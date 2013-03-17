@@ -1,0 +1,6 @@
+*.o
+*.ppu
+*.a
+*.bak
+*.bak?
+*.rst
