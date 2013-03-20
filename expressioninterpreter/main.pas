@@ -8,14 +8,23 @@ uses
 
 type
  tmainfo = class(tmainform)
-   tmemoedit1: tmemoedit;
+   ed: tmemoedit;
    tstatfile1: tstatfile;
    tbutton1: tbutton;
+   procedure parseexe(const sender: TObject);
  end;
 var
  mainfo: tmainfo;
- 
+  
 implementation
 uses
  main_mfm,mseexpint;
+ 
+procedure tmainfo.parseexe(const sender: TObject);
+var
+ ar1: stringarty;
+begin
+ parse(ed.value,ar1);
+end;
+
 end.

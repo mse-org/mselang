@@ -13,7 +13,7 @@ object mainfo: tmainfo
   )
   statfile = tstatfile1
   moduleclassname = 'tmainform'
-  object tmemoedit1: tmemoedit
+  object ed: tmemoedit
     frame.localprops = [frl_colorclient]
     bounds_x = 16
     bounds_y = 16
@@ -28,8 +28,9 @@ object mainfo: tmainfo
     bounds_y = 176
     bounds_cx = 50
     bounds_cy = 20
-    state = [as_localcaption]
+    state = [as_localcaption, as_localonexecute]
     caption = 'parse'
+    onexecute = parseexe
   end
   object tstatfile1: tstatfile
     filename = 'status.sta'
