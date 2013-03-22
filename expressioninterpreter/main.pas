@@ -24,6 +24,7 @@ procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: stringarty;
 begin
+ writeln('**********');
  parse(ed.value,ar1);
 end;
 

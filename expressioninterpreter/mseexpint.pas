@@ -37,7 +37,7 @@ type
  pbranchty = ^branchty;
  
  contextty = record
-  branch: pbranchty; //nil -> leaf
+  branch: pbranchty; //array of //nil -> leaf
   handle: contexthandlerty;
  end;
 
@@ -49,6 +49,7 @@ type
   value: double;
  end;
  contextitemty = record
+  parent: integer;
   context: pcontextty;
   start: pchar;
   case kind: contextkindty of 
@@ -65,6 +66,7 @@ type
   consumed: pchar;
   contextstack: array[0..stackdepht] of contextitemty;
   stackindex: integer; 
+  stacktop: integer; 
  end;
  
 procedure handledecnum(const info: pparseinfoty); forward;
@@ -72,11 +74,28 @@ procedure handlefrac(const info: pparseinfoty); forward;
 
 var
  startco: contextty;
- numco,numendco: contextty;
- fracco,fracendco: contextty;
+ num0co: contextty;
+ numco: contextty;
+ fracco: contextty;
+ termmulco: contextty;
  
 const
- bnum: array[0..12] of branchty =
+ bnum0: array[0..11] of branchty =
+  ((t:'0';c:@numco),
+   (t:'1';c:@numco),
+   (t:'2';c:@numco),
+   (t:'3';c:@numco),
+   (t:'4';c:@numco),
+   (t:'5';c:@numco),
+   (t:'6';c:@numco),
+   (t:'7';c:@numco),
+   (t:'8';c:@numco),
+   (t:'9';c:@numco),
+   (t:' ';c:@num0co),
+   (t:#0;c:nil)
+   );
+
+ bnum: array[0..11] of branchty =
   ((t:'0';c:@numco),
    (t:'1';c:@numco),
    (t:'2';c:@numco),
@@ -88,26 +107,10 @@ const
    (t:'8';c:@numco),
    (t:'9';c:@numco),
    (t:'.';c:@fracco),
-   (t:' ';c:@numendco),
    (t:#0;c:nil)
    );
 
- bstart: array[0..11] of branchty =
-  ((t:'0';c:@numco),
-   (t:'1';c:@numco),
-   (t:'2';c:@numco),
-   (t:'3';c:@numco),
-   (t:'4';c:@numco),
-   (t:'5';c:@numco),
-   (t:'6';c:@numco),
-   (t:'7';c:@numco),
-   (t:'8';c:@numco),
-   (t:'9';c:@numco),
-   (t:' ';c:@startco),
-   (t:#0;c:nil)
-  );
-
- bfrac: array[0..11] of branchty =
+ bfrac: array[0..10] of branchty =
   ((t:'0';c:@fracco),
    (t:'1';c:@fracco),
    (t:'2';c:@fracco),
@@ -118,9 +121,25 @@ const
    (t:'7';c:@fracco),
    (t:'8';c:@fracco),
    (t:'9';c:@fracco),
-   (t:' ';c:@fracendco),
    (t:#0;c:nil)
   );
+  
+ bstart: array[0..12] of branchty =
+  ((t:' ';c:@startco),
+   (t:'0';c:@numco),
+   (t:'1';c:@numco),
+   (t:'2';c:@numco),
+   (t:'3';c:@numco),
+   (t:'4';c:@numco),
+   (t:'5';c:@numco),
+   (t:'6';c:@numco),
+   (t:'7';c:@numco),
+   (t:'8';c:@numco),
+   (t:'9';c:@numco),
+   (t:'*';c:@termmulco),   
+   (t:#0;c:nil)
+  );
+
 const
  int32decdigits: array[0..9] of integer =
  (         1,
@@ -135,12 +154,39 @@ const
   1000000000
  );
 
+procedure outvalues(const info: pparseinfoty; const items: array of integer;
+                      const text: string);
+ procedure dump(const aitem: contextitemty);
+ begin
+  with aitem do begin
+   case aitem.kind of
+    ck_intconst: begin
+     write(intconst.value,' ');
+    end;
+    ck_realconst: begin
+     write(realconst.value,' ');
+    end;
+   end;
+  end;
+ end;
+ 
+var
+ int1: integer;
+begin
+ with info^ do begin
+  for int1:= 0 to high(items) do begin
+   dump(info^.contextstack[stackindex+items[int1]]);
+  end;
+ end;
+ writeln(text);
+end;
+
 procedure handledecnum(const info: pparseinfoty);
 var
  int1,int2: integer;
  po1: pchar;
 begin
- with info^,contextstack[stackindex] do begin
+ with info^,contextstack[stacktop] do begin
   po1:= source;
   consumed:= po1;
   int2:= 0;
@@ -154,7 +200,9 @@ begin
   end;
   kind:= ck_intconst;
   intconst.value:= int2;
+  stackindex:= stacktop-1;
  end;
+ outvalues(info,[1],'');
 end;
 
 const
@@ -170,11 +218,12 @@ var
  fraclen: integer;
 begin
  with info^ do begin
-  with contextstack[stackindex] do begin
+  with contextstack[stacktop] do begin
    fraclen:= source-start-1;
   end;
-  stackindex:= stackindex - 2;  
-  with contextstack[stackindex] do begin
+  stacktop:= stacktop - 1;
+  stackindex:= stacktop-1;
+  with contextstack[stacktop] do begin
    po1:= source;
    consumed:= po1;
    int2:= 0;
@@ -193,17 +242,21 @@ begin
    realconst.value:= int2/floatexps[fraclen]; //todo: round lsb
   end;
  end;
-end;
-  
-procedure init;
-begin
- startco.branch:= @bstart;
- numco.branch:= @bnum; 
- numendco.handle:= @handledecnum;
- fracco.branch:= @bfrac;
- fracendco.handle:= @handlefrac;
+ outvalues(info,[1],'');
 end;
 
+procedure handletermmul(const info: pparseinfoty);
+begin
+ dec(info^.stacktop,2);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[2,0],'*');
+end;
+
+procedure dummyhandler(const info: pparseinfoty);
+begin
+ //dummy
+end;
+  
 function parse(const input: string; out errors: stringarty): oparty;
 var
  pb: pbranchty;
@@ -218,36 +271,62 @@ begin
    start:= source;
   end;
   stackindex:= 0;
-  pc:= contextstack[stackindex].context;
-  repeat
-   pb:= pc^.branch;
-   while pb^.t <> #0 do begin
-    if source^ = pb^.t then begin
-     if pb^.c <> pc then begin
-      pc:= pb^.c;
-      if pc^.branch = nil then begin //leaf
-       pc^.handle(@info);
-      end
-      else begin
-       inc(stackindex);
-       if stackindex = stackdepht then begin
-        exit;
-       end;
-       with contextstack[stackindex] do begin
-        context:= pb^.c;
-        start:= source;
-       end;
+  stacktop:= 0;
+  while source^ <> #0 do begin
+   pc:= contextstack[stackindex].context;
+   while source^ <> #0 do begin
+    pb:= pc^.branch;
+    while pb^.t <> #0 do begin
+     if source^ = pb^.t then begin
+      if pb^.c <> pc then begin
+       pc:= pb^.c;
+ //      if pc^.branch = nil then begin //leaf
+ //       pc^.handle(@info);
+ //      end
+ //      else begin
+        inc(stacktop);
+        inc(stackindex);
+        if stacktop = stackdepht then begin
+         exit;
+        end;
+        with contextstack[stacktop] do begin
+         context:= pb^.c;
+         start:= source;
+        end;
+       //end;
       end;
+      inc(source);
+      pb:= pc^.branch;
+      continue;
      end;
-     break;
-    end;
-    inc(pb);
-   end;  
-   inc(source);
-  until source^ = #0;
+     inc(pb);
+    end;  
+    break;
+ //   inc(source);
+   end;
+   pc^.handle(@info);
+  end;
+  while stackindex > 0 do begin
+   contextstack[stackindex].context^.handle(@info);
+  end;
+  contextstack[0].context^.handle(@info);
  end;
 end;
 
+procedure init;
+begin
+ startco.branch:= @bstart;
+ startco.handle:= @dummyhandler;
+ num0co.branch:= @bnum0;
+ num0co.handle:= @dummyhandler;
+ numco.branch:= @bnum; 
+ numco.handle:= @handledecnum;
+ fracco.branch:= @bfrac;
+ fracco.handle:= @handlefrac;
+ termmulco.branch:= @bnum0;
+ termmulco.handle:= @handletermmul;
+end;
+  
 initialization
  init;
 end.
