@@ -37,8 +37,9 @@ type
  pbranchty = ^branchty;
  
  contextty = record
-  branch: pbranchty; //array of //nil -> leaf
+  branch: pbranchty; //array
   handle: contexthandlerty;
+  single: boolean;
  end;
 
  contextkindty = (ck_intconst,ck_realconst);
@@ -92,6 +93,21 @@ const
    (t:'8';c:@numco),
    (t:'9';c:@numco),
    (t:' ';c:@num0co),
+   (t:#0;c:nil)
+   );
+
+ btermmul: array[0..11] of branchty =
+  ((t:'0';c:@numco),
+   (t:'1';c:@numco),
+   (t:'2';c:@numco),
+   (t:'3';c:@numco),
+   (t:'4';c:@numco),
+   (t:'5';c:@numco),
+   (t:'6';c:@numco),
+   (t:'7';c:@numco),
+   (t:'8';c:@numco),
+   (t:'9';c:@numco),
+   (t:' ';c:@termmulco),
    (t:#0;c:nil)
    );
 
@@ -247,9 +263,9 @@ end;
 
 procedure handletermmul(const info: pparseinfoty);
 begin
- dec(info^.stacktop,2);
+ dec(info^.stacktop,3);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[2,0],'*');
+ outvalues(info,[1,3],'*');
 end;
 
 procedure dummyhandler(const info: pparseinfoty);
@@ -272,8 +288,8 @@ begin
   end;
   stackindex:= 0;
   stacktop:= 0;
+  pc:= contextstack[stackindex].context;
   while source^ <> #0 do begin
-   pc:= contextstack[stackindex].context;
    while source^ <> #0 do begin
     pb:= pc^.branch;
     while pb^.t <> #0 do begin
@@ -285,7 +301,8 @@ begin
  //      end
  //      else begin
         inc(stacktop);
-        inc(stackindex);
+//        inc(stackindex);
+        stackindex:= stacktop;
         if stacktop = stackdepht then begin
          exit;
         end;
@@ -304,7 +321,10 @@ begin
     break;
  //   inc(source);
    end;
-   pc^.handle(@info);
+   repeat
+    pc^.handle(@info);
+    pc:= contextstack[stackindex].context;
+   until not pc^.single;
   end;
   while stackindex > 0 do begin
    contextstack[stackindex].context^.handle(@info);
@@ -323,8 +343,9 @@ begin
  numco.handle:= @handledecnum;
  fracco.branch:= @bfrac;
  fracco.handle:= @handlefrac;
- termmulco.branch:= @bnum0;
+ termmulco.branch:= @btermmul;
  termmulco.handle:= @handletermmul;
+ termmulco.single:= true;
 end;
   
 initialization
