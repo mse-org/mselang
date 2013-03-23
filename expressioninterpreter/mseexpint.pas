@@ -11,7 +11,7 @@ unit mseexpint;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes;
+ msetypes,msestream;
 
 //todo: use efficient data structures, this is a proof of concept only
 
@@ -20,9 +20,12 @@ type
  end;
  oparty = array of opinfoty;
  
-function parse(const input: string; out errors: stringarty): oparty;
+procedure parse(const input: string; const acommand: ttextstream);
 
 implementation
+uses
+ typinfo;
+ 
 const
  stackdepht = 256;
 type
@@ -40,10 +43,11 @@ type
   branch: pbranchty; //array
   handle: contexthandlerty;
   next: pcontextty;
+  caption: string;
 //  single: boolean;
  end;
 
- contextkindty = (ck_intconst,ck_realconst);
+ contextkindty = (ck_none,ck_intconst,ck_realconst);
  intconstty = record
   value: integer;
  end;
@@ -69,21 +73,22 @@ type
   contextstack: array[0..stackdepht] of contextitemty;
   stackindex: integer; 
   stacktop: integer; 
+  command: ttextstream;
  end;
  
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
 
 var
- num0co: contextty;
- numco: contextty;
- fracco: contextty;
- mulfactco: contextty;
- termco: contextty;
- term1co: contextty;
- simpexpco: contextty;
- simpexp1co: contextty;
- addtermco: contextty;
+ num0co: contextty = (branch: nil; handle: nil; next: nil; caption: 'num0');
+ numco: contextty = (branch: nil; handle: nil; next: nil; caption: 'num');
+ fracco: contextty = (branch: nil; handle: nil; next: nil; caption: 'frac');
+ mulfactco: contextty = (branch: nil; handle: nil; next: nil; caption: 'mulfact');
+ termco: contextty = (branch: nil; handle: nil; next: nil; caption: 'term');
+ term1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'term1');
+ simpexpco: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp');
+ simpexp1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp1');
+ addtermco: contextty = (branch: nil; handle: nil; next: nil; caption: 'addterm');
  
 const
  bnum0: array[0..11] of branchty =
@@ -191,12 +196,13 @@ const
    100000000,
   1000000000
  );
-
+{
 procedure outvalues(const info: pparseinfoty; const items: array of integer;
                       const text: string);
  procedure dump(const aitem: contextitemty);
  begin
   with aitem do begin
+   write(getenumname(typeinfo(aitem.kind),ord(aitem.kind)),' ');
    case aitem.kind of
     ck_intconst: begin
      write(intconst.value,' ');
@@ -217,6 +223,65 @@ begin
   end;
  end;
  writeln(text);
+end;
+}
+procedure outhandle(const info: pparseinfoty; const text: string);
+begin
+ writeln(' *handle* ',text);
+end;
+
+procedure outinfo(const info: pparseinfoty; const text: string);
+var
+ int1: integer;
+begin
+ with info^ do begin
+  writeln('**',text,' T:',stacktop,' I:',stackindex,' ''',source,'''');
+  for int1:= stacktop downto 0 do begin
+   write(int1);
+   if int1 = stackindex then begin
+    write('*');
+   end
+   else begin
+    write(' ');
+   end;
+   with contextstack[int1] do begin
+    write(getenumname(typeinfo(kind),ord(kind)),' ');
+    case kind of
+     ck_intconst: begin
+      write(intconst.value,' ');
+     end;
+     ck_realconst: begin
+      write(realconst.value,' ');
+     end;
+    end;
+    writeln(context^.caption,' ''',start,'''');
+   end;
+  end;
+ end;
+end;
+
+procedure outcommand(const info: pparseinfoty; const items: array of integer;
+                     const text: string);
+var
+ int1: integer;
+begin
+ with info^ do begin
+  for int1:= 0 to high(items) do begin
+   with contextstack[stacktop+items[int1]] do begin
+    command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
+    case kind of
+     ck_intconst: begin
+      command.write(intconst.value);
+     end;
+     ck_realconst: begin
+      command.write(realconst.value);
+     end;
+    end;
+    command.write(',');
+   end;
+  end;
+  command.writeln([' ',text]);
+ end;
 end;
 
 procedure handledecnum(const info: pparseinfoty);
@@ -240,7 +305,7 @@ begin
   intconst.value:= int2;
   stackindex:= stacktop-1;
  end;
- outvalues(info,[1],'');
+ outhandle(info,'CNUM');
 end;
 
 const
@@ -280,57 +345,68 @@ begin
    realconst.value:= int2/floatexps[fraclen]; //todo: round lsb
   end;
  end;
- outvalues(info,[1],'');
+ outhandle(info,'FRAC');
 end;
 
 procedure handlemulfact(const info: pparseinfoty);
 begin
- dec(info^.stacktop,3);
- info^.stackindex:= info^.stacktop;
- outvalues(info,[1,3],'*');
+ with info^ do begin
+  if contextstack[stacktop-2].kind <> ck_none then begin
+   outcommand(info,[-2,0],'*');
+   dec(stacktop,3);
+  end
+  else begin
+   outcommand(info,[0],'*');
+   dec(stacktop,2);
+  end;
+  stackindex:= info^.stacktop;
+ end;
+ outhandle(info,'MULFACT');
 end;
 
 procedure handleaddterm(const info: pparseinfoty);
 begin
- dec(info^.stacktop,3);
+ outcommand(info,[0],'+');
+ dec(info^.stacktop,2);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[1,3],'+');
+ outhandle(info,'ADDTERM');
 end;
 
 procedure handleterm(const info: pparseinfoty);
 begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[],'TERM');
+ outhandle(info,'TERM');
 end;
 
 procedure handleterm1(const info: pparseinfoty);
 begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[],'TERM1');
+ outhandle(info,'TERM1');
 end;
 
 procedure handlesimpexp(const info: pparseinfoty);
 begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[],'SIMPEXP');
+ outhandle(info,'SIMPEXP');
 end;
 
 procedure handlesimpexp1(const info: pparseinfoty);
 begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
- outvalues(info,[],'SIMPEXP1');
+ outhandle(info,'SIMPEXP1');
 end;
 
 procedure dummyhandler(const info: pparseinfoty);
 begin
  //dummy
+ outhandle(info,'DUMMY');
 end;
   
-function parse(const input: string; out errors: stringarty): oparty;
+procedure parse(const input: string; const acommand: ttextstream);
 var
  pb: pbranchty;
  pc: pcontextty;
@@ -348,17 +424,20 @@ var
     exit;
    end;
    with contextstack[stacktop] do begin
+    kind:= ck_none;
     context:= pb^.c;
     start:= source;
    end;
   end;
+  outinfo(@info,'push');
  end;
  
 begin
  with info do begin
-  result:= nil;
+  command:= acommand;
   source:= pchar(input);
   with contextstack[0] do begin
+   kind:= ck_none;
    context:= @simpexpco;
    start:= source;
   end;
@@ -391,16 +470,27 @@ begin
     end;
  //   inc(source);
    end;
+   writeln('***');
    repeat
     pc^.handle(@info);
     pc:= contextstack[stackindex].context;
+    if pc^.next = nil then begin
+     outinfo(@info,'after0');
+    end;
    until pc^.next <> nil;
    pc:= pc^.next;
+   with contextstack[stackindex] do begin
+    context:= pc;
+    kind:= ck_none;
+   end;
+   outinfo(@info,'after1');
   end;
   while stackindex > 0 do begin
    contextstack[stackindex].context^.handle(@info);
+   outinfo(@info,'after2');
   end;
   contextstack[0].context^.handle(@info);
+  outinfo(@info,'after3');
  end;
 end;
 
@@ -415,7 +505,7 @@ begin
 
  mulfactco.branch:= @bnum0;
  mulfactco.handle:= @handlemulfact;
- mulfactco.next:= @mulfactco;
+// mulfactco.next:= @mulfactco;
  
  termco.branch:= @bterm;
  termco.handle:= @handleterm;
@@ -426,7 +516,7 @@ begin
 
  addtermco.branch:= @bnum0;
  addtermco.handle:= @handleaddterm;
- addtermco.next:= @addtermco;
+// addtermco.next:= @addtermco;
 
  simpexpco.branch:= @bsimpexp;
  simpexpco.handle:= @handlesimpexp;

@@ -18,23 +18,40 @@ object mainfo: tmainfo
     bounds_x = 16
     bounds_y = 16
     bounds_cx = 340
-    bounds_cy = 124
+    bounds_cy = 44
     statfile = tstatfile1
     reffontheight = 14
   end
   object tbutton1: tbutton
     taborder = 1
-    bounds_x = 32
-    bounds_y = 176
+    bounds_x = 304
+    bounds_y = 192
     bounds_cx = 50
     bounds_cy = 20
     state = [as_localcaption, as_localonexecute]
     caption = 'parse'
     onexecute = parseexe
   end
+  object grid: tstringgrid
+    taborder = 2
+    bounds_x = 16
+    bounds_y = 72
+    bounds_cx = 338
+    bounds_cy = 114
+    datacols.count = 1
+    datacols.items = <    
+      item
+        width = 333
+        options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
+        valuefalse = '0'
+        valuetrue = '1'
+      end>
+    datarowheight = 16
+    reffontheight = 14
+  end
   object tstatfile1: tstatfile
     filename = 'status.sta'
-    left = 224
-    top = 72
+    left = 232
+    top = 32
   end
 end
