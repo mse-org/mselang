@@ -39,7 +39,8 @@ type
  contextty = record
   branch: pbranchty; //array
   handle: contexthandlerty;
-  single: boolean;
+  next: pcontextty;
+//  single: boolean;
  end;
 
  contextkindty = (ck_intconst,ck_realconst);
@@ -70,15 +71,19 @@ type
   stacktop: integer; 
  end;
  
-procedure handledecnum(const info: pparseinfoty); forward;
-procedure handlefrac(const info: pparseinfoty); forward;
+//procedure handledecnum(const info: pparseinfoty); forward;
+//procedure handlefrac(const info: pparseinfoty); forward;
 
 var
- startco: contextty;
  num0co: contextty;
  numco: contextty;
  fracco: contextty;
- termmulco: contextty;
+ mulfactco: contextty;
+ termco: contextty;
+ term1co: contextty;
+ simpexpco: contextty;
+ simpexp1co: contextty;
+ addtermco: contextty;
  
 const
  bnum0: array[0..11] of branchty =
@@ -95,7 +100,7 @@ const
    (t:' ';c:@num0co),
    (t:#0;c:nil)
    );
-
+{
  btermmul: array[0..11] of branchty =
   ((t:'0';c:@numco),
    (t:'1';c:@numco),
@@ -110,7 +115,7 @@ const
    (t:' ';c:@termmulco),
    (t:#0;c:nil)
    );
-
+}
  bnum: array[0..11] of branchty =
   ((t:'0';c:@numco),
    (t:'1';c:@numco),
@@ -140,8 +145,8 @@ const
    (t:#0;c:nil)
   );
   
- bstart: array[0..12] of branchty =
-  ((t:' ';c:@startco),
+ bterm: array[0..11] of branchty =
+  ((t:' ';c:@termco),
    (t:'0';c:@numco),
    (t:'1';c:@numco),
    (t:'2';c:@numco),
@@ -152,8 +157,25 @@ const
    (t:'7';c:@numco),
    (t:'8';c:@numco),
    (t:'9';c:@numco),
-   (t:'*';c:@termmulco),   
+//   (t:'*';c:@termmulco),   
    (t:#0;c:nil)
+  );
+  
+ bterm1: array[0..2] of branchty =
+  ((t:' ';c:@term1co),
+   (t:'*';c:@mulfactco),
+   (t:#0;c:nil)
+  );
+
+ bsimpexp1: array[0..2] of branchty =
+  ((t:' ';c:@simpexp1co),
+   (t:'+';c:@addtermco),
+   (t:#0;c:nil)
+  );
+
+ bsimpexp: array[0..0] of branchty =
+  (
+   (t:#0;c:@termco)
   );
 
 const
@@ -244,7 +266,7 @@ begin
    consumed:= po1;
    int2:= 0;
    dec(po1);
-   int1:= po1-start-3;
+   int1:= po1-start-1;
    if int1 <= high(int32decdigits) then begin
     for int1:= 0 to int1 do begin
      int2:= int2 + (ord(po1^)-ord('0')) * int32decdigits[int1];
@@ -261,11 +283,46 @@ begin
  outvalues(info,[1],'');
 end;
 
-procedure handletermmul(const info: pparseinfoty);
+procedure handlemulfact(const info: pparseinfoty);
 begin
  dec(info^.stacktop,3);
  info^.stackindex:= info^.stacktop;
  outvalues(info,[1,3],'*');
+end;
+
+procedure handleaddterm(const info: pparseinfoty);
+begin
+ dec(info^.stacktop,3);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[1,3],'+');
+end;
+
+procedure handleterm(const info: pparseinfoty);
+begin
+ dec(info^.stacktop);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[],'TERM');
+end;
+
+procedure handleterm1(const info: pparseinfoty);
+begin
+ dec(info^.stacktop);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[],'TERM1');
+end;
+
+procedure handlesimpexp(const info: pparseinfoty);
+begin
+ dec(info^.stacktop);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[],'SIMPEXP');
+end;
+
+procedure handlesimpexp1(const info: pparseinfoty);
+begin
+ dec(info^.stacktop);
+ info^.stackindex:= info^.stacktop;
+ outvalues(info,[],'SIMPEXP1');
 end;
 
 procedure dummyhandler(const info: pparseinfoty);
@@ -278,12 +335,31 @@ var
  pb: pbranchty;
  pc: pcontextty;
  info: parseinfoty;
+
+ function push: boolean;
+ begin
+  result:= true;
+  with info do begin
+   pc:= pb^.c;
+   inc(stacktop);
+   stackindex:= stacktop;
+   if stacktop = stackdepht then begin
+    result:= false;
+    exit;
+   end;
+   with contextstack[stacktop] do begin
+    context:= pb^.c;
+    start:= source;
+   end;
+  end;
+ end;
+ 
 begin
  with info do begin
   result:= nil;
   source:= pchar(input);
   with contextstack[0] do begin
-   context:= @startco;
+   context:= @simpexpco;
    start:= source;
   end;
   stackindex:= 0;
@@ -292,39 +368,34 @@ begin
   while source^ <> #0 do begin
    while source^ <> #0 do begin
     pb:= pc^.branch;
-    while pb^.t <> #0 do begin
-     if source^ = pb^.t then begin
-      if pb^.c <> pc then begin
-       pc:= pb^.c;
- //      if pc^.branch = nil then begin //leaf
- //       pc^.handle(@info);
- //      end
- //      else begin
-        inc(stacktop);
-//        inc(stackindex);
-        stackindex:= stacktop;
-        if stacktop = stackdepht then begin
-         exit;
-        end;
-        with contextstack[stacktop] do begin
-         context:= pb^.c;
-         start:= source;
-        end;
-       //end;
-      end;
-      inc(source);
-      pb:= pc^.branch;
-      continue;
+    if pb^.t = #0 then begin
+     if not push then begin
+      exit;
      end;
-     inc(pb);
-    end;  
-    break;
+    end
+    else begin
+     while pb^.t <> #0 do begin
+      if source^ = pb^.t then begin
+       if pb^.c <> pc then begin
+        if not push then begin
+         exit
+        end;
+       end;
+       inc(source);
+       pb:= pc^.branch;
+       continue;
+      end;
+      inc(pb);
+     end;  
+     break;
+    end;
  //   inc(source);
    end;
    repeat
     pc^.handle(@info);
     pc:= contextstack[stackindex].context;
-   until not pc^.single;
+   until pc^.next <> nil;
+   pc:= pc^.next;
   end;
   while stackindex > 0 do begin
    contextstack[stackindex].context^.handle(@info);
@@ -335,17 +406,35 @@ end;
 
 procedure init;
 begin
- startco.branch:= @bstart;
- startco.handle:= @dummyhandler;
  num0co.branch:= @bnum0;
  num0co.handle:= @dummyhandler;
  numco.branch:= @bnum; 
  numco.handle:= @handledecnum;
  fracco.branch:= @bfrac;
  fracco.handle:= @handlefrac;
- termmulco.branch:= @btermmul;
- termmulco.handle:= @handletermmul;
- termmulco.single:= true;
+
+ mulfactco.branch:= @bnum0;
+ mulfactco.handle:= @handlemulfact;
+ mulfactco.next:= @mulfactco;
+ 
+ termco.branch:= @bterm;
+ termco.handle:= @handleterm;
+ termco.next:= @term1co;
+ term1co.branch:= @bterm1;
+ term1co.handle:= @handleterm1;
+ term1co.next:= @term1co;
+
+ addtermco.branch:= @bnum0;
+ addtermco.handle:= @handleaddterm;
+ addtermco.next:= @addtermco;
+
+ simpexpco.branch:= @bsimpexp;
+ simpexpco.handle:= @handlesimpexp;
+ simpexpco.next:= @simpexp1co;
+ simpexp1co.branch:= @bsimpexp1;
+ simpexp1co.handle:= @handlesimpexp1;
+ simpexp1co.next:= @simpexp1co;
+ 
 end;
   
 initialization
