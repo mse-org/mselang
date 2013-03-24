@@ -26,7 +26,10 @@ implementation
 uses
  typinfo;
  
+type
+ contextkindty = (ck_none,ck_neg,ck_intconst,ck_realconst);
 const
+ valuecontext = ck_intconst;
  stackdepht = 256;
 type
  pparseinfoty = ^parseinfoty;
@@ -47,7 +50,6 @@ type
 //  single: boolean;
  end;
 
- contextkindty = (ck_none,ck_intconst,ck_realconst);
  intconstty = record
   value: integer;
  end;
@@ -85,6 +87,7 @@ var
  fracco: contextty = (branch: nil; handle: nil; next: nil; caption: 'frac');
  mulfactco: contextty = (branch: nil; handle: nil; next: nil; caption: 'mulfact');
  termco: contextty = (branch: nil; handle: nil; next: nil; caption: 'term');
+ negtermco: contextty = (branch: nil; handle: nil; next: nil; caption: 'negterm');
  term1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'term1');
  simpexpco: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp');
  simpexp1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp1');
@@ -107,22 +110,7 @@ const
    (t:' ';c:@num0co),
    (t:#0;c:nil)
    );
-{
- btermmul: array[0..11] of branchty =
-  ((t:'0';c:@numco),
-   (t:'1';c:@numco),
-   (t:'2';c:@numco),
-   (t:'3';c:@numco),
-   (t:'4';c:@numco),
-   (t:'5';c:@numco),
-   (t:'6';c:@numco),
-   (t:'7';c:@numco),
-   (t:'8';c:@numco),
-   (t:'9';c:@numco),
-   (t:' ';c:@termmulco),
-   (t:#0;c:nil)
-   );
-}
+
  bnum: array[0..11] of branchty =
   ((t:'0';c:@numco),
    (t:'1';c:@numco),
@@ -152,8 +140,10 @@ const
    (t:#0;c:nil)
   );
   
- bterm: array[0..12] of branchty =
+ bterm: array[0..14] of branchty =
   ((t:' ';c:@termco),
+   (t:'+';c:@termco),
+   (t:'-';c:@negtermco),  
    (t:'(';c:@bracketstartco),   
    (t:'0';c:@numco),
    (t:'1';c:@numco),
@@ -165,7 +155,6 @@ const
    (t:'7';c:@numco),
    (t:'8';c:@numco),
    (t:'9';c:@numco),
-//   (t:'*';c:@termmulco),   
    (t:#0;c:nil)
   );
   
@@ -214,35 +203,7 @@ const
    100000000,
   1000000000
  );
-{
-procedure outvalues(const info: pparseinfoty; const items: array of integer;
-                      const text: string);
- procedure dump(const aitem: contextitemty);
- begin
-  with aitem do begin
-   write(getenumname(typeinfo(aitem.kind),ord(aitem.kind)),' ');
-   case aitem.kind of
-    ck_intconst: begin
-     write(intconst.value,' ');
-    end;
-    ck_realconst: begin
-     write(realconst.value,' ');
-    end;
-   end;
-  end;
- end;
- 
-var
- int1: integer;
-begin
- with info^ do begin
-  for int1:= 0 to high(items) do begin
-   dump(info^.contextstack[stackindex+items[int1]]);
-  end;
- end;
- writeln(text);
-end;
-}
+
 procedure outhandle(const info: pparseinfoty; const text: string);
 begin
  writeln(' *handle* ',text);
@@ -374,7 +335,7 @@ begin
    dec(stacktop,2);
   end
   else begin
-   if contextstack[stacktop-2].kind <> ck_none then begin
+   if contextstack[stacktop-2].kind >= valuecontext then begin
     outcommand(info,[-2,0],'*');
     dec(stacktop,3);
    end
@@ -403,10 +364,23 @@ begin
  outhandle(info,'TERM');
 end;
 
+procedure handlenegterm(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop] do begin
+  if kind = ck_none then begin
+   kind:= ck_neg;
+  end
+  else begin
+   kind:= ck_none;
+  end;
+ end;
+ outhandle(info,'NEGTERM');
+end;
+
 procedure handleterm1(const info: pparseinfoty);
 begin
  with info^ do begin
-  if contextstack[stacktop].kind <> ck_none then begin
+  if contextstack[stacktop].kind >= valuecontext then begin
    outcommand(info,[0],'TERM1');
    dec(stacktop,2);
   end
@@ -464,16 +438,22 @@ var
   result:= true;
   with info do begin
    pc:= pb^.c;
-   inc(stacktop);
-   stackindex:= stacktop;
-   if stacktop = stackdepht then begin
-    result:= false;
-    exit;
-   end;
-   with contextstack[stacktop] do begin
-    kind:= ck_none;
-    context:= pb^.c;
-    start:= source;
+   if pc^.branch = nil then begin
+    pc^.handle(@info);
+    pc:= pc^.next;
+   end
+   else begin
+    inc(stacktop);
+    stackindex:= stacktop;
+    if stacktop = stackdepht then begin
+     result:= false;
+     exit;
+    end;
+    with contextstack[stacktop] do begin
+     kind:= ck_none;
+     context:= pb^.c;
+     start:= source;
+    end;
    end;
    pb:= pc^.branch;
   end;
@@ -560,6 +540,9 @@ begin
  termco.branch:= @bterm;
  termco.handle:= @handleterm;
  termco.next:= @term1co;
+ negtermco.branch:= nil; //immediate
+ negtermco.handle:= @handlenegterm;
+ negtermco.next:= @termco;
  term1co.branch:= @bterm1;
  term1co.handle:= @handleterm1;
  term1co.next:= @term1co;
