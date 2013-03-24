@@ -89,6 +89,8 @@ var
  simpexpco: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp');
  simpexp1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'simpexp1');
  addtermco: contextty = (branch: nil; handle: nil; next: nil; caption: 'addterm');
+ bracketstartco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketstart');
+ bracketendco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketend');
  
 const
  bnum0: array[0..11] of branchty =
@@ -150,8 +152,9 @@ const
    (t:#0;c:nil)
   );
   
- bterm: array[0..11] of branchty =
+ bterm: array[0..12] of branchty =
   ((t:' ';c:@termco),
+   (t:'(';c:@bracketstartco),   
    (t:'0';c:@numco),
    (t:'1';c:@numco),
    (t:'2';c:@numco),
@@ -183,6 +186,21 @@ const
    (t:#0;c:@termco)
   );
 
+ baddterm: array[0..0] of branchty =
+  (
+    (t:#0;c:@termco)
+  );
+
+ bbracketstart: array[0..0] of branchty =
+  (
+    (t:#0;c:@simpexpco)
+  );
+
+ bbracketend: array[0..1] of branchty =
+  ((t:' ';c:@bracketendco),
+   (t:#0;c:nil)
+  );
+ 
 const
  int32decdigits: array[0..9] of integer =
  (         1,
@@ -351,13 +369,19 @@ end;
 procedure handlemulfact(const info: pparseinfoty);
 begin
  with info^ do begin
-  if contextstack[stacktop-2].kind <> ck_none then begin
-   outcommand(info,[-2,0],'*');
-   dec(stacktop,3);
+  if stacktop = stackindex then begin
+   outcommand(info,[-1],'*');
+   dec(stacktop,2);
   end
   else begin
-   outcommand(info,[0],'*');
-   dec(stacktop,2);
+   if contextstack[stacktop-2].kind <> ck_none then begin
+    outcommand(info,[-2,0],'*');
+    dec(stacktop,3);
+   end
+   else begin
+    outcommand(info,[0],'*');
+    dec(stacktop,2);
+   end;
   end;
   stackindex:= info^.stacktop;
  end;
@@ -367,7 +391,7 @@ end;
 procedure handleaddterm(const info: pparseinfoty);
 begin
  outcommand(info,[0],'+');
- dec(info^.stacktop,2);
+ dec(info^.stacktop,1);
  info^.stackindex:= info^.stacktop;
  outhandle(info,'ADDTERM');
 end;
@@ -381,8 +405,16 @@ end;
 
 procedure handleterm1(const info: pparseinfoty);
 begin
- dec(info^.stacktop);
- info^.stackindex:= info^.stacktop;
+ with info^ do begin
+  if contextstack[stacktop].kind <> ck_none then begin
+   outcommand(info,[0],'TERM1');
+   dec(stacktop,2);
+  end
+  else begin
+   dec(stacktop,1);
+  end;
+  stackindex:= stacktop;
+ end;
  outhandle(info,'TERM1');
 end;
 
@@ -398,6 +430,21 @@ begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
  outhandle(info,'SIMPEXP1');
+end;
+
+procedure handlebracketend(const info: pparseinfoty);
+begin
+ with info^ do begin
+  if source^ <> ')' then begin
+   outcommand(info,[],'*ERROR* '')'' expected');
+  end
+  else begin
+   inc(source);
+  end;
+  dec(stacktop,1);
+  stackindex:= stacktop;
+ end;
+ outhandle(info,'BRACKETEND');
 end;
 
 procedure dummyhandler(const info: pparseinfoty);
@@ -428,6 +475,7 @@ var
     context:= pb^.c;
     start:= source;
    end;
+   pb:= pc^.branch;
   end;
   outinfo(@info,'push');
  end;
@@ -456,12 +504,14 @@ begin
      while pb^.t <> #0 do begin
       if source^ = pb^.t then begin
        if pb^.c <> pc then begin
-        if not push then begin
-         exit
-        end;
+        repeat
+         if not push then begin
+          exit
+         end;
+        until pb^.t <> #0;
        end;
        inc(source);
-       pb:= pc^.branch;
+//       pb:= pc^.branch;
        continue;
       end;
       inc(pb);
@@ -503,7 +553,7 @@ begin
  fracco.branch:= @bfrac;
  fracco.handle:= @handlefrac;
 
- mulfactco.branch:= @bnum0;
+ mulfactco.branch:= @bterm;
  mulfactco.handle:= @handlemulfact;
 // mulfactco.next:= @mulfactco;
  
@@ -513,8 +563,14 @@ begin
  term1co.branch:= @bterm1;
  term1co.handle:= @handleterm1;
  term1co.next:= @term1co;
+ 
+ bracketstartco.branch:= @bbracketstart;
+ bracketstartco.handle:= @dummyhandler;
+ bracketstartco.next:= @bracketendco;
+ bracketendco.branch:= @bbracketend;
+ bracketendco.handle:= @handlebracketend;
 
- addtermco.branch:= @bnum0;
+ addtermco.branch:= @baddterm;
  addtermco.handle:= @handleaddterm;
 // addtermco.next:= @addtermco;
 
