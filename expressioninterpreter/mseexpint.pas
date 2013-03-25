@@ -19,9 +19,30 @@ uses
 //
 
 type
- opinfoty = record
+ datakindty = (dk_none,dk_int32,dk_flo64);
+ dataty = record
+  case kind: datakindty of
+   dk_int32: (
+    vint32: integer;
+   );
+   dk_flo64: (
+    vflo64: double;
+   );
  end;
- oparty = array of opinfoty;
+
+ opkindty = (ok_none,ok_push,ok_pop);
+ opinfoty = record
+  case kind: opkindty of
+   ok_push: (
+    data: dataty;
+   );
+   ok_pop: (
+    count: integer;
+   );
+ end;
+ popinfoty = ^opinfoty;
+ 
+ opinfoarty = array of opinfoty;
  
 procedure parse(const input: string; const acommand: ttextstream);
 
@@ -30,9 +51,10 @@ uses
  typinfo;
  
 type
- contextkindty = (ck_none,ck_neg,ck_intconst,ck_realconst);
+ contextkindty = (ck_none,ck_neg,ck_int32const,ck_flo64const,
+                  ck_int32fact,ck_flo64fact);
 const
- valuecontext = ck_intconst;
+ valuecontext = ck_int32const;
  stackdepht = 256;
 type
  pparseinfoty = ^parseinfoty;
@@ -50,13 +72,12 @@ type
   handle: contexthandlerty;
   next: pcontextty;
   caption: string;
-//  single: boolean;
  end;
 
- intconstty = record
+ int32constty = record
   value: integer;
  end;
- realconstty = record
+ flo64constty = record
   value: double;
  end;
  contextitemty = record
@@ -64,11 +85,11 @@ type
   context: pcontextty;
   start: pchar;
   case kind: contextkindty of 
-   ck_intconst:(
-    intconst: intconstty;
+   ck_int32const:(
+    int32const: int32constty;
    );
-   ck_realconst:(
-    realconst: realconstty;
+   ck_flo64const:(
+    flo64const: flo64constty;
    )
  end;
  
@@ -79,6 +100,8 @@ type
   stackindex: integer; 
   stacktop: integer; 
   command: ttextstream;
+  ops: opinfoarty;
+  opcount: integer;
  end;
  
 //procedure handledecnum(const info: pparseinfoty); forward;
@@ -262,14 +285,20 @@ begin
    with contextstack[int1] do begin
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
-     ck_intconst: begin
-      write(intconst.value,' ');
+     ck_int32const: begin
+      write(int32const.value,' ');
      end;
-     ck_realconst: begin
-      write(realconst.value,' ');
+     ck_flo64const: begin
+      write(flo64const.value,' ');
      end;
     end;
-    writeln(context^.caption,' ''',start,'''');
+    if context <> nil then begin
+     write(context^.caption);
+    end
+    else begin
+     write('NIL');
+    end;
+    writeln(' ''',start,'''');
    end;
   end;
  end;
@@ -285,17 +314,50 @@ begin
    with contextstack[stacktop+items[int1]] do begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
-     ck_intconst: begin
-      command.write(intconst.value);
+     ck_int32const: begin
+      command.write(int32const.value);
      end;
-     ck_realconst: begin
-      command.write(realconst.value);
+     ck_flo64const: begin
+      command.write(flo64const.value);
      end;
     end;
     command.write(',');
    end;
   end;
   command.writeln([' ',text]);
+ end;
+end;
+
+function additem(const info: pparseinfoty): popinfoty;
+begin
+ with info^ do begin
+  if high(ops) >= opcount then begin
+   setlength(ops,(high(ops)+257)*2);
+  end;
+  result:= @ops[opcount];
+  inc(opcount);
+ end;
+end;
+
+procedure push(const info: pparseinfoty; const avalue: integer); overload;
+begin
+ with additem(info)^ do begin
+  kind:= ok_push;
+  with data do begin
+   kind:= dk_int32;
+   vint32:= avalue;
+  end;
+ end;
+end;
+
+procedure push(const info: pparseinfoty; const avalue: real); overload;
+begin
+ with additem(info)^ do begin
+  kind:= ok_push;
+  with data do begin
+   kind:= dk_flo64;
+   vflo64:= avalue;
+  end;
  end;
 end;
 
@@ -316,8 +378,8 @@ begin
     dec(po1);
    end;
   end;
-  kind:= ck_intconst;
-  intconst.value:= int2;
+  kind:= ck_int32const;
+  int32const.value:= int2;
   stackindex:= stacktop-1;
  end;
  outhandle(info,'CNUM');
@@ -356,8 +418,8 @@ begin
      end;
     end;
    end;
-   kind:= ck_realconst;
-   realconst.value:= int2/floatexps[fraclen]; //todo: round lsb
+   kind:= ck_flo64const;
+   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb
   end;
  end;
  outhandle(info,'FRAC');
@@ -366,6 +428,7 @@ end;
 procedure handlemulfact(const info: pparseinfoty);
 begin
  with info^ do begin
+ {
   if stacktop = stackindex then begin
    outcommand(info,[-1],'*');
    dec(stacktop,2);
@@ -380,7 +443,14 @@ begin
     dec(stacktop,2);
    end;
   end;
-  stackindex:= info^.stacktop;
+  }
+  outcommand(info,[-2,0],'*');
+  dec(stacktop,2);
+  with contextstack[stacktop] do begin
+   kind:= ck_int32fact;
+   context:= nil;
+  end;
+  stackindex:= stacktop-1;
  end;
  outhandle(info,'MULFACT');
 end;
