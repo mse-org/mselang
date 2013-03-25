@@ -13,7 +13,10 @@ interface
 uses
  msetypes,msestream;
 
-//todo: use efficient data structures, this is a proof of concept only
+//
+//todo: use efficient data structures and procedures, 
+//this is a proof of concept only
+//
 
 type
  opinfoty = record
@@ -37,7 +40,7 @@ type
  
  pcontextty = ^contextty;
  branchty = record
-  t: char;
+  t: string;
   c: pcontextty;
  end;
  pbranchty = ^branchty;
@@ -94,6 +97,12 @@ var
  addtermco: contextty = (branch: nil; handle: nil; next: nil; caption: 'addterm');
  bracketstartco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketstart');
  bracketendco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketend');
+ lnco: contextty = (branch: nil; handle: nil; next: nil; caption: 'ln');
+ paramsstartco: contextty = (branch: nil; handle: nil; next: nil; caption: 'paramsstart');
+ paramsendco: contextty = (branch: nil; handle: nil; next: nil; caption: 'paramsend');
+ paramsco: contextty = (branch: nil; handle: nil; next: nil; caption: 'params');
+ params1co: contextty = (branch: nil; handle: nil; next: nil; caption: 'params1');
+ 
  
 const
  bnum0: array[0..11] of branchty =
@@ -107,8 +116,8 @@ const
    (t:'7';c:@numco),
    (t:'8';c:@numco),
    (t:'9';c:@numco),
-   (t:' ';c:@num0co),
-   (t:#0;c:nil)
+   (t:' ';c:nil),
+   (t:'';c:nil)
    );
 
  bnum: array[0..11] of branchty =
@@ -123,7 +132,7 @@ const
    (t:'8';c:@numco),
    (t:'9';c:@numco),
    (t:'.';c:@fracco),
-   (t:#0;c:nil)
+   (t:'';c:nil)
    );
 
  bfrac: array[0..10] of branchty =
@@ -137,11 +146,11 @@ const
    (t:'7';c:@fracco),
    (t:'8';c:@fracco),
    (t:'9';c:@fracco),
-   (t:#0;c:nil)
+   (t:'';c:nil)
   );
   
- bterm: array[0..14] of branchty =
-  ((t:' ';c:@termco),
+ bterm: array[0..15] of branchty =
+  ((t:' ';c:nil),
    (t:'+';c:@termco),
    (t:'-';c:@negtermco),  
    (t:'(';c:@bracketstartco),   
@@ -155,39 +164,66 @@ const
    (t:'7';c:@numco),
    (t:'8';c:@numco),
    (t:'9';c:@numco),
-   (t:#0;c:nil)
+   (t:'ln';c:@lnco),
+   (t:'';c:nil)
   );
-  
+
+ bfunc: array[0..2] of branchty =  
+  ((t:' ';c:nil),
+   (t:'(';c:@paramsstartco),
+   (t:'';c:nil)
+  );
+
+ bparams: array[0..0] of branchty =
+  (
+   (t:'';c:@simpexpco)
+  );
+ bparams1: array[0..1] of branchty =
+  (
+   (t:' ';c:nil),
+   (t:',';c:@paramsco)
+  );
+    
+ bparamsstart: array[0..0] of branchty =
+  (
+   (t:'';c:@paramsco)
+  );
+
+ bparamsend: array[0..1] of branchty =
+  ((t:' ';c:nil),
+   (t:'';c:nil)
+  );
+
  bterm1: array[0..2] of branchty =
-  ((t:' ';c:@term1co),
+  ((t:' ';c:nil),
    (t:'*';c:@mulfactco),
-   (t:#0;c:nil)
+   (t:'';c:nil)
   );
 
  bsimpexp1: array[0..2] of branchty =
-  ((t:' ';c:@simpexp1co),
+  ((t:' ';c:nil),
    (t:'+';c:@addtermco),
-   (t:#0;c:nil)
+   (t:'';c:nil)
   );
 
  bsimpexp: array[0..0] of branchty =
   (
-   (t:#0;c:@termco)
+   (t:'';c:@termco)
   );
 
  baddterm: array[0..0] of branchty =
   (
-    (t:#0;c:@termco)
+   (t:'';c:@termco)
   );
 
  bbracketstart: array[0..0] of branchty =
   (
-    (t:#0;c:@simpexpco)
+   (t:'';c:@simpexpco)
   );
 
  bbracketend: array[0..1] of branchty =
-  ((t:' ';c:@bracketendco),
-   (t:#0;c:nil)
+  ((t:' ';c:nil),
+   (t:'';c:nil)
   );
  
 const
@@ -421,12 +457,46 @@ begin
  outhandle(info,'BRACKETEND');
 end;
 
+procedure handleln(const info: pparseinfoty);
+begin
+ outcommand(info,[0],'ln()');
+ with info^ do begin
+  stacktop:= stackindex;
+  dec(stackindex);
+ end;
+ outhandle(info,'LN');
+end;
+
+procedure handleparamsend(const info: pparseinfoty);
+begin
+ with info^ do begin
+  if source^ <> ')' then begin
+   outcommand(info,[],'*ERROR* '')'' expected');
+  end
+  else begin
+   inc(source);
+  end;
+  dec(stackindex);
+ end;
+ outhandle(info,'PARAMSEND');
+end;
+
+procedure handleparam(const info: pparseinfoty);
+begin
+ dec(info^.stackindex);
+ outhandle(info,'PARAM');
+end;
+
 procedure dummyhandler(const info: pparseinfoty);
 begin
  //dummy
  outhandle(info,'DUMMY');
 end;
-  
+
+//
+// todo: optimize, this is a proof of concept only
+//
+
 procedure parse(const input: string; const acommand: ttextstream);
 var
  pb: pbranchty;
@@ -459,7 +529,9 @@ var
   end;
   outinfo(@info,'push');
  end;
- 
+
+var
+ po1,po2: pchar; 
 begin
  with info do begin
   command:= acommand;
@@ -475,22 +547,31 @@ begin
   while source^ <> #0 do begin
    while source^ <> #0 do begin
     pb:= pc^.branch;
-    if pb^.t = #0 then begin
+    if pointer(pb^.t) = nil then begin
      if not push then begin
       exit;
      end;
     end
     else begin
-     while pb^.t <> #0 do begin
-      if source^ = pb^.t then begin
-       if pb^.c <> pc then begin
+     while pointer(pb^.t) <> nil do begin
+      po1:= source;
+      po2:= pointer(pb^.t);
+      while po1^ = po2^ do begin
+       inc(po1);
+       inc(po2);
+       if po1^ = #0 then begin
+        break;
+       end;
+      end;
+      if po2^ = #0 then begin
+       if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
          if not push then begin
           exit
          end;
-        until pb^.t <> #0;
+        until pointer(pb^.t) <> nil;
        end;
-       inc(source);
+       source:= po1;
 //       pb:= pc^.branch;
        continue;
       end;
@@ -563,6 +644,21 @@ begin
  simpexp1co.branch:= @bsimpexp1;
  simpexp1co.handle:= @handlesimpexp1;
  simpexp1co.next:= @simpexp1co;
+ 
+ lnco.branch:= @bfunc;
+ lnco.handle:= @handleln;
+ paramsstartco.branch:= @bparamsstart;
+ paramsstartco.next:= @paramsendco;
+ paramsstartco.handle:= @dummyhandler;
+ paramsstartco.next:= @paramsendco;
+ paramsendco.branch:= @bparamsend;
+ paramsendco.handle:= @handleparamsend;
+
+ paramsco.branch:= @bparams;
+ paramsco.handle:= @handleparam;
+ paramsco.next:= @params1co;
+ params1co.branch:= @bparams1;
+ params1co.handle:= @handleparam;
  
 end;
   
