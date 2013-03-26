@@ -447,6 +447,7 @@ begin
   end;
   stackindex:= stacktop-1;
   if contextstack[stackindex].kind = ck_neg then begin
+   contextstack[stackindex].kind:= ck_none;
    int2:= -int2;
   end;
   int32const.value:= int2;
@@ -491,6 +492,7 @@ begin
    end;
    kind:= ck_flo64const;
    if contextstack[stackindex].kind = ck_neg then begin
+    contextstack[stackindex].kind:= ck_none;
     int2:= -int2;
    end;
    flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb;   
