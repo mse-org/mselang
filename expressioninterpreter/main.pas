@@ -4,7 +4,8 @@ interface
 uses
  mseglob,mseguiglob,mseguiintf,mseapplication,msestat,msemenus,msegui,
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
- mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,msegrids;
+ mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
+ msegrids,msedispwidgets,mserichstring;
 
 type
  tmainfo = class(tmainform)
@@ -12,6 +13,7 @@ type
    tstatfile1: tstatfile;
    tbutton1: tbutton;
    grid: tstringgrid;
+   di: trealdisp;
    procedure parseexe(const sender: TObject);
  end;
 var
@@ -32,7 +34,7 @@ begin
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
- run(ar1,1024);
+ di.value:= run(ar1,1024);
 end;
 
 end.

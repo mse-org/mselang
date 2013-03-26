@@ -345,15 +345,19 @@ begin
  end;
 end;
 
+const
+ resultdatakinds: array[stackdatakindty] of contextkindty =
+                         (ck_int32fact,ck_flo64fact,ck_int32fact,ck_flo64fact);
+
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
 var
- reverse: boolean;
+ reverse,negative: boolean;
 begin
  reverse:= false;
  with info^ do begin
   if (contextstack[stacktop].kind in flo64kinds) or 
-             (contextstack[stacktop].kind in flo64kinds) then begin
+             (contextstack[stacktop-2].kind in flo64kinds) then begin
    result:= sdk_flo64;
    with contextstack[stacktop] do begin
     case kind of
@@ -381,7 +385,7 @@ begin
       reverse:= not reverse;
      end;
      ck_int32fact: begin
-      int32toflo64(info,1);
+      int32toflo64(info,-1);
      end;
     end;
    end;
@@ -405,9 +409,15 @@ begin
     end;
    end;
   end;
- end;
- if reverse then begin
-  result:= stackdatakindty(ord(result)+ord(reversestackdata));
+  if reverse then begin
+   result:= stackdatakindty(ord(result)+ord(reversestackdata));
+  end;
+  dec(stacktop,2);
+  with contextstack[stacktop] do begin
+   kind:= resultdatakinds[result];
+   context:= nil;
+  end;
+  stackindex:= stacktop-1;
  end;
 end;
 
@@ -435,9 +445,12 @@ begin
     dec(po1);
    end;
   end;
-  kind:= ck_int32const;
-  int32const.value:= int2;
   stackindex:= stacktop-1;
+  if contextstack[stackindex].kind = ck_neg then begin
+   int2:= -int2;
+  end;
+  int32const.value:= int2;
+  kind:= ck_int32const;
  end;
  outhandle(info,'CNUM');
 end;
@@ -477,7 +490,10 @@ begin
     end;
    end;
    kind:= ck_flo64const;
-   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb;
+   if contextstack[stackindex].kind = ck_neg then begin
+    int2:= -int2;
+   end;
+   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb;   
   end;
  end;
  outhandle(info,'FRAC');
@@ -491,28 +507,17 @@ procedure handlemulfact(const info: pparseinfoty);
 begin
  outcommand(info,[-2,0],'*');
  writeop(info,mulops[pushvalues(info)]);
- with info^ do begin
-  dec(stacktop,2);
-  with contextstack[stacktop] do begin
-   kind:= ck_int32fact;
-   context:= nil;
-  end;
-  stackindex:= stacktop-1;
- end;
  outhandle(info,'MULFACT');
 end;
+
+const
+ addops: array[stackdatakindty] of opty =
+                            (@addint32,@addflo64,@addint32,@addflo64);
 
 procedure handleaddterm(const info: pparseinfoty);
 begin
  outcommand(info,[-2,0],'+');
- with info^ do begin
-  dec(stacktop,2);
-  with contextstack[stacktop] do begin
-   kind:= ck_int32fact;
-   context:= nil;
-  end;
-  stackindex:= stacktop-1;
- end;
+ writeop(info,addops[pushvalues(info)]);
  outhandle(info,'ADDTERM');
 end;
 
@@ -536,10 +541,21 @@ begin
  outhandle(info,'NEGTERM');
 end;
 
+const
+ negops: array[contextkindty] of opty = (
+  //ck_none,ck_neg,ck_int32const,ck_flo64const,
+    @dummyop,    @dummyop,   @negint32,    @negflo64,
+  //ck_int32fact,ck_flo64fact
+    @negint32,   @negflo64
+ );
+
 procedure handleterm1(const info: pparseinfoty);
 begin
  with info^ do begin
   if stackindex < stacktop then begin
+   if contextstack[stackindex].kind = ck_neg then begin
+    writeop(info,negops[contextstack[stacktop].kind]);
+   end;
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
@@ -553,20 +569,18 @@ end;
 
 procedure handlesimpexp(const info: pparseinfoty);
 begin
- dec(info^.stacktop);
- info^.stackindex:= info^.stacktop;
+ with info^ do begin
+  contextstack[stacktop-1]:= contextstack[stacktop];
+  dec(info^.stacktop);
+  info^.stackindex:= info^.stacktop;
+ end;
  outhandle(info,'SIMPEXP');
 end;
 
 procedure handlesimpexp1(const info: pparseinfoty);
 begin
  with info^ do begin
-  if stackindex < stacktop then begin
-   contextstack[stacktop-1]:= contextstack[stacktop];
-  end
-  else begin
-   outcommand(info,[],'*ERROR* Expression expected');
-  end;
+  contextstack[stacktop-1]:= contextstack[stacktop];
   dec(stacktop);
   dec(stackindex);
  end;
@@ -644,7 +658,7 @@ var
  pc: pcontextty;
  info: parseinfoty;
 
- function push: boolean;
+ function pushcontext: boolean;
  begin
   result:= true;
   with info do begin
@@ -691,7 +705,7 @@ begin
    while source^ <> #0 do begin
     pb:= pc^.branch;
     if pointer(pb^.t) = nil then begin
-     if not push then begin
+     if not pushcontext then begin
       exit;
      end;
     end
@@ -709,7 +723,7 @@ begin
       if po2^ = #0 then begin
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
-         if not push then begin
+         if not pushcontext then begin
           exit
          end;
         until pointer(pb^.t) <> nil;
@@ -735,7 +749,7 @@ begin
    pc:= pc^.next;
    with contextstack[stackindex] do begin
     context:= pc;
-    kind:= ck_none;
+//    kind:= ck_none;
    end;
    outinfo(@info,'after1');
   end;
@@ -744,6 +758,19 @@ begin
    outinfo(@info,'after2');
   end;
   contextstack[0].context^.handle(@info);
+  with contextstack[0] do begin
+   case kind of
+    ck_int32const: begin
+     push(@info,real(int32const.value));
+    end;   
+    ck_flo64const: begin
+     push(@info,flo64const.value);
+    end;
+    ck_int32fact: begin
+     int32toflo64(@info,0);
+    end;
+   end;
+  end;   
   outinfo(@info,'after3');
   setlength(ops,opcount);
   result:= ops;
