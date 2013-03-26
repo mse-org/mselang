@@ -11,40 +11,16 @@ unit mseexpint;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,msestream;
+ msetypes,msestream,msestackops;
 
 //
 //todo: use efficient data structures and procedures, 
 //this is a proof of concept only
 //
 
-type
- datakindty = (dk_none,dk_int32,dk_flo64);
- dataty = record
-  case kind: datakindty of
-   dk_int32: (
-    vint32: integer;
-   );
-   dk_flo64: (
-    vflo64: double;
-   );
- end;
-
- opkindty = (ok_none,ok_push,ok_pop);
- opinfoty = record
-  case kind: opkindty of
-   ok_push: (
-    data: dataty;
-   );
-   ok_pop: (
-    count: integer;
-   );
- end;
- popinfoty = ^opinfoty;
+//type
  
- opinfoarty = array of opinfoty;
- 
-procedure parse(const input: string; const acommand: ttextstream);
+function parse(const input: string; const acommand: ttextstream): opinfoarty;
 
 implementation
 uses
@@ -53,9 +29,13 @@ uses
 type
  contextkindty = (ck_none,ck_neg,ck_int32const,ck_flo64const,
                   ck_int32fact,ck_flo64fact);
+ stackdatakindty = (sdk_int32,sdk_flo64,sdk_int32rev,sdk_flo64rev);
 const
  valuecontext = ck_int32const;
+ reversestackdata = sdk_int32rev;
  stackdepht = 256;
+ int32kinds = [ck_int32const,ck_int32fact];
+ flo64kinds = [ck_flo64const,ck_flo64fact];
 type
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure(const info: pparseinfoty);
@@ -331,7 +311,7 @@ end;
 function additem(const info: pparseinfoty): popinfoty;
 begin
  with info^ do begin
-  if high(ops) >= opcount then begin
+  if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
   end;
   result:= @ops[opcount];
@@ -342,22 +322,99 @@ end;
 procedure push(const info: pparseinfoty; const avalue: integer); overload;
 begin
  with additem(info)^ do begin
-  kind:= ok_push;
-  with data do begin
-   kind:= dk_int32;
-   vint32:= avalue;
-  end;
+  op:= @pushint32;
+  vint32:= avalue;
  end;
 end;
 
 procedure push(const info: pparseinfoty; const avalue: real); overload;
 begin
  with additem(info)^ do begin
-  kind:= ok_push;
-  with data do begin
-   kind:= dk_flo64;
-   vflo64:= avalue;
+  op:= @pushflo64;
+  vflo64:= avalue;
+ end;
+end;
+
+procedure int32toflo64(const info: pparseinfoty; const index: integer);
+begin
+ with additem(info)^ do begin
+  op:= @msestackops.int32toflo64;
+  with op1 do begin
+   index0:= index;
   end;
+ end;
+end;
+
+function pushvalues(const info: pparseinfoty): stackdatakindty;
+//todo: don't convert inplace, stack items will be of variable size
+var
+ reverse: boolean;
+begin
+ reverse:= false;
+ with info^ do begin
+  if (contextstack[stacktop].kind in flo64kinds) or 
+             (contextstack[stacktop].kind in flo64kinds) then begin
+   result:= sdk_flo64;
+   with contextstack[stacktop] do begin
+    case kind of
+     ck_int32const: begin
+      push(info,real(int32const.value));
+      reverse:= true;
+     end;
+     ck_flo64const: begin
+      push(info,flo64const.value);
+      reverse:= true;
+     end;
+     ck_int32fact: begin
+      int32toflo64(info,0);
+     end;
+    end;
+   end;
+   with contextstack[stacktop-2] do begin
+    case kind of
+     ck_int32const: begin
+      push(info,real(int32const.value));
+      reverse:= not reverse;
+     end;
+     ck_flo64const: begin
+      push(info,real(flo64const.value));
+      reverse:= not reverse;
+     end;
+     ck_int32fact: begin
+      int32toflo64(info,1);
+     end;
+    end;
+   end;
+  end
+  else begin
+   result:= sdk_int32;
+   with contextstack[stacktop-2] do begin
+    case kind of
+     ck_int32const: begin
+      push(info,int32const.value);
+      reverse:= true;
+     end;
+    end;
+   end;
+   with contextstack[stacktop] do begin
+    case kind of
+     ck_int32const: begin
+      push(info,int32const.value);
+      reverse:= not reverse;
+     end;
+    end;
+   end;
+  end;
+ end;
+ if reverse then begin
+  result:= stackdatakindty(ord(result)+ord(reversestackdata));
+ end;
+end;
+
+procedure writeop(const info: pparseinfoty; const operation: opty); inline;
+begin
+ with additem(info)^ do begin
+  op:= operation
  end;
 end;
 
@@ -396,6 +453,7 @@ var
  int1,int2: integer;
  po1: pchar;
  fraclen: integer;
+ rea1: real;
 begin
  with info^ do begin
   with contextstack[stacktop] do begin
@@ -419,32 +477,21 @@ begin
     end;
    end;
    kind:= ck_flo64const;
-   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb
+   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb;
   end;
  end;
  outhandle(info,'FRAC');
 end;
 
+const
+ mulops: array[stackdatakindty] of opty =
+                            (@mulint32,@mulflo64,@mulint32,@mulflo64);
+ 
 procedure handlemulfact(const info: pparseinfoty);
 begin
+ outcommand(info,[-2,0],'*');
+ writeop(info,mulops[pushvalues(info)]);
  with info^ do begin
- {
-  if stacktop = stackindex then begin
-   outcommand(info,[-1],'*');
-   dec(stacktop,2);
-  end
-  else begin
-   if contextstack[stacktop-2].kind >= valuecontext then begin
-    outcommand(info,[-2,0],'*');
-    dec(stacktop,3);
-   end
-   else begin
-    outcommand(info,[0],'*');
-    dec(stacktop,2);
-   end;
-  end;
-  }
-  outcommand(info,[-2,0],'*');
   dec(stacktop,2);
   with contextstack[stacktop] do begin
    kind:= ck_int32fact;
@@ -457,9 +504,15 @@ end;
 
 procedure handleaddterm(const info: pparseinfoty);
 begin
- outcommand(info,[0],'+');
- dec(info^.stacktop,1);
- info^.stackindex:= info^.stacktop;
+ outcommand(info,[-2,0],'+');
+ with info^ do begin
+  dec(stacktop,2);
+  with contextstack[stacktop] do begin
+   kind:= ck_int32fact;
+   context:= nil;
+  end;
+  stackindex:= stacktop-1;
+ end;
  outhandle(info,'ADDTERM');
 end;
 
@@ -486,14 +539,14 @@ end;
 procedure handleterm1(const info: pparseinfoty);
 begin
  with info^ do begin
-  if contextstack[stacktop].kind >= valuecontext then begin
-   outcommand(info,[0],'TERM1');
-   dec(stacktop,2);
+  if stackindex < stacktop then begin
+   contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
-   dec(stacktop,1);
+   outcommand(info,[],'*ERROR* Expression expected');
   end;
-  stackindex:= stacktop;
+  dec(stacktop);
+  dec(stackindex);
  end;
  outhandle(info,'TERM1');
 end;
@@ -507,8 +560,16 @@ end;
 
 procedure handlesimpexp1(const info: pparseinfoty);
 begin
- dec(info^.stacktop);
- info^.stackindex:= info^.stacktop;
+ with info^ do begin
+  if stackindex < stacktop then begin
+   contextstack[stacktop-1]:= contextstack[stacktop];
+  end
+  else begin
+   outcommand(info,[],'*ERROR* Expression expected');
+  end;
+  dec(stacktop);
+  dec(stackindex);
+ end;
  outhandle(info,'SIMPEXP1');
 end;
 
@@ -521,8 +582,14 @@ begin
   else begin
    inc(source);
   end;
-  dec(stacktop,1);
-  stackindex:= stacktop;
+  if stackindex < stacktop then begin
+   contextstack[stacktop-1]:= contextstack[stacktop];
+  end
+  else begin
+   outcommand(info,[],'*ERROR* Expression expected');
+  end;
+  dec(stacktop);
+  dec(stackindex);
  end;
  outhandle(info,'BRACKETEND');
 end;
@@ -533,6 +600,10 @@ begin
  with info^ do begin
   stacktop:= stackindex;
   dec(stackindex);
+  with contextstack[stacktop] do begin
+   kind:= ck_int32fact;
+   context:= nil;
+  end;
  end;
  outhandle(info,'LN');
 end;
@@ -567,7 +638,7 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
-procedure parse(const input: string; const acommand: ttextstream);
+function parse(const input: string; const acommand: ttextstream): opinfoarty;
 var
  pb: pbranchty;
  pc: pcontextty;
@@ -603,6 +674,7 @@ var
 var
  po1,po2: pchar; 
 begin
+ result:= nil;
  with info do begin
   command:= acommand;
   source:= pchar(input);
@@ -613,6 +685,7 @@ begin
   end;
   stackindex:= 0;
   stacktop:= 0;
+  opcount:= 0;
   pc:= contextstack[stackindex].context;
   while source^ <> #0 do begin
    while source^ <> #0 do begin
@@ -672,6 +745,8 @@ begin
   end;
   contextstack[0].context^.handle(@info);
   outinfo(@info,'after3');
+  setlength(ops,opcount);
+  result:= ops;
  end;
 end;
 
