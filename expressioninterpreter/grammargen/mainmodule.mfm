@@ -1,0 +1,13 @@
+object mainmo: tmainmo
+  bounds_cx = 401
+  bounds_cy = 328
+  left = 47
+  top = 216
+  moduleclassname = 'tmsedatamodule'
+  object sysenv: tsysenvmanager
+    defs = 'ak_none'#10'ak_none'#10'ak_none'#10'ak_none'#10'ak_none'
+    oninit = initsysenvexe
+    left = 16
+    top = 8
+  end
+end
