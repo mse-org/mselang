@@ -14,6 +14,9 @@ unit msestackops;
 //this is a proof of concept only
 //
 interface
+uses
+ mseparserglob;
+ 
 type
  datakindty = (dk_none,dk_int32,dk_flo64);
  datainfoty = record
@@ -26,35 +29,8 @@ type
    );
  end;
 
- popinfoty = ^opinfoty;
  infoopty = procedure(const opinfo: popinfoty);
- opty = procedure;
 
- op1infoty = record
-  index0: integer;
- end;
-
- opkindty = (ok_none,ok_pushint32,ok_pushflo64,ok_pop,ok_op,ok_op1);
- opinfoty = record
-//todo: variable item size, immediate data
-  op: opty;
-  case opkindty of 
-   ok_pushint32: (
-    vint32: integer;
-   );
-   ok_pushflo64: (
-    vflo64: real;
-   );
-   ok_pop: (
-    count: integer;
-   );
-   ok_op1: (
-    op1: op1infoty;
-   )
- end;
- 
- opinfoarty = array of opinfoty;
- 
 procedure finalize;
 function run(const code: opinfoarty; const stackdepht: integer): real;
 
