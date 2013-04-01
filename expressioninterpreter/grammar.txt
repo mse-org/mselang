@@ -1,3 +1,99 @@
-digit '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
-num digit [num]
-decnum num '.' num
+msehandler
+simpexp,simpexp1,handlesimpexp
+ '',term
+num0,,dummyhandler
+ '0',num
+ '1',num
+ '2',num
+ '3',num
+ '4',num
+ '5',num
+ '6',num
+ '7',num
+ '8',num
+ '9',num
+ ' ',
+num,,handledecnum
+ '0',
+ '1',
+ '2',
+ '3',
+ '4',
+ '5',
+ '6',
+ '7',
+ '8',
+ '9',
+ '.',frac
+frac,,handlefrac
+ '0',
+ '1',
+ '2',
+ '3',
+ '4',
+ '5',
+ '6',
+ '7',
+ '8',
+ '9',
+term,term1,handleterm
+ ' ',
+ '+',
+ '-',negterm  
+ '(',bracketstart   
+ '0',num
+ '1',num
+ '2',num
+ '3',num
+ '4',num
+ '5',num
+ '6',num
+ '7',num
+ '8',num
+ '9',num
+ 'ln',ln
+negterm,term,handlenegterm
+mulfact,,handlemulfact
+ ' ',
+ '+',
+ '-',negterm  
+ '(',bracketstart   
+ '0',num
+ '1',num
+ '2',num
+ '3',num
+ '4',num
+ '5',num
+ '6',num
+ '7',num
+ '8',num
+ '9',num
+ 'ln',ln
+params,params1,handleparam
+ '',simpexp
+params1,,handleparam
+ ' ',
+ ',',params
+paramsstart,paramsend,dummyhandler
+ '',params
+paramsend,,handleparamsend
+ ' ',
+term1,term1,handleterm1
+ ' ',
+ '*',mulfact
+simpexp1,simpexp1,handlesimpexp1
+ ' ',
+ '+',addterm
+addterm,,handleaddterm
+ '',term
+bracketstart,bracketend,dummyhandler
+ '',simpexp
+bracketend,,handlebracketend
+ ' ',
+ln,,handleln
+ ' ',
+ '(',paramsstart
+
+
+
+

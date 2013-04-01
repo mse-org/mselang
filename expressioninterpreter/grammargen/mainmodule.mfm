@@ -26,20 +26,9 @@ object mainmo: tmainmo
         ak_pararg
         'p'
         (        )
-        []
+        [arf_mandatory]
         ''
         'PASCALFILE'
-        ''
-        ''
-        ''
-      )
-      (
-        ak_pararg
-        'i'
-        (        )
-        []
-        ''
-        'INCLUDEFILE'
         ''
         ''
         ''

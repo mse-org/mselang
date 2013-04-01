@@ -15,7 +15,7 @@ function parse(const input: string; const acommand: ttextstream): opinfoarty;
 
 implementation
 uses
- typinfo,msegrammar,msehandler;
+ typinfo,grammar,{msegrammar,}msehandler;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;

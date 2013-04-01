@@ -48,24 +48,24 @@ var
  
  
 const
- bnum0: array[0..11] of branchty =
-  ((t:'0';c:@numco),
-   (t:'1';c:@numco),
-   (t:'2';c:@numco),
-   (t:'3';c:@numco),
-   (t:'4';c:@numco),
-   (t:'5';c:@numco),
-   (t:'6';c:@numco),
-   (t:'7';c:@numco),
-   (t:'8';c:@numco),
-   (t:'9';c:@numco),
-   (t:' ';c:nil),
-   (t:'';c:nil)
-   );
+ bnum0: array[0..11] of branchty = (
+  (t:'0';c:@numco),
+  (t:'1';c:@numco),
+  (t:'2';c:@numco),
+  (t:'3';c:@numco),
+  (t:'4';c:@numco),
+  (t:'5';c:@numco),
+  (t:'6';c:@numco),
+  (t:'7';c:@numco),
+  (t:'8';c:@numco),
+  (t:'9';c:@numco),
+  (t:' ';c:nil),
+  (t:'';c:nil)
+ );
 
  bnum: array[0..11] of branchty =
-  ((t:'0';c:@numco),
-   (t:'1';c:@numco),
+  ((t:'0';c:nil),
+   (t:'1';c:nil),
    (t:'2';c:@numco),
    (t:'3';c:@numco),
    (t:'4';c:@numco),
