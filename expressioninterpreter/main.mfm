@@ -4,13 +4,7 @@ object mainfo: tmainfo
   bounds_cx = 371
   bounds_cy = 218
   anchors = [an_top, an_right]
-  container.frame.zoomwidthstep = 1
-  container.frame.zoomheightstep = 1
-  container.frame.sbhorz.stepctrlfact = 0
-  container.frame.sbhorz.wheelsensitivity = 1
-  container.frame.sbvert.stepctrlfact = 0
   container.frame.sbvert.pagesize = 0.99090909090909
-  container.frame.sbvert.wheelsensitivity = 1
   container.bounds = (
     0
     0
@@ -20,12 +14,8 @@ object mainfo: tmainfo
   statfile = tstatfile1
   moduleclassname = 'tmainform'
   object ed: tmemoedit
-    frame.sbhorz.stepctrlfact = 0
     frame.sbhorz.pagesize = 1
-    frame.sbhorz.wheelsensitivity = 1
-    frame.sbvert.stepctrlfact = 0
     frame.sbvert.pagesize = 1
-    frame.sbvert.wheelsensitivity = 1
     frame.localprops = [frl_colorclient]
     bounds_x = 16
     bounds_y = 40
@@ -33,6 +23,9 @@ object mainfo: tmainfo
     bounds_cy = 44
     anchors = [an_left, an_top, an_right]
     statfile = tstatfile1
+    font.name = 'stf_default'
+    font.xscale = 1
+    font.dummy = 0
     reffontheight = 14
   end
   object tbutton1: tbutton
@@ -47,11 +40,7 @@ object mainfo: tmainfo
     onexecute = parseexe
   end
   object grid: tstringgrid
-    frame.sbvert.stepctrlfact = 0
-    frame.sbvert.wheelsensitivity = 1
-    frame.sbhorz.stepctrlfact = 0
     frame.sbhorz.pagesize = 0.95508982035928
-    frame.sbhorz.wheelsensitivity = 1
     taborder = 2
     bounds_x = 16
     bounds_y = 96

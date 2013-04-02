@@ -21,7 +21,7 @@ uses
  mseglob,mseguiglob,mseguiintf,mseapplication,msestat,msemenus,msegui,
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
- msegrids,msedispwidgets,mserichstring;
+ msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils;
 
 type
  tmainfo = class(tmainform)
@@ -30,6 +30,7 @@ type
    tbutton1: tbutton;
    grid: tstringgrid;
    di: trealdisp;
+   tpostscriptprinter1: tpostscriptprinter;
    procedure parseexe(const sender: TObject);
  end;
 var

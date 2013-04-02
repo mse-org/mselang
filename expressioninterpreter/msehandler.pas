@@ -27,6 +27,9 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
 procedure dummyhandler(const info: pparseinfoty);
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
+procedure handleexponent(const info: pparseinfoty);
+procedure handlenegexponent(const info: pparseinfoty);
+
 procedure handlemulfact(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
 procedure handleterm1(const info: pparseinfoty);
@@ -41,7 +44,7 @@ procedure handleparamsend(const info: pparseinfoty);
 
 implementation
 uses
- msestackops;
+ msestackops,msestrings;
 
 const
  valuecontext = ck_int32const;
@@ -166,48 +169,148 @@ begin
 end;
 
 const
- floatexps: array[0..19] of double = 
+ floatexps: array[0..32] of double = 
   (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,
-   1e10,1e11,1e12,1e13,1e14,1e15,1e16,1e17,1e18,1e19);
+   1e10,1e11,1e12,1e13,1e14,1e15,1e16,1e17,1e18,1e19,
+   1e20,1e21,1e22,1e23,1e24,1e25,1e26,1e27,1e28,1e29,1e30,1e31,1e32);
+
+type
+ comperrorty = (ce_invalidfloat,ce_expressionexpected,ce_startbracketexpected,
+               ce_endbracketexpected);
+const
+ errormessages: array[comperrorty] of msestring = (
+  'Invalid Float',
+  'Expression expected',
+  '''('' expected',
+  ''')'' expected'
+ );
  
-procedure handlefrac(const info: pparseinfoty);
- //todo: handle > 10 digits
+procedure error(const info: pparseinfoty; const error: comperrorty;
+                   const pos: pchar=nil);
+begin
+ outcommand(info,[],'*ERROR* '+errormessages[error]);
+end;
+
+procedure dofrac(const info: pparseinfoty; const asource: pchar;
+                 out neg: boolean; out mantissa: qword; out fraclen: integer);
 var
- int1,int2: integer;
+ int1: integer;
+ lint2: qword;
  po1: pchar;
- fraclen: integer;
+// fraclen: integer;
  rea1: real;
 begin
  with info^ do begin
   with contextstack[stacktop] do begin
-   fraclen:= source-start-1;
+   fraclen:= asource-start-1;
   end;
   stacktop:= stacktop - 1;
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
-   po1:= source;
-   consumed:= po1;
-   int2:= 0;
-   dec(po1);
-   int1:= po1-start-1;
-   if int1 <= high(int32decdigits) then begin
-    for int1:= 0 to int1 do begin
-     int2:= int2 + (ord(po1^)-ord('0')) * int32decdigits[int1];
-     dec(po1);
+   kind:= ck_flo64const;
+   lint2:= 0;
+   po1:= start;
+   int1:= asource-po1-1;
+   if int1 > 20 then begin
+    error(info,ce_invalidfloat,asource);
+   end
+   else begin
+    while po1 < asource do begin
+     lint2:= lint2*10 + (ord(po1^)-ord('0'));
+     inc(po1);
      if po1^ = '.' then begin
-      dec(po1);
+      inc(po1);
+     end;
+    end;
+    if (int1 = 20) and (lint2 < $8AC7230489E80000) then begin 
+                                            //todo: check correctness
+     error(info,ce_invalidfloat,asource);
+     mantissa:= 0;
+     neg:= false;
+    end
+    else begin
+     mantissa:= lint2;
+     neg:= contextstack[stackindex].kind = ck_neg;
+     if neg then begin
+      contextstack[stackindex].kind:= ck_none;
      end;
     end;
    end;
-   kind:= ck_flo64const;
-   if contextstack[stackindex].kind = ck_neg then begin
-    contextstack[stackindex].kind:= ck_none;
-    int2:= -int2;
-   end;
-   flo64const.value:= int2/floatexps[fraclen]; //todo: round lsb;   
   end;
  end;
+end;
+ 
+procedure handlefrac(const info: pparseinfoty);
+var
+ mant: qword;
+ fraclen: integer;
+ neg: boolean;
+begin
+ dofrac(info,info^.source,neg,mant,fraclen);
+ with info^,contextstack[stacktop] do begin
+  flo64const.value:= mant/floatexps[fraclen]; //todo: round lsb;   
+  if neg then begin
+   flo64const.value:= -flo64const.value; 
+  end;
+  consumed:= source;
+ end;
  outhandle(info,'FRAC');
+end;
+
+procedure handleexponent(const info: pparseinfoty);
+var
+ mant: qword;
+ exp,fraclen: integer;
+ neg: boolean;
+ do1: double;
+begin
+ with info^ do begin
+  exp:= contextstack[stacktop].int32const.value;
+  dec(stacktop,2);
+  dofrac(info,contextstack[stackindex].start,neg,mant,fraclen);
+  exp:= exp-fraclen;
+  with contextstack[stacktop] do begin
+   consumed:= source; //todo: overflow check
+   do1:= floatexps[exp and $1f];
+   while exp >= 32 do begin
+    do1:= do1*floatexps[32];
+    exp:= exp - 32;
+   end;
+   flo64const.value:= mant*do1;
+   if neg then begin
+    flo64const.value:= -flo64const.value; 
+   end;
+  end;
+ end;
+ outhandle(info,'EXPONENT');
+end;
+
+procedure handlenegexponent(const info: pparseinfoty);
+var
+ mant: qword;
+ exp,fraclen: integer;
+ neg: boolean;
+ do1: double;
+begin
+ with info^ do begin
+  exp:= contextstack[stacktop].int32const.value;
+  dec(stacktop,3);
+  dofrac(info,contextstack[stackindex-1].start,neg,mant,fraclen);
+  exp:= exp+fraclen;
+  with contextstack[stacktop] do begin
+   consumed:= source; //todo: overflow check
+   do1:= floatexps[exp and $1f];
+   while exp >= 32 do begin
+    do1:= do1*floatexps[32];
+    exp:= exp - 32;
+   end;
+   flo64const.value:= mant/do1;
+   if neg then begin
+    flo64const.value:= -flo64const.value; 
+   end;
+  end;
+ end;
+ outhandle(info,'NEGEXPONENT');
 end;
 
 const
@@ -346,7 +449,8 @@ begin
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
-   outcommand(info,[],'*ERROR* Expression expected');
+   error(info,ce_expressionexpected);
+//   outcommand(info,[],'*ERROR* Expression expected');
   end;
   dec(stacktop);
   dec(stackindex);
@@ -378,7 +482,8 @@ procedure handlebracketend(const info: pparseinfoty);
 begin
  with info^ do begin
   if source^ <> ')' then begin
-   outcommand(info,[],'*ERROR* '')'' expected');
+   error(info,ce_endbracketexpected);
+//   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
    inc(source);
@@ -387,7 +492,8 @@ begin
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
-   outcommand(info,[],'*ERROR* Expression expected');
+   error(info,ce_expressionexpected);
+//   outcommand(info,[],'*ERROR* Expression expected');
   end;
   dec(stacktop);
   dec(stackindex);
@@ -413,7 +519,8 @@ procedure handleparamsend(const info: pparseinfoty);
 begin
  with info^ do begin
   if source^ <> ')' then begin
-   outcommand(info,[],'*ERROR* '')'' expected');
+   error(info,ce_endbracketexpected);
+//   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
    inc(source);

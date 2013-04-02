@@ -45,6 +45,8 @@ var
  bracketstartco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketstart');
  bracketendco: contextty = (branch: nil; handle: nil; next: nil; caption: 'bracketend');
  lnco: contextty = (branch: nil; handle: nil; next: nil; caption: 'ln');
+ exponentco: contextty = (branch: nil; handle: nil; next: nil; caption: 'exponent');
+ negexponentco: contextty = (branch: nil; handle: nil; next: nil; caption: 'negexponent');
 
 const
  bsimpexp: array[0..1] of branchty = (
@@ -82,7 +84,7 @@ const
   (t:'';c:nil)
  );
 
- bfrac: array[0..10] of branchty = (
+ bfrac: array[0..12] of branchty = (
   (t:'0';c:nil),
   (t:'1';c:nil),
   (t:'2';c:nil),
@@ -93,6 +95,8 @@ const
   (t:'7';c:nil),
   (t:'8';c:nil),
   (t:'9';c:nil),
+  (t:'e';c:@exponentco),
+  (t:'E';c:@exponentco),
   (t:'';c:nil)
  );
 
@@ -188,6 +192,36 @@ const
   (t:'';c:nil)
  );
 
+ bexponent: array[0..12] of branchty = (
+  (t:'+';c:nil),
+  (t:'-';c:@negexponentco),
+  (t:'0';c:@numco),
+  (t:'1';c:@numco),
+  (t:'2';c:@numco),
+  (t:'3';c:@numco),
+  (t:'4';c:@numco),
+  (t:'5';c:@numco),
+  (t:'6';c:@numco),
+  (t:'7';c:@numco),
+  (t:'8';c:@numco),
+  (t:'9';c:@numco),
+  (t:'';c:nil)
+ );
+
+ bnegexponent: array[0..10] of branchty = (
+  (t:'0';c:@numco),
+  (t:'1';c:@numco),
+  (t:'2';c:@numco),
+  (t:'3';c:@numco),
+  (t:'4';c:@numco),
+  (t:'5';c:@numco),
+  (t:'6';c:@numco),
+  (t:'7';c:@numco),
+  (t:'8';c:@numco),
+  (t:'9';c:@numco),
+  (t:'';c:nil)
+ );
+
 procedure init;
 begin
  simpexpco.branch:= @bsimpexp;
@@ -232,6 +266,10 @@ begin
  bracketendco.handle:= @handlebracketend;
  lnco.branch:= @bln;
  lnco.handle:= @handleln;
+ exponentco.branch:= @bexponent;
+ exponentco.handle:= @handleexponent;
+ negexponentco.branch:= @bnegexponent;
+ negexponentco.handle:= @handlenegexponent;
 end;
 
 function startcontext: pcontextty;
