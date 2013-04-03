@@ -85,8 +85,9 @@ var
 var
  ar1: stringarty;
  mstr1: msestring;
+ str2,str3: string;
  int1,int2: integer;
- 
+ po1,po2,po3: pchar;
 begin
  application.terminated:= true;
  try
@@ -119,17 +120,33 @@ begin
      else begin
       int1:= findlastchar(str1,',');
       if int1 = 0 then begin
-       error('Format of branch is "''string'',context"');
+       error('Format of branch is "''string'',{''string'',}context"');
        exit;
       end;
-      setlength(ar1,2);
-      ar1[0]:= trim(copy(str1,1,int1-1));
-      if not trypascalstringtostring(ar1[0],mstr1) then begin
-       error('Invalid string');
-       exit;
+      str2:= trim(copy(str1,int1+1,bigint));
+      po1:= pchar(str1)+1;
+      po2:= po1+int1-2;
+      while true do begin
+       po3:= po1;
+       getpascalstring(po1);
+       if po1 = po3 then begin
+        error('Invalid string');
+        exit;
+       end;
+       setstring(str3,po3,po1-po3);
+       setlength(ar1,2);
+       ar1[0]:= trim(str3);
+       ar1[1]:= str2;
+       additem(branches,ar1,branchcount);
+       if po1 = po2 then begin
+        break;
+       end;
+       if po1^ <> ',' then begin
+        error('Format of branch is "''string'',{''string'',}context"');
+        exit;
+       end;
+       inc(po1);
       end;
-      ar1[1]:= trim(copy(str1,int1+1,bigint));
-      additem(branches,ar1,branchcount);
      end;
     end;
    end;
@@ -174,8 +191,8 @@ begin
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
     str1:= str1+
-' '+cont[0]+'co: contextty = (branch: nil; handle: nil; next: nil; caption: '''+
-                                                         cont[0]+''');'+lineend;
+' '+cont[0]+'co: contextty = (branch: nil; handle: nil; next: nil;'+lineend+
+'               caption: '''+cont[0]+''');'+lineend;
    end;
   end;
   str1:= str1+

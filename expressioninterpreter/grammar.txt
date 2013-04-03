@@ -1,75 +1,46 @@
 msehandler
 simpexp,simpexp1,handlesimpexp
  '',term
+simpexp1,,handlesimpexp1
+ ' ',
+ '+',addterm
 num0,,dummyhandler
- '0',num
- '1',num
- '2',num
- '3',num
- '4',num
- '5',num
- '6',num
- '7',num
- '8',num
- '9',num
+ '0','1','2','3','4','5','6','7','8','9',num
  ' ',
 num,,handledecnum
- '0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9',
+ '0','1','2','3','4','5','6','7','8','9',
  '.',frac
 frac,,handlefrac
- '0',
- '1',
- '2',
- '3',
- '4',
- '5',
- '6',
- '7',
- '8',
- '9',
+ '0','1','2','3','4','5','6','7','8','9',
  'e',exponent
  'E',exponent
+identifier,checkparams,handleidentifier
+ '0','1','2','3','4','5','6','7','8','9',
+ '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+ 'q','r','s','t','u','v','w','x','y','z',
+ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+ 'Q','R','S','T','U','V','W','X','Y','Z',
+checkparams,,handlecheckparams
+ ' ',
+ '(',paramsstart0
+paramsstart0,paramsstart,handleparamstart0
 term,term1,handleterm
  ' ',
  '+',
  '-',negterm  
  '(',bracketstart   
- '0',num
- '1',num
- '2',num
- '3',num
- '4',num
- '5',num
- '6',num
- '7',num
- '8',num
- '9',num
- 'ln',ln
+ '0','1','2','3','4','5','6','7','8','9',num
+ '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',identifier
+ 'q','r','s','t','u','v','w','x','y','z',identifier
+ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',identifier
+ 'Q','R','S','T','U','V','W','X','Y','Z',identifier
 negterm,term,handlenegterm
 mulfact,,handlemulfact
  ' ',
  '+',
  '-',negterm  
  '(',bracketstart   
- '0',num
- '1',num
- '2',num
- '3',num
- '4',num
- '5',num
- '6',num
- '7',num
- '8',num
- '9',num
+ '0','1','2','3','4','5','6','7','8','9',num
  'ln',ln
 params,params1,handleparam
  '',simpexp
@@ -83,9 +54,6 @@ paramsend,,handleparamsend
 term1,term1,handleterm1
  ' ',
  '*',mulfact
-simpexp1,simpexp1,handlesimpexp1
- ' ',
- '+',addterm
 addterm,,handleaddterm
  '',term
 bracketstart,bracketend,dummyhandler
@@ -98,27 +66,6 @@ ln,,handleln
 exponent,,handleexponent
  '+',
  '-',negexponent
- '0',num
- '1',num
- '2',num
- '3',num
- '4',num
- '5',num
- '6',num
- '7',num
- '8',num
- '9',num
+ '0','1','2','3','4','5','6','7','8','9',num
 negexponent,,handlenegexponent
- '0',num
- '1',num
- '2',num
- '3',num
- '4',num
- '5',num
- '6',num
- '7',num
- '8',num
- '9',num
-
-
-
+ '0','1','2','3','4','5','6','7','8','9',num

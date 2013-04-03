@@ -36,6 +36,7 @@ begin
     write(' ');
    end;
    with contextstack[int1] do begin
+    write(parent,' ');
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_int32const: begin
@@ -69,15 +70,18 @@ var
  info: parseinfoty;
 
  function pushcontext: boolean;
+ var
+  int1: integer;
  begin
   result:= true;
   with info do begin
    pc:= pb^.c;
-   if pc^.branch = nil then begin
+   while pc^.branch = nil do begin
     pc^.handle(@info);
     pc:= pc^.next;
-   end
-   else begin
+   end;
+//   else begin
+    int1:= contextstack[stacktop].parent;
     inc(stacktop);
     stackindex:= stacktop;
     if stacktop = stackdepht then begin
@@ -86,10 +90,11 @@ var
     end;
     with contextstack[stacktop] do begin
      kind:= ck_none;
-     context:= pb^.c;
+     context:= pc;
      start:= source;
+     parent:= int1;
     end;
-   end;
+//   end;
    pb:= pc^.branch;
   end;
   outinfo(@info,'push');
@@ -106,6 +111,7 @@ begin
    kind:= ck_none;
    context:= startcontext;
    start:= source;
+   parent:= 0;
   end;
   stackindex:= 0;
   stacktop:= 0;

@@ -42,6 +42,7 @@ type
   branch: pbranchty; //array
   handle: contexthandlerty;
   next: pcontextty;
+//  setstackmark: boolean;
   caption: string;
  end;
  int32constty = record

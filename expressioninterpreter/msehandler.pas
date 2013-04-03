@@ -30,6 +30,8 @@ procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
 procedure handlenegexponent(const info: pparseinfoty);
 
+procedure handleidentifier(const info: pparseinfoty);
+
 procedure handlemulfact(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
 procedure handleterm1(const info: pparseinfoty);
@@ -39,8 +41,10 @@ procedure handlebracketend(const info: pparseinfoty);
 procedure handlesimpexp(const info: pparseinfoty);
 procedure handlesimpexp1(const info: pparseinfoty);
 procedure handleln(const info: pparseinfoty);
+procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
+procedure handlecheckparams(const info: pparseinfoty);
 
 implementation
 uses
@@ -471,7 +475,9 @@ end;
 procedure handlesimpexp1(const info: pparseinfoty);
 begin
  with info^ do begin
-  contextstack[stacktop-1]:= contextstack[stacktop];
+  if stacktop > stackindex then begin
+   contextstack[stacktop-1]:= contextstack[stacktop];
+  end;
   dec(stacktop);
   dec(stackindex);
  end;
@@ -530,9 +536,50 @@ begin
  outhandle(info,'PARAMSEND');
 end;
 
+procedure handlecheckparams(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+  with contextstack[stacktop] do begin
+   kind:= ck_int32const;
+   context:= nil;
+   int32const.value:= 42;
+  end;  
+  dec(stackindex);
+ end;
+ outhandle(info,'CHECKPARAMS');
+end;
+
+procedure handleidentifier(const info: pparseinfoty);
+begin
+{
+ with info^ do begin
+  stacktop:= stackindex;
+  with contextstack[stacktop] do begin
+   kind:= ck_int32const;
+   context:= nil;
+   int32const.value:= 42;
+  end;  
+  dec(stackindex);
+ end;
+}
+ outhandle(info,'IDENTIFIER');
+end;
+
+procedure handleparamstart0(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop] do begin
+  parent:= stacktop;
+ end;
+ outhandle(info,'PARAMSTART0');
+end;
+
 procedure handleparam(const info: pparseinfoty);
 begin
- dec(info^.stackindex);
+ with info^,contextstack[stacktop] do begin
+  stackindex:= parent+1;
+ end;
  outhandle(info,'PARAM');
 end;
 
