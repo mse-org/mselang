@@ -2,14 +2,14 @@ object mainfo: tmainfo
   bounds_x = 291
   bounds_y = 247
   bounds_cx = 371
-  bounds_cy = 218
+  bounds_cy = 304
   anchors = [an_top, an_right]
   container.frame.sbvert.pagesize = 0.99090909090909
   container.bounds = (
     0
     0
     371
-    218
+    304
   )
   statfile = tstatfile1
   moduleclassname = 'tmainform'
@@ -45,7 +45,7 @@ object mainfo: tmainfo
     bounds_x = 16
     bounds_y = 96
     bounds_cx = 338
-    bounds_cy = 114
+    bounds_cy = 160
     anchors = [an_left, an_top, an_right, an_bottom]
     datacols.count = 1
     datacols.items = <    
@@ -68,6 +68,25 @@ object mainfo: tmainfo
     valuerange = 1
     valuestart = 0
     value = -Inf
+    reffontheight = 14
+  end
+  object tstringedit1: tstringedit
+    frame.dummy = 0
+    taborder = 4
+    bounds_x = 16
+    bounds_y = 264
+    bounds_cx = 212
+    anchors = [an_left, an_bottom]
+    onsetvalue = findsetexe
+    reffontheight = 14
+  end
+  object intdi: tintegerdisp
+    frame.dummy = 0
+    taborder = 5
+    bounds_x = 240
+    bounds_y = 264
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
     reffontheight = 14
   end
   object tstatfile1: tstatfile

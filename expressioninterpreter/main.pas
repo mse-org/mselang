@@ -31,14 +31,18 @@ type
    grid: tstringgrid;
    di: trealdisp;
    tpostscriptprinter1: tpostscriptprinter;
+   tstringedit1: tstringedit;
+   intdi: tintegerdisp;
    procedure parseexe(const sender: TObject);
+   procedure findsetexe(const sender: TObject; var avalue: msestring;
+                   var accept: Boolean);
  end;
 var
  mainfo: tmainfo;
   
 implementation
 uses
- main_mfm,mseexpint,msestream,msestackops,mseparserglob;
+ main_mfm,mseexpint,msestream,msestackops,mseparserglob,mseelements;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -52,6 +56,17 @@ begin
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
  di.value:= run(ar1,1024);
+end;
+
+procedure tmainfo.findsetexe(const sender: TObject; var avalue: msestring;
+               var accept: Boolean);
+var
+ lstr1: lstringty;
+ str1: string;
+begin
+ str1:= avalue;
+ lstr1:= stringtolstring(str1);
+ intdi.value:= getidentnum(lstr1);
 end;
 
 end.
