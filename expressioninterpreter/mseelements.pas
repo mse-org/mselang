@@ -22,20 +22,47 @@ unit mseelements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings;
+ msestrings,msetypes;
+{$define mse_debug_parser}
+
+type
+ identty = integer;
+ elementoffsetty = integer;
+ 
+ elementheaderty = record
+  name: identty;
+  parent: elementoffsetty; //offset in data array
+ end;
+ 
+ elementinfoty = record
+  header: elementheaderty;
+  data: record
+  end;
+ end;
+ pelementinfoty = ^elementinfoty;
  
 procedure clear;
-function getidentnum(const aname: lstringty): integer;
+
+function getident(const aname: lstringty): identty;
+function pushelement(const aname: identty; 
+                            const asize: integer): pelementinfoty;
+function popelement: pelementinfoty;
+function addelement(const aname: identty; 
+           const asize: integer): pelementinfoty; //nil if duplicate
+           
+function dumpelements: msestringarty;
 
 implementation
 uses
- msehash;
+ msehash,msearrayutils,sysutils;
  
 type
 
+ identoffsetty = integer;
+ 
  indexidentdataty = record
-  key: integer; //index of null terminated string
-  data: integer;
+  key: identoffsetty; //index of null terminated string
+  data: identty;
  end;
  pindexidentdataty = ^indexidentdataty;
  indexidenthashdataty = record
@@ -47,39 +74,156 @@ type
  tindexidenthashdatalist = class(thashdatalist)
   protected
    function hashkey(const akey): hashvaluety; override;
-//   function hashkey1(const akey: lstringty): hashvaluety;
    function checkkey(const akey; const aitemdata): boolean; override;
   public
    constructor create;
-   function getident(aname: lstringty): integer;
+   function getident(aname: lstringty): identty;
  end;
 
- telementlist = class(tintegerhashdatalist)
+ elementdataty = record
+  key: identty;
+  data: elementoffsetty;
  end;
+ pelementdataty = ^elementdataty;
+ elementhashdataty = record
+  header: hashheaderty;
+  data: elementdataty;
+ end;
+ pelementhashdataty = ^elementhashdataty;
+
  
+ telementhashdatalist = class(thashdatalist)
+  protected
+   function hashkey(const akey): hashvaluety; override;
+   function checkkey(const akey; const aitemdata): boolean; override;
+  public
+   constructor create;
+   procedure addelement(const aident: identty; const aelement: elementoffsetty);
+   function findcurrent(const aident: identty): elementoffsetty;
+                  //searches in current scope, -1 if not found
+ end;
+
+const
+ mindatasize = 1024; 
 var
  stringdata: string;
- stringindex,stringlen: integer;
+ stringindex,stringlen: identoffsetty;
  stringident: integer;
- idents: tindexidenthashdatalist;
+ identlist: tindexidenthashdatalist;
+ elementlist: telementhashdatalist;
+
+ elementdata: string;
+ elementindex,elementlen: elementoffsetty;
+ elementpath: integer; //sum of names in hierarchy 
+ elementparent: integer;
+{$ifdef mse_debug_parser}
+ identnames: stringarty;
+{$endif}
 
 procedure clear;
 begin
+ identlist.clear;
  stringdata:= '';
  stringindex:= 0;
  stringlen:= 0;
  stringident:= 0;
+
+ elementlist.clear;
+ elementindex:= 0;
+ elementlen:= 0;
+ elementparent:= 0;
+ elementpath:= 0;
+{$ifdef mse_debug_parser}
+ identnames:= nil;
+{$endif}
+end;
+
+function dumpelements: msestringarty;
+var
+ int1,int2,int3: integer;
+ po1: pelementinfoty;
+ mstr1: msestring;
+begin
+ int1:= 0;
+ int2:= 0;
+ additem(result,'elementpath: '+inttostr(elementpath),int2);
+ while int1 < elementindex do begin
+  po1:= pelementinfoty(pointer(elementdata)+int1);
+  mstr1:= inttostr(po1^.header.name)+' '+identnames[po1^.header.name-1];
+  int3:= 0;
+  while po1^.header.parent <> 0 do begin
+   inc(int3);
+   po1:= pelementinfoty(pointer(elementdata)+po1^.header.parent);
+  end;
+  mstr1:= charstring(msechar('.'),int3)+mstr1;
+  additem(result,mstr1,int2);
+  int1:= int1 + sizeof(elementinfoty);
+ end;
+ setlength(result,int2);
+end;
+
+function pushelement(const aname: identty; const asize: integer): pelementinfoty;
+var
+ ele1: elementoffsetty;
+begin
+ ele1:= elementindex;
+ elementindex:= elementindex+asize;
+ if elementindex >= elementlen then begin
+  elementlen:= elementindex*2+mindatasize;
+  setlength(elementdata,elementlen);
+ end;
+ result:= pointer(elementdata)+ele1;
+ with result^.header do begin
+  parent:= elementparent;
+  name:= aname;
+ end;
+ elementparent:= ele1;
+ elementpath:= elementpath+aname;
+ elementlist.addelement(elementpath,ele1);
+end;
+
+function addelement(const aname: identty; 
+           const asize: integer): pelementinfoty; //nil if duplicate
+var
+ ele1: elementoffsetty;
+begin
+ result:= nil;
+ ele1:= elementlist.findcurrent(aname);
+ if ele1 < 0 then begin
+  ele1:= elementindex;
+  elementindex:= elementindex+asize;
+  if elementindex >= elementlen then begin
+   elementlen:= elementindex*2+mindatasize;
+   setlength(elementdata,elementlen);
+  end;
+  result:= pointer(elementdata)+ele1;
+  with result^.header do begin
+   parent:= elementparent;
+   name:= aname;
+  end; 
+  elementlist.addelement(elementpath+aname,ele1);
+ end;
+end;
+
+function popelement: pelementinfoty;
+begin
+ result:= pelementinfoty(pointer(elementdata)+elementparent);
+ elementparent:= result^.header.parent;
+ elementpath:= elementpath - result^.header.name;
 end;
 
 function storestring(const astr: lstringty): integer; //offset from stringdata
 var
  int1,int2: integer;
 begin
+{$ifdef mse_debug_parser}
+ additem(identnames,lstringtostring(astr));
+{$endif}
  int1:= stringindex;
  int2:= astr.len;
  stringindex:= stringindex+int2+1;
  if stringindex >= stringlen then begin
-  stringlen:= stringlen*2+1024;
+  stringlen:= stringindex*2+mindatasize;
   setlength(stringdata,stringlen);
   fillchar((pchar(pointer(stringdata))+int1)^,stringlen-int1,0);
  end;
@@ -88,9 +232,9 @@ begin
  inc(stringident); 
 end;
  
-function getidentnum(const aname: lstringty): integer;
+function getident(const aname: lstringty): identty;
 begin
- result:= idents.getident(aname);
+ result:= identlist.getident(aname);
 end;
 
 const
@@ -122,12 +266,19 @@ begin
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
 
+function scramble1(const avalue: hashvaluety): hashvaluety; inline;
+begin
+ result:= ((avalue xor (avalue shl 8)) xor (avalue shl 16)) xor (avalue shl 24);
+end;
+
 { tindexidenthashdatalist }
 
 constructor tindexidenthashdatalist.create;
 begin
  inherited create(sizeof(indexidentdataty));
 end;
+
+//todo: use scrambled ident for no hash in elementlist?
 
 function tindexidenthashdatalist.getident(aname: lstringty): integer;
 var
@@ -186,8 +337,70 @@ begin
  end;
 end;
 
+{ telementhashdatalist }
+
+constructor telementhashdatalist.create;
+begin
+ inherited create(sizeof(elementdataty));
+end;
+
+function telementhashdatalist.hashkey(const akey): hashvaluety;
+begin
+ with elementdataty(akey) do begin
+  result:= scramble1(key);
+ end;
+end;
+
+function telementhashdatalist.checkkey(const akey; const aitemdata): boolean;
+begin
+ result:= identty(akey) = elementdataty(aitemdata).key;
+end;
+
+procedure telementhashdatalist.addelement(const aident: identty;
+                                       const aelement: elementoffsetty);
+begin
+ with pelementhashdataty(internaladdhash(scramble1(aident)))^.data do begin
+  key:= aident;
+  data:= aelement;
+ end;
+end;
+
+function telementhashdatalist.findcurrent(
+                                     const aident: identty): elementoffsetty;
+var
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ hash1: hashvaluety;
+ id1: identty;
+begin
+ result:= -1;
+ if count > 0 then begin
+  id1:= elementpath+aident;
+  hash1:= scramble1(id1);
+  uint1:= fhashtable[hash1 and fmask];
+  if uint1 <> 0 then begin
+   po1:= pelementhashdataty(pchar(fdata) + uint1);
+   while true do begin
+    if (po1^.data.key = id1) and 
+         (pelementinfoty(pointer(elementdata)+
+                   po1^.data.data)^.header.parent = elementparent) then begin
+     break;
+    end;
+    if po1^.header.nexthash = 0 then begin
+     exit;
+    end;
+    po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+   end;
+   result:= po1^.data.data;
+  end;
+ end;
+end;
+
 initialization
- idents:= tindexidenthashdatalist.create;
+ identlist:= tindexidenthashdatalist.create;
+ elementlist:= telementhashdatalist.create;
+ clear;
 finalization
- idents.free;
+ identlist.free;
+ elementlist.free;
 end.

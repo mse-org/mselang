@@ -31,11 +31,24 @@ type
    grid: tstringgrid;
    di: trealdisp;
    tpostscriptprinter1: tpostscriptprinter;
-   tstringedit1: tstringedit;
+   getidented: tstringedit;
    intdi: tintegerdisp;
+   pushed: tstringedit;
+   added: tstringedit;
+   addi: tbooleandisp;
+   tbutton2: tbutton;
+   tbutton3: tbutton;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
+   procedure pushelementexe(const sender: TObject; var avalue: msestring;
+                   var accept: Boolean);
+   procedure addelementexe(const sender: TObject; var avalue: msestring;
+                   var accept: Boolean);
+   procedure clearexe(const sender: TObject);
+   procedure popexe(const sender: TObject);
+  protected
+   procedure dump;
  end;
 var
  mainfo: tmainfo;
@@ -66,7 +79,51 @@ var
 begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
- intdi.value:= getidentnum(lstr1);
+ intdi.value:= getident(lstr1);
+end;
+
+procedure tmainfo.pushelementexe(const sender: TObject; var avalue: msestring;
+               var accept: Boolean);
+var
+ lstr1: lstringty;
+ str1: string;
+begin
+ str1:= avalue;
+ lstr1:= stringtolstring(str1);
+ intdi.value:= getident(lstr1);
+ pushelement(intdi.value,sizeof(elementinfoty));
+ dump;
+end;
+
+procedure tmainfo.addelementexe(const sender: TObject; var avalue: msestring;
+               var accept: Boolean);
+var
+ lstr1: lstringty;
+ str1: string;
+ po1: pelementinfoty;
+begin
+ str1:= avalue;
+ lstr1:= stringtolstring(str1);
+ intdi.value:= getident(lstr1);
+ po1:= addelement(intdi.value,sizeof(elementinfoty)); 
+ addi.value:= po1 <> nil;
+ dump;
+end;
+
+procedure tmainfo.dump;
+begin
+ grid[0].datalist.asarray:= dumpelements;
+end;
+
+procedure tmainfo.clearexe(const sender: TObject);
+begin
+ clear;
+ dump;
+end;
+
+procedure tmainfo.popexe(const sender: TObject);
+begin
+ addi.value:= popelement <> nil;
 end;
 
 end.

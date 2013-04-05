@@ -2,14 +2,14 @@ object mainfo: tmainfo
   bounds_x = 291
   bounds_y = 247
   bounds_cx = 371
-  bounds_cy = 304
+  bounds_cy = 408
   anchors = [an_top, an_right]
   container.frame.sbvert.pagesize = 0.99090909090909
   container.bounds = (
     0
     0
     371
-    304
+    408
   )
   statfile = tstatfile1
   moduleclassname = 'tmainform'
@@ -23,6 +23,7 @@ object mainfo: tmainfo
     bounds_cy = 44
     anchors = [an_left, an_top, an_right]
     statfile = tstatfile1
+    optionsedit = [oe_closequery, oe_checkmrcancel, oe_linebreak, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_nofirstarrownavig, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
     font.name = 'stf_default'
     font.xscale = 1
     font.dummy = 0
@@ -43,10 +44,13 @@ object mainfo: tmainfo
     frame.sbhorz.pagesize = 0.95508982035928
     taborder = 2
     bounds_x = 16
-    bounds_y = 96
+    bounds_y = 88
     bounds_cx = 338
-    bounds_cy = 160
+    bounds_cy = 176
     anchors = [an_left, an_top, an_right, an_bottom]
+    font.name = 'stf_fixed'
+    font.xscale = 1
+    font.dummy = 0
     datacols.count = 1
     datacols.items = <    
       item
@@ -70,13 +74,22 @@ object mainfo: tmainfo
     value = -Inf
     reffontheight = 14
   end
-  object tstringedit1: tstringedit
+  object getidented: tstringedit
+    frame.caption = 'getident'
     frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
     taborder = 4
     bounds_x = 16
-    bounds_y = 264
+    bounds_y = 271
     bounds_cx = 212
+    bounds_cy = 37
     anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
     onsetvalue = findsetexe
     reffontheight = 14
   end
@@ -84,10 +97,81 @@ object mainfo: tmainfo
     frame.dummy = 0
     taborder = 5
     bounds_x = 240
-    bounds_y = 264
+    bounds_y = 288
     bounds_cy = 18
     anchors = [an_left, an_bottom]
     reffontheight = 14
+  end
+  object pushed: tstringedit
+    frame.caption = 'pushelement'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 6
+    bounds_x = 16
+    bounds_y = 311
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    onsetvalue = pushelementexe
+    reffontheight = 14
+  end
+  object added: tstringedit
+    frame.caption = 'addelement'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 7
+    bounds_x = 16
+    bounds_y = 351
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    onsetvalue = addelementexe
+    reffontheight = 14
+  end
+  object addi: tbooleandisp
+    frame.dummy = 0
+    taborder = 8
+    bounds_x = 248
+    bounds_y = 368
+    bounds_cx = 28
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    textflags = [tf_ycentered]
+    text_false = 'F'
+    text_true = 'T'
+    reffontheight = 14
+  end
+  object tbutton2: tbutton
+    taborder = 9
+    bounds_x = 240
+    bounds_y = 312
+    bounds_cx = 50
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'clear'
+    onexecute = clearexe
+  end
+  object tbutton3: tbutton
+    taborder = 10
+    bounds_x = 296
+    bounds_y = 312
+    bounds_cx = 50
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'pop'
+    onexecute = popexe
   end
   object tstatfile1: tstatfile
     filename = 'status.sta'
