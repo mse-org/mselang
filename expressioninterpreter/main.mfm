@@ -2,14 +2,14 @@ object mainfo: tmainfo
   bounds_x = 291
   bounds_y = 247
   bounds_cx = 371
-  bounds_cy = 408
+  bounds_cy = 450
   anchors = [an_top, an_right]
   container.frame.sbvert.pagesize = 0.99090909090909
   container.bounds = (
     0
     0
     371
-    408
+    450
   )
   statfile = tstatfile1
   moduleclassname = 'tmainform'
@@ -46,7 +46,7 @@ object mainfo: tmainfo
     bounds_x = 16
     bounds_y = 88
     bounds_cx = 338
-    bounds_cy = 176
+    bounds_cy = 146
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
     font.xscale = 1
@@ -85,7 +85,7 @@ object mainfo: tmainfo
     )
     taborder = 4
     bounds_x = 16
-    bounds_y = 271
+    bounds_y = 241
     bounds_cx = 212
     bounds_cy = 37
     anchors = [an_left, an_bottom]
@@ -97,7 +97,7 @@ object mainfo: tmainfo
     frame.dummy = 0
     taborder = 5
     bounds_x = 240
-    bounds_y = 288
+    bounds_y = 258
     bounds_cy = 18
     anchors = [an_left, an_bottom]
     reffontheight = 14
@@ -113,7 +113,7 @@ object mainfo: tmainfo
     )
     taborder = 6
     bounds_x = 16
-    bounds_y = 311
+    bounds_y = 281
     bounds_cx = 212
     bounds_cy = 37
     anchors = [an_left, an_bottom]
@@ -132,7 +132,7 @@ object mainfo: tmainfo
     )
     taborder = 7
     bounds_x = 16
-    bounds_y = 351
+    bounds_y = 321
     bounds_cx = 212
     bounds_cy = 37
     anchors = [an_left, an_bottom]
@@ -144,7 +144,7 @@ object mainfo: tmainfo
     frame.dummy = 0
     taborder = 8
     bounds_x = 248
-    bounds_y = 368
+    bounds_y = 338
     bounds_cx = 28
     bounds_cy = 18
     anchors = [an_left, an_bottom]
@@ -156,9 +156,10 @@ object mainfo: tmainfo
   object tbutton2: tbutton
     taborder = 9
     bounds_x = 240
-    bounds_y = 312
+    bounds_y = 296
     bounds_cx = 50
     bounds_cy = 20
+    anchors = [an_left, an_bottom]
     state = [as_localcaption, as_localonexecute]
     caption = 'clear'
     onexecute = clearexe
@@ -166,12 +167,53 @@ object mainfo: tmainfo
   object tbutton3: tbutton
     taborder = 10
     bounds_x = 296
-    bounds_y = 312
+    bounds_y = 296
     bounds_cx = 50
     bounds_cy = 20
+    anchors = [an_left, an_bottom]
     state = [as_localcaption, as_localonexecute]
     caption = 'pop'
     onexecute = popexe
+  end
+  object finded: tstringedit
+    frame.caption = 'find'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 11
+    bounds_x = 16
+    bounds_y = 361
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    onsetvalue = findelementexe
+    reffontheight = 14
+  end
+  object finddi: tstringdisp
+    frame.dummy = 0
+    taborder = 12
+    bounds_x = 16
+    bounds_y = 400
+    bounds_cx = 212
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object tbutton4: tbutton
+    taborder = 13
+    bounds_x = 240
+    bounds_y = 236
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'setpa'
+    onexecute = setpaexe
   end
   object tstatfile1: tstatfile
     filename = 'status.sta'

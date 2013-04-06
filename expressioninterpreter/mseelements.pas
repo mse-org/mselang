@@ -43,14 +43,24 @@ type
  
 procedure clear;
 
-function getident(const aname: lstringty): identty;
+function getident(const aname: lstringty): identty; overload;
+function getident(const aname: string): identty; overload;
 function pushelement(const aname: identty; 
-                            const asize: integer): pelementinfoty;
+               const asize: integer): pelementinfoty; //nil if duplicate
 function popelement: pelementinfoty;
 function addelement(const aname: identty; 
            const asize: integer): pelementinfoty; //nil if duplicate
+
+function findelement(const aname: identty): pelementinfoty; //nil if not found
+function findelementupward(const aname: identty): pelementinfoty; overload;
+                                                    //nil if not found
+function findelementupward(const aname: identty;
+                     out element: elementoffsetty): pelementinfoty; overload;
+                                                    //nil if not found
+procedure setelementparent(const element: elementoffsetty);
            
 function dumpelements: msestringarty;
+function dumppath(const aelement: pelementinfoty): msestring;
 
 implementation
 uses
@@ -101,6 +111,8 @@ type
    procedure addelement(const aident: identty; const aelement: elementoffsetty);
    function findcurrent(const aident: identty): elementoffsetty;
                   //searches in current scope, -1 if not found
+   function findupward(const aident: identty): elementoffsetty;
+                  //searches in current scope and above, -1 if not found
  end;
 
 const
@@ -108,14 +120,14 @@ const
 var
  stringdata: string;
  stringindex,stringlen: identoffsetty;
- stringident: integer;
+ stringident: identty;
  identlist: tindexidenthashdatalist;
  elementlist: telementhashdatalist;
 
  elementdata: string;
  elementindex,elementlen: elementoffsetty;
- elementpath: integer; //sum of names in hierarchy 
- elementparent: integer;
+ elementpath: identty; //sum of names in hierarchy 
+ elementparent: elementoffsetty;
 {$ifdef mse_debug_parser}
  identnames: stringarty;
 {$endif}
@@ -136,50 +148,78 @@ begin
 {$ifdef mse_debug_parser}
  identnames:= nil;
 {$endif}
+ pushelement(getident(''),sizeof(elementinfoty)); //root
 end;
 
 function dumpelements: msestringarty;
 var
- int1,int2,int3: integer;
+ int1,int2,int3,int4,int5: integer;
  po1: pelementinfoty;
  mstr1: msestring;
 begin
  int1:= 0;
  int2:= 0;
  additem(result,'elementpath: '+inttostr(elementpath),int2);
+ int5:= pelementinfoty(pointer(elementdata))^.header.name; //root
  while int1 < elementindex do begin
   po1:= pelementinfoty(pointer(elementdata)+int1);
-  mstr1:= inttostr(po1^.header.name)+' '+identnames[po1^.header.name-1];
+  if pointer(po1)-pointer(elementdata) = elementparent then begin
+   mstr1:= '*';
+  end
+  else begin
+   mstr1:= ' ';
+  end;
+  mstr1:= mstr1+inttostr(po1^.header.name)+' '+identnames[po1^.header.name-1];
   int3:= 0;
+  int4:= 0;
   while po1^.header.parent <> 0 do begin
    inc(int3);
+   int4:= int4 + po1^.header.name;
    po1:= pelementinfoty(pointer(elementdata)+po1^.header.parent);
   end;
-  mstr1:= charstring(msechar('.'),int3)+mstr1;
+  mstr1:= charstring(msechar('.'),int3)+' '+
+                         inttostr(int5+int4+po1^.header.name)+' '+mstr1;
   additem(result,mstr1,int2);
   int1:= int1 + sizeof(elementinfoty);
  end;
  setlength(result,int2);
 end;
 
+function dumppath(const aelement: pelementinfoty): msestring;
+var
+ po1: pelementinfoty;
+begin
+ result:= '';
+ po1:= aelement;
+ result:= identnames[po1^.header.name-1];
+ while po1^.header.parent <> 0 do begin
+  po1:= pointer(elementdata)+po1^.header.parent;
+  result:= identnames[po1^.header.name-1]+'.'+result;
+ end;
+end;
+
 function pushelement(const aname: identty; const asize: integer): pelementinfoty;
 var
  ele1: elementoffsetty;
 begin
- ele1:= elementindex;
- elementindex:= elementindex+asize;
- if elementindex >= elementlen then begin
-  elementlen:= elementindex*2+mindatasize;
-  setlength(elementdata,elementlen);
+ result:= nil;
+ ele1:= elementlist.findcurrent(aname);
+ if ele1 < 0 then begin
+  ele1:= elementindex;
+  elementindex:= elementindex+asize;
+  if elementindex >= elementlen then begin
+   elementlen:= elementindex*2+mindatasize;
+   setlength(elementdata,elementlen);
+  end;
+  result:= pointer(elementdata)+ele1;
+  with result^.header do begin
+   parent:= elementparent;
+   name:= aname;
+  end;
+  elementparent:= ele1;
+  elementpath:= elementpath+aname;
+  elementlist.addelement(elementpath,ele1);
  end;
- result:= pointer(elementdata)+ele1;
- with result^.header do begin
-  parent:= elementparent;
-  name:= aname;
- end;
- elementparent:= ele1;
- elementpath:= elementpath+aname;
- elementlist.addelement(elementpath,ele1);
 end;
 
 function addelement(const aname: identty; 
@@ -212,6 +252,57 @@ begin
  elementpath:= elementpath - result^.header.name;
 end;
 
+function findelement(const aname: identty): pelementinfoty; //nil if not found
+var
+ ele1: elementoffsetty;
+begin
+ result:= nil;
+ ele1:= elementlist.findcurrent(aname);
+ if ele1 >= 0 then begin
+  result:= pelementinfoty(pointer(elementdata)+ele1);
+ end;
+end;
+
+function findelementupward(const aname: identty): pelementinfoty; //nil if not found
+var
+ ele1: elementoffsetty;
+begin
+ result:= nil;
+ ele1:= elementlist.findupward(aname);
+ if ele1 >= 0 then begin
+  result:= pelementinfoty(pointer(elementdata)+ele1);
+ end;
+end;
+
+function findelementupward(const aname: identty;
+                     out element: elementoffsetty): pelementinfoty; overload;
+                                                    //nil if not found
+begin
+ result:= nil;
+ element:= elementlist.findupward(aname);
+ if element >= 0 then begin
+  result:= pelementinfoty(pointer(elementdata)+element);
+ end;
+end;
+
+procedure setelementparent(const element: elementoffsetty);
+var
+ po1: pelementinfoty;
+begin
+ elementparent:= element;
+ po1:= pointer(elementdata)+element;
+ elementpath:= po1^.header.name;
+ while true do begin
+  with po1^.header do begin
+   po1:= pointer(elementdata)+parent;
+   elementpath:= elementpath+po1^.header.name;
+   if parent = 0 then begin
+    break;
+   end;
+  end;
+ end;
+end;
+
 function storestring(const astr: lstringty): integer; //offset from stringdata
 var
  int1,int2: integer;
@@ -235,6 +326,15 @@ end;
 function getident(const aname: lstringty): identty;
 begin
  result:= identlist.getident(aname);
+end;
+
+function getident(const aname: string): identty;
+var
+ lstr1: lstringty;
+begin
+ lstr1.po:= pointer(aname);
+ lstr1.len:= length(aname);
+ result:= identlist.getident(lstr1);
 end;
 
 const
@@ -393,6 +493,34 @@ begin
    end;
    result:= po1^.data.data;
   end;
+ end;
+end;
+
+function telementhashdatalist.findupward(
+                                     const aident: identty): elementoffsetty;
+var
+ parentbefore: elementoffsetty;
+ pathbefore: identty;
+begin
+ result:= findcurrent(aident);
+ if result < 0 then begin
+  parentbefore:= elementparent;
+  pathbefore:= elementpath;
+  while true do begin
+   with pelementinfoty(pointer(elementdata)+elementparent)^.header do begin
+    if parent = 0 then begin
+     break;
+    end;
+    elementpath:= elementpath-name;
+    elementparent:= parent;
+    result:= findcurrent(aident);
+    if result >= 0 then begin
+     break;
+    end;
+   end;
+  end;
+  elementparent:= parentbefore;
+  elementpath:= pathbefore;
  end;
 end;
 

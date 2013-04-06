@@ -21,7 +21,8 @@ uses
  mseglob,mseguiglob,mseguiintf,mseapplication,msestat,msemenus,msegui,
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
- msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils;
+ msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
+ mclasses,mseelements;
 
 type
  tmainfo = class(tmainform)
@@ -38,6 +39,9 @@ type
    addi: tbooleandisp;
    tbutton2: tbutton;
    tbutton3: tbutton;
+   finded: tstringedit;
+   finddi: tstringdisp;
+   tbutton4: tbutton;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -47,7 +51,11 @@ type
                    var accept: Boolean);
    procedure clearexe(const sender: TObject);
    procedure popexe(const sender: TObject);
+   procedure findelementexe(const sender: TObject; var avalue: msestring;
+                   var accept: Boolean);
+   procedure setpaexe(const sender: TObject);
   protected
+   felement: elementoffsetty;
    procedure dump;
  end;
 var
@@ -55,7 +63,7 @@ var
   
 implementation
 uses
- main_mfm,mseexpint,msestream,msestackops,mseparserglob,mseelements;
+ main_mfm,mseexpint,msestream,msestackops,mseparserglob;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -91,7 +99,7 @@ begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
  intdi.value:= getident(lstr1);
- pushelement(intdi.value,sizeof(elementinfoty));
+ addi.value:= pushelement(intdi.value,sizeof(elementinfoty)) <> nil;
  dump;
 end;
 
@@ -113,6 +121,7 @@ end;
 procedure tmainfo.dump;
 begin
  grid[0].datalist.asarray:= dumpelements;
+ grid.row:= bigint;
 end;
 
 procedure tmainfo.clearexe(const sender: TObject);
@@ -124,6 +133,31 @@ end;
 procedure tmainfo.popexe(const sender: TObject);
 begin
  addi.value:= popelement <> nil;
+ dump;
 end;
+
+procedure tmainfo.findelementexe(const sender: TObject; var avalue: msestring;
+               var accept: Boolean);
+var
+ po1: pelementinfoty;
+begin
+ findsetexe(sender,avalue,accept);
+ po1:= findelementupward(intdi.value,felement);
+ if po1 = nil then begin
+  finddi.value:= '';
+ end
+ else begin
+  finddi.value:= dumppath(po1); 
+ end;
+end;
+
+procedure tmainfo.setpaexe(const sender: TObject);
+begin
+ if grid.row > 0 then begin
+  setelementparent((grid.row-1)*sizeof(elementinfoty));
+  dump;
+ end;
+end;
+
 
 end.
