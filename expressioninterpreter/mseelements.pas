@@ -27,10 +27,12 @@ uses
 
 type
  identty = integer;
+ identarty = integerarty;
  elementoffsetty = integer;
  
  elementheaderty = record
   name: identty;
+  path: identty;
   parent: elementoffsetty; //offset in data array
  end;
  
@@ -49,13 +51,16 @@ function pushelement(const aname: identty;
                const asize: integer): pelementinfoty; //nil if duplicate
 function popelement: pelementinfoty;
 function addelement(const aname: identty; 
-           const asize: integer): pelementinfoty; //nil if duplicate
+           const asize: integer): pelementinfoty;   //nil if duplicate
 
 function findelement(const aname: identty): pelementinfoty; //nil if not found
 function findelementupward(const aname: identty): pelementinfoty; overload;
                                                     //nil if not found
 function findelementupward(const aname: identty;
                      out element: elementoffsetty): pelementinfoty; overload;
+                                                    //nil if not found
+function findelementsupward(const anames: identarty;
+                     out element: elementoffsetty): pelementinfoty;
                                                     //nil if not found
 procedure setelementparent(const element: elementoffsetty);
            
@@ -111,7 +116,9 @@ type
    procedure addelement(const aident: identty; const aelement: elementoffsetty);
    function findcurrent(const aident: identty): elementoffsetty;
                   //searches in current scope, -1 if not found
-   function findupward(const aident: identty): elementoffsetty;
+   function findupward(const aident: identty): elementoffsetty; overload;
+                  //searches in current scope and above, -1 if not found
+   function findupward(const aidents: identarty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
  end;
 
@@ -169,7 +176,9 @@ begin
   else begin
    mstr1:= ' ';
   end;
-  mstr1:= mstr1+inttostr(po1^.header.name)+' '+identnames[po1^.header.name-1];
+  mstr1:= mstr1+'P'+inttostr(po1^.header.parent div sizeof(elementinfoty));
+  mstr1:= mstr1+' '+inttostr(po1^.header.name)+' '+
+                                             identnames[po1^.header.name-1];
   int3:= 0;
   int4:= 0;
   while po1^.header.parent <> 0 do begin
@@ -214,6 +223,7 @@ begin
   result:= pointer(elementdata)+ele1;
   with result^.header do begin
    parent:= elementparent;
+   path:= elementpath;
    name:= aname;
   end;
   elementparent:= ele1;
@@ -239,6 +249,7 @@ begin
   result:= pointer(elementdata)+ele1;
   with result^.header do begin
    parent:= elementparent;
+   path:= elementpath;
    name:= aname;
   end; 
   elementlist.addelement(elementpath+aname,ele1);
@@ -249,7 +260,7 @@ function popelement: pelementinfoty;
 begin
  result:= pelementinfoty(pointer(elementdata)+elementparent);
  elementparent:= result^.header.parent;
- elementpath:= elementpath - result^.header.name;
+ elementpath:= result^.header.path;
 end;
 
 function findelement(const aname: identty): pelementinfoty; //nil if not found
@@ -285,22 +296,24 @@ begin
  end;
 end;
 
+function findelementsupward(const anames: identarty;
+                     out element: elementoffsetty): pelementinfoty;
+                                                    //nil if not found
+begin
+ result:= nil;
+ element:= elementlist.findupward(anames);
+ if element >= 0 then begin
+  result:= pelementinfoty(pointer(elementdata)+element);
+ end;
+end;
+
 procedure setelementparent(const element: elementoffsetty);
 var
  po1: pelementinfoty;
 begin
  elementparent:= element;
  po1:= pointer(elementdata)+element;
- elementpath:= po1^.header.name;
- while true do begin
-  with po1^.header do begin
-   po1:= pointer(elementdata)+parent;
-   elementpath:= elementpath+po1^.header.name;
-   if parent = 0 then begin
-    break;
-   end;
-  end;
- end;
+ elementpath:= po1^.header.path+po1^.header.name;
 end;
 
 function storestring(const astr: lstringty): integer; //offset from stringdata
@@ -481,10 +494,12 @@ begin
   if uint1 <> 0 then begin
    po1:= pelementhashdataty(pchar(fdata) + uint1);
    while true do begin
-    if (po1^.data.key = id1) and 
-         (pelementinfoty(pointer(elementdata)+
-                   po1^.data.data)^.header.parent = elementparent) then begin
-     break;
+    if (po1^.data.key = id1) then begin
+     with pelementinfoty(pointer(elementdata)+po1^.data.data)^.header do begin
+      if (name = aident) and (parent = elementparent) then begin
+       break;
+      end;
+     end;
     end;
     if po1^.header.nexthash = 0 then begin
      exit;
@@ -517,6 +532,79 @@ begin
     if result >= 0 then begin
      break;
     end;
+   end;
+  end;
+  elementparent:= parentbefore;
+  elementpath:= pathbefore;
+ end;
+end;
+
+function telementhashdatalist.findupward(
+                                     const aidents: identarty): elementoffsetty;
+var
+ parentbefore: elementoffsetty;
+ pathbefore: identty;
+ path1: identty;
+ id1: identty;
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ po2: pelementinfoty;
+ hash1: hashvaluety;
+ int1: integer;
+ first: identty;
+begin
+ result:= -1;
+ if aidents <> nil then begin
+  path1:= aidents[0];
+  for int1:= 1 to high(aidents) do begin
+   path1:= path1 + aidents[int1];
+  end;
+  parentbefore:= elementparent;
+  pathbefore:= elementpath;
+  while true do begin
+   first:= findupward(aidents[0]);
+   if first < 0 then begin
+    break;
+   end;
+   with pelementinfoty(pointer(elementdata)+first)^.header do begin
+    elementparent:= parent;
+    elementpath:= path;
+   end;
+   id1:= elementpath+path1;
+   hash1:= scramble1(id1);
+   uint1:= fhashtable[hash1 and fmask];
+   if uint1 <> 0 then begin
+    po1:= pelementhashdataty(pchar(fdata) + uint1);
+    while true do begin
+     if (po1^.data.key = id1) then begin
+      result:= po1^.data.data;
+      po2:= pelementinfoty(pointer(elementdata)+result);
+      for int1:= high(aidents) downto 1 do begin
+       if po2^.header.name <> aidents[int1] then begin
+        result:= -1;
+        break;
+       end;
+       po2:= pointer(elementdata)+po2^.header.parent;
+      end;
+      if (result >= 0) and (po2^.header.parent = elementparent) then begin
+       break;
+      end;
+     end;
+     if po1^.header.nexthash = 0 then begin
+      break;
+     end;
+     po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+    end;
+   end
+   else begin
+    result:= -1;
+   end;
+   if (result >= 0) or (elementparent = 0) then begin
+    break;
+   end;
+   with pelementinfoty(pointer(elementdata)+elementparent)^.header do begin
+    elementparent:= parent;
+    elementpath:= path;
    end;
   end;
   elementparent:= parentbefore;

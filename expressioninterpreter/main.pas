@@ -22,7 +22,7 @@ uses
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
- mclasses,mseelements;
+ mclasses,mseelements,msegraphedits;
 
 type
  tmainfo = class(tmainform)
@@ -42,6 +42,8 @@ type
    finded: tstringedit;
    finddi: tstringdisp;
    tbutton4: tbutton;
+   tbooleanedit1: tbooleanedit;
+   tfacelist1: tfacelist;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -140,9 +142,25 @@ procedure tmainfo.findelementexe(const sender: TObject; var avalue: msestring;
                var accept: Boolean);
 var
  po1: pelementinfoty;
+ ar1: stringarty;
+ ar2: integerarty;
+ mstr1: msestring;
+ int1: integer;
 begin
- findsetexe(sender,avalue,accept);
- po1:= findelementupward(intdi.value,felement);
+ ar1:= splitstring(string(avalue),'.');
+ if high(ar1) > 0 then begin
+  setlength(ar2,length(ar1));
+  for int1:= 0 to high(ar1) do begin
+   mstr1:= ar1[int1];
+   findsetexe(sender,mstr1,accept);
+   ar2[int1]:= intdi.value;
+  end;
+  po1:= findelementsupward(ar2,felement);
+ end
+ else begin
+  findsetexe(sender,avalue,accept);
+  po1:= findelementupward(intdi.value,felement);
+ end;
  if po1 = nil then begin
   finddi.value:= '';
  end

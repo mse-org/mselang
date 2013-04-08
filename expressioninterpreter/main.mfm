@@ -54,10 +54,16 @@ object mainfo: tmainfo
     datacols.count = 1
     datacols.items = <    
       item
-        width = 333
+        width = 282
         options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
         valuefalse = '0'
         valuetrue = '1'
+      end>
+    fixcols.count = 1
+    fixcols.items = <    
+      item
+        numstart = -1
+        numstep = 1
       end>
     datarowheight = 16
     reffontheight = 14
@@ -215,9 +221,38 @@ object mainfo: tmainfo
     caption = 'setpa'
     onexecute = setpaexe
   end
+  object tbooleanedit1: tbooleanedit
+    frame.frameface_list = tfacelist1
+    frame.frameface_offset = -1
+    frame.frameface_offsetactive = 1
+    frame.frameface_offsetactivemouse = 1
+    frame.frameface_offsetactiveclicked = 1
+    frame.localprops1 = [frl1_framefacelist, frl1_framefaceoffset, frl1_framefaceoffset1, frl1_framefaceoffsetdisabled, frl1_framefaceoffsetmouse, frl1_framefaceoffsetclicked, frl1_framefaceoffsetactive, frl1_framefaceoffsetactivemouse, frl1_framefaceoffsetactiveclicked]
+    frame.dummy = 0
+    taborder = 14
+    bounds_x = 240
+    bounds_y = 376
+  end
   object tstatfile1: tstatfile
     filename = 'status.sta'
     left = 232
     top = 32
+  end
+  object tfacelist1: tfacelist
+    list.count = 1
+    list.items = <    
+      item
+        fade_pos.count = 1
+        fade_pos.items = (
+          0
+        )
+        fade_color.count = 1
+        fade_color.items = (
+          11910911
+        )
+        dummy = 0
+      end>
+    left = 248
+    top = 400
   end
 end
