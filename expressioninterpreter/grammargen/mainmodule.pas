@@ -165,7 +165,7 @@ begin
         else begin
          int1:= findlastchar(str1,',');
          if int1 = 0 then begin
-          error('Format of branch is "''string'',{''string'',}context"');
+          error('Format of branch is "''string'',{''string'',}context[*]"');
           exit;
          end;
          str2:= trim(copy(str1,int1+1,bigint));
@@ -283,15 +283,30 @@ lineend+
       str1:= str1+
 '  (t:'+bran[int2][0]+';c:';
       if bran[int2][1] <> '' then begin
-       str1:= str1+'@'+bran[int2][1]+'co),';
+       str2:= bran[int2][1];
+       if str2[length(str2)] = '*' then begin
+        str3:= ';p:true';
+        setlength(str2,length(str2)-1);
+       end
+       else begin
+        str3:= ';p:false';
+       end;
+       if str2[length(str2)] = '-' then begin
+        str3:= ';e:true'+str3;
+        setlength(str2,length(str2)-1);
+       end
+       else begin
+        str3:= ';e:false'+str3;
+       end;
+       str1:= str1+'@'+str2+'co'+str3+'),';
       end
       else begin
-       str1:= str1+'nil),';
+       str1:= str1+'nil;e:false;p:false),';
       end;
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:'''';c:nil)'+lineend+
+'  (t:'''';c:nil;e:false;p:false)'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;

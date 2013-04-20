@@ -85,7 +85,9 @@ var
    end;
 //   else begin
     int1:= contextstack[stacktop].parent;
-    inc(stacktop);
+    if pb^.p then begin
+     inc(stacktop);
+    end;
     stackindex:= stacktop;
     if stacktop = stackdepht then begin
      result:= false;
@@ -120,8 +122,8 @@ begin
   stacktop:= 0;
   opcount:= 0;
   pc:= contextstack[stackindex].context;
-  while source^ <> #0 do begin
-   while source^ <> #0 do begin
+  while (source^ <> #0) and (stackindex >= 0) do begin
+   while (source^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
     if pointer(pb^.t) = nil then begin
      if not pushcontext then begin
@@ -139,7 +141,10 @@ begin
         break;
        end;
       end;
-      if po2^ = #0 then begin
+      if pb^.e then begin
+       source:= po1;
+      end;
+      if po2^ = #0 then begin //match
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
          if not pushcontext then begin
@@ -148,7 +153,7 @@ begin
         until pointer(pb^.t) <> nil;
        end;
        source:= po1;
-//       pb:= pc^.branch;
+       pb:= pc^.branch; //restart
        continue;
       end;
       inc(pb);
@@ -161,6 +166,14 @@ begin
    repeat
     if pc^.handle <> nil then begin
      pc^.handle(@info);
+    end
+    else begin
+     if pc^.next = nil then begin
+      dec(stackindex);
+     end;
+    end;
+    if stackindex < 0 then begin
+     break;
     end;
     pc:= contextstack[stackindex].context;
     if pc^.next = nil then begin
@@ -174,19 +187,24 @@ begin
    end;
    outinfo(@info,'after1');
   end;
-  while stackindex > 0 do begin
+  while stackindex >= 0 do begin
    with contextstack[stackindex].context^ do begin
     if handle <> nil then begin
      handle(@info);
+    end
+    else begin
+     dec(stackindex);
     end;
    end;
    outinfo(@info,'after2');
   end;
+  {
   with contextstack[0].context^ do begin
    if handle <> nil then begin
     handle(@info);
    end;
   end;
+  }
   with contextstack[0] do begin
    case kind of
     ck_int32const: begin

@@ -36,6 +36,8 @@ type
  branchty = record
   t: string;
   c: pcontextty;
+  e: boolean; //eatflag
+  p: boolean; //pushflag
  end;
  pbranchty = ^branchty;
 

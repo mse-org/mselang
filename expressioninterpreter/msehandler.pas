@@ -630,6 +630,10 @@ end;
 
 procedure handleconst(const info: pparseinfoty);
 begin
+ with info^,contextstack[stacktop] do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
  outhandle(info,'CONST');
 end;
 
