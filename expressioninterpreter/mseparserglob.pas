@@ -24,9 +24,10 @@ const
  stackdepht = 256;
 
 type 
- contextkindty = (ck_none,ck_neg,ck_int32const,ck_flo64const,
-                  ck_int32fact,ck_flo64fact);
- stackdatakindty = (sdk_int32,sdk_flo64,sdk_int32rev,sdk_flo64rev);
+ contextkindty = (ck_none,ck_neg,ck_bool8const,ck_int32const,ck_flo64const,
+                  ck_bool8fact,ck_int32fact,ck_flo64fact);
+ stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
+                    sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
 
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure(const info: pparseinfoty);
@@ -45,6 +46,9 @@ type
 //  setstackmark: boolean;
   caption: string;
  end;
+ bool8constty = record
+  value: boolean;
+ end;
  int32constty = record
   value: integer;
  end;
@@ -56,6 +60,9 @@ type
   context: pcontextty;
   start: pchar;
   case kind: contextkindty of 
+   ck_bool8const:(
+    bool8const: bool8constty;
+   );
    ck_int32const:(
     int32const: int32constty;
    );
@@ -70,11 +77,14 @@ type
   index0: integer;
  end;
 
- opkindty = (ok_none,ok_pushint32,ok_pushflo64,ok_pop,ok_op,ok_op1);
+ opkindty = (ok_none,ok_pushbool8,ok_pushint32,ok_pushflo64,ok_pop,ok_op,ok_op1);
  opinfoty = record
 //todo: variable item size, immediate data
   op: opty;
   case opkindty of 
+   ok_pushbool8: (
+    vbool8: boolean;
+   );
    ok_pushint32: (
     vint32: integer;
    );

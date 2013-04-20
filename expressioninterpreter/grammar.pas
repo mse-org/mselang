@@ -28,10 +28,30 @@ uses
  msehandler;
  
 var
+ mainco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'main');
+ constco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'const');
+ const0co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'const0');
+ const1co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'const1');
+ const3co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'const3');
+ const2co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'const2');
+ expco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'exp');
+ exp1co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'exp1');
+ equsimpexpco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'equsimpexp');
  simpexpco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'simpexp');
  simpexp1co: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'simpexp1');
+ addtermco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'addterm');
  num0co: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'num0');
  numco: contextty = (branch: nil; handle: nil; next: nil;
@@ -40,28 +60,26 @@ var
                caption: 'frac');
  identifierco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'identifier');
- checkparamsco: contextty = (branch: nil; handle: nil; next: nil;
-               caption: 'checkparams');
- paramsstart0co: contextty = (branch: nil; handle: nil; next: nil;
-               caption: 'paramsstart0');
  termco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'term');
  negtermco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'negterm');
  mulfactco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'mulfact');
- paramsco: contextty = (branch: nil; handle: nil; next: nil;
-               caption: 'params');
- params1co: contextty = (branch: nil; handle: nil; next: nil;
-               caption: 'params1');
+ checkparamsco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'checkparams');
+ paramsstart0co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'paramsstart0');
  paramsstartco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'paramsstart');
  paramsendco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'paramsend');
+ paramsco: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'params');
+ params1co: contextty = (branch: nil; handle: nil; next: nil;
+               caption: 'params1');
  term1co: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'term1');
- addtermco: contextty = (branch: nil; handle: nil; next: nil;
-               caption: 'addterm');
  bracketstartco: contextty = (branch: nil; handle: nil; next: nil;
                caption: 'bracketstart');
  bracketendco: contextty = (branch: nil; handle: nil; next: nil;
@@ -74,14 +92,126 @@ var
                caption: 'negexponent');
 
 const
+ bmain: array[0..5] of branchty = (
+  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:'begin';c:@expco),
+  (t:'const';c:@constco),
+  (t:'';c:nil)
+ );
+
+ bconst: array[0..1] of branchty = (
+  (t:'';c:@const0co),
+  (t:'';c:nil)
+ );
+
+ bconst0: array[0..56] of branchty = (
+  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:'_';c:@identifierco),
+  (t:'a';c:@identifierco),
+  (t:'b';c:@identifierco),
+  (t:'c';c:@identifierco),
+  (t:'d';c:@identifierco),
+  (t:'e';c:@identifierco),
+  (t:'f';c:@identifierco),
+  (t:'g';c:@identifierco),
+  (t:'h';c:@identifierco),
+  (t:'i';c:@identifierco),
+  (t:'j';c:@identifierco),
+  (t:'k';c:@identifierco),
+  (t:'l';c:@identifierco),
+  (t:'m';c:@identifierco),
+  (t:'n';c:@identifierco),
+  (t:'o';c:@identifierco),
+  (t:'p';c:@identifierco),
+  (t:'q';c:@identifierco),
+  (t:'r';c:@identifierco),
+  (t:'s';c:@identifierco),
+  (t:'t';c:@identifierco),
+  (t:'u';c:@identifierco),
+  (t:'v';c:@identifierco),
+  (t:'w';c:@identifierco),
+  (t:'x';c:@identifierco),
+  (t:'y';c:@identifierco),
+  (t:'z';c:@identifierco),
+  (t:'A';c:@identifierco),
+  (t:'B';c:@identifierco),
+  (t:'C';c:@identifierco),
+  (t:'D';c:@identifierco),
+  (t:'E';c:@identifierco),
+  (t:'F';c:@identifierco),
+  (t:'G';c:@identifierco),
+  (t:'H';c:@identifierco),
+  (t:'I';c:@identifierco),
+  (t:'J';c:@identifierco),
+  (t:'K';c:@identifierco),
+  (t:'L';c:@identifierco),
+  (t:'M';c:@identifierco),
+  (t:'N';c:@identifierco),
+  (t:'O';c:@identifierco),
+  (t:'P';c:@identifierco),
+  (t:'Q';c:@identifierco),
+  (t:'R';c:@identifierco),
+  (t:'S';c:@identifierco),
+  (t:'T';c:@identifierco),
+  (t:'U';c:@identifierco),
+  (t:'V';c:@identifierco),
+  (t:'W';c:@identifierco),
+  (t:'X';c:@identifierco),
+  (t:'Y';c:@identifierco),
+  (t:'Z';c:@identifierco),
+  (t:'';c:nil)
+ );
+
+ bconst1: array[0..4] of branchty = (
+  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:'=';c:@const3co),
+  (t:'';c:nil)
+ );
+
+ bconst3: array[0..1] of branchty = (
+  (t:'';c:@expco),
+  (t:'';c:nil)
+ );
+
+ bexp: array[0..1] of branchty = (
+  (t:'';c:@simpexpco),
+  (t:'';c:nil)
+ );
+
+ bexp1: array[0..4] of branchty = (
+  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:'=';c:@equsimpexpco),
+  (t:'';c:nil)
+ );
+
+ bequsimpexp: array[0..1] of branchty = (
+  (t:'';c:@simpexpco),
+  (t:'';c:nil)
+ );
+
  bsimpexp: array[0..1] of branchty = (
   (t:'';c:@termco),
   (t:'';c:nil)
  );
 
- bsimpexp1: array[0..2] of branchty = (
+ bsimpexp1: array[0..4] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'+';c:@addtermco),
+  (t:'';c:nil)
+ );
+
+ baddterm: array[0..1] of branchty = (
+  (t:'';c:@termco),
   (t:'';c:nil)
  );
 
@@ -132,16 +262,6 @@ const
  );
 
  bidentifier: array[0..63] of branchty = (
-  (t:'0';c:nil),
-  (t:'1';c:nil),
-  (t:'2';c:nil),
-  (t:'3';c:nil),
-  (t:'4';c:nil),
-  (t:'5';c:nil),
-  (t:'6';c:nil),
-  (t:'7';c:nil),
-  (t:'8';c:nil),
-  (t:'9';c:nil),
   (t:'_';c:nil),
   (t:'a';c:nil),
   (t:'b';c:nil),
@@ -195,17 +315,23 @@ const
   (t:'X';c:nil),
   (t:'Y';c:nil),
   (t:'Z';c:nil),
+  (t:'0';c:nil),
+  (t:'1';c:nil),
+  (t:'2';c:nil),
+  (t:'3';c:nil),
+  (t:'4';c:nil),
+  (t:'5';c:nil),
+  (t:'6';c:nil),
+  (t:'7';c:nil),
+  (t:'8';c:nil),
+  (t:'9';c:nil),
   (t:'';c:nil)
  );
 
- bcheckparams: array[0..2] of branchty = (
+ bterm: array[0..69] of branchty = (
   (t:' ';c:nil),
-  (t:'(';c:@paramsstart0co),
-  (t:'';c:nil)
- );
-
- bterm: array[0..67] of branchty = (
-  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'+';c:nil),
   (t:'-';c:@negtermco),
   (t:'(';c:@bracketstartco),
@@ -275,8 +401,10 @@ const
   (t:'';c:nil)
  );
 
- bmulfact: array[0..15] of branchty = (
+ bmulfact: array[0..17] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'+';c:nil),
   (t:'-';c:@negtermco),
   (t:'(';c:@bracketstartco),
@@ -294,14 +422,11 @@ const
   (t:'';c:nil)
  );
 
- bparams: array[0..1] of branchty = (
-  (t:'';c:@simpexpco),
-  (t:'';c:nil)
- );
-
- bparams1: array[0..2] of branchty = (
+ bcheckparams: array[0..4] of branchty = (
   (t:' ';c:nil),
-  (t:',';c:@paramsco),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:'(';c:@paramsstart0co),
   (t:'';c:nil)
  );
 
@@ -310,19 +435,31 @@ const
   (t:'';c:nil)
  );
 
- bparamsend: array[0..1] of branchty = (
+ bparamsend: array[0..3] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'';c:nil)
  );
 
- bterm1: array[0..2] of branchty = (
+ bparams: array[0..1] of branchty = (
+  (t:'';c:@simpexpco),
+  (t:'';c:nil)
+ );
+
+ bparams1: array[0..4] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
+  (t:',';c:@paramsco),
+  (t:'';c:nil)
+ );
+
+ bterm1: array[0..4] of branchty = (
+  (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'*';c:@mulfactco),
-  (t:'';c:nil)
- );
-
- baddterm: array[0..1] of branchty = (
-  (t:'';c:@termco),
   (t:'';c:nil)
  );
 
@@ -331,13 +468,17 @@ const
   (t:'';c:nil)
  );
 
- bbracketend: array[0..1] of branchty = (
+ bbracketend: array[0..3] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'';c:nil)
  );
 
- bln: array[0..2] of branchty = (
+ bln: array[0..4] of branchty = (
   (t:' ';c:nil),
+  (t:#$0d;c:nil),
+  (t:#$0a;c:nil),
   (t:'(';c:@paramsstartco),
   (t:'';c:nil)
  );
@@ -374,11 +515,31 @@ const
 
 procedure init;
 begin
+ mainco.branch:= @bmain;
+ mainco.handle:= @handlemain;
+ constco.branch:= @bconst;
+ constco.handle:= @handleconst;
+ const0co.branch:= @bconst0;
+ const0co.next:= @const1co;
+ const1co.branch:= @bconst1;
+ const1co.next:= @const2co;
+ const3co.branch:= @bconst3;
+ const2co.branch:= nil;
+ const2co.handle:= @handleconst2;
+ expco.branch:= @bexp;
+ expco.next:= @exp1co;
+ expco.handle:= @handleexp;
+ exp1co.branch:= @bexp1;
+ exp1co.handle:= @handleexp;
+ equsimpexpco.branch:= @bequsimpexp;
+ equsimpexpco.handle:= @handleequsimpexp;
  simpexpco.branch:= @bsimpexp;
  simpexpco.next:= @simpexp1co;
  simpexpco.handle:= @handlesimpexp;
  simpexp1co.branch:= @bsimpexp1;
  simpexp1co.handle:= @handlesimpexp1;
+ addtermco.branch:= @baddterm;
+ addtermco.handle:= @handleaddterm;
  num0co.branch:= @bnum0;
  num0co.handle:= @dummyhandler;
  numco.branch:= @bnum;
@@ -388,11 +549,6 @@ begin
  identifierco.branch:= @bidentifier;
  identifierco.next:= @checkparamsco;
  identifierco.handle:= @handleidentifier;
- checkparamsco.branch:= @bcheckparams;
- checkparamsco.handle:= @handlecheckparams;
- paramsstart0co.branch:= nil;
- paramsstart0co.next:= @paramsstartco;
- paramsstart0co.handle:= @handleparamstart0;
  termco.branch:= @bterm;
  termco.next:= @term1co;
  termco.handle:= @handleterm;
@@ -401,21 +557,24 @@ begin
  negtermco.handle:= @handlenegterm;
  mulfactco.branch:= @bmulfact;
  mulfactco.handle:= @handlemulfact;
- paramsco.branch:= @bparams;
- paramsco.next:= @params1co;
- paramsco.handle:= @handleparam;
- params1co.branch:= @bparams1;
- params1co.handle:= @handleparam;
+ checkparamsco.branch:= @bcheckparams;
+ checkparamsco.handle:= @handlecheckparams;
+ paramsstart0co.branch:= nil;
+ paramsstart0co.next:= @paramsstartco;
+ paramsstart0co.handle:= @handleparamstart0;
  paramsstartco.branch:= @bparamsstart;
  paramsstartco.next:= @paramsendco;
  paramsstartco.handle:= @dummyhandler;
  paramsendco.branch:= @bparamsend;
  paramsendco.handle:= @handleparamsend;
+ paramsco.branch:= @bparams;
+ paramsco.next:= @params1co;
+ paramsco.handle:= @handleparam;
+ params1co.branch:= @bparams1;
+ params1co.handle:= @handleparam;
  term1co.branch:= @bterm1;
  term1co.next:= @term1co;
  term1co.handle:= @handleterm1;
- addtermco.branch:= @baddterm;
- addtermco.handle:= @handleaddterm;
  bracketstartco.branch:= @bbracketstart;
  bracketstartco.next:= @bracketendco;
  bracketstartco.handle:= @dummyhandler;
@@ -431,7 +590,7 @@ end;
 
 function startcontext: pcontextty;
 begin
- result:= @simpexpco;
+ result:= @mainco;
 end;
 
 initialization

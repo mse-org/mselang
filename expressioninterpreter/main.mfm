@@ -4,6 +4,7 @@ object mainfo: tmainfo
   bounds_cx = 371
   bounds_cy = 450
   anchors = [an_top, an_right]
+  container.frame.sbhorz.pagesize = 0.99731182795699
   container.frame.sbvert.pagesize = 0.99090909090909
   container.bounds = (
     0
@@ -41,12 +42,12 @@ object mainfo: tmainfo
     onexecute = parseexe
   end
   object grid: tstringgrid
-    frame.sbhorz.pagesize = 0.95508982035928
+    frame.sbhorz.pagesize = 0.99701492537313
     taborder = 2
     bounds_x = 16
-    bounds_y = 88
+    bounds_y = 87
     bounds_cx = 338
-    bounds_cy = 146
+    bounds_cy = 147
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
     font.xscale = 1
@@ -232,6 +233,19 @@ object mainfo: tmainfo
     taborder = 14
     bounds_x = 240
     bounds_y = 376
+  end
+  object tsplitter1: tsplitter
+    color = -1879048189
+    taborder = 15
+    bounds_x = 16
+    bounds_y = 84
+    bounds_cx = 338
+    bounds_cy = 3
+    anchors = [an_left, an_top, an_right]
+    options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
+    linktop = ed
+    linkbottom = grid
+    statfile = tstatfile1
   end
   object tstatfile1: tstatfile
     filename = 'status.sta'

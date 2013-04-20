@@ -22,7 +22,7 @@ uses
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
- mclasses,mseelements,msegraphedits;
+ mclasses,mseelements,msegraphedits,msesplitter;
 
 type
  tmainfo = class(tmainform)
@@ -31,7 +31,6 @@ type
    tbutton1: tbutton;
    grid: tstringgrid;
    di: trealdisp;
-   tpostscriptprinter1: tpostscriptprinter;
    getidented: tstringedit;
    intdi: tintegerdisp;
    pushed: tstringedit;
@@ -44,6 +43,8 @@ type
    tbutton4: tbutton;
    tbooleanedit1: tbooleanedit;
    tfacelist1: tfacelist;
+   tpostscriptprinter1: tpostscriptprinter;
+   tsplitter1: tsplitter;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);

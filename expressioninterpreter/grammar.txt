@@ -1,71 +1,95 @@
+@whitespace
+ ' ',#$0d,#$0a
+@identstart
+ '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
+ 'q','r','s','t','u','v','w','x','y','z'
+ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P'
+ 'Q','R','S','T','U','V','W','X','Y','Z'
+@num
+ '0','1','2','3','4','5','6','7','8','9'
 msehandler
+main,,handlemain
+ @whitespace,
+ 'begin',exp
+ 'const',const
+const,,handleconst
+ '',const0
+const0,const1,
+ @whitespace,
+ @identstart,identifier
+const1,const2,
+ @whitespace,
+ '=',const3
+const3,,
+ '',exp
+const2,,handleconst2
+exp,exp1,handleexp
+ '',simpexp
+exp1,,handleexp
+ @whitespace,
+ '=',equsimpexp
+equsimpexp,,handleequsimpexp
+ '',simpexp
 simpexp,simpexp1,handlesimpexp
  '',term
 simpexp1,,handlesimpexp1
- ' ',
+ @whitespace,
  '+',addterm
+addterm,,handleaddterm
+ '',term
 num0,,dummyhandler
- '0','1','2','3','4','5','6','7','8','9',num
+ @num,num
  ' ',
 num,,handledecnum
- '0','1','2','3','4','5','6','7','8','9',
+ @num,
  '.',frac
 frac,,handlefrac
- '0','1','2','3','4','5','6','7','8','9',
+ @num,
  'e',exponent
  'E',exponent
 identifier,checkparams,handleidentifier
- '0','1','2','3','4','5','6','7','8','9',
- '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
- 'q','r','s','t','u','v','w','x','y','z',
- 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
- 'Q','R','S','T','U','V','W','X','Y','Z',
+ @identstart,@num,
 term,term1,handleterm
- ' ',
+ @whitespace,
  '+',
  '-',negterm  
  '(',bracketstart   
- '0','1','2','3','4','5','6','7','8','9',num
- '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',identifier
- 'q','r','s','t','u','v','w','x','y','z',identifier
- 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',identifier
- 'Q','R','S','T','U','V','W','X','Y','Z',identifier
+ @num,num
+ @identstart,identifier
 negterm,term,handlenegterm
 mulfact,,handlemulfact
- ' ',
+ @whitespace,
  '+',
  '-',negterm  
  '(',bracketstart   
- '0','1','2','3','4','5','6','7','8','9',num
+ @num,num
  'ln',ln
 checkparams,,handlecheckparams
- ' ',
+ @whitespace,
  '(',paramsstart0
 paramsstart0,paramsstart,handleparamstart0
 paramsstart,paramsend,dummyhandler
  '',params
 paramsend,,handleparamsend
- ' ',
+ @whitespace,
 params,params1,handleparam
  '',simpexp
 params1,,handleparam
- ' ',
+ @whitespace,
  ',',params
 term1,term1,handleterm1
- ' ',
+ @whitespace,
  '*',mulfact
-addterm,,handleaddterm
- '',term
 bracketstart,bracketend,dummyhandler
  '',simpexp
 bracketend,,handlebracketend
- ' ',
+ @whitespace,
 ln,,handleln
- ' ',
+ @whitespace,
  '(',paramsstart
 exponent,,handleexponent
  '+',
  '-',negexponent
- '0','1','2','3','4','5','6','7','8','9',num
+ @num,num
 negexponent,,handlenegexponent
- '0','1','2','3','4','5','6','7','8','9',num
+ @num,num

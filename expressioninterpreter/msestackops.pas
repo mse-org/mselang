@@ -18,9 +18,12 @@ uses
  mseparserglob;
  
 type
- datakindty = (dk_none,dk_int32,dk_flo64);
+ datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64);
  datainfoty = record
   case kind: datakindty of
+   dk_bool8: (
+    vbool8: integer;
+   );
    dk_int32: (
     vint32: integer;
    );
@@ -35,6 +38,7 @@ procedure finalize;
 function run(const code: opinfoarty; const stackdepht: integer): real;
 
 procedure dummyop;
+procedure pushbool8;
 procedure pushint32;
 procedure pushflo64;
 procedure int32toflo64;
@@ -49,6 +53,7 @@ implementation
 type
  stackinfoty = record
   case datakindty of
+   dk_bool8: (vbool8: boolean);
    dk_int32: (vint32: integer);
    dk_flo64: (vflo64: real);
  end;
@@ -60,6 +65,12 @@ var
 
 procedure dummyop;
 begin
+end;
+
+procedure pushbool8;
+begin
+ inc(mainstackpo);
+ mainstack[mainstackpo].vbool8:= oppo^.vbool8; 
 end;
 
 procedure pushint32;

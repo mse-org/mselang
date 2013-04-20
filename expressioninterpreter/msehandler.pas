@@ -25,12 +25,18 @@ procedure push(const info: pparseinfoty; const avalue: integer); overload;
 procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
+procedure handleconst(const info: pparseinfoty);
+procedure handleconst2(const info: pparseinfoty);
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
 procedure handlenegexponent(const info: pparseinfoty);
 
 procedure handleidentifier(const info: pparseinfoty);
+
+procedure handleexp(const info: pparseinfoty);
+procedure handlemain(const info: pparseinfoty);
+procedure handleequsimpexp(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
@@ -51,8 +57,9 @@ uses
  msestackops,msestrings;
 
 const
- valuecontext = ck_int32const;
- reversestackdata = sdk_int32rev;
+ valuecontext = ck_bool8const;
+ reversestackdata = sdk_bool8rev;
+ bool8kinds = [ck_bool8const,ck_bool8fact];
  int32kinds = [ck_int32const,ck_int32fact];
  flo64kinds = [ck_flo64const,ck_flo64fact];
  
@@ -100,6 +107,14 @@ procedure writeop(const info: pparseinfoty; const operation: opty); inline;
 begin
  with additem(info)^ do begin
   op:= operation
+ end;
+end;
+
+procedure push(const info: pparseinfoty; const avalue: boolean); overload;
+begin
+ with additem(info)^ do begin
+  op:= @pushbool8;
+  vbool8:= avalue;
  end;
 end;
 
@@ -319,7 +334,8 @@ end;
 
 const
  resultdatakinds: array[stackdatakindty] of contextkindty =
-                         (ck_int32fact,ck_flo64fact,ck_int32fact,ck_flo64fact);
+           (ck_bool8fact,ck_int32fact,ck_flo64fact,
+            ck_bool8fact,ck_int32fact,ck_flo64fact);
 
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
@@ -363,20 +379,41 @@ begin
    end;
   end
   else begin
-   result:= sdk_int32;
-   with contextstack[stacktop-2] do begin
-    case kind of
-     ck_int32const: begin
-      push(info,int32const.value);
-      reverse:= true;
+   if contextstack[stacktop].kind in bool8kinds then begin
+    result:= sdk_bool8;
+    with contextstack[stacktop-2] do begin
+     case kind of
+      ck_bool8const: begin
+       push(info,bool8const.value);
+       reverse:= true;
+      end;
      end;
     end;
-   end;
-   with contextstack[stacktop] do begin
-    case kind of
-     ck_int32const: begin
-      push(info,int32const.value);
-      reverse:= not reverse;
+    with contextstack[stacktop] do begin
+     case kind of
+      ck_bool8const: begin
+       push(info,bool8const.value);
+       reverse:= not reverse;
+      end;
+     end;
+    end;
+   end
+   else begin
+    result:= sdk_int32;
+    with contextstack[stacktop-2] do begin
+     case kind of
+      ck_int32const: begin
+       push(info,int32const.value);
+       reverse:= true;
+      end;
+     end;
+    end;
+    with contextstack[stacktop] do begin
+     case kind of
+      ck_int32const: begin
+       push(info,int32const.value);
+       reverse:= not reverse;
+      end;
      end;
     end;
    end;
@@ -395,7 +432,8 @@ end;
 
 const
  mulops: array[stackdatakindty] of opty =
-                            (@mulint32,@mulflo64,@mulint32,@mulflo64);
+          (@dummyop,@mulint32,@mulflo64,
+           @dummyop,@mulint32,@mulflo64);
  
 procedure handlemulfact(const info: pparseinfoty);
 begin
@@ -406,7 +444,8 @@ end;
 
 const
  addops: array[stackdatakindty] of opty =
-                            (@addint32,@addflo64,@addint32,@addflo64);
+                    (@dummyop,@addint32,@addflo64,
+                     @dummyop,@addint32,@addflo64);
 
 procedure handleaddterm(const info: pparseinfoty);
 begin
@@ -437,10 +476,10 @@ end;
 
 const
  negops: array[contextkindty] of opty = (
-  //ck_none,ck_neg,ck_int32const,ck_flo64const,
-    @dummyop,    @dummyop,   @negint32,    @negflo64,
-  //ck_int32fact,ck_flo64fact
-    @negint32,   @negflo64
+  //ck_none, ck_neg,  ck_bool8const,ck_int32const,ck_flo64const,
+    @dummyop,@dummyop,@dummyop,     @negint32,    @negflo64,
+  //ck_boo8fact,ck_int32fact,ck_flo64fact
+    @dummyop,   @negint32,   @negflo64
  );
 
 procedure handleterm1(const info: pparseinfoty);
@@ -468,6 +507,7 @@ begin
   contextstack[stacktop-1]:= contextstack[stacktop];
   dec(info^.stacktop);
   info^.stackindex:= info^.stacktop;
+  dec(stackindex);
  end;
  outhandle(info,'SIMPEXP');
 end;
@@ -585,8 +625,46 @@ end;
 
 procedure dummyhandler(const info: pparseinfoty);
 begin
- //dummy
  outhandle(info,'DUMMY');
+end;
+
+procedure handleconst(const info: pparseinfoty);
+begin
+ outhandle(info,'CONST');
+end;
+
+procedure handleconst2(const info: pparseinfoty);
+begin
+ outhandle(info,'CONST2');
+end;
+
+procedure handleexp(const info: pparseinfoty);
+begin
+ with info^ do begin
+  contextstack[stacktop-1]:= contextstack[stacktop];
+  dec(info^.stacktop);
+  info^.stackindex:= info^.stacktop;
+  dec(stackindex);
+ end;
+ outhandle(info,'EXP');
+end;
+
+procedure handlemain(const info: pparseinfoty);
+begin
+ with info^ do begin
+  contextstack[stacktop-1]:= contextstack[stacktop];
+  dec(info^.stacktop);
+  info^.stackindex:= info^.stacktop;
+  dec(stackindex);
+ end;
+ outhandle(info,'MAIN');
+end;
+
+procedure handleequsimpexp(const info: pparseinfoty);
+begin
+ outcommand(info,[-2,0],'=');
+ writeop(info,addops[pushvalues(info)]);
+ outhandle(info,'EQUSIMPEXP');
 end;
 
 end.

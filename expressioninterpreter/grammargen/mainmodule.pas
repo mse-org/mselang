@@ -51,6 +51,11 @@ type
   bran: stringararty;
  end;
  contextinfoarty = array of contextinfoty;
+ tokendefty = record
+  name: string;
+  tokens: stringarty;
+ end;
+ tokendefarty = array of tokendefty;
  
 var
  grammarstream: ttextstream = nil;
@@ -64,6 +69,7 @@ var
  line: integer;
  branchcount: integer;
  contexts: contextinfoarty;
+ tokendefs: tokendefarty;
 
  procedure error(const text: string);
  begin
@@ -84,10 +90,11 @@ var
 
 var
  ar1: stringarty;
- mstr1: msestring;
+// mstr1: msestring;
  str2,str3: string;
  int1,int2: integer;
  po1,po2,po3: pchar;
+ intokendef: boolean;
 begin
  application.terminated:= true;
  try
@@ -95,57 +102,126 @@ begin
   line:= 0;
   branchcount:= 0;
   context:= '';
+  intokendef:= false;
+  tokendefs:= nil;
   repeat
    grammarstream.readln(str1);
    inc(line);
-   if (str1 <> '') and (str1[1] <> '#') then begin
-    if firstrow then begin
-     usesdef:= str1;
-     firstrow:= false;
+   if (str1 <> '') then begin
+    if str1[1] = '@' then begin
+     setlength(tokendefs,high(tokendefs)+2);
+     with tokendefs[high(tokendefs)] do begin
+      name:= trim(copy(str1,2,bigint));
+     end;
+     intokendef:= true;
     end
     else begin
-     if str1[1] <> ' ' then begin
-      if context <> '' then begin
-       handlecontext;
+     if (str1[1] <> '#') then begin
+      if str1[1] <> ' ' then begin
+       intokendef:= false;
       end;
-      context:= str1;
-      contextline:= splitstring(context,',',true);
-      if length(contextline) <> 3 then begin
-       error('Format of contextline is "context,next,handler"');
-       exit;
-      end;
-      branchcount:= 0;
-      branches:= nil;
-     end
-     else begin
-      int1:= findlastchar(str1,',');
-      if int1 = 0 then begin
-       error('Format of branch is "''string'',{''string'',}context"');
-       exit;
-      end;
-      str2:= trim(copy(str1,int1+1,bigint));
-      po1:= pchar(str1)+1;
-      po2:= po1+int1-2;
-      while true do begin
-       po3:= po1;
-       getpascalstring(po1);
-       if po1 = po3 then begin
-        error('Invalid string');
-        exit;
+      if intokendef then begin
+       po1:= @str1[2];
+       with tokendefs[high(tokendefs)] do begin
+        while true do begin
+         po3:= po1;
+         getpascalstring(po1);
+         if po1 = po3 then begin
+          error('Invalid string');
+          exit;
+         end;
+         setlength(tokens,high(tokens)+2);
+         setstring(tokens[high(tokens)],po3,po1-po3);
+         if po1^ = #0 then begin
+          break;
+         end;
+         if po1^ <> ',' then begin
+          error('Format of tokendef is "''string''{,''string''}"');
+          exit;
+         end;
+         inc(po1);
+        end;
        end;
-       setstring(str3,po3,po1-po3);
-       setlength(ar1,2);
-       ar1[0]:= trim(str3);
-       ar1[1]:= str2;
-       additem(branches,ar1,branchcount);
-       if po1 = po2 then begin
-        break;
+      end
+      else begin
+       if firstrow then begin
+        usesdef:= str1;
+        firstrow:= false;
+       end
+       else begin
+        if str1[1] <> ' ' then begin
+         if context <> '' then begin
+          handlecontext;
+         end;
+         context:= str1;
+         contextline:= splitstring(context,',',true);
+         if length(contextline) <> 3 then begin
+          error('Format of contextline is "context,next,handler"');
+          exit;
+         end;
+         branchcount:= 0;
+         branches:= nil;
+        end
+        else begin
+         int1:= findlastchar(str1,',');
+         if int1 = 0 then begin
+          error('Format of branch is "''string'',{''string'',}context"');
+          exit;
+         end;
+         str2:= trim(copy(str1,int1+1,bigint));
+         po1:= pchar(str1)+1;
+         po2:= po1+int1-2;
+         while true do begin
+          po3:= po1;
+          if po1^ = '@' then begin
+           inc(po3);
+           while po1^ <> ',' do begin
+            inc(po1);
+           end;
+           setstring(str3,po3,po1-po3);
+           int2:= -1;
+           for int1:= 0 to high(tokendefs) do begin
+            if tokendefs[int1].name = str3 then begin
+             int2:= int1;
+             break;
+            end;
+           end;
+           if int2 < 0 then begin
+            error('Tokendef not found.');
+            exit;
+           end;
+           with tokendefs[int2] do begin
+            for int1:= 0 to high(tokens) do begin
+             setlength(ar1,2);
+             ar1[1]:= str2;
+             ar1[0]:= tokens[int1];
+             additem(branches,ar1,branchcount);
+            end;
+           end;
+          end
+          else begin
+           getpascalstring(po1);
+           if po1 = po3 then begin
+            error('Invalid string');
+            exit;
+           end;
+           setstring(str3,po3,po1-po3);
+           setlength(ar1,2);
+           ar1[0]:= trim(str3);
+           ar1[1]:= str2;
+           additem(branches,ar1,branchcount);
+          end;
+          if po1 = po2 then begin
+           break;
+          end;
+          if po1^ <> ',' then begin
+           error('Format of branch is "''string'',{''string'',}context"');
+           exit;
+          end;
+          inc(po1);
+         end;
+        end;
        end;
-       if po1^ <> ',' then begin
-        error('Format of branch is "''string'',{''string'',}context"');
-        exit;
-       end;
-       inc(po1);
       end;
      end;
     end;

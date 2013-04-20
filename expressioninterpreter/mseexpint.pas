@@ -39,6 +39,9 @@ begin
     write(parent,' ');
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
+     ck_bool8const: begin
+      write(bool8const.value,' ');
+     end;
      ck_int32const: begin
       write(int32const.value,' ');
      end;
@@ -156,7 +159,9 @@ begin
    end;
    writeln('***');
    repeat
-    pc^.handle(@info);
+    if pc^.handle <> nil then begin
+     pc^.handle(@info);
+    end;
     pc:= contextstack[stackindex].context;
     if pc^.next = nil then begin
      outinfo(@info,'after0');
@@ -170,10 +175,18 @@ begin
    outinfo(@info,'after1');
   end;
   while stackindex > 0 do begin
-   contextstack[stackindex].context^.handle(@info);
+   with contextstack[stackindex].context^ do begin
+    if handle <> nil then begin
+     handle(@info);
+    end;
+   end;
    outinfo(@info,'after2');
   end;
-  contextstack[0].context^.handle(@info);
+  with contextstack[0].context^ do begin
+   if handle <> nil then begin
+    handle(@info);
+   end;
+  end;
   with contextstack[0] do begin
    case kind of
     ck_int32const: begin
