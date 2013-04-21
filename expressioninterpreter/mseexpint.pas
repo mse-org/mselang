@@ -35,7 +35,7 @@ begin
    else begin
     write(' ');
    end;
-   with contextstack[int1] do begin
+   with contextstack[int1],d do begin
     write(parent,' ');
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
@@ -93,11 +93,16 @@ var
      result:= false;
      exit;
     end;
-    with contextstack[stacktop] do begin
+    with contextstack[stacktop],d do begin
      kind:= ck_none;
      context:= pc;
      start:= source;
-     parent:= int1;
+     if pb^.s then begin
+      parent:= stacktop;
+     end
+     else begin
+      parent:= int1;
+     end;
     end;
 //   end;
    pb:= pc^.branch;
@@ -112,7 +117,7 @@ begin
  with info do begin
   command:= acommand;
   source:= pchar(input);
-  with contextstack[0] do begin
+  with contextstack[0],d do begin
    kind:= ck_none;
    context:= startcontext;
    start:= source;
@@ -205,7 +210,7 @@ begin
    end;
   end;
   }
-  with contextstack[0] do begin
+  with contextstack[0].d do begin
    case kind of
     ck_int32const: begin
      push(@info,real(int32const.value));

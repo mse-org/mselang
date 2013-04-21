@@ -31,10 +31,10 @@ equsimpexp,,handleequsimpexp
  '',simpexp*
 simpexp,simpexp1,handlesimpexp
  '',term*
-simpexp1,,handlesimpexp1
+simpexp1,simpexp1,handlesimpexp1
  @whitespace,
  '+',addterm*
-addterm,simpexp1,handleaddterm
+addterm,,handleaddterm
  '',term*
 term,term1,handleterm
  @whitespace,
@@ -75,7 +75,7 @@ valueidentifier,checkparams,handleidentifier
  @identstart,@num,
 checkparams,,handlecheckparams
  @whitespace,
- '(',paramsstart0*
+ '(',paramsstart!*
 paramsstart0,paramsstart,handleparamstart0
 paramsstart,paramsend,dummyhandler
  '',params*

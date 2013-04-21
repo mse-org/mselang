@@ -36,8 +36,9 @@ type
  branchty = record
   t: string;
   c: pcontextty;
-  e: boolean; //eatflag
-  p: boolean; //pushflag
+  e: boolean; //eat flag
+  s: boolean; //setparent flag
+  p: boolean; //push flag
  end;
  pbranchty = ^branchty;
 
@@ -57,11 +58,8 @@ type
  flo64constty = record
   value: double;
  end;
- contextitemty = record
-  parent: integer;
-  context: pcontextty;
-  start: pchar;
-  case kind: contextkindty of 
+ contextdataty = record
+   case kind: contextkindty of 
    ck_bool8const:(
     bool8const: bool8constty;
    );
@@ -71,6 +69,12 @@ type
    ck_flo64const:(
     flo64const: flo64constty;
    )
+ end;
+ contextitemty = record
+  parent: integer;
+  context: pcontextty;
+  start: pchar;
+  d: contextdataty;
  end;
 
  opty = procedure;

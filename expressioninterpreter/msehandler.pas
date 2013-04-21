@@ -75,7 +75,7 @@ var
 begin
  with info^ do begin
   for int1:= 0 to high(items) do begin
-   with contextstack[stacktop+items[int1]] do begin
+   with contextstack[stacktop+items[int1]].d do begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
      ck_int32const: begin
@@ -177,12 +177,13 @@ begin
    end;
   end;
   stackindex:= stacktop-1;
-  if contextstack[stackindex].kind = ck_neg then begin
-   contextstack[stackindex].kind:= ck_none;
+  if contextstack[stackindex].d.kind = ck_neg then begin
+   contextstack[stackindex].d.kind:= ck_none;
    int2:= -int2;
   end;
-  int32const.value:= int2;
-  kind:= ck_int32const;
+  d.int32const.value:= int2;
+  d.kind:= ck_int32const;
+//  context:= nil;
  end;
  outhandle(info,'CNUM');
 end;
@@ -226,7 +227,7 @@ begin
   stacktop:= stacktop - 1;
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
-   kind:= ck_flo64const;
+   d.kind:= ck_flo64const;
    lint2:= 0;
    po1:= start;
    int1:= asource-po1-1;
@@ -249,9 +250,9 @@ begin
     end
     else begin
      mantissa:= lint2;
-     neg:= contextstack[stackindex].kind = ck_neg;
+     neg:= contextstack[stackindex].d.kind = ck_neg;
      if neg then begin
-      contextstack[stackindex].kind:= ck_none;
+      contextstack[stackindex].d.kind:= ck_none;
      end;
     end;
    end;
@@ -266,7 +267,7 @@ var
  neg: boolean;
 begin
  dofrac(info,info^.source,neg,mant,fraclen);
- with info^,contextstack[stacktop] do begin
+ with info^,contextstack[stacktop].d do begin
   flo64const.value:= mant/floatexps[fraclen]; //todo: round lsb;   
   if neg then begin
    flo64const.value:= -flo64const.value; 
@@ -284,7 +285,7 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].int32const.value;
+  exp:= contextstack[stacktop].d.int32const.value;
   dec(stacktop,2);
   dofrac(info,contextstack[stackindex].start,neg,mant,fraclen);
   exp:= exp-fraclen;
@@ -295,9 +296,9 @@ begin
     do1:= do1*floatexps[32];
     exp:= exp - 32;
    end;
-   flo64const.value:= mant*do1;
+   d.flo64const.value:= mant*do1;
    if neg then begin
-    flo64const.value:= -flo64const.value; 
+    d.flo64const.value:= -d.flo64const.value; 
    end;
   end;
  end;
@@ -312,7 +313,7 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].int32const.value;
+  exp:= contextstack[stacktop].d.int32const.value;
   dec(stacktop,3);
   dofrac(info,contextstack[stackindex-1].start,neg,mant,fraclen);
   exp:= exp+fraclen;
@@ -323,9 +324,9 @@ begin
     do1:= do1*floatexps[32];
     exp:= exp - 32;
    end;
-   flo64const.value:= mant/do1;
+   d.flo64const.value:= mant/do1;
    if neg then begin
-    flo64const.value:= -flo64const.value; 
+    d.flo64const.value:= -d.flo64const.value; 
    end;
   end;
  end;
@@ -344,10 +345,10 @@ var
 begin
  reverse:= false;
  with info^ do begin
-  if (contextstack[stacktop].kind in flo64kinds) or 
-             (contextstack[stacktop-2].kind in flo64kinds) then begin
+  if (contextstack[stacktop].d.kind in flo64kinds) or 
+             (contextstack[stacktop-2].d.kind in flo64kinds) then begin
    result:= sdk_flo64;
-   with contextstack[stacktop] do begin
+   with contextstack[stacktop].d do begin
     case kind of
      ck_int32const: begin
       push(info,real(int32const.value));
@@ -362,7 +363,7 @@ begin
      end;
     end;
    end;
-   with contextstack[stacktop-2] do begin
+   with contextstack[stacktop-2].d do begin
     case kind of
      ck_int32const: begin
       push(info,real(int32const.value));
@@ -379,9 +380,9 @@ begin
    end;
   end
   else begin
-   if contextstack[stacktop].kind in bool8kinds then begin
+   if contextstack[stacktop].d.kind in bool8kinds then begin
     result:= sdk_bool8;
-    with contextstack[stacktop-2] do begin
+    with contextstack[stacktop-2].d do begin
      case kind of
       ck_bool8const: begin
        push(info,bool8const.value);
@@ -389,7 +390,7 @@ begin
       end;
      end;
     end;
-    with contextstack[stacktop] do begin
+    with contextstack[stacktop].d do begin
      case kind of
       ck_bool8const: begin
        push(info,bool8const.value);
@@ -400,7 +401,7 @@ begin
    end
    else begin
     result:= sdk_int32;
-    with contextstack[stacktop-2] do begin
+    with contextstack[stacktop-2].d do begin
      case kind of
       ck_int32const: begin
        push(info,int32const.value);
@@ -408,7 +409,7 @@ begin
       end;
      end;
     end;
-    with contextstack[stacktop] do begin
+    with contextstack[stacktop].d do begin
      case kind of
       ck_int32const: begin
        push(info,int32const.value);
@@ -423,7 +424,7 @@ begin
   end;
   dec(stacktop,2);
   with contextstack[stacktop] do begin
-   kind:= resultdatakinds[result];
+   d.kind:= resultdatakinds[result];
    context:= nil;
   end;
   stackindex:= stacktop-1;
@@ -463,7 +464,7 @@ end;
 
 procedure handlenegterm(const info: pparseinfoty);
 begin
- with info^,contextstack[stacktop] do begin
+ with info^,contextstack[stacktop].d do begin
   if kind = ck_none then begin
    kind:= ck_neg;
   end
@@ -486,8 +487,8 @@ procedure handleterm1(const info: pparseinfoty);
 begin
  with info^ do begin
   if stackindex < stacktop then begin
-   if contextstack[stackindex].kind = ck_neg then begin
-    writeop(info,negops[contextstack[stacktop].kind]);
+   if contextstack[stackindex].d.kind = ck_neg then begin
+    writeop(info,negops[contextstack[stacktop].d.kind]);
    end;
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
@@ -554,7 +555,7 @@ begin
   stacktop:= stackindex;
   dec(stackindex);
   with contextstack[stacktop] do begin
-   kind:= ck_int32fact;
+   d.kind:= ck_int32fact;
    context:= nil;
   end;
  end;
@@ -582,9 +583,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
   with contextstack[stacktop] do begin
-   kind:= ck_int32const;
+   d.kind:= ck_int32const;
    context:= nil;
-   int32const.value:= 42;
+   d.int32const.value:= 42;
   end;  
   dec(stackindex);
  end;
@@ -645,7 +646,7 @@ end;
 procedure handleexp(const info: pparseinfoty);
 begin
  with info^ do begin
-  contextstack[stacktop-1]:= contextstack[stacktop];
+  contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(info^.stacktop);
   info^.stackindex:= info^.stacktop;
   dec(stackindex);
@@ -656,7 +657,7 @@ end;
 procedure handlemain(const info: pparseinfoty);
 begin
  with info^ do begin
-  contextstack[stacktop-1]:= contextstack[stacktop];
+  contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(info^.stacktop);
   info^.stackindex:= info^.stacktop;
   dec(stackindex);
