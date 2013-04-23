@@ -26,13 +26,15 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
 procedure handleconst(const info: pparseinfoty);
-procedure handleconst2(const info: pparseinfoty);
+procedure handleconst0(const info: pparseinfoty);
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
 procedure handlenegexponent(const info: pparseinfoty);
 
-procedure handleidentifier(const info: pparseinfoty);
+procedure handlestatementend(const info: pparseinfoty);
+procedure handleident(const info: pparseinfoty);
+procedure handleidentpath(const info: pparseinfoty);
 
 procedure handleexp(const info: pparseinfoty);
 procedure handlemain(const info: pparseinfoty);
@@ -54,7 +56,7 @@ procedure handlecheckparams(const info: pparseinfoty);
 
 implementation
 uses
- msestackops,msestrings;
+ msestackops,msestrings,mseelements;
 
 const
  valuecontext = ck_bool8const;
@@ -65,7 +67,7 @@ const
  
 procedure outhandle(const info: pparseinfoty; const text: string);
 begin
- writeln(' *handle* ',text);
+ writeln(' !!!handle!!! ',text);
 end;
 
 procedure outcommand(const info: pparseinfoty; const items: array of integer;
@@ -477,8 +479,10 @@ end;
 
 const
  negops: array[contextkindty] of opty = (
-  //ck_none, ck_neg,  ck_bool8const,ck_int32const,ck_flo64const,
-    @dummyop,@dummyop,@dummyop,     @negint32,    @negflo64,
+  //ck_none, ck_end,  ck_ident,ck_neg, 
+    @dummyop,@dummyop,@dummyop,@dummyop,
+  //ck_bool8const,ck_int32const,ck_flo64const,
+    @dummyop,     @negint32,    @negflo64,
   //ck_boo8fact,ck_int32fact,ck_flo64fact
     @dummyop,   @negint32,   @negflo64
  );
@@ -592,20 +596,28 @@ begin
  outhandle(info,'CHECKPARAMS');
 end;
 
-procedure handleidentifier(const info: pparseinfoty);
+procedure handleident(const info: pparseinfoty);
 begin
-{
- with info^ do begin
-  stacktop:= stackindex;
-  with contextstack[stacktop] do begin
-   kind:= ck_int32const;
-   context:= nil;
-   int32const.value:= 42;
-  end;  
+ with info^,contextstack[stacktop],d do begin
+  kind:= ck_ident;
+  ident:= getident(start,source);
   dec(stackindex);
  end;
-}
  outhandle(info,'IDENTIFIER');
+end;
+
+procedure handleidentpath(const info: pparseinfoty);
+begin
+ outhandle(info,'IDENTPATH');
+end;
+
+procedure handlestatementend(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop],d do begin
+  kind:= ck_end;
+  stackindex:= parent;
+ end;
+ outhandle(info,'STATEMENTEND');
 end;
 
 procedure handleparamstart0(const info: pparseinfoty);
@@ -638,9 +650,13 @@ begin
  outhandle(info,'CONST');
 end;
 
-procedure handleconst2(const info: pparseinfoty);
+procedure handleconst0(const info: pparseinfoty);
 begin
- outhandle(info,'CONST2');
+// with info^,contextstack[stacktop] do begin
+//  dec(stackindex);
+//  stacktop:= stackindex;
+// end;
+ outhandle(info,'CONST0');
 end;
 
 procedure handleexp(const info: pparseinfoty);
@@ -657,9 +673,9 @@ end;
 procedure handlemain(const info: pparseinfoty);
 begin
  with info^ do begin
-  contextstack[stacktop-1].d:= contextstack[stacktop].d;
-  dec(info^.stacktop);
-  info^.stackindex:= info^.stacktop;
+//  contextstack[stacktop-1].d:= contextstack[stacktop].d;
+//  dec(info^.stacktop);
+//  info^.stackindex:= info^.stacktop;
   dec(stackindex);
  end;
  outhandle(info,'MAIN');

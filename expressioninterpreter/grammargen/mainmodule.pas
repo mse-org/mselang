@@ -89,7 +89,8 @@ var
  end;
 const
  branchformat = 
-  'Format of branch is "''string'',{''string'',}context[-][!][*]"';
+  'Format of branch is "''string'',{''string'',}context[-][*][!]"';
+ defaultflags = 'e:false;p:false;s:false';
 var
  ar1: stringarty;
 // mstr1: msestring;
@@ -286,19 +287,20 @@ lineend+
 '  (t:'+bran[int2][0]+';c:';
       if bran[int2][1] <> '' then begin
        str2:= bran[int2][1];
-       if str2[length(str2)] = '*' then begin
-        str3:= ';p:true';
-        setlength(str2,length(str2)-1);
-       end
-       else begin
-        str3:= ';p:false';
-       end;
+       str3:= '';
        if str2[length(str2)] = '!' then begin
         str3:= ';s:true'+str3;
         setlength(str2,length(str2)-1);
        end
        else begin
         str3:= ';s:false'+str3;
+       end;
+       if str2[length(str2)] = '*' then begin
+        str3:= ';p:true'+str3;
+        setlength(str2,length(str2)-1);
+       end
+       else begin
+        str3:= ';p:false'+str3;
        end;
        if str2[length(str2)] = '-' then begin
         str3:= ';e:true'+str3;
@@ -310,12 +312,12 @@ lineend+
        str1:= str1+'@'+str2+'co'+str3+'),';
       end
       else begin
-       str1:= str1+'nil;e:false;s:false;p:false),';
+       str1:= str1+'nil;'+defaultflags+'),';
       end;
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:'''';c:nil;e:false;s:false;p:false)'+lineend+
+'  (t:'''';c:nil;'+defaultflags+')'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;

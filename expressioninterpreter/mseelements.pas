@@ -45,6 +45,7 @@ type
  
 procedure clear;
 
+function getident(const astart,astop: pchar): identty; overload;
 function getident(const aname: lstringty): identty; overload;
 function getident(const aname: string): identty; overload;
 function pushelement(const aname: identty; 
@@ -339,6 +340,15 @@ end;
 function getident(const aname: lstringty): identty;
 begin
  result:= identlist.getident(aname);
+end;
+
+function getident(const astart,astop: pchar): identty;
+var
+ lstr1: lstringty;
+begin
+ lstr1.po:= astart;
+ lstr1.len:= astop-astart;
+ result:= identlist.getident(lstr1);
 end;
 
 function getident(const aname: string): identty;

@@ -11,17 +11,21 @@ msehandler
 main,,handlemain
  @whitespace,
  'begin',exp-*
- 'const',const*
+ 'const',const-*!
 const,,handleconst
  '',const0*
 const0,const1,
  @whitespace,
- @identstart,identifier*
+ @identstart,ident*
 const1,,
  @whitespace,
- '=',const2*
-const2,,
+ '=',const2
+const2,const3,
  '',exp*
+const3,,
+ @whitespace,
+ ';',statementend-*
+statementend,,handlestatementend
 exp,exp1,handleexp
  '',simpexp*
 exp1,,handleexp
@@ -63,19 +67,21 @@ num,,handledecnum
 frac,,handlefrac
  @num,
  'e','E',exponent*
-identifier,identifier1,
+ident,,handleident
  @identstart,@num,
-identifier1,,
+identpath,identpath1,
+ @identstart,@num,
+identpath1,,
  @whitespace,
- '.',identifier2
-identifier2,,
+ '.',identpath2
+identpath2,,
  @whitespace,
- @identstart,identifier*
-valueidentifier,checkparams,handleidentifier
+ @identstart,identpath*
+valueidentifier,checkparams,handleidentpath
  @identstart,@num,
 checkparams,,handlecheckparams
  @whitespace,
- '(',paramsstart!*
+ '(',paramsstart*!
 paramsstart0,paramsstart,handleparamstart0
 paramsstart,paramsend,dummyhandler
  '',params*

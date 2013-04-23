@@ -1,5 +1,5 @@
 unit mseexpint;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  msetypes,msestream,msestackops,mseparserglob;
@@ -39,6 +39,9 @@ begin
     write(parent,' ');
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
+     ck_ident: begin
+      write(ident,' ');
+     end;
      ck_bool8const: begin
       write(bool8const.value,' ');
      end;
@@ -80,6 +83,10 @@ var
   with info do begin
    pc:= pb^.c;
    while pc^.branch = nil do begin
+    if pc^.next = nil then begin
+     result:= false;
+     break;
+    end;
     pc^.handle(@info);
     pc:= pc^.next;
    end;
@@ -87,13 +94,13 @@ var
     int1:= contextstack[stacktop].parent;
     if pb^.p then begin
      inc(stacktop);
+     stackindex:= stacktop;
+     if stacktop = stackdepht then begin
+      stackdepht:= 2*stackdepht;
+      setlength(contextstack,stackdepht);
+     end;
     end;
-    stackindex:= stacktop;
-    if stacktop = stackdepht then begin
-     result:= false;
-     exit;
-    end;
-    with contextstack[stacktop],d do begin
+    with contextstack[stackindex],d do begin
      kind:= ck_none;
      context:= pc;
      start:= source;
@@ -111,12 +118,16 @@ var
  end;
 
 var
- po1,po2: pchar; 
+ po1,po2: pchar;
+label
+ handlelab;
 begin
  result:= nil;
  with info do begin
   command:= acommand;
   source:= pchar(input);
+  stackdepht:= defaultstackdepht;
+  setlength(contextstack,stackdepht);
   with contextstack[0],d do begin
    kind:= ck_none;
    context:= startcontext;
@@ -131,9 +142,7 @@ begin
    while (source^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
     if pointer(pb^.t) = nil then begin
-     if not pushcontext then begin
-      exit;
-     end;
+     pushcontext;
     end
     else begin
      while pointer(pb^.t) <> nil do begin
@@ -153,7 +162,7 @@ begin
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
          if not pushcontext then begin
-          exit
+          goto handlelab;
          end;
         until pointer(pb^.t) <> nil;
        end;
@@ -165,8 +174,8 @@ begin
      end;  
      break;
     end;
- //   inc(source);
    end;
+handlelab:
    writeln('***');
    repeat
     if pc^.handle <> nil then begin

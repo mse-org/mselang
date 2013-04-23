@@ -18,13 +18,15 @@ unit mseparserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream;
+ msestream,mseelements;
  
 const
- stackdepht = 256;
+ defaultstackdepht = 256;
 
 type 
- contextkindty = (ck_none,ck_neg,ck_bool8const,ck_int32const,ck_flo64const,
+ contextkindty = (ck_none,ck_end,ck_ident,
+                  ck_neg,
+                  ck_bool8const,ck_int32const,ck_flo64const,
                   ck_bool8fact,ck_int32fact,ck_flo64fact);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
@@ -37,8 +39,8 @@ type
   t: string;
   c: pcontextty;
   e: boolean; //eat flag
-  s: boolean; //setparent flag
   p: boolean; //push flag
+  s: boolean; //setparent flag
  end;
  pbranchty = ^branchty;
 
@@ -59,7 +61,10 @@ type
   value: double;
  end;
  contextdataty = record
-   case kind: contextkindty of 
+  case kind: contextkindty of 
+   ck_ident:(
+    ident: identty;
+   );
    ck_bool8const:(
     bool8const: bool8constty;
    );
@@ -111,7 +116,8 @@ type
  parseinfoty = record
   source: pchar;
   consumed: pchar;
-  contextstack: array[0..stackdepht] of contextitemty;
+  contextstack: array of contextitemty;
+  stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
   command: ttextstream;
