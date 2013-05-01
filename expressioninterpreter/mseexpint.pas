@@ -33,7 +33,12 @@ begin
     write('*');
    end
    else begin
-    write(' ');
+    if int1 = contextstack[int1].parent then begin
+     write('-');
+    end
+    else begin
+     write(' ');
+    end;
    end;
    with contextstack[int1],d do begin
     write(parent,' ');
@@ -78,8 +83,10 @@ var
  function pushcontext: boolean;
  var
   int1: integer;
+  bo1: boolean;
  begin
   result:= true;
+  bo1:= false;
   with info do begin
    pc:= pb^.c;
    while pc^.branch = nil do begin
@@ -90,31 +97,36 @@ var
     pc^.handle(@info);
     pc:= pc^.next;
    end;
-//   else begin
-    int1:= contextstack[stacktop].parent;
-    if pb^.p then begin
-     inc(stacktop);
-     stackindex:= stacktop;
-     if stacktop = stackdepht then begin
-      stackdepht:= 2*stackdepht;
-      setlength(contextstack,stackdepht);
-     end;
+   int1:= contextstack[stacktop].parent;
+   if pb^.sb then begin
+    int1:= stackindex;
+   end;
+   if pb^.p then begin
+    bo1:= true;
+    inc(stacktop);
+    stackindex:= stacktop;
+    if stacktop = stackdepht then begin
+     stackdepht:= 2*stackdepht;
+     setlength(contextstack,stackdepht);
     end;
-    with contextstack[stackindex],d do begin
-     kind:= ck_none;
-     context:= pc;
-     start:= source;
-     if pb^.s then begin
-      parent:= stacktop;
-     end
-     else begin
-      parent:= int1;
-     end;
+    if pb^.sa then begin
+     int1:= stacktop;
     end;
-//   end;
+   end;
+   with contextstack[stackindex],d do begin
+    kind:= ck_none;
+    context:= pc;
+    start:= source;
+    parent:= int1;
+   end;
    pb:= pc^.branch;
   end;
-  outinfo(@info,'push');
+  if bo1 then begin
+   outinfo(@info,'push');
+  end
+  else begin
+   outinfo(@info,'branch');
+  end;
  end;
 
 var
@@ -180,18 +192,31 @@ handlelab:
    repeat
     if pc^.handle <> nil then begin
      pc^.handle(@info);
+     if pc^.pop then begin
+      stackindex:= contextstack[stackindex].parent;
+     end;
     end
     else begin
      if pc^.next = nil then begin
-      dec(stackindex);
+      if pc^.pop then begin
+       stackindex:= contextstack[stackindex].parent;
+      end
+      else begin
+       dec(stackindex);
+      end;
      end;
     end;
     if stackindex < 0 then begin
      break;
     end;
+    if pc^.popexe then begin
+     pc:= contextstack[stackindex].context;
+     outinfo(@info,'after0a');
+     goto handlelab;    
+    end;
     pc:= contextstack[stackindex].context;
     if pc^.next = nil then begin
-     outinfo(@info,'after0');
+     outinfo(@info,'after0b');
     end;
    until pc^.next <> nil;
    pc:= pc^.next;

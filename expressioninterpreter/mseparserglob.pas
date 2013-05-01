@@ -40,13 +40,16 @@ type
   c: pcontextty;
   e: boolean; //eat flag
   p: boolean; //push flag
-  s: boolean; //setparent flag
+  sb: boolean; //setparent before push flag
+  sa: boolean; //setparent after push flag
  end;
  pbranchty = ^branchty;
 
  contextty = record
   branch: pbranchty; //array
   handle: contexthandlerty;
+  pop: boolean;
+  popexe: boolean;
   next: pcontextty;
 //  setstackmark: boolean;
   caption: string;

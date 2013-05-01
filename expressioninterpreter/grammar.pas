@@ -28,709 +28,709 @@ uses
  msehandler;
  
 var
- mainco: contextty = (branch: nil; handle: nil; next: nil;
+ mainco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'main');
- constco: contextty = (branch: nil; handle: nil; next: nil;
+ constco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'const');
- const0co: contextty = (branch: nil; handle: nil; next: nil;
+ const0co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'const0');
- const1co: contextty = (branch: nil; handle: nil; next: nil;
+ const1co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'const1');
- const2co: contextty = (branch: nil; handle: nil; next: nil;
+ const2co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'const2');
- const3co: contextty = (branch: nil; handle: nil; next: nil;
+ const3co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'const3');
- statementendco: contextty = (branch: nil; handle: nil; next: nil;
+ statementendco: contextty = (branch: nil; handle: nil; pop: true; popexe: true; next: nil;
                caption: 'statementend');
- expco: contextty = (branch: nil; handle: nil; next: nil;
+ expco: contextty = (branch: nil; handle: nil; pop: true; popexe: false; next: nil;
                caption: 'exp');
- exp1co: contextty = (branch: nil; handle: nil; next: nil;
+ exp1co: contextty = (branch: nil; handle: nil; pop: true; popexe: false; next: nil;
                caption: 'exp1');
- equsimpexpco: contextty = (branch: nil; handle: nil; next: nil;
+ equsimpexpco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'equsimpexp');
- simpexpco: contextty = (branch: nil; handle: nil; next: nil;
+ simpexpco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'simpexp');
- simpexp1co: contextty = (branch: nil; handle: nil; next: nil;
+ simpexp1co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'simpexp1');
- addtermco: contextty = (branch: nil; handle: nil; next: nil;
+ addtermco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'addterm');
- termco: contextty = (branch: nil; handle: nil; next: nil;
+ termco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'term');
- term1co: contextty = (branch: nil; handle: nil; next: nil;
+ term1co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'term1');
- negtermco: contextty = (branch: nil; handle: nil; next: nil;
+ negtermco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'negterm');
- mulfactco: contextty = (branch: nil; handle: nil; next: nil;
+ mulfactco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'mulfact');
- num0co: contextty = (branch: nil; handle: nil; next: nil;
+ num0co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'num0');
- numco: contextty = (branch: nil; handle: nil; next: nil;
+ numco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'num');
- fracco: contextty = (branch: nil; handle: nil; next: nil;
+ fracco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'frac');
- identco: contextty = (branch: nil; handle: nil; next: nil;
+ identco: contextty = (branch: nil; handle: nil; pop: true; popexe: false; next: nil;
                caption: 'ident');
- identpathco: contextty = (branch: nil; handle: nil; next: nil;
+ identpathco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'identpath');
- identpath1co: contextty = (branch: nil; handle: nil; next: nil;
+ identpath1co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'identpath1');
- identpath2co: contextty = (branch: nil; handle: nil; next: nil;
+ identpath2co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'identpath2');
- valueidentifierco: contextty = (branch: nil; handle: nil; next: nil;
+ valueidentifierco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'valueidentifier');
- checkparamsco: contextty = (branch: nil; handle: nil; next: nil;
+ checkparamsco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'checkparams');
- paramsstart0co: contextty = (branch: nil; handle: nil; next: nil;
+ paramsstart0co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'paramsstart0');
- paramsstartco: contextty = (branch: nil; handle: nil; next: nil;
+ paramsstartco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'paramsstart');
- paramsendco: contextty = (branch: nil; handle: nil; next: nil;
+ paramsendco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'paramsend');
- paramsco: contextty = (branch: nil; handle: nil; next: nil;
+ paramsco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'params');
- params1co: contextty = (branch: nil; handle: nil; next: nil;
+ params1co: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'params1');
- bracketstartco: contextty = (branch: nil; handle: nil; next: nil;
+ bracketstartco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'bracketstart');
- bracketendco: contextty = (branch: nil; handle: nil; next: nil;
+ bracketendco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'bracketend');
- lnco: contextty = (branch: nil; handle: nil; next: nil;
+ lnco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'ln');
- exponentco: contextty = (branch: nil; handle: nil; next: nil;
+ exponentco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'exponent');
- negexponentco: contextty = (branch: nil; handle: nil; next: nil;
+ negexponentco: contextty = (branch: nil; handle: nil; pop: false; popexe: false; next: nil;
                caption: 'negexponent');
 
 const
  bmain: array[0..5] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'begin';c:@expco;e:true;p:true;s:false),
-  (t:'const';c:@constco;e:true;p:true;s:true),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'begin'; c:@expco; e:true; p:true; sb:false; sa:false),
+  (t:'const'; c:@constco; e:true; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bconst: array[0..1] of branchty = (
-  (t:'';c:@const0co;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@const0co; e:false; p:true; sb:false; sa:true),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bconst0: array[0..56] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'_';c:@identco;e:false;p:true;s:false),
-  (t:'a';c:@identco;e:false;p:true;s:false),
-  (t:'b';c:@identco;e:false;p:true;s:false),
-  (t:'c';c:@identco;e:false;p:true;s:false),
-  (t:'d';c:@identco;e:false;p:true;s:false),
-  (t:'e';c:@identco;e:false;p:true;s:false),
-  (t:'f';c:@identco;e:false;p:true;s:false),
-  (t:'g';c:@identco;e:false;p:true;s:false),
-  (t:'h';c:@identco;e:false;p:true;s:false),
-  (t:'i';c:@identco;e:false;p:true;s:false),
-  (t:'j';c:@identco;e:false;p:true;s:false),
-  (t:'k';c:@identco;e:false;p:true;s:false),
-  (t:'l';c:@identco;e:false;p:true;s:false),
-  (t:'m';c:@identco;e:false;p:true;s:false),
-  (t:'n';c:@identco;e:false;p:true;s:false),
-  (t:'o';c:@identco;e:false;p:true;s:false),
-  (t:'p';c:@identco;e:false;p:true;s:false),
-  (t:'q';c:@identco;e:false;p:true;s:false),
-  (t:'r';c:@identco;e:false;p:true;s:false),
-  (t:'s';c:@identco;e:false;p:true;s:false),
-  (t:'t';c:@identco;e:false;p:true;s:false),
-  (t:'u';c:@identco;e:false;p:true;s:false),
-  (t:'v';c:@identco;e:false;p:true;s:false),
-  (t:'w';c:@identco;e:false;p:true;s:false),
-  (t:'x';c:@identco;e:false;p:true;s:false),
-  (t:'y';c:@identco;e:false;p:true;s:false),
-  (t:'z';c:@identco;e:false;p:true;s:false),
-  (t:'A';c:@identco;e:false;p:true;s:false),
-  (t:'B';c:@identco;e:false;p:true;s:false),
-  (t:'C';c:@identco;e:false;p:true;s:false),
-  (t:'D';c:@identco;e:false;p:true;s:false),
-  (t:'E';c:@identco;e:false;p:true;s:false),
-  (t:'F';c:@identco;e:false;p:true;s:false),
-  (t:'G';c:@identco;e:false;p:true;s:false),
-  (t:'H';c:@identco;e:false;p:true;s:false),
-  (t:'I';c:@identco;e:false;p:true;s:false),
-  (t:'J';c:@identco;e:false;p:true;s:false),
-  (t:'K';c:@identco;e:false;p:true;s:false),
-  (t:'L';c:@identco;e:false;p:true;s:false),
-  (t:'M';c:@identco;e:false;p:true;s:false),
-  (t:'N';c:@identco;e:false;p:true;s:false),
-  (t:'O';c:@identco;e:false;p:true;s:false),
-  (t:'P';c:@identco;e:false;p:true;s:false),
-  (t:'Q';c:@identco;e:false;p:true;s:false),
-  (t:'R';c:@identco;e:false;p:true;s:false),
-  (t:'S';c:@identco;e:false;p:true;s:false),
-  (t:'T';c:@identco;e:false;p:true;s:false),
-  (t:'U';c:@identco;e:false;p:true;s:false),
-  (t:'V';c:@identco;e:false;p:true;s:false),
-  (t:'W';c:@identco;e:false;p:true;s:false),
-  (t:'X';c:@identco;e:false;p:true;s:false),
-  (t:'Y';c:@identco;e:false;p:true;s:false),
-  (t:'Z';c:@identco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'_'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'a'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'b'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'c'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'d'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'e'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'f'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'g'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'h'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'i'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'j'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'k'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'l'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'m'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'n'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'o'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'p'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'q'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'r'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'s'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'t'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'u'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'v'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'w'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'x'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'y'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'z'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'A'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'B'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'C'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'D'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'E'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'F'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'G'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'H'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'I'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'J'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'K'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'L'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'M'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'N'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'O'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'P'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'Q'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'R'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'S'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'T'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'U'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'V'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'W'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'X'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'Y'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:'Z'; c:@identco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bconst1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'=';c:@const2co;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'='; c:@const2co; e:false; p:false; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bconst2: array[0..1] of branchty = (
-  (t:'';c:@expco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@expco; e:false; p:true; sb:true; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bconst3: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:';';c:@statementendco;e:true;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:';'; c:@statementendco; e:true; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bexp: array[0..1] of branchty = (
-  (t:'';c:@simpexpco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@simpexpco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bexp1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'=';c:@equsimpexpco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'='; c:@equsimpexpco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bequsimpexp: array[0..1] of branchty = (
-  (t:'';c:@simpexpco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@simpexpco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bsimpexp: array[0..1] of branchty = (
-  (t:'';c:@termco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@termco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bsimpexp1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'+';c:@addtermco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'+'; c:@addtermco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  baddterm: array[0..1] of branchty = (
-  (t:'';c:@termco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@termco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bterm: array[0..69] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'+';c:nil;e:false;p:false;s:false),
-  (t:'-';c:@negtermco;e:false;p:true;s:false),
-  (t:'(';c:@bracketstartco;e:false;p:true;s:false),
-  (t:'0';c:@numco;e:false;p:true;s:false),
-  (t:'1';c:@numco;e:false;p:true;s:false),
-  (t:'2';c:@numco;e:false;p:true;s:false),
-  (t:'3';c:@numco;e:false;p:true;s:false),
-  (t:'4';c:@numco;e:false;p:true;s:false),
-  (t:'5';c:@numco;e:false;p:true;s:false),
-  (t:'6';c:@numco;e:false;p:true;s:false),
-  (t:'7';c:@numco;e:false;p:true;s:false),
-  (t:'8';c:@numco;e:false;p:true;s:false),
-  (t:'9';c:@numco;e:false;p:true;s:false),
-  (t:'_';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'a';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'b';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'c';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'d';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'e';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'f';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'g';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'h';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'i';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'j';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'k';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'l';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'m';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'n';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'o';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'p';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'q';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'r';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'s';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'t';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'u';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'v';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'w';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'x';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'y';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'z';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'A';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'B';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'C';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'D';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'E';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'F';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'G';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'H';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'I';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'J';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'K';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'L';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'M';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'N';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'O';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'P';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'Q';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'R';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'S';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'T';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'U';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'V';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'W';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'X';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'Y';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'Z';c:@valueidentifierco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'+'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'-'; c:@negtermco; e:false; p:true; sb:false; sa:false),
+  (t:'('; c:@bracketstartco; e:false; p:true; sb:false; sa:false),
+  (t:'0'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'1'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'2'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'3'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'4'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'5'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'6'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'7'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'8'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'9'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'_'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'a'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'b'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'c'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'d'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'e'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'f'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'g'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'h'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'i'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'j'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'k'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'l'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'m'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'n'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'o'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'p'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'q'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'r'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'s'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'t'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'u'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'v'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'w'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'x'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'y'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'z'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'A'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'B'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'C'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'D'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'E'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'F'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'G'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'H'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'I'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'J'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'K'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'L'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'M'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'N'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'O'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'P'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'Q'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'R'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'S'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'T'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'U'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'V'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'W'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'X'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'Y'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:'Z'; c:@valueidentifierco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bterm1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'*';c:@mulfactco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'*'; c:@mulfactco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bmulfact: array[0..17] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'+';c:nil;e:false;p:false;s:false),
-  (t:'-';c:@negtermco;e:false;p:true;s:false),
-  (t:'(';c:@bracketstartco;e:false;p:true;s:false),
-  (t:'0';c:@numco;e:false;p:true;s:false),
-  (t:'1';c:@numco;e:false;p:true;s:false),
-  (t:'2';c:@numco;e:false;p:true;s:false),
-  (t:'3';c:@numco;e:false;p:true;s:false),
-  (t:'4';c:@numco;e:false;p:true;s:false),
-  (t:'5';c:@numco;e:false;p:true;s:false),
-  (t:'6';c:@numco;e:false;p:true;s:false),
-  (t:'7';c:@numco;e:false;p:true;s:false),
-  (t:'8';c:@numco;e:false;p:true;s:false),
-  (t:'9';c:@numco;e:false;p:true;s:false),
-  (t:'ln';c:@lnco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'+'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'-'; c:@negtermco; e:false; p:true; sb:false; sa:false),
+  (t:'('; c:@bracketstartco; e:false; p:true; sb:false; sa:false),
+  (t:'0'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'1'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'2'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'3'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'4'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'5'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'6'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'7'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'8'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'9'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'ln'; c:@lnco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bnum0: array[0..11] of branchty = (
-  (t:'0';c:@numco;e:false;p:true;s:false),
-  (t:'1';c:@numco;e:false;p:true;s:false),
-  (t:'2';c:@numco;e:false;p:true;s:false),
-  (t:'3';c:@numco;e:false;p:true;s:false),
-  (t:'4';c:@numco;e:false;p:true;s:false),
-  (t:'5';c:@numco;e:false;p:true;s:false),
-  (t:'6';c:@numco;e:false;p:true;s:false),
-  (t:'7';c:@numco;e:false;p:true;s:false),
-  (t:'8';c:@numco;e:false;p:true;s:false),
-  (t:'9';c:@numco;e:false;p:true;s:false),
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'0'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'1'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'2'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'3'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'4'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'5'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'6'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'7'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'8'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'9'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bnum: array[0..11] of branchty = (
-  (t:'0';c:nil;e:false;p:false;s:false),
-  (t:'1';c:nil;e:false;p:false;s:false),
-  (t:'2';c:nil;e:false;p:false;s:false),
-  (t:'3';c:nil;e:false;p:false;s:false),
-  (t:'4';c:nil;e:false;p:false;s:false),
-  (t:'5';c:nil;e:false;p:false;s:false),
-  (t:'6';c:nil;e:false;p:false;s:false),
-  (t:'7';c:nil;e:false;p:false;s:false),
-  (t:'8';c:nil;e:false;p:false;s:false),
-  (t:'9';c:nil;e:false;p:false;s:false),
-  (t:'.';c:@fracco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'0'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'1'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'2'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'3'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'4'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'5'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'6'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'7'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'8'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'9'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'.'; c:@fracco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bfrac: array[0..12] of branchty = (
-  (t:'0';c:nil;e:false;p:false;s:false),
-  (t:'1';c:nil;e:false;p:false;s:false),
-  (t:'2';c:nil;e:false;p:false;s:false),
-  (t:'3';c:nil;e:false;p:false;s:false),
-  (t:'4';c:nil;e:false;p:false;s:false),
-  (t:'5';c:nil;e:false;p:false;s:false),
-  (t:'6';c:nil;e:false;p:false;s:false),
-  (t:'7';c:nil;e:false;p:false;s:false),
-  (t:'8';c:nil;e:false;p:false;s:false),
-  (t:'9';c:nil;e:false;p:false;s:false),
-  (t:'e';c:@exponentco;e:false;p:true;s:false),
-  (t:'E';c:@exponentco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'0'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'1'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'2'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'3'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'4'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'5'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'6'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'7'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'8'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'9'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'e'; c:@exponentco; e:false; p:true; sb:false; sa:false),
+  (t:'E'; c:@exponentco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bident: array[0..63] of branchty = (
-  (t:'_';c:nil;e:false;p:false;s:false),
-  (t:'a';c:nil;e:false;p:false;s:false),
-  (t:'b';c:nil;e:false;p:false;s:false),
-  (t:'c';c:nil;e:false;p:false;s:false),
-  (t:'d';c:nil;e:false;p:false;s:false),
-  (t:'e';c:nil;e:false;p:false;s:false),
-  (t:'f';c:nil;e:false;p:false;s:false),
-  (t:'g';c:nil;e:false;p:false;s:false),
-  (t:'h';c:nil;e:false;p:false;s:false),
-  (t:'i';c:nil;e:false;p:false;s:false),
-  (t:'j';c:nil;e:false;p:false;s:false),
-  (t:'k';c:nil;e:false;p:false;s:false),
-  (t:'l';c:nil;e:false;p:false;s:false),
-  (t:'m';c:nil;e:false;p:false;s:false),
-  (t:'n';c:nil;e:false;p:false;s:false),
-  (t:'o';c:nil;e:false;p:false;s:false),
-  (t:'p';c:nil;e:false;p:false;s:false),
-  (t:'q';c:nil;e:false;p:false;s:false),
-  (t:'r';c:nil;e:false;p:false;s:false),
-  (t:'s';c:nil;e:false;p:false;s:false),
-  (t:'t';c:nil;e:false;p:false;s:false),
-  (t:'u';c:nil;e:false;p:false;s:false),
-  (t:'v';c:nil;e:false;p:false;s:false),
-  (t:'w';c:nil;e:false;p:false;s:false),
-  (t:'x';c:nil;e:false;p:false;s:false),
-  (t:'y';c:nil;e:false;p:false;s:false),
-  (t:'z';c:nil;e:false;p:false;s:false),
-  (t:'A';c:nil;e:false;p:false;s:false),
-  (t:'B';c:nil;e:false;p:false;s:false),
-  (t:'C';c:nil;e:false;p:false;s:false),
-  (t:'D';c:nil;e:false;p:false;s:false),
-  (t:'E';c:nil;e:false;p:false;s:false),
-  (t:'F';c:nil;e:false;p:false;s:false),
-  (t:'G';c:nil;e:false;p:false;s:false),
-  (t:'H';c:nil;e:false;p:false;s:false),
-  (t:'I';c:nil;e:false;p:false;s:false),
-  (t:'J';c:nil;e:false;p:false;s:false),
-  (t:'K';c:nil;e:false;p:false;s:false),
-  (t:'L';c:nil;e:false;p:false;s:false),
-  (t:'M';c:nil;e:false;p:false;s:false),
-  (t:'N';c:nil;e:false;p:false;s:false),
-  (t:'O';c:nil;e:false;p:false;s:false),
-  (t:'P';c:nil;e:false;p:false;s:false),
-  (t:'Q';c:nil;e:false;p:false;s:false),
-  (t:'R';c:nil;e:false;p:false;s:false),
-  (t:'S';c:nil;e:false;p:false;s:false),
-  (t:'T';c:nil;e:false;p:false;s:false),
-  (t:'U';c:nil;e:false;p:false;s:false),
-  (t:'V';c:nil;e:false;p:false;s:false),
-  (t:'W';c:nil;e:false;p:false;s:false),
-  (t:'X';c:nil;e:false;p:false;s:false),
-  (t:'Y';c:nil;e:false;p:false;s:false),
-  (t:'Z';c:nil;e:false;p:false;s:false),
-  (t:'0';c:nil;e:false;p:false;s:false),
-  (t:'1';c:nil;e:false;p:false;s:false),
-  (t:'2';c:nil;e:false;p:false;s:false),
-  (t:'3';c:nil;e:false;p:false;s:false),
-  (t:'4';c:nil;e:false;p:false;s:false),
-  (t:'5';c:nil;e:false;p:false;s:false),
-  (t:'6';c:nil;e:false;p:false;s:false),
-  (t:'7';c:nil;e:false;p:false;s:false),
-  (t:'8';c:nil;e:false;p:false;s:false),
-  (t:'9';c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'_'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'a'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'b'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'c'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'d'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'e'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'f'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'g'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'h'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'i'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'j'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'k'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'l'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'m'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'n'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'o'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'p'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'r'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'s'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'t'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'u'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'v'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'w'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'x'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'A'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'B'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'C'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'D'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'E'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'F'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'G'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'H'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'I'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'J'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'K'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'L'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'M'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'N'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'O'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'P'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'R'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'S'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'T'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'U'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'V'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'W'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'X'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'0'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'1'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'2'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'3'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'4'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'5'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'6'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'7'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'8'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'9'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bidentpath: array[0..63] of branchty = (
-  (t:'_';c:nil;e:false;p:false;s:false),
-  (t:'a';c:nil;e:false;p:false;s:false),
-  (t:'b';c:nil;e:false;p:false;s:false),
-  (t:'c';c:nil;e:false;p:false;s:false),
-  (t:'d';c:nil;e:false;p:false;s:false),
-  (t:'e';c:nil;e:false;p:false;s:false),
-  (t:'f';c:nil;e:false;p:false;s:false),
-  (t:'g';c:nil;e:false;p:false;s:false),
-  (t:'h';c:nil;e:false;p:false;s:false),
-  (t:'i';c:nil;e:false;p:false;s:false),
-  (t:'j';c:nil;e:false;p:false;s:false),
-  (t:'k';c:nil;e:false;p:false;s:false),
-  (t:'l';c:nil;e:false;p:false;s:false),
-  (t:'m';c:nil;e:false;p:false;s:false),
-  (t:'n';c:nil;e:false;p:false;s:false),
-  (t:'o';c:nil;e:false;p:false;s:false),
-  (t:'p';c:nil;e:false;p:false;s:false),
-  (t:'q';c:nil;e:false;p:false;s:false),
-  (t:'r';c:nil;e:false;p:false;s:false),
-  (t:'s';c:nil;e:false;p:false;s:false),
-  (t:'t';c:nil;e:false;p:false;s:false),
-  (t:'u';c:nil;e:false;p:false;s:false),
-  (t:'v';c:nil;e:false;p:false;s:false),
-  (t:'w';c:nil;e:false;p:false;s:false),
-  (t:'x';c:nil;e:false;p:false;s:false),
-  (t:'y';c:nil;e:false;p:false;s:false),
-  (t:'z';c:nil;e:false;p:false;s:false),
-  (t:'A';c:nil;e:false;p:false;s:false),
-  (t:'B';c:nil;e:false;p:false;s:false),
-  (t:'C';c:nil;e:false;p:false;s:false),
-  (t:'D';c:nil;e:false;p:false;s:false),
-  (t:'E';c:nil;e:false;p:false;s:false),
-  (t:'F';c:nil;e:false;p:false;s:false),
-  (t:'G';c:nil;e:false;p:false;s:false),
-  (t:'H';c:nil;e:false;p:false;s:false),
-  (t:'I';c:nil;e:false;p:false;s:false),
-  (t:'J';c:nil;e:false;p:false;s:false),
-  (t:'K';c:nil;e:false;p:false;s:false),
-  (t:'L';c:nil;e:false;p:false;s:false),
-  (t:'M';c:nil;e:false;p:false;s:false),
-  (t:'N';c:nil;e:false;p:false;s:false),
-  (t:'O';c:nil;e:false;p:false;s:false),
-  (t:'P';c:nil;e:false;p:false;s:false),
-  (t:'Q';c:nil;e:false;p:false;s:false),
-  (t:'R';c:nil;e:false;p:false;s:false),
-  (t:'S';c:nil;e:false;p:false;s:false),
-  (t:'T';c:nil;e:false;p:false;s:false),
-  (t:'U';c:nil;e:false;p:false;s:false),
-  (t:'V';c:nil;e:false;p:false;s:false),
-  (t:'W';c:nil;e:false;p:false;s:false),
-  (t:'X';c:nil;e:false;p:false;s:false),
-  (t:'Y';c:nil;e:false;p:false;s:false),
-  (t:'Z';c:nil;e:false;p:false;s:false),
-  (t:'0';c:nil;e:false;p:false;s:false),
-  (t:'1';c:nil;e:false;p:false;s:false),
-  (t:'2';c:nil;e:false;p:false;s:false),
-  (t:'3';c:nil;e:false;p:false;s:false),
-  (t:'4';c:nil;e:false;p:false;s:false),
-  (t:'5';c:nil;e:false;p:false;s:false),
-  (t:'6';c:nil;e:false;p:false;s:false),
-  (t:'7';c:nil;e:false;p:false;s:false),
-  (t:'8';c:nil;e:false;p:false;s:false),
-  (t:'9';c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'_'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'a'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'b'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'c'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'d'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'e'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'f'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'g'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'h'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'i'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'j'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'k'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'l'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'m'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'n'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'o'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'p'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'r'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'s'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'t'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'u'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'v'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'w'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'x'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'A'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'B'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'C'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'D'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'E'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'F'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'G'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'H'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'I'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'J'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'K'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'L'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'M'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'N'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'O'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'P'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'R'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'S'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'T'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'U'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'V'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'W'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'X'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'0'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'1'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'2'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'3'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'4'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'5'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'6'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'7'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'8'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'9'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bidentpath1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'.';c:@identpath2co;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'.'; c:@identpath2co; e:false; p:false; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bidentpath2: array[0..56] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'_';c:@identpathco;e:false;p:true;s:false),
-  (t:'a';c:@identpathco;e:false;p:true;s:false),
-  (t:'b';c:@identpathco;e:false;p:true;s:false),
-  (t:'c';c:@identpathco;e:false;p:true;s:false),
-  (t:'d';c:@identpathco;e:false;p:true;s:false),
-  (t:'e';c:@identpathco;e:false;p:true;s:false),
-  (t:'f';c:@identpathco;e:false;p:true;s:false),
-  (t:'g';c:@identpathco;e:false;p:true;s:false),
-  (t:'h';c:@identpathco;e:false;p:true;s:false),
-  (t:'i';c:@identpathco;e:false;p:true;s:false),
-  (t:'j';c:@identpathco;e:false;p:true;s:false),
-  (t:'k';c:@identpathco;e:false;p:true;s:false),
-  (t:'l';c:@identpathco;e:false;p:true;s:false),
-  (t:'m';c:@identpathco;e:false;p:true;s:false),
-  (t:'n';c:@identpathco;e:false;p:true;s:false),
-  (t:'o';c:@identpathco;e:false;p:true;s:false),
-  (t:'p';c:@identpathco;e:false;p:true;s:false),
-  (t:'q';c:@identpathco;e:false;p:true;s:false),
-  (t:'r';c:@identpathco;e:false;p:true;s:false),
-  (t:'s';c:@identpathco;e:false;p:true;s:false),
-  (t:'t';c:@identpathco;e:false;p:true;s:false),
-  (t:'u';c:@identpathco;e:false;p:true;s:false),
-  (t:'v';c:@identpathco;e:false;p:true;s:false),
-  (t:'w';c:@identpathco;e:false;p:true;s:false),
-  (t:'x';c:@identpathco;e:false;p:true;s:false),
-  (t:'y';c:@identpathco;e:false;p:true;s:false),
-  (t:'z';c:@identpathco;e:false;p:true;s:false),
-  (t:'A';c:@identpathco;e:false;p:true;s:false),
-  (t:'B';c:@identpathco;e:false;p:true;s:false),
-  (t:'C';c:@identpathco;e:false;p:true;s:false),
-  (t:'D';c:@identpathco;e:false;p:true;s:false),
-  (t:'E';c:@identpathco;e:false;p:true;s:false),
-  (t:'F';c:@identpathco;e:false;p:true;s:false),
-  (t:'G';c:@identpathco;e:false;p:true;s:false),
-  (t:'H';c:@identpathco;e:false;p:true;s:false),
-  (t:'I';c:@identpathco;e:false;p:true;s:false),
-  (t:'J';c:@identpathco;e:false;p:true;s:false),
-  (t:'K';c:@identpathco;e:false;p:true;s:false),
-  (t:'L';c:@identpathco;e:false;p:true;s:false),
-  (t:'M';c:@identpathco;e:false;p:true;s:false),
-  (t:'N';c:@identpathco;e:false;p:true;s:false),
-  (t:'O';c:@identpathco;e:false;p:true;s:false),
-  (t:'P';c:@identpathco;e:false;p:true;s:false),
-  (t:'Q';c:@identpathco;e:false;p:true;s:false),
-  (t:'R';c:@identpathco;e:false;p:true;s:false),
-  (t:'S';c:@identpathco;e:false;p:true;s:false),
-  (t:'T';c:@identpathco;e:false;p:true;s:false),
-  (t:'U';c:@identpathco;e:false;p:true;s:false),
-  (t:'V';c:@identpathco;e:false;p:true;s:false),
-  (t:'W';c:@identpathco;e:false;p:true;s:false),
-  (t:'X';c:@identpathco;e:false;p:true;s:false),
-  (t:'Y';c:@identpathco;e:false;p:true;s:false),
-  (t:'Z';c:@identpathco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'_'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'a'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'b'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'c'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'d'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'e'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'f'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'g'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'h'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'i'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'j'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'k'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'l'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'m'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'n'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'o'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'p'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'q'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'r'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'s'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'t'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'u'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'v'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'w'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'x'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'y'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'z'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'A'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'B'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'C'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'D'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'E'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'F'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'G'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'H'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'I'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'J'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'K'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'L'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'M'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'N'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'O'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'P'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'Q'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'R'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'S'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'T'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'U'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'V'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'W'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'X'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'Y'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:'Z'; c:@identpathco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bvalueidentifier: array[0..63] of branchty = (
-  (t:'_';c:nil;e:false;p:false;s:false),
-  (t:'a';c:nil;e:false;p:false;s:false),
-  (t:'b';c:nil;e:false;p:false;s:false),
-  (t:'c';c:nil;e:false;p:false;s:false),
-  (t:'d';c:nil;e:false;p:false;s:false),
-  (t:'e';c:nil;e:false;p:false;s:false),
-  (t:'f';c:nil;e:false;p:false;s:false),
-  (t:'g';c:nil;e:false;p:false;s:false),
-  (t:'h';c:nil;e:false;p:false;s:false),
-  (t:'i';c:nil;e:false;p:false;s:false),
-  (t:'j';c:nil;e:false;p:false;s:false),
-  (t:'k';c:nil;e:false;p:false;s:false),
-  (t:'l';c:nil;e:false;p:false;s:false),
-  (t:'m';c:nil;e:false;p:false;s:false),
-  (t:'n';c:nil;e:false;p:false;s:false),
-  (t:'o';c:nil;e:false;p:false;s:false),
-  (t:'p';c:nil;e:false;p:false;s:false),
-  (t:'q';c:nil;e:false;p:false;s:false),
-  (t:'r';c:nil;e:false;p:false;s:false),
-  (t:'s';c:nil;e:false;p:false;s:false),
-  (t:'t';c:nil;e:false;p:false;s:false),
-  (t:'u';c:nil;e:false;p:false;s:false),
-  (t:'v';c:nil;e:false;p:false;s:false),
-  (t:'w';c:nil;e:false;p:false;s:false),
-  (t:'x';c:nil;e:false;p:false;s:false),
-  (t:'y';c:nil;e:false;p:false;s:false),
-  (t:'z';c:nil;e:false;p:false;s:false),
-  (t:'A';c:nil;e:false;p:false;s:false),
-  (t:'B';c:nil;e:false;p:false;s:false),
-  (t:'C';c:nil;e:false;p:false;s:false),
-  (t:'D';c:nil;e:false;p:false;s:false),
-  (t:'E';c:nil;e:false;p:false;s:false),
-  (t:'F';c:nil;e:false;p:false;s:false),
-  (t:'G';c:nil;e:false;p:false;s:false),
-  (t:'H';c:nil;e:false;p:false;s:false),
-  (t:'I';c:nil;e:false;p:false;s:false),
-  (t:'J';c:nil;e:false;p:false;s:false),
-  (t:'K';c:nil;e:false;p:false;s:false),
-  (t:'L';c:nil;e:false;p:false;s:false),
-  (t:'M';c:nil;e:false;p:false;s:false),
-  (t:'N';c:nil;e:false;p:false;s:false),
-  (t:'O';c:nil;e:false;p:false;s:false),
-  (t:'P';c:nil;e:false;p:false;s:false),
-  (t:'Q';c:nil;e:false;p:false;s:false),
-  (t:'R';c:nil;e:false;p:false;s:false),
-  (t:'S';c:nil;e:false;p:false;s:false),
-  (t:'T';c:nil;e:false;p:false;s:false),
-  (t:'U';c:nil;e:false;p:false;s:false),
-  (t:'V';c:nil;e:false;p:false;s:false),
-  (t:'W';c:nil;e:false;p:false;s:false),
-  (t:'X';c:nil;e:false;p:false;s:false),
-  (t:'Y';c:nil;e:false;p:false;s:false),
-  (t:'Z';c:nil;e:false;p:false;s:false),
-  (t:'0';c:nil;e:false;p:false;s:false),
-  (t:'1';c:nil;e:false;p:false;s:false),
-  (t:'2';c:nil;e:false;p:false;s:false),
-  (t:'3';c:nil;e:false;p:false;s:false),
-  (t:'4';c:nil;e:false;p:false;s:false),
-  (t:'5';c:nil;e:false;p:false;s:false),
-  (t:'6';c:nil;e:false;p:false;s:false),
-  (t:'7';c:nil;e:false;p:false;s:false),
-  (t:'8';c:nil;e:false;p:false;s:false),
-  (t:'9';c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'_'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'a'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'b'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'c'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'d'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'e'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'f'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'g'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'h'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'i'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'j'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'k'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'l'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'m'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'n'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'o'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'p'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'r'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'s'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'t'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'u'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'v'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'w'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'x'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'A'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'B'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'C'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'D'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'E'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'F'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'G'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'H'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'I'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'J'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'K'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'L'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'M'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'N'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'O'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'P'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Q'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'R'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'S'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'T'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'U'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'V'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'W'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'X'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Y'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'Z'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'0'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'1'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'2'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'3'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'4'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'5'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'6'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'7'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'8'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'9'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bcheckparams: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'(';c:@paramsstartco;e:false;p:true;s:true),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'('; c:@paramsstartco; e:false; p:true; sb:false; sa:true),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bparamsstart: array[0..1] of branchty = (
-  (t:'';c:@paramsco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@paramsco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bparamsend: array[0..3] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bparams: array[0..1] of branchty = (
-  (t:'';c:@simpexpco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@simpexpco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bparams1: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:',';c:@paramsco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:','; c:@paramsco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bbracketstart: array[0..1] of branchty = (
-  (t:'';c:@simpexpco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:''; c:@simpexpco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bbracketend: array[0..3] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bln: array[0..4] of branchty = (
-  (t:' ';c:nil;e:false;p:false;s:false),
-  (t:#$0d;c:nil;e:false;p:false;s:false),
-  (t:#$0a;c:nil;e:false;p:false;s:false),
-  (t:'(';c:@paramsstartco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:' '; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0d; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:#$0a; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'('; c:@paramsstartco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bexponent: array[0..12] of branchty = (
-  (t:'+';c:nil;e:false;p:false;s:false),
-  (t:'-';c:@negexponentco;e:false;p:true;s:false),
-  (t:'0';c:@numco;e:false;p:true;s:false),
-  (t:'1';c:@numco;e:false;p:true;s:false),
-  (t:'2';c:@numco;e:false;p:true;s:false),
-  (t:'3';c:@numco;e:false;p:true;s:false),
-  (t:'4';c:@numco;e:false;p:true;s:false),
-  (t:'5';c:@numco;e:false;p:true;s:false),
-  (t:'6';c:@numco;e:false;p:true;s:false),
-  (t:'7';c:@numco;e:false;p:true;s:false),
-  (t:'8';c:@numco;e:false;p:true;s:false),
-  (t:'9';c:@numco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'+'; c:nil; e:false; p:false; sb:false; sa: false),
+  (t:'-'; c:@negexponentco; e:false; p:true; sb:false; sa:false),
+  (t:'0'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'1'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'2'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'3'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'4'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'5'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'6'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'7'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'8'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'9'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
  bnegexponent: array[0..10] of branchty = (
-  (t:'0';c:@numco;e:false;p:true;s:false),
-  (t:'1';c:@numco;e:false;p:true;s:false),
-  (t:'2';c:@numco;e:false;p:true;s:false),
-  (t:'3';c:@numco;e:false;p:true;s:false),
-  (t:'4';c:@numco;e:false;p:true;s:false),
-  (t:'5';c:@numco;e:false;p:true;s:false),
-  (t:'6';c:@numco;e:false;p:true;s:false),
-  (t:'7';c:@numco;e:false;p:true;s:false),
-  (t:'8';c:@numco;e:false;p:true;s:false),
-  (t:'9';c:@numco;e:false;p:true;s:false),
-  (t:'';c:nil;e:false;p:false;s:false)
+  (t:'0'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'1'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'2'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'3'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'4'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'5'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'6'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'7'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'8'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:'9'; c:@numco; e:false; p:true; sb:false; sa:false),
+  (t:''; c:nil; e:false; p:false; sb:false; sa: false)
  );
 
 procedure init;
@@ -745,6 +745,8 @@ begin
  const2co.branch:= @bconst2;
  const2co.next:= @const3co;
  const3co.branch:= @bconst3;
+ const3co.next:= @const0co;
+ const3co.handle:= @handleconst3;
  statementendco.branch:= nil;
  statementendco.handle:= @handlestatementend;
  expco.branch:= @bexp;

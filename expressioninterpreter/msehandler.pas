@@ -27,6 +27,7 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
 procedure dummyhandler(const info: pparseinfoty);
 procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
+procedure handleconst3(const info: pparseinfoty);
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
@@ -603,7 +604,7 @@ begin
   ident:= getident(start,source);
   dec(stackindex);
  end;
- outhandle(info,'IDENTIFIER');
+ outhandle(info,'IDENT');
 end;
 
 procedure handleidentpath(const info: pparseinfoty);
@@ -615,7 +616,6 @@ procedure handlestatementend(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_end;
-  stackindex:= parent;
  end;
  outhandle(info,'STATEMENTEND');
 end;
@@ -659,13 +659,22 @@ begin
  outhandle(info,'CONST0');
 end;
 
+procedure handleconst3(const info: pparseinfoty);
+begin
+ with info^ do begin
+//  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'CONST3');
+end;
+
 procedure handleexp(const info: pparseinfoty);
 begin
  with info^ do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(info^.stacktop);
-  info^.stackindex:= info^.stacktop;
-  dec(stackindex);
+//  info^.stackindex:= info^.stacktop;
+//  dec(stackindex);
  end;
  outhandle(info,'EXP');
 end;

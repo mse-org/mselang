@@ -89,8 +89,8 @@ var
  end;
 const
  branchformat = 
-  'Format of branch is "''string'',{''string'',}context[-][*][!]"';
- defaultflags = 'e:false;p:false;s:false';
+  'Format of branch is "''string'',{''string'',}context[-][[^][*] | [*][^]]"';
+ defaultflags = ' e:false; p:false; sb:false; sa: false';
 var
  ar1: stringarty;
 // mstr1: msestring;
@@ -98,6 +98,7 @@ var
  int1,int2: integer;
  po1,po2,po3: pchar;
  intokendef: boolean;
+ setbefore,setafter: boolean;
 begin
  application.terminated:= true;
  try
@@ -159,7 +160,7 @@ begin
          context:= str1;
          contextline:= splitstring(context,',',true);
          if length(contextline) <> 3 then begin
-          error('Format of contextline is "context,next,handler"');
+          error('Format of contextline is "context,next,handler[^|!]"');
           exit;
          end;
          branchcount:= 0;
@@ -269,8 +270,21 @@ begin
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '^') then begin
+     setlength(cont[2],length(cont[2])-1);
+     str2:= 'pop: true; popexe: false; ';
+    end
+    else begin
+     if (cont[2] <> '') and (cont[2][length(cont[2])] = '!') then begin
+      setlength(cont[2],length(cont[2])-1);
+      str2:= 'pop: true; popexe: true; ';
+     end
+     else begin
+      str2:= 'pop: false; popexe: false; ';
+     end;
+    end;
     str1:= str1+
-' '+cont[0]+'co: contextty = (branch: nil; handle: nil; next: nil;'+lineend+
+' '+cont[0]+'co: contextty = (branch: nil; handle: nil; '+str2+'next: nil;'+lineend+
 '               caption: '''+cont[0]+''');'+lineend;
    end;
   end;
@@ -284,30 +298,47 @@ lineend+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
       str1:= str1+
-'  (t:'+bran[int2][0]+';c:';
+'  (t:'+bran[int2][0]+'; c:';
       if bran[int2][1] <> '' then begin
        str2:= bran[int2][1];
        str3:= '';
-       if str2[length(str2)] = '!' then begin
-        str3:= ';s:true'+str3;
+       setbefore:= false;
+       setafter:= false;
+       if str2[length(str2)] = '^' then begin
+        setbefore:= true;
         setlength(str2,length(str2)-1);
-       end
-       else begin
-        str3:= ';s:false'+str3;
        end;
        if str2[length(str2)] = '*' then begin
-        str3:= ';p:true'+str3;
+        setafter:= setbefore;
+        setbefore:= false;
+        str3:= '; p:true'+str3;
         setlength(str2,length(str2)-1);
+        if str2[length(str2)] = '^' then begin
+         setbefore:= true;
+         setlength(str2,length(str2)-1);
+        end;
        end
        else begin
-        str3:= ';p:false'+str3;
+        str3:= '; p:false'+str3;
        end;
+       if setbefore then begin
+        str3:= str3+'; sb:true; sa:false';
+       end
+       else begin
+        if setafter then begin
+         str3:= str3+'; sb:false; sa:true';
+        end
+        else begin
+         str3:= str3+'; sb:false; sa:false';
+        end;
+       end;
+
        if str2[length(str2)] = '-' then begin
-        str3:= ';e:true'+str3;
+        str3:= '; e:true'+str3;
         setlength(str2,length(str2)-1);
        end
        else begin
-        str3:= ';e:false'+str3;
+        str3:= '; e:false'+str3;
        end;
        str1:= str1+'@'+str2+'co'+str3+'),';
       end
@@ -317,7 +348,7 @@ lineend+
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:'''';c:nil;'+defaultflags+')'+lineend+
+'  (t:''''; c:nil;'+defaultflags+')'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;
