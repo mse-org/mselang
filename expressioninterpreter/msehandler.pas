@@ -63,6 +63,8 @@ procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
 procedure handlecheckparams(const info: pparseinfoty);
 
+procedure handleassignment(const info: pparseinfoty);
+
 implementation
 uses
  msestackops,msestrings,mseelements;
@@ -679,7 +681,7 @@ begin
   kind:= ck_ident;
   identlen:= source-start;
   ident:= getident(start,identlen);
-  dec(stackindex);
+//  dec(stackindex);
  end;
  outhandle(info,'IDENT');
 end;
@@ -843,6 +845,40 @@ begin
  outcommand(info,[-2,0],'=');
  writeop(info,addops[pushvalues(info)]);
  outhandle(info,'EQUSIMPEXP');
+end;
+
+procedure handleassignment(const info: pparseinfoty);
+ procedure varexpected;
+ begin
+  parsererror(info,'variable expected HANDLEASSIGNMENT');
+ end; //varexpected
+ 
+var
+ po1: pelementinfoty;
+begin
+ with info^ do begin
+  if (stacktop-stackindex > 0) and
+                  (contextstack[stackindex+1].d.kind = ck_ident) then begin
+   po1:= findelement(contextstack[stackindex+1].d.ident);
+   if (po1 <> nil) and (po1^.header.kind = ek_context) then begin
+    with pcontextdataty(@po1^.data)^ do begin
+     if kind = ck_var then begin
+     end
+     else begin
+      varexpected;
+     end;
+    end;
+   end
+   else begin
+    varexpected;
+   end;
+  end
+  else begin
+   varexpected;
+  end;                  
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
 end;
 
 end.

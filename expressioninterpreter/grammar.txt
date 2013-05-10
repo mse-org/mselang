@@ -16,6 +16,13 @@ main,main,handlemain
 exeblock,,*
  @whitespace,
  'end',*
+ @identstart,statement0*
+statement0,statement1,
+ '',ident^*
+statement1,,
+ ':=',assignment
+assignment,,handleassignment
+ '',exp*
 const,,handleconst
  '',const0*^
 const0,const1,

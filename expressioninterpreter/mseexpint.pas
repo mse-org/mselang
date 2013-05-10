@@ -20,6 +20,9 @@ uses
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
 
+//
+//todo: move context-end flag handling to handler procedures.
+//
 
 procedure outinfo(const info: pparseinfoty; const text: string);
 var
