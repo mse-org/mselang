@@ -13,7 +13,7 @@ main,main,handlemain
  'begin',exeblock-*
  'const',const-*
  'var',var-*
-exeblock,,
+exeblock,,*
  @whitespace,
  'end',*
 const,,handleconst

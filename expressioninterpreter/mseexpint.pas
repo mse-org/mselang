@@ -184,6 +184,10 @@ begin
         until pointer(pb^.t) <> nil;
        end;
        source:= po1;
+       if (pb^.c = nil) and pb^.p then begin
+//        stacktop:= stackindex;
+        break;
+       end;
        pb:= pc^.branch; //restart
        continue;
       end;
@@ -214,6 +218,9 @@ handlelab:
        dec(stackindex);
       end;
      end;
+    end;
+    if pc^.cut then begin
+     stacktop:= stackindex;
     end;
     if stackindex < 0 then begin
      break;

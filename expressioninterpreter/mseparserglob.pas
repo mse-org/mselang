@@ -52,6 +52,7 @@ type
  contextty = record
   branch: pbranchty; //array
   handle: contexthandlerty;
+  cut: boolean;
   restoresource: boolean;
   pop: boolean;
   popexe: boolean;

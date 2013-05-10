@@ -25,16 +25,19 @@ uses
 @<tokendef>
  <pascalstring>{,<pascalstring>}
 <handler_usesdef>
-<context>,[<next>][-],[<handler>][^|!][+]
+<context>,[<next>][-],[<handler>][^|!][+][*]
  - -> eat text
  ^ -> pop parent
  + -> restore source pointer
  ! -> pop parent and execute handler
+ * -> stackindex -> stacktop
+
  <pascalstring>|@<tokendef>{,pascalstring|@<tokendef>},
-                                        [context[-][[^][*] | [*][^]]]
+                                        [[<context>][-][[^][*] | [*][^]]]
  - -> eat token
- ^ set parent
- * push context
+ <context>^ -> set parent
+ <context>* -> push context
+ * -> terminate context
 *)
 
 type
@@ -287,12 +290,19 @@ begin
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '+') then begin
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '*') then begin
      setlength(cont[2],length(cont[2])-1);
-     str2:= 'restoresource: true; ';
+     str2:= 'cut: true; ';
     end
     else begin
-     str2:= 'restoresource: false; ';
+     str2:= 'cut: false; ';
+    end;
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '+') then begin
+     setlength(cont[2],length(cont[2])-1);
+     str2:= str2+'restoresource: true; ';
+    end
+    else begin
+     str2:= str2+'restoresource: false; ';
     end;
     if (cont[2] <> '') and (cont[2][length(cont[2])] = '^') then begin
      setlength(cont[2],length(cont[2])-1);
