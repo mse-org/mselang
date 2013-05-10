@@ -8,23 +8,42 @@
 @num
  '0','1','2','3','4','5','6','7','8','9'
 msehandler
-main,,handlemain
+main,main,handlemain
  @whitespace,
- 'begin',exp-*
+ 'begin',exeblock-*
  'const',const-*
+ 'var',var-*
+exeblock,,
+ @whitespace,
+ 'end',*
 const,,handleconst
  '',const0*^
 const0,const1,
  @whitespace,
  @identstart,ident*
-const1,,
+const1,,+
  @whitespace,
- '=',const2
+ '=',const2-
 const2,const3,
  '',exp^*
-const3,const0,handleconst3
+const3,const0-,handleconst3
  @whitespace,
  ';',statementend-*
+var,,handlevar
+ '',var0*^
+var0,var1,
+ @whitespace,
+ @identstart,ident*
+var1,,+
+ @whitespace,
+ ':',var2-
+var2,var3,
+ @whitespace,
+ @identstart,ident*
+var3,var0-,handlevar3
+ @whitespace,
+ ';',statementend-*
+#
 statementend,,handlestatementend!
 exp,exp1,handleexp^
  '',simpexp*

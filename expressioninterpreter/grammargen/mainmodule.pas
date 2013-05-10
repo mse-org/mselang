@@ -20,6 +20,23 @@ interface
 uses
  mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv;
 
+(*
+#<comment>
+@<tokendef>
+ <pascalstring>{,<pascalstring>}
+<handler_usesdef>
+<context>,[<next>][-],[<handler>][^|!][+]
+ - -> eat text
+ ^ -> pop parent
+ + -> restore source pointer
+ ! -> pop parent and execute handler
+ <pascalstring>|@<tokendef>{,pascalstring|@<tokendef>},
+                                        [context[-][[^][*] | [*][^]]]
+ - -> eat token
+ ^ set parent
+ * push context
+*)
+
 type
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -160,7 +177,7 @@ begin
          context:= str1;
          contextline:= splitstring(context,',',true);
          if length(contextline) <> 3 then begin
-          error('Format of contextline is "context,next,handler[^|!]"');
+          error('Format of contextline is "context,next[-],handler[^|!]"');
           exit;
          end;
          branchcount:= 0;
@@ -270,21 +287,36 @@ begin
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '+') then begin
+     setlength(cont[2],length(cont[2])-1);
+     str2:= 'restoresource: true; ';
+    end
+    else begin
+     str2:= 'restoresource: false; ';
+    end;
     if (cont[2] <> '') and (cont[2][length(cont[2])] = '^') then begin
      setlength(cont[2],length(cont[2])-1);
-     str2:= 'pop: true; popexe: false; ';
+     str2:= str2+'pop: true; popexe: false; ';
     end
     else begin
      if (cont[2] <> '') and (cont[2][length(cont[2])] = '!') then begin
       setlength(cont[2],length(cont[2])-1);
-      str2:= 'pop: true; popexe: true; ';
+      str2:= str2+'pop: true; popexe: true; ';
      end
      else begin
-      str2:= 'pop: false; popexe: false; ';
+      str2:= str2+'pop: false; popexe: false; ';
      end;
     end;
+    if (cont[1] <> '') and (cont[1][length(cont[1])] = '-') then begin
+     setlength(cont[1],length(cont[1])-1);
+     str2:= str2+'nexteat: true; ';
+    end
+    else begin
+     str2:= str2+'nexteat: false; ';
+    end;
     str1:= str1+
-' '+cont[0]+'co: contextty = (branch: nil; handle: nil; '+str2+'next: nil;'+lineend+
+' '+cont[0]+'co: contextty = (branch: nil; handle: nil; '+lineend+
+'               '+str2+'next: nil;'+lineend+
 '               caption: '''+cont[0]+''');'+lineend;
    end;
   end;
@@ -304,16 +336,16 @@ lineend+
        str3:= '';
        setbefore:= false;
        setafter:= false;
-       if str2[length(str2)] = '^' then begin
+       if (str2 <> '') and (str2[length(str2)] = '^') then begin
         setbefore:= true;
         setlength(str2,length(str2)-1);
        end;
-       if str2[length(str2)] = '*' then begin
+       if (str2 <> '') and (str2[length(str2)] = '*') then begin
         setafter:= setbefore;
         setbefore:= false;
         str3:= '; p:true'+str3;
         setlength(str2,length(str2)-1);
-        if str2[length(str2)] = '^' then begin
+        if (str2 <> '') and (str2[length(str2)] = '^') then begin
          setbefore:= true;
          setlength(str2,length(str2)-1);
         end;
@@ -333,14 +365,19 @@ lineend+
         end;
        end;
 
-       if str2[length(str2)] = '-' then begin
+       if (str2 <> '') and (str2[length(str2)] = '-') then begin
         str3:= '; e:true'+str3;
         setlength(str2,length(str2)-1);
        end
        else begin
         str3:= '; e:false'+str3;
        end;
-       str1:= str1+'@'+str2+'co'+str3+'),';
+       if str2 <> '' then begin
+        str1:= str1+'@'+str2+'co'+str3+'),';
+       end
+       else begin
+        str1:= str1+'nil'+str3+'),';
+       end;
       end
       else begin
        str1:= str1+'nil;'+defaultflags+'),';

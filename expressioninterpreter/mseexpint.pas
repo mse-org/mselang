@@ -15,7 +15,7 @@ function parse(const input: string; const acommand: ttextstream): opinfoarty;
 
 implementation
 uses
- typinfo,grammar,{msegrammar,}msehandler;
+ typinfo,grammar,{msegrammar,}msehandler,mseelements;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -131,10 +131,15 @@ var
 
 var
  po1,po2: pchar;
+ pc1: pcontextty;
+ 
 label
  handlelab;
 begin
  result:= nil;
+ mseelements.clear;
+ initparser;
+ 
  with info do begin
   command:= acommand;
   source:= pchar(input);
@@ -190,6 +195,10 @@ begin
 handlelab:
    writeln('***');
    repeat
+    pc1:= pc;
+    if pc1^.restoresource then begin
+     source:= contextstack[stackindex].start;
+    end;
     if pc^.handle <> nil then begin
      pc^.handle(@info);
      if pc^.pop then begin
@@ -209,23 +218,26 @@ handlelab:
     if stackindex < 0 then begin
      break;
     end;
-    if pc^.popexe then begin
-     pc:= contextstack[stackindex].context;
+    pc:= contextstack[stackindex].context;
+    if pc1^.popexe then begin
      outinfo(@info,'after0a');
      goto handlelab;    
     end;
-    pc:= contextstack[stackindex].context;
     if pc^.next = nil then begin
      outinfo(@info,'after0b');
     end;
    until pc^.next <> nil;
-   pc:= pc^.next;
    with contextstack[stackindex] do begin
+    if pc^.nexteat then begin
+     start:= source;
+    end;
+    pc:= pc^.next;
     context:= pc;
 //    kind:= ck_none;
    end;
    outinfo(@info,'after1');
   end;
+ {
   while stackindex >= 0 do begin
    with contextstack[stackindex].context^ do begin
     if handle <> nil then begin
@@ -237,6 +249,7 @@ handlelab:
    end;
    outinfo(@info,'after2');
   end;
+ }
   {
   with contextstack[0].context^ do begin
    if handle <> nil then begin

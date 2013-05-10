@@ -102,7 +102,7 @@ begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
  intdi.value:= getident(lstr1);
- addi.value:= pushelement(intdi.value,sizeof(elementinfoty)) <> nil;
+ addi.value:= pushelement(intdi.value,ek_none,0) <> nil;
  dump;
 end;
 
@@ -116,7 +116,7 @@ begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
  intdi.value:= getident(lstr1);
- po1:= addelement(intdi.value,sizeof(elementinfoty)); 
+ po1:= addelement(intdi.value,ek_none,0); 
  addi.value:= po1 <> nil;
  dump;
 end;

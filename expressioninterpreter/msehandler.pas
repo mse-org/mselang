@@ -20,14 +20,22 @@ interface
 uses
  mseparserglob,typinfo;
 
+procedure initparser;
+
 procedure push(const info: pparseinfoty; const avalue: real); overload;
 procedure push(const info: pparseinfoty; const avalue: integer); overload;
 procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
+
 procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
+
+procedure handlevar(const info: pparseinfoty);
+procedure handlevar0(const info: pparseinfoty);
+procedure handlevar3(const info: pparseinfoty);
+
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
@@ -65,6 +73,74 @@ const
  bool8kinds = [ck_bool8const,ck_bool8fact];
  int32kinds = [ck_int32const,ck_int32fact];
  flo64kinds = [ck_flo64const,ck_flo64fact];
+
+type
+ systypesty = (st_integer);
+ typedataty = record
+  size: integer;
+ end;
+ ptypedataty = ^typedataty;
+ typeinfoty = record
+  name: string;
+  data: typedataty;
+ end;
+ 
+const
+ systypeinfos: array[systypesty] of typeinfoty = (
+  (name: 'integer'; data: (size: 4))
+  );
+ 
+var
+ varpo: pointer;
+
+function getvaraddress(const asize: integer): pointer;
+begin
+ result:= varpo;
+ inc(varpo,asize);
+end;
+ 
+procedure initparser;
+var
+ ty1: systypesty;
+ po1: pelementinfoty;
+begin
+ varpo:= nil;
+ for ty1:= low(systypesty) to high(systypesty) do begin
+  with systypeinfos[ty1] do begin
+   po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
+   ptypedataty(@po1^.data)^:= data;
+  end;
+ end;
+end;
+
+procedure parsererror(const info: pparseinfoty; const text: string);
+begin
+ with info^ do begin
+  contextstack[stackindex].d.kind:= ck_error;
+  writeln(' ***ERROR*** '+text);
+ end; 
+end;
+
+procedure identexisterror(const info: contextitemty; const text: string);
+begin
+ writeln(' ***ERROR*** ident '+lstringtostring(info.start,info.d.identlen)+
+                   ' exsts. '+text);
+end;
+
+procedure identnotfounderror(const info: contextitemty; const text: string);
+begin
+ writeln(' ***ERROR*** ident '+lstringtostring(info.start,info.d.identlen)+
+                   ' not found. '+text);
+end;
+
+procedure wrongidentkinderror(const info: contextitemty; 
+       wantedtype: elementkindty; const text: string);
+begin
+ writeln(' ***ERROR*** wrong ident kind '+lstringtostring(info.start,info.d.identlen)+
+                   ', expected '+
+         getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
+end;
+
  
 procedure outhandle(const info: pparseinfoty; const text: string);
 begin
@@ -480,8 +556,8 @@ end;
 
 const
  negops: array[contextkindty] of opty = (
-  //ck_none, ck_end,  ck_ident,ck_neg, 
-    @dummyop,@dummyop,@dummyop,@dummyop,
+  //ck_none, ck_error,ck_end,  ck_ident,ck_var,  ck_neg, 
+    @dummyop,@dummyop,@dummyop,@dummyop,@dummyop,@dummyop,
   //ck_bool8const,ck_int32const,ck_flo64const,
     @dummyop,     @negint32,    @negflo64,
   //ck_boo8fact,ck_int32fact,ck_flo64fact
@@ -601,7 +677,8 @@ procedure handleident(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_ident;
-  ident:= getident(start,source);
+  identlen:= source-start;
+  ident:= getident(start,identlen);
   dec(stackindex);
  end;
  outhandle(info,'IDENT');
@@ -660,12 +737,83 @@ begin
 end;
 
 procedure handleconst3(const info: pparseinfoty);
+var
+ po1: pelementinfoty;
 begin
  with info^ do begin
-//  dec(stackindex);
+  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
+       (contextstack[stacktop-1].d.kind in constkinds) and
+       (contextstack[stacktop-2].d.kind = ck_ident) then begin
+   with contextstack[stacktop-2].d do begin
+    po1:= addelement(ident,ek_context,elesize+sizeof(contextdataty));
+    if po1 = nil then begin
+     identexisterror(contextstack[stacktop-2],'CONST3');
+    end
+    else begin
+     pcontextdataty(@po1^.data)^:= contextstack[stacktop-1].d;
+    end;
+   end;
+  end
+  else begin
+   parsererror(info,'CONST3');
+  end;
   stacktop:= stackindex;
  end;
  outhandle(info,'CONST3');
+end;
+
+
+procedure handlevar(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop] do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'VAR');
+end;
+
+procedure handlevar0(const info: pparseinfoty);
+begin
+ outhandle(info,'VAR0');
+end;
+
+procedure handlevar3(const info: pparseinfoty);
+var
+ po1,po2: pelementinfoty;
+begin
+ with info^ do begin
+  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
+       (contextstack[stacktop-1].d.kind = ck_ident) and
+       (contextstack[stacktop-2].d.kind = ck_ident) then begin
+   po1:= addelement(contextstack[stacktop-2].d.ident,ek_context,
+                                        elesize+sizeof(contextdataty));
+   if po1 = nil then begin
+    identexisterror(contextstack[stacktop-2],'VAR3');
+   end
+   else begin
+    po2:= findelement(contextstack[stacktop-1].d.ident);
+    if po2 = nil then begin
+     identnotfounderror(contextstack[stacktop-1],'VAR3');
+    end
+    else begin
+     if po2^.header.kind <> ek_type then begin
+      wrongidentkinderror(contextstack[stacktop-1],ek_type,'VAR3');
+     end
+     else begin
+      with pcontextdataty(@po1^.data)^ do begin
+       kind:= ck_var;
+       varaddress:= getvaraddress(ptypedataty(@po2^.data)^.size);
+      end;
+     end;
+    end;
+   end;
+  end
+  else begin
+   parsererror(info,'VAR3');
+  end;
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'VAR3');
 end;
 
 procedure handleexp(const info: pparseinfoty);

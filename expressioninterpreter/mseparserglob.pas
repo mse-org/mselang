@@ -24,13 +24,17 @@ const
  defaultstackdepht = 256;
 
 type 
- contextkindty = (ck_none,ck_end,ck_ident,
+ contextkindty = (ck_none,ck_error,
+                  ck_end,ck_ident,ck_var,
                   ck_neg,
                   ck_bool8const,ck_int32const,ck_flo64const,
                   ck_bool8fact,ck_int32fact,ck_flo64fact);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
+const
+ constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
 
+type
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure(const info: pparseinfoty);
 
@@ -48,8 +52,10 @@ type
  contextty = record
   branch: pbranchty; //array
   handle: contexthandlerty;
+  restoresource: boolean;
   pop: boolean;
   popexe: boolean;
+  nexteat: boolean;
   next: pcontextty;
 //  setstackmark: boolean;
   caption: string;
@@ -63,10 +69,20 @@ type
  flo64constty = record
   value: double;
  end;
+ {
+ constkindty = (cok_bool8,cok_int32,cok_flo64);
+ constdataty = record
+  case kind: constkindty of
+   cok_bool8: (bool8: bool8constty);
+   cok_int32: (int32: int32constty);
+   cok_flo64: (flo64: flo64constty);
+ end;
+ }
  contextdataty = record
   case kind: contextkindty of 
    ck_ident:(
     ident: identty;
+    identlen: integer
    );
    ck_bool8const:(
     bool8const: bool8constty;
@@ -76,8 +92,12 @@ type
    );
    ck_flo64const:(
     flo64const: flo64constty;
+   );
+   ck_var:(
+    varaddress: pointer;
    )
  end;
+ pcontextdataty = ^contextdataty;
  contextitemty = record
   parent: integer;
   context: pcontextty;
@@ -129,4 +149,5 @@ type
  end;
 
 implementation
+
 end.

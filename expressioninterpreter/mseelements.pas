@@ -23,17 +23,20 @@ unit mseelements;
 interface
 uses
  msestrings,msetypes;
+
 {$define mse_debug_parser}
 
 type
  identty = integer;
  identarty = integerarty;
  elementoffsetty = integer;
+ elementkindty = (ek_none,ek_context,ek_type);
  
  elementheaderty = record
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
+  kind: elementkindty;
  end;
  
  elementinfoty = record
@@ -43,15 +46,19 @@ type
  end;
  pelementinfoty = ^elementinfoty;
  
+const
+ elesize = sizeof(elementinfoty);
+ 
 procedure clear;
 
 function getident(const astart,astop: pchar): identty; overload;
 function getident(const aname: lstringty): identty; overload;
+function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
-function pushelement(const aname: identty; 
+function pushelement(const aname: identty;  const akind: elementkindty;
                const asize: integer): pelementinfoty; //nil if duplicate
 function popelement: pelementinfoty;
-function addelement(const aname: identty; 
+function addelement(const aname: identty;  const akind: elementkindty;
            const asize: integer): pelementinfoty;   //nil if duplicate
 
 function findelement(const aname: identty): pelementinfoty; //nil if not found
@@ -156,7 +163,7 @@ begin
 {$ifdef mse_debug_parser}
  identnames:= nil;
 {$endif}
- pushelement(getident(''),sizeof(elementinfoty)); //root
+ pushelement(getident(''),ek_none,elesize); //root
 end;
 
 function dumpelements: msestringarty;
@@ -208,7 +215,8 @@ begin
  end;
 end;
 
-function pushelement(const aname: identty; const asize: integer): pelementinfoty;
+function pushelement(const aname: identty; const akind: elementkindty;
+                                        const asize: integer): pelementinfoty;
 var
  ele1: elementoffsetty;
 begin
@@ -233,7 +241,7 @@ begin
  end;
 end;
 
-function addelement(const aname: identty; 
+function addelement(const aname: identty; const akind: elementkindty;
            const asize: integer): pelementinfoty; //nil if duplicate
 var
  ele1: elementoffsetty;
@@ -252,6 +260,7 @@ begin
    parent:= elementparent;
    path:= elementpath;
    name:= aname;
+   kind:= akind;
   end; 
   elementlist.addelement(elementpath+aname,ele1);
  end;
@@ -340,6 +349,15 @@ end;
 function getident(const aname: lstringty): identty;
 begin
  result:= identlist.getident(aname);
+end;
+
+function getident(const aname: pchar; const alen: integer): identty;
+var
+ lstr1: lstringty;
+begin
+ lstr1.po:= aname;
+ lstr1.len:= alen;
+ result:= identlist.getident(lstr1);
 end;
 
 function getident(const astart,astop: pchar): identty;
