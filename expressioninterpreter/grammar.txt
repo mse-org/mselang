@@ -13,8 +13,9 @@ main,main,handlemain
  'begin',exeblock-*
  'const',const-*
  'var',var-*
-exeblock,,*
+exeblock,exeblock,*
  @whitespace,
+ ';',
  'end',*
  @identstart,statement0*
 statement0,statement1,
@@ -103,9 +104,9 @@ identpath1,,
 identpath2,,
  @whitespace,
  @identstart,identpath*
-valueidentifier,checkparams,handleidentpath
- @identstart,@num,
-checkparams,,handlecheckparams
+valueidentifier,checkparams,handlevalueidentifier
+ '',ident^*
+checkparams,,handlevalueidentifier
  @whitespace,
  '(',paramsstart*^
 paramsstart0,paramsstart,handleparamstart0

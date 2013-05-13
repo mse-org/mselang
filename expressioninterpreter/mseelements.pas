@@ -61,7 +61,8 @@ function popelement: pelementinfoty;
 function addelement(const aname: identty;  const akind: elementkindty;
            const asize: integer): pelementinfoty;   //nil if duplicate
 
-function findelement(const aname: identty): pelementinfoty; //nil if not found
+function findelement(const aname: identty): pelementinfoty;
+                                            //nil if not found
 function findelementupward(const aname: identty): pelementinfoty; overload;
                                                     //nil if not found
 function findelementupward(const aname: identty;

@@ -19,6 +19,21 @@ unit mseparserglob;
 interface
 uses
  msestream,mseelements;
+
+type
+ uint8 = byte; 
+ uint16 = word;
+ uint32 = longword;
+ sint8 = shortint; 
+ sint16 = smallint;
+ sint32 = integer;
+
+ puint8 = ^uint8; 
+ puint16 = ^uint16;
+ puint32 = ^uint32;
+ psint8 = ^sint8; 
+ psint16 = ^sint16;
+ psint32 = ^sint32;
  
 const
  defaultstackdepht = 256;
@@ -95,7 +110,8 @@ type
     flo64const: flo64constty;
    );
    ck_var:(
-    varaddress: pointer;
+    varaddress: ptruint;
+    varsize: ptruint;
    )
  end;
  pcontextdataty = ^contextdataty;
@@ -112,10 +128,15 @@ type
   index0: integer;
  end;
 
- opkindty = (ok_none,ok_pushbool8,ok_pushint32,ok_pushflo64,ok_pop,ok_op,ok_op1);
- opinfoty = record
-//todo: variable item size, immediate data
-  op: opty;
+ startupdataty = record
+  globdatasize: ptruint;
+ end;
+ pstartupdataty = ^startupdataty;
+ 
+ opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
+             ok_pop,ok_op,ok_op1,ok_var);
+ 
+ opdataty = record
   case opkindty of 
    ok_pushbool8: (
     vbool8: boolean;
@@ -131,10 +152,20 @@ type
    );
    ok_op1: (
     op1: op1infoty;
+   );
+   ok_var: (
+    address: ptruint;
+    size: ptruint;
    )
+  end;
+
+ opinfoty = record
+//todo: variable item size, immediate data
+  op: opty;
+  d: opdataty;
  end;
  popinfoty = ^opinfoty;
- 
+
  opinfoarty = array of opinfoty;
  
  parseinfoty = record
@@ -147,8 +178,12 @@ type
   command: ttextstream;
   ops: opinfoarty;
   opcount: integer;
+  globdatapo: ptruint;
  end;
 
+const
+ startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
+                                                         sizeof(opinfoty);
 implementation
 
 end.

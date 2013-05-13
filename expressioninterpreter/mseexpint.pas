@@ -137,7 +137,7 @@ var
  pc1: pcontextty;
  
 label
- handlelab;
+ handlelab,parseend;
 begin
  result:= nil;
  mseelements.clear;
@@ -156,7 +156,9 @@ begin
   end;
   stackindex:= 0;
   stacktop:= 0;
-  opcount:= 0;
+  opcount:= startupoffset;
+  setlength(ops,opcount);
+  globdatapo:= 0;
   pc:= contextstack[stackindex].context;
   while (source^ <> #0) and (stackindex >= 0) do begin
    while (source^ <> #0) and (stackindex >= 0) do begin
@@ -226,7 +228,7 @@ handlelab:
      stacktop:= stackindex;
     end;
     if stackindex < 0 then begin
-     break;
+     goto parseend;
     end;
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
@@ -247,41 +249,12 @@ handlelab:
    end;
    outinfo(@info,'after1');
   end;
- {
-  while stackindex >= 0 do begin
-   with contextstack[stackindex].context^ do begin
-    if handle <> nil then begin
-     handle(@info);
-    end
-    else begin
-     dec(stackindex);
-    end;
-   end;
-   outinfo(@info,'after2');
-  end;
- }
-  {
-  with contextstack[0].context^ do begin
-   if handle <> nil then begin
-    handle(@info);
-   end;
-  end;
-  }
-  with contextstack[0].d do begin
-   case kind of
-    ck_int32const: begin
-     push(@info,real(int32const.value));
-    end;   
-    ck_flo64const: begin
-     push(@info,flo64const.value);
-    end;
-    ck_int32fact: begin
-     int32toflo64(@info,0);
-    end;
-   end;
-  end;   
-  outinfo(@info,'after3');
+parseend:
+  outinfo(@info,'after2');
   setlength(ops,opcount);
+  with pstartupdataty(pointer(ops))^ do begin
+   globdatasize:= globdatapo;
+  end;
   result:= ops;
  end;
 end;

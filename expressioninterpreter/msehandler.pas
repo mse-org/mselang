@@ -43,7 +43,7 @@ procedure handlenegexponent(const info: pparseinfoty);
 
 procedure handlestatementend(const info: pparseinfoty);
 procedure handleident(const info: pparseinfoty);
-procedure handleidentpath(const info: pparseinfoty);
+procedure handlevalueidentifier(const info: pparseinfoty);
 
 procedure handleexp(const info: pparseinfoty);
 procedure handlemain(const info: pparseinfoty);
@@ -61,7 +61,7 @@ procedure handleln(const info: pparseinfoty);
 procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
-procedure handlecheckparams(const info: pparseinfoty);
+//procedure handlecheckparams(const info: pparseinfoty);
 
 procedure handleassignment(const info: pparseinfoty);
 
@@ -91,14 +91,14 @@ const
  systypeinfos: array[systypesty] of typeinfoty = (
   (name: 'integer'; data: (size: 4))
   );
- 
-var
- varpo: pointer;
 
-function getvaraddress(const asize: integer): pointer;
+function getglobvaraddress(const info: pparseinfoty;
+                                        const asize: integer): ptruint;
 begin
- result:= varpo;
- inc(varpo,asize);
+ with info^ do begin
+  result:= globdatapo;
+  inc(globdatapo,asize);
+ end;
 end;
  
 procedure initparser;
@@ -106,7 +106,6 @@ var
  ty1: systypesty;
  po1: pelementinfoty;
 begin
- varpo:= nil;
  for ty1:= low(systypesty) to high(systypesty) do begin
   with systypeinfos[ty1] do begin
    po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
@@ -114,6 +113,37 @@ begin
   end;
  end;
 end;
+
+function findcontextelement(const aident: contextdataty;
+              const akind: contextkindty; out ainfo: pcontextdataty): boolean;
+var
+ po1: pelementinfoty;
+begin
+ result:= false;
+ if aident.kind = ck_ident then begin
+  po1:= findelement(aident.ident);
+  if (po1 <> nil) and (po1^.header.kind = ek_context) then begin
+   ainfo:= @po1^.data;
+   result:= ainfo^.kind = akind;
+  end;
+ end;
+end;
+
+function findkindelement(const aident: contextdataty;
+              const akind: elementkindty; out ainfo: pointer): boolean;
+var
+ po1: pelementinfoty;
+begin
+ result:= false;
+ if aident.kind = ck_ident then begin
+  po1:= findelement(aident.ident);
+  if (po1 <> nil) and (po1^.header.kind = akind) then begin
+   ainfo:= @po1^.data;
+   result:= true;
+  end;
+ end;
+end;
+
 
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin
@@ -195,7 +225,7 @@ procedure push(const info: pparseinfoty; const avalue: boolean); overload;
 begin
  with additem(info)^ do begin
   op:= @pushbool8;
-  vbool8:= avalue;
+  d.vbool8:= avalue;
  end;
 end;
 
@@ -203,7 +233,7 @@ procedure push(const info: pparseinfoty; const avalue: integer); overload;
 begin
  with additem(info)^ do begin
   op:= @pushint32;
-  vint32:= avalue;
+  d.vint32:= avalue;
  end;
 end;
 
@@ -211,7 +241,25 @@ procedure push(const info: pparseinfoty; const avalue: real); overload;
 begin
  with additem(info)^ do begin
   op:= @pushflo64;
-  vflo64:= avalue;
+  d.vflo64:= avalue;
+ end;
+end;
+
+procedure pushconst(const info: pparseinfoty; const avalue: contextdataty);
+//todo: optimize
+begin
+ with avalue do begin
+  case kind of
+   ck_bool8const: begin
+    push(info,bool8const.value);
+   end;
+   ck_int32const: begin
+    push(info,int32const.value);
+   end;
+   ck_flo64const: begin
+    push(info,flo64const.value);
+   end;
+  end;
  end;
 end;
 
@@ -219,7 +267,7 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
 begin
  with additem(info)^ do begin
   op:= @msestackops.int32toflo64;
-  with op1 do begin
+  with d.op1 do begin
    index0:= index;
   end;
  end;
@@ -663,14 +711,18 @@ end;
 procedure handlecheckparams(const info: pparseinfoty);
 begin
  with info^ do begin
-  dec(stackindex);
-  stacktop:= stackindex;
-  with contextstack[stacktop] do begin
-   d.kind:= ck_int32const;
-   context:= nil;
-   d.int32const.value:= 42;
-  end;  
-  dec(stackindex);
+  if stacktop = stackindex then begin //no params
+  end
+  else begin
+   dec(stackindex);
+   stacktop:= stackindex;
+   with contextstack[stacktop] do begin
+    d.kind:= ck_int32const;
+    context:= nil;
+    d.int32const.value:= 42;
+   end;  
+   dec(stackindex);
+  end;
  end;
  outhandle(info,'CHECKPARAMS');
 end;
@@ -686,9 +738,58 @@ begin
  outhandle(info,'IDENT');
 end;
 
-procedure handleidentpath(const info: pparseinfoty);
+procedure handlevalueidentifier(const info: pparseinfoty);
+var
+ po1: pelementinfoty;
+ po2: pcontextdataty;
 begin
- outhandle(info,'IDENTPATH');
+ with info^ do begin
+  po1:= findelement(contextstack[stacktop].d.ident);
+  dec(stacktop);
+  if po1 <> nil then begin
+   if po1^.header.kind = ek_context then begin
+    po2:= @po1^.data;
+    with po2^ do begin
+     if kind = ck_var then begin
+      with po1^ do begin
+       with additem(info)^ do begin
+        case varsize of
+         1: begin 
+          op:= @pushglob1;
+         end;
+         2: begin
+          op:= @pushglob2;
+         end;
+         4: begin
+          op:= @pushglob4;
+         end;
+         else begin
+          op:= @pushglob;
+         end;
+        end;
+        d.address:= varaddress;
+        d.size:= varsize;
+       end;
+      end;
+      contextstack[stacktop].d.kind:= ck_int32fact;
+     end
+     else begin
+      if kind in constkinds then begin
+       contextstack[stacktop].d:= po2^;
+      end
+      else begin
+       parsererror(info,'wrong kind');
+      end;
+     end;
+    end;
+   end;
+  end
+  else begin
+   identnotfounderror(contextstack[stacktop],'valueidentifier');
+  end;
+  dec(stackindex);
+ end;
+ outhandle(info,'VALUEIDENTIFIER');
 end;
 
 procedure handlestatementend(const info: pparseinfoty);
@@ -793,20 +894,15 @@ begin
     identexisterror(contextstack[stacktop-2],'VAR3');
    end
    else begin
-    po2:= findelement(contextstack[stacktop-1].d.ident);
-    if po2 = nil then begin
-     identnotfounderror(contextstack[stacktop-1],'VAR3');
+    if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
+     with pcontextdataty(@po1^.data)^ do begin
+      kind:= ck_var;
+      varsize:= ptypedataty(po2)^.size;
+      varaddress:= getglobvaraddress(info,varsize);
+     end;
     end
     else begin
-     if po2^.header.kind <> ek_type then begin
-      wrongidentkinderror(contextstack[stacktop-1],ek_type,'VAR3');
-     end
-     else begin
-      with pcontextdataty(@po1^.data)^ do begin
-       kind:= ck_var;
-       varaddress:= getvaraddress(ptypedataty(@po2^.data)^.size);
-      end;
-     end;
+     parsererror(info,'type not found. VAR3');
     end;
    end;
   end
@@ -823,8 +919,12 @@ begin
  with info^ do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(info^.stacktop);
-//  info^.stackindex:= info^.stacktop;
-//  dec(stackindex);
+  with contextstack[stacktop] do begin
+   if d.kind in constkinds then begin
+    pushconst(info,d);
+    outcommand(info,[0],'push');
+   end;
+  end;
  end;
  outhandle(info,'EXP');
 end;
@@ -832,9 +932,6 @@ end;
 procedure handlemain(const info: pparseinfoty);
 begin
  with info^ do begin
-//  contextstack[stacktop-1].d:= contextstack[stacktop].d;
-//  dec(info^.stacktop);
-//  info^.stackindex:= info^.stacktop;
   dec(stackindex);
  end;
  outhandle(info,'MAIN');
@@ -854,23 +951,30 @@ procedure handleassignment(const info: pparseinfoty);
  end; //varexpected
  
 var
- po1: pelementinfoty;
+ po1: pcontextdataty;
 begin
  with info^ do begin
   if (stacktop-stackindex > 0) and
-                  (contextstack[stackindex+1].d.kind = ck_ident) then begin
-   po1:= findelement(contextstack[stackindex+1].d.ident);
-   if (po1 <> nil) and (po1^.header.kind = ek_context) then begin
-    with pcontextdataty(@po1^.data)^ do begin
-     if kind = ck_var then begin
-     end
-     else begin
-      varexpected;
+         findcontextelement(contextstack[stackindex+1].d,ck_var,po1) then begin
+   with po1^ do begin
+    with additem(info)^ do begin
+     case varsize of
+      1: begin 
+       op:= @popglob1;
+      end;
+      2: begin
+       op:= @popglob2;
+      end;
+      4: begin
+       op:= @popglob4;
+      end;
+      else begin
+       op:= @popglob;
+      end;
      end;
+     d.address:= varaddress;
+     d.size:= varsize;
     end;
-   end
-   else begin
-    varexpected;
    end;
   end
   else begin
