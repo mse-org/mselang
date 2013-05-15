@@ -18,7 +18,7 @@ unit msehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob,typinfo;
+ mseparserglob,typinfo,msetypes;
 
 procedure initparser;
 
@@ -64,10 +64,11 @@ procedure handleparamsend(const info: pparseinfoty);
 //procedure handlecheckparams(const info: pparseinfoty);
 
 procedure handleassignment(const info: pparseinfoty);
+procedure handlestatement1(const info: pparseinfoty);
 
 implementation
 uses
- msestackops,msestrings,mseelements;
+ msestackops,msestrings,mseelements,mseexpint,grammar;
 
 const
  valuecontext = ck_bool8const;
@@ -90,7 +91,8 @@ type
   name: string;
   data: contextdataty;
  end;
- 
+ keywordty = (kw_0,kw_1,kw_if);
+  
 const
  systypeinfos: array[systypesty] of typeinfoty = (
    (name: 'integer'; data: (size: 4))
@@ -111,10 +113,14 @@ end;
  
 procedure initparser;
 var
+ kw1: keywordty;
  ty1: systypesty;
  po1: pelementinfoty;
  int1: integer;
 begin
+ for kw1:= keywordty(2) to high(keywordty) do begin
+  getident(copy(getenumname(typeinfo(keywordty),ord(kw1)),4,bigint));
+ end;
  for ty1:= low(systypesty) to high(systypesty) do begin
   with systypeinfos[ty1] do begin
    po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
@@ -998,6 +1004,39 @@ begin
   else begin
    varexpected;
   end;                  
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+end;
+
+procedure handlestatement1(const info: pparseinfoty);
+ procedure error(const atext: string);
+ begin
+  parsererror(info,atext+' HANDLESTATEMENT1');
+ end; //error
+ 
+begin
+ with info^ do begin
+  if (stacktop - stackindex = 1) then begin
+   with contextstack[stacktop] do begin
+    if d.kind = ck_ident then begin
+     case d.ident of 
+      ord(kw_if): begin
+       pushcontext(info,@ifco)
+      end;
+      else begin
+       error('wrong ident');
+      end;
+     end;
+    end
+    else begin
+     error('not ident');
+    end;
+   end;
+  end
+  else begin
+   error('stacksize');
+  end;
   dec(stackindex);
   stacktop:= stackindex;
  end;

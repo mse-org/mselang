@@ -12,6 +12,7 @@ uses
 //type
  
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
+procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 implementation
 uses
@@ -77,13 +78,35 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
+procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
+var
+ int1: integer;
+begin
+ with info^ do begin
+  int1:= contextstack[stacktop].parent;
+  inc(stacktop);
+  stackindex:= stacktop;
+  if stacktop = stackdepht then begin
+   stackdepht:= 2*stackdepht;
+   setlength(contextstack,stackdepht);
+  end;
+  with contextstack[stackindex],d do begin
+   kind:= ck_none;
+   context:= cont;
+   start:= source;
+   parent:= int1;
+  end;
+ end;
+ outinfo(info,'pusha');
+end;
+
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
 var
  pb: pbranchty;
  pc: pcontextty;
  info: parseinfoty;
 
- function pushcontext: boolean;
+ function pushcont: boolean;
  var
   int1: integer;
   bo1: boolean;
@@ -164,7 +187,7 @@ begin
    while (source^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
     if pointer(pb^.t) = nil then begin
-     pushcontext;
+     pushcont;
     end
     else begin
      while pointer(pb^.t) <> nil do begin
@@ -180,10 +203,10 @@ begin
       if pb^.e then begin
        source:= po1;
       end;
-      if po2^ = #0 then begin //match
+      if (po2^ = #0) and (not pb^.k or not identchars[po1^]) then begin //match
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
-         if not pushcontext then begin
+         if not pushcont then begin
           goto handlelab;
          end;
         until pointer(pb^.t) <> nil;

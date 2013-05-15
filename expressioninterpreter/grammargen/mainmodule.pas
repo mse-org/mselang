@@ -63,7 +63,7 @@ type
 //context,next,handler
 // 'branch',destcontext
 // ...
-
+var testvar: char;
 procedure creategrammar(const grammar,outfile: filenamety);
 type
  contextinfoty = record
@@ -109,7 +109,7 @@ var
  end;
 const
  branchformat = 
-  'Format of branch is "''string'',{''string'',}context[-][[^][*] | [*][^]]"';
+  'Format of branch is "''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]"';
  defaultflags = ' e:false; p:false; sb:false; sa: false';
 var
  ar1: stringarty;
@@ -119,6 +119,7 @@ var
  po1,po2,po3: pchar;
  intokendef: boolean;
  setbefore,setafter: boolean;
+ identchars: array[char] of boolean;
 begin
  application.terminated:= true;
  try
@@ -229,6 +230,9 @@ begin
             error('Invalid string');
             exit;
            end;
+           if po1^ = '.' then begin
+            inc(po1);
+           end;
            setstring(str3,po3,po1-po3);
            setlength(ar1,2);
            ar1[0]:= trim(str3);
@@ -281,12 +285,40 @@ begin
 ' mseparserglob;'+lineend+
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
-''+lineend+
-'implementation'+lineend+
-''+lineend+
-'uses'+lineend+
-' '+usesdef+';'+lineend+
-' '+lineend+
+''+lineend;
+ for int1:= 0 to high(tokendefs) do begin
+  with tokendefs[int1] do begin
+   if name = '' then begin
+    fillchar(identchars,sizeof(identchars),0);
+    for int2:= 0 to high(tokens) do begin
+     if tokens[int2] <> '' then begin
+      str2:= pascalstringtostring(tokens[int2]);
+      if str1 <> '' then begin      
+       identchars[str2[1]]:= true;
+      end;
+     end;
+    end;   
+    str1:= str1+
+'const'+lineend+
+' identchars: array[char] of boolean = (';
+    for int2:= 0 to 255 do begin
+     if int2 mod 8 = 0 then begin
+      str1:= str1 + lineend + '  ';
+     end;
+     if identchars[char(byte(int2))] then begin
+      str1:= str1+'true,';
+     end
+     else begin
+      str1:= str1+'false,';
+     end;
+    end;
+    setlength(str1,length(str1)-1);
+    str1:= str1+');'+lineend+lineend;
+    break;
+   end;
+  end;
+ end;
+ str1:= str1+
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
@@ -332,6 +364,11 @@ begin
   end;
   str1:= str1+
 lineend+
+'implementation'+lineend+
+''+lineend+
+'uses'+lineend+
+' '+usesdef+';'+lineend+
+' '+lineend+
 'const'+lineend;
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
@@ -339,8 +376,15 @@ lineend+
      str1:= str1+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
+      if bran[int2][0][length(bran[int2][0])] = '.' then begin
+       setlength(bran[int2][0],length(bran[int2][0])-1);
+       str2:= '; k:true';
+      end
+      else begin
+       str2:= '; k:false';
+      end;
       str1:= str1+
-'  (t:'+bran[int2][0]+'; c:';
+'  (t:'+bran[int2][0]+str2+'; c:';
       if bran[int2][1] <> '' then begin
        str2:= bran[int2][1];
        str3:= '';
@@ -395,7 +439,7 @@ lineend+
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:''''; c:nil;'+defaultflags+')'+lineend+
+'  (t:''''; k:false; c:nil;'+defaultflags+')'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;

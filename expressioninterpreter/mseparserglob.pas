@@ -56,6 +56,7 @@ type
  pcontextty = ^contextty;
  branchty = record
   t: string;
+  k: boolean; //keyword
   c: pcontextty;
   e: boolean; //eat flag
   p: boolean; //push flag

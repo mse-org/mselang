@@ -1,3 +1,9 @@
+@
+ '0','1','2','3','4','5','6','7','8','9'
+ '_','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
+ 'q','r','s','t','u','v','w','x','y','z'
+ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P'
+ 'Q','R','S','T','U','V','W','X','Y','Z'
 @whitespace
  ' ',#$0d,#$0a
 @identstart
@@ -10,20 +16,26 @@
 msehandler
 main,main,handlemain
  @whitespace,
- 'begin',exeblock-*
- 'const',const-*
- 'var',var-*
+ 'begin'.,exeblock-*
+ 'const'.,const-*
+ 'var'.,var-*
 exeblock,exeblock,*
  @whitespace,
  ';',
- 'end',*
+ 'end'.,*
+ 'if'.,if*
  @identstart,statement0*
 statement0,statement1,
  '',ident^*
-statement1,,
+statement1,,handlestatement1
+ @whitespace,
  ':=',assignment
 assignment,,handleassignment
  '',exp*
+if,then,
+ '',exp*
+then,,
+ '',ident^*
 const,,handleconst
  '',const0*^
 const0,const1,
