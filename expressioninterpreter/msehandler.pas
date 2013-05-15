@@ -86,12 +86,20 @@ type
   name: string;
   data: typedataty;
  end;
+ constinfoty = record
+  name: string;
+  data: contextdataty;
+ end;
  
 const
  systypeinfos: array[systypesty] of typeinfoty = (
-  (name: 'integer'; data: (size: 4))
+   (name: 'integer'; data: (size: 4))
   );
-
+ sysconstinfos: array[0..1] of constinfoty = (
+   (name: 'false'; data: (kind: ck_bool8const; bool8const: (value: false))),
+   (name: 'true'; data: (kind: ck_bool8const; bool8const: (value: true)))
+  );
+  
 function getglobvaraddress(const info: pparseinfoty;
                                         const asize: integer): ptruint;
 begin
@@ -105,11 +113,18 @@ procedure initparser;
 var
  ty1: systypesty;
  po1: pelementinfoty;
+ int1: integer;
 begin
  for ty1:= low(systypesty) to high(systypesty) do begin
   with systypeinfos[ty1] do begin
    po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
    ptypedataty(@po1^.data)^:= data;
+  end;
+ end;
+ for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
+  with sysconstinfos[int1] do begin
+   po1:= addelement(getident(name),ek_context,elesize+sizeof(contextdataty));
+   pcontextdataty(@po1^.data)^:= data;
   end;
  end;
 end;
@@ -189,6 +204,9 @@ begin
    with contextstack[stacktop+items[int1]].d do begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
+     ck_bool8const: begin
+      command.write(bool8const.value);
+     end;
      ck_int32const: begin
       command.write(int32const.value);
      end;
