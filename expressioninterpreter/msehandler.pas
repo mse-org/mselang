@@ -66,6 +66,11 @@ procedure handleparamsend(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
 procedure handlestatement1(const info: pparseinfoty);
 
+procedure handleif(const info: pparseinfoty);
+procedure handlethen(const info: pparseinfoty);
+procedure handlethen1(const info: pparseinfoty);
+procedure handleelse(const info: pparseinfoty);
+
 implementation
 uses
  msestackops,msestrings,mseelements,mseexpint,grammar;
@@ -1040,6 +1045,42 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+end;
+
+procedure handleif(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'IF');
+end;
+
+procedure handlethen(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'THEN');
+end;
+
+procedure handlethen1(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'THEN1');
+end;
+
+procedure handleelse(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'ELSE');
 end;
 
 end.

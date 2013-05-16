@@ -16,7 +16,7 @@ procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 implementation
 uses
- typinfo,grammar,{msegrammar,}msehandler,mseelements;
+ typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -30,22 +30,44 @@ var
  int1: integer;
 begin
  with info^ do begin
-  writeln('**',text,' T:',stacktop,' I:',stackindex,' ''',source,'''');
+  writeln('**',text,' T:',stacktop,' I:',stackindex,' ''',
+                                             singleline(source),'''');
   for int1:= stacktop downto 0 do begin
    write(int1);
    if int1 = stackindex then begin
     write('*');
    end
    else begin
-    if int1 = contextstack[int1].parent then begin
-     write('-');
-    end
-    else begin
-     write(' ');
-    end;
+    write(' ');
+   end;
+   if (int1 < stacktop) and (int1 = contextstack[int1+1].parent) then begin
+    write('-');
+   end
+   else begin
+    write(' ');
    end;
    with contextstack[int1],d do begin
     write(parent,' ');
+    with context^ do begin
+     if cut then begin
+      write('-');
+     end
+     else begin
+      write(' ');
+     end;
+     if pop then begin
+      write('^');
+     end
+     else begin
+      write(' ');
+     end;
+     if popexe then begin
+      write('!');
+     end
+     else begin
+      write(' ');
+     end;
+    end;
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_ident: begin
@@ -67,7 +89,7 @@ begin
     else begin
      write('NIL');
     end;
-    writeln(' ''',start,'''');
+    writeln(' ''',singleline(start),'''');
    end;
   end;
  end;
@@ -200,10 +222,10 @@ begin
         break;
        end;
       end;
-      if pb^.e then begin
-       source:= po1;
-      end;
       if (po2^ = #0) and (not pb^.k or not identchars[po1^]) then begin //match
+       if pb^.e then begin
+        source:= po1;
+       end;
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
          if not pushcont then begin

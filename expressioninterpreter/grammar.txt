@@ -22,8 +22,8 @@ main,main,handlemain
 exeblock,exeblock,*
  @whitespace,
  ';',
- 'end'.,*
- 'if'.,if*
+ 'end'.,-*
+ 'if'.,if-*
  @identstart,statement0*
 statement0,statement1,
  '',ident^*
@@ -32,10 +32,16 @@ statement1,,handlestatement1
  ':=',assignment
 assignment,,handleassignment
  '',exp*
-if,then,
- '',exp*
-then,,
- '',ident^*
+if,then,handleif
+ '',exp^*
+then,,handlethen
+ @whitespace,
+ 'then'.,then1-
+then1,,handlethen1
+ @whitespace,
+ 'else'.,else-
+else,,handleelse
+ '',exeblock*
 const,,handleconst
  '',const0*^
 const0,const1,
