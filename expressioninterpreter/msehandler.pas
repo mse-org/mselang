@@ -63,12 +63,15 @@ procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
 //procedure handlecheckparams(const info: pparseinfoty);
 
+procedure handlestatement(const info: pparseinfoty);
+
 procedure handleassignment(const info: pparseinfoty);
 procedure handlestatement1(const info: pparseinfoty);
 
 procedure handleif(const info: pparseinfoty);
 procedure handlethen(const info: pparseinfoty);
 procedure handlethen1(const info: pparseinfoty);
+procedure handlethen2(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
 
 implementation
@@ -973,6 +976,11 @@ begin
  outhandle(info,'EQUSIMPEXP');
 end;
 
+procedure handlestatement(const info: pparseinfoty);
+begin
+ outhandle(info,'HANDLESTATEMENT');
+end;
+
 procedure handleassignment(const info: pparseinfoty);
  procedure varexpected;
  begin
@@ -1072,6 +1080,15 @@ begin
   stacktop:= stackindex;
  end;
  outhandle(info,'THEN1');
+end;
+
+procedure handlethen2(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'THEN2');
 end;
 
 procedure handleelse(const info: pparseinfoty);

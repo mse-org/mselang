@@ -142,7 +142,7 @@ var
      result:= false;
      break;
     end;
-    pc^.handle(@info);
+    pc^.handle(@info); //transition handler
     pc:= pc^.next;
    end;
    int1:= contextstack[stacktop].parent;
@@ -208,6 +208,9 @@ begin
   while (source^ <> #0) and (stackindex >= 0) do begin
    while (source^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
+    if pb = nil then begin
+     break;
+    end;
     if pointer(pb^.t) = nil then begin
      pushcont;
     end
@@ -288,6 +291,7 @@ handlelab:
     if pc^.nexteat then begin
      start:= source;
     end;
+    writeln(pc^.caption,'->',pc^.next^.caption);
     pc:= pc^.next;
     context:= pc;
 //    kind:= ck_none;

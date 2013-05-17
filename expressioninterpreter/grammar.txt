@@ -16,7 +16,7 @@
 msehandler
 main,main,handlemain
  @whitespace,
- 'begin'.,exeblock-*
+ 'begin'.,statementblock-^*
  'const'.,const-*
  'var'.,var-*
 exeblock,exeblock,*
@@ -25,6 +25,20 @@ exeblock,exeblock,*
  'end'.,-*
  'if'.,if-*
  @identstart,statement0*
+statement,simplestatement,handlestatement
+ @whitespace,
+ 'begin'.,statementblock-^*
+ 'end'.,endtoken
+ 'if'.,if-*
+endtoken,,*
+simplestatement,,*
+ '',statement0*
+statementblock,statementblock1,
+ '',statement*
+statementblock1,statementblock,
+ @whitespace,
+ ';',
+ 'end'.,endtoken
 statement0,statement1,
  '',ident^*
 statement1,,handlestatement1
@@ -37,7 +51,9 @@ if,then,handleif
 then,,handlethen
  @whitespace,
  'then'.,then1-
-then1,,handlethen1
+then1,then2,handlethen1
+ '',exeblock^*
+then2,,handlethen2
  @whitespace,
  'else'.,else-
 else,,handleelse
