@@ -638,8 +638,10 @@ end;
 
 const
  negops: array[contextkindty] of opty = (
-  //ck_none, ck_error,ck_end,  ck_ident,ck_var,  ck_neg, 
+  //ck_none, ck_error,ck_end,  ck_ident,ck_var,  ck_pc
     @dummyop,@dummyop,@dummyop,@dummyop,@dummyop,@dummyop,
+  //ck_neg, 
+    @dummyop,
   //ck_bool8const,ck_int32const,ck_flo64const,
     @dummyop,     @negint32,    @negflo64,
   //ck_boo8fact,ck_int32fact,ck_flo64fact

@@ -40,7 +40,7 @@ const
 
 type 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_var,
+                  ck_end,ck_ident,ck_var,ck_opmark,
                   ck_neg,
                   ck_bool8const,ck_int32const,ck_flo64const,
                   ck_bool8fact,ck_int32fact,ck_flo64fact);
@@ -60,6 +60,7 @@ type
   c: pcontextty;
   e: boolean; //eat flag
   p: boolean; //push flag
+  s: boolean; //set ck_pc
   sb: boolean; //setparent before push flag
   sa: boolean; //setparent after push flag
  end;
@@ -113,6 +114,9 @@ type
    ck_var:(
     varaddress: ptruint;
     varsize: ptruint;
+   );
+   ck_opmark:(
+    opmark: ptruint;
    )
  end;
  pcontextdataty = ^contextdataty;

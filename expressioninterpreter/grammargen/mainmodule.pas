@@ -28,15 +28,16 @@ uses
 <context>,[<next>][-],[<handler>][^|!][+][*]
  - -> eat text
  ^ -> pop parent
- + -> restore source pointer
  ! -> pop parent and execute handler
+ + -> restore source pointer
  * -> stackindex -> stacktop
 
  <pascalstring>|@<tokendef>{,pascalstring|@<tokendef>},
-                                        [[<context>][-][[^][*] | [*][^]]]
+                                        [[<context>][-] [[^][*] | [*][^]] [!] ]
  - -> eat token
  <context>^ -> set parent
  <context>* -> push context
+ <context>! -> set ck_codemarker
  * -> terminate context
 *)
 
@@ -110,7 +111,7 @@ var
 const
  branchformat = 
   'Format of branch is "''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]"';
- defaultflags = ' e:false; p:false; sb:false; sa: false';
+ defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
  ar1: stringarty;
 // mstr1: msestring;
@@ -376,7 +377,7 @@ lineend+
      str1:= str1+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
-      if bran[int2][0][length(bran[int2][0])] = '.' then begin
+           if bran[int2][0][length(bran[int2][0])] = '.' then begin
        setlength(bran[int2][0],length(bran[int2][0])-1);
        str2:= '; k:true';
       end
@@ -387,9 +388,15 @@ lineend+
 '  (t:'+bran[int2][0]+str2+'; c:';
       if bran[int2][1] <> '' then begin
        str2:= bran[int2][1];
-       str3:= '';
        setbefore:= false;
        setafter:= false;
+       if (str2 <> '') and (str2[length(str2)] = '!') then begin
+        setlength(str2,length(str2)-1);
+        str3:= '; s: true';
+       end
+       else begin
+        str3:= '; s: false';
+       end;
        if (str2 <> '') and (str2[length(str2)] = '^') then begin
         setbefore:= true;
         setlength(str2,length(str2)-1);

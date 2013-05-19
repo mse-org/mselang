@@ -166,6 +166,10 @@ var
     context:= pc;
     start:= source;
     parent:= int1;
+    if pb^.s then begin
+     kind:= ck_opmark;
+     opmark:= opcount;
+    end;
    end;
    pb:= pc^.branch;
   end;

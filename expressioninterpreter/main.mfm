@@ -4,8 +4,6 @@ object mainfo: tmainfo
   bounds_cx = 371
   bounds_cy = 450
   anchors = [an_top, an_right]
-  container.frame.sbhorz.pagesize = 0.99731182795699
-  container.frame.sbvert.pagesize = 0.99090909090909
   container.bounds = (
     0
     0
@@ -25,7 +23,7 @@ object mainfo: tmainfo
     anchors = [an_left, an_top, an_right]
     statfile = tstatfile1
     optionsedit = [oe_closequery, oe_checkmrcancel, oe_linebreak, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_nofirstarrownavig, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
-    font.name = 'stf_default'
+    font.name = 'stf_fixed'
     font.xscale = 1
     font.dummy = 0
     reffontheight = 14
@@ -42,7 +40,6 @@ object mainfo: tmainfo
     onexecute = parseexe
   end
   object grid: tstringgrid
-    frame.sbhorz.pagesize = 0.99701492537313
     taborder = 2
     bounds_x = 16
     bounds_y = 87
