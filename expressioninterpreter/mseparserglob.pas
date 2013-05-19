@@ -87,6 +87,9 @@ type
  flo64constty = record
   value: double;
  end;
+ opmarkty = record
+  address: ptruint;
+ end;
  {
  constkindty = (cok_bool8,cok_int32,cok_flo64);
  constdataty = record
@@ -116,7 +119,7 @@ type
     varsize: ptruint;
    );
    ck_opmark:(
-    opmark: ptruint;
+    opmark: opmarkty;
    )
  end;
  pcontextdataty = ^contextdataty;

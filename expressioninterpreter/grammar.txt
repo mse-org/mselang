@@ -52,12 +52,12 @@ then,,handlethen
  @whitespace,
  'then'.,then1-
 then1,then2,handlethen1
- '',exeblock^*
+ '',exeblock^*!
 then2,,handlethen2
  @whitespace,
- 'else'.,else-
+ 'else'.,else-*
 else,,handleelse
- '',exeblock*
+ '',exeblock*!
 const,,handleconst
  '',const0*^
 const0,const1,

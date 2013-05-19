@@ -82,6 +82,9 @@ begin
      ck_flo64const: begin
       write(flo64const.value,' ');
      end;
+     ck_opmark: begin
+      write(opmark.address,' ');
+     end;
     end;
     if context <> nil then begin
      write(context^.caption);
@@ -168,7 +171,7 @@ var
     parent:= int1;
     if pb^.s then begin
      kind:= ck_opmark;
-     opmark:= opcount;
+     opmark.address:= opcount;
     end;
    end;
    pb:= pc^.branch;

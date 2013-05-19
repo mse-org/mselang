@@ -364,7 +364,7 @@ const
  );
 
  bthen1: array[0..1] of branchty = (
-  (t:''; k:false; c:@exeblockco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:@exeblockco; e:false; p:true; s: true; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -372,12 +372,12 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'else'; k:true; c:@elseco; e:true; p:false; s: false; sb:false; sa:false),
+  (t:'else'; k:true; c:@elseco; e:true; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  belse: array[0..1] of branchty = (
-  (t:''; k:false; c:@exeblockco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:@exeblockco; e:false; p:true; s: true; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
