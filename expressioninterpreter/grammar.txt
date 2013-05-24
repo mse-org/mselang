@@ -53,12 +53,14 @@ if,then,handleif
  '',exp^*
 then,,handlethen
  @whitespace,
- 'then'.,then1-
+ 'then'.,then0-
+then0,then1,handlethen0
 then1,then2,handlethen1
  '',statementstack^*!
 then2,,handlethen2
  @whitespace,
- 'else'.,else-
+ 'else'.,else0-
+else0,else,handleelse0
 else,,handleelse
  '',statementstack^*!
 const,,handleconst

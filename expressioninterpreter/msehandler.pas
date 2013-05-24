@@ -71,8 +71,10 @@ procedure handlestatement1(const info: pparseinfoty);
 
 procedure handleif(const info: pparseinfoty);
 procedure handlethen(const info: pparseinfoty);
+procedure handlethen0(const info: pparseinfoty);
 procedure handlethen1(const info: pparseinfoty);
 procedure handlethen2(const info: pparseinfoty);
+procedure handleelse0(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
 
 implementation
@@ -304,6 +306,43 @@ begin
    index0:= index;
   end;
  end;
+end;
+
+procedure setcurrentloc(const info: pparseinfoty; const indexoffset: integer);
+begin 
+ with info^ do begin
+  ops[contextstack[stackindex+indexoffset].d.opmark.address].d.opaddress:=
+                                                                     opcount;
+ end; 
+end;
+
+procedure setcurrentlocbefore(const info: pparseinfoty;
+                                             const indexoffset: integer);
+begin 
+ with info^ do begin
+  ops[contextstack[stackindex+indexoffset].d.opmark.address-1].d.opaddress:=
+                                                                     opcount;
+ end; 
+end;
+
+procedure setlocbefore(const info: pparseinfoty;
+       const destindexoffset,sourceindexoffset: integer);
+begin
+ with info^ do begin
+  ops[contextstack[stackindex+destindexoffset].d.opmark.address-1].
+                                                               d.opaddress:=
+         contextstack[stackindex+sourceindexoffset].d.opmark.address;
+ end; 
+end;
+
+procedure setloc(const info: pparseinfoty;
+       const destindexoffset,sourceindexoffset: integer);
+begin
+ with info^ do begin
+  ops[contextstack[stackindex+destindexoffset].d.opmark.address].
+                                                               d.opaddress:=
+         contextstack[stackindex+sourceindexoffset].d.opmark.address;
+ end; 
 end;
 
 const
@@ -802,8 +841,8 @@ begin
           op:= @pushglob;
          end;
         end;
-        d.address:= varaddress;
-        d.size:= varsize;
+        d.dataaddress:= varaddress;
+        d.datasize:= varsize;
        end;
       end;
       contextstack[stacktop].d.kind:= ck_int32fact;
@@ -1020,8 +1059,8 @@ begin
        op:= @popglob;
       end;
      end;
-     d.address:= varaddress;
-     d.size:= varsize;
+     d.dataaddress:= varaddress;
+     d.datasize:= varsize;
     end;
    end;
   end
@@ -1084,6 +1123,14 @@ begin
  outhandle(info,'THEN');
 end;
 
+procedure handlethen0(const info: pparseinfoty);
+begin
+ with additem(info)^ do begin
+  op:= @ifop;   
+ end;
+ outhandle(info,'THEN0');
+end;
+
 procedure handlethen1(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -1102,8 +1149,25 @@ begin
  outhandle(info,'THEN2');
 end;
 
-procedure handleelse(const info: pparseinfoty);
+procedure opgoto(const info: pparseinfoty; const aaddress: dataaddressty);
 begin
+ with additem(info)^ do begin
+  op:= @gotoop;
+  d.opaddress:= aaddress;
+ end;
+end;
+
+procedure handleelse0(const info: pparseinfoty);
+begin
+ opgoto(info,dummyaddress);
+ outhandle(info,'ELSE0');
+end;
+
+procedure handleelse(const info: pparseinfoty);
+      //1       2        3
+begin //boolexp,thenmark,elsemark
+ setlocbefore(info,2,3);      //set gotoaddress for handlethen0
+ setcurrentlocbefore(info,3); //set gotoaddress for handleelse0
  with info^ do begin
   dec(stackindex);
   stacktop:= stackindex;

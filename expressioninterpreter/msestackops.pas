@@ -38,6 +38,9 @@ procedure finalize;
 function run(const code: opinfoarty; const stackdepht: integer): real;
 
 procedure dummyop;
+procedure gotoop;
+procedure ifop;
+
 procedure pushbool8;
 procedure pushint32;
 procedure pushflo64;
@@ -71,11 +74,25 @@ type
 var
  mainstack: stackinfoarty; 
  mainstackpo: integer;
+ startpo: popinfoty;
  oppo: popinfoty;
  globdata: pointer;
 
 procedure dummyop;
 begin
+end;
+
+procedure gotoop;
+begin
+ oppo:= startpo + oppo^.d.opaddress;
+end;
+
+procedure ifop;
+begin
+ if not mainstack[mainstackpo].vbool8 then begin
+  oppo:= startpo + oppo^.d.opaddress;
+ end;
+ dec(mainstackpo);
 end;
 
 procedure pushbool8;
@@ -143,50 +160,52 @@ end;
 
 procedure popglob1;
 begin
- puint8(globdata+oppo^.d.address)^:= puint8(@mainstack[mainstackpo])^;
+ puint8(globdata+oppo^.d.dataaddress)^:= puint8(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
 procedure popglob2;
 begin
- puint16(globdata+oppo^.d.address)^:= puint16(@mainstack[mainstackpo])^;
+ puint16(globdata+oppo^.d.dataaddress)^:= puint16(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
 procedure popglob4;
 begin
- puint32(globdata+oppo^.d.address)^:= puint32(@mainstack[mainstackpo])^;
+ puint32(globdata+oppo^.d.dataaddress)^:= puint32(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
 procedure popglob;
 begin
- move((@mainstack[mainstackpo])^,(globdata+oppo^.d.address)^,oppo^.d.size);
+ move((@mainstack[mainstackpo])^,(globdata+oppo^.d.dataaddress)^,
+                                                         oppo^.d.datasize);
  dec(mainstackpo);
 end;
 
 procedure pushglob1;
 begin
  inc(mainstackpo);
- puint8(@mainstack[mainstackpo])^:= puint8(globdata+oppo^.d.address)^;
+ puint8(@mainstack[mainstackpo])^:= puint8(globdata+oppo^.d.dataaddress)^;
 end;
 
 procedure pushglob2;
 begin
  inc(mainstackpo);
- puint16(@mainstack[mainstackpo])^:= puint16(globdata+oppo^.d.address)^;
+ puint16(@mainstack[mainstackpo])^:= puint16(globdata+oppo^.d.dataaddress)^;
 end;
 
 procedure pushglob4;
 begin
  inc(mainstackpo);
- puint32(@mainstack[mainstackpo])^:= puint32(globdata+oppo^.d.address)^;
+ puint32(@mainstack[mainstackpo])^:= puint32(globdata+oppo^.d.dataaddress)^;
 end;
 
 procedure pushglob;
 begin
  inc(mainstackpo);
- move((globdata+oppo^.d.address)^,(@mainstack[mainstackpo])^,oppo^.d.size);
+ move((globdata+oppo^.d.dataaddress)^,(@mainstack[mainstackpo])^,
+                                                    oppo^.d.datasize);
 end;
 
 procedure finalize;
@@ -200,7 +219,8 @@ var
 begin
  setlength(mainstack,stackdepht);
  mainstackpo:= -1;
- oppo:= pointer(code);
+ startpo:= pointer(code);
+ oppo:= startpo;
  endpo:= oppo+length(code);
  with pstartupdataty(oppo)^ do begin
   getmem(globdata,globdatasize);

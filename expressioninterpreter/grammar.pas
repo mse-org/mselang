@@ -100,12 +100,18 @@ var
  thenco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then');
+ then0co: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'then0');
  then1co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then1');
  then2co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then2');
+ else0co: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'else0');
  elseco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'else');
@@ -370,7 +376,7 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'then'; k:true; c:@then1co; e:true; p:false; s: false; sb:false; sa:false),
+  (t:'then'; k:true; c:@then0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -383,7 +389,7 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'else'; k:true; c:@elseco; e:true; p:false; s: false; sb:false; sa:false),
+  (t:'else'; k:true; c:@else0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1123,11 +1129,17 @@ begin
  ifco.handle:= @handleif;
  thenco.branch:= @bthen;
  thenco.handle:= @handlethen;
+ then0co.branch:= nil;
+ then0co.next:= @then1co;
+ then0co.handle:= @handlethen0;
  then1co.branch:= @bthen1;
  then1co.next:= @then2co;
  then1co.handle:= @handlethen1;
  then2co.branch:= @bthen2;
  then2co.handle:= @handlethen2;
+ else0co.branch:= nil;
+ else0co.next:= @elseco;
+ else0co.handle:= @handleelse0;
  elseco.branch:= @belse;
  elseco.handle:= @handleelse;
  constco.branch:= @bconst;

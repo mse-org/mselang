@@ -30,7 +30,7 @@ var
  int1: integer;
 begin
  with info^ do begin
-  writeln('  ',text,' T:',stacktop,' I:',stackindex,' ''',
+  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' ''',
                                              singleline(source),'''');
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));

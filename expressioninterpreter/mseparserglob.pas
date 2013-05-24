@@ -46,8 +46,12 @@ type
                   ck_bool8fact,ck_int32fact,ck_flo64fact);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
+ opaddressty = ptruint;
+ dataaddressty = ptruint;
+ 
 const
  constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
+ dummyaddress = 0;
 
 type
  pparseinfoty = ^parseinfoty;
@@ -88,7 +92,7 @@ type
   value: double;
  end;
  opmarkty = record
-  address: ptruint;
+  address: opaddressty;
  end;
  {
  constkindty = (cok_bool8,cok_int32,cok_flo64);
@@ -142,7 +146,7 @@ type
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
-             ok_pop,ok_op,ok_op1,ok_var);
+             ok_pop,ok_op,ok_op1,ok_var,ok_opaddress);
  
  opdataty = record
   case opkindty of 
@@ -162,9 +166,12 @@ type
     op1: op1infoty;
    );
    ok_var: (
-    address: ptruint;
-    size: ptruint;
-   )
+    dataaddress: dataaddressty;
+    datasize: ptruint;
+   );
+   ok_opaddress: (
+    opaddress: opaddressty;
+   )    
   end;
 
  opinfoty = record
