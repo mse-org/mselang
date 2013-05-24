@@ -64,11 +64,14 @@ var
  exeblockco: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exeblock');
+ statementstackco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'statementstack');
  statementco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement');
  endtokenco: contextty = (branch: nil; handle: nil; 
-               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'endtoken');
  simplestatementco: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -303,6 +306,11 @@ const
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
+ bstatementstack: array[0..1] of branchty = (
+  (t:''; k:false; c:@statementco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
  bstatement: array[0..6] of branchty = (
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
@@ -328,7 +336,7 @@ const
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:';'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'end'; k:true; c:@endtokenco; e:false; p:false; s: false; sb:false; sa:false),
+  (t:'end'; k:true; c:@endtokenco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -364,7 +372,7 @@ const
  );
 
  bthen1: array[0..1] of branchty = (
-  (t:''; k:false; c:@exeblockco; e:false; p:true; s: true; sb:true; sa:false),
+  (t:''; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -377,7 +385,7 @@ const
  );
 
  belse: array[0..1] of branchty = (
-  (t:''; k:false; c:@exeblockco; e:false; p:true; s: true; sb:false; sa:false),
+  (t:''; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1089,6 +1097,7 @@ begin
  mainco.handle:= @handlemain;
  exeblockco.branch:= @bexeblock;
  exeblockco.next:= @exeblockco;
+ statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
  statementco.next:= @simplestatementco;
  statementco.handle:= @handlestatement;

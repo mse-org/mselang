@@ -30,7 +30,7 @@ var
  int1: integer;
 begin
  with info^ do begin
-  writeln('**',text,' T:',stacktop,' I:',stackindex,' ''',
+  writeln('  ',text,' T:',stacktop,' I:',stackindex,' ''',
                                              singleline(source),'''');
   for int1:= stacktop downto 0 do begin
    write(int1);
@@ -68,6 +68,12 @@ begin
       write(' ');
      end;
     end;
+    if context <> nil then begin
+     write('<',context^.caption,'> ');
+    end
+    else begin
+     write('<NIL> ');
+    end;
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_ident: begin
@@ -85,12 +91,6 @@ begin
      ck_opmark: begin
       write(opmark.address,' ');
      end;
-    end;
-    if context <> nil then begin
-     write(context^.caption);
-    end
-    else begin
-     write('NIL');
     end;
     writeln(' ''',singleline(start),'''');
    end;
@@ -121,8 +121,8 @@ begin
    start:= source;
    parent:= int1;
   end;
+  outinfo(info,'pusha '+contextstack[stacktop].context^.caption);
  end;
- outinfo(info,'pusha');
 end;
 
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
@@ -177,10 +177,10 @@ var
    pb:= pc^.branch;
   end;
   if bo1 then begin
-   outinfo(@info,'push');
+   outinfo(@info,'^ '+pc^.caption);
   end
   else begin
-   outinfo(@info,'branch');
+   outinfo(@info,'> '+pc^.caption);
   end;
  end;
 
@@ -287,11 +287,11 @@ handlelab:
     end;
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
-     outinfo(@info,'after0a');
+     outinfo(@info,'! after0a');
      goto handlelab;    
     end;
     if pc^.next = nil then begin
-     outinfo(@info,'after0b');
+     outinfo(@info,'! after0b');
     end;
    until pc^.next <> nil;
    with contextstack[stackindex] do begin
@@ -303,10 +303,10 @@ handlelab:
     context:= pc;
 //    kind:= ck_none;
    end;
-   outinfo(@info,'after1');
+   outinfo(@info,'! after1');
   end;
 parseend:
-  outinfo(@info,'after2');
+  outinfo(@info,'! after2');
   setlength(ops,opcount);
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;
