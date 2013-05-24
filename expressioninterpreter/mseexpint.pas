@@ -16,7 +16,7 @@ procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 implementation
 uses
- typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings;
+ typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -33,7 +33,7 @@ begin
   writeln('  ',text,' T:',stacktop,' I:',stackindex,' ''',
                                              singleline(source),'''');
   for int1:= stacktop downto 0 do begin
-   write(int1);
+   write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
     write('*');
    end
@@ -47,7 +47,7 @@ begin
     write(' ');
    end;
    with contextstack[int1],d do begin
-    write(parent,' ');
+    write(fitstring(inttostr(parent),3,sp_right),' ');
     with context^ do begin
      if cut then begin
       write('-');

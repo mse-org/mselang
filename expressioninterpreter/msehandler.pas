@@ -42,6 +42,7 @@ procedure handleexponent(const info: pparseinfoty);
 procedure handlenegexponent(const info: pparseinfoty);
 
 procedure handlestatementend(const info: pparseinfoty);
+procedure handleendtoken(const info: pparseinfoty);
 procedure handleident(const info: pparseinfoty);
 procedure handlevalueidentifier(const info: pparseinfoty);
 
@@ -832,6 +833,14 @@ begin
   kind:= ck_end;
  end;
  outhandle(info,'STATEMENTEND');
+end;
+
+procedure handleendtoken(const info: pparseinfoty);
+begin
+ with info^ do begin
+  stackindex:= stackindex-2;
+ end;
+ outhandle(info,'ENDTOKEN');
 end;
 
 procedure handleparamstart0(const info: pparseinfoty);

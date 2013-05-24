@@ -26,13 +26,14 @@ exeblock,exeblock,*
  'if'.,if-*
  @identstart,statement0*
 statementstack,,^
- '',statement^*
+ '',statement*
 statement,simplestatement,handlestatement
  @whitespace,
  'begin'.,statementblock-^*
- 'end'.,endtoken
- 'if'.,if-*
-endtoken,,^
+ 'end'.,endcontext
+ 'if'.,if-
+endcontext,,
+endtoken,,handleendtoken*
 simplestatement,,*
  '',statement0*
 statementblock,statementblock1,
@@ -57,7 +58,7 @@ then1,then2,handlethen1
  '',statementstack^*!
 then2,,handlethen2
  @whitespace,
- 'else'.,else-*
+ 'else'.,else-
 else,,handleelse
  '',statementstack^*!
 const,,handleconst

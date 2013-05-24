@@ -70,8 +70,11 @@ var
  statementco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement');
+ endcontextco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'endcontext');
  endtokenco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'endtoken');
  simplestatementco: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -307,7 +310,7 @@ const
  );
 
  bstatementstack: array[0..1] of branchty = (
-  (t:''; k:false; c:@statementco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -316,8 +319,8 @@ const
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'begin'; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'end'; k:true; c:@endtokenco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:'if'; k:true; c:@ifco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'end'; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
+  (t:'if'; k:true; c:@ifco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -380,7 +383,7 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'else'; k:true; c:@elseco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'else'; k:true; c:@elseco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1101,7 +1104,9 @@ begin
  statementco.branch:= @bstatement;
  statementco.next:= @simplestatementco;
  statementco.handle:= @handlestatement;
+ endcontextco.branch:= nil;
  endtokenco.branch:= nil;
+ endtokenco.handle:= @handleendtoken;
  simplestatementco.branch:= @bsimplestatement;
  statementblockco.branch:= @bstatementblock;
  statementblockco.next:= @statementblock1co;
