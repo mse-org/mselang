@@ -90,7 +90,7 @@ const
  flo64kinds = [ck_flo64const,ck_flo64fact];
 
 type
- systypesty = (st_integer);
+ systypety = (st_integer);
  typedataty = record
   size: integer;
  end;
@@ -104,14 +104,27 @@ type
   data: contextdataty;
  end;
  keywordty = (kw_0,kw_1,kw_if);
+ sysfuncty = (sf_writeln);
+ sysfuncdataty = record
+  func: sysfuncty;
+  op: opty;
+ end;
+ psysfuncdataty = ^sysfuncdataty;
+ sysfuncinfoty = record
+  name: string;
+  data: sysfuncdataty;
+ end;
   
 const
- systypeinfos: array[systypesty] of typeinfoty = (
+ systypeinfos: array[systypety] of typeinfoty = (
    (name: 'integer'; data: (size: 4))
   );
  sysconstinfos: array[0..1] of constinfoty = (
    (name: 'false'; data: (kind: ck_bool8const; bool8const: (value: false))),
    (name: 'true'; data: (kind: ck_bool8const; bool8const: (value: true)))
+  );
+ sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
+   (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
   );
   
 function getglobvaraddress(const info: pparseinfoty;
@@ -126,14 +139,15 @@ end;
 procedure initparser;
 var
  kw1: keywordty;
- ty1: systypesty;
+ ty1: systypety;
+ sf1: sysfuncty;
  po1: pelementinfoty;
  int1: integer;
 begin
  for kw1:= keywordty(2) to high(keywordty) do begin
   getident(copy(getenumname(typeinfo(keywordty),ord(kw1)),4,bigint));
  end;
- for ty1:= low(systypesty) to high(systypesty) do begin
+ for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
    ptypedataty(@po1^.data)^:= data;
@@ -143,6 +157,12 @@ begin
   with sysconstinfos[int1] do begin
    po1:= addelement(getident(name),ek_context,elesize+sizeof(contextdataty));
    pcontextdataty(@po1^.data)^:= data;
+  end;
+ end;
+ for sf1:= low(sysfuncty) to high(sysfuncty) do begin
+  with sysfuncinfos[sf1] do begin
+   po1:= addelement(getident(name),ek_sysfunc,elesize+sizeof(sysfuncdataty));
+   psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
 end;
@@ -177,6 +197,13 @@ begin
  end;
 end;
 
+function findkindelement(const info: pparseinfoty; const astackoffset: integer;
+              const akind: elementkindty; out ainfo: pointer): boolean;
+begin
+ with info^ do begin
+  result:= findkindelement(contextstack[stackindex+astackoffset].d,akind,ainfo);
+ end;
+end;
 
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin
@@ -1108,8 +1135,20 @@ begin
 end;
 
 procedure handlecheckproc(const info: pparseinfoty);
+var
+ po1: pelementinfoty;
 begin
  with info^ do begin
+  if findkindelement(info,1,ek_sysfunc,po1) then begin
+   with psysfuncdataty(@po1^.data)^ do begin
+    case func of
+     sf_writeln: begin
+      push(info,stacktop-stackindex-2);
+      writeop(info,op);
+     end;
+    end;
+   end;
+  end;
   dec(stackindex);
   stacktop:= stackindex;
  end;

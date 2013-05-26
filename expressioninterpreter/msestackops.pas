@@ -40,6 +40,7 @@ function run(const code: opinfoarty; const stackdepht: integer): real;
 procedure dummyop;
 procedure gotoop;
 procedure ifop;
+procedure writelnop;
 
 procedure pushbool8;
 procedure pushint32;
@@ -93,6 +94,10 @@ begin
   oppo:= startpo + oppo^.d.opaddress;
  end;
  dec(mainstackpo);
+end;
+
+procedure writelnop;
+begin
 end;
 
 procedure pushbool8;

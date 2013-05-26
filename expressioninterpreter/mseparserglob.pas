@@ -140,13 +140,17 @@ type
   index0: integer;
  end;
 
+ opninfoty = record
+  paramcount: integer;
+ end;
+
  startupdataty = record
   globdatasize: ptruint;
  end;
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
-             ok_pop,ok_op,ok_op1,ok_var,ok_opaddress);
+             ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress);
  
  opdataty = record
   case opkindty of 
@@ -164,6 +168,9 @@ type
    );
    ok_op1: (
     op1: op1infoty;
+   );
+   ok_opn: (
+    opn: opninfoty;
    );
    ok_var: (
     dataaddress: dataaddressty;
