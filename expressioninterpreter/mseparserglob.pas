@@ -35,6 +35,8 @@ type
  psint16 = ^sint16;
  psint32 = ^sint32;
  
+ datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind);
+
 const
  defaultstackdepht = 256;
 
@@ -150,6 +152,7 @@ type
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
+             ok_pushdatakind,
              ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress);
  
  opdataty = record
@@ -162,6 +165,9 @@ type
    );
    ok_pushflo64: (
     vflo64: real;
+   );
+   ok_pushdatakind: (
+    vdatakind: datakindty;
    );
    ok_pop: (
     count: integer;

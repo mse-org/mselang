@@ -308,6 +308,27 @@ begin
  end;
 end;
 
+procedure push(const info: pparseinfoty; const avalue: contextkindty); overload;
+begin
+ with additem(info)^ do begin
+  op:= @pushdatakind;
+  case avalue of
+   ck_bool8const,ck_bool8fact: begin
+    d.vdatakind:= dk_bool8;
+   end;
+   ck_int32const,ck_int32fact: begin
+    d.vdatakind:= dk_int32;
+   end;
+   ck_flo64const,ck_flo64fact: begin
+    d.vdatakind:= dk_flo64;
+   end;
+   else begin
+    d.vdatakind:= dk_none;
+   end;
+  end; 
+ end;
+end;
+
 procedure pushconst(const info: pparseinfoty; const avalue: contextdataty);
 //todo: optimize
 begin
@@ -1136,14 +1157,19 @@ end;
 
 procedure handlecheckproc(const info: pparseinfoty);
 var
- po1: pelementinfoty;
+ po1: psysfuncdataty;
+ int1,int2: integer;
 begin
  with info^ do begin
   if findkindelement(info,1,ek_sysfunc,po1) then begin
-   with psysfuncdataty(@po1^.data)^ do begin
+   with po1^ do begin
     case func of
      sf_writeln: begin
-      push(info,stacktop-stackindex-2);
+      int2:= stacktop-stackindex-2;
+      for int1:= 3+stackindex to int2+2+stackindex do begin
+       push(info,contextstack[int1].d.kind);
+      end;
+      push(info,int2);
       writeop(info,op);
      end;
     end;

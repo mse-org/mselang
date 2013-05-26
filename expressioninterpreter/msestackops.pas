@@ -18,7 +18,6 @@ uses
  mseparserglob;
  
 type
- datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64);
  datainfoty = record
   case kind: datakindty of
    dk_bool8: (
@@ -45,6 +44,7 @@ procedure writelnop;
 procedure pushbool8;
 procedure pushint32;
 procedure pushflo64;
+procedure pushdatakind;
 procedure int32toflo64;
 procedure mulint32;
 procedure mulflo64;
@@ -67,6 +67,7 @@ implementation
 type
  stackinfoty = record
   case datakindty of
+   dk_kind: (vdatakind: datakindty);
    dk_bool8: (vbool8: boolean);
    dk_int32: (vint32: integer);
    dk_flo64: (vflo64: real);
@@ -97,7 +98,27 @@ begin
 end;
 
 procedure writelnop;
+var
+ int1,int2,int3: integer;
 begin
+ int1:= mainstack[mainstackpo].vint32;
+ int3:= mainstackpo-int1;
+ int2:= int3-int1;
+ while int2 < int3 do begin
+  case mainstack[int2+int1].vdatakind of
+   dk_bool8: begin
+    write(mainstack[int2].vbool8);
+   end;
+   dk_int32: begin
+    write(mainstack[int2].vint32);
+   end;
+   dk_flo64: begin
+    write(mainstack[int2].vflo64);
+   end;
+  end;
+  int2:= int2 + 1;
+ end;
+ writeln;
 end;
 
 procedure pushbool8;
@@ -116,6 +137,12 @@ procedure pushflo64;
 begin
  inc(mainstackpo);
  mainstack[mainstackpo].vflo64:= oppo^.d.vflo64; 
+end;
+
+procedure pushdatakind;
+begin
+ inc(mainstackpo);
+ mainstack[mainstackpo].vdatakind:= oppo^.d.vdatakind; 
 end;
 
 procedure int32toflo64;
