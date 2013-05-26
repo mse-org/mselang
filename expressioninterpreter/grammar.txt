@@ -44,13 +44,15 @@ statementblock1,statementblock,
  'end'.,endtoken-
 statement0,statement1,
  '',ident^*
-statement1,,handlestatement1
+statement1,checkproc,
  @whitespace,
  ':=',assignment
+checkproc,,handlecheckproc
+ '',checkparams*
 assignment,,handleassignment
  '',exp*
 if,then,handleif
- '',exp^*
+ '',exp*
 then,,handlethen
  @whitespace,
  'then'.,then0-
@@ -72,7 +74,7 @@ const1,,+
  @whitespace,
  '=',const2-
 const2,const3,
- '',exp^*
+ '',exp*
 const3,const0-,handleconst3
  @whitespace,
  ';',statementend-*
@@ -92,9 +94,11 @@ var3,var0-,handlevar3
  ';',statementend-*
 #
 statementend,,handlestatementend!
-exp,exp1,handleexp^
+expstack,,^
+ '',exp*
+exp,exp1,handleexp
  '',simpexp*
-exp1,,handleexp^
+exp1,,handleexp
  @whitespace,
  '=',equsimpexp*
 equsimpexp,,handleequsimpexp
@@ -123,7 +127,6 @@ mulfact,,handlemulfact
  '-',negterm*
  '(',bracketstart*
  @num,num*
- 'ln',ln*
 num0,,dummyhandler
  @num,num*
  ' ',
@@ -143,28 +146,27 @@ identpath1,,
 identpath2,,
  @whitespace,
  @identstart,identpath*
-valueidentifier,checkparams,handlevalueidentifier
+valueidentifier,checkvalueparams,handlevalueidentifier
  '',ident^*
-checkparams,,handlevalueidentifier
+#
+checkvalueparams,,handlevalueidentifier
  @whitespace,
- '(',paramsstart*^
-paramsstart0,paramsstart,handleparamstart0
-paramsstart,paramsend,dummyhandler
- '',params*
-paramsend,,handleparamsend
+ '(',params0-^*
+checkparams,,^
  @whitespace,
-params,params1,handleparam
- '',simpexp*
-params1,,handleparam
+ '(',params0-^*
+params0,params1,
+ '',expstack^*
+params1,,
  @whitespace,
- ',',params*
+ ',',params0-
+ ')',paramsend-
+paramsend,,^
+#
 bracketstart,bracketend,dummyhandler
  '',simpexp*
 bracketend,,handlebracketend
  @whitespace,
-ln,,handleln
- @whitespace,
- '(',paramsstart*
 exponent,,handleexponent
  '+',
  '-',negexponent*

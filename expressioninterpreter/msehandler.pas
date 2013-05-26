@@ -68,6 +68,7 @@ procedure handlestatement(const info: pparseinfoty);
 
 procedure handleassignment(const info: pparseinfoty);
 procedure handlestatement1(const info: pparseinfoty);
+procedure handlecheckproc(const info: pparseinfoty);
 
 procedure handleif(const info: pparseinfoty);
 procedure handlethen(const info: pparseinfoty);
@@ -1000,7 +1001,8 @@ procedure handleexp(const info: pparseinfoty);
 begin
  with info^ do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
-  dec(info^.stacktop);
+  dec(stacktop);
+  dec(stackindex);
   with contextstack[stacktop] do begin
    if d.kind in constkinds then begin
     pushconst(info,d);
@@ -1103,6 +1105,11 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+end;
+
+procedure handlecheckproc(const info: pparseinfoty);
+begin
+ outhandle(info,'CHECKPROC');
 end;
 
 procedure handleif(const info: pparseinfoty);

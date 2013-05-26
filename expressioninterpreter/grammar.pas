@@ -91,6 +91,9 @@ var
  statement1co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement1');
+ checkprocco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'checkproc');
  assignmentco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'assignment');
@@ -148,11 +151,14 @@ var
  statementendco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: true; popexe: true; nexteat: false; next: nil;
                caption: 'statementend');
- expco: contextty = (branch: nil; handle: nil; 
+ expstackco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'expstack');
+ expco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exp');
  exp1co: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exp1');
  equsimpexpco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -202,33 +208,27 @@ var
  valueidentifierco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'valueidentifier');
+ checkvalueparamsco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'checkvalueparams');
  checkparamsco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'checkparams');
- paramsstart0co: contextty = (branch: nil; handle: nil; 
+ params0co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'paramsstart0');
- paramsstartco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'paramsstart');
- paramsendco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'paramsend');
- paramsco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'params');
+               caption: 'params0');
  params1co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'params1');
+ paramsendco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'paramsend');
  bracketstartco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'bracketstart');
  bracketendco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'bracketend');
- lnco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'ln');
  exponentco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exponent');
@@ -362,13 +362,18 @@ const
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
+ bcheckproc: array[0..1] of branchty = (
+  (t:''; k:false; c:@checkparamsco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
  bassignment: array[0..1] of branchty = (
   (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bif: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -472,7 +477,7 @@ const
  );
 
  bconst2: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -625,6 +630,11 @@ const
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
+ bexpstack: array[0..1] of branchty = (
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
  bexp: array[0..1] of branchty = (
   (t:''; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
@@ -742,7 +752,7 @@ const
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bmulfact: array[0..17] of branchty = (
+ bmulfact: array[0..16] of branchty = (
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
@@ -759,7 +769,6 @@ const
   (t:'7'; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'8'; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'9'; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'ln'; k:false; c:@lnco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1016,36 +1025,33 @@ const
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
+ bcheckvalueparams: array[0..4] of branchty = (
+  (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'('; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
  bcheckparams: array[0..4] of branchty = (
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'('; k:false; c:@paramsstartco; e:false; p:true; s: false; sb:false; sa:true),
+  (t:'('; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamsstart: array[0..1] of branchty = (
-  (t:''; k:false; c:@paramsco; e:false; p:true; s: false; sb:false; sa:false),
+ bparams0: array[0..1] of branchty = (
+  (t:''; k:false; c:@expstackco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamsend: array[0..3] of branchty = (
+ bparams1: array[0..5] of branchty = (
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparams: array[0..1] of branchty = (
-  (t:''; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparams1: array[0..4] of branchty = (
-  (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:','; k:false; c:@paramsco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:','; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
+  (t:')'; k:false; c:@paramsendco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1058,14 +1064,6 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bln: array[0..4] of branchty = (
-  (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'('; k:false; c:@paramsstartco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1121,7 +1119,9 @@ begin
  statement0co.branch:= @bstatement0;
  statement0co.next:= @statement1co;
  statement1co.branch:= @bstatement1;
- statement1co.handle:= @handlestatement1;
+ statement1co.next:= @checkprocco;
+ checkprocco.branch:= @bcheckproc;
+ checkprocco.handle:= @handlecheckproc;
  assignmentco.branch:= @bassignment;
  assignmentco.handle:= @handleassignment;
  ifco.branch:= @bif;
@@ -1164,6 +1164,7 @@ begin
  var3co.handle:= @handlevar3;
  statementendco.branch:= nil;
  statementendco.handle:= @handlestatementend;
+ expstackco.branch:= @bexpstack;
  expco.branch:= @bexp;
  expco.next:= @exp1co;
  expco.handle:= @handleexp;
@@ -1203,30 +1204,20 @@ begin
  identpath1co.branch:= @bidentpath1;
  identpath2co.branch:= @bidentpath2;
  valueidentifierco.branch:= @bvalueidentifier;
- valueidentifierco.next:= @checkparamsco;
+ valueidentifierco.next:= @checkvalueparamsco;
  valueidentifierco.handle:= @handlevalueidentifier;
+ checkvalueparamsco.branch:= @bcheckvalueparams;
+ checkvalueparamsco.handle:= @handlevalueidentifier;
  checkparamsco.branch:= @bcheckparams;
- checkparamsco.handle:= @handlevalueidentifier;
- paramsstart0co.branch:= nil;
- paramsstart0co.next:= @paramsstartco;
- paramsstart0co.handle:= @handleparamstart0;
- paramsstartco.branch:= @bparamsstart;
- paramsstartco.next:= @paramsendco;
- paramsstartco.handle:= @dummyhandler;
- paramsendco.branch:= @bparamsend;
- paramsendco.handle:= @handleparamsend;
- paramsco.branch:= @bparams;
- paramsco.next:= @params1co;
- paramsco.handle:= @handleparam;
+ params0co.branch:= @bparams0;
+ params0co.next:= @params1co;
  params1co.branch:= @bparams1;
- params1co.handle:= @handleparam;
+ paramsendco.branch:= nil;
  bracketstartco.branch:= @bbracketstart;
  bracketstartco.next:= @bracketendco;
  bracketstartco.handle:= @dummyhandler;
  bracketendco.branch:= @bbracketend;
  bracketendco.handle:= @handlebracketend;
- lnco.branch:= @bln;
- lnco.handle:= @handleln;
  exponentco.branch:= @bexponent;
  exponentco.handle:= @handleexponent;
  negexponentco.branch:= @bnegexponent;
