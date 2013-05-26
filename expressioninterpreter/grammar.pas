@@ -151,14 +151,11 @@ var
  statementendco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: true; popexe: true; nexteat: false; next: nil;
                caption: 'statementend');
- expstackco: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
-               caption: 'expstack');
  expco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exp');
  exp1co: contextty = (branch: nil; handle: nil; 
-               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'exp1');
  equsimpexpco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -363,17 +360,17 @@ const
  );
 
  bcheckproc: array[0..1] of branchty = (
-  (t:''; k:false; c:@checkparamsco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:@checkparamsco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bassignment: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bif: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -477,7 +474,7 @@ const
  );
 
  bconst2: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -627,11 +624,6 @@ const
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:';'; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bexpstack: array[0..1] of branchty = (
-  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1037,12 +1029,12 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'('; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'('; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bparams0: array[0..1] of branchty = (
-  (t:''; k:false; c:@expstackco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1164,10 +1156,8 @@ begin
  var3co.handle:= @handlevar3;
  statementendco.branch:= nil;
  statementendco.handle:= @handlestatementend;
- expstackco.branch:= @bexpstack;
  expco.branch:= @bexp;
  expco.next:= @exp1co;
- expco.handle:= @handleexp;
  exp1co.branch:= @bexp1;
  exp1co.handle:= @handleexp;
  equsimpexpco.branch:= @bequsimpexp;

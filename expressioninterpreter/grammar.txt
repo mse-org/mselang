@@ -48,11 +48,11 @@ statement1,checkproc,
  @whitespace,
  ':=',assignment
 checkproc,,handlecheckproc
- '',checkparams*
+ '',checkparams^*
 assignment,,handleassignment
- '',exp*
+ '',exp^*
 if,then,handleif
- '',exp*
+ '',exp^*
 then,,handlethen
  @whitespace,
  'then'.,then0-
@@ -74,7 +74,7 @@ const1,,+
  @whitespace,
  '=',const2-
 const2,const3,
- '',exp*
+ '',exp^*
 const3,const0-,handleconst3
  @whitespace,
  ';',statementend-*
@@ -94,11 +94,9 @@ var3,var0-,handlevar3
  ';',statementend-*
 #
 statementend,,handlestatementend!
-expstack,,^
- '',exp*
-exp,exp1,handleexp
+exp,exp1,
  '',simpexp*
-exp1,,handleexp
+exp1,,handleexp^
  @whitespace,
  '=',equsimpexp*
 equsimpexp,,handleequsimpexp
@@ -154,9 +152,9 @@ checkvalueparams,,handlevalueidentifier
  '(',params0-^*
 checkparams,,^
  @whitespace,
- '(',params0-^*
+ '(',params0-
 params0,params1,
- '',expstack^*
+ '',exp^*
 params1,,
  @whitespace,
  ',',params0-

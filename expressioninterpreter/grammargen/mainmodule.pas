@@ -28,7 +28,7 @@ uses
 <context>,[<next>][-],[<handler>][^|!][+][*]
  - -> eat text
  ^ -> pop parent
- ! -> pop parent and execute handler
+ ! -> pop parent and execute parent handler
  + -> restore source pointer
  * -> stackindex -> stacktop
 

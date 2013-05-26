@@ -1002,7 +1002,7 @@ begin
  with info^ do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(stacktop);
-  dec(stackindex);
+//  dec(stackindex);
   with contextstack[stacktop] do begin
    if d.kind in constkinds then begin
     pushconst(info,d);
@@ -1109,6 +1109,10 @@ end;
 
 procedure handlecheckproc(const info: pparseinfoty);
 begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
  outhandle(info,'CHECKPROC');
 end;
 

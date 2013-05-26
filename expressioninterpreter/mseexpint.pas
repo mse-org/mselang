@@ -125,6 +125,13 @@ begin
  end;
 end;
 
+procedure internalerror(const info: pparseinfoty; const atext: string);
+begin
+ writeln('*INTERNAL ERROR* ',atext);
+ outinfo(info,'');
+ abort;
+end;
+
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
 var
  pb: pbranchty;
@@ -148,7 +155,8 @@ var
     pc^.handle(@info); //transition handler
     pc:= pc^.next;
    end;
-   int1:= contextstack[stacktop].parent;
+//   int1:= contextstack[stacktop].parent;
+   int1:= contextstack[stackindex].parent;
    if pb^.sb then begin
     int1:= stackindex;
    end;
@@ -184,9 +192,23 @@ var
   end;
  end;
 
+ procedure popparent;
+ var
+  int1: integer;
+ begin
+  with info do begin
+   int1:= stackindex;
+   stackindex:= contextstack[stackindex].parent;
+   if int1 = stackindex then begin
+    internalerror(@info,'invalid pop parent');
+   end;
+  end;
+ end; //popparent
+
 var
  po1,po2: pchar;
  pc1: pcontextty;
+ int1: integer;
  
 label
  handlelab,parseend;
@@ -266,13 +288,13 @@ handlelab:
     if pc^.handle <> nil then begin
      pc^.handle(@info);
      if pc^.pop then begin
-      stackindex:= contextstack[stackindex].parent;
+      popparent;
      end;
     end
     else begin
      if pc^.next = nil then begin
       if pc^.pop then begin
-       stackindex:= contextstack[stackindex].parent;
+       popparent;
       end
       else begin
        dec(stackindex);
