@@ -20,13 +20,15 @@ interface
 uses
  mseparserglob,typinfo,msetypes;
 
-procedure initparser;
+procedure initparser(const info: pparseinfoty);
 
 procedure push(const info: pparseinfoty; const avalue: real); overload;
 procedure push(const info: pparseinfoty; const avalue: integer); overload;
 procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
+
+procedure handleprogbegin(const info: pparseinfoty);
 
 procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
@@ -79,7 +81,7 @@ procedure handleelse0(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
 
 procedure handleprocedure3(const info: pparseinfoty);
-procedure handleprocedure4(const info: pparseinfoty);
+procedure handleprocedure6(const info: pparseinfoty);
 
 implementation
 uses
@@ -143,7 +145,25 @@ begin
  end;
 end;
  
-procedure initparser;
+function additem(const info: pparseinfoty): popinfoty;
+begin
+ with info^ do begin
+  if high(ops) < opcount then begin
+   setlength(ops,(high(ops)+257)*2);
+  end;
+  result:= @ops[opcount];
+  inc(opcount);
+ end;
+end;
+
+procedure writeop(const info: pparseinfoty; const operation: opty); inline;
+begin
+ with additem(info)^ do begin
+  op:= operation
+ end;
+end;
+
+procedure initparser(const info: pparseinfoty);
 var
  kw1: keywordty;
  ty1: systypety;
@@ -172,6 +192,7 @@ begin
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
+ writeop(info,@gotoop); //startup vector 
 end;
 
 function findcontextelement(const aident: contextdataty;
@@ -270,24 +291,6 @@ begin
    end;
   end;
   command.writeln([' ',text]);
- end;
-end;
-
-function additem(const info: pparseinfoty): popinfoty;
-begin
- with info^ do begin
-  if high(ops) < opcount then begin
-   setlength(ops,(high(ops)+257)*2);
-  end;
-  result:= @ops[opcount];
-  inc(opcount);
- end;
-end;
-
-procedure writeop(const info: pparseinfoty; const operation: opty); inline;
-begin
- with additem(info)^ do begin
-  op:= operation
  end;
 end;
 
@@ -932,9 +935,9 @@ end;
 
 procedure handleendtoken(const info: pparseinfoty);
 begin
- with info^ do begin
-  stackindex:= stackindex-2;
- end;
+// with info^ do begin
+//  stackindex:= stackindex-2;
+// end;
  outhandle(info,'ENDTOKEN');
 end;
 
@@ -957,6 +960,14 @@ end;
 procedure dummyhandler(const info: pparseinfoty);
 begin
  outhandle(info,'DUMMY');
+end;
+
+procedure handleprogbegin(const info: pparseinfoty);
+begin
+ with info^,ops[startupoffset] do begin
+  d.opaddress:= opcount-1;
+ end;
+ outhandle(info,'PROGBEGIN');
 end;
 
 procedure handleconst(const info: pparseinfoty);
@@ -1172,8 +1183,10 @@ begin
   if findkindelement(info,1,ek_func,po2) then begin
    with additem(info)^ do begin
     op:= @callop;
-    d.opaddress:= po2^.address;
+    d.opaddress:= po2^.address-1;
    end;
+   dec(stackindex);
+   stacktop:= stackindex;
   end
   else begin
    if findkindelement(info,1,ek_sysfunc,po1) then begin
@@ -1278,20 +1291,21 @@ begin
     address:= opcount;
    end;
   end;
+  stacktop:= stackindex;
  end;
  outhandle(info,'PROCEDURE3');
 end;
 
-procedure handleprocedure4(const info: pparseinfoty);
+procedure handleprocedure6(const info: pparseinfoty);
 begin
  with info^ do begin
   with additem(info)^ do begin
    op:= @returnop;
   end;
-  dec(stackindex);
-  stacktop:= stackindex;
+//  dec(stackindex);
+//  stacktop:= stackindex;
  end;
- outhandle(info,'PROCEDURE4');
+ outhandle(info,'PROCEDURE6');
 end;
 
 end.

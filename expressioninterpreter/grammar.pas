@@ -61,6 +61,12 @@ var
  mainco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main');
+ progbeginco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'progbegin');
+ progblockco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'progblock');
  paramsdef0co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramsdef0');
@@ -97,6 +103,18 @@ var
  procedure4co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure4');
+ procedure5co: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedure5');
+ procedure6co: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedure6');
+ checkterminatorco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'checkterminator');
+ terminatorokco: contextty = (branch: nil; handle: nil; 
+               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'terminatorok');
  exeblockco: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exeblock');
@@ -110,7 +128,7 @@ var
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'endcontext');
  endtokenco: contextty = (branch: nil; handle: nil; 
-               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'endtoken');
  simplestatementco: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -280,9 +298,14 @@ const
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'procedure'; k:true; c:@procedure0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'begin'; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'begin'; k:true; c:@progbeginco; e:true; p:false; s: false; sb:false; sa:false),
   (t:'const'; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
   (t:'var'; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ bprogblock: array[0..1] of branchty = (
+  (t:''; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -513,9 +536,19 @@ const
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'begin'; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'begin'; k:true; c:@procedure5co; e:false; p:false; s: false; sb:false; sa:false),
   (t:'const'; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
   (t:'var'; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ bprocedure5: array[0..1] of branchty = (
+  (t:''; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ bcheckterminator: array[0..1] of branchty = (
+  (t:';'; k:false; c:@terminatorokco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1364,6 +1397,10 @@ begin
  mainco.branch:= @bmain;
  mainco.next:= @mainco;
  mainco.handle:= @handlemain;
+ progbeginco.branch:= nil;
+ progbeginco.next:= @progblockco;
+ progbeginco.handle:= @handleprogbegin;
+ progblockco.branch:= @bprogblock;
  paramsdef0co.branch:= @bparamsdef0;
  paramsdef1co.branch:= @bparamsdef1;
  paramsdef1co.next:= @paramsdef2co;
@@ -1382,7 +1419,14 @@ begin
  procedure3co.next:= @procedure4co;
  procedure3co.handle:= @handleprocedure3;
  procedure4co.branch:= @bprocedure4;
- procedure4co.handle:= @handleprocedure4;
+ procedure4co.next:= @checkterminatorco;
+ procedure5co.branch:= @bprocedure5;
+ procedure5co.next:= @procedure6co;
+ procedure6co.branch:= nil;
+ procedure6co.next:= @checkterminatorco;
+ procedure6co.handle:= @handleprocedure6;
+ checkterminatorco.branch:= @bcheckterminator;
+ terminatorokco.branch:= nil;
  exeblockco.branch:= @bexeblock;
  exeblockco.next:= @exeblockco;
  statementstackco.branch:= @bstatementstack;

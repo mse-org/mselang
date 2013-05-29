@@ -215,7 +215,6 @@ label
 begin
  result:= nil;
  mseelements.clear;
- initparser;
  
  with info do begin
   command:= acommand;
@@ -233,6 +232,7 @@ begin
   opcount:= startupoffset;
   setlength(ops,opcount);
   globdatapo:= 0;
+  initparser(@info);
   pc:= contextstack[stackindex].context;
   while (source^ <> #0) and (stackindex >= 0) do begin
    while (source^ <> #0) and (stackindex >= 0) do begin

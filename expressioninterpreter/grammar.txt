@@ -17,9 +17,12 @@ msehandler
 main,main,handlemain
  @whitespace,
  'procedure'.,procedure0-*
- 'begin'.,statementblock-^*
+ 'begin'.,progbegin-
  'const'.,const-*
  'var'.,var-*
+progbegin,progblock,handleprogbegin
+progblock,,
+ '',statementblock-^*
 paramsdef0,,
  @whitespace,
  '(',paramsdef1-
@@ -48,11 +51,18 @@ procedure2,,
  @whitespace,
  ';',procedure3-
 procedure3,procedure4,handleprocedure3
-procedure4,,handleprocedure4
+procedure4,checkterminator,
  @whitespace,
- 'begin'.,statementblock-^*
+ 'begin'.,procedure5
  'const'.,const-*
  'var'.,var-*
+procedure5,procedure6,
+ '',statementblock-^*
+procedure6,checkterminator,handleprocedure6
+# return
+checkterminator,,
+ ';',terminatorok-
+terminatorok,,*
 exeblock,exeblock,*
  @whitespace,
  ';',
@@ -67,7 +77,7 @@ statement,simplestatement,handlestatement
  'end'.,endcontext
  'if'.,if-
 endcontext,,
-endtoken,,handleendtoken*
+endtoken,,handleendtoken^*
 simplestatement,,*
  '',statement0*
 statementblock,statementblock1,

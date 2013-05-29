@@ -123,6 +123,7 @@ begin
   int2:= int2 + 1;
  end;
  writeln;
+ mainstackpo:= mainstackpo-2*int1-1;
 end;
 
 procedure pushbool8;
@@ -247,7 +248,8 @@ end;
 procedure callop;
 begin
  inc(mainstackpo);
- mainstack[mainstackpo].vaddress:= oppo+1;
+ mainstack[mainstackpo].vaddress:= oppo;
+ oppo:= startpo+oppo^.d.opaddress;
 end;
 
 procedure returnop;

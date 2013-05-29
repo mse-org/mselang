@@ -148,6 +148,7 @@ type
 
  startupdataty = record
   globdatasize: ptruint;
+//  startaddress: opaddressty;
  end;
  pstartupdataty = ^startupdataty;
  
@@ -206,6 +207,7 @@ type
   command: ttextstream;
   ops: opinfoarty;
   opcount: integer;
+  start: integer;
   globdatapo: ptruint;
  end;
 
