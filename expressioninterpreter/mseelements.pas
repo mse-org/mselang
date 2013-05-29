@@ -30,7 +30,7 @@ type
  identty = integer;
  identarty = integerarty;
  elementoffsetty = integer;
- elementkindty = (ek_none,ek_context,ek_type,ek_sysfunc);
+ elementkindty = (ek_none,ek_context,ek_type,ek_sysfunc,ek_func);
  
  elementheaderty = record
   name: identty;
@@ -60,6 +60,9 @@ function pushelement(const aname: identty;  const akind: elementkindty;
 function popelement: pelementinfoty;
 function addelement(const aname: identty;  const akind: elementkindty;
            const asize: integer): pelementinfoty;   //nil if duplicate
+function addelement(const aname: identty;  const akind: elementkindty;
+           const asize: integer; out aelementdata: pointer): boolean;
+                                                    //false if duplicate
 
 function findelement(const aname: identty): pelementinfoty;
                                             //nil if not found
@@ -264,6 +267,17 @@ begin
    kind:= akind;
   end; 
   elementlist.addelement(elementpath+aname,ele1);
+ end;
+end;
+
+function addelement(const aname: identty;  const akind: elementkindty;
+           const asize: integer; out aelementdata: pointer): boolean;
+                                                    //false if duplicate
+begin
+ aelementdata:= addelement(aname,akind,asize);
+ result:= aelementdata <> nil;
+ if result then begin
+  aelementdata:= @(pelementinfoty(aelementdata)^.data);
  end;
 end;
 

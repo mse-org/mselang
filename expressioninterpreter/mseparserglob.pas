@@ -35,7 +35,7 @@ type
  psint16 = ^sint16;
  psint32 = ^sint32;
  
- datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind);
+ datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address);
 
 const
  defaultstackdepht = 256;

@@ -78,6 +78,9 @@ procedure handlethen2(const info: pparseinfoty);
 procedure handleelse0(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
 
+procedure handleprocedure3(const info: pparseinfoty);
+procedure handleprocedure4(const info: pparseinfoty);
+
 implementation
 uses
  msestackops,msestrings,mseelements,mseexpint,grammar;
@@ -114,6 +117,10 @@ type
   name: string;
   data: sysfuncdataty;
  end;
+ funcdataty = record
+  address: opaddressty;
+ end;
+ pfuncdataty = ^funcdataty;
   
 const
  systypeinfos: array[systypety] of typeinfoty = (
@@ -1157,26 +1164,35 @@ end;
 
 procedure handlecheckproc(const info: pparseinfoty);
 var
+ po2: pfuncdataty;
  po1: psysfuncdataty;
  int1,int2: integer;
 begin
  with info^ do begin
-  if findkindelement(info,1,ek_sysfunc,po1) then begin
-   with po1^ do begin
-    case func of
-     sf_writeln: begin
-      int2:= stacktop-stackindex-2;
-      for int1:= 3+stackindex to int2+2+stackindex do begin
-       push(info,contextstack[int1].d.kind);
+  if findkindelement(info,1,ek_func,po2) then begin
+   with additem(info)^ do begin
+    op:= @callop;
+    d.opaddress:= po2^.address;
+   end;
+  end
+  else begin
+   if findkindelement(info,1,ek_sysfunc,po1) then begin
+    with po1^ do begin
+     case func of
+      sf_writeln: begin
+       int2:= stacktop-stackindex-2;
+       for int1:= 3+stackindex to int2+2+stackindex do begin
+        push(info,contextstack[int1].d.kind);
+       end;
+       push(info,int2);
+       writeop(info,op);
       end;
-      push(info,int2);
-      writeop(info,op);
      end;
     end;
    end;
+   dec(stackindex);
+   stacktop:= stackindex;
   end;
-  dec(stackindex);
-  stacktop:= stackindex;
  end;
  outhandle(info,'CHECKPROC');
 end;
@@ -1249,6 +1265,33 @@ begin //boolexp,thenmark,elsemark
   stacktop:= stackindex;
  end;
  outhandle(info,'ELSE');
+end;
+
+procedure handleprocedure3(const info: pparseinfoty);
+var
+ po1: pfuncdataty;
+begin
+ with info^ do begin
+  if addelement(contextstack[stackindex+1].d.ident,ek_func,
+              elesize+sizeof(funcdataty),po1) then begin
+   with po1^ do begin
+    address:= opcount;
+   end;
+  end;
+ end;
+ outhandle(info,'PROCEDURE3');
+end;
+
+procedure handleprocedure4(const info: pparseinfoty);
+begin
+ with info^ do begin
+  with additem(info)^ do begin
+   op:= @returnop;
+  end;
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'PROCEDURE4');
 end;
 
 end.

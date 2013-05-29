@@ -63,6 +63,9 @@ procedure pushglob2;
 procedure pushglob4;
 procedure pushglob;
 
+procedure callop;
+procedure returnop;
+
 implementation
 type
  stackinfoty = record
@@ -71,6 +74,7 @@ type
    dk_bool8: (vbool8: boolean);
    dk_int32: (vint32: integer);
    dk_flo64: (vflo64: real);
+   dk_address: (vaddress: pointer);
  end;
  stackinfoarty = array of stackinfoty;
 var
@@ -238,6 +242,18 @@ begin
  inc(mainstackpo);
  move((globdata+oppo^.d.dataaddress)^,(@mainstack[mainstackpo])^,
                                                     oppo^.d.datasize);
+end;
+
+procedure callop;
+begin
+ inc(mainstackpo);
+ mainstack[mainstackpo].vaddress:= oppo+1;
+end;
+
+procedure returnop;
+begin
+ oppo:= mainstack[mainstackpo].vaddress;
+ dec(mainstackpo);
 end;
 
 procedure finalize;
