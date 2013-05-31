@@ -198,6 +198,9 @@ type
  opinfoarty = array of opinfoty;
  
  parseinfoty = record
+  pb: pbranchty;
+  pc: pcontextty;
+  stophandle: boolean;
   source: pchar;
   consumed: pchar;
   contextstack: array of contextitemty;

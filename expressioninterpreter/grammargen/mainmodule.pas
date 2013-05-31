@@ -91,6 +91,7 @@ var
  branchcount: integer;
  contexts: contextinfoarty;
  tokendefs: tokendefarty;
+ intokendef: boolean;
 
  procedure error(const text: string);
  begin
@@ -99,6 +100,46 @@ var
   writestderr('***ERROR*** '+text+ ' line '+inttostr(line)+lineend+str1,true);
  end;
  
+ function gettokendef(const aname: string; const acontext: string): boolean;
+ var
+  int1,int2,int3: integer;
+  ar1: stringarty;
+ begin
+  result:= true;
+  int2:= -1;
+  for int1:= 0 to high(tokendefs) do begin
+   if tokendefs[int1].name = aname then begin
+    int2:= int1;
+    break;
+   end;
+  end;
+  if int2 < 0 then begin
+   error('Tokendef not found.');
+   result:= false;
+   exit;
+  end;
+  if intokendef then begin
+   with tokendefs[int2] do begin
+    int3:= high(tokendefs[high(tokendefs)].tokens);
+    setlength(tokendefs[high(tokendefs)].tokens,int3+length(tokens)+1);
+    for int1:= 0 to high(tokens) do begin
+     inc(int3);
+     tokendefs[high(tokendefs)].tokens[int3]:= tokens[int1];
+    end;
+   end;
+  end
+  else begin
+   with tokendefs[int2] do begin
+    for int1:= 0 to high(tokens) do begin
+     setlength(ar1,2);
+     ar1[1]:= acontext;
+     ar1[0]:= tokens[int1];
+     additem(branches,ar1,branchcount);
+    end;
+   end;
+  end;
+ end;
+
  procedure handlecontext;
  begin
   setlength(branches,branchcount);
@@ -118,7 +159,6 @@ var
  str2,str3: string;
  int1,int2: integer;
  po1,po2,po3: pchar;
- intokendef: boolean;
  setbefore,setafter: boolean;
  identchars: array[char] of boolean;
 begin
@@ -151,13 +191,24 @@ begin
        with tokendefs[high(tokendefs)] do begin
         while true do begin
          po3:= po1;
-         getpascalstring(po1);
-         if po1 = po3 then begin
-          error('Invalid string');
-          exit;
+         if po1^= '@' then begin
+          inc(po3);
+          while not (po1^ in [',',#0]) do begin
+           inc(po1)
+          end;
+          if not gettokendef(psubstr(po3,po1),'') then begin
+           exit;
+          end;
+         end
+         else begin
+          getpascalstring(po1);
+          if po1 = po3 then begin
+           error('Invalid string');
+           exit;
+          end;
+          setlength(tokens,high(tokens)+2);
+          setstring(tokens[high(tokens)],po3,po1-po3);
          end;
-         setlength(tokens,high(tokens)+2);
-         setstring(tokens[high(tokens)],po3,po1-po3);
          if po1^ = #0 then begin
           break;
          end;
@@ -204,25 +255,9 @@ begin
            while po1^ <> ',' do begin
             inc(po1);
            end;
-           setstring(str3,po3,po1-po3);
-           int2:= -1;
-           for int1:= 0 to high(tokendefs) do begin
-            if tokendefs[int1].name = str3 then begin
-             int2:= int1;
-             break;
-            end;
-           end;
-           if int2 < 0 then begin
-            error('Tokendef not found.');
+//           setstring(str3,po3,po1-po3);
+           if not gettokendef(psubstr(po3,po1),str2) then begin
             exit;
-           end;
-           with tokendefs[int2] do begin
-            for int1:= 0 to high(tokens) do begin
-             setlength(ar1,2);
-             ar1[1]:= str2;
-             ar1[0]:= tokens[int1];
-             additem(branches,ar1,branchcount);
-            end;
            end;
           end
           else begin

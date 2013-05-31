@@ -61,6 +61,12 @@ var
  mainco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main');
+ main1co: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'main1');
+ keywordco: contextty = (branch: nil; handle: nil; 
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'keyword');
  progbeginco: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'progbegin');
@@ -293,14 +299,118 @@ uses
  msehandler;
  
 const
- bmain: array[0..7] of branchty = (
+ bmain: array[0..55] of branchty = (
   (t:' '; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'procedure'; k:true; c:@procedure0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'begin'; k:true; c:@progbeginco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:'const'; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'var'; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'a'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'b'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'c'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'d'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'e'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'f'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'g'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'h'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'i'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'j'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'k'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'l'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'m'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'n'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'o'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'p'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'q'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'r'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'s'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'t'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'u'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'v'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'w'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'x'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'y'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'z'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'A'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'B'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'C'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'D'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'E'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'F'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'G'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'H'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'I'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'J'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'K'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'L'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'M'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'N'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'O'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'P'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'Q'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'R'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'S'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'T'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'U'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'V'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'W'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'X'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'Y'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:'Z'; k:false; c:@keywordco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ bkeyword: array[0..52] of branchty = (
+  (t:'a'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'b'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'c'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'d'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'e'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'f'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'g'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'h'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'i'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'j'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'k'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'l'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'m'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'n'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'o'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'p'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'q'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'r'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'s'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'t'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'u'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'v'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'w'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'x'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'y'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'z'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'A'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'B'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'C'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'D'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'E'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'F'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'G'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'H'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'I'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'J'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'K'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'L'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'M'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'N'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'O'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'P'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'Q'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'R'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'S'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'T'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'U'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'V'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'W'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'X'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'Y'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'Z'; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:''; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1395,8 +1505,13 @@ const
 procedure init;
 begin
  mainco.branch:= @bmain;
- mainco.next:= @mainco;
+ mainco.next:= @main1co;
  mainco.handle:= @handlemain;
+ main1co.branch:= nil;
+ main1co.next:= @mainco;
+ main1co.handle:= @handlemain1;
+ keywordco.branch:= @bkeyword;
+ keywordco.handle:= @handlekeyword;
  progbeginco.branch:= nil;
  progbeginco.next:= @progblockco;
  progbeginco.handle:= @handleprogbegin;

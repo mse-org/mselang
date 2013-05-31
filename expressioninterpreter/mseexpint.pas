@@ -103,28 +103,6 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
-procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
-var
- int1: integer;
-begin
- with info^ do begin
-  int1:= contextstack[stacktop].parent;
-  inc(stacktop);
-  stackindex:= stacktop;
-  if stacktop = stackdepht then begin
-   stackdepht:= 2*stackdepht;
-   setlength(contextstack,stackdepht);
-  end;
-  with contextstack[stackindex],d do begin
-   kind:= ck_none;
-   context:= cont;
-   start:= source;
-   parent:= int1;
-  end;
-  outinfo(info,'pusha '+contextstack[stacktop].context^.caption);
- end;
-end;
-
 procedure internalerror(const info: pparseinfoty; const atext: string);
 begin
  writeln('*INTERNAL ERROR* ',atext);
@@ -132,65 +110,78 @@ begin
  abort;
 end;
 
-function parse(const input: string; const acommand: ttextstream): opinfoarty;
+function pushcont(const info: pparseinfoty): boolean;
 var
- pb: pbranchty;
- pc: pcontextty;
- info: parseinfoty;
-
- function pushcont: boolean;
- var
-  int1: integer;
-  bo1: boolean;
- begin
-  result:= true;
-  bo1:= false;
-  with info do begin
-   pc:= pb^.c;
-   while pc^.branch = nil do begin
-    if pc^.next = nil then begin
-     result:= false;
-     break;
-    end;
-    pc^.handle(@info); //transition handler
-    pc:= pc^.next;
+ int1: integer;
+ bo1: boolean;
+begin
+ result:= true;
+ bo1:= false;
+ with info^ do begin
+  pc:= pb^.c;
+  while pc^.branch = nil do begin
+   if pc^.next = nil then begin
+    result:= false;
+    break;
    end;
-//   int1:= contextstack[stacktop].parent;
-   int1:= contextstack[stackindex].parent;
-   if pb^.sb then begin
-    int1:= stackindex;
-   end;
-   if pb^.p then begin
-    bo1:= true;
-    inc(stacktop);
-    stackindex:= stacktop;
-    if stacktop = stackdepht then begin
-     stackdepht:= 2*stackdepht;
-     setlength(contextstack,stackdepht);
-    end;
-    if pb^.sa then begin
-     int1:= stacktop;
-    end;
-   end;
-   with contextstack[stackindex],d do begin
-    kind:= ck_none;
-    context:= pc;
-    start:= source;
-    parent:= int1;
-    if pb^.s then begin
-     kind:= ck_opmark;
-     opmark.address:= opcount;
-    end;
-   end;
-   pb:= pc^.branch;
+   pc^.handle(info); //transition handler
+   pc:= pc^.next;
   end;
+  int1:= contextstack[stackindex].parent;
+  if pb^.sb then begin
+   int1:= stackindex;
+  end;
+  if pb^.p then begin
+   bo1:= true;
+   inc(stacktop);
+   stackindex:= stacktop;
+   if stacktop = stackdepht then begin
+    stackdepht:= 2*stackdepht;
+    setlength(contextstack,stackdepht);
+   end;
+   if pb^.sa then begin
+    int1:= stacktop;
+   end;
+  end;
+  with contextstack[stackindex],d do begin
+   kind:= ck_none;
+   context:= pc;
+   start:= source;
+   parent:= int1;
+   if pb^.s then begin
+    kind:= ck_opmark;
+    opmark.address:= opcount;
+   end;
+  end;
+  pb:= pc^.branch;
   if bo1 then begin
-   outinfo(@info,'^ '+pc^.caption);
+   outinfo(info,'^ '+pc^.caption);
   end
   else begin
-   outinfo(@info,'> '+pc^.caption);
+   outinfo(info,'> '+pc^.caption);
   end;
  end;
+end;
+
+var
+ pushcontextbranch: branchty =
+   (t:''; k:false; c:nil; e:false; p:true; s: false; sb:false; sa: false);
+
+procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
+begin
+ with info^ do begin
+  pb:= @pushcontextbranch;
+  pushcontextbranch.c:= cont;
+  stophandle:= true;
+  pushcont(info);
+ end;
+end;
+
+function parse(const input: string; const acommand: ttextstream): opinfoarty;
+var
+// pb: pbranchty;
+// pc: pcontextty;
+ info: parseinfoty;
 
  procedure popparent;
  var
@@ -211,7 +202,7 @@ var
  int1: integer;
  
 label
- handlelab,parseend;
+ handlelab,stophandlelab,parseend;
 begin
  result:= nil;
  mseelements.clear;
@@ -241,7 +232,7 @@ begin
      break;
     end;
     if pointer(pb^.t) = nil then begin
-     pushcont;
+     pushcont(@info);
     end
     else begin
      while pointer(pb^.t) <> nil do begin
@@ -260,7 +251,7 @@ begin
        end;
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
-         if not pushcont then begin
+         if not pushcont(@info) then begin
           goto handlelab;
          end;
         until pointer(pb^.t) <> nil;
@@ -286,7 +277,12 @@ handlelab:
      source:= contextstack[stackindex].start;
     end;
     if pc^.handle <> nil then begin
+     stophandle:= false;
      pc^.handle(@info);
+     if stophandle then begin
+      writeln('*** stophandle');
+      goto stophandlelab
+     end;
      if pc^.pop then begin
       popparent;
      end;
@@ -325,6 +321,7 @@ handlelab:
     context:= pc;
 //    kind:= ck_none;
    end;
+stophandlelab:
    outinfo(@info,'! after1');
   end;
 parseend:

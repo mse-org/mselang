@@ -49,8 +49,11 @@ procedure handleident(const info: pparseinfoty);
 procedure handlevalueidentifier(const info: pparseinfoty);
 
 procedure handleexp(const info: pparseinfoty);
-procedure handlemain(const info: pparseinfoty);
 procedure handleequsimpexp(const info: pparseinfoty);
+
+procedure handlemain(const info: pparseinfoty);
+procedure handlemain1(const info: pparseinfoty);
+procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
@@ -108,7 +111,7 @@ type
   name: string;
   data: contextdataty;
  end;
- keywordty = (kw_0,kw_1,kw_if);
+ keywordty = (kw_0,kw_1,kw_if,kw_begin);
  sysfuncty = (sf_writeln);
  sysfuncdataty = record
   func: sysfuncty;
@@ -123,7 +126,7 @@ type
   address: opaddressty;
  end;
  pfuncdataty = ^funcdataty;
-  
+   
 const
  systypeinfos: array[systypety] of typeinfoty = (
    (name: 'integer'; data: (size: 4))
@@ -1085,6 +1088,40 @@ begin
   dec(stackindex);
  end;
  outhandle(info,'MAIN');
+end;
+
+const
+ mainkeywords: array[keywordty] of pcontextty = (
+ //kw_0,kw_1,kw_if,kw_begin
+   nil, nil, nil,  @progbeginco
+  );
+  
+procedure handlemain1(const info: pparseinfoty);
+var
+ po1: pcontextty;
+ ident1: identty;
+begin
+ outhandle(info,'MAIN1');
+ with info^,contextstack[stacktop],d do begin
+  ident1:= ident;
+  stacktop:= stackindex;
+  if ident1 <= ord(high(keywordty)) then begin
+   po1:= mainkeywords[keywordty(ident)];
+   if po1 <> nil then begin
+    pushcontext(info,po1);
+   end;       
+  end;
+ end;
+end;
+
+procedure handlekeyword(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop],d do begin
+  kind:= ck_ident;
+  identlen:= source-start;
+  ident:= getident(start,identlen);
+ end;
+ outhandle(info,'KEYWORD');
 end;
 
 procedure handleequsimpexp(const info: pparseinfoty);
