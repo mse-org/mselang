@@ -111,7 +111,7 @@ type
   name: string;
   data: contextdataty;
  end;
- keywordty = (kw_0,kw_1,kw_if,kw_begin);
+ keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
  sysfuncty = (sf_writeln);
  sysfuncdataty = record
   func: sysfuncty;
@@ -1092,8 +1092,8 @@ end;
 
 const
  mainkeywords: array[keywordty] of pcontextty = (
- //kw_0,kw_1,kw_if,kw_begin
-   nil, nil, nil,  @progbeginco
+ //kw_0,kw_1,kw_if,kw_begin,    kw_procedure, kw_const,kw_var
+   nil, nil, nil,  @progbeginco,@procedure0co,@constco,@varco
   );
   
 procedure handlemain1(const info: pparseinfoty);
