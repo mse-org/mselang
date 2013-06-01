@@ -53,7 +53,7 @@ type
  
 const
  constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
- dummyaddress = 0;
+  dummyaddress = 0;
 
 type
  pparseinfoty = ^parseinfoty;
@@ -62,6 +62,7 @@ type
  pcontextty = ^contextty;
  branchty = record
   t: string;
+  x: boolean; //exit
   k: boolean; //keyword
   c: pcontextty;
   e: boolean; //eat flag

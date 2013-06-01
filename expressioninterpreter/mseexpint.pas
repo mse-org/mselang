@@ -165,7 +165,8 @@ end;
 
 var
  pushcontextbranch: branchty =
-   (t:''; k:false; c:nil; e:false; p:true; s: false; sb:false; sa: false);
+   (t:''; x:false; k:false; c:nil; e:false; p:true;
+    s:false; sb:false; sa:false);
 
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 begin
@@ -200,6 +201,9 @@ var
  po1,po2: pchar;
  pc1: pcontextty;
  int1: integer;
+ bo1: boolean;
+ keywordindex: identty;
+ keywordend: pchar;
  
 label
  handlelab,stophandlelab,parseend;
@@ -231,21 +235,39 @@ begin
     if pb = nil then begin
      break;
     end;
+//    if pb^.x then begin 
     if pointer(pb^.t) = nil then begin
      pushcont(@info);
     end
     else begin
-     while pointer(pb^.t) <> nil do begin
-      po1:= source;
-      po2:= pointer(pb^.t);
-      while po1^ = po2^ do begin
-       inc(po1);
-       inc(po2);
-       if po1^ = #0 then begin
-        break;
+     keywordindex:= 0;
+     while not pb^.x do begin
+//     while pointer(pb^.t) <> nil do begin
+      if pb^.k then begin
+       if keywordindex = 0 then begin
+        po1:= source;
+        while po1^ in ['a'..'z','A'..'Z'] do begin
+         inc(po1);
+        end; 
+        keywordindex:= getident(source,po1);
+        keywordend:= po1;
        end;
+       po1:= keywordend;
+       bo1:= keywordindex = byte(pb^.t[1]);
+      end
+      else begin
+       po1:= source;
+       po2:= pointer(pb^.t);
+       while po1^ = po2^ do begin
+        inc(po1);
+        inc(po2);
+        if po1^ = #0 then begin
+         break;
+        end;
+       end;
+       bo1:= po2^ = #0;
       end;
-      if (po2^ = #0) and (not pb^.k or not identchars[po1^]) then begin //match
+      if bo1 then begin //match
        if pb^.e then begin
         source:= po1;
        end;
@@ -254,9 +276,11 @@ begin
          if not pushcont(@info) then begin
           goto handlelab;
          end;
+//        until not pb^.x;
         until pointer(pb^.t) <> nil;
        end;
        source:= po1;
+       keywordindex:= 0;
        if (pb^.c = nil) and pb^.p then begin
 //        stacktop:= stackindex;
         break;

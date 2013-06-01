@@ -111,7 +111,7 @@ type
   name: string;
   data: contextdataty;
  end;
- keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
+// keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
  sysfuncty = (sf_writeln);
  sysfuncdataty = record
   func: sysfuncty;
@@ -168,14 +168,17 @@ end;
 
 procedure initparser(const info: pparseinfoty);
 var
- kw1: keywordty;
+// kw1: keywordty;
  ty1: systypety;
  sf1: sysfuncty;
  po1: pelementinfoty;
  int1: integer;
 begin
- for kw1:= keywordty(2) to high(keywordty) do begin
-  getident(copy(getenumname(typeinfo(keywordty),ord(kw1)),4,bigint));
+// for kw1:= keywordty(2) to high(keywordty) do begin
+//  getident(copy(getenumname(typeinfo(keywordty),ord(kw1)),4,bigint));
+// end;
+ for int1:= 0 to high(keywords) do begin
+  getident(keywords[int1]);
  end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
@@ -1089,19 +1092,20 @@ begin
  end;
  outhandle(info,'MAIN');
 end;
-
+{
 const
  mainkeywords: array[keywordty] of pcontextty = (
  //kw_0,kw_1,kw_if,kw_begin,    kw_procedure, kw_const,kw_var
    nil, nil, nil,  @progbeginco,@procedure0co,@constco,@varco
   );
-  
+ } 
 procedure handlemain1(const info: pparseinfoty);
 var
  po1: pcontextty;
  ident1: identty;
 begin
  outhandle(info,'MAIN1');
+{
  with info^,contextstack[stacktop],d do begin
   ident1:= ident;
   stacktop:= stackindex;
@@ -1112,6 +1116,7 @@ begin
    end;       
   end;
  end;
+}
 end;
 
 procedure handlekeyword(const info: pparseinfoty);
@@ -1185,6 +1190,7 @@ procedure handlestatement1(const info: pparseinfoty);
  
 begin
  with info^ do begin
+ {
   if (stacktop - stackindex = 1) then begin
    with contextstack[stacktop] do begin
     if d.kind = ck_ident then begin
@@ -1205,6 +1211,7 @@ begin
   else begin
    error('stacksize');
   end;
+  }
   dec(stackindex);
   stacktop:= stackindex;
  end;

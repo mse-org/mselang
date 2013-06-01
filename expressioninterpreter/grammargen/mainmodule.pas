@@ -32,13 +32,15 @@ uses
  + -> restore source pointer
  * -> stackindex -> stacktop
 
- <pascalstring>|@<tokendef>{,pascalstring|@<tokendef>},
+ <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
                                         [[<context>][-] [[^][*] | [*][^]] [!] ]
  - -> eat token
  <context>^ -> set parent
  <context>* -> push context
  <context>! -> set ck_codemarker
  * -> terminate context
+<stringdef> -> <pascalstring>[.]
+ . -> keyword
 *)
 
 type
@@ -92,12 +94,52 @@ var
  contexts: contextinfoarty;
  tokendefs: tokendefarty;
  intokendef: boolean;
+ keywords: array of string;
 
  procedure error(const text: string);
  begin
   exitcode:= 1;
 //  application.terminated:= true;
   writestderr('***ERROR*** '+text+ ' line '+inttostr(line)+lineend+str1,true);
+ end;
+
+ function getkeyword(var atext: string): boolean;
+ const
+  keywordoffset = 2;
+ var
+  int1: integer;
+  mstr1: msestring;
+  str1: string;
+ begin
+  result:= true;
+  if not trypascalstringtostring(atext,mstr1) then begin
+   error('Invalid keyword "'+atext+'".');
+   result:= false;
+   exit;
+  end;
+  str1:= mstr1;
+  for int1:= 1 to length(str1) do begin
+   if not (str1[int1] in ['a'..'z','A'..'Z']) then begin
+    error('Invalid keyword "'+str1+'".');
+    result:= false;
+    exit;
+   end;
+  end;
+  for int1:= 0 to high(keywords) do begin
+   if keywords[int1] = str1 then begin
+    atext:= stringtopascalstring(msechar(int1+keywordoffset));
+    exit;
+   end;
+  end;
+  setlength(keywords,high(keywords)+2);
+  keywords[high(keywords)]:= str1;
+  if high(keywords) + keywordoffset > 255 then begin
+   error('Too many keywords.');
+   result:= false;
+   exit;
+  end;
+  atext:= stringtopascalstring(msechar(high(keywords)+keywordoffset))+
+   '{'+atext+'}';
  end;
  
  function gettokendef(const aname: string; const acontext: string): boolean;
@@ -149,6 +191,7 @@ var
    bran:= branches;
   end;
  end;
+
 const
  branchformat = 
   'Format of branch is "''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]"';
@@ -156,11 +199,12 @@ const
 var
  ar1: stringarty;
 // mstr1: msestring;
- str2,str3: string;
+ str2,str3,str4,str5: string;
  int1,int2: integer;
  po1,po2,po3: pchar;
  setbefore,setafter: boolean;
- identchars: array[char] of boolean;
+// identchars: array[char] of boolean;
+ keywordsstart: integer;
 begin
  application.terminated:= true;
  try
@@ -322,38 +366,9 @@ begin
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;
- for int1:= 0 to high(tokendefs) do begin
-  with tokendefs[int1] do begin
-   if name = '' then begin
-    fillchar(identchars,sizeof(identchars),0);
-    for int2:= 0 to high(tokens) do begin
-     if tokens[int2] <> '' then begin
-      str2:= pascalstringtostring(tokens[int2]);
-      if str1 <> '' then begin      
-       identchars[str2[1]]:= true;
-      end;
-     end;
-    end;   
-    str1:= str1+
-'const'+lineend+
-' identchars: array[char] of boolean = (';
-    for int2:= 0 to 255 do begin
-     if int2 mod 8 = 0 then begin
-      str1:= str1 + lineend + '  ';
-     end;
-     if identchars[char(byte(int2))] then begin
-      str1:= str1+'true,';
-     end
-     else begin
-      str1:= str1+'false,';
-     end;
-    end;
-    setlength(str1,length(str1)-1);
-    str1:= str1+');'+lineend+lineend;
-    break;
-   end;
-  end;
- end;
+  str1:= str1+
+'const'+lineend;
+  keywordsstart:= length(str1);
  str1:= str1+
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
@@ -412,12 +427,15 @@ lineend+
      str1:= str1+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
-           if bran[int2][0][length(bran[int2][0])] = '.' then begin
+      if bran[int2][0][length(bran[int2][0])] = '.' then begin
        setlength(bran[int2][0],length(bran[int2][0])-1);
-       str2:= '; k:true';
+       if not getkeyword(bran[int2][0]) then begin
+        exit;
+       end;
+       str2:= '; x: false; k:true';
       end
       else begin
-       str2:= '; k:false';
+       str2:= '; x: false; k:false';
       end;
       str1:= str1+
 '  (t:'+bran[int2][0]+str2+'; c:';
@@ -481,12 +499,29 @@ lineend+
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:''''; k:false; c:nil;'+defaultflags+')'+lineend+
+'  (t:''''; x: true; k:false; c:nil;'+defaultflags+')'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;
    end;
   end;
+  str5:=
+' keywords: array[0..'+inttostr(high(keywords))+'] of string = ('+lineend;
+  str2:= 
+'  ';
+  for int2:= 0 to high(keywords) do begin
+   str3:= stringtopascalstring(keywords[int2])+',';
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  setlength(str2,length(str2)-1);
+  str5:= str5 + str2+');'+lineend+lineend;
+  str1:= copy(str1,1,keywordsstart)+str5+copy(str1,keywordsstart+1,bigint);
+
   str1:= str1+
 'procedure init;'+lineend+
 'begin'+lineend;
