@@ -499,7 +499,7 @@ lineend+
       str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:''''; x: true; k:false; c:nil;'+defaultflags+')'+lineend+
+'  (t:''''; x:true; k:false; c:nil;'+defaultflags+')'+lineend+
 ' );'+lineend+
 ''+lineend;
     end;

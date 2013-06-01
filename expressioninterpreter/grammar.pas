@@ -36,6 +36,12 @@ var
  comment1co: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'comment1');
+ linecomment0co: contextty = (branch: nil; handle: nil; 
+               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'linecomment0');
+ linecomment1co: contextty = (branch: nil; handle: nil; 
+               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'linecomment1');
  main1co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main1');
@@ -271,54 +277,68 @@ uses
  msehandler;
  
 const
- bmain: array[0..8] of branchty = (
+ bmain: array[0..9] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#2{'procedure'}; x: false; k:true; c:@procedure0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#3{'begin'}; x: false; k:true; c:@progbeginco; e:true; p:false; s: false; sb:false; sa:false),
   (t:#4{'const'}; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
   (t:#5{'var'}; x: false; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bcomment0: array[0..1] of branchty = (
+ bcomment0: array[0..2] of branchty = (
   (t:'}'; x: false; k:false; c:@comment1co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ blinecomment0: array[0..2] of branchty = (
+  (t:#$0a; x: false; k:false; c:@linecomment1co; e:true; p:false; s: false; sb:false; sa:false),
+  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bprogblock: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamsdef0: array[0..4] of branchty = (
+ bparamsdef0: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bparamsdef1: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@paramdef0co; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamsdef2: array[0..5] of branchty = (
+ bparamsdef2: array[0..7] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
   (t:')'; x: false; k:false; c:@paramsdef3co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamdef0: array[0..56] of branchty = (
+ bparamdef0: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -372,21 +392,25 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamdef1: array[0..4] of branchty = (
+ bparamdef1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:':'; x: false; k:false; c:@paramdef2co; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparamdef2: array[0..56] of branchty = (
+ bparamdef2: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -440,13 +464,15 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bprocedure0: array[0..56] of branchty = (
+ bprocedure0: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -500,46 +526,52 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bprocedure1: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@paramsdef0co; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bprocedure2: array[0..4] of branchty = (
+ bprocedure2: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:@procedure3co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bprocedure4: array[0..6] of branchty = (
+ bprocedure4: array[0..8] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#3; x: false; k:true; c:@procedure5co; e:false; p:false; s: false; sb:false; sa:false),
   (t:#4; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
   (t:#5; x: false; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bprocedure5: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bcheckterminator: array[0..1] of branchty = (
   (t:';'; x: false; k:false; c:@terminatorokco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bexeblock: array[0..59] of branchty = (
+ bexeblock: array[0..61] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#6{'end'}; x: false; k:true; c:nil; e:true; p:true; s: false; sb:false; sa:false),
   (t:#7{'if'}; x: false; k:true; c:@ifco; e:true; p:true; s: false; sb:false; sa:false),
@@ -596,106 +628,118 @@ const
   (t:'X'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Y'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Z'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bstatementstack: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bstatement: array[0..6] of branchty = (
+ bstatement: array[0..8] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
   (t:#6; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
   (t:#7; x: false; k:true; c:@ifco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bsimplestatement: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bstatementblock: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bstatementblock1: array[0..5] of branchty = (
+ bstatementblock1: array[0..7] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#6; x: false; k:true; c:@endtokenco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bstatement0: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bstatement1: array[0..4] of branchty = (
+ bstatement1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:':='; x: false; k:false; c:@assignmentco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bcheckproc: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@checkparamsco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bassignment: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bif: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bthen: array[0..4] of branchty = (
+ bthen: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#8{'then'}; x: false; k:true; c:@then0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bthen1: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bthen2: array[0..4] of branchty = (
+ bthen2: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#9{'else'}; x: false; k:true; c:@else0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  belse: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bconst: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@const0co; e:false; p:true; s: false; sb:false; sa:true),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bconst0: array[0..56] of branchty = (
+ bconst0: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -749,39 +793,45 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bconst1: array[0..4] of branchty = (
+ bconst1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'='; x: false; k:false; c:@const2co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bconst2: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bconst3: array[0..4] of branchty = (
+ bconst3: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bvar: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@var0co; e:false; p:true; s: false; sb:false; sa:true),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bvar0: array[0..56] of branchty = (
+ bvar0: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -835,21 +885,25 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bvar1: array[0..4] of branchty = (
+ bvar1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:':'; x: false; k:false; c:@var2co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bvar2: array[0..56] of branchty = (
+ bvar2: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -903,57 +957,65 @@ const
   (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bvar3: array[0..4] of branchty = (
+ bvar3: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bexp: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bexp1: array[0..4] of branchty = (
+ bexp1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'='; x: false; k:false; c:@equsimpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bequsimpexp: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bsimpexp: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@termco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bsimpexp1: array[0..4] of branchty = (
+ bsimpexp1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'+'; x: false; k:false; c:@addtermco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  baddterm: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@termco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bterm: array[0..69] of branchty = (
+ bterm: array[0..71] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1020,21 +1082,25 @@ const
   (t:'X'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Y'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Z'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bterm1: array[0..4] of branchty = (
+ bterm1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'*'; x: false; k:false; c:@mulfactco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bmulfact: array[0..16] of branchty = (
+ bmulfact: array[0..18] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1048,7 +1114,7 @@ const
   (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bnum0: array[0..11] of branchty = (
@@ -1063,7 +1129,7 @@ const
   (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bnum: array[0..11] of branchty = (
@@ -1078,7 +1144,7 @@ const
   (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'.'; x: false; k:false; c:@fracco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bfrac: array[0..12] of branchty = (
@@ -1094,7 +1160,7 @@ const
   (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'e'; x: false; k:false; c:@exponentco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'E'; x: false; k:false; c:@exponentco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bident: array[0..63] of branchty = (
@@ -1161,7 +1227,7 @@ const
   (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bidentpath: array[0..63] of branchty = (
@@ -1228,21 +1294,25 @@ const
   (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bidentpath1: array[0..4] of branchty = (
+ bidentpath1: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'.'; x: false; k:false; c:@identpath2co; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bidentpath2: array[0..56] of branchty = (
+ bidentpath2: array[0..58] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'_'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'a'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'b'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1296,54 +1366,62 @@ const
   (t:'X'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Y'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'Z'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bvalueidentifier: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bcheckvalueparams: array[0..4] of branchty = (
+ bcheckvalueparams: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bcheckparams: array[0..4] of branchty = (
+ bcheckparams: array[0..6] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bparams0: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bparams1: array[0..5] of branchty = (
+ bparams1: array[0..7] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:','; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:')'; x: false; k:false; c:@paramsendco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bbracketstart: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bbracketend: array[0..3] of branchty = (
+ bbracketend: array[0..5] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bexponent: array[0..12] of branchty = (
@@ -1359,7 +1437,7 @@ const
   (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
  bnegexponent: array[0..10] of branchty = (
@@ -1373,7 +1451,7 @@ const
   (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x: true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
 procedure init;
@@ -1383,6 +1461,8 @@ begin
  mainco.handle:= @handlemain;
  comment0co.branch:= @bcomment0;
  comment1co.branch:= nil;
+ linecomment0co.branch:= @blinecomment0;
+ linecomment1co.branch:= nil;
  main1co.branch:= nil;
  main1co.next:= @mainco;
  main1co.handle:= @handlemain1;

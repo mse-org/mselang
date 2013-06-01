@@ -258,14 +258,20 @@ begin
       else begin
        po1:= source;
        po2:= pointer(pb^.t);
-       while po1^ = po2^ do begin
+       if po2 = nil then begin
         inc(po1);
-        inc(po2);
-        if po1^ = #0 then begin
-         break;
+        bo1:= true;
+       end
+       else begin
+        while po1^ = po2^ do begin
+         inc(po1);
+         inc(po2);
+         if po1^ = #0 then begin
+          break;
+         end;
         end;
+        bo1:= po2^ = #0;
        end;
-       bo1:= po2^ = #0;
       end;
       if bo1 then begin //match
        if pb^.e then begin
