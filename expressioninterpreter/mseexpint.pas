@@ -31,7 +31,7 @@ var
 begin
  with info^ do begin
   writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' ''',
-                                             singleline(source),'''');
+                                             singleline(source.po),'''');
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
@@ -92,7 +92,7 @@ begin
       write(opmark.address,' ');
      end;
     end;
-    writeln(' ''',singleline(start),'''');
+    writeln(' ''',singleline(start.po),'''');
    end;
   end;
  end;
@@ -204,6 +204,7 @@ var
  bo1: boolean;
  keywordindex: identty;
  keywordend: pchar;
+ linebreaks: integer;
  
 label
  handlelab,stophandlelab,parseend;
@@ -213,7 +214,11 @@ begin
  
  with info do begin
   command:= acommand;
-  source:= pchar(input);
+  sourcestart:= pchar(input); //todo: use filecache and include stack
+  source.po:= sourcestart;
+  source.line:= 0;
+  filename:= 'main.pas'; //dummy
+  fillchar(errors,sizeof(errors),0);
   stackdepht:= defaultstackdepht;
   setlength(contextstack,stackdepht);
   with contextstack[0],d do begin
@@ -229,8 +234,8 @@ begin
   globdatapo:= 0;
   initparser(@info);
   pc:= contextstack[stackindex].context;
-  while (source^ <> #0) and (stackindex >= 0) do begin
-   while (source^ <> #0) and (stackindex >= 0) do begin
+  while (source.po^ <> #0) and (stackindex >= 0) do begin
+   while (source.po^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
     if pb = nil then begin
      break;
@@ -245,25 +250,32 @@ begin
 //     while pointer(pb^.t) <> nil do begin
       if pb^.k then begin
        if keywordindex = 0 then begin
-        po1:= source;
+        po1:= source.po;
         while po1^ in ['a'..'z','A'..'Z'] do begin
          inc(po1);
         end; 
-        keywordindex:= getident(source,po1);
+        keywordindex:= getident(source.po,po1);
         keywordend:= po1;
        end;
        po1:= keywordend;
        bo1:= keywordindex = byte(pb^.t[1]);
       end
       else begin
-       po1:= source;
+       po1:= source.po;
        po2:= pointer(pb^.t);
-       if po2 = nil then begin
+       linebreaks:= 0;
+       if po2 = nil then begin //any character
+        if po1^ = c_linefeed then begin
+         inc(linebreaks);
+        end;
         inc(po1);
         bo1:= true;
        end
        else begin
         while po1^ = po2^ do begin
+         if po1^ = c_linefeed then begin
+          inc(linebreaks);
+         end;
          inc(po1);
          inc(po2);
          if po1^ = #0 then begin
@@ -275,7 +287,9 @@ begin
       end;
       if bo1 then begin //match
        if pb^.e then begin
-        source:= po1;
+        source.line:= source.line + linebreaks;
+        linebreaks:= 0;
+        source.po:= po1;
        end;
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
@@ -285,7 +299,8 @@ begin
 //        until not pb^.x;
         until pointer(pb^.t) <> nil;
        end;
-       source:= po1;
+       source.po:= po1;
+       source.line:= source.line + linebreaks;
        keywordindex:= 0;
        if (pb^.c = nil) and pb^.p then begin
 //        stacktop:= stackindex;

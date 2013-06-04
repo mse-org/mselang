@@ -129,11 +129,17 @@ type
     opmark: opmarkty;
    )
  end;
+
+ sourceinfoty = record
+  po: pchar;
+  line: integer;
+ end;
+  
  pcontextdataty = ^contextdataty;
  contextitemty = record
   parent: integer;
   context: pcontextty;
-  start: pchar;
+  start: sourceinfoty;
   d: contextdataty;
  end;
 
@@ -197,18 +203,22 @@ type
  popinfoty = ^opinfoty;
 
  opinfoarty = array of opinfoty;
- 
+ errorlevelty = (erl_none,erl_fatal,erl_error);
+
  parseinfoty = record
   pb: pbranchty;
   pc: pcontextty;
   stophandle: boolean;
-  source: pchar;
+  filename: string;
+  sourcestart: pchar; //todo: use file cache for inclued files
+  source: sourceinfoty;
   consumed: pchar;
   contextstack: array of contextitemty;
   stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
   command: ttextstream;
+  errors: array[errorlevelty] of integer;
   ops: opinfoarty;
   opcount: integer;
   start: integer;

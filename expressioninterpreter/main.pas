@@ -22,11 +22,11 @@ uses
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
- mclasses,mseelements,msegraphedits,msesplitter;
+ mclasses,mseelements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
+ msesyntaxedit,msetextedit;
 
 type
  tmainfo = class(tmainform)
-   ed: tmemoedit;
    tstatfile1: tstatfile;
    tbutton1: tbutton;
    grid: tstringgrid;
@@ -45,6 +45,8 @@ type
    tfacelist1: tfacelist;
    tpostscriptprinter1: tpostscriptprinter;
    tsplitter1: tsplitter;
+   edgrid: twidgetgrid;
+   ed: tsyntaxedit;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -75,7 +77,7 @@ var
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
- ar1:= parse(ed.value,stream1);
+ ar1:= parse(ed.gettext,stream1);
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;

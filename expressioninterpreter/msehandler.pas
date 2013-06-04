@@ -90,7 +90,7 @@ procedure handleprocedure6(const info: pparseinfoty);
 
 implementation
 uses
- msestackops,msestrings,mseelements,mseexpint,grammar;
+ msestackops,msestrings,mseelements,mseexpint,grammar,sysutils;
 
 const
  valuecontext = ck_bool8const;
@@ -140,7 +140,61 @@ const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
   );
-  
+
+type
+ errorty = (err_ok,err_duplicateidentifier);
+ errorinfoty = record
+  level: errorlevelty;
+  message: string;
+ end;
+const
+ errorleveltext: array[errorlevelty] of string = (
+  '','Fatal','Error'
+ );
+ errortext: array[errorty] of errorinfoty = (
+  (level: erl_none; message: ''),
+  (level: erl_error; message: 'Duplicate identifier "%s"')
+ );
+ 
+procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
+                   const aerror: errorty; const values: array of const);
+var
+ po1: pchar;
+begin
+ with info^,contextstack[stackindex+astackoffset].start do begin
+  if line > 0 then begin
+   po1:= po;
+   while po1^ <> c_linefeed do begin
+    dec(po1);
+   end;
+  end
+  else begin
+   po1:= sourcestart-1;
+  end;
+  with errortext[aerror] do begin
+   inc(errors[level]);
+   writeln(filename+'('+inttostr(line+1)+','+inttostr(po-po1)+') '+
+       errorleveltext[level]+': '+format(message,values));
+  end;
+ end;
+end;
+
+procedure identerror(const info: pparseinfoty; const astackoffset: integer;
+                                                        const aerror: errorty);
+begin
+ with info^,contextstack[stackindex+astackoffset] do begin
+  errormessage(info,astackoffset,aerror,
+                     [lstringtostring(start.po,d.identlen)]);
+ end;
+end;
+{
+procedure identexisterror(const info: contextitemty; const text: string);
+begin
+ writeln(' ***ERROR*** ident '+lstringtostring(info.start.po,info.d.identlen)+
+                   ' exsts. '+text);
+end;
+}
+
 function getglobvaraddress(const info: pparseinfoty;
                                         const asize: integer): ptruint;
 begin
@@ -249,22 +303,17 @@ begin
  end; 
 end;
 
-procedure identexisterror(const info: contextitemty; const text: string);
-begin
- writeln(' ***ERROR*** ident '+lstringtostring(info.start,info.d.identlen)+
-                   ' exsts. '+text);
-end;
-
 procedure identnotfounderror(const info: contextitemty; const text: string);
 begin
- writeln(' ***ERROR*** ident '+lstringtostring(info.start,info.d.identlen)+
+ writeln(' ***ERROR*** ident '+lstringtostring(info.start.po,info.d.identlen)+
                    ' not found. '+text);
 end;
 
 procedure wrongidentkinderror(const info: contextitemty; 
        wantedtype: elementkindty; const text: string);
 begin
- writeln(' ***ERROR*** wrong ident kind '+lstringtostring(info.start,info.d.identlen)+
+ writeln(' ***ERROR*** wrong ident kind '+
+               lstringtostring(info.start.po,info.d.identlen)+
                    ', expected '+
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
@@ -433,11 +482,11 @@ var
  po1: pchar;
 begin
  with info^,contextstack[stacktop] do begin
-  po1:= source;
+  po1:= source.po;
   consumed:= po1;
   int2:= 0;
   dec(po1);
-  int1:= po1-start;
+  int1:= po1-start.po;
   if int1 <= high(int32decdigits) then begin
    for int1:= 0 to int1 do begin
     int2:= int2 + (ord(po1^)-ord('0')) * int32decdigits[int1];
@@ -490,14 +539,14 @@ var
 begin
  with info^ do begin
   with contextstack[stacktop] do begin
-   fraclen:= asource-start-1;
+   fraclen:= asource-start.po-1;
   end;
   stacktop:= stacktop - 1;
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
    d.kind:= ck_flo64const;
    lint2:= 0;
-   po1:= start;
+   po1:= start.po;
    int1:= asource-po1-1;
    if int1 > 20 then begin
     error(info,ce_invalidfloat,asource);
@@ -534,13 +583,13 @@ var
  fraclen: integer;
  neg: boolean;
 begin
- dofrac(info,info^.source,neg,mant,fraclen);
+ dofrac(info,info^.source.po,neg,mant,fraclen);
  with info^,contextstack[stacktop].d do begin
   flo64const.value:= mant/floatexps[fraclen]; //todo: round lsb;   
   if neg then begin
    flo64const.value:= -flo64const.value; 
   end;
-  consumed:= source;
+  consumed:= source.po;
  end;
  outhandle(info,'FRAC');
 end;
@@ -555,10 +604,10 @@ begin
  with info^ do begin
   exp:= contextstack[stacktop].d.int32const.value;
   dec(stacktop,2);
-  dofrac(info,contextstack[stackindex].start,neg,mant,fraclen);
+  dofrac(info,contextstack[stackindex].start.po,neg,mant,fraclen);
   exp:= exp-fraclen;
   with contextstack[stacktop] do begin
-   consumed:= source; //todo: overflow check
+   consumed:= source.po; //todo: overflow check
    do1:= floatexps[exp and $1f];
    while exp >= 32 do begin
     do1:= do1*floatexps[32];
@@ -583,10 +632,10 @@ begin
  with info^ do begin
   exp:= contextstack[stacktop].d.int32const.value;
   dec(stacktop,3);
-  dofrac(info,contextstack[stackindex-1].start,neg,mant,fraclen);
+  dofrac(info,contextstack[stackindex-1].start.po,neg,mant,fraclen);
   exp:= exp+fraclen;
   with contextstack[stacktop] do begin
-   consumed:= source; //todo: overflow check
+   consumed:= source.po; //todo: overflow check
    do1:= floatexps[exp and $1f];
    while exp >= 32 do begin
     do1:= do1*floatexps[32];
@@ -800,12 +849,12 @@ end;
 procedure handlebracketend(const info: pparseinfoty);
 begin
  with info^ do begin
-  if source^ <> ')' then begin
+  if source.po^ <> ')' then begin
    error(info,ce_endbracketexpected);
 //   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
-   inc(source);
+   inc(source.po);
   end;
   if stackindex < stacktop then begin
    contextstack[stacktop-1]:= contextstack[stacktop];
@@ -837,12 +886,12 @@ end;
 procedure handleparamsend(const info: pparseinfoty);
 begin
  with info^ do begin
-  if source^ <> ')' then begin
+  if source.po^ <> ')' then begin
    error(info,ce_endbracketexpected);
 //   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
-   inc(source);
+   inc(source.po);
   end;
   dec(stackindex);
  end;
@@ -872,8 +921,8 @@ procedure handleident(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_ident;
-  identlen:= source-start;
-  ident:= getident(start,identlen);
+  identlen:= source.po-start.po;
+  ident:= getident(start.po,identlen);
 //  dec(stackindex);
  end;
  outhandle(info,'IDENT');
@@ -1016,7 +1065,7 @@ begin
    with contextstack[stacktop-2].d do begin
     po1:= addelement(ident,ek_context,elesize+sizeof(contextdataty));
     if po1 = nil then begin
-     identexisterror(contextstack[stacktop-2],'CONST3');
+     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
     else begin
      pcontextdataty(@po1^.data)^:= contextstack[stacktop-1].d;
@@ -1057,7 +1106,7 @@ begin
    po1:= addelement(contextstack[stacktop-2].d.ident,ek_context,
                                         elesize+sizeof(contextdataty));
    if po1 = nil then begin
-    identexisterror(contextstack[stacktop-2],'VAR3');
+    identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
@@ -1134,8 +1183,8 @@ procedure handlekeyword(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_ident;
-  identlen:= source-start;
-  ident:= getident(start,identlen);
+  identlen:= source.po-start.po;
+  ident:= getident(start.po,identlen);
  end;
  outhandle(info,'KEYWORD');
 end;
