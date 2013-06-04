@@ -258,13 +258,17 @@ begin
         exit;
        end;
       end;
+     end
+     else begin
+      str2:= str1;
      end;
      str2:= copy(str2,int2+1,bigint);
      macrotext:= '';
      bo1:= false;
      while true do begin
+      int1:= 0;
       while true do begin
-       int1:= findchar(str2,'"');
+       int1:= findchar(str2,int1+1,'"');
        if int1 > 0 then begin
         if str2[int1+1] = '"' then begin
          move(str2[int1+1],str2[int1],length(str2)-int1);

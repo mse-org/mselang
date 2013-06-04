@@ -398,7 +398,7 @@ begin
  with info^ do begin
   ops[contextstack[stackindex+destindexoffset].d.opmark.address-1].
                                                                d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].d.opmark.address;
+         contextstack[stackindex+sourceindexoffset].d.opmark.address-1;
  end; 
 end;
 
@@ -408,7 +408,7 @@ begin
  with info^ do begin
   ops[contextstack[stackindex+destindexoffset].d.opmark.address].
                                                                d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].d.opmark.address;
+         contextstack[stackindex+sourceindexoffset].d.opmark.address-1;
  end; 
 end;
 
