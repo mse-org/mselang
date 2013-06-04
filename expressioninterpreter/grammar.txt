@@ -1,5 +1,9 @@
 @whitespace
  ' ',#$0d,#$0a
+{whitespace}
+"@whitespace,
+ '{',comment0-^*
+ '//',linecomment0-^*"
 @keywordstart
  'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
  'q','r','s','t','u','v','w','x','y','z'
@@ -11,9 +15,7 @@
  '0','1','2','3','4','5','6','7','8','9'
 msehandler
 main,main1,handlemain
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  'procedure'.,procedure0-*
  'begin'.,progbegin-
  'const'.,const-*
@@ -21,61 +23,45 @@ main,main1,handlemain
 comment0,,*
  '}',comment1-
  '',
-comment1,,*
+comment1,,handlecommentend^
 linecomment0,,*
  #$0a,linecomment1-
  '',
-linecomment1,,*
+linecomment1,,handlecommentend^
 main1,main,handlemain1
 progbegin,progblock,handleprogbegin
 progblock,,
  '',statementblock-^*
 paramsdef0,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '(',paramsdef1-
 paramsdef1,paramsdef2,
  '',paramdef0^*
 paramsdef2,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',paramsdef1-
  ')',paramsdef3-
 paramsdef3,,^
 paramdef0,paramdef1,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 paramdef1,,*
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ':',paramdef2
 paramdef2,,^
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 procedure0,procedure1,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 procedure1,procedure2,
  '',paramsdef0^*
 procedure2,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',procedure3-
 procedure3,procedure4,handleprocedure3
 procedure4,checkterminator,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  'begin'.,procedure5
  'const'.,const-*
  'var'.,var-*
@@ -87,9 +73,7 @@ checkterminator,,
  ';',terminatorok-
 terminatorok,,*
 exeblock,exeblock,*
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',
  'end'.,-*
  'if'.,if-*
@@ -97,9 +81,7 @@ exeblock,exeblock,*
 statementstack,,^
  '',statement*
 statement,simplestatement,handlestatement
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  'begin'.,statementblock-^*
  'end'.,endcontext
  'if'.,if-
@@ -110,17 +92,13 @@ simplestatement,,*
 statementblock,statementblock1,
  '',statement*
 statementblock1,statementblock,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',
  'end'.,endtoken-
 statement0,statement1,
  '',ident^*
 statement1,checkproc,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ':=',assignment
 checkproc,,handlecheckproc
  '',checkparams^*
@@ -129,17 +107,13 @@ assignment,,handleassignment
 if,then,handleif
  '',exp^*
 then,,handlethen
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  'then'.,then0-
 then0,then1,handlethen0
 then1,then2,handlethen1
  '',statementstack^*!
 then2,,handlethen2
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  'else'.,else0-
 else0,else,handleelse0
 else,,handleelse
@@ -147,83 +121,59 @@ else,,handleelse
 const,,handleconst
  '',const0*^
 const0,const1,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 const1,,+
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '=',const2-
 const2,const3,
  '',exp^*
 const3,const0-,handleconst3
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',statementend-*
 var,,handlevar
  '',var0*^
 var0,var1,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 var1,,+
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ':',var2-
 var2,var3,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,ident^*
 var3,var0-,handlevar3
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ';',statementend-*
 #
 statementend,,handlestatementend!
 exp,exp1,
  '',simpexp*
 exp1,,handleexp^
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '=',equsimpexp*
 equsimpexp,,handleequsimpexp
  '',simpexp*
 simpexp,simpexp1,handlesimpexp
  '',term*
 simpexp1,simpexp1,handlesimpexp1
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '+',addterm*
 addterm,,handleaddterm
  '',term*
 term,term1,handleterm
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '+',
  '-',negterm*
  '(',bracketstart*
  @num,num*
  @identstart,valueidentifier*
 term1,term1,handleterm1
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '*',mulfact*
 negterm,term,handlenegterm
 mulfact,,handlemulfact
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '+',
  '-',negterm*
  '(',bracketstart*
@@ -242,34 +192,24 @@ ident,,handleident^
 identpath,identpath1,
  @identstart,@num,
 identpath1,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '.',identpath2
 identpath2,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  @identstart,identpath*
 valueidentifier,checkvalueparams,handlevalueidentifier
  '',ident^*
 #
 checkvalueparams,,handlevalueidentifier
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '(',params0-^*
 checkparams,,^
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  '(',params0-
 params0,params1,
  '',exp^*
 params1,,
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
  ',',params0-
  ')',paramsend-
 paramsend,,^
@@ -277,9 +217,7 @@ paramsend,,^
 bracketstart,bracketend,dummyhandler
  '',simpexp*
 bracketend,,handlebracketend
- @whitespace,
- '{',comment0-*
- '//',linecomment0-*
+ ${whitespace}
 exponent,,handleexponent
  '+',
  '-',negexponent*

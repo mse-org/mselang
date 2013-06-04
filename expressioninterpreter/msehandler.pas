@@ -30,6 +30,8 @@ procedure dummyhandler(const info: pparseinfoty);
 
 procedure handleprogbegin(const info: pparseinfoty);
 
+procedure handlecommentend(const info: pparseinfoty);
+
 procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
@@ -377,7 +379,7 @@ procedure setcurrentloc(const info: pparseinfoty; const indexoffset: integer);
 begin 
  with info^ do begin
   ops[contextstack[stackindex+indexoffset].d.opmark.address].d.opaddress:=
-                                                                     opcount;
+                                                                     opcount-1;
  end; 
 end;
 
@@ -386,7 +388,7 @@ procedure setcurrentlocbefore(const info: pparseinfoty;
 begin 
  with info^ do begin
   ops[contextstack[stackindex+indexoffset].d.opmark.address-1].d.opaddress:=
-                                                                     opcount;
+                                                                     opcount-1;
  end; 
 end;
 
@@ -976,6 +978,15 @@ begin
  outhandle(info,'PROGBEGIN');
 end;
 
+procedure handlecommentend(const info: pparseinfoty);
+begin
+ with info^ do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'COMMENTEND');
+end;
+
 procedure handleconst(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop] do begin
@@ -1254,6 +1265,14 @@ begin
  outhandle(info,'CHECKPROC');
 end;
 
+procedure opgoto(const info: pparseinfoty; const aaddress: dataaddressty);
+begin
+ with additem(info)^ do begin
+  op:= @gotoop;
+  d.opaddress:= aaddress;
+ end;
+end;
+
 procedure handleif(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -1296,14 +1315,6 @@ begin
   stacktop:= stackindex;
  end;
  outhandle(info,'THEN2');
-end;
-
-procedure opgoto(const info: pparseinfoty; const aaddress: dataaddressty);
-begin
- with additem(info)^ do begin
-  op:= @gotoop;
-  d.opaddress:= aaddress;
- end;
 end;
 
 procedure handleelse0(const info: pparseinfoty);

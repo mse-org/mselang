@@ -22,9 +22,15 @@ uses
 
 (*
 #<comment>
+
+{<macroname>} "<macrotext>" 
+ macrotext can be multiline, "" -> "
+
+${macroname}
 @<tokendef>
  <pascalstring>{,<pascalstring>}
 <handler_usesdef>
+
 <context>,[<next>][-],[<handler>][^|!][+][*]
  - -> eat text
  ^ -> pop parent
@@ -54,7 +60,7 @@ var
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils;
+ mseformatstr,msearrayutils,msemacros;
  
 type
  paramty = (pa_grammarfile,pa_pasfile);
@@ -66,7 +72,7 @@ type
 //context,next,handler
 // 'branch',destcontext
 // ...
-var testvar: char;
+
 procedure creategrammar(const grammar,outfile: filenamety);
 type
  contextinfoty = record
@@ -205,10 +211,19 @@ var
  setbefore,setafter: boolean;
 // identchars: array[char] of boolean;
  keywordsstart: integer;
+ ar2: stringarty;
+ macroname,macrotext: string;
+ bo1: boolean;
+ macrolist1: tmacrolist = nil;
+ expandedtext: stringarty;
+ lnr: integer;
+ mstr1: msestring;
+ 
 begin
  application.terminated:= true;
  try
   grammarstream:= ttextstream.create(grammar,fm_read);
+  macrolist1:= tmacrolist.create([mao_curlybraceonly]);
   line:= 0;
   branchcount:= 0;
   context:= '';
@@ -218,115 +233,180 @@ begin
    grammarstream.readln(str1);
    inc(line);
    if (str1 <> '') then begin
-    if str1[1] = '@' then begin
-     setlength(tokendefs,high(tokendefs)+2);
-     with tokendefs[high(tokendefs)] do begin
-      name:= trim(copy(str1,2,bigint));
+    if str1[1] = '{' then begin //macrodef
+     int1:= findchar(str1,'}');
+     if int1 = 0 then begin
+      error('Invalid macrodef');
+      exit;
      end;
-     intokendef:= true;
-    end
-    else begin
-     if (str1[1] <> '#') then begin
-      if str1[1] <> ' ' then begin
-       intokendef:= false;
-      end;
-      if intokendef then begin
-       po1:= @str1[2];
-       with tokendefs[high(tokendefs)] do begin
-        while true do begin
-         po3:= po1;
-         if po1^= '@' then begin
-          inc(po3);
-          while not (po1^ in [',',#0]) do begin
-           inc(po1)
-          end;
-          if not gettokendef(psubstr(po3,po1),'') then begin
-           exit;
-          end;
-         end
-         else begin
-          getpascalstring(po1);
-          if po1 = po3 then begin
-           error('Invalid string');
-           exit;
-          end;
-          setlength(tokens,high(tokens)+2);
-          setstring(tokens[high(tokens)],po3,po1-po3);
-         end;
-         if po1^ = #0 then begin
-          break;
-         end;
-         if po1^ <> ',' then begin
-          error('Format of tokendef is "''string''{,''string''}"');
-          exit;
-         end;
-         inc(po1);
-        end;
-       end;
+     macroname:= copy(str1,2,int1-2);
+     int2:= findchar(str1,'"');
+     if (int2 > 0) and (int2 < int1) then begin
+      error('Ivalid macro name.');
+      exit;
+     end;
+     if int2 = 0 then begin
+      if grammarstream.eof then begin
+       str2:= '';
       end
       else begin
-       if firstrow then begin
-        usesdef:= str1;
-        firstrow:= false;
-       end
-       else begin
-        if str1[1] <> ' ' then begin
-         if context <> '' then begin
-          handlecontext;
-         end;
-         context:= str1;
-         contextline:= splitstring(context,',',true);
-         if length(contextline) <> 3 then begin
-          error('Format of contextline is "context,next[-],handler[^|!]"');
-          exit;
-         end;
-         branchcount:= 0;
-         branches:= nil;
+       grammarstream.readln(str2);
+       inc(line);
+       int2:= findchar(str2,'"');
+       if int2 = 0 then begin
+        error('Invalid macrodef');
+        exit;
+       end;
+      end;
+     end;
+     str2:= copy(str2,int2+1,bigint);
+     macrotext:= '';
+     bo1:= false;
+     while true do begin
+      while true do begin
+       int1:= findchar(str2,'"');
+       if int1 > 0 then begin
+        if str2[int1+1] = '"' then begin
+         move(str2[int1+1],str2[int1],length(str2)-int1);
+         setlength(str2,length(str2)-1);
         end
         else begin
-         int1:= findlastchar(str1,',');
-         if int1 = 0 then begin
-          error(branchformat);
-          exit;
-         end;
-         str2:= trim(copy(str1,int1+1,bigint));
-         po1:= pchar(str1)+1;
-         po2:= po1+int1-2;
-         while true do begin
-          po3:= po1;
-          if po1^ = '@' then begin
-           inc(po3);
-           while po1^ <> ',' do begin
-            inc(po1);
+         setlength(str2,int1-1);
+         bo1:= true;
+         break;
+        end;
+       end
+       else begin
+        break;
+       end;
+      end;
+      macrotext:= macrotext+str2;
+      if bo1 or grammarstream.eof then begin
+       break;
+      end;
+      macrotext:= macrotext+lineend;
+      grammarstream.readln(str2);
+     end;
+     macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)]);
+    end
+    else begin
+     mstr1:= utf8tostring(str1);
+     macrolist1.expandmacros(mstr1);
+     expandedtext:= breaklines(stringtoutf8(mstr1));
+     for lnr:= 0 to high(expandedtext) do begin
+      str1:= expandedtext[lnr];
+     
+      if str1[1] = '@' then begin
+       setlength(tokendefs,high(tokendefs)+2);
+       with tokendefs[high(tokendefs)] do begin
+        name:= trim(copy(str1,2,bigint));
+       end;
+       intokendef:= true;
+      end
+      else begin
+       if (str1[1] <> '#') then begin
+        if str1[1] <> ' ' then begin
+         intokendef:= false;
+        end;
+        if intokendef then begin
+         po1:= @str1[2];
+         with tokendefs[high(tokendefs)] do begin
+          while true do begin
+           po3:= po1;
+           if po1^= '@' then begin
+            inc(po3);
+            while not (po1^ in [',',#0]) do begin
+             inc(po1)
+            end;
+            if not gettokendef(psubstr(po3,po1),'') then begin
+             exit;
+            end;
+           end
+           else begin
+            getpascalstring(po1);
+            if po1 = po3 then begin
+             error('Invalid string');
+             exit;
+            end;
+            setlength(tokens,high(tokens)+2);
+            setstring(tokens[high(tokens)],po3,po1-po3);
            end;
-//           setstring(str3,po3,po1-po3);
-           if not gettokendef(psubstr(po3,po1),str2) then begin
+           if po1^ = #0 then begin
+            break;
+           end;
+           if po1^ <> ',' then begin
+            error('Format of tokendef is "''string''{,''string''}"');
             exit;
            end;
+           inc(po1);
+          end;
+         end;
+        end
+        else begin
+         if firstrow then begin
+          usesdef:= str1;
+          firstrow:= false;
+         end
+         else begin
+          if str1[1] <> ' ' then begin
+           if context <> '' then begin
+            handlecontext;
+           end;
+           context:= str1;
+           contextline:= splitstring(context,',',true);
+           if length(contextline) <> 3 then begin
+            error('Format of contextline is "context,next[-],handler[^|!]"');
+            exit;
+           end;
+           branchcount:= 0;
+           branches:= nil;
           end
           else begin
-           getpascalstring(po1);
-           if po1 = po3 then begin
-            error('Invalid string');
+           int1:= findlastchar(str1,',');
+           if int1 = 0 then begin
+            error(branchformat);
             exit;
            end;
-           if po1^ = '.' then begin
+           str2:= trim(copy(str1,int1+1,bigint));
+           po1:= pchar(str1)+1;
+           po2:= po1+int1-2;
+           while true do begin
+            po3:= po1;
+            if po1^ = '@' then begin
+             inc(po3);
+             while po1^ <> ',' do begin
+              inc(po1);
+             end;
+  //           setstring(str3,po3,po1-po3);
+             if not gettokendef(psubstr(po3,po1),str2) then begin
+              exit;
+             end;
+            end
+            else begin
+             getpascalstring(po1);
+             if po1 = po3 then begin
+              error('Invalid string');
+              exit;
+             end;
+             if po1^ = '.' then begin
+              inc(po1);
+             end;
+             setstring(str3,po3,po1-po3);
+             setlength(ar1,2);
+             ar1[0]:= trim(str3);
+             ar1[1]:= str2;
+             additem(branches,ar1,branchcount);
+            end;
+            if po1 = po2 then begin
+             break;
+            end;
+            if po1^ <> ',' then begin
+             error(branchformat);
+             exit;
+            end;
             inc(po1);
            end;
-           setstring(str3,po3,po1-po3);
-           setlength(ar1,2);
-           ar1[0]:= trim(str3);
-           ar1[1]:= str2;
-           additem(branches,ar1,branchcount);
           end;
-          if po1 = po2 then begin
-           break;
-          end;
-          if po1^ <> ',' then begin
-           error(branchformat);
-           exit;
-          end;
-          inc(po1);
          end;
         end;
        end;
@@ -562,6 +642,7 @@ lineend;
  finally
   grammarstream.free;
   passtream.free;
+  macrolist1.free;
  end;
 end;
 

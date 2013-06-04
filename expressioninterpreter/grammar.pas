@@ -34,13 +34,13 @@ var
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'comment0');
  comment1co: contextty = (branch: nil; handle: nil; 
-               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'comment1');
  linecomment0co: contextty = (branch: nil; handle: nil; 
                cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'linecomment0');
  linecomment1co: contextty = (branch: nil; handle: nil; 
-               cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'linecomment1');
  main1co: contextty = (branch: nil; handle: nil; 
                cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -281,8 +281,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:#2{'procedure'}; x: false; k:true; c:@procedure0co; e:true; p:true; s: false; sb:false; sa:false),
   (t:#3{'begin'}; x: false; k:true; c:@progbeginco; e:true; p:false; s: false; sb:false; sa:false),
   (t:#4{'const'}; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
@@ -311,8 +311,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'('; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -326,8 +326,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
   (t:')'; x: false; k:false; c:@paramsdef3co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
@@ -337,8 +337,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -399,8 +399,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:':'; x: false; k:false; c:@paramdef2co; e:false; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -409,8 +409,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -471,8 +471,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -538,8 +538,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:@procedure3co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -548,8 +548,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:#3; x: false; k:true; c:@procedure5co; e:false; p:false; s: false; sb:false; sa:false),
   (t:#4; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
   (t:#5; x: false; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
@@ -570,8 +570,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#6{'end'}; x: false; k:true; c:nil; e:true; p:true; s: false; sb:false; sa:false),
   (t:#7{'if'}; x: false; k:true; c:@ifco; e:true; p:true; s: false; sb:false; sa:false),
@@ -640,8 +640,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
   (t:#6; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
   (t:#7; x: false; k:true; c:@ifco; e:true; p:false; s: false; sb:false; sa:false),
@@ -662,8 +662,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#6; x: false; k:true; c:@endtokenco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
@@ -678,8 +678,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:':='; x: false; k:false; c:@assignmentco; e:false; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -703,8 +703,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:#8{'then'}; x: false; k:true; c:@then0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -718,8 +718,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:#9{'else'}; x: false; k:true; c:@else0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -738,8 +738,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -800,8 +800,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'='; x: false; k:false; c:@const2co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -815,8 +815,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -830,8 +830,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -892,8 +892,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:':'; x: false; k:false; c:@var2co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -902,8 +902,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
   (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
@@ -964,8 +964,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -979,8 +979,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'='; x: false; k:false; c:@equsimpexpco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -999,8 +999,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'+'; x: false; k:false; c:@addtermco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1014,8 +1014,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1089,8 +1089,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'*'; x: false; k:false; c:@mulfactco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1099,8 +1099,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1301,8 +1301,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'.'; x: false; k:false; c:@identpath2co; e:false; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1311,8 +1311,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'_'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'a'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
   (t:'b'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
@@ -1378,8 +1378,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'('; x: false; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1388,8 +1388,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'('; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1403,8 +1403,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:','; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:')'; x: false; k:false; c:@paramsendco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
@@ -1419,8 +1419,8 @@ const
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:false; sa:false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1461,8 +1461,10 @@ begin
  mainco.handle:= @handlemain;
  comment0co.branch:= @bcomment0;
  comment1co.branch:= nil;
+ comment1co.handle:= @handlecommentend;
  linecomment0co.branch:= @blinecomment0;
  linecomment1co.branch:= nil;
+ linecomment1co.handle:= @handlecommentend;
  main1co.branch:= nil;
  main1co.next:= @mainco;
  main1co.handle:= @handlemain1;
