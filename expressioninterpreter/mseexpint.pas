@@ -77,7 +77,7 @@ begin
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_ident: begin
-      write(ident,' ');
+      write(ident,':',identlen,' ');
      end;
      ck_bool8const: begin
       write(bool8const.value,' ');

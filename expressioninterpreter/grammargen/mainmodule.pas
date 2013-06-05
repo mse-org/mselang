@@ -43,7 +43,7 @@ ${macroname}
  - -> eat token
  <context>^ -> set parent
  <context>* -> push context
- <context>! -> set ck_codemarker
+ <context>! -> set ck_opmark
  * -> terminate context
 <stringdef> -> <pascalstring>[.]
  . -> keyword

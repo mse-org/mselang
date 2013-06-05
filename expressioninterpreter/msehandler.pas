@@ -142,7 +142,8 @@ const
   );
 
 type
- errorty = (err_ok,err_duplicateidentifier);
+ errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
+            err_thenexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -153,28 +154,39 @@ const
  );
  errortext: array[errorty] of errorinfoty = (
   (level: erl_none; message: ''),
-  (level: erl_error; message: 'Duplicate identifier "%s"')
+  (level: erl_error; message: 'Duplicate identifier "%s"'),
+  (level: erl_error; message: 'Identifier not found "%s"'),
+  (level: erl_fatal; message: 'Syntax error, "then" expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const);
 var
  po1: pchar;
+ sourcepos: sourceinfoty;
 begin
- with info^,contextstack[stackindex+astackoffset].start do begin
-  if line > 0 then begin
-   po1:= po;
-   while po1^ <> c_linefeed do begin
-    dec(po1);
-   end;
+ with info^ do begin
+  if astackoffset < 0 then begin
+   sourcepos:= source;
   end
   else begin
-   po1:= sourcestart-1;
+   sourcepos:= contextstack[stackindex+astackoffset].start;
   end;
-  with errortext[aerror] do begin
-   inc(errors[level]);
-   writeln(filename+'('+inttostr(line+1)+','+inttostr(po-po1)+') '+
-       errorleveltext[level]+': '+format(message,values));
+  with sourcepos do begin
+   if line > 0 then begin
+    po1:= po;
+    while po1^ <> c_linefeed do begin
+     dec(po1);
+    end;
+   end
+   else begin
+    po1:= sourcestart-1;
+   end;
+   with errortext[aerror] do begin
+    inc(errors[level]);
+    command.writeln(filename+'('+inttostr(line+1)+','+inttostr(po-po1)+') '+
+        errorleveltext[level]+': '+format(message,values));
+   end;
   end;
  end;
 end;
@@ -975,7 +987,8 @@ begin
    end;
   end
   else begin
-   identnotfounderror(contextstack[stacktop],'valueidentifier');
+   identerror(info,1,err_identifiernotfound);
+//   identnotfounderror(contextstack[stacktop],'valueidentifier');
   end;
   dec(stackindex);
  end;
@@ -1333,6 +1346,7 @@ end;
 
 procedure handlethen(const info: pparseinfoty);
 begin
+ errormessage(info,-1,err_thenexpected,[]);
  with info^ do begin
   dec(stackindex);
   stacktop:= stackindex;
