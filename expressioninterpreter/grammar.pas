@@ -561,8 +561,13 @@ const
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bcheckterminator: array[0..1] of branchty = (
+ bcheckterminator: array[0..6] of branchty = (
   (t:';'; x: false; k:false; c:@terminatorokco; e:true; p:false; s: false; sb:false; sa:false),
+  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -664,7 +669,7 @@ const
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:';'; x: false; k:false; c:@statementblockco; e:true; p:false; s: false; sb:false; sa:false),
   (t:#6; x: false; k:true; c:@endtokenco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
@@ -1497,6 +1502,7 @@ begin
  procedure6co.next:= @checkterminatorco;
  procedure6co.handle:= @handleprocedure6;
  checkterminatorco.branch:= @bcheckterminator;
+ checkterminatorco.handle:= @handlecheckterminator;
  terminatorokco.branch:= nil;
  exeblockco.branch:= @bexeblock;
  exeblockco.next:= @exeblockco;
@@ -1511,7 +1517,7 @@ begin
  statementblockco.branch:= @bstatementblock;
  statementblockco.next:= @statementblock1co;
  statementblock1co.branch:= @bstatementblock1;
- statementblock1co.next:= @statementblockco;
+ statementblock1co.handle:= @handlestatementblock1;
  statement0co.branch:= @bstatement0;
  statement0co.next:= @statement1co;
  statement1co.branch:= @bstatement1;

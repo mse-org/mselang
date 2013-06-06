@@ -69,8 +69,9 @@ procedure5,procedure6,
  '',statementblock-^*
 procedure6,checkterminator,handleprocedure6
 # return
-checkterminator,,
+checkterminator,,handlecheckterminator
  ';',terminatorok-
+ ${whitespace}
 terminatorok,,*
 exeblock,exeblock,*
  ${whitespace}
@@ -91,9 +92,9 @@ simplestatement,,*
  '',statement0*
 statementblock,statementblock1,
  '',statement*
-statementblock1,statementblock,
+statementblock1,,handlestatementblock1
  ${whitespace}
- ';',
+ ';',statementblock-
  'end'.,endtoken-
 statement0,statement1,
  '',ident^*

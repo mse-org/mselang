@@ -32,6 +32,9 @@ procedure handleprogbegin(const info: pparseinfoty);
 
 procedure handlecommentend(const info: pparseinfoty);
 
+procedure handlecheckterminator(const info: pparseinfoty);
+procedure handlestatementblock1(const info: pparseinfoty);
+
 procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
@@ -143,7 +146,7 @@ const
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected);
+            err_thenexpected,err_semicolonexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -156,7 +159,8 @@ const
   (level: erl_none; message: ''),
   (level: erl_error; message: 'Duplicate identifier "%s"'),
   (level: erl_error; message: 'Identifier not found "%s"'),
-  (level: erl_fatal; message: 'Syntax error, "then" expected')
+  (level: erl_fatal; message: 'Syntax error, "then" expected'),
+  (level: erl_fatal; message: 'Syntax error, ";" expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -1424,6 +1428,22 @@ begin
 //  stacktop:= stackindex;
  end;
  outhandle(info,'PROCEDURE6');
+end;
+
+procedure handlecheckterminator(const info: pparseinfoty);
+begin
+ with info^ do begin
+  errormessage(info,-1,err_semicolonexpected,[]);
+  dec(stackindex);
+ end;
+end;
+
+procedure handlestatementblock1(const info: pparseinfoty);
+begin
+ with info^ do begin
+  errormessage(info,-1,err_semicolonexpected,[]);
+  dec(stackindex);
+ end;
 end;
 
 end.
