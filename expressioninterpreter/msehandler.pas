@@ -1376,7 +1376,9 @@ begin
 end;
 
 procedure handlethen2(const info: pparseinfoty);
-begin
+      //1       2        
+begin //boolexp,thenmark
+ setcurrentlocbefore(info,2); //set gotoaddress
  with info^ do begin
   dec(stackindex);
   stacktop:= stackindex;
