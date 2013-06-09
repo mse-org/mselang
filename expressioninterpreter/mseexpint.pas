@@ -353,17 +353,22 @@ handlelab:
      outinfo(@info,'! after0a');
      goto handlelab;    
     end;
-    if pc^.next = nil then begin
+    if not pc1^.continue and (pc^.next = nil) then begin
      outinfo(@info,'! after0b');
     end;
-   until pc^.next <> nil;
+   until pc1^.continue or (pc^.next <> nil);
    with contextstack[stackindex] do begin
-    if pc^.nexteat then begin
-     start:= source;
+    if pc1^.continue then begin
+     writeln(pc1^.caption,'.>',pc^.caption);
+    end
+    else begin
+     if pc^.nexteat then begin
+      start:= source;
+     end;
+     writeln(pc^.caption,'->',pc^.next^.caption);
+     pc:= pc^.next;
+     context:= pc;
     end;
-    writeln(pc^.caption,'->',pc^.next^.caption);
-    pc:= pc^.next;
-    context:= pc;
 //    kind:= ck_none;
    end;
 stophandlelab:

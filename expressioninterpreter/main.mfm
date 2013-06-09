@@ -54,7 +54,7 @@ object mainfo: tmainfo
     taborder = 2
     bounds_x = 16
     bounds_y = 8
-    bounds_cx = 204
+    bounds_cx = 180
     bounds_cy = 18
     valuerange = 1
     valuestart = 0
@@ -265,9 +265,18 @@ object mainfo: tmainfo
       font.name = 'stf_fixed'
       font.xscale = 1
       font.dummy = 0
-      options = []
+      oneditnotifcation = editnotiexe
       reffontheight = 16
     end
+  end
+  object coldi: tintegerdisp
+    frame.dummy = 0
+    taborder = 16
+    bounds_x = 208
+    bounds_y = 8
+    bounds_cx = 52
+    bounds_cy = 18
+    reffontheight = 14
   end
   object tstatfile1: tstatfile
     filename = 'status.sta'

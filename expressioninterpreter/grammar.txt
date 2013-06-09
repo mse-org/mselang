@@ -23,11 +23,11 @@ main,main1,handlemain
 comment0,,*
  '}',comment1-
  '',
-comment1,,handlecommentend^
+comment1,,handlecommentend^>
 linecomment0,,*
  #$0a,linecomment1-
  '',
-linecomment1,,handlecommentend^
+linecomment1,,handlecommentend^*>
 main1,main,handlemain1
 progbegin,progblock,handleprogbegin
 progblock,,
@@ -84,9 +84,9 @@ statementstack,,^
 statement,simplestatement,handlestatement
  ${whitespace}
  'begin'.,statementblock-^*
- 'end'.,endcontext
+ 'end'.,endcontext-
  'if'.,if-
-endcontext,,
+endcontext,,*
 endtoken,,handleendtoken^*
 simplestatement,,*
  '',statement0*

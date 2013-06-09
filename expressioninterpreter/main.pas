@@ -47,6 +47,7 @@ type
    tsplitter1: tsplitter;
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
+   coldi: tintegerdisp;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -59,6 +60,8 @@ type
    procedure findelementexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
    procedure setpaexe(const sender: TObject);
+   procedure editnotiexe(const sender: TObject;
+                   var info: editnotificationinfoty);
   protected
    felement: elementoffsetty;
    procedure dump;
@@ -178,6 +181,12 @@ begin
   setelementparent((grid.row-1)*sizeof(elementinfoty));
   dump;
  end;
+end;
+
+procedure tmainfo.editnotiexe(const sender: TObject;
+               var info: editnotificationinfoty);
+begin
+ coldi.value:= ed.col+1;
 end;
 
 

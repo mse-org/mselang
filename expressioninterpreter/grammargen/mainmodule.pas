@@ -31,12 +31,13 @@ ${macroname}
  <pascalstring>{,<pascalstring>}
 <handler_usesdef>
 
-<context>,[<next>][-],[<handler>][^|!][+][*]
+<context>,[<next>][-],[<handler>][^|!][+][*][>]
  - -> eat text
  ^ -> pop parent
  ! -> pop parent and execute parent handler
  + -> restore source pointer
  * -> stackindex -> stacktop
+ > -> continue
 
  <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
                                         [[<context>][-] [[^][*] | [*][^]] [!] ]
@@ -359,7 +360,7 @@ begin
            context:= str1;
            contextline:= splitstring(context,',',true);
            if length(contextline) <> 3 then begin
-            error('Format of contextline is "context,next[-],handler[^|!]"');
+            error('Format of contextline is "context,next[-],handler[^|!][>]"');
             exit;
            end;
            branchcount:= 0;
@@ -456,13 +457,21 @@ begin
  str1:= str1+
 'var'+lineend;
   for int1:= 0 to high(contexts) do begin
+   str2:= '';
    with contexts[int1] do begin
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '*') then begin
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '>') then begin
      setlength(cont[2],length(cont[2])-1);
-     str2:= 'cut: true; ';
+     str2:= str2+'continue: true; ';
     end
     else begin
-     str2:= 'cut: false; ';
+     str2:= str2+'continue: false; ';
+    end;
+    if (cont[2] <> '') and (cont[2][length(cont[2])] = '*') then begin
+     setlength(cont[2],length(cont[2])-1);
+     str2:= str2+'cut: true; ';
+    end
+    else begin
+     str2:= str2+'cut: false; ';
     end;
     if (cont[2] <> '') and (cont[2][length(cont[2])] = '+') then begin
      setlength(cont[2],length(cont[2])-1);

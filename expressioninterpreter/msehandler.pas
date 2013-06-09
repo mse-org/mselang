@@ -164,10 +164,12 @@ const
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
-                   const aerror: errorty; const values: array of const);
+                   const aerror: errorty; const values: array of const;
+                   const coloffset: integer = 0);
 var
  po1: pchar;
  sourcepos: sourceinfoty;
+ str1: string;
 begin
  with info^ do begin
   if astackoffset < 0 then begin
@@ -188,8 +190,10 @@ begin
    end;
    with errortext[aerror] do begin
     inc(errors[level]);
-    command.writeln(filename+'('+inttostr(line+1)+','+inttostr(po-po1)+') '+
-        errorleveltext[level]+': '+format(message,values));
+    str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+        errorleveltext[level]+': '+format(message,values);
+    command.writeln(str1);
+    writeln('<<<<<<< '+str1);
    end;
   end;
  end;
@@ -200,7 +204,7 @@ procedure identerror(const info: pparseinfoty; const astackoffset: integer;
 begin
  with info^,contextstack[stackindex+astackoffset] do begin
   errormessage(info,astackoffset,aerror,
-                     [lstringtostring(start.po,d.identlen)]);
+                     [lstringtostring(start.po,d.identlen)],d.identlen);
  end;
 end;
 {
@@ -1046,10 +1050,12 @@ end;
 
 procedure handlecommentend(const info: pparseinfoty);
 begin
+{
  with info^ do begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+}
  outhandle(info,'COMMENTEND');
 end;
 
@@ -1323,6 +1329,9 @@ begin
       end;
      end;
     end;
+   end
+   else begin
+    identerror(info,1,err_identifiernotfound);
    end;
    dec(stackindex);
    stacktop:= stackindex;
