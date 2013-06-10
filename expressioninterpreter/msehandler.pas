@@ -123,6 +123,7 @@ type
  pconstdataty = ^constdataty;
  vardataty = record
   d: contextdataty;
+  typerel: ptypedataty; //elementdata relative
  end;
  pvardataty = ^vardataty;
  
@@ -1138,10 +1139,11 @@ begin
    end
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
-     with pvardataty(@po1^.data)^.d do begin
+     with pvardataty(@po1^.data)^,d do begin
       kind:= ck_var;
       varsize:= ptypedataty(po2)^.size;
       varaddress:= getglobvaraddress(info,varsize);
+      typerel:= eledatarel(po2);
      end;
     end
     else begin

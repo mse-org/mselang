@@ -80,6 +80,8 @@ procedure setelementparent(const element: elementoffsetty);
 function dumpelements: msestringarty;
 function dumppath(const aelement: pelementinfoty): msestring;
 
+function eledatarel(const adata: pointer): pointer; inline;
+
 implementation
 uses
  msehash,msearrayutils,sysutils;
@@ -151,6 +153,11 @@ var
 {$ifdef mse_debug_parser}
  identnames: stringarty;
 {$endif}
+
+function eledatarel(const adata: pointer): pointer;
+begin
+ result:= pointer(adata-pointer(elementdata));
+end;
 
 procedure clear;
 begin
