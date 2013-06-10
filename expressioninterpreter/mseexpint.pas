@@ -30,8 +30,8 @@ var
  int1: integer;
 begin
  with info^ do begin
-  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' ''',
-                                             singleline(source.po),'''');
+  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' '+
+                   inttostr(source.line+1)+':''',singleline(debugsource),'''');
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
@@ -92,7 +92,7 @@ begin
       write(opmark.address,' ');
      end;
     end;
-    writeln(' ''',singleline(start.po),'''');
+    writeln(' '+inttostr(start.line+1)+':''',singleline(debugstart),'''');
    end;
   end;
  end;
@@ -147,6 +147,7 @@ begin
    kind:= ck_none;
    context:= pc;
    start:= source;
+   debugstart:= debugsource;
    parent:= int1;
    if pb^.s then begin
     kind:= ck_opmark;
@@ -234,20 +235,21 @@ begin
   globdatapo:= 0;
   initparser(@info);
   pc:= contextstack[stackindex].context;
+  keywordindex:= 0;
+  debugsource:= source.po;
+  outinfo(@info,'****');
   while (source.po^ <> #0) and (stackindex >= 0) do begin
    while (source.po^ <> #0) and (stackindex >= 0) do begin
     pb:= pc^.branch;
     if pb = nil then begin
      break;
     end;
-//    if pb^.x then begin 
     if pointer(pb^.t) = nil then begin
      pushcont(@info);
     end
     else begin
-     keywordindex:= 0;
+//     keywordindex:= 0;
      while not pb^.x do begin
-//     while pointer(pb^.t) <> nil do begin
       if pb^.k then begin
        if keywordindex = 0 then begin
         po1:= source.po;
@@ -286,9 +288,11 @@ begin
        end;
       end;
       if bo1 then begin //match
+       debugsource:= source.po;
        if pb^.e then begin
         source.line:= source.line + linebreaks;
         linebreaks:= 0;
+        keywordindex:= 0;
         source.po:= po1;
        end;
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
@@ -296,14 +300,13 @@ begin
          if not pushcont(@info) then begin
           goto handlelab;
          end;
-//        until not pb^.x;
         until pointer(pb^.t) <> nil;
        end;
        source.po:= po1;
        source.line:= source.line + linebreaks;
+       debugsource:= source.po;
        keywordindex:= 0;
        if (pb^.c = nil) and pb^.p then begin
-//        stacktop:= stackindex;
         break;
        end;
        pb:= pc^.branch; //restart
@@ -320,6 +323,8 @@ handlelab:
     pc1:= pc;
     if pc1^.restoresource then begin
      source:= contextstack[stackindex].start;
+     debugsource:= source.po;
+     keywordindex:= 0;
     end;
     if pc^.handle <> nil then begin
      stophandle:= false;

@@ -83,11 +83,11 @@ statementstack,,^
  '',statement*
 statement,simplestatement,handlestatement
  ${whitespace}
- 'begin'.,statementblock-^*
- 'end'.,endcontext-
+ 'begin'.,statementblock-*
+ 'end'.,endcontext
  'if'.,if-
-endcontext,,*
-endtoken,,handleendtoken^*
+endcontext,,
+blockend,,handleblockend*
 simplestatement,,*
  '',statement0*
 statementblock,statementblock1,
@@ -95,7 +95,7 @@ statementblock,statementblock1,
 statementblock1,,handlestatementblock1
  ${whitespace}
  ';',statementblock-
- 'end'.,endtoken-
+ 'end'.,blockend-
 statement0,statement1,
  '',ident^*
 statement1,checkproc,

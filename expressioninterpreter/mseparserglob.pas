@@ -141,6 +141,7 @@ type
   parent: integer;
   context: pcontextty;
   start: sourceinfoty;
+  debugstart: pchar;
   d: contextdataty;
  end;
 
@@ -213,6 +214,7 @@ type
   filename: string;
   sourcestart: pchar; //todo: use file cache for inclued files
   source: sourceinfoty;
+  debugsource: pchar;
   consumed: pchar;
   contextstack: array of contextitemty;
   stackdepht: integer;

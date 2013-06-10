@@ -10,10 +10,10 @@ object mainfo: tmainfo
     371
     450
   )
-  statfile = tstatfile1
+  statfile = statf
   moduleclassname = 'tmainform'
   object tbutton1: tbutton
-    bounds_x = 312
+    bounds_x = 264
     bounds_y = 8
     bounds_cx = 50
     bounds_cy = 20
@@ -225,7 +225,7 @@ object mainfo: tmainfo
     options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
     linktop = edgrid
     linkbottom = grid
-    statfile = tstatfile1
+    statfile = statf
   end
   object edgrid: twidgetgrid
     taborder = 15
@@ -251,7 +251,7 @@ object mainfo: tmainfo
       end>
     datarowlinewidth = 0
     datarowheight = 16
-    statfile = tstatfile1
+    statfile = statf
     reffontheight = 14
     object ed: tsyntaxedit
       optionsskin = [osk_framebuttononly]
@@ -278,7 +278,17 @@ object mainfo: tmainfo
     bounds_cy = 18
     reffontheight = 14
   end
-  object tstatfile1: tstatfile
+  object tbutton5: tbutton
+    taborder = 17
+    bounds_x = 320
+    bounds_y = 8
+    bounds_cx = 42
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'save'
+    onexecute = saveex
+  end
+  object statf: tstatfile
     filename = 'status.sta'
     left = 232
     top = 32

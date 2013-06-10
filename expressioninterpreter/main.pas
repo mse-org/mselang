@@ -27,7 +27,7 @@ uses
 
 type
  tmainfo = class(tmainform)
-   tstatfile1: tstatfile;
+   statf: tstatfile;
    tbutton1: tbutton;
    grid: tstringgrid;
    di: trealdisp;
@@ -48,6 +48,7 @@ type
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
    coldi: tintegerdisp;
+   tbutton5: tbutton;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -62,6 +63,7 @@ type
    procedure setpaexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
+   procedure saveex(const sender: TObject);
   protected
    felement: elementoffsetty;
    procedure dump;
@@ -187,6 +189,11 @@ procedure tmainfo.editnotiexe(const sender: TObject;
                var info: editnotificationinfoty);
 begin
  coldi.value:= ed.col+1;
+end;
+
+procedure tmainfo.saveex(const sender: TObject);
+begin
+ statf.writestat;
 end;
 
 
