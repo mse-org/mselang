@@ -121,9 +121,14 @@ type
   d: contextdataty;
  end;
  pconstdataty = ^constdataty;
+ 
+ varflagty = (vf_global);
+ varflagsty = set of varflagty;
+
  vardataty = record
   address: ptruint;
   typerel: ptypedataty; //elementdata relative
+  flags: varflagsty;
  end;
  pvardataty = ^vardataty;
  
@@ -975,18 +980,20 @@ begin
     ek_var: begin
      si1:= ptypedataty(eledataabs(pvardataty(po2)^.typerel))^.size;
      with additem(info)^ do begin
-      case si1 of
-       1: begin 
-        op:= @pushglob1;
-       end;
-       2: begin
-        op:= @pushglob2;
-       end;
-       4: begin
-        op:= @pushglob4;
-       end;
-       else begin
-        op:= @pushglob;
+      if vf_global in pvardataty(po2)^.flags then begin
+       case si1 of
+        1: begin 
+         op:= @pushglob1;
+        end;
+        2: begin
+         op:= @pushglob2;
+        end;
+        4: begin
+         op:= @pushglob4;
+        end;
+        else begin
+         op:= @pushglob;
+        end;
        end;
       end;
       d.dataaddress:= pvardataty(po2)^.address;
@@ -1144,6 +1151,7 @@ begin
      with pvardataty(@po1^.data)^ do begin
       address:= getglobvaraddress(info,ptypedataty(po2)^.size);
       typerel:= eledatarel(po2);
+      flags:= [vf_global];
      end;
     end
     else begin
