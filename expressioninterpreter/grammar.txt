@@ -73,26 +73,21 @@ checkterminator,,handlecheckterminator
  ';',terminatorok-
  ${whitespace}
 terminatorok,,*
-exeblock,exeblock,*
- ${whitespace}
- ';',
- 'end'.,-*
- 'if'.,if-*
- @identstart,statement0*
 statementstack,,^
  '',statement*
-statement,simplestatement,handlestatement
+statement,simplestatement,handlestatement*
  ${whitespace}
+ ';',endcontext
  'begin'.,statementblock-*
  'end'.,endcontext
- 'if'.,if-
+ 'if'.,if0-
 endcontext,,
 blockend,,handleblockend*
 simplestatement,,*
  '',statement0*
-statementblock,statementblock1,
+statementblock,statementblock1,*
  '',statement*
-statementblock1,,handlestatementblock1
+statementblock1,,handlestatementblock1*
  ${whitespace}
  ';',statementblock-
  'end'.,blockend-
@@ -105,6 +100,8 @@ checkproc,,handlecheckproc
  '',checkparams^*
 assignment,,handleassignment
  '',exp^*
+if0,if,
+ ${whitespace}
 if,then,handleif
  '',exp^*
 then,,handlethen

@@ -99,14 +99,11 @@ var
  terminatorokco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'terminatorok');
- exeblockco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'exeblock');
  statementstackco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'statementstack');
  statementco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement');
  endcontextco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -118,10 +115,10 @@ var
                continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'simplestatement');
  statementblockco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statementblock');
  statementblock1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statementblock1');
  statement0co: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -135,6 +132,9 @@ var
  assignmentco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'assignment');
+ if0co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'if0');
  ifco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'if');
@@ -571,85 +571,21 @@ const
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bexeblock: array[0..61] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#6{'end'}; x: false; k:true; c:nil; e:true; p:true; s: false; sb:false; sa:false),
-  (t:#7{'if'}; x: false; k:true; c:@ifco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'_'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'a'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'b'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'c'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'d'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'e'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'f'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'g'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'h'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'i'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'j'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'k'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'l'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'m'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'n'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'o'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'p'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'q'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'r'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'s'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'t'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'u'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'v'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'w'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'x'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'y'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'z'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'A'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'B'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'C'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'D'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'E'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'F'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'G'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'H'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'I'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'J'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'K'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'L'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'M'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'N'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'O'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'P'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Q'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'R'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'S'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'T'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'U'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'V'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'W'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'X'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Y'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Z'; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
  bstatementstack: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bstatement: array[0..8] of branchty = (
+ bstatement: array[0..9] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:';'; x: false; k:false; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
   (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:#6; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:#7; x: false; k:true; c:@ifco; e:true; p:false; s: false; sb:false; sa:false),
+  (t:#6{'end'}; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
+  (t:#7{'if'}; x: false; k:true; c:@if0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -696,6 +632,15 @@ const
 
  bassignment: array[0..1] of branchty = (
   (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
+ );
+
+ bif0: array[0..5] of branchty = (
+  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
+  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
+  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1504,8 +1449,6 @@ begin
  checkterminatorco.branch:= @bcheckterminator;
  checkterminatorco.handle:= @handlecheckterminator;
  terminatorokco.branch:= nil;
- exeblockco.branch:= @bexeblock;
- exeblockco.next:= @exeblockco;
  statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
  statementco.next:= @simplestatementco;
@@ -1526,6 +1469,8 @@ begin
  checkprocco.handle:= @handlecheckproc;
  assignmentco.branch:= @bassignment;
  assignmentco.handle:= @handleassignment;
+ if0co.branch:= @bif0;
+ if0co.next:= @ifco;
  ifco.branch:= @bif;
  ifco.next:= @thenco;
  ifco.handle:= @handleif;

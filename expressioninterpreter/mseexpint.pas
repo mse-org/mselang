@@ -10,6 +10,10 @@ uses
 //
 
 //type
+
+const
+ keywordchars = ['a'..'z','A'..'Z'];
+ identchars = keywordchars+['0'..'9','_'];
  
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
@@ -31,7 +35,8 @@ var
 begin
  with info^ do begin
   writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' '+
-                   inttostr(source.line+1)+':''',singleline(debugsource),'''');
+    inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
+                         singleline(source.po),'''');
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
@@ -92,7 +97,8 @@ begin
       write(opmark.address,' ');
      end;
     end;
-    writeln(' '+inttostr(start.line+1)+':''',singleline(debugstart),'''');
+    writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',
+                     singleline(start.po),'''');
    end;
   end;
  end;
@@ -253,10 +259,15 @@ begin
       if pb^.k then begin
        if keywordindex = 0 then begin
         po1:= source.po;
-        while po1^ in ['a'..'z','A'..'Z'] do begin
+        while po1^ in keywordchars do begin
          inc(po1);
         end; 
-        keywordindex:= getident(source.po,po1);
+        if not (po1^ in identchars) then begin
+         keywordindex:= getident(source.po,po1);
+        end
+        else begin
+         keywordindex:= -1;
+        end;
         keywordend:= po1;
        end;
        po1:= keywordend;
@@ -369,6 +380,9 @@ handlelab:
     else begin
      if pc^.nexteat then begin
       start:= source;
+     end;
+     if pc^.cut then begin
+      stacktop:= stackindex;
      end;
      writeln(pc^.caption,'->',pc^.next^.caption);
      pc:= pc^.next;

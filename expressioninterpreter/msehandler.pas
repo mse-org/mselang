@@ -98,6 +98,7 @@ uses
 const
  valuecontext = ck_bool8const;
  reversestackdata = sdk_bool8rev;
+ constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
  bool8kinds = [ck_bool8const,ck_bool8fact];
  int32kinds = [ck_int32const,ck_int32fact];
  flo64kinds = [ck_flo64const,ck_flo64fact];
@@ -146,7 +147,7 @@ const
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected,err_semicolonexpected);
+            err_thenexpected,err_semicolonexpected,err_booleanexpressionexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -160,7 +161,8 @@ const
   (level: erl_error; message: 'Duplicate identifier "%s"'),
   (level: erl_error; message: 'Identifier not found "%s"'),
   (level: erl_fatal; message: 'Syntax error, "then" expected'),
-  (level: erl_fatal; message: 'Syntax error, ";" expected')
+  (level: erl_fatal; message: 'Syntax error, ";" expected'),
+  (level: erl_error; message: 'Boolean expression expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -1369,6 +1371,11 @@ end;
 
 procedure handlethen0(const info: pparseinfoty);
 begin
+ with info^ do begin
+  if not (contextstack[stacktop].d.kind in bool8kinds) then begin
+   errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
+  end;
+ end;
  with additem(info)^ do begin
   op:= @ifop;   
  end;

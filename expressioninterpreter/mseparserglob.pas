@@ -52,7 +52,7 @@ type
  dataaddressty = ptruint;
  
 const
- constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
+// constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
  dummyaddress = 0;
 
 type
