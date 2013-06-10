@@ -122,7 +122,7 @@ type
  end;
  pconstdataty = ^constdataty;
  vardataty = record
-  d: contextdataty;
+  address: ptruint;
   typerel: ptypedataty; //elementdata relative
  end;
  pvardataty = ^vardataty;
@@ -827,7 +827,7 @@ end;
 const
  negops: array[contextkindty] of opty = (
   //ck_none, ck_error,ck_end,  ck_ident,ck_var,  ck_pc
-    @dummyop,@dummyop,@dummyop,@dummyop,@dummyop,@dummyop,
+    @dummyop,@dummyop,@dummyop,@dummyop,{@dummyop,}@dummyop,
   //ck_neg, 
     @dummyop,
   //ck_bool8const,ck_int32const,ck_flo64const,
@@ -963,7 +963,8 @@ end;
 procedure handlevalueidentifier(const info: pparseinfoty);
 var
  po1: pelementinfoty;
- po2: pcontextdataty;
+ po2: pointer;
+ si1: ptruint;
 begin
  with info^ do begin
   po1:= findelement(contextstack[stacktop].d.ident);
@@ -972,8 +973,9 @@ begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
+     si1:= ptypedataty(eledataabs(pvardataty(po2)^.typerel))^.size;
      with additem(info)^ do begin
-      case po2^.varsize of
+      case si1 of
        1: begin 
         op:= @pushglob1;
        end;
@@ -987,13 +989,13 @@ begin
         op:= @pushglob;
        end;
       end;
-      d.dataaddress:= po2^.varaddress;
-      d.datasize:= po2^.varsize;
+      d.dataaddress:= pvardataty(po2)^.address;
+      d.datasize:= si1;
      end;
      contextstack[stacktop].d.kind:= ck_int32fact;
     end;
     ek_const: begin
-     contextstack[stacktop].d:= po2^;
+     contextstack[stacktop].d:= pcontextdataty(po2)^;
     end;
     else begin
      parsererror(info,'wrong kind');
@@ -1139,10 +1141,8 @@ begin
    end
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
-     with pvardataty(@po1^.data)^,d do begin
-      kind:= ck_var;
-      varsize:= ptypedataty(po2)^.size;
-      varaddress:= getglobvaraddress(info,varsize);
+     with pvardataty(@po1^.data)^ do begin
+      address:= getglobvaraddress(info,ptypedataty(po2)^.size);
       typerel:= eledatarel(po2);
      end;
     end
@@ -1239,12 +1239,14 @@ procedure handleassignment(const info: pparseinfoty);
  
 var
  po1: pvardataty;
+ si1: ptruint;
 begin
  with info^ do begin
   if (stacktop-stackindex > 0) and
    findkindelement(contextstack[stackindex+1].d,ek_var,po1) then begin
+   si1:= ptypedataty(eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
-    case po1^.d.varsize of
+    case si1 of
      1: begin 
       op:= @popglob1;
      end;
@@ -1258,8 +1260,8 @@ begin
       op:= @popglob;
      end;
     end;
-    d.dataaddress:= po1^.d.varaddress;
-    d.datasize:= po1^.d.varsize;
+    d.dataaddress:= po1^.address;
+    d.datasize:= si1;
    end;
   end
   else begin

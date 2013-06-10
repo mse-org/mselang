@@ -81,6 +81,7 @@ function dumpelements: msestringarty;
 function dumppath(const aelement: pelementinfoty): msestring;
 
 function eledatarel(const adata: pointer): pointer; inline;
+function eledataabs(const adata: pointer): pointer; inline;
 
 implementation
 uses
@@ -157,6 +158,11 @@ var
 function eledatarel(const adata: pointer): pointer;
 begin
  result:= pointer(adata-pointer(elementdata));
+end;
+
+function eledataabs(const adata: pointer): pointer;
+begin
+ result:= pointer(ptruint(adata)+pointer(elementdata));
 end;
 
 procedure clear;
