@@ -86,7 +86,9 @@ begin
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
- di.value:= run(ar1,1024);
+ if ar1 <> nil then begin
+  di.value:= run(ar1,1024);
+ end;
 end;
 
 procedure tmainfo.findsetexe(const sender: TObject; var avalue: msestring;
@@ -195,6 +197,5 @@ procedure tmainfo.saveex(const sender: TObject);
 begin
  statf.writestat;
 end;
-
 
 end.

@@ -117,6 +117,15 @@ type
   name: string;
   data: contextdataty;
  end;
+ constdataty = record
+  d: contextdataty;
+ end;
+ pconstdataty = ^constdataty;
+ vardataty = record
+  d: contextdataty;
+ end;
+ pvardataty = ^vardataty;
+ 
 // keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
  sysfuncty = (sf_writeln);
  sysfuncdataty = record
@@ -266,8 +275,8 @@ begin
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= addelement(getident(name),ek_context,elesize+sizeof(contextdataty));
-   pcontextdataty(@po1^.data)^:= data;
+   po1:= addelement(getident(name),ek_const,elesize+sizeof(constdataty));
+   pconstdataty(@po1^.data)^.d:= data;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
@@ -278,7 +287,7 @@ begin
  end;
  writeop(info,@gotoop); //startup vector 
 end;
-
+(*
 function findcontextelement(const aident: contextdataty;
               const akind: contextkindty; out ainfo: pcontextdataty): boolean;
 var
@@ -293,7 +302,7 @@ begin
   end;
  end;
 end;
-
+*)
 function findkindelement(const aident: contextdataty;
               const akind: elementkindty; out ainfo: pointer): boolean;
 var
@@ -959,40 +968,34 @@ begin
   po1:= findelement(contextstack[stacktop].d.ident);
   dec(stacktop);
   if po1 <> nil then begin
-   if po1^.header.kind = ek_context then begin
-    po2:= @po1^.data;
-    with po2^ do begin
-     if kind = ck_var then begin
-      with po1^ do begin
-       with additem(info)^ do begin
-        case varsize of
-         1: begin 
-          op:= @pushglob1;
-         end;
-         2: begin
-          op:= @pushglob2;
-         end;
-         4: begin
-          op:= @pushglob4;
-         end;
-         else begin
-          op:= @pushglob;
-         end;
-        end;
-        d.dataaddress:= varaddress;
-        d.datasize:= varsize;
+   po2:= @po1^.data;
+   case po1^.header.kind of
+    ek_var: begin
+     with additem(info)^ do begin
+      case po2^.varsize of
+       1: begin 
+        op:= @pushglob1;
+       end;
+       2: begin
+        op:= @pushglob2;
+       end;
+       4: begin
+        op:= @pushglob4;
+       end;
+       else begin
+        op:= @pushglob;
        end;
       end;
-      contextstack[stacktop].d.kind:= ck_int32fact;
-     end
-     else begin
-      if kind in constkinds then begin
-       contextstack[stacktop].d:= po2^;
-      end
-      else begin
-       parsererror(info,'wrong kind');
-      end;
+      d.dataaddress:= po2^.varaddress;
+      d.datasize:= po2^.varsize;
      end;
+     contextstack[stacktop].d.kind:= ck_int32fact;
+    end;
+    ek_const: begin
+     contextstack[stacktop].d:= po2^;
+    end;
+    else begin
+     parsererror(info,'wrong kind');
     end;
    end;
   end
@@ -1088,12 +1091,12 @@ begin
        (contextstack[stacktop-1].d.kind in constkinds) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
-    po1:= addelement(ident,ek_context,elesize+sizeof(contextdataty));
+    po1:= addelement(ident,ek_const,elesize+sizeof(constdataty));
     if po1 = nil then begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
     else begin
-     pcontextdataty(@po1^.data)^:= contextstack[stacktop-1].d;
+     pconstdataty(@po1^.data)^.d:= contextstack[stacktop-1].d;
     end;
    end;
   end
@@ -1128,14 +1131,14 @@ begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
        (contextstack[stacktop-1].d.kind = ck_ident) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= addelement(contextstack[stacktop-2].d.ident,ek_context,
-                                        elesize+sizeof(contextdataty));
+   po1:= addelement(contextstack[stacktop-2].d.ident,ek_var,
+                                        elesize+sizeof(vardataty));
    if po1 = nil then begin
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
-     with pcontextdataty(@po1^.data)^ do begin
+     with pvardataty(@po1^.data)^.d do begin
       kind:= ck_var;
       varsize:= ptypedataty(po2)^.size;
       varaddress:= getglobvaraddress(info,varsize);
@@ -1233,30 +1236,28 @@ procedure handleassignment(const info: pparseinfoty);
  end; //varexpected
  
 var
- po1: pcontextdataty;
+ po1: pvardataty;
 begin
  with info^ do begin
   if (stacktop-stackindex > 0) and
-         findcontextelement(contextstack[stackindex+1].d,ck_var,po1) then begin
-   with po1^ do begin
-    with additem(info)^ do begin
-     case varsize of
-      1: begin 
-       op:= @popglob1;
-      end;
-      2: begin
-       op:= @popglob2;
-      end;
-      4: begin
-       op:= @popglob4;
-      end;
-      else begin
-       op:= @popglob;
-      end;
+   findkindelement(contextstack[stackindex+1].d,ek_var,po1) then begin
+   with additem(info)^ do begin
+    case po1^.d.varsize of
+     1: begin 
+      op:= @popglob1;
      end;
-     d.dataaddress:= varaddress;
-     d.datasize:= varsize;
+     2: begin
+      op:= @popglob2;
+     end;
+     4: begin
+      op:= @popglob4;
+     end;
+     else begin
+      op:= @popglob;
+     end;
     end;
+    d.dataaddress:= po1^.d.varaddress;
+    d.datasize:= po1^.d.varsize;
    end;
   end
   else begin

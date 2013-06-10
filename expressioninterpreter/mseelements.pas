@@ -30,7 +30,8 @@ type
  identty = integer;
  identarty = integerarty;
  elementoffsetty = integer;
- elementkindty = (ek_none,ek_context,ek_type,ek_sysfunc,ek_func);
+ elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,ek_sysfunc,
+                                                                      ek_func);
  
  elementheaderty = record
   name: identty;

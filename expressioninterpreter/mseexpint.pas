@@ -13,7 +13,7 @@ uses
 
 const
  keywordchars = ['a'..'z','A'..'Z'];
- identchars = keywordchars+['0'..'9','_'];
+ nokeywordendchars = keywordchars+['0'..'9','_'];
  
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
@@ -262,7 +262,7 @@ begin
         while po1^ in keywordchars do begin
          inc(po1);
         end; 
-        if not (po1^ in identchars) then begin
+        if not (po1^ in nokeywordendchars) then begin
          keywordindex:= getident(source.po,po1);
         end
         else begin
@@ -398,6 +398,9 @@ parseend:
   setlength(ops,opcount);
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;
+  end;
+  if (errors[erl_fatal] > 0) or (errors[erl_error] > 0) then begin
+   ops:= nil;
   end;
   result:= ops;
  end;
