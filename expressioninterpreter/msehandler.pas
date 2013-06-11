@@ -145,6 +145,9 @@ type
  end;
  funcdataty = record
   address: opaddressty;
+  paramcount: integer;
+  paramsrel: record //array of relative pvardataty
+  end;
  end;
  pfuncdataty = ^funcdataty;
    
@@ -162,7 +165,8 @@ const
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected,err_semicolonexpected,err_booleanexpressionexpected);
+            err_thenexpected,err_semicolonexpected,err_booleanexpressionexpected,
+            err_wrongnumberofparameters);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -177,7 +181,9 @@ const
   (level: erl_error; message: 'Identifier not found "%s"'),
   (level: erl_fatal; message: 'Syntax error, "then" expected'),
   (level: erl_fatal; message: 'Syntax error, ";" expected'),
-  (level: erl_error; message: 'Boolean expression expected')
+  (level: erl_error; message: 'Boolean expression expected'),
+  (level: erl_error; message: 
+                    'Wrong number of parameters specified for call to "%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -238,6 +244,15 @@ begin
  with info^ do begin
   result:= globdatapo;
   inc(globdatapo,asize);
+ end;
+end;
+
+function getlocvaraddress(const info: pparseinfoty;
+                                        const asize: integer): ptruint;
+begin
+ with info^ do begin
+  result:= locdatapo;
+  inc(locdatapo,asize);
  end;
 end;
  
@@ -1028,9 +1043,9 @@ end;
 
 procedure handleblockend(const info: pparseinfoty);
 begin
- with info^ do begin
-  stackindex:= stackindex-2;
- end;
+// with info^ do begin
+//  stackindex:= stackindex-2;
+// end;
  outhandle(info,'BLOCKEND');
 end;
 
@@ -1155,7 +1170,8 @@ begin
      end;
     end
     else begin
-     parsererror(info,'type not found. VAR3');
+     identerror(info,stacktop-1-stackindex,err_identifiernotfound);
+//     parsererror(info,'type not found. VAR3');
     end;
    end;
   end
@@ -1320,9 +1336,14 @@ var
  po2: pfuncdataty;
  po1: psysfuncdataty;
  int1,int2: integer;
+ paramco: integer;
 begin
  with info^ do begin
+  paramco:= stacktop-stackindex-2;
   if findkindelement(info,1,ek_func,po2) then begin
+   if paramco <> po2^.paramcount then begin
+    identerror(info,1,err_wrongnumberofparameters);
+   end;
    with additem(info)^ do begin
     op:= @callop;
     d.opaddress:= po2^.address-1;
@@ -1436,13 +1457,52 @@ end;
 procedure handleprocedure3(const info: pparseinfoty);
 var
  po1: pfuncdataty;
+ po2: pvardataty;
+ po3: ptypedataty;
+ po4: ppointeraty;
+ int1,int2: integer;
+ paramco: integer;
+ err1: boolean;
 begin
+//0          1     2          3          4    5
+//procedure2,ident,paramsdef3{,paramdef2,name,type}
  with info^ do begin
+  err1:= false;
+  paramco:= (stacktop-stackindex-2) div 3;
   if addelement(contextstack[stackindex+1].d.ident,ek_func,
-              elesize+sizeof(funcdataty),po1) then begin
+              elesize+sizeof(funcdataty)+
+                        paramco*sizeof(pvardataty),po1) then begin
+   po1^.paramcount:= paramco;
+   po4:= @po1^.paramsrel;
+   int1:= stackindex+4;
+   for int2:= 0 to paramco-1 do begin
+    if addelement(contextstack[int1].d.ident,ek_var,
+                                  elesize+sizeof(vardataty),po2) then begin
+     po4^[int2]:= eledatarel(po2);
+     if findkindelement(contextstack[int1+1].d,ek_type,po3) then begin
+      with po2^ do begin
+       address:= getlocvaraddress(info,po3^.size);
+       typerel:= eledatarel(po3);
+       flags:= [];
+      end;
+     end
+     else begin
+      identerror(info,int1+1-stackindex,err_identifiernotfound);
+      err1:= true;
+     end;
+    end
+    else begin
+     identerror(info,int1-stackindex,err_duplicateidentifier);
+     err1:= true;
+    end;
+    int1:= int1+3;
+   end;
    with po1^ do begin
     address:= opcount;
    end;
+  end;
+  if err1 then begin
+   //todo: delete procedure definition
   end;
   stacktop:= stackindex;
  end;

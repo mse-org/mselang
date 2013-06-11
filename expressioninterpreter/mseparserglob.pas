@@ -228,6 +228,7 @@ type
   opcount: integer;
   start: integer;
   globdatapo: ptruint;
+  locdatapo: ptruint;
  end;
 
 const

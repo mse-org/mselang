@@ -78,11 +78,11 @@ statementstack,,^
 statement,simplestatement,handlestatement*
  ${whitespace}
  ';',endcontext
- 'begin'.,statementblock-*
+ 'begin'.,statementblock-^*
  'end'.,endcontext
  'if'.,if0-
 endcontext,,
-blockend,,handleblockend*
+blockend,,handleblockend^*
 simplestatement,,*
  '',statement0*
 statementblock,statementblock1,*

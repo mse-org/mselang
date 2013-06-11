@@ -216,16 +216,16 @@ var
 label
  handlelab,stophandlelab,parseend;
 begin
+ fillchar(info,sizeof(info),0); 
  result:= nil;
  mseelements.clear;
- 
  with info do begin
   command:= acommand;
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
-  source.line:= 0;
+//  source.line:= 0;
   filename:= 'main.pas'; //dummy
-  fillchar(errors,sizeof(errors),0);
+//  fillchar(errors,sizeof(errors),0);
   stackdepht:= defaultstackdepht;
   setlength(contextstack,stackdepht);
   with contextstack[0],d do begin
@@ -234,11 +234,11 @@ begin
    start:= source;
    parent:= 0;
   end;
-  stackindex:= 0;
-  stacktop:= 0;
+//  stackindex:= 0;
+//  stacktop:= 0;
   opcount:= startupoffset;
   setlength(ops,opcount);
-  globdatapo:= 0;
+//  globdatapo:= 0;
   initparser(@info);
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;

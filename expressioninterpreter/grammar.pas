@@ -109,7 +109,7 @@ var
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'endcontext');
  blockendco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'blockend');
  simplestatementco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -583,7 +583,7 @@ const
   (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:';'; x: false; k:false; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:false; sa:false),
+  (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
   (t:#6{'end'}; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
   (t:#7{'if'}; x: false; k:true; c:@if0co; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
