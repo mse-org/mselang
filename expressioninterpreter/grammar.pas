@@ -576,7 +576,7 @@ const
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
- bstatement: array[0..9] of branchty = (
+ bstatement: array[0..10] of branchty = (
   (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
@@ -586,6 +586,7 @@ const
   (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
   (t:#6{'end'}; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
   (t:#7{'if'}; x: false; k:true; c:@if0co; e:true; p:false; s: false; sb:false; sa:false),
+  (t:''; x: false; k:false; c:@simplestatementco; e:false; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1451,8 +1452,6 @@ begin
  terminatorokco.branch:= nil;
  statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
- statementco.next:= @simplestatementco;
- statementco.handle:= @handlestatement;
  endcontextco.branch:= nil;
  blockendco.branch:= nil;
  blockendco.handle:= @handleblockend;

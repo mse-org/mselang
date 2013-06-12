@@ -142,9 +142,9 @@ object mainfo: tmainfo
   end
   object tbutton2: tbutton
     taborder = 8
-    bounds_x = 240
+    bounds_x = 232
     bounds_y = 296
-    bounds_cx = 50
+    bounds_cx = 58
     bounds_cy = 20
     anchors = [an_left, an_bottom]
     state = [as_localcaption, as_localonexecute]
@@ -287,6 +287,16 @@ object mainfo: tmainfo
     state = [as_localcaption, as_localonexecute]
     caption = 'save'
     onexecute = saveex
+  end
+  object tstringdisp1: tstringdisp
+    frame.dummy = 0
+    taborder = 18
+    bounds_x = 16
+    bounds_y = 424
+    bounds_cy = 18
+    textflags = [tf_xjustify, tf_ycentered]
+    value = 'abc def ert'
+    reffontheight = 14
   end
   object statf: tstatfile
     filename = 'status.sta'

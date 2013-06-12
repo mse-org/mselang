@@ -74,7 +74,7 @@ procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
 //procedure handlecheckparams(const info: pparseinfoty);
 
-procedure handlestatement(const info: pparseinfoty);
+//procedure handlestatement(const info: pparseinfoty);
 
 procedure handleassignment(const info: pparseinfoty);
 procedure handlestatement1(const info: pparseinfoty);
@@ -1249,12 +1249,12 @@ begin
  writeop(info,addops[pushvalues(info)]);
  outhandle(info,'EQUSIMPEXP');
 end;
-
+{
 procedure handlestatement(const info: pparseinfoty);
 begin
  outhandle(info,'HANDLESTATEMENT');
 end;
-
+}
 procedure handleassignment(const info: pparseinfoty);
  procedure varexpected;
  begin

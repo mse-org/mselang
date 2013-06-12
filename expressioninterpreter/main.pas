@@ -49,6 +49,7 @@ type
    ed: tsyntaxedit;
    coldi: tintegerdisp;
    tbutton5: tbutton;
+   tstringdisp1: tstringdisp;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);

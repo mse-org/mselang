@@ -75,12 +75,13 @@ checkterminator,,handlecheckterminator
 terminatorok,,*
 statementstack,,^
  '',statement*
-statement,simplestatement,handlestatement*
+statement,,*
  ${whitespace}
  ';',endcontext
  'begin'.,statementblock-^*
  'end'.,endcontext
  'if'.,if0-
+ '',simplestatement
 endcontext,,
 blockend,,handleblockend^*
 simplestatement,,*
