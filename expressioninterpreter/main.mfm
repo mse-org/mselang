@@ -288,16 +288,6 @@ object mainfo: tmainfo
     caption = 'save'
     onexecute = saveex
   end
-  object tstringdisp1: tstringdisp
-    frame.dummy = 0
-    taborder = 18
-    bounds_x = 16
-    bounds_y = 424
-    bounds_cy = 18
-    textflags = [tf_xjustify, tf_ycentered]
-    value = 'abc def ert'
-    reffontheight = 14
-  end
   object statf: tstatfile
     filename = 'status.sta'
     left = 232
