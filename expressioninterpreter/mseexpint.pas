@@ -84,14 +84,18 @@ begin
      ck_ident: begin
       write(ident,':',identlen,' ');
      end;
-     ck_bool8const: begin
-      write(bool8const.value,' ');
-     end;
-     ck_int32const: begin
-      write(int32const.value,' ');
-     end;
-     ck_flo64const: begin
-      write(flo64const.value,' ');
+     ck_const: begin
+      case factkind of
+       dk_bool8: begin
+        write(constval.vbool8,' ');
+       end;
+       dk_int32: begin
+        write(constval.vint32,' ');
+       end;
+       dk_flo64: begin
+        write(constval.vflo64,' ');
+       end;
+      end;
      end;
      ck_opmark: begin
       write(opmark.address,' ');

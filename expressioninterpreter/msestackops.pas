@@ -18,18 +18,6 @@ uses
  mseparserglob;
  
 type
- datainfoty = record
-  case kind: datakindty of
-   dk_bool8: (
-    vbool8: integer;
-   );
-   dk_int32: (
-    vint32: integer;
-   );
-   dk_flo64: (
-    vflo64: double;
-   );
- end;
 
  infoopty = procedure(const opinfo: popinfoty);
 

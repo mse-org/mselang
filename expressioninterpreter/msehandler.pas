@@ -68,7 +68,7 @@ procedure handleaddterm(const info: pparseinfoty);
 procedure handlebracketend(const info: pparseinfoty);
 procedure handlesimpexp(const info: pparseinfoty);
 procedure handlesimpexp1(const info: pparseinfoty);
-procedure handleln(const info: pparseinfoty);
+//procedure handleln(const info: pparseinfoty);
 procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
@@ -96,17 +96,19 @@ uses
  msestackops,msestrings,mseelements,mseexpint,grammar,sysutils;
 
 const
- valuecontext = ck_bool8const;
+// valuecontext = ck_bool8const;
  reversestackdata = sdk_bool8rev;
- constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
- bool8kinds = [ck_bool8const,ck_bool8fact];
- int32kinds = [ck_int32const,ck_int32fact];
- flo64kinds = [ck_flo64const,ck_flo64fact];
+// constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
+// bool8kinds = [ck_bool8const,ck_bool8fact];
+// int32kinds = [ck_int32const,ck_int32fact];
+// flo64kinds = [ck_flo64const,ck_flo64fact];
 
 type
  systypety = (st_integer);
  typedataty = record
   size: integer;
+  case kind: datakindty of 
+   dk_record: ();
  end;
  ptypedataty = ^typedataty;
  typeinfoty = record
@@ -131,6 +133,7 @@ type
   flags: varflagsty;
  end;
  pvardataty = ^vardataty;
+ ppvardataty = ^pvardataty;
  
 // keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
  sysfuncty = (sf_writeln);
@@ -153,11 +156,11 @@ type
    
 const
  systypeinfos: array[systypety] of typeinfoty = (
-   (name: 'integer'; data: (size: 4))
+   (name: 'integer'; data: (size: 4; kind: dk_int32))
   );
  sysconstinfos: array[0..1] of constinfoty = (
-   (name: 'false'; data: (kind: ck_bool8const; bool8const: (value: false))),
-   (name: 'true'; data: (kind: ck_bool8const; bool8const: (value: true)))
+   (name: 'false'; data: (kind: ck_const; constval: (kind: dk_bool8; vbool8: 0))),
+   (name: 'true'; data: (kind: ck_const; constval: (kind: dk_bool8; vbool8: -1)))
   );
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
@@ -166,7 +169,7 @@ const
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
             err_thenexpected,err_semicolonexpected,err_booleanexpressionexpected,
-            err_wrongnumberofparameters);
+            err_wrongnumberofparameters,err_incompatibletypeforarg);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -183,8 +186,20 @@ const
   (level: erl_fatal; message: 'Syntax error, ";" expected'),
   (level: erl_error; message: 'Boolean expression expected'),
   (level: erl_error; message: 
-                    'Wrong number of parameters specified for call to "%s"')
+                    'Wrong number of parameters specified for call to "%s"'),
+  (level: erl_error; message: 
+                    'Incompatible type for arg no. %d: Got "%s", expected "%s"')
  );
+
+function typename(const ainfo: contextdataty): string;
+begin
+ result:= getenumname(typeinfo(datakindty),ord(ainfo.factkind));
+end;
+
+function typename(const atype: typedataty): string;
+begin
+ result:= getenumname(typeinfo(datakindty),ord(atype.kind));
+end;
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
@@ -274,12 +289,16 @@ begin
  end;
 end;
 
+var
+ sysdatatypes: array[systypety] of ptypedataty;
+ 
 procedure initparser(const info: pparseinfoty);
 var
 // kw1: keywordty;
  ty1: systypety;
  sf1: sysfuncty;
  po1: pelementinfoty;
+ po2: ptypedataty;
  int1: integer;
 begin
 // for kw1:= keywordty(2) to high(keywordty) do begin
@@ -291,8 +310,10 @@ begin
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
-   ptypedataty(@po1^.data)^:= data;
+   po2:= @po1^.data;
+   po2^:= data;
   end;
+  sysdatatypes[ty1]:= eledatarel(po2);
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
@@ -386,14 +407,20 @@ begin
    with contextstack[stacktop+items[int1]].d do begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
-     ck_bool8const: begin
-      command.write(bool8const.value);
-     end;
-     ck_int32const: begin
-      command.write(int32const.value);
-     end;
-     ck_flo64const: begin
-      command.write(flo64const.value);
+     ck_const: begin
+      with constval do begin
+       case kind of
+        dk_bool8: begin
+         command.write(longbool(vbool8));
+        end;
+        dk_int32: begin
+         command.write(vint32);
+        end;
+        dk_flo64: begin
+         command.write(vflo64);
+        end;
+       end;
+      end;
      end;
     end;
     command.write(',');
@@ -427,24 +454,11 @@ begin
  end;
 end;
 
-procedure push(const info: pparseinfoty; const avalue: contextkindty); overload;
+procedure push(const info: pparseinfoty; const avalue: datakindty); overload;
 begin
  with additem(info)^ do begin
   op:= @pushdatakind;
-  case avalue of
-   ck_bool8const,ck_bool8fact: begin
-    d.vdatakind:= dk_bool8;
-   end;
-   ck_int32const,ck_int32fact: begin
-    d.vdatakind:= dk_int32;
-   end;
-   ck_flo64const,ck_flo64fact: begin
-    d.vdatakind:= dk_flo64;
-   end;
-   else begin
-    d.vdatakind:= dk_none;
-   end;
-  end; 
+  d.vdatakind:= avalue;
  end;
 end;
 
@@ -452,15 +466,15 @@ procedure pushconst(const info: pparseinfoty; const avalue: contextdataty);
 //todo: optimize
 begin
  with avalue do begin
-  case kind of
-   ck_bool8const: begin
-    push(info,bool8const.value);
+  case constval.kind of
+   dk_bool8: begin
+    push(info,constval.vbool8);
    end;
-   ck_int32const: begin
-    push(info,int32const.value);
+   dk_int32: begin
+    push(info,constval.vint32);
    end;
-   ck_flo64const: begin
-    push(info,flo64const.value);
+   dk_flo64: begin
+    push(info,constval.vflo64);
    end;
   end;
  end;
@@ -550,9 +564,9 @@ begin
    contextstack[stackindex].d.kind:= ck_none;
    int2:= -int2;
   end;
-  d.int32const.value:= int2;
-  d.kind:= ck_int32const;
-//  context:= nil;
+  d.kind:= ck_const;
+  d.constval.kind:= dk_int32;
+  d.constval.vint32:= int2;
  end;
  outhandle(info,'CNUM');
 end;
@@ -596,7 +610,8 @@ begin
   stacktop:= stacktop - 1;
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
-   d.kind:= ck_flo64const;
+   d.kind:= ck_const;
+   d.constval.kind:= dk_flo64;
    lint2:= 0;
    po1:= start.po;
    int1:= asource-po1-1;
@@ -636,10 +651,10 @@ var
  neg: boolean;
 begin
  dofrac(info,info^.source.po,neg,mant,fraclen);
- with info^,contextstack[stacktop].d do begin
-  flo64const.value:= mant/floatexps[fraclen]; //todo: round lsb;   
+ with info^,contextstack[stacktop].d.constval do begin
+  vflo64:= mant/floatexps[fraclen]; //todo: round lsb;   
   if neg then begin
-   flo64const.value:= -flo64const.value; 
+   vflo64:= -vflo64; 
   end;
   consumed:= source.po;
  end;
@@ -654,7 +669,7 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].d.int32const.value;
+  exp:= contextstack[stacktop].d.constval.vint32;
   dec(stacktop,2);
   dofrac(info,contextstack[stackindex].start.po,neg,mant,fraclen);
   exp:= exp-fraclen;
@@ -665,9 +680,11 @@ begin
     do1:= do1*floatexps[32];
     exp:= exp - 32;
    end;
-   d.flo64const.value:= mant*do1;
-   if neg then begin
-    d.flo64const.value:= -d.flo64const.value; 
+   with d.constval do begin
+    vflo64:= mant*do1;
+    if neg then begin
+     vflo64:= -vflo64; 
+    end;
    end;
   end;
  end;
@@ -682,7 +699,7 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].d.int32const.value;
+  exp:= contextstack[stacktop].d.constval.vint32;
   dec(stacktop,3);
   dofrac(info,contextstack[stackindex-1].start.po,neg,mant,fraclen);
   exp:= exp+fraclen;
@@ -693,9 +710,11 @@ begin
     do1:= do1*floatexps[32];
     exp:= exp - 32;
    end;
-   d.flo64const.value:= mant/do1;
-   if neg then begin
-    d.flo64const.value:= -d.flo64const.value; 
+   with d.constval do begin
+    vflo64:= mant/do1;
+    if neg then begin
+     vflo64:= -vflo64; 
+    end;
    end;
   end;
  end;
@@ -703,67 +722,79 @@ begin
 end;
 
 const
- resultdatakinds: array[stackdatakindty] of contextkindty =
-           (ck_bool8fact,ck_int32fact,ck_flo64fact,
-            ck_bool8fact,ck_int32fact,ck_flo64fact);
+ resultdatakinds: array[stackdatakindty] of datakindty =
+           (dk_bool8,dk_int32,dk_flo64,
+            dk_bool8,dk_int32,dk_flo64);
 
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
 var
  reverse,negative: boolean;
 begin
- reverse:= false;
  with info^ do begin
-  if (contextstack[stacktop].d.kind in flo64kinds) or 
-             (contextstack[stacktop-2].d.kind in flo64kinds) then begin
+  reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
+                           (contextstack[stacktop-2].d.kind = ck_const);
+  if (contextstack[stacktop].d.factkind = dk_flo64) or 
+             (contextstack[stacktop-2].d.factkind = dk_flo64) then begin
    result:= sdk_flo64;
    with contextstack[stacktop].d do begin
-    case kind of
-     ck_int32const: begin
-      push(info,real(int32const.value));
-      reverse:= true;
+    if kind = ck_const then begin
+     case factkind of
+      dk_int32: begin
+       push(info,real(constval.vint32));
+      end;
+      dk_flo64: begin
+       push(info,constval.vflo64);
+      end;
      end;
-     ck_flo64const: begin
-      push(info,flo64const.value);
-      reverse:= true;
-     end;
-     ck_int32fact: begin
-      int32toflo64(info,0);
+    end
+    else begin //ck_fact
+     case factkind of
+      dk_int32: begin
+       int32toflo64(info,0);
+      end;
      end;
     end;
    end;
    with contextstack[stacktop-2].d do begin
-    case kind of
-     ck_int32const: begin
-      push(info,real(int32const.value));
-      reverse:= not reverse;
+    if kind = ck_const then begin
+     case factkind of
+      dk_int32: begin
+       push(info,real(constval.vint32));
+      end;
+      dk_flo64: begin
+       push(info,real(constval.vflo64));
+       reverse:= not reverse;
+      end;
      end;
-     ck_flo64const: begin
-      push(info,real(flo64const.value));
-      reverse:= not reverse;
-     end;
-     ck_int32fact: begin
-      int32toflo64(info,-1);
+    end
+    else begin
+     case factkind of
+      dk_int32: begin
+        int32toflo64(info,-1);
+      end;
      end;
     end;
    end;
   end
   else begin
-   if contextstack[stacktop].d.kind in bool8kinds then begin
+   if contextstack[stacktop].d.factkind = dk_bool8 then begin
     result:= sdk_bool8;
     with contextstack[stacktop-2].d do begin
-     case kind of
-      ck_bool8const: begin
-       push(info,bool8const.value);
-       reverse:= true;
+     if kind = ck_const then begin
+      case factkind of
+       dk_bool8: begin
+        push(info,constval.vbool8);
+       end;
       end;
      end;
     end;
     with contextstack[stacktop].d do begin
-     case kind of
-      ck_bool8const: begin
-       push(info,bool8const.value);
-       reverse:= not reverse;
+     if kind = ck_const then begin
+      case factkind of
+       dk_bool8: begin
+        push(info,constval.vbool8);
+       end;
       end;
      end;
     end;
@@ -771,18 +802,20 @@ begin
    else begin
     result:= sdk_int32;
     with contextstack[stacktop-2].d do begin
-     case kind of
-      ck_int32const: begin
-       push(info,int32const.value);
-       reverse:= true;
+     if kind = ck_const then begin
+      case factkind of
+       dk_int32: begin
+        push(info,constval.vint32);
+       end;
       end;
      end;
     end;
     with contextstack[stacktop].d do begin
-     case kind of
-      ck_int32const: begin
-       push(info,int32const.value);
-       reverse:= not reverse;
+     if kind = ck_const then begin
+      case factkind of
+       dk_int32: begin
+        push(info,constval.vint32);
+       end;
       end;
      end;
     end;
@@ -793,7 +826,8 @@ begin
   end;
   dec(stacktop,2);
   with contextstack[stacktop] do begin
-   d.kind:= resultdatakinds[result];
+   d.kind:= ck_fact;
+   d.factkind:= resultdatakinds[result];
    context:= nil;
   end;
   stackindex:= stacktop-1;
@@ -845,15 +879,9 @@ begin
 end;
 
 const
- negops: array[contextkindty] of opty = (
-  //ck_none, ck_error,ck_end,  ck_ident,ck_var,  ck_pc
-    @dummyop,@dummyop,@dummyop,@dummyop,{@dummyop,}@dummyop,
-  //ck_neg, 
-    @dummyop,
-  //ck_bool8const,ck_int32const,ck_flo64const,
-    @dummyop,     @negint32,    @negflo64,
-  //ck_boo8fact,ck_int32fact,ck_flo64fact
-    @dummyop,   @negint32,   @negflo64
+ negops: array[datakindty] of opty = (
+ //dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,dk_record
+   @dummyop,@dummyop,@negint32,@negflo64,@dummyop,@dummyop,@dummyop
  );
 
 procedure handleterm1(const info: pparseinfoty);
@@ -861,7 +889,7 @@ begin
  with info^ do begin
   if stackindex < stacktop then begin
    if contextstack[stackindex].d.kind = ck_neg then begin
-    writeop(info,negops[contextstack[stacktop].d.kind]);
+    writeop(info,negops[contextstack[stacktop].d.factkind]);
    end;
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
@@ -920,7 +948,7 @@ begin
  end;
  outhandle(info,'BRACKETEND');
 end;
-
+{
 procedure handleln(const info: pparseinfoty);
 begin
  outcommand(info,[0],'ln()');
@@ -928,13 +956,13 @@ begin
   stacktop:= stackindex;
   dec(stackindex);
   with contextstack[stacktop] do begin
-   d.kind:= ck_int32fact;
+   d.kind:= ck_fact;
    context:= nil;
   end;
  end;
  outhandle(info,'LN');
 end;
-
+}
 procedure handleparamsend(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -949,7 +977,7 @@ begin
  end;
  outhandle(info,'PARAMSEND');
 end;
-
+{
 procedure handlecheckparams(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -968,7 +996,7 @@ begin
  end;
  outhandle(info,'CHECKPARAMS');
 end;
-
+}
 procedure handleident(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
@@ -1014,7 +1042,10 @@ begin
       d.dataaddress:= pvardataty(po2)^.address;
       d.datasize:= si1;
      end;
-     contextstack[stacktop].d.kind:= ck_int32fact;
+     with contextstack[stacktop].d do begin
+      kind:= ck_fact;
+      factkind:= dk_int32;
+     end;
     end;
     ek_const: begin
      contextstack[stacktop].d:= pcontextdataty(po2)^;
@@ -1113,7 +1144,7 @@ var
 begin
  with info^ do begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
-       (contextstack[stacktop-1].d.kind in constkinds) and
+       (contextstack[stacktop-1].d.kind = ck_const) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
     po1:= addelement(ident,ek_const,elesize+sizeof(constdataty));
@@ -1190,7 +1221,7 @@ begin
   dec(stacktop);
 //  dec(stackindex);
   with contextstack[stacktop] do begin
-   if d.kind in constkinds then begin
+   if d.kind = ck_const then begin
     pushconst(info,d);
     outcommand(info,[0],'push');
    end;
@@ -1334,6 +1365,8 @@ end;
 procedure handlecheckproc(const info: pparseinfoty);
 var
  po2: pfuncdataty;
+ po3: ppvardataty;
+ po4: pvardataty;
  po1: psysfuncdataty;
  int1,int2: integer;
  paramco: integer;
@@ -1343,6 +1376,20 @@ begin
   if findkindelement(info,1,ek_func,po2) then begin
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
+   end
+   else begin
+    po3:= @po2^.paramsrel;
+    for int1:= stackindex+3 to stacktop do begin
+     po4:= eledataabs(po3^);
+     with contextstack[int1] do begin
+      if d.factkind <> ptypedataty(eledataabs(po4^.typerel))^.kind then begin
+       errormessage(info,int1-stackindex,err_incompatibletypeforarg,
+         [int1-stackindex-2,typename(d),
+                         typename(ptypedataty(eledataabs(po4^.typerel))^)]);
+      end;
+     end;
+     inc(po3);
+    end;
    end;
    with additem(info)^ do begin
     op:= @callop;
@@ -1358,7 +1405,7 @@ begin
       sf_writeln: begin
        int2:= stacktop-stackindex-2;
        for int1:= 3+stackindex to int2+2+stackindex do begin
-        push(info,contextstack[int1].d.kind);
+        push(info,contextstack[int1].d.factkind);
        end;
        push(info,int2);
        writeop(info,op);
@@ -1406,7 +1453,7 @@ end;
 procedure handlethen0(const info: pparseinfoty);
 begin
  with info^ do begin
-  if not (contextstack[stacktop].d.kind in bool8kinds) then begin
+  if not (contextstack[stacktop].d.factkind = dk_bool8) then begin
    errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
   end;
  end;
