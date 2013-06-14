@@ -96,12 +96,8 @@ uses
  msestackops,msestrings,mseelements,mseexpint,grammar,sysutils;
 
 const
-// valuecontext = ck_bool8const;
  reversestackdata = sdk_bool8rev;
-// constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
-// bool8kinds = [ck_bool8const,ck_bool8fact];
-// int32kinds = [ck_int32const,ck_int32fact];
-// flo64kinds = [ck_flo64const,ck_flo64fact];
+ stacklinksize = 1;
 
 type
  systypety = (st_integer);
@@ -124,7 +120,7 @@ type
  end;
  pconstdataty = ^constdataty;
  
- varflagty = (vf_global);
+ varflagty = (vf_global,vf_param);
  varflagsty = set of varflagty;
 
  vardataty = record
@@ -267,7 +263,8 @@ function getlocvaraddress(const info: pparseinfoty;
 begin
  with info^ do begin
   result:= locdatapo;
-  inc(locdatapo,asize);
+  inc(locdatapo);
+//  inc(locdatapo,asize);
  end;
 end;
  
@@ -1022,7 +1019,7 @@ begin
    case po1^.header.kind of
     ek_var: begin
      si1:= ptypedataty(eledataabs(pvardataty(po2)^.typerel))^.size;
-     with additem(info)^ do begin
+     with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
         1: begin 
@@ -1038,8 +1035,30 @@ begin
          op:= @pushglob;
         end;
        end;
+       d.dataaddress:= pvardataty(po2)^.address;
+      end
+      else begin
+       case si1 of
+        1: begin 
+         op:= @pushloc1;
+        end;
+        2: begin
+         op:= @pushloc2;
+        end;
+        4: begin
+         op:= @pushloc4;
+        end;
+        else begin
+         op:= @pushloc;
+        end;
+       end;
+       if vf_param in pvardataty(po2)^.flags then begin
+        d.count:= pvardataty(po2)^.address - frameoffset - stacklinksize;
+       end
+       else begin
+        //todo
+       end;
       end;
-      d.dataaddress:= pvardataty(po2)^.address;
       d.datasize:= si1;
      end;
      with contextstack[stacktop].d do begin
@@ -1530,7 +1549,7 @@ begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
        typerel:= eledatarel(po3);
-       flags:= [];
+       flags:= [vf_param];
       end;
      end
      else begin
@@ -1551,6 +1570,7 @@ begin
   if err1 then begin
    //todo: delete procedure definition
   end;
+  frameoffset:= locdatapo; //todo: nested procedures
   stacktop:= stackindex;
   with contextstack[stackindex] do begin
 //   d.kind:= ck_const;

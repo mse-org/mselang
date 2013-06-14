@@ -262,6 +262,7 @@ type
   start: integer;
   globdatapo: ptruint;
   locdatapo: ptruint;
+  frameoffset: ptruint;
  end;
 
 const

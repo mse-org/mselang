@@ -51,6 +51,11 @@ procedure pushglob2;
 procedure pushglob4;
 procedure pushglob;
 
+procedure pushloc1;
+procedure pushloc2;
+procedure pushloc4;
+procedure pushloc;
+
 procedure callop;
 procedure returnop;
 
@@ -68,6 +73,7 @@ type
 var
  mainstack: stackinfoarty; 
  mainstackpo: integer;
+ framepointer: integer;
  startpo: popinfoty;
  oppo: popinfoty;
  globdata: pointer;
@@ -233,10 +239,40 @@ begin
                                                     oppo^.d.datasize);
 end;
 
+procedure pushloc1;
+begin
+ inc(mainstackpo);
+ puint8(@mainstack[mainstackpo])^:= 
+                       puint8(@mainstack[framepointer+oppo^.d.count])^;
+end;
+
+procedure pushloc2;
+begin
+ inc(mainstackpo);
+ puint16(@mainstack[mainstackpo])^:= 
+                       puint16(@mainstack[framepointer+oppo^.d.count])^;
+end;
+
+procedure pushloc4;
+begin
+ inc(mainstackpo);
+ puint32(@mainstack[mainstackpo])^:= 
+                       puint32(@mainstack[framepointer+oppo^.d.count])^;
+end;
+
+procedure pushloc;
+begin
+ inc(mainstackpo);
+ move((@mainstack[framepointer+oppo^.d.count])^,
+                                (@mainstack[mainstackpo])^,oppo^.d.datasize);
+end;
+
 procedure callop;
 begin
  inc(mainstackpo);
  mainstack[mainstackpo].vaddress:= oppo;
+ //todo: save framepointer
+ framepointer:= mainstackpo+1;
  oppo:= startpo+oppo^.d.opaddress;
 end;
 
@@ -247,6 +283,7 @@ begin
  int1:= oppo^.d.count;
  oppo:= mainstack[mainstackpo].vaddress;
  mainstackpo:= mainstackpo-int1;
+ //todo: restore framepointer
 end;
 
 procedure finalize;
