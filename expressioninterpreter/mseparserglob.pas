@@ -229,7 +229,7 @@ type
    );
    ok_opaddress: (
     opaddress: opaddressty;
-   )    
+   );
   end;
 
  opinfoty = record

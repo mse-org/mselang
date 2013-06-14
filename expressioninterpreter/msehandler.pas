@@ -1552,6 +1552,10 @@ begin
    //todo: delete procedure definition
   end;
   stacktop:= stackindex;
+  with contextstack[stackindex] do begin
+//   d.kind:= ck_const;
+   d.constval.vint32:= paramco;
+  end;
  end;
  outhandle(info,'PROCEDURE3');
 end;
@@ -1561,6 +1565,7 @@ begin
  with info^ do begin
   with additem(info)^ do begin
    op:= @returnop;
+   d.count:= contextstack[stackindex].d.constval.vint32+1;
   end;
 //  dec(stackindex);
 //  stacktop:= stackindex;

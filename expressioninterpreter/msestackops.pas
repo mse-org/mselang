@@ -241,9 +241,12 @@ begin
 end;
 
 procedure returnop;
+var
+ int1: integer;
 begin
+ int1:= oppo^.d.count;
  oppo:= mainstack[mainstackpo].vaddress;
- dec(mainstackpo);
+ mainstackpo:= mainstackpo-int1;
 end;
 
 procedure finalize;
