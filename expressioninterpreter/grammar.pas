@@ -30,6 +30,9 @@ var
  mainco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main');
+ main1co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'main1');
  comment0co: contextty = (branch: nil; handle: nil; 
                continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'comment0');
@@ -42,9 +45,6 @@ var
  linecomment1co: contextty = (branch: nil; handle: nil; 
                continue: true; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'linecomment1');
- main1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'main1');
  progbeginco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'progbegin');
@@ -157,7 +157,7 @@ var
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'else');
  constco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'const');
  const0co: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -172,7 +172,7 @@ var
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'const3');
  varco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'var');
  var0co: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -1410,15 +1410,15 @@ begin
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  mainco.handle:= @handlemain;
+ main1co.branch:= nil;
+ main1co.next:= @mainco;
+ main1co.handle:= @handlemain1;
  comment0co.branch:= @bcomment0;
  comment1co.branch:= nil;
  comment1co.handle:= @handlecommentend;
  linecomment0co.branch:= @blinecomment0;
  linecomment1co.branch:= nil;
  linecomment1co.handle:= @handlecommentend;
- main1co.branch:= nil;
- main1co.next:= @mainco;
- main1co.handle:= @handlemain1;
  progbeginco.branch:= nil;
  progbeginco.next:= @progblockco;
  progbeginco.handle:= @handleprogbegin;

@@ -255,6 +255,7 @@ type
   stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
+  funclevel: integer;
   command: ttextstream;
   errors: array[errorlevelty] of integer;
   ops: opinfoarty;

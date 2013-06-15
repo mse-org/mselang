@@ -272,7 +272,7 @@ begin
  inc(mainstackpo);
  mainstack[mainstackpo].vaddress:= oppo;
  //todo: save framepointer
- framepointer:= mainstackpo+1;
+ framepointer:= mainstackpo{+1};
  oppo:= startpo+oppo^.d.opaddress;
 end;
 

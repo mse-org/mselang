@@ -23,7 +23,7 @@ uses
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
  mclasses,mseelements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
- msesyntaxedit,msetextedit;
+ msesyntaxedit,msetextedit,msepipestream;
 
 type
  tmainfo = class(tmainform)

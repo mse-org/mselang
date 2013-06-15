@@ -1052,12 +1052,12 @@ begin
          op:= @pushloc;
         end;
        end;
-       if vf_param in pvardataty(po2)^.flags then begin
-        d.count:= pvardataty(po2)^.address - frameoffset - stacklinksize;
-       end
-       else begin
+//       if vf_param in pvardataty(po2)^.flags then begin
+        d.count:= pvardataty(po2)^.address - frameoffset{ - stacklinksize};
+//       end
+//       else begin
         //todo
-       end;
+//       end;
       end;
       d.datasize:= si1;
      end;
@@ -1214,9 +1214,15 @@ begin
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
      with pvardataty(@po1^.data)^ do begin
-      address:= getglobvaraddress(info,ptypedataty(po2)^.size);
       typerel:= eledatarel(po2);
-      flags:= [vf_global];
+      if funclevel = 0 then begin
+       address:= getglobvaraddress(info,ptypedataty(po2)^.size);
+       flags:= [vf_global];
+      end
+      else begin
+       address:= getlocvaraddress(info,ptypedataty(po2)^.size);
+       flags:= []; //local
+      end;
      end;
     end
     else begin
@@ -1534,6 +1540,7 @@ begin
 //procedure2,ident,paramsdef3{,paramdef2,name,type}
  with info^ do begin
   err1:= false;
+  inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
   if addelement(contextstack[stackindex+1].d.ident,ek_func,
               elesize+sizeof(funcdataty)+
@@ -1569,8 +1576,10 @@ begin
   end;
   if err1 then begin
    //todo: delete procedure definition
+   dec(funclevel);
   end;
   frameoffset:= locdatapo; //todo: nested procedures
+  getlocvaraddress(info,stacklinksize);
   stacktop:= stackindex;
   with contextstack[stackindex] do begin
 //   d.kind:= ck_const;
@@ -1587,8 +1596,7 @@ begin
    op:= @returnop;
    d.count:= contextstack[stackindex].d.constval.vint32+1;
   end;
-//  dec(stackindex);
-//  stacktop:= stackindex;
+  dec(funclevel);
  end;
  outhandle(info,'PROCEDURE6');
 end;

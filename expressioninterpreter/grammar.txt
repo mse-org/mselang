@@ -20,6 +20,7 @@ main,main1,handlemain
  'begin'.,progbegin-
  'const'.,const-*
  'var'.,var-*
+main1,main,handlemain1
 comment0,,*
  '}',comment1-
  '',
@@ -28,7 +29,6 @@ linecomment0,,*
  #$0a,linecomment1-
  '',
 linecomment1,,handlecommentend^*>
-main1,main,handlemain1
 progbegin,progblock,handleprogbegin
 progblock,,
  '',statementblock-^*
@@ -117,7 +117,7 @@ then2,,handlethen2
 else0,else,handleelse0
 else,,handleelse
  '',statementstack^*!
-const,,handleconst
+const,,handleconst>
  '',const0*^
 const0,const1,
  ${whitespace}
@@ -130,7 +130,7 @@ const2,const3,
 const3,const0-,handleconst3
  ${whitespace}
  ';',statementend-*
-var,,handlevar
+var,,handlevar>
  '',var0*^
 var0,var1,
  ${whitespace}
