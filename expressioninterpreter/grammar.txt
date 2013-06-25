@@ -60,6 +60,7 @@ procedure2,,
  ${whitespace}
  ';',procedure3-
 procedure3,procedure4,handleprocedure3
+#mark
 procedure4,checkterminator,
  ${whitespace}
  'begin'.,procedure5
@@ -68,7 +69,7 @@ procedure4,checkterminator,
 procedure5,procedure6,
  '',statementblock-^*
 procedure6,checkterminator,handleprocedure6
-# return
+# return, release
 checkterminator,,handlecheckterminator
  ';',terminatorok-
  ${whitespace}

@@ -46,6 +46,11 @@ procedure popglob2;
 procedure popglob4;
 procedure popglob;
 
+procedure poploc1;
+procedure poploc2;
+procedure poploc4;
+procedure poploc;
+
 procedure pushglob1;
 procedure pushglob2;
 procedure pushglob4;
@@ -237,6 +242,34 @@ begin
  inc(mainstackpo);
  move((globdata+oppo^.d.dataaddress)^,(@mainstack[mainstackpo])^,
                                                     oppo^.d.datasize);
+end;
+
+procedure poploc1;
+begin             
+ puint8(@mainstack[framepointer+oppo^.d.count])^:= 
+                                     puint8(@mainstack[mainstackpo])^;
+ dec(mainstackpo);
+end;
+
+procedure poploc2;
+begin
+ puint16(@mainstack[framepointer+oppo^.d.count])^:= 
+                                       puint16(@mainstack[mainstackpo])^;
+ dec(mainstackpo);
+end;
+
+procedure poploc4;
+begin
+ puint32(@mainstack[framepointer+oppo^.d.count])^:= 
+                                          puint32(@mainstack[mainstackpo])^;
+ dec(mainstackpo);
+end;
+
+procedure poploc;
+begin
+ move((@mainstack[mainstackpo])^,(@mainstack[framepointer+oppo^.d.count])^,
+                                                         oppo^.d.datasize);
+ dec(mainstackpo);
 end;
 
 procedure pushloc1;

@@ -100,6 +100,9 @@ begin
      ck_opmark: begin
       write(opmark.address,' ');
      end;
+     ck_proc: begin
+      write('paco:',proc.paramcount);
+     end;
     end;
     writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',
                      singleline(start.po),'''');
@@ -154,7 +157,9 @@ begin
    end;
   end;
   with contextstack[stackindex],d do begin
-   kind:= ck_none;
+   if pb^.p then begin
+    kind:= ck_none;
+   end;
    context:= pc;
    start:= source;
    debugstart:= debugsource;

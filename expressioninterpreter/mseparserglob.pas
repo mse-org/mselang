@@ -42,7 +42,7 @@ const
 
 type 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_opmark,
+                  ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
@@ -50,22 +50,7 @@ type
  dataaddressty = ptruint;
  
 const
-// constkinds = [ck_bool8const,ck_int32const,ck_flo64const];
  dummyaddress = 0;
- {
- contextdatakinds: array[contextkindty] of datakindty = (
-                  //ck_none,ck_error,
-                    dk_none,dk_none,
-                  //ck_end,ck_ident,ck_opmark,
-                    dk_none,dk_none,dk_none,
-                  //ck_neg,
-                    dk_none,
-                  //ck_bool8const,ck_int32const,ck_flo64const,
-                    dk_bool8,     dk_int32,     dk_flo64,
-                  //ck_bool8fact,ck_int32fact,ck_flo64fact);
-                    dk_bool8,    dk_int32,    dk_flo64
-                    );   
-}
 type
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure(const info: pparseinfoty);
@@ -94,20 +79,8 @@ type
   popexe: boolean;
   nexteat: boolean;
   next: pcontextty;
-//  setstackmark: boolean;
   caption: string;
  end;
- {
- bool8constty = record
-  value: boolean;
- end;
- int32constty = record
-  value: integer;
- end;
- flo64constty = record
-  value: double;
- end;
- }
  datainfoty = record
   case kind: datakindty of //first, maps ck_fact: factkind
    dk_bool8: (
@@ -123,15 +96,11 @@ type
  opmarkty = record
   address: opaddressty;
  end;
- {
- constkindty = (cok_bool8,cok_int32,cok_flo64);
- constdataty = record
-  case kind: constkindty of
-   cok_bool8: (bool8: bool8constty);
-   cok_int32: (int32: int32constty);
-   cok_flo64: (flo64: flo64constty);
+ procinfoty = record
+  paramcount: integer;
+  elementmark: markinfoty;
  end;
- }
+
  contextdataty = record
   case kind: contextkindty of 
    ck_ident:(
@@ -144,23 +113,9 @@ type
    ck_fact:(
     factkind: datakindty; 
    );
-   {
-   ck_bool8const:(
-    bool8const: bool8constty;
+   ck_proc:(
+    proc: procinfoty;
    );
-   ck_int32const:(
-    int32const: int32constty;
-   );
-   ck_flo64const:(
-    flo64const: flo64constty;
-   );
-   }
-   {
-   ck_var:(
-    varaddress: ptruint;
-    varsize: ptruint;
-   );
-   }
    ck_opmark:(
     opmark: opmarkty;
    )

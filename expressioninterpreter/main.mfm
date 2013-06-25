@@ -250,7 +250,7 @@ object mainfo: tmainfo
         dataclass = tgridrichstringdatalist
       end>
     datarowlinewidth = 0
-    datarowheight = 16
+    datarowheight = 14
     statfile = statf
     reffontheight = 14
     object ed: tsyntaxedit
@@ -260,13 +260,13 @@ object mainfo: tmainfo
       bounds_x = 0
       bounds_y = 0
       bounds_cx = 2016
-      bounds_cy = 16
-      font.height = 14
+      bounds_cy = 14
+      font.height = 12
       font.name = 'stf_fixed'
       font.xscale = 1
       font.dummy = 0
       oneditnotifcation = editnotiexe
-      reffontheight = 16
+      reffontheight = 14
     end
   end
   object coldi: tintegerdisp
@@ -287,6 +287,66 @@ object mainfo: tmainfo
     state = [as_localcaption, as_localonexecute]
     caption = 'save'
     onexecute = saveex
+  end
+  object tbutton6: tbutton
+    taborder = 18
+    bounds_x = 16
+    bounds_y = 424
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'mark'
+    onexecute = markexe
+  end
+  object tbutton7: tbutton
+    taborder = 19
+    bounds_x = 72
+    bounds_y = 424
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'release'
+    onexecute = releaseexe
+  end
+  object markdi: tintegerdisp
+    frame.dummy = 0
+    taborder = 20
+    bounds_x = 128
+    bounds_y = 424
+    bounds_cx = 60
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object countdi: tintegerdisp
+    frame.caption = 'count'
+    frame.captionpos = cp_right
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      0
+      33
+      0
+    )
+    taborder = 21
+    bounds_x = 256
+    bounds_y = 424
+    bounds_cx = 93
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object markddi: tintegerdisp
+    frame.dummy = 0
+    taborder = 22
+    bounds_x = 192
+    bounds_y = 424
+    bounds_cx = 60
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
   end
   object statf: tstatfile
     filename = 'status.sta'

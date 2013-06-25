@@ -1311,12 +1311,7 @@ begin
  outhandle(info,'HANDLESTATEMENT');
 end;
 }
-procedure handleassignment(const info: pparseinfoty);
- procedure varexpected;
- begin
-  parsererror(info,'variable expected HANDLEASSIGNMENT');
- end; //varexpected
- 
+procedure handleassignment(const info: pparseinfoty); 
 var
  po1: pvardataty;
  si1: ptruint;
@@ -1326,30 +1321,50 @@ begin
    findkindelement(contextstack[stackindex+1].d,ek_var,po1) then begin
    si1:= ptypedataty(eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
-    case si1 of
-     1: begin 
-      op:= @popglob1;
+    if vf_global in po1^.flags then begin
+     case si1 of
+      1: begin 
+       op:= @popglob1;
+      end;
+      2: begin
+       op:= @popglob2;
+      end;
+      4: begin
+       op:= @popglob4;
+      end;
+      else begin
+       op:= @popglob;
+      end;
      end;
-     2: begin
-      op:= @popglob2;
+     d.dataaddress:= po1^.address;
+    end
+    else begin
+     case si1 of
+      1: begin 
+       op:= @poploc1;
+      end;
+      2: begin
+       op:= @poploc2;
+      end;
+      4: begin
+       op:= @poploc4;
+      end;
+      else begin
+       op:= @poploc;
+      end;
      end;
-     4: begin
-      op:= @popglob4;
-     end;
-     else begin
-      op:= @popglob;
-     end;
+     d.count:= po1^.address;
     end;
-    d.dataaddress:= po1^.address;
     d.datasize:= si1;
    end;
   end
   else begin
-   varexpected;
+   identerror(info,1,err_identifiernotfound);
   end;                  
   dec(stackindex);
   stacktop:= stackindex;
  end;
+ outhandle(info,'ASSIGNMENT');
 end;
 
 procedure handlestatement1(const info: pparseinfoty);
@@ -1582,8 +1597,9 @@ begin
   getlocvaraddress(info,stacklinksize);
   stacktop:= stackindex;
   with contextstack[stackindex] do begin
-//   d.kind:= ck_const;
-   d.constval.vint32:= paramco;
+   d.kind:= ck_proc;
+   d.proc.paramcount:= paramco;
+   markelement(d.proc.elementmark); 
   end;
  end;
  outhandle(info,'PROCEDURE3');
@@ -1592,9 +1608,11 @@ end;
 procedure handleprocedure6(const info: pparseinfoty);
 begin
  with info^ do begin
+  releaseelement(contextstack[stackindex].d.proc.elementmark); 
+                                            //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;
-   d.count:= contextstack[stackindex].d.constval.vint32+1;
+   d.count:= contextstack[stackindex].d.proc.paramcount+1;
   end;
   dec(funclevel);
  end;

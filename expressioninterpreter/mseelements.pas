@@ -47,6 +47,11 @@ type
  end;
  pelementinfoty = ^elementinfoty;
  
+ markinfoty = record
+  hashref: ptruint;
+  dataref: ptruint;
+ end;
+ 
 const
  elesize = sizeof(elementinfoty);
  
@@ -76,7 +81,10 @@ function findelementsupward(const anames: identarty;
                      out element: elementoffsetty): pelementinfoty;
                                                     //nil if not found
 procedure setelementparent(const element: elementoffsetty);
-           
+procedure markelement(out ref: markinfoty);
+procedure releaseelement(const ref: markinfoty);
+function elementcount: integer;
+
 function dumpelements: msestringarty;
 function dumppath(const aelement: pelementinfoty): msestring;
 
@@ -353,6 +361,23 @@ begin
  elementparent:= element;
  po1:= pointer(elementdata)+element;
  elementpath:= po1^.header.path+po1^.header.name;
+end;
+
+procedure markelement(out ref: markinfoty);
+begin
+ elementlist.mark(ref.hashref);
+ ref.dataref:= elementindex;
+end;
+
+procedure releaseelement(const ref: markinfoty);
+begin
+ elementlist.release(ref.hashref);
+ elementindex:= ref.dataref;
+end;
+
+function elementcount: integer;
+begin
+ result:= elementlist.count;
 end;
 
 function storestring(const astr: lstringty): integer; //offset from stringdata

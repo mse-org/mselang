@@ -23,7 +23,7 @@ uses
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
  mclasses,mseelements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
- msesyntaxedit,msetextedit,msepipestream;
+ msesyntaxedit,msetextedit,msepipestream,mseprocess;
 
 type
  tmainfo = class(tmainform)
@@ -49,6 +49,11 @@ type
    ed: tsyntaxedit;
    coldi: tintegerdisp;
    tbutton5: tbutton;
+   tbutton6: tbutton;
+   tbutton7: tbutton;
+   markdi: tintegerdisp;
+   countdi: tintegerdisp;
+   markddi: tintegerdisp;
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
@@ -64,6 +69,8 @@ type
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
    procedure saveex(const sender: TObject);
+   procedure markexe(const sender: TObject);
+   procedure releaseexe(const sender: TObject);
   protected
    felement: elementoffsetty;
    procedure dump;
@@ -134,6 +141,7 @@ procedure tmainfo.dump;
 begin
  grid[0].datalist.asarray:= dumpelements;
  grid.row:= bigint;
+ countdi.value:= elementcount;
 end;
 
 procedure tmainfo.clearexe(const sender: TObject);
@@ -196,6 +204,25 @@ end;
 procedure tmainfo.saveex(const sender: TObject);
 begin
  statf.writestat;
+end;
+
+var
+ ref: markinfoty;
+ 
+procedure tmainfo.markexe(const sender: TObject);
+var
+ puint1: ptruint;
+begin
+ markelement(ref);
+ markdi.value:= ref.hashref;
+ markddi.value:= ref.dataref;
+ countdi.value:= elementcount;
+end;
+
+procedure tmainfo.releaseexe(const sender: TObject);
+begin
+ releaseelement(ref);
+ dump;
 end;
 
 end.
