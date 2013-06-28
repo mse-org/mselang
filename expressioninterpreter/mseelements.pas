@@ -31,7 +31,10 @@ const
 type
  identty = integer;
  identarty = integerarty;
- identvectorty = array[0..maxidentvector] of identty; //null terminated
+ identvectorty = record
+  high: integer;
+  d: array[0..maxidentvector] of identty;
+ end;
  elementoffsetty = integer;
  elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,ek_sysfunc,
                                                                       ek_func);
@@ -68,15 +71,15 @@ type
    felementparent: elementoffsetty;
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
+   procedure addelement(const aident: identty; const aelement: elementoffsetty);
   public
    constructor create;
    procedure clear; override;
-   procedure addelement(const aident: identty; const aelement: elementoffsetty);
    function findcurrent(const aident: identty): elementoffsetty;
                   //searches in current scope, -1 if not found
    function findupward(const aident: identty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
-   function findupward(const aidents: identarty): elementoffsetty; overload;
+   function findupward(const aidents: identvectorty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
 
    function eledatarel(const adata: pointer): pointer; inline;
@@ -104,10 +107,10 @@ type
    function findelementupward(const aname: identty;
                         out element: elementoffsetty): pelementinfoty; overload;
                                                        //nil if not found
-   function findelementsupward(const anames: identarty;
+   function findelementsupward(const anames: identvectorty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
-   function findelementsupward(const anames: identvectorty;
+   function findelementsupward(const anames: identarty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
    procedure setelementparent(const element: elementoffsetty);
@@ -271,6 +274,7 @@ begin
    parent:= felementparent;
    path:= felementpath;
    name:= aname;
+   kind:= akind;
   end;
   felementparent:= ele1;
   felementpath:= felementpath+aname;
@@ -366,7 +370,7 @@ begin
  end;
 end;
 
-function telementhashdatalist.findelementsupward(const anames: identarty;
+function telementhashdatalist.findelementsupward(const anames: identvectorty;
                      out element: elementoffsetty): pelementinfoty;
                                                     //nil if not found
 begin
@@ -377,6 +381,21 @@ begin
  end;
 end;
 
+function telementhashdatalist.findelementsupward(const anames: identarty;
+                        out element: elementoffsetty): pelementinfoty;
+                                                       //nil if not found
+var
+ vec1: identvectorty;
+begin
+ vec1.high:= high(anames);
+ if vec1.high > maxidentvector then begin
+  raise exception.create('Ident vector too long.');
+ end;
+ move(anames[0],vec1.d,(vec1.high+1)*sizeof(vec1.d[0]));
+ result:= findelementsupward(vec1,element);
+end;
+
+{
 function telementhashdatalist.findelementsupward(const anames: identvectorty;
                      out element: elementoffsetty): pelementinfoty;
                                                     //nil if not found
@@ -397,7 +416,7 @@ begin
  setlength(ar1,int2);
  result:= findelementsupward(ar1,element);
 end;
-
+}
 procedure telementhashdatalist.setelementparent(const element: elementoffsetty);
 var
  po1: pelementinfoty;
@@ -675,7 +694,7 @@ begin
 end;
 
 function telementhashdatalist.findupward(
-                                     const aidents: identarty): elementoffsetty;
+                          const aidents: identvectorty): elementoffsetty;
 //todo: use identvectorty
 
 var
@@ -688,18 +707,24 @@ var
  po2: pelementinfoty;
  hash1: hashvaluety;
  int1: integer;
- first: identty;
+ first: elementoffsetty;
 begin
- result:= -1;
- if aidents <> nil then begin
-  path1:= aidents[0];
-  for int1:= 1 to high(aidents) do begin
-   path1:= path1 + aidents[int1];
+ if aidents.high = 0 then begin
+  result:= findupward(aidents.d[0]);
+ end
+ else begin
+  result:= -1;
+  path1:= aidents.d[0];
+  for int1:= 1 to aidents.high do begin
+   if aidents.d[int1] = 0 then begin
+    break;
+   end;
+   path1:= path1 + aidents.d[int1];
   end;
   parentbefore:= felementparent;
   pathbefore:= felementpath;
   while true do begin
-   first:= findupward(aidents[0]);
+   first:= findupward(aidents.d[0]);
    if first < 0 then begin
     break;
    end;
@@ -716,8 +741,8 @@ begin
      if (po1^.data.key = id1) then begin
       result:= po1^.data.data;
       po2:= pelementinfoty(pointer(felementdata)+result);
-      for int1:= high(aidents) downto 1 do begin
-       if po2^.header.name <> aidents[int1] then begin
+      for int1:= aidents.high downto 1 do begin
+       if po2^.header.name <> aidents.d[int1] then begin
         result:= -1;
         break;
        end;

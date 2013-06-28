@@ -170,7 +170,7 @@ type
             err_thenexpected,err_semicolonexpected,err_identifierexpected,
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
-            err_toomanyidentifierlevels);
+            err_toomanyidentifierlevels,err_wrongtype);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -192,7 +192,9 @@ const
   (level: erl_error; message: 
                     'Incompatible type for arg no. %d: Got "%s", expected "%s"'),
   (level: erl_fatal; message:
-                    'Too many identyfier levels.')
+                    'Too many identyfier levels'),
+  (level: erl_error; message: 
+                    'Wrong type')
  );
 
 function typename(const ainfo: contextdataty): string;
@@ -352,7 +354,7 @@ begin
  end;
 end;
 *)
-function findkindelement(const aident: contextdataty;
+function findkindelementdata(const aident: contextdataty;
               const akind: elementkindty; out ainfo: pointer): boolean;
 var
  po1: pelementinfoty;
@@ -360,52 +362,66 @@ begin
  result:= false;
  if aident.kind = ck_ident then begin
   po1:= elements.findelement(aident.ident.ident);
-  if (po1 <> nil) and (po1^.header.kind = akind) then begin
+  if (po1 <> nil) and (akind = ek_none) or (po1^.header.kind = akind) then begin
    ainfo:= @po1^.data;
    result:= true;
   end;
  end;
 end;
 
-function findkindelement(const info: pparseinfoty; const astackoffset: integer;
+function findkindelementdata(const info: pparseinfoty;
+              const astackoffset: integer;
               const akind: elementkindty; out ainfo: pointer): boolean;
 begin
  with info^ do begin
-  result:= findkindelement(contextstack[stackindex+astackoffset].d,akind,ainfo);
+  result:= findkindelementdata(contextstack[stackindex+astackoffset].d,
+                                                                 akind,ainfo);
  end;
 end;
 
-function findkindelements(const info: pparseinfoty; const astackoffset: integer;
-              const akind: elementkindty; out ainfo: pointer): boolean;
+function findkindelements(const info: pparseinfoty;
+            const astackoffset: integer; const akind: elementkindty; 
+                                          out aelement: pelementinfoty): boolean;
 var
  int1: integer;
  idents: identvectorty;
  po1: pcontextitemty;
- po2: pelementinfoty;
+// po2: pelementinfoty;
  ele1: elementoffsetty;
 begin
  result:= false;
  with info^ do begin
   po1:= @contextstack[stackindex+astackoffset];
-  for int1:= 0 to high(idents) do begin
-   idents[int1]:= po1^.d.ident.ident;
+  identcount:= -1;
+  for int1:= 0 to high(idents.d) do begin
+   idents.d[int1]:= po1^.d.ident.ident;
    if not po1^.d.ident.continued then begin
-    identcount:= int1+1;
+    identcount:= int1;
     break;
    end;
    inc(po1);
   end;
-  if identcount > maxidentvector then begin
+  idents.high:= identcount;
+  inc(identcount);
+  if identcount = 0 then begin
    errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
   end
   else begin
-   idents[identcount]:= 0; //terminator
-   po2:= elements.findelementsupward(idents,ele1);
-   if (po2 <> nil) and (po2^.header.kind = akind) then begin
-    ainfo:= @po2^.data;
+   aelement:= elements.findelementsupward(idents,ele1);
+   if (aelement <> nil) and ((akind = ek_none) or 
+                             (aelement^.header.kind = akind)) then begin
     result:= true;
    end;
   end;
+ end;
+end;
+
+function findkindelementsdata(const info: pparseinfoty; const astackoffset: integer;
+              const akind: elementkindty; out ainfo: pointer): boolean;
+begin
+ result:= findkindelements(info,astackoffset,akind,ainfo);
+ if result then begin
+  ainfo:= @pelementinfoty(ainfo)^.data;
  end;
 end;
 
@@ -1081,9 +1097,9 @@ var
  si1: ptruint;
 begin
  with info^ do begin
-  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
-  dec(stacktop);
-  if po1 <> nil then begin
+//  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
+  if findkindelements(info,1,ek_none,po1) then begin
+   dec(stacktop,identcount);
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
@@ -1139,7 +1155,7 @@ begin
      contextstack[stacktop].d:= pcontextdataty(po2)^;
     end;
     else begin
-     parsererror(info,'wrong kind');
+     errormessage(info,0,err_wrongtype,[]);
     end;
    end;
   end
@@ -1280,8 +1296,8 @@ begin
    if po1 = nil then begin
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
-   else begin
-    if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
+   else begin //todo: multi level type
+    if findkindelements(info,stacktop-1-stackindex,ek_type,po2) then begin
      with pvardataty(@po1^.data)^ do begin
       typerel:= elements.eledatarel(po2);
       if funclevel = 0 then begin
@@ -1386,8 +1402,8 @@ var
  si1: ptruint;
 begin
  with info^ do begin
-  if (stacktop-stackindex > 0) and
-   findkindelement(contextstack[stackindex+1].d,ek_var,po1) then begin
+  if (stacktop-stackindex > 0) and //todo: multi level var name
+   findkindelementsdata(info,1,ek_var,po1) then begin
    si1:= ptypedataty(elements.eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
     if vf_global in po1^.flags then begin
@@ -1481,7 +1497,7 @@ var
  paramco: integer;
 begin
  with info^ do begin
-  if findkindelements(info,1,ek_func,po2) then begin
+  if findkindelementsdata(info,1,ek_func,po2) then begin
    paramco:= stacktop-stackindex-1-identcount;
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
@@ -1509,7 +1525,7 @@ begin
    stacktop:= stackindex;
   end
   else begin
-   if findkindelement(info,1,ek_sysfunc,po1) then begin
+   if findkindelementsdata(info,1,ek_sysfunc,po1) then begin
     with po1^ do begin
      case func of
       sf_writeln: begin
@@ -1624,6 +1640,7 @@ var
 begin
 //0          1     2          3          4    5
 //procedure2,ident,paramsdef3{,paramdef2,name,type}
+              //todo: multi level type
  with info^ do begin
   err1:= false;
   inc(funclevel);
@@ -1635,10 +1652,10 @@ begin
    po4:= @po1^.paramsrel;
    int1:= 4;
    for int2:= 0 to paramco-1 do begin
-    if elements.addelement(contextstack[int1].d.ident.ident,ek_var,
+    if elements.addelement(contextstack[int1+stackindex].d.ident.ident,ek_var,
                                   elesize+sizeof(vardataty),po2) then begin
      po4^[int2]:= elements.eledatarel(po2);
-     if findkindelements(info,int1+1,ek_type,po3) then begin
+     if findkindelementsdata(info,int1+1,ek_type,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
        typerel:= elements.eledatarel(po3);
@@ -1646,7 +1663,7 @@ begin
       end;
      end
      else begin
-      identerror(info,int1+1,err_identifiernotfound);
+      identerror(info,int1+1-stackindex,err_identifiernotfound);
       err1:= true;
      end;
     end
@@ -1672,7 +1689,7 @@ begin
    d.proc.paramcount:= paramco;
    elements.markelement(d.proc.elementmark); 
   end;
-  elements.popelement;
+//  elements.popelement;
  end;
  outhandle(info,'PROCEDURE3');
 end;
