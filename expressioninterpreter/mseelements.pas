@@ -40,6 +40,7 @@ type
                                                                       ek_func);
  
  elementheaderty = record
+  size: integer; //for debugging
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
@@ -229,6 +230,7 @@ begin
                                              identnames[po1^.header.name-1];
   int3:= 0;
   int4:= 0;
+  int1:= int1 + po1^.header.size;
   while po1^.header.parent <> 0 do begin
    inc(int3);
    int4:= int4 + po1^.header.name;
@@ -237,7 +239,6 @@ begin
   mstr1:= charstring(msechar('.'),int3)+' '+
                          inttostr(int5+int4+po1^.header.name)+' '+mstr1;
   additem(result,mstr1,int2);
-  int1:= int1 + sizeof(elementinfoty);
  end;
  setlength(result,int2);
 end;
@@ -271,6 +272,7 @@ begin
   end;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
+   size:= asize; //for debugging
    parent:= felementparent;
    path:= felementpath;
    name:= aname;
@@ -310,6 +312,7 @@ begin
   end;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
+   size:= asize; //for debugging
    parent:= felementparent;
    path:= felementpath;
    name:= aname;

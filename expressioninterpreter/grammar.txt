@@ -2,6 +2,7 @@
  ' ',#$0d,#$0a
 {whitespace}
 "@whitespace,
+ '{$',directive-^*
  '{',comment0-^*
  '//',linecomment0-^*"
 @keywordstart
@@ -21,10 +22,18 @@ main,main1,handlemain
  'const'.,const-*
  'var'.,var-*
 main1,main,handlemain1
-comment0,,*
- '}',comment1-
+comment0,,handlecommentend^*>
+ '}',-*
  '',
-comment1,,handlecommentend^>
+#comment1,,handlecommentend^>
+directive,,*
+ 'dumpelements'.,dumpelements-*
+ '}',-*
+ '',
+dumpelements,directiveend,handledumpelements
+directiveend,,^*>
+ '}',-*
+ '',
 linecomment0,,*
  #$0a,linecomment1-
  '',

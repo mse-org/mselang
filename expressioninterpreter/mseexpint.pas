@@ -315,11 +315,14 @@ begin
       end;
       if bo1 then begin //match
        debugsource:= source.po;
-       if pb^.e then begin
+       if pb^.e then begin //eat
         source.line:= source.line + linebreaks;
         linebreaks:= 0;
         keywordindex:= 0;
         source.po:= po1;
+       end;
+       if (pb^.c = nil) and pb^.p then begin
+        break; //terminate
        end;
        if (pb^.c <> nil) and (pb^.c <> pc) then begin
         repeat
@@ -332,9 +335,9 @@ begin
        source.line:= source.line + linebreaks;
        debugsource:= source.po;
        keywordindex:= 0;
-       if (pb^.c = nil) and pb^.p then begin
-        break;
-       end;
+//       if (pb^.c = nil) and pb^.p then begin
+//        break; //terminate
+//       end;
        pb:= pc^.branch; //restart
        continue;
       end;

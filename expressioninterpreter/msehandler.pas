@@ -94,6 +94,8 @@ procedure handleelse(const info: pparseinfoty);
 procedure handleprocedure3(const info: pparseinfoty);
 procedure handleprocedure6(const info: pparseinfoty);
 
+procedure handledumpelements(const info: pparseinfoty);
+
 implementation
 uses
  msestackops,msestrings,mseelements,mseexpint,grammar,sysutils;
@@ -1721,6 +1723,21 @@ begin
  with info^ do begin
   errormessage(info,-1,err_semicolonexpected,[]);
   dec(stackindex);
+ end;
+end;
+
+procedure handledumpelements(const info: pparseinfoty);
+var
+ ar1: msestringarty;
+ int1: integer;
+begin
+ writeln('--------------------ELEMENTS----------------------------------------');
+ ar1:= elements.dumpelements;
+ for int1:= 0 to high(ar1) do begin
+  writeln(ar1[int1]);
+ end;
+ writeln('--------------------------------------------------------------------');
+ with info^ do begin
  end;
 end;
 
