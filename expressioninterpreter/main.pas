@@ -118,7 +118,7 @@ begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
  intdi.value:= getident(lstr1);
- addi.value:= pushelement(intdi.value,ek_none,0) <> nil;
+ addi.value:= elements.pushelement(intdi.value,ek_none,0) <> nil;
  dump;
 end;
 
@@ -132,16 +132,16 @@ begin
  str1:= avalue;
  lstr1:= stringtolstring(str1);
  intdi.value:= getident(lstr1);
- po1:= addelement(intdi.value,ek_none,0); 
+ po1:= elements.addelement(intdi.value,ek_none,0); 
  addi.value:= po1 <> nil;
  dump;
 end;
 
 procedure tmainfo.dump;
 begin
- grid[0].datalist.asarray:= dumpelements;
+ grid[0].datalist.asarray:= elements.dumpelements;
  grid.row:= bigint;
- countdi.value:= elementcount;
+ countdi.value:= elements.count;
 end;
 
 procedure tmainfo.clearexe(const sender: TObject);
@@ -152,7 +152,7 @@ end;
 
 procedure tmainfo.popexe(const sender: TObject);
 begin
- addi.value:= popelement <> nil;
+ addi.value:= elements.popelement <> nil;
  dump;
 end;
 
@@ -173,24 +173,24 @@ begin
    findsetexe(sender,mstr1,accept);
    ar2[int1]:= intdi.value;
   end;
-  po1:= findelementsupward(ar2,felement);
+  po1:= elements.findelementsupward(ar2,felement);
  end
  else begin
   findsetexe(sender,avalue,accept);
-  po1:= findelementupward(intdi.value,felement);
+  po1:= elements.findelementupward(intdi.value,felement);
  end;
  if po1 = nil then begin
   finddi.value:= '';
  end
  else begin
-  finddi.value:= dumppath(po1); 
+  finddi.value:= elements.dumppath(po1); 
  end;
 end;
 
 procedure tmainfo.setpaexe(const sender: TObject);
 begin
  if grid.row > 0 then begin
-  setelementparent((grid.row-1)*sizeof(elementinfoty));
+  elements.setelementparent((grid.row-1)*sizeof(elementinfoty));
   dump;
  end;
 end;
@@ -213,15 +213,15 @@ procedure tmainfo.markexe(const sender: TObject);
 var
  puint1: ptruint;
 begin
- markelement(ref);
+ elements.markelement(ref);
  markdi.value:= ref.hashref;
  markddi.value:= ref.dataref;
- countdi.value:= elementcount;
+ countdi.value:= elements.count;
 end;
 
 procedure tmainfo.releaseexe(const sender: TObject);
 begin
- releaseelement(ref);
+ elements.releaseelement(ref);
  dump;
 end;
 

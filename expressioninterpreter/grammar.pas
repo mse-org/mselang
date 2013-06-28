@@ -234,11 +234,17 @@ var
  identpathco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'identpath');
+ identpath1aco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'identpath1a');
  identpath1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'identpath1');
- identpath2co: contextty = (branch: nil; handle: nil; 
+ identpath2aco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'identpath2a');
+ identpath2co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'identpath2');
  valueidentifierco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
@@ -612,7 +618,7 @@ const
  );
 
  bstatement0: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1254,7 +1260,7 @@ const
   (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
   (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
   (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'.'; x: false; k:false; c:@identpath2co; e:false; p:false; s: false; sb:false; sa:false),
+  (t:'.'; x: false; k:false; c:@identpath2aco; e:true; p:false; s: false; sb:false; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1321,7 +1327,7 @@ const
  );
 
  bvalueidentifier: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
+  (t:''; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:true; sa:false),
   (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
  );
 
@@ -1544,9 +1550,16 @@ begin
  identco.branch:= @bident;
  identco.handle:= @handleident;
  identpathco.branch:= @bidentpath;
- identpathco.next:= @identpath1co;
+ identpathco.next:= @identpath1aco;
+ identpath1aco.branch:= nil;
+ identpath1aco.next:= @identpath1co;
+ identpath1aco.handle:= @handleidentpath1a;
  identpath1co.branch:= @bidentpath1;
+ identpath2aco.branch:= nil;
+ identpath2aco.next:= @identpath2co;
+ identpath2aco.handle:= @handleidentpath2a;
  identpath2co.branch:= @bidentpath2;
+ identpath2co.handle:= @handleidentpath2;
  valueidentifierco.branch:= @bvalueidentifier;
  valueidentifierco.next:= @checkvalueparamsco;
  valueidentifierco.handle:= @handlevalueidentifier;

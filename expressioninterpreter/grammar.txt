@@ -94,7 +94,7 @@ statementblock1,,handlestatementblock1*
  ';',statementblock-
  'end'.,blockend-
 statement0,statement1,
- '',ident^*
+ '',identpath^*
 statement1,checkproc,
  ${whitespace}
  ':=',assignment
@@ -189,16 +189,22 @@ frac,,handlefrac
  'e','E',exponent*
 ident,,handleident^
  @identstart,@num,
-identpath,identpath1,
+identpath,identpath1a,
  @identstart,@num,
-identpath1,,
+identpath1a,identpath1,handleidentpath1a
+#set ident
+identpath1,,^
+#finish
  ${whitespace}
- '.',identpath2
-identpath2,,
+ '.',identpath2a-
+identpath2a,identpath2,handleidentpath2a
+# set continue flag
+identpath2,,handleidentpath2^
+#error
  ${whitespace}
  @identstart,identpath*
 valueidentifier,checkvalueparams,handlevalueidentifier
- '',ident^*
+ '',identpath^*
 #
 checkvalueparams,,handlevalueidentifier
  ${whitespace}

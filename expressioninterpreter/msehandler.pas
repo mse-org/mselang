@@ -51,6 +51,9 @@ procedure handlenegexponent(const info: pparseinfoty);
 procedure handlestatementend(const info: pparseinfoty);
 procedure handleblockend(const info: pparseinfoty);
 procedure handleident(const info: pparseinfoty);
+procedure handleidentpath1a(const info: pparseinfoty);
+procedure handleidentpath2a(const info: pparseinfoty);
+procedure handleidentpath2(const info: pparseinfoty);
 procedure handlevalueidentifier(const info: pparseinfoty);
 
 procedure handleexp(const info: pparseinfoty);
@@ -164,8 +167,10 @@ const
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected,err_semicolonexpected,err_booleanexpressionexpected,
-            err_wrongnumberofparameters,err_incompatibletypeforarg);
+            err_thenexpected,err_semicolonexpected,err_identifierexpected,
+            err_booleanexpressionexpected,
+            err_wrongnumberofparameters,err_incompatibletypeforarg,
+            err_toomanyidentifierlevels);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -180,11 +185,14 @@ const
   (level: erl_error; message: 'Identifier not found "%s"'),
   (level: erl_fatal; message: 'Syntax error, "then" expected'),
   (level: erl_fatal; message: 'Syntax error, ";" expected'),
+  (level: erl_fatal; message: 'Syntax error, "identifier" expected'),
   (level: erl_error; message: 'Boolean expression expected'),
   (level: erl_error; message: 
                     'Wrong number of parameters specified for call to "%s"'),
   (level: erl_error; message: 
-                    'Incompatible type for arg no. %d: Got "%s", expected "%s"')
+                    'Incompatible type for arg no. %d: Got "%s", expected "%s"'),
+  (level: erl_fatal; message:
+                    'Too many identyfier levels.')
  );
 
 function typename(const ainfo: contextdataty): string;
@@ -238,7 +246,7 @@ procedure identerror(const info: pparseinfoty; const astackoffset: integer;
 begin
  with info^,contextstack[stackindex+astackoffset] do begin
   errormessage(info,astackoffset,aerror,
-                     [lstringtostring(start.po,d.identlen)],d.identlen);
+                     [lstringtostring(start.po,d.ident.len)],d.ident.len);
  end;
 end;
 {
@@ -306,21 +314,23 @@ begin
  end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= addelement(getident(name),ek_type,elesize+sizeof(typedataty));
+   po1:= elements.addelement(getident(name),ek_type,elesize+sizeof(typedataty));
    po2:= @po1^.data;
    po2^:= data;
   end;
-  sysdatatypes[ty1]:= eledatarel(po2);
+  sysdatatypes[ty1]:= elements.eledatarel(po2);
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= addelement(getident(name),ek_const,elesize+sizeof(constdataty));
+   po1:= elements.addelement(getident(name),ek_const,
+                                          elesize+sizeof(constdataty));
    pconstdataty(@po1^.data)^.d:= data;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= addelement(getident(name),ek_sysfunc,elesize+sizeof(sysfuncdataty));
+   po1:= elements.addelement(getident(name),ek_sysfunc,
+                                    elesize+sizeof(sysfuncdataty));
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
@@ -349,7 +359,7 @@ var
 begin
  result:= false;
  if aident.kind = ck_ident then begin
-  po1:= findelement(aident.ident);
+  po1:= elements.findelement(aident.ident.ident);
   if (po1 <> nil) and (po1^.header.kind = akind) then begin
    ainfo:= @po1^.data;
    result:= true;
@@ -365,6 +375,40 @@ begin
  end;
 end;
 
+function findkindelements(const info: pparseinfoty; const astackoffset: integer;
+              const akind: elementkindty; out ainfo: pointer): boolean;
+var
+ int1: integer;
+ idents: identvectorty;
+ po1: pcontextitemty;
+ po2: pelementinfoty;
+ ele1: elementoffsetty;
+begin
+ result:= false;
+ with info^ do begin
+  po1:= @contextstack[stackindex+astackoffset];
+  for int1:= 0 to high(idents) do begin
+   idents[int1]:= po1^.d.ident.ident;
+   if not po1^.d.ident.continued then begin
+    identcount:= int1+1;
+    break;
+   end;
+   inc(po1);
+  end;
+  if identcount > maxidentvector then begin
+   errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
+  end
+  else begin
+   idents[identcount]:= 0; //terminator
+   po2:= elements.findelementsupward(idents,ele1);
+   if (po2 <> nil) and (po2^.header.kind = akind) then begin
+    ainfo:= @po2^.data;
+    result:= true;
+   end;
+  end;
+ end;
+end;
+
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin
  with info^ do begin
@@ -375,7 +419,7 @@ end;
 
 procedure identnotfounderror(const info: contextitemty; const text: string);
 begin
- writeln(' ***ERROR*** ident '+lstringtostring(info.start.po,info.d.identlen)+
+ writeln(' ***ERROR*** ident '+lstringtostring(info.start.po,info.d.ident.len)+
                    ' not found. '+text);
 end;
 
@@ -383,7 +427,7 @@ procedure wrongidentkinderror(const info: contextitemty;
        wantedtype: elementkindty; const text: string);
 begin
  writeln(' ***ERROR*** wrong ident kind '+
-               lstringtostring(info.start.po,info.d.identlen)+
+               lstringtostring(info.start.po,info.d.ident.len)+
                    ', expected '+
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
@@ -998,11 +1042,36 @@ procedure handleident(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_ident;
-  identlen:= source.po-start.po;
-  ident:= getident(start.po,identlen);
-//  dec(stackindex);
+  ident.len:= source.po-start.po;
+  ident.ident:= getident(start.po,ident.len);
+  ident.continued:= false;
  end;
  outhandle(info,'IDENT');
+end;
+
+procedure handleidentpath1a(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop],d do begin
+  kind:= ck_ident;
+  ident.len:= source.po-start.po;
+  ident.ident:= getident(start.po,ident.len);
+  ident.continued:= false;
+ end;
+ outhandle(info,'IDENTPATH1A');
+end;
+
+procedure handleidentpath2a(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop],d do begin
+  ident.continued:= true;
+ end;
+ outhandle(info,'IDENTPATH2A');
+end;
+
+procedure handleidentpath2(const info: pparseinfoty);
+begin
+ errormessage(info,0,err_identifierexpected,[]);
+ outhandle(info,'IDENTPATH2');
 end;
 
 procedure handlevalueidentifier(const info: pparseinfoty);
@@ -1012,13 +1081,13 @@ var
  si1: ptruint;
 begin
  with info^ do begin
-  po1:= findelement(contextstack[stacktop].d.ident);
+  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
   dec(stacktop);
   if po1 <> nil then begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     si1:= ptypedataty(eledataabs(pvardataty(po2)^.typerel))^.size;
+     si1:= ptypedataty(elements.eledataabs(pvardataty(po2)^.typerel))^.size;
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -1166,7 +1235,7 @@ begin
        (contextstack[stacktop-1].d.kind = ck_const) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
-    po1:= addelement(ident,ek_const,elesize+sizeof(constdataty));
+    po1:= elements.addelement(ident.ident,ek_const,elesize+sizeof(constdataty));
     if po1 = nil then begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
@@ -1206,7 +1275,7 @@ begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
        (contextstack[stacktop-1].d.kind = ck_ident) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= addelement(contextstack[stacktop-2].d.ident,ek_var,
+   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,ek_var,
                                         elesize+sizeof(vardataty));
    if po1 = nil then begin
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
@@ -1214,7 +1283,7 @@ begin
    else begin
     if findkindelement(contextstack[stacktop-1].d,ek_type,po2) then begin
      with pvardataty(@po1^.data)^ do begin
-      typerel:= eledatarel(po2);
+      typerel:= elements.eledatarel(po2);
       if funclevel = 0 then begin
        address:= getglobvaraddress(info,ptypedataty(po2)^.size);
        flags:= [vf_global];
@@ -1293,8 +1362,8 @@ procedure handlekeyword(const info: pparseinfoty);
 begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_ident;
-  identlen:= source.po-start.po;
-  ident:= getident(start.po,identlen);
+  ident.len:= source.po-start.po;
+  ident.ident:= getident(start.po,ident.len);
  end;
  outhandle(info,'KEYWORD');
 end;
@@ -1319,7 +1388,7 @@ begin
  with info^ do begin
   if (stacktop-stackindex > 0) and
    findkindelement(contextstack[stackindex+1].d,ek_var,po1) then begin
-   si1:= ptypedataty(eledataabs(po1^.typerel))^.size;
+   si1:= ptypedataty(elements.eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
     if vf_global in po1^.flags then begin
      case si1 of
@@ -1412,20 +1481,21 @@ var
  paramco: integer;
 begin
  with info^ do begin
-  paramco:= stacktop-stackindex-2;
-  if findkindelement(info,1,ek_func,po2) then begin
+  if findkindelements(info,1,ek_func,po2) then begin
+   paramco:= stacktop-stackindex-1-identcount;
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
    end
    else begin
     po3:= @po2^.paramsrel;
     for int1:= stackindex+3 to stacktop do begin
-     po4:= eledataabs(po3^);
+     po4:= elements.eledataabs(po3^);
      with contextstack[int1] do begin
-      if d.factkind <> ptypedataty(eledataabs(po4^.typerel))^.kind then begin
+      if d.factkind <> 
+               ptypedataty(elements.eledataabs(po4^.typerel))^.kind then begin
        errormessage(info,int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
-                         typename(ptypedataty(eledataabs(po4^.typerel))^)]);
+                    typename(ptypedataty(elements.eledataabs(po4^.typerel))^)]);
       end;
      end;
      inc(po3);
@@ -1454,7 +1524,8 @@ begin
     end;
    end
    else begin
-    identerror(info,1,err_identifiernotfound);
+    identerror(info,1,err_identifiernotfound); 
+     //todo: use first missing identifier in error message
    end;
    dec(stackindex);
    stacktop:= stackindex;
@@ -1557,30 +1628,30 @@ begin
   err1:= false;
   inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
-  if addelement(contextstack[stackindex+1].d.ident,ek_func,
+  if elements.pushelement(contextstack[stackindex+1].d.ident.ident,ek_func,
               elesize+sizeof(funcdataty)+
                         paramco*sizeof(pvardataty),po1) then begin
    po1^.paramcount:= paramco;
    po4:= @po1^.paramsrel;
-   int1:= stackindex+4;
+   int1:= 4;
    for int2:= 0 to paramco-1 do begin
-    if addelement(contextstack[int1].d.ident,ek_var,
+    if elements.addelement(contextstack[int1].d.ident.ident,ek_var,
                                   elesize+sizeof(vardataty),po2) then begin
-     po4^[int2]:= eledatarel(po2);
-     if findkindelement(contextstack[int1+1].d,ek_type,po3) then begin
+     po4^[int2]:= elements.eledatarel(po2);
+     if findkindelements(info,int1+1,ek_type,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
-       typerel:= eledatarel(po3);
+       typerel:= elements.eledatarel(po3);
        flags:= [vf_param];
       end;
      end
      else begin
-      identerror(info,int1+1-stackindex,err_identifiernotfound);
+      identerror(info,int1+1,err_identifiernotfound);
       err1:= true;
      end;
     end
     else begin
-     identerror(info,int1-stackindex,err_duplicateidentifier);
+     identerror(info,int1,err_duplicateidentifier);
      err1:= true;
     end;
     int1:= int1+3;
@@ -1599,8 +1670,9 @@ begin
   with contextstack[stackindex] do begin
    d.kind:= ck_proc;
    d.proc.paramcount:= paramco;
-   markelement(d.proc.elementmark); 
+   elements.markelement(d.proc.elementmark); 
   end;
+  elements.popelement;
  end;
  outhandle(info,'PROCEDURE3');
 end;
@@ -1608,7 +1680,7 @@ end;
 procedure handleprocedure6(const info: pparseinfoty);
 begin
  with info^ do begin
-  releaseelement(contextstack[stackindex].d.proc.elementmark); 
+  elements.releaseelement(contextstack[stackindex].d.proc.elementmark); 
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;

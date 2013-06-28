@@ -82,7 +82,13 @@ begin
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_ident: begin
-      write(ident,':',identlen,' ');
+      write(ident.ident,':',ident.len);
+      if ident.continued then begin
+       write('c ');
+      end
+      else begin
+       write('  ');
+      end;
      end;
      ck_const: begin
       case factkind of

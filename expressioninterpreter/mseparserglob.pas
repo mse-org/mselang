@@ -93,6 +93,11 @@ type
     vflo64: double;
    );
  end;
+ identinfoty = record
+  ident: identty;
+  len: integer;
+  continued: boolean;
+ end;
  opmarkty = record
   address: opaddressty;
  end;
@@ -104,8 +109,7 @@ type
  contextdataty = record
   case kind: contextkindty of 
    ck_ident:(
-    ident: identty;
-    identlen: integer
+    ident: identinfoty;
    );
    ck_const:(
     constval: datainfoty;
@@ -134,6 +138,7 @@ type
   debugstart: pchar;
   d: contextdataty;
  end;
+ pcontextitemty = ^contextitemty;
 
  opty = procedure;
 
@@ -210,6 +215,7 @@ type
   stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
+  identcount: integer;
   funclevel: integer;
   command: ttextstream;
   errors: array[errorlevelty] of integer;
