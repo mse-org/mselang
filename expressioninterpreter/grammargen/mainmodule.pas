@@ -105,17 +105,26 @@ end;
  
 function comparebranch(const l,r): integer;
 begin
+ result:= 0;
  with branchrecty(l) do begin
-  result:= keyword - branchrecty(r).keyword;
-  if (result = 0) and (keyword <> 0) then begin
-   if length(tokens) = 0 then begin
-    dec(result);
-   end;
-   if length(branchrecty(r).tokens) = 0 then begin
-    inc(result);
-   end;
-   if (result = 0) and (high(tokens) >= 0) then begin
-    result:= length(tokens[0]) - length(branchrecty(r).tokens[0]);
+  if emptytoken then begin
+   inc(result);
+  end;
+  if branchrecty(r).emptytoken then begin
+   dec(result);
+  end;
+  if (result = 0) and not emptytoken then begin
+   result:= keyword - branchrecty(r).keyword;
+   if (result = 0) and (keyword = 0) then begin
+    if length(tokens) = 0 then begin
+     inc(result);
+    end;
+    if length(branchrecty(r).tokens) = 0 then begin
+     dec(result);
+    end;
+    if (result = 0) and (length(tokens) <> 0) then begin
+     result:= length(branchrecty(r).tokens[0]) - length(tokens[0]);
+    end;
    end;
   end;
  end;
@@ -669,6 +678,9 @@ lineend+
        if emptytoken then begin
         include(branflags1,bf_emptytoken);
        end;
+       if keyword <> 0 then begin
+        include(branflags1,bf_keyword);
+       end;
        if checklastchar(dest,'!') then begin
         include(branflags1,bf_setpc);
        end;
@@ -677,10 +689,10 @@ lineend+
        end;
        if checklastchar(dest,'^') then begin
         if bf_push in branflags1 then begin
-         include(branflags1,bf_setparentafterpush);
+         include(branflags1,bf_setparentbeforepush);
         end
         else begin
-         include(branflags1,bf_setparentbeforepush);
+         include(branflags1,bf_setparentafterpush);
         end;
        end;
        if checklastchar(dest,'*') then begin

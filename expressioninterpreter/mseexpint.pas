@@ -204,8 +204,8 @@ end;
 
 var
  pushcontextbranch: branchty =
-   (flags: [bf_nt,bf_push]; dest: nil; keys: (
-    (kind: bkk_char; chars: [#0..#255]),
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -289,7 +289,7 @@ begin
     if pb = nil then begin
      break;
     end;
-    if false{pointer(pb^.t) = nil} then begin
+    if bf_emptytoken in pb^.flags then begin
      pushcont(@info);
     end
     else begin
@@ -315,8 +315,7 @@ begin
       else begin
        po1:= source.po;
        linebreaks:= 0;
-       bo1:= charset32ty(pb^.keys[0].chars)[byte(po1^) shr 5] and 
-                                            bits[byte(po1^) and $1f] <> 0;
+       bo1:= po1^ in pb^.keys[0].chars;
        if bo1 then begin
         if po1^ = c_linefeed then begin
          inc(linebreaks);
@@ -370,7 +369,7 @@ begin
          if not pushcont(@info) then begin
           goto handlelab;
          end;
-        until pointer(pb^.t) <> nil;
+        until not (bf_emptytoken in pb^.flags);
        end;
        source.po:= po1;
        source.line:= source.line + linebreaks;

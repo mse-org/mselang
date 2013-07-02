@@ -17,8 +17,6 @@
 msehandler
 main,main1,handlemain
  ${whitespace}
- '''',procedure0-*
-#########################
  'procedure'.,procedure0-*
  'begin'.,progbegin-
  'const'.,const-*

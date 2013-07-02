@@ -1731,7 +1731,7 @@ var
  ar1: msestringarty;
  int1: integer;
 begin
- writeln('--------------------ELEMENTS----------------------------------------');
+ writeln('--ELEMENTS----------------------------------------------------------');
  ar1:= elements.dumpelements;
  for int1:= 0 to high(ar1) do begin
   writeln(ar1[int1]);
