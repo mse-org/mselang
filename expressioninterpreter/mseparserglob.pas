@@ -39,6 +39,7 @@ type
 
 const
  defaultstackdepht = 256;
+ branchkeymaxcount = 4;
 
 type 
  contextkindty = (ck_none,ck_error,
@@ -54,8 +55,35 @@ const
 type
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure(const info: pparseinfoty);
-
+ branchflagty = (bf_nt,bf_emptytoken,
+             bf_keyword,bf_eat,bf_push,bf_setpc,
+             bf_setparentbeforepush,bf_setparentafterpush);
+ branchflagsty = set of branchflagty;
+ keywordty = identty;
+ charsetty = set of char;
+ charset32ty = array[0..7] of uint32;
+ branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued{,bkk_keyword});
+ 
+ branchkeyinfoty = record
+  case kind: branchkeykindty of
+   bkk_char,bkk_charcontinued: (
+    chars: charsetty;
+   );
+//   bkk_keyword: (
+//    keyword: keywordty;
+//   );
+ end;
+  
  pcontextty = ^contextty;
+
+ branchty = record
+  flags: branchflagsty;
+  dest: pcontextty;
+  case integer of
+   0: (keyword: keywordty);
+   1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);
+ end; //todo: use variable size array
+{
  branchty = record
   t: string;
   x: boolean; //exit
@@ -67,6 +95,7 @@ type
   sb: boolean; //setparent before push flag
   sa: boolean; //setparent after push flag
  end;
+}
  pbranchty = ^branchty;
 
  contextty = record

@@ -61,7 +61,7 @@ var
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils,msemacros;
+ mseformatstr,msearrayutils,msemacros,mseparserglob,typinfo;
  
 type
  paramty = (pa_grammarfile,pa_pasfile);
@@ -74,11 +74,108 @@ type
 // 'branch',destcontext
 // ...
 
+const
+ b: array[0..0] of branchty = (
+   (flags: []; dest: nil; keys: (
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )
+   )
+  );
+
+type
+ branchrecty = record
+  tokens: stringarty;
+  keyword: keywordty;
+  dest: string;
+  emptytoken: boolean;
+ end;
+ 
+ brancharty = array of branchrecty;
+
+function checklastchar(var astr: string; const achar: char): boolean;
+begin
+ result:= (astr <> '') and (astr[length(astr)] = achar);
+ if result then begin
+  setlength(astr,length(astr)-1);
+ end;
+end;
+ 
+function comparebranch(const l,r): integer;
+begin
+ with branchrecty(l) do begin
+  result:= keyword - branchrecty(r).keyword;
+  if (result = 0) and (keyword <> 0) then begin
+   if length(tokens) = 0 then begin
+    dec(result);
+   end;
+   if length(branchrecty(r).tokens) = 0 then begin
+    inc(result);
+   end;
+   if (result = 0) and (high(tokens) >= 0) then begin
+    result:= length(tokens[0]) - length(branchrecty(r).tokens[0]);
+   end;
+  end;
+ end;
+end;
+
+function charsettostring(const aset: charsetty): string;
+ function getcharstr(const achar: char): string;
+ begin
+  if (achar > #$1f) and (achar < #$7f) then begin
+   if achar = '''' then begin
+    result:= '''''''''';
+   end
+   else begin
+    result:= ''''+achar+'''';
+   end;
+  end
+  else begin
+   result:= '#'+inttostr(ord(achar));
+  end;
+ end; //getcharstr
+ 
+var
+ ch1: char;
+ last: integer;
+begin
+ result:= '[';
+ last:= -1;
+ for ch1:= #1 to #255 do begin
+  if ch1 in aset then begin
+   if last < 0 then begin
+    result:= result+getcharstr(ch1);
+    last:= ord(ch1);
+   end
+   else begin
+    if ch1 = #255 then begin
+     result:= result+'..#255';
+    end;
+   end;
+  end
+  else begin
+   if last >= 0 then begin
+    if (last <> ord(ch1)-1) then begin
+     result:= result+'..'+getcharstr(char(byte(ch1)-1));
+    end;
+    result:= result+',';
+    last:= -1;
+   end;
+  end;
+ end;
+ if result[length(result)] = ',' then begin
+  setlength(result,length(result)-1);
+ end;
+ result:= result + ']';
+end;
+
 procedure creategrammar(const grammar,outfile: filenamety);
 type
  contextinfoty = record
   cont: stringarty;
-  bran: stringararty;
+  bran: brancharty;
  end;
  contextinfoarty = array of contextinfoty;
  tokendefty = record
@@ -95,9 +192,9 @@ var
  usesdef: string;
  context: string;
  contextline: stringarty;
- branches: stringararty;
+ branches: brancharty;
  line: integer;
- branchcount: integer;
+// branchcount: integer;
  contexts: contextinfoarty;
  tokendefs: tokendefarty;
  intokendef: boolean;
@@ -110,7 +207,7 @@ var
   writestderr('***ERROR*** '+text+ ' line '+inttostr(line)+lineend+str1,true);
  end;
 
- function getkeyword(var atext: string): boolean;
+ function getkeyword(const atext: string; out keyword: keywordty): boolean;
  const
   keywordoffset = 2;
  var
@@ -134,7 +231,8 @@ var
   end;
   for int1:= 0 to high(keywords) do begin
    if keywords[int1] = str1 then begin
-    atext:= stringtopascalstring(msechar(int1+keywordoffset));
+    keyword:= int1+keywordoffset;
+//    atext:= stringtopascalstring(msechar(int1+keywordoffset));
     exit;
    end;
   end;
@@ -145,8 +243,9 @@ var
    result:= false;
    exit;
   end;
-  atext:= stringtopascalstring(msechar(high(keywords)+keywordoffset))+
-   '{'+atext+'}';
+  keyword:= high(keywords)+keywordoffset;
+//  atext:= stringtopascalstring(msechar(high(keywords)+keywordoffset))+
+//   '{'+atext+'}';
  end;
  
  function gettokendef(const aname: string; const acontext: string): boolean;
@@ -180,10 +279,11 @@ var
   else begin
    with tokendefs[int2] do begin
     for int1:= 0 to high(tokens) do begin
-     setlength(ar1,2);
-     ar1[1]:= acontext;
-     ar1[0]:= tokens[int1];
-     additem(branches,ar1,branchcount);
+     additem(branches[high(branches)].tokens,tokens[int1]);
+//     setlength(ar1,2);
+//     ar1[1]:= acontext;
+//     ar1[0]:= tokens[int1];
+//     additem(branches,ar1,branchcount);
     end;
    end;
   end;
@@ -191,7 +291,7 @@ var
 
  procedure handlecontext;
  begin
-  setlength(branches,branchcount);
+//  setlength(branches,branchcount);
   setlength(contexts,high(contexts)+2);
   with contexts[high(contexts)] do begin
    cont:= contextline;
@@ -207,7 +307,7 @@ var
  ar1: stringarty;
 // mstr1: msestring;
  str2,str3,str4,str5: string;
- int1,int2: integer;
+ int1,int2,int3: integer;
  po1,po2,po3: pchar;
  setbefore,setafter: boolean;
 // identchars: array[char] of boolean;
@@ -219,6 +319,8 @@ var
  expandedtext: stringarty;
  lnr: integer;
  mstr1: msestring;
+ branflags1: branchflagsty;
+ chars1: charsetty;
  
 begin
  application.terminated:= true;
@@ -226,7 +328,7 @@ begin
   grammarstream:= ttextstream.create(grammar,fm_read);
   macrolist1:= tmacrolist.create([mao_curlybraceonly]);
   line:= 0;
-  branchcount:= 0;
+//  branchcount:= 0;
   context:= '';
   intokendef:= false;
   tokendefs:= nil;
@@ -363,7 +465,7 @@ begin
             error('Format of contextline is "context,next[-],handler[^|!][>]"');
             exit;
            end;
-           branchcount:= 0;
+//           branchcount:= 0;
            branches:= nil;
           end
           else begin
@@ -372,7 +474,9 @@ begin
             error(branchformat);
             exit;
            end;
+           setlength(branches,high(branches)+2);
            str2:= trim(copy(str1,int1+1,bigint));
+           branches[high(branches)].dest:= str2;
            po1:= pchar(str1)+1;
            po2:= po1+int1-2;
            while true do begin
@@ -397,10 +501,11 @@ begin
               inc(po1);
              end;
              setstring(str3,po3,po1-po3);
-             setlength(ar1,2);
-             ar1[0]:= trim(str3);
-             ar1[1]:= str2;
-             additem(branches,ar1,branchcount);
+             additem(branches[high(branches)].tokens,str3);
+//             setlength(ar1,2);
+//             ar1[0]:= trim(str3);
+//             ar1[1]:= str2;
+//             additem(branches,ar1,branchcount);
             end;
             if po1 = po2 then begin
              break;
@@ -410,6 +515,44 @@ begin
              exit;
             end;
             inc(po1);
+           end;
+           with branches[high(branches)] do begin
+            for int1:= 0 to high(tokens) do begin
+             if (tokens[int1] = '''''') then begin
+              if (length(tokens) > 1) then begin
+               error(branchformat);
+               exit;
+              end;
+              emptytoken:= true;
+              tokens[int1]:= '';
+             end
+             else begin
+              if tokens[int1][length(tokens[int1])] = '.' then begin
+               if keyword > 0 then begin
+                error(branchformat);
+                exit;
+               end;
+               setlength(tokens[int1],length(tokens[int1])-1);
+               if not getkeyword(tokens[int1],keyword) then begin
+                exit;
+               end;
+              end
+              else begin
+               po1:= pchar(tokens[int1]);
+               tokens[int1]:= getpascalstring(po1);
+               if length(tokens[int1]) > 1 then begin
+                if high(tokens) > 0 then begin
+                 error(branchformat);
+                 exit;
+                end;
+               end;
+               if length(tokens[int1]) > branchkeymaxcount then begin
+                error(branchformat);
+                exit;
+               end;
+              end;
+             end;
+            end;
            end;
           end;
          end;
@@ -517,87 +660,104 @@ lineend+
   for int1:= 0 to high(contexts) do begin
    with contexts[int1] do begin
     if bran <> nil then begin
+     sortarray(bran,sizeof(bran[0]),@comparebranch);
      str1:= str1+
 ' b'+cont[0]+': array[0..'+inttostr(high(bran)+1)+'] of branchty = ('+lineend;
      for int2:= 0 to high(bran) do begin
-      if bran[int2][0][length(bran[int2][0])] = '.' then begin
-       setlength(bran[int2][0],length(bran[int2][0])-1);
-       if not getkeyword(bran[int2][0]) then begin
-        exit;
+      with bran[int2] do begin
+       branflags1:= [bf_nt];
+       if emptytoken then begin
+        include(branflags1,bf_emptytoken);
        end;
-       str2:= '; x: false; k:true';
-      end
-      else begin
-       str2:= '; x: false; k:false';
-      end;
-      str1:= str1+
-'  (t:'+bran[int2][0]+str2+'; c:';
-      if bran[int2][1] <> '' then begin
-       str2:= bran[int2][1];
-       setbefore:= false;
-       setafter:= false;
-       if (str2 <> '') and (str2[length(str2)] = '!') then begin
-        setlength(str2,length(str2)-1);
-        str3:= '; s: true';
-       end
-       else begin
-        str3:= '; s: false';
+       if checklastchar(dest,'!') then begin
+        include(branflags1,bf_setpc);
        end;
-       if (str2 <> '') and (str2[length(str2)] = '^') then begin
-        setbefore:= true;
-        setlength(str2,length(str2)-1);
+       if checklastchar(dest,'*') then begin
+        include(branflags1,bf_push);
        end;
-       if (str2 <> '') and (str2[length(str2)] = '*') then begin
-        setafter:= setbefore;
-        setbefore:= false;
-        str3:= '; p:true'+str3;
-        setlength(str2,length(str2)-1);
-        if (str2 <> '') and (str2[length(str2)] = '^') then begin
-         setbefore:= true;
-         setlength(str2,length(str2)-1);
-        end;
-       end
-       else begin
-        str3:= '; p:false'+str3;
-       end;
-       if setbefore then begin
-        str3:= str3+'; sb:true; sa:false';
-       end
-       else begin
-        if setafter then begin
-         str3:= str3+'; sb:false; sa:true';
+       if checklastchar(dest,'^') then begin
+        if bf_push in branflags1 then begin
+         include(branflags1,bf_setparentafterpush);
         end
         else begin
-         str3:= str3+'; sb:false; sa:false';
+         include(branflags1,bf_setparentbeforepush);
         end;
        end;
-
-       if (str2 <> '') and (str2[length(str2)] = '-') then begin
-        str3:= '; e:true'+str3;
-        setlength(str2,length(str2)-1);
+       if checklastchar(dest,'*') then begin
+        include(branflags1,bf_push);
+       end;
+       if checklastchar(dest,'-') then begin
+        include(branflags1,bf_eat);
+       end;
+       str1:= str1+
+'   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
+                                 integer(branflags1),true)+'; dest: ';
+       if dest = '' then begin
+        str1:= str1+'nil';
        end
        else begin
-        str3:= '; e:false'+str3;
+        str1:= str1+'@'+dest+'co';
        end;
-       if str2 <> '' then begin
-        str1:= str1+'@'+str2+'co'+str3+'),';
+       str1:= str1+'; ';
+       if keyword <> 0 then begin
+        include(branflags1,bf_keyword);
+        str1:= str1+lineend+
+'     keyword: '+inttostr(keyword)+'{'+tokens[0]+'}),'+lineend;
        end
        else begin
-        str1:= str1+'nil'+str3+'),';
+        if (tokens <> nil) and (length(tokens[0]) > 1) then begin
+         str1:= str1+'keys: ('+lineend;
+         for int3:= 1 to length(tokens[0])-1 do begin
+          str1:= str1+
+'    (kind: bkk_charcontinued; chars: '+
+            charsettostring([tokens[0][int3]])+')';
+          if int3 <> branchkeymaxcount then begin
+           str1:= str1 + ',';
+          end;
+          str1:= str1+lineend;
+         end;
+         str1:= str1+
+'    (kind: bkk_char; chars: '+
+            charsettostring([tokens[0][length(tokens[0])]])+'),'+lineend;
+         for int3:= length(tokens[0])+1 to branchkeymaxcount do begin
+          str1:= str1 +
+'    (kind: bkk_none; chars: [])';
+          if int3 <> branchkeymaxcount then begin
+           str1:= str1+ ',';
+          end;
+          str1:= str1+lineend;
+         end;
+         str1:= str1+
+'    )),'+lineend;
+        end
+        else begin
+         chars1:= [];
+         for int3:= 0 to high(tokens) do begin
+          if tokens[int3] <> '' then begin
+           include(chars1,tokens[int3][1]);
+          end
+          else begin
+           chars1:= [#1..#255];
+           break;
+          end;
+         end;
+         str1:= str1+'keys: ('+lineend+
+'    (kind: bkk_char; chars: '+charsettostring(chars1)+'),'+lineend+
+'    (kind: bkk_none; chars: []),'+lineend+
+'    (kind: bkk_none; chars: []),'+lineend+
+'    (kind: bkk_none; chars: [])'+lineend+
+'    )),'+lineend;
+        end;
        end;
-      end
-      else begin
-       str1:= str1+'nil;'+defaultflags+'),';
       end;
-      str1:= str1+lineend;
      end;
      str1:= str1+
-'  (t:''''; x:true; k:false; c:nil;'+defaultflags+')'+lineend+
-' );'+lineend+
-''+lineend;
+'   (flags: []; dest: nil; keyword: 0)'+lineend+
+'   );'+lineend;
     end;
    end;
   end;
+
   str5:=
 ' keywords: array[0..'+inttostr(high(keywords))+'] of string = ('+lineend;
   str2:= 

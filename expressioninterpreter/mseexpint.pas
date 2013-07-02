@@ -36,7 +36,8 @@ procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 implementation
 uses
- typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils;
+ typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
+ msebits;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -153,7 +154,7 @@ begin
  result:= true;
  bo1:= false;
  with info^ do begin
-  pc:= pb^.c;
+  pc:= pb^.dest;
   while pc^.branch = nil do begin
    if pc^.next = nil then begin
     result:= false;
@@ -163,10 +164,10 @@ begin
    pc:= pc^.next;
   end;
   int1:= contextstack[stackindex].parent;
-  if pb^.sb then begin
+  if bf_setparentbeforepush in pb^.flags then begin
    int1:= stackindex;
   end;
-  if pb^.p then begin
+  if bf_push in pb^.flags then begin
    bo1:= true;
    inc(stacktop);
    stackindex:= stacktop;
@@ -174,19 +175,19 @@ begin
     stackdepht:= 2*stackdepht;
     setlength(contextstack,stackdepht);
    end;
-   if pb^.sa then begin
+   if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
    end;
   end;
   with contextstack[stackindex],d do begin
-   if pb^.p then begin
+   if bf_push in pb^.flags then begin
     kind:= ck_none;
    end;
    context:= pc;
    start:= source;
    debugstart:= debugsource;
    parent:= int1;
-   if pb^.s then begin
+   if bf_setpc in pb^.flags then begin
     kind:= ck_opmark;
     opmark.address:= opcount;
    end;
@@ -203,14 +204,21 @@ end;
 
 var
  pushcontextbranch: branchty =
-   (t:''; x:false; k:false; c:nil; e:false; p:true;
-    s:false; sb:false; sa:false);
+   (flags: [bf_nt,bf_push]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    ));
+
+//   (t:''; x:false; k:false; c:nil; e:false; p:true;
+//    s:false; sb:false; sa:false);
 
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 begin
  with info^ do begin
   pb:= @pushcontextbranch;
-  pushcontextbranch.c:= cont;
+  pushcontextbranch.dest:= cont;
   stophandle:= true;
   pushcont(info);
  end;
@@ -281,13 +289,13 @@ begin
     if pb = nil then begin
      break;
     end;
-    if pointer(pb^.t) = nil then begin
+    if false{pointer(pb^.t) = nil} then begin
      pushcont(@info);
     end
     else begin
 //     keywordindex:= 0;
-     while not pb^.x do begin
-      if pb^.k then begin
+     while pb^.flags <> [] do begin
+      if bf_keyword in pb^.flags then begin
        if keywordindex = 0 then begin
         po1:= source.po;
         while po1^ in keywordchars do begin
@@ -302,45 +310,62 @@ begin
         keywordend:= po1;
        end;
        po1:= keywordend;
-       bo1:= keywordindex = byte(pb^.t[1]);
+       bo1:= keywordindex = pb^.keyword;
       end
       else begin
        po1:= source.po;
-       po2:= pointer(pb^.t);
        linebreaks:= 0;
-       if po2 = nil then begin //any character
+       bo1:= charset32ty(pb^.keys[0].chars)[byte(po1^) shr 5] and 
+                                            bits[byte(po1^) and $1f] <> 0;
+       if bo1 then begin
         if po1^ = c_linefeed then begin
          inc(linebreaks);
         end;
         inc(po1);
-        bo1:= true;
-       end
-       else begin
-        while po1^ = po2^ do begin
-         if po1^ = c_linefeed then begin
-          inc(linebreaks);
-         end;
-         inc(po1);
-         inc(po2);
-         if po1^ = #0 then begin
-          break;
+        if pb^.keys[0].kind = bkk_charcontinued then begin
+         bo1:= charset32ty(pb^.keys[1].chars)[byte(po1^) shr 5] and 
+                                            bits[byte(po1^) and $1f] <> 0;
+         if bo1 then begin
+          if po1^ = c_linefeed then begin
+           inc(linebreaks);
+          end;       
+          inc(po1);
+          if pb^.keys[1].kind = bkk_charcontinued then begin
+           bo1:= charset32ty(pb^.keys[2].chars)[byte(po1^) shr 5] and 
+                                              bits[byte(po1^) and $1f] <> 0;
+           if bo1 then begin
+            if po1^ = c_linefeed then begin
+             inc(linebreaks);
+            end;       
+            inc(po1);
+            if pb^.keys[2].kind = bkk_charcontinued then begin
+             bo1:= charset32ty(pb^.keys[3].chars)[byte(po1^) shr 5] and 
+                                                bits[byte(po1^) and $1f] <> 0;
+             if bo1 then begin
+              if po1^ = c_linefeed then begin
+               inc(linebreaks);
+              end;       
+              inc(po1);
+             end;
+            end;
+           end;
+          end;
          end;
         end;
-        bo1:= po2^ = #0;
        end;
       end;
       if bo1 then begin //match
        debugsource:= source.po;
-       if pb^.e then begin //eat
+       if bf_eat in pb^.flags then begin
         source.line:= source.line + linebreaks;
         linebreaks:= 0;
         keywordindex:= 0;
         source.po:= po1;
        end;
-       if (pb^.c = nil) and pb^.p then begin
+       if (pb^.dest = nil) and (bf_push in pb^.flags) then begin
         break; //terminate
        end;
-       if (pb^.c <> nil) and (pb^.c <> pc) then begin
+       if (pb^.dest <> nil) and (pb^.dest <> pc) then begin
         repeat
          if not pushcont(@info) then begin
           goto handlelab;

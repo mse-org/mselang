@@ -289,1181 +289,1546 @@ uses
  msehandler;
  
 const
- bmain: array[0..10] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:#2{'procedure'}; x: false; k:true; c:@procedure0co; e:true; p:true; s: false; sb:false; sa:false),
-  (t:#3{'begin'}; x: false; k:true; c:@progbeginco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:#4{'const'}; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:#5{'var'}; x: false; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+ bmain: array[0..9] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @procedure0co; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @procedure0co; 
+     keyword: 2{'procedure'}),
+   (flags: [bf_nt,bf_eat]; dest: @progbeginco; 
+     keyword: 3{'begin'}),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @constco; 
+     keyword: 4{'const'}),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @varco; 
+     keyword: 5{'var'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bcomment0: array[0..2] of branchty = (
-  (t:'}'; x: false; k:false; c:nil; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_eat,bf_push]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['}']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bdirective: array[0..3] of branchty = (
-  (t:#6{'dumpelements'}; x: false; k:true; c:@dumpelementsco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:'}'; x: false; k:false; c:nil; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_eat,bf_push]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['}']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @dumpelementsco; 
+     keyword: 6{'dumpelements'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bdirectiveend: array[0..2] of branchty = (
-  (t:'}'; x: false; k:false; c:nil; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_eat,bf_push]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['}']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  blinecomment0: array[0..2] of branchty = (
-  (t:#$0a; x: false; k:false; c:@linecomment1co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_eat]; dest: @linecomment1co; keys: (
+    (kind: bkk_char; chars: [#10]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bprogblock: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparamsdef0: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'('; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentafterpush]; dest: @statementblockco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparamsdef0: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @paramsdef1co; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bparamsdef1: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@paramdef0co; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparamsdef2: array[0..8] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@paramsdef1co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:')'; x: false; k:false; c:@paramsdef3co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparamdef0: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparamdef1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:':'; x: false; k:false; c:@paramdef2co; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparamdef2: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bprocedure0: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @paramdef0co; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparamsdef2: array[0..6] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @paramsdef1co; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @paramsdef3co; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparamdef0: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparamdef1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: @paramdef2co; keys: (
+    (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparamdef2: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bprocedure0: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bprocedure1: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@paramsdef0co; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bprocedure2: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@procedure3co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bprocedure4: array[0..9] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:#3; x: false; k:true; c:@procedure5co; e:false; p:false; s: false; sb:false; sa:false),
-  (t:#4; x: false; k:true; c:@constco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:#5; x: false; k:true; c:@varco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @paramsdef0co; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bprocedure2: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @procedure3co; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bprocedure4: array[0..7] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: @procedure5co; 
+     keyword: 3{'begin'}),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @constco; 
+     keyword: 4{'const'}),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @varco; 
+     keyword: 5{'var'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bprocedure5: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bcheckterminator: array[0..7] of branchty = (
-  (t:';'; x: false; k:false; c:@terminatorokco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentafterpush]; dest: @statementblockco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcheckterminator: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat]; dest: @terminatorokco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bstatementstack: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bstatement: array[0..11] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:#3; x: false; k:true; c:@statementblockco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:#7{'end'}; x: false; k:true; c:@endcontextco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:#8{'if'}; x: false; k:true; c:@if0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x: false; k:false; c:@simplestatementco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @statementco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bstatement: array[0..9] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: @endcontextco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken]; dest: @simplestatementco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @statementblockco; 
+     keyword: 3{'begin'}),
+   (flags: [bf_nt]; dest: @endcontextco; 
+     keyword: 7{'end'}),
+   (flags: [bf_nt,bf_eat]; dest: @if0co; 
+     keyword: 8{'if'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bsimplestatement: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statement0co; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @statement0co; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bstatementblock: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bstatementblock1: array[0..8] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@statementblockco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:#7; x: false; k:true; c:@blockendco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @statementco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bstatementblock1: array[0..6] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @statementblockco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @blockendco; 
+     keyword: 7{'end'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bstatement0: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bstatement1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:':='; x: false; k:false; c:@assignmentco; e:false; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @identpathco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bstatement1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: @assignmentco; keys: (
+    (kind: bkk_charcontinued; chars: [':']),
+    (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bcheckproc: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@checkparamsco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @checkparamsco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bassignment: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bif0: array[0..6] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @expco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bif0: array[0..4] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bif: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bthen: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:#9{'then'}; x: false; k:true; c:@then0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @expco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bthen: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @then0co; 
+     keyword: 9{'then'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bthen1: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bthen2: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:#10{'else'}; x: false; k:true; c:@else0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentafterpush]; dest: @statementstackco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bthen2: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @else0co; 
+     keyword: 10{'else'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
  belse: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@statementstackco; e:false; p:true; s: true; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentafterpush]; dest: @statementstackco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bconst: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@const0co; e:false; p:true; s: false; sb:false; sa:true),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bconst0: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bconst1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'='; x: false; k:false; c:@const2co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush]; dest: @const0co; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bconst0: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bconst1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @const2co; keys: (
+    (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bconst2: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bconst3: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @expco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bconst3: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @statementendco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bvar: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@var0co; e:false; p:true; s: false; sb:false; sa:true),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bvar0: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bvar1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:':'; x: false; k:false; c:@var2co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bvar2: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'a'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'b'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'c'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'d'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'e'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'f'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'g'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'h'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'i'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'j'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'k'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'l'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'m'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'n'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'o'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'p'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'r'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'s'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'t'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'u'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'v'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'w'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'x'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'A'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'B'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'C'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'D'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'E'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'F'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'G'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'H'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'I'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'J'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'K'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'L'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'M'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'N'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'O'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'P'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Q'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'R'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'S'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'T'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'U'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'V'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'W'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'X'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Y'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:'Z'; x: false; k:false; c:@identco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bvar3: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:';'; x: false; k:false; c:@statementendco; e:true; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush]; dest: @var0co; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bvar0: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bvar1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @var2co; keys: (
+    (kind: bkk_char; chars: [':']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bvar2: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentafterpush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bvar3: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push]; dest: @statementendco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bexp: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bexp1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'='; x: false; k:false; c:@equsimpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @simpexpco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bexp1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @equsimpexpco; keys: (
+    (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bequsimpexp: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @simpexpco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bsimpexp: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@termco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bsimpexp1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'+'; x: false; k:false; c:@addtermco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @termco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bsimpexp1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @addtermco; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  baddterm: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@termco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bterm: array[0..72] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'0'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'1'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'2'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'3'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'4'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'5'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'6'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'_'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'a'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'b'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'c'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'d'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'e'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'f'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'g'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'h'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'i'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'j'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'k'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'l'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'m'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'n'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'o'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'p'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'q'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'r'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'s'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'t'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'u'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'v'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'w'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'x'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'y'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'z'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'A'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'B'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'C'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'D'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'E'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'F'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'G'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'H'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'I'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'J'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'K'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'L'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'M'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'N'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'O'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'P'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Q'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'R'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'S'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'T'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'U'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'V'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'W'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'X'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Y'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Z'; x: false; k:false; c:@valueidentifierco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bterm1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'*'; x: false; k:false; c:@mulfactco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bmulfact: array[0..19] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'-'; x: false; k:false; c:@negtermco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'('; x: false; k:false; c:@bracketstartco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'0'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'1'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'2'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'3'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'4'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'5'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'6'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bnum0: array[0..11] of branchty = (
-  (t:'0'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'1'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'2'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'3'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'4'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'5'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'6'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bnum: array[0..11] of branchty = (
-  (t:'0'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'1'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'2'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'3'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'4'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'5'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'6'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'.'; x: false; k:false; c:@fracco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bfrac: array[0..12] of branchty = (
-  (t:'0'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'1'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'2'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'3'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'4'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'5'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'6'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'e'; x: false; k:false; c:@exponentco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'E'; x: false; k:false; c:@exponentco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bident: array[0..63] of branchty = (
-  (t:'_'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'a'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'b'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'c'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'d'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'e'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'f'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'g'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'h'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'i'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'j'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'k'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'l'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'m'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'n'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'o'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'p'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'q'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'r'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'s'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'t'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'u'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'v'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'w'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'x'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'y'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'z'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'A'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'B'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'C'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'D'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'E'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'F'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'G'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'H'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'I'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'J'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'K'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'L'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'M'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'N'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'O'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'P'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Q'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'R'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'S'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'T'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'U'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'V'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'W'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'X'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Y'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Z'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'0'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'1'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'2'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'3'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'4'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'5'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'6'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bidentpath: array[0..63] of branchty = (
-  (t:'_'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'a'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'b'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'c'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'d'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'e'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'f'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'g'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'h'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'i'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'j'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'k'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'l'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'m'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'n'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'o'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'p'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'q'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'r'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'s'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'t'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'u'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'v'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'w'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'x'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'y'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'z'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'A'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'B'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'C'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'D'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'E'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'F'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'G'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'H'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'I'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'J'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'K'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'L'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'M'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'N'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'O'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'P'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Q'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'R'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'S'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'T'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'U'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'V'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'W'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'X'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Y'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'Z'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'0'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'1'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'2'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'3'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'4'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'5'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'6'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'7'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'8'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'9'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bidentpath1: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'.'; x: false; k:false; c:@identpath2aco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bidentpath2: array[0..59] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'_'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'a'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'b'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'c'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'d'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'e'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'f'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'g'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'h'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'i'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'j'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'k'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'l'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'m'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'n'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'o'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'p'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'q'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'r'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'s'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'t'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'u'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'v'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'w'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'x'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'y'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'z'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'A'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'B'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'C'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'D'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'E'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'F'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'G'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'H'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'I'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'J'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'K'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'L'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'M'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'N'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'O'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'P'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Q'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'R'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'S'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'T'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'U'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'V'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'W'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'X'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Y'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'Z'; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @termco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bterm: array[0..9] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @negtermco; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @bracketstartco; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @numco; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @valueidentifierco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bterm1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @mulfactco; keys: (
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bmulfact: array[0..8] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @negtermco; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @bracketstartco; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @numco; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bnum0: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_push]; dest: @numco; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bnum: array[0..2] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @fracco; keys: (
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bfrac: array[0..2] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @exponentco; keys: (
+    (kind: bkk_char; chars: ['E','e']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bident: array[0..1] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bidentpath: array[0..1] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bidentpath1: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @identpath2aco; keys: (
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bidentpath2: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @identpathco; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bvalueidentifier: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@identpathco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bcheckvalueparams: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'('; x: false; k:false; c:@params0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bcheckparams: array[0..7] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'('; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @identpathco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcheckvalueparams: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @params0co; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcheckparams: array[0..5] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @params0co; keys: (
+    (kind: bkk_char; chars: ['(']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bparams0: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@expco; e:false; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bparams1: array[0..8] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:','; x: false; k:false; c:@params0co; e:true; p:false; s: false; sb:false; sa:false),
-  (t:')'; x: false; k:false; c:@paramsendco; e:true; p:false; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush]; dest: @expco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bparams1: array[0..6] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @params0co; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat]; dest: @paramsendco; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bbracketstart: array[0..1] of branchty = (
-  (t:''; x: false; k:false; c:@simpexpco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bbracketend: array[0..6] of branchty = (
-  (t:' '; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0d; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:#$0a; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'{$'; x: false; k:false; c:@directiveco; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'{'; x: false; k:false; c:@comment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:'//'; x: false; k:false; c:@linecomment0co; e:true; p:true; s: false; sb:true; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bexponent: array[0..12] of branchty = (
-  (t:'+'; x: false; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false),
-  (t:'-'; x: false; k:false; c:@negexponentco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'0'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'1'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'2'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'3'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'4'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'5'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'6'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
- bnegexponent: array[0..10] of branchty = (
-  (t:'0'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'1'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'2'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'3'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'4'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'5'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'6'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'7'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'8'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:'9'; x: false; k:false; c:@numco; e:false; p:true; s: false; sb:false; sa:false),
-  (t:''; x:true; k:false; c:nil; e:false; p:false; s: false; sb:false; sa: false)
- );
-
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: @simpexpco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bbracketend: array[0..4] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentafterpush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bexponent: array[0..3] of branchty = (
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @negexponentco; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push]; dest: @numco; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bnegexponent: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_push]; dest: @numco; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
 procedure init;
 begin
  mainco.branch:= @bmain;
