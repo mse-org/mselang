@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,mseparserglob,thret;
+ msestrings,mseparserglob;
 
 function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
@@ -28,7 +28,7 @@ procedure deinit;
 
 implementation
 uses
- msehash,mseelements,filehandler;
+ msehash,mseelements,filehandler,errorhandler;
  
 type
  unitinfoty = record
@@ -69,6 +69,10 @@ begin
     lstr1.len:= d.ident.len;
     filepath:= filehandler.getunitfile(lstr1);
     if filepath = '' then begin
+     identerror(info,aindex-info^.stackindex,err_cantfindunit);
+    end
+    else begin
+     result:= true;
     end;
    end;
   end;

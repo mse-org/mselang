@@ -104,7 +104,7 @@ procedure handledumpelements(const info: pparseinfoty);
 implementation
 uses
  msestackops,msestrings,mseelements,mseexpint,grammar,sysutils,
- unithandler;
+ unithandler,errorhandler;
 
 const
  reversestackdata = sdk_bool8rev;
@@ -173,38 +173,6 @@ const
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
   );
 
-type
- errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected,err_semicolonexpected,err_identifierexpected,
-            err_booleanexpressionexpected,
-            err_wrongnumberofparameters,err_incompatibletypeforarg,
-            err_toomanyidentifierlevels,err_wrongtype);
- errorinfoty = record
-  level: errorlevelty;
-  message: string;
- end;
-const
- errorleveltext: array[errorlevelty] of string = (
-  '','Fatal','Error'
- );
- errortext: array[errorty] of errorinfoty = (
-  (level: erl_none; message: ''),
-  (level: erl_error; message: 'Duplicate identifier "%s"'),
-  (level: erl_error; message: 'Identifier not found "%s"'),
-  (level: erl_fatal; message: 'Syntax error, "then" expected'),
-  (level: erl_fatal; message: 'Syntax error, ";" expected'),
-  (level: erl_fatal; message: 'Syntax error, "identifier" expected'),
-  (level: erl_error; message: 'Boolean expression expected'),
-  (level: erl_error; message: 
-                    'Wrong number of parameters specified for call to "%s"'),
-  (level: erl_error; message: 
-                    'Incompatible type for arg no. %d: Got "%s", expected "%s"'),
-  (level: erl_fatal; message:
-                    'Too many identyfier levels'),
-  (level: erl_error; message: 
-                    'Wrong type')
- );
-
 function typename(const ainfo: contextdataty): string;
 begin
  result:= getenumname(typeinfo(datakindty),ord(ainfo.factkind));
@@ -215,50 +183,6 @@ begin
  result:= getenumname(typeinfo(datakindty),ord(atype.kind));
 end;
  
-procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
-                   const aerror: errorty; const values: array of const;
-                   const coloffset: integer = 0);
-var
- po1: pchar;
- sourcepos: sourceinfoty;
- str1: string;
-begin
- with info^ do begin
-  if astackoffset < 0 then begin
-   sourcepos:= source;
-  end
-  else begin
-   sourcepos:= contextstack[stackindex+astackoffset].start;
-  end;
-  with sourcepos do begin
-   if line > 0 then begin
-    po1:= po;
-    while po1^ <> c_linefeed do begin
-     dec(po1);
-    end;
-   end
-   else begin
-    po1:= sourcestart-1;
-   end;
-   with errortext[aerror] do begin
-    inc(errors[level]);
-    str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
-        errorleveltext[level]+': '+format(message,values);
-    command.writeln(str1);
-    writeln('<<<<<<< '+str1);
-   end;
-  end;
- end;
-end;
-
-procedure identerror(const info: pparseinfoty; const astackoffset: integer;
-                                                        const aerror: errorty);
-begin
- with info^,contextstack[stackindex+astackoffset] do begin
-  errormessage(info,astackoffset,aerror,
-                     [lstringtostring(start.po,d.ident.len)],d.ident.len);
- end;
-end;
 {
 procedure identexisterror(const info: contextitemty; const text: string);
 begin
