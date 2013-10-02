@@ -127,6 +127,8 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
+function scramble1(const avalue: hashvaluety): hashvaluety; inline;
+
 var
  elements: telementhashdatalist;
 

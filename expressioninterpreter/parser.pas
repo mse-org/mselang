@@ -40,7 +40,7 @@ procedure deinit;
 implementation
 uses
  typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
- msebits,modulehandler;
+ msebits,unithandler;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -51,12 +51,12 @@ uses
 
 procedure init;
 begin
- modulehandler.init;
+ unithandler.init;
 end;
 
 procedure deinit;
 begin
- modulehandler.deinit;
+ unithandler.deinit;
 end;
 
 procedure outinfo(const info: pparseinfoty; const text: string);

@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,mseparserglob;
+ msestrings,mseparserglob,thret;
 
 function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
@@ -27,11 +27,25 @@ procedure init;
 procedure deinit;
 
 implementation
-
+uses
+ msehash,mseelements,filehandler;
+ 
 type
+ unitinfoty = record
+  key: identty;
+  filepath: filenamety;
+ end;
+ punitinfoty = ^unitinfoty;
+ 
  tunitlist = class(thashdatalist)
+  protected
+   function hashkey(const akey): hashvaluety; override;
+   function checkkey(const akey; const aitemdata): boolean; override;
+   procedure finalizeitem(var aitemdata); override;
   public
    constructor create;
+   function findunit(const aname: identty): punitinfoty;
+   function newunit(const aname: identty): punitinfoty;
  end;
  
 var
@@ -40,27 +54,70 @@ var
 function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
                     //true if ok
+var
+ po1: punitinfoty;
+ lstr1: lstringty;
 begin
- result:= false; 
+ result:= true; 
  with info^.contextstack[aindex] do begin
+  po1:= unitlist.findunit(d.ident.ident);
+  if po1 = nil then begin
+   result:= false;
+   po1:= unitlist.newunit(d.ident.ident);
+   with po1^ do begin
+    lstr1.po:= start.po;
+    lstr1.len:= d.ident.len;
+    filepath:= filehandler.getunitfile(lstr1);
+    if filepath = '' then begin
+    end;
+   end;
+  end;
  end;
 end;
 
 procedure init;
 begin
- modulelist:= tmodulelist.create;
+ unitlist:= tunitlist.create;
 end;
 
 procedure deinit;
 begin
- modulelist.free;
+ unitlist.free;
 end;
 
-{ tmodulelist }
+{ tunitlist }
 
-constructor tmodulelist.create;
+constructor tunitlist.create;
 begin
  inherited create(sizeof(unitinfoty));
+ fstate:= fstate + [hls_needsnull,hls_needsfinalize];
+end;
+
+function tunitlist.hashkey(const akey): hashvaluety;
+begin
+ with unitinfoty(akey) do begin
+  result:= scramble1(key);
+ end;
+end;
+
+function tunitlist.checkkey(const akey; const aitemdata): boolean;
+begin
+ result:= identty(akey) = unitinfoty(aitemdata).key;
+end;
+
+function tunitlist.findunit(const aname: identty): punitinfoty;
+begin
+ result:= punitinfoty(internalfind(aname));
+end;
+
+procedure tunitlist.finalizeitem(var aitemdata);
+begin
+ finalize(unitinfoty(aitemdata));
+end;
+
+function tunitlist.newunit(const aname: identty): punitinfoty;
+begin
+ result:= punitinfoty(internaladd(aname));
 end;
 
 end.
