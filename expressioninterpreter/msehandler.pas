@@ -28,6 +28,11 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
 
+procedure checkstart(const info: pparseinfoty);
+procedure handleuseserror(const info: pparseinfoty);
+procedure handleuses(const info: pparseinfoty);
+procedure handlenoidenterror(const info: pparseinfoty);
+
 procedure handleprogbegin(const info: pparseinfoty);
 
 procedure handlecommentend(const info: pparseinfoty);
@@ -1205,6 +1210,39 @@ end;
 procedure dummyhandler(const info: pparseinfoty);
 begin
  outhandle(info,'DUMMY');
+end;
+
+procedure checkstart(const info: pparseinfoty);
+begin
+ outhandle(info,'CHECKSTART');
+end;
+
+procedure handleuseserror(const info: pparseinfoty);
+begin
+ outhandle(info,'USESERROR');
+ with info^ do begin
+  errormessage(info,-1,err_semicolonexpected,[]);
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+end;
+
+procedure handleuses(const info: pparseinfoty);
+var
+ int1: integer;
+begin
+ outhandle(info,'USES');
+ with info^ do begin
+  for int1:= stackindex+2 to stacktop do begin
+   writeln(' ',contextstack[int1].d.ident.ident);
+  end;
+  stacktop:= stackindex;
+ end;
+end;
+
+procedure handlenoidenterror(const info: pparseinfoty);
+begin
+ outhandle(info,'NOIDENTERROR');
 end;
 
 procedure handleprogbegin(const info: pparseinfoty);

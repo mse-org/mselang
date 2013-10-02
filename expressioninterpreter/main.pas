@@ -81,7 +81,7 @@ var
 implementation
 uses
  main_mfm,mseexpint,msestream,msestackops,mseparserglob;
- 
+
 procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: opinfoarty;

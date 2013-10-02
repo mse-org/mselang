@@ -23,10 +23,38 @@ uses
 function startcontext: pcontextty;
 
 const
- keywords: array[0..8] of string = (
-  'procedure','begin','const','var','dumpelements','end','if','then','else');
+ keywords: array[0..9] of string = (
+  'uses','procedure','begin','const','var','dumpelements','end','if','then',
+  'else');
 
 var
+ startco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'start');
+ uses0co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'uses0');
+ uses1co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'uses1');
+ useserrorco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'useserror');
+ usesokco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'usesok');
+ commaidentsco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'commaidents');
+ commaidents1co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'commaidents1');
+ commaidents2co: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'commaidents2');
+ commaidentsnoidenterrorco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'commaidentsnoidenterror');
  mainco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main');
@@ -289,6 +317,104 @@ uses
  msehandler;
  
 const
+ bstart: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @uses0co; 
+     keyword: 2{'uses'}),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ buses0: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush]; dest: @commaidentsco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ buses1: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_eat]; dest: @usesokco; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcommaidents: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @linecomment0co; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @comment0co; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt]; dest: @commaidents1co; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcommaidents1: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush]; dest: @identco; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
+ bcommaidents2: array[0..1] of branchty = (
+   (flags: [bf_nt]; dest: @commaidentsco; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: nil; keyword: 0)
+   );
  bmain: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -315,13 +441,13 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @procedure0co; 
-     keyword: 2{'procedure'}),
+     keyword: 3{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @progbeginco; 
-     keyword: 3{'begin'}),
+     keyword: 4{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; 
-     keyword: 4{'const'}),
+     keyword: 5{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @varco; 
-     keyword: 5{'var'}),
+     keyword: 6{'var'}),
    (flags: []; dest: nil; keyword: 0)
    );
  bcomment0: array[0..2] of branchty = (
@@ -347,7 +473,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @dumpelementsco; 
-     keyword: 6{'dumpelements'}),
+     keyword: 7{'dumpelements'}),
    (flags: [bf_nt,bf_emptytoken]; dest: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -676,11 +802,11 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword]; dest: @procedure5co; 
-     keyword: 3{'begin'}),
+     keyword: 4{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; 
-     keyword: 4{'const'}),
+     keyword: 5{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @varco; 
-     keyword: 5{'var'}),
+     keyword: 6{'var'}),
    (flags: []; dest: nil; keyword: 0)
    );
  bprocedure5: array[0..1] of branchty = (
@@ -766,11 +892,11 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush]; dest: @statementblockco; 
-     keyword: 3{'begin'}),
+     keyword: 4{'begin'}),
    (flags: [bf_nt,bf_keyword]; dest: @endcontextco; 
-     keyword: 7{'end'}),
+     keyword: 8{'end'}),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @if0co; 
-     keyword: 8{'if'}),
+     keyword: 9{'if'}),
    (flags: [bf_nt,bf_emptytoken]; dest: @simplestatementco; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -829,7 +955,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @blockendco; 
-     keyword: 7{'end'}),
+     keyword: 8{'end'}),
    (flags: []; dest: nil; keyword: 0)
    );
  bstatement0: array[0..1] of branchty = (
@@ -954,7 +1080,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @then0co; 
-     keyword: 9{'then'}),
+     keyword: 10{'then'}),
    (flags: []; dest: nil; keyword: 0)
    );
  bthen1: array[0..1] of branchty = (
@@ -992,7 +1118,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @else0co; 
-     keyword: 10{'else'}),
+     keyword: 11{'else'}),
    (flags: []; dest: nil; keyword: 0)
    );
  belse: array[0..1] of branchty = (
@@ -1825,6 +1951,25 @@ const
    );
 procedure init;
 begin
+ startco.branch:= @bstart;
+ startco.next:= @mainco;
+ startco.handle:= @checkstart;
+ uses0co.branch:= @buses0;
+ uses0co.next:= @uses1co;
+ uses1co.branch:= @buses1;
+ uses1co.next:= @useserrorco;
+ useserrorco.branch:= nil;
+ useserrorco.handle:= @handleuseserror;
+ usesokco.branch:= nil;
+ usesokco.next:= @mainco;
+ usesokco.handle:= @handleuses;
+ commaidentsco.branch:= @bcommaidents;
+ commaidentsco.next:= @commaidentsnoidenterrorco;
+ commaidents1co.branch:= @bcommaidents1;
+ commaidents1co.next:= @commaidents2co;
+ commaidents2co.branch:= @bcommaidents2;
+ commaidentsnoidenterrorco.branch:= nil;
+ commaidentsnoidenterrorco.handle:= @handlenoidenterror;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  mainco.handle:= @handlemain;
@@ -1999,7 +2144,7 @@ end;
 
 function startcontext: pcontextty;
 begin
- result:= @mainco;
+ result:= @startco;
 end;
 
 initialization

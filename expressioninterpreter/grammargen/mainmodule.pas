@@ -66,14 +66,6 @@ uses
 type
  paramty = (pa_grammarfile,pa_pasfile);
 
-//lines starting with '#' are comments
-//first non comment line is uses clause
-//
-//contextdef=
-//context,next,handler
-// 'branch',destcontext
-// ...
-
 const
  b: array[0..0] of branchty = (
    (flags: []; dest: nil; keys: (
@@ -94,6 +86,8 @@ type
  end;
  
  brancharty = array of branchrecty;
+
+//procedure test(uses: integer);
 
 function checklastchar(var astr: string; const achar: char): boolean;
 begin

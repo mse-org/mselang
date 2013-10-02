@@ -236,7 +236,7 @@ type
   pc: pcontextty;
   stophandle: boolean;
   filename: string;
-  sourcestart: pchar; //todo: use file cache for inclued files
+  sourcestart: pchar; //todo: use file cache for include files
   source: sourceinfoty;
   debugsource: pchar;
   consumed: pchar;

@@ -251,6 +251,7 @@ var
  keywordindex: identty;
  keywordend: pchar;
  linebreaks: integer;
+ startopcount: integer;
  
 label
  handlelab,stophandlelab,parseend;
@@ -279,6 +280,7 @@ begin
   setlength(ops,opcount);
 //  globdatapo:= 0;
   initparser(@info);
+  startopcount:= opcount;
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
@@ -457,7 +459,8 @@ parseend:
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;
   end;
-  if (errors[erl_fatal] > 0) or (errors[erl_error] > 0) then begin
+  if (errors[erl_fatal] > 0) or (errors[erl_error] > 0) or 
+                 (opcount = startopcount) then begin
    ops:= nil;
   end;
   result:= ops;
