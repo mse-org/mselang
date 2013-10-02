@@ -14,13 +14,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-unit modulehandler;
+unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
  msestrings,mseparserglob;
 
-function loadmoduleinterface(const info: pparseinfoty;
+function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
                     //true if ok
 procedure init;
@@ -28,7 +28,16 @@ procedure deinit;
 
 implementation
 
-function loadmoduleinterface(const info: pparseinfoty;
+type
+ tunitlist = class(thashdatalist)
+  public
+   constructor create;
+ end;
+ 
+var
+ unitlist: tunitlist;
+ 
+function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
                     //true if ok
 begin
@@ -39,10 +48,19 @@ end;
 
 procedure init;
 begin
+ modulelist:= tmodulelist.create;
 end;
 
 procedure deinit;
 begin
+ modulelist.free;
+end;
+
+{ tmodulelist }
+
+constructor tmodulelist.create;
+begin
+ inherited create(sizeof(unitinfoty));
 end;
 
 end.
