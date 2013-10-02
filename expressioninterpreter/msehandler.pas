@@ -103,7 +103,8 @@ procedure handledumpelements(const info: pparseinfoty);
 
 implementation
 uses
- msestackops,msestrings,mseelements,mseexpint,grammar,sysutils;
+ msestackops,msestrings,mseelements,mseexpint,grammar,sysutils,
+ modulehandler;
 
 const
  reversestackdata = sdk_bool8rev;
@@ -1235,6 +1236,9 @@ begin
  with info^ do begin
   for int1:= stackindex+2 to stacktop do begin
    writeln(' ',contextstack[int1].d.ident.ident);
+   if not loadmoduleinterface(info,int1) then begin
+    break;
+   end;
   end;
   stacktop:= stackindex;
  end;
