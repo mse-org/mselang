@@ -20,6 +20,8 @@ interface
 uses
  mseparserglob,typinfo,msetypes;
 
+procedure init;
+procedure deinit;
 procedure initparser(const info: pparseinfoty);
 
 procedure push(const info: pparseinfoty; const avalue: real); overload;
@@ -27,6 +29,9 @@ procedure push(const info: pparseinfoty; const avalue: integer); overload;
 procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
+
+procedure handleimplementation(const info: pparseinfoty);
+procedure handlenoimplementationerror(const info: pparseinfoty);
 
 procedure checkstart(const info: pparseinfoty);
 procedure handleuseserror(const info: pparseinfoty);
@@ -232,6 +237,11 @@ var
  sysdatatypes: array[systypety] of ptypedataty;
  
 procedure initparser(const info: pparseinfoty);
+begin
+ writeop(info,@gotoop); //startup vector 
+end;
+
+procedure init;
 var
 // kw1: keywordty;
  ty1: systypety;
@@ -240,9 +250,6 @@ var
  po2: ptypedataty;
  int1: integer;
 begin
-// for kw1:= keywordty(2) to high(keywordty) do begin
-//  getident(copy(getenumname(typeinfo(keywordty),ord(kw1)),4,bigint));
-// end;
  for int1:= 0 to high(keywords) do begin
   getident(keywords[int1]);
  end;
@@ -268,8 +275,12 @@ begin
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
- writeop(info,@gotoop); //startup vector 
 end;
+
+procedure deinit;
+begin
+end;
+
 (*
 function findcontextelement(const aident: contextdataty;
               const akind: contextkindty; out ainfo: pcontextdataty): boolean;
@@ -1135,6 +1146,21 @@ end;
 procedure dummyhandler(const info: pparseinfoty);
 begin
  outhandle(info,'DUMMY');
+end;
+
+procedure handleimplementation(const info: pparseinfoty);
+begin
+ outhandle(info,'IMPLEMENTATION');
+ implementationstart(info);
+end;
+
+procedure handlenoimplementationerror(const info: pparseinfoty);
+begin
+ outhandle(info,'NOIMPLEMENTATIONERROR');
+ errormessage(info,-1,err_implementationexpected,[]);
+ with info^ do begin
+  stackindex:= -1;
+ end;
 end;
 
 procedure checkstart(const info: pparseinfoty);

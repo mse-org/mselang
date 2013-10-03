@@ -29,7 +29,7 @@ uses
 function parse(const input: string; const acommand: ttextstream): opinfoarty;
 begin
  parser.init;
- result:= parser.parse(input,acommand);
+ parser.parse(input,acommand,nil,result);
  parser.deinit;
 end;
 

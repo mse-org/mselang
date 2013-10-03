@@ -26,7 +26,7 @@ type
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
-            err_cantfindunit);
+            err_cantfindunit,err_implementationexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -51,7 +51,8 @@ const
                     'Too many identyfier levels'),
   (level: erl_error; message: 
                     'Wrong type'),
-  (level: erl_fatal; message: 'Can''t find unit "%s"')
+  (level: erl_fatal; message: 'Can''t find unit "%s"'),
+  (level: erl_fatal; message: 'Syntax error, "implementation" expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

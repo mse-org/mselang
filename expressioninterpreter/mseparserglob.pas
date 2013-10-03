@@ -18,7 +18,7 @@ unit mseparserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,mseelements;
+ msestream,mseelements,msestrings;
 
 type
  uint8 = byte; 
@@ -40,8 +40,12 @@ type
 const
  defaultstackdepht = 256;
  branchkeymaxcount = 4;
+ dummyaddress = 0;
 
 type 
+ pparseinfoty = ^parseinfoty;
+ contexthandlerty = procedure(const info: pparseinfoty);
+
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact);
@@ -50,11 +54,6 @@ type
  opaddressty = ptruint;
  dataaddressty = ptruint;
  
-const
- dummyaddress = 0;
-type
- pparseinfoty = ^parseinfoty;
- contexthandlerty = procedure(const info: pparseinfoty);
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_eat,bf_push,bf_setpc,
              bf_setparentbeforepush,bf_setparentafterpush);
@@ -231,11 +230,23 @@ type
  opinfoarty = array of opinfoty;
  errorlevelty = (erl_none,erl_fatal,erl_error);
 
+ unitstatety = (us_interface,us_interfaceparsed);
+ unitstatesty = set of unitstatety;
+ 
+ unitinfoty = record
+  key: identty;
+  filepath: filenamety;
+  state: unitstatesty;
+ end;
+ punitinfoty = ^unitinfoty;
+
  parseinfoty = record
+  unitinfo: punitinfoty;
   pb: pbranchty;
   pc: pcontextty;
   stophandle: boolean;
-  filename: string;
+  stopparser: boolean;
+  filename: filenamety;
   sourcestart: pchar; //todo: use file cache for include files
   source: sourceinfoty;
   debugsource: pchar;

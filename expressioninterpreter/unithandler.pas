@@ -18,25 +18,29 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,mseparserglob;
+ msestrings,mseparserglob,mseelements;
 
+function newunit(const aname: string): punitinfoty; 
 function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
                     //true if ok
+
+procedure implementationstart(const info: pparseinfoty);
+
 procedure init;
 procedure deinit;
 
 implementation
 uses
- msehash,mseelements,filehandler,errorhandler;
+ msehash,filehandler,errorhandler,parser,msefileutils,msestream;
  
 type
- unitinfoty = record
-  key: identty;
-  filepath: filenamety;
+ unithashdataty = record
+  header: hashheaderty;
+  data: unitinfoty;
  end;
- punitinfoty = ^unitinfoty;
- 
+ punithashdataty = ^unithashdataty;
+
  tunitlist = class(thashdatalist)
   protected
    function hashkey(const akey): hashvaluety; override;
@@ -50,6 +54,44 @@ type
  
 var
  unitlist: tunitlist;
+
+procedure implementationstart(const info: pparseinfoty);
+begin
+ with info^ do begin
+  if us_interface in unitinfo^.state then begin
+   stopparser:= true; //stop parsing;
+  end;
+ end;
+end;
+
+function parseinterface(const aunit: punitinfoty): boolean;
+var
+ ar1: opinfoarty;
+ stream1: ttextstream;
+begin
+ with aunit^ do begin
+  writeln('***************************************** interface');
+  writeln(filepath);
+  try
+   stream1:= ttextstream.create;
+   result:= parse(readfiledatastring(filepath),stream1,aunit,ar1);
+   include(state,us_interfaceparsed);
+  finally
+   stream1.free;
+  end;
+ end;
+end;
+
+function newunit(const aname: string): punitinfoty; 
+var
+ id: identty;
+begin
+ id:= getident(aname);
+ result:= unitlist.findunit(id);
+ if result = nil then begin
+  result:= unitlist.newunit(id);
+ end;
+end;
  
 function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
@@ -72,7 +114,8 @@ begin
      identerror(info,aindex-info^.stackindex,err_cantfindunit);
     end
     else begin
-     result:= true;
+     state:= [us_interface];
+     result:= parseinterface(po1);
     end;
    end;
   end;
@@ -120,8 +163,12 @@ begin
 end;
 
 function tunitlist.newunit(const aname: identty): punitinfoty;
+var
+ po1: punithashdataty;
 begin
- result:= punitinfoty(internaladd(aname));
+ po1:= punithashdataty(internaladd(aname));
+ po1^.data.key:= aname;
+ result:= @po1^.data;
 end;
 
 end.

@@ -15,15 +15,20 @@
 @num
  '0','1','2','3','4','5','6','7','8','9'
 msehandler
-start,main,checkstart
+start,noimplementation,
  ${whitespace}
  'uses'.,uses0-
+ 'implementation'.,implementation-
 uses0,uses1,
  '',commaidents^*
 uses1,useserror,
  ';',usesok-
 useserror,,handleuseserror
-usesok,main,handleuses
+usesok,start1,handleuses
+
+start1,noimplementation,
+ ${whitespace}
+ 'implementation'.,implementation
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,
@@ -34,6 +39,10 @@ commaidents1,commaidents2,
 commaidents2,,^
  ',',commaidents
 commaidentsnoidenterror,,handlenoidenterror
+
+noimplementation,,handlenoimplementationerror
+
+implementation,main,handleimplementation
 
 main,main1,handlemain
  ${whitespace}

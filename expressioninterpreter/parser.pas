@@ -31,7 +31,9 @@ const
  keywordchars = ['a'..'z','A'..'Z'];
  nokeywordendchars = keywordchars+['0'..'9','_'];
  
-function parse(const input: string; const acommand: ttextstream): opinfoarty;
+function parse(const input: string; const acommand: ttextstream;
+               const aunit: punitinfoty; out opcode: opinfoarty): boolean;
+                              //true if ok
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 procedure init;
@@ -40,7 +42,7 @@ procedure deinit;
 implementation
 uses
  typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
- msebits,unithandler;
+ msebits,unithandler,msefileutils;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -52,11 +54,14 @@ uses
 procedure init;
 begin
  unithandler.init;
+ msehandler.init;
 end;
 
 procedure deinit;
 begin
+ msehandler.deinit;
  unithandler.deinit;
+ mseelements.clear;
 end;
 
 procedure outinfo(const info: pparseinfoty; const text: string);
@@ -174,6 +179,10 @@ begin
     break;
    end;
    pc^.handle(info); //transition handler
+   if stopparser then begin
+    result:= false;
+    exit;
+   end; 
    pc:= pc^.next;
   end;
   int1:= contextstack[stackindex].parent;
@@ -237,7 +246,9 @@ begin
  end;
 end;
 
-function parse(const input: string; const acommand: ttextstream): opinfoarty;
+function parse(const input: string; const acommand: ttextstream;
+               const aunit: punitinfoty; out opcode: opinfoarty): boolean;
+                              //true if ok
 var
 // pb: pbranchty;
 // pc: pcontextty;
@@ -271,14 +282,22 @@ label
 begin
 
  fillchar(info,sizeof(info),0); 
- result:= nil;
- mseelements.clear;
+ info.unitinfo:= aunit;
+ if info.unitinfo = nil then begin
+  info.unitinfo:= newunit('program');
+ end;
+ opcode:= nil;
  with info do begin
   command:= acommand;
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
 //  source.line:= 0;
-  filename:= 'main.pas'; //dummy
+  if aunit <> nil then begin
+   filename:= msefileutils.filename(aunit^.filepath);
+  end
+  else begin
+   filename:= 'main.pas'; //dummy
+  end;
 //  fillchar(errors,sizeof(errors),0);
   stackdepht:= defaultstackdepht;
   setlength(contextstack,stackdepht);
@@ -383,6 +402,9 @@ begin
        if (pb^.dest <> nil) and (pb^.dest <> pc) then begin
         repeat
          if not pushcont(@info) then begin
+          if stopparser then begin
+           goto stophandlelab;
+          end;
           goto handlelab;
          end;
         until not (bf_emptytoken in pb^.flags);
@@ -414,8 +436,14 @@ handlelab:
     if pc^.handle <> nil then begin
      stophandle:= false;
      pc^.handle(@info);
-     if stophandle then begin
-      writeln('*** stophandle');
+     if stopparser then begin
+      writeln('*** stopparser');
+      goto parseend;
+     end;
+     if stophandle or stopparser then begin
+      if stopparser then begin
+       writeln('*** stophandle');
+      end;
       goto stophandlelab
      end;
      if pc^.pop then begin
@@ -473,11 +501,11 @@ parseend:
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;
   end;
-  if (errors[erl_fatal] > 0) or (errors[erl_error] > 0) or 
-                 (opcount = startopcount) then begin
+  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
+  if not result or (opcount = startopcount) then begin
    ops:= nil;
   end;
-  result:= ops;
+  opcode:= ops;
  end;
  
 end;
