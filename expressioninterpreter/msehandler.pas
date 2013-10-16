@@ -30,10 +30,13 @@ procedure int32toflo64(const info: pparseinfoty; const index: integer);
  
 procedure dummyhandler(const info: pparseinfoty);
 
-procedure handleimplementation(const info: pparseinfoty);
 procedure handlenoimplementationerror(const info: pparseinfoty);
 
 procedure checkstart(const info: pparseinfoty);
+procedure handlenouniterror(const info: pparseinfoty);
+procedure handlenounitnameerror(const info: pparseinfoty);
+procedure handlesemicolonexpected(const info: pparseinfoty);
+
 procedure handleuseserror(const info: pparseinfoty);
 procedure handleuses(const info: pparseinfoty);
 procedure handlenoidenterror(const info: pparseinfoty);
@@ -390,13 +393,7 @@ begin
                    ', expected '+
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
-
  
-procedure outhandle(const info: pparseinfoty; const text: string);
-begin
- writeln(' !!!handle!!! ',text);
-end;
-
 procedure outcommand(const info: pparseinfoty; const items: array of integer;
                      const text: string);
 var
@@ -1148,12 +1145,6 @@ begin
  outhandle(info,'DUMMY');
 end;
 
-procedure handleimplementation(const info: pparseinfoty);
-begin
- outhandle(info,'IMPLEMENTATION');
- implementationstart(info);
-end;
-
 procedure handlenoimplementationerror(const info: pparseinfoty);
 begin
  outhandle(info,'NOIMPLEMENTATIONERROR');
@@ -1166,6 +1157,30 @@ end;
 procedure checkstart(const info: pparseinfoty);
 begin
  outhandle(info,'CHECKSTART');
+end;
+
+procedure handlenouniterror(const info: pparseinfoty);
+begin
+ outhandle(info,'NOUNITERROR');
+ with info^ do begin
+  errormessage(info,-1,err_unitexpected,[]);
+ end;
+end;
+
+procedure handlenounitnameerror(const info: pparseinfoty);
+begin
+ outhandle(info,'NOUNITNAMEERROR');
+ with info^ do begin
+  errormessage(info,-1,err_identifierexpected,[]);
+ end;
+end;
+
+procedure handlesemicolonexpected(const info: pparseinfoty);
+begin
+ outhandle(info,'SEMICOLONEXPECTED');
+ with info^ do begin
+  errormessage(info,-1,err_semicolonexpected,[]);
+ end;
 end;
 
 procedure handleuseserror(const info: pparseinfoty);

@@ -165,6 +165,8 @@ begin
 end;
 
 function pushcont(const info: pparseinfoty): boolean;
+        //handle branch transition flags, transitionhandler, set pc
+        //returns false for stopparser or open transistion chain
 var
  int1: integer;
  bo1: boolean;
@@ -173,9 +175,11 @@ begin
  bo1:= false;
  with info^ do begin
   pc:= pb^.dest;
-  while pc^.branch = nil do begin
+  contextstack[stackindex].returncontext:= pb^.push;
+         //replace return context
+  while pc^.branch = nil do begin //handle transition chain
    if pc^.next = nil then begin
-    result:= false;
+    result:= false;  //open transition chain
     break;
    end;
    pc^.handle(info); //transition handler
@@ -216,17 +220,17 @@ begin
   end;
   pb:= pc^.branch;
   if bo1 then begin
-   outinfo(info,'^ '+pc^.caption);
+   outinfo(info,'^ '+pc^.caption); //push context
   end
   else begin
-   outinfo(info,'> '+pc^.caption);
+   outinfo(info,'> '+pc^.caption); //switch context
   end;
  end;
 end;
 
 var
  pushcontextbranch: branchty =
-   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; keys: (
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; push: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -250,8 +254,6 @@ function parse(const input: string; const acommand: ttextstream;
                const aunit: punitinfoty; out opcode: opinfoarty): boolean;
                               //true if ok
 var
-// pb: pbranchty;
-// pc: pcontextty;
  info: parseinfoty;
 
  procedure popparent;
@@ -291,14 +293,12 @@ begin
   command:= acommand;
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
-//  source.line:= 0;
   if aunit <> nil then begin
    filename:= msefileutils.filename(aunit^.filepath);
   end
   else begin
    filename:= 'main.pas'; //dummy
   end;
-//  fillchar(errors,sizeof(errors),0);
   stackdepht:= defaultstackdepht;
   setlength(contextstack,stackdepht);
   with contextstack[0],d do begin
@@ -307,11 +307,8 @@ begin
    start:= source;
    parent:= 0;
   end;
-//  stackindex:= 0;
-//  stacktop:= 0;
   opcount:= startupoffset;
   setlength(ops,opcount);
-//  globdatapo:= 0;
   initparser(@info);
   startopcount:= opcount;
   pc:= contextstack[stackindex].context;
@@ -320,16 +317,18 @@ begin
   outinfo(@info,'****');
   while (source.po^ <> #0) and (stackindex >= 0) do begin
    while (source.po^ <> #0) and (stackindex >= 0) do begin
+            //check context branches
     pb:= pc^.branch;
     if pb = nil then begin
-     break;
+     break; //no branch
     end;
     if bf_emptytoken in pb^.flags then begin
-     pushcont(@info);
+     pushcont(@info); //default branch
+               //???? why no break or stadard match handling
     end
     else begin
-//     keywordindex:= 0;
      while pb^.flags <> [] do begin
+           //check match
       if bf_keyword in pb^.flags then begin
        if keywordindex = 0 then begin
         po1:= source.po;
@@ -397,17 +396,19 @@ begin
         source.po:= po1;
        end;
        if (pb^.dest = nil) and (bf_push in pb^.flags) then begin
-        break; //terminate
+        break; //terminate current context
        end;
-       if (pb^.dest <> nil) and (pb^.dest <> pc) then begin
+       if (pb^.dest <> nil) {and (pb^.dest <> pc)????} then begin
+               //switch branch context
         repeat
-         if not pushcont(@info) then begin
+         if not pushcont(@info) then begin 
+               //can not continue
           if stopparser then begin
            goto stophandlelab;
           end;
           goto handlelab;
          end;
-        until not (bf_emptytoken in pb^.flags);
+        until not (bf_emptytoken in pb^.flags); //no start default branch
        end;
        source.po:= po1;
        source.line:= source.line + linebreaks;
@@ -416,16 +417,17 @@ begin
 //       if (pb^.c = nil) and pb^.p then begin
 //        break; //terminate
 //       end;
-       pb:= pc^.branch; //restart
+       pb:= pc^.branch; //restart branch evaluation
        continue;
       end;
-      inc(pb);
+      inc(pb); //next branch
      end;  
-     break;
+     break; //no match, next context
     end;
    end;
 handlelab:
    writeln('***');
+          //context terminated, pop stack
    repeat
     pc1:= pc;
     if pc1^.restoresource then begin
@@ -434,6 +436,7 @@ handlelab:
      keywordindex:= 0;
     end;
     if pc^.handle <> nil then begin
+         //call context transition handler
      stophandle:= false;
      pc^.handle(@info);
      if stopparser then begin
@@ -446,11 +449,13 @@ handlelab:
       end;
       goto stophandlelab
      end;
+         //take context terminate actions
      if pc^.pop then begin
       popparent;
      end;
     end
     else begin
+         //no handler, automatic stack decrement
      if pc^.next = nil then begin
       if pc^.pop then begin
        popparent;
@@ -475,8 +480,14 @@ handlelab:
      outinfo(@info,'! after0b');
     end;
    until pc1^.continue or (pc^.next <> nil);
+      //continue with branch checking
    with contextstack[stackindex] do begin
-    if pc1^.continue then begin
+    if pc1^.continue or (returncontext <> nil) then begin
+     if returncontext <> nil then begin
+      context:= returncontext;
+      pc:= returncontext;
+      returncontext:= nil;
+     end;
      writeln(pc1^.caption,'.>',pc^.caption);
     end
     else begin

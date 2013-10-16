@@ -26,7 +26,8 @@ type
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
-            err_cantfindunit,err_implementationexpected);
+            err_cantfindunit,err_implementationexpected,err_unitexpected,
+            err_illegalunitname);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -52,7 +53,9 @@ const
   (level: erl_error; message: 
                     'Wrong type'),
   (level: erl_fatal; message: 'Can''t find unit "%s"'),
-  (level: erl_fatal; message: 'Syntax error, "implementation" expected')
+  (level: erl_fatal; message: 'Syntax error, "implementation" expected'),
+  (level: erl_fatal; message: 'Syntax error, "unit" expected'),
+  (level: erl_fatal; message: 'Illegal unit name: "%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -96,6 +99,9 @@ begin
         errorleveltext[level]+': '+format(message,values);
     command.writeln(str1);
     writeln('<<<<<<< '+str1);
+    if level <= erl_fatal then begin
+     stopparser:= true;
+    end;
    end;
   end;
  end;

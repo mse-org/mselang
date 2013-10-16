@@ -78,6 +78,7 @@ type
  branchty = record
   flags: branchflagsty;
   dest: pcontextty;
+  push: pcontextty; //nil = current
   case integer of
    0: (keyword: keywordty);
    1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);
@@ -162,6 +163,7 @@ type
  contextitemty = record
   parent: integer;
   context: pcontextty;
+  returncontext: pcontextty;
   start: sourceinfoty;
   debugstart: pchar;
   d: contextdataty;
@@ -270,6 +272,14 @@ type
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
+
+procedure outhandle(const info: pparseinfoty; const text: string);
+
 implementation
+
+procedure outhandle(const info: pparseinfoty; const text: string);
+begin
+ writeln(' !!!handle!!! ',text);
+end;
 
 end.

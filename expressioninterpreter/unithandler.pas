@@ -25,6 +25,7 @@ function loadunitinterface(const info: pparseinfoty;
                                          const aindex: integer): boolean;
                     //true if ok
 
+procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 procedure implementationstart(const info: pparseinfoty);
 
 procedure init;
@@ -55,6 +56,17 @@ type
 var
  unitlist: tunitlist;
 
+procedure setunitname(const info: pparseinfoty); //unitname on top of stack
+begin
+ with info^ do begin
+  if unitinfo^.key <> contextstack[stacktop].d.ident.ident then begin
+   identerror(info,1,err_illegalunitname);
+  end;
+  stacktop:= stackindex;
+ end;
+ outhandle(info,'SETUNITNAME');
+end;
+
 procedure implementationstart(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -62,6 +74,7 @@ begin
    stopparser:= true; //stop parsing;
   end;
  end;
+ outhandle(info,'IMPLEMENTATIONSTART');
 end;
 
 function parseinterface(const aunit: punitinfoty): boolean;

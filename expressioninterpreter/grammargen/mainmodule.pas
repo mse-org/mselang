@@ -32,15 +32,18 @@ ${macroname}
 <handler_usesdef>
 
 <context>,[<next>][-],[<handler>][^|!][+][*][>]
+    <handler> called by context termination,
+    transition to <next> or termination if no branch matches
+    or after return from branch
+    <handler> also called for transition contexts without branches
  - -> eat text
  ^ -> pop parent
  ! -> pop parent and execute parent handler
  + -> restore source pointer
  * -> stackindex -> stacktop
- > -> continue
-
+ > -> continue with calling context
  <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
-                                        [[<context>][-] [[^][*] | [*][^]] [!] ]
+              [[<context>][-] [[^][*] | [*][^]] [!] ] [,<pushed context>]
  - -> eat token
  <context>^ -> set parent
  <context>* -> push context
@@ -68,7 +71,7 @@ type
 
 const
  b: array[0..0] of branchty = (
-   (flags: []; dest: nil; keys: (
+   (flags: []; dest: nil; push: nil; keys: (
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -82,6 +85,7 @@ type
   tokens: stringarty;
   keyword: keywordty;
   dest: string;
+  push: string;
   emptytoken: boolean;
  end;
  
@@ -303,8 +307,8 @@ var
  end;
 
 const
- branchformat = 
-  'Format of branch is "''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]"';
+ branchformat = 'Format of branch is'+lineend+
+'"''string''[.],{''string''[.],}context[-][[^][*] | [*][^]][,<pushed context>]"';
  defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
  ar1: stringarty;
@@ -331,7 +335,6 @@ begin
   grammarstream:= ttextstream.create(grammar,fm_read);
   macrolist1:= tmacrolist.create([mao_curlybraceonly]);
   line:= 0;
-//  branchcount:= 0;
   context:= '';
   intokendef:= false;
   tokendefs:= nil;
@@ -468,7 +471,6 @@ begin
             error('Format of contextline is "context,next[-],handler[^|!][>]"');
             exit;
            end;
-//           branchcount:= 0;
            branches:= nil;
           end
           else begin
@@ -481,6 +483,23 @@ begin
            str2:= trim(copy(str1,int1+1,bigint));
            branches[high(branches)].dest:= str2;
            po1:= pchar(str1)+1;
+           po2:= po1+int1-3;
+           while po2 > po1 do begin
+            if po2^ = ',' then begin
+             with branches[high(branches)] do begin
+              push:= dest;
+              setstring(dest,po2+1,int1-(po2-po1)-3);
+              dest:= trim(dest);
+              int1:= (po2-po1)+2;
+             end;
+             break;
+            end;
+            if po2^ in ['''','@'] then begin
+             break;
+            end;
+            dec(po2);
+           end;
+           
            po2:= po1+int1-2;
            while true do begin
             po3:= po1;
@@ -489,7 +508,6 @@ begin
              while po1^ <> ',' do begin
               inc(po1);
              end;
-  //           setstring(str3,po3,po1-po3);
              if not gettokendef(psubstr(po3,po1),str2) then begin
               exit;
              end;
@@ -505,10 +523,6 @@ begin
              end;
              setstring(str3,po3,po1-po3);
              additem(branches[high(branches)].tokens,str3);
-//             setlength(ar1,2);
-//             ar1[0]:= trim(str3);
-//             ar1[1]:= str2;
-//             additem(branches,ar1,branchcount);
             end;
             if po1 = po2 then begin
              break;
@@ -704,6 +718,13 @@ lineend+
        else begin
         str1:= str1+'@'+dest+'co';
        end;
+       str1:= str1+'; push: ';
+       if push = '' then begin
+        str1:= str1+'nil';
+       end
+       else begin
+        str1:= str1+'@'+push+'co';
+       end;
        str1:= str1+'; ';
        if keyword <> 0 then begin
         include(branflags1,bf_keyword);
@@ -758,7 +779,7 @@ lineend+
       end;
      end;
      str1:= str1+
-'   (flags: []; dest: nil; keyword: 0)'+lineend+
+'   (flags: []; dest: nil; push: nil; keyword: 0)'+lineend+
 '   );'+lineend;
     end;
    end;

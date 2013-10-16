@@ -14,11 +14,24 @@
  '_',@keywordstart
 @num
  '0','1','2','3','4','5','6','7','8','9'
-msehandler
-start,noimplementation,
+msehandler,unithandler
+start,nounit,
+ ${whitespace} 
+ 'unit'.,unit0-
+nounit,,handlenouniterror
+unit0,nounitname,handlenounitnameerror
+ ${whitespace}
+ @identstart,ident^*,unit1
+nounitname,,handlenounitnameerror
+unit1,unit2,setunitname
+unit2,semicolonexpected,
+ ${whitespace}
+ ';',start1-
+#
+semicolonexpected,,handlesemicolonexpected
+start1,start2,
  ${whitespace}
  'uses'.,uses0-
- 'implementation'.,implementation-
 uses0,uses1,
  '',commaidents^*
 uses1,useserror,
@@ -26,9 +39,11 @@ uses1,useserror,
 useserror,,handleuseserror
 usesok,start1,handleuses
 
-start1,noimplementation,
+start2,noimplementation,
  ${whitespace}
  'implementation'.,implementation
+ 'const'.,const-*
+ 'var'.,var-*
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,
@@ -42,7 +57,7 @@ commaidentsnoidenterror,,handlenoidenterror
 
 noimplementation,,handlenoimplementationerror
 
-implementation,main,handleimplementation
+implementation,main,implementationstart
 
 main,main1,handlemain
  ${whitespace}
