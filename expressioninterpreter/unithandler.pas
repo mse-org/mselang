@@ -33,7 +33,7 @@ procedure deinit;
 
 implementation
 uses
- msehash,filehandler,errorhandler,parser,msefileutils,msestream;
+ msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar;
  
 type
  unithashdataty = record
@@ -56,25 +56,56 @@ type
 var
  unitlist: tunitlist;
 
+type
+ unitdataty = record
+ end;
+ punitdataty = ^unitdataty;
+ 
+ implementationdataty = record
+ end;
+ pimplementationdataty = ^implementationdataty;
+ 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
+var
+ id1: identty;
+ po1: punitdataty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'SETUNITNAME');
+{$endif}
  with info^ do begin
-  if unitinfo^.key <> contextstack[stacktop].d.ident.ident then begin
+  id1:= contextstack[stacktop].d.ident.ident;
+  if unitinfo^.key <> id1 then begin
    identerror(info,1,err_illegalunitname);
+  end
+  else begin
+   if not elements.pushelement(id1,ek_unit,
+                                 elesize+sizeof(unitdataty),po1) then begin
+    internalerror(info,'U131018A');
+   end;
   end;
   stacktop:= stackindex;
  end;
- outhandle(info,'SETUNITNAME');
 end;
 
 procedure implementationstart(const info: pparseinfoty);
+var
+ po1: punitdataty;
 begin
  with info^ do begin
   if us_interface in unitinfo^.state then begin
    stopparser:= true; //stop parsing;
+  end
+  else begin
+   if not elements.pushelement(ord(kw_implementation),ek_implementation,
+                        elesize+sizeof(implementationdataty),po1) then begin
+    
+   end;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'IMPLEMENTATIONSTART');
+{$endif}
 end;
 
 function parseinterface(const aunit: punitinfoty): boolean;

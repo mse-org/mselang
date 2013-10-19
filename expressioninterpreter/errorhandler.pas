@@ -27,7 +27,7 @@ type
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
             err_cantfindunit,err_implementationexpected,err_unitexpected,
-            err_illegalunitname);
+            err_illegalunitname,err_internalerror);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -55,7 +55,8 @@ const
   (level: erl_fatal; message: 'Can''t find unit "%s"'),
   (level: erl_fatal; message: 'Syntax error, "implementation" expected'),
   (level: erl_fatal; message: 'Syntax error, "unit" expected'),
-  (level: erl_fatal; message: 'Illegal unit name: "%s"')
+  (level: erl_fatal; message: 'Illegal unit name: "%s"'),
+  (level: erl_fatal; message: 'Internal error %s')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -63,6 +64,7 @@ procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const coloffset: integer = 0);
 procedure identerror(const info: pparseinfoty; const astackoffset: integer;
                                                         const aerror: errorty);
+procedure internalerror(const info: pparseinfoty; const id: string);
 
 implementation
 uses
@@ -114,6 +116,11 @@ begin
   errormessage(info,astackoffset,aerror,
                      [lstringtostring(start.po,d.ident.len)],d.ident.len);
  end;
+end;
+
+procedure internalerror(const info: pparseinfoty; const id: string);
+begin
+ errormessage(info,-1,err_internalerror,[id]);
 end;
 
 end.

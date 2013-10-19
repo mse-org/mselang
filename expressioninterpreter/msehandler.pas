@@ -252,9 +252,10 @@ var
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
+ kw1: keywordty;
 begin
- for int1:= 0 to high(keywords) do begin
-  getident(keywords[int1]);
+ for kw1:= keywordty(ord(kw_none)+1) to high(keywords) do begin
+  getident(keywords[kw1]);
  end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
@@ -565,7 +566,9 @@ begin
   d.constval.kind:= dk_int32;
   d.constval.vint32:= int2;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'CNUM');
+{$endif}
 end;
 
 const
@@ -655,7 +658,9 @@ begin
   end;
   consumed:= source.po;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'FRAC');
+{$endif}
 end;
 
 procedure handleexponent(const info: pparseinfoty);
@@ -685,7 +690,9 @@ begin
    end;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'EXPONENT');
+{$endif}
 end;
 
 procedure handlenegexponent(const info: pparseinfoty);
@@ -715,7 +722,9 @@ begin
    end;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'NEGEXPONENT');
+{$endif}
 end;
 
 const
@@ -840,7 +849,9 @@ procedure handlemulfact(const info: pparseinfoty);
 begin
  outcommand(info,[-2,0],'*');
  writeop(info,mulops[pushvalues(info)]);
+{$ifdef mse_debugparser}
  outhandle(info,'MULFACT');
+{$endif}
 end;
 
 const
@@ -852,14 +863,18 @@ procedure handleaddterm(const info: pparseinfoty);
 begin
  outcommand(info,[-2,0],'+');
  writeop(info,addops[pushvalues(info)]);
+{$ifdef mse_debugparser}
  outhandle(info,'ADDTERM');
+{$endif}
 end;
 
 procedure handleterm(const info: pparseinfoty);
 begin
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
+{$ifdef mse_debugparser}
  outhandle(info,'TERM');
+{$endif}
 end;
 
 procedure handlenegterm(const info: pparseinfoty);
@@ -872,7 +887,9 @@ begin
    kind:= ck_none;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'NEGTERM');
+{$endif}
 end;
 
 const
@@ -897,7 +914,9 @@ begin
   dec(stacktop);
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'TERM1');
+{$endif}
 end;
 
 procedure handlesimpexp(const info: pparseinfoty);
@@ -908,7 +927,9 @@ begin
   info^.stackindex:= info^.stacktop;
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'SIMPEXP');
+{$endif}
 end;
 
 procedure handlesimpexp1(const info: pparseinfoty);
@@ -920,7 +941,9 @@ begin
   dec(stacktop);
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'SIMPEXP1');
+{$endif}
 end;
 
 procedure handlebracketend(const info: pparseinfoty);
@@ -943,7 +966,9 @@ begin
   dec(stacktop);
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'BRACKETEND');
+{$endif}
 end;
 {
 procedure handleln(const info: pparseinfoty);
@@ -972,7 +997,9 @@ begin
   end;
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PARAMSEND');
+{$endif}
 end;
 {
 procedure handlecheckparams(const info: pparseinfoty);
@@ -1002,7 +1029,9 @@ begin
   ident.ident:= getident(start.po,ident.len);
   ident.continued:= false;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'IDENT');
+{$endif}
 end;
 
 procedure handleidentpath1a(const info: pparseinfoty);
@@ -1013,7 +1042,9 @@ begin
   ident.ident:= getident(start.po,ident.len);
   ident.continued:= false;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'IDENTPATH1A');
+{$endif}
 end;
 
 procedure handleidentpath2a(const info: pparseinfoty);
@@ -1021,13 +1052,17 @@ begin
  with info^,contextstack[stacktop],d do begin
   ident.continued:= true;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'IDENTPATH2A');
+{$endif}
 end;
 
 procedure handleidentpath2(const info: pparseinfoty);
 begin
  errormessage(info,0,err_identifierexpected,[]);
+{$ifdef mse_debugparser}
  outhandle(info,'IDENTPATH2');
+{$endif}
 end;
 
 procedure handlevalueidentifier(const info: pparseinfoty);
@@ -1105,7 +1140,9 @@ begin
   end;
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'VALUEIDENTIFIER');
+{$endif}
 end;
 
 procedure handlestatementend(const info: pparseinfoty);
@@ -1113,7 +1150,9 @@ begin
  with info^,contextstack[stacktop],d do begin
   kind:= ck_end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'STATEMENTEND');
+{$endif}
 end;
 
 procedure handleblockend(const info: pparseinfoty);
@@ -1121,7 +1160,9 @@ begin
 // with info^ do begin
 //  stackindex:= stackindex-2;
 // end;
+{$ifdef mse_debugparser}
  outhandle(info,'BLOCKEND');
+{$endif}
 end;
 
 procedure handleparamstart0(const info: pparseinfoty);
@@ -1129,7 +1170,9 @@ begin
  with info^,contextstack[stacktop] do begin
   parent:= stacktop;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PARAMSTART0');
+{$endif}
 end;
 
 procedure handleparam(const info: pparseinfoty);
@@ -1137,17 +1180,23 @@ begin
  with info^,contextstack[stacktop] do begin
   stackindex:= parent+1;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PARAM');
+{$endif}
 end;
 
 procedure dummyhandler(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'DUMMY');
+{$endif}
 end;
 
 procedure handlenoimplementationerror(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'NOIMPLEMENTATIONERROR');
+{$endif}
  errormessage(info,-1,err_implementationexpected,[]);
  with info^ do begin
   stackindex:= -1;
@@ -1156,12 +1205,16 @@ end;
 
 procedure checkstart(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'CHECKSTART');
+{$endif}
 end;
 
 procedure handlenouniterror(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'NOUNITERROR');
+{$endif}
  with info^ do begin
   errormessage(info,-1,err_unitexpected,[]);
  end;
@@ -1169,7 +1222,9 @@ end;
 
 procedure handlenounitnameerror(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'NOUNITNAMEERROR');
+{$endif}
  with info^ do begin
   errormessage(info,-1,err_identifierexpected,[]);
  end;
@@ -1177,7 +1232,9 @@ end;
 
 procedure handlesemicolonexpected(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'SEMICOLONEXPECTED');
+{$endif}
  with info^ do begin
   errormessage(info,-1,err_semicolonexpected,[]);
  end;
@@ -1185,7 +1242,9 @@ end;
 
 procedure handleuseserror(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'USESERROR');
+{$endif}
  with info^ do begin
   errormessage(info,-1,err_semicolonexpected,[]);
   dec(stackindex);
@@ -1197,7 +1256,9 @@ procedure handleuses(const info: pparseinfoty);
 var
  int1: integer;
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'USES');
+{$endif}
  with info^ do begin
   for int1:= stackindex+2 to stacktop do begin
    writeln(' ',contextstack[int1].d.ident.ident);
@@ -1211,7 +1272,9 @@ end;
 
 procedure handlenoidenterror(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'NOIDENTERROR');
+{$endif}
 end;
 
 procedure handleprogbegin(const info: pparseinfoty);
@@ -1219,7 +1282,9 @@ begin
  with info^,ops[startupoffset] do begin
   d.opaddress:= opcount-1;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PROGBEGIN');
+{$endif}
 end;
 
 procedure handlecommentend(const info: pparseinfoty);
@@ -1230,7 +1295,9 @@ begin
   stacktop:= stackindex;
  end;
 }
+{$ifdef mse_debugparser}
  outhandle(info,'COMMENTEND');
+{$endif}
 end;
 
 procedure handleconst(const info: pparseinfoty);
@@ -1239,7 +1306,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'CONST');
+{$endif}
 end;
 
 procedure handleconst0(const info: pparseinfoty);
@@ -1248,7 +1317,9 @@ begin
 //  dec(stackindex);
 //  stacktop:= stackindex;
 // end;
+{$ifdef mse_debugparser}
  outhandle(info,'CONST0');
+{$endif}
 end;
 
 procedure handleconst3(const info: pparseinfoty);
@@ -1274,7 +1345,9 @@ begin
   end;
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'CONST3');
+{$endif}
 end;
 
 
@@ -1284,12 +1357,16 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'VAR');
+{$endif}
 end;
 
 procedure handlevar0(const info: pparseinfoty);
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'VAR0');
+{$endif}
 end;
 
 procedure handlevar3(const info: pparseinfoty);
@@ -1302,7 +1379,7 @@ begin
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,ek_var,
                                         elesize+sizeof(vardataty));
-   if po1 = nil then begin
+   if po1 = nil then begin //duplicate
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
@@ -1330,7 +1407,9 @@ begin
   end;
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'VAR3');
+{$endif}
 end;
 
 procedure handleexp(const info: pparseinfoty);
@@ -1346,7 +1425,9 @@ begin
    end;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'EXP');
+{$endif}
 end;
 
 procedure handlemain(const info: pparseinfoty);
@@ -1354,7 +1435,9 @@ begin
  with info^ do begin
   dec(stackindex);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'MAIN');
+{$endif}
 end;
 {
 const
@@ -1368,7 +1451,9 @@ var
  po1: pcontextty;
  ident1: identty;
 begin
+{$ifdef mse_debugparser}
  outhandle(info,'MAIN1');
+{$endif}
 {
  with info^,contextstack[stacktop],d do begin
   ident1:= ident;
@@ -1390,14 +1475,18 @@ begin
   ident.len:= source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'KEYWORD');
+{$endif}
 end;
 
 procedure handleequsimpexp(const info: pparseinfoty);
 begin
  outcommand(info,[-2,0],'=');
  writeop(info,addops[pushvalues(info)]);
+{$ifdef mse_debugparser}
  outhandle(info,'EQUSIMPEXP');
+{$endif}
 end;
 {
 procedure handlestatement(const info: pparseinfoty);
@@ -1458,7 +1547,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
+{$endif}
 end;
 
 procedure handlestatement1(const info: pparseinfoty);
@@ -1556,7 +1647,9 @@ begin
    stacktop:= stackindex;
   end;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'CHECKPROC');
+{$endif}
 end;
 
 procedure opgoto(const info: pparseinfoty; const aaddress: dataaddressty);
@@ -1573,7 +1666,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'IF');
+{$endif}
 end;
 
 procedure handlethen(const info: pparseinfoty);
@@ -1583,7 +1678,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'THEN');
+{$endif}
 end;
 
 procedure handlethen0(const info: pparseinfoty);
@@ -1596,7 +1693,9 @@ begin
  with additem(info)^ do begin
   op:= @ifop;   
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'THEN0');
+{$endif}
 end;
 
 procedure handlethen1(const info: pparseinfoty);
@@ -1605,7 +1704,9 @@ begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'THEN1');
+{$endif}
 end;
 
 procedure handlethen2(const info: pparseinfoty);
@@ -1616,13 +1717,17 @@ begin //boolexp,thenmark
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'THEN2');
+{$endif}
 end;
 
 procedure handleelse0(const info: pparseinfoty);
 begin
  opgoto(info,dummyaddress);
+{$ifdef mse_debugparser}
  outhandle(info,'ELSE0');
+{$endif}
 end;
 
 procedure handleelse(const info: pparseinfoty);
@@ -1634,7 +1739,9 @@ begin //boolexp,thenmark,elsemark
   dec(stackindex);
   stacktop:= stackindex;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'ELSE');
+{$endif}
 end;
 
 procedure handleprocedure3(const info: pparseinfoty);
@@ -1700,7 +1807,9 @@ begin
   end;
 //  elements.popelement;
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE3');
+{$endif}
 end;
 
 procedure handleprocedure6(const info: pparseinfoty);
@@ -1714,7 +1823,9 @@ begin
   end;
   dec(funclevel);
  end;
+{$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE6');
+{$endif}
 end;
 
 procedure handlecheckterminator(const info: pparseinfoty);

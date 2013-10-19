@@ -272,8 +272,9 @@ type
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
-
+{$ifdef mse_debugparser}
 procedure outhandle(const info: pparseinfoty; const text: string);
+{$endif}
 
 implementation
 

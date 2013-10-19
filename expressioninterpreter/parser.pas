@@ -42,7 +42,7 @@ procedure deinit;
 implementation
 uses
  typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
- msebits,unithandler,msefileutils;
+ msebits,unithandler,msefileutils,errorhandler;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -63,15 +63,17 @@ begin
  unithandler.deinit;
  mseelements.clear;
 end;
-
+{$ifdef mse_debugparser}
 procedure outinfo(const info: pparseinfoty; const text: string);
 var
  int1: integer;
 begin
  with info^ do begin
+{$ifdef mse_debugparser}
   writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' '+
     inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
+{$endif}
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
@@ -145,25 +147,27 @@ begin
       write('paco:',proc.paramcount);
      end;
     end;
+{$ifdef mse_debugparser}
     writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',
                      singleline(start.po),'''');
+{$endif}
    end;
   end;
  end;
 end;
-
+{$endif}
 
 //
 // todo: optimize, this is a proof of concept only
 //
-
+{
 procedure internalerror(const info: pparseinfoty; const atext: string);
 begin
  writeln('*INTERNAL ERROR* ',atext);
  outinfo(info,'');
  abort;
 end;
-
+}
 function pushcont(const info: pparseinfoty): boolean;
         //handle branch transition flags, transitionhandler, set pc
         //returns false for stopparser or open transistion chain
@@ -219,12 +223,14 @@ begin
    end;
   end;
   pb:= pc^.branch;
+{$ifdef mse_debugparser}
   if bo1 then begin
    outinfo(info,'^ '+pc^.caption); //push context
   end
   else begin
    outinfo(info,'> '+pc^.caption); //switch context
   end;
+{$endif}
  end;
 end;
 
@@ -314,7 +320,9 @@ begin
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
+{$ifdef mse_debugparser}
   outinfo(@info,'****');
+{$endif}
   while (source.po^ <> #0) and (stackindex >= 0) do begin
    while (source.po^ <> #0) and (stackindex >= 0) do begin
             //check context branches
@@ -426,8 +434,10 @@ begin
     end;
    end;
 handlelab:
+{$ifdef mse_debugparser}
    writeln('***');
           //context terminated, pop stack
+{$endif}
    repeat
     pc1:= pc;
     if pc1^.restoresource then begin
@@ -440,13 +450,17 @@ handlelab:
      stophandle:= false;
      pc^.handle(@info);
      if stopparser then begin
+{$ifdef mse_debugparser}
       writeln('*** stopparser');
+{$endif}
       goto parseend;
      end;
-     if stophandle or stopparser then begin
+     if {stophandle or}stopparser then begin
+{$ifdef mse_debugparser}
       if stopparser then begin
        writeln('*** stophandle');
       end;
+{$endif}
       goto stophandlelab
      end;
          //take context terminate actions
@@ -473,12 +487,16 @@ handlelab:
     end;
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
+{$ifdef mse_debugparser}
      outinfo(@info,'! after0a');
+{$endif}
      goto handlelab;    
     end;
+{$ifdef mse_debugparser}
     if not pc1^.continue and (pc^.next = nil) then begin
      outinfo(@info,'! after0b');
     end;
+{$endif}
    until pc1^.continue or (pc^.next <> nil);
       //continue with branch checking
    with contextstack[stackindex] do begin
@@ -488,7 +506,9 @@ handlelab:
       pc:= returncontext;
       returncontext:= nil;
      end;
+{$ifdef mse_debugparser}
      writeln(pc1^.caption,'.>',pc^.caption);
+{$endif}
     end
     else begin
      if pc^.nexteat then begin
@@ -497,17 +517,23 @@ handlelab:
      if pc^.cut then begin
       stacktop:= stackindex;
      end;
+{$ifdef mse_debugparser}
      writeln(pc^.caption,'->',pc^.next^.caption);
+{$endif}
      pc:= pc^.next;
      context:= pc;
     end;
 //    kind:= ck_none;
    end;
 stophandlelab:
+{$ifdef mse_debugparser}
    outinfo(@info,'! after1');
+{$endif}
   end;
 parseend:
+{$ifdef mse_debugparser}
   outinfo(@info,'! after2');
+{$endif}
   setlength(ops,opcount);
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;

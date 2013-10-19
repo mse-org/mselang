@@ -216,7 +216,7 @@ var
 
  function getkeyword(const atext: string; out keyword: keywordty): boolean;
  const
-  keywordoffset = 2;
+  keywordoffset = 1;
  var
   int1: integer;
   mstr1: msestring;
@@ -611,8 +611,8 @@ begin
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;
-  str1:= str1+
-'const'+lineend;
+//  str1:= str1+
+//'const'+lineend;
   keywordsstart:= length(str1);
  str1:= str1+
 'var'+lineend;
@@ -784,9 +784,25 @@ lineend+
     end;
    end;
   end;
-
-  str5:=
-' keywords: array[0..'+inttostr(high(keywords))+'] of string = ('+lineend;
+  str5:= 
+'type'+lineend+
+' keywordty = (kw_none,'+lineend;
+  str2:=
+'  ';
+  for int2:= 0 to high(keywords) do begin
+   str3:= 'kw_'+keywords[int2]+',';
+   if length(str2) + length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= '  ';
+   end;
+   str2:= str2+str3;
+  end;
+  setlength(str2,length(str2)-1); //remove last comma
+  str5:= str5+str2+lineend+
+' );'+lineend+lineend;
+  str5:= str5+
+'const'+lineend+
+' keywords: array[keywordty] of string = ('''','+lineend;
   str2:= 
 '  ';
   for int2:= 0 to high(keywords) do begin

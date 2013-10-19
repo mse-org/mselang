@@ -36,8 +36,9 @@ type
   d: array[0..maxidentvector] of identty;
  end;
  elementoffsetty = integer;
- elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,ek_sysfunc,
-                                                                      ek_func);
+ elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,
+                  ek_sysfunc,ek_func,
+                  ek_unit,ek_implementation);
  
  elementheaderty = record
   size: integer; //for debugging
@@ -229,7 +230,7 @@ begin
   end;
   mstr1:= mstr1+'P'+inttostr(po1^.header.parent div sizeof(elementinfoty));
   mstr1:= mstr1+' '+inttostr(po1^.header.name)+' '+
-                                             identnames[po1^.header.name-1];
+                                             identnames[po1^.header.name];
   int3:= 0;
   int4:= 0;
   int1:= int1 + po1^.header.size;
@@ -553,8 +554,8 @@ begin
  if po1 = nil then begin
   po1:= pointer(internaladdhash(ha1));
   with po1^.data do begin
-   key:= storestring(aname);
    data:= stringident;
+   key:= storestring(aname);
   end;
  end;  
  result:= po1^.data.data;
@@ -677,18 +678,18 @@ var
  pathbefore: identty;
 begin
  result:= findcurrent(aident);
- if result < 0 then begin
+ if (result < 0) and (felementpath <> 0) then begin
   parentbefore:= felementparent;
   pathbefore:= felementpath;
   while true do begin
    with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin
-    if path = 0 then begin
-     break;
-    end;
     felementpath:= felementpath-name;
     felementparent:= parent;
     result:= findcurrent(aident);
     if result >= 0 then begin
+     break;
+    end;
+    if path = 0 then begin
      break;
     end;
    end;
