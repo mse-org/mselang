@@ -45,6 +45,7 @@ type
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
+  parentlevel: integer;
   kind: elementkindty;
  end;
  
@@ -67,10 +68,11 @@ type
  telementhashdatalist = class(thashdatalist)
   protected
    felementdata: string;
-   felementindex: elementoffsetty;
+   fnextelement: elementoffsetty;
    felementlen: elementoffsetty;
    felementpath: identty; //sum of names in hierarchy 
    felementparent: elementoffsetty;
+   fparentlevel: integer;
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
    procedure addelement(const aident: identty; const aelement: elementoffsetty);
@@ -115,6 +117,7 @@ type
    function findelementsupward(const anames: identarty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
+   function decelementparent: elementoffsetty; //returns old offset
    procedure setelementparent(const element: elementoffsetty);
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
@@ -209,41 +212,102 @@ begin
 {$endif}
  elements.pushelement(getident(''),ek_none,elesize); //root
 end;
+type
+ dumpinfoty = record
+  text: msestring;
+  offset: elementoffsetty;
+  parent: elementoffsetty;
+  parents: array[0..255] of elementoffsetty;
+  parentlevel: integer;
+ end;
+ dumpinfoarty = array of dumpinfoty;
+
+function compdump(const l,r): integer;
+var
+ int1: integer;
+ int2: integer;
+ levell,levelr: integer;
+begin
+ result:= 0;
+// if dumpinfoty(l).parent = dumpinfoty(r).offset then begin
+//  inc(result);
+// end;
+// if dumpinfoty(r).parent = dumpinfoty(l).offset then begin
+//  dec(result);
+// end;
+ levell:= dumpinfoty(l).parentlevel;
+ levelr:= dumpinfoty(r).parentlevel;
+ int1:= levell;
+ if int1 > levelr then begin
+  int1:= levelr;
+ end;
+ int2:= int1;
+ for int1:= 0 to int2 do begin
+  result:= dumpinfoty(l).parents[int1]-dumpinfoty(r).parents[int1];
+  if result <> 0 then begin
+   break;
+  end;
+ end;
+ if result = 0 then begin
+  if levell > levelr then begin
+   result:= dumpinfoty(l).parents[int2+1]-dumpinfoty(r).offset;
+  end
+  else begin
+   if levelr > levell then begin
+    result:= dumpinfoty(l).parents[int2+1]-dumpinfoty(r).offset;
+   end;
+  end;
+ end;
+end;
 
 function telementhashdatalist.dumpelements: msestringarty;
 var
- int1,int2,int3,int4,int5: integer;
+ int1,int2,int3,int4,int5,int6: integer;
  po1: pelementinfoty;
  mstr1: msestring;
+ ar1: dumpinfoarty;
+ off1: elementoffsetty;
 begin
  int1:= 0;
  int2:= 0;
- additem(result,'elementpath: '+inttostr(felementpath),int2);
  int5:= pelementinfoty(pointer(felementdata))^.header.name; //root
- while int1 < felementindex do begin
+ while int1 < fnextelement do begin
+  additem(ar1,typeinfo(dumpinfoty),int2);
   po1:= pelementinfoty(pointer(felementdata)+int1);
+  off1:= int1;
   if pointer(po1)-pointer(felementdata) = felementparent then begin
    mstr1:= '*';
   end
   else begin
    mstr1:= ' ';
   end;
-  mstr1:= mstr1+'P'+inttostr(po1^.header.parent div sizeof(elementinfoty));
-  mstr1:= mstr1+' '+inttostr(po1^.header.name)+' '+
-                                             identnames[po1^.header.name];
-  int3:= 0;
+  mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+' O:'+inttostr(int1)+' N:'+
+            inttostr(po1^.header.name)+' '+identnames[po1^.header.name];
   int4:= 0;
   int1:= int1 + po1^.header.size;
-  while po1^.header.parent <> 0 do begin
-   inc(int3);
-   int4:= int4 + po1^.header.name;
-   po1:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
+  with ar1[int2-1] do begin
+   parent:= po1^.header.parent;
+   int3:= po1^.header.parentlevel;
+   parentlevel:= int3;
+   parents[int3]:= off1;
+   for int6:= int3-1 downto 0 do begin
+    parents[int6]:= po1^.header.parent;
+    int4:= int4 + po1^.header.name;
+    po1:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
+   end;
+   mstr1:= charstring(msechar('.'),int3-1)+' '+
+                          inttostr(int5+int4+po1^.header.name)+' '+mstr1;
+   text:= mstr1;
+   offset:= off1;
   end;
-  mstr1:= charstring(msechar('.'),int3)+' '+
-                         inttostr(int5+int4+po1^.header.name)+' '+mstr1;
-  additem(result,mstr1,int2);
  end;
- setlength(result,int2);
+ setlength(ar1,int2);
+ sortarray(ar1,sizeof(ar1[0]),@compdump);
+ setlength(result,int2+1);
+ result[0]:= 'elementpath: '+inttostr(felementpath);
+ for int1:= 0 to int2-1 do begin
+  result[int1+1]:= ar1[int1].text;
+ end;
 end;
 
 function telementhashdatalist.dumppath(const aelement: pelementinfoty): msestring;
@@ -267,23 +331,25 @@ begin
  result:= nil;
  ele1:= {elementlist.}findcurrent(aname);
  if ele1 < 0 then begin
-  ele1:= felementindex;
-  felementindex:= felementindex+asize;
-  if felementindex >= felementlen then begin
-   felementlen:= felementindex*2+mindatasize;
+  ele1:= fnextelement;
+  fnextelement:= fnextelement+asize;
+  if fnextelement >= felementlen then begin
+   felementlen:= fnextelement*2+mindatasize;
    setlength(felementdata,felementlen);
   end;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
    size:= asize; //for debugging
    parent:= felementparent;
+   parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
    kind:= akind;
   end;
   felementparent:= ele1;
+  inc(fparentlevel);
   felementpath:= felementpath+aname;
-  {elementlist.}addelement(felementpath,ele1);
+  addelement(felementpath,ele1);
  end;
 end;
 
@@ -305,23 +371,24 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findcurrent(aname);
+ ele1:= findcurrent(aname);
  if ele1 < 0 then begin
-  ele1:= felementindex;
-  felementindex:= felementindex+asize;
-  if felementindex >= felementlen then begin
-   felementlen:= felementindex*2+mindatasize;
+  ele1:= fnextelement;
+  fnextelement:= fnextelement+asize;
+  if fnextelement >= felementlen then begin
+   felementlen:= fnextelement*2+mindatasize;
    setlength(felementdata,felementlen);
   end;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
    size:= asize; //for debugging
    parent:= felementparent;
+   parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
    kind:= akind;
   end; 
-  {elementlist.}addelement(felementpath+aname,ele1);
+  addelement(felementpath+aname,ele1);
  end;
 end;
 
@@ -340,7 +407,30 @@ function telementhashdatalist.popelement: pelementinfoty;
 begin
  result:= pelementinfoty(pointer(felementdata)+felementparent);
  felementparent:= result^.header.parent;
+ fparentlevel:= result^.header.parentlevel;
  felementpath:= result^.header.path;
+end;
+
+function telementhashdatalist.decelementparent: elementoffsetty; 
+                    //returns old offset
+begin
+ result:= felementparent;
+ with pelementinfoty(pointer(felementdata)+felementparent)^ do begin
+  felementparent:= header.parent;
+  fparentlevel:= header.parentlevel;
+  felementpath:= header.path;
+ end;
+end;
+
+procedure telementhashdatalist.setelementparent(const element: elementoffsetty);
+var
+ po1: pelementinfoty;
+begin
+ felementparent:= element;
+ with pelementinfoty(pointer(felementdata)+felementparent)^ do begin
+  felementpath:= header.path + header.name;
+  fparentlevel:= header.parentlevel+1;
+ end;
 end;
 
 function telementhashdatalist.findelement(const aname: identty): pelementinfoty; //nil if not found
@@ -423,25 +513,16 @@ begin
  result:= findelementsupward(ar1,element);
 end;
 }
-procedure telementhashdatalist.setelementparent(const element: elementoffsetty);
-var
- po1: pelementinfoty;
-begin
- felementparent:= element;
- po1:= pointer(felementdata)+element;
- felementpath:= po1^.header.path+po1^.header.name;
-end;
-
 procedure telementhashdatalist.markelement(out ref: markinfoty);
 begin
- {elementlist.}mark(ref.hashref);
- ref.dataref:= felementindex;
+ mark(ref.hashref);
+ ref.dataref:= fnextelement;
 end;
 
 procedure telementhashdatalist.releaseelement(const ref: markinfoty);
 begin
- {elementlist.}release(ref.hashref);
- felementindex:= ref.dataref;
+ release(ref.hashref);
+ fnextelement:= ref.dataref;
 end;
 {
 function elementcount: integer;
@@ -611,10 +692,11 @@ end;
 procedure telementhashdatalist.clear;
 begin
  inherited;
- felementindex:= 0;
+ fnextelement:= 0;
  felementlen:= 0;
  felementparent:= 0;
  felementpath:= 0;
+ fparentlevel:= 0;
 end;
 
 function telementhashdatalist.hashkey(const akey): hashvaluety;

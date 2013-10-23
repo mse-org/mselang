@@ -108,6 +108,7 @@ procedure handleprocedure3(const info: pparseinfoty);
 procedure handleprocedure6(const info: pparseinfoty);
 
 procedure handledumpelements(const info: pparseinfoty);
+procedure handleabort(const info: pparseinfoty);
 
 implementation
 uses
@@ -1255,17 +1256,21 @@ end;
 procedure handleuses(const info: pparseinfoty);
 var
  int1: integer;
+ offs1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'USES');
 {$endif}
  with info^ do begin
+  offs1:= elements.decelementparent;
   for int1:= stackindex+2 to stacktop do begin
-   writeln(' ',contextstack[int1].d.ident.ident);
+//   writeln(' ',contextstack[int1].d.ident.ident);
    if not loadunitinterface(info,int1) then begin
+    stopparser:= true;
     break;
    end;
   end;
+  elements.setelementparent(offs1);
   stacktop:= stackindex;
  end;
 end;
@@ -1857,6 +1862,20 @@ begin
  writeln('--------------------------------------------------------------------');
  with info^ do begin
  end;
+end;
+
+procedure handleabort(const info: pparseinfoty);
+var
+ ar1: msestringarty;
+ int1: integer;
+begin
+ with info^ do begin
+  stopparser:= true;
+  errormessage(info,-1,err_abort,[]);
+ end;
+{$ifdef mse_debugparser}
+ outhandle(info,'ABORT');
+{$endif}
 end;
 
 end.

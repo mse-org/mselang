@@ -72,9 +72,11 @@ comment0,,handlecommentend^*>
 #comment1,,handlecommentend^>
 directive,,*
  'dumpelements'.,dumpelements-*
+ 'abort'.,abort-*
  '}',-*
  '',
 dumpelements,directiveend,handledumpelements
+abort,directiveend,handleabort
 directiveend,,^*>
  '}',-*
  '',

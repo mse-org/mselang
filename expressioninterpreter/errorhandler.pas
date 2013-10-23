@@ -27,7 +27,7 @@ type
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
             err_cantfindunit,err_implementationexpected,err_unitexpected,
-            err_illegalunitname,err_internalerror);
+            err_illegalunitname,err_internalerror,err_abort);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -56,7 +56,8 @@ const
   (level: erl_fatal; message: 'Syntax error, "implementation" expected'),
   (level: erl_fatal; message: 'Syntax error, "unit" expected'),
   (level: erl_fatal; message: 'Illegal unit name: "%s"'),
-  (level: erl_fatal; message: 'Internal error %s')
+  (level: erl_fatal; message: 'Internal error %s'),
+  (level: erl_fatal; message: 'Abort')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

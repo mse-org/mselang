@@ -544,6 +544,16 @@ parseend:
   end;
   opcode:= ops;
  end;
+
+{$ifdef mse_debugparser}
+ write('**** end **** ');
+ if aunit <> nil then begin
+  writeln(aunit^.filepath);
+ end
+ else begin
+  writeln('NIL');
+ end;
+{$endif}
  
 end;
 

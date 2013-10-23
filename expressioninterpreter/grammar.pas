@@ -25,13 +25,13 @@ function startcontext: pcontextty;
 type
  keywordty = (kw_none,
   kw_unit,kw_uses,kw_implementation,kw_const,kw_var,kw_procedure,kw_begin,
-  kw_dumpelements,kw_end,kw_if,kw_then,kw_else
+  kw_dumpelements,kw_abort,kw_end,kw_if,kw_then,kw_else
  );
 
 const
  keywords: array[keywordty] of string = ('',
   'unit','uses','implementation','const','var','procedure','begin',
-  'dumpelements','end','if','then','else');
+  'dumpelements','abort','end','if','then','else');
 
 var
  startco: contextty = (branch: nil; handle: nil; 
@@ -106,6 +106,9 @@ var
  dumpelementsco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'dumpelements');
+ abortco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'abort');
  directiveendco: contextty = (branch: nil; handle: nil; 
                continue: true; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'directiveend');
@@ -629,7 +632,7 @@ const
     )),
    (flags: []; dest: nil; push: nil; keyword: 0)
    );
- bdirective: array[0..3] of branchty = (
+ bdirective: array[0..4] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push]; dest: nil; push: nil; keys: (
     (kind: bkk_char; chars: ['}']),
     (kind: bkk_none; chars: []),
@@ -638,6 +641,8 @@ const
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @dumpelementsco; push: nil; 
      keyword: 8{'dumpelements'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @abortco; push: nil; 
+     keyword: 9{'abort'}),
    (flags: [bf_nt,bf_emptytoken]; dest: nil; push: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1058,9 +1063,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush]; dest: @statementblockco; push: nil; 
      keyword: 7{'begin'}),
    (flags: [bf_nt,bf_keyword]; dest: @endcontextco; push: nil; 
-     keyword: 9{'end'}),
+     keyword: 10{'end'}),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @if0co; push: nil; 
-     keyword: 10{'if'}),
+     keyword: 11{'if'}),
    (flags: [bf_nt,bf_emptytoken]; dest: @simplestatementco; push: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1119,7 +1124,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @blockendco; push: nil; 
-     keyword: 9{'end'}),
+     keyword: 10{'end'}),
    (flags: []; dest: nil; push: nil; keyword: 0)
    );
  bstatement0: array[0..1] of branchty = (
@@ -1244,7 +1249,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @then0co; push: nil; 
-     keyword: 11{'then'}),
+     keyword: 12{'then'}),
    (flags: []; dest: nil; push: nil; keyword: 0)
    );
  bthen1: array[0..1] of branchty = (
@@ -1282,7 +1287,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @else0co; push: nil; 
-     keyword: 12{'else'}),
+     keyword: 13{'else'}),
    (flags: []; dest: nil; push: nil; keyword: 0)
    );
  belse: array[0..1] of branchty = (
@@ -2168,6 +2173,9 @@ begin
  dumpelementsco.branch:= nil;
  dumpelementsco.next:= @directiveendco;
  dumpelementsco.handle:= @handledumpelements;
+ abortco.branch:= nil;
+ abortco.next:= @directiveendco;
+ abortco.handle:= @handleabort;
  directiveendco.branch:= @bdirectiveend;
  linecomment0co.branch:= @blinecomment0;
  linecomment1co.branch:= nil;
