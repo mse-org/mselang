@@ -22,8 +22,7 @@ uses
 
 function newunit(const aname: string): punitinfoty; 
 function loadunitinterface(const info: pparseinfoty;
-                                         const aindex: integer): boolean;
-                    //true if ok
+                                const aindex: integer): punitinfoty;
 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 procedure implementationstart(const info: pparseinfoty);
@@ -38,7 +37,7 @@ uses
 type
  unithashdataty = record
   header: hashheaderty;
-  data: unitinfoty;
+  data: punitinfoty;
  end;
  punithashdataty = ^unithashdataty;
 
@@ -83,6 +82,7 @@ begin
                                  elesize+sizeof(unitdataty),po1) then begin
     internalerror(info,'U131018A');
    end;
+   unitinfo^.interfaceelement:= elements.elementparent;
   end;
   stacktop:= stackindex;
  end;
@@ -97,7 +97,7 @@ begin
    stopparser:= true; //stop parsing;
   end
   else begin
-   if not elements.pushelement(ord(kw_implementation),ek_implementation,
+   if not elements.pushelement(ord(tk_implementation),ek_implementation,
                         elesize+sizeof(implementationdataty),po1) then begin
     
    end;
@@ -138,19 +138,15 @@ begin
 end;
  
 function loadunitinterface(const info: pparseinfoty;
-                                         const aindex: integer): boolean;
-                    //true if ok
+                                         const aindex: integer): punitinfoty;
 var
- po1: punitinfoty;
  lstr1: lstringty;
 begin
- result:= true; 
  with info^.contextstack[aindex] do begin
-  po1:= unitlist.findunit(d.ident.ident);
-  if po1 = nil then begin
-   result:= false;
-   po1:= unitlist.newunit(d.ident.ident);
-   with po1^ do begin
+  result:= unitlist.findunit(d.ident.ident);
+  if result = nil then begin
+   result:= unitlist.newunit(d.ident.ident);
+   with result^ do begin
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
     filepath:= filehandler.getunitfile(lstr1);
@@ -159,7 +155,9 @@ begin
     end
     else begin
      state:= [us_interface];
-     result:= parseinterface(po1);
+     if not parseinterface(result) then begin
+      result:= nil;
+     end;
     end;
    end;
   end;
@@ -180,8 +178,8 @@ end;
 
 constructor tunitlist.create;
 begin
- inherited create(sizeof(unitinfoty));
- fstate:= fstate + [hls_needsnull,hls_needsfinalize];
+ inherited create(sizeof(punitinfoty));
+ fstate:= fstate + [hls_needsfinalize];
 end;
 
 function tunitlist.hashkey(const akey): hashvaluety;
@@ -197,13 +195,20 @@ begin
 end;
 
 function tunitlist.findunit(const aname: identty): punitinfoty;
+var
+ po1: punithashdataty;
 begin
- result:= punitinfoty(internalfind(aname));
+ result:= nil;
+ po1:= punithashdataty(internalfind(aname));
+ if po1 <> nil then begin
+  result:= po1^.data;
+ end;
 end;
 
 procedure tunitlist.finalizeitem(var aitemdata);
 begin
- finalize(unitinfoty(aitemdata));
+ finalize(punitinfoty(aitemdata)^);
+ freemem(punitinfoty(aitemdata));
 end;
 
 function tunitlist.newunit(const aname: identty): punitinfoty;
@@ -211,8 +216,10 @@ var
  po1: punithashdataty;
 begin
  po1:= punithashdataty(internaladd(aname));
- po1^.data.key:= aname;
- result:= @po1^.data;
+ getmem(result,sizeof(unitinfoty));
+ fillchar(result^,sizeof(result^),0);
+ result^.key:= aname;
+ po1^.data:= result;
 end;
 
 end.

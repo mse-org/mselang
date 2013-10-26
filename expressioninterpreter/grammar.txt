@@ -44,6 +44,7 @@ start2,noimplementation,
  'implementation'.,implementation
  'const'.,const-*
  'var'.,var-*
+ 'type'.,type-*
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,
@@ -186,6 +187,7 @@ const2,const3,
 const3,const0-,handleconst3
  ${whitespace}
  ';',statementend-*
+#
 var,,handlevar>
  '',var0*^
 var0,var1,
@@ -201,6 +203,28 @@ var3,var0-,handlevar3
  ${whitespace}
  ';',statementend-*
 #
+type,,handletype>
+ '',type0*^
+type0,type1,
+ ${whitespace}
+ @identstart,identpath^*
+type1,,+
+ ${whitespace}
+ '=',type2-
+type2,type3,
+ ${whitespace}
+ 'class'.,classdef-
+ @identstart,ident^*
+type3,type0-,handletype3
+ ${whitespace}
+ ';',statementend-*
+#
+classdef,classdef0,handleclassdefstart
+classdef0,classdeferror,
+ ${whitespace}
+ 'end'.,classdef1-
+classdef1,,^*
+classdeferror,,handleclassdeferror^
 statementend,,handlestatementend!
 exp,exp1,
  '',simpexp*

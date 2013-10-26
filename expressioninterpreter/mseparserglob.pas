@@ -35,7 +35,8 @@ type
  psint16 = ^sint16;
  psint32 = ^sint32;
  
- datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,dk_record);
+ datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,
+               dk_record);
 
 const
  defaultstackdepht = 256;
@@ -234,19 +235,23 @@ type
 
  unitstatety = (us_interface,us_interfaceparsed);
  unitstatesty = set of unitstatety;
- 
+
+ punitinfoty = ^unitinfoty;
+ unitinfopoarty = array of punitinfoty;
  unitinfoty = record
   key: identty;
   filepath: filenamety;
   state: unitstatesty;
+  interfaceelement: elementoffsetty;
+  interfaceuses,implementationuses: unitinfopoarty;
  end;
- punitinfoty = ^unitinfoty;
+ ppunitinfoty = ^punitinfoty;
 
  parseinfoty = record
   unitinfo: punitinfoty;
   pb: pbranchty;
   pc: pcontextty;
-  stophandle: boolean;
+//  stophandle: boolean;
   stopparser: boolean;
   filename: filenamety;
   sourcestart: pchar; //todo: use file cache for include files

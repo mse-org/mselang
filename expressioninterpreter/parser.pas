@@ -34,7 +34,7 @@ const
 function parse(const input: string; const acommand: ttextstream;
                const aunit: punitinfoty; out opcode: opinfoarty): boolean;
                               //true if ok
-procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
+//procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 
 procedure init;
 procedure deinit;
@@ -245,7 +245,7 @@ var
 
 //   (t:''; x:false; k:false; c:nil; e:false; p:true;
 //    s:false; sb:false; sa:false);
-
+{
 procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
 begin
  with info^ do begin
@@ -255,7 +255,7 @@ begin
   pushcont(info);
  end;
 end;
-
+}
 function parse(const input: string; const acommand: ttextstream;
                const aunit: punitinfoty; out opcode: opinfoarty): boolean;
                               //true if ok
@@ -286,10 +286,11 @@ var
  startopcount: integer;
  
 label
- handlelab,stophandlelab,parseend;
+ handlelab{,stophandlelab},parseend;
 begin
 
- fillchar(info,sizeof(info),0); 
+ fillchar(info,sizeof(info),0);
+ linebreaks:= 0;
  info.unitinfo:= aunit;
  if info.unitinfo = nil then begin
   info.unitinfo:= newunit('program');
@@ -412,7 +413,7 @@ begin
          if not pushcont(@info) then begin 
                //can not continue
           if stopparser then begin
-           goto stophandlelab;
+           goto parseend;
           end;
           goto handlelab;
          end;
@@ -447,26 +448,23 @@ handlelab:
     end;
     if pc^.handle <> nil then begin
          //call context transition handler
-     stophandle:= false;
+//     stophandle:= false;
      pc^.handle(@info);
      if stopparser then begin
-{$ifdef mse_debugparser}
-      writeln('*** stopparser');
-{$endif}
       goto parseend;
-     end;
-     if {stophandle or}stopparser then begin
-{$ifdef mse_debugparser}
-      if stopparser then begin
-       writeln('*** stophandle');
-      end;
-{$endif}
-      goto stophandlelab
      end;
          //take context terminate actions
      if pc^.pop then begin
       popparent;
      end;
+(*
+     if stophandle then begin
+{$ifdef mse_debugparser}
+      writeln('*** stophandle');
+{$endif}
+      goto stophandlelab
+     end;
+*)
     end
     else begin
          //no handler, automatic stack decrement
@@ -482,7 +480,7 @@ handlelab:
     if pc^.cut then begin
      stacktop:= stackindex;
     end;
-    if stackindex < 0 then begin
+    if (stackindex < 0) or stopparser then begin
      goto parseend;
     end;
     pc:= contextstack[stackindex].context;
@@ -525,7 +523,6 @@ handlelab:
     end;
 //    kind:= ck_none;
    end;
-stophandlelab:
 {$ifdef mse_debugparser}
    outinfo(@info,'! after1');
 {$endif}

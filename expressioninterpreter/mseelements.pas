@@ -30,6 +30,7 @@ const
  maxidentvector = 200;
 type
  identty = integer;
+ pidentty = ^identty;
  identarty = integerarty;
  identvectorty = record
   high: integer;
@@ -76,6 +77,7 @@ type
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
    procedure addelement(const aident: identty; const aelement: elementoffsetty);
+   procedure setelementparent(const element: elementoffsetty);
   public
    constructor create;
    procedure clear; override;
@@ -118,10 +120,11 @@ type
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
    function decelementparent: elementoffsetty; //returns old offset
-   procedure setelementparent(const element: elementoffsetty);
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
    //function elementcount: integer;
+   property elementparent: elementoffsetty read felementparent 
+                                                 write setelementparent;
  end;
  
 procedure clear;
@@ -138,7 +141,7 @@ var
 
 implementation
 uses
- msearrayutils,sysutils;
+ msearrayutils,sysutils,typinfo;
  
 type
 
@@ -282,7 +285,8 @@ begin
    mstr1:= ' ';
   end;
   mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+' O:'+inttostr(int1)+' N:'+
-            inttostr(po1^.header.name)+' '+identnames[po1^.header.name];
+            inttostr(po1^.header.name)+' '+identnames[po1^.header.name] + ' '+
+            getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
   int4:= 0;
   int1:= int1 + po1^.header.size;
   with ar1[int2-1] do begin

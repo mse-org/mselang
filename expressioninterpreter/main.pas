@@ -190,7 +190,7 @@ end;
 procedure tmainfo.setpaexe(const sender: TObject);
 begin
  if grid.row > 0 then begin
-  elements.setelementparent((grid.row-1)*sizeof(elementinfoty));
+  elements.elementparent:= (grid.row-1)*sizeof(elementinfoty);
   dump;
  end;
 end;

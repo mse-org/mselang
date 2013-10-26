@@ -18,16 +18,16 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob;
+ mseparserglob,grammar;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            err_thenexpected,err_semicolonexpected,err_identifierexpected,
+            {err_thenexpected,}err_semicolonexpected,err_identifierexpected,
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
-            err_cantfindunit,err_implementationexpected,err_unitexpected,
-            err_illegalunitname,err_internalerror,err_abort);
+            err_cantfindunit,{err_implementationexpected,err_unitexpected,}
+            err_illegalunitname,err_internalerror,err_abort,err_tokenexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -40,7 +40,7 @@ const
   (level: erl_none; message: ''),
   (level: erl_error; message: 'Duplicate identifier "%s"'),
   (level: erl_error; message: 'Identifier not found "%s"'),
-  (level: erl_fatal; message: 'Syntax error, "then" expected'),
+//  (level: erl_fatal; message: 'Syntax error, "then" expected'),
   (level: erl_fatal; message: 'Syntax error, ";" expected'),
   (level: erl_fatal; message: 'Syntax error, "identifier" expected'),
   (level: erl_error; message: 'Boolean expression expected'),
@@ -53,31 +53,38 @@ const
   (level: erl_error; message: 
                     'Wrong type'),
   (level: erl_fatal; message: 'Can''t find unit "%s"'),
-  (level: erl_fatal; message: 'Syntax error, "implementation" expected'),
-  (level: erl_fatal; message: 'Syntax error, "unit" expected'),
+//  (level: erl_fatal; message: 'Syntax error, "implementation" expected'),
+//  (level: erl_fatal; message: 'Syntax error, "unit" expected'),
   (level: erl_fatal; message: 'Illegal unit name: "%s"'),
   (level: erl_fatal; message: 'Internal error %s'),
-  (level: erl_fatal; message: 'Abort')
+  (level: erl_fatal; message: 'Abort'),
+  (level: erl_fatal; message: 'Syntax error,"%s" expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
-                   const coloffset: integer = 0);
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
 procedure identerror(const info: pparseinfoty; const astackoffset: integer;
                                                         const aerror: errorty);
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: tokenty;
+                             const aerrorlevel: errorlevelty = erl_none);
+                             
 procedure internalerror(const info: pparseinfoty; const id: string);
 
 implementation
 uses
  msestrings,sysutils;
- 
+
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
-                   const coloffset: integer = 0);
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
 var
  po1: pchar;
  sourcepos: sourceinfoty;
  str1: string;
+ level1: errorlevelty;
 begin
  with info^ do begin
   if astackoffset < 0 then begin
@@ -97,12 +104,16 @@ begin
     po1:= sourcestart-1;
    end;
    with errortext[aerror] do begin
-    inc(errors[level]);
+    level1:= level;
+    if aerrorlevel <> erl_none then begin
+     level1:= aerrorlevel;
+    end;
+    inc(errors[level1]);
     str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
-        errorleveltext[level]+': '+format(message,values);
+        errorleveltext[level1]+': '+format(message,values);
     command.writeln(str1);
     writeln('<<<<<<< '+str1);
-    if level <= erl_fatal then begin
+    if level1 >= erl_fatal then begin
      stopparser:= true;
     end;
    end;
@@ -117,6 +128,12 @@ begin
   errormessage(info,astackoffset,aerror,
                      [lstringtostring(start.po,d.ident.len)],d.ident.len);
  end;
+end;
+
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: tokenty;
+                             const aerrorlevel: errorlevelty);
+begin
+ errormessage(info,-1,err_tokenexpected,[tokens[atoken]],0,aerrorlevel);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);

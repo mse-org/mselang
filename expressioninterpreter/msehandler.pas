@@ -56,6 +56,13 @@ procedure handlevar(const info: pparseinfoty);
 procedure handlevar0(const info: pparseinfoty);
 procedure handlevar3(const info: pparseinfoty);
 
+procedure handletype(const info: pparseinfoty);
+procedure handletype0(const info: pparseinfoty);
+procedure handletype3(const info: pparseinfoty);
+
+procedure handleclassdefstart(const info: pparseinfoty);
+procedure handleclassdeferror(const info: pparseinfoty);
+
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
@@ -253,10 +260,10 @@ var
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
- kw1: keywordty;
+ tk1: tokenty;
 begin
- for kw1:= keywordty(ord(kw_none)+1) to high(keywords) do begin
-  getident(keywords[kw1]);
+ for tk1:= tokenty(ord(tk_none)+1) to high(tokens) do begin
+  getident(tokens[tk1]);
  end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
@@ -334,8 +341,7 @@ var
  int1: integer;
  idents: identvectorty;
  po1: pcontextitemty;
-// po2: pelementinfoty;
- ele1: elementoffsetty;
+ ele1,ele2: elementoffsetty;
 begin
  result:= false;
  with info^ do begin
@@ -359,6 +365,32 @@ begin
    if (aelement <> nil) and ((akind = ek_none) or 
                              (aelement^.header.kind = akind)) then begin
     result:= true;
+   end
+   else begin //todo: use cache
+    ele2:= elements.elementparent;
+    for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
+     elements.elementparent:=
+       info^.unitinfo^.implementationuses[int1]^.interfaceelement;
+     aelement:= elements.findelementsupward(idents,ele1);
+     if (aelement <> nil) and ((akind = ek_none) or 
+                             (aelement^.header.kind = akind)) then begin
+      result:= true;
+      break;
+     end;
+    end;
+    if not result then begin
+     for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
+      elements.elementparent:=
+        info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
+      aelement:= elements.findelementsupward(idents,ele1);
+      if (aelement <> nil) and ((akind = ek_none) or 
+                              (aelement^.header.kind = akind)) then begin
+       result:= true;
+       break;
+      end;
+     end;
+    end;
+    elements.elementparent:= ele2;
    end;
   end;
  end;
@@ -1198,7 +1230,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'NOIMPLEMENTATIONERROR');
 {$endif}
- errormessage(info,-1,err_implementationexpected,[]);
+ tokenexpectederror(info,tk_implementation);
  with info^ do begin
   stackindex:= -1;
  end;
@@ -1217,7 +1249,7 @@ begin
  outhandle(info,'NOUNITERROR');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_unitexpected,[]);
+  tokenexpectederror(info,tk_unit);
  end;
 end;
 
@@ -1255,22 +1287,37 @@ end;
 
 procedure handleuses(const info: pparseinfoty);
 var
- int1: integer;
+ int1,int2: integer;
  offs1: elementoffsetty;
+ po1: ppunitinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'USES');
 {$endif}
  with info^ do begin
   offs1:= elements.decelementparent;
+  int2:= stacktop-stackindex-1;
+  with unitinfo^ do begin
+   if us_interfaceparsed in state then begin
+    setlength(implementationuses,int2);
+    po1:= pointer(implementationuses);
+   end
+   else begin
+    setlength(interfaceuses,int2);
+    po1:= pointer(interfaceuses);
+   end;
+  end;
+  inc(po1,int2);
   for int1:= stackindex+2 to stacktop do begin
 //   writeln(' ',contextstack[int1].d.ident.ident);
-   if not loadunitinterface(info,int1) then begin
+   dec(po1);
+   po1^:= loadunitinterface(info,int1);
+   if po1^ = nil then begin
     stopparser:= true;
     break;
    end;
   end;
-  elements.setelementparent(offs1);
+  elements.elementparent:= offs1;
   stacktop:= stackindex;
  end;
 end;
@@ -1403,17 +1450,81 @@ begin
     end
     else begin
      identerror(info,stacktop-1-stackindex,err_identifiernotfound);
-//     parsererror(info,'type not found. VAR3');
     end;
    end;
   end
   else begin
-   parsererror(info,'VAR3');
+   internalerror(info,'H131024B');
   end;
   stacktop:= stackindex;
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'VAR3');
+{$endif}
+end;
+
+procedure handletype(const info: pparseinfoty);
+begin
+ with info^,contextstack[stacktop] do begin
+  dec(stackindex);
+  stacktop:= stackindex;
+ end;
+{$ifdef mse_debugparser}
+ outhandle(info,'TYPE');
+{$endif}
+end;
+
+procedure handletype0(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'TYPE0');
+{$endif}
+end;
+
+procedure handletype3(const info: pparseinfoty);
+var
+ po1,po2: pelementinfoty;
+begin
+ with info^ do begin
+  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
+       (contextstack[stacktop-1].d.kind = ck_ident) and
+       (contextstack[stacktop-2].d.kind = ck_ident) then begin
+   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,ek_type,
+                                        elesize+sizeof(typedataty));
+   if po1 = nil then begin //duplicate
+    identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
+   end
+   else begin //todo: multi level type
+    if findkindelements(info,stacktop-1-stackindex,ek_type,po2) then begin
+     ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
+    end
+    else begin
+     identerror(info,stacktop-1-stackindex,err_identifiernotfound);
+    end;
+   end;
+  end
+  else begin
+   internalerror(info,'H131024A'); //todo: use errormessage
+  end;
+  stacktop:= stackindex;
+ end;
+{$ifdef mse_debugparser}
+ outhandle(info,'TYPE3');
+{$endif}
+end;
+
+procedure handleclassdeferror(const info: pparseinfoty);
+begin
+ tokenexpectederror(info,tk_end);
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSDEFERROR');
+{$endif}
+end;
+
+procedure handleclassdefstart(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSDEFSTART');
 {$endif}
 end;
 
@@ -1678,7 +1789,7 @@ end;
 
 procedure handlethen(const info: pparseinfoty);
 begin
- errormessage(info,-1,err_thenexpected,[]);
+ tokenexpectederror(info,tk_then);
  with info^ do begin
   dec(stackindex);
   stacktop:= stackindex;

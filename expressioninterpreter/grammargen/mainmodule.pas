@@ -112,7 +112,7 @@ begin
    dec(result);
   end;
   if (result = 0) and not emptytoken then begin
-   result:= keyword - branchrecty(r).keyword;
+   result:= branchrecty(r).keyword - keyword;
    if (result = 0) and (keyword = 0) then begin
     if length(tokens) = 0 then begin
      inc(result);
@@ -786,11 +786,11 @@ lineend+
   end;
   str5:= 
 'type'+lineend+
-' keywordty = (kw_none,'+lineend;
+' tokenty = (tk_none,'+lineend;
   str2:=
 '  ';
   for int2:= 0 to high(keywords) do begin
-   str3:= 'kw_'+keywords[int2]+',';
+   str3:= 'tk_'+keywords[int2]+',';
    if length(str2) + length(str3) > 80 then begin
     str5:= str5+str2+lineend;
     str2:= '  ';
@@ -802,7 +802,7 @@ lineend+
 ' );'+lineend+lineend;
   str5:= str5+
 'const'+lineend+
-' keywords: array[keywordty] of string = ('''','+lineend;
+' tokens: array[tokenty] of string = ('''','+lineend;
   str2:= 
 '  ';
   for int2:= 0 to high(keywords) do begin
