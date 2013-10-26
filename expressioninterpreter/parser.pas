@@ -25,8 +25,6 @@ uses
 //this is a proof of concept only
 //
 
-//type
-
 const
  keywordchars = ['a'..'z','A'..'Z'];
  nokeywordendchars = keywordchars+['0'..'9','_'];
@@ -179,8 +177,10 @@ begin
  bo1:= false;
  with info^ do begin
   pc:= pb^.dest;
-  contextstack[stackindex].returncontext:= pb^.push;
+  if not (bf_changeparentcontext in pb^.flags) then begin
+   contextstack[stackindex].returncontext:= pb^.stack;
          //replace return context
+  end;
   while pc^.branch = nil do begin //handle transition chain
    if pc^.next = nil then begin
     result:= false;  //open transition chain
@@ -191,6 +191,12 @@ begin
     result:= false;
     exit;
    end; 
+   if pc^.nexteat then begin
+    contextstack[stackindex].start:= source;
+   end;
+   if pc^.cut then begin
+    stacktop:= stackindex;
+   end;
    pc:= pc^.next;
   end;
   int1:= contextstack[stackindex].parent;
@@ -208,6 +214,10 @@ begin
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
    end;
+  end;
+  if bf_changeparentcontext in pb^.flags then begin
+   contextstack[int1].context:= pb^.stack;
+         //replace return context
   end;
   with contextstack[stackindex],d do begin
    if bf_push in pb^.flags then begin
@@ -233,16 +243,16 @@ begin
 {$endif}
  end;
 end;
-
+{
 var
  pushcontextbranch: branchty =
-   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; push: nil; keys: (
+   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     ));
-
+}
 //   (t:''; x:false; k:false; c:nil; e:false; p:true;
 //    s:false; sb:false; sa:false);
 {

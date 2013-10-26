@@ -43,7 +43,8 @@ ${macroname}
  * -> stackindex -> stacktop
  > -> continue with calling context
  <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
-              [[<context>][-] [[^][*] | [*][^]] [!] ] [,<pushed context>]
+              [[<context>][-] [[^][*] | [*][^]] [!] ] 
+              [, <pushed context> | <parentcontext>^]
  - -> eat token
  <context>^ -> set parent
  <context>* -> push context
@@ -71,7 +72,7 @@ type
 
 const
  b: array[0..0] of branchty = (
-   (flags: []; dest: nil; push: nil; keys: (
+   (flags: []; dest: nil; stack: nil; keys: (
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -85,7 +86,7 @@ type
   tokens: stringarty;
   keyword: keywordty;
   dest: string;
-  push: string;
+  stack: string;
   emptytoken: boolean;
  end;
  
@@ -307,8 +308,11 @@ var
  end;
 
 const
+ contextformat =
+ 'Format of contextline is "context,next[-],handler[^|!][>]"';
  branchformat = 'Format of branch is'+lineend+
-'"''string''[.],{''string''[.],}context[-][[^][*] | [*][^]][,<pushed context>]"';
+'"''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]'+lineend+
+          '[, <pushed context> | <parentcontext>*]"';
  defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
  ar1: stringarty;
@@ -468,7 +472,7 @@ begin
            context:= str1;
            contextline:= splitstring(context,',',true);
            if length(contextline) <> 3 then begin
-            error('Format of contextline is "context,next[-],handler[^|!][>]"');
+            error(contextformat);
             exit;
            end;
            branches:= nil;
@@ -487,7 +491,7 @@ begin
            while po2 > po1 do begin
             if po2^ = ',' then begin
              with branches[high(branches)] do begin
-              push:= dest;
+              stack:= dest;
               setstring(dest,po2+1,int1-(po2-po1)-3);
               dest:= trim(dest);
               int1:= (po2-po1)+2;
@@ -709,6 +713,10 @@ lineend+
        if checklastchar(dest,'-') then begin
         include(branflags1,bf_eat);
        end;
+       if (stack <> '') and (stack[length(stack)] = '^') then begin
+        setlength(stack,length(stack)-1);
+        include(branflags1,bf_changeparentcontext);
+       end;
        str1:= str1+
 '   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
                                  integer(branflags1),true)+'; dest: ';
@@ -718,12 +726,12 @@ lineend+
        else begin
         str1:= str1+'@'+dest+'co';
        end;
-       str1:= str1+'; push: ';
-       if push = '' then begin
+       str1:= str1+'; stack: ';
+       if stack = '' then begin
         str1:= str1+'nil';
        end
        else begin
-        str1:= str1+'@'+push+'co';
+        str1:= str1+'@'+stack+'co';
        end;
        str1:= str1+'; ';
        if keyword <> 0 then begin
@@ -779,7 +787,7 @@ lineend+
       end;
      end;
      str1:= str1+
-'   (flags: []; dest: nil; push: nil; keyword: 0)'+lineend+
+'   (flags: []; dest: nil; stack: nil; keyword: 0)'+lineend+
 '   );'+lineend;
     end;
    end;

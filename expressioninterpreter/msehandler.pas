@@ -19,7 +19,6 @@ unit msehandler;
 interface
 uses
  mseparserglob,typinfo,msetypes;
-
 procedure init;
 procedure deinit;
 procedure initparser(const info: pparseinfoty);
@@ -62,6 +61,7 @@ procedure handletype3(const info: pparseinfoty);
 
 procedure handleclassdefstart(const info: pparseinfoty);
 procedure handleclassdeferror(const info: pparseinfoty);
+procedure handleclassdefreturn(const info: pparseinfoty);
 
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
@@ -1486,25 +1486,25 @@ var
  po1,po2: pelementinfoty;
 begin
  with info^ do begin
-  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
-       (contextstack[stacktop-1].d.kind = ck_ident) and
-       (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,ek_type,
+  if (stacktop-stackindex = 2) and 
+       (contextstack[stacktop].d.kind = ck_ident) and
+       (contextstack[stacktop-1].d.kind = ck_ident) then begin
+   po1:= elements.addelement(contextstack[stacktop-1].d.ident.ident,ek_type,
                                         elesize+sizeof(typedataty));
    if po1 = nil then begin //duplicate
-    identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
+    identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-1-stackindex,ek_type,po2) then begin
+    if findkindelements(info,stacktop-stackindex,ek_type,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
     end
     else begin
-     identerror(info,stacktop-1-stackindex,err_identifiernotfound);
+     identerror(info,stacktop-stackindex,err_identifiernotfound);
     end;
    end;
   end
   else begin
-   internalerror(info,'H131024A'); //todo: use errormessage
+   internalerror(info,'H131024A');
   end;
   stacktop:= stackindex;
  end;
@@ -1525,6 +1525,13 @@ procedure handleclassdefstart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFSTART');
+{$endif}
+end;
+
+procedure handleclassdefreturn(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSDEFRETURN');
 {$endif}
 end;
 

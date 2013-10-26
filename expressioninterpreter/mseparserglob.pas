@@ -57,7 +57,8 @@ type
  
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_eat,bf_push,bf_setpc,
-             bf_setparentbeforepush,bf_setparentafterpush);
+             bf_setparentbeforepush,bf_setparentafterpush,
+             bf_changeparentcontext);
  branchflagsty = set of branchflagty;
  keywordty = identty;
  charsetty = set of char;
@@ -79,7 +80,7 @@ type
  branchty = record
   flags: branchflagsty;
   dest: pcontextty;
-  push: pcontextty; //nil = current
+  stack: pcontextty; //nil = current
   case integer of
    0: (keyword: keywordty);
    1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);

@@ -213,18 +213,21 @@ type1,,+
  '=',type2-
 type2,type3,
  ${whitespace}
- 'class'.,classdef-
+ 'class'.,classdef-,classdefreturn
  @identstart,identpath^*
-type3,type0-,handletype3
+type3,type4-,handletype3
+type4,type0-,
  ${whitespace}
- ';',statementend-*
+ ';',-*
+ '',semicolonexpected
 #
 classdef,classdef0,handleclassdefstart
 classdef0,classdeferror,
  ${whitespace}
- 'end'.,classdef1-
-classdef1,,^*
+ 'end'.,classdefreturn-
 classdeferror,,handleclassdeferror^
+classdefreturn,type4-,handleclassdefreturn*
+#
 statementend,,handlestatementend!
 exp,exp1,
  '',simpexp*
