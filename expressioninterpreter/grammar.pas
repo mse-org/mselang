@@ -1545,7 +1545,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush]; dest: @identco; push: nil; keys: (
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush]; dest: @identpathco; push: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -1688,7 +1688,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush]; dest: @identco; push: nil; keys: (
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush]; dest: @identpathco; push: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),

@@ -198,7 +198,7 @@ var1,,+
  ':',var2-
 var2,var3,
  ${whitespace}
- @identstart,ident^*
+ @identstart,identpath^*
 var3,var0-,handlevar3
  ${whitespace}
  ';',statementend-*
@@ -214,7 +214,7 @@ type1,,+
 type2,type3,
  ${whitespace}
  'class'.,classdef-
- @identstart,ident^*
+ @identstart,identpath^*
 type3,type0-,handletype3
  ${whitespace}
  ';',statementend-*
