@@ -42,6 +42,7 @@ const
  defaultstackdepht = 256;
  branchkeymaxcount = 4;
  dummyaddress = 0;
+ idstart = $12345678;
 
 type 
  pparseinfoty = ^parseinfoty;
@@ -243,7 +244,7 @@ type
   key: identty;
   filepath: filenamety;
   state: unitstatesty;
-  interfaceelement: elementoffsetty;
+  interfaceelement,classeselement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
  end;
  ppunitinfoty = ^punitinfoty;

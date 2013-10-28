@@ -65,12 +65,13 @@ var
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils,msemacros,mseparserglob,typinfo;
+ mseformatstr,msearrayutils,msemacros,mseparserglob,typinfo,mselfsr;
  
 type
  paramty = (pa_grammarfile,pa_pasfile);
 
 const
+ keywordoffset = 1;
  b: array[0..0] of branchty = (
    (flags: []; dest: nil; stack: nil; keys: (
     (kind: bkk_none; chars: []),
@@ -179,6 +180,16 @@ begin
  result:= result + ']';
 end;
 
+var
+ id: uint32;
+ 
+function idstring(const aid: string): string;
+begin
+ result:= 
+' '+aid+' = $'+hextostr(id,8)+';'+lineend;
+ lfsr321(id);
+end;
+
 procedure creategrammar(const grammar,outfile: filenamety);
 type
  contextinfoty = record
@@ -207,6 +218,7 @@ var
  tokendefs: tokendefarty;
  intokendef: boolean;
  keywords: array of string;
+ keywordids: array of keywordty;
 
  procedure error(const text: string);
  begin
@@ -216,8 +228,6 @@ var
  end;
 
  function getkeyword(const atext: string; out keyword: keywordty): boolean;
- const
-  keywordoffset = 1;
  var
   int1: integer;
   mstr1: msestring;
@@ -239,19 +249,21 @@ var
   end;
   for int1:= 0 to high(keywords) do begin
    if keywords[int1] = str1 then begin
-    keyword:= int1+keywordoffset;
-//    atext:= stringtopascalstring(msechar(int1+keywordoffset));
+    keyword:= keywordids[int1];
     exit;
    end;
   end;
   setlength(keywords,high(keywords)+2);
+  setlength(keywordids,length(keywords));
   keywords[high(keywords)]:= str1;
+  keywordids[high(keywordids)]:= id;
   if high(keywords) + keywordoffset > 255 then begin
    error('Too many keywords.');
    result:= false;
    exit;
   end;
-  keyword:= high(keywords)+keywordoffset;
+  keyword:= id;
+  lfsr321(id);
 //  atext:= stringtopascalstring(msechar(high(keywords)+keywordoffset))+
 //   '{'+atext+'}';
  end;
@@ -342,6 +354,10 @@ begin
   context:= '';
   intokendef:= false;
   tokendefs:= nil;
+  id:= idstart; //invalid
+  for int1:= 0 to keywordoffset do begin
+   lfsr321(id);
+  end;
   repeat
    grammarstream.readln(str1);
    inc(line);
@@ -611,7 +627,7 @@ begin
 '{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
 'interface'+lineend+
 'uses'+lineend+
-' mseparserglob;'+lineend+
+' mseparserglob,mseelements;'+lineend+
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;
@@ -737,7 +753,7 @@ lineend+
        if keyword <> 0 then begin
         include(branflags1,bf_keyword);
         str1:= str1+lineend+
-'     keyword: '+inttostr(keyword)+'{'+tokens[0]+'}),'+lineend;
+'     keyword: $'+hextostr(keyword,8)+'{'+tokens[0]+'}),'+lineend;
        end
        else begin
         if (tokens <> nil) and (length(tokens[0]) > 1) then begin
@@ -792,25 +808,19 @@ lineend+
     end;
    end;
   end;
+  id:= idstart;
+  lfsr321(id);
   str5:= 
-'type'+lineend+
-' tokenty = (tk_none,'+lineend;
-  str2:=
-'  ';
+'const'+lineend+
+' tks_none = 0;'+lineend+
+  idstring('tks_classes');
   for int2:= 0 to high(keywords) do begin
-   str3:= 'tk_'+keywords[int2]+',';
-   if length(str2) + length(str3) > 80 then begin
-    str5:= str5+str2+lineend;
-    str2:= '  ';
-   end;
-   str2:= str2+str3;
+   str5:= str5+ idstring('tk_'+keywords[int2]);
   end;
-  setlength(str2,length(str2)-1); //remove last comma
-  str5:= str5+str2+lineend+
-' );'+lineend+lineend;
   str5:= str5+
 'const'+lineend+
-' tokens: array[tokenty] of string = ('''','+lineend;
+' tokens: array[0..'+inttostr(high(keywords)+2)+
+                      '] of string = ('''',''.classes'','+lineend;
   str2:= 
 '  ';
   for int2:= 0 to high(keywords) do begin
@@ -824,6 +834,26 @@ lineend+
   end;
   setlength(str2,length(str2)-1);
   str5:= str5 + str2+');'+lineend+lineend;
+
+  id:= idstart;
+  lfsr321(id);
+  str5:= str5+
+' tokenids: array[0..'+inttostr(high(keywords)+2)+'] of identty = ('+lineend;
+  str2:=
+'  $00000000,';
+  for int2:= 1 to high(keywords)+2 do begin
+   str3:= '$'+hextostr(id,8)+',';
+   lfsr321(id);
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  setlength(str2,length(str2)-1);
+  str5:= str5 + str2+');'+lineend+lineend;
+
   str1:= copy(str1,1,keywordsstart)+str5+copy(str1,keywordsstart+1,bigint);
 
   str1:= str1+

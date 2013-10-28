@@ -61,6 +61,7 @@ begin
  unithandler.deinit;
  mseelements.clear;
 end;
+
 {$ifdef mse_debugparser}
 procedure outinfo(const info: pparseinfoty; const text: string);
 var
@@ -358,7 +359,7 @@ begin
          keywordindex:= getident(source.po,po1);
         end
         else begin
-         keywordindex:= -1;
+         keywordindex:= idstart; //invalid
         end;
         keywordend:= po1;
        end;

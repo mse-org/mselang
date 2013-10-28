@@ -152,7 +152,7 @@ type
 
  vardataty = record
   address: ptruint;
-  typerel: ptypedataty; //elementdata relative
+  typerel: elementoffsetty; //elementdata relative
   flags: varflagsty;
  end;
  pvardataty = ^vardataty;
@@ -245,7 +245,7 @@ begin
 end;
 
 var
- sysdatatypes: array[systypety] of ptypedataty;
+ sysdatatypes: array[systypety] of elementoffsetty;
  
 procedure initparser(const info: pparseinfoty);
 begin
@@ -260,9 +260,9 @@ var
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
- tk1: tokenty;
+ tk1: integer;
 begin
- for tk1:= tokenty(ord(tk_none)+1) to high(tokens) do begin
+ for tk1:= 1 to high(tokens) do begin
   getident(tokens[tk1]);
  end;
  for ty1:= low(systypety) to high(systypety) do begin
@@ -1522,7 +1522,19 @@ begin
 end;
 
 procedure handleclassdefstart(const info: pparseinfoty);
+var
+ po1: pelementinfoty;
 begin
+ with info^ do begin
+  po1:= elements.addelement(contextstack[stacktop].d.ident.ident,ek_type,
+                                        elesize+sizeof(typedataty));
+  if po1 = nil then begin //duplicate
+   identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+  end
+  else begin
+   
+  end;
+ end;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFSTART');
 {$endif}
@@ -1713,7 +1725,7 @@ end;
 procedure handlecheckproc(const info: pparseinfoty);
 var
  po2: pfuncdataty;
- po3: ppvardataty;
+ po3: pelementoffsetty;
  po4: pvardataty;
  po1: psysfuncdataty;
  int1,int2: integer;
@@ -1872,7 +1884,7 @@ var
  po1: pfuncdataty;
  po2: pvardataty;
  po3: ptypedataty;
- po4: ppointeraty;
+ po4: pelementoffsetaty;
  int1,int2: integer;
  paramco: integer;
  err1: boolean;

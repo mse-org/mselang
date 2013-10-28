@@ -29,7 +29,7 @@ uses
 const
  maxidentvector = 200;
 type
- identty = integer;
+ identty = uint32;
  pidentty = ^identty;
  identarty = integerarty;
  identvectorty = record
@@ -37,8 +37,12 @@ type
   d: array[0..maxidentvector] of identty;
  end;
  elementoffsetty = integer;
+ pelementoffsetty = ^elementoffsetty;
+ elementoffsetaty = array[0..0] of elementoffsetty;
+ pelementoffsetaty = ^elementoffsetaty;
+ 
  elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,
-                  ek_sysfunc,ek_func,
+                  ek_sysfunc,ek_func,ek_classes,
                   ek_unit,ek_implementation);
  
  elementheaderty = record
@@ -88,8 +92,8 @@ type
    function findupward(const aidents: identvectorty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
 
-   function eledatarel(const adata: pointer): pointer; inline;
-   function eledataabs(const adata: pointer): pointer; inline;
+   function eledatarel(const adata: pointer): elementoffsetty; inline;
+   function eledataabs(const adata: elementoffsetty): pointer; inline;
 
    function dumpelements: msestringarty;
    function dumppath(const aelement: pelementinfoty): msestring;
@@ -141,7 +145,7 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo;
+ msearrayutils,sysutils,typinfo,mselfsr,mseparserglob;
  
 type
 
@@ -191,14 +195,14 @@ var
  identnames: stringarty;
 {$endif}
 
-function telementhashdatalist.eledatarel(const adata: pointer): pointer;
+function telementhashdatalist.eledatarel(const adata: pointer): elementoffsetty;
 begin
- result:= pointer(adata-pointer(felementdata));
+ result:= adata-pointer(felementdata);
 end;
 
-function telementhashdatalist.eledataabs(const adata: pointer): pointer;
+function telementhashdatalist.eledataabs(const adata: elementoffsetty): pointer;
 begin
- result:= pointer(ptruint(adata)+pointer(felementdata));
+ result:= pointer(adata+pointer(felementdata));
 end;
 
 procedure clear;
@@ -207,14 +211,16 @@ begin
  stringdata:= '';
  stringindex:= 0;
  stringlen:= 0;
- stringident:= 0;
 
  elements.clear;
 {$ifdef mse_debug_parser}
  identnames:= nil;
 {$endif}
  elements.pushelement(getident(''),ek_none,elesize); //root
+ stringident:= idstart;
+ lfsr321(stringident);
 end;
+
 type
  dumpinfoty = record
   text: msestring;
@@ -369,8 +375,10 @@ begin
  end;
 end;
 
-function telementhashdatalist.addelement(const aname: identty; const akind: elementkindty;
-           const asize: integer): pelementinfoty; //nil if duplicate
+function telementhashdatalist.addelement(const aname: identty;
+              const akind: elementkindty;
+              const asize: integer): pelementinfoty;   
+                                                   //nil if duplicate
 var
  ele1: elementoffsetty;
 begin
@@ -396,7 +404,8 @@ begin
  end;
 end;
 
-function telementhashdatalist.addelement(const aname: identty;  const akind: elementkindty;
+function telementhashdatalist.addelement(const aname: identty;
+           const akind: elementkindty;
            const asize: integer; out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
@@ -551,7 +560,7 @@ begin
  end;
  move(astr.po^,(pchar(pointer(stringdata))+int1)^,int2);
  result:= int1;
- inc(stringident); 
+ lfsr321(stringident); 
 end;
  
 function getident(const aname: lstringty): identty;
@@ -629,7 +638,7 @@ end;
 
 //todo: use scrambled ident for no hash in elementlist?
 
-function tindexidenthashdatalist.getident(aname: lstringty): integer;
+function tindexidenthashdatalist.getident(aname: lstringty): identty;
 var
  po1: pindexidenthashdataty;
  ha1: hashvaluety;

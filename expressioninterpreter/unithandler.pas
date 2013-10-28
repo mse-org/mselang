@@ -59,6 +59,10 @@ type
  unitdataty = record
  end;
  punitdataty = ^unitdataty;
+
+ classesdataty = record
+ end;
+ pclassesdataty = ^classesdataty;
  
  implementationdataty = record
  end;
@@ -68,6 +72,7 @@ procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 var
  id1: identty;
  po1: punitdataty;
+ po2: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'SETUNITNAME');
@@ -82,7 +87,12 @@ begin
                                  elesize+sizeof(unitdataty),po1) then begin
     internalerror(info,'U131018A');
    end;
-   unitinfo^.interfaceelement:= elements.elementparent;
+   with unitinfo^ do begin
+    interfaceelement:= elements.elementparent;
+    po2:= elements.addelement(tks_classes,ek_classes,
+                                              elesize+sizeof(classesdataty));
+    classeselement:= elements.eledatarel(po2);
+   end;
   end;
   stacktop:= stackindex;
  end;

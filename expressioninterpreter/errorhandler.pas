@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob,grammar;
+ mseparserglob,grammar,mseelements;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
@@ -66,15 +66,16 @@ procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
 procedure identerror(const info: pparseinfoty; const astackoffset: integer;
-                                                        const aerror: errorty);
-procedure tokenexpectederror(const info: pparseinfoty; const atoken: tokenty;
+                               const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
 
 implementation
 uses
- msestrings,sysutils;
+ msestrings,sysutils,mseformatstr;
 
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
@@ -122,18 +123,28 @@ begin
 end;
 
 procedure identerror(const info: pparseinfoty; const astackoffset: integer;
-                                                        const aerror: errorty);
+            const aerror: errorty; const aerrorlevel: errorlevelty = erl_none);
 begin
  with info^,contextstack[stackindex+astackoffset] do begin
   errormessage(info,astackoffset,aerror,
-                     [lstringtostring(start.po,d.ident.len)],d.ident.len);
+          [lstringtostring(start.po,d.ident.len)],d.ident.len,aerrorlevel);
  end;
 end;
 
-procedure tokenexpectederror(const info: pparseinfoty; const atoken: tokenty;
-                             const aerrorlevel: errorlevelty);
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
+                                               const aerrorlevel: errorlevelty);
+var
+ int1: integer;
+ str1: string;
 begin
- errormessage(info,-1,err_tokenexpected,[tokens[atoken]],0,aerrorlevel);
+ str1:= '$'+hextostr(atoken,8);
+ for int1:= 0 to high(tokenids) do begin
+  if tokenids[int1] = atoken then begin
+   str1:= tokens[int1];
+   break;
+  end;
+ end;
+ errormessage(info,-1,err_tokenexpected,[str1],0,aerrorlevel);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);
