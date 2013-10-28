@@ -20,6 +20,20 @@ interface
 uses
  msestrings,mseparserglob,mseelements;
 
+type
+ unitdataty = record
+ end;
+ punitdataty = ^unitdataty;
+
+ classesdataty = record
+  scopebefore: elementoffsetty;
+ end;
+ pclassesdataty = ^classesdataty;
+ 
+ implementationdataty = record
+ end;
+ pimplementationdataty = ^implementationdataty;
+
 function newunit(const aname: string): punitinfoty; 
 function loadunitinterface(const info: pparseinfoty;
                                 const aindex: integer): punitinfoty;
@@ -54,19 +68,6 @@ type
  
 var
  unitlist: tunitlist;
-
-type
- unitdataty = record
- end;
- punitdataty = ^unitdataty;
-
- classesdataty = record
- end;
- pclassesdataty = ^classesdataty;
- 
- implementationdataty = record
- end;
- pimplementationdataty = ^implementationdataty;
  
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 var

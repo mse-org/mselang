@@ -1521,6 +1521,25 @@ begin
 {$endif}
 end;
 
+procedure classesscopeset(const info: pparseinfoty);
+var
+ po2: pclassesdataty;
+begin
+ po2:= @pelementinfoty(
+          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
+ po2^.scopebefore:= elements.elementparent;
+ elements.elementparent:= info^.unitinfo^.classeselement;
+end;
+
+procedure classesscopereset(const info: pparseinfoty);
+var
+ po2: pclassesdataty;
+begin
+ po2:= @pelementinfoty(
+          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
+ elements.elementparent:= po2^.scopebefore;
+end;
+
 procedure handleclassdefstart(const info: pparseinfoty);
 var
  po1: pelementinfoty;
@@ -1532,7 +1551,7 @@ begin
    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
-   
+   classesscopeset(info);
   end;
  end;
 {$ifdef mse_debugparser}
@@ -1541,7 +1560,10 @@ begin
 end;
 
 procedure handleclassdefreturn(const info: pparseinfoty);
+var
+ po2: pclassesdataty;
 begin
+ classesscopereset(info);
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFRETURN');
 {$endif}
