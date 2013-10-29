@@ -84,13 +84,13 @@ begin
    identerror(info,1,err_illegalunitname);
   end
   else begin
-   if not elements.pushelement(id1,ek_unit,
+   if not elements.pushelement(id1,vis_max,ek_unit,
                                  elesize+sizeof(unitdataty),po1) then begin
     internalerror(info,'U131018A');
    end;
    with unitinfo^ do begin
     interfaceelement:= elements.elementparent;
-    po2:= elements.addelement(tks_classes,ek_classes,
+    po2:= elements.addelement(tks_classes,vis_max,ek_classes,
                                               elesize+sizeof(classesdataty));
     classeselement:= elements.eledatarel(po2);
    end;
@@ -108,8 +108,8 @@ begin
    stopparser:= true; //stop parsing;
   end
   else begin
-   if not elements.pushelement(ord(tk_implementation),ek_implementation,
-                        elesize+sizeof(implementationdataty),po1) then begin
+   if not elements.pushelement(ord(tk_implementation),vis_max,ek_implementation,
+                elesize+sizeof(implementationdataty),po1) then begin
     
    end;
   end;

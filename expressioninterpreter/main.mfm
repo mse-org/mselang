@@ -104,7 +104,6 @@ object mainfo: tmainfo
     bounds_cy = 37
     anchors = [an_left, an_bottom]
     optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
-    onsetvalue = pushelementexe
     reffontheight = 14
   end
   object added: tstringedit
@@ -123,7 +122,6 @@ object mainfo: tmainfo
     bounds_cy = 37
     anchors = [an_left, an_bottom]
     optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
-    onsetvalue = addelementexe
     reffontheight = 14
   end
   object addi: tbooleandisp
@@ -177,7 +175,6 @@ object mainfo: tmainfo
     bounds_cy = 37
     anchors = [an_left, an_bottom]
     optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
-    onsetvalue = findelementexe
     reffontheight = 14
   end
   object finddi: tstringdisp

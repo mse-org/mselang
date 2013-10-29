@@ -38,7 +38,10 @@ type
  datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,
                dk_record);
 
+ vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 const
+ vis_max = vis_0;
+ vis_min = vis_9;
  defaultstackdepht = 256;
  branchkeymaxcount = 4;
  dummyaddress = 0;
@@ -268,7 +271,7 @@ type
   interfaceuses,implementationuses: unitinfopoarty;
  end;
  ppunitinfoty = ^punitinfoty;
-
+ 
  parseinfoty = record
   unitinfo: punitinfoty;
   pb: pbranchty;
@@ -295,10 +298,7 @@ type
   locdatapo: ptruint;
   frameoffset: ptruint;
   currentclass: elementoffsetty;
-  currentclassprivate: elementoffsetty;
-  currentclassprotected: elementoffsetty;
-  currentclasspublic: elementoffsetty;
-  currentclasspublished: elementoffsetty;
+  currentclassvislevel: vislevelty
  end;
 
 const

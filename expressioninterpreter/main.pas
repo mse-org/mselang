@@ -57,14 +57,8 @@ type
    procedure parseexe(const sender: TObject);
    procedure findsetexe(const sender: TObject; var avalue: msestring;
                    var accept: Boolean);
-   procedure pushelementexe(const sender: TObject; var avalue: msestring;
-                   var accept: Boolean);
-   procedure addelementexe(const sender: TObject; var avalue: msestring;
-                   var accept: Boolean);
    procedure clearexe(const sender: TObject);
    procedure popexe(const sender: TObject);
-   procedure findelementexe(const sender: TObject; var avalue: msestring;
-                   var accept: Boolean);
    procedure setpaexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -109,34 +103,6 @@ begin
  intdi.value:= getident(lstr1);
 end;
 
-procedure tmainfo.pushelementexe(const sender: TObject; var avalue: msestring;
-               var accept: Boolean);
-var
- lstr1: lstringty;
- str1: string;
-begin
- str1:= avalue;
- lstr1:= stringtolstring(str1);
- intdi.value:= getident(lstr1);
- addi.value:= elements.pushelement(intdi.value,ek_none,0) <> nil;
- dump;
-end;
-
-procedure tmainfo.addelementexe(const sender: TObject; var avalue: msestring;
-               var accept: Boolean);
-var
- lstr1: lstringty;
- str1: string;
- po1: pelementinfoty;
-begin
- str1:= avalue;
- lstr1:= stringtolstring(str1);
- intdi.value:= getident(lstr1);
- po1:= elements.addelement(intdi.value,ek_none,0); 
- addi.value:= po1 <> nil;
- dump;
-end;
-
 procedure tmainfo.dump;
 begin
  grid[0].datalist.asarray:= elements.dumpelements;
@@ -154,37 +120,6 @@ procedure tmainfo.popexe(const sender: TObject);
 begin
  addi.value:= elements.popelement <> nil;
  dump;
-end;
-
-procedure tmainfo.findelementexe(const sender: TObject; var avalue: msestring;
-               var accept: Boolean);
-var
- po1: pelementinfoty;
- ar1: stringarty;
- ar2: integerarty;
- mstr1: msestring;
- int1: integer;
-begin
- ar1:= splitstring(string(avalue),'.');
- if high(ar1) > 0 then begin
-  setlength(ar2,length(ar1));
-  for int1:= 0 to high(ar1) do begin
-   mstr1:= ar1[int1];
-   findsetexe(sender,mstr1,accept);
-   ar2[int1]:= intdi.value;
-  end;
-  po1:= elements.findelementsupward(ar2,felement);
- end
- else begin
-  findsetexe(sender,avalue,accept);
-  po1:= elements.findelementupward(intdi.value,felement);
- end;
- if po1 = nil then begin
-  finddi.value:= '';
- end
- else begin
-  finddi.value:= elements.dumppath(po1); 
- end;
 end;
 
 procedure tmainfo.setpaexe(const sender: TObject);

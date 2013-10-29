@@ -48,6 +48,7 @@ type
   parent: elementoffsetty; //offset in data array
   parentlevel: integer;
   kind: elementkindty;
+  visibility: vislevelty;
  end;
  
  elementinfoty = record
@@ -71,16 +72,20 @@ type
    fparentlevel: integer;
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
-   procedure addelement(const aident: identty; const aelement: elementoffsetty);
+   procedure addelement(const aident: identty; const avislevel: vislevelty;
+                                              const aelement: elementoffsetty);
    procedure setelementparent(const element: elementoffsetty);
   public
    constructor create;
    procedure clear; override;
-   function findcurrent(const aident: identty): elementoffsetty;
+   function findcurrent(const aident: identty;
+                              const avislevel: vislevelty): elementoffsetty;
                   //searches in current scope, -1 if not found
-   function findupward(const aident: identty): elementoffsetty; overload;
+   function findupward(const aident: identty;
+                  const avislevel: vislevelty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
-   function findupward(const aidents: identvectorty): elementoffsetty; overload;
+   function findupward(const aidents: identvectorty;
+                  const avislevel: vislevelty): elementoffsetty; overload;
                   //searches in current scope and above, -1 if not found
 
    function eledatarel(const adata: pointer): elementoffsetty; inline;
@@ -89,29 +94,38 @@ type
    function dumpelements: msestringarty;
    function dumppath(const aelement: pelementinfoty): msestring;
 
-   function pushelement(const aname: identty;  const akind: elementkindty;
+   function pushelement(const aname: identty; const avislevel: vislevelty;
+                  const akind: elementkindty;
                   const asize: integer): pelementinfoty; //nil if duplicate
-   function pushelement(const aname: identty;  const akind: elementkindty;
-              const asize: integer; out aelementdata: pointer): boolean;
+   function pushelement(const aname: identty; const avislevel: vislevelty;
+                  const akind: elementkindty;                  
+                  const asize: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
-   function addelement(const aname: identty;  const akind: elementkindty;
+   function addelement(const aname: identty; const avislevel: vislevelty;
+              const akind: elementkindty;              
               const asize: integer): pelementinfoty;   //nil if duplicate
-   function addelement(const aname: identty;  const akind: elementkindty;
+   function addelement(const aname: identty; const avislevel: vislevelty;
+              const akind: elementkindty;
               const asize: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
    
-   function findelement(const aname: identty): pelementinfoty;
+   function findelement(const aname: identty;
+                          const avislevel: vislevelty): pelementinfoty;
                                                //nil if not found
-   function findelementupward(const aname: identty): pelementinfoty; overload;
+   function findelementupward(const aname: identty;
+                          const avislevel: vislevelty): pelementinfoty; overload;
                                                        //nil if not found
    function findelementupward(const aname: identty;
+                          const avislevel: vislevelty;
                         out element: elementoffsetty): pelementinfoty; overload;
                                                        //nil if not found
    function findelementsupward(const anames: identvectorty;
+                          const avislevel: vislevelty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
    function findelementsupward(const anames: identarty;
+                          const avislevel: vislevelty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
    function decelementparent: elementoffsetty; //returns old offset
@@ -217,7 +231,7 @@ var
  tk1: integer;
 begin
  clear;
- elements.pushelement(getident(''),ek_none,elesize); //root
+ elements.pushelement(getident(''),vis_max,ek_none,elesize); //root
  stringident:= idstart; //invalid
  lfsr321(stringident);
  for tk1:= 1 to high(tokens) do begin
@@ -337,13 +351,14 @@ begin
  end;
 end;
 
-function telementhashdatalist.pushelement(const aname: identty; const akind: elementkindty;
+function telementhashdatalist.pushelement(const aname: identty;
+             const avislevel: vislevelty; const akind: elementkindty;
                                         const asize: integer): pelementinfoty;
 var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findcurrent(aname);
+ ele1:= {elementlist.}findcurrent(aname,avislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -363,16 +378,16 @@ begin
   felementparent:= ele1;
   inc(fparentlevel);
   felementpath:= felementpath+aname;
-  addelement(felementpath,ele1);
+  addelement(felementpath,avislevel,ele1);
  end;
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-           const akind: elementkindty;
+           const avislevel: vislevelty; const akind: elementkindty;
            const asize: integer; out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
- aelementdata:= pushelement(aname,akind,asize);
+ aelementdata:= pushelement(aname,avislevel,akind,asize);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
@@ -380,14 +395,14 @@ begin
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
-              const akind: elementkindty;
+              const avislevel: vislevelty; const akind: elementkindty;
               const asize: integer): pelementinfoty;   
                                                    //nil if duplicate
 var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= findcurrent(aname);
+ ele1:= findcurrent(aname,avislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -404,16 +419,16 @@ begin
    name:= aname;
    kind:= akind;
   end; 
-  addelement(felementpath+aname,ele1);
+  addelement(felementpath+aname,avislevel,ele1);
  end;
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
-           const akind: elementkindty;
+           const avislevel: vislevelty; const akind: elementkindty;
            const asize: integer; out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
- aelementdata:= addelement(aname,akind,elesize+asize);
+ aelementdata:= addelement(aname,avislevel,akind,elesize+asize);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
@@ -450,51 +465,56 @@ begin
  end;
 end;
 
-function telementhashdatalist.findelement(const aname: identty): pelementinfoty; //nil if not found
+function telementhashdatalist.findelement(const aname: identty;
+              const avislevel: vislevelty): pelementinfoty; //nil if not found
 var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findcurrent(aname);
- if ele1 >= 0 then begin
-  result:= pelementinfoty(pointer(felementdata)+ele1);
- end;
-end;
-
-function telementhashdatalist.findelementupward(const aname: identty): pelementinfoty; //nil if not found
-var
- ele1: elementoffsetty;
-begin
- result:= nil;
- ele1:= {elementlist.}findupward(aname);
+ ele1:= {elementlist.}findcurrent(aname,avislevel);
  if ele1 >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+ele1);
  end;
 end;
 
 function telementhashdatalist.findelementupward(const aname: identty;
+              const avislevel: vislevelty): pelementinfoty; //nil if not found
+var
+ ele1: elementoffsetty;
+begin
+ result:= nil;
+ ele1:= {elementlist.}findupward(aname,avislevel);
+ if ele1 >= 0 then begin
+  result:= pelementinfoty(pointer(felementdata)+ele1);
+ end;
+end;
+
+function telementhashdatalist.findelementupward(const aname: identty;
+                     const avislevel: vislevelty;
                      out element: elementoffsetty): pelementinfoty; overload;
                                                     //nil if not found
 begin
  result:= nil;
- element:= {elementlist.}findupward(aname);
+ element:= {elementlist.}findupward(aname,avislevel);
  if element >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+element);
  end;
 end;
 
 function telementhashdatalist.findelementsupward(const anames: identvectorty;
+                     const avislevel: vislevelty;
                      out element: elementoffsetty): pelementinfoty;
                                                     //nil if not found
 begin
  result:= nil;
- element:= {elementlist.}findupward(anames);
+ element:= {elementlist.}findupward(anames,avislevel);
  if element >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+element);
  end;
 end;
 
 function telementhashdatalist.findelementsupward(const anames: identarty;
+                        const avislevel: vislevelty;
                         out element: elementoffsetty): pelementinfoty;
                                                        //nil if not found
 var
@@ -505,7 +525,7 @@ begin
   raise exception.create('Ident vector too long.');
  end;
  move(anames[0],vec1.d,(vec1.high+1)*sizeof(vec1.d[0]));
- result:= findelementsupward(vec1,element);
+ result:= findelementsupward(vec1,avislevel,element);
 end;
 
 {
@@ -725,7 +745,7 @@ begin
 end;
 
 procedure telementhashdatalist.addelement(const aident: identty;
-                                       const aelement: elementoffsetty);
+               const avislevel: vislevelty; const aelement: elementoffsetty);
 begin
 // with pelementhashdataty(internaladdhash(scramble1(aident)))^.data do begin
  with pelementhashdataty(internaladdhash(aident))^.data do begin
@@ -734,8 +754,8 @@ begin
  end;
 end;
 
-function telementhashdatalist.findcurrent(
-                                     const aident: identty): elementoffsetty;
+function telementhashdatalist.findcurrent(const aident: identty;
+                              const avislevel: vislevelty): elementoffsetty;
 var
  uint1: ptruint;
  po1: pelementhashdataty;
@@ -767,13 +787,13 @@ begin
  end;
 end;
 
-function telementhashdatalist.findupward(
-                                     const aident: identty): elementoffsetty;
+function telementhashdatalist.findupward(const aident: identty;
+                      const avislevel: vislevelty): elementoffsetty;
 var
  parentbefore: elementoffsetty;
  pathbefore: identty;
 begin
- result:= findcurrent(aident);
+ result:= findcurrent(aident,avislevel);
  if (result < 0) and (felementpath <> 0) then begin
   parentbefore:= felementparent;
   pathbefore:= felementpath;
@@ -781,7 +801,7 @@ begin
    with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin
     felementpath:= felementpath-name;
     felementparent:= parent;
-    result:= findcurrent(aident);
+    result:= findcurrent(aident,avislevel);
     if result >= 0 then begin
      break;
     end;
@@ -795,8 +815,8 @@ begin
  end;
 end;
 
-function telementhashdatalist.findupward(
-                          const aidents: identvectorty): elementoffsetty;
+function telementhashdatalist.findupward(const aidents: identvectorty;
+                               const avislevel: vislevelty): elementoffsetty;
 //todo: use identvectorty
 
 var
@@ -812,7 +832,7 @@ var
  first: elementoffsetty;
 begin
  if aidents.high = 0 then begin
-  result:= findupward(aidents.d[0]);
+  result:= findupward(aidents.d[0],avislevel);
  end
  else begin
   result:= -1;
@@ -826,7 +846,7 @@ begin
   parentbefore:= felementparent;
   pathbefore:= felementpath;
   while true do begin
-   first:= findupward(aidents.d[0]);
+   first:= findupward(aidents.d[0],avislevel);
    if first < 0 then begin
     break;
    end;

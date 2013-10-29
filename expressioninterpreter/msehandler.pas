@@ -261,7 +261,8 @@ var
 begin
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= elements.addelement(getident(name),ek_type,elesize+sizeof(typedataty));
+   po1:= elements.addelement(getident(name),vis_max,ek_type,
+                                                  elesize+sizeof(typedataty));
    po2:= @po1^.data;
    po2^:= data;
   end;
@@ -269,14 +270,14 @@ begin
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= elements.addelement(getident(name),ek_const,
+   po1:= elements.addelement(getident(name),vis_max,ek_const,
                                           elesize+sizeof(constdataty));
    pconstdataty(@po1^.data)^.d:= data;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= elements.addelement(getident(name),ek_sysfunc,
+   po1:= elements.addelement(getident(name),vis_max,ek_sysfunc,
                                     elesize+sizeof(sysfuncdataty));
    psysfuncdataty(@po1^.data)^:= data;
   end;
@@ -304,13 +305,14 @@ begin
 end;
 *)
 function findkindelementdata(const aident: contextdataty;
+              const visibility: vislevelty;
               const akind: elementkindty; out ainfo: pointer): boolean;
 var
  po1: pelementinfoty;
 begin
  result:= false;
  if aident.kind = ck_ident then begin
-  po1:= elements.findelement(aident.ident.ident);
+  po1:= elements.findelement(aident.ident.ident,visibility);
   if (po1 <> nil) and (akind = ek_none) or (po1^.header.kind = akind) then begin
    ainfo:= @po1^.data;
    result:= true;
@@ -319,18 +321,18 @@ begin
 end;
 
 function findkindelementdata(const info: pparseinfoty;
-              const astackoffset: integer;
+              const astackoffset: integer; const visibility: vislevelty;
               const akind: elementkindty; out ainfo: pointer): boolean;
 begin
  with info^ do begin
   result:= findkindelementdata(contextstack[stackindex+astackoffset].d,
-                                                                 akind,ainfo);
+                                                      visibility,akind,ainfo);
  end;
 end;
 
 function findkindelements(const info: pparseinfoty;
-            const astackoffset: integer; const akind: elementkindty; 
-                                          out aelement: pelementinfoty): boolean;
+            const astackoffset: integer; const visibility: vislevelty;
+            const akind: elementkindty; out aelement: pelementinfoty): boolean;
 var
  int1: integer;
  idents: identvectorty;
@@ -355,7 +357,7 @@ begin
    errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
   end
   else begin
-   aelement:= elements.findelementsupward(idents,ele1);
+   aelement:= elements.findelementsupward(idents,visibility,ele1);
    if (aelement <> nil) and ((akind = ek_none) or 
                              (aelement^.header.kind = akind)) then begin
     result:= true;
@@ -365,7 +367,7 @@ begin
     for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
      elements.elementparent:=
        info^.unitinfo^.implementationuses[int1]^.interfaceelement;
-     aelement:= elements.findelementsupward(idents,ele1);
+     aelement:= elements.findelementsupward(idents,visibility,ele1);
      if (aelement <> nil) and ((akind = ek_none) or 
                              (aelement^.header.kind = akind)) then begin
       result:= true;
@@ -376,7 +378,7 @@ begin
      for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
       elements.elementparent:=
         info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
-      aelement:= elements.findelementsupward(idents,ele1);
+      aelement:= elements.findelementsupward(idents,visibility,ele1);
       if (aelement <> nil) and ((akind = ek_none) or 
                               (aelement^.header.kind = akind)) then begin
        result:= true;
@@ -390,10 +392,11 @@ begin
  end;
 end;
 
-function findkindelementsdata(const info: pparseinfoty; const astackoffset: integer;
-              const akind: elementkindty; out ainfo: pointer): boolean;
+function findkindelementsdata(const info: pparseinfoty;
+             const astackoffset: integer; const visibility: vislevelty; 
+                   const akind: elementkindty; out ainfo: pointer): boolean;
 begin
- result:= findkindelements(info,astackoffset,akind,ainfo);
+ result:= findkindelements(info,astackoffset,visibility,akind,ainfo);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
  end;
@@ -1100,7 +1103,7 @@ var
 begin
  with info^ do begin
 //  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
-  if findkindelements(info,1,ek_none,po1) then begin
+  if findkindelements(info,1,vis_max,ek_none,po1) then begin
    dec(stacktop,identcount);
    po2:= @po1^.data;
    case po1^.header.kind of
@@ -1377,7 +1380,8 @@ begin
        (contextstack[stacktop-1].d.kind = ck_const) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
-    po1:= elements.addelement(ident.ident,ek_const,elesize+sizeof(constdataty));
+    po1:= elements.addelement(ident.ident,vis_max,ek_const,
+                                             elesize+sizeof(constdataty));
     if po1 = nil then begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
@@ -1423,13 +1427,14 @@ begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
        (contextstack[stacktop-1].d.kind = ck_ident) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,ek_var,
-                                        elesize+sizeof(vardataty));
+   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,
+                                 ek_var,elesize+sizeof(vardataty));
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-1-stackindex,ek_type,po2) then begin
+    if findkindelements(info,stacktop-1-stackindex,vis_max,ek_type,
+                                                              po2) then begin
      with pvardataty(@po1^.data)^ do begin
       typerel:= elements.eledatarel(po2);
       if funclevel = 0 then begin
@@ -1483,13 +1488,13 @@ begin
   if (stacktop-stackindex = 2) and 
        (contextstack[stacktop].d.kind = ck_ident) and
        (contextstack[stacktop-1].d.kind = ck_ident) then begin
-   po1:= elements.addelement(contextstack[stacktop-1].d.ident.ident,ek_type,
-                                        elesize+sizeof(typedataty));
+   po1:= elements.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,
+                                           ek_type,elesize+sizeof(typedataty));
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-stackindex,ek_type,po2) then begin
+    if findkindelements(info,stacktop-stackindex,vis_max,ek_type,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
     end
     else begin
@@ -1596,7 +1601,7 @@ var
 begin
  with info^ do begin
   if (stacktop-stackindex > 0) and //todo: multi level var name
-   findkindelementsdata(info,1,ek_var,po1) then begin
+   findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
    si1:= ptypedataty(elements.eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
     if vf_global in po1^.flags then begin
@@ -1692,7 +1697,7 @@ var
  paramco: integer;
 begin
  with info^ do begin
-  if findkindelementsdata(info,1,ek_func,po2) then begin
+  if findkindelementsdata(info,1,vis_max,ek_func,po2) then begin
    paramco:= stacktop-stackindex-1-identcount;
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
@@ -1720,7 +1725,7 @@ begin
    stacktop:= stackindex;
   end
   else begin
-   if findkindelementsdata(info,1,ek_sysfunc,po1) then begin
+   if findkindelementsdata(info,1,vis_max,ek_sysfunc,po1) then begin
     with po1^ do begin
      case func of
       sf_writeln: begin
@@ -1856,17 +1861,17 @@ begin
   err1:= false;
   inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
-  if elements.pushelement(contextstack[stackindex+1].d.ident.ident,ek_func,
-              elesize+sizeof(funcdataty)+
+  if elements.pushelement(contextstack[stackindex+1].d.ident.ident,vis_max,
+                    ek_func,elesize+sizeof(funcdataty)+
                         paramco*sizeof(pvardataty),po1) then begin
    po1^.paramcount:= paramco;
    po4:= @po1^.paramsrel;
    int1:= 4;
    for int2:= 0 to paramco-1 do begin
-    if elements.addelement(contextstack[int1+stackindex].d.ident.ident,ek_var,
-                                  sizeof(vardataty),po2) then begin
+    if elements.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
+                               ek_var,sizeof(vardataty),po2) then begin
      po4^[int2]:= elements.eledatarel(po2);
-     if findkindelementsdata(info,int1+1,ek_type,po3) then begin
+     if findkindelementsdata(info,int1+1,vis_max,ek_type,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
        typerel:= elements.eledatarel(po3);

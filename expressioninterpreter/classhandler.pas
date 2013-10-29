@@ -31,6 +31,13 @@ procedure handleclasspublished(const info: pparseinfoty);
 implementation
 uses
  mseelements,msehandler,errorhandler,unithandler,grammar;
+
+const
+ vic_private = vis_3;
+ vic_protected = vis_2;
+ vic_public = vis_1;
+ vic_published = vis_0;
+ 
 type
  classdataty = record
  end;
@@ -68,22 +75,15 @@ var
 begin
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  if not elements.addelement(id1,ek_type,sizeof(typedataty),po1) then begin
+  if not elements.addelement(id1,vis_max,ek_type,
+                                            sizeof(typedataty),po1) then begin
    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
    classesscopeset(info);
-   elements.pushelement(id1,ek_class,sizeof(classdataty),po2);
+   elements.pushelement(id1,vis_max,ek_class,sizeof(classdataty),po2);
    currentclass:= elements.eledatarel(po2);
-   elements.addelement(tks_private,ek_class,sizeof(visibledataty),po3);
-   currentclassprivate:= elements.eledatarel(po3);
-   elements.addelement(tks_protected,ek_class,sizeof(visibledataty),po3);
-   currentclassprotected:= elements.eledatarel(po3);
-   elements.addelement(tks_public,ek_class,sizeof(visibledataty),po3);
-   currentclasspublic:= elements.eledatarel(po3);
-   elements.pushelement(tks_published,ek_class,sizeof(visibledataty),po3);
-   currentclasspublished:= elements.eledatarel(po3);
-   elements.elementparent:= info^.currentclasspublished; //default
+   currentclassvislevel:= vic_published; //default
   end;
  end;
 {$ifdef mse_debugparser}
@@ -112,22 +112,22 @@ end;
 
 procedure handleclassprivate(const info: pparseinfoty);
 begin
- elements.elementparent:= info^.currentclassprivate;
+ info^.currentclassvislevel:= vic_private;
 end;
 
 procedure handleclassprotected(const info: pparseinfoty);
 begin
- elements.elementparent:= info^.currentclassprotected;
+ info^.currentclassvislevel:= vic_protected;
 end;
 
 procedure handleclasspublic(const info: pparseinfoty);
 begin
- elements.elementparent:= info^.currentclasspublic;
+ info^.currentclassvislevel:= vic_public;
 end;
 
 procedure handleclasspublished(const info: pparseinfoty);
 begin
- elements.elementparent:= info^.currentclasspublished;
+ info^.currentclassvislevel:= vic_published;
 end;
 
 end.
