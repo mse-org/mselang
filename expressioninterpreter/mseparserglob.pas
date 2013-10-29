@@ -37,7 +37,6 @@ type
  
  datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,
                dk_record);
-
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 const
  vis_max = vis_0;

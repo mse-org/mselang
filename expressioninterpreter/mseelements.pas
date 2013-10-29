@@ -48,7 +48,7 @@ type
   parent: elementoffsetty; //offset in data array
   parentlevel: integer;
   kind: elementkindty;
-  visibility: vislevelty;
+  vislevel: vislevelty;
  end;
  
  elementinfoty = record
@@ -309,7 +309,9 @@ begin
    mstr1:= ' ';
   end;
   mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+' O:'+inttostr(int1)+' N:'+
-            inttostr(po1^.header.name)+' '+identnames[po1^.header.name] + ' '+
+            inttostr(po1^.header.name)+' '+
+            ' '+identnames[po1^.header.name] + 
+            ' V:'+inttostr(ord(po1^.header.vislevel))+' '+
             getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
   int4:= 0;
   int1:= int1 + po1^.header.size;
@@ -358,7 +360,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findcurrent(aname,avislevel);
+ ele1:= findcurrent(aname,avislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -373,6 +375,7 @@ begin
    parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
+   vislevel:= avislevel;
    kind:= akind;
   end;
   felementparent:= ele1;
@@ -417,6 +420,7 @@ begin
    parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
+   vislevel:= avislevel;
    kind:= akind;
   end; 
   addelement(felementpath+aname,avislevel,ele1);
@@ -471,7 +475,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findcurrent(aname,avislevel);
+ ele1:= findcurrent(aname,avislevel);
  if ele1 >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+ele1);
  end;
@@ -483,7 +487,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= {elementlist.}findupward(aname,avislevel);
+ ele1:= findupward(aname,avislevel);
  if ele1 >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+ele1);
  end;
@@ -495,7 +499,7 @@ function telementhashdatalist.findelementupward(const aname: identty;
                                                     //nil if not found
 begin
  result:= nil;
- element:= {elementlist.}findupward(aname,avislevel);
+ element:= findupward(aname,avislevel);
  if element >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+element);
  end;
@@ -507,7 +511,7 @@ function telementhashdatalist.findelementsupward(const anames: identvectorty;
                                                     //nil if not found
 begin
  result:= nil;
- element:= {elementlist.}findupward(anames,avislevel);
+ element:= findupward(anames,avislevel);
  if element >= 0 then begin
   result:= pelementinfoty(pointer(felementdata)+element);
  end;
@@ -759,20 +763,19 @@ function telementhashdatalist.findcurrent(const aident: identty;
 var
  uint1: ptruint;
  po1: pelementhashdataty;
-// hash1: hashvaluety;
  id1: identty;
 begin
  result:= -1;
  if count > 0 then begin
   id1:= felementpath+aident;
-//  hash1:= scramble1(id1);
   uint1:= fhashtable[id1 and fmask];
   if uint1 <> 0 then begin
    po1:= pelementhashdataty(pchar(fdata) + uint1);
    while true do begin
     if (po1^.data.key = id1) then begin
      with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
-      if (name = aident) and (parent = felementparent) then begin
+      if (name = aident) and (parent = felementparent) and 
+                                      (vislevel <= avislevel) then begin
        break;
       end;
      end;
