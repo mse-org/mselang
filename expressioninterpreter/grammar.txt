@@ -15,7 +15,7 @@
 @num
  '0','1','2','3','4','5','6','7','8','9'
 @.handlerunits
- 'msehandler','unithandler'
+ 'msehandler','unithandler','classhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
 start,nounit,

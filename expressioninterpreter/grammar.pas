@@ -44,7 +44,7 @@ const
  tk_then = $59E3376E;
  tk_else = $B3C66EDD;
  tk_class = $678CDDBA;
-const
+
  tokens: array[0..20] of string = ('',
   '.classes','.private','.protected','.public','.published',
   'unit','uses','implementation','const','var','type','procedure','begin',
@@ -57,360 +57,473 @@ const
 
 var
  startco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'start');
  nounitco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'nounit');
  unit0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'unit0');
  nounitnameco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'nounitname');
  unit1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'unit1');
  unit2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'unit2');
  semicolonexpectedco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'semicolonexpected');
  start1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'start1');
  uses0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'uses0');
  uses1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'uses1');
  useserrorco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'useserror');
  usesokco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'usesok');
  start2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'start2');
  commaidentsco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'commaidents');
  commaidents1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'commaidents1');
  commaidents2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'commaidents2');
  commaidentsnoidenterrorco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'commaidentsnoidenterror');
  noimplementationco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'noimplementation');
  implementationco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'implementation');
  mainco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main');
  main1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'main1');
  comment0co: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: true; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'comment0');
  directiveco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'directive');
  dumpelementsco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'dumpelements');
  abortco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'abort');
  directiveendco: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: true; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'directiveend');
  linecomment0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'linecomment0');
  linecomment1co: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: true; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'linecomment1');
  progbeginco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'progbegin');
  progblockco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'progblock');
  paramsdef0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramsdef0');
  paramsdef1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramsdef1');
  paramsdef2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramsdef2');
  paramsdef3co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'paramsdef3');
  paramdef0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramdef0');
  paramdef1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'paramdef1');
  paramdef2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'paramdef2');
  procedure0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure0');
  procedure1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure1');
  procedure2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure2');
  procedure3co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure3');
  procedure4co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure4');
  procedure5co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure5');
  procedure6co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure6');
  checkterminatorco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'checkterminator');
  terminatorokco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'terminatorok');
  statementstackco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'statementstack');
  statementco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement');
  endcontextco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'endcontext');
  blockendco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'blockend');
  simplestatementco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'simplestatement');
  statementblockco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statementblock');
  statementblock1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statementblock1');
  statement0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement0');
  statement1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement1');
  checkprocco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'checkproc');
  assignmentco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'assignment');
  if0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'if0');
  ifco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'if');
  thenco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then');
  then0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then0');
  then1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then1');
  then2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'then2');
  else0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'else0');
  elseco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'else');
  constco: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'const');
  const0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'const0');
  const1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: true; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: true; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'const1');
  const2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'const2');
  const3co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'const3');
  varco: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'var');
  var0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'var0');
  var1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: true; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: true; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'var1');
  var2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'var2');
  var3co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'var3');
  typeco: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: true; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type');
  type0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type0');
  type1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: true; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: true; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type1');
  type2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type2');
  type3co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'type3');
  type4co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'type4');
  classdefco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'classdef');
  classdef0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'classdef0');
  classdeferrorco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'classdeferror');
  classdefreturnco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: true; restoresource: false; pop: false; popexe: false; nexteat: true; next: nil;
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'classdefreturn');
  statementendco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: true; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: true; nexteat: false; next: nil;
                caption: 'statementend');
  expco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exp');
  exp1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'exp1');
  equsimpexpco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'equsimpexp');
  simpexpco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'simpexp');
  simpexp1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'simpexp1');
  addtermco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'addterm');
  termco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'term');
  term1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'term1');
  negtermco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'negterm');
  mulfactco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'mulfact');
  num0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'num0');
  numco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'num');
  fracco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'frac');
  identco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'ident');
  identpathco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'identpath');
  identpath1aco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'identpath1a');
  identpath1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'identpath1');
  identpath2aco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'identpath2a');
  identpath2co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'identpath2');
  valueidentifierco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'valueidentifier');
  checkvalueparamsco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'checkvalueparams');
  checkparamsco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'checkparams');
  params0co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'params0');
  params1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'params1');
  paramsendco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: true; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'paramsend');
  bracketstartco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'bracketstart');
  bracketendco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'bracketend');
  exponentco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exponent');
  negexponentco: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: false; pop: false; popexe: false; nexteat: false; next: nil;
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'negexponent');
 
 implementation
 
 uses
- msehandler,unithandler;
+ msehandler,unithandler,classhandler;
  
 const
  bstart: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @unit0co; stack: nil; 
-     keyword: $48D159E3{'unit'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -435,6 +548,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @unit0co; stack: nil; 
+     keyword: $8D159E33{'unit'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bunit0: array[0..5] of branchty = (
@@ -504,6 +619,8 @@ const
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bstart1: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @uses0co; stack: nil; 
+     keyword: $1A2B3C66{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -528,8 +645,6 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @uses0co; stack: nil; 
-     keyword: $91A2B3C6{'uses'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  buses0: array[0..1] of branchty = (
@@ -576,13 +691,13 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @varco; stack: nil; 
-     keyword: $8D159E33{'var'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; stack: nil; 
-     keyword: $468ACF19{'const'}),
-   (flags: [bf_nt,bf_keyword]; dest: @implementationco; stack: nil; 
-     keyword: $2345678C{'implementation'}),
+     keyword: $D159E337{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @typeco; stack: nil; 
-     keyword: $1A2B3C66{'type'}),
+     keyword: $A2B3C66E{'type'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; stack: nil; 
+     keyword: $68ACF19B{'const'}),
+   (flags: [bf_nt,bf_keyword]; dest: @implementationco; stack: nil; 
+     keyword: $345678CD{'implementation'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bcommaidents: array[0..5] of branchty = (
@@ -662,13 +777,13 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @varco; stack: nil; 
-     keyword: $8D159E33{'var'}),
+     keyword: $D159E337{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @progbeginco; stack: nil; 
-     keyword: $68ACF19B{'begin'}),
+     keyword: $8ACF19BB{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; stack: nil; 
-     keyword: $468ACF19{'const'}),
+     keyword: $68ACF19B{'const'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @procedure0co; stack: nil; 
-     keyword: $345678CD{'procedure'}),
+     keyword: $45678CDD{'procedure'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bcomment0: array[0..2] of branchty = (
@@ -687,16 +802,16 @@ const
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bdirective: array[0..4] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @abortco; stack: nil; 
+     keyword: $2B3C66ED{'abort'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @dumpelementsco; stack: nil; 
+     keyword: $159E3376{'dumpelements'}),
    (flags: [bf_nt,bf_eat,bf_push]; dest: nil; stack: nil; keys: (
     (kind: bkk_char; chars: ['}']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @dumpelementsco; stack: nil; 
-     keyword: $D159E337{'dumpelements'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @abortco; stack: nil; 
-     keyword: $A2B3C66E{'abort'}),
    (flags: [bf_nt,bf_emptytoken]; dest: nil; stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1025,11 +1140,11 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @varco; stack: nil; 
-     keyword: $8D159E33{'var'}),
+     keyword: $D159E337{'var'}),
    (flags: [bf_nt,bf_keyword]; dest: @procedure5co; stack: nil; 
-     keyword: $68ACF19B{'begin'}),
+     keyword: $8ACF19BB{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push]; dest: @constco; stack: nil; 
-     keyword: $468ACF19{'const'}),
+     keyword: $68ACF19B{'const'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bprocedure5: array[0..1] of branchty = (
@@ -1108,18 +1223,18 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @if0co; stack: nil; 
-     keyword: $8ACF19BB{'if'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush]; dest: @statementblockco; stack: nil; 
-     keyword: $68ACF19B{'begin'}),
-   (flags: [bf_nt,bf_keyword]; dest: @endcontextco; stack: nil; 
-     keyword: $45678CDD{'end'}),
    (flags: [bf_nt]; dest: @endcontextco; stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @if0co; stack: nil; 
+     keyword: $ACF19BB7{'if'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush]; dest: @statementblockco; stack: nil; 
+     keyword: $8ACF19BB{'begin'}),
+   (flags: [bf_nt,bf_keyword]; dest: @endcontextco; stack: nil; 
+     keyword: $5678CDDB{'end'}),
    (flags: [bf_nt,bf_emptytoken]; dest: @simplestatementco; stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1148,7 +1263,7 @@ const
    );
  bstatementblock1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @blockendco; stack: nil; 
-     keyword: $45678CDD{'end'}),
+     keyword: $5678CDDB{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -1279,7 +1394,7 @@ const
    );
  bthen: array[0..5] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @then0co; stack: nil; 
-     keyword: $159E3376{'then'}),
+     keyword: $59E3376E{'then'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -1316,8 +1431,6 @@ const
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  bthen2: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @else0co; stack: nil; 
-     keyword: $2B3C66ED{'else'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -1342,6 +1455,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_keyword,bf_eat]; dest: @else0co; stack: nil; 
+     keyword: $B3C66EDD{'else'}),
    (flags: []; dest: nil; stack: nil; keyword: 0)
    );
  belse: array[0..1] of branchty = (
@@ -1688,7 +1803,7 @@ const
    );
  btype2: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @classdefco; stack: @classdefreturnco; 
-     keyword: $5678CDDB{'class'}),
+     keyword: $678CDDBA{'class'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),
@@ -1762,7 +1877,7 @@ const
    );
  bclassdef0: array[0..5] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat]; dest: @classdefreturnco; stack: nil; 
-     keyword: $45678CDD{'end'}),
+     keyword: $5678CDDB{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush]; dest: @directiveco; stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
     (kind: bkk_char; chars: ['$']),

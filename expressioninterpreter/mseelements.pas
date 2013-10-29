@@ -132,6 +132,7 @@ type
  end;
  
 procedure clear;
+procedure init;
 
 function getident(const astart,astop: pchar): identty; overload;
 function getident(const aname: lstringty): identty; overload;
@@ -145,7 +146,7 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,mseparserglob;
+ msearrayutils,sysutils,typinfo,mselfsr,mseparserglob,grammar;
  
 type
 
@@ -216,9 +217,21 @@ begin
 {$ifdef mse_debug_parser}
  identnames:= nil;
 {$endif}
+ stringident:= 0;
+end;
+
+procedure init;
+var
+ int1: integer;
+ tk1: integer;
+begin
+ clear;
  elements.pushelement(getident(''),ek_none,elesize); //root
- stringident:= idstart;
+ stringident:= idstart; //invalid
  lfsr321(stringident);
+ for tk1:= 1 to high(tokens) do begin
+  getident(tokens[tk1]);
+ end;
 end;
 
 type
@@ -635,8 +648,6 @@ constructor tindexidenthashdatalist.create;
 begin
  inherited create(sizeof(indexidentdataty));
 end;
-
-//todo: use scrambled ident for no hash in elementlist?
 
 function tindexidenthashdatalist.getident(aname: lstringty): identty;
 var

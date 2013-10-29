@@ -51,6 +51,7 @@ uses
 
 procedure init;
 begin
+ mseelements.init;
  unithandler.init;
  msehandler.init;
 end;

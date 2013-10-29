@@ -75,7 +75,6 @@ type
  paramty = (pa_grammarfile,pa_pasfile);
 
 const
- keywordoffset = 1;
  b: array[0..0] of branchty = (
    (flags: []; dest: nil; stack: nil; keys: (
     (kind: bkk_none; chars: []),
@@ -261,7 +260,7 @@ var
   setlength(keywordids,length(keywords));
   keywords[high(keywords)]:= str1;
   keywordids[high(keywordids)]:= id;
-  if high(keywords) + keywordoffset > 255 then begin
+  if high(keywords) + high(internaltokens) > 254 then begin
    error('Too many keywords.');
    result:= false;
    exit;
@@ -357,10 +356,9 @@ begin
   context:= '';
   intokendef:= false;
   tokendefs:= nil;
+  usesdef:= '';
   id:= idstart; //invalid
-  for int1:= 0 to keywordoffset do begin
-   lfsr321(id);
-  end;
+  lfsr321(id);
   repeat
    grammarstream.readln(str1);
    inc(line);
@@ -466,6 +464,9 @@ begin
             end;
             setlength(tokens,high(tokens)+2);
             setstring(tokens[high(tokens)],po3,po1-po3);
+            if name = '.internaltokens' then begin
+             lfsr321(id);
+            end;
            end;
            if po1^ = #0 then begin
             break;
@@ -676,15 +677,18 @@ begin
     end;
     if (cont[2] <> '') and (cont[2][length(cont[2])] = '^') then begin
      setlength(cont[2],length(cont[2])-1);
-     str2:= str2+'pop: true; popexe: false; ';
+     str2:= str2+lineend+
+'               pop: true; popexe: false; ';
     end
     else begin
      if (cont[2] <> '') and (cont[2][length(cont[2])] = '!') then begin
       setlength(cont[2],length(cont[2])-1);
-      str2:= str2+'pop: true; popexe: true; ';
+      str2:= str2+lineend+
+'               pop: true; popexe: true; ';
      end
      else begin
-      str2:= str2+'pop: false; popexe: false; ';
+      str2:= str2+lineend+
+'               pop: false; popexe: false; ';
      end;
     end;
     if (cont[1] <> '') and (cont[1][length(cont[1])] = '-') then begin
@@ -835,8 +839,7 @@ lineend+
    str5:= str5+ idstring('tk_'+keywords[int2]);
   end;
   int3:= 2+high(internaltokens)+high(keywords);
-  str5:= str5+
-'const'+lineend+
+  str5:= str5+lineend+
 ' tokens: array[0..'+inttostr(int3)+
                       '] of string = ('''','+lineend;
   str2:= 

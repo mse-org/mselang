@@ -19,6 +19,14 @@ unit msehandler;
 interface
 uses
  mseparserglob,typinfo,msetypes;
+type
+ typedataty = record
+  size: integer;
+  case kind: datakindty of 
+   dk_record: ();
+ end;
+ ptypedataty = ^typedataty;
+
 procedure init;
 procedure deinit;
 procedure initparser(const info: pparseinfoty);
@@ -58,10 +66,6 @@ procedure handlevar3(const info: pparseinfoty);
 procedure handletype(const info: pparseinfoty);
 procedure handletype0(const info: pparseinfoty);
 procedure handletype3(const info: pparseinfoty);
-
-procedure handleclassdefstart(const info: pparseinfoty);
-procedure handleclassdeferror(const info: pparseinfoty);
-procedure handleclassdefreturn(const info: pparseinfoty);
 
 procedure handledecnum(const info: pparseinfoty);
 procedure handlefrac(const info: pparseinfoty);
@@ -128,19 +132,10 @@ const
 
 type
  systypety = (st_integer);
- typedataty = record
-  size: integer;
-  case kind: datakindty of 
-   dk_record: ();
- end;
- ptypedataty = ^typedataty;
  typeinfoty = record
   name: string;
   data: typedataty;
  end;
- classdataty = record
- end;
- pclassdataty = ^classdataty;
  constinfoty = record
   name: string;
   data: contextdataty;
@@ -263,11 +258,7 @@ var
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
- tk1: integer;
 begin
- for tk1:= 1 to high(tokens) do begin
-  getident(tokens[tk1]);
- end;
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= elements.addelement(getident(name),ek_type,elesize+sizeof(typedataty));
@@ -1513,68 +1504,6 @@ begin
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'TYPE3');
-{$endif}
-end;
-
-procedure handleclassdeferror(const info: pparseinfoty);
-begin
- tokenexpectederror(info,tk_end);
-{$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFERROR');
-{$endif}
-end;
-
-procedure classesscopeset(const info: pparseinfoty);
-var
- po2: pclassesdataty;
-begin
- po2:= @pelementinfoty(
-          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
- po2^.scopebefore:= elements.elementparent;
- elements.elementparent:= info^.unitinfo^.classeselement;
-end;
-
-procedure classesscopereset(const info: pparseinfoty);
-var
- po2: pclassesdataty;
-begin
- po2:= @pelementinfoty(
-          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
- elements.elementparent:= po2^.scopebefore;
-end;
-
-procedure handleclassdefstart(const info: pparseinfoty);
-var
- po1: ptypedataty;
- po2: pclassdataty;
- id1: identty;
-begin
- with info^ do begin
-  with contextstack[stacktop].d do begin
-   id1:= ident.ident;
-   if not elements.addelement(id1,ek_type,sizeof(typedataty),po1) then begin
-    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
-   end
-   else begin
-    classesscopeset(info);
-    elements.addelement(id1,ek_class,sizeof(classdataty),po2);
-    kind:= ck_class;
-    classinfo.classdata:= elements.eledatarel(po2);
-   end;
-  end;
- end;
-{$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFSTART');
-{$endif}
-end;
-
-procedure handleclassdefreturn(const info: pparseinfoty);
-var
- po2: pclassesdataty;
-begin
- classesscopereset(info);
-{$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFRETURN');
 {$endif}
 end;
 
