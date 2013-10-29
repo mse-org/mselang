@@ -195,9 +195,7 @@ end;
 
 function tunitlist.hashkey(const akey): hashvaluety;
 begin
- with unitinfoty(akey) do begin
-  result:= scramble1(key);
- end;
+ result:= unitinfoty(akey).key;
 end;
 
 function tunitlist.checkkey(const akey; const aitemdata): boolean;
@@ -210,7 +208,7 @@ var
  po1: punithashdataty;
 begin
  result:= nil;
- po1:= punithashdataty(internalfind(aname));
+ po1:= punithashdataty(internalfind(aname,aname));
  if po1 <> nil then begin
   result:= po1^.data;
  end;
@@ -226,7 +224,7 @@ function tunitlist.newunit(const aname: identty): punitinfoty;
 var
  po1: punithashdataty;
 begin
- po1:= punithashdataty(internaladd(aname));
+ po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty));
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;

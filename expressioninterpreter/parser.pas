@@ -40,7 +40,7 @@ procedure deinit;
 implementation
 uses
  typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
- msebits,unithandler,msefileutils,errorhandler;
+ msebits,unithandler,msefileutils,errorhandler,mseformatstr;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -118,7 +118,7 @@ begin
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_ident: begin
-      write(ident.ident,':',ident.len);
+      write('$',hextostr(ident.ident,8),':',ident.len);
       if ident.continued then begin
        write('c ');
       end

@@ -42,7 +42,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,
-                  ek_sysfunc,ek_func,ek_classes,
+                  ek_sysfunc,ek_func,ek_classes,ek_class,
                   ek_unit,ek_implementation);
  
  elementheaderty = record
@@ -138,7 +138,7 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-function scramble1(const avalue: hashvaluety): hashvaluety; inline;
+//function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
 var
  elements: telementhashdatalist;
@@ -409,7 +409,7 @@ function telementhashdatalist.addelement(const aname: identty;
            const asize: integer; out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
- aelementdata:= addelement(aname,akind,asize);
+ aelementdata:= addelement(aname,akind,elesize+asize);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
@@ -623,12 +623,12 @@ begin
  wo1:= (wo1 xor wo1 shl 7);
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
-
+{
 function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 begin
  result:= ((avalue xor (avalue shl 8)) xor (avalue shl 16)) xor (avalue shl 24);
 end;
-
+}
 { tindexidenthashdatalist }
 
 constructor tindexidenthashdatalist.create;
@@ -714,9 +714,7 @@ end;
 
 function telementhashdatalist.hashkey(const akey): hashvaluety;
 begin
- with elementdataty(akey) do begin
-  result:= scramble1(key);
- end;
+ result:= elementdataty(akey).key;
 end;
 
 function telementhashdatalist.checkkey(const akey; const aitemdata): boolean;
@@ -727,7 +725,8 @@ end;
 procedure telementhashdatalist.addelement(const aident: identty;
                                        const aelement: elementoffsetty);
 begin
- with pelementhashdataty(internaladdhash(scramble1(aident)))^.data do begin
+// with pelementhashdataty(internaladdhash(scramble1(aident)))^.data do begin
+ with pelementhashdataty(internaladdhash(aident))^.data do begin
   key:= aident;
   data:= aelement;
  end;
@@ -738,14 +737,14 @@ function telementhashdatalist.findcurrent(
 var
  uint1: ptruint;
  po1: pelementhashdataty;
- hash1: hashvaluety;
+// hash1: hashvaluety;
  id1: identty;
 begin
  result:= -1;
  if count > 0 then begin
   id1:= felementpath+aident;
-  hash1:= scramble1(id1);
-  uint1:= fhashtable[hash1 and fmask];
+//  hash1:= scramble1(id1);
+  uint1:= fhashtable[id1 and fmask];
   if uint1 <> 0 then begin
    po1:= pelementhashdataty(pchar(fdata) + uint1);
    while true do begin
@@ -834,8 +833,8 @@ begin
     felementpath:= path;
    end;
    id1:= felementpath+path1;
-   hash1:= scramble1(id1);
-   uint1:= fhashtable[hash1 and fmask];
+//   hash1:= scramble1(id1);
+   uint1:= fhashtable[id1 and fmask];
    if uint1 <> 0 then begin
     po1:= pelementhashdataty(pchar(fdata) + uint1);
     while true do begin

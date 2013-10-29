@@ -138,6 +138,9 @@ type
   name: string;
   data: typedataty;
  end;
+ classdataty = record
+ end;
+ pclassdataty = ^classdataty;
  constinfoty = record
   name: string;
   data: contextdataty;
@@ -1542,16 +1545,22 @@ end;
 
 procedure handleclassdefstart(const info: pparseinfoty);
 var
- po1: pelementinfoty;
+ po1: ptypedataty;
+ po2: pclassdataty;
+ id1: identty;
 begin
  with info^ do begin
-  po1:= elements.addelement(contextstack[stacktop].d.ident.ident,ek_type,
-                                        elesize+sizeof(typedataty));
-  if po1 = nil then begin //duplicate
-   identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
-  end
-  else begin
-   classesscopeset(info);
+  with contextstack[stacktop].d do begin
+   id1:= ident.ident;
+   if not elements.addelement(id1,ek_type,sizeof(typedataty),po1) then begin
+    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   end
+   else begin
+    classesscopeset(info);
+    elements.addelement(id1,ek_class,sizeof(classdataty),po2);
+    kind:= ck_class;
+    classinfo.classdata:= elements.eledatarel(po2);
+   end;
   end;
  end;
 {$ifdef mse_debugparser}
@@ -1926,7 +1935,7 @@ begin
    int1:= 4;
    for int2:= 0 to paramco-1 do begin
     if elements.addelement(contextstack[int1+stackindex].d.ident.ident,ek_var,
-                                  elesize+sizeof(vardataty),po2) then begin
+                                  sizeof(vardataty),po2) then begin
      po4^[int2]:= elements.eledatarel(po2);
      if findkindelementsdata(info,int1+1,ek_type,po3) then begin
       with po2^ do begin

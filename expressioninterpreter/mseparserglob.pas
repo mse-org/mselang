@@ -50,7 +50,7 @@ type
 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
-                  ck_neg,ck_const,ck_fact);
+                  ck_neg,ck_const,ck_fact,ck_class);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -137,6 +137,10 @@ type
   paramcount: integer;
   elementmark: markinfoty;
  end;
+ classinfoty = record
+  ident: identinfoty;
+  classdata: elementoffsetty;
+ end;
 
  contextdataty = record
   case kind: contextkindty of 
@@ -154,7 +158,10 @@ type
    );
    ck_opmark:(
     opmark: opmarkty;
-   )
+   );
+   ck_class:(
+    classinfo: classinfoty;
+   );
  end;
 
  sourceinfoty = record
