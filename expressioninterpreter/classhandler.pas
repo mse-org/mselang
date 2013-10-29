@@ -23,6 +23,7 @@ uses
 procedure handleclassdefstart(const info: pparseinfoty);
 procedure handleclassdeferror(const info: pparseinfoty);
 procedure handleclassdefreturn(const info: pparseinfoty);
+procedure handleclassprivate(const info: pparseinfoty);
 
 implementation
 uses
@@ -31,6 +32,10 @@ type
  classdataty = record
  end;
  pclassdataty = ^classdataty;
+
+ visibledataty = record
+ end;
+ pvisibledataty = ^visibledataty;
  
 procedure classesscopeset(const info: pparseinfoty);
 var
@@ -55,6 +60,7 @@ procedure handleclassdefstart(const info: pparseinfoty);
 var
  po1: ptypedataty;
  po2: pclassdataty;
+ po3: pvisibledataty;
  id1: identty;
 begin
  with info^ do begin
@@ -65,9 +71,13 @@ begin
    end
    else begin
     classesscopeset(info);
-    elements.addelement(id1,ek_class,sizeof(classdataty),po2);
+    elements.pushelement(id1,ek_class,sizeof(classdataty),po2);
     kind:= ck_class;
     classinfo.classdata:= elements.eledatarel(po2);
+    elements.addelement(tks_private,ek_class,sizeof(visibledataty),po3);
+    elements.addelement(tks_protected,ek_class,sizeof(visibledataty),po3);
+    elements.addelement(tks_public,ek_class,sizeof(visibledataty),po3);
+    elements.pushelement(tks_published,ek_class,sizeof(visibledataty),po3);
    end;
   end;
  end;
@@ -80,6 +90,7 @@ procedure handleclassdefreturn(const info: pparseinfoty);
 var
  po2: pclassesdataty;
 begin
+// elements.popelement;
  classesscopereset(info);
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFRETURN');
@@ -92,6 +103,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFERROR');
 {$endif}
+end;
+
+procedure handleclassprivate(const info: pparseinfoty);
+begin
 end;
 
 end.

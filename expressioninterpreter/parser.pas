@@ -178,7 +178,7 @@ begin
  result:= true;
  bo1:= false;
  with info^ do begin
-  pc:= pb^.dest;
+  pc:= pb^.dest.context;
   if not (bf_changeparentcontext in pb^.flags) then begin
    contextstack[stackindex].returncontext:= pb^.stack;
          //replace return context
@@ -416,20 +416,28 @@ begin
         keywordindex:= 0;
         source.po:= po1;
        end;
-       if (pb^.dest = nil) and (bf_push in pb^.flags) then begin
+       if (pb^.dest.context = nil) and (bf_push in pb^.flags) then begin
         break; //terminate current context
        end;
-       if (pb^.dest <> nil) {and (pb^.dest <> pc)????} then begin
-               //switch branch context
-        repeat
-         if not pushcont(@info) then begin 
-               //can not continue
-          if stopparser then begin
-           goto parseend;
-          end;
-          goto handlelab;
+       if (pb^.dest.context <> nil) {and (pb^.dest <> pc)????} then begin
+        if bf_handler in pb^.flags then begin
+         pb^.dest.handler(@info);
+         if stopparser then begin
+          goto parseend;
          end;
-        until not (bf_emptytoken in pb^.flags); //no start default branch
+        end
+        else begin
+               //switch branch context
+         repeat
+          if not pushcont(@info) then begin 
+                //can not continue
+           if stopparser then begin
+            goto parseend;
+           end;
+           goto handlelab;
+          end;
+         until not (bf_emptytoken in pb^.flags); //no start default branch
+        end;
        end;
        source.po:= po1;
        source.line:= source.line + linebreaks;

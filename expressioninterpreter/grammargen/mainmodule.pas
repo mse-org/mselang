@@ -47,12 +47,12 @@ ${macroname}
  * -> stackindex -> stacktop
  > -> continue with calling context
  <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
-              [[<context>][-] [[^][*] | [*][^]] [!] ] 
+              [[<context>|!<handler>] [-] [[^][*] | [*][^]] [!] ] 
               [, <pushed context> | <parentcontext>^]
  - -> eat token
- <context>^ -> set parent
- <context>* -> push context
- <context>! -> set ck_opmark
+ <<context>|!<handler>>^ -> set parent
+ <<context>|!<handler>>* -> push context
+ <<context>|!<handler>>! -> set ck_opmark
  * -> terminate context
 <stringdef> -> <pascalstring>[.]
  . -> keyword
@@ -76,7 +76,7 @@ type
 
 const
  b: array[0..0] of branchty = (
-   (flags: []; dest: nil; stack: nil; keys: (
+   (flags: []; dest: (context: nil); stack: nil; keys: (
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -325,7 +325,7 @@ const
  contextformat =
  'Format of contextline is "context,next[-],handler[^|!][>]"';
  branchformat = 'Format of branch is'+lineend+
-'"''string''[.],{''string''[.],}context[-][[^][*] | [*][^]]'+lineend+
+'"''string''[.],{''string''[.],}<<context>|!<handler>>[-][[^][*] | [*][^]]'+lineend+
           '[, <pushed context> | <parentcontext>*]"';
  defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
@@ -727,6 +727,10 @@ lineend+
        if keyword <> 0 then begin
         include(branflags1,bf_keyword);
        end;
+       if (dest <> '') and (dest[1] = '!') then begin
+        include(branflags1,bf_handler);
+        dest:= copy(dest,2,bigint);
+       end;
        if checklastchar(dest,'!') then begin
         include(branflags1,bf_setpc);
        end;
@@ -753,14 +757,24 @@ lineend+
        end;
        str1:= str1+
 '   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
-                                 integer(branflags1),true)+'; dest: ';
+                                 integer(branflags1),true)+';'+lineend+
+'     dest: (';
+       if bf_handler in branflags1 then begin
+        str1:= str1 + 'handler: ';
+       end
+       else begin
+        str1:= str1 + 'context: ';
+       end;
        if dest = '' then begin
         str1:= str1+'nil';
        end
        else begin
-        str1:= str1+'@'+dest+'co';
+        str1:= str1+'@'+dest;
+        if not (bf_handler in branflags1) then begin
+         str1:= str1+'co';
+        end;
        end;
-       str1:= str1+'; stack: ';
+       str1:= str1+'); stack: ';
        if stack = '' then begin
         str1:= str1+'nil';
        end
@@ -821,7 +835,7 @@ lineend+
       end;
      end;
      str1:= str1+
-'   (flags: []; dest: nil; stack: nil; keyword: 0)'+lineend+
+'   (flags: []; dest: (context: nil); stack: nil; keyword: 0)'+lineend+
 '   );'+lineend;
     end;
    end;

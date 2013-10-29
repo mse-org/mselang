@@ -22,22 +22,18 @@ unit mseelements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,msetypes,msehash;
+ msestrings,msetypes,msehash,mseparserglob;
 
 {$define mse_debug_parser}
 
 const
  maxidentvector = 200;
 type
- identty = uint32;
- pidentty = ^identty;
  identarty = integerarty;
  identvectorty = record
   high: integer;
   d: array[0..maxidentvector] of identty;
  end;
- elementoffsetty = integer;
- pelementoffsetty = ^elementoffsetty;
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  
@@ -60,11 +56,6 @@ type
   end;
  end;
  pelementinfoty = ^elementinfoty;
- 
- markinfoty = record
-  hashref: ptruint;
-  dataref: ptruint;
- end;
  
 const
  elesize = sizeof(elementinfoty);
@@ -146,7 +137,7 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,mseparserglob,grammar;
+ msearrayutils,sysutils,typinfo,mselfsr,grammar;
  
 type
 

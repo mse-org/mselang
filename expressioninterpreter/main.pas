@@ -23,7 +23,7 @@ uses
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
  mclasses,mseelements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
- msesyntaxedit,msetextedit,msepipestream,mseprocess;
+ msesyntaxedit,msetextedit,msepipestream,mseprocess,mseparserglob;
 
 type
  tmainfo = class(tmainform)
@@ -80,7 +80,7 @@ var
   
 implementation
 uses
- main_mfm,mseexpint,msestream,msestackops,mseparserglob;
+ main_mfm,mseexpint,msestream,msestackops;
 
 procedure tmainfo.parseexe(const sender: TObject);
 var

@@ -18,7 +18,7 @@ unit mseparserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,mseelements,msestrings;
+ msestream,msestrings;
 
 type
  uint8 = byte; 
@@ -57,11 +57,22 @@ type
  dataaddressty = ptruint;
  
  branchflagty = (bf_nt,bf_emptytoken,
-             bf_keyword,bf_eat,bf_push,bf_setpc,
+             bf_keyword,bf_handler,bf_eat,bf_push,bf_setpc,
              bf_setparentbeforepush,bf_setparentafterpush,
              bf_changeparentcontext);
  branchflagsty = set of branchflagty;
+ identty = uint32;
+ pidentty = ^identty;
  keywordty = identty;
+
+ markinfoty = record
+  hashref: ptruint;
+  dataref: ptruint;
+ end;
+
+ elementoffsetty = integer;
+ pelementoffsetty = ^elementoffsetty;
+ 
  charsetty = set of char;
  charset32ty = array[0..7] of uint32;
  branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued{,bkk_keyword});
@@ -78,9 +89,14 @@ type
   
  pcontextty = ^contextty;
 
+ branchdestty = record
+  case integer of
+   0: (context: pcontextty);
+   1: (handler: contexthandlerty);
+ end;
  branchty = record
   flags: branchflagsty;
-  dest: pcontextty;
+  dest: branchdestty;
   stack: pcontextty; //nil = current
   case integer of
    0: (keyword: keywordty);
