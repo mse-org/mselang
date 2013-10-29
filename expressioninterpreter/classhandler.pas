@@ -24,6 +24,9 @@ procedure handleclassdefstart(const info: pparseinfoty);
 procedure handleclassdeferror(const info: pparseinfoty);
 procedure handleclassdefreturn(const info: pparseinfoty);
 procedure handleclassprivate(const info: pparseinfoty);
+procedure handleclassprotected(const info: pparseinfoty);
+procedure handleclasspublic(const info: pparseinfoty);
+procedure handleclasspublished(const info: pparseinfoty);
 
 implementation
 uses
@@ -64,21 +67,23 @@ var
  id1: identty;
 begin
  with info^ do begin
-  with contextstack[stacktop].d do begin
-   id1:= ident.ident;
-   if not elements.addelement(id1,ek_type,sizeof(typedataty),po1) then begin
-    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
-   end
-   else begin
-    classesscopeset(info);
-    elements.pushelement(id1,ek_class,sizeof(classdataty),po2);
-    kind:= ck_class;
-    classinfo.classdata:= elements.eledatarel(po2);
-    elements.addelement(tks_private,ek_class,sizeof(visibledataty),po3);
-    elements.addelement(tks_protected,ek_class,sizeof(visibledataty),po3);
-    elements.addelement(tks_public,ek_class,sizeof(visibledataty),po3);
-    elements.pushelement(tks_published,ek_class,sizeof(visibledataty),po3);
-   end;
+  id1:= contextstack[stacktop].d.ident.ident;
+  if not elements.addelement(id1,ek_type,sizeof(typedataty),po1) then begin
+   identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+  end
+  else begin
+   classesscopeset(info);
+   elements.pushelement(id1,ek_class,sizeof(classdataty),po2);
+   currentclass:= elements.eledatarel(po2);
+   elements.addelement(tks_private,ek_class,sizeof(visibledataty),po3);
+   currentclassprivate:= elements.eledatarel(po3);
+   elements.addelement(tks_protected,ek_class,sizeof(visibledataty),po3);
+   currentclassprotected:= elements.eledatarel(po3);
+   elements.addelement(tks_public,ek_class,sizeof(visibledataty),po3);
+   currentclasspublic:= elements.eledatarel(po3);
+   elements.pushelement(tks_published,ek_class,sizeof(visibledataty),po3);
+   currentclasspublished:= elements.eledatarel(po3);
+   elements.elementparent:= info^.currentclasspublished; //default
   end;
  end;
 {$ifdef mse_debugparser}
@@ -107,6 +112,22 @@ end;
 
 procedure handleclassprivate(const info: pparseinfoty);
 begin
+ elements.elementparent:= info^.currentclassprivate;
+end;
+
+procedure handleclassprotected(const info: pparseinfoty);
+begin
+ elements.elementparent:= info^.currentclassprotected;
+end;
+
+procedure handleclasspublic(const info: pparseinfoty);
+begin
+ elements.elementparent:= info^.currentclasspublic;
+end;
+
+procedure handleclasspublished(const info: pparseinfoty);
+begin
+ elements.elementparent:= info^.currentclasspublished;
 end;
 
 end.

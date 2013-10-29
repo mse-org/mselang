@@ -228,6 +228,9 @@ classdef,classdef0,handleclassdefstart
 classdef0,classdeferror,
  ${whitespace}
  'private'.,!handleclassprivate-
+ 'protected'.,!handleclassprotected-
+ 'public'.,!handleclasspublic-
+ 'published'.,!handleclasspublished-
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror^
 classdefreturn,type4-,handleclassdefreturn*

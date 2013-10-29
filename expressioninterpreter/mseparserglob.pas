@@ -50,7 +50,7 @@ type
 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
-                  ck_neg,ck_const,ck_fact,ck_class);
+                  ck_neg,ck_const,ck_fact);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -175,9 +175,6 @@ type
    ck_opmark:(
     opmark: opmarkty;
    );
-   ck_class:(
-    classinfo: classinfoty;
-   );
  end;
 
  sourceinfoty = record
@@ -297,6 +294,11 @@ type
   globdatapo: ptruint;
   locdatapo: ptruint;
   frameoffset: ptruint;
+  currentclass: elementoffsetty;
+  currentclassprivate: elementoffsetty;
+  currentclassprotected: elementoffsetty;
+  currentclasspublic: elementoffsetty;
+  currentclasspublished: elementoffsetty;
  end;
 
 const

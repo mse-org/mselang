@@ -45,17 +45,21 @@ const
  tk_else = $B3C66EDD;
  tk_class = $678CDDBA;
  tk_private = $CF19BB75;
+ tk_protected = $9E3376EB;
+ tk_public = $3C66EDD6;
+ tk_published = $78CDDBAD;
 
- tokens: array[0..21] of string = ('',
+ tokens: array[0..24] of string = ('',
   '.classes','.private','.protected','.public','.published',
   'unit','uses','implementation','const','var','type','procedure','begin',
-  'dumpelements','abort','end','if','then','else','class','private');
+  'dumpelements','abort','end','if','then','else','class','private','protected',
+  'public','published');
 
- tokenids: array[0..21] of identty = (
+ tokenids: array[0..24] of identty = (
   $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
   $1A2B3C66,$345678CD,$68ACF19B,$D159E337,$A2B3C66E,$45678CDD,$8ACF19BB,
   $159E3376,$2B3C66ED,$5678CDDB,$ACF19BB7,$59E3376E,$B3C66EDD,$678CDDBA,
-  $CF19BB75);
+  $CF19BB75,$9E3376EB,$3C66EDD6,$78CDDBAD);
 
 var
  startco: contextty = (branch: nil; handle: nil; 
@@ -2088,7 +2092,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef0: array[0..6] of branchty = (
+ bclassdef0: array[0..9] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @classdefreturnco); stack: nil; 
+     keyword: $5678CDDB{'end'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2120,9 +2127,15 @@ const
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $CF19BB75{'private'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @classdefreturnco); stack: nil; 
-     keyword: $5678CDDB{'end'}),
+   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
+     dest: (handler: @handleclassprotected); stack: nil; 
+     keyword: $9E3376EB{'protected'}),
+   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
+     dest: (handler: @handleclasspublished); stack: nil; 
+     keyword: $78CDDBAD{'published'}),
+   (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
+     dest: (handler: @handleclasspublic); stack: nil; 
+     keyword: $3C66EDD6{'public'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bexp: array[0..1] of branchty = (
