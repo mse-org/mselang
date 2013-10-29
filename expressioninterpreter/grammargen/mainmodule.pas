@@ -29,8 +29,12 @@ uses
 ${macroname}
 @<tokendef>
  <pascalstring>{,<pascalstring>}
-<handler_usesdef>
-
+@.handlerunits
+ <pascalstring>{,<pascalstring>}
+@.internaltokens
+ <pascalstring>{,<pascalstring>}
+     first character of strings removed for const def ex:
+      '.classes' -> tks_classes
 <context>,[<next>][-],[<handler>][^|!][+][*][>]
     <handler> called by context termination,
     transition to <next> or termination if no branch matches
@@ -207,8 +211,8 @@ var
  grammarstream: ttextstream = nil;
  passtream: ttextstream = nil;
  str1: string;
- firstrow: boolean = true;
  usesdef: string;
+ internaltokens: stringarty;
  context: string;
  contextline: stringarty;
  branches: brancharty;
@@ -311,7 +315,6 @@ var
 
  procedure handlecontext;
  begin
-//  setlength(branches,branchcount);
   setlength(contexts,high(contexts)+2);
   with contexts[high(contexts)] do begin
    cont:= contextline;
@@ -476,117 +479,111 @@ begin
          end;
         end
         else begin
-         if firstrow then begin
-          usesdef:= str1;
-          firstrow:= false;
+         if str1[1] <> ' ' then begin
+          if context <> '' then begin
+           handlecontext;
+          end;
+          context:= str1;
+          contextline:= splitstring(context,',',true);
+          if length(contextline) <> 3 then begin
+           error(contextformat);
+           exit;
+          end;
+          branches:= nil;
          end
          else begin
-          if str1[1] <> ' ' then begin
-           if context <> '' then begin
-            handlecontext;
+          int1:= findlastchar(str1,',');
+          if int1 = 0 then begin
+           error(branchformat);
+           exit;
+          end;
+          setlength(branches,high(branches)+2);
+          str2:= trim(copy(str1,int1+1,bigint));
+          branches[high(branches)].dest:= str2;
+          po1:= pchar(str1)+1;
+          po2:= po1+int1-3;
+          while po2 > po1 do begin
+           if po2^ = ',' then begin
+            with branches[high(branches)] do begin
+             stack:= dest;
+             setstring(dest,po2+1,int1-(po2-po1)-3);
+             dest:= trim(dest);
+             int1:= (po2-po1)+2;
+            end;
+            break;
            end;
-           context:= str1;
-           contextline:= splitstring(context,',',true);
-           if length(contextline) <> 3 then begin
-            error(contextformat);
-            exit;
+           if po2^ in ['''','@'] then begin
+            break;
            end;
-           branches:= nil;
-          end
-          else begin
-           int1:= findlastchar(str1,',');
-           if int1 = 0 then begin
+           dec(po2);
+          end;
+          
+          po2:= po1+int1-2;
+          while true do begin
+           po3:= po1;
+           if po1^ = '@' then begin
+            inc(po3);
+            while po1^ <> ',' do begin
+             inc(po1);
+            end;
+            if not gettokendef(psubstr(po3,po1),str2) then begin
+             exit;
+            end;
+           end
+           else begin
+            getpascalstring(po1);
+            if po1 = po3 then begin
+             error('Invalid string');
+             exit;
+            end;
+            if po1^ = '.' then begin
+             inc(po1);
+            end;
+            setstring(str3,po3,po1-po3);
+            additem(branches[high(branches)].tokens,str3);
+           end;
+           if po1 = po2 then begin
+            break;
+           end;
+           if po1^ <> ',' then begin
             error(branchformat);
             exit;
            end;
-           setlength(branches,high(branches)+2);
-           str2:= trim(copy(str1,int1+1,bigint));
-           branches[high(branches)].dest:= str2;
-           po1:= pchar(str1)+1;
-           po2:= po1+int1-3;
-           while po2 > po1 do begin
-            if po2^ = ',' then begin
-             with branches[high(branches)] do begin
-              stack:= dest;
-              setstring(dest,po2+1,int1-(po2-po1)-3);
-              dest:= trim(dest);
-              int1:= (po2-po1)+2;
-             end;
-             break;
-            end;
-            if po2^ in ['''','@'] then begin
-             break;
-            end;
-            dec(po2);
-           end;
-           
-           po2:= po1+int1-2;
-           while true do begin
-            po3:= po1;
-            if po1^ = '@' then begin
-             inc(po3);
-             while po1^ <> ',' do begin
-              inc(po1);
-             end;
-             if not gettokendef(psubstr(po3,po1),str2) then begin
+           inc(po1);
+          end;
+          with branches[high(branches)] do begin
+           for int1:= 0 to high(tokens) do begin
+            if (tokens[int1] = '''''') then begin
+             if (length(tokens) > 1) then begin
+              error(branchformat);
               exit;
              end;
+             emptytoken:= true;
+             tokens[int1]:= '';
             end
             else begin
-             getpascalstring(po1);
-             if po1 = po3 then begin
-              error('Invalid string');
-              exit;
-             end;
-             if po1^ = '.' then begin
-              inc(po1);
-             end;
-             setstring(str3,po3,po1-po3);
-             additem(branches[high(branches)].tokens,str3);
-            end;
-            if po1 = po2 then begin
-             break;
-            end;
-            if po1^ <> ',' then begin
-             error(branchformat);
-             exit;
-            end;
-            inc(po1);
-           end;
-           with branches[high(branches)] do begin
-            for int1:= 0 to high(tokens) do begin
-             if (tokens[int1] = '''''') then begin
-              if (length(tokens) > 1) then begin
+             if tokens[int1][length(tokens[int1])] = '.' then begin
+              if keyword > 0 then begin
                error(branchformat);
                exit;
               end;
-              emptytoken:= true;
-              tokens[int1]:= '';
+              setlength(tokens[int1],length(tokens[int1])-1);
+              if not getkeyword(tokens[int1],keyword) then begin
+               exit;
+              end;
              end
              else begin
-              if tokens[int1][length(tokens[int1])] = '.' then begin
-               if keyword > 0 then begin
+              po1:= pchar(tokens[int1]);
+              tokens[int1]:= getpascalstring(po1);
+              if length(tokens[int1]) > 1 then begin
+               if high(tokens) > 0 then begin
                 error(branchformat);
                 exit;
                end;
-               setlength(tokens[int1],length(tokens[int1])-1);
-               if not getkeyword(tokens[int1],keyword) then begin
-                exit;
-               end;
-              end
-              else begin
-               po1:= pchar(tokens[int1]);
-               tokens[int1]:= getpascalstring(po1);
-               if length(tokens[int1]) > 1 then begin
-                if high(tokens) > 0 then begin
-                 error(branchformat);
-                 exit;
-                end;
-               end;
-               if length(tokens[int1]) > branchkeymaxcount then begin
-                error(branchformat);
-                exit;
-               end;
+              end;
+              if length(tokens[int1]) > branchkeymaxcount then begin
+               error(branchformat);
+               exit;
               end;
              end;
             end;
@@ -605,6 +602,23 @@ begin
    exit;
   end;
   handlecontext;
+  for int1:= 0 to high(tokendefs) do begin
+   with tokendefs[int1] do begin
+    if name = '.handlerunits' then begin
+     for int2:= 0 to high(tokens) do begin
+      usesdef:= usesdef+pascalstringtostring(tokens[int2])+',';
+     end;
+     if tokens <> nil then begin
+      setlength(usesdef,length(usesdef)-1);
+     end;
+    end;
+    if name = '.internaltokens' then begin
+     for int2:= 0 to high(tokens) do begin
+      additem(internaltokens,tokens[int2]);
+     end;
+    end;
+   end;
+  end;
   passtream:= ttextstream.create(outfile,fm_create);
  str1:= 
 '{ MSEide Copyright (c) 2013 by Martin Schreiber'+lineend+
@@ -812,15 +826,32 @@ lineend+
   lfsr321(id);
   str5:= 
 'const'+lineend+
-' tks_none = 0;'+lineend+
-  idstring('tks_classes');
+' tks_none = 0;'+lineend;
+  for int2:= 0 to high(internaltokens) do begin
+   str5:= str5+idstring('tks_'+
+                copy(pascalstringtostring(internaltokens[int2]),2,bigint));
+  end;
   for int2:= 0 to high(keywords) do begin
    str5:= str5+ idstring('tk_'+keywords[int2]);
   end;
+  int3:= 2+high(internaltokens)+high(keywords);
   str5:= str5+
 'const'+lineend+
-' tokens: array[0..'+inttostr(high(keywords)+2)+
-                      '] of string = ('''',''.classes'','+lineend;
+' tokens: array[0..'+inttostr(int3)+
+                      '] of string = ('''','+lineend;
+  str2:= 
+'  ';
+  for int2:= 0 to high(internaltokens) do begin
+   str3:= internaltokens[int2]+',';
+   if length(str2)+length(str3) > 80 then begin
+    str5:= str5+str2+lineend;
+    str2:= 
+'  ';
+   end;
+   str2:= str2+str3;
+  end;
+  str5:= str5 + str2 + lineend;
+
   str2:= 
 '  ';
   for int2:= 0 to high(keywords) do begin
@@ -838,10 +869,10 @@ lineend+
   id:= idstart;
   lfsr321(id);
   str5:= str5+
-' tokenids: array[0..'+inttostr(high(keywords)+2)+'] of identty = ('+lineend;
+' tokenids: array[0..'+inttostr(int3)+'] of identty = ('+lineend;
   str2:=
 '  $00000000,';
-  for int2:= 1 to high(keywords)+2 do begin
+  for int2:= 1 to int3 do begin
    str3:= '$'+hextostr(id,8)+',';
    lfsr321(id);
    if length(str2)+length(str3) > 80 then begin

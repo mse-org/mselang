@@ -25,30 +25,35 @@ function startcontext: pcontextty;
 const
  tks_none = 0;
  tks_classes = $2468ACF1;
- tk_unit = $48D159E3;
- tk_uses = $91A2B3C6;
- tk_implementation = $2345678C;
- tk_const = $468ACF19;
- tk_var = $8D159E33;
- tk_type = $1A2B3C66;
- tk_procedure = $345678CD;
- tk_begin = $68ACF19B;
- tk_dumpelements = $D159E337;
- tk_abort = $A2B3C66E;
- tk_end = $45678CDD;
- tk_if = $8ACF19BB;
- tk_then = $159E3376;
- tk_else = $2B3C66ED;
- tk_class = $5678CDDB;
+ tks_private = $48D159E3;
+ tks_protected = $91A2B3C6;
+ tks_public = $2345678C;
+ tks_published = $468ACF19;
+ tk_unit = $8D159E33;
+ tk_uses = $1A2B3C66;
+ tk_implementation = $345678CD;
+ tk_const = $68ACF19B;
+ tk_var = $D159E337;
+ tk_type = $A2B3C66E;
+ tk_procedure = $45678CDD;
+ tk_begin = $8ACF19BB;
+ tk_dumpelements = $159E3376;
+ tk_abort = $2B3C66ED;
+ tk_end = $5678CDDB;
+ tk_if = $ACF19BB7;
+ tk_then = $59E3376E;
+ tk_else = $B3C66EDD;
+ tk_class = $678CDDBA;
 const
- tokens: array[0..16] of string = ('','.classes',
+ tokens: array[0..20] of string = ('',
+  '.classes','.private','.protected','.public','.published',
   'unit','uses','implementation','const','var','type','procedure','begin',
   'dumpelements','abort','end','if','then','else','class');
 
- tokenids: array[0..16] of identty = (
+ tokenids: array[0..20] of identty = (
   $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
   $1A2B3C66,$345678CD,$68ACF19B,$D159E337,$A2B3C66E,$45678CDD,$8ACF19BB,
-  $159E3376,$2B3C66ED,$5678CDDB);
+  $159E3376,$2B3C66ED,$5678CDDB,$ACF19BB7,$59E3376E,$B3C66EDD,$678CDDBA);
 
 var
  startco: contextty = (branch: nil; handle: nil; 
