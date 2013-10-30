@@ -63,6 +63,8 @@ const
 
 type
  telementhashdatalist = class(thashdatalist)
+  private
+   ffindvislevel: vislevelty;
   protected
    felementdata: string;
    fnextelement: elementoffsetty;
@@ -134,6 +136,7 @@ type
    //function elementcount: integer;
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
+   property findvislevel: vislevelty read ffindvislevel write ffindvislevel;
  end;
  
 procedure clear;
@@ -360,7 +363,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= findcurrent(aname,vis_min);
+ ele1:= findcurrent(aname,ffindvislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -405,7 +408,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= findcurrent(aname,vis_min);
+ ele1:= findcurrent(aname,ffindvislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -725,6 +728,7 @@ end;
 
 constructor telementhashdatalist.create;
 begin
+ ffindvislevel:= vis_min;
  inherited create(sizeof(elementdataty));
 end;
 

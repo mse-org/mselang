@@ -31,7 +31,7 @@ procedure handleclassfield(const info: pparseinfoty);
 
 implementation
 uses
- elements,handler,errorhandler,unithandler,grammar,handlerglob;
+ elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils;
 
 const
  vic_private = vis_3;
@@ -145,10 +145,22 @@ end;
 
 procedure handleclassfield(const info: pparseinfoty);
 var
- po1: pvardataty; 
+ po1: pvardataty;
+ po2: ptypedataty;
 begin
  with info^ do begin
- // if not ele.addelement(contextstack[stackindex+1].d.ident,
+  ele.addelement(contextstack[stackindex+1].d.ident.ident,
+       currentclassvislevel,ek_var,sizeof(vardataty),po1);
+  if po1 = nil then begin
+   identerror(info,2,err_duplicateidentifier);   
+  end;
+  classesscopereset(info);
+  if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
+  end
+  else begin
+   identerror(info,stacktop-stackindex,err_identifiernotfound);
+  end;
+  classesscopeset(info);
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSFIELD');

@@ -116,7 +116,7 @@ procedure handleabort(const info: pparseinfoty);
 
 implementation
 uses
- stackops,msestrings,elements,grammar,sysutils,
+ stackops,msestrings,elements,grammar,sysutils,handlerutils,
  unithandler,errorhandler;
 
 const
@@ -286,160 +286,6 @@ begin
  end;
 end;
 *)
-function findkindelementdata(const aident: contextdataty;
-              const visibility: vislevelty;
-              const akind: elementkindty; out ainfo: pointer): boolean;
-var
- po1: pelementinfoty;
-begin
- result:= false;
- if aident.kind = ck_ident then begin
-  po1:= ele.findelement(aident.ident.ident,visibility);
-  if (po1 <> nil) and (akind = ek_none) or (po1^.header.kind = akind) then begin
-   ainfo:= @po1^.data;
-   result:= true;
-  end;
- end;
-end;
-
-function findkindelementdata(const info: pparseinfoty;
-              const astackoffset: integer; const visibility: vislevelty;
-              const akind: elementkindty; out ainfo: pointer): boolean;
-begin
- with info^ do begin
-  result:= findkindelementdata(contextstack[stackindex+astackoffset].d,
-                                                      visibility,akind,ainfo);
- end;
-end;
-
-function findkindelements(const info: pparseinfoty;
-            const astackoffset: integer; const visibility: vislevelty;
-            const akind: elementkindty; out aelement: pelementinfoty): boolean;
-var
- int1: integer;
- idents: identvectorty;
- po1: pcontextitemty;
- ele1,ele2: elementoffsetty;
-begin
- result:= false;
- with info^ do begin
-  po1:= @contextstack[stackindex+astackoffset];
-  identcount:= -1;
-  for int1:= 0 to high(idents.d) do begin
-   idents.d[int1]:= po1^.d.ident.ident;
-   if not po1^.d.ident.continued then begin
-    identcount:= int1;
-    break;
-   end;
-   inc(po1);
-  end;
-  idents.high:= identcount;
-  inc(identcount);
-  if identcount = 0 then begin
-   errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
-  end
-  else begin
-   aelement:= ele.findelementsupward(idents,visibility,ele1);
-   if (aelement <> nil) and ((akind = ek_none) or 
-                             (aelement^.header.kind = akind)) then begin
-    result:= true;
-   end
-   else begin //todo: use cache
-    ele2:= ele.elementparent;
-    for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
-     ele.elementparent:=
-       info^.unitinfo^.implementationuses[int1]^.interfaceelement;
-     aelement:= ele.findelementsupward(idents,visibility,ele1);
-     if (aelement <> nil) and ((akind = ek_none) or 
-                             (aelement^.header.kind = akind)) then begin
-      result:= true;
-      break;
-     end;
-    end;
-    if not result then begin
-     for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
-      ele.elementparent:=
-        info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
-      aelement:= ele.findelementsupward(idents,visibility,ele1);
-      if (aelement <> nil) and ((akind = ek_none) or 
-                              (aelement^.header.kind = akind)) then begin
-       result:= true;
-       break;
-      end;
-     end;
-    end;
-    ele.elementparent:= ele2;
-   end;
-  end;
- end;
-end;
-
-function findkindelementsdata(const info: pparseinfoty;
-             const astackoffset: integer; const visibility: vislevelty; 
-                   const akind: elementkindty; out ainfo: pointer): boolean;
-begin
- result:= findkindelements(info,astackoffset,visibility,akind,ainfo);
- if result then begin
-  ainfo:= @pelementinfoty(ainfo)^.data;
- end;
-end;
-
-procedure parsererror(const info: pparseinfoty; const text: string);
-begin
- with info^ do begin
-  contextstack[stackindex].d.kind:= ck_error;
-  writeln(' ***ERROR*** '+text);
- end; 
-end;
-
-procedure identnotfounderror(const info: contextitemty; const text: string);
-begin
- writeln(' ***ERROR*** ident '+lstringtostring(info.start.po,info.d.ident.len)+
-                   ' not found. '+text);
-end;
-
-procedure wrongidentkinderror(const info: contextitemty; 
-       wantedtype: elementkindty; const text: string);
-begin
- writeln(' ***ERROR*** wrong ident kind '+
-               lstringtostring(info.start.po,info.d.ident.len)+
-                   ', expected '+
-         getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
-end;
- 
-procedure outcommand(const info: pparseinfoty; const items: array of integer;
-                     const text: string);
-var
- int1: integer;
-begin
- with info^ do begin
-  for int1:= 0 to high(items) do begin
-   with contextstack[stacktop+items[int1]].d do begin
-    command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
-    case kind of
-     ck_const: begin
-      with constval do begin
-       case kind of
-        dk_bool8: begin
-         command.write(longbool(vbool8));
-        end;
-        dk_int32: begin
-         command.write(vint32);
-        end;
-        dk_flo64: begin
-         command.write(vflo64);
-        end;
-       end;
-      end;
-     end;
-    end;
-    command.write(',');
-   end;
-  end;
-  command.writeln([' ',text]);
- end;
-end;
-
 procedure push(const info: pparseinfoty; const avalue: boolean); overload;
 begin
  with additem(info)^ do begin
@@ -588,23 +434,6 @@ const
   (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,
    1e10,1e11,1e12,1e13,1e14,1e15,1e16,1e17,1e18,1e19,
    1e20,1e21,1e22,1e23,1e24,1e25,1e26,1e27,1e28,1e29,1e30,1e31,1e32);
-
-type
- comperrorty = (ce_invalidfloat,ce_expressionexpected,ce_startbracketexpected,
-               ce_endbracketexpected);
-const
- errormessages: array[comperrorty] of msestring = (
-  'Invalid Float',
-  'Expression expected',
-  '''('' expected',
-  ''')'' expected'
- );
- 
-procedure error(const info: pparseinfoty; const error: comperrorty;
-                   const pos: pchar=nil);
-begin
- outcommand(info,[],'*ERROR* '+errormessages[error]);
-end;
 
 procedure dofrac(const info: pparseinfoty; const asource: pchar;
                  out neg: boolean; out mantissa: qword; out fraclen: integer);
