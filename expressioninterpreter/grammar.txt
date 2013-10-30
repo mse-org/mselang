@@ -231,9 +231,21 @@ classdef0,classdeferror,
  'protected'.,!handleclassprotected-
  'public'.,!handleclasspublic-
  'published'.,!handleclasspublished-
+ @identstart,classfield^*
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror^
 classdefreturn,type4-,handleclassdefreturn*
+classfield,,handleclassfield^*>
+ '',vardef
+#
+vardef,vardef0,
+ '',ident*
+vardef0,,
+ ${whitespace}
+ ':',vardef1-
+vardef1,,
+ ${whitespace}
+ @identstart,identpath^*
 #
 statementend,,handlestatementend!
 exp,exp1,

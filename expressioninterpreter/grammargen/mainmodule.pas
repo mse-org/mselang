@@ -58,6 +58,14 @@ ${macroname}
  . -> keyword
 *)
 
+const
+ contextlinesyntax = 
+'<context>,[<next>][-],[<handler>][^|!][+][*][>]';
+ branchlinesyntax = 
+'<stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},'+lineend+
+'[[<context>|!<handler>] [-] [[^][*] | [*][^]] [!] ]'+lineend+
+'[, <pushed context> | <parentcontext>^]';
+
 type
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -230,6 +238,12 @@ var
   writestderr('***ERROR*** '+text+ ' line '+inttostr(line)+lineend+str1,true);
  end;
 
+ procedure readline(var astr: string);
+ begin
+  grammarstream.readln(astr);
+  inc(line);
+ end;
+ 
  function getkeyword(const atext: string; out keyword: keywordty): boolean;
  var
   int1: integer;
@@ -323,10 +337,9 @@ var
 
 const
  contextformat =
- 'Format of contextline is "context,next[-],handler[^|!][>]"';
- branchformat = 'Format of branch is'+lineend+
-'"''string''[.],{''string''[.],}<<context>|!<handler>>[-][[^][*] | [*][^]]'+lineend+
-          '[, <pushed context> | <parentcontext>*]"';
+ 'Format of contextline is'+lineend+'"'+contextlinesyntax+'"';
+ branchformat = 
+ 'Format of branch is'+lineend+'"'+branchlinesyntax+'"';
  defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
  ar1: stringarty;
@@ -360,8 +373,7 @@ begin
   id:= idstart; //invalid
   lfsr321(id);
   repeat
-   grammarstream.readln(str1);
-   inc(line);
+   readline(str1);
    if (str1 <> '') then begin
     if str1[1] = '{' then begin //macrodef
      int1:= findchar(str1,'}');
@@ -380,8 +392,7 @@ begin
        str2:= '';
       end
       else begin
-       grammarstream.readln(str2);
-       inc(line);
+       readline(str2);
        int2:= findchar(str2,'"');
        if int2 = 0 then begin
         error('Invalid macrodef');
@@ -419,7 +430,7 @@ begin
        break;
       end;
       macrotext:= macrotext+lineend;
-      grammarstream.readln(str2);
+      readline(str2);
      end;
      macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)]);
     end
