@@ -77,7 +77,7 @@ var
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils,msemacros,mseparserglob,typinfo,mselfsr;
+ mseformatstr,msearrayutils,msemacros,parserglob,typinfo,mselfsr;
  
 type
  paramty = (pa_grammarfile,pa_pasfile);
@@ -648,7 +648,7 @@ begin
 '{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
 'interface'+lineend+
 'uses'+lineend+
-' mseparserglob,mseelements;'+lineend+
+' parserglob,elements;'+lineend+
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;

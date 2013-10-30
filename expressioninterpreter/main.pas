@@ -22,8 +22,8 @@ uses
  msegraphics,msegraphutils,mseevent,mseclasses,mseforms,msedataedits,mseedit,
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
- mclasses,mseelements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
- msesyntaxedit,msetextedit,msepipestream,mseprocess,mseparserglob;
+ mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
+ msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob;
 
 type
  tmainfo = class(tmainform)
@@ -74,7 +74,7 @@ var
   
 implementation
 uses
- main_mfm,mseexpint,msestream,msestackops;
+ main_mfm,msestream,stackops,parser;
 
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -83,7 +83,10 @@ var
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
- ar1:= parse(ed.gettext,stream1);
+ parser.init;
+ parser.parse(ed.gettext,stream1,nil,ar1);
+ parser.deinit;
+
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
@@ -105,9 +108,9 @@ end;
 
 procedure tmainfo.dump;
 begin
- grid[0].datalist.asarray:= elements.dumpelements;
+ grid[0].datalist.asarray:= ele.dumpelements;
  grid.row:= bigint;
- countdi.value:= elements.count;
+ countdi.value:= ele.count;
 end;
 
 procedure tmainfo.clearexe(const sender: TObject);
@@ -118,14 +121,14 @@ end;
 
 procedure tmainfo.popexe(const sender: TObject);
 begin
- addi.value:= elements.popelement <> nil;
+ addi.value:= ele.popelement <> nil;
  dump;
 end;
 
 procedure tmainfo.setpaexe(const sender: TObject);
 begin
  if grid.row > 0 then begin
-  elements.elementparent:= (grid.row-1)*sizeof(elementinfoty);
+  ele.elementparent:= (grid.row-1)*sizeof(elementinfoty);
   dump;
  end;
 end;
@@ -148,15 +151,15 @@ procedure tmainfo.markexe(const sender: TObject);
 var
  puint1: ptruint;
 begin
- elements.markelement(ref);
+ ele.markelement(ref);
  markdi.value:= ref.hashref;
  markddi.value:= ref.dataref;
- countdi.value:= elements.count;
+ countdi.value:= ele.count;
 end;
 
 procedure tmainfo.releaseexe(const sender: TObject);
 begin
- elements.releaseelement(ref);
+ ele.releaseelement(ref);
  dump;
 end;
 

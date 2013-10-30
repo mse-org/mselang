@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,mseparserglob,mseelements;
+ msestrings,parserglob,elements;
 
 type
  unitdataty = record
@@ -84,15 +84,15 @@ begin
    identerror(info,1,err_illegalunitname);
   end
   else begin
-   if not elements.pushelement(id1,vis_max,ek_unit,
+   if not ele.pushelement(id1,vis_max,ek_unit,
                                  elesize+sizeof(unitdataty),po1) then begin
     internalerror(info,'U131018A');
    end;
    with unitinfo^ do begin
-    interfaceelement:= elements.elementparent;
-    po2:= elements.addelement(tks_classes,vis_max,ek_classes,
+    interfaceelement:= ele.elementparent;
+    po2:= ele.addelement(tks_classes,vis_max,ek_classes,
                                               elesize+sizeof(classesdataty));
-    classeselement:= elements.eledatarel(po2);
+    classeselement:= ele.eledatarel(po2);
    end;
   end;
   stacktop:= stackindex;
@@ -108,7 +108,7 @@ begin
    stopparser:= true; //stop parsing;
   end
   else begin
-   if not elements.pushelement(ord(tk_implementation),vis_max,ek_implementation,
+   if not ele.pushelement(ord(tk_implementation),vis_max,ek_implementation,
                 elesize+sizeof(implementationdataty),po1) then begin
     
    end;

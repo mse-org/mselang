@@ -18,11 +18,11 @@
 //todo: use efficient data structures and procedures, 
 //this is a proof of concept only
 //
-unit mseelements;
+unit elements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,msetypes,msehash,mseparserglob;
+ msestrings,msetypes,msehash,parserglob;
 
 {$define mse_debug_parser}
 
@@ -147,7 +147,7 @@ function getident(const aname: string): identty; overload;
 //function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
 var
- elements: telementhashdatalist;
+ ele: telementhashdatalist;
 
 implementation
 uses
@@ -218,7 +218,7 @@ begin
  stringindex:= 0;
  stringlen:= 0;
 
- elements.clear;
+ ele.clear;
 {$ifdef mse_debug_parser}
  identnames:= nil;
 {$endif}
@@ -231,7 +231,7 @@ var
  tk1: integer;
 begin
  clear;
- elements.pushelement(getident(''),vis_max,ek_none,elesize); //root
+ ele.pushelement(getident(''),vis_max,ek_none,elesize); //root
  stringident:= idstart; //invalid
  lfsr321(stringident);
  for tk1:= 1 to high(tokens) do begin
@@ -901,9 +901,9 @@ end;
 
 initialization
  identlist:= tindexidenthashdatalist.create;
- elements:= telementhashdatalist.create;
+ ele:= telementhashdatalist.create;
  clear;
 finalization
  identlist.free;
- elements.free;
+ ele.free;
 end.

@@ -14,11 +14,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-unit msehandler;
+unit handler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob,typinfo,msetypes,handlerglob;
+ parserglob,typinfo,msetypes,handlerglob;
 
 procedure init;
 procedure deinit;
@@ -116,7 +116,7 @@ procedure handleabort(const info: pparseinfoty);
 
 implementation
 uses
- msestackops,msestrings,mseelements,mseexpint,grammar,sysutils,
+ stackops,msestrings,elements,grammar,sysutils,
  unithandler,errorhandler;
 
 const
@@ -243,23 +243,23 @@ var
 begin
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= elements.addelement(getident(name),vis_max,ek_type,
+   po1:= ele.addelement(getident(name),vis_max,ek_type,
                                                   elesize+sizeof(typedataty));
    po2:= @po1^.data;
    po2^:= data;
   end;
-  sysdatatypes[ty1]:= elements.eledatarel(po2);
+  sysdatatypes[ty1]:= ele.eledatarel(po2);
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= elements.addelement(getident(name),vis_max,ek_const,
+   po1:= ele.addelement(getident(name),vis_max,ek_const,
                                           elesize+sizeof(constdataty));
    pconstdataty(@po1^.data)^.d:= data;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= elements.addelement(getident(name),vis_max,ek_sysfunc,
+   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc,
                                     elesize+sizeof(sysfuncdataty));
    psysfuncdataty(@po1^.data)^:= data;
   end;
@@ -294,7 +294,7 @@ var
 begin
  result:= false;
  if aident.kind = ck_ident then begin
-  po1:= elements.findelement(aident.ident.ident,visibility);
+  po1:= ele.findelement(aident.ident.ident,visibility);
   if (po1 <> nil) and (akind = ek_none) or (po1^.header.kind = akind) then begin
    ainfo:= @po1^.data;
    result:= true;
@@ -339,17 +339,17 @@ begin
    errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
   end
   else begin
-   aelement:= elements.findelementsupward(idents,visibility,ele1);
+   aelement:= ele.findelementsupward(idents,visibility,ele1);
    if (aelement <> nil) and ((akind = ek_none) or 
                              (aelement^.header.kind = akind)) then begin
     result:= true;
    end
    else begin //todo: use cache
-    ele2:= elements.elementparent;
+    ele2:= ele.elementparent;
     for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
-     elements.elementparent:=
+     ele.elementparent:=
        info^.unitinfo^.implementationuses[int1]^.interfaceelement;
-     aelement:= elements.findelementsupward(idents,visibility,ele1);
+     aelement:= ele.findelementsupward(idents,visibility,ele1);
      if (aelement <> nil) and ((akind = ek_none) or 
                              (aelement^.header.kind = akind)) then begin
       result:= true;
@@ -358,9 +358,9 @@ begin
     end;
     if not result then begin
      for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
-      elements.elementparent:=
+      ele.elementparent:=
         info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
-      aelement:= elements.findelementsupward(idents,visibility,ele1);
+      aelement:= ele.findelementsupward(idents,visibility,ele1);
       if (aelement <> nil) and ((akind = ek_none) or 
                               (aelement^.header.kind = akind)) then begin
        result:= true;
@@ -368,7 +368,7 @@ begin
       end;
      end;
     end;
-    elements.elementparent:= ele2;
+    ele.elementparent:= ele2;
    end;
   end;
  end;
@@ -493,7 +493,7 @@ end;
 procedure int32toflo64(const info: pparseinfoty; const index: integer);
 begin
  with additem(info)^ do begin
-  op:= @msestackops.int32toflo64;
+  op:= @stackops.int32toflo64;
   with d.op1 do begin
    index0:= index;
   end;
@@ -1090,7 +1090,7 @@ begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     si1:= ptypedataty(elements.eledataabs(pvardataty(po2)^.typerel))^.size;
+     si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typerel))^.size;
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -1274,7 +1274,7 @@ begin
  outhandle(info,'USES');
 {$endif}
  with info^ do begin
-  offs1:= elements.decelementparent;
+  offs1:= ele.decelementparent;
   int2:= stacktop-stackindex-1;
   with unitinfo^ do begin
    if us_interfaceparsed in state then begin
@@ -1296,7 +1296,7 @@ begin
     break;
    end;
   end;
-  elements.elementparent:= offs1;
+  ele.elementparent:= offs1;
   stacktop:= stackindex;
  end;
 end;
@@ -1362,7 +1362,7 @@ begin
        (contextstack[stacktop-1].d.kind = ck_const) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
-    po1:= elements.addelement(ident.ident,vis_max,ek_const,
+    po1:= ele.addelement(ident.ident,vis_max,ek_const,
                                              elesize+sizeof(constdataty));
     if po1 = nil then begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
@@ -1409,7 +1409,7 @@ begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
        (contextstack[stacktop-1].d.kind = ck_ident) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= elements.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,
+   po1:= ele.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,
                                  ek_var,elesize+sizeof(vardataty));
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
@@ -1418,7 +1418,7 @@ begin
     if findkindelements(info,stacktop-1-stackindex,vis_max,ek_type,
                                                               po2) then begin
      with pvardataty(@po1^.data)^ do begin
-      typerel:= elements.eledatarel(po2);
+      typerel:= ele.eledatarel(po2);
       if funclevel = 0 then begin
        address:= getglobvaraddress(info,ptypedataty(po2)^.size);
        flags:= [vf_global];
@@ -1470,7 +1470,7 @@ begin
   if (stacktop-stackindex = 2) and 
        (contextstack[stacktop].d.kind = ck_ident) and
        (contextstack[stacktop-1].d.kind = ck_ident) then begin
-   po1:= elements.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,
+   po1:= ele.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,
                                            ek_type,elesize+sizeof(typedataty));
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
@@ -1584,7 +1584,7 @@ begin
  with info^ do begin
   if (stacktop-stackindex > 0) and //todo: multi level var name
    findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
-   si1:= ptypedataty(elements.eledataabs(po1^.typerel))^.size;
+   si1:= ptypedataty(ele.eledataabs(po1^.typerel))^.size;
    with additem(info)^ do begin
     if vf_global in po1^.flags then begin
      case si1 of
@@ -1687,13 +1687,13 @@ begin
    else begin
     po3:= @po2^.paramsrel;
     for int1:= stackindex+3 to stacktop do begin
-     po4:= elements.eledataabs(po3^);
+     po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
       if d.factkind <> 
-               ptypedataty(elements.eledataabs(po4^.typerel))^.kind then begin
+               ptypedataty(ele.eledataabs(po4^.typerel))^.kind then begin
        errormessage(info,int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
-                    typename(ptypedataty(elements.eledataabs(po4^.typerel))^)]);
+                    typename(ptypedataty(ele.eledataabs(po4^.typerel))^)]);
       end;
      end;
      inc(po3);
@@ -1843,20 +1843,20 @@ begin
   err1:= false;
   inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
-  if elements.pushelement(contextstack[stackindex+1].d.ident.ident,vis_max,
+  if ele.pushelement(contextstack[stackindex+1].d.ident.ident,vis_max,
                     ek_func,elesize+sizeof(funcdataty)+
                         paramco*sizeof(pvardataty),po1) then begin
    po1^.paramcount:= paramco;
    po4:= @po1^.paramsrel;
    int1:= 4;
    for int2:= 0 to paramco-1 do begin
-    if elements.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
+    if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
                                ek_var,sizeof(vardataty),po2) then begin
-     po4^[int2]:= elements.eledatarel(po2);
+     po4^[int2]:= ele.eledatarel(po2);
      if findkindelementsdata(info,int1+1,vis_max,ek_type,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
-       typerel:= elements.eledatarel(po3);
+       typerel:= ele.eledatarel(po3);
        flags:= [vf_param];
       end;
      end
@@ -1885,9 +1885,9 @@ begin
   with contextstack[stackindex] do begin
    d.kind:= ck_proc;
    d.proc.paramcount:= paramco;
-   elements.markelement(d.proc.elementmark); 
+   ele.markelement(d.proc.elementmark); 
   end;
-//  elements.popelement;
+//  ele.popelement;
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE3');
@@ -1897,7 +1897,7 @@ end;
 procedure handleprocedure6(const info: pparseinfoty);
 begin
  with info^ do begin
-  elements.releaseelement(contextstack[stackindex].d.proc.elementmark); 
+  ele.releaseelement(contextstack[stackindex].d.proc.elementmark); 
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;
@@ -1932,7 +1932,7 @@ var
  int1: integer;
 begin
  writeln('--ELEMENTS----------------------------------------------------------');
- ar1:= elements.dumpelements;
+ ar1:= ele.dumpelements;
  for int1:= 0 to high(ar1) do begin
   writeln(ar1[int1]);
  end;

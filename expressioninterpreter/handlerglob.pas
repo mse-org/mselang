@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob;
+ parserglob;
 type
  typedataty = record
   size: integer;

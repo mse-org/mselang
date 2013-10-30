@@ -7,7 +7,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
-unit msestackops;
+unit stackops;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 //
 //todo: use efficient data structures and procedures, 
@@ -15,7 +15,7 @@ unit msestackops;
 //
 interface
 uses
- mseparserglob;
+ parserglob;
  
 type
 

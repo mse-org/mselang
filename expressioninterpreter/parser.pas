@@ -18,7 +18,7 @@ unit parser;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- msetypes,msestream,msestackops,mseparserglob;
+ msetypes,msestream,stackops,parserglob;
 
 //
 //todo: use efficient data structures and procedures, 
@@ -39,7 +39,7 @@ procedure deinit;
 
 implementation
 uses
- typinfo,grammar,{msegrammar,}msehandler,mseelements,msestrings,sysutils,
+ typinfo,grammar,handler,elements,msestrings,sysutils,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
@@ -51,16 +51,16 @@ uses
 
 procedure init;
 begin
- mseelements.init;
+ elements.init;
  unithandler.init;
- msehandler.init;
+ handler.init;
 end;
 
 procedure deinit;
 begin
- msehandler.deinit;
+ handler.deinit;
  unithandler.deinit;
- mseelements.clear;
+ elements.clear;
 end;
 
 {$ifdef mse_debugparser}

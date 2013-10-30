@@ -18,7 +18,7 @@ unit grammar;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob,mseelements;
+ parserglob,elements;
  
 function startcontext: pcontextty;
 
@@ -546,7 +546,7 @@ var
 implementation
 
 uses
- msehandler,unithandler,classhandler;
+ handler,unithandler,classhandler;
  
 const
  bstart: array[0..5] of branchty = (

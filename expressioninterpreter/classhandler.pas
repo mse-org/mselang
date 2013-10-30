@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob;
+ parserglob;
 
 procedure handleclassdefstart(const info: pparseinfoty);
 procedure handleclassdeferror(const info: pparseinfoty);
@@ -31,7 +31,7 @@ procedure handleclassfield(const info: pparseinfoty);
 
 implementation
 uses
- mseelements,msehandler,errorhandler,unithandler,grammar,handlerglob;
+ elements,handler,errorhandler,unithandler,grammar,handlerglob;
 
 const
  vic_private = vis_3;
@@ -53,9 +53,9 @@ var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
- po2^.scopebefore:= elements.elementparent;
- elements.elementparent:= info^.unitinfo^.classeselement;
+          ele.eledataabs(info^.unitinfo^.classeselement))^.data;
+ po2^.scopebefore:= ele.elementparent;
+ ele.elementparent:= info^.unitinfo^.classeselement;
 end;
 
 procedure classesscopereset(const info: pparseinfoty);
@@ -63,8 +63,8 @@ var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          elements.eledataabs(info^.unitinfo^.classeselement))^.data;
- elements.elementparent:= po2^.scopebefore;
+          ele.eledataabs(info^.unitinfo^.classeselement))^.data;
+ ele.elementparent:= po2^.scopebefore;
 end;
 
 procedure handleclassdefstart(const info: pparseinfoty);
@@ -76,14 +76,14 @@ var
 begin
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  if not elements.addelement(id1,vis_max,ek_type,
+  if not ele.addelement(id1,vis_max,ek_type,
                                             sizeof(typedataty),po1) then begin
    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
    classesscopeset(info);
-   elements.pushelement(id1,vis_max,ek_class,sizeof(classdataty),po2);
-   currentclass:= elements.eledatarel(po2);
+   ele.pushelement(id1,vis_max,ek_class,sizeof(classdataty),po2);
+   currentclass:= ele.eledatarel(po2);
    currentclassvislevel:= vic_published; //default
   end;
  end;
@@ -96,7 +96,7 @@ procedure handleclassdefreturn(const info: pparseinfoty);
 var
  po2: pclassesdataty;
 begin
-// elements.popelement;
+// ele.popelement;
  classesscopereset(info);
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFRETURN');
@@ -148,7 +148,7 @@ var
  po1: pvardataty; 
 begin
  with info^ do begin
- // if not elements.addelement(contextstack[stackindex+1].d.ident,
+ // if not ele.addelement(contextstack[stackindex+1].d.ident,
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSFIELD');
