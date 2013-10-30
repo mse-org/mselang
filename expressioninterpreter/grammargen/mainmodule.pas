@@ -224,7 +224,6 @@ var
  contextline: stringarty;
  branches: brancharty;
  line: integer;
-// branchcount: integer;
  contexts: contextinfoarty;
  tokendefs: tokendefarty;
  intokendef: boolean;
@@ -342,15 +341,11 @@ const
  'Format of branch is'+lineend+'"'+branchlinesyntax+'"';
  defaultflags = ' e:false; p:false; s: false; sb:false; sa: false';
 var
- ar1: stringarty;
-// mstr1: msestring;
  str2,str3,str4,str5: string;
  int1,int2,int3: integer;
  po1,po2,po3: pchar;
  setbefore,setafter: boolean;
-// identchars: array[char] of boolean;
  keywordsstart: integer;
- ar2: stringarty;
  macroname,macrotext: string;
  bo1: boolean;
  macrolist1: tmacrolist = nil;
@@ -957,6 +952,13 @@ lineend;
   passtream.free;
   macrolist1.free;
  end;
+
+// internaltokens:= nil;
+ branches:= nil;
+ contexts:= nil;
+// tokendefs:= nil;
+// keywords:= nil;
+// keywordids:= nil;
 end;
 
 procedure tmainmo.eventloopexe(const sender: TObject);

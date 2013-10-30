@@ -31,6 +31,10 @@ unit2,semicolonexpected,
  ${whitespace}
  ';',start1-
 #
+checksemicolon,,^
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 semicolonexpected,,handlesemicolonexpected
 start1,start2,
  ${whitespace}
@@ -236,17 +240,18 @@ classdef0,classdeferror,
 classdeferror,,handleclassdeferror^
 classdefreturn,type4-,handleclassdefreturn*
 classfield,,handleclassfield^*>
- '',vardef
+ '',vardef^*
 #
 vardef,vardef0,
- '',ident*
+ '',ident^*
 vardef0,,
  ${whitespace}
  ':',vardef1-
-vardef1,,
+vardef1,checksemicolon,
  ${whitespace}
  @identstart,identpath^*
 #
+
 statementend,,handlestatementend!
 exp,exp1,
  '',simpexp*

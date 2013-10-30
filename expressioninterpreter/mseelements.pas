@@ -360,7 +360,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= findcurrent(aname,avislevel);
+ ele1:= findcurrent(aname,vis_min);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;
@@ -405,7 +405,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- ele1:= findcurrent(aname,avislevel);
+ ele1:= findcurrent(aname,vis_min);
  if ele1 < 0 then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+asize;

@@ -18,14 +18,7 @@ unit msehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseparserglob,typinfo,msetypes;
-type
- typedataty = record
-  size: integer;
-  case kind: datakindty of 
-   dk_record: ();
- end;
- ptypedataty = ^typedataty;
+ mseparserglob,typinfo,msetypes,handlerglob;
 
 procedure init;
 procedure deinit;
@@ -144,18 +137,7 @@ type
   d: contextdataty;
  end;
  pconstdataty = ^constdataty;
- 
- varflagty = (vf_global,vf_param);
- varflagsty = set of varflagty;
-
- vardataty = record
-  address: ptruint;
-  typerel: elementoffsetty; //elementdata relative
-  flags: varflagsty;
- end;
- pvardataty = ^vardataty;
- ppvardataty = ^pvardataty;
- 
+  
 // keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
  sysfuncty = (sf_writeln);
  sysfuncdataty = record

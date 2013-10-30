@@ -86,6 +86,10 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'unit2');
+ checksemicolonco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'checksemicolon');
  semicolonexpectedco: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
@@ -649,6 +653,51 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @start1co); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bchecksemicolon: array[0..6] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @semicolonexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2162,7 +2211,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bclassfield: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @vardefco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2172,7 +2221,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bvardef: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2915,6 +2964,7 @@ begin
  unit1co.handle:= @setunitname;
  unit2co.branch:= @bunit2;
  unit2co.next:= @semicolonexpectedco;
+ checksemicolonco.branch:= @bchecksemicolon;
  semicolonexpectedco.branch:= nil;
  semicolonexpectedco.handle:= @handlesemicolonexpected;
  start1co.branch:= @bstart1;
@@ -3078,6 +3128,7 @@ begin
  vardefco.next:= @vardef0co;
  vardef0co.branch:= @bvardef0;
  vardef1co.branch:= @bvardef1;
+ vardef1co.next:= @checksemicolonco;
  statementendco.branch:= nil;
  statementendco.handle:= @handlestatementend;
  expco.branch:= @bexp;

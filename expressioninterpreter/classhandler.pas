@@ -27,10 +27,11 @@ procedure handleclassprivate(const info: pparseinfoty);
 procedure handleclassprotected(const info: pparseinfoty);
 procedure handleclasspublic(const info: pparseinfoty);
 procedure handleclasspublished(const info: pparseinfoty);
+procedure handleclassfield(const info: pparseinfoty);
 
 implementation
 uses
- mseelements,msehandler,errorhandler,unithandler,grammar;
+ mseelements,msehandler,errorhandler,unithandler,grammar,handlerglob;
 
 const
  vic_private = vis_3;
@@ -113,21 +114,45 @@ end;
 procedure handleclassprivate(const info: pparseinfoty);
 begin
  info^.currentclassvislevel:= vic_private;
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSPRIVATE');
+{$endif}
 end;
 
 procedure handleclassprotected(const info: pparseinfoty);
 begin
  info^.currentclassvislevel:= vic_protected;
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSPROTECTED');
+{$endif}
 end;
 
 procedure handleclasspublic(const info: pparseinfoty);
 begin
  info^.currentclassvislevel:= vic_public;
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSPUBLIC');
+{$endif}
 end;
 
 procedure handleclasspublished(const info: pparseinfoty);
 begin
  info^.currentclassvislevel:= vic_published;
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSPUBLISHED');
+{$endif}
+end;
+
+procedure handleclassfield(const info: pparseinfoty);
+var
+ po1: pvardataty; 
+begin
+ with info^ do begin
+ // if not elements.addelement(contextstack[stackindex+1].d.ident,
+ end;
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSFIELD');
+{$endif}
 end;
 
 end.
