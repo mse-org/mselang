@@ -15,7 +15,7 @@
 @num
  '0','1','2','3','4','5','6','7','8','9'
 @.handlerunits
- 'handler','unithandler','classhandler'
+ 'handler','unithandler','classhandler','recordhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
 start,nounit,
@@ -220,6 +220,7 @@ type1,,+
  '=',type2-
 type2,type3,
  ${whitespace}
+ 'record'.,recorddef-,recorddefreturn
  'class'.,classdef-,classdefreturn
  @identstart,identpath^*
 type3,type4-,handletype3
@@ -227,6 +228,16 @@ type4,type0-,
  ${whitespace}
  ';',-*
  '',semicolonexpected
+#
+recorddef,recorddef0,handlerecorddefstart
+recorddef0,recorddeferror,
+ ${whitespace}
+ @identstart,recordfield^*
+ 'end'.,recorddefreturn-
+recorddeferror,,handlerecorddeferror^
+recordfield,,handlerecordfield^*>
+ '',vardef^*
+recorddefreturn,type4-,handlerecorddefreturn*
 #
 classdef,classdef0,handleclassdefstart
 classdef0,classdeferror,

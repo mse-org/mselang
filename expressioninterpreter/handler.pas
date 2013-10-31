@@ -162,8 +162,10 @@ const
    (name: 'integer'; data: (size: 4; kind: dk_int32))
   );
  sysconstinfos: array[0..1] of constinfoty = (
-   (name: 'false'; data: (kind: ck_const; constval: (kind: dk_bool8; vbool8: 0))),
-   (name: 'true'; data: (kind: ck_const; constval: (kind: dk_bool8; vbool8: -1)))
+   (name: 'false'; data: (elemark: 0;
+             kind: ck_const; constval: (kind: dk_bool8; vbool8: 0))),
+   (name: 'true'; data: (elemark: 0;
+             kind: ck_const; constval: (kind: dk_bool8; vbool8: -1)))
   );
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))

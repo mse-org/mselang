@@ -125,7 +125,12 @@ begin
    dec(result);
   end;
   if (result = 0) and not emptytoken then begin
-   result:= branchrecty(r).keyword - keyword;
+   if (keyword = 0) then begin
+    inc(result);
+   end;
+   if (branchrecty(r).keyword = 0) then begin
+    dec(result);
+   end;
    if (result = 0) and (keyword = 0) then begin
     if length(tokens) = 0 then begin
      inc(result);
@@ -330,7 +335,7 @@ var
   setlength(contexts,high(contexts)+2);
   with contexts[high(contexts)] do begin
    cont:= contextline;
-   bran:= branches;
+   bran:= copy(branches);
   end;
  end;
 
@@ -506,7 +511,9 @@ begin
           end;
           setlength(branches,high(branches)+2);
           str2:= trim(copy(str1,int1+1,bigint));
-          branches[high(branches)].dest:= str2;
+          with branches[high(branches)] do begin
+           dest:= str2;
+          end;
           po1:= pchar(str1)+1;
           po2:= po1+int1-3;
           while po2 > po1 do begin

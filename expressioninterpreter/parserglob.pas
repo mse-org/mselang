@@ -161,6 +161,7 @@ type
  end;
 
  contextdataty = record
+  elemark: elementoffsetty;
   case kind: contextkindty of 
    ck_ident:(
     ident: identinfoty;
