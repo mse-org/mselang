@@ -147,6 +147,7 @@ procedure handleclassfield(const info: pparseinfoty);
 var
  po1: pvardataty;
  po2: ptypedataty;
+ ele1: elementoffsetty;
 begin
  with info^ do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
@@ -154,13 +155,14 @@ begin
   if po1 = nil then begin
    identerror(info,2,err_duplicateidentifier);   
   end;
+  ele1:= ele.elementparent;
   classesscopereset(info);
   if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
   end
   else begin
    identerror(info,stacktop-stackindex,err_identifiernotfound);
   end;
-  classesscopeset(info);
+  ele.elementparent:= ele1;
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSFIELD');
