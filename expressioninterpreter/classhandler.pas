@@ -149,7 +149,7 @@ var
  po2: ptypedataty;
 begin
  with info^ do begin
-  ele.addelement(contextstack[stackindex+1].d.ident.ident,
+  ele.addelement(contextstack[stackindex+2].d.ident.ident,
        currentclassvislevel,ek_var,sizeof(vardataty),po1);
   if po1 = nil then begin
    identerror(info,2,err_duplicateidentifier);   

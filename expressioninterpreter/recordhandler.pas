@@ -27,7 +27,7 @@ procedure handlerecordfield(const info: pparseinfoty);
 
 implementation
 uses
- handlerglob,elements,errorhandler;
+ handlerglob,elements,errorhandler,handlerutils;
  
 procedure handlerecorddefstart(const info: pparseinfoty);
 var
@@ -67,7 +67,26 @@ begin
 end;
 
 procedure handlerecordfield(const info: pparseinfoty);
+var
+ po1: pvardataty;
+ po2: ptypedataty;
+ ele1: elementoffsetty;
 begin
+ with info^ do begin
+  ele.addelement(contextstack[stackindex+2].d.ident.ident,
+       vis_max,ek_var,sizeof(vardataty),po1);
+  if po1 = nil then begin
+   identerror(info,2,err_duplicateidentifier);   
+  end;
+  ele1:= ele.elementparent;
+  ele.elementparent:= contextstack[stackindex-2].d.elemark;
+  if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
+  end
+  else begin
+   identerror(info,stacktop-stackindex,err_identifiernotfound);
+  end;
+  ele.elementparent:= ele1;
+ end;
 {$ifdef mse_debugparser}
  outhandle(info,'RECORDFIELD');
 {$endif}

@@ -393,7 +393,7 @@ function telementhashdatalist.pushelement(const aname: identty;
            const asize: integer; out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
- aelementdata:= pushelement(aname,avislevel,akind,asize);
+ aelementdata:= pushelement(aname,avislevel,akind,asize+elesize);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
