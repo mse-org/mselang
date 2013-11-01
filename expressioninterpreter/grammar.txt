@@ -235,7 +235,7 @@ recorddef0,recorddeferror,
  @identstart,recordfield^*
  'end'.,recorddefreturn-
 recorddeferror,,handlerecorddeferror^
-recordfield,,handlerecordfield^*>
+recordfield,,handlerecordfield^>
  '',vardef^*
 recorddefreturn,type4-,handlerecorddefreturn*
 #

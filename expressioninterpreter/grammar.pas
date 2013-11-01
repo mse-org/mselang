@@ -404,7 +404,7 @@ var
                pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'recorddeferror');
  recordfieldco: contextty = (branch: nil; handle: nil; 
-               continue: true; cut: true; restoresource: false; 
+               continue: true; cut: false; restoresource: false; 
                pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'recordfield');
  recorddefreturnco: contextty = (branch: nil; handle: nil; 

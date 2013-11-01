@@ -52,7 +52,8 @@ type
 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
-                  ck_neg,ck_const,ck_fact);
+                  ck_neg,ck_const,ck_fact,
+                  ck_field);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -159,6 +160,9 @@ type
   ident: identinfoty;
   classdata: elementoffsetty;
  end;
+ fieldinfoty = record
+  typedata: elementoffsetty;
+ end;
 
  contextdataty = record
   elemark: elementoffsetty;
@@ -178,6 +182,9 @@ type
    ck_opmark:(
     opmark: opmarkty;
    );
+   ck_field:(
+    field: fieldinfoty;
+   )
  end;
 
  sourceinfoty = record

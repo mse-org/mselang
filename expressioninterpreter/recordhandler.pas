@@ -76,14 +76,21 @@ begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
        vis_max,ek_var,sizeof(vardataty),po1);
   if po1 = nil then begin
-   identerror(info,2,err_duplicateidentifier);   
+   identerror(info,2,err_duplicateidentifier);
+   stacktop:= stackindex-1;
   end;
   ele1:= ele.elementparent;
   ele.elementparent:= contextstack[stackindex-2].d.elemark;
   if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
+   with contextstack[stackindex].d do begin
+    kind:= ck_field;
+    field.typedata:= ele.eledatarel(po2);
+   end;
+   stacktop:= stackindex;
   end
   else begin
    identerror(info,stacktop-stackindex,err_identifiernotfound);
+   stacktop:= stackindex-1;
   end;
   ele.elementparent:= ele1;
  end;
