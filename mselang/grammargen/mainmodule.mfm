@@ -1,0 +1,38 @@
+object mainmo: tmainmo
+  bounds_cx = 298
+  bounds_cy = 105
+  oneventloopstart = eventloopexe
+  left = 47
+  top = 216
+  moduleclassname = 'tmsedatamodule'
+  object sysenv: tsysenvmanager
+    options = [seo_appterminateonexception, seo_terminateonerror, seo_tooutput, seo_toerror]
+    onafterinit = afterinitexe
+    left = 16
+    top = 8
+    defs = (
+      (
+        ak_pararg
+        'g'
+        (        )
+        [arf_mandatory]
+        ''
+        'GRAMMARFILE'
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        'p'
+        (        )
+        [arf_mandatory]
+        ''
+        'PASCALFILE'
+        ''
+        ''
+        ''
+      )
+    )
+  end
+end

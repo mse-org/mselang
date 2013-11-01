@@ -1,0 +1,370 @@
+object mainfo: tmainfo
+  bounds_x = 291
+  bounds_y = 247
+  bounds_cx = 371
+  bounds_cy = 450
+  anchors = [an_top, an_right]
+  container.bounds = (
+    0
+    0
+    371
+    450
+  )
+  statfile = statf
+  moduleclassname = 'tmainform'
+  object tbutton1: tbutton
+    bounds_x = 312
+    bounds_y = 8
+    bounds_cx = 50
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'parse'
+    onexecute = parseexe
+  end
+  object grid: tstringgrid
+    taborder = 1
+    bounds_x = 16
+    bounds_y = 119
+    bounds_cx = 338
+    bounds_cy = 115
+    anchors = [an_left, an_top, an_right, an_bottom]
+    font.name = 'stf_fixed'
+    font.xscale = 1
+    font.dummy = 0
+    datacols.count = 1
+    datacols.items = <    
+      item
+        width = 282
+        options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
+        valuefalse = '0'
+        valuetrue = '1'
+      end>
+    fixcols.count = 1
+    fixcols.items = <    
+      item
+        numstart = -1
+        numstep = 1
+      end>
+    datarowheight = 16
+    reffontheight = 14
+  end
+  object di: trealdisp
+    frame.dummy = 0
+    taborder = 2
+    bounds_x = 16
+    bounds_y = 8
+    bounds_cx = 180
+    bounds_cy = 18
+    valuerange = 1
+    valuestart = 0
+    value = -Inf
+    reffontheight = 14
+  end
+  object getidented: tstringedit
+    frame.caption = 'getident'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 3
+    bounds_x = 16
+    bounds_y = 241
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    onsetvalue = findsetexe
+    reffontheight = 14
+  end
+  object intdi: tintegerdisp
+    frame.dummy = 0
+    taborder = 4
+    bounds_x = 240
+    bounds_y = 258
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object pushed: tstringedit
+    frame.caption = 'pushelement'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 5
+    bounds_x = 16
+    bounds_y = 281
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    reffontheight = 14
+  end
+  object added: tstringedit
+    frame.caption = 'addelement'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 6
+    bounds_x = 16
+    bounds_y = 321
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    reffontheight = 14
+  end
+  object addi: tbooleandisp
+    frame.dummy = 0
+    taborder = 7
+    bounds_x = 248
+    bounds_y = 338
+    bounds_cx = 28
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    textflags = [tf_ycentered]
+    text_false = 'F'
+    text_true = 'T'
+    reffontheight = 14
+  end
+  object tbutton2: tbutton
+    taborder = 8
+    bounds_x = 232
+    bounds_y = 296
+    bounds_cx = 58
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'clear'
+    onexecute = clearexe
+  end
+  object tbutton3: tbutton
+    taborder = 9
+    bounds_x = 296
+    bounds_y = 296
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'pop'
+    onexecute = popexe
+  end
+  object finded: tstringedit
+    frame.caption = 'find'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 10
+    bounds_x = 16
+    bounds_y = 361
+    bounds_cx = 212
+    bounds_cy = 37
+    anchors = [an_left, an_bottom]
+    optionsedit = [oe_undoonesc, oe_closequery, oe_checkmrcancel, oe_shiftreturn, oe_forcereturncheckvalue, oe_eatreturn, oe_resetselectonexit, oe_exitoncursor, oe_endonenter, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly, oe_savevalue, oe_savestate, oe_checkvaluepaststatread]
+    reffontheight = 14
+  end
+  object finddi: tstringdisp
+    frame.dummy = 0
+    taborder = 11
+    bounds_x = 16
+    bounds_y = 400
+    bounds_cx = 212
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object tbutton4: tbutton
+    taborder = 12
+    bounds_x = 240
+    bounds_y = 236
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'setpa'
+    onexecute = setpaexe
+  end
+  object tbooleanedit1: tbooleanedit
+    frame.frameface_list = tfacelist1
+    frame.frameface_offset = -1
+    frame.frameface_offsetactive = 1
+    frame.frameface_offsetactivemouse = 1
+    frame.frameface_offsetactiveclicked = 1
+    frame.localprops1 = [frl1_framefacelist, frl1_framefaceoffset, frl1_framefaceoffset1, frl1_framefaceoffsetdisabled, frl1_framefaceoffsetmouse, frl1_framefaceoffsetclicked, frl1_framefaceoffsetactive, frl1_framefaceoffsetactivemouse, frl1_framefaceoffsetactiveclicked]
+    frame.dummy = 0
+    taborder = 13
+    bounds_x = 240
+    bounds_y = 376
+  end
+  object tsplitter1: tsplitter
+    color = -1879048189
+    taborder = 14
+    bounds_x = 16
+    bounds_y = 116
+    bounds_cx = 338
+    bounds_cy = 3
+    anchors = [an_left, an_top, an_right]
+    options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
+    linktop = edgrid
+    linkbottom = grid
+    statfile = statf
+  end
+  object edgrid: twidgetgrid
+    taborder = 15
+    bounds_x = 16
+    bounds_y = 32
+    bounds_cx = 338
+    bounds_cy = 84
+    anchors = [an_left, an_top, an_right]
+    optionsgrid = [og_focuscellonenter, og_autofirstrow, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
+    fixcols.count = 1
+    fixcols.width = 30
+    fixcols.items = <    
+      item
+        width = 30
+        numstart = 1
+        numstep = 1
+      end>
+    datacols.count = 1
+    datacols.items = <    
+      item[ed]
+        width = 2016
+        widgetname = 'ed'
+        dataclass = tgridrichstringdatalist
+      end>
+    datarowlinewidth = 0
+    datarowheight = 14
+    statfile = statf
+    reffontheight = 14
+    object ed: tsyntaxedit
+      optionsskin = [osk_framebuttononly]
+      taborder = 1
+      visible = False
+      bounds_x = 0
+      bounds_y = 0
+      bounds_cx = 2016
+      bounds_cy = 14
+      font.height = 12
+      font.name = 'stf_fixed'
+      font.xscale = 1
+      font.dummy = 0
+      oneditnotifcation = editnotiexe
+      reffontheight = 14
+    end
+  end
+  object coldi: tintegerdisp
+    frame.dummy = 0
+    taborder = 16
+    bounds_x = 208
+    bounds_y = 8
+    bounds_cx = 52
+    bounds_cy = 18
+    reffontheight = 14
+  end
+  object tbutton5: tbutton
+    taborder = 17
+    bounds_x = 264
+    bounds_y = 8
+    bounds_cx = 42
+    bounds_cy = 20
+    state = [as_localcaption, as_localonexecute]
+    caption = 'save'
+    onexecute = saveex
+  end
+  object tbutton6: tbutton
+    taborder = 18
+    bounds_x = 16
+    bounds_y = 424
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'mark'
+    onexecute = markexe
+  end
+  object tbutton7: tbutton
+    taborder = 19
+    bounds_x = 72
+    bounds_y = 424
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_left, an_bottom]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'release'
+    onexecute = releaseexe
+  end
+  object markdi: tintegerdisp
+    frame.dummy = 0
+    taborder = 20
+    bounds_x = 128
+    bounds_y = 424
+    bounds_cx = 60
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object countdi: tintegerdisp
+    frame.caption = 'count'
+    frame.captionpos = cp_right
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      0
+      33
+      0
+    )
+    taborder = 21
+    bounds_x = 256
+    bounds_y = 424
+    bounds_cx = 93
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object markddi: tintegerdisp
+    frame.dummy = 0
+    taborder = 22
+    bounds_x = 192
+    bounds_y = 424
+    bounds_cx = 60
+    bounds_cy = 18
+    anchors = [an_left, an_bottom]
+    reffontheight = 14
+  end
+  object statf: tstatfile
+    filename = 'status.sta'
+    left = 232
+    top = 32
+  end
+  object tfacelist1: tfacelist
+    list.count = 1
+    list.items = <    
+      item
+        fade_pos.count = 1
+        fade_pos.items = (
+          0
+        )
+        fade_color.count = 1
+        fade_color.items = (
+          11910911
+        )
+        dummy = 0
+      end>
+    left = 248
+    top = 400
+  end
+end
