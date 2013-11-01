@@ -11,6 +11,7 @@ object mainfo: tmainfo
     450
   )
   statfile = statf
+  caption = 'MSElang'
   moduleclassname = 'tmainform'
   object tbutton1: tbutton
     bounds_x = 312

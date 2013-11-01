@@ -14,7 +14,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-program expint;
+program mselang;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 {$ifdef FPC}
  {$ifdef mswindows}{$apptype gui}{$endif}
