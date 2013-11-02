@@ -96,10 +96,10 @@ type
 
    function eledatarel(const adata: pointer): elementoffsetty; inline;
    function eledataabs(const adata: elementoffsetty): pointer; inline;
-
+  {$ifdef mse_debugparser}
    function dumpelements: msestringarty;
    function dumppath(const aelement: pelementinfoty): msestring;
-
+  {$endif}
    function pushelement(const aname: identty; const avislevel: vislevelty;
                   const akind: elementkindty{;
                   const asize: integer}): pelementinfoty; //nil if duplicate
@@ -159,6 +159,9 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
+{$ifdef mse_debugparser}
+function getidentname(const aident: identty): string;
+{$endif}
 //function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
 var
@@ -166,7 +169,7 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob;
+ msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob,mseformatstr;
 
 const
  elesizes: array[elementkindty] of integer = (
@@ -196,14 +199,43 @@ type
   data: indexidentdataty;
  end;
  pindexidenthashdataty = ^indexidenthashdataty;
- 
- tindexidenthashdatalist = class(thashdatalist)
+
+{$ifdef mse_debugparser}
+ identdataty = record
+  ident: identty;
+  keyname: identoffsetty;
+ end;
+ identhashdataty = record
+  header: hashheaderty;
+  data: identdataty;
+ end;
+ pidenthashdataty = ^identhashdataty;
+
+ tidenthashdatalist = class(thashdatalist)
   protected
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
   public
    constructor create;
-   function getident(aname: lstringty): identty;
+ end;
+{$endif}
+  
+ tindexidenthashdatalist = class(thashdatalist)
+ {$ifdef mse_debugparser}
+  private
+   fidents: tidenthashdatalist;
+ {$endif}
+  protected
+   function hashkey(const akey): hashvaluety; override;
+   function checkkey(const akey; const aitemdata): boolean; override;
+  public
+   constructor create;
+  {$ifdef mse_debugparser}
+   destructor destroy; override;
+   procedure clear; override;
+   function identname(const aident: identty): string;
+  {$endif}
+   function getident(const aname: lstringty): identty;
  end;
 
  elementdataty = record
@@ -216,7 +248,6 @@ type
   data: elementdataty;
  end;
  pelementhashdataty = ^elementhashdataty;
-
  
 const
  mindatasize = 1024; 
@@ -225,10 +256,6 @@ var
  stringindex,stringlen: identoffsetty;
  stringident: identty;
  identlist: tindexidenthashdatalist;
-
-{$ifdef mse_debug_parser}
- identnames: stringarty;
-{$endif}
 
 function telementhashdatalist.eledatarel(const adata: pointer): elementoffsetty;
 begin
@@ -248,9 +275,6 @@ begin
  stringlen:= 0;
 
  ele.clear;
-{$ifdef mse_debug_parser}
- identnames:= nil;
-{$endif}
  stringident:= 0;
 end;
 
@@ -316,6 +340,7 @@ begin
  end;
 end;
 
+{$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 var
  int1,int2,int3,int4,int5,int6: integer;
@@ -337,9 +362,10 @@ begin
   else begin
    mstr1:= ' ';
   end;
-  mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+' O:'+inttostr(int1)+' N:'+
-            inttostr(po1^.header.name)+' '+
-            ' '+identnames[po1^.header.name] + 
+  mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+
+            ' O:'+inttostr(int1)+' N:$'+
+            hextostr(po1^.header.name,8)+' '+
+            ' '+identlist.identname(po1^.header.name) + 
             ' V:'+inttostr(ord(po1^.header.vislevel))+' '+
             getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
   int4:= 0;
@@ -355,8 +381,8 @@ begin
     int4:= int4 + po1^.header.name;
     po1:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
    end;
-   mstr1:= charstring(msechar('.'),int3-1)+' '+
-                          inttostr(int5+int4+po1^.header.name)+' '+mstr1;
+   mstr1:= charstring(msechar('.'),int3-1)+' $'+
+                 hextostr(longword(int5+int4+po1^.header.name),8)+' '+mstr1;
    text:= mstr1;
    offset:= off1;
   end;
@@ -364,7 +390,7 @@ begin
  setlength(ar1,int2);
  sortarray(ar1,sizeof(ar1[0]),@compdump);
  setlength(result,int2+1);
- result[0]:= 'elementpath: '+inttostr(felementpath);
+ result[0]:= 'elementpath: $'+hextostr(felementpath,8);
  for int1:= 0 to int2-1 do begin
   result[int1+1]:= ar1[int1].text;
  end;
@@ -376,12 +402,13 @@ var
 begin
  result:= '';
  po1:= aelement;
- result:= identnames[po1^.header.name-1];
+ result:= identlist.identname(po1^.header.name);
  while po1^.header.parent <> 0 do begin
   po1:= pointer(felementdata)+po1^.header.parent;
-  result:= identnames[po1^.header.name-1]+'.'+result;
+  result:= identlist.identname(po1^.header.name)+'.'+result;
  end;
 end;
+{$endif}
 
 procedure telementhashdatalist.checkbuffersize; inline;
 begin
@@ -640,9 +667,6 @@ function storestring(const astr: lstringty): integer; //offset from stringdata
 var
  int1,int2: integer;
 begin
-{$ifdef mse_debug_parser}
- additem(identnames,lstringtostring(astr));
-{$endif}
  int1:= stringindex;
  int2:= astr.len;
  stringindex:= stringindex+int2+1;
@@ -716,20 +740,67 @@ begin
  wo1:= (wo1 xor wo1 shl 7);
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
-{
-function scramble1(const avalue: hashvaluety): hashvaluety; inline;
+
+{$ifdef mse_debugparser}
+function getidentname(const aident: identty): string;
 begin
- result:= ((avalue xor (avalue shl 8)) xor (avalue shl 16)) xor (avalue shl 24);
+ result:= identlist.identname(aident);
 end;
-}
+
+{ tidenthashdataty }
+
+constructor tidenthashdatalist.create;
+begin
+ inherited create(sizeof(identdataty));
+end;
+
+function tidenthashdatalist.hashkey(const akey): hashvaluety;
+begin
+ result:= identty(akey);
+end;
+
+function tidenthashdatalist.checkkey(const akey; const aitemdata): boolean;
+begin
+ result:= identty(akey) = identdataty(aitemdata).ident;
+end;
+{$endif}
+
 { tindexidenthashdatalist }
 
 constructor tindexidenthashdatalist.create;
 begin
  inherited create(sizeof(indexidentdataty));
+{$ifdef mse_debugparser}
+ fidents:= tidenthashdatalist.create;
+{$endif}
 end;
 
-function tindexidenthashdatalist.getident(aname: lstringty): identty;
+{$ifdef mse_debugparser}
+destructor tindexidenthashdatalist.destroy;
+begin
+ inherited;
+ fidents.free;
+end;
+
+procedure tindexidenthashdatalist.clear;
+begin
+ inherited;
+ fidents.clear;
+end;
+
+function tindexidenthashdatalist.identname(const aident: identty): string;
+var
+ po1: pidenthashdataty;
+begin
+ result:= '';
+ po1:= pidenthashdataty(fidents.internalfind(aident,aident));
+ if po1 <> nil then begin
+  result:= strpas(pchar(stringdata)+po1^.data.keyname);
+ end;
+end;
+{$endif}
+
+function tindexidenthashdatalist.getident(const aname: lstringty): identty;
 var
  po1: pindexidenthashdataty;
  ha1: hashvaluety;
@@ -741,6 +812,12 @@ begin
   with po1^.data do begin
    data:= stringident;
    key:= storestring(aname);
+  {$ifdef mse_debugparser}
+   with pidenthashdataty(fidents.internaladdhash(data))^.data do begin
+    ident:= data;
+    keyname:= key;
+   end;
+  {$endif}
   end;
  end;  
  result:= po1^.data.data;

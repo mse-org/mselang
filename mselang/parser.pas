@@ -126,6 +126,7 @@ begin
       else begin
        write('  ');
       end;
+      write(getidentname(ident.ident));
      end;
      ck_const: begin
       case factkind of
