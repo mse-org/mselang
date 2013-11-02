@@ -19,6 +19,7 @@ unit handlerglob;
 interface
 uses
  parserglob;
+
 type
  typedataty = record
   size: integer;
@@ -30,13 +31,63 @@ type
  varflagty = (vf_global,vf_param);
  varflagsty = set of varflagty;
 
+ constdataty = record
+  d: contextdataty;
+ end;
+ pconstdataty = ^constdataty;
+
  vardataty = record
   address: ptruint;
-  typerel: elementoffsetty; //elementdata relative
+  typ: elementoffsetty; //elementdata relative
   flags: varflagsty;
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
+
+ fielddataty = record
+  offset: ptruint;
+  typ: elementoffsetty; //elementdata relative
+  flags: varflagsty;
+ end;
+ pfielddataty = ^fielddataty;
+
+ sysfuncty = (sf_writeln);
+
+ sysfuncdataty = record
+  func: sysfuncty;
+  op: opty;
+ end;
+ psysfuncdataty = ^sysfuncdataty;
+
+ funcdataty = record
+  address: opaddressty;
+  paramcount: integer;
+  paramsrel: record //array of relative pvardataty
+  end;
+ end;
+ pfuncdataty = ^funcdataty;
+
+ unitdataty = record
+ end;
+ punitdataty = ^unitdataty;
+
+ classdataty = record
+ end;
+ pclassdataty = ^classdataty;
+
+ classesdataty = record
+  scopebefore: elementoffsetty;
+ end;
+ pclassesdataty = ^classesdataty;
+ 
+ implementationdataty = record
+ end;
+ pimplementationdataty = ^implementationdataty;
+
+ visibledataty = record
+ end;
+ pvisibledataty = ^visibledataty;
+ 
 
 implementation
 end.

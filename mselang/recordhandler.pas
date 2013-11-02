@@ -36,9 +36,12 @@ var
 begin
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  contextstack[stackindex].d.elemark:= ele.elementparent;  
-  if not ele.pushelement(id1,vis_max,ek_type,sizeof(typedataty),po1) then begin
-   identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+  with contextstack[stackindex].d do begin
+   elemark:= ele.elementparent;
+   kind:= ck_type;
+   if not ele.pushelement(id1,vis_max,ek_type,typ.typedata) then begin
+    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   end;
   end;
  end;
 {$ifdef mse_debugparser}
@@ -56,46 +59,61 @@ begin
 {$endif}
 end;
 
-procedure handlerecorddefreturn(const info: pparseinfoty);
-begin
- with info^ do begin
-  ele.elementparent:= contextstack[stackindex].d.elemark;
- end;
-{$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFRETURN');
-{$endif}
-end;
-
 procedure handlerecordfield(const info: pparseinfoty);
 var
- po1: pvardataty;
+ po1: pfielddataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
  with info^ do begin
-  ele.addelement(contextstack[stackindex+2].d.ident.ident,
-       vis_max,ek_var,sizeof(vardataty),po1);
-  if po1 = nil then begin
+  if ele.addelement(contextstack[stackindex+2].d.ident.ident,
+                                           vis_max,ek_field,po1) then begin
+   ele1:= ele.elementparent;
+   ele.elementparent:= contextstack[stackindex-2].d.elemark; //record def
+   if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
+    po1^.typ:= ele.eledatarel(po2);
+    with contextstack[stackindex].d do begin
+     kind:= ck_field;
+     field.fielddata:= ele.eledatarel(po1);
+    end;
+    stacktop:= stackindex;
+   end
+   else begin
+    identerror(info,stacktop-stackindex,err_identifiernotfound);
+    stacktop:= stackindex-1;
+   end;
+   ele.elementparent:= ele1;
+  end
+  else begin
    identerror(info,2,err_duplicateidentifier);
    stacktop:= stackindex-1;
   end;
-  ele1:= ele.elementparent;
-  ele.elementparent:= contextstack[stackindex-2].d.elemark;
-  if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
-   with contextstack[stackindex].d do begin
-    kind:= ck_field;
-    field.typedata:= ele.eledatarel(po2);
-   end;
-   stacktop:= stackindex;
-  end
-  else begin
-   identerror(info,stacktop-stackindex,err_identifiernotfound);
-   stacktop:= stackindex-1;
-  end;
-  ele.elementparent:= ele1;
  end;
 {$ifdef mse_debugparser}
  outhandle(info,'RECORDFIELD');
+{$endif}
+end;
+
+procedure handlerecorddefreturn(const info: pparseinfoty);
+var
+ int1,int2: integer;
+ po1: pfielddataty;
+begin
+ with info^ do begin
+  ele.elementparent:= contextstack[stackindex].d.elemark; //restore
+  int2:= 0;
+  for int1:= stackindex+2 to stacktop do begin
+   with contextstack[int1].d do begin
+    po1:= ele.eledataabs(field.fielddata);
+    po1^.offset:= int2;
+    int2:= int2 + ptypedataty(ele.eledataabs(po1^.typ))^.size;
+   end;
+  end;
+  ptypedataty(ele.eledataabs(
+               contextstack[stackindex].d.typ.typedata))^.size:= int2;
+ end;
+{$ifdef mse_debugparser}
+ outhandle(info,'RECORDDEFRETURN');
 {$endif}
 end;
 

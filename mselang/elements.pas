@@ -37,12 +37,13 @@ type
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  
- elementkindty = (ek_none,{ek_context,}ek_type,ek_const,ek_var,
+ elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_func,ek_classes,ek_class,
                   ek_unit,ek_implementation);
  
  elementheaderty = record
-  size: integer; //for debugging
+ // size: integer; //for debugging
+  next: elementoffsetty; //for debugging
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
@@ -77,7 +78,10 @@ type
    procedure addelement(const aident: identty; const avislevel: vislevelty;
                                               const aelement: elementoffsetty);
    procedure setelementparent(const element: elementoffsetty);
+   procedure checkbuffersize; inline;
   public
+//todo: use faster calling, less parameters
+
    constructor create;
    procedure clear; override;
    function findcurrent(const aident: identty;
@@ -97,19 +101,27 @@ type
    function dumppath(const aelement: pelementinfoty): msestring;
 
    function pushelement(const aname: identty; const avislevel: vislevelty;
-                  const akind: elementkindty;
-                  const asize: integer): pelementinfoty; //nil if duplicate
+                  const akind: elementkindty{;
+                  const asize: integer}): pelementinfoty; //nil if duplicate
    function pushelement(const aname: identty; const avislevel: vislevelty;
                   const akind: elementkindty;                  
-                  const asize: integer; out aelementdata: pointer): boolean;
+                  {const asize: integer;} out aelementdata: pointer): boolean;
+                                                       //false if duplicate
+   function pushelement(const aname: identty; const avislevel: vislevelty;
+                const akind: elementkindty;                  
+                const sizeextend: integer; out aelementdata: pointer): boolean;
+                                                       //false if duplicate
+   function pushelement(const aname: identty; const avislevel: vislevelty;
+                  const akind: elementkindty;                  
+           {const asize: integer;} out aelementdata: elementoffsetty): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
    function addelement(const aname: identty; const avislevel: vislevelty;
-              const akind: elementkindty;              
-              const asize: integer): pelementinfoty;   //nil if duplicate
+              const akind: elementkindty{;
+              const asize: integer}): pelementinfoty;   //nil if duplicate
    function addelement(const aname: identty; const avislevel: vislevelty;
               const akind: elementkindty;
-              const asize: integer; out aelementdata: pointer): boolean;
+              {const asize: integer;} out aelementdata: pointer): boolean;
                                                        //false if duplicate
    
    function findelement(const aname: identty;
@@ -154,7 +166,21 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,grammar;
+ msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob;
+
+const
+ elesizes: array[elementkindty] of integer = (
+//ek_none,ek_type,   ek_const,         
+  0,sizeof(typedataty),sizeof(constdataty),
+//ek_var,           ek_field,
+  sizeof(vardataty),sizeof(fielddataty), 
+//ek_sysfunc,           ek_func,
+  sizeof(sysfuncdataty),sizeof(funcdataty),
+//ek_classes,           ek_class,
+  sizeof(classesdataty),sizeof(classdataty),
+//ek_unit,           ek_implementation  
+  sizeof(unitdataty),sizeof(classdataty)
+ );
  
 type
 
@@ -234,7 +260,7 @@ var
  tk1: integer;
 begin
  clear;
- ele.pushelement(getident(''),vis_max,ek_none,elesize); //root
+ ele.pushelement(getident(''),vis_max,ek_none); //root
  stringident:= idstart; //invalid
  lfsr321(stringident);
  for tk1:= 1 to high(tokens) do begin
@@ -317,7 +343,8 @@ begin
             ' V:'+inttostr(ord(po1^.header.vislevel))+' '+
             getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
   int4:= 0;
-  int1:= int1 + po1^.header.size;
+//  int1:= int1 + po1^.header.size;
+  int1:= po1^.header.next;
   with ar1[int2-1] do begin
    parent:= po1^.header.parent;
    int3:= po1^.header.parentlevel;
@@ -356,9 +383,17 @@ begin
  end;
 end;
 
+procedure telementhashdatalist.checkbuffersize; inline;
+begin
+ if fnextelement >= felementlen then begin
+  felementlen:= fnextelement*2+mindatasize;
+  setlength(felementdata,felementlen);
+ end;
+end;
+
 function telementhashdatalist.pushelement(const aname: identty;
-             const avislevel: vislevelty; const akind: elementkindty;
-                                        const asize: integer): pelementinfoty;
+             const avislevel: vislevelty;
+             const akind: elementkindty): pelementinfoty;
 var
  ele1: elementoffsetty;
 begin
@@ -366,14 +401,12 @@ begin
  ele1:= findcurrent(aname,ffindvislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
-  fnextelement:= fnextelement+asize;
-  if fnextelement >= felementlen then begin
-   felementlen:= fnextelement*2+mindatasize;
-   setlength(felementdata,felementlen);
-  end;
+  fnextelement:= fnextelement+elesize+elesizes[akind];
+  checkbuffersize;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
-   size:= asize; //for debugging
+//   size:= asize; //for debugging
+   next:= fnextelement; //for debugging
    parent:= felementparent;
    parentlevel:= fparentlevel;
    path:= felementpath;
@@ -390,19 +423,50 @@ end;
 
 function telementhashdatalist.pushelement(const aname: identty;
            const avislevel: vislevelty; const akind: elementkindty;
-           const asize: integer; out aelementdata: pointer): boolean;
-                                                    //false if duplicate
+                   out aelementdata: pointer): boolean; //false if duplicate
 begin
- aelementdata:= pushelement(aname,avislevel,akind,asize+elesize);
+ aelementdata:= pushelement(aname,avislevel,akind);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
  end;
 end;
 
+function telementhashdatalist.pushelement(const aname: identty;
+           const avislevel: vislevelty; const akind: elementkindty;
+           out aelementdata: elementoffsetty): boolean;
+                                                    //false if duplicate
+var
+ po1: pelementinfoty;
+begin
+ po1:= pushelement(aname,avislevel,akind);
+ result:= po1 <> nil;
+ if result then begin
+  aelementdata:= @(po1^.data)-pointer(felementdata);
+ end;
+end;
+
+function telementhashdatalist.pushelement(const aname: identty;
+                  const avislevel: vislevelty;
+       const akind: elementkindty;                  
+       const sizeextend: integer; out aelementdata: pointer): boolean;
+                                                       //false if duplicate
+var
+ po1: pelementinfoty;
+begin
+ po1:= pushelement(aname,avislevel,akind);
+ result:= po1 <> nil;
+ if result then begin
+  fnextelement:= fnextelement+sizeextend;
+  po1^.header.next:= fnextelement;
+  checkbuffersize;
+  aelementdata:= @(po1^.data);
+ end;
+end;
+
 function telementhashdatalist.addelement(const aname: identty;
-              const avislevel: vislevelty; const akind: elementkindty;
-              const asize: integer): pelementinfoty;   
+              const avislevel: vislevelty;
+              const akind: elementkindty): pelementinfoty;   
                                                    //nil if duplicate
 var
  ele1: elementoffsetty;
@@ -411,14 +475,12 @@ begin
  ele1:= findcurrent(aname,ffindvislevel);
  if ele1 < 0 then begin
   ele1:= fnextelement;
-  fnextelement:= fnextelement+asize;
-  if fnextelement >= felementlen then begin
-   felementlen:= fnextelement*2+mindatasize;
-   setlength(felementdata,felementlen);
-  end;
+  fnextelement:= fnextelement+elesize+elesizes[akind];
+  checkbuffersize;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
-   size:= asize; //for debugging
+//   size:= asize; //for debugging
+   next:= fnextelement;
    parent:= felementparent;
    parentlevel:= fparentlevel;
    path:= felementpath;
@@ -432,10 +494,10 @@ end;
 
 function telementhashdatalist.addelement(const aname: identty;
            const avislevel: vislevelty; const akind: elementkindty;
-           const asize: integer; out aelementdata: pointer): boolean;
+           out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
- aelementdata:= addelement(aname,avislevel,akind,elesize+asize);
+ aelementdata:= addelement(aname,avislevel,akind);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);

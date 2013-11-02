@@ -20,20 +20,6 @@ interface
 uses
  msestrings,parserglob,elements;
 
-type
- unitdataty = record
- end;
- punitdataty = ^unitdataty;
-
- classesdataty = record
-  scopebefore: elementoffsetty;
- end;
- pclassesdataty = ^classesdataty;
- 
- implementationdataty = record
- end;
- pimplementationdataty = ^implementationdataty;
-
 function newunit(const aname: string): punitinfoty; 
 function loadunitinterface(const info: pparseinfoty;
                                 const aindex: integer): punitinfoty;
@@ -46,7 +32,8 @@ procedure deinit;
 
 implementation
 uses
- msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar;
+ msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
+ handlerglob;
  
 type
  unithashdataty = record
@@ -84,14 +71,12 @@ begin
    identerror(info,1,err_illegalunitname);
   end
   else begin
-   if not ele.pushelement(id1,vis_max,ek_unit,
-                                 elesize+sizeof(unitdataty),po1) then begin
+   if not ele.pushelement(id1,vis_max,ek_unit,po1) then begin
     internalerror(info,'U131018A');
    end;
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
-    po2:= ele.addelement(tks_classes,vis_max,ek_classes,
-                                              elesize+sizeof(classesdataty));
+    po2:= ele.addelement(tks_classes,vis_max,ek_classes);
     classeselement:= ele.eledatarel(po2);
    end;
   end;
@@ -108,8 +93,8 @@ begin
    stopparser:= true; //stop parsing;
   end
   else begin
-   if not ele.pushelement(ord(tk_implementation),vis_max,ek_implementation,
-                elesize+sizeof(implementationdataty),po1) then begin
+   if not ele.pushelement(ord(tk_implementation),vis_max,
+                                    ek_implementation,po1) then begin
     
    end;
   end;

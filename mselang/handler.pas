@@ -133,29 +133,12 @@ type
   name: string;
   data: contextdataty;
  end;
- constdataty = record
-  d: contextdataty;
- end;
- pconstdataty = ^constdataty;
   
 // keywordty = (kw_0,kw_1,kw_if,kw_begin,kw_procedure,kw_const,kw_var);
- sysfuncty = (sf_writeln);
- sysfuncdataty = record
-  func: sysfuncty;
-  op: opty;
- end;
- psysfuncdataty = ^sysfuncdataty;
  sysfuncinfoty = record
   name: string;
   data: sysfuncdataty;
  end;
- funcdataty = record
-  address: opaddressty;
-  paramcount: integer;
-  paramsrel: record //array of relative pvardataty
-  end;
- end;
- pfuncdataty = ^funcdataty;
    
 const
  systypeinfos: array[systypety] of typeinfoty = (
@@ -245,8 +228,7 @@ var
 begin
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_type,
-                                                  elesize+sizeof(typedataty));
+   po1:= ele.addelement(getident(name),vis_max,ek_type);
    po2:= @po1^.data;
    po2^:= data;
   end;
@@ -254,15 +236,13 @@ begin
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_const,
-                                          elesize+sizeof(constdataty));
+   po1:= ele.addelement(getident(name),vis_max,ek_const);
    pconstdataty(@po1^.data)^.d:= data;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc,
-                                    elesize+sizeof(sysfuncdataty));
+   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc);
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
@@ -921,7 +901,7 @@ begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typerel))^.size;
+     si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -1193,8 +1173,7 @@ begin
        (contextstack[stacktop-1].d.kind = ck_const) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
    with contextstack[stacktop-2].d do begin
-    po1:= ele.addelement(ident.ident,vis_max,ek_const,
-                                             elesize+sizeof(constdataty));
+    po1:= ele.addelement(ident.ident,vis_max,ek_const);
     if po1 = nil then begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
@@ -1240,8 +1219,7 @@ begin
   if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
        (contextstack[stacktop-1].d.kind = ck_ident) and
        (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= ele.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,
-                                 ek_var,elesize+sizeof(vardataty));
+   po1:= ele.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,ek_var);
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
@@ -1249,7 +1227,7 @@ begin
     if findkindelements(info,stacktop-1-stackindex,vis_max,ek_type,
                                                               po2) then begin
      with pvardataty(@po1^.data)^ do begin
-      typerel:= ele.eledatarel(po2);
+      typ:= ele.eledatarel(po2);
       if funclevel = 0 then begin
        address:= getglobvaraddress(info,ptypedataty(po2)^.size);
        flags:= [vf_global];
@@ -1301,8 +1279,7 @@ begin
   if (stacktop-stackindex = 2) and 
        (contextstack[stacktop].d.kind = ck_ident) and
        (contextstack[stacktop-1].d.kind = ck_ident) then begin
-   po1:= ele.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,
-                                           ek_type,elesize+sizeof(typedataty));
+   po1:= ele.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,ek_type);
    if po1 = nil then begin //duplicate
     identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
    end
@@ -1415,7 +1392,7 @@ begin
  with info^ do begin
   if (stacktop-stackindex > 0) and //todo: multi level var name
    findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
-   si1:= ptypedataty(ele.eledataabs(po1^.typerel))^.size;
+   si1:= ptypedataty(ele.eledataabs(po1^.typ))^.size;
    with additem(info)^ do begin
     if vf_global in po1^.flags then begin
      case si1 of
@@ -1521,10 +1498,10 @@ begin
      po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
       if d.factkind <> 
-               ptypedataty(ele.eledataabs(po4^.typerel))^.kind then begin
+               ptypedataty(ele.eledataabs(po4^.typ))^.kind then begin
        errormessage(info,int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
-                    typename(ptypedataty(ele.eledataabs(po4^.typerel))^)]);
+                    typename(ptypedataty(ele.eledataabs(po4^.typ))^)]);
       end;
      end;
      inc(po3);
@@ -1675,19 +1652,19 @@ begin
   inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
   if ele.pushelement(contextstack[stackindex+1].d.ident.ident,vis_max,
-                    ek_func,elesize+sizeof(funcdataty)+
+                    ek_func,
                         paramco*sizeof(pvardataty),po1) then begin
    po1^.paramcount:= paramco;
    po4:= @po1^.paramsrel;
    int1:= 4;
    for int2:= 0 to paramco-1 do begin
     if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
-                               ek_var,sizeof(vardataty),po2) then begin
+                               ek_var,po2) then begin
      po4^[int2]:= ele.eledatarel(po2);
      if findkindelementsdata(info,int1+1,vis_max,ek_type,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
-       typerel:= ele.eledatarel(po3);
+       typ:= ele.eledatarel(po3);
        flags:= [vf_param];
       end;
      end

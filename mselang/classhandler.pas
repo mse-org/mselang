@@ -39,15 +39,6 @@ const
  vic_public = vis_1;
  vic_published = vis_0;
  
-type
- classdataty = record
- end;
- pclassdataty = ^classdataty;
-
- visibledataty = record
- end;
- pvisibledataty = ^visibledataty;
- 
 procedure classesscopeset(const info: pparseinfoty);
 var
  po2: pclassesdataty;
@@ -76,13 +67,12 @@ var
 begin
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  if not ele.addelement(id1,vis_max,ek_type,
-                                            sizeof(typedataty),po1) then begin
+  if not ele.addelement(id1,vis_max,ek_type,po1) then begin
    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
    classesscopeset(info);
-   ele.pushelement(id1,vis_max,ek_class,sizeof(classdataty),po2);
+   ele.pushelement(id1,vis_max,ek_class,po2);
    currentclass:= ele.eledatarel(po2);
    currentclassvislevel:= vic_published; //default
   end;
@@ -151,7 +141,7 @@ var
 begin
  with info^ do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
-       currentclassvislevel,ek_var,sizeof(vardataty),po1);
+       currentclassvislevel,ek_var,po1);
   if po1 = nil then begin
    identerror(info,2,err_duplicateidentifier);   
   end;

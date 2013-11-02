@@ -38,6 +38,7 @@ type
  datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,
                dk_record);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
+
 const
  vis_max = vis_0;
  vis_min = vis_9;
@@ -53,7 +54,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
-                  ck_field);
+                  ck_type,ck_field);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -78,16 +79,13 @@ type
  
  charsetty = set of char;
  charset32ty = array[0..7] of uint32;
- branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued{,bkk_keyword});
+ branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued);
  
  branchkeyinfoty = record
   case kind: branchkeykindty of
    bkk_char,bkk_charcontinued: (
     chars: charsetty;
    );
-//   bkk_keyword: (
-//    keyword: keywordty;
-//   );
  end;
   
  pcontextty = ^contextty;
@@ -105,19 +103,6 @@ type
    0: (keyword: keywordty);
    1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);
  end; //todo: use variable size array
-{
- branchty = record
-  t: string;
-  x: boolean; //exit
-  k: boolean; //keyword
-  c: pcontextty;
-  e: boolean; //eat flag
-  p: boolean; //push flag
-  s: boolean; //set ck_pc
-  sb: boolean; //setparent before push flag
-  sa: boolean; //setparent after push flag
- end;
-}
  pbranchty = ^branchty;
 
  contextty = record
@@ -132,6 +117,7 @@ type
   next: pcontextty;
   caption: string;
  end;
+
  datainfoty = record
   case kind: datakindty of //first, maps ck_fact: factkind
    dk_bool8: (
@@ -144,6 +130,7 @@ type
     vflo64: double;
    );
  end;
+
  identinfoty = record
   ident: identty;
   len: integer;
@@ -160,8 +147,11 @@ type
   ident: identinfoty;
   classdata: elementoffsetty;
  end;
- fieldinfoty = record
+ typeinfoty = record
   typedata: elementoffsetty;
+ end;
+ fieldinfoty = record
+  fielddata: elementoffsetty;
  end;
 
  contextdataty = record
@@ -181,6 +171,9 @@ type
    );
    ck_opmark:(
     opmark: opmarkty;
+   );
+   ck_type:(
+    typ: typeinfoty;
    );
    ck_field:(
     field: fieldinfoty;
