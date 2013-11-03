@@ -904,7 +904,7 @@ begin
  po1:= pushelement(aname,avislevel,akind);
  result:= po1 <> nil;
  if result then begin
-  aelementdata:= @(po1^.data)-pointer(felementdata);
+  aelementdata:= pointer(po1)-pointer(felementdata);
  end;
 end;
 

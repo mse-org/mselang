@@ -901,7 +901,7 @@ begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     si1:= ptypedataty(ele.eleinfoabs(pvardataty(po2)^.typ))^.size;
+     si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -1501,10 +1501,10 @@ begin
      po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
       if d.factkind <> 
-               ptypedataty(ele.eleinfoabs(po4^.typ))^.kind then begin
+               ptypedataty(ele.eledataabs(po4^.typ))^.kind then begin
        errormessage(info,int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
-                    typename(ptypedataty(ele.eleinfoabs(po4^.typ))^)]);
+                    typename(ptypedataty(ele.eledataabs(po4^.typ))^)]);
       end;
      end;
      inc(po3);
