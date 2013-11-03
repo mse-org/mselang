@@ -896,7 +896,7 @@ var
 begin
  with info^ do begin
 //  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
-  if findkindelements(info,1,vis_max,ek_none,po1) then begin
+  if findkindelements(info,1,[ek_var,ek_const],vis_max,po1) then begin
    dec(stacktop,identcount);
    po2:= @po1^.data;
    case po1^.header.kind of
@@ -1224,8 +1224,8 @@ begin
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-1-stackindex,vis_max,ek_type,
-                                                              po2) then begin
+    if findkindelements(info,stacktop-1-stackindex,[ek_type],vis_max,
+                                                                po2) then begin
      with pvardataty(@po1^.data)^ do begin
       typ:= ele.eledatarel(po2);
       if funclevel = 0 then begin
@@ -1284,7 +1284,8 @@ begin
     identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-stackindex,vis_max,ek_type,po2) then begin
+    if findkindelements(info,stacktop-stackindex,
+                                     [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
     end
     else begin
@@ -1386,16 +1387,18 @@ end;
 }
 procedure handleassignment(const info: pparseinfoty); 
 var
- po1: pvardataty;
- si1: ptruint;
+// po1: pvardataty;
+// si1: ptruint;
+ varinfo1: varinfoty;
 begin
  with info^ do begin
   if (stacktop-stackindex > 0) and //todo: multi level var name
-   findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
-   si1:= ptypedataty(ele.eledataabs(po1^.typ))^.size;
+          findvar(info,1,vis_max,varinfo1) then begin
+//                 findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
+//   si1:= ptypedataty(ele.eledataabs(po1^.typ))^.size;
    with additem(info)^ do begin
-    if vf_global in po1^.flags then begin
-     case si1 of
+    if vf_global in varinfo1.flags then begin
+     case varinfo1.size of
       1: begin 
        op:= @popglob1;
       end;
@@ -1409,10 +1412,10 @@ begin
        op:= @popglob;
       end;
      end;
-     d.dataaddress:= po1^.address;
+     d.dataaddress:= varinfo1.address;
     end
     else begin
-     case si1 of
+     case varinfo1.size of
       1: begin 
        op:= @poploc1;
       end;
@@ -1426,9 +1429,9 @@ begin
        op:= @poploc;
       end;
      end;
-     d.count:= po1^.address;
+     d.count:= varinfo1.address;
     end;
-    d.datasize:= si1;
+    d.datasize:= varinfo1.size;
    end;
   end
   else begin
@@ -1487,7 +1490,7 @@ var
  paramco: integer;
 begin
  with info^ do begin
-  if findkindelementsdata(info,1,vis_max,ek_func,po2) then begin
+  if findkindelementsdata(info,1,[ek_func],vis_max,po2) then begin
    paramco:= stacktop-stackindex-1-identcount;
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
@@ -1515,7 +1518,7 @@ begin
    stacktop:= stackindex;
   end
   else begin
-   if findkindelementsdata(info,1,vis_max,ek_sysfunc,po1) then begin
+   if findkindelementsdata(info,1,[ek_sysfunc],vis_max,po1) then begin
     with po1^ do begin
      case func of
       sf_writeln: begin
@@ -1661,7 +1664,7 @@ begin
     if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
                                ek_var,po2) then begin
      po4^[int2]:= ele.eledatarel(po2);
-     if findkindelementsdata(info,int1+1,vis_max,ek_type,po3) then begin
+     if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
       with po2^ do begin
        address:= getlocvaraddress(info,po3^.size);
        typ:= ele.eledatarel(po3);

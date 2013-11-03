@@ -147,7 +147,7 @@ begin
   end;
   ele1:= ele.elementparent;
   classesscopereset(info);
-  if findkindelementsdata(info,3,vis_max,ek_type,po2) then begin
+  if findkindelementsdata(info,3,[ek_type],vis_max,po2) then begin
   end
   else begin
    identerror(info,stacktop-stackindex,err_identifiernotfound);
