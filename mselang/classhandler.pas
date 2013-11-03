@@ -44,7 +44,7 @@ var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          ele.eledataabs(info^.unitinfo^.classeselement))^.data;
+          ele.eleinfoabs(info^.unitinfo^.classeselement))^.data;
  po2^.scopebefore:= ele.elementparent;
  ele.elementparent:= info^.unitinfo^.classeselement;
 end;
@@ -54,7 +54,7 @@ var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          ele.eledataabs(info^.unitinfo^.classeselement))^.data;
+          ele.eleinfoabs(info^.unitinfo^.classeselement))^.data;
  ele.elementparent:= po2^.scopebefore;
 end;
 

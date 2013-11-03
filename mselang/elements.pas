@@ -62,6 +62,7 @@ type
  
 const
  elesize = sizeof(elementinfoty);
+ eledataoffset = sizeof(elementheaderty);
 
 type
  telementhashdatalist = class(thashdatalist)
@@ -101,9 +102,16 @@ type
                   //searches in current scope and above, -1 if not found
                   //lastident = index of last matching in aident if
                   //akinds <> []
+   function findchild(const aparent: elementoffsetty; 
+                 const achild: elementoffsetty; const akinds: elementkindsty;
+                 const avislevel: vislevelty; 
+                               out element: elementoffsetty): boolean;
 
-   function eledatarel(const adata: pointer): elementoffsetty; inline;
-   function eledataabs(const adata: elementoffsetty): pointer; inline;
+   function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
+   function eleinforel(const aelement: pelementinfoty): elementoffsetty; inline;
+   function eledataabs(const aelement: elementoffsetty): pointer; inline;
+   function eledatarel(const aelement: pointer): elementoffsetty; inline;
+   
   {$ifdef mse_debugparser}
    function dumpelements: msestringarty;
    function dumppath(const aelement: pelementinfoty): msestring;
@@ -269,14 +277,28 @@ var
  stringident: identty;
  identlist: tindexidenthashdatalist;
 
-function telementhashdatalist.eledatarel(const adata: pointer): elementoffsetty;
+function telementhashdatalist.eleinforel(
+                          const aelement: pelementinfoty): elementoffsetty;
 begin
- result:= adata-pointer(felementdata);
+ result:= aelement-pointer(felementdata);
 end;
 
-function telementhashdatalist.eledataabs(const adata: elementoffsetty): pointer;
+function telementhashdatalist.eleinfoabs(
+                         const aelement: elementoffsetty): pelementinfoty;
 begin
- result:= pointer(adata+pointer(felementdata));
+ result:= aelement+pointer(felementdata);
+end;
+
+function telementhashdatalist.eledatarel(
+                          const aelement: pointer): elementoffsetty;
+begin
+ result:= aelement-pointer(felementdata)-eledataoffset;
+end;
+
+function telementhashdatalist.eledataabs(
+                           const aelement: elementoffsetty): pointer; inline;
+begin
+ result:= @pelementinfoty(aelement+pointer(felementdata))^.data;
 end;
 
 procedure clear;
@@ -740,6 +762,19 @@ begin
    felementpath:= pathbefore;
   end;
  end;
+end;
+
+function telementhashdatalist.findchild(const aparent: elementoffsetty; 
+           const achild: elementoffsetty; const akinds: elementkindsty;
+           const avislevel: vislevelty; out element: elementoffsetty): boolean;
+//todo: optimize
+var 
+ ele1: elementoffsetty;
+begin
+ ele1:= elementparent;
+ elementparent:= aparent;
+ result:= findcurrent(achild,akinds,avislevel,element);
+ elementparent:= ele1;
 end;
 
 {$ifdef mse_debugparser}

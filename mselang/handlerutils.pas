@@ -81,7 +81,7 @@ begin
  result:= false;
  if aident.kind = ck_ident then begin
   if ele.findcurrent(aident.ident.ident,akinds,visibility,ele1) then begin
-   po1:= ele.eledataabs(ele1);
+   po1:= ele.eleinfoabs(ele1);
    ainfo:= @po1^.data;
    result:= true;
   end;
@@ -165,7 +165,7 @@ begin
   end;
  end;
  if result then begin
-  aelement:= ele.eledataabs(eleres);
+  aelement:= ele.eleinfoabs(eleres);
  end;
 end;
 
@@ -184,18 +184,38 @@ function findvar(const info: pparseinfoty; const astackoffset: integer;
                    const visibility: vislevelty;
                            out varinfo: varinfoty): boolean;
 var
- idents: identvectorty;	
- po1: pelementinfoty;
- ele1: elementoffsetty;
+ idents,types: identvectorty;	
+ po1: pvardataty;
+ po2: ptypedataty;
+ po3: pfielddataty;
+ ele1,ele2: elementoffsetty;
  int1: integer;
 begin
  result:= false;
  if getidents(info,astackoffset,idents) then begin
   result:= ele.findupward(idents,[ek_var],visibility,ele1,int1);
   if result then begin
-   if int1 < idents.high then begin //field
-   end;
    po1:= ele.eledataabs(ele1);
+   varinfo.flags:= po1^.flags;
+   varinfo.address:= po1^.address;
+   ele2:= po1^.typ;
+   if int1 < idents.high then begin
+    for int1:= int1+1 to idents.high do begin //fields
+     result:= ele.findchild(ele2,idents.d[int1],[ek_field],visibility,ele2);
+     if not result then begin
+      identerror(info,astackoffset+int1,err_identifiernotfound);
+      exit;
+     end;
+     po3:= ele.eledataabs(ele2);
+     varinfo.address:= varinfo.address + po3^.offset;
+    end;
+    po2:= ele.eledataabs(po3^.typ);
+    varinfo.size:= po2^.size;
+   end
+   else begin
+    po2:= ele.eledataabs(ele2);
+    varinfo.size:= po2^.size;
+   end;
   end;
  end;
 end;                           

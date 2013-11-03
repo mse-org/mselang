@@ -77,7 +77,7 @@ begin
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
     po2:= ele.addelement(tks_classes,vis_max,ek_classes);
-    classeselement:= ele.eledatarel(po2);
+    classeselement:= ele.eleinforel(po2);
    end;
   end;
   stacktop:= stackindex;
