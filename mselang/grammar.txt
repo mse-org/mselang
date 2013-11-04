@@ -306,6 +306,7 @@ frac,,handlefrac
  'e','E',exponent*
 ident,,handleident^
  @identstart,@num,
+#
 identpath,identpath1a,
  @identstart,@num,
 identpath1a,identpath1,handleidentpath1a
@@ -313,7 +314,7 @@ identpath1a,identpath1,handleidentpath1a
 identpath1,,^
 #finish
  ${whitespace}
- '.',identpath2a-
+ '.',identpath2a+-
 identpath2a,identpath2,handleidentpath2a
 # set continue flag
 identpath2,,handleidentpath2^

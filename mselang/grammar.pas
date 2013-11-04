@@ -2760,7 +2760,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat];
+   (flags: [bf_nt,bf_nostart,bf_eat];
      dest: (context: @identpath2aco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),

@@ -47,8 +47,9 @@ ${macroname}
  * -> stackindex -> stacktop
  > -> continue with calling context
  <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
-              [[<context>|!<handler>] [-] [[^][*] | [*][^]] [!] ] 
+              [[<context>|!<handler>] [+][-] [[^][*] | [*][^]] [!] ] 
               [, <pushed context> | <parentcontext>^]
+ + -> do not set context start
  - -> eat token
  <<context>|!<handler>>^ -> set parent
  <<context>|!<handler>>* -> push context
@@ -763,6 +764,9 @@ lineend+
        end;
        if checklastchar(dest,'-') then begin
         include(branflags1,bf_eat);
+       end;
+       if checklastchar(dest,'+') then begin
+        include(branflags1,bf_nostart);
        end;
        if (stack <> '') and (stack[length(stack)] = '^') then begin
         setlength(stack,length(stack)-1);

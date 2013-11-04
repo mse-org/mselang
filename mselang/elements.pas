@@ -30,7 +30,7 @@ const
  maxidentvector = 200;
 type
  identarty = integerarty;
- identvectorty = record
+ identvecty = record
   high: integer;
   d: array[0..maxidentvector] of identty;
  end;
@@ -94,7 +94,7 @@ type
                   const avislevel: vislevelty;
                   out element: elementoffsetty): boolean; overload;
                   //searches in current scope and above
-   function findupward(const aidents: identvectorty;
+   function findupward(const aidents: identvecty;
                       const akinds: elementkindsty;
                       const avislevel: vislevelty;
                       out element: elementoffsetty;
@@ -667,7 +667,7 @@ begin
  end;
 end;
 
-function telementhashdatalist.findupward(const aidents: identvectorty;
+function telementhashdatalist.findupward(const aidents: identvecty;
               const akinds: elementkindsty; const avislevel: vislevelty;
               out element: elementoffsetty;
               out lastident: integer): boolean;

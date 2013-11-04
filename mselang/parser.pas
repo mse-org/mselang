@@ -227,7 +227,9 @@ begin
     kind:= ck_none;
    end;
    context:= pc;
-   start:= source;
+   if not (bf_nostart in pb^.flags) then begin
+    start:= source;
+   end;
    debugstart:= debugsource;
    parent:= int1;
    if bf_setpc in pb^.flags then begin

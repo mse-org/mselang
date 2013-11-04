@@ -892,16 +892,39 @@ procedure handlevalueidentifier(const info: pparseinfoty);
 var
  po1: pelementinfoty;
  po2: pointer;
- si1: ptruint;
+ po3: ptypedataty;
+ po4: pfielddataty;
+ lastident: integer;
+ idents: identvecty;
+ ele1: elementoffsetty;
+ int1: integer;
+ si1,addr1: ptruint;
 begin
  with info^ do begin
-//  po1:= elements.findelement(contextstack[stacktop].d.ident.ident);
-  if findkindelements(info,1,[ek_var,ek_const],vis_max,po1) then begin
+  if findkindelements(info,1,[ek_var,ek_const],vis_max,po1,lastident,
+                                                         idents) then begin
    dec(stacktop,identcount);
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
+     addr1:= pvardataty(po2)^.address;
+     if lastident < identcount-1 then begin
+      ele1:= pvardataty(po2)^.typ;
+      for int1:= lastident+1 to idents.high do begin //fields
+       if not ele.findchild(ele1,idents.d[int1],[ek_field],
+                                                   vis_max,ele1) then begin
+        identerror(info,1+int1,err_identifiernotfound);
+        exit;
+       end;
+       po4:= ele.eledataabs(ele1);
+       addr1:= addr1 + po4^.offset;
+      end;
+      po3:= ele.eledataabs(po4^.typ);
+      si1:= po3^.size;      
+     end
+     else begin
+      si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
+     end; 
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -918,7 +941,7 @@ begin
          op:= @pushglob;
         end;
        end;
-       d.dataaddress:= pvardataty(po2)^.address;
+       d.dataaddress:= addr1;
       end
       else begin
        case si1 of
@@ -935,12 +958,7 @@ begin
          op:= @pushloc;
         end;
        end;
-//       if vf_param in pvardataty(po2)^.flags then begin
-        d.count:= pvardataty(po2)^.address - frameoffset{ - stacklinksize};
-//       end
-//       else begin
-        //todo
-//       end;
+       d.count:= addr1 - frameoffset;
       end;
       d.datasize:= si1;
      end;
@@ -1224,8 +1242,7 @@ begin
     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
    end
    else begin //todo: multi level type
-    if findkindelements(info,stacktop-1-stackindex,[ek_type],vis_max,
-                                                                po2) then begin
+    if findkindelements(info,stacktop-1-stackindex,[ek_type],vis_max,po2) then begin
      with pvardataty(@po1^.data)^ do begin
       typ:= ele.eleinforel(po2);
       if funclevel = 0 then begin
@@ -1285,7 +1302,7 @@ begin
    end
    else begin //todo: multi level type
     if findkindelements(info,stacktop-stackindex,
-                                     [ek_type],vis_max,po2) then begin
+                       [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
     end
     else begin
@@ -1433,9 +1450,6 @@ begin
     end;
     d.datasize:= varinfo1.size;
    end;
-  end
-  else begin
-   identerror(info,1,err_identifiernotfound);
   end;                  
   dec(stackindex);
   stacktop:= stackindex;

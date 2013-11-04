@@ -52,7 +52,15 @@ function findkindelementdata(const aident: contextdataty;
                                     out ainfo: pointer): boolean;
 function findkindelements(const info: pparseinfoty;
            const astackoffset: integer; const akinds: elementkindsty; 
+           const visibility: vislevelty; out aelement: pelementinfoty;
+           out lastident: integer; out idents: identvecty): boolean;
+function findkindelements(const info: pparseinfoty;
+           const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: vislevelty; out aelement: pelementinfoty): boolean;
+function findkindelementsdata(const info: pparseinfoty;
+              const astackoffset: integer; const akinds: elementkindsty;
+              const visibility: vislevelty; out ainfo: pointer;
+              out lastident: integer; out idents: identvecty): boolean;
 function findkindelementsdata(const info: pparseinfoty;
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: vislevelty; out ainfo: pointer): boolean;
@@ -100,7 +108,7 @@ begin
 end;
 
 function getidents(const info: pparseinfoty; const astackoffset: integer;
-                     out idents: identvectorty): boolean;
+                     out idents: identvecty): boolean;
 var
  po1: pcontextitemty;
  int1: integer;
@@ -129,23 +137,23 @@ end;
 function findkindelements(const info: pparseinfoty;
             const astackoffset: integer; const akinds: elementkindsty; 
             const visibility: vislevelty;
-            out aelement: pelementinfoty): boolean;
+            out aelement: pelementinfoty;
+            out lastident: integer; out idents: identvecty): boolean;
 var
- idents: identvectorty;
  eleres,ele1,ele2: elementoffsetty;
- int1,int2: integer;
+ int1: integer;
 begin
  result:= false;
  aelement:= nil;
  if getidents(info,astackoffset,idents) then begin
   with info^ do begin
-   result:= ele.findupward(idents,akinds,visibility,eleres,int2);
+   result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
    if not result then begin //todo: use cache
     ele2:= ele.elementparent;
     for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
      ele.elementparent:=
        info^.unitinfo^.implementationuses[int1]^.interfaceelement;
-     result:= ele.findupward(idents,akinds,visibility,eleres,int2);
+     result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
      if result then begin
       break;
      end;
@@ -154,7 +162,7 @@ begin
      for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
       ele.elementparent:=
         info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
-      result:= ele.findupward(idents,akinds,visibility,eleres,int2);
+      result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
       if result then begin
        break;
       end;
@@ -169,10 +177,67 @@ begin
  end;
 end;
 
+function findkindelements(const info: pparseinfoty;
+           const astackoffset: integer; const akinds: elementkindsty; 
+           const visibility: vislevelty; out aelement: pelementinfoty): boolean;
+var
+ eleres,ele1,ele2: elementoffsetty;
+ int1: integer;
+ idents: identvecty;
+ lastident: integer;
+begin
+ result:= false;
+ aelement:= nil;
+ if getidents(info,astackoffset,idents) then begin
+  with info^ do begin
+   result:= ele.findupward(idents,[],visibility,eleres,lastident); //exact
+   if not result then begin //todo: use cache
+    ele2:= ele.elementparent;
+    for int1:= 0 to high(info^.unitinfo^.implementationuses) do begin
+     ele.elementparent:=
+       info^.unitinfo^.implementationuses[int1]^.interfaceelement;
+     result:= ele.findupward(idents,[],visibility,eleres,lastident); //exact
+     if result then begin
+      break;
+     end;
+    end;
+    if not result then begin
+     for int1:= 0 to high(info^.unitinfo^.interfaceuses) do begin
+      ele.elementparent:=
+        info^.unitinfo^.interfaceuses[int1]^.interfaceelement;
+      result:= ele.findupward(idents,[],visibility,eleres,lastident); //exact
+      if result then begin
+       break;
+      end;
+     end;
+    end;
+    ele.elementparent:= ele2;
+   end;
+  end;
+ end;
+ if result then begin
+  aelement:= ele.eleinfoabs(eleres);
+  result:= (akinds = []) or (aelement^.header.kind in akinds);
+ end;
+end;
+
 function findkindelementsdata(const info: pparseinfoty;
              const astackoffset: integer;
              const akinds: elementkindsty; const visibility: vislevelty; 
-                   out ainfo: pointer): boolean;
+             out ainfo: pointer; out lastident: integer;
+             out idents: identvecty): boolean;
+begin
+ result:= findkindelements(info,astackoffset,akinds,visibility,ainfo,
+                                lastident,idents);
+ if result then begin
+  ainfo:= @pelementinfoty(ainfo)^.data;
+ end;
+end;
+
+function findkindelementsdata(const info: pparseinfoty;
+             const astackoffset: integer;
+             const akinds: elementkindsty; const visibility: vislevelty; 
+             out ainfo: pointer): boolean;
 begin
  result:= findkindelements(info,astackoffset,akinds,visibility,ainfo);
  if result then begin
@@ -184,7 +249,7 @@ function findvar(const info: pparseinfoty; const astackoffset: integer;
                    const visibility: vislevelty;
                            out varinfo: varinfoty): boolean;
 var
- idents,types: identvectorty;	
+ idents,types: identvecty;	
  po1: pvardataty;
  po2: ptypedataty;
  po3: pfielddataty;
@@ -216,6 +281,9 @@ begin
     po2:= ele.eledataabs(ele2);
     varinfo.size:= po2^.size;
    end;
+  end
+  else begin
+   identerror(info,astackoffset,err_identifiernotfound);
   end;
  end;
 end;                           
