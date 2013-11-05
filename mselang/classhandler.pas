@@ -1,4 +1,4 @@
-{ MSEide Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,6 +65,9 @@ var
  po3: pvisibledataty;
  id1: identty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSDEFSTART');
+{$endif}
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
@@ -77,60 +80,57 @@ begin
    currentclassvislevel:= vic_published; //default
   end;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFSTART');
-{$endif}
 end;
 
 procedure handleclassdefreturn(const info: pparseinfoty);
 var
  po2: pclassesdataty;
 begin
-// ele.popelement;
- classesscopereset(info);
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFRETURN');
 {$endif}
+// ele.popelement;
+ classesscopereset(info);
 end;
 
 procedure handleclassdeferror(const info: pparseinfoty);
 begin
- tokenexpectederror(info,tk_end);
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSDEFERROR');
 {$endif}
+ tokenexpectederror(info,tk_end);
 end;
 
 procedure handleclassprivate(const info: pparseinfoty);
 begin
- info^.currentclassvislevel:= vic_private;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSPRIVATE');
 {$endif}
+ info^.currentclassvislevel:= vic_private;
 end;
 
 procedure handleclassprotected(const info: pparseinfoty);
 begin
- info^.currentclassvislevel:= vic_protected;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSPROTECTED');
 {$endif}
+ info^.currentclassvislevel:= vic_protected;
 end;
 
 procedure handleclasspublic(const info: pparseinfoty);
 begin
- info^.currentclassvislevel:= vic_public;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSPUBLIC');
 {$endif}
+ info^.currentclassvislevel:= vic_public;
 end;
 
 procedure handleclasspublished(const info: pparseinfoty);
 begin
- info^.currentclassvislevel:= vic_published;
 {$ifdef mse_debugparser}
  outhandle(info,'CLASSPUBLISHED');
 {$endif}
+ info^.currentclassvislevel:= vic_published;
 end;
 
 procedure handleclassfield(const info: pparseinfoty);
@@ -139,6 +139,9 @@ var
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CLASSFIELD');
+{$endif}
  with info^ do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
        currentclassvislevel,ek_var,po1);
@@ -154,9 +157,6 @@ begin
   end;
   ele.elementparent:= ele1;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'CLASSFIELD');
-{$endif}
 end;
 
 end.

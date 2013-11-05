@@ -1,4 +1,4 @@
-{ MSEide Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ var
  po1: ptypedataty;
  id1: identty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'RECORDDEFSTART');
+{$endif}
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
   with contextstack[stackindex].d do begin
@@ -44,19 +47,16 @@ begin
    end;
   end;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFSTART');
-{$endif}
 end;
 
 procedure handlerecorddeferror(const info: pparseinfoty);
 begin
- with info^ do begin
-  ele.elementparent:= contextstack[stackindex].d.elemark;
- end;
 {$ifdef mse_debugparser}
  outhandle(info,'RECORDDEFERROR');
 {$endif}
+ with info^ do begin
+  ele.elementparent:= contextstack[stackindex].d.elemark;
+ end;
 end;
 
 procedure handlerecordfield(const info: pparseinfoty);
@@ -65,6 +65,9 @@ var
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'RECORDFIELD');
+{$endif}
  with info^ do begin
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            vis_max,ek_field,po1) then begin
@@ -89,9 +92,6 @@ begin
    stacktop:= stackindex-1;
   end;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'RECORDFIELD');
-{$endif}
 end;
 
 procedure handlerecorddefreturn(const info: pparseinfoty);
@@ -99,6 +99,9 @@ var
  int1,int2: integer;
  po1: pfielddataty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'RECORDDEFRETURN');
+{$endif}
  with info^ do begin
   ele.elementparent:= contextstack[stackindex].d.elemark; //restore
   int2:= 0;
@@ -112,9 +115,6 @@ begin
   ptypedataty(ele.eledataabs(
                contextstack[stackindex].d.typ.typedata))^.size:= int2;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFRETURN');
-{$endif}
 end;
 
 end.

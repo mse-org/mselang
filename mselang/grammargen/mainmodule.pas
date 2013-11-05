@@ -1,4 +1,4 @@
-{ MSEide Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -636,7 +636,7 @@ begin
   end;
   passtream:= ttextstream.create(outfile,fm_create);
  str1:= 
-'{ MSEide Copyright (c) 2013 by Martin Schreiber'+lineend+
+'{ MSElang Copyright (c) 2013 by Martin Schreiber'+lineend+
 '   '+lineend+
 '    This program is free software; you can redistribute it and/or modify'+lineend+
 '    it under the terms of the GNU General Public License as published by'+lineend+

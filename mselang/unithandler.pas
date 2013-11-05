@@ -1,4 +1,4 @@
-{ MSEide Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,6 +88,9 @@ procedure implementationstart(const info: pparseinfoty);
 var
  po1: punitdataty;
 begin
+{$ifdef mse_debugparser}
+ outhandle(info,'IMPLEMENTATIONSTART');
+{$endif}
  with info^ do begin
   if us_interface in unitinfo^.state then begin
    stopparser:= true; //stop parsing;
@@ -99,9 +102,6 @@ begin
    end;
   end;
  end;
-{$ifdef mse_debugparser}
- outhandle(info,'IMPLEMENTATIONSTART');
-{$endif}
 end;
 
 function parseinterface(const aunit: punitinfoty): boolean;
