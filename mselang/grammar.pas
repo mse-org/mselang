@@ -2092,7 +2092,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype2: array[0..7] of branchty = (
+ btype2: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @recorddefco); stack: @recorddefreturnco; 
      keyword: $678CDDBA{'record'}),
@@ -2123,6 +2123,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @comment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @handlepointertype); stack: nil; keys: (
+    (kind: bkk_char; chars: ['^']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
