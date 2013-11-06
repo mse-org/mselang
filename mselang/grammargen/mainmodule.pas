@@ -980,11 +980,7 @@ begin
 end;
 
 procedure tmainmo.afterinitexe(sender: tsysenvmanager);
-var
- ch1: msechar;
- mstr1: msestring;
 begin
- ch1:= mstr1;
 {
  with sender do begin
   if not defined[ord(pa_pasfile)] then begin
