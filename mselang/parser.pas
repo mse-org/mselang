@@ -129,15 +129,15 @@ begin
       write(getidentname(ident.ident));
      end;
      ck_const: begin
-      case factkind of
+      case constval.d.kind of
        dk_bool8: begin
-        write(constval.vbool8,' ');
+        write(constval.d.vbool8,' ');
        end;
-       dk_int32: begin
-        write(constval.vint32,' ');
+       dk_sint32: begin
+        write(constval.d.vsint32,' ');
        end;
        dk_flo64: begin
-        write(constval.vflo64,' ');
+        write(constval.d.vflo64,' ');
        end;
       end;
      end;

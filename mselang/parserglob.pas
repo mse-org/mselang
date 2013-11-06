@@ -27,6 +27,7 @@ type
  sint8 = shortint; 
  sint16 = smallint;
  sint32 = integer;
+ float64 = double;
 
  puint8 = ^uint8; 
  puint16 = ^uint16;
@@ -35,8 +36,8 @@ type
  psint16 = ^sint16;
  psint32 = ^sint32;
  
- datakindty = (dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,
-               dk_record);
+ datakindty = (dk_none,dk_bool8,dk_sint32,dk_flo64,dk_kind,dk_address,
+               dk_record,dk_reference);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 
 const
@@ -55,8 +56,8 @@ type
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
                   ck_type,ck_field);
- stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
-                    sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
+ stackdatakindty = (sdk_bool8,sdk_sint32,sdk_flo64,
+                    sdk_bool8rev,sdk_sint32rev,sdk_flo64rev);
  opaddressty = ptruint;
  dataaddressty = ptruint;
  
@@ -118,19 +119,30 @@ type
   caption: string;
  end;
 
- datainfoty = record
-  case kind: datakindty of //first, maps ck_fact: factkind
-   dk_bool8: (
-    vbool8: integer;
-   );
-   dk_int32: (
-    vint32: integer;
-   );
-   dk_flo64: (
-    vflo64: double;
-   );
+ typeflagty = (tf_pointer);
+ typeflagsty = set of typeflagty;
+ typeinfoty = record
+  typedata: elementoffsetty;
+  flags: typeflagsty;
  end;
 
+ dataty = record
+  case kind: datakindty of
+   dk_bool8: (
+    vbool8: uint32;
+   );
+   dk_sint32: (
+    vsint32: sint32;
+   );
+   dk_flo64: (
+    vflo64: float64;
+   );
+ end;
+ 
+ datainfoty = record
+  typ: typeinfoty; //first, maps ck_fact facttyp
+  d: dataty;
+ end;
  identinfoty = record
   ident: identty;
   len: integer;
@@ -147,9 +159,7 @@ type
   ident: identinfoty;
   classdata: elementoffsetty;
  end;
- typeinfoty = record
-  typedata: elementoffsetty;
- end;
+ 
  fieldinfoty = record
   fielddata: elementoffsetty;
  end;
@@ -160,12 +170,12 @@ type
    ck_ident:(
     ident: identinfoty;
    );
-   ck_const:(
-    constval: datainfoty;
-   );
-   ck_fact:(
-    factkind: datakindty; 
-   );
+   ck_const:(             ////
+    constval: datainfoty;   //
+   );                       // same startlayout
+   ck_fact:(                //
+    facttyp: typeinfoty;    //
+   );                     ////
    ck_proc:(
     proc: procinfoty;
    );

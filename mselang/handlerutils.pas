@@ -33,9 +33,9 @@ const
 
 type
  varinfoty = record
-  size: integer;
   flags: varflagsty;
   address: ptruint;
+  typ: typedataty;
  end;
  
 procedure error(const info: pparseinfoty; const error: comperrorty;
@@ -275,11 +275,11 @@ begin
      varinfo.address:= varinfo.address + po3^.offset;
     end;
     po2:= ele.eledataabs(po3^.typ);
-    varinfo.size:= po2^.size;
+    varinfo.typ:= po2^;
    end
    else begin
     po2:= ele.eledataabs(ele2);
-    varinfo.size:= po2^.size;
+    varinfo.typ:= po2^;
    end;
   end
   else begin
@@ -322,13 +322,13 @@ begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
      ck_const: begin
-      with constval do begin
+      with constval.d do begin
        case kind of
         dk_bool8: begin
          command.write(longbool(vbool8));
         end;
-        dk_int32: begin
-         command.write(vint32);
+        dk_sint32: begin
+         command.write(vsint32);
         end;
         dk_flo64: begin
          command.write(vflo64);

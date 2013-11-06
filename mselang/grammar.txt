@@ -215,7 +215,8 @@ type,,handletype>
 type0,type1,
  ${whitespace}
  @identstart,identpath^*
-type1,,+
+type1,type1a,handletypedefstart
+type1a,,+
  ${whitespace}
  '=',type2-
 type2,type3,

@@ -20,19 +20,24 @@ interface
 uses
  parserglob;
 
-type
+const
+ pointersize = sizeof(pointer);
+type  
  typedataty = record
   size: integer;
   case kind: datakindty of 
    dk_record: ();
+   dk_reference: (target: elementoffsetty);
  end;
-
  ptypedataty = ^typedataty;
+ 
  varflagty = (vf_global,vf_param);
  varflagsty = set of varflagty;
 
  constdataty = record
-  d: contextdataty;
+//  typ: elementoffsetty; //typedataty
+  val: datainfoty;
+//  d: contextdataty;
  end;
  pconstdataty = ^constdataty;
 

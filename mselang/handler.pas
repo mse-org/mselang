@@ -57,7 +57,7 @@ procedure handlevar0(const info: pparseinfoty);
 procedure handlevar3(const info: pparseinfoty);
 
 procedure handletype(const info: pparseinfoty);
-procedure handletype0(const info: pparseinfoty);
+procedure handletypedefstart(const info: pparseinfoty);
 procedure handletype3(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
 
@@ -125,14 +125,15 @@ const
  stacklinksize = 1;
 
 type
- systypety = (st_integer);
- typeinfoty = record
+ systypety = (st_sint32,st_bool8,st_float64);
+ systypeinfoty = record
   name: string;
   data: typedataty;
  end;
- constinfoty = record
+ sysconstinfoty = record
   name: string;
-  data: contextdataty;
+  ctyp: systypety;
+  cval: dataty;
  end;
   
  sysfuncinfoty = record
@@ -141,22 +142,25 @@ type
  end;
    
 const
- systypeinfos: array[systypety] of typeinfoty = (
-   (name: 'integer'; data: (size: 4; kind: dk_int32))
+ systypeinfos: array[systypety] of systypeinfoty = (
+   (name: 'sint32'; data: (size: 4; kind: dk_sint32; target: 0)),
+   (name: 'bool8'; data: (size: 1; kind: dk_bool8; target: 0)),
+   (name: 'float64'; data: (size: 8; kind: dk_flo64; target: 0))
   );
- sysconstinfos: array[0..1] of constinfoty = (
-   (name: 'false'; data: (elemark: 0;
-             kind: ck_const; constval: (kind: dk_bool8; vbool8: 0))),
-   (name: 'true'; data: (elemark: 0;
-             kind: ck_const; constval: (kind: dk_bool8; vbool8: -1)))
+ sysconstinfos: array[0..1] of sysconstinfoty = (
+   (name: 'false'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: 0)),
+   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: -1))
   );
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
   );
 
 function typename(const ainfo: contextdataty): string;
+var
+ po1: ptypedataty;
 begin
- result:= getenumname(typeinfo(datakindty),ord(ainfo.factkind));
+ po1:= ele.eledataabs(ainfo.facttyp.typedata);
+ result:= getenumname(typeinfo(datakindty),ord(po1^.kind));
 end;
 
 function typename(const atype: typedataty): string;
@@ -201,7 +205,7 @@ begin
 end;
 
 var
- sysdatatypes: array[systypety] of elementoffsetty;
+ sysdatatypes: array[systypety] of typeinfoty;
  
 procedure initparser(const info: pparseinfoty);
 begin
@@ -222,12 +226,16 @@ begin
    po2:= @po1^.data;
    po2^:= data;
   end;
-  sysdatatypes[ty1]:= ele.eleinforel(po1);
+  sysdatatypes[ty1].typedata:= ele.eleinforel(po1);
+  sysdatatypes[ty1].flags:= [];
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
    po1:= ele.addelement(getident(name),vis_max,ek_const);
-   pconstdataty(@po1^.data)^.d:= data;
+   with pconstdataty(@po1^.data)^ do begin
+    val.d:= cval;
+    val.typ:= sysdatatypes[ctyp];
+   end;
   end;
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
@@ -278,15 +286,15 @@ procedure pushconst(const info: pparseinfoty; const avalue: contextdataty);
 //todo: optimize
 begin
  with avalue do begin
-  case constval.kind of
+  case constval.d.kind of
    dk_bool8: begin
-    push(info,constval.vbool8);
+    push(info,constval.d.vbool8);
    end;
-   dk_int32: begin
-    push(info,constval.vint32);
+   dk_sint32: begin
+    push(info,constval.d.vsint32);
    end;
    dk_flo64: begin
-    push(info,constval.vflo64);
+    push(info,constval.d.vflo64);
    end;
   end;
  end;
@@ -380,8 +388,9 @@ begin
    int2:= -int2;
   end;
   d.kind:= ck_const;
-  d.constval.kind:= dk_int32;
-  d.constval.vint32:= int2;
+  d.constval.typ:= sysdatatypes[st_sint32];
+  d.constval.d.kind:= dk_sint32;
+  d.constval.d.vsint32:= int2;
  end;
 end;
 
@@ -408,7 +417,8 @@ begin
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
    d.kind:= ck_const;
-   d.constval.kind:= dk_flo64;
+   d.constval.typ:= sysdatatypes[st_float64];
+   d.constval.d.kind:= dk_flo64;
    lint2:= 0;
    po1:= start.po;
    int1:= asource-po1-1;
@@ -452,9 +462,9 @@ begin
 {$endif}
  dofrac(info,info^.source.po,neg,mant,fraclen);
  with info^,contextstack[stacktop].d.constval do begin
-  vflo64:= mant/floatexps[fraclen]; //todo: round lsb;   
+  d.vflo64:= mant/floatexps[fraclen]; //todo: round lsb;   
   if neg then begin
-   vflo64:= -vflo64; 
+   d.vflo64:= -d.vflo64; 
   end;
   consumed:= source.po;
  end;
@@ -471,7 +481,7 @@ begin
  outhandle(info,'EXPONENT');
 {$endif}
  with info^ do begin
-  exp:= contextstack[stacktop].d.constval.vint32;
+  exp:= contextstack[stacktop].d.constval.d.vsint32;
   dec(stacktop,2);
   dofrac(info,contextstack[stackindex].start.po,neg,mant,fraclen);
   exp:= exp-fraclen;
@@ -483,9 +493,9 @@ begin
     exp:= exp - 32;
    end;
    with d.constval do begin
-    vflo64:= mant*do1;
+    d.vflo64:= mant*do1;
     if neg then begin
-     vflo64:= -vflo64; 
+     d.vflo64:= -d.vflo64; 
     end;
    end;
   end;
@@ -500,7 +510,7 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].d.constval.vint32;
+  exp:= contextstack[stacktop].d.constval.d.vsint32;
   dec(stacktop,3);
   dofrac(info,contextstack[stackindex-1].start.po,neg,mant,fraclen);
   exp:= exp+fraclen;
@@ -512,9 +522,9 @@ begin
     exp:= exp - 32;
    end;
    with d.constval do begin
-    vflo64:= mant/do1;
+    d.vflo64:= mant/do1;
     if neg then begin
-     vflo64:= -vflo64; 
+     d.vflo64:= -d.vflo64; 
     end;
    end;
   end;
@@ -526,34 +536,41 @@ end;
 
 const
  resultdatakinds: array[stackdatakindty] of datakindty =
-           (dk_bool8,dk_int32,dk_flo64,
-            dk_bool8,dk_int32,dk_flo64);
+           (dk_bool8,dk_sint32,dk_flo64,
+            dk_bool8,dk_sint32,dk_flo64);
+ resultdatatypes: array[stackdatakindty] of systypety =
+           (st_bool8,st_sint32,st_float64,
+            st_bool8,st_sint32,st_float64);
 
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
 var
  reverse,negative: boolean;
+ kinda,kindb: datakindty;
 begin
  with info^ do begin
   reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
                            (contextstack[stacktop-2].d.kind = ck_const);
-  if (contextstack[stacktop].d.factkind = dk_flo64) or 
-             (contextstack[stacktop-2].d.factkind = dk_flo64) then begin
+  kinda:= ptypedataty(ele.eleinfoabs(
+                     contextstack[stacktop].d.facttyp.typedata))^.kind;
+  kindb:= ptypedataty(ele.eleinfoabs(
+                     contextstack[stacktop-2].d.facttyp.typedata))^.kind;
+  if (kinda = dk_flo64) or (kindb = dk_flo64) then begin
    result:= sdk_flo64;
    with contextstack[stacktop].d do begin
     if kind = ck_const then begin
-     case factkind of
-      dk_int32: begin
-       push(info,real(constval.vint32));
+     case constval.d.kind of
+      dk_sint32: begin
+       push(info,real(constval.d.vsint32));
       end;
       dk_flo64: begin
-       push(info,constval.vflo64);
+       push(info,constval.d.vflo64);
       end;
      end;
     end
     else begin //ck_fact
-     case factkind of
-      dk_int32: begin
+     case kinda of
+      dk_sint32: begin
        int32toflo64(info,0);
       end;
      end;
@@ -561,19 +578,19 @@ begin
    end;
    with contextstack[stacktop-2].d do begin
     if kind = ck_const then begin
-     case factkind of
-      dk_int32: begin
-       push(info,real(constval.vint32));
+     case kindb of
+      dk_sint32: begin
+       push(info,real(constval.d.vsint32));
       end;
       dk_flo64: begin
-       push(info,real(constval.vflo64));
+       push(info,real(constval.d.vflo64));
        reverse:= not reverse;
       end;
      end;
     end
     else begin
-     case factkind of
-      dk_int32: begin
+     case kindb of
+      dk_sint32: begin
         int32toflo64(info,-1);
       end;
      end;
@@ -581,43 +598,43 @@ begin
    end;
   end
   else begin
-   if contextstack[stacktop].d.factkind = dk_bool8 then begin
+   if kinda = dk_bool8 then begin
     result:= sdk_bool8;
     with contextstack[stacktop-2].d do begin
      if kind = ck_const then begin
-      case factkind of
+      case kindb of
        dk_bool8: begin
-        push(info,constval.vbool8);
+        push(info,constval.d.vbool8);
        end;
       end;
      end;
     end;
     with contextstack[stacktop].d do begin
      if kind = ck_const then begin
-      case factkind of
+      case kinda of
        dk_bool8: begin
-        push(info,constval.vbool8);
+        push(info,constval.d.vbool8);
        end;
       end;
      end;
     end;
    end
    else begin
-    result:= sdk_int32;
+    result:= sdk_sint32;
     with contextstack[stacktop-2].d do begin
      if kind = ck_const then begin
-      case factkind of
-       dk_int32: begin
-        push(info,constval.vint32);
+      case kindb of
+       dk_sint32: begin
+        push(info,constval.d.vsint32);
        end;
       end;
      end;
     end;
     with contextstack[stacktop].d do begin
      if kind = ck_const then begin
-      case factkind of
-       dk_int32: begin
-        push(info,constval.vint32);
+      case kinda of
+       dk_sint32: begin
+        push(info,constval.d.vsint32);
        end;
       end;
      end;
@@ -630,7 +647,7 @@ begin
   dec(stacktop,2);
   with contextstack[stacktop] do begin
    d.kind:= ck_fact;
-   d.factkind:= resultdatakinds[result];
+   d.facttyp:= sysdatatypes[resultdatatypes[result]];
    context:= nil;
   end;
   stackindex:= stacktop-1;
@@ -691,11 +708,13 @@ end;
 
 const
  negops: array[datakindty] of opty = (
- //dk_none,dk_bool8,dk_int32,dk_flo64,dk_kind,dk_address,dk_record
-   @dummyop,@dummyop,@negint32,@negflo64,@dummyop,@dummyop,@dummyop
+ //dk_none,dk_bool8,dk_sint32,dk_flo64,dk_kind,dk_address,dk_record,dk_reference
+   @dummyop,@dummyop,@negint32,@negflo64,@dummyop,@dummyop,@dummyop,@dummyop
  );
 
 procedure handleterm1(const info: pparseinfoty);
+var
+ po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM1');
@@ -703,7 +722,8 @@ begin
  with info^ do begin
   if stackindex < stacktop then begin
    if contextstack[stackindex].d.kind = ck_neg then begin
-    writeop(info,negops[contextstack[stacktop].d.factkind]);
+    po1:= ele.eledataabs(contextstack[stacktop].d.facttyp.typedata);
+    writeop(info,negops[po1^.kind]);
    end;
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
@@ -908,7 +928,8 @@ begin
      end;
      with contextstack[stacktop].d do begin
       kind:= ck_fact;
-      factkind:= dk_int32;
+      facttyp.typedata:= ele1;
+      facttyp.flags:= [];
      end;
     end;
     ek_const: begin
@@ -1140,7 +1161,7 @@ begin
      identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
     end
     else begin
-     pconstdataty(@po1^.data)^.d:= contextstack[stacktop-1].d;
+     pconstdataty(@po1^.data)^.val:= contextstack[stacktop-1].d.constval;
     end;
    end;
   end
@@ -1222,11 +1243,25 @@ begin
  end;
 end;
 
-procedure handletype0(const info: pparseinfoty);
+procedure handletypedefstart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'TYPE0');
+ outhandle(info,'TYPEDEFSTART');
 {$endif}
+ with info^,contextstack[stackindex] do begin
+  d.kind:= ck_type;
+  d.typ.flags:= [];
+ end;
+end;
+
+procedure handlepointertype(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'POINTERTYPE');
+{$endif}
+ with info^,contextstack[stackindex] do begin
+  include(d.typ.flags,tf_pointer);
+ end;
 end;
 
 procedure handletype3(const info: pparseinfoty);
@@ -1248,6 +1283,13 @@ begin
     if findkindelements(info,stacktop-stackindex,
                        [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
+     if tf_pointer in contextstack[stackindex].d.typ.flags then begin
+      with ptypedataty(@po1^.data)^ do begin
+       size:= pointersize;
+       kind:= dk_reference;
+       target:= ele.eleinforel(po2);
+      end;
+     end;
     end
     else begin
      identerror(info,stacktop-stackindex,err_identifiernotfound);
@@ -1259,13 +1301,6 @@ begin
   end;
   stacktop:= stackindex;
  end;
-end;
-
-procedure handlepointertype(const info: pparseinfoty);
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'TYPE3');
-{$endif}
 end;
 
 procedure handleexp(const info: pparseinfoty);
@@ -1352,56 +1387,58 @@ end;
 }
 procedure handleassignment(const info: pparseinfoty); 
 var
-// po1: pvardataty;
-// si1: ptruint;
  varinfo1: varinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
 {$endif}
  with info^ do begin
-  if (stacktop-stackindex > 0) and //todo: multi level var name
-          findvar(info,1,vis_max,varinfo1) then begin
-//                 findkindelementsdata(info,1,vis_max,ek_var,po1) then begin
-//   si1:= ptypedataty(ele.eledataabs(po1^.typ))^.size;
-   with additem(info)^ do begin
-    if vf_global in varinfo1.flags then begin
-     case varinfo1.size of
-      1: begin 
-       op:= @popglob1;
+  if (stacktop-stackindex > 1) then begin
+   if findvar(info,1,vis_max,varinfo1) then begin
+//    if varinfo1.typ.kind <> 
+//    if varinfo1.typ.kind = tk_reference
+    with additem(info)^ do begin
+     if vf_global in varinfo1.flags then begin
+      case varinfo1.typ.size of
+       1: begin 
+        op:= @popglob1;
+       end;
+       2: begin
+        op:= @popglob2;
+       end;
+       4: begin
+        op:= @popglob4;
+       end;
+       else begin
+        op:= @popglob;
+       end;
       end;
-      2: begin
-       op:= @popglob2;
+      d.dataaddress:= varinfo1.address;
+     end
+     else begin
+      case varinfo1.typ.size of
+       1: begin 
+        op:= @poploc1;
+       end;
+       2: begin
+        op:= @poploc2;
+       end;
+       4: begin
+        op:= @poploc4;
+       end;
+       else begin
+        op:= @poploc;
+       end;
       end;
-      4: begin
-       op:= @popglob4;
-      end;
-      else begin
-       op:= @popglob;
-      end;
+      d.count:= varinfo1.address;
      end;
-     d.dataaddress:= varinfo1.address;
-    end
-    else begin
-     case varinfo1.size of
-      1: begin 
-       op:= @poploc1;
-      end;
-      2: begin
-       op:= @poploc2;
-      end;
-      4: begin
-       op:= @poploc4;
-      end;
-      else begin
-       op:= @poploc;
-      end;
-     end;
-     d.count:= varinfo1.address;
+     d.datasize:= varinfo1.typ.size;
     end;
-    d.datasize:= varinfo1.size;
    end;
-  end;                  
+  end
+  else begin
+   internalerror(info,'H20131105A');
+  end;
   dec(stackindex);
   stacktop:= stackindex;
  end;
@@ -1465,8 +1502,7 @@ begin
     for int1:= stackindex+3 to stacktop do begin
      po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
-      if d.factkind <> 
-               ptypedataty(ele.eledataabs(po4^.typ))^.kind then begin
+      if d.facttyp.typedata <> po4^.typ then begin
        errormessage(info,int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
                     typename(ptypedataty(ele.eledataabs(po4^.typ))^)]);
@@ -1489,7 +1525,8 @@ begin
       sf_writeln: begin
        int2:= stacktop-stackindex-2;
        for int1:= 3+stackindex to int2+2+stackindex do begin
-        push(info,contextstack[int1].d.factkind);
+        push(info,ptypedataty(
+                ele.eledataabs(contextstack[int1].d.facttyp.typedata))^.kind);
        end;
        push(info,int2);
        writeop(info,op);
@@ -1544,7 +1581,8 @@ begin
  outhandle(info,'THEN0');
 {$endif}
  with info^ do begin
-  if not (contextstack[stacktop].d.factkind = dk_bool8) then begin
+  if not (ptypedataty(ele.eledataabs(
+       contextstack[stacktop].d.facttyp.typedata))^.kind = dk_bool8) then begin
    errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
   end;
  end;

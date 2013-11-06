@@ -376,9 +376,13 @@ var
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type0');
  type1co: contextty = (branch: nil; handle: nil; 
-               continue: false; cut: false; restoresource: true; 
+               continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'type1');
+ type1aco: contextty = (branch: nil; handle: nil; 
+               continue: false; cut: false; restoresource: true; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'type1a');
  type2co: contextty = (branch: nil; handle: nil; 
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
@@ -2054,7 +2058,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype1: array[0..5] of branchty = (
+ btype1a: array[0..5] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3186,7 +3190,10 @@ begin
  typeco.handle:= @handletype;
  type0co.branch:= @btype0;
  type0co.next:= @type1co;
- type1co.branch:= @btype1;
+ type1co.branch:= nil;
+ type1co.next:= @type1aco;
+ type1co.handle:= @handletypedefstart;
+ type1aco.branch:= @btype1a;
  type2co.branch:= @btype2;
  type2co.next:= @type3co;
  type3co.branch:= nil;

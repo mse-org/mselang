@@ -70,8 +70,8 @@ type
   case datakindty of
    dk_kind: (vdatakind: datakindty);
    dk_bool8: (vbool8: boolean);
-   dk_int32: (vint32: integer);
-   dk_flo64: (vflo64: real);
+   dk_sint32: (vsint32: sint32);
+   dk_flo64: (vflo64: float64);
    dk_address: (vaddress: pointer);
  end;
  stackinfoarty = array of stackinfoty;
@@ -104,7 +104,7 @@ procedure writelnop;
 var
  int1,int2,int3: integer;
 begin
- int1:= mainstack[mainstackpo].vint32;
+ int1:= mainstack[mainstackpo].vsint32;
  int3:= mainstackpo-int1;
  int2:= int3-int1;
  while int2 < int3 do begin
@@ -112,8 +112,8 @@ begin
    dk_bool8: begin
     write(mainstack[int2].vbool8);
    end;
-   dk_int32: begin
-    write(mainstack[int2].vint32);
+   dk_sint32: begin
+    write(mainstack[int2].vsint32);
    end;
    dk_flo64: begin
     write(mainstack[int2].vflo64);
@@ -134,7 +134,7 @@ end;
 procedure pushint32;
 begin
  inc(mainstackpo);
- mainstack[mainstackpo].vint32:= oppo^.d.vint32; 
+ mainstack[mainstackpo].vsint32:= oppo^.d.vint32; 
 end;
 
 procedure pushflo64;
@@ -152,41 +152,42 @@ end;
 procedure int32toflo64;
 begin
  with mainstack[mainstackpo+oppo^.d.op1.index0] do begin
-  vflo64:= vint32;
+  vflo64:= vsint32;
  end;
 end;
 
 procedure mulint32;
 begin
- mainstack[mainstackpo-1].vint32:= 
-                mainstack[mainstackpo-1].vint32 * mainstack[mainstackpo].vint32;
+ mainstack[mainstackpo-1].vsint32:= 
+                mainstack[mainstackpo-1].vsint32 * 
+                                  mainstack[mainstackpo].vsint32;
  dec(mainstackpo);
 end;
 
 procedure mulflo64;
 begin
- mainstack[mainstackpo-1].vflo64:= 
-                mainstack[mainstackpo-1].vflo64 * mainstack[mainstackpo].vflo64;
+ mainstack[mainstackpo-1].vflo64:= mainstack[mainstackpo-1].vflo64 * 
+                                              mainstack[mainstackpo].vflo64;
  dec(mainstackpo);
 end;
 
 procedure addint32;
 begin
- mainstack[mainstackpo-1].vint32:= 
-                mainstack[mainstackpo-1].vint32 + mainstack[mainstackpo].vint32;
+ mainstack[mainstackpo-1].vsint32:= mainstack[mainstackpo-1].vsint32 + 
+                                              mainstack[mainstackpo].vsint32;
  dec(mainstackpo);
 end;
 
 procedure addflo64;
 begin
- mainstack[mainstackpo-1].vflo64:= 
-                mainstack[mainstackpo-1].vflo64 + mainstack[mainstackpo].vflo64;
+ mainstack[mainstackpo-1].vflo64:= mainstack[mainstackpo-1].vflo64 + 
+                                              mainstack[mainstackpo].vflo64;
  dec(mainstackpo);
 end;
 
 procedure negint32;
 begin
- mainstack[mainstackpo].vint32:= -mainstack[mainstackpo].vint32;
+ mainstack[mainstackpo].vsint32:= -mainstack[mainstackpo].vsint32;
 end;
 
 procedure negflo64;
