@@ -872,8 +872,8 @@ begin
    case po1^.header.kind of
     ek_var: begin
      addr1:= pvardataty(po2)^.address;
+     ele1:= pvardataty(po2)^.typ;
      if lastident < identcount-1 then begin
-      ele1:= pvardataty(po2)^.typ;
       for int1:= lastident+1 to idents.high do begin //fields
        if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                    vis_max,ele1) then begin
