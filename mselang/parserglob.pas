@@ -108,7 +108,8 @@ type
 
  contextty = record
   branch: pbranchty; //array
-  handle: contexthandlerty;
+  handleentry: contexthandlerty;
+  handleexit: contexthandlerty;
   continue: boolean;
   cut: boolean;
   restoresource: boolean;

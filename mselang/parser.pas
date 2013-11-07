@@ -189,11 +189,13 @@ begin
     result:= false;  //open transition chain
     break;
    end;
-   pc^.handle(info); //transition handler
-   if stopparser then begin
-    result:= false;
-    exit;
-   end; 
+   if pc^.handleexit <> nil then begin
+    pc^.handleexit(info); //transition handler
+    if stopparser then begin
+     result:= false;
+     exit;
+    end;
+   end;
    if pc^.nexteat then begin
     contextstack[stackindex].start:= source;
    end;
@@ -469,10 +471,10 @@ handlelab:
      debugsource:= source.po;
      keywordindex:= 0;
     end;
-    if pc^.handle <> nil then begin
+    if pc^.handleexit <> nil then begin
          //call context transition handler
 //     stophandle:= false;
-     pc^.handle(@info);
+     pc^.handleexit(@info);
      if stopparser then begin
       goto parseend;
      end;

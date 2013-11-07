@@ -53,8 +53,9 @@ procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
 
 procedure handlevar(const info: pparseinfoty);
-procedure handlevar0(const info: pparseinfoty);
+procedure handlevar1(const info: pparseinfoty);
 procedure handlevar3(const info: pparseinfoty);
+procedure handlepointervar(const info: pparseinfoty);
 
 procedure handletype(const info: pparseinfoty);
 procedure handletypedefstart(const info: pparseinfoty);
@@ -1184,10 +1185,10 @@ begin
  end;
 end;
 
-procedure handlevar0(const info: pparseinfoty);
+procedure handlevar1(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'VAR0');
+ outhandle(info,'VAR1');
 {$endif}
 end;
 
@@ -1230,6 +1231,13 @@ begin
   end;
   stacktop:= stackindex;
  end;
+end;
+
+procedure handlepointervar(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'POINTERVAR');
+{$endif}
 end;
 
 procedure handletype(const info: pparseinfoty);

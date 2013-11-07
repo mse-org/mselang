@@ -35,11 +35,12 @@ ${macroname}
  <pascalstring>{,<pascalstring>}
      first character of strings removed for const def ex:
       '.classes' -> tks_classes
-<context>,[<next>][-],[<handler>][^|!][+][*][>]
-    <handler> called by context termination,
+<context>,[<next>][-],[<entryhandler>],[<exithandler>][^|!][+][*][>]
+    <entryhandler> called at contextstart
+    <exithandler> called by context termination,
     transition to <next> or termination if no branch matches
     or after return from branch
-    <handler> also called for transition contexts without branches
+    <*handler> also called for transition contexts without branches
  - -> eat text
  ^ -> pop parent
  ! -> pop parent and execute parent handler
@@ -61,7 +62,7 @@ ${macroname}
 
 const
  contextlinesyntax = 
-'<context>,[<next>][-],[<handler>][^|!][+][*][>]';
+'<context>,[<next>][-],[<entryhandler>],[<exithandler>][^|!][+][*][>]';
  branchlinesyntax = 
 '<stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},'+lineend+
 '[[<context>|!<handler>] [-] [[^][*] | [*][^]] [!] ]'+lineend+
@@ -360,7 +361,8 @@ var
  mstr1: msestring;
  branflags1: branchflagsty;
  chars1: charsetty;
- 
+const
+ contlast = 3; 
 begin
  application.terminated:= true;
  try
@@ -498,7 +500,7 @@ begin
           end;
           context:= str1;
           contextline:= splitstring(context,',',true);
-          if length(contextline) <> 3 then begin
+          if length(contextline) <> contlast+1 then begin
            error(contextformat);
            exit;
           end;
@@ -668,35 +670,35 @@ begin
   for int1:= 0 to high(contexts) do begin
    str2:= '';
    with contexts[int1] do begin
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '>') then begin
-     setlength(cont[2],length(cont[2])-1);
+    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '>') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'continue: true; ';
     end
     else begin
      str2:= str2+'continue: false; ';
     end;
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '*') then begin
-     setlength(cont[2],length(cont[2])-1);
+    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '*') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'cut: true; ';
     end
     else begin
      str2:= str2+'cut: false; ';
     end;
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '+') then begin
-     setlength(cont[2],length(cont[2])-1);
+    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '+') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'restoresource: true; ';
     end
     else begin
      str2:= str2+'restoresource: false; ';
     end;
-    if (cont[2] <> '') and (cont[2][length(cont[2])] = '^') then begin
-     setlength(cont[2],length(cont[2])-1);
+    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '^') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+lineend+
 '               pop: true; popexe: false; ';
     end
     else begin
-     if (cont[2] <> '') and (cont[2][length(cont[2])] = '!') then begin
-      setlength(cont[2],length(cont[2])-1);
+     if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '!') then begin
+      setlength(cont[contlast],length(cont[contlast])-1);
       str2:= str2+lineend+
 '               pop: true; popexe: true; ';
      end
@@ -713,7 +715,8 @@ begin
      str2:= str2+'nexteat: false; ';
     end;
     str1:= str1+
-' '+cont[0]+'co: contextty = (branch: nil; handle: nil; '+lineend+
+' '+cont[0]+'co: contextty = (branch: nil; '+lineend+
+'               handleentry: nil; handleexit: nil; '+lineend+
 '               '+str2+'next: nil;'+lineend+
 '               caption: '''+cont[0]+''');'+lineend;
    end;
@@ -938,9 +941,13 @@ lineend+
      str1:= str1+
 ' '+cont[0]+'co.next:= @'+cont[1]+'co;'+lineend;
     end;
-    if cont[2] <> '' then begin
+    if cont[contlast-1] <> '' then begin
      str1:= str1+
-' '+cont[0]+'co.handle:= @'+cont[2]+';'+lineend;
+' '+cont[0]+'co.handleentry:= @'+cont[contlast-1]+';'+lineend;
+    end;
+    if cont[contlast] <> '' then begin
+     str1:= str1+
+' '+cont[0]+'co.handleexit:= @'+cont[contlast]+';'+lineend;
     end;
    end;
   end;
