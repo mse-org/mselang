@@ -1190,6 +1190,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'VAR1');
 {$endif}
+ with info^,contextstack[stackindex] do begin
+  d.kind:= ck_var;
+  d.vari.flags:= [];
+ end;
 end;
 
 procedure handlevar3(const info: pparseinfoty);
@@ -1238,6 +1242,12 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'POINTERVAR');
 {$endif}
+ with info^,contextstack[stackindex].d.vari do begin
+  if tf_pointer in flags then begin
+   errormessage(info,-1,err_typeidentexpected,[]);
+  end;
+  include(flags,tf_pointer);
+ end;
 end;
 
 procedure handletype(const info: pparseinfoty);

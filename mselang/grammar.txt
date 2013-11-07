@@ -197,10 +197,10 @@ const3,const0-,,handleconst3
 #
 var,,,handlevar>
  '',var0*^
-var0,var1,,handlevar1
+var0,var1,,
  ${whitespace}
  @identstart,ident^*
-var1,,,+
+var1,,handlevar1,+
  ${whitespace}
  ':',var2-
 var2,var3,,

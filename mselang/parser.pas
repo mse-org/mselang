@@ -185,6 +185,7 @@ begin
          //replace return context
   end;
   while pc^.branch = nil do begin //handle transition chain
+//todo: what about handleentry?
    if pc^.next = nil then begin
     result:= false;  //open transition chain
     break;
@@ -248,6 +249,12 @@ begin
    outinfo(info,'> '+pc^.caption); //switch context
   end;
 {$endif}
+  if (pc^.handleentry <> nil) then begin
+   pc^.handleentry(info);
+   if stopparser then begin
+    result:= false;
+   end;
+  end;
  end;
 end;
 {
@@ -545,6 +552,12 @@ handlelab:
 {$endif}
      pc:= pc^.next;
      context:= pc;
+     if pc^.handleentry <> nil then begin
+      pc^.handleentry(@info);
+      if stopparser then begin
+       goto parseend;
+      end;
+     end;
     end;
 //    kind:= ck_none;
    end;

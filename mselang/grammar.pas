@@ -3313,8 +3313,8 @@ begin
  varco.handleexit:= @handlevar;
  var0co.branch:= @bvar0;
  var0co.next:= @var1co;
- var0co.handleexit:= @handlevar1;
  var1co.branch:= @bvar1;
+ var1co.handleentry:= @handlevar1;
  var2co.branch:= @bvar2;
  var2co.next:= @var3co;
  var3co.branch:= @bvar3;

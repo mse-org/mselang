@@ -55,7 +55,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
-                  ck_type,ck_field);
+                  ck_type,ck_var,ck_field);
  stackdatakindty = (sdk_bool8,sdk_sint32,sdk_flo64,
                     sdk_bool8rev,sdk_sint32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -127,6 +127,10 @@ type
   flags: typeflagsty;
  end;
 
+ varinfoty = record
+  flags: typeflagsty;
+ end;
+ 
  dataty = record
   case kind: datakindty of
    dk_bool8: (
@@ -185,6 +189,9 @@ type
    );
    ck_type:(
     typ: typeinfoty;
+   );
+   ck_var:(
+    vari: varinfoty;
    );
    ck_field:(
     field: fieldinfoty;
