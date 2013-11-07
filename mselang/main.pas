@@ -31,43 +31,17 @@ type
    tbutton1: tbutton;
    grid: tstringgrid;
    di: trealdisp;
-   getidented: tstringedit;
-   intdi: tintegerdisp;
-   pushed: tstringedit;
-   added: tstringedit;
-   addi: tbooleandisp;
-   tbutton2: tbutton;
-   tbutton3: tbutton;
-   finded: tstringedit;
-   finddi: tstringdisp;
-   tbutton4: tbutton;
-   tbooleanedit1: tbooleanedit;
-   tfacelist1: tfacelist;
    tpostscriptprinter1: tpostscriptprinter;
    tsplitter1: tsplitter;
    edgrid: twidgetgrid;
    ed: tsyntaxedit;
    coldi: tintegerdisp;
    tbutton5: tbutton;
-   tbutton6: tbutton;
-   tbutton7: tbutton;
-   markdi: tintegerdisp;
-   countdi: tintegerdisp;
-   markddi: tintegerdisp;
    procedure parseexe(const sender: TObject);
-   procedure findsetexe(const sender: TObject; var avalue: msestring;
-                   var accept: Boolean);
-   procedure clearexe(const sender: TObject);
-   procedure popexe(const sender: TObject);
-   procedure setpaexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
    procedure saveex(const sender: TObject);
-   procedure markexe(const sender: TObject);
-   procedure releaseexe(const sender: TObject);
   protected
-   felement: elementoffsetty;
-   procedure dump;
  end;
 var
  mainfo: tmainfo;
@@ -95,44 +69,6 @@ begin
  end;
 end;
 
-procedure tmainfo.findsetexe(const sender: TObject; var avalue: msestring;
-               var accept: Boolean);
-var
- lstr1: lstringty;
- str1: string;
-begin
- str1:= avalue;
- lstr1:= stringtolstring(str1);
- intdi.value:= getident(lstr1);
-end;
-
-procedure tmainfo.dump;
-begin
- grid[0].datalist.asarray:= ele.dumpelements;
- grid.row:= bigint;
- countdi.value:= ele.count;
-end;
-
-procedure tmainfo.clearexe(const sender: TObject);
-begin
- clear;
- dump;
-end;
-
-procedure tmainfo.popexe(const sender: TObject);
-begin
- addi.value:= ele.popelement <> nil;
- dump;
-end;
-
-procedure tmainfo.setpaexe(const sender: TObject);
-begin
- if grid.row > 0 then begin
-  ele.elementparent:= (grid.row-1)*sizeof(elementinfoty);
-  dump;
- end;
-end;
-
 procedure tmainfo.editnotiexe(const sender: TObject;
                var info: editnotificationinfoty);
 begin
@@ -142,25 +78,6 @@ end;
 procedure tmainfo.saveex(const sender: TObject);
 begin
  statf.writestat;
-end;
-
-var
- ref: markinfoty;
- 
-procedure tmainfo.markexe(const sender: TObject);
-var
- puint1: ptruint;
-begin
- ele.markelement(ref);
- markdi.value:= ref.hashref;
- markddi.value:= ref.dataref;
- countdi.value:= ele.count;
-end;
-
-procedure tmainfo.releaseexe(const sender: TObject);
-begin
- ele.releaseelement(ref);
- dump;
 end;
 
 end.
