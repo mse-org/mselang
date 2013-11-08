@@ -208,8 +208,9 @@ var2,var3,,
  @identstart,identpath^*
  '^',!handlepointervar-
 var3,var0-,,handlevar3
- ${whitespace}
- ';',statementend-*
+ '',checksemicolon^*
+# ${whitespace}
+# ';',statementend-*
 #
 type,,,handletype>
  '',type0*^
