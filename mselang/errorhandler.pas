@@ -28,7 +28,7 @@ type
             err_toomanyidentifierlevels,err_wrongtype,
             err_cantfindunit,{err_implementationexpected,err_unitexpected,}
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
-            err_typeidentexpected);
+            err_typeidentexpected,err_identexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -60,7 +60,8 @@ const
   (level: erl_fatal; message: 'Internal error %s'),
   (level: erl_fatal; message: 'Abort'),
   (level: erl_fatal; message: 'Syntax error,"%s" expected'),
-  (level: erl_error; message: 'Type identifier expected')
+  (level: erl_error; message: 'Type identifier expected'),
+  (level: erl_error; message: 'Identifier expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -116,7 +117,7 @@ begin
         errorleveltext[level1]+': '+format(message,values);
     command.writeln(str1);
     writeln('<<<<<<< '+str1);
-    if level1 >= erl_fatal then begin
+    if level1 <= erl_fatal then begin
      stopparser:= true;
     end;
    end;

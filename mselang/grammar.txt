@@ -36,6 +36,7 @@ checksemicolon,,,^
  ';',-*
  '',semicolonexpected
 semicolonexpected,,,handlesemicolonexpected
+identexpected,,,handleidentexpected
 start1,start2,,
  ${whitespace}
  'uses'.,uses0-
@@ -203,15 +204,14 @@ var0,var1,,
 var1,,handlevar1,+
  ${whitespace}
  ':',var2-
-var2,var3,,
+var2,identexpected,,
  ${whitespace}
- @identstart,identpath^*
+ @identstart,identpath^*>,var3^
  '^',!handlepointervar-
-var3,var0-,,handlevar3
- '',checksemicolon^*
-# ${whitespace}
-# ';',statementend-*
-#
+var3,var0-,,handlevar3*
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 type,,,handletype>
  '',type0*^
 type0,type1,,
@@ -311,6 +311,8 @@ frac,,,handlefrac
 ident,,,handleident^
  @identstart,@num,
 #
+identpathcontinue,,,^>
+ '',identpath^*
 identpath,identpath1a,,
  @identstart,@num,
 identpath1a,identpath1,,handleidentpath1a
@@ -325,6 +327,7 @@ identpath2,,,handleidentpath2^
 #error
  ${whitespace}
  @identstart,identpath*
+#
 valueidentifier,checkvalueparams,,handlevalueidentifier
  '',identpath^*
 #

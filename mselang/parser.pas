@@ -90,6 +90,12 @@ begin
    end;
    with contextstack[int1],d do begin
     write(fitstring(inttostr(parent),3,sp_right),' ');
+    if bf_continue in transitionflags then begin
+     write('>');
+    end
+    else begin
+     write(' ');
+    end;
     with context^ do begin
      if cut then begin
       write('-');
@@ -180,6 +186,7 @@ begin
  bo1:= false;
  with info^ do begin
   pc:= pb^.dest.context;
+  contextstack[stackindex].transitionflags:= pb^.flags;
   if not (bf_changeparentcontext in pb^.flags) then begin
    contextstack[stackindex].returncontext:= pb^.stack;
          //replace return context
@@ -527,10 +534,13 @@ handlelab:
      outinfo(@info,'! after0b');
     end;
 {$endif}
-   until pc1^.continue or (pc^.next <> nil);
+   until pc1^.continue or (pc^.next <> nil) or 
+                 (bf_continue in contextstack[stackindex].transitionflags);
       //continue with branch checking
    with contextstack[stackindex] do begin
-    if pc1^.continue or (returncontext <> nil) then begin
+    if pc1^.continue or (returncontext <> nil) or 
+                              (bf_continue in transitionflags) then begin
+     exclude(transitionflags,bf_continue);
      if returncontext <> nil then begin
       context:= returncontext;
       pc:= returncontext;

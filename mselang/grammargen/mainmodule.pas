@@ -21,43 +21,44 @@ uses
  mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv;
 
 (*
-#<comment>
+'#'COMMENT
 
-{<macroname>} "<macrotext>" 
+'{'MACRONAME'}' '"'MACROTEXT'"' 
  macrotext can be multiline, "" -> "
 
-${macroname}
-@<tokendef>
- <pascalstring>{,<pascalstring>}
-@.handlerunits
- <pascalstring>{,<pascalstring>}
-@.internaltokens
- <pascalstring>{,<pascalstring>}
+'${'MACRONAME'}'
+'@'TOKENDEF
+ PASCALSTRING {','PASCALSTRING}
+'@.handlerunits'
+ PASCALSTRING{','PASCALSTRING}
+'@.internaltokens'
+ PASCALSTRING{','PASCALSTRING}
      first character of strings removed for const def ex:
       '.classes' -> tks_classes
-<context>,[<next>][-],[<entryhandler>],[<exithandler>][^|!][+][*][>]
-    <entryhandler> called at contextstart
-    <exithandler> called by context termination,
+CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
+    ENTRIHANDLER called at contextstart
+    EXITHANDLER called by context termination,
     transition to <next> or termination if no branch matches
     or after return from branch
-    <*handler> also called for transition contexts without branches
- - -> eat text
- ^ -> pop parent
- ! -> pop parent and execute parent handler
- + -> restore source pointer
- * -> stackindex -> stacktop
- > -> continue with calling context
- <stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},
-              [[<context>|!<handler>] [+][-] [[^][*] | [*][^]] [!] ] 
-              [, <pushed context> | <parentcontext>^]
- + -> do not set context start
- - -> eat token
- <<context>|!<handler>>^ -> set parent
- <<context>|!<handler>>* -> push context
- <<context>|!<handler>>! -> set ck_opmark
- * -> terminate context
-<stringdef> -> <pascalstring>[.]
- . -> keyword
+    *HANDLER also called for transition contexts without branches
+ '-' -> eat text
+ '^' -> pop parent
+ '!' -> pop parent and execute parent handler
+ '+' -> restore source pointer
+ '*' -> stackindex -> stacktop
+ '>' -> continue with calling context
+ STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
+        [[CONTEXT|'!'HANDLER] ['+']['-'] [['^']['*'] | ['*']['^']] ['!'] [ '>']] 
+        [',' (PUSHEDCONTEXT | (PARENTCONTEXT'^'))]
+ '+' -> do not set context start
+ '-' -> eat token
+ (CONTEXT|!HANDLER)'^' -> set parent
+ (CONTEXT|!HANDLER)'*' -> push context
+ (CONTEXT|!HANDLER)'!' -> set ck_opmark
+ '*' -> terminate context
+ '>' -> continue context after return
+STRINGDEF -> PASCALSTRING['.']
+ '.' -> keyword
 *)
 
 const
@@ -750,6 +751,9 @@ lineend+
         include(branflags1,bf_handler);
         dest:= copy(dest,2,bigint);
        end;
+       if checklastchar(dest,'>') then begin
+        include(branflags1,bf_continue);
+       end;
        if checklastchar(dest,'!') then begin
         include(branflags1,bf_setpc);
        end;
@@ -773,8 +777,7 @@ lineend+
        if checklastchar(dest,'+') then begin
         include(branflags1,bf_nostart);
        end;
-       if (stack <> '') and (stack[length(stack)] = '^') then begin
-        setlength(stack,length(stack)-1);
+       if checklastchar(stack,'^') then begin
         include(branflags1,bf_changeparentcontext);
        end;
        str1:= str1+

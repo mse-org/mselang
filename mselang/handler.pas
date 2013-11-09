@@ -36,6 +36,7 @@ procedure checkstart(const info: pparseinfoty);
 procedure handlenouniterror(const info: pparseinfoty);
 procedure handlenounitnameerror(const info: pparseinfoty);
 procedure handlesemicolonexpected(const info: pparseinfoty);
+procedure handleidentexpected(const info: pparseinfoty);
 
 procedure handleuseserror(const info: pparseinfoty);
 procedure handleuses(const info: pparseinfoty);
@@ -150,7 +151,7 @@ const
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: 0)),
-   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: -1))
+   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: uint32(-1)))
   );
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
@@ -1044,6 +1045,16 @@ begin
  end;
 end;
 
+procedure handleidentexpected(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'IDENTEXPECTED');
+{$endif}
+ with info^ do begin
+  errormessage(info,-1,err_identexpected,[]);
+ end;
+end;
+
 procedure handleuseserror(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1204,36 +1215,28 @@ begin
  outhandle(info,'VAR3');
 {$endif}
  with info^ do begin
-  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
-       (contextstack[stacktop-1].d.kind = ck_ident) and
-       (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   po1:= ele.addelement(contextstack[stacktop-2].d.ident.ident,vis_max,ek_var);
-   if po1 = nil then begin //duplicate
-    identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
-   end
-   else begin //todo: multi level type
-    if findkindelements(info,stacktop-1-stackindex,[ek_type],vis_max,po2) then begin
-     with pvardataty(@po1^.data)^ do begin
-      typ:= ele.eleinforel(po2);
-      if funclevel = 0 then begin
-       address:= getglobvaraddress(info,ptypedataty(po2)^.size);
-       flags:= [vf_global];
-      end
-      else begin
-       address:= getlocvaraddress(info,ptypedataty(po2)^.size);
-       flags:= []; //local
-      end;
-     end;
-    end
-    else begin
-     identerror(info,stacktop-1-stackindex,err_identifiernotfound);
-    end;
-   end;
+  po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,ek_var);
+  if po1 = nil then begin //duplicate
+   identerror(info,1,err_duplicateidentifier);
   end
-  else begin
-   internalerror(info,'H131024B');
+  else begin //todo: multi level type
+   if findkindelements(info,stackindex+2,[ek_type],vis_max,po2) then begin
+    with pvardataty(@po1^.data)^ do begin
+     typ:= ele.eleinforel(po2);
+     if funclevel = 0 then begin
+      address:= getglobvaraddress(info,ptypedataty(po2)^.size);
+      flags:= [vf_global];
+     end
+     else begin
+      address:= getlocvaraddress(info,ptypedataty(po2)^.size);
+      flags:= []; //local
+     end;
+    end;
+   end
+   else begin
+    identerror(info,2,err_identifiernotfound);
+   end;
   end;
-  stacktop:= stackindex;
  end;
 end;
 

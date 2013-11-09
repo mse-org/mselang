@@ -62,7 +62,8 @@ type
  dataaddressty = ptruint;
  
  branchflagty = (bf_nt,bf_emptytoken,
-             bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,bf_setpc,
+             bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,
+             bf_setpc,bf_continue,
              bf_setparentbeforepush,bf_setparentafterpush,
              bf_changeparentcontext);
  branchflagsty = set of branchflagty;
@@ -210,6 +211,7 @@ type
   returncontext: pcontextty;
   start: sourceinfoty;
   debugstart: pchar;
+  transitionflags: branchflagsty;
   d: contextdataty;
  end;
  pcontextitemty = ^contextitemty;
