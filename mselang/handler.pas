@@ -85,6 +85,7 @@ procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
+procedure handleaddress(const info: pparseinfoty);
 procedure handleterm1(const info: pparseinfoty);
 procedure handlenegterm(const info: pparseinfoty);
 procedure handleaddterm(const info: pparseinfoty);
@@ -688,6 +689,15 @@ procedure handleterm(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM');
+{$endif}
+ dec(info^.stacktop);
+ info^.stackindex:= info^.stacktop;
+end;
+
+procedure handleaddress(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ADDRESS');
 {$endif}
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;

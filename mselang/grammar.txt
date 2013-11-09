@@ -289,6 +289,10 @@ term,term1,,handleterm
  '(',bracketstart*
  @num,num*
  @identstart,valueidentifier*
+ '@',getaddress-
+getaddress,term1,,handleaddress
+ ${whitespace}
+ @identstart,identpath^*
 term1,term1,,handleterm1
  ${whitespace}
  '*',mulfact*
