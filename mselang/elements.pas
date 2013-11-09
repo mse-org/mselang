@@ -781,7 +781,7 @@ end;
 function telementhashdatalist.dumpelements: msestringarty;
 var
  int1,int2,int3,int4,int5,int6: integer;
- po1: pelementinfoty;
+ po1,po2: pelementinfoty;
  mstr1: msestring;
  ar1: dumpinfoarty;
  off1: elementoffsetty;
@@ -805,6 +805,20 @@ begin
             ' '+identlist.identname(po1^.header.name) + 
             ' V:'+inttostr(ord(po1^.header.vislevel))+' '+
             getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
+  case po1^.header.kind of
+   ek_var: begin
+    with pvardataty(@po1^.data)^ do begin
+     mstr1:= mstr1 +lineend+'  A:'+inttostr(address)+' '+
+           settostring(ptypeinfo(typeinfo(flags)),integer(flags),false);
+     mstr1:= mstr1 + ' T:'+getidentname(typ);
+     po2:= eleinfoabs(typ);
+     with ptypedataty(@po2^.data)^ do begin
+      mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
+       ' S:'+inttostr(size);
+     end;
+    end;
+   end;
+  end;
   int4:= 0;
   int1:= po1^.header.next;
   with ar1[int2-1] do begin

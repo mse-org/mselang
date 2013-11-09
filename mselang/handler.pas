@@ -1195,7 +1195,7 @@ begin
   stacktop:= stackindex;
  end;
 end;
-
+ 
 procedure handlevar1(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1220,7 +1220,7 @@ begin
    identerror(info,1,err_duplicateidentifier);
   end
   else begin //todo: multi level type
-   if findkindelements(info,stackindex+2,[ek_type],vis_max,po2) then begin
+   if findkindelements(info,2,[ek_type],vis_max,po2) then begin
     with pvardataty(@po1^.data)^ do begin
      typ:= ele.eleinforel(po2);
      if funclevel = 0 then begin
@@ -1230,6 +1230,9 @@ begin
      else begin
       address:= getlocvaraddress(info,ptypedataty(po2)^.size);
       flags:= []; //local
+     end;
+     if tf_pointer in contextstack[stackindex].d.vari.flags then begin
+      include(flags,vf_reference);
      end;
     end;
    end

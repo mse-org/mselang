@@ -31,7 +31,7 @@ type
  end;
  ptypedataty = ^typedataty;
  
- varflagty = (vf_global,vf_param);
+ varflagty = (vf_global,vf_param,vf_reference);
  varflagsty = set of varflagty;
 
  constdataty = record
