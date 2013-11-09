@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,grammar,elements;
+ parserglob,grammar,elements,handlerglob;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
@@ -28,7 +28,7 @@ type
             err_toomanyidentifierlevels,err_wrongtype,
             err_cantfindunit,{err_implementationexpected,err_unitexpected,}
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
-            err_typeidentexpected,err_identexpected);
+            err_typeidentexpected,err_identexpected,err_incompatibletypes);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -61,7 +61,8 @@ const
   (level: erl_fatal; message: 'Abort'),
   (level: erl_fatal; message: 'Syntax error,"%s" expected'),
   (level: erl_error; message: 'Type identifier expected'),
-  (level: erl_error; message: 'Identifier expected')
+  (level: erl_error; message: 'Identifier expected'),
+  (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -73,12 +74,14 @@ procedure identerror(const info: pparseinfoty; const astackoffset: integer;
                                    const aerrorlevel: errorlevelty = erl_none);
 procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
+procedure assignmenterror(const info: pparseinfoty;
+                 const source: contextdataty; const dest: vardestinfoty);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
 
 implementation
 uses
- msestrings,sysutils,mseformatstr;
+ msestrings,sysutils,mseformatstr,typinfo;
 
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
@@ -148,6 +151,25 @@ begin
   end;
  end;
  errormessage(info,-1,err_tokenexpected,[str1],0,aerrorlevel);
+end;
+
+procedure assignmenterror(const info: pparseinfoty;
+                      const source: contextdataty; const dest: vardestinfoty);
+var
+ sourceinfo,destinfo: string;
+ po1,po2: pelementinfoty;
+begin
+ case source.kind of
+  ck_const,ck_fact: begin
+   po1:= ele.eleinfoabs(source.constval.typ.typedata);
+   sourceinfo:= getidentname(po1^.header.name);
+   destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
+   if vf_reference in dest.flags then begin
+    destinfo:= '^'+destinfo;
+   end;
+  end;
+ end;  
+ errormessage(info,-1,err_incompatibletypes,[sourceinfo,destinfo]);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);

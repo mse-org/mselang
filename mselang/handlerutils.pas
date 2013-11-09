@@ -31,13 +31,6 @@ const
   ''')'' expected'
  );
 
-type
- varinfoty = record
-  flags: varflagsty;
-  address: ptruint;
-  typ: typedataty;
- end;
- 
 procedure error(const info: pparseinfoty; const error: comperrorty;
                    const pos: pchar=nil);
 procedure parsererror(const info: pparseinfoty; const text: string);
@@ -66,7 +59,7 @@ function findkindelementsdata(const info: pparseinfoty;
               const visibility: vislevelty; out ainfo: pointer): boolean;
 
 function findvar(const info: pparseinfoty; const astackoffset: integer; 
-                const visibility: vislevelty; out varinfo: varinfoty): boolean;
+        const visibility: vislevelty; out varinfo: vardestinfoty): boolean;
                            
 implementation
 uses
@@ -247,7 +240,7 @@ end;
 
 function findvar(const info: pparseinfoty; const astackoffset: integer; 
                    const visibility: vislevelty;
-                           out varinfo: varinfoty): boolean;
+                           out varinfo: vardestinfoty): boolean;
 var
  idents,types: identvecty;	
  po1: pvardataty;
@@ -274,12 +267,11 @@ begin
      po3:= ele.eledataabs(ele2);
      varinfo.address:= varinfo.address + po3^.offset;
     end;
-    po2:= ele.eledataabs(po3^.typ);
-    varinfo.typ:= po2^;
+    varinfo.typ:= ele.eledataabs(po3^.typ);
    end
    else begin
     po2:= ele.eledataabs(ele2);
-    varinfo.typ:= po2^;
+    varinfo.typ:= po2;
    end;
   end
   else begin

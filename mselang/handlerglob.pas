@@ -23,6 +23,9 @@ uses
 const
  pointersize = sizeof(pointer);
 type  
+ varflagty = (vf_global,vf_param,vf_reference);
+ varflagsty = set of varflagty;
+
  typedataty = record
   size: integer;
   case kind: datakindty of 
@@ -30,10 +33,13 @@ type
    dk_reference: (target: elementoffsetty);
  end;
  ptypedataty = ^typedataty;
- 
- varflagty = (vf_global,vf_param,vf_reference);
- varflagsty = set of varflagty;
 
+ vardestinfoty = record
+  flags: varflagsty;
+  address: ptruint;
+  typ: ptypedataty;
+ end;
+ 
  constdataty = record
 //  typ: elementoffsetty; //typedataty
   val: datainfoty;

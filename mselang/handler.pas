@@ -1409,9 +1409,10 @@ begin
  outhandle(info,'HANDLESTATEMENT');
 end;
 }
-procedure handleassignment(const info: pparseinfoty); 
+procedure handleassignment(const info: pparseinfoty);
 var
- varinfo1: varinfoty;
+ varinfo1: vardestinfoty;
+ bo1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
@@ -1419,44 +1420,51 @@ begin
  with info^ do begin
   if (stacktop-stackindex > 1) then begin
    if findvar(info,1,vis_max,varinfo1) then begin
-//    if varinfo1.typ.kind <> 
-//    if varinfo1.typ.kind = tk_reference
-    with additem(info)^ do begin
-     if vf_global in varinfo1.flags then begin
-      case varinfo1.typ.size of
-       1: begin 
-        op:= @popglob1;
-       end;
-       2: begin
-        op:= @popglob2;
-       end;
-       4: begin
-        op:= @popglob4;
-       end;
-       else begin
-        op:= @popglob;
-       end;
-      end;
-      d.dataaddress:= varinfo1.address;
-     end
-     else begin
-      case varinfo1.typ.size of
-       1: begin 
-        op:= @poploc1;
-       end;
-       2: begin
-        op:= @poploc2;
-       end;
-       4: begin
-        op:= @poploc4;
-       end;
-       else begin
-        op:= @poploc;
-       end;
-      end;
-      d.count:= varinfo1.address;
+    bo1:= true;
+    if vf_reference in varinfo1.flags then begin
+     with info^ do begin
+      assignmenterror(info,contextstack[stacktop].d,varinfo1);
+      bo1:= false;
      end;
-     d.datasize:= varinfo1.typ.size;
+    end;
+    if bo1 then begin
+     with additem(info)^ do begin
+      if vf_global in varinfo1.flags then begin
+       case varinfo1.typ^.size of
+        1: begin 
+         op:= @popglob1;
+        end;
+        2: begin
+         op:= @popglob2;
+        end;
+        4: begin
+         op:= @popglob4;
+        end;
+        else begin
+         op:= @popglob;
+        end;
+       end;
+       d.dataaddress:= varinfo1.address;
+      end
+      else begin
+       case varinfo1.typ^.size of
+        1: begin 
+         op:= @poploc1;
+        end;
+        2: begin
+         op:= @poploc2;
+        end;
+        4: begin
+         op:= @poploc4;
+        end;
+        else begin
+         op:= @poploc;
+        end;
+       end;
+       d.count:= varinfo1.address;
+      end;
+      d.datasize:= varinfo1.typ^.size;
+     end;
     end;
    end;
   end
