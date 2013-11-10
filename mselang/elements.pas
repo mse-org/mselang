@@ -781,10 +781,11 @@ end;
 function telementhashdatalist.dumpelements: msestringarty;
 var
  int1,int2,int3,int4,int5,int6: integer;
- po1,po2: pelementinfoty;
- mstr1: msestring;
+ po1,po2,po3: pelementinfoty;
+ mstr1,mstr2: msestring;
  ar1: dumpinfoarty;
  off1: elementoffsetty;
+ ar2: msestringarty;
 begin
  int1:= 0;
  int2:= 0;
@@ -808,13 +809,32 @@ begin
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
-     mstr1:= mstr1 +lineend+'  A:'+inttostr(address)+' '+
+     mstr1:= mstr1+lineend+' A:'+inttostr(address)+' '+
            settostring(ptypeinfo(typeinfo(flags)),integer(flags),false);
-     mstr1:= mstr1 + ' T:'+getidentname(typ);
+     mstr1:= mstr1+' T:'+getidentname(typ);
      po2:= eleinfoabs(typ);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(size);
+     end;
+    end;
+   end;
+   ek_type: begin
+    with ptypedataty(@po1^.data)^ do begin
+     mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
+       ' S:'+inttostr(size);
+     po3:= po1;
+     while ptypedataty(@po3^.data)^.kind = dk_reference do begin
+      mstr2:= '  ';
+      po3:= eleinfoabs(ptypedataty(@po3^.data)^.target);
+      mstr1:= mstr1+lineend+mstr2+'N:$'+
+            hextostr(po3^.header.name,8)+' '+
+            ' '+identlist.identname(po3^.header.name);
+      with ptypedataty(@po3^.data)^ do begin
+       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
+         ' S:'+inttostr(size);
+      end;
+      mstr2:= mstr2+' ';
      end;
     end;
    end;
@@ -831,9 +851,14 @@ begin
     int4:= int4 + po1^.header.name;
     po1:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
    end;
-   mstr1:= charstring(msechar('.'),int3-1)+' $'+
-                 hextostr(longword(int5+int4+po1^.header.name),8)+' '+mstr1;
-   text:= mstr1;
+   ar2:= breaklines(mstr1);
+   ar2[0]:= charstring(msechar('.'),int3-1)+'$'+
+                 hextostr(longword(int5+int4+po1^.header.name),8)+' '+ar2[0];
+   mstr2:= charstring(msechar(' '),int3-1);
+   for int6:= 1 to high(ar2) do begin
+    ar2[int6]:= mstr2+ar2[int6];
+   end;
+   text:= concatstrings(ar2,lineend);
    offset:= off1;
   end;
  end;
