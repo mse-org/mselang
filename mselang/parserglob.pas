@@ -146,9 +146,13 @@ type
  end;
  
  datainfoty = record
-  typ: typeinfoty; //first, maps ck_fact facttyp
+  typ: typeinfoty;
   d: dataty;
  end;
+
+ factinfoty = record
+ end;
+ 
  identinfoty = record
   ident: identty;
   len: integer;
@@ -176,12 +180,16 @@ type
    ck_ident:(
     ident: identinfoty;
    );
-   ck_const:(             ////
-    constval: datainfoty;   //
-   );                       // same startlayout
-   ck_fact:(                //
-    facttyp: typeinfoty;    //
-   );                     ////
+   ck_const,ck_fact:(
+    datatyp: typeinfoty;
+    case contextkindty of
+     ck_const:(
+      constval: dataty;
+     );
+     ck_fact:(
+      fact: factinfoty;
+     );
+   );
    ck_proc:(
     proc: procinfoty;
    );
@@ -310,6 +318,7 @@ type
   identcount: integer;
   funclevel: integer;
   command: ttextstream;
+  errorfla: boolean;
   errors: array[errorlevelty] of integer;
   ops: opinfoarty;
   opcount: integer;

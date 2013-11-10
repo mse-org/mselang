@@ -70,7 +70,7 @@ var
 begin
  with info^ do begin
 {$ifdef mse_debugparser}
-  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,' '+
+  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,'L:'+
     inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
 {$endif}
@@ -135,15 +135,15 @@ begin
       write(getidentname(ident.ident));
      end;
      ck_const: begin
-      case constval.d.kind of
+      case constval.kind of
        dk_bool8: begin
-        write(constval.d.vbool8,' ');
+        write(constval.vbool8,' ');
        end;
        dk_sint32: begin
-        write(constval.d.vsint32,' ');
+        write(constval.vsint32,' ');
        end;
        dk_flo64: begin
-        write(constval.d.vflo64,' ');
+        write(constval.vflo64,' ');
        end;
       end;
      end;
@@ -460,6 +460,7 @@ begin
        end;
        source.po:= po1;
        source.line:= source.line + linebreaks;
+       linebreaks:= 0;
        debugsource:= source.po;
        keywordindex:= 0;
 //       if (pb^.c = nil) and pb^.p then begin

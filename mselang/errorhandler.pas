@@ -28,12 +28,16 @@ type
             err_toomanyidentifierlevels,err_wrongtype,
             err_cantfindunit,{err_implementationexpected,err_unitexpected,}
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
-            err_typeidentexpected,err_identexpected,err_incompatibletypes);
+            err_typeidentexpected,err_identexpected,err_incompatibletypes,
+            err_illegalqualifier,err_illegalexpression);
  errorinfoty = record
   level: errorlevelty;
   message: string;
  end;
 const
+ stoperrorlevel = erl_fatal;
+ errorerrorlevel = erl_error;
+ 
  errorleveltext: array[errorlevelty] of string = (
   '','Fatal','Error'
  );
@@ -62,7 +66,9 @@ const
   (level: erl_fatal; message: 'Syntax error,"%s" expected'),
   (level: erl_error; message: 'Type identifier expected'),
   (level: erl_error; message: 'Identifier expected'),
-  (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"')
+  (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"'),
+  (level: erl_error; message: 'Illegal qualifier'),
+  (level: erl_error; message: 'Illegal expression')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -120,8 +126,11 @@ begin
         errorleveltext[level1]+': '+format(message,values);
     command.writeln(str1);
     writeln('<<<<<<< '+str1);
-    if level1 <= erl_fatal then begin
+    if level1 <= stoperrorlevel then begin
      stopparser:= true;
+    end;
+    if level1 <= errorerrorlevel then begin
+     errorfla:= true;
     end;
    end;
   end;
@@ -161,7 +170,7 @@ var
 begin
  case source.kind of
   ck_const,ck_fact: begin
-   po1:= ele.eleinfoabs(source.constval.typ.typedata);
+   po1:= ele.eleinfoabs(source.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
    if vf_reference in dest.flags then begin

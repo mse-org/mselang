@@ -295,6 +295,7 @@ getaddress,term1,,handleaddress
  @identstart,identpath^*
 term1,term1,,handleterm1
  ${whitespace}
+ '^',!handledereference-
  '*',mulfact*
 negterm,term,,handlenegterm
 mulfact,,,handlemulfact

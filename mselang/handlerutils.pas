@@ -314,7 +314,7 @@ begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
      ck_const: begin
-      with constval.d do begin
+      with constval do begin
        case kind of
         dk_bool8: begin
          command.write(longbool(vbool8));
