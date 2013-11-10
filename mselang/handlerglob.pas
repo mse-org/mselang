@@ -30,7 +30,10 @@ type
   size: integer;
   case kind: datakindty of 
    dk_record: ();
-   dk_reference: (target: elementoffsetty);
+   dk_reference:(
+    target: elementoffsetty;
+    reflevel: integer;
+   );
  end;
  ptypedataty = ^typedataty;
 

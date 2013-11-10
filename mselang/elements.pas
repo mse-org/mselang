@@ -825,6 +825,7 @@ begin
        ' S:'+inttostr(size);
      po3:= po1;
      while ptypedataty(@po3^.data)^.kind = dk_reference do begin
+      mstr1:= mstr1+' R:'+inttostr(ptypedataty(@po3^.data)^.reflevel);
       mstr2:= '  ';
       po3:= eleinfoabs(ptypedataty(@po3^.data)^.target);
       mstr1:= mstr1+lineend+mstr2+'N:$'+

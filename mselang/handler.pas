@@ -147,9 +147,9 @@ type
    
 const
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'sint32'; data: (size: 4; kind: dk_sint32; target: 0)),
-   (name: 'bool8'; data: (size: 1; kind: dk_bool8; target: 0)),
-   (name: 'float64'; data: (size: 8; kind: dk_flo64; target: 0))
+   (name: 'sint32'; data: (size: 4; kind: dk_sint32; target: 0; reflevel: 0)),
+   (name: 'bool8'; data: (size: 1; kind: dk_bool8; target: 0; reflevel: 0)),
+   (name: 'float64'; data: (size: 8; kind: dk_flo64; target: 0; reflevel: 0))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_bool8; vbool8: 0)),
@@ -1338,6 +1338,10 @@ begin
        size:= pointersize;
        kind:= dk_reference;
        target:= ele.eleinforel(po2);
+       reflevel:= 0;
+       if ptypedataty(@po2^.data)^.kind = dk_reference then begin
+        reflevel:= ptypedataty(@po2^.data)^.reflevel + 1;
+       end;
       end;
      end;
     end
