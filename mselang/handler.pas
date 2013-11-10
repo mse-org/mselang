@@ -705,13 +705,43 @@ begin
 end;
 
 procedure handledereference(const info: pparseinfoty);
+var
+ po1: ptypedataty;
+ int1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'DEREFERENCE');
 {$endif}
  with info^,contextstack[stacktop].d do begin
-  if not (tf_pointer in datatyp.flags) then begin
+  int1:= -1;
+  po1:= ele.eledataabs(datatyp.typedata);
+  if po1^.kind = dk_reference then begin
+   int1:= po1^.reflevel;
+  end;
+  if tf_pointer in datatyp.flags then begin
+   inc(int1);
+  end;
+  if int1 < 0 then begin
    errormessage(info,-1,err_illegalqualifier,[]);
+  end
+  else begin
+   with additem(info)^ do begin //todo: use table
+    case po1^.size of
+     1: begin
+      op:= @indirect1;
+     end;
+     2: begin
+      op:= @indirect2;
+     end;
+     4: begin
+      op:= @indirect4;
+     end;
+     else begin
+      op:= @indirect;
+      d.datasize:= po1^.size;      
+     end;
+    end;
+   end;   
   end;
  end;
 end;
@@ -885,6 +915,7 @@ var
  ele1: elementoffsetty;
  int1: integer;
  si1,addr1: ptruint;
+ fl1: typeflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'VALUEIDENTIFIER');
@@ -896,24 +927,31 @@ begin
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
+     fl1:= [];
      addr1:= pvardataty(po2)^.address;
      ele1:= pvardataty(po2)^.typ;
-     if lastident < identcount-1 then begin
-      for int1:= lastident+1 to idents.high do begin //fields
-       if not ele.findchild(ele1,idents.d[int1],[ek_field],
-                                                   vis_max,ele1) then begin
-        identerror(info,1+int1,err_identifiernotfound);
-        exit;
-       end;
-       po4:= ele.eledataabs(ele1);
-       addr1:= addr1 + po4^.offset;
-      end;
-      po3:= ele.eledataabs(po4^.typ);
-      si1:= po3^.size;      
+     if vf_reference in pvardataty(po2)^.flags then begin
+      include(fl1,tf_pointer);
+      si1:= pointersize;
      end
      else begin
-      si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
-     end; 
+      if lastident < identcount-1 then begin
+       for int1:= lastident+1 to idents.high do begin //fields
+        if not ele.findchild(ele1,idents.d[int1],[ek_field],
+                                                    vis_max,ele1) then begin
+         identerror(info,1+int1,err_identifiernotfound);
+         exit;
+        end;
+        po4:= ele.eledataabs(ele1);
+        addr1:= addr1 + po4^.offset;
+       end;
+       po3:= ele.eledataabs(po4^.typ);
+       si1:= po3^.size;      
+      end
+      else begin
+       si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.size;
+      end;
+     end;
      with additem(info)^ do begin //todo: use table
       if vf_global in pvardataty(po2)^.flags then begin
        case si1 of
@@ -954,7 +992,7 @@ begin
      with contextstack[stacktop].d do begin
       kind:= ck_fact;
       datatyp.typedata:= ele1;
-      datatyp.flags:= [];
+      datatyp.flags:= fl1;
      end;
     end;
     ek_const: begin

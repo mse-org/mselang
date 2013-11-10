@@ -61,6 +61,11 @@ procedure pushloc2;
 procedure pushloc4;
 procedure pushloc;
 
+procedure indirect1;
+procedure indirect2;
+procedure indirect4;
+procedure indirect;
+
 procedure callop;
 procedure returnop;
 
@@ -299,6 +304,27 @@ begin
  inc(mainstackpo);
  move((@mainstack[framepointer+oppo^.d.count])^,
                                 (@mainstack[mainstackpo])^,oppo^.d.datasize);
+end;
+
+procedure indirect1;
+begin
+ puint8(@mainstack[mainstackpo])^:= ppuint8(@mainstack[mainstackpo])^^
+end;
+
+procedure indirect2;
+begin
+ puint16(@mainstack[mainstackpo])^:= ppuint16(@mainstack[mainstackpo])^^
+end;
+
+procedure indirect4;
+begin
+ puint32(@mainstack[mainstackpo])^:= ppuint32(@mainstack[mainstackpo])^^
+end;
+
+procedure indirect;
+begin
+ move(ppointer(@mainstack[mainstackpo])^^,(mainstack[mainstackpo]),
+                                                          oppo^.d.datasize);
 end;
 
 procedure callop;

@@ -30,8 +30,11 @@ type
  float64 = double;
 
  puint8 = ^uint8; 
+ ppuint8 = ^puint8;
  puint16 = ^uint16;
+ ppuint16 = ^puint16;
  puint32 = ^uint32;
+ ppuint32 = ^puint32;
  psint8 = ^sint8; 
  psint16 = ^sint16;
  psint32 = ^sint32;
