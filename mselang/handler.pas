@@ -37,6 +37,7 @@ procedure handlenouniterror(const info: pparseinfoty);
 procedure handlenounitnameerror(const info: pparseinfoty);
 procedure handlesemicolonexpected(const info: pparseinfoty);
 procedure handleidentexpected(const info: pparseinfoty);
+procedure handleillegalexpression(const info: pparseinfoty);
 
 procedure handleuseserror(const info: pparseinfoty);
 procedure handleuses(const info: pparseinfoty);
@@ -299,6 +300,9 @@ begin
    end;
    dk_flo64: begin
     push(info,constval.vflo64);
+   end;
+   dk_address: begin
+    push(info,constval.vaddress);
    end;
   end;
  end;
@@ -696,12 +700,36 @@ begin
 end;
 
 procedure handleaddress(const info: pparseinfoty);
+var
+ po1: pelementinfoty;
+ po2: pvardataty;
+//i: integer;
+//pi: pinteger;
 begin
+//pi:= @pparseinfoty;
 {$ifdef mse_debugparser}
  outhandle(info,'ADDRESS');
 {$endif}
- dec(info^.stacktop);
- info^.stackindex:= info^.stacktop;
+ with info^ do begin
+  if findkindelements(info,stacktop-stackindex,[ek_var],vis_max,po1) then begin
+   po2:= @po1^.data;
+   inc(info^.stackindex);
+   with contextstack[stackindex] do begin
+    d.kind:= ck_const;
+    d.datatyp.typedata:= po2^.typ;
+    d.datatyp.flags:= [tf_reference];
+    with d.constval do begin
+     kind:= dk_address;
+     vaddress:= po2^.address;
+    end;
+   end;
+  end
+  else begin
+   errormessage(info,-1,err_varidentexpected,[]);
+   dec(info^.stackindex);
+  end;
+ end;
+ info^.stacktop:= info^.stackindex;
 end;
 
 procedure handledereference(const info: pparseinfoty);
@@ -718,7 +746,7 @@ begin
   if po1^.kind = dk_reference then begin
    int1:= po1^.reflevel;
   end;
-  if tf_pointer in datatyp.flags then begin
+  if tf_reference in datatyp.flags then begin
    inc(int1);
   end;
   if int1 < 0 then begin
@@ -931,7 +959,7 @@ begin
      addr1:= pvardataty(po2)^.address;
      ele1:= pvardataty(po2)^.typ;
      if vf_reference in pvardataty(po2)^.flags then begin
-      include(fl1,tf_pointer);
+      include(fl1,tf_reference);
       si1:= pointersize;
      end
      else begin
@@ -1116,6 +1144,17 @@ begin
  end;
 end;
 
+procedure handleillegalexpression(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ILLEGALEXPRESSION');
+{$endif}
+ with info^ do begin
+  errormessage(info,-1,err_illegalexpression,[]);
+  dec(stackindex);
+ end;
+end;
+
 procedure handleuseserror(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1295,7 +1334,7 @@ begin
       address:= getlocvaraddress(info,ptypedataty(po2)^.size);
       flags:= []; //local
      end;
-     if tf_pointer in contextstack[stackindex].d.vari.flags then begin
+     if tf_reference in contextstack[stackindex].d.vari.flags then begin
       include(flags,vf_reference);
      end;
     end;
@@ -1313,10 +1352,10 @@ begin
  outhandle(info,'POINTERVAR');
 {$endif}
  with info^,contextstack[stackindex].d.vari do begin
-  if tf_pointer in flags then begin
+  if tf_reference in flags then begin
    errormessage(info,-1,err_typeidentexpected,[]);
   end;
-  include(flags,tf_pointer);
+  include(flags,tf_reference);
  end;
 end;
 
@@ -1348,7 +1387,7 @@ begin
  outhandle(info,'POINTERTYPE');
 {$endif}
  with info^,contextstack[stackindex] do begin
-  include(d.typ.flags,tf_pointer);
+  include(d.typ.flags,tf_reference);
  end;
 end;
 
@@ -1371,7 +1410,7 @@ begin
     if findkindelements(info,stacktop-stackindex,
                        [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-     if tf_pointer in contextstack[stackindex].d.typ.flags then begin
+     if tf_reference in contextstack[stackindex].d.typ.flags then begin
       with ptypedataty(@po1^.data)^ do begin
        size:= pointersize;
        kind:= dk_reference;
@@ -1494,10 +1533,9 @@ begin
     if varinfo1.typ^.kind <> po1^.kind then begin
      bo1:= false;
     end;
-    if vf_reference in varinfo1.flags then begin
-     with info^ do begin
-      bo1:= false;
-     end;
+    if (vf_reference in varinfo1.flags) and 
+        not (tf_reference in contextstack[stacktop].d.datatyp.flags) then begin
+     bo1:= false;
     end;
     if not bo1 then begin
      assignmenterror(info,contextstack[stacktop].d,varinfo1);

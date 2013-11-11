@@ -51,7 +51,7 @@ type
  pconstdataty = ^constdataty;
 
  vardataty = record
-  address: ptruint;
+  address: dataaddressty;
   typ: elementoffsetty; //elementdata relative
   flags: varflagsty;
  end;

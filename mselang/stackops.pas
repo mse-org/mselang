@@ -318,7 +318,8 @@ end;
 
 procedure indirect4;
 begin
- puint32(@mainstack[mainstackpo])^:= ppuint32(@mainstack[mainstackpo])^^
+ puint32(@mainstack[mainstackpo])^:= 
+         puint32(globdata+pdataaddressty(@mainstack[mainstackpo])^)^;
 end;
 
 procedure indirect;

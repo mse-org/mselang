@@ -29,7 +29,7 @@ type
             err_cantfindunit,{err_implementationexpected,err_unitexpected,}
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
-            err_illegalqualifier,err_illegalexpression);
+            err_illegalqualifier,err_illegalexpression,err_varidentexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -54,7 +54,7 @@ const
   (level: erl_error; message: 
                     'Incompatible type for arg no. %d: Got "%s", expected "%s"'),
   (level: erl_fatal; message:
-                    'Too many identyfier levels'),
+                    'Too many identifier levels'),
   (level: erl_error; message: 
                     'Wrong type'),
   (level: erl_fatal; message: 'Can''t find unit "%s"'),
@@ -68,7 +68,8 @@ const
   (level: erl_error; message: 'Identifier expected'),
   (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"'),
   (level: erl_error; message: 'Illegal qualifier'),
-  (level: erl_error; message: 'Illegal expression')
+  (level: erl_error; message: 'Illegal expression'),
+  (level: erl_error; message: 'Variable identifier expexted')  
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

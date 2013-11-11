@@ -62,7 +62,9 @@ type
  stackdatakindty = (sdk_bool8,sdk_sint32,sdk_flo64,
                     sdk_bool8rev,sdk_sint32rev,sdk_flo64rev);
  opaddressty = ptruint;
+ popaddressty = ^opaddressty;
  dataaddressty = ptruint;
+ pdataaddressty = ^dataaddressty;
  
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,
@@ -124,7 +126,7 @@ type
   caption: string;
  end;
 
- typeflagty = (tf_pointer);
+ typeflagty = (tf_reference);
  typeflagsty = set of typeflagty;
  typeinfoty = record
   typedata: elementoffsetty;
@@ -137,14 +139,17 @@ type
  
  dataty = record
   case kind: datakindty of
-   dk_bool8: (
+   dk_bool8:(
     vbool8: uint32;
    );
-   dk_sint32: (
+   dk_sint32:(
     vsint32: sint32;
    );
-   dk_flo64: (
+   dk_flo64:(
     vflo64: float64;
+   );
+   dk_address:(
+    vaddress: dataaddressty;
    );
  end;
  

@@ -290,9 +290,18 @@ term,term1,,handleterm
  @num,num*
  @identstart,valueidentifier*
  '@',getaddress-
-getaddress,term1,,handleaddress
+getaddress,illegalexpression,,
  ${whitespace}
- @identstart,identpath^*
+ @identstart,identpath^*,getaddress0
+# '(',getaddressbracket
+getaddress0,term1,,handleaddress
+#
+illegalexpression,,,handleillegalexpression*
+#addressbracket,,,
+# ${whitespace}
+# @identstart,identpath^*
+# '(',getaddressbracket
+# ')',addressbracketend
 term1,term1,,handleterm1
  ${whitespace}
  '^',!handledereference-

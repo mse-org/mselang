@@ -593,6 +593,16 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'getaddress');
+ getaddress0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'getaddress0');
+ illegalexpressionco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'illegalexpression');
  term1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -2766,7 +2776,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @identpathco); stack: nil; keys: (
+     dest: (context: @identpathco); stack: @getaddress0co; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3470,8 +3480,12 @@ begin
  termco.next:= @term1co;
  termco.handleexit:= @handleterm;
  getaddressco.branch:= @bgetaddress;
- getaddressco.next:= @term1co;
- getaddressco.handleexit:= @handleaddress;
+ getaddressco.next:= @illegalexpressionco;
+ getaddress0co.branch:= nil;
+ getaddress0co.next:= @term1co;
+ getaddress0co.handleexit:= @handleaddress;
+ illegalexpressionco.branch:= nil;
+ illegalexpressionco.handleexit:= @handleillegalexpression;
  term1co.branch:= @bterm1;
  term1co.next:= @term1co;
  term1co.handleexit:= @handleterm1;
