@@ -23,8 +23,6 @@ uses
 const
  pointersize = sizeof(pointer);
 type  
- varflagty = (vf_global,vf_param,vf_reference);
- varflagsty = set of varflagty;
 
  typedataty = record
   size: integer;

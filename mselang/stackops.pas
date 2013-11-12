@@ -61,6 +61,9 @@ procedure pushloc2;
 procedure pushloc4;
 procedure pushloc;
 
+procedure pushlocaddr;
+procedure pushglobaddr;
+
 procedure indirect1;
 procedure indirect2;
 procedure indirect4;
@@ -306,6 +309,18 @@ begin
                                 (@mainstack[mainstackpo])^,oppo^.d.datasize);
 end;
 
+procedure pushlocaddr;
+begin
+ inc(mainstackpo);
+ ppointer(@mainstack[mainstackpo])^:= @mainstack[framepointer+oppo^.d.vaddress];
+end;
+
+procedure pushglobaddr;
+begin
+ inc(mainstackpo);
+ pppointer(@mainstack[mainstackpo])^:= globdata + oppo^.d.vaddress;
+end;
+
 procedure indirect1;
 begin
  puint8(@mainstack[mainstackpo])^:= ppuint8(@mainstack[mainstackpo])^^
@@ -319,7 +334,7 @@ end;
 procedure indirect4;
 begin
  puint32(@mainstack[mainstackpo])^:= 
-         puint32(globdata+pdataaddressty(@mainstack[mainstackpo])^)^;
+         puint32(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
 procedure indirect;

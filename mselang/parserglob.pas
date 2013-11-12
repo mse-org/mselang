@@ -126,6 +126,9 @@ type
   caption: string;
  end;
 
+ varflagty = (vf_global,vf_param,vf_reference);
+ varflagsty = set of varflagty;
+
  typeflagty = (tf_reference);
  typeflagsty = set of typeflagty;
  typeinfoty = record
@@ -137,6 +140,10 @@ type
   flags: typeflagsty;
  end;
  
+ addressinfoty = record
+  address: dataaddressty;
+  flags: varflagsty;
+ end; 
  dataty = record
   case kind: datakindty of
    dk_bool8:(
@@ -149,7 +156,7 @@ type
     vflo64: float64;
    );
    dk_address:(
-    vaddress: dataaddressty;
+    vaddress: addressinfoty;
    );
  end;
  
@@ -249,7 +256,7 @@ type
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
-             ok_pushdatakind,
+             ok_pushdatakind,ok_pushaddress,
              ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress);
  
  opdataty = record
@@ -265,6 +272,9 @@ type
    );
    ok_pushdatakind: (
     vdatakind: datakindty;
+   );
+   ok_pushaddress: (
+    vaddress: dataaddressty;
    );
    ok_pop: (
     count: integer;

@@ -279,6 +279,19 @@ begin
  end;
 end;
 
+procedure push(const info: pparseinfoty; const avalue: addressinfoty); overload;
+begin
+ with additem(info)^ do begin
+  if vf_global in avalue.flags then begin
+   op:= @pushglobaddr;
+  end
+  else begin
+   op:= @pushlocaddr;
+  end;
+  d.vaddress:= avalue.address;
+ end;
+end;
+
 procedure push(const info: pparseinfoty; const avalue: datakindty); overload;
 begin
  with additem(info)^ do begin
@@ -703,10 +716,7 @@ procedure handleaddress(const info: pparseinfoty);
 var
  po1: pelementinfoty;
  po2: pvardataty;
-//i: integer;
-//pi: pinteger;
 begin
-//pi:= @pparseinfoty;
 {$ifdef mse_debugparser}
  outhandle(info,'ADDRESS');
 {$endif}
@@ -720,7 +730,8 @@ begin
     d.datatyp.flags:= [tf_reference];
     with d.constval do begin
      kind:= dk_address;
-     vaddress:= po2^.address;
+     vaddress.address:= po2^.address;
+     vaddress.flags:= po2^.flags;
     end;
    end;
   end
