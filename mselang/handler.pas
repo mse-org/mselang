@@ -1035,7 +1035,10 @@ begin
      end;
     end;
     ek_const: begin
-     contextstack[stacktop].d:= pcontextdataty(po2)^;
+     with contextstack[stacktop].d do begin
+      datatyp:= pconstdataty(po2)^.val.typ;
+      constval:= pconstdataty(po2)^.val.d;
+     end;
     end;
     else begin
      errormessage(info,0,err_wrongtype,[]);

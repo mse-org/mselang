@@ -323,12 +323,14 @@ end;
 
 procedure indirect1;
 begin
- puint8(@mainstack[mainstackpo])^:= ppuint8(@mainstack[mainstackpo])^^
+ puint8(@mainstack[mainstackpo])^:= 
+          puint8(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
 procedure indirect2;
 begin
- puint16(@mainstack[mainstackpo])^:= ppuint16(@mainstack[mainstackpo])^^
+ puint16(@mainstack[mainstackpo])^:= 
+          puint16(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
 procedure indirect4;
