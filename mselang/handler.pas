@@ -130,7 +130,7 @@ const
  stacklinksize = 1;
 
 type
- systypety = (st_sint32,st_bool8,st_float64);
+ systypety = (st_bool8,st_int32,st_float64);
  systypeinfoty = record
   name: string;
   data: typedataty;
@@ -152,10 +152,10 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'int32'; data: (bitsize: 32; bytesize: 4; datasize: das_32;
-     flags: []; kind: dk_integer; infoint32:(min: minint; max: maxint))),
    (name: 'bool8'; data: (bitsize: 8; bytesize: 1; datasize: das_8;
      flags: []; kind: dk_boolean; dummy: 0)),
+   (name: 'int32'; data: (bitsize: 32; bytesize: 4; datasize: das_32;
+     flags: []; kind: dk_integer; infoint32:(min: minint; max: maxint))),
    (name: 'float64'; data: (bitsize: 64; bytesize: 8; datasize: das_64;
      flags: []; kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
   );
@@ -416,7 +416,7 @@ begin
    int2:= -int2;
   end;
   d.kind:= ck_const;
-  d.datatyp:= sysdatatypes[st_sint32];
+  d.datatyp:= sysdatatypes[st_int32];
   d.constval.kind:= dk_integer;
   d.constval.vinteger:= int2;
  end;
@@ -564,11 +564,15 @@ end;
 
 const
  resultdatakinds: array[stackdatakindty] of datakindty =
+            //sdk_bool8,sdk_int32,sdk_flo64,
            (dk_boolean,dk_integer,dk_float,
+            //sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
             dk_boolean,dk_integer,dk_float);
  resultdatatypes: array[stackdatakindty] of systypety =
-           (st_bool8,st_sint32,st_float64,
-            st_bool8,st_sint32,st_float64);
+            //sdk_bool8,sdk_int32,sdk_flo64,
+           (st_bool8,st_int32,st_float64,
+            //sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
+            st_bool8,st_int32,st_float64);
 
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
@@ -648,7 +652,7 @@ begin
     end;
    end
    else begin
-    result:= sdk_sint32;
+    result:= sdk_int32;
     with contextstack[stacktop-2].d do begin
      if kind = ck_const then begin
       case kindb of
@@ -1045,6 +1049,7 @@ begin
     end;
     ek_const: begin
      with contextstack[stacktop].d do begin
+      kind:= ck_const;
       datatyp:= pconstdataty(po2)^.val.typ;
       constval:= pconstdataty(po2)^.val.d;
      end;

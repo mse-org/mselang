@@ -145,19 +145,19 @@ end;
 procedure push16;
 begin
  inc(mainstackpo);
- pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
+ pv16ty(@mainstack[mainstackpo])^:= oppo^.d.v16; 
 end;
 
 procedure push32;
 begin
  inc(mainstackpo);
- pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
+ pv32ty(@mainstack[mainstackpo])^:= oppo^.d.v32; 
 end;
 
 procedure push64;
 begin
  inc(mainstackpo);
- pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
+ pv64ty(@mainstack[mainstackpo])^:= oppo^.d.v64; 
 end;
 
 procedure pushdatakind;
