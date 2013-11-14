@@ -23,15 +23,81 @@ uses
 const
  pointersize = sizeof(pointer);
 type  
+ card8infoty = record
+  min: card8;
+  max: card8;
+ end;
+ card16infoty = record
+  min: card16;
+  max: card16;
+ end;
+ card32infoty = record
+  min: card32;
+  max: card32;
+ end;
+ card64infoty = record
+  min: card64;
+  max: card64;
+ end;
 
+ int8infoty = record
+  min: int8;
+  max: int8;
+ end;
+ int16infoty = record
+  min: int16;
+  max: int16;
+ end;
+ int32infoty = record
+  min: int32;
+  max: int32;
+ end;
+ int64infoty = record
+  min: int64;
+  max: int64;
+ end;
+ float32infoty = record
+  min: single;
+  max: single;
+ end;
+ float64infoty = record
+  min: double;
+  max: double;
+ end;
+ 
  typedataty = record
-  size: integer;
+  bitsize: integer;
+  bytesize: integer;
+  datasize: datasizety;
+  flags: typeflagsty;
   case kind: datakindty of 
+   dk_boolean:(
+    dummy: byte
+   );
+   dk_cardinal:(
+    case datasizety of
+     das_1,das_2_7,das_8: (infocard8: card8infoty);
+     das_9_15,das_16: (infocard16: card16infoty);
+     das_17_31,das_32: (infocard32: card32infoty);
+     das_33_63,das_64: (infocard64: card64infoty);
+   );
+   dk_integer:(
+    case datasizety of  
+     das_1,das_2_7,das_8: (infoint8: int8infoty);
+     das_9_15,das_16: (infoint16: int16infoty);
+     das_17_31,das_32: (infoint32: int32infoty);
+     das_33_63,das_64: (infoint64: int64infoty);
+   );
+   dk_float:(
+    case datasizety of
+     das_32:(infofloat32: float32infoty);
+     das_64:(infofloat64: float64infoty);
    dk_record: ();
    dk_reference:(
     target: elementoffsetty;
     reflevel: integer;
    );
+  );
  end;
  ptypedataty = ^typedataty;
 

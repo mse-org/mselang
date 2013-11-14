@@ -136,14 +136,14 @@ begin
      end;
      ck_const: begin
       case constval.kind of
-       dk_bool8: begin
-        write(constval.vbool8,' ');
+       dk_boolean: begin
+        write(constval.vboolean,' ');
        end;
-       dk_sint32: begin
-        write(constval.vsint32,' ');
+       dk_integer: begin
+        write(constval.vinteger,' ');
        end;
-       dk_flo64: begin
-        write(constval.vflo64,' ');
+       dk_float: begin
+        write(constval.vfloat,' ');
        end;
       end;
      end;

@@ -316,14 +316,14 @@ begin
      ck_const: begin
       with constval do begin
        case kind of
-        dk_bool8: begin
-         command.write(longbool(vbool8));
+        dk_boolean: begin
+         command.write(vboolean);
         end;
-        dk_sint32: begin
-         command.write(vsint32);
+        dk_integer: begin
+         command.write(vinteger);
         end;
-        dk_flo64: begin
-         command.write(vflo64);
+        dk_float: begin
+         command.write(vfloat);
         end;
        end;
       end;

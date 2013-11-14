@@ -29,44 +29,46 @@ procedure gotoop;
 procedure ifop;
 procedure writelnop;
 
-procedure pushbool8;
-procedure pushint32;
-procedure pushflo64;
+procedure push8;
+procedure push16;
+procedure push32;
+procedure push64;
 procedure pushdatakind;
 procedure int32toflo64;
 procedure mulint32;
 procedure mulflo64;
 procedure addint32;
 procedure addflo64;
+procedure negcard32;
 procedure negint32;
 procedure negflo64;
 
-procedure popglob1;
-procedure popglob2;
-procedure popglob4;
+procedure popglob8;
+procedure popglob16;
+procedure popglob32;
 procedure popglob;
 
-procedure poploc1;
-procedure poploc2;
-procedure poploc4;
+procedure poploc8;
+procedure poploc16;
+procedure poploc32;
 procedure poploc;
 
-procedure pushglob1;
-procedure pushglob2;
-procedure pushglob4;
+procedure pushglob8;
+procedure pushglob16;
+procedure pushglob32;
 procedure pushglob;
 
-procedure pushloc1;
-procedure pushloc2;
-procedure pushloc4;
+procedure pushloc8;
+procedure pushloc16;
+procedure pushloc32;
 procedure pushloc;
 
 procedure pushlocaddr;
 procedure pushglobaddr;
 
-procedure indirect1;
-procedure indirect2;
-procedure indirect4;
+procedure indirect8;
+procedure indirect16;
+procedure indirect32;
 procedure indirect;
 
 procedure callop;
@@ -77,9 +79,10 @@ type
  stackinfoty = record
   case datakindty of
    dk_kind: (vdatakind: datakindty);
-   dk_bool8: (vbool8: boolean);
-   dk_sint32: (vsint32: sint32);
-   dk_flo64: (vflo64: float64);
+   dk_boolean: (vboolean: boolean);
+   dk_cardinal: (vcardinal: card32);
+   dk_integer: (vinteger: int32);
+   dk_float: (vfloat: float64);
    dk_address: (vaddress: pointer);
  end;
  stackinfoarty = array of stackinfoty;
@@ -102,7 +105,7 @@ end;
 
 procedure ifop;
 begin
- if not mainstack[mainstackpo].vbool8 then begin
+ if not mainstack[mainstackpo].vboolean then begin
   oppo:= startpo + oppo^.d.opaddress;
  end;
  dec(mainstackpo);
@@ -112,19 +115,19 @@ procedure writelnop;
 var
  int1,int2,int3: integer;
 begin
- int1:= mainstack[mainstackpo].vsint32;
+ int1:= mainstack[mainstackpo].vinteger;
  int3:= mainstackpo-int1;
  int2:= int3-int1;
  while int2 < int3 do begin
   case mainstack[int2+int1].vdatakind of
-   dk_bool8: begin
-    write(mainstack[int2].vbool8);
+   dk_boolean: begin
+    write(mainstack[int2].vboolean);
    end;
-   dk_sint32: begin
-    write(mainstack[int2].vsint32);
+   dk_integer: begin
+    write(mainstack[int2].vinteger);
    end;
-   dk_flo64: begin
-    write(mainstack[int2].vflo64);
+   dk_float: begin
+    write(mainstack[int2].vfloat);
    end;
   end;
   int2:= int2 + 1;
@@ -133,22 +136,28 @@ begin
  mainstackpo:= mainstackpo-2*int1-1;
 end;
 
-procedure pushbool8;
+procedure push8;
 begin
  inc(mainstackpo);
- mainstack[mainstackpo].vbool8:= oppo^.d.vbool8; 
+ pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
 end;
 
-procedure pushint32;
+procedure push16;
 begin
  inc(mainstackpo);
- mainstack[mainstackpo].vsint32:= oppo^.d.vint32; 
+ pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
 end;
 
-procedure pushflo64;
+procedure push32;
 begin
  inc(mainstackpo);
- mainstack[mainstackpo].vflo64:= oppo^.d.vflo64; 
+ pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
+end;
+
+procedure push64;
+begin
+ inc(mainstackpo);
+ pv8ty(@mainstack[mainstackpo])^:= oppo^.d.v8; 
 end;
 
 procedure pushdatakind;
@@ -160,62 +169,67 @@ end;
 procedure int32toflo64;
 begin
  with mainstack[mainstackpo+oppo^.d.op1.index0] do begin
-  vflo64:= vsint32;
+  vfloat:= vinteger;
  end;
 end;
 
 procedure mulint32;
 begin
- mainstack[mainstackpo-1].vsint32:= 
-                mainstack[mainstackpo-1].vsint32 * 
-                                  mainstack[mainstackpo].vsint32;
+ mainstack[mainstackpo-1].vinteger:= 
+                mainstack[mainstackpo-1].vinteger * 
+                                  mainstack[mainstackpo].vinteger;
  dec(mainstackpo);
 end;
 
 procedure mulflo64;
 begin
- mainstack[mainstackpo-1].vflo64:= mainstack[mainstackpo-1].vflo64 * 
-                                              mainstack[mainstackpo].vflo64;
+ mainstack[mainstackpo-1].vfloat:= mainstack[mainstackpo-1].vfloat * 
+                                              mainstack[mainstackpo].vfloat;
  dec(mainstackpo);
 end;
 
 procedure addint32;
 begin
- mainstack[mainstackpo-1].vsint32:= mainstack[mainstackpo-1].vsint32 + 
-                                              mainstack[mainstackpo].vsint32;
+ mainstack[mainstackpo-1].vinteger:= mainstack[mainstackpo-1].vinteger + 
+                                              mainstack[mainstackpo].vinteger;
  dec(mainstackpo);
 end;
 
 procedure addflo64;
 begin
- mainstack[mainstackpo-1].vflo64:= mainstack[mainstackpo-1].vflo64 + 
-                                              mainstack[mainstackpo].vflo64;
+ mainstack[mainstackpo-1].vfloat:= mainstack[mainstackpo-1].vfloat + 
+                                              mainstack[mainstackpo].vfloat;
  dec(mainstackpo);
+end;
+
+procedure negcard32;
+begin
+ mainstack[mainstackpo].vcardinal:= -mainstack[mainstackpo].vcardinal;
 end;
 
 procedure negint32;
 begin
- mainstack[mainstackpo].vsint32:= -mainstack[mainstackpo].vsint32;
+ mainstack[mainstackpo].vinteger:= -mainstack[mainstackpo].vinteger;
 end;
 
 procedure negflo64;
 begin
- mainstack[mainstackpo].vflo64:= -mainstack[mainstackpo].vflo64;
+ mainstack[mainstackpo].vfloat:= -mainstack[mainstackpo].vfloat;
 end;
 
-procedure popglob1;
+procedure popglob8;
 begin
  puint8(globdata+oppo^.d.dataaddress)^:= puint8(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
-procedure popglob2;
+procedure popglob16;
 begin
  puint16(globdata+oppo^.d.dataaddress)^:= puint16(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
-procedure popglob4;
+procedure popglob32;
 begin
  puint32(globdata+oppo^.d.dataaddress)^:= puint32(@mainstack[mainstackpo])^;
  dec(mainstackpo);
@@ -228,22 +242,22 @@ begin
  dec(mainstackpo);
 end;
 
-procedure pushglob1;
+procedure pushglob8;
 begin
  inc(mainstackpo);
- puint8(@mainstack[mainstackpo])^:= puint8(globdata+oppo^.d.dataaddress)^;
+ pv8ty(@mainstack[mainstackpo])^:= pv8ty(globdata+oppo^.d.dataaddress)^;
 end;
 
-procedure pushglob2;
+procedure pushglob16;
 begin
  inc(mainstackpo);
- puint16(@mainstack[mainstackpo])^:= puint16(globdata+oppo^.d.dataaddress)^;
+ pv16ty(@mainstack[mainstackpo])^:= pv16ty(globdata+oppo^.d.dataaddress)^;
 end;
 
-procedure pushglob4;
+procedure pushglob32;
 begin
  inc(mainstackpo);
- puint32(@mainstack[mainstackpo])^:= puint32(globdata+oppo^.d.dataaddress)^;
+ pv32ty(@mainstack[mainstackpo])^:= pv32ty(globdata+oppo^.d.dataaddress)^;
 end;
 
 procedure pushglob;
@@ -253,24 +267,24 @@ begin
                                                     oppo^.d.datasize);
 end;
 
-procedure poploc1;
+procedure poploc8;
 begin             
- puint8(@mainstack[framepointer+oppo^.d.count])^:= 
-                                     puint8(@mainstack[mainstackpo])^;
+ pv8ty(@mainstack[framepointer+oppo^.d.count])^:= 
+                                     pv8ty(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
-procedure poploc2;
+procedure poploc16;
 begin
- puint16(@mainstack[framepointer+oppo^.d.count])^:= 
-                                       puint16(@mainstack[mainstackpo])^;
+ pv16ty(@mainstack[framepointer+oppo^.d.count])^:= 
+                                       pv16ty(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
-procedure poploc4;
+procedure poploc32;
 begin
- puint32(@mainstack[framepointer+oppo^.d.count])^:= 
-                                          puint32(@mainstack[mainstackpo])^;
+ pv32ty(@mainstack[framepointer+oppo^.d.count])^:= 
+                                          pv32ty(@mainstack[mainstackpo])^;
  dec(mainstackpo);
 end;
 
@@ -281,25 +295,25 @@ begin
  dec(mainstackpo);
 end;
 
-procedure pushloc1;
+procedure pushloc8;
 begin
  inc(mainstackpo);
- puint8(@mainstack[mainstackpo])^:= 
-                       puint8(@mainstack[framepointer+oppo^.d.count])^;
+ pv8ty(@mainstack[mainstackpo])^:= 
+                       pv8ty(@mainstack[framepointer+oppo^.d.count])^;
 end;
 
-procedure pushloc2;
+procedure pushloc16;
 begin
  inc(mainstackpo);
- puint16(@mainstack[mainstackpo])^:= 
-                       puint16(@mainstack[framepointer+oppo^.d.count])^;
+ pv16ty(@mainstack[mainstackpo])^:= 
+                       pv16ty(@mainstack[framepointer+oppo^.d.count])^;
 end;
 
-procedure pushloc4;
+procedure pushloc32;
 begin
  inc(mainstackpo);
- puint32(@mainstack[mainstackpo])^:= 
-                       puint32(@mainstack[framepointer+oppo^.d.count])^;
+ pv32ty(@mainstack[mainstackpo])^:= 
+                       pv32ty(@mainstack[framepointer+oppo^.d.count])^;
 end;
 
 procedure pushloc;
@@ -321,22 +335,22 @@ begin
  pppointer(@mainstack[mainstackpo])^:= globdata + oppo^.d.vaddress;
 end;
 
-procedure indirect1;
+procedure indirect8;
 begin
- puint8(@mainstack[mainstackpo])^:= 
-          puint8(ppointer(@mainstack[mainstackpo])^)^;
+ pv8ty(@mainstack[mainstackpo])^:= 
+          pv8ty(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
-procedure indirect2;
+procedure indirect16;
 begin
- puint16(@mainstack[mainstackpo])^:= 
-          puint16(ppointer(@mainstack[mainstackpo])^)^;
+ pv16ty(@mainstack[mainstackpo])^:= 
+          pv16ty(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
-procedure indirect4;
+procedure indirect32;
 begin
- puint32(@mainstack[mainstackpo])^:= 
-         puint32(ppointer(@mainstack[mainstackpo])^)^;
+ pv32ty(@mainstack[mainstackpo])^:= 
+         pv32ty(ppointer(@mainstack[mainstackpo])^)^;
 end;
 
 procedure indirect;

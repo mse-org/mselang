@@ -815,14 +815,14 @@ begin
      po2:= eleinfoabs(typ);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
-       ' S:'+inttostr(size);
+       ' S:'+inttostr(bytesize);
      end;
     end;
    end;
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
-       ' S:'+inttostr(size);
+       ' S:'+inttostr(bytesize);
      po3:= po1;
      while ptypedataty(@po3^.data)^.kind = dk_reference do begin
       mstr1:= mstr1+' R:'+inttostr(ptypedataty(@po3^.data)^.reflevel);
@@ -833,7 +833,7 @@ begin
             ' '+identlist.identname(po3^.header.name);
       with ptypedataty(@po3^.data)^ do begin
        mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
-         ' S:'+inttostr(size);
+         ' S:'+inttostr(bytesize);
       end;
       mstr2:= mstr2+' ';
      end;

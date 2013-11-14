@@ -109,11 +109,11 @@ begin
    with contextstack[int1].d do begin
     po1:= ele.eledataabs(field.fielddata);
     po1^.offset:= int2;
-    int2:= int2 + ptypedataty(ele.eledataabs(po1^.typ))^.size;
+    int2:= int2 + ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
    end;
   end;
   ptypedataty(ele.eledataabs(
-               contextstack[stackindex].d.typ.typedata))^.size:= int2;
+               contextstack[stackindex].d.typ.typedata))^.bytesize:= int2;
  end;
 end;
 

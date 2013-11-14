@@ -21,26 +21,38 @@ uses
  msestream,msestrings;
 
 type
- uint8 = byte; 
- uint16 = word;
- uint32 = longword;
- sint8 = shortint; 
- sint16 = smallint;
- sint32 = integer;
+ bool8 = boolean;
+ bool16 = wordbool;
+ bool32 = longbool;
+ card8 = byte; 
+ card16 = word;
+ card32 = longword;
+ card64 = qword;
+ int8 = shortint; 
+ int16 = smallint;
+ int32 = integer;
+ float32 = single;
  float64 = double;
 
- puint8 = ^uint8; 
- ppuint8 = ^puint8;
- puint16 = ^uint16;
- ppuint16 = ^puint16;
- puint32 = ^uint32;
- ppuint32 = ^puint32;
- psint8 = ^sint8; 
- psint16 = ^sint16;
- psint32 = ^sint32;
+ pcard8 = ^card8; 
+ ppcard8 = ^pcard8;
+ pcard16 = ^card16;
+ ppcard16 = ^pcard16;
+ pcard32 = ^card32;
+ ppcard32 = ^pcard32;
+ pcard64 = ^card64;
+ ppcard64 = ^pcard64;
+ pint8 = ^int8;
+ ppint8 = ^pint8;
+ pint16 = ^int16;
+ ppint16 = ^pint16;
+ pint32 = ^int32;
+ ppint32 = ^int32;
  
- datakindty = (dk_none,dk_bool8,dk_sint32,dk_flo64,dk_kind,dk_address,
-               dk_record,dk_reference);
+ datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+               dk_address,dk_record,dk_reference);
+ datasizety = (das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+               das_33_63,das_64);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 
 const
@@ -146,14 +158,14 @@ type
  end; 
  dataty = record
   case kind: datakindty of
-   dk_bool8:(
-    vbool8: uint32;
+   dk_boolean:(
+    vboolean: bool8;
    );
-   dk_sint32:(
-    vsint32: sint32;
+   dk_integer:(
+    vinteger: int32;
    );
-   dk_flo64:(
-    vflo64: float64;
+   dk_float:(
+    vfloat: float64;
    );
    dk_address:(
     vaddress: addressinfoty;
@@ -255,41 +267,62 @@ type
  end;
  pstartupdataty = ^startupdataty;
  
- opkindty = (ok_none,ok_startup,ok_pushbool8,ok_pushint32,ok_pushflo64,
+ opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,ok_pushaddress,
              ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress);
+
+ v8ty = array[0..0] of byte;
+ pv8ty = ^v8ty;
+ v16ty = array[0..1] of byte;
+ pv16ty = ^v16ty;
+ v32ty = array[0..3] of byte;
+ pv32ty = ^v32ty;
+ v64ty = array[0..7] of byte;
+ pv64ty = ^v64ty;
  
  opdataty = record
   case opkindty of 
-   ok_pushbool8: (
-    vbool8: boolean;
+   ok_none: (
+    d: record
+     case integer of
+      1: (vboolean: boolean);
+      2: (vcardinal: card32);
+      3: (vinteger: int32);
+      4: (vfloat: float64);
+    end;
    );
-   ok_pushint32: (
-    vint32: integer;
+   ok_push8:(
+    v8: v8ty;
    );
-   ok_pushflo64: (
-    vflo64: real;
+   ok_push16:(
+    v16: v16ty;
    );
-   ok_pushdatakind: (
+   ok_push32:(
+    v32: v32ty;
+   );
+   ok_push64:(
+    v64: v64ty;
+   );
+   ok_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushaddress: (
+   ok_pushaddress:(
     vaddress: dataaddressty;
    );
-   ok_pop: (
+   ok_pop:(
     count: integer;
    );
-   ok_op1: (
+   ok_op1:(
     op1: op1infoty;
    );
-   ok_opn: (
+   ok_opn:(
     opn: opninfoty;
    );
-   ok_var: (
+   ok_var:(
     dataaddress: dataaddressty;
     datasize: ptruint;
    );
-   ok_opaddress: (
+   ok_opaddress:(
     opaddress: opaddressty;
    );
   end;
