@@ -1,7 +1,7 @@
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
-"@whitespace,
+"@whitespace,-
  '{$',directive-^*
  '{',comment0-^*
  '//',linecomment0-^*"
@@ -49,7 +49,7 @@ usesok,start1,,handleuses
 
 start2,noimplementation,,
  ${whitespace}
- 'implementation'.,implementation
+ 'implementation'.,implementation-
  'const'.,const-*
  'var'.,var-*
  'type'.,type-*
@@ -157,14 +157,16 @@ statementblock1,,,handlestatementblock1*
  ${whitespace}
  ';',statementblock-
  'end'.,blockend-
-statement0,statement1,,
- '',identpath^*
+statement0,statement1,handlestatement0entry,
+ '',exp^*
+# '',identpath^*
 statement1,checkproc,,
  ${whitespace}
  ':=',assignment
+# '^',!setleftreference
 checkproc,,,handlecheckproc
  '',checkparams^*
-assignment,,,handleassignment
+assignment,,handleassignmententry,handleassignment
  '',exp^*
 if0,if,,
  ${whitespace}
@@ -317,18 +319,18 @@ num0,,,dummyhandler
  @num,num*
  ' ',
 num,,,handledecnum
- @num,
- '.',frac*
+ @num,-
+ '.',frac-*
 frac,,,handlefrac
- @num,
- 'e','E',exponent*
+ @num,-
+ 'e','E',exponent-*
 ident,,,handleident^
- @identstart,@num,
+ @identstart,@num,-
 #
 identpathcontinue,,,^>
  '',identpath^*
 identpath,identpath1a,,
- @identstart,@num,
+ @identstart,@num,-
 identpath1a,identpath1,,handleidentpath1a
 #set ident
 identpath1,,,^

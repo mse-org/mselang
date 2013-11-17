@@ -369,26 +369,29 @@ begin
     else begin
      while pb^.flags <> [] do begin
            //check match
+      po1:= source.po;
+      linebreaks:= 0;
       if bf_keyword in pb^.flags then begin
        if keywordindex = 0 then begin
-        po1:= source.po;
+//        po1:= source.po;
         while po1^ in keywordchars do begin
          inc(po1);
         end; 
-        if not (po1^ in nokeywordendchars) then begin
+        if (po1 <> source.po) and not (po1^ in nokeywordendchars) then begin
          keywordindex:= getident(source.po,po1);
+         keywordend:= po1;
         end
         else begin
          keywordindex:= idstart; //invalid
         end;
-        keywordend:= po1;
+        po1:= source.po;
        end;
-       po1:= keywordend;
        bo1:= keywordindex = pb^.keyword;
+       if bo1 then begin
+        po1:= keywordend;
+       end;
       end
       else begin
-       po1:= source.po;
-       linebreaks:= 0;
        bo1:= po1^ in pb^.keys[0].chars;
        if bo1 then begin
         if po1^ = c_linefeed then begin
@@ -458,11 +461,11 @@ begin
          until not (bf_emptytoken in pb^.flags); //no start default branch
         end;
        end;
-       source.po:= po1;
-       source.line:= source.line + linebreaks;
-       linebreaks:= 0;
-       debugsource:= source.po;
-       keywordindex:= 0;
+//       source.po:= po1;
+//       source.line:= source.line + linebreaks;
+//       linebreaks:= 0;
+//       debugsource:= source.po;
+//       keywordindex:= 0;
 //       if (pb^.c = nil) and pb^.p then begin
 //        break; //terminate
 //       end;

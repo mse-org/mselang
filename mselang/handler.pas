@@ -102,9 +102,12 @@ procedure handleparamsend(const info: pparseinfoty);
 
 //procedure handlestatement(const info: pparseinfoty);
 
+procedure handleassignmententry(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
+procedure handlestatement0entry(const info: pparseinfoty);
 procedure handlestatement1(const info: pparseinfoty);
 procedure handlecheckproc(const info: pparseinfoty);
+//procedure setleftreference(const info: pparseinfoty);
 
 procedure handleif(const info: pparseinfoty);
 procedure handlethen(const info: pparseinfoty);
@@ -156,7 +159,7 @@ const
      flags: []; kind: dk_boolean; dummy: 0)),
    (name: 'int32'; data: (bitsize: 32; bytesize: 4; datasize: das_32;
      flags: []; kind: dk_integer; infoint32:(min: minint; max: maxint))),
-   (name: 'float64'; data: (bitsize: 64; bytesize: 8; datasize: das_64;
+   (name: 'flo64'; data: (bitsize: 64; bytesize: 8; datasize: das_64;
      flags: []; kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
@@ -1544,6 +1547,29 @@ begin
  outhandle(info,'HANDLESTATEMENT');
 end;
 }
+function tryconvert(var data: contextdataty;
+                            const dest: vardestinfoty): boolean;
+var
+ po1: ptypedataty;
+ pi: ^integer;
+ i: integer;
+begin
+// i^:= 123;
+ po1:= ele.eledataabs(data.datatyp.typedata);
+ result:= dest.typ^.kind = po1^.kind;
+
+end;
+
+procedure handleassignmententry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ASSIGNMENTENTRY');
+{$endif}
+ with info^ do begin
+  include(currentstatementflags,stf_rightside);
+ end;
+end;
+
 procedure handleassignment(const info: pparseinfoty);
 var
  varinfo1: vardestinfoty;
@@ -1614,6 +1640,20 @@ begin
   end;
   dec(stackindex);
   stacktop:= stackindex;
+ end;
+end;
+
+procedure handlestatement0entry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'STATEMENT0ENTRY');
+{$endif}
+ with info^ do begin
+  currentstatementflags:= [];
+  with contextstack[stacktop].d,statement do begin
+   kind:= ck_statement;
+//   flags:= [];
+  end;
  end;
 end;
 
@@ -1716,7 +1756,26 @@ begin
   end;
  end;
 end;
-
+(*
+procedure setleftreference(const info: pparseinfoty);
+//called by i1po^:= 123;
+var
+ pi: ^pinteger;
+begin
+// pi(^)^:= 123;
+{$ifdef mse_debugparser}
+ outhandle(info,'SETDESTREFERENCE');
+{$endif}
+ with info^,contextstack[stackindex].d.statement do begin
+  if sf_leftreference in flags then begin
+   
+  end
+  else begin
+   include(flags,sf_leftreference);
+  end;
+ end;
+end;
+*)
 procedure opgoto(const info: pparseinfoty; const aaddress: dataaddressty);
 begin
  with additem(info)^ do begin

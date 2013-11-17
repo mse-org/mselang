@@ -70,7 +70,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
-                  ck_type,ck_var,ck_field);
+                  ck_type,ck_var,ck_field,ck_statement);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -201,6 +201,12 @@ type
   fielddata: elementoffsetty;
  end;
 
+ statementflagty = (stf_rightside,stf_leftreference);
+ statementflagsty = set of statementflagty;
+ statementinfoty = record
+//  flags: statementflagsty;
+ end;
+ 
  contextdataty = record
   elemark: elementoffsetty;
   case kind: contextkindty of 
@@ -231,7 +237,10 @@ type
    );
    ck_field:(
     field: fieldinfoty;
-   )
+   );
+   ck_statement:(
+    statement: statementinfoty;
+   );
  end;
 
  sourceinfoty = record
@@ -350,7 +359,7 @@ type
   interfaceuses,implementationuses: unitinfopoarty;
  end;
  ppunitinfoty = ^punitinfoty;
- 
+
  parseinfoty = record
   unitinfo: punitinfoty;
   pb: pbranchty;
@@ -378,7 +387,8 @@ type
   locdatapo: ptruint;
   frameoffset: ptruint;
   currentclass: elementoffsetty;
-  currentclassvislevel: vislevelty
+  currentclassvislevel: vislevelty;
+  currentstatementflags: statementflagsty;
  end;
 
 const

@@ -743,7 +743,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -774,7 +774,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -812,7 +812,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -850,7 +850,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -898,7 +898,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -935,7 +935,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bstart2: array[0..8] of branchty = (
-   (flags: [bf_nt,bf_keyword];
+   (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationco); stack: nil; 
      keyword: $345678CD{'implementation'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
@@ -961,7 +961,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -992,7 +992,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1062,7 +1062,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1177,7 +1177,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1225,7 +1225,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1270,7 +1270,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1308,7 +1308,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1346,7 +1346,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1384,7 +1384,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1432,7 +1432,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1479,7 +1479,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1527,7 +1527,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1577,7 +1577,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1645,7 +1645,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1670,7 +1670,7 @@ const
    );
  bstatement0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @identpathco); stack: nil; keys: (
+     dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -1700,7 +1700,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1751,7 +1751,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1795,7 +1795,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1839,7 +1839,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1890,7 +1890,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1928,7 +1928,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -1976,7 +1976,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2024,7 +2024,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2062,7 +2062,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2100,7 +2100,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2145,7 +2145,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2200,7 +2200,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2238,7 +2238,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2282,7 +2282,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2327,7 +2327,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2375,7 +2375,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2438,7 +2438,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2496,7 +2496,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2534,7 +2534,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2582,7 +2582,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2640,7 +2640,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2688,7 +2688,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2761,7 +2761,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2799,7 +2799,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2844,7 +2844,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -2906,14 +2906,14 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bnum: array[0..2] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @fracco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
@@ -2923,14 +2923,14 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bfrac: array[0..2] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @exponentco); stack: nil; keys: (
     (kind: bkk_char; chars: ['E','e']),
     (kind: bkk_none; chars: []),
@@ -2940,7 +2940,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bident: array[0..1] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -2960,7 +2960,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bidentpath: array[0..1] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -2984,7 +2984,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3022,7 +3022,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3070,7 +3070,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3108,7 +3108,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3156,7 +3156,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3211,7 +3211,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#10,#13,' ']),
     (kind: bkk_none; chars: []),
@@ -3369,11 +3369,13 @@ begin
  statementblock1co.handleexit:= @handlestatementblock1;
  statement0co.branch:= @bstatement0;
  statement0co.next:= @statement1co;
+ statement0co.handleentry:= @handlestatement0entry;
  statement1co.branch:= @bstatement1;
  statement1co.next:= @checkprocco;
  checkprocco.branch:= @bcheckproc;
  checkprocco.handleexit:= @handlecheckproc;
  assignmentco.branch:= @bassignment;
+ assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;
  if0co.branch:= @bif0;
  if0co.next:= @ifco;

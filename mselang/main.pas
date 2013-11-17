@@ -23,7 +23,8 @@ uses
  mseifiglob,msestrings,msetypes,msestatfile,msesimplewidgets,msewidgets,
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
- msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob;
+ msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
+ msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys;
 
 type
  tmainfo = class(tmainform)
@@ -37,10 +38,15 @@ type
    ed: tsyntaxedit;
    coldi: tintegerdisp;
    tbutton5: tbutton;
+   tbutton2: tbutton;
+   filena: tfilenameedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
-   procedure saveex(const sender: TObject);
+   procedure saveexe(const sender: TObject);
+   procedure loadexe(const sender: TObject);
+   procedure aftreadexe(const sender: TObject);
+   procedure befwriteexe(const sender: TObject);
   protected
  end;
 var
@@ -75,9 +81,24 @@ begin
  coldi.value:= ed.col+1;
 end;
 
-procedure tmainfo.saveex(const sender: TObject);
+procedure tmainfo.saveexe(const sender: TObject);
 begin
- statf.writestat;
+ ed.savetofile(filena.value);
+end;
+
+procedure tmainfo.loadexe(const sender: TObject);
+begin
+ ed.loadfromfile(filena.value);
+end;
+
+procedure tmainfo.aftreadexe(const sender: TObject);
+begin
+ loadexe(nil);
+end;
+
+procedure tmainfo.befwriteexe(const sender: TObject);
+begin
+ saveexe(nil);
 end;
 
 end.

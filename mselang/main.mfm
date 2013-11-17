@@ -1,23 +1,25 @@
 object mainfo: tmainfo
-  bounds_x = 291
-  bounds_y = 247
-  bounds_cx = 371
+  bounds_x = 4
+  bounds_y = 186
+  bounds_cx = 628
   bounds_cy = 450
   anchors = [an_top, an_right]
   container.bounds = (
     0
     0
-    371
+    628
     450
   )
+  options = [fo_main, fo_terminateonclose, fo_autoreadstat, fo_delayedreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
   statfile = statf
   caption = 'MSElang'
   moduleclassname = 'tmainform'
   object tbutton1: tbutton
-    bounds_x = 312
-    bounds_y = 8
+    bounds_x = 560
+    bounds_y = 7
     bounds_cx = 50
     bounds_cy = 20
+    anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
     caption = 'parse'
     onexecute = parseexe
@@ -26,7 +28,7 @@ object mainfo: tmainfo
     taborder = 1
     bounds_x = 16
     bounds_y = 327
-    bounds_cx = 338
+    bounds_cx = 595
     bounds_cy = 115
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
@@ -35,7 +37,7 @@ object mainfo: tmainfo
     datacols.count = 1
     datacols.items = <    
       item
-        width = 282
+        width = 539
         options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
         valuefalse = '0'
         valuetrue = '1'
@@ -66,7 +68,7 @@ object mainfo: tmainfo
     taborder = 3
     bounds_x = 16
     bounds_y = 324
-    bounds_cx = 338
+    bounds_cx = 595
     bounds_cy = 3
     anchors = [an_left, an_top, an_right]
     options = [spo_vmove, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
@@ -78,7 +80,7 @@ object mainfo: tmainfo
     taborder = 4
     bounds_x = 16
     bounds_y = 32
-    bounds_cx = 338
+    bounds_cx = 595
     bounds_cy = 292
     anchors = [an_left, an_top, an_right]
     optionsgrid = [og_focuscellonenter, og_autofirstrow, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
@@ -91,9 +93,11 @@ object mainfo: tmainfo
         numstep = 1
       end>
     datacols.count = 1
+    datacols.options = [co_savestate, co_mousescrollrow]
     datacols.items = <    
       item[ed]
         width = 2016
+        options = [co_savestate, co_mousescrollrow]
         widgetname = 'ed'
         dataclass = tgridrichstringdatalist
       end>
@@ -113,6 +117,7 @@ object mainfo: tmainfo
       font.name = 'stf_fixed'
       font.xscale = 1
       font.dummy = 0
+      optionsedit = [oe_closequery, oe_checkmrcancel, oe_linebreak, oe_eatreturn, oe_exitoncursor, oe_nofirstarrownavig, oe_focusrectonreadonly, oe_savestate, oe_checkvaluepaststatread]
       oneditnotifcation = editnotiexe
       reffontheight = 14
     end
@@ -128,16 +133,47 @@ object mainfo: tmainfo
   end
   object tbutton5: tbutton
     taborder = 6
-    bounds_x = 264
-    bounds_y = 8
+    bounds_x = 512
+    bounds_y = 7
     bounds_cx = 42
     bounds_cy = 20
+    anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
     caption = 'save'
-    onexecute = saveex
+    onexecute = saveexe
+  end
+  object tbutton2: tbutton
+    taborder = 7
+    bounds_x = 464
+    bounds_y = 7
+    bounds_cx = 42
+    bounds_cy = 20
+    anchors = [an_top, an_right]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'load'
+    onexecute = loadexe
+  end
+  object filena: tfilenameedit
+    frame.button.imagenr = 17
+    taborder = 8
+    bounds_x = 264
+    bounds_y = 7
+    bounds_cx = 196
+    anchors = [an_left, an_top, an_right]
+    statfile = statf
+    textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
+    controller.filterlist.data = (
+      (
+        'MSElang source'
+        '*.mla'
+      )
+    )
+    reffontheight = 14
   end
   object statf: tstatfile
     filename = 'status.sta'
+    onstatbeforewrite = befwriteexe
+    onstatafterread = aftreadexe
     left = 232
     top = 32
   end
