@@ -37,6 +37,9 @@ function parse(const input: string; const acommand: ttextstream;
 procedure init;
 procedure deinit;
 
+{$ifdef mse_debugparser}
+procedure outinfo(const info: pparseinfoty; const text: string);
+{$endif}
 implementation
 uses
  typinfo,grammar,handler,elements,msestrings,sysutils,

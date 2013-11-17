@@ -348,11 +348,6 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'statement1');
- checkprocco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'checkproc');
  assignmentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -693,6 +688,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'params1');
+ params2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'params2');
  paramsendco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -1710,16 +1710,6 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @comment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bcheckproc: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @checkparamsco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3131,7 +3121,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bparams0: array[0..1] of branchty = (
+ bparams1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -3141,7 +3131,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bparams1: array[0..6] of branchty = (
+ bparams2: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3171,7 +3161,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @params0co); stack: nil; keys: (
+     dest: (context: @params1co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3371,10 +3361,7 @@ begin
  statement0co.next:= @statement1co;
  statement0co.handleentry:= @handlestatement0entry;
  statement1co.branch:= @bstatement1;
- statement1co.next:= @checkprocco;
  statement1co.handleentry:= @handleleftside;
- checkprocco.branch:= @bcheckproc;
- checkprocco.handleexit:= @handlecheckproc;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;
@@ -3523,10 +3510,14 @@ begin
  checkvalueparamsco.branch:= @bcheckvalueparams;
  checkvalueparamsco.handleexit:= @handlevalueidentifier;
  checkparamsco.branch:= @bcheckparams;
- params0co.branch:= @bparams0;
+ params0co.branch:= nil;
  params0co.next:= @params1co;
+ params0co.handleexit:= @handleparams0;
  params1co.branch:= @bparams1;
+ params1co.next:= @params2co;
+ params2co.branch:= @bparams2;
  paramsendco.branch:= nil;
+ paramsendco.handleentry:= @handleparamsend;
  bracketstartco.branch:= @bbracketstart;
  bracketstartco.next:= @bracketendco;
  bracketstartco.handleexit:= @dummyhandler;

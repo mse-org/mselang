@@ -160,12 +160,10 @@ statementblock1,,,handlestatementblock1*
 statement0,statement1,handlestatement0entry,
  '',exp^*
 # '',identpath^*
-statement1,checkproc,handleleftside,
+statement1,,handleleftside,
  ${whitespace}
  ':=',assignment-
 # '^',!setleftreference
-checkproc,,,handlecheckproc
- '',checkparams^*
 assignment,,handleassignmententry,handleassignment
  '',exp^*
 if0,if,,
@@ -353,13 +351,14 @@ checkvalueparams,,,handlevalueidentifier
 checkparams,,,^
  ${whitespace}
  '(',params0-
-params0,params1,,
+params0,params1,,handleparams0
+params1,params2,,
  '',exp^*
-params1,,,
+params2,,,
  ${whitespace}
- ',',params0-
+ ',',params1-
  ')',paramsend-
-paramsend,,,^
+paramsend,,handleparamsend,^
 #
 bracketstart,bracketend,,dummyhandler
  '',simpexp*

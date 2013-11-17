@@ -70,7 +70,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
-                  ck_type,ck_var,ck_field,ck_statement);
+                  ck_type,ck_var,ck_field,ck_statement,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
  opaddressty = ptruint;
@@ -138,6 +138,9 @@ type
   caption: string;
  end;
 
+ statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall);
+ statementflagsty = set of statementflagty;
+
  varflagty = (vf_global,vf_param,vf_reference);
  varflagsty = set of varflagty;
 
@@ -192,6 +195,9 @@ type
   paramcount: integer;
   elementmark: markinfoty;
  end;
+ paramsinfoty = record
+  flagsbefore: statementflagsty;
+ end;
  classinfoty = record
   ident: identinfoty;
   classdata: elementoffsetty;
@@ -201,8 +207,6 @@ type
   fielddata: elementoffsetty;
  end;
 
- statementflagty = (stf_rightside,stf_leftreference);
- statementflagsty = set of statementflagty;
  statementinfoty = record
 //  flags: statementflagsty;
  end;
@@ -225,6 +229,9 @@ type
    );
    ck_proc:(
     proc: procinfoty;
+   );
+   ck_params:(
+    params: paramsinfoty;
    );
    ck_opmark:(
     opmark: opmarkty;

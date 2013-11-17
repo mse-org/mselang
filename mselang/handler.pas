@@ -95,9 +95,14 @@ procedure handlebracketend(const info: pparseinfoty);
 procedure handlesimpexp(const info: pparseinfoty);
 procedure handlesimpexp1(const info: pparseinfoty);
 //procedure handleln(const info: pparseinfoty);
+
+procedure handleparams0(const info: pparseinfoty);
+procedure handleparamsend(const info: pparseinfoty);
+{
 procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
+}
 //procedure handlecheckparams(const info: pparseinfoty);
 
 //procedure handlestatement(const info: pparseinfoty);
@@ -105,7 +110,7 @@ procedure handleparamsend(const info: pparseinfoty);
 procedure handlestatement0entry(const info: pparseinfoty);
 procedure handleleftside(const info: pparseinfoty);
 //procedure handlestatement1(const info: pparseinfoty);
-procedure handlecheckproc(const info: pparseinfoty);
+//procedure handlecheckproc(const info: pparseinfoty);
 procedure handleassignmententry(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
 //procedure setleftreference(const info: pparseinfoty);
@@ -127,7 +132,7 @@ procedure handleabort(const info: pparseinfoty);
 implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,
- unithandler,errorhandler;
+ unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif};
 
 const
  reversestackdata = sdk_bool8rev;
@@ -898,6 +903,33 @@ begin
  end;
 end;
 
+procedure handleparams0(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PARAMS0');
+{$endif}
+ with info^ do begin
+  with contextstack[stackindex].d do begin
+   kind:= ck_params;
+   params.flagsbefore:= currentstatementflags;
+   include(currentstatementflags,stf_params);
+  end;
+ end;
+end;
+
+procedure handleparamsend(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PARAMSEND');
+{$endif}
+ with info^ do begin
+  with contextstack[stackindex].d do begin
+   currentstatementflags:= params.flagsbefore;
+  end;
+ end;
+end;
+
+(*
 procedure handleparamsend(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -914,7 +946,7 @@ begin
   dec(stackindex);
  end;
 end;
-
+*)
 procedure handleident(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -965,20 +997,23 @@ var
  po2: pointer;
  po3: ptypedataty;
  po4: pfielddataty;
+ po5: pelementoffsetty;
+ po6: pvardataty;
  lastident: integer;
  idents: identvecty;
  ele1: elementoffsetty;
- int1: integer;
+ int1,int2: integer;
  si1,addr1: ptruint;
  fl1: typeflagsty;
+ paramco: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'VALUEIDENTIFIER');
 {$endif}
  with info^ do begin
-  if findkindelements(info,1,[ek_var,ek_const],vis_max,po1,lastident,
-                                                         idents) then begin
-   dec(stacktop,identcount);
+  if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_func],
+                                vis_max,po1,lastident,idents) then begin
+//   dec(stacktop,identcount);
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
@@ -1007,7 +1042,7 @@ begin
        si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
       end;
      end;
-     if stf_rightside in currentstatementflags then begin
+     if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
       with additem(info)^ do begin //todo: use table
        if vf_global in pvardataty(po2)^.address.flags then begin
         case si1 of
@@ -1045,14 +1080,14 @@ begin
        end;
        d.datasize:= si1;
       end;
-      with contextstack[stacktop].d do begin
+      with contextstack[stackindex].d do begin
        kind:= ck_fact;
        datatyp.typedata:= ele1;
        datatyp.flags:= fl1;
       end;
      end
      else begin  //todo: handle dereference and the like
-      with contextstack[stacktop].d do begin
+      with contextstack[stackindex].d do begin
        kind:= ck_const;
        datatyp.typedata:= ele1;
        datatyp.flags:= fl1 + [tf_reference];
@@ -1063,10 +1098,54 @@ begin
      end;
     end;
     ek_const: begin
-     with contextstack[stacktop].d do begin
+     with contextstack[stackindex].d do begin
       kind:= ck_const;
       datatyp:= pconstdataty(po2)^.val.typ;
       constval:= pconstdataty(po2)^.val.d;
+     end;
+    end;
+    ek_func: begin
+     paramco:= stacktop-stackindex-1-identcount; //todo!!!!!
+     if paramco <> pfuncdataty(po2)^.paramcount then begin
+      identerror(info,1,err_wrongnumberofparameters);
+     end
+     else begin
+      po5:= @pfuncdataty(po2)^.paramsrel;
+      for int1:= stackindex+3 to stacktop do begin
+       po6:= ele.eledataabs(po5^);
+       with contextstack[int1] do begin
+        if d.datatyp.typedata <> po6^.typ then begin
+         errormessage(info,int1-stackindex,err_incompatibletypeforarg,
+           [int1-stackindex-2,typename(d),
+                      typename(ptypedataty(ele.eledataabs(po6^.typ))^)]);
+        end;
+       end;
+       inc(po5);
+      end;
+     end;
+     with additem(info)^ do begin
+      op:= @callop;
+      d.opaddress:= pfuncdataty(po2)^.address-1;
+     end;
+//     dec(stackindex);
+//     stacktop:= stackindex;
+    end;
+    ek_sysfunc: begin
+outinfo(info,'******');
+     with psysfuncdataty(po2)^ do begin
+      case func of
+       sf_writeln: begin
+        int2:= stacktop-stackindex-1-identcount;
+        for int1:= 2+stackindex+identcount to 
+                                 int2+1+stackindex+identcount do begin
+         push(info,ptypedataty(
+                 ele.eledataabs(contextstack[int1].d.datatyp.typedata))^.kind);
+        end;
+        push(info,int2);
+        writeop(info,op);
+        //todo: handle function
+       end;
+      end;
      end;
     end;
     else begin
@@ -1078,6 +1157,7 @@ begin
    identerror(info,1,err_identifiernotfound);
 //   identnotfounderror(contextstack[stacktop],'valueidentifier');
   end;
+  stacktop:= stackindex;
   dec(stackindex);
  end;
 end;
@@ -1101,7 +1181,7 @@ begin
 //  stackindex:= stackindex-2;
 // end;
 end;
-
+(*
 procedure handleparamstart0(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1121,7 +1201,7 @@ begin
   stackindex:= parent+1;
  end;
 end;
-
+*)
 procedure dummyhandler(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1485,11 +1565,13 @@ begin
  with info^ do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(stacktop);
-//  dec(stackindex);
-  with contextstack[stacktop] do begin
-   if d.kind = ck_const then begin
-    pushconst(info,d);
-    outcommand(info,[0],'push');
+  //todo: handle dereference and the like
+  if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
+   with contextstack[stacktop] do begin
+    if d.kind = ck_const then begin
+     pushconst(info,d);
+     outcommand(info,[0],'push');
+    end;
    end;
   end;
  end;
@@ -1736,7 +1818,7 @@ begin
   stacktop:= stackindex;
  end;
 end;
-*)
+
 procedure handlecheckproc(const info: pparseinfoty);
 var
  po2: pfuncdataty;
@@ -1801,6 +1883,7 @@ begin
   end;
  end;
 end;
+*)
 (*
 procedure setleftreference(const info: pparseinfoty);
 //called by i1po^:= 123;
