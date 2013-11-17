@@ -77,13 +77,13 @@ main,main1,,handlemain
 main1,main,,handlemain1
 comment0,,,handlecommentend^*>
  '}',-*
- '',
+ '',-
 #comment1,,,handlecommentend^>
 directive,,,*
  'dumpelements'.,dumpelements-*
  'abort'.,abort-*
  '}',-*
- '',
+ '',-
 dumpelements,directiveend,,handledumpelements
 abort,directiveend,,handleabort
 directiveend,,,^*>
@@ -91,7 +91,7 @@ directiveend,,,^*>
  '',
 linecomment0,,,*
  #$0a,linecomment1-
- '',
+ '',-
 linecomment1,,,handlecommentend^*>
 progbegin,progblock,,handleprogbegin
 progblock,,,
