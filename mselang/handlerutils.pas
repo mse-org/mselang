@@ -254,7 +254,6 @@ begin
   result:= ele.findupward(idents,[ek_var],visibility,ele1,int1);
   if result then begin
    po1:= ele.eledataabs(ele1);
-   varinfo.flags:= po1^.flags;
    varinfo.address:= po1^.address;
    ele2:= po1^.typ;
    if int1 < idents.high then begin
@@ -265,7 +264,7 @@ begin
       exit;
      end;
      po3:= ele.eledataabs(ele2);
-     varinfo.address:= varinfo.address + po3^.offset;
+     varinfo.address.address:= varinfo.address.address + po3^.offset;
     end;
     varinfo.typ:= ele.eledataabs(po3^.typ);
    end

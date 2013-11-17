@@ -29,7 +29,8 @@ type
             err_cantfindunit,{err_implementationexpected,err_unitexpected,}
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
-            err_illegalqualifier,err_illegalexpression,err_varidentexpected);
+            err_illegalqualifier,err_illegalexpression,err_varidentexpected,
+            err_argnotassign);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -69,7 +70,8 @@ const
   (level: erl_error; message: 'Incompatible types: got "%s" expected "%s"'),
   (level: erl_error; message: 'Illegal qualifier'),
   (level: erl_error; message: 'Illegal expression'),
-  (level: erl_error; message: 'Variable identifier expexted')  
+  (level: erl_error; message: 'Variable identifier expexted'),
+  (level: erl_error; message: 'Argument can''t be assigned to')  
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -174,7 +176,7 @@ begin
    po1:= ele.eleinfoabs(source.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
-   if vf_reference in dest.flags then begin
+   if vf_reference in dest.address.flags then begin
     destinfo:= '^'+destinfo;
    end;
   end;

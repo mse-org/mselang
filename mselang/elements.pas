@@ -809,8 +809,9 @@ begin
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' A:'+inttostr(address)+' '+
-           settostring(ptypeinfo(typeinfo(flags)),integer(flags),false);
+     mstr1:= mstr1+lineend+' A:'+inttostr(address.address)+' '+
+           settostring(ptypeinfo(typeinfo(address.flags)),
+                                         integer(address.flags),false);
      mstr1:= mstr1+' T:'+getidentname(typ);
      po2:= eleinfoabs(typ);
      with ptypedataty(@po2^.data)^ do begin

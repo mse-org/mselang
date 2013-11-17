@@ -1693,7 +1693,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: @assignmentco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: [':']),
     (kind: bkk_char; chars: ['=']),
@@ -3372,6 +3372,7 @@ begin
  statement0co.handleentry:= @handlestatement0entry;
  statement1co.branch:= @bstatement1;
  statement1co.next:= @checkprocco;
+ statement1co.handleentry:= @handleleftside;
  checkprocco.branch:= @bcheckproc;
  checkprocco.handleexit:= @handlecheckproc;
  assignmentco.branch:= @bassignment;

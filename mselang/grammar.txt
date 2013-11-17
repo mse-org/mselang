@@ -160,9 +160,9 @@ statementblock1,,,handlestatementblock1*
 statement0,statement1,handlestatement0entry,
  '',exp^*
 # '',identpath^*
-statement1,checkproc,,
+statement1,checkproc,handleleftside,
  ${whitespace}
- ':=',assignment
+ ':=',assignment-
 # '^',!setleftreference
 checkproc,,,handlecheckproc
  '',checkparams^*

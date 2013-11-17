@@ -102,8 +102,7 @@ type
  ptypedataty = ^typedataty;
 
  vardestinfoty = record
-  flags: varflagsty;
-  address: ptruint;
+  address: addressinfoty;
   typ: ptypedataty;
  end;
  
@@ -115,9 +114,8 @@ type
  pconstdataty = ^constdataty;
 
  vardataty = record
-  address: dataaddressty;
+  address: addressinfoty;
   typ: elementoffsetty; //elementdata relative
-  flags: varflagsty;
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
