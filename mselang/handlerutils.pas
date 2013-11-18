@@ -105,6 +105,7 @@ function getidents(const info: pparseinfoty; const astackoffset: integer;
 var
  po1: pcontextitemty;
  int1: integer;
+ identcount: integer;
 begin
  with info^ do begin
   po1:= @contextstack[stackindex+astackoffset];

@@ -382,7 +382,7 @@ type
   stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
-  identcount: integer;
+//  identcount: integer;
   funclevel: integer;
   command: ttextstream;
   errorfla: boolean;

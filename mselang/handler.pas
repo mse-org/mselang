@@ -1025,7 +1025,7 @@ begin
       si1:= pointersize;
      end
      else begin
-      if lastident < identcount-1 then begin
+      if lastident < idents.high then begin
        for int1:= lastident+1 to idents.high do begin //fields
         if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                     vis_max,ele1) then begin
@@ -1105,7 +1105,7 @@ begin
      end;
     end;
     ek_func: begin
-     paramco:= stacktop-stackindex-1-identcount; //todo!!!!!
+     paramco:= stacktop-stackindex-2-idents.high; //todo!!!!!
      if paramco <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
@@ -1135,9 +1135,9 @@ outinfo(info,'******');
      with psysfuncdataty(po2)^ do begin
       case func of
        sf_writeln: begin
-        int2:= stacktop-stackindex-1-identcount;
-        for int1:= 2+stackindex+identcount to 
-                                 int2+1+stackindex+identcount do begin
+        int2:= stacktop-stackindex-2-idents.high;
+        for int1:= 3+stackindex+idents.high to 
+                                 int2+2+stackindex+idents.high do begin
          push(info,ptypedataty(
                  ele.eledataabs(contextstack[int1].d.datatyp.typedata))^.kind);
         end;
