@@ -588,14 +588,15 @@ function pushvalues(const info: pparseinfoty): stackdatakindty;
 var
  reverse,negative: boolean;
  kinda,kindb: datakindty;
+ po1: pelementinfoty;
 begin
  with info^ do begin
   reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
                            (contextstack[stacktop-2].d.kind = ck_const);
-  kinda:= ptypedataty(ele.eleinfoabs(
-                     contextstack[stacktop].d.datatyp.typedata))^.kind;
-  kindb:= ptypedataty(ele.eleinfoabs(
-                     contextstack[stacktop-2].d.datatyp.typedata))^.kind;
+  po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
+  kinda:= ptypedataty(@po1^.data)^.kind;
+  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
+  kindb:= ptypedataty(@po1^.data)^.kind;
   if (kinda = dk_float) or (kindb = dk_float) then begin
    result:= sdk_flo64;
    with contextstack[stacktop].d do begin
@@ -1105,7 +1106,7 @@ begin
      end;
     end;
     ek_func: begin
-outinfo(info,'******');
+//outinfo(info,'******');
      paramco:= stacktop-stackindex-2-idents.high;
      if paramco < 0 then begin
       paramco:= 0; //no paramsend context
