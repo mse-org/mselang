@@ -1105,13 +1105,14 @@ begin
      end;
     end;
     ek_func: begin
-     paramco:= stacktop-stackindex-2-idents.high; //todo!!!!!
+outinfo(info,'******');
+     paramco:= stacktop-stackindex-1-idents.high; //todo!!!!!
      if paramco <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
      else begin
       po5:= @pfuncdataty(po2)^.paramsrel;
-      for int1:= stackindex+3 to stacktop do begin
+      for int1:= stackindex+2+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
         if d.datatyp.typedata <> po6^.typ then begin

@@ -371,7 +371,6 @@ type
   unitinfo: punitinfoty;
   pb: pbranchty;
   pc: pcontextty;
-//  stophandle: boolean;
   stopparser: boolean;
   filename: filenamety;
   sourcestart: pchar; //todo: use file cache for include files
@@ -382,7 +381,6 @@ type
   stackdepht: integer;
   stackindex: integer; 
   stacktop: integer; 
-//  identcount: integer;
   funclevel: integer;
   command: ttextstream;
   errorfla: boolean;

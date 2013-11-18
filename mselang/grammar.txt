@@ -111,7 +111,7 @@ paramdef0,paramdef1,,
  @identstart,ident^*
 paramdef1,,,*
  ${whitespace}
- ':',paramdef2
+ ':',paramdef2-
 paramdef2,,,^
  ${whitespace}
  @identstart,ident^*
