@@ -279,14 +279,14 @@ simpexp,simpexp1,,handlesimpexp
  '',term*
 simpexp1,simpexp1,,handlesimpexp1
  ${whitespace}
- '+',addterm*
+ '+',addterm-*
 addterm,,,handleaddterm
  '',term*
 term,term1,,handleterm
  ${whitespace}
- '+',
- '-',negterm*
- '(',bracketstart*
+ '+',-
+ '-',negterm-*
+ '(',bracketstart-*
  @num,num*
  @identstart,valueidentifier*
  '@',getaddress-

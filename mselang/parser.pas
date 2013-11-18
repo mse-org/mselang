@@ -99,27 +99,27 @@ begin
     else begin
      write(' ');
     end;
-    with context^ do begin
-     if cut then begin
-      write('-');
-     end
-     else begin
-      write(' ');
-     end;
-     if pop then begin
-      write('^');
-     end
-     else begin
-      write(' ');
-     end;
-     if popexe then begin
-      write('!');
-     end
-     else begin
-      write(' ');
-     end;
-    end;
     if context <> nil then begin
+     with context^ do begin
+      if cut then begin
+       write('-');
+      end
+      else begin
+       write(' ');
+      end;
+      if pop then begin
+       write('^');
+      end
+      else begin
+       write(' ');
+      end;
+      if popexe then begin
+       write('!');
+      end
+      else begin
+       write(' ');
+      end;
+     end;
      write('<',context^.caption,'> ');
     end
     else begin

@@ -2644,7 +2644,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @addtermco); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
     (kind: bkk_none; chars: []),
@@ -2692,21 +2692,21 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @negtermco); stack: nil; keys: (
     (kind: bkk_char; chars: ['-']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @bracketstartco); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
