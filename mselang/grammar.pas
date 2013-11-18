@@ -1456,7 +1456,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bprocedure4: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword];
+   (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @procedure5co); stack: nil; 
      keyword: $8ACF19BB{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
@@ -1496,7 +1496,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bprocedure5: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1591,7 +1591,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: @endcontextco); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),

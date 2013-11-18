@@ -127,11 +127,11 @@ procedure3,procedure4,,handleprocedure3
 #mark
 procedure4,checkterminator,,
  ${whitespace}
- 'begin'.,procedure5
+ 'begin'.,procedure5-
  'const'.,const-*
  'var'.,var-*
 procedure5,procedure6,,
- '',statementblock-^*
+ '',statementblock^*
 procedure6,checkterminator,,handleprocedure6
 # return, release
 checkterminator,,,handlecheckterminator
@@ -142,7 +142,7 @@ statementstack,,,^
  '',statement*
 statement,,,*
  ${whitespace}
- ';',endcontext
+ ';',endcontext-
  'begin'.,statementblock-^*
  'end'.,endcontext
  'if'.,if0-

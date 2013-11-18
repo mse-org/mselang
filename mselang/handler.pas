@@ -1106,18 +1106,21 @@ begin
     end;
     ek_func: begin
 outinfo(info,'******');
-     paramco:= stacktop-stackindex-1-idents.high; //todo!!!!!
+     paramco:= stacktop-stackindex-2-idents.high;
+     if paramco < 0 then begin
+      paramco:= 0; //no paramsend context
+     end;
      if paramco <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
      else begin
       po5:= @pfuncdataty(po2)^.paramsrel;
-      for int1:= stackindex+2+idents.high to stacktop do begin
+      for int1:= stackindex+3+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
         if d.datatyp.typedata <> po6^.typ then begin
          errormessage(info,int1-stackindex,err_incompatibletypeforarg,
-           [int1-stackindex-2,typename(d),
+           [int1-stackindex-3,typename(d),
                       typename(ptypedataty(ele.eledataabs(po6^.typ))^)]);
         end;
        end;
