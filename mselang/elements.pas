@@ -812,8 +812,8 @@ begin
      mstr1:= mstr1+lineend+' A:'+inttostr(address.address)+' '+
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
-     mstr1:= mstr1+' T:'+getidentname(typ);
      po2:= eleinfoabs(typ);
+     mstr1:= mstr1+' T:'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize);
