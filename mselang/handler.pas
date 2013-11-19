@@ -1037,6 +1037,7 @@ begin
         end;
         po4:= ele.eledataabs(ele1);
         addr1:= addr1 + po4^.offset;
+        ele1:= po4^.typ;
        end;
        ele1:= po4^.typ;
        po3:= ele.eledataabs(ele1);
