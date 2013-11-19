@@ -1036,7 +1036,8 @@ begin
         po4:= ele.eledataabs(ele1);
         addr1:= addr1 + po4^.offset;
        end;
-       po3:= ele.eledataabs(po4^.typ);
+       ele1:= po4^.typ;
+       po3:= ele.eledataabs(ele1);
        si1:= po3^.bytesize;      
       end
       else begin
