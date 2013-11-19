@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit handler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  parserglob,typinfo,msetypes,handlerglob;
@@ -1007,6 +1007,8 @@ var
  si1,addr1: ptruint;
  fl1: typeflagsty;
  paramco: integer;
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'VALUEIDENTIFIER');
@@ -1031,7 +1033,7 @@ begin
         if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                     vis_max,ele1) then begin
          identerror(info,1+int1,err_identifiernotfound);
-         exit;
+         goto endlab;
         end;
         po4:= ele.eledataabs(ele1);
         addr1:= addr1 + po4^.offset;
@@ -1163,6 +1165,7 @@ outinfo(info,'******');
    identerror(info,1,err_identifiernotfound);
 //   identnotfounderror(contextstack[stacktop],'valueidentifier');
   end;
+endlab:
   stacktop:= stackindex;
   dec(stackindex);
  end;
