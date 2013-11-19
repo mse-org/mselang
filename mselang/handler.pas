@@ -1680,7 +1680,7 @@ begin
  outhandle(info,'ASSIGNMENT');
 {$endif}
  with info^ do begin
-  if (stacktop-stackindex = 2) then begin
+  if (stacktop-stackindex = 2) and not errorfla then begin
    with contextstack[stackindex+1].d do begin
    //todo: handle dereference and the like
     bo1:= false;
