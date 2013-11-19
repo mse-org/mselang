@@ -800,8 +800,8 @@ begin
   else begin
    mstr1:= ' ';
   end;
-  mstr1:= mstr1+'P:'+inttostr(po1^.header.parent)+
-            ' O:'+inttostr(int1)+' N:$'+
+  mstr1:= mstr1+'O:'+inttostr(int1) +
+            ' P:'+inttostr(po1^.header.parent)+' N:$'+
             hextostr(po1^.header.name,8)+' '+
             ' '+identlist.identname(po1^.header.name) + 
             ' V:'+inttostr(ord(po1^.header.vislevel))+' '+

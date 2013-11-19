@@ -51,7 +51,7 @@ type
  
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
                dk_address,dk_record,dk_reference);
- datasizety = (das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+ datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                das_33_63,das_64);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 

@@ -72,7 +72,8 @@ begin
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            vis_max,ek_field,po1) then begin
    ele1:= ele.elementparent;
-   ele.elementparent:= contextstack[contextstack[stackindex].parent].d.elemark; //record def
+   ele.elementparent:= contextstack[contextstack[stackindex].parent].d.elemark;
+                                                           //record def
    if findkindelementsdata(info,3,[ek_type],vis_max,po2) then begin
     po1^.typ:= ele.eledatarel(po2);
     with contextstack[stackindex].d do begin
@@ -112,8 +113,13 @@ begin
     int2:= int2 + ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
    end;
   end;
-  ptypedataty(ele.eledataabs(
-               contextstack[stackindex].d.typ.typedata))^.bytesize:= int2;
+  with ptypedataty(ele.eledataabs(
+               contextstack[stackindex].d.typ.typedata))^ do begin
+   kind:= dk_record;
+   datasize:= das_none;
+   bytesize:= int2;
+   bitsize:= int2*8;
+  end;
  end;
 end;
 
