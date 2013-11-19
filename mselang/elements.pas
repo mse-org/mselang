@@ -813,7 +813,7 @@ begin
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
      po2:= eleinfoabs(typ);
-     mstr1:= mstr1+' T:'+getidentname(po2^.header.name);
+     mstr1:= mstr1+' T:'+inttostr(typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize);
