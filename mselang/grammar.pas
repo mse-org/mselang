@@ -623,6 +623,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'num');
+ fracexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'fracexp');
  fracco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -2895,7 +2900,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bnum: array[0..2] of branchty = (
+ bnum: array[0..3] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
@@ -2906,6 +2911,23 @@ const
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @fracco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @fracexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['E','e']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bfracexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @expco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3218,14 +3240,14 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bexponent: array[0..3] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @negexponentco); stack: nil; keys: (
     (kind: bkk_char; chars: ['-']),
     (kind: bkk_none; chars: []),
@@ -3488,6 +3510,7 @@ begin
  num0co.handleexit:= @dummyhandler;
  numco.branch:= @bnum;
  numco.handleexit:= @handledecnum;
+ fracexpco.branch:= @bfracexp;
  fracco.branch:= @bfrac;
  fracco.handleexit:= @handlefrac;
  identco.branch:= @bident;

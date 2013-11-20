@@ -436,6 +436,10 @@ const
   (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,
    1e10,1e11,1e12,1e13,1e14,1e15,1e16,1e17,1e18,1e19,
    1e20,1e21,1e22,1e23,1e24,1e25,1e26,1e27,1e28,1e29,1e30,1e31,1e32);
+ floatnegexps: array[0..32] of double = 
+  (1e0,1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8,1e-9,
+   1e-10,1e-11,1e-12,1e-13,1e-14,1e-15,1e-16,1e-17,1e-18,1e-19,
+   1e-20,1e-21,1e-22,1e-23,1e-24,1e-25,1e-26,1e-27,1e-28,1e-29,1e-30,1e-31,1e-32);
 
 procedure dofrac(const info: pparseinfoty; const asource: pchar;
                  out neg: boolean; out mantissa: qword; out fraclen: integer);
@@ -499,7 +503,8 @@ begin
 {$endif}
  dofrac(info,info^.source.po,neg,mant,fraclen);
  with info^,contextstack[stacktop].d.constval do begin
-  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
+//  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
+  vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
   if neg then begin
    vfloat:= -vfloat; 
   end;
@@ -517,17 +522,28 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'EXPONENT');
 {$endif}
+outinfo(info,'*****');
  with info^ do begin
   exp:= contextstack[stacktop].d.constval.vinteger;
   dec(stacktop,2);
-  dofrac(info,contextstack[stackindex].start.po,neg,mant,fraclen);
+  dofrac(info,contextstack[stackindex].start.po-1,neg,mant,fraclen);
   exp:= exp-fraclen;
   with contextstack[stacktop] do begin
    consumed:= source.po; //todo: overflow check
-   do1:= floatexps[exp and $1f];
-   while exp >= 32 do begin
-    do1:= do1*floatexps[32];
-    exp:= exp - 32;
+   if exp < 0 then begin
+    exp:= -exp;
+    do1:= floatnegexps[exp and $1f];
+    while exp >= 32 do begin
+     do1:= do1*floatnegexps[32];
+     exp:= exp - 32;
+    end;
+   end
+   else begin
+    do1:= floatexps[exp and $1f];
+    while exp >= 32 do begin
+     do1:= do1*floatexps[32];
+     exp:= exp - 32;
+    end;
    end;
    with d.constval do begin
     vfloat:= mant*do1;
