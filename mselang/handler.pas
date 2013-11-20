@@ -66,6 +66,7 @@ procedure handlepointertype(const info: pparseinfoty);
 
 procedure handledecnum(const info: pparseinfoty);
 procedure handlenumberentry(const info: pparseinfoty);
+procedure handlenumber(const info: pparseinfoty);
 procedure posnumber(const info: pparseinfoty);
 procedure negnumber(const info: pparseinfoty);
 procedure handlenumberexpected(const info: pparseinfoty);
@@ -409,7 +410,7 @@ var
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CNUM');
+ outhandle(info,'DECNUM');
 {$endif}
  with info^,contextstack[stacktop] do begin
   po1:= source.po;
@@ -472,13 +473,55 @@ begin
  end;
 end;
 
+const
+ card32decdigits: array[0..9] of card32 =
+ (         1,
+          10,
+         100,
+        1000,
+       10000,
+      100000,
+     1000000,
+    10000000,
+   100000000,
+  1000000000
+ );
+
+procedure handlenumber(const info: pparseinfoty);
+var
+ int1: integer;
+ c1: card32;
+ po1: pchar;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'NUMBER');
+{$endif}
+ with info^,contextstack[stacktop] do begin
+  po1:= source.po;
+  consumed:= po1;
+  c1:= 0;
+  dec(po1);
+  int1:= po1-start.po;
+  if int1 <= high(card32decdigits) then begin
+   for int1:= 0 to int1 do begin
+    c1:= c1 + (ord(po1^)-ord('0')) * card32decdigits[int1];
+    dec(po1);
+   end;
+  end;
+  d.number.value:= c1;
+  dec(stackindex);
+ end;
+end;
+
 procedure handlenumberexpected(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'NUMBEREXPECTED');
 {$endif}
  with info^ do begin
-  errormessage(info,stacktop-stackindex,err_numberexpected,[]);
+  illegalcharactererror(info,false);
+//  errormessage(info,stacktop-stackindex,err_numberexpected,[]);
+  dec(stackindex);
  end;
 end;
 
@@ -552,14 +595,22 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'FRAC');
 {$endif}
- dofrac(info,info^.source.po,neg,mant,fraclen);
- with info^,contextstack[stacktop].d.constval do begin
-//  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
-  vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
-  if neg then begin
-   vfloat:= -vfloat; 
-  end;
-  consumed:= source.po;
+ with info^ do begin
+//  if stacktop > stackindex then begin //no exponent nuber error otherwise
+   dofrac(info,info^.source.po,neg,mant,fraclen);
+   with info^,contextstack[stacktop].d.constval do begin
+  //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
+    vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
+    if neg then begin
+     vfloat:= -vfloat; 
+    end;
+    consumed:= source.po;
+   end;
+//  end
+//  else begin
+//   dec(stackindex);
+//   stacktop:= stackindex;
+//  end;
  end;
 end;
 
@@ -575,7 +626,12 @@ begin
 {$endif}
 outinfo(info,'*****');
  with info^ do begin
-  exp:= contextstack[stacktop].d.constval.vinteger;
+  with contextstack[stacktop].d.number do begin
+   exp:= value;
+   if nuf_neg in flags then begin
+    exp:= -exp;
+   end;
+  end;
   dec(stacktop,2);
   dofrac(info,contextstack[stackindex].start.po-1,neg,mant,fraclen);
   if fraclen < 0 then begin

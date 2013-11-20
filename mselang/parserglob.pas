@@ -188,6 +188,7 @@ type
  
  numberinfoty = record
   flags: numflagsty;
+  value: card32;
  end;
  
  identinfoty = record

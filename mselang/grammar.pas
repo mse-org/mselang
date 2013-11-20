@@ -633,6 +633,21 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'frac');
+ exponentco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'exponent');
+ numberco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'number');
+ number0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'number0');
  identco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -713,16 +728,6 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'bracketend');
- exponentco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'exponent');
- numberco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'number');
  numberexpectedco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: true; restoresource: false; 
@@ -2956,6 +2961,57 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bexponent: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @numberco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bnumber: array[0..4] of branchty = (
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @posnumber); stack: nil; keys: (
+    (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @negnumber); stack: nil; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @number0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @numberexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bnumber0: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
@@ -3244,47 +3300,6 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexponent: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @numberco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bnumber: array[0..4] of branchty = (
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @posnumber); stack: nil; keys: (
-    (kind: bkk_char; chars: ['+']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @negnumber); stack: nil; keys: (
-    (kind: bkk_char; chars: ['-']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_push];
-     dest: (context: @numco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['0'..'9']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @numberexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
 procedure init;
 begin
  startco.branch:= @bstart;
@@ -3523,8 +3538,15 @@ begin
  numco.branch:= @bnum;
  numco.handleexit:= @handledecnum;
  fracexpco.branch:= @bfracexp;
+ fracexpco.next:= @fracco;
  fracco.branch:= @bfrac;
  fracco.handleexit:= @handlefrac;
+ exponentco.branch:= @bexponent;
+ exponentco.handleexit:= @handleexponent;
+ numberco.branch:= @bnumber;
+ numberco.handleentry:= @handlenumberentry;
+ number0co.branch:= @bnumber0;
+ number0co.handleexit:= @handlenumber;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
  identpathcontinueco.branch:= @bidentpathcontinue;
@@ -3558,10 +3580,6 @@ begin
  bracketstartco.handleexit:= @dummyhandler;
  bracketendco.branch:= @bbracketend;
  bracketendco.handleexit:= @handlebracketend;
- exponentco.branch:= @bexponent;
- exponentco.handleexit:= @handleexponent;
- numberco.branch:= @bnumber;
- numberco.handleentry:= @handlenumberentry;
  numberexpectedco.branch:= nil;
  numberexpectedco.handleexit:= @handlenumberexpected;
 end;
