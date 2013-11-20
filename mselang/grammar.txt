@@ -321,7 +321,7 @@ num,,,handledecnum
  '.',frac-*
  'e','E',fracexp-*
 fracexp,,,
- '',exp*
+ '',exponent*
 frac,,,handlefrac
  @num,-
  'e','E',exponent-*
@@ -368,8 +368,12 @@ bracketstart,bracketend,,dummyhandler
 bracketend,,,handlebracketend
  ${whitespace}
 exponent,,,handleexponent
- '+',-
- '-',negexponent-*
+ '',number
+number,,handlenumberentry,
+ '+',!posnumber-
+ '-',!negnumber-
  @num,num*
-negexponent,,,handlenegexponent
- @num,num*
+ '',numberexpected
+numberexpected,,,handlenumberexpected*
+#negexponent,,,handlenegexponent
+# @num,num*

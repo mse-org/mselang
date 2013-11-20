@@ -30,7 +30,7 @@ type
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
-            err_argnotassign);
+            err_argnotassign,err_illegalcharacter,err_numberexpected);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -71,7 +71,9 @@ const
   (level: erl_error; message: 'Illegal qualifier'),
   (level: erl_error; message: 'Illegal expression'),
   (level: erl_error; message: 'Variable identifier expexted'),
-  (level: erl_error; message: 'Argument can''t be assigned to')  
+  (level: erl_error; message: 'Argument can''t be assigned to'),
+  (level: erl_fatal; message: 'Illegal character %s'),
+  (level: erl_error; message: 'Number expected')  
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -85,6 +87,7 @@ procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
 procedure assignmenterror(const info: pparseinfoty;
                  const source: contextdataty; const dest: vardestinfoty);
+procedure illegalcharactererror(const info: pparseinfoty; const eaten: boolean);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
 
@@ -137,6 +140,20 @@ begin
     end;
    end;
   end;
+ end;
+end;
+
+procedure illegalcharactererror(const info: pparseinfoty; const eaten: boolean);
+var
+ po1: pchar;
+begin
+ with info^ do begin
+  po1:= source.po;   //todo: utf-8 decoding
+  if eaten then begin
+   dec(po1);
+  end;
+  errormessage(info,stacktop-stackindex,err_illegalcharacter,
+           ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')']);
  end;
 end;
 

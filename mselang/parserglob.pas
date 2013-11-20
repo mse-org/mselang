@@ -68,7 +68,7 @@ type
  contexthandlerty = procedure(const info: pparseinfoty);
 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_opmark,ck_proc,
+                  ck_end,ck_ident,ck_number,ck_opmark,ck_proc,
                   ck_neg,ck_const,ck_fact,
                   ck_type,ck_var,ck_field,ck_statement,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
@@ -182,6 +182,13 @@ type
 
  factinfoty = record
  end;
+
+ numflagty = (nuf_pos,nuf_neg);
+ numflagsty = set of numflagty;
+ 
+ numberinfoty = record
+  flags: numflagsty;
+ end;
  
  identinfoty = record
   ident: identty;
@@ -216,6 +223,9 @@ type
   case kind: contextkindty of 
    ck_ident:(
     ident: identinfoty;
+   );
+   ck_number:(
+    number: numberinfoty;
    );
    ck_const,ck_fact:(
     datatyp: typeinfoty;

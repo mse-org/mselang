@@ -718,11 +718,16 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'exponent');
- negexponentco: contextty = (branch: nil; 
+ numberco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'negexponent');
+               caption: 'number');
+ numberexpectedco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'numberexpected');
 
 implementation
 
@@ -2926,7 +2931,7 @@ const
    );
  bfracexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @expco); stack: nil; keys: (
+     dest: (context: @exponentco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3239,16 +3244,26 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexponent: array[0..3] of branchty = (
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
+ bexponent: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @numberco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bnumber: array[0..4] of branchty = (
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @posnumber); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @negexponentco); stack: nil; keys: (
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @negnumber); stack: nil; keys: (
     (kind: bkk_char; chars: ['-']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3261,12 +3276,9 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bnegexponent: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_push];
-     dest: (context: @numco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['0'..'9']),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @numberexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3548,8 +3560,10 @@ begin
  bracketendco.handleexit:= @handlebracketend;
  exponentco.branch:= @bexponent;
  exponentco.handleexit:= @handleexponent;
- negexponentco.branch:= @bnegexponent;
- negexponentco.handleexit:= @handlenegexponent;
+ numberco.branch:= @bnumber;
+ numberco.handleentry:= @handlenumberentry;
+ numberexpectedco.branch:= nil;
+ numberexpectedco.handleexit:= @handlenumberexpected;
 end;
 
 function startcontext: pcontextty;

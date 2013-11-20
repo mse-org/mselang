@@ -65,9 +65,13 @@ procedure handletype3(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
 
 procedure handledecnum(const info: pparseinfoty);
+procedure handlenumberentry(const info: pparseinfoty);
+procedure posnumber(const info: pparseinfoty);
+procedure negnumber(const info: pparseinfoty);
+procedure handlenumberexpected(const info: pparseinfoty);
+
 procedure handlefrac(const info: pparseinfoty);
 procedure handleexponent(const info: pparseinfoty);
-procedure handlenegexponent(const info: pparseinfoty);
 
 procedure handlestatementend(const info: pparseinfoty);
 procedure handleblockend(const info: pparseinfoty);
@@ -131,7 +135,7 @@ procedure handleabort(const info: pparseinfoty);
 
 implementation
 uses
- stackops,msestrings,elements,grammar,sysutils,handlerutils,
+ stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif};
 
 const
@@ -431,6 +435,53 @@ begin
  end;
 end;
 
+procedure handlenumberentry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'NUMBERENTRY');
+{$endif}
+ with info^,contextstack[stacktop].d do begin
+  kind:= ck_number;
+  number.flags:= [];
+ end;
+end;
+
+procedure posnumber(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'POSNUMBER');
+{$endif}
+ with info^,contextstack[stacktop].d do begin
+  if number.flags <> [] then begin
+   illegalcharactererror(info,true);
+  end;
+  include(number.flags,nuf_pos);
+ end;
+end;
+
+procedure negnumber(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'NEGNUMBER');
+{$endif}
+ with info^,contextstack[stacktop].d do begin
+  if number.flags <> [] then begin
+   illegalcharactererror(info,true);
+  end;
+  include(number.flags,nuf_neg);
+ end;
+end;
+
+procedure handlenumberexpected(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'NUMBEREXPECTED');
+{$endif}
+ with info^ do begin
+  errormessage(info,stacktop-stackindex,err_numberexpected,[]);
+ end;
+end;
+
 const
  floatexps: array[0..32] of double = 
   (1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9,
@@ -527,6 +578,9 @@ outinfo(info,'*****');
   exp:= contextstack[stacktop].d.constval.vinteger;
   dec(stacktop,2);
   dofrac(info,contextstack[stackindex].start.po-1,neg,mant,fraclen);
+  if fraclen < 0 then begin
+   fraclen:= 0;  //no frac 123e4
+  end;
   exp:= exp-fraclen;
   with contextstack[stacktop] do begin
    consumed:= source.po; //todo: overflow check
@@ -555,6 +609,7 @@ outinfo(info,'*****');
  end;
 end;
 
+(*
 procedure handlenegexponent(const info: pparseinfoty);
 var
  mant: qword;
@@ -586,7 +641,7 @@ begin
  outhandle(info,'NEGEXPONENT');
 {$endif}
 end;
-
+*)
 const
  resultdatakinds: array[stackdatakindty] of datakindty =
             //sdk_bool8,sdk_int32,sdk_flo64,
