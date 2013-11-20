@@ -1272,6 +1272,8 @@ begin
       for int1:= stackindex+3+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
+        if d.kind = ck_const then begin
+        end;
         if d.datatyp.typedata <> po6^.typ then begin
          errormessage(info,int1-stackindex,err_incompatibletypeforarg,
            [int1-stackindex-3,typename(d),
@@ -1296,8 +1298,12 @@ outinfo(info,'******');
         int2:= stacktop-stackindex-2-idents.high;
         for int1:= 3+stackindex+idents.high to 
                                  int2+2+stackindex+idents.high do begin
-         push(info,ptypedataty(
-                 ele.eledataabs(contextstack[int1].d.datatyp.typedata))^.kind);
+         with contextstack[int1] do begin
+          if d.kind = ck_const then begin
+           
+          end;
+          push(info,ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind);
+         end;
         end;
         push(info,int2);
         writeop(info,op);
