@@ -30,7 +30,8 @@ type
             err_illegalunitname,err_internalerror,err_abort,err_tokenexpected,
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
-            err_argnotassign,err_illegalcharacter,err_numberexpected);
+            err_argnotassign,err_illegalcharacter,err_numberexpected,
+            err_negnotpossible);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -73,7 +74,8 @@ const
   (level: erl_error; message: 'Variable identifier expexted'),
   (level: erl_error; message: 'Argument can''t be assigned to'),
   (level: erl_fatal; message: 'Illegal character %s'),
-  (level: erl_error; message: 'Number expected')  
+  (level: erl_error; message: 'Number expected'),
+  (level: erl_error; message: 'Negation not possible') 
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

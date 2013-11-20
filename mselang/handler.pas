@@ -958,17 +958,39 @@ const
 procedure handleterm1(const info: pparseinfoty);
 var
  po1: ptypedataty;
+ bo1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM1');
 {$endif}
  with info^ do begin
   if stackindex < stacktop then begin
-   if contextstack[stackindex].d.kind = ck_neg then begin
-    po1:= ele.eledataabs(contextstack[stacktop].d.datatyp.typedata);
-    writeop(info,negops[po1^.kind]);
+   with contextstack[stackindex] do begin
+    bo1:= d.kind = ck_neg;
+    d:= contextstack[stacktop].d;
+    if bo1 then begin
+     if d.kind = ck_const then begin
+      with d.constval do begin
+       case kind of
+        dk_integer: begin
+         vinteger:= -vinteger;
+        end;
+        dk_float: begin
+         vfloat:= -vfloat;
+        end;
+        else begin
+         errormessage(info,1,err_negnotpossible,[]);
+        end;
+       end;
+      end;
+     end
+     else begin
+      po1:= ele.eledataabs(d.datatyp.typedata);
+      writeop(info,negops[po1^.kind]);
+     end;
+    end;
    end;
-   contextstack[stacktop-1]:= contextstack[stacktop];
+//   contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
    error(info,ce_expressionexpected);
@@ -1703,6 +1725,7 @@ begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(stacktop);
   //todo: handle dereference and the like
+ {
   if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
    with contextstack[stacktop] do begin
     if d.kind = ck_const then begin
@@ -1711,6 +1734,7 @@ begin
     end;
    end;
   end;
+ }
  end;
 end;
 
@@ -1870,6 +1894,12 @@ begin
      assignmenterror(info,contextstack[stacktop].d,dest);
     end
     else begin
+     with contextstack[stacktop] do begin
+      if d.kind = ck_const then begin
+       pushconst(info,d);
+       outcommand(info,[0],'push');
+      end;
+     end;
      with additem(info)^ do begin
       if vf_global in dest.address.flags then begin
        case dest.typ^.bytesize of
