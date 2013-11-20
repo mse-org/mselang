@@ -448,7 +448,7 @@ var
 begin
  with info^ do begin
   with contextstack[stacktop] do begin
-   fraclen:= asource-start.po-1;
+   fraclen:= asource-start.po;
   end;
   stacktop:= stacktop - 1;
   stackindex:= stacktop-1;
@@ -1674,11 +1674,39 @@ begin
  end;
 end;
 
+function tryconvert(const info: pparseinfoty; var context: contextitemty;
+                 const dest: vardestinfoty): boolean;
+var
+ po1: ptypedataty;
+begin
+ po1:= ele.eledataabs(context.d.datatyp.typedata);
+ result:= dest.typ^.kind = po1^.kind;
+ if not result then begin
+  case context.d.kind of
+   ck_const: begin
+    case dest.typ^.kind of //todo: use table
+     dk_float: begin
+      case po1^.kind of
+       dk_integer: begin //todo: adjust data size
+        with context.d,constval do begin
+         datatyp.typedata:= ele.eledatarel(dest.typ);
+         kind:= dk_float;
+         vfloat:= vinteger;
+        end;
+        result:= true;
+       end;
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure handleassignment(const info: pparseinfoty);
 var
  dest: vardestinfoty;
  bo1: boolean;
- po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
@@ -1706,11 +1734,7 @@ begin
     end;
    end;
    if bo1 and not errorfla then begin
-    bo1:= true;
-    po1:= ele.eledataabs(contextstack[stacktop].d.datatyp.typedata);
-    if dest.typ^.kind <> po1^.kind then begin
-     bo1:= false;
-    end;
+    bo1:= tryconvert(info,contextstack[stacktop],dest);
 //    if (vf_reference in varinfo1.flags) and 
 //        not (tf_reference in contextstack[stacktop].d.datatyp.flags) then begin
 //     bo1:= false;
