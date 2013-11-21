@@ -150,9 +150,9 @@ begin
        end;
       end;
      end;
-     ck_opmark: begin
-      write(opmark.address,' ');
-     end;
+//     ck_opmark: begin
+//      write(opmark.address,' ');
+//     end;
      ck_proc: begin
       write('paco:',proc.paramcount);
      end;
@@ -246,7 +246,7 @@ begin
    debugstart:= debugsource;
    parent:= int1;
    if bf_setpc in pb^.flags then begin
-    kind:= ck_opmark;
+//    kind:= ck_opmark;
     opmark.address:= opcount;
    end;
   end;

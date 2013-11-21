@@ -223,6 +223,19 @@ begin
  end;
 end;
 
+function insertitem(const info: pparseinfoty; 
+                                   const insertad: opaddressty): popinfoty;
+begin
+ with info^ do begin
+  if high(ops) < opcount then begin
+   setlength(ops,(high(ops)+257)*2);
+  end;
+  move(ops[insertad],ops[insertad+1],(opcount-insertad)*sizeof(ops[0]));
+  result:= @ops[insertad];
+  inc(opcount);
+ end;
+end;
+
 procedure writeop(const info: pparseinfoty; const operation: opty); inline;
 begin
  with additem(info)^ do begin
@@ -274,6 +287,30 @@ end;
 
 procedure deinit;
 begin
+end;
+
+procedure pushinsertconst(const info: pparseinfoty;
+                                              const avalue: contextitemty);
+begin
+ with insertitem(info,avalue.opmark.address)^ do begin
+  case avalue.d.constval.kind of
+   dk_boolean: begin
+    op:= @push8;
+    d.d.vboolean:= avalue.d.constval.vboolean;
+   end;
+   dk_integer: begin
+    op:= @push32;
+    d.d.vinteger:= avalue.d.constval.vinteger;
+   end;
+   dk_float: begin
+    op:= @push64;
+    d.d.vfloat:= avalue.d.constval.vfloat;
+   end;
+   else begin
+    internalerror(info,'P20131121A');
+   end;
+  end;
+ end;
 end;
 
 procedure push(const info: pparseinfoty; const avalue: boolean); overload;
@@ -355,7 +392,7 @@ end;
 procedure setcurrentloc(const info: pparseinfoty; const indexoffset: integer);
 begin 
  with info^ do begin
-  ops[contextstack[stackindex+indexoffset].d.opmark.address].d.opaddress:=
+  ops[contextstack[stackindex+indexoffset].opmark.address].d.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -364,7 +401,7 @@ procedure setcurrentlocbefore(const info: pparseinfoty;
                                              const indexoffset: integer);
 begin 
  with info^ do begin
-  ops[contextstack[stackindex+indexoffset].d.opmark.address-1].d.opaddress:=
+  ops[contextstack[stackindex+indexoffset].opmark.address-1].d.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -373,9 +410,9 @@ procedure setlocbefore(const info: pparseinfoty;
        const destindexoffset,sourceindexoffset: integer);
 begin
  with info^ do begin
-  ops[contextstack[stackindex+destindexoffset].d.opmark.address-1].
+  ops[contextstack[stackindex+destindexoffset].opmark.address-1].
                                                                d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].d.opmark.address-1;
+         contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
 
@@ -383,9 +420,9 @@ procedure setloc(const info: pparseinfoty;
        const destindexoffset,sourceindexoffset: integer);
 begin
  with info^ do begin
-  ops[contextstack[stackindex+destindexoffset].d.opmark.address].
+  ops[contextstack[stackindex+destindexoffset].opmark.address].
                                                                d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].d.opmark.address-1;
+         contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
 
@@ -1156,6 +1193,7 @@ var
  si1,addr1: ptruint;
  fl1: typeflagsty;
  paramco: integer;
+ opshift: opaddressty;
 label
  endlab;
 begin
@@ -1296,11 +1334,14 @@ outinfo(info,'******');
       case func of
        sf_writeln: begin
         int2:= stacktop-stackindex-2-idents.high;
+        opshift:= 0;
         for int1:= 3+stackindex+idents.high to 
                                  int2+2+stackindex+idents.high do begin
          with contextstack[int1] do begin
           if d.kind = ck_const then begin
-           
+           opmark.address:= opmark.address + opshift;
+           inc(opshift);
+           pushinsertconst(info,contextstack[int1]);
           end;
           push(info,ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind);
          end;

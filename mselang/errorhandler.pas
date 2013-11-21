@@ -209,3 +209,88 @@ begin
 end;
 
 end.
+
+sub test(para: boolean): int32;
+var
+ c1: card32;
+
+ sub locabc();
+ var
+  bo1: bool8;
+ begin
+  bo1:= false;
+  if bo1 then
+   c1:= 88;
+  else
+   para:= false;
+  end;
+ end;
+
+const
+ maxval = 123;
+ 
+begin
+ if para then
+  return maxval;
+ end;
+ locabc();
+ return 12;
+end;
+
+procedure test(para: boolean): int32;
+var
+ c1: card32;
+
+ procedure locabc();
+ var
+  bo1: bool8;
+ begin
+  bo1:= false;
+  if bo1 then
+   c1:= 88;
+  else
+   para:= false;
+  end;
+ end;
+
+const
+ maxval = 123;
+ 
+begin
+ if para then
+  return maxval;
+ end;
+ locabc();
+ return 12;
+end;
+
+testfunc(para: boolean): int32;
+var
+ c1: card32;
+
+ locabc();
+ var
+  bo1: bool8;
+ begin
+  bo1:= false;
+  if bo1 then
+   c1:= 88;
+  else
+   para:= false;
+  end;
+ end;
+
+const
+ maxval = 123;
+ 
+begin
+ if para then
+  return maxval;
+ end;
+ locabc();
+end:= 12;
+
+handler(const par1: msestring);
+begin
+ testfunc(false);
+end;

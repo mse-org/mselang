@@ -365,7 +365,7 @@ checkparams,,,^
  '(',params0-
 params0,params1,,handleparams0
 params1,params2,,
- '',exp^*
+ '',exp^*!
 params2,,,
  ${whitespace}
  ',',params1-

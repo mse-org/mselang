@@ -3205,7 +3205,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bparams1: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),

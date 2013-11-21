@@ -39,7 +39,7 @@ begin
 {$endif}
  with info^ do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  with contextstack[stackindex].d do begin
+  with contextstack[stackindex],d do begin
    elemark:= ele.elementparent;
    kind:= ck_type;
    if not ele.pushelement(id1,vis_max,ek_type,typ.typedata) then begin
@@ -55,7 +55,7 @@ begin
  outhandle(info,'RECORDDEFERROR');
 {$endif}
  with info^ do begin
-  ele.elementparent:= contextstack[stackindex].d.elemark;
+  ele.elementparent:= contextstack[stackindex].elemark;
  end;
 end;
 
@@ -72,7 +72,7 @@ begin
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            vis_max,ek_field,po1) then begin
    ele1:= ele.elementparent;
-   ele.elementparent:= contextstack[contextstack[stackindex].parent].d.elemark;
+   ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
                                                            //record def
    if findkindelementsdata(info,3,[ek_type],vis_max,po2) then begin
     po1^.typ:= ele.eledatarel(po2);
@@ -104,7 +104,7 @@ begin
  outhandle(info,'RECORDDEFRETURN');
 {$endif}
  with info^ do begin
-  ele.elementparent:= contextstack[stackindex].d.elemark; //restore
+  ele.elementparent:= contextstack[stackindex].elemark; //restore
   int2:= 0;
   for int1:= stackindex+2 to stacktop do begin
    with contextstack[int1].d do begin

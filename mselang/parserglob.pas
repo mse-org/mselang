@@ -68,7 +68,7 @@ type
  contexthandlerty = procedure(const info: pparseinfoty);
 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_number,ck_opmark,ck_proc,
+                  ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_fact,
                   ck_type,ck_var,ck_field,ck_statement,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
@@ -220,7 +220,7 @@ type
  end;
  
  contextdataty = record
-  elemark: elementoffsetty;
+//  elemark: elementoffsetty;
   case kind: contextkindty of 
    ck_ident:(
     ident: identinfoty;
@@ -244,9 +244,9 @@ type
    ck_params:(
     params: paramsinfoty;
    );
-   ck_opmark:(
-    opmark: opmarkty;
-   );
+//   ck_opmark:(
+//    opmark: opmarkty;
+//   );
    ck_type:(
     typ: typeinfoty;
    );
@@ -274,6 +274,8 @@ type
   start: sourceinfoty;
   debugstart: pchar;
   transitionflags: branchflagsty;
+  elemark: elementoffsetty;
+  opmark: opmarkty;
   d: contextdataty;
  end;
  pcontextitemty = ^contextitemty;
