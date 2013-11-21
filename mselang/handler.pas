@@ -1901,6 +1901,26 @@ begin
      end;
     end;
    end;
+   ck_fact: begin
+    case dest.typ^.kind of //todo: use table
+     dk_float: begin
+      case po1^.kind of
+       dk_integer: begin //todo: adjust data size
+        with additem(info)^ do begin
+         op:= @stackops.int32toflo64;
+         with d.op1 do begin
+          index0:= 0;
+         end;
+        end;
+        result:= true;
+       end;
+      end;
+     end;
+    end;
+   end;
+   else begin
+    internalerror(info,'P20131121B');
+   end;
   end;
  end;
 end;
