@@ -71,8 +71,8 @@ type
                   ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_fact,
                   ck_type,ck_var,ck_field,ck_statement,ck_params);
- stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64,
-                    sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
+ stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64{,
+                    sdk_bool8rev,sdk_int32rev,sdk_flo64rev});
  opaddressty = ptruint;
  popaddressty = ^opaddressty;
  dataaddressty = ptruint;

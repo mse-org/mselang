@@ -140,7 +140,7 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif};
 
 const
- reversestackdata = sdk_bool8rev;
+// reversestackdata = sdk_bool8rev;
  stacklinksize = 1;
 
 type
@@ -737,15 +737,11 @@ end;
 *)
 const
  resultdatakinds: array[stackdatakindty] of datakindty =
-            //sdk_bool8,sdk_int32,sdk_flo64,
-           (dk_boolean,dk_integer,dk_float,
-            //sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
-            dk_boolean,dk_integer,dk_float);
+            //sdk_bool8,sdk_int32,sdk_flo64
+           (dk_boolean,dk_integer,dk_float);
  resultdatatypes: array[stackdatakindty] of systypety =
-            //sdk_bool8,sdk_int32,sdk_flo64,
-           (st_bool8,st_int32,st_float64,
-            //sdk_bool8rev,sdk_int32rev,sdk_flo64rev);
-            st_bool8,st_int32,st_float64);
+            //sdk_bool8,sdk_int32,sdk_flo64
+           (st_bool8,st_int32,st_float64);
 
 function pushvalues(const info: pparseinfoty): stackdatakindty;
 //todo: don't convert inplace, stack items will be of variable size
@@ -755,36 +751,45 @@ var
  po1: pelementinfoty;
 begin
  with info^ do begin
-  reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
-                           (contextstack[stacktop-2].d.kind = ck_const);
+//  reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
+//                           (contextstack[stacktop-2].d.kind = ck_const);
+  reverse:= false;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
   po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
   if (kinda = dk_float) or (kindb = dk_float) then begin
    result:= sdk_flo64;
-   with contextstack[stacktop].d do begin
+   with contextstack[stacktop-2],d do begin
     if kind = ck_const then begin
-     case constval.kind of
-      dk_integer: begin
-       push(info,real(constval.vinteger));
-      end;
-      dk_float: begin
-       push(info,constval.vfloat);
+     with insertitem(info,opmark.address)^ do begin
+      op:= @push64;
+      case constval.kind of
+       dk_integer: begin
+        d.d.vfloat:= real(constval.vinteger);
+       end;
+       dk_float: begin
+        d.d.vfloat:= constval.vfloat;
+       end;
       end;
      end;
     end
     else begin //ck_fact
-     case kinda of
+     case kindb of
       dk_integer: begin
-       int32toflo64(info,0);
+       with insertitem(info,opmark.address)^ do begin
+        op:= @stackops.int32toflo64;
+        with d.op1 do begin
+         index0:= 0;
+        end;
+       end;
       end;
      end;
     end;
    end;
-   with contextstack[stacktop-2].d do begin
+   with contextstack[stacktop].d do begin
     if kind = ck_const then begin
-     case kindb of
+     case kinda of
       dk_integer: begin
        push(info,real(constval.vinteger));
       end;
@@ -795,7 +800,7 @@ begin
      end;
     end
     else begin
-     case kindb of
+     case kinda of
       dk_integer: begin
         int32toflo64(info,-1);
       end;
@@ -806,11 +811,15 @@ begin
   else begin
    if kinda = dk_boolean then begin
     result:= sdk_bool8;
-    with contextstack[stacktop-2].d do begin
+    with contextstack[stacktop-2],d do begin
      if kind = ck_const then begin
       case kindb of
        dk_boolean: begin
-        push(info,constval.vboolean);
+        with insertitem(info,opmark.address)^ do begin
+         op:= @push8;
+         d.d.vboolean:= constval.vboolean;
+        end;        
+//        push(info,constval.vboolean);
        end;
       end;
      end;
@@ -827,11 +836,14 @@ begin
    end
    else begin
     result:= sdk_int32;
-    with contextstack[stacktop-2].d do begin
+    with contextstack[stacktop-2],d do begin
      if kind = ck_const then begin
-      case kindb of
-       dk_integer: begin
-        push(info,constval.vinteger);
+      with insertitem(info,opmark.address)^ do begin
+       case kindb of
+        dk_integer: begin
+         op:= @push32;
+         d.d.vinteger:= constval.vinteger;
+        end;
        end;
       end;
      end;
@@ -847,9 +859,9 @@ begin
     end;
    end;
   end;
-  if reverse then begin
-   result:= stackdatakindty(ord(result)+ord(reversestackdata));
-  end;
+//  if reverse then begin
+//   result:= stackdatakindty(ord(result)+ord(reversestackdata));
+//  end;
   dec(stacktop,2);
   with contextstack[stacktop] do begin
    d.kind:= ck_fact;
@@ -862,8 +874,7 @@ end;
 
 const
  mulops: array[stackdatakindty] of opty =
-          (@dummyop,@mulint32,@mulflo64,
-           @dummyop,@mulint32,@mulflo64);
+          (@dummyop,@mulint32,@mulflo64);
  
 procedure handlemulfact(const info: pparseinfoty);
 begin
@@ -876,8 +887,7 @@ end;
 
 const
  addops: array[stackdatakindty] of opty =
-                    (@dummyop,@addint32,@addflo64,
-                     @dummyop,@addint32,@addflo64);
+                    (@dummyop,@addint32,@addflo64);
 
 procedure handleaddterm(const info: pparseinfoty);
 begin
@@ -1333,7 +1343,6 @@ begin
 //     stacktop:= stackindex;
     end;
     ek_sysfunc: begin
-outinfo(info,'******');
      with psysfuncdataty(po2)^ do begin
       case func of
        sf_writeln: begin
@@ -1853,6 +1862,7 @@ begin
  outhandle(info,'HANDLESTATEMENT');
 end;
 }
+{
 function tryconvert(var data: contextdataty;
                             const dest: vardestinfoty): boolean;
 var
@@ -1865,7 +1875,7 @@ begin
  result:= dest.typ^.kind = po1^.kind;
 
 end;
-
+}
 procedure handleassignmententry(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}

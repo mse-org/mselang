@@ -276,12 +276,12 @@ exp1,,,handleexp^
 equsimpexp,,,handleequsimpexp
  '',simpexp*
 simpexp,simpexp1,,handlesimpexp
- '',term*
+ '',term*!
 simpexp1,simpexp1,,handlesimpexp1
  ${whitespace}
  '+',addterm-*
 addterm,,,handleaddterm
- '',term*
+ '',term*!
 term,term1,,handleterm
  ${whitespace}
  '+',-

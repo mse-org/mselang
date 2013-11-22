@@ -2621,7 +2621,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bsimpexp: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc];
      dest: (context: @termco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2669,7 +2669,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  baddterm: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc];
      dest: (context: @termco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
