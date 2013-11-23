@@ -1248,7 +1248,7 @@ begin
       case po1^.kind of
        dk_integer: begin //todo: adjust data size
         with context.d,constval do begin
-         datatyp.typedata:= ele.eledatarel(dest);
+//         datatyp.typedata:= ele.eledatarel(dest);
          kind:= dk_float;
          vfloat:= vinteger;
         end;
@@ -1279,6 +1279,9 @@ begin
 outinfo(info,'*****');
     internalerror(info,'P20131121B');
    end;
+  end;
+  if result then begin
+   context.d.datatyp.typedata:= ele.eledatarel(dest);
   end;
  end;
 end;
