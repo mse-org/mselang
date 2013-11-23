@@ -1188,6 +1188,56 @@ begin
  errormessage(info,0,err_identifierexpected,[]);
 end;
 
+function tryconvert(const info: pparseinfoty; var context: contextitemty;
+                 const dest: ptypedataty): boolean;
+var
+ po1: ptypedataty;
+begin
+ po1:= ele.eledataabs(context.d.datatyp.typedata);
+ result:= dest^.kind = po1^.kind;
+ if not result then begin
+  case context.d.kind of
+   ck_const: begin
+    case dest^.kind of //todo: use table
+     dk_float: begin
+      case po1^.kind of
+       dk_integer: begin //todo: adjust data size
+        with context.d,constval do begin
+         datatyp.typedata:= ele.eledatarel(dest);
+         kind:= dk_float;
+         vfloat:= vinteger;
+        end;
+        result:= true;
+       end;
+      end;
+     end;
+    end;
+   end;
+   ck_fact: begin
+    case dest^.kind of //todo: use table
+     dk_float: begin
+      case po1^.kind of
+       dk_integer: begin //todo: adjust data size
+        with additem(info)^ do begin
+         op:= @stackops.int32toflo64;
+         with d.op1 do begin
+          index0:= 0;
+         end;
+        end;
+        result:= true;
+       end;
+      end;
+     end;
+    end;
+   end;
+   else begin
+outinfo(info,'*****');
+    internalerror(info,'P20131121B');
+   end;
+  end;
+ end;
+end;
+
 procedure handlevalueidentifier(const info: pparseinfoty);
 var
  paramco: integer;
@@ -1353,8 +1403,6 @@ begin
       op:= @callop;
       d.opaddress:= pfuncdataty(po2)^.address-1;
      end;
-//     dec(stackindex);
-//     stacktop:= stackindex;
     end;
     ek_sysfunc: begin
      with psysfuncdataty(po2)^ do begin
@@ -1381,7 +1429,19 @@ begin
      end;
     end;
     ek_type: begin
-     po3:= @po1^.data;
+     if paramco = 0 then begin
+      errormessage(info,stacktop-stackindex,err_illegalexpression,[]);
+     end
+     else begin
+      if paramco > 1 then begin
+       errormessage(info,4,err_closeparentexpected,[],-1);
+      end
+      else begin
+       if not tryconvert(info,contextstack[stacktop],po2) then begin
+        illegalconversionerror(info,contextstack[stacktop].d,po2);
+       end;
+      end;
+     end;
     end;
     else begin
      errormessage(info,0,err_wrongtype,[]);
@@ -1903,55 +1963,6 @@ begin
  end;
 end;
 
-function tryconvert(const info: pparseinfoty; var context: contextitemty;
-                 const dest: vardestinfoty): boolean;
-var
- po1: ptypedataty;
-begin
- po1:= ele.eledataabs(context.d.datatyp.typedata);
- result:= dest.typ^.kind = po1^.kind;
- if not result then begin
-  case context.d.kind of
-   ck_const: begin
-    case dest.typ^.kind of //todo: use table
-     dk_float: begin
-      case po1^.kind of
-       dk_integer: begin //todo: adjust data size
-        with context.d,constval do begin
-         datatyp.typedata:= ele.eledatarel(dest.typ);
-         kind:= dk_float;
-         vfloat:= vinteger;
-        end;
-        result:= true;
-       end;
-      end;
-     end;
-    end;
-   end;
-   ck_fact: begin
-    case dest.typ^.kind of //todo: use table
-     dk_float: begin
-      case po1^.kind of
-       dk_integer: begin //todo: adjust data size
-        with additem(info)^ do begin
-         op:= @stackops.int32toflo64;
-         with d.op1 do begin
-          index0:= 0;
-         end;
-        end;
-        result:= true;
-       end;
-      end;
-     end;
-    end;
-   end;
-   else begin
-    internalerror(info,'P20131121B');
-   end;
-  end;
- end;
-end;
-
 procedure handleassignment(const info: pparseinfoty);
 var
  dest: vardestinfoty;
@@ -1983,11 +1994,7 @@ begin
     end;
    end;
    if bo1 and not errorfla then begin
-    bo1:= tryconvert(info,contextstack[stacktop],dest);
-//    if (vf_reference in varinfo1.flags) and 
-//        not (tf_reference in contextstack[stacktop].d.datatyp.flags) then begin
-//     bo1:= false;
-//    end;
+    bo1:= tryconvert(info,contextstack[stacktop],dest.typ);
     if not bo1 then begin
      assignmenterror(info,contextstack[stacktop].d,dest);
     end

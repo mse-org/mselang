@@ -31,7 +31,7 @@ type
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
             err_argnotassign,err_illegalcharacter,err_numberexpected,
-            err_negnotpossible);
+            err_negnotpossible,err_closeparentexpected,err_illegalconversion);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -75,7 +75,9 @@ const
   (level: erl_error; message: 'Argument can''t be assigned to'),
   (level: erl_fatal; message: 'Illegal character %s'),
   (level: erl_error; message: 'Number expected'),
-  (level: erl_error; message: 'Negation not possible') 
+  (level: erl_error; message: 'Negation not possible'),
+  (level: erl_fatal; message: 'Syntax error, ")" expected'),
+  (level: erl_error; message: 'Illegal type conversion: "%s" to "%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -89,6 +91,8 @@ procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
 procedure assignmenterror(const info: pparseinfoty;
                  const source: contextdataty; const dest: vardestinfoty);
+procedure illegalconversionerror(const info: pparseinfoty;
+                 const source: contextdataty; const dest: ptypedataty);
 procedure illegalcharactererror(const info: pparseinfoty; const eaten: boolean);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
@@ -184,8 +188,9 @@ begin
  errormessage(info,-1,err_tokenexpected,[str1],0,aerrorlevel);
 end;
 
-procedure assignmenterror(const info: pparseinfoty;
-                      const source: contextdataty; const dest: vardestinfoty);
+procedure typeconversionerror(const info: pparseinfoty;
+          const source: contextdataty; const dest: vardestinfoty;
+                   const error: errorty);
 var
  sourceinfo,destinfo: string;
  po1,po2: pelementinfoty;
@@ -200,7 +205,23 @@ begin
    end;
   end;
  end;  
- errormessage(info,-1,err_incompatibletypes,[sourceinfo,destinfo]);
+ errormessage(info,-1,error,[sourceinfo,destinfo]);
+end;
+
+procedure assignmenterror(const info: pparseinfoty;
+                      const source: contextdataty; const dest: vardestinfoty);
+begin
+ typeconversionerror(info,source,dest,err_incompatibletypes);
+end;
+
+procedure illegalconversionerror(const info: pparseinfoty;
+                 const source: contextdataty; const dest: ptypedataty);
+var
+ d1: vardestinfoty;
+begin
+ d1.address.flags:= [];
+ d1.typ:= dest;
+ typeconversionerror(info,source,d1,err_illegalconversion);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);
