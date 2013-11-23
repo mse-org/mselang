@@ -1190,6 +1190,19 @@ end;
 
 procedure handlevalueidentifier(const info: pparseinfoty);
 var
+ paramco: integer;
+
+ function checknoparam: boolean;
+ begin
+  result:= paramco = 0;
+  if not result then begin
+   with info^,contextstack[stackindex].d do begin
+    errormessage(info,1,err_semicolonexpected,[],ident.len);
+   end;
+  end;
+ end;
+ 
+var
  po1: pelementinfoty;
  po2: pointer;
  po3: ptypedataty;
@@ -1202,7 +1215,6 @@ var
  int1,int2: integer;
  si1,addr1: ptruint;
  fl1: typeflagsty;
- paramco: integer;
  opshift: opaddressty;
 label
  endlab;
@@ -1211,107 +1223,109 @@ begin
  outhandle(info,'VALUEIDENTIFIER');
 {$endif}
  with info^ do begin
-  if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_func],
+  if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_func,ek_type],
                                 vis_max,po1,lastident,idents) then begin
-//   dec(stacktop,identcount);
+   paramco:= stacktop-stackindex-2-idents.high;
+   if paramco < 0 then begin
+    paramco:= 0; //no paramsend context
+   end;
    po2:= @po1^.data;
    case po1^.header.kind of
     ek_var: begin
-     fl1:= [];
-     addr1:= pvardataty(po2)^.address.address;
-     ele1:= pvardataty(po2)^.typ;
-     if vf_reference in pvardataty(po2)^.address.flags then begin
-      include(fl1,tf_reference);
-      si1:= pointersize;
-     end
-     else begin
-      if lastident < idents.high then begin
-       for int1:= lastident+1 to idents.high do begin //fields
-        if not ele.findchild(ele1,idents.d[int1],[ek_field],
-                                                    vis_max,ele1) then begin
-         identerror(info,1+int1,err_identifiernotfound);
-         goto endlab;
-        end;
-        po4:= ele.eledataabs(ele1);
-        addr1:= addr1 + po4^.offset;
-        ele1:= po4^.typ;
-       end;
-       ele1:= po4^.typ;
-       po3:= ele.eledataabs(ele1);
-       si1:= po3^.bytesize;      
+     if checknoparam then begin     
+      fl1:= [];
+      addr1:= pvardataty(po2)^.address.address;
+      ele1:= pvardataty(po2)^.typ;
+      if vf_reference in pvardataty(po2)^.address.flags then begin
+       include(fl1,tf_reference);
+       si1:= pointersize;
       end
       else begin
-       si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
-      end;
-     end;
-     if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-      with additem(info)^ do begin //todo: use table
-       if vf_global in pvardataty(po2)^.address.flags then begin
-        case si1 of
-         1: begin 
-          op:= @pushglob8;
+       if lastident < idents.high then begin
+        for int1:= lastident+1 to idents.high do begin //fields
+         if not ele.findchild(ele1,idents.d[int1],[ek_field],
+                                                     vis_max,ele1) then begin
+          identerror(info,1+int1,err_identifiernotfound);
+          goto endlab;
          end;
-         2: begin
-          op:= @pushglob16;
-         end;
-         4: begin
-          op:= @pushglob32;
-         end;
-         else begin
-          op:= @pushglob;
-         end;
+         po4:= ele.eledataabs(ele1);
+         addr1:= addr1 + po4^.offset;
+         ele1:= po4^.typ;
         end;
-        d.dataaddress:= addr1;
+        ele1:= po4^.typ;
+        po3:= ele.eledataabs(ele1);
+        si1:= po3^.bytesize;      
        end
        else begin
-        case si1 of
-         1: begin 
-          op:= @pushloc8;
-         end;
-         2: begin
-          op:= @pushloc16;
-         end;
-         4: begin
-          op:= @pushloc32;
-         end;
-         else begin
-          op:= @pushloc;
-         end;
-        end;
-        d.count:= addr1 - frameoffset;
+        si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
        end;
-       d.datasize:= si1;
       end;
-      with contextstack[stackindex].d do begin
-       kind:= ck_fact;
-       datatyp.typedata:= ele1;
-       datatyp.flags:= fl1;
-      end;
-     end
-     else begin  //todo: handle dereference and the like
-      with contextstack[stackindex].d do begin
-       kind:= ck_const;
-       datatyp.typedata:= ele1;
-       datatyp.flags:= fl1 + [tf_reference];
-       constval.kind:= dk_address;
-       constval.vaddress.address:= addr1;
-       constval.vaddress.flags:= pvardataty(po2)^.address.flags;
+      if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
+       with additem(info)^ do begin //todo: use table
+        if vf_global in pvardataty(po2)^.address.flags then begin
+         case si1 of
+          1: begin 
+           op:= @pushglob8;
+          end;
+          2: begin
+           op:= @pushglob16;
+          end;
+          4: begin
+           op:= @pushglob32;
+          end;
+          else begin
+           op:= @pushglob;
+          end;
+         end;
+         d.dataaddress:= addr1;
+        end
+        else begin
+         case si1 of
+          1: begin 
+           op:= @pushloc8;
+          end;
+          2: begin
+           op:= @pushloc16;
+          end;
+          4: begin
+           op:= @pushloc32;
+          end;
+          else begin
+           op:= @pushloc;
+          end;
+         end;
+         d.count:= addr1 - frameoffset;
+        end;
+        d.datasize:= si1;
+       end;
+       with contextstack[stackindex].d do begin
+        kind:= ck_fact;
+        datatyp.typedata:= ele1;
+        datatyp.flags:= fl1;
+       end;
+      end
+      else begin  //todo: handle dereference and the like
+       with contextstack[stackindex].d do begin
+        kind:= ck_const;
+        datatyp.typedata:= ele1;
+        datatyp.flags:= fl1 + [tf_reference];
+        constval.kind:= dk_address;
+        constval.vaddress.address:= addr1;
+        constval.vaddress.flags:= pvardataty(po2)^.address.flags;
+       end;
       end;
      end;
     end;
     ek_const: begin
-     with contextstack[stackindex].d do begin
-      kind:= ck_const;
-      datatyp:= pconstdataty(po2)^.val.typ;
-      constval:= pconstdataty(po2)^.val.d;
+     if checknoparam then begin
+      with contextstack[stackindex].d do begin
+       kind:= ck_const;
+       datatyp:= pconstdataty(po2)^.val.typ;
+       constval:= pconstdataty(po2)^.val.d;
+      end;
      end;
     end;
     ek_func: begin
-//outinfo(info,'******');
-     paramco:= stacktop-stackindex-2-idents.high;
-     if paramco < 0 then begin
-      paramco:= 0; //no paramsend context
-     end;
      if paramco <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
@@ -1365,6 +1379,9 @@ begin
        end;
       end;
      end;
+    end;
+    ek_type: begin
+     po3:= @po1^.data;
     end;
     else begin
      errormessage(info,0,err_wrongtype,[]);
