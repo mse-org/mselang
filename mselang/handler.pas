@@ -775,7 +775,7 @@ begin
      end;
     end
     else begin //ck_fact
-     case kindb of
+     case kinda of
       dk_integer: begin
        with insertitem(info,opmark.address)^ do begin
         op:= @stackops.int32toflo64;
@@ -802,7 +802,7 @@ begin
     else begin
      case kinda of
       dk_integer: begin
-        int32toflo64(info,-1);
+        int32toflo64(info,0);
       end;
      end;
     end;
