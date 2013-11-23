@@ -894,8 +894,53 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'ADDTERM');
 {$endif}
- outcommand(info,[-2,0],'+');
- writeop(info,addops[pushvalues(info)]);
+ with info^ do begin
+  if (contextstack[stacktop].d.kind = ck_const) and 
+                (contextstack[stacktop-2].d.kind = ck_const) then begin
+   case contextstack[stacktop].d.constval.kind of
+    dk_float: begin
+     with contextstack[stacktop-2].d.constval do begin
+      case kind of
+       dk_float: begin
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+       end;
+       dk_integer: begin
+        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+       end;
+       else begin
+        incompatibletypeserror(info,contextstack[stacktop-2].d,
+                                            contextstack[stacktop].d);
+       end;
+      end;
+     end;
+    end;
+    dk_integer: begin
+     with contextstack[stacktop-2].d.constval do begin
+      case kind of
+       dk_integer: begin
+        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
+       end;
+       else begin
+        incompatibletypeserror(info,contextstack[stacktop-2].d,
+                                            contextstack[stacktop].d);
+       end;
+      end;
+     end;
+    end;
+    else begin
+     operationnotsupportederror(info,contextstack[stacktop-2].d,
+                                            contextstack[stacktop].d,'+');
+    end;
+   end;
+   dec(stacktop,2);
+   stackindex:= stacktop-1;
+  end
+  else begin
+   outcommand(info,[-2,0],'+');
+   writeop(info,addops[pushvalues(info)]);
+  end;
+ end;
 end;
 
 procedure handleterm(const info: pparseinfoty);
@@ -1437,8 +1482,12 @@ begin
        errormessage(info,4,err_closeparentexpected,[],-1);
       end
       else begin
+outinfo(info,'****');
        if not tryconvert(info,contextstack[stacktop],po2) then begin
         illegalconversionerror(info,contextstack[stacktop].d,po2);
+       end
+       else begin
+        contextstack[stackindex].d:= contextstack[stacktop].d;
        end;
       end;
      end;

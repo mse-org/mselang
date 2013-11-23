@@ -31,7 +31,8 @@ type
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
             err_argnotassign,err_illegalcharacter,err_numberexpected,
-            err_negnotpossible,err_closeparentexpected,err_illegalconversion);
+            err_negnotpossible,err_closeparentexpected,err_illegalconversion,
+            err_operationnotsupported);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -77,7 +78,8 @@ const
   (level: erl_error; message: 'Number expected'),
   (level: erl_error; message: 'Negation not possible'),
   (level: erl_fatal; message: 'Syntax error, ")" expected'),
-  (level: erl_error; message: 'Illegal type conversion: "%s" to "%s"')
+  (level: erl_error; message: 'Illegal type conversion: "%s" to "%s"'),
+  (level: erl_error; message: 'Operation "%s" not supported for "%s" and "%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
@@ -93,6 +95,11 @@ procedure assignmenterror(const info: pparseinfoty;
                  const source: contextdataty; const dest: vardestinfoty);
 procedure illegalconversionerror(const info: pparseinfoty;
                  const source: contextdataty; const dest: ptypedataty);
+procedure incompatibletypeserror(const info: pparseinfoty;
+                                    const a,b: contextdataty);
+procedure operationnotsupportederror(const info: pparseinfoty;
+                           const a,b: contextdataty; const operation: string);
+
 procedure illegalcharactererror(const info: pparseinfoty; const eaten: boolean);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
@@ -222,6 +229,42 @@ begin
  d1.address.flags:= [];
  d1.typ:= dest;
  typeconversionerror(info,source,d1,err_illegalconversion);
+end;
+
+procedure typeinfonames(const a,b: contextdataty; out ainfo,binfo: string);
+var
+ po1,po2: pelementinfoty;
+begin
+ case a.kind of
+  ck_const,ck_fact: begin
+   po1:= ele.eleinfoabs(a.datatyp.typedata);
+   ainfo:= getidentname(po1^.header.name);
+  end;
+ end;
+ case b.kind of
+  ck_const,ck_fact: begin
+   po2:= ele.eleinfoabs(a.datatyp.typedata);
+   binfo:= getidentname(po2^.header.name);
+  end;
+ end;
+end;
+
+procedure incompatibletypeserror(const info: pparseinfoty;
+                                    const a,b: contextdataty);
+var
+ ainfo,binfo: string;
+begin
+ typeinfonames(a,b,ainfo,binfo);
+ errormessage(info,-1,err_incompatibletypes,[binfo,ainfo]);
+end;
+
+procedure operationnotsupportederror(const info: pparseinfoty;
+                           const a,b: contextdataty; const operation: string);
+var
+ ainfo,binfo: string;
+begin
+ typeinfonames(a,b,ainfo,binfo);
+ errormessage(info,-1,err_operationnotsupported,[operation,ainfo,binfo]);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);
