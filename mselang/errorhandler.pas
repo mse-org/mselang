@@ -243,7 +243,7 @@ begin
  end;
  case b.kind of
   ck_const,ck_fact: begin
-   po2:= ele.eleinfoabs(a.datatyp.typedata);
+   po2:= ele.eleinfoabs(b.datatyp.typedata);
    binfo:= getidentname(po2^.header.name);
   end;
  end;
