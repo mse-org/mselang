@@ -899,7 +899,7 @@ begin
                 (contextstack[stacktop-2].d.kind = ck_const) then begin
    case contextstack[stacktop].d.constval.kind of
     dk_float: begin
-     with contextstack[stacktop-2].d.constval do begin
+     with contextstack[stacktop-2],d,constval do begin
       case kind of
        dk_float: begin
         vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
@@ -907,6 +907,7 @@ begin
        dk_integer: begin
         vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
         kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
        end;
        else begin
         incompatibletypeserror(info,contextstack[stacktop-2].d,
@@ -916,10 +917,15 @@ begin
      end;
     end;
     dk_integer: begin
-     with contextstack[stacktop-2].d.constval do begin
+     with contextstack[stacktop-2].d,constval do begin
       case kind of
        dk_integer: begin
         vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
+       end;
+       dk_float: begin
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
        end;
        else begin
         incompatibletypeserror(info,contextstack[stacktop-2].d,
@@ -2023,6 +2029,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
 {$endif}
+outinfo(info,'*****');
  with info^ do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
    with contextstack[stackindex+1].d do begin
