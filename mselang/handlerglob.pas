@@ -69,7 +69,7 @@ type
   bitsize: integer;
   bytesize: integer;
   datasize: datasizety;
-  flags: typeflagsty;
+//  flags: typeflagsty;
   case kind: datakindty of 
    dk_boolean:(
     dummy: byte
@@ -94,8 +94,8 @@ type
      das_64:(infofloat64: float64infoty);
    dk_record: ();
    dk_reference:(
-    target: elementoffsetty;
-    reflevel: integer;
+    target: elementoffsetty;        //not indirected root type
+    indirectlevel: indirectlevelty; //total indirection count
    );
   );
  end;

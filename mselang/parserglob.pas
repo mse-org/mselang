@@ -141,23 +141,28 @@ type
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_global,vf_param,vf_reference);
+ varflagty = (vf_global,vf_param{,vf_reference});
  varflagsty = set of varflagty;
 
- typeflagty = (tf_reference);
- typeflagsty = set of typeflagty;
+ indirectlevelty = integer;
+ 
+// typeflagty = (tf_reference);
+// typeflagsty = set of typeflagty;
  typeinfoty = record
   typedata: elementoffsetty;
-  flags: typeflagsty;
+  indirectlevel: indirectlevelty;
+//  flags: typeflagsty;
  end;
 
  varinfoty = record
-  flags: typeflagsty;
+  indirectlevel: indirectlevelty;
+//  flags: typeflagsty;
  end;
  
  addressinfoty = record
   address: dataaddressty;
   flags: varflagsty;
+  indirectlevel: indirectlevelty;
  end; 
  dataty = record
   case kind: datakindty of

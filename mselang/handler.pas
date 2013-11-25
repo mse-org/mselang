@@ -167,11 +167,11 @@ const
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
    (name: 'bool8'; data: (bitsize: 8; bytesize: 1; datasize: das_8;
-     flags: []; kind: dk_boolean; dummy: 0)),
+     {flags: [];} kind: dk_boolean; dummy: 0)),
    (name: 'int32'; data: (bitsize: 32; bytesize: 4; datasize: das_32;
-     flags: []; kind: dk_integer; infoint32:(min: minint; max: maxint))),
+     {flags: [];} kind: dk_integer; infoint32:(min: minint; max: maxint))),
    (name: 'flo64'; data: (bitsize: 64; bytesize: 8; datasize: das_64;
-     flags: []; kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
+     {flags: [];} kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
@@ -266,7 +266,7 @@ begin
    po2^:= data;
   end;
   sysdatatypes[ty1].typedata:= ele.eleinforel(po1);
-  sysdatatypes[ty1].flags:= [];
+//  sysdatatypes[ty1].flags:= [];
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
@@ -973,10 +973,11 @@ begin
    with contextstack[stackindex] do begin
     d.kind:= ck_const;
     d.datatyp.typedata:= po2^.typ;
-    d.datatyp.flags:= [tf_reference];
+//    d.datatyp.flags:= [tf_reference];
     with d.constval do begin
      kind:= dk_address;
      vaddress:= po2^.address;
+     inc(vaddress.indirectlevel);
     end;
    end;
   end
@@ -997,18 +998,23 @@ begin
  outhandle(info,'DEREFERENCE');
 {$endif}
  with info^,contextstack[stacktop].d do begin
+ {
   int1:= -1;
   po1:= ele.eledataabs(datatyp.typedata);
   if po1^.kind = dk_reference then begin
-   int1:= po1^.reflevel;
+   int1:= po1^.indirectlevel;
   end;
   if tf_reference in datatyp.flags then begin
    inc(int1);
   end;
-  if int1 < 0 then begin
+  }
+  //todo: handle const
+  if datatyp.indirectlevel <= 0 then begin
    errormessage(info,-1,err_illegalqualifier,[]);
   end
   else begin
+   po1:= ele.eledataabs(datatyp.typedata);
+   dec(datatyp.indirectlevel);
    with additem(info)^ do begin //todo: use table
     case po1^.bytesize of
      1: begin
@@ -1318,7 +1324,8 @@ var
  ele1: elementoffsetty;
  int1,int2: integer;
  si1,addr1: ptruint;
- fl1: typeflagsty;
+ indirect1: indirectlevelty;
+// fl1: typeflagsty;
  opshift: opaddressty;
 label
  endlab;
@@ -1337,11 +1344,13 @@ begin
    case po1^.header.kind of
     ek_var: begin
      if checknoparam then begin     
-      fl1:= [];
+//      fl1:= [];
       addr1:= pvardataty(po2)^.address.address;
       ele1:= pvardataty(po2)^.typ;
-      if vf_reference in pvardataty(po2)^.address.flags then begin
-       include(fl1,tf_reference);
+      indirect1:= pvardataty(po2)^.address.indirectlevel;
+      if indirect1 > 0 then begin
+//      if vf_reference in pvardataty(po2)^.address.flags then begin
+//       include(fl1,tf_reference);
        si1:= pointersize;
       end
       else begin
@@ -1405,14 +1414,16 @@ begin
        with contextstack[stackindex].d do begin
         kind:= ck_fact;
         datatyp.typedata:= ele1;
-        datatyp.flags:= fl1;
+        datatyp.indirectlevel:= indirect1;
+//        datatyp.flags:= fl1;
        end;
       end
       else begin  //todo: handle dereference and the like
        with contextstack[stackindex].d do begin
         kind:= ck_const;
         datatyp.typedata:= ele1;
-        datatyp.flags:= fl1 + [tf_reference];
+        datatyp.indirectlevel:= indirect1+1;
+//        datatyp.flags:= fl1 + [tf_reference];
         constval.kind:= dk_address;
         constval.vaddress.address:= addr1;
         constval.vaddress.flags:= pvardataty(po2)^.address.flags;
@@ -1783,7 +1794,8 @@ begin
 {$endif}
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_var;
-  d.vari.flags:= [];
+  d.vari.indirectlevel:= 0;
+//  d.vari.flags:= [];
  end;
 end;
 
@@ -1811,9 +1823,11 @@ begin
       address.address:= getlocvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
       address.flags:= []; //local
      end;
-     if tf_reference in contextstack[stackindex].d.vari.flags then begin
-      include(address.flags,vf_reference);
-     end;
+     address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel +
+                                      ptypedataty(@po2^.data)^.indirectlevel;
+//     if tf_reference in contextstack[stackindex].d.vari.flags then begin
+//      include(address.flags,vf_reference);
+//     end;
     end;
    end
    else begin
@@ -1829,10 +1843,12 @@ begin
  outhandle(info,'POINTERVAR');
 {$endif}
  with info^,contextstack[stackindex].d.vari do begin
-  if tf_reference in flags then begin
+//  if tf_reference in flags then begin
+  if indirectlevel > 0 then begin
    errormessage(info,-1,err_typeidentexpected,[]);
   end;
-  include(flags,tf_reference);
+  inc(indirectlevel);
+//  include(flags,tf_reference);
  end;
 end;
 
@@ -1854,7 +1870,8 @@ begin
 {$endif}
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_type;
-  d.typ.flags:= [];
+  d.typ.indirectlevel:= 0;
+//  d.typ.flags:= [];
  end;
 end;
 
@@ -1864,7 +1881,8 @@ begin
  outhandle(info,'POINTERTYPE');
 {$endif}
  with info^,contextstack[stackindex] do begin
-  include(d.typ.flags,tf_reference);
+  inc(d.typ.indirectlevel);
+//  include(d.typ.flags,tf_reference);
  end;
 end;
 
@@ -1887,14 +1905,19 @@ begin
     if findkindelements(info,stacktop-stackindex,
                        [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-     if tf_reference in contextstack[stackindex].d.typ.flags then begin
-      with ptypedataty(@po1^.data)^ do begin
-       bytesize:= pointersize;
-       kind:= dk_reference;
-       target:= ele.eleinforel(po2);
-       reflevel:= 0;
-       if ptypedataty(@po2^.data)^.kind = dk_reference then begin
-        reflevel:= ptypedataty(@po2^.data)^.reflevel + 1;
+//     if tf_reference in contextstack[stackindex].d.typ.flags then begin
+     with contextstack[stackindex].d do begin
+      if typ.indirectlevel > 0 then begin
+       with ptypedataty(@po1^.data)^ do begin
+        if ptypedataty(@po1^.data)^.kind = dk_reference then begin
+         indirectlevel:= indirectlevel + typ.indirectlevel;
+        end
+        else begin
+         bytesize:= pointersize;
+         kind:= dk_reference;
+         target:= ele.eleinforel(po2);
+         indirectlevel:= 1;
+        end;
        end;
       end;
      end;

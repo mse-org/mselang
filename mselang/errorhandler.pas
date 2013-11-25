@@ -207,7 +207,8 @@ begin
    po1:= ele.eleinfoabs(source.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
-   if vf_reference in dest.address.flags then begin
+//   if vf_reference in dest.address.flags then begin
+   if dest.address.indirectlevel > 0 then begin
     destinfo:= '^'+destinfo;
    end;
   end;
