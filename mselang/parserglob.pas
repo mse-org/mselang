@@ -64,20 +64,24 @@ const
  idstart = $12345678;
 
 type 
- pparseinfoty = ^parseinfoty;
- contexthandlerty = procedure(const info: pparseinfoty);
-
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_fact,
                   ck_type,ck_var,ck_field,ck_statement,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64{,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev});
- opaddressty = ptruint;
+ opaddressty = ptruint;         //todo: use target size
  popaddressty = ^opaddressty;
  dataaddressty = ptruint;
  pdataaddressty = ^dataaddressty;
- 
+ databytesizety = ptruint;
+const
+ dataaddresssize = sizeof(dataaddressty);
+
+type 
+ pparseinfoty = ^parseinfoty;
+ contexthandlerty = procedure(const info: pparseinfoty);
+
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,
              bf_setpc,bf_continue,
@@ -429,3 +433,33 @@ begin
 end;
 
 end.
+
+...
+label
+ abort;
+begin
+...
+ with fr: fieldread, ds: dataset as tmsesqlquery do
+  if fieldwrite.dataset.state in [dsBrowse,dsInactive] then 
+   goto abort;
+  end;
+  if fr is tmselongintfield then
+   if local_idx_num >= 0 then
+    if not ds.indexlocal[local_idx_num].find([fieldwrite.asinteger],[],bm,
+                                                         false,false,true) then
+     fieldwrite.clear;
+    end;
+   end;
+  else
+   if fr is tmsestringfield then
+    if local_idx_num >= 0 then
+     if not ds.indexlocal[local_idx_num].find( [fieldwrite.asmsestring],[],bm,
+                                                         false,false,true) then
+      fieldwrite.clear;
+     end;
+    end;
+   end;
+  end;
+ end;
+abort:
+end;

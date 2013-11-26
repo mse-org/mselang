@@ -42,7 +42,7 @@ procedure outinfo(const info: pparseinfoty; const text: string);
 {$endif}
 implementation
 uses
- typinfo,grammar,handler,elements,msestrings,sysutils,
+ typinfo,grammar,handler,elements,msestrings,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
@@ -68,6 +68,18 @@ end;
 
 {$ifdef mse_debugparser}
 procedure outinfo(const info: pparseinfoty; const text: string);
+ procedure writetype(const ainfo: typeinfoty);
+ var
+  po1: ptypedataty;
+ begin
+  with ainfo do begin
+   po1:= ele.eledataabs(typedata);
+   write('T:',inttostr(typedata),' ',
+          getenumname(typeinfo(datakindty),ord(po1^.kind)),' ',
+          'I:',inttostr(indirectlevel),' ');
+  end;
+ end;
+ 
 var
  int1: integer;
 begin
@@ -137,7 +149,11 @@ begin
       end;
       write(getidentname(ident.ident));
      end;
+     ck_fact: begin
+      writetype(datatyp);
+     end;
      ck_const: begin
+      writetype(datatyp);
       case constval.kind of
        dk_boolean: begin
         write(constval.vboolean,' ');
@@ -147,6 +163,13 @@ begin
        end;
        dk_float: begin
         write(constval.vfloat,' ');
+       end;
+       dk_address: begin
+        with constval.vaddress do begin
+         write(settostring(ptypeinfo(typeinfo(varflagsty)),
+                               integer(constval.vaddress.flags),true));
+         write('I:',inttostr(indirectlevel),' A:',inttostr(address),' ');
+        end;
        end;
       end;
      end;

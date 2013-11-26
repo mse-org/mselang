@@ -16,7 +16,10 @@ unit stackops;
 interface
 uses
  parserglob;
- 
+
+const
+ pointersize = sizeof(pointer);
+  
 type
 
  infoopty = procedure(const opinfo: popinfoty);
@@ -70,6 +73,11 @@ procedure indirect8;
 procedure indirect16;
 procedure indirect32;
 procedure indirect;
+
+procedure popindirect8;
+procedure popindirect16;
+procedure popindirect32;
+procedure popindirect;
 
 procedure callop;
 procedure returnop;
@@ -357,6 +365,34 @@ procedure indirect;
 begin
  move(ppointer(@mainstack[mainstackpo])^^,(mainstack[mainstackpo]),
                                                           oppo^.d.datasize);
+end;
+
+procedure popindirect8;
+begin
+ pv8ty(ppointer(@mainstack[mainstackpo-1])^)^:= 
+                                  pv8ty(@mainstack[mainstackpo])^;
+ dec(mainstackpo,2);
+end;
+
+procedure popindirect16;
+begin
+ pv16ty(ppointer(@mainstack[mainstackpo-1])^)^:= 
+                                  pv16ty(@mainstack[mainstackpo])^;
+ dec(mainstackpo,2);
+end;
+
+procedure popindirect32;
+begin
+ pv32ty(ppointer(@mainstack[mainstackpo-1])^)^:= 
+                                  pv32ty(@mainstack[mainstackpo])^;
+ dec(mainstackpo,2);
+end;
+
+procedure popindirect;
+begin
+ move(mainstack[mainstackpo],ppointer(@mainstack[mainstackpo-1])^^,
+                                                       oppo^.d.datasize);
+ dec(mainstackpo,2);
 end;
 
 procedure callop;

@@ -989,6 +989,49 @@ begin
  info^.stacktop:= info^.stackindex;
 end;
 
+procedure pushdata(const info: pparseinfoty; 
+         const flags: varflagsty;
+         const address: dataaddressty; const size: databytesizety);
+begin
+ with additem(info)^ do begin //todo: use table
+  if vf_global in flags then begin
+   case size of
+    1: begin 
+     op:= @pushglob8;
+    end;
+    2: begin
+     op:= @pushglob16;
+    end;
+    4: begin
+     op:= @pushglob32;
+    end;
+    else begin
+     op:= @pushglob;
+    end;
+   end;
+   d.dataaddress:= address;
+  end
+  else begin
+   case size of
+    1: begin 
+     op:= @pushloc8;
+    end;
+    2: begin
+     op:= @pushloc16;
+    end;
+    4: begin
+     op:= @pushloc32;
+    end;
+    else begin
+     op:= @pushloc;
+    end;
+   end;
+   d.count:= address - info^.frameoffset;
+  end;
+  d.datasize:= size;
+ end;
+end;
+
 procedure handledereference(const info: pparseinfoty);
 var
  po1: ptypedataty;
@@ -1013,25 +1056,35 @@ begin
    errormessage(info,-1,err_illegalqualifier,[]);
   end
   else begin
-   po1:= ele.eledataabs(datatyp.typedata);
    dec(datatyp.indirectlevel);
-   with additem(info)^ do begin //todo: use table
-    case po1^.bytesize of
-     1: begin
-      op:= @indirect8;
-     end;
-     2: begin
-      op:= @indirect16;
-     end;
-     4: begin
-      op:= @indirect32;
-     end;
-     else begin
-      op:= @indirect;
-      d.datasize:= po1^.bytesize;      
-     end;
+   if currentstatementflags * [stf_rightside,stf_params] = [] then begin
+    if kind = ck_const then begin
+     pushdata(info,constval.vaddress.flags,constval.vaddress.address,
+                                                           dataaddresssize);
+//     push(info,constval.vaddress);
+     kind:= ck_fact;
     end;
-   end;   
+   end
+   else begin
+    po1:= ele.eledataabs(datatyp.typedata);
+    with additem(info)^ do begin //todo: use table
+     case po1^.bytesize of
+      1: begin
+       op:= @indirect8;
+      end;
+      2: begin
+       op:= @indirect16;
+      end;
+      4: begin
+       op:= @indirect32;
+      end;
+      else begin
+       op:= @indirect;
+       d.datasize:= po1^.bytesize;      
+      end;
+     end;
+    end;   
+   end;
   end;
  end;
 end;
@@ -1323,7 +1376,8 @@ var
  idents: identvecty;
  ele1: elementoffsetty;
  int1,int2: integer;
- si1,addr1: ptruint;
+ si1: databytesizety;
+ addr1: dataaddressty;
  indirect1: indirectlevelty;
 // fl1: typeflagsty;
  opshift: opaddressty;
@@ -1374,48 +1428,11 @@ begin
        end;
       end;
       if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-       with additem(info)^ do begin //todo: use table
-        if vf_global in pvardataty(po2)^.address.flags then begin
-         case si1 of
-          1: begin 
-           op:= @pushglob8;
-          end;
-          2: begin
-           op:= @pushglob16;
-          end;
-          4: begin
-           op:= @pushglob32;
-          end;
-          else begin
-           op:= @pushglob;
-          end;
-         end;
-         d.dataaddress:= addr1;
-        end
-        else begin
-         case si1 of
-          1: begin 
-           op:= @pushloc8;
-          end;
-          2: begin
-           op:= @pushloc16;
-          end;
-          4: begin
-           op:= @pushloc32;
-          end;
-          else begin
-           op:= @pushloc;
-          end;
-         end;
-         d.count:= addr1 - frameoffset;
-        end;
-        d.datasize:= si1;
-       end;
+       pushdata(info,pvardataty(po2)^.address.flags,addr1,si1);
        with contextstack[stackindex].d do begin
         kind:= ck_fact;
         datatyp.typedata:= ele1;
         datatyp.indirectlevel:= indirect1;
-//        datatyp.flags:= fl1;
        end;
       end
       else begin  //todo: handle dereference and the like
@@ -1423,7 +1440,6 @@ begin
         kind:= ck_const;
         datatyp.typedata:= ele1;
         datatyp.indirectlevel:= indirect1+1;
-//        datatyp.flags:= fl1 + [tf_reference];
         constval.kind:= dk_address;
         constval.vaddress.address:= addr1;
         constval.vaddress.flags:= pvardataty(po2)^.address.flags;
@@ -1823,8 +1839,12 @@ begin
       address.address:= getlocvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
       address.flags:= []; //local
      end;
-     address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel +
-                                      ptypedataty(@po2^.data)^.indirectlevel;
+     address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel;
+     with ptypedataty(@po2^.data)^ do begin
+      if kind = dk_reference then begin
+       address.indirectlevel:= address.indirectlevel+indirectlevel;
+      end;
+     end;
 //     if tf_reference in contextstack[stackindex].d.vari.flags then begin
 //      include(address.flags,vf_reference);
 //     end;
@@ -2047,7 +2067,8 @@ end;
 procedure handleassignment(const info: pparseinfoty);
 var
  dest: vardestinfoty;
- bo1: boolean;
+ typematch,indi: boolean;
+ si1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
@@ -2057,27 +2078,44 @@ outinfo(info,'*****');
   if (stacktop-stackindex = 2) and not errorfla then begin
    with contextstack[stackindex+1].d do begin
    //todo: handle dereference and the like
-    bo1:= false;
-    case kind of
-     ck_const: begin
-      if constval.kind <> dk_address then begin
-       errormessage(info,0,err_argnotassign,[]);
-      end
-      else begin
-       dest.typ:= ele.eledataabs(datatyp.typedata);
-       dest.address:= constval.vaddress;
-       bo1:= true;
-      end;
-     end;
+    typematch:= false;
+    indi:= false;
+    dest.typ:= ele.eledataabs(datatyp.typedata);
+    dec(datatyp.indirectlevel);
+    if datatyp.indirectlevel < 0 then begin
+     internalerror(info,'P20131126B');
+    end
+    else begin
+     if datatyp.indirectlevel > 0 then begin
+      si1:= pointersize;
+     end
      else begin
-      internalerror(info,'P20131117A');
-      exit;
+      si1:= dest.typ^.bytesize;
+     end;
+     case kind of
+      ck_const: begin
+       if constval.kind <> dk_address then begin
+        errormessage(info,0,err_argnotassign,[]);
+       end
+       else begin
+        dest.address:= constval.vaddress;
+        typematch:= true;
+       end;
+      end;
+      ck_fact: begin
+       typematch:= true;
+       indi:= true;
+      end;
+      else begin
+       internalerror(info,'P20131117A');
+       exit;
+      end;
      end;
     end;
    end;
-   if bo1 and not errorfla then begin
-    bo1:= tryconvert(info,contextstack[stacktop],dest.typ);
-    if not bo1 then begin
+   if typematch and not errorfla then begin
+    typematch:= tryconvert(info,contextstack[stacktop],dest.typ);
+    if not typematch then begin
      assignmenterror(info,contextstack[stacktop].d,dest);
     end
     else begin
@@ -2088,41 +2126,59 @@ outinfo(info,'*****');
       end;
      end;
      with additem(info)^ do begin
-      if vf_global in dest.address.flags then begin
-       case dest.typ^.bytesize of
-        1: begin 
-         op:= @popglob8;
+      d.datasize:= si1;
+      if indi then begin
+       case si1 of
+        1: begin
+         op:= @popindirect8;
         end;
         2: begin
-         op:= @popglob16;
+         op:= @popindirect16;
         end;
         4: begin
-         op:= @popglob32;
+         op:= @popindirect32;
         end;
         else begin
-         op:= @popglob;
+         op:= @popindirect;
         end;
        end;
-       d.dataaddress:= dest.address.address;
       end
       else begin
-       case dest.typ^.bytesize of
-        1: begin 
-         op:= @poploc8;
+       if vf_global in dest.address.flags then begin
+        case si1 of
+         1: begin 
+          op:= @popglob8;
+         end;
+         2: begin
+          op:= @popglob16;
+         end;
+         4: begin
+          op:= @popglob32;
+         end;
+         else begin
+          op:= @popglob;
+         end;
         end;
-        2: begin
-         op:= @poploc16;
+        d.dataaddress:= dest.address.address;
+       end
+       else begin
+        case si1 of
+         1: begin 
+          op:= @poploc8;
+         end;
+         2: begin
+          op:= @poploc16;
+         end;
+         4: begin
+          op:= @poploc32;
+         end;
+         else begin
+          op:= @poploc;
+         end;
         end;
-        4: begin
-         op:= @poploc32;
-        end;
-        else begin
-         op:= @poploc;
-        end;
+        d.count:= dest.address.address;
        end;
-       d.count:= dest.address.address;
       end;
-      d.datasize:= dest.typ^.bytesize;
      end;
     end;
    end;
