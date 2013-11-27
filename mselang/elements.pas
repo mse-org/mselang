@@ -823,8 +823,9 @@ begin
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
-       ' S:'+inttostr(bytesize);
+       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      po3:= po1;
+     {
      while ptypedataty(@po3^.data)^.kind = dk_reference do begin
       mstr1:= mstr1+' R:'+inttostr(ptypedataty(@po3^.data)^.indirectlevel);
       mstr2:= '  ';
@@ -838,6 +839,7 @@ begin
       end;
       mstr2:= mstr2+' ';
      end;
+     }
     end;
    end;
   end;

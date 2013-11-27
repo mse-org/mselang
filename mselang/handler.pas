@@ -166,12 +166,14 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'bool8'; data: (bitsize: 8; bytesize: 1; datasize: das_8;
-     {flags: [];} kind: dk_boolean; dummy: 0)),
-   (name: 'int32'; data: (bitsize: 32; bytesize: 4; datasize: das_32;
-     {flags: [];} kind: dk_integer; infoint32:(min: minint; max: maxint))),
-   (name: 'flo64'; data: (bitsize: 64; bytesize: 8; datasize: das_64;
-     {flags: [];} kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
+   (name: 'bool8'; data: (indirectlevel: 0;
+       bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
+   (name: 'int32'; data: (indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_32;
+                 kind: dk_integer; infoint32:(min: minint; max: maxint))),
+   (name: 'flo64'; data: (indirectlevel: 0;
+       bitsize: 64; bytesize: 8; datasize: das_64;
+                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
@@ -1108,8 +1110,8 @@ const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
    @dummyop,@dummyop,  @negcard32, @negint32, @negflo64,
- //dk_kind, dk_address,dk_record,dk_reference
-   @dummyop,@dummyop,  @dummyop, @dummyop
+ //dk_kind, dk_address,dk_record
+   @dummyop,@dummyop,  @dummyop
  );
 
 procedure handleterm1(const info: pparseinfoty);
@@ -1841,9 +1843,9 @@ begin
      end;
      address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
-      if kind = dk_reference then begin
+//      if kind = dk_reference then begin
        address.indirectlevel:= address.indirectlevel+indirectlevel;
-      end;
+//      end;
      end;
 //     if tf_reference in contextstack[stackindex].d.vari.flags then begin
 //      include(address.flags,vf_reference);
@@ -1927,6 +1929,8 @@ begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
 //     if tf_reference in contextstack[stackindex].d.typ.flags then begin
      with contextstack[stackindex].d do begin
+      inc(ptypedataty(@po1^.data)^.indirectlevel,typ.indirectlevel);
+      {
       if typ.indirectlevel > 0 then begin
        with ptypedataty(@po1^.data)^ do begin
         if ptypedataty(@po1^.data)^.kind = dk_reference then begin
@@ -1940,6 +1944,7 @@ begin
         end;
        end;
       end;
+      }
      end;
     end
     else begin

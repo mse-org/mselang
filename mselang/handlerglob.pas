@@ -66,6 +66,7 @@ type
  end;
  
  typedataty = record
+  indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
   bytesize: integer;
   datasize: datasizety;
@@ -93,10 +94,12 @@ type
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
    dk_record: ();
+  {
    dk_reference:(
     target: elementoffsetty;        //not indirected root type
-    indirectlevel: indirectlevelty; //total indirection count
+     indirectlevel: indirectlevelty; //total indirection count
    );
+  }
   );
  end;
  ptypedataty = ^typedataty;
