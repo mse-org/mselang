@@ -94,7 +94,8 @@ procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
 procedure assignmenterror(const info: pparseinfoty;
                  const source: contextdataty; const dest: vardestinfoty);
 procedure illegalconversionerror(const info: pparseinfoty;
-                 const source: contextdataty; const dest: ptypedataty);
+                 const source: contextdataty; const dest: ptypedataty;
+                                       const destindirectlevel: integer);
 procedure incompatibletypeserror(const info: pparseinfoty;
                                     const a,b: contextdataty);
 procedure operationnotsupportederror(const info: pparseinfoty;
@@ -223,12 +224,14 @@ begin
 end;
 
 procedure illegalconversionerror(const info: pparseinfoty;
-                 const source: contextdataty; const dest: ptypedataty);
+                 const source: contextdataty; const dest: ptypedataty;
+                                             const destindirectlevel: integer);
 var
  d1: vardestinfoty;
 begin
  d1.address.flags:= [];
  d1.typ:= dest;
+ d1.address.indirectlevel:= destindirectlevel;
  typeconversionerror(info,source,d1,err_illegalconversion);
 end;
 
