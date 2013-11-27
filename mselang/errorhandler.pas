@@ -202,14 +202,18 @@ procedure typeconversionerror(const info: pparseinfoty;
 var
  sourceinfo,destinfo: string;
  po1,po2: pelementinfoty;
+ int1: integer;
 begin
  case source.kind of
   ck_const,ck_fact: begin
    po1:= ele.eleinfoabs(source.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
+   for int1:= 0 to source.datatyp.indirectlevel-1 do begin
+    sourceinfo:= '^'+sourceinfo;
+   end;
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
 //   if vf_reference in dest.address.flags then begin
-   if dest.address.indirectlevel > 0 then begin
+   for int1:= 0 to dest.address.indirectlevel-1 do begin
     destinfo:= '^'+destinfo;
    end;
   end;
