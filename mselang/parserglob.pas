@@ -211,6 +211,7 @@ type
  procinfoty = record
   paramcount: integer;
   elementmark: markinfoty;
+  error: boolean;
  end;
  paramsinfoty = record
   flagsbefore: statementflagsty;
@@ -375,7 +376,7 @@ type
  opinfoarty = array of opinfoty;
  errorlevelty = (erl_none,erl_fatal,erl_error);
 
- unitstatety = (us_interface,us_interfaceparsed);
+ unitstatety = (us_interface,us_interfaceparsed,us_implementation);
  unitstatesty = set of unitstatety;
 
  punitinfoty = ^unitinfoty;

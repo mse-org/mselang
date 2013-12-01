@@ -103,6 +103,8 @@ procedure handlesimpexp1(const info: pparseinfoty);
 
 procedure handleparams0(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
+procedure handleprocedureheader(const info: pparseinfoty);
+
 {
 procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
@@ -1236,6 +1238,16 @@ begin
   with contextstack[stackindex].d do begin
    currentstatementflags:= params.flagsbefore;
   end;
+ end;
+end;
+
+procedure handleprocedureheader(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PROCEDUREHEADER');
+{$endif}
+ with info^ do begin
+  dec(stackindex);
  end;
 end;
 
@@ -2443,6 +2455,38 @@ begin //boolexp,thenmark,elsemark
  end;
 end;
 
+type
+ equalparaminfoty = record
+  ref: pfuncdataty;
+ end;
+
+procedure checkequalparam(const aelement: pelementinfoty; var adata;
+                                                     var terminate: boolean);
+var
+ po1: pfuncdataty;
+ int1: integer;
+ par1,parref: pvardatapoaty;
+ offs1: ptruint;
+ var1,varref: pvardataty;
+begin
+ po1:= @aelement^.data;
+ with equalparaminfoty(adata) do begin
+  if (po1 <> ref) and (po1^.paramcount = ref^.paramcount) then begin
+   offs1:= ele.eleoffset;
+   pointer(par1):= @po1^.paramsrel;
+   pointer(parref):= @ref^.paramsrel;
+   for int1:= 0 to po1^.paramcount-1 do begin
+    var1:= pointer(par1^[int1])+offs1;
+    varref:= pointer(parref^[int1])+offs1;
+    if var1^.typ <> varref^.typ then begin
+     exit;
+    end;
+   end;
+   terminate:= true;
+  end;
+ end;
+end;
+
 procedure handleprocedure3(const info: pparseinfoty);
 var
  po1: pfuncdataty;
@@ -2452,6 +2496,10 @@ var
  int1,int2: integer;
  paramco: integer;
  err1: boolean;
+ impl1: boolean;
+ parent1: elementoffsetty;
+ paramdata: equalparaminfoty;
+
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE3');
@@ -2459,55 +2507,68 @@ begin
 //0          1     2          3          4    5
 //procedure2,ident,paramsdef3{,paramdef2,name,type}
               //todo: multi level type
+outinfo(info,'****');
  with info^ do begin
-  err1:= false;
-  inc(funclevel);
   paramco:= (stacktop-stackindex-2) div 3;
-  if ele.pushelement(contextstack[stackindex+1].d.ident.ident,vis_max,
-                    ek_func,
-                        paramco*sizeof(pvardataty),po1) then begin
-   po1^.paramcount:= paramco;
-   po4:= @po1^.paramsrel;
-   int1:= 4;
-   for int2:= 0 to paramco-1 do begin
-    if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
-                               ek_var,po2) then begin
-     po4^[int2]:= ele.eledatarel(po2);
-     if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
-      with po2^ do begin
+  po1:= addr(ele.pushelementduplicate(
+                      contextstack[stackindex+1].d.ident.ident,
+                      vis_max,ek_func,paramco*sizeof(pvardataty))^.data);
+  po1^.paramcount:= paramco;
+  po4:= @po1^.paramsrel;
+  int1:= 4;
+  err1:= false;
+  impl1:= us_implementation in unitinfo^.state; //todo: check forward modifier
+  for int2:= 0 to paramco-1 do begin
+   if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
+                              ek_var,po2) then begin
+    po4^[int2]:= ele.eledatarel(po2);
+    if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
+     with po2^ do begin
+      if impl1 then begin
        address.address:= getlocvaraddress(info,po3^.bytesize);
        address.flags:= [vf_param];
-       typ:= ele.eledatarel(po3);
       end;
-     end
-     else begin
-      identerror(info,int1+1-stackindex,err_identifiernotfound);
-      err1:= true;
+      typ:= ele.eledatarel(po3);
      end;
     end
     else begin
-     identerror(info,int1,err_duplicateidentifier);
+     identerror(info,int1+1-stackindex,err_identifiernotfound);
      err1:= true;
     end;
-    int1:= int1+3;
+   end
+   else begin
+    identerror(info,int1,err_duplicateidentifier);
+    err1:= true;
    end;
+   int1:= int1+3;
+  end;
+  
+  parent1:= ele.decelementparent; //check params duplicate
+  with paramdata do begin
+   ref:= po1;
+  end;
+  if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
+                            vis_max,@checkequalparam,paramdata) then begin
+   err1:= true;
+   errormessage(info,-1,err_sameparamlist,[]);
+  end;
+  
+  if impl1 then begin //implementation
+   ele.elementparent:= parent1;
    with po1^ do begin
     address:= opcount;
    end;
+   inc(funclevel);
+   frameoffset:= locdatapo; //todo: nested procedures
+   getlocvaraddress(info,stacklinksize);
+   stacktop:= stackindex;
+   with contextstack[stackindex] do begin
+    d.kind:= ck_proc;
+    d.proc.paramcount:= paramco;
+    d.proc.error:= err1;
+    ele.markelement(d.proc.elementmark); 
+   end;
   end;
-  if err1 then begin
-   //todo: delete procedure definition
-   dec(funclevel);
-  end;
-  frameoffset:= locdatapo; //todo: nested procedures
-  getlocvaraddress(info,stacklinksize);
-  stacktop:= stackindex;
-  with contextstack[stackindex] do begin
-   d.kind:= ck_proc;
-   d.proc.paramcount:= paramco;
-   ele.markelement(d.proc.elementmark); 
-  end;
-//  ele.popelement;
  end;
 end;
 
@@ -2517,7 +2578,7 @@ begin
  outhandle(info,'PROCEDURE6');
 {$endif}
  with info^ do begin
-  ele.releaseelement(contextstack[stackindex].d.proc.elementmark); 
+  ele.releaseelement(contextstack[stackindex-1].d.proc.elementmark); 
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;

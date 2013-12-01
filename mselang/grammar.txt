@@ -53,6 +53,7 @@ start2,noimplementation,,
  'const'.,const-*
  'var'.,var-*
  'type'.,type-*
+ 'procedure'.,procedureheader-*^>
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,,
@@ -70,7 +71,7 @@ implementation,main,,implementationstart
 
 main,main1,,handlemain
  ${whitespace}
- 'procedure'.,procedure0-*
+ 'procedure'.,procedure-*
  'begin'.,progbegin-
  'const'.,const-*
  'var'.,var-*
@@ -96,6 +97,7 @@ linecomment1,,,handlecommentend^*>
 progbegin,progblock,,handleprogbegin
 progblock,,,
  '',statementblock-^*
+#
 paramsdef0,,,
  ${whitespace}
  '(',paramsdef1-
@@ -115,6 +117,13 @@ paramdef1,,,*
 paramdef2,,,^
  ${whitespace}
  @identstart,ident^*
+#
+procedureheader,,,handleprocedureheader*
+ '',procedure0-*
+procedure,procedurea,,
+ '',procedure0*
+procedurea,,,
+ '',procedure4*
 procedure0,procedure1,,
  ${whitespace}
  @identstart,ident^*
@@ -122,8 +131,10 @@ procedure1,procedure2,,
  '',paramsdef0^*
 procedure2,,,
  ${whitespace}
- ';',procedure3-
-procedure3,procedure4,,handleprocedure3
+ ';',!handleprocedure3-*
+ '',semicolonexpected
+# ';',procedure3-
+#procedure3,procedure4,,handleprocedure3
 #mark
 procedure4,checkterminator,,
  ${whitespace}

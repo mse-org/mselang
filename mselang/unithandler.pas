@@ -96,9 +96,15 @@ begin
    stopparser:= true; //stop parsing;
   end
   else begin
-   if not ele.pushelement(ord(tk_implementation),vis_max,
-                                    ek_implementation,po1) then begin
-    
+   if us_implementation in unitinfo^.state then begin
+    errormessage(info,-1,err_invalidtoken,['implementation']);
+   end
+   else begin
+    include(unitinfo^.state,us_implementation);
+    if not ele.pushelement(ord(tk_implementation),vis_max,
+                                     ek_implementation,po1) then begin
+     internalerror(info,'U20131130A');
+    end;
    end;
   end;
  end;

@@ -467,15 +467,17 @@ begin
        if (pb^.dest.context = nil) and (bf_push in pb^.flags) then begin
         break; //terminate current context
        end;
-       if (pb^.dest.context <> nil) {and (pb^.dest <> pc)????} then begin
+       if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
          pb^.dest.handler(@info);
          if stopparser then begin
           goto parseend;
          end;
+         if bf_push in pb^.flags then begin
+          break; //terminate current context
+         end
         end
-        else begin
-               //switch branch context
+        else begin //switch branch context
          repeat
           if not pushcont(@info) then begin 
                 //can not continue
@@ -487,14 +489,6 @@ begin
          until not (bf_emptytoken in pb^.flags); //no start default branch
         end;
        end;
-//       source.po:= po1;
-//       source.line:= source.line + linebreaks;
-//       linebreaks:= 0;
-//       debugsource:= source.po;
-//       keywordindex:= 0;
-//       if (pb^.c = nil) and pb^.p then begin
-//        break; //terminate
-//       end;
        pb:= pc^.branch; //restart branch evaluation
        continue;
       end;
@@ -517,7 +511,6 @@ handlelab:
     end;
     if pc^.handleexit <> nil then begin
          //call context transition handler
-//     stophandle:= false;
      pc^.handleexit(@info);
      if stopparser then begin
       goto parseend;
@@ -526,14 +519,6 @@ handlelab:
      if pc^.pop then begin
       popparent;
      end;
-(*
-     if stophandle then begin
-{$ifdef mse_debugparser}
-      writeln('*** stophandle');
-{$endif}
-      goto stophandlelab
-     end;
-*)
     end
     else begin
          //no handler, automatic stack decrement

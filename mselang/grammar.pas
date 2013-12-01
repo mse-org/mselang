@@ -258,6 +258,21 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: true; popexe: false; nexteat: false; next: nil;
                caption: 'paramdef2');
+ procedureheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: true; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedureheader');
+ procedureco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedure');
+ procedureaco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedurea');
  procedure0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -273,11 +288,6 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure2');
- procedure3co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'procedure3');
  procedure4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -949,7 +959,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstart2: array[0..8] of branchty = (
+ bstart2: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationco); stack: nil; 
      keyword: $345678CD{'implementation'}),
@@ -962,6 +972,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @typeco); stack: nil; 
      keyword: $A2B3C66E{'type'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @procedureheaderco); stack: nil; 
+     keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -1052,7 +1065,7 @@ const
    );
  bmain: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @procedure0co); stack: nil; 
+     dest: (context: @procedureco); stack: nil; 
      keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @progbeginco); stack: nil; 
@@ -1384,6 +1397,36 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bprocedureheader: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push];
+     dest: (context: @procedure0co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bprocedure: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @procedure0co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bprocedurea: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @procedure4co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bprocedure0: array[0..5] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -1432,7 +1475,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure2: array[0..5] of branchty = (
+ bprocedure2: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -1461,9 +1504,16 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: @procedure3co); stack: nil; keys: (
+   (flags: [bf_nt,bf_handler,bf_eat,bf_push];
+     dest: (handler: @handleprocedure3); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @semicolonexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3378,14 +3428,16 @@ begin
  paramdef0co.next:= @paramdef1co;
  paramdef1co.branch:= @bparamdef1;
  paramdef2co.branch:= @bparamdef2;
+ procedureheaderco.branch:= @bprocedureheader;
+ procedureheaderco.handleexit:= @handleprocedureheader;
+ procedureco.branch:= @bprocedure;
+ procedureco.next:= @procedureaco;
+ procedureaco.branch:= @bprocedurea;
  procedure0co.branch:= @bprocedure0;
  procedure0co.next:= @procedure1co;
  procedure1co.branch:= @bprocedure1;
  procedure1co.next:= @procedure2co;
  procedure2co.branch:= @bprocedure2;
- procedure3co.branch:= nil;
- procedure3co.next:= @procedure4co;
- procedure3co.handleexit:= @handleprocedure3;
  procedure4co.branch:= @bprocedure4;
  procedure4co.next:= @checkterminatorco;
  procedure5co.branch:= @bprocedure5;

@@ -32,7 +32,7 @@ type
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
             err_argnotassign,err_illegalcharacter,err_numberexpected,
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
-            err_operationnotsupported);
+            err_operationnotsupported,err_invalidtoken,err_sameparamlist);
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -79,7 +79,10 @@ const
   (level: erl_error; message: 'Negation not possible'),
   (level: erl_fatal; message: 'Syntax error, ")" expected'),
   (level: erl_error; message: 'Illegal type conversion: "%s" to "%s"'),
-  (level: erl_error; message: 'Operation "%s" not supported for "%s" and "%s"')
+  (level: erl_error; message: 'Operation "%s" not supported for "%s" and "%s"'),
+  (level: erl_fatal; message: 'Invalid token "%s"'),
+  (level: erl_error; message: 
+                       'Overloaded functions have the same parameter list') 
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

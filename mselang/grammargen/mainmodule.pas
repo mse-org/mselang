@@ -48,14 +48,15 @@ CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
  '*' -> stackindex -> stacktop
  '>' -> continue with calling context
  STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
-        [[CONTEXT|'!'HANDLER] ['+']['-'] [['^']['*'] | ['*']['^']] ['!'] [ '>']] 
+        (CONTEXT ['+']['-'] [['^']['*'] | ['*']['^']] ['!'] [ '>']) |
+                                                      (['!'HANDLER][-][*][^])
         [',' (PUSHEDCONTEXT | (PARENTCONTEXT'^'))]
  '+' -> do not set context start
  '-' -> eat token
- (CONTEXT|!HANDLER)'^' -> set parent
- (CONTEXT|!HANDLER)'*' -> push context
- (CONTEXT|!HANDLER)'!' -> set ck_opmark
- '*' -> terminate context
+ CONTEXT'^' -> set parent
+ CONTEXT'*' -> push context
+ CONTEXT'!' -> set ck_opmark
+ ['!'HANDLER]'*' -> terminate context
  '>' -> continue context after return
 STRINGDEF -> PASCALSTRING['.']
  '.' -> keyword

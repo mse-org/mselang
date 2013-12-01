@@ -65,6 +65,8 @@ const
  eledataoffset = sizeof(elementheaderty);
 
 type
+ elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
+                                                     var terminate: boolean);
  telementhashdatalist = class(thashdatalist)
   private
    ffindvislevel: vislevelty;
@@ -86,7 +88,10 @@ type
 
    constructor create;
    procedure clear; override;
- 
+
+   function forallcurrent(const aident: identty; const akinds: elementkindsty;
+                 const avislevel: vislevelty; const ahandler: elehandlerprocty;
+                 var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
             const avislevel: vislevelty; out element: elementoffsetty): boolean;
                   //searches in current scope
@@ -107,6 +112,7 @@ type
                  const avislevel: vislevelty; 
                                out element: elementoffsetty): boolean;
 
+   function eleoffset: ptruint; inline;
    function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
    function eleinforel(const aelement: pelementinfoty): elementoffsetty; inline;
    function eledataabs(const aelement: elementoffsetty): pointer; inline;
@@ -116,6 +122,9 @@ type
    function dumpelements: msestringarty;
    function dumppath(const aelement: pelementinfoty): msestring;
   {$endif}
+   function pushelementduplicate(const aname: identty;
+                  const avislevel: vislevelty; const akind: elementkindty;
+                                  const sizeextend: integer): pelementinfoty;
    function pushelement(const aname: identty; const avislevel: vislevelty;
                   const akind: elementkindty{;
                   const asize: integer}): pelementinfoty; //nil if duplicate
@@ -139,29 +148,6 @@ type
               const akind: elementkindty;
               {const asize: integer;} out aelementdata: pointer): boolean;
                                                        //false if duplicate
-{   
-   function findelement(const aname: identty; const akinds: elementkindsty;
-                          const avislevel: vislevelty): pelementinfoty;
-                                               //nil if not found
-   function findelementupward(const aname: identty;
-                          const akinds: elementkindsty;
-                          const avislevel: vislevelty): pelementinfoty; overload;
-                                                       //nil if not found
-   function findelementupward(const aname: identty;
-                  const akinds: elementkindsty; const avislevel: vislevelty;
-                  out element: elementoffsetty; out ): pelementinfoty; overload;
-                                                       //nil if not found
-   function findelementsupward(const anames: identvectorty;
-                          const akinds: elementkindsty;
-                          const avislevel: vislevelty;
-                        out element: elementoffsetty): pelementinfoty;
-                                                       //nil if not found                                                       
-   function findelementsupward(const anames: identarty;
-                          const akinds: elementkindsty;
-                          const avislevel: vislevelty;
-                        out element: elementoffsetty): pelementinfoty;
-                                                       //nil if not found
-}
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
@@ -276,6 +262,11 @@ var
  stringindex,stringlen: identoffsetty;
  stringident: identty;
  identlist: tindexidenthashdatalist;
+
+function telementhashdatalist.eleoffset: ptruint; inline;
+begin
+ result:= ptruint(felementdata);
+end;
 
 function telementhashdatalist.eleinforel(
                           const aelement: pelementinfoty): elementoffsetty;
@@ -606,6 +597,42 @@ begin
  end;
 end;
 
+function telementhashdatalist.forallcurrent(const aident: identty;
+                 const akinds: elementkindsty;
+                 const avislevel: vislevelty; const ahandler: elehandlerprocty;
+                 var adata): boolean; //returns terminated flag
+var
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ po2: pelementinfoty;
+ id1: identty;
+begin
+ result:= false;
+ if count > 0 then begin
+  id1:= felementpath+aident;
+  uint1:= fhashtable[id1 and fmask];
+  if uint1 <> 0 then begin
+   po1:= pelementhashdataty(pchar(fdata) + uint1);
+   while not result do begin
+    if (po1^.data.key = id1) then begin
+     po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+     with po2^.header do begin
+      if (name = aident) and (parent = felementparent) and 
+                               (vislevel <= avislevel) and 
+                           ((akinds = []) or (kind in akinds)) then begin
+       ahandler(po2,adata,result);
+      end;
+     end;
+    end;
+    if po1^.header.nexthash = 0 then begin
+     exit;
+    end;
+    po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+   end;
+  end;
+ end;
+end;
+
 function telementhashdatalist.findcurrent(const aident: identty;
               const akinds: elementkindsty; const avislevel: vislevelty;
                                         out element: elementoffsetty): boolean;
@@ -615,6 +642,7 @@ var
  id1: identty;
 begin
  element:= -1;
+ result:= false;
  if count > 0 then begin
   id1:= felementpath+aident;
   uint1:= fhashtable[id1 and fmask];
@@ -897,6 +925,32 @@ begin
  end;
 end;
 
+function telementhashdatalist.pushelementduplicate(const aname: identty;
+                  const avislevel: vislevelty;
+                  const akind: elementkindty;
+                  const sizeextend: integer): pelementinfoty;
+var
+ ele1: elementoffsetty;
+begin
+ ele1:= fnextelement;
+ fnextelement:= fnextelement+(elesize+elesizes[akind])+sizeextend;
+ checkbuffersize;
+ result:= pointer(felementdata)+ele1;
+ with result^.header do begin
+  next:= fnextelement; //for debugging
+  parent:= felementparent;
+  parentlevel:= fparentlevel;
+  path:= felementpath;
+  name:= aname;
+  vislevel:= avislevel;
+  kind:= akind;
+ end;
+ felementparent:= ele1;
+ inc(fparentlevel);
+ felementpath:= felementpath+aname;
+ addelement(felementpath,avislevel,ele1);
+end;
+
 function telementhashdatalist.pushelement(const aname: identty;
              const avislevel: vislevelty;
              const akind: elementkindty): pelementinfoty;
@@ -905,24 +959,7 @@ var
 begin
  result:= nil;
  if not findcurrent(aname,[],ffindvislevel,ele1) then begin
-  ele1:= fnextelement;
-  fnextelement:= fnextelement+elesize+elesizes[akind];
-  checkbuffersize;
-  result:= pointer(felementdata)+ele1;
-  with result^.header do begin
-//   size:= asize; //for debugging
-   next:= fnextelement; //for debugging
-   parent:= felementparent;
-   parentlevel:= fparentlevel;
-   path:= felementpath;
-   name:= aname;
-   vislevel:= avislevel;
-   kind:= akind;
-  end;
-  felementparent:= ele1;
-  inc(fparentlevel);
-  felementpath:= felementpath+aname;
-  addelement(felementpath,avislevel,ele1);
+  result:= pushelementduplicate(aname,avislevel,akind,0);
  end;
 end;
 
@@ -958,13 +995,11 @@ function telementhashdatalist.pushelement(const aname: identty;
                                                        //false if duplicate
 var
  po1: pelementinfoty;
+ ele1: elementoffsetty;
 begin
- po1:= pushelement(aname,avislevel,akind);
- result:= po1 <> nil;
- if result then begin
-  fnextelement:= fnextelement+sizeextend;
-  po1^.header.next:= fnextelement;
-  checkbuffersize;
+ result:= false;
+ if not findcurrent(aname,[],ffindvislevel,ele1) then begin
+  po1:= pushelementduplicate(aname,avislevel,akind,sizeextend);
   aelementdata:= @(po1^.data);
  end;
 end;
