@@ -143,6 +143,7 @@ type
 
  funcdataty = record
   impl: elementoffsetty; //pfuncdataty
+  links: linkoffsetty;
   address: opaddressty;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty

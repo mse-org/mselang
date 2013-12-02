@@ -166,6 +166,11 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
+procedure linkmark(const info: pparseinfoty; var alinks: linkoffsetty;
+                                                      const aaddress: integer);
+procedure linkresolve(const info: pparseinfoty; const alinks: linkoffsetty;
+                                                  const aaddress: opaddressty);
+
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
 {$endif}
@@ -441,6 +446,63 @@ begin
  end;
  wo1:= (wo1 xor wo1 shl 7);
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
+end;
+
+type
+ linkinfoty = record
+  next: linkoffsetty;
+  dest: opaddressty;
+ end;
+ plinkinfoty = ^linkinfoty;
+ linkarty = array of linkinfoty;
+ 
+var
+ links: linkarty;
+ linkindex: integer;
+ deletedlinks: linkoffsetty;
+ 
+procedure linkmark(const info: pparseinfoty; 
+                           var alinks: linkoffsetty; const aaddress: integer);
+var
+ li1: linkoffsetty;
+ po1: plinkinfoty;
+begin
+ li1:= deletedlinks;
+ if li1 = 0 then begin
+  inc(linkindex);
+  if linkindex > high(links) then begin
+   setlength(links,high(links)*2+1024);
+  end;
+  li1:= linkindex;
+  po1:= @links[li1];
+ end
+ else begin
+  po1:= @links[li1];
+  deletedlinks:= po1^.next;
+ end;
+ po1^.next:= alinks;
+ alinks:= li1;
+end;
+
+procedure linkresolve(const info: pparseinfoty;
+                    const alinks: linkoffsetty; const aaddress: opaddressty);
+var
+ li1: linkoffsetty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    info^.ops[dest].d.opaddress:= aaddress;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
 end;
 
 {$ifdef mse_debugparser}

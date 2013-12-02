@@ -2522,6 +2522,7 @@ outinfo(info,'****');
                       contextstack[stackindex+1].d.ident.ident,
                       vis_max,ek_func,paramco*sizeof(pvardataty))^.data);
   po1^.paramcount:= paramco;
+  po1^.links:= 0;
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;
@@ -2579,14 +2580,15 @@ outinfo(info,'****');
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
        end;
       end;
+      linkresolve(info,paramdata.match^.links,opcount);
      end;
     end;
    end;
    ele.elementparent:= parent1;
+   inc(funclevel);
    with po1^ do begin
     address:= opcount;
    end;
-   inc(funclevel);
    frameoffset:= locdatapo; //todo: nested procedures
    getlocvaraddress(info,stacklinksize);
    stacktop:= stackindex;

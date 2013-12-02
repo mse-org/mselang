@@ -99,6 +99,7 @@ type
 
  elementoffsetty = ptrint;
  pelementoffsetty = ^elementoffsetty;
+ linkoffsetty = ptrint;
  
  charsetty = set of char;
  charset32ty = array[0..7] of uint32;
