@@ -62,7 +62,7 @@ type
  
 const
  elesize = sizeof(elementinfoty);
- eledataoffset = sizeof(elementheaderty);
+ eledatashift = sizeof(elementheaderty);
 
 type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
@@ -113,6 +113,7 @@ type
                                out element: elementoffsetty): boolean;
 
    function eleoffset: ptruint; inline;
+   function eledataoffset: ptruint; inline;
    function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
    function eleinforel(const aelement: pelementinfoty): elementoffsetty; inline;
    function eledataabs(const aelement: elementoffsetty): pointer; inline;
@@ -268,6 +269,11 @@ begin
  result:= ptruint(felementdata);
 end;
 
+function telementhashdatalist.eledataoffset: ptruint; inline;
+begin
+ result:= ptruint(felementdata) + eledatashift;
+end;
+
 function telementhashdatalist.eleinforel(
                           const aelement: pelementinfoty): elementoffsetty;
 begin
@@ -283,7 +289,7 @@ end;
 function telementhashdatalist.eledatarel(
                           const aelement: pointer): elementoffsetty;
 begin
- result:= aelement-pointer(felementdata)-eledataoffset;
+ result:= aelement-pointer(felementdata)-eledatashift;
 end;
 
 function telementhashdatalist.eledataabs(

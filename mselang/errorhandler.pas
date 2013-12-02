@@ -132,6 +132,9 @@ begin
   with sourcepos do begin
    if line > 0 then begin
     po1:= po;
+    if po1^ = c_linefeed then begin
+     dec(po1);
+    end;
     while po1^ <> c_linefeed do begin
      dec(po1);
     end;

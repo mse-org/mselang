@@ -2458,6 +2458,7 @@ end;
 type
  equalparaminfoty = record
   ref: pfuncdataty;
+  match: pfuncdataty;
  end;
 
 procedure checkequalparam(const aelement: pelementinfoty; var adata;
@@ -2472,7 +2473,7 @@ begin
  po1:= @aelement^.data;
  with equalparaminfoty(adata) do begin
   if (po1 <> ref) and (po1^.paramcount = ref^.paramcount) then begin
-   offs1:= ele.eleoffset;
+   offs1:= ele.eledataoffset;
    pointer(par1):= @po1^.paramsrel;
    pointer(parref):= @ref^.paramsrel;
    for int1:= 0 to po1^.paramcount-1 do begin
@@ -2483,6 +2484,7 @@ begin
     end;
    end;
    terminate:= true;
+   match:= po1;
   end;
  end;
 end;
@@ -2554,6 +2556,15 @@ outinfo(info,'****');
   end;
   
   if impl1 then begin //implementation
+   if funclevel = 0 then begin //todo: check forward modifier
+    ele.decelementparent;
+    if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
+                                vis_max,@checkequalparam,paramdata) then begin
+     with paramdata.match^ do begin
+      impl:= ele.eledatarel(po1);
+     end;
+    end;
+   end;
    ele.elementparent:= parent1;
    with po1^ do begin
     address:= opcount;

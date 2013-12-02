@@ -434,33 +434,3 @@ begin
 end;
 
 end.
-
-...
-label
- abort;
-begin
-...
- with fr: fieldread, ds: dataset as tmsesqlquery do
-  if fieldwrite.dataset.state in [dsBrowse,dsInactive] then 
-   goto abort;
-  end;
-  if fr is tmselongintfield then
-   if local_idx_num >= 0 then
-    if not ds.indexlocal[local_idx_num].find([fieldwrite.asinteger],[],bm,
-                                                         false,false,true) then
-     fieldwrite.clear;
-    end;
-   end;
-  else
-   if fr is tmsestringfield then
-    if local_idx_num >= 0 then
-     if not ds.indexlocal[local_idx_num].find( [fieldwrite.asmsestring],[],bm,
-                                                         false,false,true) then
-      fieldwrite.clear;
-     end;
-    end;
-   end;
-  end;
- end;
-abort:
-end;

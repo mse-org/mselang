@@ -141,6 +141,7 @@ type
  psysfuncdataty = ^sysfuncdataty;
 
  funcdataty = record
+  impl: elementoffsetty; //pfuncdataty
   address: opaddressty;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty
