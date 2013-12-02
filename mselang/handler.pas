@@ -2466,8 +2466,8 @@ procedure checkequalparam(const aelement: pelementinfoty; var adata;
 var
  po1: pfuncdataty;
  int1: integer;
- par1,parref: pvardatapoaty;
- offs1: ptruint;
+ par1,parref: pelementoffsetaty;
+ offs1: elementoffsetty;
  var1,varref: pvardataty;
 begin
  po1:= @aelement^.data;
@@ -2477,8 +2477,8 @@ begin
    pointer(par1):= @po1^.paramsrel;
    pointer(parref):= @ref^.paramsrel;
    for int1:= 0 to po1^.paramcount-1 do begin
-    var1:= pointer(par1^[int1])+offs1;
-    varref:= pointer(parref^[int1])+offs1;
+    var1:= pointer(par1^[int1]+offs1);
+    varref:= pointer(parref^[int1]+offs1);
     if var1^.typ <> varref^.typ then begin
      exit;
     end;
@@ -2488,7 +2488,12 @@ begin
   end;
  end;
 end;
-
+{
+procedure testxx(const info1: pparseinfoty); forward;
+procedure testxx(const info: pparseinfoty);
+begin
+end;
+}
 procedure handleprocedure3(const info: pparseinfoty);
 var
  po1: pfuncdataty;
@@ -2501,6 +2506,7 @@ var
  impl1: boolean;
  parent1: elementoffsetty;
  paramdata: equalparaminfoty;
+ par1,parref: pelementoffsetaty;
 
 begin
 {$ifdef mse_debugparser}
@@ -2522,7 +2528,7 @@ outinfo(info,'****');
   impl1:= us_implementation in unitinfo^.state; //todo: check forward modifier
   for int2:= 0 to paramco-1 do begin
    if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
-                              ek_var,po2) then begin
+                                                        ek_var,po2) then begin
     po4^[int2]:= ele.eledatarel(po2);
     if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
      with po2^ do begin
@@ -2557,11 +2563,22 @@ outinfo(info,'****');
   
   if impl1 then begin //implementation
    if funclevel = 0 then begin //todo: check forward modifier
-    ele.decelementparent;
+    ele.decelementparent; //interface
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
                                 vis_max,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
       impl:= ele.eledatarel(po1);
+      pointer(parref):= @paramsrel;
+      pointer(par1):= @po1^.paramsrel;
+      for int1:= 0 to paramco-1 do begin
+       if ele.eleinfoabs(parref^[int1])^.header.name <> 
+                 ele.eleinfoabs(par1^[int1])^.header.name then begin
+        errormessage(info,stacktop-stackindex-3*(paramco-int1-1)-1,
+             err_functionheadernotmatch,
+                [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
+                     getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
+       end;
+      end;
      end;
     end;
    end;

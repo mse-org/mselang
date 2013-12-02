@@ -122,8 +122,9 @@ type
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
- vardatapoaty = array[0..0] of pvardataty;
- pvardatapoaty = ^vardatapoaty;
+
+// vardatapoaty = array[0..0] of pvardataty;
+// pvardatapoaty = ^vardatapoaty;
 
  fielddataty = record
   offset: ptruint;

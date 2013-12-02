@@ -32,7 +32,9 @@ type
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
             err_argnotassign,err_illegalcharacter,err_numberexpected,
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
-            err_operationnotsupported,err_invalidtoken,err_sameparamlist);
+            err_operationnotsupported,err_invalidtoken,err_sameparamlist,
+            err_functionheadernotmatch);
+            
  errorinfoty = record
   level: errorlevelty;
   message: string;
@@ -82,7 +84,9 @@ const
   (level: erl_error; message: 'Operation "%s" not supported for "%s" and "%s"'),
   (level: erl_fatal; message: 'Invalid token "%s"'),
   (level: erl_error; message: 
-                       'Overloaded functions have the same parameter list') 
+                       'Overloaded functions have the same parameter list'),
+  (level: erl_error; message: 
+               'Function header doesn''t match: param name changes "%s"=>"%s"')
  );
  
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;

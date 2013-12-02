@@ -97,7 +97,7 @@ type
   dataref: ptruint;
  end;
 
- elementoffsetty = integer;
+ elementoffsetty = ptrint;
  pelementoffsetty = ^elementoffsetty;
  
  charsetty = set of char;
