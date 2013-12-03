@@ -166,10 +166,17 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-procedure linkmark(const info: pparseinfoty; var alinks: linkoffsetty;
+procedure linkmark(const info: pparseinfoty; var alinks: linkindexty;
                                                       const aaddress: integer);
-procedure linkresolve(const info: pparseinfoty; const alinks: linkoffsetty;
+procedure linkresolve(const info: pparseinfoty; const alinks: linkindexty;
                                                   const aaddress: opaddressty);
+
+procedure forwardmark(const info: pparseinfoty;
+            out aforward: forwardindexty; const asource: sourceinfoty);
+procedure forwardresolve(const info: pparseinfoty;
+                                        const aforward: forwardindexty);
+procedure checkforwarderrors(const info: pparseinfoty;
+                                    const aforward: forwardindexty);
 
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
@@ -181,7 +188,8 @@ var
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob,mseformatstr;
+ msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob,mseformatstr,
+ errorhandler;
 
 const
  elesizes: array[elementkindty] of integer = (
@@ -301,31 +309,6 @@ function telementhashdatalist.eledataabs(
                            const aelement: elementoffsetty): pointer; inline;
 begin
  result:= @pelementinfoty(aelement+pointer(felementdata))^.data;
-end;
-
-procedure clear;
-begin
- identlist.clear;
- stringdata:= '';
- stringindex:= 0;
- stringlen:= 0;
-
- ele.clear;
- stringident:= 0;
-end;
-
-procedure init;
-var
- int1: integer;
- tk1: integer;
-begin
- clear;
- ele.pushelement(getident(''),vis_max,ek_none); //root
- stringident:= idstart; //invalid
- lfsr321(stringident);
- for tk1:= 1 to high(tokens) do begin
-  getident(tokens[tk1]);
- end;
 end;
 
 type
@@ -450,28 +433,28 @@ end;
 
 type
  linkinfoty = record
-  next: linkoffsetty;
+  next: linkindexty;
   dest: opaddressty;
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
  
 var
- links: linkarty;
- linkindex: integer;
- deletedlinks: linkoffsetty;
+ links: linkarty; //[0] -> dummy entry
+ linkindex: linkindexty;
+ deletedlinks: linkindexty;
  
 procedure linkmark(const info: pparseinfoty; 
-                           var alinks: linkoffsetty; const aaddress: integer);
+                           var alinks: linkindexty; const aaddress: integer);
 var
- li1: linkoffsetty;
+ li1: linkindexty;
  po1: plinkinfoty;
 begin
  li1:= deletedlinks;
  if li1 = 0 then begin
   inc(linkindex);
   if linkindex > high(links) then begin
-   setlength(links,high(links)*2+1024);
+   reallocuninitedarray(high(links)*2+1024,sizeof(links[0]),links);
   end;
   li1:= linkindex;
   po1:= @links[li1];
@@ -486,9 +469,9 @@ begin
 end;
 
 procedure linkresolve(const info: pparseinfoty;
-                    const alinks: linkoffsetty; const aaddress: opaddressty);
+                    const alinks: linkindexty; const aaddress: opaddressty);
 var
- li1: linkoffsetty;
+ li1: linkindexty;
 begin
  if alinks <> 0 then begin
   li1:= alinks;
@@ -503,6 +486,111 @@ begin
   end;
   links[li1].next:= deletedlinks;
   deletedlinks:= alinks;
+ end;
+end;
+
+type
+ forwardinfoty = record
+  prev: forwardindexty;
+  next: forwardindexty;
+  source: sourceinfoty;
+ end;
+ pforwardinfoty = ^forwardinfoty;
+ forwardarty = array of forwardinfoty;
+ 
+var
+ forwards: forwardarty; //[0] -> dummy entry
+ forwardindex: forwardindexty;
+ deletedforwards: forwardindexty;
+
+procedure forwardmark(const info: pparseinfoty;
+            out aforward: forwardindexty; const asource: sourceinfoty);
+var
+ fo1: forwardindexty;
+ po1: pforwardinfoty;
+begin
+ fo1:= deletedforwards;
+ if fo1 = 0 then begin
+  inc(forwardindex);
+  if forwardindex > high(forwards) then begin
+   reallocuninitedarray(high(forwards)*2+1024,sizeof(forwards[0]),forwards);
+  end;
+  fo1:= forwardindex;
+  po1:= @forwards[fo1];
+ end
+ else begin
+  po1:= @forwards[fo1];
+  deletedlinks:= po1^.next;
+ end;
+ with info^.unitinfo^ do begin
+  po1^.prev:= 0;
+  po1^.next:= forwardlist;
+  po1^.source:= asource;
+  forwards[forwardlist].prev:= fo1;
+  forwardlist:= fo1;
+ end;
+ aforward:= fo1;
+end;
+
+procedure forwardresolve(const info: pparseinfoty;
+                                        const aforward: forwardindexty);
+begin
+ if aforward <> 0 then begin
+  with forwards[aforward] do begin
+   if info^.unitinfo^.forwardlist = aforward then begin
+    info^.unitinfo^.forwardlist:= next;
+   end;
+   forwards[next].prev:= prev;
+   forwards[prev].next:= next;
+   next:= deletedforwards;
+  end;
+  deletedforwards:= aforward;
+ end;
+end;
+
+procedure checkforwarderrors(const info: pparseinfoty;
+                                    const aforward: forwardindexty);
+var
+ fo1: forwardindexty;
+begin
+ fo1:= aforward;
+ while fo1 <> 0 do begin
+  with forwards[fo1] do begin
+   errormessage(info,source,err_forwardnotsolved,['']);
+                      //todo show header
+   fo1:= next;
+  end;
+ end;
+end;
+
+procedure clear;
+begin
+ identlist.clear;
+ stringdata:= '';
+ stringindex:= 0;
+ stringlen:= 0;
+
+ ele.clear;
+ stringident:= 0;
+ links:= nil;
+ linkindex:= 0;
+ deletedlinks:= 0;
+ forwards:= nil;
+ forwardindex:= 0;
+ deletedforwards:= 0;
+end;
+
+procedure init;
+var
+ int1: integer;
+ tk1: integer;
+begin
+ clear;
+ ele.pushelement(getident(''),vis_max,ek_none); //root
+ stringident:= idstart; //invalid
+ lfsr321(stringident);
+ for tk1:= 1 to high(tokens) do begin
+  getident(tokens[tk1]);
  end;
 end;
 

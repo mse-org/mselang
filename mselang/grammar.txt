@@ -95,7 +95,7 @@ linecomment0,,,*
  '',-
 linecomment1,,,handlecommentend^*>
 progbegin,progblock,,handleprogbegin
-progblock,,,
+progblock,,,handleprogblock*
  '',statementblock-^*
 #
 paramsdef0,,,

@@ -44,6 +44,7 @@ procedure handleuses(const info: pparseinfoty);
 procedure handlenoidenterror(const info: pparseinfoty);
 
 procedure handleprogbegin(const info: pparseinfoty);
+procedure handleprogblock(const info: pparseinfoty);
 
 procedure handlecommentend(const info: pparseinfoty);
 
@@ -1742,6 +1743,18 @@ begin
  end;
 end;
 
+procedure handleprogblock(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PROGBLOCK');
+{$endif}
+outinfo(info,'****');
+ checkforwarderrors(info,info^.unitinfo^.forwardlist);
+ with info^ do begin
+  dec(stackindex);
+ end;
+end;
+
 procedure handlecommentend(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -2569,6 +2582,7 @@ outinfo(info,'****');
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
                                 vis_max,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
+      forwardresolve(info,mark);
       impl:= ele.eledatarel(po1);
       pointer(parref):= @paramsrel;
       pointer(par1):= @po1^.paramsrel;
@@ -2600,6 +2614,7 @@ outinfo(info,'****');
   end
   else begin
    po1^.address:= 0;
+   forwardmark(info,po1^.mark,source);
   end;
  end;
 end;

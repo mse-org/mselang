@@ -33,7 +33,7 @@ type
             err_argnotassign,err_illegalcharacter,err_numberexpected,
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
-            err_functionheadernotmatch);
+            err_functionheadernotmatch,err_forwardnotsolved);
             
  errorinfoty = record
   level: errorlevelty;
@@ -86,9 +86,15 @@ const
   (level: erl_error; message: 
                        'Overloaded functions have the same parameter list'),
   (level: erl_error; message: 
-               'Function header doesn''t match: param name changes "%s"=>"%s"')
+               'Function header doesn''t match: param name changes "%s"=>"%s"'),
+  (level: erl_error; message: 
+               'Forward declaration not solved "%s"')
  );
  
+procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
+                   const aerror: errorty; const values: array of const;
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -116,6 +122,48 @@ implementation
 uses
  msestrings,sysutils,mseformatstr,typinfo;
 
+procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
+                   const aerror: errorty; const values: array of const;
+                   const coloffset: integer = 0;
+                   const aerrorlevel: errorlevelty = erl_none);
+var
+ po1: pchar;
+ str1: string;
+ level1: errorlevelty;
+begin
+ with asourcepos do begin
+  if line > 0 then begin
+   po1:= po;
+   if po1^ = c_linefeed then begin
+    dec(po1);
+   end;
+   while po1^ <> c_linefeed do begin
+    dec(po1);
+   end;
+  end
+  else begin
+   po1:= info^.sourcestart-1;
+  end;
+  with errortext[aerror],info^ do begin
+   level1:= level;
+   if aerrorlevel <> erl_none then begin
+    level1:= aerrorlevel;
+   end;
+   inc(errors[level1]);
+   str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+       errorleveltext[level1]+': '+format(message,values);
+   command.writeln(str1);
+   writeln('<<<<<<< '+str1);
+   if level1 <= stoperrorlevel then begin
+    stopparser:= true;
+   end;
+   if level1 <= errorerrorlevel then begin
+    errorfla:= true;
+   end;
+  end;
+ end;
+end;
+
 procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -133,37 +181,7 @@ begin
   else begin
    sourcepos:= contextstack[stackindex+astackoffset].start;
   end;
-  with sourcepos do begin
-   if line > 0 then begin
-    po1:= po;
-    if po1^ = c_linefeed then begin
-     dec(po1);
-    end;
-    while po1^ <> c_linefeed do begin
-     dec(po1);
-    end;
-   end
-   else begin
-    po1:= sourcestart-1;
-   end;
-   with errortext[aerror] do begin
-    level1:= level;
-    if aerrorlevel <> erl_none then begin
-     level1:= aerrorlevel;
-    end;
-    inc(errors[level1]);
-    str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
-        errorleveltext[level1]+': '+format(message,values);
-    command.writeln(str1);
-    writeln('<<<<<<< '+str1);
-    if level1 <= stoperrorlevel then begin
-     stopparser:= true;
-    end;
-    if level1 <= errorerrorlevel then begin
-     errorfla:= true;
-    end;
-   end;
-  end;
+  errormessage(info,sourcepos,aerror,values,coloffset,aerrorlevel);
  end;
 end;
 

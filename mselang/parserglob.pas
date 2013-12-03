@@ -55,6 +55,10 @@ type
                das_33_63,das_64);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 
+ indexty = integer;
+ linkindexty = indexty;
+ forwardindexty = indexty;
+
 const
  vis_max = vis_0;
  vis_min = vis_9;
@@ -99,7 +103,6 @@ type
 
  elementoffsetty = ptrint;
  pelementoffsetty = ^elementoffsetty;
- linkoffsetty = ptrint;
  
  charsetty = set of char;
  charset32ty = array[0..7] of uint32;
@@ -388,6 +391,7 @@ type
   state: unitstatesty;
   interfaceelement,classeselement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
+  forwardlist: forwardindexty;
  end;
  ppunitinfoty = ^punitinfoty;
 

@@ -220,7 +220,7 @@ var
                caption: 'progbegin');
  progblockco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
+               continue: false; cut: true; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'progblock');
  paramsdef0co: contextty = (branch: nil; 
@@ -3419,6 +3419,7 @@ begin
  progbeginco.next:= @progblockco;
  progbeginco.handleexit:= @handleprogbegin;
  progblockco.branch:= @bprogblock;
+ progblockco.handleexit:= @handleprogblock;
  paramsdef0co.branch:= @bparamsdef0;
  paramsdef1co.branch:= @bparamsdef1;
  paramsdef1co.next:= @paramsdef2co;

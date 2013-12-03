@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ parserglob,elements;
 
 const
  pointersize = sizeof(pointer);
@@ -143,7 +143,8 @@ type
 
  funcdataty = record
   impl: elementoffsetty; //pfuncdataty
-  links: linkoffsetty;
+  links: linkindexty;
+  mark: forwardindexty;
   address: opaddressty;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty
