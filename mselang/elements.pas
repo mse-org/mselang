@@ -481,6 +481,7 @@ begin
   deletedlinks:= po1^.next;
  end;
  po1^.next:= alinks;
+ po1^.dest:= aaddress;
  alinks:= li1;
 end;
 
@@ -493,7 +494,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
-    info^.ops[dest].d.opaddress:= aaddress;
+    info^.ops[dest].d.opaddress:= aaddress-1;
     if next = 0 then begin
      break;
     end;

@@ -1415,13 +1415,10 @@ begin
    case po1^.header.kind of
     ek_var: begin
      if checknoparam then begin     
-//      fl1:= [];
       addr1:= pvardataty(po2)^.address.address;
       ele1:= pvardataty(po2)^.typ;
       indirect1:= pvardataty(po2)^.address.indirectlevel;
       if indirect1 > 0 then begin
-//      if vf_reference in pvardataty(po2)^.address.flags then begin
-//       include(fl1,tf_reference);
        si1:= pointersize;
       end
       else begin
@@ -1497,9 +1494,12 @@ begin
        inc(po5);
       end;
      end;
+     if pfuncdataty(po2)^.address = 0 then begin //unresolved header
+      linkmark(info,pfuncdataty(po2)^.links,opcount);
+     end;
      with additem(info)^ do begin
       op:= @callop;
-      d.opaddress:= pfuncdataty(po2)^.address-1;
+      d.opaddress:= pfuncdataty(po2)^.address-1; //possibly invalid
      end;
     end;
     ek_sysfunc: begin
@@ -1535,7 +1535,6 @@ begin
        errormessage(info,4,err_closeparentexpected,[],-1);
       end
       else begin
-outinfo(info,'****');
        if not tryconvert(info,contextstack[stacktop],po2,
                                     ptypedataty(po2)^.indirectlevel) then begin
         illegalconversionerror(info,contextstack[stacktop].d,po2,
@@ -1554,7 +1553,6 @@ outinfo(info,'****');
   end
   else begin
    identerror(info,1,err_identifiernotfound);
-//   identnotfounderror(contextstack[stacktop],'valueidentifier');
   end;
 endlab:
   stacktop:= stackindex;
@@ -2563,6 +2561,9 @@ outinfo(info,'****');
   end;
   
   if impl1 then begin //implementation
+   with po1^ do begin
+    address:= opcount;
+   end;
    if funclevel = 0 then begin //todo: check forward modifier
     ele.decelementparent; //interface
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
@@ -2580,15 +2581,13 @@ outinfo(info,'****');
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
        end;
       end;
+      address:= po1^.address;
       linkresolve(info,paramdata.match^.links,opcount);
      end;
     end;
    end;
    ele.elementparent:= parent1;
    inc(funclevel);
-   with po1^ do begin
-    address:= opcount;
-   end;
    frameoffset:= locdatapo; //todo: nested procedures
    getlocvaraddress(info,stacklinksize);
    stacktop:= stackindex;
@@ -2598,6 +2597,9 @@ outinfo(info,'****');
     d.proc.error:= err1;
     ele.markelement(d.proc.elementmark); 
    end;
+  end
+  else begin
+   po1^.address:= 0;
   end;
  end;
 end;
@@ -2607,12 +2609,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE6');
 {$endif}
- with info^ do begin
-  ele.releaseelement(contextstack[stackindex-1].d.proc.elementmark); 
+outinfo(info,'*****');
+ with info^,contextstack[stackindex-1],d do begin
+  ele.decelementparent;
+  ele.releaseelement(proc.elementmark); 
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;
-   d.count:= contextstack[stackindex].d.proc.paramcount+1;
+   d.count:= proc.paramcount+1;
   end;
   dec(funclevel);
  end;
