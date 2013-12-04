@@ -189,7 +189,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob,mseformatstr,
- errorhandler;
+ errorhandler,mselinklist;
 
 const
  elesizes: array[elementkindty] of integer = (

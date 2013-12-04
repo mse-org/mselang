@@ -23,6 +23,7 @@ uses
 function newunit(const aname: string): punitinfoty; 
 function loadunitinterface(const info: pparseinfoty;
                                 const aindex: integer): punitinfoty;
+function nextunitimplementation: punitinfoty;
 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 procedure implementationstart(const info: pparseinfoty);
@@ -33,7 +34,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerglob;
+ handlerglob,mselinklist;
  
 type
  unithashdataty = record
@@ -52,9 +53,29 @@ type
    function findunit(const aname: identty): punitinfoty;
    function newunit(const aname: identty): punitinfoty;
  end;
+
+ implpenddataty = record
+  unitname: identty;
+ end;
+ pimplpenddataty = ^implpenddataty;
+ implpendinfoty = record
+  header: doublelinkheaderty;
+  data: implpenddataty;
+ end;
+ pimplpendinfoty = ^implpendinfoty;
+ 
+ timplementationpendinglist = class(tdoublelinklist)
+  protected
+   froot: ptruint;
+  public
+   constructor create;
+   procedure add(const aunit: punitinfoty);
+   function next: punitinfoty;
+ end;
  
 var
  unitlist: tunitlist;
+ implementationpending: timplementationpendinglist;
  
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 var
@@ -110,21 +131,14 @@ begin
  end;
 end;
 
-function parseinterface(const aunit: punitinfoty): boolean;
-var
- ar1: opinfoarty;
- stream1: ttextstream;
+function parseinterface(const info: pparseinfoty; 
+                                       const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
   writeln('***************************************** interface');
   writeln(filepath);
-  try
-   stream1:= ttextstream.create;
-   result:= parse(readfiledatastring(filepath),stream1,aunit,ar1);
-   include(state,us_interfaceparsed);
-  finally
-   stream1.free;
-  end;
+  result:= parseunit(info,readfiledatastring(filepath),aunit);
+  include(state,us_interfaceparsed);
  end;
 end;
 
@@ -157,8 +171,11 @@ begin
     end
     else begin
      state:= [us_interface];
-     if not parseinterface(result) then begin
+     if not parseinterface(info,result) then begin
       result:= nil;
+     end
+     else begin
+      implementationpending.add(result);
      end;
     end;
    end;
@@ -166,14 +183,21 @@ begin
  end;
 end;
 
+function nextunitimplementation: punitinfoty;
+begin
+ result:= implementationpending.next;
+end;
+
 procedure init;
 begin
  unitlist:= tunitlist.create;
+ implementationpending:= timplementationpendinglist.create;
 end;
 
 procedure deinit;
 begin
  unitlist.free;
+ implementationpending.free;
 end;
 
 { tunitlist }
@@ -191,7 +215,7 @@ end;
 
 function tunitlist.checkkey(const akey; const aitemdata): boolean;
 begin
- result:= identty(akey) = unitinfoty(aitemdata).key;
+ result:= identty(akey) = punitinfoty(aitemdata)^.key;
 end;
 
 function tunitlist.findunit(const aname: identty): punitinfoty;
@@ -220,6 +244,41 @@ begin
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
  po1^.data:= result;
+end;
+
+{ timplementationpendinglist }
+
+constructor timplementationpendinglist.create;
+begin
+ inherited create(sizeof(implpenddataty));
+end;
+
+procedure timplementationpendinglist.add(const aunit: punitinfoty);
+var
+ ofs1: ptruint;
+begin
+ with pimplpendinfoty(inherited add(ofs1))^ do begin
+  header.prev:= 0;
+  header.lh.next:= froot;
+  pimplpendinfoty(fdata+froot)^.header.prev:= ofs1;
+  froot:= ofs1;
+  data.unitname:= aunit^.key;
+ end;
+end;
+
+function timplementationpendinglist.next: punitinfoty;
+var
+ ofs1: ptruint;
+begin
+ result:= nil;
+ ofs1:= froot;
+ if ofs1 <> 0 then begin
+  with pimplpendinfoty(fdata+ofs1)^ do begin
+   result:= unitlist.findunit(data.unitname);
+   froot:= header.lh.next;
+  end;
+  delete(ofs1);
+ end;  
 end;
 
 end.

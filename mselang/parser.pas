@@ -30,9 +30,10 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  
 function parse(const input: string; const acommand: ttextstream;
-               const aunit: punitinfoty; out opcode: opinfoarty): boolean;
+               const aunit: punitinfoty; out aopcode: opinfoarty): boolean;
                               //true if ok
-//procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
+function parseunit(const info: pparseinfoty; const input: string;
+                                       const aunit: punitinfoty): boolean;
 
 procedure init;
 procedure deinit;
@@ -201,6 +202,18 @@ begin
  abort;
 end;
 }
+procedure incstack(const info: pparseinfoty);
+begin
+ with info^ do begin
+  inc(stacktop);
+  stackindex:= stacktop;
+  if stacktop = stackdepht then begin
+   stackdepht:= 2*stackdepht;
+   setlength(contextstack,stackdepht);
+  end;
+ end;
+end;
+
 function pushcont(const info: pparseinfoty): boolean;
         //handle branch transition flags, transitionhandler, set pc
         //returns false for stopparser or open transistion chain
@@ -244,12 +257,7 @@ begin
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
-   inc(stacktop);
-   stackindex:= stacktop;
-   if stacktop = stackdepht then begin
-    stackdepht:= 2*stackdepht;
-    setlength(contextstack,stackdepht);
-   end;
+   incstack(info);
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
    end;
@@ -313,21 +321,17 @@ begin
  end;
 end;
 }
-function parse(const input: string; const acommand: ttextstream;
-               const aunit: punitinfoty; out opcode: opinfoarty): boolean;
-                              //true if ok
-var
- info: parseinfoty;
-
+function parseunit(const info: pparseinfoty; const input: string;
+                                       const aunit: punitinfoty): boolean;
  procedure popparent;
  var
   int1: integer;
  begin
-  with info do begin
+  with info^ do begin
    int1:= stackindex;
    stackindex:= contextstack[stackindex].parent;
    if int1 = stackindex then begin
-    internalerror(@info,'invalid pop parent');
+    internalerror(info,'invalid pop parent');
    end;
   end;
  end; //popparent
@@ -340,56 +344,63 @@ var
  keywordindex: identty;
  keywordend: pchar;
  linebreaks: integer;
- startopcount: integer;
+ sourcebefore: sourceinfoty;
+ sourcestartbefore: pchar;
+ stackindexbefore: integer;
+ stacktopbefore: integer;
+ unitinfobefore: punitinfoty;
+ pcbefore: pcontextty;
+ stopparserbefore: boolean;
  
 label
  handlelab{,stophandlelab},parseend;
 begin
-
- fillchar(info,sizeof(info),0);
  linebreaks:= 0;
- info.unitinfo:= aunit;
- if info.unitinfo = nil then begin
-  info.unitinfo:= newunit('program');
- end;
- opcode:= nil;
- with info do begin
-  command:= acommand;
+ with info^ do begin
+  sourcebefore:= source;
+  sourcestartbefore:= sourcestart;
+  stackindexbefore:= stackindex;
+  stacktopbefore:= stacktop;
+  unitinfobefore:= unitinfo;
+  pcbefore:= pc;
+  stopparserbefore:= stopparser;
+  
+  unitinfo:= aunit;
+  if unitinfo = nil then begin
+   unitinfo:= newunit('program');
+  end;
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
+  source.line:= 0;
   if aunit <> nil then begin
    filename:= msefileutils.filename(aunit^.filepath);
   end
   else begin
-   filename:= 'main.pas'; //dummy
+   filename:= 'main.mla'; //dummy
   end;
-  stackdepht:= defaultstackdepht;
-  setlength(contextstack,stackdepht);
-  with contextstack[0],d do begin
+  incstack(info);
+  with contextstack[stackindex],d do begin
    kind:= ck_none;
    context:= startcontext;
-   start:= source;
-   parent:= 0;
+   start.po:= pchar(input);
+   start.line:= 0;
+   parent:= stackindex;
   end;
-  opcount:= startupoffset;
-  setlength(ops,opcount);
-  initparser(@info);
-  startopcount:= opcount;
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
 {$ifdef mse_debugparser}
-  outinfo(@info,'****');
+  outinfo(info,'****');
 {$endif}
-  while (source.po^ <> #0) and (stackindex >= 0) do begin
-   while (source.po^ <> #0) and (stackindex >= 0) do begin
+  while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
+   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
             //check context branches
     pb:= pc^.branch;
     if pb = nil then begin
      break; //no branch
     end;
     if bf_emptytoken in pb^.flags then begin
-     pushcont(@info); //default branch
+     pushcont(info); //default branch
                //???? why no break or stadard match handling
     end
     else begin
@@ -469,7 +480,7 @@ begin
        end;
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
-         pb^.dest.handler(@info);
+         pb^.dest.handler(info);
          if stopparser then begin
           goto parseend;
          end;
@@ -479,7 +490,7 @@ begin
         end
         else begin //switch branch context
          repeat
-          if not pushcont(@info) then begin 
+          if not pushcont(info) then begin 
                 //can not continue
            if stopparser then begin
             goto parseend;
@@ -511,7 +522,7 @@ handlelab:
     end;
     if pc^.handleexit <> nil then begin
          //call context transition handler
-     pc^.handleexit(@info);
+     pc^.handleexit(info);
      if stopparser then begin
       goto parseend;
      end;
@@ -534,19 +545,19 @@ handlelab:
     if pc^.cut then begin
      stacktop:= stackindex;
     end;
-    if (stackindex < 0) or stopparser then begin
+    if (stackindex <= stacktopbefore) or stopparser then begin
      goto parseend;
     end;
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser}
-     outinfo(@info,'! after0a');
+     outinfo(info,'! after0a');
 {$endif}
      goto handlelab;    
     end;
 {$ifdef mse_debugparser}
     if not pc1^.continue and (pc^.next = nil) then begin
-     outinfo(@info,'! after0b');
+     outinfo(info,'! after0b');
     end;
 {$endif}
    until pc1^.continue or (pc^.next <> nil) or 
@@ -578,7 +589,7 @@ handlelab:
      pc:= pc^.next;
      context:= pc;
      if pc^.handleentry <> nil then begin
-      pc^.handleentry(@info);
+      pc^.handleentry(info);
       if stopparser then begin
        goto parseend;
       end;
@@ -587,22 +598,25 @@ handlelab:
 //    kind:= ck_none;
    end;
 {$ifdef mse_debugparser}
-   outinfo(@info,'! after1');
+   outinfo(info,'! after1');
 {$endif}
   end;
 parseend:
 {$ifdef mse_debugparser}
-  outinfo(@info,'! after2');
+  outinfo(info,'! after2');
 {$endif}
   setlength(ops,opcount);
   with pstartupdataty(pointer(ops))^ do begin
    globdatasize:= globdatapo;
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
-  if not result or (opcount = startopcount) then begin
-   ops:= nil;
-  end;
-  opcode:= ops;
+  source:= sourcebefore;
+  sourcestart:= sourcestartbefore;
+  stackindex:= stackindexbefore;
+  stacktop:= stacktopbefore;
+  unitinfo:= unitinfobefore;
+  pc:= pcbefore;
+  stopparser:= stopparserbefore;
  end;
 
 {$ifdef mse_debugparser}
@@ -614,7 +628,44 @@ parseend:
   writeln('NIL');
  end;
 {$endif}
- 
+end;
+        
+function parse(const input: string; const acommand: ttextstream;
+               const aunit: punitinfoty; out aopcode: opinfoarty): boolean;
+                              //true if ok
+var
+ info: parseinfoty;
+ startopcount: integer;
+ po1: punitinfoty;
+begin
+ fillchar(info,sizeof(info),0);
+ info.unitinfo:= aunit;
+ if info.unitinfo = nil then begin
+  info.unitinfo:= newunit('program');
+ end;
+ with info do begin
+  ops:= nil;
+  command:= acommand;
+  stackdepht:= defaultstackdepht;
+  setlength(contextstack,stackdepht);
+  stacktop:= -1;
+  stackindex:= stacktop;
+  opcount:= startupoffset;
+  setlength(ops,opcount);
+  startopcount:= opcount;
+  initparser(@info);
+  result:= parseunit(@info,input,aunit);
+  while result do begin
+   po1:= nextunitimplementation;
+   if po1 = nil then begin
+    break;
+   end;
+  end;
+  if not result or (opcount = startopcount) then begin
+   ops:= nil;
+  end;
+  aopcode:= ops; 
+ end;
 end;
 
 end.

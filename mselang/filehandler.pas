@@ -28,7 +28,8 @@ uses
  
 function getunitfile(const aname: lstringty): filenamety;
 begin
- result:= filepath(utf8tostring(aname)+'.pas');
+// result:= filepath(utf8tostring(aname)+'.pas');
+ result:= filepath(utf8tostring(aname)+'.mla');
  if not findfile(result) then begin
   result:= '';
  end;
