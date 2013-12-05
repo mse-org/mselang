@@ -380,7 +380,8 @@ type
  opinfoarty = array of opinfoty;
  errorlevelty = (erl_none,erl_fatal,erl_error);
 
- unitstatety = (us_interface,us_interfaceparsed,us_implementation);
+ unitstatety = (us_interface,us_interfaceparsed,
+                     us_implementation,us_implementationparsed);
  unitstatesty = set of unitstatety;
 
  punitinfoty = ^unitinfoty;
@@ -392,6 +393,9 @@ type
   interfaceelement,classeselement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
+  implsourceoffset: integer;
+  implsourceline: integer;
+  implcontext: pcontextty;
  end;
  ppunitinfoty = ^punitinfoty;
 

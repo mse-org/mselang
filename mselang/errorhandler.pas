@@ -33,7 +33,7 @@ type
             err_argnotassign,err_illegalcharacter,err_numberexpected,
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
-            err_functionheadernotmatch,err_forwardnotsolved);
+            err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc);
             
  errorinfoty = record
   level: errorlevelty;
@@ -88,7 +88,8 @@ const
   (level: erl_error; message: 
                'Function header doesn''t match: param name changes "%s"=>"%s"'),
   (level: erl_error; message: 
-               'Forward declaration not solved "%s"')
+               'Forward declaration not solved "%s"'),
+  (level: erl_fatal; message: 'File "%s" truncated')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

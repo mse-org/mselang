@@ -1713,7 +1713,6 @@ begin
   end;
   inc(po1,int2);
   for int1:= stackindex+2 to stacktop do begin
-//   writeln(' ',contextstack[int1].d.ident.ident);
    dec(po1);
    po1^:= loadunitinterface(info,int1);
    if po1^ = nil then begin

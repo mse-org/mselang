@@ -24,6 +24,8 @@ function newunit(const aname: string): punitinfoty;
 function loadunitinterface(const info: pparseinfoty;
                                 const aindex: integer): punitinfoty;
 function nextunitimplementation: punitinfoty;
+function parseimplementation(const info: pparseinfoty; 
+                                       const aunit: punitinfoty): boolean;
 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 procedure implementationstart(const info: pparseinfoty);
@@ -114,6 +116,9 @@ begin
 {$endif}
  with info^ do begin
   if us_interface in unitinfo^.state then begin
+   unitinfo^.implsourceoffset:= source.po-sourcestart;
+   unitinfo^.implsourceline:= source.line;
+   unitinfo^.implcontext:= @mainco;
    stopparser:= true; //stop parsing;
   end
   else begin
@@ -137,8 +142,21 @@ begin
  with aunit^ do begin
   writeln('***************************************** interface');
   writeln(filepath);
+  state:= [us_interface];
   result:= parseunit(info,readfiledatastring(filepath),aunit);
   include(state,us_interfaceparsed);
+ end;
+end;
+
+function parseimplementation(const info: pparseinfoty; 
+                                       const aunit: punitinfoty): boolean;
+begin
+ with aunit^ do begin
+  writeln('***************************************** implementation');
+  writeln(filepath);
+  exclude(state,us_interface);
+  result:= parseunit(info,readfiledatastring(filepath),aunit);
+  include(state,us_implementationparsed);
  end;
 end;
 
@@ -170,7 +188,6 @@ begin
      identerror(info,aindex-info^.stackindex,err_cantfindunit);
     end
     else begin
-     state:= [us_interface];
      if not parseinterface(info,result) then begin
       result:= nil;
      end

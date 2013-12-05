@@ -365,27 +365,43 @@ begin
   pcbefore:= pc;
   stopparserbefore:= stopparser;
   
-  unitinfo:= aunit;
-  if unitinfo = nil then begin
-   unitinfo:= newunit('program');
-  end;
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
   source.line:= 0;
-  if aunit <> nil then begin
-   filename:= msefileutils.filename(aunit^.filepath);
-  end
-  else begin
-   filename:= 'main.mla'; //dummy
-  end;
+
   incstack(info);
   with contextstack[stackindex],d do begin
    kind:= ck_none;
    context:= startcontext;
    start.po:= pchar(input);
+   debugstart:= start.po;
    start.line:= 0;
    parent:= stackindex;
   end;
+
+  unitinfo:= aunit;
+  if unitinfo = nil then begin
+   unitinfo:= newunit('program');
+   filename:= 'main.mla'; //dummy
+  end
+  else begin
+   filename:= msefileutils.filename(unitinfo^.filepath);
+   if us_interfaceparsed in unitinfo^.state then begin
+    if unitinfo^.implsourceoffset >= length(input) then begin
+     errormessage(info,-1,err_filetrunc,[filename]);
+     debugsource:= source.po;
+     goto parseend;
+    end;
+    inc(source.po,unitinfo^.implsourceoffset);
+    source.line:= unitinfo^.implsourceline;
+    with contextstack[stackindex],d do begin
+     start:= source;
+     debugstart:= start.po;
+     context:= unitinfo^.implcontext;
+    end;
+   end;
+  end;
+
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
@@ -657,9 +673,10 @@ begin
   result:= parseunit(@info,input,aunit);
   while result do begin
    po1:= nextunitimplementation;
-   if po1 = nil then begin
+   if (po1 = nil) then begin
     break;
    end;
+   result:= parseimplementation(@info,po1);
   end;
   if not result or (opcount = startopcount) then begin
    ops:= nil;
