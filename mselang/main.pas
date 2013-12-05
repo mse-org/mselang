@@ -64,7 +64,7 @@ begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
  parser.init;
- parser.parse(ed.gettext,stream1,nil,ar1);
+ parser.parse(ed.gettext,stream1,ar1);
  parser.deinit;
 
  stream1.position:= 0;

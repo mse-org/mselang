@@ -168,6 +168,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'implementation');
+ implementationstartco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'implementationstart');
  mainco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -3394,8 +3399,11 @@ begin
  noimplementationco.branch:= nil;
  noimplementationco.handleexit:= @handlenoimplementationerror;
  implementationco.branch:= nil;
- implementationco.next:= @mainco;
- implementationco.handleexit:= @implementationstart;
+ implementationco.next:= @implementationstartco;
+ implementationco.handleexit:= @interfacestop;
+ implementationstartco.branch:= nil;
+ implementationstartco.next:= @mainco;
+ implementationstartco.handleexit:= @implementationstart;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  mainco.handleexit:= @handlemain;

@@ -384,6 +384,13 @@ type
                      us_implementation,us_implementationparsed);
  unitstatesty = set of unitstatety;
 
+ implinfoty = record
+  sourceoffset: integer;
+  sourceline: integer;
+  context: pcontextty;
+  eleparent: elementoffsetty;
+ end;
+ 
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
@@ -393,9 +400,7 @@ type
   interfaceelement,classeselement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
-  implsourceoffset: integer;
-  implsourceline: integer;
-  implcontext: pcontextty;
+  impl: implinfoty;
  end;
  ppunitinfoty = ^punitinfoty;
 

@@ -28,6 +28,7 @@ function parseimplementation(const info: pparseinfoty;
                                        const aunit: punitinfoty): boolean;
 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
+procedure interfacestop(const info: pparseinfoty);
 procedure implementationstart(const info: pparseinfoty);
 
 procedure init;
@@ -107,6 +108,22 @@ begin
  end;
 end;
 
+procedure interfacestop(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'INTERFACESTOP');
+{$endif}
+ with info^ do begin
+  if us_interface in unitinfo^.state then begin
+   unitinfo^.impl.sourceoffset:= source.po-sourcestart;
+   unitinfo^.impl.sourceline:= source.line;
+   unitinfo^.impl.context:= @implementationstartco;
+   unitinfo^.impl.eleparent:= ele.elementparent;
+   stopparser:= true; //stop parsing;
+  end
+ end;
+end;
+
 procedure implementationstart(const info: pparseinfoty);
 var
  po1: punitdataty;
@@ -115,22 +132,14 @@ begin
  outhandle(info,'IMPLEMENTATIONSTART');
 {$endif}
  with info^ do begin
-  if us_interface in unitinfo^.state then begin
-   unitinfo^.implsourceoffset:= source.po-sourcestart;
-   unitinfo^.implsourceline:= source.line;
-   unitinfo^.implcontext:= @mainco;
-   stopparser:= true; //stop parsing;
+  if us_implementation in unitinfo^.state then begin
+   errormessage(info,-1,err_invalidtoken,['implementation']);
   end
   else begin
-   if us_implementation in unitinfo^.state then begin
-    errormessage(info,-1,err_invalidtoken,['implementation']);
-   end
-   else begin
-    include(unitinfo^.state,us_implementation);
-    if not ele.pushelement(ord(tk_implementation),vis_max,
-                                     ek_implementation,po1) then begin
-     internalerror(info,'U20131130A');
-    end;
+   include(unitinfo^.state,us_implementation);
+   if not ele.pushelement(ord(tk_implementation),vis_max,
+                                    ek_implementation,po1) then begin
+    internalerror(info,'U20131130A');
    end;
   end;
  end;

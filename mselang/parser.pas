@@ -30,7 +30,7 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  
 function parse(const input: string; const acommand: ttextstream;
-               const aunit: punitinfoty; out aopcode: opinfoarty): boolean;
+               {const aunit: punitinfoty;} out aopcode: opinfoarty): boolean;
                               //true if ok
 function parseunit(const info: pparseinfoty; const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -380,26 +380,21 @@ begin
   end;
 
   unitinfo:= aunit;
-  if unitinfo = nil then begin
-   unitinfo:= newunit('program');
-   filename:= 'main.mla'; //dummy
-  end
-  else begin
-   filename:= msefileutils.filename(unitinfo^.filepath);
-   if us_interfaceparsed in unitinfo^.state then begin
-    if unitinfo^.implsourceoffset >= length(input) then begin
-     errormessage(info,-1,err_filetrunc,[filename]);
-     debugsource:= source.po;
-     goto parseend;
-    end;
-    inc(source.po,unitinfo^.implsourceoffset);
-    source.line:= unitinfo^.implsourceline;
-    with contextstack[stackindex],d do begin
-     start:= source;
-     debugstart:= start.po;
-     context:= unitinfo^.implcontext;
-    end;
+  filename:= msefileutils.filename(unitinfo^.filepath);
+  if us_interfaceparsed in unitinfo^.state then begin
+   if unitinfo^.impl.sourceoffset >= length(input) then begin
+    errormessage(info,-1,err_filetrunc,[filename]);
+    debugsource:= source.po;
+    goto parseend;
    end;
+   inc(source.po,unitinfo^.impl.sourceoffset);
+   source.line:= unitinfo^.impl.sourceline;
+   with contextstack[stackindex],d do begin
+    start:= source;
+    debugstart:= start.po;
+    context:= unitinfo^.impl.context;
+   end;
+   ele.elementparent:= unitinfo^.impl.eleparent;
   end;
 
   pc:= contextstack[stackindex].context;
@@ -647,18 +642,18 @@ parseend:
 end;
         
 function parse(const input: string; const acommand: ttextstream;
-               const aunit: punitinfoty; out aopcode: opinfoarty): boolean;
+               {const aunit: punitinfoty;} out aopcode: opinfoarty): boolean;
                               //true if ok
 var
  info: parseinfoty;
  startopcount: integer;
  po1: punitinfoty;
+ unit1: punitinfoty;
 begin
  fillchar(info,sizeof(info),0);
- info.unitinfo:= aunit;
- if info.unitinfo = nil then begin
-  info.unitinfo:= newunit('program');
- end;
+ unit1:= newunit('program');
+ unit1^.filepath:= 'main.mla'; //dummy
+ 
  with info do begin
   ops:= nil;
   command:= acommand;
@@ -670,7 +665,7 @@ begin
   setlength(ops,opcount);
   startopcount:= opcount;
   initparser(@info);
-  result:= parseunit(@info,input,aunit);
+  result:= parseunit(@info,input,unit1);
   while result do begin
    po1:= nextunitimplementation;
    if (po1 = nil) then begin
