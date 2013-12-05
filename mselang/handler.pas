@@ -1748,6 +1748,7 @@ begin
  outhandle(info,'PROGBLOCK');
 {$endif}
 outinfo(info,'****');
+ writeop(info,nil); 
  checkforwarderrors(info,info^.unitinfo^.forwardlist);
  with info^ do begin
   dec(stackindex);
@@ -2013,6 +2014,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'MAIN');
 {$endif}
+ checkforwarderrors(info,info^.unitinfo^.forwardlist);
  with info^ do begin
   dec(stackindex);
  end;

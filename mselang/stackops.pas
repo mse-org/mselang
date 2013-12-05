@@ -433,7 +433,7 @@ begin
  end;
  inc(oppo,startupoffset);
  try
-  while oppo < endpo do begin
+  while oppo^.op <> nil do begin
    oppo^.op;
    inc(oppo);
   end;
