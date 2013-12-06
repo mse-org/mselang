@@ -344,6 +344,7 @@ var
  keywordindex: identty;
  keywordend: pchar;
  linebreaks: integer;
+ 
  sourcebefore: sourceinfoty;
  sourcestartbefore: pchar;
  stackindexbefore: integer;
@@ -614,7 +615,9 @@ handlelab:
   end;
 parseend:
 {$ifdef mse_debugparser}
-  outinfo(info,'! after2');
+  if not stopparser then begin
+   outinfo(info,'! after2');
+  end;
 {$endif}
   setlength(ops,opcount);
   with pstartupdataty(pointer(ops))^ do begin

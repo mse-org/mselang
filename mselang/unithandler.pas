@@ -190,8 +190,10 @@ begin
   if result = nil then begin
    result:= unitlist.newunit(d.ident.ident);
    with result^ do begin
+    prev:= info^.unitinfo;
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
+    name:= lstringtostring(lstr1);
     filepath:= filehandler.getunitfile(lstr1);
     if filepath = '' then begin
      identerror(info,aindex-info^.stackindex,err_cantfindunit);
@@ -204,6 +206,12 @@ begin
       implementationpending.add(result);
      end;
     end;
+   end;
+  end
+  else begin
+   if not (us_interfaceparsed in result^.state) then begin
+    circularerror(info,aindex-info^.stackindex,result);
+    result:= nil;
    end;
   end;
  end;

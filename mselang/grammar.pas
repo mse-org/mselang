@@ -1059,7 +1059,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcommaidents2: array[0..1] of branchty = (
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: @commaidentsco); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),

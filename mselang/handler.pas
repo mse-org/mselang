@@ -1730,6 +1730,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'NOIDENTERROR');
 {$endif}
+ errormessage(info,-1,err_identexpected,[],0,erl_fatal);
 end;
 
 procedure handleprogbegin(const info: pparseinfoty);

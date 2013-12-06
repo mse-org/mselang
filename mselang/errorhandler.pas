@@ -33,7 +33,8 @@ type
             err_argnotassign,err_illegalcharacter,err_numberexpected,
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
-            err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc);
+            err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
+            err_circularreference);
             
  errorinfoty = record
   level: errorlevelty;
@@ -89,7 +90,8 @@ const
                'Function header doesn''t match: param name changes "%s"=>"%s"'),
   (level: erl_error; message: 
                'Forward declaration not solved "%s"'),
-  (level: erl_fatal; message: 'File "%s" truncated')
+  (level: erl_fatal; message: 'File "%s" truncated'),
+  (level: erl_fatal; message: 'Circular unit reference %s')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
@@ -118,6 +120,8 @@ procedure operationnotsupportederror(const info: pparseinfoty;
 procedure illegalcharactererror(const info: pparseinfoty; const eaten: boolean);
                              
 procedure internalerror(const info: pparseinfoty; const id: string);
+procedure circularerror(const info: pparseinfoty; const astackoffset: integer;
+                                                     const adest: punitinfoty);
 
 implementation
 uses
@@ -309,89 +313,24 @@ begin
  errormessage(info,-1,err_internalerror,[id]);
 end;
 
+procedure circularerror(const info: pparseinfoty; const astackoffset: integer;
+                                                     const adest: punitinfoty);
+var
+ str1: string;
+ po1: punitinfoty;
+begin
+ po1:= info^.unitinfo;
+ str1:= '';
+ while po1 <> nil do begin
+  str1:= po1^.name+'->'+str1;
+  if po1 = adest then begin
+   break;
+  end;
+  po1:= po1^.prev;
+ end;
+ str1:= info^.unitinfo^.name+'->'+str1;
+ setlength(str1,length(str1)-2);
+ errormessage(info,astackoffset,err_circularreference,[str1]);
+end;
+
 end.
-
-sub test(para: boolean): int32;
-var
- c1: card32;
-
- sub locabc();
- var
-  bo1: bool8;
- begin
-  bo1:= false;
-  if bo1 then
-   c1:= 88;
-  else
-   para:= false;
-  end;
- end;
-
-const
- maxval = 123;
- 
-begin
- if para then
-  return maxval;
- end;
- locabc();
- return 12;
-end;
-
-procedure test(para: boolean): int32;
-var
- c1: card32;
-
- procedure locabc();
- var
-  bo1: bool8;
- begin
-  bo1:= false;
-  if bo1 then
-   c1:= 88;
-  else
-   para:= false;
-  end;
- end;
-
-const
- maxval = 123;
- 
-begin
- if para then
-  return maxval;
- end;
- locabc();
- return 12;
-end;
-
-testfunc(para: boolean): int32;
-var
- c1: card32;
-
- locabc();
- var
-  bo1: bool8;
- begin
-  bo1:= false;
-  if bo1 then
-   c1:= 88;
-  else
-   para:= false;
-  end;
- end;
-
-const
- maxval = 123;
- 
-begin
- if para then
-  return maxval;
- end;
- locabc();
-end:= 12;
-
-handler(const par1: msestring);
-begin
- testfunc(false);
-end;

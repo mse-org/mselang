@@ -62,7 +62,7 @@ commaidents,commaidentsnoidenterror,,
 commaidents1,commaidents2,,
  '',ident^*
 commaidents2,,,^
- ',',commaidents
+ ',',commaidents-
 commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,,,handlenoimplementationerror

@@ -395,7 +395,9 @@ type
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
   key: identty;
-  filepath: filenamety;
+  name: string;      //todo: use lstringty
+  prev: punitinfoty; //current uses compiled item
+  filepath: filenamety; //todo: use lstringty
   state: unitstatesty;
   interfaceelement,classeselement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
