@@ -414,7 +414,9 @@ type
   filename: filenamety;
   sourcestart: pchar; //todo: use file cache for include files
   source: sourceinfoty;
+{$ifdef mse_debugparser}
   debugsource: pchar;
+{$endif}
   consumed: pchar;
   contextstack: array of contextitemty;
   stackdepht: integer;

@@ -114,6 +114,7 @@ begin
  outhandle(info,'INTERFACESTOP');
 {$endif}
  with info^ do begin
+  include(unitinfo^.state,us_interfaceparsed);
   if us_interface in unitinfo^.state then begin
    unitinfo^.impl.sourceoffset:= source.po-sourcestart;
    unitinfo^.impl.sourceline:= source.line;

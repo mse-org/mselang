@@ -154,7 +154,7 @@ begin
     level1:= aerrorlevel;
    end;
    inc(errors[level1]);
-   str1:=filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+   str1:=unitinfo^.filepath+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
    command.writeln(str1);
    writeln('<<<<<<< '+str1);

@@ -352,13 +352,18 @@ var
  unitinfobefore: punitinfoty;
  pcbefore: pcontextty;
  stopparserbefore: boolean;
- 
+{$ifdef mse_debugparser}
+ debugsourcebefore: pchar;
+{$endif}
 label
  handlelab{,stophandlelab},parseend;
 begin
  linebreaks:= 0;
  with info^ do begin
   sourcebefore:= source;
+ {$ifdef mse_debugparser}
+  debugsourcebefore:= debugsource;
+ {$endif}
   sourcestartbefore:= sourcestart;
   stackindexbefore:= stackindex;
   stacktopbefore:= stacktop;
@@ -626,6 +631,9 @@ parseend:
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
+ {$ifdef mse_debugparser}
+  debugsource:= debugsourcebefore;
+ {$endif}
   sourcestart:= sourcestartbefore;
   stackindex:= stackindexbefore;
   stacktop:= stacktopbefore;

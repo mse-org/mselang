@@ -1655,6 +1655,7 @@ begin
   int2:= stacktop-stackindex-1;
   with unitinfo^ do begin
    if us_interfaceparsed in state then begin
+    ele.decelementparent;
     setlength(implementationuses,int2);
     po1:= pointer(implementationuses);
    end
