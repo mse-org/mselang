@@ -44,7 +44,7 @@ procedure outinfo(const info: pparseinfoty; const text: string);
 implementation
 uses
  typinfo,grammar,handler,elements,msestrings,sysutils,handlerglob,
- msebits,unithandler,msefileutils,errorhandler,mseformatstr;
+ msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode;
   
 //procedure handledecnum(const info: pparseinfoty); forward;
 //procedure handlefrac(const info: pparseinfoty); forward;
@@ -365,6 +365,7 @@ begin
   unitinfobefore:= unitinfo;
   pcbefore:= pc;
   stopparserbefore:= stopparser;
+  inc(unitlevel);
   
   sourcestart:= pchar(input); //todo: use filecache and include stack
   source.po:= sourcestart;
@@ -631,6 +632,7 @@ parseend:
   unitinfo:= unitinfobefore;
   pc:= pcbefore;
   stopparser:= stopparserbefore;
+  dec(unitlevel);
  end;
 
 {$ifdef mse_debugparser}
@@ -666,9 +668,10 @@ begin
   stackindex:= stacktop;
   opcount:= startupoffset;
   setlength(ops,opcount);
-  startopcount:= opcount;
   initparser(@info);
+  startopcount:= opcount;
   result:= parseunit(@info,input,unit1);
+  inc(unitlevel);
   while result do begin
    po1:= nextunitimplementation;
    if (po1 = nil) then begin

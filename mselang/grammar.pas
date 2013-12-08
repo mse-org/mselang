@@ -911,8 +911,8 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bstart1: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @uses0co); stack: nil; 
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
+     dest: (context: @uses0co); stack: @start2co; 
      keyword: $1A2B3C66{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -1068,17 +1068,51 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bmain: array[0..8] of branchty = (
+ bmain: array[0..5] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
+     dest: (context: @uses0co); stack: nil; 
+     keyword: $1A2B3C66{'uses'}),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bmain1: array[0..8] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @procedureco); stack: nil; 
      keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @progbeginco); stack: nil; 
      keyword: $8ACF19BB{'begin'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @constco); stack: nil; 
      keyword: $68ACF19B{'const'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @varco); stack: nil; 
      keyword: $D159E337{'var'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
@@ -3385,7 +3419,6 @@ begin
  useserrorco.branch:= nil;
  useserrorco.handleexit:= @handleuseserror;
  usesokco.branch:= nil;
- usesokco.next:= @start1co;
  usesokco.handleexit:= @handleuses;
  start2co.branch:= @bstart2;
  start2co.next:= @noimplementationco;
@@ -3406,10 +3439,8 @@ begin
  implementationstartco.handleexit:= @implementationstart;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
- mainco.handleexit:= @handlemain;
- main1co.branch:= nil;
- main1co.next:= @mainco;
- main1co.handleexit:= @handlemain1;
+ main1co.branch:= @bmain1;
+ main1co.handleexit:= @handlemain;
  comment0co.branch:= @bcomment0;
  comment0co.handleexit:= @handlecommentend;
  directiveco.branch:= @bdirective;

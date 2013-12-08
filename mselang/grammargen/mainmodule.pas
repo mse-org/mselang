@@ -105,7 +105,7 @@ type
   stack: string;
   emptytoken: boolean;
  end;
- 
+  
  brancharty = array of branchrecty;
 
 //procedure test(uses: integer);

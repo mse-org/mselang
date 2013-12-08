@@ -22,7 +22,7 @@ uses
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
-            {err_thenexpected,}err_semicolonexpected,err_identifierexpected,
+            {err_thenexpected,}err_syntax,
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
             err_toomanyidentifierlevels,err_wrongtype,
@@ -52,8 +52,7 @@ const
   (level: erl_error; message: 'Duplicate identifier "%s"'),
   (level: erl_error; message: 'Identifier not found "%s"'),
 //  (level: erl_fatal; message: 'Syntax error, "then" expected'),
-  (level: erl_fatal; message: 'Syntax error, ";" expected'),
-  (level: erl_fatal; message: 'Syntax error, "identifier" expected'),
+  (level: erl_fatal; message: 'Syntax error, "%s" expected'),
   (level: erl_error; message: 'Boolean expression expected'),
   (level: erl_error; message: 
                     'Wrong number of parameters specified for call to "%s"'),

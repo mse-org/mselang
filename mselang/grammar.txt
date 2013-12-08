@@ -39,13 +39,13 @@ semicolonexpected,,,handlesemicolonexpected
 identexpected,,,handleidentexpected
 start1,start2,,
  ${whitespace}
- 'uses'.,uses0-
+ 'uses'.,uses0-*,start2
 uses0,uses1,,
  '',commaidents^*
 uses1,useserror,,
  ';',usesok-
 useserror,,,handleuseserror
-usesok,start1,,handleuses
+usesok,,,handleuses
 
 start2,noimplementation,,
  ${whitespace}
@@ -70,13 +70,16 @@ noimplementation,,,handlenoimplementationerror
 implementation,implementationstart,,interfacestop
 implementationstart,main,,implementationstart
 
-main,main1,,handlemain
+main,main1,,
  ${whitespace}
- 'procedure'.,procedure-*
+ 'uses'.,uses0-*
+main1,,,handlemain
+ ${whitespace}
+ 'procedure'.,procedure-*>
  'begin'.,progbegin-
- 'const'.,const-*
- 'var'.,var-*
-main1,main,,handlemain1
+ 'const'.,const-*>
+ 'var'.,var-*>
+
 comment0,,,handlecommentend^*>
  '}',-*
  '',-

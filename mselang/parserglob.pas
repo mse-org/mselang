@@ -421,6 +421,7 @@ type
   stackindex: integer; 
   stacktop: integer; 
   funclevel: integer;
+  unitlevel: integer;
   command: ttextstream;
   errorfla: boolean;
   errors: array[errorlevelty] of integer;

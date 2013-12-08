@@ -87,7 +87,7 @@ procedure handleexp(const info: pparseinfoty);
 procedure handleequsimpexp(const info: pparseinfoty);
 
 procedure handlemain(const info: pparseinfoty);
-procedure handlemain1(const info: pparseinfoty);
+//procedure handlemain1(const info: pparseinfoty);
 procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
@@ -140,7 +140,7 @@ procedure handleabort(const info: pparseinfoty);
 implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
- unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif};
+ unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif},opcode;
 
 const
 // reversestackdata = sdk_bool8rev;
@@ -199,55 +199,6 @@ begin
  result:= getenumname(typeinfo(datakindty),ord(atype.kind));
 end;
  
-function getglobvaraddress(const info: pparseinfoty;
-                                        const asize: integer): ptruint;
-begin
- with info^ do begin
-  result:= globdatapo;
-  inc(globdatapo,asize);
- end;
-end;
-
-function getlocvaraddress(const info: pparseinfoty;
-                                        const asize: integer): ptruint;
-begin
- with info^ do begin
-  result:= locdatapo;
-  inc(locdatapo);
- end;
-end;
- 
-function additem(const info: pparseinfoty): popinfoty;
-begin
- with info^ do begin
-  if high(ops) < opcount then begin
-   setlength(ops,(high(ops)+257)*2);
-  end;
-  result:= @ops[opcount];
-  inc(opcount);
- end;
-end;
-
-function insertitem(const info: pparseinfoty; 
-                                   const insertad: opaddressty): popinfoty;
-begin
- with info^ do begin
-  if high(ops) < opcount then begin
-   setlength(ops,(high(ops)+257)*2);
-  end;
-  move(ops[insertad],ops[insertad+1],(opcount-insertad)*sizeof(ops[0]));
-  result:= @ops[insertad];
-  inc(opcount);
- end;
-end;
-
-procedure writeop(const info: pparseinfoty; const operation: opty); inline;
-begin
- with additem(info)^ do begin
-  op:= operation
- end;
-end;
-
 var
  sysdatatypes: array[systypety] of typeinfoty;
  
@@ -1311,7 +1262,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'IDENTPATH2');
 {$endif}
- errormessage(info,0,err_identifierexpected,[]);
+ errormessage(info,0,err_syntax,['identifier']);
 end;
 
 function tryconvert(const info: pparseinfoty; var context: contextitemty;
@@ -1378,7 +1329,7 @@ var
   result:= paramco = 0;
   if not result then begin
    with info^,contextstack[stackindex].d do begin
-    errormessage(info,1,err_semicolonexpected,[],ident.len);
+    errormessage(info,1,err_syntax,[';'],ident.len);
    end;
   end;
  end;
@@ -1642,7 +1593,7 @@ begin
  outhandle(info,'NOUNITNAMEERROR');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_identifierexpected,[]);
+  errormessage(info,-1,err_syntax,['identifier']);
  end;
 end;
 
@@ -1652,7 +1603,7 @@ begin
  outhandle(info,'SEMICOLONEXPECTED');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_semicolonexpected,[]);
+  errormessage(info,-1,err_syntax,[';']);
  end;
 end;
 
@@ -1683,7 +1634,7 @@ begin
  outhandle(info,'USESERROR');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_semicolonexpected,[]);
+  errormessage(info,-1,err_syntax,[';']);
   dec(stackindex);
   stacktop:= stackindex;
  end;
@@ -1698,6 +1649,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'USES');
 {$endif}
+ outinfo(info,'***');
  with info^ do begin
   offs1:= ele.decelementparent;
   int2:= stacktop-stackindex-1;
@@ -1721,6 +1673,7 @@ begin
    end;
   end;
   ele.elementparent:= offs1;
+  dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
@@ -2017,6 +1970,9 @@ begin
 {$endif}
  checkforwarderrors(info,info^.unitinfo^.forwardlist);
  with info^ do begin
+  if unitlevel = 1 then begin
+   errormessage(info,-1,err_syntax,['begin']);
+  end;
   dec(stackindex);
  end;
 end;
@@ -2027,6 +1983,7 @@ const
    nil, nil, nil,  @progbeginco,@procedure0co,@constco,@varco
   );
  } 
+ (*
 procedure handlemain1(const info: pparseinfoty);
 var
  po1: pcontextty;
@@ -2048,7 +2005,7 @@ begin
  end;
 }
 end;
-
+*)
 procedure handlekeyword(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -2642,7 +2599,7 @@ end;
 procedure handlecheckterminator(const info: pparseinfoty);
 begin
  with info^ do begin
-  errormessage(info,-1,err_semicolonexpected,[]);
+  errormessage(info,-1,err_syntax,[';']);
   dec(stackindex);
  end;
 end;
@@ -2650,7 +2607,7 @@ end;
 procedure handlestatementblock1(const info: pparseinfoty);
 begin
  with info^ do begin
-  errormessage(info,-1,err_semicolonexpected,[]);
+  errormessage(info,-1,err_syntax,[';']);
   dec(stackindex);
  end;
 end;

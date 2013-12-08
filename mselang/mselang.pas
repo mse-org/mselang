@@ -22,6 +22,7 @@ program mselang;
 uses
  {$ifdef FPC}{$ifdef unix}cthreads,{$endif}{$endif}
  msegui,mseforms,main;
+
 begin
  application.createform(tmainfo,mainfo);
  application.run;
