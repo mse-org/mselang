@@ -21,11 +21,11 @@ uses
  msestrings,parserglob,elements;
 
 function newunit(const aname: string): punitinfoty; 
-function loadunitinterface(const info: pparseinfoty;
+function loadunit(const info: pparseinfoty;
                                 const aindex: integer): punitinfoty;
-function nextunitimplementation: punitinfoty;
-function parseimplementation(const info: pparseinfoty; 
-                                       const aunit: punitinfoty): boolean;
+//function nextunitimplementation: punitinfoty;
+//function parseimplementation(const info: pparseinfoty; 
+//                                       const aunit: punitinfoty): boolean;
 
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 procedure interfacestop(const info: pparseinfoty);
@@ -56,7 +56,7 @@ type
    function findunit(const aname: identty): punitinfoty;
    function newunit(const aname: identty): punitinfoty;
  end;
-
+{
  implpenddataty = record
   unitname: identty;
  end;
@@ -75,10 +75,10 @@ type
    procedure add(const aunit: punitinfoty);
    function next: punitinfoty;
  end;
- 
+} 
 var
  unitlist: tunitlist;
- implementationpending: timplementationpendinglist;
+// implementationpending: timplementationpendinglist;
  
 procedure setunitname(const info: pparseinfoty); //unitname on top of stack
 var
@@ -115,6 +115,7 @@ begin
 {$endif}
  with info^ do begin
   include(unitinfo^.state,us_interfaceparsed);
+{
   if us_interface in unitinfo^.state then begin
    unitinfo^.impl.sourceoffset:= source.po-sourcestart;
    unitinfo^.impl.sourceline:= source.line;
@@ -122,6 +123,7 @@ begin
    unitinfo^.impl.eleparent:= ele.elementparent;
    stopparser:= true; //stop parsing;
   end
+}
  end;
 end;
 
@@ -146,6 +148,18 @@ begin
  end;
 end;
 
+function parseusesunit(const info: pparseinfoty;
+                              const aunit: punitinfoty): boolean;
+begin
+ with aunit^ do begin
+  writeln('***************************************** uses');
+  writeln(filepath);
+  result:= parseunit(info,readfiledatastring(filepath),aunit);
+  include(state,us_implementationparsed);
+ end;
+end;
+
+(*
 function parseinterface(const info: pparseinfoty; 
                                        const aunit: punitinfoty): boolean;
 begin
@@ -169,7 +183,7 @@ begin
   include(state,us_implementationparsed);
  end;
 end;
-
+*)
 function newunit(const aname: string): punitinfoty; 
 var
  id: identty;
@@ -181,8 +195,7 @@ begin
  end;
 end;
  
-function loadunitinterface(const info: pparseinfoty;
-                                         const aindex: integer): punitinfoty;
+function loadunit(const info: pparseinfoty; const aindex: integer): punitinfoty;
 var
  lstr1: lstringty;
 begin
@@ -200,12 +213,17 @@ begin
      identerror(info,aindex-info^.stackindex,err_cantfindunit);
     end
     else begin
+     if not parseusesunit(info,result) then begin
+      result:= nil;
+     end
+{    
      if not parseinterface(info,result) then begin
       result:= nil;
      end
      else begin
       implementationpending.add(result);
      end;
+}
     end;
    end;
   end
@@ -217,22 +235,22 @@ begin
   end;
  end;
 end;
-
+{
 function nextunitimplementation: punitinfoty;
 begin
  result:= implementationpending.next;
 end;
-
+}
 procedure init;
 begin
  unitlist:= tunitlist.create;
- implementationpending:= timplementationpendinglist.create;
+// implementationpending:= timplementationpendinglist.create;
 end;
 
 procedure deinit;
 begin
  unitlist.free;
- implementationpending.free;
+// implementationpending.free;
 end;
 
 { tunitlist }
@@ -280,7 +298,7 @@ begin
  result^.key:= aname;
  po1^.data:= result;
 end;
-
+(*
 { timplementationpendinglist }
 
 constructor timplementationpendinglist.create;
@@ -315,5 +333,5 @@ begin
   delete(ofs1);
  end;  
 end;
-
+*)
 end.

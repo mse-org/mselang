@@ -679,6 +679,7 @@ begin
   initparser(@info);
   startopcount:= opcount;
   result:= parseunit(@info,input,unit1);
+  {
   inc(unitlevel);
   while result do begin
    po1:= nextunitimplementation;
@@ -687,6 +688,7 @@ begin
    end;
    result:= parseimplementation(@info,po1);
   end;
+  }
   if not result or (opcount = startopcount) then begin
    ops:= nil;
   end;

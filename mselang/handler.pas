@@ -1667,7 +1667,7 @@ begin
   inc(po1,int2);
   for int1:= stackindex+2 to stacktop do begin
    dec(po1);
-   po1^:= loadunitinterface(info,int1);
+   po1^:= loadunit(info,int1);
    if po1^ = nil then begin
     stopparser:= true;
     break;

@@ -124,7 +124,7 @@ procedure circularerror(const info: pparseinfoty; const astackoffset: integer;
 
 implementation
 uses
- msestrings,sysutils,mseformatstr,typinfo;
+ msestrings,sysutils,mseformatstr,typinfo,msefileutils;
 
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
@@ -154,7 +154,8 @@ begin
     level1:= aerrorlevel;
    end;
    inc(errors[level1]);
-   str1:=unitinfo^.filepath+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+   str1:= msefileutils.filename(unitinfo^.filepath)+
+      '('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
    command.writeln(str1);
    writeln('<<<<<<< '+str1);
