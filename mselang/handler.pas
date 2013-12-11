@@ -26,7 +26,7 @@ procedure initparser(const info: pparseinfoty);
 
 procedure push(const info: pparseinfoty; const avalue: real); overload;
 procedure push(const info: pparseinfoty; const avalue: integer); overload;
-procedure int32toflo64(const info: pparseinfoty; const index: integer);
+procedure int32toflo64(const info: pparseinfoty{; const index: integer});
  
 procedure dummyhandler(const info: pparseinfoty);
 
@@ -144,7 +144,7 @@ uses
 
 const
 // reversestackdata = sdk_bool8rev;
- stacklinksize = 1;
+ stacklinksize = sizeof(pointer);
 
 type
  systypety = (st_bool8,st_int32,st_float64);
@@ -183,7 +183,7 @@ const
    (name: 'true'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: true))
   );
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
-   (name: 'writeln'; data: (func: sf_writeln; op: @writelnop))
+   (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
   );
 
 function typename(const ainfo: contextdataty): string;
@@ -307,6 +307,7 @@ begin
 end;
 
 procedure push(const info: pparseinfoty; const avalue: datakindty); overload;
+      //no alignsize
 begin
  with additem(info)^ do begin
   op:= @pushdatakind;
@@ -335,13 +336,15 @@ begin
  end;
 end;
 
-procedure int32toflo64(const info: pparseinfoty; const index: integer);
+procedure int32toflo64(const info: pparseinfoty{; const index: integer});
 begin
  with additem(info)^ do begin
   op:= @stackops.int32toflo64;
+  {
   with d.op1 do begin
    index0:= index;
   end;
+  }
  end;
 end;
 
@@ -758,7 +761,7 @@ begin
     else begin
      case kinda of
       dk_integer: begin
-        int32toflo64(info,0);
+        int32toflo64(info);
       end;
      end;
     end;
@@ -1341,6 +1344,7 @@ var
  po4: pfielddataty;
  po5: pelementoffsetty;
  po6: pvardataty;
+ po7: pointer;
  lastident: integer;
  idents: identvecty;
  ele1: elementoffsetty;
@@ -1350,6 +1354,7 @@ var
  indirect1: indirectlevelty;
 // fl1: typeflagsty;
  opshift: opaddressty;
+ stacksize1: databytesizety;
 label
  endlab;
 begin
@@ -1457,8 +1462,9 @@ begin
     ek_sysfunc: begin
      with psysfuncdataty(po2)^ do begin
       case func of
-       sf_writeln: begin
-        int2:= stacktop-stackindex-2-idents.high;
+       sf_writeln: begin //todo: use open array of constrec
+        int2:= stacktop-stackindex-2-idents.high; //count
+        stacksize1:= 0;
         opshift:= 0;
         for int1:= 3+stackindex+idents.high to 
                                  int2+2+stackindex+idents.high do begin
@@ -1468,11 +1474,17 @@ begin
            inc(opshift);
            pushinsertconst(info,contextstack[int1]);
           end;
-          push(info,ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind);
+          with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
+           push(info,kind);
+           stacksize1:= stacksize1 + alignsize(bytesize);
+          end;
          end;
         end;
-        push(info,int2);
-        writeop(info,op);
+        with additem(info)^ do begin
+         op:= sysop;
+         d.paramcount:= int2;
+         d.paramsize:= stacksize1;
+        end;
         //todo: handle function
        end;
       end;
@@ -2478,6 +2490,7 @@ var
  parent1: elementoffsetty;
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
+ parambase: ptruint;
 
 begin
 {$ifdef mse_debugparser}
@@ -2488,6 +2501,7 @@ begin
               //todo: multi level type
 outinfo(info,'****');
  with info^ do begin
+  parambase:= locdatapo;
   paramco:= (stacktop-stackindex-2) div 3;
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
@@ -2567,7 +2581,7 @@ outinfo(info,'****');
    stacktop:= stackindex;
    with contextstack[stackindex] do begin
     d.kind:= ck_proc;
-    d.proc.paramcount:= paramco;
+    d.proc.paramsize:= locdatapo - parambase;
     d.proc.error:= err1;
     ele.markelement(d.proc.elementmark); 
    end;
@@ -2591,7 +2605,7 @@ outinfo(info,'*****');
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;
-   d.count:= proc.paramcount+1;
+   d.count:= proc.paramsize + sizeof(pointer);
   end;
   dec(funclevel);
  end;

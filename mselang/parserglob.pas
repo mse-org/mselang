@@ -51,6 +51,7 @@ type
  
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
                dk_address,dk_record{,dk_reference});
+ pdatakindty = ^datakindty;
  datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                das_33_63,das_64);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
@@ -213,7 +214,7 @@ type
   address: opaddressty;
  end;
  procinfoty = record
-  paramcount: integer;
+  paramsize: integer;
   elementmark: markinfoty;
   error: boolean;
  end;
@@ -312,7 +313,7 @@ type
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,ok_pushaddress,
-             ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress);
+             ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -363,10 +364,14 @@ type
    );
    ok_var:(
     dataaddress: dataaddressty;
-    datasize: ptruint;
+    datasize: databytesizety;
    );
    ok_opaddress:(
     opaddress: opaddressty;
+   );
+   ok_params:(
+    paramsize: databytesizety;
+    paramcount: integer;
    );
   end;
 

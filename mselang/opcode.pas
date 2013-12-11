@@ -30,13 +30,15 @@ function insertitem(const info: pparseinfoty;
 procedure writeop(const info: pparseinfoty; const operation: opty); inline;
 
 implementation
-
+uses
+ stackops;
+ 
 function getglobvaraddress(const info: pparseinfoty;
                                         const asize: integer): ptruint;
 begin
  with info^ do begin
   result:= globdatapo;
-  inc(globdatapo,asize);
+  globdatapo:= globdatapo + alignsize(asize);
  end;
 end;
 
@@ -45,7 +47,7 @@ function getlocvaraddress(const info: pparseinfoty;
 begin
  with info^ do begin
   result:= locdatapo;
-  inc(locdatapo);
+  locdatapo:= locdatapo + alignsize(asize);
  end;
 end;
  

@@ -178,7 +178,7 @@ begin
 //      write(opmark.address,' ');
 //     end;
      ck_proc: begin
-      write('paco:',proc.paramcount);
+      write('pasize:',proc.paramsize);
      end;
     end;
 {$ifdef mse_debugparser}

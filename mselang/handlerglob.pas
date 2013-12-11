@@ -137,7 +137,7 @@ type
 
  sysfuncdataty = record
   func: sysfuncty;
-  op: opty;
+  sysop: opty;
  end;
  psysfuncdataty = ^sysfuncdataty;
 

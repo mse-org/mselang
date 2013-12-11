@@ -154,7 +154,7 @@ begin
  with aunit^ do begin
   writeln('***************************************** uses');
   writeln(filepath);
-//todo: use mmap()
+//todo: use mmap(), problem: no terminating 0.
   result:= parseunit(info,readfiledatastring(filepath),aunit);
   include(state,us_implementationparsed);
  end;
