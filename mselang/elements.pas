@@ -38,7 +38,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
-                  ek_sysfunc,ek_func,ek_classes,ek_class,
+                  ek_sysfunc,ek_sub,ek_classes,ek_class,
                   ek_unit,ek_implementation);
  elementkindsty = set of elementkindty;
  

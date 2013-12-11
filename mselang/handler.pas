@@ -986,7 +986,7 @@ begin
      op:= @pushloc;
     end;
    end;
-   d.count:= address - info^.frameoffset;
+   d.locdataoffs:= address - info^.frameoffset;
   end;
   d.datasize:= size;
  end;
@@ -1362,7 +1362,7 @@ begin
  outhandle(info,'VALUEIDENTIFIER');
 {$endif}
  with info^ do begin
-  if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_func,ek_type],
+  if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
                                 vis_max,po1,lastident,idents) then begin
    paramco:= stacktop-stackindex-2-idents.high;
    if paramco < 0 then begin
@@ -1427,7 +1427,7 @@ begin
       end;
      end;
     end;
-    ek_func: begin
+    ek_sub: begin
      if paramco <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
@@ -2183,7 +2183,7 @@ outinfo(info,'*****');
           op:= @poploc;
          end;
         end;
-        d.count:= dest.address.address;
+        d.locdataoffs:= dest.address.address;
        end;
       end;
      end;
@@ -2505,7 +2505,7 @@ outinfo(info,'****');
   paramco:= (stacktop-stackindex-2) div 3;
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
-                      vis_max,ek_func,paramco*sizeof(pvardataty))^.data);
+                      vis_max,ek_sub,paramco*sizeof(pvardataty))^.data);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po4:= @po1^.paramsrel;
@@ -2519,6 +2519,7 @@ outinfo(info,'****');
     if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
      with po2^ do begin
       if impl1 then begin
+       address.indirectlevel:= 0;
        address.address:= getlocvaraddress(info,po3^.bytesize);
        address.flags:= [vf_param];
       end;
@@ -2541,7 +2542,7 @@ outinfo(info,'****');
   with paramdata do begin
    ref:= po1;
   end;
-  if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
+  if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                             vis_max,@checkequalparam,paramdata) then begin
    err1:= true;
    errormessage(info,-1,err_sameparamlist,[]);
@@ -2553,7 +2554,7 @@ outinfo(info,'****');
    end;
    if funclevel = 0 then begin //todo: check forward modifier
     ele.decelementparent; //interface
-    if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_func],
+    if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                 vis_max,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
       forwardresolve(info,mark);
@@ -2576,8 +2577,8 @@ outinfo(info,'****');
    end;
    ele.elementparent:= parent1;
    inc(funclevel);
-   frameoffset:= locdatapo; //todo: nested procedures
    getlocvaraddress(info,stacklinksize);
+   frameoffset:= locdatapo; //todo: nested procedures
    stacktop:= stackindex;
    with contextstack[stackindex] do begin
     d.kind:= ck_proc;
@@ -2605,7 +2606,7 @@ outinfo(info,'*****');
                                             //remove local definitions
   with additem(info)^ do begin
    op:= @returnop;
-   d.count:= proc.paramsize + sizeof(pointer);
+   d.paramsize:= proc.paramsize{ + sizeof(pointer)};
   end;
   dec(funclevel);
  end;

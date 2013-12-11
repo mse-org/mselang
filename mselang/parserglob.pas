@@ -75,10 +75,13 @@ type
                   ck_type,ck_var,ck_field,ck_statement,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64{,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev});
+
  opaddressty = ptruint;         //todo: use target size
  popaddressty = ^opaddressty;
  dataaddressty = ptruint;
  pdataaddressty = ^dataaddressty;
+ dataoffsty = ptrint;
+ pdataoffsty = ^dataoffsty;
  databytesizety = ptruint;
 const
  dataaddresssize = sizeof(dataaddressty);
@@ -313,7 +316,7 @@ type
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,ok_pushaddress,
-             ok_pop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params);
+             ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -353,18 +356,21 @@ type
    ok_pushaddress:(
     vaddress: dataaddressty;
    );
-   ok_pop:(
-    count: integer;
+   ok_locop,ok_var:(
+    datasize: databytesizety;
+    case opkindty of
+     ok_locop:(
+      locdataoffs: dataoffsty;
+     );
+     ok_var:(
+      dataaddress: dataaddressty;
+     );
    );
    ok_op1:(
     op1: op1infoty;
    );
    ok_opn:(
     opn: opninfoty;
-   );
-   ok_var:(
-    dataaddress: dataaddressty;
-    datasize: databytesizety;
    );
    ok_opaddress:(
     opaddress: opaddressty;

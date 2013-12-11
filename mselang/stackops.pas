@@ -389,48 +389,49 @@ end;
 
 procedure poploc8;
 begin             
- pv8ty(framepo+oppo^.d.count)^:= pv8ty(stackpop(1))^;
+ pv8ty(framepo+oppo^.d.locdataoffs)^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poploc16;
 begin
- pv16ty(framepo+oppo^.d.count)^:= pv16ty(stackpop(2))^;
+ pv16ty(framepo+oppo^.d.locdataoffs)^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poploc32;
 begin
- pv32ty(framepo+oppo^.d.count)^:= pv32ty(stackpop(4))^;
+ pv32ty(framepo+oppo^.d.locdataoffs)^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poploc;
 begin
- move(stackpop(oppo^.d.datasize)^,(framepo+oppo^.d.count)^,
+ move(stackpop(oppo^.d.datasize)^,(framepo+oppo^.d.locdataoffs)^,
                                                          oppo^.d.datasize);
 end;
 
 procedure pushloc8;
 begin
- pv8ty(stackpush(1))^:= pv8ty(framepo+oppo^.d.count)^;
+ pv8ty(stackpush(1))^:= pv8ty(framepo+oppo^.d.locdataoffs)^;
 end;
 
 procedure pushloc16;
 begin
- pv16ty(stackpush(2))^:= pv16ty(framepo+oppo^.d.count)^;
+ pv16ty(stackpush(2))^:= pv16ty(framepo+oppo^.d.locdataoffs)^;
 end;
 
 procedure pushloc32;
 begin
- pv32ty(stackpush(4))^:= pv32ty(framepo+oppo^.d.count)^;
+ pv32ty(stackpush(4))^:= pv32ty(framepo+oppo^.d.locdataoffs)^;
 end;
 
 procedure pushloc;
 begin
- move((framepo+oppo^.d.count)^,stackpush(oppo^.d.datasize)^,oppo^.d.datasize);
+ move((framepo+oppo^.d.locdataoffs)^,stackpush(oppo^.d.datasize)^,
+                                                   oppo^.d.datasize);
 end;
 
 procedure pushlocaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= framepo+oppo^.d.vaddress;
+ ppointer(stackpush(sizeof(pointer)))^:= framepo+oppo^.d.locdataoffs;
 end;
 
 procedure pushglobaddr;
@@ -518,7 +519,7 @@ procedure returnop;
 var
  int1: integer;
 begin
- int1:= oppo^.d.count;
+ int1:= oppo^.d.paramsize;
  oppo:= vaddressty((mainstackpo-sizeof(vaddressty))^);
  mainstackpo:= mainstackpo-int1;
  //todo: restore framepointer
