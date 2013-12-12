@@ -102,7 +102,12 @@ procedure handlesimpexp(const info: pparseinfoty);
 procedure handlesimpexp1(const info: pparseinfoty);
 //procedure handleln(const info: pparseinfoty);
 
+procedure handleparamsdef1entry(const info: pparseinfoty);
 procedure handleparams0(const info: pparseinfoty);
+procedure setconstparam(const info: pparseinfoty);
+procedure setvarparam(const info: pparseinfoty);
+procedure setoutparam(const info: pparseinfoty);
+procedure handleparamdef2(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
 procedure handleprocedureheader(const info: pparseinfoty);
 
@@ -1170,16 +1175,87 @@ begin
  end;
 end;
 
+procedure handleparamsdef1entry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PARAMSDEF1ENTRY');
+{$endif}
+ with info^,contextstack[stackindex].d do begin
+  kind:= ck_paramsdef;
+  paramsdef.kind:= pk_value;
+ end;
+end;
+
 procedure handleparams0(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'PARAMS0');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
   with contextstack[stackindex].d do begin
    kind:= ck_params;
    params.flagsbefore:= currentstatementflags;
    include(currentstatementflags,stf_params);
+  end;
+ end;
+end;
+
+procedure setconstparam(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CONSTPARAM');
+{$endif}
+ with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+  if kind <> pk_value then begin
+   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+  end;
+  kind:= pk_const;
+ end;
+end;
+
+procedure setvarparam(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'VARPARAM');
+{$endif}
+outinfo(info,'***');
+ with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+  if kind <> pk_value then begin
+   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+  end;
+  kind:= pk_var;
+ end;
+end;
+
+procedure setoutparam(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'OUTPARAM');
+{$endif}
+ with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+  if kind <> pk_value then begin
+   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+  end;
+  kind:= pk_out;
+ end;
+end;
+
+procedure handleparamdef2(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PARAMDEF2');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  if stacktop-stackindex <> 2 then begin
+   errormessage(info,-1,err_typeidentexpected,[]);
+  end
+  else begin
+   with contextstack[stacktop-1] do begin
+    d.ident.paramkind:= 
+             contextstack[contextstack[stackindex].parent].d.paramsdef.kind;
+   end;
   end;
  end;
 end;
@@ -2513,27 +2589,39 @@ outinfo(info,'****');
   err1:= false;
   impl1:= us_implementation in unitinfo^.state; //todo: check forward modifier
   for int2:= 0 to paramco-1 do begin
-   if ele.addelement(contextstack[int1+stackindex].d.ident.ident,vis_max,
-                                                        ek_var,po2) then begin
-    po4^[int2]:= ele.eledatarel(po2);
-    if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
-     with po2^ do begin
-      if impl1 then begin
-       address.indirectlevel:= 0;
-       address.address:= getlocvaraddress(info,po3^.bytesize);
-       address.flags:= [vf_param];
+   with contextstack[int1+stackindex] do begin
+    if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
+     po4^[int2]:= ele.eledatarel(po2);
+     if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
+      with po2^ do begin
+       if impl1 then begin
+        address.address:= getlocvaraddress(info,po3^.bytesize);
+        address.flags:= [vf_param];
+        address.indirectlevel:= 0;
+        if d.ident.paramkind = pk_const then begin
+         if po3^.bytesize > pointersize then begin
+          address.indirectlevel:= 1;
+         end;
+         include(address.flags,vf_const);
+        end
+        else begin
+         if d.ident.paramkind in [pk_var,pk_out] then begin
+          address.indirectlevel:= 1;
+         end;
+        end;
+       end;
+       typ:= ele.eledatarel(po3);
       end;
-      typ:= ele.eledatarel(po3);
+     end
+     else begin
+      identerror(info,int1+1-stackindex,err_identifiernotfound);
+      err1:= true;
      end;
     end
     else begin
-     identerror(info,int1+1-stackindex,err_identifiernotfound);
+     identerror(info,int1,err_duplicateidentifier);
      err1:= true;
     end;
-   end
-   else begin
-    identerror(info,int1,err_duplicateidentifier);
-    err1:= true;
    end;
    int1:= int1+3;
   end;

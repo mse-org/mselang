@@ -180,6 +180,11 @@ begin
      ck_proc: begin
       write('pasize:',proc.paramsize);
      end;
+     ck_paramsdef: begin
+      with paramsdef do begin
+       write('kind:',getenumname(typeinfo(kind),ord(kind)))
+      end;
+     end;
     end;
 {$ifdef mse_debugparser}
     writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',

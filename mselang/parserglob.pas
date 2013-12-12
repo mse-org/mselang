@@ -72,7 +72,8 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_fact,
-                  ck_type,ck_var,ck_field,ck_statement,ck_params);
+                  ck_type,ck_var,ck_field,ck_statement,
+                  ck_paramsdef,ck_params);
  stackdatakindty = (sdk_bool8,sdk_int32,sdk_flo64{,
                     sdk_bool8rev,sdk_int32rev,sdk_flo64rev});
 
@@ -153,7 +154,7 @@ type
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_global,vf_param{,vf_reference});
+ varflagty = (vf_global,vf_param,vf_const);
  varflagsty = set of varflagty;
 
  indirectlevelty = integer;
@@ -207,11 +208,18 @@ type
   flags: numflagsty;
   value: card32;
  end;
- 
+
+ paramkindty = (pk_value,pk_const,pk_var,pk_out);
+
+ identkindty = (ik_param); 
  identinfoty = record
   ident: identty;
   len: integer;
   continued: boolean;
+  case identkindty of
+   ik_param:(
+    paramkind: paramkindty;
+   )
  end;
  opmarkty = record
   address: opaddressty;
@@ -221,6 +229,11 @@ type
   elementmark: markinfoty;
   error: boolean;
  end;
+ 
+ paramsdefinfoty = record
+  kind: paramkindty;
+ end;
+ 
  paramsinfoty = record
   flagsbefore: statementflagsty;
  end;
@@ -258,6 +271,9 @@ type
    );
    ck_proc:(
     proc: procinfoty;
+   );
+   ck_paramsdef:(
+    paramsdef: paramsdefinfoty;
    );
    ck_params:(
     params: paramsinfoty;

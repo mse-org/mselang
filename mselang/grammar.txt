@@ -105,7 +105,7 @@ progblock,,,handleprogblock*
 paramsdef0,,,
  ${whitespace}
  '(',paramsdef1-
-paramsdef1,paramsdef2,,
+paramsdef1,paramsdef2,handleparamsdef1entry,
  '',paramdef0^*
 paramsdef2,,,
  ${whitespace}
@@ -114,11 +114,14 @@ paramsdef2,,,
 paramsdef3,,,^
 paramdef0,paramdef1,,
  ${whitespace}
+ 'const'.,!setconstparam->
+ 'var'.,!setvarparam->
+ 'out'.,!setoutparam->
  @identstart,ident^*
 paramdef1,,,*
  ${whitespace}
  ':',paramdef2-
-paramdef2,,,^
+paramdef2,,,handleparamdef2^
  ${whitespace}
  @identstart,ident^*
 #
