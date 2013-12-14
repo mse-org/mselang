@@ -139,6 +139,7 @@ procedure1,procedure2,,
 procedure2,,,
  ${whitespace}
  ';',!handleprocedure3-*
+#      handle parameters
  '',semicolonexpected
 # ';',procedure3-
 #procedure3,procedure4,,handleprocedure3
