@@ -146,6 +146,7 @@ type
   links: linkindexty;
   mark: forwardindexty;
   address: opaddressty;
+  nestinglevel: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty
   end;

@@ -1534,7 +1534,7 @@ begin
      with additem(info)^ do begin
       op:= @callop;
       d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
-      d.callinfo.framelevel:= 0; //todo
+      d.callinfo.framelevel:= pfuncdataty(po2)^.nestinglevel-funclevel;
      end;
     end;
     ek_sysfunc: begin
@@ -2461,7 +2461,7 @@ begin
 {$endif}
  with info^ do begin
   if not (ptypedataty(ele.eledataabs(
-       contextstack[stacktop].d.datatyp.typedata))^.kind = dk_boolean) then begin
+     contextstack[stacktop].d.datatyp.typedata))^.kind = dk_boolean) then begin
    errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
   end;
  end;
@@ -2586,6 +2586,7 @@ outinfo(info,'****');
                       vis_max,ek_sub,paramco*sizeof(pvardataty))^.data);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
+  po1^.nestinglevel:= funclevel;
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;

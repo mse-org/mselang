@@ -512,13 +512,22 @@ begin
 end;
 
 procedure callop;
+var
+ i1: integer;
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
   frame:= framepo;
  end;
  //todo: check framelevel
- framepo:= mainstackpo;
+ if oppo^.d.callinfo.framelevel = 0 then begin
+  framepo:= mainstackpo;
+ end
+ else begin
+  for i1:= oppo^.d.callinfo.framelevel + 1 to 0 do begin
+   framepo:= frameinfoty((framepo-sizeof(frameinfoty))^).frame;
+  end;
+ end;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
