@@ -24,7 +24,11 @@ const
  alignmask = ptrint(-alignstep);
   
 type
-
+ vaddressty = pointer;
+ frameinfoty = record
+  pc: vaddressty;
+  frame: vaddressty;
+ end;
  infoopty = procedure(const opinfo: popinfoty);
 
 function alignsize(const size: ptruint): ptruint; inline;
@@ -96,7 +100,7 @@ type
  vcardinalty = card32;
  vintegerty = int32;
  vfloatty = float64;
- vaddressty = pointer;
+// vaddressty = pointer;
  vsizety = ptrint;
  voffsty = ptrint;
 {
@@ -509,10 +513,13 @@ end;
 
 procedure callop;
 begin
- vaddressty(stackpush(sizeof(vaddressty))^):= oppo;
- //todo: save framepointer
+ with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
+  pc:= oppo;
+  frame:= framepo;
+ end;
+ //todo: check framelevel
  framepo:= mainstackpo;
- oppo:= startpo+oppo^.d.opaddress;
+ oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
 procedure returnop;
@@ -520,9 +527,11 @@ var
  int1: integer;
 begin
  int1:= oppo^.d.paramsize;
- oppo:= vaddressty((mainstackpo-sizeof(vaddressty))^);
+ with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
+  oppo:= pc;
+  framepo:= frame;
+ end;
  mainstackpo:= mainstackpo-int1;
- //todo: restore framepointer
 end;
 
 procedure finalize;

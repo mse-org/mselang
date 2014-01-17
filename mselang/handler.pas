@@ -149,7 +149,8 @@ uses
 
 const
 // reversestackdata = sdk_bool8rev;
- stacklinksize = sizeof(pointer);
+// stacklinksize = sizeof(pointer);
+ stacklinksize = sizeof(frameinfoty);
 
 type
  systypety = (st_bool8,st_int32,st_float64);
@@ -1532,7 +1533,8 @@ begin
      end;
      with additem(info)^ do begin
       op:= @callop;
-      d.opaddress:= pfuncdataty(po2)^.address-1; //possibly invalid
+      d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
+      d.callinfo.framelevel:= 0; //todo
      end;
     end;
     ek_sysfunc: begin

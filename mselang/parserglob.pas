@@ -332,7 +332,8 @@ type
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,ok_pushaddress,
-             ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params);
+             ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
+             ok_call);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -342,7 +343,11 @@ type
  pv32ty = ^v32ty;
  v64ty = array[0..7] of byte;
  pv64ty = ^v64ty;
- 
+
+ callinfoty = record
+  ad: opaddressty;
+  framelevel: integer;
+ end; 
  opdataty = record
   case opkindty of 
    ok_none: (
@@ -390,6 +395,9 @@ type
    );
    ok_opaddress:(
     opaddress: opaddressty;
+   );
+   ok_call:(
+    callinfo: callinfoty;
    );
    ok_params:(
     paramsize: databytesizety;
