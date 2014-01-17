@@ -75,7 +75,7 @@ main,main1,,
  'uses'.,uses0-*
 main1,,,handlemain
  ${whitespace}
- 'procedure'.,procedure-*>
+ 'procedure'.,procedure-^*>
  'begin'.,progbegin-
  'const'.,const-*>
  'var'.,var-*>
@@ -149,14 +149,20 @@ procedure4,checkterminator,,
  'begin'.,procedure5-
  'const'.,const-*
  'var'.,var-*
+ 'procedure'.,procedure-^*>
 procedure5,procedure6,,
  '',statementblock^*
-procedure6,checkterminator,,handleprocedure6
+procedure6,checkterminatorpop,,handleprocedure6
 # return, release
 checkterminator,,,handlecheckterminator
  ';',terminatorok-
  ${whitespace}
 terminatorok,,,*
+checkterminatorpop,,,handlecheckterminator
+ ';',terminatorokpop-
+ ${whitespace}
+terminatorokpop,,,^*
+
 statementstack,,,^
  '',statement*
 statement,,,*

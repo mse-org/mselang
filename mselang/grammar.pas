@@ -319,6 +319,16 @@ var
                continue: false; cut: true; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'terminatorok');
+ checkterminatorpopco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'checkterminatorpop');
+ terminatorokpopco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: true; restoresource: false; 
+               pop: true; popexe: false; nexteat: false; next: nil;
+               caption: 'terminatorokpop');
  statementstackco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -1104,7 +1114,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bmain1: array[0..8] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
      keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -1569,7 +1579,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure4: array[0..7] of branchty = (
+ bprocedure4: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @procedure5co); stack: nil; 
      keyword: $8ACF19BB{'begin'}),
@@ -1579,6 +1589,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @varco); stack: nil; 
      keyword: $D159E337{'var'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
+     dest: (context: @procedureco); stack: nil; 
+     keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -1636,6 +1649,44 @@ const
     )),
    (flags: [bf_nt,bf_eat];
      dest: (context: @terminatorokco); stack: nil; keys: (
+    (kind: bkk_char; chars: [';']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcheckterminatorpop: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @terminatorokpopco); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3495,11 +3546,14 @@ begin
  procedure5co.branch:= @bprocedure5;
  procedure5co.next:= @procedure6co;
  procedure6co.branch:= nil;
- procedure6co.next:= @checkterminatorco;
+ procedure6co.next:= @checkterminatorpopco;
  procedure6co.handleexit:= @handleprocedure6;
  checkterminatorco.branch:= @bcheckterminator;
  checkterminatorco.handleexit:= @handlecheckterminator;
  terminatorokco.branch:= nil;
+ checkterminatorpopco.branch:= @bcheckterminatorpop;
+ checkterminatorpopco.handleexit:= @handlecheckterminator;
+ terminatorokpopco.branch:= nil;
  statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
  endcontextco.branch:= nil;

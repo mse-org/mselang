@@ -2688,13 +2688,16 @@ begin
  outhandle(info,'PROCEDURE6');
 {$endif}
 outinfo(info,'*****');
- with info^,contextstack[stackindex-1],d do begin
-  ele.decelementparent;
-  ele.releaseelement(proc.elementmark); 
-                                            //remove local definitions
-  with additem(info)^ do begin
-   op:= @returnop;
-   d.paramsize:= proc.paramsize{ + sizeof(pointer)};
+ with info^ do begin
+  with contextstack[stackindex-1],d do begin
+   //todo: check local forward
+   ele.decelementparent;
+   ele.releaseelement(proc.elementmark); 
+                                             //remove local definitions
+   with additem(info)^ do begin
+    op:= @returnop;
+    d.paramsize:= proc.paramsize{ + sizeof(pointer)};
+   end;
   end;
   dec(funclevel);
  end;
