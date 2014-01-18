@@ -89,6 +89,7 @@ procedure popindirect32;
 procedure popindirect;
 
 procedure callop;
+procedure calloutop;
 procedure returnop;
 
 implementation
@@ -391,51 +392,71 @@ begin
                                                           oppo^.d.datasize);
 end;
 
+//todo: make special locvar access funcs for inframe variables
+//and loop unroll
+
+function locaddress(const aaddress: locdataadressty): pointer;// inline;
+var
+ i1: integer;
+ po1: pointer;
+begin
+ if aaddress.framelevel = 0 then begin
+  result:= framepo+aaddress.offset;
+ end
+ else begin
+  po1:= framepo;
+  for i1:= aaddress.framelevel + 1 to 0 do begin
+   po1:= frameinfoty((po1-sizeof(frameinfoty))^).frame;
+  end;
+  result:= po1+aaddress.offset;
+ end;
+end;
+
 procedure poploc8;
 begin             
- pv8ty(framepo+oppo^.d.locdataoffs)^:= pv8ty(stackpop(1))^;
+ pv8ty(locaddress(oppo^.d.locdataaddress))^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poploc16;
 begin
- pv16ty(framepo+oppo^.d.locdataoffs)^:= pv16ty(stackpop(2))^;
+ pv16ty(locaddress(oppo^.d.locdataaddress))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poploc32;
 begin
- pv32ty(framepo+oppo^.d.locdataoffs)^:= pv32ty(stackpop(4))^;
+ pv32ty(locaddress(oppo^.d.locdataaddress))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poploc;
 begin
- move(stackpop(oppo^.d.datasize)^,(framepo+oppo^.d.locdataoffs)^,
+ move(stackpop(oppo^.d.datasize)^,(locaddress(oppo^.d.locdataaddress))^,
                                                          oppo^.d.datasize);
 end;
 
 procedure pushloc8;
 begin
- pv8ty(stackpush(1))^:= pv8ty(framepo+oppo^.d.locdataoffs)^;
+ pv8ty(stackpush(1))^:= pv8ty(locaddress(oppo^.d.locdataaddress))^;
 end;
 
 procedure pushloc16;
 begin
- pv16ty(stackpush(2))^:= pv16ty(framepo+oppo^.d.locdataoffs)^;
+ pv16ty(stackpush(2))^:= pv16ty(locaddress(oppo^.d.locdataaddress))^;
 end;
 
 procedure pushloc32;
 begin
- pv32ty(stackpush(4))^:= pv32ty(framepo+oppo^.d.locdataoffs)^;
+ pv32ty(stackpush(4))^:= pv32ty(locaddress(oppo^.d.locdataaddress))^;
 end;
 
 procedure pushloc;
 begin
- move((framepo+oppo^.d.locdataoffs)^,stackpush(oppo^.d.datasize)^,
+ move((locaddress(oppo^.d.locdataaddress))^,stackpush(oppo^.d.datasize)^,
                                                    oppo^.d.datasize);
 end;
 
 procedure pushlocaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= framepo+oppo^.d.locdataoffs;
+ ppointer(stackpush(sizeof(pointer)))^:= locaddress(oppo^.d.locdataaddress);
 end;
 
 procedure pushglobaddr;
@@ -519,14 +540,20 @@ begin
   pc:= oppo;
   frame:= framepo;
  end;
- //todo: check framelevel
- if oppo^.d.callinfo.framelevel = 0 then begin
-  framepo:= mainstackpo;
- end
- else begin
-  for i1:= oppo^.d.callinfo.framelevel + 1 to 0 do begin
-   framepo:= frameinfoty((framepo-sizeof(frameinfoty))^).frame;
-  end;
+ framepo:= mainstackpo;
+ oppo:= startpo+oppo^.d.callinfo.ad;
+end;
+
+procedure calloutop;
+var
+ i1: integer;
+begin
+ with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
+  pc:= oppo;
+  frame:= framepo;
+ end;
+ for i1:= oppo^.d.callinfo.framecount downto 0 do begin
+  framepo:= frameinfoty((framepo-sizeof(frameinfoty))^).frame;
  end;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
@@ -565,6 +592,7 @@ begin
  startpo:= pointer(code);
  oppo:= startpo;
  endpo:= oppo+length(code);
+ framepo:= nil;
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
  end;

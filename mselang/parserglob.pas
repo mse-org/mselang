@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ type
  dataoffsty = ptrint;
  pdataoffsty = ^dataoffsty;
  databytesizety = ptruint;
+ 
 const
  dataaddresssize = sizeof(dataaddressty);
 
@@ -158,6 +159,7 @@ type
  varflagsty = set of varflagty;
 
  indirectlevelty = integer;
+ framelevelty = integer;
  
 // typeflagty = (tf_reference);
 // typeflagsty = set of typeflagty;
@@ -176,7 +178,9 @@ type
   address: dataaddressty;
   flags: varflagsty;
   indirectlevel: indirectlevelty;
- end; 
+  framelevel: framelevelty;
+ end;
+ 
  dataty = record
   case kind: datakindty of
    dk_boolean:(
@@ -227,6 +231,8 @@ type
  procinfoty = record
   paramsize: integer;
   elementmark: markinfoty;
+  ref: elementoffsetty;
+  match: elementoffsetty;
   error: boolean;
  end;
  
@@ -344,9 +350,14 @@ type
  v64ty = array[0..7] of byte;
  pv64ty = ^v64ty;
 
+ locdataadressty = record
+  offset: dataoffsty;
+  framelevel: integer;
+ end;
+
  callinfoty = record
   ad: opaddressty;
-  framelevel: integer;
+  framecount: integer; //used in "for downto 0"
  end; 
  opdataty = record
   case opkindty of 
@@ -381,7 +392,7 @@ type
     datasize: databytesizety;
     case opkindty of
      ok_locop:(
-      locdataoffs: dataoffsty;
+      locdataaddress: locdataadressty;
      );
      ok_var:(
       dataaddress: dataaddressty;

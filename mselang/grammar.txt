@@ -143,13 +143,15 @@ procedure2,,,
  '',semicolonexpected
 # ';',procedure3-
 #procedure3,procedure4,,handleprocedure3
-#mark
+# mark
 procedure4,checkterminator,,
  ${whitespace}
- 'begin'.,procedure5-
+ 'begin'.,procedure5a-
  'const'.,const-*
  'var'.,var-*
  'procedure'.,procedure-^*>
+procedure5a,procedure5,,handleprocedure5a
+# set procstartaddress
 procedure5,procedure6,,
  '',statementblock^*
 procedure6,checkterminatorpop,,handleprocedure6

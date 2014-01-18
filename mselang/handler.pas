@@ -137,6 +137,7 @@ procedure handleelse0(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
 
 procedure handleprocedure3(const info: pparseinfoty);
+procedure handleprocedure5a(const info: pparseinfoty);
 procedure handleprocedure6(const info: pparseinfoty);
 
 procedure handledumpelements(const info: pparseinfoty);
@@ -955,11 +956,15 @@ begin
  info^.stacktop:= info^.stackindex;
 end;
 
+//procedure pushdata(const info: pparseinfoty; 
+//         const flags: varflagsty;
+//         const address: dataaddressty; const size: databytesizety);
+
 procedure pushdata(const info: pparseinfoty; 
-         const flags: varflagsty;
-         const address: dataaddressty; const size: databytesizety);
+         const address: addressinfoty; const offset: dataoffsty;
+         const size: databytesizety);
 begin
- with additem(info)^ do begin //todo: use table
+ with additem(info)^,address do begin //todo: use table
   if vf_global in flags then begin
    case size of
     1: begin 
@@ -975,7 +980,7 @@ begin
      op:= @pushglob;
     end;
    end;
-   d.dataaddress:= address;
+   d.dataaddress:= address+offset;
   end
   else begin
    case size of
@@ -992,7 +997,8 @@ begin
      op:= @pushloc;
     end;
    end;
-   d.locdataoffs:= address - info^.frameoffset;
+   d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
+   d.locdataaddress.framelevel:= framelevel-info^.funclevel;
   end;
   d.datasize:= size;
  end;
@@ -1025,9 +1031,9 @@ begin
    dec(datatyp.indirectlevel);
    if currentstatementflags * [stf_rightside,stf_params] = [] then begin
     if kind = ck_const then begin
-     pushdata(info,constval.vaddress.flags,constval.vaddress.address,
-                                                           dataaddresssize);
-//     push(info,constval.vaddress);
+     pushdata(info,constval.vaddress,0,dataaddresssize);
+//     pushdata(info,constval.vaddress.flags,constval.vaddress.address,
+//                                                           dataaddresssize);
      kind:= ck_fact;
     end;
    end
@@ -1427,7 +1433,8 @@ var
  ele1: elementoffsetty;
  int1,int2: integer;
  si1: databytesizety;
- addr1: dataaddressty;
+// addr1: dataaddressty;
+ offs1: dataoffsty;
  indirect1: indirectlevelty;
 // fl1: typeflagsty;
  opshift: opaddressty;
@@ -1449,7 +1456,8 @@ begin
    case po1^.header.kind of
     ek_var: begin
      if checknoparam then begin     
-      addr1:= pvardataty(po2)^.address.address;
+//      addr1:= pvardataty(po2)^.address.address;
+      offs1:= 0;
       ele1:= pvardataty(po2)^.typ;
       indirect1:= pvardataty(po2)^.address.indirectlevel;
       if indirect1 > 0 then begin
@@ -1464,7 +1472,8 @@ begin
           goto endlab;
          end;
          po4:= ele.eledataabs(ele1);
-         addr1:= addr1 + po4^.offset;
+//         addr1:= addr1 + po4^.offset;
+         offs1:= offs1 + po4^.offset;
          ele1:= po4^.typ;
         end;
         ele1:= po4^.typ;
@@ -1476,7 +1485,8 @@ begin
        end;
       end;
       if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-       pushdata(info,pvardataty(po2)^.address.flags,addr1,si1);
+//       pushdata(info,pvardataty(po2)^.address.flags,addr1,si1);
+       pushdata(info,pvardataty(po2)^.address,offs1,si1);
        with contextstack[stackindex].d do begin
         kind:= ck_fact;
         datatyp.typedata:= ele1;
@@ -1489,8 +1499,11 @@ begin
         datatyp.typedata:= ele1;
         datatyp.indirectlevel:= indirect1+1;
         constval.kind:= dk_address;
-        constval.vaddress.address:= addr1;
-        constval.vaddress.flags:= pvardataty(po2)^.address.flags;
+//        constval.vaddress.flags:= pvardataty(po2)^.address.flags;
+//        constval.vaddress.address:= addr1;
+        constval.vaddress:= pvardataty(po2)^.address;
+        constval.vaddress.address:= constval.vaddress.address + offs1;
+        constval.vaddress.framelevel:= constval.vaddress.framelevel-funclevel;
        end;
       end;
      end;
@@ -1532,9 +1545,16 @@ begin
       linkmark(info,pfuncdataty(po2)^.links,opcount);
      end;
      with additem(info)^ do begin
-      op:= @callop;
       d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
-      d.callinfo.framelevel:= pfuncdataty(po2)^.nestinglevel-funclevel;
+      if (pfuncdataty(po2)^.nestinglevel = 0) or 
+                       (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
+       op:= @callop;
+       d.callinfo.framecount:= -1;
+      end
+      else begin
+       op:= @calloutop;
+       d.callinfo.framecount:= funclevel-pfuncdataty(po2)^.nestinglevel-1;
+      end;
      end;
     end;
     ek_sysfunc: begin
@@ -1909,10 +1929,12 @@ begin
      if funclevel = 0 then begin
       address.address:= getglobvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
       address.flags:= [vf_global];
+      address.framelevel:= 0;
      end
      else begin
       address.address:= getlocvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
       address.flags:= []; //local
+      address.framelevel:= funclevel;
      end;
      address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
@@ -2261,7 +2283,8 @@ outinfo(info,'*****');
           op:= @poploc;
          end;
         end;
-        d.locdataoffs:= dest.address.address;
+        d.locdataaddress.offset:= dest.address.address;
+        d.locdataaddress.framelevel:= dest.address.framelevel;
        end;
       end;
      end;
@@ -2632,17 +2655,19 @@ outinfo(info,'****');
   parent1:= ele.decelementparent; //check params duplicate
   with paramdata do begin
    ref:= po1;
+   match:= nil;
   end;
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                             vis_max,@checkequalparam,paramdata) then begin
    err1:= true;
    errormessage(info,-1,err_sameparamlist,[]);
   end;
-  
+
+  po1^.address:= 0; //init
   if impl1 then begin //implementation
-   with po1^ do begin
-    address:= opcount;
-   end;
+//   with po1^ do begin
+//    address:= opcount;
+//   end;
    if funclevel = 0 then begin //todo: check forward modifier
     ele.decelementparent; //interface
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
@@ -2661,8 +2686,8 @@ outinfo(info,'****');
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
        end;
       end;
-      address:= po1^.address;
-      linkresolve(info,paramdata.match^.links,opcount);
+//      address:= po1^.address;
+//      linkresolve(info,paramdata.match^.links,opcount);
      end;
     end;
    end;
@@ -2675,12 +2700,39 @@ outinfo(info,'****');
     d.kind:= ck_proc;
     d.proc.paramsize:= locdatapo - parambase;
     d.proc.error:= err1;
+    d.proc.ref:= ele.eledatarel(po1);
+    if paramdata.match <> nil then begin
+     d.proc.match:= ele.eledatarel(paramdata.match);
+    end
+    else begin
+     d.proc.match:= 0;
+    end;
     ele.markelement(d.proc.elementmark); 
    end;
   end
   else begin
-   po1^.address:= 0;
    forwardmark(info,po1^.mark,source);
+  end;
+ end;
+end;
+
+procedure handleprocedure5a(const info: pparseinfoty);
+var
+ po1,po2: pfuncdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PROCEDURE5A');
+{$endif}
+outinfo(info,'*****');
+ with info^,contextstack[stackindex-1] do begin
+  po1:= ele.eledataabs(d.proc.ref);
+  with po1^ do begin
+   address:= opcount;
+  end;
+  if d.proc.match <> 0 then begin
+   po2:= ele.eledataabs(d.proc.ref);    
+   po2^.address:= opcount;
+   linkresolve(info,po2^.links,opcount);
   end;
  end;
 end;

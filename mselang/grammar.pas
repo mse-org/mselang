@@ -299,6 +299,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'procedure4');
+ procedure5aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'procedure5a');
  procedure5co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -1581,7 +1586,7 @@ const
    );
  bprocedure4: array[0..8] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @procedure5co); stack: nil; 
+     dest: (context: @procedure5aco); stack: nil; 
      keyword: $8ACF19BB{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @constco); stack: nil; 
@@ -3543,6 +3548,9 @@ begin
  procedure2co.branch:= @bprocedure2;
  procedure4co.branch:= @bprocedure4;
  procedure4co.next:= @checkterminatorco;
+ procedure5aco.branch:= nil;
+ procedure5aco.next:= @procedure5co;
+ procedure5aco.handleexit:= @handleprocedure5a;
  procedure5co.branch:= @bprocedure5;
  procedure5co.next:= @procedure6co;
  procedure6co.branch:= nil;
