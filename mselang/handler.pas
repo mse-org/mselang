@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -998,7 +998,7 @@ begin
     end;
    end;
    d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
-   d.locdataaddress.framelevel:= framelevel-info^.funclevel;
+   d.locdataaddress.framecount:= info^.funclevel-framelevel-1;
   end;
   d.datasize:= size;
  end;
@@ -1445,6 +1445,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'VALUEIDENTIFIER');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
   if findkindelements(info,1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
                                 vis_max,po1,lastident,idents) then begin
@@ -1503,7 +1504,7 @@ begin
 //        constval.vaddress.address:= addr1;
         constval.vaddress:= pvardataty(po2)^.address;
         constval.vaddress.address:= constval.vaddress.address + offs1;
-        constval.vaddress.framelevel:= constval.vaddress.framelevel-funclevel;
+//        constval.vaddress.framelevel:= constval.vaddress.framelevel-funclevel;
        end;
       end;
      end;
@@ -2284,7 +2285,7 @@ outinfo(info,'*****');
          end;
         end;
         d.locdataaddress.offset:= dest.address.address;
-        d.locdataaddress.framelevel:= dest.address.framelevel;
+        d.locdataaddress.framecount:= funclevel-dest.address.framelevel-1;
        end;
       end;
      end;
@@ -2591,7 +2592,7 @@ var
  parent1: elementoffsetty;
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
- parambase: ptruint;
+// parambase: ptruint;
 
 begin
 {$ifdef mse_debugparser}
@@ -2602,7 +2603,9 @@ begin
               //todo: multi level type
 outinfo(info,'****');
  with info^ do begin
-  parambase:= locdatapo;
+  with contextstack[stackindex] do begin
+   d.proc.parambase:= locdatapo;
+  end;
   paramco:= (stacktop-stackindex-2) div 3;
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
@@ -2698,7 +2701,7 @@ outinfo(info,'****');
    stacktop:= stackindex;
    with contextstack[stackindex] do begin
     d.kind:= ck_proc;
-    d.proc.paramsize:= locdatapo - parambase;
+    d.proc.paramsize:= locdatapo - d.proc.parambase;
     d.proc.error:= err1;
     d.proc.ref:= ele.eledatarel(po1);
     if paramdata.match <> nil then begin
@@ -2724,13 +2727,20 @@ begin
  outhandle(info,'PROCEDURE5A');
 {$endif}
 outinfo(info,'*****');
- with info^,contextstack[stackindex-1] do begin
-  po1:= ele.eledataabs(d.proc.ref);
+ with info^,contextstack[stackindex-1].d do begin
+  proc.varsize:= locdatapo - proc.parambase - proc.paramsize;
+  po1:= ele.eledataabs(proc.ref);
   with po1^ do begin
    address:= opcount;
   end;
-  if d.proc.match <> 0 then begin
-   po2:= ele.eledataabs(d.proc.ref);    
+  if proc.varsize <> 0 then begin
+   with additem(info)^ do begin
+    op:= @locvarpushop;
+    d.stacksize:= proc.varsize;
+   end;
+  end;
+  if proc.match <> 0 then begin
+   po2:= ele.eledataabs(proc.ref);    
    po2^.address:= opcount;
    linkresolve(info,po2^.links,opcount);
   end;
@@ -2749,10 +2759,17 @@ outinfo(info,'*****');
    ele.decelementparent;
    ele.releaseelement(proc.elementmark); 
                                              //remove local definitions
+   if proc.varsize <> 0 then begin
+    with additem(info)^ do begin
+     op:= @locvarpopop;
+     d.stacksize:= proc.varsize;
+    end;
+   end;
    with additem(info)^ do begin
     op:= @returnop;
-    d.paramsize:= proc.paramsize{ + sizeof(pointer)};
+    d.stacksize:= proc.paramsize{ + sizeof(pointer)};
    end;
+   locdatapo:= proc.parambase;
   end;
   dec(funclevel);
  end;

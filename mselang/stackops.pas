@@ -90,6 +90,8 @@ procedure popindirect;
 
 procedure callop;
 procedure calloutop;
+procedure locvarpushop;
+procedure locvarpopop;
 procedure returnop;
 
 implementation
@@ -400,12 +402,12 @@ var
  i1: integer;
  po1: pointer;
 begin
- if aaddress.framelevel = 0 then begin
+ if aaddress.framecount < 0 then begin
   result:= framepo+aaddress.offset;
  end
  else begin
   po1:= framepo;
-  for i1:= aaddress.framelevel + 1 to 0 do begin
+  for i1:= aaddress.framecount downto 0 do begin
    po1:= frameinfoty((po1-sizeof(frameinfoty))^).frame;
   end;
   result:= po1+aaddress.offset;
@@ -558,11 +560,21 @@ begin
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
+procedure locvarpushop;
+begin
+ stackpush(oppo^.d.stacksize);
+end;
+
+procedure locvarpopop;
+begin
+ stackpop(oppo^.d.stacksize);
+end;
+
 procedure returnop;
 var
  int1: integer;
 begin
- int1:= oppo^.d.paramsize;
+ int1:= oppo^.d.stacksize;
  with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
   oppo:= pc;
   framepo:= frame;
