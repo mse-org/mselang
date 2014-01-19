@@ -128,7 +128,7 @@ var
  mainstack: pointer;
  mainstackend: pointer;
  mainstackpo: pointer;
- framepox: pointer;
+ framepo: pointer;
  stacklink: pointer;
  startpo: popinfoty;
  oppo: popinfoty;
@@ -405,7 +405,7 @@ var
  po1: pointer;
 begin
  if aaddress.linkcount < 0 then begin
-  result:= framepox+aaddress.offset;
+  result:= framepo+aaddress.offset;
  end
  else begin
   po1:= stacklink;
@@ -542,11 +542,11 @@ var
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
-  frame:= framepox;
+  frame:= framepo;
   link:= stacklink;
  end;
- stacklink:= framepox;
- framepox:= mainstackpo;
+ stacklink:= framepo;
+ framepo:= mainstackpo;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
@@ -556,14 +556,14 @@ var
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
-  frame:= framepox;
+  frame:= framepo;
   link:= stacklink;
  end;
  
  for i1:= oppo^.d.callinfo.linkcount downto 1 do begin
   stacklink:= frameinfoty((stacklink-sizeof(frameinfoty))^).frame;
  end;
- framepox:= mainstackpo;
+ framepo:= mainstackpo;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
@@ -584,7 +584,7 @@ begin
  int1:= oppo^.d.stacksize;
  with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
   oppo:= pc;
-  framepox:= frame;
+  framepo:= frame;
   stacklink:= link;
  end;
  mainstackpo:= mainstackpo-int1;
@@ -612,7 +612,7 @@ begin
  startpo:= pointer(code);
  oppo:= startpo;
  endpo:= oppo+length(code);
- framepox:= nil;
+ framepo:= nil;
  stacklink:= nil;
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
