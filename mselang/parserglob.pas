@@ -353,14 +353,16 @@ type
  v64ty = array[0..7] of byte;
  pv64ty = ^v64ty;
 
+   //todo: simplify nested procedure link handling
+ 
  locdataadressty = record
   offset: dataoffsty;
-  framecount: integer; //used in "for downto 0"
+  linkcount: integer; //used in "for downto 0"
  end;
 
  callinfoty = record
   ad: opaddressty;
-  framecount: integer; //used in "for downto 0"
+  linkcount: integer; //used in "for downto 0"
  end; 
  
  opdataty = record

@@ -28,6 +28,7 @@ type
  frameinfoty = record
   pc: vaddressty;
   frame: vaddressty;
+  link: vaddressty;
  end;
  infoopty = procedure(const opinfo: popinfoty);
 
@@ -127,7 +128,8 @@ var
  mainstack: pointer;
  mainstackend: pointer;
  mainstackpo: pointer;
- framepo: pointer;
+ framepox: pointer;
+ stacklink: pointer;
  startpo: popinfoty;
  oppo: popinfoty;
  globdata: pointer;
@@ -402,13 +404,13 @@ var
  i1: integer;
  po1: pointer;
 begin
- if aaddress.framecount < 0 then begin
-  result:= framepo+aaddress.offset;
+ if aaddress.linkcount < 0 then begin
+  result:= framepox+aaddress.offset;
  end
  else begin
-  po1:= framepo;
-  for i1:= aaddress.framecount downto 0 do begin
-   po1:= frameinfoty((po1-sizeof(frameinfoty))^).frame;
+  po1:= stacklink;
+  for i1:= aaddress.linkcount downto 1 do begin
+   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
   end;
   result:= po1+aaddress.offset;
  end;
@@ -540,9 +542,11 @@ var
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
-  frame:= framepo;
+  frame:= framepox;
+  link:= stacklink;
  end;
- framepo:= mainstackpo;
+ stacklink:= framepox;
+ framepox:= mainstackpo;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
@@ -552,11 +556,14 @@ var
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
-  frame:= framepo;
+  frame:= framepox;
+  link:= stacklink;
  end;
- for i1:= oppo^.d.callinfo.framecount downto 0 do begin
-  framepo:= frameinfoty((framepo-sizeof(frameinfoty))^).frame;
+ 
+ for i1:= oppo^.d.callinfo.linkcount downto 1 do begin
+  stacklink:= frameinfoty((stacklink-sizeof(frameinfoty))^).frame;
  end;
+ framepox:= mainstackpo;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
@@ -577,7 +584,8 @@ begin
  int1:= oppo^.d.stacksize;
  with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
   oppo:= pc;
-  framepo:= frame;
+  framepox:= frame;
+  stacklink:= link;
  end;
  mainstackpo:= mainstackpo-int1;
 end;
@@ -604,7 +612,8 @@ begin
  startpo:= pointer(code);
  oppo:= startpo;
  endpo:= oppo+length(code);
- framepo:= nil;
+ framepox:= nil;
+ stacklink:= nil;
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
  end;

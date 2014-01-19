@@ -998,7 +998,7 @@ begin
     end;
    end;
    d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
-   d.locdataaddress.framecount:= info^.funclevel-framelevel-1;
+   d.locdataaddress.linkcount:= info^.funclevel-framelevel-1;
   end;
   d.datasize:= size;
  end;
@@ -1550,11 +1550,11 @@ outinfo(info,'***');
       if (pfuncdataty(po2)^.nestinglevel = 0) or 
                        (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
        op:= @callop;
-       d.callinfo.framecount:= -1;
+       d.callinfo.linkcount:= -1;
       end
       else begin
        op:= @calloutop;
-       d.callinfo.framecount:= funclevel-pfuncdataty(po2)^.nestinglevel-1;
+       d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-1;
       end;
      end;
     end;
@@ -2288,7 +2288,7 @@ outinfo(info,'*****');
          end;
         end;
         d.locdataaddress.offset:= dest.address.address;
-        d.locdataaddress.framecount:= funclevel-dest.address.framelevel-1;
+        d.locdataaddress.linkcount:= funclevel-dest.address.framelevel-1;
        end;
       end;
      end;
