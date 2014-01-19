@@ -2595,7 +2595,7 @@ var
  parent1: elementoffsetty;
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
- elebase: ptruint;
+ eledatabase: ptruint;
 // parambase: ptruint;
 
 begin
@@ -2613,7 +2613,7 @@ outinfo(info,'****');
   paramco:= (stacktop-stackindex-2) div 3;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
-  elebase:= ele.eleoffset();
+  eledatabase:= ele.eledataoffset();
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
                       vis_max,ek_sub,paramco*sizeof(pvardataty))^.data);
@@ -2633,6 +2633,7 @@ outinfo(info,'****');
       with po2^ do begin
        if impl1 then begin
         address.address:= getlocvaraddress(info,po3^.bytesize);
+        address.framelevel:= funclevel+1;
         address.flags:= [vf_param];
         address.indirectlevel:= 0;
         if d.ident.paramkind = pk_const then begin
@@ -2721,14 +2722,14 @@ outinfo(info,'****');
     for int2:= 0 to paramco-1 do begin
      po2:= pointer(po4^[int2]);
      dec(po2^.address.address,frameoffset);
-     po4^[int2]:= ptruint(po2)-elebase;
+     po4^[int2]:= ptruint(po2)-eledatabase;
     end;
     ele.markelement(d.proc.elementmark); 
    end;
   end
   else begin
    for int2:= 0 to paramco-1 do begin
-    dec(po4^[int2],elebase); //relative address
+    dec(po4^[int2],eledatabase); //relative address
    end;
    forwardmark(info,po1^.mark,source);
   end;
