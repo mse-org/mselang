@@ -22,7 +22,7 @@ unit elements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,msetypes,msehash,parserglob;
+ msestrings,msetypes,msehash,parserglob,handlerglob;
 
 {$define mse_debug_parser}
 
@@ -88,6 +88,7 @@ type
 
    constructor create;
    procedure clear; override;
+   procedure checkcapacity(const areserve: integer);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: vislevelty; const ahandler: elehandlerprocty;
@@ -183,27 +184,28 @@ function getidentname(const aident: identty): string;
 {$endif}
 //function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
+const
+ elesizes: array[elementkindty] of integer = (
+//ek_none,ek_type,                   ek_const,         
+  0,      sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
+//ek_var,                   ek_field,
+  sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
+//ek_sysfunc,                   ek_func,
+  sizeof(sysfuncdataty)+elesize,sizeof(funcdataty)+elesize,
+//ek_classes,                   ek_class,
+  sizeof(classesdataty)+elesize,sizeof(classdataty)+elesize,
+//ek_unit,                   ek_implementation  
+  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize
+ );
+
 var
  ele: telementhashdatalist;
 
 implementation
 uses
- msearrayutils,sysutils,typinfo,mselfsr,grammar,handlerglob,mseformatstr,
+ msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
  errorhandler,mselinklist;
 
-const
- elesizes: array[elementkindty] of integer = (
-//ek_none,ek_type,   ek_const,         
-  0,sizeof(typedataty),sizeof(constdataty),
-//ek_var,           ek_field,
-  sizeof(vardataty),sizeof(fielddataty), 
-//ek_sysfunc,           ek_func,
-  sizeof(sysfuncdataty),sizeof(funcdataty),
-//ek_classes,           ek_class,
-  sizeof(classesdataty),sizeof(classdataty),
-//ek_unit,           ek_implementation  
-  sizeof(unitdataty),sizeof(classdataty)
- );
  
 type
 
@@ -1082,6 +1084,14 @@ begin
  end;
 end;
 
+procedure telementhashdatalist.checkcapacity(const areserve: integer);
+begin
+ if fnextelement+areserve >= felementlen then begin
+  felementlen:= fnextelement*2+mindatasize+areserve;
+  setlength(felementdata,felementlen);
+ end;
+end;
+
 function telementhashdatalist.pushelementduplicate(const aname: identty;
                   const avislevel: vislevelty;
                   const akind: elementkindty;
@@ -1090,7 +1100,7 @@ var
  ele1: elementoffsetty;
 begin
  ele1:= fnextelement;
- fnextelement:= fnextelement+(elesize+elesizes[akind])+sizeextend;
+ fnextelement:= fnextelement+(elesizes[akind])+sizeextend;
  checkbuffersize;
  result:= pointer(felementdata)+ele1;
  with result^.header do begin
@@ -1171,7 +1181,7 @@ begin
  result:= nil;
  if not findcurrent(aname,[],ffindvislevel,ele1) then begin
   ele1:= fnextelement;
-  fnextelement:= fnextelement+elesize+elesizes[akind];
+  fnextelement:= fnextelement+elesizes[akind];
   checkbuffersize;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin

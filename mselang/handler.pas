@@ -1918,6 +1918,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'VAR3');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
   po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,ek_var);
   if po1 = nil then begin //duplicate
@@ -1928,12 +1929,14 @@ begin
     with pvardataty(@po1^.data)^ do begin
      typ:= ele.eleinforel(po2);
      if funclevel = 0 then begin
-      address.address:= getglobvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
+      address.address:= getglobvaraddress(info,
+                                        ptypedataty(@po2^.data)^.bytesize);
       address.flags:= [vf_global];
       address.framelevel:= 0;
      end
      else begin
-      address.address:= getlocvaraddress(info,ptypedataty(@po2^.data)^.bytesize);
+      address.address:= getlocvaraddress(info,
+                              ptypedataty(@po2^.data)^.bytesize)-frameoffset;
       address.flags:= []; //local
       address.framelevel:= funclevel;
      end;
@@ -2592,6 +2595,7 @@ var
  parent1: elementoffsetty;
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
+ elebase: ptruint;
 // parambase: ptruint;
 
 begin
@@ -2607,6 +2611,9 @@ outinfo(info,'****');
    d.proc.parambase:= locdatapo;
   end;
   paramco:= (stacktop-stackindex-2) div 3;
+  int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
+  ele.checkcapacity(int2); //absolute addresses can be used
+  elebase:= ele.eleoffset();
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
                       vis_max,ek_sub,paramco*sizeof(pvardataty))^.data);
@@ -2620,7 +2627,8 @@ outinfo(info,'****');
   for int2:= 0 to paramco-1 do begin
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
-     po4^[int2]:= ele.eledatarel(po2);
+//     po4^[int2]:= ele.eledatarel(po2);
+     po4^[int2]:= elementoffsetty(po2); //absoluteaddress
      if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
       with po2^ do begin
        if impl1 then begin
@@ -2654,7 +2662,6 @@ outinfo(info,'****');
    end;
    int1:= int1+3;
   end;
-  
   parent1:= ele.decelementparent; //check params duplicate
   with paramdata do begin
    ref:= po1;
@@ -2697,10 +2704,11 @@ outinfo(info,'****');
    ele.elementparent:= parent1;
    inc(funclevel);
    getlocvaraddress(info,stacklinksize);
-   frameoffset:= locdatapo; //todo: nested procedures
-   stacktop:= stackindex;
    with contextstack[stackindex] do begin
     d.kind:= ck_proc;
+    d.proc.frameoffsetbefore:= frameoffset;
+    frameoffset:= locdatapo; //todo: nested procedures
+    stacktop:= stackindex;
     d.proc.paramsize:= locdatapo - d.proc.parambase;
     d.proc.error:= err1;
     d.proc.ref:= ele.eledatarel(po1);
@@ -2710,10 +2718,18 @@ outinfo(info,'****');
     else begin
      d.proc.match:= 0;
     end;
+    for int2:= 0 to paramco-1 do begin
+     po2:= pointer(po4^[int2]);
+     dec(po2^.address.address,frameoffset);
+     po4^[int2]:= ptruint(po2)-elebase;
+    end;
     ele.markelement(d.proc.elementmark); 
    end;
   end
   else begin
+   for int2:= 0 to paramco-1 do begin
+    dec(po4^[int2],elebase); //relative address
+   end;
    forwardmark(info,po1^.mark,source);
   end;
  end;
@@ -2770,6 +2786,7 @@ outinfo(info,'*****');
     d.stacksize:= proc.paramsize{ + sizeof(pointer)};
    end;
    locdatapo:= proc.parambase;
+   frameoffset:= proc.frameoffsetbefore;
   end;
   dec(funclevel);
  end;

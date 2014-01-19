@@ -229,6 +229,7 @@ type
   address: opaddressty;
  end;
  procinfoty = record
+  frameoffsetbefore: ptruint;
   parambase: ptruint;
   paramsize: integer;
   varsize: integer;

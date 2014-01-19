@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,elements;
+ parserglob{,elements};
 
 const
  pointersize = sizeof(pointer);
