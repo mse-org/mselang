@@ -409,7 +409,7 @@ begin
  end
  else begin
   po1:= stacklink;
-  for i1:= aaddress.linkcount downto 1 do begin
+  for i1:= aaddress.linkcount downto 0 do begin
    po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
   end;
   result:= po1+aaddress.offset;
@@ -545,8 +545,8 @@ begin
   frame:= framepo;
   link:= stacklink;
  end;
- stacklink:= framepo;
  framepo:= mainstackpo;
+ stacklink:= framepo;
  oppo:= startpo+oppo^.d.callinfo.ad;
 end;
 
@@ -560,8 +560,8 @@ begin
   link:= stacklink;
  end;
  
- for i1:= oppo^.d.callinfo.linkcount downto 1 do begin
-  stacklink:= frameinfoty((stacklink-sizeof(frameinfoty))^).frame;
+ for i1:= oppo^.d.callinfo.linkcount downto 0 do begin
+  stacklink:= frameinfoty((stacklink-sizeof(frameinfoty))^).link;
  end;
  framepo:= mainstackpo;
  oppo:= startpo+oppo^.d.callinfo.ad;
