@@ -1554,7 +1554,8 @@ outinfo(info,'***');
       end
       else begin
        op:= @calloutop;
-       d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-1;
+       d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-2;
+                                                               //for downto 0
       end;
      end;
     end;
