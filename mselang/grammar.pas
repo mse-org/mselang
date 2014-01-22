@@ -2756,7 +2756,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @equsimpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: ['=']),
     (kind: bkk_none; chars: []),

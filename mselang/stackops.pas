@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -37,7 +37,7 @@ function alignsize(const size: ptruint): ptruint; inline;
 procedure finalize;
 function run(const code: opinfoarty; const stackdepht: integer): real;
 
-procedure dummyop;
+//procedure dummyop;
 procedure gotoop;
 procedure ifop;
 procedure writelnop;
@@ -55,6 +55,10 @@ procedure addflo64;
 procedure negcard32;
 procedure negint32;
 procedure negflo64;
+
+procedure cmpequbool;
+procedure cmpequint32;
+procedure cmpequflo64;
 
 procedure popglob8;
 procedure popglob16;
@@ -100,10 +104,15 @@ uses
  sysutils;
 type
  vdatakindty = datakindty;
+ pvdatakindty = ^vdatakindty;
  vbooleanty = boolean;
+ pvbooleanty = ^vbooleanty;
  vcardinalty = card32;
+ pvcardinalty = ^vcardinalty;
  vintegerty = int32;
+ pvintegerty = ^vintegerty;
  vfloatty = float64;
+ pvfloatty = ^vfloatty;
 // vaddressty = pointer;
  vsizety = ptrint;
  voffsty = ptrint;
@@ -319,6 +328,33 @@ begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
  vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
+end;
+
+procedure cmpequbool;
+var
+ po1,po2: pvbooleanty;
+begin
+ po1:= stackpop(sizeof(po1^));
+ po2:= po1-alignsize(sizeof(po2^));
+ po2^:= po2^ = po1^;
+end;
+
+procedure cmpequint32;
+var
+ po1,po2: pvintegerty;
+begin
+ po1:= stackpop(sizeof(po1^));
+ po2:= stackpop(sizeof(po2^));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+end;
+
+procedure cmpequflo64;
+var
+ po1,po2: pvfloatty;
+begin
+ po1:= stackpop(sizeof(po1^));
+ po2:= stackpop(sizeof(po2^));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
 procedure addflo64;

@@ -299,7 +299,7 @@ exp,exp1,,
  '',simpexp*
 exp1,,,handleexp^
  ${whitespace}
- '=',equsimpexp*
+ '=',equsimpexp-*
 equsimpexp,,,handleequsimpexp
  '',simpexp*
 simpexp,simpexp1,,handlesimpexp

@@ -154,7 +154,7 @@ const
  stacklinksize = sizeof(frameinfoty);
 
 type
- systypety = (st_bool8,st_int32,st_float64);
+ systypety = (st_none,st_bool8,st_int32,st_float64);
  systypeinfoty = record
   name: string;
   data: typedataty;
@@ -176,6 +176,8 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
+   (name: 'none'; data: (indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
    (name: 'bool8'; data: (indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
    (name: 'int32'; data: (indirectlevel: 0;
@@ -702,31 +704,97 @@ begin
 end;
 *)
 const
+ stackdatakinds: array[datakindty] of stackdatakindty = 
+   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+   (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
+  //dk_address,dk_record
+    sdk_none,  sdk_none);
+                
  resultdatakinds: array[stackdatakindty] of datakindty =
             //sdk_bool8,sdk_int32,sdk_flo64
-           (dk_boolean,dk_integer,dk_float);
+           (dk_none,dk_boolean,dk_integer,dk_float);
  resultdatatypes: array[stackdatakindty] of systypety =
             //sdk_bool8,sdk_int32,sdk_flo64
-           (st_bool8,st_int32,st_float64);
+           (st_none,st_bool8,st_int32,st_float64);
 
-function pushvalues(const info: pparseinfoty): stackdatakindty;
+function convertconsts(const info: pparseinfoty): stackdatakindty;
+                //convert stacktop, stacktop-2
+begin
+ with info^,contextstack[stacktop-2] do begin
+  result:= stackdatakinds[d.constval.kind];  
+  if contextstack[stacktop].d.constval.kind <> d.constval.kind then begin
+   case contextstack[stacktop].d.constval.kind of
+    dk_float: begin
+     result:= sdk_flo64;
+     with d,constval do begin
+      case kind of
+       dk_float: begin
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+       end;
+       dk_integer: begin
+        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
+       end;
+       else begin
+        result:= sdk_none;
+       end;
+      end;
+     end;
+    end;
+    dk_integer: begin
+     with d,constval do begin
+      case kind of
+       dk_integer: begin
+        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
+       end;
+       dk_float: begin
+        result:= sdk_flo64;
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
+       end;
+       else begin
+        result:= sdk_none;
+       end;
+      end;
+     end;
+    end;
+    else begin
+     result:= sdk_none;
+    end;
+   end;
+  end;
+  if result = sdk_none then begin
+   incompatibletypeserror(info,contextstack[stacktop-2].d,
+                                           contextstack[stacktop].d);
+  end;
+ end;
+end;
+
+type
+ opinfoty = record
+  ops: array[stackdatakindty] of opty;
+  opname: string;
+ end;
+
+procedure updateop(const info: pparseinfoty; const opinfo: opinfoty);
 //todo: don't convert inplace, stack items will be of variable size
 var
- reverse,negative: boolean;
  kinda,kindb: datakindty;
  po1: pelementinfoty;
+ sd1: stackdatakindty;
+ op1: opty;
 begin
  with info^ do begin
-//  reverse:= (contextstack[stacktop].d.kind = ck_const) xor 
-//                           (contextstack[stacktop-2].d.kind = ck_const);
-  reverse:= false;
+  sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
   po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
-  if (kinda = dk_float) or (kindb = dk_float) then begin
-   result:= sdk_flo64;
-   with contextstack[stacktop-2],d do begin
+  with contextstack[stacktop-2],d do begin
+   if (kinda = dk_float) or (kindb = dk_float) then begin
+    sd1:= sdk_flo64;
     if kind = ck_const then begin
      with insertitem(info,opmark.address)^ do begin
       op:= @push64;
@@ -736,6 +804,9 @@ begin
        end;
        dk_float: begin
         d.d.vfloat:= constval.vfloat;
+       end;
+       else begin
+        sd1:= sdk_none;
        end;
       end;
      end;
@@ -750,167 +821,146 @@ begin
         end;
        end;
       end;
-     end;
-    end;
-   end;
-   with contextstack[stacktop].d do begin
-    if kind = ck_const then begin
-     case kinda of
-      dk_integer: begin
-       push(info,real(constval.vinteger));
-      end;
       dk_float: begin
-       push(info,real(constval.vfloat));
-       reverse:= not reverse;
       end;
-     end;
-    end
-    else begin
-     case kinda of
-      dk_integer: begin
-        int32toflo64(info);
-      end;
-     end;
-    end;
-   end;
-  end
-  else begin
-   if kinda = dk_boolean then begin
-    result:= sdk_bool8;
-    with contextstack[stacktop-2],d do begin
-     if kind = ck_const then begin
-      case kindb of
-       dk_boolean: begin
-        with insertitem(info,opmark.address)^ do begin
-         op:= @push8;
-         d.d.vboolean:= constval.vboolean;
-        end;        
-//        push(info,constval.vboolean);
-       end;
+      else begin
+       sd1:= sdk_none;
       end;
      end;
     end;
     with contextstack[stacktop].d do begin
      if kind = ck_const then begin
       case kinda of
-       dk_boolean: begin
-        push(info,constval.vboolean);
+       dk_integer: begin
+        push(info,real(constval.vinteger));
+       end;
+       dk_float: begin
+        push(info,real(constval.vfloat));
+       end;
+       else begin
+        sd1:= sdk_none;
+       end;
+      end;
+     end
+     else begin
+      case kinda of
+       dk_integer: begin
+         int32toflo64(info);
+       end;
+       dk_float: begin
+       end;
+       else begin
+        sd1:= sdk_none;
        end;
       end;
      end;
     end;
    end
    else begin
-    result:= sdk_int32;
-    with contextstack[stacktop-2],d do begin
-     if kind = ck_const then begin
-      with insertitem(info,opmark.address)^ do begin
-       case kindb of
-        dk_integer: begin
-         op:= @push32;
-         d.d.vinteger:= constval.vinteger;
-        end;
+    if kinda = dk_boolean then begin
+     if kindb = dk_boolean then begin
+      sd1:= sdk_bool8;
+      if kind = ck_const then begin
+       with insertitem(info,opmark.address)^ do begin
+        op:= @push8;
+        d.d.vboolean:= constval.vboolean;
+       end;
+      end;
+      with contextstack[stacktop].d do begin
+       if kind = ck_const then begin
+        push(info,constval.vboolean);
        end;
       end;
      end;
-    end;
-    with contextstack[stacktop].d do begin
-     if kind = ck_const then begin
-      case kinda of
-       dk_integer: begin
+    end
+    else begin
+     if (kinda = dk_integer) and (kinda = dk_integer) then begin
+      sd1:= sdk_int32;
+      if kind = ck_const then begin
+       with insertitem(info,opmark.address)^ do begin
+        op:= @push32;
+        d.d.vinteger:= constval.vinteger;
+       end;
+      end;
+      with contextstack[stacktop].d do begin
+       if kind = ck_const then begin
         push(info,constval.vinteger);
        end;
       end;
      end;
     end;
    end;
+   if sd1 = sdk_none then begin
+    incompatibletypeserror(info,contextstack[stacktop-2].d,
+                                            contextstack[stacktop].d);
+   end
+   else begin
+    op1:= opinfo.ops[sd1];
+    if op1 = nil then begin
+     operationnotsupportederror(info,d,contextstack[stacktop].d,opinfo.opname);
+    end
+    else begin
+    {$ifdef mse_debugparser}
+     outcommand(info,[-2,0],opinfo.opname);
+    {$endif}
+     writeop(info,op1);
+     d.kind:= ck_fact;
+     d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
+     context:= nil;
+    end;
+   end;
   end;
-//  if reverse then begin
-//   result:= stackdatakindty(ord(result)+ord(reversestackdata));
-//  end;
   dec(stacktop,2);
-  with contextstack[stacktop] do begin
-   d.kind:= ck_fact;
-   d.datatyp:= sysdatatypes[resultdatatypes[result]];
-   context:= nil;
-  end;
-  stackindex:= stacktop-1;
+  stackindex:= stacktop-1; 
  end;
 end;
 
 const
- mulops: array[stackdatakindty] of opty =
-          (@dummyop,@mulint32,@mulflo64);
+ mulops: opinfoty = (ops: (nil,nil,@mulint32,@mulflo64);
+                     opname: '*');
  
 procedure handlemulfact(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'MULFACT');
 {$endif}
- outcommand(info,[-2,0],'*');
- writeop(info,mulops[pushvalues(info)]);
+ updateop(info,mulops);
 end;
 
 const
- addops: array[stackdatakindty] of opty =
-                    (@dummyop,@addint32,@addflo64);
+ addops: opinfoty = (ops: (nil,nil,@addint32,@addflo64);
+                     opname: '+');
 
 procedure handleaddterm(const info: pparseinfoty);
+ 
+var 
+ dk1: stackdatakindty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ADDTERM');
 {$endif}
- with info^ do begin
+ with info^,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
-                (contextstack[stacktop-2].d.kind = ck_const) then begin
-   case contextstack[stacktop].d.constval.kind of
-    dk_float: begin
-     with contextstack[stacktop-2],d,constval do begin
-      case kind of
-       dk_float: begin
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
-       end;
-       dk_integer: begin
-        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
-        kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
-       end;
-       else begin
-        incompatibletypeserror(info,contextstack[stacktop-2].d,
-                                            contextstack[stacktop].d);
-       end;
-      end;
-     end;
+              (d.kind = ck_const) then begin
+   dk1:= convertconsts(info);
+   case dk1 of
+    sdk_int32: begin
+     d.constval.vinteger:= d.constval.vinteger + 
+               contextstack[stacktop].d.constval.vinteger;
     end;
-    dk_integer: begin
-     with contextstack[stacktop-2].d,constval do begin
-      case kind of
-       dk_integer: begin
-        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
-       end;
-       dk_float: begin
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
-        kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
-       end;
-       else begin
-        incompatibletypeserror(info,contextstack[stacktop-2].d,
-                                            contextstack[stacktop].d);
-       end;
-      end;
-     end;
+    sdk_flo64: begin
+     d.constval.vfloat:= d.constval.vfloat + 
+                            contextstack[stacktop].d.constval.vfloat;
     end;
     else begin
-     operationnotsupportederror(info,contextstack[stacktop-2].d,
-                                            contextstack[stacktop].d,'+');
+     operationnotsupportederror(info,d,contextstack[stacktop].d,'+');
     end;
    end;
    dec(stacktop,2);
    stackindex:= stacktop-1;
   end
   else begin
-   outcommand(info,[-2,0],'+');
-   writeop(info,addops[pushvalues(info)]);
+   updateop(info,addops);
   end;
  end;
 end;
@@ -1079,15 +1129,16 @@ end;
 const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
-   @dummyop,@dummyop,  @negcard32, @negint32, @negflo64,
+   nil,     nil,       @negcard32, @negint32, @negflo64,
  //dk_kind, dk_address,dk_record
-   @dummyop,@dummyop,  @dummyop
+   nil,     nil,       nil
  );
 
 procedure handleterm1(const info: pparseinfoty);
 var
  po1: ptypedataty;
  bo1: boolean;
+ op1: opty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM1');
@@ -1115,7 +1166,13 @@ begin
      end
      else begin
       po1:= ele.eledataabs(d.datatyp.typedata);
-      writeop(info,negops[po1^.kind]);
+      op1:= negops[po1^.kind];
+      if op1 = nil then begin
+       errormessage(info,1,err_negnotpossible,[]);
+      end
+      else begin
+       writeop(info,op1);
+      end;
      end;
     end;
    end;
@@ -2136,13 +2193,50 @@ begin
  end;
 end;
 
+const
+ cmpequops: opinfoty = (ops: (nil,@cmpequbool,@cmpequint32,@cmpequflo64);
+                        opname: '=');
+
 procedure handleequsimpexp(const info: pparseinfoty);
+var
+ dk1:stackdatakindty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'EQUSIMPEXP');
 {$endif}
- outcommand(info,[-2,0],'=');
- writeop(info,addops[pushvalues(info)]);
+ with info^,contextstack[stacktop-2] do begin
+  if (contextstack[stacktop].d.kind = ck_const) and 
+                                               (d.kind = ck_const) then begin
+   dk1:= convertconsts(info);
+   d.constval.kind:= dk_boolean;
+   d.datatyp:= sysdatatypes[st_bool8];
+   case dk1 of
+    sdk_int32: begin
+     d.constval.vboolean:= d.constval.vinteger = 
+               contextstack[stacktop].d.constval.vinteger;
+    end;
+    sdk_flo64: begin
+     d.constval.vboolean:= d.constval.vfloat = 
+                            contextstack[stacktop].d.constval.vfloat;
+    end;
+    sdk_bool8: begin
+     d.constval.vboolean:= d.constval.vboolean =
+                            contextstack[stacktop].d.constval.vboolean;
+    end;
+    else begin
+     operationnotsupportederror(info,d,contextstack[stacktop].d,'=');
+    end;
+   end;
+   dec(stacktop,2);
+   stackindex:= stacktop-1;
+  end
+  else begin
+   updateop(info,cmpequops);
+   with info^,contextstack[stacktop] do begin
+    d.datatyp:= sysdatatypes[resultdatatypes[sdk_bool8]];
+   end;
+  end;
+ end;
 end;
 {
 procedure handlestatement(const info: pparseinfoty);
@@ -2487,10 +2581,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'THEN0');
 {$endif}
- with info^ do begin
+ with info^,contextstack[stacktop] do begin
   if not (ptypedataty(ele.eledataabs(
-     contextstack[stacktop].d.datatyp.typedata))^.kind = dk_boolean) then begin
+                         d.datatyp.typedata))^.kind = dk_boolean) then begin
    errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
+  end;
+  if d.kind = ck_const then begin
+   push(info,d.constval.vboolean); //todo: use compiletime branch
   end;
  end;
  with additem(info)^ do begin
