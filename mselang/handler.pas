@@ -128,6 +128,7 @@ procedure handleassignmententry(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
 //procedure setleftreference(const info: pparseinfoty);
 
+procedure handleif0(const info: pparseinfoty);
 procedure handleif(const info: pparseinfoty);
 procedure handlethen(const info: pparseinfoty);
 procedure handlethen0(const info: pparseinfoty);
@@ -2204,6 +2205,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'EQUSIMPEXP');
 {$endif}
+outinfo(info,'***');
  with info^,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
@@ -2550,6 +2552,16 @@ begin
  with additem(info)^ do begin
   op:= @gotoop;
   d.opaddress:= aaddress;
+ end;
+end;
+
+procedure handleif0(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'IF0');
+{$endif}
+ with info^ do begin
+  include(currentstatementflags,stf_rightside);
  end;
 end;
 

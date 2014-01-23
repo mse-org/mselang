@@ -3582,6 +3582,7 @@ begin
  assignmentco.handleexit:= @handleassignment;
  if0co.branch:= @bif0;
  if0co.next:= @ifco;
+ if0co.handleexit:= @handleif0;
  ifco.branch:= @bif;
  ifco.next:= @thenco;
  ifco.handleexit:= @handleif;

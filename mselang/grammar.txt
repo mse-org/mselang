@@ -193,7 +193,7 @@ statement1,,handleleftside,
 # '^',!setleftreference
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-if0,if,,
+if0,if,,handleif0
  ${whitespace}
 if,then,,handleif
  '',exp^*
