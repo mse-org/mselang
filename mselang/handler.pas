@@ -111,6 +111,15 @@ procedure handleparamdef2(const info: pparseinfoty);
 procedure handleparamsend(const info: pparseinfoty);
 procedure handleprocedureheader(const info: pparseinfoty);
 
+procedure handlefunctionentry(const info: pparseinfoty);
+procedure handleprocedureentry(const info: pparseinfoty);
+//procedure handlefunctionentry(const info: pparseinfoty);
+
+procedure handleprocedure3(const info: pparseinfoty);
+procedure handleprocedure5a(const info: pparseinfoty);
+procedure handleprocedure6(const info: pparseinfoty);
+
+
 {
 procedure handleparamstart0(const info: pparseinfoty);
 procedure handleparam(const info: pparseinfoty);
@@ -136,10 +145,6 @@ procedure handlethen1(const info: pparseinfoty);
 procedure handlethen2(const info: pparseinfoty);
 procedure handleelse0(const info: pparseinfoty);
 procedure handleelse(const info: pparseinfoty);
-
-procedure handleprocedure3(const info: pparseinfoty);
-procedure handleprocedure5a(const info: pparseinfoty);
-procedure handleprocedure6(const info: pparseinfoty);
 
 procedure handledumpelements(const info: pparseinfoty);
 procedure handleabort(const info: pparseinfoty);
@@ -1347,6 +1352,28 @@ begin
  end;
 end;
 
+procedure handleprocedureentry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'PROCEDUREENTRY');
+{$endif}
+end;
+
+procedure handlefunctionentry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'FUNCTIONENTRY');
+{$endif}
+outinfo(info,'****');
+end;
+(*
+procedure handlefunctionentry(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'FUNCTIONENTRY');
+{$endif}
+end;
+*)
 (*
 procedure handleparamsend(const info: pparseinfoty);
 begin

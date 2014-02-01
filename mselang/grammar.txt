@@ -54,6 +54,9 @@ start2,noimplementation,,
  'var'.,var-*
  'type'.,type-*
  'procedure'.,procedureheader-*^>
+ 'function'.,functionheader-*^>
+
+functionheader,procedureheader,,handlefunctionentry
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,,
@@ -76,9 +79,13 @@ main,main1,,
 main1,,,handlemain
  ${whitespace}
  'procedure'.,procedure-^*>
+ 'function'.,function-^*>
  'begin'.,progbegin-
  'const'.,const-*>
  'var'.,var-*>
+
+function,procfunc,,handlefunctionentry
+procedure,procfunc,,handleprocedureentry
 
 comment0,,,handlecommentend^*>
  '}',-*
@@ -127,7 +134,7 @@ paramdef2,,,handleparamdef2^
 #
 procedureheader,,,handleprocedureheader*
  '',procedure0-*
-procedure,procedurea,,
+procfunc,procedurea,,
  '',procedure0*
 procedurea,,,
  '',procedure4*
