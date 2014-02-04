@@ -36,11 +36,12 @@ uses
      first character of strings removed for const def ex:
       '.classes' -> tks_classes
 CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
-    ENTRIHANDLER called at contextstart
+    ENTRYHANDLER called at contextstart
     EXITHANDLER called by context termination,
     transition to <next> or termination if no branch matches
     or after return from branch
-    *HANDLER also called for transition contexts without branches
+    EXITHANDLER also called for transition contexts without branches,
+     no flags allowed
  '-' -> eat text
  '^' -> pop parent
  '!' -> pop parent and execute parent handler
@@ -215,6 +216,7 @@ type
  contextinfoty = record
   cont: stringarty;
   bran: brancharty;
+  li: integer;
  end;
  contextinfoarty = array of contextinfoty;
  tokendefty = record
@@ -231,6 +233,7 @@ var
  internaltokens: stringarty;
  context: string;
  contextline: stringarty;
+ contextlinenr: integer;
  branches: brancharty;
  line: integer;
  contexts: contextinfoarty;
@@ -239,11 +242,14 @@ var
  keywords: array of string;
  keywordids: array of keywordty;
 
- procedure error(const text: string);
+ procedure error(const text: string; aline: integer = -1);
  begin
+  if aline < 0 then begin
+   aline:= line;
+  end;
   exitcode:= 1;
 //  application.terminated:= true;
-  writestderr('***ERROR*** '+text+ ' line '+inttostr(line)+lineend+str1,true);
+  writestderr('***ERROR*** '+text+ ' line '+inttostr(aline)+lineend+str1,true);
  end;
 
  procedure readline(var astr: string);
@@ -334,12 +340,22 @@ var
   end;
  end;
 
+const
+ flagchars = ['^','!','+','*','>'];
+
  procedure handlecontext;
  begin
   setlength(contexts,high(contexts)+2);
   with contexts[high(contexts)] do begin
    cont:= contextline;
    bran:= copy(branches);
+   li:= contextlinenr;
+   {
+   if (bran = nil) and (cont <> nil) and (cont[high(cont)] <> '') and
+       (cont[high(cont)][length(cont[high(cont)])] in flagchars)  then begin
+    error('Transition context can not have flags.',li);
+   end;
+   }
   end;
  end;
 
@@ -439,10 +455,10 @@ begin
      end;
      macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)]);
     end
-    else begin
+    else begin //no macrodef
      mstr1:= utf8tostring(str1);
      macrolist1.expandmacros(mstr1);
-     if (mstr1 <> '') and (mstr1[1] <> '#') then begin
+     if (mstr1 <> '') and (mstr1[1] <> '#') then begin //no comment
       expandedtext:= breaklines(stringtoutf8(mstr1));
       for lnr:= 0 to high(expandedtext) do begin
        str1:= expandedtext[lnr];
@@ -499,10 +515,11 @@ begin
          else begin
           if str1[1] <> ' ' then begin
            if context <> '' then begin
-            handlecontext;
+            handlecontext; //new context
            end;
            context:= str1;
            contextline:= splitstring(context,',',true);
+           contextlinenr:= line;
            if length(contextline) <> contlast+1 then begin
             error(contextformat);
             exit;
@@ -674,34 +691,39 @@ begin
   for int1:= 0 to high(contexts) do begin
    str2:= '';
    with contexts[int1] do begin
-    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '>') then begin
+    if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '>') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'continue: true; ';
     end
     else begin
      str2:= str2+'continue: false; ';
     end;
-    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '*') then begin
+    if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '*') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'cut: true; ';
     end
     else begin
      str2:= str2+'cut: false; ';
     end;
-    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '+') then begin
+    if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '+') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'restoresource: true; ';
     end
     else begin
      str2:= str2+'restoresource: false; ';
     end;
-    if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '^') then begin
+    if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '^') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+lineend+
 '               pop: true; popexe: false; ';
     end
     else begin
-     if (cont[contlast] <> '') and (cont[contlast][length(cont[contlast])] = '!') then begin
+     if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '!') then begin
       setlength(cont[contlast],length(cont[contlast])-1);
       str2:= str2+lineend+
 '               pop: true; popexe: true; ';

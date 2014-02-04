@@ -235,27 +235,7 @@ begin
    contextstack[stackindex].returncontext:= pb^.stack;
          //replace return context
   end;
-  while pc^.branch = nil do begin //handle transition chain
-//todo: what about handleentry?
-   if pc^.next = nil then begin
-    result:= false;  //open transition chain
-    break;
-   end;
-   if pc^.handleexit <> nil then begin
-    pc^.handleexit(info); //transition handler
-    if stopparser then begin
-     result:= false;
-     exit;
-    end;
-   end;
-   if pc^.nexteat then begin
-    contextstack[stackindex].start:= source;
-   end;
-   if pc^.cut then begin
-    stacktop:= stackindex;
-   end;
-   pc:= pc^.next;
-  end;
+
   int1:= contextstack[stackindex].parent;
   if bf_setparentbeforepush in pb^.flags then begin
    int1:= stackindex;
@@ -286,6 +266,61 @@ begin
     opmark.address:= opcount;
    end;
   end;
+
+  while pc^.branch = nil do begin //handle transition chain
+//todo: what about handleentry?
+   if pc^.next = nil then begin
+    result:= false;  //open transition chain
+    break;
+   end;
+   if pc^.handleexit <> nil then begin
+    pc^.handleexit(info); //transition handler
+    if stopparser then begin
+     result:= false;
+     exit;
+    end;
+   end;
+   if pc^.nexteat then begin
+    contextstack[stackindex].start:= source;
+   end;
+   if pc^.cut then begin
+    stacktop:= stackindex;
+   end;
+   pc:= pc^.next;
+   contextstack[stackindex].context:= pc;
+  end;
+ (*
+  int1:= contextstack[stackindex].parent;
+  if bf_setparentbeforepush in pb^.flags then begin
+   int1:= stackindex;
+  end;
+  if bf_push in pb^.flags then begin
+   bo1:= true;
+   incstack(info);
+   if bf_setparentafterpush in pb^.flags then begin
+    int1:= stacktop;
+   end;
+  end;
+  if bf_changeparentcontext in pb^.flags then begin
+   contextstack[int1].context:= pb^.stack;
+         //replace return context
+  end;
+  with contextstack[stackindex],d do begin
+   if bf_push in pb^.flags then begin
+    kind:= ck_none;
+   end;
+   context:= pc;
+   if not (bf_nostart in pb^.flags) then begin
+    start:= source;
+   end;
+   debugstart:= debugsource;
+   parent:= int1;
+   if bf_setpc in pb^.flags then begin
+//    kind:= ck_opmark;
+    opmark.address:= opcount;
+   end;
+  end;
+*)
   pb:= pc^.branch;
 {$ifdef mse_debugparser}
   if bo1 then begin
