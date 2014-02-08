@@ -155,7 +155,7 @@ type
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_global,vf_param,vf_const);
+ varflagty = (vf_global,vf_param,vf_paramindirect,vf_const);
  varflagsty = set of varflagty;
 
  indirectlevelty = integer;

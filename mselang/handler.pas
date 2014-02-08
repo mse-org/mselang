@@ -1625,17 +1625,25 @@ outinfo(info,'***');
      end;
     end;
     ek_sub: begin
+     po5:= @pfuncdataty(po2)^.paramsrel;
+     opshift:= 0;
      paramco1:= paramco;
      if pf_function in pfuncdataty(po2)^.flags then begin
       inc(paramco1);
-//      pushinsertvar(
+      po6:= ele.eledataabs(po5[pfuncdataty(po2)^.paramcount-1]); //result
+      po3:= ptypedataty(ele.eledataabs(po6^.typ));
+      with contextstack[stackindex] do begin
+       pushinsertvar(info,opmark.address,po3);
+       d.kind:= ck_fact;
+       d.datatyp.indirectlevel:= 0;
+       d.datatyp.typedata:= po6^.typ;
+      end;
+      inc(opshift);
      end;
      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
      else begin
-      po5:= @pfuncdataty(po2)^.paramsrel;
-      opshift:= 0;
       for int1:= stackindex+3+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
@@ -1652,6 +1660,8 @@ outinfo(info,'***');
        end;
        inc(po5);
       end;
+      if pf_function in pfuncdataty(po2)^.flags then begin
+      end;
      end;
      if pfuncdataty(po2)^.address = 0 then begin //unresolved header
       linkmark(info,pfuncdataty(po2)^.links,opcount);
@@ -1667,6 +1677,12 @@ outinfo(info,'***');
        op:= @calloutop;
        d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-2;
                                                                //for downto 0
+      end;
+     end;
+     if pf_function in pfuncdataty(po2)^.flags then begin
+      with additem(info)^ do begin
+       op:= @popop;
+       d.d.vsize:= po3^.bytesize;
       end;
      end;
     end;
@@ -2328,6 +2344,7 @@ var
  dest: vardestinfoty;
  typematch,indi: boolean;
  si1: integer;
+ int1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ASSIGNMENT');
@@ -2374,8 +2391,11 @@ outinfo(info,'*****');
     dest.address.indirectlevel:= datatyp.indirectlevel;
    end;
    if typematch and not errorfla then begin
-    typematch:= tryconvert(info,contextstack[stacktop],dest.typ,
-                                              dest.address.indirectlevel);
+    int1:= dest.address.indirectlevel;
+    if vf_paramindirect in dest.address.flags then begin
+     dec(int1);
+    end;
+    typematch:= tryconvert(info,contextstack[stacktop],dest.typ,int1);
     if not typematch then begin
      assignmenterror(info,contextstack[stacktop].d,dest);
     end
@@ -2423,18 +2443,36 @@ outinfo(info,'*****');
         d.dataaddress:= dest.address.address;
        end
        else begin
-        case si1 of
-         1: begin 
-          op:= @poploc8;
+        if vf_paramindirect in dest.address.flags then begin
+         case si1 of
+          1: begin 
+           op:= @poplocindi8;
+          end;
+          2: begin
+           op:= @poplocindi16;
+          end;
+          4: begin
+           op:= @poplocindi32;
+          end;
+          else begin
+           op:= @poplocindi;
+          end;
          end;
-         2: begin
-          op:= @poploc16;
-         end;
-         4: begin
-          op:= @poploc32;
-         end;
-         else begin
-          op:= @poploc;
+        end
+        else begin
+         case si1 of
+          1: begin 
+           op:= @poploc8;
+          end;
+          2: begin
+           op:= @poploc16;
+          end;
+          4: begin
+           op:= @poploc32;
+          end;
+          else begin
+           op:= @poploc;
+          end;
          end;
         end;
         d.locdataaddress.offset:= dest.address.address;
@@ -2835,12 +2873,14 @@ outinfo(info,'****');
         if d.ident.paramkind = pk_const then begin
          if po3^.bytesize > pointersize then begin
           address.indirectlevel:= 1;
+          include(address.flags,vf_paramindirect);
          end;
          include(address.flags,vf_const);
         end
         else begin
          if d.ident.paramkind in [pk_var,pk_out] then begin
           address.indirectlevel:= 1;
+          include(address.flags,vf_paramindirect);
          end;
         end;
        end;

@@ -133,9 +133,11 @@ begin
        write(' ');
       end;
      end;
+     write(fitstring(inttostr(opmark.address),3,sp_right));
      write('<',context^.caption,'> ');
     end
     else begin
+     write(fitstring(inttostr(opmark.address),3,sp_right));
      write('<NIL> ');
     end;
     write(getenumname(typeinfo(kind),ord(kind)),' ');
@@ -262,10 +264,10 @@ begin
    end;
    debugstart:= debugsource;
    parent:= int1;
-   if bf_setpc in pb^.flags then begin
+//   if bf_setpc in pb^.flags then begin
 //    kind:= ck_opmark;
     opmark.address:= opcount;
-   end;
+//   end;
   end;
 
   while pc^.branch = nil do begin //handle transition chain

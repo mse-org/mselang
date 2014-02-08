@@ -73,6 +73,11 @@ procedure poploc16;
 procedure poploc32;
 procedure poploc;
 
+procedure poplocindi8;
+procedure poplocindi16;
+procedure poplocindi32;
+procedure poplocindi;
+
 procedure pushglob8;
 procedure pushglob16;
 procedure pushglob32;
@@ -484,6 +489,27 @@ procedure poploc;
 begin
  move(stackpop(oppo^.d.datasize)^,(locaddress(oppo^.d.locdataaddress))^,
                                                          oppo^.d.datasize);
+end;
+
+procedure poplocindi8;
+begin             
+ pv8ty(locaddress(oppo^.d.locdataaddress)^)^:= pv8ty(stackpop(1))^;
+end;
+
+procedure poplocindi16;
+begin
+ pv16ty(ppointer(locaddress(oppo^.d.locdataaddress))^)^:= pv16ty(stackpop(2))^;
+end;
+
+procedure poplocindi32;
+begin
+ pv32ty(ppointer(locaddress(oppo^.d.locdataaddress))^)^:= pv32ty(stackpop(4))^;
+end;
+
+procedure poplocindi;
+begin
+ move(stackpop(oppo^.d.datasize)^,
+            (ppointer(locaddress(oppo^.d.locdataaddress))^)^,oppo^.d.datasize);
 end;
 
 procedure pushloc8;
