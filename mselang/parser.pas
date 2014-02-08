@@ -178,7 +178,8 @@ begin
 //      write(opmark.address,' ');
 //     end;
      ck_proc: begin
-      write('pasize:',proc.paramsize);
+      write('flags:',settostring(ptypeinfo(typeinfo(procflagsty)),
+                           integer(proc.flags),true),' pasize:',proc.paramsize);
      end;
      ck_paramsdef: begin
       with paramsdef do begin

@@ -118,7 +118,7 @@ type
 
  vardataty = record
   address: addressinfoty;
-  typ: elementoffsetty; //elementdata relative
+  typ: elementoffsetty; //elementdata relative typedataty
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
@@ -146,6 +146,7 @@ type
   links: linkindexty;
   mark: forwardindexty;
   address: opaddressty;
+  flags: procflagsty;
   nestinglevel: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty

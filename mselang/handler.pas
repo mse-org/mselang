@@ -115,6 +115,7 @@ procedure handlefunctionentry(const info: pparseinfoty);
 procedure handleprocedureentry(const info: pparseinfoty);
 //procedure handlefunctionentry(const info: pparseinfoty);
 
+procedure checkfunctiontype(const info: pparseinfoty);
 procedure handleprocedure3(const info: pparseinfoty);
 procedure handleprocedure5a(const info: pparseinfoty);
 procedure handleprocedure6(const info: pparseinfoty);
@@ -216,6 +217,7 @@ end;
  
 var
  sysdatatypes: array[systypety] of typeinfoty;
+ resultident: identty;
  
 procedure initparser(const info: pparseinfoty);
 begin
@@ -254,10 +256,20 @@ begin
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
+ resultident:= getident('result');
 end;
 
 procedure deinit;
 begin
+end;
+
+procedure pushinsertvar(const info: pparseinfoty;
+            const insertad: opaddressty; const atype: ptypedataty);
+begin
+ with insertitem(info,insertad)^ do begin
+  op:= @pushop;
+  d.d.vsize:= atype^.bytesize;
+ end;
 end;
 
 procedure pushinsertconst(const info: pparseinfoty;
@@ -1357,6 +1369,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'PROCEDUREENTRY');
 {$endif}
+ with info^,contextstack[stackindex].d do begin
+  kind:= ck_proc;
+  proc.flags:= [];
+ end;
 end;
 
 procedure handlefunctionentry(const info: pparseinfoty);
@@ -1365,6 +1381,10 @@ begin
  outhandle(info,'FUNCTIONENTRY');
 {$endif}
 outinfo(info,'****');
+ with info^,contextstack[stackindex].d do begin
+  kind:= ck_proc;
+  proc.flags:= [pf_function];
+ end;
 end;
 (*
 procedure handlefunctionentry(const info: pparseinfoty);
@@ -1524,6 +1544,7 @@ var
 // fl1: typeflagsty;
  opshift: opaddressty;
  stacksize1: databytesizety;
+ paramco1: integer;
 label
  endlab;
 begin
@@ -1604,7 +1625,12 @@ outinfo(info,'***');
      end;
     end;
     ek_sub: begin
-     if paramco <> pfuncdataty(po2)^.paramcount then begin
+     paramco1:= paramco;
+     if pf_function in pfuncdataty(po2)^.flags then begin
+      inc(paramco1);
+//      pushinsertvar(
+     end;
+     if paramco1 <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
      end
      else begin
@@ -2442,10 +2468,7 @@ begin
 end;
 
 procedure handleleftside(const info: pparseinfoty);
-var
- pi: pinteger;
 begin
- (pi):= nil;
 {$ifdef mse_debugparser}
  outhandle(info,'HANDLELEFTSIDE');
 {$endif}
@@ -2719,6 +2742,19 @@ procedure testxx(const info: pparseinfoty);
 begin
 end;
 }
+
+procedure checkfunctiontype(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CHECKFUNCTIONTYPE');
+{$endif}
+outinfo(info,'****');
+ with info^,contextstack[stackindex] do begin
+  include(contextstack[parent-1].d.proc.flags,pf_functiontype);
+ end;
+outinfo(info,'****');
+end;
+
 procedure handleprocedure3(const info: pparseinfoty);
 var
  po1: pfuncdataty;
@@ -2733,20 +2769,42 @@ var
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
  eledatabase: ptruint;
+ procflags: procflagsty;
 // parambase: ptruint;
 
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'PROCEDURE3');
 {$endif}
-//0          1     2          3          4    5
-//procedure2,ident,paramsdef3{,paramdef2,name,type}
+//0          1     2          3          4    5      6           7
+//procedure2,ident,paramsdef3{,paramdef2,name,type}[functiontype,ident]
               //todo: multi level type
 outinfo(info,'****');
  with info^ do begin
+  procflags:= contextstack[stackindex-1].d.proc.flags;
   with contextstack[stackindex] do begin
+   d.proc.flags:= procflags;
    d.proc.parambase:= locdatapo;
   end;
+  if pf_functiontype in procflags then begin
+   if pf_function in procflags then begin
+    with contextstack[stacktop-1].d do begin
+     kind:= ck_ident;
+     ident.paramkind:= pk_var;
+     ident.ident:= resultident;
+    end;
+    paramco:= (stacktop-stackindex-2-2) div 3+1;
+   end
+   else begin
+    errormessage(info,stacktop-stackindex-1,err_syntax,[';']);    
+   end;
+  end
+  else begin
+   if pf_function in procflags then begin
+    tokenexpectederror(info,':');
+   end;
+  end;
+outinfo(info,'****');
   paramco:= (stacktop-stackindex-2) div 3;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
@@ -2757,6 +2815,7 @@ outinfo(info,'****');
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.nestinglevel:= funclevel;
+  po1^.flags:= procflags;
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;

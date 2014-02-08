@@ -145,9 +145,18 @@ procedure1,procedure2,,
  '',paramsdef0^*
 procedure2,,,
  ${whitespace}
+ ':',functiontype-^*>
  ';',!handleprocedure3-*
 #      handle parameters
  '',semicolonexpected
+
+functiontype,,,checkfunctiontype^
+ '',functiontypea*
+# same layout as parameter
+functiontypea,,,
+ ${whitespace}
+ @identstart,ident^*
+
 # ';',procedure3-
 #procedure3,procedure4,,handleprocedure3
 # mark

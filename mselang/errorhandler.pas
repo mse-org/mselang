@@ -106,6 +106,8 @@ procedure identerror(const info: pparseinfoty; const astackoffset: integer;
                                    const aerrorlevel: errorlevelty = erl_none);
 procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: string;
+                             const aerrorlevel: errorlevelty = erl_none);
 procedure assignmenterror(const info: pparseinfoty;
                  const source: contextdataty; const dest: vardestinfoty);
 procedure illegalconversionerror(const info: pparseinfoty;
@@ -213,6 +215,12 @@ begin
  end;
 end;
 
+procedure tokenexpectederror(const info: pparseinfoty; const atoken: string;
+                                               const aerrorlevel: errorlevelty);
+begin
+ errormessage(info,-1,err_tokenexpected,[atoken],0,aerrorlevel);
+end;
+
 procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
                                                const aerrorlevel: errorlevelty);
 var
@@ -226,7 +234,7 @@ begin
    break;
   end;
  end;
- errormessage(info,-1,err_tokenexpected,[str1],0,aerrorlevel);
+ tokenexpectederror(info,str1,aerrorlevel);
 end;
 
 procedure typeconversionerror(const info: pparseinfoty;

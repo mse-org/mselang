@@ -228,6 +228,9 @@ type
  opmarkty = record
   address: opaddressty;
  end;
+ 
+ procflagty = (pf_function,pf_functiontype);
+ procflagsty = set of procflagty;
  procinfoty = record
   frameoffsetbefore: ptruint;
   parambase: ptruint;
@@ -237,6 +240,7 @@ type
   ref: elementoffsetty;
   match: elementoffsetty;
   error: boolean;
+  flags: procflagsty;
  end;
  
  paramsdefinfoty = record
@@ -374,6 +378,7 @@ type
       2: (vcardinal: card32);
       3: (vinteger: int32);
       4: (vfloat: float64);
+      5: (vsize: ptrint);
     end;
    );
    ok_push8:(

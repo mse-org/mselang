@@ -42,6 +42,9 @@ procedure gotoop;
 procedure ifop;
 procedure writelnop;
 
+procedure pushop;
+procedure popop;
+
 procedure push8;
 procedure push16;
 procedure push32;
@@ -268,6 +271,16 @@ begin
  writeln;
  mainstackpo:= mainstackpo-2*int1-1;
 }
+end;
+
+procedure pushop;
+begin
+ stackpush(oppo^.d.d.vsize);
+end;
+
+procedure popop;
+begin
+ stackpop(oppo^.d.d.vsize);
 end;
 
 procedure push8;
