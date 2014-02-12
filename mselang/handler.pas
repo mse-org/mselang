@@ -1719,10 +1719,15 @@ outinfo(info,'***');
       for int1:= stackindex+3+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
-        if d.kind = ck_const then begin
-         opmark.address:= opmark.address + opshift;
-//         inc(opshift);
-         pushinsertconst(info,contextstack[int1]);
+        case d.kind of
+         ck_const: begin
+          opmark.address:= opmark.address + opshift;
+ //         inc(opshift);
+          pushinsertconst(info,contextstack[int1]);
+         end;
+         ck_ref: begin
+          getvalue(info,int1-stackindex,true);
+         end;
         end;
         if d.datatyp.typedata <> po6^.typ then begin
          errormessage(info,int1-stackindex,err_incompatibletypeforarg,
