@@ -790,11 +790,11 @@ type
   opname: string;
  end;
 
-procedure pushdata(const info: pparseinfoty; 
-         const address: addressinfoty; const offset: dataoffsty;
-         const size: databytesizety);
+procedure pushd(const info: pparseinfoty;
+                     const oppo: popinfoty; const address: addressinfoty;
+                     const offset: dataoffsty; const size: databytesizety);
 begin
- with additem(info)^,address do begin //todo: use table
+ with oppo^,address do begin //todo: use table
   if vf_global in flags then begin
    case size of
     1: begin 
@@ -834,6 +834,21 @@ begin
  end;
 end;
 
+//todo: optimize call
+procedure pushdata(const info: pparseinfoty; 
+         const address: addressinfoty; const offset: dataoffsty;
+         const size: databytesizety);
+begin
+ pushd(info,additem(info),address,offset,size);
+end;
+
+procedure pushinsertdata(const info: pparseinfoty; const insertad: opaddressty;
+         const address: addressinfoty; const offset: dataoffsty;
+         const size: databytesizety);
+begin
+ pushd(info,insertitem(info,insertad),address,offset,size);
+end;
+
 function getvalue(const info: pparseinfoty; 
                                  const stackoffset: integer): boolean;
 var
@@ -842,17 +857,17 @@ var
  si1: databytesizety;
 begin
  result:= true;
- with info^,contextstack[stackindex+stackoffset].d do begin
+ with info^,contextstack[stackindex+stackoffset],d do begin
   if kind = ck_ref then begin
    ref1:= ref; //todo: optimize, handle indirectlevel
-   if datatyp.indirectlevel > 0 then begin
+   if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
     po1:= ele.eledataabs(datatyp.typedata);
     si1:= po1^.bytesize;
    end
    else begin
     si1:= pointersize;
    end;
-   pushdata(info,ref1.address,ref1.offset,si1);
+   pushinsertdata(info,opmark.address,ref1.address,ref1.offset,si1);
   end;
  end;
 end;
@@ -1752,12 +1767,12 @@ outinfo(info,'***');
            getvalue(info,int1-stackindex);
           end;
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-           if int1 = int3 then begin
+//           if int1 = int3 then begin
             push(info,kind);
-           end
-           else begin
-            pushinsert(info,contextstack[int1+1].opmark.address,kind);
-           end;
+//           end
+//           else begin
+//            pushinsert(info,contextstack[int1+1].opmark.address,kind);
+//           end;
            stacksize1:= stacksize1 + alignsize(bytesize);
           end;
          end;
