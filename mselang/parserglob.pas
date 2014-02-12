@@ -71,7 +71,7 @@ const
 type 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
-                  ck_neg,ck_const,ck_fact,
+                  ck_neg,ck_const,ck_ref,ck_fact,
                   ck_type,ck_var,ck_field,ck_statement,
                   ck_paramsdef,ck_params);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
@@ -180,7 +180,12 @@ type
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
- 
+
+ refinfoty = record
+  address: addressinfoty;
+  offset: dataoffsty;
+ end;
+  
  dataty = record
   case kind: datakindty of
    dk_boolean:(
@@ -272,7 +277,7 @@ type
    ck_number:(
     number: numberinfoty;
    );
-   ck_const,ck_fact:(
+   ck_const,ck_fact,ck_ref:(
     datatyp: typeinfoty;
     case contextkindty of
      ck_const:(
@@ -280,6 +285,9 @@ type
      );
      ck_fact:(
       fact: factinfoty;
+     );
+     ck_ref:(
+      ref: refinfoty;
      );
    );
    ck_proc:(
@@ -489,6 +497,7 @@ type
   errors: array[errorlevelty] of integer;
   ops: opinfoarty;
   opcount: integer;
+  opshift: integer;
   start: integer;
   globdatapo: ptruint;
   locdatapo: ptruint;

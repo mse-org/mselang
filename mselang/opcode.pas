@@ -64,14 +64,18 @@ end;
 
 function insertitem(const info: pparseinfoty; 
                                    const insertad: opaddressty): popinfoty;
+var
+ ad1: opaddressty;
 begin
  with info^ do begin
   if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
   end;
-  move(ops[insertad],ops[insertad+1],(opcount-insertad)*sizeof(ops[0]));
-  result:= @ops[insertad];
+  ad1:= insertad+opshift;
+  move(ops[ad1],ops[ad1+1],(opcount-ad1)*sizeof(ops[0]));
+  result:= @ops[ad1];
   inc(opcount);
+  inc(opshift);
  end;
 end;
 

@@ -87,7 +87,6 @@ procedure handleexp(const info: pparseinfoty);
 procedure handleequsimpexp(const info: pparseinfoty);
 
 procedure handlemain(const info: pparseinfoty);
-//procedure handlemain1(const info: pparseinfoty);
 procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
@@ -100,7 +99,6 @@ procedure handleaddterm(const info: pparseinfoty);
 procedure handlebracketend(const info: pparseinfoty);
 procedure handlesimpexp(const info: pparseinfoty);
 procedure handlesimpexp1(const info: pparseinfoty);
-//procedure handleln(const info: pparseinfoty);
 
 procedure handleparamsdef1entry(const info: pparseinfoty);
 procedure handleparams0(const info: pparseinfoty);
@@ -113,30 +111,16 @@ procedure handleprocedureheader(const info: pparseinfoty);
 
 procedure handlefunctionentry(const info: pparseinfoty);
 procedure handleprocedureentry(const info: pparseinfoty);
-//procedure handlefunctionentry(const info: pparseinfoty);
 
 procedure checkfunctiontype(const info: pparseinfoty);
 procedure handleprocedure3(const info: pparseinfoty);
 procedure handleprocedure5a(const info: pparseinfoty);
 procedure handleprocedure6(const info: pparseinfoty);
 
-
-{
-procedure handleparamstart0(const info: pparseinfoty);
-procedure handleparam(const info: pparseinfoty);
-procedure handleparamsend(const info: pparseinfoty);
-}
-//procedure handlecheckparams(const info: pparseinfoty);
-
-//procedure handlestatement(const info: pparseinfoty);
-
 procedure handlestatement0entry(const info: pparseinfoty);
 procedure handleleftside(const info: pparseinfoty);
-//procedure handlestatement1(const info: pparseinfoty);
-//procedure handlecheckproc(const info: pparseinfoty);
 procedure handleassignmententry(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
-//procedure setleftreference(const info: pparseinfoty);
 
 procedure handleif0(const info: pparseinfoty);
 procedure handleif(const info: pparseinfoty);
@@ -156,8 +140,6 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif},opcode;
 
 const
-// reversestackdata = sdk_bool8rev;
-// stacklinksize = sizeof(pointer);
  stacklinksize = sizeof(frameinfoty);
 
 type
@@ -266,6 +248,7 @@ end;
 procedure pushinsertvar(const info: pparseinfoty;
             const insertad: opaddressty; const atype: ptypedataty);
 begin
+// insertad:= insertad + info^.opshift;
  with insertitem(info,insertad)^ do begin
   op:= @pushop;
   d.d.vsize:= atype^.bytesize;
@@ -275,6 +258,7 @@ end;
 procedure pushinsertconst(const info: pparseinfoty;
                                               const avalue: contextitemty);
 begin
+// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
  with insertitem(info,avalue.opmark.address)^ do begin
   case avalue.d.constval.kind of
    dk_boolean: begin
@@ -337,6 +321,16 @@ procedure push(const info: pparseinfoty; const avalue: datakindty); overload;
       //no alignsize
 begin
  with additem(info)^ do begin
+  op:= @pushdatakind;
+  d.vdatakind:= avalue;
+ end;
+end;
+
+procedure pushinsert(const info: pparseinfoty; const insertad: opaddressty; 
+                                    const avalue: datakindty); overload;
+      //no alignsize
+begin
+ with insertitem(info,insertad)^ do begin
   op:= @pushdatakind;
   d.vdatakind:= avalue;
  end;
@@ -796,6 +790,98 @@ type
   opname: string;
  end;
 
+procedure pushdata(const info: pparseinfoty; 
+         const address: addressinfoty; const offset: dataoffsty;
+         const size: databytesizety);
+begin
+ with additem(info)^,address do begin //todo: use table
+  if vf_global in flags then begin
+   case size of
+    1: begin 
+     op:= @pushglob8;
+    end;
+    2: begin
+     op:= @pushglob16;
+    end;
+    4: begin
+     op:= @pushglob32;
+    end;
+    else begin
+     op:= @pushglob;
+    end;
+   end;
+   d.dataaddress:= address+offset;
+  end
+  else begin
+   case size of
+    1: begin 
+     op:= @pushloc8;
+    end;
+    2: begin
+     op:= @pushloc16;
+    end;
+    4: begin
+     op:= @pushloc32;
+    end;
+    else begin
+     op:= @pushloc;
+    end;
+   end;
+   d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
+   d.locdataaddress.linkcount:= info^.funclevel-framelevel-1;
+  end;
+  d.datasize:= size;
+ end;
+end;
+
+function getvalue(const info: pparseinfoty; 
+                                 const stackoffset: integer): boolean;
+var
+ ref1: refinfoty;
+ po1: ptypedataty;
+ si1: databytesizety;
+begin
+ result:= true;
+ with info^,contextstack[stackindex+stackoffset].d do begin
+  if kind = ck_ref then begin
+   ref1:= ref; //todo: optimize, handle indirectlevel
+   if datatyp.indirectlevel > 0 then begin
+    po1:= ele.eledataabs(datatyp.typedata);
+    si1:= po1^.bytesize;
+   end
+   else begin
+    si1:= pointersize;
+   end;
+   pushdata(info,ref1.address,ref1.offset,si1);
+  end;
+ end;
+end;
+
+function getaddress(const info: pparseinfoty; 
+                                 const stackoffset: integer): boolean;
+var
+ ref1: refinfoty;
+begin
+ result:= true;
+ with info^,contextstack[stackindex+stackoffset].d do begin
+  if kind = ck_ref then begin
+   ref1:= ref; //todo: optimize
+   kind:= ck_const;
+   datatyp.indirectlevel:= datatyp.indirectlevel+1;
+   constval.kind:= dk_address;
+   constval.vaddress:= ref1.address;
+   constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+  end;
+  {
+  datatyp.typedata:= ele1;
+  datatyp.indirectlevel:= indirect1+1;
+  constval.kind:= dk_address;
+  constval.vaddress:= pvardataty(po2)^.address;
+  constval.vaddress.address:= constval.vaddress.address + offs1;
+  }
+ end;
+end;
+
 procedure updateop(const info: pparseinfoty; const opinfo: opinfoty);
 //todo: don't convert inplace, stack items will be of variable size
 var
@@ -805,6 +891,7 @@ var
  op1: opty;
 begin
  with info^ do begin
+  opshift:= 0;
   sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
@@ -1028,50 +1115,6 @@ end;
 //         const flags: varflagsty;
 //         const address: dataaddressty; const size: databytesizety);
 
-procedure pushdata(const info: pparseinfoty; 
-         const address: addressinfoty; const offset: dataoffsty;
-         const size: databytesizety);
-begin
- with additem(info)^,address do begin //todo: use table
-  if vf_global in flags then begin
-   case size of
-    1: begin 
-     op:= @pushglob8;
-    end;
-    2: begin
-     op:= @pushglob16;
-    end;
-    4: begin
-     op:= @pushglob32;
-    end;
-    else begin
-     op:= @pushglob;
-    end;
-   end;
-   d.dataaddress:= address+offset;
-  end
-  else begin
-   case size of
-    1: begin 
-     op:= @pushloc8;
-    end;
-    2: begin
-     op:= @pushloc16;
-    end;
-    4: begin
-     op:= @pushloc32;
-    end;
-    else begin
-     op:= @pushloc;
-    end;
-   end;
-   d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
-   d.locdataaddress.linkcount:= info^.funclevel-framelevel-1;
-  end;
-  d.datasize:= size;
- end;
-end;
-
 procedure handledereference(const info: pparseinfoty);
 var
  po1: ptypedataty;
@@ -1183,22 +1226,22 @@ begin
       end;
      end
      else begin
-      po1:= ele.eledataabs(d.datatyp.typedata);
-      op1:= negops[po1^.kind];
-      if op1 = nil then begin
-       errormessage(info,1,err_negnotpossible,[]);
-      end
-      else begin
-       writeop(info,op1);
+      if getvalue(info,0) then begin
+       po1:= ele.eledataabs(d.datatyp.typedata);
+       op1:= negops[po1^.kind];
+       if op1 = nil then begin
+        errormessage(info,1,err_negnotpossible,[]);
+       end
+       else begin
+        writeop(info,op1);
+       end;
       end;
      end;
     end;
    end;
-//   contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
    error(info,ce_expressionexpected);
-//   outcommand(info,[],'*ERROR* Expression expected');
   end;
   dec(stacktop);
   dec(stackindex);
@@ -1536,13 +1579,13 @@ var
  lastident: integer;
  idents: identvecty;
  ele1: elementoffsetty;
- int1,int2: integer;
+ int1,int2,int3: integer;
  si1: databytesizety;
 // addr1: dataaddressty;
  offs1: dataoffsty;
  indirect1: indirectlevelty;
 // fl1: typeflagsty;
- opshift: opaddressty;
+// opshift: opaddressty;
  stacksize1: databytesizety;
  paramco1: integer;
 label
@@ -1563,14 +1606,13 @@ outinfo(info,'***');
    case po1^.header.kind of
     ek_var: begin
      if checknoparam then begin     
-//      addr1:= pvardataty(po2)^.address.address;
       offs1:= 0;
       ele1:= pvardataty(po2)^.typ;
-      indirect1:= pvardataty(po2)^.address.indirectlevel;
-      if indirect1 > 0 then begin
-       si1:= pointersize;
-      end
-      else begin
+//      indirect1:= pvardataty(po2)^.address.indirectlevel;
+//      if indirect1 > 0 then begin
+//       si1:= pointersize;
+//      end
+//      else begin
        if lastident < idents.high then begin
         for int1:= lastident+1 to idents.high do begin //fields
          if not ele.findchild(ele1,idents.d[int1],[ek_field],
@@ -1579,20 +1621,27 @@ outinfo(info,'***');
           goto endlab;
          end;
          po4:= ele.eledataabs(ele1);
-//         addr1:= addr1 + po4^.offset;
          offs1:= offs1 + po4^.offset;
          ele1:= po4^.typ;
         end;
         ele1:= po4^.typ;
         po3:= ele.eledataabs(ele1);
-        si1:= po3^.bytesize;      
-       end
-       else begin
-        si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
-       end;
+//        si1:= po3^.bytesize;      
+//       end
+//       else begin
+//        si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
+//       end;
       end;
+      with contextstack[stackindex].d,ref do begin
+       kind:= ck_ref;
+       address:= pvardataty(po2)^.address;
+       datatyp.typedata:= ele1;
+       datatyp.indirectlevel:= address.indirectlevel;
+       offset:= offs1;
+//       size:= si1;
+      end;
+      {
       if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-//       pushdata(info,pvardataty(po2)^.address.flags,addr1,si1);
        pushdata(info,pvardataty(po2)^.address,offs1,si1);
        with contextstack[stackindex].d do begin
         kind:= ck_fact;
@@ -1606,13 +1655,11 @@ outinfo(info,'***');
         datatyp.typedata:= ele1;
         datatyp.indirectlevel:= indirect1+1;
         constval.kind:= dk_address;
-//        constval.vaddress.flags:= pvardataty(po2)^.address.flags;
-//        constval.vaddress.address:= addr1;
         constval.vaddress:= pvardataty(po2)^.address;
         constval.vaddress.address:= constval.vaddress.address + offs1;
-//        constval.vaddress.framelevel:= constval.vaddress.framelevel-funclevel;
        end;
       end;
+      }
      end;
     end;
     ek_const: begin
@@ -1638,7 +1685,7 @@ outinfo(info,'***');
        d.datatyp.indirectlevel:= 0;
        d.datatyp.typedata:= po6^.typ;
       end;
-      inc(opshift);
+//      inc(opshift);
      end;
      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
@@ -1649,7 +1696,7 @@ outinfo(info,'***');
        with contextstack[int1] do begin
         if d.kind = ck_const then begin
          opmark.address:= opmark.address + opshift;
-         inc(opshift);
+//         inc(opshift);
          pushinsertconst(info,contextstack[int1]);
         end;
         if d.datatyp.typedata <> po6^.typ then begin
@@ -1693,16 +1740,24 @@ outinfo(info,'***');
         int2:= stacktop-stackindex-2-idents.high; //count
         stacksize1:= 0;
         opshift:= 0;
-        for int1:= 3+stackindex+idents.high to 
-                                 int2+2+stackindex+idents.high do begin
+        int3:= int2+2+stackindex+idents.high;
+        for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
           if d.kind = ck_const then begin
-           opmark.address:= opmark.address + opshift;
-           inc(opshift);
+//           opmark.address:= opmark.address + opshift;
+//           inc(opshift);
            pushinsertconst(info,contextstack[int1]);
+          end
+          else begin
+           getvalue(info,int1-stackindex);
           end;
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-           push(info,kind);
+           if int1 = int3 then begin
+            push(info,kind);
+           end
+           else begin
+            pushinsert(info,contextstack[int1+1].opmark.address,kind);
+           end;
            stacksize1:= stacksize1 + alignsize(bytesize);
           end;
          end;
@@ -2352,6 +2407,8 @@ begin
 outinfo(info,'*****');
  with info^ do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
+   getaddress(info,1);
+   getvalue(info,2);
    with contextstack[stackindex+1].d do begin
    //todo: handle dereference and the like
     typematch:= false;

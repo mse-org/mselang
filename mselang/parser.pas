@@ -155,6 +155,9 @@ begin
      ck_fact: begin
       writetype(datatyp);
      end;
+     ck_ref: begin
+      writetype(datatyp);
+     end;
      ck_const: begin
       writetype(datatyp);
       case constval.kind of
