@@ -849,8 +849,8 @@ begin
  pushd(info,insertitem(info,insertad),address,offset,size);
 end;
 
-function getvalue(const info: pparseinfoty; 
-                                 const stackoffset: integer): boolean;
+function getvalue(const info: pparseinfoty; const stackoffset: integer;
+                                               const insert: boolean): boolean;
 var
  ref1: refinfoty;
  po1: ptypedataty;
@@ -867,7 +867,13 @@ begin
    else begin
     si1:= pointersize;
    end;
-   pushinsertdata(info,opmark.address,ref1.address,ref1.offset,si1);
+   if insert then begin
+    pushinsertdata(info,opmark.address,ref1.address,ref1.offset,si1);
+   end
+   else begin
+    pushdata(info,ref1.address,ref1.offset,si1);
+   end;
+   kind:= ck_fact;
   end;
  end;
 end;
@@ -907,6 +913,10 @@ var
 begin
  with info^ do begin
   opshift:= 0;
+outinfo(info,'****');
+  getvalue(info,stacktop-2-stackindex,true);
+  getvalue(info,stacktop-stackindex,false);
+outinfo(info,'****');
   sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
@@ -1241,7 +1251,7 @@ begin
       end;
      end
      else begin
-      if getvalue(info,0) then begin
+      if getvalue(info,0,false) then begin
        po1:= ele.eledataabs(d.datatyp.typedata);
        op1:= negops[po1^.kind];
        if op1 = nil then begin
@@ -1764,7 +1774,7 @@ outinfo(info,'***');
            pushinsertconst(info,contextstack[int1]);
           end
           else begin
-           getvalue(info,int1-stackindex);
+           getvalue(info,int1-stackindex,true);
           end;
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
 //           if int1 = int3 then begin
@@ -2423,7 +2433,7 @@ outinfo(info,'*****');
  with info^ do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
    getaddress(info,1);
-   getvalue(info,2);
+   getvalue(info,2,false);
    with contextstack[stackindex+1].d do begin
    //todo: handle dereference and the like
     typematch:= false;
