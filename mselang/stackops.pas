@@ -88,6 +88,11 @@ procedure pushloc16;
 procedure pushloc32;
 procedure pushloc;
 
+procedure pushlocindi8;
+procedure pushlocindi16;
+procedure pushlocindi32;
+procedure pushlocindi;
+
 procedure pushlocaddr;
 procedure pushglobaddr;
 
@@ -453,7 +458,7 @@ end;
 //todo: make special locvar access funcs for inframe variables
 //and loop unroll
 
-function locaddress(const aaddress: locdataadressty): pointer;// inline;
+function locaddress(const aaddress: locdataaddressty): pointer;// inline;
 var
  i1: integer;
  po1: pointer;
@@ -533,9 +538,30 @@ begin
                                                    oppo^.d.datasize);
 end;
 
+procedure pushlocindi8;
+begin
+ pv8ty(stackpush(1))^:= ppv8ty(locaddress(oppo^.d.locdataaddress))^^;
+end;
+
+procedure pushlocindi16;
+begin
+ pv16ty(stackpush(2))^:= ppv16ty(locaddress(oppo^.d.locdataaddress))^^;
+end;
+
+procedure pushlocindi32;
+begin
+ pv32ty(stackpush(4))^:= ppv32ty(locaddress(oppo^.d.locdataaddress))^^;
+end;
+
+procedure pushlocindi;
+begin
+ move(ppointer(locaddress(oppo^.d.locdataaddress))^^,
+               stackpush(oppo^.d.datasize)^,oppo^.d.datasize);
+end;
+
 procedure pushlocaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= locaddress(oppo^.d.locdataaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= locaddress(oppo^.d.vlocaddress);
 end;
 
 procedure pushglobaddr;

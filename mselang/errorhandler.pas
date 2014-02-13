@@ -34,7 +34,7 @@ type
             err_negnotpossible,err_closeparentexpected,err_illegalconversion,
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
             err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
-            err_circularreference);
+            err_circularreference,err_variableexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -90,7 +90,8 @@ const
   (level: erl_error; message: 
                'Forward declaration not solved "%s"'),
   (level: erl_fatal; message: 'File "%s" truncated'),
-  (level: erl_fatal; message: 'Circular unit reference %s')
+  (level: erl_fatal; message: 'Circular unit reference %s'),
+  (level: erl_error; message: 'Variable identifier expected')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

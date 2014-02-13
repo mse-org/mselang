@@ -352,22 +352,26 @@ type
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
-             ok_pushdatakind,ok_pushaddress,
+             ok_pushdatakind,ok_pushglobaddress,ok_pushlocaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_stack);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
+ ppv8ty = ^pv8ty;
  v16ty = array[0..1] of byte;
  pv16ty = ^v16ty;
+ ppv16ty = ^pv16ty;
  v32ty = array[0..3] of byte;
  pv32ty = ^v32ty;
+ ppv32ty = ^pv32ty;
  v64ty = array[0..7] of byte;
  pv64ty = ^v64ty;
+ ppv64ty = ^pv64ty;
 
    //todo: simplify nested procedure link handling
  
- locdataadressty = record
+ locdataaddressty = record
   offset: dataoffsty;
   linkcount: integer; //used in "for downto 0"
  end;
@@ -404,14 +408,17 @@ type
    ok_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushaddress:(
+   ok_pushglobaddress:(
     vaddress: dataaddressty;
+   );
+   ok_pushlocaddress:(
+    vlocaddress: locdataaddressty;
    );
    ok_locop,ok_var:(
     datasize: databytesizety;
     case opkindty of
      ok_locop:(
-      locdataaddress: locdataadressty;
+      locdataaddress: locdataaddressty;
      );
      ok_var:(
       dataaddress: dataaddressty;

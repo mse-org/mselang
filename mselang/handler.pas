@@ -255,6 +255,23 @@ begin
  end;
 end;
 
+procedure pushinsertaddress(const info: pparseinfoty;
+                                              const avalue: contextitemty);
+begin
+// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
+ with insertitem(info,avalue.opmark.address)^,avalue.d.ref do begin
+  if vf_global in address.flags then begin
+   op:= @pushglobaddr;
+   d.vaddress:= address.address + offset;
+  end
+  else begin
+   op:= @pushlocaddr;
+   d.vlocaddress.offset:= address.address + offset;
+   d.vlocaddress.linkcount:= info^.funclevel-address.framelevel-1;
+  end;
+ end;
+end;
+
 procedure pushinsertconst(const info: pparseinfoty;
                                               const avalue: contextitemty);
 begin
@@ -309,11 +326,13 @@ begin
  with additem(info)^ do begin
   if vf_global in avalue.flags then begin
    op:= @pushglobaddr;
+   d.vaddress:= avalue.address;
   end
   else begin
    op:= @pushlocaddr;
+   d.vlocaddress.offset:= avalue.address;
+   d.vlocaddress.linkcount:= info^.funclevel-avalue.framelevel-1;
   end;
-  d.vaddress:= avalue.address;
  end;
 end;
 
@@ -813,18 +832,36 @@ begin
    d.dataaddress:= address+offset;
   end
   else begin
-   case size of
-    1: begin 
-     op:= @pushloc8;
+   if vf_paramindirect in flags then begin
+    case size of
+     1: begin 
+      op:= @pushlocindi8;
+     end;
+     2: begin
+      op:= @pushlocindi16;
+     end;
+     4: begin
+      op:= @pushlocindi32;
+     end;
+     else begin
+      op:= @pushlocindi;
+     end;
     end;
-    2: begin
-     op:= @pushloc16;
-    end;
-    4: begin
-     op:= @pushloc32;
-    end;
-    else begin
-     op:= @pushloc;
+   end
+   else begin
+    case size of
+     1: begin 
+      op:= @pushloc8;
+     end;
+     2: begin
+      op:= @pushloc16;
+     end;
+     4: begin
+      op:= @pushloc32;
+     end;
+     else begin
+      op:= @pushloc;
+     end;
     end;
    end;
    d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
@@ -1578,7 +1615,12 @@ begin
   end;
  end;
 end;
-
+{
+procedure t(var a: integer);
+begin
+ t(1);
+end;
+}
 procedure handlevalueidentifier(const info: pparseinfoty);
 var
  paramco: integer;
@@ -1719,14 +1761,32 @@ outinfo(info,'***');
       for int1:= stackindex+3+idents.high to stacktop do begin
        po6:= ele.eledataabs(po5^);
        with contextstack[int1] do begin
-        case d.kind of
-         ck_const: begin
-          opmark.address:= opmark.address + opshift;
- //         inc(opshift);
-          pushinsertconst(info,contextstack[int1]);
+        if vf_paramindirect in po6^.address.flags then begin
+         case d.kind of
+          ck_const: begin
+           if not (vf_const in po6^.address.flags) then begin
+            errormessage(info,int1-stackindex,err_variableexpected,[]);
+           end
+           else begin
+           end;
+          end;
+          ck_ref: begin
+           pushinsertaddress(info,contextstack[int1]);
+//           getaddress(info,int1-stackindex);
+//           pushinsertconst(info,contextstack[int1]);           
+          end;
          end;
-         ck_ref: begin
-          getvalue(info,int1-stackindex,true);
+        end
+        else begin
+         case d.kind of
+          ck_const: begin
+           opmark.address:= opmark.address + opshift;
+  //         inc(opshift);
+           pushinsertconst(info,contextstack[int1]);
+          end;
+          ck_ref: begin
+           getvalue(info,int1-stackindex,true);
+          end;
          end;
         end;
         if d.datatyp.typedata <> po6^.typ then begin
