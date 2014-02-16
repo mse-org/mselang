@@ -148,6 +148,7 @@ type
   address: opaddressty;
   flags: procflagsty;
   nestinglevel: integer;
+  paramsize: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty
   end;

@@ -119,6 +119,7 @@ procedure handleprocedure6(const info: pparseinfoty);
 
 procedure handlestatement0entry(const info: pparseinfoty);
 procedure handleleftside(const info: pparseinfoty);
+procedure handlestatementexit(const info: pparseinfoty);
 procedure handleassignmententry(const info: pparseinfoty);
 procedure handleassignment(const info: pparseinfoty);
 
@@ -245,13 +246,14 @@ procedure deinit;
 begin
 end;
 
-procedure pushinsertvar(const info: pparseinfoty;
-            const insertad: opaddressty; const atype: ptypedataty);
+function pushinsertvar(const info: pparseinfoty;
+            const insertad: opaddressty; const atype: ptypedataty): integer;
 begin
 // insertad:= insertad + info^.opshift;
  with insertitem(info,insertad)^ do begin
   op:= @pushop;
-  d.d.vsize:= atype^.bytesize;
+  result:= atype^.bytesize; //todo: alignment
+  d.d.vsize:= result;
  end;
 end;
 
@@ -864,7 +866,7 @@ begin
      end;
     end;
    end;
-   d.locdataaddress.offset:= address {- info^.frameoffset} + offset;
+   d.locdataaddress.offset:= address + offset;
    d.locdataaddress.linkcount:= info^.funclevel-framelevel-1;
   end;
   d.datasize:= size;
@@ -1744,6 +1746,7 @@ outinfo(info,'***');
      paramco1:= paramco;
      if pf_function in pfuncdataty(po2)^.flags then begin
       inc(paramco1);
+      {
       po6:= ele.eledataabs(po5[pfuncdataty(po2)^.paramcount-1]); //result
       po3:= ptypedataty(ele.eledataabs(po6^.typ));
       with contextstack[stackindex] do begin
@@ -1752,7 +1755,7 @@ outinfo(info,'***');
        d.datatyp.indirectlevel:= 0;
        d.datatyp.typedata:= po6^.typ;
       end;
-//      inc(opshift);
+      }
      end;
      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
       identerror(info,1,err_wrongnumberofparameters);
@@ -1780,7 +1783,7 @@ outinfo(info,'***');
         else begin
          case d.kind of
           ck_const: begin
-           opmark.address:= opmark.address + opshift;
+//           opmark.address:= opmark.address + opshift;
   //         inc(opshift);
            pushinsertconst(info,contextstack[int1]);
           end;
@@ -1797,7 +1800,24 @@ outinfo(info,'***');
        end;
        inc(po5);
       end;
-      if pf_function in pfuncdataty(po2)^.flags then begin
+      with contextstack[stackindex] do begin //result data
+       if pf_function in pfuncdataty(po2)^.flags then begin
+        po6:= ele.eledataabs(po5^);
+        po3:= ptypedataty(ele.eledataabs(po6^.typ));
+        int1:= pushinsertvar(info,opmark.address-opshift,po3);
+        d.fact.datasize:= int1;
+//        d.kind:= ck_fact;
+        d.kind:= ck_subres;
+        d.datatyp.indirectlevel:= po3^.indirectlevel;
+        d.datatyp.typedata:= po6^.typ;        
+        with additem(info)^ do begin //result var param
+         op:= @pushstackaddr;
+         d.voffset:= -pfuncdataty(po2)^.paramsize+stacklinksize-int1;
+        end;
+       end
+       else begin
+        d.kind:= ck_sub;
+       end;
       end;
      end;
      if pfuncdataty(po2)^.address = 0 then begin //unresolved header
@@ -1816,14 +1836,11 @@ outinfo(info,'***');
                                                                //for downto 0
       end;
      end;
-     if pf_function in pfuncdataty(po2)^.flags then begin
-      with additem(info)^ do begin
-       op:= @popop;
-       d.d.vsize:= po3^.bytesize;
-      end;
-     end;
     end;
     ek_sysfunc: begin
+     with contextstack[stackindex] do begin
+      d.kind:= ck_sub;
+     end;
      with psysfuncdataty(po2)^ do begin
       case func of
        sf_writeln: begin //todo: use open array of constrec
@@ -1834,20 +1851,13 @@ outinfo(info,'***');
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
           if d.kind = ck_const then begin
-//           opmark.address:= opmark.address + opshift;
-//           inc(opshift);
            pushinsertconst(info,contextstack[int1]);
           end
           else begin
            getvalue(info,int1-stackindex,true);
           end;
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-//           if int1 = int3 then begin
-            push(info,kind);
-//           end
-//           else begin
-//            pushinsert(info,contextstack[int1+1].opmark.address,kind);
-//           end;
+           push(info,kind);
            stacksize1:= stacksize1 + alignsize(bytesize);
           end;
          end;
@@ -2215,13 +2225,8 @@ outinfo(info,'***');
      end;
      address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
-//      if kind = dk_reference then begin
-       address.indirectlevel:= address.indirectlevel+indirectlevel;
-//      end;
+      address.indirectlevel:= address.indirectlevel+indirectlevel;
      end;
-//     if tf_reference in contextstack[stackindex].d.vari.flags then begin
-//      include(address.flags,vf_reference);
-//     end;
     end;
    end
    else begin
@@ -2657,7 +2662,37 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'HANDLELEFTSIDE');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
+ end;
+end;
+
+procedure handlestatementexit(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'HANDLESTATEMENTEXIT');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  if stacktop-stackindex <> 1 then begin
+   internalerror(info,'h20140216a');
+  end;
+  with contextstack[stacktop].d do begin
+   case kind of
+    ck_subres: begin
+     with additem(info)^ do begin
+      op:= @popop;
+      d.d.vsize:= fact.datasize; //todo: alignment
+     end;    
+    end;
+    ck_sub: begin
+    end;
+    else begin
+     errormessage(info,1,err_illegalexpression,[]);
+    end;
+   end;
+  end;
+  dec(stackindex);
  end;
 end;
 
@@ -3008,7 +3043,6 @@ outinfo(info,'****');
   for int2:= 0 to paramco-1 do begin
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
-//     po4^[int2]:= ele.eledatarel(po2);
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
      if findkindelementsdata(info,int1+1,[ek_type],vis_max,po3) then begin
       with po2^ do begin
@@ -3059,9 +3093,6 @@ outinfo(info,'****');
 
   po1^.address:= 0; //init
   if impl1 then begin //implementation
-//   with po1^ do begin
-//    address:= opcount;
-//   end;
    if funclevel = 0 then begin //todo: check forward modifier
     ele.decelementparent; //interface
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
@@ -3080,8 +3111,6 @@ outinfo(info,'****');
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
        end;
       end;
-//      address:= po1^.address;
-//      linkresolve(info,paramdata.match^.links,opcount);
      end;
     end;
    end;
@@ -3094,6 +3123,7 @@ outinfo(info,'****');
     frameoffset:= locdatapo; //todo: nested procedures
     stacktop:= stackindex;
     d.proc.paramsize:= locdatapo - d.proc.parambase;
+    po1^.paramsize:= d.proc.paramsize;
     d.proc.error:= err1;
     d.proc.ref:= ele.eledatarel(po1);
     if paramdata.match <> nil then begin
@@ -3167,7 +3197,7 @@ outinfo(info,'*****');
    end;
    with additem(info)^ do begin
     op:= @returnop;
-    d.stacksize:= proc.paramsize{ + sizeof(pointer)};
+    d.stacksize:= proc.paramsize;
    end;
    locdatapo:= proc.parambase;
    frameoffset:= proc.frameoffsetbefore;

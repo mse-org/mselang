@@ -71,7 +71,7 @@ const
 type 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
-                  ck_neg,ck_const,ck_ref,ck_fact,
+                  ck_neg,ck_const,ck_ref,ck_fact,ck_subres,ck_sub,
                   ck_type,ck_var,ck_field,ck_statement,
                   ck_paramsdef,ck_params);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
@@ -207,7 +207,11 @@ type
   d: dataty;
  end;
 
- factinfoty = record
+ factinfoty = record  
+  case contextkindty of
+   ck_subres: (
+    datasize: integer;
+   );
  end;
 
  numflagty = (nuf_pos,nuf_neg);
@@ -277,7 +281,7 @@ type
    ck_number:(
     number: numberinfoty;
    );
-   ck_const,ck_fact,ck_ref:(
+   ck_const,ck_fact,ck_subres,ck_ref:(
     datatyp: typeinfoty;
     case contextkindty of
      ck_const:(
@@ -352,7 +356,8 @@ type
  pstartupdataty = ^startupdataty;
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
-             ok_pushdatakind,ok_pushglobaddress,ok_pushlocaddress,
+             ok_pushdatakind,
+             ok_pushglobaddress,ok_pushlocaddress,ok_pushstackaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_stack);
 
@@ -410,6 +415,9 @@ type
    );
    ok_pushglobaddress:(
     vaddress: dataaddressty;
+   );
+   ok_pushstackaddress:(
+    voffset: dataoffsty;
    );
    ok_pushlocaddress:(
     vlocaddress: locdataaddressty;

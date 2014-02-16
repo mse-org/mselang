@@ -95,6 +95,7 @@ procedure pushlocindi;
 
 procedure pushlocaddr;
 procedure pushglobaddr;
+procedure pushstackaddr;
 
 procedure indirect8;
 procedure indirect16;
@@ -567,6 +568,11 @@ end;
 procedure pushglobaddr;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= globdata+oppo^.d.vaddress;
+end;
+
+procedure pushstackaddr;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= mainstackpo+oppo^.d.voffset;
 end;
 
 procedure indirect8;
