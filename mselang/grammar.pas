@@ -705,6 +705,21 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'number0');
+ stringco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'string');
+ string1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'string1');
+ charco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'char');
  identco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -2059,7 +2074,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bthen1: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2103,7 +2118,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  belse: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2863,7 +2878,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bsimpexp: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc];
+   (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @termco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2911,7 +2926,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  baddterm: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc];
+   (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @termco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -2920,7 +2935,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bterm: array[0..10] of branchty = (
+ bterm: array[0..12] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2973,6 +2988,20 @@ const
    (flags: [bf_nt,bf_push];
      dest: (context: @numco); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @stringco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @charco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['#']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3254,6 +3283,40 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bstring: array[0..3] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @string1co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_handler,bf_eat,bf_push];
+     dest: (handler: @stringlineenderror); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bchar: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @numberco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
@@ -3447,7 +3510,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bparams1: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setpc,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -3784,6 +3847,7 @@ begin
  addtermco.handleexit:= @handleaddterm;
  termco.branch:= @bterm;
  termco.next:= @term1co;
+ termco.handleentry:= @handletermstart;
  termco.handleexit:= @handleterm;
  getaddressco.branch:= @bgetaddress;
  getaddressco.next:= @illegalexpressionco;
@@ -3814,6 +3878,10 @@ begin
  numberco.handleentry:= @handlenumberentry;
  number0co.branch:= @bnumber0;
  number0co.handleexit:= @handlenumber;
+ stringco.branch:= @bstring;
+ string1co.branch:= nil;
+ string1co.handleexit:= @handlestring;
+ charco.branch:= @bchar;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
  identpathcontinueco.branch:= @bidentpathcontinue;

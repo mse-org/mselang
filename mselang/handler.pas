@@ -90,6 +90,7 @@ procedure handlemain(const info: pparseinfoty);
 procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
+procedure handletermstart(const info: pparseinfoty);
 procedure handleterm(const info: pparseinfoty);
 procedure handleaddress(const info: pparseinfoty);
 procedure handledereference(const info: pparseinfoty);
@@ -134,6 +135,9 @@ procedure handleelse(const info: pparseinfoty);
 
 procedure handledumpelements(const info: pparseinfoty);
 procedure handleabort(const info: pparseinfoty);
+
+procedure stringlineenderror(const info: pparseinfoty);
+procedure handlestring(const info: pparseinfoty);
 
 implementation
 uses
@@ -1131,6 +1135,16 @@ begin
   else begin
    updateop(info,addops);
   end;
+ end;
+end;
+
+procedure handletermstart(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'TERMSTART');
+{$endif}
+ with info^ do begin
+  stringbuffer:= '';
  end;
 end;
 
@@ -3252,5 +3266,26 @@ begin
   errormessage(info,-1,err_abort,[]);
  end;
 end;
+
+procedure stringlineenderror(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'STRINGLINEENDERROR');
+{$endif}
+ errormessage(info,-1,err_stringexeedsline,[]);
+end;
+const
+ sc = #$12;
+ si = -+10;
+procedure handlestring(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'STRING');
+{$endif}
+outinfo(info,'****');
+ with info^ do begin
+ end;
+end;
+
 
 end.

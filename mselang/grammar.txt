@@ -12,7 +12,7 @@
  'Q','R','S','T','U','V','W','X','Y','Z'
 @identstart
  '_',@keywordstart
-@num
+@decnum
  '0','1','2','3','4','5','6','7','8','9'
 @.handlerunits
  'handler','unithandler','classhandler','recordhandler'
@@ -218,13 +218,13 @@ then,,,handlethen
  'then'.,then0-
 then0,then1,,handlethen0
 then1,then2,,handlethen1
- '',statementstack^*!
+ '',statementstack^*
 then2,,,handlethen2
  ${whitespace}
  'else'.,else0-
 else0,else,,handleelse0
 else,,,handleelse
- '',statementstack^*!
+ '',statementstack^*
 const,,,handleconst>
  '',const0*^
 const0,const1,,
@@ -319,18 +319,20 @@ exp1,,,handleexp^
 equsimpexp,,,handleequsimpexp
  '',simpexp*
 simpexp,simpexp1,,handlesimpexp
- '',term*!
+ '',term*
 simpexp1,simpexp1,,handlesimpexp1
  ${whitespace}
  '+',addterm-*
 addterm,,,handleaddterm
- '',term*!
-term,term1,,handleterm
+ '',term*
+term,term1,handletermstart,handleterm
  ${whitespace}
  '+',-
  '-',negterm-*
  '(',bracketstart-*
- @num,num*
+ @decnum,num*
+ '''',string-*
+ '#',char-*
  @identstart,valueidentifier*
  '@',getaddress-
 getaddress,illegalexpression,,
@@ -355,35 +357,43 @@ mulfact,,,handlemulfact
  '+',
  '-',negterm*
  '(',bracketstart*
- @num,num*
+ @decnum,num*
 num0,,,dummyhandler
- @num,num*
+ @decnum,num*
  ' ',
 num,,,handledecnum
- @num,-
+ @decnum,-
  '.',frac-*
  'e','E',fracexp-*
 fracexp,frac,,
  '',exponent*
 frac,,,handlefrac
- @num,-
+ @decnum,-
  'e','E',exponent-*
 exponent,,,handleexponent
  '',number*
 number,,handlenumberentry,
  '+',!posnumber-
  '-',!negnumber-
- @num,number0
+ @decnum,number0
  '',numberexpected
 number0,,,handlenumber
- @num,-
+ @decnum,-
+string,,,
+ '''',string1-*
+ #$0a,!stringlineenderror-*
+ '',-
+string1,,,handlestring
+char,,,
+ '',numconst
+#
 ident,,,handleident^
- @identstart,@num,-
+ @identstart,@decnum,-
 #
 identpathcontinue,,,^>
  '',identpath^*
 identpath,identpath1a,,
- @identstart,@num,-
+ @identstart,@decnum,-
 identpath1a,identpath1,,handleidentpath1a
 #set ident
 identpath1,,,^
@@ -408,7 +418,7 @@ checkparams,,,^
  '(',params0-
 params0,params1,,handleparams0
 params1,params2,,
- '',exp^*!
+ '',exp^*
 params2,,,
  ${whitespace}
  ',',params1-
@@ -421,4 +431,4 @@ bracketend,,,handlebracketend
  ${whitespace}
 numberexpected,,,handlenumberexpected*
 #negexponent,,,handlenegexponent
-# @num,num*
+# @decnum,num*

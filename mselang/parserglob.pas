@@ -94,7 +94,7 @@ type
 
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,
-             bf_setpc,bf_continue,
+             {bf_setpc,}bf_continue,
              bf_setparentbeforepush,bf_setparentafterpush,
              bf_changeparentcontext);
  branchflagsty = set of branchflagty;
@@ -520,6 +520,7 @@ type
   currentclass: elementoffsetty;
   currentclassvislevel: vislevelty;
   currentstatementflags: statementflagsty;
+  stringbuffer: string;
  end;
 
 const

@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,14 +49,13 @@ CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
  '*' -> stackindex -> stacktop
  '>' -> continue with calling context
  STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
-        (CONTEXT ['+']['-'] [['^']['*'] | ['*']['^']] ['!'] [ '>']) |
+        ([CONTEXT] ['+']['-'] [['^']['*'] | ['*']['^']] [ '>']) |
                                                       (['!'HANDLER][-][*][^])
         [',' (PUSHEDCONTEXT | (PARENTCONTEXT'^'))]
  '+' -> do not set context start
  '-' -> eat token
  CONTEXT'^' -> set parent
  CONTEXT'*' -> push context
- CONTEXT'!' -> set ck_opmark
  ['!'HANDLER]'*' -> terminate context
  '>' -> continue context after return
 STRINGDEF -> PASCALSTRING['.']
@@ -65,11 +64,12 @@ STRINGDEF -> PASCALSTRING['.']
 
 const
  contextlinesyntax = 
-'<context>,[<next>][-],[<entryhandler>],[<exithandler>][^|!][+][*][>]';
+'CONTEXT,[NEXT][''-'']'',''[ENTRYHANDLER]'',''[EXITHANDLER][''^''|''!''][''+''][''*''][''>'']';
  branchlinesyntax = 
-'<stringdef>|@<tokendef>{,<stringdef>|@<tokendef>},'+lineend+
-'[[<context>|!<handler>] [-] [[^][*] | [*][^]] [!] ]'+lineend+
-'[, <pushed context> | <parentcontext>^]';
+'STRINGDEF|''@''TOKENDEF{'',''STRINGDEF|''@''TOKENDEF}'','''+lineend+
+'        ([CONTEXT] [''+''][''-''] [[''^''][''*''] | [''*''][''^'']] [ ''>'']) |'+lineend+
+'                                                      ([''!''HANDLER][-][*][^])'+lineend+
+'        ['','' (PUSHEDCONTEXT | (PARENTCONTEXT''^''))]';
 
 type
  tmainmo = class(tmsedatamodule)
@@ -105,11 +105,25 @@ type
   dest: string;
   stack: string;
   emptytoken: boolean;
+  bline: integer;
  end;
   
  brancharty = array of branchrecty;
 
 //procedure test(uses: integer);
+
+function checkident(const avalue: string): boolean;
+var
+ int1: integer;
+begin
+ result:= true;
+ for int1:= 1 to length(avalue) do begin
+  if not (avalue[int1] in ['a'..'z','A'..'Z','0'..'9','_']) then begin
+   result:= false;
+   break;
+  end;
+ end;
+end;
 
 function checklastchar(var astr: string; const achar: char): boolean;
 begin
@@ -249,7 +263,7 @@ var
   end;
   exitcode:= 1;
 //  application.terminated:= true;
-  writestderr('***ERROR*** '+text+ ' line '+inttostr(aline)+lineend+str1,true);
+  writestderr('***ERROR*** line '+inttostr(aline)+' '+text,true);
  end;
 
  procedure readline(var astr: string);
@@ -589,6 +603,7 @@ begin
             inc(po1);
            end;
            with branches[high(branches)] do begin
+            bline:= line;
             for int1:= 0 to high(tokens) do begin
              if (tokens[int1] = '''''') then begin
               if (length(tokens) > 1) then begin
@@ -777,9 +792,9 @@ lineend+
        if checklastchar(dest,'>') then begin
         include(branflags1,bf_continue);
        end;
-       if checklastchar(dest,'!') then begin
-        include(branflags1,bf_setpc);
-       end;
+//       if checklastchar(dest,'!') then begin
+//        include(branflags1,bf_setpc);
+//       end;
        if checklastchar(dest,'*') then begin
         include(branflags1,bf_push);
        end;
@@ -802,6 +817,9 @@ lineend+
        end;
        if checklastchar(stack,'^') then begin
         include(branflags1,bf_changeparentcontext);
+       end;
+       if not checkident(dest) then begin
+        error(branchformat,bline);
        end;
        str1:= str1+
 '   (flags: '+settostring(ptypeinfo(typeinfo(branflags1)),
