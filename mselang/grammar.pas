@@ -640,6 +640,16 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'term');
+ term1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'term1');
+ negtermco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'negterm');
  getaddressco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -655,26 +665,11 @@ var
                continue: false; cut: true; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'illegalexpression');
- term1co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'term1');
- negtermco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'negterm');
  mulfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'mulfact');
- num0co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: false; 
-               pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'num0');
  numco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -700,11 +695,31 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'number');
- number0co: contextty = (branch: nil; 
+ decnumco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
-               caption: 'number0');
+               caption: 'decnum');
+ binnumco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'binnum');
+ octnumco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'octnum');
+ hexnumco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'hexnum');
+ ordnumco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'ordnum');
  stringco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -2935,7 +2950,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bterm: array[0..12] of branchty = (
+ bterm: array[0..15] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2993,6 +3008,27 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @binnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['%']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @octnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['&']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @hexnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @stringco); stack: nil; keys: (
     (kind: bkk_char; chars: ['''']),
     (kind: bkk_none; chars: []),
@@ -3016,44 +3052,6 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @getaddressco); stack: nil; keys: (
     (kind: bkk_char; chars: ['@']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bgetaddress: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @comment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @identpathco); stack: @getaddress0co; keys: (
-    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3099,6 +3097,44 @@ const
    (flags: [bf_nt,bf_push];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetaddress: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
+     dest: (context: @identpathco); stack: @getaddress0co; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3158,23 +3194,6 @@ const
    (flags: [bf_nt,bf_push];
      dest: (context: @numco); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bnum0: array[0..2] of branchty = (
-   (flags: [bf_nt,bf_push];
-     dest: (context: @numco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['0'..'9']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [' ']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3258,7 +3277,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt];
-     dest: (context: @number0co); stack: nil; keys: (
+     dest: (context: @decnumco); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3273,10 +3292,78 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bnumber0: array[0..1] of branchty = (
+ bdecnum: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bbinnum: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'1']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ boctnum: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'7']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bhexnum: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9','A'..'F','a'..'f']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bordnum: array[0..5] of branchty = (
+   (flags: [bf_nt];
+     dest: (context: @decnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @binnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['%']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @octnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['&']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @hexnumco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @numberexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3309,7 +3396,7 @@ const
    );
  bchar: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @numberco); stack: nil; keys: (
+     dest: (context: @ordnumco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3849,6 +3936,12 @@ begin
  termco.next:= @term1co;
  termco.handleentry:= @handletermstart;
  termco.handleexit:= @handleterm;
+ term1co.branch:= @bterm1;
+ term1co.next:= @term1co;
+ term1co.handleexit:= @handleterm1;
+ negtermco.branch:= nil;
+ negtermco.next:= @termco;
+ negtermco.handleexit:= @handlenegterm;
  getaddressco.branch:= @bgetaddress;
  getaddressco.next:= @illegalexpressionco;
  getaddress0co.branch:= nil;
@@ -3856,18 +3949,10 @@ begin
  getaddress0co.handleexit:= @handleaddress;
  illegalexpressionco.branch:= nil;
  illegalexpressionco.handleexit:= @handleillegalexpression;
- term1co.branch:= @bterm1;
- term1co.next:= @term1co;
- term1co.handleexit:= @handleterm1;
- negtermco.branch:= nil;
- negtermco.next:= @termco;
- negtermco.handleexit:= @handlenegterm;
  mulfactco.branch:= @bmulfact;
  mulfactco.handleexit:= @handlemulfact;
- num0co.branch:= @bnum0;
- num0co.handleexit:= @dummyhandler;
  numco.branch:= @bnum;
- numco.handleexit:= @handledecnum;
+ numco.handleexit:= @handleint;
  fracexpco.branch:= @bfracexp;
  fracexpco.next:= @fracco;
  fracco.branch:= @bfrac;
@@ -3876,8 +3961,15 @@ begin
  exponentco.handleexit:= @handleexponent;
  numberco.branch:= @bnumber;
  numberco.handleentry:= @handlenumberentry;
- number0co.branch:= @bnumber0;
- number0co.handleexit:= @handlenumber;
+ decnumco.branch:= @bdecnum;
+ decnumco.handleexit:= @handledecnum;
+ binnumco.branch:= @bbinnum;
+ binnumco.handleexit:= @handlebinnum;
+ octnumco.branch:= @boctnum;
+ octnumco.handleexit:= @handleoctnum;
+ hexnumco.branch:= @bhexnum;
+ hexnumco.handleexit:= @handlehexnum;
+ ordnumco.branch:= @bordnum;
  stringco.branch:= @bstring;
  string1co.branch:= nil;
  string1co.handleexit:= @handlestring;

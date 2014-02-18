@@ -65,9 +65,14 @@ procedure handletypedefstart(const info: pparseinfoty);
 procedure handletype3(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
 
-procedure handledecnum(const info: pparseinfoty);
 procedure handlenumberentry(const info: pparseinfoty);
-procedure handlenumber(const info: pparseinfoty);
+procedure handleint(const info: pparseinfoty);
+
+procedure handlebinnum(const info: pparseinfoty);
+procedure handleoctnum(const info: pparseinfoty);
+procedure handledecnum(const info: pparseinfoty);
+procedure handlehexnum(const info: pparseinfoty);
+
 procedure posnumber(const info: pparseinfoty);
 procedure negnumber(const info: pparseinfoty);
 procedure handlenumberexpected(const info: pparseinfoty);
@@ -431,50 +436,47 @@ begin
  end; 
 end;
 
-const
- int32decdigits: array[0..9] of integer =
- (         1,
-          10,
-         100,
-        1000,
-       10000,
-      100000,
-     1000000,
-    10000000,
-   100000000,
-  1000000000
- );
-
-
-procedure handledecnum(const info: pparseinfoty);
+procedure handleint(const info: pparseinfoty);
 var
- int1,int2: integer;
+ int1,c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'DECNUM');
+ outhandle(info,'INT');
 {$endif}
  with info^,contextstack[stacktop] do begin
-  po1:= source.po;
-  consumed:= po1;
-  int2:= 0;
-  dec(po1);
-  int1:= po1-start.po;
-  if int1 <= high(int32decdigits) then begin
-   for int1:= 0 to int1 do begin
-    int2:= int2 + (ord(po1^)-ord('0')) * int32decdigits[int1];
-    dec(po1);
+  consumed:= source.po;
+  po1:= start.po;
+  while (po1^ = '0') do begin
+   inc(po1);
+  end;
+  c1:= 0;
+//  18446744073709551615
+  int1:= 20-(consumed-po1);
+  if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
+   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+  end
+  else begin
+   while po1 < source.po do begin
+    c1:= c1*10 + (ord(po1^)-ord('0'));
+    inc(po1);
+   end;
+   if (int1 = 0) and (c1 < 10000000000000000000) then begin
+    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
    end;
   end;
   stackindex:= stacktop-1;
   if contextstack[stackindex].d.kind = ck_neg then begin
    contextstack[stackindex].d.kind:= ck_none;
-   int2:= -int2;
+   if int64(c1) < 0 then begin
+    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   end;
+   int64(c1):= -int64(c1);
   end;
   d.kind:= ck_const;
   d.datatyp:= sysdatatypes[st_int32];
   d.constval.kind:= dk_integer;
-  d.constval.vinteger:= int2;
+  d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
  end;
 end;
 
@@ -515,41 +517,131 @@ begin
  end;
 end;
 
-const
- card32decdigits: array[0..9] of card32 =
- (         1,
-          10,
-         100,
-        1000,
-       10000,
-      100000,
-     1000000,
-    10000000,
-   100000000,
-  1000000000
- );
+procedure handlebinnum(const info: pparseinfoty);
+var
+ c1: card64;
+ po1: pchar;
+ ch1: char;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'BINNUM');
+{$endif}
+ with info^,contextstack[stacktop] do begin
+  consumed:= source.po;
+  po1:= start.po;
+  while (po1^ = '0') do begin
+   inc(po1);
+  end;
+  c1:= 0;
+  if consumed-po1 > 64 then begin
+   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+  end
+  else begin
+   while po1 < source.po do begin
+    c1:= c1*2 + (ord(po1^)-ord('0'));
+    inc(po1);
+   end;
+  end;
+  d.kind:= ck_number;
+  d.number.value:= c1;
+  dec(stackindex);
+ end;
+end;
 
-procedure handlenumber(const info: pparseinfoty);
+procedure handleoctnum(const info: pparseinfoty);
 var
  int1: integer;
- c1: card32;
+ c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'NUMBER');
+ outhandle(info,'OCTNUM');
 {$endif}
  with info^,contextstack[stacktop] do begin
-  po1:= source.po;
-  consumed:= po1;
+  consumed:= source.po;
+  po1:= start.po;
+  while (po1^ = '0') do begin
+   inc(po1);
+  end;
   c1:= 0;
-  dec(po1);
-  int1:= po1-start.po;
-  if int1 <= high(card32decdigits) then begin
-   for int1:= 0 to int1 do begin
-    c1:= c1 + (ord(po1^)-ord('0')) * card32decdigits[int1];
-    dec(po1);
+//  1777777777777777777777
+  int1:= 22-(consumed-po1);
+  if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
+   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+  end
+  else begin
+   while po1 < source.po do begin
+    c1:= c1*8 + (ord(po1^)-ord('0'));
+    inc(po1);
    end;
   end;
+  d.kind:= ck_number;
+  d.number.value:= c1;
+  dec(stackindex);
+ end;
+end;
+
+procedure handledecnum(const info: pparseinfoty);
+var
+ int1: integer;
+ c1: card64;
+ po1: pchar;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'DECNUM');
+{$endif}
+ with info^,contextstack[stacktop] do begin
+  consumed:= source.po;
+  po1:= start.po;
+  while (po1^ = '0') do begin
+   inc(po1);
+  end;
+  c1:= 0;
+//  18446744073709551615
+  int1:= 20-(consumed-po1);
+  if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
+   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+  end
+  else begin
+   while po1 < source.po do begin
+    c1:= c1*10 + (ord(po1^)-ord('0'));
+    inc(po1);
+   end;
+   if (int1 = 0) and (c1 < 10000000000000000000) then begin
+    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   end;
+  end;
+  d.kind:= ck_number;
+  d.number.value:= c1;
+  dec(stackindex);
+ end;
+end;
+
+procedure handlehexnum(const info: pparseinfoty);
+var
+ c1: card64;
+ po1: pchar;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'HEXNUM');
+{$endif}
+ with info^,contextstack[stacktop] do begin
+  consumed:= source.po;
+  po1:= start.po;
+  while (po1^ = '0') do begin
+   inc(po1);
+  end;
+  c1:= 0;
+  if consumed-po1 > 16 then begin
+   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+  end
+  else begin
+   while po1 < source.po do begin
+    c1:= c1*$10 + hexchars[po1^];
+    inc(po1);
+   end;
+  end;
+  d.kind:= ck_number;
   d.number.value:= c1;
   dec(stackindex);
  end;
@@ -1153,6 +1245,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM');
 {$endif}
+outinfo(info,'****');
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
 end;
@@ -1278,12 +1371,24 @@ var
  po1: ptypedataty;
  bo1: boolean;
  op1: opty;
+ c1: card64;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM1');
 {$endif}
+outinfo(info,'****');
  with info^ do begin
   if stackindex < stacktop then begin
+   with contextstack[stacktop] do begin
+    if d.kind = ck_number then begin
+     c1:= d.number.value;
+     d.kind:= ck_const;
+     d.datatyp:= sysdatatypes[st_int32];
+     d.constval.kind:= dk_integer;
+     d.constval.vinteger:= int64(c1); 
+         //todo: handle cardinals and 64 bit
+    end;    
+   end;
    with contextstack[stackindex] do begin
     bo1:= d.kind = ck_neg;
     d:= contextstack[stacktop].d;
@@ -3274,9 +3379,7 @@ begin
 {$endif}
  errormessage(info,-1,err_stringexeedsline,[]);
 end;
-const
- sc = #$12;
- si = -+10;
+
 procedure handlestring(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}

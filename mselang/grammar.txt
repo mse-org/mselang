@@ -12,8 +12,14 @@
  'Q','R','S','T','U','V','W','X','Y','Z'
 @identstart
  '_',@keywordstart
+@binnum
+ '0','1'
+@octnum
+ @binnum,'2','3','4','5','6','7'
 @decnum
- '0','1','2','3','4','5','6','7','8','9'
+ @octnum,'8','9'
+@hexnum
+ @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','recordhandler'
 @.internaltokens
@@ -331,10 +337,18 @@ term,term1,handletermstart,handleterm
  '-',negterm-*
  '(',bracketstart-*
  @decnum,num*
+ '%',binnum-*
+ '&',octnum-*
+ '$',hexnum-*
  '''',string-*
  '#',char-*
  @identstart,valueidentifier*
  '@',getaddress-
+term1,term1,,handleterm1
+ ${whitespace}
+ '^',!handledereference-
+ '*',mulfact*
+negterm,term,,handlenegterm
 getaddress,illegalexpression,,
  ${whitespace}
  @identstart,identpath^*,getaddress0
@@ -347,21 +361,13 @@ illegalexpression,,,handleillegalexpression*
 # @identstart,identpath^*
 # '(',getaddressbracket
 # ')',addressbracketend
-term1,term1,,handleterm1
- ${whitespace}
- '^',!handledereference-
- '*',mulfact*
-negterm,term,,handlenegterm
 mulfact,,,handlemulfact
  ${whitespace}
  '+',
  '-',negterm*
  '(',bracketstart*
  @decnum,num*
-num0,,,dummyhandler
- @decnum,num*
- ' ',
-num,,,handledecnum
+num,,,handleint
  @decnum,-
  '.',frac-*
  'e','E',fracexp-*
@@ -375,17 +381,31 @@ exponent,,,handleexponent
 number,,handlenumberentry,
  '+',!posnumber-
  '-',!negnumber-
- @decnum,number0
+ @decnum,decnum
  '',numberexpected
-number0,,,handlenumber
+decnum,,,handledecnum
  @decnum,-
+#
+binnum,,,handlebinnum
+ @binnum,-
+octnum,,,handleoctnum
+ @octnum,-
+hexnum,,,handlehexnum
+ @hexnum,-
+# 
+ordnum,,,
+ @decnum,decnum
+ '%',binnum-
+ '&',octnum-
+ '$',hexnum-
+ '',numberexpected
 string,,,
  '''',string1-*
  #$0a,!stringlineenderror-*
  '',-
 string1,,,handlestring
 char,,,
- '',numconst
+ '',ordnum
 #
 ident,,,handleident^
  @identstart,@decnum,-
@@ -431,4 +451,4 @@ bracketend,,,handlebracketend
  ${whitespace}
 numberexpected,,,handlenumberexpected*
 #negexponent,,,handlenegexponent
-# @decnum,num*
+# @decnum,decnum*

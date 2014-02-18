@@ -219,7 +219,7 @@ type
  
  numberinfoty = record
   flags: numflagsty;
-  value: card32;
+  value: card64;
  end;
 
  paramkindty = (pk_value,pk_const,pk_var,pk_out);
