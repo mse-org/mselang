@@ -142,7 +142,10 @@ procedure handledumpelements(const info: pparseinfoty);
 procedure handleabort(const info: pparseinfoty);
 
 procedure stringlineenderror(const info: pparseinfoty);
+procedure handlestringstart(const info: pparseinfoty);
 procedure handlestring(const info: pparseinfoty);
+procedure copystring(const info: pparseinfoty);
+procedure copyapostrophe(const info: pparseinfoty);
 
 implementation
 uses
@@ -153,7 +156,7 @@ const
  stacklinksize = sizeof(frameinfoty);
 
 type
- systypety = (st_none,st_bool8,st_int32,st_float64);
+ systypety = (st_none,st_bool8,st_int32,st_float64,st_string8);
  systypeinfoty = record
   name: string;
   data: typedataty;
@@ -184,7 +187,10 @@ const
                  kind: dk_integer; infoint32:(min: minint; max: maxint))),
    (name: 'flo64'; data: (indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64;
-                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble)))
+                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
+   (name: 'string8'; data: (indirectlevel: 0;
+       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
+                 kind: dk_string8))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
@@ -300,6 +306,10 @@ begin
    dk_float: begin
     op:= @push64;
     d.d.vfloat:= avalue.d.constval.vfloat;
+   end;
+   dk_string8: begin
+    op:= @pushconstaddress;
+    d.vaddress:= stringconst(info,avalue.d.constval.vstring);
    end;
    else begin
     internalerror(info,'P20131121A');
@@ -836,8 +846,8 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record
-    sdk_none,  sdk_none);
+  //dk_address,dk_record,dk_string
+    sdk_none,  sdk_none, sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
             //sdk_bool8,sdk_int32,sdk_flo64
@@ -1362,8 +1372,8 @@ const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
    nil,     nil,       @negcard32, @negint32, @negflo64,
- //dk_kind, dk_address,dk_record
-   nil,     nil,       nil
+ //dk_kind, dk_address,dk_record,dk_string
+   nil,     nil,       nil,      nil
  );
 
 procedure handleterm1(const info: pparseinfoty);
@@ -1380,14 +1390,22 @@ outinfo(info,'****');
  with info^ do begin
   if stackindex < stacktop then begin
    with contextstack[stacktop] do begin
-    if d.kind = ck_number then begin
-     c1:= d.number.value;
-     d.kind:= ck_const;
-     d.datatyp:= sysdatatypes[st_int32];
-     d.constval.kind:= dk_integer;
-     d.constval.vinteger:= int64(c1); 
-         //todo: handle cardinals and 64 bit
-    end;    
+    case d.kind of
+     ck_str: begin
+      d.kind:= ck_const;
+      d.datatyp:= sysdatatypes[st_string8];
+      d.constval.kind:= dk_string8;
+      d.constval.vstring:= newstring(info);
+     end;
+     ck_number: begin
+      c1:= d.number.value;
+      d.kind:= ck_const;
+      d.datatyp:= sysdatatypes[st_int32];
+      d.constval.kind:= dk_integer;
+      d.constval.vinteger:= int64(c1); 
+          //todo: handle cardinals and 64 bit
+     end;
+    end;
    end;
    with contextstack[stackindex] do begin
     bo1:= d.kind = ck_neg;
@@ -3380,6 +3398,20 @@ begin
  errormessage(info,-1,err_stringexeedsline,[]);
 end;
 
+procedure handlestringstart(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'STRINGSTART');
+{$endif}
+outinfo(info,'****');
+ with info^ do begin
+  with contextstack[stacktop] do begin
+   d.kind:= ck_str;
+   d.str.start:= source.po;
+  end;
+ end;
+end;
+
 procedure handlestring(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -3387,8 +3419,38 @@ begin
 {$endif}
 outinfo(info,'****');
  with info^ do begin
+  dec(stackindex);
  end;
 end;
 
+procedure copystring(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'COPYSTRING');
+{$endif}
+outinfo(info,'****');
+ with info^ do begin
+  with contextstack[stacktop] do begin
+   stringbuffer:= stringbuffer+psubstr(d.str.start,source.po-1);
+   d.str.start:= source.po;
+  end;
+ end;
+end;
 
+procedure copyapostrophe(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'COPYAPOSTROPHE');
+{$endif}
+outinfo(info,'****');
+ with info^ do begin
+  with contextstack[stacktop] do begin
+   stringbuffer:= stringbuffer+'''';
+   start.po:= source.po;
+  end;
+ end;
+end;
+
+const
+ s = 'abc''asd'#3#5'def';
 end.

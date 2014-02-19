@@ -30,7 +30,7 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  
 function parse(const input: string; const acommand: ttextstream;
-               {const aunit: punitinfoty;} out aopcode: opinfoarty): boolean;
+               out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
                               //true if ok
 function parseunit(const info: pparseinfoty; const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -701,7 +701,8 @@ parseend:
 end;
         
 function parse(const input: string; const acommand: ttextstream;
-               {const aunit: punitinfoty;} out aopcode: opinfoarty): boolean;
+               {const aunit: punitinfoty;} out aopcode: opinfoarty;
+                                     out aconstseg: bytearty): boolean;
                               //true if ok
 var
  info: parseinfoty;
@@ -715,6 +716,11 @@ begin
  
  with info do begin
   ops:= nil;
+  constseg:= nil;
+  constcapacity:= defaultconstsegsize;
+  setlength(constseg,constcapacity);
+  constsize:= 4; //0 -> not allocated
+  stringbuffer:= '';
   command:= acommand;
   stackdepht:= defaultstackdepht;
   setlength(contextstack,stackdepht);
@@ -739,6 +745,7 @@ begin
    ops:= nil;
   end;
   aopcode:= ops; 
+  aconstseg:= constseg;
  end;
 end;
 

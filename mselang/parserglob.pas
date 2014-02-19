@@ -18,7 +18,7 @@ unit parserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msestrings;
+ msestream,msestrings,msetypes;
 
 type
  bool8 = boolean;
@@ -50,10 +50,10 @@ type
  ppint32 = ^int32;
  
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-               dk_address,dk_record{,dk_reference});
+               dk_address,dk_record,dk_string8);
  pdatakindty = ^datakindty;
  datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
-               das_33_63,das_64);
+               das_33_63,das_64,das_pointer);
  vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 
  indexty = integer;
@@ -64,13 +64,14 @@ const
  vis_max = vis_0;
  vis_min = vis_9;
  defaultstackdepht = 256;
+ defaultconstsegsize = 256;
  branchkeymaxcount = 4;
  dummyaddress = 0;
  idstart = $12345678;
 
 type 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_number,{ck_opmark,}ck_proc,
+                  ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_ref,ck_fact,ck_subres,ck_sub,
                   ck_type,ck_var,ck_field,ck_statement,
                   ck_paramsdef,ck_params);
@@ -180,6 +181,11 @@ type
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
+ 
+ stringinfoty = record
+  offset: ptruint; //offset in string buffer
+ // len: databytesizety;
+ end;
 
  refinfoty = record
   address: addressinfoty;
@@ -199,6 +205,9 @@ type
    );
    dk_address:(
     vaddress: addressinfoty;
+   );
+   dk_string8:(
+    vstring: stringinfoty;
    );
  end;
  
@@ -222,6 +231,10 @@ type
   value: card64;
  end;
 
+ strinfoty = record
+  start: pchar;
+ end;
+ 
  paramkindty = (pk_value,pk_const,pk_var,pk_out);
 
  identkindty = (ik_param); 
@@ -280,6 +293,9 @@ type
    );
    ck_number:(
     number: numberinfoty;
+   );
+   ck_str:(
+    str: strinfoty;
    );
    ck_const,ck_fact,ck_subres,ck_ref:(
     datatyp: typeinfoty;
@@ -358,6 +374,7 @@ type
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,
              ok_pushglobaddress,ok_pushlocaddress,ok_pushstackaddress,
+             ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_stack);
 
@@ -413,7 +430,7 @@ type
    ok_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushglobaddress:(
+   ok_pushglobaddress,ok_pushconstaddress:(
     vaddress: dataaddressty;
    );
    ok_pushstackaddress:(
@@ -510,6 +527,9 @@ type
   command: ttextstream;
   errorfla: boolean;
   errors: array[errorlevelty] of integer;
+  constseg: bytearty;
+  constsize: integer;
+  constcapacity: integer;
   ops: opinfoarty;
   opcount: integer;
   opshift: integer;

@@ -178,6 +178,9 @@ procedure forwardresolve(const info: pparseinfoty;
                                         const aforward: forwardindexty);
 procedure checkforwarderrors(const info: pparseinfoty;
                                     const aforward: forwardindexty);
+function newstring(const info: pparseinfoty): stringinfoty;
+function stringconst(const info: pparseinfoty;
+                                   const astring: stringinfoty): dataaddressty;
 
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
@@ -204,7 +207,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist;
+ errorhandler,mselinklist,stackops;
 
  
 type
@@ -270,6 +273,43 @@ type
   data: elementdataty;
  end;
  pelementhashdataty = ^elementhashdataty;
+{
+ varlendataty = record
+  len: integer;
+  data: record //array of byte
+  end;
+ end;
+ pvarlendataty = ^varlendataty;
+}
+ stringbufdataty = record
+  len: integer;
+  offset: ptruint; //offset in fbuffer
+  constoffset: dataoffsty; //offset in constdata, 0 -> not assigned
+ end;
+ pstringbufdataty = ^stringbufdataty;
+ stringbufhashdataty = record
+  header: hashheaderty;
+  data: stringbufdataty;
+ end;
+ pstringbufhashdataty = ^stringbufhashdataty;
+ 
+ tstringbuffer = class(thashdatalist)
+  private
+   fbuffer: pointer;
+   fbufsize: ptruint;
+   fbufcapacity: ptruint;
+  protected
+   procedure initbuffer;
+   function hashkey(const akey): hashvaluety; override;
+   function checkkey(const akey; const aitemdata): boolean; override;
+  public
+   constructor create;
+   destructor destroy; override;
+   procedure clear; override;
+   function add(const avalue: string): stringinfoty;
+   function allocconst(const info: pparseinfoty;
+                         const astring: stringinfoty): dataaddressty;
+ end;
  
 const
  mindatasize = 1024; 
@@ -278,6 +318,7 @@ var
  stringindex,stringlen: identoffsetty;
  stringident: identty;
  identlist: tindexidenthashdatalist;
+ stringbuf: tstringbuffer;
 
 function telementhashdatalist.eleoffset: ptruint; inline;
 begin
@@ -565,6 +606,17 @@ begin
  end;
 end;
 
+function newstring(const info: pparseinfoty): stringinfoty;
+begin
+ result:= stringbuf.add(info^.stringbuffer);
+end;
+
+function stringconst(const info: pparseinfoty;
+                           const astring: stringinfoty): dataaddressty;
+begin
+ result:= stringbuf.allocconst(info,astring);
+end;
+
 procedure clear;
 begin
  identlist.clear;
@@ -580,6 +632,8 @@ begin
  forwards:= nil;
  forwardindex:= 0;
  deletedforwards:= 0;
+ 
+ stringbuf.clear;
 end;
 
 procedure init;
@@ -1346,11 +1400,112 @@ begin
  result:= elementlist.count;
 end;
 }
+{ tstringbuffer }
+
+constructor tstringbuffer.create;
+begin
+ inherited create(sizeof(stringbufdataty));
+ initbuffer;
+end;
+
+destructor tstringbuffer.destroy;
+begin
+ freemem(fbuffer);
+ inherited;
+end;
+
+function tstringbuffer.hashkey(const akey): hashvaluety;
+begin
+ result:= stringhash(lstringty(akey));
+end;
+
+function tstringbuffer.checkkey(const akey; const aitemdata): boolean;
+begin
+ result:= (lstringty(akey).len = stringbufdataty(aitemdata).len) and
+       comparemem(lstringty(akey).po,
+                       fbuffer+stringbufdataty(aitemdata).offset,
+                                      stringbufdataty(aitemdata).len);
+end;
+
+function tstringbuffer.add(const avalue: string): stringinfoty;
+var
+ hash: longword;
+ po1: pstringbufhashdataty;
+ offs1: ptruint;
+ len1: integer;
+begin
+ hash:= stringhash(avalue);
+ po1:= pointer(internalfind(avalue,hash));
+ if po1 = nil then begin
+  len1:= length(avalue);
+  po1:= pointer(internaladdhash(hash));
+  po1^.data.offset:= fbufsize;
+  po1^.data.constoffset:= 0;
+  po1^.data.len:= len1;
+  fbufsize:= fbufsize + len1;
+  if fbufsize > fbufcapacity then begin
+   fbufcapacity:= fbufsize*2;
+   reallocmem(fbuffer,fbufcapacity);
+  end;
+  move(pointer(avalue)^,(fbuffer+po1^.data.offset)^,len1);
+ end;
+ result.offset:= @po1^.data-fdata;
+end;
+
+procedure tstringbuffer.clear;
+begin
+ initbuffer;
+ inherited; 
+end;
+
+procedure tstringbuffer.initbuffer;
+const
+ minbuffersize = $16;// $10000;
+begin
+ fbufsize:= 0;
+ fbufcapacity:= minbuffersize;
+ reallocmem(fbuffer,fbufcapacity);
+end;
+ 
+function tstringbuffer.allocconst(const info: pparseinfoty;
+                                   const astring: stringinfoty): dataaddressty;
+var
+ po1: pstringheaderty;
+ po2: pbyte;
+begin
+ with pstringbufdataty(fdata+astring.offset)^ do begin
+  if constoffset = 0 then begin
+   with info^ do begin
+    constoffset:= constsize;
+    constsize:= constsize+sizeof(stringheaderty)+len+1;
+    alignsize(constsize);
+    if constsize > constcapacity then begin
+     constcapacity:= 2*constsize;
+     setlength(constseg,constcapacity);
+    end;
+    po1:= pointer(constseg)+constoffset;
+    po1^.len:= len;
+    po2:= @po1^.data;
+    move((fbuffer+offset)^,po2^,len);
+    (po2+len)^:= 0;
+   end;
+  end;
+  if len = 0 then begin
+   result:= 0;
+  end
+  else begin
+   result:= constoffset+sizeof(stringheaderty);
+  end;
+ end;
+end;
+
 initialization
  identlist:= tindexidenthashdatalist.create;
+ stringbuf:= tstringbuffer.create;
  ele:= telementhashdatalist.create;
  clear;
 finalization
  identlist.free;
+ stringbuf.free;
  ele.free;
 end.

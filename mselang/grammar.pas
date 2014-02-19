@@ -730,6 +730,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'string1');
+ apostropheco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'apostrophe');
  charco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -3371,7 +3376,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bstring: array[0..3] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push];
+   (flags: [bf_nt,bf_eat];
      dest: (context: @string1co); stack: nil; keys: (
     (kind: bkk_char; chars: ['''']),
     (kind: bkk_none; chars: []),
@@ -3387,6 +3392,33 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bstring1: array[0..1] of branchty = (
+   (flags: [bf_nt];
+     dest: (context: @apostropheco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bapostrophe: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @string1co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @stringco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3971,8 +4003,12 @@ begin
  hexnumco.handleexit:= @handlehexnum;
  ordnumco.branch:= @bordnum;
  stringco.branch:= @bstring;
- string1co.branch:= nil;
+ stringco.handleentry:= @handlestringstart;
+ string1co.branch:= @bstring1;
+ string1co.handleentry:= @copystring;
  string1co.handleexit:= @handlestring;
+ apostropheco.branch:= @bapostrophe;
+ apostropheco.handleentry:= @copyapostrophe;
  charco.branch:= @bchar;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;

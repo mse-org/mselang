@@ -399,11 +399,15 @@ ordnum,,,
  '&',octnum-
  '$',hexnum-
  '',numberexpected
-string,,,
- '''',string1-*
+string,,handlestringstart,
+ '''',string1-
  #$0a,!stringlineenderror-*
  '',-
-string1,,,handlestring
+string1,,copystring,handlestring
+ '''',apostrophe
+apostrophe,,copyapostrophe,
+ '''',string1-
+ '',string
 char,,,
  '',ordnum
 #

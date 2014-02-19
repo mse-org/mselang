@@ -31,7 +31,6 @@ type
    statf: tstatfile;
    tbutton1: tbutton;
    grid: tstringgrid;
-   di: trealdisp;
    tpostscriptprinter1: tpostscriptprinter;
    tsplitter1: tsplitter;
    edgrid: twidgetgrid;
@@ -60,18 +59,19 @@ procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: opinfoarty;
  stream1: ttextstream;
+ constseg: bytearty;
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
  parser.init;
- parser.parse(ed.gettext,stream1,ar1);
+ parser.parse(ed.gettext,stream1,ar1,constseg);
  parser.deinit;
 
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
  if ar1 <> nil then begin
-  di.value:= run(ar1,1024);
+  run(ar1,pointer(constseg),1024);
  end;
 end;
 

@@ -51,21 +51,9 @@ object mainfo: tmainfo
     datarowheight = 16
     reffontheight = 14
   end
-  object di: trealdisp
-    frame.dummy = 0
-    taborder = 2
-    bounds_x = 16
-    bounds_y = 8
-    bounds_cx = 180
-    bounds_cy = 18
-    valuerange = 1
-    valuestart = 0
-    value = -Inf
-    reffontheight = 14
-  end
   object tsplitter1: tsplitter
     color = -1879048189
-    taborder = 3
+    taborder = 2
     bounds_x = 16
     bounds_y = 324
     bounds_cx = 595
@@ -77,7 +65,7 @@ object mainfo: tmainfo
     statfile = statf
   end
   object edgrid: twidgetgrid
-    taborder = 4
+    taborder = 3
     bounds_x = 16
     bounds_y = 32
     bounds_cx = 595
@@ -124,7 +112,7 @@ object mainfo: tmainfo
   end
   object coldi: tintegerdisp
     frame.dummy = 0
-    taborder = 5
+    taborder = 4
     bounds_x = 208
     bounds_y = 8
     bounds_cx = 52
@@ -132,7 +120,7 @@ object mainfo: tmainfo
     reffontheight = 14
   end
   object tbutton5: tbutton
-    taborder = 6
+    taborder = 5
     bounds_x = 512
     bounds_y = 7
     bounds_cx = 42
@@ -143,7 +131,7 @@ object mainfo: tmainfo
     onexecute = saveexe
   end
   object tbutton2: tbutton
-    taborder = 7
+    taborder = 6
     bounds_x = 464
     bounds_y = 7
     bounds_cx = 42
@@ -155,7 +143,7 @@ object mainfo: tmainfo
   end
   object filena: tfilenameedit
     frame.button.imagenr = 17
-    taborder = 8
+    taborder = 7
     bounds_x = 264
     bounds_y = 7
     bounds_cx = 196

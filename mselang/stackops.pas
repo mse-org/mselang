@@ -24,18 +24,40 @@ const
  alignmask = ptrint(-alignstep);
   
 type
- vaddressty = pointer;
+ vdatakindty = datakindty;
+ pvdatakindty = ^vdatakindty;
+ vbooleanty = boolean;
+ pvbooleanty = ^vbooleanty;
+ vcardinalty = card32;
+ pvcardinalty = ^vcardinalty;
+ vintegerty = int32;
+ pvintegerty = ^vintegerty;
+ vfloatty = float64;
+ pvfloatty = ^vfloatty;
+ vpointerty = pointer;
+ pvpointerty = ^vpointerty;
+ vsizety = ptrint;
+ voffsty = ptrint;
+
+ stringheaderty = record
+  len: integer;
+  data: record
+  end;
+ end;
+ pstringheaderty = ^stringheaderty;
+
  frameinfoty = record
-  pc: vaddressty;
-  frame: vaddressty;
-  link: vaddressty;
+  pc: vpointerty;
+  frame: vpointerty;
+  link: vpointerty;
  end;
  infoopty = procedure(const opinfo: popinfoty);
 
 function alignsize(const size: ptruint): ptruint; inline;
 
 procedure finalize;
-function run(const code: opinfoarty; const stackdepht: integer): real;
+procedure run(const code: opinfoarty; const constseg: pointer;
+                                    const stackdepht: integer);
 
 //procedure dummyop;
 procedure gotoop;
@@ -49,6 +71,7 @@ procedure push8;
 procedure push16;
 procedure push32;
 procedure push64;
+
 procedure pushdatakind;
 procedure int32toflo64;
 procedure mulint32;
@@ -77,6 +100,8 @@ procedure poplocindi8;
 procedure poplocindi16;
 procedure poplocindi32;
 procedure poplocindi;
+
+procedure pushconstaddress;
 
 procedure pushglob8;
 procedure pushglob16;
@@ -116,20 +141,6 @@ procedure returnop;
 implementation
 uses
  sysutils;
-type
- vdatakindty = datakindty;
- pvdatakindty = ^vdatakindty;
- vbooleanty = boolean;
- pvbooleanty = ^vbooleanty;
- vcardinalty = card32;
- pvcardinalty = ^vcardinalty;
- vintegerty = int32;
- pvintegerty = ^vintegerty;
- vfloatty = float64;
- pvfloatty = ^vfloatty;
-// vaddressty = pointer;
- vsizety = ptrint;
- voffsty = ptrint;
 {
  stackinfoty = record
   case datakindty of
@@ -156,6 +167,7 @@ var
  startpo: popinfoty;
  oppo: popinfoty;
  globdata: pointer;
+ constdata: pointer;
 
 procedure internalerror(const atext: string);
 begin
@@ -234,6 +246,8 @@ var
  int1,int2,int3: integer;
  po1,po2: pointer;
  po3: pdatakindty;
+ str1: string;
+ po4: pstringheaderty;
 begin
  dec(mainstackpo,oppo^.d.paramcount*sizeof(datakindty));
  po3:= mainstackpo; //start of data kinds
@@ -253,6 +267,13 @@ begin
    dk_float: begin
     write(vfloatty(po1^));
     inc(po1,alignsize(sizeof(vfloatty)));
+   end;
+   dk_string8: begin
+    po4:= vpointerty(po1^)-sizeof(stringheaderty);
+    setlength(str1,po4^.len);
+    move(vpointerty(po1^)^,pointer(str1)^,po4^.len);
+    write(str1);
+    inc(po1,alignsize(sizeof(vpointerty)));
    end;
    else begin
     internalerror('I20131210A');
@@ -412,6 +433,11 @@ var
 begin
  po1:= stacktop(sizeof(vfloatty));
  vfloatty(po1^):= -vfloatty(po1^);
+end;
+
+procedure pushconstaddress;
+begin
+ ppointer(stackpush(sizeof(dataaddressty)))^:= constdata+oppo^.d.vaddress; 
 end;
 
 procedure popglob8;
@@ -709,7 +735,8 @@ begin
  end;
 end;
 
-function run(const code: opinfoarty; const stackdepht: integer): real;
+procedure run(const code: opinfoarty; const constseg: pointer;
+                                        const stackdepht: integer);
 var
  endpo: popinfoty;
 begin
@@ -724,12 +751,14 @@ begin
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
  end;
+ constdata:= constseg;
  inc(oppo,startupoffset);
  while oppo^.op <> nil do begin
   oppo^.op;
   inc(oppo);
  end;
- result:= 0;
 end;
 
+finalization
+ finalize;
 end.
