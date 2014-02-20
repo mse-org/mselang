@@ -37,8 +37,8 @@ uses
       '.classes' -> tks_classes
 CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
     ENTRYHANDLER called at contextstart
-    EXITHANDLER called by context termination,
-    transition to <next> or termination if no branch matches
+    EXITHANDLER called by context termination (not by transition to NEXT),
+     or termination if no branch matches
     or after return from branch
     EXITHANDLER also called for transition contexts without branches,
      no flags allowed

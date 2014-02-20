@@ -3427,7 +3427,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bchar: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken];
+   (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @ordnumco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -4010,6 +4010,9 @@ begin
  apostropheco.branch:= @bapostrophe;
  apostropheco.handleentry:= @copyapostrophe;
  charco.branch:= @bchar;
+ charco.next:= @stringco;
+ charco.handleentry:= @handlestringstart;
+ charco.handleexit:= @handlechar;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
  identpathcontinueco.branch:= @bidentpathcontinue;

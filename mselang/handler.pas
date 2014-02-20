@@ -146,6 +146,7 @@ procedure handlestringstart(const info: pparseinfoty);
 procedure handlestring(const info: pparseinfoty);
 procedure copystring(const info: pparseinfoty);
 procedure copyapostrophe(const info: pparseinfoty);
+procedure handlechar(const info: pparseinfoty);
 
 implementation
 uses
@@ -3451,6 +3452,17 @@ outinfo(info,'****');
  end;
 end;
 
+procedure handlechar(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CHAR');
+{$endif}
+outinfo(info,'****');
+ with info^ do begin
+  with contextstack[stacktop] do begin
+  end;
+ end;
+end;
 const
  s = 'abc''asd'#3#5'def';
 end.

@@ -408,8 +408,8 @@ string1,,copystring,handlestring
 apostrophe,,copyapostrophe,
  '''',string1-
  '',string
-char,,,
- '',ordnum
+char,string,handlestringstart,handlechar
+ '',ordnum*
 #
 ident,,,handleident^
  @identstart,@decnum,-
