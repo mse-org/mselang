@@ -96,7 +96,7 @@ procedure handlekeyword(const info: pparseinfoty);
 
 procedure handlemulfact(const info: pparseinfoty);
 procedure handletermstart(const info: pparseinfoty);
-procedure handleterm(const info: pparseinfoty);
+//procedure handleterm(const info: pparseinfoty);
 procedure handleaddress(const info: pparseinfoty);
 procedure handledereference(const info: pparseinfoty);
 procedure handleterm1(const info: pparseinfoty);
@@ -191,7 +191,7 @@ const
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
    (name: 'string8'; data: (indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8))
+                 kind: dk_string8; dummy: 0))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
@@ -1250,7 +1250,7 @@ begin
   stringbuffer:= '';
  end;
 end;
-
+(*
 procedure handleterm(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -1260,7 +1260,7 @@ outinfo(info,'****');
  dec(info^.stacktop);
  info^.stackindex:= info^.stacktop;
 end;
-
+*)
 procedure handleaddress(const info: pparseinfoty);
 var
  po1: pelementinfoty;

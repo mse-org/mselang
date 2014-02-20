@@ -500,6 +500,11 @@ var
                continue: false; cut: true; restoresource: false; 
                pop: false; popexe: false; nexteat: true; next: nil;
                caption: 'var3');
+ var3aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: true; next: nil;
+               caption: 'var3a');
  typeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; cut: false; restoresource: false; 
@@ -630,6 +635,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'simpexp1');
+ simpexp1aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'simpexp1a');
  addtermco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -645,6 +655,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'term1');
+ term1aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'term1a');
  negtermco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -740,6 +755,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'char');
+ char1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'char1');
  identco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -2907,7 +2927,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsimpexp1: array[0..5] of branchty = (
+ bsimpexp1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2939,6 +2959,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @addtermco); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @simpexp1aco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3063,7 +3090,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bterm1: array[0..6] of branchty = (
+ bterm1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3102,6 +3129,13 @@ const
    (flags: [bf_nt,bf_push];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @term1aco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3732,12 +3766,11 @@ begin
  nounitco.handleexit:= @handlenouniterror;
  unit0co.branch:= @bunit0;
  unit0co.next:= @nounitnameco;
- unit0co.handleexit:= @handlenounitnameerror;
  nounitnameco.branch:= nil;
- nounitnameco.handleexit:= @handlenounitnameerror;
+ nounitnameco.handleentry:= @handlenounitnameerror;
  unit1co.branch:= nil;
  unit1co.next:= @unit2co;
- unit1co.handleexit:= @setunitname;
+ unit1co.handleentry:= @setunitname;
  unit2co.branch:= @bunit2;
  unit2co.next:= @semicolonexpectedco;
  checksemicolonco.branch:= @bchecksemicolon;
@@ -3759,7 +3792,7 @@ begin
  start2co.next:= @noimplementationco;
  functionheaderco.branch:= nil;
  functionheaderco.next:= @procedureheaderco;
- functionheaderco.handleexit:= @handlefunctionentry;
+ functionheaderco.handleentry:= @handlefunctionentry;
  commaidentsco.branch:= @bcommaidents;
  commaidentsco.next:= @commaidentsnoidenterrorco;
  commaidents1co.branch:= @bcommaidents1;
@@ -3771,36 +3804,36 @@ begin
  noimplementationco.handleexit:= @handlenoimplementationerror;
  implementationco.branch:= nil;
  implementationco.next:= @implementationstartco;
- implementationco.handleexit:= @interfacestop;
+ implementationco.handleentry:= @interfacestop;
  implementationstartco.branch:= nil;
  implementationstartco.next:= @mainco;
- implementationstartco.handleexit:= @implementationstart;
+ implementationstartco.handleentry:= @implementationstart;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  main1co.branch:= @bmain1;
  main1co.handleexit:= @handlemain;
  functionco.branch:= nil;
  functionco.next:= @procfuncco;
- functionco.handleexit:= @handlefunctionentry;
+ functionco.handleentry:= @handlefunctionentry;
  procedureco.branch:= nil;
  procedureco.next:= @procfuncco;
- procedureco.handleexit:= @handleprocedureentry;
+ procedureco.handleentry:= @handleprocedureentry;
  comment0co.branch:= @bcomment0;
  comment0co.handleexit:= @handlecommentend;
  directiveco.branch:= @bdirective;
  dumpelementsco.branch:= nil;
  dumpelementsco.next:= @directiveendco;
- dumpelementsco.handleexit:= @handledumpelements;
+ dumpelementsco.handleentry:= @handledumpelements;
  abortco.branch:= nil;
  abortco.next:= @directiveendco;
- abortco.handleexit:= @handleabort;
+ abortco.handleentry:= @handleabort;
  directiveendco.branch:= @bdirectiveend;
  linecomment0co.branch:= @blinecomment0;
  linecomment1co.branch:= nil;
  linecomment1co.handleexit:= @handlecommentend;
  progbeginco.branch:= nil;
  progbeginco.next:= @progblockco;
- progbeginco.handleexit:= @handleprogbegin;
+ progbeginco.handleentry:= @handleprogbegin;
  progblockco.branch:= @bprogblock;
  progblockco.handleexit:= @handleprogblock;
  paramsdef0co.branch:= @bparamsdef0;
@@ -3831,12 +3864,12 @@ begin
  procedure4co.next:= @checkterminatorco;
  procedure5aco.branch:= nil;
  procedure5aco.next:= @procedure5co;
- procedure5aco.handleexit:= @handleprocedure5a;
+ procedure5aco.handleentry:= @handleprocedure5a;
  procedure5co.branch:= @bprocedure5;
  procedure5co.next:= @procedure6co;
  procedure6co.branch:= nil;
  procedure6co.next:= @checkterminatorpopco;
- procedure6co.handleexit:= @handleprocedure6;
+ procedure6co.handleentry:= @handleprocedure6;
  checkterminatorco.branch:= @bcheckterminator;
  checkterminatorco.handleexit:= @handlecheckterminator;
  terminatorokco.branch:= nil;
@@ -3864,23 +3897,23 @@ begin
  assignmentco.handleexit:= @handleassignment;
  if0co.branch:= @bif0;
  if0co.next:= @ifco;
- if0co.handleexit:= @handleif0;
+ if0co.handleentry:= @handleif0;
  ifco.branch:= @bif;
  ifco.next:= @thenco;
- ifco.handleexit:= @handleif;
+ ifco.handleentry:= @handleif;
  thenco.branch:= @bthen;
  thenco.handleexit:= @handlethen;
  then0co.branch:= nil;
  then0co.next:= @then1co;
- then0co.handleexit:= @handlethen0;
+ then0co.handleentry:= @handlethen0;
  then1co.branch:= @bthen1;
  then1co.next:= @then2co;
- then1co.handleexit:= @handlethen1;
+ then1co.handleentry:= @handlethen1;
  then2co.branch:= @bthen2;
  then2co.handleexit:= @handlethen2;
  else0co.branch:= nil;
  else0co.next:= @elseco;
- else0co.handleexit:= @handleelse0;
+ else0co.handleentry:= @handleelse0;
  elseco.branch:= @belse;
  elseco.handleexit:= @handleelse;
  constco.branch:= @bconst;
@@ -3892,7 +3925,7 @@ begin
  const2co.next:= @const3co;
  const3co.branch:= @bconst3;
  const3co.next:= @const0co;
- const3co.handleexit:= @handleconst3;
+ const3co.handleentry:= @handleconst3;
  varco.branch:= @bvar;
  varco.handleexit:= @handlevar;
  var0co.branch:= @bvar0;
@@ -3902,26 +3935,28 @@ begin
  var2co.branch:= @bvar2;
  var2co.next:= @identexpectedco;
  var3co.branch:= @bvar3;
- var3co.next:= @var0co;
- var3co.handleexit:= @handlevar3;
+ var3co.next:= @var3aco;
+ var3aco.branch:= nil;
+ var3aco.next:= @var0co;
+ var3aco.handleentry:= @handlevar3;
  typeco.branch:= @btype;
  typeco.handleexit:= @handletype;
  type0co.branch:= @btype0;
  type0co.next:= @type1co;
  type1co.branch:= nil;
  type1co.next:= @type1aco;
- type1co.handleexit:= @handletypedefstart;
+ type1co.handleentry:= @handletypedefstart;
  type1aco.branch:= @btype1a;
  type2co.branch:= @btype2;
  type2co.next:= @type3co;
  type3co.branch:= nil;
  type3co.next:= @type4co;
- type3co.handleexit:= @handletype3;
+ type3co.handleentry:= @handletype3;
  type4co.branch:= @btype4;
  type4co.next:= @type0co;
  recorddefco.branch:= nil;
  recorddefco.next:= @recorddef0co;
- recorddefco.handleexit:= @handlerecorddefstart;
+ recorddefco.handleentry:= @handlerecorddefstart;
  recorddef0co.branch:= @brecorddef0;
  recorddef0co.next:= @recorddeferrorco;
  recorddeferrorco.branch:= nil;
@@ -3930,17 +3965,17 @@ begin
  recordfieldco.handleexit:= @handlerecordfield;
  recorddefreturnco.branch:= nil;
  recorddefreturnco.next:= @type4co;
- recorddefreturnco.handleexit:= @handlerecorddefreturn;
+ recorddefreturnco.handleentry:= @handlerecorddefreturn;
  classdefco.branch:= nil;
  classdefco.next:= @classdef0co;
- classdefco.handleexit:= @handleclassdefstart;
+ classdefco.handleentry:= @handleclassdefstart;
  classdef0co.branch:= @bclassdef0;
  classdef0co.next:= @classdeferrorco;
  classdeferrorco.branch:= nil;
- classdeferrorco.handleexit:= @handleclassdeferror;
+ classdeferrorco.handleentry:= @handleclassdeferror;
  classdefreturnco.branch:= nil;
  classdefreturnco.next:= @type4co;
- classdefreturnco.handleexit:= @handleclassdefreturn;
+ classdefreturnco.handleentry:= @handleclassdefreturn;
  classfieldco.branch:= @bclassfield;
  classfieldco.handleexit:= @handleclassfield;
  vardefco.branch:= @bvardef;
@@ -3958,27 +3993,27 @@ begin
  equsimpexpco.handleexit:= @handleequsimpexp;
  simpexpco.branch:= @bsimpexp;
  simpexpco.next:= @simpexp1co;
- simpexpco.handleexit:= @handlesimpexp;
  simpexp1co.branch:= @bsimpexp1;
  simpexp1co.next:= @simpexp1co;
- simpexp1co.handleexit:= @handlesimpexp1;
+ simpexp1aco.branch:= nil;
+ simpexp1aco.handleexit:= @handlesimpexp1;
  addtermco.branch:= @baddterm;
  addtermco.handleexit:= @handleaddterm;
  termco.branch:= @bterm;
  termco.next:= @term1co;
  termco.handleentry:= @handletermstart;
- termco.handleexit:= @handleterm;
  term1co.branch:= @bterm1;
  term1co.next:= @term1co;
- term1co.handleexit:= @handleterm1;
+ term1aco.branch:= nil;
+ term1aco.handleexit:= @handleterm1;
  negtermco.branch:= nil;
  negtermco.next:= @termco;
- negtermco.handleexit:= @handlenegterm;
+ negtermco.handleentry:= @handlenegterm;
  getaddressco.branch:= @bgetaddress;
  getaddressco.next:= @illegalexpressionco;
  getaddress0co.branch:= nil;
  getaddress0co.next:= @term1co;
- getaddress0co.handleexit:= @handleaddress;
+ getaddress0co.handleentry:= @handleaddress;
  illegalexpressionco.branch:= nil;
  illegalexpressionco.handleexit:= @handleillegalexpression;
  mulfactco.branch:= @bmulfact;
@@ -4010,9 +4045,11 @@ begin
  apostropheco.branch:= @bapostrophe;
  apostropheco.handleentry:= @copyapostrophe;
  charco.branch:= @bchar;
- charco.next:= @stringco;
+ charco.next:= @char1co;
  charco.handleentry:= @handlestringstart;
- charco.handleexit:= @handlechar;
+ char1co.branch:= nil;
+ char1co.next:= @stringco;
+ char1co.handleentry:= @handlechar;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
  identpathcontinueco.branch:= @bidentpathcontinue;
@@ -4020,22 +4057,21 @@ begin
  identpathco.next:= @identpath1aco;
  identpath1aco.branch:= nil;
  identpath1aco.next:= @identpath1co;
- identpath1aco.handleexit:= @handleidentpath1a;
+ identpath1aco.handleentry:= @handleidentpath1a;
  identpath1co.branch:= @bidentpath1;
  identpath2aco.branch:= nil;
  identpath2aco.next:= @identpath2co;
- identpath2aco.handleexit:= @handleidentpath2a;
+ identpath2aco.handleentry:= @handleidentpath2a;
  identpath2co.branch:= @bidentpath2;
  identpath2co.handleexit:= @handleidentpath2;
  valueidentifierco.branch:= @bvalueidentifier;
  valueidentifierco.next:= @checkvalueparamsco;
- valueidentifierco.handleexit:= @handlevalueidentifier;
  checkvalueparamsco.branch:= @bcheckvalueparams;
  checkvalueparamsco.handleexit:= @handlevalueidentifier;
  checkparamsco.branch:= @bcheckparams;
  params0co.branch:= nil;
  params0co.next:= @params1co;
- params0co.handleexit:= @handleparams0;
+ params0co.handleentry:= @handleparams0;
  params1co.branch:= @bparams1;
  params1co.next:= @params2co;
  params2co.branch:= @bparams2;
@@ -4043,7 +4079,6 @@ begin
  paramsendco.handleentry:= @handleparamsend;
  bracketstartco.branch:= @bbracketstart;
  bracketstartco.next:= @bracketendco;
- bracketstartco.handleexit:= @dummyhandler;
  bracketendco.branch:= @bbracketend;
  bracketendco.handleexit:= @handlebracketend;
  numberexpectedco.branch:= nil;

@@ -37,11 +37,7 @@ uses
       '.classes' -> tks_classes
 CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
     ENTRYHANDLER called at contextstart
-    EXITHANDLER called by context termination (not by transition to NEXT),
-     or termination if no branch matches
-    or after return from branch
-    EXITHANDLER also called for transition contexts without branches,
-     no flags allowed
+    EXITHANDLER called by context termination, NEXT must be empty
  '-' -> eat text
  '^' -> pop parent
  '!' -> pop parent and execute parent handler
@@ -992,6 +988,9 @@ lineend+
 ' '+cont[0]+'co.handleentry:= @'+cont[contlast-1]+';'+lineend;
     end;
     if cont[contlast] <> '' then begin
+     if cont[1] <> '' then begin
+      error('EXITHANDLER not allowed with NEXT',li);
+     end;
      str1:= str1+
 ' '+cont[0]+'co.handleexit:= @'+cont[contlast]+';'+lineend;
     end;

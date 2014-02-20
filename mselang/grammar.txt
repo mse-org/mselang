@@ -28,11 +28,11 @@ start,nounit,,
  ${whitespace} 
  'unit'.,unit0-
 nounit,,,handlenouniterror
-unit0,nounitname,,handlenounitnameerror
+unit0,nounitname,,
  ${whitespace}
  @identstart,ident^*,unit1
-nounitname,,,handlenounitnameerror
-unit1,unit2,,setunitname
+nounitname,,handlenounitnameerror,
+unit1,unit2,setunitname,
 unit2,semicolonexpected,,
  ${whitespace}
  ';',start1-
@@ -62,7 +62,7 @@ start2,noimplementation,,
  'procedure'.,procedureheader-*^>
  'function'.,functionheader-*^>
 
-functionheader,procedureheader,,handlefunctionentry
+functionheader,procedureheader,handlefunctionentry,
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,,
@@ -76,8 +76,8 @@ commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,,,handlenoimplementationerror
 
-implementation,implementationstart,,interfacestop
-implementationstart,main,,implementationstart
+implementation,implementationstart,interfacestop,
+implementationstart,main,implementationstart,
 
 main,main1,,
  ${whitespace}
@@ -90,8 +90,8 @@ main1,,,handlemain
  'const'.,const-*>
  'var'.,var-*>
 
-function,procfunc,,handlefunctionentry
-procedure,procfunc,,handleprocedureentry
+function,procfunc,handlefunctionentry,
+procedure,procfunc,handleprocedureentry,
 
 comment0,,,handlecommentend^*>
  '}',-*
@@ -102,8 +102,8 @@ directive,,,*
  'abort'.,abort-*
  '}',-*
  '',-
-dumpelements,directiveend,,handledumpelements
-abort,directiveend,,handleabort
+dumpelements,directiveend,handledumpelements,
+abort,directiveend,handleabort,
 directiveend,,,^*>
  '}',-*
  '',
@@ -111,7 +111,7 @@ linecomment0,,,*
  #$0a,linecomment1-
  '',-
 linecomment1,,,handlecommentend^*>
-progbegin,progblock,,handleprogbegin
+progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*
 #
@@ -172,11 +172,11 @@ procedure4,checkterminator,,
  'const'.,const-*
  'var'.,var-*
  'procedure'.,procedure-^*>
-procedure5a,procedure5,,handleprocedure5a
+procedure5a,procedure5,handleprocedure5a,
 # set procstartaddress
 procedure5,procedure6,,
  '',statementblock^*
-procedure6,checkterminatorpop,,handleprocedure6
+procedure6,checkterminatorpop,handleprocedure6,
 # return, release
 checkterminator,,,handlecheckterminator
  ';',terminatorok-
@@ -215,20 +215,20 @@ statement1,,handleleftside,handlestatementexit
 # '^',!setleftreference
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-if0,if,,handleif0
+if0,if,handleif0,
  ${whitespace}
-if,then,,handleif
+if,then,handleif,
  '',exp^*
 then,,,handlethen
  ${whitespace}
  'then'.,then0-
-then0,then1,,handlethen0
-then1,then2,,handlethen1
+then0,then1,handlethen0,
+then1,then2,handlethen1,
  '',statementstack^*
 then2,,,handlethen2
  ${whitespace}
  'else'.,else0-
-else0,else,,handleelse0
+else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
 const,,,handleconst>
@@ -241,7 +241,7 @@ const1,,,+
  '=',const2-
 const2,const3,,
  '',exp^*
-const3,const0-,,handleconst3
+const3,const0-,handleconst3,
  ${whitespace}
  ';',statementend-*
 #
@@ -257,16 +257,18 @@ var2,identexpected,,
  ${whitespace}
  @identstart,identpath^*>,var3^
  '^',!handlepointervar-
-var3,var0-,,handlevar3*
+##############var3,var0-,,handlevar3*
+var3,var3a-,,*
  ${whitespace}
  ';',-*
  '',semicolonexpected
+var3a,var0-,handlevar3,
 type,,,handletype>
  '',type0*^
 type0,type1,,
  ${whitespace}
  @identstart,identpath^*
-type1,type1a,,handletypedefstart
+type1,type1a,handletypedefstart,
 type1a,,,+
  ${whitespace}
  '=',type2-
@@ -276,13 +278,13 @@ type2,type3,,
  'record'.,recorddef-,recorddefreturn
  'class'.,classdef-,classdefreturn
  @identstart,identpath^*
-type3,type4-,,handletype3
+type3,type4-,handletype3,
 type4,type0-,,
  ${whitespace}
  ';',-*
  '',semicolonexpected
 #
-recorddef,recorddef0,,handlerecorddefstart
+recorddef,recorddef0,handlerecorddefstart,
 recorddef0,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
@@ -290,9 +292,9 @@ recorddef0,recorddeferror,,
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^>
  '',vardef^*
-recorddefreturn,type4-,,handlerecorddefreturn*
+recorddefreturn,type4-,handlerecorddefreturn,*
 #
-classdef,classdef0,,handleclassdefstart
+classdef,classdef0,handleclassdefstart,
 classdef0,classdeferror,,
  ${whitespace}
  'private'.,!handleclassprivate-
@@ -301,8 +303,8 @@ classdef0,classdeferror,,
  'published'.,!handleclasspublished-
  @identstart,classfield^*
  'end'.,classdefreturn-
-classdeferror,,,handleclassdeferror^
-classdefreturn,type4-,,handleclassdefreturn*
+classdeferror,,handleclassdeferror,^
+classdefreturn,type4-,handleclassdefreturn,*
 classfield,,,handleclassfield^*>
  '',vardef^*
 #
@@ -324,14 +326,19 @@ exp1,,,handleexp^
  '=',equsimpexp-*
 equsimpexp,,,handleequsimpexp
  '',simpexp*
-simpexp,simpexp1,,handlesimpexp
+#############simpexp,simpexp1,,handlesimpexp
+simpexp,simpexp1,,
  '',term*
-simpexp1,simpexp1,,handlesimpexp1
+#############simpexp1,simpexp1,,handlesimpexp1
+simpexp1,simpexp1,,
  ${whitespace}
  '+',addterm-*
+ '',simpexp1a
+simpexp1a,,,handlesimpexp1
 addterm,,,handleaddterm
  '',term*
-term,term1,handletermstart,handleterm
+##################term,term1,handletermstart,handleterm
+term,term1,handletermstart,
  ${whitespace}
  '+',-
  '-',negterm-*
@@ -344,16 +351,19 @@ term,term1,handletermstart,handleterm
  '#',char-*
  @identstart,valueidentifier*
  '@',getaddress-
-term1,term1,,handleterm1
+##############term1,term1a,,handleterm1
+term1,term1,,
  ${whitespace}
  '^',!handledereference-
  '*',mulfact*
-negterm,term,,handlenegterm
+ '',term1a
+term1a,,,handleterm1
+negterm,term,handlenegterm,
 getaddress,illegalexpression,,
  ${whitespace}
  @identstart,identpath^*,getaddress0
 # '(',getaddressbracket
-getaddress0,term1,,handleaddress
+getaddress0,term1,handleaddress,
 #
 illegalexpression,,,handleillegalexpression*
 #addressbracket,,,
@@ -408,8 +418,9 @@ string1,,copystring,handlestring
 apostrophe,,copyapostrophe,
  '''',string1-
  '',string
-char,string,handlestringstart,handlechar
+char,char1,handlestringstart,
  '',ordnum*
+char1,string,handlechar,
 #
 ident,,,handleident^
  @identstart,@decnum,-
@@ -418,20 +429,21 @@ identpathcontinue,,,^>
  '',identpath^*
 identpath,identpath1a,,
  @identstart,@decnum,-
-identpath1a,identpath1,,handleidentpath1a
+identpath1a,identpath1,handleidentpath1a,
 #set ident
 identpath1,,,^
 #finish
  ${whitespace}
  '.',identpath2a+-
-identpath2a,identpath2,,handleidentpath2a
+identpath2a,identpath2,handleidentpath2a,
 # set continue flag
 identpath2,,,handleidentpath2^
 #error
  ${whitespace}
  @identstart,identpath*
 #
-valueidentifier,checkvalueparams,,handlevalueidentifier
+#####################valueidentifier,checkvalueparams,,handlevalueidentifier
+valueidentifier,checkvalueparams,,
  '',identpath^*
 #
 checkvalueparams,,,handlevalueidentifier
@@ -440,7 +452,7 @@ checkvalueparams,,,handlevalueidentifier
 checkparams,,,^
  ${whitespace}
  '(',params0-
-params0,params1,,handleparams0
+params0,params1,handleparams0,
 params1,params2,,
  '',exp^*
 params2,,,
@@ -449,7 +461,7 @@ params2,,,
  ')',paramsend-
 paramsend,,handleparamsend,^
 #
-bracketstart,bracketend,,dummyhandler
+bracketstart,bracketend,,
  '',simpexp*
 bracketend,,,handlebracketend
  ${whitespace}

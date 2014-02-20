@@ -274,13 +274,12 @@ begin
   end;
 
   while pc^.branch = nil do begin //handle transition chain
-//todo: what about handleentry?
    if pc^.next = nil then begin
     result:= false;  //open transition chain
     break;
    end;
-   if pc^.handleexit <> nil then begin
-    pc^.handleexit(info); //transition handler
+   if pc^.handleentry <> nil then begin
+    pc^.handleentry(info); //transition handler
     if stopparser then begin
      result:= false;
      exit;
@@ -584,8 +583,8 @@ handlelab:
      debugsource:= source.po;
      keywordindex:= 0;
     end;
-    if pc^.handleexit <> nil then begin
-         //call context transition handler
+    if pc^.handleexit <> nil then begin //pc^.next = nil!
+         //call context termination handler
      pc^.handleexit(info);
      if stopparser then begin
       goto parseend;
