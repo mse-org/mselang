@@ -407,6 +407,7 @@ string,,handlestringstart,
  '',-
 string1,,copystring,handlestring
  '''',apostrophe-
+ '#',char-
 apostrophe,,copyapostrophe,
  '''',string1-
  '',string

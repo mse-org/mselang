@@ -3438,10 +3438,17 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstring1: array[0..1] of branchty = (
+ bstring1: array[0..2] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: @apostropheco); stack: nil; keys: (
     (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @charco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['#']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
