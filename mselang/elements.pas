@@ -1410,8 +1410,8 @@ end;
 
 destructor tstringbuffer.destroy;
 begin
- freemem(fbuffer);
  inherited;
+ freemem(fbuffer);
 end;
 
 function tstringbuffer.hashkey(const akey): hashvaluety;
@@ -1435,7 +1435,7 @@ var
  len1: integer;
 begin
  hash:= stringhash(avalue);
- po1:= pointer(internalfind(avalue,hash));
+ po1:= pointer(internalfind(stringtolstring(avalue),hash));
  if po1 = nil then begin
   len1:= length(avalue);
   po1:= pointer(internaladdhash(hash));

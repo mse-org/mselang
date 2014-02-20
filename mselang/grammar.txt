@@ -404,7 +404,7 @@ string,,handlestringstart,
  #$0a,!stringlineenderror-*
  '',-
 string1,,copystring,handlestring
- '''',apostrophe
+ '''',apostrophe-
 apostrophe,,copyapostrophe,
  '''',string1-
  '',string

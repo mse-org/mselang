@@ -3446,7 +3446,7 @@ outinfo(info,'****');
  with info^ do begin
   with contextstack[stacktop] do begin
    stringbuffer:= stringbuffer+'''';
-   start.po:= source.po;
+   d.str.start:= source.po;
   end;
  end;
 end;
