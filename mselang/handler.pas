@@ -3453,6 +3453,9 @@ outinfo(info,'****');
 end;
 
 procedure handlechar(const info: pparseinfoty);
+var
+ i1,i2: int32;
+ s1: string[4];
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'CHAR');
@@ -3460,9 +3463,47 @@ begin
 outinfo(info,'****');
  with info^ do begin
   with contextstack[stacktop] do begin
+   if d.kind <> ck_number then begin
+    internalerror(info,'20140220a');
+   end;
+   if d.number.value > $10ffff then begin
+    errormessage(info,stacktop-stackindex,err_illegalcharconst,[]);
+   end
+   else begin //todo: optimize
+    i2:= 1;
+    i1:= d.number.value;
+    if i1 < $80 then begin
+     s1[0]:= #1;
+     s1[1]:= char(i1);
+    end
+    else begin
+     if i1 < $0800 then begin
+      s1[0]:= #2;
+      s1[1]:= char((i1 shr 6) and %00011111 or %11000000);
+      s1[2]:= char(byte(i1) and %00111111 or %10000000);
+     end
+     else begin
+      if i1 < $10000 then begin
+       s1[0]:= #3;
+       s1[1]:= char((i1 shr 12) and %00001111 or %11100000);
+       s1[2]:= char((i1 shr 6) and %00111111 or %10000000);
+       s1[3]:= char(byte(i1) and %00111111 or %10000000);
+      end
+      else begin
+       s1[0]:= #4;
+       s1[1]:= char((i1 shr 18) and %00000111 or %11110000);
+       s1[2]:= char((i1 shr 12) and %00111111 or %10000000);
+       s1[3]:= char((i1 shr 6) and %00111111 or %10000000);
+       s1[4]:= char(byte(i1) and %00111111 or %10000000);
+      end;
+     end;
+    end;
+    stringbuffer:= stringbuffer+s1;
+   end;
+   dec(stacktop);
   end;
  end;
 end;
 const
- s = 'abc''asd'#3#5'def';
+ s = #$ffff;
 end.

@@ -326,10 +326,8 @@ exp1,,,handleexp^
  '=',equsimpexp-*
 equsimpexp,,,handleequsimpexp
  '',simpexp*
-#############simpexp,simpexp1,,handlesimpexp
 simpexp,simpexp1,,
  '',term*
-#############simpexp1,simpexp1,,handlesimpexp1
 simpexp1,simpexp1,,
  ${whitespace}
  '+',addterm-*
@@ -337,7 +335,6 @@ simpexp1,simpexp1,,
 simpexp1a,,,handlesimpexp1
 addterm,,,handleaddterm
  '',term*
-##################term,term1,handletermstart,handleterm
 term,term1,handletermstart,
  ${whitespace}
  '+',-
@@ -351,7 +348,6 @@ term,term1,handletermstart,
  '#',char-*
  @identstart,valueidentifier*
  '@',getaddress-
-##############term1,term1a,,handleterm1
 term1,term1,,
  ${whitespace}
  '^',!handledereference-
@@ -366,11 +362,7 @@ getaddress,illegalexpression,,
 getaddress0,term1,handleaddress,
 #
 illegalexpression,,,handleillegalexpression*
-#addressbracket,,,
-# ${whitespace}
-# @identstart,identpath^*
-# '(',getaddressbracket
-# ')',addressbracketend
+#
 mulfact,,,handlemulfact
  ${whitespace}
  '+',
@@ -421,6 +413,10 @@ apostrophe,,copyapostrophe,
 char,char1,handlestringstart,
  '',ordnum*
 char1,string,handlechar,
+ '''',string-
+ '#',char-
+ '',char2
+char2,,,handlestring
 #
 ident,,,handleident^
  @identstart,@decnum,-
@@ -442,7 +438,6 @@ identpath2,,,handleidentpath2^
  ${whitespace}
  @identstart,identpath*
 #
-#####################valueidentifier,checkvalueparams,,handlevalueidentifier
 valueidentifier,checkvalueparams,,
  '',identpath^*
 #

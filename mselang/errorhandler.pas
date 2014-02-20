@@ -35,7 +35,7 @@ type
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
             err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
             err_circularreference,err_variableexpected,err_stringexeedsline,
-            err_invalidintegerexpression);
+            err_invalidintegerexpression,err_illegalcharconst);
             
  errorinfoty = record
   level: errorlevelty;
@@ -94,7 +94,8 @@ const
   (level: erl_fatal; message: 'Circular unit reference %s'),
   (level: erl_error; message: 'Variable identifier expected'),
   (level: erl_fatal; message: 'String exeeds line'),
-  (level: erl_error; message: 'Invalid integer expression')
+  (level: erl_error; message: 'Invalid integer expression'),
+  (level: erl_error; message: 'Illegal char constant')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

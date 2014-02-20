@@ -760,6 +760,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'char1');
+ char2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: false; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'char2');
  identco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -3470,6 +3475,30 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bchar1: array[0..3] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @stringco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['''']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @charco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['#']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @char2co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
@@ -4047,9 +4076,11 @@ begin
  charco.branch:= @bchar;
  charco.next:= @char1co;
  charco.handleentry:= @handlestringstart;
- char1co.branch:= nil;
+ char1co.branch:= @bchar1;
  char1co.next:= @stringco;
  char1co.handleentry:= @handlechar;
+ char2co.branch:= nil;
+ char2co.handleexit:= @handlestring;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
  identpathcontinueco.branch:= @bidentpathcontinue;
