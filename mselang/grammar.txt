@@ -28,7 +28,7 @@
 @hexnum
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
- 'handler','unithandler','classhandler','recordhandler'
+ 'handler','unithandler','classhandler','typehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
 start,nounit,,

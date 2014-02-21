@@ -14,7 +14,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-unit recordhandler;
+unit typehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
@@ -87,24 +87,8 @@ begin
     if findkindelements(info,stacktop-stackindex,
                        [ek_type],vis_max,po2) then begin
      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-//     if tf_reference in contextstack[stackindex].d.typ.flags then begin
      with contextstack[stackindex].d do begin
       inc(ptypedataty(@po1^.data)^.indirectlevel,typ.indirectlevel);
-      {
-      if typ.indirectlevel > 0 then begin
-       with ptypedataty(@po1^.data)^ do begin
-        if ptypedataty(@po1^.data)^.kind = dk_reference then begin
-         indirectlevel:= indirectlevel + typ.indirectlevel;
-        end
-        else begin
-         bytesize:= pointersize;
-         kind:= dk_reference;
-         target:= ele.eleinforel(po2);
-         indirectlevel:= 1;
-        end;
-       end;
-      end;
-      }
      end;
     end
     else begin
@@ -115,7 +99,6 @@ begin
   else begin
    internalerror(info,'H131024A');
   end;
-//  dec(stackindex);
  end;
 end;
  
