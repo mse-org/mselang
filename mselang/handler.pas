@@ -56,14 +56,9 @@ procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
 
 procedure handlevar(const info: pparseinfoty);
-procedure handlevar1(const info: pparseinfoty);
+procedure handlevardefstart(const info: pparseinfoty);
 procedure handlevar3(const info: pparseinfoty);
 procedure handlepointervar(const info: pparseinfoty);
-
-procedure handletype(const info: pparseinfoty);
-procedure handletypedefstart(const info: pparseinfoty);
-procedure handletype3(const info: pparseinfoty);
-procedure handlepointertype(const info: pparseinfoty);
 
 procedure handlenumberentry(const info: pparseinfoty);
 procedure handleint(const info: pparseinfoty);
@@ -2320,10 +2315,10 @@ begin
  end;
 end;
  
-procedure handlevar1(const info: pparseinfoty);
+procedure handlevardefstart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'VAR1');
+ outhandle(info,'VARDEFSTART');
 {$endif}
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_var;
@@ -2388,91 +2383,6 @@ begin
   end;
   inc(indirectlevel);
 //  include(flags,tf_reference);
- end;
-end;
-
-procedure handletype(const info: pparseinfoty);
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'TYPE');
-{$endif}
- with info^,contextstack[stacktop] do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-
-procedure handletypedefstart(const info: pparseinfoty);
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'TYPEDEFSTART');
-{$endif}
- with info^,contextstack[stackindex] do begin
-  d.kind:= ck_type;
-  d.typ.indirectlevel:= 0;
-//  d.typ.flags:= [];
- end;
-end;
-
-procedure handlepointertype(const info: pparseinfoty);
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'POINTERTYPE');
-{$endif}
- with info^,contextstack[stackindex] do begin
-  inc(d.typ.indirectlevel);
-//  include(d.typ.flags,tf_reference);
- end;
-end;
-
-procedure handletype3(const info: pparseinfoty);
-var
- po1,po2: pelementinfoty;
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'TYPE3');
-{$endif}
- with info^ do begin
-  if (stacktop-stackindex = 2) and 
-       (contextstack[stacktop].d.kind = ck_ident) and
-       (contextstack[stacktop-1].d.kind = ck_ident) then begin
-   po1:= ele.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,ek_type);
-   if po1 = nil then begin //duplicate
-    identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
-   end
-   else begin //todo: multi level type
-    if findkindelements(info,stacktop-stackindex,
-                       [ek_type],vis_max,po2) then begin
-     ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-//     if tf_reference in contextstack[stackindex].d.typ.flags then begin
-     with contextstack[stackindex].d do begin
-      inc(ptypedataty(@po1^.data)^.indirectlevel,typ.indirectlevel);
-      {
-      if typ.indirectlevel > 0 then begin
-       with ptypedataty(@po1^.data)^ do begin
-        if ptypedataty(@po1^.data)^.kind = dk_reference then begin
-         indirectlevel:= indirectlevel + typ.indirectlevel;
-        end
-        else begin
-         bytesize:= pointersize;
-         kind:= dk_reference;
-         target:= ele.eleinforel(po2);
-         indirectlevel:= 1;
-        end;
-       end;
-      end;
-      }
-     end;
-    end
-    else begin
-     identerror(info,stacktop-stackindex,err_identifiernotfound);
-    end;
-   end;
-  end
-  else begin
-   internalerror(info,'H131024A');
-  end;
-  stacktop:= stackindex;
  end;
 end;
 

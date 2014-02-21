@@ -258,7 +258,7 @@ var,,,handlevar>
  '',var0*^
 var0,var1,,
  @identstart,ident^*
-var1,,handlevar1,+
+var1,,handlevardefstart,
  ${whitespace}
  ':',var2-
 var2,identexpected,,
@@ -271,23 +271,24 @@ var3,,,handlevar3*>
  '',semicolonexpected
 #
 type,,,handletype>
+ ${whitespace}
+ ${blockswitch}
  '',type0*^
 type0,type1,,
- ${whitespace}
  @identstart,identpath^*
-type1,type1a,handletypedefstart,
-type1a,,,+
+type1,,handletypedefstart,
  ${whitespace}
  '=',type2-
-type2,type3,,
+type2,identexpected,,
  ${whitespace}
+ @identstart,identpath^*>,type3^
  '^',!handlepointertype-
  'record'.,recorddef-,recorddefreturn
  'class'.,classdef-,classdefreturn
  'array'.,arraydef-,arraydefreturn
- @identstart,identpath^*
-type3,type4-,handletype3,
-type4,type0-,,
+type3,type3a,,
+type3a,type4,handletype3,*
+type4,,,*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
@@ -300,7 +301,7 @@ recorddef0,recorddeferror,,
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^>
  '',vardef^*
-recorddefreturn,type4-,handlerecorddefreturn,*
+recorddefreturn,type4,handlerecorddefreturn,*
 #
 arraydef,,,
 arraydefreturn,,,
@@ -314,7 +315,7 @@ classdef0,classdeferror,,
  @identstart,classfield^*
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^
-classdefreturn,type4-,handleclassdefreturn,*
+classdefreturn,type3,handleclassdefreturn,*
 classfield,,,handleclassfield^*>
  '',vardef^*
 #
