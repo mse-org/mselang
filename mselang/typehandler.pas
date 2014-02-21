@@ -188,12 +188,13 @@ outinfo(info,'****');
                 //todo: alignment
    end;
   end;
-  with ptypedataty(ele.eledataabs(
-               contextstack[stackindex].d.typ.typedata))^ do begin
+  with contextstack[stackindex],ptypedataty(ele.eledataabs(
+               d.typ.typedata))^ do begin
    kind:= dk_record;
    datasize:= das_none;
    bytesize:= int2;
    bitsize:= int2*8;
+   indirectlevel:= d.typ.indirectlevel;
   end;
  end;
 end;
