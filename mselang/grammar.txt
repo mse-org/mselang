@@ -5,6 +5,13 @@
  '{$',directive-^*
  '{',comment0-^*
  '//',linecomment0-^*"
+{blockswitch}
+" 'implementation'.,*
+ 'var'.,*
+ 'type'.,*
+ 'const'.,*
+"
+
 @keywordstart
  'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
  'q','r','s','t','u','v','w','x','y','z'
@@ -32,7 +39,7 @@ unit0,nounitname,,
  ${whitespace}
  @identstart,ident^*,unit1
 nounitname,,handlenounitnameerror,
-unit1,unit2,setunitname,
+unit1,unit2,setunitname,*
 unit2,semicolonexpected,,
  ${whitespace}
  ';',start1-
@@ -246,9 +253,10 @@ const3,const0-,handleconst3,
  ';',statementend-*
 #
 var,,,handlevar>
+ ${whitespace}
+ ${blockswitch}
  '',var0*^
 var0,var1,,
- ${whitespace}
  @identstart,ident^*
 var1,,handlevar1,+
  ${whitespace}
@@ -257,12 +265,11 @@ var2,identexpected,,
  ${whitespace}
  @identstart,identpath^*>,var3^
  '^',!handlepointervar-
-##############var3,var0-,,handlevar3*
-var3,var3a-,,*
+var3,,,handlevar3*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
-var3a,var0-,handlevar3,
+#
 type,,,handletype>
  '',type0*^
 type0,type1,,
@@ -277,6 +284,7 @@ type2,type3,,
  '^',!handlepointertype-
  'record'.,recorddef-,recorddefreturn
  'class'.,classdef-,classdefreturn
+ 'array'.,arraydef-,arraydefreturn
  @identstart,identpath^*
 type3,type4-,handletype3,
 type4,type0-,,
@@ -294,6 +302,8 @@ recordfield,,,handlerecordfield^>
  '',vardef^*
 recorddefreturn,type4-,handlerecorddefreturn,*
 #
+arraydef,,,
+arraydefreturn,,,
 classdef,classdef0,handleclassdefstart,
 classdef0,classdeferror,,
  ${whitespace}

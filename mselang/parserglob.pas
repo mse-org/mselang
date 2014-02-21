@@ -540,7 +540,7 @@ type
   currentclass: elementoffsetty;
   currentclassvislevel: vislevelty;
   currentstatementflags: statementflagsty;
-  stringbuffer: string;
+  stringbuffer: string; //todo: use faster type
  end;
 
 const

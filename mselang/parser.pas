@@ -464,7 +464,7 @@ begin
     end;
     if bf_emptytoken in pb^.flags then begin
      pushcont(info); //default branch
-               //???? why no break or stadard match handling
+               //???? why no break or standard match handling
     end
     else begin
      while pb^.flags <> [] do begin

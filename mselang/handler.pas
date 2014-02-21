@@ -2371,6 +2371,8 @@ outinfo(info,'***');
     identerror(info,2,err_identifiernotfound);
    end;
   end;
+  dec(stackindex);
+//  stacktop:= stackindex;
  end;
 end;
 
