@@ -30,6 +30,13 @@ procedure handlerecorddeferror(const info: pparseinfoty);
 procedure handlerecorddefreturn(const info: pparseinfoty);
 procedure handlerecordfield(const info: pparseinfoty);
 
+procedure handlearraydefstart(const info: pparseinfoty);
+procedure handlearraydefreturn(const info: pparseinfoty);
+procedure handlearraydeferror1(const info: pparseinfoty);
+procedure handlearrayindexerror1(const info: pparseinfoty);
+procedure handlearrayindexerror2(const info: pparseinfoty);
+procedure handlearrayindex(const info: pparseinfoty);
+
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser;
@@ -199,4 +206,57 @@ outinfo(info,'****');
  end;
 end;
 
+procedure handlearraydefstart(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYDEFSTART');
+{$endif}
+outinfo(info,'****');
+end;
+ 
+procedure handlearraydefreturn(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYDEFRETURN');
+{$endif}
+outinfo(info,'****');
+end;
+
+procedure handlearraydeferror1(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYDEFERROR1');
+{$endif}
+ tokenexpectederror(info,'of',erl_fatal);
+end;
+
+procedure handlearrayindexerror1(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYINDEXERROR1');
+{$endif}
+ tokenexpectederror(info,'[',erl_fatal);
+end;
+
+procedure handlearrayindexerror2(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYINDEXERROR2');
+{$endif}
+ tokenexpectederror(info,']',erl_fatal);
+end;
+
+procedure handlearrayindex(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYINDEX');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  dec(stackindex);
+ end;
+end;
+
+//type
+// t = array [0..2];
 end.

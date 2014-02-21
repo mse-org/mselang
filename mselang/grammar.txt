@@ -303,8 +303,36 @@ recordfield,,,handlerecordfield^>
  '',vardef^*
 recorddefreturn,type4,handlerecorddefreturn,*
 #
-arraydef,,,
-arraydefreturn,,,
+arraydef,arraydef1,handlearraydefstart,
+ ${whitespace}
+ '',arrayindex*
+arraydef1,,,handlearraydeferror1
+ ${whitespace}
+ 'of'.,arraydef2-
+arraydef2,type4,,
+ '',gettype*
+arraydefreturn,type4,handlearraydefreturn,*
+#
+arrayindex,,,handlearrayindexerror1
+ '[',arrayindex1-
+arrayindex1,arrayindex2,,
+ '',getrange^*
+arrayindex2,,,handlearrayindex
+ ',',getrange-^*
+ ']',-*
+  '',!handlearrayindexerror2*
+#
+gettype,,,
+getrange,getrange1,,
+ '',exp^*
+getrange1,getrange2,,
+ ${whitespace}
+ '..',getrange3-
+getrange2,,,
+getrange3,,,^
+ '',exp^*
+
+#
 classdef,classdef0,handleclassdefstart,
 classdef0,classdeferror,,
  ${whitespace}
@@ -473,5 +501,3 @@ bracketstart,bracketend,,
 bracketend,,,handlebracketend
  ${whitespace}
 numberexpected,,,handlenumberexpected*
-#negexponent,,,handlenegexponent
-# @decnum,decnum*
