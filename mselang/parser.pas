@@ -46,9 +46,6 @@ uses
  typinfo,grammar,handler,elements,msestrings,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode;
   
-//procedure handledecnum(const info: pparseinfoty); forward;
-//procedure handlefrac(const info: pparseinfoty); forward;
-
 //
 //todo: move context-end flag handling to handler procedures.
 //
@@ -179,9 +176,6 @@ begin
        end;
       end;
      end;
-//     ck_opmark: begin
-//      write(opmark.address,' ');
-//     end;
      ck_proc: begin
       write('flags:',settostring(ptypeinfo(typeinfo(procflagsty)),
                            integer(proc.flags),true),' pasize:',proc.paramsize);
@@ -205,14 +199,7 @@ end;
 //
 // todo: optimize, this is a proof of concept only
 //
-{
-procedure internalerror(const info: pparseinfoty; const atext: string);
-begin
- writeln('*INTERNAL ERROR* ',atext);
- outinfo(info,'');
- abort;
-end;
-}
+
 procedure incstack(const info: pparseinfoty);
 begin
  with info^ do begin
@@ -248,6 +235,9 @@ begin
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
+   if not (bf_nostartbefore in pb^.flags) then begin
+    contextstack[stackindex].start:= source;
+   end;
    incstack(info);
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
@@ -260,17 +250,21 @@ begin
   with contextstack[stackindex],d do begin
    if bf_push in pb^.flags then begin
     kind:= ck_none;
+//    start:= source;
+    start:= contextstack[stackindex-1].start;
+   end
+   else begin
+    if not (bf_nostartbefore in pb^.flags) then begin
+     start:= sourcebef;
+    end;
+    if not (bf_nostartafter in pb^.flags) then begin
+     start:= source;
+    end;
    end;
    context:= pc;
-   if not (bf_nostart in pb^.flags) then begin
-    start:= source;
-   end;
    debugstart:= debugsource;
    parent:= int1;
-//   if bf_setpc in pb^.flags then begin
-//    kind:= ck_opmark;
-    opmark.address:= opcount;
-//   end;
+   opmark.address:= opcount;
   end;
 
   while pc^.branch = nil do begin //handle transition chain
@@ -294,38 +288,6 @@ begin
    pc:= pc^.next;
    contextstack[stackindex].context:= pc;
   end;
- (*
-  int1:= contextstack[stackindex].parent;
-  if bf_setparentbeforepush in pb^.flags then begin
-   int1:= stackindex;
-  end;
-  if bf_push in pb^.flags then begin
-   bo1:= true;
-   incstack(info);
-   if bf_setparentafterpush in pb^.flags then begin
-    int1:= stacktop;
-   end;
-  end;
-  if bf_changeparentcontext in pb^.flags then begin
-   contextstack[int1].context:= pb^.stack;
-         //replace return context
-  end;
-  with contextstack[stackindex],d do begin
-   if bf_push in pb^.flags then begin
-    kind:= ck_none;
-   end;
-   context:= pc;
-   if not (bf_nostart in pb^.flags) then begin
-    start:= source;
-   end;
-   debugstart:= debugsource;
-   parent:= int1;
-   if bf_setpc in pb^.flags then begin
-//    kind:= ck_opmark;
-    opmark.address:= opcount;
-   end;
-  end;
-*)
   pb:= pc^.branch;
 {$ifdef mse_debugparser}
   if bo1 then begin
@@ -343,29 +305,7 @@ begin
   end;
  end;
 end;
-{
-var
- pushcontextbranch: branchty =
-   (flags: [bf_nt,bf_emptytoken,bf_push]; dest: nil; stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    ));
-}
-//   (t:''; x:false; k:false; c:nil; e:false; p:true;
-//    s:false; sb:false; sa:false);
-{
-procedure pushcontext(const info: pparseinfoty; const cont: pcontextty);
-begin
- with info^ do begin
-  pb:= @pushcontextbranch;
-  pushcontextbranch.dest:= cont;
-  stophandle:= true;
-  pushcont(info);
- end;
-end;
-}
+
 function parseunit(const info: pparseinfoty; const input: string;
                                        const aunit: punitinfoty): boolean;
  procedure popparent;
@@ -391,6 +331,7 @@ var
  linebreaks: integer;
  
  sourcebefore: sourceinfoty;
+ sourcebefbefore: sourceinfoty;
  sourcestartbefore: pchar;
  stackindexbefore: integer;
  stacktopbefore: integer;
@@ -406,6 +347,7 @@ begin
  linebreaks:= 0;
  with info^ do begin
   sourcebefore:= source;
+  sourcebefbefore:= sourcebef;
  {$ifdef mse_debugparser}
   debugsourcebefore:= debugsource;
  {$endif}
@@ -458,6 +400,7 @@ begin
   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
    while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
             //check context branches
+    sourcebef:= source;
     pb:= pc^.branch;
     if pb = nil then begin
      break; //no branch
@@ -473,7 +416,6 @@ begin
       linebreaks:= 0;
       if bf_keyword in pb^.flags then begin
        if keywordindex = 0 then begin
-//        po1:= source.po;
         while po1^ in keywordchars do begin
          inc(po1);
         end; 
@@ -676,6 +618,7 @@ parseend:
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
+  sourcebef:= sourcebefbefore;
  {$ifdef mse_debugparser}
   debugsource:= debugsourcebefore;
  {$endif}

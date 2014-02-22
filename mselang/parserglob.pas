@@ -94,7 +94,8 @@ type
  contexthandlerty = procedure(const info: pparseinfoty);
 
  branchflagty = (bf_nt,bf_emptytoken,
-             bf_keyword,bf_handler,bf_nostart,bf_eat,bf_push,
+             bf_keyword,bf_handler,
+             bf_nostartbefore,bf_nostartafter,bf_eat,bf_push,
              {bf_setpc,}bf_continue,
              bf_setparentbeforepush,bf_setparentafterpush,
              bf_changeparentcontext);
@@ -513,7 +514,7 @@ type
   stopparser: boolean;
   filename: filenamety;
   sourcestart: pchar; //todo: use file cache for include files
-  source: sourceinfoty;
+  source,sourcebef: sourceinfoty;
 {$ifdef mse_debugparser}
   debugsource: pchar;
 {$endif}

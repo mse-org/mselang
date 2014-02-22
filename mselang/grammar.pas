@@ -753,6 +753,11 @@ var
                continue: false; cut: false; restoresource: false; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'fracexp');
+ checkfracco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; cut: false; restoresource: true; 
+               pop: false; popexe: false; nexteat: false; next: nil;
+               caption: 'checkfrac');
  fracco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; cut: false; restoresource: false; 
@@ -3521,8 +3526,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @fracco); stack: nil; keys: (
+   (flags: [bf_nt,bf_nostartbefore,bf_eat,bf_push];
+     dest: (context: @checkfracco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3541,6 +3546,16 @@ const
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @exponentco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcheckfrac: array[0..1] of branchty = (
+   (flags: [bf_nt];
+     dest: (context: @fracco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['0'..'9']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3834,7 +3849,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_nostart,bf_eat];
+   (flags: [bf_nt,bf_nostartafter,bf_eat];
      dest: (context: @identpath2aco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
@@ -4346,6 +4361,7 @@ begin
  numco.handleexit:= @handleint;
  fracexpco.branch:= @bfracexp;
  fracexpco.next:= @fracco;
+ checkfracco.branch:= @bcheckfrac;
  fracco.branch:= @bfrac;
  fracco.handleexit:= @handlefrac;
  exponentco.branch:= @bexponent;

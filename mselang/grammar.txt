@@ -410,10 +410,12 @@ mulfact,,,handlemulfact
  @decnum,num*
 num,,,handleint
  @decnum,-
- '.',frac-*
+ '.',checkfrac-+*
  'e','E',fracexp-*
 fracexp,frac,,
  '',exponent*
+checkfrac,,,+
+ @decnum,frac
 frac,,,handlefrac
  @decnum,-
  'e','E',exponent-*

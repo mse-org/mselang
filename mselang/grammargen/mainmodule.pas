@@ -45,10 +45,10 @@ CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
  '*' -> stackindex -> stacktop
  '>' -> continue with calling context
  STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
-        ([CONTEXT] ['+']['-'] [['^']['*'] | ['*']['^']] [ '>']) |
+        ([CONTEXT] ['+']['-']['+'] [['^']['*'] | ['*']['^']] [ '>']) |
                                                       (['!'HANDLER][-][*][^])
         [',' (PUSHEDCONTEXT | (PARENTCONTEXT'^'))]
- '+' -> do not set context start
+ '+' -> do not set start source pointer
  '-' -> eat token
  CONTEXT'^' -> set parent
  CONTEXT'*' -> push context
@@ -806,11 +806,14 @@ lineend+
        if checklastchar(dest,'*') then begin
         include(branflags1,bf_push);
        end;
+       if checklastchar(dest,'+') then begin
+        include(branflags1,bf_nostartbefore);
+       end;
        if checklastchar(dest,'-') then begin
         include(branflags1,bf_eat);
        end;
        if checklastchar(dest,'+') then begin
-        include(branflags1,bf_nostart);
+        include(branflags1,bf_nostartafter);
        end;
        if checklastchar(stack,'^') then begin
         include(branflags1,bf_changeparentcontext);
