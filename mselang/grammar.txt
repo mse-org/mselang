@@ -328,8 +328,8 @@ getrange,getrange1,,
 getrange1,getrange2,,
  ${whitespace}
  '..',getrange3-
-getrange2,,,
-getrange3,,,^
+getrange2,,,handlerange2
+getrange3,,,handlerange3^
  '',exp^*
 
 #
@@ -414,7 +414,7 @@ num,,,handleint
  'e','E',fracexp-*
 fracexp,frac,,
  '',exponent*
-checkfrac,,,+
+checkfrac,,,+*
  @decnum,frac
 frac,,,handlefrac
  @decnum,-

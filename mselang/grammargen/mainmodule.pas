@@ -807,13 +807,13 @@ lineend+
         include(branflags1,bf_push);
        end;
        if checklastchar(dest,'+') then begin
-        include(branflags1,bf_nostartbefore);
+        include(branflags1,bf_nostartafter);
        end;
        if checklastchar(dest,'-') then begin
         include(branflags1,bf_eat);
        end;
        if checklastchar(dest,'+') then begin
-        include(branflags1,bf_nostartafter);
+        include(branflags1,bf_nostartbefore);
        end;
        if checklastchar(stack,'^') then begin
         include(branflags1,bf_changeparentcontext);

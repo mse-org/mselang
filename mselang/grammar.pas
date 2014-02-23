@@ -755,7 +755,7 @@ var
                caption: 'fracexp');
  checkfracco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; cut: false; restoresource: true; 
+               continue: false; cut: true; restoresource: true; 
                pop: false; popexe: false; nexteat: false; next: nil;
                caption: 'checkfrac');
  fracco: contextty = (branch: nil; 
@@ -3526,7 +3526,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_nostartbefore,bf_eat,bf_push];
+   (flags: [bf_nt,bf_nostartafter,bf_eat,bf_push];
      dest: (context: @checkfracco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
@@ -3849,7 +3849,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_nostartafter,bf_eat];
+   (flags: [bf_nt,bf_nostartbefore,bf_eat];
      dest: (context: @identpath2aco); stack: nil; keys: (
     (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
@@ -4304,7 +4304,9 @@ begin
  getrange1co.branch:= @bgetrange1;
  getrange1co.next:= @getrange2co;
  getrange2co.branch:= nil;
+ getrange2co.handleexit:= @handlerange2;
  getrange3co.branch:= @bgetrange3;
+ getrange3co.handleexit:= @handlerange3;
  classdefco.branch:= nil;
  classdefco.next:= @classdef0co;
  classdefco.handleentry:= @handleclassdefstart;

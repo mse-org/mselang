@@ -379,8 +379,8 @@ procedure cmpequbool;
 var
  po1,po2: pvbooleanty;
 begin
- po1:= stackpop(sizeof(po1^));
- po2:= po1-alignsize(sizeof(po2^));
+ po1:= stackpop(sizeof(vbooleanty));
+ po2:= po1-alignsize(sizeof(vbooleanty));
  po2^:= po2^ = po1^;
 end;
 

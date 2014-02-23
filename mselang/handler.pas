@@ -63,6 +63,9 @@ procedure handlepointervar(const info: pparseinfoty);
 procedure handlenumberentry(const info: pparseinfoty);
 procedure handleint(const info: pparseinfoty);
 
+procedure handlerange2(const info: pparseinfoty);
+procedure handlerange3(const info: pparseinfoty);
+
 procedure handlebinnum(const info: pparseinfoty);
 procedure handleoctnum(const info: pparseinfoty);
 procedure handledecnum(const info: pparseinfoty);
@@ -450,6 +453,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'INT');
 {$endif}
+outinfo(info,'***');
  with info^,contextstack[stacktop] do begin
   consumed:= source.po;
   po1:= start.po;
@@ -483,6 +487,49 @@ begin
   d.datatyp:= sysdatatypes[st_int32];
   d.constval.kind:= dk_integer;
   d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
+ end;
+end;
+
+procedure handlerange2(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'RANGE2');
+{$endif}
+ with info^ do begin
+ end;
+end;
+
+procedure handlerange3(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'RANGE3');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  if stacktop-stackindex = 2 then begin
+   if contextstack[stackindex+1].d.kind <> ck_const then begin
+    errormessage(info,1,err_constexpressionexpected,[]);
+   end
+   else begin
+    if contextstack[stackindex+2].d.kind <> ck_const then begin
+     errormessage(info,2,err_constexpressionexpected,[]);
+    end
+    else begin
+     if contextstack[stackindex+1].d.constval.kind <> 
+              contextstack[stacktop].d.constval.kind then begin
+      incompatibletypeserror(info,contextstack[stackindex+1].d,
+                                              contextstack[stacktop].d);
+//     errormessage(info,err
+     end
+     else begin
+      with contextstack[stackindex] do begin
+       d.kind:= ck_range;
+      end;
+     end;
+    end;
+   end;
+  end;
+//  stacktop:= stackindex;
  end;
 end;
 
@@ -735,6 +782,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'FRAC');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
 //  if stacktop > stackindex then begin //no exponent nuber error otherwise
    dofrac(info,info^.source.po,neg,mant,fraclen);
@@ -1438,7 +1486,7 @@ outinfo(info,'****');
    end;
   end
   else begin
-   error(info,ce_expressionexpected);
+   errormessage(info,stacktop-stackindex,err_illegalexpression,[]);
   end;
   dec(stacktop);
   dec(stackindex);
@@ -3418,4 +3466,15 @@ outinfo(info,'****');
 end;
 const
  s = #$ffff;
+ f = 1.;
+var
+ r: real;
+type
+ a = array[1..2] of integer;
+procedure t;
+var
+ f: real;
+begin
+ f:= 1.;
+end;
 end.

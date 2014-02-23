@@ -235,9 +235,6 @@ begin
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
-   if not (bf_nostartbefore in pb^.flags) then begin
-    contextstack[stackindex].start:= source;
-   end;
    incstack(info);
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
@@ -251,17 +248,19 @@ begin
    if bf_push in pb^.flags then begin
     kind:= ck_none;
 //    start:= source;
-    start:= contextstack[stackindex-1].start;
+    start:= contextstack[stackindex-1].start; //default
+   end;
+   if not (bf_nostartafter in pb^.flags) then begin
+    start:= source;
    end
    else begin
     if not (bf_nostartbefore in pb^.flags) then begin
-     start:= sourcebef;
-    end;
-    if not (bf_nostartafter in pb^.flags) then begin
      start:= source;
+     start.po:= beforeeat;
     end;
    end;
    context:= pc;
+//   sourcebef:= source;
    debugstart:= debugsource;
    parent:= int1;
    opmark.address:= opcount;
@@ -331,7 +330,7 @@ var
  linebreaks: integer;
  
  sourcebefore: sourceinfoty;
- sourcebefbefore: sourceinfoty;
+// sourcebefbefore: sourceinfoty;
  sourcestartbefore: pchar;
  stackindexbefore: integer;
  stacktopbefore: integer;
@@ -347,7 +346,7 @@ begin
  linebreaks:= 0;
  with info^ do begin
   sourcebefore:= source;
-  sourcebefbefore:= sourcebef;
+//  sourcebefbefore:= sourcebef;
  {$ifdef mse_debugparser}
   debugsourcebefore:= debugsource;
  {$endif}
@@ -400,7 +399,7 @@ begin
   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
    while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
             //check context branches
-    sourcebef:= source;
+//    sourcebef:= source;
     pb:= pc^.branch;
     if pb = nil then begin
      break; //no branch
@@ -473,7 +472,10 @@ begin
        end;
       end;
       if bo1 then begin //match
+      {$ifdef mse_debugparser}
        debugsource:= source.po;
+      {$endif}
+       beforeeat:= source.po;
        if bf_eat in pb^.flags then begin
         source.line:= source.line + linebreaks;
         linebreaks:= 0;
@@ -618,7 +620,7 @@ parseend:
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
-  sourcebef:= sourcebefbefore;
+//  sourcebef:= sourcebefbefore;
  {$ifdef mse_debugparser}
   debugsource:= debugsourcebefore;
  {$endif}
