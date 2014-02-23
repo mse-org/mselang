@@ -1,3 +1,4 @@
+#todo: use handler for whitespace
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -408,6 +409,7 @@ mulfact,,,handlemulfact
  '-',negterm*
  '(',bracketstart*
  @decnum,num*
+#todo: use handler for number evaluation
 num,,,handleint
  @decnum,-
  '.',checkfrac-+*
