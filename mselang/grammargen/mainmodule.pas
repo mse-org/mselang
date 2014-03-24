@@ -76,6 +76,7 @@ type
  end;
 var
  mainmo: tmainmo;
+
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,

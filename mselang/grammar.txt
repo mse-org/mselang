@@ -277,20 +277,20 @@ type,,,handletype>
  '',type0*^
 type0,type1,,
  @identstart,identpath^*
-type1,,handletypedefstart,
+type1,,,handleequalityexpected
  ${whitespace}
  '=',type2-
-type2,type3,,
+type2,type3,,*
+ '',gettype^*
+gettype,,handlegettypestart,^
  ${whitespace}
- @identstart,simpletype^*
  '^',!handlepointertype-
+ @identstart,simpletype^*
  'record'.,recorddef-^*
+ 'array'.,arraydef-^*
  'class'.,classdef-,classdefreturn
- 'array'.,arraydef-,arraydefreturn
  '',identexpected
-#simpletype,type3,,handlesimpletype
-type3,type4,handletype3,*
-type4,,,*>
+type3,,,*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
@@ -305,7 +305,7 @@ recorddef0,recorddeferror,,
 recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^>
  '',vardef^*
-recorddefreturn,,handlerecorddefreturn,*^
+recorddefreturn,,handlerecordtype,*^
 #
 arraydef,arraydef1,handlearraydefstart,
  ${whitespace}
@@ -313,9 +313,9 @@ arraydef,arraydef1,handlearraydefstart,
 arraydef1,,,handlearraydeferror1
  ${whitespace}
  'of'.,arraydef2-
-arraydef2,type4,,
+arraydef2,arraydefreturn,,
  '',gettype^*
-arraydefreturn,type4,handlearraydefreturn,*
+arraydefreturn,,handlearraydefreturn,*^
 #
 arrayindex,,,handlearrayindexerror1
  '[',arrayindex1-
@@ -326,9 +326,9 @@ arrayindex2,,,handlearrayindex
  ']',-*
   '',!handlearrayindexerror2*
 #
-gettype,,,^
- ${whitespace}
- '',type2*
+#gettype,,,^
+# ${whitespace}
+# '',type2*
 getrange,getrange1,,
  '',exp^*
 getrange1,getrange2,,

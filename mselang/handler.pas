@@ -36,6 +36,7 @@ procedure checkstart(const info: pparseinfoty);
 procedure handlenouniterror(const info: pparseinfoty);
 procedure handlenounitnameerror(const info: pparseinfoty);
 procedure handlesemicolonexpected(const info: pparseinfoty);
+procedure handleequalityexpected(const info: pparseinfoty);
 procedure handleidentexpected(const info: pparseinfoty);
 procedure handleillegalexpression(const info: pparseinfoty);
 
@@ -311,7 +312,7 @@ begin
     d.vaddress:= stringconst(info,avalue.d.constval.vstring);
    end;
    else begin
-    internalerror(info,'P20131121A');
+    internalerror(info,'H20131121A');
    end;
   end;
  end;
@@ -1789,7 +1790,7 @@ begin
      end;
     end;
     else begin
-     internalerror(info,'P20131121B');
+     internalerror(info,'H20131121B');
     end;
    end;
    if result then begin
@@ -2179,6 +2180,16 @@ begin
 {$endif}
  with info^ do begin
   errormessage(info,-1,err_syntax,[';']);
+ end;
+end;
+
+procedure handleequalityexpected(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'SEMICOLONEXPECTED');
+{$endif}
+ with info^ do begin
+  errormessage(info,-1,err_syntax,['=']);
  end;
 end;
 
@@ -2609,7 +2620,7 @@ outinfo(info,'*****');
     dest.typ:= ele.eledataabs(datatyp.typedata);
     dec(datatyp.indirectlevel);
     if datatyp.indirectlevel < 0 then begin
-     internalerror(info,'P20131126B');
+     internalerror(info,'H20131126B');
     end
     else begin
      if datatyp.indirectlevel > 0 then begin
@@ -2633,7 +2644,7 @@ outinfo(info,'*****');
        indi:= true;
       end;
       else begin
-       internalerror(info,'P20131117A');
+       internalerror(info,'H20131117A');
        exit;
       end;
      end;
@@ -2773,7 +2784,7 @@ begin
 outinfo(info,'***');
  with info^ do begin
   if stacktop-stackindex <> 1 then begin
-   internalerror(info,'h20140216a');
+   internalerror(info,'H20140216A');
   end;
   with contextstack[stacktop].d do begin
    case kind of
@@ -3424,7 +3435,7 @@ outinfo(info,'****');
  with info^ do begin
   with contextstack[stacktop] do begin
    if d.kind <> ck_number then begin
-    internalerror(info,'20140220a');
+    internalerror(info,'H20140220A');
    end;
    if d.number.value > $10ffff then begin
     errormessage(info,stacktop-stackindex,err_illegalcharconst,[]);

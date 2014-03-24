@@ -46,8 +46,8 @@ const
  tk_then = $678CDDBA;
  tk_else = $CF19BB75;
  tk_record = $9E3376EB;
- tk_class = $3C66EDD6;
- tk_array = $78CDDBAD;
+ tk_array = $3C66EDD6;
+ tk_class = $78CDDBAD;
  tk_of = $F19BB75B;
  tk_private = $E3376EB7;
  tk_protected = $C66EDD6E;
@@ -58,7 +58,7 @@ const
   '.classes','.private','.protected','.public','.published',
   'unit','uses','implementation','const','var','type','procedure','function',
   'begin','dumpelements','abort','out','end','if','then','else','record',
-  'class','array','of','private','protected','public','published');
+  'array','class','of','private','protected','public','published');
 
  tokenids: array[0..29] of identty = (
   $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
@@ -520,19 +520,19 @@ var
                caption: 'type1');
  type2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'type2');
- type3co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'type3');
- type4co: contextty = (branch: nil; 
+               caption: 'type2');
+ gettypeco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'gettype');
+ type3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'type4');
+               caption: 'type3');
  simpletypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -580,8 +580,8 @@ var
                caption: 'arraydef2');
  arraydefreturnco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'arraydefreturn');
  arrayindexco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -598,11 +598,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'arrayindex2');
- gettypeco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'gettype');
  getrangeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2655,16 +2650,26 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype2: array[0..10] of branchty = (
+ btype2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @gettypeco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgettype: array[0..10] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @recorddefco); stack: nil; 
      keyword: $9E3376EB{'record'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @arraydefco); stack: nil; 
+     keyword: $3C66EDD6{'array'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefco); stack: @classdefreturnco; 
-     keyword: $3C66EDD6{'class'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @arraydefco); stack: @arraydefreturnco; 
-     keyword: $78CDDBAD{'array'}),
+     keyword: $78CDDBAD{'class'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2693,16 +2698,16 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @simpletypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @handlepointertype); stack: nil; keys: (
+    (kind: bkk_char; chars: ['^']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @handlepointertype); stack: nil; keys: (
-    (kind: bkk_char; chars: ['^']),
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
+     dest: (context: @simpletypeco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2716,7 +2721,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype4: array[0..6] of branchty = (
+ btype3: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2941,44 +2946,6 @@ const
     )),
    (flags: [bf_nt,bf_handler,bf_push];
      dest: (handler: @handlearrayindexerror2); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bgettype: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @comment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @type2co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4316,13 +4283,12 @@ begin
  type0co.branch:= @btype0;
  type0co.next:= @type1co;
  type1co.branch:= @btype1;
- type1co.handleentry:= @handletypedefstart;
+ type1co.handleexit:= @handleequalityexpected;
  type2co.branch:= @btype2;
  type2co.next:= @type3co;
- type3co.branch:= nil;
- type3co.next:= @type4co;
- type3co.handleentry:= @handletype3;
- type4co.branch:= @btype4;
+ gettypeco.branch:= @bgettype;
+ gettypeco.handleentry:= @handlegettypestart;
+ type3co.branch:= @btype3;
  simpletypeco.branch:= @bsimpletype;
  simpletypeco.handleexit:= @handlesimpletype;
  recorddefco.branch:= nil;
@@ -4335,16 +4301,15 @@ begin
  recordfieldco.branch:= @brecordfield;
  recordfieldco.handleexit:= @handlerecordfield;
  recorddefreturnco.branch:= nil;
- recorddefreturnco.handleentry:= @handlerecorddefreturn;
+ recorddefreturnco.handleentry:= @handlerecordtype;
  arraydefco.branch:= @barraydef;
  arraydefco.next:= @arraydef1co;
  arraydefco.handleentry:= @handlearraydefstart;
  arraydef1co.branch:= @barraydef1;
  arraydef1co.handleexit:= @handlearraydeferror1;
  arraydef2co.branch:= @barraydef2;
- arraydef2co.next:= @type4co;
+ arraydef2co.next:= @arraydefreturnco;
  arraydefreturnco.branch:= nil;
- arraydefreturnco.next:= @type4co;
  arraydefreturnco.handleentry:= @handlearraydefreturn;
  arrayindexco.branch:= @barrayindex;
  arrayindexco.handleexit:= @handlearrayindexerror1;
@@ -4352,7 +4317,6 @@ begin
  arrayindex1co.next:= @arrayindex2co;
  arrayindex2co.branch:= @barrayindex2;
  arrayindex2co.handleexit:= @handlearrayindex;
- gettypeco.branch:= @bgettype;
  getrangeco.branch:= @bgetrange;
  getrangeco.next:= @getrange1co;
  getrange1co.branch:= @bgetrange1;

@@ -21,14 +21,13 @@ uses
  parserglob;
 
 procedure handletype(const info: pparseinfoty);
-procedure handletypedefstart(const info: pparseinfoty);
+procedure handlegettypestart(const info: pparseinfoty);
 procedure handlesimpletype(const info: pparseinfoty);
-procedure handletype3(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
  
 procedure handlerecorddefstart(const info: pparseinfoty);
 procedure handlerecorddeferror(const info: pparseinfoty);
-procedure handlerecorddefreturn(const info: pparseinfoty);
+procedure handlerecordtype(const info: pparseinfoty);
 procedure handlerecordfield(const info: pparseinfoty);
 
 procedure handlearraydefstart(const info: pparseinfoty);
@@ -53,15 +52,15 @@ begin
  end;
 end;
 
-procedure handletypedefstart(const info: pparseinfoty);
+procedure handlegettypestart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'TYPEDEFSTART');
+ outhandle(info,'GETTYPESTART');
 {$endif}
+outinfo(info,'***');
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_type;
   d.typ.indirectlevel:= 0;
-//  d.typ.flags:= [];
  end;
 end;
 
@@ -84,22 +83,25 @@ begin
  outhandle(info,'SIMPLETYPE');
 {$endif}
 outinfo(info,'***');
- with info^,contextstack[stackindex] do begin
+ with info^,contextstack[stackindex-1] do begin
   if findkindelements(info,1,[ek_type],vis_max,po2) then begin
-   d.kind:= ck_type;
+//   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
-   d.typ.indirectlevel:= 0;
-   with contextstack[stackindex-1] do begin
+//   d.typ.indirectlevel:= 0;
+   with contextstack[stackindex-2] do begin
     if d.kind = ck_ident then begin
      po1:= ele.addelement(d.ident.ident,vis_max,ek_type);
-    end;
-    if po1 <> nil then begin
-     ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-     inc(ptypedataty(@po1^.data)^.indirectlevel,
-                            contextstack[stackindex-2].d.typ.indirectlevel);
+     if po1 <> nil then begin
+      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
+      inc(ptypedataty(@po1^.data)^.indirectlevel,
+                             contextstack[stackindex-1].d.typ.indirectlevel);
+     end
+     else begin //duplicate
+      identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
+     end;
     end
-    else begin //duplicate
-     identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
+    else begin
+     internalerror(info,'H20140324B');
     end;
    end;
   end
@@ -107,38 +109,6 @@ outinfo(info,'***');
    identerror(info,stacktop-stackindex,err_identifiernotfound);
   end;
  end;
-end;
-
-procedure handletype3(const info: pparseinfoty);
-var
- po1,po2: pelementinfoty;
-begin
-{$ifdef mse_debugparser}
- outhandle(info,'TYPE3');
-{$endif}
-outinfo(info,'***');
-{
- with info^ do begin
-  if (stacktop-stackindex = 2) and 
-       (contextstack[stacktop].d.kind = ck_type) and
-       (contextstack[stacktop-1].d.kind = ck_ident) then begin
-   po1:= ele.addelement(contextstack[stacktop-1].d.ident.ident,vis_max,ek_type);
-   if po1 = nil then begin //duplicate
-    identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
-   end
-   else begin //todo: multi level type
-    po2:= ele.eleinfoabs(contextstack[stacktop].d.typ.typedata);
-    ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-    with contextstack[stackindex].d do begin
-     inc(ptypedataty(@po1^.data)^.indirectlevel,typ.indirectlevel);
-    end;
-   end;
-  end
-  else begin
-   internalerror(info,'H131024A');
-  end;
- end;
-}
 end;
  
 procedure handlerecorddefstart(const info: pparseinfoty);
@@ -151,7 +121,7 @@ begin
 {$endif}
 outinfo(info,'***');
  with info^ do begin
-  with contextstack[stacktop-1] do begin
+  with contextstack[stackindex-2] do begin
    if d.kind = ck_ident then begin
     id1:= d.ident.ident; //typedef
    end
@@ -159,10 +129,10 @@ outinfo(info,'***');
     id1:= getident();
    end;
   end;
-  with contextstack[stackindex],d do begin
-   elemark:= ele.elementparent;
-   kind:= ck_type;
-   if not ele.pushelement(id1,vis_max,ek_type,typ.typedata) then begin
+  contextstack[stackindex].elemark:= ele.elementparent;
+  with contextstack[stackindex-1] do begin
+//   kind:= ck_type;
+   if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
     identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
   end;
@@ -215,13 +185,13 @@ begin
  end;
 end;
 
-procedure handlerecorddefreturn(const info: pparseinfoty);
+procedure handlerecordtype(const info: pparseinfoty);
 var
  int1,int2: integer;
  po1: pfielddataty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFRETURN');
+ outhandle(info,'RECORDTYPE');
 {$endif}
 outinfo(info,'****');
   with info^ do begin
@@ -235,8 +205,8 @@ outinfo(info,'****');
                 //todo: alignment
    end;
   end;
-  with contextstack[stackindex],ptypedataty(ele.eledataabs(
-               d.typ.typedata))^ do begin
+  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
+                                                d.typ.typedata))^ do begin
    kind:= dk_record;
    datasize:= das_none;
    bytesize:= int2;
@@ -293,7 +263,7 @@ begin
 {$endif}
 outinfo(info,'***');
  with info^ do begin
-  dec(stackindex,2);
+  dec(stackindex,1);
  end;
 end;
 

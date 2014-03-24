@@ -328,7 +328,7 @@ function parseunit(const info: pparseinfoty; const input: string;
    int1:= stackindex;
    stackindex:= contextstack[stackindex].parent;
    if int1 = stackindex then begin
-    internalerror(info,'invalid pop parent');
+    internalerror(info,'P20140324A');
    end;
   end;
  end; //popparent
