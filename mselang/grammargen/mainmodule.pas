@@ -35,14 +35,15 @@ uses
  PASCALSTRING{','PASCALSTRING}
      first character of strings removed for const def ex:
       '.classes' -> tks_classes
-CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]['^'|'!']['+']['*']['>']
+CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]
+        (['*']['^'|'!']) | (['^'|'!']['*']) ['+']['>']
     ENTRYHANDLER called at contextstart
-    EXITHANDLER called by context termination, NEXT must be empty
+    EXITHANDLER called by context termination
  '-' -> eat text
- '^' -> pop parent
- '!' -> pop parent and execute parent handler
- '+' -> restore source pointer
  '*' -> stackindex -> stacktop
+ '^' -> pop parent, NEXT must be empty
+ '!' -> pop parent and execute parent handler, NEXT must be empty
+ '+' -> restore source pointer
  '>' -> continue with calling context
  STRINGDEF|'@'TOKENDEF{','STRINGDEF|'@'TOKENDEF}','
         ([CONTEXT] ['+']['-']['+'] [['^']['*'] | ['*']['^']] [ '>']) |
@@ -712,14 +713,6 @@ begin
      str2:= str2+'continue: false; ';
     end;
     if (cont[contlast] <> '') and 
-                      (cont[contlast][length(cont[contlast])] = '*') then begin
-     setlength(cont[contlast],length(cont[contlast])-1);
-     str2:= str2+'cut: true; ';
-    end
-    else begin
-     str2:= str2+'cut: false; ';
-    end;
-    if (cont[contlast] <> '') and 
                       (cont[contlast][length(cont[contlast])] = '+') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+'restoresource: true; ';
@@ -728,10 +721,23 @@ begin
      str2:= str2+'restoresource: false; ';
     end;
     if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '*') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
+     str2:= str2+'cutafter: true; ';
+    end
+    else begin
+     str2:= str2+'cutafter: false; ';
+    end;
+    if (cont[contlast] <> '') and 
                       (cont[contlast][length(cont[contlast])] = '^') then begin
      setlength(cont[contlast],length(cont[contlast])-1);
      str2:= str2+lineend+
 '               pop: true; popexe: false; ';
+{
+     if cont[1] <> '' then begin
+      error('pop parent not allowed with NEXT',li);
+     end;
+}
     end
     else begin
      if (cont[contlast] <> '') and 
@@ -739,11 +745,24 @@ begin
       setlength(cont[contlast],length(cont[contlast])-1);
       str2:= str2+lineend+
 '               pop: true; popexe: true; ';
+ {
+      if cont[1] <> '' then begin
+       error('pop parent-exe not allowed with NEXT',li);
+      end;
+ }
      end
      else begin
       str2:= str2+lineend+
 '               pop: false; popexe: false; ';
      end;
+    end;
+    if (cont[contlast] <> '') and 
+                      (cont[contlast][length(cont[contlast])] = '*') then begin
+     setlength(cont[contlast],length(cont[contlast])-1);
+     str2:= str2+'cutbefore: true; ';
+    end
+    else begin
+     str2:= str2+'cutbefore: false; ';
     end;
     if (cont[1] <> '') and (cont[1][length(cont[1])] = '-') then begin
      setlength(cont[1],length(cont[1])-1);
@@ -992,9 +1011,9 @@ lineend+
 ' '+cont[0]+'co.handleentry:= @'+cont[contlast-1]+';'+lineend;
     end;
     if cont[contlast] <> '' then begin
-     if cont[1] <> '' then begin
-      error('EXITHANDLER not allowed with NEXT',li);
-     end;
+//     if cont[1] <> '' then begin
+//      error('EXITHANDLER not allowed with NEXT',li);
+//     end;
      str1:= str1+
 ' '+cont[0]+'co.handleexit:= @'+cont[contlast]+';'+lineend;
     end;

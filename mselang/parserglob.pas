@@ -145,10 +145,11 @@ type
   handleentry: contexthandlerty;
   handleexit: contexthandlerty;
   continue: boolean;
-  cut: boolean;
   restoresource: boolean;
+  cutafter: boolean;
   pop: boolean;
   popexe: boolean;
+  cutbefore: boolean;
   nexteat: boolean;
   next: pcontextty;
   caption: string;

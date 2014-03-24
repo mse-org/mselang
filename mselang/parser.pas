@@ -111,7 +111,7 @@ begin
     end;
     if context <> nil then begin
      with context^ do begin
-      if cut then begin
+      if cutbefore then begin
        write('-');
       end
       else begin
@@ -125,6 +125,12 @@ begin
       end;
       if popexe then begin
        write('!');
+      end
+      else begin
+       write(' ');
+      end;
+      if cutafter then begin
+       write('-');
       end
       else begin
        write(' ');
@@ -278,10 +284,17 @@ begin
      exit;
     end;
    end;
+   if pc^.handleexit <> nil then begin
+    pc^.handleexit(info); //transition handler
+    if stopparser then begin
+     result:= false;
+     exit;
+    end;
+   end;
    if pc^.nexteat then begin
     contextstack[stackindex].start:= source;
    end;
-   if pc^.cut then begin
+   if pc^.cutafter or pc^.cutbefore then begin
     stacktop:= stackindex;
    end;
    pc:= pc^.next;
@@ -527,19 +540,25 @@ handlelab:
      debugsource:= source.po;
      keywordindex:= 0;
     end;
-    if pc^.handleexit <> nil then begin //pc^.next = nil!
+    if pc^.handleexit <> nil then begin
          //call context termination handler
      pc^.handleexit(info);
      if stopparser then begin
       goto parseend;
      end;
          //take context terminate actions
-     if pc^.pop then begin
+     if pc^.cutbefore then begin
+      stacktop:= stackindex;
+     end;
+     if (pc^.next = nil) and pc^.pop then begin
       popparent;
      end;
     end
     else begin
          //no handler, automatic stack decrement
+     if pc^.cutbefore then begin
+      stacktop:= stackindex;
+     end;
      if pc^.next = nil then begin
       if pc^.pop then begin
        popparent;
@@ -549,7 +568,7 @@ handlelab:
       end;
      end;
     end;
-    if pc^.cut then begin
+    if pc^.cutafter then begin
      stacktop:= stackindex;
     end;
     if (stackindex <= stacktopbefore) or stopparser then begin
@@ -587,7 +606,7 @@ handlelab:
      if pc^.nexteat then begin
       start:= source;
      end;
-     if pc^.cut then begin
+     if pc^.cutafter then begin
       stacktop:= stackindex;
      end;
 {$ifdef mse_debugparser}

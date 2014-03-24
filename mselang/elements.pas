@@ -162,6 +162,7 @@ type
 procedure clear;
 procedure init;
 
+function getident(): identty; overload;
 function getident(const astart,astop: pchar): identty; overload;
 function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
@@ -410,6 +411,12 @@ begin
  end;
  move(astr.po^,(pchar(pointer(stringdata))+int1)^,int2);
  result:= int1;
+ lfsr321(stringident); 
+end;
+
+function getident(): identty;
+begin
+ result:= stringident;
  lfsr321(stringident); 
 end;
  
