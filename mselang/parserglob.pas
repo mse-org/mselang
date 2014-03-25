@@ -73,7 +73,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_range,ck_ref,ck_fact,ck_subres,ck_sub,
-                  ck_type,ck_var,ck_field,ck_statement,
+                  ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_paramsdef,ck_params);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
@@ -324,7 +324,7 @@ type
 //   ck_opmark:(
 //    opmark: opmarkty;
 //   );
-   ck_type:(
+   ck_typetype,ck_fieldtype:(
     typ: typeinfoty;
    );
    ck_var:(

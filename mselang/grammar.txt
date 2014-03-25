@@ -276,7 +276,7 @@ arraydef1,,,handlearraydeferror1
  ${whitespace}
  'of'.,arraydef2-
 arraydef2,arraydefreturn,,
- '',gettype^*
+ '',getfieldtype^*
 arraydefreturn,,handlearraydefreturn,*^
 #
 arrayindex,,,handlearrayindexerror1
@@ -288,7 +288,9 @@ arrayindex2,,,handlearrayindex
  ']',-*
   '',!handlearrayindexerror2*
 #
-gettype,,handlegettypestart,^
+getfieldtype,gettype,handlegetfieldtypestart,
+gettypetype,gettype,handlegettypetypestart,
+gettype,,,^
  ${whitespace}
  '^',!handlepointertype-
  @identstart,simpletype^*
@@ -307,7 +309,7 @@ var1,,handlevardefstart,
  ${whitespace}
  ':',var2-
 var2,var3,,
- '',gettype^*
+ '',getfieldtype^*
 var3,checksemicolon2,,handlevar3
 #
 vardef,vardef0,,
@@ -316,7 +318,7 @@ vardef0,,handlevardefstart,
  ${whitespace}
  ':',vardef1-
 vardef1,checksemicolon,,
- '',gettype^*
+ '',getfieldtype^*
 # ${whitespace}
 # @identstart,identpath^*
 #
@@ -330,7 +332,7 @@ type1,,,handleequalityexpected
  ${whitespace}
  '=',type2-
 type2,type3,,*
- '',gettype^*
+ '',gettypetype^*
 type3,,,*>
  ${whitespace}
  ';',-*

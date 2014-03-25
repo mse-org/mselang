@@ -2399,7 +2399,7 @@ begin
 outinfo(info,'***');
  with info^ do begin
   if (stacktop-stackindex < 2) or 
-            (contextstack[stackindex+2].d.kind <> ck_type) then begin
+            (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
    internalerror(info,'H20140325B');
    exit;
   end;

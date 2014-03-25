@@ -21,7 +21,8 @@ uses
  parserglob;
 
 procedure handletype(const info: pparseinfoty);
-procedure handlegettypestart(const info: pparseinfoty);
+procedure handlegettypetypestart(const info: pparseinfoty);
+procedure handlegetfieldtypestart(const info: pparseinfoty);
 procedure handlesimpletype(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
  
@@ -52,14 +53,26 @@ begin
  end;
 end;
 
-procedure handlegettypestart(const info: pparseinfoty);
+procedure handlegetfieldtypestart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'GETTYPESTART');
+ outhandle(info,'GETFIELDTYPESTART');
 {$endif}
 outinfo(info,'***');
  with info^,contextstack[stackindex] do begin
-  d.kind:= ck_type;
+  d.kind:= ck_fieldtype;
+  d.typ.indirectlevel:= 0;
+ end;
+end;
+
+procedure handlegettypetypestart(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'GETTYPETYPESTART');
+{$endif}
+outinfo(info,'***');
+ with info^,contextstack[stackindex] do begin
+  d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
  end;
 end;
@@ -92,7 +105,7 @@ outinfo(info,'***');
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
-   if contextstack[stackindex-3].d.kind <> ck_var then begin
+   if contextstack[stackindex-1].d.kind = ck_typetype then begin
     with contextstack[stackindex-2] do begin
      if d.kind = ck_ident then begin
       po1:= ele.addelement(d.ident.ident,vis_max,ek_type);
@@ -133,7 +146,7 @@ outinfo(info,'***');
   end;
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-3].d.kind <> ck_var) then begin
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
     id1:= d.ident.ident; //typedef
    end
    else begin
@@ -172,7 +185,7 @@ begin
 outinfo(info,'***');
  with info^ do begin
   if (stacktop-stackindex < 3) or 
-            (contextstack[stackindex+3].d.kind <> ck_type) then begin
+            (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
    internalerror(info,'H20140325C');
    exit;
   end;

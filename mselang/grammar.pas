@@ -548,6 +548,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'arrayindex2');
+ getfieldtypeco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getfieldtype');
+ gettypetypeco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'gettypetype');
  gettypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2549,7 +2559,7 @@ const
    );
  barraydef2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @gettypeco); stack: nil; keys: (
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2762,7 +2772,7 @@ const
    );
  bvar2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @gettypeco); stack: nil; keys: (
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2820,7 +2830,7 @@ const
    );
  bvardef1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @gettypeco); stack: nil; keys: (
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2928,7 +2938,7 @@ const
    );
  btype2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @gettypeco); stack: nil; keys: (
+     dest: (context: @gettypetypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4239,8 +4249,13 @@ begin
  arrayindex1co.next:= @arrayindex2co;
  arrayindex2co.branch:= @barrayindex2;
  arrayindex2co.handleexit:= @handlearrayindex;
+ getfieldtypeco.branch:= nil;
+ getfieldtypeco.next:= @gettypeco;
+ getfieldtypeco.handleentry:= @handlegetfieldtypestart;
+ gettypetypeco.branch:= nil;
+ gettypetypeco.next:= @gettypeco;
+ gettypetypeco.handleentry:= @handlegettypetypestart;
  gettypeco.branch:= @bgettype;
- gettypeco.handleentry:= @handlegettypestart;
  varco.branch:= @bvar;
  var0co.branch:= @bvar0;
  var0co.next:= @var1co;
