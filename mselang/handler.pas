@@ -56,7 +56,7 @@ procedure handleconst(const info: pparseinfoty);
 procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
 
-procedure handlevar(const info: pparseinfoty);
+//procedure handlevar(const info: pparseinfoty);
 procedure handlevardefstart(const info: pparseinfoty);
 procedure handlevar3(const info: pparseinfoty);
 procedure handlepointervar(const info: pparseinfoty);
@@ -2362,18 +2362,20 @@ begin
  end;
 end;
 
-
+(*
 procedure handlevar(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'VAR');
 {$endif}
+outinfo(info,'***');
  with info^,contextstack[stacktop] do begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
- 
+*)
+
 procedure handlevardefstart(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -2389,44 +2391,48 @@ end;
 procedure handlevar3(const info: pparseinfoty);
 var
  po1,po2: pelementinfoty;
+ size1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'VAR3');
 {$endif}
 outinfo(info,'***');
  with info^ do begin
+  if (stacktop-stackindex < 2) or 
+            (contextstack[stackindex+2].d.kind <> ck_type) then begin
+   internalerror(info,'H20140325B');
+   exit;
+  end;
   po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,ek_var);
   if po1 = nil then begin //duplicate
    identerror(info,1,err_duplicateidentifier);
   end
-  else begin //todo: multi level type
-   if findkindelements(info,2,[ek_type],vis_max,po2) then begin
-    with pvardataty(@po1^.data)^ do begin
-     typ:= ele.eleinforel(po2);
-     if funclevel = 0 then begin
-      address.address:= getglobvaraddress(info,
-                                        ptypedataty(@po2^.data)^.bytesize);
-      address.flags:= [vf_global];
-      address.framelevel:= 0;
+  else begin
+   with pvardataty(@po1^.data)^ do begin
+    typ:= contextstack[stackindex+2].d.typ.typedata;
+    po2:= ele.eleinfoabs(typ);
+    address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
+    with ptypedataty(@po2^.data)^ do begin
+     address.indirectlevel:= address.indirectlevel+indirectlevel;
+     if address.indirectlevel = 0 then begin
+      size1:= bytesize;
      end
      else begin
-      address.address:= getlocvaraddress(info,
-                              ptypedataty(@po2^.data)^.bytesize)-frameoffset;
-      address.flags:= []; //local
-      address.framelevel:= funclevel;
-     end;
-     address.indirectlevel:= contextstack[stackindex].d.vari.indirectlevel;
-     with ptypedataty(@po2^.data)^ do begin
-      address.indirectlevel:= address.indirectlevel+indirectlevel;
+      size1:= pointersize;
      end;
     end;
-   end
-   else begin
-    identerror(info,2,err_identifiernotfound);
+    if funclevel = 0 then begin
+     address.address:= getglobvaraddress(info,size1);
+     address.flags:= [vf_global];
+     address.framelevel:= 0;
+    end
+    else begin
+     address.address:= getlocvaraddress(info,size1)-frameoffset;
+     address.flags:= []; //local
+     address.framelevel:= funclevel;
+    end;
    end;
   end;
-  dec(stackindex);
-//  stacktop:= stackindex;
  end;
 end;
 

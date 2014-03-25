@@ -49,6 +49,10 @@ checksemicolon,,,^
  ${whitespace}
  ';',-*
  '',semicolonexpected
+checksemicolon2,,,*>
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 semicolonexpected,,,handlesemicolonexpected
 identexpected,,,handleidentexpected
 start1,start2,,
@@ -253,48 +257,6 @@ const3,const0-,handleconst3,
  ${whitespace}
  ';',statementend-*
 #
-var,,,handlevar>
- ${whitespace}
- ${blockswitch}
- '',var0*^
-var0,var1,,
- @identstart,ident^*
-var1,,handlevardefstart,
- ${whitespace}
- ':',var2-
-var2,identexpected,,
- ${whitespace}
- @identstart,identpath^*>,var3^
- '^',!handlepointervar-
-var3,,,handlevar3*>
- ${whitespace}
- ';',-*
- '',semicolonexpected
-#
-type,,,handletype>
- ${whitespace}
- ${blockswitch}
- '',type0*^
-type0,type1,,
- @identstart,identpath^*
-type1,,,handleequalityexpected
- ${whitespace}
- '=',type2-
-type2,type3,,*
- '',gettype^*
-gettype,,handlegettypestart,^
- ${whitespace}
- '^',!handlepointertype-
- @identstart,simpletype^*
- 'record'.,recorddef-^*
- 'array'.,arraydef-^*
- 'class'.,classdef-,classdefreturn
- '',identexpected
-type3,,,*>
- ${whitespace}
- ';',-*
- '',semicolonexpected
-#
 simpletype,,,handlesimpletype*^
  '',identpath^*
 recorddef,recorddef0,handlerecorddefstart,
@@ -326,9 +288,44 @@ arrayindex2,,,handlearrayindex
  ']',-*
   '',!handlearrayindexerror2*
 #
-#gettype,,,^
-# ${whitespace}
-# '',type2*
+gettype,,handlegettypestart,^
+ ${whitespace}
+ '^',!handlepointertype-
+ @identstart,simpletype^*
+ 'record'.,recorddef-^*
+ 'array'.,arraydef-^*
+ 'class'.,classdef-,classdefreturn
+ '',identexpected
+#
+var,,,*>
+ ${whitespace}
+ ${blockswitch}
+ '',var0*^
+var0,var1,,
+ @identstart,ident^*
+var1,,handlevardefstart,
+ ${whitespace}
+ ':',var2-
+var2,var3,,
+ '',gettype^*
+var3,checksemicolon2,,handlevar3
+#
+type,,,handletype>
+ ${whitespace}
+ ${blockswitch}
+ '',type0*^
+type0,type1,,
+ @identstart,identpath^*
+type1,,,handleequalityexpected
+ ${whitespace}
+ '=',type2-
+type2,type3,,*
+ '',gettype^*
+type3,,,*>
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
+#
 getrange,getrange1,,
  '',exp^*
 getrange1,getrange2,,
@@ -404,7 +401,7 @@ getaddress,illegalexpression,,
  ${whitespace}
  @identstart,identpath^*,getaddress0
 # '(',getaddressbracket
-getaddress0,term1,handleaddress,
+getaddress0,term1,,handleaddress
 #
 illegalexpression,,,handleillegalexpression*
 #

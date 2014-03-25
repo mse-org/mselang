@@ -84,24 +84,30 @@ begin
 {$endif}
 outinfo(info,'***');
  with info^,contextstack[stackindex-1] do begin
+  if stackindex < 3 then begin
+   internalerror(info,'H20140325A');
+   exit;
+  end;
   if findkindelements(info,1,[ek_type],vis_max,po2) then begin
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
-   with contextstack[stackindex-2] do begin
-    if d.kind = ck_ident then begin
-     po1:= ele.addelement(d.ident.ident,vis_max,ek_type);
-     if po1 <> nil then begin
-      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-      inc(ptypedataty(@po1^.data)^.indirectlevel,
-                             contextstack[stackindex-1].d.typ.indirectlevel);
+   if contextstack[stackindex-3].d.kind <> ck_var then begin
+    with contextstack[stackindex-2] do begin
+     if d.kind = ck_ident then begin
+      po1:= ele.addelement(d.ident.ident,vis_max,ek_type);
+      if po1 <> nil then begin
+       ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
+       inc(ptypedataty(@po1^.data)^.indirectlevel,
+                              contextstack[stackindex-1].d.typ.indirectlevel);
+      end
+      else begin //duplicate
+       identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
+      end;
      end
-     else begin //duplicate
-      identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
+     else begin
+      internalerror(info,'H20140324B');
      end;
-    end
-    else begin
-     internalerror(info,'H20140324B');
     end;
    end;
   end
