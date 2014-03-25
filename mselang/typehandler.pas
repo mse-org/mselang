@@ -127,8 +127,13 @@ begin
 {$endif}
 outinfo(info,'***');
  with info^ do begin
+  if stackindex < 3 then begin
+   internalerror(info,'H20140325D');
+   exit;
+  end;
   with contextstack[stackindex-2] do begin
-   if d.kind = ck_ident then begin
+   if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-3].d.kind <> ck_var) then begin
     id1:= d.ident.ident; //typedef
    end
    else begin
