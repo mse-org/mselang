@@ -310,6 +310,16 @@ var2,var3,,
  '',gettype^*
 var3,checksemicolon2,,handlevar3
 #
+vardef,vardef0,,
+ '',ident^*
+vardef0,,handlevardefstart,
+ ${whitespace}
+ ':',vardef1-
+vardef1,checksemicolon,,
+ '',gettype^*
+# ${whitespace}
+# @identstart,identpath^*
+#
 type,,,handletype>
  ${whitespace}
  ${blockswitch}
@@ -349,15 +359,6 @@ classdeferror,,handleclassdeferror,^
 classdefreturn,type3,handleclassdefreturn,*
 classfield,,,handleclassfield^*>
  '',vardef^*
-#
-vardef,vardef0,,
- '',ident^*
-vardef0,,,
- ${whitespace}
- ':',vardef1-
-vardef1,checksemicolon,,
- ${whitespace}
- @identstart,identpath^*
 #
 
 statementend,,,handlestatementend!

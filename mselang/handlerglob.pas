@@ -131,6 +131,7 @@ type
   offset: ptruint;
   typ: elementoffsetty; //elementdata relative
   flags: varflagsty;
+  indirectlevel: integer;
  end;
  pfielddataty = ^fielddataty;
 

@@ -164,24 +164,26 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'RECORDFIELD');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
+  if (stacktop-stackindex < 3) or 
+            (contextstack[stackindex+3].d.kind <> ck_type) then begin
+   internalerror(info,'H20140325C');
+   exit;
+  end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            vis_max,ek_field,po1) then begin
    ele1:= ele.elementparent;
    ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
-                                                           //record def
-   if findkindelementsdata(info,3,[ek_type],vis_max,po2) then begin
-    po1^.typ:= ele.eledatarel(po2);
-    with contextstack[stackindex].d do begin
-     kind:= ck_field;
-     field.fielddata:= ele.eledatarel(po1);
-    end;
-    stacktop:= stackindex;
-   end
-   else begin
-    identerror(info,stacktop-stackindex,err_identifiernotfound);
-    stacktop:= stackindex-1;
+   with contextstack[stackindex+3] do begin
+    po1^.typ:= d.typ.typedata;
+    po1^.indirectlevel:= d.typ.indirectlevel;
    end;
+   with contextstack[stackindex].d do begin
+    kind:= ck_field;
+    field.fielddata:= ele.eledatarel(po1);
+   end;
+   stacktop:= stackindex;
    ele.elementparent:= ele1;
   end
   else begin
@@ -195,6 +197,7 @@ procedure handlerecordtype(const info: pparseinfoty);
 var
  int1,int2: integer;
  po1: pfielddataty;
+ size1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'RECORDTYPE');
@@ -207,7 +210,13 @@ outinfo(info,'****');
    with contextstack[int1].d do begin
     po1:= ele.eledataabs(field.fielddata);
     po1^.offset:= int2;
-    int2:= int2 + ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
+    if po1^.indirectlevel = 0 then begin
+     size1:= ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
+    end
+    else begin
+     size1:= pointersize;
+    end;
+    int2:= int2 + size1;
                 //todo: alignment
    end;
   end;
