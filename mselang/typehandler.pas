@@ -23,8 +23,9 @@ uses
 procedure handletype(const info: pparseinfoty);
 procedure handlegettypetypestart(const info: pparseinfoty);
 procedure handlegetfieldtypestart(const info: pparseinfoty);
-procedure handlechecktypeident(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
+procedure handlechecktypeident(const info: pparseinfoty);
+procedure handlecheckrangetype(const info: pparseinfoty);
  
 procedure handlerecorddefstart(const info: pparseinfoty);
 procedure handlerecorddeferror(const info: pparseinfoty);
@@ -128,6 +129,55 @@ outinfo(info,'***');
 //  else begin
 //   identerror(info,stacktop-stackindex,err_identifiernotfound);
 //  end;
+ end;
+end;
+
+procedure handlecheckrangetype(const info: pparseinfoty);
+var
+ id1: identty;
+ po1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'CHECKRANGETYPE');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  if stacktop-stackindex <> 3 then begin
+   internalerror(info,'H20140324B');
+   exit;
+  end;
+  with contextstack[stackindex-2] do begin
+   if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+    id1:= d.ident.ident; //typedef
+   end
+   else begin
+    id1:= getident();
+   end;
+  end;
+  with contextstack[stackindex-1] do begin
+   if ele.addelement(id1,vis_max,ek_type,po1) then begin
+    d.typ.typedata:= ele.eledatarel(po1);
+    with po1^ do begin
+     //todo: check datasize
+     indirectlevel:= d.typ.indirectlevel;
+     d.typ.indirectlevel:= 0;
+     bitsize:= 32;
+     bytesize:= 4;
+     datasize:= das_32;
+     kind:= dk_integer;
+     with infoint32 do begin
+      min:= contextstack[stackindex+2].d.constval.vinteger;
+      max:= contextstack[stackindex+3].d.constval.vinteger;
+     end;
+    end;
+   end
+   else begin
+    identerror(info,-1,err_duplicateidentifier,erl_fatal);
+   end;
+   stacktop:= stackindex-1;
+   stackindex:= contextstack[stackindex].parent;
+  end;
  end;
 end;
  

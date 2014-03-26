@@ -259,11 +259,11 @@ const3,const0-,handleconst3,
 #
 simpletype,rangetype,,
  @identstart,typeident*
- '',identexpected
 typeident,checktypeident,,
  '',identpath^*
 checktypeident,,,handlechecktypeident
-rangetype,,,handleidentexpected*^
+rangetype,,,handlecheckrangetype*^
+ '',getrange^*
 # 
 #handlesimpletype*^
 #

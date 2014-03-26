@@ -2439,17 +2439,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsimpletype: array[0..2] of branchty = (
+ bsimpletype: array[0..1] of branchty = (
    (flags: [bf_nt,bf_push];
      dest: (context: @typeidentco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @identexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2459,6 +2452,16 @@ const
  btypeident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ brangetype: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getrangeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4252,8 +4255,8 @@ begin
  typeidentco.next:= @checktypeidentco;
  checktypeidentco.branch:= nil;
  checktypeidentco.handleexit:= @handlechecktypeident;
- rangetypeco.branch:= nil;
- rangetypeco.handleexit:= @handleidentexpected;
+ rangetypeco.branch:= @brangetype;
+ rangetypeco.handleexit:= @handlecheckrangetype;
  recorddefco.branch:= nil;
  recorddefco.next:= @recorddef0co;
  recorddefco.handleentry:= @handlerecorddefstart;
