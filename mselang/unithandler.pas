@@ -136,7 +136,7 @@ begin
 {$endif}
  with info^ do begin
   if us_implementation in unitinfo^.state then begin
-   errormessage(info,-1,err_invalidtoken,['implementation']);
+   errormessage(info,err_invalidtoken,['implementation']);
   end
   else begin
    include(unitinfo^.state,us_implementation);

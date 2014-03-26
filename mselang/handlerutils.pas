@@ -122,7 +122,7 @@ begin
   inc(identcount);
   result:= true;
   if identcount = 0 then begin
-   errormessage(info,astackoffset+identcount,err_toomanyidentifierlevels,[]);
+   errormessage(info,err_toomanyidentifierlevels,[],astackoffset+identcount);
    result:= false;
   end;
  end;

@@ -389,7 +389,7 @@ begin
   filename:= msefileutils.filename(unitinfo^.filepath);
   if us_interfaceparsed in unitinfo^.state then begin
    if unitinfo^.impl.sourceoffset >= length(input) then begin
-    errormessage(info,-1,err_filetrunc,[filename]);
+    errormessage(info,err_filetrunc,[filename]);
     debugsource:= source.po;
     goto parseend;
    end;

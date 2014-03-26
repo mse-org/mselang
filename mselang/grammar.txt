@@ -257,8 +257,16 @@ const3,const0-,handleconst3,
  ${whitespace}
  ';',statementend-*
 #
-simpletype,,,handlesimpletype*^
+simpletype,rangetype,,
+ @identstart,typeident*
+ '',identexpected
+typeident,checktypeident,,
  '',identpath^*
+checktypeident,,,handlechecktypeident
+rangetype,,,handleidentexpected*^
+# 
+#handlesimpletype*^
+#
 recorddef,recorddef0,handlerecorddefstart,
 recorddef0,recorddeferror,,
  ${whitespace}
@@ -293,11 +301,12 @@ gettypetype,gettype,handlegettypetypestart,
 gettype,,,^
  ${whitespace}
  '^',!handlepointertype-
- @identstart,simpletype^*
+# @identstart,simpletype^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
  'class'.,classdef-,classdefreturn
- '',identexpected
+ '',simpletype^*
+# '',identexpected
 #
 var,,,*>
  ${whitespace}

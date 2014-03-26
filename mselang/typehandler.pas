@@ -23,7 +23,7 @@ uses
 procedure handletype(const info: pparseinfoty);
 procedure handlegettypetypestart(const info: pparseinfoty);
 procedure handlegetfieldtypestart(const info: pparseinfoty);
-procedure handlesimpletype(const info: pparseinfoty);
+procedure handlechecktypeident(const info: pparseinfoty);
 procedure handlepointertype(const info: pparseinfoty);
  
 procedure handlerecorddefstart(const info: pparseinfoty);
@@ -88,15 +88,16 @@ begin
  end;
 end;
 
-procedure handlesimpletype(const info: pparseinfoty);
+procedure handlechecktypeident(const info: pparseinfoty);
 var
  po1,po2: pelementinfoty;
+ idcontext: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'SIMPLETYPE');
+ outhandle(info,'CHECKTYPEIDENT');
 {$endif}
 outinfo(info,'***');
- with info^,contextstack[stackindex-1] do begin
+ with info^,contextstack[stackindex-2] do begin
   if stackindex < 3 then begin
    internalerror(info,'H20140325A');
    exit;
@@ -105,28 +106,28 @@ outinfo(info,'***');
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
-   if contextstack[stackindex-1].d.kind = ck_typetype then begin
-    with contextstack[stackindex-2] do begin
-     if d.kind = ck_ident then begin
-      po1:= ele.addelement(d.ident.ident,vis_max,ek_type);
-      if po1 <> nil then begin
-       ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-       inc(ptypedataty(@po1^.data)^.indirectlevel,
-                              contextstack[stackindex-1].d.typ.indirectlevel);
-      end
-      else begin //duplicate
-       identerror(info,stacktop-1-stackindex,err_duplicateidentifier);
-      end;
+   if d.kind = ck_typetype then begin
+    idcontext:= @contextstack[stackindex-3];
+    if idcontext^.d.kind = ck_ident then begin
+     po1:= ele.addelement(idcontext^.d.ident.ident,vis_max,ek_type);
+     if po1 <> nil then begin
+      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
+      inc(ptypedataty(@po1^.data)^.indirectlevel,d.typ.indirectlevel);
      end
-     else begin
-      internalerror(info,'H20140324B');
+     else begin //duplicate
+      identerror(info,-3,err_duplicateidentifier);
      end;
+    end
+    else begin
+     internalerror(info,'H20140324B');
     end;
    end;
-  end
-  else begin
-   identerror(info,stacktop-stackindex,err_identifiernotfound);
+   stacktop:= stackindex-1;
+   stackindex:= contextstack[stackindex].parent;
   end;
+//  else begin
+//   identerror(info,stacktop-stackindex,err_identifiernotfound);
+//  end;
  end;
 end;
  

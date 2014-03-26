@@ -465,7 +465,7 @@ outinfo(info,'***');
 //  18446744073709551615
   int1:= 20-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -473,14 +473,14 @@ outinfo(info,'***');
     inc(po1);
    end;
    if (int1 = 0) and (c1 < 10000000000000000000) then begin
-    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+    errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
    end;
   end;
   stackindex:= stacktop-1;
   if contextstack[stackindex].d.kind = ck_neg then begin
    contextstack[stackindex].d.kind:= ck_none;
    if int64(c1) < 0 then begin
-    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+    errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
    end;
    int64(c1):= -int64(c1);
   end;
@@ -509,11 +509,11 @@ outinfo(info,'***');
  with info^ do begin
   if stacktop-stackindex = 2 then begin
    if contextstack[stackindex+1].d.kind <> ck_const then begin
-    errormessage(info,1,err_constexpressionexpected,[]);
+    errormessage(info,err_constexpressionexpected,[],1);
    end
    else begin
     if contextstack[stackindex+2].d.kind <> ck_const then begin
-     errormessage(info,2,err_constexpressionexpected,[]);
+     errormessage(info,err_constexpressionexpected,[],2);
     end
     else begin
      if contextstack[stackindex+1].d.constval.kind <> 
@@ -588,7 +588,7 @@ begin
   end;
   c1:= 0;
   if consumed-po1 > 64 then begin
-   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -621,7 +621,7 @@ begin
 //  1777777777777777777777
   int1:= 22-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -654,7 +654,7 @@ begin
 //  18446744073709551615
   int1:= 20-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -662,7 +662,7 @@ begin
     inc(po1);
    end;
    if (int1 = 0) and (c1 < 10000000000000000000) then begin
-    errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+    errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
    end;
   end;
   d.kind:= ck_number;
@@ -687,7 +687,7 @@ begin
   end;
   c1:= 0;
   if consumed-po1 > 16 then begin
-   errormessage(info,stacktop-stackindex,err_invalidintegerexpression,[]);
+   errormessage(info,err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -1330,7 +1330,7 @@ begin
    end;
   end
   else begin
-   errormessage(info,-1,err_varidentexpected,[]);
+   errormessage(info,err_varidentexpected,[]);
    dec(info^.stackindex);
   end;
  end;
@@ -1362,7 +1362,7 @@ begin
   }
   //todo: handle const
   if datatyp.indirectlevel <= 0 then begin
-   errormessage(info,-1,err_illegalqualifier,[]);
+   errormessage(info,err_illegalqualifier,[]);
   end
   else begin
    dec(datatyp.indirectlevel);
@@ -1466,7 +1466,7 @@ outinfo(info,'****');
          vfloat:= -vfloat;
         end;
         else begin
-         errormessage(info,1,err_negnotpossible,[]);
+         errormessage(info,err_negnotpossible,[],1);
         end;
        end;
       end;
@@ -1476,7 +1476,7 @@ outinfo(info,'****');
        po1:= ele.eledataabs(d.datatyp.typedata);
        op1:= negops[po1^.kind];
        if op1 = nil then begin
-        errormessage(info,1,err_negnotpossible,[]);
+        errormessage(info,err_negnotpossible,[],1);
        end
        else begin
         writeop(info,op1);
@@ -1487,7 +1487,7 @@ outinfo(info,'****');
    end;
   end
   else begin
-   errormessage(info,stacktop-stackindex,err_illegalexpression,[]);
+   errormessage(info,err_illegalexpression,[],stacktop-stackindex);
   end;
   dec(stacktop);
   dec(stackindex);
@@ -1579,7 +1579,7 @@ begin
 {$endif}
  with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+   errormessage(info,err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_const;
  end;
@@ -1593,7 +1593,7 @@ begin
 outinfo(info,'***');
  with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+   errormessage(info,err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_var;
  end;
@@ -1606,7 +1606,7 @@ begin
 {$endif}
  with info^,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+   errormessage(info,err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_out;
  end;
@@ -1620,7 +1620,7 @@ begin
 outinfo(info,'***');
  with info^ do begin
   if stacktop-stackindex <> 2 then begin
-   errormessage(info,-1,err_typeidentexpected,[]);
+   errormessage(info,err_typeidentexpected,[]);
   end
   else begin
    with contextstack[stacktop-1] do begin
@@ -1742,7 +1742,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'IDENTPATH2');
 {$endif}
- errormessage(info,0,err_syntax,['identifier']);
+ errormessage(info,err_syntax,['identifier'],0);
 end;
 
 function tryconvert(const info: pparseinfoty; var context: contextitemty;
@@ -1814,7 +1814,7 @@ var
   result:= paramco = 0;
   if not result then begin
    with info^,contextstack[stackindex].d do begin
-    errormessage(info,1,err_syntax,[';'],ident.len);
+    errormessage(info,err_syntax,[';'],1,ident.len);
    end;
   end;
  end;
@@ -1950,7 +1950,7 @@ outinfo(info,'***');
          case d.kind of
           ck_const: begin
            if not (vf_const in po6^.address.flags) then begin
-            errormessage(info,int1-stackindex,err_variableexpected,[]);
+            errormessage(info,err_variableexpected,[],int1-stackindex);
            end
            else begin
            end;
@@ -1975,9 +1975,10 @@ outinfo(info,'***');
          end;
         end;
         if d.datatyp.typedata <> po6^.typ then begin
-         errormessage(info,int1-stackindex,err_incompatibletypeforarg,
-           [int1-stackindex-3,typename(d),
-                      typename(ptypedataty(ele.eledataabs(po6^.typ))^)]);
+         errormessage(info,err_incompatibletypeforarg,
+                     [int1-stackindex-3,typename(d),
+                     typename(ptypedataty(ele.eledataabs(po6^.typ))^)],
+                                                          int1-stackindex);
         end;
        end;
        inc(po5);
@@ -2056,11 +2057,11 @@ outinfo(info,'***');
     end;
     ek_type: begin
      if paramco = 0 then begin
-      errormessage(info,stacktop-stackindex,err_illegalexpression,[]);
+      errormessage(info,err_illegalexpression,[],stacktop-stackindex);
      end
      else begin
       if paramco > 1 then begin
-       errormessage(info,4,err_closeparentexpected,[],-1);
+       errormessage(info,err_closeparentexpected,[],4,-1);
       end
       else begin
        if not tryconvert(info,contextstack[stacktop],po2,
@@ -2075,7 +2076,7 @@ outinfo(info,'***');
      end;
     end;
     else begin
-     errormessage(info,0,err_wrongtype,[]);
+     errormessage(info,err_wrongtype,[],0);
     end;
    end;
   end
@@ -2169,7 +2170,7 @@ begin
  outhandle(info,'NOUNITNAMEERROR');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_syntax,['identifier']);
+  errormessage(info,err_syntax,['identifier']);
  end;
 end;
 
@@ -2179,7 +2180,7 @@ begin
  outhandle(info,'SEMICOLONEXPECTED');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_syntax,[';']);
+  errormessage(info,err_syntax,[';']);
  end;
 end;
 
@@ -2189,7 +2190,7 @@ begin
  outhandle(info,'SEMICOLONEXPECTED');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_syntax,['=']);
+  errormessage(info,err_syntax,['=']);
  end;
 end;
 
@@ -2199,7 +2200,7 @@ begin
  outhandle(info,'IDENTEXPECTED');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_identexpected,[]);
+  errormessage(info,err_identexpected,[],minint,0,erl_fatal);
  end;
 end;
 
@@ -2209,7 +2210,7 @@ begin
  outhandle(info,'ILLEGALEXPRESSION');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_illegalexpression,[]);
+  errormessage(info,err_illegalexpression,[]);
   dec(stackindex);
  end;
 end;
@@ -2220,7 +2221,7 @@ begin
  outhandle(info,'USESERROR');
 {$endif}
  with info^ do begin
-  errormessage(info,-1,err_syntax,[';']);
+  errormessage(info,err_syntax,[';']);
   dec(stackindex);
   stacktop:= stackindex;
  end;
@@ -2270,7 +2271,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'NOIDENTERROR');
 {$endif}
- errormessage(info,-1,err_identexpected,[],0,erl_fatal);
+ errormessage(info,err_identexpected,[],minint,0,erl_fatal);
 end;
 
 procedure handleprogbegin(const info: pparseinfoty);
@@ -2444,7 +2445,7 @@ begin
  with info^,contextstack[stackindex].d.vari do begin
 //  if tf_reference in flags then begin
   if indirectlevel > 0 then begin
-   errormessage(info,-1,err_typeidentexpected,[]);
+   errormessage(info,err_typeidentexpected,[]);
   end;
   inc(indirectlevel);
 //  include(flags,tf_reference);
@@ -2481,7 +2482,7 @@ begin
  checkforwarderrors(info,info^.unitinfo^.forwardlist);
  with info^ do begin
   if unitlevel = 1 then begin
-   errormessage(info,-1,err_syntax,['begin']);
+   errormessage(info,err_syntax,['begin']);
   end;
   dec(stackindex);
  end;
@@ -2638,7 +2639,7 @@ outinfo(info,'*****');
      case kind of
       ck_const: begin
        if constval.kind <> dk_address then begin
-        errormessage(info,0,err_argnotassign,[]);
+        errormessage(info,err_argnotassign,[],0);
        end
        else begin
         dest.address:= constval.vaddress;
@@ -2751,7 +2752,7 @@ outinfo(info,'*****');
    end;
   end
   else begin
-   errormessage(info,-1,err_illegalexpression,[]);
+   errormessage(info,err_illegalexpression,[]);
   end;
   dec(stackindex);
   stacktop:= stackindex;
@@ -2803,7 +2804,7 @@ outinfo(info,'***');
     ck_sub: begin
     end;
     else begin
-     errormessage(info,1,err_illegalexpression,[]);
+     errormessage(info,err_illegalexpression,[],1);
     end;
    end;
   end;
@@ -2981,7 +2982,7 @@ begin
  with info^,contextstack[stacktop] do begin
   if not (ptypedataty(ele.eledataabs(
                          d.datatyp.typedata))^.kind = dk_boolean) then begin
-   errormessage(info,stacktop-stackindex,err_booleanexpressionexpected,[]);
+   errormessage(info,err_booleanexpressionexpected,[],stacktop-stackindex);
   end;
   if d.kind = ck_const then begin
    push(info,d.constval.vboolean); //todo: use compiletime branch
@@ -3131,7 +3132,7 @@ outinfo(info,'****');
     paramco:= (stacktop-stackindex-2-2) div 3+1;
    end
    else begin
-    errormessage(info,stacktop-stackindex-1,err_syntax,[';']);    
+    errormessage(info,err_syntax,[';'],stacktop-stackindex-1);    
    end;
   end
   else begin
@@ -3203,7 +3204,7 @@ outinfo(info,'****');
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                             vis_max,@checkequalparam,paramdata) then begin
    err1:= true;
-   errormessage(info,-1,err_sameparamlist,[]);
+   errormessage(info,err_sameparamlist,[]);
   end;
 
   po1^.address:= 0; //init
@@ -3220,10 +3221,11 @@ outinfo(info,'****');
       for int1:= 0 to paramco-1 do begin
        if ele.eleinfoabs(parref^[int1])^.header.name <> 
                  ele.eleinfoabs(par1^[int1])^.header.name then begin
-        errormessage(info,stacktop-stackindex-3*(paramco-int1-1)-1,
+        errormessage(info,
              err_functionheadernotmatch,
                 [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
-                     getidentname(ele.eleinfoabs(par1^[int1])^.header.name)]);
+                     getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
+                                      stacktop-stackindex-3*(paramco-int1-1)-1);
        end;
       end;
      end;
@@ -3324,7 +3326,7 @@ end;
 procedure handlecheckterminator(const info: pparseinfoty);
 begin
  with info^ do begin
-  errormessage(info,-1,err_syntax,[';']);
+  errormessage(info,err_syntax,[';']);
   dec(stackindex);
  end;
 end;
@@ -3332,7 +3334,7 @@ end;
 procedure handlestatementblock1(const info: pparseinfoty);
 begin
  with info^ do begin
-  errormessage(info,-1,err_syntax,[';']);
+  errormessage(info,err_syntax,[';']);
   dec(stackindex);
  end;
 end;
@@ -3364,7 +3366,7 @@ begin
 {$endif}
  with info^ do begin
   stopparser:= true;
-  errormessage(info,-1,err_abort,[]);
+  errormessage(info,err_abort,[]);
  end;
 end;
 
@@ -3373,7 +3375,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle(info,'STRINGLINEENDERROR');
 {$endif}
- errormessage(info,-1,err_stringexeedsline,[]);
+ errormessage(info,err_stringexeedsline,[]);
 end;
 
 procedure handlestringstart(const info: pparseinfoty);
@@ -3444,7 +3446,7 @@ outinfo(info,'****');
     internalerror(info,'H20140220A');
    end;
    if d.number.value > $10ffff then begin
-    errormessage(info,stacktop-stackindex,err_illegalcharconst,[]);
+    errormessage(info,err_illegalcharconst,[],stacktop-stackindex);
    end
    else begin //todo: optimize
     i2:= 1;

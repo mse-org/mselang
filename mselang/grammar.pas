@@ -486,8 +486,23 @@ var
  simpletypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'simpletype');
+ typeidentco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'typeident');
+ checktypeidentco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'checktypeident');
+ rangetypeco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               caption: 'rangetype');
  recorddefco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2424,7 +2439,24 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsimpletype: array[0..1] of branchty = (
+ bsimpletype: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_push];
+     dest: (context: @typeidentco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken];
+     dest: (context: @identexpectedco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ btypeident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -2611,7 +2643,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..10] of branchty = (
+ bgettype: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @recorddefco); stack: nil; 
      keyword: $3C66EDD6{'record'}),
@@ -2656,15 +2688,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @simpletypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @identexpectedco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4222,7 +4247,13 @@ begin
  const3co.next:= @const0co;
  const3co.handleentry:= @handleconst3;
  simpletypeco.branch:= @bsimpletype;
- simpletypeco.handleexit:= @handlesimpletype;
+ simpletypeco.next:= @rangetypeco;
+ typeidentco.branch:= @btypeident;
+ typeidentco.next:= @checktypeidentco;
+ checktypeidentco.branch:= nil;
+ checktypeidentco.handleexit:= @handlechecktypeident;
+ rangetypeco.branch:= nil;
+ rangetypeco.handleexit:= @handleidentexpected;
  recorddefco.branch:= nil;
  recorddefco.next:= @recorddef0co;
  recorddefco.handleentry:= @handlerecorddefstart;

@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,grammar,elements,handlerglob;
+ parserglob,grammar,elements,handlerglob,msetypes;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
@@ -104,10 +104,12 @@ procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
-procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
+procedure errormessage(const info: pparseinfoty;
                    const aerror: errorty; const values: array of const;
+                   const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
+
 procedure identerror(const info: pparseinfoty; const astackoffset: integer;
                                const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
@@ -178,8 +180,9 @@ begin
  end;
 end;
 
-procedure errormessage(const info: pparseinfoty; const astackoffset: integer;
+procedure errormessage(const info: pparseinfoty;
                    const aerror: errorty; const values: array of const;
+                   const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
 var
@@ -187,13 +190,19 @@ var
  sourcepos: sourceinfoty;
  str1: string;
  level1: errorlevelty;
+ int1: integer;
 begin
  with info^ do begin
-  if astackoffset < 0 then begin
+  if astackoffset = minint then begin
    sourcepos:= source;
   end
   else begin
-   sourcepos:= contextstack[stackindex+astackoffset].start;
+   int1:= stackindex+astackoffset;
+   if (int1 > stacktop) or (int1 < 0) then begin
+    internalerror(info,'E20140326A');
+    exit;
+   end;
+   sourcepos:= contextstack[int1].start;
   end;
   errormessage(info,sourcepos,aerror,values,coloffset,aerrorlevel);
  end;
@@ -208,8 +217,8 @@ begin
   if eaten then begin
    dec(po1);
   end;
-  errormessage(info,stacktop-stackindex,err_illegalcharacter,
-           ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')']);
+  errormessage(info,err_illegalcharacter,
+           ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')'],stacktop-stackindex);
  end;
 end;
 
@@ -217,15 +226,15 @@ procedure identerror(const info: pparseinfoty; const astackoffset: integer;
             const aerror: errorty; const aerrorlevel: errorlevelty = erl_none);
 begin
  with info^,contextstack[stackindex+astackoffset] do begin
-  errormessage(info,astackoffset,aerror,
-          [lstringtostring(start.po,d.ident.len)],d.ident.len,aerrorlevel);
+  errormessage(info,aerror,[lstringtostring(start.po,d.ident.len)],
+                                    astackoffset,d.ident.len,aerrorlevel);
  end;
 end;
 
 procedure tokenexpectederror(const info: pparseinfoty; const atoken: string;
                                                const aerrorlevel: errorlevelty);
 begin
- errormessage(info,-1,err_tokenexpected,[atoken],0,aerrorlevel);
+ errormessage(info,err_tokenexpected,[atoken],minint,0,aerrorlevel);
 end;
 
 procedure tokenexpectederror(const info: pparseinfoty; const atoken: identty;
@@ -266,7 +275,7 @@ begin
    end;
   end;
  end;  
- errormessage(info,-1,error,[sourceinfo,destinfo]);
+ errormessage(info,error,[sourceinfo,destinfo]);
 end;
 
 procedure assignmenterror(const info: pparseinfoty;
@@ -311,7 +320,7 @@ var
  ainfo,binfo: string;
 begin
  typeinfonames(a,b,ainfo,binfo);
- errormessage(info,-1,err_incompatibletypes,[binfo,ainfo]);
+ errormessage(info,err_incompatibletypes,[binfo,ainfo]);
 end;
 
 procedure operationnotsupportederror(const info: pparseinfoty;
@@ -320,12 +329,12 @@ var
  ainfo,binfo: string;
 begin
  typeinfonames(a,b,ainfo,binfo);
- errormessage(info,-1,err_operationnotsupported,[operation,ainfo,binfo]);
+ errormessage(info,err_operationnotsupported,[operation,ainfo,binfo]);
 end;
 
 procedure internalerror(const info: pparseinfoty; const id: string);
 begin
- errormessage(info,-1,err_internalerror,[id]);
+ errormessage(info,err_internalerror,[id]);
 end;
 
 procedure circularerror(const info: pparseinfoty; const astackoffset: integer;
@@ -345,7 +354,7 @@ begin
  end;
  str1:= info^.unitinfo^.name+'->'+str1;
  setlength(str1,length(str1)-2);
- errormessage(info,astackoffset,err_circularreference,[str1]);
+ errormessage(info,err_circularreference,[str1],astackoffset);
 end;
 
 end.
