@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit typehandler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  parserglob;
@@ -33,11 +33,11 @@ procedure handlerecordtype(const info: pparseinfoty);
 procedure handlerecordfield(const info: pparseinfoty);
 
 procedure handlearraydefstart(const info: pparseinfoty);
-procedure handlearraydefreturn(const info: pparseinfoty);
+procedure handlearraytype(const info: pparseinfoty);
 procedure handlearraydeferror1(const info: pparseinfoty);
 procedure handlearrayindexerror1(const info: pparseinfoty);
 procedure handlearrayindexerror2(const info: pparseinfoty);
-procedure handlearrayindex(const info: pparseinfoty);
+//procedure handlearrayindex2(const info: pparseinfoty);
 
 implementation
 uses
@@ -63,6 +63,7 @@ outinfo(info,'***');
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
+  d.typ.typedata:= 0;
  end;
 end;
 
@@ -75,6 +76,7 @@ outinfo(info,'***');
  with info^,contextstack[stackindex] do begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
+  d.typ.typedata:= 0;
  end;
 end;
 
@@ -306,13 +308,145 @@ begin
 {$endif}
 outinfo(info,'****');
 end;
- 
-procedure handlearraydefreturn(const info: pparseinfoty);
+//type t1 = array[real] of integer; 
+procedure handlearraytype(const info: pparseinfoty);
+var
+ int1,int2: integer;
+ po2: pelementoffsetty;
+ arty: ptypedataty;
+ itemty: ptypedataty;
+ itemtyoffs: elementoffsetty;
+ itemsize: integer;
+ indilev: integer;
+ po1: ptypedataty;
+ po3: parraydimdataty;
+ id1: identty;
+ mark1: markinfoty;
+ min,max,datasize: int64;
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYDEFRETURN');
+ outhandle(info,'ARRAYTYPE');
 {$endif}
 outinfo(info,'****');
+ with info^ do begin
+  with contextstack[stackindex-2] do begin
+   if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+    id1:= d.ident.ident; //typedef
+   end
+   else begin
+    id1:= getident();
+   end;
+  end;
+  int1:= stacktop-stackindex-2;
+  if int1 >= firstident then begin
+   errormessage(info,err_toomanydim,[],1);
+   goto endlab;
+  end;
+  if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
+   ele.checkcapacity(int1*elesizes[ek_arraydim]+elesizes[ek_type]);
+   ele.markelement(mark1);
+   with contextstack[stacktop] do begin
+    itemtyoffs:= d.typ.typedata;
+    itemty:= ele.eledataabs(itemtyoffs);
+    indilev:= d.typ.indirectlevel + itemty^.indirectlevel;
+    if indilev > 0 then begin
+     itemsize:= pointersize;
+    end
+    else begin
+     itemsize:= itemty^.bytesize;
+    end;
+   end;  //todo: alignment
+   with contextstack[stackindex-1] do begin
+    if not ele.pushelement(id1,vis_max,ek_type,arty) then begin
+     identerror(info,stacktop-stackindex,err_duplicateidentifier);
+     goto endlab;
+    end;
+    d.typ.typedata:= ele.eledatarel(arty);
+    with arty^.infoarray do begin
+     itemtype:= itemtyoffs;
+     itemindirectlevel:= indilev;
+     dimcount:= int1;
+     po2:= @firstdim;
+    end;
+   end;
+   int2:= 1;
+   for int1:= stackindex+2 to stacktop-1 do begin
+    with contextstack[int1] do begin
+     if d.kind <> ck_fieldtype then begin
+      internalerror(info,'H20140327A');
+      exit;
+     end;
+     ele.addelement(int2,vis_max,ek_arraydim,po3);
+     po2^:= ele.eledatarel(po3);
+     with po3^ do begin
+      dimtype:= d.typ.typedata;
+      po1:= ele.eledataabs(dimtype);
+      po2:= @nextdim;
+      nextdim:= 0;
+     end;
+     if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
+       not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
+      errormessage(info,err_ordtypeexpected,[],int1-stackindex);
+      ele.decelementparent();
+      ele.releaseelement(mark1);
+      goto endlab;
+     end;
+     with po1^ do begin
+      case kind of
+       dk_cardinal: begin
+        if datasize <= das_8 then begin
+         min:= infocard8.min;
+         max:= infocard8.max;
+        end
+        else begin
+         if po1^.datasize <= das_16 then begin
+          min:= infocard16.min;
+          max:= infocard16.max;
+         end
+         else begin
+          min:= infocard32.min;
+          max:= infocard32.max;
+         end;
+        end;
+       end;
+       dk_integer: begin
+        if datasize <= das_8 then begin
+         min:= infoint8.min;
+         max:= infoint8.max;
+        end
+        else begin
+         if po1^.datasize <= das_16 then begin
+          min:= infoint16.min;
+          max:= infoint16.max;
+         end
+         else begin
+          min:= infoint32.min;
+          max:= infoint32.max;
+         end;
+        end;
+       end;
+       dk_boolean: begin
+        min:= 0;
+        max:= 1;
+       end;
+       else begin
+        internalerror(info,'H20120327B');
+        exit;
+       end;
+      end;
+     end;
+    end;
+    inc(int2);
+   end;
+   ele.decelementparent();
+  end;
+endlab:
+  stacktop:= stackindex-2;
+  stackindex:= contextstack[stackindex-1].parent;  
+ end;
 end;
 
 procedure handlearraydeferror1(const info: pparseinfoty);
@@ -338,18 +472,23 @@ begin
 {$endif}
  tokenexpectederror(info,']',erl_fatal);
 end;
-
-procedure handlearrayindex(const info: pparseinfoty);
+(*
+procedure handlearrayindex2(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'ARRAYINDEX');
 {$endif}
 outinfo(info,'***');
- with info^ do begin
+ with info^,contextstack[stacktop] do begin
+  if d.kind <> ck_fieldtype then begin
+   internalerror(info,'H20140327A');
+   exit;
+  end;
+  if not (d.typ.kind in ordinalk
   dec(stackindex,1);
  end;
 end;
-
+*)
 //type
 // t = array [0..2];
 end.

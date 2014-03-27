@@ -36,7 +36,8 @@ type
             err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
             err_circularreference,err_variableexpected,err_stringexeedsline,
             err_invalidintegerexpression,err_illegalcharconst,
-            err_constexpressionexpected,err_errintypedef);
+            err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
+            err_toomanydim);
             
  errorinfoty = record
   level: errorlevelty;
@@ -98,7 +99,9 @@ const
   (level: erl_error; message: 'Invalid integer expression'),
   (level: erl_error; message: 'Illegal char constant'),
   (level: erl_error; message: 'Constant expression expected'),
-  (level: erl_error; message: 'Error in type definition')
+  (level: erl_error; message: 'Error in type definition'),
+  (level: erl_error; message: 'Ordinal type expected'),
+  (level: erl_error; message: 'Too many dimensions')  
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

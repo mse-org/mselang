@@ -548,11 +548,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'arraydef2');
- arraydefreturnco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
-               caption: 'arraydefreturn');
  arrayindexco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -581,7 +576,7 @@ var
  gettypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'gettype');
  varco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -2671,7 +2666,7 @@ const
    );
  barrayindex1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @getrangeco); stack: nil; keys: (
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2681,7 +2676,7 @@ const
    );
  barrayindex2: array[0..3] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @getrangeco); stack: nil; keys: (
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4339,15 +4334,12 @@ begin
  arraydef1co.branch:= @barraydef1;
  arraydef1co.handleexit:= @handlearraydeferror1;
  arraydef2co.branch:= @barraydef2;
- arraydef2co.next:= @arraydefreturnco;
- arraydefreturnco.branch:= nil;
- arraydefreturnco.handleentry:= @handlearraydefreturn;
+ arraydef2co.handleexit:= @handlearraytype;
  arrayindexco.branch:= @barrayindex;
  arrayindexco.handleexit:= @handlearrayindexerror1;
  arrayindex1co.branch:= @barrayindex1;
  arrayindex1co.next:= @arrayindex2co;
  arrayindex2co.branch:= @barrayindex2;
- arrayindex2co.handleexit:= @handlearrayindex;
  getfieldtypeco.branch:= nil;
  getfieldtypeco.next:= @gettypeco;
  getfieldtypeco.handleentry:= @handlegetfieldtypestart;

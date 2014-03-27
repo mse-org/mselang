@@ -894,8 +894,8 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string
-    sdk_none,  sdk_none, sdk_none);
+  //dk_address,dk_record,dk_string,dk_array
+    sdk_none,  sdk_none, sdk_none, sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
             //sdk_bool8,sdk_int32,sdk_flo64
@@ -1420,8 +1420,8 @@ const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
    nil,     nil,       @negcard32, @negint32, @negflo64,
- //dk_kind, dk_address,dk_record,dk_string
-   nil,     nil,       nil,      nil
+ //dk_kind, dk_address,dk_record,dk_string,dk_array
+   nil,     nil,       nil,      nil,      nil
  );
 
 procedure handleterm1(const info: pparseinfoty);

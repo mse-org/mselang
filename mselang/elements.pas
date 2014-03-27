@@ -28,6 +28,7 @@ uses
 
 const
  maxidentvector = 200;
+ firstident = 256;
 type
  identarty = integerarty;
  identvecty = record
@@ -39,7 +40,7 @@ type
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_sub,ek_classes,ek_class,
-                  ek_unit,ek_implementation);
+                  ek_unit,ek_implementation,ek_arraydim);
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -199,7 +200,9 @@ const
 //ek_classes,                   ek_class,
   sizeof(classesdataty)+elesize,sizeof(classdataty)+elesize,
 //ek_unit,                   ek_implementation  
-  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize
+  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize,
+//ek_arraydim
+  sizeof(arraydimdataty)+elesize
  );
 
 var
@@ -321,6 +324,13 @@ var
  identlist: tindexidenthashdatalist;
  stringbuf: tstringbuffer;
 
+procedure nextident;
+begin
+ repeat
+  lfsr321(stringident);
+ until stringident >= firstident;
+end;
+
 function telementhashdatalist.eleoffset: ptruint; inline;
 begin
  result:= ptruint(felementdata);
@@ -411,13 +421,13 @@ begin
  end;
  move(astr.po^,(pchar(pointer(stringdata))+int1)^,int2);
  result:= int1;
- lfsr321(stringident); 
+ nextident;
 end;
 
 function getident(): identty;
 begin
  result:= stringident;
- lfsr321(stringident); 
+ nextident; 
 end;
  
 function getident(const aname: lstringty): identty;
@@ -649,9 +659,10 @@ var
  tk1: integer;
 begin
  clear;
- ele.pushelement(getident(''),vis_max,ek_none); //root
+// ele.pushelement(getident(''),vis_max,ek_none); //root
+ ele.pushelement(0,vis_max,ek_none); //root
  stringident:= idstart; //invalid
- lfsr321(stringident);
+ nextident;
  for tk1:= 1 to high(tokens) do begin
   getident(tokens[tk1]);
  end;

@@ -65,13 +65,19 @@ type
   min: double;
   max: double;
  end;
- 
+
+ infoarrayty = record
+  itemtype: elementoffsetty;
+  itemindirectlevel: integer;
+  dimcount: integer;
+  firstdim: elementoffsetty;
+ end;
+  
  typedataty = record
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
   bytesize: integer;
   datasize: datasizety;
-//  flags: typeflagsty;
   case kind: datakindty of 
    dk_boolean:(
     dummy: byte
@@ -94,16 +100,20 @@ type
     case datasizety of
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
-   dk_record: ();
-  {
-   dk_reference:(
-    target: elementoffsetty;        //not indirected root type
-     indirectlevel: indirectlevelty; //total indirection count
    );
-  }
-  );
+   dk_record: (
+   );
+   dk_array: (
+    infoarray: infoarrayty;
+   );
  end;
  ptypedataty = ^typedataty;
+
+ arraydimdataty = record
+  dimtype: elementoffsetty;
+  nextdim: elementoffsetty;
+ end;
+ parraydimdataty = ^arraydimdataty;
 
  vardestinfoty = record
   address: addressinfoty;

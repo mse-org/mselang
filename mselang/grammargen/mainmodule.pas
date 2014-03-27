@@ -215,12 +215,19 @@ end;
 
 var
  id: uint32;
- 
+
+procedure nextid;
+begin
+ repeat
+  lfsr321(id);
+ until id >= firstident;
+end;
+
 function idstring(const aid: string): string;
 begin
  result:= 
 ' '+aid+' = $'+hextostr(id,8)+';'+lineend;
- lfsr321(id);
+ nextid;
 end;
 
 procedure creategrammar(const grammar,outfile: filenamety);
@@ -306,7 +313,7 @@ var
    exit;
   end;
   keyword:= id;
-  lfsr321(id);
+  nextid;
 //  atext:= stringtopascalstring(msechar(high(keywords)+keywordoffset))+
 //   '{'+atext+'}';
  end;
@@ -404,7 +411,7 @@ begin
   tokendefs:= nil;
   usesdef:= '';
   id:= idstart; //invalid
-  lfsr321(id);
+  nextid;
   repeat
    readline(str1);
    if (str1 <> '') then begin
@@ -510,7 +517,7 @@ begin
               setlength(tokens,high(tokens)+2);
               setstring(tokens[high(tokens)],po3,po1-po3);
               if name = '.internaltokens' then begin
-               lfsr321(id);
+               nextid;
               end;
              end;
              if po1^ = #0 then begin
@@ -927,7 +934,7 @@ lineend+
    end;
   end;
   id:= idstart;
-  lfsr321(id);
+  nextid;
   str5:= 
 'const'+lineend+
 ' tks_none = 0;'+lineend;
@@ -970,14 +977,14 @@ lineend+
   str5:= str5 + str2+');'+lineend+lineend;
 
   id:= idstart;
-  lfsr321(id);
+  nextid;
   str5:= str5+
 ' tokenids: array[0..'+inttostr(int3)+'] of identty = ('+lineend;
   str2:=
 '  $00000000,';
   for int2:= 1 to int3 do begin
    str3:= '$'+hextostr(id,8)+',';
-   lfsr321(id);
+   nextid;
    if length(str2)+length(str3) > 80 then begin
     str5:= str5+str2+lineend;
     str2:= 

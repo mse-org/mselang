@@ -288,22 +288,21 @@ arraydef,arraydef1,handlearraydefstart,
 arraydef1,,,handlearraydeferror1
  ${whitespace}
  'of'.,arraydef2-
-arraydef2,arraydefreturn,,
+arraydef2,,,handlearraytype
  '',getfieldtype^*
-arraydefreturn,,handlearraydefreturn,*^
 #
 arrayindex,,,handlearrayindexerror1
  '[',arrayindex1-
 arrayindex1,arrayindex2,,
- '',getrange^*
-arrayindex2,,,handlearrayindex
- ',',getrange-^*>
+ '',getfieldtype^*
+arrayindex2,,,
+ ',',getfieldtype-^*>
  ']',-*
   '',!handlearrayindexerror2*
 #
 getfieldtype,gettype,handlegetfieldtypestart,
 gettypetype,gettype,handlegettypetypestart,
-gettype,,,^
+gettype,,,*^
  ${whitespace}
  '^',!handlepointertype-
 # @identstart,simpletype^*
