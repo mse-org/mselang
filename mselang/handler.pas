@@ -52,8 +52,8 @@ procedure handlecommentend(const info: pparseinfoty);
 procedure handlecheckterminator(const info: pparseinfoty);
 procedure handlestatementblock1(const info: pparseinfoty);
 
-procedure handleconst(const info: pparseinfoty);
-procedure handleconst0(const info: pparseinfoty);
+//procedure handleconst(const info: pparseinfoty);
+//procedure handleconst0(const info: pparseinfoty);
 procedure handleconst3(const info: pparseinfoty);
 
 //procedure handlevar(const info: pparseinfoty);
@@ -64,7 +64,7 @@ procedure handlepointervar(const info: pparseinfoty);
 procedure handlenumberentry(const info: pparseinfoty);
 procedure handleint(const info: pparseinfoty);
 
-procedure handlerange2(const info: pparseinfoty);
+procedure handlerange1(const info: pparseinfoty);
 procedure handlerange3(const info: pparseinfoty);
 
 procedure handlebinnum(const info: pparseinfoty);
@@ -491,12 +491,15 @@ outinfo(info,'***');
  end;
 end;
 
-procedure handlerange2(const info: pparseinfoty);
+procedure handlerange1(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RANGE2');
+ outhandle(info,'RANGE1');
 {$endif}
  with info^ do begin
+  errormessage(info,err_errintypedef,[]);
+  stackindex:= stackindex-1;
+  stacktop:= stackindex;
  end;
 end;
 
@@ -2187,7 +2190,7 @@ end;
 procedure handleequalityexpected(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'SEMICOLONEXPECTED');
+ outhandle(info,'EQUALITYEXPECTED');
 {$endif}
  with info^ do begin
   errormessage(info,err_syntax,['=']);
@@ -2309,7 +2312,7 @@ begin
  end;
 }
 end;
-
+(*
 procedure handleconst(const info: pparseinfoty);
 begin
 {$ifdef mse_debugparser}
@@ -2331,34 +2334,39 @@ begin
 //  stacktop:= stackindex;
 // end;
 end;
-
+*)
 procedure handleconst3(const info: pparseinfoty);
 var
- po1: pelementinfoty;
+ po1: pconstdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'CONST3');
 {$endif}
+outinfo(info,'***');
  with info^ do begin
-  if (stacktop-stackindex = 3) and (contextstack[stacktop].d.kind = ck_end) and
-       (contextstack[stacktop-1].d.kind = ck_const) and
-       (contextstack[stacktop-2].d.kind = ck_ident) then begin
-   with contextstack[stacktop-2].d do begin
-    po1:= ele.addelement(ident.ident,vis_max,ek_const);
-    if po1 = nil then begin
-     identerror(info,stacktop-2-stackindex,err_duplicateidentifier);
+  if (stacktop-stackindex <> 2) or 
+            (contextstack[stackindex+1].d.kind <> ck_ident) then begin
+   internalerror(info,'H20140326C');
+   exit;
+  end
+  else begin
+   if contextstack[stacktop].d.kind <> ck_const then begin
+    errormessage(info,err_constexpressionexpected,[],stacktop-stackindex);
+   end
+   else begin
+    if not ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,
+                  ek_const,po1) then begin
+     identerror(info,1,err_duplicateidentifier);
     end
     else begin
-     with contextstack[stacktop-1].d do begin
-      pconstdataty(@po1^.data)^.val.typ:= datatyp;
-      pconstdataty(@po1^.data)^.val.d:= constval;
+     with contextstack[stacktop].d do begin
+      po1^.val.typ:= datatyp;
+      po1^.val.d:= constval;
      end;
     end;
    end;
-  end
-  else begin
-   parsererror(info,'CONST3');
   end;
+  stackindex:= stackindex;
   stacktop:= stackindex;
  end;
 end;

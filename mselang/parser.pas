@@ -603,8 +603,13 @@ handlelab:
 {$endif}
     end
     else begin
-     if pc^.nexteat then begin
-      start:= source;
+     if pc^.restoresource then begin
+      source:= start;
+     end
+     else begin
+      if pc^.nexteat then begin
+       start:= source;
+      end;
      end;
      if pc^.cutafter then begin
       stacktop:= stackindex;

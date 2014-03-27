@@ -33,10 +33,10 @@ const
 
 procedure error(const info: pparseinfoty; const error: comperrorty;
                    const pos: pchar=nil);
-procedure parsererror(const info: pparseinfoty; const text: string);
-procedure identnotfounderror(const info: contextitemty; const text: string);
-procedure wrongidentkinderror(const info: contextitemty; 
-       wantedtype: elementkindty; const text: string);
+//procedure parsererror(const info: pparseinfoty; const text: string);
+//procedure identnotfounderror(const info: contextitemty; const text: string);
+//procedure wrongidentkinderror(const info: contextitemty; 
+//       wantedtype: elementkindty; const text: string);
 procedure outcommand(const info: pparseinfoty; const items: array of integer;
                      const text: string);
  
@@ -279,7 +279,7 @@ begin
   end;
  end;
 end;                           
-
+(*
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin
  with info^ do begin
@@ -302,7 +302,7 @@ begin
                    ', expected '+
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
- 
+*)
 procedure outcommand(const info: pparseinfoty; const items: array of integer;
                      const text: string);
 var

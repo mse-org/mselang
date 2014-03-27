@@ -36,7 +36,7 @@ type
             err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
             err_circularreference,err_variableexpected,err_stringexeedsline,
             err_invalidintegerexpression,err_illegalcharconst,
-            err_constexpressionexpected);
+            err_constexpressionexpected,err_errintypedef);
             
  errorinfoty = record
   level: errorlevelty;
@@ -97,7 +97,8 @@ const
   (level: erl_fatal; message: 'String exeeds line'),
   (level: erl_error; message: 'Invalid integer expression'),
   (level: erl_error; message: 'Illegal char constant'),
-  (level: erl_error; message: 'Constant expression expected')
+  (level: erl_error; message: 'Constant expression expected'),
+  (level: erl_error; message: 'Error in type definition')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

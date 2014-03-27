@@ -49,6 +49,10 @@ checksemicolon,,,^
  ${whitespace}
  ';',-*
  '',semicolonexpected
+checksemicolon1,,,^*>
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 checksemicolon2,,,*>
  ${whitespace}
  ';',-*
@@ -243,21 +247,22 @@ then2,,,handlethen2
 else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
-const,,,handleconst>
- '',const0*^
-const0,const1,,
+const,,,*>
+ ${whitespace}
+ ${blockswitch}
+ '',const0^*
+const0,const1,,handleidentexpected^
  ${whitespace}
  @identstart,ident^*
-const1,,,+
+const1,,,handleequalityexpected^
  ${whitespace}
  '=',const2-
 const2,const3,,
  '',exp^*
-const3,const0-,handleconst3,
- ${whitespace}
- ';',statementend-*
+const3,,handleconst3,
+ '',checksemicolon1
 #
-simpletype,rangetype,,
+simpletype,rangetype,,+
  @identstart,typeident*
 typeident,checktypeident,,
  '',identpath^*
@@ -349,10 +354,9 @@ type3,,,*>
 #
 getrange,getrange1,,
  '',exp^*
-getrange1,getrange2,,
+getrange1,,,handlerange1
  ${whitespace}
  '..',getrange3-
-getrange2,,,handlerange2
 getrange3,,,handlerange3^
  '',exp^*
 
@@ -488,6 +492,7 @@ identpath1a,identpath1,handleidentpath1a,
 identpath1,,,^
 #finish
  ${whitespace}
+ '..',*
  '.',identpath2a+-
 identpath2a,identpath2,handleidentpath2a,
 # set continue flag
