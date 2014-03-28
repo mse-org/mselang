@@ -39,6 +39,8 @@ procedure handlearrayindexerror1(const info: pparseinfoty);
 procedure handlearrayindexerror2(const info: pparseinfoty);
 //procedure handlearrayindex2(const info: pparseinfoty);
 
+procedure handleindex(const info: pparseinfoty);
+
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser;
@@ -516,4 +518,14 @@ end;
 *)
 //type
 // t = array [0..2];
+procedure handleindex(const info: pparseinfoty);
+begin
+{$ifdef mse_debugparser}
+ outhandle(info,'ARRAYINDEXERROR2');
+{$endif}
+outinfo(info,'***');
+ with info^ do begin
+  dec(stackindex);
+ end;
+end;
 end.

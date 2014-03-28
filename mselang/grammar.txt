@@ -409,6 +409,7 @@ term1,term1,,
  ${whitespace}
  '^',!handledereference-
  '*',mulfact*
+ '[',getindex-*
  '',term1a
 term1a,,,handleterm1
 negterm,term,handlenegterm,
@@ -417,6 +418,12 @@ getaddress,illegalexpression,,
  @identstart,identpath^*,getaddress0
 # '(',getaddressbracket
 getaddress0,term1,,handleaddress
+#
+getindex,getindex1,,
+ '',exp^*
+getindex1,,,handleindex*
+ ${whitespace}
+ ']',-*
 #
 illegalexpression,,,handleillegalexpression*
 #

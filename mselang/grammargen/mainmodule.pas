@@ -80,7 +80,7 @@ var
 implementation
 uses
  mainmodule_mfm,msefileutils,msestream,msesys,msetypes,msesysutils,sysutils,
- mseformatstr,msearrayutils,msemacros,parserglob,typinfo,mselfsr;
+ mseformatstr,msearrayutils,msemacros,parserglob,typinfo,mselfsr,elements;
  
 type
  paramty = (pa_grammarfile,pa_pasfile);
