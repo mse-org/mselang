@@ -321,6 +321,15 @@ var
  po1: ptypedataty;
  id1: identty;
  min,max,totsize,si1: int64;
+
+ procedure err(const aerror: errorty);
+ begin
+  errormessage(info,aerror,[],int1-info^.stackindex); 
+  if arty <> nil then begin
+   ele.hideelementdata(arty);
+  end;
+ end;
+
 label
  endlab;
 begin
@@ -331,7 +340,7 @@ outinfo(info,'****');
  with info^ do begin
   int1:= stacktop-stackindex-2;
   if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
-//   ele.checkcapacity(int1*elesizes[ek_arraydim]+elesizes[ek_type]);
+   arty:= nil;
    with contextstack[stacktop] do begin
     itemtyoffs:= d.typ.typedata;
     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
@@ -354,7 +363,7 @@ outinfo(info,'****');
      po1:= ele.eledataabs(d.typ.typedata);
      if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
        not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
-      errormessage(info,err_ordtypeexpected,[],int1-stackindex);
+      err(err_ordtypeexpected);
       goto endlab;
      end;
      if int1 = int2 then begin //first dimension
@@ -427,8 +436,7 @@ outinfo(info,'****');
      end;
      si1:= max-min+1;
      if (si1 > maxint) and (totsize > maxint) then begin
-      errormessage(info,err_dataeletoolarge,[],int1-stackindex);
-      ele.hideelementdata(arty);
+      err(err_dataeletoolarge);
       goto endlab;
      end;
      if max < min then begin
@@ -438,8 +446,7 @@ outinfo(info,'****');
      end;
      totsize:= si1*totsize;
      if totsize > maxint then begin
-      errormessage(info,err_dataeletoolarge,[],int1-stackindex);
-      ele.hideelementdata(arty);
+      err(err_dataeletoolarge);
       goto endlab;
      end;
      with arty^ do begin
@@ -452,7 +459,11 @@ outinfo(info,'****');
      itemtyoffs:= ele.eledatarel(arty);
     end;
    end;
-   arty^.indirectlevel:= contextstack[stackindex-1].d.typ.indirectlevel;
+   with contextstack[stackindex-1] do begin
+    arty^.indirectlevel:= d.typ.indirectlevel;
+    d.typ.indirectlevel:= 0;
+    d.typ.typedata:= ele.eledatarel(arty);
+   end;
   end;
 endlab:
   stacktop:= stackindex-1;
