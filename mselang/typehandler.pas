@@ -308,21 +308,19 @@ begin
 {$endif}
 outinfo(info,'****');
 end;
-//type t1 = array[real] of integer; 
+//type t1 = array[1..0] of integer; 
 procedure handlearraytype(const info: pparseinfoty);
 var
  int1,int2: integer;
- po2: pelementoffsetty;
+// po2: pelementoffsetty;
  arty: ptypedataty;
- itemty: ptypedataty;
+// itemty: ptypedataty;
  itemtyoffs: elementoffsetty;
- itemsize: integer;
+// itemsize: integer;
  indilev: integer;
  po1: ptypedataty;
- po3: parraydimdataty;
  id1: identty;
- mark1: markinfoty;
- min,max,datasize: int64;
+ min,max,totsize,si1: int64;
 label
  endlab;
 begin
@@ -331,69 +329,58 @@ begin
 {$endif}
 outinfo(info,'****');
  with info^ do begin
-  with contextstack[stackindex-2] do begin
-   if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
-    id1:= d.ident.ident; //typedef
-   end
-   else begin
-    id1:= getident();
-   end;
-  end;
   int1:= stacktop-stackindex-2;
-  if int1 >= firstident then begin
-   errormessage(info,err_toomanydim,[],1);
-   goto endlab;
-  end;
   if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
-   ele.checkcapacity(int1*elesizes[ek_arraydim]+elesizes[ek_type]);
-   ele.markelement(mark1);
+//   ele.checkcapacity(int1*elesizes[ek_arraydim]+elesizes[ek_type]);
    with contextstack[stacktop] do begin
     itemtyoffs:= d.typ.typedata;
-    itemty:= ele.eledataabs(itemtyoffs);
-    indilev:= d.typ.indirectlevel + itemty^.indirectlevel;
-    if indilev > 0 then begin
-     itemsize:= pointersize;
-    end
-    else begin
-     itemsize:= itemty^.bytesize;
+    with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
+     indilev:= d.typ.indirectlevel;
+     if indilev + indirectlevel > 0 then begin
+      totsize:= pointersize;
+     end
+     else begin
+      totsize:= bytesize;
+     end;
     end;
    end;  //todo: alignment
-   with contextstack[stackindex-1] do begin
-    if not ele.pushelement(id1,vis_max,ek_type,arty) then begin
-     identerror(info,stacktop-stackindex,err_duplicateidentifier);
-     goto endlab;
-    end;
-    d.typ.typedata:= ele.eledatarel(arty);
-    with arty^.infoarray do begin
-     itemtype:= itemtyoffs;
-     itemindirectlevel:= indilev;
-     dimcount:= int1;
-     po2:= @firstdim;
-    end;
-   end;
-   int2:= 1;
-   for int1:= stackindex+2 to stacktop-1 do begin
+   int2:= stackindex + 2;
+   for int1:= stacktop-1 downto int2 do begin
     with contextstack[int1] do begin
      if d.kind <> ck_fieldtype then begin
       internalerror(info,'H20140327A');
       exit;
      end;
-     ele.addelement(int2,vis_max,ek_arraydim,po3);
-     po2^:= ele.eledatarel(po3);
-     with po3^ do begin
-      dimtype:= d.typ.typedata;
-      po1:= ele.eledataabs(dimtype);
-      po2:= @nextdim;
-      nextdim:= 0;
-     end;
+     po1:= ele.eledataabs(d.typ.typedata);
      if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
        not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
       errormessage(info,err_ordtypeexpected,[],int1-stackindex);
-      ele.decelementparent();
-      ele.releaseelement(mark1);
       goto endlab;
      end;
+     if int1 = int2 then begin //first dimension
+      with contextstack[stackindex-2] do begin
+       if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+        id1:= d.ident.ident; //typedef
+       end
+       else begin
+        id1:= getident();    //fielddef
+       end;
+      end;
+     end
+     else begin
+      id1:= getident(); //multi dimension
+     end;
+     if not ele.addelement(id1,vis_max,ek_type,arty) then begin
+      identerror(info,stacktop-stackindex,err_duplicateidentifier);
+      goto endlab;
+     end;
+     with arty^.infoarray do begin
+      itemtypedata:= itemtyoffs;
+      itemindirectlevel:= indilev;
+      indextypedata:= d.typ.typedata;
+     end;
+     indilev:= 0; //no indirectlevel for multi dimensions
      with po1^ do begin
       case kind of
        dk_cardinal: begin
@@ -438,10 +425,34 @@ outinfo(info,'****');
        end;
       end;
      end;
+     si1:= max-min+1;
+     if (si1 > maxint) and (totsize > maxint) then begin
+      errormessage(info,err_dataeletoolarge,[],int1-stackindex);
+      ele.hideelementdata(arty);
+      goto endlab;
+     end;
+     if max < min then begin
+      errormessage(info,err_highlowerlow,[],int1-stackindex);
+      ele.hideelementdata(arty);
+      goto endlab;     
+     end;
+     totsize:= si1*totsize;
+     if totsize > maxint then begin
+      errormessage(info,err_dataeletoolarge,[],int1-stackindex);
+      ele.hideelementdata(arty);
+      goto endlab;
+     end;
+     with arty^ do begin
+      indirectlevel:= 0;
+      bitsize:= 0;
+      bytesize:= totsize;
+      datasize:= das_none;
+      kind:= dk_array;      
+     end;
+     itemtyoffs:= ele.eledatarel(arty);
     end;
-    inc(int2);
    end;
-   ele.decelementparent();
+   arty^.indirectlevel:= contextstack[stackindex-1].d.typ.indirectlevel;
   end;
 endlab:
   stacktop:= stackindex-2;

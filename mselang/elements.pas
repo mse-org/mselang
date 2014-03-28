@@ -40,7 +40,7 @@ type
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_sub,ek_classes,ek_class,
-                  ek_unit,ek_implementation,ek_arraydim);
+                  ek_unit,ek_implementation);
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -154,7 +154,7 @@ type
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
-   //function elementcount: integer;
+   procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
    property findvislevel: vislevelty read ffindvislevel write ffindvislevel;
@@ -200,9 +200,7 @@ const
 //ek_classes,                   ek_class,
   sizeof(classesdataty)+elesize,sizeof(classdataty)+elesize,
 //ek_unit,                   ek_implementation  
-  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize,
-//ek_arraydim
-  sizeof(arraydimdataty)+elesize
+  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize
  );
 
 var
@@ -1411,6 +1409,14 @@ procedure telementhashdatalist.releaseelement(const ref: markinfoty);
 begin
  release(ref.hashref);
  fnextelement:= ref.dataref;
+end;
+
+procedure telementhashdatalist.hideelementdata(const adata: pointer);
+begin
+ with pelementinfoty(adata-sizeof(elementheaderty))^.header do begin
+  path:= path-name;
+  name:= 0;
+ end;
 end;
 {
 function elementcount: integer;

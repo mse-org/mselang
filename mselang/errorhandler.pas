@@ -37,7 +37,7 @@ type
             err_circularreference,err_variableexpected,err_stringexeedsline,
             err_invalidintegerexpression,err_illegalcharconst,
             err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
-            err_toomanydim);
+            err_dataeletoolarge,err_highlowerlow);
             
  errorinfoty = record
   level: errorlevelty;
@@ -101,7 +101,8 @@ const
   (level: erl_error; message: 'Constant expression expected'),
   (level: erl_error; message: 'Error in type definition'),
   (level: erl_error; message: 'Ordinal type expected'),
-  (level: erl_error; message: 'Too many dimensions')  
+  (level: erl_error; message: 'Data element too large'),
+  (level: erl_error; message: 'High range limit < low range limit')  
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;

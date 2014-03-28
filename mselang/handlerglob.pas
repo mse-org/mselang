@@ -67,10 +67,9 @@ type
  end;
 
  infoarrayty = record
-  itemtype: elementoffsetty;
+  itemtypedata: elementoffsetty;
   itemindirectlevel: integer;
-  dimcount: integer;
-  firstdim: elementoffsetty;
+  indextypedata: elementoffsetty;
  end;
   
  typedataty = record
@@ -108,12 +107,6 @@ type
    );
  end;
  ptypedataty = ^typedataty;
-
- arraydimdataty = record
-  dimtype: elementoffsetty;
-  nextdim: elementoffsetty;
- end;
- parraydimdataty = ^arraydimdataty;
 
  vardestinfoty = record
   address: addressinfoty;
