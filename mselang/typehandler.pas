@@ -455,7 +455,7 @@ outinfo(info,'****');
    arty^.indirectlevel:= contextstack[stackindex-1].d.typ.indirectlevel;
   end;
 endlab:
-  stacktop:= stackindex-2;
+  stacktop:= stackindex-1;
   stackindex:= contextstack[stackindex-1].parent;  
  end;
 end;
