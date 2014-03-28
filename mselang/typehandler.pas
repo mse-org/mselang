@@ -310,6 +310,54 @@ begin
 {$endif}
 outinfo(info,'****');
 end;
+
+procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
+begin
+ with typedata^ do begin
+  case kind of
+   dk_cardinal: begin
+    if datasize <= das_8 then begin
+     range.min:= infocard8.min;
+     range.max:= infocard8.max;
+    end
+    else begin
+     if datasize <= das_16 then begin
+      range.min:= infocard16.min;
+      range.max:= infocard16.max;
+     end
+     else begin
+      range.min:= infocard32.min;
+      range.max:= infocard32.max;
+     end;
+    end;
+   end;
+   dk_integer: begin
+    if datasize <= das_8 then begin
+     range.min:= infoint8.min;
+     range.max:= infoint8.max;
+    end
+    else begin
+     if datasize <= das_16 then begin
+      range.min:= infoint16.min;
+      range.max:= infoint16.max;
+     end
+     else begin
+      range.min:= infoint32.min;
+      range.max:= infoint32.max;
+     end;
+    end;
+   end;
+   dk_boolean: begin
+    range.min:= 0;
+    range.max:= 1;
+   end;
+   else begin
+    internalerror(info,'H20120327B');
+   end;
+  end;
+ end;
+end;
+
 //type t1 = array[1..0] of integer; 
 procedure handlearraytype(const info: pparseinfoty);
 var
@@ -395,50 +443,7 @@ outinfo(info,'****');
       indextypedata:= d.typ.typedata;
      end;
      indilev:= 0; //no indirectlevel for multi dimensions
-     with po1^ do begin
-      case kind of
-       dk_cardinal: begin
-        if datasize <= das_8 then begin
-         min:= infocard8.min;
-         max:= infocard8.max;
-        end
-        else begin
-         if po1^.datasize <= das_16 then begin
-          min:= infocard16.min;
-          max:= infocard16.max;
-         end
-         else begin
-          min:= infocard32.min;
-          max:= infocard32.max;
-         end;
-        end;
-       end;
-       dk_integer: begin
-        if datasize <= das_8 then begin
-         min:= infoint8.min;
-         max:= infoint8.max;
-        end
-        else begin
-         if po1^.datasize <= das_16 then begin
-          min:= infoint16.min;
-          max:= infoint16.max;
-         end
-         else begin
-          min:= infoint32.min;
-          max:= infoint32.max;
-         end;
-        end;
-       end;
-       dk_boolean: begin
-        min:= 0;
-        max:= 1;
-       end;
-       else begin
-        internalerror(info,'H20120327B');
-        exit;
-       end;
-      end;
-     end;
+     getordrange(po1,range);
      si1:= max-min+1;
      if (si1 > maxint) and (totsize > maxint) then begin
       err(err_dataeletoolarge);
@@ -516,16 +521,50 @@ outinfo(info,'***');
  end;
 end;
 *)
-//type
-// t = array [0..2];
+{
+type
+ i1 = 0..3;
+var
+ v2: array[i1] of integer;
+}
 procedure handleindex(const info: pparseinfoty);
+var
+ po1: ptypedataty;
+label
+ endlab;
 begin
+// v2[4]:= 1;
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYINDEXERROR2');
+ outhandle(info,'INDEX');
 {$endif}
 outinfo(info,'***');
- with info^ do begin
+ with info^,contextstack[stackindex-1] do begin
+  if stacktop - stackindex = 1 then begin
+   case d.kind of
+    ck_ref: begin
+     po1:= ele.eledataabs(d.datatyp.typedata);
+     if po1^.kind <> dk_array then begin
+      errormessage(info,err_illegalqualifier,[],0);
+      d.kind:= ck_none;
+      goto endlab;
+     end;
+     if contextstack[stacktop].d.kind = ck_const then begin
+     end
+     else begin
+      internalerror(info,'N20140328B');
+     end;
+    end;
+    else begin
+     internalerror(info,'N20140328A');
+    end;
+   end;
+  end
+  else begin
+   d.kind:= ck_none;
+  end;
+endlab:
   dec(stackindex);
  end;
 end;
+
 end.

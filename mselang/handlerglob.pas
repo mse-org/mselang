@@ -23,7 +23,11 @@ uses
 const
  pointersize = sizeof(pointer);
  pointerbitsize = pointersize*8;
-type  
+type
+ ordrangety = record
+  min: int64;
+  max: int64;
+ end;
  card8infoty = record
   min: card8;
   max: card8;

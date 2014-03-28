@@ -102,7 +102,7 @@ const
   (level: erl_error; message: 'Error in type definition'),
   (level: erl_error; message: 'Ordinal type expected'),
   (level: erl_error; message: 'Data element too large'),
-  (level: erl_error; message: 'High range limit < low range limit')  
+  (level: erl_error; message: 'High range limit < low range limit')
  );
  
 procedure errormessage(const info: pparseinfoty; const asourcepos: sourceinfoty;
