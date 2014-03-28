@@ -324,9 +324,12 @@ var
 
  procedure err(const aerror: errorty);
  begin
-  errormessage(info,aerror,[],int1-info^.stackindex); 
-  if arty <> nil then begin
-   ele.hideelementdata(arty);
+  with info^ do begin
+   errormessage(info,aerror,[],int1-stackindex); 
+   if arty <> nil then begin
+    ele.hideelementdata(arty);
+   end;
+   contextstack[stackindex-1].d.kind:= ck_none;
   end;
  end;
 
