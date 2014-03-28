@@ -20,40 +20,40 @@ interface
 uses
  parserglob;
  
-function getglobvaraddress(const info: pparseinfoty;
+function getglobvaraddress({const info: pparseinfoty;}
                                         const asize: integer): ptruint;
-function getlocvaraddress(const info: pparseinfoty;
+function getlocvaraddress({const info: pparseinfoty;}
                                         const asize: integer): ptruint;
-function additem(const info: pparseinfoty): popinfoty;
-function insertitem(const info: pparseinfoty; 
+function additem({const info: pparseinfoty}): popinfoty;
+function insertitem({const info: pparseinfoty;} 
                                    const insertad: opaddressty): popinfoty;
-procedure writeop(const info: pparseinfoty; const operation: opty); inline;
+procedure writeop({const info: pparseinfoty;} const operation: opty); inline;
 
 implementation
 uses
  stackops;
  
-function getglobvaraddress(const info: pparseinfoty;
+function getglobvaraddress({const info: pparseinfoty;}
                                         const asize: integer): ptruint;
 begin
- with info^ do begin
+ with info do begin
   result:= globdatapo;
   globdatapo:= globdatapo + alignsize(asize);
  end;
 end;
 
-function getlocvaraddress(const info: pparseinfoty;
+function getlocvaraddress({const info: pparseinfoty;}
                                         const asize: integer): ptruint;
 begin
- with info^ do begin
+ with info do begin
   result:= locdatapo;
   locdatapo:= locdatapo + alignsize(asize);
  end;
 end;
  
-function additem(const info: pparseinfoty): popinfoty;
+function additem({const info: pparseinfoty}): popinfoty;
 begin
- with info^ do begin
+ with info do begin
   if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
   end;
@@ -62,12 +62,12 @@ begin
  end;
 end;
 
-function insertitem(const info: pparseinfoty; 
+function insertitem({const info: pparseinfoty;}
                                    const insertad: opaddressty): popinfoty;
 var
  ad1: opaddressty;
 begin
- with info^ do begin
+ with info do begin
   if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
   end;
@@ -79,9 +79,9 @@ begin
  end;
 end;
 
-procedure writeop(const info: pparseinfoty; const operation: opty); inline;
+procedure writeop({const info: pparseinfoty;} const operation: opty); inline;
 begin
- with additem(info)^ do begin
+ with additem({info})^ do begin
   op:= operation
  end;
 end;

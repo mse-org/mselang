@@ -32,14 +32,14 @@ const
 function parse(const input: string; const acommand: ttextstream;
                out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
                               //true if ok
-function parseunit(const info: pparseinfoty; const input: string;
+function parseunit({const info: pparseinfoty;} const input: string;
                                        const aunit: punitinfoty): boolean;
 
 procedure init;
 procedure deinit;
 
 {$ifdef mse_debugparser}
-procedure outinfo(const info: pparseinfoty; const text: string);
+procedure outinfo({const info: pparseinfoty;} const text: string);
 {$endif}
 implementation
 uses
@@ -65,7 +65,7 @@ begin
 end;
 
 {$ifdef mse_debugparser}
-procedure outinfo(const info: pparseinfoty; const text: string);
+procedure outinfo({const info: pparseinfoty;} const text: string);
  procedure writetype(const ainfo: typeinfoty);
  var
   po1: ptypedataty;
@@ -81,7 +81,7 @@ procedure outinfo(const info: pparseinfoty; const text: string);
 var
  int1: integer;
 begin
- with info^ do begin
+ with info do begin
 {$ifdef mse_debugparser}
   writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,'L:'+
     inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
@@ -206,9 +206,9 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
-procedure incstack(const info: pparseinfoty);
+procedure incstack({const info: pparseinfoty});
 begin
- with info^ do begin
+ with info do begin
   inc(stacktop);
   stackindex:= stacktop;
   if stacktop = stackdepht then begin
@@ -218,7 +218,7 @@ begin
  end;
 end;
 
-function pushcont(const info: pparseinfoty): boolean;
+function pushcont({const info: pparseinfoty}): boolean;
         //handle branch transition flags, transitionhandler, set pc
         //returns false for stopparser or open transistion chain
 var
@@ -227,7 +227,7 @@ var
 begin
  result:= true;
  bo1:= false;
- with info^ do begin
+ with info do begin
   pc:= pb^.dest.context;
   contextstack[stackindex].transitionflags:= pb^.flags;
   if not (bf_changeparentcontext in pb^.flags) then begin
@@ -241,7 +241,7 @@ begin
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
-   incstack(info);
+   incstack({info});
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
    end;
@@ -278,14 +278,14 @@ begin
     break;
    end;
    if pc^.handleentry <> nil then begin
-    pc^.handleentry(info); //transition handler
+    pc^.handleentry({info}); //transition handler
     if stopparser then begin
      result:= false;
      exit;
     end;
    end;
    if pc^.handleexit <> nil then begin
-    pc^.handleexit(info); //transition handler
+    pc^.handleexit({info}); //transition handler
     if stopparser then begin
      result:= false;
      exit;
@@ -303,14 +303,14 @@ begin
   pb:= pc^.branch;
 {$ifdef mse_debugparser}
   if bo1 then begin
-   outinfo(info,'^ '+pc^.caption); //push context
+   outinfo({info,}'^ '+pc^.caption); //push context
   end
   else begin
-   outinfo(info,'> '+pc^.caption); //switch context
+   outinfo({info,}'> '+pc^.caption); //switch context
   end;
 {$endif}
   if (pc^.handleentry <> nil) then begin
-   pc^.handleentry(info);
+   pc^.handleentry({info});
    if stopparser then begin
     result:= false;
    end;
@@ -318,17 +318,17 @@ begin
  end;
 end;
 
-function parseunit(const info: pparseinfoty; const input: string;
+function parseunit({const info: pparseinfoty;} const input: string;
                                        const aunit: punitinfoty): boolean;
  procedure popparent;
  var
   int1: integer;
  begin
-  with info^ do begin
+  with info do begin
    int1:= stackindex;
    stackindex:= contextstack[stackindex].parent;
    if int1 = stackindex then begin
-    internalerror(info,'P20140324A');
+    internalerror({info,}'P20140324A');
    end;
   end;
  end; //popparent
@@ -357,7 +357,7 @@ label
  handlelab{,stophandlelab},parseend;
 begin
  linebreaks:= 0;
- with info^ do begin
+ with info do begin
   sourcebefore:= source;
 //  sourcebefbefore:= sourcebef;
  {$ifdef mse_debugparser}
@@ -375,7 +375,7 @@ begin
   source.po:= sourcestart;
   source.line:= 0;
 
-  incstack(info);
+  incstack({info});
   with contextstack[stackindex],d do begin
    kind:= ck_none;
    context:= startcontext;
@@ -389,7 +389,7 @@ begin
   filename:= msefileutils.filename(unitinfo^.filepath);
   if us_interfaceparsed in unitinfo^.state then begin
    if unitinfo^.impl.sourceoffset >= length(input) then begin
-    errormessage(info,err_filetrunc,[filename]);
+    errormessage({info,}err_filetrunc,[filename]);
     debugsource:= source.po;
     goto parseend;
    end;
@@ -407,7 +407,7 @@ begin
   keywordindex:= 0;
   debugsource:= source.po;
 {$ifdef mse_debugparser}
-  outinfo(info,'****');
+  outinfo({info,}'****');
 {$endif}
   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
    while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
@@ -418,7 +418,7 @@ begin
      break; //no branch
     end;
     if bf_emptytoken in pb^.flags then begin
-     pushcont(info); //default branch
+     pushcont({info}); //default branch
                //???? why no break or standard match handling
     end
     else begin
@@ -500,7 +500,7 @@ begin
        end;
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
-         pb^.dest.handler(info);
+         pb^.dest.handler({info});
          if stopparser then begin
           goto parseend;
          end;
@@ -510,7 +510,7 @@ begin
         end
         else begin //switch branch context
          repeat
-          if not pushcont(info) then begin 
+          if not pushcont({info}) then begin 
                 //can not continue
            if stopparser then begin
             goto parseend;
@@ -542,7 +542,7 @@ handlelab:
     end;
     if pc^.handleexit <> nil then begin
          //call context termination handler
-     pc^.handleexit(info);
+     pc^.handleexit({info});
      if stopparser then begin
       goto parseend;
      end;
@@ -577,13 +577,13 @@ handlelab:
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser}
-     outinfo(info,'! after0a');
+     outinfo({info,}'! after0a');
 {$endif}
      goto handlelab;    
     end;
 {$ifdef mse_debugparser}
     if not pc1^.continue and (pc^.next = nil) then begin
-     outinfo(info,'! after0b');
+     outinfo({info,}'! after0b');
     end;
 {$endif}
    until pc1^.continue or (pc^.next <> nil) or 
@@ -620,7 +620,7 @@ handlelab:
      pc:= pc^.next;
      context:= pc;
      if pc^.handleentry <> nil then begin
-      pc^.handleentry(info);
+      pc^.handleentry({info});
       if stopparser then begin
        goto parseend;
       end;
@@ -629,13 +629,13 @@ handlelab:
 //    kind:= ck_none;
    end;
 {$ifdef mse_debugparser}
-   outinfo(info,'! after1');
+   outinfo({info,}'! after1');
 {$endif}
   end;
 parseend:
 {$ifdef mse_debugparser}
   if not stopparser then begin
-   outinfo(info,'! after2');
+   outinfo({info,}'! after2');
   end;
 {$endif}
   setlength(ops,opcount);
@@ -673,7 +673,6 @@ function parse(const input: string; const acommand: ttextstream;
                                      out aconstseg: bytearty): boolean;
                               //true if ok
 var
- info: parseinfoty;
  startopcount: integer;
  po1: punitinfoty;
  unit1: punitinfoty;
@@ -696,9 +695,9 @@ begin
   stackindex:= stacktop;
   opcount:= startupoffset;
   setlength(ops,opcount);
-  initparser(@info);
+  initparser({info});
   startopcount:= opcount;
-  result:= parseunit(@info,input,unit1);
+  result:= parseunit({info,}input,unit1);
   {
   inc(unitlevel);
   while result do begin

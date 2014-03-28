@@ -94,7 +94,7 @@ const
 
 type 
  pparseinfoty = ^parseinfoty;
- contexthandlerty = procedure(const info: pparseinfoty);
+ contexthandlerty = procedure({const info: pparseinfoty});
 
  branchflagty = (bf_nt,bf_emptytoken,
              bf_keyword,bf_handler,
@@ -553,12 +553,15 @@ const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
 {$ifdef mse_debugparser}
-procedure outhandle(const info: pparseinfoty; const text: string);
+procedure outhandle({const info: pparseinfoty;} const text: string);
 {$endif}
 
+var
+ info: parseinfoty;
+ 
 implementation
 
-procedure outhandle(const info: pparseinfoty; const text: string);
+procedure outhandle({const info: pparseinfoty;} const text: string);
 begin
  writeln(' !!!handle!!! ',text);
 end;

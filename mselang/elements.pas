@@ -169,19 +169,19 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-procedure linkmark(const info: pparseinfoty; var alinks: linkindexty;
+procedure linkmark({const info: pparseinfoty;} var alinks: linkindexty;
                                                       const aaddress: integer);
-procedure linkresolve(const info: pparseinfoty; const alinks: linkindexty;
+procedure linkresolve({const info: pparseinfoty;} const alinks: linkindexty;
                                                   const aaddress: opaddressty);
 
-procedure forwardmark(const info: pparseinfoty;
+procedure forwardmark({const info: pparseinfoty;}
             out aforward: forwardindexty; const asource: sourceinfoty);
-procedure forwardresolve(const info: pparseinfoty;
+procedure forwardresolve({const info: pparseinfoty;}
                                         const aforward: forwardindexty);
-procedure checkforwarderrors(const info: pparseinfoty;
+procedure checkforwarderrors({const info: pparseinfoty;}
                                     const aforward: forwardindexty);
-function newstring(const info: pparseinfoty): stringinfoty;
-function stringconst(const info: pparseinfoty;
+function newstring({const info: pparseinfoty}): stringinfoty;
+function stringconst({const info: pparseinfoty;}
                                    const astring: stringinfoty): dataaddressty;
 
 {$ifdef mse_debugparser}
@@ -309,7 +309,7 @@ type
    destructor destroy; override;
    procedure clear; override;
    function add(const avalue: string): stringinfoty;
-   function allocconst(const info: pparseinfoty;
+   function allocconst({const info: pparseinfoty;}
                          const astring: stringinfoty): dataaddressty;
  end;
  
@@ -502,7 +502,7 @@ var
  linkindex: linkindexty;
  deletedlinks: linkindexty;
  
-procedure linkmark(const info: pparseinfoty; 
+procedure linkmark({const info: pparseinfoty; }
                            var alinks: linkindexty; const aaddress: integer);
 var
  li1: linkindexty;
@@ -526,7 +526,7 @@ begin
  alinks:= li1;
 end;
 
-procedure linkresolve(const info: pparseinfoty;
+procedure linkresolve({const info: pparseinfoty;}
                     const alinks: linkindexty; const aaddress: opaddressty);
 var
  li1: linkindexty;
@@ -535,7 +535,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
-    info^.ops[dest].d.opaddress:= aaddress-1;
+    info.ops[dest].d.opaddress:= aaddress-1;
     if next = 0 then begin
      break;
     end;
@@ -561,7 +561,7 @@ var
  forwardindex: forwardindexty;
  deletedforwards: forwardindexty;
 
-procedure forwardmark(const info: pparseinfoty;
+procedure forwardmark({const info: pparseinfoty;}
             out aforward: forwardindexty; const asource: sourceinfoty);
 var
  fo1: forwardindexty;
@@ -580,7 +580,7 @@ begin
   po1:= @forwards[fo1];
   deletedlinks:= po1^.next;
  end;
- with info^.unitinfo^ do begin
+ with info.unitinfo^ do begin
   po1^.prev:= 0;
   po1^.next:= forwardlist;
   po1^.source:= asource;
@@ -590,13 +590,13 @@ begin
  aforward:= fo1;
 end;
 
-procedure forwardresolve(const info: pparseinfoty;
+procedure forwardresolve({const info: pparseinfoty;}
                                         const aforward: forwardindexty);
 begin
  if aforward <> 0 then begin
   with forwards[aforward] do begin
-   if info^.unitinfo^.forwardlist = aforward then begin
-    info^.unitinfo^.forwardlist:= next;
+   if info.unitinfo^.forwardlist = aforward then begin
+    info.unitinfo^.forwardlist:= next;
    end;
    forwards[next].prev:= prev;
    forwards[prev].next:= next;
@@ -606,7 +606,7 @@ begin
  end;
 end;
 
-procedure checkforwarderrors(const info: pparseinfoty;
+procedure checkforwarderrors({const info: pparseinfoty;}
                                     const aforward: forwardindexty);
 var
  fo1: forwardindexty;
@@ -614,22 +614,22 @@ begin
  fo1:= aforward;
  while fo1 <> 0 do begin
   with forwards[fo1] do begin
-   errormessage(info,source,err_forwardnotsolved,['']);
+   errormessage({info,}source,err_forwardnotsolved,['']);
                       //todo show header
    fo1:= next;
   end;
  end;
 end;
 
-function newstring(const info: pparseinfoty): stringinfoty;
+function newstring({const info: pparseinfoty}): stringinfoty;
 begin
- result:= stringbuf.add(info^.stringbuffer);
+ result:= stringbuf.add(info.stringbuffer);
 end;
 
-function stringconst(const info: pparseinfoty;
+function stringconst({const info: pparseinfoty;}
                            const astring: stringinfoty): dataaddressty;
 begin
- result:= stringbuf.allocconst(info,astring);
+ result:= stringbuf.allocconst({info,}astring);
 end;
 
 procedure clear;
@@ -1491,7 +1491,7 @@ begin
  reallocmem(fbuffer,fbufcapacity);
 end;
  
-function tstringbuffer.allocconst(const info: pparseinfoty;
+function tstringbuffer.allocconst({const info: pparseinfoty;}
                                    const astring: stringinfoty): dataaddressty;
 var
  po1: pstringheaderty;
@@ -1499,7 +1499,7 @@ var
 begin
  with pstringbufdataty(fdata+astring.offset)^ do begin
   if constoffset = 0 then begin
-   with info^ do begin
+   with info do begin
     constoffset:= constsize;
     constsize:= constsize+sizeof(stringheaderty)+len+1;
     alignsize(constsize);

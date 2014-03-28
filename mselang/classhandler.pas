@@ -20,14 +20,14 @@ interface
 uses
  parserglob;
 
-procedure handleclassdefstart(const info: pparseinfoty);
-procedure handleclassdeferror(const info: pparseinfoty);
-procedure handleclassdefreturn(const info: pparseinfoty);
-procedure handleclassprivate(const info: pparseinfoty);
-procedure handleclassprotected(const info: pparseinfoty);
-procedure handleclasspublic(const info: pparseinfoty);
-procedure handleclasspublished(const info: pparseinfoty);
-procedure handleclassfield(const info: pparseinfoty);
+procedure handleclassdefstart({const info: pparseinfoty});
+procedure handleclassdeferror({const info: pparseinfoty});
+procedure handleclassdefreturn({const info: pparseinfoty});
+procedure handleclassprivate({const info: pparseinfoty});
+procedure handleclassprotected({const info: pparseinfoty});
+procedure handleclasspublic({const info: pparseinfoty});
+procedure handleclasspublished({const info: pparseinfoty});
+procedure handleclassfield({const info: pparseinfoty});
 
 implementation
 uses
@@ -39,26 +39,26 @@ const
  vic_public = vis_1;
  vic_published = vis_0;
  
-procedure classesscopeset(const info: pparseinfoty);
+procedure classesscopeset({const info: pparseinfoty});
 var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          ele.eleinfoabs(info^.unitinfo^.classeselement))^.data;
+          ele.eleinfoabs(info.unitinfo^.classeselement))^.data;
  po2^.scopebefore:= ele.elementparent;
- ele.elementparent:= info^.unitinfo^.classeselement;
+ ele.elementparent:= info.unitinfo^.classeselement;
 end;
 
-procedure classesscopereset(const info: pparseinfoty);
+procedure classesscopereset({const info: pparseinfoty});
 var
  po2: pclassesdataty;
 begin
  po2:= @pelementinfoty(
-          ele.eleinfoabs(info^.unitinfo^.classeselement))^.data;
+          ele.eleinfoabs(info.unitinfo^.classeselement))^.data;
  ele.elementparent:= po2^.scopebefore;
 end;
 
-procedure handleclassdefstart(const info: pparseinfoty);
+procedure handleclassdefstart({const info: pparseinfoty});
 var
  po1: ptypedataty;
  po2: pclassdataty;
@@ -66,15 +66,15 @@ var
  id1: identty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFSTART');
+ outhandle({info,}'CLASSDEFSTART');
 {$endif}
- with info^ do begin
+ with info do begin
   id1:= contextstack[stacktop].d.ident.ident;
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
-   identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   identerror({info,}stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
-   classesscopeset(info);
+   classesscopeset({info});
    ele.pushelement(id1,vis_max,ek_class,po2);
    currentclass:= ele.eledatarel(po2);
    currentclassvislevel:= vic_published; //default
@@ -82,78 +82,78 @@ begin
  end;
 end;
 
-procedure handleclassdefreturn(const info: pparseinfoty);
+procedure handleclassdefreturn({const info: pparseinfoty});
 var
  po2: pclassesdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFRETURN');
+ outhandle({info,}'CLASSDEFRETURN');
 {$endif}
 // ele.popelement;
- classesscopereset(info);
+ classesscopereset({info});
 end;
 
-procedure handleclassdeferror(const info: pparseinfoty);
+procedure handleclassdeferror({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSDEFERROR');
+ outhandle({info,}'CLASSDEFERROR');
 {$endif}
- tokenexpectederror(info,tk_end);
+ tokenexpectederror({info,}tk_end);
 end;
 
-procedure handleclassprivate(const info: pparseinfoty);
+procedure handleclassprivate({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSPRIVATE');
+ outhandle({info,}'CLASSPRIVATE');
 {$endif}
- info^.currentclassvislevel:= vic_private;
+ info.currentclassvislevel:= vic_private;
 end;
 
-procedure handleclassprotected(const info: pparseinfoty);
+procedure handleclassprotected({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSPROTECTED');
+ outhandle({info,}'CLASSPROTECTED');
 {$endif}
- info^.currentclassvislevel:= vic_protected;
+ info.currentclassvislevel:= vic_protected;
 end;
 
-procedure handleclasspublic(const info: pparseinfoty);
+procedure handleclasspublic({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSPUBLIC');
+ outhandle({info,}'CLASSPUBLIC');
 {$endif}
- info^.currentclassvislevel:= vic_public;
+ info.currentclassvislevel:= vic_public;
 end;
 
-procedure handleclasspublished(const info: pparseinfoty);
+procedure handleclasspublished({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSPUBLISHED');
+ outhandle({info,}'CLASSPUBLISHED');
 {$endif}
- info^.currentclassvislevel:= vic_published;
+ info.currentclassvislevel:= vic_published;
 end;
 
-procedure handleclassfield(const info: pparseinfoty);
+procedure handleclassfield({const info: pparseinfoty});
 var
  po1: pvardataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CLASSFIELD');
+ outhandle({info,}'CLASSFIELD');
 {$endif}
- with info^ do begin
+ with info do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
        currentclassvislevel,ek_var,po1);
   if po1 = nil then begin
-   identerror(info,2,err_duplicateidentifier);   
+   identerror({info,}2,err_duplicateidentifier);   
   end;
   ele1:= ele.elementparent;
-  classesscopereset(info);
-  if findkindelementsdata(info,3,[ek_type],vis_max,po2) then begin
+  classesscopereset({info});
+  if findkindelementsdata({info,}3,[ek_type],vis_max,po2) then begin
   end
   else begin
-   identerror(info,stacktop-stackindex,err_identifiernotfound);
+   identerror({info,}stacktop-stackindex,err_identifiernotfound);
   end;
   ele.elementparent:= ele1;
  end;

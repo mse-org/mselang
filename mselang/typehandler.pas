@@ -20,94 +20,94 @@ interface
 uses
  parserglob;
 
-procedure handletype(const info: pparseinfoty);
-procedure handlegettypetypestart(const info: pparseinfoty);
-procedure handlegetfieldtypestart(const info: pparseinfoty);
-procedure handlepointertype(const info: pparseinfoty);
-procedure handlechecktypeident(const info: pparseinfoty);
-procedure handlecheckrangetype(const info: pparseinfoty);
+procedure handletype({const info: pparseinfoty});
+procedure handlegettypetypestart({const info: pparseinfoty});
+procedure handlegetfieldtypestart({const info: pparseinfoty});
+procedure handlepointertype({const info: pparseinfoty});
+procedure handlechecktypeident({const info: pparseinfoty});
+procedure handlecheckrangetype({const info: pparseinfoty});
  
-procedure handlerecorddefstart(const info: pparseinfoty);
-procedure handlerecorddeferror(const info: pparseinfoty);
-procedure handlerecordtype(const info: pparseinfoty);
-procedure handlerecordfield(const info: pparseinfoty);
+procedure handlerecorddefstart({const info: pparseinfoty});
+procedure handlerecorddeferror({const info: pparseinfoty});
+procedure handlerecordtype({const info: pparseinfoty});
+procedure handlerecordfield({const info: pparseinfoty});
 
-procedure handlearraydefstart(const info: pparseinfoty);
-procedure handlearraytype(const info: pparseinfoty);
-procedure handlearraydeferror1(const info: pparseinfoty);
-procedure handlearrayindexerror1(const info: pparseinfoty);
-procedure handlearrayindexerror2(const info: pparseinfoty);
-//procedure handlearrayindex2(const info: pparseinfoty);
+procedure handlearraydefstart({const info: pparseinfoty});
+procedure handlearraytype({const info: pparseinfoty});
+procedure handlearraydeferror1({const info: pparseinfoty});
+procedure handlearrayindexerror1({const info: pparseinfoty});
+procedure handlearrayindexerror2({const info: pparseinfoty});
+//procedure handlearrayindex2({const info: pparseinfoty});
 
-procedure handleindex(const info: pparseinfoty);
+procedure handleindex({const info: pparseinfoty});
 
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser;
 
-procedure handletype(const info: pparseinfoty);
+procedure handletype({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'TYPE');
+ outhandle({info,}'TYPE');
 {$endif}
- with info^,contextstack[stacktop] do begin
+ with info,contextstack[stacktop] do begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
 
-procedure handlegetfieldtypestart(const info: pparseinfoty);
+procedure handlegetfieldtypestart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'GETFIELDTYPESTART');
+ outhandle({info,}'GETFIELDTYPESTART');
 {$endif}
-outinfo(info,'***');
- with info^,contextstack[stackindex] do begin
+outinfo({info,}'***');
+ with info,contextstack[stackindex] do begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
  end;
 end;
 
-procedure handlegettypetypestart(const info: pparseinfoty);
+procedure handlegettypetypestart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'GETTYPETYPESTART');
+ outhandle({info,}'GETTYPETYPESTART');
 {$endif}
-outinfo(info,'***');
- with info^,contextstack[stackindex] do begin
+outinfo({info,}'***');
+ with info,contextstack[stackindex] do begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
  end;
 end;
 
-procedure handlepointertype(const info: pparseinfoty);
+procedure handlepointertype({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'POINTERTYPE');
+ outhandle({info,}'POINTERTYPE');
 {$endif}
- with info^,contextstack[stackindex] do begin
+ with info,contextstack[stackindex] do begin
   inc(d.typ.indirectlevel);
 //  include(d.typ.flags,tf_reference);
  end;
 end;
 
-procedure handlechecktypeident(const info: pparseinfoty);
+procedure handlechecktypeident({const info: pparseinfoty});
 var
  po1,po2: pelementinfoty;
  idcontext: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CHECKTYPEIDENT');
+ outhandle({info,}'CHECKTYPEIDENT');
 {$endif}
-outinfo(info,'***');
- with info^,contextstack[stackindex-2] do begin
+outinfo({info,}'***');
+ with info,contextstack[stackindex-2] do begin
   if stackindex < 3 then begin
-   internalerror(info,'H20140325A');
+   internalerror({info,}'H20140325A');
    exit;
   end;
-  if findkindelements(info,1,[ek_type],vis_max,po2) then begin
+  if findkindelements({info,}1,[ek_type],vis_max,po2) then begin
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
@@ -120,11 +120,11 @@ outinfo(info,'***');
       inc(ptypedataty(@po1^.data)^.indirectlevel,d.typ.indirectlevel);
      end
      else begin //duplicate
-      identerror(info,-3,err_duplicateidentifier);
+      identerror({info,}-3,err_duplicateidentifier);
      end;
     end
     else begin
-     internalerror(info,'H20140324B');
+     internalerror({info,}'H20140324B');
     end;
    end;
    stacktop:= stackindex-1;
@@ -137,16 +137,16 @@ outinfo(info,'***');
  end;
 end;
 
-procedure handlecheckrangetype(const info: pparseinfoty);
+procedure handlecheckrangetype({const info: pparseinfoty});
 var
  id1: identty;
  po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'CHECKRANGETYPE');
+ outhandle({info,}'CHECKRANGETYPE');
 {$endif}
-outinfo(info,'***');
- with info^ do begin
+outinfo({info,}'***');
+ with info do begin
   if stacktop-stackindex = 3 then begin
    with contextstack[stackindex-2] do begin
     if (d.kind = ck_ident) and 
@@ -175,7 +175,7 @@ outinfo(info,'***');
      end;
     end
     else begin
-     identerror(info,-1,err_duplicateidentifier,erl_fatal);
+     identerror({info,}-1,err_duplicateidentifier,erl_fatal);
     end;
    end;
   end;
@@ -184,18 +184,18 @@ outinfo(info,'***');
  end;
 end;
  
-procedure handlerecorddefstart(const info: pparseinfoty);
+procedure handlerecorddefstart({const info: pparseinfoty});
 var
  po1: ptypedataty;
  id1: identty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFSTART');
+ outhandle({info,}'RECORDDEFSTART');
 {$endif}
-outinfo(info,'***');
- with info^ do begin
+outinfo({info,}'***');
+ with info do begin
   if stackindex < 3 then begin
-   internalerror(info,'H20140325D');
+   internalerror({info,}'H20140325D');
    exit;
   end;
   with contextstack[stackindex-2] do begin
@@ -211,36 +211,36 @@ outinfo(info,'***');
   with contextstack[stackindex-1] do begin
 //   kind:= ck_type;
    if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
-    identerror(info,stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+    identerror({info,}stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
   end;
  end;
 end;
 
-procedure handlerecorddeferror(const info: pparseinfoty);
+procedure handlerecorddeferror({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RECORDDEFERROR');
+ outhandle({info,}'RECORDDEFERROR');
 {$endif}
- with info^ do begin
+ with info do begin
   ele.elementparent:= contextstack[stackindex].elemark;
  end;
 end;
 
-procedure handlerecordfield(const info: pparseinfoty);
+procedure handlerecordfield({const info: pparseinfoty});
 var
  po1: pfielddataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RECORDFIELD');
+ outhandle({info,}'RECORDFIELD');
 {$endif}
-outinfo(info,'***');
- with info^ do begin
+outinfo({info,}'***');
+ with info do begin
   if (stacktop-stackindex < 3) or 
             (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
-   internalerror(info,'H20140325C');
+   internalerror({info,}'H20140325C');
    exit;
   end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
@@ -259,23 +259,23 @@ outinfo(info,'***');
    ele.elementparent:= ele1;
   end
   else begin
-   identerror(info,2,err_duplicateidentifier);
+   identerror({info,}2,err_duplicateidentifier);
    stacktop:= stackindex-1;
   end;
  end;
 end;
 
-procedure handlerecordtype(const info: pparseinfoty);
+procedure handlerecordtype({const info: pparseinfoty});
 var
  int1,int2: integer;
  po1: pfielddataty;
  size1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'RECORDTYPE');
+ outhandle({info,}'RECORDTYPE');
 {$endif}
-outinfo(info,'****');
-  with info^ do begin
+outinfo({info,}'****');
+  with info do begin
   ele.elementparent:= contextstack[stackindex].elemark; //restore
   int2:= 0;
   for int1:= stackindex+1 to stacktop do begin
@@ -303,12 +303,12 @@ outinfo(info,'****');
  end;
 end;
 
-procedure handlearraydefstart(const info: pparseinfoty);
+procedure handlearraydefstart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYDEFSTART');
+ outhandle({info,}'ARRAYDEFSTART');
 {$endif}
-outinfo(info,'****');
+outinfo({info,}'****');
 end;
 
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
@@ -352,14 +352,14 @@ begin
     range.max:= 1;
    end;
    else begin
-    internalerror(info,'H20120327B');
+    internalerror({info,}'H20120327B');
    end;
   end;
  end;
 end;
 
 //type t1 = array[1..0] of integer; 
-procedure handlearraytype(const info: pparseinfoty);
+procedure handlearraytype({const info: pparseinfoty});
 var
  int1,int2: integer;
 // po2: pelementoffsetty;
@@ -374,23 +374,24 @@ var
 
  procedure err(const aerror: errorty);
  begin
-  with info^ do begin
-   errormessage(info,aerror,[],int1-stackindex); 
+  with info do begin
+   errormessage({info,}aerror,[],int1-stackindex); 
    if arty <> nil then begin
     ele.hideelementdata(arty);
    end;
    contextstack[stackindex-1].d.kind:= ck_none;
   end;
  end;
-
+var
+ range: ordrangety;
 label
  endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYTYPE');
+ outhandle({info,}'ARRAYTYPE');
 {$endif}
-outinfo(info,'****');
- with info^ do begin
+outinfo({info,}'****');
+ with info do begin
   int1:= stacktop-stackindex-2;
   if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
    arty:= nil;
@@ -410,7 +411,7 @@ outinfo(info,'****');
    for int1:= stacktop-1 downto int2 do begin
     with contextstack[int1] do begin
      if d.kind <> ck_fieldtype then begin
-      internalerror(info,'H20140327A');
+      internalerror({info,}'H20140327A');
       exit;
      end;
      po1:= ele.eledataabs(d.typ.typedata);
@@ -434,7 +435,7 @@ outinfo(info,'****');
       id1:= getident(); //multi dimension
      end;
      if not ele.addelement(id1,vis_max,ek_type,arty) then begin
-      identerror(info,stacktop-stackindex,err_duplicateidentifier);
+      identerror({info,}stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
      with arty^.infoarray do begin
@@ -450,7 +451,7 @@ outinfo(info,'****');
       goto endlab;
      end;
      if max < min then begin
-      errormessage(info,err_highlowerlow,[],int1-stackindex);
+      errormessage({info,}err_highlowerlow,[],int1-stackindex);
       ele.hideelementdata(arty);
       goto endlab;     
      end;
@@ -481,39 +482,39 @@ endlab:
  end;
 end;
 
-procedure handlearraydeferror1(const info: pparseinfoty);
+procedure handlearraydeferror1({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYDEFERROR1');
+ outhandle({info,}'ARRAYDEFERROR1');
 {$endif}
- tokenexpectederror(info,'of',erl_fatal);
+ tokenexpectederror({info,}'of',erl_fatal);
 end;
 
-procedure handlearrayindexerror1(const info: pparseinfoty);
+procedure handlearrayindexerror1({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYINDEXERROR1');
+ outhandle({info,}'ARRAYINDEXERROR1');
 {$endif}
- tokenexpectederror(info,'[',erl_fatal);
+ tokenexpectederror({info,}'[',erl_fatal);
 end;
 
-procedure handlearrayindexerror2(const info: pparseinfoty);
+procedure handlearrayindexerror2({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYINDEXERROR2');
+ outhandle({info,}'ARRAYINDEXERROR2');
 {$endif}
- tokenexpectederror(info,']',erl_fatal);
+ tokenexpectederror({info,}']',erl_fatal);
 end;
 (*
-procedure handlearrayindex2(const info: pparseinfoty);
+procedure handlearrayindex2({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'ARRAYINDEX');
+ outhandle({info,}'ARRAYINDEX');
 {$endif}
-outinfo(info,'***');
+outinfo({info,}'***');
  with info^,contextstack[stacktop] do begin
   if d.kind <> ck_fieldtype then begin
-   internalerror(info,'H20140327A');
+   internalerror({info,}'H20140327A');
    exit;
   end;
   if not (d.typ.kind in ordinalk
@@ -527,7 +528,7 @@ type
 var
  v2: array[i1] of integer;
 }
-procedure handleindex(const info: pparseinfoty);
+procedure handleindex({const info: pparseinfoty});
 var
  po1: ptypedataty;
 label
@@ -535,27 +536,27 @@ label
 begin
 // v2[4]:= 1;
 {$ifdef mse_debugparser}
- outhandle(info,'INDEX');
+ outhandle({info,}'INDEX');
 {$endif}
-outinfo(info,'***');
- with info^,contextstack[stackindex-1] do begin
+outinfo({info,}'***');
+ with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex = 1 then begin
    case d.kind of
     ck_ref: begin
      po1:= ele.eledataabs(d.datatyp.typedata);
      if po1^.kind <> dk_array then begin
-      errormessage(info,err_illegalqualifier,[],0);
+      errormessage({info,}err_illegalqualifier,[],0);
       d.kind:= ck_none;
       goto endlab;
      end;
      if contextstack[stacktop].d.kind = ck_const then begin
      end
      else begin
-      internalerror(info,'N20140328B');
+      internalerror({info,}'N20140328B');
      end;
     end;
     else begin
-     internalerror(info,'N20140328A');
+     internalerror({info,}'N20140328A');
     end;
    end;
   end

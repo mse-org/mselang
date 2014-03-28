@@ -21,15 +21,15 @@ uses
  msestrings,parserglob,elements;
 
 function newunit(const aname: string): punitinfoty; 
-function loadunit(const info: pparseinfoty;
+function loadunit({const info: pparseinfoty;}
                                 const aindex: integer): punitinfoty;
 //function nextunitimplementation: punitinfoty;
 //function parseimplementation(const info: pparseinfoty; 
 //                                       const aunit: punitinfoty): boolean;
 
-procedure setunitname(const info: pparseinfoty); //unitname on top of stack
-procedure interfacestop(const info: pparseinfoty);
-procedure implementationstart(const info: pparseinfoty);
+procedure setunitname({const info: pparseinfoty}); //unitname on top of stack
+procedure interfacestop({const info: pparseinfoty});
+procedure implementationstart({const info: pparseinfoty});
 
 procedure init;
 procedure deinit;
@@ -80,23 +80,23 @@ var
  unitlist: tunitlist;
 // implementationpending: timplementationpendinglist;
  
-procedure setunitname(const info: pparseinfoty); //unitname on top of stack
+procedure setunitname({const info: pparseinfoty}); //unitname on top of stack
 var
  id1: identty;
  po1: punitdataty;
  po2: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'SETUNITNAME');
+ outhandle({info,}'SETUNITNAME');
 {$endif}
- with info^ do begin
+ with info do begin
   id1:= contextstack[stacktop].d.ident.ident;
   if unitinfo^.key <> id1 then begin
-   identerror(info,1,err_illegalunitname);
+   identerror({info,}1,err_illegalunitname);
   end
   else begin
    if not ele.pushelement(id1,vis_max,ek_unit,po1) then begin
-    internalerror(info,'U131018A');
+    internalerror({info,}'U131018A');
    end;
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
@@ -108,12 +108,12 @@ begin
  end;
 end;
 
-procedure interfacestop(const info: pparseinfoty);
+procedure interfacestop({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'INTERFACESTOP');
+ outhandle({info,}'INTERFACESTOP');
 {$endif}
- with info^ do begin
+ with info do begin
   include(unitinfo^.state,us_interfaceparsed);
 {
   if us_interface in unitinfo^.state then begin
@@ -127,35 +127,35 @@ begin
  end;
 end;
 
-procedure implementationstart(const info: pparseinfoty);
+procedure implementationstart({const info: pparseinfoty});
 var
  po1: punitdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'IMPLEMENTATIONSTART');
+ outhandle({info,}'IMPLEMENTATIONSTART');
 {$endif}
- with info^ do begin
+ with info do begin
   if us_implementation in unitinfo^.state then begin
-   errormessage(info,err_invalidtoken,['implementation']);
+   errormessage({info,}err_invalidtoken,['implementation']);
   end
   else begin
    include(unitinfo^.state,us_implementation);
    if not ele.pushelement(ord(tk_implementation),vis_max,
                                     ek_implementation,po1) then begin
-    internalerror(info,'U20131130A');
+    internalerror({info,}'U20131130A');
    end;
   end;
  end;
 end;
 
-function parseusesunit(const info: pparseinfoty;
+function parseusesunit({const info: pparseinfoty;}
                               const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
   writeln('***************************************** uses');
   writeln(filepath);
 //todo: use mmap(), problem: no terminating 0.
-  result:= parseunit(info,readfiledatastring(filepath),aunit);
+  result:= parseunit({info,}readfiledatastring(filepath),aunit);
   include(state,us_implementationparsed);
  end;
 end;
@@ -196,25 +196,25 @@ begin
  end;
 end;
  
-function loadunit(const info: pparseinfoty; const aindex: integer): punitinfoty;
+function loadunit({const info: pparseinfoty;} const aindex: integer): punitinfoty;
 var
  lstr1: lstringty;
 begin
- with info^.contextstack[aindex] do begin
+ with info.contextstack[aindex] do begin
   result:= unitlist.findunit(d.ident.ident);
   if result = nil then begin
    result:= unitlist.newunit(d.ident.ident);
    with result^ do begin
-    prev:= info^.unitinfo;
+    prev:= info.unitinfo;
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
     name:= lstringtostring(lstr1);
     filepath:= filehandler.getunitfile(lstr1);
     if filepath = '' then begin
-     identerror(info,aindex-info^.stackindex,err_cantfindunit);
+     identerror({info,}aindex-info.stackindex,err_cantfindunit);
     end
     else begin
-     if not parseusesunit(info,result) then begin
+     if not parseusesunit({info,}result) then begin
       result:= nil;
      end
 {    
@@ -230,7 +230,7 @@ begin
   end
   else begin
    if not (us_interfaceparsed in result^.state) then begin
-    circularerror(info,aindex-info^.stackindex,result);
+    circularerror({info,}aindex-info.stackindex,result);
     result:= nil;
    end;
   end;
