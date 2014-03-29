@@ -37,7 +37,7 @@ type
             err_circularreference,err_variableexpected,err_stringexeedsline,
             err_invalidintegerexpression,err_illegalcharconst,
             err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
-            err_dataeletoolarge,err_highlowerlow);
+            err_dataeletoolarge,err_highlowerlow,err_valuerange);
             
  errorinfoty = record
   level: errorlevelty;
@@ -102,7 +102,8 @@ const
   (level: erl_error; message: 'Error in type definition'),
   (level: erl_error; message: 'Ordinal type expected'),
   (level: erl_error; message: 'Data element too large'),
-  (level: erl_error; message: 'High range limit < low range limit')
+  (level: erl_error; message: 'High range limit < low range limit'),
+  (level: erl_error; message: 'Value exceeds range %s..%s')
  );
  
 procedure errormessage({const info: pparseinfoty;} const asourcepos: sourceinfoty;
@@ -137,7 +138,8 @@ procedure illegalcharactererror({const info: pparseinfoty;} const eaten: boolean
 procedure internalerror({const info: pparseinfoty;} const id: string);
 procedure circularerror({const info: pparseinfoty;} const astackoffset: integer;
                                                      const adest: punitinfoty);
-
+procedure rangeerror(const range: ordrangety;
+                                          const stackoffset: integer = minint);
 implementation
 uses
  msestrings,sysutils,mseformatstr,typinfo,msefileutils;
@@ -360,6 +362,13 @@ begin
  str1:= info.unitinfo^.name+'->'+str1;
  setlength(str1,length(str1)-2);
  errormessage({info,}err_circularreference,[str1],astackoffset);
+end;
+
+procedure rangeerror(const range: ordrangety;
+                                    const stackoffset: integer = minint);
+begin
+ errormessage(err_valuerange,[inttostr(range.min),
+                                         inttostr(range.max)],stackoffset);
 end;
 
 end.

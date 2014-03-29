@@ -760,7 +760,7 @@ var
                caption: 'getindex');
  getindex1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'getindex1');
  illegalexpressionco: contextty = (branch: nil; 
@@ -3476,7 +3476,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @getindexco); stack: nil; keys: (
     (kind: bkk_char; chars: ['[']),
     (kind: bkk_none; chars: []),
@@ -3540,7 +3540,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgetindex1: array[0..5] of branchty = (
+ bgetindex1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3572,6 +3572,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [']']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_handler];
+     dest: (handler: @closesquarebracketexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])

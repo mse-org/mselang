@@ -40,6 +40,7 @@ procedure handlearrayindexerror2({const info: pparseinfoty});
 //procedure handlearrayindex2({const info: pparseinfoty});
 
 procedure handleindex({const info: pparseinfoty});
+procedure closesquarebracketexpected;
 
 implementation
 uses
@@ -358,6 +359,28 @@ begin
  end;
 end;
 
+function getordconst(const avalue: dataty): int64;
+begin
+ with avalue do begin
+  case kind of
+   dk_integer: begin
+    result:= vinteger;
+   end;
+   dk_boolean: begin
+    if vboolean then begin
+     result:= 1;
+    end
+    else begin
+     result:= 0;
+    end;
+   end;
+   else begin
+    internalerror('H20140329A');
+   end;
+  end;
+ end;
+end;
+
 //type t1 = array[1..0] of integer; 
 procedure handlearraytype({const info: pparseinfoty});
 var
@@ -370,7 +393,7 @@ var
  indilev: integer;
  po1: ptypedataty;
  id1: identty;
- min,max,totsize,si1: int64;
+ {min,max,}totsize,si1: int64;
 
  procedure err(const aerror: errorty);
  begin
@@ -445,12 +468,12 @@ outinfo({info,}'****');
      end;
      indilev:= 0; //no indirectlevel for multi dimensions
      getordrange(po1,range);
-     si1:= max-min+1;
+     si1:= range.max-range.min+1;
      if (si1 > maxint) and (totsize > maxint) then begin
       err(err_dataeletoolarge);
       goto endlab;
      end;
-     if max < min then begin
+     if range.max < range.min then begin
       errormessage({info,}err_highlowerlow,[],int1-stackindex);
       ele.hideelementdata(arty);
       goto endlab;     
@@ -522,17 +545,20 @@ outinfo({info,}'***');
  end;
 end;
 *)
-{
+
 type
  i1 = 0..3;
 var
  v2: array[i1] of integer;
-}
+
 procedure handleindex({const info: pparseinfoty});
 var
- po1: ptypedataty;
+ itemtype,indextype: ptypedataty;
+ range: ordrangety;
+ li1: int64;
+ offs: dataoffsty;
 label
- endlab;
+ errlab;
 begin
 // v2[4]:= 1;
 {$ifdef mse_debugparser}
@@ -541,15 +567,32 @@ begin
 outinfo({info,}'***');
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex = 1 then begin
+   offs:= 0;
    case d.kind of
     ck_ref: begin
-     po1:= ele.eledataabs(d.datatyp.typedata);
-     if po1^.kind <> dk_array then begin
+     itemtype:= ele.eledataabs(d.datatyp.typedata);
+     if itemtype^.kind <> dk_array then begin
       errormessage({info,}err_illegalqualifier,[],0);
-      d.kind:= ck_none;
-      goto endlab;
+      goto errlab;
      end;
+     indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
      if contextstack[stacktop].d.kind = ck_const then begin
+      if  not (contextstack[stacktop].d.constval.kind in 
+                                           ordinaldatakinds) then begin
+       errormessage(err_ordtypeexpected,[],stacktop-stackindex);
+       goto errlab;
+      end;
+      getordrange(indextype,range);
+      li1:= getordconst(contextstack[stacktop].d.constval);
+      if (li1 < range.min) or (li1 > range.max) then begin
+       rangeerror(range,stacktop-stackindex);
+       goto errlab;
+      end;
+      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
+      offs:= offs + li1*gettypesize(itemtype^);
+      d.ref.offset:= d.ref.offset + offs;
+      d.datatyp.typedata:= ele.eledatarel(itemtype);
+      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
      end
      else begin
       internalerror({info,}'N20140328B');
@@ -561,11 +604,17 @@ outinfo({info,}'***');
    end;
   end
   else begin
+errlab:
    d.kind:= ck_none;
   end;
-endlab:
-  dec(stackindex);
+  stacktop:= stackindex-1;
+  stackindex:= contextstack[stackindex].parent;
  end;
+end;
+
+procedure closesquarebracketexpected;
+begin
+ tokenexpectederror(']',erl_fatal);
 end;
 
 end.

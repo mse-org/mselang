@@ -185,6 +185,16 @@ type
  end;
  pvisibledataty = ^visibledataty;
  
+function gettypesize(const typedata: typedataty): databytesizety; inline;
 
 implementation
+
+function gettypesize(const typedata: typedataty): databytesizety; inline;
+begin
+ result:= typedata.bytesize;
+ if typedata.indirectlevel <> 0 then begin
+  result:= pointersize;
+ end;
+end;
+
 end.
