@@ -424,7 +424,10 @@ getindex,getindex1,,
 getindex1,,,handleindex
  ${whitespace}
  ']',-*
+ ',',getindex2-
  '',!closesquarebracketexpected
+getindex2,getindex1,,
+ '',exp^*
 #
 illegalexpression,,,handleillegalexpression*
 #

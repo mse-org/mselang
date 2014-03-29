@@ -763,6 +763,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'getindex1');
+ getindex2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getindex2');
  illegalexpressionco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -3540,7 +3545,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgetindex1: array[0..6] of branchty = (
+ bgetindex1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3576,8 +3581,25 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @getindex2co); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @closesquarebracketexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetindex2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4497,6 +4519,8 @@ begin
  getindexco.next:= @getindex1co;
  getindex1co.branch:= @bgetindex1;
  getindex1co.handleexit:= @handleindex;
+ getindex2co.branch:= @bgetindex2;
+ getindex2co.next:= @getindex1co;
  illegalexpressionco.branch:= nil;
  illegalexpressionco.handleexit:= @handleillegalexpression;
  mulfactco.branch:= @bmulfact;

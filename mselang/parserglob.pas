@@ -19,6 +19,8 @@ unit parserglob;
 interface
 uses
  msestream,msestrings,msetypes;
+const
+ firstident = 256;
 
 type
  bool8 = boolean;

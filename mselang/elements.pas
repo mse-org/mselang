@@ -28,7 +28,6 @@ uses
 
 const
  maxidentvector = 200;
- firstident = 256;
 type
  identarty = integerarty;
  identvecty = record

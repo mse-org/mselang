@@ -557,6 +557,7 @@ var
  range: ordrangety;
  li1: int64;
  offs: dataoffsty;
+ int1: integer;
 label
  errlab;
 begin
@@ -566,37 +567,39 @@ begin
 {$endif}
 outinfo({info,}'***');
  with info,contextstack[stackindex-1] do begin
-  if stacktop - stackindex = 1 then begin
+  if stacktop - stackindex > 0 then begin
    offs:= 0;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.datatyp.typedata);
-     if itemtype^.kind <> dk_array then begin
-      errormessage({info,}err_illegalqualifier,[],0);
-      goto errlab;
-     end;
-     indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
-     if contextstack[stacktop].d.kind = ck_const then begin
-      if  not (contextstack[stacktop].d.constval.kind in 
-                                           ordinaldatakinds) then begin
-       errormessage(err_ordtypeexpected,[],stacktop-stackindex);
+     for int1:= stackindex+1 to stacktop do begin
+      if itemtype^.kind <> dk_array then begin
+       errormessage({info,}err_illegalqualifier,[],0);
        goto errlab;
       end;
-      getordrange(indextype,range);
-      li1:= getordconst(contextstack[stacktop].d.constval);
-      if (li1 < range.min) or (li1 > range.max) then begin
-       rangeerror(range,stacktop-stackindex);
-       goto errlab;
+      indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
+      if contextstack[int1].d.kind = ck_const then begin
+       if not (contextstack[int1].d.constval.kind in 
+                                            ordinaldatakinds) then begin
+        errormessage(err_ordtypeexpected,[],stacktop-stackindex);
+        goto errlab;
+       end;
+       getordrange(indextype,range);
+       li1:= getordconst(contextstack[int1].d.constval);
+       if (li1 < range.min) or (li1 > range.max) then begin
+        rangeerror(range,stacktop-stackindex);
+        goto errlab;
+       end;
+       itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
+       offs:= offs + li1*gettypesize(itemtype^);
+      end
+      else begin
+       internalerror({info,}'N20140328B');
       end;
-      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
-      offs:= offs + li1*gettypesize(itemtype^);
-      d.ref.offset:= d.ref.offset + offs;
-      d.datatyp.typedata:= ele.eledatarel(itemtype);
-      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
-     end
-     else begin
-      internalerror({info,}'N20140328B');
      end;
+     d.ref.offset:= d.ref.offset + offs;
+     d.datatyp.typedata:= ele.eledatarel(itemtype);
+     d.datatyp.indirectlevel:= itemtype^.indirectlevel;
     end;
     else begin
      internalerror({info,}'N20140328A');
