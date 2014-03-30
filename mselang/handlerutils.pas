@@ -18,7 +18,47 @@ unit handlerutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- handlerglob,parserglob,elements,msestrings;
+ handlerglob,parserglob,elements,msestrings,msetypes;
+
+type
+ systypety = (st_none,st_bool8,st_int32,st_float64,st_string8);
+ systypeinfoty = record
+  name: string;
+  data: typedataty;
+ end;
+ sysconstinfoty = record
+  name: string;
+  ctyp: systypety;
+  cval: dataty;
+ end;
+  
+ sysfuncinfoty = record
+  name: string;
+  data: sysfuncdataty;
+ end;
+
+ opinfoty = record
+  ops: array[stackdatakindty] of opty;
+  opname: string;
+ end;
+
+var
+ sysdatatypes: array[systypety] of typeinfoty;
+ resultident: identty;
+
+const
+ stackdatakinds: array[datakindty] of stackdatakindty = 
+   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+   (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
+  //dk_address,dk_record,dk_string,dk_array
+    sdk_none,  sdk_none, sdk_none, sdk_none);
+                
+ resultdatakinds: array[stackdatakindty] of datakindty =
+            //sdk_bool8,sdk_int32,sdk_flo64
+           (dk_none,dk_boolean,dk_integer,dk_float);
+ resultdatatypes: array[stackdatakindty] of systypety =
+            //sdk_bool8,sdk_int32,sdk_flo64
+           (st_none,st_bool8,st_int32,st_float64);
 
 type
  comperrorty = (ce_invalidfloat,ce_expressionexpected,ce_startbracketexpected,
@@ -60,10 +100,68 @@ function findkindelementsdata({const info: pparseinfoty;}
 
 function findvar({const info: pparseinfoty;} const astackoffset: integer; 
         const visibility: vislevelty; out varinfo: vardestinfoty): boolean;
+
+procedure updateop(const opinfo: opinfoty);
+function convertconsts(): stackdatakindty;
+function getvalue(const stackoffset: integer; const insert: boolean): boolean;
+function getaddress(const stackoffset: integer): boolean;
+procedure push(const avalue: boolean); overload;
+procedure push(const avalue: integer); overload;
+procedure push(const avalue: real); overload;
+procedure push(const avalue: addressinfoty); overload;
+procedure push(const avalue: datakindty); overload;
+procedure pushconst(const avalue: contextdataty);
+procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
+                                                   const size: databytesizety);
+procedure pushinsert(const insertad: opaddressty; 
+                                    const avalue: datakindty); overload;
+function pushinsertvar(const insertad: opaddressty;
+                                    const atype: ptypedataty): integer;
+procedure pushinsertdata(const insertad: opaddressty;
+                  const address: addressinfoty; const offset: dataoffsty;
+                                                  const size: databytesizety);
+procedure pushinsertaddress(const avalue: contextitemty);
+procedure pushinsertconst(const avalue: contextitemty);
+
+procedure setcurrentloc(const indexoffset: integer);
+procedure setcurrentlocbefore(const indexoffset: integer);
+procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
+procedure setloc(const destindexoffset,sourceindexoffset: integer);
+
+procedure init();
+procedure deinit();
                            
 implementation
 uses
- errorhandler,typinfo;
+ errorhandler,typinfo,opcode,stackops,parser;
+   
+const
+ mindouble = -1.7e308;
+ maxdouble = 1.7e308; //todo: use exact values
+ 
+  //will be replaced by systypes.mla
+ systypeinfos: array[systypety] of systypeinfoty = (
+   (name: 'none'; data: (indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
+   (name: 'bool8'; data: (indirectlevel: 0;
+       bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
+   (name: 'int32'; data: (indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_32;
+                 kind: dk_integer; infoint32:(min: minint; max: maxint))),
+   (name: 'flo64'; data: (indirectlevel: 0;
+       bitsize: 64; bytesize: 8; datasize: das_64;
+                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
+   (name: 'string8'; data: (indirectlevel: 0;
+       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
+                 kind: dk_string8; dummy: 0))
+  );
+ sysconstinfos: array[0..1] of sysconstinfoty = (
+   (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
+   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: true))
+  );
+ sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
+   (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
+  );
  
 procedure error({const info: pparseinfoty;} const error: comperrorty;
                    const pos: pchar=nil);
@@ -332,6 +430,544 @@ begin
    end;
   end;
   command.writeln([' ',text]);
+ end;
+end;
+
+
+function pushinsertvar(const insertad: opaddressty;
+                                    const atype: ptypedataty): integer;
+begin
+// insertad:= insertad + info^.opshift;
+ with insertitem(insertad)^ do begin
+  op:= @pushop;
+  result:= atype^.bytesize; //todo: alignment
+  d.d.vsize:= result;
+ end;
+end;
+
+procedure pushinsertaddress(const avalue: contextitemty);
+begin
+// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
+ with insertitem(avalue.opmark.address)^,avalue.d.ref do begin
+  if vf_global in address.flags then begin
+   op:= @pushglobaddr;
+   d.vaddress:= address.address + offset;
+  end
+  else begin
+   op:= @pushlocaddr;
+   d.vlocaddress.offset:= address.address + offset;
+   d.vlocaddress.linkcount:= info.funclevel-address.framelevel-1;
+  end;
+ end;
+end;
+
+procedure pushinsertconst(const avalue: contextitemty);
+begin
+// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
+ with insertitem(avalue.opmark.address)^ do begin
+  case avalue.d.constval.kind of
+   dk_boolean: begin
+    op:= @push8;
+    d.d.vboolean:= avalue.d.constval.vboolean;
+   end;
+   dk_integer: begin
+    op:= @push32;
+    d.d.vinteger:= avalue.d.constval.vinteger;
+   end;
+   dk_float: begin
+    op:= @push64;
+    d.d.vfloat:= avalue.d.constval.vfloat;
+   end;
+   dk_string8: begin
+    op:= @pushconstaddress;
+    d.vaddress:= stringconst(avalue.d.constval.vstring);
+   end;
+   else begin
+    internalerror('H20131121A');
+   end;
+  end;
+ end;
+end;
+
+procedure push(const avalue: boolean); overload;
+begin
+ with additem({info})^ do begin
+  op:= @push8;
+  d.d.vboolean:= avalue;
+ end;
+end;
+
+procedure push(const avalue: integer); overload;
+begin
+ with additem({info})^ do begin
+  op:= @push32;
+  d.d.vinteger:= avalue;
+ end;
+end;
+
+procedure push(const avalue: real); overload;
+begin
+ with additem({info})^ do begin
+  op:= @push64;
+  d.d.vfloat:= avalue;
+ end;
+end;
+
+procedure push(const avalue: addressinfoty); overload;
+begin
+ with additem({info})^ do begin
+  if vf_global in avalue.flags then begin
+   op:= @pushglobaddr;
+   d.vaddress:= avalue.address;
+  end
+  else begin
+   op:= @pushlocaddr;
+   d.vlocaddress.offset:= avalue.address;
+   d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+  end;
+ end;
+end;
+
+procedure push(const avalue: datakindty); overload;
+      //no alignsize
+begin
+ with additem({info})^ do begin
+  op:= @pushdatakind;
+  d.vdatakind:= avalue;
+ end;
+end;
+
+procedure pushinsert(const insertad: opaddressty; 
+                                    const avalue: datakindty); overload;
+      //no alignsize
+begin
+ with insertitem(insertad)^ do begin
+  op:= @pushdatakind;
+  d.vdatakind:= avalue;
+ end;
+end;
+
+procedure pushconst(const avalue: contextdataty);
+//todo: optimize
+begin
+ with avalue do begin
+  case constval.kind of
+   dk_boolean: begin
+    push(constval.vboolean);
+   end;
+   dk_integer: begin
+    push(constval.vinteger);
+   end;
+   dk_float: begin
+    push(constval.vfloat);
+   end;
+   dk_address: begin
+    push(constval.vaddress);
+   end;
+  end;
+ end;
+end;
+
+procedure int32toflo64({; const index: integer});
+begin
+ with additem({info})^ do begin
+  op:= @stackops.int32toflo64;
+  {
+  with d.op1 do begin
+   index0:= index;
+  end;
+  }
+ end;
+end;
+
+procedure setcurrentloc(const indexoffset: integer);
+begin 
+ with info do begin
+  ops[contextstack[stackindex+indexoffset].opmark.address].d.opaddress:=
+                                                                     opcount-1;
+ end; 
+end;
+
+procedure setcurrentlocbefore(const indexoffset: integer);
+begin 
+ with info do begin
+  ops[contextstack[stackindex+indexoffset].opmark.address-1].d.opaddress:=
+                                                                     opcount-1;
+ end; 
+end;
+
+procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
+begin
+ with info do begin
+  ops[contextstack[stackindex+destindexoffset].opmark.address-1].
+                                                               d.opaddress:=
+         contextstack[stackindex+sourceindexoffset].opmark.address-1;
+ end; 
+end;
+
+procedure setloc(const destindexoffset,sourceindexoffset: integer);
+begin
+ with info do begin
+  ops[contextstack[stackindex+destindexoffset].opmark.address].
+                                                               d.opaddress:=
+         contextstack[stackindex+sourceindexoffset].opmark.address-1;
+ end; 
+end;
+
+function convertconsts(): stackdatakindty;
+                //convert stacktop, stacktop-2
+begin
+ with info,contextstack[stacktop-2] do begin
+  result:= stackdatakinds[d.constval.kind];  
+  if contextstack[stacktop].d.constval.kind <> d.constval.kind then begin
+   case contextstack[stacktop].d.constval.kind of
+    dk_float: begin
+     result:= sdk_flo64;
+     with d,constval do begin
+      case kind of
+       dk_float: begin
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+       end;
+       dk_integer: begin
+        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
+       end;
+       else begin
+        result:= sdk_none;
+       end;
+      end;
+     end;
+    end;
+    dk_integer: begin
+     with d,constval do begin
+      case kind of
+       dk_integer: begin
+        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
+       end;
+       dk_float: begin
+        result:= sdk_flo64;
+        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+        kind:= dk_float;
+        datatyp:= contextstack[stacktop].d.datatyp;
+       end;
+       else begin
+        result:= sdk_none;
+       end;
+      end;
+     end;
+    end;
+    else begin
+     result:= sdk_none;
+    end;
+   end;
+  end;
+  if result = sdk_none then begin
+   incompatibletypeserror(contextstack[stacktop-2].d,
+                                           contextstack[stacktop].d);
+  end;
+ end;
+end;
+
+procedure pushd({const info: pparseinfoty;}
+                     const oppo: popinfoty; const address: addressinfoty;
+                     const offset: dataoffsty; const size: databytesizety);
+begin
+ with oppo^,address do begin //todo: use table
+  if vf_global in flags then begin
+   case size of
+    1: begin 
+     op:= @pushglob8;
+    end;
+    2: begin
+     op:= @pushglob16;
+    end;
+    4: begin
+     op:= @pushglob32;
+    end;
+    else begin
+     op:= @pushglob;
+    end;
+   end;
+   d.dataaddress:= address+offset;
+  end
+  else begin
+   if vf_paramindirect in flags then begin
+    case size of
+     1: begin 
+      op:= @pushlocindi8;
+     end;
+     2: begin
+      op:= @pushlocindi16;
+     end;
+     4: begin
+      op:= @pushlocindi32;
+     end;
+     else begin
+      op:= @pushlocindi;
+     end;
+    end;
+   end
+   else begin
+    case size of
+     1: begin 
+      op:= @pushloc8;
+     end;
+     2: begin
+      op:= @pushloc16;
+     end;
+     4: begin
+      op:= @pushloc32;
+     end;
+     else begin
+      op:= @pushloc;
+     end;
+    end;
+   end;
+   d.locdataaddress.offset:= address + offset;
+   d.locdataaddress.linkcount:= info.funclevel-framelevel-1;
+  end;
+  d.datasize:= size;
+ end;
+end;
+
+//todo: optimize call
+procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
+                                                   const size: databytesizety);
+begin
+ pushd(additem({info}),address,offset,size);
+end;
+
+procedure pushinsertdata(const insertad: opaddressty;
+                  const address: addressinfoty; const offset: dataoffsty;
+                                                  const size: databytesizety);
+begin
+ pushd(insertitem(insertad),address,offset,size);
+end;
+
+function getvalue(const stackoffset: integer; const insert: boolean): boolean;
+var
+ ref1: refinfoty;
+ po1: ptypedataty;
+ si1: databytesizety;
+begin
+ result:= true;
+ with info,contextstack[stackindex+stackoffset],d do begin
+  if kind = ck_ref then begin
+   ref1:= ref; //todo: optimize, handle indirectlevel
+   if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
+    po1:= ele.eledataabs(datatyp.typedata);
+    si1:= po1^.bytesize;
+   end
+   else begin
+    si1:= pointersize;
+   end;
+   if insert then begin
+    pushinsertdata(opmark.address,ref1.address,ref1.offset,si1);
+   end
+   else begin
+    pushdata(ref1.address,ref1.offset,si1);
+   end;
+   kind:= ck_fact;
+  end;
+ end;
+end;
+
+function getaddress(const stackoffset: integer): boolean;
+var
+ ref1: refinfoty;
+begin
+ result:= true;
+ with info,contextstack[stackindex+stackoffset].d do begin
+  if kind = ck_ref then begin
+   ref1:= ref; //todo: optimize
+   kind:= ck_const;
+   datatyp.indirectlevel:= datatyp.indirectlevel+1;
+   constval.kind:= dk_address;
+   constval.vaddress:= ref1.address;
+   constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+  end;
+ end;
+end;
+
+procedure init;
+var
+ ty1: systypety;
+ sf1: sysfuncty;
+ po1: pelementinfoty;
+ po2: ptypedataty;
+ int1: integer;
+begin
+ for ty1:= low(systypety) to high(systypety) do begin
+  with systypeinfos[ty1] do begin
+   po1:= ele.addelement(getident(name),vis_max,ek_type);
+   po2:= @po1^.data;
+   po2^:= data;
+  end;
+  sysdatatypes[ty1].typedata:= ele.eleinforel(po1);
+//  sysdatatypes[ty1].flags:= [];
+ end;
+ for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
+  with sysconstinfos[int1] do begin
+   po1:= ele.addelement(getident(name),vis_max,ek_const);
+   with pconstdataty(@po1^.data)^ do begin
+    val.d:= cval;
+    val.typ:= sysdatatypes[ctyp];
+   end;
+  end;
+ end;
+ for sf1:= low(sysfuncty) to high(sysfuncty) do begin
+  with sysfuncinfos[sf1] do begin
+   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc);
+   psysfuncdataty(@po1^.data)^:= data;
+  end;
+ end;
+ resultident:= getident('result');
+end;
+
+procedure deinit;
+begin
+end;
+
+procedure updateop(const opinfo: opinfoty);
+//todo: don't convert inplace, stack items will be of variable size
+var
+ kinda,kindb: datakindty;
+ po1: pelementinfoty;
+ sd1: stackdatakindty;
+ op1: opty;
+begin
+ with info do begin
+  opshift:= 0;
+outinfo('****');
+  getvalue(stacktop-2-stackindex,true);
+  getvalue(stacktop-stackindex,false);
+outinfo('****');
+  sd1:= sdk_none;
+  po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
+  kinda:= ptypedataty(@po1^.data)^.kind;
+  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
+  kindb:= ptypedataty(@po1^.data)^.kind;
+  with contextstack[stacktop-2],d do begin
+   if (kinda = dk_float) or (kindb = dk_float) then begin
+    sd1:= sdk_flo64;
+    if kind = ck_const then begin
+     with insertitem(opmark.address)^ do begin
+      op:= @push64;
+      case constval.kind of
+       dk_integer: begin
+        d.d.vfloat:= real(constval.vinteger);
+       end;
+       dk_float: begin
+        d.d.vfloat:= constval.vfloat;
+       end;
+       else begin
+        sd1:= sdk_none;
+       end;
+      end;
+     end;
+    end
+    else begin //ck_fact
+     case kinda of
+      dk_integer: begin
+       with insertitem(opmark.address)^ do begin
+        op:= @stackops.int32toflo64;
+        with d.op1 do begin
+         index0:= 0;
+        end;
+       end;
+      end;
+      dk_float: begin
+      end;
+      else begin
+       sd1:= sdk_none;
+      end;
+     end;
+    end;
+    with contextstack[stacktop].d do begin
+     if kind = ck_const then begin
+      case kinda of
+       dk_integer: begin
+        push(real(constval.vinteger));
+       end;
+       dk_float: begin
+        push(real(constval.vfloat));
+       end;
+       else begin
+        sd1:= sdk_none;
+       end;
+      end;
+     end
+     else begin
+      case kinda of
+       dk_integer: begin
+         int32toflo64({info});
+       end;
+       dk_float: begin
+       end;
+       else begin
+        sd1:= sdk_none;
+       end;
+      end;
+     end;
+    end;
+   end
+   else begin
+    if kinda = dk_boolean then begin
+     if kindb = dk_boolean then begin
+      sd1:= sdk_bool8;
+      if kind = ck_const then begin
+       with insertitem(opmark.address)^ do begin
+        op:= @push8;
+        d.d.vboolean:= constval.vboolean;
+       end;
+      end;
+      with contextstack[stacktop].d do begin
+       if kind = ck_const then begin
+        push(constval.vboolean);
+       end;
+      end;
+     end;
+    end
+    else begin
+     if (kinda = dk_integer) and (kinda = dk_integer) then begin
+      sd1:= sdk_int32;
+      if kind = ck_const then begin
+       with insertitem(opmark.address)^ do begin
+        op:= @push32;
+        d.d.vinteger:= constval.vinteger;
+       end;
+      end;
+      with contextstack[stacktop].d do begin
+       if kind = ck_const then begin
+        push(constval.vinteger);
+       end;
+      end;
+     end;
+    end;
+   end;
+   if sd1 = sdk_none then begin
+    incompatibletypeserror(contextstack[stacktop-2].d,
+                                            contextstack[stacktop].d);
+   end
+   else begin
+    op1:= opinfo.ops[sd1];
+    if op1 = nil then begin
+     operationnotsupportederror(d,contextstack[stacktop].d,opinfo.opname);
+    end
+    else begin
+    {$ifdef mse_debugparser}
+     outcommand([-2,0],opinfo.opname);
+    {$endif}
+     writeop(op1);
+     d.kind:= ck_fact;
+     d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
+     context:= nil;
+    end;
+   end;
+  end;
+  dec(stacktop,2);
+  stackindex:= stacktop-1; 
  end;
 end;
 

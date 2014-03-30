@@ -49,7 +49,7 @@ uses
 procedure handletype({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'TYPE');
+ outhandle('TYPE');
 {$endif}
  with info,contextstack[stacktop] do begin
   dec(stackindex);
@@ -60,9 +60,9 @@ end;
 procedure handlegetfieldtypestart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'GETFIELDTYPESTART');
+ outhandle('GETFIELDTYPESTART');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
@@ -73,9 +73,9 @@ end;
 procedure handlegettypetypestart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'GETTYPETYPESTART');
+ outhandle('GETTYPETYPESTART');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
@@ -86,7 +86,7 @@ end;
 procedure handlepointertype({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'POINTERTYPE');
+ outhandle('POINTERTYPE');
 {$endif}
  with info,contextstack[stackindex] do begin
   inc(d.typ.indirectlevel);
@@ -100,15 +100,15 @@ var
  idcontext: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHECKTYPEIDENT');
+ outhandle('CHECKTYPEIDENT');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stackindex-2] do begin
   if stackindex < 3 then begin
-   internalerror({info,}'H20140325A');
+   internalerror('H20140325A');
    exit;
   end;
-  if findkindelements({info,}1,[ek_type],vis_max,po2) then begin
+  if findkindelements(1,[ek_type],vis_max,po2) then begin
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
@@ -121,11 +121,11 @@ outinfo({info,}'***');
       inc(ptypedataty(@po1^.data)^.indirectlevel,d.typ.indirectlevel);
      end
      else begin //duplicate
-      identerror({info,}-3,err_duplicateidentifier);
+      identerror(-3,err_duplicateidentifier);
      end;
     end
     else begin
-     internalerror({info,}'H20140324B');
+     internalerror('H20140324B');
     end;
    end;
    stacktop:= stackindex-1;
@@ -144,9 +144,9 @@ var
  po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHECKRANGETYPE');
+ outhandle('CHECKRANGETYPE');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if stacktop-stackindex = 3 then begin
    with contextstack[stackindex-2] do begin
@@ -176,7 +176,7 @@ outinfo({info,}'***');
      end;
     end
     else begin
-     identerror({info,}-1,err_duplicateidentifier,erl_fatal);
+     identerror(-1,err_duplicateidentifier,erl_fatal);
     end;
    end;
   end;
@@ -191,12 +191,12 @@ var
  id1: identty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RECORDDEFSTART');
+ outhandle('RECORDDEFSTART');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if stackindex < 3 then begin
-   internalerror({info,}'H20140325D');
+   internalerror('H20140325D');
    exit;
   end;
   with contextstack[stackindex-2] do begin
@@ -212,7 +212,7 @@ outinfo({info,}'***');
   with contextstack[stackindex-1] do begin
 //   kind:= ck_type;
    if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
-    identerror({info,}stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
   end;
  end;
@@ -221,7 +221,7 @@ end;
 procedure handlerecorddeferror({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RECORDDEFERROR');
+ outhandle('RECORDDEFERROR');
 {$endif}
  with info do begin
   ele.elementparent:= contextstack[stackindex].elemark;
@@ -235,13 +235,13 @@ var
  ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RECORDFIELD');
+ outhandle('RECORDFIELD');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if (stacktop-stackindex < 3) or 
             (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
-   internalerror({info,}'H20140325C');
+   internalerror('H20140325C');
    exit;
   end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
@@ -260,7 +260,7 @@ outinfo({info,}'***');
    ele.elementparent:= ele1;
   end
   else begin
-   identerror({info,}2,err_duplicateidentifier);
+   identerror(2,err_duplicateidentifier);
    stacktop:= stackindex-1;
   end;
  end;
@@ -273,9 +273,9 @@ var
  size1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RECORDTYPE');
+ outhandle('RECORDTYPE');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
   with info do begin
   ele.elementparent:= contextstack[stackindex].elemark; //restore
   int2:= 0;
@@ -307,9 +307,9 @@ end;
 procedure handlearraydefstart({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYDEFSTART');
+ outhandle('ARRAYDEFSTART');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
 end;
 
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
@@ -353,7 +353,7 @@ begin
     range.max:= 1;
    end;
    else begin
-    internalerror({info,}'H20120327B');
+    internalerror('H20120327B');
    end;
   end;
  end;
@@ -398,7 +398,7 @@ var
  procedure err(const aerror: errorty);
  begin
   with info do begin
-   errormessage({info,}aerror,[],int1-stackindex); 
+   errormessage(aerror,[],int1-stackindex); 
    if arty <> nil then begin
     ele.hideelementdata(arty);
    end;
@@ -411,9 +411,9 @@ label
  endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYTYPE');
+ outhandle('ARRAYTYPE');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   int1:= stacktop-stackindex-2;
   if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
@@ -434,7 +434,7 @@ outinfo({info,}'****');
    for int1:= stacktop-1 downto int2 do begin
     with contextstack[int1] do begin
      if d.kind <> ck_fieldtype then begin
-      internalerror({info,}'H20140327A');
+      internalerror('H20140327A');
       exit;
      end;
      po1:= ele.eledataabs(d.typ.typedata);
@@ -458,7 +458,7 @@ outinfo({info,}'****');
       id1:= getident(); //multi dimension
      end;
      if not ele.addelement(id1,vis_max,ek_type,arty) then begin
-      identerror({info,}stacktop-stackindex,err_duplicateidentifier);
+      identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
      with arty^.infoarray do begin
@@ -474,7 +474,7 @@ outinfo({info,}'****');
       goto endlab;
      end;
      if range.max < range.min then begin
-      errormessage({info,}err_highlowerlow,[],int1-stackindex);
+      errormessage(err_highlowerlow,[],int1-stackindex);
       ele.hideelementdata(arty);
       goto endlab;     
      end;
@@ -508,36 +508,36 @@ end;
 procedure handlearraydeferror1({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYDEFERROR1');
+ outhandle('ARRAYDEFERROR1');
 {$endif}
- tokenexpectederror({info,}'of',erl_fatal);
+ tokenexpectederror('of',erl_fatal);
 end;
 
 procedure handlearrayindexerror1({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYINDEXERROR1');
+ outhandle('ARRAYINDEXERROR1');
 {$endif}
- tokenexpectederror({info,}'[',erl_fatal);
+ tokenexpectederror('[',erl_fatal);
 end;
 
 procedure handlearrayindexerror2({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYINDEXERROR2');
+ outhandle('ARRAYINDEXERROR2');
 {$endif}
- tokenexpectederror({info,}']',erl_fatal);
+ tokenexpectederror(']',erl_fatal);
 end;
 (*
 procedure handlearrayindex2({const info: pparseinfoty});
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ARRAYINDEX');
+ outhandle('ARRAYINDEX');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info^,contextstack[stacktop] do begin
   if d.kind <> ck_fieldtype then begin
-   internalerror({info,}'H20140327A');
+   internalerror('H20140327A');
    exit;
   end;
   if not (d.typ.kind in ordinalk
@@ -558,51 +558,68 @@ var
  li1: int64;
  offs: dataoffsty;
  int1: integer;
+ fullconst: boolean;
 label
  errlab;
 begin
 // v2[4]:= 1;
 {$ifdef mse_debugparser}
- outhandle({info,}'INDEX');
+ outhandle('INDEX');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex > 0 then begin
    offs:= 0;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.datatyp.typedata);
+     fullconst:= true;
      for int1:= stackindex+1 to stacktop do begin
       if itemtype^.kind <> dk_array then begin
-       errormessage({info,}err_illegalqualifier,[],0);
+       errormessage(err_illegalqualifier,[],0);
        goto errlab;
       end;
       indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
-      if contextstack[int1].d.kind = ck_const then begin
-       if not (contextstack[int1].d.constval.kind in 
-                                            ordinaldatakinds) then begin
-        errormessage(err_ordtypeexpected,[],stacktop-stackindex);
-        goto errlab;
+      getordrange(indextype,range);
+      with contextstack[int1] do begin
+       case d.kind of
+        ck_const: begin
+         if not (contextstack[int1].d.constval.kind in 
+                                              ordinaldatakinds) then begin
+          errormessage(err_ordtypeexpected,[],stacktop-stackindex);
+          goto errlab;
+         end;
+         li1:= getordconst(contextstack[int1].d.constval);
+         if (li1 < range.min) or (li1 > range.max) then begin
+          rangeerror(range,stacktop-stackindex);
+          goto errlab;
+         end;
+        end;
+        ck_ref,ck_fact: begin //todo: check type
+         if d.kind = ck_ref then begin
+          //todo: push value
+         end;
+         push(indextype^.bytesize);
+//         mul32();
+//         if not fullconst then begin
+          
+        end;
+        else begin
+         internalerror('N20140328B');
+         exit;
+        end;
        end;
-       getordrange(indextype,range);
-       li1:= getordconst(contextstack[int1].d.constval);
-       if (li1 < range.min) or (li1 > range.max) then begin
-        rangeerror(range,stacktop-stackindex);
-        goto errlab;
-       end;
-       itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
-       offs:= offs + li1*gettypesize(itemtype^);
-      end
-      else begin
-       internalerror({info,}'N20140328B');
       end;
+      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
+      offs:= offs + li1*gettypesize(itemtype^);
      end;
      d.ref.offset:= d.ref.offset + offs;
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
     end;
     else begin
-     internalerror({info,}'N20140328A');
+     internalerror('N20140328A');
+     exit;
     end;
    end;
   end

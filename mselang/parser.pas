@@ -39,12 +39,13 @@ procedure init;
 procedure deinit;
 
 {$ifdef mse_debugparser}
-procedure outinfo({const info: pparseinfoty;} const text: string);
+procedure outinfo(const text: string);
 {$endif}
 implementation
 uses
  typinfo,grammar,handler,elements,msestrings,sysutils,handlerglob,
- msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode;
+ msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
+ handlerutils;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -53,19 +54,21 @@ uses
 procedure init;
 begin
  elements.init;
+ handlerutils.init;
  unithandler.init;
- handler.init;
+// handler.init;
 end;
 
 procedure deinit;
 begin
- handler.deinit;
+// handler.deinit;
  unithandler.deinit;
+ handlerutils.deinit;
  elements.clear;
 end;
 
 {$ifdef mse_debugparser}
-procedure outinfo({const info: pparseinfoty;} const text: string);
+procedure outinfo(const text: string);
  procedure writetype(const ainfo: typeinfoty);
  var
   po1: ptypedataty;

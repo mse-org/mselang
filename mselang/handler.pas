@@ -20,132 +20,130 @@ interface
 uses
  parserglob,typinfo,msetypes,handlerglob;
 
-procedure init;
-procedure deinit;
-procedure initparser({var info: parseinfoty});
+procedure initparser();
 
-procedure push({const info: pparseinfoty;} const avalue: real); overload;
-procedure push({const info: pparseinfoty;} const avalue: integer); overload;
-procedure int32toflo64({const info: pparseinfoty}{; const index: integer});
+//procedure push(const avalue: real); overload;
+//procedure push(const avalue: integer); overload;
+//procedure int32toflo64();
  
-procedure dummyhandler({const info: pparseinfoty});
+procedure dummyhandler();
 
-procedure handlenoimplementationerror({const info: pparseinfoty});
+procedure handlenoimplementationerror();
 
-procedure checkstart({const info: pparseinfoty});
-procedure handlenouniterror({const info: pparseinfoty});
-procedure handlenounitnameerror({const info: pparseinfoty});
-procedure handlesemicolonexpected({const info: pparseinfoty});
-procedure handleequalityexpected({const info: pparseinfoty});
-procedure handleidentexpected({const info: pparseinfoty});
-procedure handleillegalexpression({const info: pparseinfoty});
+procedure checkstart();
+procedure handlenouniterror();
+procedure handlenounitnameerror();
+procedure handlesemicolonexpected();
+procedure handleequalityexpected();
+procedure handleidentexpected();
+procedure handleillegalexpression();
 
-procedure handleuseserror({const info: pparseinfoty});
-procedure handleuses({const info: pparseinfoty});
-procedure handlenoidenterror({const info: pparseinfoty});
+procedure handleuseserror();
+procedure handleuses();
+procedure handlenoidenterror();
 
-procedure handleprogbegin({const info: pparseinfoty});
-procedure handleprogblock({const info: pparseinfoty});
+procedure handleprogbegin();
+procedure handleprogblock();
 
-procedure handlecommentend({const info: pparseinfoty});
+procedure handlecommentend();
 
-procedure handlecheckterminator({const info: pparseinfoty});
-procedure handlestatementblock1({const info: pparseinfoty});
+procedure handlecheckterminator();
+procedure handlestatementblock1();
 
-//procedure handleconst({const info: pparseinfoty});
-//procedure handleconst0({const info: pparseinfoty});
-procedure handleconst3({const info: pparseinfoty});
+//procedure handleconst();
+//procedure handleconst0();
+procedure handleconst3();
 
-//procedure handlevar({const info: pparseinfoty});
-procedure handlevardefstart({const info: pparseinfoty});
-procedure handlevar3({const info: pparseinfoty});
-procedure handlepointervar({const info: pparseinfoty});
+//procedure handlevar();
+procedure handlevardefstart();
+procedure handlevar3();
+procedure handlepointervar();
 
-procedure handlenumberentry({const info: pparseinfoty});
-procedure handleint({const info: pparseinfoty});
+procedure handlenumberentry();
+procedure handleint();
 
-procedure handlerange1({const info: pparseinfoty});
-procedure handlerange3({const info: pparseinfoty});
+procedure handlerange1();
+procedure handlerange3();
 
-procedure handlebinnum({const info: pparseinfoty});
-procedure handleoctnum({const info: pparseinfoty});
-procedure handledecnum({const info: pparseinfoty});
-procedure handlehexnum({const info: pparseinfoty});
+procedure handlebinnum();
+procedure handleoctnum();
+procedure handledecnum();
+procedure handlehexnum();
 
-procedure posnumber({const info: pparseinfoty});
-procedure negnumber({const info: pparseinfoty});
-procedure handlenumberexpected({const info: pparseinfoty});
+procedure posnumber();
+procedure negnumber();
+procedure handlenumberexpected();
 
-procedure handlefrac({const info: pparseinfoty});
-procedure handleexponent({const info: pparseinfoty});
+procedure handlefrac();
+procedure handleexponent();
 
-procedure handlestatementend({const info: pparseinfoty});
-procedure handleblockend({const info: pparseinfoty});
-procedure handleident({const info: pparseinfoty});
-procedure handleidentpath1a({const info: pparseinfoty});
-procedure handleidentpath2a({const info: pparseinfoty});
-procedure handleidentpath2({const info: pparseinfoty});
-procedure handlevalueidentifier({const info: pparseinfoty});
+procedure handlestatementend();
+procedure handleblockend();
+procedure handleident();
+procedure handleidentpath1a();
+procedure handleidentpath2a();
+procedure handleidentpath2();
+procedure handlevalueidentifier();
 
-procedure handleexp({const info: pparseinfoty});
-procedure handleequsimpexp({const info: pparseinfoty});
+procedure handleexp();
+procedure handleequsimpexp();
 
-procedure handlemain({const info: pparseinfoty});
-procedure handlekeyword({const info: pparseinfoty});
+procedure handlemain();
+procedure handlekeyword();
 
-procedure handlemulfact({const info: pparseinfoty});
-procedure handletermstart({const info: pparseinfoty});
-//procedure handleterm({const info: pparseinfoty});
-procedure handleaddress({const info: pparseinfoty});
-procedure handledereference({const info: pparseinfoty});
-procedure handleterm1({const info: pparseinfoty});
-procedure handlenegterm({const info: pparseinfoty});
-procedure handleaddterm({const info: pparseinfoty});
-procedure handlebracketend({const info: pparseinfoty});
-procedure handlesimpexp({const info: pparseinfoty});
-procedure handlesimpexp1({const info: pparseinfoty});
+procedure handlemulfact();
+procedure handletermstart();
+//procedure handleterm();
+procedure handleaddress();
+procedure handledereference();
+procedure handleterm1();
+procedure handlenegterm();
+procedure handleaddterm();
+procedure handlebracketend();
+procedure handlesimpexp();
+procedure handlesimpexp1();
 
-procedure handleparamsdef1entry({const info: pparseinfoty});
-procedure handleparams0({const info: pparseinfoty});
-procedure setconstparam({const info: pparseinfoty});
-procedure setvarparam({const info: pparseinfoty});
-procedure setoutparam({const info: pparseinfoty});
-procedure handleparamdef2({const info: pparseinfoty});
-procedure handleparamsend({const info: pparseinfoty});
-procedure handleprocedureheader({const info: pparseinfoty});
+procedure handleparamsdef1entry();
+procedure handleparams0();
+procedure setconstparam();
+procedure setvarparam();
+procedure setoutparam();
+procedure handleparamdef2();
+procedure handleparamsend();
+procedure handleprocedureheader();
 
-procedure handlefunctionentry({const info: pparseinfoty});
-procedure handleprocedureentry({const info: pparseinfoty});
+procedure handlefunctionentry();
+procedure handleprocedureentry();
 
-procedure checkfunctiontype({const info: pparseinfoty});
-procedure handleprocedure3({const info: pparseinfoty});
-procedure handleprocedure5a({const info: pparseinfoty});
-procedure handleprocedure6({const info: pparseinfoty});
+procedure checkfunctiontype();
+procedure handleprocedure3();
+procedure handleprocedure5a();
+procedure handleprocedure6();
 
-procedure handlestatement0entry({const info: pparseinfoty});
-procedure handleleftside({const info: pparseinfoty});
-procedure handlestatementexit({const info: pparseinfoty});
-procedure handleassignmententry({const info: pparseinfoty});
-procedure handleassignment({const info: pparseinfoty});
+procedure handlestatement0entry();
+procedure handleleftside();
+procedure handlestatementexit();
+procedure handleassignmententry();
+procedure handleassignment();
 
-procedure handleif0({const info: pparseinfoty});
-procedure handleif({const info: pparseinfoty});
-procedure handlethen({const info: pparseinfoty});
-procedure handlethen0({const info: pparseinfoty});
-procedure handlethen1({const info: pparseinfoty});
-procedure handlethen2({const info: pparseinfoty});
-procedure handleelse0({const info: pparseinfoty});
-procedure handleelse({const info: pparseinfoty});
+procedure handleif0();
+procedure handleif();
+procedure handlethen();
+procedure handlethen0();
+procedure handlethen1();
+procedure handlethen2();
+procedure handleelse0();
+procedure handleelse();
 
-procedure handledumpelements({const info: pparseinfoty});
-procedure handleabort({const info: pparseinfoty});
+procedure handledumpelements();
+procedure handleabort();
 
-procedure stringlineenderror({const info: pparseinfoty});
-procedure handlestringstart({const info: pparseinfoty});
-procedure handlestring({const info: pparseinfoty});
-procedure copystring({const info: pparseinfoty});
-procedure copyapostrophe({const info: pparseinfoty});
-procedure handlechar({const info: pparseinfoty});
+procedure stringlineenderror();
+procedure handlestringstart();
+procedure handlestring();
+procedure copystring();
+procedure copyapostrophe();
+procedure handlechar();
 
 implementation
 uses
@@ -155,50 +153,6 @@ uses
 const
  stacklinksize = sizeof(frameinfoty);
 
-type
- systypety = (st_none,st_bool8,st_int32,st_float64,st_string8);
- systypeinfoty = record
-  name: string;
-  data: typedataty;
- end;
- sysconstinfoty = record
-  name: string;
-  ctyp: systypety;
-  cval: dataty;
- end;
-  
- sysfuncinfoty = record
-  name: string;
-  data: sysfuncdataty;
- end;
-   
-const
- mindouble = -1.7e308;
- maxdouble = 1.7e308; //todo: use exact values
- 
-  //will be replaced by systypes.mla
- systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'none'; data: (indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
-   (name: 'bool8'; data: (indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
-   (name: 'int32'; data: (indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32;
-                 kind: dk_integer; infoint32:(min: minint; max: maxint))),
-   (name: 'flo64'; data: (indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64;
-                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
-   (name: 'string8'; data: (indirectlevel: 0;
-       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8; dummy: 0))
-  );
- sysconstinfos: array[0..1] of sysconstinfoty = (
-   (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
-   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: true))
-  );
- sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
-   (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
-  );
 
 function typename(const ainfo: contextdataty): string;
 var
@@ -212,249 +166,21 @@ function typename(const atype: typedataty): string;
 begin
  result:= getenumname(typeinfo(datakindty),ord(atype.kind));
 end;
- 
-var
- sysdatatypes: array[systypety] of typeinfoty;
- resultident: identty;
- 
+  
 procedure initparser({var info: parseinfoty});
 begin
- writeop({info,}@gotoop); //startup vector 
+ writeop(@gotoop); //startup vector 
 end;
 
-procedure init;
-var
- ty1: systypety;
- sf1: sysfuncty;
- po1: pelementinfoty;
- po2: ptypedataty;
- int1: integer;
-begin
- for ty1:= low(systypety) to high(systypety) do begin
-  with systypeinfos[ty1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_type);
-   po2:= @po1^.data;
-   po2^:= data;
-  end;
-  sysdatatypes[ty1].typedata:= ele.eleinforel(po1);
-//  sysdatatypes[ty1].flags:= [];
- end;
- for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
-  with sysconstinfos[int1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_const);
-   with pconstdataty(@po1^.data)^ do begin
-    val.d:= cval;
-    val.typ:= sysdatatypes[ctyp];
-   end;
-  end;
- end;
- for sf1:= low(sysfuncty) to high(sysfuncty) do begin
-  with sysfuncinfos[sf1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc);
-   psysfuncdataty(@po1^.data)^:= data;
-  end;
- end;
- resultident:= getident('result');
-end;
-
-procedure deinit;
-begin
-end;
-
-function pushinsertvar({const info: pparseinfoty;}
-            const insertad: opaddressty; const atype: ptypedataty): integer;
-begin
-// insertad:= insertad + info^.opshift;
- with insertitem({info,}insertad)^ do begin
-  op:= @pushop;
-  result:= atype^.bytesize; //todo: alignment
-  d.d.vsize:= result;
- end;
-end;
-
-procedure pushinsertaddress({const info: pparseinfoty;}
-                                              const avalue: contextitemty);
-begin
-// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
- with insertitem({info,}avalue.opmark.address)^,avalue.d.ref do begin
-  if vf_global in address.flags then begin
-   op:= @pushglobaddr;
-   d.vaddress:= address.address + offset;
-  end
-  else begin
-   op:= @pushlocaddr;
-   d.vlocaddress.offset:= address.address + offset;
-   d.vlocaddress.linkcount:= info.funclevel-address.framelevel-1;
-  end;
- end;
-end;
-
-procedure pushinsertconst({const info: pparseinfoty;}
-                                              const avalue: contextitemty);
-begin
-// avalue.opmark.address:= avalue.opmark.address + info^.opshift;
- with insertitem({info,}avalue.opmark.address)^ do begin
-  case avalue.d.constval.kind of
-   dk_boolean: begin
-    op:= @push8;
-    d.d.vboolean:= avalue.d.constval.vboolean;
-   end;
-   dk_integer: begin
-    op:= @push32;
-    d.d.vinteger:= avalue.d.constval.vinteger;
-   end;
-   dk_float: begin
-    op:= @push64;
-    d.d.vfloat:= avalue.d.constval.vfloat;
-   end;
-   dk_string8: begin
-    op:= @pushconstaddress;
-    d.vaddress:= stringconst({info,}avalue.d.constval.vstring);
-   end;
-   else begin
-    internalerror({info,}'H20131121A');
-   end;
-  end;
- end;
-end;
-
-procedure push({const info: pparseinfoty;} const avalue: boolean); overload;
-begin
- with additem({info})^ do begin
-  op:= @push8;
-  d.d.vboolean:= avalue;
- end;
-end;
-
-procedure push({const info: pparseinfoty;} const avalue: integer); overload;
-begin
- with additem({info})^ do begin
-  op:= @push32;
-  d.d.vinteger:= avalue;
- end;
-end;
-
-procedure push({const info: pparseinfoty;} const avalue: real); overload;
-begin
- with additem({info})^ do begin
-  op:= @push64;
-  d.d.vfloat:= avalue;
- end;
-end;
-
-procedure push({const info: pparseinfoty;} const avalue: addressinfoty); overload;
-begin
- with additem({info})^ do begin
-  if vf_global in avalue.flags then begin
-   op:= @pushglobaddr;
-   d.vaddress:= avalue.address;
-  end
-  else begin
-   op:= @pushlocaddr;
-   d.vlocaddress.offset:= avalue.address;
-   d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
-  end;
- end;
-end;
-
-procedure push({const info: pparseinfoty;} const avalue: datakindty); overload;
-      //no alignsize
-begin
- with additem({info})^ do begin
-  op:= @pushdatakind;
-  d.vdatakind:= avalue;
- end;
-end;
-
-procedure pushinsert({const info: pparseinfoty;} const insertad: opaddressty; 
-                                    const avalue: datakindty); overload;
-      //no alignsize
-begin
- with insertitem({info,}insertad)^ do begin
-  op:= @pushdatakind;
-  d.vdatakind:= avalue;
- end;
-end;
-
-procedure pushconst({const info: pparseinfoty;} const avalue: contextdataty);
-//todo: optimize
-begin
- with avalue do begin
-  case constval.kind of
-   dk_boolean: begin
-    push({info,}constval.vboolean);
-   end;
-   dk_integer: begin
-    push({info,}constval.vinteger);
-   end;
-   dk_float: begin
-    push({info,}constval.vfloat);
-   end;
-   dk_address: begin
-    push({info,}constval.vaddress);
-   end;
-  end;
- end;
-end;
-
-procedure int32toflo64({const info: pparseinfoty}{; const index: integer});
-begin
- with additem({info})^ do begin
-  op:= @stackops.int32toflo64;
-  {
-  with d.op1 do begin
-   index0:= index;
-  end;
-  }
- end;
-end;
-
-procedure setcurrentloc({const info: pparseinfoty;} const indexoffset: integer);
-begin 
- with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address].d.opaddress:=
-                                                                     opcount-1;
- end; 
-end;
-
-procedure setcurrentlocbefore({const info: pparseinfoty;}
-                                             const indexoffset: integer);
-begin 
- with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address-1].d.opaddress:=
-                                                                     opcount-1;
- end; 
-end;
-
-procedure setlocbefore({const info: pparseinfoty;}
-       const destindexoffset,sourceindexoffset: integer);
-begin
- with info do begin
-  ops[contextstack[stackindex+destindexoffset].opmark.address-1].
-                                                               d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].opmark.address-1;
- end; 
-end;
-
-procedure setloc({const info: pparseinfoty;}
-       const destindexoffset,sourceindexoffset: integer);
-begin
- with info do begin
-  ops[contextstack[stackindex+destindexoffset].opmark.address].
-                                                               d.opaddress:=
-         contextstack[stackindex+sourceindexoffset].opmark.address-1;
- end; 
-end;
-
-procedure handleint({const info: pparseinfoty});
+procedure handleint();
 var
  int1,c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'INT');
+ outhandle('INT');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stacktop] do begin
   consumed:= source.po;
   po1:= start.po;
@@ -465,7 +191,7 @@ outinfo({info,}'***');
 //  18446744073709551615
   int1:= 20-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -473,14 +199,14 @@ outinfo({info,}'***');
     inc(po1);
    end;
    if (int1 = 0) and (c1 < 10000000000000000000) then begin
-    errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
    end;
   end;
   stackindex:= stacktop-1;
   if contextstack[stackindex].d.kind = ck_neg then begin
    contextstack[stackindex].d.kind:= ck_none;
    if int64(c1) < 0 then begin
-    errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
    end;
    int64(c1):= -int64(c1);
   end;
@@ -491,37 +217,37 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure handlerange1({const info: pparseinfoty});
+procedure handlerange1();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RANGE1');
+ outhandle('RANGE1');
 {$endif}
  with info do begin
-  errormessage({info,}err_errintypedef,[]);
+  errormessage(err_errintypedef,[]);
   stackindex:= stackindex-1;
   stacktop:= stackindex;
  end;
 end;
 
-procedure handlerange3({const info: pparseinfoty});
+procedure handlerange3();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'RANGE3');
+ outhandle('RANGE3');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if stacktop-stackindex = 2 then begin
    if contextstack[stackindex+1].d.kind <> ck_const then begin
-    errormessage({info,}err_constexpressionexpected,[],1);
+    errormessage(err_constexpressionexpected,[],1);
    end
    else begin
     if contextstack[stackindex+2].d.kind <> ck_const then begin
-     errormessage({info,}err_constexpressionexpected,[],2);
+     errormessage(err_constexpressionexpected,[],2);
     end
     else begin
      if contextstack[stackindex+1].d.constval.kind <> 
               contextstack[stacktop].d.constval.kind then begin
-      incompatibletypeserror({info,}contextstack[stackindex+1].d,
+      incompatibletypeserror(contextstack[stackindex+1].d,
                                               contextstack[stacktop].d);
 //     errormessage(info,err
      end
@@ -537,10 +263,10 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure handlenumberentry({const info: pparseinfoty});
+procedure handlenumberentry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NUMBERENTRY');
+ outhandle('NUMBERENTRY');
 {$endif}
  with info,contextstack[stacktop].d do begin
   kind:= ck_number;
@@ -548,40 +274,40 @@ begin
  end;
 end;
 
-procedure posnumber({const info: pparseinfoty});
+procedure posnumber();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'POSNUMBER');
+ outhandle('POSNUMBER');
 {$endif}
  with info,contextstack[stacktop].d do begin
   if number.flags <> [] then begin
-   illegalcharactererror({info,}true);
+   illegalcharactererror(true);
   end;
   include(number.flags,nuf_pos);
  end;
 end;
 
-procedure negnumber({const info: pparseinfoty});
+procedure negnumber();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NEGNUMBER');
+ outhandle('NEGNUMBER');
 {$endif}
  with info,contextstack[stacktop].d do begin
   if number.flags <> [] then begin
-   illegalcharactererror({info,}true);
+   illegalcharactererror(true);
   end;
   include(number.flags,nuf_neg);
  end;
 end;
 
-procedure handlebinnum({const info: pparseinfoty});
+procedure handlebinnum();
 var
  c1: card64;
  po1: pchar;
  ch1: char;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'BINNUM');
+ outhandle('BINNUM');
 {$endif}
  with info,contextstack[stacktop] do begin
   consumed:= source.po;
@@ -591,7 +317,7 @@ begin
   end;
   c1:= 0;
   if consumed-po1 > 64 then begin
-   errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -605,14 +331,14 @@ begin
  end;
 end;
 
-procedure handleoctnum({const info: pparseinfoty});
+procedure handleoctnum();
 var
  int1: integer;
  c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'OCTNUM');
+ outhandle('OCTNUM');
 {$endif}
  with info,contextstack[stacktop] do begin
   consumed:= source.po;
@@ -624,7 +350,7 @@ begin
 //  1777777777777777777777
   int1:= 22-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -638,14 +364,14 @@ begin
  end;
 end;
 
-procedure handledecnum({const info: pparseinfoty});
+procedure handledecnum();
 var
  int1: integer;
  c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'DECNUM');
+ outhandle('DECNUM');
 {$endif}
  with info,contextstack[stacktop] do begin
   consumed:= source.po;
@@ -657,7 +383,7 @@ begin
 //  18446744073709551615
   int1:= 20-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -665,7 +391,7 @@ begin
     inc(po1);
    end;
    if (int1 = 0) and (c1 < 10000000000000000000) then begin
-    errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
    end;
   end;
   d.kind:= ck_number;
@@ -674,13 +400,13 @@ begin
  end;
 end;
 
-procedure handlehexnum({const info: pparseinfoty});
+procedure handlehexnum();
 var
  c1: card64;
  po1: pchar;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'HEXNUM');
+ outhandle('HEXNUM');
 {$endif}
  with info,contextstack[stacktop] do begin
   consumed:= source.po;
@@ -690,7 +416,7 @@ begin
   end;
   c1:= 0;
   if consumed-po1 > 16 then begin
-   errormessage({info,}err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
   end
   else begin
    while po1 < source.po do begin
@@ -704,13 +430,13 @@ begin
  end;
 end;
 
-procedure handlenumberexpected({const info: pparseinfoty});
+procedure handlenumberexpected();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NUMBEREXPECTED');
+ outhandle('NUMBEREXPECTED');
 {$endif}
  with info do begin
-  illegalcharactererror({info,}false);
+  illegalcharactererror(false);
 //  errormessage(info,stacktop-stackindex,err_numberexpected,[]);
   dec(stackindex);
  end;
@@ -726,7 +452,7 @@ const
    1e-10,1e-11,1e-12,1e-13,1e-14,1e-15,1e-16,1e-17,1e-18,1e-19,
    1e-20,1e-21,1e-22,1e-23,1e-24,1e-25,1e-26,1e-27,1e-28,1e-29,1e-30,1e-31,1e-32);
 
-procedure dofrac({const info: pparseinfoty;} const asource: pchar;
+procedure dofrac(const asource: pchar;
                  out neg: boolean; out mantissa: qword; out fraclen: integer);
 var
  int1: integer;
@@ -749,7 +475,7 @@ begin
    po1:= start.po;
    int1:= asource-po1-1;
    if int1 > 20 then begin
-    error({info,}ce_invalidfloat,asource);
+    error(ce_invalidfloat,asource);
    end
    else begin
     while po1 < asource do begin
@@ -761,7 +487,7 @@ begin
     end;
     if (int1 = 20) and (lint2 < $8AC7230489E80000) then begin 
                                             //todo: check correctness
-     error({info,}ce_invalidfloat,asource);
+     error(ce_invalidfloat,asource);
      mantissa:= 0;
      neg:= false;
     end
@@ -777,19 +503,19 @@ begin
  end;
 end;
  
-procedure handlefrac({const info: pparseinfoty});
+procedure handlefrac();
 var
  mant: qword;
  fraclen: integer;
  neg: boolean;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'FRAC');
+ outhandle('FRAC');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
 //  if stacktop > stackindex then begin //no exponent nuber error otherwise
-   dofrac({info,}source.po,neg,mant,fraclen);
+   dofrac(source.po,neg,mant,fraclen);
    with contextstack[stacktop].d.constval do begin
   //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
     vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
@@ -806,7 +532,7 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure handleexponent({const info: pparseinfoty});
+procedure handleexponent();
 var
  mant: qword;
  exp,fraclen: integer;
@@ -814,9 +540,9 @@ var
  do1: double;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'EXPONENT');
+ outhandle('EXPONENT');
 {$endif}
-outinfo({info,}'*****');
+outinfo('*****');
  with info do begin
   with contextstack[stacktop].d.number do begin
    exp:= value;
@@ -825,7 +551,7 @@ outinfo({info,}'*****');
    end;
   end;
   dec(stacktop,2);
-  dofrac({info,}contextstack[stackindex].start.po-1,neg,mant,fraclen);
+  dofrac(contextstack[stackindex].start.po-1,neg,mant,fraclen);
   if fraclen < 0 then begin
    fraclen:= 0;  //no frac 123e4
   end;
@@ -858,7 +584,7 @@ outinfo({info,}'*****');
 end;
 
 (*
-procedure handlenegexponent({const info: pparseinfoty});
+procedure handlenegexponent();
 var
  mant: qword;
  exp,fraclen: integer;
@@ -890,382 +616,35 @@ begin
 {$endif}
 end;
 *)
-const
- stackdatakinds: array[datakindty] of stackdatakindty = 
-   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-   (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_array
-    sdk_none,  sdk_none, sdk_none, sdk_none);
-                
- resultdatakinds: array[stackdatakindty] of datakindty =
-            //sdk_bool8,sdk_int32,sdk_flo64
-           (dk_none,dk_boolean,dk_integer,dk_float);
- resultdatatypes: array[stackdatakindty] of systypety =
-            //sdk_bool8,sdk_int32,sdk_flo64
-           (st_none,st_bool8,st_int32,st_float64);
-
-function convertconsts({const info: pparseinfoty}): stackdatakindty;
-                //convert stacktop, stacktop-2
-begin
- with info,contextstack[stacktop-2] do begin
-  result:= stackdatakinds[d.constval.kind];  
-  if contextstack[stacktop].d.constval.kind <> d.constval.kind then begin
-   case contextstack[stacktop].d.constval.kind of
-    dk_float: begin
-     result:= sdk_flo64;
-     with d,constval do begin
-      case kind of
-       dk_float: begin
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
-       end;
-       dk_integer: begin
-        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
-        kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
-       end;
-       else begin
-        result:= sdk_none;
-       end;
-      end;
-     end;
-    end;
-    dk_integer: begin
-     with d,constval do begin
-      case kind of
-       dk_integer: begin
-        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
-       end;
-       dk_float: begin
-        result:= sdk_flo64;
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
-        kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
-       end;
-       else begin
-        result:= sdk_none;
-       end;
-      end;
-     end;
-    end;
-    else begin
-     result:= sdk_none;
-    end;
-   end;
-  end;
-  if result = sdk_none then begin
-   incompatibletypeserror({info,}contextstack[stacktop-2].d,
-                                           contextstack[stacktop].d);
-  end;
- end;
-end;
-
-type
- opinfoty = record
-  ops: array[stackdatakindty] of opty;
-  opname: string;
- end;
-
-procedure pushd({const info: pparseinfoty;}
-                     const oppo: popinfoty; const address: addressinfoty;
-                     const offset: dataoffsty; const size: databytesizety);
-begin
- with oppo^,address do begin //todo: use table
-  if vf_global in flags then begin
-   case size of
-    1: begin 
-     op:= @pushglob8;
-    end;
-    2: begin
-     op:= @pushglob16;
-    end;
-    4: begin
-     op:= @pushglob32;
-    end;
-    else begin
-     op:= @pushglob;
-    end;
-   end;
-   d.dataaddress:= address+offset;
-  end
-  else begin
-   if vf_paramindirect in flags then begin
-    case size of
-     1: begin 
-      op:= @pushlocindi8;
-     end;
-     2: begin
-      op:= @pushlocindi16;
-     end;
-     4: begin
-      op:= @pushlocindi32;
-     end;
-     else begin
-      op:= @pushlocindi;
-     end;
-    end;
-   end
-   else begin
-    case size of
-     1: begin 
-      op:= @pushloc8;
-     end;
-     2: begin
-      op:= @pushloc16;
-     end;
-     4: begin
-      op:= @pushloc32;
-     end;
-     else begin
-      op:= @pushloc;
-     end;
-    end;
-   end;
-   d.locdataaddress.offset:= address + offset;
-   d.locdataaddress.linkcount:= info.funclevel-framelevel-1;
-  end;
-  d.datasize:= size;
- end;
-end;
-
-//todo: optimize call
-procedure pushdata({const info: pparseinfoty; }
-         const address: addressinfoty; const offset: dataoffsty;
-         const size: databytesizety);
-begin
- pushd({info,}additem({info}),address,offset,size);
-end;
-
-procedure pushinsertdata({const info: pparseinfoty;} const insertad: opaddressty;
-         const address: addressinfoty; const offset: dataoffsty;
-         const size: databytesizety);
-begin
- pushd({info,}insertitem({info,}insertad),address,offset,size);
-end;
-
-function getvalue({const info: pparseinfoty;} const stackoffset: integer;
-                                               const insert: boolean): boolean;
-var
- ref1: refinfoty;
- po1: ptypedataty;
- si1: databytesizety;
-begin
- result:= true;
- with info,contextstack[stackindex+stackoffset],d do begin
-  if kind = ck_ref then begin
-   ref1:= ref; //todo: optimize, handle indirectlevel
-   if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-    po1:= ele.eledataabs(datatyp.typedata);
-    si1:= po1^.bytesize;
-   end
-   else begin
-    si1:= pointersize;
-   end;
-   if insert then begin
-    pushinsertdata({info,}opmark.address,ref1.address,ref1.offset,si1);
-   end
-   else begin
-    pushdata({info,}ref1.address,ref1.offset,si1);
-   end;
-   kind:= ck_fact;
-  end;
- end;
-end;
-
-function getaddress({const info: pparseinfoty;}
-                                 const stackoffset: integer): boolean;
-var
- ref1: refinfoty;
-begin
- result:= true;
- with info,contextstack[stackindex+stackoffset].d do begin
-  if kind = ck_ref then begin
-   ref1:= ref; //todo: optimize
-   kind:= ck_const;
-   datatyp.indirectlevel:= datatyp.indirectlevel+1;
-   constval.kind:= dk_address;
-   constval.vaddress:= ref1.address;
-   constval.vaddress.address:= constval.vaddress.address + ref1.offset;
-  end;
-  {
-  datatyp.typedata:= ele1;
-  datatyp.indirectlevel:= indirect1+1;
-  constval.kind:= dk_address;
-  constval.vaddress:= pvardataty(po2)^.address;
-  constval.vaddress.address:= constval.vaddress.address + offs1;
-  }
- end;
-end;
-
-procedure updateop({const info: pparseinfoty;} const opinfo: opinfoty);
-//todo: don't convert inplace, stack items will be of variable size
-var
- kinda,kindb: datakindty;
- po1: pelementinfoty;
- sd1: stackdatakindty;
- op1: opty;
-begin
- with info do begin
-  opshift:= 0;
-outinfo({info,}'****');
-  getvalue({info,}stacktop-2-stackindex,true);
-  getvalue({info,}stacktop-stackindex,false);
-outinfo({info,}'****');
-  sd1:= sdk_none;
-  po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
-  kinda:= ptypedataty(@po1^.data)^.kind;
-  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
-  kindb:= ptypedataty(@po1^.data)^.kind;
-  with contextstack[stacktop-2],d do begin
-   if (kinda = dk_float) or (kindb = dk_float) then begin
-    sd1:= sdk_flo64;
-    if kind = ck_const then begin
-     with insertitem({info,}opmark.address)^ do begin
-      op:= @push64;
-      case constval.kind of
-       dk_integer: begin
-        d.d.vfloat:= real(constval.vinteger);
-       end;
-       dk_float: begin
-        d.d.vfloat:= constval.vfloat;
-       end;
-       else begin
-        sd1:= sdk_none;
-       end;
-      end;
-     end;
-    end
-    else begin //ck_fact
-     case kinda of
-      dk_integer: begin
-       with insertitem({info,}opmark.address)^ do begin
-        op:= @stackops.int32toflo64;
-        with d.op1 do begin
-         index0:= 0;
-        end;
-       end;
-      end;
-      dk_float: begin
-      end;
-      else begin
-       sd1:= sdk_none;
-      end;
-     end;
-    end;
-    with contextstack[stacktop].d do begin
-     if kind = ck_const then begin
-      case kinda of
-       dk_integer: begin
-        push({info,}real(constval.vinteger));
-       end;
-       dk_float: begin
-        push({info,}real(constval.vfloat));
-       end;
-       else begin
-        sd1:= sdk_none;
-       end;
-      end;
-     end
-     else begin
-      case kinda of
-       dk_integer: begin
-         int32toflo64({info});
-       end;
-       dk_float: begin
-       end;
-       else begin
-        sd1:= sdk_none;
-       end;
-      end;
-     end;
-    end;
-   end
-   else begin
-    if kinda = dk_boolean then begin
-     if kindb = dk_boolean then begin
-      sd1:= sdk_bool8;
-      if kind = ck_const then begin
-       with insertitem({info,}opmark.address)^ do begin
-        op:= @push8;
-        d.d.vboolean:= constval.vboolean;
-       end;
-      end;
-      with contextstack[stacktop].d do begin
-       if kind = ck_const then begin
-        push({info,}constval.vboolean);
-       end;
-      end;
-     end;
-    end
-    else begin
-     if (kinda = dk_integer) and (kinda = dk_integer) then begin
-      sd1:= sdk_int32;
-      if kind = ck_const then begin
-       with insertitem({info,}opmark.address)^ do begin
-        op:= @push32;
-        d.d.vinteger:= constval.vinteger;
-       end;
-      end;
-      with contextstack[stacktop].d do begin
-       if kind = ck_const then begin
-        push({info,}constval.vinteger);
-       end;
-      end;
-     end;
-    end;
-   end;
-   if sd1 = sdk_none then begin
-    incompatibletypeserror({info,}contextstack[stacktop-2].d,
-                                            contextstack[stacktop].d);
-   end
-   else begin
-    op1:= opinfo.ops[sd1];
-    if op1 = nil then begin
-     operationnotsupportederror({info,}d,contextstack[stacktop].d,opinfo.opname);
-    end
-    else begin
-    {$ifdef mse_debugparser}
-     outcommand({info,}[-2,0],opinfo.opname);
-    {$endif}
-     writeop({info,}op1);
-     d.kind:= ck_fact;
-     d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
-     context:= nil;
-    end;
-   end;
-  end;
-  dec(stacktop,2);
-  stackindex:= stacktop-1; 
- end;
-end;
 
 const
  mulops: opinfoty = (ops: (nil,nil,@mulint32,@mulflo64);
                      opname: '*');
  
-procedure handlemulfact({const info: pparseinfoty});
+procedure handlemulfact();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'MULFACT');
+ outhandle('MULFACT');
 {$endif}
- updateop({info,}mulops);
+ updateop(mulops);
 end;
 
 const
  addops: opinfoty = (ops: (nil,nil,@addint32,@addflo64);
                      opname: '+');
 
-procedure handleaddterm({const info: pparseinfoty});
+procedure handleaddterm();
  
 var 
  dk1: stackdatakindty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ADDTERM');
+ outhandle('ADDTERM');
 {$endif}
  with info,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
               (d.kind = ck_const) then begin
-   dk1:= convertconsts({info});
+   dk1:= convertconsts();
    case dk1 of
     sdk_int32: begin
      d.constval.vinteger:= d.constval.vinteger + 
@@ -1276,29 +655,29 @@ begin
                             contextstack[stacktop].d.constval.vfloat;
     end;
     else begin
-     operationnotsupportederror({info,}d,contextstack[stacktop].d,'+');
+     operationnotsupportederror(d,contextstack[stacktop].d,'+');
     end;
    end;
    dec(stacktop,2);
    stackindex:= stacktop-1;
   end
   else begin
-   updateop({info,}addops);
+   updateop(addops);
   end;
  end;
 end;
 
-procedure handletermstart({const info: pparseinfoty});
+procedure handletermstart();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'TERMSTART');
+ outhandle('TERMSTART');
 {$endif}
  with info do begin
   stringbuffer:= '';
  end;
 end;
 (*
-procedure handleterm({const info: pparseinfoty});
+procedure handleterm();
 begin
 {$ifdef mse_debugparser}
  outhandle(info,'TERM');
@@ -1308,16 +687,16 @@ outinfo(info,'****');
  info^.stackindex:= info^.stacktop;
 end;
 *)
-procedure handleaddress({const info: pparseinfoty});
+procedure handleaddress();
 var
  po1: pelementinfoty;
  po2: pvardataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ADDRESS');
+ outhandle('ADDRESS');
 {$endif}
  with info do begin
-  if findkindelements({info,}1,[ek_var],vis_max,po1) then begin
+  if findkindelements(1,[ek_var],vis_max,po1) then begin
    po2:= @po1^.data;
    inc(info.stackindex);
    with contextstack[stackindex] do begin
@@ -1333,7 +712,7 @@ begin
    end;
   end
   else begin
-   errormessage({info,}err_varidentexpected,[]);
+   errormessage(err_varidentexpected,[]);
    dec(info.stackindex);
   end;
   stacktop:= stackindex;
@@ -1344,13 +723,13 @@ end;
 //         const flags: varflagsty;
 //         const address: dataaddressty; const size: databytesizety);
 
-procedure handledereference({const info: pparseinfoty});
+procedure handledereference();
 var
  po1: ptypedataty;
  int1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'DEREFERENCE');
+ outhandle('DEREFERENCE');
 {$endif}
  with info,contextstack[stacktop].d do begin
  {
@@ -1365,13 +744,13 @@ begin
   }
   //todo: handle const
   if datatyp.indirectlevel <= 0 then begin
-   errormessage({info,}err_illegalqualifier,[]);
+   errormessage(err_illegalqualifier,[]);
   end
   else begin
    dec(datatyp.indirectlevel);
    if currentstatementflags * [stf_rightside,stf_params] = [] then begin
     if kind = ck_const then begin
-     pushdata({info,}constval.vaddress,0,dataaddresssize);
+     pushdata(constval.vaddress,0,dataaddresssize);
 //     pushdata(info,constval.vaddress.flags,constval.vaddress.address,
 //                                                           dataaddresssize);
      kind:= ck_fact;
@@ -1401,10 +780,10 @@ begin
  end;
 end;
 
-procedure handlenegterm({const info: pparseinfoty});
+procedure handlenegterm();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NEGTERM');
+ outhandle('NEGTERM');
 {$endif}
  with info,contextstack[stacktop].d do begin
   if kind = ck_none then begin
@@ -1424,7 +803,7 @@ const
    nil,     nil,       nil,      nil,      nil
  );
 
-procedure handleterm1({const info: pparseinfoty});
+procedure handleterm1();
 var
  po1: ptypedataty;
  bo1: boolean;
@@ -1432,9 +811,9 @@ var
  c1: card64;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'TERM1');
+ outhandle('TERM1');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   if stackindex < stacktop then begin
    with contextstack[stacktop] do begin
@@ -1469,20 +848,20 @@ outinfo({info,}'****');
          vfloat:= -vfloat;
         end;
         else begin
-         errormessage({info,}err_negnotpossible,[],1);
+         errormessage(err_negnotpossible,[],1);
         end;
        end;
       end;
      end
      else begin
-      if getvalue({info,}0,false) then begin
+      if getvalue(0,false) then begin
        po1:= ele.eledataabs(d.datatyp.typedata);
        op1:= negops[po1^.kind];
        if op1 = nil then begin
-        errormessage({info,}err_negnotpossible,[],1);
+        errormessage(err_negnotpossible,[],1);
        end
        else begin
-        writeop({info,}op1);
+        writeop(op1);
        end;
       end;
      end;
@@ -1490,17 +869,17 @@ outinfo({info,}'****');
    end;
   end
   else begin
-   errormessage({info,}err_illegalexpression,[],stacktop-stackindex);
+   errormessage(err_illegalexpression,[],stacktop-stackindex);
   end;
   dec(stacktop);
   dec(stackindex);
  end;
 end;
 
-procedure handlesimpexp({const info: pparseinfoty});
+procedure handlesimpexp();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'SIMPEXP');
+ outhandle('SIMPEXP');
 {$endif}
  with info do begin
   contextstack[stacktop-1]:= contextstack[stacktop];
@@ -1510,10 +889,10 @@ begin
  end;
 end;
 
-procedure handlesimpexp1({const info: pparseinfoty});
+procedure handlesimpexp1();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'SIMPEXP1');
+ outhandle('SIMPEXP1');
 {$endif}
  with info do begin
   if stacktop > stackindex then begin
@@ -1524,14 +903,14 @@ begin
  end;
 end;
 
-procedure handlebracketend({const info: pparseinfoty});
+procedure handlebracketend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'BRACKETEND');
+ outhandle('BRACKETEND');
 {$endif}
  with info do begin
   if source.po^ <> ')' then begin
-   error({info,}ce_endbracketexpected);
+   error(ce_endbracketexpected);
 //   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
@@ -1541,7 +920,7 @@ begin
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
-   error({info,}ce_expressionexpected);
+   error(ce_expressionexpected);
 //   outcommand(info,[],'*ERROR* Expression expected');
   end;
   dec(stacktop);
@@ -1549,10 +928,10 @@ begin
  end;
 end;
 
-procedure handleparamsdef1entry({const info: pparseinfoty});
+procedure handleparamsdef1entry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMSDEF1ENTRY');
+ outhandle('PARAMSDEF1ENTRY');
 {$endif}
  with info,contextstack[stackindex].d do begin
   kind:= ck_paramsdef;
@@ -1560,12 +939,12 @@ begin
  end;
 end;
 
-procedure handleparams0({const info: pparseinfoty});
+procedure handleparams0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMS0');
+ outhandle('PARAMS0');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   with contextstack[stackindex].d do begin
    kind:= ck_params;
@@ -1575,55 +954,55 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure setconstparam({const info: pparseinfoty});
+procedure setconstparam();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CONSTPARAM');
+ outhandle('CONSTPARAM');
 {$endif}
  with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage({info,}err_identexpected,[],minint,0,erl_fatal);
+   errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_const;
  end;
 end;
 
-procedure setvarparam({const info: pparseinfoty});
+procedure setvarparam();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'VARPARAM');
+ outhandle('VARPARAM');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage({info,}err_identexpected,[],minint,0,erl_fatal);
+   errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_var;
  end;
 end;
 
-procedure setoutparam({const info: pparseinfoty});
+procedure setoutparam();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'OUTPARAM');
+ outhandle('OUTPARAM');
 {$endif}
  with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
-   errormessage({info,}err_identexpected,[],minint,0,erl_fatal);
+   errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
   kind:= pk_out;
  end;
 end;
 
-procedure handleparamdef2({const info: pparseinfoty});
+procedure handleparamdef2();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMDEF2');
+ outhandle('PARAMDEF2');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if stacktop-stackindex <> 2 then begin
-   errormessage({info,}err_typeidentexpected,[]);
+   errormessage(err_typeidentexpected,[]);
   end
   else begin
    with contextstack[stacktop-1] do begin
@@ -1634,10 +1013,10 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure handleparamsend({const info: pparseinfoty});
+procedure handleparamsend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMSEND');
+ outhandle('PARAMSEND');
 {$endif}
  with info do begin
   with contextstack[stackindex].d do begin
@@ -1646,20 +1025,20 @@ begin
  end;
 end;
 
-procedure handleprocedureheader({const info: pparseinfoty});
+procedure handleprocedureheader();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROCEDUREHEADER');
+ outhandle('PROCEDUREHEADER');
 {$endif}
  with info do begin
   dec(stackindex);
  end;
 end;
 
-procedure handleprocedureentry({const info: pparseinfoty});
+procedure handleprocedureentry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROCEDUREENTRY');
+ outhandle('PROCEDUREENTRY');
 {$endif}
  with info,contextstack[stackindex].d do begin
   kind:= ck_proc;
@@ -1667,30 +1046,30 @@ begin
  end;
 end;
 
-procedure handlefunctionentry({const info: pparseinfoty});
+procedure handlefunctionentry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'FUNCTIONENTRY');
+ outhandle('FUNCTIONENTRY');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_proc;
   proc.flags:= [pf_function];
  end;
 end;
 (*
-procedure handlefunctionentry({const info: pparseinfoty});
+procedure handlefunctionentry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'FUNCTIONENTRY');
+ outhandle('FUNCTIONENTRY');
 {$endif}
 end;
 *)
 (*
-procedure handleparamsend({const info: pparseinfoty});
+procedure handleparamsend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMSEND');
+ outhandle('PARAMSEND');
 {$endif}
  with info^ do begin
   if source.po^ <> ')' then begin
@@ -1704,10 +1083,10 @@ begin
  end;
 end;
 *)
-procedure handleident({const info: pparseinfoty});
+procedure handleident();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IDENT');
+ outhandle('IDENT');
 {$endif}
  with info,contextstack[stacktop],d do begin
   kind:= ck_ident;
@@ -1717,10 +1096,10 @@ begin
  end;
 end;
 
-procedure handleidentpath1a({const info: pparseinfoty});
+procedure handleidentpath1a();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IDENTPATH1A');
+ outhandle('IDENTPATH1A');
 {$endif}
  with info,contextstack[stacktop],d do begin
   kind:= ck_ident;
@@ -1730,25 +1109,25 @@ begin
  end;
 end;
 
-procedure handleidentpath2a({const info: pparseinfoty});
+procedure handleidentpath2a();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IDENTPATH2A');
+ outhandle('IDENTPATH2A');
 {$endif}
  with info,contextstack[stacktop],d do begin
   ident.continued:= true;
  end;
 end;
 
-procedure handleidentpath2({const info: pparseinfoty});
+procedure handleidentpath2();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IDENTPATH2');
+ outhandle('IDENTPATH2');
 {$endif}
- errormessage({info,}err_syntax,['identifier'],0);
+ errormessage(err_syntax,['identifier'],0);
 end;
 
-function tryconvert({const info: pparseinfoty;} var context: contextitemty;
+function tryconvert(var context: contextitemty;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
 var
  po1: ptypedataty;
@@ -1793,7 +1172,7 @@ begin
      end;
     end;
     else begin
-     internalerror({info,}'H20131121B');
+     internalerror('H20131121B');
     end;
    end;
    if result then begin
@@ -1808,7 +1187,7 @@ begin
  t(1);
 end;
 }
-procedure handlevalueidentifier({const info: pparseinfoty});
+procedure handlevalueidentifier();
 var
  paramco: integer;
 
@@ -1817,7 +1196,7 @@ var
   result:= paramco = 0;
   if not result then begin
    with info,contextstack[stackindex].d do begin
-    errormessage({info,}err_syntax,[';'],1,ident.len);
+    errormessage(err_syntax,[';'],1,ident.len);
    end;
   end;
  end;
@@ -1846,11 +1225,11 @@ label
  endlab;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'VALUEIDENTIFIER');
+ outhandle('VALUEIDENTIFIER');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
-  if findkindelements({info,}1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
+  if findkindelements(1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
                                 vis_max,po1,lastident,idents) then begin
    paramco:= stacktop-stackindex-2-idents.high;
    if paramco < 0 then begin
@@ -1871,7 +1250,7 @@ outinfo({info,}'***');
         for int1:= lastident+1 to idents.high do begin //fields
          if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                      vis_max,ele1) then begin
-          identerror({info,}1+int1,err_identifiernotfound);
+          identerror(1+int1,err_identifiernotfound);
           goto endlab;
          end;
          po4:= ele.eledataabs(ele1);
@@ -1943,7 +1322,7 @@ outinfo({info,}'***');
       }
      end;
      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
-      identerror({info,}1,err_wrongnumberofparameters);
+      identerror(1,err_wrongnumberofparameters);
      end
      else begin
       for int1:= stackindex+3+idents.high to stacktop do begin
@@ -1953,13 +1332,13 @@ outinfo({info,}'***');
          case d.kind of
           ck_const: begin
            if not (vf_const in po6^.address.flags) then begin
-            errormessage({info,}err_variableexpected,[],int1-stackindex);
+            errormessage(err_variableexpected,[],int1-stackindex);
            end
            else begin
            end;
           end;
           ck_ref: begin
-           pushinsertaddress({info,}contextstack[int1]);
+           pushinsertaddress(contextstack[int1]);
 //           getaddress(info,int1-stackindex);
 //           pushinsertconst(info,contextstack[int1]);           
           end;
@@ -1970,15 +1349,15 @@ outinfo({info,}'***');
           ck_const: begin
 //           opmark.address:= opmark.address + opshift;
   //         inc(opshift);
-           pushinsertconst({info,}contextstack[int1]);
+           pushinsertconst(contextstack[int1]);
           end;
           ck_ref: begin
-           getvalue({info,}int1-stackindex,true);
+           getvalue(int1-stackindex,true);
           end;
          end;
         end;
         if d.datatyp.typedata <> po6^.typ then begin
-         errormessage({info,}err_incompatibletypeforarg,
+         errormessage(err_incompatibletypeforarg,
                      [int1-stackindex-3,typename(d),
                      typename(ptypedataty(ele.eledataabs(po6^.typ))^)],
                                                           int1-stackindex);
@@ -1990,7 +1369,7 @@ outinfo({info,}'***');
        if pf_function in pfuncdataty(po2)^.flags then begin
         po6:= ele.eledataabs(po5^);
         po3:= ptypedataty(ele.eledataabs(po6^.typ));
-        int1:= pushinsertvar({info,}opmark.address-opshift,po3);
+        int1:= pushinsertvar(opmark.address-opshift,po3);
         d.fact.datasize:= int1;
 //        d.kind:= ck_fact;
         d.kind:= ck_subres;
@@ -2007,7 +1386,7 @@ outinfo({info,}'***');
       end;
      end;
      if pfuncdataty(po2)^.address = 0 then begin //unresolved header
-      linkmark({info,}pfuncdataty(po2)^.links,opcount);
+      linkmark(pfuncdataty(po2)^.links,opcount);
      end;
      with additem({info})^ do begin
       d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
@@ -2037,13 +1416,13 @@ outinfo({info,}'***');
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
           if d.kind = ck_const then begin
-           pushinsertconst({info,}contextstack[int1]);
+           pushinsertconst(contextstack[int1]);
           end
           else begin
-           getvalue({info,}int1-stackindex,true);
+           getvalue(int1-stackindex,true);
           end;
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-           push({info,}kind);
+           push(kind);
            stacksize1:= stacksize1 + alignsize(bytesize);
           end;
          end;
@@ -2060,16 +1439,16 @@ outinfo({info,}'***');
     end;
     ek_type: begin
      if paramco = 0 then begin
-      errormessage({info,}err_illegalexpression,[],stacktop-stackindex);
+      errormessage(err_illegalexpression,[],stacktop-stackindex);
      end
      else begin
       if paramco > 1 then begin
-       errormessage({info,}err_closeparentexpected,[],4,-1);
+       errormessage(err_closeparentexpected,[],4,-1);
       end
       else begin
-       if not tryconvert({info,}contextstack[stacktop],po2,
+       if not tryconvert(contextstack[stacktop],po2,
                                     ptypedataty(po2)^.indirectlevel) then begin
-        illegalconversionerror({info,}contextstack[stacktop].d,po2,
+        illegalconversionerror(contextstack[stacktop].d,po2,
                                     ptypedataty(po2)^.indirectlevel);
        end
        else begin
@@ -2079,12 +1458,12 @@ outinfo({info,}'***');
      end;
     end;
     else begin
-     errormessage({info,}err_wrongtype,[],0);
+     errormessage(err_wrongtype,[],0);
     end;
    end;
   end
   else begin
-   identerror({info,}1,err_identifiernotfound);
+   identerror(1,err_identifiernotfound);
   end;
 endlab:
   stacktop:= stackindex;
@@ -2092,154 +1471,154 @@ endlab:
  end;
 end;
 
-procedure handlestatementend({const info: pparseinfoty});
+procedure handlestatementend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'STATEMENTEND');
+ outhandle('STATEMENTEND');
 {$endif}
  with info,contextstack[stacktop],d do begin
   kind:= ck_end;
  end;
 end;
 
-procedure handleblockend({const info: pparseinfoty});
+procedure handleblockend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'BLOCKEND');
+ outhandle('BLOCKEND');
 {$endif}
 // with info^ do begin
 //  stackindex:= stackindex-2;
 // end;
 end;
 (*
-procedure handleparamstart0({const info: pparseinfoty});
+procedure handleparamstart0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAMSTART0');
+ outhandle('PARAMSTART0');
 {$endif}
  with info^,contextstack[stacktop] do begin
   parent:= stacktop;
  end;
 end;
 
-procedure handleparam({const info: pparseinfoty});
+procedure handleparam();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PARAM');
+ outhandle('PARAM');
 {$endif}
  with info^,contextstack[stacktop] do begin
   stackindex:= parent+1;
  end;
 end;
 *)
-procedure dummyhandler({const info: pparseinfoty});
+procedure dummyhandler();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'DUMMY');
+ outhandle('DUMMY');
 {$endif}
 end;
 
-procedure handlenoimplementationerror({const info: pparseinfoty});
+procedure handlenoimplementationerror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NOIMPLEMENTATIONERROR');
+ outhandle('NOIMPLEMENTATIONERROR');
 {$endif}
- tokenexpectederror({info,}tk_implementation);
+ tokenexpectederror(tk_implementation);
  with info do begin
   stackindex:= -1;
  end;
 end;
 
-procedure checkstart({const info: pparseinfoty});
+procedure checkstart();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHECKSTART');
+ outhandle('CHECKSTART');
 {$endif}
 end;
 
-procedure handlenouniterror({const info: pparseinfoty});
+procedure handlenouniterror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NOUNITERROR');
+ outhandle('NOUNITERROR');
 {$endif}
  with info do begin
-  tokenexpectederror({info,}tk_unit);
+  tokenexpectederror(tk_unit);
  end;
 end;
 
-procedure handlenounitnameerror({const info: pparseinfoty});
+procedure handlenounitnameerror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NOUNITNAMEERROR');
+ outhandle('NOUNITNAMEERROR');
 {$endif}
  with info do begin
-  errormessage({info,}err_syntax,['identifier']);
+  errormessage(err_syntax,['identifier']);
  end;
 end;
 
-procedure handlesemicolonexpected({const info: pparseinfoty});
+procedure handlesemicolonexpected();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'SEMICOLONEXPECTED');
+ outhandle('SEMICOLONEXPECTED');
 {$endif}
  with info do begin
-  errormessage({info,}err_syntax,[';']);
+  errormessage(err_syntax,[';']);
  end;
 end;
 
-procedure handleequalityexpected({const info: pparseinfoty});
+procedure handleequalityexpected();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'EQUALITYEXPECTED');
+ outhandle('EQUALITYEXPECTED');
 {$endif}
  with info do begin
-  errormessage({info,}err_syntax,['=']);
+  errormessage(err_syntax,['=']);
  end;
 end;
 
-procedure handleidentexpected({const info: pparseinfoty});
+procedure handleidentexpected();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IDENTEXPECTED');
+ outhandle('IDENTEXPECTED');
 {$endif}
  with info do begin
-  errormessage({info,}err_identexpected,[],minint,0,erl_fatal);
+  errormessage(err_identexpected,[],minint,0,erl_fatal);
  end;
 end;
 
-procedure handleillegalexpression({const info: pparseinfoty});
+procedure handleillegalexpression();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ILLEGALEXPRESSION');
+ outhandle('ILLEGALEXPRESSION');
 {$endif}
  with info do begin
-  errormessage({info,}err_illegalexpression,[]);
+  errormessage(err_illegalexpression,[]);
   dec(stackindex);
  end;
 end;
 
-procedure handleuseserror({const info: pparseinfoty});
+procedure handleuseserror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'USESERROR');
+ outhandle('USESERROR');
 {$endif}
  with info do begin
-  errormessage({info,}err_syntax,[';']);
+  errormessage(err_syntax,[';']);
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
 
-procedure handleuses({const info: pparseinfoty});
+procedure handleuses();
 var
  int1,int2: integer;
  offs1: elementoffsetty;
  po1: ppunitinfoty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'USES');
+ outhandle('USES');
 {$endif}
- outinfo({info,}'***');
+ outinfo('***');
  with info do begin
   offs1:= ele.decelementparent;
   int2:= stacktop-stackindex-1;
@@ -2257,7 +1636,7 @@ begin
   inc(po1,int2);
   for int1:= stackindex+2 to stacktop do begin
    dec(po1);
-   po1^:= loadunit({info,}int1);
+   po1^:= loadunit(int1);
    if po1^ = nil then begin
     stopparser:= true;
     break;
@@ -2269,41 +1648,41 @@ begin
  end;
 end;
 
-procedure handlenoidenterror({const info: pparseinfoty});
+procedure handlenoidenterror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'NOIDENTERROR');
+ outhandle('NOIDENTERROR');
 {$endif}
- errormessage({info,}err_identexpected,[],minint,0,erl_fatal);
+ errormessage(err_identexpected,[],minint,0,erl_fatal);
 end;
 
-procedure handleprogbegin({const info: pparseinfoty});
+procedure handleprogbegin();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROGBEGIN');
+ outhandle('PROGBEGIN');
 {$endif}
  with info,ops[startupoffset] do begin
   d.opaddress:= opcount-1;
  end;
 end;
 
-procedure handleprogblock({const info: pparseinfoty});
+procedure handleprogblock();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROGBLOCK');
+ outhandle('PROGBLOCK');
 {$endif}
-outinfo({info,}'****');
- writeop({info,}nil); 
- checkforwarderrors({info,}info.unitinfo^.forwardlist);
+outinfo('****');
+ writeop(nil); 
+ checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
   dec(stackindex);
  end;
 end;
 
-procedure handlecommentend({const info: pparseinfoty});
+procedure handlecommentend();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'COMMENTEND');
+ outhandle('COMMENTEND');
 {$endif}
 {
  with info^ do begin
@@ -2313,10 +1692,10 @@ begin
 }
 end;
 (*
-procedure handleconst({const info: pparseinfoty});
+procedure handleconst();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CONST');
+ outhandle('CONST');
 {$endif}
  with info^,contextstack[stacktop] do begin
   dec(stackindex);
@@ -2324,10 +1703,10 @@ begin
  end;
 end;
 
-procedure handleconst0({const info: pparseinfoty});
+procedure handleconst0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CONST0');
+ outhandle('CONST0');
 {$endif}
 // with info^,contextstack[stacktop] do begin
 //  dec(stackindex);
@@ -2335,28 +1714,28 @@ begin
 // end;
 end;
 *)
-procedure handleconst3({const info: pparseinfoty});
+procedure handleconst3();
 var
  po1: pconstdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CONST3');
+ outhandle('CONST3');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if (stacktop-stackindex <> 2) or 
             (contextstack[stackindex+1].d.kind <> ck_ident) then begin
-   internalerror({info,}'H20140326C');
+   internalerror('H20140326C');
    exit;
   end
   else begin
    if contextstack[stacktop].d.kind <> ck_const then begin
-    errormessage({info,}err_constexpressionexpected,[],stacktop-stackindex);
+    errormessage(err_constexpressionexpected,[],stacktop-stackindex);
    end
    else begin
     if not ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,
                   ek_const,po1) then begin
-     identerror({info,}1,err_duplicateidentifier);
+     identerror(1,err_duplicateidentifier);
     end
     else begin
      with contextstack[stacktop].d do begin
@@ -2372,12 +1751,12 @@ outinfo({info,}'***');
 end;
 
 (*
-procedure handlevar({const info: pparseinfoty});
+procedure handlevar();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'VAR');
+ outhandle('VAR');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info^,contextstack[stacktop] do begin
   dec(stackindex);
   stacktop:= stackindex;
@@ -2385,10 +1764,10 @@ outinfo({info,}'***');
 end;
 *)
 
-procedure handlevardefstart({const info: pparseinfoty});
+procedure handlevardefstart();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'VARDEFSTART');
+ outhandle('VARDEFSTART');
 {$endif}
  with info,contextstack[stackindex] do begin
   d.kind:= ck_var;
@@ -2397,24 +1776,24 @@ begin
  end;
 end;
 
-procedure handlevar3({const info: pparseinfoty});
+procedure handlevar3();
 var
  po1,po2: pelementinfoty;
  size1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'VAR3');
+ outhandle('VAR3');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if (stacktop-stackindex < 2) or 
             (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
-   internalerror({info,}'H20140325B');
+   internalerror('H20140325B');
    exit;
   end;
   po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,ek_var);
   if po1 = nil then begin //duplicate
-   identerror({info,}1,err_duplicateidentifier);
+   identerror(1,err_duplicateidentifier);
   end
   else begin
    with pvardataty(@po1^.data)^ do begin
@@ -2431,12 +1810,12 @@ outinfo({info,}'***');
      end;
     end;
     if funclevel = 0 then begin
-     address.address:= getglobvaraddress({info,}size1);
+     address.address:= getglobvaraddress(size1);
      address.flags:= [vf_global];
      address.framelevel:= 0;
     end
     else begin
-     address.address:= getlocvaraddress({info,}size1)-frameoffset;
+     address.address:= getlocvaraddress(size1)-frameoffset;
      address.flags:= []; //local
      address.framelevel:= funclevel;
     end;
@@ -2445,25 +1824,25 @@ outinfo({info,}'***');
  end;
 end;
 
-procedure handlepointervar({const info: pparseinfoty});
+procedure handlepointervar();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'POINTERVAR');
+ outhandle('POINTERVAR');
 {$endif}
  with info,contextstack[stackindex].d.vari do begin
 //  if tf_reference in flags then begin
   if indirectlevel > 0 then begin
-   errormessage({info,}err_typeidentexpected,[]);
+   errormessage(err_typeidentexpected,[]);
   end;
   inc(indirectlevel);
 //  include(flags,tf_reference);
  end;
 end;
 
-procedure handleexp({const info: pparseinfoty});
+procedure handleexp();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'EXP');
+ outhandle('EXP');
 {$endif}
  with info do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
@@ -2482,15 +1861,15 @@ begin
  end;
 end;
 
-procedure handlemain({const info: pparseinfoty});
+procedure handlemain();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'MAIN');
+ outhandle('MAIN');
 {$endif}
- checkforwarderrors({info,}info.unitinfo^.forwardlist);
+ checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
   if unitlevel = 1 then begin
-   errormessage({info,}err_syntax,['begin']);
+   errormessage(err_syntax,['begin']);
   end;
   dec(stackindex);
  end;
@@ -2503,13 +1882,13 @@ const
   );
  } 
  (*
-procedure handlemain1({const info: pparseinfoty});
+procedure handlemain1();
 var
  po1: pcontextty;
  ident1: identty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'MAIN1');
+ outhandle('MAIN1');
 {$endif}
 {
  with info^,contextstack[stacktop],d do begin
@@ -2525,10 +1904,10 @@ begin
 }
 end;
 *)
-procedure handlekeyword({const info: pparseinfoty});
+procedure handlekeyword();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'KEYWORD');
+ outhandle('KEYWORD');
 {$endif}
  with info,contextstack[stacktop],d do begin
   kind:= ck_ident;
@@ -2541,14 +1920,14 @@ const
  cmpequops: opinfoty = (ops: (nil,@cmpequbool,@cmpequint32,@cmpequflo64);
                         opname: '=');
 
-procedure handleequsimpexp({const info: pparseinfoty});
+procedure handleequsimpexp();
 var
  dk1:stackdatakindty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'EQUSIMPEXP');
+ outhandle('EQUSIMPEXP');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
@@ -2569,14 +1948,14 @@ outinfo({info,}'***');
                             contextstack[stacktop].d.constval.vboolean;
     end;
     else begin
-     operationnotsupportederror({info,}d,contextstack[stacktop].d,'=');
+     operationnotsupportederror(d,contextstack[stacktop].d,'=');
     end;
    end;
    dec(stacktop,2);
    stackindex:= stacktop-1;
   end
   else begin
-   updateop({info,}cmpequops);
+   updateop(cmpequops);
    with info,contextstack[stacktop] do begin
     d.datatyp:= sysdatatypes[resultdatatypes[sdk_bool8]];
    end;
@@ -2584,9 +1963,9 @@ outinfo({info,}'***');
  end;
 end;
 {
-procedure handlestatement({const info: pparseinfoty});
+procedure handlestatement();
 begin
- outhandle({info,}'HANDLESTATEMENT');
+ outhandle('HANDLESTATEMENT');
 end;
 }
 {
@@ -2603,17 +1982,17 @@ begin
 
 end;
 }
-procedure handleassignmententry({const info: pparseinfoty});
+procedure handleassignmententry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ASSIGNMENTENTRY');
+ outhandle('ASSIGNMENTENTRY');
 {$endif}
  with info do begin
   include(currentstatementflags,stf_rightside);
  end;
 end;
 
-procedure handleassignment({const info: pparseinfoty});
+procedure handleassignment();
 var
  dest: vardestinfoty;
  typematch,indi: boolean;
@@ -2621,21 +2000,20 @@ var
  int1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ASSIGNMENT');
+ outhandle('ASSIGNMENT');
 {$endif}
-outinfo({info,}'*****');
+outinfo('*****');
  with info do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
-   getaddress({info,}1);
-   getvalue({info,}2,false);
-   with contextstack[stackindex+1].d do begin
-   //todo: handle dereference and the like
+   getaddress(1);
+   getvalue(2,false);
+   with contextstack[stackindex+1].d do begin //address
     typematch:= false;
     indi:= false;
     dest.typ:= ele.eledataabs(datatyp.typedata);
     dec(datatyp.indirectlevel);
     if datatyp.indirectlevel < 0 then begin
-     internalerror({info,}'H20131126B');
+     internalerror('H20131126B');
     end
     else begin
      if datatyp.indirectlevel > 0 then begin
@@ -2647,7 +2025,7 @@ outinfo({info,}'*****');
      case kind of
       ck_const: begin
        if constval.kind <> dk_address then begin
-        errormessage({info,}err_argnotassign,[],0);
+        errormessage(err_argnotassign,[],0);
        end
        else begin
         dest.address:= constval.vaddress;
@@ -2659,7 +2037,7 @@ outinfo({info,}'*****');
        indi:= true;
       end;
       else begin
-       internalerror({info,}'H20131117A');
+       internalerror('H20131117A');
        exit;
       end;
      end;
@@ -2671,18 +2049,18 @@ outinfo({info,}'*****');
     if vf_paramindirect in dest.address.flags then begin
      dec(int1);
     end;
-    typematch:= tryconvert({info,}contextstack[stacktop],dest.typ,int1);
+    typematch:= tryconvert(contextstack[stacktop],dest.typ,int1);
     if not typematch then begin
-     assignmenterror({info,}contextstack[stacktop].d,dest);
+     assignmenterror(contextstack[stacktop].d,dest);
     end
     else begin
      with contextstack[stacktop] do begin
       if d.kind = ck_const then begin
-       pushconst({info,}d);
-       outcommand({info,}[0],'push');
+       pushconst(d);
+       outcommand([0],'push');
       end;
      end;
-     with additem({info})^ do begin
+     with additem()^ do begin
       d.datasize:= si1;
       if indi then begin
        case si1 of
@@ -2760,17 +2138,17 @@ outinfo({info,}'*****');
    end;
   end
   else begin
-   errormessage({info,}err_illegalexpression,[]);
+   errormessage(err_illegalexpression,[]);
   end;
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
 
-procedure handlestatement0entry({const info: pparseinfoty});
+procedure handlestatement0entry();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'STATEMENT0ENTRY');
+ outhandle('STATEMENT0ENTRY');
 {$endif}
  with info do begin
   currentstatementflags:= [];
@@ -2781,25 +2159,25 @@ begin
  end;
 end;
 
-procedure handleleftside({const info: pparseinfoty});
+procedure handleleftside();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'HANDLELEFTSIDE');
+ outhandle('HANDLELEFTSIDE');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
  end;
 end;
 
-procedure handlestatementexit({const info: pparseinfoty});
+procedure handlestatementexit();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'HANDLESTATEMENTEXIT');
+ outhandle('HANDLESTATEMENTEXIT');
 {$endif}
-outinfo({info,}'***');
+outinfo('***');
  with info do begin
   if stacktop-stackindex <> 1 then begin
-   internalerror({info,}'H20140216A');
+   internalerror('H20140216A');
   end;
   with contextstack[stacktop].d do begin
    case kind of
@@ -2812,7 +2190,7 @@ outinfo({info,}'***');
     ck_sub: begin
     end;
     else begin
-     errormessage({info,}err_illegalexpression,[],1);
+     errormessage(err_illegalexpression,[],1);
     end;
    end;
   end;
@@ -2821,7 +2199,7 @@ outinfo({info,}'***');
 end;
 
 (*
-procedure handlestatement1({const info: pparseinfoty});
+procedure handlestatement1();
  procedure error(const atext: string);
  begin
   parsererror(info,atext+' HANDLESTATEMENT1');
@@ -2856,7 +2234,7 @@ begin
  end;
 end;
 
-procedure handlecheckproc({const info: pparseinfoty});
+procedure handlecheckproc();
 var
  po2: pfuncdataty;
  po3: pelementoffsetty;
@@ -2866,7 +2244,7 @@ var
  paramco: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHECKPROC');
+ outhandle('CHECKPROC');
 {$endif}
  with info^ do begin
   if findkindelementsdata(info,1,[ek_func],vis_max,po2) then begin
@@ -2880,7 +2258,7 @@ begin
      po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
       if d.datatyp.typedata <> po4^.typ then begin
-       errormessage({info,}int1-stackindex,err_incompatibletypeforarg,
+       errormessage(int1-stackindex,err_incompatibletypeforarg,
          [int1-stackindex-2,typename(d),
                     typename(ptypedataty(ele.eledataabs(po4^.typ))^)]);
       end;
@@ -2922,14 +2300,14 @@ begin
 end;
 *)
 (*
-procedure setleftreference({const info: pparseinfoty});
+procedure setleftreference();
 //called by i1po^:= 123;
 var
  pi: ^pinteger;
 begin
 // pi(^)^:= 123;
 {$ifdef mse_debugparser}
- outhandle({info,}'SETDESTREFERENCE');
+ outhandle('SETDESTREFERENCE');
 {$endif}
  with info^,contextstack[stackindex].d.statement do begin
   if sf_leftreference in flags then begin
@@ -2941,7 +2319,7 @@ begin
  end;
 end;
 *)
-procedure opgoto({const info: pparseinfoty;} const aaddress: dataaddressty);
+procedure opgoto(const aaddress: dataaddressty);
 begin
  with additem({info})^ do begin
   op:= @gotoop;
@@ -2949,20 +2327,20 @@ begin
  end;
 end;
 
-procedure handleif0({const info: pparseinfoty});
+procedure handleif0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IF0');
+ outhandle('IF0');
 {$endif}
  with info do begin
   include(currentstatementflags,stf_rightside);
  end;
 end;
 
-procedure handleif({const info: pparseinfoty});
+procedure handleif();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IF');
+ outhandle('IF');
 {$endif}
  with info do begin
   dec(stackindex);
@@ -2970,30 +2348,30 @@ begin
  end;
 end;
 
-procedure handlethen({const info: pparseinfoty});
+procedure handlethen();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'THEN');
+ outhandle('THEN');
 {$endif}
- tokenexpectederror({info,}tk_then);
+ tokenexpectederror(tk_then);
  with info do begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
 
-procedure handlethen0({const info: pparseinfoty});
+procedure handlethen0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'THEN0');
+ outhandle('THEN0');
 {$endif}
  with info,contextstack[stacktop] do begin
   if not (ptypedataty(ele.eledataabs(
                          d.datatyp.typedata))^.kind = dk_boolean) then begin
-   errormessage({info,}err_booleanexpressionexpected,[],stacktop-stackindex);
+   errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
   end;
   if d.kind = ck_const then begin
-   push({info,}d.constval.vboolean); //todo: use compiletime branch
+   push(d.constval.vboolean); //todo: use compiletime branch
   end;
  end;
  with additem({info})^ do begin
@@ -3001,10 +2379,10 @@ begin
  end;
 end;
 
-procedure handlethen1({const info: pparseinfoty});
+procedure handlethen1();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'THEN1');
+ outhandle('THEN1');
 {$endif}
  with info do begin
   dec(stackindex);
@@ -3012,35 +2390,35 @@ begin
  end;
 end;
 
-procedure handlethen2({const info: pparseinfoty});
+procedure handlethen2();
       //1       2        
 begin //boolexp,thenmark
 {$ifdef mse_debugparser}
- outhandle({info,}'THEN2');
+ outhandle('THEN2');
 {$endif}
- setcurrentlocbefore({info,}2); //set gotoaddress
+ setcurrentlocbefore(2); //set gotoaddress
  with info do begin
   dec(stackindex);
   stacktop:= stackindex;
  end;
 end;
 
-procedure handleelse0({const info: pparseinfoty});
+procedure handleelse0();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ELSE0');
+ outhandle('ELSE0');
 {$endif}
- opgoto({info,}dummyaddress);
+ opgoto(dummyaddress);
 end;
 
-procedure handleelse({const info: pparseinfoty});
+procedure handleelse();
       //1       2        3
 begin //boolexp,thenmark,elsemark
 {$ifdef mse_debugparser}
- outhandle({info,}'ELSE');
+ outhandle('ELSE');
 {$endif}
- setlocbefore({info,}2,3);      //set gotoaddress for handlethen0
- setcurrentlocbefore({info,}3); //set gotoaddress for handleelse0
+ setlocbefore(2,3);      //set gotoaddress for handlethen0
+ setcurrentlocbefore(3); //set gotoaddress for handleelse0
  with info do begin
   dec(stackindex);
   stacktop:= stackindex;
@@ -3082,24 +2460,24 @@ begin
 end;
 {
 procedure testxx(const info1: pparseinfoty); forward;
-procedure testxx({const info: pparseinfoty});
+procedure testxx();
 begin
 end;
 }
 
-procedure checkfunctiontype({const info: pparseinfoty});
+procedure checkfunctiontype();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHECKFUNCTIONTYPE');
+ outhandle('CHECKFUNCTIONTYPE');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info,contextstack[stackindex] do begin
   include(contextstack[parent-1].d.proc.flags,pf_functiontype);
  end;
-outinfo({info,}'****');
+outinfo('****');
 end;
 
-procedure handleprocedure3({const info: pparseinfoty});
+procedure handleprocedure3();
 var
  po1: pfuncdataty;
  po2: pvardataty;
@@ -3118,12 +2496,12 @@ var
 
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROCEDURE3');
+ outhandle('PROCEDURE3');
 {$endif}
 //0          1     2          3          4    5      6           7
 //procedure2,ident,paramsdef3{,paramdef2,name,type}[functiontype,ident]
               //todo: multi level type
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   procflags:= contextstack[stackindex-1].d.proc.flags;
   with contextstack[stackindex] do begin
@@ -3140,15 +2518,15 @@ outinfo({info,}'****');
     paramco:= (stacktop-stackindex-2-2) div 3+1;
    end
    else begin
-    errormessage({info,}err_syntax,[';'],stacktop-stackindex-1);    
+    errormessage(err_syntax,[';'],stacktop-stackindex-1);    
    end;
   end
   else begin
    if pf_function in procflags then begin
-    tokenexpectederror({info,}':');
+    tokenexpectederror(':');
    end;
   end;
-outinfo({info,}'****');
+outinfo('****');
   paramco:= (stacktop-stackindex-2) div 3;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
@@ -3168,10 +2546,10 @@ outinfo({info,}'****');
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-     if findkindelementsdata({info,}int1+1,[ek_type],vis_max,po3) then begin
+     if findkindelementsdata(int1+1,[ek_type],vis_max,po3) then begin
       with po2^ do begin
        if impl1 then begin
-        address.address:= getlocvaraddress({info,}po3^.bytesize);
+        address.address:= getlocvaraddress(po3^.bytesize);
         address.framelevel:= funclevel+1;
         address.flags:= [vf_param];
         address.indirectlevel:= 0;
@@ -3193,12 +2571,12 @@ outinfo({info,}'****');
       end;
      end
      else begin
-      identerror({info,}int1+1-stackindex,err_identifiernotfound);
+      identerror(int1+1-stackindex,err_identifiernotfound);
       err1:= true;
      end;
     end
     else begin
-     identerror({info,}int1,err_duplicateidentifier);
+     identerror(int1,err_duplicateidentifier);
      err1:= true;
     end;
    end;
@@ -3212,7 +2590,7 @@ outinfo({info,}'****');
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                             vis_max,@checkequalparam,paramdata) then begin
    err1:= true;
-   errormessage({info,}err_sameparamlist,[]);
+   errormessage(err_sameparamlist,[]);
   end;
 
   po1^.address:= 0; //init
@@ -3222,14 +2600,14 @@ outinfo({info,}'****');
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                 vis_max,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
-      forwardresolve({info,}mark);
+      forwardresolve(mark);
       impl:= ele.eledatarel(po1);
       pointer(parref):= @paramsrel;
       pointer(par1):= @po1^.paramsrel;
       for int1:= 0 to paramco-1 do begin
        if ele.eleinfoabs(parref^[int1])^.header.name <> 
                  ele.eleinfoabs(par1^[int1])^.header.name then begin
-        errormessage({info,}
+        errormessage(
              err_functionheadernotmatch,
                 [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
@@ -3241,7 +2619,7 @@ outinfo({info,}'****');
    end;
    ele.elementparent:= parent1;
    inc(funclevel);
-   getlocvaraddress({info,}stacklinksize);
+   getlocvaraddress(stacklinksize);
    with contextstack[stackindex] do begin
     d.kind:= ck_proc;
     d.proc.frameoffsetbefore:= frameoffset;
@@ -3269,19 +2647,19 @@ outinfo({info,}'****');
    for int2:= 0 to paramco-1 do begin
     dec(po4^[int2],eledatabase); //relative address
    end;
-   forwardmark({info,}po1^.mark,source);
+   forwardmark(po1^.mark,source);
   end;
  end;
 end;
 
-procedure handleprocedure5a({const info: pparseinfoty});
+procedure handleprocedure5a();
 var
  po1,po2: pfuncdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROCEDURE5A');
+ outhandle('PROCEDURE5A');
 {$endif}
-outinfo({info,}'*****');
+outinfo('*****');
  with info,contextstack[stackindex-1].d do begin
   proc.varsize:= locdatapo - proc.parambase - proc.paramsize;
   po1:= ele.eledataabs(proc.ref);
@@ -3297,17 +2675,17 @@ outinfo({info,}'*****');
   if proc.match <> 0 then begin
    po2:= ele.eledataabs(proc.ref);    
    po2^.address:= opcount;
-   linkresolve({info,}po2^.links,opcount);
+   linkresolve(po2^.links,opcount);
   end;
  end;
 end;
 
-procedure handleprocedure6({const info: pparseinfoty});
+procedure handleprocedure6();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'PROCEDURE6');
+ outhandle('PROCEDURE6');
 {$endif}
-outinfo({info,}'*****');
+outinfo('*****');
  with info do begin
   with contextstack[stackindex-1],d do begin
    //todo: check local forward
@@ -3331,23 +2709,23 @@ outinfo({info,}'*****');
  end;
 end;
 
-procedure handlecheckterminator({const info: pparseinfoty});
+procedure handlecheckterminator();
 begin
  with info do begin
-  errormessage({info,}err_syntax,[';']);
+  errormessage(err_syntax,[';']);
   dec(stackindex);
  end;
 end;
 
-procedure handlestatementblock1({const info: pparseinfoty});
+procedure handlestatementblock1();
 begin
  with info do begin
-  errormessage({info,}err_syntax,[';']);
+  errormessage(err_syntax,[';']);
   dec(stackindex);
  end;
 end;
 
-procedure handledumpelements({const info: pparseinfoty});
+procedure handledumpelements();
 {$ifdef mse_debugparser}
 var
  ar1: msestringarty;
@@ -3364,34 +2742,34 @@ begin
 {$endif}
 end;
 
-procedure handleabort({const info: pparseinfoty});
+procedure handleabort();
 var
  ar1: msestringarty;
  int1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'ABORT');
+ outhandle('ABORT');
 {$endif}
  with info do begin
   stopparser:= true;
-  errormessage({info,}err_abort,[]);
+  errormessage(err_abort,[]);
  end;
 end;
 
-procedure stringlineenderror({const info: pparseinfoty});
+procedure stringlineenderror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'STRINGLINEENDERROR');
+ outhandle('STRINGLINEENDERROR');
 {$endif}
- errormessage({info,}err_stringexeedsline,[]);
+ errormessage(err_stringexeedsline,[]);
 end;
 
-procedure handlestringstart({const info: pparseinfoty});
+procedure handlestringstart();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'STRINGSTART');
+ outhandle('STRINGSTART');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    d.kind:= ck_str;
@@ -3400,23 +2778,23 @@ outinfo({info,}'****');
  end;
 end;
 
-procedure handlestring({const info: pparseinfoty});
+procedure handlestring();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'STRING');
+ outhandle('STRING');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   dec(stackindex);
  end;
 end;
 
-procedure copystring({const info: pparseinfoty});
+procedure copystring();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'COPYSTRING');
+ outhandle('COPYSTRING');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    stringbuffer:= stringbuffer+psubstr(d.str.start,source.po-1);
@@ -3425,12 +2803,12 @@ outinfo({info,}'****');
  end;
 end;
 
-procedure copyapostrophe({const info: pparseinfoty});
+procedure copyapostrophe();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'COPYAPOSTROPHE');
+ outhandle('COPYAPOSTROPHE');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    stringbuffer:= stringbuffer+'''';
@@ -3439,22 +2817,22 @@ outinfo({info,}'****');
  end;
 end;
 
-procedure handlechar({const info: pparseinfoty});
+procedure handlechar();
 var
  i1,i2: int32;
  s1: string[4];
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CHAR');
+ outhandle('CHAR');
 {$endif}
-outinfo({info,}'****');
+outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    if d.kind <> ck_number then begin
-    internalerror({info,}'H20140220A');
+    internalerror('H20140220A');
    end;
    if d.number.value > $10ffff then begin
-    errormessage({info,}err_illegalcharconst,[],stacktop-stackindex);
+    errormessage(err_illegalcharconst,[],stacktop-stackindex);
    end
    else begin //todo: optimize
     i2:= 1;

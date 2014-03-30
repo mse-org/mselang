@@ -20,21 +20,17 @@ interface
 uses
  parserglob;
  
-function getglobvaraddress({const info: pparseinfoty;}
-                                        const asize: integer): ptruint;
-function getlocvaraddress({const info: pparseinfoty;}
-                                        const asize: integer): ptruint;
-function additem({const info: pparseinfoty}): popinfoty;
-function insertitem({const info: pparseinfoty;} 
-                                   const insertad: opaddressty): popinfoty;
-procedure writeop({const info: pparseinfoty;} const operation: opty); inline;
+function getglobvaraddress(const asize: integer): ptruint;
+function getlocvaraddress(const asize: integer): ptruint;
+function additem(): popinfoty;
+function insertitem(const insertad: opaddressty): popinfoty;
+procedure writeop(const operation: opty); inline;
 
 implementation
 uses
  stackops;
  
-function getglobvaraddress({const info: pparseinfoty;}
-                                        const asize: integer): ptruint;
+function getglobvaraddress(const asize: integer): ptruint;
 begin
  with info do begin
   result:= globdatapo;
@@ -42,8 +38,7 @@ begin
  end;
 end;
 
-function getlocvaraddress({const info: pparseinfoty;}
-                                        const asize: integer): ptruint;
+function getlocvaraddress(const asize: integer): ptruint;
 begin
  with info do begin
   result:= locdatapo;
@@ -51,7 +46,7 @@ begin
  end;
 end;
  
-function additem({const info: pparseinfoty}): popinfoty;
+function additem(): popinfoty;
 begin
  with info do begin
   if high(ops) < opcount then begin
@@ -62,8 +57,7 @@ begin
  end;
 end;
 
-function insertitem({const info: pparseinfoty;}
-                                   const insertad: opaddressty): popinfoty;
+function insertitem(const insertad: opaddressty): popinfoty;
 var
  ad1: opaddressty;
 begin
@@ -79,9 +73,9 @@ begin
  end;
 end;
 
-procedure writeop({const info: pparseinfoty;} const operation: opty); inline;
+procedure writeop(const operation: opty); inline;
 begin
- with additem({info})^ do begin
+ with additem()^ do begin
   op:= operation
  end;
 end;
