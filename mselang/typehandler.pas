@@ -44,7 +44,7 @@ procedure closesquarebracketexpected;
 
 implementation
 uses
- handlerglob,elements,errorhandler,handlerutils,parser;
+ handlerglob,elements,errorhandler,handlerutils,parser,opcode;
 
 procedure handletype({const info: pparseinfoty});
 begin
@@ -597,12 +597,20 @@ outinfo('***');
         end;
         ck_ref,ck_fact: begin //todo: check type
          if d.kind = ck_ref then begin
-          //todo: push value
+          getvalue(int1-stackoffset,true);
          end;
-         push(indextype^.bytesize);
-//         mul32();
-//         if not fullconst then begin
-          
+         with insertitem(opmark.address)^ do begin
+          op:= @mulimmint32;
+          d.d.vint32:= indextype^.bytesize;
+         end;
+         if not allconst then begin
+          with insertitem(opmark.address)^ do begin
+           op:= @addint32;
+          end;         
+         end
+         else begin
+          alconst:= false;
+         end;
         end;
         else begin
          internalerror('N20140328B');
@@ -616,6 +624,9 @@ outinfo('***');
      d.ref.offset:= d.ref.offset + offs;
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
+     if not fullconst then begin
+      pushinsertaddress(contextstack[stackindex-1]);
+     end;
     end;
     else begin
      internalerror('N20140328A');

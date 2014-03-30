@@ -433,7 +433,6 @@ begin
  end;
 end;
 
-
 function pushinsertvar(const insertad: opaddressty;
                                     const atype: ptypedataty): integer;
 begin

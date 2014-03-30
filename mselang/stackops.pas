@@ -75,6 +75,7 @@ procedure push64;
 procedure pushdatakind;
 procedure int32toflo64;
 procedure mulint32;
+procedure mulimmint32;
 procedure mulflo64;
 procedure addint32;
 procedure addflo64;
@@ -85,6 +86,8 @@ procedure negflo64;
 procedure cmpequbool;
 procedure cmpequint32;
 procedure cmpequflo64;
+
+procedure mulimmint32;
 
 procedure popglob8;
 procedure popglob16;
@@ -355,6 +358,14 @@ begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
  vintegerty(po2^):= vintegerty(po2^)*vintegerty(po1^);
+end;
+
+procedure mulimmint32;
+var
+ po1: pointer;
+begin
+ po1:= mainstackpo;
+ vintegerty(po1^):= vintegerty(po1^)*oppo^.d.d.vinteger;
 end;
 
 procedure mulflo64;
