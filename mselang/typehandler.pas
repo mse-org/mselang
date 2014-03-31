@@ -590,6 +590,7 @@ outinfo('***');
        goto errlab;
       end;
       indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
+      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
       getordrange(indextype,range);
       with contextstack[int1] do begin
        case d.kind of
@@ -612,7 +613,7 @@ outinfo('***');
          end;
          with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
           op:= @mulimmint32;
-          d.d.vinteger:= indextype^.bytesize;
+          d.d.vinteger:= itemtype^.bytesize;
          end;
          if not fullconst then begin
           with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
@@ -629,7 +630,6 @@ outinfo('***');
         end;
        end;
       end;
-      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
       offs:= offs + li1*gettypesize(itemtype^);
      end;
      d.ref.offset:= d.ref.offset + offs;

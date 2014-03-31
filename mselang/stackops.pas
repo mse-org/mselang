@@ -759,6 +759,7 @@ begin
  stacklink:= nil;
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
+  fillchar(globdata^,globdatasize,0);
  end;
  constdata:= constseg;
  inc(oppo,startupoffset);
