@@ -1988,6 +1988,7 @@ begin
  outhandle('ASSIGNMENTENTRY');
 {$endif}
  with info do begin
+  opshift:= 0;
   include(currentstatementflags,stf_rightside);
  end;
 end;
@@ -2033,6 +2034,7 @@ outinfo('*****');
        end;
       end;
       ck_fact: begin
+       dest.address.flags:= [];
        typematch:= true;
        indi:= true;
       end;
@@ -2151,6 +2153,7 @@ begin
  outhandle('STATEMENT0ENTRY');
 {$endif}
  with info do begin
+  opshift:= 0;
   currentstatementflags:= [];
   with contextstack[stacktop].d,statement do begin
    kind:= ck_statement;

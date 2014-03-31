@@ -282,7 +282,7 @@ recordfield,,,handlerecordfield^>
  '',vardef^*
 recorddefreturn,,handlerecordtype,*^
 #
-arraydef,arraydef1,handlearraydefstart,
+arraydef,arraydef1,,
  ${whitespace}
  '',arrayindex*
 arraydef1,,,handlearraydeferror1
@@ -419,7 +419,7 @@ getaddress,illegalexpression,,
 # '(',getaddressbracket
 getaddress0,term1,,handleaddress
 #
-getindex,getindex1,,
+getindex,getindex1,handleindexstart,
  '',exp^*
 getindex1,,,handleindex
  ${whitespace}

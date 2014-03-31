@@ -20,33 +20,34 @@ interface
 uses
  parserglob;
 
-procedure handletype({const info: pparseinfoty});
-procedure handlegettypetypestart({const info: pparseinfoty});
-procedure handlegetfieldtypestart({const info: pparseinfoty});
-procedure handlepointertype({const info: pparseinfoty});
-procedure handlechecktypeident({const info: pparseinfoty});
-procedure handlecheckrangetype({const info: pparseinfoty});
+procedure handletype();
+procedure handlegettypetypestart();
+procedure handlegetfieldtypestart();
+procedure handlepointertype();
+procedure handlechecktypeident();
+procedure handlecheckrangetype();
  
-procedure handlerecorddefstart({const info: pparseinfoty});
-procedure handlerecorddeferror({const info: pparseinfoty});
-procedure handlerecordtype({const info: pparseinfoty});
-procedure handlerecordfield({const info: pparseinfoty});
+procedure handlerecorddefstart();
+procedure handlerecorddeferror();
+procedure handlerecordtype();
+procedure handlerecordfield();
 
-procedure handlearraydefstart({const info: pparseinfoty});
-procedure handlearraytype({const info: pparseinfoty});
-procedure handlearraydeferror1({const info: pparseinfoty});
-procedure handlearrayindexerror1({const info: pparseinfoty});
-procedure handlearrayindexerror2({const info: pparseinfoty});
-//procedure handlearrayindex2({const info: pparseinfoty});
+//procedure handlearraydefstart();
+procedure handlearraytype();
+procedure handlearraydeferror1();
+procedure handlearrayindexerror1();
+procedure handlearrayindexerror2();
+//procedure handlearrayindex2();
 
-procedure handleindex({const info: pparseinfoty});
+procedure handleindexstart();
+procedure handleindex();
 procedure closesquarebracketexpected;
 
 implementation
 uses
- handlerglob,elements,errorhandler,handlerutils,parser,opcode;
+ handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops;
 
-procedure handletype({const info: pparseinfoty});
+procedure handletype();
 begin
 {$ifdef mse_debugparser}
  outhandle('TYPE');
@@ -57,7 +58,7 @@ begin
  end;
 end;
 
-procedure handlegetfieldtypestart({const info: pparseinfoty});
+procedure handlegetfieldtypestart();
 begin
 {$ifdef mse_debugparser}
  outhandle('GETFIELDTYPESTART');
@@ -70,7 +71,7 @@ outinfo('***');
  end;
 end;
 
-procedure handlegettypetypestart({const info: pparseinfoty});
+procedure handlegettypetypestart();
 begin
 {$ifdef mse_debugparser}
  outhandle('GETTYPETYPESTART');
@@ -83,7 +84,7 @@ outinfo('***');
  end;
 end;
 
-procedure handlepointertype({const info: pparseinfoty});
+procedure handlepointertype();
 begin
 {$ifdef mse_debugparser}
  outhandle('POINTERTYPE');
@@ -94,7 +95,7 @@ begin
  end;
 end;
 
-procedure handlechecktypeident({const info: pparseinfoty});
+procedure handlechecktypeident();
 var
  po1,po2: pelementinfoty;
  idcontext: pcontextitemty;
@@ -138,7 +139,7 @@ outinfo('***');
  end;
 end;
 
-procedure handlecheckrangetype({const info: pparseinfoty});
+procedure handlecheckrangetype();
 var
  id1: identty;
  po1: ptypedataty;
@@ -185,7 +186,7 @@ outinfo('***');
  end;
 end;
  
-procedure handlerecorddefstart({const info: pparseinfoty});
+procedure handlerecorddefstart();
 var
  po1: ptypedataty;
  id1: identty;
@@ -218,7 +219,7 @@ outinfo('***');
  end;
 end;
 
-procedure handlerecorddeferror({const info: pparseinfoty});
+procedure handlerecorddeferror();
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDDEFERROR');
@@ -228,7 +229,7 @@ begin
  end;
 end;
 
-procedure handlerecordfield({const info: pparseinfoty});
+procedure handlerecordfield();
 var
  po1: pfielddataty;
  po2: ptypedataty;
@@ -266,7 +267,7 @@ outinfo('***');
  end;
 end;
 
-procedure handlerecordtype({const info: pparseinfoty});
+procedure handlerecordtype();
 var
  int1,int2: integer;
  po1: pfielddataty;
@@ -303,15 +304,15 @@ outinfo('****');
   end;
  end;
 end;
-
-procedure handlearraydefstart({const info: pparseinfoty});
+(*
+procedure handlearraydefstart();
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYDEFSTART');
 {$endif}
 outinfo('****');
 end;
-
+*)
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 begin
  with typedata^ do begin
@@ -382,7 +383,7 @@ begin
 end;
 
 //type t1 = array[1..0] of integer; 
-procedure handlearraytype({const info: pparseinfoty});
+procedure handlearraytype();
 var
  int1,int2: integer;
 // po2: pelementoffsetty;
@@ -505,7 +506,7 @@ endlab:
  end;
 end;
 
-procedure handlearraydeferror1({const info: pparseinfoty});
+procedure handlearraydeferror1();
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYDEFERROR1');
@@ -513,7 +514,7 @@ begin
  tokenexpectederror('of',erl_fatal);
 end;
 
-procedure handlearrayindexerror1({const info: pparseinfoty});
+procedure handlearrayindexerror1();
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYINDEXERROR1');
@@ -521,7 +522,7 @@ begin
  tokenexpectederror('[',erl_fatal);
 end;
 
-procedure handlearrayindexerror2({const info: pparseinfoty});
+procedure handlearrayindexerror2();
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYINDEXERROR2');
@@ -529,7 +530,7 @@ begin
  tokenexpectederror(']',erl_fatal);
 end;
 (*
-procedure handlearrayindex2({const info: pparseinfoty});
+procedure handlearrayindex2();
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYINDEX');
@@ -546,12 +547,19 @@ outinfo('***');
 end;
 *)
 
-type
- i1 = 0..3;
-var
- v2: array[i1] of integer;
+procedure handleindexstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INDEXSTART');
+{$endif}
+outinfo('***');
+ with info,contextstack[stackindex] do begin
+  d.kind:= ck_index;
+  d.opshiftmark:= opshift;
+ end;
+end;
 
-procedure handleindex({const info: pparseinfoty});
+procedure handleindex();
 var
  itemtype,indextype: ptypedataty;
  range: ordrangety;
@@ -559,6 +567,7 @@ var
  offs: dataoffsty;
  int1: integer;
  fullconst: boolean;
+ opshiftcorr: integer;
 label
  errlab;
 begin
@@ -570,6 +579,7 @@ outinfo('***');
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex > 0 then begin
    offs:= 0;
+   opshiftcorr:= opshift-contextstack[stackindex].d.opshiftmark;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.datatyp.typedata);
@@ -596,20 +606,21 @@ outinfo('***');
          end;
         end;
         ck_ref,ck_fact: begin //todo: check type
+         li1:= 0;
          if d.kind = ck_ref then begin
-          getvalue(int1-stackoffset,true);
+          getvalue(int1-stackindex,true);
          end;
-         with insertitem(opmark.address)^ do begin
+         with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
           op:= @mulimmint32;
-          d.d.vint32:= indextype^.bytesize;
+          d.d.vinteger:= indextype^.bytesize;
          end;
-         if not allconst then begin
-          with insertitem(opmark.address)^ do begin
+         if not fullconst then begin
+          with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
            op:= @addint32;
           end;         
          end
          else begin
-          alconst:= false;
+          fullconst:= false;
          end;
         end;
         else begin
@@ -625,7 +636,12 @@ outinfo('***');
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
-      pushinsertaddress(contextstack[stackindex-1]);
+      pushinsertaddress(contextstack[stackindex-1],opshift);
+      with additem^ do begin
+       op:= @addint32;
+      end;
+      d.kind:= ck_fact;
+      inc(d.datatyp.indirectlevel)
      end;
     end;
     else begin

@@ -87,8 +87,6 @@ procedure cmpequbool;
 procedure cmpequint32;
 procedure cmpequflo64;
 
-procedure mulimmint32;
-
 procedure popglob8;
 procedure popglob16;
 procedure popglob32;
@@ -364,7 +362,7 @@ procedure mulimmint32;
 var
  po1: pointer;
 begin
- po1:= mainstackpo;
+ po1:= mainstackpo - alignsize(sizeof(vintegerty));
  vintegerty(po1^):= vintegerty(po1^)*oppo^.d.d.vinteger;
 end;
 
@@ -399,8 +397,8 @@ procedure cmpequint32;
 var
  po1,po2: pvintegerty;
 begin
- po1:= stackpop(sizeof(po1^));
- po2:= stackpop(sizeof(po2^));
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= stackpop(sizeof(vintegerty));
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
@@ -408,8 +406,8 @@ procedure cmpequflo64;
 var
  po1,po2: pvfloatty;
 begin
- po1:= stackpop(sizeof(po1^));
- po2:= stackpop(sizeof(po2^));
+ po1:= stackpop(sizeof(vfloatty));
+ po2:= stackpop(sizeof(vfloatty));
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 

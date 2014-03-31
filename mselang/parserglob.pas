@@ -79,7 +79,7 @@ type
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_proc,
                   ck_neg,ck_const,ck_range,ck_ref,ck_fact,ck_subres,ck_sub,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
-                  ck_paramsdef,ck_params);
+                  ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
 
@@ -316,6 +316,9 @@ type
      ck_ref:(
       ref: refinfoty;
      );
+   );
+   ck_index:(
+    opshiftmark: integer;
    );
    ck_proc:(
     proc: procinfoty;

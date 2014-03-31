@@ -113,15 +113,17 @@ procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
                                                    const size: databytesizety);
-procedure pushinsert(const insertad: opaddressty; 
-                                    const avalue: datakindty); overload;
+procedure pushinsert(const insertad: opaddressty;
+                                     const avalue: datakindty); overload;
 function pushinsertvar(const insertad: opaddressty;
-                                    const atype: ptypedataty): integer;
+                                     const atype: ptypedataty): integer;
 procedure pushinsertdata(const insertad: opaddressty;
                   const address: addressinfoty; const offset: dataoffsty;
                                                   const size: databytesizety);
-procedure pushinsertaddress(const avalue: contextitemty);
-procedure pushinsertconst(const avalue: contextitemty);
+procedure pushinsertaddress(const avalue: contextitemty;
+                                              const shift: integer = 0);
+procedure pushinsertconst(const avalue: contextitemty;
+                                              const shift: integer = 0);
 
 procedure setcurrentloc(const indexoffset: integer);
 procedure setcurrentlocbefore(const indexoffset: integer);
@@ -434,7 +436,7 @@ begin
 end;
 
 function pushinsertvar(const insertad: opaddressty;
-                                    const atype: ptypedataty): integer;
+                                       const atype: ptypedataty): integer;
 begin
 // insertad:= insertad + info^.opshift;
  with insertitem(insertad)^ do begin
@@ -444,10 +446,11 @@ begin
  end;
 end;
 
-procedure pushinsertaddress(const avalue: contextitemty);
+procedure pushinsertaddress(const avalue: contextitemty;
+                                              const shift: integer = 0);
 begin
 // avalue.opmark.address:= avalue.opmark.address + info^.opshift;
- with insertitem(avalue.opmark.address)^,avalue.d.ref do begin
+ with insertitem(avalue.opmark.address-shift)^,avalue.d.ref do begin
   if vf_global in address.flags then begin
    op:= @pushglobaddr;
    d.vaddress:= address.address + offset;
@@ -460,10 +463,11 @@ begin
  end;
 end;
 
-procedure pushinsertconst(const avalue: contextitemty);
+procedure pushinsertconst(const avalue: contextitemty;
+                                              const shift: integer = 0);
 begin
 // avalue.opmark.address:= avalue.opmark.address + info^.opshift;
- with insertitem(avalue.opmark.address)^ do begin
+ with insertitem(avalue.opmark.address-shift)^ do begin
   case avalue.d.constval.kind of
    dk_boolean: begin
     op:= @push8;
@@ -732,7 +736,7 @@ end;
 
 //todo: optimize call
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
-                                                   const size: databytesizety);
+                                          const size: databytesizety);
 begin
  pushd(additem({info}),address,offset,size);
 end;

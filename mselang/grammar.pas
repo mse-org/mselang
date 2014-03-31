@@ -4424,7 +4424,6 @@ begin
  recorddefreturnco.handleentry:= @handlerecordtype;
  arraydefco.branch:= @barraydef;
  arraydefco.next:= @arraydef1co;
- arraydefco.handleentry:= @handlearraydefstart;
  arraydef1co.branch:= @barraydef1;
  arraydef1co.handleexit:= @handlearraydeferror1;
  arraydef2co.branch:= @barraydef2;
@@ -4517,6 +4516,7 @@ begin
  getaddress0co.handleexit:= @handleaddress;
  getindexco.branch:= @bgetindex;
  getindexco.next:= @getindex1co;
+ getindexco.handleentry:= @handleindexstart;
  getindex1co.branch:= @bgetindex1;
  getindex1co.handleexit:= @handleindex;
  getindex2co.branch:= @bgetindex2;

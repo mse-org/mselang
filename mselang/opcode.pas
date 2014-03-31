@@ -24,6 +24,8 @@ function getglobvaraddress(const asize: integer): ptruint;
 function getlocvaraddress(const asize: integer): ptruint;
 function additem(): popinfoty;
 function insertitem(const insertad: opaddressty): popinfoty;
+function insertitemafter(const stackoffset: integer;
+                                       const shift: integer=0): popinfoty;
 procedure writeop(const operation: opty); inline;
 
 implementation
@@ -70,6 +72,20 @@ begin
   result:= @ops[ad1];
   inc(opcount);
   inc(opshift);
+ end;
+end;
+
+function insertitemafter(const stackoffset: integer;
+                                         const shift: integer=0): popinfoty;
+begin
+ with info do begin
+  if stackoffset+stackindex > stacktop then begin
+   result:= additem;
+  end
+  else begin
+   result:= insertitem(
+                 contextstack[stackindex+stackoffset+1].opmark.address+shift);
+  end;
  end;
 end;
 

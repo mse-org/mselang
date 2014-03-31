@@ -194,6 +194,9 @@ begin
        write('kind:',getenumname(typeinfo(kind),ord(kind)))
       end;
      end;
+     ck_index: begin
+      write('opshiftmark:'+inttostr(opshiftmark));
+     end;
     end;
 {$ifdef mse_debugparser}
     writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',
