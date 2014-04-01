@@ -640,8 +640,8 @@ outinfo('***');
       with additem^ do begin
        op:= @addint32;
       end;
-      d.kind:= ck_fact;
-      inc(d.datatyp.indirectlevel)
+      d.kind:= ck_reffact;
+//      inc(d.datatyp.indirectlevel)
      end;
     end;
     else begin

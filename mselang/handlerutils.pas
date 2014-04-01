@@ -782,13 +782,22 @@ var
 begin
  result:= true;
  with info,contextstack[stackindex+stackoffset].d do begin
-  if kind = ck_ref then begin
-   ref1:= ref; //todo: optimize
-   kind:= ck_const;
-   datatyp.indirectlevel:= datatyp.indirectlevel+1;
-   constval.kind:= dk_address;
-   constval.vaddress:= ref1.address;
-   constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+  case kind of
+   ck_ref: begin
+    ref1:= ref; //todo: optimize
+    kind:= ck_const;
+    datatyp.indirectlevel:= datatyp.indirectlevel+1;
+    constval.kind:= dk_address;
+    constval.vaddress:= ref1.address;
+    constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+   end;
+   ck_reffact: begin
+    inc(datatyp.indirectlevel);
+    kind:= ck_fact;
+   end;
+   else begin
+    internalerror('H20140401A');
+   end;
   end;
  end;
 end;

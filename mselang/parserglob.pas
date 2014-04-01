@@ -77,7 +77,8 @@ const
 type 
  contextkindty = (ck_none,ck_error,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_proc,
-                  ck_neg,ck_const,ck_range,ck_ref,ck_fact,ck_subres,ck_sub,
+                  ck_neg,ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
+                  ck_subres,ck_sub,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
@@ -225,7 +226,7 @@ type
 
  factinfoty = record  
   case contextkindty of
-   ck_subres: (
+   ck_subres:(
     datasize: integer;
    );
  end;
@@ -304,7 +305,7 @@ type
    ck_str:(
     str: strinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_ref:(
+   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:(
     datatyp: typeinfoty;
     case contextkindty of
      ck_const:(
