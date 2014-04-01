@@ -77,7 +77,7 @@ begin
    move(ops[ad1],ops[ad1+1],(opcount-ad1)*sizeof(ops[0]));
    result:= @ops[ad1];
    inc(opcount);
-   for int1:= int1 to stacktop do begin
+   for int1:= int1+1 to stacktop do begin
     inc(contextstack[int1].opmark.address);
    end;
   end;

@@ -2054,12 +2054,14 @@ outinfo('*****');
      assignmenterror(contextstack[stacktop].d,dest);
     end
     else begin
+    {
      with contextstack[stacktop] do begin
       if d.kind = ck_const then begin
        pushconst(d);
        outcommand([0],'push');
       end;
      end;
+     }
      with additem()^ do begin
       d.datasize:= si1;
       if indi then begin

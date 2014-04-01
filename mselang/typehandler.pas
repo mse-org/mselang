@@ -636,7 +636,7 @@ outinfo('***');
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
-      pushinsertaddress(stackindex);
+      pushinsertaddress(-1);
       with additem^ do begin
        op:= @addint32;
       end;
