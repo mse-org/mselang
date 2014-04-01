@@ -555,7 +555,7 @@ begin
 outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_index;
-  d.opshiftmark:= opshift;
+//  d.opshiftmark:= opshift;
  end;
 end;
 
@@ -567,7 +567,7 @@ var
  offs: dataoffsty;
  int1: integer;
  fullconst: boolean;
- opshiftcorr: integer;
+// opshiftcorr: integer;
 label
  errlab;
 begin
@@ -579,7 +579,7 @@ outinfo('***');
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex > 0 then begin
    offs:= 0;
-   opshiftcorr:= opshift-contextstack[stackindex].d.opshiftmark;
+//   opshiftcorr:= opshift-contextstack[stackindex].d.opshiftmark;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.datatyp.typedata);
@@ -611,12 +611,12 @@ outinfo('***');
          if d.kind = ck_ref then begin
           getvalue(int1-stackindex,true);
          end;
-         with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
+         with insertitemx(int1-stackindex+1)^ do begin
           op:= @mulimmint32;
           d.d.vinteger:= itemtype^.bytesize;
          end;
          if not fullconst then begin
-          with insertitemafter(int1-stackindex,opshiftcorr)^ do begin
+          with insertitemx(int1-stackindex+1)^ do begin
            op:= @addint32;
           end;         
          end
@@ -636,7 +636,7 @@ outinfo('***');
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
-      pushinsertaddress(contextstack[stackindex-1],opshift);
+      pushinsertaddressx(stackindex);
       with additem^ do begin
        op:= @addint32;
       end;

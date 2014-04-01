@@ -1306,7 +1306,7 @@ outinfo('***');
     end;
     ek_sub: begin
      po5:= @pfuncdataty(po2)^.paramsrel;
-     opshift:= 0;
+//     opshift:= 0;
      paramco1:= paramco;
      if pf_function in pfuncdataty(po2)^.flags then begin
       inc(paramco1);
@@ -1338,7 +1338,7 @@ outinfo('***');
            end;
           end;
           ck_ref: begin
-           pushinsertaddress(contextstack[int1]);
+           pushinsertaddressx(int1-stackindex);
 //           getaddress(info,int1-stackindex);
 //           pushinsertconst(info,contextstack[int1]);           
           end;
@@ -1349,7 +1349,7 @@ outinfo('***');
           ck_const: begin
 //           opmark.address:= opmark.address + opshift;
   //         inc(opshift);
-           pushinsertconst(contextstack[int1]);
+           pushinsertconstx(int1-stackindex);
           end;
           ck_ref: begin
            getvalue(int1-stackindex,true);
@@ -1369,7 +1369,7 @@ outinfo('***');
        if pf_function in pfuncdataty(po2)^.flags then begin
         po6:= ele.eledataabs(po5^);
         po3:= ptypedataty(ele.eledataabs(po6^.typ));
-        int1:= pushinsertvar(opmark.address-opshift,po3);
+        int1:= pushinsertvarx(0,po3);
         d.fact.datasize:= int1;
 //        d.kind:= ck_fact;
         d.kind:= ck_subres;
@@ -1411,7 +1411,7 @@ outinfo('***');
        sf_writeln: begin //todo: use open array of constrec
         int2:= stacktop-stackindex-2-idents.high; //count
         stacksize1:= 0;
-        opshift:= 0;
+//        opshift:= 0;
         int3:= int2+2+stackindex+idents.high;
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
@@ -1991,7 +1991,7 @@ begin
  outhandle('ASSIGNMENTENTRY');
 {$endif}
  with info do begin
-  opshift:= 0;
+//  opshift:= 0;
   include(currentstatementflags,stf_rightside);
  end;
 end;
@@ -2156,7 +2156,7 @@ begin
  outhandle('STATEMENT0ENTRY');
 {$endif}
  with info do begin
-  opshift:= 0;
+//  opshift:= 0;
   currentstatementflags:= [];
   with contextstack[stacktop].d,statement do begin
    kind:= ck_statement;

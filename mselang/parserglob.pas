@@ -544,7 +544,7 @@ type
   constcapacity: integer;
   ops: opinfoarty;
   opcount: integer;
-  opshift: integer;
+//  opshift: integer;
   start: integer;
   globdatapo: ptruint;
   locdatapo: ptruint;
