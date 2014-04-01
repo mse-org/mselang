@@ -757,7 +757,7 @@ begin
     end;
    end
    else begin
-    po1:= ele.eledataabs(datatyp.typedata);
+    po1:= ele.eledataabs(datatyp.typedata);    
     with additem({info})^ do begin //todo: use table
      case po1^.bytesize of
       1: begin
@@ -1415,12 +1415,15 @@ outinfo('***');
         int3:= int2+2+stackindex+idents.high;
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
+          getvalue(int1-stackindex,true);
+          {
           if d.kind = ck_const then begin
            pushinsertconst(contextstack[int1]);
           end
           else begin
            getvalue(int1-stackindex,true);
           end;
+          }
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
            push(kind);
            stacksize1:= stacksize1 + alignsize(bytesize);

@@ -753,23 +753,68 @@ var
  ref1: refinfoty;
  po1: ptypedataty;
  si1: databytesizety;
+ op1: popinfoty;
 begin
  result:= true;
  with info,contextstack[stackindex+stackoffset],d do begin
-  if kind = ck_ref then begin
-   ref1:= ref; //todo: optimize, handle indirectlevel
-   if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-    po1:= ele.eledataabs(datatyp.typedata);
-    si1:= po1^.bytesize;
-   end
-   else begin
-    si1:= pointersize;
+  case kind of
+   ck_ref: begin
+    ref1:= ref; //todo: optimize, handle indirectlevel
+    if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
+     po1:= ele.eledataabs(datatyp.typedata);
+     si1:= po1^.bytesize;
+    end
+    else begin
+     si1:= pointersize;
+    end;
+    if insert then begin
+     pushinsertdata(opmark.address,ref1.address,ref1.offset,si1);
+    end
+    else begin
+     pushdata(ref1.address,ref1.offset,si1);
+    end;
    end;
-   if insert then begin
-    pushinsertdata(opmark.address,ref1.address,ref1.offset,si1);
-   end
+   ck_reffact: begin
+    if datatyp.indirectlevel > 0 then begin
+     si1:= pointersize;
+    end
+    else begin
+     si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
+    end;
+    if insert then begin
+     op1:= insertitem(opmark.address);
+    end
+    else begin
+     op1:= additem;
+    end;
+    with op1^ do begin //todo: use table
+     case si1 of
+      1: begin
+       op:= @indirect8;
+      end;
+      2: begin
+       op:= @indirect16;
+      end;
+      4: begin
+       op:= @indirect32;
+      end;
+      else begin
+       op:= @indirect;
+       d.datasize:= si1;      
+      end;
+     end;
+    end;   
+   end;
+   ck_const: begin
+    if insert then begin
+     pushinsertconst(contextstack[stackindex+stackoffset]);
+    end
+    else begin
+     pushconst(contextstack[stackindex+stackoffset].d);
+    end;
+   end;
    else begin
-    pushdata(ref1.address,ref1.offset,si1);
+    internalerror('B20140401B');
    end;
    kind:= ck_fact;
   end;
