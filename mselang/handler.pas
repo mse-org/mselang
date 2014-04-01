@@ -1338,18 +1338,14 @@ outinfo('***');
            end;
           end;
           ck_ref: begin
-           pushinsertaddressx(int1-stackindex);
-//           getaddress(info,int1-stackindex);
-//           pushinsertconst(info,contextstack[int1]);           
+           pushinsertaddress(int1-stackindex);
           end;
          end;
         end
         else begin
          case d.kind of
           ck_const: begin
-//           opmark.address:= opmark.address + opshift;
-  //         inc(opshift);
-           pushinsertconstx(int1-stackindex);
+           pushinsertconst(int1-stackindex);
           end;
           ck_ref: begin
            getvalue(int1-stackindex,true);
@@ -1369,13 +1365,12 @@ outinfo('***');
        if pf_function in pfuncdataty(po2)^.flags then begin
         po6:= ele.eledataabs(po5^);
         po3:= ptypedataty(ele.eledataabs(po6^.typ));
-        int1:= pushinsertvarx(0,po3);
+        int1:= pushinsertvar(0,po3);
         d.fact.datasize:= int1;
-//        d.kind:= ck_fact;
         d.kind:= ck_subres;
         d.datatyp.indirectlevel:= po3^.indirectlevel;
         d.datatyp.typedata:= po6^.typ;        
-        with additem({info})^ do begin //result var param
+        with additem()^ do begin //result var param
          op:= @pushstackaddr;
          d.voffset:= -pfuncdataty(po2)^.paramsize+stacklinksize-int1;
         end;
