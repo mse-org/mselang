@@ -1338,14 +1338,14 @@ outinfo('***');
            end;
           end;
           ck_ref: begin
-           pushinsertaddress(int1-stackindex);
+           pushinsertaddress(int1-stackindex,false);
           end;
          end;
         end
         else begin
          case d.kind of
           ck_const: begin
-           pushinsertconst(int1-stackindex);
+           pushinsertconst(int1-stackindex,false);
           end;
           ck_ref: begin
            getvalue(int1-stackindex,true);
@@ -1365,7 +1365,7 @@ outinfo('***');
        if pf_function in pfuncdataty(po2)^.flags then begin
         po6:= ele.eledataabs(po5^);
         po3:= ptypedataty(ele.eledataabs(po6^.typ));
-        int1:= pushinsertvar(0,po3);
+        int1:= pushinsertvar(0,false,po3);
         d.fact.datasize:= int1;
         d.kind:= ck_subres;
         d.datatyp.indirectlevel:= po3^.indirectlevel;

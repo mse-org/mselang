@@ -611,12 +611,12 @@ outinfo('***');
          if d.kind = ck_ref then begin
           getvalue(int1-stackindex,true);
          end;
-         with insertitem(int1-stackindex+1)^ do begin
+         with insertitem(int1-stackindex+1,false)^ do begin
           op:= @mulimmint32;
           d.d.vinteger:= itemtype^.bytesize;
          end;
          if not fullconst then begin
-          with insertitem(int1-stackindex+1)^ do begin
+          with insertitem(int1-stackindex+1,false)^ do begin
            op:= @addint32;
           end;         
          end
@@ -636,7 +636,7 @@ outinfo('***');
      d.datatyp.typedata:= ele.eledatarel(itemtype);
      d.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
-      pushinsertaddress(-1);
+      pushinsertaddress(-1,true);
       with additem^ do begin
        op:= @addint32;
       end;

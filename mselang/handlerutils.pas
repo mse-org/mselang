@@ -113,15 +113,15 @@ procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
                                                    const size: databytesizety);
-procedure pushinsert(const stackoffset: integer;
+procedure pushinsert(const stackoffset: integer; const before: boolean;
                                      const avalue: datakindty); overload;
-function pushinsertvar(const stackoffset: integer;
+function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
-procedure pushinsertdata(const stackoffset: integer;
+procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
                                                   const size: databytesizety);
-procedure pushinsertaddress(const stackoffset: integer);
-procedure pushinsertconst(const stackoffset: integer);
+procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
+procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 
 procedure setcurrentloc(const indexoffset: integer);
 procedure setcurrentlocbefore(const indexoffset: integer);
@@ -433,19 +433,19 @@ begin
  end;
 end;
 
-function pushinsertvar(const stackoffset: integer;
+function pushinsertvar(const stackoffset: integer; const before: boolean;
                                        const atype: ptypedataty): integer;
 begin
- with insertitem(stackoffset)^ do begin
+ with insertitem(stackoffset,before)^ do begin
   op:= @pushop;
   result:= atype^.bytesize; //todo: alignment
   d.d.vsize:= result;
  end;
 end;
 
-procedure pushinsertaddress(const stackoffset: integer);
+procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
- with insertitem(stackoffset)^,info,
+ with insertitem(stackoffset,before)^,info,
                      contextstack[stackindex+stackoffset].d.ref do begin
   if vf_global in address.flags then begin
    op:= @pushglobaddr;
@@ -459,11 +459,11 @@ begin
  end;
 end;
 
-procedure pushinsertconst(const stackoffset: integer);
+procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 var
  po1: pcontextitemty;
 begin
- with insertitem(stackoffset)^,info do begin
+ with insertitem(stackoffset,before)^,info do begin
   po1:= @contextstack[stackindex+stackoffset];
   case po1^.d.constval.kind of
    dk_boolean: begin
@@ -537,11 +537,11 @@ begin
  end;
 end;
 
-procedure pushinsert(const stackoffset: integer; 
+procedure pushinsert(const stackoffset: integer; const before: boolean;
                                     const avalue: datakindty); overload;
       //no alignsize
 begin
- with insertitem(stackoffset)^ do begin
+ with insertitem(stackoffset,before)^ do begin
   op:= @pushdatakind;
   d.vdatakind:= avalue;
  end;
@@ -738,11 +738,11 @@ begin
  pushd(additem({info}),address,offset,size);
 end;
 
-procedure pushinsertdata(const stackoffset: integer;
+procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
                                                   const size: databytesizety);
 begin
- pushd(insertitem(stackoffset),address,offset,size);
+ pushd(insertitem(stackoffset,before),address,offset,size);
 end;
 
 function getvalue(const stackoffset: integer; const insert: boolean): boolean;
@@ -765,7 +765,7 @@ begin
      si1:= pointersize;
     end;
     if insert then begin
-     pushinsertdata(stackoffset+1,ref1.address,ref1.offset,si1);
+     pushinsertdata(stackoffset+1,false,ref1.address,ref1.offset,si1);
     end
     else begin
      pushdata(ref1.address,ref1.offset,si1);
@@ -779,7 +779,7 @@ begin
      si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
     end;
     if insert then begin
-     op1:= insertitem(stackoffset);
+     op1:= insertitem(stackoffset,false);
     end
     else begin
      op1:= additem;
@@ -804,11 +804,13 @@ begin
    end;
    ck_const: begin
     if insert then begin
-     pushinsertconst(stackoffset);
+     pushinsertconst(stackoffset,false);
     end
     else begin
      pushconst(contextstack[stackindex+stackoffset].d);
     end;
+   end;
+   ck_fact: begin
    end;
    else begin
     internalerror('B20140401B');
@@ -894,8 +896,9 @@ begin
  with info do begin
 //  opshift:= 0;
 outinfo('****');
-  getvalue(stacktop-2-stackindex,true);
-  getvalue(stacktop-stackindex,false);
+  if contextstack[stacktop].d.kind <> ck_const then begin
+   getvalue(stacktop-stackindex,false);
+  end;
 outinfo('****');
   sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
@@ -903,10 +906,13 @@ outinfo('****');
   po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
   with contextstack[stacktop-2],d do begin
+   if d.kind <> ck_const then begin
+    getvalue(stacktop-2-stackindex,true);
+   end;
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
     if kind = ck_const then begin
-     with insertitem(stacktop-2-stackindex)^ do begin
+     with insertitem(stacktop-2-stackindex,false)^ do begin
       op:= @push64;
       case constval.kind of
        dk_integer: begin
@@ -924,7 +930,7 @@ outinfo('****');
     else begin //ck_fact
      case kinda of
       dk_integer: begin
-       with insertitem(stacktop-2-stackindex)^ do begin
+       with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @stackops.int32toflo64;
         with d.op1 do begin
          index0:= 0;
@@ -971,7 +977,7 @@ outinfo('****');
      if kindb = dk_boolean then begin
       sd1:= sdk_bool8;
       if kind = ck_const then begin
-       with insertitem(stacktop-2-stackindex)^ do begin
+       with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @push8;
         d.d.vboolean:= constval.vboolean;
        end;
@@ -984,10 +990,10 @@ outinfo('****');
      end;
     end
     else begin
-     if (kinda = dk_integer) and (kinda = dk_integer) then begin
+     if (kinda = dk_integer) and (kindb = dk_integer) then begin
       sd1:= sdk_int32;
       if kind = ck_const then begin
-       with insertitem(stacktop-2-stackindex)^ do begin
+       with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @push32;
         d.d.vinteger:= constval.vinteger;
        end;
