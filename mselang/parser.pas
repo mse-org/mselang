@@ -159,6 +159,11 @@ begin
       end;
       write(getidentname(ident.ident));
      end;
+     ck_getfact: begin
+      with getfact do begin
+       write('neg:'+inttostr(negcount)+' indi:'+inttostr(indicount));
+      end;
+     end;
      ck_fact: begin
       writetype(datatyp);
      end;
