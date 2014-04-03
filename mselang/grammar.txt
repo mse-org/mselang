@@ -392,10 +392,11 @@ simpexp1,simpexp1,,
 simpexp1a,,,handlesimpexp1
 addterm,,,handleaddterm
  '',term*
-term,term1,handletermstart,
+fact,fact1,handlefactstart,
  ${whitespace}
  '+',-
- '-',negterm-*
+ '-',!handlenegfact-
+ '@',!handleaddressfact-
  '(',bracketstart-*
  @decnum,num*
  '%',binnum-*
@@ -404,20 +405,30 @@ term,term1,handletermstart,
  '''',string-*
  '#',char-*
  @identstart,valueidentifier*
- '@',getaddress-
-term1,term1,,
+ '',illegalexpression
+#
+valueidentifier,checkvalueparams,,
+ '',identpath^*
+#
+checkvalueparams,,,handlevalueidentifier
+ ${whitespace}
+ '(',params0-^*
+checkparams,,,^
+ ${whitespace}
+ '(',params0-
+params0,params1,handleparams0,
+params1,params2,,
+ '',exp^*
+params2,,,
+ ${whitespace}
+ ',',params1-
+ ')',paramsend-
+paramsend,,handleparamsend,^
+#
+fact1,,,handlefact
  ${whitespace}
  '^',!handledereference-
- '*',mulfact*
  '[',getindex-^*>
- '',term1a
-term1a,,,handleterm1
-negterm,term,handlenegterm,
-getaddress,illegalexpression,,
- ${whitespace}
- @identstart,identpath^*,getaddress0
-# '(',getaddressbracket
-getaddress0,term1,,handleaddress
 #
 getindex,getindex1,handleindexstart,
  '',exp^*
@@ -429,14 +440,24 @@ getindex1,,,handleindex
 getindex2,getindex1,,
  '',exp^*
 #
+term,term1,,
+# ${whitespace}
+# '@',getaddress-
+ '',fact*
+#getaddress,term1,,handleaddress
+# '',fact*
+#
+term1,,,handleterm
+ ${whitespace}
+ '*',mulfact*>
+# '',term1a
+#term1a,,,handleterm1
+#negterm,term,handlenegterm,
+#
 illegalexpression,,,handleillegalexpression*
 #
 mulfact,,,handlemulfact
- ${whitespace}
- '+',
- '-',negterm*
- '(',bracketstart*
- @decnum,num*
+ '',fact*
 #todo: use handler for number evaluation
 num,,,handleint
  @decnum,-
@@ -511,23 +532,6 @@ identpath2,,,handleidentpath2^
  ${whitespace}
  @identstart,identpath*
 #
-valueidentifier,checkvalueparams,,
- '',identpath^*
-#
-checkvalueparams,,,handlevalueidentifier
- ${whitespace}
- '(',params0-^*
-checkparams,,,^
- ${whitespace}
- '(',params0-
-params0,params1,handleparams0,
-params1,params2,,
- '',exp^*
-params2,,,
- ${whitespace}
- ',',params1-
- ')',paramsend-
-paramsend,,handleparamsend,^
 #
 bracketstart,bracketend,,
  '',simpexp*

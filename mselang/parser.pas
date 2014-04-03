@@ -28,6 +28,7 @@ uses
 const
  keywordchars = ['a'..'z','A'..'Z'];
  nokeywordendchars = keywordchars+['0'..'9','_'];
+ contextstackreserve = 16; //guaranteed available above stacktop in handlers
  
 function parse(const input: string; const acommand: ttextstream;
                out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
@@ -217,9 +218,9 @@ begin
  with info do begin
   inc(stacktop);
   stackindex:= stacktop;
-  if stacktop = stackdepht then begin
+  if stacktop >= stackdepht then begin
    stackdepht:= 2*stackdepht;
-   setlength(contextstack,stackdepht);
+   setlength(contextstack,stackdepht+contextstackreserve);
   end;
  end;
 end;

@@ -37,7 +37,8 @@ type
             err_circularreference,err_variableexpected,err_stringexeedsline,
             err_invalidintegerexpression,err_illegalcharconst,
             err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
-            err_dataeletoolarge,err_highlowerlow,err_valuerange);
+            err_dataeletoolarge,err_highlowerlow,err_valuerange,
+            err_cannotaddressconst,err_cannotderefnonpointer);
             
  errorinfoty = record
   level: errorlevelty;
@@ -103,7 +104,10 @@ const
   (level: erl_error; message: 'Ordinal type expected'),
   (level: erl_error; message: 'Data element too large'),
   (level: erl_error; message: 'High range limit < low range limit'),
-  (level: erl_error; message: 'Value exceeds range %s..%s')
+  (level: erl_error; message: 'Value exceeds range %s..%s'),
+  (level: erl_error; message: 
+                    'Can''t take the addreess of constant expressions'),
+  (level: erl_error; message: 'Can''t dereference non pointer')
  );
  
 procedure errormessage({const info: pparseinfoty;} const asourcepos: sourceinfoty;

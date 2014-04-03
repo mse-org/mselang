@@ -91,13 +91,14 @@ procedure handleequsimpexp();
 procedure handlemain();
 procedure handlekeyword();
 
+procedure handlefactstart();
+procedure handlenegfact();
+procedure handleaddressfact();
+procedure handlefact();
 procedure handlemulfact();
-procedure handletermstart();
-//procedure handleterm();
-procedure handleaddress();
+
+procedure handleterm();
 procedure handledereference();
-procedure handleterm1();
-procedure handlenegterm();
 procedure handleaddterm();
 procedure handlebracketend();
 procedure handlesimpexp();
@@ -181,39 +182,46 @@ begin
  outhandle('INT');
 {$endif}
 outinfo('***');
- with info,contextstack[stacktop] do begin
-  consumed:= source.po;
-  po1:= start.po;
-  while (po1^ = '0') do begin
-   inc(po1);
-  end;
-  c1:= 0;
-//  18446744073709551615
-  int1:= 20-(consumed-po1);
-  if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
-  end
-  else begin
-   while po1 < source.po do begin
-    c1:= c1*10 + (ord(po1^)-ord('0'));
+ with info do begin
+  with contextstack[stacktop] do begin
+   consumed:= source.po;
+   po1:= start.po;
+   while (po1^ = '0') do begin
     inc(po1);
    end;
-   if (int1 = 0) and (c1 < 10000000000000000000) then begin
+   c1:= 0;
+ //  18446744073709551615
+   int1:= 20-(consumed-po1);
+   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
     errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   end
+   else begin
+    while po1 < source.po do begin
+     c1:= c1*10 + (ord(po1^)-ord('0'));
+     inc(po1);
+    end;
+    if (int1 = 0) and (c1 < 10000000000000000000) then begin
+     errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+    end;
    end;
-  end;
-  stackindex:= stacktop-1;
-  if contextstack[stackindex].d.kind = ck_neg then begin
-   contextstack[stackindex].d.kind:= ck_none;
-   if int64(c1) < 0 then begin
-    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   stackindex:= stacktop-1;
+   with contextstack[stackindex] do begin
+    if d.kind <> ck_getfact then begin
+     internalerror('H20140403A');
+    end;
+    if odd(d.getfact.negcount) then begin
+     d.getfact.negcount:= 0;
+     if int64(c1) < 0 then begin
+      errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+     end;
+     int64(c1):= -int64(c1);
+    end;
    end;
-   int64(c1):= -int64(c1);
+   d.kind:= ck_const;
+   d.datatyp:= sysdatatypes[st_int32];
+   d.constval.kind:= dk_integer;
+   d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
   end;
-  d.kind:= ck_const;
-  d.datatyp:= sysdatatypes[st_int32];
-  d.constval.kind:= dk_integer;
-  d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
  end;
 end;
 
@@ -493,9 +501,12 @@ begin
     end
     else begin
      mantissa:= lint2;
-     neg:= contextstack[stackindex].d.kind = ck_neg;
-     if neg then begin
-      contextstack[stackindex].d.kind:= ck_none;
+     with contextstack[stackindex] do begin
+      if d.kind <> ck_getfact then begin
+       internalerror('H20140403B');
+      end;
+      neg:= odd(d.getfact.negcount);
+      d.getfact.negcount:= 0;
      end;
     end;
    end;
@@ -667,42 +678,46 @@ begin
  end;
 end;
 
-procedure handletermstart();
-begin
-{$ifdef mse_debugparser}
- outhandle('TERMSTART');
-{$endif}
- with info do begin
-  stringbuffer:= '';
- end;
-end;
-(*
 procedure handleterm();
 begin
 {$ifdef mse_debugparser}
- outhandle(info,'TERM');
+ outhandle('TERM');
+outinfo('***');
+ with info do begin
+  if stacktop-stackindex = 1 then begin
+   contextstack[stackindex].d:= contextstack[stackindex+1].d;
+  end;
+  stacktop:= stackindex;
+  dec(stackindex);
+ end;
 {$endif}
-outinfo(info,'****');
- dec(info^.stacktop);
- info^.stackindex:= info^.stacktop;
 end;
-*)
-procedure handleaddress();
+
+(*
+procedure handleaddressfact();
 var
  po1: pelementinfoty;
  po2: pvardataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('ADDRESS');
-{$endif}
+ outhandle('ADDRESSFACT');
+{$endif} //todo: handle non var references
  with info do begin
+//errormessage(err_cannotaddressconst,[],stacktop-stackindex);
   if findkindelements(1,[ek_var],vis_max,po1) then begin
    po2:= @po1^.data;
    inc(info.stackindex);
    with contextstack[stackindex] do begin
+    d.kind:= ck_ref;
+    d.datatyp.typedata:= po2^.typ;
+    d.ref.address:= po2^.address;
+    d.datatyp.indirectlevel:= d.ref.address.indirectlevel+1;
+    d.ref.address.indirectlevel:= 1;
+   end;
+  {
+   with contextstack[stackindex] do begin
     d.kind:= ck_const;
     d.datatyp.typedata:= po2^.typ;
-//    d.datatyp.flags:= [tf_reference];
     with d.constval do begin
      kind:= dk_address;
      vaddress:= po2^.address;
@@ -710,6 +725,7 @@ begin
      d.datatyp.indirectlevel:= vaddress.indirectlevel;
     end;
    end;
+  }
   end
   else begin
    errormessage(err_varidentexpected,[]);
@@ -718,10 +734,7 @@ begin
   stacktop:= stackindex;
  end;
 end;
-
-//procedure pushdata(const info: pparseinfoty; 
-//         const flags: varflagsty;
-//         const address: dataaddressty; const size: databytesizety);
+*)
 
 procedure handledereference();
 var
@@ -731,28 +744,32 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
 {$endif}
- with info,contextstack[stacktop].d do begin
- {
-  int1:= -1;
-  po1:= ele.eledataabs(datatyp.typedata);
-  if po1^.kind = dk_reference then begin
-   int1:= po1^.indirectlevel;
-  end;
-  if tf_reference in datatyp.flags then begin
-   inc(int1);
-  end;
-  }
-  //todo: handle const
-  if datatyp.indirectlevel <= 0 then begin
+ with info,contextstack[stacktop] do begin
+  if d.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
   end
   else begin
-   dec(datatyp.indirectlevel);
+   dec(d.datatyp.indirectlevel);
+   case d.kind of
+    ck_ref: begin
+     dec(d.ref.address.indirectlevel);
+    end;
+    ck_const: begin
+     if d.constval.kind <> dk_address then begin
+      errormessage(err_cannotderefnonpointer,[],stacktop-stackindex);
+     end
+     else begin
+      internalerror('N20140402B'); //todo
+     end;
+    end;
+    else begin
+     internalerror('N20140402A'); //todo
+    end;
+   end;
+(*  
    if currentstatementflags * [stf_rightside,stf_params] = [] then begin
     if kind = ck_const then begin
      pushdata(constval.vaddress,0,dataaddresssize);
-//     pushdata(info,constval.vaddress.flags,constval.vaddress.address,
-//                                                           dataaddresssize);
      kind:= ck_fact;
     end;
    end
@@ -776,21 +793,46 @@ begin
      end;
     end;   
    end;
+*)
   end;
  end;
 end;
 
-procedure handlenegterm();
+procedure handlefactstart();
 begin
 {$ifdef mse_debugparser}
- outhandle('NEGTERM');
+ outhandle('FACTSTART');
 {$endif}
- with info,contextstack[stacktop].d do begin
-  if kind = ck_none then begin
-   kind:= ck_neg;
-  end
-  else begin
-   kind:= ck_none;
+ with info,contextstack[stacktop] do begin
+  stringbuffer:= '';
+  d.kind:= ck_getfact;
+  d.getfact.negcount:= 0;
+  d.getfact.indicount:= 0;
+ end;
+end;
+
+procedure handlenegfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('NEGFACT');
+{$endif}
+ with info,contextstack[stacktop] do begin
+  inc(d.getfact.negcount);
+  if d.getfact.indicount <> 0 then begin
+   errormessage(err_illegalexpression,[]);
+  end;
+ end;
+end;
+
+procedure handleaddressfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ADRESSFACT');
+{$endif}
+ with info,contextstack[stacktop] do begin
+  dec(d.getfact.indicount);
+  if d.getfact.negcount <> 0 then begin
+   errormessage(err_illegalexpression,[]);
   end;
  end;
 end;
@@ -803,15 +845,16 @@ const
    nil,     nil,       nil,      nil,      nil
  );
 
-procedure handleterm1();
+procedure handlefact();
 var
  po1: ptypedataty;
  bo1: boolean;
  op1: opty;
  c1: card64;
+ int1: integer;
 begin
 {$ifdef mse_debugparser}
- outhandle('TERM1');
+ outhandle('FACT');
 {$endif}
 outinfo('****');
  with info do begin
@@ -835,8 +878,12 @@ outinfo('****');
     end;
    end;
    with contextstack[stackindex] do begin
-    bo1:= d.kind = ck_neg;
+    bo1:= odd(d.getfact.negcount);
+    int1:= d.getfact.indicount;
     d:= contextstack[stacktop].d;
+    if int1 <> 0 then begin
+     //todo
+    end;
     if bo1 then begin
      if d.kind = ck_const then begin
       with d.constval do begin
@@ -871,7 +918,7 @@ outinfo('****');
   else begin
    errormessage(err_illegalexpression,[],stacktop-stackindex);
   end;
-  dec(stacktop);
+  stacktop:= stackindex;
   dec(stackindex);
  end;
 end;
@@ -1214,11 +1261,8 @@ var
  ele1: elementoffsetty;
  int1,int2,int3: integer;
  si1: databytesizety;
-// addr1: dataaddressty;
  offs1: dataoffsty;
  indirect1: indirectlevelty;
-// fl1: typeflagsty;
-// opshift: opaddressty;
  stacksize1: databytesizety;
  paramco1: integer;
 label
@@ -1241,29 +1285,19 @@ outinfo('***');
      if checknoparam then begin     
       offs1:= 0;
       ele1:= pvardataty(po2)^.typ;
-//      indirect1:= pvardataty(po2)^.address.indirectlevel;
-//      if indirect1 > 0 then begin
-//       si1:= pointersize;
-//      end
-//      else begin
-       if lastident < idents.high then begin
-        for int1:= lastident+1 to idents.high do begin //fields
-         if not ele.findchild(ele1,idents.d[int1],[ek_field],
-                                                     vis_max,ele1) then begin
-          identerror(1+int1,err_identifiernotfound);
-          goto endlab;
-         end;
-         po4:= ele.eledataabs(ele1);
-         offs1:= offs1 + po4^.offset;
-         ele1:= po4^.typ;
+      if lastident < idents.high then begin
+       for int1:= lastident+1 to idents.high do begin //fields
+        if not ele.findchild(ele1,idents.d[int1],[ek_field],
+                                                    vis_max,ele1) then begin
+         identerror(1+int1,err_identifiernotfound);
+         goto endlab;
         end;
+        po4:= ele.eledataabs(ele1);
+        offs1:= offs1 + po4^.offset;
         ele1:= po4^.typ;
-        po3:= ele.eledataabs(ele1);
-//        si1:= po3^.bytesize;      
-//       end
-//       else begin
-//        si1:= ptypedataty(ele.eledataabs(pvardataty(po2)^.typ))^.bytesize;
-//       end;
+       end;
+       ele1:= po4^.typ;
+       po3:= ele.eledataabs(ele1);
       end;
       with contextstack[stackindex].d,ref do begin
        kind:= ck_ref;
@@ -1271,28 +1305,7 @@ outinfo('***');
        datatyp.typedata:= ele1;
        datatyp.indirectlevel:= address.indirectlevel;
        offset:= offs1;
-//       size:= si1;
       end;
-      {
-      if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-       pushdata(info,pvardataty(po2)^.address,offs1,si1);
-       with contextstack[stackindex].d do begin
-        kind:= ck_fact;
-        datatyp.typedata:= ele1;
-        datatyp.indirectlevel:= indirect1;
-       end;
-      end
-      else begin  //todo: handle dereference and the like
-       with contextstack[stackindex].d do begin
-        kind:= ck_const;
-        datatyp.typedata:= ele1;
-        datatyp.indirectlevel:= indirect1+1;
-        constval.kind:= dk_address;
-        constval.vaddress:= pvardataty(po2)^.address;
-        constval.vaddress.address:= constval.vaddress.address + offs1;
-       end;
-      end;
-      }
      end;
     end;
     ek_const: begin
@@ -1306,20 +1319,9 @@ outinfo('***');
     end;
     ek_sub: begin
      po5:= @pfuncdataty(po2)^.paramsrel;
-//     opshift:= 0;
      paramco1:= paramco;
      if pf_function in pfuncdataty(po2)^.flags then begin
       inc(paramco1);
-      {
-      po6:= ele.eledataabs(po5[pfuncdataty(po2)^.paramcount-1]); //result
-      po3:= ptypedataty(ele.eledataabs(po6^.typ));
-      with contextstack[stackindex] do begin
-       pushinsertvar(info,opmark.address,po3);
-       d.kind:= ck_fact;
-       d.datatyp.indirectlevel:= 0;
-       d.datatyp.typedata:= po6^.typ;
-      end;
-      }
      end;
      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
       identerror(1,err_wrongnumberofparameters);
@@ -1383,7 +1385,7 @@ outinfo('***');
      if pfuncdataty(po2)^.address = 0 then begin //unresolved header
       linkmark(pfuncdataty(po2)^.links,opcount);
      end;
-     with additem({info})^ do begin
+     with additem()^ do begin
       d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
       if (pfuncdataty(po2)^.nestinglevel = 0) or 
                        (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
@@ -1406,26 +1408,17 @@ outinfo('***');
        sf_writeln: begin //todo: use open array of constrec
         int2:= stacktop-stackindex-2-idents.high; //count
         stacksize1:= 0;
-//        opshift:= 0;
         int3:= int2+2+stackindex+idents.high;
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
           getvalue(int1-stackindex,true);
-          {
-          if d.kind = ck_const then begin
-           pushinsertconst(contextstack[int1]);
-          end
-          else begin
-           getvalue(int1-stackindex,true);
-          end;
-          }
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
            push(kind);
            stacksize1:= stacksize1 + alignsize(bytesize);
           end;
          end;
         end;
-        with additem({info})^ do begin
+        with additem()^ do begin
          op:= sysop;
          d.paramcount:= int2;
          d.paramsize:= stacksize1;
