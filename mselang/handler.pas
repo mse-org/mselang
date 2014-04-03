@@ -903,6 +903,12 @@ outinfo('****');
         inc(d.datatyp.indirectlevel);
        end;
       end;
+      ck_fact: begin
+       errormessage(err_cannotaddressexp,[],1);
+      end;
+      else begin
+       internalerror('H20140403C');
+      end;
      end;
     end;
    end;
