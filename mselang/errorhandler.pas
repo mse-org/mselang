@@ -38,7 +38,8 @@ type
             err_invalidintegerexpression,err_illegalcharconst,
             err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
             err_dataeletoolarge,err_highlowerlow,err_valuerange,
-            err_cannotaddressconst,err_cannotderefnonpointer);
+            err_cannotaddressconst,err_cannotderefnonpointer,
+            err_cannotassigntoaddr);
             
  errorinfoty = record
   level: errorlevelty;
@@ -107,7 +108,8 @@ const
   (level: erl_error; message: 'Value exceeds range %s..%s'),
   (level: erl_error; message: 
                     'Can''t take the addreess of constant expressions'),
-  (level: erl_error; message: 'Can''t dereference non pointer')
+  (level: erl_error; message: 'Can''t dereference non pointer'),
+  (level: erl_error; message: 'Can''t assign values to an address')
  );
  
 procedure errormessage({const info: pparseinfoty;} const asourcepos: sourceinfoty;

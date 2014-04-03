@@ -529,7 +529,7 @@ begin
 {$endif}
 outinfo('***');
  with info do begin
-//  if stacktop > stackindex then begin //no exponent nuber error otherwise
+//  if stacktop > stackindex then begin //no exponent number error otherwise
    dofrac(source.po,{neg,}mant,fraclen);
    with contextstack[stacktop].d.constval do begin
   //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
@@ -815,8 +815,9 @@ begin
   stringbuffer:= '';
   d.kind:= ck_getfact;
   with d.getfact do begin
+   flags:= [];
 //   negcount:= 0;
-   indicount:= 0;
+//   indicount:= 0;
 //   derefcount:= 0;
   end;
  end;
@@ -840,8 +841,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ADRESSFACT');
 {$endif}
- with info,contextstack[stacktop] do begin
-  dec(d.getfact.indicount);
+ with info,contextstack[stacktop].d.getfact do begin
+  if ff_address in flags then begin
+   errormessage(err_cannotassigntoaddr,[]);
+  end;
+  include(flags,ff_address);
  end;
 end;
 
@@ -857,6 +861,7 @@ procedure handlefact();
 var
  int1: integer;
  c1: card64;
+ fl1: factflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FACT');
@@ -883,13 +888,20 @@ outinfo('****');
     end;
    end;
    with contextstack[stackindex] do begin
-    int1:= d.getfact.indicount;
+    fl1:= d.getfact.flags;
     d:= contextstack[stacktop].d;
-    for int1:= int1+1 to 0 do begin
+    if ff_address in fl1 then begin
      case d.kind of
       ck_const: begin
        errormessage(err_cannotaddressconst,[],1);
-       break;
+      end;
+      ck_ref: begin
+       d.kind:= ck_const;      
+       with d.constval do begin
+        kind:= dk_address;
+        vaddress:= contextstack[stacktop].d.ref.address;
+        inc(d.datatyp.indirectlevel);
+       end;
       end;
      end;
     end;

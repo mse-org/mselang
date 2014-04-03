@@ -225,9 +225,6 @@ type
  
  getfactinfoty = record
   flags: factflagsty;
-//  negcount: integer;
-  indicount: integer;
-//  derefcount: integer;
  end;
  
  factinfoty = record
