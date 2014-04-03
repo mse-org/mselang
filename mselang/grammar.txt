@@ -395,7 +395,7 @@ addterm,,,handleaddterm
 fact,fact1,handlefactstart,
  ${whitespace}
  '+',-
- '-',!handlenegfact-
+ '-',negfact-*
  '@',!handleaddressfact-
  '(',bracketstart-*
  @decnum,num*
@@ -406,6 +406,9 @@ fact,fact1,handlefactstart,
  '#',char-*
  @identstart,valueidentifier*
  '',illegalexpression
+#
+negfact,,,handlenegfact
+ '',fact*
 #
 valueidentifier,checkvalueparams,,
  '',identpath^*

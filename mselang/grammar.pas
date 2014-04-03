@@ -728,6 +728,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'fact');
+ negfactco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'negfact');
  valueidentifierco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3356,8 +3361,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @handlenegfact); stack: nil; keys: (
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @negfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['-']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3428,6 +3433,16 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @illegalexpressionco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bnegfact: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @factco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4446,6 +4461,8 @@ begin
  factco.branch:= @bfact;
  factco.next:= @fact1co;
  factco.handleentry:= @handlefactstart;
+ negfactco.branch:= @bnegfact;
+ negfactco.handleexit:= @handlenegfact;
  valueidentifierco.branch:= @bvalueidentifier;
  valueidentifierco.next:= @checkvalueparamsco;
  checkvalueparamsco.branch:= @bcheckvalueparams;

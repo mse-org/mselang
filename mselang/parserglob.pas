@@ -220,9 +220,14 @@ type
   d: dataty;
  end;
 
+ factflagty = (ff_address);
+ factflagsty = set of factflagty;
+ 
  getfactinfoty = record
-  negcount: integer;
+  flags: factflagsty;
+//  negcount: integer;
   indicount: integer;
+//  derefcount: integer;
  end;
  
  factinfoty = record

@@ -205,6 +205,7 @@ outinfo('***');
     end;
    end;
    stackindex:= stacktop-1;
+   {
    with contextstack[stackindex] do begin
     if d.kind <> ck_getfact then begin
      internalerror('H20140403A');
@@ -217,6 +218,7 @@ outinfo('***');
      int64(c1):= -int64(c1);
     end;
    end;
+   }
    d.kind:= ck_const;
    d.datatyp:= sysdatatypes[st_int32];
    d.constval.kind:= dk_integer;
@@ -461,7 +463,7 @@ const
    1e-20,1e-21,1e-22,1e-23,1e-24,1e-25,1e-26,1e-27,1e-28,1e-29,1e-30,1e-31,1e-32);
 
 procedure dofrac(const asource: pchar;
-                 out neg: boolean; out mantissa: qword; out fraclen: integer);
+                {out neg: boolean;} out mantissa: qword; out fraclen: integer);
 var
  int1: integer;
  lint2: qword;
@@ -497,10 +499,11 @@ begin
                                             //todo: check correctness
      error(ce_invalidfloat,asource);
      mantissa:= 0;
-     neg:= false;
+//     neg:= false;
     end
     else begin
      mantissa:= lint2;
+     {
      with contextstack[stackindex] do begin
       if d.kind <> ck_getfact then begin
        internalerror('H20140403B');
@@ -508,6 +511,7 @@ begin
       neg:= odd(d.getfact.negcount);
       d.getfact.negcount:= 0;
      end;
+     }
     end;
    end;
   end;
@@ -518,7 +522,7 @@ procedure handlefrac();
 var
  mant: qword;
  fraclen: integer;
- neg: boolean;
+// neg: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('FRAC');
@@ -526,13 +530,15 @@ begin
 outinfo('***');
  with info do begin
 //  if stacktop > stackindex then begin //no exponent nuber error otherwise
-   dofrac(source.po,neg,mant,fraclen);
+   dofrac(source.po,{neg,}mant,fraclen);
    with contextstack[stacktop].d.constval do begin
   //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
     vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
+{
     if neg then begin
      vfloat:= -vfloat; 
     end;
+}
     consumed:= source.po;
    end;
 //  end
@@ -562,7 +568,7 @@ outinfo('*****');
    end;
   end;
   dec(stacktop,2);
-  dofrac(contextstack[stackindex].start.po-1,neg,mant,fraclen);
+  dofrac(contextstack[stackindex].start.po-1,{neg,}mant,fraclen);
   if fraclen < 0 then begin
    fraclen:= 0;  //no frac 123e4
   end;
@@ -586,9 +592,11 @@ outinfo('*****');
    end;
    with d.constval do begin
     vfloat:= mant*do1;
+{
     if neg then begin
      vfloat:= -vfloat; 
     end;
+}
    end;
   end;
  end;
@@ -806,11 +814,14 @@ begin
  with info,contextstack[stacktop] do begin
   stringbuffer:= '';
   d.kind:= ck_getfact;
-  d.getfact.negcount:= 0;
-  d.getfact.indicount:= 0;
+  with d.getfact do begin
+//   negcount:= 0;
+   indicount:= 0;
+//   derefcount:= 0;
+  end;
  end;
 end;
-
+(*
 procedure handlenegfact();
 begin
 {$ifdef mse_debugparser}
@@ -823,7 +834,7 @@ begin
   end;
  end;
 end;
-
+*)
 procedure handleaddressfact();
 begin
 {$ifdef mse_debugparser}
@@ -831,9 +842,6 @@ begin
 {$endif}
  with info,contextstack[stacktop] do begin
   dec(d.getfact.indicount);
-  if d.getfact.negcount <> 0 then begin
-   errormessage(err_illegalexpression,[]);
-  end;
  end;
 end;
 
@@ -847,11 +855,8 @@ const
 
 procedure handlefact();
 var
- po1: ptypedataty;
- bo1: boolean;
- op1: opty;
- c1: card64;
  int1: integer;
+ c1: card64;
 begin
 {$ifdef mse_debugparser}
  outhandle('FACT');
@@ -878,38 +883,13 @@ outinfo('****');
     end;
    end;
    with contextstack[stackindex] do begin
-    bo1:= odd(d.getfact.negcount);
     int1:= d.getfact.indicount;
     d:= contextstack[stacktop].d;
-    if int1 <> 0 then begin
-     //todo
-    end;
-    if bo1 then begin
-     if d.kind = ck_const then begin
-      with d.constval do begin
-       case kind of
-        dk_integer: begin
-         vinteger:= -vinteger;
-        end;
-        dk_float: begin
-         vfloat:= -vfloat;
-        end;
-        else begin
-         errormessage(err_negnotpossible,[],1);
-        end;
-       end;
-      end;
-     end
-     else begin
-      if getvalue(0,false) then begin
-       po1:= ele.eledataabs(d.datatyp.typedata);
-       op1:= negops[po1^.kind];
-       if op1 = nil then begin
-        errormessage(err_negnotpossible,[],1);
-       end
-       else begin
-        writeop(op1);
-       end;
+    for int1:= int1+1 to 0 do begin
+     case d.kind of
+      ck_const: begin
+       errormessage(err_cannotaddressconst,[],1);
+       break;
       end;
      end;
     end;
@@ -920,6 +900,47 @@ outinfo('****');
   end;
   stacktop:= stackindex;
   dec(stackindex);
+ end;
+end;
+
+procedure handlenegfact;
+var
+ po1: ptypedataty;
+ op1: opty;
+begin
+ handlefact;
+{$ifdef mse_debugparser}
+ outhandle('NEGFACT');
+{$endif}
+outinfo('****');
+ with info,contextstack[stacktop] do begin
+  if d.kind = ck_const then begin
+   with d.constval do begin
+    case kind of
+     dk_integer: begin
+      vinteger:= -vinteger;
+     end;
+     dk_float: begin
+      vfloat:= -vfloat;
+     end;
+     else begin
+      errormessage(err_negnotpossible,[],1);
+     end;
+    end;
+   end;
+  end
+  else begin
+   if getvalue(0,false) then begin
+    po1:= ele.eledataabs(d.datatyp.typedata);
+    op1:= negops[po1^.kind];
+    if op1 = nil then begin
+     errormessage(err_negnotpossible,[],1);
+    end
+    else begin
+     writeop(op1);
+    end;
+   end;
+  end;
  end;
 end;
 

@@ -161,7 +161,8 @@ begin
      end;
      ck_getfact: begin
       with getfact do begin
-       write('neg:'+inttostr(negcount)+' indi:'+inttostr(indicount));
+       write('flags:',settostring(ptypeinfo(typeinfo(factflagsty)),
+                                           integer(getfact.flags),true));
       end;
      end;
      ck_fact: begin
