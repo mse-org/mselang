@@ -427,7 +427,9 @@ checkvalueparams,,,handlevalueidentifier
 checkparams,,,^
  ${whitespace}
  '(',params0-
-params0,params1,handleparams0,
+params0,params1,handleparams0entry,
+ ${whitespace}
+ ')',paramsend-
 params1,params2,,
  '',exp^*
 params2,,,

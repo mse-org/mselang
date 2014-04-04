@@ -105,7 +105,7 @@ procedure handlesimpexp();
 procedure handlesimpexp1();
 
 procedure handleparamsdef0entry();
-procedure handleparams0();
+procedure handleparams0entry();
 procedure setconstparam();
 procedure setvarparam();
 procedure setoutparam();
@@ -1036,10 +1036,10 @@ begin
  end;
 end;
 
-procedure handleparams0();
+procedure handleparams0entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('PARAMS0');
+ outhandle('PARAMS0ENTRY');
 {$endif}
 outinfo('***');
  with info do begin
