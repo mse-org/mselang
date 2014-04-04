@@ -867,6 +867,9 @@ begin                    //todo: optimize
 //     pushconst(contextstack[stackindex+stackoffset].d);
 //    end;
    end;
+   ck_subres: begin
+    kind:= ck_fact;
+   end;
    ck_fact: begin
    end;
    else begin
