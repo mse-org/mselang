@@ -1102,10 +1102,12 @@ outinfo('***');
    errormessage(err_typeidentexpected,[]);
   end
   else begin
+ {
    with contextstack[stacktop-1] do begin
     d.ident.paramkind:= 
              contextstack[contextstack[stackindex].parent].d.paramsdef.kind;
    end;
+  }
   end;
  end;
 end;
@@ -2557,6 +2559,7 @@ var
  procflags: procflagsty;
 // parambase: ptruint;
  si1: integer;
+ paramkind1: paramkindty; 
 
 begin
 {$ifdef mse_debugparser}
@@ -2613,6 +2616,7 @@ outinfo('****');
   err1:= false;
   impl1:= us_implementation in unitinfo^.state; //todo: check forward modifier
   for int2:= 0 to paramco-1 do begin
+   paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
@@ -2632,7 +2636,7 @@ outinfo('****');
          address.address:= getlocvaraddress(si1);
          address.framelevel:= funclevel+1;
          address.flags:= [vf_param];
-         if d.ident.paramkind = pk_const then begin
+         if paramkind1 = pk_const then begin
           if si1 > pointersize then begin
            inc(address.indirectlevel);
            include(address.flags,vf_paramindirect);
@@ -2640,7 +2644,7 @@ outinfo('****');
           include(address.flags,vf_const);
          end
          else begin
-          if d.ident.paramkind in [pk_var,pk_out] then begin
+          if paramkind1 in [pk_var,pk_out] then begin
            inc(address.indirectlevel);
            include(address.flags,vf_paramindirect);
           end;

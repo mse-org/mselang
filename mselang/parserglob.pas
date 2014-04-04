@@ -253,10 +253,12 @@ type
   ident: identty;
   len: integer;
   continued: boolean;
+  {
   case identkindty of
    ik_param:(
     paramkind: paramkindty;
    )
+   }
  end;
  opmarkty = record
   address: opaddressty;
