@@ -126,7 +126,7 @@ type
 
  vardataty = record
   address: addressinfoty; //indirectlevel = total
-  typ: elementoffsetty; //elementdata relative typedataty
+  typ: elementoffsetty;   //elementdata relative typedataty
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;

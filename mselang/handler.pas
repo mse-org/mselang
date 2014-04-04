@@ -896,12 +896,16 @@ outinfo('****');
        errormessage(err_cannotaddressconst,[],1);
       end;
       ck_ref: begin
+       inc(d.ref.address.indirectlevel);
+       inc(d.datatyp.indirectlevel);
+      {
        d.kind:= ck_const;      
        with d.constval do begin
         kind:= dk_address;
         vaddress:= contextstack[stacktop].d.ref.address;
         inc(d.datatyp.indirectlevel);
        end;
+      }
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
@@ -1343,6 +1347,7 @@ outinfo('***');
        address:= pvardataty(po2)^.address;
        datatyp.typedata:= ele1;
        datatyp.indirectlevel:= address.indirectlevel;
+       address.indirectlevel:= 0;
        offset:= offs1;
       end;
      end;
@@ -2029,6 +2034,8 @@ var
  typematch,indi: boolean;
  si1: integer;
  int1: integer;
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('ASSIGNMENT');
@@ -2036,8 +2043,9 @@ begin
 outinfo('*****');
  with info do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
-   getaddress(1);
-   getvalue(2,false);
+   if not getaddress(1) or not getvalue(2,false) then begin
+    goto endlab;
+   end;
    with contextstack[stackindex+1].d do begin //address
     typematch:= false;
     indi:= false;
@@ -2174,6 +2182,7 @@ outinfo('*****');
   else begin
    errormessage(err_illegalexpression,[]);
   end;
+endlab:
   dec(stackindex);
   stacktop:= stackindex;
  end;

@@ -126,6 +126,7 @@ procedure pushstackaddr;
 procedure indirect8;
 procedure indirect16;
 procedure indirect32;
+procedure indirectpo;
 procedure indirect;
 
 procedure popindirect8;
@@ -632,6 +633,14 @@ var
 begin
  po1:= mainstackpo-alignstep;
  pv32ty(po1)^:=  pv32ty(ppointer(po1)^)^;
+end;
+
+procedure indirectpo;
+var
+ po1: pointer;
+begin
+ po1:= mainstackpo-sizeof(pointer);
+ ppointer(po1)^:=  ppointer(ppointer(po1)^)^;
 end;
 
 procedure indirect;

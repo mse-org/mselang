@@ -105,6 +105,7 @@ procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
 function getvalue(const stackoffset: integer; const insert: boolean): boolean;
 function getaddress(const stackoffset: integer): boolean;
+
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
 procedure push(const avalue: real); overload;
@@ -746,61 +747,117 @@ begin
 end;
 
 function getvalue(const stackoffset: integer; const insert: boolean): boolean;
+
+ procedure doindirect();
+ var
+  po1: ptypedataty;
+  si1: databytesizety;
+  op1: popinfoty;
+ begin
+  with info,contextstack[stackindex+stackoffset],d do begin
+   if datatyp.indirectlevel > 0 then begin
+    si1:= pointersize;
+   end
+   else begin
+    si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
+   end;
+   if insert then begin
+    op1:= insertitem(stackoffset,false);
+   end
+   else begin
+    op1:= additem;
+   end;
+   with op1^ do begin //todo: use table
+    case si1 of
+     1: begin
+      op:= @indirect8;
+     end;
+     2: begin
+      op:= @indirect16;
+     end;
+     4: begin
+      op:= @indirect32;
+     end;
+     else begin
+      op:= @indirect;
+      d.datasize:= si1;      
+     end;
+    end;
+   end;
+  end;
+ end;
+
 var
- ref1: refinfoty;
  po1: ptypedataty;
  si1: databytesizety;
  op1: popinfoty;
-begin
- result:= true;
+ int1: integer;
+ 
+begin                    //todo: optimize
+ result:= false;
  with info,contextstack[stackindex+stackoffset],d do begin
   case kind of
    ck_ref: begin
-    ref1:= ref; //todo: optimize, handle indirectlevel
-    if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-     po1:= ele.eledataabs(datatyp.typedata);
-     si1:= po1^.bytesize;
-    end
-    else begin
-     si1:= pointersize;
+    if datatyp.indirectlevel < 0 then begin
+     errormessage(err_invalidderef,[],stackoffset);
+     exit;
     end;
-    if insert then begin
-     pushinsertdata(stackoffset+1,false,ref1.address,ref1.offset,si1);
+    inc(ref.address.address,ref.offset);
+    ref.offset:= 0;
+    if ref.address.indirectlevel > 0 then begin //@ operator
+     if ref.address.indirectlevel = 1 then begin
+      if insert then begin
+       pushinsertaddress(stackoffset,false);
+      end
+      else begin
+       push(ref.address);
+      end;
+     end
+     else begin
+      errormessage(err_cannotassigntoaddr,[],stackoffset);
+      exit;
+     end;
     end
     else begin
-     pushdata(ref1.address,ref1.offset,si1);
+     if ref.address.indirectlevel < 0 then begin //dereference
+      if insert then begin
+       pushinsertdata(stackoffset,false,ref.address,ref.offset,pointersize);
+      end
+      else begin
+       pushdata(ref.address,ref.offset,pointersize);
+      end;
+      for int1:= ref.address.indirectlevel to -2 do begin
+       if insert then begin
+        op1:= insertitem(stackoffset,false);
+       end
+       else begin
+        op1:= additem();
+       end;
+       with op1^ do begin
+        op:= @indirectpo;
+       end;
+      end;
+      doindirect;
+     end
+     else begin
+      if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
+       po1:= ele.eledataabs(datatyp.typedata);
+       si1:= po1^.bytesize;
+      end
+      else begin
+       si1:= pointersize;
+      end;
+      if insert then begin
+       pushinsertdata(stackoffset,false,ref.address,ref.offset,si1);
+      end
+      else begin
+       pushdata(ref.address,ref.offset,si1);
+      end;
+     end;
     end;
    end;
    ck_reffact: begin
-    if datatyp.indirectlevel > 0 then begin
-     si1:= pointersize;
-    end
-    else begin
-     si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
-    end;
-    if insert then begin
-     op1:= insertitem(stackoffset,false);
-    end
-    else begin
-     op1:= additem;
-    end;
-    with op1^ do begin //todo: use table
-     case si1 of
-      1: begin
-       op:= @indirect8;
-      end;
-      2: begin
-       op:= @indirect16;
-      end;
-      4: begin
-       op:= @indirect32;
-      end;
-      else begin
-       op:= @indirect;
-       d.datasize:= si1;      
-      end;
-     end;
-    end;   
+    doindirect();
    end;
    ck_const: begin
     if insert then begin
@@ -815,25 +872,39 @@ begin
    else begin
     internalerror('B20140401B');
    end;
-   kind:= ck_fact;
   end;
+  kind:= ck_fact;
  end;
+ result:= true;
 end;
 
 function getaddress(const stackoffset: integer): boolean;
 var
  ref1: refinfoty;
 begin
- result:= true;
+ result:= false;
  with info,contextstack[stackindex+stackoffset].d do begin
   case kind of
    ck_ref: begin
-    ref1:= ref; //todo: optimize
-    kind:= ck_const;
-    datatyp.indirectlevel:= datatyp.indirectlevel+1;
-    constval.kind:= dk_address;
-    constval.vaddress:= ref1.address;
-    constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+    if ref.address.indirectlevel = 0 then begin
+     ref1:= ref; //todo: optimize
+     kind:= ck_const;
+     datatyp.indirectlevel:= datatyp.indirectlevel+1;
+     constval.kind:= dk_address;
+     constval.vaddress:= ref1.address;
+     constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+    end
+    else begin
+     if ref.address.indirectlevel < 0 then begin
+      inc(ref.address.indirectlevel);
+      inc(datatyp.indirectlevel);
+      result:= getvalue(stackoffset,true);
+     end
+     else begin
+      errormessage(err_cannotassigntoaddr,[],stackoffset);
+      exit;
+     end;
+    end;
    end;
    ck_reffact: begin
     inc(datatyp.indirectlevel);
@@ -841,9 +912,11 @@ begin
    end;
    else begin
     internalerror('H20140401A');
+    exit;
    end;
   end;
  end;
+ result:= true;
 end;
 
 procedure init;

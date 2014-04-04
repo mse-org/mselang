@@ -192,7 +192,7 @@ type
  end;
 
  refinfoty = record
-  address: addressinfoty;
+  address: addressinfoty;  //indirectlevel = additional
   offset: dataoffsty;
  end;
   
