@@ -930,12 +930,16 @@ var
  po1: ptypedataty;
  op1: opty;
 begin
- handlefact;
+// handlefact;
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
 outinfo('****');
  with info,contextstack[stacktop] do begin
+  if stacktop-stackindex <> 1 then begin
+   internalerror('H20140404A');
+   exit;
+  end;
   if d.kind = ck_const then begin
    with d.constval do begin
     case kind of
@@ -952,7 +956,7 @@ outinfo('****');
    end;
   end
   else begin
-   if getvalue(0,false) then begin
+   if getvalue(1{,false}) then begin
     po1:= ele.eledataabs(d.datatyp.typedata);
     op1:= negops[po1^.kind];
     if op1 = nil then begin
@@ -963,6 +967,9 @@ outinfo('****');
     end;
    end;
   end;
+  contextstack[stackindex].d:= d;
+  stacktop:= stackindex;
+  dec(stackindex);
  end;
 end;
 
@@ -1394,7 +1401,7 @@ outinfo('***');
            pushinsertconst(int1-stackindex,false);
           end;
           ck_ref: begin
-           getvalue(int1-stackindex,true);
+           getvalue(int1-stackindex{,true});
           end;
          end;
         end;
@@ -1455,7 +1462,7 @@ outinfo('***');
         int3:= int2+2+stackindex+idents.high;
         for int1:= 3+stackindex+idents.high to int3 do begin
          with contextstack[int1] do begin
-          getvalue(int1-stackindex,true);
+          getvalue(int1-stackindex{,true});
           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
            push(kind);
            stacksize1:= stacksize1 + alignsize(bytesize);
@@ -2043,7 +2050,7 @@ begin
 outinfo('*****');
  with info do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
-   if not getaddress(1) or not getvalue(2,false) then begin
+   if not getaddress(1) or not getvalue(2{,false}) then begin
     goto endlab;
    end;
    with contextstack[stackindex+1].d do begin //address

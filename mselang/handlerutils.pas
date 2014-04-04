@@ -103,7 +103,7 @@ function findvar({const info: pparseinfoty;} const astackoffset: integer;
 
 procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
-function getvalue(const stackoffset: integer; const insert: boolean): boolean;
+function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
 function getaddress(const stackoffset: integer): boolean;
 
 procedure push(const avalue: boolean); overload;
@@ -746,7 +746,7 @@ begin
  pushd(insertitem(stackoffset,before),address,offset,size);
 end;
 
-function getvalue(const stackoffset: integer; const insert: boolean): boolean;
+function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
 
  procedure doindirect();
  var
@@ -761,12 +761,12 @@ function getvalue(const stackoffset: integer; const insert: boolean): boolean;
    else begin
     si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
    end;
-   if insert then begin
+//   if insert then begin
     op1:= insertitem(stackoffset,false);
-   end
-   else begin
-    op1:= additem;
-   end;
+//   end
+//   else begin
+//    op1:= additem;
+//   end;
    with op1^ do begin //todo: use table
     case si1 of
      1: begin
@@ -806,12 +806,12 @@ begin                    //todo: optimize
     ref.offset:= 0;
     if ref.address.indirectlevel > 0 then begin //@ operator
      if ref.address.indirectlevel = 1 then begin
-      if insert then begin
+//      if insert then begin
        pushinsertaddress(stackoffset,false);
-      end
-      else begin
-       push(ref.address);
-      end;
+//      end
+//      else begin
+//       push(ref.address);
+//      end;
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -820,19 +820,19 @@ begin                    //todo: optimize
     end
     else begin
      if ref.address.indirectlevel < 0 then begin //dereference
-      if insert then begin
+//      if insert then begin
        pushinsertdata(stackoffset,false,ref.address,ref.offset,pointersize);
-      end
-      else begin
-       pushdata(ref.address,ref.offset,pointersize);
-      end;
+//      end
+//      else begin
+ //      pushdata(ref.address,ref.offset,pointersize);
+//      end;
       for int1:= ref.address.indirectlevel to -2 do begin
-       if insert then begin
+//       if insert then begin
         op1:= insertitem(stackoffset,false);
-       end
-       else begin
-        op1:= additem();
-       end;
+//       end
+//       else begin
+//        op1:= additem();
+//       end;
        with op1^ do begin
         op:= @indirectpo;
        end;
@@ -847,12 +847,12 @@ begin                    //todo: optimize
       else begin
        si1:= pointersize;
       end;
-      if insert then begin
+//      if insert then begin
        pushinsertdata(stackoffset,false,ref.address,ref.offset,si1);
-      end
-      else begin
-       pushdata(ref.address,ref.offset,si1);
-      end;
+//      end
+//      else begin
+//       pushdata(ref.address,ref.offset,si1);
+//      end;
      end;
     end;
    end;
@@ -860,12 +860,12 @@ begin                    //todo: optimize
     doindirect();
    end;
    ck_const: begin
-    if insert then begin
+//    if insert then begin
      pushinsertconst(stackoffset,false);
-    end
-    else begin
-     pushconst(contextstack[stackindex+stackoffset].d);
-    end;
+//    end
+//    else begin
+//     pushconst(contextstack[stackindex+stackoffset].d);
+//    end;
    end;
    ck_fact: begin
    end;
@@ -898,7 +898,7 @@ begin
      if ref.address.indirectlevel < 0 then begin
       inc(ref.address.indirectlevel);
       inc(datatyp.indirectlevel);
-      result:= getvalue(stackoffset,true);
+      result:= getvalue(stackoffset{,true});
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -909,6 +909,10 @@ begin
    ck_reffact: begin
     inc(datatyp.indirectlevel);
     kind:= ck_fact;
+   end;
+   ck_fact: begin
+    internalerror('N20140404B'); //todo
+    exit;
    end;
    else begin
     internalerror('H20140401A');
@@ -970,7 +974,7 @@ begin
 //  opshift:= 0;
 outinfo('****');
   if contextstack[stacktop].d.kind <> ck_const then begin
-   getvalue(stacktop-stackindex,false);
+   getvalue(stacktop-stackindex{,false});
   end;
 outinfo('****');
   sd1:= sdk_none;
@@ -980,7 +984,7 @@ outinfo('****');
   kindb:= ptypedataty(@po1^.data)^.kind;
   with contextstack[stacktop-2],d do begin
    if d.kind <> ck_const then begin
-    getvalue(stacktop-2-stackindex,true);
+    getvalue(stacktop-2-stackindex{,true});
    end;
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;

@@ -609,7 +609,7 @@ outinfo('***');
         ck_ref,ck_fact: begin //todo: check type
          li1:= 0;
          if d.kind = ck_ref then begin
-          getvalue(int1-stackindex,true);
+          getvalue(int1-stackindex{,true});
          end;
          with insertitem(int1-stackindex+1,false)^ do begin
           op:= @mulimmint32;
