@@ -153,11 +153,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'start2');
- functionheaderco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'functionheader');
  commaidentsco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -293,6 +288,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'paramdef2');
+ functionheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'functionheader');
  procedureheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -326,8 +326,13 @@ var
  functiontypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'functiontype');
+ resultidentco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'resultident');
  functiontypeaco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -728,6 +733,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'fact');
+ fact1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'fact1');
  negfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -768,11 +778,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'paramsend');
- fact1co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'fact1');
  getindexco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1698,38 +1703,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bparamdef2: array[0..5] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @comment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @identco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+ bparamdef2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -1868,7 +1845,17 @@ const
    );
  bfunctiontype: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @functiontypeaco); stack: nil; keys: (
+     dest: (context: @resultidentco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bresultident: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @getfieldtypeco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3440,6 +3427,51 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bfact1: array[0..6] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_handler,bf_eat];
+     dest: (handler: @handledereference); stack: nil; keys: (
+    (kind: bkk_char; chars: ['^']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
+     dest: (context: @getindexco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['[']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bnegfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
@@ -3585,51 +3617,6 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @paramsendco); stack: nil; keys: (
     (kind: bkk_char; chars: [')']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bfact1: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @directiveco); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['{']),
-    (kind: bkk_char; chars: ['$']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @linecomment0co); stack: nil; keys: (
-    (kind: bkk_charcontinued; chars: ['/']),
-    (kind: bkk_char; chars: ['/']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat];
-     dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#10,#13,' ']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @comment0co); stack: nil; keys: (
-    (kind: bkk_char; chars: ['{']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @handledereference); stack: nil; keys: (
-    (kind: bkk_char; chars: ['^']),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: []),
-    (kind: bkk_none; chars: [])
-    )),
-   (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
-     dest: (context: @getindexco); stack: nil; keys: (
-    (kind: bkk_char; chars: ['[']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4226,9 +4213,6 @@ begin
  usesokco.handleexit:= @handleuses;
  start2co.branch:= @bstart2;
  start2co.next:= @noimplementationco;
- functionheaderco.branch:= nil;
- functionheaderco.next:= @procedureheaderco;
- functionheaderco.handleentry:= @handlefunctionentry;
  commaidentsco.branch:= @bcommaidents;
  commaidentsco.next:= @commaidentsnoidenterrorco;
  commaidents1co.branch:= @bcommaidents1;
@@ -4275,14 +4259,17 @@ begin
  paramsdef0co.branch:= @bparamsdef0;
  paramsdef1co.branch:= @bparamsdef1;
  paramsdef1co.next:= @paramsdef2co;
- paramsdef1co.handleentry:= @handleparamsdef1entry;
  paramsdef2co.branch:= @bparamsdef2;
  paramsdef3co.branch:= nil;
  paramdef0co.branch:= @bparamdef0;
  paramdef0co.next:= @paramdef1co;
+ paramdef0co.handleentry:= @handleparamsdef0entry;
  paramdef1co.branch:= @bparamdef1;
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.handleexit:= @handleparamdef2;
+ functionheaderco.branch:= nil;
+ functionheaderco.next:= @procedureheaderco;
+ functionheaderco.handleentry:= @handlefunctionentry;
  procedureheaderco.branch:= @bprocedureheader;
  procedureheaderco.handleexit:= @handleprocedureheader;
  procfuncco.branch:= @bprocfunc;
@@ -4294,7 +4281,8 @@ begin
  procedure1co.next:= @procedure2co;
  procedure2co.branch:= @bprocedure2;
  functiontypeco.branch:= @bfunctiontype;
- functiontypeco.handleexit:= @checkfunctiontype;
+ resultidentco.branch:= @bresultident;
+ resultidentco.handleentry:= @checkfunctiontype;
  functiontypeaco.branch:= @bfunctiontypea;
  procedure4co.branch:= @bprocedure4;
  procedure4co.next:= @checkterminatorco;
@@ -4461,6 +4449,8 @@ begin
  factco.branch:= @bfact;
  factco.next:= @fact1co;
  factco.handleentry:= @handlefactstart;
+ fact1co.branch:= @bfact1;
+ fact1co.handleexit:= @handlefact;
  negfactco.branch:= @bnegfact;
  negfactco.handleexit:= @handlenegfact;
  valueidentifierco.branch:= @bvalueidentifier;
@@ -4476,8 +4466,6 @@ begin
  params2co.branch:= @bparams2;
  paramsendco.branch:= nil;
  paramsendco.handleentry:= @handleparamsend;
- fact1co.branch:= @bfact1;
- fact1co.handleexit:= @handlefact;
  getindexco.branch:= @bgetindex;
  getindexco.next:= @getindex1co;
  getindexco.handleentry:= @handleindexstart;

@@ -104,7 +104,7 @@ procedure handlebracketend();
 procedure handlesimpexp();
 procedure handlesimpexp1();
 
-procedure handleparamsdef1entry();
+procedure handleparamsdef0entry();
 procedure handleparams0();
 procedure setconstparam();
 procedure setvarparam();
@@ -1025,10 +1025,10 @@ begin
  end;
 end;
 
-procedure handleparamsdef1entry();
+procedure handleparamsdef0entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('PARAMSDEF1ENTRY');
+ outhandle('PARAMSDEF0ENTRY');
 {$endif}
  with info,contextstack[stackindex].d do begin
   kind:= ck_paramsdef;
@@ -2522,8 +2522,20 @@ begin
  outhandle('CHECKFUNCTIONTYPE');
 {$endif}
 outinfo('****');
+ with info,contextstack[stackindex-1] do begin
+  d.kind:= ck_paramsdef;
+  d.paramsdef.kind:= pk_var;
+ end;
  with info,contextstack[stackindex] do begin
-  include(contextstack[parent-1].d.proc.flags,pf_functiontype);
+  d.kind:= ck_ident;
+//  d.ident.paramkind:= pk_var;
+  d.ident.ident:= resultident;
+  with contextstack[parent-1] do begin
+   if pf_functiontype in d.proc.flags then begin
+    errormessage(err_syntax,[';']);
+   end;
+   include(d.proc.flags,pf_functiontype);
+  end;
  end;
 outinfo('****');
 end;
@@ -2544,6 +2556,7 @@ var
  eledatabase: ptruint;
  procflags: procflagsty;
 // parambase: ptruint;
+ si1: integer;
 
 begin
 {$ifdef mse_debugparser}
@@ -2559,6 +2572,11 @@ outinfo('****');
    d.proc.flags:= procflags;
    d.proc.parambase:= locdatapo;
   end;
+  if (pf_function in procflags) and 
+                      not (pf_functiontype in procflags) then begin
+   tokenexpectederror(':');
+  end;
+  {
   if pf_functiontype in procflags then begin
    if pf_function in procflags then begin
     with contextstack[stacktop-1].d do begin
@@ -2577,6 +2595,7 @@ outinfo('****');
     tokenexpectederror(':');
    end;
   end;
+  }
 outinfo('****');
   paramco:= (stacktop-stackindex-2) div 3;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
@@ -2597,33 +2616,43 @@ outinfo('****');
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-     if findkindelementsdata(int1+1,[ek_type],vis_max,po3) then begin
-      with po2^ do begin
-       if impl1 then begin
-        address.address:= getlocvaraddress(po3^.bytesize);
-        address.framelevel:= funclevel+1;
-        address.flags:= [vf_param];
-        address.indirectlevel:= 0;
-        if d.ident.paramkind = pk_const then begin
-         if po3^.bytesize > pointersize then begin
-          address.indirectlevel:= 1;
-          include(address.flags,vf_paramindirect);
+     with contextstack[int1+stackindex+1] do begin
+      if d.kind = ck_fieldtype then begin
+       po3:= ele.eledataabs(d.typ.typedata);
+//     if findkindelementsdata(int1+1,[ek_type],vis_max,po3) then begin
+       with po2^ do begin
+        if impl1 then begin
+         address.indirectlevel:= d.typ.indirectlevel;
+         if address.indirectlevel > 0 then begin
+          si1:= pointersize;
+         end
+         else begin
+          si1:= po3^.bytesize;
          end;
-         include(address.flags,vf_const);
-        end
-        else begin
-         if d.ident.paramkind in [pk_var,pk_out] then begin
-          address.indirectlevel:= 1;
-          include(address.flags,vf_paramindirect);
+         address.address:= getlocvaraddress(si1);
+         address.framelevel:= funclevel+1;
+         address.flags:= [vf_param];
+         if d.ident.paramkind = pk_const then begin
+          if si1 > pointersize then begin
+           inc(address.indirectlevel);
+           include(address.flags,vf_paramindirect);
+          end;
+          include(address.flags,vf_const);
+         end
+         else begin
+          if d.ident.paramkind in [pk_var,pk_out] then begin
+           inc(address.indirectlevel);
+           include(address.flags,vf_paramindirect);
+          end;
          end;
         end;
+        typ:= d.typ.typedata;
        end;
-       typ:= ele.eledatarel(po3);
+      end
+      else begin
+//       identerror(int1+1-stackindex,err_identifiernotfound);
+       err1:= true;
       end;
-     end
-     else begin
-      identerror(int1+1-stackindex,err_identifiernotfound);
-      err1:= true;
      end;
     end
     else begin

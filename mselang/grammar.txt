@@ -78,8 +78,6 @@ start2,noimplementation,,
  'procedure'.,procedureheader-*^>
  'function'.,functionheader-*^>
 
-functionheader,procedureheader,handlefunctionentry,
-
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,,
  ${whitespace}
@@ -134,14 +132,14 @@ progblock,,,handleprogblock*
 paramsdef0,,,
  ${whitespace}
  '(',paramsdef1-
-paramsdef1,paramsdef2,handleparamsdef1entry,
+paramsdef1,paramsdef2,,
  '',paramdef0^*
 paramsdef2,,,
  ${whitespace}
  ';',paramsdef1-
  ')',paramsdef3-
 paramsdef3,,,^
-paramdef0,paramdef1,,
+paramdef0,paramdef1,handleparamsdef0entry,
  ${whitespace}
  'const'.,!setconstparam->
  'var'.,!setvarparam->
@@ -151,9 +149,11 @@ paramdef1,,,*
  ${whitespace}
  ':',paramdef2-
 paramdef2,,,handleparamdef2^
- ${whitespace}
- @identstart,ident^*
+ '',getfieldtype*
+# ${whitespace}
+# @identstart,ident^*
 #
+functionheader,procedureheader,handlefunctionentry,
 procedureheader,,,handleprocedureheader*
  '',procedure0-*
 procfunc,procedurea,,
@@ -171,9 +171,12 @@ procedure2,,,
  ';',!handleprocedure3-*
 #      handle parameters
  '',semicolonexpected
-
-functiontype,,,checkfunctiontype^
- '',functiontypea*
+#
+functiontype,,,
+ '',resultident*
+resultident,,checkfunctiontype,
+ '',getfieldtype*
+#
 # same layout as parameter
 functiontypea,,,
  ${whitespace}
@@ -407,6 +410,11 @@ fact,fact1,handlefactstart,
  @identstart,valueidentifier*
  '',illegalexpression
 #
+fact1,,,handlefact
+ ${whitespace}
+ '^',!handledereference-
+ '[',getindex-^*>
+#
 negfact,,,handlenegfact
  '',fact*
 #
@@ -427,11 +435,6 @@ params2,,,
  ',',params1-
  ')',paramsend-
 paramsend,,handleparamsend,^
-#
-fact1,,,handlefact
- ${whitespace}
- '^',!handledereference-
- '[',getindex-^*>
 #
 getindex,getindex1,handleindexstart,
  '',exp^*
