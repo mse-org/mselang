@@ -1423,7 +1423,8 @@ outinfo('***');
         int1:= pushinsertvar(0,false,po3);
         d.fact.datasize:= int1;
         d.kind:= ck_subres;
-        d.datatyp.indirectlevel:= po3^.indirectlevel;
+//        d.datatyp.indirectlevel:= po3^.indirectlevel;
+        d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
         d.datatyp.typedata:= po6^.typ;        
         with additem()^ do begin //result var param
          op:= @pushstackaddr;
