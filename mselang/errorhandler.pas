@@ -284,7 +284,6 @@ begin
     sourceinfo:= '^'+sourceinfo;
    end;
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
-//   if vf_reference in dest.address.flags then begin
    for int1:= 0 to dest.address.indirectlevel-1 do begin
     destinfo:= '^'+destinfo;
    end;
@@ -308,7 +307,7 @@ begin
  d1.address.flags:= [];
  d1.typ:= dest;
  d1.address.indirectlevel:= destindirectlevel;
- typeconversionerror({info,}source,d1,err_illegalconversion);
+ typeconversionerror(source,d1,err_illegalconversion);
 end;
 
 procedure typeinfonames(const a,b: contextdataty; out ainfo,binfo: string);

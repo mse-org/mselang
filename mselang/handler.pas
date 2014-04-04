@@ -205,21 +205,8 @@ outinfo('***');
     end;
    end;
    stackindex:= stacktop-1;
-   {
-   with contextstack[stackindex] do begin
-    if d.kind <> ck_getfact then begin
-     internalerror('H20140403A');
-    end;
-    if odd(d.getfact.negcount) then begin
-     d.getfact.negcount:= 0;
-     if int64(c1) < 0 then begin
-      errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
-     end;
-     int64(c1):= -int64(c1);
-    end;
-   end;
-   }
    d.kind:= ck_const;
+   d.indirection:= 0;
    d.datatyp:= sysdatatypes[st_int32];
    d.constval.kind:= dk_integer;
    d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
@@ -479,6 +466,7 @@ begin
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
    d.kind:= ck_const;
+   d.indirection:= 0;
    d.datatyp:= sysdatatypes[st_float64];
    d.constval.kind:= dk_float;
    lint2:= 0;
@@ -701,49 +689,6 @@ outinfo('***');
 {$endif}
 end;
 
-(*
-procedure handleaddressfact();
-var
- po1: pelementinfoty;
- po2: pvardataty;
-begin
-{$ifdef mse_debugparser}
- outhandle('ADDRESSFACT');
-{$endif} //todo: handle non var references
- with info do begin
-//errormessage(err_cannotaddressconst,[],stacktop-stackindex);
-  if findkindelements(1,[ek_var],vis_max,po1) then begin
-   po2:= @po1^.data;
-   inc(info.stackindex);
-   with contextstack[stackindex] do begin
-    d.kind:= ck_ref;
-    d.datatyp.typedata:= po2^.typ;
-    d.ref.address:= po2^.address;
-    d.datatyp.indirectlevel:= d.ref.address.indirectlevel+1;
-    d.ref.address.indirectlevel:= 1;
-   end;
-  {
-   with contextstack[stackindex] do begin
-    d.kind:= ck_const;
-    d.datatyp.typedata:= po2^.typ;
-    with d.constval do begin
-     kind:= dk_address;
-     vaddress:= po2^.address;
-     inc(vaddress.indirectlevel);
-     d.datatyp.indirectlevel:= vaddress.indirectlevel;
-    end;
-   end;
-  }
-  end
-  else begin
-   errormessage(err_varidentexpected,[]);
-   dec(info.stackindex);
-  end;
-  stacktop:= stackindex;
- end;
-end;
-*)
-
 procedure handledereference();
 var
  po1: ptypedataty;
@@ -758,9 +703,9 @@ begin
   end
   else begin
    dec(d.datatyp.indirectlevel);
+   dec(d.indirection);
    case d.kind of
     ck_ref: begin
-     dec(d.ref.address.indirectlevel);
     end;
     ck_const: begin
      if d.constval.kind <> dk_address then begin
@@ -770,8 +715,11 @@ begin
       internalerror('N20140402B'); //todo
      end;
     end;
+    ck_fact,ck_subres: begin
+     internalerror('H20140404C'); //todo
+    end;
     else begin
-     internalerror('N20140402A'); //todo
+     internalerror('H20140402A'); //todo
     end;
    end;
 (*  
@@ -873,6 +821,7 @@ outinfo('****');
     case d.kind of
      ck_str: begin
       d.kind:= ck_const;
+      d.indirection:= 0;
       d.datatyp:= sysdatatypes[st_string8];
       d.constval.kind:= dk_string8;
       d.constval.vstring:= newstring({info});
@@ -880,6 +829,7 @@ outinfo('****');
      ck_number: begin
       c1:= d.number.value;
       d.kind:= ck_const;
+      d.indirection:= 0;
       d.datatyp:= sysdatatypes[st_int32];
       d.constval.kind:= dk_integer;
       d.constval.vinteger:= int64(c1); 
@@ -896,16 +846,8 @@ outinfo('****');
        errormessage(err_cannotaddressconst,[],1);
       end;
       ck_ref: begin
-       inc(d.ref.address.indirectlevel);
+       inc(d.indirection);
        inc(d.datatyp.indirectlevel);
-      {
-       d.kind:= ck_const;      
-       with d.constval do begin
-        kind:= dk_address;
-        vaddress:= contextstack[stacktop].d.ref.address;
-        inc(d.datatyp.indirectlevel);
-       end;
-      }
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
@@ -1332,178 +1274,176 @@ outinfo('***');
     paramco:= 0; //no paramsend context
    end;
    po2:= @po1^.data;
-   case po1^.header.kind of
-    ek_var: begin
-     if checknoparam then begin     
-      offs1:= 0;
-      ele1:= pvardataty(po2)^.typ;
-      if lastident < idents.high then begin
-       for int1:= lastident+1 to idents.high do begin //fields
-        if not ele.findchild(ele1,idents.d[int1],[ek_field],
-                                                    vis_max,ele1) then begin
-         identerror(1+int1,err_identifiernotfound);
-         goto endlab;
+   with contextstack[stackindex] do begin
+    d.indirection:= 0;
+    case po1^.header.kind of
+     ek_var: begin
+      if checknoparam then begin     
+       offs1:= 0;
+       ele1:= pvardataty(po2)^.typ;
+       if lastident < idents.high then begin
+        for int1:= lastident+1 to idents.high do begin //fields
+         if not ele.findchild(ele1,idents.d[int1],[ek_field],
+                                                     vis_max,ele1) then begin
+          identerror(1+int1,err_identifiernotfound);
+          goto endlab;
+         end;
+         po4:= ele.eledataabs(ele1);
+         offs1:= offs1 + po4^.offset;
+         ele1:= po4^.typ;
         end;
-        po4:= ele.eledataabs(ele1);
-        offs1:= offs1 + po4^.offset;
         ele1:= po4^.typ;
+        po3:= ele.eledataabs(ele1);
        end;
-       ele1:= po4^.typ;
-       po3:= ele.eledataabs(ele1);
-      end;
-      with contextstack[stackindex].d,ref do begin
-       kind:= ck_ref;
-       address:= pvardataty(po2)^.address;
-       datatyp.typedata:= ele1;
-       datatyp.indirectlevel:= address.indirectlevel;
-       address.indirectlevel:= 0;
-       offset:= offs1;
+       d.kind:= ck_ref;
+       d.ref.address:= pvardataty(po2)^.address;
+       d.datatyp.typedata:= ele1;
+       d.datatyp.indirectlevel:= d.ref.address.indirectlevel;
+       d.ref.offset:= offs1;
       end;
      end;
-    end;
-    ek_const: begin
-     if checknoparam then begin
-      with contextstack[stackindex].d do begin
-       kind:= ck_const;
-       datatyp:= pconstdataty(po2)^.val.typ;
-       constval:= pconstdataty(po2)^.val.d;
+     ek_const: begin
+      if checknoparam then begin
+       d.kind:= ck_const;
+       d.indirection:= 0;
+       d.datatyp:= pconstdataty(po2)^.val.typ;
+       d.constval:= pconstdataty(po2)^.val.d;
       end;
      end;
-    end;
-    ek_sub: begin
-     po5:= @pfuncdataty(po2)^.paramsrel;
-     paramco1:= paramco;
-     if pf_function in pfuncdataty(po2)^.flags then begin
-      inc(paramco1);
-     end;
-     if paramco1 <> pfuncdataty(po2)^.paramcount then begin
-      identerror(1,err_wrongnumberofparameters);
-     end
-     else begin
-      for int1:= stackindex+3+idents.high to stacktop do begin
-       po6:= ele.eledataabs(po5^);
-       with contextstack[int1] do begin
-        if vf_paramindirect in po6^.address.flags then begin
-         case d.kind of
-          ck_const: begin
-           if not (vf_const in po6^.address.flags) then begin
-            errormessage(err_variableexpected,[],int1-stackindex);
-           end
-           else begin
+     ek_sub: begin
+      po5:= @pfuncdataty(po2)^.paramsrel;
+      paramco1:= paramco;
+      if pf_function in pfuncdataty(po2)^.flags then begin
+       inc(paramco1);
+      end;
+      if paramco1 <> pfuncdataty(po2)^.paramcount then begin
+       identerror(1,err_wrongnumberofparameters);
+      end
+      else begin
+       for int1:= stackindex+3+idents.high to stacktop do begin
+        po6:= ele.eledataabs(po5^);
+        with contextstack[int1] do begin
+         if vf_paramindirect in po6^.address.flags then begin
+          case d.kind of
+           ck_const: begin
+            if not (vf_const in po6^.address.flags) then begin
+             errormessage(err_variableexpected,[],int1-stackindex);
+            end
+            else begin
+            end;
+           end;
+           ck_ref: begin
+            pushinsertaddress(int1-stackindex,false);
            end;
           end;
-          ck_ref: begin
-           pushinsertaddress(int1-stackindex,false);
+         end
+         else begin
+          case d.kind of
+           ck_const: begin
+            pushinsertconst(int1-stackindex,false);
+           end;
+           ck_ref: begin
+            getvalue(int1-stackindex{,true});
+           end;
           end;
+         end;
+         if d.datatyp.typedata <> po6^.typ then begin
+          errormessage(err_incompatibletypeforarg,
+                      [int1-stackindex-3,typename(d),
+                      typename(ptypedataty(ele.eledataabs(po6^.typ))^)],
+                                                           int1-stackindex);
+         end;
+        end;
+        inc(po5);
+       end;
+       with contextstack[stackindex] do begin //result data
+        if pf_function in pfuncdataty(po2)^.flags then begin
+         po6:= ele.eledataabs(po5^);
+         po3:= ptypedataty(ele.eledataabs(po6^.typ));
+         int1:= pushinsertvar(0,false,po3);
+         d.fact.datasize:= int1;
+         d.kind:= ck_subres;
+         d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
+         d.datatyp.typedata:= po6^.typ;        
+         with additem()^ do begin //result var param
+          op:= @pushstackaddr;
+          d.voffset:= -pfuncdataty(po2)^.paramsize+stacklinksize-int1;
          end;
         end
         else begin
-         case d.kind of
-          ck_const: begin
-           pushinsertconst(int1-stackindex,false);
-          end;
-          ck_ref: begin
+         d.kind:= ck_sub;
+        end;
+       end;
+      end;
+      if pfuncdataty(po2)^.address = 0 then begin //unresolved header
+       linkmark(pfuncdataty(po2)^.links,opcount);
+      end;
+      with additem()^ do begin
+       d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
+       if (pfuncdataty(po2)^.nestinglevel = 0) or 
+                        (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
+        op:= @callop;
+        d.callinfo.linkcount:= -1;
+       end
+       else begin
+        op:= @calloutop;
+        d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-2;
+                                                                //for downto 0
+       end;
+      end;
+     end;
+     ek_sysfunc: begin
+      with contextstack[stackindex] do begin
+       d.kind:= ck_sub;
+      end;
+      with psysfuncdataty(po2)^ do begin
+       case func of
+        sf_writeln: begin //todo: use open array of constrec
+         int2:= stacktop-stackindex-2-idents.high; //count
+         stacksize1:= 0;
+         int3:= int2+2+stackindex+idents.high;
+         for int1:= 3+stackindex+idents.high to int3 do begin
+          with contextstack[int1] do begin
            getvalue(int1-stackindex{,true});
+           with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
+            push(kind);
+            stacksize1:= stacksize1 + alignsize(bytesize);
+           end;
           end;
          end;
+         with additem()^ do begin
+          op:= sysop;
+          d.paramcount:= int2;
+          d.paramsize:= stacksize1;
+         end;
+         //todo: handle function
         end;
-        if d.datatyp.typedata <> po6^.typ then begin
-         errormessage(err_incompatibletypeforarg,
-                     [int1-stackindex-3,typename(d),
-                     typename(ptypedataty(ele.eledataabs(po6^.typ))^)],
-                                                          int1-stackindex);
-        end;
-       end;
-       inc(po5);
-      end;
-      with contextstack[stackindex] do begin //result data
-       if pf_function in pfuncdataty(po2)^.flags then begin
-        po6:= ele.eledataabs(po5^);
-        po3:= ptypedataty(ele.eledataabs(po6^.typ));
-        int1:= pushinsertvar(0,false,po3);
-        d.fact.datasize:= int1;
-        d.kind:= ck_subres;
-//        d.datatyp.indirectlevel:= po3^.indirectlevel;
-        d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
-        d.datatyp.typedata:= po6^.typ;        
-        with additem()^ do begin //result var param
-         op:= @pushstackaddr;
-         d.voffset:= -pfuncdataty(po2)^.paramsize+stacklinksize-int1;
-        end;
-       end
-       else begin
-        d.kind:= ck_sub;
        end;
       end;
      end;
-     if pfuncdataty(po2)^.address = 0 then begin //unresolved header
-      linkmark(pfuncdataty(po2)^.links,opcount);
-     end;
-     with additem()^ do begin
-      d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
-      if (pfuncdataty(po2)^.nestinglevel = 0) or 
-                       (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
-       op:= @callop;
-       d.callinfo.linkcount:= -1;
+     ek_type: begin
+      if paramco = 0 then begin
+       errormessage(err_illegalexpression,[],stacktop-stackindex);
       end
       else begin
-       op:= @calloutop;
-       d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-2;
-                                                               //for downto 0
-      end;
-     end;
-    end;
-    ek_sysfunc: begin
-     with contextstack[stackindex] do begin
-      d.kind:= ck_sub;
-     end;
-     with psysfuncdataty(po2)^ do begin
-      case func of
-       sf_writeln: begin //todo: use open array of constrec
-        int2:= stacktop-stackindex-2-idents.high; //count
-        stacksize1:= 0;
-        int3:= int2+2+stackindex+idents.high;
-        for int1:= 3+stackindex+idents.high to int3 do begin
-         with contextstack[int1] do begin
-          getvalue(int1-stackindex{,true});
-          with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-           push(kind);
-           stacksize1:= stacksize1 + alignsize(bytesize);
-          end;
-         end;
+       if paramco > 1 then begin
+        errormessage(err_closeparentexpected,[],4,-1);
+       end
+       else begin
+        if not tryconvert(contextstack[stacktop],po2,
+                                     ptypedataty(po2)^.indirectlevel) then begin
+         illegalconversionerror(contextstack[stacktop].d,po2,
+                                     ptypedataty(po2)^.indirectlevel);
+        end
+        else begin
+         contextstack[stackindex].d:= contextstack[stacktop].d;
         end;
-        with additem()^ do begin
-         op:= sysop;
-         d.paramcount:= int2;
-         d.paramsize:= stacksize1;
-        end;
-        //todo: handle function
        end;
       end;
      end;
-    end;
-    ek_type: begin
-     if paramco = 0 then begin
-      errormessage(err_illegalexpression,[],stacktop-stackindex);
-     end
      else begin
-      if paramco > 1 then begin
-       errormessage(err_closeparentexpected,[],4,-1);
-      end
-      else begin
-       if not tryconvert(contextstack[stacktop],po2,
-                                    ptypedataty(po2)^.indirectlevel) then begin
-        illegalconversionerror(contextstack[stacktop].d,po2,
-                                    ptypedataty(po2)^.indirectlevel);
-       end
-       else begin
-        contextstack[stackindex].d:= contextstack[stacktop].d;
-       end;
-      end;
+      errormessage(err_wrongtype,[],0);
      end;
-    end;
-    else begin
-     errormessage(err_wrongtype,[],0);
     end;
    end;
   end
@@ -1892,17 +1832,6 @@ begin
  with info do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(stacktop);
-  //todo: handle dereference and the like
- {
-  if currentstatementflags * [stf_rightside,stf_params] <> [] then begin
-   with contextstack[stacktop] do begin
-    if d.kind = ck_const then begin
-     pushconst(info,d);
-     outcommand(info,[0],'push');
-    end;
-   end;
-  end;
- }
  end;
 end;
 
@@ -2624,7 +2553,6 @@ outinfo('****');
      with contextstack[int1+stackindex+1] do begin
       if d.kind = ck_fieldtype then begin
        po3:= ele.eledataabs(d.typ.typedata);
-//     if findkindelementsdata(int1+1,[ek_type],vis_max,po3) then begin
        with po2^ do begin
         if impl1 then begin
          address.indirectlevel:= d.typ.indirectlevel;

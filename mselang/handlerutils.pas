@@ -761,12 +761,7 @@ function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
    else begin
     si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
    end;
-//   if insert then begin
-    op1:= insertitem(stackoffset,false);
-//   end
-//   else begin
-//    op1:= additem;
-//   end;
+   op1:= insertitem(stackoffset,false);
    with op1^ do begin //todo: use table
     case si1 of
      1: begin
@@ -804,14 +799,9 @@ begin                    //todo: optimize
     end;
     inc(ref.address.address,ref.offset);
     ref.offset:= 0;
-    if ref.address.indirectlevel > 0 then begin //@ operator
-     if ref.address.indirectlevel = 1 then begin
-//      if insert then begin
-       pushinsertaddress(stackoffset,false);
-//      end
-//      else begin
-//       push(ref.address);
-//      end;
+    if indirection > 0 then begin //@ operator
+     if indirection = 1 then begin
+     pushinsertaddress(stackoffset,false);
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -819,20 +809,10 @@ begin                    //todo: optimize
      end;
     end
     else begin
-     if ref.address.indirectlevel < 0 then begin //dereference
-//      if insert then begin
-       pushinsertdata(stackoffset,false,ref.address,ref.offset,pointersize);
-//      end
-//      else begin
- //      pushdata(ref.address,ref.offset,pointersize);
-//      end;
-      for int1:= ref.address.indirectlevel to -2 do begin
-//       if insert then begin
-        op1:= insertitem(stackoffset,false);
-//       end
-//       else begin
-//        op1:= additem();
-//       end;
+     if indirection < 0 then begin //dereference
+      pushinsertdata(stackoffset,false,ref.address,ref.offset,pointersize);
+      for int1:= indirection to -2 do begin
+       op1:= insertitem(stackoffset,false);
        with op1^ do begin
         op:= @indirectpo;
        end;
@@ -847,12 +827,7 @@ begin                    //todo: optimize
       else begin
        si1:= pointersize;
       end;
-//      if insert then begin
-       pushinsertdata(stackoffset,false,ref.address,ref.offset,si1);
-//      end
-//      else begin
-//       pushdata(ref.address,ref.offset,si1);
-//      end;
+      pushinsertdata(stackoffset,false,ref.address,ref.offset,si1);
      end;
     end;
    end;
@@ -860,12 +835,7 @@ begin                    //todo: optimize
     doindirect();
    end;
    ck_const: begin
-//    if insert then begin
-     pushinsertconst(stackoffset,false);
-//    end
-//    else begin
-//     pushconst(contextstack[stackindex+stackoffset].d);
-//    end;
+    pushinsertconst(stackoffset,false);
    end;
    ck_subres: begin
     kind:= ck_fact;
@@ -877,6 +847,7 @@ begin                    //todo: optimize
    end;
   end;
   kind:= ck_fact;
+  indirection:= 0;
  end;
  result:= true;
 end;
@@ -889,7 +860,7 @@ begin
  with info,contextstack[stackindex+stackoffset].d do begin
   case kind of
    ck_ref: begin
-    if ref.address.indirectlevel = 0 then begin
+    if indirection = 0 then begin
      ref1:= ref; //todo: optimize
      kind:= ck_const;
      datatyp.indirectlevel:= datatyp.indirectlevel+1;
@@ -898,10 +869,10 @@ begin
      constval.vaddress.address:= constval.vaddress.address + ref1.offset;
     end
     else begin
-     if ref.address.indirectlevel < 0 then begin
-      inc(ref.address.indirectlevel);
+     if indirection < 0 then begin
+      inc(indirection);
       inc(datatyp.indirectlevel);
-      result:= getvalue(stackoffset{,true});
+      result:= getvalue(stackoffset);
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -1101,6 +1072,7 @@ outinfo('****');
     {$endif}
      writeop(op1);
      d.kind:= ck_fact;
+     d.indirection:= 0;
      d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
     end;

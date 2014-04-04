@@ -314,6 +314,7 @@ type
     getfact: getfactinfoty;
    );
    ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:(
+    indirection: integer; //pending
     datatyp: typeinfoty;
     case contextkindty of
      ck_const:(
