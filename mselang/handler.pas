@@ -97,6 +97,9 @@ procedure handleaddressfact();
 procedure handlefact();
 procedure handlemulfact();
 
+procedure handlefact2entry();
+procedure handlefact2();
+
 procedure handleterm();
 procedure handledereference();
 procedure handleaddterm();
@@ -837,6 +840,22 @@ outinfo('****');
   stacktop:= stackindex;
   dec(stackindex);
  end;
+end;
+
+procedure handlefact2entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FACT2ENTRY');
+{$endif}
+outinfo('****');
+end;
+
+procedure handlefact2();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FACT2');
+{$endif}
+outinfo('****');
 end;
 
 procedure handlenegfact;

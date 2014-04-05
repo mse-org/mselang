@@ -738,6 +738,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'fact1');
+ fact2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'fact2');
  negfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3427,7 +3432,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bfact1: array[0..6] of branchty = (
+ bfact1: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3439,6 +3444,13 @@ const
      dest: (context: @linecomment0co); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['/']),
     (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['.']),
+    (kind: bkk_char; chars: ['.']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
@@ -3466,6 +3478,23 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @getindexco); stack: nil; keys: (
     (kind: bkk_char; chars: ['[']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @fact2co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bfact2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @valueidentifierco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4488,6 +4517,9 @@ begin
  factco.handleentry:= @handlefactstart;
  fact1co.branch:= @bfact1;
  fact1co.handleexit:= @handlefact;
+ fact2co.branch:= @bfact2;
+ fact2co.handleentry:= @handlefact2entry;
+ fact2co.handleexit:= @handlefact2;
  negfactco.branch:= @bnegfact;
  negfactco.handleexit:= @handlenegfact;
  valueidentifierco.branch:= @bvalueidentifier;

@@ -414,6 +414,11 @@ fact1,,,handlefact
  ${whitespace}
  '^',!handledereference-
  '[',getindex-^*>
+ '..',*
+ '.',fact2-
+#
+fact2,,handlefact2entry,handlefact2
+ '',valueidentifier*
 #
 negfact,,,handlenegfact
  '',fact*

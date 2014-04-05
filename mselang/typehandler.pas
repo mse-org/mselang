@@ -248,6 +248,7 @@ outinfo('***');
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            vis_max,ek_field,po1) then begin
    ele1:= ele.elementparent;
+              //???? not used
    ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
    with contextstack[stackindex+3] do begin
     po1^.typ:= d.typ.typedata;
