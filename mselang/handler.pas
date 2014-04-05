@@ -1321,6 +1321,7 @@ outinfo('***');
              errormessage(err_variableexpected,[],int1-stackindex);
             end
             else begin
+             internalerror('N20140405B'); //todo
             end;
            end;
            ck_ref: begin
@@ -1648,7 +1649,7 @@ begin
  outhandle('PROGBLOCK');
 {$endif}
 outinfo('****');
- writeop(nil); 
+ writeop(nil); //endmark
  checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
   dec(stackindex);
@@ -2525,29 +2526,29 @@ outinfo('****');
       if d.kind = ck_fieldtype then begin
        po3:= ele.eledataabs(d.typ.typedata);
        with po2^ do begin
+        address.indirectlevel:= d.typ.indirectlevel;
+        if address.indirectlevel > 0 then begin
+         si1:= pointersize;
+        end
+        else begin
+         si1:= po3^.bytesize;
+        end;
         if impl1 then begin
-         address.indirectlevel:= d.typ.indirectlevel;
-         if address.indirectlevel > 0 then begin
-          si1:= pointersize;
-         end
-         else begin
-          si1:= po3^.bytesize;
-         end;
          address.address:= getlocvaraddress(si1);
-         address.framelevel:= funclevel+1;
-         address.flags:= [vf_param];
-         if paramkind1 = pk_const then begin
-          if si1 > pointersize then begin
-           inc(address.indirectlevel);
-           include(address.flags,vf_paramindirect);
-          end;
-          include(address.flags,vf_const);
-         end
-         else begin
-          if paramkind1 in [pk_var,pk_out] then begin
-           inc(address.indirectlevel);
-           include(address.flags,vf_paramindirect);
-          end;
+        end;
+        address.framelevel:= funclevel+1;
+        address.flags:= [vf_param];
+        if paramkind1 = pk_const then begin
+         if si1 > pointersize then begin
+          inc(address.indirectlevel);
+          include(address.flags,vf_paramindirect);
+         end;
+         include(address.flags,vf_const);
+        end
+        else begin
+         if paramkind1 in [pk_var,pk_out] then begin
+          inc(address.indirectlevel);
+          include(address.flags,vf_paramindirect);
          end;
         end;
         typ:= d.typ.typedata;
