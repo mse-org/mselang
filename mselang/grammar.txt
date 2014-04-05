@@ -228,7 +228,7 @@ statementblock1,,,handlestatementblock1*
 statement0,statement1,handlestatement0entry,
  '',exp^*
 # '',identpath^*
-statement1,,handleleftside,handlestatementexit
+statement1,,,handlestatementexit
  ${whitespace}
  ':=',assignment-
 # '^',!setleftreference

@@ -4352,7 +4352,6 @@ begin
  statement0co.next:= @statement1co;
  statement0co.handleentry:= @handlestatement0entry;
  statement1co.branch:= @bstatement1;
- statement1co.handleentry:= @handleleftside;
  statement1co.handleexit:= @handlestatementexit;
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;

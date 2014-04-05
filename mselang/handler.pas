@@ -122,7 +122,7 @@ procedure handleprocedure5a();
 procedure handleprocedure6();
 
 procedure handlestatement0entry();
-procedure handleleftside();
+//procedure handleleftside();
 procedure handlestatementexit();
 procedure handleassignmententry();
 procedure handleassignment();
@@ -2113,7 +2113,7 @@ begin
   end;
  end;
 end;
-
+(*
 procedure handleleftside();
 begin
 {$ifdef mse_debugparser}
@@ -2123,7 +2123,7 @@ outinfo('***');
  with info do begin
  end;
 end;
-
+*)
 procedure handlestatementexit();
 begin
 {$ifdef mse_debugparser}
