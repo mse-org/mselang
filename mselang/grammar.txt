@@ -40,7 +40,7 @@ unit0,nounitname,,
  ${whitespace}
  @identstart,ident^*,unit1
 nounitname,,handlenounitnameerror,
-unit1,unit2,setunitname,*
+unit1,unit2,,setunitname*
 unit2,semicolonexpected,,
  ${whitespace}
  ';',start1-

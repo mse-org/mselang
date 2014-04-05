@@ -4258,7 +4258,7 @@ begin
  nounitnameco.handleentry:= @handlenounitnameerror;
  unit1co.branch:= nil;
  unit1co.next:= @unit2co;
- unit1co.handleentry:= @setunitname;
+ unit1co.handleexit:= @setunitname;
  unit2co.branch:= @bunit2;
  unit2co.next:= @semicolonexpectedco;
  checksemicolonco.branch:= @bchecksemicolon;

@@ -356,13 +356,13 @@ var
  linebreaks: integer;
  
  sourcebefore: sourceinfoty;
-// sourcebefbefore: sourceinfoty;
  sourcestartbefore: pchar;
  stackindexbefore: integer;
  stacktopbefore: integer;
  unitinfobefore: punitinfoty;
  pcbefore: pcontextty;
  stopparserbefore: boolean;
+ eleparentbefore: elementoffsetty;
 {$ifdef mse_debugparser}
  debugsourcebefore: pchar;
 {$endif}
@@ -370,6 +370,8 @@ label
  handlelab{,stophandlelab},parseend;
 begin
  linebreaks:= 0;
+ eleparentbefore:= ele.elementparent;
+ ele.elementparent:= 0; //root
  with info do begin
   sourcebefore:= source;
 //  sourcebefbefore:= sourcebef;
@@ -668,6 +670,7 @@ parseend:
   pc:= pcbefore;
   stopparser:= stopparserbefore;
   dec(unitlevel);
+  ele.elementparent:= eleparentbefore;
  end;
 
 {$ifdef mse_debugparser}
