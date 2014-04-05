@@ -790,17 +790,17 @@ var
  
 begin                    //todo: optimize
  result:= false;
- with info,contextstack[stackindex+stackoffset],d do begin
-  case kind of
+ with info,contextstack[stackindex+stackoffset] do begin
+  case d.kind of
    ck_ref: begin
-    if datatyp.indirectlevel < 0 then begin
+    if d.datatyp.indirectlevel < 0 then begin
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
-    inc(ref.address.address,ref.offset);
-    ref.offset:= 0;
-    if indirection > 0 then begin //@ operator
-     if indirection = 1 then begin
+    inc(d.ref.address.address,d.ref.offset);
+    d.ref.offset:= 0;
+    if d.indirection > 0 then begin //@ operator
+     if d.indirection = 1 then begin
      pushinsertaddress(stackoffset,false);
      end
      else begin
@@ -809,9 +809,9 @@ begin                    //todo: optimize
      end;
     end
     else begin
-     if indirection < 0 then begin //dereference
-      pushinsertdata(stackoffset,false,ref.address,ref.offset,pointersize);
-      for int1:= indirection to -2 do begin
+     if d.indirection < 0 then begin //dereference
+      pushinsertdata(stackoffset,false,d.ref.address,d.ref.offset,pointersize);
+      for int1:= d.indirection to -2 do begin
        op1:= insertitem(stackoffset,false);
        with op1^ do begin
         op:= @indirectpo;
@@ -820,14 +820,14 @@ begin                    //todo: optimize
       doindirect;
      end
      else begin
-      if datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-       po1:= ele.eledataabs(datatyp.typedata);
+      if d.datatyp.indirectlevel <= 0 then begin //??? <0 = error?
+       po1:= ele.eledataabs(d.datatyp.typedata);
        si1:= po1^.bytesize;
       end
       else begin
        si1:= pointersize;
       end;
-      pushinsertdata(stackoffset,false,ref.address,ref.offset,si1);
+      pushinsertdata(stackoffset,false,d.ref.address,d.ref.offset,si1);
      end;
     end;
    end;
@@ -837,17 +837,29 @@ begin                    //todo: optimize
    ck_const: begin
     pushinsertconst(stackoffset,false);
    end;
-   ck_subres: begin
-    kind:= ck_fact;
-   end;
-   ck_fact: begin
+   ck_subres,ck_fact: begin
+    if d.indirection < 0 then begin
+     for int1:= d.indirection+2 to 0 do begin
+      with insertitem(stackoffset,false)^ do begin
+       op:= @indirectpo;
+      end;
+     end;
+     doindirect();
+    end
+    else begin
+     if d.indirection > 0 then begin
+      errormessage(err_cannotaddressexp,[],stackoffset);
+      exit;
+     end;
+    end;
    end;
    else begin
     internalerror('B20140401B');
+    exit;
    end;
   end;
-  kind:= ck_fact;
-  indirection:= 0;
+  d.kind:= ck_fact;
+  d.indirection:= 0;
  end;
  result:= true;
 end;

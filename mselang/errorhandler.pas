@@ -114,45 +114,40 @@ const
   (level: erl_error; message: 'Invalid dereference')
  );
  
-procedure errormessage({const info: pparseinfoty;} const asourcepos: sourceinfoty;
+procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
-procedure errormessage({const info: pparseinfoty;}
-                   const aerror: errorty; const values: array of const;
+procedure errormessage(const aerror: errorty; const values: array of const;
                    const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
 
-procedure identerror({const info: pparseinfoty;} const astackoffset: integer;
-                               const aerror: errorty;
+procedure identerror(const astackoffset: integer;const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
-procedure tokenexpectederror({const info: pparseinfoty;} const atoken: identty;
+procedure tokenexpectederror(const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
-procedure tokenexpectederror({const info: pparseinfoty;} const atoken: string;
+procedure tokenexpectederror(const atoken: string;
                              const aerrorlevel: errorlevelty = erl_none);
-procedure assignmenterror({const info: pparseinfoty;}
-                 const source: contextdataty; const dest: vardestinfoty);
-procedure illegalconversionerror({const info: pparseinfoty;}
-                 const source: contextdataty; const dest: ptypedataty;
-                                       const destindirectlevel: integer);
-procedure incompatibletypeserror({const info: pparseinfoty;}
-                                    const a,b: contextdataty);
-procedure operationnotsupportederror({const info: pparseinfoty;}
-                           const a,b: contextdataty; const operation: string);
+procedure assignmenterror(const source: contextdataty; 
+                                      const dest: vardestinfoty);
+procedure illegalconversionerror(const source: contextdataty;
+                 const dest: ptypedataty; const destindirectlevel: integer);
+procedure incompatibletypeserror(const a,b: contextdataty);
+procedure operationnotsupportederror(const a,b: contextdataty;
+                                             const operation: string);
 
-procedure illegalcharactererror({const info: pparseinfoty;} const eaten: boolean);
+procedure illegalcharactererror(const eaten: boolean);
                              
-procedure internalerror({const info: pparseinfoty;} const id: string);
-procedure circularerror({const info: pparseinfoty;} const astackoffset: integer;
-                                                     const adest: punitinfoty);
+procedure internalerror(const id: string);
+procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 procedure rangeerror(const range: ordrangety;
-                                          const stackoffset: integer = minint);
+                               const stackoffset: integer = minint);
 implementation
 uses
  msestrings,sysutils,mseformatstr,typinfo,msefileutils;
 
-procedure errormessage({const info: pparseinfoty;} const asourcepos: sourceinfoty;
+procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
@@ -195,8 +190,7 @@ begin
  end;
 end;
 
-procedure errormessage({const info: pparseinfoty;}
-                   const aerror: errorty; const values: array of const;
+procedure errormessage(const aerror: errorty; const values: array of const;
                    const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
@@ -214,16 +208,16 @@ begin
   else begin
    int1:= stackindex+astackoffset;
    if (int1 > stacktop) or (int1 < 0) then begin
-    internalerror({info,}'E20140326A');
+    internalerror('E20140326A');
     exit;
    end;
    sourcepos:= contextstack[int1].start;
   end;
-  errormessage({info,}sourcepos,aerror,values,coloffset,aerrorlevel);
+  errormessage(sourcepos,aerror,values,coloffset,aerrorlevel);
  end;
 end;
 
-procedure illegalcharactererror({const info: pparseinfoty;} const eaten: boolean);
+procedure illegalcharactererror(const eaten: boolean);
 var
  po1: pchar;
 begin
@@ -232,27 +226,27 @@ begin
   if eaten then begin
    dec(po1);
   end;
-  errormessage({info,}err_illegalcharacter,
+  errormessage(err_illegalcharacter,
            ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')'],stacktop-stackindex);
  end;
 end;
 
-procedure identerror({const info: pparseinfoty;} const astackoffset: integer;
+procedure identerror(const astackoffset: integer;
             const aerror: errorty; const aerrorlevel: errorlevelty = erl_none);
 begin
  with info,contextstack[stackindex+astackoffset] do begin
-  errormessage({info,}aerror,[lstringtostring(start.po,d.ident.len)],
+  errormessage(aerror,[lstringtostring(start.po,d.ident.len)],
                                     astackoffset,d.ident.len,aerrorlevel);
  end;
 end;
 
-procedure tokenexpectederror({const info: pparseinfoty;} const atoken: string;
+procedure tokenexpectederror(const atoken: string;
                                                const aerrorlevel: errorlevelty);
 begin
- errormessage({info,}err_tokenexpected,[atoken],minint,0,aerrorlevel);
+ errormessage(err_tokenexpected,[atoken],minint,0,aerrorlevel);
 end;
 
-procedure tokenexpectederror({const info: pparseinfoty;} const atoken: identty;
+procedure tokenexpectederror(const atoken: identty;
                                                const aerrorlevel: errorlevelty);
 var
  int1: integer;
@@ -265,12 +259,11 @@ begin
    break;
   end;
  end;
- tokenexpectederror({info,}str1,aerrorlevel);
+ tokenexpectederror(str1,aerrorlevel);
 end;
 
-procedure typeconversionerror({const info: pparseinfoty;}
-          const source: contextdataty; const dest: vardestinfoty;
-                   const error: errorty);
+procedure typeconversionerror(const source: contextdataty;
+                        const dest: vardestinfoty; const error: errorty);
 var
  sourceinfo,destinfo: string;
  po1,po2: pelementinfoty;
@@ -289,18 +282,17 @@ begin
    end;
   end;
  end;  
- errormessage({info,}error,[sourceinfo,destinfo]);
+ errormessage(error,[sourceinfo,destinfo]);
 end;
 
-procedure assignmenterror({const info: pparseinfoty;}
-                      const source: contextdataty; const dest: vardestinfoty);
+procedure assignmenterror(const source: contextdataty; 
+                                        const dest: vardestinfoty);
 begin
- typeconversionerror({info,}source,dest,err_incompatibletypes);
+ typeconversionerror(source,dest,err_incompatibletypes);
 end;
 
-procedure illegalconversionerror({const info: pparseinfoty;}
-                 const source: contextdataty; const dest: ptypedataty;
-                                             const destindirectlevel: integer);
+procedure illegalconversionerror(const source: contextdataty;
+                    const dest: ptypedataty; const destindirectlevel: integer);
 var
  d1: vardestinfoty;
 begin
@@ -328,31 +320,29 @@ begin
  end;
 end;
 
-procedure incompatibletypeserror({const info: pparseinfoty;}
-                                    const a,b: contextdataty);
+procedure incompatibletypeserror(const a,b: contextdataty);
 var
  ainfo,binfo: string;
 begin
  typeinfonames(a,b,ainfo,binfo);
- errormessage({info,}err_incompatibletypes,[binfo,ainfo]);
+ errormessage(err_incompatibletypes,[binfo,ainfo]);
 end;
 
-procedure operationnotsupportederror({const info: pparseinfoty;}
-                           const a,b: contextdataty; const operation: string);
+procedure operationnotsupportederror(const a,b: contextdataty;
+                                                   const operation: string);
 var
  ainfo,binfo: string;
 begin
  typeinfonames(a,b,ainfo,binfo);
- errormessage({info,}err_operationnotsupported,[operation,ainfo,binfo]);
+ errormessage(err_operationnotsupported,[operation,ainfo,binfo]);
 end;
 
-procedure internalerror({const info: pparseinfoty;} const id: string);
+procedure internalerror(const id: string);
 begin
- errormessage({info,}err_internalerror,[id]);
+ errormessage(err_internalerror,[id]);
 end;
 
-procedure circularerror({const info: pparseinfoty;} const astackoffset: integer;
-                                                     const adest: punitinfoty);
+procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 var
  str1: string;
  po1: punitinfoty;
@@ -368,11 +358,11 @@ begin
  end;
  str1:= info.unitinfo^.name+'->'+str1;
  setlength(str1,length(str1)-2);
- errormessage({info,}err_circularreference,[str1],astackoffset);
+ errormessage(err_circularreference,[str1],astackoffset);
 end;
 
 procedure rangeerror(const range: ordrangety;
-                                    const stackoffset: integer = minint);
+                                 const stackoffset: integer = minint);
 begin
  errormessage(err_valuerange,[inttostr(range.min),
                                          inttostr(range.max)],stackoffset);
