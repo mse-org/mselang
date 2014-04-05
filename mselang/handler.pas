@@ -2665,7 +2665,7 @@ outinfo('*****');
    end;
   end;
   if proc.match <> 0 then begin
-   po2:= ele.eledataabs(proc.ref);    
+   po2:= ele.eledataabs(proc.match);    
    po2^.address:= opcount;
    linkresolve(po2^.links,opcount);
   end;
