@@ -716,40 +716,12 @@ begin
      end;
     end;
     ck_fact,ck_subres: begin
-     internalerror('H20140404C'); //todo
+     //nothing to do
     end;
     else begin
      internalerror('H20140402A'); //todo
     end;
    end;
-(*  
-   if currentstatementflags * [stf_rightside,stf_params] = [] then begin
-    if kind = ck_const then begin
-     pushdata(constval.vaddress,0,dataaddresssize);
-     kind:= ck_fact;
-    end;
-   end
-   else begin
-    po1:= ele.eledataabs(datatyp.typedata);    
-    with additem({info})^ do begin //todo: use table
-     case po1^.bytesize of
-      1: begin
-       op:= @indirect8;
-      end;
-      2: begin
-       op:= @indirect16;
-      end;
-      4: begin
-       op:= @indirect32;
-      end;
-      else begin
-       op:= @indirect;
-       d.datasize:= po1^.bytesize;      
-      end;
-     end;
-    end;   
-   end;
-*)
   end;
  end;
 end;
@@ -2010,7 +1982,7 @@ outinfo('*****');
         typematch:= true;
        end;
       end;
-      ck_fact: begin
+      ck_fact,ck_subres: begin
        dest.address.flags:= [];
        typematch:= true;
        indi:= true;

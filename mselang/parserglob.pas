@@ -94,6 +94,7 @@ type
  
 const
  dataaddresssize = sizeof(dataaddressty);
+ datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
 
 type 
  pparseinfoty = ^parseinfoty;
@@ -297,7 +298,7 @@ type
  statementinfoty = record
 //  flags: statementflagsty;
  end;
- 
+
  contextdataty = record
 //  elemark: elementoffsetty;
   case kind: contextkindty of 
@@ -313,7 +314,7 @@ type
    ck_getfact:(
     getfact: getfactinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:(
+   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:( //datacontexts
     indirection: integer; //pending
     datatyp: typeinfoty;
     case contextkindty of

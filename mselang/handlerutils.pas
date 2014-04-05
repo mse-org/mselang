@@ -857,21 +857,29 @@ var
  ref1: refinfoty;
 begin
  result:= false;
- with info,contextstack[stackindex+stackoffset].d do begin
-  case kind of
+ with info,contextstack[stackindex+stackoffset] do begin
+  if not (d.kind in datacontexts) then begin
+   internalerror('H20140405A');
+   exit;
+  end;
+  inc(d.indirection);
+  inc(d.datatyp.indirectlevel);
+  if d.datatyp.indirectlevel <= 0 then begin
+   errormessage(err_cannotassigntoaddr,[]);
+   exit;
+  end;
+  case d.kind of
    ck_ref: begin
-    if indirection = 0 then begin
-     ref1:= ref; //todo: optimize
-     kind:= ck_const;
-     datatyp.indirectlevel:= datatyp.indirectlevel+1;
-     constval.kind:= dk_address;
-     constval.vaddress:= ref1.address;
-     constval.vaddress.address:= constval.vaddress.address + ref1.offset;
+    if d.indirection = 1 then begin
+     ref1:= d.ref; //todo: optimize
+     d.kind:= ck_const;
+     d.indirection:= 0;
+     d.constval.kind:= dk_address;
+     d.constval.vaddress:= ref1.address;
+     d.constval.vaddress.address:= d.constval.vaddress.address + ref1.offset;
     end
     else begin
-     if indirection < 0 then begin
-      inc(indirection);
-      inc(datatyp.indirectlevel);
+     if d.indirection <= 0 then begin
       result:= getvalue(stackoffset);
      end
      else begin
@@ -880,13 +888,16 @@ begin
      end;
     end;
    end;
-   ck_reffact: begin
-    inc(datatyp.indirectlevel);
-    kind:= ck_fact;
-   end;
-   ck_fact: begin
+   ck_reffact: begin //
     internalerror('N20140404B'); //todo
     exit;
+//    inc(d.datatyp.indirectlevel);
+//    kind:= ck_fact;
+   end;
+   ck_fact,ck_subres: begin
+    if d.indirection <> 0 then begin
+     result:= getvalue(stackoffset);
+    end;
    end;
    else begin
     internalerror('H20140401A');
