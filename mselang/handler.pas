@@ -2500,26 +2500,6 @@ outinfo('****');
                       not (pf_functiontype in procflags) then begin
    tokenexpectederror(':');
   end;
-  {
-  if pf_functiontype in procflags then begin
-   if pf_function in procflags then begin
-    with contextstack[stacktop-1].d do begin
-     kind:= ck_ident;
-     ident.paramkind:= pk_var;
-     ident.ident:= resultident;
-    end;
-    paramco:= (stacktop-stackindex-2-2) div 3+1;
-   end
-   else begin
-    errormessage(err_syntax,[';'],stacktop-stackindex-1);    
-   end;
-  end
-  else begin
-   if pf_function in procflags then begin
-    tokenexpectederror(':');
-   end;
-  end;
-  }
 outinfo('****');
   paramco:= (stacktop-stackindex-2) div 3;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
@@ -2586,21 +2566,50 @@ outinfo('****');
    end;
    int1:= int1+3;
   end;
-  parent1:= ele.decelementparent; //check params duplicate
-  with paramdata do begin
+
+  po1^.address:= 0; //init
+  if impl1 then begin //implementation
+   inc(funclevel);
+   getlocvaraddress(stacklinksize);
+   with contextstack[stackindex] do begin
+    d.kind:= ck_proc;
+    d.proc.frameoffsetbefore:= frameoffset;
+    frameoffset:= locdatapo; //todo: nested procedures
+    stacktop:= stackindex;
+    d.proc.paramsize:= locdatapo - d.proc.parambase;
+    po1^.paramsize:= d.proc.paramsize;
+    d.proc.error:= err1;
+    d.proc.ref:= ele.eledatarel(po1);
+    for int2:= 0 to paramco-1 do begin
+     po2:= pointer(po4^[int2]);
+     dec(po2^.address.address,frameoffset);
+     po4^[int2]:= ptruint(po2)-eledatabase;
+    end;
+    ele.markelement(d.proc.elementmark); 
+   end;
+  end
+  else begin
+   for int2:= 0 to paramco-1 do begin
+    dec(po4^[int2],eledatabase); //relative address
+   end;
+   forwardmark(po1^.mark,source);
+  end;
+
+  parent1:= ele.decelementparent;
+  with paramdata do begin  //check params duplicate
    ref:= po1;
    match:= nil;
-  end;
+  end;                                    
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                             vis_max,@checkequalparam,paramdata) then begin
    err1:= true;
    errormessage(err_sameparamlist,[]);
   end;
-
-  po1^.address:= 0; //init
-  if impl1 then begin //implementation
-   if funclevel = 0 then begin //todo: check forward modifier
+  
+  if impl1 then begin
+   if funclevel = 1 then begin //todo: check forward modifier
     ele.decelementparent; //interface
+    paramdata.match:= nil;
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                 vis_max,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
@@ -2620,38 +2629,16 @@ outinfo('****');
       end;
      end;
     end;
-   end;
-   ele.elementparent:= parent1;
-   inc(funclevel);
-   getlocvaraddress(stacklinksize);
-   with contextstack[stackindex] do begin
-    d.kind:= ck_proc;
-    d.proc.frameoffsetbefore:= frameoffset;
-    frameoffset:= locdatapo; //todo: nested procedures
-    stacktop:= stackindex;
-    d.proc.paramsize:= locdatapo - d.proc.parambase;
-    po1^.paramsize:= d.proc.paramsize;
-    d.proc.error:= err1;
-    d.proc.ref:= ele.eledatarel(po1);
-    if paramdata.match <> nil then begin
-     d.proc.match:= ele.eledatarel(paramdata.match);
-    end
-    else begin
-     d.proc.match:= 0;
+    ele.elementparent:= parent1; //restore in sub
+    with contextstack[stackindex] do begin
+     if paramdata.match <> nil then begin
+      d.proc.match:= ele.eledatarel(paramdata.match);
+     end
+     else begin
+      d.proc.match:= 0;
+     end;
     end;
-    for int2:= 0 to paramco-1 do begin
-     po2:= pointer(po4^[int2]);
-     dec(po2^.address.address,frameoffset);
-     po4^[int2]:= ptruint(po2)-eledatabase;
-    end;
-    ele.markelement(d.proc.elementmark); 
    end;
-  end
-  else begin
-   for int2:= 0 to paramco-1 do begin
-    dec(po4^[int2],eledatabase); //relative address
-   end;
-   forwardmark(po1^.mark,source);
   end;
  end;
 end;
