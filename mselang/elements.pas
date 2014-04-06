@@ -67,9 +67,16 @@ const
 type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
+ scopeinfoty = record
+ end;
+ scopeinfoarty= array of scopeinfoty;
+ 
  telementhashdatalist = class(thashdatalist)
   private
    ffindvislevel: vislevelty;
+   fscopestack: scopeinfoarty;
+   fscopestackpo: integer;
+   fscopestacksize: integer;
   protected
    felementdata: string;
    fnextelement: elementoffsetty;
@@ -150,6 +157,9 @@ type
               const akind: elementkindty;
               {const asize: integer;} out aelementdata: pointer): boolean;
                                                        //false if duplicate
+   procedure pushscopelevel();
+   procedure popscopelevel();
+   
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
@@ -803,6 +813,9 @@ begin
  felementparent:= 0;
  felementpath:= 0;
  fparentlevel:= 0;
+ fscopestack:= nil;
+ fscopestackpo:= 0;
+ fscopestacksize:= 0;
 end;
 
 function telementhashdatalist.hashkey(const akey): hashvaluety;
@@ -1415,6 +1428,22 @@ begin
  with pelementinfoty(adata-sizeof(elementheaderty))^.header do begin
   path:= path-name;
   name:= 0;
+ end;
+end;
+
+procedure telementhashdatalist.pushscopelevel;
+begin
+ inc(fscopestackpo);
+ if fscopestackpo >= fscopestacksize then begin
+  fscopestacksize:= fscopestacksize*2+16;
+  setlength(fscopestack,fscopestacksize);
+ end;
+end;
+
+procedure telementhashdatalist.popscopelevel;
+begin
+ if fscopestackpo = 0 then begin
+  internalerror('E20140406C');
  end;
 end;
 {
