@@ -417,7 +417,7 @@ fact1,,,handlefact
  '..',*
  '.',fact2-
 #
-fact2,,handlefact2entry,handlefact2
+fact2,fact1,handlefact2entry,
  '',valueidentifier*
 #
 negfact,,,handlenegfact

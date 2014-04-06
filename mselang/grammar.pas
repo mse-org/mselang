@@ -4518,8 +4518,8 @@ begin
  fact1co.branch:= @bfact1;
  fact1co.handleexit:= @handlefact;
  fact2co.branch:= @bfact2;
+ fact2co.next:= @fact1co;
  fact2co.handleentry:= @handlefact2entry;
- fact2co.handleexit:= @handlefact2;
  negfactco.branch:= @bnegfact;
  negfactco.handleexit:= @handlenegfact;
  valueidentifierco.branch:= @bvalueidentifier;

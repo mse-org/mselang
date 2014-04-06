@@ -167,7 +167,7 @@ const
 procedure error({const info: pparseinfoty;} const error: comperrorty;
                    const pos: pchar=nil);
 begin
- outcommand({info,}[],'*ERROR* '+errormessages[error]);
+ outcommand([],'*ERROR* '+errormessages[error]);
 end;
 
 function findkindelementdata(const aident: contextdataty;
@@ -220,7 +220,7 @@ begin
   inc(identcount);
   result:= true;
   if identcount = 0 then begin
-   errormessage({info,}err_toomanyidentifierlevels,[],astackoffset+identcount);
+   errormessage(err_toomanyidentifierlevels,[],astackoffset+identcount);
    result:= false;
   end;
  end;
@@ -237,7 +237,7 @@ var
 begin
  result:= false;
  aelement:= nil;
- if getidents({info,}astackoffset,idents) then begin
+ if getidents(astackoffset,idents) then begin
   with info do begin
    result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
    if not result then begin //todo: use cache
@@ -280,7 +280,7 @@ var
 begin
  result:= false;
  aelement:= nil;
- if getidents({info,}astackoffset,idents) then begin
+ if getidents(astackoffset,idents) then begin
   with info do begin
    result:= ele.findupward(idents,[],visibility,eleres,lastident); //exact
    if not result then begin //todo: use cache
@@ -319,7 +319,7 @@ function findkindelementsdata({const info: pparseinfoty;}
              out ainfo: pointer; out lastident: integer;
              out idents: identvecty): boolean;
 begin
- result:= findkindelements({info,}astackoffset,akinds,visibility,ainfo,
+ result:= findkindelements(astackoffset,akinds,visibility,ainfo,
                                 lastident,idents);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
@@ -331,7 +331,7 @@ function findkindelementsdata({const info: pparseinfoty;}
              const akinds: elementkindsty; const visibility: vislevelty; 
              out ainfo: pointer): boolean;
 begin
- result:= findkindelements({info,}astackoffset,akinds,visibility,ainfo);
+ result:= findkindelements(astackoffset,akinds,visibility,ainfo);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
  end;
@@ -349,7 +349,7 @@ var
  int1: integer;
 begin
  result:= false;
- if getidents({info,}astackoffset,idents) then begin
+ if getidents(astackoffset,idents) then begin
   result:= ele.findupward(idents,[ek_var],visibility,ele1,int1);
   if result then begin
    po1:= ele.eledataabs(ele1);
@@ -359,7 +359,7 @@ begin
     for int1:= int1+1 to idents.high do begin //fields
      result:= ele.findchild(ele2,idents.d[int1],[ek_field],visibility,ele2);
      if not result then begin
-      identerror({info,}astackoffset+int1,err_identifiernotfound);
+      identerror(astackoffset+int1,err_identifiernotfound);
       exit;
      end;
      po3:= ele.eledataabs(ele2);
@@ -373,7 +373,7 @@ begin
    end;
   end
   else begin
-   identerror({info,}astackoffset,err_identifiernotfound);
+   identerror(astackoffset,err_identifiernotfound);
   end;
  end;
 end;                           
