@@ -130,6 +130,11 @@ procedure handlestatementexit();
 procedure handleassignmententry();
 procedure handleassignment();
 
+procedure handledoexpected();
+procedure handlewithentry();
+procedure handlewith2entry();
+procedure handlewith();
+
 procedure handleif0();
 procedure handleif();
 procedure handlethen();
@@ -2173,6 +2178,46 @@ outinfo('*****');
 endlab:
   dec(stackindex);
   stacktop:= stackindex;
+ end;
+end;
+
+procedure handledoexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DOEXPECTED');
+{$endif}
+ with info do begin
+  tokenexpectederror('do');
+  dec(stackindex);
+ end;
+end;
+
+procedure handlewithentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WITHENTRY');
+{$endif}
+ with info,contextstack[stackindex] do begin
+  d.kind:= ck_getfact;
+ end;
+end;
+
+procedure handlewith2entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WITH2ENTRY');
+{$endif}
+ with info do begin
+ end;
+end;
+
+procedure handlewith();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WITH');
+{$endif}
+ with info do begin
+  dec(stackindex);
  end;
 end;
 

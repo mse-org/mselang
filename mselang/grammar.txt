@@ -213,8 +213,19 @@ statement,,,*
  ';',endcontext-
  'begin'.,statementblock-^*
  'end'.,endcontext
+ 'with'.,with-
  'if'.,if0-
  '',simplestatement
+#
+with,with1,handlewithentry,
+ '',valueidentifierwhite*
+with1,,,handledoexpected*
+ ${whitespace}
+ ',',with-
+ 'do'.,with2-
+with2,,handlewith2entry,handlewith*
+ '',statement*
+#
 endcontext,,,
 blockend,,,handleblockend^*
 simplestatement,,,*
@@ -418,12 +429,15 @@ fact1,,,handlefact
  '.',fact2-
 #
 fact2,fact1,handlefact2entry,
- '',valueidentifier*
+ '',valueidentifierwhite*
 #
 negfact,,,handlenegfact
  '',fact*
 #
 valueidentifier,checkvalueparams,,
+ '',identpath^*
+valueidentifierwhite,checkvalueparams,,
+ ${whitespace}
  '',identpath^*
 #
 checkvalueparams,,,handlevalueidentifier
