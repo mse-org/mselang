@@ -1469,10 +1469,16 @@ outinfo('***');
        ele1:= d.datatyp.typedata;
        offs1:= 0;
        for int1:= stackindex+1 to stacktop do begin //fields
-        if not ele.findchild(ele1,contextstack[int1].d.ident.ident,[ek_field],
-                                                    vis_max,ele1) then begin
-         identerror(int1,err_identifiernotfound);
-         goto endlab;
+        with contextstack[int1] do begin
+         if d.kind <> ck_ident then begin
+          errormessage(err_identexpected,[],int1-stackindex,0,erl_error);
+          goto endlab;
+         end;
+         if not ele.findchild(ele1,d.ident.ident,[ek_field],
+                                                     vis_max,ele1) then begin
+          identerror(int1-stackindex,err_identifiernotfound);
+          goto endlab;
+         end;
         end;
         po4:= ele.eledataabs(ele1);
         offs1:= offs1 + po4^.offset;
