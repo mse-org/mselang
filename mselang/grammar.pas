@@ -397,7 +397,7 @@ var
                caption: 'with');
  with1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'with1');
  with2co: contextty = (branch: nil; 
@@ -405,6 +405,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'with2');
+ with3co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'with3');
  endcontextco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2124,9 +2129,9 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwith: array[0..1] of branchty = (
+ bwith1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @valueidentifierwhiteco); stack: nil; keys: (
+     dest: (context: @factco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2134,9 +2139,9 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwith1: array[0..6] of branchty = (
+ bwith2: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @with2co); stack: nil; 
+     dest: (context: @with3co); stack: nil; 
      keyword: $CF19BB75{'do'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -2167,7 +2172,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @withco); stack: nil; keys: (
+     dest: (context: @with1co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2175,7 +2180,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bwith2: array[0..1] of branchty = (
+ bwith3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @statementco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -4493,14 +4498,16 @@ begin
  terminatorokpopco.branch:= nil;
  statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
- withco.branch:= @bwith;
+ withco.branch:= nil;
  withco.next:= @with1co;
- withco.handleentry:= @handlewithentry;
+ withco.handleexit:= @handlewithentry;
  with1co.branch:= @bwith1;
- with1co.handleexit:= @handledoexpected;
+ with1co.next:= @with2co;
  with2co.branch:= @bwith2;
  with2co.handleentry:= @handlewith2entry;
- with2co.handleexit:= @handlewith;
+ with2co.handleexit:= @handledoexpected;
+ with3co.branch:= @bwith3;
+ with3co.handleexit:= @handlewith3;
  endcontextco.branch:= nil;
  blockendco.branch:= nil;
  blockendco.handleexit:= @handleblockend;

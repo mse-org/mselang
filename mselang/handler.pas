@@ -133,7 +133,8 @@ procedure handleassignment();
 procedure handledoexpected();
 procedure handlewithentry();
 procedure handlewith2entry();
-procedure handlewith();
+//procedure handlewith3entry();
+procedure handlewith3();
 
 procedure handleif0();
 procedure handleif();
@@ -2197,25 +2198,38 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITHENTRY');
 {$endif}
- with info,contextstack[stackindex] do begin
-  d.kind:= ck_getfact;
- end;
+// with info,contextstack[stackindex] do begin
+//  d.kind:= ck_getfact;
+// end;
 end;
-
-procedure handlewith2entry();
+(*
+procedure handlewith3entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('WITH2ENTRY');
+ outhandle('WITH3ENTRY');
 {$endif}
  with info do begin
  end;
 end;
+*)
 
-procedure handlewith();
+procedure handlewith2entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('WITH');
+ outhandle('WITH1');
 {$endif}
+outinfo('***');
+ with info do begin
+  stacktop:= stackindex;
+ end;
+end;
+
+procedure handlewith3();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WITH3');
+{$endif}
+outinfo('***');
  with info do begin
   dec(stackindex);
  end;

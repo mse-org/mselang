@@ -217,13 +217,14 @@ statement,,,*
  'if'.,if0-
  '',simplestatement
 #
-with,with1,handlewithentry,
- '',valueidentifierwhite*
-with1,,,handledoexpected*
+with,with1,,handlewithentry
+with1,with2,,
+ '',fact*
+with2,,handlewith2entry,handledoexpected*
  ${whitespace}
- ',',with-
- 'do'.,with2-
-with2,,handlewith2entry,handlewith*
+ ',',with1-
+ 'do'.,with3-
+with3,,,handlewith3*
  '',statement*
 #
 endcontext,,,
