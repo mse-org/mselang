@@ -52,7 +52,7 @@ type
  ppint32 = ^int32;
  
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-               dk_address,dk_record,dk_string8,dk_array);
+               dk_address,dk_record,dk_string8,dk_array,dk_class);
  pdatakindty = ^datakindty;
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];

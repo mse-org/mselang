@@ -68,6 +68,9 @@ type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
  scopeinfoty = record
+  eles: pelementoffsetaty;
+  elesize: integer;
+  elepo: integer;
  end;
  scopeinfoarty= array of scopeinfoty;
  
@@ -159,6 +162,7 @@ type
                                                        //false if duplicate
    procedure pushscopelevel();
    procedure popscopelevel();
+   function addscope(const akind: elementkindty): pointer;
    
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
@@ -218,7 +222,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist,stackops;
+ errorhandler,mselinklist,stackops,msesysutils;
 
  
 type
@@ -802,10 +806,13 @@ end;
 constructor telementhashdatalist.create;
 begin
  ffindvislevel:= vis_min;
+ fscopestackpo:= -1;
  inherited create(sizeof(elementdataty));
 end;
 
 procedure telementhashdatalist.clear;
+var
+ int1: integer;
 begin
  inherited;
  fnextelement:= 0;
@@ -813,8 +820,11 @@ begin
  felementparent:= 0;
  felementpath:= 0;
  fparentlevel:= 0;
+ for int1:= fscopestackpo downto 1 do begin
+  freemem(fscopestack[int1].eles);
+ end;
  fscopestack:= nil;
- fscopestackpo:= 0;
+ fscopestackpo:= -1;
  fscopestacksize:= 0;
 end;
 
@@ -1438,14 +1448,46 @@ begin
   fscopestacksize:= fscopestacksize*2+16;
   setlength(fscopestack,fscopestacksize);
  end;
+ with fscopestack[fscopestackpo] do begin
+  elepo:= -1;
+ end;
 end;
 
 procedure telementhashdatalist.popscopelevel;
+var
+ int1: integer;
 begin
- if fscopestackpo = 0 then begin
+ if fscopestackpo < 0 then begin
   internalerror('E20140406C');
+ end
+ else begin
+ {
+  with fscopestack[fscopestackpo] do begin
+//   for int1:= elesize downto 0 do begin
+//    deleteelement(eles[int1]);
+//   end;
+   elepo:= 0; 
+  end;
+ }
+  dec(fscopestackpo);
+ end; 
+end;
+
+function telementhashdatalist.addscope(const akind: elementkindty): pointer;
+begin
+ with fscopestack[fscopestackpo] do begin
+  inc(elepo);
+  if elepo >= elesize then begin
+   elesize:= elesize*2+16;
+   reallocmemandinit(eles,elesize*sizeof(eles^[0]));
+  end;
+  eles^[elepo]:= getident();
+  if not addelement(eles^[elepo],vis_max,akind,result) then begin
+   internalerror('F20140407B'); //duplicate id
+  end;
  end;
 end;
+
 {
 function elementcount: integer;
 begin

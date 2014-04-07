@@ -39,7 +39,8 @@ type
             err_constexpressionexpected,err_errintypedef,err_ordtypeexpected,
             err_dataeletoolarge,err_highlowerlow,err_valuerange,
             err_cannotaddressconst,err_cannotderefnonpointer,
-            err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef);
+            err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
+            err_expmustbeclassorrec);
             
  errorinfoty = record
   level: errorlevelty;
@@ -111,7 +112,8 @@ const
   (level: erl_error; message: 'Can''t dereference non pointer'),
   (level: erl_error; message: 'Can''t assign values to an address'),
   (level: erl_error; message: 'Can''t take the addreess of expression'),
-  (level: erl_error; message: 'Invalid dereference')
+  (level: erl_error; message: 'Invalid dereference'),
+  (level: erl_error; message: 'Expresssion type must be class or record type')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

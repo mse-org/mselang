@@ -782,8 +782,8 @@ const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
    nil,     nil,       @negcard32, @negint32, @negflo64,
- //dk_kind, dk_address,dk_record,dk_string,dk_array
-   nil,     nil,       nil,      nil,      nil
+ //dk_kind, dk_address,dk_record,dk_string,dk_array,dk_class
+   nil,     nil,       nil,      nil,      nil,     nil
  );
 
 procedure handlefact();
@@ -2198,9 +2198,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITHENTRY');
 {$endif}
-// with info,contextstack[stackindex] do begin
-//  d.kind:= ck_getfact;
-// end;
+ ele.pushscopelevel();
 end;
 (*
 procedure handlewith3entry();
@@ -2214,12 +2212,35 @@ end;
 *)
 
 procedure handlewith2entry();
+var
+ po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('WITH1');
 {$endif}
 outinfo('***');
- with info do begin
+ with info,contextstack[stacktop] do begin
+  case d.kind of
+   ck_ref: begin
+    po1:= ele.eledataabs(d.datatyp.typedata);
+    if (d.datatyp.indirectlevel = 0) and 
+                         (po1^.kind in [dk_record,dk_class]) then begin
+     with pvardataty(ele.addscope(ek_var))^ do begin
+      address:= d.ref.address;
+      address.address:= address.address + d.ref.offset;
+      typ:= d.datatyp.typedata;
+     end;
+    end
+    else begin
+     errormessage(err_expmustbeclassorrec,[]);
+    end;
+   end;
+   ck_none: begin //error in fact
+   end;
+   else begin
+    internalerror('N20140407A');
+   end;
+  end;
   stacktop:= stackindex;
  end;
 end;
@@ -2231,6 +2252,7 @@ begin
 {$endif}
 outinfo('***');
  with info do begin
+  ele.popscopelevel();
   dec(stackindex);
  end;
 end;
