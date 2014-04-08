@@ -2225,7 +2225,8 @@ outinfo('***');
     po1:= ele.eledataabs(d.datatyp.typedata);
     if (d.datatyp.indirectlevel = 0) and 
                          (po1^.kind in [dk_record,dk_class]) then begin
-     with pvardataty(ele.addscope(ek_var))^ do begin
+
+     with pvardataty(ele.addscope(ek_var,d.datatyp.typedata))^ do begin
       address:= d.ref.address;
       address.address:= address.address + d.ref.offset;
       typ:= d.datatyp.typedata;

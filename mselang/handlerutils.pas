@@ -239,28 +239,34 @@ begin
  aelement:= nil;
  if getidents(astackoffset,idents) then begin
   with info do begin
-   result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
-   if not result then begin //todo: use cache
-    ele2:= ele.elementparent;
-    for int1:= 0 to high(info.unitinfo^.implementationuses) do begin
-     ele.elementparent:=
-       info.unitinfo^.implementationuses[int1]^.interfaceelement;
-     result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
-     if result then begin
-      break;
-     end;
-    end;
-    if not result then begin
-     for int1:= 0 to high(info.unitinfo^.interfaceuses) do begin
+   if ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
+    result:= true;
+    lastident:= 0;
+   end
+   else begin
+    result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
+    if not result then begin //todo: use cache
+     ele2:= ele.elementparent;
+     for int1:= 0 to high(info.unitinfo^.implementationuses) do begin
       ele.elementparent:=
-        info.unitinfo^.interfaceuses[int1]^.interfaceelement;
+        info.unitinfo^.implementationuses[int1]^.interfaceelement;
       result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
       if result then begin
        break;
       end;
      end;
+     if not result then begin
+      for int1:= 0 to high(info.unitinfo^.interfaceuses) do begin
+       ele.elementparent:=
+         info.unitinfo^.interfaceuses[int1]^.interfaceelement;
+       result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
+       if result then begin
+        break;
+       end;
+      end;
+     end;
+     ele.elementparent:= ele2;
     end;
-    ele.elementparent:= ele2;
    end;
   end;
  end;

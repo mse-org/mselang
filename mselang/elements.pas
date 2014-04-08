@@ -19,7 +19,7 @@
 //this is a proof of concept only
 //
 unit elements;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  msestrings,msetypes,msehash,parserglob,handlerglob;
@@ -68,16 +68,18 @@ type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
  scopeinfoty = record
-  eles: pelementoffsetaty;
-  elesize: integer;
-  elepo: integer;
+  element: elementoffsetty;
+  childparent: elementoffsetty;
  end;
- scopeinfoarty= array of scopeinfoty;
+ pscopeinfoty = ^scopeinfoty;
  
  telementhashdatalist = class(thashdatalist)
   private
    ffindvislevel: vislevelty;
-   fscopestack: scopeinfoarty;
+   fscopes: pointer;
+   fscopespo: pscopeinfoty;
+   fscopesend: pointer;
+   fscopestack: integerarty;
    fscopestackpo: integer;
    fscopestacksize: integer;
   protected
@@ -122,6 +124,9 @@ type
                  const achild: elementoffsetty; const akinds: elementkindsty;
                  const avislevel: vislevelty; 
                                out element: elementoffsetty): boolean;
+   function findparentscope(const aident: identty; const akinds: elementkindsty;
+            const avislevel: vislevelty; out aparent: elementoffsetty): boolean;
+                  //searches in scopestack, returns parent
 
    function eleoffset: ptruint; inline;
    function eledataoffset: ptruint; inline;
@@ -162,7 +167,8 @@ type
                                                        //false if duplicate
    procedure pushscopelevel();
    procedure popscopelevel();
-   function addscope(const akind: elementkindty): pointer;
+   function addscope(const akind: elementkindty;
+                        const achildparent: elementoffsetty): pointer;
    
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
@@ -806,8 +812,8 @@ end;
 constructor telementhashdatalist.create;
 begin
  ffindvislevel:= vis_min;
- fscopestackpo:= -1;
  inherited create(sizeof(elementdataty));
+ clear();
 end;
 
 procedure telementhashdatalist.clear;
@@ -820,9 +826,8 @@ begin
  felementparent:= 0;
  felementpath:= 0;
  fparentlevel:= 0;
- for int1:= fscopestackpo downto 1 do begin
-  freemem(fscopestack[int1].eles);
- end;
+ reallocmem(fscopes,16*sizeof(fscopes));
+ fscopespo:= nil;
  fscopestack:= nil;
  fscopestackpo:= -1;
  fscopestacksize:= 0;
@@ -891,6 +896,7 @@ var
  uint1: ptruint;
  po1: pelementhashdataty;
  id1: identty;
+ int1,int2: integer;
 begin
  element:= -1;
  result:= false;
@@ -1056,6 +1062,59 @@ begin
  elementparent:= ele1;
 end;
 
+function telementhashdatalist.findparentscope(const aident: identty;
+               const akinds: elementkindsty; const avislevel: vislevelty;
+               out aparent: elementoffsetty): boolean;
+var
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ po2: pscopeinfoty;
+ id1: identty;
+label
+ endloop;
+begin
+ result:= false;
+ if (fscopespo <> nil) and (count > 0) then begin // check "with" and the like 
+  po2:= fscopespo;
+  while true do begin
+   with pelementinfoty(pointer(felementdata)+po2^.childparent)^ do begin
+    id1:= header.path+header.name+aident;
+    uint1:= fhashtable[id1 and fmask];
+    if uint1 <> 0 then begin
+     po1:= pelementhashdataty(pchar(fdata) + uint1);
+     while true do begin
+      if (po1^.data.key = id1) then begin
+       with pelementinfoty(
+              pointer(felementdata)+po1^.data.data)^.header do begin //child
+        if (name = aident) and (parent = po2^.childparent) then begin
+          with pelementinfoty(pointer(felementdata) +
+                                po2^.childparent)^.header do begin //parent
+          if (vislevel <= avislevel) and 
+                             ((akinds = []) or (kind in akinds)) then begin
+           aparent:= po2^.element;
+           result:= true;
+           exit;
+          end;
+         end;
+        end;
+       end;
+      end;
+      if po1^.header.nexthash = 0 then begin
+       goto endloop; //not found
+      end;
+      po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+     end;
+    end;
+   end;
+endloop:
+   if po2 = fscopes then begin
+    break;
+   end;
+   dec(po2);
+  end; 
+ end;
+end;
+
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 var
@@ -1065,6 +1124,7 @@ var
  ar1: dumpinfoarty;
  off1: elementoffsetty;
  ar2: msestringarty;
+ po4: pscopeinfoty;
 begin
  int1:= 0;
  int2:= 0;
@@ -1104,21 +1164,6 @@ begin
      mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      po3:= po1;
-     {
-     while ptypedataty(@po3^.data)^.kind = dk_reference do begin
-      mstr1:= mstr1+' R:'+inttostr(ptypedataty(@po3^.data)^.indirectlevel);
-      mstr2:= '  ';
-      po3:= eleinfoabs(ptypedataty(@po3^.data)^.target);
-      mstr1:= mstr1+lineend+mstr2+'N:$'+
-            hextostr(po3^.header.name,8)+' '+
-            ' '+identlist.identname(po3^.header.name);
-      with ptypedataty(@po3^.data)^ do begin
-       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
-         ' S:'+inttostr(bytesize);
-      end;
-      mstr2:= mstr2+' ';
-     end;
-     }
     end;
    end;
   end;
@@ -1151,6 +1196,22 @@ begin
  result[0]:= 'elementpath: $'+hextostr(felementpath,8);
  for int1:= 0 to int2-1 do begin
   result[int1+1]:= ar1[int1].text;
+ end;
+ additem(result,'---SCOPES');
+ if fscopespo <> nil then begin
+  int1:= length(result);
+  setlength(result,length(result)+(fscopespo-pscopeinfoty(fscopes))+1);
+  po4:= fscopes;
+  for int1:= int1 to high(result) do begin
+   po1:= ele.eleinfoabs(po4^.element);
+   mstr1:= getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
+   po1:= ele.eleinfoabs(po4^.childparent);
+   mstr1:= mstr1+' CP:'+
+    getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
+    ' '+identlist.identname(po1^.header.name);
+   result[int1]:= mstr1;
+   inc(po4);
+  end;
  end;
 end;
 
@@ -1269,8 +1330,11 @@ function telementhashdatalist.addelement(const aname: identty;
                                                    //nil if duplicate
 var
  ele1: elementoffsetty;
+ scopebefore: pscopeinfoty;
 begin
  result:= nil;
+ scopebefore:= fscopespo;
+ fscopespo:= nil;
  if not findcurrent(aname,[],ffindvislevel,ele1) then begin
   ele1:= fnextelement;
   fnextelement:= fnextelement+elesizes[akind];
@@ -1288,6 +1352,7 @@ begin
   end; 
   addelement(felementpath+aname,avislevel,ele1);
  end;
+ fscopespo:= scopebefore;
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
@@ -1448,44 +1513,60 @@ begin
   fscopestacksize:= fscopestacksize*2+16;
   setlength(fscopestack,fscopestacksize);
  end;
- with fscopestack[fscopestackpo] do begin
-  elepo:= -1;
+ if fscopes = nil then begin
+  fscopestack[fscopestackpo]:= -1;
+ end
+ else begin
+  fscopestack[fscopestackpo]:= pointer(fscopespo)-fscopes;
  end;
 end;
 
 procedure telementhashdatalist.popscopelevel;
 var
- int1: integer;
+ int1,int2: integer;
 begin
  if fscopestackpo < 0 then begin
   internalerror('E20140406C');
  end
  else begin
- {
-  with fscopestack[fscopestackpo] do begin
-//   for int1:= elesize downto 0 do begin
-//    deleteelement(eles[int1]);
-//   end;
-   elepo:= 0; 
+  int2:= fscopestack[fscopestackpo];
+  if int2 < 0 then begin
+   fscopespo:= nil;
+  end
+  else begin
+   fscopespo:= fscopes + int2;
   end;
- }
   dec(fscopestackpo);
  end; 
 end;
 
-function telementhashdatalist.addscope(const akind: elementkindty): pointer;
+function telementhashdatalist.addscope(const akind: elementkindty;
+                                 const achildparent: elementoffsetty): pointer;
+var
+ int1: integer;
 begin
- with fscopestack[fscopestackpo] do begin
-  inc(elepo);
-  if elepo >= elesize then begin
-   elesize:= elesize*2+16;
-   reallocmemandinit(eles,elesize*sizeof(eles^[0]));
-  end;
-  eles^[elepo]:= getident();
-  if not addelement(eles^[elepo],vis_max,akind,result) then begin
-   internalerror('F20140407B'); //duplicate id
+ if fscopespo = nil then begin
+  fscopespo:= fscopes;
+ end
+ else begin
+  inc(fscopespo);
+  if fscopespo >= fscopesend then begin
+   int1:= fscopespo-fscopes;
+   reallocmem(fscopes,int1*2);
+   fscopesend:= fscopes + int1*2;
+   fscopespo:= fscopes + int1;
   end;
  end;
+ result:= addelement(getident(),vis_max,akind);
+ if result = nil then begin
+  internalerror('F20140407B'); //duplicate id
+  exit;
+ end;
+ with fscopespo^ do begin
+  element:= result-pointer(felementdata);
+  childparent:= achildparent;
+ end;
+ inc(result,sizeof(elementheaderty));
 end;
 
 {
