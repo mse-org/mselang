@@ -226,8 +226,8 @@ begin
  end;
 end;
 
-function findkindelements({const info: pparseinfoty;}
-            const astackoffset: integer; const akinds: elementkindsty; 
+function findkindelements(const astackoffset: integer;
+            const akinds: elementkindsty; 
             const visibility: vislevelty;
             out aelement: pelementinfoty;
             out lastident: integer; out idents: identvecty): boolean;
@@ -241,7 +241,7 @@ begin
   with info do begin
    if ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
     result:= true;
-    lastident:= 0;
+    lastident:= -1;
    end
    else begin
     result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
@@ -275,8 +275,20 @@ begin
  end;
 end;
 
-function findkindelements({const info: pparseinfoty;}
-           const astackoffset: integer; const akinds: elementkindsty; 
+function findkindelements(const astackoffset: integer;
+           const akinds: elementkindsty; 
+           const visibility: vislevelty; out aelement: pelementinfoty): boolean;
+var
+ idents: identvecty;
+ lastident: integer;
+begin
+ result:= findkindelements(astackoffset,akinds,visibility,
+                                            aelement,lastident,idents);
+end;
+
+(*
+function findkindelements(const astackoffset: integer;
+           const akinds: elementkindsty; 
            const visibility: vislevelty; out aelement: pelementinfoty): boolean;
 var
  eleres,ele1,ele2: elementoffsetty;
@@ -318,6 +330,7 @@ begin
   result:= (akinds = []) or (aelement^.header.kind in akinds);
  end;
 end;
+*)
 
 function findkindelementsdata({const info: pparseinfoty;}
              const astackoffset: integer;
