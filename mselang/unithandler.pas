@@ -156,7 +156,7 @@ begin
 {$endif} 
 outinfo('***');
  with info do begin
-  dec(stackindex);
+  dec(stackindex,2);
  end;
 end;
 

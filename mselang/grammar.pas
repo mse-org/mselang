@@ -229,9 +229,14 @@ var
                caption: 'directive1');
  includeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'include');
+ include1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'include1');
  dumpelementsco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1567,6 +1572,23 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @tokenco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ binclude1: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['}']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4518,7 +4540,9 @@ begin
  directiveco.next:= @directive1co;
  directive1co.branch:= @bdirective1;
  includeco.branch:= @binclude;
- includeco.handleexit:= @handleinclude;
+ includeco.next:= @include1co;
+ include1co.branch:= @binclude1;
+ include1co.handleexit:= @handleinclude;
  dumpelementsco.branch:= nil;
  dumpelementsco.next:= @directiveendco;
  dumpelementsco.handleentry:= @handledumpelements;

@@ -121,10 +121,13 @@ directive1,,,*
  '}',-*
  '',-
 #
-include,,,handleinclude*
+include,include1,,
  @whitespace,-
  '''',string-*
  '',token*
+include1,,,handleinclude*
+ '}',-*
+ '',-
 # 
 dumpelements,directiveend,handledumpelements,
 abort,directiveend,handleabort,
