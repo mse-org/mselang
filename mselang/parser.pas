@@ -18,7 +18,7 @@ unit parser;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- msetypes,msestream,stackops,parserglob;
+ msetypes,msestream,stackops,parserglob,msestrings;
 
 //
 //todo: use efficient data structures and procedures, 
@@ -33,8 +33,9 @@ const
 function parse(const input: string; const acommand: ttextstream;
                out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
                               //true if ok
-function parseunit({const info: pparseinfoty;} const input: string;
+function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
+procedure includefile(const afilename: filenamety);
 
 procedure init;
 procedure deinit;
@@ -44,7 +45,7 @@ procedure outinfo(const text: string);
 {$endif}
 implementation
 uses
- typinfo,grammar,handler,elements,msestrings,sysutils,handlerglob,
+ typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils;
   
@@ -219,6 +220,10 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
+procedure includefile(const afilename: filenamety);
+begin
+end;
+
 procedure incstack({const info: pparseinfoty});
 begin
  with info do begin
@@ -254,7 +259,7 @@ begin
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
-   incstack({info});
+   incstack();
    if bf_setparentafterpush in pb^.flags then begin
     int1:= stacktop;
    end;
@@ -291,14 +296,14 @@ begin
     break;
    end;
    if pc^.handleentry <> nil then begin
-    pc^.handleentry({info}); //transition handler
+    pc^.handleentry(); //transition handler
     if stopparser then begin
      result:= false;
      exit;
     end;
    end;
    if pc^.handleexit <> nil then begin
-    pc^.handleexit({info}); //transition handler
+    pc^.handleexit(); //transition handler
     if stopparser then begin
      result:= false;
      exit;
@@ -323,7 +328,7 @@ begin
   end;
 {$endif}
   if (pc^.handleentry <> nil) then begin
-   pc^.handleentry({info});
+   pc^.handleentry();
    if stopparser then begin
     result:= false;
    end;
@@ -331,8 +336,7 @@ begin
  end;
 end;
 
-function parseunit({const info: pparseinfoty;} const input: string;
-                                       const aunit: punitinfoty): boolean;
+function parseunit(const input: string; const aunit: punitinfoty): boolean;
  procedure popparent;
  var
   int1: integer;
@@ -390,7 +394,7 @@ begin
   source.po:= sourcestart;
   source.line:= 0;
 
-  incstack({info});
+  incstack();
   with contextstack[stackindex],d do begin
    kind:= ck_none;
    context:= startcontext;
@@ -433,7 +437,7 @@ begin
      break; //no branch
     end;
     if bf_emptytoken in pb^.flags then begin
-     pushcont({info}); //default branch
+     pushcont(); //default branch
                //???? why no break or standard match handling
     end
     else begin
@@ -515,7 +519,7 @@ begin
        end;
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
-         pb^.dest.handler({info});
+         pb^.dest.handler();
          if stopparser then begin
           goto parseend;
          end;
@@ -525,7 +529,7 @@ begin
         end
         else begin //switch branch context
          repeat
-          if not pushcont({info}) then begin 
+          if not pushcont() then begin 
                 //can not continue
            if stopparser then begin
             goto parseend;
@@ -557,7 +561,7 @@ handlelab:
     end;
     if pc^.handleexit <> nil then begin
          //call context termination handler
-     pc^.handleexit({info});
+     pc^.handleexit();
      if stopparser then begin
       goto parseend;
      end;
@@ -635,7 +639,7 @@ handlelab:
      pc:= pc^.next;
      context:= pc;
      if pc^.handleentry <> nil then begin
-      pc^.handleentry({info});
+      pc^.handleentry();
       if stopparser then begin
        goto parseend;
       end;
@@ -711,7 +715,7 @@ begin
   stackindex:= stacktop;
   opcount:= startupoffset;
   setlength(ops,opcount);
-  initparser({info});
+  initparser();
   startopcount:= opcount;
   result:= parseunit({info,}input,unit1);
   {

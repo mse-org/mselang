@@ -150,9 +150,10 @@ procedure handleabort();
 
 procedure stringlineenderror();
 procedure handlestringstart();
-procedure handlestring();
+//procedure handlestring();
 procedure copystring();
 procedure copyapostrophe();
+procedure copytoken();
 procedure handlechar();
 
 implementation
@@ -2871,6 +2872,9 @@ begin
  end;
  writeln('-------------------------------------------------------------------');
 {$endif}
+ with info do begin
+  dec(stackindex);
+ end;
 end;
 
 procedure handleabort();
@@ -2884,6 +2888,7 @@ begin
  with info do begin
   stopparser:= true;
   errormessage(err_abort,[]);
+  dec(stackindex);
  end;
 end;
 
@@ -2908,7 +2913,7 @@ outinfo('****');
   end;
  end;
 end;
-
+(*
 procedure handlestring();
 begin
 {$ifdef mse_debugparser}
@@ -2919,7 +2924,7 @@ outinfo('****');
   dec(stackindex);
  end;
 end;
-
+*)
 procedure copystring();
 begin
 {$ifdef mse_debugparser}
@@ -2945,6 +2950,18 @@ outinfo('****');
    stringbuffer:= stringbuffer+'''';
    d.str.start:= source.po;
   end;
+ end;
+end;
+
+procedure copytoken();
+begin
+{$ifdef mse_debugparser}
+ outhandle('COPYTOKEN');
+{$endif}
+outinfo('****');
+ with info,contextstack[stacktop] do begin
+  stringbuffer:= stringbuffer+psubstr(d.str.start,source.po);
+  dec(stackindex);
  end;
 end;
 

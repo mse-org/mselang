@@ -111,11 +111,21 @@ comment0,,,handlecommentend^*>
  '}',-*
  '',-
 #comment1,,,handlecommentend^>
-directive,,,*
+directive,directive1,,*
  'dumpelements'.,dumpelements-*
  'abort'.,abort-*
+ 'include'.,include-*
  '}',-*
  '',-
+directive1,,,*
+ '}',-*
+ '',-
+#
+include,,,handleinclude*
+ @whitespace,-
+ '''',string-*
+ '',token*
+# 
 dumpelements,directiveend,handledumpelements,
 abort,directiveend,handleabort,
 directiveend,,,^*>
@@ -525,19 +535,23 @@ string,,handlestringstart,
  '''',string1-
  #$0a,!stringlineenderror-*
  '',-
-string1,,copystring,handlestring
+string1,,copystring,
  '''',apostrophe-
  '#',char-
 apostrophe,,copyapostrophe,
  '''',string1-
  '',string
+token,,handlestringstart,copytoken
+ @whitespace,'}',*
+ '',-
+#
 char,char1,handlestringstart,
  '',ordnum*
 char1,string,handlechar,
  '''',string-
  '#',char-
  '',char2
-char2,,,handlestring
+char2,,,
 #
 ident,,,handleident^
  @identstart,@decnum,-

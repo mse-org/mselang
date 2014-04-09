@@ -27,9 +27,10 @@ function loadunit({const info: pparseinfoty;}
 //function parseimplementation(const info: pparseinfoty; 
 //                                       const aunit: punitinfoty): boolean;
 
-procedure setunitname({const info: pparseinfoty}); //unitname on top of stack
-procedure interfacestop({const info: pparseinfoty});
-procedure implementationstart({const info: pparseinfoty});
+procedure setunitname(); //unitname on top of stack
+procedure interfacestop();
+procedure implementationstart();
+procedure handleinclude();
 
 procedure init;
 procedure deinit;
@@ -80,23 +81,23 @@ var
  unitlist: tunitlist;
 // implementationpending: timplementationpendinglist;
  
-procedure setunitname({const info: pparseinfoty}); //unitname on top of stack
+procedure setunitname(); //unitname on top of stack
 var
  id1: identty;
  po1: punitdataty;
  po2: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'SETUNITNAME');
+ outhandle('SETUNITNAME');
 {$endif}
  with info do begin
   id1:= contextstack[stacktop].d.ident.ident;
   if unitinfo^.key <> id1 then begin
-   identerror({info,}1,err_illegalunitname);
+   identerror(1,err_illegalunitname);
   end
   else begin
    if not ele.pushelement(id1,vis_max,ek_unit,po1) then begin
-    internalerror({info,}'U131018A');
+    internalerror('U131018A');
    end;
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
@@ -108,10 +109,10 @@ begin
  end;
 end;
 
-procedure interfacestop({const info: pparseinfoty});
+procedure interfacestop();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'INTERFACESTOP');
+ outhandle('INTERFACESTOP');
 {$endif}
  with info do begin
   include(unitinfo^.state,us_interfaceparsed);
@@ -127,24 +128,35 @@ begin
  end;
 end;
 
-procedure implementationstart({const info: pparseinfoty});
+procedure implementationstart();
 var
  po1: punitdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'IMPLEMENTATIONSTART');
+ outhandle('IMPLEMENTATIONSTART');
 {$endif}
  with info do begin
   if us_implementation in unitinfo^.state then begin
-   errormessage({info,}err_invalidtoken,['implementation']);
+   errormessage(err_invalidtoken,['implementation']);
   end
   else begin
    include(unitinfo^.state,us_implementation);
    if not ele.pushelement(ord(tk_implementation),vis_max,
                                     ek_implementation,po1) then begin
-    internalerror({info,}'U20131130A');
+    internalerror('U20131130A');
    end;
   end;
+ end;
+end;
+
+procedure handleinclude();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INCLUDE');
+{$endif} 
+outinfo('***');
+ with info do begin
+  dec(stackindex);
  end;
 end;
 
@@ -155,7 +167,7 @@ begin
   writeln('***************************************** uses');
   writeln(filepath);
 //todo: use mmap(), problem: no terminating 0.
-  result:= parseunit({info,}readfiledatastring(filepath),aunit);
+  result:= parseunit(readfiledatastring(filepath),aunit);
   include(state,us_implementationparsed);
  end;
 end;
@@ -211,10 +223,10 @@ begin
     name:= lstringtostring(lstr1);
     filepath:= filehandler.getunitfile(lstr1);
     if filepath = '' then begin
-     identerror({info,}aindex-info.stackindex,err_cantfindunit);
+     identerror(aindex-info.stackindex,err_cantfindunit);
     end
     else begin
-     if not parseusesunit({info,}result) then begin
+     if not parseusesunit(result) then begin
       result:= nil;
      end
 {    
@@ -230,7 +242,7 @@ begin
   end
   else begin
    if not (us_interfaceparsed in result^.state) then begin
-    circularerror({info,}aindex-info.stackindex,result);
+    circularerror(aindex-info.stackindex,result);
     result:= nil;
    end;
   end;
