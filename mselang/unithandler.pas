@@ -150,18 +150,31 @@ begin
 end;
 
 procedure handleinclude();
+var
+ lstr1: lstringty;
+ filepath: filenamety;
 begin
 {$ifdef mse_debugparser}
  outhandle('INCLUDE');
 {$endif} 
 outinfo('***');
  with info do begin
+  if stringbuffer <> '' then begin
+   lstr1.po:= pointer(stringbuffer);
+   lstr1.len:= length(stringbuffer);
+   filepath:= filehandler.getincludefile(lstr1);
+   if filepath = '' then begin
+    errormessage(err_cannotfindinclude,[],stacktop-stackindex);
+   end
+   else begin
+    includefile(filepath);
+   end;
+  end;
   dec(stackindex,2);
  end;
 end;
 
-function parseusesunit({const info: pparseinfoty;}
-                              const aunit: punitinfoty): boolean;
+function parseusesunit(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
   writeln('***************************************** uses');
@@ -208,7 +221,7 @@ begin
  end;
 end;
  
-function loadunit({const info: pparseinfoty;} const aindex: integer): punitinfoty;
+function loadunit(const aindex: integer): punitinfoty;
 var
  lstr1: lstringty;
 begin
