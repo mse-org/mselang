@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,grammar,elements,handlerglob,msetypes;
+ parserglob,grammar,elements,handlerglob,msetypes,msestrings;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
@@ -40,7 +40,8 @@ type
             err_dataeletoolarge,err_highlowerlow,err_valuerange,
             err_cannotaddressconst,err_cannotderefnonpointer,
             err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
-            err_expmustbeclassorrec,err_cannotfindinclude);
+            err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
+            err_fileread);
             
  errorinfoty = record
   level: errorlevelty;
@@ -114,7 +115,9 @@ const
   (level: erl_error; message: 'Can''t take the addreess of expression'),
   (level: erl_error; message: 'Invalid dereference'),
   (level: erl_error; message: 'Expresssion type must be class or record type'),
-  (level: erl_error; message: 'Can not find include file')
+  (level: erl_fatal; message: 'Can not find include file'),
+  (level: erl_error; message: 'Too many nested include files'),
+  (level: erl_fatal; message: 'Can not read file "%s", error: %s')  
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
@@ -146,9 +149,11 @@ procedure internalerror(const id: string);
 procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 procedure rangeerror(const range: ordrangety;
                                const stackoffset: integer = minint);
+procedure filereaderror(const afile: filenamety);
+
 implementation
 uses
- msestrings,sysutils,mseformatstr,typinfo,msefileutils;
+ sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys;
 
 procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
@@ -178,8 +183,7 @@ begin
     level1:= aerrorlevel;
    end;
    inc(errors[level1]);
-   str1:= msefileutils.filename(unitinfo^.filepath)+
-      '('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+   str1:= filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
    command.writeln(str1);
    writeln('<<<<<<< '+str1);
@@ -369,6 +373,11 @@ procedure rangeerror(const range: ordrangety;
 begin
  errormessage(err_valuerange,[inttostr(range.min),
                                          inttostr(range.max)],stackoffset);
+end;
+
+procedure filereaderror(const afile: filenamety);
+begin
+ errormessage(err_fileread,[afile,sys_geterrortext(mselasterror)]);
 end;
 
 end.

@@ -35,7 +35,7 @@ function parse(const input: string; const acommand: ttextstream;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
-procedure includefile(const afilename: filenamety);
+procedure pushincludefile(const afilename: filenamety);
 
 procedure init;
 procedure deinit;
@@ -207,8 +207,8 @@ begin
      end;
     end;
 {$ifdef mse_debugparser}
-    writeln(' '+inttostr(start.line+1)+':''',psubstr(debugstart,start.po),''',''',
-                     singleline(start.po),'''');
+    writeln(' '+inttostr(start.line+1)+':''',
+             psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
 {$endif}
    end;
   end;
@@ -220,8 +220,49 @@ end;
 // todo: optimize, this is a proof of concept only
 //
 
-procedure includefile(const afilename: filenamety);
+procedure pushincludefile(const afilename: filenamety);
 begin
+ with info do begin
+  if includeindex > high(includestack) then begin
+   errormessage(err_toomanyincludes,[]);
+  end
+  else begin
+   with includestack[includeindex] do begin
+    try
+     input:= readfiledatastring(afilename);
+    except
+     filereaderror(afilename);
+     exit;
+    end;
+    sourcebefore:= source;
+    filenamebefore:= filename;
+    source.line:= 0;
+    source.po:= pchar(input);
+    filename:= msefileutils.filename(afilename);
+    debugsource:= source.po;
+   end;
+   inc(includeindex);
+  end;
+ end;
+end;
+
+function popincludefile: boolean;
+begin
+ with info do begin
+  result:= includeindex > 0;
+  if result then begin
+   dec(includeindex);
+   with includestack[includeindex] do begin
+    input:= '';
+    source:= sourcebefore;
+    filename:= filenamebefore;
+    debugsource:= source.po;
+    if source.po^ = #0 then begin
+     result:= popincludefile();
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure incstack({const info: pparseinfoty});
@@ -321,10 +362,10 @@ begin
   pb:= pc^.branch;
 {$ifdef mse_debugparser}
   if bo1 then begin
-   outinfo({info,}'^ '+pc^.caption); //push context
+   outinfo('^ '+pc^.caption); //push context
   end
   else begin
-   outinfo({info,}'> '+pc^.caption); //switch context
+   outinfo('> '+pc^.caption); //switch context
   end;
 {$endif}
   if (pc^.handleentry <> nil) then begin
@@ -345,7 +386,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
    int1:= stackindex;
    stackindex:= contextstack[stackindex].parent;
    if int1 = stackindex then begin
-    internalerror({info,}'P20140324A');
+    internalerror('P20140324A');
    end;
   end;
  end; //popparent
@@ -408,7 +449,7 @@ begin
   filename:= msefileutils.filename(unitinfo^.filepath);
   if us_interfaceparsed in unitinfo^.state then begin
    if unitinfo^.impl.sourceoffset >= length(input) then begin
-    errormessage({info,}err_filetrunc,[filename]);
+    errormessage(err_filetrunc,[filename]);
     debugsource:= source.po;
     goto parseend;
    end;
@@ -426,12 +467,25 @@ begin
   keywordindex:= 0;
   debugsource:= source.po;
 {$ifdef mse_debugparser}
-  outinfo({info,}'****');
+  outinfo('****');
 {$endif}
-  while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
-   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
+  while true do begin
+   if stackindex <= stacktopbefore then begin
+    break;
+   end;
+   if (source.po^ = #0) and not popincludefile() then begin
+    break;
+   end;
+//  while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
+   while true do begin
+    if stackindex <= stacktopbefore then begin
+     break;
+    end;
+    if (source.po^ = #0) and not popincludefile() then begin
+     break;
+    end;
+//   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
             //check context branches
-//    sourcebef:= source;
     pb:= pc^.branch;
     if pb = nil then begin
      break; //no branch
@@ -443,6 +497,9 @@ begin
     else begin
      while pb^.flags <> [] do begin
            //check match
+//      if (source.po^ = #0) and not popincludefile() then begin
+//       break;
+//      end;
       po1:= source.po;
       linebreaks:= 0;
       if bf_keyword in pb^.flags then begin
@@ -596,13 +653,13 @@ handlelab:
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser}
-     outinfo({info,}'! after0a');
+     outinfo('! after0a');
 {$endif}
      goto handlelab;    
     end;
 {$ifdef mse_debugparser}
     if not pc1^.continue and (pc^.next = nil) then begin
-     outinfo({info,}'! after0b');
+     outinfo('! after0b');
     end;
 {$endif}
    until pc1^.continue or (pc^.next <> nil) or 
@@ -648,13 +705,13 @@ handlelab:
 //    kind:= ck_none;
    end;
 {$ifdef mse_debugparser}
-   outinfo({info,}'! after1');
+   outinfo('! after1');
 {$endif}
   end;
 parseend:
 {$ifdef mse_debugparser}
   if not stopparser then begin
-   outinfo({info,}'! after2');
+   outinfo('! after2');
   end;
 {$endif}
   setlength(ops,opcount);
@@ -696,6 +753,7 @@ var
  startopcount: integer;
  po1: punitinfoty;
  unit1: punitinfoty;
+ int1: integer;
 begin
  fillchar(info,sizeof(info),0);
  unit1:= newunit('program');
@@ -717,17 +775,10 @@ begin
   setlength(ops,opcount);
   initparser();
   startopcount:= opcount;
-  result:= parseunit({info,}input,unit1);
-  {
-  inc(unitlevel);
-  while result do begin
-   po1:= nextunitimplementation;
-   if (po1 = nil) then begin
-    break;
-   end;
-   result:= parseimplementation(@info,po1);
+  result:= parseunit(input,unit1);
+  for int1:= includeindex-1 downto 0 do begin
+   system.finalize(includestack[int1]);
   end;
-  }
   if not result or (opcount = startopcount) then begin
    ops:= nil;
   end;

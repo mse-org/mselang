@@ -21,6 +21,7 @@ uses
  msestream,msestrings,msetypes;
 const
  firstident = 256;
+ includemax = 31;
 
 type
  bool8 = boolean;
@@ -527,6 +528,12 @@ type
  end;
  ppunitinfoty = ^punitinfoty;
 
+ includeinfoty = record
+  sourcebefore: sourceinfoty;
+  filenamebefore: filenamety;
+  input: string;
+ end;
+ 
  parseinfoty = record
   unitinfo: punitinfoty;
   pb: pbranchty;
@@ -563,6 +570,8 @@ type
   currentclassvislevel: vislevelty;
   currentstatementflags: statementflagsty;
   stringbuffer: string; //todo: use faster type
+  includestack: array[0..includemax] of includeinfoty;
+  includeindex: integer;
  end;
 
 const

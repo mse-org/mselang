@@ -234,7 +234,7 @@ var
                caption: 'include');
  include1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'include1');
  dumpelementsco: contextty = (branch: nil; 

@@ -125,7 +125,7 @@ include,include1,,
  @whitespace,-
  '''',string-*
  '',token*
-include1,,,handleinclude*
+include1,,,handleinclude*>
  '}',-*
  '',-
 # 

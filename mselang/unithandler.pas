@@ -167,7 +167,7 @@ outinfo('***');
     errormessage(err_cannotfindinclude,[],stacktop-stackindex);
    end
    else begin
-    includefile(filepath);
+    pushincludefile(filepath);
    end;
   end;
   dec(stackindex,2);
