@@ -530,6 +530,7 @@ type
 
  includeinfoty = record
   sourcebefore: sourceinfoty;
+  sourcestartbefore: pchar;
   filenamebefore: filenamety;
   input: string;
  end;

@@ -235,9 +235,11 @@ begin
      exit;
     end;
     sourcebefore:= source;
+    sourcestartbefore:= sourcestart;
     filenamebefore:= filename;
     source.line:= 0;
     source.po:= pchar(input);
+    sourcestart:= source.po;
     filename:= msefileutils.filename(afilename);
     debugsource:= source.po;
    end;
@@ -255,6 +257,7 @@ begin
    with includestack[includeindex] do begin
     input:= '';
     source:= sourcebefore;
+    sourcestart:= sourcestartbefore;
     filename:= filenamebefore;
     debugsource:= source.po;
     if source.po^ = #0 then begin
