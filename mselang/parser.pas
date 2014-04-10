@@ -776,9 +776,7 @@ begin
   initparser();
   startopcount:= opcount;
   result:= parseunit(input,unit1);
-  for int1:= includeindex-1 downto 0 do begin
-   system.finalize(includestack[int1]);
-  end;
+  system.finalize(info);
   if not result or (opcount = startopcount) then begin
    ops:= nil;
   end;

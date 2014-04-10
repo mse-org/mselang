@@ -82,6 +82,7 @@ type
    fscopestack: integerarty;
    fscopestackpo: integer;
    fscopestacksize: integer;
+   fdestroying: boolean;
   protected
    felementdata: string;
    fnextelement: elementoffsetty;
@@ -97,9 +98,9 @@ type
    procedure checkbuffersize; inline;
   public
 //todo: use faster calling, less parameters
-
-   constructor create;
-   procedure clear; override;
+   constructor create();
+   destructor destroy(); override;
+   procedure clear(); override;
    procedure checkcapacity(const areserve: integer);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
@@ -809,14 +810,20 @@ end;
 
 { telementhashdatalist }
 
-constructor telementhashdatalist.create;
+constructor telementhashdatalist.create();
 begin
  ffindvislevel:= vis_min;
  inherited create(sizeof(elementdataty));
  clear();
 end;
 
-procedure telementhashdatalist.clear;
+destructor telementhashdatalist.destroy;
+begin
+ fdestroying:= true;
+ inherited;
+end;
+
+procedure telementhashdatalist.clear();
 var
  int1: integer;
 begin
@@ -826,7 +833,15 @@ begin
  felementparent:= 0;
  felementpath:= 0;
  fparentlevel:= 0;
- reallocmem(fscopes,16*sizeof(fscopes));
+ if fdestroying then begin
+  if fscopes <> nil then begin
+   freemem(fscopes);
+   fscopes:= nil;
+  end;
+ end
+ else begin
+  reallocmem(fscopes,16*sizeof(fscopes));
+ end;
  fscopespo:= nil;
  fscopestack:= nil;
  fscopestackpo:= -1;
