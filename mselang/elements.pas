@@ -51,6 +51,7 @@ type
   parentlevel: integer;
   kind: elementkindty;
   visibility: visikindsty;
+  defunit: identty;
  end;
  
  elementinfoty = record
@@ -889,8 +890,9 @@ begin
      po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
      with po2^.header do begin
       if (name = aident) and (parent = felementparent) and 
-                               (visibility * avislevel <> []) and 
-                           ((akinds = []) or (kind in akinds)) then begin
+             ((visibility * avislevel <> []) or 
+          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
+                                ((akinds = []) or (kind in akinds)) then begin
        ahandler(po2,adata,result);
       end;
      end;
@@ -924,7 +926,8 @@ begin
     if (po1^.data.key = id1) then begin
      with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
       if (name = aident) and (parent = felementparent) and 
-                               (visibility * avislevel <> []) and 
+             ((visibility * avislevel <> []) or 
+          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
                            ((akinds = []) or (kind in akinds)) then begin
        break;
       end;
@@ -1104,7 +1107,8 @@ begin
         if (name = aident) and (parent = po2^.childparent) then begin
           with pelementinfoty(pointer(felementdata) +
                                 po2^.childparent)^.header do begin //parent
-          if (visibility * avislevel <> []) and 
+          if ((visibility * avislevel <> [])  or 
+          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
                              ((akinds = []) or (kind in akinds)) then begin
            aparent:= po2^.element;
            result:= true;
@@ -1357,13 +1361,18 @@ begin
   checkbuffersize;
   result:= pointer(felementdata)+ele1;
   with result^.header do begin
-//   size:= asize; //for debugging
    next:= fnextelement;
    parent:= felementparent;
    parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
    visibility:= avislevel;
+   if info.unitinfo <> nil then begin
+    defunit:= info.unitinfo^.key;
+   end
+   else begin
+    defunit:= 0;
+   end;
    kind:= akind;
   end; 
   addelement(felementpath+aname,avislevel,ele1);

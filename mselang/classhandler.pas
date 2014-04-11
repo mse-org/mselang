@@ -76,6 +76,10 @@ outinfo('***');
    internalerror('H20140325D');
    exit;
   end;
+  with contextstack[stackindex] do begin
+   d.kind:= ck_classdef;
+   d.cla.visibility:= classpublishedvisi;
+  end;
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
                   (contextstack[stackindex-1].d.kind = ck_typetype) then begin
@@ -140,7 +144,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPRIVATE');
 {$endif}
-// info.currentclassvislevel:= vic_private;
+outinfo('***');
+ with info,contextstack[stackindex] do begin
+  d.cla.visibility:= classprivatevisi;
+ end;
 end;
 
 procedure handleclassprotected();
@@ -148,7 +155,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROTECTED');
 {$endif}
-// info.currentclassvislevel:= vic_protected;
+ with info,contextstack[stackindex] do begin
+  d.cla.visibility:= classprotectedvisi;
+ end;
 end;
 
 procedure handleclasspublic();
@@ -156,7 +165,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLIC');
 {$endif}
-// info.currentclassvislevel:= vic_public;
+ with info,contextstack[stackindex] do begin
+  d.cla.visibility:= classpublicvisi;
+ end;
 end;
 
 procedure handleclasspublished();
@@ -164,7 +175,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLISHED');
 {$endif}
-// info.currentclassvislevel:= vic_published;
+ with info,contextstack[stackindex] do begin
+  d.cla.visibility:= classpublishedvisi;
+ end;
 end;
 
 procedure handleclassfield();
@@ -177,7 +190,9 @@ begin
  outhandle('CLASSFIELD');
 {$endif}
 outinfo('***');
- checkrecordfield(globalvisi);
+ with info,contextstack[stackindex-1] do begin
+  checkrecordfield(d.cla.visibility);
+ end;
  {
  with info do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
