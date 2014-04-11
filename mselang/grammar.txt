@@ -336,7 +336,7 @@ gettype,,,*^
 # @identstart,simpletype^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
- 'class'.,classdef-,classdefreturn
+ 'class'.,classdef-^*
  '',simpletype^*
 # '',identexpected
 #
@@ -388,8 +388,7 @@ getrange3,,,handlerange3^
  '',exp^*
 
 #
-classdef,classdef0,handleclassdefstart,
-classdef0,classdeferror,,
+classdef,classdeferror,handleclassdefstart,
  ${whitespace}
  'private'.,!handleclassprivate-
  'protected'.,!handleclassprotected-
@@ -398,7 +397,7 @@ classdef0,classdeferror,,
  @identstart,classfield^*
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^
-classdefreturn,type3,handleclassdefreturn,*
+classdefreturn,,handleclassdefreturn,*^
 classfield,,,handleclassfield^*>
  '',vardef^*
 #

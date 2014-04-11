@@ -113,7 +113,7 @@ object mainfo: tmainfo
   object coldi: tintegerdisp
     frame.dummy = 0
     taborder = 4
-    bounds_x = 208
+    bounds_x = 16
     bounds_y = 8
     bounds_cx = 52
     bounds_cy = 18
@@ -144,9 +144,9 @@ object mainfo: tmainfo
   object filena: tfilenameedit
     frame.button.imagenr = 17
     taborder = 7
-    bounds_x = 264
+    bounds_x = 72
     bounds_y = 7
-    bounds_cx = 196
+    bounds_cx = 388
     anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]

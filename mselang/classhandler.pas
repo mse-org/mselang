@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,19 @@ interface
 uses
  parserglob;
 
-procedure handleclassdefstart({const info: pparseinfoty});
-procedure handleclassdeferror({const info: pparseinfoty});
-procedure handleclassdefreturn({const info: pparseinfoty});
-procedure handleclassprivate({const info: pparseinfoty});
-procedure handleclassprotected({const info: pparseinfoty});
-procedure handleclasspublic({const info: pparseinfoty});
-procedure handleclasspublished({const info: pparseinfoty});
-procedure handleclassfield({const info: pparseinfoty});
+procedure handleclassdefstart();
+procedure handleclassdeferror();
+procedure handleclassdefreturn();
+procedure handleclassprivate();
+procedure handleclassprotected();
+procedure handleclasspublic();
+procedure handleclasspublished();
+procedure handleclassfield();
 
 implementation
 uses
- elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils;
+ elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
+ parser,typehandler;
 
 const
  vic_private = vis_3;
@@ -39,7 +40,7 @@ const
  vic_public = vis_1;
  vic_published = vis_0;
  
-procedure classesscopeset({const info: pparseinfoty});
+procedure classesscopeset();
 var
  po2: pclassesdataty;
 begin
@@ -49,7 +50,7 @@ begin
  ele.elementparent:= info.unitinfo^.classeselement;
 end;
 
-procedure classesscopereset({const info: pparseinfoty});
+procedure classesscopereset();
 var
  po2: pclassesdataty;
 begin
@@ -58,105 +59,142 @@ begin
  ele.elementparent:= po2^.scopebefore;
 end;
 
-procedure handleclassdefstart({const info: pparseinfoty});
+procedure handleclassdefstart();
 var
  po1: ptypedataty;
  po2: pclassdataty;
  po3: pvisibledataty;
  id1: identty;
+
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSDEFSTART');
+ outhandle('CLASSDEFSTART');
 {$endif}
+outinfo('***');
  with info do begin
-  id1:= contextstack[stacktop].d.ident.ident;
+  if stackindex < 3 then begin
+   internalerror('H20140325D');
+   exit;
+  end;
+  with contextstack[stackindex-2] do begin
+   if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+    id1:= d.ident.ident; //typedef
+   end
+   else begin
+    errormessage(err_anonclassdef,[]);
+    exit;
+   end;
+  end;
+  contextstack[stackindex].elemark:= ele.elementparent;
+  with contextstack[stackindex-1] do begin
+   if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
+    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   end;
+  end;
+{
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
-   identerror({info,}stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
   end
   else begin
-   classesscopeset({info});
+   classesscopeset();
    ele.pushelement(id1,vis_max,ek_class,po2);
    currentclass:= ele.eledatarel(po2);
    currentclassvislevel:= vic_published; //default
   end;
+ }
  end;
 end;
 
-procedure handleclassdefreturn({const info: pparseinfoty});
+procedure handleclassdefreturn();
 var
  po2: pclassesdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSDEFRETURN');
+ outhandle('CLASSDEFRETURN');
 {$endif}
-// ele.popelement;
- classesscopereset({info});
+outinfo('***');
+// classesscopereset();
+ with info do begin
+  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
+                                                d.typ.typedata))^ do begin
+   kind:= dk_class;
+   datasize:= das_pointer;
+   bytesize:= pointersize;
+   bitsize:= pointersize*8;
+   indirectlevel:= d.typ.indirectlevel;
+  end;
+ end;
 end;
 
-procedure handleclassdeferror({const info: pparseinfoty});
+procedure handleclassdeferror();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSDEFERROR');
+ outhandle('CLASSDEFERROR');
 {$endif}
- tokenexpectederror({info,}tk_end);
+ tokenexpectederror(tk_end);
 end;
 
-procedure handleclassprivate({const info: pparseinfoty});
+procedure handleclassprivate();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSPRIVATE');
+ outhandle('CLASSPRIVATE');
 {$endif}
  info.currentclassvislevel:= vic_private;
 end;
 
-procedure handleclassprotected({const info: pparseinfoty});
+procedure handleclassprotected();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSPROTECTED');
+ outhandle('CLASSPROTECTED');
 {$endif}
  info.currentclassvislevel:= vic_protected;
 end;
 
-procedure handleclasspublic({const info: pparseinfoty});
+procedure handleclasspublic();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSPUBLIC');
+ outhandle('CLASSPUBLIC');
 {$endif}
  info.currentclassvislevel:= vic_public;
 end;
 
-procedure handleclasspublished({const info: pparseinfoty});
+procedure handleclasspublished();
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSPUBLISHED');
+ outhandle('CLASSPUBLISHED');
 {$endif}
  info.currentclassvislevel:= vic_published;
 end;
 
-procedure handleclassfield({const info: pparseinfoty});
+procedure handleclassfield();
 var
  po1: pvardataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
- outhandle({info,}'CLASSFIELD');
+ outhandle('CLASSFIELD');
 {$endif}
+outinfo('***');
+ checkrecordfield(vis_max);
+ {
  with info do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,
        currentclassvislevel,ek_var,po1);
   if po1 = nil then begin
-   identerror({info,}2,err_duplicateidentifier);   
+   identerror(2,err_duplicateidentifier);   
   end;
   ele1:= ele.elementparent;
-  classesscopereset({info});
-  if findkindelementsdata({info,}3,[ek_type],vis_max,po2) then begin
+  classesscopereset();
+  if findkindelementsdata(3,[ek_type],vis_max,po2) then begin
   end
   else begin
-   identerror({info,}stacktop-stackindex,err_identifiernotfound);
+   identerror(stacktop-stackindex,err_identifiernotfound);
   end;
   ele.elementparent:= ele1;
  end;
+ }
 end;
 
 end.

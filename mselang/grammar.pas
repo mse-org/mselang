@@ -707,11 +707,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdef');
- classdef0co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'classdef0');
  classdeferrorco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -719,8 +714,8 @@ var
                caption: 'classdeferror');
  classdefreturnco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'classdefreturn');
  classfieldco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -2881,8 +2876,8 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @arraydefco); stack: nil; 
      keyword: $C66EDD6E{'array'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @classdefco); stack: @classdefreturnco; 
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @classdefco); stack: nil; 
      keyword: $8CDDBADC{'class'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -3305,7 +3300,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef0: array[0..10] of branchty = (
+ bclassdef: array[0..10] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $19BB75B9{'private'}),
@@ -4729,15 +4724,12 @@ begin
  getrange1co.handleexit:= @handlerange1;
  getrange3co.branch:= @bgetrange3;
  getrange3co.handleexit:= @handlerange3;
- classdefco.branch:= nil;
- classdefco.next:= @classdef0co;
+ classdefco.branch:= @bclassdef;
+ classdefco.next:= @classdeferrorco;
  classdefco.handleentry:= @handleclassdefstart;
- classdef0co.branch:= @bclassdef0;
- classdef0co.next:= @classdeferrorco;
  classdeferrorco.branch:= nil;
  classdeferrorco.handleentry:= @handleclassdeferror;
  classdefreturnco.branch:= nil;
- classdefreturnco.next:= @type3co;
  classdefreturnco.handleentry:= @handleclassdefreturn;
  classfieldco.branch:= @bclassfield;
  classfieldco.handleexit:= @handleclassfield;

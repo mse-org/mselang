@@ -41,7 +41,9 @@ procedure handlearrayindexerror2();
 
 procedure handleindexstart();
 procedure handleindex();
-procedure closesquarebracketexpected;
+procedure closesquarebracketexpected();
+
+procedure checkrecordfield(const avisibility: vislevelty);
 
 implementation
 uses
@@ -211,7 +213,6 @@ outinfo('***');
   end;
   contextstack[stackindex].elemark:= ele.elementparent;
   with contextstack[stackindex-1] do begin
-//   kind:= ck_type;
    if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
@@ -229,16 +230,12 @@ begin
  end;
 end;
 
-procedure handlerecordfield();
+procedure checkrecordfield(const avisibility: vislevelty);
 var
  po1: pfielddataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
 begin
-{$ifdef mse_debugparser}
- outhandle('RECORDFIELD');
-{$endif}
-outinfo('***');
  with info do begin
   if (stacktop-stackindex < 3) or 
             (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
@@ -246,7 +243,7 @@ outinfo('***');
    exit;
   end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
-                                           vis_max,ek_field,po1) then begin
+                                           avisibility,ek_field,po1) then begin
    ele1:= ele.elementparent;
               //???? not used
    ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
@@ -266,6 +263,15 @@ outinfo('***');
    stacktop:= stackindex-1;
   end;
  end;
+end;
+
+procedure handlerecordfield();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RECORDFIELD');
+{$endif}
+outinfo('***');
+ checkrecordfield(vis_max);
 end;
 
 procedure handlerecordtype();
