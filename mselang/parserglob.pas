@@ -60,15 +60,24 @@ const
 type
  datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                das_33_63,das_64,das_pointer);
- vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
+
+ visikindty = (vik_global,vik_sameunit);
+ visikindsty = set of visikindty;
+ 
+// vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
 
  indexty = integer;
  linkindexty = indexty;
  forwardindexty = indexty;
 
 const
- vis_max = vis_0;
- vis_min = vis_9;
+// vis_max = vis_0;
+// vis_min = vis_9;
+ nonevisi = [];
+ allvisi = [vik_global,vik_sameunit];
+ globalvisi = [vik_global];
+ implementationvisi = [vik_sameunit];
+ 
  defaultstackdepht = 256;
  defaultconstsegsize = 256;
  branchkeymaxcount = 4;
@@ -568,7 +577,8 @@ type
   locdatapo: ptruint;
   frameoffset: ptruint;
   currentclass: elementoffsetty;
-  currentclassvislevel: vislevelty;
+//  currentclassvislevel: vislevelty;
+  currentclassvislevel: visikindsty;
   currentstatementflags: statementflagsty;
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;

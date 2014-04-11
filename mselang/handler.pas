@@ -1281,7 +1281,7 @@ outinfo('***');
   case contextstack[stackindex-1].d.kind of
    ck_getfact: begin
     if findkindelements(1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
-                                  vis_max,po1,lastident,idents) then begin
+                                    allvisi,po1,lastident,idents) then begin
      paramco:= stacktop-stackindex-2-idents.high;
      if paramco < 0 then begin
       paramco:= 0; //no paramsend context
@@ -1297,7 +1297,7 @@ outinfo('***');
          if lastident < idents.high then begin
           for int1:= lastident+1 to idents.high do begin //fields
            if not ele.findchild(ele1,idents.d[int1],[ek_field],
-                                                       vis_max,ele1) then begin
+                                                       allvisi,ele1) then begin
             identerror(1+int1,err_identifiernotfound);
             goto endlab;
            end;
@@ -1482,7 +1482,7 @@ outinfo('***');
           goto endlab;
          end;
          if not ele.findchild(ele1,d.ident.ident,[ek_field],
-                                                     vis_max,ele1) then begin
+                                                     allvisi,ele1) then begin
           identerror(int1-stackindex,err_identifiernotfound);
           goto endlab;
          end;
@@ -1774,7 +1774,7 @@ outinfo('***');
     errormessage(err_constexpressionexpected,[],stacktop-stackindex);
    end
    else begin
-    if not ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,
+    if not ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,
                   ek_const,po1) then begin
      identerror(1,err_duplicateidentifier);
     end
@@ -1832,7 +1832,7 @@ outinfo('***');
    internalerror('H20140325B');
    exit;
   end;
-  po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,vis_max,ek_var);
+  po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,ek_var);
   if po1 = nil then begin //duplicate
    identerror(1,err_duplicateidentifier);
   end
@@ -2648,7 +2648,7 @@ outinfo('****');
   eledatabase:= ele.eledataoffset();
   po1:= addr(ele.pushelementduplicate(
                       contextstack[stackindex+1].d.ident.ident,
-                      vis_max,ek_sub,paramco*sizeof(pvardataty))^.data);
+                      allvisi,ek_sub,paramco*sizeof(pvardataty))^.data);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.nestinglevel:= funclevel;
@@ -2660,7 +2660,7 @@ outinfo('****');
   for int2:= 0 to paramco-1 do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
-    if ele.addelement(d.ident.ident,vis_max,ek_var,po2) then begin
+    if ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
      with contextstack[int1+stackindex+1] do begin
       if d.kind = ck_fieldtype then begin
@@ -2742,7 +2742,7 @@ outinfo('****');
    match:= nil;
   end;                                    
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                            vis_max,@checkequalparam,paramdata) then begin
+                            allvisi,@checkequalparam,paramdata) then begin
    err1:= true;
    errormessage(err_sameparamlist,[]);
   end;
@@ -2752,7 +2752,7 @@ outinfo('****');
     ele.decelementparent; //interface
     paramdata.match:= nil;
     if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                                vis_max,@checkequalparam,paramdata) then begin
+                                allvisi,@checkequalparam,paramdata) then begin
      with paramdata.match^ do begin
       forwardresolve(mark);
       impl:= ele.eledatarel(po1);

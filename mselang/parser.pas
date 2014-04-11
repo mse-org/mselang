@@ -779,12 +779,12 @@ begin
   initparser();
   startopcount:= opcount;
   result:= parseunit(input,unit1);
-  system.finalize(info);
   if not result or (opcount = startopcount) then begin
    ops:= nil;
   end;
   aopcode:= ops; 
   aconstseg:= constseg;
+  system.finalize(info);
  end;
 end;
 

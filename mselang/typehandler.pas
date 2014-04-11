@@ -43,7 +43,7 @@ procedure handleindexstart();
 procedure handleindex();
 procedure closesquarebracketexpected();
 
-procedure checkrecordfield(const avisibility: vislevelty);
+procedure checkrecordfield(const avisibility: visikindsty);
 
 implementation
 uses
@@ -111,14 +111,14 @@ outinfo('***');
    internalerror('H20140325A');
    exit;
   end;
-  if findkindelements(1,[ek_type],vis_max,po2) then begin
+  if findkindelements(1,[ek_type],allvisi,po2) then begin
 //   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
 //   d.typ.indirectlevel:= 0;
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[stackindex-3];
     if idcontext^.d.kind = ck_ident then begin
-     po1:= ele.addelement(idcontext^.d.ident.ident,vis_max,ek_type);
+     po1:= ele.addelement(idcontext^.d.ident.ident,allvisi,ek_type);
      if po1 <> nil then begin
       ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
       inc(ptypedataty(@po1^.data)^.indirectlevel,d.typ.indirectlevel);
@@ -162,7 +162,7 @@ outinfo('***');
     end;
    end;
    with contextstack[stackindex-1] do begin
-    if ele.addelement(id1,vis_max,ek_type,po1) then begin
+    if ele.addelement(id1,allvisi,ek_type,po1) then begin
      d.typ.typedata:= ele.eledatarel(po1);
      with po1^ do begin
       //todo: check datasize
@@ -213,7 +213,7 @@ outinfo('***');
   end;
   contextstack[stackindex].elemark:= ele.elementparent;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
+   if not ele.pushelement(id1,allvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
   end;
@@ -230,7 +230,7 @@ begin
  end;
 end;
 
-procedure checkrecordfield(const avisibility: vislevelty);
+procedure checkrecordfield(const avisibility: visikindsty);
 var
  po1: pfielddataty;
  po2: ptypedataty;
@@ -271,7 +271,7 @@ begin
  outhandle('RECORDFIELD');
 {$endif}
 outinfo('***');
- checkrecordfield(vis_max);
+ checkrecordfield(allvisi);
 end;
 
 procedure handlerecordtype();
@@ -465,7 +465,7 @@ outinfo('****');
      else begin
       id1:= getident(); //multi dimension
      end;
-     if not ele.addelement(id1,vis_max,ek_type,arty) then begin
+     if not ele.addelement(id1,allvisi,ek_type,arty) then begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;

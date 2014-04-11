@@ -81,25 +81,25 @@ procedure outcommand({const info: pparseinfoty;} const items: array of integer;
                      const text: string);
  
 function findkindelementdata(const aident: contextdataty;
-              const akinds: elementkindsty; const visibility: vislevelty;
+              const akinds: elementkindsty; const visibility: visikindsty;
                                     out ainfo: pointer): boolean;
 function findkindelements({const info: pparseinfoty;}
            const astackoffset: integer; const akinds: elementkindsty; 
-           const visibility: vislevelty; out aelement: pelementinfoty;
+           const visibility: visikindsty; out aelement: pelementinfoty;
            out lastident: integer; out idents: identvecty): boolean;
 function findkindelements({const info: pparseinfoty;}
            const astackoffset: integer; const akinds: elementkindsty; 
-           const visibility: vislevelty; out aelement: pelementinfoty): boolean;
+           const visibility: visikindsty; out aelement: pelementinfoty): boolean;
 function findkindelementsdata({const info: pparseinfoty;}
               const astackoffset: integer; const akinds: elementkindsty;
-              const visibility: vislevelty; out ainfo: pointer;
+              const visibility: visikindsty; out ainfo: pointer;
               out lastident: integer; out idents: identvecty): boolean;
 function findkindelementsdata({const info: pparseinfoty;}
               const astackoffset: integer; const akinds: elementkindsty;
-              const visibility: vislevelty; out ainfo: pointer): boolean;
+              const visibility: visikindsty; out ainfo: pointer): boolean;
 
 function findvar({const info: pparseinfoty;} const astackoffset: integer; 
-        const visibility: vislevelty; out varinfo: vardestinfoty): boolean;
+        const visibility: visikindsty; out varinfo: vardestinfoty): boolean;
 
 procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
@@ -172,7 +172,7 @@ end;
 
 function findkindelementdata(const aident: contextdataty;
               const akinds: elementkindsty;
-              const visibility: vislevelty; out ainfo: pointer): boolean;
+              const visibility: visikindsty; out ainfo: pointer): boolean;
 var
  po1: pelementinfoty;
  ele1: elementoffsetty;
@@ -190,7 +190,7 @@ end;
 function findkindelementdata({const info: pparseinfoty;}
               const astackoffset: integer;
               const akinds: elementkindsty;
-              const visibility: vislevelty; out ainfo: pointer): boolean;
+              const visibility: visikindsty; out ainfo: pointer): boolean;
 begin
  with info do begin
   result:= findkindelementdata(contextstack[stackindex+astackoffset].d,
@@ -228,7 +228,7 @@ end;
 
 function findkindelements(const astackoffset: integer;
             const akinds: elementkindsty; 
-            const visibility: vislevelty;
+            const visibility: visikindsty;
             out aelement: pelementinfoty;
             out lastident: integer; out idents: identvecty): boolean;
 var
@@ -277,7 +277,7 @@ end;
 
 function findkindelements(const astackoffset: integer;
            const akinds: elementkindsty; 
-           const visibility: vislevelty; out aelement: pelementinfoty): boolean;
+           const visibility: visikindsty; out aelement: pelementinfoty): boolean;
 var
  idents: identvecty;
  lastident: integer;
@@ -334,7 +334,7 @@ end;
 
 function findkindelementsdata({const info: pparseinfoty;}
              const astackoffset: integer;
-             const akinds: elementkindsty; const visibility: vislevelty; 
+             const akinds: elementkindsty; const visibility: visikindsty; 
              out ainfo: pointer; out lastident: integer;
              out idents: identvecty): boolean;
 begin
@@ -347,7 +347,7 @@ end;
 
 function findkindelementsdata({const info: pparseinfoty;}
              const astackoffset: integer;
-             const akinds: elementkindsty; const visibility: vislevelty; 
+             const akinds: elementkindsty; const visibility: visikindsty; 
              out ainfo: pointer): boolean;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,ainfo);
@@ -357,7 +357,7 @@ begin
 end;
 
 function findvar({const info: pparseinfoty;} const astackoffset: integer; 
-                   const visibility: vislevelty;
+                   const visibility: visikindsty;
                            out varinfo: vardestinfoty): boolean;
 var
  idents,types: identvecty;	
@@ -949,7 +949,7 @@ var
 begin
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_type);
+   po1:= ele.addelement(getident(name),globalvisi,ek_type);
    po2:= @po1^.data;
    po2^:= data;
   end;
@@ -958,7 +958,7 @@ begin
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_const);
+   po1:= ele.addelement(getident(name),globalvisi,ek_const);
    with pconstdataty(@po1^.data)^ do begin
     val.d:= cval;
     val.typ:= sysdatatypes[ctyp];
@@ -967,7 +967,7 @@ begin
  end;
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= ele.addelement(getident(name),vis_max,ek_sysfunc);
+   po1:= ele.addelement(getident(name),globalvisi,ek_sysfunc);
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;

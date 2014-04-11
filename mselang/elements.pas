@@ -50,7 +50,7 @@ type
   parent: elementoffsetty; //offset in data array
   parentlevel: integer;
   kind: elementkindty;
-  vislevel: vislevelty;
+  visibility: visikindsty;
  end;
  
  elementinfoty = record
@@ -75,7 +75,7 @@ type
  
  telementhashdatalist = class(thashdatalist)
   private
-   ffindvislevel: vislevelty;
+   ffindvislevel: visikindsty;
    fscopes: pointer;
    fscopespo: pscopeinfoty;
    fscopesend: pointer;
@@ -92,7 +92,7 @@ type
    fparentlevel: integer;
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
-   procedure addelement(const aident: identty; const avislevel: vislevelty;
+   procedure addelement(const aident: identty; const avislevel: visikindsty;
                                               const aelement: elementoffsetty);
    procedure setelementparent(const element: elementoffsetty);
    procedure checkbuffersize; inline;
@@ -104,18 +104,18 @@ type
    procedure checkcapacity(const areserve: integer);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
-                 const avislevel: vislevelty; const ahandler: elehandlerprocty;
+                 const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
-            const avislevel: vislevelty; out element: elementoffsetty): boolean;
+            const avislevel: visikindsty; out element: elementoffsetty): boolean;
                   //searches in current scope
    function findupward(const aident: identty; const akinds: elementkindsty;
-                  const avislevel: vislevelty;
+                  const avislevel: visikindsty;
                   out element: elementoffsetty): boolean; overload;
                   //searches in current scope and above
    function findupward(const aidents: identvecty;
                       const akinds: elementkindsty;
-                      const avislevel: vislevelty;
+                      const avislevel: visikindsty;
                       out element: elementoffsetty;
                       out lastident: integer): boolean; overload;
                   //searches in current scope and above, -1 if not found
@@ -123,10 +123,10 @@ type
                   //akinds <> []
    function findchild(const aparent: elementoffsetty; 
                  const achild: elementoffsetty; const akinds: elementkindsty;
-                 const avislevel: vislevelty; 
+                 const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
-            const avislevel: vislevelty; out aparent: elementoffsetty): boolean;
+            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
                   //searches in scopestack, returns parent
 
    function eleoffset: ptruint; inline;
@@ -141,28 +141,28 @@ type
    function dumppath(const aelement: pelementinfoty): msestring;
   {$endif}
    function pushelementduplicate(const aname: identty;
-                  const avislevel: vislevelty; const akind: elementkindty;
+                  const avislevel: visikindsty; const akind: elementkindty;
                                   const sizeextend: integer): pelementinfoty;
-   function pushelement(const aname: identty; const avislevel: vislevelty;
+   function pushelement(const aname: identty; const avislevel: visikindsty;
                   const akind: elementkindty{;
                   const asize: integer}): pelementinfoty; //nil if duplicate
-   function pushelement(const aname: identty; const avislevel: vislevelty;
+   function pushelement(const aname: identty; const avislevel: visikindsty;
                   const akind: elementkindty;                  
                   {const asize: integer;} out aelementdata: pointer): boolean;
                                                        //false if duplicate
-   function pushelement(const aname: identty; const avislevel: vislevelty;
+   function pushelement(const aname: identty; const avislevel: visikindsty;
                 const akind: elementkindty;                  
                 const sizeextend: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
-   function pushelement(const aname: identty; const avislevel: vislevelty;
+   function pushelement(const aname: identty; const avislevel: visikindsty;
                   const akind: elementkindty;                  
            {const asize: integer;} out aelementdata: elementoffsetty): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
-   function addelement(const aname: identty; const avislevel: vislevelty;
+   function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty{;
               const asize: integer}): pelementinfoty;   //nil if duplicate
-   function addelement(const aname: identty; const avislevel: vislevelty;
+   function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty;
               {const asize: integer;} out aelementdata: pointer): boolean;
                                                        //false if duplicate
@@ -177,7 +177,7 @@ type
    procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
-   property findvislevel: vislevelty read ffindvislevel write ffindvislevel;
+   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
  
 procedure clear;
@@ -678,7 +678,7 @@ var
 begin
  clear;
 // ele.pushelement(getident(''),vis_max,ek_none); //root
- ele.pushelement(0,vis_max,ek_none); //root
+ ele.pushelement(0,globalvisi,ek_none); //root
  stringident:= idstart; //invalid
  nextident;
  for tk1:= 1 to high(tokens) do begin
@@ -812,7 +812,7 @@ end;
 
 constructor telementhashdatalist.create();
 begin
- ffindvislevel:= vis_min;
+ ffindvislevel:= nonevisi;
  inherited create(sizeof(elementdataty));
  clear();
 end;
@@ -859,7 +859,7 @@ begin
 end;
 
 procedure telementhashdatalist.addelement(const aident: identty;
-               const avislevel: vislevelty; const aelement: elementoffsetty);
+               const avislevel: visikindsty; const aelement: elementoffsetty);
 begin
 // with pelementhashdataty(internaladdhash(scramble1(aident)))^.data do begin
  with pelementhashdataty(internaladdhash(aident))^.data do begin
@@ -870,7 +870,7 @@ end;
 
 function telementhashdatalist.forallcurrent(const aident: identty;
                  const akinds: elementkindsty;
-                 const avislevel: vislevelty; const ahandler: elehandlerprocty;
+                 const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
 var
  uint1: ptruint;
@@ -889,7 +889,7 @@ begin
      po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
      with po2^.header do begin
       if (name = aident) and (parent = felementparent) and 
-                               (vislevel <= avislevel) and 
+                               (visibility * avislevel <> []) and 
                            ((akinds = []) or (kind in akinds)) then begin
        ahandler(po2,adata,result);
       end;
@@ -905,7 +905,7 @@ begin
 end;
 
 function telementhashdatalist.findcurrent(const aident: identty;
-              const akinds: elementkindsty; const avislevel: vislevelty;
+              const akinds: elementkindsty; const avislevel: visikindsty;
                                         out element: elementoffsetty): boolean;
 var
  uint1: ptruint;
@@ -924,7 +924,7 @@ begin
     if (po1^.data.key = id1) then begin
      with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
       if (name = aident) and (parent = felementparent) and 
-                               (vislevel <= avislevel) and 
+                               (visibility * avislevel <> []) and 
                            ((akinds = []) or (kind in akinds)) then begin
        break;
       end;
@@ -943,7 +943,7 @@ end;
 
 function telementhashdatalist.findupward(const aident: identty;
           const akinds: elementkindsty;
-          const avislevel: vislevelty; out element: elementoffsetty): boolean;
+          const avislevel: visikindsty; out element: elementoffsetty): boolean;
 var
  parentbefore: elementoffsetty;
  pathbefore: identty;
@@ -968,7 +968,7 @@ begin
 end;
 
 function telementhashdatalist.findupward(const aidents: identvecty;
-              const akinds: elementkindsty; const avislevel: vislevelty;
+              const akinds: elementkindsty; const avislevel: visikindsty;
               out element: elementoffsetty;
               out lastident: integer): boolean;
 //todo: optimize
@@ -1066,7 +1066,7 @@ end;
 
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
            const achild: elementoffsetty; const akinds: elementkindsty;
-           const avislevel: vislevelty; out element: elementoffsetty): boolean;
+           const avislevel: visikindsty; out element: elementoffsetty): boolean;
 //todo: optimize
 var 
  ele1: elementoffsetty;
@@ -1078,7 +1078,7 @@ begin
 end;
 
 function telementhashdatalist.findparentscope(const aident: identty;
-               const akinds: elementkindsty; const avislevel: vislevelty;
+               const akinds: elementkindsty; const avislevel: visikindsty;
                out aparent: elementoffsetty): boolean;
 var
  uint1: ptruint;
@@ -1104,7 +1104,7 @@ begin
         if (name = aident) and (parent = po2^.childparent) then begin
           with pelementinfoty(pointer(felementdata) +
                                 po2^.childparent)^.header do begin //parent
-          if (vislevel <= avislevel) and 
+          if (visibility * avislevel <> []) and 
                              ((akinds = []) or (kind in akinds)) then begin
            aparent:= po2^.element;
            result:= true;
@@ -1158,7 +1158,8 @@ begin
             ' P:'+inttostr(po1^.header.parent)+' N:$'+
             hextostr(po1^.header.name,8)+' '+
             ' '+identlist.identname(po1^.header.name) + 
-            ' V:'+inttostr(ord(po1^.header.vislevel))+' '+
+             ' V:'+settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
+                                 integer(po1^.header.visibility),false)+' '+
             getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
   case po1^.header.kind of
    ek_var: begin
@@ -1261,7 +1262,7 @@ begin
 end;
 
 function telementhashdatalist.pushelementduplicate(const aname: identty;
-                  const avislevel: vislevelty;
+                  const avislevel: visikindsty;
                   const akind: elementkindty;
                   const sizeextend: integer): pelementinfoty;
 var
@@ -1277,7 +1278,7 @@ begin
   parentlevel:= fparentlevel;
   path:= felementpath;
   name:= aname;
-  vislevel:= avislevel;
+  visibility:= avislevel;
   kind:= akind;
  end;
  felementparent:= ele1;
@@ -1287,7 +1288,7 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-             const avislevel: vislevelty;
+             const avislevel: visikindsty;
              const akind: elementkindty): pelementinfoty;
 var
  ele1: elementoffsetty;
@@ -1299,7 +1300,7 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-           const avislevel: vislevelty; const akind: elementkindty;
+           const avislevel: visikindsty; const akind: elementkindty;
                    out aelementdata: pointer): boolean; //false if duplicate
 begin
  aelementdata:= pushelement(aname,avislevel,akind);
@@ -1310,7 +1311,7 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-           const avislevel: vislevelty; const akind: elementkindty;
+           const avislevel: visikindsty; const akind: elementkindty;
            out aelementdata: elementoffsetty): boolean;
                                                     //false if duplicate
 var
@@ -1324,7 +1325,7 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-                  const avislevel: vislevelty;
+                  const avislevel: visikindsty;
        const akind: elementkindty;                  
        const sizeextend: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
@@ -1340,7 +1341,7 @@ begin
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
-              const avislevel: vislevelty;
+              const avislevel: visikindsty;
               const akind: elementkindty): pelementinfoty;   
                                                    //nil if duplicate
 var
@@ -1362,7 +1363,7 @@ begin
    parentlevel:= fparentlevel;
    path:= felementpath;
    name:= aname;
-   vislevel:= avislevel;
+   visibility:= avislevel;
    kind:= akind;
   end; 
   addelement(felementpath+aname,avislevel,ele1);
@@ -1371,7 +1372,7 @@ begin
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
-           const avislevel: vislevelty; const akind: elementkindty;
+           const avislevel: visikindsty; const akind: elementkindty;
            out aelementdata: pointer): boolean;
                                                     //false if duplicate
 begin
@@ -1572,7 +1573,7 @@ begin
    fscopespo:= fscopes + int1;
   end;
  end;
- result:= addelement(getident(),vis_max,akind);
+ result:= addelement(getident(),globalvisi,akind);
  if result = nil then begin
   internalerror('F20140407B'); //duplicate id
   exit;

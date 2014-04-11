@@ -33,13 +33,13 @@ implementation
 uses
  elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
  parser,typehandler;
-
+{
 const
  vic_private = vis_3;
  vic_protected = vis_2;
  vic_public = vis_1;
  vic_published = vis_0;
- 
+}
 procedure classesscopeset();
 var
  po2: pclassesdataty;
@@ -88,7 +88,7 @@ outinfo('***');
   end;
   contextstack[stackindex].elemark:= ele.elementparent;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelement(id1,vis_max,ek_type,d.typ.typedata) then begin
+   if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
   end;
@@ -140,7 +140,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPRIVATE');
 {$endif}
- info.currentclassvislevel:= vic_private;
+// info.currentclassvislevel:= vic_private;
 end;
 
 procedure handleclassprotected();
@@ -148,7 +148,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROTECTED');
 {$endif}
- info.currentclassvislevel:= vic_protected;
+// info.currentclassvislevel:= vic_protected;
 end;
 
 procedure handleclasspublic();
@@ -156,7 +156,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLIC');
 {$endif}
- info.currentclassvislevel:= vic_public;
+// info.currentclassvislevel:= vic_public;
 end;
 
 procedure handleclasspublished();
@@ -164,7 +164,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLISHED');
 {$endif}
- info.currentclassvislevel:= vic_published;
+// info.currentclassvislevel:= vic_published;
 end;
 
 procedure handleclassfield();
@@ -177,7 +177,7 @@ begin
  outhandle('CLASSFIELD');
 {$endif}
 outinfo('***');
- checkrecordfield(vis_max);
+ checkrecordfield(globalvisi);
  {
  with info do begin
   ele.addelement(contextstack[stackindex+2].d.ident.ident,

@@ -96,12 +96,12 @@ begin
    identerror(1,err_illegalunitname);
   end
   else begin
-   if not ele.pushelement(id1,vis_max,ek_unit,po1) then begin
+   if not ele.pushelement(id1,globalvisi,ek_unit,po1) then begin
     internalerror('U131018A');
    end;
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
-    po2:= ele.addelement(tks_classes,vis_max,ek_classes);
+    po2:= ele.addelement(tks_classes,globalvisi,ek_classes);
     classeselement:= ele.eleinforel(po2);
    end;
   end;
@@ -141,7 +141,7 @@ begin
   end
   else begin
    include(unitinfo^.state,us_implementation);
-   if not ele.pushelement(ord(tk_implementation),vis_max,
+   if not ele.pushelement(ord(tk_implementation),implementationvisi,
                                     ek_implementation,po1) then begin
     internalerror('U20131130A');
    end;
