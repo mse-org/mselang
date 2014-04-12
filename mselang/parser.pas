@@ -404,6 +404,7 @@ var
  linebreaks: integer;
  
  sourcebefore: sourceinfoty;
+ filenamebefore: filenamety;
  sourcestartbefore: pchar;
  stackindexbefore: integer;
  stacktopbefore: integer;
@@ -421,6 +422,7 @@ begin
  eleparentbefore:= ele.elementparent;
  ele.elementparent:= 0; //root
  with info do begin
+  filenamebefore:= filename;
   sourcebefore:= source;
 //  sourcebefbefore:= sourcebef;
  {$ifdef mse_debugparser}
@@ -731,6 +733,7 @@ parseend:
   stackindex:= stackindexbefore;
   stacktop:= stacktopbefore;
   unitinfo:= unitinfobefore;
+  filename:= filenamebefore;
   pc:= pcbefore;
   stopparser:= stopparserbefore;
   dec(unitlevel);

@@ -54,7 +54,11 @@ var
 implementation
 uses
  main_mfm,msestream,stackops,parser;
-
+{
+procedure integer.parseex(const sender: TObject);
+begin
+end;
+}
 procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: opinfoarty;

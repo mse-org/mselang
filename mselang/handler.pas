@@ -120,6 +120,7 @@ procedure handlefunctionentry();
 procedure handleprocedureentry();
 
 procedure checkfunctiontype();
+procedure handleprocedure1entry();
 procedure handleprocedure3();
 procedure handleprocedure5a();
 procedure handleprocedure6();
@@ -2602,6 +2603,43 @@ outinfo('****');
   end;
  end;
 outinfo('****');
+end;
+
+procedure handleprocedure1entry();
+var
+ int1: integer;
+ ele1: elementoffsetty;
+ po1: pelementinfoty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROCEDURE1ENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex] do begin
+  int1:= stacktop-stackindex; 
+  if int1 > 1 then begin //todo: check procedure level and the like
+   if not ele.findcurrent(contextstack[stackindex+1].d.ident.ident,[],
+             implementationvisi,ele1) then begin
+    identerror(1,err_identifiernotfound,erl_fatal);
+   end
+   else begin
+    po1:= ele.eleinfoabs(ele1);
+    if po1^.header.kind <> ek_class then begin
+     errormessage(err_classidentexpected,[],1);
+    end
+    else begin
+     if int1 > 2 then begin
+      errormessage(err_syntax,[';'],2);
+     end
+     else begin
+      contextstack[stackindex+1].d.ident:= contextstack[stackindex+1].d.ident;
+      stacktop:= stackindex+1;
+      ele.pushelementparent(ele1);
+     end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure handleprocedure3();

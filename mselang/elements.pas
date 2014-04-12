@@ -64,6 +64,7 @@ type
 const
  elesize = sizeof(elementinfoty);
  eledatashift = sizeof(elementheaderty);
+ maxparents = 255;
 
 type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
@@ -84,6 +85,8 @@ type
    fscopestackpo: integer;
    fscopestacksize: integer;
    fdestroying: boolean;
+   fparents: array[0..maxparents] of elementoffsetty;
+   fparentindex: integer;
   protected
    felementdata: string;
    fnextelement: elementoffsetty;
@@ -108,7 +111,7 @@ type
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
-            const avislevel: visikindsty; out element: elementoffsetty): boolean;
+           const avislevel: visikindsty; out element: elementoffsetty): boolean;
                   //searches in current scope
    function findupward(const aident: identty; const akinds: elementkindsty;
                   const avislevel: visikindsty;
@@ -178,6 +181,8 @@ type
    procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
+   procedure pushelementparent(const aparent: elementoffsetty);
+   procedure popelementparent;
    property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
  
@@ -847,6 +852,7 @@ begin
  fscopestack:= nil;
  fscopestackpo:= -1;
  fscopestacksize:= 0;
+ fparentindex:= 0;
 end;
 
 function telementhashdatalist.hashkey(const akey): hashvaluety;
@@ -1592,6 +1598,28 @@ begin
   childparent:= achildparent;
  end;
  inc(result,sizeof(elementheaderty));
+end;
+
+procedure telementhashdatalist.pushelementparent(
+                             const aparent: elementoffsetty);
+begin
+ if fparentindex > maxparents then begin
+  internalerror('E201400412A');
+  exit;
+ end;
+ fparents[fparentindex]:= elementparent;
+ elementparent:= aparent;
+ inc(fparentindex);
+end;
+
+procedure telementhashdatalist.popelementparent;
+begin
+ if fparentindex = 0 then begin
+  internalerror('E201400412B');
+  exit;
+ end;
+ dec(fparentindex);
+ elementparent:= fparents[fparentindex];
 end;
 
 {

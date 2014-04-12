@@ -103,10 +103,7 @@ main1,,,handlemain
  'begin'.,progbegin-
  'const'.,const-*>
  'var'.,var-*>
-
-function,procfunc,handlefunctionentry,
-procedure,procfunc,handleprocedureentry,
-
+#
 comment0,,,handlecommentend^*>
  '}',-*
  '',-
@@ -166,17 +163,21 @@ paramdef2,,,handleparamdef2^
 # ${whitespace}
 # @identstart,ident^*
 #
-functionheader,procedureheader,handlefunctionentry,
-procedureheader,,,handleprocedureheader*
- '',procedure0-*
+functionheader,procfuncheader,handlefunctionentry,
+procedureheader,procfuncheader,handleprocedureentry,
+procfuncheader,,,handleprocedureheader*
+ '',procedure0*
+function,procfunc,handlefunctionentry,
+procedure,procfunc,handleprocedureentry,
+#
 procfunc,procedurea,,
  '',procedure0*
 procedurea,,,
  '',procedure4*
 procedure0,procedure1,,
  ${whitespace}
- @identstart,ident^*
-procedure1,procedure2,,
+ @identstart,identpath^*
+procedure1,procedure2,handleprocedure1entry,
  '',paramsdef0^*
 procedure2,,,
  ${whitespace}
@@ -194,10 +195,7 @@ resultident,,checkfunctiontype,
 functiontypea,,,
  ${whitespace}
  @identstart,ident^*
-
-# ';',procedure3-
-#procedure3,procedure4,,handleprocedure3
-# mark
+#
 procedure4,checkterminator,,
  ${whitespace}
  'begin'.,procedure5a-
@@ -394,11 +392,13 @@ classdef,classdeferror,handleclassdefstart,
  'protected'.,!handleclassprotected-
  'public'.,!handleclasspublic-
  'published'.,!handleclasspublished-
- @identstart,classfield^*
+ 'procedure'.,procedureheader-*^>
+ 'function'.,functionheader-*^>
+ @identstart,classfield^*>
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^
 classdefreturn,,handleclassdefreturn,*^
-classfield,,,handleclassfield^*>
+classfield,,,handleclassfield^*
  '',vardef^*
 #
 

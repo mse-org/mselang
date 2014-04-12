@@ -41,7 +41,7 @@ type
             err_cannotaddressconst,err_cannotderefnonpointer,
             err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
             err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
-            err_fileread,err_anonclassdef);
+            err_fileread,err_anonclassdef,err_classidentexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -118,7 +118,8 @@ const
   (level: erl_fatal; message: 'Can not find include file'),
   (level: erl_error; message: 'Too many nested include files'),
   (level: erl_fatal; message: 'Can not read file "%s", error: %s'),
-  (level: erl_fatal; message: 'Anonymous class definitions are not allowed')
+  (level: erl_fatal; message: 'Anonymous class definitions are not allowed'),
+  (level: erl_fatal; message: 'Class identifier expected')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

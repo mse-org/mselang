@@ -202,16 +202,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'main1');
- functionco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'function');
- procedureco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure');
  comment0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: true; 
@@ -314,9 +304,24 @@ var
                caption: 'functionheader');
  procedureheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'procedureheader');
+ procfuncheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'procfuncheader');
+ functionco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'function');
+ procedureco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'procedure');
  procfuncco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -719,7 +724,7 @@ var
                caption: 'classdefreturn');
  classfieldco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: true; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classfield');
  statementendco: contextty = (branch: nil; 
@@ -1823,8 +1828,8 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedureheader: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push];
+ bprocfuncheader: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @procedure0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -1883,7 +1888,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @identco); stack: nil; keys: (
+     dest: (context: @identpathco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -3300,7 +3305,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef: array[0..10] of branchty = (
+ bclassdef: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $19BB75B9{'private'}),
@@ -3313,6 +3318,12 @@ const
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclasspublished); stack: nil; 
      keyword: $CDDBADCE{'published'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @procedureheaderco); stack: nil; 
+     keyword: $45678CDD{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @functionheaderco); stack: nil; 
+     keyword: $8ACF19BB{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefreturnco); stack: nil; 
      keyword: $B3C66EDD{'end'}),
@@ -3344,7 +3355,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
+   (flags: [bf_nt,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @classfieldco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -4523,12 +4534,6 @@ begin
  mainco.next:= @main1co;
  main1co.branch:= @bmain1;
  main1co.handleexit:= @handlemain;
- functionco.branch:= nil;
- functionco.next:= @procfuncco;
- functionco.handleentry:= @handlefunctionentry;
- procedureco.branch:= nil;
- procedureco.next:= @procfuncco;
- procedureco.handleentry:= @handleprocedureentry;
  comment0co.branch:= @bcomment0;
  comment0co.handleexit:= @handlecommentend;
  directiveco.branch:= @bdirective;
@@ -4565,10 +4570,19 @@ begin
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.handleexit:= @handleparamdef2;
  functionheaderco.branch:= nil;
- functionheaderco.next:= @procedureheaderco;
+ functionheaderco.next:= @procfuncheaderco;
  functionheaderco.handleentry:= @handlefunctionentry;
- procedureheaderco.branch:= @bprocedureheader;
- procedureheaderco.handleexit:= @handleprocedureheader;
+ procedureheaderco.branch:= nil;
+ procedureheaderco.next:= @procfuncheaderco;
+ procedureheaderco.handleentry:= @handleprocedureentry;
+ procfuncheaderco.branch:= @bprocfuncheader;
+ procfuncheaderco.handleexit:= @handleprocedureheader;
+ functionco.branch:= nil;
+ functionco.next:= @procfuncco;
+ functionco.handleentry:= @handlefunctionentry;
+ procedureco.branch:= nil;
+ procedureco.next:= @procfuncco;
+ procedureco.handleentry:= @handleprocedureentry;
  procfuncco.branch:= @bprocfunc;
  procfuncco.next:= @procedureaco;
  procedureaco.branch:= @bprocedurea;
@@ -4576,6 +4590,7 @@ begin
  procedure0co.next:= @procedure1co;
  procedure1co.branch:= @bprocedure1;
  procedure1co.next:= @procedure2co;
+ procedure1co.handleentry:= @handleprocedure1entry;
  procedure2co.branch:= @bprocedure2;
  functiontypeco.branch:= @bfunctiontype;
  resultidentco.branch:= @bresultident;
