@@ -2618,13 +2618,14 @@ outinfo('****');
  with info,contextstack[stackindex] do begin
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
-   if not ele.findcurrent(contextstack[stackindex+1].d.ident.ident,[],
+   if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
              implementationvisi,ele1) then begin
     identerror(1,err_identifiernotfound,erl_fatal);
    end
    else begin
     po1:= ele.eleinfoabs(ele1);
-    if po1^.header.kind <> ek_class then begin
+    if (po1^.header.kind <> ek_type) or 
+               (ptypedataty(@po1^.data)^.kind <> dk_class) then begin
      errormessage(err_classidentexpected,[],1);
     end
     else begin

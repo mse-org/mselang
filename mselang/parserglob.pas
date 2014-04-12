@@ -75,7 +75,7 @@ const
 // vis_min = vis_9;
  nonevisi = [];
  allvisi = [vik_global{,vik_sameunit}];
- globalvisi = [vik_global];
+ globalvisi = [vik_global,vik_sameunit];
  implementationvisi = [vik_sameunit];
  classprivatevisi = [vik_sameunit];
  classprotectedvisi = classprivatevisi+[vik_sameclass];

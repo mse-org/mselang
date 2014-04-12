@@ -130,7 +130,7 @@ end;
 
 procedure implementationstart();
 var
- po1: punitdataty;
+ po1: pimplementationdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('IMPLEMENTATIONSTART');

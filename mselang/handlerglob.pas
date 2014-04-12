@@ -167,19 +167,18 @@ type
  unitdataty = record
  end;
  punitdataty = ^unitdataty;
-
+ implementationdataty = record
+ end;
+ pimplementationdataty = ^implementationdataty;
+{
  classdataty = record
  end;
  pclassdataty = ^classdataty;
-
+}
  classesdataty = record
   scopebefore: elementoffsetty;
  end;
  pclassesdataty = ^classesdataty;
- 
- implementationdataty = record
- end;
- pimplementationdataty = ^implementationdataty;
 
  visibledataty = record
  end;

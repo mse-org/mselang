@@ -40,6 +40,7 @@ const
  vic_public = vis_1;
  vic_published = vis_0;
 }
+{
 procedure classesscopeset();
 var
  po2: pclassesdataty;
@@ -58,12 +59,12 @@ begin
           ele.eleinfoabs(info.unitinfo^.classeselement))^.data;
  ele.elementparent:= po2^.scopebefore;
 end;
-
+}
 procedure handleclassdefstart();
 var
- po1: ptypedataty;
- po2: pclassdataty;
- po3: pvisibledataty;
+// po1: ptypedataty;
+// po2: pclassdataty;
+// po3: pvisibledataty;
  id1: identty;
 
 begin
@@ -128,6 +129,7 @@ outinfo('***');
    bitsize:= pointersize*8;
    indirectlevel:= d.typ.indirectlevel;
   end;
+  ele.elementparent:= contextstack[stackindex].elemark;
  end;
 end;
 

@@ -38,7 +38,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
-                  ek_sysfunc,ek_sub,ek_classes,ek_class,
+                  ek_sysfunc,ek_sub,ek_classes,{ek_class,}
                   ek_unit,ek_implementation);
  elementkindsty = set of elementkindty;
  
@@ -224,9 +224,9 @@ const
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(funcdataty)+elesize,
 //ek_classes,                   ek_class,
-  sizeof(classesdataty)+elesize,sizeof(classdataty)+elesize,
+  sizeof(classesdataty)+elesize,{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
-  sizeof(unitdataty)+elesize,sizeof(classdataty)+elesize
+  sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize
  );
 
 var
@@ -1289,6 +1289,12 @@ begin
   path:= felementpath;
   name:= aname;
   visibility:= avislevel;
+  if info.unitinfo <> nil then begin
+   defunit:= info.unitinfo^.key;
+  end
+  else begin
+   defunit:= 0;
+  end;
   kind:= akind;
  end;
  felementparent:= ele1;
