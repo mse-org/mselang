@@ -2572,6 +2572,58 @@ type
   match: psubdataty;
  end;
 
+function checkparams(const po1,ref: psubdataty): boolean; inline;
+var
+ par1,parref: pelementoffsetaty;
+ offs1: elementoffsetty;
+ var1,varref: pvardataty;
+ int1: integer;
+begin
+ result:= true;
+ offs1:= ele.eledataoffset;
+ pointer(par1):= @po1^.paramsrel;
+ pointer(parref):= @ref^.paramsrel;
+ for int1:= 0 to po1^.paramcount-1 do begin
+  var1:= pointer(par1^[int1]+offs1);
+  varref:= pointer(parref^[int1]+offs1);
+  if var1^.typ <> varref^.typ then begin
+   result:= false;
+   exit;
+  end;
+ end;
+end;
+
+procedure checkequalheader(const aelement: pelementinfoty; var adata;
+                                                     var terminate: boolean);
+var
+ po1: psubdataty;
+// int1: integer;
+// par1,parref: pelementoffsetaty;
+// offs1: elementoffsetty;
+// var1,varref: pvardataty;
+begin
+ po1:= @aelement^.data;
+ with equalparaminfoty(adata) do begin
+  if (po1 <> ref) and ((po1^.flags >< ref^.flags)*[sf_header] = []) and
+     (po1^.paramcount = ref^.paramcount) and checkparams(po1,ref) then begin
+   {
+   offs1:= ele.eledataoffset;
+   pointer(par1):= @po1^.paramsrel;
+   pointer(parref):= @ref^.paramsrel;
+   for int1:= 0 to po1^.paramcount-1 do begin
+    var1:= pointer(par1^[int1]+offs1);
+    varref:= pointer(parref^[int1]+offs1);
+    if var1^.typ <> varref^.typ then begin
+     exit;
+    end;
+   end;
+   }
+   terminate:= true;
+   match:= po1;
+  end;
+ end;
+end;
+
 procedure checkequalparam(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
 var
@@ -2583,7 +2635,9 @@ var
 begin
  po1:= @aelement^.data;
  with equalparaminfoty(adata) do begin
-  if (po1 <> ref) and (po1^.paramcount = ref^.paramcount) then begin
+  if (po1 <> ref) and (po1^.paramcount = ref^.paramcount) and 
+                                    checkparams(po1,ref) then begin
+  {
    offs1:= ele.eledataoffset;
    pointer(par1):= @po1^.paramsrel;
    pointer(parref):= @ref^.paramsrel;
@@ -2594,6 +2648,7 @@ begin
      exit;
     end;
    end;
+  }
    terminate:= true;
    match:= po1;
   end;
@@ -2641,6 +2696,7 @@ begin
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex] do begin
+  exclude(currentstatementflags,stf_classimp);
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
@@ -2658,6 +2714,7 @@ outinfo('****');
       errormessage(err_syntax,[';'],2);
      end
      else begin
+      include(currentstatementflags,stf_classimp);
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
       ele.pushelementparent(ele1);
@@ -2685,7 +2742,8 @@ var
  subflags: subflagsty;
 // parambase: ptruint;
  si1: integer;
- paramkind1: paramkindty; 
+ paramkind1: paramkindty;
+ bo1: boolean;
 
 begin
 {$ifdef mse_debugparser}
@@ -2807,17 +2865,26 @@ outinfo('****');
    match:= nil;
   end;                                    
   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                            allvisi,@checkequalparam,paramdata) then begin
+                            allvisi,@checkequalheader,paramdata) then begin
    err1:= true;
    errormessage(err_sameparamlist,[]);
   end;
   
   if impl1 then begin
-   if funclevel = 1 then begin //todo: check forward modifier
-    ele.decelementparent; //interface
+   if funclevel = 1 then begin
     paramdata.match:= nil;
-    if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                                allvisi,@checkequalparam,paramdata) then begin
+    bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                                allvisi,@checkequalparam,paramdata);
+    if not bo1 then begin
+     if stf_classimp in currentstatementflags then begin
+     end
+     else begin
+      ele.decelementparent; //interface
+      bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                                allvisi,@checkequalparam,paramdata);
+     end;
+    end;
+    if bo1 then begin
      with paramdata.match^ do begin
       forwardresolve(mark);
       impl:= ele.eledatarel(po1);
