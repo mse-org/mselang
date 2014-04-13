@@ -77,6 +77,7 @@ outinfo('***');
    internalerror('H20140325D');
    exit;
   end;
+  include(currentstatementflags,stf_classdef);
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
@@ -121,6 +122,7 @@ begin
 outinfo('***');
 // classesscopereset();
  with info do begin
+  exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    kind:= dk_class;

@@ -307,6 +307,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'procedureheader');
+ classfunctionheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classfunctionheader');
+ classprocedureheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classprocedureheader');
  procfuncheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -3319,10 +3329,10 @@ const
      dest: (handler: @handleclasspublished); stack: nil; 
      keyword: $CDDBADCE{'published'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @procedureheaderco); stack: nil; 
+     dest: (context: @classprocedureheaderco); stack: nil; 
      keyword: $45678CDD{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @functionheaderco); stack: nil; 
+     dest: (context: @classfunctionheaderco); stack: nil; 
      keyword: $8ACF19BB{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefreturnco); stack: nil; 
@@ -4575,6 +4585,12 @@ begin
  procedureheaderco.branch:= nil;
  procedureheaderco.next:= @procfuncheaderco;
  procedureheaderco.handleentry:= @handleprocedureentry;
+ classfunctionheaderco.branch:= nil;
+ classfunctionheaderco.next:= @procfuncheaderco;
+ classfunctionheaderco.handleentry:= @handleclassfunctionentry;
+ classprocedureheaderco.branch:= nil;
+ classprocedureheaderco.next:= @procfuncheaderco;
+ classprocedureheaderco.handleentry:= @handleclassprocedureentry;
  procfuncheaderco.branch:= @bprocfuncheader;
  procfuncheaderco.handleexit:= @handleprocedureheader;
  functionco.branch:= nil;

@@ -177,7 +177,8 @@ type
   caption: string;
  end;
 
- statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall);
+ statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
+                    stf_classdef);
  statementflagsty = set of statementflagty;
 
  varflagty = (vf_global,vf_param,vf_paramindirect,vf_const);
@@ -280,7 +281,7 @@ type
   address: opaddressty;
  end;
  
- subflagty = (sf_function,sf_functiontype,sf_implementation);
+ subflagty = (sf_function,sf_functiontype,sf_header);
  subflagsty = set of subflagty;
  subinfoty = record
   frameoffsetbefore: ptruint;

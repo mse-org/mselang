@@ -118,6 +118,8 @@ procedure handleprocedureheader();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
+procedure handleclassfunctionentry();
+procedure handleclassprocedureentry();
 
 procedure checkfunctiontype();
 procedure handleprocedure1entry();
@@ -1102,6 +1104,29 @@ outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function];
+ end;
+end;
+
+procedure handleclassprocedureentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROCEDUREENTRY');
+{$endif}
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_header];
+ end;
+end;
+
+procedure handleclassfunctionentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSFUNCTIONENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_function,sf_header];
  end;
 end;
 (*
@@ -2695,7 +2720,8 @@ outinfo('****');
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;
-  impl1:= us_implementation in unitinfo^.state; //todo: check forward modifier
+  impl1:= (us_implementation in unitinfo^.state) and 
+                                                 not (sf_header in subflags);
   for int2:= 0 to paramco-1 do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
