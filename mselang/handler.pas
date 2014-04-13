@@ -1088,8 +1088,8 @@ begin
  outhandle('PROCEDUREENTRY');
 {$endif}
  with info,contextstack[stackindex].d do begin
-  kind:= ck_proc;
-  proc.flags:= [];
+  kind:= ck_subdef;
+  subdef.flags:= [];
  end;
 end;
 
@@ -1100,8 +1100,8 @@ begin
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
-  kind:= ck_proc;
-  proc.flags:= [pf_function];
+  kind:= ck_subdef;
+  subdef.flags:= [sf_function];
  end;
 end;
 (*
@@ -1327,7 +1327,7 @@ outinfo('***');
        ek_sub: begin
         po5:= @pfuncdataty(po2)^.paramsrel;
         paramco1:= paramco;
-        if pf_function in pfuncdataty(po2)^.flags then begin
+        if sf_function in pfuncdataty(po2)^.flags then begin
          inc(paramco1);
         end;
         if paramco1 <> pfuncdataty(po2)^.paramcount then begin
@@ -1372,7 +1372,7 @@ outinfo('***');
           inc(po5);
          end;
          with contextstack[stackindex] do begin //result data
-          if pf_function in pfuncdataty(po2)^.flags then begin
+          if sf_function in pfuncdataty(po2)^.flags then begin
            po6:= ele.eledataabs(po5^);
            po3:= ptypedataty(ele.eledataabs(po6^.typ));
            int1:= pushinsertvar(0,false,po3);
@@ -1386,7 +1386,7 @@ outinfo('***');
            end;
           end
           else begin
-           d.kind:= ck_sub;
+           d.kind:= ck_subcall;
           end;
          end;
         end;
@@ -1409,7 +1409,7 @@ outinfo('***');
        end;
        ek_sysfunc: begin
         with contextstack[stackindex] do begin
-         d.kind:= ck_sub;
+         d.kind:= ck_subcall;
         end;
         with psysfuncdataty(po2)^ do begin
          case func of
@@ -2303,7 +2303,7 @@ outinfo('***');
       d.d.vsize:= fact.datasize; //todo: alignment
      end;    
     end;
-    ck_sub: begin
+    ck_subcall: begin
     end;
     else begin
      errormessage(err_illegalexpression,[],1);
@@ -2596,10 +2596,10 @@ outinfo('****');
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= resultident;
   with contextstack[parent-1] do begin
-   if pf_functiontype in d.proc.flags then begin
+   if sf_functiontype in d.subdef.flags then begin
     errormessage(err_syntax,[';']);
    end;
-   include(d.proc.flags,pf_functiontype);
+   include(d.subdef.flags,sf_functiontype);
   end;
  end;
 outinfo('****');
@@ -2633,7 +2633,7 @@ outinfo('****');
       errormessage(err_syntax,[';'],2);
      end
      else begin
-      contextstack[stackindex+1].d.ident:= contextstack[stackindex+1].d.ident;
+      contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
       ele.pushelementparent(ele1);
      end;
@@ -2657,7 +2657,7 @@ var
  paramdata: equalparaminfoty;
  par1,parref: pelementoffsetaty;
  eledatabase: ptruint;
- procflags: procflagsty;
+ subflags: subflagsty;
 // parambase: ptruint;
  si1: integer;
  paramkind1: paramkindty; 
@@ -2671,13 +2671,13 @@ begin
               //todo: multi level type
 outinfo('****');
  with info do begin
-  procflags:= contextstack[stackindex-1].d.proc.flags;
+  subflags:= contextstack[stackindex-1].d.subdef.flags;
   with contextstack[stackindex] do begin
-   d.proc.flags:= procflags;
-   d.proc.parambase:= locdatapo;
+   d.subdef.flags:= subflags;
+   d.subdef.parambase:= locdatapo;
   end;
-  if (pf_function in procflags) and 
-                      not (pf_functiontype in procflags) then begin
+  if (sf_function in subflags) and 
+                      not (sf_functiontype in subflags) then begin
    tokenexpectederror(':');
   end;
 outinfo('****');
@@ -2691,7 +2691,7 @@ outinfo('****');
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.nestinglevel:= funclevel;
-  po1^.flags:= procflags;
+  po1^.flags:= subflags;
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;
@@ -2752,20 +2752,20 @@ outinfo('****');
    inc(funclevel);
    getlocvaraddress(stacklinksize);
    with contextstack[stackindex] do begin
-    d.kind:= ck_proc;
-    d.proc.frameoffsetbefore:= frameoffset;
+    d.kind:= ck_subdef;
+    d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     stacktop:= stackindex;
-    d.proc.paramsize:= locdatapo - d.proc.parambase;
-    po1^.paramsize:= d.proc.paramsize;
-    d.proc.error:= err1;
-    d.proc.ref:= ele.eledatarel(po1);
+    d.subdef.paramsize:= locdatapo - d.subdef.parambase;
+    po1^.paramsize:= d.subdef.paramsize;
+    d.subdef.error:= err1;
+    d.subdef.ref:= ele.eledatarel(po1);
     for int2:= 0 to paramco-1 do begin
      po2:= pointer(po4^[int2]);
      dec(po2^.address.address,frameoffset);
      po4^[int2]:= ptruint(po2)-eledatabase;
     end;
-    ele.markelement(d.proc.elementmark); 
+    ele.markelement(d.subdef.elementmark); 
    end;
   end
   else begin
@@ -2812,10 +2812,10 @@ outinfo('****');
     ele.elementparent:= parent1; //restore in sub
     with contextstack[stackindex] do begin
      if paramdata.match <> nil then begin
-      d.proc.match:= ele.eledatarel(paramdata.match);
+      d.subdef.match:= ele.eledatarel(paramdata.match);
      end
      else begin
-      d.proc.match:= 0;
+      d.subdef.match:= 0;
      end;
     end;
    end;
@@ -2832,19 +2832,19 @@ begin
 {$endif}
 outinfo('*****');
  with info,contextstack[stackindex-1].d do begin
-  proc.varsize:= locdatapo - proc.parambase - proc.paramsize;
-  po1:= ele.eledataabs(proc.ref);
+  subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
+  po1:= ele.eledataabs(subdef.ref);
   with po1^ do begin
    address:= opcount;
   end;
-  if proc.varsize <> 0 then begin
+  if subdef.varsize <> 0 then begin
    with additem({info})^ do begin
     op:= @locvarpushop;
-    d.stacksize:= proc.varsize;
+    d.stacksize:= subdef.varsize;
    end;
   end;
-  if proc.match <> 0 then begin
-   po2:= ele.eledataabs(proc.match);    
+  if subdef.match <> 0 then begin
+   po2:= ele.eledataabs(subdef.match);    
    po2^.address:= opcount;
    linkresolve(po2^.links,opcount);
   end;
@@ -2861,20 +2861,20 @@ outinfo('*****');
   with contextstack[stackindex-1],d do begin
    //todo: check local forward
    ele.decelementparent;
-   ele.releaseelement(proc.elementmark); 
+   ele.releaseelement(subdef.elementmark); 
                                              //remove local definitions
-   if proc.varsize <> 0 then begin
+   if subdef.varsize <> 0 then begin
     with additem({info})^ do begin
      op:= @locvarpopop;
-     d.stacksize:= proc.varsize;
+     d.stacksize:= subdef.varsize;
     end;
    end;
    with additem({info})^ do begin
     op:= @returnop;
-    d.stacksize:= proc.paramsize;
+    d.stacksize:= subdef.paramsize;
    end;
-   locdatapo:= proc.parambase;
-   frameoffset:= proc.frameoffsetbefore;
+   locdatapo:= subdef.parambase;
+   frameoffset:= subdef.frameoffsetbefore;
   end;
   dec(funclevel);
  end;

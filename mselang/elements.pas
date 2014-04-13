@@ -152,7 +152,7 @@ type
                   const asize: integer}): pelementinfoty; //nil if duplicate
    function pushelement(const aname: identty; const avislevel: visikindsty;
                   const akind: elementkindty;                  
-                  {const asize: integer;} out aelementdata: pointer): boolean;
+                  out aelementdata: pointer): boolean;
                                                        //false if duplicate
    function pushelement(const aname: identty; const avislevel: visikindsty;
                 const akind: elementkindty;                  
@@ -160,7 +160,7 @@ type
                                                        //false if duplicate
    function pushelement(const aname: identty; const avislevel: visikindsty;
                   const akind: elementkindty;                  
-           {const asize: integer;} out aelementdata: elementoffsetty): boolean;
+           out aelementdata: elementoffsetty): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
    function addelement(const aname: identty; const avislevel: visikindsty;
@@ -168,7 +168,7 @@ type
               const asize: integer}): pelementinfoty;   //nil if duplicate
    function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty;
-              {const asize: integer;} out aelementdata: pointer): boolean;
+              out aelementdata: pointer): boolean;
                                                        //false if duplicate
    procedure pushscopelevel();
    procedure popscopelevel();
@@ -195,19 +195,19 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-procedure linkmark({const info: pparseinfoty;} var alinks: linkindexty;
+procedure linkmark(var alinks: linkindexty;
                                                       const aaddress: integer);
-procedure linkresolve({const info: pparseinfoty;} const alinks: linkindexty;
+procedure linkresolve(const alinks: linkindexty;
                                                   const aaddress: opaddressty);
 
 procedure forwardmark({const info: pparseinfoty;}
             out aforward: forwardindexty; const asource: sourceinfoty);
-procedure forwardresolve({const info: pparseinfoty;}
+procedure forwardresolve(
                                         const aforward: forwardindexty);
-procedure checkforwarderrors({const info: pparseinfoty;}
+procedure checkforwarderrors(
                                     const aforward: forwardindexty);
 function newstring({const info: pparseinfoty}): stringinfoty;
-function stringconst({const info: pparseinfoty;}
+function stringconst(
                                    const astring: stringinfoty): dataaddressty;
 
 {$ifdef mse_debugparser}
@@ -335,7 +335,7 @@ type
    destructor destroy; override;
    procedure clear; override;
    function add(const avalue: string): stringinfoty;
-   function allocconst({const info: pparseinfoty;}
+   function allocconst(
                          const astring: stringinfoty): dataaddressty;
  end;
  
@@ -552,7 +552,7 @@ begin
  alinks:= li1;
 end;
 
-procedure linkresolve({const info: pparseinfoty;}
+procedure linkresolve(
                     const alinks: linkindexty; const aaddress: opaddressty);
 var
  li1: linkindexty;
@@ -587,7 +587,7 @@ var
  forwardindex: forwardindexty;
  deletedforwards: forwardindexty;
 
-procedure forwardmark({const info: pparseinfoty;}
+procedure forwardmark(
             out aforward: forwardindexty; const asource: sourceinfoty);
 var
  fo1: forwardindexty;
@@ -616,7 +616,7 @@ begin
  aforward:= fo1;
 end;
 
-procedure forwardresolve({const info: pparseinfoty;}
+procedure forwardresolve(
                                         const aforward: forwardindexty);
 begin
  if aforward <> 0 then begin
@@ -632,7 +632,7 @@ begin
  end;
 end;
 
-procedure checkforwarderrors({const info: pparseinfoty;}
+procedure checkforwarderrors(
                                     const aforward: forwardindexty);
 var
  fo1: forwardindexty;
@@ -652,7 +652,7 @@ begin
  result:= stringbuf.add(info.stringbuffer);
 end;
 
-function stringconst({const info: pparseinfoty;}
+function stringconst(
                            const astring: stringinfoty): dataaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
@@ -1607,7 +1607,7 @@ begin
 end;
 
 procedure telementhashdatalist.pushelementparent(
-                             const aparent: elementoffsetty);
+                                           const aparent: elementoffsetty);
 begin
  if fparentindex > maxparents then begin
   internalerror('E201400412A');
@@ -1701,8 +1701,7 @@ begin
  reallocmem(fbuffer,fbufcapacity);
 end;
  
-function tstringbuffer.allocconst({const info: pparseinfoty;}
-                                   const astring: stringinfoty): dataaddressty;
+function tstringbuffer.allocconst(const astring: stringinfoty): dataaddressty;
 var
  po1: pstringheaderty;
  po2: pbyte;

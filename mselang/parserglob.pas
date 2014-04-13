@@ -90,9 +90,9 @@ const
 
 type 
  contextkindty = (ck_none,ck_error,
-                  ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_proc,
+                  ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
-                  ck_subres,ck_sub,ck_getfact,
+                  ck_subres,ck_subcall,ck_getfact,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_classdef,
                   ck_paramsdef,ck_params,ck_index);
@@ -280,9 +280,9 @@ type
   address: opaddressty;
  end;
  
- procflagty = (pf_function,pf_functiontype);
- procflagsty = set of procflagty;
- procinfoty = record
+ subflagty = (sf_function,sf_functiontype,sf_implementation);
+ subflagsty = set of subflagty;
+ subinfoty = record
   frameoffsetbefore: ptruint;
   parambase: ptruint;
   paramsize: integer;
@@ -291,7 +291,7 @@ type
   ref: elementoffsetty;
   match: elementoffsetty;
   error: boolean;
-  flags: procflagsty;
+  flags: subflagsty;
  end;
  
  paramsdefinfoty = record
@@ -351,8 +351,8 @@ type
    ck_index:(
     opshiftmark: integer;
    );
-   ck_proc:(
-    proc: procinfoty;
+   ck_subdef:(
+    subdef: subinfoty;
    );
    ck_paramsdef:(
     paramsdef: paramsdefinfoty;

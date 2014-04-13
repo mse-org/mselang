@@ -155,7 +155,7 @@ type
   links: linkindexty;
   mark: forwardindexty;
   address: opaddressty;
-  flags: procflagsty;
+  flags: subflagsty;
   nestinglevel: integer;
   paramsize: integer;
   paramcount: integer;

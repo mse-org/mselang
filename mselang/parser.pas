@@ -193,9 +193,10 @@ begin
        end;
       end;
      end;
-     ck_proc: begin
-      write('flags:',settostring(ptypeinfo(typeinfo(procflagsty)),
-                           integer(proc.flags),true),' pasize:',proc.paramsize);
+     ck_subdef: begin
+      write('flags:',settostring(ptypeinfo(typeinfo(subflagsty)),
+                           integer(subdef.flags),true),' pasize:',
+                           subdef.paramsize);
      end;
      ck_paramsdef: begin
       with paramsdef do begin
