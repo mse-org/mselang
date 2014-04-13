@@ -222,7 +222,7 @@ const
 //ek_var,                   ek_field,
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
 //ek_sysfunc,                   ek_func,
-  sizeof(sysfuncdataty)+elesize,sizeof(funcdataty)+elesize,
+  sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,
   sizeof(classesdataty)+elesize,{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  

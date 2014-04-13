@@ -150,7 +150,7 @@ type
  end;
  psysfuncdataty = ^sysfuncdataty;
 
- funcdataty = record
+ subdataty = record
   impl: elementoffsetty; //pfuncdataty
   links: linkindexty;
   mark: forwardindexty;
@@ -162,7 +162,7 @@ type
   paramsrel: record //array of relative pvardataty
   end;
  end;
- pfuncdataty = ^funcdataty;
+ psubdataty = ^subdataty;
 
  unitdataty = record
  end;

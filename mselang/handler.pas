@@ -1350,12 +1350,12 @@ outinfo('***');
         end;
        end;
        ek_sub: begin
-        po5:= @pfuncdataty(po2)^.paramsrel;
+        po5:= @psubdataty(po2)^.paramsrel;
         paramco1:= paramco;
-        if sf_function in pfuncdataty(po2)^.flags then begin
+        if sf_function in psubdataty(po2)^.flags then begin
          inc(paramco1);
         end;
-        if paramco1 <> pfuncdataty(po2)^.paramcount then begin
+        if paramco1 <> psubdataty(po2)^.paramcount then begin
          identerror(1,err_wrongnumberofparameters);
         end
         else begin
@@ -1397,7 +1397,7 @@ outinfo('***');
           inc(po5);
          end;
          with contextstack[stackindex] do begin //result data
-          if sf_function in pfuncdataty(po2)^.flags then begin
+          if sf_function in psubdataty(po2)^.flags then begin
            po6:= ele.eledataabs(po5^);
            po3:= ptypedataty(ele.eledataabs(po6^.typ));
            int1:= pushinsertvar(0,false,po3);
@@ -1407,7 +1407,7 @@ outinfo('***');
            d.datatyp.typedata:= po6^.typ;        
            with additem()^ do begin //result var param
             op:= @pushstackaddr;
-            d.voffset:= -pfuncdataty(po2)^.paramsize+stacklinksize-int1;
+            d.voffset:= -psubdataty(po2)^.paramsize+stacklinksize-int1;
            end;
           end
           else begin
@@ -1415,19 +1415,19 @@ outinfo('***');
           end;
          end;
         end;
-        if pfuncdataty(po2)^.address = 0 then begin //unresolved header
-         linkmark(pfuncdataty(po2)^.links,opcount);
+        if psubdataty(po2)^.address = 0 then begin //unresolved header
+         linkmark(psubdataty(po2)^.links,opcount);
         end;
         with additem()^ do begin
-         d.callinfo.ad:= pfuncdataty(po2)^.address-1; //possibly invalid
-         if (pfuncdataty(po2)^.nestinglevel = 0) or 
-                          (pfuncdataty(po2)^.nestinglevel = funclevel) then begin
+         d.callinfo.ad:= psubdataty(po2)^.address-1; //possibly invalid
+         if (psubdataty(po2)^.nestinglevel = 0) or 
+                          (psubdataty(po2)^.nestinglevel = funclevel) then begin
           op:= @callop;
           d.callinfo.linkcount:= -1;
          end
          else begin
           op:= @calloutop;
-          d.callinfo.linkcount:= funclevel-pfuncdataty(po2)^.nestinglevel-2;
+          d.callinfo.linkcount:= funclevel-psubdataty(po2)^.nestinglevel-2;
                                                                   //for downto 0
          end;
         end;
@@ -2568,14 +2568,14 @@ end;
 
 type
  equalparaminfoty = record
-  ref: pfuncdataty;
-  match: pfuncdataty;
+  ref: psubdataty;
+  match: psubdataty;
  end;
 
 procedure checkequalparam(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
 var
- po1: pfuncdataty;
+ po1: psubdataty;
  int1: integer;
  par1,parref: pelementoffsetaty;
  offs1: elementoffsetty;
@@ -2670,7 +2670,7 @@ end;
 
 procedure handleprocedure3();
 var
- po1: pfuncdataty;
+ po1: psubdataty;
  po2: pvardataty;
  po3: ptypedataty;
  po4: pelementoffsetaty;
@@ -2851,7 +2851,7 @@ end;
 
 procedure handleprocedure5a();
 var
- po1,po2: pfuncdataty;
+ po1,po2: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROCEDURE5A');
