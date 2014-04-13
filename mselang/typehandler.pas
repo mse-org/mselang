@@ -42,6 +42,7 @@ procedure handlearrayindexerror2();
 procedure handleindexstart();
 procedure handleindex();
 procedure closesquarebracketexpected();
+procedure closeroundbracketexpected();
 
 procedure checkrecordfield(const avisibility: visikindsty);
 
@@ -666,9 +667,14 @@ errlab:
  end;
 end;
 
-procedure closesquarebracketexpected;
+procedure closesquarebracketexpected();
 begin
  tokenexpectederror(']',erl_fatal);
+end;
+
+procedure closeroundbracketexpected();
+begin
+ tokenexpectederror(')',erl_fatal);
 end;
 
 end.

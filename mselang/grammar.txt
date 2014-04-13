@@ -388,7 +388,10 @@ getrange3,,,handlerange3^
  '',exp^*
 
 #
-classdef,classdeferror,handleclassdefstart,
+classdef,classdef0,handleclassdefstart,
+ ${whitespace}
+ '(',classdefparam-*
+classdef0,classdeferror,,
  ${whitespace}
  'private'.,!handleclassprivate-
  'protected'.,!handleclassprotected-
@@ -400,6 +403,11 @@ classdef,classdeferror,handleclassdefstart,
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^
 classdefreturn,,handleclassdefreturn,*^
+classdefparam,,,*
+ ${whitespace}
+ ')',-*
+ '',!closeroundbracketexpected
+#
 classfield,,,handleclassfield^*
  '',vardef^*
 #
