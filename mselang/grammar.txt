@@ -11,6 +11,7 @@
  'var'.,*
  'type'.,*
  'const'.,*
+ 'begin'.,*
 "
 
 @keywordstart
@@ -201,8 +202,8 @@ functiontypea,,,
 procedure4,checkterminator,,
  ${whitespace}
  'begin'.,procedure5a-
- 'const'.,const-*
- 'var'.,var-*
+ 'const'.,const-*>
+ 'var'.,var-*>
  'procedure'.,procedure-^*>
 procedure5a,procedure5,handleprocedure5a,
 # set procstartaddress
