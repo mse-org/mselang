@@ -1306,8 +1306,8 @@ outinfo('***');
  with info do begin
   case contextstack[stackindex-1].d.kind of
    ck_getfact: begin
-    if findkindelements(1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
-                                    allvisi,po1,lastident,idents) then begin
+//    if findkindelements(1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
+    if findkindelements(1,[],allvisi,po1,lastident,idents) then begin
      paramco:= stacktop-stackindex-2-idents.high;
      if paramco < 0 then begin
       paramco:= 0; //no paramsend context
