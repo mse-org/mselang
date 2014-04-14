@@ -1001,6 +1001,7 @@ begin //todo: optimize
     if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
      break;
     end;
+    element:= ele1;
     felementparent:= ele1;
     felementpath:= felementpath+aidents.d[firstnotfound];
     inc(firstnotfound);
