@@ -86,14 +86,14 @@ function findkindelementdata(const aident: contextdataty;
 function findkindelements({const info: pparseinfoty;}
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
-           out lastident: integer; out idents: identvecty): boolean;
+           out firstnotfound: integer; out idents: identvecty): boolean;
 function findkindelements({const info: pparseinfoty;}
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty): boolean;
 function findkindelementsdata({const info: pparseinfoty;}
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer;
-              out lastident: integer; out idents: identvecty): boolean;
+              out firstnotfound: integer; out idents: identvecty): boolean;
 function findkindelementsdata({const info: pparseinfoty;}
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
@@ -230,7 +230,7 @@ function findkindelements(const astackoffset: integer;
             const akinds: elementkindsty; 
             const visibility: visikindsty;
             out aelement: pelementinfoty;
-            out lastident: integer; out idents: identvecty): boolean;
+            out firstnotfound: integer; out idents: identvecty): boolean;
 var
  eleres,ele1,ele2: elementoffsetty;
  int1: integer;
@@ -241,16 +241,16 @@ begin
   with info do begin
    if ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
     result:= true;
-    lastident:= -1;
+    firstnotfound:= 0;
    end
    else begin
-    result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
+    result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
     if not result then begin //todo: use cache
      ele2:= ele.elementparent;
      for int1:= 0 to high(info.unitinfo^.implementationuses) do begin
       ele.elementparent:=
         info.unitinfo^.implementationuses[int1]^.interfaceelement;
-      result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
+      result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
       if result then begin
        break;
       end;
@@ -259,7 +259,7 @@ begin
       for int1:= 0 to high(info.unitinfo^.interfaceuses) do begin
        ele.elementparent:=
          info.unitinfo^.interfaceuses[int1]^.interfaceelement;
-       result:= ele.findupward(idents,akinds,visibility,eleres,lastident);
+       result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
        if result then begin
         break;
        end;
@@ -280,10 +280,10 @@ function findkindelements(const astackoffset: integer;
            const visibility: visikindsty; out aelement: pelementinfoty): boolean;
 var
  idents: identvecty;
- lastident: integer;
+ firstnotfound: integer;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,
-                                            aelement,lastident,idents);
+                                            aelement,firstnotfound,idents);
 end;
 
 (*
@@ -335,11 +335,11 @@ end;
 function findkindelementsdata({const info: pparseinfoty;}
              const astackoffset: integer;
              const akinds: elementkindsty; const visibility: visikindsty; 
-             out ainfo: pointer; out lastident: integer;
+             out ainfo: pointer; out firstnotfound: integer;
              out idents: identvecty): boolean;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,ainfo,
-                                lastident,idents);
+                                firstnotfound,idents);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
  end;

@@ -1287,7 +1287,7 @@ var
  po5: pelementoffsetty;
  po6: pvardataty;
  po7: pointer;
- lastident: integer;
+ firstnotfound: integer;
  idents: identvecty;
  ele1: elementoffsetty;
  int1,int2,int3: integer;
@@ -1307,7 +1307,7 @@ outinfo('***');
   case contextstack[stackindex-1].d.kind of
    ck_getfact: begin
 //    if findkindelements(1,[ek_var,ek_const,ek_sysfunc,ek_sub,ek_type],
-    if findkindelements(1,[],allvisi,po1,lastident,idents) then begin
+    if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
      paramco:= stacktop-stackindex-2-idents.high;
      if paramco < 0 then begin
       paramco:= 0; //no paramsend context
@@ -1320,8 +1320,8 @@ outinfo('***');
         if checknoparam then begin     
          offs1:= 0;
          ele1:= pvardataty(po2)^.typ;
-         if lastident < idents.high then begin
-          for int1:= lastident+1 to idents.high do begin //fields
+         if firstnotfound <= idents.high then begin
+          for int1:= firstnotfound to idents.high do begin //fields
            if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                        allvisi,ele1) then begin
             identerror(1+int1,err_identifiernotfound);

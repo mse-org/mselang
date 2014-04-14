@@ -121,10 +121,9 @@ type
                       const akinds: elementkindsty;
                       const avislevel: visikindsty;
                       out element: elementoffsetty;
-                      out lastident: integer): boolean; overload;
+                      out firstnotfound: integer): boolean; overload;
                   //searches in current scope and above, -1 if not found
-                  //lastident = index of last matching in aident if
-                  //akinds <> []
+                  //firstnotfound = index of first not matching in aident
    function findchild(const aparent: elementoffsetty; 
                  const achild: elementoffsetty; const akinds: elementkindsty;
                  const avislevel: visikindsty; 
@@ -979,6 +978,46 @@ end;
 function telementhashdatalist.findupward(const aidents: identvecty;
               const akinds: elementkindsty; const avislevel: visikindsty;
               out element: elementoffsetty;
+              out firstnotfound: integer): boolean;
+var
+ parentbefore: elementoffsetty;
+ pathbefore: identty;
+ ele1: elementoffsetty;
+begin //todo: optimize
+ result:= false;
+ element:= -1;
+ firstnotfound:= 0;
+ if aidents.high >= 0 then begin
+  result:= findupward(aidents.d[0],akinds,avislevel,element);
+  if result then begin
+   parentbefore:= felementparent;
+   pathbefore:= felementpath;
+   felementparent:= element; //parentlevel
+   with pelementinfoty(pointer(felementdata)+element)^.header do begin
+    felementpath:= path;
+   end;
+   firstnotfound:= 1;
+   while true do begin
+    if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
+     break;
+    end;
+    felementparent:= ele1;
+    felementpath:= felementpath+aidents.d[firstnotfound];
+    inc(firstnotfound);
+    if firstnotfound > aidents.high then begin
+     break;
+    end;
+   end;
+   felementparent:= parentbefore;
+   felementpath:= pathbefore;
+  end;
+ end;
+end;
+
+(*
+function telementhashdatalist.findupward(const aidents: identvecty;
+              const akinds: elementkindsty; const avislevel: visikindsty;
+              out element: elementoffsetty;
               out lastident: integer): boolean;
 //todo: optimize
 var
@@ -1072,6 +1111,7 @@ begin
   end;
  end;
 end;
+*)
 
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
            const achild: elementoffsetty; const akinds: elementkindsty;
