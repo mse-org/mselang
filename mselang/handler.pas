@@ -2714,6 +2714,7 @@ outinfo('****');
       errormessage(err_syntax,[';'],2);
      end
      else begin
+//      ele.pushscopelevel();
       include(currentstatementflags,stf_classimp);
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
@@ -2954,8 +2955,7 @@ outinfo('*****');
   with contextstack[stackindex-1],d do begin
    //todo: check local forward
    ele.decelementparent;
-   ele.releaseelement(subdef.elementmark); 
-                                             //remove local definitions
+   ele.releaseelement(subdef.elementmark); //remove local definitions
    if subdef.varsize <> 0 then begin
     with additem({info})^ do begin
      op:= @locvarpopop;
@@ -2970,6 +2970,10 @@ outinfo('*****');
    frameoffset:= subdef.frameoffsetbefore;
   end;
   dec(funclevel);
+  if (funclevel = 0) and (stf_classimp in currentstatementflags) then begin
+   exclude(currentstatementflags,stf_classimp);
+//   ele.popscopelevel();
+  end;
  end;
 end;
 

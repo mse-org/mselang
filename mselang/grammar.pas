@@ -742,6 +742,31 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdefparam');
+ classdefparam1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefparam1');
+ classdefparam2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefparam2');
+ classdefparam2aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefparam2a');
+ classdefparam3co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefparam3');
+ classdefparam3aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'classdefparam3a');
  classfieldco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -3422,7 +3447,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdefparam: array[0..6] of branchty = (
+ bclassdefparam: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3451,6 +3476,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_push,bf_continue];
+     dest: (context: @classdefparam1co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: [')']),
@@ -3460,6 +3492,64 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @closeroundbracketexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bclassdefparam1: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @identpathco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bclassdefparam2a: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @classdefparam3co); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bclassdefparam3: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @identpathco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4858,6 +4948,17 @@ begin
  classdefreturnco.branch:= nil;
  classdefreturnco.handleentry:= @handleclassdefreturn;
  classdefparamco.branch:= @bclassdefparam;
+ classdefparam1co.branch:= @bclassdefparam1;
+ classdefparam1co.next:= @classdefparam2co;
+ classdefparam2co.branch:= nil;
+ classdefparam2co.next:= @classdefparam2aco;
+ classdefparam2co.handleexit:= @handleclassdefparam2;
+ classdefparam2aco.branch:= @bclassdefparam2a;
+ classdefparam3co.branch:= @bclassdefparam3;
+ classdefparam3co.next:= @classdefparam3aco;
+ classdefparam3aco.branch:= nil;
+ classdefparam3aco.next:= @classdefparam2aco;
+ classdefparam3aco.handleexit:= @handleclassdefparam3a;
  classfieldco.branch:= @bclassfield;
  classfieldco.handleexit:= @handleclassfield;
  statementendco.branch:= nil;

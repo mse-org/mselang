@@ -405,8 +405,18 @@ classdeferror,,handleclassdeferror,^
 classdefreturn,,handleclassdefreturn,*^
 classdefparam,,,*
  ${whitespace}
+ @identstart,classdefparam1*>
  ')',-*
  '',!closeroundbracketexpected
+classdefparam1,classdefparam2,,
+ '',identpath^*
+classdefparam2,classdefparam2a,,handleclassdefparam2*
+classdefparam2a,,,
+ ${whitespace}
+ ',',classdefparam3-
+classdefparam3,classdefparam3a,,
+ '',identpath^*
+classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 #
 classfield,,,handleclassfield^*
  '',vardef^*

@@ -23,6 +23,8 @@ uses
 procedure handleclassdefstart();
 procedure handleclassdeferror();
 procedure handleclassdefreturn();
+procedure handleclassdefparam2();
+procedure handleclassdefparam3a();
 procedure handleclassprivate();
 procedure handleclassprotected();
 procedure handleclasspublic();
@@ -109,6 +111,28 @@ outinfo('***');
    currentclassvislevel:= vic_published; //default
   end;
  }
+ end;
+end;
+
+procedure handleclassdefparam2();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFPARAM2');
+{$endif}
+outinfo('***');
+ with info do begin
+//  dec(stackindex);
+ end;
+end;
+
+procedure handleclassdefparam3a();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFPARAM3A');
+{$endif}
+outinfo('***');
+ with info do begin
+//  dec(stackindex);
  end;
 end;
 
