@@ -939,8 +939,11 @@ lineend+
 'const'+lineend+
 ' tks_none = 0;'+lineend;
   for int2:= 0 to high(internaltokens) do begin
-   str5:= str5+idstring('tks_'+
-                copy(pascalstringtostring(internaltokens[int2]),2,bigint));
+   str2:= pascalstringtostring(internaltokens[int2]);
+   if (str2 <> '') and (str2[1] = '.') then begin
+    str2:= copy(str2,2,bigint);
+   end;
+   str5:= str5+idstring('tks_'+str2);
   end;
   for int2:= 0 to high(keywords) do begin
    str5:= str5+ idstring('tk_'+keywords[int2]);

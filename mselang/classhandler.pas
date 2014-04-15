@@ -83,6 +83,7 @@ outinfo('***');
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
+   d.cla.fieldoffset:= 0;
   end;
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
@@ -99,6 +100,7 @@ outinfo('***');
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
+   currentclass:= d.typ.typedata;
   end;
 {
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
@@ -154,8 +156,14 @@ outinfo('***');
    bytesize:= pointersize;
    bitsize:= pointersize*8;
    indirectlevel:= d.typ.indirectlevel;
+   
+   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,
+                                                 infoclass.impl) then begin
+    internalerror('C20140415B');
+   end;
   end;
   ele.elementparent:= contextstack[stackindex].elemark;
+  currentclass:= 0;
  end;
 end;
 
@@ -219,7 +227,7 @@ begin
 {$endif}
 outinfo('***');
  with info,contextstack[stackindex-1] do begin
-  checkrecordfield(d.cla.visibility);
+  checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset);
  end;
  {
  with info do begin

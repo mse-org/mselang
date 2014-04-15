@@ -203,6 +203,12 @@ begin
        write('kind:',getenumname(typeinfo(kind),ord(kind)))
       end;
      end;
+     ck_recorddef: begin
+      write('foffs:',d.rec.fieldoffset);
+     end;
+     ck_classdef: begin
+      write('foffs:',d.cla.fieldoffset);
+     end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));
      end;

@@ -75,6 +75,10 @@ type
   itemindirectlevel: integer;
   indextypedata: elementoffsetty;
  end;
+ 
+ infoclassty = record
+  impl: elementoffsetty;
+ end;
   
  typedataty = record
   indirectlevel: indirectlevelty; //total indirection count
@@ -104,9 +108,12 @@ type
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
    );
-   dk_record: (
+   dk_record:(
    );
-   dk_array: (
+   dk_class:(
+    infoclass: infoclassty;
+   );
+   dk_array:(
     infoarray: infoarrayty;
    );
  end;
@@ -135,7 +142,7 @@ type
 // pvardatapoaty = ^vardatapoaty;
 
  fielddataty = record
-  offset: ptruint;
+  offset: dataoffsty;
   typ: elementoffsetty; //elementdata relative
   flags: varflagsty;
   indirectlevel: integer;
@@ -170,6 +177,11 @@ type
  implementationdataty = record
  end;
  pimplementationdataty = ^implementationdataty;
+ 
+ classimpdataty = record
+ end;
+ pclassimpdataty = ^classimpdataty;
+ 
 {
  classdataty = record
  end;

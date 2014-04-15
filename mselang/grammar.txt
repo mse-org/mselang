@@ -32,7 +32,7 @@
 @.handlerunits
  'handler','unithandler','classhandler','typehandler'
 @.internaltokens
- '.classes','.private','.protected','.public','.published'
+ '.classes','.private','.protected','.public','.published','.classimp','.self'
 start,nounit,,
  ${whitespace} 
  'unit'.,unit0-
@@ -307,7 +307,7 @@ recorddef0,recorddeferror,,
  @identstart,recordfield^*
  'end'.,recorddefreturn-
 recorddeferror,,,handlerecorddeferror^
-recordfield,,,handlerecordfield^>
+recordfield,,,handlerecordfield^*>
  '',vardef^*
 recorddefreturn,,handlerecordtype,*^
 #

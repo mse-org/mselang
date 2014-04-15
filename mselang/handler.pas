@@ -26,7 +26,7 @@ procedure initparser();
 //procedure push(const avalue: integer); overload;
 //procedure int32toflo64();
  
-procedure dummyhandler();
+//procedure dummyhandler();
 
 procedure handlenoimplementationerror();
 
@@ -809,7 +809,7 @@ outinfo('****');
       d.indirection:= 0;
       d.datatyp:= sysdatatypes[st_string8];
       d.constval.kind:= dk_string8;
-      d.constval.vstring:= newstring({info});
+      d.constval.vstring:= newstring();
      end;
      ck_number: begin
       c1:= d.number.value;
@@ -1237,7 +1237,7 @@ begin
       dk_float: begin
        case po1^.kind of
         dk_integer: begin //todo: adjust data size
-         with additem({info})^ do begin
+         with additem()^ do begin
           op:= @stackops.int32toflo64;
           with d.op1 do begin
            index0:= 0;
@@ -1289,7 +1289,7 @@ var
  po7: pointer;
  firstnotfound: integer;
  idents: identvecty;
- ele1: elementoffsetty;
+ ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
  si1: databytesizety;
  offs1: dataoffsty;
@@ -1316,10 +1316,27 @@ outinfo('***');
      with contextstack[stackindex] do begin
       d.indirection:= 0;
       case po1^.header.kind of
-       ek_var: begin
+       ek_var,ek_field: begin
         if checknoparam then begin     
-         offs1:= 0;
-         ele1:= pvardataty(po2)^.typ;
+         if po1^.header.kind = ek_field then begin
+          with pfielddataty(po2)^ do begin
+           if not (vf_classfield in flags) then begin
+            errormessage(err_classfieldexpected,[],0);
+            goto endlab;
+           end;
+           ele1:= typ;
+           offs1:= offset;
+          end;
+          if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
+           errormessage(err_noclass,[],0);
+           goto endlab;
+          end;
+          po2:= ele.eledataabs(ele2);
+         end
+         else begin
+          offs1:= 0;
+          ele1:= pvardataty(po2)^.typ;
+         end;
          if firstnotfound <= idents.high then begin
           for int1:= firstnotfound to idents.high do begin //fields
            if not ele.findchild(ele1,idents.d[int1],[ek_field],
@@ -1577,13 +1594,14 @@ begin
   stackindex:= parent+1;
  end;
 end;
-*)
+
 procedure dummyhandler();
 begin
 {$ifdef mse_debugparser}
  outhandle('DUMMY');
 {$endif}
 end;
+*)
 
 procedure handlenoimplementationerror();
 begin
@@ -1987,7 +2005,7 @@ outinfo('***');
  with info,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
-   dk1:= convertconsts({info});
+   dk1:= convertconsts();
    d.constval.kind:= dk_boolean;
    d.datatyp:= sysdatatypes[st_bool8];
    case dk1 of
@@ -2323,7 +2341,7 @@ outinfo('***');
   with contextstack[stacktop].d do begin
    case kind of
     ck_subres: begin
-     with additem({info})^ do begin
+     with additem()^ do begin
       op:= @popop;
       d.d.vsize:= fact.datasize; //todo: alignment
      end;    
@@ -2462,7 +2480,7 @@ end;
 *)
 procedure opgoto(const aaddress: dataaddressty);
 begin
- with additem({info})^ do begin
+ with additem()^ do begin
   op:= @gotoop;
   d.opaddress:= aaddress;
  end;
@@ -2515,7 +2533,7 @@ begin
    push(d.constval.vboolean); //todo: use compiletime branch
   end;
  end;
- with additem({info})^ do begin
+ with additem()^ do begin
   op:= @ifop;   
  end;
 end;
@@ -2696,7 +2714,6 @@ begin
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex] do begin
-  exclude(currentstatementflags,stf_classimp);
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
@@ -2714,14 +2731,19 @@ outinfo('****');
       errormessage(err_syntax,[';'],2);
      end
      else begin
-//      ele.pushscopelevel();
+///      ele.pushscopelevel();
       include(currentstatementflags,stf_classimp);
+      currentclass:= ele1;
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
-      ele.pushelementparent(ele1);
+      ele.pushelementparent(ptypedataty(ele.eledataabs(ele1))^.infoclass.impl);
      end;
     end;
    end;
+  end
+  else begin
+   exclude(currentstatementflags,stf_classimp);
+//   currentclass:= 0;
   end;
  end;
 end;
@@ -2733,7 +2755,7 @@ var
  po3: ptypedataty;
  po4: pelementoffsetaty;
  int1,int2: integer;
- paramco: integer;
+ paramco,paramhigh: integer;
  err1: boolean;
  impl1: boolean;
  parent1: elementoffsetty;
@@ -2744,7 +2766,7 @@ var
 // parambase: ptruint;
  si1: integer;
  paramkind1: paramkindty;
- bo1: boolean;
+ bo1,isclass: boolean;
 
 begin
 {$ifdef mse_debugparser}
@@ -2765,7 +2787,12 @@ outinfo('****');
    tokenexpectederror(':');
   end;
 outinfo('****');
+  isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
   paramco:= (stacktop-stackindex-2) div 3;
+  paramhigh:= paramco-1;
+  if isclass then begin
+   inc(paramco); //self pointer
+  end;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
   eledatabase:= ele.eledataoffset();
@@ -2781,7 +2808,25 @@ outinfo('****');
   err1:= false;
   impl1:= (us_implementation in unitinfo^.state) and 
                                                  not (sf_header in subflags);
-  for int2:= 0 to paramco-1 do begin
+  if isclass then begin
+   if not ele.addelement(tks_self,allvisi,ek_var,po2) then begin
+    internalerror('H20140415A');
+    exit;
+   end;
+   po4^[0]:= elementoffsetty(po2); //absoluteaddress
+   inc(po4);
+   with po2^ do begin
+    address.indirectlevel:= 1;
+    if impl1 then begin
+     address.address:= getlocvaraddress(pointersize);
+    end;
+    address.framelevel:= funclevel+1;
+    address.flags:= [vf_param];
+    include(address.flags,vf_const);
+    typ:= currentclass;
+   end;
+  end;
+  for int2:= 0 to paramhigh do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
     if ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
@@ -2832,6 +2877,9 @@ outinfo('****');
    int1:= int1+3;
   end;
 
+  if isclass then begin
+   dec(po4);
+  end;
   po1^.address:= 0; //init
   if impl1 then begin //implementation
    inc(funclevel);
@@ -2874,12 +2922,16 @@ outinfo('****');
   if impl1 then begin
    if funclevel = 1 then begin
     paramdata.match:= nil;
-    bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                                allvisi,@checkequalparam,paramdata);
-    if not bo1 then begin
-     if stf_classimp in currentstatementflags then begin
-     end
-     else begin
+    if isclass then begin
+     ele.pushelementparent(currentclass);
+     bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                                 allvisi,@checkequalparam,paramdata);
+     ele.popelementparent();       
+    end
+    else begin
+     bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                                 allvisi,@checkequalparam,paramdata);
+     if not bo1 then begin
       ele.decelementparent; //interface
       bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                 allvisi,@checkequalparam,paramdata);
@@ -2932,7 +2984,7 @@ outinfo('*****');
    address:= opcount;
   end;
   if subdef.varsize <> 0 then begin
-   with additem({info})^ do begin
+   with additem()^ do begin
     op:= @locvarpushop;
     d.stacksize:= subdef.varsize;
    end;
@@ -2957,12 +3009,12 @@ outinfo('*****');
    ele.decelementparent;
    ele.releaseelement(subdef.elementmark); //remove local definitions
    if subdef.varsize <> 0 then begin
-    with additem({info})^ do begin
+    with additem()^ do begin
      op:= @locvarpopop;
      d.stacksize:= subdef.varsize;
     end;
    end;
-   with additem({info})^ do begin
+   with additem()^ do begin
     op:= @returnop;
     d.stacksize:= subdef.paramsize;
    end;
@@ -2972,6 +3024,7 @@ outinfo('*****');
   dec(funclevel);
   if (funclevel = 0) and (stf_classimp in currentstatementflags) then begin
    exclude(currentstatementflags,stf_classimp);
+   ele.popelementparent();
 //   ele.popscopelevel();
   end;
  end;

@@ -94,7 +94,7 @@ type
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
-                  ck_classdef,
+                  ck_recorddef,ck_classdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
@@ -181,7 +181,7 @@ type
                     stf_classdef,stf_classimp);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_global,vf_param,vf_paramindirect,vf_const);
+ varflagty = (vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);
  varflagsty = set of varflagty;
 
  indirectlevelty = integer;
@@ -308,8 +308,12 @@ type
   classdata: elementoffsetty;
  end;
 }
+ recordinfoty = record
+  fieldoffset: dataoffsty;
+ end;
  classinfoty = record
   visibility: visikindsty;
+  fieldoffset: dataoffsty;
  end;
 
  fieldinfoty = record
@@ -366,6 +370,9 @@ type
 //   );
    ck_typetype,ck_fieldtype:(
     typ: typeinfoty;
+   );
+   ck_recorddef:(
+    rec: recordinfoty;
    );
    ck_classdef:(
     cla: classinfoty;

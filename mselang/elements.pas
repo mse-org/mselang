@@ -39,7 +39,7 @@ type
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_sub,ek_classes,{ek_class,}
-                  ek_unit,ek_implementation);
+                  ek_unit,ek_implementation,ek_classimp);
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -169,6 +169,10 @@ type
               const akind: elementkindty;
               out aelementdata: pointer): boolean;
                                                        //false if duplicate
+   function addelement(const aname: identty; const avislevel: visikindsty;
+              const akind: elementkindty;
+              out aelementoffset: elementoffsetty): boolean;
+                                                       //false if duplicate
    procedure pushscopelevel();
    procedure popscopelevel();
    function addscope(const akind: elementkindty;
@@ -225,7 +229,9 @@ const
 //ek_classes,                   ek_class,
   sizeof(classesdataty)+elesize,{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
-  sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize
+  sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
+//ek_classimp
+  sizeof(classimpdataty)+elesize
  );
 
 var
@@ -1442,6 +1448,21 @@ begin
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
+ end;
+end;
+
+function telementhashdatalist.addelement(const aname: identty;
+              const avislevel: visikindsty;
+              const akind: elementkindty;
+              out aelementoffset: elementoffsetty): boolean;
+                                                       //false if duplicate
+var
+ po1: pelementinfoty;
+begin
+ po1:= addelement(aname,avislevel,akind);
+ result:= po1 <> nil;
+ if result then begin
+  aelementoffset:= pointer(po1)-pointer(felementdata);
  end;
 end;
 

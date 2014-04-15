@@ -44,7 +44,8 @@ procedure handleindex();
 procedure closesquarebracketexpected();
 procedure closeroundbracketexpected();
 
-procedure checkrecordfield(const avisibility: visikindsty);
+procedure checkrecordfield(const avisibility: visikindsty;
+                       const aflags: varflagsty; var aoffset: dataoffsty);
 
 implementation
 uses
@@ -212,7 +213,11 @@ outinfo('***');
     id1:= getident();
    end;
   end;
-  contextstack[stackindex].elemark:= ele.elementparent;
+  with contextstack[stackindex] do begin
+   elemark:= ele.elementparent;
+   d.kind:= ck_recorddef;
+   d.rec.fieldoffset:= 0;
+  end;
   with contextstack[stackindex-1] do begin
    if not ele.pushelement(id1,allvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
@@ -231,11 +236,13 @@ begin
  end;
 end;
 
-procedure checkrecordfield(const avisibility: visikindsty);
+procedure checkrecordfield(const avisibility: visikindsty;
+                       const aflags: varflagsty; var aoffset: dataoffsty);
 var
  po1: pfielddataty;
  po2: ptypedataty;
  ele1: elementoffsetty;
+ size1: dataoffsty;
 begin
  with info do begin
   if (stacktop-stackindex < 3) or 
@@ -248,10 +255,19 @@ begin
    ele1:= ele.elementparent;
               //???? not used
    ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
+   po1^.flags:= aflags;
+   po1^.offset:= aoffset;
    with contextstack[stackindex+3] do begin
     po1^.typ:= d.typ.typedata;
     po1^.indirectlevel:= d.typ.indirectlevel;
    end;
+   if po1^.indirectlevel = 0 then begin      //todo: alignment
+    size1:= ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
+   end
+   else begin
+    size1:= pointersize;
+   end;
+   aoffset:= aoffset+size1;
    with contextstack[stackindex].d do begin
     kind:= ck_field;
     field.fielddata:= ele.eledatarel(po1);
@@ -272,12 +288,15 @@ begin
  outhandle('RECORDFIELD');
 {$endif}
 outinfo('***');
- checkrecordfield(allvisi);
+ with info do begin
+  checkrecordfield(allvisi,[],contextstack[stackindex-1].d.rec.fieldoffset);
+ end;
 end;
 
 procedure handlerecordtype();
 var
- int1,int2: integer;
+ int1: integer;
+ int2: dataoffsty;
  po1: pfielddataty;
  size1: integer;
 begin
@@ -285,8 +304,9 @@ begin
  outhandle('RECORDTYPE');
 {$endif}
 outinfo('****');
-  with info do begin
+ with info do begin
   ele.elementparent:= contextstack[stackindex].elemark; //restore
+{
   int2:= 0;
   for int1:= stackindex+1 to stacktop do begin
    with contextstack[int1].d do begin
@@ -302,12 +322,13 @@ outinfo('****');
                 //todo: alignment
    end;
   end;
+}
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    kind:= dk_record;
    datasize:= das_none;
-   bytesize:= int2;
-   bitsize:= int2*8;
+   bytesize:= contextstack[stackindex].d.rec.fieldoffset;
+   bitsize:= bytesize*8;
    indirectlevel:= d.typ.indirectlevel;
   end;
  end;
