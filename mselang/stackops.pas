@@ -78,6 +78,7 @@ procedure mulint32;
 procedure mulimmint32;
 procedure mulflo64;
 procedure addint32;
+procedure addimmint32;
 procedure addflo64;
 procedure negcard32;
 procedure negint32;
@@ -383,6 +384,14 @@ begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
  vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
+end;
+
+procedure addimmint32;
+var
+ po1: pointer;
+begin
+ po1:= mainstackpo - alignsize(sizeof(vintegerty));
+ vintegerty(po1^):= vintegerty(po1^)+oppo^.d.d.vinteger;
 end;
 
 procedure cmpequbool;

@@ -824,7 +824,10 @@ outinfo('****');
     end;
    end;
    with contextstack[stackindex] do begin
-    fl1:= d.getfact.flags;
+    fl1:= [];
+    if d.kind = ck_getfact then begin
+     fl1:= d.getfact.flags;
+    end;
     d:= contextstack[stacktop].d;
     if ff_address in fl1 then begin
      case d.kind of
@@ -1332,13 +1335,13 @@ outinfo('***');
            errormessage(err_noclass,[],0);
            goto endlab;
           end;
-          po2:= ele.eledataabs(ele2);
+          po2:= ele.eledataabs(ele2); //self parameter
          end
          else begin
           offs1:= 0;
           ele1:= pvardataty(po2)^.typ;
          end;
-         indirect1:= d.ref.address.indirectlevel;
+         indirect1:= pvardataty(po2)^.address.indirectlevel;
          if firstnotfound <= idents.high then begin
           for int1:= firstnotfound to idents.high do begin //fields
            if not ele.findchild(ele1,idents.d[int1],[ek_field],
@@ -1349,15 +1352,15 @@ outinfo('***');
            po4:= ele.eledataabs(ele1);
            offs1:= offs1 + po4^.offset;
            ele1:= po4^.typ;
-           indirect1:= po4^.indirectlevel;
           end;
           ele1:= po4^.typ;
-          po3:= ele.eledataabs(ele1);
          end;
+         po3:= ele.eledataabs(ele1);
          d.kind:= ck_ref;
          d.ref.address:= pvardataty(po2)^.address;
+         d.ref.address.indirectlevel:= 0;
          d.datatyp.typedata:= ele1;
-         d.datatyp.indirectlevel:= indirect1;
+         d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
          d.ref.offset:= offs1;
         end;
        end;
@@ -1518,9 +1521,6 @@ outinfo('***');
       errormessage(err_illegalqualifier,[]);
      end
      else begin
-       for int1:= d.indirection to -1 do begin
-       end;
-//      if checknoparam then begin
        ele1:= d.datatyp.typedata;
        offs1:= 0;
        for int1:= stackindex+1 to stacktop do begin //fields
@@ -1537,13 +1537,23 @@ outinfo('***');
         end;
         po4:= ele.eledataabs(ele1);
         offs1:= offs1 + po4^.offset;
-        ele1:= po4^.typ;
        end;
        ele1:= po4^.typ;
        po3:= ele.eledataabs(ele1);
+       if d.indirection <> 0 then begin
+        getaddress(-1);
+        if offs1 <> 0 then begin
+         offsetad(-1,offs1);
+        end;
+        dec(d.indirection);
+        d.datatyp.indirectlevel:= po3^.indirectlevel+1;
+      end
+       else begin
+        d.ref.offset:= d.ref.offset+offs1;
+        d.datatyp.indirectlevel:= po3^.indirectlevel;
+       end;
        d.datatyp.typedata:= ele1;
-       d.datatyp.indirectlevel:= po3^.indirectlevel;
-       d.ref.offset:= d.ref.offset+offs1;
+outinfo('***');
        contextstack[stackindex].d:= d; 
                  //todo: no double copy by handlefact
 //      end;
@@ -2084,12 +2094,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ASSIGNMENT');
 {$endif}
-outinfo('*****');
+outinfo('**1**');
  with info do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
    if not getaddress(1) or not getvalue(2{,false}) then begin
     goto endlab;
    end;
+outinfo('**2**');
    with contextstack[stackindex+1].d do begin //address
     typematch:= false;
     indi:= false;

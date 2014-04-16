@@ -123,6 +123,7 @@ procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                                                   const size: databytesizety);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
+procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 
 procedure setcurrentloc(const indexoffset: integer);
 procedure setcurrentlocbefore(const indexoffset: integer);
@@ -506,6 +507,14 @@ begin
     internalerror('H20131121A');
    end;
   end;
+ end;
+end;
+
+procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+begin
+ with insertitem(stackoffset,false)^ do begin
+  op:= @addimmint32;
+  d.d.vinteger:= aoffset;
  end;
 end;
 

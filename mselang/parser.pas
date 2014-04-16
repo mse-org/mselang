@@ -83,7 +83,24 @@ procedure outinfo(const text: string);
   end;
   write(':',ainfo.indirection,' ');
  end;
+
+ procedure writeaddress(const aaddress: addressinfoty);
+ begin
+  with aaddress do begin
+   write('A:',inttostr(address),' I:',inttostr(indirectlevel),
+        ' F:',inttostr(framelevel),' ');
+   write(settostring(ptypeinfo(typeinfo(varflagsty)),
+                         integer(flags),true),' ');
+  end;
+ end;
  
+ procedure writeref(const ainfo: contextdataty);
+ begin
+  with ainfo.ref do begin
+   writeaddress(address);
+   write('O:',offset,' ');
+  end;
+ end;
 var
  int1: integer;
 begin
@@ -171,6 +188,7 @@ begin
       writetype(d);
      end;
      ck_ref: begin
+      writeref(d);
       writetype(d);
      end;
      ck_reffact: begin
@@ -189,11 +207,7 @@ begin
         write(constval.vfloat,' ');
        end;
        dk_address: begin
-        with constval.vaddress do begin
-         write(settostring(ptypeinfo(typeinfo(varflagsty)),
-                               integer(constval.vaddress.flags),true));
-         write('I:',inttostr(indirectlevel),' A:',inttostr(address),' ');
-        end;
+        writeaddress(constval.vaddress);
        end;
       end;
      end;

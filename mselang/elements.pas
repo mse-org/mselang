@@ -1221,14 +1221,16 @@ begin
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' A:'+inttostr(address.address)+' '+
+     mstr1:= mstr1+lineend+' A:'+inttostr(address.address)+' I:'+
+               inttostr(address.indirectlevel)+' F:'+
+               inttostr(address.framelevel)+' '+
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
      po2:= eleinfoabs(typ);
      mstr1:= mstr1+' T:'+inttostr(typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
-       ' S:'+inttostr(bytesize);
+       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      end;
     end;
    end;
