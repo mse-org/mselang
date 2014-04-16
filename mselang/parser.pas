@@ -71,16 +71,17 @@ end;
 
 {$ifdef mse_debugparser}
 procedure outinfo(const text: string);
- procedure writetype(const ainfo: typeinfoty);
+ procedure writetype(const ainfo: contextdataty);
  var
   po1: ptypedataty;
  begin
-  with ainfo do begin
+  with ainfo.datatyp do begin
    po1:= ele.eledataabs(typedata);
-   write('T:',inttostr(typedata),' ',
+   write('T:',typedata,' ',
           getenumname(typeinfo(datakindty),ord(po1^.kind)),' ',
-          'I:',inttostr(indirectlevel),' ');
+          'I:',indirectlevel);
   end;
+  write(':',ainfo.indirection,' ');
  end;
  
 var
@@ -167,13 +168,16 @@ begin
       end;
      end;
      ck_fact: begin
-      writetype(datatyp);
+      writetype(d);
      end;
      ck_ref: begin
-      writetype(datatyp);
+      writetype(d);
+     end;
+     ck_reffact: begin
+      writetype(d);
      end;
      ck_const: begin
-      writetype(datatyp);
+      writetype(d);
       case constval.kind of
        dk_boolean: begin
         write(constval.vboolean,' ');

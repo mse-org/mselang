@@ -1232,6 +1232,20 @@ begin
      end;
     end;
    end;
+   ek_field: begin
+    with pfielddataty(@po1^.data)^ do begin
+     mstr1:= mstr1+lineend+' O:'+inttostr(offset)+
+          ' I:'+inttostr(indirectlevel)+' '+
+           settostring(ptypeinfo(typeinfo(flags)),
+                                         integer(flags),false);
+     po2:= eleinfoabs(typ);
+     mstr1:= mstr1+' T:'+inttostr(typ)+':'+getidentname(po2^.header.name);
+     with ptypedataty(@po2^.data)^ do begin
+      mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
+       ' S:'+inttostr(bytesize);
+     end;
+    end;
+   end;
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+

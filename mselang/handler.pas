@@ -710,6 +710,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
 {$endif}
+outinfo('***');
  with info,contextstack[stacktop] do begin
   if d.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
@@ -1337,16 +1338,18 @@ outinfo('***');
           offs1:= 0;
           ele1:= pvardataty(po2)^.typ;
          end;
+         indirect1:= d.ref.address.indirectlevel;
          if firstnotfound <= idents.high then begin
           for int1:= firstnotfound to idents.high do begin //fields
            if not ele.findchild(ele1,idents.d[int1],[ek_field],
                                                        allvisi,ele1) then begin
             identerror(1+int1,err_identifiernotfound);
             goto endlab;
-           end;
+           end;                        //todo: check indirection
            po4:= ele.eledataabs(ele1);
            offs1:= offs1 + po4^.offset;
            ele1:= po4^.typ;
+           indirect1:= po4^.indirectlevel;
           end;
           ele1:= po4^.typ;
           po3:= ele.eledataabs(ele1);
@@ -1354,7 +1357,7 @@ outinfo('***');
          d.kind:= ck_ref;
          d.ref.address:= pvardataty(po2)^.address;
          d.datatyp.typedata:= ele1;
-         d.datatyp.indirectlevel:= d.ref.address.indirectlevel;
+         d.datatyp.indirectlevel:= indirect1;
          d.ref.offset:= offs1;
         end;
        end;
@@ -1515,6 +1518,8 @@ outinfo('***');
       errormessage(err_illegalqualifier,[]);
      end
      else begin
+       for int1:= d.indirection to -1 do begin
+       end;
 //      if checknoparam then begin
        ele1:= d.datatyp.typedata;
        offs1:= 0;
