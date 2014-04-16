@@ -1545,14 +1545,13 @@ outinfo('***');
         if offs1 <> 0 then begin
          offsetad(-1,offs1);
         end;
-        dec(d.indirection);
-        d.datatyp.indirectlevel:= po3^.indirectlevel+1;
+        dec(d.indirection); //pending dereference
       end
        else begin
         d.ref.offset:= d.ref.offset+offs1;
-        d.datatyp.indirectlevel:= po3^.indirectlevel;
        end;
        d.datatyp.typedata:= ele1;
+       d.datatyp.indirectlevel:= po3^.indirectlevel;
 outinfo('***');
        contextstack[stackindex].d:= d; 
                  //todo: no double copy by handlefact
