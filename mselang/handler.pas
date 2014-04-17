@@ -118,8 +118,6 @@ procedure handleprocedureheader();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
-procedure handleclassfunctionentry();
-procedure handleclassprocedureentry();
 
 procedure checkfunctiontype();
 procedure handleprocedure1entry();
@@ -1111,28 +1109,6 @@ outinfo('****');
  end;
 end;
 
-procedure handleclassprocedureentry();
-begin
-{$ifdef mse_debugparser}
- outhandle('CLASSPROCEDUREENTRY');
-{$endif}
- with info,contextstack[stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_header];
- end;
-end;
-
-procedure handleclassfunctionentry();
-begin
-{$ifdef mse_debugparser}
- outhandle('CLASSFUNCTIONENTRY');
-{$endif}
-outinfo('****');
- with info,contextstack[stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_function,sf_header];
- end;
-end;
 (*
 procedure handlefunctionentry();
 begin
@@ -1300,10 +1276,16 @@ var
    if sf_function in asub^.flags then begin
     inc(paramco1);
    end;
+   if sf_method in asub^.flags then begin
+    inc(paramco1);
+   end;
    if paramco1 <> asub^.paramcount then begin
     identerror(idents.high+1,err_wrongnumberofparameters);
    end
    else begin
+    if sf_method in asub^.flags then begin
+     inc(po5); //instance pointer
+    end;
     for int1:= stackindex+3+idents.high to stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
@@ -1461,6 +1443,13 @@ outinfo('***');
           ek_sub: begin
            if int1 <> idents.high then begin
             errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
+            goto endlab;
+           end;
+           if po1^.header.kind = ek_var then begin
+            pushinsertdata(0,false,pvardataty(po2)^.address,offs1,pointersize);
+           end
+           else begin
+            internalerror('N20140417A');
             goto endlab;
            end;
            dosub(psubdataty(po4));

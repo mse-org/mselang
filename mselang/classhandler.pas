@@ -30,6 +30,8 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
+procedure handleclassfunctionentry();
+procedure handleclassprocedureentry();
 
 implementation
 uses
@@ -246,6 +248,29 @@ outinfo('***');
   ele.elementparent:= ele1;
  end;
  }
+end;
+
+procedure handleclassprocedureentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROCEDUREENTRY');
+{$endif}
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_header,sf_method];
+ end;
+end;
+
+procedure handleclassfunctionentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSFUNCTIONENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_function,sf_header,sf_method];
+ end;
 end;
 
 end.
