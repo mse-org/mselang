@@ -258,11 +258,11 @@ begin
    po1^.flags:= aflags;
    po1^.offset:= aoffset;
    with contextstack[stackindex+3] do begin
-    po1^.typ:= d.typ.typedata;
+    po1^.vf.typ:= d.typ.typedata;
     po1^.indirectlevel:= d.typ.indirectlevel;
    end;
    if po1^.indirectlevel = 0 then begin      //todo: alignment
-    size1:= ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
+    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
    end
    else begin
     size1:= pointersize;

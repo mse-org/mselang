@@ -131,9 +131,12 @@ type
  end;
  pconstdataty = ^constdataty;
 
- vardataty = record
-  address: addressinfoty; //indirectlevel = total
+ vfinfoty = record
   typ: elementoffsetty;   //elementdata relative typedataty
+ end;
+ vardataty = record
+  vf: vfinfoty;           //same layout as fielddataty
+  address: addressinfoty; //indirectlevel = total
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
@@ -142,8 +145,8 @@ type
 // pvardatapoaty = ^vardatapoaty;
 
  fielddataty = record
+  vf: vfinfoty;           //same layout as vardataty
   offset: dataoffsty;
-  typ: elementoffsetty; //elementdata relative
   flags: varflagsty;
   indirectlevel: integer;
  end;

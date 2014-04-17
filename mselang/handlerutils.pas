@@ -71,34 +71,34 @@ const
   ''')'' expected'
  );
 
-procedure error({const info: pparseinfoty;} const error: comperrorty;
+procedure error(const error: comperrorty;
                    const pos: pchar=nil);
 //procedure parsererror(const info: pparseinfoty; const text: string);
 //procedure identnotfounderror(const info: contextitemty; const text: string);
 //procedure wrongidentkinderror(const info: contextitemty; 
 //       wantedtype: elementkindty; const text: string);
-procedure outcommand({const info: pparseinfoty;} const items: array of integer;
+procedure outcommand(const items: array of integer;
                      const text: string);
  
 function findkindelementdata(const aident: contextdataty;
               const akinds: elementkindsty; const visibility: visikindsty;
                                     out ainfo: pointer): boolean;
-function findkindelements({const info: pparseinfoty;}
+function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
            out firstnotfound: integer; out idents: identvecty): boolean;
-function findkindelements({const info: pparseinfoty;}
+function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty): boolean;
-function findkindelementsdata({const info: pparseinfoty;}
+function findkindelementsdata(
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer;
               out firstnotfound: integer; out idents: identvecty): boolean;
-function findkindelementsdata({const info: pparseinfoty;}
+function findkindelementsdata(
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
 
-function findvar({const info: pparseinfoty;} const astackoffset: integer; 
+function findvar(const astackoffset: integer; 
         const visibility: visikindsty; out varinfo: vardestinfoty): boolean;
 
 procedure updateop(const opinfo: opinfoty);
@@ -116,6 +116,8 @@ procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
                                                    const size: databytesizety);
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                                      const avalue: datakindty); overload;
+procedure pushinsert(const stackoffset: integer; const before: boolean;
+                                     const avalue: addressinfoty); overload;
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
@@ -165,7 +167,7 @@ const
    (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
   );
  
-procedure error({const info: pparseinfoty;} const error: comperrorty;
+procedure error(const error: comperrorty;
                    const pos: pchar=nil);
 begin
  outcommand([],'*ERROR* '+errormessages[error]);
@@ -188,7 +190,7 @@ begin
  end;
 end;
 
-function findkindelementdata({const info: pparseinfoty;}
+function findkindelementdata(
               const astackoffset: integer;
               const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
@@ -199,7 +201,7 @@ begin
  end;
 end;
 
-function getidents({const info: pparseinfoty;} const astackoffset: integer;
+function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean;
 var
  po1: pcontextitemty;
@@ -333,7 +335,7 @@ begin
 end;
 *)
 
-function findkindelementsdata({const info: pparseinfoty;}
+function findkindelementsdata(
              const astackoffset: integer;
              const akinds: elementkindsty; const visibility: visikindsty; 
              out ainfo: pointer; out firstnotfound: integer;
@@ -346,7 +348,7 @@ begin
  end;
 end;
 
-function findkindelementsdata({const info: pparseinfoty;}
+function findkindelementsdata(
              const astackoffset: integer;
              const akinds: elementkindsty; const visibility: visikindsty; 
              out ainfo: pointer): boolean;
@@ -357,7 +359,7 @@ begin
  end;
 end;
 
-function findvar({const info: pparseinfoty;} const astackoffset: integer; 
+function findvar(const astackoffset: integer; 
                    const visibility: visikindsty;
                            out varinfo: vardestinfoty): boolean;
 var
@@ -374,7 +376,7 @@ begin
   if result then begin
    po1:= ele.eledataabs(ele1);
    varinfo.address:= po1^.address;
-   ele2:= po1^.typ;
+   ele2:= po1^.vf.typ;
    if int1 < idents.high then begin
     for int1:= int1+1 to idents.high do begin //fields
      result:= ele.findchild(ele2,idents.d[int1],[ek_field],visibility,ele2);
@@ -385,7 +387,7 @@ begin
      po3:= ele.eledataabs(ele2);
      varinfo.address.address:= varinfo.address.address + po3^.offset;
     end;
-    varinfo.typ:= ele.eledataabs(po3^.typ);
+    varinfo.typ:= ele.eledataabs(po3^.vf.typ);
    end
    else begin
     po2:= ele.eledataabs(ele2);
@@ -421,7 +423,7 @@ begin
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
 *)
-procedure outcommand({const info: pparseinfoty;} const items: array of integer;
+procedure outcommand(const items: array of integer;
                      const text: string);
 var
  int1: integer;
@@ -512,9 +514,11 @@ end;
 
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 begin
- with insertitem(stackoffset,false)^ do begin
-  op:= @addimmint32;
-  d.d.vinteger:= aoffset;
+ if aoffset <> 0 then begin
+  with insertitem(stackoffset,false)^ do begin
+   op:= @addimmint32;
+   d.d.vinteger:= aoffset;
+  end;
  end;
 end;
 
@@ -542,9 +546,9 @@ begin
  end;
 end;
 
-procedure push(const avalue: addressinfoty); overload;
+procedure pushins(const aitem: popinfoty; const avalue: addressinfoty);
 begin
- with additem({info})^ do begin
+ with aitem^ do begin
   if vf_global in avalue.flags then begin
    op:= @pushglobaddr;
    d.vaddress:= avalue.address;
@@ -555,6 +559,17 @@ begin
    d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
   end;
  end;
+end;
+
+procedure push(const avalue: addressinfoty); overload;
+begin
+ pushins(additem,avalue);
+end;
+
+procedure pushinsert(const stackoffset: integer; const before: boolean;
+                                    const avalue: addressinfoty); overload;
+begin
+ pushins(insertitem(stackoffset,before),avalue);
 end;
 
 procedure push(const avalue: datakindty); overload;
@@ -698,8 +713,7 @@ begin
  end;
 end;
 
-procedure pushd({const info: pparseinfoty;}
-                     const oppo: popinfoty; const address: addressinfoty;
+procedure pushd(const oppo: popinfoty; const address: addressinfoty;
                      const offset: dataoffsty; const size: databytesizety);
 begin
  with oppo^,address do begin //todo: use table
@@ -829,7 +843,7 @@ begin                    //todo: optimize
     d.ref.offset:= 0;
     if d.indirection > 0 then begin //@ operator
      if d.indirection = 1 then begin
-     pushinsertaddress(stackoffset,false);
+      pushinsertaddress(stackoffset,false);
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);

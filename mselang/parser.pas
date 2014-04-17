@@ -87,7 +87,7 @@ procedure outinfo(const text: string);
  procedure writeaddress(const aaddress: addressinfoty);
  begin
   with aaddress do begin
-   write('A:',inttostr(address),' I:',inttostr(indirectlevel),
+   write('A:',inttostr(integer(address)),' I:',inttostr(indirectlevel),
         ' F:',inttostr(framelevel),' ');
    write(settostring(ptypeinfo(typeinfo(varflagsty)),
                          integer(flags),true),' ');

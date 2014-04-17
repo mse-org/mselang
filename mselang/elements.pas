@@ -128,8 +128,11 @@ type
                  const achild: elementoffsetty; const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
+   function findchild(const aparent: elementoffsetty; 
+                 const achild: elementoffsetty; const avislevel: visikindsty; 
+               out element: elementoffsetty; out adata: pointer): elementkindty;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
-            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
+           const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
                   //searches in scopestack, returns parent
 
    function eleoffset: ptruint; inline;
@@ -184,6 +187,7 @@ type
    procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
+   procedure pushelementparent(); //save current on stack
    procedure pushelementparent(const aparent: elementoffsetty);
    procedure popelementparent;
    property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
@@ -391,7 +395,7 @@ end;
 function telementhashdatalist.eledataabs(
                            const aelement: elementoffsetty): pointer; inline;
 begin
- result:= @pelementinfoty(aelement+pointer(felementdata))^.data;
+ result:= aelement+pointer(felementdata)+eledatashift;
 end;
 
 type
@@ -1133,6 +1137,26 @@ begin
  elementparent:= ele1;
 end;
 
+function telementhashdatalist.findchild(const aparent: elementoffsetty; 
+                 const achild: elementoffsetty; const avislevel: visikindsty; 
+               out element: elementoffsetty; out adata: pointer): elementkindty;
+var 
+ ele1: elementoffsetty;
+begin
+ ele1:= elementparent;
+ elementparent:= aparent;
+ if findcurrent(achild,[],avislevel,element) then begin
+  adata:= eleinfoabs(element);
+  result:= pelementinfoty(adata)^.header.kind;
+  inc(adata,eledatashift);
+ end
+ else begin
+  result:= ek_none;
+  adata:= nil;
+ end;
+ elementparent:= ele1;
+end;
+
 function telementhashdatalist.findparentscope(const aident: identty;
                const akinds: elementkindsty; const avislevel: visikindsty;
                out aparent: elementoffsetty): boolean;
@@ -1226,8 +1250,8 @@ begin
                inttostr(address.framelevel)+' '+
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
-     po2:= eleinfoabs(typ);
-     mstr1:= mstr1+' T:'+inttostr(typ)+':'+getidentname(po2^.header.name);
+     po2:= eleinfoabs(vf.typ);
+     mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
@@ -1240,8 +1264,8 @@ begin
           ' I:'+inttostr(indirectlevel)+' '+
            settostring(ptypeinfo(typeinfo(flags)),
                                          integer(flags),false);
-     po2:= eleinfoabs(typ);
-     mstr1:= mstr1+' T:'+inttostr(typ)+':'+getidentname(po2^.header.name);
+     po2:= eleinfoabs(vf.typ);
+     mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize);
@@ -1693,6 +1717,16 @@ begin
  end;
  fparents[fparentindex]:= elementparent;
  elementparent:= aparent;
+ inc(fparentindex);
+end;
+
+procedure telementhashdatalist.pushelementparent(); //save current on stack
+begin
+ if fparentindex > maxparents then begin
+  internalerror('E201400412A');
+  exit;
+ end;
+ fparents[fparentindex]:= elementparent;
  inc(fparentindex);
 end;
 
