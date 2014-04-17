@@ -1282,6 +1282,102 @@ var
    end;
   end;
  end;
+
+var
+ idents: identvecty;
+
+ procedure dosub(const asub: psubdataty);
+ var
+  po3: ptypedataty;
+  po5: pelementoffsetty;
+  po6: pvardataty;
+  paramco1: integer;
+  int1: integer;
+ begin
+  with info do begin
+   po5:= @asub^.paramsrel;
+   paramco1:= paramco;
+   if sf_function in asub^.flags then begin
+    inc(paramco1);
+   end;
+   if paramco1 <> asub^.paramcount then begin
+    identerror(idents.high+1,err_wrongnumberofparameters);
+   end
+   else begin
+    for int1:= stackindex+3+idents.high to stacktop do begin
+     po6:= ele.eledataabs(po5^);
+     with contextstack[int1] do begin
+      if vf_paramindirect in po6^.address.flags then begin
+       case d.kind of
+        ck_const: begin
+         if not (vf_const in po6^.address.flags) then begin
+          errormessage(err_variableexpected,[],int1-stackindex);
+         end
+         else begin
+          internalerror('N20140405B'); //todo
+         end;
+        end;
+        ck_ref: begin
+         pushinsertaddress(int1-stackindex,false);
+        end;
+       end;
+      end
+      else begin
+       case d.kind of
+        ck_const: begin
+         pushinsertconst(int1-stackindex,false);
+        end;
+        ck_ref: begin
+         getvalue(int1-stackindex{,true});
+        end;
+       end;
+      end;
+      if d.datatyp.typedata <> po6^.vf.typ then begin
+       errormessage(err_incompatibletypeforarg,
+                   [int1-stackindex-3,typename(d),
+                   typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
+                                                        int1-stackindex);
+      end;
+     end;
+     inc(po5);
+    end;
+    with contextstack[stackindex] do begin //result data
+     if sf_function in asub^.flags then begin
+      po6:= ele.eledataabs(po5^);
+      po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
+      int1:= pushinsertvar(0,false,po3);
+      d.fact.datasize:= int1;
+      d.kind:= ck_subres;
+      d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
+      d.datatyp.typedata:= po6^.vf.typ;        
+      with additem()^ do begin //result var param
+       op:= @pushstackaddr;
+       d.voffset:= -asub^.paramsize+stacklinksize-int1;
+      end;
+     end
+     else begin
+      d.kind:= ck_subcall;
+     end;
+    end;
+   end;
+   if asub^.address = 0 then begin //unresolved header
+    linkmark(asub^.links,opcount);
+   end;
+   with additem()^ do begin
+    d.callinfo.ad:= asub^.address-1; //possibly invalid
+    if (asub^.nestinglevel = 0) or 
+                     (asub^.nestinglevel = funclevel) then begin
+     op:= @callop;
+     d.callinfo.linkcount:= -1;
+    end
+    else begin
+     op:= @calloutop;
+     d.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
+                                                             //for downto 0
+    end;
+   end;
+  end;
+ end; //dosub
  
 var
  po1: pelementinfoty;
@@ -1292,7 +1388,6 @@ var
  po6: pvardataty;
  po7: pointer;
  firstnotfound: integer;
- idents: identvecty;
  ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
  si1: databytesizety;
@@ -1362,6 +1457,14 @@ outinfo('***');
                                  //todo: check indirection
            offs1:= offs1 + pfielddataty(po4)^.offset;
            ele1:= pfielddataty(po4)^.vf.typ;
+          end;
+          ek_sub: begin
+           if int1 <> idents.high then begin
+            errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
+            goto endlab;
+           end;
+           dosub(psubdataty(po4));
+           goto endlab;
           end;
           else begin
            identerror(1+int1,err_wrongtype,erl_fatal);
@@ -1446,87 +1549,7 @@ outinfo('***');
        end;
       end;
       ek_sub: begin
-       po5:= @psubdataty(po2)^.paramsrel;
-       paramco1:= paramco;
-       if sf_function in psubdataty(po2)^.flags then begin
-        inc(paramco1);
-       end;
-       if paramco1 <> psubdataty(po2)^.paramcount then begin
-        identerror(1,err_wrongnumberofparameters);
-       end
-       else begin
-        for int1:= stackindex+3+idents.high to stacktop do begin
-         po6:= ele.eledataabs(po5^);
-         with contextstack[int1] do begin
-          if vf_paramindirect in po6^.address.flags then begin
-           case d.kind of
-            ck_const: begin
-             if not (vf_const in po6^.address.flags) then begin
-              errormessage(err_variableexpected,[],int1-stackindex);
-             end
-             else begin
-              internalerror('N20140405B'); //todo
-             end;
-            end;
-            ck_ref: begin
-             pushinsertaddress(int1-stackindex,false);
-            end;
-           end;
-          end
-          else begin
-           case d.kind of
-            ck_const: begin
-             pushinsertconst(int1-stackindex,false);
-            end;
-            ck_ref: begin
-             getvalue(int1-stackindex{,true});
-            end;
-           end;
-          end;
-          if d.datatyp.typedata <> po6^.vf.typ then begin
-           errormessage(err_incompatibletypeforarg,
-                       [int1-stackindex-3,typename(d),
-                       typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
-                                                            int1-stackindex);
-          end;
-         end;
-         inc(po5);
-        end;
-        with contextstack[stackindex] do begin //result data
-         if sf_function in psubdataty(po2)^.flags then begin
-          po6:= ele.eledataabs(po5^);
-          po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
-          int1:= pushinsertvar(0,false,po3);
-          d.fact.datasize:= int1;
-          d.kind:= ck_subres;
-          d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
-          d.datatyp.typedata:= po6^.vf.typ;        
-          with additem()^ do begin //result var param
-           op:= @pushstackaddr;
-           d.voffset:= -psubdataty(po2)^.paramsize+stacklinksize-int1;
-          end;
-         end
-         else begin
-          d.kind:= ck_subcall;
-         end;
-        end;
-       end;
-       if psubdataty(po2)^.address = 0 then begin //unresolved header
-        linkmark(psubdataty(po2)^.links,opcount);
-       end;
-       with additem()^ do begin
-        d.callinfo.ad:= psubdataty(po2)^.address-1; //possibly invalid
-        if (psubdataty(po2)^.nestinglevel = 0) or 
-                         (psubdataty(po2)^.nestinglevel = funclevel) then begin
-         op:= @callop;
-         d.callinfo.linkcount:= -1;
-        end
-        else begin
-         op:= @calloutop;
-         d.callinfo.linkcount:= funclevel-psubdataty(po2)^.nestinglevel-2;
-                                                                 //for downto 0
-        end;
-       end;
+       dosub(psubdataty(po2));
       end;
       ek_sysfunc: begin
        with contextstack[stackindex] do begin
