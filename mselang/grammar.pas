@@ -344,26 +344,26 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'sub');
- procedureaco: contextty = (branch: nil; 
+ subaco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedurea');
- procedure0co: contextty = (branch: nil; 
+               caption: 'suba');
+ sub0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure0');
- procedure1co: contextty = (branch: nil; 
+               caption: 'sub0');
+ sub1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure1');
- procedure2co: contextty = (branch: nil; 
+               caption: 'sub1');
+ sub2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure2');
+               caption: 'sub2');
  functiontypeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -379,26 +379,26 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'functiontypea');
- procedure4co: contextty = (branch: nil; 
+ sub4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure4');
- procedure5aco: contextty = (branch: nil; 
+               caption: 'sub4');
+ sub5aco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure5a');
- procedure5co: contextty = (branch: nil; 
+               caption: 'sub5a');
+ sub5co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure5');
- procedure6co: contextty = (branch: nil; 
+               caption: 'sub5');
+ sub6co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedure6');
+               caption: 'sub6');
  checkterminatorco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1882,7 +1882,7 @@ const
    );
  bsubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @procedure0co); stack: nil; keys: (
+     dest: (context: @sub0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -1892,7 +1892,7 @@ const
    );
  bsub: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @procedure0co); stack: nil; keys: (
+     dest: (context: @sub0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -1900,9 +1900,9 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedurea: array[0..1] of branchty = (
+ bsuba: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @procedure4co); stack: nil; keys: (
+     dest: (context: @sub4co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -1910,7 +1910,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure0: array[0..5] of branchty = (
+ bsub0: array[0..5] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -1948,7 +1948,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure1: array[0..1] of branchty = (
+ bsub1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @paramsdef0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -1958,7 +1958,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure2: array[0..7] of branchty = (
+ bsub2: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -1995,7 +1995,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_handler,bf_eat,bf_push];
-     dest: (handler: @handleprocedure3); stack: nil; keys: (
+     dest: (handler: @handlesub3); stack: nil; keys: (
     (kind: bkk_char; chars: [';']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2068,9 +2068,9 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure4: array[0..8] of branchty = (
+ bsub4: array[0..9] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
-     dest: (context: @procedure5aco); stack: nil; 
+     dest: (context: @sub5aco); stack: nil; 
      keyword: $5678CDDB{'begin'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @constco); stack: nil; 
@@ -2081,6 +2081,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
      keyword: $159E3376{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
+     dest: (context: @functionco); stack: nil; 
+     keyword: $2B3C66ED{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2111,7 +2114,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocedure5: array[0..1] of branchty = (
+ bsub5: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -4802,28 +4805,28 @@ begin
  procedureco.next:= @subco;
  procedureco.handleentry:= @handleprocedureentry;
  subco.branch:= @bsub;
- subco.next:= @procedureaco;
- procedureaco.branch:= @bprocedurea;
- procedure0co.branch:= @bprocedure0;
- procedure0co.next:= @procedure1co;
- procedure1co.branch:= @bprocedure1;
- procedure1co.next:= @procedure2co;
- procedure1co.handleentry:= @handleprocedure1entry;
- procedure2co.branch:= @bprocedure2;
+ subco.next:= @subaco;
+ subaco.branch:= @bsuba;
+ sub0co.branch:= @bsub0;
+ sub0co.next:= @sub1co;
+ sub1co.branch:= @bsub1;
+ sub1co.next:= @sub2co;
+ sub1co.handleentry:= @handlesub1entry;
+ sub2co.branch:= @bsub2;
  functiontypeco.branch:= @bfunctiontype;
  resultidentco.branch:= @bresultident;
  resultidentco.handleentry:= @checkfunctiontype;
  functiontypeaco.branch:= @bfunctiontypea;
- procedure4co.branch:= @bprocedure4;
- procedure4co.next:= @checkterminatorco;
- procedure5aco.branch:= nil;
- procedure5aco.next:= @procedure5co;
- procedure5aco.handleentry:= @handleprocedure5a;
- procedure5co.branch:= @bprocedure5;
- procedure5co.next:= @procedure6co;
- procedure6co.branch:= nil;
- procedure6co.next:= @checkterminatorpopco;
- procedure6co.handleentry:= @handleprocedure6;
+ sub4co.branch:= @bsub4;
+ sub4co.next:= @checkterminatorco;
+ sub5aco.branch:= nil;
+ sub5aco.next:= @sub5co;
+ sub5aco.handleentry:= @handlesub5a;
+ sub5co.branch:= @bsub5;
+ sub5co.next:= @sub6co;
+ sub6co.branch:= nil;
+ sub6co.next:= @checkterminatorpopco;
+ sub6co.handleentry:= @handlesub6;
  checkterminatorco.branch:= @bcheckterminator;
  checkterminatorco.handleexit:= @handlecheckterminator;
  terminatorokco.branch:= nil;

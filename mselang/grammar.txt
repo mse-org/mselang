@@ -170,23 +170,23 @@ methfunctionheader,subheader,handlemethfunctionentry,
 methprocedureheader,subheader,handlemethprocedureentry,
 createsubheader,subheader,handlecreatesubentry,
 subheader,,,handlesubheader*
- '',procedure0*
+ '',sub0*
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
 #
-sub,procedurea,,
- '',procedure0*
-procedurea,,,
- '',procedure4*
-procedure0,procedure1,,
+sub,suba,,
+ '',sub0*
+suba,,,
+ '',sub4*
+sub0,sub1,,
  ${whitespace}
  @identstart,identpath^*
-procedure1,procedure2,handleprocedure1entry,
+sub1,sub2,handlesub1entry,
  '',paramsdef0^*
-procedure2,,,
+sub2,,,
  ${whitespace}
  ':',functiontype-^*>
- ';',!handleprocedure3-*
+ ';',!handlesub3-*
 #      handle parameters
  '',semicolonexpected
 #
@@ -200,17 +200,18 @@ functiontypea,,,
  ${whitespace}
  @identstart,ident^*
 #
-procedure4,checkterminator,,
+sub4,checkterminator,,
  ${whitespace}
- 'begin'.,procedure5a-
+ 'begin'.,sub5a-
  'const'.,const-*>
  'var'.,var-*>
  'procedure'.,procedure-^*>
-procedure5a,procedure5,handleprocedure5a,
+ 'function'.,function-^*>
+sub5a,sub5,handlesub5a,
 # set procstartaddress
-procedure5,procedure6,,
+sub5,sub6,,
  '',statementblock^*
-procedure6,checkterminatorpop,handleprocedure6,
+sub6,checkterminatorpop,handlesub6,
 # return, release
 checkterminator,,,handlecheckterminator
  ';',terminatorok-

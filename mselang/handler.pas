@@ -120,10 +120,10 @@ procedure handlefunctionentry();
 procedure handleprocedureentry();
 
 procedure checkfunctiontype();
-procedure handleprocedure1entry();
-procedure handleprocedure3();
-procedure handleprocedure5a();
-procedure handleprocedure6();
+procedure handlesub1entry();
+procedure handlesub3();
+procedure handlesub5a();
+procedure handlesub6();
 
 procedure handlestatement0entry();
 //procedure handleleftside();
@@ -2805,14 +2805,14 @@ outinfo('****');
 outinfo('****');
 end;
 
-procedure handleprocedure1entry();
+procedure handlesub1entry();
 var
  int1: integer;
  ele1: elementoffsetty;
  po1: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDURE1ENTRY');
+ outhandle('SUB1ENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex] do begin
@@ -2850,7 +2850,7 @@ outinfo('****');
  end;
 end;
 
-procedure handleprocedure3();
+procedure handlesub3();
 var
  po1: psubdataty;
  po2: pvardataty;
@@ -2872,7 +2872,7 @@ var
 
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDURE3');
+ outhandle('SUB3');
 {$endif}
 //0          1     2          3          4    5      6           7
 //procedure2,ident,paramsdef3{,paramdef2,name,type}[functiontype,ident]
@@ -3071,12 +3071,12 @@ outinfo('****');
  end;
 end;
 
-procedure handleprocedure5a();
+procedure handlesub5a();
 var
  po1,po2: psubdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDURE5A');
+ outhandle('SUB5A');
 {$endif}
 outinfo('*****');
  with info,contextstack[stackindex-1].d do begin
@@ -3099,10 +3099,10 @@ outinfo('*****');
  end;
 end;
 
-procedure handleprocedure6();
+procedure handlesub6();
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDURE6');
+ outhandle('SUB6');
 {$endif}
 outinfo('*****');
  with info do begin
