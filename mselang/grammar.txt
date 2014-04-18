@@ -101,6 +101,8 @@ main1,,,handlemain
  ${whitespace}
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+ 'constructor'.,constructor-^*>
+ 'destructor'.,destructor-^*>
  'begin'.,progbegin-
  'const'.,const-*>
  'var'.,var-*>
@@ -168,12 +170,14 @@ subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
 methfunctionheader,subheader,handlemethfunctionentry,
 methprocedureheader,subheader,handlemethprocedureentry,
-constructorsubheader,subheader,handleconstructorsubentry,
-destructorsubheader,subheader,handledestructorsubentry,
+methconstructorheader,subheader,handlemethconstructorentry,
+methdestructorheader,subheader,handlemethdestructorentry,
 subheader,,,handlesubheader*
  '',sub0*
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
+constructor,sub,handleconstructorentry,
+destructor,sub,handledestructorentry,
 #
 sub,suba,,
  '',sub0*
@@ -403,8 +407,8 @@ classdef0,classdeferror,,
  'published'.,!handleclasspublished-
  'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
- 'constructor'.,constructorsubheader-*^>
- 'destructor'.,destructorsubheader-*^>
+ 'constructor'.,methconstructorheader-*^>
+ 'destructor'.,methdestructorheader-*^>
  @identstart,classfield^*>
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^

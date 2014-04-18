@@ -32,8 +32,10 @@ procedure handleclasspublished();
 procedure handleclassfield();
 procedure handlemethfunctionentry();
 procedure handlemethprocedureentry();
-procedure handleconstructorsubentry();
-procedure handledestructorsubentry();
+procedure handlemethconstructorentry();
+procedure handlemethdestructorentry();
+procedure handleconstructorentry();
+procedure handledestructorentry();
 
 implementation
 uses
@@ -275,10 +277,10 @@ outinfo('****');
  end;
 end;
 
-procedure handleconstructorsubentry();
+procedure handlemethconstructorentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('CONSTRUCTORSUBENTRY');
+ outhandle('METHCONSTRUCTORENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
@@ -287,15 +289,39 @@ outinfo('****');
  end;
 end;
 
-procedure handledestructorsubentry();
+procedure handlemethdestructorentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('DESTRUCTORSUBENTRY');
+ outhandle('METHDESTRUCTORENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method,sf_destructor];
+ end;
+end;
+
+procedure handleconstructorentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CONSTRUCTORENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_method,sf_constructor];
+ end;
+end;
+
+procedure handledestructorentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DESTRUCTORENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_method,sf_destructor];
  end;
 end;
 
