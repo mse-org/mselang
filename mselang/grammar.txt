@@ -76,8 +76,8 @@ start2,noimplementation,,
  'const'.,const-*
  'var'.,var-*
  'type'.,type-*
- 'procedure'.,procedureheader-*^>
- 'function'.,functionheader-*^>
+ 'procedure'.,subprocedureheader-*^>
+ 'function'.,subfunctionheader-*^>
 
 #comma separated idents on stack
 commaidents,commaidentsnoidenterror,,
@@ -164,11 +164,12 @@ paramdef2,,,handleparamdef2^
 # ${whitespace}
 # @identstart,ident^*
 #
-functionheader,procfuncheader,handlefunctionentry,
-procedureheader,procfuncheader,handleprocedureentry,
-classfunctionheader,procfuncheader,handleclassfunctionentry,
-classprocedureheader,procfuncheader,handleclassprocedureentry,
-procfuncheader,,,handleprocedureheader*
+subfunctionheader,procfuncheader,handlefunctionentry,
+subprocedureheader,procfuncheader,handleprocedureentry,
+methfunctionheader,procfuncheader,handlemethfunctionentry,
+methprocedureheader,procfuncheader,handlemethprocedureentry,
+createsubheader,procfuncheader,handlecreatesubentry,
+procfuncheader,,,handlesubheader*
  '',procedure0*
 function,procfunc,handlefunctionentry,
 procedure,procfunc,handleprocedureentry,
@@ -398,8 +399,8 @@ classdef0,classdeferror,,
  'protected'.,!handleclassprotected-
  'public'.,!handleclasspublic-
  'published'.,!handleclasspublished-
- 'procedure'.,classprocedureheader-*^>
- 'function'.,classfunctionheader-*^>
+ 'procedure'.,methprocedureheader-*^>
+ 'function'.,methfunctionheader-*^>
  @identstart,classfield^*>
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^

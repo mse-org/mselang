@@ -114,7 +114,7 @@ procedure setvarparam();
 procedure setoutparam();
 procedure handleparamdef2();
 procedure handleparamsend();
-procedure handleprocedureheader();
+procedure handlesubheader();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
@@ -1076,10 +1076,10 @@ begin
  end;
 end;
 
-procedure handleprocedureheader();
+procedure handlesubheader();
 begin
 {$ifdef mse_debugparser}
- outhandle('PROCEDUREHEADER');
+ outhandle('SUBHEADER');
 {$endif}
  with info do begin
   dec(stackindex);

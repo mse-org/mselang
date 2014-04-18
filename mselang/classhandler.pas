@@ -30,8 +30,10 @@ procedure handleclassprotected();
 procedure handleclasspublic();
 procedure handleclasspublished();
 procedure handleclassfield();
-procedure handleclassfunctionentry();
-procedure handleclassprocedureentry();
+procedure handlemethfunctionentry();
+procedure handlemethprocedureentry();
+procedure handlecreatesubentry();
+procedure handledestroysubentry();
 
 implementation
 uses
@@ -250,10 +252,10 @@ outinfo('***');
  }
 end;
 
-procedure handleclassprocedureentry();
+procedure handlemethprocedureentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('CLASSPROCEDUREENTRY');
+ outhandle('METHPROCEDUREENTRY');
 {$endif}
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
@@ -261,15 +263,39 @@ begin
  end;
 end;
 
-procedure handleclassfunctionentry();
+procedure handlemethfunctionentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('CLASSFUNCTIONENTRY');
+ outhandle('METHFUNCTIONENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function,sf_header,sf_method];
+ end;
+end;
+
+procedure handlecreatesubentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CREATEENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_function,sf_header,sf_method];
+ end;
+end;
+
+procedure handledestroysubentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DESTROYENTRY');
+{$endif}
+outinfo('****');
+ with info,contextstack[stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_header,sf_method];
  end;
 end;
 

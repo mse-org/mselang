@@ -299,26 +299,31 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'paramdef2');
- functionheaderco: contextty = (branch: nil; 
+ subfunctionheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'functionheader');
- procedureheaderco: contextty = (branch: nil; 
+               caption: 'subfunctionheader');
+ subprocedureheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procedureheader');
- classfunctionheaderco: contextty = (branch: nil; 
+               caption: 'subprocedureheader');
+ methfunctionheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'classfunctionheader');
- classprocedureheaderco: contextty = (branch: nil; 
+               caption: 'methfunctionheader');
+ methprocedureheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'classprocedureheader');
+               caption: 'methprocedureheader');
+ createsubheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'createsubheader');
  procfuncheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -1369,10 +1374,10 @@ const
      dest: (context: @typeco); stack: nil; 
      keyword: $8ACF19BB{'type'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @procedureheaderco); stack: nil; 
+     dest: (context: @subprocedureheaderco); stack: nil; 
      keyword: $159E3376{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @functionheaderco); stack: nil; 
+     dest: (context: @subfunctionheaderco); stack: nil; 
      keyword: $2B3C66ED{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -3413,10 +3418,10 @@ const
      dest: (handler: @handleclasspublished); stack: nil; 
      keyword: $376EB739{'published'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @classprocedureheaderco); stack: nil; 
+     dest: (context: @methprocedureheaderco); stack: nil; 
      keyword: $159E3376{'procedure'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
-     dest: (context: @classfunctionheaderco); stack: nil; 
+     dest: (context: @methfunctionheaderco); stack: nil; 
      keyword: $2B3C66ED{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefreturnco); stack: nil; 
@@ -4773,20 +4778,23 @@ begin
  paramdef1co.branch:= @bparamdef1;
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.handleexit:= @handleparamdef2;
- functionheaderco.branch:= nil;
- functionheaderco.next:= @procfuncheaderco;
- functionheaderco.handleentry:= @handlefunctionentry;
- procedureheaderco.branch:= nil;
- procedureheaderco.next:= @procfuncheaderco;
- procedureheaderco.handleentry:= @handleprocedureentry;
- classfunctionheaderco.branch:= nil;
- classfunctionheaderco.next:= @procfuncheaderco;
- classfunctionheaderco.handleentry:= @handleclassfunctionentry;
- classprocedureheaderco.branch:= nil;
- classprocedureheaderco.next:= @procfuncheaderco;
- classprocedureheaderco.handleentry:= @handleclassprocedureentry;
+ subfunctionheaderco.branch:= nil;
+ subfunctionheaderco.next:= @procfuncheaderco;
+ subfunctionheaderco.handleentry:= @handlefunctionentry;
+ subprocedureheaderco.branch:= nil;
+ subprocedureheaderco.next:= @procfuncheaderco;
+ subprocedureheaderco.handleentry:= @handleprocedureentry;
+ methfunctionheaderco.branch:= nil;
+ methfunctionheaderco.next:= @procfuncheaderco;
+ methfunctionheaderco.handleentry:= @handlemethfunctionentry;
+ methprocedureheaderco.branch:= nil;
+ methprocedureheaderco.next:= @procfuncheaderco;
+ methprocedureheaderco.handleentry:= @handlemethprocedureentry;
+ createsubheaderco.branch:= nil;
+ createsubheaderco.next:= @procfuncheaderco;
+ createsubheaderco.handleentry:= @handlecreatesubentry;
  procfuncheaderco.branch:= @bprocfuncheader;
- procfuncheaderco.handleexit:= @handleprocedureheader;
+ procfuncheaderco.handleexit:= @handlesubheader;
  functionco.branch:= nil;
  functionco.next:= @procfuncco;
  functionco.handleentry:= @handlefunctionentry;
