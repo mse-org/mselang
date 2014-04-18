@@ -32,8 +32,8 @@ procedure handleclasspublished();
 procedure handleclassfield();
 procedure handlemethfunctionentry();
 procedure handlemethprocedureentry();
-procedure handlecreatesubentry();
-procedure handledestroysubentry();
+procedure handleconstructorsubentry();
+procedure handledestructorsubentry();
 
 implementation
 uses
@@ -275,27 +275,27 @@ outinfo('****');
  end;
 end;
 
-procedure handlecreatesubentry();
+procedure handleconstructorsubentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('CREATEENTRY');
+ outhandle('CONSTRUCTORSUBENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
-  subdef.flags:= [sf_function,sf_header,sf_method];
+  subdef.flags:= [sf_header,sf_method,sf_constructor];
  end;
 end;
 
-procedure handledestroysubentry();
+procedure handledestructorsubentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('DESTROYENTRY');
+ outhandle('DESTRUCTORSUBENTRY');
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
-  subdef.flags:= [sf_header,sf_method];
+  subdef.flags:= [sf_header,sf_method,sf_destructor];
  end;
 end;
 

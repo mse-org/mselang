@@ -168,7 +168,8 @@ subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
 methfunctionheader,subheader,handlemethfunctionentry,
 methprocedureheader,subheader,handlemethprocedureentry,
-createsubheader,subheader,handlecreatesubentry,
+constructorsubheader,subheader,handleconstructorsubentry,
+destructorsubheader,subheader,handledestructorsubentry,
 subheader,,,handlesubheader*
  '',sub0*
 function,sub,handlefunctionentry,
@@ -402,6 +403,8 @@ classdef0,classdeferror,,
  'published'.,!handleclasspublished-
  'procedure'.,methprocedureheader-*^>
  'function'.,methfunctionheader-*^>
+ 'constructor'.,constructorsubheader-*^>
+ 'destructor'.,destructorsubheader-*^>
  @identstart,classfield^*>
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^

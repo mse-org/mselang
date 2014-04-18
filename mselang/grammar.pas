@@ -58,20 +58,23 @@ const
  tk_protected = $CDDBADCE;
  tk_public = $9BB75B9C;
  tk_published = $376EB739;
+ tk_constructor = $6EDD6E73;
+ tk_destructor = $DDBADCE6;
 
- tokens: array[0..34] of string = ('',
+ tokens: array[0..36] of string = ('',
   '.classes','.private','.protected','.public','.published','.classimp','.self',
   'unit','uses','implementation','const','var','type','procedure','function',
   'begin','dumpelements','abort','include','out','end','with','if','do','then',
   'else','of','record','array','class','private','protected','public',
-  'published');
+  'published','constructor','destructor');
 
- tokenids: array[0..34] of identty = (
+ tokenids: array[0..36] of identty = (
   $00000000,$2468ACF1,$48D159E3,$91A2B3C6,$2345678C,$468ACF19,$8D159E33,
   $1A2B3C66,$345678CD,$68ACF19B,$D159E337,$A2B3C66E,$45678CDD,$8ACF19BB,
   $159E3376,$2B3C66ED,$5678CDDB,$ACF19BB7,$59E3376E,$B3C66EDD,$678CDDBA,
   $CF19BB75,$9E3376EB,$3C66EDD6,$78CDDBAD,$F19BB75B,$E3376EB7,$C66EDD6E,
-  $8CDDBADC,$19BB75B9,$3376EB73,$66EDD6E7,$CDDBADCE,$9BB75B9C,$376EB739);
+  $8CDDBADC,$19BB75B9,$3376EB73,$66EDD6E7,$CDDBADCE,$9BB75B9C,$376EB739,
+  $6EDD6E73,$DDBADCE6);
 
 var
  startco: contextty = (branch: nil; 
@@ -319,11 +322,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'methprocedureheader');
- createsubheaderco: contextty = (branch: nil; 
+ constructorsubheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'createsubheader');
+               caption: 'constructorsubheader');
+ destructorsubheaderco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'destructorsubheader');
  subheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -3407,7 +3415,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdef0: array[0..12] of branchty = (
+ bclassdef0: array[0..14] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_handler,bf_eat];
      dest: (handler: @handleclassprivate); stack: nil; 
      keyword: $66EDD6E7{'private'}),
@@ -3426,6 +3434,12 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @methfunctionheaderco); stack: nil; 
      keyword: $2B3C66ED{'function'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @constructorsubheaderco); stack: nil; 
+     keyword: $6EDD6E73{'constructor'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @destructorsubheaderco); stack: nil; 
+     keyword: $DDBADCE6{'destructor'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @classdefreturnco); stack: nil; 
      keyword: $CF19BB75{'end'}),
@@ -4793,9 +4807,12 @@ begin
  methprocedureheaderco.branch:= nil;
  methprocedureheaderco.next:= @subheaderco;
  methprocedureheaderco.handleentry:= @handlemethprocedureentry;
- createsubheaderco.branch:= nil;
- createsubheaderco.next:= @subheaderco;
- createsubheaderco.handleentry:= @handlecreatesubentry;
+ constructorsubheaderco.branch:= nil;
+ constructorsubheaderco.next:= @subheaderco;
+ constructorsubheaderco.handleentry:= @handleconstructorsubentry;
+ destructorsubheaderco.branch:= nil;
+ destructorsubheaderco.next:= @subheaderco;
+ destructorsubheaderco.handleentry:= @handledestructorsubentry;
  subheaderco.branch:= @bsubheader;
  subheaderco.handleexit:= @handlesubheader;
  functionco.branch:= nil;

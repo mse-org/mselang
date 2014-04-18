@@ -281,7 +281,8 @@ type
   address: opaddressty;
  end;
  
- subflagty = (sf_function,sf_method,sf_functiontype,sf_header);
+ subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
+              sf_functiontype,sf_header);
  subflagsty = set of subflagty;
  subinfoty = record
   frameoffsetbefore: ptruint;
