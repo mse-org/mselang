@@ -38,7 +38,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerglob,mselinklist;
+ handlerglob,mselinklist,handlerutils;
  
 type
  unithashdataty = record

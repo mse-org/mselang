@@ -1076,7 +1076,7 @@ var
 implementation
 
 uses
- handler,unithandler,classhandler,typehandler;
+ handler,unithandler,classhandler,typehandler,subhandler;
  
 const
  bstart: array[0..5] of branchty = (

@@ -610,18 +610,10 @@ type
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
-{$ifdef mse_debugparser}
-procedure outhandle({const info: pparseinfoty;} const text: string);
-{$endif}
 
 var
  info: parseinfoty;
  
 implementation
-
-procedure outhandle({const info: pparseinfoty;} const text: string);
-begin
- writeln(' !!!handle!!! ',text);
-end;
 
 end.
