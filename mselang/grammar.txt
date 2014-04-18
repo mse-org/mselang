@@ -164,17 +164,17 @@ paramdef2,,,handleparamdef2^
 # ${whitespace}
 # @identstart,ident^*
 #
-subfunctionheader,procfuncheader,handlefunctionentry,
-subprocedureheader,procfuncheader,handleprocedureentry,
-methfunctionheader,procfuncheader,handlemethfunctionentry,
-methprocedureheader,procfuncheader,handlemethprocedureentry,
-createsubheader,procfuncheader,handlecreatesubentry,
-procfuncheader,,,handlesubheader*
+subfunctionheader,subheader,handlefunctionentry,
+subprocedureheader,subheader,handleprocedureentry,
+methfunctionheader,subheader,handlemethfunctionentry,
+methprocedureheader,subheader,handlemethprocedureentry,
+createsubheader,subheader,handlecreatesubentry,
+subheader,,,handlesubheader*
  '',procedure0*
-function,procfunc,handlefunctionentry,
-procedure,procfunc,handleprocedureentry,
+function,sub,handlefunctionentry,
+procedure,sub,handleprocedureentry,
 #
-procfunc,procedurea,,
+sub,procedurea,,
  '',procedure0*
 procedurea,,,
  '',procedure4*

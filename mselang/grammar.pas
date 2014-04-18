@@ -324,11 +324,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'createsubheader');
- procfuncheaderco: contextty = (branch: nil; 
+ subheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procfuncheader');
+               caption: 'subheader');
  functionco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -339,11 +339,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'procedure');
- procfuncco: contextty = (branch: nil; 
+ subco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'procfunc');
+               caption: 'sub');
  procedureaco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1880,7 +1880,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocfuncheader: array[0..1] of branchty = (
+ bsubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @procedure0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -1890,7 +1890,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bprocfunc: array[0..1] of branchty = (
+ bsub: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @procedure0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -4779,30 +4779,30 @@ begin
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.handleexit:= @handleparamdef2;
  subfunctionheaderco.branch:= nil;
- subfunctionheaderco.next:= @procfuncheaderco;
+ subfunctionheaderco.next:= @subheaderco;
  subfunctionheaderco.handleentry:= @handlefunctionentry;
  subprocedureheaderco.branch:= nil;
- subprocedureheaderco.next:= @procfuncheaderco;
+ subprocedureheaderco.next:= @subheaderco;
  subprocedureheaderco.handleentry:= @handleprocedureentry;
  methfunctionheaderco.branch:= nil;
- methfunctionheaderco.next:= @procfuncheaderco;
+ methfunctionheaderco.next:= @subheaderco;
  methfunctionheaderco.handleentry:= @handlemethfunctionentry;
  methprocedureheaderco.branch:= nil;
- methprocedureheaderco.next:= @procfuncheaderco;
+ methprocedureheaderco.next:= @subheaderco;
  methprocedureheaderco.handleentry:= @handlemethprocedureentry;
  createsubheaderco.branch:= nil;
- createsubheaderco.next:= @procfuncheaderco;
+ createsubheaderco.next:= @subheaderco;
  createsubheaderco.handleentry:= @handlecreatesubentry;
- procfuncheaderco.branch:= @bprocfuncheader;
- procfuncheaderco.handleexit:= @handlesubheader;
+ subheaderco.branch:= @bsubheader;
+ subheaderco.handleexit:= @handlesubheader;
  functionco.branch:= nil;
- functionco.next:= @procfuncco;
+ functionco.next:= @subco;
  functionco.handleentry:= @handlefunctionentry;
  procedureco.branch:= nil;
- procedureco.next:= @procfuncco;
+ procedureco.next:= @subco;
  procedureco.handleentry:= @handleprocedureentry;
- procfuncco.branch:= @bprocfunc;
- procfuncco.next:= @procedureaco;
+ subco.branch:= @bsub;
+ subco.next:= @procedureaco;
  procedureaco.branch:= @bprocedurea;
  procedure0co.branch:= @bprocedure0;
  procedure0co.next:= @procedure1co;
