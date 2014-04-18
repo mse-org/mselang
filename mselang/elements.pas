@@ -244,7 +244,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist,stackops,msesysutils;
+ errorhandler,mselinklist,stackops,msesysutils,opcode;
 
  
 type
@@ -1226,7 +1226,7 @@ begin
  int2:= 0;
  int5:= pelementinfoty(pointer(felementdata))^.header.name; //root
  while int1 < fnextelement do begin
-  additem(ar1,typeinfo(dumpinfoty),int2);
+  msearrayutils.additem(ar1,typeinfo(dumpinfoty),int2);
   po1:= pelementinfoty(pointer(felementdata)+int1);
   off1:= int1;
   if pointer(po1)-pointer(felementdata) = felementparent then begin
@@ -1310,7 +1310,7 @@ begin
  for int1:= 0 to int2-1 do begin
   result[int1+1]:= ar1[int1].text;
  end;
- additem(result,'---SCOPES');
+ msearrayutils.additem(result,'---SCOPES');
  if fscopespo <> nil then begin
   int1:= length(result);
   setlength(result,length(result)+(fscopespo-pscopeinfoty(fscopes))+1);
@@ -1820,14 +1820,8 @@ var
 begin
  with pstringbufdataty(fdata+astring.offset)^ do begin
   if constoffset = 0 then begin
-   with info do begin
-    constoffset:= constsize;
-    constsize:= constsize+sizeof(stringheaderty)+len+1;
-    alignsize(constsize);
-    if constsize > constcapacity then begin
-     constcapacity:= 2*constsize;
-     setlength(constseg,constcapacity);
-    end;
+   constoffset:= getglobconstaddress(sizeof(stringheaderty)+len+1);
+   with info do begin    
     po1:= pointer(constseg)+constoffset;
     po1^.len:= len;
     po2:= @po1^.data;

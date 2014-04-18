@@ -1082,6 +1082,9 @@ var
 
 var
  idents: identvecty;
+ firstnotfound: integer;
+ po1: pelementinfoty;
+ po2: pointer;
 
  procedure dosub(const asub: psubdataty);
  var
@@ -1145,7 +1148,7 @@ var
      inc(po5);
     end;
     with contextstack[stackindex] do begin //result data
-     if sf_function in asub^.flags then begin
+     if [sf_constructor,sf_function] * asub^.flags <> [] then begin
       po6:= ele.eledataabs(po5^);
       po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
       int1:= pushinsertvar(0,false,po3);
@@ -1182,15 +1185,70 @@ var
   end;
  end; //dosub
  
+ function donotfound(const typeele: elementoffsetty;
+                  out ele1: elementoffsetty; var offs1: dataoffsty): boolean;
+                                                       //true if finished
+ var
+  int1: integer;
+//  po3: pelementinfoty; //parent
+  po4: pointer;
+ begin
+  result:= true;
+  ele1:= typeele;
+//  po4:= ele.eleinfoabs(typeele);
+  if firstnotfound <= idents.high then begin
+   for int1:= firstnotfound to idents.high do begin //fields
+//    po3:= po4; //parent
+    case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
+     ek_none: begin
+      identerror(1+int1,err_identifiernotfound);
+      exit;
+     end;
+     ek_field: begin
+                            //todo: check indirection
+      offs1:= offs1 + pfielddataty(po4)^.offset;
+      ele1:= pfielddataty(po4)^.vf.typ;
+     end;
+     ek_sub: begin
+      if int1 <> idents.high then begin
+       errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
+       exit;
+      end;
+      case po1^.header.kind of
+       ek_var: begin //todo: check class procedures
+        pushinsertdata(0,false,pvardataty(po2)^.address,
+                                                    offs1,pointersize);
+       end;
+       ek_type: begin
+        if not (sf_constructor in psubdataty(po4)^.flags) then begin
+         errormessage(err_classref,[],int1+1);
+         exit;
+        end;
+       end;
+       else begin
+        internalerror('N20140417A');
+        exit;
+       end;
+      end;
+      dosub(psubdataty(po4));
+      exit;
+     end;
+     else begin
+      identerror(1+int1,err_wrongtype,erl_fatal);
+      exit;
+     end;
+    end;
+   end;
+  end; //donotfound
+  result:= false;
+ end;
+  
 var
- po1: pelementinfoty;
- po2: pointer;
  po3: ptypedataty;
  po4: pointer;
  po5: pelementoffsetty;
  po6: pvardataty;
  po7: pointer;
- firstnotfound: integer;
  ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
  si1: databytesizety;
@@ -1240,236 +1298,156 @@ outinfo('***');
    goto endlab;
   end;
 
-//  case contextstack[stackindex-1].d.kind of
-//   ck_getfact: begin
-    po2:= @po1^.data;
-    with contextstack[stackindex] do begin
-     d.indirection:= 0;
-     case po1^.header.kind of
-      ek_var,ek_field: begin
-       offs1:= 0;
-       ele1:= pvardataty(po2)^.vf.typ;
-       if firstnotfound <= idents.high then begin
-        for int1:= firstnotfound to idents.high do begin //fields
-         case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
-          ek_none: begin
-           identerror(1+int1,err_identifiernotfound);
-           goto endlab;
-          end;
-          ek_field: begin
-                                 //todo: check indirection
-           offs1:= offs1 + pfielddataty(po4)^.offset;
-           ele1:= pfielddataty(po4)^.vf.typ;
-          end;
-          ek_sub: begin
-           if int1 <> idents.high then begin
-            errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
-            goto endlab;
-           end;
-           if po1^.header.kind = ek_var then begin
-            pushinsertdata(0,false,pvardataty(po2)^.address,offs1,pointersize);
-           end
-           else begin
-            internalerror('N20140417A');
-            goto endlab;
-           end;
-           dosub(psubdataty(po4));
-           goto endlab;
-          end;
-          else begin
-           identerror(1+int1,err_wrongtype,erl_fatal);
-           goto endlab;
-          end;
-         end;
-        end;
-       end;
-       if po1^.header.kind = ek_field then begin
-        with pfielddataty(po2)^ do begin
+  po2:= @po1^.data;
+  offs1:= 0;
+  with contextstack[stackindex] do begin
+   d.indirection:= 0;
+   case po1^.header.kind of
+    ek_var,ek_field: begin
+     if donotfound(pvardataty(po2)^.vf.typ,ele1,offs1) then begin
+      goto endlab;
+     end;
+     if po1^.header.kind = ek_field then begin
+      with pfielddataty(po2)^ do begin
 //         if not (vf_classfield in flags) then begin
 //          errormessage(err_classfieldexpected,[],0);
 //          goto endlab;
 //         end;
-         offs1:= offs1+offset;
-         if vf_classfield in flags then begin
-          if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
-           errormessage(err_noclass,[],0);
-           goto endlab;
-          end;
-          po2:= ele.eledataabs(ele2); //self parameter
-         end;
-        end;
-        if isgetfact then begin
-         pushinsert(-1,false,pvardataty(po2)^.address);
-         offsetad(-1,offs1);
-         d.kind:= ck_fact;
-         indirect1:= 0;
-         d.indirection:= -1;
-        end
-        else begin
-         with contextstack[stackindex-1] do begin
-          indirect1:= 0;
-          if d.indirection <> 0 then begin
-           getaddress(-1);
-           offsetad(-1,offs1);
-           dec(d.indirection); //pending dereference
-          end
-          else begin
-           d.ref.offset:= d.ref.offset+offs1;
-          end;
-    outinfo('***');
-          contextstack[stackindex].d:= d; 
-                    //todo: no double copy by handlefact
-         end;
-        end;
-       end
-       else begin
-        indirect1:= pvardataty(po2)^.address.indirectlevel;
-        if isgetfact then begin
-         d.kind:= ck_ref;
-         d.ref.address:= pvardataty(po2)^.address;
-         d.ref.address.indirectlevel:= 0;
-         d.ref.offset:= offs1;
-        end
-        else begin
-         with contextstack[stackindex-1] do begin
-          if d.indirection <> 0 then begin
-           getaddress(-1);
-           offsetad(-1,offs1);
-           dec(d.indirection); //pending dereference
-          end
-          else begin
-           d.ref.offset:= d.ref.offset+offs1;
-          end;
-    outinfo('***');
-          contextstack[stackindex].d:= d; 
-                    //todo: no double copy by handlefact
-         end;
-        end;
-       end;
-       po3:= ele.eledataabs(ele1);
-       d.datatyp.typedata:= ele1;
-       d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
-      end;
-      ek_const: begin
-       if checknoparam then begin
-        d.kind:= ck_const;
-        d.indirection:= 0;
-        d.datatyp:= pconstdataty(po2)^.val.typ;
-        d.constval:= pconstdataty(po2)^.val.d;
-       end;
-      end;
-      ek_sub: begin
-       dosub(psubdataty(po2));
-      end;
-      ek_sysfunc: begin
-       with contextstack[stackindex] do begin
-        d.kind:= ck_subcall;
-       end;
-       with psysfuncdataty(po2)^ do begin
-        case func of
-         sf_writeln: begin //todo: use open array of constrec
-          int2:= stacktop-stackindex-2-idents.high; //count
-          stacksize1:= 0;
-          int3:= int2+2+stackindex+idents.high;
-          for int1:= 3+stackindex+idents.high to int3 do begin
-           with contextstack[int1] do begin
-            getvalue(int1-stackindex{,true});
-            with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-             push(kind);
-             stacksize1:= stacksize1 + alignsize(bytesize);
-            end;
-           end;
-          end;
-          with additem()^ do begin
-           op:= sysop;
-           d.paramcount:= int2;
-           d.paramsize:= stacksize1;
-          end;
-          //todo: handle function
-         end;
-        end;
-       end;
-      end;
-      ek_type: begin
-       if paramco = 0 then begin
-        errormessage(err_illegalexpression,[],stacktop-stackindex);
-       end
-       else begin
-        if paramco > 1 then begin
-         errormessage(err_closeparentexpected,[],4,-1);
-        end
-        else begin
-         if not tryconvert(contextstack[stacktop],po2,
-                                      ptypedataty(po2)^.indirectlevel) then begin
-          illegalconversionerror(contextstack[stacktop].d,po2,
-                                      ptypedataty(po2)^.indirectlevel);
-         end
-         else begin
-          contextstack[stackindex].d:= contextstack[stacktop].d;
-         end;
-        end;
-       end;
-      end;
-      else begin
-       errormessage(err_wrongtype,[],0);
-      end;
-     end;
-    end;
-(*
-   end;
-   ck_ref: begin
-    with contextstack[stackindex-1] do begin
-     po3:= ele.eledataabs(d.datatyp.typedata);
-     if (d.datatyp.indirectlevel <> 0) or (po3^.kind <> dk_record) then begin
-      errormessage(err_illegalqualifier,[]);
-     end
-     else begin
-      ele1:= d.datatyp.typedata;
-      offs1:= 0;
-      for int1:= stackindex+1 to stackindex+1+idents.high do begin //fields
-       with contextstack[int1] do begin
-        if d.kind <> ck_ident then begin
-         errormessage(err_identexpected,[],int1-stackindex,0,erl_error);
+       offs1:= offs1+offset;
+       if vf_classfield in flags then begin
+        if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
+         errormessage(err_noclass,[],0);
          goto endlab;
         end;
-        case ele.findchild(ele1,d.ident.ident,allvisi,ele1,po4) of
-         ek_none: begin
-          identerror(int1-stackindex,err_identifiernotfound);
-          goto endlab;
+        po2:= ele.eledataabs(ele2); //self parameter
+       end;
+      end;
+      if isgetfact then begin
+       pushinsert(-1,false,pvardataty(po2)^.address);
+       offsetad(-1,offs1);
+       d.kind:= ck_fact;
+       indirect1:= 0;
+       d.indirection:= -1;
+      end
+      else begin
+       with contextstack[stackindex-1] do begin
+        indirect1:= 0;
+        if d.indirection <> 0 then begin
+         getaddress(-1);
+         offsetad(-1,offs1);
+         dec(d.indirection); //pending dereference
+        end
+        else begin
+         d.ref.offset:= d.ref.offset+offs1;
+        end;
+  outinfo('***');
+        contextstack[stackindex].d:= d; 
+                  //todo: no double copy by handlefact
+       end;
+      end;
+     end
+     else begin
+      indirect1:= pvardataty(po2)^.address.indirectlevel;
+      if isgetfact then begin
+       d.kind:= ck_ref;
+       d.ref.address:= pvardataty(po2)^.address;
+       d.ref.address.indirectlevel:= 0;
+       d.ref.offset:= offs1;
+      end
+      else begin
+       with contextstack[stackindex-1] do begin
+        if d.indirection <> 0 then begin
+         getaddress(-1);
+         offsetad(-1,offs1);
+         dec(d.indirection); //pending dereference
+        end
+        else begin
+         d.ref.offset:= d.ref.offset+offs1;
+        end;
+  outinfo('***');
+        contextstack[stackindex].d:= d; 
+                  //todo: no double copy by handlefact
+       end;
+      end;
+     end;
+     po3:= ele.eledataabs(ele1);
+     d.datatyp.typedata:= ele1;
+     d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
+    end;
+    ek_const: begin
+     if checknoparam then begin
+      d.kind:= ck_const;
+      d.indirection:= 0;
+      d.datatyp:= pconstdataty(po2)^.val.typ;
+      d.constval:= pconstdataty(po2)^.val.d;
+     end;
+    end;
+    ek_sub: begin
+     dosub(psubdataty(po2));
+    end;
+    ek_sysfunc: begin
+     with contextstack[stackindex] do begin
+      d.kind:= ck_subcall;
+     end;
+     with psysfuncdataty(po2)^ do begin
+      case func of
+       sf_writeln: begin //todo: use open array of constrec
+        int2:= stacktop-stackindex-2-idents.high; //count
+        stacksize1:= 0;
+        int3:= int2+2+stackindex+idents.high;
+        for int1:= 3+stackindex+idents.high to int3 do begin
+         with contextstack[int1] do begin
+          getvalue(int1-stackindex{,true});
+          with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
+           push(kind);
+           stacksize1:= stacksize1 + alignsize(bytesize);
+          end;
          end;
-         ek_field: begin
-          offs1:= offs1 + pfielddataty(po4)^.offset;
-          ele1:= pfielddataty(po4)^.vf.typ;
-         end;
-         else begin
-          identerror(int1-stackindex,err_wrongtype,erl_fatal);
-          goto endlab;
-         end;
+        end;
+        with additem()^ do begin
+         op:= sysop;
+         d.paramcount:= int2;
+         d.paramsize:= stacksize1;
+        end;
+        //todo: handle function
+       end;
+      end;
+     end;
+    end;
+    ek_type: begin
+     if donotfound(ele.eleinforel(po1),ele1,offs1) then begin
+      goto endlab;
+     end;
+     if (ptypedataty(po2)^.kind = dk_class) then begin
+//      if ptypedataty(po2)^.indirectlevel <> then begin
+//      end; 
+     end
+     else begin
+      if paramco = 0 then begin
+       errormessage(err_illegalexpression,[],stacktop-stackindex);
+      end
+      else begin
+       if paramco > 1 then begin
+        errormessage(err_closeparentexpected,[],4,-1);
+       end
+       else begin
+        if not tryconvert(contextstack[stacktop],po2,
+                                 ptypedataty(po2)^.indirectlevel) then begin
+         illegalconversionerror(contextstack[stacktop].d,po2,
+                                     ptypedataty(po2)^.indirectlevel);
+        end
+        else begin
+         contextstack[stackindex].d:= contextstack[stacktop].d;
         end;
        end;
       end;
-      po3:= ele.eledataabs(ele1);
-      if d.indirection <> 0 then begin
-       getaddress(-1);
-       offsetad(-1,offs1);
-       dec(d.indirection); //pending dereference
-      end
-      else begin
-       d.ref.offset:= d.ref.offset+offs1;
-      end;
-      d.datatyp.typedata:= ele1;
-      d.datatyp.indirectlevel:= po3^.indirectlevel;
-outinfo('***');
-      contextstack[stackindex].d:= d; 
-                //todo: no double copy by handlefact
      end;
     end;
-   end;
-   else begin
-    internalerror('N20140406A');
+    else begin
+     errormessage(err_wrongtype,[],0);
+    end;
    end;
   end;
-*)
 endlab:
   ele.popelementparent();
   stacktop:= stackindex;

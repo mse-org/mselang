@@ -75,9 +75,15 @@ type
   itemindirectlevel: integer;
   indextypedata: elementoffsetty;
  end;
- 
+
+ classdefinfoty = record
+  fieldsize: integer;
+ end;
+ pclassdefinfoty = ^classdefinfoty;
+  
  infoclassty = record
   impl: elementoffsetty;
+  defs: dataoffsty; //classdefinfoty
  end;
   
  typedataty = record

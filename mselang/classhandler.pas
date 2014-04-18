@@ -40,7 +40,7 @@ procedure handledestructorentry();
 implementation
 uses
  elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
- parser,typehandler;
+ parser,typehandler,opcode;
 {
 const
  vic_private = vis_3;
@@ -151,7 +151,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
 {$endif}
-outinfo('***');
 // classesscopereset();
  with info do begin
   exclude(currentstatementflags,stf_classdef);
@@ -162,7 +161,11 @@ outinfo('***');
    bytesize:= pointersize;
    bitsize:= pointersize*8;
    indirectlevel:= d.typ.indirectlevel;
-   
+outinfo('***');
+   infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty));
+   with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
+    fieldsize:= contextstack[stackindex].d.cla.fieldoffset;
+   end;
    if not ele.addelement(tks_classimp,globalvisi,ek_classimp,
                                                  infoclass.impl) then begin
     internalerror('C20140415B');

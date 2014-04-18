@@ -20,8 +20,10 @@ interface
 uses
  parserglob;
  
-function getglobvaraddress(const asize: integer): ptruint;
-function getlocvaraddress(const asize: integer): ptruint;
+function getglobvaraddress(const asize: integer): dataoffsty;
+function getlocvaraddress(const asize: integer): dataoffsty;
+function getglobconstaddress(const asize: integer): dataoffsty;
+
 function additem(): popinfoty;
 function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
@@ -31,7 +33,7 @@ implementation
 uses
  stackops;
  
-function getglobvaraddress(const asize: integer): ptruint;
+function getglobvaraddress(const asize: integer): dataoffsty;
 begin
  with info do begin
   result:= globdatapo;
@@ -39,11 +41,24 @@ begin
  end;
 end;
 
-function getlocvaraddress(const asize: integer): ptruint;
+function getlocvaraddress(const asize: integer): dataoffsty;
 begin
  with info do begin
   result:= locdatapo;
   locdatapo:= locdatapo + alignsize(asize);
+ end;
+end;
+
+function getglobconstaddress(const asize: integer): dataoffsty;
+begin
+ with info do begin
+  result:= constsize;
+  constsize:= constsize+asize;
+  alignsize(constsize);
+  if constsize > constcapacity then begin
+   constcapacity:= 2*constsize;
+   setlength(constseg,constcapacity);
+  end;
  end;
 end;
  

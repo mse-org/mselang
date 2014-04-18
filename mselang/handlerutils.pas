@@ -1174,6 +1174,23 @@ procedure outinfo(const text: string);
   write(':',ainfo.indirection,' ');
  end;
 
+ procedure writetyp(const atyp: typeinfoty);
+ var
+  po1: ptypedataty;
+ begin
+  with atyp do begin
+   if typedata = 0 then begin
+    write('NIL');
+   end
+   else begin
+    po1:= ele.eledataabs(typedata);
+    write('T:',typedata,' ',
+           getenumname(typeinfo(datakindty),ord(po1^.kind)),' ',
+           'I:',indirectlevel);
+   end;
+  end;
+ end;
+ 
  procedure writeaddress(const aaddress: addressinfoty);
  begin
   with aaddress do begin
@@ -1319,6 +1336,9 @@ begin
      end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));
+     end;
+     ck_typetype: begin
+      writetyp(typ);
      end;
     end;
 {$ifdef mse_debugparser}

@@ -406,6 +406,9 @@ outinfo('****');
   paramhigh:= paramco-1;
   if isclass then begin
    inc(paramco); //self pointer
+   if sf_constructor in subflags then begin
+    inc(paramco);
+   end;
   end;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
@@ -429,7 +432,7 @@ outinfo('****');
    end;
    po4^[0]:= elementoffsetty(po2); //absoluteaddress
    inc(po4);
-   with po2^ do begin
+   with po2^ do begin //todo: class proc
     address.indirectlevel:= 1;
     if impl1 then begin
      address.address:= getlocvaraddress(pointersize);
@@ -490,7 +493,9 @@ outinfo('****');
    end;
    int1:= int1+3;
   end;
-
+  if sf_constructor in subflags then begin
+   po4^[paramhigh+1]:=
+  end;
   if isclass then begin
    dec(po4);
   end;

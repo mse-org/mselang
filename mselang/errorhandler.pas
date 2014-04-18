@@ -42,7 +42,7 @@ type
             err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
             err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
             err_fileread,err_anonclassdef,err_classidentexpected,
-            err_classfieldexpected,err_noclass);
+            err_classfieldexpected,err_noclass,err_classref);
             
  errorinfoty = record
   level: errorlevelty;
@@ -122,7 +122,9 @@ const
   (level: erl_fatal; message: 'Anonymous class definitions are not allowed'),
   (level: erl_fatal; message: 'Class identifier expected'),
   (level: erl_error; message: 'Class field expected'),
-  (level: erl_error; message: 'Class expected')
+  (level: erl_error; message: 'Class expected'),
+  (level: erl_error; message: 
+             'Only class methods can be referenced with class references')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
