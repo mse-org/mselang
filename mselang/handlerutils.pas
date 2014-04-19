@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -554,14 +554,20 @@ end;
 procedure pushins(const aitem: popinfoty; const avalue: addressinfoty);
 begin
  with aitem^ do begin
-  if vf_global in avalue.flags then begin
-   op:= @pushglobaddr;
-   d.vaddress:= avalue.address;
+  if vf_nil in avalue.flags then begin
+   op:= @pushaddr;
+   d.d.vpointer:= 0;
   end
   else begin
-   op:= @pushlocaddr;
-   d.vlocaddress.offset:= avalue.address;
-   d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+   if vf_global in avalue.flags then begin
+    op:= @pushglobaddr;
+    d.vaddress:= avalue.address;
+   end
+   else begin
+    op:= @pushlocaddr;
+    d.vlocaddress.offset:= avalue.address;
+    d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+   end;
   end;
  end;
 end;
@@ -1291,7 +1297,7 @@ begin
                                            integer(getfact.flags),true));
       end;
      end;
-     ck_fact: begin
+     ck_fact,ck_subres: begin
       writetype(d);
      end;
      ck_ref: begin
@@ -1337,7 +1343,7 @@ begin
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));
      end;
-     ck_typetype: begin
+     ck_typetype,ck_fieldtype: begin
       writetyp(typ);
      end;
     end;

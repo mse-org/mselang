@@ -120,6 +120,7 @@ procedure pushlocindi16;
 procedure pushlocindi32;
 procedure pushlocindi;
 
+procedure pushaddr;
 procedure pushlocaddr;
 procedure pushglobaddr;
 procedure pushstackaddr;
@@ -603,6 +604,11 @@ procedure pushlocindi;
 begin
  move(ppointer(locaddress(oppo^.d.locdataaddress))^^,
                stackpush(oppo^.d.datasize)^,oppo^.d.datasize);
+end;
+
+procedure pushaddr;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= pointer(oppo^.d.d.vpointer);
 end;
 
 procedure pushlocaddr;

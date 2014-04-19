@@ -1097,7 +1097,7 @@ var
   with info do begin
    po5:= @asub^.paramsrel;
    paramco1:= paramco;
-   if sf_function in asub^.flags then begin
+   if [sf_function,sf_constructor] * asub^.flags <> [] then begin
     inc(paramco1);
    end;
    if sf_method in asub^.flags then begin
@@ -1224,6 +1224,7 @@ var
          errormessage(err_classref,[],int1+1);
          exit;
         end;
+        pushinsert(0,false,nilad);
        end;
        else begin
         internalerror('N20140417A');
@@ -1263,7 +1264,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VALUEIDENTIFIER');
 {$endif}
-outinfo('***');
+outinfo('**1**');
  with info do begin      //todo: use specialized addressing modes
   ele.pushelementparent();
   isgetfact:= false;
@@ -1364,7 +1365,6 @@ outinfo('***');
         else begin
          d.ref.offset:= d.ref.offset+offs1;
         end;
-  outinfo('***');
         contextstack[stackindex].d:= d; 
                   //todo: no double copy by handlefact
        end;
@@ -1418,11 +1418,9 @@ outinfo('***');
      if donotfound(ele.eleinforel(po1),ele1,offs1) then begin
       goto endlab;
      end;
-     if (ptypedataty(po2)^.kind = dk_class) then begin
-//      if ptypedataty(po2)^.indirectlevel <> then begin
-//      end; 
-     end
-     else begin
+//     if (ptypedataty(po2)^.kind = dk_class) then begin
+//     end
+//     else begin
       if paramco = 0 then begin
        errormessage(err_illegalexpression,[],stacktop-stackindex);
       end
@@ -1440,7 +1438,7 @@ outinfo('***');
          contextstack[stackindex].d:= contextstack[stacktop].d;
         end;
        end;
-      end;
+//      end;
      end;
     end;
     else begin
@@ -1449,6 +1447,7 @@ outinfo('***');
    end;
   end;
 endlab:
+outinfo('**2**');
   ele.popelementparent();
   stacktop:= stackindex;
   dec(stackindex);

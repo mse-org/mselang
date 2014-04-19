@@ -386,8 +386,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB3');
 {$endif}
-//0          1     2          3          4    5      6           7
-//procedure2,ident,paramsdef3{,paramdef2,name,type}[functiontype,ident]
+//0     1     2          3          4    5    
+//sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+//  6           7             8    result
+//[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
 outinfo('****');
  with info do begin
@@ -402,13 +404,28 @@ outinfo('****');
   end;
 outinfo('****');
   isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
+  if isclass and (sf_constructor in subflags) then begin //add return type
+   inc(stacktop);
+   with contextstack[stacktop] do begin
+    d.kind:= ck_paramsdef;
+    d.paramsdef.kind:= pk_var;
+   end;
+   inc(stacktop);
+   with contextstack[stacktop] do begin
+    d.kind:= ck_ident;
+    d.ident.ident:= resultident;
+   end;
+   inc(stacktop);
+   with contextstack[stacktop] do begin
+    d.kind:= ck_fieldtype;
+    d.typ.typedata:= currentclass;
+    d.typ.indirectlevel:= 0;
+   end;
+  end;
   paramco:= (stacktop-stackindex-2) div 3;
   paramhigh:= paramco-1;
   if isclass then begin
    inc(paramco); //self pointer
-   if sf_constructor in subflags then begin
-    inc(paramco);
-   end;
   end;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
@@ -492,9 +509,6 @@ outinfo('****');
     end;
    end;
    int1:= int1+3;
-  end;
-  if sf_constructor in subflags then begin
-   po4^[paramhigh+1]:=
   end;
   if isclass then begin
    dec(po4);

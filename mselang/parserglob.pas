@@ -181,7 +181,7 @@ type
                     stf_classdef,stf_classimp);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);
+ varflagty = (vf_nil,vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);
  varflagsty = set of varflagty;
 
  indirectlevelty = integer;
@@ -202,7 +202,7 @@ type
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
- 
+
  stringinfoty = record
   offset: ptruint; //offset in string buffer
  // len: databytesizety;
@@ -466,6 +466,7 @@ type
       3: (vinteger: int32);
       4: (vfloat: float64);
       5: (vsize: ptrint);
+      6: (vpointer: ptruint);
     end;
    );
    ok_push8:(
@@ -610,6 +611,12 @@ type
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
+ nilad: addressinfoty = (
+  address: 0;
+  flags: [vf_nil];
+  indirectlevel: 0;
+  framelevel: 0;
+ );
 
 var
  info: parseinfoty;
