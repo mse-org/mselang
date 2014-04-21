@@ -419,7 +419,7 @@ outinfo('****');
    with contextstack[stacktop] do begin
     d.kind:= ck_fieldtype;
     d.typ.typedata:= currentclass;
-    d.typ.indirectlevel:= 0;
+    d.typ.indirectlevel:= 1;
    end;
   end;
   paramco:= (stacktop-stackindex-2) div 3;
