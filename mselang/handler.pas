@@ -1786,6 +1786,9 @@ outinfo('***');
     address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
     with ptypedataty(@po2^.data)^ do begin
      address.indirectlevel:= address.indirectlevel+indirectlevel;
+     if kind = dk_class then begin
+      inc(address.indirectlevel);
+     end;
      if address.indirectlevel = 0 then begin
       size1:= bytesize;
      end
