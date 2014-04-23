@@ -380,6 +380,7 @@ var
  subflags: subflagsty;
 // parambase: ptruint;
  si1: integer;
+ paramsize1: integer;
  paramkind1: paramkindty;
  bo1,isclass: boolean;
 
@@ -404,6 +405,7 @@ outinfo('****');
    tokenexpectederror(':');
   end;
 outinfo('****');
+  paramsize1:= 0;
   isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
@@ -449,8 +451,9 @@ outinfo('****');
     exit;
    end;
    po4^[0]:= elementoffsetty(po2); //absoluteaddress
-   inc(po4);
-   with po2^ do begin //todo: class proc
+   inc(po4);          //todo: class proc
+   with po2^ do begin //self variable
+    inc(paramsize1,pointersize);
     address.indirectlevel:= 1;
     if impl1 then begin
      address.address:= getlocvaraddress(pointersize);
@@ -486,6 +489,7 @@ outinfo('****');
          if si1 > pointersize then begin
           inc(address.indirectlevel);
           include(address.flags,vf_paramindirect);
+          si1:= pointersize;
          end;
          include(address.flags,vf_const);
         end
@@ -493,6 +497,7 @@ outinfo('****');
          if paramkind1 in [pk_var,pk_out] then begin
           inc(address.indirectlevel);
           include(address.flags,vf_paramindirect);
+          si1:= pointersize;
          end;
         end;
         vf.typ:= d.typ.typedata;
@@ -502,6 +507,7 @@ outinfo('****');
 //       identerror(int1+1-stackindex,err_identifiernotfound);
        err1:= true;
       end;
+      inc(paramsize1,si1);
      end;
     end
     else begin
@@ -514,6 +520,8 @@ outinfo('****');
   if isclass then begin
    dec(po4);
   end;
+  inc(paramsize1,stacklinksize);
+  po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
   if impl1 then begin //implementation
    inc(funclevel);
@@ -523,8 +531,9 @@ outinfo('****');
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     stacktop:= stackindex;
-    d.subdef.paramsize:= locdatapo - d.subdef.parambase;
-    po1^.paramsize:= d.subdef.paramsize;
+    d.subdef.paramsize:= paramsize1;
+//    d.subdef.paramsize:= locdatapo - d.subdef.parambase;
+//    po1^.paramsize:= d.subdef.paramsize;
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(po1);
     for int2:= 0 to paramco-1 do begin
