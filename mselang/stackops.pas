@@ -142,9 +142,12 @@ procedure locvarpushop;
 procedure locvarpopop;
 procedure returnop;
 
+procedure initclassop;
+procedure destroyclassop;
+
 implementation
 uses
- sysutils;
+ sysutils,handlerglob,mseformatstr;
 {
  stackinfoty = record
   case datakindty of
@@ -181,6 +184,17 @@ end;
 function alignsize(const size: ptruint): ptruint; inline;
 begin
  result:= (size+(alignstep-1)) and alignmask;
+end;
+
+function intgetnulledmem(const size: integer): pointer;
+begin
+ result:= getmem(size);
+ fillchar(result^,size,0);
+end;
+
+procedure intfreemem(const mem: pointer);
+begin
+ freemem(mem);
 end;
 
 function stackoffs(const offs: ptruint; const size: ptruint): pointer; inline;
@@ -277,6 +291,10 @@ begin
     setlength(str1,po4^.len);
     move(vpointerty(po1^)^,pointer(str1)^,po4^.len);
     write(str1);
+    inc(po1,alignsize(sizeof(vpointerty)));
+   end;
+   dk_class: begin
+    write(hextostr(vpointerty(po1^),8));
     inc(po1,alignsize(sizeof(vpointerty)));
    end;
    else begin
@@ -702,6 +720,10 @@ begin
  move(po1^,po2^,oppo^.d.datasize);
 end;
 
+//first op:
+//                  |framepo    |mainstackpo
+// params frameinfo locvars      
+//
 procedure callop;
 var
  i1: integer;
@@ -754,6 +776,26 @@ begin
   stacklink:= link;
  end;
  mainstackpo:= mainstackpo-int1;
+end;
+
+procedure initclassop;
+var
+ po1: pointer;
+begin
+ with oppo^.d do begin
+  with pclassdefinfoty(initclass.classdef+constdata)^ do begin
+   po1:= intgetnulledmem(fieldsize);
+   ppointer(framepo+initclass.selfinstance)^:= po1;
+   pppointer(framepo+initclass.result)^:= po1;
+  end;
+ end;
+end;
+
+procedure destroyclassop;
+begin
+ with oppo^.d do begin
+  intfreemem(ppointer(framepo+destroyclass.selfinstance)^);
+ end;
 end;
 
 procedure finalize;

@@ -38,6 +38,7 @@ procedure handleprocedureentry();
 procedure checkfunctiontype();
 procedure handlesub1entry();
 procedure handlesub3();
+//procedure handlesub4entry();
 procedure handlesub5a();
 procedure handlesub6();
 
@@ -601,10 +602,26 @@ outinfo('****');
   end;
  end;
 end;
-
+(*
+procedure handlesub4entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUB4ENTRY');
+{$endif}
+outinfo('*****');
+ with info do begin
+  if sf_constructor in contextstack[stackindex-1].d.subdef.flags then begin
+   with additem^ do begin
+    op:= @initclassop;
+   end;
+  end;
+ end;
+end;
+*)
 procedure handlesub5a();
 var
  po1,po2: psubdataty;
+ po3: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -627,6 +644,15 @@ outinfo('*****');
    po2^.address:= opcount;
    linkresolve(po2^.links,opcount);
   end;
+  if sf_constructor in subdef.flags then begin
+   po3:= ele.eledataabs(currentclass);
+   with additem^,d.initclass do begin
+    op:= @initclassop;
+    classdef:= po3^.infoclass.defs;
+    selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
+    result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
+   end;
+  end;
  end;
 end;
 
@@ -645,6 +671,12 @@ outinfo('*****');
     with additem()^ do begin
      op:= @locvarpopop;
      d.stacksize:= subdef.varsize;
+    end;
+   end;
+   if sf_destructor in subdef.flags then begin
+    with additem^,d.destroyclass do begin
+     op:= @destroyclassop;
+     selfinstance:= -subdef.paramsize;
     end;
    end;
    with additem()^ do begin

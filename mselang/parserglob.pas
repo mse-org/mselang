@@ -287,7 +287,7 @@ type
  subinfoty = record
   frameoffsetbefore: ptruint;
   parambase: ptruint;
-  paramsize: integer;
+  paramsize: integer; //params+stacklinksize
   varsize: integer;
   elementmark: markinfoty;
   ref: elementoffsetty;
@@ -429,7 +429,7 @@ type
              ok_pushglobaddress,ok_pushlocaddress,ok_pushstackaddress,
              ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
-             ok_call,ok_stack);
+             ok_call,ok_stack,ok_initclass,ok_destroyclass);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -455,7 +455,20 @@ type
   ad: opaddressty;
   linkcount: integer; //used in "for downto 0"
  end; 
- 
+
+ initclassinfoty = record
+  classdef: dataoffsty;
+  selfinstance: dataoffsty; //stackoffset
+  result: dataoffsty;   //stackoffset to result pointer
+ end;
+
+ destroyclassinfoty = record
+  selfinstance: dataoffsty; //stackoffset
+ end;
+
+ destroyclassinfo = record
+ end;
+  
  opdataty = record
   case opkindty of 
    ok_none: (
@@ -521,6 +534,12 @@ type
    );
    ok_stack:(
     stacksize: databytesizety;
+   );
+   ok_initclass:(
+    initclass: initclassinfoty;
+   );
+   ok_destroyclass:(
+    destroyclass: destroyclassinfoty;
    );
   end;
 
