@@ -786,7 +786,7 @@ begin
   with pclassdefinfoty(initclass.classdef+constdata)^ do begin
    po1:= intgetnulledmem(fieldsize);
    ppointer(framepo+initclass.selfinstance)^:= po1;
-   pppointer(framepo+initclass.result)^:= po1;
+   pppointer(framepo+initclass.result)^^:= po1;
   end;
  end;
 end;
