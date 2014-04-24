@@ -426,7 +426,9 @@ type
  
  opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,
-             ok_pushglobaddress,ok_pushlocaddress,ok_pushstackaddress,
+             ok_pushglobaddress,ok_pushlocaddress,
+             ok_pushglobaddressindi,ok_pushlocaddressindi,
+             ok_pushstackaddress,
              ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_stack,ok_initclass,ok_destroyclass);
@@ -497,14 +499,19 @@ type
    ok_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushglobaddress,ok_pushconstaddress:(
+   ok_pushconstaddress:(
     vaddress: dataaddressty;
+   );
+   ok_pushglobaddress,ok_pushglobaddressindi:(
+    vglobaddress: dataaddressty;
+    vglobadoffs: dataoffsty;
+   );
+   ok_pushlocaddress,ok_pushlocaddressindi:(
+    vlocaddress: locdataaddressty;
+    vlocadoffs: dataoffsty;
    );
    ok_pushstackaddress:(
     voffset: dataoffsty;
-   );
-   ok_pushlocaddress:(
-    vlocaddress: locdataaddressty;
    );
    ok_locop,ok_var:(
     datasize: databytesizety;

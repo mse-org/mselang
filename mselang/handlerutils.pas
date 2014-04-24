@@ -109,7 +109,8 @@ function getaddress(const stackoffset: integer): boolean;
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
 procedure push(const avalue: real); overload;
-procedure push(const avalue: addressinfoty); overload;
+procedure push(const avalue: addressinfoty; const offset: dataoffsty;
+                                          const indirect: boolean); overload;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
@@ -117,7 +118,9 @@ procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                                      const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
-                                     const avalue: addressinfoty); overload;
+            const avalue: addressinfoty; const offset: dataoffsty;
+                                            const indirect: boolean); overload;
+            //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
@@ -551,7 +554,9 @@ begin
  end;
 end;
 
-procedure pushins(const aitem: popinfoty; const avalue: addressinfoty);
+procedure pushins(const aitem: popinfoty;
+          const avalue: addressinfoty; const offset: dataoffsty;
+                                           const indirect: boolean);
 begin
  with aitem^ do begin
   if vf_nil in avalue.flags then begin
@@ -560,27 +565,41 @@ begin
   end
   else begin
    if vf_global in avalue.flags then begin
-    op:= @pushglobaddr;
-    d.vaddress:= avalue.address;
+    if indirect then begin
+     op:= @pushglobaddrindi;
+    end
+    else begin
+     op:= @pushglobaddr;
+    end;
+    d.vglobaddress:= avalue.address;
+    d.vglobadoffs:= offset;
    end
    else begin
-    op:= @pushlocaddr;
+    if indirect then begin
+     op:= @pushlocaddrindi;
+    end
+    else begin
+     op:= @pushlocaddr;
+    end;
     d.vlocaddress.offset:= avalue.address;
     d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+    d.vlocadoffs:= offset;
    end;
   end;
  end;
 end;
 
-procedure push(const avalue: addressinfoty); overload;
+procedure push(const avalue: addressinfoty; const offset: dataoffsty;
+            const indirect: boolean); overload;
 begin
- pushins(additem,avalue);
+ pushins(additem,avalue,offset,indirect);
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
-                                    const avalue: addressinfoty); overload;
+            const avalue: addressinfoty; const offset: dataoffsty;
+            const indirect: boolean); overload;
 begin
- pushins(insertitem(stackoffset,before),avalue);
+ pushins(insertitem(stackoffset,before),avalue,offset,indirect);
 end;
 
 procedure push(const avalue: datakindty); overload;
@@ -617,7 +636,7 @@ begin
     push(constval.vfloat);
    end;
    dk_address: begin
-    push(constval.vaddress);
+    push(constval.vaddress,0,false);
    end;
   end;
  end;

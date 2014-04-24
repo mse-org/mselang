@@ -60,6 +60,7 @@ procedure run(const code: opinfoarty; const constseg: pointer;
                                     const stackdepht: integer);
 
 //procedure dummyop;
+procedure nop();
 procedure gotoop;
 procedure ifop;
 procedure writelnop;
@@ -122,7 +123,9 @@ procedure pushlocindi;
 
 procedure pushaddr;
 procedure pushlocaddr;
+procedure pushlocaddrindi;
 procedure pushglobaddr;
+procedure pushglobaddrindi;
 procedure pushstackaddr;
 
 procedure indirect8;
@@ -243,7 +246,7 @@ begin
  end; 
 end;
 
-procedure dummyop;
+procedure nop;
 begin
 end;
 
@@ -631,12 +634,26 @@ end;
 
 procedure pushlocaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= locaddress(oppo^.d.vlocaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= 
+                     locaddress(oppo^.d.vlocaddress)+oppo^.d.vlocadoffs;;
+end;
+
+procedure pushlocaddrindi;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= 
+           ppointer(locaddress(oppo^.d.vlocaddress))^+oppo^.d.vlocadoffs;
 end;
 
 procedure pushglobaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= globdata+oppo^.d.vaddress;
+ ppointer(stackpush(sizeof(pointer)))^:= 
+                     globdata+oppo^.d.vaddress+oppo^.d.vglobadoffs;
+end;
+
+procedure pushglobaddrindi;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= 
+           ppointer(globdata+oppo^.d.vaddress)^+oppo^.d.vglobadoffs;
 end;
 
 procedure pushstackaddr;

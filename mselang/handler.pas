@@ -130,6 +130,7 @@ procedure handleelse();
 
 procedure handledumpelements();
 procedure handleabort();
+procedure handlenop();
 
 procedure stringlineenderror();
 procedure handlestringstart();
@@ -1224,7 +1225,7 @@ var
          errormessage(err_classref,[],int1+1);
          exit;
         end;
-        pushinsert(0,false,nilad);
+        pushinsert(0,false,nilad,0,false);
        end;
        else begin
         internalerror('N20140417A');
@@ -1258,6 +1259,7 @@ var
  stacksize1: databytesizety;
  paramco1: integer;
  isgetfact: boolean;
+ isclass: boolean;
 label
  endlab;
 begin
@@ -1309,23 +1311,20 @@ outinfo('**1**');
       goto endlab;
      end;
      if po1^.header.kind = ek_field then begin
+      isclass:= false;
       with pfielddataty(po2)^ do begin
-//         if not (vf_classfield in flags) then begin
-//          errormessage(err_classfieldexpected,[],0);
-//          goto endlab;
-//         end;
        offs1:= offs1+offset;
        if vf_classfield in flags then begin
         if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
          errormessage(err_noclass,[],0);
          goto endlab;
         end;
+        isclass:= true;
         po2:= ele.eledataabs(ele2); //self parameter
        end;
       end;
       if isgetfact then begin
-       pushinsert(-1,false,pvardataty(po2)^.address);
-       offsetad(-1,offs1);
+       pushinsert(-1,false,pvardataty(po2)^.address,offs1,isclass);
        d.kind:= ck_fact;
        indirect1:= 0;
        d.indirection:= -1;
@@ -2542,6 +2541,16 @@ begin
   stopparser:= true;
   errormessage(err_abort,[]);
   dec(stackindex);
+ end;
+end;
+
+procedure handlenop();
+begin
+{$ifdef mse_debugparser}
+ outhandle('NOP');
+{$endif}
+ with additem()^ do begin
+  op:= @nop;
  end;
 end;
 

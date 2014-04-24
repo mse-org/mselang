@@ -114,6 +114,7 @@ comment0,,,handlecommentend^*>
 directive,directive1,,*
  'dumpelements'.,dumpelements-*
  'abort'.,abort-*
+ 'nop'.,nop-*
  'include'.,include-*
  '}',-*
  '',-
@@ -130,6 +131,7 @@ include1,,,handleinclude*>
  '',-
 # 
 dumpelements,directiveend,handledumpelements,
+nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 directiveend,,,^*>
  '}',-*
