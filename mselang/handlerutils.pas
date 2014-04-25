@@ -79,6 +79,10 @@ procedure error(const error: comperrorty;
 //       wantedtype: elementkindty; const text: string);
 procedure outcommand(const items: array of integer;
                      const text: string);
+
+function getidents(const astackoffset: integer;
+                     out idents: identvecty): boolean; overload;
+function getidents(const astackoffset: integer): identvecty; overload;
  
 function findkindelementdata(const aident: contextdataty;
               const akinds: elementkindsty; const visibility: visikindsty;
@@ -231,10 +235,17 @@ begin
   inc(identcount);
   result:= true;
   if identcount = 0 then begin
-   errormessage(err_toomanyidentifierlevels,[],astackoffset+identcount);
    result:= false;
   end;
+  if identcount > high(idents.d) then begin
+   errormessage(err_toomanyidentifierlevels,[],astackoffset+identcount);
+  end;
  end;
+end;
+
+function getidents(const astackoffset: integer): identvecty;
+begin
+ getidents(astackoffset,result); 
 end;
 
 function findkindelements(const astackoffset: integer;
@@ -294,7 +305,11 @@ var
  firstnotfound: integer;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,
-                                            aelement,firstnotfound,idents);
+                              aelement,firstnotfound,idents) and 
+                              (firstnotfound > idents.high);
+ if not result then begin
+  identerror(astackoffset+firstnotfound,err_identifiernotfound);
+ end;
 end;
 
 (*
@@ -1357,7 +1372,7 @@ begin
       write('foffs:',d.rec.fieldoffset);
      end;
      ck_classdef: begin
-      write('foffs:',d.cla.fieldoffset);
+      write('foffs:',d.cla.fieldoffset{,' parent:',d.cla.parentclass});
      end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));

@@ -78,12 +78,15 @@ type
 
  classdefinfoty = record
   fieldsize: integer;
+  parentclass: elementoffsetty;
  end;
  pclassdefinfoty = ^classdefinfoty;
   
  infoclassty = record
   impl: elementoffsetty;
-  defs: dataoffsty; //classdefinfoty
+  defs: dataoffsty; //classdefinfoty in target const
+  parentcla: elementoffsetty;
+  allocsize: dataoffsty;
  end;
   
  typedataty = record

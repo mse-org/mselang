@@ -225,7 +225,7 @@ function getidentname(const aident: identty): string;
 const
  elesizes: array[elementkindty] of integer = (
 //ek_none,ek_type,                   ek_const,         
-  0,      sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
+  elesize,      sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
 //ek_sysfunc,                   ek_func,
@@ -693,7 +693,7 @@ var
 begin
  clear;
 // ele.pushelement(getident(''),vis_max,ek_none); //root
- ele.pushelement(0,globalvisi,ek_none); //root
+ ele.pushelement(idstart,[],ek_none); //root
  stringident:= idstart; //invalid
  nextident;
  for tk1:= 1 to high(tokens) do begin
@@ -963,26 +963,53 @@ function telementhashdatalist.findupward(const aident: identty;
           const akinds: elementkindsty;
           const avislevel: visikindsty; out element: elementoffsetty): boolean;
 var
- parentbefore: elementoffsetty;
- pathbefore: identty;
+ parentbefore,parentbefore1: elementoffsetty;
+ pathbefore,pathbefore1: identty;
+ po1: pelementinfoty;
+label
+ endlab;
 begin
- result:= findcurrent(aident,akinds,avislevel,element);
- if not result and (felementpath <> 0) then begin
-  parentbefore:= felementparent;
-  pathbefore:= felementpath;
-  while true do begin
-   with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin
-    felementpath:= felementpath-name;
-    felementparent:= parent;
+ parentbefore:= felementparent;
+ pathbefore:= felementpath;
+ while true do begin
+  result:= findcurrent(aident,akinds,avislevel,element);
+  if result then begin
+   break;
+  end;
+  po1:= eleinfoabs(felementparent);
+  if (akinds <> [ek_type]) and (po1^.header.kind = ek_type) then begin
+   parentbefore1:= felementparent;
+   pathbefore1:= felementpath;
+   while true do begin
+    with ptypedataty(@po1^.data)^ do begin
+     if (kind = dk_class) and (infoclass.parentcla <> 0) then begin
+      felementparent:= infoclass.parentcla;
+      po1:= eleinfoabs(felementparent);
+      felementpath:= po1^.header.path+po1^.header.name;
+     end
+     else begin
+      break;
+     end;
+    end;
     result:= findcurrent(aident,akinds,avislevel,element);
-    if result or (path = 0) then begin
-     break;
+    if result then begin
+     goto endlab;
     end;
    end;
+   felementparent:= parentbefore1;
+   felementpath:= pathbefore1;
   end;
-  felementparent:= parentbefore;
-  felementpath:= pathbefore;
+  with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin    
+   if path = 0 then begin
+    break;
+   end;
+   felementpath:= felementpath-name;
+   felementparent:= parent;
+  end;
  end;
+endlab:
+ felementparent:= parentbefore;
+ felementpath:= pathbefore;
 end;
 
 function telementhashdatalist.findupward(const aidents: identvecty;
@@ -1276,6 +1303,9 @@ begin
     with ptypedataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
+     if kind = dk_class then begin
+      mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize);
+     end;
      po3:= po1;
     end;
    end;
@@ -1293,9 +1323,16 @@ begin
     po1:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
    end;
    ar2:= breaklines(mstr1);
-   ar2[0]:= charstring(msechar('.'),int3-1)+'$'+
-                 hextostr(longword(int5+int4+po1^.header.name),8)+' '+ar2[0];
-   mstr2:= charstring(msechar(' '),int3-1);
+   if mstr1[1] = '*' then begin
+    mstr1[1]:= ' ';
+    mstr2:= '*';
+   end
+   else begin
+    mstr2:= ' ';
+   end;
+   ar2[0]:= mstr2+charstring(msechar('.'),int3)+'$'+
+                 hextostr(longword(int5+int4+po1^.header.name),8)+ar2[0];
+   mstr2:= charstring(msechar(' '),int3);
    for int6:= 1 to high(ar2) do begin
     ar2[int6]:= mstr2+ar2[int6];
    end;

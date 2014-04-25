@@ -70,7 +70,7 @@ end;
 }
 procedure handleclassdefstart();
 var
-// po1: ptypedataty;
+ po1: ptypedataty;
 // po2: pclassdataty;
 // po3: pvisibledataty;
  id1: identty;
@@ -90,6 +90,7 @@ outinfo('***');
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
    d.cla.fieldoffset:= 0;
+//   d.cla.parentclass:= 0;
   end;
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
@@ -107,6 +108,10 @@ outinfo('***');
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
    currentclass:= d.typ.typedata;
+   po1:= ele.eledataabs(currentclass);
+   po1^.infoclass.impl:= 0;
+   po1^.infoclass.parentcla:= 0;
+   po1^.infoclass.defs:= 0;
   end;
 {
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
@@ -123,12 +128,29 @@ outinfo('***');
 end;
 
 procedure handleclassdefparam2();
+var
+ po1,po2: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFPARAM2');
 {$endif}
 outinfo('***');
  with info do begin
+  po1:= ele.eledataabs(currentclass);
+  ele.pushelementparent();
+  ele.decelementparent; //interface or implementation
+  if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
+   if po2^.kind <> dk_class then begin
+    errormessage(err_classidentexpected,[]);
+   end
+   else begin
+    po1^.infoclass.parentcla:= ele.eledatarel(po2);
+    with contextstack[stackindex-2] do begin
+     d.cla.fieldoffset:= po2^.infoclass.allocsize;
+    end;
+   end;
+  end;
+  ele.popelementparent;
 //  dec(stackindex);
  end;
 end;
@@ -162,9 +184,14 @@ begin
    bitsize:= pointersize*8;
    indirectlevel:= d.typ.indirectlevel;
 outinfo('***');
+//   infoclass.impl:= 0;
    infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty));
-   with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
-    fieldsize:= contextstack[stackindex].d.cla.fieldoffset;
+   with contextstack[stackindex] do begin
+    infoclass.allocsize:= d.cla.fieldoffset;
+    with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
+     fieldsize:= d.cla.fieldoffset;
+//     parentclass:= d.cla.parentclass; //todo: pointer to parent in const
+    end;
    end;
    if not ele.addelement(tks_classimp,globalvisi,ek_classimp,
                                                  infoclass.impl) then begin
