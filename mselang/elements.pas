@@ -987,8 +987,8 @@ function telementhashdatalist.findupward(const aident: identty;
           const akinds: elementkindsty;
           const avislevel: visikindsty; out element: elementoffsetty): boolean;
 var
- parentbefore,parentbefore1: elementoffsetty;
- pathbefore,pathbefore1: identty;
+ parentbefore: elementoffsetty;
+ pathbefore: identty;
  po1: pelementinfoty;
 label
  endlab;
@@ -1000,31 +1000,6 @@ begin
   if result then begin
    break;
   end;
-{
-  po1:= eleinfoabs(felementparent);
-  if (akinds <> [ek_type]) and (po1^.header.kind = ek_type) then begin
-   parentbefore1:= felementparent;
-   pathbefore1:= felementpath;
-   while true do begin
-    with ptypedataty(@po1^.data)^ do begin
-     if (kind = dk_class) and (infoclass.parentcla <> 0) then begin
-      felementparent:= infoclass.parentcla;
-      po1:= eleinfoabs(felementparent);
-      felementpath:= po1^.header.path+po1^.header.name;
-     end
-     else begin
-      break;
-     end;
-    end;
-    result:= findcurrent(aident,akinds,avislevel,element);
-    if result then begin
-     goto endlab;
-    end;
-   end;
-   felementparent:= parentbefore1;
-   felementpath:= pathbefore1;
-  end;
-}
   with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin    
    if path = 0 then begin
     break;
