@@ -1377,7 +1377,7 @@ outinfo('**1**');
        end;
       end;
      end;
-     donotfound(pvardataty(po2)^.vf.typ{,ele1,offs1});
+     donotfound(pvardataty(po2)^.vf.typ);
     end;
     ek_const: begin
      if checknoparam then begin
@@ -1420,12 +1420,6 @@ outinfo('**1**');
      end;
     end;
     ek_type: begin
-//     if donotfound(ele.eleinforel(po1){,ele1,offs1}) then begin
-//      goto endlab;
-//     end;
-//     if (ptypedataty(po2)^.kind = dk_class) then begin
-//     end
-//     else begin
      if firstnotfound > idents.high then begin
       if paramco = 0 then begin
        errormessage(err_illegalexpression,[],stacktop-stackindex);
@@ -1449,12 +1443,7 @@ outinfo('**1**');
      else begin
       donotfound(ele.eleinforel(po1));
      end;
-//      end;
-//     end;
     end;
-//    else begin
-//     errormessage(err_wrongtype,[],0);
-//    end;
    end;
   end;
 endlab:
