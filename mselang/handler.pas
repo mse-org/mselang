@@ -1102,7 +1102,7 @@ var
     inc(paramco1);
    end;
    if sf_method in asub^.flags then begin
-    inc(paramco1);
+    inc(paramco1); //self parameter
    end;
    if paramco1 <> asub^.paramcount then begin
     identerror(idents.high+1,err_wrongnumberofparameters);
@@ -1196,48 +1196,71 @@ var
  begin
   result:= true;
   ele1:= typeele;
+  offs1:= 0;
 //  po4:= ele.eleinfoabs(typeele);
   if firstnotfound <= idents.high then begin
-   for int1:= firstnotfound to idents.high do begin //fields
-//    po3:= po4; //parent
-    case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
-     ek_none: begin
-      identerror(1+int1,err_identifiernotfound);
-      exit;
-     end;
-     ek_field: begin
-                            //todo: check indirection
-      offs1:= offs1 + pfielddataty(po4)^.offset;
-      ele1:= pfielddataty(po4)^.vf.typ;
-     end;
-     ek_sub: begin
-      if int1 <> idents.high then begin
-       errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
+   with info do begin
+    for int1:= firstnotfound to idents.high do begin //fields
+     case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
+      ek_none: begin
+       identerror(1+int1,err_identifiernotfound);
        exit;
       end;
-      case po1^.header.kind of
-       ek_var: begin //todo: check class procedures
-        pushinsertdata(0,false,pvardataty(po2)^.address,
-                                                    offs1,pointersize);
-       end;
-       ek_type: begin
-        if not (sf_constructor in psubdataty(po4)^.flags) then begin
-         errormessage(err_classref,[],int1+1);
-         exit;
+      ek_field: begin
+                             //todo: check indirection
+       with contextstack[stackindex],pfielddataty(po4)^ do begin
+        ele1:= pfielddataty(po4)^.vf.typ;
+        case d.kind of
+         ck_ref: begin
+          if vf_classfield in flags then begin
+           pushinsert(-1,false,d.ref.address,offset,true);
+           d.kind:= ck_fact;
+           d.indirection:= -1;
+           d.datatyp.indirectlevel:= 0;
+          end
+          else begin
+           d.ref.offset:= d.ref.offset + offset;
+          end;
+          d.datatyp.typedata:= ele1;
+         end;
+         ck_fact: begin
+         end;
+         else begin
+          internalerror('H20140427A');
+          exit;
+         end;
         end;
-        pushinsert(0,false,nilad,0,false);
-       end;
-       else begin
-        internalerror('N20140417A');
-        exit;
+        offs1:= offs1 + pfielddataty(po4)^.offset;
        end;
       end;
-      dosub(psubdataty(po4));
-      exit;
-     end;
-     else begin
-      identerror(1+int1,err_wrongtype,erl_fatal);
-      exit;
+      ek_sub: begin
+       if int1 <> idents.high then begin
+        errormessage(err_illegalqualifier,[],int1+1,0,erl_fatal);
+        exit;
+       end;
+       case po1^.header.kind of
+        ek_var: begin //todo: check class procedures
+         pushinsertdata(0,false,pvardataty(po2)^.address,offs1,pointersize);
+        end;
+        ek_type: begin
+         if not (sf_constructor in psubdataty(po4)^.flags) then begin
+          errormessage(err_classref,[],int1+1);
+          exit;
+         end;
+         pushinsert(0,false,nilad,0,false);
+        end;
+        else begin
+         internalerror('N20140417A');
+         exit;
+        end;
+       end;
+       dosub(psubdataty(po4));
+       exit;
+      end;
+      else begin
+       identerror(1+int1,err_wrongtype,erl_fatal);
+       exit;
+      end;
      end;
     end;
    end;
@@ -1259,7 +1282,7 @@ var
  stacksize1: databytesizety;
  paramco1: integer;
  isgetfact: boolean;
- isclass: boolean;
+// isclass: boolean;
 label
  endlab;
 begin
@@ -1307,6 +1330,72 @@ outinfo('**1**');
    d.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
+//     if donotfound(pvardataty(po2)^.vf.typ,ele1,offs1) then begin
+//      goto endlab;
+//     end;
+//     indirect1:= pvardataty(po2)^.address.indirectlevel;
+     if po1^.header.kind = ek_field then begin
+      with pfielddataty(po2)^ do begin
+       offs1:= offs1+offset;
+       if vf_classfield in flags then begin
+        if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
+         errormessage(err_noclass,[],0);
+         goto endlab;
+        end;
+//        isclass:= true;
+//        po2:= ele.eledataabs(ele2); //self parameter
+       end
+       else begin
+        internalerror('H201400427B');
+        goto endlab;
+       end;
+       if isgetfact then begin
+        pushinsert(-1,false,pvardataty(ele.eledataabs(ele2))^.address,
+                                                               offset,true);
+        d.kind:= ck_fact;
+        d.datatyp.typedata:= vf.typ;
+        d.datatyp.indirectlevel:= indirectlevel;
+        d.indirection:= -1;
+       end
+       else begin
+        internalerror('H201400427C');
+        goto endlab;
+       end;
+      end;
+     end
+     else begin //ek_var
+      if isgetfact then begin
+       d.kind:= ck_ref;
+       d.ref.address:= pvardataty(po2)^.address;
+       d.ref.offset:= 0;
+       d.datatyp.typedata:= pvardataty(po2)^.vf.typ;
+       d.datatyp.indirectlevel:= d.ref.address.indirectlevel +
+               ptypedataty(ele.eledataabs(d.datatyp.typedata))^.indirectlevel;
+       d.indirection:= 0;
+      end
+      else begin
+       with contextstack[stackindex-1] do begin
+        if d.indirection <> 0 then begin
+         getaddress(-1);
+         offsetad(-1,offs1);
+         dec(d.indirection); //pending dereference
+        end
+        else begin
+         d.ref.offset:= d.ref.offset+offs1;
+        end;
+        contextstack[stackindex].d:= d; 
+                  //todo: no double copy by handlefact
+       end;
+      end;
+     end;
+     donotfound(pvardataty(po2)^.vf.typ,ele1,offs1);
+     {
+     po3:= ele.eledataabs(ele1);
+     d.datatyp.typedata:= ele1;
+     d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
+     }
+    end;
+(*
      if donotfound(pvardataty(po2)^.vf.typ,ele1,offs1) then begin
       goto endlab;
      end;
@@ -1373,6 +1462,7 @@ outinfo('**1**');
      d.datatyp.typedata:= ele1;
      d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
     end;
+*)
     ek_const: begin
      if checknoparam then begin
       d.kind:= ck_const;
