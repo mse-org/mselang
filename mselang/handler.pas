@@ -1186,19 +1186,21 @@ var
   end;
  end; //dosub
  
- function donotfound(const typeele: elementoffsetty;
-                  out ele1: elementoffsetty; var offs1: dataoffsty): boolean;
+ function donotfound(const typeele: elementoffsetty{;
+                  out ele1: elementoffsetty; var offs1: dataoffsty}): boolean;
                                                        //true if finished
  var
   int1: integer;
 //  po3: pelementinfoty; //parent
   po4: pointer;
+  ele1: elementoffsetty;
+  offs1: dataoffsty;
  begin
   result:= true;
-  ele1:= typeele;
-  offs1:= 0;
 //  po4:= ele.eleinfoabs(typeele);
   if firstnotfound <= idents.high then begin
+   ele1:= typeele;
+   offs1:= 0;
    with info do begin
     for int1:= firstnotfound to idents.high do begin //fields
      case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
@@ -1388,7 +1390,7 @@ outinfo('**1**');
        end;
       end;
      end;
-     donotfound(pvardataty(po2)^.vf.typ,ele1,offs1);
+     donotfound(pvardataty(po2)^.vf.typ{,ele1,offs1});
      {
      po3:= ele.eledataabs(ele1);
      d.datatyp.typedata:= ele1;
@@ -1504,7 +1506,7 @@ outinfo('**1**');
      end;
     end;
     ek_type: begin
-     if donotfound(ele.eleinforel(po1),ele1,offs1) then begin
+     if donotfound(ele.eleinforel(po1){,ele1,offs1}) then begin
       goto endlab;
      end;
 //     if (ptypedataty(po2)^.kind = dk_class) then begin
