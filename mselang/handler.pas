@@ -1506,12 +1506,13 @@ outinfo('**1**');
      end;
     end;
     ek_type: begin
-     if donotfound(ele.eleinforel(po1){,ele1,offs1}) then begin
-      goto endlab;
-     end;
+//     if donotfound(ele.eleinforel(po1){,ele1,offs1}) then begin
+//      goto endlab;
+//     end;
 //     if (ptypedataty(po2)^.kind = dk_class) then begin
 //     end
 //     else begin
+     if firstnotfound > idents.high then begin
       if paramco = 0 then begin
        errormessage(err_illegalexpression,[],stacktop-stackindex);
       end
@@ -1529,12 +1530,17 @@ outinfo('**1**');
          contextstack[stackindex].d:= contextstack[stacktop].d;
         end;
        end;
-//      end;
+      end;
+     end
+     else begin
+      donotfound(ele.eleinforel(po1));
      end;
+//      end;
+//     end;
     end;
-    else begin
-     errormessage(err_wrongtype,[],0);
-    end;
+//    else begin
+//     errormessage(err_wrongtype,[],0);
+//    end;
    end;
   end;
 endlab:
