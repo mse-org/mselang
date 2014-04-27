@@ -1186,18 +1186,13 @@ var
   end;
  end; //dosub
  
- function donotfound(const typeele: elementoffsetty{;
-                  out ele1: elementoffsetty; var offs1: dataoffsty}): boolean;
-                                                       //true if finished
+ procedure donotfound(const typeele: elementoffsetty);
  var
   int1: integer;
-//  po3: pelementinfoty; //parent
   po4: pointer;
   ele1: elementoffsetty;
   offs1: dataoffsty;
  begin
-  result:= true;
-//  po4:= ele.eleinfoabs(typeele);
   if firstnotfound <= idents.high then begin
    ele1:= typeele;
    offs1:= 0;
@@ -1266,9 +1261,8 @@ var
      end;
     end;
    end;
-  end; //donotfound
-  result:= false;
- end;
+  end; 
+ end;//donotfound
   
 var
  po3: ptypedataty;
@@ -1284,7 +1278,6 @@ var
  stacksize1: databytesizety;
  paramco1: integer;
  isgetfact: boolean;
-// isclass: boolean;
 label
  endlab;
 begin
@@ -1332,10 +1325,6 @@ outinfo('**1**');
    d.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
-//     if donotfound(pvardataty(po2)^.vf.typ,ele1,offs1) then begin
-//      goto endlab;
-//     end;
-//     indirect1:= pvardataty(po2)^.address.indirectlevel;
      if po1^.header.kind = ek_field then begin
       with pfielddataty(po2)^ do begin
        offs1:= offs1+offset;
@@ -1344,8 +1333,6 @@ outinfo('**1**');
          errormessage(err_noclass,[],0);
          goto endlab;
         end;
-//        isclass:= true;
-//        po2:= ele.eledataabs(ele2); //self parameter
        end
        else begin
         internalerror('H201400427B');
@@ -1391,80 +1378,7 @@ outinfo('**1**');
       end;
      end;
      donotfound(pvardataty(po2)^.vf.typ{,ele1,offs1});
-     {
-     po3:= ele.eledataabs(ele1);
-     d.datatyp.typedata:= ele1;
-     d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
-     }
     end;
-(*
-     if donotfound(pvardataty(po2)^.vf.typ,ele1,offs1) then begin
-      goto endlab;
-     end;
-     if po1^.header.kind = ek_field then begin
-      isclass:= false;
-      with pfielddataty(po2)^ do begin
-       offs1:= offs1+offset;
-       if vf_classfield in flags then begin
-        if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
-         errormessage(err_noclass,[],0);
-         goto endlab;
-        end;
-        isclass:= true;
-        po2:= ele.eledataabs(ele2); //self parameter
-       end;
-      end;
-      if isgetfact then begin
-       pushinsert(-1,false,pvardataty(po2)^.address,offs1,isclass);
-       d.kind:= ck_fact;
-       indirect1:= 0;
-       d.indirection:= -1;
-      end
-      else begin
-       with contextstack[stackindex-1] do begin
-        indirect1:= 0;
-        if d.indirection <> 0 then begin
-         getaddress(-1);
-         offsetad(-1,offs1);
-         dec(d.indirection); //pending dereference
-        end
-        else begin
-         d.ref.offset:= d.ref.offset+offs1;
-        end;
-  outinfo('***');
-        contextstack[stackindex].d:= d; 
-                  //todo: no double copy by handlefact
-       end;
-      end;
-     end
-     else begin
-      indirect1:= pvardataty(po2)^.address.indirectlevel;
-      if isgetfact then begin
-       d.kind:= ck_ref;
-       d.ref.address:= pvardataty(po2)^.address;
-       d.ref.address.indirectlevel:= 0;
-       d.ref.offset:= offs1;
-      end
-      else begin
-       with contextstack[stackindex-1] do begin
-        if d.indirection <> 0 then begin
-         getaddress(-1);
-         offsetad(-1,offs1);
-         dec(d.indirection); //pending dereference
-        end
-        else begin
-         d.ref.offset:= d.ref.offset+offs1;
-        end;
-        contextstack[stackindex].d:= d; 
-                  //todo: no double copy by handlefact
-       end;
-      end;
-     end;
-     po3:= ele.eledataabs(ele1);
-     d.datatyp.typedata:= ele1;
-     d.datatyp.indirectlevel:= indirect1+po3^.indirectlevel;
-    end;
-*)
     ek_const: begin
      if checknoparam then begin
       d.kind:= ck_const;
