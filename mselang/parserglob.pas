@@ -61,7 +61,7 @@ type
  datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                das_33_63,das_64,das_pointer);
 
- visikindty = (vik_global,vik_sameunit,vik_sameclass,vik_published);
+ visikindty = (vik_global,vik_sameunit,vik_sameclass,vik_published,vik_parent);
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
@@ -74,8 +74,8 @@ const
 // vis_max = vis_0;
 // vis_min = vis_9;
  nonevisi = [];
- allvisi = [vik_global{,vik_sameunit}];
- globalvisi = [vik_global,vik_sameunit];
+ allvisi = [vik_global{,vik_sameunit},vik_parent];
+ globalvisi = [vik_global,vik_sameunit,vik_parent];
  implementationvisi = [vik_sameunit];
  classprivatevisi = [vik_sameunit];
  classprotectedvisi = classprivatevisi+[vik_sameclass];

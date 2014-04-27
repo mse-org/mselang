@@ -929,33 +929,57 @@ var
  po1: pelementhashdataty;
  id1: identty;
  int1,int2: integer;
+ parentele: elementoffsetty;
+ elepath: identty;
+label
+ endlab;
 begin
  element:= -1;
  result:= false;
  if count > 0 then begin
-  id1:= felementpath+aident;
-  uint1:= fhashtable[id1 and fmask];
-  if uint1 <> 0 then begin
-   po1:= pelementhashdataty(pchar(fdata) + uint1);
-   while true do begin
-    if (po1^.data.key = id1) then begin
-     with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
-      if (name = aident) and (parent = felementparent) and 
-             ((visibility * avislevel <> []) or 
-          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
-                           ((akinds = []) or (kind in akinds)) then begin
-       break;
+  parentele:= felementparent;
+  elepath:= felementpath;
+  while true do begin
+   id1:= elepath+aident;
+   uint1:= fhashtable[id1 and fmask];
+   if uint1 <> 0 then begin
+    po1:= pelementhashdataty(pchar(fdata) + uint1);
+    while true do begin
+     if (po1^.data.key = id1) then begin
+      with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
+       if (name = aident) and (parent = parentele) and 
+                                    ((visibility * avislevel <> []) or 
+           (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
+                            ((akinds = []) or (kind in akinds)) then begin
+        element:= po1^.data.data;
+        goto endlab;
+       end;
+      end;
+     end;
+     if po1^.header.nexthash = 0 then begin
+      break;
+     end;
+     po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+    end;
+   end;
+   if vik_parent in avislevel then begin
+    with eleinfoabs(parentele)^ do begin
+     if (header.kind = ek_type) and 
+                             (ptypedataty(@data)^.kind = dk_class) then begin
+      parentele:= ptypedataty(@data)^.infoclass.parentcla;
+      if parentele <> 0 then begin
+       with eleinfoabs(parentele)^ do begin
+        elepath:= header.path+header.name;
+       end;
+       continue;
       end;
      end;
     end;
-    if po1^.header.nexthash = 0 then begin
-     exit;
-    end;
-    po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
    end;
-   element:= po1^.data.data;
+   break;
   end;
  end;
+endlab:
  result:= element >= 0;
 end;
 
@@ -976,6 +1000,7 @@ begin
   if result then begin
    break;
   end;
+{
   po1:= eleinfoabs(felementparent);
   if (akinds <> [ek_type]) and (po1^.header.kind = ek_type) then begin
    parentbefore1:= felementparent;
@@ -999,6 +1024,7 @@ begin
    felementparent:= parentbefore1;
    felementpath:= pathbefore1;
   end;
+}
   with pelementinfoty(pointer(felementdata)+felementparent)^.header do begin    
    if path = 0 then begin
     break;
@@ -1332,6 +1358,7 @@ begin
    end;
    ar2[0]:= mstr2+charstring(msechar('.'),int3)+'$'+
                  hextostr(longword(int5+int4+po1^.header.name),8)+ar2[0];
+//                 hextostr(longword(po1^.header.path),8)+ar2[0];
    mstr2:= charstring(msechar(' '),int3);
    for int6:= 1 to high(ar2) do begin
     ar2[int6]:= mstr2+ar2[int6];
