@@ -542,7 +542,7 @@ outinfo('****');
      dec(po2^.address.address,frameoffset);
      po4^[int2]:= ptruint(po2)-eledatabase;
     end;
-    ele.markelement(d.subdef.elementmark); 
+    ele.markelement(b.elemark); 
    end;
   end
   else begin
@@ -672,36 +672,38 @@ begin
  outhandle('SUB6');
 {$endif}
 outinfo('*****');
- with info do begin
-  with contextstack[stackindex-1],d do begin
+ with info,contextstack[stackindex-1] do begin
    //todo: check local forward
-   ele.decelementparent;
-   ele.releaseelement(subdef.elementmark); //remove local definitions
-   if subdef.varsize <> 0 then begin
-    with additem()^ do begin
-     op:= @locvarpopop;
-     par.stacksize:= subdef.varsize;
-    end;
-   end;
-   if sf_destructor in subdef.flags then begin
-    with additem^,par.destroyclass do begin
-     op:= @destroyclassop;
-     selfinstance:= -subdef.paramsize;
-    end;
-   end;
+  ele.decelementparent;
+  ele.releaseelement(b.elemark); //remove local definitions
+  if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
-    op:= @returnop;
-    par.stacksize:= subdef.paramsize;
+    op:= @locvarpopop;
+    par.stacksize:= d.subdef.varsize;
    end;
-   locdatapo:= subdef.parambase;
-   frameoffset:= subdef.frameoffsetbefore;
   end;
+  if sf_destructor in d.subdef.flags then begin
+   with additem^,par.destroyclass do begin
+    op:= @destroyclassop;
+    selfinstance:= -d.subdef.paramsize;
+   end;
+  end;
+  with additem()^ do begin
+   op:= @returnop;
+   par.stacksize:= d.subdef.paramsize;
+  end;
+  locdatapo:= d.subdef.parambase;
+  frameoffset:= d.subdef.frameoffsetbefore;
   dec(funclevel);
+  ele.elementparent:= b.eleparent;
+  currentstatementflags:= b.flags;
+{
   if (funclevel = 0) and (stf_classimp in currentstatementflags) then begin
    exclude(currentstatementflags,stf_classimp);
-   ele.popelementparent();
+//   ele.popelementparent();
 //   ele.popscopelevel();
   end;
+}
  end;
 end;
 

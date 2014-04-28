@@ -289,7 +289,7 @@ type
   parambase: ptruint;
   paramsize: integer; //params+stacklinksize
   varsize: integer;
-  elementmark: markinfoty;
+//  elementmark: markinfoty;
   ref: elementoffsetty;
   match: elementoffsetty;
   error: boolean;
@@ -392,7 +392,7 @@ type
  end;
 
  contextbackupty = record
-  elemark: elementoffsetty;
+  elemark: markinfoty;
   eleparent: elementoffsetty;
   flags: statementflagsty;
  end;
