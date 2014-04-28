@@ -485,7 +485,7 @@ begin
  with insertitem(stackoffset,before)^ do begin
   op:= @pushop;
   result:= atype^.bytesize; //todo: alignment
-  d.d.vsize:= result;
+  par.imm.vsize:= result;
  end;
 end;
 
@@ -495,12 +495,12 @@ begin
                      contextstack[stackindex+stackoffset].d.ref do begin
   if vf_global in address.flags then begin
    op:= @pushglobaddr;
-   d.vaddress:= address.address + offset;
+   par.vaddress:= address.address + offset;
   end
   else begin
    op:= @pushlocaddr;
-   d.vlocaddress.offset:= address.address + offset;
-   d.vlocaddress.linkcount:= info.funclevel-address.framelevel-1;
+   par.vlocaddress.offset:= address.address + offset;
+   par.vlocaddress.linkcount:= info.funclevel-address.framelevel-1;
   end;
  end;
 end;
@@ -514,19 +514,19 @@ begin
   case po1^.d.constval.kind of
    dk_boolean: begin
     op:= @push8;
-    d.d.vboolean:= po1^.d.constval.vboolean;
+    par.imm.vboolean:= po1^.d.constval.vboolean;
    end;
    dk_integer: begin
     op:= @push32;
-    d.d.vinteger:= po1^.d.constval.vinteger;
+    par.imm.vinteger:= po1^.d.constval.vinteger;
    end;
    dk_float: begin
     op:= @push64;
-    d.d.vfloat:= po1^.d.constval.vfloat;
+    par.imm.vfloat:= po1^.d.constval.vfloat;
    end;
    dk_string8: begin
     op:= @pushconstaddress;
-    d.vaddress:= stringconst(po1^.d.constval.vstring);
+    par.vaddress:= stringconst(po1^.d.constval.vstring);
    end;
    else begin
     internalerror('H20131121A');
@@ -540,7 +540,7 @@ begin
  if aoffset <> 0 then begin
   with insertitem(stackoffset,false)^ do begin
    op:= @addimmint32;
-   d.d.vinteger:= aoffset;
+   par.imm.vinteger:= aoffset;
   end;
  end;
 end;
@@ -549,7 +549,7 @@ procedure push(const avalue: boolean); overload;
 begin
  with additem({info})^ do begin
   op:= @push8;
-  d.d.vboolean:= avalue;
+  par.imm.vboolean:= avalue;
  end;
 end;
 
@@ -557,7 +557,7 @@ procedure push(const avalue: integer); overload;
 begin
  with additem({info})^ do begin
   op:= @push32;
-  d.d.vinteger:= avalue;
+  par.imm.vinteger:= avalue;
  end;
 end;
 
@@ -565,7 +565,7 @@ procedure push(const avalue: real); overload;
 begin
  with additem({info})^ do begin
   op:= @push64;
-  d.d.vfloat:= avalue;
+  par.imm.vfloat:= avalue;
  end;
 end;
 
@@ -576,7 +576,7 @@ begin
  with aitem^ do begin
   if vf_nil in avalue.flags then begin
    op:= @pushaddr;
-   d.d.vpointer:= 0;
+   par.imm.vpointer:= 0;
   end
   else begin
    if vf_global in avalue.flags then begin
@@ -586,8 +586,8 @@ begin
     else begin
      op:= @pushglobaddr;
     end;
-    d.vglobaddress:= avalue.address;
-    d.vglobadoffs:= offset;
+    par.vglobaddress:= avalue.address;
+    par.vglobadoffs:= offset;
    end
    else begin
     if indirect then begin
@@ -596,9 +596,9 @@ begin
     else begin
      op:= @pushlocaddr;
     end;
-    d.vlocaddress.offset:= avalue.address;
-    d.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
-    d.vlocadoffs:= offset;
+    par.vlocaddress.offset:= avalue.address;
+    par.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+    par.vlocadoffs:= offset;
    end;
   end;
  end;
@@ -622,7 +622,7 @@ procedure push(const avalue: datakindty); overload;
 begin
  with additem({info})^ do begin
   op:= @pushdatakind;
-  d.vdatakind:= avalue;
+  par.vdatakind:= avalue;
  end;
 end;
 
@@ -632,7 +632,7 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
 begin
  with insertitem(stackoffset,before)^ do begin
   op:= @pushdatakind;
-  d.vdatakind:= avalue;
+  par.vdatakind:= avalue;
  end;
 end;
 
@@ -672,7 +672,7 @@ end;
 procedure setcurrentloc(const indexoffset: integer);
 begin 
  with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address].d.opaddress:=
+  ops[contextstack[stackindex+indexoffset].opmark.address].par.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -680,7 +680,7 @@ end;
 procedure setcurrentlocbefore(const indexoffset: integer);
 begin 
  with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address-1].d.opaddress:=
+  ops[contextstack[stackindex+indexoffset].opmark.address-1].par.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -689,7 +689,7 @@ procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 begin
  with info do begin
   ops[contextstack[stackindex+destindexoffset].opmark.address-1].
-                                                               d.opaddress:=
+                                                               par.opaddress:=
          contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
@@ -698,7 +698,7 @@ procedure setloc(const destindexoffset,sourceindexoffset: integer);
 begin
  with info do begin
   ops[contextstack[stackindex+destindexoffset].opmark.address].
-                                                               d.opaddress:=
+                                                               par.opaddress:=
          contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
@@ -777,7 +777,7 @@ begin
      op:= @pushglob;
     end;
    end;
-   d.dataaddress:= address+offset;
+   par.dataaddress:= address+offset;
   end
   else begin
    if vf_paramindirect in flags then begin
@@ -812,10 +812,10 @@ begin
      end;
     end;
    end;
-   d.locdataaddress.offset:= address + offset;
-   d.locdataaddress.linkcount:= info.funclevel-framelevel-1;
+   par.locdataaddress.offset:= address + offset;
+   par.locdataaddress.linkcount:= info.funclevel-framelevel-1;
   end;
-  d.datasize:= size;
+  par.datasize:= size;
  end;
 end;
 
@@ -862,7 +862,7 @@ function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
      end;
      else begin
       op:= @indirect;
-      d.datasize:= si1;      
+      par.datasize:= si1;      
      end;
     end;
    end;
@@ -954,6 +954,7 @@ end;
 function getaddress(const stackoffset: integer): boolean;
 var
  ref1: refinfoty;
+ int1: integer;
 begin
  result:= false;
  with info,contextstack[stackindex+stackoffset] do begin
@@ -979,7 +980,23 @@ begin
     end
     else begin
      if d.indirection <= 0 then begin
-      result:= getvalue(stackoffset);
+      if d.indirection = 0 then begin
+       pushinsert(stackoffset,false,d.ref.address,d.ref.offset,true);
+      end
+      else begin
+       pushinsert(stackoffset,false,d.ref.address,0,true);
+       for int1:= d.indirection to -2 do begin
+        with insertitem(stackoffset,false)^ do begin
+         op:= @indirectpo;
+        end;
+       end;
+       with insertitem(stackoffset,false)^ do begin
+        op:= @indirectpooffs;
+///////////////////        d.voffset:= d.ref.offset;
+       end;
+      end;
+      d.kind:= ck_fact;
+      d.indirection:= 0;
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -1077,10 +1094,10 @@ outinfo('****');
       op:= @push64;
       case constval.kind of
        dk_integer: begin
-        d.d.vfloat:= real(constval.vinteger);
+        par.imm.vfloat:= real(constval.vinteger);
        end;
        dk_float: begin
-        d.d.vfloat:= constval.vfloat;
+        par.imm.vfloat:= constval.vfloat;
        end;
        else begin
         sd1:= sdk_none;
@@ -1093,7 +1110,7 @@ outinfo('****');
       dk_integer: begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @stackops.int32toflo64;
-        with d.op1 do begin
+        with par.op1 do begin
          index0:= 0;
         end;
        end;
@@ -1140,7 +1157,7 @@ outinfo('****');
       if kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @push8;
-        d.d.vboolean:= constval.vboolean;
+        par.imm.vboolean:= constval.vboolean;
        end;
       end;
       with contextstack[stacktop].d do begin
@@ -1156,7 +1173,7 @@ outinfo('****');
       if kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @push32;
-        d.d.vinteger:= constval.vinteger;
+        par.imm.vinteger:= constval.vinteger;
        end;
       end;
       with contextstack[stacktop].d do begin

@@ -570,7 +570,7 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
-    info.ops[dest].d.opaddress:= aaddress-1;
+    info.ops[dest].par.opaddress:= aaddress-1;
     if next = 0 then begin
      break;
     end;
@@ -1028,27 +1028,29 @@ begin //todo: optimize
  if aidents.high >= 0 then begin
   result:= findupward(aidents.d[0],akinds,avislevel,element);
   if result then begin
-   parentbefore:= felementparent;
-   pathbefore:= felementpath;
-   felementparent:= element; //parentlevel
-   with pelementinfoty(pointer(felementdata)+element)^.header do begin
-    felementpath:= path;
-   end;
    firstnotfound:= 1;
-   while true do begin
-    if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
-     break;
+   if aidents.high > 0 then begin
+    parentbefore:= felementparent;
+    pathbefore:= felementpath;
+    felementparent:= element; //parentlevel
+    with pelementinfoty(pointer(felementdata)+element)^.header do begin
+     felementpath:= path;
     end;
-    element:= ele1;
-    felementparent:= ele1;
-    felementpath:= felementpath+aidents.d[firstnotfound];
-    inc(firstnotfound);
-    if firstnotfound > aidents.high then begin
-     break;
+    while true do begin
+     if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
+      break;
+     end;
+     element:= ele1;
+     felementparent:= ele1;
+     felementpath:= felementpath+aidents.d[firstnotfound];
+     inc(firstnotfound);
+     if firstnotfound > aidents.high then begin
+      break;
+     end;
     end;
+    felementparent:= parentbefore;
+    felementpath:= pathbefore;
    end;
-   felementparent:= parentbefore;
-   felementpath:= pathbefore;
   end;
  end;
 end;

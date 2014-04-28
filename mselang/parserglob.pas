@@ -429,7 +429,7 @@ type
              ok_pushdatakind,
              ok_pushglobaddress,ok_pushlocaddress,
              ok_pushglobaddressindi,ok_pushlocaddressindi,
-             ok_pushstackaddress,
+             ok_pushstackaddress,ok_indirectpooffs,
              ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_stack,ok_initclass,ok_destroyclass);
@@ -472,10 +472,10 @@ type
  destroyclassinfo = record
  end;
   
- opdataty = record
+ opparamty = record
   case opkindty of 
    ok_none: (
-    d: record
+    imm: record
      case integer of
       1: (vboolean: boolean);
       2: (vcardinal: card32);
@@ -511,7 +511,7 @@ type
     vlocaddress: locdataaddressty;
     vlocadoffs: dataoffsty;
    );
-   ok_pushstackaddress:(
+   ok_pushstackaddress,ok_indirectpooffs:(
     voffset: dataoffsty;
    );
    ok_locop,ok_var:(
@@ -554,7 +554,7 @@ type
  opinfoty = record
 //todo: variable item size, immediate data
   op: opty;
-  d: opdataty;
+  par: opparamty;
  end;
  popinfoty = ^opinfoty;
 

@@ -132,6 +132,7 @@ procedure indirect8;
 procedure indirect16;
 procedure indirect32;
 procedure indirectpo;
+procedure indirectpooffs;
 procedure indirect;
 
 procedure popindirect8;
@@ -252,13 +253,13 @@ end;
 
 procedure gotoop;
 begin
- oppo:= startpo + oppo^.d.opaddress;
+ oppo:= startpo + oppo^.par.opaddress;
 end;
 
 procedure ifop;
 begin
  if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
-  oppo:= startpo + oppo^.d.opaddress;
+  oppo:= startpo + oppo^.par.opaddress;
  end;
 end;
 
@@ -270,10 +271,10 @@ var
  str1: string;
  po4: pstringheaderty;
 begin
- dec(mainstackpo,oppo^.d.paramcount*sizeof(datakindty));
+ dec(mainstackpo,oppo^.par.paramcount*sizeof(datakindty));
  po3:= mainstackpo; //start of data kinds
  po2:= po3;
- dec(mainstackpo,oppo^.d.paramsize);
+ dec(mainstackpo,oppo^.par.paramsize);
  po1:= mainstackpo; //start of params
  while po1 < po2 do begin
   case po3^ of
@@ -332,37 +333,37 @@ end;
 
 procedure pushop;
 begin
- stackpush(oppo^.d.d.vsize);
+ stackpush(oppo^.par.imm.vsize);
 end;
 
 procedure popop;
 begin
- stackpop(oppo^.d.d.vsize);
+ stackpop(oppo^.par.imm.vsize);
 end;
 
 procedure push8;
 begin
- pv8ty(stackpush(1))^:= oppo^.d.v8; 
+ pv8ty(stackpush(1))^:= oppo^.par.v8; 
 end;
 
 procedure push16;
 begin
- pv16ty(stackpush(2))^:= oppo^.d.v16; 
+ pv16ty(stackpush(2))^:= oppo^.par.v16; 
 end;
 
 procedure push32;
 begin
- pv32ty(stackpush(4))^:= oppo^.d.v32; 
+ pv32ty(stackpush(4))^:= oppo^.par.v32; 
 end;
 
 procedure push64;
 begin
- pv64ty(stackpush(8))^:= oppo^.d.v64; 
+ pv64ty(stackpush(8))^:= oppo^.par.v64; 
 end;
 
 procedure pushdatakind;
 begin
- vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= oppo^.d.vdatakind; 
+ vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= oppo^.par.vdatakind; 
 end;
 
 procedure int32toflo64;
@@ -387,7 +388,7 @@ var
  po1: pointer;
 begin
  po1:= mainstackpo - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^)*oppo^.d.d.vinteger;
+ vintegerty(po1^):= vintegerty(po1^)*oppo^.par.imm.vinteger;
 end;
 
 procedure mulflo64;
@@ -413,7 +414,7 @@ var
  po1: pointer;
 begin
  po1:= mainstackpo - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^)+oppo^.d.d.vinteger;
+ vintegerty(po1^):= vintegerty(po1^)+oppo^.par.imm.vinteger;
 end;
 
 procedure cmpequbool;
@@ -478,49 +479,49 @@ end;
 
 procedure pushconstaddress;
 begin
- ppointer(stackpush(sizeof(dataaddressty)))^:= constdata+oppo^.d.vaddress; 
+ ppointer(stackpush(sizeof(dataaddressty)))^:= constdata+oppo^.par.vaddress; 
 end;
 
 procedure popglob8;
 begin
- puint8(globdata+oppo^.d.dataaddress)^:= puint8(stackpop(1))^;
+ puint8(globdata+oppo^.par.dataaddress)^:= puint8(stackpop(1))^;
 end;
 
 procedure popglob16;
 begin
- puint16(globdata+oppo^.d.dataaddress)^:= puint16(stackpop(2))^;
+ puint16(globdata+oppo^.par.dataaddress)^:= puint16(stackpop(2))^;
 end;
 
 procedure popglob32;
 begin
- puint32(globdata+oppo^.d.dataaddress)^:= puint32(stackpop(4))^;
+ puint32(globdata+oppo^.par.dataaddress)^:= puint32(stackpop(4))^;
 end;
 
 procedure popglob;
 begin
- move(stackpop(oppo^.d.datasize)^,(globdata+oppo^.d.dataaddress)^,
-                                                        oppo^.d.datasize);
+ move(stackpop(oppo^.par.datasize)^,(globdata+oppo^.par.dataaddress)^,
+                                                        oppo^.par.datasize);
 end;
 
 procedure pushglob8;
 begin
- pv8ty(stackpush(1))^:= pv8ty(globdata+oppo^.d.dataaddress)^;
+ pv8ty(stackpush(1))^:= pv8ty(globdata+oppo^.par.dataaddress)^;
 end;
 
 procedure pushglob16;
 begin
- pv16ty(stackpush(2))^:= pv16ty(globdata+oppo^.d.dataaddress)^;
+ pv16ty(stackpush(2))^:= pv16ty(globdata+oppo^.par.dataaddress)^;
 end;
 
 procedure pushglob32;
 begin
- pv32ty(stackpush(4))^:= pv32ty(globdata+oppo^.d.dataaddress)^;
+ pv32ty(stackpush(4))^:= pv32ty(globdata+oppo^.par.dataaddress)^;
 end;
 
 procedure pushglob;
 begin
- move((globdata+oppo^.d.dataaddress)^,stackpush(oppo^.d.datasize)^,
-                                                          oppo^.d.datasize);
+ move((globdata+oppo^.par.dataaddress)^,stackpush(oppo^.par.datasize)^,
+                                                          oppo^.par.datasize);
 end;
 
 //todo: make special locvar access funcs for inframe variables
@@ -545,120 +546,120 @@ end;
 
 procedure poploc8;
 begin             
- pv8ty(locaddress(oppo^.d.locdataaddress))^:= pv8ty(stackpop(1))^;
+ pv8ty(locaddress(oppo^.par.locdataaddress))^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poploc16;
 begin
- pv16ty(locaddress(oppo^.d.locdataaddress))^:= pv16ty(stackpop(2))^;
+ pv16ty(locaddress(oppo^.par.locdataaddress))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poploc32;
 begin
- pv32ty(locaddress(oppo^.d.locdataaddress))^:= pv32ty(stackpop(4))^;
+ pv32ty(locaddress(oppo^.par.locdataaddress))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poploc;
 begin
- move(stackpop(oppo^.d.datasize)^,(locaddress(oppo^.d.locdataaddress))^,
-                                                         oppo^.d.datasize);
+ move(stackpop(oppo^.par.datasize)^,(locaddress(oppo^.par.locdataaddress))^,
+                                                         oppo^.par.datasize);
 end;
 
 procedure poplocindi8;
 begin             
- pv8ty(locaddress(oppo^.d.locdataaddress)^)^:= pv8ty(stackpop(1))^;
+ pv8ty(locaddress(oppo^.par.locdataaddress)^)^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poplocindi16;
 begin
- pv16ty(ppointer(locaddress(oppo^.d.locdataaddress))^)^:= pv16ty(stackpop(2))^;
+ pv16ty(ppointer(locaddress(oppo^.par.locdataaddress))^)^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poplocindi32;
 begin
- pv32ty(ppointer(locaddress(oppo^.d.locdataaddress))^)^:= pv32ty(stackpop(4))^;
+ pv32ty(ppointer(locaddress(oppo^.par.locdataaddress))^)^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poplocindi;
 begin
- move(stackpop(oppo^.d.datasize)^,
-            (ppointer(locaddress(oppo^.d.locdataaddress))^)^,oppo^.d.datasize);
+ move(stackpop(oppo^.par.datasize)^,
+      (ppointer(locaddress(oppo^.par.locdataaddress))^)^,oppo^.par.datasize);
 end;
 
 procedure pushloc8;
 begin
- pv8ty(stackpush(1))^:= pv8ty(locaddress(oppo^.d.locdataaddress))^;
+ pv8ty(stackpush(1))^:= pv8ty(locaddress(oppo^.par.locdataaddress))^;
 end;
 
 procedure pushloc16;
 begin
- pv16ty(stackpush(2))^:= pv16ty(locaddress(oppo^.d.locdataaddress))^;
+ pv16ty(stackpush(2))^:= pv16ty(locaddress(oppo^.par.locdataaddress))^;
 end;
 
 procedure pushloc32;
 begin
- pv32ty(stackpush(4))^:= pv32ty(locaddress(oppo^.d.locdataaddress))^;
+ pv32ty(stackpush(4))^:= pv32ty(locaddress(oppo^.par.locdataaddress))^;
 end;
 
 procedure pushloc;
 begin
- move((locaddress(oppo^.d.locdataaddress))^,stackpush(oppo^.d.datasize)^,
-                                                   oppo^.d.datasize);
+ move((locaddress(oppo^.par.locdataaddress))^,stackpush(oppo^.par.datasize)^,
+                                                   oppo^.par.datasize);
 end;
 
 procedure pushlocindi8;
 begin
- pv8ty(stackpush(1))^:= ppv8ty(locaddress(oppo^.d.locdataaddress))^^;
+ pv8ty(stackpush(1))^:= ppv8ty(locaddress(oppo^.par.locdataaddress))^^;
 end;
 
 procedure pushlocindi16;
 begin
- pv16ty(stackpush(2))^:= ppv16ty(locaddress(oppo^.d.locdataaddress))^^;
+ pv16ty(stackpush(2))^:= ppv16ty(locaddress(oppo^.par.locdataaddress))^^;
 end;
 
 procedure pushlocindi32;
 begin
- pv32ty(stackpush(4))^:= ppv32ty(locaddress(oppo^.d.locdataaddress))^^;
+ pv32ty(stackpush(4))^:= ppv32ty(locaddress(oppo^.par.locdataaddress))^^;
 end;
 
 procedure pushlocindi;
 begin
- move(ppointer(locaddress(oppo^.d.locdataaddress))^^,
-               stackpush(oppo^.d.datasize)^,oppo^.d.datasize);
+ move(ppointer(locaddress(oppo^.par.locdataaddress))^^,
+               stackpush(oppo^.par.datasize)^,oppo^.par.datasize);
 end;
 
 procedure pushaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= pointer(oppo^.d.d.vpointer);
+ ppointer(stackpush(sizeof(pointer)))^:= pointer(oppo^.par.imm.vpointer);
 end;
 
 procedure pushlocaddr;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-                     locaddress(oppo^.d.vlocaddress)+oppo^.d.vlocadoffs;;
+                     locaddress(oppo^.par.vlocaddress)+oppo^.par.vlocadoffs;;
 end;
 
 procedure pushlocaddrindi;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-           ppointer(locaddress(oppo^.d.vlocaddress))^+oppo^.d.vlocadoffs;
+           ppointer(locaddress(oppo^.par.vlocaddress))^+oppo^.par.vlocadoffs;
 end;
 
 procedure pushglobaddr;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-                     globdata+oppo^.d.vaddress+oppo^.d.vglobadoffs;
+                     globdata+oppo^.par.vaddress+oppo^.par.vglobadoffs;
 end;
 
 procedure pushglobaddrindi;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-           ppointer(globdata+oppo^.d.vaddress)^+oppo^.d.vglobadoffs;
+           ppointer(globdata+oppo^.par.vaddress)^+oppo^.par.vglobadoffs;
 end;
 
 procedure pushstackaddr;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= mainstackpo+oppo^.d.voffset;
+ ppointer(stackpush(sizeof(pointer)))^:= mainstackpo+oppo^.par.voffset;
 end;
 
 procedure indirect8;
@@ -693,12 +694,20 @@ begin
  ppointer(po1)^:=  ppointer(ppointer(po1)^)^;
 end;
 
+procedure indirectpooffs;
+var
+ po1: pointer;
+begin
+ po1:= mainstackpo-sizeof(pointer);
+ ppointer(po1)^:=  ppointer(ppointer(po1)^)^+oppo^.par.voffset;
+end;
+
 procedure indirect;
 var
  po1: pointer;
 begin
  po1:= ppointer(stackpop(sizeof(pointer)))^;
- move(po1^,stackpush(oppo^.d.datasize)^,oppo^.d.datasize);
+ move(po1^,stackpush(oppo^.par.datasize)^,oppo^.par.datasize);
 end;
 
 procedure popindirect8;
@@ -732,9 +741,9 @@ procedure popindirect;
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(oppo^.d.datasize);
+ po1:= stackpop(oppo^.par.datasize);
  po2:= ppointer(stackpop(sizeof(pointer)))^;
- move(po1^,po2^,oppo^.d.datasize);
+ move(po1^,po2^,oppo^.par.datasize);
 end;
 
 //first op:
@@ -752,7 +761,7 @@ begin
  end;
  framepo:= mainstackpo;
  stacklink:= framepo;
- oppo:= startpo+oppo^.d.callinfo.ad;
+ oppo:= startpo+oppo^.par.callinfo.ad;
 end;
 
 procedure calloutop;
@@ -765,28 +774,28 @@ begin
   link:= stacklink;
  end;
  
- for i1:= oppo^.d.callinfo.linkcount downto 0 do begin
+ for i1:= oppo^.par.callinfo.linkcount downto 0 do begin
   stacklink:= frameinfoty((stacklink-sizeof(frameinfoty))^).link;
  end;
  framepo:= mainstackpo;
- oppo:= startpo+oppo^.d.callinfo.ad;
+ oppo:= startpo+oppo^.par.callinfo.ad;
 end;
 
 procedure locvarpushop;
 begin
- stackpush(oppo^.d.stacksize);
+ stackpush(oppo^.par.stacksize);
 end;
 
 procedure locvarpopop;
 begin
- stackpop(oppo^.d.stacksize);
+ stackpop(oppo^.par.stacksize);
 end;
 
 procedure returnop;
 var
  int1: integer;
 begin
- int1:= oppo^.d.stacksize;
+ int1:= oppo^.par.stacksize;
  with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
   oppo:= pc;
   framepo:= frame;
@@ -799,7 +808,7 @@ procedure initclassop;
 var
  po1: pointer;
 begin
- with oppo^.d do begin
+ with oppo^.par do begin
   with pclassdefinfoty(initclass.classdef+constdata)^ do begin
    po1:= intgetnulledmem(fieldsize);
    ppointer(framepo+initclass.selfinstance)^:= po1;
@@ -810,7 +819,7 @@ end;
 
 procedure destroyclassop;
 begin
- with oppo^.d do begin
+ with oppo^.par do begin
   intfreemem(ppointer(framepo+destroyclass.selfinstance)^);
  end;
 end;

@@ -642,7 +642,7 @@ outinfo('***');
          end;
          with insertitem(int1-stackindex+1,false)^ do begin
           op:= @mulimmint32;
-          d.d.vinteger:= itemtype^.bytesize;
+          par.imm.vinteger:= itemtype^.bytesize;
          end;
          if not fullconst then begin
           with insertitem(int1-stackindex+1,false)^ do begin

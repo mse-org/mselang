@@ -1041,7 +1041,7 @@ begin
         dk_integer: begin //todo: adjust data size
          with additem()^ do begin
           op:= @stackops.int32toflo64;
-          with d.op1 do begin
+          with par.op1 do begin
            index0:= 0;
           end;
          end;
@@ -1159,7 +1159,7 @@ var
       d.datatyp.typedata:= po6^.vf.typ;        
       with additem()^ do begin //result var param
        op:= @pushstackaddr;
-       d.voffset:= -asub^.paramsize+stacklinksize-int1;
+       par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
      end
      else begin
@@ -1171,15 +1171,15 @@ var
     linkmark(asub^.links,opcount);
    end;
    with additem()^ do begin
-    d.callinfo.ad:= asub^.address-1; //possibly invalid
+    par.callinfo.ad:= asub^.address-1; //possibly invalid
     if (asub^.nestinglevel = 0) or 
                      (asub^.nestinglevel = funclevel) then begin
      op:= @callop;
-     d.callinfo.linkcount:= -1;
+     par.callinfo.linkcount:= -1;
     end
     else begin
      op:= @calloutop;
-     d.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
+     par.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
                                                              //for downto 0
     end;
    end;
@@ -1221,6 +1221,7 @@ var
           d.datatyp.typedata:= ele1;
          end;
          ck_fact: begin
+          
          end;
          else begin
           internalerror('H20140427A');
@@ -1328,28 +1329,47 @@ outinfo('**1**');
      if po1^.header.kind = ek_field then begin
       with pfielddataty(po2)^ do begin
        offs1:= offs1+offset;
-       if vf_classfield in flags then begin
-        if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
-         errormessage(err_noclass,[],0);
+       if isgetfact then begin
+        if vf_classfield in flags then begin
+         if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
+          errormessage(err_noclass,[],0);
+          goto endlab;
+         end;
+        end
+        else begin
+         internalerror('H201400427B');
          goto endlab;
         end;
-       end
-       else begin
-        internalerror('H201400427B');
-        goto endlab;
-       end;
-       if isgetfact then begin
-        pushinsert(-1,false,pvardataty(ele.eledataabs(ele2))^.address,
-                                                               offset,true);
-        d.kind:= ck_fact;
+//        pushinsert(-1,false,pvardataty(ele.eledataabs(ele2))^.address,
+//                                                               offset,true);
+        d.kind:= ck_ref;
         d.datatyp.typedata:= vf.typ;
         d.datatyp.indirectlevel:= indirectlevel;
         d.indirection:= -1;
+        d.ref.address:= pvardataty(ele.eledataabs(ele2))^.address;
+        d.ref.offset:= offset;
        end
        else begin
-        internalerror('H201400427C');
-        goto endlab;
+        d:= contextstack[stackindex-1].d; 
+                  //todo: no double copy by handlefact
+        case d.kind of
+         ck_ref: begin
+          pushinsert(0,false,d.ref.address,offset,false);
+          d.kind:= ck_fact;
+          d.datatyp.typedata:= vf.typ;
+          d.datatyp.indirectlevel:= indirectlevel;
+          d.indirection:= -1;
+outinfo('**1a**');
+         end;
+         ck_fact: begin
+          internalerror('N20140427E');
+         end;
+         else begin
+          internalerror('H20140427D');
+         end;
+        end;
        end;
+       donotfound(d.datatyp.typedata);
       end;
      end
      else begin //ek_var
@@ -1365,7 +1385,7 @@ outinfo('**1**');
       else begin
        with contextstack[stackindex-1] do begin
         if d.indirection <> 0 then begin
-         getaddress(-1);
+         getaddress(-1{,offs1});
          offsetad(-1,offs1);
          dec(d.indirection); //pending dereference
         end
@@ -1376,8 +1396,8 @@ outinfo('**1**');
                   //todo: no double copy by handlefact
        end;
       end;
+      donotfound(pvardataty(po2)^.vf.typ);
      end;
-     donotfound(pvardataty(po2)^.vf.typ);
     end;
     ek_const: begin
      if checknoparam then begin
@@ -1411,8 +1431,8 @@ outinfo('**1**');
         end;
         with additem()^ do begin
          op:= sysop;
-         d.paramcount:= int2;
-         d.paramsize:= stacksize1;
+         par.paramcount:= int2;
+         par.paramsize:= stacksize1;
         end;
         //todo: handle function
        end;
@@ -1646,7 +1666,7 @@ begin
  outhandle('PROGBEGIN');
 {$endif}
  with info,ops[startupoffset] do begin
-  d.opaddress:= opcount-1;
+  par.opaddress:= opcount-1;
  end;
 end;
 
@@ -1975,6 +1995,7 @@ var
  typematch,indi: boolean;
  si1: integer;
  int1: integer;
+ offs1: dataoffsty;
 label
  endlab;
 begin
@@ -1984,7 +2005,7 @@ begin
 outinfo('**1**');
  with info do begin
   if (stacktop-stackindex = 2) and not errorfla then begin
-   if not getaddress(1) or not getvalue(2{,false}) then begin
+   if not getaddress(1{,offs1}) or not getvalue(2{,false}) then begin
     goto endlab;
    end;
 outinfo('**2**');
@@ -2045,7 +2066,7 @@ outinfo('**2**');
      end;
      }
      with additem()^ do begin
-      d.datasize:= si1;
+      par.datasize:= si1;
       if indi then begin
        case si1 of
         1: begin
@@ -2078,7 +2099,7 @@ outinfo('**2**');
           op:= @popglob;
          end;
         end;
-        d.dataaddress:= dest.address.address;
+        par.dataaddress:= dest.address.address;
        end
        else begin
         if vf_paramindirect in dest.address.flags then begin
@@ -2113,8 +2134,8 @@ outinfo('**2**');
           end;
          end;
         end;
-        d.locdataaddress.offset:= dest.address.address;
-        d.locdataaddress.linkcount:= funclevel-dest.address.framelevel-1;
+        par.locdataaddress.offset:= dest.address.address;
+        par.locdataaddress.linkcount:= funclevel-dest.address.framelevel-1;
        end;
       end;
      end;
@@ -2246,7 +2267,7 @@ outinfo('***');
     ck_subres: begin
      with additem()^ do begin
       op:= @popop;
-      d.d.vsize:= fact.datasize; //todo: alignment
+      par.imm.vsize:= fact.datasize; //todo: alignment
      end;    
     end;
     ck_subcall: begin
@@ -2385,7 +2406,7 @@ procedure opgoto(const aaddress: dataaddressty);
 begin
  with additem()^ do begin
   op:= @gotoop;
-  d.opaddress:= aaddress;
+  par.opaddress:= aaddress;
  end;
 end;
 

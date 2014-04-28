@@ -169,6 +169,7 @@ end;
 procedure handleclassdefreturn();
 var
  po2: pclassesdataty;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -193,10 +194,11 @@ outinfo('***');
 //     parentclass:= d.cla.parentclass; //todo: pointer to parent in const
     end;
    end;
-   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,
-                                                 infoclass.impl) then begin
+   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,ele1) then begin
     internalerror('C20140415B');
    end;
+   ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
+              //possible capacity change
   end;
   ele.elementparent:= contextstack[stackindex].elemark;
   currentclass:= 0;

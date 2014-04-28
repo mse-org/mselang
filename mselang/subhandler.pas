@@ -645,7 +645,7 @@ outinfo('*****');
   if subdef.varsize <> 0 then begin
    with additem()^ do begin
     op:= @locvarpushop;
-    d.stacksize:= subdef.varsize;
+    par.stacksize:= subdef.varsize;
    end;
   end;
   if subdef.match <> 0 then begin
@@ -655,7 +655,7 @@ outinfo('*****');
   end;
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentclass);
-   with additem^,d.initclass do begin
+   with additem^,par.initclass do begin
     op:= @initclassop;
     classdef:= po3^.infoclass.defs;
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
@@ -679,18 +679,18 @@ outinfo('*****');
    if subdef.varsize <> 0 then begin
     with additem()^ do begin
      op:= @locvarpopop;
-     d.stacksize:= subdef.varsize;
+     par.stacksize:= subdef.varsize;
     end;
    end;
    if sf_destructor in subdef.flags then begin
-    with additem^,d.destroyclass do begin
+    with additem^,par.destroyclass do begin
      op:= @destroyclassop;
      selfinstance:= -subdef.paramsize;
     end;
    end;
    with additem()^ do begin
     op:= @returnop;
-    d.stacksize:= subdef.paramsize;
+    par.stacksize:= subdef.paramsize;
    end;
    locdatapo:= subdef.parambase;
    frameoffset:= subdef.frameoffsetbefore;
