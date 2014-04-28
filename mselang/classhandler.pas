@@ -79,7 +79,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFSTART');
 {$endif}
-outinfo('***');
+outinfo('**1**');
  with info do begin
   if stackindex < 3 then begin
    internalerror('H20140325D');
@@ -125,6 +125,7 @@ outinfo('***');
   end;
  }
  end;
+outinfo('**2**');
 end;
 
 procedure handleclassdefparam2();

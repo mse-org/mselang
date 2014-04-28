@@ -833,6 +833,38 @@ begin
  pushd(insertitem(stackoffset,before),address,offset,size);
 end;
 
+function pushindirection(const stackoffset: integer): boolean;
+var
+ int1: integer;
+begin
+ result:= true;
+ with info,contextstack[stackindex+stackoffset] do begin;
+  if d.indirection <= 0 then begin
+   if d.indirection = 0 then begin
+    pushinsert(stackoffset,false,d.ref.address,d.ref.offset,true);
+   end
+   else begin
+    pushinsert(stackoffset,false,d.ref.address,0,true);
+    for int1:= d.indirection to -2 do begin
+     with insertitem(stackoffset,false)^ do begin
+      op:= @indirectpo;
+     end;
+    end;
+    with insertitem(stackoffset,false)^ do begin
+     op:= @indirectpooffs;
+     par.voffset:= d.ref.offset;
+    end;
+   end;
+   d.kind:= ck_fact;
+   d.indirection:= 0;
+  end
+  else begin
+   errormessage(err_cannotassigntoaddr,[],stackoffset);
+   result:= false;
+  end;
+ end;
+end;
+
 function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
 
  procedure doindirect();
@@ -884,8 +916,8 @@ begin                    //todo: optimize
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
-    inc(d.ref.address.address,d.ref.offset);
-    d.ref.offset:= 0;
+//    inc(d.ref.address.address,d.ref.offset);
+//    d.ref.offset:= 0;
     if d.indirection > 0 then begin //@ operator
      if d.indirection = 1 then begin
       pushinsertaddress(stackoffset,false);
@@ -897,6 +929,11 @@ begin                    //todo: optimize
     end
     else begin
      if d.indirection < 0 then begin //dereference
+      inc(d.indirection); //correct addr handling
+      if not pushindirection(stackoffset) then begin
+       exit;
+      end;
+      {
       pushinsertdata(stackoffset,false,d.ref.address,d.ref.offset,pointersize);
       for int1:= d.indirection to -2 do begin
        op1:= insertitem(stackoffset,false);
@@ -904,6 +941,7 @@ begin                    //todo: optimize
         op:= @indirectpo;
        end;
       end;
+      }
       doindirect;
      end
      else begin
@@ -979,27 +1017,7 @@ begin
      d.constval.vaddress.address:= d.constval.vaddress.address + ref1.offset;
     end
     else begin
-     if d.indirection <= 0 then begin
-      if d.indirection = 0 then begin
-       pushinsert(stackoffset,false,d.ref.address,d.ref.offset,true);
-      end
-      else begin
-       pushinsert(stackoffset,false,d.ref.address,0,true);
-       for int1:= d.indirection to -2 do begin
-        with insertitem(stackoffset,false)^ do begin
-         op:= @indirectpo;
-        end;
-       end;
-       with insertitem(stackoffset,false)^ do begin
-        op:= @indirectpooffs;
-        par.voffset:= d.ref.offset;
-       end;
-      end;
-      d.kind:= ck_fact;
-      d.indirection:= 0;
-     end
-     else begin
-      errormessage(err_cannotassigntoaddr,[],stackoffset);
+     if not pushindirection(stackoffset) then begin
       exit;
      end;
     end;
@@ -1073,11 +1091,11 @@ var
 begin
  with info do begin
 //  opshift:= 0;
-outinfo('****');
+outinfo('**1**');
   if contextstack[stacktop].d.kind <> ck_const then begin
    getvalue(stacktop-stackindex{,false});
   end;
-outinfo('****');
+outinfo('**2**');
   sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
@@ -1087,6 +1105,7 @@ outinfo('****');
    if d.kind <> ck_const then begin
     getvalue(stacktop-2-stackindex{,true});
    end;
+outinfo('**3**');
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
     if kind = ck_const then begin
@@ -1208,6 +1227,7 @@ outinfo('****');
   dec(stacktop,2);
   stackindex:= stacktop-1; 
  end;
+outinfo('**4**');
 end;
 
  
