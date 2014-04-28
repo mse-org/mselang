@@ -992,7 +992,7 @@ begin
        end;
        with insertitem(stackoffset,false)^ do begin
         op:= @indirectpooffs;
-///////////////////        d.voffset:= d.ref.offset;
+        par.voffset:= d.ref.offset;
        end;
       end;
       d.kind:= ck_fact;
