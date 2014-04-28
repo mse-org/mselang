@@ -214,7 +214,7 @@ outinfo('***');
    end;
   end;
   with contextstack[stackindex] do begin
-   elemark:= ele.elementparent;
+   b.eleparent:= ele.elementparent;
    d.kind:= ck_recorddef;
    d.rec.fieldoffset:= 0;
   end;
@@ -232,7 +232,7 @@ begin
  outhandle('RECORDDEFERROR');
 {$endif}
  with info do begin
-  ele.elementparent:= contextstack[stackindex].elemark;
+  ele.elementparent:= contextstack[stackindex].b.eleparent;
  end;
 end;
 
@@ -254,7 +254,8 @@ begin
                                            avisibility,ek_field,po1) then begin
    ele1:= ele.elementparent;
               //???? not used
-   ele.elementparent:= contextstack[contextstack[stackindex].parent].elemark;
+   ele.elementparent:= 
+            contextstack[contextstack[stackindex].parent].b.eleparent;
    po1^.flags:= aflags;
    po1^.offset:= aoffset;
    with contextstack[stackindex+3] do begin
@@ -305,7 +306,7 @@ begin
 {$endif}
 outinfo('****');
  with info do begin
-  ele.elementparent:= contextstack[stackindex].elemark; //restore
+  ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
 {
   int2:= 0;
   for int1:= stackindex+1 to stacktop do begin

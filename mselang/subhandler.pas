@@ -154,9 +154,9 @@ begin
 {$endif}
 outinfo('***');
  with info do begin
-  with contextstack[stackindex].d do begin
-   kind:= ck_params;
-   params.flagsbefore:= currentstatementflags;
+  with contextstack[stackindex] do begin
+   d.kind:= ck_params;
+   b.flags:= currentstatementflags;
    include(currentstatementflags,stf_params);
   end;
  end;
@@ -229,8 +229,8 @@ begin
  outhandle('PARAMSEND');
 {$endif}
  with info do begin
-  with contextstack[stackindex].d do begin
-   currentstatementflags:= params.flagsbefore;
+  with contextstack[stackindex] do begin
+   currentstatementflags:= b.flags;
   end;
  end;
 end;
@@ -328,7 +328,8 @@ begin
  outhandle('SUB1ENTRY');
 {$endif}
 outinfo('****');
- with info,contextstack[stackindex] do begin
+ with info,contextstack[stackindex-1] do begin
+  b.flags:= currentstatementflags; ///////////////////////////7
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],

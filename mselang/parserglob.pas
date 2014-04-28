@@ -294,6 +294,7 @@ type
   match: elementoffsetty;
   error: boolean;
   flags: subflagsty;
+//  statementflagsbefore: statementflagsty;
  end;
  
  paramsdefinfoty = record
@@ -301,7 +302,7 @@ type
  end;
  
  paramsinfoty = record
-  flagsbefore: statementflagsty;
+//  flagsbefore: statementflagsty;
  end;
 {
  classinfoty = record
@@ -390,6 +391,12 @@ type
    );
  end;
 
+ contextbackupty = record
+  elemark: elementoffsetty;
+  eleparent: elementoffsetty;
+  flags: statementflagsty;
+ end;
+
  sourceinfoty = record
   po: pchar;
   line: integer;
@@ -403,8 +410,8 @@ type
   start: sourceinfoty;
   debugstart: pchar;
   transitionflags: branchflagsty;
-  elemark: elementoffsetty;
   opmark: opmarkty;
+  b: contextbackupty;
   d: contextdataty;
  end;
  pcontextitemty = ^contextitemty;

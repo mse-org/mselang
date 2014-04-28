@@ -102,7 +102,7 @@ outinfo('**1**');
     exit;
    end;
   end;
-  contextstack[stackindex].elemark:= ele.elementparent;
+  contextstack[stackindex].b.eleparent:= ele.elementparent;
   with contextstack[stackindex-1] do begin
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
@@ -201,7 +201,7 @@ outinfo('***');
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change
   end;
-  ele.elementparent:= contextstack[stackindex].elemark;
+  ele.elementparent:= contextstack[stackindex].b.eleparent;
   currentclass:= 0;
  end;
 end;
