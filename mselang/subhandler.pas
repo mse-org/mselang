@@ -640,6 +640,7 @@ begin
 outinfo('*****');
  with info,contextstack[stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
+outinfo('*****');
   po1:= ele.eledataabs(subdef.ref);
   with po1^ do begin
    address:= opcount;
@@ -652,7 +653,7 @@ outinfo('*****');
   end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
-   po2^.address:= opcount;
+   po2^.address:= po1^.address;
    linkresolve(po2^.links,opcount);
   end;
   if sf_constructor in subdef.flags then begin

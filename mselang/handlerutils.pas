@@ -143,7 +143,7 @@ procedure init();
 procedure deinit();
 
 {$ifdef mse_debugparser}
-procedure outhandle({const info: pparseinfoty;} const text: string);
+procedure outhandle(const text: string);
 procedure outinfo(const text: string);
 {$endif}
                            
@@ -1396,9 +1396,9 @@ begin
       end;
      end;
      ck_subdef: begin
-      write('flags:',settostring(ptypeinfo(typeinfo(subflagsty)),
-                           integer(subdef.flags),true),' pasize:',
-                           subdef.paramsize);
+      write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
+                                           integer(subdef.flags),true),
+                            ' ps:',subdef.paramsize,' vs:',subdef.varsize);
      end;
      ck_paramsdef: begin
       with paramsdef do begin

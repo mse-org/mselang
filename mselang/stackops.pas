@@ -796,7 +796,7 @@ var
  int1: integer;
 begin
  int1:= oppo^.par.stacksize;
- with frameinfoty((mainstackpo-sizeof(frameinfoty))^) do begin
+ with frameinfoty((framepo-sizeof(frameinfoty))^) do begin
   oppo:= pc;
   framepo:= frame;
   stacklink:= link;
