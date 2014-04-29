@@ -1213,14 +1213,14 @@ var
         case d.kind of
          ck_ref: begin
           if vf_classfield in flags then begin
-           pushinsert(-1,false,d.ref.address,offset,true);
-           d.kind:= ck_fact;
-           d.indirection:= -1;
-           d.datatyp.indirectlevel:= 0;
-          end
-          else begin
-           d.ref.offset:= d.ref.offset + offset;
+//           pushinsert(-1,false,d.ref.address,offset,true);
+//           d.kind:= ck_fact;
+           dec(d.indirection);
+//           d.datatyp.indirectlevel:= 0;
           end;
+//          else begin
+          d.ref.offset:= d.ref.offset + offset;
+//          end;
          end;
          ck_fact: begin     //todo: check indirection
           offs1:= offs1 + offset;
