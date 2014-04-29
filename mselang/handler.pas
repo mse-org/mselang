@@ -1208,7 +1208,6 @@ var
        exit;
       end;
       ek_field: begin
-                             //todo: check indirection
        with contextstack[stackindex],pfielddataty(po4)^ do begin
         ele1:= pfielddataty(po4)^.vf.typ;
         case d.kind of
@@ -1222,17 +1221,18 @@ var
           else begin
            d.ref.offset:= d.ref.offset + offset;
           end;
-          d.datatyp.typedata:= ele1;
          end;
-         ck_fact: begin
-          
+         ck_fact: begin     //todo: check indirection
+          offs1:= offs1 + offset;
          end;
          else begin
           internalerror('H20140427A');
           exit;
          end;
         end;
-        offs1:= offs1 + pfielddataty(po4)^.offset;
+        d.datatyp.typedata:= ele1; //todo: adress operator
+        d.datatyp.indirectlevel:= 
+                       ptypedataty(ele.eledataabs(ele1))^.indirectlevel;
        end;
       end;
       ek_sub: begin
@@ -1264,6 +1264,9 @@ var
        exit;
       end;
      end;
+    end;
+    if offs1 <> 0 then begin
+     offsetad(-1,offs1);
     end;
    end;
   end; 
