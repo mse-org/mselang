@@ -464,7 +464,8 @@ begin
    po1:= start.po;
    int1:= asource-po1-1;
    if int1 > 20 then begin
-    error(ce_invalidfloat,asource);
+    errormessage(err_invalidfloat,[],stacktop-stackindex);
+//    error(ce_invalidfloat,asource);
    end
    else begin
     while po1 < asource do begin
@@ -476,7 +477,8 @@ begin
     end;
     if (int1 = 20) and (lint2 < $8AC7230489E80000) then begin 
                                             //todo: check correctness
-     error(ce_invalidfloat,asource);
+     errormessage(err_invalidfloat,[],stacktop-stackindex);
+//     error(ce_invalidfloat,asource);
      mantissa:= 0;
 //     neg:= false;
     end
@@ -939,7 +941,8 @@ begin
 {$endif}
  with info do begin
   if source.po^ <> ')' then begin
-   error(ce_endbracketexpected);
+   tokenexpectederror(')',erl_error);
+//   error(ce_endbracketexpected);
 //   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
@@ -949,7 +952,8 @@ begin
    contextstack[stacktop-1]:= contextstack[stacktop];
   end
   else begin
-   error(ce_expressionexpected);
+   errormessage(err_expressionexpected,[]);
+//   error(ce_expressionexpected);
 //   outcommand(info,[],'*ERROR* Expression expected');
   end;
   dec(stacktop);

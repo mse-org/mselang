@@ -71,14 +71,14 @@ const
   ''')'' expected'
  );
 
-procedure error(const error: comperrorty;
-                   const pos: pchar=nil);
+//procedure error(const error: comperrorty;
+//                   const pos: pchar=nil);
 //procedure parsererror(const info: pparseinfoty; const text: string);
 //procedure identnotfounderror(const info: contextitemty; const text: string);
 //procedure wrongidentkinderror(const info: contextitemty; 
 //       wantedtype: elementkindty; const text: string);
-procedure outcommand(const items: array of integer;
-                     const text: string);
+//procedure outcommand(const items: array of integer;
+//                     const text: string);
 
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
@@ -178,13 +178,13 @@ const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
   );
- 
+{ 
 procedure error(const error: comperrorty;
                    const pos: pchar=nil);
 begin
  outcommand([],'*ERROR* '+errormessages[error]);
 end;
-
+}
 function findkindelementdata(const aident: contextdataty;
               const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
@@ -446,6 +446,7 @@ begin
          getenumname(typeinfo(elementkindty),ord(wantedtype))+'. '+text);
 end;
 *)
+(*
 procedure outcommand(const items: array of integer;
                      const text: string);
 var
@@ -478,7 +479,7 @@ begin
   command.writeln([' ',text]);
  end;
 end;
-
+*)
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                        const atype: ptypedataty): integer;
 begin
@@ -1213,9 +1214,9 @@ outinfo('**3**');
      operationnotsupportederror(d,contextstack[stacktop].d,opinfo.opname);
     end
     else begin
-    {$ifdef mse_debugparser}
-     outcommand([-2,0],opinfo.opname);
-    {$endif}
+//    {$ifdef mse_debugparser}
+//     outcommand([-2,0],opinfo.opname);
+//    {$endif}
      writeop(op1);
      d.kind:= ck_fact;
      d.indirection:= 0;

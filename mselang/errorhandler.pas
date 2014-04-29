@@ -42,7 +42,8 @@ type
             err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
             err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
             err_fileread,err_anonclassdef,err_classidentexpected,
-            err_classfieldexpected,err_noclass,err_classref);
+            err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
+            err_expressionexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -124,7 +125,9 @@ const
   (level: erl_error; message: 'Class field expected'),
   (level: erl_error; message: 'Class expected'),
   (level: erl_error; message: 
-             'Only class methods can be referenced with class references')
+             'Only class methods can be referenced with class references'),
+  (level: erl_error; message: 'Invalid floating point number'),
+  (level: erl_error; message: 'Expression expected')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
