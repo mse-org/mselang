@@ -318,7 +318,7 @@ outinfo('****');
 outinfo('****');
 end;
 
-procedure handlesub1entry();
+procedure handlesub1entry(); //header
 var
  int1: integer;
  ele1: elementoffsetty;
@@ -329,7 +329,8 @@ begin
 {$endif}
 outinfo('****');
  with info,contextstack[stackindex-1] do begin
-  b.flags:= currentstatementflags; ///////////////////////////7
+  b.flags:= currentstatementflags;
+  b.eleparent:= ele.elementparent;
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
@@ -389,16 +390,16 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB3');
 {$endif}
-//0     1     2          3          4    5    
-//sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+//-1  0     1     2          3          4    5    
+//sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
 outinfo('****');
  with info do begin
-  subflags:= contextstack[stackindex-1].d.subdef.flags;
-  with contextstack[stackindex] do begin
-   d.subdef.flags:= subflags;
+//  subflags:= contextstack[stackindex-1].d.subdef.flags;
+  with contextstack[stackindex-1] do begin
+   subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
   end;
   if (sf_function in subflags) and 
@@ -527,8 +528,8 @@ outinfo('****');
   if impl1 then begin //implementation
    inc(funclevel);
    getlocvaraddress(stacklinksize);
-   with contextstack[stackindex] do begin
-    d.kind:= ck_subdef;
+   with contextstack[stackindex-1] do begin
+//    d.kind:= ck_subdef;
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     stacktop:= stackindex;
@@ -600,7 +601,7 @@ outinfo('****');
      end;
     end;
     ele.elementparent:= parent1; //restore in sub
-    with contextstack[stackindex] do begin
+    with contextstack[stackindex-1] do begin
      if paramdata.match <> nil then begin
       d.subdef.match:= ele.eledatarel(paramdata.match);
      end
@@ -637,7 +638,7 @@ begin
  outhandle('SUB5A');
 {$endif}
 outinfo('*****');
- with info,contextstack[stackindex-1].d do begin
+ with info,contextstack[stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   with po1^ do begin
@@ -672,10 +673,9 @@ begin
  outhandle('SUB6');
 {$endif}
 outinfo('*****');
- with info,contextstack[stackindex-1] do begin
+ with info,contextstack[stackindex-2] do begin
    //todo: check local forward
-  ele.decelementparent;
-  ele.releaseelement(b.elemark); //remove local definitions
+//  ele.decelementparent;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
     op:= @locvarpopop;
@@ -695,6 +695,7 @@ outinfo('*****');
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(funclevel);
+  ele.releaseelement(b.elemark); //remove local definitions
   ele.elementparent:= b.eleparent;
   currentstatementflags:= b.flags;
 {
