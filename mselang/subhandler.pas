@@ -645,16 +645,18 @@ outinfo('*****');
   with po1^ do begin
    address:= opcount;
   end;
+  {
   if subdef.varsize <> 0 then begin
    with additem()^ do begin
     op:= @locvarpushop;
     par.stacksize:= subdef.varsize;
    end;
   end;
+  }
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
-   linkresolve(po2^.links,opcount);
+   linkresolve(po2^.links,po1^.address);
   end;
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentclass);
@@ -663,6 +665,12 @@ outinfo('*****');
     classdef:= po3^.infoclass.defs;
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
+   end;
+  end;
+  if subdef.varsize <> 0 then begin
+   with additem()^ do begin
+    op:= @locvarpushop;
+    par.stacksize:= subdef.varsize;
    end;
   end;
  end;
