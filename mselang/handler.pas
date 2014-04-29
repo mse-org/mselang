@@ -1274,7 +1274,7 @@ var
  ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
  si1: databytesizety;
- offs1: dataoffsty;
+// offs1: dataoffsty;
  indirect1: indirectlevelty;
  stacksize1: databytesizety;
  paramco1: integer;
@@ -1321,14 +1321,14 @@ outinfo('**1**');
   end;
 
   po2:= @po1^.data;
-  offs1:= 0;
+//  offs1:= 0;
   with contextstack[stackindex] do begin
    d.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
      if po1^.header.kind = ek_field then begin
       with pfielddataty(po2)^ do begin
-       offs1:= offs1+offset;
+//       offs1:= offs1+offset;
        if isgetfact then begin
         if vf_classfield in flags then begin
          if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
@@ -1354,11 +1354,12 @@ outinfo('**1**');
                   //todo: no double copy by handlefact
         case d.kind of
          ck_ref: begin
-          pushinsert(0,false,d.ref.address,offset,false);
-          d.kind:= ck_fact;
+//          pushinsert(0,false,d.ref.address,offset,false);
+//          d.kind:= ck_fact;
           d.datatyp.typedata:= vf.typ;
           d.datatyp.indirectlevel:= indirectlevel;
-          d.indirection:= -1;
+          d.ref.offset:= offset;
+//          d.indirection:= -1;
 outinfo('**1a**');
          end;
          ck_fact: begin
@@ -1386,11 +1387,11 @@ outinfo('**1a**');
        with contextstack[stackindex-1] do begin
         if d.indirection <> 0 then begin
          getaddress(-1{,offs1});
-         offsetad(-1,offs1);
+//         offsetad(-1,offs1);
          dec(d.indirection); //pending dereference
-        end
-        else begin
-         d.ref.offset:= d.ref.offset+offs1;
+//        end
+//        else begin
+//         d.ref.offset:= d.ref.offset+offs1;
         end;
         contextstack[stackindex].d:= d; 
                   //todo: no double copy by handlefact
