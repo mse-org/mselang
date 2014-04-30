@@ -111,8 +111,8 @@ type
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
-           const avislevel: visikindsty; out element: elementoffsetty): boolean;
-                  //searches in current scope
+             avislevel: visikindsty; out element: elementoffsetty): boolean;
+                  //searches in current scope and ancestors
    function findupward(const aident: identty; const akinds: elementkindsty;
                   const avislevel: visikindsty;
                   out element: elementoffsetty): boolean; overload;
@@ -922,7 +922,7 @@ begin
 end;
 
 function telementhashdatalist.findcurrent(const aident: identty;
-              const akinds: elementkindsty; const avislevel: visikindsty;
+              const akinds: elementkindsty; avislevel: visikindsty;
                                         out element: elementoffsetty): boolean;
 var
  uint1: ptruint;
@@ -971,6 +971,7 @@ begin
        with eleinfoabs(parentele)^ do begin
         elepath:= header.path+header.name;
        end;
+       include(avislevel,vik_sameclass);
        continue;
       end;
      end;

@@ -1293,7 +1293,7 @@ begin
  outhandle('VALUEIDENTIFIER');
 {$endif}
 outinfo('**1**');
- with info do begin      //todo: use specialized addressing modes
+ with info do begin
   ele.pushelementparent();
   isgetfact:= false;
   case contextstack[stackindex-1].d.kind of
@@ -2011,7 +2011,7 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
 outinfo('**1**');
- with info do begin
+ with info do begin       //todo: use direct move if possible
   if (stacktop-stackindex = 2) and not errorfla then begin
    if not getaddress(1{,offs1}) or not getvalue(2{,false}) then begin
     goto endlab;
