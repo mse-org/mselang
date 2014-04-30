@@ -929,7 +929,7 @@ var
  po1: pelementhashdataty;
  id1: identty;
  int1,int2: integer;
- parentele: elementoffsetty;
+ ancestorele: elementoffsetty;
  elepath: identty;
 label
  endlab;
@@ -937,7 +937,7 @@ begin
  element:= -1;
  result:= false;
  if count > 0 then begin
-  parentele:= felementparent;
+  ancestorele:= felementparent;
   elepath:= felementpath;
   while true do begin
    id1:= elepath+aident;
@@ -947,7 +947,7 @@ begin
     while true do begin
      if (po1^.data.key = id1) then begin
       with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
-       if (name = aident) and (parent = parentele) and 
+       if (name = aident) and (parent = ancestorele) and 
                                     ((visibility * avislevel <> []) or 
            (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
                             ((akinds = []) or (kind in akinds)) then begin
@@ -963,12 +963,12 @@ begin
     end;
    end;
    if vik_parent in avislevel then begin
-    with eleinfoabs(parentele)^ do begin
+    with eleinfoabs(ancestorele)^ do begin
      if (header.kind = ek_type) and 
                              (ptypedataty(@data)^.kind = dk_class) then begin
-      parentele:= ptypedataty(@data)^.infoclass.parentcla;
-      if parentele <> 0 then begin
-       with eleinfoabs(parentele)^ do begin
+      ancestorele:= ptypedataty(@data)^.infoclass.parentcla;
+      if ancestorele <> 0 then begin
+       with eleinfoabs(ancestorele)^ do begin
         elepath:= header.path+header.name;
        end;
        include(avislevel,vik_sameclass);
