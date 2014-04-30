@@ -1792,6 +1792,8 @@ procedure handlevar3();
 var
  po1,po2: pelementinfoty;
  size1: integer;
+ ident1: identty;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -1803,7 +1805,14 @@ outinfo('***');
    internalerror('H20140325B');
    exit;
   end;
-  po1:= ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,ek_var);
+  ident1:= contextstack[stackindex+1].d.ident.ident;
+  if (currentclass <> 0) and ele.findchild(info.currentclass,ident1,
+                                                   [],allvisi,ele1) then begin
+   po1:= nil;
+  end
+  else begin
+   po1:= ele.addelement(ident1,allvisi,ek_var);
+  end;
   if po1 = nil then begin //duplicate
    identerror(1,err_duplicateidentifier);
   end

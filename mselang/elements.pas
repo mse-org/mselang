@@ -125,11 +125,11 @@ type
                   //searches in current scope and above, -1 if not found
                   //firstnotfound = index of first not matching in aident
    function findchild(const aparent: elementoffsetty; 
-                 const achild: elementoffsetty; const akinds: elementkindsty;
+                 const achild: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
    function findchild(const aparent: elementoffsetty; 
-                 const achild: elementoffsetty; const avislevel: visikindsty; 
+                 const achild: identty; const avislevel: visikindsty; 
                out element: elementoffsetty; out adata: pointer): elementkindty;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
@@ -1156,7 +1156,7 @@ end;
 *)
 
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
-           const achild: elementoffsetty; const akinds: elementkindsty;
+           const achild: identty; const akinds: elementkindsty;
            const avislevel: visikindsty; out element: elementoffsetty): boolean;
 //todo: optimize
 var 
@@ -1169,7 +1169,7 @@ begin
 end;
 
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
-                 const achild: elementoffsetty; const avislevel: visikindsty; 
+                 const achild: identty; const avislevel: visikindsty; 
                out element: elementoffsetty; out adata: pointer): elementkindty;
 var 
  ele1: elementoffsetty;
