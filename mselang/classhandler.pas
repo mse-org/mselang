@@ -109,9 +109,15 @@ outinfo('**1**');
    end;
    currentclass:= d.typ.typedata;
    po1:= ele.eledataabs(currentclass);
-   po1^.infoclass.impl:= 0;
-   po1^.ancestor:= 0;
-   po1^.infoclass.defs:= 0;
+   with po1^ do begin
+    kind:= dk_class;
+    datasize:= das_pointer;
+    bytesize:= pointersize;
+    bitsize:= pointersize*8;
+    ancestor:= 0;
+    infoclass.impl:= 0;
+    infoclass.defs:= 0;
+   end;
   end;
 {
   if not ele.addelement(id1,vis_max,ek_type,po1) then begin
@@ -180,10 +186,6 @@ begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
-   kind:= dk_class;
-   datasize:= das_pointer;
-   bytesize:= pointersize;
-   bitsize:= pointersize*8;
    indirectlevel:= d.typ.indirectlevel;
 outinfo('***');
 //   infoclass.impl:= 0;
