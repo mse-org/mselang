@@ -85,7 +85,6 @@ type
  infoclassty = record
   impl: elementoffsetty;
   defs: dataoffsty; //classdefinfoty in target const
-  parentcla: elementoffsetty;
   allocsize: dataoffsty;
  end;
   
@@ -120,7 +119,11 @@ type
    dk_record:(
    );
    dk_class:(
-    infoclass: infoclassty;
+    ancestor: elementoffsetty;
+    case datakindty of
+     dk_class:(
+      infoclass: infoclassty;
+     );
    );
    dk_array:(
     infoarray: infoarrayty;

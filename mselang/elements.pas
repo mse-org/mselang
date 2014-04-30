@@ -966,7 +966,7 @@ begin
     with eleinfoabs(parentele)^ do begin
      if (header.kind = ek_type) and 
                              (ptypedataty(@data)^.kind = dk_class) then begin
-      parentele:= ptypedataty(@data)^.infoclass.parentcla;
+      parentele:= ptypedataty(@data)^.ancestor;
       if parentele <> 0 then begin
        with eleinfoabs(parentele)^ do begin
         elepath:= header.path+header.name;

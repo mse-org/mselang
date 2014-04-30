@@ -110,7 +110,7 @@ outinfo('**1**');
    currentclass:= d.typ.typedata;
    po1:= ele.eledataabs(currentclass);
    po1^.infoclass.impl:= 0;
-   po1^.infoclass.parentcla:= 0;
+   po1^.ancestor:= 0;
    po1^.infoclass.defs:= 0;
   end;
 {
@@ -145,7 +145,7 @@ outinfo('***');
     errormessage(err_classidentexpected,[]);
    end
    else begin
-    po1^.infoclass.parentcla:= ele.eledatarel(po2);
+    po1^.ancestor:= ele.eledatarel(po2);
     with contextstack[stackindex-2] do begin
      d.cla.fieldoffset:= po2^.infoclass.allocsize;
     end;
