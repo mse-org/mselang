@@ -165,13 +165,15 @@ type
            out aelementdata: elementoffsetty): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
+   function addelementduplicate(const aname: identty;
+                                const avislevel: visikindsty;
+                                const akind: elementkindty): pelementinfoty;
    function addelement(const aname: identty; const avislevel: visikindsty;
-              const akind: elementkindty{;
-              const asize: integer}): pelementinfoty;   //nil if duplicate
+              const akind: elementkindty): pelementinfoty;   //nil if duplicate
    function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty;
               out aelementdata: pointer): boolean;
-                                                       //false if duplicate
+         //false if duplicate, aelementdata always allocated
    function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty;
               out aelementoffset: elementoffsetty): boolean;
@@ -1485,38 +1487,47 @@ begin
  end;
 end;
 
+function telementhashdatalist.addelementduplicate(const aname: identty;
+                                const avislevel: visikindsty;
+                                const akind: elementkindty): pelementinfoty;
+var
+ ele1: elementoffsetty;
+begin
+ ele1:= fnextelement;
+ fnextelement:= fnextelement+elesizes[akind];
+ checkbuffersize;
+ result:= pointer(felementdata)+ele1;
+ with result^.header do begin
+  next:= fnextelement;
+  parent:= felementparent;
+  parentlevel:= fparentlevel;
+  path:= felementpath;
+  name:= aname;
+  visibility:= avislevel;
+  if info.unitinfo <> nil then begin
+   defunit:= info.unitinfo^.key;
+  end
+  else begin
+   defunit:= 0;
+  end;
+  kind:= akind;
+ end; 
+ addelement(felementpath+aname,avislevel,ele1);
+end;
+
 function telementhashdatalist.addelement(const aname: identty;
               const avislevel: visikindsty;
               const akind: elementkindty): pelementinfoty;   
                                                    //nil if duplicate
 var
- ele1: elementoffsetty;
  scopebefore: pscopeinfoty;
+ ele1: elementoffsetty;
 begin
  result:= nil;
  scopebefore:= fscopespo;
  fscopespo:= nil;
  if not findcurrent(aname,[],ffindvislevel,ele1) then begin
-  ele1:= fnextelement;
-  fnextelement:= fnextelement+elesizes[akind];
-  checkbuffersize;
-  result:= pointer(felementdata)+ele1;
-  with result^.header do begin
-   next:= fnextelement;
-   parent:= felementparent;
-   parentlevel:= fparentlevel;
-   path:= felementpath;
-   name:= aname;
-   visibility:= avislevel;
-   if info.unitinfo <> nil then begin
-    defunit:= info.unitinfo^.key;
-   end
-   else begin
-    defunit:= 0;
-   end;
-   kind:= akind;
-  end; 
-  addelement(felementpath+aname,avislevel,ele1);
+  result:= addelementduplicate(aname,avislevel,akind);
  end;
  fscopespo:= scopebefore;
 end;
@@ -1524,13 +1535,14 @@ end;
 function telementhashdatalist.addelement(const aname: identty;
            const avislevel: visikindsty; const akind: elementkindty;
            out aelementdata: pointer): boolean;
-                                                    //false if duplicate
+                    //false if duplicate, aelement always allocated
 begin
  aelementdata:= addelement(aname,avislevel,akind);
  result:= aelementdata <> nil;
- if result then begin
-  aelementdata:= @(pelementinfoty(aelementdata)^.data);
+ if not result then begin
+  aelementdata:= addelementduplicate(aname,avislevel,akind);
  end;
+ aelementdata:= @(pelementinfoty(aelementdata)^.data);
 end;
 
 function telementhashdatalist.addelement(const aname: identty;

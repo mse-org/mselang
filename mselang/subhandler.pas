@@ -470,54 +470,52 @@ outinfo('****');
   for int2:= 0 to paramhigh do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
-    if (not isclass or 
-        not ele.findchild(currentclass,d.ident.ident,[],allvisi,ele1)) and
+    if (isclass and
+        ele.findchild(currentclass,d.ident.ident,[],allvisi,ele1)) or not
             ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
-     po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-     with contextstack[int1+stackindex+1] do begin
-      if d.kind = ck_fieldtype then begin
-       po3:= ele.eledataabs(d.typ.typedata);
-       with po2^ do begin
-        address.indirectlevel:= d.typ.indirectlevel;
-        if address.indirectlevel > 0 then begin
-         si1:= pointersize;
-        end
-        else begin
-         si1:= po3^.bytesize;
-        end;
-        if impl1 then begin
-         address.address:= getlocvaraddress(si1);
-        end;
-        address.framelevel:= funclevel+1;
-        address.flags:= [vf_param];
-        if paramkind1 = pk_const then begin
-         if si1 > pointersize then begin
-          inc(address.indirectlevel);
-          include(address.flags,vf_paramindirect);
-          si1:= pointersize;
-         end;
-         include(address.flags,vf_const);
-        end
-        else begin
-         if paramkind1 in [pk_var,pk_out] then begin
-          inc(address.indirectlevel);
-          include(address.flags,vf_paramindirect);
-          si1:= pointersize;
-         end;
-        end;
-        vf.typ:= d.typ.typedata;
-       end;
-      end
-      else begin
-//       identerror(int1+1-stackindex,err_identifiernotfound);
-       err1:= true;
-      end;
-      inc(paramsize1,si1);
-     end;
-    end
-    else begin
      identerror(int1,err_duplicateidentifier);
      err1:= true;
+    end;
+    po4^[int2]:= elementoffsetty(po2); //absoluteaddress
+    with contextstack[int1+stackindex+1] do begin
+     if d.kind = ck_fieldtype then begin
+      po3:= ele.eledataabs(d.typ.typedata);
+      with po2^ do begin
+       address.indirectlevel:= d.typ.indirectlevel;
+       if address.indirectlevel > 0 then begin
+        si1:= pointersize;
+       end
+       else begin
+        si1:= po3^.bytesize;
+       end;
+       if impl1 then begin
+        address.address:= getlocvaraddress(si1);
+       end;
+       address.framelevel:= funclevel+1;
+       address.flags:= [vf_param];
+       if paramkind1 = pk_const then begin
+        if si1 > pointersize then begin
+         inc(address.indirectlevel);
+         include(address.flags,vf_paramindirect);
+         si1:= pointersize;
+        end;
+        include(address.flags,vf_const);
+       end
+       else begin
+        if paramkind1 in [pk_var,pk_out] then begin
+         inc(address.indirectlevel);
+         include(address.flags,vf_paramindirect);
+         si1:= pointersize;
+        end;
+       end;
+       vf.typ:= d.typ.typedata;
+      end;
+     end
+     else begin
+//       identerror(int1+1-stackindex,err_identifiernotfound);
+      err1:= true;
+     end;
+     inc(paramsize1,si1);
     end;
    end;
    int1:= int1+3;
