@@ -386,6 +386,7 @@ var
  paramkind1: paramkindty;
  bo1,isclass: boolean;
  ele1: elementoffsetty;
+ ident1: identty;
 
 begin
 {$ifdef mse_debugparser}
@@ -436,8 +437,12 @@ outinfo('****');
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
   eledatabase:= ele.eledataoffset();
-  po1:= addr(ele.pushelementduplicate(
-                      contextstack[stackindex+1].d.ident.ident,
+  ident1:= contextstack[stackindex+1].d.ident.ident;
+  if ele.findcurrent(ident1,[],allvisi,ele1) and 
+       (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
+   identerror(1,err_overloadnotfunc);
+  end;
+  po1:= addr(ele.pushelementduplicate(ident1,
                       allvisi,ek_sub,paramco*sizeof(pvardataty))^.data);
   po1^.paramcount:= paramco;
   po1^.links:= 0;

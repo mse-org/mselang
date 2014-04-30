@@ -77,7 +77,7 @@ type
  
  telementhashdatalist = class(thashdatalist)
   private
-   ffindvislevel: visikindsty;
+//   ffindvislevel: visikindsty;
    fscopes: pointer;
    fscopespo: pscopeinfoty;
    fscopesend: pointer;
@@ -168,6 +168,9 @@ type
    function addelementduplicate(const aname: identty;
                                 const avislevel: visikindsty;
                                 const akind: elementkindty): pelementinfoty;
+   function addelementduplicate1(const aname: identty;
+                                const avislevel: visikindsty;
+                                const akind: elementkindty): elementoffsetty;
    function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty): pelementinfoty;   //nil if duplicate
    function addelement(const aname: identty; const avislevel: visikindsty;
@@ -192,7 +195,7 @@ type
    procedure pushelementparent(); //save current on stack
    procedure pushelementparent(const aparent: elementoffsetty);
    procedure popelementparent;
-   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
+//   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
  
 procedure clear;
@@ -383,13 +386,13 @@ begin
 end;
 
 function telementhashdatalist.eleinfoabs(
-                         const aelement: elementoffsetty): pelementinfoty;
+                    const aelement: elementoffsetty): pelementinfoty; inline;
 begin
  result:= aelement+pointer(felementdata);
 end;
 
 function telementhashdatalist.eledatarel(
-                          const aelement: pointer): elementoffsetty;
+                    const aelement: pointer): elementoffsetty; inline;
 begin
  result:= aelement-pointer(felementdata)-eledatashift;
 end;
@@ -829,7 +832,7 @@ end;
 
 constructor telementhashdatalist.create();
 begin
- ffindvislevel:= nonevisi;
+// ffindvislevel:= nonevisi;
  inherited create(sizeof(elementdataty));
  clear();
 end;
@@ -1441,7 +1444,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= nil;
- if not findcurrent(aname,[],ffindvislevel,ele1) then begin
+ if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
   result:= pushelementduplicate(aname,avislevel,akind,0);
  end;
 end;
@@ -1481,23 +1484,23 @@ var
  ele1: elementoffsetty;
 begin
  result:= false;
- if not findcurrent(aname,[],ffindvislevel,ele1) then begin
+ if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
   po1:= pushelementduplicate(aname,avislevel,akind,sizeextend);
   aelementdata:= @(po1^.data);
  end;
 end;
 
-function telementhashdatalist.addelementduplicate(const aname: identty;
+function telementhashdatalist.addelementduplicate1(const aname: identty;
                                 const avislevel: visikindsty;
-                                const akind: elementkindty): pelementinfoty;
-var
- ele1: elementoffsetty;
+                                const akind: elementkindty): elementoffsetty;
+//var
+// ele1: elementoffsetty;
 begin
- ele1:= fnextelement;
+ result:= fnextelement;
  fnextelement:= fnextelement+elesizes[akind];
  checkbuffersize;
- result:= pointer(felementdata)+ele1;
- with result^.header do begin
+// result:= pointer(felementdata)+ele1;
+ with eleinfoabs(result)^.header do begin
   next:= fnextelement;
   parent:= felementparent;
   parentlevel:= fparentlevel;
@@ -1512,7 +1515,14 @@ begin
   end;
   kind:= akind;
  end; 
- addelement(felementpath+aname,avislevel,ele1);
+ addelement(felementpath+aname,avislevel,result);
+end;
+
+function telementhashdatalist.addelementduplicate(const aname: identty;
+                                const avislevel: visikindsty;
+                                const akind: elementkindty): pelementinfoty;
+begin
+ result:= eleinfoabs(addelementduplicate1(aname,avislevel,akind));
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
@@ -1526,7 +1536,7 @@ begin
  result:= nil;
  scopebefore:= fscopespo;
  fscopespo:= nil;
- if not findcurrent(aname,[],ffindvislevel,ele1) then begin
+ if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
   result:= addelementduplicate(aname,avislevel,akind);
  end;
  fscopespo:= scopebefore;

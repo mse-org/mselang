@@ -197,9 +197,10 @@ outinfo('***');
 //     parentclass:= d.cla.parentclass; //todo: pointer to parent in const
     end;
    end;
-   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,ele1) then begin
-    internalerror('C20140415B');
-   end;
+//   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,ele1) then begin
+//    internalerror('C20140415B');
+//   end;
+   ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change
   end;

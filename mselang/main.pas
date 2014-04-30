@@ -46,6 +46,7 @@ type
    procedure loadexe(const sender: TObject);
    procedure aftreadexe(const sender: TObject);
    procedure befwriteexe(const sender: TObject);
+//   procedure tbutton2();
   protected
  end;
 var

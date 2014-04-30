@@ -43,7 +43,7 @@ type
             err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
             err_fileread,err_anonclassdef,err_classidentexpected,
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
-            err_expressionexpected);
+            err_expressionexpected,err_overloadnotfunc);
             
  errorinfoty = record
   level: errorlevelty;
@@ -127,7 +127,8 @@ const
   (level: erl_error; message: 
              'Only class methods can be referenced with class references'),
   (level: erl_error; message: 'Invalid floating point number'),
-  (level: erl_error; message: 'Expression expected')
+  (level: erl_error; message: 'Expression expected'),
+  (level: erl_error; message: 'Overloaded identifier "%s" isn''t a function')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
