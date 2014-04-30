@@ -962,7 +962,7 @@ begin
      po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
     end;
    end;
-   if vik_parent in avislevel then begin
+   if vik_ancestor in avislevel then begin
     with eleinfoabs(parentele)^ do begin
      if (header.kind = ek_type) and 
                              (ptypedataty(@data)^.kind = dk_class) then begin
