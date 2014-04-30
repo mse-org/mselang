@@ -385,6 +385,7 @@ var
  paramsize1: integer;
  paramkind1: paramkindty;
  bo1,isclass: boolean;
+ ele1: elementoffsetty;
 
 begin
 {$ifdef mse_debugparser}
@@ -469,7 +470,9 @@ outinfo('****');
   for int2:= 0 to paramhigh do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
-    if ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
+    if (not isclass or 
+        not ele.findchild(currentclass,d.ident.ident,[],allvisi,ele1)) and
+            ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
      po4^[int2]:= elementoffsetty(po2); //absoluteaddress
      with contextstack[int1+stackindex+1] do begin
       if d.kind = ck_fieldtype then begin
