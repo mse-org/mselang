@@ -16,6 +16,9 @@
 }
 unit parser;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
+{$ifdef mse_debugparser}
+ {$define mse_debugparser1}
+{$endif}
 interface
 uses
  msetypes,msestream,stackops,parserglob,msestrings;
@@ -214,7 +217,7 @@ begin
    contextstack[stackindex].context:= pc;
   end;
   pb:= pc^.branch;
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
   if bo1 then begin
    outinfo('^ '+pc^.caption); //push context
   end
@@ -322,7 +325,7 @@ begin
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
   outinfo('****');
 {$endif}
   while true do begin
@@ -508,12 +511,12 @@ handlelab:
     end;
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
      outinfo('! after0a');
 {$endif}
      goto handlelab;    
     end;
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
     if not pc1^.continue and (pc^.next = nil) then begin
      outinfo('! after0b');
     end;
@@ -560,12 +563,12 @@ handlelab:
     end;
 //    kind:= ck_none;
    end;
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
    outinfo('! after1');
 {$endif}
   end;
 parseend:
-{$ifdef mse_debugparser}
+{$ifdef mse_debugparser1}
   if not stopparser then begin
    outinfo('! after2');
   end;

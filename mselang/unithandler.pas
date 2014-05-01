@@ -158,7 +158,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INCLUDE');
 {$endif} 
-outinfo('***');
  with info do begin
   if stringbuffer <> '' then begin
    lstr1.po:= pointer(stringbuffer);

@@ -172,7 +172,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INT');
 {$endif}
-outinfo('***');
  with info do begin
   with contextstack[stacktop] do begin
    consumed:= source.po;
@@ -222,7 +221,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('RANGE3');
 {$endif}
-outinfo('***');
  with info do begin
   if stacktop-stackindex = 2 then begin
    if contextstack[stackindex+1].d.kind <> ck_const then begin
@@ -508,7 +506,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FRAC');
 {$endif}
-outinfo('***');
  with info do begin
 //  if stacktop > stackindex then begin //no exponent number error otherwise
    dofrac(source.po,{neg,}mant,fraclen);
@@ -540,7 +537,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXPONENT');
 {$endif}
-outinfo('*****');
  with info do begin
   with contextstack[stacktop].d.number do begin
    exp:= value;
@@ -671,7 +667,6 @@ procedure handleterm();
 begin
 {$ifdef mse_debugparser}
  outhandle('TERM');
-outinfo('***');
  with info do begin
   if stacktop-stackindex = 1 then begin
    contextstack[stackindex].d:= contextstack[stackindex+1].d;
@@ -690,7 +685,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
 {$endif}
-outinfo('***');
  with info,contextstack[stacktop] do begin
   if d.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
@@ -780,7 +774,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FACT');
 {$endif}
-outinfo('****');
  with info do begin
   if stackindex < stacktop then begin
    with contextstack[stacktop] do begin
@@ -841,7 +834,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FACT2ENTRY');
 {$endif}
-outinfo('****');
  with info do begin
   if stacktop-stackindex <> 1 then begin
    internalerror('H20140406B');
@@ -868,7 +860,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
-outinfo('****');
  with info,contextstack[stacktop] do begin
   if stacktop-stackindex <> 1 then begin
    internalerror('H20140404A');
@@ -1292,7 +1283,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VALUEIDENTIFIER');
 {$endif}
-outinfo('**1**');
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
@@ -1367,7 +1357,6 @@ outinfo('**1**');
           d.datatyp.indirectlevel:= indirectlevel;
           d.ref.offset:= offset;
 //          d.indirection:= -1;
-outinfo('**1a**');
          end;
          ck_fact: begin
           internalerror('N20140427E');
@@ -1475,7 +1464,6 @@ outinfo('**1a**');
    end;
   end;
 endlab:
-outinfo('**2**');
   ele.popelementparent();
   stacktop:= stackindex;
   dec(stackindex);
@@ -1630,7 +1618,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('USES');
 {$endif}
- outinfo('***');
  with info do begin
   offs1:= ele.decelementparent;
   int2:= stacktop-stackindex-1;
@@ -1683,7 +1670,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
 {$endif}
-outinfo('****');
  writeop(nil); //endmark
  checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
@@ -1733,7 +1719,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONST3');
 {$endif}
-outinfo('***');
  with info do begin
   if (stacktop-stackindex <> 2) or 
             (contextstack[stackindex+1].d.kind <> ck_ident) then begin
@@ -1798,7 +1783,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
 {$endif}
-outinfo('***');
  with info do begin
   if (stacktop-stackindex < 2) or 
             (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
@@ -1940,7 +1924,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EQUSIMPEXP');
 {$endif}
-outinfo('***');
  with info,contextstack[stacktop-2] do begin
   if (contextstack[stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
@@ -2019,13 +2002,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ASSIGNMENT');
 {$endif}
-outinfo('**1**');
  with info do begin       //todo: use direct move if possible
   if (stacktop-stackindex = 2) and not errorfla then begin
    if not getaddress(1{,offs1}) or not getvalue(2{,false}) then begin
     goto endlab;
    end;
-outinfo('**2**');
    with contextstack[stackindex+1].d do begin //address
     typematch:= false;
     indi:= false;
@@ -2204,7 +2185,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITH1');
 {$endif}
-outinfo('***');
  with info,contextstack[stacktop] do begin
   case d.kind of
    ck_ref: begin
@@ -2237,7 +2217,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITH3');
 {$endif}
-outinfo('***');
  with info do begin
   ele.popscopelevel();
   dec(stackindex);
@@ -2274,7 +2253,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('HANDLESTATEMENTEXIT');
 {$endif}
-outinfo('***');
  with info do begin
   if stacktop-stackindex <> 1 then begin
    internalerror('H20140216A');
@@ -2606,7 +2584,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('STRINGSTART');
 {$endif}
-outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    d.kind:= ck_str;
@@ -2631,7 +2608,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('COPYSTRING');
 {$endif}
-outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    stringbuffer:= stringbuffer+psubstr(d.str.start,source.po-1);
@@ -2645,7 +2621,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('COPYAPOSTROPHE');
 {$endif}
-outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    stringbuffer:= stringbuffer+'''';
@@ -2659,7 +2634,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('COPYTOKEN');
 {$endif}
-outinfo('****');
  with info,contextstack[stacktop] do begin
   stringbuffer:= stringbuffer+psubstr(d.str.start,source.po);
   dec(stackindex);
@@ -2674,7 +2648,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHAR');
 {$endif}
-outinfo('****');
  with info do begin
   with contextstack[stacktop] do begin
    if d.kind <> ck_number then begin

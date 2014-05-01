@@ -79,7 +79,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFSTART');
 {$endif}
-outinfo('**1**');
  with info do begin
   if stackindex < 3 then begin
    internalerror('H20140325D');
@@ -131,7 +130,6 @@ outinfo('**1**');
   end;
  }
  end;
-outinfo('**2**');
 end;
 
 procedure handleclassdefparam2();
@@ -141,7 +139,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFPARAM2');
 {$endif}
-outinfo('***');
  with info do begin
   po1:= ele.eledataabs(currentclass);
   ele.pushelementparent();
@@ -167,7 +164,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFPARAM3A');
 {$endif}
-outinfo('***');
  with info do begin
 //  dec(stackindex);
  end;
@@ -187,7 +183,6 @@ begin
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    indirectlevel:= d.typ.indirectlevel;
-outinfo('***');
 //   infoclass.impl:= 0;
    infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty));
    with contextstack[stackindex] do begin
@@ -222,7 +217,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPRIVATE');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex] do begin
   d.cla.visibility:= classprivatevisi;
  end;
@@ -267,7 +261,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSFIELD');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex-1] do begin
   checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset);
  end;
@@ -306,7 +299,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHFUNCTIONENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function,sf_header,sf_method];
@@ -318,7 +310,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHCONSTRUCTORENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method,sf_constructor];
@@ -330,7 +321,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHDESTRUCTORENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method,sf_destructor];
@@ -342,7 +332,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONSTRUCTORENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_method,sf_constructor];
@@ -354,7 +343,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DESTRUCTORENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_method,sf_destructor];

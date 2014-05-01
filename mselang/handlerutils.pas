@@ -1091,12 +1091,9 @@ var
  op1: opty;
 begin
  with info do begin
-//  opshift:= 0;
-outinfo('**1**');
   if contextstack[stacktop].d.kind <> ck_const then begin
    getvalue(stacktop-stackindex{,false});
   end;
-outinfo('**2**');
   sd1:= sdk_none;
   po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
@@ -1106,7 +1103,6 @@ outinfo('**2**');
    if d.kind <> ck_const then begin
     getvalue(stacktop-2-stackindex{,true});
    end;
-outinfo('**3**');
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
     if kind = ck_const then begin
@@ -1228,7 +1224,6 @@ outinfo('**3**');
   dec(stacktop,2);
   stackindex:= stacktop-1; 
  end;
-outinfo('**4**');
 end;
 
  

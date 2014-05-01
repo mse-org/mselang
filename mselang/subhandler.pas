@@ -158,7 +158,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMS0ENTRY');
 {$endif}
-outinfo('***');
  with info do begin
   with contextstack[stackindex] do begin
    d.kind:= ck_params;
@@ -186,7 +185,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VARPARAM');
 {$endif}
-outinfo('***');
  with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
@@ -213,7 +211,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMDEF2');
 {$endif}
-outinfo('***');
  with info do begin
   if stacktop-stackindex <> 2 then begin
    errormessage(err_typeidentexpected,[]);
@@ -267,7 +264,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FUNCTIONENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function];
@@ -305,7 +301,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHECKFUNCTIONTYPE');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex-1] do begin
   d.kind:= ck_paramsdef;
   d.paramsdef.kind:= pk_var;
@@ -321,7 +316,6 @@ outinfo('****');
    include(d.subdef.flags,sf_functiontype);
   end;
  end;
-outinfo('****');
 end;
 
 procedure handlesub1entry(); //header
@@ -333,7 +327,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB1ENTRY');
 {$endif}
-outinfo('****');
  with info,contextstack[stackindex-1] do begin
   b.flags:= currentstatementflags;
   b.eleparent:= ele.elementparent;
@@ -376,7 +369,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VIRTUAL');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex-1] do begin
   if not (stf_classdef in currentstatementflags) then begin
    if stf_implementation in currentstatementflags then begin
@@ -438,7 +430,6 @@ begin
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
-outinfo('****');
  with info do begin
 //  subflags:= contextstack[stackindex-1].d.subdef.flags;
   with contextstack[stackindex-1] do begin
@@ -449,7 +440,6 @@ outinfo('****');
                       not (sf_functiontype in subflags) then begin
    tokenexpectederror(':');
   end;
-outinfo('****');
   paramsize1:= 0;
   isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
   if isclass and (sf_constructor in subflags) then begin //add return type
@@ -684,10 +674,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
 {$endif}
-outinfo('*****');
  with info,contextstack[stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
-outinfo('*****');
   po1:= ele.eledataabs(subdef.ref);
   with po1^ do begin
    address:= opcount;
@@ -728,7 +716,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
 {$endif}
-outinfo('*****');
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
@@ -769,7 +756,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('BEGINEXPECTED');
 {$endif}
-outinfo('*****');
  with info do begin
   tokenexpectederror('begin');
   dec(stackindex);
@@ -781,7 +767,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IMPLEMENTATIONEXPECTED');
 {$endif}
-outinfo('*****');
  with info do begin
   tokenexpectederror('implementation');
   dec(stackindex);

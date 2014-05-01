@@ -67,7 +67,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GETFIELDTYPESTART');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
@@ -80,7 +79,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GETTYPETYPESTART');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
@@ -107,7 +105,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHECKTYPEIDENT');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex-2] do begin
   if stackindex < 3 then begin
    internalerror('H20140325A');
@@ -151,7 +148,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHECKRANGETYPE');
 {$endif}
-outinfo('***');
  with info do begin
   if stacktop-stackindex = 3 then begin
    with contextstack[stackindex-2] do begin
@@ -198,7 +194,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('RECORDDEFSTART');
 {$endif}
-outinfo('***');
  with info do begin
   if stackindex < 3 then begin
    internalerror('H20140325D');
@@ -288,7 +283,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('RECORDFIELD');
 {$endif}
-outinfo('***');
  with info do begin
   checkrecordfield(allvisi,[],contextstack[stackindex-1].d.rec.fieldoffset);
  end;
@@ -304,7 +298,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('RECORDTYPE');
 {$endif}
-outinfo('****');
  with info do begin
   ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
 {
@@ -444,7 +437,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYTYPE');
 {$endif}
-outinfo('****');
  with info do begin
   int1:= stacktop-stackindex-2;
   if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
@@ -582,7 +574,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex] do begin
   d.kind:= ck_index;
 //  d.opshiftmark:= opshift;
@@ -605,7 +596,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEX');
 {$endif}
-outinfo('***');
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex > 0 then begin
    offs:= 0;
