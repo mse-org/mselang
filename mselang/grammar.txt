@@ -220,7 +220,8 @@ functiontypea,,,
  ${whitespace}
  @identstart,ident^*
 #
-subbody4,checkterminator,,
+#subbody4,checkterminator,,
+subbody4,,,handlebeginexpected*
  ${whitespace}
  'begin'.,subbody5a-
  'const'.,const-*>

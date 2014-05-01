@@ -179,7 +179,7 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_classdef,stf_classimp);
+                    stf_classdef,stf_classimp,stf_implementation);
  statementflagsty = set of statementflagty;
 
  varflagty = (vf_nil,vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);

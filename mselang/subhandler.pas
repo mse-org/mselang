@@ -45,6 +45,9 @@ procedure handlesubheader();
 procedure handlesubbody5a();
 procedure handlesubbody6();
 
+procedure handlebeginexpected();
+procedure handleimplementationexpected();
+
 implementation
 uses
  parserglob,errorhandler,msetypes,handlerutils,elements,handlerglob,
@@ -373,6 +376,17 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VIRTUAL');
 {$endif}
+outinfo('***');
+ with info,contextstack[stackindex-1] do begin
+  if not (stf_classdef in currentstatementflags) then begin
+   if stf_implementation in currentstatementflags then begin
+    handlebeginexpected();
+   end
+   else begin
+    handleimplementationexpected();
+   end
+  end;
+ end;
 end;
 
 procedure handleoverride();
@@ -744,6 +758,30 @@ outinfo('*****');
 //   ele.popscopelevel();
   end;
 }
+ end;
+end;
+
+procedure handlebeginexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('BEGINEXPECTED');
+{$endif}
+outinfo('*****');
+ with info do begin
+  tokenexpectederror('begin');
+  dec(stackindex);
+ end;
+end;
+
+procedure handleimplementationexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IMPLEMENTATIONEXPECTED');
+{$endif}
+outinfo('*****');
+ with info do begin
+  tokenexpectederror('implementation');
+  dec(stackindex);
  end;
 end;
 

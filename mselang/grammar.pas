@@ -433,7 +433,7 @@ var
                caption: 'functiontypea');
  subbody4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'subbody4');
  subbody5aco: contextty = (branch: nil; 
@@ -4995,7 +4995,7 @@ begin
  resultidentco.handleentry:= @checkfunctiontype;
  functiontypeaco.branch:= @bfunctiontypea;
  subbody4co.branch:= @bsubbody4;
- subbody4co.next:= @checkterminatorco;
+ subbody4co.handleexit:= @handlebeginexpected;
  subbody5aco.branch:= nil;
  subbody5aco.next:= @subbody5co;
  subbody5aco.handleentry:= @handlesubbody5a;

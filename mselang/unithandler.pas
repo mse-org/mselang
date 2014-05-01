@@ -141,6 +141,7 @@ begin
   end
   else begin
    include(unitinfo^.state,us_implementation);
+   include(currentstatementflags,stf_implementation);
    if not ele.pushelement(tk_implementation,implementationvisi,
                                     ek_implementation,po1) then begin
     internalerror('U20131130A');

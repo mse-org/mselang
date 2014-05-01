@@ -52,10 +52,13 @@ type
  end;
 var
  mainfo: tmainfo;
+
+//procedure test(); virtual;
   
 implementation
 uses
  main_mfm,msestream,stackops,parser;
+// procedure test() virtual;
 {
 procedure integer.parseex(const sender: TObject);
 begin
