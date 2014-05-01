@@ -385,6 +385,9 @@ outinfo('***');
    else begin
     handleimplementationexpected();
    end
+  end
+  else begin
+   include(d.subdef.flags,sf_virtual);
   end;
  end;
 end;

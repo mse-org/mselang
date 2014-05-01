@@ -1310,12 +1310,19 @@ begin
    end;
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' K:'+getenumname(typeinfo(kind),ord(kind))+
-       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
+     mstr1:= mstr1+lineend+
+     ' K:'+getenumname(typeinfo(kind),ord(kind))+
+                      ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      if kind = dk_class then begin
       mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize);
      end;
      po3:= po1;
+    end;
+   end;
+   ek_sub: begin
+    with psubdataty(@po1^.data)^ do begin
+     mstr1:= mstr1+lineend+
+     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false);
     end;
    end;
   end;
@@ -1333,7 +1340,7 @@ begin
    end;
    ar2:= breaklines(mstr1);
    if mstr1[1] = '*' then begin
-    mstr1[1]:= ' ';
+    ar2[0][1]:= ' ';
     mstr2:= '*';
    end
    else begin
@@ -1342,7 +1349,7 @@ begin
    ar2[0]:= mstr2+charstring(msechar('.'),int3)+'$'+
                  hextostr(longword(int5+int4+po1^.header.name),8)+ar2[0];
 //                 hextostr(longword(po1^.header.path),8)+ar2[0];
-   mstr2:= charstring(msechar(' '),int3);
+   mstr2:= charstring(msechar(' '),int3+1);
    for int6:= 1 to high(ar2) do begin
     ar2[int6]:= mstr2+ar2[int6];
    end;
