@@ -143,7 +143,7 @@ procedure handlechar();
 implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
- unithandler,errorhandler,{$ifdef mse_debugparser}parser{$endif},opcode,
+ unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler;
 
 function typename(const ainfo: contextdataty): string;

@@ -17,37 +17,37 @@ order14=0
 order15=0
 order16=0
 order17=0
+order18=0
+order19=0
+order20=0
 [projectoptions]
-projectdir=/home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen
-projectfilename=/home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/grammargen.prj
+projectdir=/home/mse/packs/standard/git/mselang/mselang/grammargen
+projectfilename=/home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.prj
 options=99
  [projectoptionsfo.twidgetgrid3]
- propcolwidthref=596
- width0=13
- sortdescent0=0
- width1=13
- sortdescent1=0
- width2=13
- sortdescent2=0
- width3=104
- sortdescent3=0
- width4=204
- sortdescent4=0
- width5=238
- sortdescent5=0
+ propcolwidthref=583
+ sortdescend0=0
+ sortdescend1=0
+ sortdescend2=0
+ sortdescend3=0
+ width4=200
+ sortdescend4=0
+ width5=94
+ sortdescend5=0
+ width6=238
+ sortdescend6=0
  [projectoptionsfo.twidgetgrid4]
  propcolwidthref=407
  width0=96
- sortdescent0=0
- width1=13
- sortdescent1=0
+ sortdescend0=0
+ sortdescend1=0
  width2=73
- sortdescent2=0
+ sortdescend2=0
  width3=195
- sortdescent3=0
+ sortdescend3=0
  width4=202
- sortdescent4=0
- sortcol=-1
+ sortdescend4=0
+ sorted=0
  col=-1073741823
  row=-1073741823
  rowheight=16
@@ -55,60 +55,63 @@ options=99
  firsttab=0
  index=2
  [projectoptionsfo.fontaliasgrid]
- propcolwidthref=336
- values0=0
+ propcolwidthref=266
  width0=98
- sortdescent0=0
- values1=0
- width1=326
- sortdescent1=0
- values2=0
+ sortdescend0=0
+ width1=255
+ sortdescend1=0
  width2=30
- sortdescent2=0
- values3=0
+ sortdescend2=0
  width3=50
- sortdescent3=0
- values4=0
+ sortdescend3=0
  width4=50
- sortdescent4=0
- values5=0
+ sortdescend4=0
  width5=50
- sortdescent5=0
+ sortdescend5=0
+ width6=70
+ sortdescend6=0
  [projectoptionsfo.macrosplitter]
  x=0
- y=131
- xprop=0
+ y=128
+ xprop=1
  yprop=0.2504816955684
  [projectoptionsfo.macrogrid]
  propcolwidthref=390
- width0=13
- sortdescent0=0
- width1=13
- sortdescent1=0
- width2=13
- sortdescent2=0
- width3=13
- sortdescent3=0
- width4=13
- sortdescent4=0
- width5=13
- sortdescent5=0
+ sortdescend0=0
+ sortdescend1=0
+ sortdescend2=0
+ sortdescend3=0
+ sortdescend4=0
+ sortdescend5=0
  width6=146
- sortdescent6=0
+ sortdescend6=0
  width7=378
- sortdescent7=0
+ sortdescend7=0
  [projectoptionsfo.makegroupbox]
  firsttab=0
  index=1
  [projectoptionsfo.exceptionsgrid]
- propcolwidthref=567
+ propcolwidthref=590
  width0=47
- sortdescent0=0
- values1=1
-  EconvertError
- width1=561
- sortdescent1=0
+ sortdescend0=0
+ width1=584
+ sortdescend1=0
  [projectoptionsfo.ttabwidget1]
+ firsttab=0
+ index=0
+ [projectoptionsfo.grid]
+ propcolwidthref=368
+ width0=219
+ sortdescend0=0
+ width1=361
+ sortdescend1=0
+ [projectoptionsfo.filefiltergrid]
+ propcolwidthref=475
+ width0=112
+ sortdescend0=0
+ width1=468
+ sortdescend1=0
+ [projectoptionsfo.ttabwidget2]
  firsttab=0
  index=0
  [projectoptionsfo.tabwidget]
@@ -120,13 +123,17 @@ options=99
  y=68
  cx=616
  cy=572
-settings=9
+settings=13
+ [settingsfo.tsplitter2]
+ x=254
+ y=16
+ xprop=0.57879656160458
+ yprop=1
  [settingsfo]
- stackedunder=
  x=88
  y=108
- cx=358
- cy=522
+ cx=456
+ cy=585
  wsize=0
  active=1
  visible=1
@@ -135,7 +142,8 @@ targetfile=${PROJECTNAME}${EXEEXT}
 messageoutputfile=
 makecommand=${COMPILER}
 makedir=
-unitdirs=4
+unitdirs=5
+ ..
  ${MSEDIR}lib/addon/*/
  ${MSELIBDIR}kernel/$TARGETOSDIR/
  ${MSELIBDIR}kernel/
@@ -303,7 +311,8 @@ makeoptionson=4
  34
  32
 aftcommandon=0
-unitdirson=4
+unitdirson=5
+ 983103
  196671
  65599
  196671
@@ -363,6 +372,7 @@ gridsizex=8
 gridsizey=8
 autoindent=1
 blockindent=1
+linenumberson=0
 rightmarginon=1
 rightmarginchars=80
 scrollheight=0
@@ -494,7 +504,7 @@ cy=473
 progparamhistory=0
 envvarons=0
 [layout]
-windowlayout=567
+windowlayout=558
  [mainfo.openform]
  filenames=1
   /home/mse/packs/standard/git/mseide-msegui/lib/common/dialogs/msefiledialogres.mfm
@@ -512,19 +522,19 @@ windowlayout=567
  cy=0
  [mainfo.projectfiledia]
  filenames=1
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/mse_grammargen.prj
- lastdir=/home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/
+  /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
+ lastdir=/home/mse/packs/standard/git/mselang/mselang/grammargen/
  filehistory=10
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/mse_grammargen.prj
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/mse_syntaxgen.prj
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/mse_expint.prj
+  /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
+  /home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.prj
+  /home/mse/packs/standard/git/mseexperiments/mselang/grammargen/mse_grammargen.prj
+  /home/mse/packs/standard/git/mseexperiments/mselang/mse_mselang.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
   /home/mse/proj/test3/test.prj
-  /home/mse/test/ssx_src/ssx.prj
-  /home/mse/proj/msegui/testcase/mse/db/firebird/sequencelink/sequencelink.prj
-  /home/mse/proj/msegui/testcase/mse/db/lookup/lookup.prj
-  /home/mse/packs/standard/git/mseuniverse/testcase/kylix/kylixdemo/kylixdemo.prj
-  /home/mse/proj/msegui/testcase/mse/kylix/demo/kylixdemo.prj
+  /home/mse/packs/standard/git/mseide-msegui/tools/i18n/mse_msei18n.prj
+  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/staticgravitytest.prj
+  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/mse_staticgravitytest.prj
+  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity_unity/mse_staticgravity_unity.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=130
@@ -549,8 +559,8 @@ windowlayout=567
  useroptions=15488
  [mainfo]
  splitdir=0
- useroptions=127
- stackedunder=mainfo.panel1
+ useroptions=123
+ stackedunder=
  parent=
  mdistate=0
  nx=0
@@ -563,12 +573,8 @@ windowlayout=567
  cy=72
  rcx=0
  rcy=0
- children=2
-  basedock,0,20,292,36
-  statdisp,0,1,292,18
- focusedchild=0
  wsize=0
- active=0
+ active=1
  visible=1
  [targetconsolefo]
  splitdir=0
@@ -636,7 +642,7 @@ windowlayout=567
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=objectinspectorfo
+ stackedunder=componentpalettefo
  parent=
  mdistate=0
  nx=0
@@ -655,7 +661,7 @@ windowlayout=567
  [findinfilefo]
  splitdir=0
  useroptions=16491
- stackedunder=symbolfo
+ stackedunder=componentstorefo
  parent=
  mdistate=0
  nx=0
@@ -735,7 +741,6 @@ windowlayout=567
  visible=0
  [watchpointsfo.grid]
  propcolwidthref=352
- width0=16
  sortdescend0=0
  values1=0
  values1_ci=-1
@@ -777,7 +782,7 @@ windowlayout=567
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=componentpalettefo
+ stackedunder=breakpointsfo
  parent=
  mdistate=0
  nx=0
@@ -801,7 +806,7 @@ windowlayout=567
  sortdescend1=0
  [symbolfo]
  splitdir=0
- useroptions=16511
+ useroptions=16507
  stackedunder=disassfo
  parent=
  mdistate=0
@@ -815,9 +820,6 @@ windowlayout=567
  cy=137
  rcx=0
  rcy=0
- children=1
-  grid,0,0,351,137
- focusedchild=-1
  wsize=0
  active=0
  visible=0
@@ -865,7 +867,6 @@ windowlayout=567
   -1
   -1
  values0_ci=-1
- width0=13
  sortdescend0=0
  values1=2
   po2^
@@ -898,15 +899,15 @@ windowlayout=567
  ncx=0
  ncy=0
  x=0
- y=493
+ y=361
  cx=720
- cy=70
- rcx=313
- rcy=195
+ cy=202
+ rcx=720
+ rcy=563
  [componentstorefo]
  splitdir=0
  useroptions=24675
- stackedunder=findinfilefo
+ stackedunder=symbolfo
  parent=
  mdistate=0
  nx=0
@@ -1027,7 +1028,7 @@ windowlayout=567
  irqoff=0
  splitdir=0
  useroptions=16491
- stackedunder=componentstorefo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -1046,7 +1047,7 @@ windowlayout=567
  [mainfo.panel1]
  splitdir=2
  useroptions=32235
- stackedunder=
+ stackedunder=mainfo
  parent=
  mdistate=0
  nx=0
@@ -1060,7 +1061,7 @@ windowlayout=567
  rcx=0
  rcy=0
  wsize=0
- active=1
+ active=0
  visible=1
 [edit]
 hintwidth=185
@@ -1072,7 +1073,7 @@ editpos=1
  0,0
 bookmarks0=0
 sourcefiles=1
- /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/syntaxgen/grammargen.pas
+ /home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.pas
 relpaths=1
  grammargen.pas
 ismoduletexts=1
@@ -1085,3 +1086,7 @@ nomenumodules=0
 tabsize=141
 firsttab=0
 index=0
+[targetconsole]
+finddtext=
+findhistory=0
+findoptions=1

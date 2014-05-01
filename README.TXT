@@ -1,3 +1,3 @@
-Experiments for MSEide+MSEgui
+Experiments for MSElang
 
-Copyright (c) 2013 by MArtin Schreiber 
+Copyright (c) 2013-2014 by Martin Schreiber 
