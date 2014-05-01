@@ -48,6 +48,7 @@ type
    procedure befwriteexe(const sender: TObject);
 //   procedure tbutton2();
   protected
+//   procedure test;
  end;
 var
  mainfo: tmainfo;

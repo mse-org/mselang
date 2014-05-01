@@ -174,28 +174,41 @@ methfunctionheader,subheader,handlemethfunctionentry,
 methprocedureheader,subheader,handlemethprocedureentry,
 methconstructorheader,subheader,handlemethconstructorentry,
 methdestructorheader,subheader,handlemethdestructorentry,
-subheader,,,handlesubheader*
- '',sub0*
+subheader,,,*
+ '',subheader0*
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
 #
 sub,suba,,
- '',sub0*
+ '',subheader0*
 suba,,,
- '',sub4*
-sub0,sub1,,
+ '',subbody4*
+subheader0,subheader1,,
  ${whitespace}
  @identstart,identpath^*
-sub1,sub2,handlesub1entry,
+subheader1,subheader2,handlesub1entry,
  '',paramsdef0^*
-sub2,,,
+subheader2,subheader3,,
  ${whitespace}
- ':',functiontype-^*>
- ';',!handlesub3-*
-#      handle parameters
+ ':',functiontype-^*
+subheader3,,,
+ ${whitespace}
+ 'virtual'.,!handlevirtual-
+ 'override'.,!handleoverride-
+ 'overload'.,!handleoverload-
+ ';',subheader4-
  '',semicolonexpected
+subheader4,,,
+ ${whitespace}
+ 'virtual'.,virtual-
+ 'override'.,override-
+ 'overload'.,overload-
+ '',!handlesubheader*
+virtual,subheader3,handlevirtual,
+override,subheader3,handleoverride,
+overload,subheader3,handleoverload, 
 #
 functiontype,,,
  '',resultident*
@@ -207,18 +220,18 @@ functiontypea,,,
  ${whitespace}
  @identstart,ident^*
 #
-sub4,checkterminator,,
+subbody4,checkterminator,,
  ${whitespace}
- 'begin'.,sub5a-
+ 'begin'.,subbody5a-
  'const'.,const-*>
  'var'.,var-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
-sub5a,sub5,handlesub5a,
+subbody5a,subbody5,handlesubbody5a,
 # set procstartaddress
-sub5,sub6,,
+subbody5,subbody6,,
  '',statementblock^*
-sub6,checkterminatorpop,handlesub6,
+subbody6,checkterminatorpop,handlesubbody6,
 # return, release
 checkterminator,,,handlecheckterminator
  ';',terminatorok-

@@ -30,17 +30,20 @@ procedure setvarparam();
 procedure setoutparam();
 procedure handleparamdef2();
 procedure handleparamsend();
-procedure handlesubheader();
+//procedure handlesubheader();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
 
 procedure checkfunctiontype();
 procedure handlesub1entry();
-procedure handlesub3();
+procedure handlevirtual();
+procedure handleoverride();
+procedure handleoverload();
+procedure handlesubheader();
 //procedure handlesub4entry();
-procedure handlesub5a();
-procedure handlesub6();
+procedure handlesubbody5a();
+procedure handlesubbody6();
 
 implementation
 uses
@@ -234,7 +237,7 @@ begin
   end;
  end;
 end;
-
+(*
 procedure handlesubheader();
 begin
 {$ifdef mse_debugparser}
@@ -244,7 +247,7 @@ begin
   dec(stackindex);
  end;
 end;
-
+*)
 procedure handleprocedureentry();
 begin
 {$ifdef mse_debugparser}
@@ -365,7 +368,28 @@ outinfo('****');
  end;
 end;
 
-procedure handlesub3();
+procedure handlevirtual();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VIRTUAL');
+{$endif}
+end;
+
+procedure handleoverride();
+begin
+{$ifdef mse_debugparser}
+ outhandle('OVERRIDE');
+{$endif}
+end;
+
+procedure handleoverload();
+begin
+{$ifdef mse_debugparser}
+ outhandle('OVERLOAD');
+{$endif}
+end;
+
+procedure handlesubheader();
 var
  po1: psubdataty;
  po2: pvardataty;
@@ -635,7 +659,7 @@ outinfo('*****');
  end;
 end;
 *)
-procedure handlesub5a();
+procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
  po3: ptypedataty;
@@ -682,7 +706,7 @@ outinfo('*****');
  end;
 end;
 
-procedure handlesub6();
+procedure handlesubbody6();
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
