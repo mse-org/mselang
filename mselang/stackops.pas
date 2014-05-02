@@ -142,6 +142,7 @@ procedure popindirect;
 
 procedure callop;
 procedure calloutop;
+procedure callvirtop;
 procedure locvarpushop;
 procedure locvarpopop;
 procedure returnop;
@@ -151,7 +152,7 @@ procedure destroyclassop;
 
 implementation
 uses
- sysutils,handlerglob,mseformatstr;
+ sysutils,handlerglob,mseformatstr,msetypes;
 {
  stackinfoty = record
   case datakindty of
@@ -751,8 +752,6 @@ end;
 // params frameinfo locvars      
 //
 procedure callop;
-var
- i1: integer;
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= oppo;
@@ -779,6 +778,20 @@ begin
  end;
  framepo:= mainstackpo;
  oppo:= startpo+oppo^.par.callinfo.ad;
+end;
+
+procedure callvirtop;
+begin
+ with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
+  pc:= oppo;
+  frame:= framepo;
+  link:= stacklink;
+ end;
+ framepo:= mainstackpo;
+ stacklink:= framepo;
+ with oppo^.par.virtcallinfo do begin
+  oppo:= startpo+ptruint(ppppointer(mainstackpo+selfinstance)^^[virtindex]); 
+ end;
 end;
 
 procedure locvarpushop;

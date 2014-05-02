@@ -441,7 +441,7 @@ type
              ok_pushstackaddress,ok_indirectpooffs,
              ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
-             ok_call,ok_stack,ok_initclass,ok_destroyclass);
+             ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -468,9 +468,14 @@ type
   linkcount: integer; //used in "for downto 0"
  end; 
 
- initclassinfoty = record
-  classdef: dataoffsty;
+ virtcallinfoty = record
   selfinstance: dataoffsty; //stackoffset
+  virtindex: integer;
+ end;
+ 
+ initclassinfoty = record
+  selfinstance: dataoffsty; //stackoffset
+  classdef: dataoffsty;
   result: dataoffsty;   //stackoffset to result pointer
  end;
 
@@ -548,6 +553,9 @@ type
    );
    ok_call:(
     callinfo: callinfoty;
+   );
+   ok_virtcall:(
+    virtcallinfo: virtcallinfoty;
    );
    ok_stack:(
     stacksize: databytesizety;

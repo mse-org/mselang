@@ -1162,20 +1162,29 @@ var
      end;
     end;
    end;
-   if asub^.address = 0 then begin //unresolved header
-    linkmark(asub^.links,opcount);
-   end;
-   with additem()^ do begin
-    par.callinfo.ad:= asub^.address-1; //possibly invalid
-    if (asub^.nestinglevel = 0) or 
-                     (asub^.nestinglevel = funclevel) then begin
-     op:= @callop;
-     par.callinfo.linkcount:= -1;
-    end
-    else begin
-     op:= @calloutop;
-     par.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
-                                                             //for downto 0
+   if sf_virtual in asub^.flags then begin
+    with additem()^ do begin
+     par.virtcallinfo.virtindex:= asub^.virtualindex;
+     par.virtcallinfo.selfinstance:= -asub^.paramsize;
+     op:= @callvirtop;
+    end;
+   end
+   else begin
+    if asub^.address = 0 then begin //unresolved header
+     linkmark(asub^.links,opcount);
+    end;
+    with additem()^ do begin
+     par.callinfo.ad:= asub^.address-1; //possibly invalid
+     if (asub^.nestinglevel = 0) or 
+                      (asub^.nestinglevel = funclevel) then begin
+      op:= @callop;
+      par.callinfo.linkcount:= -1;
+     end
+     else begin
+      op:= @calloutop;
+      par.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
+                                                              //for downto 0
+     end;
     end;
    end;
   end;

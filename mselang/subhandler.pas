@@ -706,8 +706,8 @@ begin
     end;
     with ptypedataty(ele.eledataabs(currentclass))^ do begin
      popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs)^.
-                      virtualmethods)[po2^.virtualindex]:= po1^.address;
-                        //resolve virtual table entry
+                      virtualmethods)[po2^.virtualindex]:= po1^.address-1;
+              //resolve virtual table entry, compensate oppo inc
     end;
    end;
    linkresolve(po2^.links,po1^.address);
