@@ -51,7 +51,7 @@ procedure handleimplementationexpected();
 implementation
 uses
  parserglob,errorhandler,msetypes,handlerutils,elements,handlerglob,
- grammar,opcode;
+ grammar,opcode,unithandler;
  
 type
  equalparaminfoty = record

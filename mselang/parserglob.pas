@@ -70,6 +70,7 @@ type
  indexty = integer;
  linkindexty = indexty;
  forwardindexty = indexty;
+ listadty = longword;
 
 const
 // vis_max = vis_0;
@@ -579,7 +580,9 @@ type
  errorlevelty = (erl_none,erl_fatal,erl_error);
 
  unitstatety = ({us_interface,}us_interfaceparsed,
-                     us_implementation,us_implementationparsed);
+                     us_implementation,us_implementationparsed,
+                     us_end //pendings resolved
+                     );
  unitstatesty = set of unitstatety;
 
  implinfoty = record
@@ -588,6 +591,12 @@ type
   context: pcontextty;
   eleparent: elementoffsetty;
  end;
+ 
+ pendinginfoty = record
+  ref: elementoffsetty;
+//  ancestor: elementoffsetty;
+ end;
+ pendinginfoarty = array of pendinginfoty;
  
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
@@ -600,6 +609,9 @@ type
   interfaceelement{,classeselement}: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
+  pendingcount: integer;
+  pendingcapacity: integer;
+  pendings: pendinginfoarty;
   impl: implinfoty;
  end;
  ppunitinfoty = ^punitinfoty;

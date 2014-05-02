@@ -21,16 +21,24 @@ uses
  msestrings,parserglob,elements;
 
 function newunit(const aname: string): punitinfoty; 
-function loadunit({const info: pparseinfoty;}
-                                const aindex: integer): punitinfoty;
-//function nextunitimplementation: punitinfoty;
-//function parseimplementation(const info: pparseinfoty; 
-//                                       const aunit: punitinfoty): boolean;
+function loadunit(const aindex: integer): punitinfoty;
 
 procedure setunitname(); //unitname on top of stack
 procedure interfacestop();
 procedure implementationstart();
 procedure handleinclude();
+
+procedure linkmark(var alinks: linkindexty; const aaddress: integer);
+procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
+
+procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
+procedure forwardresolve(const aforward: forwardindexty);
+procedure checkforwarderrors(const aforward: forwardindexty);
+
+procedure regclass(const aclass: elementoffsetty);
+procedure regclassdescendant(const aclass: elementoffsetty;
+                                const aancestor: elementoffsetty);
+procedure handleunitend();
 
 procedure init;
 procedure deinit;
@@ -38,7 +46,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerglob,mselinklist,handlerutils;
+ handlerglob,mselinklist,handlerutils,msearrayutils;
  
 type
  unithashdataty = record
@@ -267,19 +275,7 @@ begin
  result:= implementationpending.next;
 end;
 }
-procedure init;
-begin
- unitlist:= tunitlist.create;
-// implementationpending:= timplementationpendinglist.create;
-end;
 
-procedure deinit;
-begin
- unitlist.free;
-// implementationpending.free;
-end;
-
-{ tunitlist }
 
 constructor tunitlist.create;
 begin
@@ -360,4 +356,279 @@ begin
  end;  
 end;
 *)
+
+procedure regclass(const aclass: elementoffsetty);
+begin
+ with info.unitinfo^ do begin
+  if us_end in state then begin
+   internalerror('U201400402B');
+  end;
+  if pendingcount >= pendingcapacity then begin
+   pendingcapacity:= pendingcapacity*2+256;
+   reallocuninitedarray(pendingcapacity,sizeof(pendings[0]),pendings);   
+  end;
+  with pendings[pendingcount] do begin
+   ref:= aclass;
+//   ancestor:= aancestor;
+  end;
+  inc(pendingcount);
+ end;
+end;
+
+type
+ listadty = longword;
+
+ linkheaderty = record
+  next: listadty; //offset from list
+ end;
+ plinkheaderty = ^linkheaderty;
+
+ linklistty = record
+  itemsize: integer;
+  list: pointer;
+  current: listadty;  //offset from list
+  capacity: listadty; //offset from list
+  deleted: listadty;
+ end;
+
+procedure clearlist(var alist: linklistty; const aitemsize: integer);
+begin
+ with alist do begin
+  itemsize:= aitemsize;
+  if list <> nil then begin
+   freemem(list);
+  end;
+  list:= nil;
+  current:= 0;
+  capacity:= 0;
+  deleted:= 0;  
+ end;
+end;
+
+function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+var
+ li1: listadty;
+begin
+ with alist do begin
+  li1:= deleted;
+  if li1 = 0 then begin
+   current:= current + itemsize;
+   if current >= capacity then begin
+    capacity:= 2*capacity + 256*itemsize;
+    reallocmem(list,capacity);
+    li1:= current;
+   end;
+   result:= list+li1;
+  end
+  else begin
+   result:= list+li1;
+   deleted:= plinkheaderty(result)^.next;
+  end;
+  plinkheaderty(result)^.next:= aitem;
+  aitem:= li1;  
+ end; 
+end; 
+
+type
+ classdescendinfoty = record
+  header: linkheaderty;
+  itemcount: integer;
+  source: dataoffsty;
+  dest: dataoffsty;
+ end;
+ pclassdescendinfoty = ^classdescendinfoty;
+ classdescendarty = array of classdescendinfoty;
+var
+ classdescendindex: linkindexty;
+ deletedclassdescends: linkindexty;
+ classdescends: classdescendarty;
+
+
+var
+ classdescendlist: linklistty;
+ 
+procedure regclassdescendant(const aclass: elementoffsetty;
+                                const aancestor: elementoffsetty);
+var
+ po1: pclassdescendinfoty;
+begin
+ with ptypedataty(ele.eledataabs(aancestor))^ do begin
+  po1:= addlistitem(classdescendlist,infoclass.pendingdescends);
+  po1^.source:= infoclass.defs;
+  po1^.itemcount:= infoclass.virtualcount;
+ end;
+ with ptypedataty(ele.eledataabs(aclass))^ do begin
+  po1^.dest:= infoclass.defs;
+ end;
+end;
+
+type
+ linkinfoty = record
+  next: linkindexty;
+  dest: opaddressty;
+ end;
+ plinkinfoty = ^linkinfoty;
+ linkarty = array of linkinfoty;
+ 
+var
+ links: linkarty; //[0] -> dummy entry
+ linkindex: linkindexty;
+ deletedlinks: linkindexty;
+ 
+procedure linkmark(var alinks: linkindexty; const aaddress: integer);
+var
+ li1: linkindexty;
+ po1: plinkinfoty;
+begin
+ li1:= deletedlinks;
+ if li1 = 0 then begin
+  inc(linkindex);
+  if linkindex > high(links) then begin
+   reallocuninitedarray(high(links)*2+1024,sizeof(links[0]),links);
+  end;
+  li1:= linkindex;
+  po1:= @links[li1];
+ end
+ else begin
+  po1:= @links[li1];
+  deletedlinks:= po1^.next;
+ end;
+ po1^.next:= alinks;
+ po1^.dest:= aaddress;
+ alinks:= li1;
+end;
+
+procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
+var
+ li1: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    info.ops[dest].par.opaddress:= aaddress-1;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
+type
+ forwardinfoty = record
+  prev: forwardindexty;
+  next: forwardindexty;
+  source: sourceinfoty;
+ end;
+ pforwardinfoty = ^forwardinfoty;
+ forwardarty = array of forwardinfoty;
+ 
+var
+ forwards: forwardarty; //[0] -> dummy entry
+ forwardindex: forwardindexty;
+ deletedforwards: forwardindexty;
+
+procedure forwardmark(out aforward: forwardindexty; 
+                                              const asource: sourceinfoty);
+var
+ fo1: forwardindexty;
+ po1: pforwardinfoty;
+begin
+ fo1:= deletedforwards;
+ if fo1 = 0 then begin
+  inc(forwardindex);
+  if forwardindex > high(forwards) then begin
+   reallocuninitedarray(high(forwards)*2+1024,sizeof(forwards[0]),forwards);
+  end;
+  fo1:= forwardindex;
+  po1:= @forwards[fo1];
+ end
+ else begin
+  po1:= @forwards[fo1];
+  deletedlinks:= po1^.next;
+ end;
+ with info.unitinfo^ do begin
+  po1^.prev:= 0;
+  po1^.next:= forwardlist;
+  po1^.source:= asource;
+  forwards[forwardlist].prev:= fo1;
+  forwardlist:= fo1;
+ end;
+ aforward:= fo1;
+end;
+
+procedure forwardresolve(const aforward: forwardindexty);
+begin
+ if aforward <> 0 then begin
+  with forwards[aforward] do begin
+   if info.unitinfo^.forwardlist = aforward then begin
+    info.unitinfo^.forwardlist:= next;
+   end;
+   forwards[next].prev:= prev;
+   forwards[prev].next:= next;
+   next:= deletedforwards;
+  end;
+  deletedforwards:= aforward;
+ end;
+end;
+
+procedure checkforwarderrors(const aforward: forwardindexty);
+var
+ fo1: forwardindexty;
+begin
+ fo1:= aforward;
+ while fo1 <> 0 do begin
+  with forwards[fo1] do begin
+   errormessage(source,err_forwardnotsolved,['']);
+                      //todo show header
+   fo1:= next;
+  end;
+ end;
+end;
+
+procedure handleunitend();
+var
+ int1: integer;
+begin
+ with info.unitinfo^ do begin
+  checkforwarderrors(forwardlist);
+  for int1:= 0 to pendingcount-1 do begin
+   with ptypedataty(ele.eledataabs(pendings[int1].ref))^ do begin
+    include(infoclass.flags,icf_virtualtablevalid);
+   end;
+  end;
+  pendings:= nil;
+  include(state,us_end);
+ end;
+end;
+
+procedure clear;
+begin
+ clearlist(classdescendlist,sizeof(classdescendinfoty));
+ 
+ links:= nil;
+ linkindex:= 0;
+ deletedlinks:= 0;
+ 
+ forwards:= nil;
+ forwardindex:= 0;
+ deletedforwards:= 0;
+end;
+
+procedure init;
+begin
+ clear;
+ unitlist:= tunitlist.create;
+end;
+
+procedure deinit;
+begin
+ clear;
+ unitlist.free;
+end;
+
 end.

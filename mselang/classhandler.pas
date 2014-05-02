@@ -117,6 +117,8 @@ begin
     ancestor:= 0;
     infoclass.impl:= 0;
     infoclass.defs:= 0;
+    infoclass.flags:= [];
+    infoclass.pendingdescends:= 0;
    end;
   end;
 {
@@ -171,10 +173,15 @@ begin
  end;
 end;
 
+procedure copyvirtualtable(const source: infoclassty; const dest: dataoffsty);
+begin
+end;
+
 procedure handleclassdefreturn();
 var
 // po2: pclassesdataty;
  ele1: elementoffsetty;
+ classdefs1: dataoffsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
@@ -183,17 +190,29 @@ begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
+   regclass(d.typ.typedata);
    indirectlevel:= d.typ.indirectlevel;
    with contextstack[stackindex] do begin
     infoclass.allocsize:= d.cla.fieldoffset;
     infoclass.virtualcount:= d.cla.virtualindex;
-    infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty)+
+    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
                                    pointersize*infoclass.virtualcount);
+    infoclass.defs:= classdefs1;   
     with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
      fieldsize:= d.cla.fieldoffset;
      parentclass:= 0;
      if ancestor <> 0 then begin 
-      parentclass:= ptypedataty(ele.eledataabs(ancestor))^.infoclass.defs;
+      with ptypedataty(ele.eledataabs(ancestor))^ do begin
+       parentclass:= infoclass.defs;
+       if infoclass.virtualcount > 0 then begin
+        if icf_virtualtablevalid in infoclass.flags then begin
+         copyvirtualtable(infoclass,classdefs1);
+        end
+        else begin
+         regclassdescendant(d.typ.typedata,ancestor);
+        end;
+       end;
+      end;
      end;
     end;
    end;

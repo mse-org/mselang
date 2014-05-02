@@ -83,12 +83,16 @@ type
   end;
  end;
  pclassdefinfoty = ^classdefinfoty;
-  
+
+ infoclassflagty = (icf_virtualtablevalid);
+ infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   impl: elementoffsetty;
   defs: dataoffsty; //classdefinfoty in target const
+  pendingdescends: listadty;
   allocsize: dataoffsty;
   virtualcount: integer;
+  flags: infoclassflagsty;
  end;
   
  typedataty = record

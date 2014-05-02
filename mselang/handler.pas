@@ -1680,7 +1680,7 @@ begin
  outhandle('PROGBLOCK');
 {$endif}
  writeop(nil); //endmark
- checkforwarderrors(info.unitinfo^.forwardlist);
+ handleunitend();
  with info do begin
   dec(stackindex);
  end;
@@ -1872,7 +1872,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('MAIN');
 {$endif}
- checkforwarderrors(info.unitinfo^.forwardlist);
+ handleunitend();
+// checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
   if unitlevel = 1 then begin
    errormessage(err_syntax,['begin']);

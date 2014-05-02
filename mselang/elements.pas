@@ -207,20 +207,8 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-procedure linkmark(var alinks: linkindexty;
-                                                      const aaddress: integer);
-procedure linkresolve(const alinks: linkindexty;
-                                                  const aaddress: opaddressty);
-
-procedure forwardmark({const info: pparseinfoty;}
-            out aforward: forwardindexty; const asource: sourceinfoty);
-procedure forwardresolve(
-                                        const aforward: forwardindexty);
-procedure checkforwarderrors(
-                                    const aforward: forwardindexty);
-function newstring({const info: pparseinfoty}): stringinfoty;
-function stringconst(
-                                   const astring: stringinfoty): dataaddressty;
+function newstring(): stringinfoty;
+function stringconst(const astring: stringinfoty): dataaddressty;
 
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
@@ -529,138 +517,6 @@ begin
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
 
-type
- linkinfoty = record
-  next: linkindexty;
-  dest: opaddressty;
- end;
- plinkinfoty = ^linkinfoty;
- linkarty = array of linkinfoty;
- 
-var
- links: linkarty; //[0] -> dummy entry
- linkindex: linkindexty;
- deletedlinks: linkindexty;
- 
-procedure linkmark({const info: pparseinfoty; }
-                           var alinks: linkindexty; const aaddress: integer);
-var
- li1: linkindexty;
- po1: plinkinfoty;
-begin
- li1:= deletedlinks;
- if li1 = 0 then begin
-  inc(linkindex);
-  if linkindex > high(links) then begin
-   reallocuninitedarray(high(links)*2+1024,sizeof(links[0]),links);
-  end;
-  li1:= linkindex;
-  po1:= @links[li1];
- end
- else begin
-  po1:= @links[li1];
-  deletedlinks:= po1^.next;
- end;
- po1^.next:= alinks;
- po1^.dest:= aaddress;
- alinks:= li1;
-end;
-
-procedure linkresolve(
-                    const alinks: linkindexty; const aaddress: opaddressty);
-var
- li1: linkindexty;
-begin
- if alinks <> 0 then begin
-  li1:= alinks;
-  while true do begin
-   with links[li1] do begin
-    info.ops[dest].par.opaddress:= aaddress-1;
-    if next = 0 then begin
-     break;
-    end;
-    li1:= next;
-   end;
-  end;
-  links[li1].next:= deletedlinks;
-  deletedlinks:= alinks;
- end;
-end;
-
-type
- forwardinfoty = record
-  prev: forwardindexty;
-  next: forwardindexty;
-  source: sourceinfoty;
- end;
- pforwardinfoty = ^forwardinfoty;
- forwardarty = array of forwardinfoty;
- 
-var
- forwards: forwardarty; //[0] -> dummy entry
- forwardindex: forwardindexty;
- deletedforwards: forwardindexty;
-
-procedure forwardmark(
-            out aforward: forwardindexty; const asource: sourceinfoty);
-var
- fo1: forwardindexty;
- po1: pforwardinfoty;
-begin
- fo1:= deletedforwards;
- if fo1 = 0 then begin
-  inc(forwardindex);
-  if forwardindex > high(forwards) then begin
-   reallocuninitedarray(high(forwards)*2+1024,sizeof(forwards[0]),forwards);
-  end;
-  fo1:= forwardindex;
-  po1:= @forwards[fo1];
- end
- else begin
-  po1:= @forwards[fo1];
-  deletedlinks:= po1^.next;
- end;
- with info.unitinfo^ do begin
-  po1^.prev:= 0;
-  po1^.next:= forwardlist;
-  po1^.source:= asource;
-  forwards[forwardlist].prev:= fo1;
-  forwardlist:= fo1;
- end;
- aforward:= fo1;
-end;
-
-procedure forwardresolve(
-                                        const aforward: forwardindexty);
-begin
- if aforward <> 0 then begin
-  with forwards[aforward] do begin
-   if info.unitinfo^.forwardlist = aforward then begin
-    info.unitinfo^.forwardlist:= next;
-   end;
-   forwards[next].prev:= prev;
-   forwards[prev].next:= next;
-   next:= deletedforwards;
-  end;
-  deletedforwards:= aforward;
- end;
-end;
-
-procedure checkforwarderrors(
-                                    const aforward: forwardindexty);
-var
- fo1: forwardindexty;
-begin
- fo1:= aforward;
- while fo1 <> 0 do begin
-  with forwards[fo1] do begin
-   errormessage({info,}source,err_forwardnotsolved,['']);
-                      //todo show header
-   fo1:= next;
-  end;
- end;
-end;
-
 function newstring({const info: pparseinfoty}): stringinfoty;
 begin
  result:= stringbuf.add(info.stringbuffer);
@@ -681,12 +537,6 @@ begin
 
  ele.clear;
  stringident:= 0;
- links:= nil;
- linkindex:= 0;
- deletedlinks:= 0;
- forwards:= nil;
- forwardindex:= 0;
- deletedforwards:= 0;
  
  stringbuf.clear;
 end;
@@ -697,7 +547,6 @@ var
  tk1: integer;
 begin
  clear;
-// ele.pushelement(getident(''),vis_max,ek_none); //root
  ele.pushelement(idstart,[],ek_none); //root
  stringident:= idstart; //invalid
  nextident;
