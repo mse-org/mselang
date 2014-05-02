@@ -811,6 +811,7 @@ begin
  with oppo^.par do begin
   with pclassdefinfoty(initclass.classdef+constdata)^ do begin
    po1:= intgetnulledmem(fieldsize);
+   ppointer(po1)^:= @virtualmethods;
    ppointer(framepo+initclass.selfinstance)^:= po1;
    pppointer(framepo+initclass.result)^^:= po1;
   end;
