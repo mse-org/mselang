@@ -173,31 +173,30 @@ end;
 
 procedure handleclassdefreturn();
 var
- po2: pclassesdataty;
+// po2: pclassesdataty;
  ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
 {$endif}
-// classesscopereset();
  with info do begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    indirectlevel:= d.typ.indirectlevel;
-//   infoclass.impl:= 0;
-   infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty));
    with contextstack[stackindex] do begin
     infoclass.allocsize:= d.cla.fieldoffset;
     infoclass.virtualcount:= d.cla.virtualindex;
+    infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty)+
+                                   pointersize*infoclass.virtualcount);
     with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
      fieldsize:= d.cla.fieldoffset;
-//     parentclass:= d.cla.parentclass; //todo: pointer to parent in const
+     parentclass:= 0;
+     if ancestor <> 0 then begin 
+      parentclass:= ptypedataty(ele.eledataabs(ancestor))^.infoclass.defs;
+     end;
     end;
    end;
-//   if not ele.addelement(tks_classimp,globalvisi,ek_classimp,ele1) then begin
-//    internalerror('C20140415B');
-//   end;
    ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change

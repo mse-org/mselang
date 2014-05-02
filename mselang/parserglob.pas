@@ -589,7 +589,7 @@ type
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
   state: unitstatesty;
-  interfaceelement,classeselement: elementoffsetty;
+  interfaceelement{,classeselement}: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   impl: implinfoty;

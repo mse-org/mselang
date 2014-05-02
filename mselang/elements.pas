@@ -38,7 +38,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
-                  ek_sysfunc,ek_sub,ek_classes,{ek_class,}
+                  ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
                   ek_unit,ek_implementation,ek_classimp);
  elementkindsty = set of elementkindty;
  
@@ -236,7 +236,7 @@ const
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,
-  sizeof(classesdataty)+elesize,{sizeof(classdataty)+elesize,}
+ {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
   sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
 //ek_classimp
@@ -1313,9 +1313,14 @@ begin
      mstr1:= mstr1+lineend+
      ' K:'+getenumname(typeinfo(kind),ord(kind))+
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
-     if kind = dk_class then begin
-      mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
+     if kind in [dk_class] then begin
+      mstr1:= mstr1+' A:'+inttostr(ancestor);
+      case kind of
+       dk_class: begin
+        mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
                               ' virt:'+inttostr(infoclass.virtualcount);
+       end;
+      end;
      end;
      po3:= po1;
     end;

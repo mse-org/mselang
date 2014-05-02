@@ -85,7 +85,7 @@ procedure setunitname(); //unitname on top of stack
 var
  id1: identty;
  po1: punitdataty;
- po2: pelementinfoty;
+// po2: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETUNITNAME');
@@ -101,8 +101,8 @@ begin
    end;
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
-    po2:= ele.addelement(tks_classes,globalvisi,ek_classes);
-    classeselement:= ele.eleinforel(po2);
+//    po2:= ele.addelement(tks_classes,globalvisi,ek_classes);
+//    classeselement:= ele.eleinforel(po2);
    end;
   end;
   stacktop:= stackindex;

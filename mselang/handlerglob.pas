@@ -79,6 +79,8 @@ type
  classdefinfoty = record
   fieldsize: integer;
   parentclass: elementoffsetty;
+  virtualmethods: record //array of pointer
+  end;
  end;
  pclassdefinfoty = ^classdefinfoty;
   
@@ -204,11 +206,12 @@ type
  end;
  pclassdataty = ^classdataty;
 }
+{
  classesdataty = record
   scopebefore: elementoffsetty;
  end;
  pclassesdataty = ^classesdataty;
-
+}
  visibledataty = record
  end;
  pvisibledataty = ^visibledataty;

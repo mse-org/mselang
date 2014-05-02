@@ -699,6 +699,17 @@ begin
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
+   if sf_virtual in po2^.flags then begin
+    if currentclass = 0 then begin
+     internalerror('H20140502A');
+     exit;
+    end;
+    with ptypedataty(ele.eledataabs(currentclass))^ do begin
+     popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs)^.
+                      virtualmethods)[po2^.virtualindex]:= po1^.address;
+                        //resolve virtual table entry
+    end;
+   end;
    linkresolve(po2^.links,po1^.address);
   end;
   if sf_constructor in subdef.flags then begin
