@@ -1314,7 +1314,8 @@ begin
      ' K:'+getenumname(typeinfo(kind),ord(kind))+
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      if kind = dk_class then begin
-      mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize);
+      mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
+                              ' virt:'+inttostr(infoclass.virtualcount);
      end;
      po3:= po1;
     end;
@@ -1322,7 +1323,8 @@ begin
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
-     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false);
+     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
+     ' V:'+inttostr(virtualindex);
     end;
    end;
   end;

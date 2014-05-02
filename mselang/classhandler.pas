@@ -88,7 +88,8 @@ begin
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
-   d.cla.fieldoffset:= 0;
+   d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
+   d.cla.virtualindex:= 0;
 //   d.cla.parentclass:= 0;
   end;
   with contextstack[stackindex-2] do begin
@@ -151,6 +152,7 @@ begin
     po1^.ancestor:= ele.eledatarel(po2);
     with contextstack[stackindex-2] do begin
      d.cla.fieldoffset:= po2^.infoclass.allocsize;
+     d.cla.virtualindex:= po2^.infoclass.virtualcount;
     end;
    end;
   end;
@@ -187,6 +189,7 @@ begin
    infoclass.defs:= getglobconstaddress(sizeof(classdefinfoty));
    with contextstack[stackindex] do begin
     infoclass.allocsize:= d.cla.fieldoffset;
+    infoclass.virtualcount:= d.cla.virtualindex;
     with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
      fieldsize:= d.cla.fieldoffset;
 //     parentclass:= d.cla.parentclass; //todo: pointer to parent in const

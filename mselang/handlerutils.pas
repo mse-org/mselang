@@ -1405,7 +1405,7 @@ begin
       write('foffs:',d.rec.fieldoffset);
      end;
      ck_classdef: begin
-      write('foffs:',d.cla.fieldoffset{,' parent:',d.cla.parentclass});
+      write('foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
      end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));

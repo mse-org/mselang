@@ -86,6 +86,7 @@ type
   impl: elementoffsetty;
   defs: dataoffsty; //classdefinfoty in target const
   allocsize: dataoffsty;
+  virtualcount: integer;
  end;
   
  typedataty = record
@@ -176,8 +177,9 @@ type
   impl: elementoffsetty; //pfuncdataty
   links: linkindexty;
   mark: forwardindexty;
-  address: opaddressty;
   flags: subflagsty;
+  virtualindex: integer; //-1 = none
+  address: opaddressty;
   nestinglevel: integer;
   paramsize: integer;
   paramcount: integer;

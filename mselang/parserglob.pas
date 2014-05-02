@@ -317,6 +317,7 @@ type
  classinfoty = record
   visibility: visikindsty;
   fieldoffset: dataoffsty;
+  virtualindex: integer;
 //  parentclass: elementoffsetty;
  end;
 

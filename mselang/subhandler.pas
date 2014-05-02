@@ -425,8 +425,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB3');
 {$endif}
-//-1  0     1     2          3          4    5    
-//sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+//|-2        |-1  0     1     2           3           4        5    
+//|classdef0,|sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
@@ -479,6 +479,14 @@ begin
   po1^.links:= 0;
   po1^.nestinglevel:= funclevel;
   po1^.flags:= subflags;
+  po1^.virtualindex:= -1; //none
+  if (stf_classdef in currentstatementflags) and 
+                                          (sf_virtual in subflags) then begin
+   with contextstack[stackindex-2] do begin
+    po1^.virtualindex:= d.cla.virtualindex;
+    inc(d.cla.virtualindex);
+   end;
+  end;
   po4:= @po1^.paramsrel;
   int1:= 4;
   err1:= false;
