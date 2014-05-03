@@ -173,10 +173,6 @@ begin
  end;
 end;
 
-procedure copyvirtualtable(const source: infoclassty; const dest: dataoffsty);
-begin
-end;
-
 procedure handleclassdefreturn();
 var
 // po2: pclassesdataty;
@@ -210,7 +206,7 @@ outinfo('***');
      header.parentclass:= parentinfoclass1^.defs;
      if infoclass.virtualcount > 0 then begin
       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
-       copyvirtualtable(infoclass,classdefs1);
+       copyvirtualtable(infoclass.defs,classdefs1,infoclass.virtualcount);
       end
       else begin
        regclassdescendant(d.typ.typedata,ancestor);

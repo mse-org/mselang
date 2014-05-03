@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,parserglob,elements;
+ msestrings,parserglob,elements,handlerglob;
 
 function newunit(const aname: string): punitinfoty; 
 function loadunit(const aindex: integer): punitinfoty;
@@ -39,6 +39,8 @@ procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendant(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 procedure handleunitend();
+procedure copyvirtualtable(const source,dest: dataoffsty;
+                                                 const itemcount: integer);
 
 procedure init;
 procedure deinit;
@@ -46,7 +48,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerglob,mselinklist,handlerutils,msearrayutils;
+ mselinklist,handlerutils,msearrayutils;
  
 type
  unithashdataty = record
@@ -628,21 +630,27 @@ begin
  end;
 end;
 
-procedure resolveclassdescend(const listitem: pointer);
+procedure copyvirtualtable(const source,dest: dataoffsty;
+                                                 const itemcount: integer);
 var
  ps,pd,pe: popaddressty;
 begin
+ ps:= pointer(info.constseg)+source+sizeof(classdefheaderty);
+ pd:= pointer(info.constseg)+dest+sizeof(classdefheaderty);
+ pe:= pd+itemcount;
+ repeat
+  if pd^ = 0 then begin
+   pd^:= ps^;
+  end;
+  inc(ps);
+  inc(pd);
+ until pd >= pe;
+end;
+
+procedure resolveclassdescend(const listitem: pointer);
+begin
  with pclassdescendinfoty(listitem)^ do begin
-  ps:= pointer(info.constseg)+source+sizeof(classdefheaderty);
-  pd:= pointer(info.constseg)+dest+sizeof(classdefheaderty);
-  pe:= pd+itemcount;
-  repeat
-   if pd^ = 0 then begin
-    pd^:= ps^;
-   end;
-   inc(ps);
-   inc(pd);
-  until pd >= pe;
+  copyvirtualtable(source,dest,itemcount);
  end;
 end;
 
