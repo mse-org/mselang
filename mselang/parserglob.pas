@@ -284,7 +284,7 @@ type
  end;
  
  subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
-              sf_functiontype,sf_header,sf_virtual);
+              sf_functiontype,sf_header,sf_virtual,sf_override);
  subflagsty = set of subflagty;
  subinfoty = record
   frameoffsetbefore: ptruint;

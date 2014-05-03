@@ -606,8 +606,7 @@ parseend:
 end;
         
 function parse(const input: string; const acommand: ttextstream;
-               {const aunit: punitinfoty;} out aopcode: opinfoarty;
-                                     out aconstseg: bytearty): boolean;
+                out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
                               //true if ok
 var
  startopcount: integer;

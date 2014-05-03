@@ -364,13 +364,12 @@ begin
  end;
 end;
 
-procedure handlevirtual();
+function checkclassdef(): boolean;
 begin
-{$ifdef mse_debugparser}
- outhandle('VIRTUAL');
-{$endif}
+ result:= true;
  with info,contextstack[stackindex-1] do begin
   if not (stf_classdef in currentstatementflags) then begin
+   result:= false;
    if stf_implementation in currentstatementflags then begin
     handlebeginexpected();
    end
@@ -378,8 +377,22 @@ begin
     handleimplementationexpected();
    end
   end
-  else begin
-   include(d.subdef.flags,sf_virtual);
+ end;
+end;
+
+procedure handlevirtual();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VIRTUAL');
+{$endif}
+ if checkclassdef() then begin
+  with info,contextstack[stackindex-1] do begin
+   if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
+    errormessage(err_procdirectiveconflict,['virtual']);
+   end
+   else begin
+    include(d.subdef.flags,sf_virtual);
+   end;
   end;
  end;
 end;
@@ -389,6 +402,17 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OVERRIDE');
 {$endif}
+outinfo('***');
+ if checkclassdef() then begin
+  with info,contextstack[stackindex-1] do begin
+   if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
+    errormessage(err_procdirectiveconflict,['override']);
+   end
+   else begin
+    include(d.subdef.flags,sf_override);
+   end;
+  end;
+ end;
 end;
 
 procedure handleoverload();

@@ -1293,6 +1293,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VALUEIDENTIFIER');
 {$endif}
+outinfo('***');
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
