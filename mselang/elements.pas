@@ -87,6 +87,7 @@ type
    fdestroying: boolean;
    fparents: array[0..maxparents] of elementoffsetty;
    fparentindex: integer;
+   flastdescendent: elementoffsetty;
   protected
    felementdata: string;
    fnextelement: elementoffsetty;
@@ -134,7 +135,7 @@ type
    function findparentscope(const aident: identty; const akinds: elementkindsty;
            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
                   //searches in scopestack, returns parent
-
+   property lastdescendent: elementoffsetty read flastdescendent;
    function eleoffset: ptruint; inline;
    function eledataoffset: ptruint; inline;
    function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
@@ -784,6 +785,7 @@ var
  id1: identty;
  int1,int2: integer;
  parentele: elementoffsetty;
+ classdescend: elementoffsetty;
  elepath: identty;
 label
  endlab;
@@ -791,6 +793,7 @@ begin
  element:= -1;
  result:= false;
  if count > 0 then begin
+  classdescend:= 0;
   parentele:= felementparent;
   elepath:= felementpath;
   while true do begin
@@ -820,6 +823,9 @@ begin
     with eleinfoabs(parentele)^ do begin
      if (header.kind = ek_type) and 
                              (ptypedataty(@data)^.kind = dk_class) then begin
+      if classdescend = 0 then begin
+       classdescend:= parentele;
+      end;
       parentele:= ptypedataty(@data)^.ancestor;
       if parentele <> 0 then begin
        with eleinfoabs(parentele)^ do begin
@@ -836,6 +842,9 @@ begin
  end;
 endlab:
  result:= element >= 0;
+ if result then begin
+  flastdescendent:= classdescend;
+ end;
 end;
 
 function telementhashdatalist.findupward(const aident: identty;
