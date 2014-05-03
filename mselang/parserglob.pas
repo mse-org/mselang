@@ -472,7 +472,7 @@ type
 
  virtcallinfoty = record
   selfinstance: dataoffsty; //stackoffset
-  virtindex: integer;
+  virtoffset: dataoffsty;   //offset in classdefinfoty
  end;
  
  initclassinfoty = record

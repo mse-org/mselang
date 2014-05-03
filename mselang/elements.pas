@@ -1167,7 +1167,8 @@ begin
       case kind of
        dk_class: begin
         mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
-                              ' virt:'+inttostr(infoclass.virtualcount);
+                      ' virt:'+inttostr(infoclass.virtualcount)+
+                      ' defs:'+inttostr(infoclass.defs);
        end;
       end;
      end;

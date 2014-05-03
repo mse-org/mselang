@@ -1164,7 +1164,8 @@ var
    end;
    if sf_virtual in asub^.flags then begin
     with additem()^ do begin
-     par.virtcallinfo.virtindex:= asub^.virtualindex;
+     par.virtcallinfo.virtoffset:= asub^.virtualindex*sizeof(opaddressty)+
+                                                      sizeof(classdefheaderty);
      par.virtcallinfo.selfinstance:= -asub^.paramsize;
      op:= @callvirtop;
     end;

@@ -633,8 +633,8 @@ var
  ps,pd,pe: popaddressty;
 begin
  with pclassdescendinfoty(listitem)^ do begin
-  ps:= pointer(info.constseg)+source;
-  pd:= pointer(info.constseg)+dest;
+  ps:= pointer(info.constseg)+source+sizeof(classdefheaderty);
+  pd:= pointer(info.constseg)+dest+sizeof(classdefheaderty);
   pe:= pd+itemcount;
   repeat
    if pd^ = 0 then begin

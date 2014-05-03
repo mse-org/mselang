@@ -790,7 +790,8 @@ begin
  framepo:= mainstackpo;
  stacklink:= framepo;
  with oppo^.par.virtcallinfo do begin
-  oppo:= startpo+ptruint(ppppointer(mainstackpo+selfinstance)^^[virtindex]); 
+  oppo:= startpo+pptruint(pppointer(mainstackpo+selfinstance)^^+virtoffset)^;
+//  oppo:= startpo+ptruint(ppppointer(mainstackpo+selfinstance)^^[virtindex]); 
  end;
 end;
 
@@ -820,14 +821,14 @@ end;
 procedure initclassop;
 var
  po1: pointer;
+ po2: pclassdefinfoty;
 begin
  with oppo^.par do begin
-  with pclassdefinfoty(initclass.classdef+constdata)^ do begin
-   po1:= intgetnulledmem(fieldsize);
-   ppointer(po1)^:= @virtualmethods;
-   ppointer(framepo+initclass.selfinstance)^:= po1;
-   pppointer(framepo+initclass.result)^^:= po1;
-  end;
+  po2:= pclassdefinfoty(initclass.classdef+constdata);
+  po1:= intgetnulledmem(po2^.header.fieldsize);
+  ppointer(po1)^:= po2;
+  ppointer(framepo+initclass.selfinstance)^:= po1;
+  pppointer(framepo+initclass.result)^^:= po1;
  end;
 end;
 

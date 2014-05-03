@@ -203,11 +203,11 @@ outinfo('***');
                                    pointersize*infoclass.virtualcount);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(pointer(constseg)+classdefs1)^ do begin
-    fieldsize:= classinfo1^.fieldoffset;
-    parentclass:= 0;
+    header.fieldsize:= classinfo1^.fieldoffset;
+    header.parentclass:= 0;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
-     parentclass:= parentinfoclass1^.defs;
+     header.parentclass:= parentinfoclass1^.defs;
      if infoclass.virtualcount > 0 then begin
       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
        copyvirtualtable(infoclass,classdefs1);

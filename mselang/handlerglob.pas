@@ -76,9 +76,12 @@ type
   indextypedata: elementoffsetty;
  end;
 
- classdefinfoty = record
+ classdefheaderty = record
   fieldsize: integer;
   parentclass: elementoffsetty;
+ end;
+ classdefinfoty = record
+  header: classdefheaderty;
   virtualmethods: record //array of pointer
   end;
  end;
