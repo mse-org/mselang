@@ -321,6 +321,7 @@ type
   virtualindex: integer;
 //  parentclass: elementoffsetty;
  end;
+ pclassinfoty = ^classinfoty;
 
  fieldinfoty = record
   fielddata: elementoffsetty;

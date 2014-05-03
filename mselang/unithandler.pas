@@ -376,12 +376,18 @@ begin
 end;
 
 type
- listadty = longword;
+// listadty = longword;
 
  linkheaderty = record
   next: listadty; //offset from list
  end;
  plinkheaderty = ^linkheaderty;
+ linkdataty = record
+  header: linkheaderty;
+  data: record
+  end;
+ end;
+ plinkdataty = ^linkdataty;
 
  linklistty = record
   itemsize: integer;
@@ -416,8 +422,8 @@ begin
    if current >= capacity then begin
     capacity:= 2*capacity + 256*itemsize;
     reallocmem(list,capacity);
-    li1:= current;
    end;
+   li1:= current;
    result:= list+li1;
   end
   else begin
@@ -428,6 +434,38 @@ begin
   aitem:= li1;  
  end; 
 end; 
+
+procedure deletelistchain(var alist: linklistty; const achain: listadty);
+begin
+ with alist do begin
+  plinkheaderty(list+achain)^.next:= deleted;
+  deleted:= achain;
+ end; 
+end;
+
+type
+ resolvehandlerty = procedure(const listitem: pointer);
+ 
+procedure resolve(var alist: linklistty; const handler: resolvehandlerty;
+                                                         var achain: listadty);
+var
+ ad1: listadty;
+ po1: plinkheaderty;
+begin
+ if achain <> 0 then begin
+  ad1:= achain;
+  with alist do begin
+   while ad1 <> 0 do begin
+    po1:= alist.list+ad1;
+    handler(po1);
+    ad1:= po1^.next;
+   end;
+   plinkheaderty(list+achain)^.next:= deleted;
+   deleted:= achain;
+   achain:= 0;
+  end;
+ end;
+end;
 
 type
  classdescendinfoty = record
@@ -590,15 +628,35 @@ begin
  end;
 end;
 
+procedure resolveclassdescend(const listitem: pointer);
+var
+ ps,pd,pe: popaddressty;
+begin
+ with pclassdescendinfoty(listitem)^ do begin
+  ps:= pointer(info.constseg)+source;
+  pd:= pointer(info.constseg)+dest;
+  pe:= pd+itemcount;
+  repeat
+   if pd^ = 0 then begin
+    pd^:= ps^;
+   end;
+   inc(ps);
+   inc(pd);
+  until pd >= pe;
+ end;
+end;
+
 procedure handleunitend();
 var
  int1: integer;
+ ad1: listadty;
 begin
  with info.unitinfo^ do begin
   checkforwarderrors(forwardlist);
   for int1:= 0 to pendingcount-1 do begin
    with ptypedataty(ele.eledataabs(pendings[int1].ref))^ do begin
     include(infoclass.flags,icf_virtualtablevalid);
+    resolve(classdescendlist,@resolveclassdescend,infoclass.pendingdescends);
    end;
   end;
   pendings:= nil;

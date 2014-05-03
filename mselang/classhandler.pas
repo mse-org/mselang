@@ -182,36 +182,38 @@ var
 // po2: pclassesdataty;
  ele1: elementoffsetty;
  classdefs1: dataoffsty;
+ classinfo1: pclassinfoty;
+ parentinfoclass1: pinfoclassty;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
 {$endif}
+outinfo('***');
  with info do begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    regclass(d.typ.typedata);
    indirectlevel:= d.typ.indirectlevel;
-   with contextstack[stackindex] do begin
-    infoclass.allocsize:= d.cla.fieldoffset;
-    infoclass.virtualcount:= d.cla.virtualindex;
-    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
+   classinfo1:= @contextstack[stackindex].d.cla;
+   infoclass.allocsize:= classinfo1^.fieldoffset;
+   infoclass.virtualcount:= classinfo1^.virtualindex;
+   classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
                                    pointersize*infoclass.virtualcount);
-    infoclass.defs:= classdefs1;   
-    with pclassdefinfoty(pointer(constseg)+infoclass.defs)^ do begin
-     fieldsize:= d.cla.fieldoffset;
-     parentclass:= 0;
-     if ancestor <> 0 then begin 
-      with ptypedataty(ele.eledataabs(ancestor))^ do begin
-       parentclass:= infoclass.defs;
-       if infoclass.virtualcount > 0 then begin
-        if icf_virtualtablevalid in infoclass.flags then begin
-         copyvirtualtable(infoclass,classdefs1);
-        end
-        else begin
-         regclassdescendant(d.typ.typedata,ancestor);
-        end;
-       end;
+   infoclass.defs:= classdefs1;   
+   with pclassdefinfoty(pointer(constseg)+classdefs1)^ do begin
+    fieldsize:= classinfo1^.fieldoffset;
+    parentclass:= 0;
+    if ancestor <> 0 then begin 
+     parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
+     parentclass:= parentinfoclass1^.defs;
+     if infoclass.virtualcount > 0 then begin
+      if icf_virtualtablevalid in parentinfoclass1^.flags then begin
+       copyvirtualtable(infoclass,classdefs1);
+      end
+      else begin
+       regclassdescendant(d.typ.typedata,ancestor);
       end;
      end;
     end;

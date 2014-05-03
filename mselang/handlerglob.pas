@@ -94,6 +94,7 @@ type
   virtualcount: integer;
   flags: infoclassflagsty;
  end;
+ pinfoclassty = ^infoclassty;
   
  typedataty = record
   indirectlevel: indirectlevelty; //total indirection count
