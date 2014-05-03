@@ -127,6 +127,8 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
             //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
+procedure pushinsertconstaddress(const stackoffset: integer; const before: boolean;
+                             const address: dataoffsty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
                                                   const size: databytesizety);
@@ -487,6 +489,15 @@ begin
   op:= @pushop;
   result:= atype^.bytesize; //todo: alignment
   par.imm.vsize:= result;
+ end;
+end;
+
+procedure pushinsertconstaddress(const stackoffset: integer; const before: boolean;
+                             const address: dataoffsty);
+begin
+ with insertitem(stackoffset,before)^ do begin
+  op:= @pushconstaddress;
+  par.vaddress:= address;
  end;
 end;
 

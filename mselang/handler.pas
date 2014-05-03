@@ -1094,7 +1094,7 @@ var
    po5:= @asub^.paramsrel;
    paramco1:= paramco;
    if [sf_function,sf_constructor] * asub^.flags <> [] then begin
-    inc(paramco1);
+    inc(paramco1); //result parameter
    end;
    if sf_method in asub^.flags then begin
     inc(paramco1); //self parameter
@@ -1146,7 +1146,13 @@ var
     with contextstack[stackindex] do begin //result data
      if [sf_constructor,sf_function] * asub^.flags <> [] then begin
       po6:= ele.eledataabs(po5^);
-      po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
+      if (sf_constructor in asub^.flags) and 
+                                  (ele.lastdescendent <> 0) then begin
+       po3:= ptypedataty(ele.eledataabs(ele.lastdescendent));
+      end
+      else begin
+       po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
+      end;
       int1:= pushinsertvar(0,false,po3);
       d.fact.datasize:= int1;
       d.kind:= ck_subres;
@@ -1155,6 +1161,9 @@ var
       with additem()^ do begin //result var param
        op:= @pushstackaddr;
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
+      end;
+      if (sf_constructor in asub^.flags) then begin
+       pushinsertconstaddress(0,false,po3^.infoclass.defs); //class type
       end;
      end
      else begin

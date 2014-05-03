@@ -822,13 +822,16 @@ procedure initclassop;
 var
  po1: pointer;
  po2: pclassdefinfoty;
+ self1: ppointer;
 begin
  with oppo^.par do begin
-  po2:= pclassdefinfoty(initclass.classdef+constdata);
+//  po2:= pclassdefinfoty(initclass.classdef+constdata);
+  self1:= framepo+initclass.selfinstance;
+  po2:= self1^;  //class type
   po1:= intgetnulledmem(po2^.header.fieldsize);
   ppointer(po1)^:= po2;
-  ppointer(framepo+initclass.selfinstance)^:= po1;
-  pppointer(framepo+initclass.result)^^:= po1;
+  self1^:= po1;  //class instance
+  pppointer(framepo+initclass.result)^^:= po1; //result
  end;
 end;
 

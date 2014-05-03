@@ -740,7 +740,7 @@ begin
    po3:= ele.eledataabs(currentclass);
    with additem^,par.initclass do begin
     op:= @initclassop;
-    classdef:= po3^.infoclass.defs;
+//    classdef:= po3^.infoclass.defs;
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;

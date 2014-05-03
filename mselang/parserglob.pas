@@ -477,7 +477,7 @@ type
  
  initclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
-  classdef: dataoffsty;
+//  classdef: dataoffsty;
   result: dataoffsty;   //stackoffset to result pointer
  end;
 
