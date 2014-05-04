@@ -1410,6 +1410,7 @@ begin
      ck_subdef: begin
       write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
                                            integer(subdef.flags),true),
+            ' ma:',subdef.match,
                             ' ps:',subdef.paramsize,' vs:',subdef.varsize);
      end;
      ck_paramsdef: begin

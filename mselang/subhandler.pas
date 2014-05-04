@@ -736,7 +736,7 @@ begin
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
-   if sf_virtual in po2^.flags then begin
+   if po2^.flags * [sf_virtual,sf_override] <> [] then begin
     if currentclass = 0 then begin
      internalerror('H20140502A');
      exit;
