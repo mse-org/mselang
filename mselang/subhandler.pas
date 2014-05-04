@@ -610,13 +610,10 @@ begin
    inc(funclevel);
    getlocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
-//    d.kind:= ck_subdef;
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
-    stacktop:= stackindex;
+//    stacktop:= stackindex;
     d.subdef.paramsize:= paramsize1;
-//    d.subdef.paramsize:= locdatapo - d.subdef.parambase;
-//    po1^.paramsize:= d.subdef.paramsize;
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(po1);
     for int2:= 0 to paramco-1 do begin
@@ -668,6 +665,9 @@ begin
      bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                  allvisi,@checkequalparam,paramdata);
      ele.popelementparent();       
+     if not bo1 then begin
+      errormessage(err_methodexpected,[],1);
+     end;
     end
     else begin
      bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
@@ -706,6 +706,7 @@ begin
      end;
     end;
    end;
+   stacktop:= stackindex;
   end;
  end;
 end;

@@ -44,7 +44,7 @@ type
             err_fileread,err_anonclassdef,err_classidentexpected,
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
             err_expressionexpected,err_overloadnotfunc,
-            err_procdirectiveconflict,err_noancestormethod);
+            err_procdirectiveconflict,err_noancestormethod,err_methodexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -133,7 +133,9 @@ const
   (level: erl_error; message: 
               'Procedure directive "%s" has conflicts with other directives'),
   (level: erl_error; message: 
-              'There is no method in ancestor class to be overridden')
+              'There is no method in ancestor class to be overridden'),
+  (level: erl_error; message: 
+              'Method identifier expected')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

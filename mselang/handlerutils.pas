@@ -1297,9 +1297,14 @@ var
 begin
  with info do begin
 {$ifdef mse_debugparser}
-  writeln('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,'L:'+
-    inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
+  write('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,
+  ' cla:',currentclass);
+  if currentclass <> 0 then begin
+   write(' ',getidentname(ele.eleinfoabs(currentclass)^.header.name),' ');
+  end;
+  write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
+  writeln;
 {$endif}
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
