@@ -82,7 +82,7 @@ type
  end;
  classdefinfoty = record
   header: classdefheaderty;
-  virtualmethods: record //array of pointer
+  virtualmethods: record //array of opaddressty
   end;
  end;
  pclassdefinfoty = ^classdefinfoty;

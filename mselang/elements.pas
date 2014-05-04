@@ -1143,6 +1143,7 @@ var
  off1: elementoffsetty;
  ar2: msestringarty;
  po4: pscopeinfoty;
+ po5: popaddressty;
 begin
  int1:= 0;
  int2:= 0;
@@ -1206,6 +1207,15 @@ begin
         mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
                       ' virt:'+inttostr(infoclass.virtualcount)+
                       ' defs:'+inttostr(infoclass.defs);
+        po5:= @pclassdefinfoty(
+                       pointer(info.constseg)+infoclass.defs)^.virtualmethods;
+        for int6:= 0 to infoclass.virtualcount-1 do begin
+         if int6 mod 5 = 0 then begin
+          mstr1:= mstr1+lineend+'  ';
+         end;
+         mstr1:= mstr1+inttostrlen(po5^,4)+' ';
+         inc(po5);
+        end;
        end;
       end;
      end;
