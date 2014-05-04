@@ -111,6 +111,9 @@ type
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
+   function forallancestor(const aident: identty; const akinds: elementkindsty;
+                 const avislevel: visikindsty; const ahandler: elehandlerprocty;
+                 var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
              avislevel: visikindsty; out element: elementoffsetty): boolean;
                   //searches in current scope and ancestors
@@ -772,6 +775,31 @@ begin
     end;
     po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
    end;
+  end;
+ end;
+end;
+
+function telementhashdatalist.forallancestor(const aident: identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty; const ahandler: elehandlerprocty;
+                 var adata): boolean; //returns terminated flag
+var
+ po1: pelementinfoty;
+ po2: ptypedataty;
+ parentbefore: elementoffsetty;
+begin
+ result:= false;
+ po1:= eleinfoabs(felementparent);
+ if (po1^.header.kind = ek_type) then begin
+  po2:= @po1^.data;
+  if po2^.kind in ancestordatakinds then begin
+   parentbefore:= elementparent;
+   while not result and (po2^.ancestor <> 0) do begin
+    elementparent:= po2^.ancestor;
+    po2:= eledataabs(po2^.ancestor);
+    result:= forallcurrent(aident,akinds,avislevel,ahandler,adata);
+   end;
+   elementparent:= parentbefore;
   end;
  end;
 end;

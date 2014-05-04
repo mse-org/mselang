@@ -59,18 +59,28 @@ type
   match: psubdataty;
  end;
 
-function checkparams(const po1,ref: psubdataty): boolean; inline;
+function checkparams(const po1,ref: psubdataty): boolean; 
+                                  {$ifndef mse_debugparser} inline;{$endif}
 var
  par1,parref: pelementoffsetaty;
  offs1: elementoffsetty;
  var1,varref: pvardataty;
  int1: integer;
+ start,stop: integer;
 begin
  result:= true;
  offs1:= ele.eledataoffset;
  pointer(par1):= @po1^.paramsrel;
  pointer(parref):= @ref^.paramsrel;
- for int1:= 0 to po1^.paramcount-1 do begin
+ start:= 0;
+ stop:= ref^.paramcount-1;
+ if sf_method in ref^.flags then begin
+  start:= 1; //skip self param
+  if sf_constructor in ref^.flags then begin
+   dec(stop); //skip result param
+  end;
+ end;
+ for int1:= start to stop do begin
   var1:= pointer(par1^[int1]+offs1);
   varref:= pointer(parref^[int1]+offs1);
   if var1^.vf.typ <> varref^.vf.typ then begin
@@ -92,7 +102,10 @@ begin
  po1:= @aelement^.data;
  with equalparaminfoty(adata) do begin
   if (po1 <> ref) and ((po1^.flags >< ref^.flags)*[sf_header] = []) and
-     (po1^.paramcount = ref^.paramcount) and checkparams(po1,ref) then begin
+                    (po1^.paramcount = ref^.paramcount) and
+                    (po1^.paramsize = ref^.paramsize) and 
+                    ((sf_method in po1^.flags) = (sf_method in ref^.flags)) and
+                                            checkparams(po1,ref) then begin
    {
    offs1:= ele.eledataoffset;
    pointer(par1):= @po1^.paramsrel;
@@ -627,10 +640,25 @@ begin
    ref:= po1;
    match:= nil;
   end;                                    
-  if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
-                            allvisi,@checkequalheader,paramdata) then begin
-   err1:= true;
-   errormessage(err_sameparamlist,[]);
+  if sf_override in subflags then begin
+   if not ele.forallancestor(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                             allvisi,@checkequalheader,paramdata) then begin
+    err1:= true;
+    errormessage(err_noancestormethod,[]);
+   end
+   else begin
+    po1^.virtualindex:= paramdata.match^.virtualindex;
+    with contextstack[stackindex-2] do begin
+     dec(d.cla.virtualindex);
+    end;
+   end;
+  end
+  else begin
+   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+                             allvisi,@checkequalheader,paramdata) then begin
+    err1:= true;
+    errormessage(err_sameparamlist,[]);
+   end;
   end;
   
   if impl1 then begin

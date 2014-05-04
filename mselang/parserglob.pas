@@ -57,6 +57,7 @@ type
  pdatakindty = ^datakindty;
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
+ ancestordatakinds = [dk_class];
 type
  datasizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                das_33_63,das_64,das_pointer);
@@ -112,6 +113,7 @@ type
 const
  dataaddresssize = sizeof(dataaddressty);
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
+ typecontexts = [ck_typetype,ck_fieldtype];
 
 type 
  pparseinfoty = ^parseinfoty;
