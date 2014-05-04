@@ -415,7 +415,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OVERRIDE');
 {$endif}
-outinfo('***');
  if checkclassdef() then begin
   with info,contextstack[stackindex-1] do begin
    if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
@@ -518,7 +517,7 @@ begin
   po1^.flags:= subflags;
   po1^.virtualindex:= -1; //none
   if (stf_classdef in currentstatementflags) and 
-                                          (sf_virtual in subflags) then begin
+                        (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[stackindex-2] do begin
     po1^.virtualindex:= d.cla.virtualindex;
     inc(d.cla.virtualindex);
@@ -710,22 +709,7 @@ begin
   end;
  end;
 end;
-(*
-procedure handlesub4entry();
-begin
-{$ifdef mse_debugparser}
- outhandle('SUB4ENTRY');
-{$endif}
-outinfo('*****');
- with info do begin
-  if sf_constructor in contextstack[stackindex-1].d.subdef.flags then begin
-   with additem^ do begin
-    op:= @initclassop;
-   end;
-  end;
- end;
-end;
-*)
+
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;

@@ -219,10 +219,10 @@ begin
   pb:= pc^.branch;
 {$ifdef mse_debugparser1}
   if bo1 then begin
-   outinfo('^ '+pc^.caption); //push context
+   writeln('^ '+pc^.caption); //push context
   end
   else begin
-   outinfo('> '+pc^.caption); //switch context
+   writeln('> '+pc^.caption); //switch context
   end;
 {$endif}
   if (pc^.handleentry <> nil) then begin
@@ -325,9 +325,9 @@ begin
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
-{$ifdef mse_debugparser1}
-  outinfo('****');
-{$endif}
+//{$ifdef mse_debugparser1}
+//  outinfo('****');
+//{$endif}
   while true do begin
    if stackindex <= stacktopbefore then begin
     break;
@@ -512,13 +512,13 @@ handlelab:
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser1}
-     outinfo('! after0a');
+     writeln('! after0a');
 {$endif}
      goto handlelab;    
     end;
 {$ifdef mse_debugparser1}
     if not pc1^.continue and (pc^.next = nil) then begin
-     outinfo('! after0b');
+     writeln('! after0b');
     end;
 {$endif}
    until pc1^.continue or (pc^.next <> nil) or 
@@ -564,13 +564,13 @@ handlelab:
 //    kind:= ck_none;
    end;
 {$ifdef mse_debugparser1}
-   outinfo('! after1');
+   writeln('! after1');
 {$endif}
   end;
 parseend:
 {$ifdef mse_debugparser1}
   if not stopparser then begin
-   outinfo('! after2');
+   writeln('! after2');
   end;
 {$endif}
   setlength(ops,opcount);

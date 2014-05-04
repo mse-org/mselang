@@ -1239,9 +1239,9 @@ end;
 
  
 {$ifdef mse_debugparser}
-procedure outhandle({const info: pparseinfoty;} const text: string);
+procedure outhandle(const text: string);
 begin
- writeln(' !!!handle!!! ',text);
+ outinfo('*'+text+'*');
 end;
 
 procedure outinfo(const text: string);

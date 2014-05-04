@@ -327,15 +327,7 @@ begin
   end;
  end;
 end;
-(*
-procedure handlearraydefstart();
-begin
-{$ifdef mse_debugparser}
- outhandle('ARRAYDEFSTART');
-{$endif}
-outinfo('****');
-end;
-*)
+
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 begin
  with typedata^ do begin
@@ -551,23 +543,6 @@ begin
 {$endif}
  tokenexpectederror(']',erl_fatal);
 end;
-(*
-procedure handlearrayindex2();
-begin
-{$ifdef mse_debugparser}
- outhandle('ARRAYINDEX');
-{$endif}
-outinfo('***');
- with info^,contextstack[stacktop] do begin
-  if d.kind <> ck_fieldtype then begin
-   internalerror('H20140327A');
-   exit;
-  end;
-  if not (d.typ.kind in ordinalk
-  dec(stackindex,1);
- end;
-end;
-*)
 
 procedure handleindexstart();
 begin

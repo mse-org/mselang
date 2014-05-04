@@ -185,7 +185,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFRETURN');
 {$endif}
-outinfo('***');
  with info do begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(

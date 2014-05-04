@@ -1226,7 +1226,7 @@ begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
      ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
-     ' V:'+inttostr(virtualindex);
+     ' virt:'+inttostr(virtualindex)+' addr:'+inttostr(impl);
     end;
    end;
   end;

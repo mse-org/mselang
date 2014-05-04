@@ -842,15 +842,7 @@ begin
   dec(stacktop);
  end;
 end;
-(*
-procedure handlefact2();
-begin
-{$ifdef mse_debugparser}
- outhandle('FACT2');
-{$endif}
-outinfo('****');
-end;
-*)
+
 procedure handlenegfact;
 var
  po1: ptypedataty;
@@ -1302,7 +1294,6 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VALUEIDENTIFIER');
 {$endif}
-outinfo('***');
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
@@ -1766,20 +1757,6 @@ begin
   stacktop:= stackindex;
  end;
 end;
-
-(*
-procedure handlevar();
-begin
-{$ifdef mse_debugparser}
- outhandle('VAR');
-{$endif}
-outinfo('***');
- with info^,contextstack[stacktop] do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-*)
 
 procedure handlevardefstart();
 begin
@@ -2258,17 +2235,7 @@ begin
   end;
  end;
 end;
-(*
-procedure handleleftside();
-begin
-{$ifdef mse_debugparser}
- outhandle('HANDLELEFTSIDE');
-{$endif}
-outinfo('***');
- with info do begin
- end;
-end;
-*)
+
 procedure handlestatementexit();
 begin
 {$ifdef mse_debugparser}
@@ -2612,18 +2579,7 @@ begin
   end;
  end;
 end;
-(*
-procedure handlestring();
-begin
-{$ifdef mse_debugparser}
- outhandle('STRING');
-{$endif}
-outinfo('****');
- with info do begin
-  dec(stackindex);
- end;
-end;
-*)
+
 procedure copystring();
 begin
 {$ifdef mse_debugparser}
