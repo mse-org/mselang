@@ -447,6 +447,25 @@ end;
 
 type
  resolvehandlerty = procedure(const listitem: pointer);
+
+procedure invert(const alist: linklistty; var achain: listadty);
+var
+ s,s1,d: listadty;
+begin
+ if achain <> 0 then begin
+  d:= 0;
+  s:= achain;
+  repeat
+   with plinkheaderty(alist.list+s)^ do begin
+    s1:= next;
+    next:= d;
+   end;
+   d:= s;
+   s:= s1;
+  until s = 0;
+  achain:= d;
+ end;
+end;
  
 procedure resolve(var alist: linklistty; const handler: resolvehandlerty;
                                                          var achain: listadty);
@@ -664,6 +683,7 @@ begin
   for int1:= 0 to pendingcount-1 do begin
    with ptypedataty(ele.eledataabs(pendings[int1].ref))^ do begin
     include(infoclass.flags,icf_virtualtablevalid);
+//    invert(classdescendlist,infoclass.pendingdescends);
     resolve(classdescendlist,@resolveclassdescend,infoclass.pendingdescends);
    end;
   end;
