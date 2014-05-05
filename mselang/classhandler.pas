@@ -208,7 +208,7 @@ begin
        copyvirtualtable(infoclass.defs,classdefs1,infoclass.virtualcount);
       end
       else begin
-       regclassdescendant(d.typ.typedata,ancestor);
+       regclassdescendent(d.typ.typedata,ancestor);
       end;
      end;
     end;
@@ -282,23 +282,6 @@ begin
  with info,contextstack[stackindex-1] do begin
   checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset);
  end;
- {
- with info do begin
-  ele.addelement(contextstack[stackindex+2].d.ident.ident,
-       currentclassvislevel,ek_var,po1);
-  if po1 = nil then begin
-   identerror(2,err_duplicateidentifier);   
-  end;
-  ele1:= ele.elementparent;
-  classesscopereset();
-  if findkindelementsdata(3,[ek_type],vis_max,po2) then begin
-  end
-  else begin
-   identerror(stacktop-stackindex,err_identifiernotfound);
-  end;
-  ele.elementparent:= ele1;
- end;
- }
 end;
 
 procedure handlemethprocedureentry();

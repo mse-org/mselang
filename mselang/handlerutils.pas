@@ -42,6 +42,27 @@ type
   opname: string;
  end;
 
+ linkheaderty = record
+  next: listadty; //offset from list
+ end;
+ plinkheaderty = ^linkheaderty;
+ linkdataty = record
+  header: linkheaderty;
+  data: record
+  end;
+ end;
+ plinkdataty = ^linkdataty;
+
+ linklistty = record
+  itemsize: integer;
+  list: pointer;
+  current: listadty;  //offset from list
+  capacity: listadty; //offset from list
+  deleted: listadty;
+ end;
+
+ resolvehandlerty = procedure(var itemdata);
+
 var
  sysdatatypes: array[systypety] of typeinfoty;
  resultident: identty;
@@ -141,6 +162,12 @@ procedure setcurrentlocbefore(const indexoffset: integer);
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
 
+procedure clearlist(var alist: linklistty; const aitemsize: integer);
+function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+procedure deletelistchain(var alist: linklistty; const achain: listadty);
+procedure invertlist(const alist: linklistty; var achain: listadty);
+procedure resolvelist(var alist: linklistty; const handler: resolvehandlerty;
+                                                         var achain: listadty);
 procedure init();
 procedure deinit();
 
@@ -1440,4 +1467,91 @@ begin
  end;
 end;
 {$endif}
+
+procedure clearlist(var alist: linklistty; const aitemsize: integer);
+begin
+ with alist do begin
+  itemsize:= aitemsize;
+  if list <> nil then begin
+   freemem(list);
+  end;
+  list:= nil;
+  current:= 0;
+  capacity:= 0;
+  deleted:= 0;  
+ end;
+end;
+
+function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+var
+ li1: listadty;
+begin
+ with alist do begin
+  li1:= deleted;
+  if li1 = 0 then begin
+   current:= current + itemsize;
+   if current >= capacity then begin
+    capacity:= 2*capacity + 256*itemsize;
+    reallocmem(list,capacity);
+   end;
+   li1:= current;
+   result:= list+li1;
+  end
+  else begin
+   result:= list+li1;
+   deleted:= plinkheaderty(result)^.next;
+  end;
+  plinkheaderty(result)^.next:= aitem;
+  aitem:= li1;  
+ end; 
+end; 
+
+procedure deletelistchain(var alist: linklistty; const achain: listadty);
+begin
+ with alist do begin
+  plinkheaderty(list+achain)^.next:= deleted;
+  deleted:= achain;
+ end; 
+end;
+
+procedure invertlist(const alist: linklistty; var achain: listadty);
+var
+ s,s1,d: listadty;
+begin
+ if achain <> 0 then begin
+  d:= 0;
+  s:= achain;
+  repeat
+   with plinkheaderty(alist.list+s)^ do begin
+    s1:= next;
+    next:= d;
+   end;
+   d:= s;
+   s:= s1;
+  until s = 0;
+  achain:= d;
+ end;
+end;
+ 
+procedure resolvelist(var alist: linklistty; const handler: resolvehandlerty;
+                                                         var achain: listadty);
+var
+ ad1: listadty;
+ po1: plinkheaderty;
+begin
+ if achain <> 0 then begin
+  ad1:= achain;
+  with alist do begin
+   while ad1 <> 0 do begin
+    po1:= alist.list+ad1;
+    handler(po1^);
+    ad1:= po1^.next;
+   end;
+   plinkheaderty(list+achain)^.next:= deleted;
+   deleted:= achain;
+   achain:= 0;
+  end;
+ end;
+end;
+
 end.

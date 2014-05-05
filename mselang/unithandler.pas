@@ -36,7 +36,7 @@ procedure forwardresolve(const aforward: forwardindexty);
 procedure checkforwarderrors(const aforward: forwardindexty);
 
 procedure regclass(const aclass: elementoffsetty);
-procedure regclassdescendant(const aclass: elementoffsetty;
+procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 procedure handleunitend();
 procedure copyvirtualtable(const source,dest: dataoffsty;
@@ -378,117 +378,6 @@ begin
 end;
 
 type
-// listadty = longword;
-
- linkheaderty = record
-  next: listadty; //offset from list
- end;
- plinkheaderty = ^linkheaderty;
- linkdataty = record
-  header: linkheaderty;
-  data: record
-  end;
- end;
- plinkdataty = ^linkdataty;
-
- linklistty = record
-  itemsize: integer;
-  list: pointer;
-  current: listadty;  //offset from list
-  capacity: listadty; //offset from list
-  deleted: listadty;
- end;
-
-procedure clearlist(var alist: linklistty; const aitemsize: integer);
-begin
- with alist do begin
-  itemsize:= aitemsize;
-  if list <> nil then begin
-   freemem(list);
-  end;
-  list:= nil;
-  current:= 0;
-  capacity:= 0;
-  deleted:= 0;  
- end;
-end;
-
-function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
-var
- li1: listadty;
-begin
- with alist do begin
-  li1:= deleted;
-  if li1 = 0 then begin
-   current:= current + itemsize;
-   if current >= capacity then begin
-    capacity:= 2*capacity + 256*itemsize;
-    reallocmem(list,capacity);
-   end;
-   li1:= current;
-   result:= list+li1;
-  end
-  else begin
-   result:= list+li1;
-   deleted:= plinkheaderty(result)^.next;
-  end;
-  plinkheaderty(result)^.next:= aitem;
-  aitem:= li1;  
- end; 
-end; 
-
-procedure deletelistchain(var alist: linklistty; const achain: listadty);
-begin
- with alist do begin
-  plinkheaderty(list+achain)^.next:= deleted;
-  deleted:= achain;
- end; 
-end;
-
-type
- resolvehandlerty = procedure(const listitem: pointer);
-
-procedure invert(const alist: linklistty; var achain: listadty);
-var
- s,s1,d: listadty;
-begin
- if achain <> 0 then begin
-  d:= 0;
-  s:= achain;
-  repeat
-   with plinkheaderty(alist.list+s)^ do begin
-    s1:= next;
-    next:= d;
-   end;
-   d:= s;
-   s:= s1;
-  until s = 0;
-  achain:= d;
- end;
-end;
- 
-procedure resolve(var alist: linklistty; const handler: resolvehandlerty;
-                                                         var achain: listadty);
-var
- ad1: listadty;
- po1: plinkheaderty;
-begin
- if achain <> 0 then begin
-  ad1:= achain;
-  with alist do begin
-   while ad1 <> 0 do begin
-    po1:= alist.list+ad1;
-    handler(po1);
-    ad1:= po1^.next;
-   end;
-   plinkheaderty(list+achain)^.next:= deleted;
-   deleted:= achain;
-   achain:= 0;
-  end;
- end;
-end;
-
-type
  classdescendinfoty = record
   header: linkheaderty;
   itemcount: integer;
@@ -506,7 +395,7 @@ var
 var
  classdescendlist: linklistty;
  
-procedure regclassdescendant(const aclass: elementoffsetty;
+procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 var
  po1: pclassdescendinfoty;
@@ -666,9 +555,9 @@ begin
  until pd >= pe;
 end;
 
-procedure resolveclassdescend(const listitem: pointer);
+procedure resolveclassdescend(var itemdata);
 begin
- with pclassdescendinfoty(listitem)^ do begin
+ with classdescendinfoty(itemdata) do begin
   copyvirtualtable(source,dest,itemcount);
  end;
 end;
@@ -683,8 +572,8 @@ begin
   for int1:= 0 to pendingcount-1 do begin
    with ptypedataty(ele.eledataabs(pendings[int1].ref))^ do begin
     include(infoclass.flags,icf_virtualtablevalid);
-//    invert(classdescendlist,infoclass.pendingdescends);
-    resolve(classdescendlist,@resolveclassdescend,infoclass.pendingdescends);
+    resolvelist(classdescendlist,@resolveclassdescend,
+                                              infoclass.pendingdescends);
    end;
   end;
   pendings:= nil;
