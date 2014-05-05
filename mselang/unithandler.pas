@@ -583,7 +583,7 @@ end;
 
 procedure clear;
 begin
- clearlist(classdescendlist,sizeof(classdescendinfoty));
+ clearlist(classdescendlist,sizeof(classdescendinfoty),256);
  
  links:= nil;
  linkindex:= 0;

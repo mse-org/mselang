@@ -55,6 +55,7 @@ type
 
  linklistty = record
   itemsize: integer;
+  mincapacity: integer;
   list: pointer;
   current: listadty;  //offset from list
   capacity: listadty; //offset from list
@@ -162,7 +163,8 @@ procedure setcurrentlocbefore(const indexoffset: integer);
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
 
-procedure clearlist(var alist: linklistty; const aitemsize: integer);
+procedure clearlist(var alist: linklistty; const aitemsize: integer;
+                                              const amincapacity: integer);
 function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
 procedure deletelistchain(var alist: linklistty; const achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
@@ -1468,10 +1470,12 @@ begin
 end;
 {$endif}
 
-procedure clearlist(var alist: linklistty; const aitemsize: integer);
+procedure clearlist(var alist: linklistty; const aitemsize: integer;
+                                                 const amincapacity: integer);
 begin
  with alist do begin
   itemsize:= aitemsize;
+  mincapacity:= amincapacity*aitemsize;
   if list <> nil then begin
    freemem(list);
   end;
@@ -1491,7 +1495,7 @@ begin
   if li1 = 0 then begin
    current:= current + itemsize;
    if current >= capacity then begin
-    capacity:= 2*capacity + 256*itemsize;
+    capacity:= 2*capacity + mincapacity;
     reallocmem(list,capacity);
    end;
    li1:= current;
