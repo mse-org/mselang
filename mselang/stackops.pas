@@ -49,7 +49,7 @@ type
  frameinfoty = record
   pc: vpointerty;
   frame: vpointerty;
-  link: vpointerty;
+  link: vpointerty;     //todo: remove link field
  end;
  infoopty = procedure(const opinfo: popinfoty);
 
@@ -114,6 +114,7 @@ procedure pushglob;
 procedure pushloc8;
 procedure pushloc16;
 procedure pushloc32;
+procedure pushlocpo;
 procedure pushloc;
 
 procedure pushlocindi8;
@@ -528,7 +529,7 @@ end;
 //todo: make special locvar access funcs for inframe variables
 //and loop unroll
 
-function locaddress(const aaddress: locdataaddressty): pointer;// inline;
+function locaddress(const aaddress: locdataaddressty): pointer; inline;
 var
  i1: integer;
  po1: pointer;
@@ -600,6 +601,12 @@ end;
 procedure pushloc32;
 begin
  pv32ty(stackpush(4))^:= pv32ty(locaddress(oppo^.par.locdataaddress))^;
+end;
+
+procedure pushlocpo;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= 
+                              ppointer(locaddress(oppo^.par.locdataaddress))^;
 end;
 
 procedure pushloc;

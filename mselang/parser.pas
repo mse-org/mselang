@@ -325,9 +325,6 @@ begin
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
   debugsource:= source.po;
-//{$ifdef mse_debugparser1}
-//  outinfo('****');
-//{$endif}
   while true do begin
    if stackindex <= stacktopbefore then begin
     break;
@@ -335,7 +332,6 @@ begin
    if (source.po^ = #0) and not popincludefile() then begin
     break;
    end;
-//  while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
    while true do begin
     if stackindex <= stacktopbefore then begin
      break;
@@ -343,8 +339,6 @@ begin
     if (source.po^ = #0) and not popincludefile() then begin
      break;
     end;
-//   while (source.po^ <> #0) and (stackindex > stacktopbefore) do begin
-            //check context branches
     pb:= pc^.branch;
     if pb = nil then begin
      break; //no branch
@@ -356,9 +350,6 @@ begin
     else begin
      while pb^.flags <> [] do begin
            //check match
-//      if (source.po^ = #0) and not popincludefile() then begin
-//       break;
-//      end;
       po1:= source.po;
       linebreaks:= 0;
       if bf_keyword in pb^.flags then begin
@@ -561,7 +552,6 @@ handlelab:
       end;
      end;
     end;
-//    kind:= ck_none;
    end;
 {$ifdef mse_debugparser1}
    writeln('! after1');
@@ -579,7 +569,6 @@ parseend:
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
-//  sourcebef:= sourcebefbefore;
  {$ifdef mse_debugparser}
   debugsource:= debugsourcebefore;
  {$endif}

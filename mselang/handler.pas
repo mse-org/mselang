@@ -1135,6 +1135,7 @@ var
      end;
      inc(po5);
     end;
+              //todo: exeenv flag for constructor and destructor
     with contextstack[stackindex] do begin //result data
      if [sf_constructor,sf_function] * asub^.flags <> [] then begin
       po6:= ele.eledataabs(po5^);
@@ -1155,14 +1156,25 @@ var
        op:= @pushstackaddr;
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
-      if (sf_constructor in asub^.flags) then begin
+      if sf_constructor in asub^.flags then begin
        pushinsertconstaddress(parent-stackindex,false,po3^.infoclass.defs);
                                    //class type
       end;
-outinfo('***');
      end
      else begin
       d.kind:= ck_subcall;
+      if (sf_method in asub^.flags) and (idents.high = 0) then begin
+                 //owned method
+       if ele.findcurrent(tks_self,[],allvisi,po6) <> ek_var then begin
+        internalerror('H20140505A');
+        exit;
+       end;
+       with insertitem(parent-stackindex,false)^ do begin
+        op:= @pushlocpo;
+        par.locdataaddress.linkcount:= -1;
+        par.locdataaddress.offset:= po6^.address.address;
+       end;
+      end;
      end;
     end;
    end;
@@ -1332,14 +1344,12 @@ begin
   end;
 
   po2:= @po1^.data;
-//  offs1:= 0;
   with contextstack[stackindex] do begin
    d.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
      if po1^.header.kind = ek_field then begin
       with pfielddataty(po2)^ do begin
-//       offs1:= offs1+offset;
        if isgetfact then begin
         if vf_classfield in flags then begin
          if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
@@ -1351,8 +1361,6 @@ begin
          internalerror('H201400427B');
          goto endlab;
         end;
-//        pushinsert(-1,false,pvardataty(ele.eledataabs(ele2))^.address,
-//                                                               offset,true);
         d.kind:= ck_ref;
         d.datatyp.typedata:= vf.typ;
         d.datatyp.indirectlevel:= indirectlevel;
@@ -1365,12 +1373,9 @@ begin
                   //todo: no double copy by handlefact
         case d.kind of
          ck_ref: begin
-//          pushinsert(0,false,d.ref.address,offset,false);
-//          d.kind:= ck_fact;
           d.datatyp.typedata:= vf.typ;
           d.datatyp.indirectlevel:= indirectlevel;
           d.ref.offset:= offset;
-//          d.indirection:= -1;
          end;
          ck_fact: begin
           internalerror('N20140427E');

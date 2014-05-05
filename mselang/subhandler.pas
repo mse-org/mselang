@@ -612,7 +612,6 @@ begin
    with contextstack[stackindex-1] do begin
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
-//    stacktop:= stackindex;
     d.subdef.paramsize:= paramsize1;
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(po1);
@@ -725,17 +724,11 @@ begin
   with po1^ do begin
    address:= opcount;
   end;
-  {
-  if subdef.varsize <> 0 then begin
-   with additem()^ do begin
-    op:= @locvarpushop;
-    par.stacksize:= subdef.varsize;
-   end;
-  end;
-  }
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
+   po1^.flags:= po2^.flags;
+   po1^.virtualindex:= po2^.virtualindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
     if currentclass = 0 then begin
      internalerror('H20140502A');
@@ -753,7 +746,6 @@ begin
    po3:= ele.eledataabs(currentclass);
    with additem^,par.initclass do begin
     op:= @initclassop;
-//    classdef:= po3^.infoclass.defs;
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;

@@ -116,6 +116,8 @@ type
                  var adata): boolean; //returns terminated flag
    function findcurrent(const aident: identty; const akinds: elementkindsty;
              avislevel: visikindsty; out element: elementoffsetty): boolean;
+   function findcurrent(const aident: identty; const akinds: elementkindsty;
+             avislevel: visikindsty; out adata: pointer): elementkindty;
                   //searches in current scope and ancestors
    function findupward(const aident: identty; const akinds: elementkindsty;
                   const avislevel: visikindsty;
@@ -872,6 +874,21 @@ endlab:
  result:= element >= 0;
  if result then begin
   flastdescendent:= classdescend;
+ end;
+end;
+
+function telementhashdatalist.findcurrent(const aident: identty;
+             const akinds: elementkindsty;
+             avislevel: visikindsty; out adata: pointer): elementkindty;
+var
+ ele1: elementoffsetty;
+ po1: pelementinfoty;
+begin
+ result:= ek_none;
+ if findcurrent(aident,akinds,avislevel,ele1) then begin
+  po1:= eleinfoabs(ele1);
+  result:= po1^.header.kind;
+  adata:= @po1^.data;
  end;
 end;
 
