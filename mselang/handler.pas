@@ -1145,7 +1145,8 @@ var
       else begin
        po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
       end;
-      int1:= pushinsertvar(0,false,po3);
+      int1:= pushinsertvar(parent-stackindex,false,po3); 
+                                    //alloc space for return value
       d.fact.datasize:= int1;
       d.kind:= ck_subres;
       d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
@@ -1155,15 +1156,17 @@ var
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
       if (sf_constructor in asub^.flags) then begin
-       pushinsertconstaddress(0,false,po3^.infoclass.defs); //class type
+       pushinsertconstaddress(parent-stackindex,false,po3^.infoclass.defs);
+                                   //class type
       end;
+outinfo('***');
      end
      else begin
       d.kind:= ck_subcall;
      end;
     end;
    end;
-   if sf_virtual in asub^.flags then begin
+   if asub^.flags * [sf_virtual,sf_override] <> [] then begin
     with additem()^ do begin
      par.virtcallinfo.virtoffset:= asub^.virtualindex*sizeof(opaddressty)+
                                                       sizeof(classdefheaderty);

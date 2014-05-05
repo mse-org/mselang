@@ -758,7 +758,7 @@ begin
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
   end;
-  if subdef.varsize <> 0 then begin
+  if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin
     op:= @locvarpushop;
     par.stacksize:= subdef.varsize;
