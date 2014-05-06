@@ -35,6 +35,10 @@ uses
  PASCALSTRING{','PASCALSTRING}
      first character of strings removed for const def ex:
       '.classes' -> tks_classes
+'@.tokens'
+ PASCALSTRING{','PASCALSTRING}
+     ex:
+      '.result' -> tk_result
 CONTEXT,[NEXT]['-']','[ENTRYHANDLER]','[EXITHANDLER]
         (['*']['^'|'!']) | (['^'|'!']['*']) ['+']['>']
     ENTRYHANDLER called at contextstart
@@ -398,6 +402,7 @@ var
  mstr1: msestring;
  branflags1: branchflagsty;
  chars1: charsetty;
+ kw1: keywordty;
 const
  contlast = 3; 
 begin
@@ -518,6 +523,13 @@ begin
               setstring(tokens[high(tokens)],po3,po1-po3);
               if name = '.internaltokens' then begin
                nextid;
+              end
+              else begin
+               if name = '.tokens' then begin
+                if not getkeyword(tokens[high(tokens)],kw1) then begin
+                 exit;
+                end;
+               end;
               end;
              end;
              if po1^ = #0 then begin
