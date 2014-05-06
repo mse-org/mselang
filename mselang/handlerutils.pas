@@ -66,7 +66,6 @@ type
 
 var
  sysdatatypes: array[systypety] of typeinfoty;
- resultident: identty;
 
 const
  stackdatakinds: array[datakindty] of stackdatakindty = 
@@ -1115,7 +1114,6 @@ begin
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;
- resultident:= getident('result');
 end;
 
 procedure deinit;

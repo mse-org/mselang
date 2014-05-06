@@ -321,7 +321,7 @@ begin
  with info,contextstack[stackindex] do begin
   d.kind:= ck_ident;
 //  d.ident.paramkind:= pk_var;
-  d.ident.ident:= resultident;
+  d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin
    if sf_functiontype in d.subdef.flags then begin
     errormessage(err_syntax,[';']);
@@ -487,7 +487,7 @@ begin
    inc(stacktop);
    with contextstack[stacktop] do begin
     d.kind:= ck_ident;
-    d.ident.ident:= resultident;
+    d.ident.ident:= tk_result;
    end;
    inc(stacktop);
    with contextstack[stacktop] do begin
