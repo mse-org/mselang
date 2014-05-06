@@ -32,12 +32,10 @@ procedure handlerecorddeferror();
 procedure handlerecordtype();
 procedure handlerecordfield();
 
-//procedure handlearraydefstart();
 procedure handlearraytype();
 procedure handlearraydeferror1();
 procedure handlearrayindexerror1();
 procedure handlearrayindexerror2();
-//procedure handlearrayindex2();
 
 procedure handleindexstart();
 procedure handleindex();
@@ -71,6 +69,7 @@ begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
+  d.typ.flags:= [];
  end;
 end;
 
@@ -83,6 +82,7 @@ begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
+  d.typ.flags:= [];
  end;
 end;
 
@@ -93,13 +93,13 @@ begin
 {$endif}
  with info,contextstack[stackindex] do begin
   inc(d.typ.indirectlevel);
-//  include(d.typ.flags,tf_reference);
  end;
 end;
 
 procedure handlechecktypeident();
 var
  po1,po2: pelementinfoty;
+ po3: ptypedataty;
  idcontext: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
@@ -111,16 +111,19 @@ begin
    exit;
   end;
   if findkindelements(1,[ek_type],allvisi,po2) then begin
-//   d.kind:= ck_type;
    d.typ.typedata:= ele.eleinforel(po2);
-//   d.typ.indirectlevel:= 0;
+   d.typ.flags:= ptypedataty(@po2^.data)^.flags;
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[stackindex-3];
     if idcontext^.d.kind = ck_ident then begin
      po1:= ele.addelement(idcontext^.d.ident.ident,allvisi,ek_type);
      if po1 <> nil then begin
-      ptypedataty(@po1^.data)^:= ptypedataty(@po2^.data)^;
-      inc(ptypedataty(@po1^.data)^.indirectlevel,d.typ.indirectlevel);
+      po3:= @po1^.data;
+      po3^:= ptypedataty(@po2^.data)^;
+      inc(po3^.indirectlevel,d.typ.indirectlevel);
+      if po3^.indirectlevel > 0 then begin
+       exclude(po3^.flags,tf_managed);
+      end;
      end
      else begin //duplicate
       identerror(-3,err_duplicateidentifier);
@@ -164,6 +167,7 @@ begin
      d.typ.typedata:= ele.eledatarel(po1);
      with po1^ do begin
       //todo: check datasize
+      flags:= [];
       indirectlevel:= d.typ.indirectlevel;
       d.typ.indirectlevel:= 0;
       bitsize:= 32;
@@ -256,12 +260,14 @@ begin
    with contextstack[stackindex+3] do begin
     po1^.vf.typ:= d.typ.typedata;
     po1^.indirectlevel:= d.typ.indirectlevel;
-   end;
-   if po1^.indirectlevel = 0 then begin      //todo: alignment
-    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
-   end
-   else begin
-    size1:= pointersize;
+    po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
+    if po1^.indirectlevel = 0 then begin      //todo: alignment
+     d.typ.flags:= d.typ.flags + po2^.flags;   //track tf_managed
+     size1:= po2^.bytesize;
+    end
+    else begin
+     size1:= pointersize;
+    end;
    end;
    aoffset:= aoffset+size1;
    with contextstack[stackindex].d do begin
@@ -300,23 +306,6 @@ begin
 {$endif}
  with info do begin
   ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
-{
-  int2:= 0;
-  for int1:= stackindex+1 to stacktop do begin
-   with contextstack[int1].d do begin
-    po1:= ele.eledataabs(field.fielddata);
-    po1^.offset:= int2;
-    if po1^.indirectlevel = 0 then begin
-     size1:= ptypedataty(ele.eledataabs(po1^.typ))^.bytesize;
-    end
-    else begin
-     size1:= pointersize;
-    end;
-    int2:= int2 + size1;
-                //todo: alignment
-   end;
-  end;
-}
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    kind:= dk_record;
@@ -324,6 +313,7 @@ begin
    bytesize:= contextstack[stackindex].d.rec.fieldoffset;
    bitsize:= bytesize*8;
    indirectlevel:= d.typ.indirectlevel;
+   flags:= d.typ.flags;
   end;
  end;
 end;
@@ -397,19 +387,15 @@ begin
  end;
 end;
 
-//type t1 = array[1..0] of integer; 
 procedure handlearraytype();
 var
  int1,int2: integer;
-// po2: pelementoffsetty;
  arty: ptypedataty;
-// itemty: ptypedataty;
  itemtyoffs: elementoffsetty;
-// itemsize: integer;
  indilev: integer;
  po1: ptypedataty;
  id1: identty;
- {min,max,}totsize,si1: int64;
+ totsize,si1: int64;
 
  procedure err(const aerror: errorty);
  begin
@@ -421,8 +407,11 @@ var
    contextstack[stackindex-1].d.kind:= ck_none;
   end;
  end;
+
 var
  range: ordrangety;
+ flags1: typeflagsty;
+ 
 label
  endlab;
 begin
@@ -436,9 +425,11 @@ begin
    with contextstack[stacktop] do begin
     itemtyoffs:= d.typ.typedata;
     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
+     flags1:= flags;
      indilev:= d.typ.indirectlevel;
      if indilev + indirectlevel > 0 then begin
       totsize:= pointersize;
+      exclude(flags1,tf_managed);
      end
      else begin
       totsize:= bytesize;
@@ -476,6 +467,10 @@ begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
+     arty^.flags:= flags1;
+     if indilev > 0 then begin
+      exclude(flags1,tf_managed);
+     end;
      with arty^.infoarray do begin
       itemtypedata:= itemtyoffs;
       itemindirectlevel:= indilev;
@@ -503,7 +498,7 @@ begin
       bitsize:= 0;
       bytesize:= totsize;
       datasize:= das_none;
-      kind:= dk_array;      
+      kind:= dk_array;
      end;
      itemtyoffs:= ele.eledatarel(arty);
     end;
@@ -551,7 +546,6 @@ begin
 {$endif}
  with info,contextstack[stackindex] do begin
   d.kind:= ck_index;
-//  d.opshiftmark:= opshift;
  end;
 end;
 
@@ -563,18 +557,15 @@ var
  offs: dataoffsty;
  int1: integer;
  fullconst: boolean;
-// opshiftcorr: integer;
 label
  errlab;
 begin
-// v2[4]:= 1;
 {$ifdef mse_debugparser}
  outhandle('INDEX');
 {$endif}
  with info,contextstack[stackindex-1] do begin
   if stacktop - stackindex > 0 then begin
    offs:= 0;
-//   opshiftcorr:= opshift-contextstack[stackindex].d.opshiftmark;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.datatyp.typedata);
@@ -636,7 +627,6 @@ begin
        op:= @addint32;
       end;
       d.kind:= ck_reffact;
-//      inc(d.datatyp.indirectlevel)
      end;
     end;
     else begin

@@ -1152,6 +1152,20 @@ end;
 
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
+
+ function dumptyp(const atyp: elementoffsetty): msestring;
+ var
+  po2: pelementinfoty;
+ begin
+  po2:= eleinfoabs(atyp);
+  result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
+  with ptypedataty(@po2^.data)^ do begin
+   result:= result+' K:'+getenumname(typeinfo(kind),ord(kind))+
+   ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
+    ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
+  end;
+ end; //dumptyp
+ 
 var
  int1,int2,int3,int4,int5,int6: integer;
  po1,po2,po3: pelementinfoty;
@@ -1190,12 +1204,15 @@ begin
                inttostr(address.framelevel)+' '+
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
+     mstr1:= mstr1 + dumptyp(vf.typ);
+     {
      po2:= eleinfoabs(vf.typ);
      mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      end;
+     }
     end;
    end;
    ek_field: begin
@@ -1204,19 +1221,24 @@ begin
           ' I:'+inttostr(indirectlevel)+' '+
            settostring(ptypeinfo(typeinfo(flags)),
                                          integer(flags),false);
+     mstr1:= mstr1+dumptyp(vf.typ);
+    {
      po2:= eleinfoabs(vf.typ);
      mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
      with ptypedataty(@po2^.data)^ do begin
       mstr1:= mstr1+' K:'+getenumname(typeinfo(kind),ord(kind))+
        ' S:'+inttostr(bytesize);
      end;
+    }
     end;
    end;
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+
+     mstr1:= mstr1+lineend+dumptyp(off1);
+     {
      ' K:'+getenumname(typeinfo(kind),ord(kind))+
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
+     }
      if kind in [dk_class] then begin
       mstr1:= mstr1+' A:'+inttostr(ancestor);
       case kind of

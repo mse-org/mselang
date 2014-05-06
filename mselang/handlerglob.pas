@@ -98,8 +98,9 @@ type
   flags: infoclassflagsty;
  end;
  pinfoclassty = ^infoclassty;
-  
+
  typedataty = record
+  flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
   bytesize: integer;

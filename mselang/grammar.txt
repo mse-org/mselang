@@ -33,11 +33,13 @@
  'handler','unithandler','classhandler','typehandler','subhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
-tokens,,,
- 'result'.,
+@.tokens
+ 'result'
 start,nounit,,
  ${whitespace} 
  'unit'.,unit0-
+ 'result'.,
+ 'result'.,
 nounit,,,handlenouniterror
 unit0,nounitname,,
  ${whitespace}

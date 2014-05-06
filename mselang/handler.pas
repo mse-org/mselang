@@ -1843,12 +1843,10 @@ begin
  outhandle('POINTERVAR');
 {$endif}
  with info,contextstack[stackindex].d.vari do begin
-//  if tf_reference in flags then begin
   if indirectlevel > 0 then begin
    errormessage(err_typeidentexpected,[]);
   end;
   inc(indirectlevel);
-//  include(flags,tf_reference);
  end;
 end;
 

@@ -187,17 +187,17 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'none'; data: (indirectlevel: 0;
+   (name: 'none'; data: (flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
-   (name: 'bool8'; data: (indirectlevel: 0;
+   (name: 'bool8'; data: (flags: []; indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
-   (name: 'int32'; data: (indirectlevel: 0;
+   (name: 'int32'; data: (flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32;
                  kind: dk_integer; infoint32:(min: minint; max: maxint))),
-   (name: 'flo64'; data: (indirectlevel: 0;
+   (name: 'flo64'; data: (flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64;
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
-   (name: 'string8'; data: (indirectlevel: 0;
+   (name: 'string8'; data: (flags: [tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
                  kind: dk_string8; dummy: 0))
   );
@@ -208,6 +208,7 @@ const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
   );
+    
 { 
 procedure error(const error: comperrorty;
                    const pos: pchar=nil);
@@ -1279,8 +1280,10 @@ procedure outinfo(const text: string);
   with ainfo.datatyp do begin
    po1:= ele.eledataabs(typedata);
    write('T:',typedata,' ',
-          getenumname(typeinfo(datakindty),ord(po1^.kind)),' ',
-          'I:',indirectlevel);
+          getenumname(typeinfo(datakindty),ord(po1^.kind)),
+          ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
+                  integer(po1^.flags),false),
+          ' I:',indirectlevel);
   end;
   write(':',ainfo.indirection,' ');
  end;
@@ -1296,8 +1299,10 @@ procedure outinfo(const text: string);
    else begin
     po1:= ele.eledataabs(typedata);
     write('T:',typedata,' ',
-           getenumname(typeinfo(datakindty),ord(po1^.kind)),' ',
-           'I:',indirectlevel);
+           getenumname(typeinfo(datakindty),ord(po1^.kind)),
+          ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
+                  integer(po1^.flags),false),
+           ' I:',indirectlevel);
    end;
   end;
  end;

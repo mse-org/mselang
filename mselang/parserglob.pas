@@ -190,8 +190,12 @@ type
 
  indirectlevelty = integer;
  framelevelty = integer;
+
+ typeflagty = (tf_managed);
+ typeflagsty = set of typeflagty;   
  
  typeinfoty = record
+  flags: typeflagsty;
   typedata: elementoffsetty;
   indirectlevel: indirectlevelty; //total
  end;

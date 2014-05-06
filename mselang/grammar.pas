@@ -83,11 +83,6 @@ const
   $6EDD6E73,$DDBADCE6,$BB75B9CC,$76EB7398,$EDD6E730,$DBADCE61,$B75B9CC3);
 
 var
- tokensco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'tokens');
  startco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1120,16 +1115,16 @@ uses
  handler,unithandler,classhandler,typehandler,subhandler;
  
 const
- btokens: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_keyword];
-     dest: (context: nil); stack: nil; 
-     keyword: $345678CD{'result'}),
-   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
-   );
- bstart: array[0..5] of branchty = (
+ bstart: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @unit0co); stack: nil; 
      keyword: $68ACF19B{'unit'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: nil); stack: nil; 
+     keyword: $345678CD{'result'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: nil); stack: nil; 
+     keyword: $345678CD{'result'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4862,7 +4857,6 @@ const
    );
 procedure init;
 begin
- tokensco.branch:= @btokens;
  startco.branch:= @bstart;
  startco.next:= @nounitco;
  nounitco.branch:= nil;
@@ -5290,7 +5284,7 @@ end;
 
 function startcontext: pcontextty;
 begin
- result:= @tokensco;
+ result:= @startco;
 end;
 
 initialization
