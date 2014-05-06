@@ -318,9 +318,12 @@ settingsstorage=0
 settingsprojecttree=0
 settingsautoload=0
 settingsautosave=0
-modulenames=0
-moduletypes=0
-modulefiles=0
+modulenames=1
+ MAINFO
+moduletypes=1
+ TMAINFO
+modulefiles=1
+ /home/mse/packs/standard/git/mselang/mselang/main.mfm
 befcommandon=0
 makeoptionson=4
  63
@@ -531,7 +534,7 @@ cy=0
 progparamhistory=0
 envvarons=0
 [layout]
-windowlayout=556
+windowlayout=558
  [mainfo.openform]
  filenames=1
   /home/mse/packs/standard/git/mseide-msegui/lib/common/dialogs/msefiledialogres.mfm
@@ -554,6 +557,7 @@ windowlayout=556
  filehistory=10
   /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
   /home/mse/packs/standard/git/mselang/mselang/mselang.prj
+  /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
   /home/mse/packs/standard/git/mseexperiments/mselang/mse_mselang.prj
   /home/mse/proj/test3/test.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
@@ -561,7 +565,6 @@ windowlayout=556
   /home/mse/packs/standard/git/mseide-msegui/tools/i18n/mse_msei18n.prj
   /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/staticgravitytest.prj
   /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/mse_staticgravitytest.prj
-  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity_unity/mse_staticgravity_unity.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=98
@@ -570,8 +573,10 @@ windowlayout=556
  cx=0
  cy=0
  [mainfo.openfile]
- filenames=0
- filehistory=2
+ filenames=1
+  /home/mse/packs/standard/git/mselang/mselang/main.pas
+ filehistory=3
+  /home/mse/packs/standard/git/mselang/mselang/main.pas
   /home/mse/proj/msegui/testcase/jean-pierre/Demo/main.pas
   /D:/MSE/Livre/DemoMSE/Demo.pas
  filefilterindex=0
@@ -642,7 +647,7 @@ windowlayout=556
  [memoryfo]
  splitdir=0
  useroptions=16507
- stackedunder=findinfilefo
+ stackedunder=cpui386fo
  parent=
  mdistate=0
  nx=0
@@ -669,7 +674,7 @@ windowlayout=556
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=objectinspectorfo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -688,7 +693,7 @@ windowlayout=556
  [findinfilefo]
  splitdir=0
  useroptions=16491
- stackedunder=componentstorefo
+ stackedunder=watchfo
  parent=
  mdistate=0
  nx=0
@@ -792,7 +797,7 @@ windowlayout=556
  [breakpointsfo]
  splitdir=0
  useroptions=16491
- stackedunder=targetconsolefo
+ stackedunder=watchpointsfo
  parent=
  mdistate=0
  nx=0
@@ -813,7 +818,7 @@ windowlayout=556
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=watchfo
+ stackedunder=breakpointsfo
  parent=
  mdistate=0
  nx=0
@@ -838,7 +843,7 @@ windowlayout=556
  [symbolfo]
  splitdir=0
  useroptions=16507
- stackedunder=cpui386fo
+ stackedunder=disassfo
  parent=
  mdistate=0
  nx=0
@@ -995,7 +1000,7 @@ windowlayout=556
  [componentpalettefo]
  splitdir=0
  useroptions=24683
- stackedunder=mainfo.panel1
+ stackedunder=formdesignerfo
  parent=
  mdistate=0
  nx=0
@@ -1053,7 +1058,7 @@ windowlayout=556
  irqoff=0
  splitdir=0
  useroptions=16491
- stackedunder=disassfo
+ stackedunder=componentstorefo
  parent=
  mdistate=0
  nx=0
@@ -1094,18 +1099,27 @@ hintheight=0
 finddtext=
 findhistory=0
 findoptions=1
-editpos=0
-sourcefiles=0
-relpaths=0
-ismoduletexts=0
-modules=0
-moduleoptions=0
-visiblemodules=0
-nomenumodules=0
+editpos=1
+ 0,0
+bookmarks0=0
+sourcefiles=1
+ /home/mse/packs/standard/git/mselang/mselang/main.pas
+relpaths=1
+ main.pas
+ismoduletexts=1
+ 0
+modules=1
+ /home/mse/packs/standard/git/mselang/mselang/main.mfm
+moduleoptions=1
+ 0
+visiblemodules=1
+ -1
+nomenumodules=1
+ 0
 [sourcefo.tabwidget]
 tabsize=134
 firsttab=0
-index=-1
+index=0
 [targetconsole]
 finddtext=
 findhistory=0

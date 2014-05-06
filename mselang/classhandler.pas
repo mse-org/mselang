@@ -190,6 +190,7 @@ begin
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    regclass(d.typ.typedata);
+   flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[stackindex].d.cla;
    infoclass.allocsize:= classinfo1^.fieldoffset;
@@ -280,7 +281,8 @@ begin
  outhandle('CLASSFIELD');
 {$endif}
  with info,contextstack[stackindex-1] do begin
-  checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset);
+  checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset,
+                                   contextstack[stackindex-2].d.typ.flags);
  end;
 end;
 

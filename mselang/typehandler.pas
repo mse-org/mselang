@@ -43,7 +43,8 @@ procedure closesquarebracketexpected();
 procedure closeroundbracketexpected();
 
 procedure checkrecordfield(const avisibility: visikindsty;
-                       const aflags: varflagsty; var aoffset: dataoffsty);
+                       const aflags: varflagsty; var aoffset: dataoffsty;
+                                                  var atypeflags: typeflagsty);
 
 implementation
 uses
@@ -236,7 +237,8 @@ begin
 end;
 
 procedure checkrecordfield(const avisibility: visikindsty;
-                       const aflags: varflagsty; var aoffset: dataoffsty);
+           const aflags: varflagsty; var aoffset: dataoffsty;
+                                      var atypeflags: typeflagsty);
 var
  po1: pfielddataty;
  po2: ptypedataty;
@@ -262,7 +264,7 @@ begin
     po1^.indirectlevel:= d.typ.indirectlevel;
     po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
     if po1^.indirectlevel = 0 then begin      //todo: alignment
-     d.typ.flags:= d.typ.flags + po2^.flags;   //track tf_managed
+     atypeflags:= atypeflags + po2^.flags;    //track tf_managed
      size1:= po2^.bytesize;
     end
     else begin
@@ -290,7 +292,8 @@ begin
  outhandle('RECORDFIELD');
 {$endif}
  with info do begin
-  checkrecordfield(allvisi,[],contextstack[stackindex-1].d.rec.fieldoffset);
+  checkrecordfield(allvisi,[],contextstack[stackindex-1].d.rec.fieldoffset,
+                            contextstack[stackindex-2].d.typ.flags);
  end;
 end;
 
