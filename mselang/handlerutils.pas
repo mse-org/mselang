@@ -169,6 +169,7 @@ procedure deletelistchain(var alist: linklistty; const achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
 procedure resolvelist(var alist: linklistty; const handler: resolvehandlerty;
                                                          var achain: listadty);
+
 procedure init();
 procedure deinit();
 

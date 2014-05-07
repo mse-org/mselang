@@ -24,8 +24,8 @@ function newunit(const aname: string): punitinfoty;
 function loadunit(const aindex: integer): punitinfoty;
 
 procedure setunitname(); //unitname on top of stack
-procedure interfacestop();
-procedure implementationstart();
+//procedure interfacestop();
+procedure handleimplementationentry();
 procedure handleinclude();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: integer);
@@ -119,6 +119,7 @@ begin
  end;
 end;
 
+(*
 procedure interfacestop();
 begin
 {$ifdef mse_debugparser}
@@ -126,26 +127,19 @@ begin
 {$endif}
  with info do begin
   include(unitinfo^.state,us_interfaceparsed);
-{
-  if us_interface in unitinfo^.state then begin
-   unitinfo^.impl.sourceoffset:= source.po-sourcestart;
-   unitinfo^.impl.sourceline:= source.line;
-   unitinfo^.impl.context:= @implementationstartco;
-   unitinfo^.impl.eleparent:= ele.elementparent;
-   stopparser:= true; //stop parsing;
-  end
-}
  end;
 end;
+*)
 
-procedure implementationstart();
+procedure handleimplementationentry();
 var
  po1: pimplementationdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('IMPLEMENTATIONSTART');
+ outhandle('IMPLEMENTATIONENTRY');
 {$endif}
  with info do begin
+  include(unitinfo^.state,us_interfaceparsed);
   if us_implementation in unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
   end
@@ -378,19 +372,13 @@ begin
 end;
 
 type
- classdescendinfoty = record
+ classdescendinfoty = record  //used for copying ancestor virtual method table
   header: linkheaderty;
   itemcount: integer;
   source: dataoffsty;
   dest: dataoffsty;
  end;
  pclassdescendinfoty = ^classdescendinfoty;
- classdescendarty = array of classdescendinfoty;
-var
- classdescendindex: linkindexty;
- deletedclassdescends: linkindexty;
- classdescends: classdescendarty;
-
 
 var
  classdescendlist: linklistty;

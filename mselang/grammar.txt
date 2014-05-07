@@ -95,8 +95,7 @@ commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,,,handlenoimplementationerror
 
-implementation,implementationstart,interfacestop,
-implementationstart,main,implementationstart,
+implementation,main,handleimplementationentry,
 
 main,main1,,
  ${whitespace}

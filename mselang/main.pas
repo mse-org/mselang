@@ -68,6 +68,10 @@ end;
 //begin
 //end;
 
+//procedure test(a: record a: integer end);
+//begin
+//end;
+
 procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: opinfoarty;

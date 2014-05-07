@@ -534,7 +534,7 @@ cy=0
 progparamhistory=0
 envvarons=0
 [layout]
-windowlayout=558
+windowlayout=557
  [mainfo.openform]
  filenames=1
   /home/mse/packs/standard/git/mseide-msegui/lib/common/dialogs/msefiledialogres.mfm
@@ -552,12 +552,12 @@ windowlayout=558
  cy=0
  [mainfo.projectfiledia]
  filenames=1
-  /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
- lastdir=/home/mse/packs/standard/git/mselang/mselang/
- filehistory=10
-  /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
-  /home/mse/packs/standard/git/mselang/mselang/mselang.prj
   /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
+ lastdir=/home/mse/packs/standard/git/mselang/mselang/grammargen/
+ filehistory=10
+  /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
+  /home/mse/packs/standard/git/mselang/mselang/mselang.prj
+  /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
   /home/mse/packs/standard/git/mseexperiments/mselang/mse_mselang.prj
   /home/mse/proj/test3/test.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
@@ -573,8 +573,7 @@ windowlayout=558
  cx=0
  cy=0
  [mainfo.openfile]
- filenames=1
-  /home/mse/packs/standard/git/mselang/mselang/main.pas
+ filenames=0
  filehistory=3
   /home/mse/packs/standard/git/mselang/mselang/main.pas
   /home/mse/proj/msegui/testcase/jean-pierre/Demo/main.pas
@@ -744,10 +743,10 @@ windowlayout=558
  ny=0
  ncx=0
  ncy=0
- x=407
- y=349
- cx=254
- cy=180
+ x=0
+ y=0
+ cx=0
+ cy=0
  rcx=0
  rcy=0
  wsize=0
@@ -1000,7 +999,7 @@ windowlayout=558
  [componentpalettefo]
  splitdir=0
  useroptions=24683
- stackedunder=formdesignerfo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
