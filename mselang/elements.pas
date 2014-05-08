@@ -1261,6 +1261,11 @@ begin
      po3:= po1;
     end;
    end;
+   ek_managed: begin
+    with pmanageddataty(@po1^.data)^ do begin
+     mstr1:= mstr1+' E:'+inttostr(managedele);
+    end;
+   end;
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
