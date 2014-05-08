@@ -1193,9 +1193,9 @@ begin
             ' P:'+inttostr(po1^.header.parent)+' N:$'+
             hextostr(po1^.header.name,8)+' '+
             ' '+identlist.identname(po1^.header.name) + 
+            ' '+getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
              ' V:'+settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
-                                 integer(po1^.header.visibility),false)+' '+
-            getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
+                                 integer(po1^.header.visibility),false);
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
