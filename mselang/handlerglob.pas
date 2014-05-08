@@ -104,6 +104,11 @@ type
  addresskindty = boolean;{(adk_local,adk_global)}
 
  managedtypeprocty = procedure(const aadress: addressinfoty);
+
+ manageddataty = record
+  managedele: elementoffsetty;
+ end;
+ pmanageddataty = ^manageddataty;
   
  typedataty = record
   flags: typeflagsty;
@@ -155,7 +160,7 @@ type
    );
  end;
  ptypedataty = ^typedataty;
-
+ 
  vardestinfoty = record
   address: addressinfoty;
   typ: ptypedataty;

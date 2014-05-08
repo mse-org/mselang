@@ -47,7 +47,7 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils,inifini;
+ handlerutils;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -58,14 +58,14 @@ begin
  elements.init;
  handlerutils.init;
  unithandler.init;
- inifini.init;
+// inifini.init;
 // handler.init;
 end;
 
 procedure deinit;
 begin
 // handler.deinit;
- inifini.deinit;
+// inifini.deinit;
  unithandler.deinit;
  handlerutils.deinit;
  elements.clear;

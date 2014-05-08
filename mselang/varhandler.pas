@@ -25,7 +25,7 @@ procedure handlepointervar();
 
 implementation
 uses
- handlerutils,parserglob,elements,errorhandler,handlerglob,opcode,inifini;
+ handlerutils,parserglob,elements,errorhandler,handlerglob,opcode,grammar;
  
 procedure handlevardefstart();
 begin
@@ -79,8 +79,12 @@ begin
      if address.indirectlevel = 0 then begin
       size1:= bytesize;
       if tf_hasmanaged in flags then begin
-       include(po1^.header.visibility,vik_managed);
-//       regmanagedvar(ele.eleinforel(po1));
+ 
+       with pmanageddataty(
+               pointer(ele.addelementduplicate(tks_managed,[],ek_managed))+
+                                              sizeof(elementheaderty))^ do begin
+        managedele:= ele.eleinforel(po1);
+       end;
       end;
      end
      else begin

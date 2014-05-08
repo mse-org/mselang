@@ -39,7 +39,7 @@ type
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
-                  ek_unit,ek_implementation,ek_classimp);
+                  ek_unit,ek_implementation,ek_classimp,ek_managed);
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -233,8 +233,8 @@ const
  {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
   sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
-//ek_classimp
-  sizeof(classimpdataty)+elesize
+//ek_classimp                    ek_managed
+  sizeof(classimpdataty)+elesize,sizeof(manageddataty)+elesize
  );
 
 var

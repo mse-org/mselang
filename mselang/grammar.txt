@@ -34,6 +34,7 @@
  'varhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
+ '.managed'
 @.tokens
  'result'
 start,nounit,,

@@ -48,7 +48,8 @@ procedure checkrecordfield(const avisibility: visikindsty;
 
 implementation
 uses
- handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops;
+ handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
+ grammar;
 
 procedure handletype();
 begin
@@ -266,6 +267,11 @@ begin
     if po1^.indirectlevel = 0 then begin      //todo: alignment
      if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
       include(atypeflags,tf_hasmanaged);
+      with pmanageddataty(
+              pointer(ele.addelementduplicate(tks_managed,[],ek_managed))+
+                                             sizeof(elementheaderty))^ do begin
+       managedele:= ele.eledatarel(po1);
+      end;
      end;
      size1:= po2^.bytesize;
     end
