@@ -29,10 +29,30 @@ function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
 procedure writeop(const operation: opty); inline;
 
+procedure inipointer(const aaddress: addressinfoty);
+procedure finistring8(const aaddress: addressinfoty);
+
 implementation
 uses
  stackops;
- 
+
+procedure inipointer(const aaddress: addressinfoty);
+begin
+ with additem^ do begin
+  if vf_global in aaddress.flags then begin
+   op:= @storeglobnil;
+  end
+  else begin
+   op:= @storelocnil;
+  end;
+  par.dataaddress:= aaddress.address;
+ end;
+end;
+
+procedure finistring8(const aaddress: addressinfoty);
+begin
+end;
+
 function getglobvaraddress(const asize: integer): dataoffsty;
 begin
  with info do begin

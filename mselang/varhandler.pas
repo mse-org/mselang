@@ -16,6 +16,103 @@
 }
 unit varhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+
 interface
+
+procedure handlevardefstart();
+procedure handlevar3();
+procedure handlepointervar();
+
 implementation
+uses
+ handlerutils,parserglob,elements,errorhandler,handlerglob,opcode,inifini;
+ 
+procedure handlevardefstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VARDEFSTART');
+{$endif}
+ with info,contextstack[stackindex] do begin
+  d.kind:= ck_var;
+  d.vari.indirectlevel:= 0;
+//  d.vari.flags:= [];
+ end;
+end;
+
+procedure handlevar3();
+var
+ po1,po2: pelementinfoty;
+ size1: integer;
+ ident1: identty;
+ ele1: elementoffsetty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('VAR3');
+{$endif}
+ with info do begin
+  if (stacktop-stackindex < 2) or 
+            (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
+   internalerror('H20140325B');
+   exit;
+  end;
+  ident1:= contextstack[stackindex+1].d.ident.ident;
+  if (currentclass <> 0) and ele.findchild(info.currentclass,ident1,
+                                                   [],allvisi,ele1) then begin
+   po1:= nil;
+  end
+  else begin
+   po1:= ele.addelement(ident1,allvisi,ek_var);
+  end;
+  if po1 = nil then begin //duplicate
+   identerror(1,err_duplicateidentifier);
+  end
+  else begin
+   with pvardataty(@po1^.data)^ do begin
+    vf.typ:= contextstack[stackindex+2].d.typ.typedata;
+    po2:= ele.eleinfoabs(vf.typ);
+    address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
+    with ptypedataty(@po2^.data)^ do begin
+     address.indirectlevel:= address.indirectlevel+indirectlevel;
+     if kind = dk_class then begin
+      inc(address.indirectlevel);
+     end;
+     if address.indirectlevel = 0 then begin
+      size1:= bytesize;
+      if tf_hasmanaged in flags then begin
+       include(po1^.header.visibility,vik_managed);
+//       regmanagedvar(ele.eleinforel(po1));
+      end;
+     end
+     else begin
+      size1:= pointersize;
+     end;
+    end;
+    if funclevel = 0 then begin
+     address.address:= getglobvaraddress(size1);
+     address.flags:= [vf_global];
+     address.framelevel:= 0;
+    end
+    else begin
+     address.address:= getlocvaraddress(size1)-frameoffset;
+     address.flags:= []; //local
+     address.framelevel:= funclevel;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handlepointervar();
+begin
+{$ifdef mse_debugparser}
+ outhandle('POINTERVAR');
+{$endif}
+ with info,contextstack[stackindex].d.vari do begin
+  if indirectlevel > 0 then begin
+   errormessage(err_typeidentexpected,[]);
+  end;
+  inc(indirectlevel);
+ end;
+end;
+
 end.

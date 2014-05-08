@@ -17,25 +17,17 @@
 unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
+
+procedure writemanagedini();
+procedure writemanagedfini();
+
 implementation
 
-procedure checkvarmanagedtype(const avar: vardataty);
+procedure writemanagedini();
+begin
+end;
 
-type
- varprocty = procedure();
-
-const
- systypeini = array[systypety] of varprocty = (
-  //st_none,st_bool8,st_int32,st_float64,st_string8
-    nil,    nil,     nil,     nil,       nil
- );
-
- systypefini = array[systypety] of varprocty = (
-  //st_none,st_bool8,st_int32,st_float64,st_string8
-    nil,    nil,     nil,     nil,       nil
- );
-
-procedure checkvarmanagedtype(const avar: vardataty);
+procedure writemanagedfini();
 begin
 end;
 

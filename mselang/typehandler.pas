@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit typehandler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}{$endif}
 interface
 uses
  parserglob;
@@ -123,7 +123,7 @@ begin
       po3^:= ptypedataty(@po2^.data)^;
       inc(po3^.indirectlevel,d.typ.indirectlevel);
       if po3^.indirectlevel > 0 then begin
-       exclude(po3^.flags,tf_managed);
+       po3^.flags-= [tf_managed,tf_hasmanaged];
       end;
      end
      else begin //duplicate
@@ -264,7 +264,9 @@ begin
     po1^.indirectlevel:= d.typ.indirectlevel;
     po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
     if po1^.indirectlevel = 0 then begin      //todo: alignment
-     atypeflags:= atypeflags + po2^.flags;    //track tf_managed
+     if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+      include(atypeflags,tf_hasmanaged);
+     end;
      size1:= po2^.bytesize;
     end
     else begin
@@ -432,7 +434,7 @@ begin
      indilev:= d.typ.indirectlevel;
      if indilev + indirectlevel > 0 then begin
       totsize:= pointersize;
-      exclude(flags1,tf_managed);
+      flags1-= [tf_managed,tf_hasmanaged];
      end
      else begin
       totsize:= bytesize;
@@ -472,7 +474,7 @@ begin
      end;
      arty^.flags:= flags1;
      if indilev > 0 then begin
-      exclude(flags1,tf_managed);
+      flags1-= [tf_managed,tf_hasmanaged];
      end;
      with arty^.infoarray do begin
       itemtypedata:= itemtyoffs;

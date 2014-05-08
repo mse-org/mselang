@@ -26,6 +26,7 @@ function loadunit(const aindex: integer): punitinfoty;
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 procedure handleimplementationentry();
+procedure handleimplementation();
 procedure handleinclude();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: integer);
@@ -48,7 +49,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils;
+ mselinklist,handlerutils,msearrayutils,listutils;
  
 type
  unithashdataty = record
@@ -151,6 +152,23 @@ begin
     internalerror('U20131130A');
    end;
   end;
+  with contextstack[stackindex] do begin
+   d.kind:= ck_implementation;
+   ele.markelement(d.impl.elemark);
+  end;
+ end;
+end;
+
+procedure handleimplementation();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IMPLEMENTATION');
+{$endif}
+ with info do begin
+  with contextstack[stackindex] do begin
+   ele.releaseelement(d.impl.elemark);
+  end;
+  dec(stackindex);
  end;
 end;
 

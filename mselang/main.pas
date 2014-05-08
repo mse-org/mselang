@@ -58,20 +58,7 @@ var
 implementation
 uses
  main_mfm,msestream,stackops,parser;
-// procedure test() virtual;
-{
-procedure integer.parseex(const sender: TObject);
-begin
-end;
-}
-//procedure tmainfo.test();
-//begin
-//end;
-
-//procedure test(a: record a: integer end);
-//begin
-//end;
-
+ 
 procedure tmainfo.parseexe(const sender: TObject);
 var
  ar1: opinfoarty;

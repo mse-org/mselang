@@ -51,7 +51,7 @@ procedure handleimplementationexpected();
 implementation
 uses
  parserglob,errorhandler,msetypes,handlerutils,elements,handlerglob,
- grammar,opcode,unithandler;
+ grammar,opcode,unithandler,managedtypes;
  
 type
  equalparaminfoty = record
@@ -621,6 +621,7 @@ begin
      po4^[int2]:= ptruint(po2)-eledatabase;
     end;
     ele.markelement(b.elemark); 
+//    markmanagedblock(b.managedblock);
    end;
   end
   else begin
@@ -756,6 +757,7 @@ begin
     par.stacksize:= subdef.varsize;
    end;
   end;
+  writemanagedini();
  end;
 end;
 
@@ -767,6 +769,7 @@ begin
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
+  writemanagedfini();
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
     op:= @locvarpopop;
@@ -783,6 +786,7 @@ begin
    op:= @returnop;
    par.stacksize:= d.subdef.paramsize;
   end;
+//  releasemanagedblock(b.managedblock);
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(funclevel);

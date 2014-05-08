@@ -99,6 +99,12 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
+ writeiniprocty = procedure (const address: dataoffsty);
+ writefiniprocty = procedure (const address: dataoffsty);
+ addresskindty = boolean;{(adk_local,adk_global)}
+
+ managedtypeprocty = procedure(const aadress: addressinfoty);
+  
  typedataty = record
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
@@ -127,6 +133,13 @@ type
     case datasizety of
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
+   );
+   dk_string8:(
+    iniproc: managedtypeprocty;
+    finiproc: managedtypeprocty;
+    case datakindty of
+     dk_string8:(
+     );
    );
    dk_record:(
    );

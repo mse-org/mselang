@@ -18,47 +18,82 @@ unit inifini;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- handlerutils;
- 
-type
- managedvaritemty = record
-  header: linkheaderty;
- end;
- pmangedvaritemty = ^managedvaritemty;
-
- managedtypeitemty = record
-  header: linkheaderty;
- end;
- pmangedtypeitemty = ^managedtypeitemty;
- 
-//function addiniitem(var aitem: listadty): piniitemty;
-//function  deleteinilist(
-
-procedure markmanagedblock();
-procedure releasemanagedblock();
-
+ parserglob,handlerutils;
+(* not used 
+procedure regmanagedvar(const avar: elementoffsetty);
+procedure markmanagedblock(out aitem: listadty);
+procedure releasemanagedblock(const aitem: listadty);
+procedure writemanagedini();
+procedure writemanagedfini();
+*)
 procedure init;
 procedure deinit;
 
 implementation
-
+uses
+ listutils,handlerglob,elements;
+ 
 type
  managedblockitemty = record
   header: linkheaderty;
  end;
  pmangedblockitemty = ^managedblockitemty;
 
+ managedvaritemty = record
+  header: linkheaderty;
+  varele: elementoffsetty;
+ end;
+ pmanagedvaritemty = ^managedvaritemty;
+
+ managedtypeitemty = record
+  header: linkheaderty;
+ end;
+ pmangedtypeitemty = ^managedtypeitemty;
+
 var
+ currentmanagedvar: listadty;
  managedblocklist: linklistty;
  managedvarlist: linklistty;
  managedtypelist: linklistty;
 
-procedure markmanagedblock();
+procedure writemanagedvarini(var itemdata);
+var
+ po1: pvardataty;
+ po2: ptypedataty;
+ po3: pointer;
+ po4: plinkdataty;
+begin
+ with managedvaritemty(itemdata) do begin
+  po1:= ele.eledataabs(varele);
+  po2:= ele.eledataabs(po1^.vf.typ);
+  po3:= managedtypelist.list;
+//  po4:= po3+po2^.iniproc;
+  ///////////////7..........
+ end;
+end;
+
+procedure writemanagedini();
+begin
+ foralllistitems(managedvarlist,@writemanagedvarini,currentmanagedvar);
+end;
+
+procedure writemanagedfini();
 begin
 end;
 
-procedure releasemanagedblock();
+procedure markmanagedblock(out aitem: listadty);
 begin
+end;
+
+procedure releasemanagedblock(const aitem: listadty);
+begin
+end;
+
+procedure regmanagedvar(const avar: elementoffsetty);
+begin
+ with pmanagedvaritemty(addlistitem(managedvarlist,currentmanagedvar))^ do begin
+  varele:= avar;
+ end;
 end;
  
 procedure clear();
@@ -66,6 +101,7 @@ begin
  clearlist(managedblocklist,sizeof(managedblockitemty),256); 
  clearlist(managedvarlist,sizeof(managedvaritemty),1024); 
  clearlist(managedtypelist,sizeof(managedtypeitemty),1024); 
+ currentmanagedvar:= 0;
 end;
 
 procedure init;

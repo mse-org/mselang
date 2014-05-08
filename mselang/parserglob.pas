@@ -63,7 +63,7 @@ type
                das_33_63,das_64,das_pointer);
 
  visikindty = (vik_global,vik_sameunit,vik_sameclass,
-               vik_published,vik_ancestor);
+               vik_published,vik_ancestor,vik_managed);
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
@@ -92,7 +92,7 @@ const
  idstart = $12345678;
 
 type 
- contextkindty = (ck_none,ck_error,
+ contextkindty = (ck_none,ck_error,ck_implementation,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
@@ -191,7 +191,8 @@ type
  indirectlevelty = integer;
  framelevelty = integer;
 
- typeflagty = (tf_managed);
+ typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
+               tf_hasmanaged); //has nested tf_managed
  typeflagsty = set of typeflagty;   
  
  typeinfoty = record
@@ -336,10 +337,14 @@ type
  statementinfoty = record
 //  flags: statementflagsty;
  end;
-
+ 
+ implcontinfoty = record
+  elemark: markinfoty;
+ end;
+ 
  contextdataty = record
 //  elemark: elementoffsetty;
-  case kind: contextkindty of 
+  case kind: contextkindty of
    ck_ident:(
     ident: identinfoty;
    );
@@ -399,12 +404,16 @@ type
    ck_statement:(
     statement: statementinfoty;
    );
+   ck_implementation:(
+    impl: implcontinfoty;
+   );
  end;
 
  contextbackupty = record
   elemark: markinfoty;
   eleparent: elementoffsetty;
   flags: statementflagsty;
+//  managedblock: listadty;
  end;
 
  sourceinfoty = record

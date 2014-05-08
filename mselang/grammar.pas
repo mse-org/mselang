@@ -195,7 +195,7 @@ var
                caption: 'noimplementation');
  implementationco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'implementation');
  mainco: contextty = (branch: nil; 
@@ -1107,7 +1107,7 @@ var
 implementation
 
 uses
- handler,unithandler,classhandler,typehandler,subhandler;
+ handler,unithandler,classhandler,typehandler,subhandler,varhandler;
  
 const
  bstart: array[0..7] of branchty = (
@@ -1516,6 +1516,16 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @commaidentsco); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bimplementation: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @mainco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4893,9 +4903,9 @@ begin
  commaidentsnoidenterrorco.handleexit:= @handlenoidenterror;
  noimplementationco.branch:= nil;
  noimplementationco.handleexit:= @handlenoimplementationerror;
- implementationco.branch:= nil;
- implementationco.next:= @mainco;
+ implementationco.branch:= @bimplementation;
  implementationco.handleentry:= @handleimplementationentry;
+ implementationco.handleexit:= @handleimplementation;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  main1co.branch:= @bmain1;

@@ -61,95 +61,98 @@ procedure run(const code: opinfoarty; const constseg: pointer;
 
 //procedure dummyop;
 procedure nop();
-procedure gotoop;
-procedure ifop;
-procedure writelnop;
+procedure gotoop();
+procedure ifop();
+procedure writelnop();
 
-procedure pushop;
-procedure popop;
+procedure pushop();
+procedure popop();
 
-procedure push8;
-procedure push16;
-procedure push32;
-procedure push64;
+procedure push8();
+procedure push16();
+procedure push32();
+procedure push64();
 
-procedure pushdatakind;
-procedure int32toflo64;
-procedure mulint32;
-procedure mulimmint32;
-procedure mulflo64;
-procedure addint32;
-procedure addimmint32;
-procedure addflo64;
-procedure negcard32;
-procedure negint32;
-procedure negflo64;
+procedure pushdatakind();
+procedure int32toflo64();
+procedure mulint32();
+procedure mulimmint32();
+procedure mulflo64();
+procedure addint32();
+procedure addimmint32();
+procedure addflo64();
+procedure negcard32();
+procedure negint32();
+procedure negflo64();
 
-procedure cmpequbool;
-procedure cmpequint32;
-procedure cmpequflo64;
+procedure cmpequbool();
+procedure cmpequint32();
+procedure cmpequflo64();
 
-procedure popglob8;
-procedure popglob16;
-procedure popglob32;
-procedure popglob;
+procedure storelocnil();
+procedure storeglobnil();
 
-procedure poploc8;
-procedure poploc16;
-procedure poploc32;
-procedure poploc;
+procedure popglob8();
+procedure popglob16();
+procedure popglob32();
+procedure popglob();
 
-procedure poplocindi8;
-procedure poplocindi16;
-procedure poplocindi32;
-procedure poplocindi;
+procedure poploc8();
+procedure poploc16();
+procedure poploc32();
+procedure poploc();
 
-procedure pushconstaddress;
+procedure poplocindi8();
+procedure poplocindi16();
+procedure poplocindi32();
+procedure poplocindi();
 
-procedure pushglob8;
-procedure pushglob16;
-procedure pushglob32;
-procedure pushglob;
+procedure pushconstaddress();
 
-procedure pushloc8;
-procedure pushloc16;
-procedure pushloc32;
-procedure pushlocpo;
-procedure pushloc;
+procedure pushglob8();
+procedure pushglob16();
+procedure pushglob32();
+procedure pushglob();
 
-procedure pushlocindi8;
-procedure pushlocindi16;
-procedure pushlocindi32;
-procedure pushlocindi;
+procedure pushloc8();
+procedure pushloc16();
+procedure pushloc32();
+procedure pushlocpo();
+procedure pushloc();
 
-procedure pushaddr;
-procedure pushlocaddr;
-procedure pushlocaddrindi;
-procedure pushglobaddr;
-procedure pushglobaddrindi;
-procedure pushstackaddr;
+procedure pushlocindi8();
+procedure pushlocindi16();
+procedure pushlocindi32();
+procedure pushlocindi();
 
-procedure indirect8;
-procedure indirect16;
-procedure indirect32;
-procedure indirectpo;
-procedure indirectpooffs;
-procedure indirect;
+procedure pushaddr();
+procedure pushlocaddr();
+procedure pushlocaddrindi();
+procedure pushglobaddr();
+procedure pushglobaddrindi();
+procedure pushstackaddr();
 
-procedure popindirect8;
-procedure popindirect16;
-procedure popindirect32;
-procedure popindirect;
+procedure indirect8();
+procedure indirect16();
+procedure indirect32();
+procedure indirectpo();
+procedure indirectpooffs();
+procedure indirect();
 
-procedure callop;
-procedure calloutop;
-procedure callvirtop;
-procedure locvarpushop;
-procedure locvarpopop;
-procedure returnop;
+procedure popindirect8();
+procedure popindirect16();
+procedure popindirect32();
+procedure popindirect();
 
-procedure initclassop;
-procedure destroyclassop;
+procedure callop();
+procedure calloutop();
+procedure callvirtop();
+procedure locvarpushop();
+procedure locvarpopop();
+procedure returnop();
+
+procedure initclassop();
+procedure destroyclassop();
 
 implementation
 uses
@@ -293,10 +296,13 @@ begin
     inc(po1,alignsize(sizeof(vfloatty)));
    end;
    dk_string8: begin
-    po4:= vpointerty(po1^)-sizeof(stringheaderty);
-    setlength(str1,po4^.len);
-    move(vpointerty(po1^)^,pointer(str1)^,po4^.len);
-    write(str1);
+    po4:= pointer(po1^);
+    if po4 <> nil then begin
+     po4:= pointer(po4)-sizeof(stringheaderty);
+     setlength(str1,po4^.len);
+     move(vpointerty(po1^)^,pointer(str1)^,po4^.len);
+     write(str1);
+    end;
     inc(po1,alignsize(sizeof(vpointerty)));
    end;
    dk_class: begin
@@ -482,6 +488,16 @@ end;
 procedure pushconstaddress;
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= constdata+oppo^.par.vaddress; 
+end;
+
+procedure storeglobnil();
+begin
+ ppointer(globdata+oppo^.par.dataaddress)^:= nil;
+end;
+
+procedure storelocnil();
+begin
+ ppointer(framepo+oppo^.par.dataaddress)^:= nil;
 end;
 
 procedure popglob8;

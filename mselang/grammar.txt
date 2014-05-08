@@ -31,6 +31,7 @@
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
+ 'varhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
 @.tokens
@@ -95,7 +96,8 @@ commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,,,handlenoimplementationerror
 
-implementation,main,handleimplementationentry,
+implementation,,handleimplementationentry,handleimplementation*
+ '',main*
 
 main,main1,,
  ${whitespace}
