@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit handler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}{$endif}
 interface
 uses
  parserglob,typinfo,msetypes,handlerglob;
@@ -2145,7 +2145,8 @@ begin
 {$endif}
  with info do begin
 //  opshift:= 0;
-  currentstatementflags:= [];
+  currentstatementflags-= [stf_rightside,stf_params,
+                           stf_leftreference,stf_proccall];
   with contextstack[stacktop].d,statement do begin
    kind:= ck_statement;
 //   flags:= [];

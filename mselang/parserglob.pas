@@ -63,7 +63,7 @@ type
                das_33_63,das_64,das_pointer);
 
  visikindty = (vik_global,vik_sameunit,vik_sameclass,
-               vik_published,vik_ancestor{,vik_managed});
+               vik_published,vik_ancestor,vik_managed);
  visikindsty = set of visikindty;
  
 // vislevelty = (vis_0,vis_1,vis_2,vis_3,vis_4,vis_5,vis_6,vis_7,vis_8,vis_9);
@@ -182,7 +182,7 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_classdef,stf_classimp,stf_implementation);
+                    stf_classdef,stf_classimp,stf_implementation,stf_managed);
  statementflagsty = set of statementflagty;
 
  varflagty = (vf_nil,vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);

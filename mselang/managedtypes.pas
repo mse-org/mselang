@@ -22,13 +22,27 @@ procedure writemanagedini();
 procedure writemanagedfini();
 
 implementation
+uses
+ elements,grammar,parserglob;
+
+procedure writeini(const aelement: pelementinfoty; var adata;
+                                                     var terminate: boolean);
+begin
+end;
+
+procedure writefini(const aelement: pelementinfoty; var adata;
+                                                     var terminate: boolean);
+begin
+end;
 
 procedure writemanagedini();
 begin
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeini,nil^);
 end;
 
 procedure writemanagedfini();
 begin
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writefini,nil^);
 end;
 
 end.

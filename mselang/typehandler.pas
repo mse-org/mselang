@@ -268,7 +268,8 @@ begin
      if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
       include(atypeflags,tf_hasmanaged);
       with pmanageddataty(
-              pointer(ele.addelementduplicate(tks_managed,[],ek_managed))+
+              pointer(ele.addelementduplicate(tks_managed,[vik_managed],
+                                                                ek_managed))+
                                              sizeof(elementheaderty))^ do begin
        managedele:= ele.eledatarel(po1);
       end;

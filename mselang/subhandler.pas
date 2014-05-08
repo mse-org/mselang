@@ -343,6 +343,7 @@ begin
  with info,contextstack[stackindex-1] do begin
   b.flags:= currentstatementflags;
   b.eleparent:= ele.elementparent;
+  exclude(currentstatementflags,stf_managed);
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
@@ -757,7 +758,9 @@ begin
     par.stacksize:= subdef.varsize;
    end;
   end;
-  writemanagedini();
+  if stf_managed in currentstatementflags then begin
+   writemanagedini();
+  end;
  end;
 end;
 
@@ -769,7 +772,9 @@ begin
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
-  writemanagedfini();
+  if stf_managed in currentstatementflags then begin
+   writemanagedfini();
+  end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
     op:= @locvarpopop;
