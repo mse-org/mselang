@@ -60,7 +60,7 @@ const
  ancestordatakinds = [dk_class];
 type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
-               das_33_63,das_64,das_pointer);
+                  das_33_63,das_64,das_pointer);
 
  visikindty = (vik_global,vik_sameunit,vik_sameclass,
                vik_published,vik_ancestor,vik_managed);
@@ -108,7 +108,8 @@ type
  pdataaddressty = ^dataaddressty;
  dataoffsty = ptrint;
  pdataoffsty = ^dataoffsty;
- databytesizety = ptruint;
+ datasizety = ptruint;
+ loopcountty = ptrint;
  
 const
  dataaddresssize = sizeof(dataaddressty);
@@ -511,11 +512,12 @@ type
     imm: record
      case integer of
       1: (vboolean: boolean);
-      2: (vcardinal: card32);
-      3: (vinteger: int32);
-      4: (vfloat: float64);
-      5: (vsize: ptrint);
-      6: (vpointer: ptruint);
+      2: (vcard32: card32);
+      3: (vint32: int32);
+      4: (vint64: int64);
+      5: (vfloat64: float64);
+      6: (vsize: ptrint);
+      7: (vpointer: ptruint);
     end;
    );
    ok_push8:(
@@ -548,7 +550,7 @@ type
     voffset: dataoffsty;
    );
    ok_locop,ok_var:(
-    datasize: databytesizety;
+    datasize: datasizety;
     case opkindty of
      ok_locop:(
       locdataaddress: locdataaddressty;
@@ -567,7 +569,7 @@ type
     opaddress: opaddressty;
    );
    ok_params:(
-    paramsize: databytesizety;
+    paramsize: datasizety;
     paramcount: integer;
    );
    ok_call:(
@@ -577,7 +579,7 @@ type
     virtcallinfo: virtcallinfoty;
    );
    ok_stack:(
-    stacksize: databytesizety;
+    stacksize: datasizety;
    );
    ok_initclass:(
     initclass: initclassinfoty;

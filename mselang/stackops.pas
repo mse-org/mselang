@@ -156,6 +156,9 @@ procedure returnop();
 procedure initclassop();
 procedure destroyclassop();
 
+procedure decloop32();
+procedure decloop64();
+
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes;
@@ -398,7 +401,7 @@ var
  po1: pointer;
 begin
  po1:= mainstackpo - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^)*oppo^.par.imm.vinteger;
+ vintegerty(po1^):= vintegerty(po1^)*oppo^.par.imm.vint32;
 end;
 
 procedure mulflo64;
@@ -424,7 +427,7 @@ var
  po1: pointer;
 begin
  po1:= mainstackpo - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^)+oppo^.par.imm.vinteger;
+ vintegerty(po1^):= vintegerty(po1^)+oppo^.par.imm.vint32;
 end;
 
 procedure cmpequbool;
@@ -502,7 +505,7 @@ begin
  ppointer(framepo+oppo^.par.dataaddress)^:= nil;
 end;
 
-procedure storelocnilar();
+procedure storeglobnilar();
 begin
  with oppo^ do begin
 {$ifdef cpu64}
@@ -513,7 +516,7 @@ begin
  end;
 end;
 
-procedure storeglobnilar();
+procedure storelocnilar();
 begin
  with oppo^ do begin
 {$ifdef cpu64}
@@ -886,6 +889,28 @@ procedure destroyclassop;
 begin
  with oppo^.par do begin
   intfreemem(ppointer(framepo+destroyclass.selfinstance)^);
+ end;
+end;
+
+procedure decloop32();
+var
+ po1: pinteger;
+begin
+ po1:= pinteger(mainstackpo-4);
+ dec(po1^);
+ if po1^ = 0 then begin
+  oppo:= startpo+oppo^.par.opaddress;
+ end;
+end;
+
+procedure decloop64();
+var
+ po1: pint64;
+begin
+ po1:= pint64(mainstackpo-8);
+ dec(po1^);
+ if po1^ = 0 then begin
+  oppo:= startpo+oppo^.par.opaddress;
  end;
 end;
 

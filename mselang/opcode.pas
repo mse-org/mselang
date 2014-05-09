@@ -19,7 +19,12 @@ unit opcode;
 interface
 uses
  parserglob;
- 
+type
+ loopinfoty = record
+  start: opaddressty;
+  size: databitsizety;
+ end;
+  
 function getglobvaraddress(const asize: integer): dataoffsty;
 function getlocvaraddress(const asize: integer): dataoffsty;
 function getglobconstaddress(const asize: integer): dataoffsty;
@@ -34,20 +39,34 @@ procedure inipointer(const aaddress: dataoffsty; const global: boolean;
 procedure finistring8(const aaddress: dataoffsty; const global: boolean;
                                                       const count: integer);
 
+procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
+procedure endforloop(const ainfo: loopinfoty);
+
 implementation
 uses
- stackops;
+ stackops,handlerutils;
 
 procedure inipointer(const aaddress: dataoffsty; const global: boolean;
                                                          const count: integer);
 begin
  with additem^ do begin
-  if global then begin
-   op:= @storeglobnil;
+  if count = 1 then begin
+   if global then begin
+    op:= @storeglobnil;
+   end
+   else begin
+    op:= @storelocnil;
+   end;
   end
   else begin
-   op:= @storelocnil;
+   if global then begin
+    op:= @storeglobnilar;
+   end
+   else begin
+    op:= @storelocnilar;
+   end;
   end;
+  par.datasize:= count;
   par.dataaddress:= aaddress;
  end;
 end;
@@ -86,6 +105,49 @@ begin
  end;
 end;
  
+procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
+begin
+ ainfo.size:= getdatabitsize(count);
+ with additem()^ do begin
+  if ainfo.size > das_32 then begin
+   op:= @push64;
+   par.imm.vint64:= count;
+   ainfo.start:= info.opcount;
+   with additem^ do begin
+    op:= @decloop64;
+   end;
+  end
+  else begin
+   op:= @push32;
+   par.imm.vint32:= count;
+   ainfo.start:= info.opcount;
+   with additem^ do begin
+    op:= @decloop32;
+   end;
+  end;
+ end;
+end;
+
+procedure endforloop(const ainfo: loopinfoty);
+begin
+ with additem^ do begin
+  op:= @gotoop;
+  par.opaddress:= ainfo.start-1;
+ end;
+ with info.ops[ainfo.start] do begin
+  par.opaddress:= info.opcount-1;
+ end;
+ with additem^ do begin
+  op:= @locvarpopop;
+  if ainfo.size > das_32 then begin
+   par.stacksize:= 8;
+  end
+  else begin
+   par.stacksize:= 4;
+  end;
+ end;
+end;
+
 function additem(): popinfoty;
 begin
  with info do begin

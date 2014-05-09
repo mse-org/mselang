@@ -1292,10 +1292,10 @@ var
  po7: pointer;
  ele1,ele2: elementoffsetty;
  int1,int2,int3: integer;
- si1: databytesizety;
+ si1: datasizety;
 // offs1: dataoffsty;
  indirect1: indirectlevelty;
- stacksize1: databytesizety;
+ stacksize1: datasizety;
  paramco1: integer;
  isgetfact: boolean;
 label

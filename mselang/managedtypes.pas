@@ -23,7 +23,7 @@ procedure writemanagedfini(const global: boolean);
 
 implementation
 uses
- elements,grammar,parserglob,handlerglob,errorhandler,handlerutils;
+ elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode;
 
 var
  currentwriteinifini: procedure (const address: dataoffsty;
@@ -53,6 +53,7 @@ procedure doitem(aaddress: dataoffsty; const atyp: elementoffsetty);
 var
  po1: ptypedataty;
  parentbefore: elementoffsetty;
+ loopinfo: loopinfoty;
 begin
  po1:= ele.eledataabs(atyp);
  if tf_managed in po1^.flags then begin
@@ -63,6 +64,8 @@ begin
    internalerror('M20140509B');
   end;
   if po1^.kind = dk_array then begin
+   beginforloop(loopinfo,
+               getordcount(ele.eledataabs(po1^.infoarray.indextypedata)));
   end;
   parentbefore:= ele.elementparent;
   ele.elementparent:= atyp;
@@ -70,6 +73,7 @@ begin
                                                @writeinifiniitem,aaddress);
   ele.elementparent:= parentbefore;
   if po1^.kind = dk_array then begin
+   endforloop(loopinfo);
   end;
  end;
 end;

@@ -117,7 +117,7 @@ procedure push(const avalue: addressinfoty; const offset: dataoffsty;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
-                                                   const size: databytesizety);
+                                                   const size: datasizety);
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                                      const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
@@ -130,7 +130,7 @@ procedure pushinsertconstaddress(const stackoffset: integer; const before: boole
                              const address: dataoffsty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
-                                                  const size: databytesizety);
+                                                  const size: datasizety);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -143,6 +143,7 @@ procedure setloc(const destindexoffset,sourceindexoffset: integer);
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
+function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure init();
 procedure deinit();
@@ -535,11 +536,11 @@ begin
    end;
    dk_integer: begin
     op:= @push32;
-    par.imm.vinteger:= po1^.d.constval.vinteger;
+    par.imm.vint32:= po1^.d.constval.vinteger;
    end;
    dk_float: begin
     op:= @push64;
-    par.imm.vfloat:= po1^.d.constval.vfloat;
+    par.imm.vfloat64:= po1^.d.constval.vfloat;
    end;
    dk_string8: begin
     op:= @pushconstaddress;
@@ -557,7 +558,7 @@ begin
  if aoffset <> 0 then begin
   with insertitem(stackoffset,false)^ do begin
    op:= @addimmint32;
-   par.imm.vinteger:= aoffset;
+   par.imm.vint32:= aoffset;
   end;
  end;
 end;
@@ -574,7 +575,7 @@ procedure push(const avalue: integer); overload;
 begin
  with additem({info})^ do begin
   op:= @push32;
-  par.imm.vinteger:= avalue;
+  par.imm.vint32:= avalue;
  end;
 end;
 
@@ -582,7 +583,7 @@ procedure push(const avalue: real); overload;
 begin
  with additem({info})^ do begin
   op:= @push64;
-  par.imm.vfloat:= avalue;
+  par.imm.vfloat64:= avalue;
  end;
 end;
 
@@ -776,7 +777,7 @@ begin
 end;
 
 procedure pushd(const oppo: popinfoty; const address: addressinfoty;
-                     const offset: dataoffsty; const size: databytesizety);
+                     const offset: dataoffsty; const size: datasizety);
 begin
  with oppo^,address do begin //todo: use table
   if vf_global in flags then begin
@@ -838,14 +839,14 @@ end;
 
 //todo: optimize call
 procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
-                                          const size: databytesizety);
+                                          const size: datasizety);
 begin
  pushd(additem({info}),address,offset,size);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
-                                                  const size: databytesizety);
+                                                  const size: datasizety);
 begin
  pushd(insertitem(stackoffset,before),address,offset,size);
 end;
@@ -887,7 +888,7 @@ function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
  procedure doindirect();
  var
   po1: ptypedataty;
-  si1: databytesizety;
+  si1: datasizety;
   op1: popinfoty;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
@@ -920,7 +921,7 @@ function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
 
 var
  po1: ptypedataty;
- si1: databytesizety;
+ si1: datasizety;
  op1: popinfoty;
  int1: integer;
  
@@ -1125,10 +1126,10 @@ begin
       op:= @push64;
       case constval.kind of
        dk_integer: begin
-        par.imm.vfloat:= real(constval.vinteger);
+        par.imm.vfloat64:= real(constval.vinteger);
        end;
        dk_float: begin
-        par.imm.vfloat:= constval.vfloat;
+        par.imm.vfloat64:= constval.vfloat;
        end;
        else begin
         sd1:= sdk_none;
@@ -1204,7 +1205,7 @@ begin
       if kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         op:= @push32;
-        par.imm.vinteger:= constval.vinteger;
+        par.imm.vint32:= constval.vinteger;
        end;
       end;
       with contextstack[stacktop].d do begin
@@ -1315,6 +1316,41 @@ begin
     internalerror('H20140329A');
    end;
   end;
+ end;
+end;
+
+function getdatabitsize(const avalue: int64): databitsizety;
+begin
+ result:= das_8;
+ if avalue < 0 then begin
+  if avalue < -$80 then begin
+   if avalue < -$8000 then begin
+    if avalue < -$80000000 then begin
+     result:= das_64;
+    end
+    else begin
+     result:= das_32;
+    end;
+   end
+   else begin
+    result:= das_16;
+   end;
+  end;   
+ end
+ else begin
+  if avalue > $7f then begin
+   if avalue > $7fff then begin
+    if avalue > $7fffffff then begin
+     result:= das_64;
+    end
+    else begin
+     result:= das_32;
+    end;
+   end
+   else begin
+    result:= das_16;
+   end;
+  end;   
  end;
 end;
  

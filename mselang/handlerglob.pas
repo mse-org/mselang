@@ -244,11 +244,11 @@ type
  end;
  pvisibledataty = ^visibledataty;
  
-function gettypesize(const typedata: typedataty): databytesizety; inline;
+function gettypesize(const typedata: typedataty): datasizety; inline;
 
 implementation
 
-function gettypesize(const typedata: typedataty): databytesizety; inline;
+function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
  result:= typedata.bytesize;
  if typedata.indirectlevel <> 0 then begin
