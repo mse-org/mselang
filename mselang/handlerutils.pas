@@ -140,6 +140,10 @@ procedure setcurrentlocbefore(const indexoffset: integer);
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
 
+procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
+function getordcount(const typedata: ptypedataty): int64;
+function getordconst(const avalue: dataty): int64;
+
 procedure init();
 procedure deinit();
 
@@ -1237,6 +1241,82 @@ begin
  end;
 end;
 
+procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
+begin
+ with typedata^ do begin
+  case kind of
+   dk_cardinal: begin
+    if datasize <= das_8 then begin
+     range.min:= infocard8.min;
+     range.max:= infocard8.max;
+    end
+    else begin
+     if datasize <= das_16 then begin
+      range.min:= infocard16.min;
+      range.max:= infocard16.max;
+     end
+     else begin
+      range.min:= infocard32.min;
+      range.max:= infocard32.max;
+     end;
+    end;
+   end;
+   dk_integer: begin
+    if datasize <= das_8 then begin
+     range.min:= infoint8.min;
+     range.max:= infoint8.max;
+    end
+    else begin
+     if datasize <= das_16 then begin
+      range.min:= infoint16.min;
+      range.max:= infoint16.max;
+     end
+     else begin
+      range.min:= infoint32.min;
+      range.max:= infoint32.max;
+     end;
+    end;
+   end;
+   dk_boolean: begin
+    range.min:= 0;
+    range.max:= 1;
+   end;
+   else begin
+    internalerror('H20120327B');
+   end;
+  end;
+ end;
+end;
+
+function getordcount(const typedata: ptypedataty): int64;
+var
+ ra1: ordrangety;
+begin
+ getordrange(typedata,ra1);
+ result:= ra1.max-ra1.min;
+end;
+
+function getordconst(const avalue: dataty): int64;
+begin
+ with avalue do begin
+  case kind of
+   dk_integer: begin
+    result:= vinteger;
+   end;
+   dk_boolean: begin
+    if vboolean then begin
+     result:= 1;
+    end
+    else begin
+     result:= 0;
+    end;
+   end;
+   else begin
+    internalerror('H20140329A');
+   end;
+  end;
+ end;
+end;
  
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);

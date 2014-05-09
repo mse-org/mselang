@@ -104,7 +104,7 @@ type
  addresskindty = boolean;{(adk_local,adk_global)}
 
  managedtypeprocty = procedure(const aadress: dataoffsty;
-                               const global: boolean; const count: boolean);
+                               const global: boolean; const count: integer);
 
  manageddataty = record
   managedele: elementoffsetty;
@@ -116,27 +116,27 @@ type
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
   bytesize: integer;
-  datasize: datasizety;
+  datasize: databitsizety;
   case kind: datakindty of 
    dk_boolean:(
     dummy: byte
    );
    dk_cardinal:(
-    case datasizety of
+    case databitsizety of
      das_1,das_2_7,das_8: (infocard8: card8infoty);
      das_9_15,das_16: (infocard16: card16infoty);
      das_17_31,das_32: (infocard32: card32infoty);
      das_33_63,das_64: (infocard64: card64infoty);
    );
    dk_integer:(
-    case datasizety of  
+    case databitsizety of  
      das_1,das_2_7,das_8: (infoint8: int8infoty);
      das_9_15,das_16: (infoint16: int16infoty);
      das_17_31,das_32: (infoint32: int32infoty);
      das_33_63,das_64: (infoint64: int64infoty);
    );
    dk_float:(
-    case datasizety of
+    case databitsizety of
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
    );

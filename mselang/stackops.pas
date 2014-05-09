@@ -504,11 +504,25 @@ end;
 
 procedure storelocnilar();
 begin
- {$
- ppointer(globdata+oppo^.par.dataaddress)^:= nil;
+ with oppo^ do begin
+{$ifdef cpu64}
+  fillqword(ppointer(globdata+par.dataaddress)^,par.datasize,0);
+{$else}
+  filldword(ppointer(globdata+par.dataaddress)^,par.datasize,0);
+{$endif}
+ end;
 end;
 
 procedure storeglobnilar();
+begin
+ with oppo^ do begin
+{$ifdef cpu64}
+  fillqword(ppointer(framepo+par.dataaddress)^,par.datasize,0);
+{$else}
+  filldword(ppointer(framepo+par.dataaddress)^,par.datasize,0);
+{$endif}
+ end;
+end;
 
 procedure popglob8;
 begin

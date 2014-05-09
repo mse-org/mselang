@@ -23,7 +23,7 @@ procedure writemanagedfini(const global: boolean);
 
 implementation
 uses
- elements,grammar,parserglob,handlerglob,errorhandler;
+ elements,grammar,parserglob,handlerglob,errorhandler,handlerutils;
 
 var
  currentwriteinifini: procedure (const address: dataoffsty;
@@ -62,14 +62,14 @@ begin
   if not (tf_hasmanaged in po1^.flags) then begin
    internalerror('M20140509B');
   end;
-  if po1^.kind = tk_array then begin
+  if po1^.kind = dk_array then begin
   end;
   parentbefore:= ele.elementparent;
   ele.elementparent:= atyp;
   ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],
                                                @writeinifiniitem,aaddress);
   ele.elementparent:= parentbefore;
-  if po1^.kind = tk_array then begin
+  if po1^.kind = dk_array then begin
   end;
  end;
 end;
@@ -96,30 +96,58 @@ end;
 
 procedure writeinilocal(const aadress: dataoffsty; const atype: ptypedataty);
 var
- po1: ptypeinfoty;
+ po1: ptypedataty;
 begin
  if atype^.kind = dk_array then begin
   po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  if tf_
+  po1^.iniproc(aadress,false,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
  end
  else begin
-  atype^.iniproc(aadress,false);
+  atype^.iniproc(aadress,false,1);
  end;
 end;
 
 procedure writeiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
+var
+ po1: ptypedataty;
 begin
- atype^.iniproc(aadress,true);
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  po1^.iniproc(aadress,true,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+ end
+ else begin
+  atype^.iniproc(aadress,true,1);
+ end;
 end;
 
 procedure writefinilocal(const aadress: dataoffsty; const atype: ptypedataty);
+var
+ po1: ptypedataty;
 begin
- atype^.finiproc(aadress,false);
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  po1^.finiproc(aadress,false,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+ end
+ else begin
+  atype^.finiproc(aadress,false,1);
+ end;
 end;
 
 procedure writefiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
+var
+ po1: ptypedataty;
 begin
- atype^.finiproc(aadress,true);
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  po1^.finiproc(aadress,true,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+ end
+ else begin
+  atype^.finiproc(aadress,true,1);
+ end;
 end;
 
 procedure writemanagedini(const global: boolean);
