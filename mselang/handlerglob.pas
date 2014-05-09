@@ -103,7 +103,8 @@ type
  writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedtypeprocty = procedure(const aadress: addressinfoty);
+ managedtypeprocty = procedure(const aadress: dataoffsty;
+                               const global: boolean; const count: boolean);
 
  manageddataty = record
   managedele: elementoffsetty;

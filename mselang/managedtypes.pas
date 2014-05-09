@@ -18,31 +18,130 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 
-procedure writemanagedini();
-procedure writemanagedfini();
+procedure writemanagedini(const global: boolean);
+procedure writemanagedfini(const global: boolean);
 
 implementation
 uses
- elements,grammar,parserglob;
+ elements,grammar,parserglob,handlerglob,errorhandler;
 
-procedure writeini(const aelement: pelementinfoty; var adata;
+var
+ currentwriteinifini: procedure (const address: dataoffsty;
+                                       const atype: ptypedataty);
+
+procedure doitem(aaddress: dataoffsty; const atyp: elementoffsetty); forward;
+
+procedure writeinifiniitem(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
+var
+ po1: pelementinfoty;
 begin
+ po1:= ele.eleinfoabs(pmanageddataty(@aelement^.data)^.managedele);
+ case po1^.header.kind of
+  ek_field: begin
+   with pfielddataty(@po1^.data)^ do begin
+    doitem(offset+dataoffsty(adata),vf.typ);
+   end;
+  end;
+  else begin
+   internalerror('M20140509C');
+  end;
+ end;
 end;
 
-procedure writefini(const aelement: pelementinfoty; var adata;
+procedure doitem(aaddress: dataoffsty; const atyp: elementoffsetty);
+var
+ po1: ptypedataty;
+ parentbefore: elementoffsetty;
+begin
+ po1:= ele.eledataabs(atyp);
+ if tf_managed in po1^.flags then begin
+  currentwriteinifini(aaddress,po1);
+ end
+ else begin
+  if not (tf_hasmanaged in po1^.flags) then begin
+   internalerror('M20140509B');
+  end;
+  if po1^.kind = tk_array then begin
+  end;
+  parentbefore:= ele.elementparent;
+  ele.elementparent:= atyp;
+  ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],
+                                               @writeinifiniitem,aaddress);
+  ele.elementparent:= parentbefore;
+  if po1^.kind = tk_array then begin
+  end;
+ end;
+end;
+                                       
+procedure writeinifini(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
+var
+ po1: pelementinfoty;
+ po3: ptypedataty;
 begin
+ po1:= ele.eleinfoabs(pmanageddataty(@aelement^.data)^.managedele);
+ case po1^.header.kind of
+  ek_var: begin
+   with pvardataty(@po1^.data)^ do begin
+    po3:= ele.eledataabs(vf.typ);
+    doitem(address.address,vf.typ);
+   end;
+  end;
+  else begin
+   internalerror('M20140509A');
+  end;
+ end;
 end;
 
-procedure writemanagedini();
+procedure writeinilocal(const aadress: dataoffsty; const atype: ptypedataty);
+var
+ po1: ptypeinfoty;
 begin
- ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeini,nil^);
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  if tf_
+ end
+ else begin
+  atype^.iniproc(aadress,false);
+ end;
 end;
 
-procedure writemanagedfini();
+procedure writeiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
 begin
- ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writefini,nil^);
+ atype^.iniproc(aadress,true);
+end;
+
+procedure writefinilocal(const aadress: dataoffsty; const atype: ptypedataty);
+begin
+ atype^.finiproc(aadress,false);
+end;
+
+procedure writefiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
+begin
+ atype^.finiproc(aadress,true);
+end;
+
+procedure writemanagedini(const global: boolean);
+begin
+ if global then begin
+  currentwriteinifini:= @writeiniglobal;
+ end
+ else begin
+  currentwriteinifini:= @writeinilocal;
+ end;
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,nil^);
+end;
+
+procedure writemanagedfini(const global: boolean);
+begin
+ if global then begin
+  currentwriteinifini:= @writefiniglobal;
+ end
+ else begin
+  currentwriteinifini:= @writefinilocal;
+ end;
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,nil^);
 end;
 
 end.

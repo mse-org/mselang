@@ -243,7 +243,7 @@ procedure checkrecordfield(const avisibility: visikindsty;
 var
  po1: pfielddataty;
  po2: ptypedataty;
- ele1: elementoffsetty;
+// ele1: elementoffsetty;
  size1: dataoffsty;
 begin
  with info do begin
@@ -254,10 +254,10 @@ begin
   end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            avisibility,ek_field,po1) then begin
-   ele1:= ele.elementparent;
+//   ele1:= ele.elementparent;
               //???? not used
-   ele.elementparent:= 
-            contextstack[contextstack[stackindex].parent].b.eleparent;
+//   ele.elementparent:= 
+//            contextstack[contextstack[stackindex].parent].b.eleparent;
    po1^.flags:= aflags;
    po1^.offset:= aoffset;
    with contextstack[stackindex+3] do begin
@@ -286,7 +286,7 @@ begin
     field.fielddata:= ele.eledatarel(po1);
    end;
    stacktop:= stackindex;
-   ele.elementparent:= ele1;
+//   ele.elementparent:= ele1;
   end
   else begin
    identerror(2,err_duplicateidentifier);

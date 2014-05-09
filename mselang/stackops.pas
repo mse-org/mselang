@@ -91,6 +91,8 @@ procedure cmpequflo64();
 
 procedure storelocnil();
 procedure storeglobnil();
+procedure storelocnilar();
+procedure storeglobnilar();
 
 procedure popglob8();
 procedure popglob16();
@@ -499,6 +501,14 @@ procedure storelocnil();
 begin
  ppointer(framepo+oppo^.par.dataaddress)^:= nil;
 end;
+
+procedure storelocnilar();
+begin
+ {$
+ ppointer(globdata+oppo^.par.dataaddress)^:= nil;
+end;
+
+procedure storeglobnilar();
 
 procedure popglob8;
 begin

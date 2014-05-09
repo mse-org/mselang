@@ -192,7 +192,8 @@ type
  framelevelty = integer;
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
-               tf_hasmanaged); //has nested tf_managed
+               tf_hasmanaged   //has nested tf_managed
+               ); 
  typeflagsty = set of typeflagty;   
  
  typeinfoty = record
@@ -211,6 +212,7 @@ type
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
+ paddressinfoty = ^addressinfoty;
 
  stringinfoty = record
   offset: ptruint; //offset in string buffer

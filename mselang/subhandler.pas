@@ -759,7 +759,7 @@ begin
    end;
   end;
   if stf_managed in currentstatementflags then begin
-   writemanagedini();
+   writemanagedini(false);
   end;
  end;
 end;
@@ -773,7 +773,7 @@ begin
    //todo: check local forward
 //  ele.decelementparent;
   if stf_managed in currentstatementflags then begin
-   writemanagedfini();
+   writemanagedfini(false);
   end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
