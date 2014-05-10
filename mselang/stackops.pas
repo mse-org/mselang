@@ -60,6 +60,10 @@ procedure run(const code: opinfoarty; const constseg: pointer;
                                     const stackdepht: integer);
 
 //procedure dummyop;
+procedure moveglobalreg0();
+procedure moveframereg0();
+procedure increg0();
+
 procedure nop();
 procedure gotoop();
 procedure ifop();
@@ -260,16 +264,31 @@ begin
  end; 
 end;
 
-procedure nop;
+procedure moveglobalreg0();
+begin
+ reg0:= globdata;
+end;
+
+procedure moveframereg0();
+begin
+ reg0:= framepo;
+end;
+
+procedure increg0();
+begin
+ inc(reg0,oppo^.par.imm.voffset);
+end;
+
+procedure nop();
 begin
 end;
 
-procedure gotoop;
+procedure gotoop();
 begin
  oppo:= startpo + oppo^.par.opaddress;
 end;
 
-procedure ifop;
+procedure ifop();
 begin
  if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
   oppo:= startpo + oppo^.par.opaddress;
@@ -917,7 +936,7 @@ var
 begin
  po1:= pinteger(mainstackpo-4);
  dec(po1^);
- if po1^ = 0 then begin
+ if po1^ < 0 then begin
   oppo:= startpo+oppo^.par.opaddress;
  end;
 end;
@@ -928,7 +947,7 @@ var
 begin
  po1:= pint64(mainstackpo-8);
  dec(po1^);
- if po1^ = 0 then begin
+ if po1^ < 0 then begin
   oppo:= startpo+oppo^.par.opaddress;
  end;
 end;

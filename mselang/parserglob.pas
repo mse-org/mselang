@@ -510,7 +510,7 @@ type
   case opkindty of 
    ok_none: (
     imm: record
-     case integer of
+     case integer of               //todo: use target size
       1: (vboolean: boolean);
       2: (vcard32: card32);
       3: (vint32: int32);
@@ -518,6 +518,7 @@ type
       5: (vfloat64: float64);
       6: (vsize: ptrint);
       7: (vpointer: ptruint);
+      8: (voffset: ptrint);
     end;
    );
    ok_push8:(

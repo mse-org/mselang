@@ -23,14 +23,15 @@ procedure writemanagedfini(global: boolean);
 
 implementation
 uses
- elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode;
+ elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode,
+ stackops;
 
 var
  currentwriteinifini: procedure (const address: addressrefty;
                                                 const atype: ptypedataty);
 
 procedure doitem(var aaddress: addressrefty;
-                              const atyp: elementoffsetty); forward;
+                              atyp: elementoffsetty); forward;
 
 procedure writeinifiniitem(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
@@ -53,11 +54,12 @@ begin
  end;
 end;
 
-procedure doitem(var aaddress: addressrefty; const atyp: elementoffsetty);
+procedure doitem(var aaddress: addressrefty; atyp: elementoffsetty);
 var
  po1: ptypedataty;
  parentbefore: elementoffsetty;
  loopinfo: loopinfoty;
+ bo1: boolean;
 begin
  po1:= ele.eledataabs(atyp);
  if tf_managed in po1^.flags then begin
@@ -68,8 +70,19 @@ begin
    internalerror('M20140509B');
   end;
   if po1^.kind = dk_array then begin
+   bo1:= aaddress.base = ab_global;
+   aaddress.base:= ab_reg0;
+   with additem^ do begin
+    if bo1 then begin
+     op:= @moveglobalreg0;
+    end
+    else begin
+     op:= @moveframereg0;
+    end;
+   end;
    beginforloop(loopinfo,
                getordcount(ele.eledataabs(po1^.infoarray.indextypedata)));
+   atyp:= po1^.infoarray.itemtypedata;
   end;
   parentbefore:= ele.elementparent;
   ele.elementparent:= atyp;
@@ -77,7 +90,17 @@ begin
                                                @writeinifiniitem,aaddress);
   ele.elementparent:= parentbefore;
   if po1^.kind = dk_array then begin
+   with additem^ do begin
+    op:= @increg0;
+    par.imm.voffset:= ptypedataty(ele.eledataabs(atyp))^.bytesize;
+   end;
    endforloop(loopinfo);
+   if bo1 then begin              //restore
+    aaddress.base:= ab_global;
+   end
+   else begin
+    aaddress.base:= ab_frame;
+   end;
   end;
  end;
 end;

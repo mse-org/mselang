@@ -1294,7 +1294,7 @@ var
  ra1: ordrangety;
 begin
  getordrange(typedata,ra1);
- result:= ra1.max-ra1.min;
+ result:= ra1.max - ra1.min + 1;
 end;
 
 function getordconst(const avalue: dataty): int64;
