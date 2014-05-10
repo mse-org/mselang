@@ -20,11 +20,22 @@ interface
 
 procedure writemanagedini(global: boolean);
 procedure writemanagedfini(global: boolean);
+procedure handlesetlength(const paramco: integer);
 
 implementation
 uses
  elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode,
  stackops;
+
+procedure handlesetlength(const paramco: integer);
+begin
+ with info do begin
+  if paramco <> 2 then begin
+   errormessage(err_wrongnumberofparameters,['setlength'],
+                                     stacktop-paramcount-stackindex);
+  end;
+ end;
+end;
 
 var
  currentwriteinifini: procedure (const address: addressrefty;

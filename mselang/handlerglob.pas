@@ -195,14 +195,6 @@ type
  end;
  pfielddataty = ^fielddataty;
 
- sysfuncty = (sf_writeln);
-
- sysfuncdataty = record
-  func: sysfuncty;
-  sysop: opty;
- end;
- psysfuncdataty = ^sysfuncdataty;
-
  subdataty = record
   impl: elementoffsetty; //pfuncdataty
   links: linkindexty;
@@ -217,6 +209,14 @@ type
   end;
  end;
  psubdataty = ^subdataty;
+
+ sysfuncty = (sf_writeln,sf_setlength);
+
+ sysfuncdataty = record
+  func: sysfuncty;
+//  sysop: opty;
+ end;
+ psysfuncdataty = ^sysfuncdataty;
 
  unitdataty = record
  end;

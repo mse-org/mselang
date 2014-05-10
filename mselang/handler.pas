@@ -139,7 +139,7 @@ implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
- subhandler;
+ subhandler,managedtypes,syssubhandler;
 
 function typename(const ainfo: contextdataty): string;
 var
@@ -1426,7 +1426,12 @@ begin
       d.kind:= ck_subcall;
      end;
      with psysfuncdataty(po2)^ do begin
+      sysfuncs[func](paramco);
+(*      
       case func of
+       sf_setlength: begin
+        handlesetlength(paramco);
+       end;
        sf_writeln: begin //todo: use open array of constrec
         int2:= stacktop-stackindex-2-idents.high; //count
         stacksize1:= 0;
@@ -1441,13 +1446,14 @@ begin
          end;
         end;
         with additem()^ do begin
-         op:= sysop;
+         op:= @writelnop;
          par.paramcount:= int2;
          par.paramsize:= stacksize1;
         end;
         //todo: handle function
        end;
       end;
+    *)
      end;
     end;
     ek_type: begin

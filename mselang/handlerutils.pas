@@ -32,11 +32,6 @@ type
   cval: dataty;
  end;
   
- sysfuncinfoty = record
-  name: string;
-  data: sysfuncdataty;
- end;
-
  opinfoty = record
   ops: array[stackdatakindty] of opty;
   opname: string;
@@ -126,8 +121,8 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
             //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
-procedure pushinsertconstaddress(const stackoffset: integer; const before: boolean;
-                             const address: dataoffsty);
+procedure pushinsertconstaddress(const stackoffset: integer;
+                            const before: boolean; const address: dataoffsty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressinfoty; const offset: dataoffsty;
                                                   const size: datasizety);
@@ -155,7 +150,8 @@ procedure outinfo(const text: string);
                            
 implementation
 uses
- errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr;
+ errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
+ syssubhandler;
    
 const
  mindouble = -1.7e308;
@@ -181,9 +177,6 @@ const
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
    (name: 'true'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: true))
-  );
- sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
-   (name: 'writeln'; data: (func: sf_writeln; sysop: @writelnop))
   );
     
 { 
@@ -1063,7 +1056,6 @@ end;
 procedure init;
 var
  ty1: systypety;
- sf1: sysfuncty;
  po1: pelementinfoty;
  po2: ptypedataty;
  int1: integer;
@@ -1086,16 +1078,12 @@ begin
    end;
   end;
  end;
- for sf1:= low(sysfuncty) to high(sysfuncty) do begin
-  with sysfuncinfos[sf1] do begin
-   po1:= ele.addelement(getident(name),globalvisi,ek_sysfunc);
-   psysfuncdataty(@po1^.data)^:= data;
-  end;
- end;
+ syssubhandler.init();
 end;
 
 procedure deinit;
 begin
+ syssubhandler.deinit();
 end;
 
 procedure updateop(const opinfo: opinfoty);

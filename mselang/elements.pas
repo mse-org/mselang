@@ -66,6 +66,21 @@ const
  eledatashift = sizeof(elementheaderty);
  maxparents = 255;
 
+ elesizes: array[elementkindty] of integer = (
+//ek_none,ek_type,                   ek_const,         
+  elesize,      sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
+//ek_var,                   ek_field,
+  sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
+//ek_sysfunc,                   ek_func,
+  sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
+//ek_classes,                   ek_class,
+ {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
+//ek_unit,                   ek_implementation  
+  sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
+//ek_classimp                    ek_managed
+  sizeof(classimpdataty)+elesize,sizeof(manageddataty)+elesize
+ );
+
 type
  elehandlerprocty = procedure(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
@@ -221,30 +236,13 @@ function getidentname(const aident: identty): string;
 {$endif}
 //function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
-const
- elesizes: array[elementkindty] of integer = (
-//ek_none,ek_type,                   ek_const,         
-  elesize,      sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
-//ek_var,                   ek_field,
-  sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
-//ek_sysfunc,                   ek_func,
-  sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
-//ek_classes,                   ek_class,
- {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
-//ek_unit,                   ek_implementation  
-  sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
-//ek_classimp                    ek_managed
-  sizeof(classimpdataty)+elesize,sizeof(manageddataty)+elesize
- );
-
 var
  ele: telementhashdatalist;
 
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist,stackops,msesysutils,opcode;
-
+ errorhandler,mselinklist,stackops,msesysutils,opcode,syssubhandler;
  
 type
 
