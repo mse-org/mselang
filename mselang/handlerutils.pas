@@ -101,8 +101,9 @@ function findvar(const astackoffset: integer;
 
 procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
-function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
-function getaddress(const stackoffset: integer): boolean;
+function getvalue(const stackoffset: integer): boolean;
+function getaddress(const stackoffset: integer;
+                                  const endaddress: boolean): boolean;
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -876,7 +877,7 @@ begin
  end;
 end;
 
-function getvalue(const stackoffset: integer{; const insert: boolean}): boolean;
+function getvalue(const stackoffset: integer): boolean;
 
  procedure doindirect();
  var
@@ -927,8 +928,6 @@ begin                    //todo: optimize
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
-//    inc(d.ref.address.address,d.ref.offset);
-//    d.ref.offset:= 0;
     if d.indirection > 0 then begin //@ operator
      if d.indirection = 1 then begin
       pushinsertaddress(stackoffset,false);
@@ -944,15 +943,6 @@ begin                    //todo: optimize
       if not pushindirection(stackoffset) then begin
        exit;
       end;
-      {
-      pushinsertdata(stackoffset,false,d.ref.address,d.ref.offset,pointersize);
-      for int1:= d.indirection to -2 do begin
-       op1:= insertitem(stackoffset,false);
-       with op1^ do begin
-        op:= @indirectpo;
-       end;
-      end;
-      }
       doindirect;
      end
      else begin
@@ -1000,7 +990,8 @@ begin                    //todo: optimize
  result:= true;
 end;
 
-function getaddress(const stackoffset: integer): boolean;
+function getaddress(const stackoffset: integer;
+                                const endaddress: boolean): boolean;
 var
  ref1: refinfoty;
  int1: integer;
@@ -1020,12 +1011,19 @@ begin
   case d.kind of
    ck_ref: begin
     if d.indirection = 1 then begin
-     ref1:= d.ref; //todo: optimize
-     d.kind:= ck_const;
      d.indirection:= 0;
-     d.constval.kind:= dk_address;
-     d.constval.vaddress:= ref1.address;
-     d.constval.vaddress.address:= d.constval.vaddress.address + ref1.offset;
+     if endaddress then begin
+      pushinsert(stackoffset,false,d.ref.address,d.ref.offset,false);
+                  //address pointer on stack
+      d.kind:= ck_fact;
+     end
+     else begin
+      ref1:= d.ref; //todo: optimize
+      d.kind:= ck_const;
+      d.constval.kind:= dk_address;
+      d.constval.vaddress:= ref1.address;
+      d.constval.vaddress.address:= d.constval.vaddress.address + ref1.offset;
+     end;
     end
     else begin
      if not pushindirection(stackoffset) then begin

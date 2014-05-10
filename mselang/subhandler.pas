@@ -94,10 +94,6 @@ procedure checkequalheader(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
 var
  po1: psubdataty;
-// int1: integer;
-// par1,parref: pelementoffsetaty;
-// offs1: elementoffsetty;
-// var1,varref: pvardataty;
 begin
  po1:= @aelement^.data;
  with equalparaminfoty(adata) do begin
@@ -106,18 +102,6 @@ begin
                     (po1^.paramsize = ref^.paramsize) and 
                     ((sf_method in po1^.flags) = (sf_method in ref^.flags)) and
                                             checkparams(po1,ref) then begin
-   {
-   offs1:= ele.eledataoffset;
-   pointer(par1):= @po1^.paramsrel;
-   pointer(parref):= @ref^.paramsrel;
-   for int1:= 0 to po1^.paramcount-1 do begin
-    var1:= pointer(par1^[int1]+offs1);
-    varref:= pointer(parref^[int1]+offs1);
-    if var1^.typ <> varref^.typ then begin
-     exit;
-    end;
-   end;
-   }
    terminate:= true;
    match:= po1;
   end;
@@ -137,18 +121,6 @@ begin
  with equalparaminfoty(adata) do begin
   if (po1 <> ref) and (po1^.paramcount = ref^.paramcount) and 
                                     checkparams(po1,ref) then begin
-  {
-   offs1:= ele.eledataoffset;
-   pointer(par1):= @po1^.paramsrel;
-   pointer(parref):= @ref^.paramsrel;
-   for int1:= 0 to po1^.paramcount-1 do begin
-    var1:= pointer(par1^[int1]+offs1);
-    varref:= pointer(parref^[int1]+offs1);
-    if var1^.typ <> varref^.typ then begin
-     exit;
-    end;
-   end;
-  }
    terminate:= true;
    match:= po1;
   end;
@@ -227,14 +199,6 @@ begin
  with info do begin
   if stacktop-stackindex <> 2 then begin
    errormessage(err_typeidentexpected,[]);
-  end
-  else begin
- {
-   with contextstack[stacktop-1] do begin
-    d.ident.paramkind:= 
-             contextstack[contextstack[stackindex].parent].d.paramsdef.kind;
-   end;
-  }
   end;
  end;
 end;
@@ -250,17 +214,7 @@ begin
   end;
  end;
 end;
-(*
-procedure handlesubheader();
-begin
-{$ifdef mse_debugparser}
- outhandle('SUBHEADER');
-{$endif}
- with info do begin
-  dec(stackindex);
- end;
-end;
-*)
+
 procedure handleprocedureentry();
 begin
 {$ifdef mse_debugparser}
@@ -283,32 +237,6 @@ begin
  end;
 end;
 
-(*
-procedure handlefunctionentry();
-begin
-{$ifdef mse_debugparser}
- outhandle('FUNCTIONENTRY');
-{$endif}
-end;
-*)
-(*
-procedure handleparamsend();
-begin
-{$ifdef mse_debugparser}
- outhandle('PARAMSEND');
-{$endif}
- with info^ do begin
-  if source.po^ <> ')' then begin
-   error(info,ce_endbracketexpected);
-//   outcommand(info,[],'*ERROR* '')'' expected');
-  end
-  else begin
-   inc(source.po);
-  end;
-  dec(stackindex);
- end;
-end;
-*)
 procedure checkfunctiontype();
 begin
 {$ifdef mse_debugparser}

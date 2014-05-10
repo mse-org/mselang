@@ -44,7 +44,8 @@ type
             err_fileread,err_anonclassdef,err_classidentexpected,
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
             err_expressionexpected,err_overloadnotfunc,
-            err_procdirectiveconflict,err_noancestormethod,err_methodexpected);
+            err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
+            err_typemismatch);
             
  errorinfoty = record
   level: errorlevelty;
@@ -134,8 +135,8 @@ const
               'Procedure directive "%s" has conflicts with other directives'),
   (level: erl_error; message: 
               'There is no method in ancestor class to be overridden'),
-  (level: erl_error; message: 
-              'Method identifier expected')
+  (level: erl_error; message: 'Method identifier expected'),
+  (level: erl_error; message: 'Type mismatch')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
@@ -157,7 +158,11 @@ procedure assignmenterror(const source: contextdataty;
                                       const dest: vardestinfoty);
 procedure illegalconversionerror(const source: contextdataty;
                  const dest: ptypedataty; const destindirectlevel: integer);
-procedure incompatibletypeserror(const a,b: contextdataty);
+procedure incompatibletypeserror(const expected,got: contextdataty);
+procedure incompatibletypeserror(const expected: string;
+                                                const got: contextdataty);
+procedure incompatibletypeserror(const param: integer; const expected: string;
+                                                const got: contextdataty);
 procedure operationnotsupportederror(const a,b: contextdataty;
                                              const operation: string);
 
@@ -169,10 +174,26 @@ procedure rangeerror(const range: ordrangety;
                                const stackoffset: integer = minint);
 procedure filereaderror(const afile: filenamety);
 
+function typename(const ainfo: contextdataty): string;
+function typename(const atype: typedataty): string;
+
 implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys;
 
+function typename(const ainfo: contextdataty): string;
+var
+ po1: ptypedataty;
+begin
+ po1:= ele.eledataabs(ainfo.datatyp.typedata);
+ result:= getenumname(typeinfo(datakindty),ord(po1^.kind));
+end;
+
+function typename(const atype: typedataty): string;
+begin
+ result:= getenumname(typeinfo(datakindty),ord(atype.kind));
+end;
+  
 procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -327,6 +348,27 @@ begin
  typeconversionerror(source,d1,err_illegalconversion);
 end;
 
+function typeinfoname(const typedata: elementoffsetty): string;
+begin
+ result:= getidentname(ele.eleinfoabs(typedata)^.header.name);
+end;
+
+function typeinfoname(const context: contextdataty): string;
+begin
+ with context do begin
+  case kind of
+   ck_const,ck_fact: begin
+    result:= charstring('^',datatyp.indirectlevel)+
+                    charstring('@',-datatyp.indirectlevel)+
+                                   typeinfoname(context.datatyp.typedata);
+   end
+   else begin
+    result:= '';
+   end;
+  end;
+ end;
+end;
+{
 procedure typeinfonames(const a,b: contextdataty; out ainfo,binfo: string);
 var
  po1,po2: pelementinfoty;
@@ -344,22 +386,30 @@ begin
   end;
  end;
 end;
-
-procedure incompatibletypeserror(const a,b: contextdataty);
-var
- ainfo,binfo: string;
+}
+procedure incompatibletypeserror(const expected,got: contextdataty);
 begin
- typeinfonames(a,b,ainfo,binfo);
- errormessage(err_incompatibletypes,[binfo,ainfo]);
+ errormessage(err_incompatibletypes,[typeinfoname(got),
+                                                   typeinfoname(expected)]);
+end;
+
+procedure incompatibletypeserror(const expected: string;
+                                                const got: contextdataty);
+begin
+ errormessage(err_incompatibletypes,[typeinfoname(got),expected]);
+end;
+
+procedure incompatibletypeserror(const param: integer; const expected: string;
+                                                const got: contextdataty);
+begin
+ errormessage(err_incompatibletypeforarg,[param,typeinfoname(got),expected]);
 end;
 
 procedure operationnotsupportederror(const a,b: contextdataty;
                                                    const operation: string);
-var
- ainfo,binfo: string;
 begin
- typeinfonames(a,b,ainfo,binfo);
- errormessage(err_operationnotsupported,[operation,ainfo,binfo]);
+ errormessage(err_operationnotsupported,[operation,typeinfoname(a),
+                                                           typeinfoname(b)]);
 end;
 
 procedure internalerror(const id: string);

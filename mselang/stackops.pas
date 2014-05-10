@@ -165,6 +165,8 @@ procedure destroyclassop();
 procedure decloop32();
 procedure decloop64();
 
+procedure setlengthstr8();
+
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes;
@@ -950,6 +952,11 @@ begin
  if po1^ < 0 then begin
   oppo:= startpo+oppo^.par.opaddress;
  end;
+end;
+
+procedure setlengthstr8(); //address, length
+begin
+ stackpop(pointersize+sizeof(integer));
 end;
 
 procedure finalize;

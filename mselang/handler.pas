@@ -141,19 +141,6 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler;
 
-function typename(const ainfo: contextdataty): string;
-var
- po1: ptypedataty;
-begin
- po1:= ele.eledataabs(ainfo.datatyp.typedata);
- result:= getenumname(typeinfo(datakindty),ord(po1^.kind));
-end;
-
-function typename(const atype: typedataty): string;
-begin
- result:= getenumname(typeinfo(datakindty),ord(atype.kind));
-end;
-  
 procedure initparser({var info: parseinfoty});
 begin
  writeop(@gotoop); //startup vector 
@@ -1006,7 +993,6 @@ begin
        case po1^.kind of
         dk_integer: begin //todo: adjust data size
          with context.d,constval do begin
- //         datatyp.typedata:= ele.eledatarel(dest);
           kind:= dk_float;
           vfloat:= vinteger;
          end;
@@ -1043,12 +1029,7 @@ begin
   end;
  end;
 end;
-{
-procedure t(var a: integer);
-begin
- t(1);
-end;
-}
+
 procedure handlevalueidentifier();
 var
  paramco: integer;
@@ -1396,12 +1377,8 @@ begin
       else begin
        with contextstack[stackindex-1] do begin
         if d.indirection <> 0 then begin
-         getaddress(-1{,offs1});
-//         offsetad(-1,offs1);
+         getaddress(-1,false);
          dec(d.indirection); //pending dereference
-//        end
-//        else begin
-//         d.ref.offset:= d.ref.offset+offs1;
         end;
         contextstack[stackindex].d:= d; 
                   //todo: no double copy by handlefact
@@ -1925,7 +1902,7 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   if (stacktop-stackindex = 2) and not errorfla then begin
-   if not getaddress(1{,offs1}) or not getvalue(2{,false}) then begin
+   if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
    with contextstack[stackindex+1].d do begin //address

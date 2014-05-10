@@ -26,13 +26,44 @@ implementation
 uses
  elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode,
  stackops;
-
+const
+ setlengthops: array[datakindty] of opty = (
+  //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+    nil,    nil,       nil,        nil,       nil,     nil,
+  //dk_address,dk_record,dk_string8,dk_array,dk_class
+    nil,       nil,      @setlengthstr8,       nil,     nil
+ );
+ 
 procedure handlesetlength(const paramco: integer);
+var
+ len: integer;
+ po1: ptypedataty;
 begin
  with info do begin
   if paramco <> 2 then begin
    errormessage(err_wrongnumberofparameters,['setlength'],
                                      stacktop-paramcount-stackindex);
+  end;
+  if getvalue(stacktop-stackindex) then begin
+   with contextstack[stacktop] do begin
+    po1:= ele.eledataabs(d.datatyp.typedata);
+    if (d.datatyp.indirectlevel <> 0) or (po1^.kind <> dk_integer) then begin
+     incompatibletypeserror(2,'dk_integer',d);
+    end
+    else begin
+     if getaddress(stacktop-stackindex-1,true) then begin
+      with ptypedataty(ele.eledataabs(
+                 contextstack[stacktop-1].d.datatyp.typedata))^ do begin
+       with additem^ do begin
+        op:= setlengthops[kind];
+        if op = nil then begin
+         errormessage(err_typemismatch,[]);
+        end;
+       end;
+      end;
+     end;
+    end;     
+   end;   
   end;
  end;
 end;
