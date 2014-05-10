@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob{,elements};
+ parserglob,opcode;
 
 const
  pointersize = sizeof(pointer);
@@ -99,12 +99,12 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
- writeiniprocty = procedure (const address: dataoffsty);
- writefiniprocty = procedure (const address: dataoffsty);
+// writeiniprocty = procedure (const address: dataoffsty);
+// writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedtypeprocty = procedure(const aadress: dataoffsty;
-                               const global: boolean; const count: integer);
+ managedtypeprocty = procedure(const aadress: addressrefty;
+                                                const count: integer);
 
  manageddataty = record
   managedele: elementoffsetty;

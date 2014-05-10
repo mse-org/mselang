@@ -18,29 +18,33 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 
-procedure writemanagedini(const global: boolean);
-procedure writemanagedfini(const global: boolean);
+procedure writemanagedini(global: boolean);
+procedure writemanagedfini(global: boolean);
 
 implementation
 uses
  elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode;
 
 var
- currentwriteinifini: procedure (const address: dataoffsty;
-                                       const atype: ptypedataty);
+ currentwriteinifini: procedure (const address: addressrefty;
+                                                const atype: ptypedataty);
 
-procedure doitem(aaddress: dataoffsty; const atyp: elementoffsetty); forward;
+procedure doitem(var aaddress: addressrefty;
+                              const atyp: elementoffsetty); forward;
 
 procedure writeinifiniitem(const aelement: pelementinfoty; var adata;
                                                      var terminate: boolean);
 var
  po1: pelementinfoty;
+ ad1: addressrefty;
 begin
  po1:= ele.eleinfoabs(pmanageddataty(@aelement^.data)^.managedele);
+ ad1:= addressrefty(adata);
  case po1^.header.kind of
   ek_field: begin
    with pfielddataty(@po1^.data)^ do begin
-    doitem(offset+dataoffsty(adata),vf.typ);
+    inc(ad1.offset,offset);
+    doitem(ad1,vf.typ);
    end;
   end;
   else begin
@@ -49,7 +53,7 @@ begin
  end;
 end;
 
-procedure doitem(aaddress: dataoffsty; const atyp: elementoffsetty);
+procedure doitem(var aaddress: addressrefty; const atyp: elementoffsetty);
 var
  po1: ptypedataty;
  parentbefore: elementoffsetty;
@@ -89,7 +93,8 @@ begin
   ek_var: begin
    with pvardataty(@po1^.data)^ do begin
     po3:= ele.eledataabs(vf.typ);
-    doitem(address.address,vf.typ);
+    addressrefty(adata).offset:= address.address;
+    doitem(addressrefty(adata),vf.typ);
    end;
   end;
   else begin
@@ -98,6 +103,35 @@ begin
  end;
 end;
 
+procedure writeini(const aadress: addressrefty; const atype: ptypedataty);
+var
+ po1: ptypedataty;
+begin
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  po1^.iniproc(aadress,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+ end
+ else begin
+  atype^.iniproc(aadress,1);
+ end;
+end;
+
+procedure writefini(const aadress: addressrefty; const atype: ptypedataty);
+var
+ po1: ptypedataty;
+begin
+ if atype^.kind = dk_array then begin
+  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
+  po1^.finiproc(aadress,
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+ end
+ else begin
+  atype^.finiproc(aadress,1);
+ end;
+end;
+
+(*
 procedure writeinilocal(const aadress: dataoffsty; const atype: ptypedataty);
 var
  po1: ptypedataty;
@@ -153,27 +187,33 @@ begin
   atype^.finiproc(aadress,true,1);
  end;
 end;
-
-procedure writemanagedini(const global: boolean);
+*)
+procedure writemanagedini(global: boolean);
+var
+ ad1: addressrefty;
 begin
+ currentwriteinifini:= @writeini;
  if global then begin
-  currentwriteinifini:= @writeiniglobal;
+  ad1.base:= ab_global;
  end
  else begin
-  currentwriteinifini:= @writeinilocal;
+  ad1.base:= ab_frame;
  end;
- ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,nil^);
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,ad1);
 end;
 
-procedure writemanagedfini(const global: boolean);
+procedure writemanagedfini(global: boolean);
+var
+ ad1: addressrefty;
 begin
+ currentwriteinifini:= @writefini;
  if global then begin
-  currentwriteinifini:= @writefiniglobal;
+  ad1.base:= ab_global;
  end
  else begin
-  currentwriteinifini:= @writefinilocal;
+  ad1.base:= ab_frame;
  end;
- ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,nil^);
+ ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,ad1);
 end;
 
 end.

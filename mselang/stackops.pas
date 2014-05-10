@@ -19,7 +19,7 @@ uses
 
 const
  pointersize = sizeof(pointer);
- //todo: use variable alignment
+ //todo: use variable alignment, remove stacklink
  alignstep = 4;
  alignmask = ptrint(-alignstep);
   
@@ -91,8 +91,10 @@ procedure cmpequflo64();
 
 procedure storelocnil();
 procedure storeglobnil();
+procedure storereg0nil();
 procedure storelocnilar();
 procedure storeglobnilar();
+procedure storereg0nilar();
 
 procedure popglob8();
 procedure popglob16();
@@ -183,6 +185,7 @@ var
  mainstack: pointer;
  mainstackend: pointer;
  mainstackpo: pointer;
+ reg0: pointer;
  framepo: pointer;
  stacklink: pointer;
  startpo: popinfoty;
@@ -505,6 +508,11 @@ begin
  ppointer(framepo+oppo^.par.dataaddress)^:= nil;
 end;
 
+procedure storereg0nil();
+begin
+ ppointer(reg0+oppo^.par.dataaddress)^:= nil;
+end;
+
 procedure storeglobnilar();
 begin
  with oppo^ do begin
@@ -523,6 +531,17 @@ begin
   fillqword(ppointer(framepo+par.dataaddress)^,par.datasize,0);
 {$else}
   filldword(ppointer(framepo+par.dataaddress)^,par.datasize,0);
+{$endif}
+ end;
+end;
+
+procedure storereg0nilar();
+begin
+ with oppo^ do begin
+{$ifdef cpu64}
+  fillqword(ppointer(reg0+par.dataaddress)^,par.datasize,0);
+{$else}
+  filldword(ppointer(reg0+par.dataaddress)^,par.datasize,0);
 {$endif}
  end;
 end;
@@ -939,6 +958,7 @@ begin
  endpo:= oppo+length(code);
  framepo:= nil;
  stacklink:= nil;
+ reg0:= nil;
  with pstartupdataty(oppo)^ do begin
   reallocmem(globdata,globdatasize);
   fillchar(globdata^,globdatasize,0);

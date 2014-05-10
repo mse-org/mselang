@@ -20,6 +20,12 @@ interface
 uses
  parserglob;
 type
+ addressbasety = (ab_global,ab_frame,ab_reg0);
+ addressrefty = record
+  offset: dataoffsty;
+  base: addressbasety;
+ end;
+
  loopinfoty = record
   start: opaddressty;
   size: databitsizety;
@@ -34,10 +40,8 @@ function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
 procedure writeop(const operation: opty); inline;
 
-procedure inipointer(const aaddress: dataoffsty; const global: boolean;
-                                                      const count: integer);
-procedure finistring8(const aaddress: dataoffsty; const global: boolean;
-                                                      const count: integer);
+procedure inipointer(const aaddress: addressrefty; const count: integer);
+procedure finistring8(const aaddress: addressrefty; const count: integer);
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
@@ -46,33 +50,41 @@ implementation
 uses
  stackops,handlerutils;
 
-procedure inipointer(const aaddress: dataoffsty; const global: boolean;
-                                                         const count: integer);
+procedure inipointer(const aaddress: addressrefty; const count: integer);
 begin
  with additem^ do begin
   if count = 1 then begin
-   if global then begin
-    op:= @storeglobnil;
-   end
-   else begin
-    op:= @storelocnil;
+   case aaddress.base of
+    ab_global: begin
+     op:= @storeglobnil;
+    end;
+    ab_frame: begin
+     op:= @storelocnil;
+    end;
+    else begin
+     op:= @storereg0nil;
+    end;
    end;
   end
   else begin
-   if global then begin
-    op:= @storeglobnilar;
-   end
-   else begin
-    op:= @storelocnilar;
+   case aaddress.base of
+    ab_global: begin
+     op:= @storeglobnilar;
+    end;
+    ab_frame: begin
+     op:= @storelocnilar;
+    end;
+    else begin
+     op:= @storereg0nilar;
+    end;
    end;
   end;
   par.datasize:= count;
-  par.dataaddress:= aaddress;
+  par.dataaddress:= aaddress.offset;
  end;
 end;
 
-procedure finistring8(const aaddress: dataoffsty; const global: boolean;
-                                                        const count: integer);
+procedure finistring8(const aaddress: addressrefty; const count: integer);
 begin
 end;
 
