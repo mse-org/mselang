@@ -100,6 +100,13 @@ procedure storelocnilar();
 procedure storeglobnilar();
 procedure storereg0nilar();
 
+procedure finirefsizeloc();
+procedure finirefsizeglob();
+procedure finirefsizereg0();
+procedure finirefsizelocar();
+procedure finirefsizeglobar();
+procedure finirefsizereg0ar();
+
 procedure popglob8();
 procedure popglob16();
 procedure popglob32();
@@ -169,7 +176,7 @@ procedure setlengthstr8();
 
 implementation
 uses
- sysutils,handlerglob,mseformatstr,msetypes;
+ sysutils,handlerglob,mseformatstr,msetypes,internaltypes;
 {
  stackinfoty = record
   case datakindty of
@@ -954,9 +961,116 @@ begin
  end;
 end;
 
-procedure setlengthstr8(); //address, length
+procedure finirefsize(const ref: ppointer); inline;
+var
+ d: prefsizeinfoty;
 begin
- stackpop(pointersize+sizeof(integer));
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  dec(d^.ref.count);
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+  ref^:= nil;
+ end;
+end;
+
+procedure finirefsizear(ref: ppointer; const count: datasizety); inline;
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ for si1:= count-1 downto 0 do begin
+  d:= ref^;
+  if d <> nil then begin
+   dec(d);
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+   ref^:= nil;
+  end;
+  inc(ref);
+ end;
+end;
+
+procedure finirefsizeloc();
+begin
+ finirefsize(ppointer(framepo+oppo^.par.dataaddress));
+end;
+
+procedure finirefsizeglob();
+begin
+ finirefsize(ppointer(globdata+oppo^.par.dataaddress));
+end;
+
+procedure finirefsizereg0();
+begin
+ finirefsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure finirefsizelocar();
+begin
+ finirefsizear(ppointer(framepo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure finirefsizeglobar();
+begin
+ finirefsizear(ppointer(globdata+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure finirefsizereg0ar();
+begin
+ finirefsizear(ppointer(reg0+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure setlengthstr8(); //address, length
+var
+ si1,si2: stringsizety;
+ ds,ss: pstring8headerty;
+ ad: ppointer;
+begin
+ si1:= pstringsizety(mainstackpo-sizeof(stringsizety))^;
+ ad:= ppointer(mainstackpo-(sizeof(stringsizety)+sizeof(pointer)))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+ end;
+ if si1 <= 0 then begin
+  if ds <> nil then begin
+   dec(ds^.ref.count);
+   if ds^.ref.count = 0 then begin
+    freemem(ds);
+   end;
+   ad^:= nil;
+  end;
+ end
+ else begin
+  if ds = nil then begin
+   getmem(ds,si1+string8allocsize);
+  end
+  else begin
+   if ds^.ref.count = 1 then begin
+    reallocmem(ds,si1+string8allocsize);
+   end
+   else begin //needs copy
+    ss:= ds;
+    getmem(ds,si1+string8allocsize);
+    si2:= ss^.length;
+    if si1 < si2 then begin
+     si2:= si1;
+    end;
+    move((ss+1)^,(ds+1)^,si2); //get data copy
+   end;
+  end;
+  ds^.length:= si1;
+  ds^.ref.count:= 1;
+  inc(ds);    //data
+  (pchar8(ds)+si1)^:= #0; //endmarker
+  ad^:= ds;
+ end;
+ stackpop(pointersize+sizeof(stringsizety));
 end;
 
 procedure finalize;

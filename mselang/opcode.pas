@@ -41,7 +41,7 @@ function insertitem(const stackoffset: integer;
 procedure writeop(const operation: opty); inline;
 
 procedure inipointer(const aaddress: addressrefty; const count: integer);
-procedure finistring8(const aaddress: addressrefty; const count: integer);
+procedure finirefsize(const aaddress: addressrefty; const count: integer);
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
@@ -84,8 +84,38 @@ begin
  end;
 end;
 
-procedure finistring8(const aaddress: addressrefty; const count: integer);
+procedure finirefsize(const aaddress: addressrefty; const count: integer);
 begin
+ with additem^ do begin
+  if count = 1 then begin
+   case aaddress.base of
+    ab_global: begin
+     op:= @finirefsizeglob;
+    end;
+    ab_frame: begin
+     op:= @finirefsizeloc;
+    end;
+    else begin
+     op:= @finirefsizereg0;
+    end;
+   end;
+  end
+  else begin
+   case aaddress.base of
+    ab_global: begin
+     op:= @finirefsizeglobar;
+    end;
+    ab_frame: begin
+     op:= @finirefsizelocar;
+    end;
+    else begin
+     op:= @finirefsizereg0ar;
+    end;
+   end;
+  end;
+  par.datasize:= count;
+  par.dataaddress:= aaddress.offset;
+ end;
 end;
 
 function getglobvaraddress(const asize: integer): dataoffsty;

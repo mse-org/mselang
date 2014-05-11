@@ -172,7 +172,7 @@ const
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
    (name: 'string8'; data: (flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8; iniproc: @inipointer; finiproc: @finistring8;
+                 kind: dk_string8; iniproc: @inipointer; finiproc: @finirefsize;
                  ))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
