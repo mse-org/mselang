@@ -319,9 +319,9 @@ begin
 
   repeat
    po3:= ele.eledataabs(ele1);
-   ad1.offset:= aaddress.offset + po3^.offset;
    po4:= ele.eledataabs(po3^.vf.typ);
    if po4^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+    ad1.offset:= aaddress.offset + po3^.offset;
     doitem(op,ad1,po4);
    end;
    ele1:= po3^.vf.next;
@@ -330,9 +330,12 @@ begin
   if atyp^.kind = dk_array then begin
    with additem^ do begin
     op:= @increg0;
-    par.imm.voffset:= atyp^.bytesize;
+    par.imm.voffset:= po2^.bytesize;
    end;
    endforloop(loopinfo);
+   with additem^ do begin
+    op:= @popreg0;
+   end;
   end;
  end;
 end;

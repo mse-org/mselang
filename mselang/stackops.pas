@@ -62,6 +62,7 @@ procedure run(const code: opinfoarty; const constseg: pointer;
 //procedure dummyop;
 procedure moveglobalreg0();
 procedure moveframereg0();
+procedure popreg0();
 procedure increg0();
 
 procedure nop();
@@ -275,12 +276,19 @@ end;
 
 procedure moveglobalreg0();
 begin
+ ppointer(stackpush(sizeof(pointer)))^:= reg0;
  reg0:= globdata;
 end;
 
 procedure moveframereg0();
 begin
+ ppointer(stackpush(sizeof(pointer)))^:= reg0;
  reg0:= framepo;
+end;
+
+procedure popreg0();
+begin
+ reg0:= ppointer(stackpop(sizeof(pointer)))^;
 end;
 
 procedure increg0();
