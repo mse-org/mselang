@@ -222,6 +222,11 @@ begin
   with contextstack[stackindex-1] do begin
    if not ele.pushelement(id1,allvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   end
+   else begin
+    with ptypedataty(ele.parentdata)^ do begin
+     fieldchain:= 0;  //used in checkrecordfield()
+    end;
    end;
   end;
  end;
@@ -324,8 +329,7 @@ begin
   ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
-   kind:= dk_record;
-   fieldchain:= 0;
+   kind:= dk_record; //fieldchain set in handlerecorddefstart()
    datasize:= das_none;
    bytesize:= contextstack[stackindex].d.rec.fieldoffset;
    bitsize:= bytesize*8;

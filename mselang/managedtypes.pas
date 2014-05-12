@@ -270,13 +270,79 @@ begin
  end;
 end;
 *)
+
+procedure doitem(const op: managedopty;
+                      const aaddress: addressrefty; const atyp: ptypedataty);
+var
+ po2,po4: ptypedataty;
+ po3: pfielddataty;
+ parentbefore: elementoffsetty;
+ loopinfo: loopinfoty;
+ bo1: boolean;
+ ad1: addressrefty;
+ ele1: elementoffsetty;
+begin
+ if tf_managed in atyp^.flags then begin
+  if atyp^.kind = dk_array then begin
+   ptypedataty(ele.eledataabs(atyp^.infoarray.itemtypedata))^.manageproc(
+         op,aaddress,getordcount(ele.eledataabs(atyp^.infoarray.indextypedata)));
+  end
+  else begin
+   atyp^.manageproc(op,aaddress,1);
+  end;
+ end
+ else begin
+  if atyp^.kind = dk_array then begin
+   ad1.base:= ab_reg0;
+   with additem^ do begin
+    if aaddress.base = ab_global then begin
+     op:= @moveglobalreg0;
+    end
+    else begin
+     op:= @moveframereg0;
+    end;
+   end;
+   beginforloop(loopinfo,
+               getordcount(ele.eledataabs(atyp^.infoarray.indextypedata)));
+   po2:= ele.eledataabs(atyp^.infoarray.itemtypedata);
+  end
+  else begin
+   ad1.base:= aaddress.base;
+   po2:= atyp;
+  end;
+
+  ele1:= po2^.fieldchain;
+  if ele1 = 0 then begin
+   internalerror('M20140512A');
+   exit;
+  end;
+
+  repeat
+   po3:= ele.eledataabs(ele1);
+   ad1.offset:= aaddress.offset + po3^.offset;
+   po4:= ele.eledataabs(po3^.vf.typ);
+   if po4^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+    doitem(op,ad1,po4);
+   end;
+   ele1:= po3^.vf.next;
+  until ele1 = 0;
+
+  if atyp^.kind = dk_array then begin
+   with additem^ do begin
+    op:= @increg0;
+    par.imm.voffset:= atyp^.bytesize;
+   end;
+   endforloop(loopinfo);
+  end;
+ end;
+end;
+
 procedure writemanagedop(const op: managedopty;
                          const chain: elementoffsetty; const global: boolean);
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
- po2: ptypedataty;
  si1: datasizety;
 begin
  if chain <> 0 then begin
@@ -290,31 +356,12 @@ begin
   repeat
    po1:= ele.eledataabs(ele1);
    if tf_hasmanaged in po1^.vf.flags then begin
-    po2:= ele.eledataabs(po1^.vf.typ);
     ad1.offset:= po1^.address.address;
-    if tf_managed in po2^.flags then begin
-     if po2^.kind = dk_array then begin
-      ptypedataty(ele.eledataabs(po2^.infoarray.itemtypedata))^.manageproc(
-              op,ad1,getordcount(ele.eledataabs(po2^.infoarray.indextypedata)));
-     end
-     else begin
-      po2^.manageproc(op,ad1,1);
-     end;
-    end;
+    doitem(op,ad1,ele.eledataabs(po1^.vf.typ));
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
  end;
- {
- currentwriteinifini:= @writeini;
- if global then begin
-  ad1.base:= ab_global;
- end
- else begin
-  ad1.base:= ab_frame;
- end;
- ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,ad1);
- }
 end;
 {
 procedure writemanagedfini(global: boolean);
