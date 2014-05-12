@@ -263,7 +263,7 @@ begin
  ele1:= chain;
  while ele1 <> 0 do begin
   po1:= ele.eledataabs(ele1);
-  if tf_managed in po1^.vf.flags then begin
+  if tf_hasmanaged in po1^.vf.flags then begin
   end;
   ele1:= po1^.vf.next;
  end;

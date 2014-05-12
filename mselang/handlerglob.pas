@@ -147,14 +147,16 @@ type
      dk_string8:(
      );
    );
-   dk_record:(
-   );
-   dk_class:(
-    ancestor: elementoffsetty;
+   dk_record,dk_class:(
+    fieldchain: elementoffsetty;
     case datakindty of
      dk_class:(
-      infoclass: infoclassty;
-     );
+      ancestor: elementoffsetty;
+      case datakindty of
+       dk_class:(
+        infoclass: infoclassty;
+       );
+    );
    );
    dk_array:(
     infoarray: infoarrayty;

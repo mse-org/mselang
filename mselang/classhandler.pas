@@ -111,6 +111,7 @@ begin
    po1:= ele.eledataabs(currentclass);
    with po1^ do begin
     kind:= dk_class;
+    fieldchain:= 0;
     datasize:= das_pointer;
     bytesize:= pointersize;
     bitsize:= pointersize*8;

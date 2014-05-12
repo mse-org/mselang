@@ -254,12 +254,13 @@ begin
   end;
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            avisibility,ek_field,po1) then begin
-//   ele1:= ele.elementparent;
-              //???? not used
-//   ele.elementparent:= 
-//            contextstack[contextstack[stackindex].parent].b.eleparent;
    po1^.flags:= aflags;
    po1^.offset:= aoffset;
+   po1^.vf.flags:= [];
+   with ptypedataty(ele.parentdata)^ do begin
+    po1^.vf.next:= fieldchain;
+    fieldchain:= ele.eledatarel(po1);
+   end;
    with contextstack[stackindex+3] do begin
     po1^.vf.typ:= d.typ.typedata;
     po1^.indirectlevel:= d.typ.indirectlevel;
@@ -267,12 +268,15 @@ begin
     if po1^.indirectlevel = 0 then begin      //todo: alignment
      if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
       include(atypeflags,tf_hasmanaged);
+      include(po1^.vf.flags,tf_hasmanaged);
+      {
       with pmanageddataty(
               pointer(ele.addelementduplicate(tks_managed,[vik_managed],
                                                                 ek_managed))+
                                              sizeof(elementheaderty))^ do begin
        managedele:= ele.eledatarel(po1);
       end;
+      }
      end;
      size1:= po2^.bytesize;
     end
@@ -321,6 +325,7 @@ begin
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    kind:= dk_record;
+   fieldchain:= 0;
    datasize:= das_none;
    bytesize:= contextstack[stackindex].d.rec.fieldoffset;
    bitsize:= bytesize*8;
