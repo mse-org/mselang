@@ -18,14 +18,18 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
-procedure writemanagedini(const chain: elementoffsetty; global: boolean);
-procedure writemanagedfini(global: boolean);
+ parserglob,handlerglob,opcode;
+
+procedure writemanagedop(const op: managedopty; const chain: elementoffsetty;
+                                                        const global: boolean);
+//procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
+procedure managestring8(const op: managedopty; const aaddress: addressrefty;
+                                                      const count: datasizety);
 implementation
 uses
- elements,grammar,handlerglob,errorhandler,handlerutils,opcode,
+ elements,grammar,errorhandler,handlerutils,
  stackops;
 const
  setlengthops: array[datakindty] of opty = (
@@ -34,6 +38,19 @@ const
   //dk_address,dk_record,dk_string8,dk_array,dk_class
     nil,       nil,      @setlengthstr8,       nil,     nil
  );
+
+procedure managestring8(const op: managedopty; const aaddress: addressrefty;
+                                                      const count: datasizety);
+begin
+ case op of 
+  mo_ini: begin
+   inipointer(aaddress,count);
+  end;
+  mo_fini: begin
+   finirefsize(aaddress,count);
+  end;
+ end;
+end;
  
 procedure handlesetlength(const paramco: integer);
 var
@@ -68,7 +85,7 @@ begin
   end;
  end;
 end;
-
+(*
 var
  currentwriteinifini: procedure (const address: addressrefty;
                                                 const atype: ptypedataty);
@@ -197,7 +214,6 @@ begin
  end;
 end;
 
-(*
 procedure writeinilocal(const aadress: dataoffsty; const atype: ptypedataty);
 var
  po1: ptypedataty;
@@ -254,19 +270,42 @@ begin
  end;
 end;
 *)
-procedure writemanagedini(const chain: elementoffsetty; global: boolean);
+procedure writemanagedop(const op: managedopty;
+                         const chain: elementoffsetty; const global: boolean);
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
+ po2: ptypedataty;
+ si1: datasizety;
 begin
- ele1:= chain;
- while ele1 <> 0 do begin
-  po1:= ele.eledataabs(ele1);
-  if tf_hasmanaged in po1^.vf.flags then begin
+ if chain <> 0 then begin
+  if global then begin
+   ad1.base:= ab_global;
+  end
+  else begin
+   ad1.base:= ab_frame;
   end;
-  ele1:= po1^.vf.next;
+  ele1:= chain;
+  repeat
+   po1:= ele.eledataabs(ele1);
+   if tf_hasmanaged in po1^.vf.flags then begin
+    po2:= ele.eledataabs(po1^.vf.typ);
+    ad1.offset:= po1^.address.address;
+    if tf_managed in po2^.flags then begin
+     if po2^.kind = dk_array then begin
+      ptypedataty(ele.eledataabs(po2^.infoarray.itemtypedata))^.manageproc(
+              op,ad1,getordcount(ele.eledataabs(po2^.infoarray.indextypedata)));
+     end
+     else begin
+      po2^.manageproc(op,ad1,1);
+     end;
+    end;
+   end;
+   ele1:= po1^.vf.next;
+  until ele1 = 0;
  end;
+ {
  currentwriteinifini:= @writeini;
  if global then begin
   ad1.base:= ab_global;
@@ -275,8 +314,9 @@ begin
   ad1.base:= ab_frame;
  end;
  ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,ad1);
+ }
 end;
-
+{
 procedure writemanagedfini(global: boolean);
 var
  ad1: addressrefty;
@@ -290,5 +330,5 @@ begin
  end;
  ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],@writeinifini,ad1);
 end;
-
+}
 end.

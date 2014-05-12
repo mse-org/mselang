@@ -154,7 +154,7 @@ procedure outinfo(const text: string);
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler;
+ syssubhandler,managedtypes;
    
 const
  mindouble = -1.7e308;
@@ -174,7 +174,7 @@ const
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
    (name: 'string8'; data: (flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8; iniproc: @inipointer; finiproc: @finirefsize;
+                 kind: dk_string8; manageproc: @managestring8;
                  ))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (

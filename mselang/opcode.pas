@@ -40,8 +40,8 @@ function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
 procedure writeop(const operation: opty); inline;
 
-procedure inipointer(const aaddress: addressrefty; const count: integer);
-procedure finirefsize(const aaddress: addressrefty; const count: integer);
+procedure inipointer(const aaddress: addressrefty; const count: datasizety);
+procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
@@ -50,7 +50,7 @@ implementation
 uses
  stackops,handlerutils;
 
-procedure inipointer(const aaddress: addressrefty; const count: integer);
+procedure inipointer(const aaddress: addressrefty; const count: datasizety);
 begin
  with additem^ do begin
   if count = 1 then begin
@@ -84,7 +84,7 @@ begin
  end;
 end;
 
-procedure finirefsize(const aaddress: addressrefty; const count: integer);
+procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
 begin
  with additem^ do begin
   if count = 1 then begin

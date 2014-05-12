@@ -689,7 +689,7 @@ begin
    end;
   end;
   if stf_managed in currentstatementflags then begin
-   writemanagedini(po1^.varchain,false);
+   writemanagedop(mo_ini,po1^.varchain,false);
   end;
  end;
 end;
@@ -703,7 +703,8 @@ begin
    //todo: check local forward
 //  ele.decelementparent;
   if stf_managed in currentstatementflags then begin
-   writemanagedfini(false);
+   writemanagedop(mo_fini,
+                    psubdataty(ele.eledataabs(d.subdef.ref))^.varchain,false);
   end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin

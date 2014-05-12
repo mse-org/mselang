@@ -103,8 +103,10 @@ type
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedtypeprocty = procedure(const aadress: addressrefty;
-                                                const count: integer);
+ managedopty = (mo_ini,mo_fini);
+ 
+ managedtypeprocty = procedure(const op: managedopty;
+                      const aadress: addressrefty; const count: datasizety);
 
  manageddataty = record
   managedele: elementoffsetty;
@@ -141,8 +143,7 @@ type
      das_64:(infofloat64: float64infoty);
    );
    dk_string8:(
-    iniproc: managedtypeprocty;
-    finiproc: managedtypeprocty;
+    manageproc: managedtypeprocty;
     case datakindty of
      dk_string8:(
      );

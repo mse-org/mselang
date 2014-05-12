@@ -63,15 +63,16 @@ begin
   if (currentclass = 0) or not ele.findchild(info.currentclass,ident1,
                                                    [],allvisi,ele1) then begin
    if funclevel > 0 then begin
+    ele.checkcapacity(elesizes[ek_var]); //no change by addvar
     po3:= @(psubdataty(ele.parentdata)^.varchain);
    end
    else begin
     po3:= @unitinfo^.varchain;
    end;
-   addvar(ident1,allvisi,po3^,po1);
+   bo1:= addvar(ident1,allvisi,po3^,po1);
 //   po1:= ele.addelement(ident1,allvisi,ek_var);
   end;
-  if po1 = nil then begin //duplicate
+  if not bo1 then begin //duplicate
    identerror(1,err_duplicateidentifier);
   end
   else begin
