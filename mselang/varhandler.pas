@@ -87,13 +87,16 @@ begin
      if address.indirectlevel = 0 then begin
       size1:= bytesize;
       if tf_hasmanaged in flags then begin
-       include(currentstatementflags,stf_managed); 
+       include(currentstatementflags,stf_managed);
+       include(vf.flags,tf_hasmanaged);
+       {
        with pmanageddataty(
                pointer(ele.addelementduplicate(tks_managed,[vik_managed],
                                             ek_managed))+
                                          sizeof(elementheaderty))^ do begin
         managedele:= ele.eledatarel(po1);
        end;
+       }
       end;
      end
      else begin
@@ -102,7 +105,7 @@ begin
     end;
     if funclevel = 0 then begin
      address.address:= getglobvaraddress(size1);
-     address.flags:= [vf_global];
+     address.flags:= [af_global];
      address.framelevel:= 0;
     end
     else begin

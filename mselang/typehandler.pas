@@ -43,7 +43,7 @@ procedure closesquarebracketexpected();
 procedure closeroundbracketexpected();
 
 procedure checkrecordfield(const avisibility: visikindsty;
-                       const aflags: varflagsty; var aoffset: dataoffsty;
+                       const aflags: addressflagsty; var aoffset: dataoffsty;
                                                   var atypeflags: typeflagsty);
 
 implementation
@@ -238,7 +238,7 @@ begin
 end;
 
 procedure checkrecordfield(const avisibility: visikindsty;
-           const aflags: varflagsty; var aoffset: dataoffsty;
+           const aflags: addressflagsty; var aoffset: dataoffsty;
                                       var atypeflags: typeflagsty);
 var
  po1: pfielddataty;

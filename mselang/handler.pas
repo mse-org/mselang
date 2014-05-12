@@ -1077,10 +1077,10 @@ var
     for int1:= stackindex+3+idents.high to stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
-      if vf_paramindirect in po6^.address.flags then begin
+      if af_paramindirect in po6^.address.flags then begin
        case d.kind of
         ck_const: begin
-         if not (vf_const in po6^.address.flags) then begin
+         if not (af_const in po6^.address.flags) then begin
           errormessage(err_variableexpected,[],int1-stackindex);
          end
          else begin
@@ -1205,7 +1205,7 @@ var
         ele1:= pfielddataty(po4)^.vf.typ;
         case d.kind of
          ck_ref: begin
-          if vf_classfield in flags then begin
+          if af_classfield in flags then begin
 //           pushinsert(-1,false,d.ref.address,offset,true);
 //           d.kind:= ck_fact;
            dec(d.indirection);
@@ -1327,7 +1327,7 @@ begin
      if po1^.header.kind = ek_field then begin
       with pfielddataty(po2)^ do begin
        if isgetfact then begin
-        if vf_classfield in flags then begin
+        if af_classfield in flags then begin
          if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
           errormessage(err_noclass,[],0);
           goto endlab;
@@ -1945,7 +1945,7 @@ begin
    end;
    if typematch and not errorfla then begin
     int1:= dest.address.indirectlevel;
-    if vf_paramindirect in dest.address.flags then begin
+    if af_paramindirect in dest.address.flags then begin
      dec(int1);
     end;
     typematch:= tryconvert(contextstack[stacktop],dest.typ,int1);
@@ -1980,7 +1980,7 @@ begin
        end;
       end
       else begin
-       if vf_global in dest.address.flags then begin
+       if af_global in dest.address.flags then begin
         case si1 of
          1: begin 
           op:= @popglob8;
@@ -1998,7 +1998,7 @@ begin
         par.dataaddress:= dest.address.address;
        end
        else begin
-        if vf_paramindirect in dest.address.flags then begin
+        if af_paramindirect in dest.address.flags then begin
          case si1 of
           1: begin 
            op:= @poplocindi8;
@@ -2094,7 +2094,7 @@ begin
       address:= d.ref.address;
       address.address:= address.address + d.ref.offset;
       vf.typ:= d.datatyp.typedata;
-      next:= 0;
+      vf.next:= 0;
      end;
     end
     else begin

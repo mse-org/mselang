@@ -473,8 +473,8 @@ begin
      address.address:= getlocvaraddress(pointersize);
     end;
     address.framelevel:= funclevel+1;
-    address.flags:= [vf_param];
-    include(address.flags,vf_const);
+    address.flags:= [af_param];
+    include(address.flags,af_const);
     vf.typ:= currentclass;
    end;
   end;
@@ -503,19 +503,19 @@ begin
         address.address:= getlocvaraddress(si1);
        end;
        address.framelevel:= funclevel+1;
-       address.flags:= [vf_param];
+       address.flags:= [af_param];
        if paramkind1 = pk_const then begin
         if si1 > pointersize then begin
          inc(address.indirectlevel);
-         include(address.flags,vf_paramindirect);
+         include(address.flags,af_paramindirect);
          si1:= pointersize;
         end;
-        include(address.flags,vf_const);
+        include(address.flags,af_const);
        end
        else begin
         if paramkind1 in [pk_var,pk_out] then begin
          inc(address.indirectlevel);
-         include(address.flags,vf_paramindirect);
+         include(address.flags,af_paramindirect);
          si1:= pointersize;
         end;
        end;

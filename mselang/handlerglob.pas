@@ -176,11 +176,12 @@ type
 
  vfinfoty = record
   typ: elementoffsetty;   //elementdata relative typedataty
+  flags: typeflagsty;
+  next: elementoffsetty;  //chain in same scope, used for ini, fini
  end;
  vardataty = record
   vf: vfinfoty;           //same layout as fielddataty
   address: addressinfoty; //indirectlevel = total
-  next: elementoffsetty;  //chain in same scope, used for ini, fini
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
@@ -191,7 +192,7 @@ type
  fielddataty = record
   vf: vfinfoty;           //same layout as vardataty
   offset: dataoffsty;
-  flags: varflagsty;
+  flags: addressflagsty;
   indirectlevel: integer;
  end;
  pfielddataty = ^fielddataty;

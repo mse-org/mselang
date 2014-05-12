@@ -186,8 +186,8 @@ type
                     stf_classdef,stf_classimp,stf_implementation,stf_managed);
  statementflagsty = set of statementflagty;
 
- varflagty = (vf_nil,vf_global,vf_param,vf_paramindirect,vf_const,vf_classfield);
- varflagsty = set of varflagty;
+ addressflagty = (af_nil,af_global,af_param,af_paramindirect,af_const,af_classfield);
+ addressflagsty = set of addressflagty;
 
  indirectlevelty = integer;
  framelevelty = integer;
@@ -209,7 +209,7 @@ type
  
  addressinfoty = record
   address: dataaddressty;
-  flags: varflagsty;
+  flags: addressflagsty;
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
@@ -691,7 +691,7 @@ const
                                                          sizeof(opinfoty);
  nilad: addressinfoty = (
   address: 0;
-  flags: [vf_nil];
+  flags: [af_nil];
   indirectlevel: 0;
   framelevel: 0;
  );

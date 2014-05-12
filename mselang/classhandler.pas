@@ -281,7 +281,7 @@ begin
  outhandle('CLASSFIELD');
 {$endif}
  with info,contextstack[stackindex-1] do begin
-  checkrecordfield(d.cla.visibility,[vf_classfield],d.cla.fieldoffset,
+  checkrecordfield(d.cla.visibility,[af_classfield],d.cla.fieldoffset,
                                    contextstack[stackindex-2].d.typ.flags);
  end;
 end;

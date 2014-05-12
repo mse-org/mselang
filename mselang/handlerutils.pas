@@ -436,7 +436,8 @@ begin
  po1:= ele.addelement(aname,avislevel,ek_var);
  if po1 <> nil then begin
   aelementdata:= @po1^.data;
-  aelementdata^.next:= chain;
+  aelementdata^.vf.next:= chain;
+  aelementdata^.vf.flags:= [];
   chain:= ele.eleinforel(po1);
   result:= true;
  end;
@@ -523,7 +524,7 @@ procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
  with insertitem(stackoffset,before)^,info,
                      contextstack[stackindex+stackoffset].d.ref do begin
-  if vf_global in address.flags then begin
+  if af_global in address.flags then begin
    op:= @pushglobaddr;
    par.vaddress:= address.address + offset;
   end
@@ -604,12 +605,12 @@ procedure pushins(const aitem: popinfoty;
                                            const indirect: boolean);
 begin
  with aitem^ do begin
-  if vf_nil in avalue.flags then begin
+  if af_nil in avalue.flags then begin
    op:= @pushaddr;
    par.imm.vpointer:= 0;
   end
   else begin
-   if vf_global in avalue.flags then begin
+   if af_global in avalue.flags then begin
     if indirect then begin
      op:= @pushglobaddrindi;
     end
@@ -792,7 +793,7 @@ procedure pushd(const oppo: popinfoty; const address: addressinfoty;
                      const offset: dataoffsty; const size: datasizety);
 begin
  with oppo^,address do begin //todo: use table
-  if vf_global in flags then begin
+  if af_global in flags then begin
    case size of
     1: begin 
      op:= @pushglob8;
@@ -810,7 +811,7 @@ begin
    par.dataaddress:= address+offset;
   end
   else begin
-   if vf_paramindirect in flags then begin
+   if af_paramindirect in flags then begin
     case size of
      1: begin 
       op:= @pushlocindi8;
@@ -1404,7 +1405,7 @@ procedure outinfo(const text: string);
   with aaddress do begin
    write('A:',inttostr(integer(address)),' I:',inttostr(indirectlevel),
         ' F:',inttostr(framelevel),' ');
-   write(settostring(ptypeinfo(typeinfo(varflagsty)),
+   write(settostring(ptypeinfo(typeinfo(addressflagsty)),
                          integer(flags),true),' ');
   end;
  end;
