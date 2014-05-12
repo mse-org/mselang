@@ -2094,6 +2094,7 @@ begin
       address:= d.ref.address;
       address.address:= address.address + d.ref.offset;
       vf.typ:= d.datatyp.typedata;
+      next:= 0;
      end;
     end
     else begin

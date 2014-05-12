@@ -180,6 +180,7 @@ type
  vardataty = record
   vf: vfinfoty;           //same layout as fielddataty
   address: addressinfoty; //indirectlevel = total
+  next: elementoffsetty;  //chain in same scope, used for ini, fini
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;
@@ -203,6 +204,7 @@ type
   virtualindex: integer; //-1 = none
   address: opaddressty;
   nestinglevel: integer;
+  varchain: elementoffsetty;
   paramsize: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty

@@ -17,14 +17,15 @@
 unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
-
-procedure writemanagedini(global: boolean);
+uses
+ parserglob;
+procedure writemanagedini(const chain: elementoffsetty; global: boolean);
 procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
 implementation
 uses
- elements,grammar,parserglob,handlerglob,errorhandler,handlerutils,opcode,
+ elements,grammar,handlerglob,errorhandler,handlerutils,opcode,
  stackops;
 const
  setlengthops: array[datakindty] of opty = (
@@ -253,10 +254,17 @@ begin
  end;
 end;
 *)
-procedure writemanagedini(global: boolean);
+procedure writemanagedini(const chain: elementoffsetty; global: boolean);
 var
  ad1: addressrefty;
+ ele1: elementoffsetty;
+ po1: pvardataty;
 begin
+ ele1:= chain;
+ while ele1 <> 0 do begin
+  po1:= ele.eledataabs(ele1);
+  ele1:= po1^.next;
+ end;
  currentwriteinifini:= @writeini;
  if global then begin
   ad1.base:= ab_global;

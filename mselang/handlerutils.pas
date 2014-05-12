@@ -98,6 +98,8 @@ function findkindelementsdata(
 
 function findvar(const astackoffset: integer; 
         const visibility: visikindsty; out varinfo: vardestinfoty): boolean;
+function addvar(const aname: identty; const avislevel: visikindsty;
+          var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
 procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
@@ -424,6 +426,22 @@ begin
   end;
  end;
 end;                           
+
+function addvar(const aname: identty; const avislevel: visikindsty;
+          var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
+var
+ po1: pelementinfoty;
+begin
+ result:= false;
+ po1:= ele.addelement(aname,avislevel,ek_var);
+ if po1 <> nil then begin
+  aelementdata:= @po1^.data;
+  aelementdata^.next:= chain;
+  chain:= ele.eleinforel(po1);
+  result:= true;
+ end;
+end;
+
 (*
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin

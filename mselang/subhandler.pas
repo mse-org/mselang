@@ -445,6 +445,7 @@ begin
   po1^.nestinglevel:= funclevel;
   po1^.flags:= subflags;
   po1^.virtualindex:= -1; //none
+  po1^.varchain:= 0;
   if (stf_classdef in currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[stackindex-2] do begin
@@ -458,7 +459,8 @@ begin
   impl1:= (us_implementation in unitinfo^.state) and 
                                                  not (sf_header in subflags);
   if isclass then begin
-   if not ele.addelement(tks_self,allvisi,ek_var,po2) then begin
+   if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
+//   if not ele.addelement(tks_self,allvisi,ek_var,po2) then begin
     internalerror('H20140415A');
     exit;
    end;
@@ -481,7 +483,7 @@ begin
    with contextstack[int1+stackindex] do begin
     if (isclass and
         ele.findchild(currentclass,d.ident.ident,[],allvisi,ele1)) or not
-            ele.addelement(d.ident.ident,allvisi,ek_var,po2) then begin
+            addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
      identerror(int1,err_duplicateidentifier);
      err1:= true;
     end;
@@ -687,7 +689,7 @@ begin
    end;
   end;
   if stf_managed in currentstatementflags then begin
-   writemanagedini(false);
+   writemanagedini(po1^.varchain,false);
   end;
  end;
 end;

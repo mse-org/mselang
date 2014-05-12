@@ -41,10 +41,13 @@ end;
 
 procedure handlevar3();
 var
- po1,po2: pelementinfoty;
+ po1: pvardataty;
+ po2: pelementinfoty;
+ po3: pelementoffsetty;
  size1: integer;
  ident1: identty;
  ele1: elementoffsetty;
+ bo1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -56,18 +59,23 @@ begin
    exit;
   end;
   ident1:= contextstack[stackindex+1].d.ident.ident;
-  if (currentclass <> 0) and ele.findchild(info.currentclass,ident1,
+  bo1:= false;
+  if (currentclass = 0) or not ele.findchild(info.currentclass,ident1,
                                                    [],allvisi,ele1) then begin
-   po1:= nil;
-  end
-  else begin
-   po1:= ele.addelement(ident1,allvisi,ek_var);
+   if funclevel > 0 then begin
+    po3:= @(psubdataty(ele.parentdata)^.varchain);
+   end
+   else begin
+    po3:= @unitinfo^.varchain;
+   end;
+   addvar(ident1,allvisi,po3^,po1);
+//   po1:= ele.addelement(ident1,allvisi,ek_var);
   end;
   if po1 = nil then begin //duplicate
    identerror(1,err_duplicateidentifier);
   end
   else begin
-   with pvardataty(@po1^.data)^ do begin
+   with po1^ do begin
     vf.typ:= contextstack[stackindex+2].d.typ.typedata;
     po2:= ele.eleinfoabs(vf.typ);
     address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
@@ -84,7 +92,7 @@ begin
                pointer(ele.addelementduplicate(tks_managed,[vik_managed],
                                             ek_managed))+
                                          sizeof(elementheaderty))^ do begin
-        managedele:= ele.eleinforel(po1);
+        managedele:= ele.eledatarel(po1);
        end;
       end;
      end

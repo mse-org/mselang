@@ -213,6 +213,7 @@ type
    procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
+   function parentdata: pointer;
    procedure pushelementparent(); //save current on stack
    procedure pushelementparent(const aparent: elementoffsetty);
    procedure popelementparent;
@@ -393,6 +394,11 @@ function telementhashdatalist.eledataabs(
                            const aelement: elementoffsetty): pointer; inline;
 begin
  result:= aelement+pointer(felementdata)+eledatashift;
+end;
+
+function telementhashdatalist.parentdata: pointer;
+begin
+ result:= pointer(felementdata)+felementparent+eledatashift;
 end;
 
 type

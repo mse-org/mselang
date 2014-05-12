@@ -633,6 +633,7 @@ type
   pendingcount: integer;
   pendingcapacity: integer;
   pendings: pendinginfoarty;
+  varchain: elementoffsetty;
   impl: implinfoty;
  end;
  ppunitinfoty = ^punitinfoty;
