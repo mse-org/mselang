@@ -42,6 +42,7 @@ procedure regclassdescendent(const aclass: elementoffsetty;
 procedure handleunitend();
 procedure copyvirtualtable(const source,dest: dataoffsty;
                                                  const itemcount: integer);
+procedure handleinifini();
 
 procedure init;
 procedure deinit;
@@ -49,7 +50,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils,listutils;
+ mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops;
  
 type
  unithashdataty = record
@@ -68,29 +69,9 @@ type
    function findunit(const aname: identty): punitinfoty;
    function newunit(const aname: identty): punitinfoty;
  end;
-{
- implpenddataty = record
-  unitname: identty;
- end;
- pimplpenddataty = ^implpenddataty;
- implpendinfoty = record
-  header: doublelinkheaderty;
-  data: implpenddataty;
- end;
- pimplpendinfoty = ^implpendinfoty;
- 
- timplementationpendinglist = class(tdoublelinklist)
-  protected
-   froot: ptruint;
-  public
-   constructor create;
-   procedure add(const aunit: punitinfoty);
-   function next: punitinfoty;
- end;
-} 
+
 var
  unitlist: tunitlist;
-// implementationpending: timplementationpendinglist;
  
 procedure setunitname(); //unitname on top of stack
 var
@@ -207,31 +188,16 @@ begin
  end;
 end;
 
-(*
-function parseinterface(const info: pparseinfoty; 
-                                       const aunit: punitinfoty): boolean;
-begin
- with aunit^ do begin
-  writeln('***************************************** interface');
-  writeln(filepath);
-  state:= [us_interface];
-  result:= parseunit(info,readfiledatastring(filepath),aunit);
-  include(state,us_interfaceparsed);
+type
+ unitlinkinfoty = record  //used for ini, fini
+  header: linkheaderty;
+  ref: punitinfoty
  end;
-end;
+ punitlinkinfoty = ^unitlinkinfoty;
+var 
+ unitlinklist: linklistty;
+ unitchain: listadty;
 
-function parseimplementation(const info: pparseinfoty; 
-                                       const aunit: punitinfoty): boolean;
-begin
- with aunit^ do begin
-  writeln('***************************************** implementation');
-  writeln(filepath);
-  exclude(state,us_interface);
-  result:= parseunit(info,readfiledatastring(filepath),aunit);
-  include(state,us_implementationparsed);
- end;
-end;
-*)
 function newunit(const aname: string): punitinfoty; 
 var
  id: identty;
@@ -320,7 +286,7 @@ end;
 
 procedure tunitlist.finalizeitem(var aitemdata);
 begin
- finalize(punitinfoty(aitemdata)^);
+ system.finalize(punitinfoty(aitemdata)^);
  freemem(punitinfoty(aitemdata));
 end;
 
@@ -333,6 +299,9 @@ begin
  fillchar(result^,sizeof(result^),0);
  result^.key:= aname;
  po1^.data:= result;
+ with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
+  ref:= result;
+ end;
 end;
 (*
 { timplementationpendinglist }
@@ -587,10 +556,71 @@ begin
  end;
 end;
 
+procedure handleinifini();
+var
+ start1: dataaddressty;
+ unit1: punitinfoty;
+ ad1: listadty;
+begin
+ with info,unitlinklist do begin
+  start1:= 0;
+  ad1:= unitchain;
+  unit1:= nil; //compiler warning
+  while ad1 <> 0 do begin
+   with punitlinkinfoty(list+ad1)^ do begin
+    with ref^ do begin
+     if inistart <> 0 then begin
+      if start1 = 0 then begin
+       start1:= inistart;
+      end
+      else begin
+       ops[unit1^.inistop].par.opaddress:= inistart; //goto
+      end;
+      unit1:= ref;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  if start1 <> 0 then begin
+   ops[unit1^.inistop].par.opaddress:= ops[startupoffset].par.opaddress; //goto                                      
+   ops[startupoffset].par.opaddress:= start1; //inject ini code
+  end;
+  invertlist(unitlinklist,unitchain);
+  start1:= 0;
+  ad1:= unitchain;
+  while ad1 <> 0 do begin
+   with punitlinkinfoty(list+ad1)^ do begin
+    with ref^ do begin
+     if finistart <> 0 then begin
+      if start1 = 0 then begin
+       start1:= finistart;
+      end
+      else begin
+       ops[unit1^.finistop].par.opaddress:= finistart; //goto
+      end;
+      unit1:= ref;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  if start1 <> 0 then begin
+   with opcode.additem^ do begin //add fini code
+    op:= @gotoop;
+    par.opaddress:= start1;
+   end;
+   ops[unit1^.finistop].op:= nil; //stop
+  end;
+ end;
+end;
+
 procedure clear;
 begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);
- 
+ clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
+ unitchain:= 0;
+  
  links:= nil;
  linkindex:= 0;
  deletedlinks:= 0;

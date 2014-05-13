@@ -47,7 +47,7 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils;
+ handlerutils,managedtypes;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -570,8 +570,33 @@ parseend:
   end;
 {$endif}
   if stf_hasmanaged in currentstatementflags then begin
+   with unitinfo^ do begin
+    inistart:= opcount;
+    writemanagedop(mo_ini,varchain,true);
+    if inistart = opcount then begin
+     inistart:= 0;
+    end
+    else begin
+     inistop:= opcount;
+     with additem^ do begin
+      op:= @gotoop;
+     end;
+    end;
+    finistart:= opcount;
+    writemanagedop(mo_fini,varchain,true);
+    if finistart = opcount then begin
+     finistart:= 0;
+    end
+    else begin
+     finistop:= opcount;
+     with additem^ do begin
+      op:= @gotoop;
+     end;
+    end;
+   end;
   end;
   if unitlevel = 1 then begin
+   unithandler.handleinifini();
    setlength(ops,opcount);
    with pstartupdataty(pointer(ops))^ do begin
     globdatasize:= globdatapo;

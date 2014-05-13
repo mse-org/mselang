@@ -630,7 +630,7 @@ type
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
   state: unitstatesty;
-  interfaceelement{,classeselement}: elementoffsetty;
+  interfaceelement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   pendingcount: integer;
@@ -638,10 +638,10 @@ type
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
   impl: implinfoty;
-  inistart: opaddressty;
-  inistop: opaddressty;
-  finistart: opaddressty;
-  finistop: opaddressty;
+  inistart: opaddressty;   //0 if none
+  inistop: opaddressty;    //-> gotoop
+  finistart: opaddressty;  //0 if none
+  finistop: opaddressty;   //-> gotoop
  end;
  ppunitinfoty = ^punitinfoty;
 
