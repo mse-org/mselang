@@ -271,7 +271,7 @@ begin
  with info,contextstack[stackindex-1] do begin
   b.flags:= currentstatementflags;
   b.eleparent:= ele.elementparent;
-  exclude(currentstatementflags,stf_managed);
+  exclude(currentstatementflags,stf_hasmanaged);
   int1:= stacktop-stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
@@ -688,7 +688,7 @@ begin
     par.stacksize:= subdef.varsize;
    end;
   end;
-  if stf_managed in currentstatementflags then begin
+  if stf_hasmanaged in currentstatementflags then begin
    writemanagedop(mo_ini,po1^.varchain,false);
   end;
  end;
@@ -702,7 +702,7 @@ begin
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
-  if stf_managed in currentstatementflags then begin
+  if stf_hasmanaged in currentstatementflags then begin
    writemanagedop(mo_fini,
                     psubdataty(ele.eledataabs(d.subdef.ref))^.varchain,false);
   end;
@@ -722,20 +722,12 @@ begin
    op:= @returnop;
    par.stacksize:= d.subdef.paramsize;
   end;
-//  releasemanagedblock(b.managedblock);
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(funclevel);
   ele.releaseelement(b.elemark); //remove local definitions
   ele.elementparent:= b.eleparent;
   currentstatementflags:= b.flags;
-{
-  if (funclevel = 0) and (stf_classimp in currentstatementflags) then begin
-   exclude(currentstatementflags,stf_classimp);
-//   ele.popelementparent();
-//   ele.popscopelevel();
-  end;
-}
  end;
 end;
 

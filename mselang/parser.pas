@@ -269,6 +269,7 @@ var
  pcbefore: pcontextty;
  stopparserbefore: boolean;
  eleparentbefore: elementoffsetty;
+ currentstatementflagsbefore: statementflagsty;
 {$ifdef mse_debugparser}
  debugsourcebefore: pchar;
 {$endif}
@@ -291,6 +292,8 @@ begin
   unitinfobefore:= unitinfo;
   pcbefore:= pc;
   stopparserbefore:= stopparser;
+  currentstatementflagsbefore:= currentstatementflags;
+  currentstatementflags:= [];
   inc(unitlevel);
   
   sourcestart:= pchar(input); //todo: use filecache and include stack
@@ -566,9 +569,13 @@ parseend:
    writeln('! after2');
   end;
 {$endif}
-  setlength(ops,opcount);
-  with pstartupdataty(pointer(ops))^ do begin
-   globdatasize:= globdatapo;
+  if stf_hasmanaged in currentstatementflags then begin
+  end;
+  if unitlevel = 1 then begin
+   setlength(ops,opcount);
+   with pstartupdataty(pointer(ops))^ do begin
+    globdatasize:= globdatapo;
+   end;
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
@@ -582,10 +589,11 @@ parseend:
   filename:= filenamebefore;
   pc:= pcbefore;
   stopparser:= stopparserbefore;
+  currentstatementflags:= currentstatementflagsbefore;
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;
  end;
-
+ 
 {$ifdef mse_debugparser}
  write('**** end **** ');
  if aunit <> nil then begin

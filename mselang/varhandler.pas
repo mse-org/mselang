@@ -88,16 +88,8 @@ begin
      if address.indirectlevel = 0 then begin
       size1:= bytesize;
       if tf_hasmanaged in flags then begin
-       include(currentstatementflags,stf_managed);
+       include(currentstatementflags,stf_hasmanaged);
        include(vf.flags,tf_hasmanaged);
-       {
-       with pmanageddataty(
-               pointer(ele.addelementduplicate(tks_managed,[vik_managed],
-                                            ek_managed))+
-                                         sizeof(elementheaderty))^ do begin
-        managedele:= ele.eledatarel(po1);
-       end;
-       }
       end;
      end
      else begin

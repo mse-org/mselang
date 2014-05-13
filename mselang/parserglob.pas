@@ -184,10 +184,12 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_classdef,stf_classimp,stf_implementation,stf_managed);
+                    stf_classdef,stf_classimp,stf_implementation,
+                    stf_hasmanaged);
  statementflagsty = set of statementflagty;
 
- addressflagty = (af_nil,af_global,af_param,af_paramindirect,af_const,af_classfield);
+ addressflagty = (af_nil,af_global,af_param,af_paramindirect,af_const,
+                  af_classfield);
  addressflagsty = set of addressflagty;
 
  indirectlevelty = integer;
@@ -636,6 +638,10 @@ type
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
   impl: implinfoty;
+  inistart: opaddressty;
+  inistop: opaddressty;
+  finistart: opaddressty;
+  finistop: opaddressty;
  end;
  ppunitinfoty = ^punitinfoty;
 
