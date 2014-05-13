@@ -230,6 +230,11 @@ type
  implementationdataty = record
  end;
  pimplementationdataty = ^implementationdataty;
+
+ usesdataty = record
+  ref: elementoffsetty;
+ end;
+ pusesdataty = ^usesdataty;
  
  classimpdataty = record
  end;

@@ -15,7 +15,8 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit handler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}
+            {$implicitexceptions off}{$endif}
 interface
 uses
  parserglob,typinfo,msetypes,handlerglob;
@@ -1609,18 +1610,26 @@ end;
 procedure handleuses();
 var
  int1,int2: integer;
- offs1: elementoffsetty;
+// offs1: elementoffsetty;
  po1: ppunitinfoty;
+ ar1: elementoffsetarty;
 begin
 {$ifdef mse_debugparser}
  outhandle('USES');
 {$endif}
  with info do begin
-  offs1:= ele.decelementparent;
   int2:= stacktop-stackindex-1;
+  setlength(ar1,int2);
+  for int1:= 0 to int2-1 do begin
+   if not ele.addelement(contextstack[stackindex+int1+2].d.ident.ident,
+                                    [vik_global],ek_uses,ar1[int1]) then begin
+    identerror(int1+2,err_duplicateidentifier);
+   end;
+  end;
+//  offs1:= ele.decelementparent;
   with unitinfo^ do begin
    if us_interfaceparsed in state then begin
-    ele.decelementparent;
+//    ele.decelementparent;
     setlength(implementationuses,int2);
     po1:= pointer(implementationuses);
    end
@@ -1630,6 +1639,7 @@ begin
    end;
   end;
   inc(po1,int2);
+  int2:= 0;
   for int1:= stackindex+2 to stacktop do begin
    dec(po1);
    po1^:= loadunit(int1);
@@ -1637,8 +1647,14 @@ begin
     stopparser:= true;
     break;
    end;
+   if ar1[int2] <> 0 then begin
+    with pusesdataty(ele.eledataabs(ar1[int2]))^ do begin
+     ref:= po1^^.interfaceelement;
+    end;
+   end;
+   inc(int2);
   end;
-  ele.elementparent:= offs1;
+//  ele.elementparent:= offs1;
   dec(stackindex);
   stacktop:= stackindex;
  end;

@@ -38,6 +38,7 @@ type
  end;
 
 var
+ unitsele: elementoffsetty;
  sysdatatypes: array[systypety] of typeinfoty;
 
 const
@@ -154,7 +155,7 @@ procedure outinfo(const text: string);
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes;
+ syssubhandler,managedtypes,grammar;
    
 const
  mindouble = -1.7e308;
@@ -1077,6 +1078,7 @@ var
  po2: ptypedataty;
  int1: integer;
 begin
+ ele.addelement(tks_units,globalvisi,ek_none,unitsele);
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
    po1:= ele.addelement(getident(name),globalvisi,ek_type);

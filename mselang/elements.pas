@@ -39,7 +39,7 @@ type
  
  elementkindty = (ek_none,ek_type,ek_const,ek_var,ek_field,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
-                  ek_unit,ek_implementation,ek_classimp{,ek_managed});
+                  ek_unit,ek_implementation,ek_classimp,ek_uses{,ek_managed});
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -77,8 +77,8 @@ const
  {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
   sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
-//ek_classimp                    ek_managed
-  sizeof(classimpdataty)+elesize{,sizeof(manageddataty)+elesize}
+//ek_classimp                    ek_uses
+  sizeof(classimpdataty)+elesize,sizeof(usesdataty)+elesize
  );
 
 type
@@ -934,6 +934,7 @@ var
  parentbefore: elementoffsetty;
  pathbefore: identty;
  ele1: elementoffsetty;
+ po1: pointer;
 begin //todo: optimize
  result:= false;
  element:= -1;
@@ -945,9 +946,15 @@ begin //todo: optimize
    if aidents.high > 0 then begin
     parentbefore:= felementparent;
     pathbefore:= felementpath;
+    po1:= pointer(felementdata)+element;
+    with pelementinfoty(po1)^.header do begin
+     if kind = ek_uses then begin
+      element:= pusesdataty(po1+eledatashift)^.ref;
+     end;
+    end;
     felementparent:= element; //parentlevel
     with pelementinfoty(pointer(felementdata)+element)^.header do begin
-     felementpath:= path;
+     felementpath:= path + name;
     end;
     while true do begin
      if not findcurrent(aidents.d[firstnotfound],[],allvisi,ele1) then begin
@@ -1279,6 +1286,11 @@ begin
      ' virt:'+inttostr(virtualindex)+' addr:'+inttostr(impl);
     end;
    end;
+   ek_uses: begin
+    with pusesdataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' U:'+inttostr(ref);
+    end;
+   end;
   end;
   int4:= 0;
   int1:= po1^.header.next;
@@ -1528,6 +1540,9 @@ begin
  result:= po1 <> nil;
  if result then begin
   aelementoffset:= pointer(po1)-pointer(felementdata);
+ end
+ else begin
+  aelementoffset:= 0;
  end;
 end;
 

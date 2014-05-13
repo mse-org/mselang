@@ -277,7 +277,7 @@ label
 begin
  linebreaks:= 0;
  eleparentbefore:= ele.elementparent;
- ele.elementparent:= 0; //root
+ ele.elementparent:= unitsele;
  with info do begin
   filenamebefore:= filename;
   sourcebefore:= source;

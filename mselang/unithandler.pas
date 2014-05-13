@@ -107,7 +107,7 @@ begin
    identerror(1,err_illegalunitname);
   end
   else begin
-   if not ele.pushelement(id1,globalvisi,ek_unit,po1) then begin
+   if not ele.pushelement(id1,[vik_units],ek_unit,po1) then begin
     internalerror('U131018A');
    end;
    with unitinfo^ do begin

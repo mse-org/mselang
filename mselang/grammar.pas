@@ -31,7 +31,7 @@ const
  tks_published = $468ACF19;
  tks_classimp = $8D159E33;
  tks_self = $1A2B3C66;
- tks_managed = $345678CD;
+ tks_units = $345678CD;
  tk_result = $68ACF19B;
  tk_unit = $D159E337;
  tk_uses = $A2B3C66E;
@@ -69,7 +69,7 @@ const
 
  tokens: array[0..42] of string = ('',
   '.classes','.private','.protected','.public','.published','.classimp','.self',
-  '.managed',
+  '.units',
   'result','unit','uses','implementation','const','var','type','procedure',
   'function','constructor','destructor','begin','dumpelements','abort','nop',
   'include','out','virtual','override','overload','end','with','if','do','then',
