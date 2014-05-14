@@ -1,4 +1,4 @@
-#todo: use handler for whitespace
+#todo: use optimised handler for whitespace and the like
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -40,8 +40,6 @@
 start,nounit,,
  ${whitespace} 
  'unit'.,unit0-
- 'result'.,
- 'result'.,
 nounit,,,handlenouniterror
 unit0,nounitname,,
  ${whitespace}
@@ -97,8 +95,24 @@ commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,,,handlenoimplementationerror
 
-implementation,,handleimplementationentry,handleimplementation*
+implementation,implementation1,handleimplementationentry,
  '',main*
+implementation1,,,handleendexpected*
+ ${whitespace}
+ 'end'.,implementationend-
+ 'initialization'.,initialization-
+ 'finalization'.,finalization-
+initialization,initialization1,handleinitializationstart,
+ '',statementblock-^*
+initialization1,,handleinitialization,handleendexpected
+ ${whitespace}
+ 'finalization'.,finalization-
+ 'end'.,implementationend-
+finalization,finalization1,handlefinalizationstart,
+ '',statementblock-^*
+finalization1,,handlefinalization,handleendexpected
+ 'end'.,implementationend-
+implementationend,,,handleimplementation*
 
 main,main1,,
  ${whitespace}
@@ -236,8 +250,10 @@ subbody4,,,handlebeginexpected*
  'function'.,function-^*>
 subbody5a,subbody5,handlesubbody5a,
 # set procstartaddress
-subbody5,subbody6,,
+subbody5,subbody5b,,
  '',statementblock^*
+subbody5b,,,handleendexpected*
+ 'end'.,subbody6-
 subbody6,checkterminatorpop,handlesubbody6,
 # return, release
 checkterminator,,,handlecheckterminator
@@ -256,6 +272,8 @@ statement,,,*
  ';',endcontext-
  'begin'.,statementblock-^*
  'end'.,endcontext
+ 'initialization'.,endcontext
+ 'finalization'.,endcontext
  'with'.,with-
  'if'.,if0-
  '',simplestatement
@@ -279,7 +297,10 @@ statementblock,statementblock1,,*
 statementblock1,,,handlestatementblock1*
  ${whitespace}
  ';',statementblock-
- 'end'.,blockend-
+ 'end'.,blockend
+ 'initialization'.,blockend
+ 'finalization'.,blockend
+#
 statement0,statement1,handlestatement0entry,
  '',exp^*
 # '',identpath^*

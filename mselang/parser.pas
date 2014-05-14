@@ -595,14 +595,14 @@ parseend:
     end;
    end;
   end;
-  if unitlevel = 1 then begin
+  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
+  if result and (unitlevel = 1) then begin
    unithandler.handleinifini();
    setlength(ops,opcount);
    with pstartupdataty(pointer(ops))^ do begin
     globdatasize:= globdatapo;
    end;
   end;
-  result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   source:= sourcebefore;
  {$ifdef mse_debugparser}
   debugsource:= debugsourcebefore;

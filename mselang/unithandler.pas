@@ -43,6 +43,10 @@ procedure handleunitend();
 procedure copyvirtualtable(const source,dest: dataoffsty;
                                                  const itemcount: integer);
 procedure handleinifini();
+procedure handleinitializationstart();
+procedure handleinitialization();
+procedure handlefinalizationstart();
+procedure handlefinalization();
 
 procedure init;
 procedure deinit;
@@ -557,6 +561,56 @@ begin
  end;
 end;
 
+procedure handleinitializationstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INITIALIZATIONSTART');
+{$endif}
+ with info,unitinfo^ do begin
+  initializationstart:= opcount;
+ end;
+end;
+
+procedure handleinitialization();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INITIALIZATION');
+{$endif}
+ with info,unitinfo^ do begin
+   initializationstop:= opcount;
+  if opcount <> initializationstart then begin
+   with additem()^ do begin
+    op:= @gotoop; //address set in handleinifini
+   end;
+  end;
+ end;
+end;
+
+procedure handlefinalizationstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FINALIZATIONSTART');
+{$endif}
+ with info,unitinfo^ do begin
+  finalizationstart:= opcount;
+ end;
+end;
+
+procedure handlefinalization();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FINALIZATION');
+{$endif}
+ with info,unitinfo^ do begin
+  if opcount <> finalizationstart then begin
+   finalizationstop:= opcount;
+   with additem()^ do begin
+    op:= @gotoop; //address set in handleinifini
+   end;
+  end;
+ end;
+end;
+
 procedure handleinifini();
 var
  start1: opaddressty;
@@ -571,12 +625,32 @@ begin
   while ad1 <> 0 do begin //append fini calls
    with punitlinkinfoty(list+ad1)^ do begin
     with ref^ do begin
+     if finalizationstop <> 0 then begin
+      if start1 = 0 then begin
+       start1:= finalizationstart;
+      end
+      else begin
+       if unit1^.finalizationstop <> 0 then begin
+        ops[unit1^.finalizationstop].par.opaddress:= finalizationstart-1; 
+                                                                   //goto
+       end
+       else begin
+        ops[unit1^.finistop].par.opaddress:= finalizationstart-1; //goto
+       end;
+      end;
+      unit1:= ref;
+     end;
      if finistart <> 0 then begin
       if start1 = 0 then begin
        start1:= finistart;
       end
       else begin
-       ops[unit1^.finistop].par.opaddress:= finistart-1; //goto
+       if finalizationstop <> 0 then begin
+        ops[finalizationstop].par.opaddress:= finistart-1; //goto
+       end
+       else begin
+        ops[unit1^.finistop].par.opaddress:= finistart-1; //goto
+       end;
       end;
       unit1:= ref;
      end;
@@ -585,11 +659,16 @@ begin
    end;
   end;
   if start1 <> 0 then begin
-   with ops[unitinfo^.codestop-1] do begin
+   with ops[unitinfo^.codestop] do begin
     op:= @gotoop;
     par.opaddress:= start1-1;
    end;
-   ops[unit1^.finistop].op:= nil; //stop
+   if unit1^.finistop <> 0 then begin
+    ops[unit1^.finistop].op:= nil; //stop
+   end
+   else begin
+    ops[unit1^.finalizationstop].op:= nil; //stop
+   end;
   end;
 
   invertlist(unitlinklist,unitchain);

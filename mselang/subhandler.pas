@@ -46,6 +46,7 @@ procedure handlesubbody5a();
 procedure handlesubbody6();
 
 procedure handlebeginexpected();
+procedure handleendexpected();
 procedure handleimplementationexpected();
 
 implementation
@@ -738,6 +739,17 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('begin');
+  dec(stackindex);
+ end;
+end;
+
+procedure handleendexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ENDEXPECTED');
+{$endif}
+ with info do begin
+  tokenexpectederror('end');
   dec(stackindex);
  end;
 end;

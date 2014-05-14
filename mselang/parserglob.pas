@@ -639,6 +639,10 @@ type
   varchain: elementoffsetty;
   impl: implinfoty;
   codestop: opaddressty;
+  initializationstart: opaddressty;  //0 if none
+  initializationstop: opaddressty;   //0 if none, last op is goto
+  finalizationstart: opaddressty;    //0 if none
+  finalizationstop: opaddressty;     //0 if none, last op is goto
   inistart: opaddressty;   //0 if none
   inistop: opaddressty;    //-> gotoop
   finistart: opaddressty;  //0 if none

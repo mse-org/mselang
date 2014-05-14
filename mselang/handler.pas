@@ -1684,10 +1684,10 @@ begin
  outhandle('PROGBLOCK');
 {$endif}
 // writeop(nil); //endmark
+ handleunitend();
  with additem()^ do begin //endmark, will possibly replaced by goto if there 
   op:= nil;               //is fini code
  end;
- handleunitend();
  with info do begin
   dec(stackindex);
  end;
