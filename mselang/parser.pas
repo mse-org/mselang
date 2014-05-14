@@ -572,7 +572,7 @@ parseend:
   if stf_hasmanaged in currentstatementflags then begin
    with unitinfo^ do begin
     inistart:= opcount;
-    writemanagedop(mo_ini,varchain,true);
+    writemanagedvarop(mo_ini,varchain,true);
     if inistart = opcount then begin
      inistart:= 0;
     end
@@ -583,7 +583,7 @@ parseend:
      end;
     end;
     finistart:= opcount;
-    writemanagedop(mo_fini,varchain,true);
+    writemanagedvarop(mo_fini,varchain,true);
     if finistart = opcount then begin
      finistart:= 0;
     end

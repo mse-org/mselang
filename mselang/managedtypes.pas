@@ -20,7 +20,7 @@ interface
 uses
  parserglob,handlerglob,opcode;
 
-procedure writemanagedop(const op: managedopty; const chain: elementoffsetty;
+procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                                         const global: boolean);
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
@@ -340,7 +340,7 @@ begin
  end;
 end;
 
-procedure writemanagedop(const op: managedopty;
+procedure writemanagedvarop(const op: managedopty;
                          const chain: elementoffsetty; const global: boolean);
 var
  ad1: addressrefty;

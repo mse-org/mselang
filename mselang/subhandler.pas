@@ -690,7 +690,7 @@ begin
    end;
   end;
   if stf_hasmanaged in currentstatementflags then begin
-   writemanagedop(mo_ini,po1^.varchain,false);
+   writemanagedvarop(mo_ini,po1^.varchain,false);
   end;
  end;
 end;
@@ -704,7 +704,7 @@ begin
    //todo: check local forward
 //  ele.decelementparent;
   if stf_hasmanaged in currentstatementflags then begin
-   writemanagedop(mo_fini,
+   writemanagedvarop(mo_fini,
                     psubdataty(ele.eledataabs(d.subdef.ref))^.varchain,false);
   end;
   if d.subdef.varsize <> 0 then begin
