@@ -638,6 +638,7 @@ type
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
   impl: implinfoty;
+  codestop: opaddressty;
   inistart: opaddressty;   //0 if none
   inistop: opaddressty;    //-> gotoop
   finistart: opaddressty;  //0 if none

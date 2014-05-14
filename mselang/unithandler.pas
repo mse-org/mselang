@@ -542,7 +542,8 @@ var
  int1: integer;
  ad1: listadty;
 begin
- with info.unitinfo^ do begin
+ with info,unitinfo^ do begin
+  codestop:= opcount;
   checkforwarderrors(forwardlist);
   for int1:= 0 to pendingcount-1 do begin
    with ptypedataty(ele.eledataabs(pendings[int1].ref))^ do begin
@@ -558,15 +559,43 @@ end;
 
 procedure handleinifini();
 var
- start1: dataaddressty;
+ start1: opaddressty;
  unit1: punitinfoty;
  ad1: listadty;
 begin
  with info,unitlinklist do begin
+  unit1:= nil; //compiler warning
+  invertlist(unitlinklist,unitchain);
   start1:= 0;
   ad1:= unitchain;
-  unit1:= nil; //compiler warning
-  while ad1 <> 0 do begin
+  while ad1 <> 0 do begin //append fini calls
+   with punitlinkinfoty(list+ad1)^ do begin
+    with ref^ do begin
+     if finistart <> 0 then begin
+      if start1 = 0 then begin
+       start1:= finistart;
+      end
+      else begin
+       ops[unit1^.finistop].par.opaddress:= finistart-1; //goto
+      end;
+      unit1:= ref;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  if start1 <> 0 then begin
+   with ops[unitinfo^.codestop-1] do begin
+    op:= @gotoop;
+    par.opaddress:= start1-1;
+   end;
+   ops[unit1^.finistop].op:= nil; //stop
+  end;
+
+  invertlist(unitlinklist,unitchain);
+  start1:= 0;
+  ad1:= unitchain;
+  while ad1 <> 0 do begin         //insert ini calls
    with punitlinkinfoty(list+ad1)^ do begin
     with ref^ do begin
      if inistart <> 0 then begin
@@ -574,7 +603,7 @@ begin
        start1:= inistart;
       end
       else begin
-       ops[unit1^.inistop].par.opaddress:= inistart; //goto
+       ops[unit1^.inistop].par.opaddress:= inistart-1; //goto
       end;
       unit1:= ref;
      end;
@@ -584,33 +613,7 @@ begin
   end;
   if start1 <> 0 then begin
    ops[unit1^.inistop].par.opaddress:= ops[startupoffset].par.opaddress; //goto                                      
-   ops[startupoffset].par.opaddress:= start1; //inject ini code
-  end;
-  invertlist(unitlinklist,unitchain);
-  start1:= 0;
-  ad1:= unitchain;
-  while ad1 <> 0 do begin
-   with punitlinkinfoty(list+ad1)^ do begin
-    with ref^ do begin
-     if finistart <> 0 then begin
-      if start1 = 0 then begin
-       start1:= finistart;
-      end
-      else begin
-       ops[unit1^.finistop].par.opaddress:= finistart; //goto
-      end;
-      unit1:= ref;
-     end;
-     ad1:= header.next;
-    end;
-   end;
-  end;
-  if start1 <> 0 then begin
-   with opcode.additem^ do begin //add fini code
-    op:= @gotoop;
-    par.opaddress:= start1;
-   end;
-   ops[unit1^.finistop].op:= nil; //stop
+   ops[startupoffset].par.opaddress:= start1-1; //inject ini code
   end;
  end;
 end;

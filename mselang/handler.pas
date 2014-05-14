@@ -1683,7 +1683,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
 {$endif}
- writeop(nil); //endmark
+// writeop(nil); //endmark
+ with additem()^ do begin //endmark, will possibly replaced by goto if there 
+  op:= nil;               //is fini code
+ end;
  handleunitend();
  with info do begin
   dec(stackindex);
@@ -2302,7 +2305,7 @@ begin
   end;
  end;
 end;
-*)
+
 procedure opgoto(const aaddress: dataaddressty);
 begin
  with additem()^ do begin
@@ -2310,6 +2313,7 @@ begin
   par.opaddress:= aaddress;
  end;
 end;
+*)
 
 procedure handleif0();
 begin
@@ -2392,7 +2396,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ELSE0');
 {$endif}
- opgoto(dummyaddress);
+ with additem()^ do begin
+  op:= @gotoop;
+ end;
 end;
 
 procedure handleelse();
