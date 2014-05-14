@@ -635,7 +635,7 @@ begin
                                                                    //goto
        end
        else begin
-        ops[unit1^.finistop].par.opaddress:= finalizationstart-1; //goto
+        ops[unit1^.finistop].par.opaddress:= finalizationstart-1;  //goto
        end;
       end;
       unit1:= ref;
@@ -646,10 +646,16 @@ begin
       end
       else begin
        if finalizationstop <> 0 then begin
-        ops[finalizationstop].par.opaddress:= finistart-1; //goto
+        ops[finalizationstop].par.opaddress:= finistart-1;        //goto
        end
        else begin
-        ops[unit1^.finistop].par.opaddress:= finistart-1; //goto
+        if unit1^.finalizationstop <> 0 then begin
+         ops[unit1^.finalizationstop].par.opaddress:= finistart-1; 
+                                                                 //goto
+        end
+        else begin
+         ops[unit1^.finistop].par.opaddress:= finistart-1;       //goto
+        end;
        end;
       end;
       unit1:= ref;
@@ -664,7 +670,7 @@ begin
     par.opaddress:= start1-1;
    end;
    if unit1^.finistop <> 0 then begin
-    ops[unit1^.finistop].op:= nil; //stop
+    ops[unit1^.finistop].op:= nil;         //stop
    end
    else begin
     ops[unit1^.finalizationstop].op:= nil; //stop
@@ -682,7 +688,33 @@ begin
        start1:= inistart;
       end
       else begin
-       ops[unit1^.inistop].par.opaddress:= inistart-1; //goto
+       if unit1^.initializationstop <> 0 then begin
+        ops[unit1^.initializationstop].par.opaddress:= inistart-1; //goto
+       end
+       else begin
+        ops[unit1^.inistop].par.opaddress:= inistart-1;          //goto
+       end;
+      end;
+      unit1:= ref;
+     end;
+     if initializationstop <> 0 then begin
+      if start1 = 0 then begin
+       start1:= initializationstart;
+      end
+      else begin
+       if inistop <> 0 then begin
+        ops[inistop].par.opaddress:= initializationstart-1;      //goto
+       end
+       else begin
+        if unit1^.inistop <> 0 then begin
+         ops[unit1^.inistop].par.opaddress:= initializationstart-1;          
+                                                                 //goto
+        end
+        else begin
+         ops[unit1^.finalizationstop].par.opaddress:= initializationstart-1; 
+                                                                 //goto
+        end;
+       end;
       end;
       unit1:= ref;
      end;
@@ -691,7 +723,8 @@ begin
    end;
   end;
   if start1 <> 0 then begin
-   ops[unit1^.inistop].par.opaddress:= ops[startupoffset].par.opaddress; //goto                                      
+   ops[unit1^.inistop].par.opaddress:= ops[startupoffset].par.opaddress; 
+                                                                //goto                                      
    ops[startupoffset].par.opaddress:= start1-1; //inject ini code
   end;
  end;
