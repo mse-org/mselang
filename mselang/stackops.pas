@@ -94,19 +94,49 @@ procedure cmpequbool();
 procedure cmpequint32();
 procedure cmpequflo64();
 
-procedure storelocnil();
 procedure storeglobnil();
 procedure storereg0nil();
-procedure storelocnilar();
+procedure storeframenil();
+procedure storestacknil();
+procedure storestackrefnil();
 procedure storeglobnilar();
+procedure storeframenilar();
 procedure storereg0nilar();
+procedure storestacknilar();
+procedure storestackrefnilar();
 
-procedure finirefsizeloc();
 procedure finirefsizeglob();
+procedure finirefsizeframe();
 procedure finirefsizereg0();
-procedure finirefsizelocar();
+procedure finirefsizestack();
+procedure finirefsizestackref();
+procedure finirefsizeframear();
 procedure finirefsizeglobar();
 procedure finirefsizereg0ar();
+procedure finirefsizestackar();
+procedure finirefsizestackrefar();
+
+procedure increfsizeglob();
+procedure increfsizeframe();
+procedure increfsizereg0();
+procedure increfsizestack();
+procedure increfsizestackref();
+procedure increfsizeframear();
+procedure increfsizeglobar();
+procedure increfsizereg0ar();
+procedure increfsizestackar();
+procedure increfsizestackrefar();
+
+procedure decrefsizeglob();
+procedure decrefsizeframe();
+procedure decrefsizereg0();
+procedure decrefsizestack();
+procedure decrefsizestackref();
+procedure decrefsizeframear();
+procedure decrefsizeglobar();
+procedure decrefsizereg0ar();
+procedure decrefsizestackar();
+procedure decrefsizestackrefar();
 
 procedure popglob8();
 procedure popglob16();
@@ -539,9 +569,19 @@ begin
  ppointer(globdata+oppo^.par.dataaddress)^:= nil;
 end;
 
-procedure storelocnil();
+procedure storeframenil();
 begin
  ppointer(framepo+oppo^.par.dataaddress)^:= nil;
+end;
+
+procedure storestacknil();
+begin
+ ppointer(mainstackpo+oppo^.par.dataaddress)^:= nil;
+end;
+
+procedure storestackrefnil();
+begin
+ pppointer(mainstackpo+oppo^.par.dataaddress)^^:= nil;
 end;
 
 procedure storereg0nil();
@@ -560,7 +600,7 @@ begin
  end;
 end;
 
-procedure storelocnilar();
+procedure storeframenilar();
 begin
  with oppo^ do begin
 {$ifdef cpu64}
@@ -578,6 +618,28 @@ begin
   fillqword(ppointer(reg0+par.dataaddress)^,par.datasize,0);
 {$else}
   filldword(ppointer(reg0+par.dataaddress)^,par.datasize,0);
+{$endif}
+ end;
+end;
+
+procedure storestacknilar();
+begin
+ with oppo^ do begin
+{$ifdef cpu64}
+  fillqword(ppointer(mainstackpo+par.dataaddress)^,par.datasize,0);
+{$else}
+  filldword(ppointer(mainstackpo+par.dataaddress)^,par.datasize,0);
+{$endif}
+ end;
+end;
+
+procedure storestackrefnilar();
+begin
+ with oppo^ do begin
+{$ifdef cpu64}
+  fillqword(pppointer(mainstackpo+par.dataaddress)^^,par.datasize,0);
+{$else}
+  filldword(pppointer(mainstackpo+par.dataaddress)^^,par.datasize,0);
 {$endif}
  end;
 end;
@@ -1003,9 +1065,64 @@ begin
  end;
 end;
 
-procedure finirefsizeloc();
+procedure increfsize(const ref: ppointer); inline;
+var
+ d: prefsizeinfoty;
 begin
- finirefsize(ppointer(framepo+oppo^.par.dataaddress));
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  inc(d^.ref.count);
+ end;
+end;
+
+procedure increfsizear(ref: ppointer; const count: datasizety); inline;
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ for si1:= count-1 downto 0 do begin
+  d:= ref^;
+  if d <> nil then begin
+   dec(d);
+   inc(d^.ref.count);
+  end;
+  inc(ref);
+ end;
+end;
+
+procedure decrefsize(const ref: ppointer); inline;
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  dec(d^.ref.count);
+  if d^.ref.count = 0 then begin
+   freemem(d);
+  end;
+  ref^:= nil;
+ end;
+end;
+
+procedure decrefsizear(ref: ppointer; const count: datasizety); inline;
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ for si1:= count-1 downto 0 do begin
+  d:= ref^;
+  if d <> nil then begin
+   dec(d);
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+   ref^:= nil;
+  end;
+  inc(ref);
+ end;
 end;
 
 procedure finirefsizeglob();
@@ -1013,14 +1130,24 @@ begin
  finirefsize(ppointer(globdata+oppo^.par.dataaddress));
 end;
 
+procedure finirefsizeframe();
+begin
+ finirefsize(ppointer(framepo+oppo^.par.dataaddress));
+end;
+
 procedure finirefsizereg0();
 begin
  finirefsize(ppointer(reg0+oppo^.par.dataaddress));
 end;
 
-procedure finirefsizelocar();
+procedure finirefsizestack();
 begin
- finirefsizear(ppointer(framepo+oppo^.par.dataaddress),oppo^.par.datasize);
+ finirefsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure finirefsizestackref();
+begin
+ finirefsize(pppointer(reg0+oppo^.par.dataaddress)^);
 end;
 
 procedure finirefsizeglobar();
@@ -1028,9 +1155,127 @@ begin
  finirefsizear(ppointer(globdata+oppo^.par.dataaddress),oppo^.par.datasize);
 end;
 
+procedure finirefsizeframear();
+begin
+ finirefsizear(ppointer(framepo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
 procedure finirefsizereg0ar();
 begin
  finirefsizear(ppointer(reg0+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure finirefsizestackar();
+begin
+ finirefsizear(ppointer(mainstackpo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure finirefsizestackrefar();
+begin
+ finirefsizear(pppointer(mainstackpo+oppo^.par.dataaddress)^,
+                                                          oppo^.par.datasize);
+end;
+
+procedure increfsizeglob();
+begin
+ increfsize(ppointer(globdata+oppo^.par.dataaddress));
+end;
+
+procedure increfsizeframe();
+begin
+ increfsize(ppointer(framepo+oppo^.par.dataaddress));
+end;
+
+procedure increfsizereg0();
+begin
+ increfsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure increfsizestack();
+begin
+ increfsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure increfsizestackref();
+begin
+ increfsize(pppointer(reg0+oppo^.par.dataaddress)^);
+end;
+
+procedure increfsizeglobar();
+begin
+ increfsizear(ppointer(globdata+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure increfsizeframear();
+begin
+ increfsizear(ppointer(framepo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure increfsizereg0ar();
+begin
+ increfsizear(ppointer(reg0+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure increfsizestackar();
+begin
+ increfsizear(ppointer(mainstackpo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure increfsizestackrefar();
+begin
+ increfsizear(pppointer(mainstackpo+oppo^.par.dataaddress)^,
+                                                          oppo^.par.datasize);
+end;
+
+procedure decrefsizeglob();
+begin
+ decrefsize(ppointer(globdata+oppo^.par.dataaddress));
+end;
+
+procedure decrefsizeframe();
+begin
+ decrefsize(ppointer(framepo+oppo^.par.dataaddress));
+end;
+
+procedure decrefsizereg0();
+begin
+ decrefsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure decrefsizestack();
+begin
+ decrefsize(ppointer(reg0+oppo^.par.dataaddress));
+end;
+
+procedure decrefsizestackref();
+begin
+ decrefsize(pppointer(reg0+oppo^.par.dataaddress)^);
+end;
+
+procedure decrefsizeglobar();
+begin
+ decrefsizear(ppointer(globdata+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure decrefsizeframear();
+begin
+ decrefsizear(ppointer(framepo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure decrefsizereg0ar();
+begin
+ decrefsizear(ppointer(reg0+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure decrefsizestackar();
+begin
+ decrefsizear(ppointer(mainstackpo+oppo^.par.dataaddress),oppo^.par.datasize);
+end;
+
+procedure decrefsizestackrefar();
+begin
+ decrefsizear(pppointer(mainstackpo+oppo^.par.dataaddress)^,
+                                                          oppo^.par.datasize);
 end;
 
 procedure setlengthstr8(); //address, length

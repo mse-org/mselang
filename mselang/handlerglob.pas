@@ -103,7 +103,7 @@ type
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
- managedopty = (mo_ini,mo_fini);
+ managedopty = (mo_ini,mo_fini,mo_incref,mo_decref);
  
  managedtypeprocty = procedure(const op: managedopty;
                       const aadress: addressrefty; const count: datasizety);

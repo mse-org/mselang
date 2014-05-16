@@ -20,7 +20,7 @@ interface
 uses
  parserglob;
 type
- addressbasety = (ab_global,ab_frame,ab_reg0);
+ addressbasety = (ab_global,ab_frame,ab_reg0,ab_stack,ab_stackref);
  addressrefty = record
   offset: dataoffsty;
   base: addressbasety;
@@ -42,80 +42,101 @@ procedure writeop(const operation: opty); inline;
 
 procedure inipointer(const aaddress: addressrefty; const count: datasizety);
 procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
+procedure increfsize(const aaddress: addressrefty; const count: datasizety);
+procedure decrefsize(const aaddress: addressrefty; const count: datasizety);
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
 implementation
 uses
- stackops,handlerutils;
+ stackops,handlerutils,errorhandler;
+ 
+type
+ opadsty = array[addressbasety] of opty;
+ aropadsty = array[boolean] of opadsty; 
+ 
+const
+ storenilops: aropadsty = (
+  (
+  //ab_global,   ab_frame,      ab_reg0,
+   @storeglobnil,@storeframenil,@storereg0nil,
+  //ab_stack,      ab_stackref
+   @storestacknil,@storestackrefnil),
+  (
+  //ab_global,     ab_frame,        ab_reg0,
+   @storeglobnilar,@storeframenilar,@storereg0nilar,
+  //ab_stack,       ab_stackref
+   @storestacknilar,@storestackrefnilar)
+ );
 
-procedure inipointer(const aaddress: addressrefty; const count: datasizety);
+ finirefsizeops: aropadsty = (
+  (
+  //ab_global,         ab_frame,            ab_reg0,
+   @finirefsizeglob,@finirefsizeframe,@finirefsizereg0,
+  //ab_stack,           ab_stackref
+   @finirefsizestack,@finirefsizestackref),
+  (
+  //ab_global,           ab_frame,              ab_reg0,
+   @finirefsizeglobar,@finirefsizeframear,@finirefsizereg0ar,
+  //ab_stack,             ab_stackref
+   @finirefsizestackar,@finirefsizestackrefar)
+ );
+
+ increfsizeops: aropadsty = (
+  (
+  //ab_global,         ab_frame,            ab_reg0,
+   @increfsizeglob,@increfsizeframe,@increfsizereg0,
+  //ab_stack,           ab_stackref
+   @increfsizestack,@increfsizestackref),
+  (
+  //ab_global,           ab_frame,              ab_reg0,
+   @increfsizeglobar,@increfsizeframear,@increfsizereg0ar,
+  //ab_stack,             ab_stackref
+   @increfsizestackar,@increfsizestackrefar)
+ );
+
+ decrefsizeops: aropadsty = (
+  (
+  //ab_global,         ab_frame,            ab_reg0,
+   @decrefsizeglob,@decrefsizeframe,@decrefsizereg0,
+  //ab_stack,           ab_stackref
+   @decrefsizestack,@decrefsizestackref),
+  (
+  //ab_global,           ab_frame,              ab_reg0,
+   @decrefsizeglobar,@decrefsizeframear,@decrefsizereg0ar,
+  //ab_stack,             ab_stackref
+   @decrefsizestackar,@decrefsizestackrefar)
+ );
+
+procedure addmanagedop(const opsar: aropadsty; 
+               const aaddress: addressrefty; const count: datasizety);
 begin
  with additem^ do begin
-  if count = 1 then begin
-   case aaddress.base of
-    ab_global: begin
-     op:= @storeglobnil;
-    end;
-    ab_frame: begin
-     op:= @storelocnil;
-    end;
-    else begin
-     op:= @storereg0nil;
-    end;
-   end;
-  end
-  else begin
-   case aaddress.base of
-    ab_global: begin
-     op:= @storeglobnilar;
-    end;
-    ab_frame: begin
-     op:= @storelocnilar;
-    end;
-    else begin
-     op:= @storereg0nilar;
-    end;
-   end;
-  end;
+  op:= opsar[count = 1][aaddress.base];
   par.datasize:= count;
   par.dataaddress:= aaddress.offset;
  end;
 end;
 
+procedure inipointer(const aaddress: addressrefty; const count: datasizety);
+begin
+ addmanagedop(storenilops,aaddress,count);
+end;
+
 procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
 begin
- with additem^ do begin
-  if count = 1 then begin
-   case aaddress.base of
-    ab_global: begin
-     op:= @finirefsizeglob;
-    end;
-    ab_frame: begin
-     op:= @finirefsizeloc;
-    end;
-    else begin
-     op:= @finirefsizereg0;
-    end;
-   end;
-  end
-  else begin
-   case aaddress.base of
-    ab_global: begin
-     op:= @finirefsizeglobar;
-    end;
-    ab_frame: begin
-     op:= @finirefsizelocar;
-    end;
-    else begin
-     op:= @finirefsizereg0ar;
-    end;
-   end;
-  end;
-  par.datasize:= count;
-  par.dataaddress:= aaddress.offset;
- end;
+ addmanagedop(finirefsizeops,aaddress,count);
+end;
+
+procedure increfsize(const aaddress: addressrefty; const count: datasizety);
+begin
+ addmanagedop(increfsizeops,aaddress,count);
+end;
+
+procedure decrefsize(const aaddress: addressrefty; const count: datasizety);
+begin
+ addmanagedop(decrefsizeops,aaddress,count);
 end;
 
 function getglobvaraddress(const asize: integer): dataoffsty;

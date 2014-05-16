@@ -22,6 +22,11 @@ uses
 
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                                         const global: boolean);
+procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
+                                                 const aaddress: addressinfoty);
+procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
+                                                 const aaddress: addressrefty);
+
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
@@ -48,6 +53,15 @@ begin
   end;
   mo_fini: begin
    finirefsize(aaddress,count);
+  end;
+  mo_incref: begin
+   increfsize(aaddress,count);
+  end;
+  mo_decref: begin
+   decrefsize(aaddress,count);
+  end;
+  else begin
+   internalerror('M20140416A');
   end;
  end;
 end;
@@ -271,8 +285,8 @@ begin
 end;
 *)
 
-procedure doitem(const op: managedopty;
-                      const aaddress: addressrefty; const atyp: ptypedataty);
+procedure writemanagedtypeop(const op: managedopty;
+                       const atype: ptypedataty; const aaddress: addressrefty);
 var
  po2,po4: ptypedataty;
  po3: pfielddataty;
@@ -282,17 +296,17 @@ var
  ad1: addressrefty;
  ele1: elementoffsetty;
 begin
- if tf_managed in atyp^.flags then begin
-  if atyp^.kind = dk_array then begin
-   ptypedataty(ele.eledataabs(atyp^.infoarray.itemtypedata))^.manageproc(
-         op,aaddress,getordcount(ele.eledataabs(atyp^.infoarray.indextypedata)));
+ if tf_managed in atype^.flags then begin
+  if atype^.kind = dk_array then begin
+   ptypedataty(ele.eledataabs(atype^.infoarray.itemtypedata))^.manageproc(
+         op,aaddress,getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
   end
   else begin
-   atyp^.manageproc(op,aaddress,1);
+   atype^.manageproc(op,aaddress,1);
   end;
  end
  else begin
-  if atyp^.kind = dk_array then begin
+  if atype^.kind = dk_array then begin
    ad1.base:= ab_reg0;
    with additem^ do begin
     if aaddress.base = ab_global then begin
@@ -303,12 +317,12 @@ begin
     end;
    end;
    beginforloop(loopinfo,
-               getordcount(ele.eledataabs(atyp^.infoarray.indextypedata)));
-   po2:= ele.eledataabs(atyp^.infoarray.itemtypedata);
+               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+   po2:= ele.eledataabs(atype^.infoarray.itemtypedata);
   end
   else begin
    ad1.base:= aaddress.base;
-   po2:= atyp;
+   po2:= atype;
   end;
 
   ele1:= po2^.fieldchain;
@@ -322,12 +336,12 @@ begin
    po4:= ele.eledataabs(po3^.vf.typ);
    if po4^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
     ad1.offset:= aaddress.offset + po3^.offset;
-    doitem(op,ad1,po4);
+    writemanagedtypeop(op,po4,ad1);
    end;
    ele1:= po3^.vf.next;
   until ele1 = 0;
 
-  if atyp^.kind = dk_array then begin
+  if atype^.kind = dk_array then begin
    with additem^ do begin
     op:= @increg0;
     par.imm.voffset:= po2^.bytesize;
@@ -346,7 +360,6 @@ var
  ad1: addressrefty;
  ele1: elementoffsetty;
  po1: pvardataty;
- si1: datasizety;
 begin
  if chain <> 0 then begin
   if global then begin
@@ -360,12 +373,33 @@ begin
    po1:= ele.eledataabs(ele1);
    if tf_hasmanaged in po1^.vf.flags then begin
     ad1.offset:= po1^.address.address;
-    doitem(op,ad1,ele.eledataabs(po1^.vf.typ));
+    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
  end;
 end;
+
+procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
+                                                 const aaddress: addressinfoty);
+var
+ ad1: addressrefty;
+begin
+ if af_global in aaddress.flags then begin
+  ad1.base:= ab_global;
+ end
+ else begin
+  if af_stack in aaddress.flags then begin
+   ad1.base:= ab_stack;
+  end
+  else begin
+   ad1.base:= ab_frame;
+  end;
+ end;
+ ad1.offset:= aaddress.address;
+ writemanagedtypeop(op,atype,ad1);
+end;
+
 {
 procedure writemanagedfini(global: boolean);
 var

@@ -1913,6 +1913,7 @@ var
  si1: integer;
  int1: integer;
  offs1: dataoffsty;
+ ad1: addressrefty;
 label
  endlab;
 begin
@@ -1924,28 +1925,28 @@ begin
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
-   with contextstack[stackindex+1].d do begin //address
+   with contextstack[stackindex+1] do begin //address
     typematch:= false;
     indi:= false;
-    dest.typ:= ele.eledataabs(datatyp.typedata);
-    dec(datatyp.indirectlevel);
-    if datatyp.indirectlevel < 0 then begin
+    dest.typ:= ele.eledataabs(d.datatyp.typedata);
+    dec(d.datatyp.indirectlevel);
+    if d.datatyp.indirectlevel < 0 then begin
      internalerror('H20131126B');
     end
     else begin
-     if datatyp.indirectlevel > 0 then begin
+     if d.datatyp.indirectlevel > 0 then begin
       si1:= pointersize;
      end
      else begin
       si1:= dest.typ^.bytesize;
      end;
-     case kind of
+     case d.kind of
       ck_const: begin
-       if constval.kind <> dk_address then begin
+       if d.constval.kind <> dk_address then begin
         errormessage(err_argnotassign,[],0);
        end
        else begin
-        dest.address:= constval.vaddress;
+        dest.address:= d.constval.vaddress;
         typematch:= true;
        end;
       end;
@@ -1960,13 +1961,14 @@ begin
       end;
      end;
     end;
-    dest.address.indirectlevel:= datatyp.indirectlevel;
+    dest.address.indirectlevel:= d.datatyp.indirectlevel;
    end;
    if typematch and not errorfla then begin
     int1:= dest.address.indirectlevel;
     if af_paramindirect in dest.address.flags then begin
      dec(int1);
     end;
+                         //todo: use destinationaddress directly
     typematch:= tryconvert(contextstack[stacktop],dest.typ,int1);
     if not typematch then begin
      assignmenterror(contextstack[stacktop].d,dest);
@@ -1980,6 +1982,15 @@ begin
       end;
      end;
      }
+     if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
+      ad1.base:= ab_stack;
+      ad1.offset:= -si1;
+      writemanagedtypeop(mo_incref,dest.typ,ad1);
+      dec(ad1.offset,si1);
+      ad1.base:= ab_stackref;
+      writemanagedtypeop(mo_decref,dest.typ,ad1);
+     end;
+
      with additem()^ do begin
       par.datasize:= si1;
       if indi then begin

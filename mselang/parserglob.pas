@@ -189,7 +189,7 @@ type
  statementflagsty = set of statementflagty;
 
  addressflagty = (af_nil,af_global,af_param,af_paramindirect,af_const,
-                  af_classfield);
+                  af_classfield,af_stack);
  addressflagsty = set of addressflagty;
 
  indirectlevelty = integer;
