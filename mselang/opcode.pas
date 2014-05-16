@@ -113,9 +113,15 @@ procedure addmanagedop(const opsar: aropadsty;
                const aaddress: addressrefty; const count: datasizety);
 begin
  with additem^ do begin
-  op:= opsar[count = 1][aaddress.base];
-  par.datasize:= count;
-  par.dataaddress:= aaddress.offset;
+  if count > 1 then begin
+   op:= opsar[true][aaddress.base];
+   par.datasize:= count;
+   par.dataaddress:= aaddress.offset;
+  end
+  else begin
+   op:= opsar[false][aaddress.base];
+   par.vaddress:= aaddress.offset;
+  end;
  end;
 end;
 

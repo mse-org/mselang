@@ -243,7 +243,8 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist,stackops,msesysutils,opcode,syssubhandler;
+ errorhandler,mselinklist,stackops,msesysutils,opcode,syssubhandler,
+ internaltypes;
  
 type
 
@@ -1855,25 +1856,25 @@ end;
  
 function tstringbuffer.allocconst(const astring: stringinfoty): dataaddressty;
 var
- po1: pstringheaderty;
- po2: pbyte;
+ po1: pstring8headerty;
 begin
  with pstringbufdataty(fdata+astring.offset)^ do begin
   if constoffset = 0 then begin
-   constoffset:= getglobconstaddress(sizeof(stringheaderty)+len+1);
+   constoffset:= getglobconstaddress(sizeof(string8headerty)+len+1);
    with info do begin    
     po1:= pointer(constseg)+constoffset;
+    po1^.ref.count:= -1;
     po1^.len:= len;
-    po2:= @po1^.data;
-    move((fbuffer+offset)^,po2^,len);
-    (po2+len)^:= 0;
+    inc(po1); //data
+    move((fbuffer+offset)^,po1^,len);
+    pbyte(pointer(po1))[len]:= 0;
    end;
   end;
   if len = 0 then begin
    result:= 0;
   end
   else begin
-   result:= constoffset+sizeof(stringheaderty);
+   result:= constoffset+sizeof(string8headerty);
   end;
  end;
 end;

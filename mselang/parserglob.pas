@@ -464,7 +464,8 @@ type
              ok_pushstackaddress,ok_indirectpooffs,
              ok_pushconstaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
-             ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass);
+             ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass,
+             ok_managed,ok_managedar);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -539,7 +540,7 @@ type
    ok_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushconstaddress:(
+   ok_pushconstaddress,ok_managed:(
     vaddress: dataaddressty;
    );
    ok_pushglobaddress,ok_pushglobaddressindi:(
@@ -553,13 +554,13 @@ type
    ok_pushstackaddress,ok_indirectpooffs:(
     voffset: dataoffsty;
    );
-   ok_locop,ok_var:(
+   ok_locop,ok_var,ok_managedar:(
     datasize: datasizety;
     case opkindty of
      ok_locop:(
       locdataaddress: locdataaddressty;
      );
-     ok_var:(
+     ok_var,ok_managedar:(
       dataaddress: dataaddressty;
      );
    );

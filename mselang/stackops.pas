@@ -38,14 +38,14 @@ type
  pvpointerty = ^vpointerty;
  vsizety = ptrint;
  voffsty = ptrint;
-
+{
  stringheaderty = record
   len: integer;
   data: record
   end;
  end;
  pstringheaderty = ^stringheaderty;
-
+}
  frameinfoty = record
   pc: vpointerty;
   frame: vpointerty;
@@ -53,7 +53,8 @@ type
  end;
  infoopty = procedure(const opinfo: popinfoty);
 
-function alignsize(const size: ptruint): ptruint; inline;
+function alignsize(const size: ptruint): ptruint; 
+                         {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
 procedure run(const code: opinfoarty; const constseg: pointer;
@@ -242,7 +243,8 @@ begin
  raise exception.create('Internal error '+atext);
 end;
  
-function alignsize(const size: ptruint): ptruint; inline;
+function alignsize(const size: ptruint): ptruint; 
+                             {$ifdef mse_inline}inline;{$endif}
 begin
  result:= (size+(alignstep-1)) and alignmask;
 end;
@@ -258,7 +260,8 @@ begin
  freemem(mem);
 end;
 
-function stackoffs(const offs: ptruint; const size: ptruint): pointer; inline;
+function stackoffs(const offs: ptruint; const size: ptruint): pointer;
+                                          {$ifdef mse_inline}inline;{$endif}
 begin
  result:= mainstackpo + offs;
  if (result < mainstack) or (result >= mainstackend) or 
@@ -267,7 +270,8 @@ begin
  end;
 end;
 
-function stacktop(const size: ptruint): pointer; inline;
+function stacktop(const size: ptruint): pointer; 
+                                      {$ifdef mse_inline}inline;{$endif}
 begin
  result:= mainstackpo-alignsize(size);
 end;
@@ -277,7 +281,8 @@ begin
  raise exception.create('Interpreter AV');
 end;
 
-function stackpush(const size: ptruint): pointer; inline;
+function stackpush(const size: ptruint): pointer; 
+                                       {$ifdef mse_inline}inline;{$endif}
 begin
  result:= mainstackpo;
  mainstackpo:= mainstackpo + alignsize(size);
@@ -286,7 +291,8 @@ begin
  end; 
 end;
 
-function stackpushnoalign(const size: ptruint): pointer; inline;
+function stackpushnoalign(const size: ptruint): pointer; 
+                                        {$ifdef mse_inline}inline;{$endif}
 begin
  result:= mainstackpo;
  mainstackpo:= mainstackpo + size;
@@ -295,7 +301,8 @@ begin
  end; 
 end;
 
-function stackpop(const size: ptruint): pointer; inline;
+function stackpop(const size: ptruint): pointer; 
+                                        {$ifdef mse_inline}inline;{$endif}
 begin
  mainstackpo:= mainstackpo - alignsize(size);
  result:= mainstackpo;
@@ -348,7 +355,7 @@ var
  po1,po2: pointer;
  po3: pdatakindty;
  str1: string;
- po4: pstringheaderty;
+ po4: pstring8headerty;
 begin
  dec(mainstackpo,oppo^.par.paramcount*sizeof(datakindty));
  po3:= mainstackpo; //start of data kinds
@@ -372,7 +379,7 @@ begin
    dk_string8: begin
     po4:= pointer(po1^);
     if po4 <> nil then begin
-     po4:= pointer(po4)-sizeof(stringheaderty);
+     po4:= pointer(po4)-sizeof(string8headerty);
      setlength(str1,po4^.len);
      move(vpointerty(po1^)^,pointer(str1)^,po4^.len);
      write(str1);
@@ -566,27 +573,27 @@ end;
 
 procedure storeglobnil();
 begin
- ppointer(globdata+oppo^.par.dataaddress)^:= nil;
+ ppointer(globdata+oppo^.par.vaddress)^:= nil;
 end;
 
 procedure storeframenil();
 begin
- ppointer(framepo+oppo^.par.dataaddress)^:= nil;
-end;
-
-procedure storestacknil();
-begin
- ppointer(mainstackpo+oppo^.par.dataaddress)^:= nil;
-end;
-
-procedure storestackrefnil();
-begin
- pppointer(mainstackpo+oppo^.par.dataaddress)^^:= nil;
+ ppointer(framepo+oppo^.par.vaddress)^:= nil;
 end;
 
 procedure storereg0nil();
 begin
- ppointer(reg0+oppo^.par.dataaddress)^:= nil;
+ ppointer(reg0+oppo^.par.vaddress)^:= nil;
+end;
+
+procedure storestacknil();
+begin
+ ppointer(mainstackpo+oppo^.par.vaddress)^:= nil;
+end;
+
+procedure storestackrefnil();
+begin
+ pppointer(mainstackpo+oppo^.par.vaddress)^^:= nil;
 end;
 
 procedure storeglobnilar();
@@ -689,7 +696,8 @@ end;
 //todo: make special locvar access funcs for inframe variables
 //and loop unroll
 
-function locaddress(const aaddress: locdataaddressty): pointer; inline;
+function locaddress(const aaddress: locdataaddressty): pointer; 
+                                          {$ifdef mse_inline}inline;{$endif}
 var
  i1: integer;
  po1: pointer;
@@ -1031,52 +1039,26 @@ begin
  end;
 end;
 
-procedure finirefsize(const ref: ppointer); inline;
+procedure finirefsize(const ref: ppointer); 
+                         {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
 begin
  d:= ref^;
  if d <> nil then begin
   dec(d);
-  dec(d^.ref.count);
-  if d^.ref.count = 0 then begin
-   freemem(d);
-  end;
-  ref^:= nil;
- end;
-end;
-
-procedure finirefsizear(ref: ppointer; const count: datasizety); inline;
-var
- d: prefsizeinfoty;
- si1: datasizety;
-begin
- for si1:= count-1 downto 0 do begin
-  d:= ref^;
-  if d <> nil then begin
-   dec(d);
+  if d^.ref.count > 0 then begin
    dec(d^.ref.count);
    if d^.ref.count = 0 then begin
     freemem(d);
    end;
    ref^:= nil;
   end;
-  inc(ref);
  end;
 end;
 
-procedure increfsize(const ref: ppointer); inline;
-var
- d: prefsizeinfoty;
-begin
- d:= ref^;
- if d <> nil then begin
-  dec(d);
-  inc(d^.ref.count);
- end;
-end;
-
-procedure increfsizear(ref: ppointer; const count: datasizety); inline;
+procedure finirefsizear(ref: ppointer; const count: datasizety); 
+                                    {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
  si1: datasizety;
@@ -1085,28 +1067,33 @@ begin
   d:= ref^;
   if d <> nil then begin
    dec(d);
+   if d^.ref.count > 0 then begin
+    dec(d^.ref.count);
+    if d^.ref.count = 0 then begin
+     freemem(d);
+    end;
+    ref^:= nil;
+   end;
+  end;
+  inc(ref);
+ end;
+end;
+
+procedure increfsize(const ref: ppointer); {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
    inc(d^.ref.count);
   end;
-  inc(ref);
  end;
 end;
 
-procedure decrefsize(const ref: ppointer); inline;
-var
- d: prefsizeinfoty;
-begin
- d:= ref^;
- if d <> nil then begin
-  dec(d);
-  dec(d^.ref.count);
-  if d^.ref.count = 0 then begin
-   freemem(d);
-  end;
-  ref^:= nil;
- end;
-end;
-
-procedure decrefsizear(ref: ppointer; const count: datasizety); inline;
+procedure increfsizear(ref: ppointer; const count: datasizety); 
+                                           {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
  si1: datasizety;
@@ -1115,11 +1102,48 @@ begin
   d:= ref^;
   if d <> nil then begin
    dec(d);
+   if d^.ref.count > 0 then begin
+    inc(d^.ref.count);
+   end;
+  end;
+  inc(ref);
+ end;
+end;
+
+procedure decrefsize(const ref: ppointer); {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
    dec(d^.ref.count);
    if d^.ref.count = 0 then begin
     freemem(d);
    end;
    ref^:= nil;
+  end;
+ end;
+end;
+
+procedure decrefsizear(ref: ppointer; const count: datasizety); 
+                                           {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ for si1:= count-1 downto 0 do begin
+  d:= ref^;
+  if d <> nil then begin
+   dec(d);
+   if d^.ref.count > 0 then begin
+    dec(d^.ref.count);
+    if d^.ref.count = 0 then begin
+     freemem(d);
+    end;
+    ref^:= nil;
+   end;
   end;
   inc(ref);
  end;
@@ -1127,27 +1151,27 @@ end;
 
 procedure finirefsizeglob();
 begin
- finirefsize(ppointer(globdata+oppo^.par.dataaddress));
+ finirefsize(ppointer(globdata+oppo^.par.vaddress));
 end;
 
 procedure finirefsizeframe();
 begin
- finirefsize(ppointer(framepo+oppo^.par.dataaddress));
+ finirefsize(ppointer(framepo+oppo^.par.vaddress));
 end;
 
 procedure finirefsizereg0();
 begin
- finirefsize(ppointer(reg0+oppo^.par.dataaddress));
+ finirefsize(ppointer(reg0+oppo^.par.vaddress));
 end;
 
 procedure finirefsizestack();
 begin
- finirefsize(ppointer(reg0+oppo^.par.dataaddress));
+ finirefsize(ppointer(reg0+oppo^.par.vaddress));
 end;
 
 procedure finirefsizestackref();
 begin
- finirefsize(pppointer(reg0+oppo^.par.dataaddress)^);
+ finirefsize(pppointer(reg0+oppo^.par.vaddress)^);
 end;
 
 procedure finirefsizeglobar();
@@ -1178,27 +1202,27 @@ end;
 
 procedure increfsizeglob();
 begin
- increfsize(ppointer(globdata+oppo^.par.dataaddress));
+ increfsize(ppointer(globdata+oppo^.par.vaddress));
 end;
 
 procedure increfsizeframe();
 begin
- increfsize(ppointer(framepo+oppo^.par.dataaddress));
+ increfsize(ppointer(framepo+oppo^.par.vaddress));
 end;
 
 procedure increfsizereg0();
 begin
- increfsize(ppointer(reg0+oppo^.par.dataaddress));
+ increfsize(ppointer(reg0+oppo^.par.vaddress));
 end;
 
 procedure increfsizestack();
 begin
- increfsize(ppointer(reg0+oppo^.par.dataaddress));
+ increfsize(ppointer(mainstackpo+oppo^.par.vaddress));
 end;
 
 procedure increfsizestackref();
 begin
- increfsize(pppointer(reg0+oppo^.par.dataaddress)^);
+ increfsize(pppointer(mainstackpo+oppo^.par.vaddress)^);
 end;
 
 procedure increfsizeglobar();
@@ -1229,27 +1253,27 @@ end;
 
 procedure decrefsizeglob();
 begin
- decrefsize(ppointer(globdata+oppo^.par.dataaddress));
+ decrefsize(ppointer(globdata+oppo^.par.vaddress));
 end;
 
 procedure decrefsizeframe();
 begin
- decrefsize(ppointer(framepo+oppo^.par.dataaddress));
+ decrefsize(ppointer(framepo+oppo^.par.vaddress));
 end;
 
 procedure decrefsizereg0();
 begin
- decrefsize(ppointer(reg0+oppo^.par.dataaddress));
+ decrefsize(ppointer(reg0+oppo^.par.vaddress));
 end;
 
 procedure decrefsizestack();
 begin
- decrefsize(ppointer(reg0+oppo^.par.dataaddress));
+ decrefsize(ppointer(mainstackpo+oppo^.par.vaddress));
 end;
 
 procedure decrefsizestackref();
 begin
- decrefsize(pppointer(reg0+oppo^.par.dataaddress)^);
+ decrefsize(pppointer(mainstack+oppo^.par.vaddress)^);
 end;
 
 procedure decrefsizeglobar();
@@ -1310,14 +1334,14 @@ begin
    else begin //needs copy
     ss:= ds;
     getmem(ds,si1+string8allocsize);
-    si2:= ss^.length;
+    si2:= ss^.len;
     if si1 < si2 then begin
      si2:= si1;
     end;
     move((ss+1)^,(ds+1)^,si2); //get data copy
    end;
   end;
-  ds^.length:= si1;
+  ds^.len:= si1;
   ds^.ref.count:= 1;
   inc(ds);    //data
   (pchar8(ds)+si1)^:= #0; //endmarker

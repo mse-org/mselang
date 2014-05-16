@@ -1909,7 +1909,7 @@ end;
 procedure handleassignment();
 var
  dest: vardestinfoty;
- typematch,indi: boolean;
+ typematch,indi,isconst: boolean;
  si1: integer;
  int1: integer;
  offs1: dataoffsty;
@@ -1922,6 +1922,7 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   if (stacktop-stackindex = 2) and not errorfla then begin
+   isconst:= contextstack[stackindex+2].d.kind = ck_const;
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
@@ -1985,9 +1986,22 @@ begin
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
       ad1.base:= ab_stack;
       ad1.offset:= -si1;
-      writemanagedtypeop(mo_incref,dest.typ,ad1);
-      dec(ad1.offset,si1);
-      ad1.base:= ab_stackref;
+      if not isconst then begin
+       writemanagedtypeop(mo_incref,dest.typ,ad1);
+      end;
+      if indi then begin
+       dec(ad1.offset,si1);
+       ad1.base:= ab_stackref;
+      end
+      else begin
+       ad1.offset:= dest.address.address;
+       if af_global in dest.address.flags then begin
+        ad1.base:= ab_global;
+       end
+       else begin
+        ad1.base:= ab_frame;
+       end;
+      end;
       writemanagedtypeop(mo_decref,dest.typ,ad1);
      end;
 

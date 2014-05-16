@@ -30,7 +30,7 @@ type
  
  string8headerty = record
   ref: refinfoty;
-  length: stringsizety;
+  len: stringsizety;
  end; //following stringdata + terminating #0
  pstring8headerty = ^string8headerty;
  
