@@ -450,6 +450,7 @@ begin
   po1^.flags:= subflags;
   po1^.virtualindex:= -1; //none
   po1^.varchain:= 0;
+  po1^.paramfinichain:= 0;
   if (stf_classdef in currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[stackindex-2] do begin
@@ -564,6 +565,8 @@ begin
      if tf_hasmanaged in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
                                                                  po2^.address);
+      po2^.vf.next:= po1^.paramfinichain;
+      po1^.paramfinichain:= ele.eledatarel(po2);
      end;
     end;
     ele.markelement(b.elemark); 
@@ -710,6 +713,8 @@ begin
 end;
 
 procedure handlesubbody6();
+var
+ po1: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -717,9 +722,12 @@ begin
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
+  po1:= ele.eledataabs(d.subdef.ref);
   if stf_hasmanaged in currentstatementflags then begin
-   writemanagedvarop(mo_fini,
-                    psubdataty(ele.eledataabs(d.subdef.ref))^.varchain,false);
+   writemanagedvarop(mo_fini,po1^.varchain,false);
+  end;
+  if po1^.paramfinichain <> 0 then begin
+   writemanagedvarop(mo_fini,po1^.paramfinichain,false);
   end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
