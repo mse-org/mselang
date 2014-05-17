@@ -158,7 +158,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONSTPARAM');
 {$endif}
- with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+// with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+ with info,contextstack[stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -171,7 +172,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VARPARAM');
 {$endif}
- with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+// with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+ with info,contextstack[stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -184,7 +186,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OUTPARAM');
 {$endif}
- with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+// with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
+ with info,contextstack[stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -518,6 +521,12 @@ begin
          inc(address.indirectlevel);
          include(address.flags,af_paramindirect);
          si1:= pointersize;
+        end
+        else begin
+         if impl1 and (d.typ.indirectlevel = 0) and 
+                   (tf_hasmanaged in po3^.flags) then begin
+          include(vf.flags,tf_hasmanaged);
+         end;                     
         end;
        end;
        vf.typ:= d.typ.typedata;
@@ -539,6 +548,7 @@ begin
   po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
   if impl1 then begin //implementation
+   po1^.address:= opcount;
    inc(funclevel);
    getlocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
@@ -551,6 +561,10 @@ begin
      po2:= pointer(po4^[int2]);
      dec(po2^.address.address,frameoffset);
      po4^[int2]:= ptruint(po2)-eledatabase;
+     if tf_hasmanaged in po2^.vf.flags then begin
+      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
+                                                                 po2^.address);
+     end;
     end;
     ele.markelement(b.elemark); 
 //    markmanagedblock(b.managedblock);
@@ -654,9 +668,9 @@ begin
  with info,contextstack[stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
-  with po1^ do begin
-   address:= opcount;
-  end;
+//  with po1^ do begin
+//   address:= opcount;
+//  end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
