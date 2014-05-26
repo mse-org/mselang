@@ -276,7 +276,22 @@ statement,,,*
  'finalization'.,endcontext
  'with'.,with-
  'if'.,if0-
+ 'try'.,try-
  '',simplestatement
+#
+try,try1,,
+ '',statementstack^*
+try1,,,handlefinallyexpected*
+ 'finally'.,finally-
+finally,finally1,,
+ '',statementstack^*
+finally1,,,
+ '',checkend*
+#
+checkend,endexpected,,*
+ ${whitespace}
+ 'end'.,*
+ '',!handleendexpected*
 #
 with,with1,,handlewithentry
 with1,with2,,
