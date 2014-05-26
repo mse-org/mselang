@@ -31,7 +31,7 @@
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
- 'varhandler'
+ 'varhandler','tryhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'
@@ -274,21 +274,22 @@ statement,,,*
  'end'.,endcontext
  'initialization'.,endcontext
  'finalization'.,endcontext
+ 'finally'.,endcontext
  'with'.,with-
  'if'.,if0-
  'try'.,try-
  '',simplestatement
 #
 try,try1,,
- '',statementstack^*
+ '',statementblock^*
 try1,,,handlefinallyexpected*
  'finally'.,finally-
 finally,finally1,,
- '',statementstack^*
+ '',statementblock^*
 finally1,,,
  '',checkend*
 #
-checkend,endexpected,,*
+checkend,,,*
  ${whitespace}
  'end'.,*
  '',!handleendexpected*

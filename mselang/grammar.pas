@@ -55,10 +55,10 @@ const
  tk_virtual = $19BB75B9;
  tk_override = $3376EB73;
  tk_overload = $66EDD6E7;
- tk_with = $CDDBADCE;
- tk_if = $9BB75B9C;
- tk_try = $376EB739;
- tk_finally = $6EDD6E73;
+ tk_finally = $CDDBADCE;
+ tk_with = $9BB75B9C;
+ tk_if = $376EB739;
+ tk_try = $6EDD6E73;
  tk_do = $DDBADCE6;
  tk_then = $BB75B9CC;
  tk_else = $76EB7398;
@@ -77,7 +77,7 @@ const
   'result','unit','uses','implementation','const','var','type','procedure',
   'function','end','initialization','finalization','constructor','destructor',
   'begin','dumpelements','abort','nop','include','out','virtual','override',
-  'overload','with','if','try','finally','do','then','else','of','record',
+  'overload','finally','with','if','try','do','then','else','of','record',
   'array','class','private','protected','public','published');
 
  tokenids: array[0..46] of identty = (
@@ -1174,7 +1174,7 @@ var
 implementation
 
 uses
- handler,unithandler,classhandler,typehandler,subhandler,varhandler;
+ handler,unithandler,classhandler,typehandler,subhandler,varhandler,tryhandler;
  
 const
  bstart: array[0..5] of branchty = (
@@ -2541,7 +2541,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstatement: array[0..13] of branchty = (
+ bstatement: array[0..14] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; 
      keyword: $3C66EDD6{'begin'}),
@@ -2554,15 +2554,18 @@ const
    (flags: [bf_nt,bf_keyword];
      dest: (context: @endcontextco); stack: nil; 
      keyword: $678CDDBA{'finalization'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @endcontextco); stack: nil; 
+     keyword: $CDDBADCE{'finally'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @withco); stack: nil; 
-     keyword: $CDDBADCE{'with'}),
+     keyword: $9BB75B9C{'with'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @if0co); stack: nil; 
-     keyword: $9BB75B9C{'if'}),
+     keyword: $376EB739{'if'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @tryco); stack: nil; 
-     keyword: $376EB739{'try'}),
+     keyword: $6EDD6E73{'try'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -2609,7 +2612,7 @@ const
    );
  btry: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementstackco); stack: nil; keys: (
+     dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -2620,12 +2623,12 @@ const
  btry1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @finallyco); stack: nil; 
-     keyword: $6EDD6E73{'finally'}),
+     keyword: $CDDBADCE{'finally'}),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bfinally: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementstackco); stack: nil; keys: (
+     dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5310,7 +5313,6 @@ begin
  finallyco.next:= @finally1co;
  finally1co.branch:= @bfinally1;
  checkendco.branch:= @bcheckend;
- checkendco.next:= @endexpectedco;
  withco.branch:= nil;
  withco.next:= @with1co;
  withco.handleexit:= @handlewithentry;

@@ -2449,6 +2449,9 @@ end;
 
 procedure handlecheckterminator();
 begin
+{$ifdef mse_debugparser}
+ outhandle('CHECKTERMINATOR');
+{$endif}
  with info do begin
   errormessage(err_syntax,[';']);
   dec(stackindex);
@@ -2457,6 +2460,9 @@ end;
 
 procedure handlestatementblock1();
 begin
+{$ifdef mse_debugparser}
+ outhandle('STATEMENTBLOCK1');
+{$endif}
  with info do begin
   errormessage(err_syntax,[';']);
   dec(stackindex);

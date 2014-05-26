@@ -616,9 +616,61 @@ var
  start1: opaddressty;
  unit1: punitinfoty;
  ad1: listadty;
+ opad1: opaddressty;
 begin
  with info,unitlinklist do begin
   unit1:= nil; //compiler warning
+
+  start1:= 0;
+  ad1:= unitchain;
+  while ad1 <> 0 do begin         //insert ini calls
+   with punitlinkinfoty(list+ad1)^ do begin
+    with ref^ do begin
+     if inistart <> 0 then begin
+      if start1 = 0 then begin
+       start1:= inistart;
+      end
+      else begin
+       if unit1^.initializationstop <> 0 then begin
+        ops[unit1^.initializationstop].par.opaddress:= inistart-1; //goto
+       end
+       else begin
+        ops[unit1^.inistop].par.opaddress:= inistart-1;          //goto
+       end;
+      end;
+      unit1:= ref;
+     end;
+     if initializationstop <> 0 then begin
+      if start1 = 0 then begin
+       start1:= initializationstart;
+      end
+      else begin
+       if inistop <> 0 then begin
+        ops[inistop].par.opaddress:= initializationstart-1;      //goto
+       end
+       else begin
+        opad1:= unit1^.inistop;
+        if opad1 = 0 then begin
+         opad1:= unit1^.finalizationstop;
+        end; 
+        ops[opad1].par.opaddress:= initializationstart-1;        //goto
+       end;
+      end;
+      unit1:= ref;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  if start1 <> 0 then begin
+   opad1:= unit1^.initializationstop;
+   if opad1 = 0 then begin
+    opad1:= unit1^.inistop;
+   end;
+   ops[opad1].par.opaddress:= ops[startupoffset].par.opaddress; //goto                                      
+   ops[startupoffset].par.opaddress:= start1-1; //inject ini code
+  end;
+
   invertlist(unitlinklist,unitchain);
   start1:= 0;
   ad1:= unitchain;
@@ -669,64 +721,13 @@ begin
     op:= @gotoop;
     par.opaddress:= start1-1;
    end;
-   if unit1^.finistop <> 0 then begin
-    ops[unit1^.finistop].op:= nil;         //stop
-   end
-   else begin
-    ops[unit1^.finalizationstop].op:= nil; //stop
+   opad1:= unit1^.finistop;
+   if opad1 = 0 then begin
+    opad1:= unit1^.finalizationstop;
    end;
+   ops[opad1].op:= nil;         //stop
   end;
 
-  invertlist(unitlinklist,unitchain);
-  start1:= 0;
-  ad1:= unitchain;
-  while ad1 <> 0 do begin         //insert ini calls
-   with punitlinkinfoty(list+ad1)^ do begin
-    with ref^ do begin
-     if inistart <> 0 then begin
-      if start1 = 0 then begin
-       start1:= inistart;
-      end
-      else begin
-       if unit1^.initializationstop <> 0 then begin
-        ops[unit1^.initializationstop].par.opaddress:= inistart-1; //goto
-       end
-       else begin
-        ops[unit1^.inistop].par.opaddress:= inistart-1;          //goto
-       end;
-      end;
-      unit1:= ref;
-     end;
-     if initializationstop <> 0 then begin
-      if start1 = 0 then begin
-       start1:= initializationstart;
-      end
-      else begin
-       if inistop <> 0 then begin
-        ops[inistop].par.opaddress:= initializationstart-1;      //goto
-       end
-       else begin
-        if unit1^.inistop <> 0 then begin
-         ops[unit1^.inistop].par.opaddress:= initializationstart-1;          
-                                                                 //goto
-        end
-        else begin
-         ops[unit1^.finalizationstop].par.opaddress:= initializationstart-1; 
-                                                                 //goto
-        end;
-       end;
-      end;
-      unit1:= ref;
-     end;
-     ad1:= header.next;
-    end;
-   end;
-  end;
-  if start1 <> 0 then begin
-   ops[unit1^.inistop].par.opaddress:= ops[startupoffset].par.opaddress; 
-                                                                //goto                                      
-   ops[startupoffset].par.opaddress:= start1-1; //inject ini code
-  end;
  end;
 end;
 
