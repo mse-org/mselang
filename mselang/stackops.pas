@@ -1359,9 +1359,15 @@ begin
  stackpop(pointersize+sizeof(stringsizety));
 end;
 
+const
+ stopop: opinfoty = (op: nil; par:(dummy:()));
+
 procedure raiseop();
 begin
+ writeln('An unhandled exception occured at $'+hextostr(oppo));
  finiclass(stackpop(pointersize));
+ oppo:= @stopop;
+ dec(oppo);
 end;
 
 procedure finalize;

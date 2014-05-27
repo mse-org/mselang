@@ -457,7 +457,7 @@ type
  end;
  pstartupdataty = ^startupdataty;
  
- opkindty = (ok_none,ok_startup,ok_push8,ok_push16,ok_push32,ok_push64,
+ opkindty = (ok_none,ok_startup,ok_imm,ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,
              ok_pushglobaddress,ok_pushlocaddress,
              ok_pushglobaddressindi,ok_pushlocaddressindi,
@@ -513,6 +513,10 @@ type
  opparamty = record
   case opkindty of 
    ok_none: (
+    dummy: record
+    end;
+   );
+   ok_imm: (
     imm: record
      case integer of               //todo: use target size
       1: (vboolean: boolean);
