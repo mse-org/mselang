@@ -44,6 +44,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('TRYYENTRY');
 {$endif}
+ with additem()^ do begin
+  op:= @pushcpucontext;
+ end;
 end;
 
 procedure handlefinallyentry();
@@ -51,11 +54,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALLYENTRY');
 {$endif}
- with info do begin
-  with insertitem(-1,true)^ do begin
-   op:= @pushcpucontext;
-   par.opaddress:= opcount;
-  end;
+ with info,contextstack[stackindex-1] do begin
+  ops[opmark.address].par.opaddress:= opcount;
  end;
 end;
 
