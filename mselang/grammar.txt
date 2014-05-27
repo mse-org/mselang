@@ -13,7 +13,12 @@
  'const'.,*
  'begin'.,*
 "
-
+{blockends}
+" 'end'.,blockend
+ 'initialization'.,blockend
+ 'finalization'.,blockend
+ 'finally'.,blockend
+"
 @keywordstart
  'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
  'q','r','s','t','u','v','w','x','y','z'
@@ -31,7 +36,7 @@
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
- 'varhandler','tryhandler'
+ 'varhandler','exceptionhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'
@@ -271,23 +276,24 @@ statement,,,*
  ${whitespace}
  ';',endcontext-
  'begin'.,statementblock-^*
- 'end'.,endcontext
- 'initialization'.,endcontext
- 'finalization'.,endcontext
- 'finally'.,endcontext
+ ${blockends}
  'with'.,with-
  'if'.,if0-
  'try'.,try-
+ 'raise'.,raise-
  '',simplestatement
 #
-try,try1,,
+try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
  'finally'.,finally-
 finally,finally1,,
  '',statementblock^*
-finally1,,,
+finally1,,handlefinally,
  '',checkend*
+#
+raise,,,handleraise*
+ '',exp^*
 #
 checkend,,,*
  ${whitespace}
@@ -313,9 +319,7 @@ statementblock,statementblock1,,*
 statementblock1,,,handlestatementblock1*
  ${whitespace}
  ';',statementblock-
- 'end'.,blockend
- 'initialization'.,blockend
- 'finalization'.,blockend
+ ${blockends}
 #
 statement0,statement1,handlestatement0entry,
  '',exp^*

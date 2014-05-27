@@ -45,7 +45,7 @@ type
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
             err_expressionexpected,err_overloadnotfunc,
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
-            err_typemismatch);
+            err_typemismatch,err_classinstanceexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -136,7 +136,8 @@ const
   (level: erl_error; message: 
               'There is no method in ancestor class to be overridden'),
   (level: erl_error; message: 'Method identifier expected'),
-  (level: erl_error; message: 'Type mismatch')
+  (level: erl_error; message: 'Type mismatch'),
+  (level: erl_error; message: 'Class instance expected')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

@@ -206,6 +206,8 @@ procedure decloop64();
 
 procedure setlengthstr8();
 
+procedure raiseop();
+
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes;
@@ -1057,6 +1059,13 @@ begin
  end;
 end;
 
+procedure finiclass(const ref: ppointer); 
+                         {$ifdef mse_inline}inline;{$endif}
+//todo: call destroy
+begin
+ intfreemem(ref^);
+end;
+
 procedure finirefsizear(ref: ppointer; const count: datasizety); 
                                     {$ifdef mse_inline}inline;{$endif}
 var
@@ -1348,6 +1357,11 @@ begin
   ad^:= ds;
  end;
  stackpop(pointersize+sizeof(stringsizety));
+end;
+
+procedure raiseop();
+begin
+ finiclass(stackpop(pointersize));
 end;
 
 procedure finalize;
