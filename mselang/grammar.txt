@@ -279,7 +279,7 @@ statement,,,*
  ${blockends}
  'with'.,with-
  'if'.,if0-
- 'try'.,try-
+ 'try'.,try-*
  'raise'.,raise-
  '',simplestatement
 #
@@ -287,7 +287,7 @@ try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
  'finally'.,finally-
-finally,finally1,,
+finally,finally1,handlefinallyentry,
  '',statementblock^*
 finally1,,handlefinally,
  '',checkend*

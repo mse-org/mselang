@@ -2569,7 +2569,7 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @if0co); stack: nil; 
      keyword: $376EB739{'if'}),
-   (flags: [bf_nt,bf_keyword,bf_eat];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @tryco); stack: nil; 
      keyword: $6EDD6E73{'try'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -5334,6 +5334,7 @@ begin
  try1co.handleexit:= @handlefinallyexpected;
  finallyco.branch:= @bfinally;
  finallyco.next:= @finally1co;
+ finallyco.handleentry:= @handlefinallyentry;
  finally1co.branch:= @bfinally1;
  finally1co.handleentry:= @handlefinally;
  raiseco.branch:= @braise;

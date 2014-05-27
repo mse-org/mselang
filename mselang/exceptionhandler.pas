@@ -20,6 +20,7 @@ interface
 
 procedure handlefinallyexpected();
 procedure handletryentry();
+procedure handlefinallyentry();
 procedure handlefinally();
 procedure handleraise();
 
@@ -45,13 +46,29 @@ begin
 {$endif}
 end;
 
+procedure handlefinallyentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FINALLYENTRY');
+{$endif}
+ with info do begin
+  with insertitem(-1,true)^ do begin
+   op:= @pushcpucontext;
+   par.opaddress:= opcount;
+  end;
+ end;
+end;
+
 procedure handlefinally();
 begin
 {$ifdef mse_debugparser}
  outhandle('FINALLY');
 {$endif}
  with info do begin
-  dec(stackindex);
+  with additem^ do begin
+   op:= @popcpucontext;
+  end;
+  dec(stackindex,2);
  end; 
 end;
 
@@ -65,7 +82,7 @@ begin
 {$endif}
  with info,contextstack[stacktop] do begin
   bo1:= (stacktop-stackindex <> 1) or not(d.kind in datacontexts) or
-      not getvalue(1) or (d.datatyp.indirectlevel <> 0);
+                            not getvalue(1) or (d.datatyp.indirectlevel <> 0);
   if bo1 then begin
    po1:= ele.eledataabs(d.datatyp.typedata);
    bo1:= po1^.kind = dk_class;
