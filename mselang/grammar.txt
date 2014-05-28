@@ -18,6 +18,7 @@
  'initialization'.,blockend
  'finalization'.,blockend
  'finally'.,blockend
+ 'except'.,blockend
 "
 @keywordstart
  'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'
@@ -287,9 +288,14 @@ try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
  'finally'.,finally-
+ 'except'.,except-
 finally,finally1,handlefinallyentry,
  '',statementblock^*
-finally1,,handlefinally,
+finally1,,handlefinally,*
+ '',checkend*
+except,except1,handleexceptentry,
+ '',statementblock^*
+except1,,handleexcept,*
  '',checkend*
 #
 raise,,,handleraise*
@@ -297,7 +303,7 @@ raise,,,handleraise*
 #
 checkend,,,*
  ${whitespace}
- 'end'.,*
+ 'end'.,-*
  '',!handleendexpected*
 #
 with,with1,,handlewithentry

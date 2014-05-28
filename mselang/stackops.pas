@@ -209,6 +209,7 @@ procedure setlengthstr8();
 procedure raiseop();
 procedure pushcpucontext();
 procedure popcpucontext();
+procedure pophandlecpucontext();
 
 implementation
 uses
@@ -1439,6 +1440,17 @@ begin
    trystack^.exceptobj:= po1^.exceptobj; //todo: check existing exception
    cpu:= trystack^.cpu;
   end;
+ end;
+end;
+
+procedure pophandlecpucontext();
+var
+ po1: pjumpinfoty;
+begin
+ po1:= stackpop(sizeof(jumpinfoty));
+ trystack:= po1^.next;
+ if po1^.exceptobj <> nil then begin
+  finiclass(@po1^.exceptobj);
  end;
 end;
 

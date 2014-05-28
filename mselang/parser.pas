@@ -143,6 +143,9 @@ function pushcont({const info: pparseinfoty}): boolean;
 var
  int1: integer;
  bo1: boolean;
+{$ifdef mse_debugparser}
+ ch1: char;
+{$endif}
 begin
  result:= true;
  bo1:= false;
@@ -219,15 +222,22 @@ begin
    pc:= pc^.next;
    contextstack[stackindex].context:= pc;
   end;
-  pb:= pc^.branch;
 {$ifdef mse_debugparser1}
+  ch1:= ' ';
+  if bf_setparentbeforepush in pb^.flags then begin
+   ch1:= '-';
+  end;
+  if bf_setparentafterpush in pb^.flags then begin
+   ch1:= '+';
+  end;
   if bo1 then begin
-   writeln('^ '+pc^.caption); //push context
+   writeln('^'+ch1+pc^.caption); //push context
   end
   else begin
-   writeln('> '+pc^.caption); //switch context
+   writeln('>'+ch1+pc^.caption); //switch context
   end;
 {$endif}
+  pb:= pc^.branch;
   if (pc^.handleentry <> nil) then begin
    pc^.handleentry();
    if stopparser then begin

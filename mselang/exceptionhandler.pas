@@ -22,6 +22,8 @@ procedure handlefinallyexpected();
 procedure handletryentry();
 procedure handlefinallyentry();
 procedure handlefinally();
+procedure handleexceptentry();
+procedure handleexcept();
 procedure handleraise();
 
 implementation
@@ -69,7 +71,35 @@ begin
   with additem^ do begin
    op:= @popcpucontext;
   end;
-  dec(stackindex,2);
+//  dec(stackindex,1);
+ end; 
+end;
+
+procedure handleexceptentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPTENTRY');
+{$endif}
+ with additem()^ do begin
+  op:= @gotoop;
+ end;
+ with info,contextstack[stackindex-1] do begin
+  ops[opmark.address].par.opaddress:= opcount-1;
+  opmark.address:= opcount-1; //gotoop
+ end;
+end;
+
+procedure handleexcept();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXCEPT');
+{$endif}
+ with info,contextstack[stackindex-1] do begin
+  ops[opmark.address].par.opaddress:= opcount-1; //skip exception handling code
+  with additem^ do begin
+   op:= @pophandlecpucontext;
+  end;
+//  dec(stackindex,1);
  end; 
 end;
 
