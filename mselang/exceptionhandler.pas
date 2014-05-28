@@ -40,6 +40,7 @@ begin
 end;
 
 procedure handletryentry();
+              //todo: don't use push/pop stack
 begin
 {$ifdef mse_debugparser}
  outhandle('TRYYENTRY');
@@ -55,7 +56,7 @@ begin
  outhandle('FINALLYENTRY');
 {$endif}
  with info,contextstack[stackindex-1] do begin
-  ops[opmark.address].par.opaddress:= opcount;
+  ops[opmark.address].par.opaddress:= opcount-1;
  end;
 end;
 

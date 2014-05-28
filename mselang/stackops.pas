@@ -239,10 +239,16 @@ type
   stacklink: pointer;
  end;
  pcputy = ^cputy;
+ 
+ jumpflagty = (jf_exception);
+ jumpflagsty = set of jumpflagty;
+ 
  pjumpinfoty = ^jumpinfoty;
  jumpinfoty = record
   cpu: cputy;
   next: pjumpinfoty;
+  exceptobj: pointer;
+//  flags: jumpflagsty;
  end;
  
 var                       //todo: threadvar
@@ -1383,15 +1389,30 @@ end;
 const
  stopop: opinfoty = (op: nil; par:(dummy:()));
 
-procedure raiseop();
+procedure unhandledexception(const exceptobj: pointer);
 begin
  writeln('An unhandled exception occured at $'+hextostr(cpu.pc));
- finiclass(stackpop(pointersize));
+ finiclass(@exceptobj);
  cpu.pc:= @stopop;
  dec(cpu.pc);
 end;
+
+procedure raiseop();
+var
+ po1: pointer;
+begin
+ po1:= ppointer(stackpop(pointersize))^;
+ if trystack <> nil then begin
+  cpu:= trystack^.cpu;
+  trystack^.exceptobj:= po1; //todo: check existing exception
+//  include(trystack^.flags,jf_exception);
+ end
+ else begin
+  unhandledexception(po1);
+ end;
+end;
  
-procedure pushcpucontext();
+procedure pushcpucontext(); //todo: don't use push/pop stack
 var
  po1: pjumpinfoty;
 begin
@@ -1399,6 +1420,8 @@ begin
  po1^.cpu:= cpu;
  po1^.cpu.pc:= startpo + cpu.pc^.par.opaddress;
  po1^.next:= trystack;
+ po1^.exceptobj:= nil;
+// po1^.flags:= [];
  trystack:= po1;
 end;
 
@@ -1408,6 +1431,15 @@ var
 begin
  po1:= stackpop(sizeof(jumpinfoty));
  trystack:= po1^.next;
+ if po1^.exceptobj <> nil then begin
+  if trystack = nil then begin
+   unhandledexception(po1^.exceptobj);
+  end
+  else begin
+   trystack^.exceptobj:= po1^.exceptobj; //todo: check existing exception
+   cpu:= trystack^.cpu;
+  end;
+ end;
 end;
 
 procedure finalize;
