@@ -82,8 +82,8 @@ begin
  outhandle('RAISE');
 {$endif}
  with info,contextstack[stacktop] do begin
-  bo1:= (stacktop-stackindex <> 1) or not(d.kind in datacontexts) or
-                            not getvalue(1) or (d.datatyp.indirectlevel <> 0);
+  bo1:= (stacktop-stackindex = 1) and (d.kind in datacontexts) and
+                            getvalue(1) and (d.datatyp.indirectlevel = 1);
   if bo1 then begin
    po1:= ele.eledataabs(d.datatyp.typedata);
    bo1:= po1^.kind = dk_class;
