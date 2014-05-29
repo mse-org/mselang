@@ -149,7 +149,7 @@ procedure deinit();
 
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
-procedure outinfo(const text: string);
+procedure outinfo(const text: string; const indent: boolean);
 {$endif}
                            
 implementation
@@ -1364,10 +1364,11 @@ end;
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 begin
- outinfo('*'+text+'*');
+ outinfo('*'+text+'*',false);
 end;
 
-procedure outinfo(const text: string);
+procedure outinfo(const text: string; const indent: boolean = true);
+
  procedure writetype(const ainfo: contextdataty);
  var
   po1: ptypedataty;
@@ -1381,7 +1382,7 @@ procedure outinfo(const text: string);
           ' I:',indirectlevel);
   end;
   write(':',ainfo.indirection,' ');
- end;
+ end;//writetype
 
  procedure writetyp(const atyp: typeinfoty);
  var
@@ -1400,7 +1401,7 @@ procedure outinfo(const text: string);
            ' I:',indirectlevel);
    end;
   end;
- end;
+ end;//writetyp
  
  procedure writeaddress(const aaddress: addressinfoty);
  begin
@@ -1410,7 +1411,7 @@ procedure outinfo(const text: string);
    write(settostring(ptypeinfo(typeinfo(addressflagsty)),
                          integer(flags),true),' ');
   end;
- end;
+ end;//writeaddress
  
  procedure writeref(const ainfo: contextdataty);
  begin
@@ -1418,13 +1419,16 @@ procedure outinfo(const text: string);
    writeaddress(address);
    write('O:',offset,' ');
   end;
- end;
+ end;//writeref
+ 
 var
  int1: integer;
 begin
  with info do begin
-{$ifdef mse_debugparser}
-  write('  ',text,' T:',stacktop,' I:',stackindex,' O:',opcount,
+  if indent then begin
+   write('  ');
+  end;
+  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
   ' cla:',currentclass);
   if currentclass <> 0 then begin
    write(' ',getidentname(ele.eleinfoabs(currentclass)^.header.name),' ');
@@ -1432,7 +1436,6 @@ begin
   write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
   writeln;
-{$endif}
   for int1:= stacktop downto 0 do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin

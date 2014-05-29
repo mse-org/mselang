@@ -247,6 +247,19 @@ begin
  end;
 end;
 
+{$ifdef mse_debugparser}
+procedure writeinfoline(const text: string);
+begin
+ with info do begin
+  write('! '+text+' '+inttostr(stackindex)+':'+inttostr(stacktop));
+  if pc <> nil then begin
+   write(' '+pc^.caption);
+  end;
+  writeln();
+ end;
+end;
+{$endif}
+
 function parseunit(const input: string; const aunit: punitinfoty): boolean;
  procedure popparent;
  var
@@ -472,7 +485,7 @@ begin
    end;
 handlelab:
 {$ifdef mse_debugparser}
-   writeln('***');
+   writeln('*** context terminated');
           //context terminated, pop stack
 {$endif}
    repeat
@@ -519,13 +532,13 @@ handlelab:
     pc:= contextstack[stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser1}
-     writeln('! after0a');
+     writeinfoline('popexe');
 {$endif}
      goto handlelab;    
     end;
 {$ifdef mse_debugparser1}
     if not pc1^.continue and (pc^.next = nil) then begin
-     writeln('! after0b');
+     writeinfoline('no next, no continue');
     end;
 {$endif}
    until pc1^.continue or (pc^.next <> nil) or 
@@ -541,7 +554,7 @@ handlelab:
       returncontext:= nil;
      end;
 {$ifdef mse_debugparser}
-     writeln(pc1^.caption,'.>',pc^.caption);
+     writeinfoline(pc1^.caption+'.>'+pc^.caption);
 {$endif}
     end
     else begin
@@ -557,7 +570,7 @@ handlelab:
       stacktop:= stackindex;
      end;
 {$ifdef mse_debugparser}
-     writeln(pc^.caption,'->',pc^.next^.caption);
+     writeinfoline(pc^.caption+'->'+pc^.next^.caption);
 {$endif}
      pc:= pc^.next;
      context:= pc;
@@ -570,13 +583,13 @@ handlelab:
     end;
    end;
 {$ifdef mse_debugparser1}
-   writeln('! after1');
+   writeinfoline('after1');
 {$endif}
   end;
 parseend:
 {$ifdef mse_debugparser1}
   if not stopparser then begin
-   writeln('! after2');
+   writeinfoline('after2');
   end;
 {$endif}
   if stf_hasmanaged in currentstatementflags then begin
@@ -632,10 +645,10 @@ parseend:
 {$ifdef mse_debugparser}
  write('**** end **** ');
  if aunit <> nil then begin
-  writeln(aunit^.filepath);
+  writeinfoline(aunit^.filepath);
  end
  else begin
-  writeln('NIL');
+  writeinfoline('NIL');
  end;
 {$endif}
 end;

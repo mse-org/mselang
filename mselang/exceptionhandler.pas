@@ -57,8 +57,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALLYENTRY');
 {$endif}
- with info,contextstack[stackindex-1] do begin
-  ops[opmark.address].par.opaddress:= opcount-1;
+ with info do begin
+  ops[contextstack[stackindex-1].opmark.address].par.opaddress:= opcount-1;
+  with additem^ do begin
+   op:= @popcpucontext;
+  end;
  end;
 end;
 
@@ -69,7 +72,7 @@ begin
 {$endif}
  with info do begin
   with additem^ do begin
-   op:= @popcpucontext;
+   op:= @continueexception;
   end;
 //  dec(stackindex,1);
  end; 
@@ -87,6 +90,9 @@ begin
   ops[opmark.address].par.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
+ with additem^ do begin
+  op:= @popcpucontext;
+ end;
 end;
 
 procedure handleexcept();
@@ -97,7 +103,7 @@ begin
  with info,contextstack[stackindex-1] do begin
   ops[opmark.address].par.opaddress:= opcount-1; //skip exception handling code
   with additem^ do begin
-   op:= @pophandlecpucontext;
+   op:= @finiexception;
   end;
 //  dec(stackindex,1);
  end; 

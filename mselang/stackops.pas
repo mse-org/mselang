@@ -209,7 +209,8 @@ procedure setlengthstr8();
 procedure raiseop();
 procedure pushcpucontext();
 procedure popcpucontext();
-procedure pophandlecpucontext();
+procedure finiexception();
+procedure continueexception();
 
 implementation
 uses
@@ -248,15 +249,20 @@ type
  jumpinfoty = record
   cpu: cputy;
   next: pjumpinfoty;
-  exceptobj: pointer;
+//  exceptobj: pointer;
 //  flags: jumpflagsty;
  end;
- 
-var                       //todo: threadvar
+
+ exceptioninfoty = record
+  trystack: pjumpinfoty;
+  exceptobj: pointer;
+ end;
+  
+var                       //todo: use threadvars where necessary
  mainstack: pointer;
  mainstackend: pointer;
  reg0: pointer;
- trystack: pjumpinfoty;
+ exceptioninfo: exceptioninfoty;
  cpu: cputy;
  {
  mainstackpo: pointer;
@@ -1403,13 +1409,17 @@ var
  po1: pointer;
 begin
  po1:= ppointer(stackpop(pointersize))^;
- if trystack <> nil then begin
-  cpu:= trystack^.cpu;
-  trystack^.exceptobj:= po1; //todo: check existing exception
-//  include(trystack^.flags,jf_exception);
- end
- else begin
-  unhandledexception(po1);
+ with exceptioninfo do begin
+  if exceptobj <> nil then begin
+   finiclass(@exceptioninfo.exceptobj);
+  end;
+  exceptobj:= po1;
+  if trystack <> nil then begin
+   cpu:= trystack^.cpu;
+  end
+  else begin
+   unhandledexception(po1);
+  end;
  end;
 end;
  
@@ -1420,10 +1430,8 @@ begin
  po1:= stackpush(sizeof(jumpinfoty));
  po1^.cpu:= cpu;
  po1^.cpu.pc:= startpo + cpu.pc^.par.opaddress;
- po1^.next:= trystack;
- po1^.exceptobj:= nil;
-// po1^.flags:= [];
- trystack:= po1;
+ po1^.next:= exceptioninfo.trystack;
+ exceptioninfo.trystack:= po1;
 end;
 
 procedure popcpucontext();
@@ -1431,7 +1439,10 @@ var
  po1: pjumpinfoty;
 begin
  po1:= stackpop(sizeof(jumpinfoty));
+ exceptioninfo.trystack:= po1^.next;
+{
  trystack:= po1^.next;
+ currentexception:= po1^.exceptobj
  if po1^.exceptobj <> nil then begin
   if trystack = nil then begin
    unhandledexception(po1^.exceptobj);
@@ -1441,8 +1452,34 @@ begin
    cpu:= trystack^.cpu;
   end;
  end;
+}
 end;
 
+procedure finiexception();
+begin
+ with exceptioninfo do begin
+  if exceptobj <> nil then begin
+   finiclass(@exceptioninfo.exceptobj);
+   exceptobj:= nil;  
+  end;
+ end;
+end;
+
+procedure continueexception();
+begin
+ with exceptioninfo do begin
+  if exceptobj <> nil then begin
+   if trystack = nil then begin
+    unhandledexception(exceptobj);
+   end
+   else begin
+    cpu:= trystack^.cpu;
+   end;
+  end;
+ end;
+end;
+
+{
 procedure pophandlecpucontext();
 var
  po1: pjumpinfoty;
@@ -1453,7 +1490,7 @@ begin
   finiclass(@po1^.exceptobj);
  end;
 end;
-
+}
 procedure finalize;
 begin
  if mainstack <> nil then begin
@@ -1473,7 +1510,9 @@ var
 begin
  fillchar(cpu,sizeof(cpu),0);
  reg0:= nil;
- trystack:= nil;
+ fillchar(exceptioninfo,sizeof(exceptioninfo),0);
+// trystack:= nil;
+// exceptobj:= nil;
  reallocmem(mainstack,stackdepht);
  cpu.stack:= mainstack;
  mainstackend:= cpu.stack + stackdepht;
