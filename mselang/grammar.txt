@@ -374,7 +374,7 @@ casebranch1,,,handlecolonexpected
  ':',casebranch2-*
 casebranch2,casebranch3,handlecasebranchentry,*
  '',statementstack^*
-casebranch3,casebranch,,
+casebranch3,casebranch,handlecasebranch,
  ${whitespace}
  ';',casebranch-
  'else'.,caseelse-

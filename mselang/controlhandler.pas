@@ -32,6 +32,7 @@ procedure handlecaseexpression();
 procedure handleofexpected();
 procedure handlecolonexpected();
 procedure handlecasebranchentry();
+procedure handlecasebranch();
 procedure handlecase();
 
 implementation
@@ -197,12 +198,46 @@ begin
  end;
 end;
 
-procedure handlecase();
+procedure handlecasebranch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEBRANCH');
+{$endif}
+ with additem()^ do begin
+  op:= @gotoop;  //goto casend
+ end;
+end;
+
+procedure handlecase(); //todo: use jumptable
+var
+ haselse: boolean;
+ int1: integer;
+ endad: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASE');
 {$endif}
  with info do begin
+  haselse:= not odd(stacktop-stackindex);
+  endad:= opcount - 1;
+  int1:= stackindex + 4;
+  while int1 < stacktop do begin
+   with ops[contextstack[int1].opmark.address-1] do begin
+    if op <> @gotoop then begin
+     internalerror('P20140530A');
+    end;
+    par.opaddress:= endad;
+   end;
+   inc(int1,2);
+  end;
+  if not haselse then begin
+   with ops[opcount-1] do begin
+    if op <> @gotoop then begin
+     internalerror('P20140530B');
+     op:= @nop;
+    end;
+   end;
+  end;
   dec(stackindex);
  end;
 end;

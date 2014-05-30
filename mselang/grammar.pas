@@ -5738,6 +5738,7 @@ begin
  casebranch2co.handleentry:= @handlecasebranchentry;
  casebranch3co.branch:= @bcasebranch3;
  casebranch3co.next:= @casebranchco;
+ casebranch3co.handleentry:= @handlecasebranch;
  caseelseco.branch:= @bcaseelse;
  caseelseco.next:= @checkcaseendco;
  checkcaseendco.branch:= @bcheckcaseend;
