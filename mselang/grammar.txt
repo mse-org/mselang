@@ -381,7 +381,7 @@ casebranch3,casebranch,,
  'end'.,caseend-
 caseelse,checkcaseend,,
  'end'.,caseend-
- '',statementstack^*
+ '',statementblock^*
 checkcaseend,caseend,,
  ${whitespace}
  ';',-

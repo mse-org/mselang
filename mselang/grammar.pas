@@ -3300,7 +3300,7 @@ const
      dest: (context: @caseendco); stack: nil; 
      keyword: $59E3376E{'end'}),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementstackco); stack: nil; keys: (
+     dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
