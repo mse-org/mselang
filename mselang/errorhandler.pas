@@ -45,7 +45,8 @@ type
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
             err_expressionexpected,err_overloadnotfunc,
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
-            err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected);
+            err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected,
+            err_ordinalconstexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -138,7 +139,8 @@ const
   (level: erl_error; message: 'Method identifier expected'),
   (level: erl_error; message: 'Type mismatch'),
   (level: erl_error; message: 'Class instance expected'),
-  (level: erl_error; message: 'Ordinal expression expected')
+  (level: erl_error; message: 'Ordinal expression expected'),
+  (level: erl_error; message: 'Ordinal constant expected')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

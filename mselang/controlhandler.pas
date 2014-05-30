@@ -187,6 +187,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
 {$endif}
+ with info,contextstack[stackindex-1] do begin
+  if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
+              (d.constval.kind in ordinaldatakinds) then begin
+  end
+  else begin
+   errormessage(err_ordinalconstexpected,[],-1);
+  end;
+ end;
 end;
 
 procedure handlecase();

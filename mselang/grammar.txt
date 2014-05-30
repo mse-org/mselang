@@ -15,6 +15,7 @@
 "
 {blockends}
 " 'end'.,blockend
+ 'else'.,blockend
  'initialization'.,blockend
  'finalization'.,blockend
  'finally'.,blockend
@@ -360,8 +361,9 @@ else,,,handleelse
 #
 case,caseof,handlecasestart,
  '',exp^*
-caseof,,handlecaseexpression,handleofexpected
- 'of'.,casebranch-
+caseof,,handlecaseexpression,handlecase*
+ 'of'.,casebranch-^*
+ '',!handleofexpected*
 casebranch,casebranch1,,
  ${whitespace}
  'else'.,caseelse-
@@ -370,16 +372,21 @@ casebranch,casebranch1,,
 casebranch1,,,handlecolonexpected
  ${whitespace}
  ':',casebranch2-*
-casebranch2,casebranch3,handlecasebranchentry,
+casebranch2,casebranch3,handlecasebranchentry,*
  '',statementstack^*
 casebranch3,casebranch,,
  ${whitespace}
  ';',casebranch-
  'else'.,caseelse-
  'end'.,caseend-
-caseelse,,,
+caseelse,checkcaseend,,
+ 'end'.,caseend-
  '',statementstack^*
-caseend,,,handlecase*
+checkcaseend,caseend,,
+ ${whitespace}
+ ';',-
+ '',checkend*
+caseend,,,^
 #
 const,,,*>
  ${whitespace}

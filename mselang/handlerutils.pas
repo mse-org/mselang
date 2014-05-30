@@ -1528,6 +1528,7 @@ begin
      end;
      ck_const: begin
       writetype(d);
+      write('V:');
       case constval.kind of
        dk_boolean: begin
         write(constval.vboolean,' ');
