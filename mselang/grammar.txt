@@ -37,7 +37,7 @@
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
- 'varhandler','exceptionhandler'
+ 'varhandler','exceptionhandler','controlhandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'
@@ -280,6 +280,7 @@ statement,,,*
  ${blockends}
  'with'.,with-
  'if'.,if0-
+ 'case'.,case-
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
@@ -336,6 +337,7 @@ statement1,,,handlestatementexit
 # '^',!setleftreference
 assignment,,handleassignmententry,handleassignment
  '',exp^*
+#
 if0,if,handleif0,
  ${whitespace}
 if,then,handleif,
@@ -352,6 +354,30 @@ then2,,,handlethen2
 else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
+#
+case,caseof,handlecasestart,
+ '',exp^*
+caseof,,,handleofexpected
+ 'of'.,casebranch-
+casebranch,casebranch1,,
+ ${whitespace}
+ 'else'.,caseelse-
+ 'end'.,caseend-
+ '',exp^*
+casebranch1,,,handlecolonexpected
+ ${whitespace}
+ ':',casebranch2-
+casebranch2,casebranch3,,
+ '',statementstack^*
+casebranch3,casebranch,,
+ ${whitespace}
+ ';',casebranch-
+ 'else'.,caseelse-
+ 'end'.,caseend-
+caseelse,,,
+ '',statementstack^*
+caseend,,,handlecase*
+#
 const,,,*>
  ${whitespace}
  ${blockswitch}

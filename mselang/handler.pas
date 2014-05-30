@@ -115,15 +115,6 @@ procedure handlewith2entry();
 //procedure handlewith3entry();
 procedure handlewith3();
 
-procedure handleif0();
-procedure handleif();
-procedure handlethen();
-procedure handlethen0();
-procedure handlethen1();
-procedure handlethen2();
-procedure handleelse0();
-procedure handleelse();
-
 procedure handledumpelements();
 procedure handleabort();
 procedure handlenop();
@@ -2339,106 +2330,6 @@ begin
  end;
 end;
 *)
-
-procedure handleif0();
-begin
-{$ifdef mse_debugparser}
- outhandle('IF0');
-{$endif}
- with info do begin
-  include(currentstatementflags,stf_rightside);
- end;
-end;
-
-procedure handleif();
-begin
-{$ifdef mse_debugparser}
- outhandle('IF');
-{$endif}
- with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-
-procedure handlethen();
-begin
-{$ifdef mse_debugparser}
- outhandle('THEN');
-{$endif}
- tokenexpectederror(tk_then);
- with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-
-procedure handlethen0();
-begin
-{$ifdef mse_debugparser}
- outhandle('THEN0');
-{$endif}
- with info,contextstack[stacktop] do begin
-  if not (ptypedataty(ele.eledataabs(
-                         d.datatyp.typedata))^.kind = dk_boolean) then begin
-   errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
-  end;
-  if d.kind = ck_const then begin
-   push(d.constval.vboolean); //todo: use compiletime branch
-  end;
- end;
- with additem()^ do begin
-  op:= @ifop;   
- end;
-end;
-
-procedure handlethen1();
-begin
-{$ifdef mse_debugparser}
- outhandle('THEN1');
-{$endif}
- with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-
-procedure handlethen2();
-      //1       2        
-begin //boolexp,thenmark
-{$ifdef mse_debugparser}
- outhandle('THEN2');
-{$endif}
- setcurrentlocbefore(2); //set gotoaddress
- with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
-
-procedure handleelse0();
-begin
-{$ifdef mse_debugparser}
- outhandle('ELSE0');
-{$endif}
- with additem()^ do begin
-  op:= @gotoop;
- end;
-end;
-
-procedure handleelse();
-      //1       2        3
-begin //boolexp,thenmark,elsemark
-{$ifdef mse_debugparser}
- outhandle('ELSE');
-{$endif}
- setlocbefore(2,3);      //set gotoaddress for handlethen0
- setcurrentlocbefore(3); //set gotoaddress for handleelse0
- with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
- end;
-end;
 
 {
 procedure testxx(const info1: pparseinfoty); forward;

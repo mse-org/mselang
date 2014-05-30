@@ -485,7 +485,7 @@ begin
    end;
 handlelab:
 {$ifdef mse_debugparser}
-   writeln('*** context terminated');
+   writeln('*** terminate cotext');
           //context terminated, pop stack
 {$endif}
    repeat
