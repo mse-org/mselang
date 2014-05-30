@@ -360,7 +360,7 @@ else,,,handleelse
 #
 case,caseof,handlecasestart,
  '',exp^*
-caseof,,,handleofexpected
+caseof,,handlecaseexpression,handleofexpected
  'of'.,casebranch-
 casebranch,casebranch1,,
  ${whitespace}
@@ -369,8 +369,8 @@ casebranch,casebranch1,,
  '',exp^*
 casebranch1,,,handlecolonexpected
  ${whitespace}
- ':',casebranch2-
-casebranch2,casebranch3,,
+ ':',casebranch2-*
+casebranch2,casebranch3,handlecasebranchentry,
  '',statementstack^*
 casebranch3,casebranch,,
  ${whitespace}

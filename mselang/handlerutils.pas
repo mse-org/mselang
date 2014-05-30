@@ -104,7 +104,8 @@ function addvar(const aname: identty; const avislevel: visikindsty;
 
 procedure updateop(const opinfo: opinfoty);
 function convertconsts(): stackdatakindty;
-function getvalue(const stackoffset: integer): boolean;
+function getvalue(const stackoffset: integer;
+                               const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 
@@ -897,7 +898,8 @@ begin
  end;
 end;
 
-function getvalue(const stackoffset: integer): boolean;
+function getvalue(const stackoffset: integer;
+                            const retainconst: boolean = false): boolean;
 
  procedure doindirect();
  var
@@ -981,6 +983,10 @@ begin                    //todo: optimize
     doindirect();
    end;
    ck_const: begin
+    if retainconst then begin
+     result:= true;
+     exit;
+    end;
     pushinsertconst(stackoffset,false);
    end;
    ck_subres,ck_fact: begin

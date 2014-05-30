@@ -28,8 +28,10 @@ procedure handleelse0();
 procedure handleelse();
 
 procedure handlecasestart();
+procedure handlecaseexpression();
 procedure handleofexpected();
 procedure handlecolonexpected();
+procedure handlecasebranchentry();
 procedure handlecase();
 
 implementation
@@ -144,11 +146,32 @@ begin
 {$endif}
 end;
 
+procedure handlecaseexpression();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEEXPRESSION');
+{$endif}
+ with info,contextstack[stacktop] do begin
+  if (stacktop-stackindex = 1) and getvalue(1,true) and 
+                 (d.datatyp.indirectlevel = 0) and 
+         (ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind in 
+                                                 ordinaldatakinds) then begin
+   if d.kind = ck_const then begin //todo: optimize const case switch
+    getvalue(1);
+   end;
+  end
+  else begin
+   errormessage(err_ordinalexpexpected,[]);
+  end;
+ end;
+end;
+
 procedure handleofexpected();
 begin
 {$ifdef mse_debugparser}
  outhandle('OFEXPECTED');
 {$endif}
+ tokenexpectederror(tk_of);
 end;
 
 procedure handlecolonexpected();
@@ -157,6 +180,13 @@ begin
  outhandle('COLONEXPECTED');
 {$endif}
  tokenexpectederror(':');
+end;
+
+procedure handlecasebranchentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEBRANCHENTRY');
+{$endif}
 end;
 
 procedure handlecase();

@@ -3214,7 +3214,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat];
+   (flags: [bf_nt,bf_eat,bf_push];
      dest: (context: @casebranch2co); stack: nil; keys: (
     (kind: bkk_char; chars: [':']),
     (kind: bkk_none; chars: []),
@@ -5661,6 +5661,7 @@ begin
  caseco.next:= @caseofco;
  caseco.handleentry:= @handlecasestart;
  caseofco.branch:= @bcaseof;
+ caseofco.handleentry:= @handlecaseexpression;
  caseofco.handleexit:= @handleofexpected;
  casebranchco.branch:= @bcasebranch;
  casebranchco.next:= @casebranch1co;
@@ -5668,6 +5669,7 @@ begin
  casebranch1co.handleexit:= @handlecolonexpected;
  casebranch2co.branch:= @bcasebranch2;
  casebranch2co.next:= @casebranch3co;
+ casebranch2co.handleentry:= @handlecasebranchentry;
  casebranch3co.branch:= @bcasebranch3;
  casebranch3co.next:= @casebranchco;
  caseelseco.branch:= @bcaseelse;
