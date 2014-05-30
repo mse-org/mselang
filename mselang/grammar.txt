@@ -276,7 +276,7 @@ statementstack,,,^
 statement,,,*
  ${whitespace}
  ';',endcontext-
- 'begin'.,statementblock-^*
+ 'begin'.,compoundstatement-
  ${blockends}
  'with'.,with-
  'if'.,if0-
@@ -284,6 +284,9 @@ statement,,,*
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
+#
+compoundstatement,checkend,,*
+ '',statementblock-^*
 #
 try,try1,handletryentry,
  '',statementblock^*

@@ -525,6 +525,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'statement');
+ compoundstatementco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'compoundstatement');
  tryco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2602,8 +2607,8 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bstatement: array[0..17] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @statementblockco); stack: nil; 
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @compoundstatementco); stack: nil; 
      keyword: $3C66EDD6{'begin'}),
    (flags: [bf_nt,bf_keyword];
      dest: (context: @blockendco); stack: nil; 
@@ -2672,6 +2677,16 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @simplestatementco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcompoundstatement: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @statementblockco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5575,6 +5590,8 @@ begin
  terminatorokpopco.branch:= nil;
  statementstackco.branch:= @bstatementstack;
  statementco.branch:= @bstatement;
+ compoundstatementco.branch:= @bcompoundstatement;
+ compoundstatementco.next:= @checkendco;
  tryco.branch:= @btry;
  tryco.next:= @try1co;
  tryco.handleentry:= @handletryentry;
