@@ -190,7 +190,11 @@ begin
 {$endif}
  with info,contextstack[stackindex-1] do begin
   if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
-              (d.constval.kind in ordinaldatakinds) then begin
+                            (d.constval.kind in ordinaldatakinds) then begin
+   with additem()^ do begin
+    op:= @cmpjmpneimm4;
+    par.ordimm.vint32:= d.constval.vinteger;
+   end;
   end
   else begin
    errormessage(err_ordinalconstexpected,[],-1);
@@ -213,6 +217,7 @@ var
  haselse: boolean;
  int1: integer;
  endad: opaddressty;
+ po1: popinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASE');
@@ -221,12 +226,21 @@ begin
   haselse:= not odd(stacktop-stackindex);
   endad:= opcount - 1;
   int1:= stackindex + 4;
-  while int1 < stacktop do begin
-   with ops[contextstack[int1].opmark.address-1] do begin
-    if op <> @gotoop then begin
-     internalerror('P20140530A');
-    end;
-    par.opaddress:= endad;
+  while int1 <= stacktop do begin
+   po1:= @ops[contextstack[int1-1].opmark.address]; //start compare
+   if po1^.op <> @cmpjmpneimm4 then begin
+    internalerror('P20140530A');
+   end;
+   with contextstack[int1] do begin
+    po1^.par.immgoto:= opmark.address-1;
+//    if int1 <> stacktop then begin
+     with ops[opmark.address-1] do begin
+      if op <> @gotoop then begin
+       internalerror('P20140530A');
+      end;
+      par.opaddress:= endad;
+     end;
+//    end;
    end;
    inc(int1,2);
   end;
@@ -237,6 +251,10 @@ begin
      op:= @nop;
     end;
    end;
+  end;
+  with additem()^ do begin
+   op:= @popop;
+   par.imm.vsize:= sizeof(int32);
   end;
   dec(stackindex);
  end;

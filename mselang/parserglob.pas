@@ -457,7 +457,8 @@ type
  end;
  pstartupdataty = ^startupdataty;
  
- opkindty = (ok_none,ok_startup,ok_imm,ok_push8,ok_push16,ok_push32,ok_push64,
+ opkindty = (ok_none,ok_startup,ok_imm,ok_immgoto,
+             ok_push8,ok_push16,ok_push32,ok_push64,
              ok_pushdatakind,
              ok_pushglobaddress,ok_pushlocaddress,
              ok_pushglobaddressindi,ok_pushlocaddressindi,
@@ -509,6 +510,25 @@ type
 
  destroyclassinfo = record
  end;
+
+ immty = record
+  case integer of               //todo: use target size
+   1: (vboolean: boolean);
+   2: (vcard32: card32);
+   3: (vint32: int32);
+   4: (vint64: int64);
+   5: (vfloat64: float64);
+   6: (vsize: ptrint);
+   7: (vpointer: ptruint);
+   8: (voffset: ptrint);
+ end;  
+
+ ordimmty = record
+  case integer of
+   1: (vboolean: boolean);
+   2: (vcard32: card32);
+   3: (vint32: int32);
+ end;
   
  opparamty = record
   case opkindty of 
@@ -517,17 +537,11 @@ type
     end;
    );
    ok_imm: (
-    imm: record
-     case integer of               //todo: use target size
-      1: (vboolean: boolean);
-      2: (vcard32: card32);
-      3: (vint32: int32);
-      4: (vint64: int64);
-      5: (vfloat64: float64);
-      6: (vsize: ptrint);
-      7: (vpointer: ptruint);
-      8: (voffset: ptrint);
-    end;
+    imm: immty;
+   );
+   ok_immgoto: (
+    ordimm: ordimmty;
+    immgoto: opaddressty
    );
    ok_push8:(
     v8: v8ty;

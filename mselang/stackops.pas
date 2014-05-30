@@ -68,6 +68,8 @@ procedure increg0();
 
 procedure nop();
 procedure gotoop();
+procedure cmpjmpneimm4();
+
 procedure ifop();
 procedure writelnop();
 
@@ -376,6 +378,15 @@ end;
 procedure gotoop();
 begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress;
+end;
+
+procedure cmpjmpneimm4();
+begin
+ with cpu.pc^.par do begin
+  if pint32(cpu.stack-sizeof(int32))^ <> ordimm.vint32 then begin
+   cpu.pc:= startpo + immgoto;
+  end;
+ end;
 end;
 
 procedure ifop();
