@@ -199,15 +199,34 @@ begin
    with contextstack[int1] do begin
     if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
                               (d.constval.kind in ordinaldatakinds) then begin
-     with additem()^ do begin
-      if int1 <> last then begin
-       op:= @cmpjmpeqimm4;
-       par.immgoto:= opcount+last-int1-1;
+     with additem()^ do begin       //todo: signed/unsigned, use table
+      if tf_lower in d.datatyp.flags then begin
+       op:= @cmpjmploimm4;
+       if int1 <> last-1 then begin
+        par.immgoto:= opcount; //next check
+       end;
       end
       else begin
-       op:= @cmpjmpneimm4;
-       opmark.address:= opcount-1;
+       if tf_upper in d.datatyp.flags then begin
+        if int1 = last then begin
+         op:= @cmpjmpgtimm4;
+        end
+        else begin
+         op:= @cmpjmploeqimm4;
+         par.immgoto:= opcount+last-int1-1;
+        end;
+       end
+       else begin
+        if int1 = last then begin
+         op:= @cmpjmpneimm4;
+        end
+        else begin
+         op:= @cmpjmpeqimm4;
+         par.immgoto:= opcount+last-int1-1;
+        end;
+       end;
       end;
+      opmark.address:= opcount-1;
       par.ordimm.vint32:= d.constval.vinteger;
      end;
     end
@@ -230,10 +249,12 @@ begin
 end;
 
 procedure handlecase(); //todo: use jumptable and the like
+                        //todo: check overlap and range direction
 var
  int1: integer;
  endad: opaddressty;
  po1: popinfoty;
+ isrange: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASE');
@@ -246,24 +267,33 @@ begin
     while contextstack[int1].d.kind = ck_const do begin
      inc(int1);
     end;
-    po1:= @ops[contextstack[int1-1].opmark.address]; //last compare
+    with contextstack[int1-1] do begin
+     po1:= @ops[opmark.address]; //last compare
+     isrange:= tf_upper in d.datatyp.flags;
+    end;
    {$ifdef mse_checkinternalerror}
-    if po1^.op <> @cmpjmpneimm4 then begin
+    if (po1^.op <> @cmpjmpneimm4) and (po1^.op <> @cmpjmpgtimm4) then begin
      internalerror(ie_handler,'20140530A');
     end;
    {$endif}
     with contextstack[int1] do begin
      po1^.par.immgoto:= opmark.address-1;
- //    if int1 <> stacktop then begin
-      with ops[opmark.address-1] do begin
-      {$ifdef mse_checkinternalerror}
-       if op <> @gotoop then begin
-        internalerror(ie_handler,'20140530A');
-       end;
-      {$endif}
-       par.opaddress:= endad;
+     if isrange then begin
+     {$ifdef mse_checkinternalerror}
+      if ((po1-1)^.op <> @cmpjmploimm4) then begin
+       internalerror(ie_handler,'20140530A');
       end;
- //    end;
+     {$endif}
+      (po1-1)^.par.immgoto:= opmark.address-1; //tf_lower
+     end;
+     with ops[opmark.address-1] do begin
+     {$ifdef mse_checkinternalerror}
+      if op <> @gotoop then begin
+       internalerror(ie_handler,'20140530A');
+      end;
+     {$endif}
+      par.opaddress:= endad;
+     end;
     end;
     inc(int1,3);
    end;

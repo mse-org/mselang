@@ -70,6 +70,9 @@ procedure nop();
 procedure gotoop();
 procedure cmpjmpneimm4();
 procedure cmpjmpeqimm4();
+procedure cmpjmploimm4();
+procedure cmpjmpgtimm4();
+procedure cmpjmploeqimm4();
 
 procedure ifop();
 procedure writelnop();
@@ -394,6 +397,33 @@ procedure cmpjmpeqimm4();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ = ordimm.vint32 then begin
+   cpu.pc:= startpo + immgoto;
+  end;
+ end;
+end;
+
+procedure cmpjmploimm4();
+begin
+ with cpu.pc^.par do begin
+  if pint32(cpu.stack-sizeof(int32))^ < ordimm.vint32 then begin
+   cpu.pc:= startpo + immgoto;
+  end;
+ end;
+end;
+
+procedure cmpjmploeqimm4();
+begin
+ with cpu.pc^.par do begin
+  if pint32(cpu.stack-sizeof(int32))^ <= ordimm.vint32 then begin
+   cpu.pc:= startpo + immgoto;
+  end;
+ end;
+end;
+
+procedure cmpjmpgtimm4();
+begin
+ with cpu.pc^.par do begin
+  if pint32(cpu.stack-sizeof(int32))^ > ordimm.vint32 then begin
    cpu.pc:= startpo + immgoto;
   end;
  end;

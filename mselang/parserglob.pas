@@ -196,7 +196,9 @@ type
  framelevelty = integer;
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
-               tf_hasmanaged   //has nested tf_managed
+               tf_hasmanaged,  //has nested tf_managed
+               tf_lower,       //in range expression
+               tf_upper        //in range expression
                ); 
  typeflagsty = set of typeflagty;   
  

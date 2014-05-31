@@ -680,6 +680,16 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'commasepexp1');
+ commasepexp2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'commasepexp2');
+ commasepexp3co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'commasepexp3');
  caseco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3156,7 +3166,34 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bcommasepexp1: array[0..1] of branchty = (
+ bcommasepexp1: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @commasepexp2co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['.']),
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @commasepexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcommasepexp2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @expco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcommasepexp3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: @commasepexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
@@ -5756,6 +5793,10 @@ begin
  commasepexpco.branch:= @bcommasepexp;
  commasepexpco.next:= @commasepexp1co;
  commasepexp1co.branch:= @bcommasepexp1;
+ commasepexp2co.branch:= @bcommasepexp2;
+ commasepexp2co.next:= @commasepexp3co;
+ commasepexp3co.branch:= @bcommasepexp3;
+ commasepexp3co.handleentry:= @handlecommaseprange;
  caseco.branch:= @bcase;
  caseco.next:= @caseofco;
  caseco.handleentry:= @handlecasestart;

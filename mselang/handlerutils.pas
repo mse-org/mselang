@@ -1394,9 +1394,10 @@ procedure outinfo(const text: string; const indent: boolean = true);
           getenumname(typeinfo(datakindty),ord(po1^.kind)),
           ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.flags),false),
-          ' I:',indirectlevel);
+          ' I:',indirectlevel,':',ainfo.indirection,
+          ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
+                                            integer(flags),false),' ');
   end;
-  write(':',ainfo.indirection,' ');
  end;//writetype
 
  procedure writetyp(const atyp: typeinfoty);

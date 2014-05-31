@@ -363,6 +363,11 @@ commasepexp,commasepexp1,,
  '',exp^*
 commasepexp1,,,^
  ',',commasepexp-
+ '..',commasepexp2-
+commasepexp2,commasepexp3,,
+ '',exp^*
+commasepexp3,,handlecommaseprange,^
+ ',',commasepexp-
 #
 case,caseof,handlecasestart,
  '',exp^*

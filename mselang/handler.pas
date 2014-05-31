@@ -83,6 +83,7 @@ procedure handlevalueidentifier();
 
 procedure handleexp();
 procedure handleequsimpexp();
+procedure handlecommaseprange();
 
 procedure handlemain();
 procedure handlekeyword();
@@ -1870,6 +1871,20 @@ begin
   end;
  end;
 end;
+
+procedure handlecommaseprange();
+begin
+{$ifdef mse_debugparser}
+ outhandle('COMMASEPRANGE');
+{$endif}
+ with info do begin
+  if stacktop-stackindex = 2 then begin
+   include(contextstack[stacktop].d.datatyp.flags,tf_upper);
+   include(contextstack[stacktop-1].d.datatyp.flags,tf_lower);
+  end;
+ end;
+end;
+
 {
 procedure handlestatement();
 begin
