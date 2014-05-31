@@ -371,7 +371,7 @@ caseof,,handlecaseexpression,handlecase*
  '',!handleofexpected*
 casebranch,casebranch1,,
  ${whitespace}
- 'else'.,caseelse-
+ 'else'.,caseelse-*
  'end'.,caseend-
  '',commasepexp^*
 casebranch1,,,handlecolonexpected
@@ -382,7 +382,7 @@ casebranch2,casebranch3,handlecasebranchentry,*
 casebranch3,casebranch,handlecasebranch,
  ${whitespace}
  ';',casebranch-
- 'else'.,caseelse-
+ 'else'.,caseelse-*
  'end'.,caseend-
 caseelse,checkcaseend,,
  'end'.,caseend-

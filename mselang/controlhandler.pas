@@ -267,7 +267,7 @@ begin
     end;
     inc(int1,3);
    end;
-   if int1 - stacktop = 2 then begin
+   if int1 - stacktop = 3 then begin
     with ops[opcount-1] do begin
     {$ifdef mse_checkinternalerror}
      if op <> @gotoop then begin

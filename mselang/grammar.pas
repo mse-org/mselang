@@ -3190,7 +3190,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcasebranch: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @caseelseco); stack: nil; 
      keyword: $CDDBADCE{'else'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
@@ -3282,7 +3282,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bcasebranch3: array[0..7] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat];
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
      dest: (context: @caseelseco); stack: nil; 
      keyword: $CDDBADCE{'else'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
