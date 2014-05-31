@@ -184,20 +184,37 @@ begin
 end;
 
 procedure handlecasebranchentry();
+var
+ int1: integer;
+ itemcount,last: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
 {$endif}
- with info,contextstack[stackindex-1] do begin
-  if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
-                            (d.constval.kind in ordinaldatakinds) then begin
-   with additem()^ do begin
-    op:= @cmpjmpneimm4;
-    par.ordimm.vint32:= d.constval.vinteger;
+ with info do begin
+  last:= stackindex-1;
+  itemcount:= stackindex - contextstack[last].parent - 1;
+  
+  for int1:= stackindex - itemcount to last do begin
+   with contextstack[int1] do begin
+    if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
+                              (d.constval.kind in ordinaldatakinds) then begin
+     with additem()^ do begin
+      if int1 <> last then begin
+       op:= @cmpjmpeqimm4;
+       par.immgoto:= opcount+last-int1-1;
+      end
+      else begin
+       op:= @cmpjmpneimm4;
+       opmark.address:= opcount-1;
+      end;
+      par.ordimm.vint32:= d.constval.vinteger;
+     end;
+    end
+    else begin
+     errormessage(err_ordinalconstexpected,[],-1);
+    end;
    end;
-  end
-  else begin
-   errormessage(err_ordinalconstexpected,[],-1);
   end;
  end;
 end;
@@ -214,7 +231,6 @@ end;
 
 procedure handlecase(); //todo: use jumptable and the like
 var
- haselse: boolean;
  int1: integer;
  endad: opaddressty;
  po1: popinfoty;
@@ -224,11 +240,13 @@ begin
 {$endif}
  with info do begin
   if errors[erl_error] = 0 then begin
-   haselse:= not odd(stacktop-stackindex);
    endad:= opcount - 1;
-   int1:= stackindex + 4;
+   int1:= stackindex + 5;
    while int1 <= stacktop do begin
-    po1:= @ops[contextstack[int1-1].opmark.address]; //start compare
+    while contextstack[int1].d.kind = ck_const do begin
+     inc(int1);
+    end;
+    po1:= @ops[contextstack[int1-1].opmark.address]; //last compare
    {$ifdef mse_checkinternalerror}
     if po1^.op <> @cmpjmpneimm4 then begin
      internalerror(ie_handler,'20140530A');
@@ -247,9 +265,9 @@ begin
       end;
  //    end;
     end;
-    inc(int1,2);
+    inc(int1,3);
    end;
-   if not haselse then begin
+   if int1 - stacktop = 2 then begin
     with ops[opcount-1] do begin
     {$ifdef mse_checkinternalerror}
      if op <> @gotoop then begin

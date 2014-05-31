@@ -359,6 +359,11 @@ else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
 #
+commasepexp,commasepexp1,,
+ '',exp^*
+commasepexp1,,,^
+ ',',commasepexp-
+#
 case,caseof,handlecasestart,
  '',exp^*
 caseof,,handlecaseexpression,handlecase*
@@ -368,7 +373,7 @@ casebranch,casebranch1,,
  ${whitespace}
  'else'.,caseelse-
  'end'.,caseend-
- '',exp^*
+ '',commasepexp^*
 casebranch1,,,handlecolonexpected
  ${whitespace}
  ':',casebranch2-*
