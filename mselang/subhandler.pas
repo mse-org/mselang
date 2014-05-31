@@ -464,11 +464,13 @@ begin
   impl1:= (us_implementation in unitinfo^.state) and 
                                                  not (sf_header in subflags);
   if isclass then begin
+  {$ifdef mse_checkinternalerror}
    if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
-//   if not ele.addelement(tks_self,allvisi,ek_var,po2) then begin
-    internalerror('H20140415A');
-    exit;
+    internalerror(ie_sub,'20140415A');
    end;
+  {$else}
+    addvar(tks_self,allvisi,po1^.varchain,po2);
+  {$endif}
    po4^[0]:= elementoffsetty(po2); //absoluteaddress
    inc(po4);          //todo: class proc
    with po2^ do begin //self variable
@@ -680,10 +682,11 @@ begin
    po1^.flags:= po2^.flags;
    po1^.virtualindex:= po2^.virtualindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
+   {$ifdef mse_checkinternalerror}
     if currentclass = 0 then begin
-     internalerror('H20140502A');
-     exit;
+     internalerror(ie_sub,'20140502A');
     end;
+   {$endif}
     with ptypedataty(ele.eledataabs(currentclass))^ do begin
      popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs)^.
                       virtualmethods)[po2^.virtualindex]:= po1^.address-1;

@@ -456,15 +456,6 @@ begin
     end
     else begin
      mantissa:= lint2;
-     {
-     with contextstack[stackindex] do begin
-      if d.kind <> ck_getfact then begin
-       internalerror('H20140403B');
-      end;
-      neg:= odd(d.getfact.negcount);
-      d.getfact.negcount:= 0;
-     end;
-     }
     end;
    end;
   end;
@@ -674,14 +665,14 @@ begin
       errormessage(err_cannotderefnonpointer,[],stacktop-stackindex);
      end
      else begin
-      internalerror('N20140402B'); //todo
+      internalerror1(ie_notimplemented,'20140402B'); //todo
      end;
     end;
     ck_fact,ck_subres: begin
      //nothing to do
     end;
     else begin
-     internalerror('H20140402A'); //todo
+     internalerror1(ie_notimplemented,'20140402A'); //todo
     end;
    end;
   end;
@@ -788,9 +779,11 @@ begin
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
       end;
+     {$ifdef mse_checkinternalerror}
       else begin
-       internalerror('H20140403C');
+       internalerror(ie_handler,'20140403C');
       end;
+     {$endif}
      end;
     end;
    end;
@@ -809,9 +802,11 @@ begin
  outhandle('FACT2ENTRY');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if stacktop-stackindex <> 1 then begin
-   internalerror('H20140406B');
+   internalerror(ie_handler,'20140406B');
   end;
+ {$endif}
   contextstack[stackindex].d:= contextstack[stackindex+1].d;
   dec(stacktop);
  end;
@@ -827,10 +822,11 @@ begin
  outhandle('NEGFACT');
 {$endif}
  with info,contextstack[stacktop] do begin
+ {$ifdef mse_checkinternalerror}
   if stacktop-stackindex <> 1 then begin
-   internalerror('H20140404A');
-   exit;
+   internalerror(ie_handler,'20140404A');
   end;
+ {$endif}
   if d.kind = ck_const then begin
    with d.constval do begin
     case kind of
@@ -1011,9 +1007,11 @@ begin
       end;
      end;
     end;
+   {$ifdef mse_checkinternalerror}
     else begin
-     internalerror('H20131121B');
+     internalerror(ie_handler,'20131121B');
     end;
+   {$endif}
    end;
    if result then begin
     context.d.datatyp.typedata:= ele.eledatarel(dest);
@@ -1076,7 +1074,7 @@ var
           errormessage(err_variableexpected,[],int1-stackindex);
          end
          else begin
-          internalerror('N20140405B'); //todo
+          internalerror1(ie_notimplemented,'20140405B'); //todo
          end;
         end;
         ck_ref: begin
@@ -1133,10 +1131,13 @@ var
       d.kind:= ck_subcall;
       if (sf_method in asub^.flags) and (idents.high = 0) then begin
                  //owned method
+      {$ifdef mse_checkinternalerror}
        if ele.findcurrent(tks_self,[],allvisi,po6) <> ek_var then begin
-        internalerror('H20140505A');
-        exit;
+        internalerror(ie_handler,'20140505A');
        end;
+      {$else}
+       ele.findcurrent(tks_self,[],allvisi,po6);
+      {$endif}
        with insertitem(parent-stackindex,false)^ do begin
         op:= @pushlocpo;
         par.locdataaddress.linkcount:= -1;
@@ -1210,10 +1211,11 @@ var
          ck_fact: begin     //todo: check indirection
           offs1:= offs1 + offset;
          end;
+        {$ifdef mse_checkinternalerror}
          else begin
-          internalerror('H20140427A');
-          exit;
+          internalerror(ie_handler,'20140427A');
          end;
+        {$endif}
         end;
         d.datatyp.typedata:= ele1; //todo: adress operator
         d.datatyp.indirectlevel:= 
@@ -1237,8 +1239,7 @@ var
          pushinsert(0,false,nilad,0,false);
         end;
         else begin
-         internalerror('N20140417A');
-         exit;
+         internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
        dosub(psubdataty(po4));
@@ -1297,7 +1298,7 @@ begin
     end;
    end;
    else begin
-    internalerror('N20140406A');
+    internalerror1(ie_notimplemented,'20140406A');
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
@@ -1324,10 +1325,12 @@ begin
           errormessage(err_noclass,[],0);
           goto endlab;
          end;
+       {$ifdef mse_checkinternalerror}
         end
         else begin
-         internalerror('H201400427B');
+         internalerror(ie_handler,'201400427B');
          goto endlab;
+       {$endif}
         end;
         d.kind:= ck_ref;
         d.datatyp.typedata:= vf.typ;
@@ -1346,11 +1349,13 @@ begin
           d.ref.offset:= offset;
          end;
          ck_fact: begin
-          internalerror('N20140427E');
+          internalerror1(ie_notimplemented,'20140427E'); //todo
          end;
+        {$ifdef mse_checkinternalerror}
          else begin
-          internalerror('H20140427D');
+          internalerror(ie_handler,'20140427D');
          end;
+        {$endif}
         end;
        end;
        donotfound(d.datatyp.typedata);
@@ -1727,25 +1732,24 @@ begin
  outhandle('CONST3');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if (stacktop-stackindex <> 2) or 
             (contextstack[stackindex+1].d.kind <> ck_ident) then begin
-   internalerror('H20140326C');
-   exit;
+   internalerror(ie_handler,'20140326C');
+  end;
+ {$endif}
+  if contextstack[stacktop].d.kind <> ck_const then begin
+   errormessage(err_constexpressionexpected,[],stacktop-stackindex);
   end
   else begin
-   if contextstack[stacktop].d.kind <> ck_const then begin
-    errormessage(err_constexpressionexpected,[],stacktop-stackindex);
+   if not ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,
+                 ek_const,po1) then begin
+    identerror(1,err_duplicateidentifier);
    end
    else begin
-    if not ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,
-                  ek_const,po1) then begin
-     identerror(1,err_duplicateidentifier);
-    end
-    else begin
-     with contextstack[stacktop].d do begin
-      po1^.val.typ:= datatyp;
-      po1^.val.d:= constval;
-     end;
+    with contextstack[stacktop].d do begin
+     po1^.val.typ:= datatyp;
+     po1^.val.d:= constval;
     end;
    end;
   end;
@@ -1922,36 +1926,37 @@ begin
     indi:= false;
     dest.typ:= ele.eledataabs(d.datatyp.typedata);
     dec(d.datatyp.indirectlevel);
+   {$ifdef mse_checkinternalerror}
     if d.datatyp.indirectlevel < 0 then begin
-     internalerror('H20131126B');
+     internalerror(ie_handler,'20131126B');
+    end;
+   {$endif}
+    if d.datatyp.indirectlevel > 0 then begin
+     si1:= pointersize;
     end
     else begin
-     if d.datatyp.indirectlevel > 0 then begin
-      si1:= pointersize;
-     end
-     else begin
-      si1:= dest.typ^.bytesize;
-     end;
-     case d.kind of
-      ck_const: begin
-       if d.constval.kind <> dk_address then begin
-        errormessage(err_argnotassign,[],0);
-       end
-       else begin
-        dest.address:= d.constval.vaddress;
-        typematch:= true;
-       end;
-      end;
-      ck_fact,ck_subres: begin
-       dest.address.flags:= [];
-       typematch:= true;
-       indi:= true;
-      end;
+     si1:= dest.typ^.bytesize;
+    end;
+    case d.kind of
+     ck_const: begin
+      if d.constval.kind <> dk_address then begin
+       errormessage(err_argnotassign,[],0);
+      end
       else begin
-       internalerror('H20131117A');
-       exit;
+       dest.address:= d.constval.vaddress;
+       typematch:= true;
       end;
      end;
+     ck_fact,ck_subres: begin
+      dest.address.flags:= [];
+      typematch:= true;
+      indi:= true;
+     end;
+    {$ifdef mse_checkinternalerror}
+     else begin
+      internalerror(ie_handler,'20131117A');
+     end;
+    {$endif}
     end;
     dest.address.indirectlevel:= d.datatyp.indirectlevel;
    end;
@@ -2139,7 +2144,7 @@ begin
    ck_none: begin //error in fact
    end;
    else begin
-    internalerror('N20140407A');
+    internalerror1(ie_notimplemented,'20140407A');
    end;
   end;
   stacktop:= stackindex;
@@ -2179,9 +2184,11 @@ begin
  outhandle('HANDLESTATEMENTEXIT');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if stacktop-stackindex <> 1 then begin
-   internalerror('H20140216A');
+   internalerror(ie_handler,'20140216A');
   end;
+ {$endif}
   with contextstack[stacktop].d do begin
    case kind of
     ck_subres: begin
@@ -2473,9 +2480,11 @@ begin
 {$endif}
  with info do begin
   with contextstack[stacktop] do begin
+  {$ifdef mse_checkinternalerror}
    if d.kind <> ck_number then begin
-    internalerror('H20140220A');
+    internalerror(ie_handler,'20140220A');
    end;
+  {$endif}
    if d.number.value > $10ffff then begin
     errormessage(err_illegalcharconst,[],stacktop-stackindex);
    end

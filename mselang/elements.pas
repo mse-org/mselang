@@ -243,8 +243,8 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- errorhandler,mselinklist,stackops,msesysutils,opcode,syssubhandler,
- internaltypes;
+ mselinklist,stackops,msesysutils,opcode,syssubhandler,
+ internaltypes,errorhandler;
  
 type
 
@@ -1706,7 +1706,7 @@ var
  int1,int2: integer;
 begin
  if fscopestackpo < 0 then begin
-  internalerror('E20140406C');
+  internalerror(ie_elements,'E20140406C');
  end
  else begin
   int2:= fscopestack[fscopestackpo];
@@ -1739,8 +1739,7 @@ begin
  end;
  result:= addelement(getident(),globalvisi,akind);
  if result = nil then begin
-  internalerror('F20140407B'); //duplicate id
-  exit;
+  internalerror(ie_elements,'20140407B'); //duplicate id
  end;
  with fscopespo^ do begin
   element:= result-pointer(felementdata);
@@ -1753,8 +1752,7 @@ procedure telementhashdatalist.pushelementparent(
                                            const aparent: elementoffsetty);
 begin
  if fparentindex > maxparents then begin
-  internalerror('E201400412A');
-  exit;
+  internalerror(ie_elements,'201400412A');
  end;
  fparents[fparentindex]:= elementparent;
  elementparent:= aparent;
@@ -1764,8 +1762,7 @@ end;
 procedure telementhashdatalist.pushelementparent(); //save current on stack
 begin
  if fparentindex > maxparents then begin
-  internalerror('E201400412A');
-  exit;
+  internalerror(ie_elements,'201400412A');
  end;
  fparents[fparentindex]:= elementparent;
  inc(fparentindex);
@@ -1774,8 +1771,7 @@ end;
 procedure telementhashdatalist.popelementparent;
 begin
  if fparentindex = 0 then begin
-  internalerror('E201400412B');
-  exit;
+  internalerror(ie_elements,'201400412B');
  end;
  dec(fparentindex);
  elementparent:= fparents[fparentindex];

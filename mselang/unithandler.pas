@@ -92,9 +92,13 @@ begin
    identerror(1,err_illegalunitname);
   end
   else begin
+ {$ifdef mse_checkinternalerror}                             
    if not ele.pushelement(id1,[vik_units],ek_unit,po1) then begin
-    internalerror('U131018A');
+    internalerror(ie_unit,'131018A');
    end;
+ {$else}
+   ele.pushelement(id1,[vik_units],ek_unit,po1);
+ {$endif}
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
 //    po2:= ele.addelement(tks_classes,globalvisi,ek_classes);
@@ -132,10 +136,14 @@ begin
   else begin
    include(unitinfo^.state,us_implementation);
    include(currentstatementflags,stf_implementation);
+  {$ifdef mse_checkinternalerror}                             
    if not ele.pushelement(tk_implementation,implementationvisi,
                                     ek_implementation,po1) then begin
-    internalerror('U20131130A');
+    internalerror(ie_unit,'20131130A');
    end;
+  {$else}
+   ele.pushelement(tk_implementation,implementationvisi,ek_implementation,po1);
+  {$endif}
   end;
   with contextstack[stackindex] do begin
    d.kind:= ck_implementation;
@@ -347,9 +355,11 @@ end;
 procedure regclass(const aclass: elementoffsetty);
 begin
  with info.unitinfo^ do begin
+ {$ifdef mse_checkinternalerror}                             
   if us_end in state then begin
-   internalerror('U201400402B');
+   internalerror(ie_unit,'201400402B');
   end;
+ {$endif}
   if pendingcount >= pendingcapacity then begin
    pendingcapacity:= pendingcapacity*2+256;
    reallocuninitedarray(pendingcapacity,sizeof(pendings[0]),pendings);   

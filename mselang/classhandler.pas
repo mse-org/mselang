@@ -80,10 +80,11 @@ begin
  outhandle('CLASSDEFSTART');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if stackindex < 3 then begin
-   internalerror('H20140325D');
-   exit;
+   internalerror(ie_handler,'20140325D');
   end;
+ {$endif}
   include(currentstatementflags,stf_classdef);
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;

@@ -268,9 +268,11 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
   with info do begin
    int1:= stackindex;
    stackindex:= contextstack[stackindex].parent;
+  {$ifdef mse_checkinternalerror}                             
    if int1 = stackindex then begin
-    internalerror('P20140324A');
+    internalerror(ie_parser,'20140324A');
    end;
+  {$endif}
   end;
  end; //popparent
 

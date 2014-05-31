@@ -212,7 +212,7 @@ begin
  end;
 end;
 
-procedure handlecase(); //todo: use jumptable
+procedure handlecase(); //todo: use jumptable and the like
 var
  haselse: boolean;
  int1: integer;
@@ -223,38 +223,46 @@ begin
  outhandle('CASE');
 {$endif}
  with info do begin
-  haselse:= not odd(stacktop-stackindex);
-  endad:= opcount - 1;
-  int1:= stackindex + 4;
-  while int1 <= stacktop do begin
-   po1:= @ops[contextstack[int1-1].opmark.address]; //start compare
-   if po1^.op <> @cmpjmpneimm4 then begin
-    internalerror('P20140530A');
-   end;
-   with contextstack[int1] do begin
-    po1^.par.immgoto:= opmark.address-1;
-//    if int1 <> stacktop then begin
-     with ops[opmark.address-1] do begin
-      if op <> @gotoop then begin
-       internalerror('P20140530A');
+  if errors[erl_error] = 0 then begin
+   haselse:= not odd(stacktop-stackindex);
+   endad:= opcount - 1;
+   int1:= stackindex + 4;
+   while int1 <= stacktop do begin
+    po1:= @ops[contextstack[int1-1].opmark.address]; //start compare
+   {$ifdef mse_checkinternalerror}
+    if po1^.op <> @cmpjmpneimm4 then begin
+     internalerror(ie_handler,'20140530A');
+    end;
+   {$endif}
+    with contextstack[int1] do begin
+     po1^.par.immgoto:= opmark.address-1;
+ //    if int1 <> stacktop then begin
+      with ops[opmark.address-1] do begin
+      {$ifdef mse_checkinternalerror}
+       if op <> @gotoop then begin
+        internalerror(ie_handler,'20140530A');
+       end;
+      {$endif}
+       par.opaddress:= endad;
       end;
-      par.opaddress:= endad;
-     end;
-//    end;
+ //    end;
+    end;
+    inc(int1,2);
    end;
-   inc(int1,2);
-  end;
-  if not haselse then begin
-   with ops[opcount-1] do begin
-    if op <> @gotoop then begin
-     internalerror('P20140530B');
+   if not haselse then begin
+    with ops[opcount-1] do begin
+    {$ifdef mse_checkinternalerror}
+     if op <> @gotoop then begin
+      internalerror(ie_handler,'20140530B');
+     end;
+    {$endif}
      op:= @nop;
     end;
    end;
-  end;
-  with additem()^ do begin
-   op:= @popop;
-   par.imm.vsize:= sizeof(int32);
+   with additem()^ do begin
+    op:= @popop;
+    par.imm.vsize:= sizeof(int32);
+   end;
   end;
   dec(stackindex);
  end;

@@ -52,7 +52,27 @@ type
   level: errorlevelty;
   message: string;
  end;
+ 
+ internalerrorkindty = (ie_none,ie_notimplemented,//todo
+                        ie_parser, //error in parser
+                        ie_handler,//error in handler function
+                        ie_error,  //invalid error message
+                        ie_unit,   //error in unithandler
+                        ie_type,   //error in type handler
+                        ie_managed, //error in managed types handler
+                        ie_sub,     //error in subhadler
+                        ie_elements //error in element list
+                       ); 
 const
+ internalerrorlabels: array[internalerrorkindty] of string = (
+ //ie_none,ie_notimplemented,ie_parser,ie_handler,ie_error,ie_unit,
+     '',     'N',              'P',      'H',       'R',     'U',    
+ //ie_type,ie_managed
+     'T',    'M',
+ //ie_sub,ie_elements
+     'S',   'E'
+ );
+ 
  stoperrorlevel = erl_fatal;
  errorerrorlevel = erl_error;
  
@@ -171,8 +191,12 @@ procedure operationnotsupportederror(const a,b: contextdataty;
                                              const operation: string);
 
 procedure illegalcharactererror(const eaten: boolean);
-                             
-procedure internalerror(const id: string);
+
+{$ifdef mse_checkinternalerror}                             
+procedure internalerror(const kind: internalerrorkindty; const id: string);
+{$endif}
+procedure internalerror1(const kind: internalerrorkindty; const id: string);
+
 procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 procedure rangeerror(const range: ordrangety;
                                const stackoffset: integer = minint);
@@ -184,7 +208,7 @@ function typename(const atype: typedataty): string;
 implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys;
-
+ 
 function typename(const ainfo: contextdataty): string;
 var
  po1: ptypedataty;
@@ -258,7 +282,7 @@ begin
   else begin
    int1:= stackindex+astackoffset;
    if (int1 > stacktop) or (int1 < 0) then begin
-    internalerror('E20140326A');
+    internalerror(ie_error,'20140326A');
     exit;
    end;
    sourcepos:= contextstack[int1].start;
@@ -416,10 +440,18 @@ begin
                                                            typeinfoname(b)]);
 end;
 
-procedure internalerror(const id: string);
+procedure internalerror1(const kind: internalerrorkindty; const id: string);
 begin
- errormessage(err_internalerror,[id]);
+ errormessage(err_internalerror,[internalerrorlabels[kind]+id]);
+ halt(integer(kind));
 end;
+
+{$ifdef mse_checkinternalerror}
+procedure internalerror(const kind: internalerrorkindty; const id: string);
+begin
+ internalerror1(kind,id);
+end;
+{$endif}
 
 procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 var

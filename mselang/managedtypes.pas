@@ -60,9 +60,11 @@ begin
   mo_decref: begin
    decrefsize(aaddress,count);
   end;
+ {$ifdef mse_checkinternalerror}                             
   else begin
-   internalerror('M20140416A');
+   internalerror(ie_managed,'20140416A');
   end;
+ {$endif}
  end;
 end;
  
@@ -99,191 +101,6 @@ begin
   end;
  end;
 end;
-(*
-var
- currentwriteinifini: procedure (const address: addressrefty;
-                                                const atype: ptypedataty);
-
-procedure doitem(var aaddress: addressrefty;
-                              atyp: elementoffsetty); forward;
-
-procedure writeinifiniitem(const aelement: pelementinfoty; var adata;
-                                                     var terminate: boolean);
-var
- po1: pelementinfoty;
- ad1: addressrefty;
-begin
- po1:= ele.eleinfoabs(pmanageddataty(@aelement^.data)^.managedele);
- ad1:= addressrefty(adata);
- case po1^.header.kind of
-  ek_field: begin
-   with pfielddataty(@po1^.data)^ do begin
-    inc(ad1.offset,offset);
-    doitem(ad1,vf.typ);
-   end;
-  end;
-  else begin
-   internalerror('M20140509C');
-  end;
- end;
-end;
-
-procedure doitem(var aaddress: addressrefty; atyp: elementoffsetty);
-var
- po1: ptypedataty;
- parentbefore: elementoffsetty;
- loopinfo: loopinfoty;
- bo1: boolean;
-begin
- po1:= ele.eledataabs(atyp);
- if tf_managed in po1^.flags then begin
-  currentwriteinifini(aaddress,po1);
- end
- else begin
-  if not (tf_hasmanaged in po1^.flags) then begin
-   internalerror('M20140509B');
-  end;
-  if po1^.kind = dk_array then begin
-   bo1:= aaddress.base = ab_global;
-   aaddress.base:= ab_reg0;
-   with additem^ do begin
-    if bo1 then begin
-     op:= @moveglobalreg0;
-    end
-    else begin
-     op:= @moveframereg0;
-    end;
-   end;
-   beginforloop(loopinfo,
-               getordcount(ele.eledataabs(po1^.infoarray.indextypedata)));
-   atyp:= po1^.infoarray.itemtypedata;
-  end;
-  parentbefore:= ele.elementparent;
-  ele.elementparent:= atyp;
-  ele.forallcurrent(tks_managed,[ek_managed],[vik_managed],
-                                               @writeinifiniitem,aaddress);
-  ele.elementparent:= parentbefore;
-  if po1^.kind = dk_array then begin
-   with additem^ do begin
-    op:= @increg0;
-    par.imm.voffset:= ptypedataty(ele.eledataabs(atyp))^.bytesize;
-   end;
-   endforloop(loopinfo);
-   if bo1 then begin              //restore
-    aaddress.base:= ab_global;
-   end
-   else begin
-    aaddress.base:= ab_frame;
-   end;
-  end;
- end;
-end;
-                                       
-procedure writeinifini(const aelement: pelementinfoty; var adata;
-                                                     var terminate: boolean);
-var
- po1: pelementinfoty;
- po3: ptypedataty;
-begin
- po1:= ele.eleinfoabs(pmanageddataty(@aelement^.data)^.managedele);
- case po1^.header.kind of
-  ek_var: begin
-   with pvardataty(@po1^.data)^ do begin
-    po3:= ele.eledataabs(vf.typ);
-    addressrefty(adata).offset:= address.address;
-    doitem(addressrefty(adata),vf.typ);
-   end;
-  end;
-  else begin
-   internalerror('M20140509A');
-  end;
- end;
-end;
-
-procedure writeini(const aadress: addressrefty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.iniproc(aadress,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.iniproc(aadress,1);
- end;
-end;
-
-procedure writefini(const aadress: addressrefty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.finiproc(aadress,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.finiproc(aadress,1);
- end;
-end;
-
-procedure writeinilocal(const aadress: dataoffsty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.iniproc(aadress,false,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.iniproc(aadress,false,1);
- end;
-end;
-
-procedure writeiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.iniproc(aadress,true,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.iniproc(aadress,true,1);
- end;
-end;
-
-procedure writefinilocal(const aadress: dataoffsty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.finiproc(aadress,false,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.finiproc(aadress,false,1);
- end;
-end;
-
-procedure writefiniglobal(const aadress: dataoffsty; const atype: ptypedataty);
-var
- po1: ptypedataty;
-begin
- if atype^.kind = dk_array then begin
-  po1:= ele.eledataabs(atype^.infoarray.itemtypedata);
-  po1^.finiproc(aadress,true,
-               getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
- end
- else begin
-  atype^.finiproc(aadress,true,1);
- end;
-end;
-*)
 
 procedure writemanagedtypeop(const op: managedopty;
                        const atype: ptypedataty; const aaddress: addressrefty);
@@ -326,11 +143,11 @@ begin
   end;
 
   ele1:= po2^.fieldchain;
+ {$ifdef mse_checkinternalerror}                             
   if ele1 = 0 then begin
-   internalerror('M20140512A');
-   exit;
+   internalerror(ie_managed,'20140512A');
   end;
-
+ {$endif}
   repeat
    po3:= ele.eledataabs(ele1);
    po4:= ele.eledataabs(po3^.vf.typ);

@@ -53,11 +53,12 @@ begin
  outhandle('VAR3');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if (stacktop-stackindex < 2) or 
             (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
-   internalerror('H20140325B');
-   exit;
+   internalerror(ie_handler,'20140325B');
   end;
+ {$endif}
   ident1:= contextstack[stackindex+1].d.ident.ident;
   bo1:= false;
   if (currentclass = 0) or not ele.findchild(info.currentclass,ident1,

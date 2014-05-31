@@ -561,9 +561,11 @@ begin
     op:= @pushconstaddress;
     par.vaddress:= stringconst(po1^.d.constval.vstring);
    end;
+  {$ifdef mse_checkinternalerror}                             
    else begin
-    internalerror('H20131121A');
+    internalerror(ie_handler,'20131121A');
    end;
+  {$endif}
   end;
  end;
 end;
@@ -1005,10 +1007,11 @@ begin                    //todo: optimize
      end;
     end;
    end;
+  {$ifdef mse_checkinternalerror}                             
    else begin
-    internalerror('B20140401B');
-    exit;
+    internalerror(ie_handler,'20140401B');
    end;
+  {$endif}
   end;
   d.kind:= ck_fact;
   d.indirection:= 0;
@@ -1024,10 +1027,11 @@ var
 begin
  result:= false;
  with info,contextstack[stackindex+stackoffset] do begin
+ {$ifdef mse_checkinternalerror}                             
   if not (d.kind in datacontexts) then begin
-   internalerror('H20140405A');
-   exit;
+   internalerror(ie_handler,'20140405A');
   end;
+ {$endif}
   inc(d.indirection);
   inc(d.datatyp.indirectlevel);
   if d.datatyp.indirectlevel <= 0 then begin
@@ -1058,7 +1062,7 @@ begin
     end;
    end;
    ck_reffact: begin //
-    internalerror('N20140404B'); //todo
+    internalerror1(ie_notimplemented,'20140404B'); //todo
     exit;
 //    inc(d.datatyp.indirectlevel);
 //    kind:= ck_fact;
@@ -1068,10 +1072,11 @@ begin
      result:= getvalue(stackoffset);
     end;
    end;
+  {$ifdef mse_checkinternalerror}
    else begin
-    internalerror('H20140401A');
-    exit;
+    internalerror(ie_handler,'20140401A');
    end;
+  {$endif}
   end;
  end;
  result:= true;
@@ -1295,9 +1300,11 @@ begin
     range.min:= 0;
     range.max:= 1;
    end;
+  {$ifdef mse_checkinternalerror}
    else begin
-    internalerror('H20120327B');
+    internalerror(ie_handler,'20120327B');
    end;
+  {$endif}
   end;
  end;
 end;
@@ -1325,9 +1332,11 @@ begin
      result:= 0;
     end;
    end;
+  {$ifdef mse_checkinternalerror}
    else begin
-    internalerror('H20140329A');
+    internalerror(ie_handler,'20140329A');
    end;
+  {$endif}
   end;
  end;
 end;

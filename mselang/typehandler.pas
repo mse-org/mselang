@@ -108,10 +108,11 @@ begin
  outhandle('CHECKTYPEIDENT');
 {$endif}
  with info,contextstack[stackindex-2] do begin
+ {$ifdef mse_checkinternalerror}
   if stackindex < 3 then begin
-   internalerror('H20140325A');
-   exit;
+   internalerror(ie_type,'20140325A');
   end;
+ {$endif}
   if findkindelements(1,[ek_type],allvisi,po2) then begin
    d.typ.typedata:= ele.eleinforel(po2);
    d.typ.flags:= ptypedataty(@po2^.data)^.flags;
@@ -130,9 +131,11 @@ begin
      else begin //duplicate
       identerror(-3,err_duplicateidentifier);
      end;
+  {$ifdef mse_checkinternalerror}
     end
     else begin
-     internalerror('H20140324B');
+     internalerror(ie_type,'20140324B');
+   {$endif}
     end;
    end;
    stacktop:= stackindex-1;
@@ -201,10 +204,11 @@ begin
  outhandle('RECORDDEFSTART');
 {$endif}
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if stackindex < 3 then begin
-   internalerror('H20140325D');
-   exit;
+   internalerror(ie_type,'20140325D');
   end;
+ {$endif}
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
                   (contextstack[stackindex-1].d.kind = ck_typetype) then begin
@@ -252,11 +256,12 @@ var
  size1: dataoffsty;
 begin
  with info do begin
+ {$ifdef mse_checkinternalerror}
   if (stacktop-stackindex < 3) or 
             (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
-   internalerror('H20140325C');
-   exit;
+   internalerror(ie_type,'20140325C');
   end;
+ {$endif}
   if ele.addelement(contextstack[stackindex+2].d.ident.ident,
                                            avisibility,ek_field,po1) then begin
    po1^.flags:= aflags;
@@ -391,10 +396,11 @@ begin
    int2:= stackindex + 2;
    for int1:= stacktop-1 downto int2 do begin
     with contextstack[int1] do begin
+    {$ifdef mse_checkinternalerror}
      if d.kind <> ck_fieldtype then begin
-      internalerror('H20140327A');
-      exit;
+      internalerror(ie_type,'20140327A');
      end;
+    {$endif}
      po1:= ele.eledataabs(d.typ.typedata);
      if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
        not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
@@ -562,10 +568,11 @@ begin
           fullconst:= false;
          end;
         end;
+       {$ifdef mse_checkinternalerror}
         else begin
-         internalerror('N20140328B');
-         exit;
+         internalerror(ie_type,'20140328B');
         end;
+       {$endif}
        end;
       end;
       offs:= offs + li1*gettypesize(itemtype^);
@@ -581,10 +588,11 @@ begin
       d.kind:= ck_reffact;
      end;
     end;
+   {$ifdef mse_checkinternalerror}
     else begin
-     internalerror('N20140328A');
-     exit;
+     internalerror(ie_type,'20140328A');
     end;
+   {$endif}
    end;
   end
   else begin
