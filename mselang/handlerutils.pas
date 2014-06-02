@@ -1452,7 +1452,7 @@ begin
   write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
   writeln;
-  for int1:= stacktop downto 0 do begin
+  for int1:= 0 to stacktop do begin
    write(fitstring(inttostr(int1),3,sp_right));
    if int1 = stackindex then begin
     write('*');
