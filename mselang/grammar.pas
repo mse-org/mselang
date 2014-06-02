@@ -820,6 +820,41 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'arraydef2');
+ enumdefco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'enumdef');
+ enumdef1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'enumdef1');
+ enumdef2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'enumdef2');
+ enumdef3co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'enumdef3');
+ getenumitemco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getenumitem');
+ getenumitem1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getenumitem1');
+ getenumitem2co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getenumitem2');
  arrayindexco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1215,6 +1250,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'ident');
+ getidentco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'getident');
  identpathcontinueco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: false; 
@@ -3732,6 +3772,101 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ benumdef: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getenumitemco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ benumdef1: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @enumdef3co); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @enumdef2co); stack: nil; keys: (
+    (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ benumdef2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getenumitemco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetenumitem: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
+     dest: (context: @getidentco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetenumitem1: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @getenumitem2co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetenumitem2: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush];
+     dest: (context: @expco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  barrayindex: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: @arrayindex1co); stack: nil; keys: (
@@ -3776,7 +3911,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..9] of branchty = (
+ bgettype: array[0..10] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @recorddefco); stack: nil; 
      keyword: $DD6E730C{'record'}),
@@ -3817,6 +3952,13 @@ const
    (flags: [bf_nt,bf_handler,bf_eat];
      dest: (handler: @handlepointertype); stack: nil; keys: (
     (kind: bkk_char; chars: ['^']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @enumdefco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4360,7 +4502,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
-     dest: (handler: @closeroundbracketexpected); stack: nil; keys: (
+     dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5024,7 +5166,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
-     dest: (handler: @closesquarebracketexpected); stack: nil; keys: (
+     dest: (handler: @handleclosesquarebracketexpected); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5393,6 +5535,44 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgetident: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
+     dest: (context: @identco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5853,6 +6033,20 @@ begin
  arraydef1co.handleexit:= @handlearraydeferror1;
  arraydef2co.branch:= @barraydef2;
  arraydef2co.handleexit:= @handlearraytype;
+ enumdefco.branch:= @benumdef;
+ enumdefco.next:= @enumdef1co;
+ enumdef1co.branch:= @benumdef1;
+ enumdef1co.handleexit:= @handlecloseroundbracketexpected;
+ enumdef2co.branch:= @benumdef2;
+ enumdef2co.next:= @enumdef1co;
+ enumdef3co.branch:= nil;
+ enumdef3co.handleexit:= @handleenumdef;
+ getenumitemco.branch:= @bgetenumitem;
+ getenumitemco.next:= @getenumitem1co;
+ getenumitem1co.branch:= @bgetenumitem1;
+ getenumitem1co.handleexit:= @handleenumitem;
+ getenumitem2co.branch:= @bgetenumitem2;
+ getenumitem2co.handleexit:= @handleenumitemvalue;
  arrayindexco.branch:= @barrayindex;
  arrayindexco.handleexit:= @handlearrayindexerror1;
  arrayindex1co.branch:= @barrayindex1;
@@ -6013,6 +6207,8 @@ begin
  char2co.branch:= nil;
  identco.branch:= @bident;
  identco.handleexit:= @handleident;
+ getidentco.branch:= @bgetident;
+ getidentco.handleexit:= @handleidentexpected;
  identpathcontinueco.branch:= @bidentpathcontinue;
  identpathco.branch:= @bidentpath;
  identpathco.next:= @identpath1aco;

@@ -35,6 +35,8 @@ procedure checkstart();
 procedure handlenouniterror();
 procedure handlenounitnameerror();
 procedure handlesemicolonexpected();
+procedure handlecloseroundbracketexpected();
+procedure handleclosesquarebracketexpected();
 procedure handleequalityexpected();
 procedure handleidentexpected();
 procedure handleillegalexpression();
@@ -1559,6 +1561,22 @@ begin
  with info do begin
   errormessage(err_syntax,[';']);
  end;
+end;
+
+procedure handleclosesquarebracketexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLOSESQUAREBRACKETEXPECTED');
+{$endif}
+ tokenexpectederror(']',erl_fatal);
+end;
+
+procedure handlecloseroundbracketexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLOSESROUNDBRACKETEXPECTED');
+{$endif}
+ tokenexpectederror(')',erl_fatal);
 end;
 
 procedure handleequalityexpected();

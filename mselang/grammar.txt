@@ -442,6 +442,22 @@ arraydef1,,,handlearraydeferror1
 arraydef2,,,handlearraytype
  '',getfieldtype^*
 #
+enumdef,enumdef1,,
+ '',getenumitem^*
+enumdef1,,,handlecloseroundbracketexpected^*
+ ')',enumdef3-
+  ',',enumdef2
+enumdef2,enumdef1,,
+ '',getenumitem^*
+enumdef3,,,handleenumdef^*
+#
+getenumitem,getenumitem1,,
+ '',getident^*
+getenumitem1,,,handleenumitem^
+ ${whitespace}
+ '=',getenumitem2
+getenumitem2,,,handleenumitemvalue
+ '',exp*^
 arrayindex,,,handlearrayindexerror1
  '[',arrayindex1-
 arrayindex1,arrayindex2,,
@@ -456,6 +472,7 @@ gettypetype,gettype,handlegettypetypestart,
 gettype,,,*^
  ${whitespace}
  '^',!handlepointertype-
+ '(',enumdef-^*
 # @identstart,simpletype^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
@@ -532,7 +549,7 @@ classdefparam,,,*
  ${whitespace}
  @identstart,classdefparam1*>
  ')',-*
- '',!closeroundbracketexpected
+ '',!handlecloseroundbracketexpected
 classdefparam1,classdefparam2,,
  '',identpath^*
 classdefparam2,classdefparam2a,,handleclassdefparam2*
@@ -621,7 +638,7 @@ getindex1,,,handleindex
  ${whitespace}
  ']',-*
  ',',getindex2-
- '',!closesquarebracketexpected
+ '',!handleclosesquarebracketexpected
 getindex2,getindex1,,
  '',exp^*
 #
@@ -702,6 +719,10 @@ char2,,,
 #
 ident,,,handleident^
  @identstart,@decnum,-
+#
+getident,,,handleidentexpected
+ ${whitespace}
+ @identstart,ident^*
 #
 identpathcontinue,,,^>
  '',identpath^*

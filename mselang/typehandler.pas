@@ -39,8 +39,10 @@ procedure handlearrayindexerror2();
 
 procedure handleindexstart();
 procedure handleindex();
-procedure closesquarebracketexpected();
-procedure closeroundbracketexpected();
+
+procedure handleenumdef();
+procedure handleenumitem();
+procedure handleenumitemvalue();
 
 procedure checkrecordfield(const avisibility: visikindsty;
                        const aflags: addressflagsty; var aoffset: dataoffsty;
@@ -604,14 +606,25 @@ errlab:
  end;
 end;
 
-procedure closesquarebracketexpected();
+procedure handleenumdef();
 begin
- tokenexpectederror(']',erl_fatal);
+{$ifdef mse_debugparser}
+ outhandle('ENUMDEF');
+{$endif}
 end;
 
-procedure closeroundbracketexpected();
+procedure handleenumitem();
 begin
- tokenexpectederror(')',erl_fatal);
+{$ifdef mse_debugparser}
+ outhandle('ENUMITEM');
+{$endif}
+end;
+
+procedure handleenumitemvalue();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ENUMITEMVALUE');
+{$endif}
 end;
 
 end.
