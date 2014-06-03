@@ -40,6 +40,7 @@ procedure handlearrayindexerror2();
 procedure handleindexstart();
 procedure handleindex();
 
+procedure handleenumdefentry();
 procedure handleenumdef();
 procedure handleenumitem();
 procedure handleenumitemvalue();
@@ -170,25 +171,23 @@ begin
     end;
    end;
    with contextstack[stackindex-1] do begin
-    if ele.addelement(id1,allvisi,ek_type,po1) then begin
-     d.typ.typedata:= ele.eledatarel(po1);
-     with po1^ do begin
-      //todo: check datasize
-      flags:= [];
-      indirectlevel:= d.typ.indirectlevel;
-      d.typ.indirectlevel:= 0;
-      bitsize:= 32;
-      bytesize:= 4;
-      datasize:= das_32;
-      kind:= dk_integer;
-      with infoint32 do begin
-       min:= contextstack[stackindex+2].d.constval.vinteger;
-       max:= contextstack[stackindex+3].d.constval.vinteger;
-      end;
+    if not ele.addelementduplicatedata(id1,allvisi,ek_type,po1) then begin
+     identerror(-1,err_duplicateidentifier);
+    end;
+    d.typ.typedata:= ele.eledatarel(po1);
+    with po1^ do begin
+     //todo: check datasize
+     flags:= [];
+     indirectlevel:= d.typ.indirectlevel;
+     d.typ.indirectlevel:= 0;
+     bitsize:= 32;
+     bytesize:= 4;
+     datasize:= das_32;
+     kind:= dk_integer;
+     with infoint32 do begin
+      min:= contextstack[stackindex+2].d.constval.vinteger;
+      max:= contextstack[stackindex+3].d.constval.vinteger;
      end;
-    end
-    else begin
-     identerror(-1,err_duplicateidentifier,erl_fatal);
     end;
    end;
   end;
@@ -226,13 +225,15 @@ begin
    d.rec.fieldoffset:= 0;
   end;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelement(id1,allvisi,ek_type,d.typ.typedata) then begin
-    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
-   end
-   else begin
-    with ptypedataty(ele.parentdata)^ do begin
-     fieldchain:= 0;  //used in checkrecordfield()
-    end;
+   if not ele.pushelementduplicatedata(id1,allvisi,ek_type,po1) then begin
+    identerror(stacktop-stackindex,err_duplicateidentifier);
+   end;
+   d.typ.typedata:= ele.eledatarel(po1);
+   with po1^ do begin
+//    flags:= [];
+//    datasize:= das_none;
+    kind:= dk_none; //inhibit dump
+    fieldchain:= 0;  //used in checkrecordfield()
    end;
   end;
  end;
@@ -264,50 +265,46 @@ begin
    internalerror(ie_type,'20140325C');
   end;
  {$endif}
-  if ele.addelement(contextstack[stackindex+2].d.ident.ident,
+  if not ele.addelementduplicatedata(contextstack[stackindex+2].d.ident.ident,
                                            avisibility,ek_field,po1) then begin
-   po1^.flags:= aflags;
-   po1^.offset:= aoffset;
-   po1^.vf.flags:= [];
-   with ptypedataty(ele.parentdata)^ do begin
-    po1^.vf.next:= fieldchain;
-    fieldchain:= ele.eledatarel(po1);
-   end;
-   with contextstack[stackindex+3] do begin
-    po1^.vf.typ:= d.typ.typedata;
-    po1^.indirectlevel:= d.typ.indirectlevel;
-    po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
-    if po1^.indirectlevel = 0 then begin      //todo: alignment
-     if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
-      include(atypeflags,tf_hasmanaged);
-      include(po1^.vf.flags,tf_hasmanaged);
-      {
-      with pmanageddataty(
-              pointer(ele.addelementduplicate(tks_managed,[vik_managed],
-                                                                ek_managed))+
-                                             sizeof(elementheaderty))^ do begin
-       managedele:= ele.eledatarel(po1);
-      end;
-      }
-     end;
-     size1:= po2^.bytesize;
-    end
-    else begin
-     size1:= pointersize;
-    end;
-   end;
-   aoffset:= aoffset+size1;
-   with contextstack[stackindex].d do begin
-    kind:= ck_field;
-    field.fielddata:= ele.eledatarel(po1);
-   end;
-   stacktop:= stackindex;
-//   ele.elementparent:= ele1;
-  end
-  else begin
    identerror(2,err_duplicateidentifier);
-   stacktop:= stackindex-1;
   end;
+  po1^.flags:= aflags;
+  po1^.offset:= aoffset;
+  po1^.vf.flags:= [];
+  with ptypedataty(ele.parentdata)^ do begin
+   po1^.vf.next:= fieldchain;
+   fieldchain:= ele.eledatarel(po1);
+  end;
+  with contextstack[stackindex+3] do begin
+   po1^.vf.typ:= d.typ.typedata;
+   po1^.indirectlevel:= d.typ.indirectlevel;
+   po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
+   if po1^.indirectlevel = 0 then begin      //todo: alignment
+    if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+     include(atypeflags,tf_hasmanaged);
+     include(po1^.vf.flags,tf_hasmanaged);
+     {
+     with pmanageddataty(
+             pointer(ele.addelementduplicate(tks_managed,[vik_managed],
+                                                               ek_managed))+
+                                            sizeof(elementheaderty))^ do begin
+      managedele:= ele.eledatarel(po1);
+     end;
+     }
+    end;
+    size1:= po2^.bytesize;
+   end
+   else begin
+    size1:= pointersize;
+   end;
+  end;
+  aoffset:= aoffset+size1;
+  with contextstack[stackindex].d do begin
+   kind:= ck_field;
+   field.fielddata:= ele.eledatarel(po1);
+  end;
+  stacktop:= stackindex;
  end;
 end;
 
@@ -606,11 +603,90 @@ errlab:
  end;
 end;
 
+procedure handleenumdefentry();
+var
+ po1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('ENUMDEFENTRY');
+{$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[stackindex-2].d.kind <> ck_ident then begin
+   internalerror(ie_type,'20140603A');
+  end;
+  if contextstack[stackindex-1].d.kind <> ck_typetype then begin
+   internalerror(ie_type,'20140603B');
+  end;
+ {$endif}
+  if not ele.pushelementduplicatedata(contextstack[stackindex-2].d.ident.ident,
+                                               allvisi,ek_type,po1) then begin
+   identerror(-2,err_duplicateidentifier);
+  end;
+  with contextstack[stackindex-1] do begin
+   d.typ.typedata:= ele.eledatarel(po1);
+  end;
+  with po1^ do begin
+   kind:= dk_none;
+  end;
+ end;
+end;
+
 procedure handleenumdef();
 begin
 {$ifdef mse_debugparser}
  outhandle('ENUMDEF');
 {$endif}
+ with info do begin
+  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
+                                                d.typ.typedata))^ do begin
+   kind:= dk_enum; //fieldchain set in handlerecorddefstart()
+   datasize:= das_32;
+   bytesize:= 4;
+   bitsize:= 32;
+   indirectlevel:= d.typ.indirectlevel;
+   flags:= [];
+  end;
+  ele.popelement();
+ end;
+end;
+
+procedure doenumitem(const avalue: integer);
+var
+ po1: ptypedataty;
+ po2: prefdataty;
+ ele1: elementoffsetty;
+ ident1: identty;
+begin
+ with info,contextstack[stackindex] do begin
+  ident1:= contextstack[stackindex+1].d.ident.ident;
+  if ele.addelement(ident1,allvisi,ek_type,po1) then begin
+   with po1^ do begin
+    flags:= [];
+    indirectlevel:= 0;
+    bitsize:= 32;
+    bytesize:= 4;
+    datasize:= das_32;
+    kind:= dk_enumitem;
+    infoenumitem.value:= avalue;
+    with contextstack[parent] do begin
+     infoenumitem.enum:= d.enu.entry;
+     d.enu.value:= avalue+1;
+    end;
+   end;
+   ele1:= ele.decelementparent();
+   if ele.addelement(ident1,allvisi,ek_ref,po2) then begin
+    po2^.ref:= ele.eledatarel(po1);    //non qualified name copy
+   end
+   else begin
+    identerror(1,err_duplicateidentifier);
+   end;
+   ele.elementparent:= ele1;
+  end
+  else begin
+   identerror(1,err_duplicateidentifier);
+  end;
+ end;
 end;
 
 procedure handleenumitem();
@@ -618,6 +694,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ENUMITEM');
 {$endif}
+ with info do begin
+  doenumitem(contextstack[contextstack[stackindex].parent].d.enu.value);
+ end;
 end;
 
 procedure handleenumitemvalue();
@@ -625,6 +704,18 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ENUMITEMVALUE');
 {$endif}
+ with info,contextstack[stacktop] do begin
+  if (d.kind <> ck_const) or (d.constval.kind <> dk_integer) then begin
+                            //todo: check already defined enum
+   errormessage(err_ordinalconstexpected,[]);
+   dec(stackindex);
+   stacktop:= stackindex;
+  end
+  else begin
+   dec(stacktop);
+   doenumitem(d.constval.vinteger);
+  end;
+ end;
 end;
 
 end.

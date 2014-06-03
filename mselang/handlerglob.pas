@@ -98,6 +98,12 @@ type
   flags: infoclassflagsty;
  end;
  pinfoclassty = ^infoclassty;
+ 
+ infoenumitemty = record
+  value: integer;
+  enum: elementoffsetty;
+ end;
+ pinfoenumitemty = ^infoenumitemty;
 
 // writeiniprocty = procedure (const address: dataoffsty);
 // writefiniprocty = procedure (const address: dataoffsty);
@@ -112,7 +118,12 @@ type
   managedele: elementoffsetty;
  end;
  pmanageddataty = ^manageddataty;
-  
+
+ refdataty = record
+  ref: elementoffsetty;
+ end;
+ prefdataty = ^refdataty;
+ 
  typedataty = record
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
@@ -158,6 +169,9 @@ type
         infoclass: infoclassty;
        );
     );
+   );
+   dk_enumitem:(
+    infoenumitem: infoenumitemty;
    );
    dk_array:(
     infoarray: infoarrayty;

@@ -45,8 +45,10 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_array,dk_class
-    sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none);
+  //dk_address,dk_record,dk_string,dk_array,dk_class,
+    sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none,
+  //dk_enum,dk_enumitem,
+    sdk_none,   sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
             //sdk_bool8,sdk_int32,sdk_flo64
@@ -1392,12 +1394,14 @@ procedure outinfo(const text: string; const indent: boolean = true);
   with ainfo.datatyp do begin
    po1:= ele.eledataabs(typedata);
    write('T:',typedata,' ',
-          getenumname(typeinfo(datakindty),ord(po1^.kind)),
-          ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
+          getenumname(typeinfo(datakindty),ord(po1^.kind)));
+   if po1^.kind <> dk_none then begin
+    write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.flags),false),
           ' I:',indirectlevel,':',ainfo.indirection,
           ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                                             integer(flags),false),' ');
+   end;
   end;
  end;//writetype
 
@@ -1412,10 +1416,12 @@ procedure outinfo(const text: string; const indent: boolean = true);
    else begin
     po1:= ele.eledataabs(typedata);
     write('T:',typedata,' ',
-           getenumname(typeinfo(datakindty),ord(po1^.kind)),
-          ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
+           getenumname(typeinfo(datakindty),ord(po1^.kind)));
+    if po1^.kind <> dk_none then begin
+     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.flags),false),
            ' I:',indirectlevel);
+    end;
    end;
   end;
  end;//writetyp

@@ -853,7 +853,7 @@ var
  getenumitem2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'getenumitem2');
  arrayindexco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -3848,7 +3848,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_eat];
      dest: (context: @getenumitem2co); stack: nil; keys: (
     (kind: bkk_char; chars: ['=']),
     (kind: bkk_none; chars: []),
@@ -3858,7 +3858,7 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bgetenumitem2: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush];
+   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -6042,6 +6042,7 @@ begin
  arraydef2co.handleexit:= @handlearraytype;
  enumdefco.branch:= @benumdef;
  enumdefco.next:= @enumdef1co;
+ enumdefco.handleentry:= @handleenumdefentry;
  enumdef1co.branch:= @benumdef1;
  enumdef1co.handleexit:= @handlecloseroundbracketexpected;
  enumdef2co.branch:= @benumdef2;
