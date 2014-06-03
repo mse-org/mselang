@@ -38,7 +38,7 @@
  @decnum,'a','b','c','d','e','f','A','B','C','D','E','F'
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
- 'varhandler','exceptionhandler','controlhandler'
+ 'varhandler','exceptionhandler','controlhandler','handlerutils'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'
@@ -446,7 +446,7 @@ enumdef,enumdef1,,
  '',getenumitem^*
 enumdef1,,,handlecloseroundbracketexpected^*
  ')',enumdef3-
-  ',',enumdef2
+  ',',enumdef2-
 enumdef2,enumdef1,,
  '',getenumitem^*
 enumdef3,,,handleenumdef^*
@@ -720,9 +720,10 @@ char2,,,
 ident,,,handleident^
  @identstart,@decnum,-
 #
-getident,,,handleidentexpected
+getident,,test,^
  ${whitespace}
- @identstart,ident^*
+ @identstart,ident
+ '',!handleidentexpected*
 #
 identpathcontinue,,,^>
  '',identpath^*

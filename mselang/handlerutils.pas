@@ -151,6 +151,7 @@ procedure deinit();
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 procedure outinfo(const text: string; const indent: boolean);
+procedure test();
 {$endif}
                            
 implementation
@@ -1578,14 +1579,18 @@ begin
       writetyp(typ);
      end;
     end;
-{$ifdef mse_debugparser}
     writeln(' '+inttostr(start.line+1)+':''',
              psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
-{$endif}
    end;
   end;
  end;
 end;
+
+procedure test();
+begin
+ outhandle('TEST');
+end;
+
 {$endif}
 
 end.
