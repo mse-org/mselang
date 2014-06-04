@@ -1012,7 +1012,7 @@ begin                    //todo: optimize
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin
-    internalerror(ie_handler,'20140401B');
+    internalerror(ie_notimplemented,'20140401B');
    end;
   {$endif}
   end;
