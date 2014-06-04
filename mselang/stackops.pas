@@ -76,6 +76,11 @@ procedure cmpjmploeqimm4();
 
 procedure ifop();
 procedure writelnop();
+procedure writebooleanop();
+procedure writeintegerop();
+procedure writefloatop();
+procedure writestring8op();
+procedure writeclassop();
 
 procedure pushop();
 procedure popop();
@@ -436,6 +441,47 @@ begin
  end;
 end;
 
+procedure writebooleanop();
+begin
+ write(vbooleanty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+end;
+
+procedure writeintegerop();
+begin
+ write(vintegerty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+end;
+
+procedure writefloatop();
+begin
+ write(vfloatty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+end;
+
+procedure writestring8op();
+var
+ po1: pointer;
+ po2: pstring8headerty;
+ str1: string;
+begin
+ po1:= pointer((cpu.stack+cpu.pc^.par.imm.voffset)^);
+ if po1 <> nil then begin
+  po2:= po1-sizeof(string8headerty);
+  setlength(str1,po2^.len);
+  move(po1^,pointer(str1)^,po2^.len);
+  write(str1);
+ end;
+end;
+
+procedure writeclassop();
+begin
+ write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.imm.voffset)^)));
+end;
+
+procedure writelnop();
+begin
+ writeln();
+end;
+
+(*
 procedure writelnop;
 var
  int1,int2,int3: integer;
@@ -506,6 +552,7 @@ begin
  cpu.stack:= cpu.stack-2*int1-1;
 }
 end;
+*)
 
 procedure pushop;
 begin

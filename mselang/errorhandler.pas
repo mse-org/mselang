@@ -46,7 +46,7 @@ type
             err_expressionexpected,err_overloadnotfunc,
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
             err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected,
-            err_ordinalconstexpected);
+            err_ordinalconstexpected,err_cantreadwritevar);
             
  errorinfoty = record
   level: errorlevelty;
@@ -161,7 +161,8 @@ const
   (level: erl_error; message: 'Type mismatch'),
   (level: erl_error; message: 'Class instance expected'),
   (level: erl_error; message: 'Ordinal expression expected'),
-  (level: erl_error; message: 'Ordinal constant expected')
+  (level: erl_error; message: 'Ordinal constant expected'),
+  (level: erl_error; message: 'Can''t read or write variables of this type')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

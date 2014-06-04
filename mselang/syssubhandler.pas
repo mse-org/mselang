@@ -18,24 +18,89 @@ unit syssubhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- handlerglob,managedtypes;
+ handlerglob,managedtypes,msetypes;
 type
  syssubty = procedure (const paramco: integer);
  
 procedure handlewriteln(const paramco: integer);
+procedure handlewrite(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
-  //sf_writeln, sf_setlength
-  @handlewriteln,@handlesetlength);
+  //sf_write,   sf_writeln,    sf_setlength
+  @handlewrite,@handlewriteln,@handlesetlength);
   
 procedure init();
 procedure deinit();
 
 implementation
 uses
- elements,parserglob,handlerutils,opcode,stackops;
+ elements,parserglob,handlerutils,opcode,stackops,errorhandler;
 
+procedure handlewrite(const paramco: integer);
+var
+ int1,int3: integer;
+ stacksize1: datasizety;
+ po1: popinfoty; 
+begin
+ stacksize1:= 0;
+ with info do begin
+  int3:= 0;
+  for int1:= stacktop-paramco+1 to stacktop do begin
+   getvalue(int1-stackindex);
+  end;
+  for int1:= stacktop-paramco+1 to stacktop do begin
+   with additem()^ do begin
+    with contextstack[int1] do begin //todo: indirection, use table
+     case ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind of
+      dk_boolean: begin
+       op:= @writebooleanop;
+       par.imm.voffset:= alignsize(sizeof(boolean));
+      end;
+      dk_integer: begin
+       op:= @writeintegerop;
+       par.imm.voffset:= alignsize(sizeof(int32));
+      end;
+      dk_float: begin
+       op:= @writefloatop;
+       par.imm.voffset:= alignsize(sizeof(float64));
+      end;
+      dk_string8: begin
+       op:= @writestring8op;
+       par.imm.voffset:= alignsize(pointersize);
+      end;
+      dk_class: begin
+       op:= @writeclassop;
+       par.imm.voffset:= alignsize(pointersize);
+      end;
+      else begin
+       errormessage(err_cantreadwritevar,[],int1-stackindex);
+       op:= nil;
+       par.imm.voffset:= 0;
+      end;
+     end;
+    end;
+   end;
+  end;
+  po1:= @ops[opcount];
+  int3:= 0;
+  for int1:= paramco-1 downto 0 do begin
+   dec(po1);
+   int3:= int3-po1^.par.imm.voffset;
+   po1^.par.imm.voffset:= int3;
+  end;
+ end;
+end;
+
+procedure handlewriteln(const paramco: integer);
+begin
+ handlewrite(paramco);
+ with additem()^ do begin
+  op:= @writelnop;
+ end;
+end;
+
+(*
 procedure handlewriteln(const paramco: integer);
 var
  int1: integer;
@@ -61,6 +126,7 @@ begin
   end;
  end;
 end;
+*)
 
 procedure handlesetlength(const paramco: integer);
 begin
@@ -73,8 +139,9 @@ type
  end;
 const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
-   (name: 'writeln'; data: (func: sf_writeln{; sysop: @writelnop})),
-   (name: 'setlength'; data: (func: sf_setlength{; sysop: @setlengthop}))
+   (name: 'write'; data: (func: sf_write)),
+   (name: 'writeln'; data: (func: sf_writeln)),
+   (name: 'setlength'; data: (func: sf_setlength))
   );
 
 procedure init();
