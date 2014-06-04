@@ -239,8 +239,8 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-function newstring(): stringinfoty;
-function stringconst(const astring: stringinfoty): dataaddressty;
+function newstring(): stringvaluety;
+function stringconst(const astring: stringvaluety): dataaddressty;
 
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
@@ -352,9 +352,9 @@ type
    constructor create;
    destructor destroy; override;
    procedure clear; override;
-   function add(const avalue: string): stringinfoty;
+   function add(const avalue: string): stringvaluety;
    function allocconst(
-                         const astring: stringinfoty): dataaddressty;
+                         const astring: stringvaluety): dataaddressty;
  end;
  
 const
@@ -538,13 +538,13 @@ begin
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
 
-function newstring({const info: pparseinfoty}): stringinfoty;
+function newstring({const info: pparseinfoty}): stringvaluety;
 begin
  result:= stringbuf.add(info.stringbuffer);
 end;
 
 function stringconst(
-                           const astring: stringinfoty): dataaddressty;
+                           const astring: stringvaluety): dataaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
 end;
@@ -1847,7 +1847,7 @@ begin
                                       stringbufdataty(aitemdata).len);
 end;
 
-function tstringbuffer.add(const avalue: string): stringinfoty;
+function tstringbuffer.add(const avalue: string): stringvaluety;
 var
  hash: longword;
  po1: pstringbufhashdataty;
@@ -1887,7 +1887,7 @@ begin
  reallocmem(fbuffer,fbufcapacity);
 end;
  
-function tstringbuffer.allocconst(const astring: stringinfoty): dataaddressty;
+function tstringbuffer.allocconst(const astring: stringvaluety): dataaddressty;
 var
  po1: pstring8headerty;
 begin

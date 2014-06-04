@@ -98,7 +98,7 @@ type
   flags: infoclassflagsty;
  end;
  pinfoclassty = ^infoclassty;
- 
+
  infoenumitemty = record
   value: integer;
   enum: elementoffsetty;
@@ -180,7 +180,7 @@ type
  ptypedataty = ^typedataty;
  
  vardestinfoty = record
-  address: addressinfoty;
+  address: addressvaluety;
   typ: ptypedataty;
  end;
  
@@ -198,7 +198,7 @@ type
  end;
  vardataty = record
   vf: vfinfoty;           //same layout as fielddataty
-  address: addressinfoty; //indirectlevel = total
+  address: addressvaluety; //indirectlevel = total
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;

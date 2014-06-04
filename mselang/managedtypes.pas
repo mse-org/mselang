@@ -23,7 +23,7 @@ uses
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                                         const global: boolean);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                                 const aaddress: addressinfoty);
+                                                const aaddress: addressvaluety);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
                                                  const aaddress: addressrefty);
 
@@ -200,7 +200,7 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                                 const aaddress: addressinfoty);
+                                               const aaddress: addressvaluety);
 var
  ad1: addressrefty;
 begin

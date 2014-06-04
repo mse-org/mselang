@@ -670,7 +670,7 @@ begin
     kind:= dk_enumitem;
     infoenumitem.value:= avalue;
     with contextstack[parent] do begin
-     infoenumitem.enum:= d.enu.entry;
+     infoenumitem.enum:= d.enu.enum;
      d.enu.value:= avalue+1;
     end;
    end;

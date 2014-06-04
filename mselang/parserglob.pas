@@ -213,21 +213,26 @@ type
   indirectlevel: indirectlevelty;
  end;
  
- addressinfoty = record
+ addressvaluety = record
   address: dataaddressty;
   flags: addressflagsty;
   indirectlevel: indirectlevelty;
   framelevel: framelevelty;
  end;
- paddressinfoty = ^addressinfoty;
+ paddressvaluety = ^addressvaluety;
 
- stringinfoty = record
+ stringvaluety = record
   offset: ptruint; //offset in string buffer
  // len: databytesizety;
  end;
 
- refinfoty = record
-  address: addressinfoty;  //indirectlevel = additional
+ enumvaluety = record
+  value: integer;
+  enum: elementoffsetty;
+ end; 
+
+ refvaluety = record
+  address: addressvaluety;  //indirectlevel = additional
   offset: dataoffsty;
  end;
   
@@ -243,10 +248,13 @@ type
     vfloat: float64;
    );
    dk_address:(
-    vaddress: addressinfoty;
+    vaddress: addressvaluety;
    );
    dk_string8:(
-    vstring: stringinfoty;
+    vstring: stringvaluety;
+   );
+   dk_enum:(
+    venum: enumvaluety;
    );
  end;
  
@@ -341,7 +349,7 @@ type
  
  enuminfoty = record
   value: integer;
-  entry: elementoffsetty;
+  enum: elementoffsetty;
  end;
  penuminfoty = ^enuminfoty;
 
@@ -383,7 +391,7 @@ type
       fact: factinfoty;
      );
      ck_ref:(
-      ref: refinfoty;
+      ref: refvaluety;
      );
    );
    ck_index:(
@@ -732,7 +740,7 @@ type
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
- nilad: addressinfoty = (
+ nilad: addressvaluety = (
   address: 0;
   flags: [af_nil];
   indirectlevel: 0;

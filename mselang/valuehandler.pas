@@ -377,7 +377,9 @@ begin
    identerror(1,err_identifiernotfound);
    goto endlab;
   end;
-
+  if po1^.header.kind = ek_ref then begin
+   po1:= ele.eleinfoabs(prefdataty(@po1^.data)^.ref);
+  end;
   po2:= @po1^.data;
   with contextstack[stackindex] do begin
    d.indirection:= 0;
@@ -499,9 +501,21 @@ begin
     ek_type: begin
      if firstnotfound > idents.high then begin
       if paramco = 0 then begin
-       errormessage(err_illegalexpression,[],stacktop-stackindex);
+       with ptypedataty(po2)^ do begin
+        if kind = dk_enumitem then begin
+         d.kind:= ck_const;
+         d.indirection:= 0;
+         d.datatyp.flags:= [];
+         d.datatyp.typedata:= infoenumitem.enum;
+         d.datatyp.indirectlevel:= 0;
+         d.constval.vinteger:= infoenumitem.value;
+        end
+        else begin
+         errormessage(err_illegalexpression,[],stacktop-stackindex);
+        end;
+       end;
       end
-      else begin
+      else begin          //type conversion
        if paramco > 1 then begin
         errormessage(err_closeparentexpected,[],4,-1);
        end

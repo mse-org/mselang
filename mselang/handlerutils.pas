@@ -114,16 +114,16 @@ function getaddress(const stackoffset: integer;
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
 procedure push(const avalue: real); overload;
-procedure push(const avalue: addressinfoty; const offset: dataoffsty;
+procedure push(const avalue: addressvaluety; const offset: dataoffsty;
                                           const indirect: boolean); overload;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
-procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
+procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
                                                    const size: datasizety);
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                                      const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
-            const avalue: addressinfoty; const offset: dataoffsty;
+            const avalue: addressvaluety; const offset: dataoffsty;
                                             const indirect: boolean); overload;
             //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
@@ -131,7 +131,7 @@ function pushinsertvar(const stackoffset: integer; const before: boolean;
 procedure pushinsertconstaddress(const stackoffset: integer;
                             const before: boolean; const address: dataoffsty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
-                  const address: addressinfoty; const offset: dataoffsty;
+                  const address: addressvaluety; const offset: dataoffsty;
                                                   const size: datasizety);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
@@ -608,7 +608,7 @@ begin
 end;
 
 procedure pushins(const aitem: popinfoty;
-          const avalue: addressinfoty; const offset: dataoffsty;
+          const avalue: addressvaluety; const offset: dataoffsty;
                                            const indirect: boolean);
 begin
  with aitem^ do begin
@@ -642,14 +642,14 @@ begin
  end;
 end;
 
-procedure push(const avalue: addressinfoty; const offset: dataoffsty;
+procedure push(const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
  pushins(additem,avalue,offset,indirect);
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
-            const avalue: addressinfoty; const offset: dataoffsty;
+            const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
  pushins(insertitem(stackoffset,before),avalue,offset,indirect);
@@ -796,7 +796,7 @@ begin
  end;
 end;
 
-procedure pushd(const oppo: popinfoty; const address: addressinfoty;
+procedure pushd(const oppo: popinfoty; const address: addressvaluety;
                      const offset: dataoffsty; const size: datasizety);
 begin
  with oppo^,address do begin //todo: use table
@@ -858,14 +858,14 @@ begin
 end;
 
 //todo: optimize call
-procedure pushdata(const address: addressinfoty; const offset: dataoffsty;
+procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
                                           const size: datasizety);
 begin
  pushd(additem({info}),address,offset,size);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
-                  const address: addressinfoty; const offset: dataoffsty;
+                  const address: addressvaluety; const offset: dataoffsty;
                                                   const size: datasizety);
 begin
  pushd(insertitem(stackoffset,before),address,offset,size);
@@ -1025,7 +1025,7 @@ end;
 function getaddress(const stackoffset: integer;
                                 const endaddress: boolean): boolean;
 var
- ref1: refinfoty;
+ ref1: refvaluety;
  int1: integer;
 begin
  result:= false;
@@ -1426,7 +1426,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
   end;
  end;//writetyp
  
- procedure writeaddress(const aaddress: addressinfoty);
+ procedure writeaddress(const aaddress: addressvaluety);
  begin
   with aaddress do begin
    write('A:',inttostr(integer(address)),' I:',inttostr(indirectlevel),
