@@ -552,7 +552,7 @@ begin
     op:= @push8;
     par.imm.vboolean:= po1^.d.constval.vboolean;
    end;
-   dk_integer: begin
+   dk_integer,dk_enum: begin
     op:= @push32;
     par.imm.vint32:= po1^.d.constval.vinteger;
    end;

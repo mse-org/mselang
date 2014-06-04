@@ -508,6 +508,7 @@ begin
          d.datatyp.flags:= [];
          d.datatyp.typedata:= infoenumitem.enum;
          d.datatyp.indirectlevel:= 0;
+         d.constval.kind:= dk_enum;
          d.constval.vinteger:= infoenumitem.value;
         end
         else begin

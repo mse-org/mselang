@@ -606,6 +606,7 @@ end;
 procedure handleenumdefentry();
 var
  po1: ptypedataty;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('ENUMDEFENTRY');
@@ -623,8 +624,12 @@ begin
                                                allvisi,ek_type,po1) then begin
    identerror(-2,err_duplicateidentifier);
   end;
+  ele1:= ele.eledatarel(po1);
   with contextstack[stackindex-1] do begin
-   d.typ.typedata:= ele.eledatarel(po1);
+   d.typ.typedata:= ele1;
+  end;
+  with contextstack[stackindex] do begin
+   d.enu.enum:= ele1;
   end;
   with po1^ do begin
    kind:= dk_none;
@@ -717,5 +722,14 @@ begin
   end;
  end;
 end;
-
+{
+type
+ enuty = (en_0,en_1,en_2);
+var
+ en1: enuty;
+initialization
+ writeln(en_1);
+ en1:= en_1;
+ writeln(en1);
+}
 end.
