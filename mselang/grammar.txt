@@ -39,6 +39,7 @@
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
  'varhandler','exceptionhandler','controlhandler','handlerutils'
+ 'valuehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'

@@ -1304,7 +1304,7 @@ var
 implementation
 
 uses
- handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils;
+ handler,unithandler,classhandler,typehandler,subhandler,varhandler,exceptionhandler,controlhandler,handlerutils,valuehandler;
  
 const
  bstart: array[0..5] of branchty = (
