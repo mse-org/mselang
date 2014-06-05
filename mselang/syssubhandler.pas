@@ -35,13 +35,14 @@ procedure deinit();
 
 implementation
 uses
- elements,parserglob,handlerutils,opcode,stackops,errorhandler;
+ elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler;
 
 procedure handlewrite(const paramco: integer);
 var
  int1,int3: integer;
  stacksize1: datasizety;
  po1: popinfoty; 
+ po2: ptypedataty;
 begin
  stacksize1:= 0;
  with info do begin
@@ -52,31 +53,37 @@ begin
   for int1:= stacktop-paramco+1 to stacktop do begin
    with additem()^ do begin
     with contextstack[int1] do begin //todo: indirection, use table
-     case ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind of
+     po2:= ptypedataty(ele.eledataabs(d.datatyp.typedata));
+     case po2^.kind of
       dk_boolean: begin
        op:= @writebooleanop;
-       par.imm.voffset:= alignsize(sizeof(boolean));
+       par.voffset:= alignsize(sizeof(boolean));
       end;
       dk_integer: begin
        op:= @writeintegerop;
-       par.imm.voffset:= alignsize(sizeof(int32));
+       par.voffset:= alignsize(sizeof(int32));
       end;
       dk_float: begin
        op:= @writefloatop;
-       par.imm.voffset:= alignsize(sizeof(float64));
+       par.voffset:= alignsize(sizeof(float64));
       end;
       dk_string8: begin
        op:= @writestring8op;
-       par.imm.voffset:= alignsize(pointersize);
+       par.voffset:= alignsize(pointersize);
       end;
       dk_class: begin
        op:= @writeclassop;
-       par.imm.voffset:= alignsize(pointersize);
+       par.voffset:= alignsize(pointersize);
+      end;
+      dk_enum: begin
+       op:= @writeenumop;
+       
       end;
       else begin
        errormessage(err_cantreadwritevar,[],int1-stackindex);
        op:= nil;
-       par.imm.voffset:= 0;
+       par.voffset:= 0;
+       par.voffsaddress:= getrtti(po2);
       end;
      end;
     end;

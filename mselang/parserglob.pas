@@ -484,6 +484,7 @@ type
              ok_pushglobaddressindi,ok_pushlocaddressindi,
              ok_pushstackaddress,ok_indirectpooffs,
              ok_pushconstaddress,
+             ok_offset,ok_offsetaddress,
              ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
              ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass,
              ok_managed,ok_managedar);
@@ -531,6 +532,7 @@ type
  destroyclassinfo = record
  end;
 
+ 
  immty = record
   case integer of               //todo: use target size
    1: (vboolean: boolean);
@@ -589,8 +591,12 @@ type
     vlocaddress: locdataaddressty;
     vlocadoffs: dataoffsty;
    );
-   ok_pushstackaddress,ok_indirectpooffs:(
+   ok_pushstackaddress,ok_indirectpooffs,ok_offset,ok_offsetaddress:(
     voffset: dataoffsty;
+    case opkindty of
+     ok_offsetaddress:(
+      voffsaddress: dataaddressty;
+     );
    );
    ok_locop,ok_var,ok_managedar:(
     datasize: datasizety;

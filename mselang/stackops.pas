@@ -81,6 +81,7 @@ procedure writeintegerop();
 procedure writefloatop();
 procedure writestring8op();
 procedure writeclassop();
+procedure writeenumop();
 
 procedure pushop();
 procedure popop();
@@ -443,17 +444,17 @@ end;
 
 procedure writebooleanop();
 begin
- write(vbooleanty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+ write(vbooleanty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
 procedure writeintegerop();
 begin
- write(vintegerty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+ write(vintegerty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
 procedure writefloatop();
 begin
- write(vfloatty((cpu.stack+cpu.pc^.par.imm.voffset)^));
+ write(vfloatty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
 procedure writestring8op();
@@ -462,7 +463,7 @@ var
  po2: pstring8headerty;
  str1: string;
 begin
- po1:= pointer((cpu.stack+cpu.pc^.par.imm.voffset)^);
+ po1:= pointer((cpu.stack+cpu.pc^.par.voffset)^);
  if po1 <> nil then begin
   po2:= po1-sizeof(string8headerty);
   setlength(str1,po2^.len);
@@ -473,7 +474,11 @@ end;
 
 procedure writeclassop();
 begin
- write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.imm.voffset)^)));
+ write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.voffset)^)));
+end;
+
+procedure writeenumop();
+begin
 end;
 
 procedure writelnop();
