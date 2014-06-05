@@ -226,7 +226,7 @@ procedure continueexception();
 
 implementation
 uses
- sysutils,handlerglob,mseformatstr,msetypes,internaltypes;
+ sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils;
 {
  stackinfoty = record
   case datakindty of
@@ -479,6 +479,8 @@ end;
 
 procedure writeenumop();
 begin
+ write(getenumname(vintegerty((cpu.stack+cpu.pc^.par.voffset)^),
+                           constdata+cpu.pc^.par.voffsaddress));
 end;
 
 procedure writelnop();

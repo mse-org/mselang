@@ -22,10 +22,121 @@ uses
  
 function getrtti(const atype: ptypedataty): dataaddressty;
 
+procedure init();
+procedure deinit();
+
 implementation
+uses
+ errorhandler,elements,msestrings,msertti,opcode;
+
+var
+ rttibuffer: pointer;
+ rttibufferindex: integer;
+ rttibuffersize: integer;
+
+procedure checkbuffer(step: integer); inline;
+begin
+ inc(rttibufferindex,step);
+ if rttibufferindex > rttibuffersize then begin
+  rttibuffersize:= 2*rttibufferindex;
+  reallocmem(rttibuffer,rttibuffersize);
+ end;
+end;
+
+procedure checkbuffer(step: integer; var abuffer: pointer); 
+                                 {$ifndef mse_debugparser}inline;{$endif}
+var
+ po1: pointer;
+begin
+ inc(rttibufferindex,step);
+ if rttibufferindex > rttibuffersize then begin
+  rttibuffersize:= 2*rttibufferindex;
+  po1:= rttibuffer;
+  reallocmem(rttibuffer,rttibuffersize);
+  abuffer:= abuffer+(rttibuffer-po1); //realloc
+ end;
+end;
+
+function allocrttibuffer(const akind: datatypety; 
+                                         const asize: integer): pointer;
+begin
+ rttibufferindex:= 0;
+ checkbuffer(sizeof(rttiheaderty)+asize);
+ prttity(rttibuffer)^.header.kind:= akind;
+ result:= @prttity(rttibuffer)^.data;
+end;
+
+procedure addname(const aname: identty; var abuffer: pointer);
+var
+ s1: lstringty;
+ int1: integer;
+ po1: pbyte;
+begin
+ if getidentname(aname,s1) then begin
+  if s1.len > 255 then begin
+   identerror(aname,err_identtoolong);
+  end;
+  int1:= rttibufferindex;
+  checkbuffer(s1.len+1,abuffer);
+  po1:= rttibuffer+int1;
+  po1^:= s1.len;
+  move(s1.po^,(po1+1)^,s1.len);
+ end
+ else begin
+  internalerror1(ie_rtti,'20140605C');
+ end;
+end;
 
 function getrtti(const atype: ptypedataty): dataaddressty;
+var
+ po1: penumrttity;
+ po2: ptypedataty;
+ po3: penumitemrttity;
+ ele1: elementoffsetty;
+ int1,int2: integer;
 begin
+ result:= atype^.rtti;
+ if result = 0 then begin
+  case atype^.kind of 
+   dk_enum: begin
+    int2:= sizeof(enumrttity)+atype^.infoenum.itemcount*sizeof(enumitemrttity);
+    po1:= allocrttibuffer(dt_enum,int2);
+    po1^.itemcount:= atype^.infoenum.itemcount;
+    po1^.flags:= [erf_contiguous];
+    po3:= @po1^.items;
+    ele1:= atype^.infoenum.first;
+    for int1:= 0 to atype^.infoenum.itemcount-1 do begin
+     po2:= ele.eledataabs(ele1);
+     po3^.value:= po2^.infoenumitem.value;
+     if int1 <> po3^.value then begin
+      po1^.flags:= [];
+     end;
+     po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
+     addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
+     inc(po3);
+     ele1:= po2^.infoenumitem.next;
+    end;
+    
+   end;
+   else begin
+    internalerror(ie_notimplemented,'20140605A');
+   end;
+  end;
+  result:= getglobconstaddress(rttibufferindex);
+  move(rttibuffer^,info.constseg[result],rttibufferindex);
+ end;
+end;
+
+procedure init();
+begin
+ rttibufferindex:= 0;
+ rttibuffersize:= defaultrttibuffersize;
+ rttibuffer:= getmem(rttibuffersize);
+end;
+
+procedure deinit();
+begin
+ freemem(rttibuffer);
 end;
 
 end.

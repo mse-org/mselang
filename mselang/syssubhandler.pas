@@ -77,7 +77,8 @@ begin
       end;
       dk_enum: begin
        op:= @writeenumop;
-       
+       par.voffset:= alignsize(pointersize);
+       par.voffsaddress:= getrtti(po2);
       end;
       else begin
        errormessage(err_cantreadwritevar,[],int1-stackindex);

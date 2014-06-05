@@ -67,9 +67,9 @@ var
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
- parser.init;
+// parser.init;
  parser.parse(ed.gettext,stream1,ar1,constseg);
- parser.deinit;
+// parser.deinit;
 
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);

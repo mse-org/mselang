@@ -18,7 +18,7 @@ unit parserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msestrings,msetypes;
+ msestream,msestrings,msetypes,msertti;
 const
  firstident = 256;
  includemax = 31;
@@ -51,15 +51,17 @@ type
  ppint16 = ^pint16;
  pint32 = ^int32;
  ppint32 = ^int32;
- 
+
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
                dk_address,dk_record,dk_string8,dk_array,dk_class,
                dk_enum,dk_enumitem);
  pdatakindty = ^datakindty;
+ 
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
  ancestordatakinds = [dk_class];
 type
+
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer);
 
@@ -86,8 +88,11 @@ const
  classpublicvisi = classprotectedvisi+[vik_global];
  classpublishedvisi = classpublicvisi+[vik_published];
  
- defaultstackdepht = 256;
+ defaultstackdepth = 256;
  defaultconstsegsize = 256;
+ defaultrttibuffersize = 256;
+ 
+ 
  branchkeymaxcount = 4;
  dummyaddress = 0;
  idstart = $12345678;
@@ -350,6 +355,7 @@ type
  enuminfoty = record
   value: integer;
   enum: elementoffsetty;
+  first: elementoffsetty;
  end;
  penuminfoty = ^enuminfoty;
 
@@ -716,7 +722,7 @@ type
 {$endif}
   consumed: pchar;
   contextstack: array of contextitemty;
-  stackdepht: integer;
+  stackdepth: integer;
   stackindex: integer; 
   stacktop: integer; 
   funclevel: integer;

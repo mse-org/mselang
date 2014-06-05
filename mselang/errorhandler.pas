@@ -46,7 +46,8 @@ type
             err_expressionexpected,err_overloadnotfunc,
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
             err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected,
-            err_ordinalconstexpected,err_cantreadwritevar);
+            err_ordinalconstexpected,err_cantreadwritevar,
+            err_identtoolong);
             
  errorinfoty = record
   level: errorlevelty;
@@ -62,7 +63,8 @@ type
                         ie_managed, //error in managed types handler
                         ie_sub,     //error in subhadler
                         ie_value,   //error in value handler
-                        ie_elements //error in element list
+                        ie_elements, //error in element list
+                        ie_rtti      //error in rtti handler
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -70,8 +72,8 @@ const
      '',     'N',              'P',      'H',       'R',     'U',    
  //ie_type,ie_managed
      'T',    'M',
- //ie_sub,ie_value,ie_elements
-     'S',   'V',   'E'
+ //ie_sub,ie_value,ie_elements,ie_rtti
+     'S',   'V',   'E',        'I'
  );
  
  stoperrorlevel = erl_fatal;
@@ -162,7 +164,8 @@ const
   (level: erl_error; message: 'Class instance expected'),
   (level: erl_error; message: 'Ordinal expression expected'),
   (level: erl_error; message: 'Ordinal constant expected'),
-  (level: erl_error; message: 'Can''t read or write variables of this type')
+  (level: erl_error; message: 'Can''t read or write variables of this type'),
+  (level: erl_error; message: 'Identifier too long "%s"')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
@@ -176,6 +179,9 @@ procedure errormessage(const aerror: errorty; const values: array of const;
 
 procedure identerror(const astackoffset: integer;const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
+procedure identerror(const aident: identty; const aerror: errorty;
+                             const aerrorlevel: errorlevelty = erl_none);
+
 procedure tokenexpectederror(const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
 procedure tokenexpectederror(const atoken: string;
@@ -316,6 +322,12 @@ begin
  end;
 end;
 
+procedure identerror(const aident: identty; const aerror: errorty;
+                             const aerrorlevel: errorlevelty = erl_none);
+begin
+ errormessage(aerror,[getidentname(aident)],-1,0,aerrorlevel);
+end;
+
 procedure tokenexpectederror(const atoken: string;
                                                const aerrorlevel: errorlevelty);
 begin
@@ -445,7 +457,8 @@ end;
 procedure internalerror1(const kind: internalerrorkindty; const id: string);
 begin
  errormessage(err_internalerror,[internalerrorlabels[kind]+id]);
- halt(integer(kind));
+ exitcode:= integer(kind);
+ abort();
 end;
 
 {$ifdef mse_checkinternalerror}

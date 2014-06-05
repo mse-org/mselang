@@ -102,8 +102,14 @@ type
  infoenumitemty = record
   value: integer;
   enum: elementoffsetty;
+  next: elementoffsetty;
  end;
  pinfoenumitemty = ^infoenumitemty;
+ 
+ infoenumty = record
+  itemcount: integer;
+  first: elementoffsetty;
+ end;
 
 // writeiniprocty = procedure (const address: dataoffsty);
 // writefiniprocty = procedure (const address: dataoffsty);
@@ -125,6 +131,7 @@ type
  prefdataty = ^refdataty;
  
  typedataty = record
+  rtti: dataaddressty; //0 -> none
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
@@ -169,6 +176,9 @@ type
         infoclass: infoclassty;
        );
     );
+   );
+   dk_enum:(
+    infoenum: infoenumty;
    );
    dk_enumitem:(
     infoenumitem: infoenumitemty;

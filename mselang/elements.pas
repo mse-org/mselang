@@ -242,6 +242,8 @@ function getident(const aname: string): identty; overload;
 function newstring(): stringvaluety;
 function stringconst(const astring: stringvaluety): dataaddressty;
 
+function getidentname(const aident: identty; out name: lstringty): boolean;
+                             //true if found
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
 {$endif}
@@ -275,6 +277,7 @@ type
  identdataty = record
   ident: identty;
   keyname: identoffsetty;
+  keylen: integer;
  end;
  identhashdataty = record
   header: hashheaderty;
@@ -301,11 +304,9 @@ type
    function checkkey(const akey; const aitemdata): boolean; override;
   public
    constructor create;
-  {$ifdef mse_debugparser}
    destructor destroy; override;
    procedure clear; override;
-   function identname(const aident: identty): string;
-  {$endif}
+   function identname(const aident: identty; out aname: lstringty): boolean;
    function getident(const aname: lstringty): identty;
  end;
 
@@ -576,10 +577,23 @@ begin
  end;
 end;
 
+function getidentname(const aident: identty; out name: lstringty): boolean;
+                             //true if found
+begin
+ result:= identlist.identname(aident,name);
+end;
+
 {$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
+var
+ lstr1: lstringty;
 begin
- result:= identlist.identname(aident);
+ if getidentname(aident,lstr1) then begin
+  result:= lstringtostring(lstr1);
+ end
+ else begin
+  result:= '';
+ end;
 end;
 
 { tidenthashdataty }
@@ -605,12 +619,9 @@ end;
 constructor tindexidenthashdatalist.create;
 begin
  inherited create(sizeof(indexidentdataty));
-{$ifdef mse_debugparser}
  fidents:= tidenthashdatalist.create;
-{$endif}
 end;
 
-{$ifdef mse_debugparser}
 destructor tindexidenthashdatalist.destroy;
 begin
  inherited;
@@ -623,17 +634,23 @@ begin
  fidents.clear;
 end;
 
-function tindexidenthashdatalist.identname(const aident: identty): string;
+function tindexidenthashdatalist.identname(const aident: identty;
+                   out aname: lstringty): boolean;
 var
  po1: pidenthashdataty;
 begin
- result:= '';
  po1:= pidenthashdataty(fidents.internalfind(aident,aident));
  if po1 <> nil then begin
-  result:= strpas(pchar(stringdata)+po1^.data.keyname);
+  result:= true;
+  aname.po:= pchar(stringdata)+po1^.data.keyname;
+  aname.len:= po1^.data.keylen;
+ end
+ else begin
+  result:= false;
+  aname.po:= nil;
+  aname.len:= 0;
  end;
 end;
-{$endif}
 
 function tindexidenthashdatalist.getident(const aname: lstringty): identty;
 var
@@ -647,12 +664,11 @@ begin
   with po1^.data do begin
    data:= stringident;
    key:= storestring(aname);
-  {$ifdef mse_debugparser}
    with pidenthashdataty(fidents.internaladdhash(data))^.data do begin
     ident:= data;
     keyname:= key;
+    keylen:= aname.len;
    end;
-  {$endif}
   end;
  end;  
  result:= po1^.data.data;
@@ -1220,7 +1236,7 @@ begin
   mstr1:= mstr1+'O:'+inttostr(int1) +
             ' P:'+inttostr(po1^.header.parent)+' N:$'+
             hextostr(po1^.header.name,8)+' '+
-            ' '+identlist.identname(po1^.header.name) + 
+            ' '+getidentname(po1^.header.name) + 
             ' '+getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
              ' V:'+settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
                                  integer(po1^.header.visibility),false);
@@ -1358,7 +1374,7 @@ begin
    po1:= ele.eleinfoabs(po4^.childparent);
    mstr1:= mstr1+' CP:'+
     getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
-    ' '+identlist.identname(po1^.header.name);
+    ' '+getidentname(po1^.header.name);
    result[int1]:= mstr1;
    inc(po4);
   end;
@@ -1371,10 +1387,10 @@ var
 begin
  result:= '';
  po1:= aelement;
- result:= identlist.identname(po1^.header.name);
+ result:= getidentname(po1^.header.name);
  while po1^.header.parent <> 0 do begin
   po1:= pointer(felementdata)+po1^.header.parent;
-  result:= identlist.identname(po1^.header.name)+'.'+result;
+  result:= getidentname(po1^.header.name)+'.'+result;
  end;
 end;
 {$endif}

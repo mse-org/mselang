@@ -47,28 +47,30 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils,managedtypes;
+ handlerutils,managedtypes,rttihandler;
   
 //
 //todo: move context-end flag handling to handler procedures.
 //
 
-procedure init;
+procedure init();
 begin
- elements.init;
- handlerutils.init;
- unithandler.init;
+ elements.init();
+ handlerutils.init();
+ unithandler.init();
+ rttihandler.init();
 // inifini.init;
 // handler.init;
 end;
 
-procedure deinit;
+procedure deinit();
 begin
 // handler.deinit;
 // inifini.deinit;
- unithandler.deinit;
- handlerutils.deinit;
- elements.clear;
+ rttihandler.deinit();
+ unithandler.deinit();
+ handlerutils.deinit();
+ elements.clear();
  
 end;
 
@@ -130,9 +132,9 @@ begin
  with info do begin
   inc(stacktop);
   stackindex:= stacktop;
-  if stacktop >= stackdepht then begin
-   stackdepht:= 2*stackdepht;
-   setlength(contextstack,stackdepht+contextstackreserve);
+  if stacktop >= stackdepth then begin
+   stackdepth:= 2*stackdepth;
+   setlength(contextstack,stackdepth+contextstackreserve);
   end;
  end;
 end;
@@ -664,33 +666,43 @@ var
  unit1: punitinfoty;
  int1: integer;
 begin
+ exitcode:= 0;
  fillchar(info,sizeof(info),0);
- unit1:= newunit('program');
- unit1^.filepath:= 'main.mla'; //dummy
- 
+ result:= false;
+ init();
  with info do begin
-  ops:= nil;
-  constseg:= nil;
-  constcapacity:= defaultconstsegsize;
-  setlength(constseg,constcapacity);
-  constsize:= 4; //0 -> not allocated
-  stringbuffer:= '';
-  command:= acommand;
-  stackdepht:= defaultstackdepht;
-  setlength(contextstack,stackdepht);
-  stacktop:= -1;
-  stackindex:= stacktop;
-  opcount:= startupoffset;
-  setlength(ops,opcount);
-  initparser();
-  startopcount:= opcount;
-  result:= parseunit(input,unit1);
-  if not result or (opcount = startopcount) then begin
-   ops:= nil;
+  try
+   try
+    unit1:= newunit('program');
+    unit1^.filepath:= 'main.mla'; //dummy
+    
+    ops:= nil;
+    constseg:= nil;
+    constcapacity:= defaultconstsegsize;
+    setlength(constseg,constcapacity);
+    constsize:= 4; //0 -> not allocated
+    stringbuffer:= '';
+    command:= acommand;
+    stackdepth:= defaultstackdepth;
+    setlength(contextstack,stackdepth);
+    stacktop:= -1;
+    stackindex:= stacktop;
+    opcount:= startupoffset;
+    setlength(ops,opcount);
+    initparser();
+    startopcount:= opcount;
+    result:= parseunit(input,unit1);
+   finally
+    if not result or (opcount = startopcount) then begin
+     ops:= nil;
+    end;
+    aopcode:= ops; 
+    aconstseg:= constseg;
+    system.finalize(info);
+    deinit();
+   end;
+  except
   end;
-  aopcode:= ops; 
-  aconstseg:= constseg;
-  system.finalize(info);
  end;
 end;
 

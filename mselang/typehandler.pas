@@ -54,6 +54,12 @@ uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
  grammar;
 
+procedure inittypedata(var atype: typedataty); inline;
+begin
+ atype.rtti:= 0;
+ atype.flags:= [];
+end;
+
 procedure handletype();
 begin
 {$ifdef mse_debugparser}
@@ -175,9 +181,11 @@ begin
      identerror(-1,err_duplicateidentifier);
     end;
     d.typ.typedata:= ele.eledatarel(po1);
+    inittypedata(po1^);
     with po1^ do begin
      //todo: check datasize
-     flags:= [];
+//     flags:= [];
+//     rtti:= 0;
      indirectlevel:= d.typ.indirectlevel;
      d.typ.indirectlevel:= 0;
      bitsize:= 32;
@@ -630,27 +638,51 @@ begin
   end;
   with contextstack[stackindex] do begin
    d.enu.enum:= ele1;
+   d.enu.first:= 0;
   end;
   with po1^ do begin
-   kind:= dk_none;
+   kind:= dk_none; //incomplete
   end;
  end;
 end;
 
 procedure handleenumdef();
+var
+ po1: ptypedataty;
+ int1: integer;
+ ele1,ele2,ele3: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('ENUMDEF');
 {$endif}
  with info do begin
-  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
-                                                d.typ.typedata))^ do begin
-   kind:= dk_enum; //fieldchain set in handlerecorddefstart()
-   datasize:= das_32;
-   bytesize:= 4;
-   bitsize:= 32;
-   indirectlevel:= d.typ.indirectlevel;
-   flags:= [];
+  ele2:= contextstack[stackindex].d.enu.first;
+  ele1:= 0;
+  ele3:= 0;
+  int1:= 0;
+  while ele2 <> 0 do begin
+   inc(int1);
+   with ptypedataty(ele.eledataabs(ele2))^.infoenumitem do begin
+                       //reverse order
+    ele3:= ele2;
+    ele2:= next;
+    next:= ele1;
+    ele1:= ele3;
+   end;
+  end;
+  with contextstack[stackindex-1] do begin
+   po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   inittypedata(po1^);
+   with po1^ do begin
+    kind:= dk_enum;
+    datasize:= das_32;
+    bytesize:= 4;
+    bitsize:= 32;
+    indirectlevel:= d.typ.indirectlevel;
+    infoenum.first:= ele3;
+    infoenum.itemcount:= int1;
+//    flags:= [];
+   end;
   end;
   ele.popelement();
  end;
@@ -666,8 +698,9 @@ begin
  with info,contextstack[stackindex] do begin
   ident1:= contextstack[stackindex+1].d.ident.ident;
   if ele.addelement(ident1,allvisi,ek_type,po1) then begin
+   inittypedata(po1^);
    with po1^ do begin
-    flags:= [];
+//    flags:= [];
     indirectlevel:= 0;
     bitsize:= 32;
     bytesize:= 4;
@@ -677,6 +710,8 @@ begin
     with contextstack[parent] do begin
      infoenumitem.enum:= d.enu.enum;
      d.enu.value:= avalue+1;
+     infoenumitem.next:= d.enu.first;
+     d.enu.first:= ele.eledatarel(po1);
     end;
    end;
    ele1:= ele.decelementparent();

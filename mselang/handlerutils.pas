@@ -167,17 +167,18 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'none'; data: (flags: []; indirectlevel: 0;
+   (name: 'none'; data: (rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
-   (name: 'bool8'; data: (flags: []; indirectlevel: 0;
+   (name: 'bool8'; data: (rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
-   (name: 'int32'; data: (flags: []; indirectlevel: 0;
+   (name: 'int32'; data: (rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32;
                  kind: dk_integer; infoint32:(min: minint; max: maxint))),
-   (name: 'flo64'; data: (flags: []; indirectlevel: 0;
+   (name: 'flo64'; data: (rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64;
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
-   (name: 'string8'; data: (flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
+   (name: 'string8'; data: (rtti: 0; flags: [tf_hasmanaged,tf_managed];
+       indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
                  kind: dk_string8; manageproc: @managestring8;
                  ))
