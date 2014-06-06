@@ -112,8 +112,6 @@ type
   
  brancharty = array of branchrecty;
 
-//procedure test(uses: integer);
-
 function checkident(const avalue: string): boolean;
 var
  int1: integer;

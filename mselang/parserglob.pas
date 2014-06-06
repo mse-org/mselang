@@ -54,7 +54,7 @@ type
 
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
                dk_address,dk_record,dk_string8,dk_array,dk_class,
-               dk_enum,dk_enumitem);
+               dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  
 const
@@ -351,11 +351,15 @@ type
 //  parentclass: elementoffsetty;
  end;
  pclassinfoty = ^classinfoty;
- 
+
+ enumflagty = (enf_contiguous);
+ enumflagsty = set of enumflagty;
+   
  enuminfoty = record
   value: integer;
   enum: elementoffsetty;
   first: elementoffsetty;
+  flags: enumflagsty;
  end;
  penuminfoty = ^enuminfoty;
 

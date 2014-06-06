@@ -102,15 +102,15 @@ begin
     int2:= sizeof(enumrttity)+atype^.infoenum.itemcount*sizeof(enumitemrttity);
     po1:= allocrttibuffer(dt_enum,int2);
     po1^.itemcount:= atype^.infoenum.itemcount;
-    po1^.flags:= [erf_contiguous];
+    po1^.flags:= [];
+    if enf_contiguous in atype^.infoenum.flags then begin
+     include(po1^.flags,erf_contiguous);
+    end;
     po3:= @po1^.items;
     ele1:= atype^.infoenum.first;
     for int1:= 0 to atype^.infoenum.itemcount-1 do begin
      po2:= ele.eledataabs(ele1);
      po3^.value:= po2^.infoenumitem.value;
-     if int1 <> po3^.value then begin
-      po1^.flags:= [];
-     end;
      po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
      addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
      inc(po3);

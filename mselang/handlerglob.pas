@@ -105,10 +105,15 @@ type
   next: elementoffsetty;
  end;
  pinfoenumitemty = ^infoenumitemty;
- 
+
  infoenumty = record
   itemcount: integer;
   first: elementoffsetty;
+  flags: enumflagsty;
+ end;
+ 
+ infosetty = record
+  itemtype: elementoffsetty;
  end;
 
 // writeiniprocty = procedure (const address: dataoffsty);
@@ -182,6 +187,9 @@ type
    );
    dk_enumitem:(
     infoenumitem: infoenumitemty;
+   );
+   dk_set:(
+    infoset: infosetty;
    );
    dk_array:(
     infoarray: infoarrayty;

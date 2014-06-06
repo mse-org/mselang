@@ -45,6 +45,8 @@ procedure handleenumdef();
 procedure handleenumitem();
 procedure handleenumitemvalue();
 
+procedure handlesettype();
+
 procedure checkrecordfield(const avisibility: visikindsty;
                        const aflags: addressflagsty; var aoffset: dataoffsty;
                                                   var atypeflags: typeflagsty);
@@ -203,6 +205,19 @@ begin
   stackindex:= contextstack[stackindex].parent;
  end;
 end;
+
+function gettypeident(): identty;
+begin
+ with info,contextstack[stackindex-2] do begin
+  if (d.kind = ck_ident) and 
+                 (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+   result:= d.ident.ident; //typedef
+  end
+  else begin
+   result:= getident();
+  end;
+ end;
+end;
  
 procedure handlerecorddefstart();
 var
@@ -218,22 +233,14 @@ begin
    internalerror(ie_type,'20140325D');
   end;
  {$endif}
-  with contextstack[stackindex-2] do begin
-   if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
-    id1:= d.ident.ident; //typedef
-   end
-   else begin
-    id1:= getident();
-   end;
-  end;
   with contextstack[stackindex] do begin
    b.eleparent:= ele.elementparent;
    d.kind:= ck_recorddef;
    d.rec.fieldoffset:= 0;
   end;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelementduplicatedata(id1,allvisi,ek_type,po1) then begin
+   if not ele.pushelementduplicatedata(
+                      gettypeident(),allvisi,ek_type,po1) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier);
    end;
    d.typ.typedata:= ele.eledatarel(po1);
@@ -351,6 +358,57 @@ begin
  end;
 end;
 
+procedure handlesettype();
+var
+ po1: ptypedataty;
+ ele1: elementoffsetty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('SETTYPE');
+{$endif}
+ with info,contextstack[stacktop] do begin
+  if (stacktop-stackindex = 1) and (d.typ.typedata <> 0) then begin
+   ele1:= d.typ.typedata;
+   po1:= ele.eledataabs(ele1);
+   if d.typ.indirectlevel = 0 then begin
+    case po1^.kind of        //todo: check size and offset
+     dk_boolean,dk_integer,dk_cardinal: begin
+     end;
+     dk_enum: begin
+      if not (enf_contiguous in po1^.infoenum.flags) then begin
+                            //todo: remove this constraint
+       errormessage(err_setelemustbecontiguous,[],1);
+       exit;
+      end
+      else begin
+      end; 
+     end;
+     else begin
+      errormessage(err_illegalsetele,[],1);
+      exit;
+     end;
+    end;
+    if not ele.addelementdata(gettypeident(),allvisi,ek_type,po1) then begin
+     identerror(-2,err_duplicateidentifier);
+     exit;
+    end;
+    inittypedata(po1^);
+    with contextstack[stackindex-1],po1^ do begin
+     kind:= dk_set; //fieldchain set in handlerecorddefstart()
+     datasize:= das_32;
+     bytesize:= 4;
+     bitsize:= 32;
+     indirectlevel:= d.typ.indirectlevel;
+     infoset.itemtype:= ele1;
+    end;
+   end
+   else begin
+    errormessage(err_illegalsetele,[],1);
+   end;
+  end;
+ end;
+end;
+
 procedure handlearraytype();
 var
  int1,int2: integer;
@@ -428,7 +486,7 @@ begin
      else begin
       id1:= getident(); //multi dimension
      end;
-     if not ele.addelement(id1,allvisi,ek_type,arty) then begin
+     if not ele.addelementdata(id1,allvisi,ek_type,arty) then begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
@@ -639,6 +697,7 @@ begin
   with contextstack[stackindex] do begin
    d.enu.enum:= ele1;
    d.enu.first:= 0;
+   d.enu.flags:= [enf_contiguous];
   end;
   with po1^ do begin
    kind:= dk_none; //incomplete
@@ -679,9 +738,9 @@ begin
     bytesize:= 4;
     bitsize:= 32;
     indirectlevel:= d.typ.indirectlevel;
+    infoenum.flags:= contextstack[stackindex].d.enu.flags;
     infoenum.first:= ele3;
     infoenum.itemcount:= int1;
-//    flags:= [];
    end;
   end;
   ele.popelement();
@@ -697,10 +756,9 @@ var
 begin
  with info,contextstack[stackindex] do begin
   ident1:= contextstack[stackindex+1].d.ident.ident;
-  if ele.addelement(ident1,allvisi,ek_type,po1) then begin
+  if ele.addelementdata(ident1,allvisi,ek_type,po1) then begin
    inittypedata(po1^);
    with po1^ do begin
-//    flags:= [];
     indirectlevel:= 0;
     bitsize:= 32;
     bytesize:= 4;
@@ -709,13 +767,16 @@ begin
     infoenumitem.value:= avalue;
     with contextstack[parent] do begin
      infoenumitem.enum:= d.enu.enum;
+     if d.enu.value <> avalue then begin
+      exclude(d.enu.flags,enf_contiguous);
+     end;
      d.enu.value:= avalue+1;
      infoenumitem.next:= d.enu.first;
      d.enu.first:= ele.eledatarel(po1);
     end;
    end;
    ele1:= ele.decelementparent();
-   if ele.addelement(ident1,allvisi,ek_ref,po2) then begin
+   if ele.addelementdata(ident1,allvisi,ek_ref,po2) then begin
     po2^.ref:= ele.eledatarel(po1);    //non qualified name copy
    end
    else begin

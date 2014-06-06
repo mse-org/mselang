@@ -424,8 +424,14 @@ rangetype,,,handlecheckrangetype*^
 # 
 #handlesimpletype*^
 #
-recorddef,recorddef0,handlerecorddefstart,
-recorddef0,recorddeferror,,
+setdef,,,handleofexpected
+ ${whitespace}
+ 'of'.,setdef1-
+setdef1,,,handlesettype*^
+ '',getfieldtype^*
+#
+recorddef,recorddef1,handlerecorddefstart,
+recorddef1,recorddeferror,,
  ${whitespace}
  @identstart,recordfield^*
  'end'.,recorddefreturn-
@@ -475,6 +481,7 @@ gettype,,,*^
  '^',!handlepointertype-
  '(',enumdef-^*
 # @identstart,simpletype^*
+ 'set'.,setdef-^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
  'class'.,classdef-^*
@@ -721,7 +728,7 @@ char2,,,
 ident,,,handleident^
  @identstart,@decnum,-
 #
-getident,,test,^
+getident,,,^
  ${whitespace}
  @identstart,ident
  '',!handleidentexpected*

@@ -42,8 +42,8 @@ const
     nil,    nil,       nil,        nil,       nil,     nil,
   //dk_address,dk_record,dk_string8,     dk_array,dk_class,
     nil,       nil,      @setlengthstr8, nil,     nil,     
-  //dk_enum,dk_enumitem
-    nil,    nil
+  //dk_enum,dk_enumitem,dk_set
+    nil,    nil,        nil
  );
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;

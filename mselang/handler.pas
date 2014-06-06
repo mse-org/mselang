@@ -730,8 +730,8 @@ const
    nil,     nil,       @negcard32, @negint32, @negflo64,
  //dk_kind, dk_address,dk_record,dk_string,dk_array,dk_class,
    nil,     nil,       nil,      nil,      nil,     nil,     
- //dk_enum,dk_enumitem
-   nil,    nil
+ //dk_enum,dk_enumitem,dk_set
+   nil,    nil,        nil
  );
 
 procedure handlefact();
@@ -1262,7 +1262,7 @@ begin
    errormessage(err_constexpressionexpected,[],stacktop-stackindex);
   end
   else begin
-   if not ele.addelement(contextstack[stackindex+1].d.ident.ident,allvisi,
+   if not ele.addelementdata(contextstack[stackindex+1].d.ident.ident,allvisi,
                  ek_const,po1) then begin
     identerror(1,err_duplicateidentifier);
    end

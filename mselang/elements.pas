@@ -204,7 +204,7 @@ type
                                 const akind: elementkindty): elementoffsetty;
    function addelement(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty): pelementinfoty;   //nil if duplicate
-   function addelement(const aname: identty; const avislevel: visikindsty;
+   function addelementdata(const aname: identty; const avislevel: visikindsty;
               const akind: elementkindty;
               out aelementdata: pointer): boolean;
          //false if duplicate, aelementdata always allocated
@@ -1203,8 +1203,13 @@ function telementhashdatalist.dumpelements: msestringarty;
     result:= result+
     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
     ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
-    if kind = dk_enumitem then begin
-     result:= result+' value:'+inttostr(infoenumitem.value);
+    case kind of
+     dk_enumitem: begin
+      result:= result+' value:'+inttostr(infoenumitem.value);
+     end;
+     dk_set: begin
+      result:= result+' itemtyp:'+inttostr(infoset.itemtype);
+     end;
     end;
    end;
   end;
@@ -1569,7 +1574,7 @@ begin
  fscopespo:= scopebefore;
 end;
 
-function telementhashdatalist.addelement(const aname: identty;
+function telementhashdatalist.addelementdata(const aname: identty;
            const avislevel: visikindsty; const akind: elementkindty;
            out aelementdata: pointer): boolean;
                     //false if duplicate, aelement always allocated
