@@ -27,7 +27,8 @@ procedure handleinterfacedefparam2();
 procedure handleinterfacedefparam3a();
 
 implementation
-
+uses
+ handlerutils;
 procedure handleinterfacedefstart();
 begin
 {$ifdef mse_debugparser}
@@ -38,21 +39,21 @@ end;
 procedure handleinterfacedeferror();
 begin
 {$ifdef mse_debugparser}
- outhandle('INTERFACEDEFSTART');
+ outhandle('INTERFACEDEFERROR');
 {$endif}
 end;
 
 procedure handleinterfacedefreturn();
 begin
 {$ifdef mse_debugparser}
- outhandle('INTERFACEDEFSTART');
+ outhandle('INTERFACEDEFRETURN');
 {$endif}
 end;
 
 procedure handleinterfacedefparam2();
 begin
 {$ifdef mse_debugparser}
- outhandle('INTERFACEDEFSTART');
+ outhandle('INTERFACEDEFPSTART');
 {$endif}
 end;
 
