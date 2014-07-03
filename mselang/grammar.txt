@@ -39,7 +39,7 @@
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
  'varhandler','exceptionhandler','controlhandler','handlerutils'
- 'valuehandler'
+ 'valuehandler','interfacehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published','.classimp','.self'
  '.units'
@@ -485,6 +485,7 @@ gettype,,,*^
  'record'.,recorddef-^*
  'array'.,arraydef-^*
  'class'.,classdef-^*
+ 'interface'.,interfacedef-^*
  '',simpletype^*
 # '',identexpected
 #
@@ -571,6 +572,31 @@ classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 classfield,,,handleclassfield^*
  '',vardef^*
 #
+
+interfacedef,interfacedef0,handleinterfacedefstart,
+ ${whitespace}
+ '(',interfacedefparam-*
+interfacedef0,interfacedeferror,,
+ ${whitespace}
+ 'end'.,interfacedefreturn-
+
+interfacedeferror,,handleinterfacedeferror,^
+interfacedefreturn,,handleinterfacedefreturn,*^
+
+interfacedefparam,,,*
+ ${whitespace}
+ @identstart,interfacedefparam1*>
+ ')',-*
+ '',!handlecloseroundbracketexpected
+interfacedefparam1,interfacedefparam2,,
+ '',identpath^*
+interfacedefparam2,interfacedefparam2a,,handleinterfacedefparam2*
+interfacedefparam2a,,,
+ ${whitespace}
+ ',',interfacedefparam3-
+interfacedefparam3,interfacedefparam3a,,
+ '',identpath^*
+interfacedefparam3a,interfacedefparam2a,,handleinterfacedefparam3a*
 
 statementend,,,handlestatementend!
 exp,exp1,,
