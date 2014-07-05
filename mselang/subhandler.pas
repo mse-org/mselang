@@ -386,7 +386,7 @@ var
  si1: integer;
  paramsize1: integer;
  paramkind1: paramkindty;
- bo1,isclass,ismethod: boolean;
+ bo1,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
 
@@ -411,10 +411,10 @@ begin
    tokenexpectederror(':');
   end;
   paramsize1:= 0;
-  ismethod:= currentstatementflags * 
-                   [stf_interfacedef,stf_classdef,stf_classimp] <> [];
   isclass:= currentstatementflags * 
                    [stf_classdef,stf_classimp] <> [];
+  isinterface:=  stf_interfacedef in currentstatementflags;
+  ismethod:= isclass or isinterface;
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
    with contextstack[stacktop] do begin
@@ -583,7 +583,9 @@ begin
    for int2:= 0 to paramco-1 do begin
     dec(po4^[int2],eledatabase); //relative address
    end;
-   forwardmark(po1^.mark,source);
+   if not isinterface then begin
+    forwardmark(po1^.mark,source);
+   end;
   end;
 
   parent1:= ele.decelementparent;
