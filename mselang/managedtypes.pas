@@ -40,8 +40,8 @@ const
  setlengthops: array[datakindty] of opty = (
   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     nil,    nil,       nil,        nil,       nil,     nil,
-  //dk_address,dk_record,dk_string8,     dk_array,dk_class,
-    nil,       nil,      @setlengthstr8, nil,     nil,     
+  //dk_address,dk_record,dk_string8,     dk_array,dk_class,dk_interface,
+    nil,       nil,      @setlengthstr8, nil,     nil,     nil, 
   //dk_enum,dk_enumitem,dk_set
     nil,    nil,        nil
  );

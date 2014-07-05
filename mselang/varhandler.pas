@@ -61,7 +61,7 @@ begin
  {$endif}
   ident1:= contextstack[stackindex+1].d.ident.ident;
   bo1:= false;
-  if (currentclass = 0) or not ele.findchild(info.currentclass,ident1,
+  if (currentcontainer = 0) or not ele.findchild(info.currentcontainer,ident1,
                                                    [],allvisi,ele1) then begin
    if funclevel > 0 then begin
     ele.checkcapacity(elesizes[ek_var]); //no change by addvar

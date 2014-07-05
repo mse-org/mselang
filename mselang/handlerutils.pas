@@ -45,8 +45,8 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_array,dk_class,
-    sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none,
+  //dk_address,dk_record,dk_string,dk_array,dk_class,dk_interface
+    sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none,sdk_none,
   //dk_enum,dk_enumitem, dk_set
     sdk_none,   sdk_none, sdk_none);
                 
@@ -167,18 +167,21 @@ const
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
    (name: 'none'; data: (rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none; dummy: 0)),
+       bitsize: 0; bytesize: 0; datasize: das_none; ancestor: 0; kind: dk_none;
+       dummy: 0)),
    (name: 'bool8'; data: (rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean; dummy: 0)),
+       bitsize: 8; bytesize: 1; datasize: das_8; ancestor: 0; kind: dk_boolean;
+       dummy: 0)),
    (name: 'int32'; data: (rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32;
+       bitsize: 32; bytesize: 4; datasize: das_32; ancestor: 0;
                  kind: dk_integer; infoint32:(min: minint; max: maxint))),
    (name: 'flo64'; data: (rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64;
+       bitsize: 64; bytesize: 8; datasize: das_64; ancestor: 0;
                  kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
    (name: 'string8'; data: (rtti: 0; flags: [tf_hasmanaged,tf_managed];
        indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
+        ancestor: 0;
                  kind: dk_string8; manageproc: @managestring8;
                  ))
   );
@@ -1452,9 +1455,9 @@ begin
    write('  ');
   end;
   write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
-  ' cla:',currentclass);
-  if currentclass <> 0 then begin
-   write(' ',getidentname(ele.eleinfoabs(currentclass)^.header.name),' ');
+  ' cont:',currentcontainer);
+  if currentcontainer <> 0 then begin
+   write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name),' ');
   end;
   write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');

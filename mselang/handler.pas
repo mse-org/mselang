@@ -728,8 +728,8 @@ const
  negops: array[datakindty] of opty = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
    nil,     nil,       @negcard32, @negint32, @negflo64,
- //dk_kind, dk_address,dk_record,dk_string,dk_array,dk_class,
-   nil,     nil,       nil,      nil,      nil,     nil,     
+ //dk_kind, dk_address,dk_record,dk_string,dk_array,dk_class,dk_interface,
+   nil,     nil,       nil,      nil,      nil,     nil,     nil,
  //dk_enum,dk_enumitem,dk_set
    nil,    nil,        nil
  );

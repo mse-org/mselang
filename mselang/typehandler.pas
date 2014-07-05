@@ -56,12 +56,6 @@ uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
  grammar;
 
-procedure inittypedata(var atype: typedataty); inline;
-begin
- atype.rtti:= 0;
- atype.flags:= [];
-end;
-
 procedure handletype();
 begin
 {$ifdef mse_debugparser}
@@ -183,9 +177,10 @@ begin
      identerror(-1,err_duplicateidentifier);
     end;
     d.typ.typedata:= ele.eledatarel(po1);
-    inittypedata(po1^);
-    with po1^ do begin
+    inittypedatasize(po1^,dk_integer,d.typ.indirectlevel,das_32);
+    with po1^.infoint32 do begin
      //todo: check datasize
+    {
 //     flags:= [];
 //     rtti:= 0;
      indirectlevel:= d.typ.indirectlevel;
@@ -193,11 +188,11 @@ begin
      bitsize:= 32;
      bytesize:= 4;
      datasize:= das_32;
+     parent:= 0;
      kind:= dk_integer;
-     with infoint32 do begin
-      min:= contextstack[stackindex+2].d.constval.vinteger;
-      max:= contextstack[stackindex+3].d.constval.vinteger;
-     end;
+    }
+     min:= contextstack[stackindex+2].d.constval.vinteger;
+     max:= contextstack[stackindex+3].d.constval.vinteger;
     end;
    end;
   end;
@@ -338,7 +333,7 @@ procedure handlerecordtype();
 var
  int1: integer;
  int2: dataoffsty;
- po1: pfielddataty;
+ po1: ptypedataty;
  size1: integer;
 begin
 {$ifdef mse_debugparser}
@@ -346,14 +341,18 @@ begin
 {$endif}
  with info do begin
   ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
-  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
-                                                d.typ.typedata))^ do begin
+  with contextstack[stackindex-1] do begin
+   po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
+                       contextstack[stackindex].d.rec.fieldoffset,d.typ.flags);
+{   
    kind:= dk_record; //fieldchain set in handlerecorddefstart()
    datasize:= das_none;
    bytesize:= contextstack[stackindex].d.rec.fieldoffset;
    bitsize:= bytesize*8;
    indirectlevel:= d.typ.indirectlevel;
    flags:= d.typ.flags;
+}
   end;
  end;
 end;
@@ -392,13 +391,16 @@ begin
      identerror(-2,err_duplicateidentifier);
      exit;
     end;
-    inittypedata(po1^);
-    with contextstack[stackindex-1],po1^ do begin
+    inittypedatasize(po1^,dk_set,
+           contextstack[stackindex-1].d.typ.indirectlevel,das_32);
+    with {contextstack[stackindex-1],}po1^ do begin
+    {
      kind:= dk_set; //fieldchain set in handlerecorddefstart()
      datasize:= das_32;
      bytesize:= 4;
      bitsize:= 32;
      indirectlevel:= d.typ.indirectlevel;
+    }
      infoset.itemtype:= ele1;
     end;
    end
@@ -731,16 +733,18 @@ begin
   end;
   with contextstack[stackindex-1] do begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
-   inittypedata(po1^);
-   with po1^ do begin
+   inittypedatasize(po1^,dk_enum,d.typ.indirectlevel,das_32);
+   with po1^.infoenum do begin
+   {
     kind:= dk_enum;
     datasize:= das_32;
     bytesize:= 4;
     bitsize:= 32;
     indirectlevel:= d.typ.indirectlevel;
-    infoenum.flags:= contextstack[stackindex].d.enu.flags;
-    infoenum.first:= ele3;
-    infoenum.itemcount:= int1;
+   }
+    flags:= contextstack[stackindex].d.enu.flags;
+    first:= ele3;
+    itemcount:= int1;
    end;
   end;
   ele.popelement();
@@ -757,13 +761,15 @@ begin
  with info,contextstack[stackindex] do begin
   ident1:= contextstack[stackindex+1].d.ident.ident;
   if ele.addelementdata(ident1,allvisi,ek_type,po1) then begin
-   inittypedata(po1^);
+   inittypedatasize(po1^,dk_enumitem,0,das_32);
    with po1^ do begin
+   {
     indirectlevel:= 0;
     bitsize:= 32;
     bytesize:= 4;
     datasize:= das_32;
     kind:= dk_enumitem;
+   }
     infoenumitem.value:= avalue;
     with contextstack[parent] do begin
      infoenumitem.enum:= d.enu.enum;

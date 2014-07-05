@@ -28,12 +28,65 @@ procedure handleinterfacedefparam3a();
 
 implementation
 uses
- handlerutils;
+ handlerutils,handlerglob,errorhandler,elements;
+ 
 procedure handleinterfacedefstart();
+var
+ po1: ptypedataty;
+ id1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INTERFACEDEFSTART');
 {$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if stackindex < 3 then begin
+   internalerror(ie_handler,'20140704A');
+  end;
+ {$endif}
+//  include(currentstatementflags,stf_classdef);
+  with contextstack[stackindex] do begin
+   d.kind:= ck_interfacedef;
+  {
+   d.cla.visibility:= classpublishedvisi;
+   d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
+   d.cla.virtualindex:= 0;
+  }
+  end;
+  with contextstack[stackindex-2] do begin
+   if (d.kind = ck_ident) and 
+                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+    id1:= d.ident.ident; //typedef
+   end
+   else begin
+    errormessage(err_anoninterfacedef,[]);
+    exit;
+   end;
+  end;
+  contextstack[stackindex].b.eleparent:= ele.elementparent;
+  with contextstack[stackindex-1] do begin
+   if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
+    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+   end;
+//   currentclass:= d.typ.typedata;
+   po1:= ele.eledataabs(d.typ.typedata{currentclass});
+   inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
+{
+   with po1^ do begin
+    kind:= dk_class;
+    fieldchain:= 0;
+    bytesize:= pointersize;
+    bitsize:= pointersize*8;
+    datasize:= das_pointer;
+    ancestor:= 0;
+    infoclass.impl:= 0;
+    infoclass.defs:= 0;
+    infoclass.flags:= [];
+    infoclass.pendingdescends:= 0;
+   end;
+}
+  end;
+ end;
 end;
 
 procedure handleinterfacedeferror();
@@ -48,6 +101,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INTERFACEDEFRETURN');
 {$endif}
+ with info do begin
+  ele.elementparent:= contextstack[stackindex].b.eleparent;
+ end;
 end;
 
 procedure handleinterfacedefparam2();

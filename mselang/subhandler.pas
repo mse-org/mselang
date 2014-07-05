@@ -295,7 +295,7 @@ begin
      else begin
 ///      ele.pushscopelevel();
       include(currentstatementflags,stf_classimp);
-      currentclass:= ele1;
+      currentcontainer:= ele1;
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
       ele.pushelementparent(ptypedataty(ele.eledataabs(ele1))^.infoclass.impl);
@@ -425,7 +425,7 @@ begin
    inc(stacktop);
    with contextstack[stacktop] do begin
     d.kind:= ck_fieldtype;
-    d.typ.typedata:= currentclass;
+    d.typ.typedata:= currentcontainer;
     d.typ.indirectlevel:= 1;
    end;
   end;
@@ -482,14 +482,14 @@ begin
     address.framelevel:= funclevel+1;
     address.flags:= [af_param];
     include(address.flags,af_const);
-    vf.typ:= currentclass;
+    vf.typ:= currentcontainer;
    end;
   end;
   for int2:= 0 to paramhigh do begin
    paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
    with contextstack[int1+stackindex] do begin
     if (isclass and
-        ele.findchild(currentclass,d.ident.ident,[],allvisi,ele1)) or not
+        ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
             addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
      identerror(int1,err_duplicateidentifier);
      err1:= true;
@@ -612,7 +612,7 @@ begin
    if funclevel = 1 then begin
     paramdata.match:= nil;
     if isclass then begin
-     ele.pushelementparent(currentclass);
+     ele.pushelementparent(currentcontainer);
      bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
                                  allvisi,@checkequalparam,paramdata);
      ele.popelementparent();       
@@ -683,11 +683,11 @@ begin
    po1^.virtualindex:= po2^.virtualindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
    {$ifdef mse_checkinternalerror}
-    if currentclass = 0 then begin
+    if currentcontainer = 0 then begin
      internalerror(ie_sub,'20140502A');
     end;
    {$endif}
-    with ptypedataty(ele.eledataabs(currentclass))^ do begin
+    with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs)^.
                       virtualmethods)[po2^.virtualindex]:= po1^.address-1;
               //resolve virtual table entry, compensate oppo inc
@@ -696,7 +696,7 @@ begin
    linkresolve(po2^.links,po1^.address);
   end;
   if sf_constructor in subdef.flags then begin
-   po3:= ele.eledataabs(currentclass);
+   po3:= ele.eledataabs(currentcontainer);
    with additem^,par.initclass do begin
     op:= @initclassop;
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;

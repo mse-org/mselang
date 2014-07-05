@@ -53,13 +53,13 @@ type
  ppint32 = ^int32;
 
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-               dk_address,dk_record,dk_string8,dk_array,dk_class,
+               dk_address,dk_record,dk_string8,dk_array,dk_class,dk_interface,
                dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
- ancestordatakinds = [dk_class];
+ ancestordatakinds = [dk_class,dk_interface];
 type
 
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
@@ -103,7 +103,7 @@ type
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
-                  ck_recorddef,ck_classdef,ck_enumdef,
+                  ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
@@ -190,7 +190,8 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_classdef,stf_classimp,stf_implementation,
+                    stf_classdef,stf_classimp,
+                    stf_implementation,
                     stf_hasmanaged);
  statementflagsty = set of statementflagty;
 
@@ -352,6 +353,10 @@ type
  end;
  pclassinfoty = ^classinfoty;
 
+ interfaceinfoty = record
+ end;
+ pinterfaceinfoty = ^interfaceinfoty;
+ 
  enumflagty = (enf_contiguous);
  enumflagsty = set of enumflagty;
    
@@ -427,6 +432,9 @@ type
    );
    ck_classdef:(
     cla: classinfoty;
+   );
+   ck_interfacedef:(
+    intf: interfaceinfoty;
    );
    ck_enumdef:(
     enu: enuminfoty;
@@ -744,7 +752,7 @@ type
   globdatapo: ptruint;
   locdatapo: ptruint;
   frameoffset: ptruint;
-  currentclass: elementoffsetty;
+  currentcontainer: elementoffsetty;
 //  currentclassvislevel: vislevelty;
   currentclassvislevel: visikindsty;
   currentstatementflags: statementflagsty;

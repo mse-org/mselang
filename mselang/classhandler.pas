@@ -71,8 +71,6 @@ end;
 procedure handleclassdefstart();
 var
  po1: ptypedataty;
-// po2: pclassdataty;
-// po3: pvisibledataty;
  id1: identty;
 
 begin
@@ -91,7 +89,6 @@ begin
    d.cla.visibility:= classpublishedvisi;
    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    d.cla.virtualindex:= 0;
-//   d.cla.parentclass:= 0;
   end;
   with contextstack[stackindex-2] do begin
    if (d.kind = ck_ident) and 
@@ -108,32 +105,24 @@ begin
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
-   currentclass:= d.typ.typedata;
-   po1:= ele.eledataabs(currentclass);
+   currentcontainer:= d.typ.typedata;
+   po1:= ele.eledataabs(currentcontainer);
+   inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
    with po1^ do begin
+   {
     kind:= dk_class;
-    fieldchain:= 0;
-    datasize:= das_pointer;
     bytesize:= pointersize;
     bitsize:= pointersize*8;
+    datasize:= das_pointer;
     ancestor:= 0;
+    }
+    fieldchain:= 0;
     infoclass.impl:= 0;
     infoclass.defs:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
    end;
   end;
-{
-  if not ele.addelement(id1,vis_max,ek_type,po1) then begin
-   identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
-  end
-  else begin
-   classesscopeset();
-   ele.pushelement(id1,vis_max,ek_class,po2);
-   currentclass:= ele.eledatarel(po2);
-   currentclassvislevel:= vic_published; //default
-  end;
- }
  end;
 end;
 
@@ -145,7 +134,7 @@ begin
  outhandle('CLASSDEFPARAM2');
 {$endif}
  with info do begin
-  po1:= ele.eledataabs(currentclass);
+  po1:= ele.eledataabs(currentcontainer);
   ele.pushelementparent();
   ele.decelementparent; //interface or implementation
   if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
@@ -221,7 +210,7 @@ begin
               //possible capacity change
   end;
   ele.elementparent:= contextstack[stackindex].b.eleparent;
-  currentclass:= 0;
+  currentcontainer:= 0;
  end;
 end;
 

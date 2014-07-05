@@ -224,6 +224,7 @@ type
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
    function parentdata: pointer;
+   function parentelement: pelementinfoty;
    procedure pushelementparent(); //save current on stack
    procedure pushelementparent(const aparent: elementoffsetty);
    procedure popelementparent;
@@ -411,6 +412,11 @@ end;
 function telementhashdatalist.parentdata: pointer;
 begin
  result:= pointer(felementdata)+felementparent+eledatashift;
+end;
+
+function telementhashdatalist.parentelement: pelementinfoty;
+begin
+ result:= pointer(felementdata)+felementparent;
 end;
 
 type
@@ -1288,7 +1294,7 @@ begin
      ' K:'+getenumname(typeinfo(kind),ord(kind))+
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      }
-     if kind in [dk_class] then begin
+     if kind in ancestordatakinds then begin
       mstr1:= mstr1+' A:'+inttostr(ancestor);
       case kind of
        dk_class: begin

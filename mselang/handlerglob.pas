@@ -142,6 +142,7 @@ type
   bitsize: integer;
   bytesize: integer;
   datasize: databitsizety;
+  ancestor: elementoffsetty; //valid for ancestordatakinds
   case kind: datakindty of 
    dk_boolean:(
     dummy: byte
@@ -175,7 +176,7 @@ type
     fieldchain: elementoffsetty;
     case datakindty of
      dk_class:(
-      ancestor: elementoffsetty;
+//      classancestor: elementoffsetty;
       case datakindty of
        dk_class:(
         infoclass: infoclassty;
@@ -289,6 +290,18 @@ type
  pvisibledataty = ^visibledataty;
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
+procedure inittypedatabit(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abitsize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abytesize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+procedure inittypedatasize(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; adatasize: databitsizety;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 
 implementation
 
@@ -298,6 +311,94 @@ begin
  if typedata.indirectlevel <> 0 then begin
   result:= pointersize;
  end;
+end;
+
+const 
+ datasizes: array[0..64] of databitsizety = (
+ //   0        1     2       3       4       5       6       7
+  das_none,das_1,das_2_7,das_2_7,das_2_7,das_2_7,das_2_7,das_2_7,
+ //   8     9        10       11       12       13       14       15   
+  das_8,das_9_15,das_9_15,das_9_15,das_9_15,das_9_15,das_9_15,das_9_15,
+ //   16     17        18        19        20        21        22        23 
+  das_16,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,
+ //   24        25        26        27        28           29        30        31
+  das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,das_17_31,
+ //   32     33        34        35        36        37        38        39 
+  das_32,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,
+ //   40        41        42        43        44        45        46        47
+  das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,
+ //   48        49        50        51        52        53        54        55
+  das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,
+ //   56        57        58        59        60        61        62        64
+  das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,das_33_63,
+ //   64 
+  das_64);
+  
+ bitsizes: array[databitsizety] of integer =
+//das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+ (    0,       1,      7,    8,      15,    16,       31,    32,
+//das_33_63,das_64,das_pointer
+         63,    64,pointerbitsize);
+         
+ bytesizes: array[databitsizety] of integer =
+//das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+ (    0,       1,      1,    1,       2,     2,        4,     4,
+//das_33_63,das_64,das_pointer
+          8,     8,pointersize);
+ 
+procedure inittypedata(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; aflags: typeflagsty;
+            artti: dataaddressty; aancestor: elementoffsetty); inline;
+begin
+ atype.rtti:= artti;
+ atype.flags:= aflags;
+ atype.indirectlevel:= aindirectlevel;
+ atype.ancestor:= aancestor;
+ atype.kind:= akind;
+end;
+
+procedure inittypedatabit(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abitsize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+begin
+ inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ atype.bitsize:= abitsize;
+ atype.bytesize:= (abitsize+7) div 8;
+ if atype.bitsize >= 64 then begin
+  atype.datasize:= das_none;
+ end
+ else begin
+  atype.datasize:= datasizes[atype.bitsize];
+ end;
+end;
+
+procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abytesize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+begin
+ inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ atype.bytesize:= abytesize;
+ if abytesize >= pointersize then begin
+  atype.datasize:= das_none;
+  atype.bitsize:= 0;
+ end
+ else begin
+  atype.bitsize:= abytesize*8;
+  atype.datasize:= datasizes[atype.bitsize];
+ end;  
+end;
+
+procedure inittypedatasize(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; adatasize: databitsizety;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+begin
+ inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
+ atype.datasize:= adatasize;
+ atype.bytesize:= bytesizes[adatasize];
+ atype.bitsize:= bitsizes[adatasize];
 end;
 
 end.

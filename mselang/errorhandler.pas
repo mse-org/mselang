@@ -47,7 +47,8 @@ type
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
             err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected,
             err_ordinalconstexpected,err_cantreadwritevar,
-            err_identtoolong,err_illegalsetele,err_setelemustbecontiguous);
+            err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
+            err_anoninterfacedef);
             
  errorinfoty = record
   level: errorlevelty;
@@ -167,7 +168,9 @@ const
   (level: erl_error; message: 'Can''t read or write variables of this type'),
   (level: erl_error; message: 'Identifier too long "%s"'),
   (level: erl_error; message: 'Illegal type declaration of set elements'),
-  (level: erl_error; message: 'Set elements must be contiguous')
+  (level: erl_error; message: 'Set elements must be contiguous'),
+  (level: erl_fatal; message: 
+              'Anonymous interface definitions are not allowed')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;
