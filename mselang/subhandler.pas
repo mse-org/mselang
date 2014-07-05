@@ -386,7 +386,7 @@ var
  si1: integer;
  paramsize1: integer;
  paramkind1: paramkindty;
- bo1,isclass: boolean;
+ bo1,isclass,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
 
@@ -396,6 +396,7 @@ begin
 {$endif}
 //|-2        |-1  0     1     2           3           4        5    
 //|classdef0,|sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+// interfacedef0
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
@@ -410,7 +411,10 @@ begin
    tokenexpectederror(':');
   end;
   paramsize1:= 0;
-  isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
+  ismethod:= currentstatementflags * 
+                   [stf_interfacedef,stf_classdef,stf_classimp] <> [];
+  isclass:= currentstatementflags * 
+                   [stf_classdef,stf_classimp] <> [];
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
    with contextstack[stacktop] do begin
@@ -431,7 +435,7 @@ begin
   end;
   paramco:= (stacktop-stackindex-2) div 3;
   paramhigh:= paramco-1;
-  if isclass then begin
+  if ismethod then begin
    inc(paramco); //self pointer
   end;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];

@@ -4728,7 +4728,13 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedef0: array[0..5] of branchty = (
+ binterfacedef0: array[0..7] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @methprocedureheaderco); stack: nil; 
+     keyword: $5678CDDB{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
+     dest: (context: @methfunctionheaderco); stack: nil; 
+     keyword: $ACF19BB7{'function'}),
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @interfacedefreturnco); stack: nil; 
      keyword: $59E3376E{'end'}),

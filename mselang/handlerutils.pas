@@ -1457,8 +1457,10 @@ begin
   write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
   ' cont:',currentcontainer);
   if currentcontainer <> 0 then begin
-   write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name),' ');
+   write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name));
   end;
+  write(' ',settostring(ptypeinfo(typeinfo(statementflagsty)),
+                         integer(currentstatementflags),true));
   write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
                          singleline(source.po),'''');
   writeln;

@@ -190,7 +190,7 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_classdef,stf_classimp,
+                    stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
                     stf_hasmanaged);
  statementflagsty = set of statementflagty;

@@ -29,7 +29,7 @@ procedure handleinterfacedefparam3a();
 implementation
 uses
  handlerutils,handlerglob,errorhandler,elements;
- 
+
 procedure handleinterfacedefstart();
 var
  po1: ptypedataty;
@@ -44,7 +44,7 @@ begin
    internalerror(ie_handler,'20140704A');
   end;
  {$endif}
-//  include(currentstatementflags,stf_classdef);
+  include(currentstatementflags,stf_interfacedef);
   with contextstack[stackindex] do begin
    d.kind:= ck_interfacedef;
   {
@@ -68,8 +68,8 @@ begin
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
-//   currentclass:= d.typ.typedata;
-   po1:= ele.eledataabs(d.typ.typedata{currentclass});
+   currentcontainer:= d.typ.typedata;
+   po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
 {
    with po1^ do begin

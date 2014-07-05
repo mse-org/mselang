@@ -578,6 +578,8 @@ interfacedef,interfacedef0,handleinterfacedefstart,
  '(',interfacedefparam-*
 interfacedef0,interfacedeferror,,
  ${whitespace}
+ 'procedure'.,methprocedureheader-*^>
+ 'function'.,methfunctionheader-*^>
  'end'.,interfacedefreturn-
 
 interfacedeferror,,handleinterfacedeferror,^
