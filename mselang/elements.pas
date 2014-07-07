@@ -37,7 +37,8 @@ type
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  
- elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,ek_field,
+ elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
+                  ek_field,ek_classintf,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
                   ek_unit,ek_implementation,ek_classimp,ek_uses{,ek_managed});
  elementkindsty = set of elementkindty;
@@ -71,8 +72,10 @@ const
   elesize,sizeof(refdataty)+elesize,
 //ek_type,                   ek_const,         
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
-//ek_var,                   ek_field,
-  sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize, 
+//ek_var,                   ek_field,                
+  sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
+//ek_classintf,
+  sizeof(classintfdataty)+elesize, 
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,
@@ -124,6 +127,7 @@ type
    destructor destroy(); override;
    procedure clear(); override;
    procedure checkcapacity(const areserve: integer);
+   procedure checkcapacity(const akind: elementkindty);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
@@ -131,6 +135,7 @@ type
    function forallancestor(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
+   
    function findcurrent(const aident: identty; const akinds: elementkindsty;
              avislevel: visikindsty; out element: elementoffsetty): boolean;
    function findcurrent(const aident: identty; const akinds: elementkindsty;
@@ -197,7 +202,8 @@ type
                                 const akind: elementkindty): pelementinfoty;
    function addelementduplicatedata(const aname: identty;
                const avislevel: visikindsty;
-               const akind: elementkindty; out aelementdata: pointer): boolean;
+               const akind: elementkindty; out aelementdata: pointer;
+               const asearchlevel: visikindsty = allvisi): boolean;
                                                        //false if duplicate
    function addelementduplicate1(const aname: identty;
                                 const avislevel: visikindsty;
@@ -245,10 +251,7 @@ function stringconst(const astring: stringvaluety): dataaddressty;
 
 function getidentname(const aident: identty; out name: lstringty): boolean;
                              //true if found
-{$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
-{$endif}
-//function scramble1(const avalue: hashvaluety): hashvaluety; inline;
 
 var
  ele: telementhashdatalist;
@@ -1300,6 +1303,7 @@ begin
        dk_class: begin
         mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
                       ' virt:'+inttostr(infoclass.virtualcount)+
+                      ' intf:'+inttostr(infoclass.interfacecount)+
                       ' defs:'+inttostr(infoclass.defs);
         po5:= @pclassdefinfoty(
                        pointer(info.constseg)+infoclass.defs)^.virtualmethods;
@@ -1418,6 +1422,14 @@ procedure telementhashdatalist.checkcapacity(const areserve: integer);
 begin
  if fnextelement+areserve >= felementlen then begin
   felementlen:= fnextelement*2+mindatasize+areserve;
+  setlength(felementdata,felementlen);
+ end;
+end;
+
+procedure telementhashdatalist.checkcapacity(const akind: elementkindty);
+begin
+ if fnextelement+elesizes[akind] >= felementlen then begin
+  felementlen:= fnextelement*2+mindatasize+elesizes[akind];
   setlength(felementdata,felementlen);
  end;
 end;
@@ -1555,11 +1567,12 @@ end;
 
 function telementhashdatalist.addelementduplicatedata(const aname: identty;
                const avislevel: visikindsty;
-               const akind: elementkindty; out aelementdata: pointer): boolean;
+               const akind: elementkindty; out aelementdata: pointer;
+               const asearchlevel: visikindsty = allvisi): boolean;
 var
  ele1: elementoffsetty;
 begin
- result:= not findcurrent(aname,[],allvisi,ele1);
+ result:= not findcurrent(aname,[],asearchlevel,ele1);
  aelementdata:= eledataabs(addelementduplicate1(aname,avislevel,akind));
 end;             
 

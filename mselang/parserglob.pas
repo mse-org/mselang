@@ -752,6 +752,8 @@ type
   globdatapo: ptruint;
   locdatapo: ptruint;
   frameoffset: ptruint;
+  currentsubchain: elementoffsetty;
+  currentsubcount: integer;
   currentcontainer: elementoffsetty;
 //  currentclassvislevel: vislevelty;
   currentclassvislevel: visikindsty;

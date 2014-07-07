@@ -45,6 +45,8 @@ begin
   end;
  {$endif}
   include(currentstatementflags,stf_interfacedef);
+  currentsubchain:= 0;
+  currentsubcount:= 0;
   with contextstack[stackindex] do begin
    d.kind:= ck_interfacedef;
   {
@@ -102,6 +104,7 @@ begin
  outhandle('INTERFACEDEFRETURN');
 {$endif}
  with info do begin
+  ptypedataty(ele.parentdata())^.infointerface.subchain:= currentsubchain;
   ele.elementparent:= contextstack[stackindex].b.eleparent;
  end;
 end;

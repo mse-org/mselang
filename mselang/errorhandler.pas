@@ -48,7 +48,8 @@ type
             err_typemismatch,err_classinstanceexpected,err_ordinalexpexpected,
             err_ordinalconstexpected,err_cantreadwritevar,
             err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
-            err_anoninterfacedef);
+            err_anoninterfacedef,err_interfacetypeexpected,
+            err_classtypeexpected,err_nomatchingimplementation);
             
  errorinfoty = record
   level: errorlevelty;
@@ -170,7 +171,11 @@ const
   (level: erl_error; message: 'Illegal type declaration of set elements'),
   (level: erl_error; message: 'Set elements must be contiguous'),
   (level: erl_fatal; message: 
-              'Anonymous interface definitions are not allowed')
+              'Anonymous interface definitions are not allowed'),
+  (level: erl_error; message: 'Interface type expected'),
+  (level: erl_error; message: 'Class type expected'),
+  (level: erl_error; message: 
+          'No matching implementation for interface method "%s" found')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

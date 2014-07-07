@@ -319,6 +319,8 @@ begin
   unitinfobefore:= unitinfo;
   pcbefore:= pc;
   stopparserbefore:= stopparser;
+  currentsubchain:= 0;
+  currentsubcount:= 0;
   currentstatementflagsbefore:= currentstatementflags;
   currentstatementflags:= [];
   inc(unitlevel);

@@ -18,7 +18,7 @@ unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- stackops;
+ stackops,parserglob,handlerglob;
  
 const
  stacklinksize = sizeof(frameinfoty);
@@ -49,10 +49,12 @@ procedure handlebeginexpected();
 procedure handleendexpected();
 procedure handleimplementationexpected();
 
+function checkparams(const po1,ref: psubdataty): boolean; 
+
 implementation
 uses
- parserglob,errorhandler,msetypes,handlerutils,elements,handlerglob,
- grammar,opcode,unithandler,managedtypes;
+ errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
+ managedtypes;
  
 type
  equalparaminfoty = record
@@ -61,7 +63,7 @@ type
  end;
 
 function checkparams(const po1,ref: psubdataty): boolean; 
-                                  {$ifndef mse_debugparser} inline;{$endif}
+//                                  {$ifndef mse_debugparser} inline;{$endif}
 var
  par1,parref: pelementoffsetaty;
  offs1: elementoffsetty;
@@ -411,8 +413,7 @@ begin
    tokenexpectederror(':');
   end;
   paramsize1:= 0;
-  isclass:= currentstatementflags * 
-                   [stf_classdef,stf_classimp] <> [];
+  isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
   isinterface:=  stf_interfacedef in currentstatementflags;
   ismethod:= isclass or isinterface;
   if isclass and (sf_constructor in subflags) then begin //add return type
@@ -448,6 +449,9 @@ begin
   end;
   po1:= addr(ele.pushelementduplicate(ident1,
                       allvisi,ek_sub,paramco*sizeof(pvardataty))^.data);
+  po1^.next:= currentsubchain;
+  currentsubchain:= ele.eledatarel(po1);
+  inc(currentsubcount);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.nestinglevel:= funclevel;
@@ -467,7 +471,7 @@ begin
   err1:= false;
   impl1:= (us_implementation in unitinfo^.state) and 
                                                  not (sf_header in subflags);
-  if isclass then begin
+  if ismethod then begin
   {$ifdef mse_checkinternalerror}
    if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
     internalerror(ie_sub,'20140415A');
@@ -548,7 +552,7 @@ begin
    end;
    int1:= int1+3;
   end;
-  if isclass then begin
+  if ismethod then begin
    dec(po4);
   end;
   inc(paramsize1,stacklinksize);

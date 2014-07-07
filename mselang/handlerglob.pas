@@ -96,8 +96,16 @@ type
   allocsize: dataoffsty;
   virtualcount: integer;
   flags: infoclassflagsty;
+  interfacecount: integer;
+  interfacechain: elementoffsetty;
  end;
  pinfoclassty = ^infoclassty;
+ 
+ infointerfacety = record
+  subchain: elementoffsetty;
+  subcount: integer;
+ end;
+ pinfointerfacety = ^infointerfacety;
 
  infoenumitemty = record
   value: integer;
@@ -181,7 +189,10 @@ type
        dk_class:(
         infoclass: infoclassty;
        );
-    );
+     );
+   );
+   dk_interface:(
+    infointerface: infointerfacety;
    );
    dk_enum:(
     infoenum: infoenumty;
@@ -214,6 +225,7 @@ type
   typ: elementoffsetty;   //elementdata relative typedataty
   flags: typeflagsty;
   next: elementoffsetty;  //chain in same scope, used for ini, fini
+                          //root = typedataty.fieldchain
  end;
  vardataty = record
   vf: vfinfoty;           //same layout as fielddataty
@@ -233,7 +245,14 @@ type
  end;
  pfielddataty = ^fielddataty;
 
+ classintfdataty = record
+  intftype: elementoffsetty;
+  next: elementoffsetty;  //chain, root = classinfoty.interfacechain
+ end;
+ pclassintfdataty = ^classintfdataty;
+ 
  subdataty = record
+  next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
   links: linkindexty;
   mark: forwardindexty;

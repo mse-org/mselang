@@ -40,7 +40,7 @@ procedure handledestructorentry();
 implementation
 uses
  elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
- parser,typehandler,opcode;
+ parser,typehandler,opcode,subhandler;
 {
 const
  vic_private = vis_3;
@@ -121,37 +121,69 @@ begin
     infoclass.defs:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
+    infoclass.interfacecount:= 0;
+    infoclass.interfacechain:= 0;
    end;
   end;
  end;
 end;
 
-procedure handleclassdefparam2();
+procedure classheader(const ainterface: boolean);
 var
  po1,po2: ptypedataty;
+ po3: pclassintfdataty;
 begin
-{$ifdef mse_debugparser}
- outhandle('CLASSDEFPARAM2');
-{$endif}
  with info do begin
   po1:= ele.eledataabs(currentcontainer);
+  ele.checkcapacity(ek_classintf);
   ele.pushelementparent();
-  ele.decelementparent; //interface or implementation
+  ele.decelementparent(); //interface or implementation
   if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
-   if po2^.kind <> dk_class then begin
-    errormessage(err_classidentexpected,[]);
+   if ainterface then begin
+    if po2^.kind <> dk_interface then begin
+     errormessage(err_interfacetypeexpected,[]);
+    end
+    else begin
+     ele.popelementparent;
+     if ele.addelementduplicatedata(
+           contextstack[stackindex+1].d.ident.ident,
+           [vik_global],ek_classintf,po3,allvisi-[vik_ancestor]) then begin
+      with po3^ do begin
+       intftype:= ele.eledatarel(po2);
+       next:= po1^.infoclass.interfacechain;
+       po1^.infoclass.interfacechain:= ele.eledatarel(po3);
+      end;
+     end
+     else begin
+      identerror(1,err_duplicateidentifier);
+     end;
+     exit;
+    end;
    end
    else begin
-    po1^.ancestor:= ele.eledatarel(po2);
-    with contextstack[stackindex-2] do begin
-     d.cla.fieldoffset:= po2^.infoclass.allocsize;
-     d.cla.virtualindex:= po2^.infoclass.virtualcount;
+    if po2^.kind <> dk_class then begin
+     errormessage(err_classtypeexpected,[]);
+    end
+    else begin
+     po1^.ancestor:= ele.eledatarel(po2);
+     po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
+     with contextstack[stackindex-2] do begin
+      d.cla.fieldoffset:= po2^.infoclass.allocsize;
+      d.cla.virtualindex:= po2^.infoclass.virtualcount;
+     end;
     end;
    end;
   end;
   ele.popelementparent;
-//  dec(stackindex);
  end;
+end;
+
+procedure handleclassdefparam2();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSDEFPARAM2');
+{$endif}
+ classheader(false); //ancestordef
 end;
 
 procedure handleclassdefparam3a();
@@ -159,8 +191,33 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFPARAM3A');
 {$endif}
+ classheader(true); //interfacedef
  with info do begin
 //  dec(stackindex);
+ end;
+end;
+
+procedure checkinterface(const ainterface: pclassintfdataty);
+             //todo: name alias, delegation end the like
+var
+ ele1: elementoffsetty;
+ po1: pelementinfoty;
+ po2: psubdataty;
+begin
+ ele1:= ptypedataty(
+               ele.eledataabs(ainterface^.intftype))^.infointerface.subchain;
+ while ele1 <> 0 do begin
+  po1:= ele.eleinfoabs(ele1);
+  if (ele.findcurrent(po1^.header.name,[ek_sub],allvisi,po2) <> ek_sub)
+            or not checkparams(@po1^.data,po2) then begin
+             //todo: compose parameter message
+   errormessage(err_nomatchingimplementation,[
+   getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
+                                            getidentname(po1^.header.name)]);
+  end
+  else begin
+  end;
+  ele1:= psubdataty(@po1^.data)^.next;
  end;
 end;
 
@@ -171,6 +228,7 @@ var
  classdefs1: dataoffsty;
  classinfo1: pclassinfoty;
  parentinfoclass1: pinfoclassty;
+ int1: integer;
  
 begin
 {$ifdef mse_debugparser}
@@ -184,6 +242,14 @@ begin
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[stackindex].d.cla;
+   ele1:= infoclass.interfacechain;
+   int1:= 0;
+   while ele1 <> 0 do begin
+    checkinterface(ele.eledataabs(ele1));
+    ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
+    inc(int1);
+   end;
+   infoclass.interfacecount:= infoclass.interfacecount + int1;
    infoclass.allocsize:= classinfo1^.fieldoffset;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
