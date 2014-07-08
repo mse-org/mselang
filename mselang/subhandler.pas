@@ -589,6 +589,9 @@ begin
    end;
    if not isinterface then begin
     forwardmark(po1^.mark,source);
+   end
+   else begin
+    po1^.mark:= -1;
    end;
   end;
 

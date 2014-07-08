@@ -112,6 +112,7 @@ begin
    infointerface.subcount:= currentsubcount;
   end;
   ele.elementparent:= contextstack[stackindex].b.eleparent;
+  exclude(currentstatementflags,stf_interfacedef);
  end;
 end;
 
