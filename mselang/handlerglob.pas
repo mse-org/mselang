@@ -103,6 +103,7 @@ type
  pinfoclassty = ^infoclassty;
  
  infointerfacety = record
+  ancestorchain: elementoffsetty;
   subchain: elementoffsetty;
   subcount: integer;
  end;
@@ -251,6 +252,11 @@ type
   next: elementoffsetty;  //chain, root = classinfoty.interfacechain
  end;
  pclassintfdataty = ^classintfdataty;
+ 
+ intfancestordataty = record
+  next: elementoffsetty;
+ end;
+ pintfancestordataty = ^intfancestordataty;
  
  subdataty = record
   next: elementoffsetty;

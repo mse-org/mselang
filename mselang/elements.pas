@@ -38,7 +38,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
-                  ek_field,ek_classintf,
+                  ek_field,ek_classintf,ek_intfancestor,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
                   ek_unit,ek_implementation,ek_classimp,ek_uses{,ek_managed});
  elementkindsty = set of elementkindty;
@@ -74,8 +74,8 @@ const
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,                
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
-//ek_classintf,
-  sizeof(classintfdataty)+elesize, 
+//ek_classintf,                   ek_intfancestor,
+  sizeof(classintfdataty)+elesize,sizeof(intfancestordataty)+elesize,
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,
@@ -127,7 +127,8 @@ type
    destructor destroy(); override;
    procedure clear(); override;
    procedure checkcapacity(const areserve: integer);
-   procedure checkcapacity(const akind: elementkindty);
+   procedure checkcapacity(const akind: elementkindty;
+                                        const acount: integer = 1);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
@@ -1427,10 +1428,14 @@ begin
  end;
 end;
 
-procedure telementhashdatalist.checkcapacity(const akind: elementkindty);
+procedure telementhashdatalist.checkcapacity(const akind: elementkindty;
+                                                  const acount: integer = 1);
+var
+ ele1: elementoffsetty;
 begin
- if fnextelement+elesizes[akind] >= felementlen then begin
-  felementlen:= fnextelement*2+mindatasize+elesizes[akind];
+ ele1:= elesizes[akind]*acount;
+ if fnextelement+ele1 >= felementlen then begin
+  felementlen:= fnextelement*2+mindatasize+ele1;
   setlength(felementdata,felementlen);
  end;
 end;

@@ -28,7 +28,7 @@ procedure handleinterfaceparam();
 
 implementation
 uses
- handlerutils,handlerglob,errorhandler,elements;
+ handlerutils,handlerglob,errorhandler,elements,grammar;
 
 procedure handleinterfacedefstart();
 var
@@ -73,6 +73,9 @@ begin
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
+   with po1^.infointerface do begin
+    ancestorchain:= 0;
+   end;
 {
    with po1^ do begin
     kind:= dk_class;
@@ -124,14 +127,13 @@ begin
   if findkindelementsdata(1,[ek_type],allvisi,po1) then begin
    if po1^.kind <> dk_interface then begin
     errormessage(err_interfacetypeexpected,[]);
-//    dec(stackindex);
    end
    else begin
-    
+    with contextstack[stackindex] do begin
+     d.kind:= ck_typeref;
+     d.typeref:= ele.eledatarel(po1);
+    end;
    end;
-  end
-  else begin
-//   dec(stackindex);
   end;
   stacktop:= stackindex;
   ele.elementparent:= currentcontainer;
@@ -139,12 +141,34 @@ begin
 end;
 
 procedure handleinterfaceparam();
+var
+ int1: integer;
+ ele1: elementoffsetty;
+ po1: ptypedataty;
+ po2: pintfancestordataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INTERFACEPARAM');
 {$endif}
  with info do begin
-//  dec(stackindex);
+  ele.pushelement(tks_ancestors,allvisi,ek_none);
+  ele.checkcapacity(ek_intfancestor,stacktop-stackindex);
+  ele1:= 0;
+  for int1:= stacktop downto stackindex + 1 do begin
+   if not ele.addelementdata(identty(contextstack[int1].d.typeref),allvisi,
+                                             ek_intfancestor,po2) then begin
+    errormessage(err_duplicateancestortype,[]);
+   end;
+   currentsubcount:= currentsubcount + 
+        ptypedataty(ele.eledataabs(
+                       contextstack[int1].d.typeref))^.infointerface.subcount;
+   po2^.next:= ele1;
+   ele1:= ele.eledatarel(po2);
+  end;
+  ele.decelementparent();
+  with ptypedataty(ele.parentdata)^ do begin
+   infointerface.ancestorchain:= ele1;
+  end;
  end;
 end;
 

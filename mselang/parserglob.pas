@@ -102,6 +102,7 @@ type
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
+                  ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
@@ -424,6 +425,12 @@ type
 //   ck_opmark:(
 //    opmark: opmarkty;
 //   );
+   ck_typedata:(
+    typedata: pointer;
+   );
+   ck_typeref:(
+    typeref: elementoffsetty;
+   );
    ck_typetype,ck_fieldtype:(
     typ: typeinfoty;
    );

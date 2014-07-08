@@ -49,7 +49,8 @@ type
             err_ordinalconstexpected,err_cantreadwritevar,
             err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
             err_anoninterfacedef,err_interfacetypeexpected,
-            err_classtypeexpected,err_nomatchingimplementation);
+            err_classtypeexpected,err_nomatchingimplementation,
+            err_duplicateancestortype);
             
  errorinfoty = record
   level: errorlevelty;
@@ -175,7 +176,8 @@ const
   (level: erl_error; message: 'Interface type expected'),
   (level: erl_error; message: 'Class type expected'),
   (level: erl_error; message: 
-          'No matching implementation for interface method "%s" found')
+          'No matching implementation for interface method "%s" found'),
+  (level: erl_error; message: 'Duplicate ancestor type')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

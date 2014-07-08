@@ -27,8 +27,8 @@ uses
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys;
 
 type
-// it = interface(ievent,iificlient)
-// end;
+ it = interface(ievent)
+ end;
 
  tmainfo = class(tmainform)
    statf: tstatfile;

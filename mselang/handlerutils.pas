@@ -1428,6 +1428,12 @@ procedure outinfo(const text: string; const indent: boolean = true);
    end;
   end;
  end;//writetyp
+
+ procedure writetypedata(const adata: ptypedataty);
+ begin
+   write(getidentname(pelementinfoty(pointer(adata)-eledatashift)^.header.name),
+          ':',getenumname(typeinfo(datakindty),ord(adata^.kind)))
+  end;
  
  procedure writeaddress(const aaddress: addressvaluety);
  begin
@@ -1585,6 +1591,12 @@ begin
      end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));
+     end;
+     ck_typedata: begin
+      writetypedata(d.typedata);
+     end;
+     ck_typeref: begin
+      writetypedata(ele.eledataabs(d.typeref));
      end;
      ck_typetype,ck_fieldtype: begin
       writetyp(typ);
