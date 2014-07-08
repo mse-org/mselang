@@ -556,15 +556,17 @@ classdeferror,,handleclassdeferror,^
 classdefreturn,,handleclassdefreturn,*^
 classdefparam,,,*
  ${whitespace}
- @identstart,classdefparam1*>
+ @identstart,classdefparam1*
  ')',-*
  '',!handlecloseroundbracketexpected
 classdefparam1,classdefparam2,,
  '',identpath^*
 classdefparam2,classdefparam2a,,handleclassdefparam2*
-classdefparam2a,,,
+classdefparam2a,,,*
  ${whitespace}
  ',',classdefparam3-
+ ')',-*
+ '',!handlecloseroundbracketexpected
 classdefparam3,classdefparam3a,,
  '',identpath^*
 classdefparam3a,classdefparam2a,,handleclassdefparam3a*
@@ -587,18 +589,19 @@ interfacedefreturn,,handleinterfacedefreturn,*^
 
 interfacedefparam,,,*
  ${whitespace}
- @identstart,interfacedefparam1*>
+ @identstart,interfaceparam1
  ')',-*
  '',!handlecloseroundbracketexpected
-interfacedefparam1,interfacedefparam2,,
+interfaceparam1,interfaceparam2,,
  '',identpath^*
-interfacedefparam2,interfacedefparam2a,,handleinterfacedefparam2*
-interfacedefparam2a,,,
+interfaceparam2,,handleinterfaceparam1entry,*
  ${whitespace}
- ',',interfacedefparam3-
-interfacedefparam3,interfacedefparam3a,,
- '',identpath^*
-interfacedefparam3a,interfacedefparam2a,,handleinterfacedefparam3a*
+ ',',interfaceparam3-
+ ')',-*
+ '',!handlecloseroundbracketexpected
+interfaceparam3,,,handleidentexpected*
+ ${whitespace}
+ @identstart,interfaceparam1
 
 statementend,,,handlestatementend!
 exp,exp1,,

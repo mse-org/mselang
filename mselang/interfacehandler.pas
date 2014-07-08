@@ -23,8 +23,7 @@ uses
 procedure handleinterfacedefstart();
 procedure handleinterfacedeferror();
 procedure handleinterfacedefreturn();
-procedure handleinterfacedefparam2();
-procedure handleinterfacedefparam3a();
+procedure handleinterfaceparam1entry();
 
 implementation
 uses
@@ -112,17 +111,10 @@ begin
  end;
 end;
 
-procedure handleinterfacedefparam2();
+procedure handleinterfaceparam1entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('INTERFACEDEFPSTART');
-{$endif}
-end;
-
-procedure handleinterfacedefparam3a();
-begin
-{$ifdef mse_debugparser}
- outhandle('INTERFACEDEFSTART');
+ outhandle('INTERFACEPARAM1ENTRY');
 {$endif}
 end;
 

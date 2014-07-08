@@ -1014,7 +1014,7 @@ var
                caption: 'classdefparam2');
  classdefparam2aco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classdefparam2a');
  classdefparam3co: contextty = (branch: nil; 
@@ -1057,31 +1057,21 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'interfacedefparam');
- interfacedefparam1co: contextty = (branch: nil; 
+ interfaceparam1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'interfacedefparam1');
- interfacedefparam2co: contextty = (branch: nil; 
+               caption: 'interfaceparam1');
+ interfaceparam2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'interfacedefparam2');
- interfacedefparam2aco: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'interfacedefparam2a');
- interfacedefparam3co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'interfacedefparam3');
- interfacedefparam3aco: contextty = (branch: nil; 
+               caption: 'interfaceparam2');
+ interfaceparam3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'interfacedefparam3a');
+               caption: 'interfaceparam3');
  statementendco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -4599,7 +4589,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_continue];
+   (flags: [bf_nt,bf_push];
      dest: (context: @classdefparam1co); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -4632,7 +4622,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bclassdefparam2a: array[0..5] of branchty = (
+ bclassdefparam2a: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4664,6 +4654,20 @@ const
    (flags: [bf_nt,bf_eat];
      dest: (context: @classdefparam3co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_handler];
+     dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4797,8 +4801,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_push,bf_continue];
-     dest: (context: @interfacedefparam1co); stack: nil; keys: (
+   (flags: [bf_nt];
+     dest: (context: @interfaceparam1co); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -4820,7 +4824,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedefparam1: array[0..1] of branchty = (
+ binterfaceparam1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -4830,7 +4834,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedefparam2a: array[0..5] of branchty = (
+ binterfaceparam2: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4860,18 +4864,60 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat];
-     dest: (context: @interfacedefparam3co); stack: nil; keys: (
+     dest: (context: @interfaceparam3co); stack: nil; keys: (
     (kind: bkk_char; chars: [',']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [')']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_handler];
+     dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binterfacedefparam3: array[0..1] of branchty = (
-   (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+ binterfaceparam3: array[0..5] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @comment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt];
+     dest: (context: @interfaceparam1co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6435,17 +6481,12 @@ begin
  interfacedefreturnco.branch:= nil;
  interfacedefreturnco.handleentry:= @handleinterfacedefreturn;
  interfacedefparamco.branch:= @binterfacedefparam;
- interfacedefparam1co.branch:= @binterfacedefparam1;
- interfacedefparam1co.next:= @interfacedefparam2co;
- interfacedefparam2co.branch:= nil;
- interfacedefparam2co.next:= @interfacedefparam2aco;
- interfacedefparam2co.handleexit:= @handleinterfacedefparam2;
- interfacedefparam2aco.branch:= @binterfacedefparam2a;
- interfacedefparam3co.branch:= @binterfacedefparam3;
- interfacedefparam3co.next:= @interfacedefparam3aco;
- interfacedefparam3aco.branch:= nil;
- interfacedefparam3aco.next:= @interfacedefparam2aco;
- interfacedefparam3aco.handleexit:= @handleinterfacedefparam3a;
+ interfaceparam1co.branch:= @binterfaceparam1;
+ interfaceparam1co.next:= @interfaceparam2co;
+ interfaceparam2co.branch:= @binterfaceparam2;
+ interfaceparam2co.handleentry:= @handleinterfaceparam1entry;
+ interfaceparam3co.branch:= @binterfaceparam3;
+ interfaceparam3co.handleexit:= @handleidentexpected;
  statementendco.branch:= nil;
  statementendco.handleexit:= @handlestatementend;
  expco.branch:= @bexp;
