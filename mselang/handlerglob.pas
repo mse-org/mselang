@@ -77,8 +77,9 @@ type
  end;
 
  classdefheaderty = record
+  allocsize: integer;
   fieldsize: integer;
-  parentclass: elementoffsetty;
+  parentclass: dataoffsty;
  end;
  classdefinfoty = record
   header: classdefheaderty;

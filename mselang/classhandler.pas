@@ -265,12 +265,14 @@ begin
     infoclass.interfacecount:= infoclass.interfacecount + intfcount;
     infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
    end;
-   infoclass.allocsize:= classinfo1^.fieldoffset;
+   infoclass.allocsize:= classinfo1^.fieldoffset + 
+          infoclass.interfacecount*pointersize;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
                                    pointersize*infoclass.virtualcount);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(pointer(constseg)+classdefs1)^ do begin
+    header.allocsize:= infoclass.allocsize;
     header.fieldsize:= classinfo1^.fieldoffset;
     header.parentclass:= 0;
     if ancestor <> 0 then begin 

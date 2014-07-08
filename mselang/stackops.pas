@@ -297,10 +297,22 @@ begin
  result:= (size+(alignstep-1)) and alignmask;
 end;
 
+function intgetmem(const size: integer): pointer;
+begin
+ result:= getmem(size);
+end;
+
 function intgetnulledmem(const size: integer): pointer;
 begin
  result:= getmem(size);
  fillchar(result^,size,0);
+end;
+
+function intgetnulledmem(const allocsize: integer;
+                           const nullsize: integer): pointer;
+begin
+ result:= getmem(allocsize);
+ fillchar(result^,nullsize,0);
 end;
 
 procedure intfreemem(const mem: pointer);
@@ -1144,7 +1156,7 @@ begin
 //  po2:= pclassdefinfoty(initclass.classdef+constdata);
   self1:= cpu.frame+initclass.selfinstance;
   po2:= self1^;  //class type
-  po1:= intgetnulledmem(po2^.header.fieldsize);
+  po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
   ppointer(po1)^:= po2;
   self1^:= po1;  //class instance
   pppointer(cpu.frame+initclass.result)^^:= po1; //result

@@ -59,7 +59,7 @@ type
  
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
- ancestordatakinds = [dk_class,dk_interface];
+ ancestordatakinds = [dk_class{,dk_interface}];
 type
 
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
