@@ -1304,6 +1304,7 @@ begin
         mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
                       ' virt:'+inttostr(infoclass.virtualcount)+
                       ' intf:'+inttostr(infoclass.interfacecount)+
+                      ' isub:'+inttostr(infoclass.interfacesubcount)+
                       ' defs:'+inttostr(infoclass.defs);
         po5:= @pclassdefinfoty(
                        pointer(info.constseg)+infoclass.defs)^.virtualmethods;

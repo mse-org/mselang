@@ -123,6 +123,7 @@ begin
     infoclass.pendingdescends:= 0;
     infoclass.interfacecount:= 0;
     infoclass.interfacechain:= 0;
+    infoclass.interfacesubcount:= 0;
    end;
   end;
  end;
@@ -167,6 +168,7 @@ begin
     else begin
      po1^.ancestor:= ele.eledatarel(po2);
      po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
+     po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
      with contextstack[stackindex-2] do begin
       d.cla.fieldoffset:= po2^.infoclass.allocsize;
       d.cla.virtualindex:= po2^.infoclass.virtualcount;
@@ -209,7 +211,7 @@ begin
  while ele1 <> 0 do begin
   po1:= ele.eleinfoabs(ele1);
   if (ele.findcurrent(po1^.header.name,[ek_sub],allvisi,po2) <> ek_sub)
-            or not checkparams(@po1^.data,po2) then begin
+                                  or not checkparams(@po1^.data,po2) then begin
              //todo: compose parameter message
    errormessage(err_nomatchingimplementation,[
    getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
@@ -228,7 +230,8 @@ var
  classdefs1: dataoffsty;
  classinfo1: pclassinfoty;
  parentinfoclass1: pinfoclassty;
- int1: integer;
+ intfcount: integer;
+ intfsubcount: integer;
  
 begin
 {$ifdef mse_debugparser}
@@ -242,14 +245,26 @@ begin
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[stackindex].d.cla;
+   intfcount:= 0;
+   intfsubcount:= 0;
    ele1:= infoclass.interfacechain;
-   int1:= 0;
    while ele1 <> 0 do begin
-    checkinterface(ele.eledataabs(ele1));
-    ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
-    inc(int1);
+    with pclassintfdataty(ele.eledataabs(ele1))^ do begin
+     intfsubcount:= intfsubcount + 
+            ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
+     ele1:= next;
+    end;
+    inc(intfcount);
    end;
-   infoclass.interfacecount:= infoclass.interfacecount + int1;
+   if intfcount <> 0 then begin
+    ele1:= infoclass.interfacechain;
+    while ele1 <> 0 do begin
+     checkinterface(ele.eledataabs(ele1));
+     ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
+    end;
+    infoclass.interfacecount:= infoclass.interfacecount + intfcount;
+    infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
+   end;
    infoclass.allocsize:= classinfo1^.fieldoffset;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+

@@ -104,7 +104,10 @@ begin
  outhandle('INTERFACEDEFRETURN');
 {$endif}
  with info do begin
-  ptypedataty(ele.parentdata())^.infointerface.subchain:= currentsubchain;
+  with ptypedataty(ele.parentdata())^ do begin
+   infointerface.subchain:= currentsubchain;
+   infointerface.subcount:= currentsubcount;
+  end;
   ele.elementparent:= contextstack[stackindex].b.eleparent;
  end;
 end;

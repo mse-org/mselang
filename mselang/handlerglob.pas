@@ -98,6 +98,7 @@ type
   flags: infoclassflagsty;
   interfacecount: integer;
   interfacechain: elementoffsetty;
+  interfacesubcount: integer;
  end;
  pinfoclassty = ^infoclassty;
  
