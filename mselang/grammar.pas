@@ -1049,13 +1049,13 @@ var
                caption: 'interfacedeferror');
  interfacedefreturnco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               continue: false; restoresource: false; cutafter: true; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'interfacedefreturn');
  interfacedefparamco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'interfacedefparam');
  interfaceparam1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -1064,8 +1064,8 @@ var
                caption: 'interfaceparam1');
  interfaceparam2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'interfaceparam2');
  interfaceparam3co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -4723,7 +4723,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_eat,bf_push];
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @interfacedefparamco); stack: nil; keys: (
     (kind: bkk_char; chars: ['(']),
     (kind: bkk_none; chars: []),
@@ -4801,7 +4801,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_push,bf_setparentbeforepush];
      dest: (context: @interfaceparam1co); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -4915,7 +4915,7 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt];
+   (flags: [bf_nt,bf_push];
      dest: (context: @interfaceparam1co); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
@@ -6481,10 +6481,11 @@ begin
  interfacedefreturnco.branch:= nil;
  interfacedefreturnco.handleentry:= @handleinterfacedefreturn;
  interfacedefparamco.branch:= @binterfacedefparam;
+ interfacedefparamco.handleexit:= @handleinterfaceparam;
  interfaceparam1co.branch:= @binterfaceparam1;
  interfaceparam1co.next:= @interfaceparam2co;
  interfaceparam2co.branch:= @binterfaceparam2;
- interfaceparam2co.handleentry:= @handleinterfaceparam1entry;
+ interfaceparam2co.handleentry:= @handleinterfaceparam2entry;
  interfaceparam3co.branch:= @binterfaceparam3;
  interfaceparam3co.handleexit:= @handleidentexpected;
  statementendco.branch:= nil;

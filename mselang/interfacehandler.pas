@@ -23,7 +23,8 @@ uses
 procedure handleinterfacedefstart();
 procedure handleinterfacedeferror();
 procedure handleinterfacedefreturn();
-procedure handleinterfaceparam1entry();
+procedure handleinterfaceparam2entry();
+procedure handleinterfaceparam();
 
 implementation
 uses
@@ -111,11 +112,40 @@ begin
  end;
 end;
 
-procedure handleinterfaceparam1entry();
+procedure handleinterfaceparam2entry();
+var
+ po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('INTERFACEPARAM1ENTRY');
+ outhandle('INTERFACEPARAM2ENTRY');
 {$endif}
+ with info do begin
+  ele.decelementparent(); //interface or implementation
+  if findkindelementsdata(1,[ek_type],allvisi,po1) then begin
+   if po1^.kind <> dk_interface then begin
+    errormessage(err_interfacetypeexpected,[]);
+//    dec(stackindex);
+   end
+   else begin
+    
+   end;
+  end
+  else begin
+//   dec(stackindex);
+  end;
+  stacktop:= stackindex;
+  ele.elementparent:= currentcontainer;
+ end;
+end;
+
+procedure handleinterfaceparam();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INTERFACEPARAM');
+{$endif}
+ with info do begin
+//  dec(stackindex);
+ end;
 end;
 
 end.

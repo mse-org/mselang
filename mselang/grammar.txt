@@ -577,7 +577,7 @@ classfield,,,handleclassfield^*
 
 interfacedef,interfacedef0,handleinterfacedefstart,
  ${whitespace}
- '(',interfacedefparam-*
+ '(',interfacedefparam-^*
 interfacedef0,interfacedeferror,,
  ${whitespace}
  'procedure'.,methprocedureheader-*^>
@@ -585,23 +585,23 @@ interfacedef0,interfacedeferror,,
  'end'.,interfacedefreturn-
 
 interfacedeferror,,handleinterfacedeferror,^
-interfacedefreturn,,handleinterfacedefreturn,*^
+interfacedefreturn,,handleinterfacedefreturn,^*
 
-interfacedefparam,,,*
+interfacedefparam,,,handleinterfaceparam^*
  ${whitespace}
- @identstart,interfaceparam1
+ @identstart,interfaceparam1^*
  ')',-*
  '',!handlecloseroundbracketexpected
 interfaceparam1,interfaceparam2,,
  '',identpath^*
-interfaceparam2,,handleinterfaceparam1entry,*
+interfaceparam2,,handleinterfaceparam2entry,^
  ${whitespace}
  ',',interfaceparam3-
  ')',-*
  '',!handlecloseroundbracketexpected
 interfaceparam3,,,handleidentexpected*
  ${whitespace}
- @identstart,interfaceparam1
+ @identstart,interfaceparam1*
 
 statementend,,,handlestatementend!
 exp,exp1,,
