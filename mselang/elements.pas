@@ -1220,6 +1220,9 @@ function telementhashdatalist.dumpelements: msestringarty;
      dk_set: begin
       result:= result+' itemtyp:'+inttostr(infoset.itemtype);
      end;
+     dk_interface: begin
+      result:= result+' subco:'+inttostr(infointerface.subcount);
+     end;
     end;
    end;
   end;
