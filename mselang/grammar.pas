@@ -2576,7 +2576,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubbody4: array[0..9] of branchty = (
+ bsubbody4: array[0..10] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @subbody5aco); stack: nil; 
      keyword: $78CDDBAD{'begin'}),
@@ -2586,6 +2586,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @varco); stack: nil; 
      keyword: $2B3C66ED{'var'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
+     dest: (context: @typeco); stack: nil; 
+     keyword: $5678CDDB{'type'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
      keyword: $ACF19BB7{'procedure'}),

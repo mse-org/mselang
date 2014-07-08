@@ -254,6 +254,7 @@ subbody4,,,handlebeginexpected*
  'begin'.,subbody5a-
  'const'.,const-*>
  'var'.,var-*>
+ 'type'.,type-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
 subbody5a,subbody5,handlesubbody5a,
