@@ -228,13 +228,13 @@ var
     with additem()^ do begin
      par.callinfo.ad:= asub^.address-1; //possibly invalid
      if (asub^.nestinglevel = 0) or 
-                      (asub^.nestinglevel = funclevel) then begin
+                      (asub^.nestinglevel = sublevel) then begin
       op:= @callop;
       par.callinfo.linkcount:= -1;
      end
      else begin
       op:= @calloutop;
-      par.callinfo.linkcount:= funclevel-asub^.nestinglevel-2;
+      par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
                                                               //for downto 0
      end;
     end;

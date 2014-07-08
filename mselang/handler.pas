@@ -1605,7 +1605,7 @@ begin
          end;
         end;
         par.locdataaddress.offset:= dest.address.address;
-        par.locdataaddress.linkcount:= funclevel-dest.address.framelevel-1;
+        par.locdataaddress.linkcount:= sublevel-dest.address.framelevel-1;
        end;
       end;
      end;

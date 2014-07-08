@@ -50,7 +50,7 @@ type
             err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
             err_anoninterfacedef,err_interfacetypeexpected,
             err_classtypeexpected,err_nomatchingimplementation,
-            err_duplicateancestortype);
+            err_duplicateancestortype,err_localclassdef);
             
  errorinfoty = record
   level: errorlevelty;
@@ -177,7 +177,8 @@ const
   (level: erl_error; message: 'Class type expected'),
   (level: erl_error; message: 
           'No matching implementation for interface method "%s" found'),
-  (level: erl_error; message: 'Duplicate ancestor type')
+  (level: erl_error; message: 'Duplicate ancestor type'),
+  (level: erl_error; message: 'Local class definitions are not allowed')
  );
  
 procedure errormessage(const asourcepos: sourceinfoty;

@@ -63,7 +63,7 @@ begin
   bo1:= false;
   if (currentcontainer = 0) or not ele.findchild(info.currentcontainer,ident1,
                                                    [],allvisi,ele1) then begin
-   if funclevel > 0 then begin
+   if sublevel > 0 then begin
     ele.checkcapacity(elesizes[ek_var]); //no change by addvar
     po3:= @(psubdataty(ele.parentdata)^.varchain);
    end
@@ -97,7 +97,7 @@ begin
       size1:= pointersize;
      end;
     end;
-    if funclevel = 0 then begin
+    if sublevel = 0 then begin
      address.address:= getglobvaraddress(size1);
      address.flags:= [af_global];
      address.framelevel:= 0;
@@ -105,7 +105,7 @@ begin
     else begin
      address.address:= getlocvaraddress(size1)-frameoffset;
      address.flags:= []; //local
-     address.framelevel:= funclevel;
+     address.framelevel:= sublevel;
     end;
    end;
   end;

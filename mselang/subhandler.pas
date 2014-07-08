@@ -454,7 +454,7 @@ begin
   inc(currentsubcount);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
-  po1^.nestinglevel:= funclevel;
+  po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
   po1^.virtualindex:= -1; //none
   po1^.varchain:= 0;
@@ -487,7 +487,7 @@ begin
     if impl1 then begin
      address.address:= getlocvaraddress(pointersize);
     end;
-    address.framelevel:= funclevel+1;
+    address.framelevel:= sublevel+1;
     address.flags:= [af_param];
     include(address.flags,af_const);
     vf.typ:= currentcontainer;
@@ -517,7 +517,7 @@ begin
        if impl1 then begin
         address.address:= getlocvaraddress(si1);
        end;
-       address.framelevel:= funclevel+1;
+       address.framelevel:= sublevel+1;
        address.flags:= [af_param];
        if paramkind1 = pk_const then begin
         if si1 > pointersize then begin
@@ -560,7 +560,7 @@ begin
   po1^.address:= 0; //init
   if impl1 then begin //implementation
    po1^.address:= opcount;
-   inc(funclevel);
+   inc(sublevel);
    getlocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
     d.subdef.frameoffsetbefore:= frameoffset;
@@ -622,7 +622,7 @@ begin
   end;
   
   if impl1 then begin
-   if funclevel = 1 then begin
+   if sublevel = 1 then begin
     paramdata.match:= nil;
     if isclass then begin
      ele.pushelementparent(currentcontainer);
@@ -763,7 +763,7 @@ begin
   end;
   locdatapo:= d.subdef.parambase;
   frameoffset:= d.subdef.frameoffsetbefore;
-  dec(funclevel);
+  dec(sublevel);
   ele.releaseelement(b.elemark); //remove local definitions
   ele.elementparent:= b.eleparent;
   currentstatementflags:= b.flags;

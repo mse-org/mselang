@@ -744,7 +744,7 @@ type
   stackdepth: integer;
   stackindex: integer; 
   stacktop: integer; 
-  funclevel: integer;
+  sublevel: integer;
   unitlevel: integer;
   command: ttextstream;
   errorfla: boolean;

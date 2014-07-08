@@ -539,7 +539,7 @@ begin
   else begin
    op:= @pushlocaddr;
    par.vlocaddress.offset:= address.address + offset;
-   par.vlocaddress.linkcount:= info.funclevel-address.framelevel-1;
+   par.vlocaddress.linkcount:= info.sublevel-address.framelevel-1;
   end;
  end;
 end;
@@ -638,7 +638,7 @@ begin
      op:= @pushlocaddr;
     end;
     par.vlocaddress.offset:= avalue.address;
-    par.vlocaddress.linkcount:= info.funclevel-avalue.framelevel-1;
+    par.vlocaddress.linkcount:= info.sublevel-avalue.framelevel-1;
     par.vlocadoffs:= offset;
    end;
   end;
@@ -854,7 +854,7 @@ begin
     end;
    end;
    par.locdataaddress.offset:= address + offset;
-   par.locdataaddress.linkcount:= info.funclevel-framelevel-1;
+   par.locdataaddress.linkcount:= info.sublevel-framelevel-1;
   end;
   par.datasize:= size;
  end;

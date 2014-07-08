@@ -84,6 +84,9 @@ begin
   end;
  {$endif}
   include(currentstatementflags,stf_classdef);
+  if sublevel > 0 then begin
+   errormessage(err_localclassdef,[]);
+  end;
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
