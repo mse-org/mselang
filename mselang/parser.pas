@@ -47,7 +47,7 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils,managedtypes,rttihandler;
+ handlerutils,managedtypes,rttihandler,segmentutils;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -55,10 +55,11 @@ uses
 
 procedure init();
 begin
+ segmentutils.init();
  elements.init();
  handlerutils.init();
  unithandler.init();
- rttihandler.init();
+// rttihandler.init();
 // inifini.init;
 // handler.init;
 end;
@@ -67,10 +68,11 @@ procedure deinit();
 begin
 // handler.deinit;
 // inifini.deinit;
- rttihandler.deinit();
+// rttihandler.deinit();
  unithandler.deinit();
  handlerutils.deinit();
  elements.clear();
+ segmentutils.deinit();
  
 end;
 

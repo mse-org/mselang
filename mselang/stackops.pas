@@ -53,12 +53,19 @@ type
  end;
  infoopty = procedure(const opinfo: popinfoty);
 
+ segmentbufferty = record
+  base: pointer;
+  size: integer;
+ end;
+ segmentbuffersty = array[segmentty] of segmentbufferty;
+ 
 function alignsize(const size: ptruint): ptruint; 
                          {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
 procedure run(const code: opinfoarty; const constseg: pointer;
-                                    const stackdepht: integer);
+                                               const stackdepht: integer);
+procedure run(const asegments: segmentbuffersty);
 
 //procedure dummyop;
 procedure moveglobalreg0();
@@ -226,7 +233,8 @@ procedure continueexception();
 
 implementation
 uses
- sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils;
+ sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
+ segmentutils;
 {
  stackinfoty = record
   case datakindty of
@@ -269,6 +277,11 @@ type
   trystack: pjumpinfoty;
   exceptobj: pointer;
  end;
+
+ segmentrangety = record
+  basepo: pointer;
+  endpo: pointer;
+ end; 
   
 var                       //todo: use threadvars where necessary
  mainstack: pointer;
@@ -286,6 +299,8 @@ var                       //todo: use threadvars where necessary
  globdata: pointer;
  constdata: pointer;
 
+ segments: array[segmentty] of segmentrangety;
+ 
 procedure internalerror(const atext: string);
 begin
  raise exception.create('Internal error '+atext);
@@ -492,7 +507,7 @@ end;
 procedure writeenumop();
 begin
  write(getenumname(vintegerty((cpu.stack+cpu.pc^.par.voffset)^),
-                           constdata+cpu.pc^.par.voffsaddress));
+                           segments[seg_rtti].basepo+cpu.pc^.par.voffsaddress));
 end;
 
 procedure writelnop();
@@ -965,13 +980,13 @@ end;
 procedure pushlocaddr;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-                     locaddress(cpu.pc^.par.vlocaddress)+cpu.pc^.par.vlocadoffs;;
+                     locaddress(cpu.pc^.par.vlocaddress)+cpu.pc^.par.vlocadoffs;
 end;
 
 procedure pushlocaddrindi;
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-           ppointer(locaddress(cpu.pc^.par.vlocaddress))^+cpu.pc^.par.vlocadoffs;
+          ppointer(locaddress(cpu.pc^.par.vlocaddress))^+cpu.pc^.par.vlocadoffs;
 end;
 
 procedure pushglobaddr;
@@ -1620,6 +1635,58 @@ begin
  end;
 end;
 
+procedure run(const asegments: segmentbuffersty);
+var
+ seg1: segmentty;
+begin
+ for seg1:= low(segmentty) to high(segmentty) do begin
+  segments[seg1].basepo:= asegments[seg1].base;
+  segments[seg1].endpo:= segments[seg1].basepo+asegments[seg1].size;
+ end;
+ fillchar(cpu,sizeof(cpu),0);
+ reg0:= nil;
+ fillchar(exceptioninfo,sizeof(exceptioninfo),0);
+ cpu.stack:= segments[seg_stack].basepo;
+ mainstack:= cpu.stack;
+ mainstackend:= segments[seg_stack].endpo;
+ startpo:= segments[seg_op].basepo;
+ cpu.pc:= startpo;
+ with segments[seg_globvar] do begin
+  globdata:= basepo;
+  fillchar(basepo^,endpo-basepo,0);
+ end;
+ constdata:= segments[seg_globconst].basepo;
+ inc(cpu.pc,startupoffset);
+ while cpu.pc^.op <> nil do begin
+  cpu.pc^.op;
+  inc(cpu.pc);
+ end;
+end;
+
+procedure run(const code: opinfoarty; const constseg: pointer;
+                                        const stackdepht: integer);
+var
+ segs: segmentbuffersty;
+begin
+// trystack:= nil;
+// exceptobj:= nil;
+ fillchar(segs,sizeof(segs),0);
+ reallocmem(mainstack,stackdepht);
+ segs[seg_stack].base:= mainstack;
+ segs[seg_stack].size:= stackdepht;
+ segs[seg_op].base:= pointer(code);
+ segs[seg_op].size:= length(code)*sizeof(opinfoty);
+ with pstartupdataty(pointer(code))^ do begin
+  reallocmem(globdata,globdatasize);
+  segs[seg_globvar].base:= globdata;
+  segs[seg_globvar].size:= globdatasize;
+ end;
+ segs[seg_globconst].base:= constseg;
+ segs[seg_rtti].base:= getsegmentbase(seg_rtti);
+ segs[seg_rtti].size:= getsegmentsize(seg_rtti);
+ run(segs);
+end;
+{
 procedure run(const code: opinfoarty; const constseg: pointer;
                                         const stackdepht: integer);
 var
@@ -1647,7 +1714,7 @@ begin
   inc(cpu.pc);
  end;
 end;
-
+}
 finalization
  finalize;
 end.

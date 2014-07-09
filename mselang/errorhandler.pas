@@ -58,16 +58,17 @@ type
  end;
  
  internalerrorkindty = (ie_none,ie_notimplemented,//todo
-                        ie_parser, //error in parser
-                        ie_handler,//error in handler function
-                        ie_error,  //invalid error message
-                        ie_unit,   //error in unithandler
-                        ie_type,   //error in type handler
-                        ie_managed, //error in managed types handler
-                        ie_sub,     //error in subhadler
-                        ie_value,   //error in value handler
+                        ie_parser,   //error in parser
+                        ie_handler,  //error in handler function
+                        ie_error,    //invalid error message
+                        ie_unit,     //error in unithandler
+                        ie_type,     //error in type handler
+                        ie_managed,  //error in managed types handler
+                        ie_sub,      //error in subhadler
+                        ie_value,    //error in value handler
                         ie_elements, //error in element list
-                        ie_rtti      //error in rtti handler
+                        ie_rtti,     //error in rtti handler
+                        ie_segment   //error in segment handler
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -75,8 +76,8 @@ const
      '',     'N',              'P',      'H',       'R',     'U',    
  //ie_type,ie_managed
      'T',    'M',
- //ie_sub,ie_value,ie_elements,ie_rtti
-     'S',   'V',   'E',        'I'
+ //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment
+     'SUB',   'V',   'E',        'I',    'SEG'
  );
  
  stoperrorlevel = erl_fatal;

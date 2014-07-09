@@ -21,33 +21,38 @@ uses
  parserglob,handlerglob;
  
 function getrtti(const atype: ptypedataty): dataaddressty;
-
+{
 procedure init();
 procedure deinit();
-
+}
 implementation
 uses
- errorhandler,elements,msestrings,msertti,opcode;
+ errorhandler,elements,msestrings,msertti,opcode,segmentutils;
 
-var
- rttibuffer: pointer;
- rttibufferindex: integer;
- rttibuffersize: integer;
+//var
+// rttibuffer: pointer;
+// rttibufferindex: integer;
+// rttibuffersize: integer;
 
 procedure checkbuffer(step: integer); inline;
 begin
+ checksegmentcapacity(seg_rtti,step);
+{
  inc(rttibufferindex,step);
  if rttibufferindex > rttibuffersize then begin
   rttibuffersize:= 2*rttibufferindex;
   reallocmem(rttibuffer,rttibuffersize);
  end;
+}
 end;
 
 procedure checkbuffer(step: integer; var abuffer: pointer); 
                                  {$ifndef mse_debugparser}inline;{$endif}
-var
- po1: pointer;
+//var
+// po1: pointer;
 begin
+ checksegmentcapacity(seg_rtti,step,abuffer);
+{
  inc(rttibufferindex,step);
  if rttibufferindex > rttibuffersize then begin
   rttibuffersize:= 2*rttibufferindex;
@@ -55,30 +60,39 @@ begin
   reallocmem(rttibuffer,rttibuffersize);
   abuffer:= abuffer+(rttibuffer-po1); //realloc
  end;
+}
 end;
 
 function allocrttibuffer(const akind: datatypety; 
                                          const asize: integer): pointer;
+var
+ po1: prttity;
 begin
+ po1:= allocsegmentpo(seg_rtti,sizeof(rttiheaderty)+asize);
+ po1^.header.kind:= akind;
+ result:= @po1^.data;
+{
  rttibufferindex:= 0;
  checkbuffer(sizeof(rttiheaderty)+asize);
  prttity(rttibuffer)^.header.kind:= akind;
  result:= @prttity(rttibuffer)^.data;
+}
 end;
 
 procedure addname(const aname: identty; var abuffer: pointer);
 var
  s1: lstringty;
- int1: integer;
+// int1: integer;
  po1: pbyte;
 begin
  if getidentname(aname,s1) then begin
   if s1.len > 255 then begin
    identerror(aname,err_identtoolong);
   end;
-  int1:= rttibufferindex;
-  checkbuffer(s1.len+1,abuffer);
-  po1:= rttibuffer+int1;
+  po1:= allocsegmentpo(seg_rtti,s1.len+1,abuffer);
+//  int1:= rttibufferindex;
+//  checkbuffer(s1.len+1,abuffer);
+//  po1:= rttibuffer+int1;
   po1^:= s1.len;
   move(s1.po^,(po1+1)^,s1.len);
  end
@@ -101,6 +115,7 @@ begin
    dk_enum: begin
     int2:= sizeof(enumrttity)+atype^.infoenum.itemcount*sizeof(enumitemrttity);
     po1:= allocrttibuffer(dt_enum,int2);
+    result:= getsegmentoffset(seg_rtti,po1)-sizeof(rttiheaderty);
     po1^.itemcount:= atype^.infoenum.itemcount;
     po1^.flags:= [];
     if enf_contiguous in atype^.infoenum.flags then begin
@@ -111,32 +126,33 @@ begin
     for int1:= 0 to atype^.infoenum.itemcount-1 do begin
      po2:= ele.eledataabs(ele1);
      po3^.value:= po2^.infoenumitem.value;
-     po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
+     po3^.name:= getsegmenttoppo(seg_rtti)-pointer(po3);
+//     po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
      addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
      inc(po3);
      ele1:= po2^.infoenumitem.next;
     end;
-    
+    alignsegment(seg_rtti);
    end;
    else begin
     internalerror(ie_notimplemented,'20140605A');
    end;
   end;
-  result:= getglobconstaddress(rttibufferindex);
-  move(rttibuffer^,info.constseg[result],rttibufferindex);
+//  result:= getglobconstaddress(rttibufferindex);
+//  move(rttibuffer^,info.constseg[result],rttibufferindex);
  end;
 end;
-
+{
 procedure init();
 begin
- rttibufferindex:= 0;
- rttibuffersize:= defaultrttibuffersize;
- rttibuffer:= getmem(rttibuffersize);
+// rttibufferindex:= 0;
+// rttibuffersize:= defaultrttibuffersize;
+// rttibuffer:= getmem(rttibuffersize);
 end;
 
 procedure deinit();
 begin
- freemem(rttibuffer);
+// freemem(rttibuffer);
 end;
-
+}
 end.

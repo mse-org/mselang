@@ -173,6 +173,19 @@ begin
   end;
  end;
 end;
+
+function getglobopaddress(const asize: integer): dataoffsty;
+begin
+ with info do begin
+  result:= constsize;
+  constsize:= constsize+asize;
+  alignsize(constsize);
+  if constsize > constcapacity then begin
+   constcapacity:= 2*constsize;
+   setlength(constseg,constcapacity);
+  end;
+ end;
+end;
  
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin
