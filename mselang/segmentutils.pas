@@ -22,25 +22,32 @@ uses
  
   //todo: use inline
   
+
+function allocsegment(const asegment: segmentty;
+                                    asize: integer): segaddressty;
 function allocsegmentoffset(const asegment: segmentty;
-                                    const asize: integer): dataoffsty;
+                                    asize: integer): dataoffsty;
 function allocsegmentpo(const asegment: segmentty;
-                                    const asize: integer): pointer;
+                                    asize: integer): pointer;
 function allocsegmentpo(const asegment: segmentty;
-                          const asize: integer; var buffer: pointer): pointer;
+                                 asize: integer; var buffer: pointer): pointer;
 procedure checksegmentcapacity(const asegment: segmentty;
-                               const asize: integer; var buffer: pointer);
+                               asize: integer; var buffer: pointer);
 function checksegmentcapacity(const asegment: segmentty;
-                               const asize: integer): pointer;
+                                asize: integer): pointer;
                                  //returns alloc top
-function alignsegment(const asegment: segmentty): pointer;
+//function alignsegment(const asegment: segmentty): pointer;
+//procedure alignsegment(var aaddress:segaddressty);
 
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
 
 function getsegmentoffset(const asegment: segmentty;
                                     const apo: pointer): dataoffsty;
+
 function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
+function getsegmentpo(const aaddress: segaddressty): pointer;
+
 function getsegmenttoppo(const asegment: segmentty): pointer;
 function getsegmenttopoffset(const asegment: segmentty): dataoffsty;
 function getsegmentbase(const asegment: segmentty): pointer;
@@ -55,9 +62,9 @@ uses
  
 type
  segmentinfoty = record
+  data: pointer;
   toppo: pointer;
   endpo: pointer;
-  data: bytearty;
  end;
 const
  minsize: array[segmentty] of integer = (
@@ -66,35 +73,19 @@ const
   
 var
  segments: array[segmentty] of segmentinfoty;
- 
-procedure init();
-var
- seg1: segmentty;
-begin
- for seg1:= low(segmentty) to high(segmentty) do begin
-  with segments[seg1] do begin
-   toppo:= pointer(data);
-   endpo:= toppo+length(data);
-  end;
- end;
-// fillchar(segments,sizeof(segments),0);
-end;
-
-procedure deinit();
-begin
-// finalize(segments);
-end;
 
 procedure grow(const asegment: segmentty; var ref: pointer);
 var
  po1: pointer;
+ int1: integer;
 begin
  with segments[asegment] do begin
-  po1:= pointer(data);
-  setlength(data,(toppo-po1)*2+minsize[asegment]);
-  endpo:= @data[length(data)];
-  toppo:= toppo + (pointer(data) - po1);
-  ref:= ref + (pointer(data) - po1);
+  int1:= (toppo-data)*2 + minsize[asegment];
+  po1:= data;
+  reallocmem(data,int1);
+  endpo:= data + int1;
+  toppo:= toppo + (data - po1);
+  ref:= ref + (data - po1);
  end;
 end;
 
@@ -105,11 +96,31 @@ begin
  grow(asegment,po1);
 end;
 
+procedure sizealign(var asize: integer); {$ifdef mse_inline}inline;{$endif}
+begin
+ asize:= (asize+alignstep) and alignmask;
+end;
+
+function allocsegment(const asegment: segmentty;
+                                    asize: integer): segaddressty;
+begin
+ with segments[asegment] do begin
+  result.segment:= asegment;
+  result.address:= toppo-pointer(data);
+  sizealign(asize);
+  inc(toppo,asize);
+  if toppo > endpo then begin
+   grow(asegment);
+  end;
+ end;
+end;
+
 function allocsegmentoffset(const asegment: segmentty;
-                                    const asize: integer): dataoffsty;
+                                    asize: integer): dataoffsty;
 begin
  with segments[asegment] do begin
   result:= toppo-pointer(data);
+  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
@@ -118,10 +129,11 @@ begin
 end;
 
 function allocsegmentpo(const asegment: segmentty;
-                                    const asize: integer): pointer;
+                                    asize: integer): pointer;
 begin
  with segments[asegment] do begin
   result:= toppo;
+  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,result);
@@ -130,12 +142,13 @@ begin
 end;
 
 function allocsegmentpo(const asegment: segmentty;
-                          const asize: integer; var buffer: pointer): pointer;
+                          asize: integer; var buffer: pointer): pointer;
 var
  po1: pointer;
 begin
  with segments[asegment] do begin
   result:= toppo;
+  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    po1:= result;
@@ -146,9 +159,10 @@ begin
 end;
 
 procedure checksegmentcapacity(const asegment: segmentty;
-                               const asize: integer; var buffer: pointer);
+                               asize: integer; var buffer: pointer);
 begin
  with segments[asegment] do begin
+  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,buffer);
@@ -157,11 +171,12 @@ begin
  end;
 end;
 
-function checksegmentcapacity(const asegment: segmentty;
-                               const asize: integer): pointer;
+function checksegmentcapacity(const asegment: segmentty; 
+                                           asize: integer): pointer;
                                  //returns alloc top
 begin
  with segments[asegment] do begin
+  sizealign(asize);
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
@@ -170,7 +185,7 @@ begin
   result:= toppo;
  end;
 end;
-
+{
 function alignsegment(const asegment: segmentty): pointer;
 begin
  with segments[asegment] do begin
@@ -182,6 +197,16 @@ begin
  end;
 end;
 
+procedure alignsegment(var aaddress:segaddressty);
+begin
+ with segments[aaddress.segment] do begin
+  toppo:= pointer((ptruint(toppo)+alignstep) and alignmask);
+  if toppo > endpo then begin
+   grow(aaddress.segment);
+  end;
+ end;
+end;
+}
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
 begin
  with segments[asegment] do begin
@@ -202,6 +227,11 @@ function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
 begin
  result:= pointer(segments[asegment].data) + aoffset;
+end;
+
+function getsegmentpo(const aaddress: segaddressty): pointer;
+begin
+ result:= pointer(segments[aaddress.segment].data) + aaddress.address;
 end;
 
 function getsegmenttoppo(const asegment: segmentty): pointer;
@@ -228,4 +258,30 @@ begin
  end;
 end;
 
+procedure dofinalize();
+var
+ seg1: segmentty;
+begin
+ for seg1:= low(segmentty) to high(segmentty) do begin
+  with segments[seg1] do begin
+   if data <> nil then begin
+    freemem(data);
+   end;
+  end;
+ end;
+end;
+
+procedure init();
+begin
+ dofinalize();
+ fillchar(segments,sizeof(segments),0);
+end;
+
+procedure deinit();
+begin
+ //dummy
+end;
+ 
+finalization
+ dofinalize();
 end.

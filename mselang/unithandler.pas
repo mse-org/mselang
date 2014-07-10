@@ -54,7 +54,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops;
+ mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops,segmentutils;
  
 type
  unithashdataty = record
@@ -532,8 +532,10 @@ procedure copyvirtualtable(const source,dest: segaddressty;
 var
  ps,pd,pe: popaddressty;
 begin
- ps:= pointer(info.constseg)+source.address+sizeof(classdefheaderty);
- pd:= pointer(info.constseg)+dest.address+sizeof(classdefheaderty);
+ ps:= getsegmentpo(seg_globconst,source.address+sizeof(classdefheaderty));
+ pd:= getsegmentpo(seg_globconst,dest.address+sizeof(classdefheaderty));
+// ps:= pointer(info.constseg)+source.address+sizeof(classdefheaderty);
+// pd:= pointer(info.constseg)+dest.address+sizeof(classdefheaderty);
  pe:= pd+itemcount;
  repeat
   if pd^ = 0 then begin

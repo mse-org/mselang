@@ -132,7 +132,7 @@ begin
      inc(po3);
      ele1:= po2^.infoenumitem.next;
     end;
-    alignsegment(seg_rtti);
+//    alignsegment(seg_rtti);
    end;
    else begin
     internalerror(ie_notimplemented,'20140605A');

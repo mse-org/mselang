@@ -40,7 +40,7 @@ procedure handledestructorentry();
 implementation
 uses
  elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
- parser,typehandler,opcode,subhandler;
+ parser,typehandler,opcode,subhandler,segmentutils;
 {
 const
  vic_private = vis_3;
@@ -225,7 +225,7 @@ begin
   ele1:= psubdataty(@po1^.data)^.next;
  end;
 end;
-
+var testvar: ptypedataty; testvar1: pclassdefinfoty;
 procedure handleclassdefreturn();
 var
 // po2: pclassesdataty;
@@ -245,6 +245,8 @@ begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
+testvar:= ptypedataty(ele.eledataabs(
+                                                d.typ.typedata));
    regclass(d.typ.typedata);
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
@@ -275,7 +277,8 @@ begin
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
                                    pointersize*infoclass.virtualcount,fla1);
    infoclass.defs:= classdefs1;   
-   with pclassdefinfoty(pointer(constseg)+classdefs1.address)^ do begin
+testvar1:= getsegmentpo(classdefs1);
+   with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
     header.allocsize:= infoclass.allocsize;
     header.fieldsize:= classinfo1^.fieldoffset;
     header.parentclass:= 0;

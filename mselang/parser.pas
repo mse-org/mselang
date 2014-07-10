@@ -34,7 +34,7 @@ const
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
  
 function parse(const input: string; const acommand: ttextstream;
-               out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
+               out aopcode: opinfoarty{; out aconstseg: bytearty}): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -662,7 +662,7 @@ parseend:
 end;
         
 function parse(const input: string; const acommand: ttextstream;
-                out aopcode: opinfoarty; out aconstseg: bytearty): boolean;
+                out aopcode: opinfoarty{; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
  startopcount: integer;
@@ -681,10 +681,10 @@ begin
     unit1^.filepath:= 'main.mla'; //dummy
     
     ops:= nil;
-    constseg:= nil;
-    constcapacity:= defaultconstsegsize;
-    setlength(constseg,constcapacity);
-    constsize:= 4; //0 -> not allocated
+//    constseg:= nil;
+//    constcapacity:= defaultconstsegsize;
+//    setlength(constseg,constcapacity);
+//    constsize:= 4; //0 -> not allocated
     stringbuffer:= '';
     command:= acommand;
     stackdepth:= defaultstackdepth;
@@ -701,7 +701,7 @@ begin
      ops:= nil;
     end;
     aopcode:= ops; 
-    aconstseg:= constseg;
+//    aconstseg:= constseg;
     system.finalize(info);
     deinit();
    end;

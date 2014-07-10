@@ -63,7 +63,7 @@ function alignsize(const size: ptruint): ptruint;
                          {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
-procedure run(const code: opinfoarty; const constseg: pointer;
+procedure run(const code: opinfoarty;{ const constseg: pointer;}
                                                const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
@@ -1708,7 +1708,7 @@ begin
  end;
 end;
 
-procedure run(const code: opinfoarty; const constseg: pointer;
+procedure run(const code: opinfoarty;{ const constseg: pointer;}
                                         const stackdepht: integer);
 var
  segs: segmentbuffersty;
@@ -1726,7 +1726,8 @@ begin
   segs[seg_globvar].base:= globdata;
   segs[seg_globvar].size:= globdatasize;
  end;
- segs[seg_globconst].base:= constseg;
+ segs[seg_globconst].base:= getsegmentbase(seg_globconst);
+ segs[seg_globconst].size:= getsegmentsize(seg_globconst);
  segs[seg_rtti].base:= getsegmentbase(seg_rtti);
  segs[seg_rtti].size:= getsegmentsize(seg_rtti);
  run(segs);

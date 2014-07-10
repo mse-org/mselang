@@ -776,9 +776,9 @@ type
   command: ttextstream;
   errorfla: boolean;
   errors: array[errorlevelty] of integer;
-  constseg: bytearty;
-  constsize: integer;
-  constcapacity: integer;
+//  constseg: bytearty;
+//  constsize: integer;
+//  constcapacity: integer;
   ops: opinfoarty;
   opcount: integer;
 //  opshift: integer;

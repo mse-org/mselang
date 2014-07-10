@@ -22,7 +22,7 @@ unit elements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- msestrings,msetypes,msehash,parserglob,handlerglob;
+ msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils;
 
 {$define mse_debug_parser}
 
@@ -1315,8 +1315,7 @@ begin
                       ' intf:'+inttostr(infoclass.interfacecount)+
                       ' isub:'+inttostr(infoclass.interfacesubcount)+
                       ' defs:'+inttostr(infoclass.defs.address);
-        po5:= @pclassdefinfoty(
-               pointer(info.constseg)+infoclass.defs.address)^.virtualmethods;
+        po5:= @pclassdefinfoty(getsegmentpo(infoclass.defs))^.virtualmethods;
         for int6:= 0 to infoclass.virtualcount-1 do begin
          if int6 mod 5 = 0 then begin
           mstr1:= mstr1+lineend+'  ';
@@ -1951,7 +1950,7 @@ begin
    result:= getglobconstaddress(sizeof(string8headerty)+len+1,fla1);
    constoffset:= result.address;
    with info do begin    
-    po1:= pointer(constseg)+constoffset;
+    po1:= getsegmentpo(result);
     po1^.ref.count:= -1;
     po1^.len:= len;
     inc(po1); //data

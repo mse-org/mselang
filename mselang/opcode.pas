@@ -57,7 +57,7 @@ procedure endforloop(const ainfo: loopinfoty);
 
 implementation
 uses
- stackops,handlerutils,errorhandler;
+ stackops,handlerutils,errorhandler,segmentutils;
  
 type
  opadsty = array[addressbasety] of opty;
@@ -199,6 +199,11 @@ end;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 begin
+ result:= allocsegment(seg_globconst,asize);
+// alignsegment(result);
+ result.address:= result.address + shift;
+ include(aflags,af_segment);
+{ 
  with info do begin
   result.address:= constsize+shift;
   result.segment:= seg_globconst;
@@ -210,21 +215,17 @@ begin
    setlength(constseg,constcapacity);
   end;
  end;
+}
 end;
-
-function getglobopaddress(const asize: integer): dataoffsty;
+{
+function getglobopaddress(const asize: integer; var aflags: addressflagsty;
+                                       const shift: integer = 0): segaddressty;
 begin
- with info do begin
-  result:= constsize;
-  constsize:= constsize+asize;
-  alignsize(constsize);
-  if constsize > constcapacity then begin
-   constcapacity:= 2*constsize;
-   setlength(constseg,constcapacity);
-  end;
- end;
+ result:= allocsegment(seg_globconst,asize);
+ result.address:= result.address + shift;
+ include(aflags,af_segment);
 end;
- 
+} 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin
  ainfo.size:= getdatabitsize(count);
