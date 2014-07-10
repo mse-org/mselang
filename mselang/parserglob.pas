@@ -697,7 +697,7 @@ type
  end;
  popinfoty = ^opinfoty;
 
- opinfoarty = array of opinfoty;
+// opinfoarty = array of opinfoty;
  errorlevelty = (erl_none,erl_fatal,erl_error);
 
  unitstatety = ({us_interface,}us_interfaceparsed,
@@ -779,7 +779,7 @@ type
 //  constseg: bytearty;
 //  constsize: integer;
 //  constcapacity: integer;
-  ops: opinfoarty;
+//  ops: opinfoarty;
   opcount: integer;
 //  opshift: integer;
   start: integer;

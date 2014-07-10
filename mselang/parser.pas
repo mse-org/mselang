@@ -33,8 +33,8 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
  
-function parse(const input: string; const acommand: ttextstream;
-               out aopcode: opinfoarty{; out aconstseg: bytearty}): boolean;
+function parse(const input: string; const acommand: ttextstream
+               {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -629,8 +629,8 @@ parseend:
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
   if result and (unitlevel = 1) then begin
    unithandler.handleinifini();
-   setlength(ops,opcount);
-   with pstartupdataty(pointer(ops))^ do begin
+//   setlength(ops,opcount);
+   with pstartupdataty(getoppo(0))^ do begin
     globdatasize:= globdatapo;
    end;
   end;
@@ -661,8 +661,8 @@ parseend:
 {$endif}
 end;
         
-function parse(const input: string; const acommand: ttextstream;
-                out aopcode: opinfoarty{; out aconstseg: bytearty}): boolean;
+function parse(const input: string; const acommand: ttextstream
+                {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
  startopcount: integer;
@@ -680,7 +680,7 @@ begin
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
     
-    ops:= nil;
+//    ops:= nil;
 //    constseg:= nil;
 //    constcapacity:= defaultconstsegsize;
 //    setlength(constseg,constcapacity);
@@ -692,15 +692,16 @@ begin
     stacktop:= -1;
     stackindex:= stacktop;
     opcount:= startupoffset;
-    setlength(ops,opcount);
+    allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
+//    setlength(ops,opcount);
     initparser();
     startopcount:= opcount;
     result:= parseunit(input,unit1);
    finally
-    if not result or (opcount = startopcount) then begin
-     ops:= nil;
-    end;
-    aopcode:= ops; 
+//    if not result or (opcount = startopcount) then begin
+//     ops:= nil;
+//    end;
+//    aopcode:= ops; 
 //    aconstseg:= constseg;
     system.finalize(info);
     deinit();

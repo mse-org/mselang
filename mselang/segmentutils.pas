@@ -52,6 +52,8 @@ function getsegmenttoppo(const asegment: segmentty): pointer;
 function getsegmenttopoffset(const asegment: segmentty): dataoffsty;
 function getsegmentbase(const asegment: segmentty): pointer;
 function getsegmentsize(const asegment: segmentty): integer;
+
+function getoppo(const opindex: integer): popinfoty;
                                
 procedure init();
 procedure deinit();
@@ -98,7 +100,7 @@ end;
 
 procedure sizealign(var asize: integer); {$ifdef mse_inline}inline;{$endif}
 begin
- asize:= (asize+alignstep) and alignmask;
+ asize:= (asize+alignstep-1) and alignmask;
 end;
 
 function allocsegment(const asegment: segmentty;
@@ -232,6 +234,11 @@ end;
 function getsegmentpo(const aaddress: segaddressty): pointer;
 begin
  result:= pointer(segments[aaddress.segment].data) + aaddress.address;
+end;
+
+function getoppo(const opindex: integer): popinfoty;
+begin
+ result:= getsegmentpo(seg_op,opindex*sizeof(opinfoty));
 end;
 
 function getsegmenttoppo(const asegment: segmentty): pointer;

@@ -63,7 +63,7 @@ function alignsize(const size: ptruint): ptruint;
                          {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
-procedure run(const code: opinfoarty;{ const constseg: pointer;}
+procedure run({const code: opinfoarty; const constseg: pointer;}
                                                const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
@@ -297,8 +297,8 @@ var                       //todo: use threadvars where necessary
  oppo: popinfoty;
 }
  startpo: popinfoty;
- globdata: pointer;
- constdata: pointer;
+// globdata: pointer;
+// constdata: pointer;
 
  segments: array[segmentty] of segmentrangety;
  
@@ -1417,7 +1417,7 @@ end;
 
 procedure increfsizeseg();
 begin
- increfsize(ppointer(globdata+cpu.pc^.par.vaddress));
+ increfsize(getsegaddress(cpu.pc^.par.vsegaddress));
 end;
 
 procedure increfsizeframe();
@@ -1442,7 +1442,7 @@ end;
 
 procedure increfsizesegar();
 begin
- increfsizear(ppointer(globdata+cpu.pc^.par.podataaddress),
+ increfsizear(getsegaddress(cpu.pc^.par.segdataaddress),
                                              cpu.pc^.par.datasize);
 end;
 
@@ -1471,7 +1471,7 @@ end;
 
 procedure decrefsizeseg();
 begin
- decrefsize(ppointer(globdata+cpu.pc^.par.vaddress));
+ decrefsize(getsegaddress(cpu.pc^.par.vsegaddress));
 end;
 
 procedure decrefsizeframe();
@@ -1668,17 +1668,6 @@ begin
  end;
 end;
 }
-procedure finalize;
-begin
- if mainstack <> nil then begin
-  freemem(mainstack);
-  mainstack:= nil;
- end;
- if globdata <> nil then begin
-  freemem(globdata);
-  globdata:= nil;
- end;
-end;
 
 procedure run(const asegments: segmentbuffersty);
 var
@@ -1697,10 +1686,9 @@ begin
  startpo:= segments[seg_op].basepo;
  cpu.pc:= startpo;
  with segments[seg_globvar] do begin
-  globdata:= basepo;
   fillchar(basepo^,endpo-basepo,0);
  end;
- constdata:= segments[seg_globconst].basepo;
+// constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
  while cpu.pc^.op <> nil do begin
   cpu.pc^.op;
@@ -1708,7 +1696,10 @@ begin
  end;
 end;
 
-procedure run(const code: opinfoarty;{ const constseg: pointer;}
+var
+ globdata: pointer;
+ 
+procedure run({const code: opinfoarty; const constseg: pointer;}
                                         const stackdepht: integer);
 var
  segs: segmentbuffersty;
@@ -1719,9 +1710,11 @@ begin
  reallocmem(mainstack,stackdepht);
  segs[seg_stack].base:= mainstack;
  segs[seg_stack].size:= stackdepht;
- segs[seg_op].base:= pointer(code);
- segs[seg_op].size:= length(code)*sizeof(opinfoty);
- with pstartupdataty(pointer(code))^ do begin
+// segs[seg_op].base:= pointer(code);
+// segs[seg_op].size:= length(code)*sizeof(opinfoty);
+ segs[seg_op].base:= getsegmentbase(seg_op);
+ segs[seg_op].size:= getsegmentsize(seg_op);
+ with pstartupdataty(segs[seg_op].base)^ do begin
   reallocmem(globdata,globdatasize);
   segs[seg_globvar].base:= globdata;
   segs[seg_globvar].size:= globdatasize;
@@ -1732,6 +1725,19 @@ begin
  segs[seg_rtti].size:= getsegmentsize(seg_rtti);
  run(segs);
 end;
+
+procedure finalize;
+begin
+ if mainstack <> nil then begin
+  freemem(mainstack);
+  mainstack:= nil;
+ end;
+ if globdata <> nil then begin
+  freemem(globdata);
+  globdata:= nil;
+ end;
+end;
+
 {
 procedure run(const code: opinfoarty; const constseg: pointer;
                                         const stackdepht: integer);

@@ -28,7 +28,8 @@ procedure handleraise();
 
 implementation
 uses
- handlerutils,errorhandler,parserglob,handlerglob,elements,opcode,stackops;
+ handlerutils,errorhandler,parserglob,handlerglob,elements,opcode,stackops,
+ segmentutils;
  
 procedure handlefinallyexpected();
 begin
@@ -58,7 +59,7 @@ begin
  outhandle('FINALLYENTRY');
 {$endif}
  with info do begin
-  ops[contextstack[stackindex-1].opmark.address].par.opaddress:= opcount-1;
+  getoppo(contextstack[stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
   with additem^ do begin
    op:= @popcpucontext;
   end;
@@ -87,7 +88,7 @@ begin
   op:= @gotoop;
  end;
  with info,contextstack[stackindex-1] do begin
-  ops[opmark.address].par.opaddress:= opcount-1;
+  getoppo(opmark.address)^.par.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
  with additem^ do begin
@@ -101,7 +102,7 @@ begin
  outhandle('EXCEPT');
 {$endif}
  with info,contextstack[stackindex-1] do begin
-  ops[opmark.address].par.opaddress:= opcount-1; //skip exception handling code
+  getoppo(opmark.address)^.par.opaddress:= opcount-1; //skip exception handling code
   with additem^ do begin
    op:= @finiexception;
   end;

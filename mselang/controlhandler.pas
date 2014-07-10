@@ -38,7 +38,7 @@ procedure handlecase();
 implementation
 uses
  handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
- stackops;
+ stackops,segmentutils;
  
 procedure handleif0();
 begin
@@ -268,7 +268,7 @@ begin
      inc(int1);
     end;
     with contextstack[int1-1] do begin
-     po1:= @ops[opmark.address]; //last compare
+     po1:= getoppo(opmark.address); //last compare
      isrange:= tf_upper in d.datatyp.flags;
     end;
    {$ifdef mse_checkinternalerror}
@@ -286,7 +286,7 @@ begin
      {$endif}
       (po1-1)^.par.immgoto:= opmark.address-1; //tf_lower
      end;
-     with ops[opmark.address-1] do begin
+     with getoppo(opmark.address-1)^ do begin
      {$ifdef mse_checkinternalerror}
       if op <> @gotoop then begin
        internalerror(ie_handler,'20140530A');
@@ -298,7 +298,7 @@ begin
     inc(int1,3);
    end;
    if int1 - stacktop = 3 then begin
-    with ops[opcount-1] do begin
+    with getoppo(opcount-1)^ do begin
     {$ifdef mse_checkinternalerror}
      if op <> @gotoop then begin
       internalerror(ie_handler,'20140530B');

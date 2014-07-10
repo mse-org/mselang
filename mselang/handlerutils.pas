@@ -32,7 +32,7 @@ type
   cval: dataty;
  end;
   
- opinfoty = record
+ opsinfoty = record
   ops: array[stackdatakindty] of opty;
   opname: string;
  end;
@@ -104,7 +104,7 @@ function findvar(const astackoffset: integer;
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
-procedure updateop(const opinfo: opinfoty);
+procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function getvalue(const stackoffset: integer;
                                const retainconst: boolean = false): boolean;
@@ -158,7 +158,7 @@ procedure outinfo(const text: string; const indent: boolean);
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes,grammar;
+ syssubhandler,managedtypes,grammar,segmentutils;
    
 const
  mindouble = -1.7e308;
@@ -728,7 +728,8 @@ end;
 procedure setcurrentloc(const indexoffset: integer);
 begin 
  with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address].par.opaddress:=
+  getoppo(
+   contextstack[stackindex+indexoffset].opmark.address)^.par.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -736,7 +737,8 @@ end;
 procedure setcurrentlocbefore(const indexoffset: integer);
 begin 
  with info do begin
-  ops[contextstack[stackindex+indexoffset].opmark.address-1].par.opaddress:=
+  getoppo(
+   contextstack[stackindex+indexoffset].opmark.address-1)^.par.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -744,8 +746,8 @@ end;
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 begin
  with info do begin
-  ops[contextstack[stackindex+destindexoffset].opmark.address-1].
-                                                               par.opaddress:=
+  getoppo(
+   contextstack[stackindex+destindexoffset].opmark.address-1)^.par.opaddress:=
          contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
@@ -753,8 +755,8 @@ end;
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
 begin
  with info do begin
-  ops[contextstack[stackindex+destindexoffset].opmark.address].
-                                                               par.opaddress:=
+  getoppo(
+    contextstack[stackindex+destindexoffset].opmark.address)^.par.opaddress:=
          contextstack[stackindex+sourceindexoffset].opmark.address-1;
  end; 
 end;
@@ -1140,7 +1142,7 @@ begin
  syssubhandler.deinit();
 end;
 
-procedure updateop(const opinfo: opinfoty);
+procedure updateop(const opsinfo: opsinfoty);
 //todo: don't convert inplace, stack items will be of variable size
 var
  kinda,kindb: datakindty;
@@ -1263,9 +1265,9 @@ begin
                                             contextstack[stacktop].d);
    end
    else begin
-    op1:= opinfo.ops[sd1];
+    op1:= opsinfo.ops[sd1];
     if op1 = nil then begin
-     operationnotsupportederror(d,contextstack[stacktop].d,opinfo.opname);
+     operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
     end
     else begin
 //    {$ifdef mse_debugparser}

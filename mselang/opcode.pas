@@ -255,7 +255,7 @@ begin
   op:= @gotoop;
   par.opaddress:= ainfo.start-1;
  end;
- with info.ops[ainfo.start] do begin
+ with getoppo(ainfo.start)^ do begin
   par.opaddress:= info.opcount-1;
  end;
  with additem^ do begin
@@ -272,10 +272,13 @@ end;
 function additem(): popinfoty;
 begin
  with info do begin
+  result:= allocsegmentpo(seg_op,sizeof(opinfoty));
+  {
   if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
   end;
   result:= @ops[opcount];
+  }
   inc(opcount);
  end;
 end;
@@ -292,17 +295,20 @@ begin
    result:= additem;
   end
   else begin
+   allocsegmentpo(seg_op,sizeof(opinfoty));
+   {
    if high(ops) < opcount then begin
     setlength(ops,(high(ops)+257)*2);
    end;
+   }
    if before then begin
     ad1:= contextstack[int1].opmark.address;
    end
    else begin
     ad1:= contextstack[int1+1].opmark.address
    end;
-   move(ops[ad1],ops[ad1+1],(opcount-ad1)*sizeof(ops[0]));
-   result:= @ops[ad1];
+   result:= getoppo(ad1);
+   move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    inc(opcount);
    for int1:= int1+1 to stacktop do begin
     inc(contextstack[int1].opmark.address);

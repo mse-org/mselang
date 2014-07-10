@@ -133,7 +133,7 @@ implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
- subhandler,managedtypes,syssubhandler,valuehandler;
+ subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
 
 procedure initparser({var info: parseinfoty});
 begin
@@ -581,7 +581,7 @@ end;
 *)
 
 const
- mulops: opinfoty = (ops: (nil,nil,@mulint32,@mulflo64);
+ mulops: opsinfoty = (ops: (nil,nil,@mulint32,@mulflo64);
                      opname: '*');
  
 procedure handlemulfact();
@@ -593,7 +593,7 @@ begin
 end;
 
 const
- addops: opinfoty = (ops: (nil,nil,@addint32,@addflo64);
+ addops: opsinfoty = (ops: (nil,nil,@addint32,@addflo64);
                      opname: '+');
 
 procedure handleaddterm();
@@ -1189,7 +1189,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
 {$endif}
- with info,ops[startupoffset] do begin
+ with info,getoppo(startupoffset)^ do begin
   par.opaddress:= opcount-1;
  end;
 end;
@@ -1346,7 +1346,7 @@ begin
 end;
 
 const
- cmpequops: opinfoty = (ops: (nil,@cmpequbool,@cmpequint32,@cmpequflo64);
+ cmpequops: opsinfoty = (ops: (nil,@cmpequbool,@cmpequint32,@cmpequflo64);
                         opname: '=');
 
 procedure handleequsimpexp();

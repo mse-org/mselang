@@ -35,7 +35,8 @@ procedure deinit();
 
 implementation
 uses
- elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler;
+ elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
+ segmentutils;
 
 procedure handlewrite(const paramco: integer);
 var
@@ -90,7 +91,7 @@ begin
     end;
    end;
   end;
-  po1:= @ops[opcount];
+  po1:= getoppo(opcount);
   int3:= 0;
   for int1:= paramco-1 downto 0 do begin
    dec(po1);

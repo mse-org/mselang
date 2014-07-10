@@ -64,21 +64,22 @@ uses
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
- ar1: opinfoarty;
+// ar1: opinfoarty;
  stream1: ttextstream;
 // constseg: bytearty;
+ bo1: boolean;
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
 // parser.init;
- parser.parse(ed.gettext,stream1,ar1{,constseg});
+ bo1:= parser.parse(ed.gettext,stream1{,ar1,constseg});
 // parser.deinit;
 
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
- if ar1 <> nil then begin
-  run(ar1,{pointer(constseg),}1024);
+ if bo1 then begin
+  run({ar1,pointer(constseg),}1024);
  end;
 end;
 
