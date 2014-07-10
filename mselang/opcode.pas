@@ -20,10 +20,13 @@ interface
 uses
  parserglob;
 type
- addressbasety = (ab_global,ab_frame,ab_reg0,ab_stack,ab_stackref);
+ addressbasety = (ab_frame,ab_reg0,ab_stack,ab_stackref,ab_segment);
+ 
+type
  addressrefty = record
   offset: dataoffsty;
-  base: addressbasety;
+  case base: addressbasety of
+   ab_segment: (segment: segmentty);
  end;
 
  loopinfoty = record
@@ -31,8 +34,11 @@ type
   size: databitsizety;
  end;
   
-function getglobvaraddress(const asize: integer): dataoffsty;
-function getlocvaraddress(const asize: integer): dataoffsty;
+function getglobvaraddress(const asize: integer;
+                                    var aflags: addressflagsty): segaddressty;
+procedure inclocvaraddress(const asize: integer);
+function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
+                                       const shift: integer = 0): locaddressty;
 function getglobconstaddress(const asize: integer): dataoffsty;
 
 function additem(): popinfoty;
@@ -59,52 +65,52 @@ type
 const
  storenilops: aropadsty = (
   (
-  //ab_global,   ab_frame,      ab_reg0,
-   @storeglobnil,@storeframenil,@storereg0nil,
+  //ab_segment,   ab_frame,      ab_reg0,
+   @storesegnil,@storeframenil,@storereg0nil,
   //ab_stack,      ab_stackref
    @storestacknil,@storestackrefnil),
   (
-  //ab_global,     ab_frame,        ab_reg0,
-   @storeglobnilar,@storeframenilar,@storereg0nilar,
+  //ab_segment,     ab_frame,        ab_reg0,
+   @storesegnilar,@storeframenilar,@storereg0nilar,
   //ab_stack,       ab_stackref
    @storestacknilar,@storestackrefnilar)
  );
 
  finirefsizeops: aropadsty = (
   (
-  //ab_global,         ab_frame,            ab_reg0,
-   @finirefsizeglob,@finirefsizeframe,@finirefsizereg0,
+  //ab_segment,         ab_frame,            ab_reg0,
+   @finirefsizeseg,@finirefsizeframe,@finirefsizereg0,
   //ab_stack,           ab_stackref
    @finirefsizestack,@finirefsizestackref),
   (
-  //ab_global,           ab_frame,              ab_reg0,
-   @finirefsizeglobar,@finirefsizeframear,@finirefsizereg0ar,
+  //ab_segment,           ab_frame,              ab_reg0,
+   @finirefsizesegar,@finirefsizeframear,@finirefsizereg0ar,
   //ab_stack,             ab_stackref
    @finirefsizestackar,@finirefsizestackrefar)
  );
 
  increfsizeops: aropadsty = (
   (
-  //ab_global,         ab_frame,            ab_reg0,
-   @increfsizeglob,@increfsizeframe,@increfsizereg0,
+  //ab_segment,         ab_frame,            ab_reg0,
+   @increfsizeseg,@increfsizeframe,@increfsizereg0,
   //ab_stack,           ab_stackref
    @increfsizestack,@increfsizestackref),
   (
-  //ab_global,           ab_frame,              ab_reg0,
-   @increfsizeglobar,@increfsizeframear,@increfsizereg0ar,
+  //ab_segment,           ab_frame,              ab_reg0,
+   @increfsizesegar,@increfsizeframear,@increfsizereg0ar,
   //ab_stack,             ab_stackref
    @increfsizestackar,@increfsizestackrefar)
  );
 
  decrefsizeops: aropadsty = (
   (
-  //ab_global,         ab_frame,            ab_reg0,
-   @decrefsizeglob,@decrefsizeframe,@decrefsizereg0,
+  //ab_segment,         ab_frame,            ab_reg0,
+   @decrefsizeseg,@decrefsizeframe,@decrefsizereg0,
   //ab_stack,           ab_stackref
    @decrefsizestack,@decrefsizestackref),
   (
   //ab_global,           ab_frame,              ab_reg0,
-   @decrefsizeglobar,@decrefsizeframear,@decrefsizereg0ar,
+   @decrefsizesegar,@decrefsizeframear,@decrefsizereg0ar,
   //ab_stack,             ab_stackref
    @decrefsizestackar,@decrefsizestackrefar)
  );
@@ -116,11 +122,26 @@ begin
   if count > 1 then begin
    op:= opsar[true][aaddress.base];
    par.datasize:= count;
-   par.dataaddress:= aaddress.offset;
+   if aaddress.base = ab_segment then begin
+    par.segdataaddress.a.address:= aaddress.offset;
+    par.segdataaddress.a.segment:= aaddress.segment;
+    par.segdataaddress.offset:= 0;
+   end
+   else begin
+    par.podataaddress:= aaddress.offset;
+   end;
   end
   else begin
    op:= opsar[false][aaddress.base];
-   par.vaddress:= aaddress.offset;
+   if aaddress.base = ab_segment then begin
+    par.vsegaddress.a.address:= aaddress.offset;
+    par.vsegaddress.a.segment:= aaddress.segment;
+    par.vsegaddress.offset:= 0;
+   end
+   else begin
+    par.vaddress:= aaddress.offset;
+   end;
+//   par.vaddress:= aaddress.offset;
   end;
  end;
 end;
@@ -145,19 +166,32 @@ begin
  addmanagedop(decrefsizeops,aaddress,count);
 end;
 
-function getglobvaraddress(const asize: integer): dataoffsty;
+function getglobvaraddress(const asize: integer;
+                                    var aflags: addressflagsty): segaddressty;
 begin
  with info do begin
-  result:= globdatapo;
+  result.address:= globdatapo;
   globdatapo:= globdatapo + alignsize(asize);
+  result.segment:= seg_globvar;
+  include(aflags,af_segment);
  end;
 end;
 
-function getlocvaraddress(const asize: integer): dataoffsty;
+procedure inclocvaraddress(const asize: integer);
 begin
  with info do begin
-  result:= locdatapo;
   locdatapo:= locdatapo + alignsize(asize);
+ end;
+end;
+
+function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
+                                       const shift: integer = 0): locaddressty;
+begin
+ with info do begin
+  result.address:= locdatapo+shift;
+  locdatapo:= locdatapo + alignsize(asize);
+  result.framelevel:= info.sublevel;
+  exclude(aflags,af_segment);
  end;
 end;
 

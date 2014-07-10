@@ -420,7 +420,7 @@ begin
       exit;
      end;
      po3:= ele.eledataabs(ele2);
-     varinfo.address.address:= varinfo.address.address + po3^.offset;
+     varinfo.address.poaddress:= varinfo.address.poaddress + po3^.offset;
     end;
     varinfo.typ:= ele.eledataabs(po3^.vf.typ);
    end
@@ -532,14 +532,16 @@ procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
  with insertitem(stackoffset,before)^,info,
                      contextstack[stackindex+stackoffset].d.ref do begin
-  if af_global in address.flags then begin
-   op:= @pushglobaddr;
-   par.vaddress:= address.address + offset;
+  if af_segment in address.flags then begin
+   op:= @pushsegaddr;
+   par.vsegaddress.a:= address.segaddress;
+   par.vsegaddress.offset:= offset;
   end
   else begin
    op:= @pushlocaddr;
-   par.vlocaddress.offset:= address.address + offset;
-   par.vlocaddress.linkcount:= info.sublevel-address.framelevel-1;
+   par.vlocaddress.a:= address.locaddress;
+   par.vlocaddress.a.framelevel:= info.sublevel-address.locaddress.framelevel-1;
+   par.vlocaddress.offset:= offset;
   end;
  end;
 end;
@@ -620,15 +622,15 @@ begin
    par.imm.vpointer:= 0;
   end
   else begin
-   if af_global in avalue.flags then begin
+   if af_segment in avalue.flags then begin
     if indirect then begin
-     op:= @pushglobaddrindi;
+     op:= @pushsegaddrindi;
     end
     else begin
-     op:= @pushglobaddr;
+     op:= @pushsegaddr;
     end;
-    par.vglobaddress:= avalue.address;
-    par.vglobadoffs:= offset;
+    par.vsegaddress.a:= avalue.segaddress;
+    par.vsegaddress.offset:= offset;
    end
    else begin
     if indirect then begin
@@ -637,9 +639,9 @@ begin
     else begin
      op:= @pushlocaddr;
     end;
-    par.vlocaddress.offset:= avalue.address;
-    par.vlocaddress.linkcount:= info.sublevel-avalue.framelevel-1;
-    par.vlocadoffs:= offset;
+    par.vlocaddress.a:= avalue.locaddress;
+    par.vlocaddress.a.framelevel:= info.sublevel-avalue.locaddress.framelevel-1;
+    par.vlocaddress.offset:= offset;
    end;
   end;
  end;
@@ -803,22 +805,23 @@ procedure pushd(const oppo: popinfoty; const address: addressvaluety;
                      const offset: dataoffsty; const size: datasizety);
 begin
  with oppo^,address do begin //todo: use table
-  if af_global in flags then begin
+  if af_segment in flags then begin
    case size of
     1: begin 
-     op:= @pushglob8;
+     op:= @pushseg8;
     end;
     2: begin
-     op:= @pushglob16;
+     op:= @pushseg16;
     end;
     4: begin
-     op:= @pushglob32;
+     op:= @pushseg32;
     end;
     else begin
-     op:= @pushglob;
+     op:= @pushseg;
     end;
    end;
-   par.dataaddress:= address+offset;
+   par.vsegaddress.a:= segaddress;
+   par.vsegaddress.offset:= offset;
   end
   else begin
    if af_paramindirect in flags then begin
@@ -853,8 +856,9 @@ begin
      end;
     end;
    end;
-   par.locdataaddress.offset:= address + offset;
-   par.locdataaddress.linkcount:= info.sublevel-framelevel-1;
+   par.locdataaddress.a:= locaddress;
+   par.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
+   par.locdataaddress.offset:= offset;
   end;
   par.datasize:= size;
  end;
@@ -1058,7 +1062,8 @@ begin
       d.kind:= ck_const;
       d.constval.kind:= dk_address;
       d.constval.vaddress:= ref1.address;
-      d.constval.vaddress.address:= d.constval.vaddress.address + ref1.offset;
+      d.constval.vaddress.poaddress:= 
+                       d.constval.vaddress.poaddress + ref1.offset;
      end;
     end
     else begin
@@ -1438,10 +1443,15 @@ procedure outinfo(const text: string; const indent: boolean = true);
  procedure writeaddress(const aaddress: addressvaluety);
  begin
   with aaddress do begin
-   write('A:',inttostr(integer(address)),' I:',inttostr(indirectlevel),
-        ' F:',inttostr(framelevel),' ');
+   write('I:',inttostr(indirectlevel),' A:',inttostr(integer(poaddress)),' ');
    write(settostring(ptypeinfo(typeinfo(addressflagsty)),
-                         integer(flags),true),' ');
+                                                     integer(flags),true),' ');
+   if af_stack in flags then begin
+    write(' F:',inttostr(locaddress.framelevel),' ');
+   end;
+   if af_segment in flags then begin
+    write(' S:',getenumname(typeinfo(segmentty),ord(segaddress.segment)),' ');
+   end;
   end;
  end;//writeaddress
  

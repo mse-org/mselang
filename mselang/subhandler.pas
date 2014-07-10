@@ -485,9 +485,9 @@ begin
     inc(paramsize1,pointersize);
     address.indirectlevel:= 1;
     if impl1 then begin
-     address.address:= getlocvaraddress(pointersize);
+     address.locaddress:= getlocvaraddress(pointersize,address.flags);
     end;
-    address.framelevel:= sublevel+1;
+    address.locaddress.framelevel:= sublevel+1;
     address.flags:= [af_param];
     include(address.flags,af_const);
     vf.typ:= currentcontainer;
@@ -515,9 +515,9 @@ begin
         si1:= po3^.bytesize;
        end;
        if impl1 then begin
-        address.address:= getlocvaraddress(si1);
+        address.locaddress:= getlocvaraddress(si1,address.flags);
        end;
-       address.framelevel:= sublevel+1;
+       address.locaddress.framelevel:= sublevel+1;
        address.flags:= [af_param];
        if paramkind1 = pk_const then begin
         if si1 > pointersize then begin
@@ -561,7 +561,7 @@ begin
   if impl1 then begin //implementation
    po1^.address:= opcount;
    inc(sublevel);
-   getlocvaraddress(stacklinksize);
+   inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
@@ -570,7 +570,7 @@ begin
     d.subdef.ref:= ele.eledatarel(po1);
     for int2:= 0 to paramco-1 do begin
      po2:= pointer(po4^[int2]);
-     dec(po2^.address.address,frameoffset);
+     dec(po2^.address.locaddress.address,frameoffset);
      po4^[int2]:= ptruint(po2)-eledatabase;
      if tf_hasmanaged in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),

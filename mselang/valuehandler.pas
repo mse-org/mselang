@@ -206,8 +206,9 @@ var
       {$endif}
        with insertitem(parent-stackindex,false)^ do begin
         op:= @pushlocpo;
-        par.locdataaddress.linkcount:= -1;
-        par.locdataaddress.offset:= po6^.address.address;
+        par.locdataaddress.a.framelevel:= -1;
+        par.locdataaddress.a.address:= po6^.address.poaddress;
+        par.locdataaddress.offset:= 0;
        end;
       end;
      end;

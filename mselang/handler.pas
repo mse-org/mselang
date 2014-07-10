@@ -1524,9 +1524,10 @@ begin
        ad1.base:= ab_stackref;
       end
       else begin
-       ad1.offset:= dest.address.address;
-       if af_global in dest.address.flags then begin
-        ad1.base:= ab_global;
+       ad1.offset:= dest.address.poaddress;
+       if af_segment in dest.address.flags then begin
+        ad1.base:= ab_segment;
+        ad1.segment:= dest.address.segaddress.segment;
        end
        else begin
         ad1.base:= ab_frame;
@@ -1554,22 +1555,23 @@ begin
        end;
       end
       else begin
-       if af_global in dest.address.flags then begin
+       if af_segment in dest.address.flags then begin
         case si1 of
          1: begin 
-          op:= @popglob8;
+          op:= @popseg8;
          end;
          2: begin
-          op:= @popglob16;
+          op:= @popseg16;
          end;
          4: begin
-          op:= @popglob32;
+          op:= @popseg32;
          end;
          else begin
-          op:= @popglob;
+          op:= @popseg;
          end;
         end;
-        par.dataaddress:= dest.address.address;
+        par.segdataaddress.a:= dest.address.segaddress;
+        par.segdataaddress.offset:= 0;
        end
        else begin
         if af_paramindirect in dest.address.flags then begin
@@ -1604,8 +1606,10 @@ begin
           end;
          end;
         end;
-        par.locdataaddress.offset:= dest.address.address;
-        par.locdataaddress.linkcount:= sublevel-dest.address.framelevel-1;
+        par.locdataaddress.a:= dest.address.locaddress;
+        par.locdataaddress.a.framelevel:= sublevel -
+                                           dest.address.locaddress.framelevel-1;
+        par.locdataaddress.offset:= 0;
        end;
       end;
      end;
@@ -1666,7 +1670,7 @@ begin
 
      with pvardataty(ele.addscope(ek_var,d.datatyp.typedata))^ do begin
       address:= d.ref.address;
-      address.address:= address.address + d.ref.offset;
+      address.poaddress:= address.poaddress + d.ref.offset;
       vf.typ:= d.datatyp.typedata;
       vf.next:= 0;
      end;

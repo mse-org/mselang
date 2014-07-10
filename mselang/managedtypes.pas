@@ -128,8 +128,9 @@ begin
   if atype^.kind = dk_array then begin
    ad1.base:= ab_reg0;
    with additem^ do begin
-    if aaddress.base = ab_global then begin
-     op:= @moveglobalreg0;
+    if aaddress.base = ab_segment then begin
+     op:= @movesegreg0;
+     par.vsegment:= aaddress.segment;
     end
     else begin
      op:= @moveframereg0;
@@ -182,7 +183,8 @@ var
 begin
  if chain <> 0 then begin
   if global then begin
-   ad1.base:= ab_global;
+   ad1.base:= ab_segment;
+   ad1.segment:= seg_globvar;
   end
   else begin
    ad1.base:= ab_frame;
@@ -191,7 +193,7 @@ begin
   repeat
    po1:= ele.eledataabs(ele1);
    if tf_hasmanaged in po1^.vf.flags then begin
-    ad1.offset:= po1^.address.address;
+    ad1.offset:= po1^.address.poaddress;
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
    end;
    ele1:= po1^.vf.next;
@@ -204,8 +206,9 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 var
  ad1: addressrefty;
 begin
- if af_global in aaddress.flags then begin
-  ad1.base:= ab_global;
+ if af_segment in aaddress.flags then begin
+  ad1.base:= ab_segment;
+  ad1.segment:= aaddress.segaddress.segment;
  end
  else begin
   if af_stack in aaddress.flags then begin
@@ -215,7 +218,7 @@ begin
    ad1.base:= ab_frame;
   end;
  end;
- ad1.offset:= aaddress.address;
+ ad1.offset:= aaddress.poaddress;
  writemanagedtypeop(op,atype,ad1);
 end;
 

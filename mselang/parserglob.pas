@@ -198,7 +198,7 @@ type
                     stf_hasmanaged);
  statementflagsty = set of statementflagty;
 
- addressflagty = (af_nil,af_global,af_param,af_paramindirect,af_const,
+ addressflagty = (af_nil,af_segment,af_param,af_paramindirect,af_const,
                   af_classfield,af_stack);
  addressflagsty = set of addressflagty;
 
@@ -221,12 +221,25 @@ type
  varinfoty = record
   indirectlevel: indirectlevelty;
  end;
+
+ segaddressty = record
+  address: dataoffsty;
+//  offset: dataoffsty;
+  segment: segmentty;
+ end;
+ 
+ locaddressty = record
+  address: dataoffsty;
+  framelevel: integer;
+ end;
  
  addressvaluety = record
-  address: dataaddressty;
   flags: addressflagsty;
   indirectlevel: indirectlevelty;
-  framelevel: framelevelty;
+  case integer of
+   0: (poaddress: dataoffsty);
+   1: (segaddress: segaddressty);
+   2: (locaddress: locaddressty);
  end;
  paddressvaluety = ^addressvaluety;
 
@@ -511,10 +524,11 @@ type
              ok_pushglobaddressindi,ok_pushlocaddressindi,
              ok_pushstackaddress,ok_indirectpooffs,
              ok_pushconstaddress,
-             ok_offset,ok_offsetaddress,
-             ok_locop,ok_op,ok_op1,ok_opn,ok_var,ok_opaddress,ok_params,
+             ok_offset,ok_offsetaddress,ok_segment,
+             ok_locop,ok_segop,ok_poop,
+             ok_op,ok_op1,ok_opn,ok_opaddress,ok_params,
              ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass,
-             ok_managed,ok_managedar);
+             ok_managed);
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -530,11 +544,6 @@ type
  ppv64ty = ^pv64ty;
 
    //todo: simplify nested procedure link handling
- 
- locdataaddressty = record
-  offset: dataoffsty;
-  linkcount: integer; //used in "for downto 0"
- end;
 
  callinfoty = record
   ad: opaddressty;
@@ -558,7 +567,6 @@ type
 
  destroyclassinfo = record
  end;
-
  
  immty = record
   case integer of               //todo: use target size
@@ -578,6 +586,16 @@ type
    2: (vcard32: card32);
    3: (vint32: int32);
  end;
+
+ segdataaddressty = record
+  a: segaddressty;
+  offset: dataoffsty;
+ end;
+   
+ locdataaddressty = record
+  a: locaddressty;
+  offset: dataoffsty;
+ end;
   
  opparamty = record
   case opkindty of 
@@ -591,6 +609,9 @@ type
    ok_immgoto: (
     ordimm: ordimmty;
     immgoto: opaddressty
+   );
+   ok_segment:(
+    vsegment: segmentty;
    );
    ok_push8:(
     v8: v8ty;
@@ -611,12 +632,13 @@ type
     vaddress: dataaddressty;
    );
    ok_pushglobaddress,ok_pushglobaddressindi:(
-    vglobaddress: dataaddressty;
-    vglobadoffs: dataoffsty;
+    vsegaddress: segdataaddressty;
+//    vglobaddress: dataaddressty;
+ //   vglobadoffs: dataoffsty;
    );
    ok_pushlocaddress,ok_pushlocaddressindi:(
     vlocaddress: locdataaddressty;
-    vlocadoffs: dataoffsty;
+//    vlocadoffs: dataoffsty;
    );
    ok_pushstackaddress,ok_indirectpooffs,ok_offset,ok_offsetaddress:(
     voffset: dataoffsty;
@@ -625,14 +647,17 @@ type
       voffsaddress: dataaddressty;
      );
    );
-   ok_locop,ok_var,ok_managedar:(
+   ok_locop,ok_segop,ok_poop:(
     datasize: datasizety;
     case opkindty of
      ok_locop:(
       locdataaddress: locdataaddressty;
      );
-     ok_var,ok_managedar:(
-      dataaddress: dataaddressty;
+     ok_segop:(
+      segdataaddress: segdataaddressty;
+     );
+     ok_poop:(
+      podataaddress: dataaddressty;
      );
    );
    ok_op1:(
@@ -776,10 +801,9 @@ const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
  nilad: addressvaluety = (
-  address: 0;
   flags: [af_nil];
   indirectlevel: 0;
-  framelevel: 0;
+  poaddress: 0;
  );
 
 var

@@ -1261,11 +1261,18 @@ begin
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' A:'+inttostr(address.address)+' I:'+
-               inttostr(address.indirectlevel)+' F:'+
-               inttostr(address.framelevel)+' '+
+     mstr1:= mstr1+lineend+' A:'+inttostr(address.poaddress)+' I:'+
+               inttostr(address.indirectlevel)+ ' ' +
            settostring(ptypeinfo(typeinfo(address.flags)),
                                          integer(address.flags),false);
+     if af_segment in address.flags then begin
+      mstr1:= mstr1+' S:'+getenumname(typeinfo(segmentty),
+                                    ord(address.segaddress.segment));
+     end
+     else begin
+      mstr1:= mstr1+' L:'+inttostr(address.locaddress.framelevel);
+     end;               
+
      mstr1:= mstr1 + dumptyp(vf.typ);
      {
      po2:= eleinfoabs(vf.typ);

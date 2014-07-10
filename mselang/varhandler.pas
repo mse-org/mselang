@@ -78,6 +78,7 @@ begin
   end
   else begin
    with po1^ do begin
+    address.flags:= [];
     vf.typ:= contextstack[stackindex+2].d.typ.typedata;
     po2:= ele.eleinfoabs(vf.typ);
     address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
@@ -98,14 +99,10 @@ begin
      end;
     end;
     if sublevel = 0 then begin
-     address.address:= getglobvaraddress(size1);
-     address.flags:= [af_global];
-     address.framelevel:= 0;
+     address.segaddress:= getglobvaraddress(size1,address.flags);
     end
     else begin
-     address.address:= getlocvaraddress(size1)-frameoffset;
-     address.flags:= []; //local
-     address.framelevel:= sublevel;
+     address.locaddress:= getlocvaraddress(size1,address.flags,-frameoffset);
     end;
    end;
   end;
