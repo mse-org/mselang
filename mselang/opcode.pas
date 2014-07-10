@@ -39,7 +39,8 @@ function getglobvaraddress(const asize: integer;
 procedure inclocvaraddress(const asize: integer);
 function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): locaddressty;
-function getglobconstaddress(const asize: integer): dataoffsty;
+function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
+                                       const shift: integer = 0): segaddressty;
 
 function additem(): popinfoty;
 function insertitem(const stackoffset: integer;
@@ -195,10 +196,13 @@ begin
  end;
 end;
 
-function getglobconstaddress(const asize: integer): dataoffsty;
+function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
+                                       const shift: integer = 0): segaddressty;
 begin
  with info do begin
-  result:= constsize;
+  result.address:= constsize+shift;
+  result.segment:= seg_globconst;
+  include(aflags,af_segment);
   constsize:= constsize+asize;
   alignsize(constsize);
   if constsize > constcapacity then begin

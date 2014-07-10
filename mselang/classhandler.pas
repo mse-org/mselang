@@ -121,7 +121,7 @@ begin
     }
     fieldchain:= 0;
     infoclass.impl:= 0;
-    infoclass.defs:= 0;
+    infoclass.defs.address:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
     infoclass.interfacecount:= 0;
@@ -230,11 +230,12 @@ procedure handleclassdefreturn();
 var
 // po2: pclassesdataty;
  ele1: elementoffsetty;
- classdefs1: dataoffsty;
+ classdefs1: segaddressty;
  classinfo1: pclassinfoty;
  parentinfoclass1: pinfoclassty;
  intfcount: integer;
  intfsubcount: integer;
+ fla1: addressflagsty;
  
 begin
 {$ifdef mse_debugparser}
@@ -272,15 +273,15 @@ begin
           infoclass.interfacecount*pointersize;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
-                                   pointersize*infoclass.virtualcount);
+                                   pointersize*infoclass.virtualcount,fla1);
    infoclass.defs:= classdefs1;   
-   with pclassdefinfoty(pointer(constseg)+classdefs1)^ do begin
+   with pclassdefinfoty(pointer(constseg)+classdefs1.address)^ do begin
     header.allocsize:= infoclass.allocsize;
     header.fieldsize:= classinfo1^.fieldoffset;
     header.parentclass:= 0;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
-     header.parentclass:= parentinfoclass1^.defs;
+     header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
      if infoclass.virtualcount > 0 then begin
       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
        copyvirtualtable(infoclass.defs,classdefs1,infoclass.virtualcount);

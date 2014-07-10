@@ -24,7 +24,7 @@ const
  includemax = 31;
 
 type
- segmentty = (seg_stack,seg_globvar,seg_globconst,seg_op,seg_rtti);
+ segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_rtti);
 
  bool8 = boolean;
  bool16 = wordbool;

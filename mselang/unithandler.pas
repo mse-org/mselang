@@ -40,7 +40,7 @@ procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 procedure handleunitend();
-procedure copyvirtualtable(const source,dest: dataoffsty;
+procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
 procedure handleinifini();
 procedure handleinitializationstart();
@@ -376,8 +376,8 @@ type
  classdescendinfoty = record  //used for copying ancestor virtual method table
   header: linkheaderty;
   itemcount: integer;
-  source: dataoffsty;
-  dest: dataoffsty;
+  source: segaddressty;
+  dest: segaddressty;
  end;
  pclassdescendinfoty = ^classdescendinfoty;
 
@@ -527,13 +527,13 @@ begin
  end;
 end;
 
-procedure copyvirtualtable(const source,dest: dataoffsty;
+procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
 var
  ps,pd,pe: popaddressty;
 begin
- ps:= pointer(info.constseg)+source+sizeof(classdefheaderty);
- pd:= pointer(info.constseg)+dest+sizeof(classdefheaderty);
+ ps:= pointer(info.constseg)+source.address+sizeof(classdefheaderty);
+ pd:= pointer(info.constseg)+dest.address+sizeof(classdefheaderty);
  pe:= pd+itemcount;
  repeat
   if pd^ = 0 then begin

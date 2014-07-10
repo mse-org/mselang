@@ -189,7 +189,7 @@ var
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
       if sf_constructor in asub^.flags then begin
-       pushinsertconstaddress(parent-stackindex,false,po3^.infoclass.defs);
+       pushinsertsegaddress(parent-stackindex,false,po3^.infoclass.defs);
                                    //class type
       end;
      end

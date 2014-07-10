@@ -701,7 +701,7 @@ begin
     end;
    {$endif}
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs)^.
+     popaddressty(@pclassdefinfoty(pointer(constseg)+infoclass.defs.address)^.
                       virtualmethods)[po2^.virtualindex]:= po1^.address-1;
               //resolve virtual table entry, compensate oppo inc
     end;

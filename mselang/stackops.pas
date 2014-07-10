@@ -173,7 +173,8 @@ procedure poplocindi16();
 procedure poplocindi32();
 procedure poplocindi();
 
-procedure pushconstaddress();
+procedure pushnil();
+procedure pushsegaddress();
 
 procedure pushseg8();
 procedure pushseg16();
@@ -306,6 +307,20 @@ begin
  raise exception.create('Internal error '+atext);
 end;
  
+function getsegaddress(const aaddress: segdataaddressty): pointer; 
+                                  {$ifdef mse_inline}inline;{$endif}
+begin
+ result:= segments[aaddress.a.segment].basepo + 
+                              aaddress.a.address + aaddress.offset;
+end;
+
+function getsegaddressindi(const aaddress: segdataaddressty): pointer;
+                                  {$ifdef mse_inline}inline;{$endif}
+begin
+ result:= ppointer(segments[aaddress.a.segment].basepo + 
+                              aaddress.a.address)^ + aaddress.offset;
+end;
+
 function alignsize(const size: ptruint): ptruint; 
                              {$ifdef mse_inline}inline;{$endif}
 begin
@@ -734,14 +749,20 @@ begin
  vfloatty(po1^):= -vfloatty(po1^);
 end;
 
-procedure pushconstaddress;
+procedure pushnil;
 begin
- ppointer(stackpush(sizeof(dataaddressty)))^:= constdata+cpu.pc^.par.vaddress; 
+ ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
+end;
+
+procedure pushsegaddress;
+begin
+ ppointer(stackpush(sizeof(dataaddressty)))^:= 
+                                    getsegaddress(cpu.pc^.par.vsegaddress); 
 end;
 
 procedure storesegnil();
 begin
- ppointer(globdata+cpu.pc^.par.vaddress)^:= nil;
+ ppointer(getsegaddress(cpu.pc^.par.vsegaddress))^:= nil;
 end;
 
 procedure storeframenil();
@@ -762,20 +783,6 @@ end;
 procedure storestackrefnil();
 begin
  pppointer(cpu.stack+cpu.pc^.par.vaddress)^^:= nil;
-end;
-
-function getsegaddress(const aaddress: segdataaddressty): pointer; 
-                                  {$ifdef mse_inline}inline;{$endif}
-begin
- result:= segments[aaddress.a.segment].basepo + 
-                              aaddress.a.address + aaddress.offset;
-end;
-
-function getsegaddressindi(const aaddress: segdataaddressty): pointer;
-                                  {$ifdef mse_inline}inline;{$endif}
-begin
- result:= ppointer(segments[aaddress.a.segment].basepo + 
-                              aaddress.a.address)^ + aaddress.offset;
 end;
 
 procedure storesegnilar();

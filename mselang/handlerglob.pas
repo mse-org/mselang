@@ -92,7 +92,7 @@ type
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
   impl: elementoffsetty;
-  defs: dataoffsty; //classdefinfoty in target const
+  defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
   allocsize: dataoffsty;
   virtualcount: integer;

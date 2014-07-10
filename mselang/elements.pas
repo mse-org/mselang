@@ -248,7 +248,7 @@ function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
 function newstring(): stringvaluety;
-function stringconst(const astring: stringvaluety): dataaddressty;
+function stringconst(const astring: stringvaluety): segaddressty;
 
 function getidentname(const aident: identty; out name: lstringty): boolean;
                              //true if found
@@ -359,8 +359,7 @@ type
    destructor destroy; override;
    procedure clear; override;
    function add(const avalue: string): stringvaluety;
-   function allocconst(
-                         const astring: stringvaluety): dataaddressty;
+   function allocconst(const astring: stringvaluety): segaddressty;
  end;
  
 const
@@ -554,8 +553,7 @@ begin
  result:= stringbuf.add(info.stringbuffer);
 end;
 
-function stringconst(
-                           const astring: stringvaluety): dataaddressty;
+function stringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
 end;
@@ -1316,9 +1314,9 @@ begin
                       ' virt:'+inttostr(infoclass.virtualcount)+
                       ' intf:'+inttostr(infoclass.interfacecount)+
                       ' isub:'+inttostr(infoclass.interfacesubcount)+
-                      ' defs:'+inttostr(infoclass.defs);
+                      ' defs:'+inttostr(infoclass.defs.address);
         po5:= @pclassdefinfoty(
-                       pointer(info.constseg)+infoclass.defs)^.virtualmethods;
+               pointer(info.constseg)+infoclass.defs.address)^.virtualmethods;
         for int6:= 0 to infoclass.virtualcount-1 do begin
          if int6 mod 5 = 0 then begin
           mstr1:= mstr1+lineend+'  ';
@@ -1943,13 +1941,15 @@ begin
  reallocmem(fbuffer,fbufcapacity);
 end;
  
-function tstringbuffer.allocconst(const astring: stringvaluety): dataaddressty;
+function tstringbuffer.allocconst(const astring: stringvaluety): segaddressty;
 var
  po1: pstring8headerty;
+ fla1: addressflagsty;
 begin
  with pstringbufdataty(fdata+astring.offset)^ do begin
   if constoffset = 0 then begin
-   constoffset:= getglobconstaddress(sizeof(string8headerty)+len+1);
+   result:= getglobconstaddress(sizeof(string8headerty)+len+1,fla1);
+   constoffset:= result.address;
    with info do begin    
     po1:= pointer(constseg)+constoffset;
     po1^.ref.count:= -1;
@@ -1960,10 +1960,12 @@ begin
    end;
   end;
   if len = 0 then begin
-   result:= 0;
+   result.address:= 0;
+   result.segment:= seg_nil;
   end
   else begin
-   result:= constoffset+sizeof(string8headerty);
+   result.address:= constoffset+sizeof(string8headerty);
+   result.segment:= seg_globconst;
   end;
  end;
 end;

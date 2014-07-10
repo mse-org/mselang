@@ -128,8 +128,8 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
             //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
-procedure pushinsertconstaddress(const stackoffset: integer;
-                            const before: boolean; const address: dataoffsty);
+procedure pushinsertsegaddress(const stackoffset: integer;
+                            const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
                                                   const size: datasizety);
@@ -519,12 +519,19 @@ begin
  end;
 end;
 
-procedure pushinsertconstaddress(const stackoffset: integer; const before: boolean;
-                             const address: dataoffsty);
+procedure pushinsertsegaddress(const stackoffset: integer;
+                             const before: boolean;
+                             const address: segaddressty);
 begin
  with insertitem(stackoffset,before)^ do begin
-  op:= @pushconstaddress;
-  par.vaddress:= address;
+  if address.segment = seg_nil then begin
+   op:= @pushnil;
+  end
+  else begin
+   op:= @pushsegaddress;
+   par.vsegaddress.a:= address;
+   par.vsegaddress.offset:= 0;
+  end;
  end;
 end;
 
@@ -566,8 +573,14 @@ begin
     par.imm.vfloat64:= po1^.d.constval.vfloat;
    end;
    dk_string8: begin
-    op:= @pushconstaddress;
-    par.vaddress:= stringconst(po1^.d.constval.vstring);
+    par.vsegaddress.a:= stringconst(po1^.d.constval.vstring);
+    if par.vsegaddress.a.segment = seg_nil then begin
+     op:= @pushnil;
+    end
+    else begin
+     op:= @pushsegaddress;
+     par.vsegaddress.offset:= 0;
+    end;
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin
