@@ -820,8 +820,8 @@ begin
      op:= @pushseg;
     end;
    end;
-   par.vsegaddress.a:= segaddress;
-   par.vsegaddress.offset:= offset;
+   par.segdataaddress.a:= segaddress;
+   par.segdataaddress.offset:= offset;
   end
   else begin
    if af_paramindirect in flags then begin

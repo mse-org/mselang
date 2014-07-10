@@ -764,13 +764,15 @@ begin
  pppointer(cpu.stack+cpu.pc^.par.vaddress)^^:= nil;
 end;
 
-function getsegaddress(const aaddress: segdataaddressty): pointer; inline;
+function getsegaddress(const aaddress: segdataaddressty): pointer; 
+                                  {$ifdef mse_inline}inline;{$endif}
 begin
  result:= segments[aaddress.a.segment].basepo + 
                               aaddress.a.address + aaddress.offset;
 end;
 
-function getsegaddressindi(const aaddress: segdataaddressty): pointer; inline;
+function getsegaddressindi(const aaddress: segdataaddressty): pointer;
+                                  {$ifdef mse_inline}inline;{$endif}
 begin
  result:= ppointer(segments[aaddress.a.segment].basepo + 
                               aaddress.a.address)^ + aaddress.offset;
