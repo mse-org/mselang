@@ -22,14 +22,19 @@ uses
 
 type
  classdefheaderty = record
+  parentclass: dataoffsty;
   allocsize: integer;
   fieldsize: integer;
-  parentclass: dataoffsty;
+  interfacestart: integer;
  end;
+ pclassdefheaderty = ^classdefheaderty;
+ 
  classdefinfoty = record
   header: classdefheaderty;
-  virtualmethods: record //array of opaddressty
+  virtualmethods: record //array of targetpointer
   end;
+  interfaces: record     //array of targetpointer, copied to instance
+  end;  
  end;
  pclassdefinfoty = ^classdefinfoty;
  
@@ -319,7 +324,6 @@ end;
 
 procedure handleclassdefreturn();
 var
-// po2: pclassesdataty;
  ele1: elementoffsetty;
  classdefs1: segaddressty;
  classinfo1: pclassinfoty;
@@ -328,6 +332,7 @@ var
  intfsubcount: integer;
  fla1: addressflagsty;
  int1: integer;
+ po1: pdataoffsty;
  
 begin
 {$ifdef mse_debugparser}
@@ -361,13 +366,16 @@ begin
    infoclass.allocsize:= classinfo1^.fieldoffset + 
           infoclass.interfacecount*pointersize;
    infoclass.virtualcount:= classinfo1^.virtualindex;
-   classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
-                                   pointersize*infoclass.virtualcount,fla1);
+   int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
+                    //interfacetable start
+   classdefs1:= getglobconstaddress(int1 +
+                                   pointersize*infoclass.interfacecount,fla1);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
+    header.parentclass:= 0;
     header.allocsize:= infoclass.allocsize;
     header.fieldsize:= classinfo1^.fieldoffset;
-    header.parentclass:= 0;
+    header.interfacestart:= int1;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
@@ -382,23 +390,24 @@ begin
       end;
      end;
     end;
+    if intfcount <> 0 then begin       //alloc interface table
+     po1:= pointer(@header) + header.interfacestart;
+     inc(po1,infoclass.interfacecount); //top - down
+     int1:= -infoclass.allocsize; 
+     ele1:= infoclass.interfacechain;
+     while ele1 <> 0 do begin
+      inc(int1,pointersize);
+      dec(po1);
+      po1^:= checkinterface(int1,ele.eledataabs(ele1));
+      ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
+     end;
+    end;
    end;
    ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change
-    
-    //todo: init instance interface table
-              
-   if intfcount <> 0 then begin       //alloc interface table
-    int1:= -infoclass.allocsize;
-    ele1:= infoclass.interfacechain;
-    while ele1 <> 0 do begin
-     dec(int1,pointersize);
-     checkinterface(int1,ele.eledataabs(ele1));
-     ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
-    end;
-   end;
   end;
+    
   ele.elementparent:= contextstack[stackindex].b.eleparent;
   currentcontainer:= 0;
  end;
