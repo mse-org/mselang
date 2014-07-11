@@ -217,15 +217,15 @@ begin
                                   or not checkparams(@po1^.data,po2) then begin
              //todo: compose parameter message
    errormessage(err_nomatchingimplementation,[
-   getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
-                                            getidentname(po1^.header.name)]);
+           getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
+           getidentname(po1^.header.name)]);
   end
   else begin
   end;
   ele1:= psubdataty(@po1^.data)^.next;
  end;
 end;
-var testvar: ptypedataty; testvar1: pclassdefinfoty;
+
 procedure handleclassdefreturn();
 var
 // po2: pclassesdataty;
@@ -245,12 +245,12 @@ begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
-testvar:= ptypedataty(ele.eledataabs(
-                                                d.typ.typedata));
    regclass(d.typ.typedata);
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[stackindex].d.cla;
+
+                     //alloc interfaces   
    intfcount:= 0;
    intfsubcount:= 0;
    ele1:= infoclass.interfacechain;
@@ -271,13 +271,14 @@ testvar:= ptypedataty(ele.eledataabs(
     infoclass.interfacecount:= infoclass.interfacecount + intfcount;
     infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
    end;
+
+         //alloc classinfo
    infoclass.allocsize:= classinfo1^.fieldoffset + 
           infoclass.interfacecount*pointersize;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    classdefs1:= getglobconstaddress(sizeof(classdefinfoty)+
                                    pointersize*infoclass.virtualcount,fla1);
    infoclass.defs:= classdefs1;   
-testvar1:= getsegmentpo(classdefs1);
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
     header.allocsize:= infoclass.allocsize;
     header.fieldsize:= classinfo1^.fieldoffset;

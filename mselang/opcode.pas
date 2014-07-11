@@ -18,7 +18,7 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ parserglob,opglob;
 type
  addressbasety = (ab_frame,ab_reg0,ab_stack,ab_stackref,ab_segment);
  

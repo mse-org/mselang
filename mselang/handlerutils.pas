@@ -18,7 +18,7 @@ unit handlerutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- handlerglob,parserglob,elements,msestrings,msetypes;
+ handlerglob,parserglob,opglob,elements,msestrings,msetypes;
 
 type
  systypety = (st_none,st_bool8,st_int32,st_float64,st_string8);

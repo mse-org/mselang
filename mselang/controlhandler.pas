@@ -38,7 +38,7 @@ procedure handlecase();
 implementation
 uses
  handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
- stackops,segmentutils;
+ stackops,segmentutils,opglob;
  
 procedure handleif0();
 begin

@@ -18,7 +18,7 @@ unit syssubhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- handlerglob,managedtypes,msetypes;
+ handlerglob,opglob,managedtypes,msetypes;
 type
  syssubty = procedure (const paramco: integer);
  

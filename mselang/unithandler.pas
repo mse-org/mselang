@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,parserglob,elements,handlerglob;
+ msestrings,parserglob,opglob,elements,handlerglob;
 
 function newunit(const aname: string): punitinfoty; 
 function loadunit(const aindex: integer): punitinfoty;

@@ -18,7 +18,7 @@ unit segmentutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,msetypes;
+ parserglob,opglob,msetypes;
  
   //todo: use inline
   

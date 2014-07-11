@@ -18,7 +18,7 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob,opcode;
+ parserglob,handlerglob,opglob,opcode;
 
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                                         const global: boolean);

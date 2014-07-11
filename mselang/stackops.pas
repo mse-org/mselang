@@ -15,7 +15,7 @@ unit stackops;
 //
 interface
 uses
- parserglob;
+ parserglob,opglob;
 
 const
  pointersize = sizeof(pointer);

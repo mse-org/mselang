@@ -19,7 +19,7 @@ unit handler;
             {$implicitexceptions off}{$endif}
 interface
 uses
- parserglob,typinfo,msetypes,handlerglob;
+ parserglob,opglob,typinfo,msetypes,handlerglob;
 
 procedure initparser();
 
