@@ -274,7 +274,7 @@ type
     end
     else begin
      if po2^.address = 0 then begin
-      linkmark(po2^.links,seg);
+      linkmark(po2^.links,seg,sizeof(intfitemty.instanceshift));
      end
      else begin
       sub^.subad:= po2^.address;

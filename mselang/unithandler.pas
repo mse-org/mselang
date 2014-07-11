@@ -29,7 +29,8 @@ procedure handleimplementationentry();
 procedure handleimplementation();
 procedure handleinclude();
 
-procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty);
+procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
+                                                  const offset: integer  = 0);
 procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
@@ -411,7 +412,8 @@ var
  linkindex: linkindexty;
  deletedlinks: linkindexty;
  
-procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty);
+procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
+                                                    const offset: integer = 0);
 var
  li1: linkindexty;
  po1: plinkinfoty;
@@ -431,6 +433,7 @@ begin
  end;
  po1^.next:= alinks;
  po1^.dest:= aaddress;
+ inc(po1^.dest.address,offset); 
  alinks:= li1;
 end;
 
