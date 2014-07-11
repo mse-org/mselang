@@ -29,7 +29,7 @@ procedure handleimplementationentry();
 procedure handleimplementation();
 procedure handleinclude();
 
-procedure linkmark(var alinks: linkindexty; const aaddress: integer);
+procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty);
 procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
@@ -40,8 +40,6 @@ procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 procedure handleunitend();
-procedure copyvirtualtable(const source,dest: segaddressty;
-                                                 const itemcount: integer);
 procedure handleinifini();
 procedure handleinitializationstart();
 procedure handleinitialization();
@@ -54,7 +52,8 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops,segmentutils;
+ mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops,segmentutils,
+ classhandler;
  
 type
  unithashdataty = record
@@ -402,7 +401,7 @@ end;
 type
  linkinfoty = record
   next: linkindexty;
-  dest: opaddressty;
+  dest: segaddressty;
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
@@ -412,7 +411,7 @@ var
  linkindex: linkindexty;
  deletedlinks: linkindexty;
  
-procedure linkmark(var alinks: linkindexty; const aaddress: integer);
+procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty);
 var
  li1: linkindexty;
  po1: plinkinfoty;
@@ -438,14 +437,12 @@ end;
 procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
 var
  li1: linkindexty;
- po1: popinfoty;
 begin
  if alinks <> 0 then begin
   li1:= alinks;
-  po1:= getoppo(0);
   while true do begin
    with links[li1] do begin
-    po1[dest].par.opaddress:= aaddress-1;
+    popaddressty(getsegmentpo(dest))^:= aaddress-1;
     if next = 0 then begin
      break;
     end;
@@ -527,25 +524,6 @@ begin
    fo1:= next;
   end;
  end;
-end;
-
-procedure copyvirtualtable(const source,dest: segaddressty;
-                                                 const itemcount: integer);
-var
- ps,pd,pe: popaddressty;
-begin
- ps:= getsegmentpo(seg_globconst,source.address+sizeof(classdefheaderty));
- pd:= getsegmentpo(seg_globconst,dest.address+sizeof(classdefheaderty));
-// ps:= pointer(info.constseg)+source.address+sizeof(classdefheaderty);
-// pd:= pointer(info.constseg)+dest.address+sizeof(classdefheaderty);
- pe:= pd+itemcount;
- repeat
-  if pd^ = 0 then begin
-   pd^:= ps^;
-  end;
-  inc(ps);
-  inc(pd);
- until pd >= pe;
 end;
 
 procedure resolveclassdescend(var itemdata);

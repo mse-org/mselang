@@ -24,7 +24,8 @@ const
  includemax = 31;
 
 type
- segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_rtti);
+ segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
+              seg_op,seg_rtti,seg_intf);
 
  bool8 = boolean;
  bool16 = wordbool;
@@ -224,7 +225,6 @@ type
 
  segaddressty = record
   address: dataoffsty;
-//  offset: dataoffsty;
   segment: segmentty;
  end;
  

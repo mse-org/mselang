@@ -235,7 +235,7 @@ procedure continueexception();
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
- segmentutils;
+ segmentutils,classhandler;
 {
  stackinfoty = record
   case datakindty of
@@ -1703,26 +1703,23 @@ procedure run({const code: opinfoarty; const constseg: pointer;}
                                         const stackdepht: integer);
 var
  segs: segmentbuffersty;
+ seg1: segmentty;
 begin
 // trystack:= nil;
 // exceptobj:= nil;
- fillchar(segs,sizeof(segs),0);
+ for seg1:= low(seg1) to high(seg1) do begin //defaults
+  segs[seg1].base:= getsegmentbase(seg1); 
+  segs[seg1].size:= getsegmentsize(seg1);
+ end;
+
  reallocmem(mainstack,stackdepht);
  segs[seg_stack].base:= mainstack;
  segs[seg_stack].size:= stackdepht;
-// segs[seg_op].base:= pointer(code);
-// segs[seg_op].size:= length(code)*sizeof(opinfoty);
- segs[seg_op].base:= getsegmentbase(seg_op);
- segs[seg_op].size:= getsegmentsize(seg_op);
  with pstartupdataty(segs[seg_op].base)^ do begin
   reallocmem(globdata,globdatasize);
   segs[seg_globvar].base:= globdata;
   segs[seg_globvar].size:= globdatasize;
  end;
- segs[seg_globconst].base:= getsegmentbase(seg_globconst);
- segs[seg_globconst].size:= getsegmentsize(seg_globconst);
- segs[seg_rtti].base:= getsegmentbase(seg_rtti);
- segs[seg_rtti].size:= getsegmentsize(seg_rtti);
  run(segs);
 end;
 

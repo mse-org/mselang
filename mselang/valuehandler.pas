@@ -27,8 +27,8 @@ procedure handlevalueidentifier();
 
 implementation
 uses
- errorhandler,elements,handlerutils,opcode,stackops,
- subhandler,grammar,unithandler,syssubhandler;
+ errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
+ subhandler,grammar,unithandler,syssubhandler,classhandler;
 
 function tryconvert(var context: contextitemty;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
@@ -217,14 +217,14 @@ var
    if asub^.flags * [sf_virtual,sf_override] <> [] then begin
     with additem()^ do begin
      par.virtcallinfo.virtoffset:= asub^.virtualindex*sizeof(opaddressty)+
-                                                      sizeof(classdefheaderty);
+                                                           virtualtableoffset;
      par.virtcallinfo.selfinstance:= -asub^.paramsize;
      op:= @callvirtop;
     end;
    end
    else begin
     if asub^.address = 0 then begin //unresolved header
-     linkmark(asub^.links,opcount);
+     linkmark(asub^.links,getsegaddress(seg_op,opcount*sizeof(opinfoty)));
     end;
     with additem()^ do begin
      par.callinfo.ad:= asub^.address-1; //possibly invalid

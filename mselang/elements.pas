@@ -22,7 +22,8 @@ unit elements;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils;
+ msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils,
+ classhandler;
 
 {$define mse_debug_parser}
 

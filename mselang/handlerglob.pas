@@ -76,18 +76,6 @@ type
   indextypedata: elementoffsetty;
  end;
 
- classdefheaderty = record
-  allocsize: integer;
-  fieldsize: integer;
-  parentclass: dataoffsty;
- end;
- classdefinfoty = record
-  header: classdefheaderty;
-  virtualmethods: record //array of opaddressty
-  end;
- end;
- pclassdefinfoty = ^classdefinfoty;
-
  infoclassflagty = (icf_virtualtablevalid);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
@@ -102,11 +90,23 @@ type
   interfacesubcount: integer;
  end;
  pinfoclassty = ^infoclassty;
- 
+
+ classintfdataty = record
+  intftype: elementoffsetty;
+  next: elementoffsetty;  //chain, root = infoclassty.interfacechain
+ end;
+ pclassintfdataty = ^classintfdataty;
+   
+ intfancestordataty = record
+  intftype: elementoffsetty;
+  next: elementoffsetty;  //chain, root = infointerfacety.ancestorchain
+ end;
+ pintfancestordataty = ^intfancestordataty;
+
  infointerfacety = record
-  ancestorchain: elementoffsetty;
-  subchain: elementoffsetty;
-  subcount: integer;
+  ancestorchain: elementoffsetty; //-> infoancestordataty
+  subchain: elementoffsetty;      //->
+  subcount: integer;  
  end;
  pinfointerfacety = ^infointerfacety;
 
@@ -248,21 +248,10 @@ type
  end;
  pfielddataty = ^fielddataty;
 
- classintfdataty = record
-  intftype: elementoffsetty;
-  next: elementoffsetty;  //chain, root = classinfoty.interfacechain
- end;
- pclassintfdataty = ^classintfdataty;
- 
- intfancestordataty = record
-  next: elementoffsetty;
- end;
- pintfancestordataty = ^intfancestordataty;
- 
  subdataty = record
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
-  links: linkindexty;
+  links: linkindexty;    //calls which need to be resolved
   mark: forwardindexty;
   flags: subflagsty;
   virtualindex: integer; //-1 = none

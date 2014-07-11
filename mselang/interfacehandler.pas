@@ -20,6 +20,13 @@ interface
 uses
  parserglob;
 
+type
+ intfitemty = record  //interface sub item
+  instanceshift: integer; //offset from interface pointer to instance
+  subad: opaddressty;
+ end;
+ pintfitemty = ^intfitemty;
+ 
 procedure handleinterfacedefstart();
 procedure handleinterfacedeferror();
 procedure handleinterfacedefreturn();
@@ -156,15 +163,18 @@ begin
   ele.checkcapacity(ek_intfancestor,stacktop-stackindex);
   ele1:= 0;
   for int1:= stacktop downto stackindex + 1 do begin
-   if not ele.addelementdata(identty(contextstack[int1].d.typeref),allvisi,
-                                             ek_intfancestor,po2) then begin
-    errormessage(err_duplicateancestortype,[]);
+              //todo: check recursion
+   with contextstack[int1] do begin
+    if not ele.addelementdata(identty(d.typeref),allvisi,
+                                              ek_intfancestor,po2) then begin
+     errormessage(err_duplicateancestortype,[]);
+    end;
+    currentsubcount:= currentsubcount + 
+                ptypedataty(ele.eledataabs(d.typeref))^.infointerface.subcount;
+    po2^.intftype:= d.typeref;
+    po2^.next:= ele1;
+    ele1:= ele.eledatarel(po2);
    end;
-   currentsubcount:= currentsubcount + 
-        ptypedataty(ele.eledataabs(
-                       contextstack[int1].d.typeref))^.infointerface.subcount;
-   po2^.next:= ele1;
-   ele1:= ele.eledatarel(po2);
   end;
   ele.decelementparent();
   with ptypedataty(ele.parentdata)^ do begin

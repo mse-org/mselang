@@ -20,6 +20,25 @@ interface
 uses
  parserglob;
 
+type
+ classdefheaderty = record
+  allocsize: integer;
+  fieldsize: integer;
+  parentclass: dataoffsty;
+ end;
+ classdefinfoty = record
+  header: classdefheaderty;
+  virtualmethods: record //array of opaddressty
+  end;
+ end;
+ pclassdefinfoty = ^classdefinfoty;
+ 
+const 
+ virtualtableoffset = sizeof(classdefheaderty);
+
+procedure copyvirtualtable(const source,dest: segaddressty;
+                                                 const itemcount: integer);
+
 procedure handleclassdefstart();
 procedure handleclassdeferror();
 procedure handleclassdefreturn();
@@ -40,7 +59,7 @@ procedure handledestructorentry();
 implementation
 uses
  elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
- parser,typehandler,opcode,subhandler,segmentutils;
+ parser,typehandler,opcode,subhandler,segmentutils,interfacehandler;
 {
 const
  vic_private = vis_3;
@@ -68,6 +87,23 @@ begin
  ele.elementparent:= po2^.scopebefore;
 end;
 }
+procedure copyvirtualtable(const source,dest: segaddressty;
+                                                 const itemcount: integer);
+var
+ ps,pd,pe: popaddressty;
+begin
+ ps:= getsegmentpo(seg_globconst,source.address + virtualtableoffset);
+ pd:= getsegmentpo(seg_globconst,dest.address + virtualtableoffset);
+ pe:= pd+itemcount;
+ while pd < pe do begin
+  if pd^ = 0 then begin
+   pd^:= ps^;
+  end;
+  inc(ps);
+  inc(pd);
+ end;
+end;
+
 procedure handleclassdefstart();
 var
  po1: ptypedataty;
@@ -202,29 +238,84 @@ begin
  end;
 end;
 
-procedure checkinterface(const ainterface: pclassintfdataty);
+function checkinterface(const instanceshift: integer;
+                               const ainterface: pclassintfdataty): dataoffsty;
              //todo: name alias, delegation end the like
-var
- ele1: elementoffsetty;
- po1: pelementinfoty;
- po2: psubdataty;
-begin
- ele1:= ptypedataty(
-               ele.eledataabs(ainterface^.intftype))^.infointerface.subchain;
- while ele1 <> 0 do begin
-  po1:= ele.eleinfoabs(ele1);
-  if (ele.findcurrent(po1^.header.name,[ek_sub],allvisi,po2) <> ek_sub)
-                                  or not checkparams(@po1^.data,po2) then begin
-             //todo: compose parameter message
-   errormessage(err_nomatchingimplementation,[
-           getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
-           getidentname(po1^.header.name)]);
-  end
-  else begin
-  end;
-  ele1:= psubdataty(@po1^.data)^.next;
+
+type
+ scaninfoty = record
+  intfele: elementoffsetty;
+  sub: pintfitemty;
+  seg: segaddressty;
  end;
+              
+ procedure dointerface(var scaninfo: scaninfoty);
+ var
+  intftype: ptypedataty;
+  ele1: elementoffsetty;
+  po1: pelementinfoty;
+  po2: psubdataty;
+  po3: pintfancestordataty;
+ begin
+  with scaninfo do begin
+   intftype:= ele.eledataabs(intfele);
+   ele1:= intftype^.infointerface.subchain;
+   while ele1 <> 0 do begin
+    dec(sub);
+    dec(seg.address,sizeof(intfitemty));
+    po1:= ele.eleinfoabs(ele1);
+                    //todo: overloaded subs
+    if (ele.findcurrent(po1^.header.name,[ek_sub],allvisi,po2) <> ek_sub)
+                                or not checkparams(@po1^.data,po2) then begin
+               //todo: compose parameter message
+     errormessage(err_nomatchingimplementation,[
+         getidentname(ele.eleinfoabs(ainterface^.intftype)^.header.name)+'.'+
+         getidentname(po1^.header.name)]);
+    end
+    else begin
+     if po2^.address = 0 then begin
+      linkmark(po2^.links,seg);
+     end
+     else begin
+      sub^.subad:= po2^.address;
+     end;
+    end;
+    sub^.instanceshift:= instanceshift;
+    ele1:= psubdataty(@po1^.data)^.next;
+   end;
+   ele1:= intftype^.infointerface.ancestorchain;
+   while ele1 <> 0 do begin
+    po3:= ele.eledataabs(ele1);
+    intfele:= po3^.intftype;
+    dointerface(scaninfo);
+    ele1:= po3^.next;
+   end;
+  end;
+ end;
+ 
+var
+ intftypepo: ptypedataty;
+ int1: integer;
+ scaninfo: scaninfoty;
+ 
+begin
+ scaninfo.intfele:= ainterface^.intftype;
+ intftypepo:= ptypedataty(ele.eledataabs(scaninfo.intfele));
+ int1:= intftypepo^.infointerface.subcount*sizeof(intfitemty);
+ result:= allocsegmentoffset(seg_intf,int1);
+ with scaninfo do begin
+  seg.address:= result+int1;       //top-down
+  sub:= getsegmentpo(seg_intf,seg.address);
+  seg.segment:= seg_intf;
+ end;
+ dointerface(scaninfo); 
 end;
+
+//class instance layout:
+// header, pointer to virtual table
+// fields
+// interface table  <- fieldsize
+//                  <- allocsize
 
 procedure handleclassdefreturn();
 var
@@ -236,6 +327,7 @@ var
  intfcount: integer;
  intfsubcount: integer;
  fla1: addressflagsty;
+ int1: integer;
  
 begin
 {$ifdef mse_debugparser}
@@ -250,11 +342,11 @@ begin
    indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[stackindex].d.cla;
 
-                     //alloc interfaces   
+                     
    intfcount:= 0;
    intfsubcount:= 0;
    ele1:= infoclass.interfacechain;
-   while ele1 <> 0 do begin
+   while ele1 <> 0 do begin          //count interfaces
     with pclassintfdataty(ele.eledataabs(ele1))^ do begin
      intfsubcount:= intfsubcount + 
             ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
@@ -262,15 +354,8 @@ begin
     end;
     inc(intfcount);
    end;
-   if intfcount <> 0 then begin
-    ele1:= infoclass.interfacechain;
-    while ele1 <> 0 do begin
-     checkinterface(ele.eledataabs(ele1));
-     ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
-    end;
-    infoclass.interfacecount:= infoclass.interfacecount + intfcount;
-    infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
-   end;
+   infoclass.interfacecount:= infoclass.interfacecount + intfcount;
+   infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
 
          //alloc classinfo
    infoclass.allocsize:= classinfo1^.fieldoffset + 
@@ -286,9 +371,11 @@ begin
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
-     if infoclass.virtualcount > 0 then begin
+     if parentinfoclass1^.virtualcount > 0 then begin
+      fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
-       copyvirtualtable(infoclass.defs,classdefs1,infoclass.virtualcount);
+       copyvirtualtable(infoclass.defs,classdefs1,
+                                       parentinfoclass1^.virtualcount);
       end
       else begin
        regclassdescendent(d.typ.typedata,ancestor);
@@ -299,6 +386,18 @@ begin
    ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change
+    
+    //todo: init instance interface table
+              
+   if intfcount <> 0 then begin       //alloc interface table
+    int1:= -infoclass.allocsize;
+    ele1:= infoclass.interfacechain;
+    while ele1 <> 0 do begin
+     dec(int1,pointersize);
+     checkinterface(int1,ele.eledataabs(ele1));
+     ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
+    end;
+   end;
   end;
   ele.elementparent:= contextstack[stackindex].b.eleparent;
   currentcontainer:= 0;

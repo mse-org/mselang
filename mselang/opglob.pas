@@ -41,7 +41,8 @@ type
              ok_offset,ok_offsetaddress,ok_segment,
              ok_locop,ok_segop,ok_poop,
              ok_op,ok_op1,ok_opn,ok_opaddress,ok_params,
-             ok_call,ok_virtcall,ok_stack,ok_initclass,ok_destroyclass,
+             ok_call,ok_virtcall,ok_intfcall,
+             ok_stack,ok_initclass,ok_destroyclass,
              ok_managed);
 
  v8ty = array[0..0] of byte;
@@ -60,7 +61,7 @@ type
    //todo: simplify nested procedure link handling
 
  callinfoty = record
-  ad: opaddressty;
+  ad: opaddressty;    //first!
   linkcount: integer; //used in "for downto 0"
  end; 
 
@@ -68,7 +69,13 @@ type
   selfinstance: dataoffsty; //stackoffset
   virtoffset: dataoffsty;   //offset in classdefinfoty
  end;
- 
+
+ intfcallinfoty = record
+  selfinstance: dataoffsty; 
+    //stackoffset, points to interface item in obj instance.
+  subindex: integer;   //sub item in interface list
+ end;
+  
  initclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
 //  classdef: dataoffsty;
@@ -181,7 +188,7 @@ type
     opn: opninfoty;
    );
    ok_opaddress:(
-    opaddress: opaddressty;
+    opaddress: opaddressty; //first!
    );
    ok_params:(
     paramsize: datasizety;
@@ -192,6 +199,9 @@ type
    );
    ok_virtcall:(
     virtcallinfo: virtcallinfoty;
+   );
+   ok_intfcall:(
+    intfcallinfo: intfcallinfoty;
    );
    ok_stack:(
     stacksize: datasizety;

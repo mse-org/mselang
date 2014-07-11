@@ -54,7 +54,7 @@ function checkparams(const po1,ref: psubdataty): boolean;
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils;
+ managedtypes,segmentutils,classhandler;
  
 type
  equalparaminfoty = record
