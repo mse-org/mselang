@@ -1204,12 +1204,18 @@ var
  po1: pointer;
  po2: pclassdefinfoty;
  self1: ppointer;
+ int1: integer;
 begin
  with cpu.pc^.par do begin
 //  po2:= pclassdefinfoty(initclass.classdef+constdata);
   self1:= cpu.frame+initclass.selfinstance;
   po2:= self1^;  //class type
   po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
+  int1:= po2^.header.allocsize - po2^.header.fieldsize;
+  if int1 > 0 then begin
+   move((pointer(po2)+po2^.header.interfacestart)^,
+                                      (po1+po2^.header.fieldsize)^,int1);
+  end;
   ppointer(po1)^:= po2;
   self1^:= po1;  //class instance
   pppointer(cpu.frame+initclass.result)^^:= po1; //result
