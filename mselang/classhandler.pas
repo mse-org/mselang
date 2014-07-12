@@ -188,19 +188,20 @@ procedure classheader(const ainterface: boolean);
 var
  po1,po2: ptypedataty;
  po3: pclassintfdataty;
+ ele1: elementoffsetty;
 begin
  with info do begin
   po1:= ele.eledataabs(currentcontainer);
   ele.checkcapacity(ek_classintf);
-  ele.pushelementparent();
-  ele.decelementparent(); //interface or implementation
+  ele1:= ele.elementparent;
+  ele.decelementparent(); //interface or implementation scope
   if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
    if ainterface then begin
     if po2^.kind <> dk_interface then begin
      errormessage(err_interfacetypeexpected,[]);
     end
     else begin
-     ele.popelementparent;
+     ele.elementparent:= ptypedataty(ele.eledataabs(ele1))^.infoclass.intf;
      if ele.addelementduplicatedata(
            contextstack[stackindex+1].d.ident.ident,
            [vik_global],ek_classintf,po3,allvisi-[vik_ancestor]) then begin
@@ -213,7 +214,6 @@ begin
      else begin
       identerror(1,err_duplicateidentifier);
      end;
-     exit;
     end;
    end
    else begin
@@ -231,7 +231,7 @@ begin
     end;
    end;
   end;
-  ele.popelementparent;
+  ele.elementparent:= ele1;
  end;
 end;
 
