@@ -21,6 +21,18 @@ uses
  parserglob,handlerglob;
 
 type
+ classintfnamedataty = record
+  intftype: elementoffsetty;
+  next: elementoffsetty;  //chain, root = infoclassty.interfacechain
+ end;
+ pclassintfnamedataty = ^classintfnamedataty;
+
+ classintftypedataty = record
+  intftype: elementoffsetty;
+  intfindex: integer;
+ end;
+ pclassintftypedataty = ^classintftypedataty;
+   
  classdefheaderty = record
   parentclass: dataoffsty;
   allocsize: integer;
@@ -116,13 +128,16 @@ function getclassinterfaceoffset(const aclass: ptypedataty;
               const aintf: ptypedataty; out offset: integer): boolean;
                             //true if ok
 var
- classele,intfele: elementoffsetty;
- ele1: elementoffsetty;
+ intfele: elementoffsetty;
+ po1: pclassintftypedataty;
+ 
 begin
- classele:= ele.eledatarel(aclass);
  intfele:= ele.eledatarel(aintf);
- result:= ele.findchild(classele,[tks_classintftype,intfele],
-                                          [ek_classintftype],allvisi,ele1);
+ result:= ele.findchilddata(aclass^.infoclass.intftypenode,identty(intfele),
+                                 [ek_classintftype],allvisi,pointer(po1));
+ if result then begin
+  offset:= po1^.intfindex*pointersize + aclass^.infoclass.fieldsize;
+ end;
 end;
 
 procedure handleclassdefstart();
@@ -148,6 +163,7 @@ begin
   with contextstack[stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
+   d.cla.intfindex:= 0;
    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    d.cla.virtualindex:= 0;
   end;
@@ -195,6 +211,7 @@ procedure classheader(const ainterface: boolean);
 var
  po1,po2: ptypedataty;
  po3: pclassintfnamedataty;
+ po4: pclassintftypedataty;
  ele1: elementoffsetty;
 begin
  with info do begin
@@ -220,9 +237,15 @@ begin
       end;
       ele.elementparent:= 
                  ptypedataty(ele.eledataabs(ele1))^.infoclass.intftypenode;
-      pclassintftypedataty(
-       ele.addelementduplicatedata1(identty(po3^.intftype),
-                   ek_classintftype,[vik_global]))^.intftype:= po3^.intftype;
+      po4:= ele.addelementduplicatedata1(identty(po3^.intftype),
+                   ek_classintftype,[vik_global]);
+      with po4^ do begin
+       intftype:= po3^.intftype;
+       with contextstack[stackindex-2] do begin
+        intfindex:= d.cla.intfindex;
+        inc(d.cla.intfindex);
+       end;
+      end;
      end
      else begin
       identerror(1,err_duplicateidentifier);
@@ -387,8 +410,9 @@ begin
    infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
 
          //alloc classinfo
-   infoclass.allocsize:= classinfo1^.fieldoffset + 
-          infoclass.interfacecount*pointersize;
+   infoclass.fieldsize:= classinfo1^.fieldoffset;
+   infoclass.allocsize:= infoclass.fieldsize +  
+                                  infoclass.interfacecount*pointersize;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                     //interfacetable start
@@ -398,7 +422,7 @@ begin
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
     header.parentclass:= 0;
     header.allocsize:= infoclass.allocsize;
-    header.fieldsize:= classinfo1^.fieldoffset;
+    header.fieldsize:= infoclass.fieldsize;
     header.interfacestart:= int1;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;

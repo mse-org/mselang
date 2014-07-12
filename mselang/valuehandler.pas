@@ -268,7 +268,7 @@ var
    offs1:= 0;
    with info do begin
     for int1:= firstnotfound to idents.high do begin //fields
-     case ele.findchild(ele1,idents.d[int1],allvisi,ele1,po4) of
+     case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
       ek_none: begin
        identerror(1+int1,err_identifiernotfound);
        exit;

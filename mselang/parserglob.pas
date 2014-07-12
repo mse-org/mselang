@@ -363,6 +363,7 @@ type
  end;
  classinfoty = record
   visibility: visikindsty;
+  intfindex: integer;
   fieldoffset: dataoffsty;
   virtualindex: integer;
 //  parentclass: elementoffsetty;

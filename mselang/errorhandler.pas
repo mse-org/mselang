@@ -303,10 +303,12 @@ begin
   end
   else begin
    int1:= stackindex+astackoffset;
+  {$ifdef mse_checkinternalerror}
    if (int1 > stacktop) or (int1 < 0) then begin
     internalerror(ie_error,'20140326A');
     exit;
    end;
+  {$endif}
    sourcepos:= contextstack[int1].start;
   end;
   errormessage(sourcepos,aerror,values,coloffset,aerrorlevel);

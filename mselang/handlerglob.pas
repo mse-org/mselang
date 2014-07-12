@@ -84,6 +84,7 @@ type
   implnode: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
+  fieldsize: dataoffsty;
   allocsize: dataoffsty;
   virtualcount: integer;
   flags: infoclassflagsty;
@@ -93,17 +94,6 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
- classintfnamedataty = record
-  intftype: elementoffsetty;
-  next: elementoffsetty;  //chain, root = infoclassty.interfacechain
- end;
- pclassintfnamedataty = ^classintfnamedataty;
-
- classintftypedataty = record
-  intftype: elementoffsetty;
- end;
- pclassintftypedataty = ^classintftypedataty;
-   
  intfancestordataty = record
   intftype: elementoffsetty;
   next: elementoffsetty;  //chain, root = infointerfacety.ancestorchain

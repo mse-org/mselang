@@ -135,7 +135,9 @@ begin
 //    alignsegment(seg_rtti);
    end;
    else begin
+  {$ifdef mse_checkinternalerror}
     internalerror(ie_notimplemented,'20140605A');
+  {$endif}
    end;
   end;
 //  result:= getglobconstaddress(rttibufferindex);

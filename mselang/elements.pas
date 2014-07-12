@@ -167,14 +167,23 @@ type
                  const achild: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
+   function findchilddata(const aparent: elementoffsetty; 
+                 const achild: identty; const akinds: elementkindsty;
+                 const avislevel: visikindsty; out adata: pointer): boolean;
+   function findchild(const aparent: elementoffsetty;
+                 const achild: identty; const akinds: elementkindsty; 
+                 const avislevel: visikindsty; 
+               out element: elementoffsetty; out adata: pointer): elementkindty;
    function findchild(const aparent: elementoffsetty; 
                  const achildtree: array of identty;
                  const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
-   function findchild(const aparent: elementoffsetty; 
-                 const achild: identty; const avislevel: visikindsty; 
-               out element: elementoffsetty; out adata: pointer): elementkindty;
+   function findchilddata(const aparent: elementoffsetty; 
+                 const achildtree: array of identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty; 
+                               out adata: pointer): boolean;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
                   //searches in scopestack, returns parent
@@ -1128,7 +1137,7 @@ begin
  end;
 end;
 *)
-
+{
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
            const achild: identty; const akinds: elementkindsty;
            const avislevel: visikindsty; out element: elementoffsetty): boolean;
@@ -1141,7 +1150,7 @@ begin
  result:= findcurrent(achild,akinds,avislevel,element);
  elementparent:= ele1;
 end;
-
+}
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
                  const achildtree: array of identty;
                  const akinds: elementkindsty;
@@ -1194,6 +1203,91 @@ next:
  end;
 end;
 
+function telementhashdatalist.findchilddata(const aparent: elementoffsetty; 
+                 const achildtree: array of identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty;
+                               out adata: pointer): boolean;
+var
+ ele1: elementoffsetty;
+begin
+ adata:= nil;
+ result:= findchild(aparent,achildtree,akinds,avislevel,ele1);
+ if result then begin
+  adata:= ele1+pointer(felementdata)+eledatashift;
+ end;
+end;
+
+function telementhashdatalist.findchild(const aparent: elementoffsetty; 
+                 const achild: identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty;
+                               out element: elementoffsetty): boolean;
+var
+ int1: integer;
+ id1: identty;
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ po2,po3: pelementinfoty;
+label
+ next;
+begin
+ result:= false;
+ with pelementinfoty(pointer(felementdata)+aparent)^ do begin
+  id1:= header.path + header.name + achild;
+ end;
+ uint1:= fhashtable[id1 and fmask];
+ if uint1 <> 0 then begin
+  po1:= pelementhashdataty(pchar(fdata) + uint1);
+  while true do begin
+   if po1^.data.key = id1 then begin
+    po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+    if (po2^.header.name <> achild) or 
+                          (po2^.header.parent <> aparent) then begin
+     goto next;
+    end;
+    element:= po1^.data.data;
+    result:= (po2^.header.visibility*avislevel <> []) and
+                ((akinds = []) or (po2^.header.kind in akinds));
+    exit;
+   end;
+next:
+   if po1^.header.nexthash = 0 then begin
+    break;
+   end;
+   po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+  end;
+ end;
+end;
+
+function telementhashdatalist.findchilddata(const aparent: elementoffsetty; 
+                 const achild: identty; const akinds: elementkindsty;
+                 const avislevel: visikindsty;
+                               out adata: pointer): boolean;
+var
+ ele1: elementoffsetty;
+begin
+ adata:= nil;
+ result:= findchild(aparent,achild,akinds,avislevel,ele1);
+ if result then begin
+  adata:= ele1+pointer(felementdata)+eledatashift;
+ end;
+end;
+
+function telementhashdatalist.findchild(const aparent: elementoffsetty;
+                 const achild: identty; const akinds: elementkindsty;
+                 const avislevel: visikindsty; 
+               out element: elementoffsetty; out adata: pointer): elementkindty;
+begin
+ result:= ek_none;
+ adata:= nil;
+ if findchild(aparent,achild,akinds,avislevel,element) then begin
+  adata:= element+pointer(felementdata)+eledatashift;
+  result:= pelementinfoty(adata-eledatashift)^.header.kind;
+ end;
+end;
+
+{
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
                  const achild: identty; const avislevel: visikindsty; 
                out element: elementoffsetty; out adata: pointer): elementkindty;
@@ -1213,6 +1307,7 @@ begin
  end;
  elementparent:= ele1;
 end;
+}
 
 function telementhashdatalist.findparentscope(const aident: identty;
                const akinds: elementkindsty; const avislevel: visikindsty;
@@ -1875,7 +1970,9 @@ var
  int1,int2: integer;
 begin
  if fscopestackpo < 0 then begin
+ {$ifdef mse_checkinternalerror}
   internalerror(ie_elements,'E20140406C');
+ {$endif}
  end
  else begin
   int2:= fscopestack[fscopestackpo];
@@ -1908,7 +2005,9 @@ begin
  end;
  result:= addelement(getident(),akind,globalvisi);
  if result = nil then begin
+ {$ifdef mse_checkinternalerror}
   internalerror(ie_elements,'20140407B'); //duplicate id
+ {$endif}
  end;
  with fscopespo^ do begin
   element:= result-pointer(felementdata);
@@ -1920,9 +2019,11 @@ end;
 procedure telementhashdatalist.pushelementparent(
                                            const aparent: elementoffsetty);
 begin
+{$ifdef mse_checkinternalerror}
  if fparentindex > maxparents then begin
   internalerror(ie_elements,'201400412A');
  end;
+{$endif}
  fparents[fparentindex]:= elementparent;
  elementparent:= aparent;
  inc(fparentindex);
@@ -1930,18 +2031,22 @@ end;
 
 procedure telementhashdatalist.pushelementparent(); //save current on stack
 begin
+{$ifdef mse_checkinternalerror}
  if fparentindex > maxparents then begin
   internalerror(ie_elements,'201400412A');
  end;
+{$endif}
  fparents[fparentindex]:= elementparent;
  inc(fparentindex);
 end;
 
 procedure telementhashdatalist.popelementparent;
 begin
+{$ifdef mse_checkinternalerror}
  if fparentindex = 0 then begin
   internalerror(ie_elements,'201400412B');
  end;
+{$endif}
  dec(fparentindex);
  elementparent:= fparents[fparentindex];
 end;

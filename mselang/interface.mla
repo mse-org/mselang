@@ -67,5 +67,5 @@ begin
  c:= tc.create();
  c.test();
  c.destroy();
- i:= itesta(c);
+ i:= itest1(c);
 end.

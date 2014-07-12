@@ -97,7 +97,7 @@ begin
     internalerror(ie_unit,'131018A');
    end;
  {$else}
-   ele.pushelement(id1,[vik_units],ek_unit,po1);
+   ele.pushelement(id1,ek_unit,[vik_units],po1);
  {$endif}
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
@@ -142,7 +142,7 @@ begin
     internalerror(ie_unit,'20131130A');
    end;
   {$else}
-   ele.pushelement(tk_implementation,implementationvisi,ek_implementation,po1);
+   ele.pushelement(tk_implementation,ek_implementation,implementationvisi,po1);
   {$endif}
   end;
   with contextstack[stackindex] do begin
