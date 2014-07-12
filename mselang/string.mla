@@ -1,0 +1,17 @@
+unit program;
+var
+implementation
+
+procedure p(var s: string8);
+begin
+ writeln(s);
+ s:= 'def';
+end;
+
+var
+ s: string8;
+begin
+ s:= 'abc';
+ p(s);
+ writeln(s);
+end.
