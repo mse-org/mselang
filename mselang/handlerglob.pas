@@ -287,9 +287,12 @@ type
  end;
  pusesdataty = ^usesdataty;
  
- classimpdataty = record
+ classimpnodedataty = record
  end;
- pclassimpdataty = ^classimpdataty;
+ pclassimpnodedataty = ^classimpnodedataty;
+ classintfnodedataty = record
+ end;
+ pclassintfnodedataty = ^classimpnodedataty;
  
 {
  classdataty = record

@@ -164,8 +164,8 @@ begin
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
-   ele1:= ele.addelementduplicate1(tks_classintf,globalvisi,ek_classintf);
-   ele2:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
+   ele1:= ele.addelementduplicate1(tks_classintf,globalvisi,ek_classintfnode);
+   ele2:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimpnode);
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
