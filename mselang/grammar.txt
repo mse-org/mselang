@@ -41,7 +41,8 @@
  'varhandler','exceptionhandler','controlhandler','handlerutils'
  'valuehandler','interfacehandler'
 @.internaltokens
- '.classes','.private','.protected','.public','.published','.classimp','.self'
+ '.classes','.private','.protected','.public','.published'
+ '.classintf','.classimp','.self'
  '.units','.ancestors'
 @.tokens
  'result'

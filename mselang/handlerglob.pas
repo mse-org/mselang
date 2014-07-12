@@ -79,6 +79,7 @@ type
  infoclassflagty = (icf_virtualtablevalid);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
+  intf: elementoffsetty;
   impl: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;

@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ parserglob,handlerglob;
 
 type
  classdefheaderty = record
@@ -43,6 +43,9 @@ const
 
 procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);
+function getclassinterfaceoffset(const aclass: ptypedataty;
+              const aintf: ptypedataty; out offset: integer): boolean;
+                            //true if ok
 
 procedure handleclassdefstart();
 procedure handleclassdeferror();
@@ -63,7 +66,7 @@ procedure handledestructorentry();
 
 implementation
 uses
- elements,handler,errorhandler,unithandler,grammar,handlerglob,handlerutils,
+ elements,handler,errorhandler,unithandler,grammar,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler;
 {
 const
@@ -109,11 +112,23 @@ begin
  end;
 end;
 
+function getclassinterfaceoffset(const aclass: ptypedataty;
+              const aintf: ptypedataty; out offset: integer): boolean;
+                            //true if ok
+var
+ classele,intfele: elementoffsetty;
+begin
+ classele:= ele.eledatarel(aclass);
+ intfele:= ele.eledatarel(aintf);
+ result:= false;
+end;
+
 procedure handleclassdefstart();
 var
  po1: ptypedataty;
  id1: identty;
-
+ ele1,ele2: elementoffsetty;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSDEFSTART');
@@ -149,19 +164,15 @@ begin
    if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
+   ele1:= ele.addelementduplicate1(tks_classintf,globalvisi,ek_classintf);
+   ele2:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
    with po1^ do begin
-   {
-    kind:= dk_class;
-    bytesize:= pointersize;
-    bitsize:= pointersize*8;
-    datasize:= das_pointer;
-    ancestor:= 0;
-    }
     fieldchain:= 0;
-    infoclass.impl:= 0;
+    infoclass.intf:= ele1;
+    infoclass.impl:= ele2;
     infoclass.defs.address:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
@@ -403,9 +414,11 @@ begin
      end;
     end;
    end;
+  {
    ele1:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimp);
    ptypedataty(ele.eledataabs(d.typ.typedata))^.infoclass.impl:= ele1;
               //possible capacity change
+  }
   end;
     
   ele.elementparent:= contextstack[stackindex].b.eleparent;

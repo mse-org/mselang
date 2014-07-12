@@ -26,7 +26,7 @@ type
   subad: opaddressty;
  end;
  pintfitemty = ^intfitemty;
- 
+
 procedure handleinterfacedefstart();
 procedure handleinterfacedeferror();
 procedure handleinterfacedefreturn();
@@ -83,20 +83,6 @@ begin
    with po1^.infointerface do begin
     ancestorchain:= 0;
    end;
-{
-   with po1^ do begin
-    kind:= dk_class;
-    fieldchain:= 0;
-    bytesize:= pointersize;
-    bitsize:= pointersize*8;
-    datasize:= das_pointer;
-    ancestor:= 0;
-    infoclass.impl:= 0;
-    infoclass.defs:= 0;
-    infoclass.flags:= [];
-    infoclass.pendingdescends:= 0;
-   end;
-}
   end;
  end;
 end;

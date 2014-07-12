@@ -294,8 +294,7 @@ begin
      if int1 > 2 then begin
       errormessage(err_syntax,[';'],2);
      end
-     else begin
-///      ele.pushscopelevel();
+     else begin     //class sub
       include(currentstatementflags,stf_classimp);
       currentcontainer:= ele1;
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
@@ -307,7 +306,6 @@ begin
   end
   else begin
    exclude(currentstatementflags,stf_classimp);
-//   currentclass:= 0;
   end;
  end;
 end;

@@ -110,6 +110,8 @@ procedure negcard32();
 procedure negint32();
 procedure negflo64();
 
+procedure offsetpoimm32();
+
 procedure cmpequbool();
 procedure cmpequint32();
 procedure cmpequflo64();
@@ -689,6 +691,14 @@ begin
  vintegerty(po1^):= vintegerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
+procedure offsetpoimm32();
+var
+ po1: pointer;
+begin
+ po1:= cpu.stack - alignsize(sizeof(vpointerty));
+ vpointerty(po1^):= vpointerty(po1^)+cpu.pc^.par.imm.vint32;
+end;
+
 procedure cmpequbool;
 var
  po1,po2: pvbooleanty;
@@ -1204,21 +1214,25 @@ var
  po1: pointer;
  po2: pclassdefinfoty;
  self1: ppointer;
- int1: integer;
+ ps,pd,pe: popaddressty;
 begin
  with cpu.pc^.par do begin
 //  po2:= pclassdefinfoty(initclass.classdef+constdata);
   self1:= cpu.frame+initclass.selfinstance;
   po2:= self1^;  //class type
   po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
-  int1:= po2^.header.allocsize - po2^.header.fieldsize;
-  if int1 > 0 then begin
-   move((pointer(po2)+po2^.header.interfacestart)^,
-                                      (po1+po2^.header.fieldsize)^,int1);
-  end;
-  ppointer(po1)^:= po2;
-  self1^:= po1;  //class instance
+  ppointer(po1)^:= po2;    //class type info
+  self1^:= po1;            //class instance
   pppointer(cpu.frame+initclass.result)^^:= po1; //result
+
+  pd:= po1 + po2^.header.fieldsize; //copy interface table
+  pe:= po1 + po2^.header.allocsize;
+  ps:= (pointer(po2)+po2^.header.interfacestart);
+  while pd < pe do begin
+   pd^:= ps^;
+   inc(pd);
+   inc(ps);
+  end;
  end;
 end;
 

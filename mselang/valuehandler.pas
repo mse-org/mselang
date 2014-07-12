@@ -32,19 +32,20 @@ uses
 
 function tryconvert(var context: contextitemty;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
-var
- po1: ptypedataty;
+var                     //todo: optimize, use tables, complete
+ source: ptypedataty;
+ int1: integer;
 begin
- po1:= ele.eledataabs(context.d.datatyp.typedata);
+ source:= ele.eledataabs(context.d.datatyp.typedata);
  result:= destindirectlevel = context.d.datatyp.indirectlevel;
  if result then begin
-  result:= dest^.kind = po1^.kind;
+  result:= dest^.kind = source^.kind;
   if not result then begin
    case context.d.kind of
     ck_const: begin
      case dest^.kind of //todo: use table
       dk_float: begin
-       case po1^.kind of
+       case source^.kind of
         dk_integer: begin //todo: adjust data size
          with context.d,constval do begin
           kind:= dk_float;
@@ -59,7 +60,7 @@ begin
     ck_fact: begin
      case dest^.kind of //todo: use table
       dk_float: begin
-       case po1^.kind of
+       case source^.kind of
         dk_integer: begin //todo: adjust data size
          with additem()^ do begin
           op:= @stackops.int32toflo64;
@@ -79,10 +80,22 @@ begin
     end;
    {$endif}
    end;
-   if result then begin
-    context.d.datatyp.typedata:= ele.eledatarel(dest);
+  end;
+ end
+ else begin
+  if (context.d.kind = ck_fact) and (destindirectlevel = 0) and
+        (context.d.datatyp.indirectlevel = 1) and 
+        (source^.kind = dk_class) and (dest^.kind = dk_interface) then begin
+   if getclassinterfaceoffset(source,dest,int1) then begin
+    with additem()^ do begin
+     op:= @offsetpoimm32;
+     par.imm.vint32:= int1;
+    end;
    end;
   end;
+ end;
+ if result then begin
+  context.d.datatyp.typedata:= ele.eledatarel(dest);
  end;
 end;
  
