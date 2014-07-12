@@ -160,7 +160,7 @@ var
 begin
  for sf1:= low(sysfuncty) to high(sysfuncty) do begin
   with sysfuncinfos[sf1] do begin
-   po1:= ele.addelement(getident(name),globalvisi,ek_sysfunc);
+   po1:= ele.addelement(getident(name),ek_sysfunc,globalvisi);
    psysfuncdataty(@po1^.data)^:= data;
   end;
  end;

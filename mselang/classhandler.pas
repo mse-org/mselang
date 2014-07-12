@@ -117,17 +117,19 @@ function getclassinterfaceoffset(const aclass: ptypedataty;
                             //true if ok
 var
  classele,intfele: elementoffsetty;
+ ele1: elementoffsetty;
 begin
  classele:= ele.eledatarel(aclass);
  intfele:= ele.eledatarel(aintf);
- result:= false;
+ result:= ele.findchild(classele,[tks_classintftype,intfele],
+                                          [ek_classintftype],allvisi,ele1);
 end;
 
 procedure handleclassdefstart();
 var
  po1: ptypedataty;
  id1: identty;
- ele1,ele2: elementoffsetty;
+ ele1,ele2,ele3: elementoffsetty;
  
 begin
 {$ifdef mse_debugparser}
@@ -161,18 +163,23 @@ begin
   end;
   contextstack[stackindex].b.eleparent:= ele.elementparent;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
+   if not ele.pushelement(id1,ek_type,globalvisi,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
-   ele1:= ele.addelementduplicate1(tks_classintf,globalvisi,ek_classintfnode);
-   ele2:= ele.addelementduplicate1(tks_classimp,globalvisi,ek_classimpnode);
+   ele1:= ele.addelementduplicate1(tks_classintfname,
+                                          ek_classintfnamenode,globalvisi);
+   ele2:= ele.addelementduplicate1(tks_classintftype,
+                                   ek_classintftypenode,globalvisi);
+   ele3:= ele.addelementduplicate1(tks_classimp,ek_classimpnode,globalvisi);
+
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_class,d.typ.indirectlevel,das_pointer);
    with po1^ do begin
     fieldchain:= 0;
-    infoclass.intf:= ele1;
-    infoclass.impl:= ele2;
+    infoclass.intfnamenode:= ele1;
+    infoclass.intftypenode:= ele2;
+    infoclass.implnode:= ele3;
     infoclass.defs.address:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
@@ -187,12 +194,12 @@ end;
 procedure classheader(const ainterface: boolean);
 var
  po1,po2: ptypedataty;
- po3: pclassintfdataty;
+ po3: pclassintfnamedataty;
  ele1: elementoffsetty;
 begin
  with info do begin
+  ele.checkcapacity(elesizes[ek_classintfname]+elesizes[ek_classintftype]);
   po1:= ele.eledataabs(currentcontainer);
-  ele.checkcapacity(ek_classintf);
   ele1:= ele.elementparent;
   ele.decelementparent(); //interface or implementation scope
   if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
@@ -201,15 +208,21 @@ begin
      errormessage(err_interfacetypeexpected,[]);
     end
     else begin
-     ele.elementparent:= ptypedataty(ele.eledataabs(ele1))^.infoclass.intf;
+     ele.elementparent:= 
+                 ptypedataty(ele.eledataabs(ele1))^.infoclass.intfnamenode;
      if ele.addelementduplicatedata(
            contextstack[stackindex+1].d.ident.ident,
-           [vik_global],ek_classintf,po3,allvisi-[vik_ancestor]) then begin
+           ek_classintfname,[vik_global],po3,allvisi-[vik_ancestor]) then begin
       with po3^ do begin
        intftype:= ele.eledatarel(po2);
        next:= po1^.infoclass.interfacechain;
        po1^.infoclass.interfacechain:= ele.eledatarel(po3);
       end;
+      ele.elementparent:= 
+                 ptypedataty(ele.eledataabs(ele1))^.infoclass.intftypenode;
+      pclassintftypedataty(
+       ele.addelementduplicatedata1(identty(po3^.intftype),
+                   ek_classintftype,[vik_global]))^.intftype:= po3^.intftype;
      end
      else begin
       identerror(1,err_duplicateidentifier);
@@ -255,7 +268,7 @@ begin
 end;
 
 function checkinterface(const instanceshift: integer;
-                               const ainterface: pclassintfdataty): dataoffsty;
+                        const ainterface: pclassintfnamedataty): dataoffsty;
              //todo: name alias, delegation end the like
 
 type
@@ -363,7 +376,7 @@ begin
    intfsubcount:= 0;
    ele1:= infoclass.interfacechain;
    while ele1 <> 0 do begin          //count interfaces
-    with pclassintfdataty(ele.eledataabs(ele1))^ do begin
+    with pclassintfnamedataty(ele.eledataabs(ele1))^ do begin
      intfsubcount:= intfsubcount + 
             ptypedataty(ele.eledataabs(intftype))^.infointerface.subcount;
      ele1:= next;
@@ -410,7 +423,7 @@ begin
       inc(int1,pointersize);
       dec(po1);
       po1^:= checkinterface(int1,ele.eledataabs(ele1));
-      ele1:= pclassintfdataty(ele.eledataabs(ele1))^.next;
+      ele1:= pclassintfnamedataty(ele.eledataabs(ele1))^.next;
      end;
     end;
    end;

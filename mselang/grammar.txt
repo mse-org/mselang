@@ -42,7 +42,7 @@
  'valuehandler','interfacehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
- '.classintf','.classimp','.self'
+ '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors'
 @.tokens
  'result'

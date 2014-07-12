@@ -124,7 +124,7 @@ begin
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[stackindex-3];
     if idcontext^.d.kind = ck_ident then begin
-     po1:= ele.addelement(idcontext^.d.ident.ident,allvisi,ek_type);
+     po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
      if po1 <> nil then begin
       po3:= @po1^.data;
       po3^:= ptypedataty(@po2^.data)^;
@@ -173,7 +173,7 @@ begin
     end;
    end;
    with contextstack[stackindex-1] do begin
-    if not ele.addelementduplicatedata(id1,allvisi,ek_type,po1) then begin
+    if not ele.addelementduplicatedata(id1,ek_type,allvisi,po1) then begin
      identerror(-1,err_duplicateidentifier);
     end;
     d.typ.typedata:= ele.eledatarel(po1);
@@ -235,7 +235,7 @@ begin
   end;
   with contextstack[stackindex-1] do begin
    if not ele.pushelementduplicatedata(
-                      gettypeident(),allvisi,ek_type,po1) then begin
+                      gettypeident(),ek_type,allvisi,po1) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier);
    end;
    d.typ.typedata:= ele.eledatarel(po1);
@@ -276,7 +276,7 @@ begin
   end;
  {$endif}
   if not ele.addelementduplicatedata(contextstack[stackindex+2].d.ident.ident,
-                                           avisibility,ek_field,po1) then begin
+                                           ek_field,avisibility,po1) then begin
    identerror(2,err_duplicateidentifier);
   end;
   po1^.flags:= aflags;
@@ -387,7 +387,7 @@ begin
       exit;
      end;
     end;
-    if not ele.addelementdata(gettypeident(),allvisi,ek_type,po1) then begin
+    if not ele.addelementdata(gettypeident(),ek_type,allvisi,po1) then begin
      identerror(-2,err_duplicateidentifier);
      exit;
     end;
@@ -488,7 +488,7 @@ begin
      else begin
       id1:= getident(); //multi dimension
      end;
-     if not ele.addelementdata(id1,allvisi,ek_type,arty) then begin
+     if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
@@ -689,7 +689,7 @@ begin
   end;
  {$endif}
   if not ele.pushelementduplicatedata(contextstack[stackindex-2].d.ident.ident,
-                                               allvisi,ek_type,po1) then begin
+                                               ek_type,allvisi,po1) then begin
    identerror(-2,err_duplicateidentifier);
   end;
   ele1:= ele.eledatarel(po1);
@@ -760,7 +760,7 @@ var
 begin
  with info,contextstack[stackindex] do begin
   ident1:= contextstack[stackindex+1].d.ident.ident;
-  if ele.addelementdata(ident1,allvisi,ek_type,po1) then begin
+  if ele.addelementdata(ident1,ek_type,allvisi,po1) then begin
    inittypedatasize(po1^,dk_enumitem,0,das_32);
    with po1^ do begin
    {
@@ -782,7 +782,7 @@ begin
     end;
    end;
    ele1:= ele.decelementparent();
-   if ele.addelementdata(ident1,allvisi,ek_ref,po2) then begin
+   if ele.addelementdata(ident1,ek_ref,allvisi,po2) then begin
     po2^.ref:= ele.eledatarel(po1);    //non qualified name copy
    end
    else begin

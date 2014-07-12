@@ -441,7 +441,7 @@ var
  po1: pelementinfoty;
 begin
  result:= false;
- po1:= ele.addelement(aname,avislevel,ek_var);
+ po1:= ele.addelement(aname,ek_var,avislevel);
  if po1 <> nil then begin
   aelementdata:= @po1^.data;
   aelementdata^.vf.next:= chain;
@@ -1115,10 +1115,10 @@ var
  po2: ptypedataty;
  int1: integer;
 begin
- ele.addelement(tks_units,globalvisi,ek_none,unitsele);
+ ele.addelement(tks_units,ek_none,globalvisi,unitsele);
  for ty1:= low(systypety) to high(systypety) do begin
   with systypeinfos[ty1] do begin
-   po1:= ele.addelement(getident(name),globalvisi,ek_type);
+   po1:= ele.addelement(getident(name),ek_type,globalvisi);
    po2:= @po1^.data;
    po2^:= data;
   end;
@@ -1127,7 +1127,7 @@ begin
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
-   po1:= ele.addelement(getident(name),globalvisi,ek_const);
+   po1:= ele.addelement(getident(name),ek_const,globalvisi);
    with pconstdataty(@po1^.data)^ do begin
     val.d:= cval;
     val.typ:= sysdatatypes[ctyp];

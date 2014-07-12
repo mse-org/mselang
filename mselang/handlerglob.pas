@@ -79,8 +79,9 @@ type
  infoclassflagty = (icf_virtualtablevalid);
  infoclassflagsty = set of infoclassflagty;  
  infoclassty = record
-  intf: elementoffsetty;
-  impl: elementoffsetty;
+  intfnamenode: elementoffsetty;
+  intftypenode: elementoffsetty;
+  implnode: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
   allocsize: dataoffsty;
@@ -92,11 +93,16 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
- classintfdataty = record
+ classintfnamedataty = record
   intftype: elementoffsetty;
   next: elementoffsetty;  //chain, root = infoclassty.interfacechain
  end;
- pclassintfdataty = ^classintfdataty;
+ pclassintfnamedataty = ^classintfnamedataty;
+
+ classintftypedataty = record
+  intftype: elementoffsetty;
+ end;
+ pclassintftypedataty = ^classintftypedataty;
    
  intfancestordataty = record
   intftype: elementoffsetty;
@@ -290,9 +296,14 @@ type
  classimpnodedataty = record
  end;
  pclassimpnodedataty = ^classimpnodedataty;
- classintfnodedataty = record
+ 
+ classintfnamenodedataty = record
  end;
- pclassintfnodedataty = ^classimpnodedataty;
+ pclassintfnamenodedataty = ^classintfnamenodedataty;
+ 
+ classintftypenodedataty = record
+ end;
+ pclassintftypenodedataty = ^classintftypenodedataty;
  
 {
  classdataty = record

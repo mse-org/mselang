@@ -39,10 +39,12 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
-                  ek_field,ek_classintf,ek_intfancestor,
+                  ek_field,ek_classintfname,ek_classintftype,
+                  ek_intfancestor,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
                   ek_unit,ek_implementation,
-                  ek_classimpnode,ek_classintfnode,ek_uses{,ek_managed});
+                  ek_classimpnode,ek_classintfnamenode,ek_classintftypenode,
+                  ek_uses{,ek_managed});
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
@@ -76,16 +78,20 @@ const
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,                
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
-//ek_classintf,                   ek_intfancestor,
-  sizeof(classintfdataty)+elesize,sizeof(intfancestordataty)+elesize,
+//ek_classintfname,                   ek_classintftype,
+  sizeof(classintfnamedataty)+elesize,sizeof(classintftypedataty)+elesize,
+//ek_intfancestor,
+  sizeof(intfancestordataty)+elesize,
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,
  {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
   sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
-//ek_classimpnode,                   ek_classintfnode
-  sizeof(classimpnodedataty)+elesize,sizeof(classintfnodedataty)+elesize,
+//ek_classimpnode,                   ek_classintfnamenode,
+  sizeof(classimpnodedataty)+elesize,sizeof(classintfnamenodedataty)+elesize,
+//ek_classintftypenode,
+  sizeof(classintftypenodedataty)+elesize,
 //ek_uses
   sizeof(usesdataty)+elesize
  );
@@ -162,6 +168,11 @@ type
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
    function findchild(const aparent: elementoffsetty; 
+                 const achildtree: array of identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty; 
+                               out element: elementoffsetty): boolean;
+   function findchild(const aparent: elementoffsetty; 
                  const achild: identty; const avislevel: visikindsty; 
                out element: elementoffsetty; out adata: pointer): elementkindty;
    function findparentscope(const aident: identty; const akinds: elementkindsty;
@@ -180,47 +191,52 @@ type
    function dumppath(const aelement: pelementinfoty): msestring;
   {$endif}
    function pushelementduplicate(const aname: identty;
-                  const avislevel: visikindsty; const akind: elementkindty;
+                   const akind: elementkindty; const avislevel: visikindsty;
                                   const sizeextend: integer): pelementinfoty;
    function pushelementduplicatedata(const aname: identty;
-                  const avislevel: visikindsty; const akind: elementkindty;
+                   const akind: elementkindty; const avislevel: visikindsty;
                                                   out adata: pointer): boolean;
                   //false if duplicate
-   function pushelement(const aname: identty; const avislevel: visikindsty;
-                  const akind: elementkindty{;
+   function pushelement(const aname: identty; const akind: elementkindty;
+                   const avislevel: visikindsty{;
                   const asize: integer}): pelementinfoty; //nil if duplicate
-   function pushelement(const aname: identty; const avislevel: visikindsty;
-                  const akind: elementkindty;                  
+   function pushelement(const aname: identty; const akind: elementkindty;
+                  const avislevel: visikindsty;                  
                   out aelementdata: pointer): boolean;
                                                        //false if duplicate
-   function pushelement(const aname: identty; const avislevel: visikindsty;
-                const akind: elementkindty;                  
+   function pushelement(const aname: identty; const akind: elementkindty;  
+                const avislevel: visikindsty;                
                 const sizeextend: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
-   function pushelement(const aname: identty; const avislevel: visikindsty;
-                  const akind: elementkindty;                  
+   function pushelement(const aname: identty; const akind: elementkindty;
+           const avislevel: visikindsty;                         
            out aelementdata: elementoffsetty): boolean;
                                                        //false if duplicate
    function popelement: pelementinfoty;
    function addelementduplicate(const aname: identty;
-                                const avislevel: visikindsty;
-                                const akind: elementkindty): pelementinfoty;
+                                const akind: elementkindty;
+                                const avislevel: visikindsty): pelementinfoty;
    function addelementduplicatedata(const aname: identty;
+               const akind: elementkindty;
                const avislevel: visikindsty;
-               const akind: elementkindty; out aelementdata: pointer;
+               out aelementdata: pointer;
                const asearchlevel: visikindsty = allvisi): boolean;
                                                        //false if duplicate
    function addelementduplicate1(const aname: identty;
-                                const avislevel: visikindsty;
-                                const akind: elementkindty): elementoffsetty;
-   function addelement(const aname: identty; const avislevel: visikindsty;
-              const akind: elementkindty): pelementinfoty;   //nil if duplicate
-   function addelementdata(const aname: identty; const avislevel: visikindsty;
-              const akind: elementkindty;
+                                 const akind: elementkindty;
+                                 const avislevel: visikindsty): elementoffsetty;
+   function addelementduplicatedata1(const aname: identty;
+                                const akind: elementkindty;
+                                const avislevel: visikindsty): pointer;
+   function addelement(const aname: identty; const akind: elementkindty;
+                       const avislevel: visikindsty): pelementinfoty; 
+                                              //nil if duplicate
+   function addelementdata(const aname: identty; const akind: elementkindty;
+              const avislevel: visikindsty;
               out aelementdata: pointer): boolean;
          //false if duplicate, aelementdata always allocated
-   function addelement(const aname: identty; const avislevel: visikindsty;
-              const akind: elementkindty;
+   function addelement(const aname: identty; const akind: elementkindty;
+              const avislevel: visikindsty;
               out aelementoffset: elementoffsetty): boolean;
                                                        //false if duplicate
    procedure pushscopelevel();
@@ -581,7 +597,7 @@ var
  tk1: integer;
 begin
  clear;
- ele.pushelement(idstart,[],ek_none); //root
+ ele.pushelement(idstart,ek_none,[]); //root
  stringident:= idstart; //invalid
  nextident;
  for tk1:= 1 to high(tokens) do begin
@@ -1127,6 +1143,58 @@ begin
 end;
 
 function telementhashdatalist.findchild(const aparent: elementoffsetty; 
+                 const achildtree: array of identty;
+                 const akinds: elementkindsty;
+                 const avislevel: visikindsty;
+                               out element: elementoffsetty): boolean;
+var
+ int1: integer;
+ id1: identty;
+ uint1: ptruint;
+ po1: pelementhashdataty;
+ po2,po3: pelementinfoty;
+label
+ next;
+begin
+ result:= false;
+ if length(achildtree) > 0 then begin
+  with pelementinfoty(pointer(felementdata)+aparent)^ do begin
+   id1:= header.path + header.name;
+  end;
+  for int1:= 0 to high(achildtree) do begin
+   id1:= id1 + achildtree[int1];
+  end;
+  uint1:= fhashtable[id1 and fmask];
+  if uint1 <> 0 then begin
+   po1:= pelementhashdataty(pchar(fdata) + uint1);
+   while true do begin
+    if po1^.data.key = id1 then begin
+     po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+     po3:= po2; //searched child
+     for int1:= high(achildtree) downto 0 do begin
+      if (po2^.header.name <> achildtree[int1]) or 
+             (po2^.header.visibility*avislevel = []) then begin
+       goto next;
+      end;
+      po2:= pointer(felementdata)+po2^.header.parent;
+     end;
+     if (pointer(po2)-pointer(felementdata) = aparent) then begin
+      element:= po1^.data.data;
+      result:= (akinds = []) or (po3^.header.kind in akinds);
+      exit;
+     end;
+    end;
+next:
+    if po1^.header.nexthash = 0 then begin
+     break;
+    end;
+    po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+   end;
+  end;
+ end;
+end;
+
+function telementhashdatalist.findchild(const aparent: elementoffsetty; 
                  const achild: identty; const avislevel: visikindsty; 
                out element: elementoffsetty; out adata: pointer): elementkindty;
 var 
@@ -1452,8 +1520,8 @@ begin
 end;
 
 function telementhashdatalist.pushelementduplicate(const aname: identty;
-                  const avislevel: visikindsty;
                   const akind: elementkindty;
+                  const avislevel: visikindsty;
                   const sizeextend: integer): pelementinfoty;
 var
  ele1: elementoffsetty;
@@ -1484,33 +1552,33 @@ begin
 end;
 
 function telementhashdatalist.pushelementduplicatedata(const aname: identty;
-               const avislevel: visikindsty; const akind: elementkindty;
+               const akind: elementkindty; const avislevel: visikindsty;
                out adata: pointer): boolean;
 var
  ele1: elementoffsetty;
 begin
  result:= not findcurrent(aname,[],allvisi,ele1);
- adata:= pointer(pushelementduplicate(aname,avislevel,akind,0)) +
+ adata:= pointer(pushelementduplicate(aname,akind,avislevel,0)) +
                                                      sizeof(elementheaderty);
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-             const avislevel: visikindsty;
-             const akind: elementkindty): pelementinfoty;
+             const akind: elementkindty; 
+             const avislevel: visikindsty): pelementinfoty;
 var
  ele1: elementoffsetty;
 begin
  result:= nil;
  if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
-  result:= pushelementduplicate(aname,avislevel,akind,0);
+  result:= pushelementduplicate(aname,akind,avislevel,0);
  end;
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-           const avislevel: visikindsty; const akind: elementkindty;
+            const akind: elementkindty; const avislevel: visikindsty;
                    out aelementdata: pointer): boolean; //false if duplicate
 begin
- aelementdata:= pushelement(aname,avislevel,akind);
+ aelementdata:= pushelement(aname,akind,avislevel);
  result:= aelementdata <> nil;
  if result then begin
   aelementdata:= @(pelementinfoty(aelementdata)^.data);
@@ -1518,13 +1586,13 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-           const avislevel: visikindsty; const akind: elementkindty;
+           const akind: elementkindty; const avislevel: visikindsty;
            out aelementdata: elementoffsetty): boolean;
                                                     //false if duplicate
 var
  po1: pelementinfoty;
 begin
- po1:= pushelement(aname,avislevel,akind);
+ po1:= pushelement(aname,akind,avislevel);
  result:= po1 <> nil;
  if result then begin
   aelementdata:= pointer(po1)-pointer(felementdata);
@@ -1532,8 +1600,8 @@ begin
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
-                  const avislevel: visikindsty;
        const akind: elementkindty;                  
+       const avislevel: visikindsty;
        const sizeextend: integer; out aelementdata: pointer): boolean;
                                                        //false if duplicate
 var
@@ -1542,14 +1610,14 @@ var
 begin
  result:= false;
  if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
-  po1:= pushelementduplicate(aname,avislevel,akind,sizeextend);
+  po1:= pushelementduplicate(aname,akind,avislevel,sizeextend);
   aelementdata:= @(po1^.data);
  end;
 end;
 
 function telementhashdatalist.addelementduplicate1(const aname: identty;
-                                const avislevel: visikindsty;
-                                const akind: elementkindty): elementoffsetty;
+                                const akind: elementkindty;
+                                const avislevel: visikindsty): elementoffsetty;
 //var
 // ele1: elementoffsetty;
 begin
@@ -1575,27 +1643,34 @@ begin
  addelement(felementpath+aname,avislevel,result);
 end;
 
-function telementhashdatalist.addelementduplicate(const aname: identty;
-                                const avislevel: visikindsty;
-                                const akind: elementkindty): pelementinfoty;
+function telementhashdatalist.addelementduplicatedata1(const aname: identty;
+                                const akind: elementkindty;
+                                const avislevel: visikindsty): pointer;
 begin
- result:= eleinfoabs(addelementduplicate1(aname,avislevel,akind));
+ result:= ptruint(addelementduplicate1(aname,akind,avislevel))+fdata;
+end;
+
+function telementhashdatalist.addelementduplicate(const aname: identty;
+                                const akind: elementkindty;
+                                const avislevel: visikindsty): pelementinfoty;
+begin
+ result:= eleinfoabs(addelementduplicate1(aname,akind,avislevel));
 end;
 
 function telementhashdatalist.addelementduplicatedata(const aname: identty;
-               const avislevel: visikindsty;
-               const akind: elementkindty; out aelementdata: pointer;
+               const akind: elementkindty;
+               const avislevel: visikindsty; out aelementdata: pointer;
                const asearchlevel: visikindsty = allvisi): boolean;
 var
  ele1: elementoffsetty;
 begin
  result:= not findcurrent(aname,[],asearchlevel,ele1);
- aelementdata:= eledataabs(addelementduplicate1(aname,avislevel,akind));
+ aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
 end;             
 
 function telementhashdatalist.addelement(const aname: identty;
-              const avislevel: visikindsty;
-              const akind: elementkindty): pelementinfoty;   
+              const akind: elementkindty; 
+              const avislevel: visikindsty): pelementinfoty;   
                                                    //nil if duplicate
 var
  scopebefore: pscopeinfoty;
@@ -1605,33 +1680,33 @@ begin
  scopebefore:= fscopespo;
  fscopespo:= nil;
  if not findcurrent(aname,[],allvisi{ffindvislevel},ele1) then begin
-  result:= addelementduplicate(aname,avislevel,akind);
+  result:= addelementduplicate(aname,akind,avislevel);
  end;
  fscopespo:= scopebefore;
 end;
 
 function telementhashdatalist.addelementdata(const aname: identty;
-           const avislevel: visikindsty; const akind: elementkindty;
+           const akind: elementkindty; const avislevel: visikindsty;
            out aelementdata: pointer): boolean;
                     //false if duplicate, aelement always allocated
 begin
- aelementdata:= addelement(aname,avislevel,akind);
+ aelementdata:= addelement(aname,akind,avislevel);
  result:= aelementdata <> nil;
  if not result then begin
-  aelementdata:= addelementduplicate(aname,avislevel,akind);
+  aelementdata:= addelementduplicate(aname,akind,avislevel);
  end;
  aelementdata:= @(pelementinfoty(aelementdata)^.data);
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
-              const avislevel: visikindsty;
               const akind: elementkindty;
+              const avislevel: visikindsty;
               out aelementoffset: elementoffsetty): boolean;
                                                        //false if duplicate
 var
  po1: pelementinfoty;
 begin
- po1:= addelement(aname,avislevel,akind);
+ po1:= addelement(aname,akind,avislevel);
  result:= po1 <> nil;
  if result then begin
   aelementoffset:= pointer(po1)-pointer(felementdata);
@@ -1831,7 +1906,7 @@ begin
    fscopespo:= fscopes + int1;
   end;
  end;
- result:= addelement(getident(),globalvisi,akind);
+ result:= addelement(getident(),akind,globalvisi);
  if result = nil then begin
   internalerror(ie_elements,'20140407B'); //duplicate id
  end;

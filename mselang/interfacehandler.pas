@@ -74,7 +74,7 @@ begin
   end;
   contextstack[stackindex].b.eleparent:= ele.elementparent;
   with contextstack[stackindex-1] do begin
-   if not ele.pushelement(id1,globalvisi,ek_type,d.typ.typedata) then begin
+   if not ele.pushelement(id1,ek_type,globalvisi,d.typ.typedata) then begin
     identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
    end;
    currentcontainer:= d.typ.typedata;
@@ -145,14 +145,14 @@ begin
  outhandle('INTERFACEPARAM');
 {$endif}
  with info do begin
-  ele.pushelement(tks_ancestors,allvisi,ek_none);
+  ele.pushelement(tks_ancestors,ek_none,allvisi);
   ele.checkcapacity(ek_intfancestor,stacktop-stackindex);
   ele1:= 0;
   for int1:= stacktop downto stackindex + 1 do begin
               //todo: check recursion
    with contextstack[int1] do begin
-    if not ele.addelementdata(identty(d.typeref),allvisi,
-                                              ek_intfancestor,po2) then begin
+    if not ele.addelementdata(identty(d.typeref),
+                                  ek_intfancestor,allvisi,po2) then begin
      errormessage(err_duplicateancestortype,[]);
     end;
     currentsubcount:= currentsubcount + 

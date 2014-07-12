@@ -299,7 +299,8 @@ begin
       currentcontainer:= ele1;
       contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
       stacktop:= stackindex+1;
-      ele.pushelementparent(ptypedataty(ele.eledataabs(ele1))^.infoclass.impl);
+      ele.pushelementparent(
+                     ptypedataty(ele.eledataabs(ele1))^.infoclass.implnode);
      end;
     end;
    end;
@@ -445,8 +446,8 @@ begin
        (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
   end;
-  po1:= addr(ele.pushelementduplicate(ident1,
-                      allvisi,ek_sub,paramco*sizeof(pvardataty))^.data);
+  po1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
+                                      paramco*sizeof(pvardataty))^.data);
   po1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(po1);
   inc(currentsubcount);

@@ -83,7 +83,7 @@ begin
   end;
  end
  else begin
-  if (context.d.kind = ck_fact) and (destindirectlevel = 0) and
+  if (context.d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
         (context.d.datatyp.indirectlevel = 1) and 
         (source^.kind = dk_class) and (dest^.kind = dk_interface) then begin
    if getclassinterfaceoffset(source,dest,int1) then begin

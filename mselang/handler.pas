@@ -1138,7 +1138,7 @@ begin
   setlength(ar1,int2);
   for int1:= 0 to int2-1 do begin
    if not ele.addelement(contextstack[stackindex+int1+2].d.ident.ident,
-                                    [vik_global],ek_uses,ar1[int1]) then begin
+                                    ek_uses,[vik_global],ar1[int1]) then begin
     identerror(int1+2,err_duplicateidentifier);
    end;
   end;
@@ -1262,8 +1262,8 @@ begin
    errormessage(err_constexpressionexpected,[],stacktop-stackindex);
   end
   else begin
-   if not ele.addelementdata(contextstack[stackindex+1].d.ident.ident,allvisi,
-                 ek_const,po1) then begin
+   if not ele.addelementdata(contextstack[stackindex+1].d.ident.ident,
+                                            ek_const,allvisi,po1) then begin
     identerror(1,err_duplicateidentifier);
    end
    else begin
