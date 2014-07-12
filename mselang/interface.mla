@@ -1,0 +1,71 @@
+unit program;
+type
+ itest = interface
+  procedure test();
+  procedure test1(p: int32);
+ end;
+ itesta = interface
+  procedure test2(p: int32);
+ end;
+
+ itest1 = interface(itest,itesta)
+  procedure test2(p: int32; p1: int32);
+ end;
+
+ tobject = class
+  public
+   constructor create();
+   destructor destroy();
+   procedure test(); virtual;
+ end;
+ tc = class(tobject,itest,itest1)
+  itest: int32;
+  procedure test1(p: int32);
+  procedure test2(p: int32; p1: int32);
+ end;
+{
+ tc2 = class(tc,itest)
+ end;
+}
+//{$dumpelements}
+//{$abort}
+
+implementation
+
+constructor tobject.create();
+begin
+end;
+
+destructor tobject.destroy();
+begin
+end;
+
+procedure tobject.test();
+begin
+ writeln(123);
+end;
+
+procedure tc.test1(p: int32);
+begin
+end;
+
+procedure tc.test2(p: int32; p1: int32);
+begin
+end;
+
+var
+ t: itest;
+ c: tc;
+ o: tobject;
+ i: itesta;
+
+begin
+// o:= tobject.create();
+// o.test();
+// o.destroy();
+
+ c:= tc.create();
+ c.test();
+ c.destroy();
+ i:= itesta(c);
+end.

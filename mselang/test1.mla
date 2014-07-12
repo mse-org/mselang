@@ -1,0 +1,17 @@
+unit test1;
+function test1(p1: int32): int32;
+var
+ s1: string8;
+
+implementation
+
+function test1(p1: int32): int32;
+begin
+ writeln(p1);
+end;
+
+initialization
+ writeln('ini1');
+finalization
+ writeln('fini1');
+end.

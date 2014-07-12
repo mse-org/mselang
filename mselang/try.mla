@@ -1,0 +1,42 @@
+unit program;
+type
+ tt = class
+  public
+   constructor create();
+ end;
+
+implementation
+
+constructor tt.create();
+begin
+end;
+
+procedure p();
+begin
+ writeln(111);
+ try
+  writeln(112);
+  raise tt.create();
+  writeln(113);
+ finally
+  writeln(114);
+ end;
+end;
+
+begin
+ try
+  try
+//  raise tt.create();
+  p();
+  writeln(100);
+  finally
+   raise tt.create();
+   writeln(101);
+  end;
+  writeln(102);
+ except
+// finally
+  writeln(200);
+ end;
+ writeln(300);
+end.

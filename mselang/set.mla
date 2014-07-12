@@ -1,0 +1,13 @@
+unit program;
+type
+ enumty = (en_0,en_1,en_2);
+ setty = set of enumty;
+var
+ v1: enumty;
+ v2: setty;
+implementation
+
+begin
+ v1:= en_1;
+ writeln(v1);
+end.

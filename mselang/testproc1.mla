@@ -1,0 +1,18 @@
+unit program;
+implementation
+
+function f(p1:int32):int32;
+ procedure p;
+ begin
+  result:= p1+1;
+ end;
+
+begin
+ p;
+end;
+var
+ i1: int32;
+begin
+ i1:= f(123);
+ writeln(i1);
+end.

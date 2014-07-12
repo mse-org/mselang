@@ -1,0 +1,17 @@
+unit program;
+
+procedure test;
+implementation
+
+procedure test1;
+begin
+ test;
+end;
+
+procedure test;
+begin
+end;
+
+begin
+ test1;
+end.

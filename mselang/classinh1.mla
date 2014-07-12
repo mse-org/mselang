@@ -1,0 +1,12 @@
+unit classinh1;
+//interface
+type
+ tc1 = class
+  public
+  protected
+   f0: int32;
+  private
+   f1: int32;
+ end;
+implementation
+end.

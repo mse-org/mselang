@@ -1,0 +1,10 @@
+unit unit2;
+uses
+ unit3;
+procedure tt2(p1: int32);
+implementation
+procedure tt2(p1: int32);
+begin
+ tt3(p1);
+end;
+end.

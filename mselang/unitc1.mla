@@ -1,0 +1,10 @@
+unit unitc1;
+//interface
+type
+ c1 = class
+  private
+  public
+   f1: int32;
+ end;
+implementation
+end.

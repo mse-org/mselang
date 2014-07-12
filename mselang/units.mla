@@ -1,0 +1,7 @@
+unit program;
+uses
+ unit1;
+implementation
+begin
+ tt1(123);
+end.

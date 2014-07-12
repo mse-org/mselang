@@ -1,0 +1,14 @@
+unit program;
+type
+ t1 = array[0..1,0..1] of int32;
+var
+ v1: t1;
+ v2: int32;
+implementation
+begin
+ v1.c:= 0;
+ v1.b[v1.c+0]:= 123;
+ v1.b[v1.c+1]:= 111;
+ writeln(v1.b[1]);
+ writeln(v1.b[0]);
+end.

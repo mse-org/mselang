@@ -1,0 +1,8 @@
+unit unit0;
+implementation
+
+initialization
+ writeln(123);
+finalization
+ writeln(456);
+end.

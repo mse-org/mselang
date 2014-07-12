@@ -1,0 +1,27 @@
+unit program;
+type
+ t1 = record
+       a: int32;
+       b: int32;
+      end;
+var
+ v1: t1;
+ v2: record
+       a: int32;
+       b: int32;
+      end;
+ v3: int32;
+
+implementation
+begin
+ v1.a:= 123;
+ v1.b:= 456;
+ v2.a:= 222;
+ v2.b:= 333;
+ v3:= 444;
+ writeln(v1.a);
+ writeln(v1.b);
+ writeln(v2.a);
+ writeln(v2.b);
+ writeln(v3);
+end.

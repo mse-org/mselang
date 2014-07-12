@@ -1,0 +1,34 @@
+unit program;
+{$include test.inc}
+type
+ t1 = record
+  a: int32;
+  b: int32;
+ end;
+ t2 = record
+  c: int32;
+  d: int32;
+ end;
+var
+ v1: array[0..1] of t1;
+ v2: int32;
+ v3: t2;
+
+implementation
+
+begin
+ with v1[0],v1[1],v3 do begin
+  a:= 111;
+  b:= 123;
+  c:= 222;
+  d:= 456;
+ end;
+ writeln(v1[0].a);
+ writeln(v1[0].b);
+ writeln(v1[1].a);
+ writeln(v1[1].b);
+ writeln(v3.c);
+ writeln(v3.d);
+ v4:= 444;
+ writeln(v4);
+end.

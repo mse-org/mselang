@@ -1,0 +1,11 @@
+unit unit3;
+//uses
+// unit2;
+procedure tt3(p1: int32);
+implementation
+procedure tt3(p1: int32);
+begin
+ writeln(p1);
+end;
+{$dumpelements}
+end.

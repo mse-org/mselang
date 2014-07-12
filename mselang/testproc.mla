@@ -1,0 +1,14 @@
+unit program;
+implementation
+
+function f(p1: int32):int32;
+ procedure fa();
+ begin
+  writeln(p1+p1);
+ end;
+begin
+ fa();
+end;
+begin
+ f(123);
+end.

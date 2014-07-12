@@ -1,0 +1,24 @@
+unit program;
+type
+ tr1 = record
+  f1: int32;
+  f2: int32;
+  f3: ^int32;
+ end;
+var
+ v1: tr1;
+ v2: ^tr1;
+ v3: ^int32;
+ v4: int32;
+{$dumpelements}
+implementation
+
+begin
+ v1.f2:= 123;
+ v2:= @v1;
+ v4:= v2^.f2;
+ writeln(v4);
+ writeln(v2^.f2);
+ v2^.f2:= 222;
+ writeln(v1.f2);
+end.

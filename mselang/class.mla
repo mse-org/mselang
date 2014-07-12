@@ -1,0 +1,86 @@
+unit program;
+type
+ tc1 = class
+  public
+   constructor create(p1: int32);
+   destructor destroy();
+   procedure t1(p1: int32); virtual;
+   f0: int32;
+   f3: int32;
+ end;
+
+ tc1a = class(tc1)
+  public
+   f2: int32;
+   procedure t1(p1: int32); override;
+   function t1a(p1: int32): int32; virtual;
+ end;
+ tc1b= class(tc1a)
+  public
+   procedure t1(p1: int32); override;
+ end;
+var
+ v1: tc1;
+// v1_: tc1;
+// v1__: tc1;
+ v1a: tc1a;
+ v1b: tc1b;
+
+implementation
+
+constructor tc1.create(p1: int32);
+begin
+end;
+destructor tc1.destroy();
+begin
+end;
+
+procedure tc1.t1(p1: int32);
+begin
+ writeln(111);
+end;
+
+procedure tc1a.t1(p1: int32);
+begin
+ writeln(333);
+end;
+
+function tc1a.t1a(p1: int32): int32;
+begin
+{$dumpelements}
+ t1(777);
+ writeln(222);
+ result:= 555;
+end;
+
+procedure tc1b.t1(p1: int32);
+begin
+ writeln(444);
+end;
+
+var
+ v0: int32;
+
+begin
+ v1:= tc1.create(123);
+// v1_:= tc1a.create(123);
+// v1__:= tc1b.create(123);
+ v1a:= tc1a.create(123);
+ v1b:= tc1b.create(123);
+ v1.t1(123);
+// v1_.t1(123);
+// v1__.t1(123);
+ v1a.t1(123);
+ v1b.t1(123);
+// v1b.t1(123);
+// v1b.t1a(123);
+// v1b.t1(123);
+// v0:= v1b.t1a(222);
+writeln(v0);
+// v1a.destroy();
+ v1.destroy();
+ v1a.destroy();
+ v1b.destroy();
+// v1_.destroy();
+// v1__.destroy();
+end.

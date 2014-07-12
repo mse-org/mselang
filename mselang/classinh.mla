@@ -1,0 +1,43 @@
+unit program;
+uses
+ classinh1;
+
+type
+ tc2 = class(tc1)
+  public
+   f1: int32;
+   procedure test();
+   procedure test(p1: int32);
+   constructor create(f3: int32);
+   destructor destroy();
+ end;
+implementation
+
+constructor tc2.create(f3: int32);
+var
+ f2: int32;
+begin
+end;
+
+destructor tc2.destroy();
+begin
+{$dumpelements}
+ writeln(f0);
+ writeln(f1);
+end;
+
+procedure tc2.test();
+begin
+end;
+
+procedure tc2.test(p1: int32);
+begin
+end;
+
+var
+ v1: tc2;
+begin
+ v1:= tc2.create(222);
+ v1.test();
+ v1.destroy();
+end.
