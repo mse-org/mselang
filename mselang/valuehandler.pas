@@ -28,7 +28,7 @@ procedure handlevalueidentifier();
 implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
- subhandler,grammar,unithandler,syssubhandler,classhandler;
+ subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler;
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
@@ -90,8 +90,8 @@ begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
       with insertitem(stackoffset,false)^ do begin
-       op:= @indirectoffspo;
-       par.voffset:= int1;
+       op:= @offsetpoimm32;
+       par.imm.vint32:= int1;
       end;
       result:= true;
      end;
@@ -232,12 +232,19 @@ var
      end;
     end;
    end;
-   if asub^.flags * [sf_virtual,sf_override] <> [] then begin
+   if asub^.flags * [sf_virtual,sf_override,sf_interface] <> [] then begin
     with additem()^ do begin
-     par.virtcallinfo.virtoffset:= asub^.virtualindex*sizeof(opaddressty)+
-                                                           virtualtableoffset;
      par.virtcallinfo.selfinstance:= -asub^.paramsize;
-     op:= @callvirtop;
+     if sf_interface in asub^.flags then begin
+      par.virtcallinfo.virtoffset:= 
+        asub^.tableindex*sizeof(intfitemty);
+      op:= @callintfop;
+     end
+     else begin
+      par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+                                                           virtualtableoffset;
+      op:= @callvirtop;
+     end;
     end;
    end
    else begin

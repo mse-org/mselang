@@ -1539,7 +1539,7 @@ begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
      ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
-     ' virt:'+inttostr(virtualindex)+' addr:'+inttostr(impl);
+     ' idx:'+inttostr(tableindex)+' addr:'+inttostr(impl);
     end;
    end;
    ek_uses: begin

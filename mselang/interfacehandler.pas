@@ -56,6 +56,7 @@ begin
   currentsubcount:= 0;
   with contextstack[stackindex] do begin
    d.kind:= ck_interfacedef;
+//   d.intf.intfindex:= 0;
   {
    d.cla.visibility:= classpublishedvisi;
    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable

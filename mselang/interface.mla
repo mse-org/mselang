@@ -47,6 +47,7 @@ end;
 
 procedure tc.test1(p: int32);
 begin
+ writeln(123);
 end;
 
 procedure tc.test2(p: int32; p1: int32);
@@ -63,9 +64,9 @@ begin
 // o:= tobject.create();
 // o.test();
 // o.destroy();
-
  c:= tc.create();
- c.test();
- c.destroy();
  i:= itest1(c);
+ i.test2(1);
+// c.test();
+ c.destroy();
 end.

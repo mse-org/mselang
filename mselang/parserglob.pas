@@ -331,7 +331,7 @@ type
  end;
  
  subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
-              sf_functiontype,sf_header,sf_virtual,sf_override);
+              sf_functiontype,sf_header,sf_virtual,sf_override,sf_interface);
  subflagsty = set of subflagty;
  subinfoty = record
   frameoffsetbefore: ptruint;
@@ -372,6 +372,7 @@ type
  pclassinfoty = ^classinfoty;
 
  interfaceinfoty = record
+//  intfindex: integer;
  end;
  pinterfaceinfoty = ^interfaceinfoty;
  

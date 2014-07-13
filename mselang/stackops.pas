@@ -218,6 +218,7 @@ procedure popindirect();
 procedure callop();
 procedure calloutop();
 procedure callvirtop();
+procedure callintfop();
 procedure locvarpushop();
 procedure locvarpopop();
 procedure returnop();
@@ -239,7 +240,7 @@ procedure continueexception();
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
- segmentutils,classhandler;
+ segmentutils,classhandler,interfacehandler;
 {
  stackinfoty = record
   case datakindty of
@@ -1199,6 +1200,26 @@ begin
  with cpu.pc^.par.virtcallinfo do begin
   cpu.pc:= startpo+pptruint(pppointer(cpu.stack+selfinstance)^^+virtoffset)^;
 //  cpu.pc:= startpo+ptruint(ppppointer(cpu.stack+selfinstance)^^[virtindex]); 
+ end;
+end;
+
+procedure callintfop;
+var
+ po1: ppointer;
+ po2: pintfitemty;
+begin
+ with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
+  pc:= cpu.pc;
+  frame:= cpu.frame;
+  link:= cpu.stacklink;
+ end;
+ cpu.frame:= cpu.stack;
+ cpu.stacklink:= cpu.frame;
+ with cpu.pc^.par.virtcallinfo do begin
+  po1:= cpu.stack + selfinstance;
+  po2:= segments[seg_intf].basepo + pptrint(po1^)^;
+  inc(po1^,po2^.instanceshift);
+  cpu.pc:= startpo + po2^.subad;
  end;
 end;
 

@@ -252,7 +252,7 @@ type
   links: linkindexty;    //calls which need to be resolved
   mark: forwardindexty;
   flags: subflagsty;
-  virtualindex: integer; //-1 = none
+  tableindex: integer; //-1 = none
   address: opaddressty;
   nestinglevel: integer;
   varchain: elementoffsetty;

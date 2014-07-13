@@ -450,18 +450,24 @@ begin
                                       paramco*sizeof(pvardataty))^.data);
   po1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(po1);
+  if isinterface then begin
+   include(subflags,sf_interface);
+   po1^.tableindex:= currentsubcount;
+  end
+  else begin
+   po1^.tableindex:= -1; //none
+  end;
   inc(currentsubcount);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
-  po1^.virtualindex:= -1; //none
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;
   if (stf_classdef in currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[stackindex-2] do begin
-    po1^.virtualindex:= d.cla.virtualindex;
+    po1^.tableindex:= d.cla.virtualindex;
     inc(d.cla.virtualindex);
    end;
   end;
@@ -606,7 +612,7 @@ begin
     errormessage(err_noancestormethod,[]);
    end
    else begin
-    po1^.virtualindex:= paramdata.match^.virtualindex;
+    po1^.tableindex:= paramdata.match^.tableindex;
     with contextstack[stackindex-2] do begin
      dec(d.cla.virtualindex);
     end;
@@ -692,7 +698,7 @@ begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
    po1^.flags:= po2^.flags;
-   po1^.virtualindex:= po2^.virtualindex;
+   po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
    {$ifdef mse_checkinternalerror}
     if currentcontainer = 0 then begin
@@ -701,7 +707,7 @@ begin
    {$endif}
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      popaddressty(@pclassdefinfoty(getsegmentpo(infoclass.defs))^.
-                      virtualmethods)[po2^.virtualindex]:= po1^.address-1;
+                      virtualmethods)[po2^.tableindex]:= po1^.address-1;
               //resolve virtual table entry, compensate oppo inc
     end;
    end;
