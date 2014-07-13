@@ -69,7 +69,7 @@ type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer);
 
- visikindty = (vik_global,vik_sameunit,vik_sameclass,
+ visikindty = (vik_global,vik_sameunit,vik_descendent,
                vik_published,vik_ancestor,vik_units);
  visikindsty = set of visikindty;
  
@@ -88,7 +88,7 @@ const
  globalvisi = [vik_global,vik_sameunit,vik_ancestor];
  implementationvisi = [vik_sameunit];
  classprivatevisi = [vik_sameunit];
- classprotectedvisi = classprivatevisi+[vik_sameclass];
+ classprotectedvisi = classprivatevisi+[vik_descendent];
  classpublicvisi = classprotectedvisi+[vik_global];
  classpublishedvisi = classpublicvisi+[vik_published];
  
