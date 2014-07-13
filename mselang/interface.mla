@@ -19,7 +19,7 @@ type
    procedure test(); virtual;
  end;
  tc = class(tobject,itest,itest1)
-  itest: int32;
+  fi: int32;
   procedure test1(p: int32);
   procedure test2(p: int32; p1: int32);
  end;
@@ -42,7 +42,6 @@ end;
 
 procedure tobject.test();
 begin
- writeln(123);
 end;
 
 procedure tc.test1(p: int32);
@@ -52,6 +51,7 @@ end;
 
 procedure tc.test2(p: int32; p1: int32);
 begin
+ writeln(123);
 end;
 
 var

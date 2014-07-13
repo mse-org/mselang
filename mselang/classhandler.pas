@@ -329,7 +329,7 @@ type
       linkmark(po2^.links,seg,sizeof(intfitemty.instanceshift));
      end
      else begin
-      sub^.subad:= po2^.address;
+      sub^.subad:= po2^.address-1;
      end;
     end;
     sub^.instanceshift:= instanceshift;
@@ -369,7 +369,7 @@ end;
 // fields
 // interface table  <- fieldsize
 //                  <- allocsize
-
+var testvar: ptypedataty;
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -390,6 +390,7 @@ begin
   exclude(currentstatementflags,stf_classdef);
   with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
+testvar:= ptypedataty(ele.eledataabs(d.typ.typedata));
    regclass(d.typ.typedata);
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
