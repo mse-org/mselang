@@ -200,12 +200,14 @@ procedure pushlocaddrindi();
 procedure pushsegaddr();
 procedure pushsegaddrindi();
 procedure pushstackaddr();
+procedure pushstackaddrindi();
 
 procedure indirect8();
 procedure indirect16();
 procedure indirect32();
 procedure indirectpo();
-procedure indirectpooffs();
+procedure indirectpooffs(); //offset after indirect
+procedure indirectoffspo(); //offset before indirect
 procedure indirect();
 
 procedure popindirect8();
@@ -1054,6 +1056,12 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= cpu.stack+cpu.pc^.par.voffset;
 end;
 
+procedure pushstackaddrindi;
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= 
+        ppointer(cpu.stack+cpu.pc^.par.voffset)^+cpu.pc^.par.voffsaddress;
+end;
+
 procedure indirect8;
 var
  po1: pointer;
@@ -1092,6 +1100,14 @@ var
 begin
  po1:= cpu.stack-sizeof(pointer);
  ppointer(po1)^:=  ppointer(ppointer(po1)^)^+cpu.pc^.par.voffset;
+end;
+
+procedure indirectoffspo;
+var
+ po1: pointer;
+begin
+ po1:= cpu.stack-sizeof(pointer);
+ ppointer(po1)^:=  ppointer(ppointer(po1)^+cpu.pc^.par.voffset)^;
 end;
 
 procedure indirect;

@@ -90,8 +90,8 @@ begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
       with insertitem(stackoffset,false)^ do begin
-       op:= @offsetpoimm32;
-       par.imm.vint32:= int1;
+       op:= @indirectoffspo;
+       par.voffset:= int1;
       end;
       result:= true;
      end;
