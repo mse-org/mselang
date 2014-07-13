@@ -1500,7 +1500,7 @@ begin
      dec(int1);
     end;
                          //todo: use destinationaddress directly
-    typematch:= tryconvert(contextstack[stacktop],dest.typ,int1);
+    typematch:= tryconvert(stacktop-stackindex,dest.typ,int1);
     if not typematch then begin
      assignmenterror(contextstack[stacktop].d,dest);
     end

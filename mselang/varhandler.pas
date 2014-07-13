@@ -18,14 +18,19 @@ unit varhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 
 interface
-
+uses
+ parserglob;
+ 
+const 
+ pointervarkinds = [dk_class,dk_interface];
+ 
 procedure handlevardefstart();
 procedure handlevar3();
 procedure handlepointervar();
 
 implementation
 uses
- handlerutils,parserglob,elements,errorhandler,handlerglob,opcode,grammar;
+ handlerutils,elements,errorhandler,handlerglob,opcode,grammar;
  
 procedure handlevardefstart();
 begin
@@ -84,7 +89,7 @@ begin
     address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
     with ptypedataty(@po2^.data)^ do begin
      address.indirectlevel:= address.indirectlevel+indirectlevel;
-     if kind = dk_class then begin
+     if kind in pointervarkinds then begin
       inc(address.indirectlevel);
      end;
      if address.indirectlevel = 0 then begin

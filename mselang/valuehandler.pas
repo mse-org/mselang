@@ -20,7 +20,7 @@ interface
 uses
  parserglob,handlerglob;
  
-function tryconvert(var context: contextitemty;
+function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
 
 procedure handlevalueidentifier();
@@ -30,72 +30,77 @@ uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler;
 
-function tryconvert(var context: contextitemty;
+function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
 var                     //todo: optimize, use tables, complete
- source: ptypedataty;
+ source1: ptypedataty;
  int1: integer;
 begin
- source:= ele.eledataabs(context.d.datatyp.typedata);
- result:= destindirectlevel = context.d.datatyp.indirectlevel;
- if result then begin
-  result:= dest^.kind = source^.kind;
-  if not result then begin
-   case context.d.kind of
-    ck_const: begin
-     case dest^.kind of //todo: use table
-      dk_float: begin
-       case source^.kind of
-        dk_integer: begin //todo: adjust data size
-         with context.d,constval do begin
-          kind:= dk_float;
-          vfloat:= vinteger;
-         end;
-         result:= true;
-        end;
-       end;
-      end;
-     end;
-    end;
-    ck_fact: begin
-     case dest^.kind of //todo: use table
-      dk_float: begin
-       case source^.kind of
-        dk_integer: begin //todo: adjust data size
-         with additem()^ do begin
-          op:= @stackops.int32toflo64;
-          with par.op1 do begin
-           index0:= 0;
+ with info,contextstack[stackindex+stackoffset] do begin
+  source1:= ele.eledataabs(d.datatyp.typedata);
+  result:= destindirectlevel = d.datatyp.indirectlevel;
+  if result then begin
+   result:= dest^.kind = source1^.kind;
+   if not result then begin
+    case d.kind of
+     ck_const: begin
+      case dest^.kind of //todo: use table
+       dk_float: begin
+        case source1^.kind of
+         dk_integer: begin //todo: adjust data size
+          with d,constval do begin
+           kind:= dk_float;
+           vfloat:= vinteger;
           end;
+          result:= true;
          end;
-         result:= true;
         end;
        end;
       end;
      end;
+     ck_fact: begin
+      case dest^.kind of //todo: use table
+       dk_float: begin
+        case source1^.kind of
+         dk_integer: begin //todo: adjust data size
+          with additem()^ do begin
+           op:= @stackops.int32toflo64;
+           with par.op1 do begin
+            index0:= 0;
+           end;
+          end;
+          result:= true;
+         end;
+        end;
+       end;
+      end;
+     end;
+    {$ifdef mse_checkinternalerror}
+     else begin
+      internalerror(ie_handler,'20131121B');
+     end;
+    {$endif}
     end;
-   {$ifdef mse_checkinternalerror}
-    else begin
-     internalerror(ie_handler,'20131121B');
+   end;
+  end
+  else begin
+   if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
+         (d.datatyp.indirectlevel = 1) and 
+         (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
+    if getclassinterfaceoffset(source1,dest,int1) then begin
+     if getvalue(stackoffset) then begin
+      with insertitem(stackoffset,false)^ do begin
+       op:= @offsetpoimm32;
+       par.imm.vint32:= int1;
+      end;
+      result:= true;
+     end;
     end;
-   {$endif}
    end;
   end;
- end
- else begin
-  if (context.d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-        (context.d.datatyp.indirectlevel = 1) and 
-        (source^.kind = dk_class) and (dest^.kind = dk_interface) then begin
-   if getclassinterfaceoffset(source,dest,int1) then begin
-    with additem()^ do begin
-     op:= @offsetpoimm32;
-     par.imm.vint32:= int1;
-    end;
-   end;
+  if result then begin
+   d.datatyp.typedata:= ele.eledatarel(dest);
   end;
- end;
- if result then begin
-  context.d.datatyp.typedata:= ele.eledatarel(dest);
  end;
 end;
  
@@ -535,7 +540,7 @@ begin
         errormessage(err_closeparentexpected,[],4,-1);
        end
        else begin
-        if not tryconvert(contextstack[stacktop],po2,
+        if not tryconvert(stacktop-stackindex,po2,
                                  ptypedataty(po2)^.indirectlevel) then begin
          illegalconversionerror(contextstack[stacktop].d,po2,
                                      ptypedataty(po2)^.indirectlevel);

@@ -1685,8 +1685,7 @@ var
  ele1: elementoffsetty;
 begin
  result:= not findcurrent(aname,[],allvisi,ele1);
- adata:= pointer(pushelementduplicate(aname,akind,avislevel,0)) +
-                                                     sizeof(elementheaderty);
+ adata:= pointer(pushelementduplicate(aname,akind,avislevel,0)) + eledatashift;
 end;
 
 function telementhashdatalist.pushelement(const aname: identty;
@@ -1774,7 +1773,8 @@ function telementhashdatalist.addelementduplicatedata1(const aname: identty;
                                 const akind: elementkindty;
                                 const avislevel: visikindsty): pointer;
 begin
- result:= ptruint(addelementduplicate1(aname,akind,avislevel))+fdata;
+ result:= addelementduplicate1(aname,akind,avislevel) +
+                        pointer(felementdata) + eledatashift;
 end;
 
 function telementhashdatalist.addelementduplicate(const aname: identty;
@@ -2045,7 +2045,7 @@ begin
   element:= result-pointer(felementdata);
   childparent:= achildparent;
  end;
- inc(result,sizeof(elementheaderty));
+ inc(result,eledatashift);
 end;
 
 procedure telementhashdatalist.pushelementparent(
