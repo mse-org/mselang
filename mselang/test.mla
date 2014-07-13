@@ -1,4 +1,25 @@
 unit program;
+
+type
+ tc = class
+  constructor create();
+  procedure p();
+ end;
+ tc1 = class(tc)
+ end;
+
 implementation
+
+constructor tc.create();
 begin
+end;
+
+procedure tc.p();
+begin
+end;
+
+var
+ c: tc1;
+begin
+ c:= tc.create();
 end;

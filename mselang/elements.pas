@@ -40,7 +40,7 @@ type
  
  elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
                   ek_field,ek_classintfname,ek_classintftype,
-                  ek_intfancestor,
+                  ek_ancestorchain,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
                   ek_unit,ek_implementation,
                   ek_classimpnode,ek_classintfnamenode,ek_classintftypenode,
@@ -80,8 +80,8 @@ const
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
 //ek_classintfname,                   ek_classintftype,
   sizeof(classintfnamedataty)+elesize,sizeof(classintftypedataty)+elesize,
-//ek_intfancestor,
-  sizeof(intfancestordataty)+elesize,
+//ek_ancestorchain,
+  sizeof(ancestorchaindataty)+elesize,
 //ek_sysfunc,                   ek_func,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
 //ek_classes,                   ek_class,

@@ -94,14 +94,14 @@ type
  end;
  pinfoclassty = ^infoclassty;
 
- intfancestordataty = record
+ ancestorchaindataty = record
+  next: elementoffsetty;  //chain, root = typedataty.ancestor
   intftype: elementoffsetty;
-  next: elementoffsetty;  //chain, root = infointerfacety.ancestorchain
  end;
- pintfancestordataty = ^intfancestordataty;
+ pancestorchaindataty = ^ancestorchaindataty;
 
  infointerfacety = record
-  ancestorchain: elementoffsetty; //-> infoancestordataty
+//  ancestorchain: elementoffsetty; //-> infoancestordataty
   subchain: elementoffsetty;      //->
   subcount: integer;  
  end;
@@ -144,13 +144,14 @@ type
  prefdataty = ^refdataty;
  
  typedataty = record
+  ancestor: elementoffsetty; //first, 
+            //valid for ancestordatakinds and ancestorchaindatakinds
   rtti: dataaddressty; //0 -> none
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
   bytesize: integer;
   datasize: databitsizety;
-  ancestor: elementoffsetty; //valid for ancestordatakinds
   case kind: datakindty of 
    dk_boolean:(
     dummy: byte

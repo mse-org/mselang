@@ -80,9 +80,11 @@ begin
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
    inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
+{
    with po1^.infointerface do begin
     ancestorchain:= 0;
    end;
+}
   end;
  end;
 end;
@@ -139,20 +141,20 @@ var
  int1: integer;
  ele1: elementoffsetty;
  po1: ptypedataty;
- po2: pintfancestordataty;
+ po2: pancestorchaindataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INTERFACEPARAM');
 {$endif}
  with info do begin
   ele.pushelement(tks_ancestors,ek_none,allvisi);
-  ele.checkcapacity(ek_intfancestor,stacktop-stackindex);
+  ele.checkcapacity(ek_ancestorchain,stacktop-stackindex);
   ele1:= 0;
   for int1:= stacktop downto stackindex + 1 do begin
               //todo: check recursion
    with contextstack[int1] do begin
     if not ele.addelementdata(identty(d.typeref),
-                                  ek_intfancestor,allvisi,po2) then begin
+                                  ek_ancestorchain,allvisi,po2) then begin
      errormessage(err_duplicateancestortype,[]);
     end;
     currentsubcount:= currentsubcount + 
@@ -164,7 +166,8 @@ begin
   end;
   ele.decelementparent();
   with ptypedataty(ele.parentdata)^ do begin
-   infointerface.ancestorchain:= ele1;
+   ancestor:= ele1;
+//   infointerface.ancestorchain:= ele1;
   end;
  end;
 end;

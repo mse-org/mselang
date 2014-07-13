@@ -1,17 +1,39 @@
-unit test1;
-function test1(p1: int32): int32;
-var
- s1: string8;
-
+unit program;
+type
+ tobject = class
+  public
+   constructor create();
+   destructor destroy();
+   procedure test();
+ end;
+ tc = class(tobject{,itest,itest1})
+  procedure test1(p: int32);
+ end;
 implementation
 
-function test1(p1: int32): int32;
+constructor tobject.create();
 begin
- writeln(p1);
 end;
 
-initialization
- writeln('ini1');
-finalization
- writeln('fini1');
+destructor tobject.destroy();
+begin
+end;
+
+procedure tobject.test();
+begin
+ writeln(123);
+end;
+
+procedure tc.test1(p: int32);
+begin
+end;
+
+var
+ c: tc;
+
+begin
+
+// c:= tc.create();
+ c.test();
+ c.destroy();
 end.

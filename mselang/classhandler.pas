@@ -307,7 +307,7 @@ type
   ele1: elementoffsetty;
   po1: pelementinfoty;
   po2: psubdataty;
-  po3: pintfancestordataty;
+  po3: pancestorchaindataty;
  begin
   with scaninfo do begin
    intftype:= ele.eledataabs(intfele);
@@ -335,7 +335,8 @@ type
     sub^.instanceshift:= instanceshift;
     ele1:= psubdataty(@po1^.data)^.next;
    end;
-   ele1:= intftype^.infointerface.ancestorchain;
+   ele1:= intftype^.ancestor;
+//   ele1:= intftype^.infointerface.ancestorchain;
    while ele1 <> 0 do begin
     po3:= ele.eledataabs(ele1);
     intfele:= po3^.intftype;
