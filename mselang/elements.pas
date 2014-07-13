@@ -146,6 +146,9 @@ type
    function forallancestor(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
                  var adata): boolean; //returns terminated flag
+
+   function checkancestor(var aele: elementoffsetty;
+                                        const avislevel: visikindsty): boolean;
    
    function findcurrent(const aident: identty; const akinds: elementkindsty;
              avislevel: visikindsty; out element: elementoffsetty): boolean;
@@ -163,7 +166,8 @@ type
                       out firstnotfound: integer): boolean; overload;
                   //searches in current scope and above, -1 if not found
                   //firstnotfound = index of first not matching in aident
-   function findchild(const aparent: elementoffsetty; 
+
+   function findchild(aparent: elementoffsetty; 
                  const achild: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; 
                                out element: elementoffsetty): boolean;
@@ -1218,7 +1222,30 @@ begin
  end;
 end;
 
-function telementhashdatalist.findchild(const aparent: elementoffsetty; 
+function telementhashdatalist.checkancestor(var aele: elementoffsetty;
+                                        const avislevel: visikindsty): boolean;
+begin
+ result:= false;
+ if vik_ancestor in avislevel then begin
+  with pelementinfoty(pointer(felementdata)+aele)^ do begin
+   if header.kind = ek_type then begin
+    with ptypedataty(@data)^ do begin
+     if kind in ancestordatakinds then begin
+      aele:= ancestor;
+      result:= aele <> 0;
+     end
+     else begin
+      if kind in ancestorchaindatakinds then begin
+         //todo
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+function telementhashdatalist.findchild(aparent: elementoffsetty; 
                  const achild: identty;
                  const akinds: elementkindsty;
                  const avislevel: visikindsty;
@@ -1233,31 +1260,33 @@ label
  next;
 begin
  result:= false;
- with pelementinfoty(pointer(felementdata)+aparent)^ do begin
-  id1:= header.path + header.name + achild;
- end;
- uint1:= fhashtable[id1 and fmask];
- if uint1 <> 0 then begin
-  po1:= pelementhashdataty(pchar(fdata) + uint1);
-  while true do begin
-   if po1^.data.key = id1 then begin
-    po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
-    if (po2^.header.name <> achild) or 
-                          (po2^.header.parent <> aparent) then begin
-     goto next;
-    end;
-    element:= po1^.data.data;
-    result:= (po2^.header.visibility*avislevel <> []) and
-                ((akinds = []) or (po2^.header.kind in akinds));
-    exit;
-   end;
-next:
-   if po1^.header.nexthash = 0 then begin
-    break;
-   end;
-   po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+ repeat
+  with pelementinfoty(pointer(felementdata)+aparent)^ do begin
+   id1:= header.path + header.name + achild;
   end;
- end;
+  uint1:= fhashtable[id1 and fmask];
+  if uint1 <> 0 then begin
+   po1:= pelementhashdataty(pchar(fdata) + uint1);
+   while true do begin
+    if po1^.data.key = id1 then begin
+     po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+     if (po2^.header.name <> achild) or 
+                           (po2^.header.parent <> aparent) then begin
+      goto next;
+     end;
+     element:= po1^.data.data;
+     result:= (po2^.header.visibility*avislevel <> []) and
+                 ((akinds = []) or (po2^.header.kind in akinds));
+     exit;
+    end;
+next:
+    if po1^.header.nexthash = 0 then begin
+     break;
+    end;
+    po1:= pelementhashdataty(pchar(fdata) + po1^.header.nexthash);
+   end;
+  end;
+ until not checkancestor(aparent,avislevel);
 end;
 
 function telementhashdatalist.findchilddata(const aparent: elementoffsetty; 
