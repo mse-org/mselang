@@ -42,6 +42,7 @@ end;
 
 procedure tobject.test();
 begin
+ writeln(111);
 end;
 
 procedure tc.test1(p: int32);
@@ -59,6 +60,7 @@ var
  c: tc;
  o: tobject;
  i: itesta;
+ i1: itest;
 
 begin
 // o:= tobject.create();
@@ -66,7 +68,9 @@ begin
 // o.destroy();
  c:= tc.create();
  i:= itest1(c);
+ i1:= itest(c);
  i.test2(1);
+ i1.test();
 // c.test();
  c.destroy();
 end.
