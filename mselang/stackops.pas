@@ -219,6 +219,8 @@ procedure callop();
 procedure calloutop();
 procedure callvirtop();
 procedure callintfop();
+procedure virttrampolineop();
+
 procedure locvarpushop();
 procedure locvarpopop();
 procedure returnop();
@@ -1220,6 +1222,13 @@ begin
   po2:= segments[seg_intf].basepo + pptrint(po1^)^;
   inc(po1^,po2^.instanceshift);
   cpu.pc:= startpo + po2^.subad;
+ end;
+end;
+
+procedure virttrampolineop();
+begin
+ with cpu.pc^.par.virttrampolineinfo do begin
+  cpu.pc:= startpo+pptruint(pppointer(cpu.frame+selfinstance)^^+virtoffset)^;
  end;
 end;
 

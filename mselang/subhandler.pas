@@ -438,7 +438,7 @@ begin
   if ismethod then begin
    inc(paramco); //self pointer
   end;
-  int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var])+elesizes[ek_sub];
+  int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[stackindex+1].d.ident.ident;
@@ -460,6 +460,8 @@ begin
   inc(currentsubcount);
   po1^.paramcount:= paramco;
   po1^.links:= 0;
+  po1^.trampolinelinks:= 0;   //for virtual interface items
+  po1^.trampolineaddress:= 0;
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
   po1^.varchain:= 0;
@@ -549,7 +551,6 @@ begin
       end;
      end
      else begin
-//       identerror(int1+1-stackindex,err_identifiernotfound);
       err1:= true;
      end;
      inc(paramsize1,si1);
@@ -585,7 +586,6 @@ begin
      end;
     end;
     ele.markelement(b.elemark); 
-//    markmanagedblock(b.managedblock);
    end;
   end
   else begin
@@ -691,9 +691,6 @@ begin
  with info,contextstack[stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
-//  with po1^ do begin
-//   address:= opcount;
-//  end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
@@ -735,7 +732,7 @@ end;
 
 procedure handlesubbody6();
 var
- po1: psubdataty;
+ po1,po2: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -772,6 +769,21 @@ begin
   ele.releaseelement(b.elemark); //remove local definitions
   ele.elementparent:= b.eleparent;
   currentstatementflags:= b.flags;
+  if d.subdef.match <> 0 then begin
+   po1:= ele.eledataabs(d.subdef.match);
+   if (po1^.flags * [sf_virtual,sf_override] <> []) and 
+                    (sf_intfcall in po1^.flags) then begin
+    po1^.trampolineaddress:= opcount;
+    linkresolve(po1^.trampolinelinks,po1^.trampolineaddress);
+    with additem()^ do begin 
+      //todo: possibly better in front of sub because of cache line
+     op:= @virttrampolineop;
+     par.virttrampolineinfo.selfinstance:= -d.subdef.paramsize;
+     par.virttrampolineinfo.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
+                                                            virtualtableoffset;
+    end;
+   end;
+  end;
  end;
 end;
 

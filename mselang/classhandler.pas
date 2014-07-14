@@ -325,11 +325,22 @@ type
          getidentname(po1^.header.name)]);
     end
     else begin
-     if po2^.address = 0 then begin
-      linkmark(po2^.links,seg,sizeof(intfitemty.instanceshift));
+     include(po2^.flags,sf_intfcall);
+     if sf_virtual in po2^.flags then begin
+      if po2^.trampolineaddress = 0 then begin
+       linkmark(po2^.trampolinelinks,seg,sizeof(intfitemty.instanceshift));
+      end
+      else begin
+       sub^.subad:= po2^.trampolineaddress-1;
+      end;
      end
      else begin
-      sub^.subad:= po2^.address-1;
+      if po2^.address = 0 then begin
+       linkmark(po2^.links,seg,sizeof(intfitemty.instanceshift));
+      end
+      else begin
+       sub^.subad:= po2^.address-1;
+      end;
      end;
     end;
     sub^.instanceshift:= instanceshift;

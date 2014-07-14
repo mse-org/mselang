@@ -41,7 +41,7 @@ type
              ok_offset,ok_offsetaddress,ok_segment,
              ok_locop,ok_segop,ok_poop,
              ok_op,ok_op1,ok_opn,ok_opaddress,ok_params,
-             ok_call,ok_virtcall,ok_intfcall,
+             ok_call,ok_virtcall,ok_intfcall,ok_virttrampoline,
              ok_stack,ok_initclass,ok_destroyclass,
              ok_managed);
 
@@ -67,6 +67,11 @@ type
 
  virtcallinfoty = record
   selfinstance: dataoffsty; //stackoffset
+  virtoffset: dataoffsty;   //offset in classdefinfoty
+ end;
+
+ virttrampolineinfoty = record
+  selfinstance: dataoffsty; //frameoffset
   virtoffset: dataoffsty;   //offset in classdefinfoty
  end;
 
@@ -199,6 +204,9 @@ type
    );
    ok_virtcall:(
     virtcallinfo: virtcallinfoty;
+   );
+   ok_virttrampoline:(
+    virttrampolineinfo: virttrampolineinfoty;
    );
    ok_intfcall:(
     intfcallinfo: intfcallinfoty;

@@ -254,6 +254,8 @@ type
   flags: subflagsty;
   tableindex: integer; //-1 = none
   address: opaddressty;
+  trampolinelinks: linkindexty;   //for virtual interface items
+  trampolineaddress: opaddressty;
   nestinglevel: integer;
   varchain: elementoffsetty;
   paramfinichain: elementoffsetty;

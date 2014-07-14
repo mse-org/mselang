@@ -2,14 +2,6 @@ unit program;
 type
  itest = interface
   procedure test();
-  procedure test1(p: int32);
- end;
- itesta = interface
-  procedure test2(p: int32);
- end;
-
- itest1 = interface(itest,itesta)
-  procedure test2(p: int32; p1: int32);
  end;
 
  tobject = class
@@ -18,17 +10,8 @@ type
    destructor destroy();
    procedure test(); virtual;
  end;
- tc = class(tobject,itest,itest1)
-  fi: int32;
-  procedure test1(p: int32);
-  procedure test2(p: int32; p1: int32);
+ tc = class(tobject,itest)
  end;
-{
- tc2 = class(tc,itest)
- end;
-}
-//{$dumpelements}
-//{$abort}
 
 implementation
 
@@ -45,32 +28,13 @@ begin
  writeln(111);
 end;
 
-procedure tc.test1(p: int32);
-begin
- writeln(123);
-end;
-
-procedure tc.test2(p: int32; p1: int32);
-begin
- writeln(123);
-end;
-
 var
- t: itest;
+ i: itest;
  c: tc;
- o: tobject;
- i: itesta;
- i1: itest;
 
 begin
-// o:= tobject.create();
-// o.test();
-// o.destroy();
  c:= tc.create();
- i:= itest1(c);
- i1:= itest(c);
- i.test2(1);
- i1.test();
-// c.test();
+ i:= itest(c);
+ i.test();
  c.destroy();
 end.
