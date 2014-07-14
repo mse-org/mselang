@@ -11,6 +11,10 @@ type
    procedure test(); virtual;
  end;
  tc = class(tobject,itest)
+   procedure test(); override;
+ end;
+ tc3 = class(tobject,itest)
+   procedure test(); override;
  end;
 
 implementation
@@ -28,12 +32,22 @@ begin
  writeln(111);
 end;
 
+procedure tc.test();
+begin
+ writeln(222);
+end;
+
+procedure tc3.test();
+begin
+ writeln(333);
+end;
+
 var
  i: itest;
  c: tc;
 
 begin
- c:= tc.create();
+ c:= tc3.create();
  i:= itest(c);
  i.test();
  c.destroy();
