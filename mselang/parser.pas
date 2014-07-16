@@ -610,7 +610,7 @@ parseend:
     else begin
      inistop:= opcount;
      with additem^ do begin
-      op:= @gotoop;
+      setop(op,oc_goto);
      end;
     end;
     finistart:= opcount;
@@ -621,7 +621,7 @@ parseend:
     else begin
      finistop:= opcount;
      with additem^ do begin
-      op:= @gotoop;
+      setop(op,oc_goto);
      end;
     end;
    end;

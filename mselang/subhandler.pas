@@ -54,7 +54,7 @@ function checkparams(const po1,ref: psubdataty): boolean;
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils,classhandler;
+ managedtypes,segmentutils,classhandler,opglob;
  
 type
  equalparaminfoty = record
@@ -713,14 +713,14 @@ begin
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentcontainer);
    with additem^,par.initclass do begin
-    op:= @initclassop;
+    setop(op,oc_initclass);
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin
-    op:= @locvarpushop;
+    setop(op,oc_locvarpush);
     par.stacksize:= subdef.varsize;
    end;
   end;
@@ -749,18 +749,18 @@ begin
   end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
-    op:= @locvarpopop;
+    setop(op,oc_locvarpop);
     par.stacksize:= d.subdef.varsize;
    end;
   end;
   if sf_destructor in d.subdef.flags then begin
    with additem^,par.destroyclass do begin
-    op:= @destroyclassop;
+    setop(op,oc_destroyclass);
     selfinstance:= -d.subdef.paramsize;
    end;
   end;
   with additem()^ do begin
-   op:= @returnop;
+   setop(op,oc_return);
    par.stacksize:= d.subdef.paramsize;
   end;
   locdatapo:= d.subdef.parambase;
@@ -777,7 +777,7 @@ begin
     linkresolve(po1^.trampolinelinks,po1^.trampolineaddress);
     with additem()^ do begin 
       //todo: possibly better in front of sub because of cache line
-     op:= @virttrampolineop;
+     setop(op,oc_virttrampoline);
      par.virttrampolineinfo.selfinstance:= -d.subdef.paramsize;
      par.virttrampolineinfo.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;

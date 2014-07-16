@@ -137,7 +137,9 @@ uses
 
 procedure initparser({var info: parseinfoty});
 begin
- writeop(@gotoop); //startup vector 
+ with additem()^ do begin
+  setop(op,oc_goto); //startup vector 
+ end;
 end;
 
 procedure handleint();
@@ -581,7 +583,7 @@ end;
 *)
 
 const
- mulops: opsinfoty = (ops: (nil,nil,@mulint32,@mulflo64);
+ mulops: opsinfoty = (ops: (oc_none,oc_none,oc_mulint32,oc_mulflo64);
                      opname: '*');
  
 procedure handlemulfact();
@@ -593,7 +595,7 @@ begin
 end;
 
 const
- addops: opsinfoty = (ops: (nil,nil,@addint32,@addflo64);
+ addops: opsinfoty = (ops: (oc_none,oc_none,oc_addint32,oc_addflo64);
                      opname: '+');
 
 procedure handleaddterm();
@@ -725,13 +727,13 @@ begin
 end;
 
 const
- negops: array[datakindty] of opty = (
+ negops: array[datakindty] of opcodety = (
  //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
-   nil,     nil,       @negcard32, @negint32, @negflo64,
+   oc_none, oc_none,   oc_negcard32, oc_negint32, oc_negflo64,
  //dk_kind, dk_address,dk_record,dk_string,dk_array,dk_class,dk_interface,
-   nil,     nil,       nil,      nil,      nil,     nil,     nil,
+   oc_none, oc_none,   oc_none,  oc_none,  oc_none, oc_none, oc_none,
  //dk_enum,dk_enumitem,dk_set
-   nil,    nil,        nil
+   oc_none,oc_none,    oc_none
  );
 
 procedure handlefact();
@@ -819,7 +821,7 @@ end;
 procedure handlenegfact;
 var
  po1: ptypedataty;
- op1: opty;
+// op1: opty;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
@@ -849,12 +851,11 @@ begin
   else begin
    if getvalue(1{,false}) then begin
     po1:= ele.eledataabs(d.datatyp.typedata);
-    op1:= negops[po1^.kind];
-    if op1 = nil then begin
-     errormessage(err_negnotpossible,[],1);
-    end
-    else begin
-     writeop(op1);
+    with additem()^ do begin
+     setop(op,negops[po1^.kind]);
+     if op.proc = nil then begin
+      errormessage(err_negnotpossible,[],1);
+     end;
     end;
    end;
   end;
@@ -1202,7 +1203,7 @@ begin
 // writeop(nil); //endmark
  handleunitend();
  with additem()^ do begin //endmark, will possibly replaced by goto if there 
-  op:= nil;               //is fini code
+  setop(op,oc_none);               //is fini code
  end;
  with info do begin
   dec(stackindex);
@@ -1346,7 +1347,8 @@ begin
 end;
 
 const
- cmpequops: opsinfoty = (ops: (nil,@cmpequbool,@cmpequint32,@cmpequflo64);
+ cmpequops: opsinfoty = (ops: (oc_none,oc_cmpequbool,oc_cmpequint32,
+                        oc_cmpequflo64);
                         opname: '=');
 
 procedure handleequsimpexp();
@@ -1541,16 +1543,16 @@ begin
       if indi then begin
        case si1 of
         1: begin
-         op:= @popindirect8;
+         setop(op,oc_popindirect8);
         end;
         2: begin
-         op:= @popindirect16;
+         setop(op,oc_popindirect16);
         end;
         4: begin
-         op:= @popindirect32;
+         setop(op,oc_popindirect32);
         end;
         else begin
-         op:= @popindirect;
+         setop(op,oc_popindirect);
         end;
        end;
       end
@@ -1558,16 +1560,16 @@ begin
        if af_segment in dest.address.flags then begin
         case si1 of
          1: begin 
-          op:= @popseg8;
+          setop(op,oc_popseg8);
          end;
          2: begin
-          op:= @popseg16;
+          setop(op,oc_popseg16);
          end;
          4: begin
-          op:= @popseg32;
+          setop(op,oc_popseg32);
          end;
          else begin
-          op:= @popseg;
+          setop(op,oc_popseg);
          end;
         end;
         par.segdataaddress.a:= dest.address.segaddress;
@@ -1577,32 +1579,32 @@ begin
         if af_paramindirect in dest.address.flags then begin
          case si1 of
           1: begin 
-           op:= @poplocindi8;
+           setop(op,oc_poplocindi8);
           end;
           2: begin
-           op:= @poplocindi16;
+           setop(op,oc_poplocindi16);
           end;
           4: begin
-           op:= @poplocindi32;
+           setop(op,oc_poplocindi32);
           end;
           else begin
-           op:= @poplocindi;
+           setop(op,oc_poplocindi);
           end;
          end;
         end
         else begin
          case si1 of
           1: begin 
-           op:= @poploc8;
+           setop(op,oc_poploc8);
           end;
           2: begin
-           op:= @poploc16;
+           setop(op,oc_poploc16);
           end;
           4: begin
-           op:= @poploc32;
+           setop(op,oc_poploc32);
           end;
           else begin
-           op:= @poploc;
+           setop(op,oc_poploc);
           end;
          end;
         end;
@@ -1731,7 +1733,7 @@ begin
    case kind of
     ck_subres: begin
      with additem()^ do begin
-      op:= @popop;
+      setop(op,oc_pop);
       par.imm.vsize:= fact.datasize; //todo: alignment
      end;    
     end;
@@ -1946,7 +1948,7 @@ begin
  outhandle('NOP');
 {$endif}
  with additem()^ do begin
-  op:= @nop;
+  setop(op,oc_nop);
  end;
 end;
 

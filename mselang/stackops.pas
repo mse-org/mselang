@@ -67,7 +67,14 @@ procedure run({const code: opinfoarty; const constseg: pointer;}
                                                const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
+procedure setop(var aop: opty; const aopcode: opcodety);
+                       {$ifndef mse_debugparser} inline;{$endif}
+function checkop(var aop: opty; const aopcode: opcodety): boolean;
+                       {$ifndef mse_debugparser} inline;{$endif}
+
+
 //procedure dummyop;
+{
 procedure movesegreg0();
 procedure moveframereg0();
 procedure popreg0();
@@ -238,7 +245,7 @@ procedure pushcpucontext();
 procedure popcpucontext();
 procedure finiexception();
 procedure continueexception();
-
+}
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
@@ -261,6 +268,7 @@ var
  framepointer: integer;
 }
 
+  
 type
  cputy = record
   pc: popinfoty;
@@ -408,24 +416,24 @@ begin
  end; 
 end;
 
-procedure movesegreg0();
+procedure movesegreg0op();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= reg0;
  reg0:= segments[cpu.pc^.par.vsegment].basepo;
 end;
 
-procedure moveframereg0();
+procedure moveframereg0op();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= reg0;
  reg0:= cpu.frame;
 end;
 
-procedure popreg0();
+procedure popreg0op();
 begin
  reg0:= ppointer(stackpop(sizeof(pointer)))^;
 end;
 
-procedure increg0();
+procedure increg0op();
 begin
  inc(reg0,cpu.pc^.par.imm.voffset);
 end;
@@ -439,7 +447,7 @@ begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress;
 end;
 
-procedure cmpjmpneimm4();
+procedure cmpjmpneimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ <> ordimm.vint32 then begin
@@ -448,7 +456,7 @@ begin
  end;
 end;
 
-procedure cmpjmpeqimm4();
+procedure cmpjmpeqimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ = ordimm.vint32 then begin
@@ -457,7 +465,7 @@ begin
  end;
 end;
 
-procedure cmpjmploimm4();
+procedure cmpjmploimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ < ordimm.vint32 then begin
@@ -466,7 +474,7 @@ begin
  end;
 end;
 
-procedure cmpjmploeqimm4();
+procedure cmpjmploeqimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ <= ordimm.vint32 then begin
@@ -475,7 +483,7 @@ begin
  end;
 end;
 
-procedure cmpjmpgtimm4();
+procedure cmpjmpgtimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ > ordimm.vint32 then begin
@@ -610,42 +618,42 @@ begin
 end;
 *)
 
-procedure pushop;
+procedure pushop();
 begin
  stackpush(cpu.pc^.par.imm.vsize);
 end;
 
-procedure popop;
+procedure popop();
 begin
  stackpop(cpu.pc^.par.imm.vsize);
 end;
 
-procedure push8;
+procedure push8op();
 begin
  pv8ty(stackpush(1))^:= cpu.pc^.par.v8; 
 end;
 
-procedure push16;
+procedure push16op();
 begin
  pv16ty(stackpush(2))^:= cpu.pc^.par.v16; 
 end;
 
-procedure push32;
+procedure push32op();
 begin
  pv32ty(stackpush(4))^:= cpu.pc^.par.v32; 
 end;
 
-procedure push64;
+procedure push64op();
 begin
  pv64ty(stackpush(8))^:= cpu.pc^.par.v64; 
 end;
 
-procedure pushdatakind;
+procedure pushdatakindop();
 begin
  vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= cpu.pc^.par.vdatakind; 
 end;
 
-procedure int32toflo64;
+procedure int32toflo64op();
 var
  po1: pointer;
 begin
@@ -653,7 +661,7 @@ begin
  vfloatty(stackpush(sizeof(vfloatty))^):= vintegerty(po1^);
 end;
 
-procedure mulint32;
+procedure mulint32op();
 var
  po1,po2: pointer;
 begin
@@ -662,7 +670,7 @@ begin
  vintegerty(po2^):= vintegerty(po2^)*vintegerty(po1^);
 end;
 
-procedure mulimmint32;
+procedure mulimmint32op();
 var
  po1: pointer;
 begin
@@ -670,7 +678,7 @@ begin
  vintegerty(po1^):= vintegerty(po1^)*cpu.pc^.par.imm.vint32;
 end;
 
-procedure mulflo64;
+procedure mulflo64op();
 var
  po1,po2: pointer;
 begin
@@ -679,7 +687,7 @@ begin
  vfloatty(po2^):= vfloatty(po2^)*vfloatty(po1^);
 end;
 
-procedure addint32;
+procedure addint32op();
 var
  po1,po2: pointer;
 begin
@@ -688,7 +696,7 @@ begin
  vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
 end;
 
-procedure addimmint32;
+procedure addimmint32op();
 var
  po1: pointer;
 begin
@@ -696,7 +704,7 @@ begin
  vintegerty(po1^):= vintegerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
-procedure offsetpoimm32();
+procedure offsetpoimm32op();
 var
  po1: pointer;
 begin
@@ -704,7 +712,7 @@ begin
  vpointerty(po1^):= vpointerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
-procedure cmpequbool;
+procedure cmpequboolop();
 var
  po1,po2: pvbooleanty;
 begin
@@ -713,7 +721,7 @@ begin
  po2^:= po2^ = po1^;
 end;
 
-procedure cmpequint32;
+procedure cmpequint32op();
 var
  po1,po2: pvintegerty;
 begin
@@ -722,7 +730,7 @@ begin
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
-procedure cmpequflo64;
+procedure cmpequflo64op();
 var
  po1,po2: pvfloatty;
 begin
@@ -731,7 +739,7 @@ begin
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
-procedure addflo64;
+procedure addflo64op();
 var
  po1,po2: pointer;
 begin
@@ -740,7 +748,7 @@ begin
  vfloatty(po2^):= vfloatty(po2^)+vfloatty(po1^);
 end;
 
-procedure negcard32;
+procedure negcard32op();
 var
  po1: pointer;
 begin
@@ -748,7 +756,7 @@ begin
  vcardinalty(po1^):= -vcardinalty(po1^);
 end;
 
-procedure negint32;
+procedure negint32op();
 var
  po1: pointer;
 begin
@@ -756,7 +764,7 @@ begin
  vintegerty(po1^):= -vintegerty(po1^);
 end;
 
-procedure negflo64;
+procedure negflo64op();
 var
  po1: pointer;
 begin
@@ -764,43 +772,43 @@ begin
  vfloatty(po1^):= -vfloatty(po1^);
 end;
 
-procedure pushnil;
+procedure pushnilop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
 end;
 
-procedure pushsegaddress;
+procedure pushsegaddressop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= 
                                     getsegaddress(cpu.pc^.par.vsegaddress); 
 end;
 
-procedure storesegnil();
+procedure storesegnilop();
 begin
  ppointer(getsegaddress(cpu.pc^.par.vsegaddress))^:= nil;
 end;
 
-procedure storeframenil();
+procedure storeframenilop();
 begin
  ppointer(cpu.frame+cpu.pc^.par.vaddress)^:= nil;
 end;
 
-procedure storereg0nil();
+procedure storereg0nilop();
 begin
  ppointer(reg0+cpu.pc^.par.vaddress)^:= nil;
 end;
 
-procedure storestacknil();
+procedure storestacknilop();
 begin
  ppointer(cpu.stack+cpu.pc^.par.vaddress)^:= nil;
 end;
 
-procedure storestackrefnil();
+procedure storestackrefnilop();
 begin
  pppointer(cpu.stack+cpu.pc^.par.vaddress)^^:= nil;
 end;
 
-procedure storesegnilar();
+procedure storesegnilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
@@ -811,7 +819,7 @@ begin
  end;
 end;
 
-procedure storeframenilar();
+procedure storeframenilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
@@ -822,7 +830,7 @@ begin
  end;
 end;
 
-procedure storereg0nilar();
+procedure storereg0nilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
@@ -833,7 +841,7 @@ begin
  end;
 end;
 
-procedure storestacknilar();
+procedure storestacknilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
@@ -844,7 +852,7 @@ begin
  end;
 end;
 
-procedure storestackrefnilar();
+procedure storestackrefnilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
@@ -855,43 +863,43 @@ begin
  end;
 end;
 
-procedure popseg8;
+procedure popseg8op();
 begin
  puint8(getsegaddress(cpu.pc^.par.segdataaddress))^:= puint8(stackpop(1))^;
 end;
 
-procedure popseg16;
+procedure popseg16op();
 begin
  puint16(getsegaddress(cpu.pc^.par.segdataaddress))^:= puint16(stackpop(2))^;
 end;
 
-procedure popseg32;
+procedure popseg32op();
 begin
  puint32(getsegaddress(cpu.pc^.par.segdataaddress))^:= puint32(stackpop(4))^;
 end;
 
-procedure popseg;
+procedure popsegop();
 begin
  move(stackpop(cpu.pc^.par.datasize)^,
       getsegaddress(cpu.pc^.par.segdataaddress)^,cpu.pc^.par.datasize);
 end;
 
-procedure pushseg8;
+procedure pushseg8op();
 begin
  pv8ty(stackpush(1))^:= pv8ty(getsegaddress(cpu.pc^.par.segdataaddress))^;
 end;
 
-procedure pushseg16;
+procedure pushseg16op();
 begin
  pv16ty(stackpush(2))^:= pv16ty(getsegaddress(cpu.pc^.par.segdataaddress))^;
 end;
 
-procedure pushseg32;
+procedure pushseg32op();
 begin
  pv32ty(stackpush(4))^:= pv32ty(getsegaddress(cpu.pc^.par.segdataaddress))^;
 end;
 
-procedure pushseg;
+procedure pushsegop();
 begin
  move(getsegaddress(cpu.pc^.par.segdataaddress)^,
                   stackpush(cpu.pc^.par.datasize)^,cpu.pc^.par.datasize);
@@ -936,136 +944,136 @@ begin
  end;
 end;
 
-procedure poploc8;
+procedure poploc8op();
 begin             
  pv8ty(getlocaddress(cpu.pc^.par.locdataaddress))^:= pv8ty(stackpop(1))^;
 end;
 
-procedure poploc16;
+procedure poploc16op();
 begin
  pv16ty(getlocaddress(cpu.pc^.par.locdataaddress))^:= pv16ty(stackpop(2))^;
 end;
 
-procedure poploc32;
+procedure poploc32op();
 begin
  pv32ty(getlocaddress(cpu.pc^.par.locdataaddress))^:= pv32ty(stackpop(4))^;
 end;
 
-procedure poploc;
+procedure poplocop();
 begin
  move(stackpop(cpu.pc^.par.datasize)^,
        getlocaddress(cpu.pc^.par.locdataaddress)^,cpu.pc^.par.datasize);
 end;
 
-procedure poplocindi8;
+procedure poplocindi8op();
 begin             
  pv8ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^:= pv8ty(stackpop(1))^;
 end;
 
-procedure poplocindi16;
+procedure poplocindi16op();
 begin
  pv16ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^:= pv16ty(stackpop(2))^;
 end;
 
-procedure poplocindi32;
+procedure poplocindi32op();
 begin
  pv32ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^:= pv32ty(stackpop(4))^;
 end;
 
-procedure poplocindi;
+procedure poplocindiop();
 begin
  move(stackpop(cpu.pc^.par.datasize)^,
       getlocaddressindi(cpu.pc^.par.locdataaddress)^,cpu.pc^.par.datasize);
 end;
 
-procedure pushloc8;
+procedure pushloc8op();
 begin
  pv8ty(stackpush(1))^:= pv8ty(getlocaddress(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushloc16;
+procedure pushloc16op();
 begin
  pv16ty(stackpush(2))^:= pv16ty(getlocaddress(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushloc32;
+procedure pushloc32op();
 begin
  pv32ty(stackpush(4))^:= pv32ty(getlocaddress(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushlocpo;
+procedure pushlocpoop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                     ppointer(getlocaddress(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushloc;
+procedure pushlocop();
 begin
  move(getlocaddress(cpu.pc^.par.locdataaddress)^,stackpush(cpu.pc^.par.datasize)^,
                                                    cpu.pc^.par.datasize);
 end;
 
-procedure pushlocindi8;
+procedure pushlocindi8op();
 begin
  pv8ty(stackpush(1))^:= pv8ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushlocindi16;
+procedure pushlocindi16op();
 begin
  pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushlocindi32;
+procedure pushlocindi32op();
 begin
  pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(cpu.pc^.par.locdataaddress))^;
 end;
 
-procedure pushlocindi;
+procedure pushlocindiop();
 begin
  move(getlocaddressindi(cpu.pc^.par.locdataaddress)^,
                stackpush(cpu.pc^.par.datasize)^,cpu.pc^.par.datasize);
 end;
 
-procedure pushaddr;
+procedure pushaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= pointer(cpu.pc^.par.imm.vpointer);
 end;
 
-procedure pushlocaddr;
+procedure pushlocaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= getlocaddress(cpu.pc^.par.vlocaddress);
 end;
 
-procedure pushlocaddrindi;
+procedure pushlocaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                            getlocaddressindi(cpu.pc^.par.vlocaddress);
 end;
 
-procedure pushsegaddr;
+procedure pushsegaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                getsegaddress(cpu.pc^.par.segdataaddress);
 end;
 
-procedure pushsegaddrindi;
+procedure pushsegaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                getsegaddressindi(cpu.pc^.par.segdataaddress);
 end;
 
-procedure pushstackaddr;
+procedure pushstackaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= cpu.stack+cpu.pc^.par.voffset;
 end;
 
-procedure pushstackaddrindi;
+procedure pushstackaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
         ppointer(cpu.stack+cpu.pc^.par.voffset)^+cpu.pc^.par.voffsaddress;
 end;
 
-procedure indirect8;
+procedure indirect8op();
 var
  po1: pointer;
 begin
@@ -1073,7 +1081,7 @@ begin
  pv8ty(po1)^:=  pv8ty(ppointer(po1)^)^;
 end;
 
-procedure indirect16;
+procedure indirect16op();
 var
  po1: pointer;
 begin
@@ -1081,7 +1089,7 @@ begin
  pv16ty(po1)^:=  pv16ty(ppointer(po1)^)^;
 end;
 
-procedure indirect32;
+procedure indirect32op();
 var
  po1: pointer;
 begin
@@ -1089,7 +1097,7 @@ begin
  pv32ty(po1)^:=  pv32ty(ppointer(po1)^)^;
 end;
 
-procedure indirectpo;
+procedure indirectpoop();
 var
  po1: pointer;
 begin
@@ -1097,7 +1105,7 @@ begin
  ppointer(po1)^:=  ppointer(ppointer(po1)^)^;
 end;
 
-procedure indirectpooffs;
+procedure indirectpooffsop();
 var
  po1: pointer;
 begin
@@ -1105,7 +1113,7 @@ begin
  ppointer(po1)^:=  ppointer(ppointer(po1)^)^+cpu.pc^.par.voffset;
 end;
 
-procedure indirectoffspo;
+procedure indirectoffspoop();
 var
  po1: pointer;
 begin
@@ -1113,7 +1121,7 @@ begin
  ppointer(po1)^:=  ppointer(ppointer(po1)^+cpu.pc^.par.voffset)^;
 end;
 
-procedure indirect;
+procedure indirectop();
 var
  po1: pointer;
 begin
@@ -1121,7 +1129,7 @@ begin
  move(po1^,stackpush(cpu.pc^.par.datasize)^,cpu.pc^.par.datasize);
 end;
 
-procedure popindirect8;
+procedure popindirect8op();
 var
  po1,po2: pointer;
 begin
@@ -1130,7 +1138,7 @@ begin
  pv8ty(po2)^:= pv8ty(po1)^;
 end;
 
-procedure popindirect16;
+procedure popindirect16op();
 var
  po1,po2: pointer;
 begin
@@ -1139,7 +1147,7 @@ begin
  pv16ty(po2)^:= pv16ty(po1)^;
 end;
 
-procedure popindirect32;
+procedure popindirect32op();
 var
  po1,po2: pointer;
 begin
@@ -1148,7 +1156,7 @@ begin
  pv32ty(po2)^:= pv32ty(po1)^;
 end;
 
-procedure popindirect;
+procedure popindirectop();
 var
  po1,po2: pointer;
 begin
@@ -1161,7 +1169,7 @@ end;
 //                  |cpu.frame    |cpu.stack
 // params frameinfo locvars      
 //
-procedure callop;
+procedure callop();
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -1173,7 +1181,7 @@ begin
  cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
 end;
 
-procedure calloutop;
+procedure calloutop();
 var
  i1: integer;
 begin
@@ -1190,7 +1198,7 @@ begin
  cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
 end;
 
-procedure callvirtop;
+procedure callvirtop();
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -1205,7 +1213,7 @@ begin
  end;
 end;
 
-procedure callintfop;
+procedure callintfop();
 var
  po1: ppointer;
  po2: pintfitemty;
@@ -1232,17 +1240,17 @@ begin
  end;
 end;
 
-procedure locvarpushop;
+procedure locvarpushop();
 begin
  stackpush(cpu.pc^.par.stacksize);
 end;
 
-procedure locvarpopop;
+procedure locvarpopop();
 begin
  stackpop(cpu.pc^.par.stacksize);
 end;
 
-procedure returnop;
+procedure returnop();
 var
  int1: integer;
 begin
@@ -1255,7 +1263,7 @@ begin
  cpu.stack:= cpu.stack-int1;
 end;
 
-procedure initclassop;
+procedure initclassop();
 var
  po1: pointer;
  po2: pclassdefinfoty;
@@ -1282,14 +1290,14 @@ begin
  end;
 end;
 
-procedure destroyclassop;
+procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
   intfreemem(ppointer(cpu.frame+destroyclass.selfinstance)^);
  end;
 end;
 
-procedure decloop32();
+procedure decloop32op();
 var
  po1: pinteger;
 begin
@@ -1300,7 +1308,7 @@ begin
  end;
 end;
 
-procedure decloop64();
+procedure decloop64op();
 var
  po1: pint64;
 begin
@@ -1428,167 +1436,167 @@ begin
  end;
 end;
 
-procedure finirefsizeseg();
+procedure finirefsizesegop();
 begin
  finirefsize(getsegaddress(cpu.pc^.par.vsegaddress));
 end;
 
-procedure finirefsizeframe();
+procedure finirefsizeframeop();
 begin
  finirefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
 end;
 
-procedure finirefsizereg0();
+procedure finirefsizereg0op();
 begin
  finirefsize(ppointer(reg0+cpu.pc^.par.vaddress));
 end;
 
-procedure finirefsizestack();
+procedure finirefsizestackop();
 begin
  finirefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
-procedure finirefsizestackref();
+procedure finirefsizestackrefop();
 begin
  finirefsize(pppointer(cpu.stack+cpu.pc^.par.vaddress)^);
 end;
 
-procedure finirefsizesegar();
+procedure finirefsizesegarop();
 begin
  finirefsizear(getsegaddress(cpu.pc^.par.segdataaddress),cpu.pc^.par.datasize);
 end;
 
-procedure finirefsizeframear();
+procedure finirefsizeframearop();
 begin
  finirefsizear(ppointer(cpu.frame+cpu.pc^.par.podataaddress),
                                                        cpu.pc^.par.datasize);
 end;
 
-procedure finirefsizereg0ar();
+procedure finirefsizereg0arop();
 begin
  finirefsizear(ppointer(reg0+cpu.pc^.par.podataaddress),cpu.pc^.par.datasize);
 end;
 
-procedure finirefsizestackar();
+procedure finirefsizestackarop();
 begin
  finirefsizear(ppointer(cpu.stack+cpu.pc^.par.podataaddress),
                                                     cpu.pc^.par.datasize);
 end;
 
-procedure finirefsizestackrefar();
+procedure finirefsizestackrefarop();
 begin
  finirefsizear(pppointer(cpu.stack+cpu.pc^.par.podataaddress)^,
                                                    cpu.pc^.par.datasize);
 end;
 
-procedure increfsizeseg();
+procedure increfsizesegop();
 begin
  increfsize(getsegaddress(cpu.pc^.par.vsegaddress));
 end;
 
-procedure increfsizeframe();
+procedure increfsizeframeop();
 begin
  increfsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
 end;
 
-procedure increfsizereg0();
+procedure increfsizereg0op();
 begin
  increfsize(ppointer(reg0+cpu.pc^.par.vaddress));
 end;
 
-procedure increfsizestack();
+procedure increfsizestackop();
 begin
  increfsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
-procedure increfsizestackref();
+procedure increfsizestackrefop();
 begin
  increfsize(pppointer(cpu.stack+cpu.pc^.par.vaddress)^);
 end;
 
-procedure increfsizesegar();
+procedure increfsizesegarop();
 begin
  increfsizear(getsegaddress(cpu.pc^.par.segdataaddress),
                                              cpu.pc^.par.datasize);
 end;
 
-procedure increfsizeframear();
+procedure increfsizeframearop();
 begin
  increfsizear(ppointer(cpu.frame+cpu.pc^.par.podataaddress),
                                              cpu.pc^.par.datasize);
 end;
 
-procedure increfsizereg0ar();
+procedure increfsizereg0arop();
 begin
  increfsizear(ppointer(reg0+cpu.pc^.par.podataaddress),cpu.pc^.par.datasize);
 end;
 
-procedure increfsizestackar();
+procedure increfsizestackarop();
 begin
  increfsizear(ppointer(cpu.stack+cpu.pc^.par.podataaddress),
                                                         cpu.pc^.par.datasize);
 end;
 
-procedure increfsizestackrefar();
+procedure increfsizestackrefarop();
 begin
  increfsizear(pppointer(cpu.stack+cpu.pc^.par.podataaddress)^,
                                                           cpu.pc^.par.datasize);
 end;
 
-procedure decrefsizeseg();
+procedure decrefsizesegop();
 begin
  decrefsize(getsegaddress(cpu.pc^.par.vsegaddress));
 end;
 
-procedure decrefsizeframe();
+procedure decrefsizeframeop();
 begin
  decrefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
 end;
 
-procedure decrefsizereg0();
+procedure decrefsizereg0op();
 begin
  decrefsize(ppointer(reg0+cpu.pc^.par.vaddress));
 end;
 
-procedure decrefsizestack();
+procedure decrefsizestackop();
 begin
  decrefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
-procedure decrefsizestackref();
+procedure decrefsizestackrefop();
 begin
  decrefsize(pppointer(mainstack+cpu.pc^.par.vaddress)^);
 end;
 
-procedure decrefsizesegar();
+procedure decrefsizesegarop();
 begin
  decrefsizear(getsegaddress(cpu.pc^.par.segdataaddress),
                                                   cpu.pc^.par.datasize);
 end;
 
-procedure decrefsizeframear();
+procedure decrefsizeframearop();
 begin
  decrefsizear(ppointer(cpu.frame+cpu.pc^.par.podataaddress),
                                                 cpu.pc^.par.datasize);
 end;
 
-procedure decrefsizereg0ar();
+procedure decrefsizereg0arop();
 begin
  decrefsizear(ppointer(reg0+cpu.pc^.par.podataaddress),cpu.pc^.par.datasize);
 end;
 
-procedure decrefsizestackar();
+procedure decrefsizestackarop();
 begin
  decrefsizear(ppointer(cpu.stack+cpu.pc^.par.podataaddress),cpu.pc^.par.datasize);
 end;
 
-procedure decrefsizestackrefar();
+procedure decrefsizestackrefarop();
 begin
  decrefsizear(pppointer(cpu.stack+cpu.pc^.par.podataaddress)^,
                                                           cpu.pc^.par.datasize);
 end;
 
-procedure setlengthstr8(); //address, length
+procedure setlengthstr8op(); //address, length
 var
  si1,si2: stringsizety;
  ds,ss: pstring8headerty;
@@ -1637,7 +1645,7 @@ begin
 end;
 
 const
- stopop: opinfoty = (op: nil; par:(dummy:()));
+ stopop: opinfoty = (op: (proc:nil); par:(dummy:()));
 
 procedure unhandledexception(const exceptobj: pointer);
 begin
@@ -1666,7 +1674,7 @@ begin
  end;
 end;
  
-procedure pushcpucontext(); //todo: don't use push/pop stack
+procedure pushcpucontextop(); //todo: don't use push/pop stack
 var
  po1: pjumpinfoty;
 begin
@@ -1677,7 +1685,7 @@ begin
  exceptioninfo.trystack:= po1;
 end;
 
-procedure popcpucontext();
+procedure popcpucontextop();
 var
  po1: pjumpinfoty;
 begin
@@ -1698,7 +1706,7 @@ begin
 }
 end;
 
-procedure finiexception();
+procedure finiexceptionop();
 begin
  with exceptioninfo do begin
   if exceptobj <> nil then begin
@@ -1708,7 +1716,7 @@ begin
  end;
 end;
 
-procedure continueexception();
+procedure continueexceptionop();
 begin
  with exceptioninfo do begin
   if exceptobj <> nil then begin
@@ -1756,8 +1764,8 @@ begin
  end;
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
- while cpu.pc^.op <> nil do begin
-  cpu.pc^.op;
+ while cpu.pc^.op.proc <> nil do begin
+  cpu.pc^.op.proc;
   inc(cpu.pc);
  end;
 end;
@@ -1830,6 +1838,195 @@ begin
  end;
 end;
 }
+
+const
+ stackoptable: array[opcodety] of opprocty = (
+  nil,
+  @nop,
+
+  @movesegreg0op,
+  @moveframereg0op,
+  @popreg0op,
+  @increg0op,
+
+  @gotoop,
+  @cmpjmpneimm4op,
+  @cmpjmpeqimm4op,
+  @cmpjmploimm4op,
+  @cmpjmpgtimm4op,
+  @cmpjmploeqimm4op,
+
+  @ifop,
+  @writelnop,
+  @writebooleanop,
+  @writeintegerop,
+  @writefloatop,
+  @writestring8op,
+  @writeclassop,
+  @writeenumop,
+
+  @pushop,
+  @popop,
+
+  @push8op,
+  @push16op,
+  @push32op,
+  @push64op,
+
+  @pushdatakindop,
+  @int32toflo64op,
+  @mulint32op,
+  @mulimmint32op,
+  @mulflo64op,
+  @addint32op,
+  @addimmint32op,
+  @addflo64op,
+  @negcard32op,
+  @negint32op,
+  @negflo64op,
+
+  @offsetpoimm32op,
+
+  @cmpequboolop,
+  @cmpequint32op,
+  @cmpequflo64op,
+
+  @storesegnilop,
+  @storereg0nilop,
+  @storeframenilop,
+  @storestacknilop,
+  @storestackrefnilop,
+  @storesegnilarop,
+  @storeframenilarop,
+  @storereg0nilarop,
+  @storestacknilarop,
+  @storestackrefnilarop,
+
+  @finirefsizesegop,
+  @finirefsizeframeop,
+  @finirefsizereg0op,
+  @finirefsizestackop,
+  @finirefsizestackrefop,
+  @finirefsizeframearop,
+  @finirefsizesegarop,
+  @finirefsizereg0arop,
+  @finirefsizestackarop,
+  @finirefsizestackrefarop,
+
+  @increfsizesegop,
+  @increfsizeframeop,
+  @increfsizereg0op,
+  @increfsizestackop,
+  @increfsizestackrefop,
+  @increfsizeframearop,
+  @increfsizesegarop,
+  @increfsizereg0arop,
+  @increfsizestackarop,
+  @increfsizestackrefarop,
+
+  @decrefsizesegop,
+  @decrefsizeframeop,
+  @decrefsizereg0op,
+  @decrefsizestackop,
+  @decrefsizestackrefop,
+  @decrefsizeframearop,
+  @decrefsizesegarop,
+  @decrefsizereg0arop,
+  @decrefsizestackarop,
+  @decrefsizestackrefarop,
+
+  @popseg8op,
+  @popseg16op,
+  @popseg32op,
+  @popsegop,
+
+  @poploc8op,
+  @poploc16op,
+  @poploc32op,
+  @poplocop,
+
+  @poplocindi8op,
+  @poplocindi16op,
+  @poplocindi32op,
+  @poplocindiop,
+
+  @pushnilop,
+  @pushsegaddressop,
+
+  @pushseg8op,
+  @pushseg16op,
+  @pushseg32op,
+  @pushsegop,
+
+  @pushloc8op,
+  @pushloc16op,
+  @pushloc32op,
+  @pushlocpoop,
+  @pushlocop,
+
+  @pushlocindi8op,
+  @pushlocindi16op,
+  @pushlocindi32op,
+  @pushlocindiop,
+
+  @pushaddrop,
+  @pushlocaddrop,
+  @pushlocaddrindiop,
+  @pushsegaddrop,
+  @pushsegaddrindiop,
+  @pushstackaddrop,
+  @pushstackaddrindiop,
+
+  @indirect8op,
+  @indirect16op,
+  @indirect32op,
+  @indirectpoop,
+  @indirectpooffsop, //offset after indirect
+  @indirectoffspoop, //offset before indirect
+  @indirectop,
+
+  @popindirect8op,
+  @popindirect16op,
+  @popindirect32op,
+  @popindirectop,
+
+  @callop,
+  @calloutop,
+  @callvirtop,
+  @callintfop,
+  @virttrampolineop,
+
+  @locvarpushop,
+  @locvarpopop,
+  @returnop,
+
+  @initclassop,
+  @destroyclassop,
+
+  @decloop32op,
+  @decloop64op,
+
+  @setlengthstr8op,
+
+  @raiseop,
+  @pushcpucontextop,
+  @popcpucontextop,
+  @finiexceptionop,
+  @continueexceptionop
+ );
+
+procedure setop(var aop: opty; const aopcode: opcodety);
+                       {$ifndef mse_debugparser} inline;{$endif}
+begin
+ aop.proc:= stackoptable[aopcode]
+end;
+
+function checkop(var aop: opty; const aopcode: opcodety): boolean;
+                       {$ifndef mse_debugparser} inline;{$endif}
+begin
+ result:= aop.proc = stackoptable[aopcode];
+end;
+
 finalization
  finalize;
 end.

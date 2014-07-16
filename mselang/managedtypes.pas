@@ -37,13 +37,13 @@ uses
  elements,grammar,errorhandler,handlerutils,
  stackops;
 const
- setlengthops: array[datakindty] of opty = (
+ setlengthops: array[datakindty] of opcodety = (
   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-    nil,    nil,       nil,        nil,       nil,     nil,
+    oc_none,oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,     dk_array,dk_class,dk_interface,
-    nil,       nil,      @setlengthstr8, nil,     nil,     nil, 
+    oc_none,   oc_none,  oc_setlengthstr8,oc_none,oc_none, oc_none, 
   //dk_enum,dk_enumitem,dk_set
-    nil,    nil,        nil
+    oc_none,oc_none,    oc_none
  );
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;
@@ -91,8 +91,8 @@ begin
       with ptypedataty(ele.eledataabs(
                  contextstack[stacktop-1].d.datatyp.typedata))^ do begin
        with additem^ do begin
-        op:= setlengthops[kind];
-        if op = nil then begin
+        setop(op,setlengthops[kind]);
+        if op.proc = nil then begin
          errormessage(err_typemismatch,[]);
         end;
        end;
@@ -129,11 +129,11 @@ begin
    ad1.base:= ab_reg0;
    with additem^ do begin
     if aaddress.base = ab_segment then begin
-     op:= @movesegreg0;
+     setop(op,oc_movesegreg0);
      par.vsegment:= aaddress.segment;
     end
     else begin
-     op:= @moveframereg0;
+     setop(op,oc_moveframereg0);
     end;
    end;
    beginforloop(loopinfo,
@@ -163,12 +163,12 @@ begin
 
   if atype^.kind = dk_array then begin
    with additem^ do begin
-    op:= @increg0;
+    setop(op,oc_increg0);
     par.imm.voffset:= po2^.bytesize;
    end;
    endforloop(loopinfo);
    with additem^ do begin
-    op:= @popreg0;
+    setop(op,oc_popreg0);
    end;
   end;
  end;

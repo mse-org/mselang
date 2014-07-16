@@ -54,7 +54,7 @@ procedure checkrecordfield(const avisibility: visikindsty;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar;
+ grammar,opglob;
 
 procedure handletype();
 begin
@@ -623,12 +623,12 @@ begin
           getvalue(int1-stackindex{,true});
          end;
          with insertitem(int1-stackindex+1,false)^ do begin
-          op:= @mulimmint32;
+          setop(op,oc_mulimmint32);
           par.imm.vint32:= itemtype^.bytesize;
          end;
          if not fullconst then begin
           with insertitem(int1-stackindex+1,false)^ do begin
-           op:= @addint32;
+           setop(op,oc_addint32);
           end;         
          end
          else begin
@@ -650,7 +650,7 @@ begin
      if not fullconst then begin
       pushinsertaddress(-1,true);
       with additem^ do begin
-       op:= @addint32;
+       setop(op,oc_addint32);
       end;
       d.kind:= ck_reffact;
      end;

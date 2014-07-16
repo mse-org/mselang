@@ -57,33 +57,33 @@ begin
      po2:= ptypedataty(ele.eledataabs(d.datatyp.typedata));
      case po2^.kind of
       dk_boolean: begin
-       op:= @writebooleanop;
+       setop(op,oc_writeboolean);
        par.voffset:= alignsize(sizeof(boolean));
       end;
       dk_integer: begin
-       op:= @writeintegerop;
+       setop(op,oc_writeinteger);
        par.voffset:= alignsize(sizeof(int32));
       end;
       dk_float: begin
-       op:= @writefloatop;
+       setop(op,oc_writefloat);
        par.voffset:= alignsize(sizeof(float64));
       end;
       dk_string8: begin
-       op:= @writestring8op;
+       setop(op,oc_writestring8);
        par.voffset:= alignsize(pointersize);
       end;
       dk_class: begin
-       op:= @writeclassop;
+       setop(op,oc_writeclass);
        par.voffset:= alignsize(pointersize);
       end;
       dk_enum: begin
-       op:= @writeenumop;
+       setop(op,oc_writeenum);
        par.voffset:= alignsize(pointersize);
        par.voffsaddress:= getrtti(po2);
       end;
       else begin
        errormessage(err_cantreadwritevar,[],int1-stackindex);
-       op:= nil;
+       setop(op,oc_none);
        par.voffset:= 0;
        par.voffsaddress:= getrtti(po2);
       end;
@@ -105,7 +105,7 @@ procedure handlewriteln(const paramco: integer);
 begin
  handlewrite(paramco);
  with additem()^ do begin
-  op:= @writelnop;
+  setop(op,oc_writeln);
  end;
 end;
 

@@ -29,7 +29,7 @@ procedure handleraise();
 implementation
 uses
  handlerutils,errorhandler,parserglob,handlerglob,elements,opcode,stackops,
- segmentutils;
+ segmentutils,opglob;
  
 procedure handlefinallyexpected();
 begin
@@ -49,7 +49,7 @@ begin
  outhandle('TRYYENTRY');
 {$endif}
  with additem()^ do begin
-  op:= @pushcpucontext;
+  setop(op,oc_pushcpucontext);
  end;
 end;
 
@@ -61,7 +61,7 @@ begin
  with info do begin
   getoppo(contextstack[stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
   with additem^ do begin
-   op:= @popcpucontext;
+   setop(op,oc_popcpucontext);
   end;
  end;
 end;
@@ -73,7 +73,7 @@ begin
 {$endif}
  with info do begin
   with additem^ do begin
-   op:= @continueexception;
+   setop(op,oc_continueexception);
   end;
 //  dec(stackindex,1);
  end; 
@@ -85,14 +85,14 @@ begin
  outhandle('EXCEPTENTRY');
 {$endif}
  with additem()^ do begin
-  op:= @gotoop;
+  setop(op,oc_goto);
  end;
  with info,contextstack[stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
  with additem^ do begin
-  op:= @popcpucontext;
+  setop(op,oc_popcpucontext);
  end;
 end;
 
@@ -104,7 +104,7 @@ begin
  with info,contextstack[stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1; //skip exception handling code
   with additem^ do begin
-   op:= @finiexception;
+   setop(op,oc_finiexception);
   end;
 //  dec(stackindex,1);
  end; 
@@ -127,7 +127,7 @@ begin
   end;
   if bo1 then begin
    with additem^ do begin
-    op:= @raiseop;
+    setop(op,oc_raise);
    end;
   end
   else begin

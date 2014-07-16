@@ -21,7 +21,7 @@ uses
  parserglob;
  
 type
- opty = procedure;
+ opprocty = procedure;
 
  op1infoty = record
   index0: integer;
@@ -31,19 +31,194 @@ type
   paramcount: integer;
  end;
 
- opkindty = (ok_none,ok_startup,ok_imm,ok_immgoto,
-             ok_push8,ok_push16,ok_push32,ok_push64,
-             ok_pushdatakind,
-             ok_pushglobaddress,ok_pushlocaddress,
-             ok_pushglobaddressindi,ok_pushlocaddressindi,
-             ok_pushstackaddress,ok_indirectpooffs,
-             ok_pushconstaddress,
-             ok_offset,ok_offsetaddress,ok_segment,
-             ok_locop,ok_segop,ok_poop,
-             ok_op,ok_op1,ok_opn,ok_opaddress,ok_params,
-             ok_call,ok_virtcall,ok_intfcall,ok_virttrampoline,
-             ok_stack,ok_initclass,ok_destroyclass,
-             ok_managed);
+ opcodety = (
+  oc_none,
+  oc_nop,
+
+  oc_movesegreg0,
+  oc_moveframereg0,
+  oc_popreg0,
+  oc_increg0,
+
+  oc_goto,
+  oc_cmpjmpneimm4,
+  oc_cmpjmpeqimm4,
+  oc_cmpjmploimm4,
+  oc_cmpjmpgtimm4,
+  oc_cmpjmploeqimm4,
+
+  oc_if,
+  oc_writeln,
+  oc_writeboolean,
+  oc_writeinteger,
+  oc_writefloat,
+  oc_writestring8,
+  oc_writeclass,
+  oc_writeenum,
+
+  oc_push,
+  oc_pop,
+
+  oc_push8,
+  oc_push16,
+  oc_push32,
+  oc_push64,
+
+  oc_pushdatakind,
+  oc_int32toflo64,
+  oc_mulint32,
+  oc_mulimmint32,
+  oc_mulflo64,
+  oc_addint32,
+  oc_addimmint32,
+  oc_addflo64,
+  oc_negcard32,
+  oc_negint32,
+  oc_negflo64,
+
+  oc_offsetpoimm32,
+
+  oc_cmpequbool,
+  oc_cmpequint32,
+  oc_cmpequflo64,
+
+  oc_storesegnil,
+  oc_storereg0nil,
+  oc_storeframenil,
+  oc_storestacknil,
+  oc_storestackrefnil,
+  oc_storesegnilar,
+  oc_storeframenilar,
+  oc_storereg0nilar,
+  oc_storestacknilar,
+  oc_storestackrefnilar,
+
+  oc_finirefsizeseg,
+  oc_finirefsizeframe,
+  oc_finirefsizereg0,
+  oc_finirefsizestack,
+  oc_finirefsizestackref,
+  oc_finirefsizeframear,
+  oc_finirefsizesegar,
+  oc_finirefsizereg0ar,
+  oc_finirefsizestackar,
+  oc_finirefsizestackrefar,
+
+  oc_increfsizeseg,
+  oc_increfsizeframe,
+  oc_increfsizereg0,
+  oc_increfsizestack,
+  oc_increfsizestackref,
+  oc_increfsizeframear,
+  oc_increfsizesegar,
+  oc_increfsizereg0ar,
+  oc_increfsizestackar,
+  oc_increfsizestackrefar,
+
+  oc_decrefsizeseg,
+  oc_decrefsizeframe,
+  oc_decrefsizereg0,
+  oc_decrefsizestack,
+  oc_decrefsizestackref,
+  oc_decrefsizeframear,
+  oc_decrefsizesegar,
+  oc_decrefsizereg0ar,
+  oc_decrefsizestackar,
+  oc_decrefsizestackrefar,
+
+  oc_popseg8,
+  oc_popseg16,
+  oc_popseg32,
+  oc_popseg,
+
+  oc_poploc8,
+  oc_poploc16,
+  oc_poploc32,
+  oc_poploc,
+
+  oc_poplocindi8,
+  oc_poplocindi16,
+  oc_poplocindi32,
+  oc_poplocindi,
+
+  oc_pushnil,
+  oc_pushsegaddress,
+
+  oc_pushseg8,
+  oc_pushseg16,
+  oc_pushseg32,
+  oc_pushseg,
+
+  oc_pushloc8,
+  oc_pushloc16,
+  oc_pushloc32,
+  oc_pushlocpo,
+  oc_pushloc,
+
+  oc_pushlocindi8,
+  oc_pushlocindi16,
+  oc_pushlocindi32,
+  oc_pushlocindi,
+
+  oc_pushaddr,
+  oc_pushlocaddr,
+  oc_pushlocaddrindi,
+  oc_pushsegaddr,
+  oc_pushsegaddrindi,
+  oc_pushstackaddr,
+  oc_pushstackaddrindi,
+
+  oc_indirect8,
+  oc_indirect16,
+  oc_indirect32,
+  oc_indirectpo,
+  oc_indirectpooffs, //offset after indirect
+  oc_indirectoffspo, //offset before indirect
+  oc_indirect,
+
+  oc_popindirect8,
+  oc_popindirect16,
+  oc_popindirect32,
+  oc_popindirect,
+
+  oc_call,
+  oc_callout,
+  oc_callvirt,
+  oc_callintf,
+  oc_virttrampoline,
+
+  oc_locvarpush,
+  oc_locvarpop,
+  oc_return,
+
+  oc_initclass,
+  oc_destroyclass,
+
+  oc_decloop32,
+  oc_decloop64,
+
+  oc_setlengthstr8,
+
+  oc_raise,
+  oc_pushcpucontext,
+  oc_popcpucontext,
+  oc_finiexception,
+  oc_continueexception
+ );
+
+             {oc_startup,oc_imm,oc_immgoto,
+             oc_push8,oc_push16,oc_push32,oc_push64,
+             oc_pushdatakind,
+             oc_pushglobaddress,oc_pushlocaddress,
+             oc_pushglobaddressindi,oc_pushlocaddressindi,
+             oc_pushstackaddress,oc_indirectpooffs,
+             oc_pushconstaddress,
+             oc_offset,oc_offsetaddress,oc_segment,
+             oc_locop,oc_segop,oc_poop,
+             oc_op,oc_op1,oc_opn,oc_opaddress,oc_params,
+             oc_call,oc_virtcall,oc_intfcall,oc_virttrampoline,
+             oc_stack,oc_initclass,oc_destroyclass,
+             oc_managed);}
 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
@@ -122,106 +297,144 @@ type
   a: locaddressty;
   offset: dataoffsty;
  end;
-  
+                   //todo: unify
  opparamty = record
-  case opkindty of 
-   ok_none: (
+  case opcodety of 
+   oc_none,oc_nop: (
     dummy: record
     end;
    );
-   ok_imm: (
+   oc_increg0,oc_push,oc_pop,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
+   oc_pushaddr: (
     imm: immty;
    );
-   ok_immgoto: (
+   oc_cmpjmpneimm4,oc_cmpjmpeqimm4,oc_cmpjmploimm4,oc_cmpjmploeqimm4,
+   oc_cmpjmpgtimm4: (
     ordimm: ordimmty;
     immgoto: opaddressty
    );
-   ok_segment:(
+   oc_movesegreg0:(
     vsegment: segmentty;
    );
-   ok_push8:(
+   oc_push8:(
     v8: v8ty;
    );
-   ok_push16:(
+   oc_push16:(
     v16: v16ty;
    );
-   ok_push32:(
+   oc_push32:(
     v32: v32ty;
    );
-   ok_push64:(
+   oc_push64:(
     v64: v64ty;
    );
-   ok_pushdatakind:(
+   oc_pushdatakind:(
     vdatakind: datakindty;
    );
-   ok_pushconstaddress,ok_managed:(
+   oc_storeframenil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
+   oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,
+   oc_finirefsizestackref,oc_increfsizeframe,oc_increfsizereg0,
+   oc_increfsizestack,oc_increfsizestackref,oc_decrefsizeframe,
+   oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref:(
     vaddress: dataaddressty;
    );
-   ok_pushglobaddress,ok_pushglobaddressindi:(
+   oc_pushsegaddress,oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,
+   oc_decrefsizeseg:(
     vsegaddress: segdataaddressty;
 //    vglobaddress: dataaddressty;
  //   vglobadoffs: dataoffsty;
    );
-   ok_pushlocaddress,ok_pushlocaddressindi:(
+   oc_pushlocaddr,oc_pushlocaddrindi:(
     vlocaddress: locdataaddressty;
 //    vlocadoffs: dataoffsty;
    );
-   ok_pushstackaddress,ok_indirectpooffs,ok_offset,ok_offsetaddress:(
+   oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
+   oc_writeclass,oc_writeenum,oc_pushstackaddr,oc_pushstackaddrindi,
+   oc_indirectpooffs,oc_indirectoffspo:(
     voffset: dataoffsty;
-    case opkindty of
-     ok_offsetaddress:(
+    case opcodety of
+     oc_writeenum,oc_pushstackaddrindi:(
       voffsaddress: dataaddressty;
      );
    );
-   ok_locop,ok_segop,ok_poop:(
+   oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
+   oc_storestackrefnilar,oc_popseg,oc_pushseg,oc_poploc,oc_poplocindi,
+   oc_pushloc,oc_pushlocindi,oc_indirect,oc_popindirect,
+   oc_finirefsizesegar,oc_finirefsizeframe,oc_finirefsizereg0ar,
+   oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizesegar,
+   oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
+   oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
+   oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
     datasize: datasizety;
-    case opkindty of
-     ok_locop:(
+    case opcodety of
+     oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
+     oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
+     oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
+     oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
       locdataaddress: locdataaddressty;
      );
-     ok_segop:(
+     oc_storesegnilar,
+     oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
+     oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
+     oc_pushsegaddr,oc_pushsegaddrindi,
+     oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
       segdataaddress: segdataaddressty;
      );
-     ok_poop:(
+     oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
+     oc_storestackrefnilar,oc_finirefsizeframear,oc_finirefsizereg0ar,
+     oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizeframear,
+     oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
+     oc_decrefsizeframear,oc_decrefsizereg0ar,oc_decrefsizestackar,
+     oc_decrefsizestackrefar:(
       podataaddress: dataaddressty;
      );
    );
-   ok_op1:(
+   {
+   oc_op1:(
     op1: op1infoty;
    );
-   ok_opn:(
+   oc_opn:(
     opn: opninfoty;
    );
-   ok_opaddress:(
+   }
+   oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
     opaddress: opaddressty; //first!
    );
-   ok_params:(
+   {
+   oc_params:(
     paramsize: datasizety;
     paramcount: integer;
    );
-   ok_call:(
+   }
+   oc_call,oc_callout:(
     callinfo: callinfoty;
    );
-   ok_virtcall:(
+   oc_callvirt,oc_callintf:(
     virtcallinfo: virtcallinfoty;
    );
-   ok_virttrampoline:(
+   oc_virttrampoline:(
     virttrampolineinfo: virttrampolineinfoty;
    );
-   ok_intfcall:(
+   {
+   oc_intfcall:(
     intfcallinfo: intfcallinfoty;
    );
-   ok_stack:(
+   }
+   oc_locvarpush,oc_locvarpop,oc_return:(
     stacksize: datasizety;
    );
-   ok_initclass:(
+   oc_initclass:(
     initclass: initclassinfoty;
    );
-   ok_destroyclass:(
+   oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
   end;
 
+ opty = record
+  proc: opprocty;
+ end;
+ 
  opinfoty = record
 //todo: variable item size, immediate data
   op: opty;
@@ -240,4 +453,7 @@ const
                                                          sizeof(opinfoty);
 
 implementation
+uses
+ stackops;
+
 end.

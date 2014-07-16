@@ -64,10 +64,12 @@ begin
         case source1^.kind of
          dk_integer: begin //todo: adjust data size
           with additem()^ do begin
-           op:= @stackops.int32toflo64;
+           setop(op,oc_int32toflo64);
+          {
            with par.op1 do begin
             index0:= 0;
            end;
+          }
           end;
           result:= true;
          end;
@@ -90,7 +92,7 @@ begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
       with insertitem(stackoffset,false)^ do begin
-       op:= @offsetpoimm32;
+       setop(op,oc_offsetpoimm32);
        par.imm.vint32:= int1;
       end;
       result:= true;
@@ -203,7 +205,7 @@ var
       d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
       d.datatyp.typedata:= po6^.vf.typ;        
       with additem()^ do begin //result var param
-       op:= @pushstackaddr;
+       setop(op,oc_pushstackaddr);
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
       if sf_constructor in asub^.flags then begin
@@ -223,7 +225,7 @@ var
        ele.findcurrent(tks_self,[],allvisi,po6);
       {$endif}
        with insertitem(parent-stackindex,false)^ do begin
-        op:= @pushlocpo;
+        setop(op,oc_pushlocpo);
         par.locdataaddress.a.framelevel:= -1;
         par.locdataaddress.a.address:= po6^.address.poaddress;
         par.locdataaddress.offset:= 0;
@@ -238,12 +240,12 @@ var
      if sf_interface in asub^.flags then begin
       par.virtcallinfo.virtoffset:= 
         asub^.tableindex*sizeof(intfitemty);
-      op:= @callintfop;
+      setop(op,oc_callintf);
      end
      else begin
       par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                            virtualtableoffset;
-      op:= @callvirtop;
+      setop(op,oc_callvirt);
      end;
     end;
    end
@@ -255,11 +257,11 @@ var
      par.callinfo.ad:= asub^.address-1; //possibly invalid
      if (asub^.nestinglevel = 0) or 
                       (asub^.nestinglevel = sublevel) then begin
-      op:= @callop;
+      setop(op,oc_call);
       par.callinfo.linkcount:= -1;
      end
      else begin
-      op:= @calloutop;
+      setop(op,oc_callout);
       par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
                                                               //for downto 0
      end;

@@ -45,7 +45,7 @@ function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
 function additem(): popinfoty;
 function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
-procedure writeop(const operation: opty); inline;
+//procedure writeop(const operation: opty); inline;
 
 procedure inipointer(const aaddress: addressrefty; const count: datasizety);
 procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
@@ -60,60 +60,60 @@ uses
  stackops,handlerutils,errorhandler,segmentutils;
  
 type
- opadsty = array[addressbasety] of opty;
+ opadsty = array[addressbasety] of opcodety;
  aropadsty = array[boolean] of opadsty; 
  
 const
  storenilops: aropadsty = (
   (
   //ab_segment,   ab_frame,      ab_reg0,
-   @storesegnil,@storeframenil,@storereg0nil,
+   oc_storesegnil,oc_storeframenil,oc_storereg0nil,
   //ab_stack,      ab_stackref
-   @storestacknil,@storestackrefnil),
+   oc_storestacknil,oc_storestackrefnil),
   (
   //ab_segment,     ab_frame,        ab_reg0,
-   @storesegnilar,@storeframenilar,@storereg0nilar,
+   oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,
   //ab_stack,       ab_stackref
-   @storestacknilar,@storestackrefnilar)
+   oc_storestacknilar,oc_storestackrefnilar)
  );
 
  finirefsizeops: aropadsty = (
   (
   //ab_segment,         ab_frame,            ab_reg0,
-   @finirefsizeseg,@finirefsizeframe,@finirefsizereg0,
+   oc_finirefsizeseg,oc_finirefsizeframe,oc_finirefsizereg0,
   //ab_stack,           ab_stackref
-   @finirefsizestack,@finirefsizestackref),
+   oc_finirefsizestack,oc_finirefsizestackref),
   (
   //ab_segment,           ab_frame,              ab_reg0,
-   @finirefsizesegar,@finirefsizeframear,@finirefsizereg0ar,
+   oc_finirefsizesegar,oc_finirefsizeframear,oc_finirefsizereg0ar,
   //ab_stack,             ab_stackref
-   @finirefsizestackar,@finirefsizestackrefar)
+   oc_finirefsizestackar,oc_finirefsizestackrefar)
  );
 
  increfsizeops: aropadsty = (
   (
   //ab_segment,         ab_frame,            ab_reg0,
-   @increfsizeseg,@increfsizeframe,@increfsizereg0,
+   oc_increfsizeseg,oc_increfsizeframe,oc_increfsizereg0,
   //ab_stack,           ab_stackref
-   @increfsizestack,@increfsizestackref),
+   oc_increfsizestack,oc_increfsizestackref),
   (
   //ab_segment,           ab_frame,              ab_reg0,
-   @increfsizesegar,@increfsizeframear,@increfsizereg0ar,
+   oc_increfsizesegar,oc_increfsizeframear,oc_increfsizereg0ar,
   //ab_stack,             ab_stackref
-   @increfsizestackar,@increfsizestackrefar)
+   oc_increfsizestackar,oc_increfsizestackrefar)
  );
 
  decrefsizeops: aropadsty = (
   (
   //ab_segment,         ab_frame,            ab_reg0,
-   @decrefsizeseg,@decrefsizeframe,@decrefsizereg0,
+   oc_decrefsizeseg,oc_decrefsizeframe,oc_decrefsizereg0,
   //ab_stack,           ab_stackref
-   @decrefsizestack,@decrefsizestackref),
+   oc_decrefsizestack,oc_decrefsizestackref),
   (
   //ab_global,           ab_frame,              ab_reg0,
-   @decrefsizesegar,@decrefsizeframear,@decrefsizereg0ar,
+   oc_decrefsizesegar,oc_decrefsizeframear,oc_decrefsizereg0ar,
   //ab_stack,             ab_stackref
-   @decrefsizestackar,@decrefsizestackrefar)
+   oc_decrefsizestackar,oc_decrefsizestackrefar)
  );
 
 procedure addmanagedop(const opsar: aropadsty; 
@@ -121,7 +121,7 @@ procedure addmanagedop(const opsar: aropadsty;
 begin
  with additem^ do begin
   if count > 1 then begin
-   op:= opsar[true][aaddress.base];
+   setop(op,opsar[true][aaddress.base]);
    par.datasize:= count;
    if aaddress.base = ab_segment then begin
     par.segdataaddress.a.address:= aaddress.offset;
@@ -133,7 +133,7 @@ begin
    end;
   end
   else begin
-   op:= opsar[false][aaddress.base];
+   setop(op,opsar[false][aaddress.base]);
    if aaddress.base = ab_segment then begin
     par.vsegaddress.a.address:= aaddress.offset;
     par.vsegaddress.a.segment:= aaddress.segment;
@@ -231,19 +231,19 @@ begin
  ainfo.size:= getdatabitsize(count);
  with additem()^ do begin
   if ainfo.size > das_32 then begin
-   op:= @push64;
+   setop(op,oc_push64);
    par.imm.vint64:= count;
    ainfo.start:= info.opcount;
    with additem^ do begin
-    op:= @decloop64;
+    setop(op,oc_decloop64);
    end;
   end
   else begin
-   op:= @push32;
+   setop(op,oc_push32);
    par.imm.vint32:= count;
    ainfo.start:= info.opcount;
    with additem^ do begin
-    op:= @decloop32;
+    setop(op,oc_decloop32);
    end;
   end;
  end;
@@ -252,14 +252,14 @@ end;
 procedure endforloop(const ainfo: loopinfoty);
 begin
  with additem^ do begin
-  op:= @gotoop;
+  setop(op,oc_goto);
   par.opaddress:= ainfo.start-1;
  end;
  with getoppo(ainfo.start)^ do begin
   par.opaddress:= info.opcount-1;
  end;
  with additem^ do begin
-  op:= @locvarpopop;
+  setop(op,oc_locvarpop);
   if ainfo.size > das_32 then begin
    par.stacksize:= 8;
   end
@@ -331,11 +331,12 @@ begin
  end;
 end;
 }
+{
 procedure writeop(const operation: opty); inline;
 begin
  with additem()^ do begin
   op:= operation
  end;
 end;
-
+}
 end.

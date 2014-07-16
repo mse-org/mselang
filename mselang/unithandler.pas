@@ -575,7 +575,8 @@ begin
    initializationstop:= opcount;
   if opcount <> initializationstart then begin
    with additem()^ do begin
-    op:= @gotoop; //address set in handleinifini
+    setop(op,oc_goto);
+//    op:= @gotoop; //address set in handleinifini
    end;
   end;
  end;
@@ -600,7 +601,7 @@ begin
   if opcount <> finalizationstart then begin
    finalizationstop:= opcount;
    with additem()^ do begin
-    op:= @gotoop; //address set in handleinifini
+    setop(op,oc_goto); //address set in handleinifini
    end;
   end;
  end;
@@ -715,14 +716,14 @@ begin
   end;
   if start1 <> 0 then begin
    with po1[unitinfo^.codestop] do begin
-    op:= @gotoop;
+    setop(op,oc_goto);
     par.opaddress:= start1-1;
    end;
    opad1:= unit1^.finistop;
    if opad1 = 0 then begin
     opad1:= unit1^.finalizationstop;
    end;
-   po1[opad1].op:= nil;         //stop
+   setop(po1[opad1].op,oc_none);         //stop
   end;
 
  end;

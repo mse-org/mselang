@@ -88,7 +88,7 @@ begin
   end;
  end;
  with additem()^ do begin
-  op:= @ifop;   
+  setop(op,oc_if);   
  end;
 end;
 
@@ -122,7 +122,7 @@ begin
  outhandle('ELSE0');
 {$endif}
  with additem()^ do begin
-  op:= @gotoop;
+  setop(op,oc_goto);
  end;
 end;
 
@@ -201,7 +201,7 @@ begin
                               (d.constval.kind in ordinaldatakinds) then begin
      with additem()^ do begin       //todo: signed/unsigned, use table
       if tf_lower in d.datatyp.flags then begin
-       op:= @cmpjmploimm4;
+       setop(op,oc_cmpjmploimm4);
        if int1 <> last-1 then begin
         par.immgoto:= opcount; //next check
        end;
@@ -209,19 +209,19 @@ begin
       else begin
        if tf_upper in d.datatyp.flags then begin
         if int1 = last then begin
-         op:= @cmpjmpgtimm4;
+         setop(op,oc_cmpjmpgtimm4);
         end
         else begin
-         op:= @cmpjmploeqimm4;
+         setop(op,oc_cmpjmploeqimm4);
          par.immgoto:= opcount+last-int1-1;
         end;
        end
        else begin
         if int1 = last then begin
-         op:= @cmpjmpneimm4;
+         setop(op,oc_cmpjmpneimm4);
         end
         else begin
-         op:= @cmpjmpeqimm4;
+         setop(op,oc_cmpjmpeqimm4);
          par.immgoto:= opcount+last-int1-1;
         end;
        end;
@@ -244,7 +244,7 @@ begin
  outhandle('CASEBRANCH');
 {$endif}
  with additem()^ do begin
-  op:= @gotoop;  //goto casend
+  setop(op,oc_goto);  //goto casend
  end;
 end;
 
@@ -272,7 +272,8 @@ begin
      isrange:= tf_upper in d.datatyp.flags;
     end;
    {$ifdef mse_checkinternalerror}
-    if (po1^.op <> @cmpjmpneimm4) and (po1^.op <> @cmpjmpgtimm4) then begin
+    if not checkop(po1^.op,oc_cmpjmpneimm4) and 
+                         not checkop(po1^.op,oc_cmpjmpgtimm4) then begin
      internalerror(ie_handler,'20140530A');
     end;
    {$endif}
@@ -280,7 +281,7 @@ begin
      po1^.par.immgoto:= opmark.address-1;
      if isrange then begin
      {$ifdef mse_checkinternalerror}
-      if ((po1-1)^.op <> @cmpjmploimm4) then begin
+      if not checkop((po1-1)^.op,oc_cmpjmploimm4) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
@@ -288,7 +289,7 @@ begin
      end;
      with getoppo(opmark.address-1)^ do begin
      {$ifdef mse_checkinternalerror}
-      if op <> @gotoop then begin
+      if not checkop(op,oc_goto) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
@@ -300,15 +301,15 @@ begin
    if int1 - stacktop = 3 then begin
     with getoppo(opcount-1)^ do begin
     {$ifdef mse_checkinternalerror}
-     if op <> @gotoop then begin
+     if not checkop(op,oc_goto) then begin
       internalerror(ie_handler,'20140530B');
      end;
     {$endif}
-     op:= @nop;
+     setop(op,oc_nop);
     end;
    end;
    with additem()^ do begin
-    op:= @popop;
+    setop(op,oc_pop);
     par.imm.vsize:= sizeof(int32);
    end;
   end;
