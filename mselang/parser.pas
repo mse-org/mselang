@@ -694,7 +694,7 @@ begin
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
 //    setlength(ops,opcount);
-    initparser();
+    initparser(stackops.getoptable());
     startopcount:= opcount;
     result:= parseunit(input,unit1);
    finally

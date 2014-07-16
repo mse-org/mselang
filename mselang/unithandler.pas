@@ -53,8 +53,8 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils,listutils,opcode,stackops,segmentutils,
- classhandler;
+ mselinklist,handlerutils,msearrayutils,listutils,opcode,
+ {stackops,}segmentutils,classhandler;
  
 type
  unithashdataty = record

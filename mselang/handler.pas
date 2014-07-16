@@ -21,7 +21,7 @@ interface
 uses
  parserglob,opglob,typinfo,msetypes,handlerglob;
 
-procedure initparser();
+procedure initparser(const aoptable: poptablety);
 
 //procedure push(const avalue: real); overload;
 //procedure push(const avalue: integer); overload;
@@ -135,8 +135,9 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
 
-procedure initparser({var info: parseinfoty});
+procedure initparser(const aoptable: poptablety);
 begin
+ setoptable(aoptable);
  with additem()^ do begin
   setop(op,oc_goto); //startup vector 
  end;

@@ -448,12 +448,39 @@ type
  end;
  pstartupdataty = ^startupdataty;
 
+ optablety = array[opcodety] of opprocty;
+ poptablety = ^optablety;
+ 
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
+function checkop(var aop: opty; const aopcode: opcodety): boolean;
+                       {$ifndef mse_debugparser} inline;{$endif}
 
+procedure setoptable(const atable: poptablety);
+
+procedure setop(var aop: opty; const aopcode: opcodety);
+                       {$ifndef mse_debugparser} inline;{$endif}
 implementation
-uses
- stackops;
+
+var
+ optable: poptablety;
+ 
+procedure setop(var aop: opty; const aopcode: opcodety);
+                       {$ifndef mse_debugparser} inline;{$endif}
+begin
+ aop.proc:= optable^[aopcode]
+end;
+
+function checkop(var aop: opty; const aopcode: opcodety): boolean;
+                       {$ifndef mse_debugparser} inline;{$endif}
+begin
+ result:= aop.proc = optable^[aopcode];
+end;
+
+procedure setoptable(const atable: poptablety);
+begin
+ optable:= atable;
+end;
 
 end.

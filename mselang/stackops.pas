@@ -67,11 +67,7 @@ procedure run({const code: opinfoarty; const constseg: pointer;}
                                                const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
-procedure setop(var aop: opty; const aopcode: opcodety);
-                       {$ifndef mse_debugparser} inline;{$endif}
-function checkop(var aop: opty; const aopcode: opcodety): boolean;
-                       {$ifndef mse_debugparser} inline;{$endif}
-
+function getoptable: poptablety;
 
 //procedure dummyop;
 {
@@ -1840,7 +1836,7 @@ end;
 }
 
 const
- stackoptable: array[opcodety] of opprocty = (
+ stackoptable: optablety = (
   nil,
   @nop,
 
@@ -2015,16 +2011,10 @@ const
   @continueexceptionop
  );
 
-procedure setop(var aop: opty; const aopcode: opcodety);
-                       {$ifndef mse_debugparser} inline;{$endif}
-begin
- aop.proc:= stackoptable[aopcode]
-end;
 
-function checkop(var aop: opty; const aopcode: opcodety): boolean;
-                       {$ifndef mse_debugparser} inline;{$endif}
+function getoptable: poptablety;
 begin
- result:= aop.proc = stackoptable[aopcode];
+ result:= @stackoptable;
 end;
 
 finalization
