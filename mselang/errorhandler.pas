@@ -274,7 +274,7 @@ begin
    inc(errors[level1]);
    str1:= filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
-   command.writeln(str1);
+   errorstream.writeln(str1);
    writeln('<<<<<<< '+str1);
    if level1 <= stoperrorlevel then begin
     stopparser:= true;

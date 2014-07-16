@@ -583,7 +583,7 @@ type
   stacktop: integer; 
   sublevel: integer;
   unitlevel: integer;
-  command: ttextstream;
+  errorstream: ttextstream;
   errorfla: boolean;
   errors: array[errorlevelty] of integer;
 //  constseg: bytearty;

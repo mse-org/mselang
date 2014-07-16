@@ -71,15 +71,13 @@ var
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
-// parser.init;
- bo1:= parser.parse(ed.gettext,stream1{,ar1,constseg});
-// parser.deinit;
+ bo1:= parser.parse(ed.gettext,bke_direct,stream1);
 
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
  if bo1 then begin
-  run({ar1,pointer(constseg),}1024);
+  run(1024);
  end;
 end;
 

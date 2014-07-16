@@ -21,7 +21,7 @@ unit parser;
 {$endif}
 interface
 uses
- msetypes,msestream,stackops,parserglob,opglob,msestrings;
+ msetypes,msestream,parserglob,opglob,msestrings;
 
 //
 //todo: use efficient data structures and procedures, 
@@ -32,9 +32,12 @@ const
  keywordchars = ['a'..'z','A'..'Z'];
  nokeywordendchars = keywordchars+['0'..'9','_'];
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
- 
-function parse(const input: string; const acommand: ttextstream
-               {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
+
+type
+ backendty = (bke_direct,bke_llvm);
+  
+function parse(const input: string; const backend: backendty;
+                                  const aerror: ttextstream): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -47,7 +50,7 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils,managedtypes,rttihandler,segmentutils;
+ handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -661,7 +664,8 @@ parseend:
 {$endif}
 end;
         
-function parse(const input: string; const acommand: ttextstream
+function parse(const input: string; const backend: backendty;
+               const aerror: ttextstream
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
@@ -686,7 +690,7 @@ begin
 //    setlength(constseg,constcapacity);
 //    constsize:= 4; //0 -> not allocated
     stringbuffer:= '';
-    command:= acommand;
+    errorstream:= aerror;
     stackdepth:= defaultstackdepth;
     setlength(contextstack,stackdepth);
     stacktop:= -1;
@@ -694,7 +698,14 @@ begin
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
 //    setlength(ops,opcount);
-    beginparser(stackops.getoptable());
+    case backend of
+     bke_direct: begin
+      beginparser(stackops.getoptable());
+     end;
+     bke_llvm: begin
+      beginparser(llvmops.getoptable());
+     end;
+    end;
 //    startopcount:= opcount;
     result:= parseunit(input,unit1);
     endparser();

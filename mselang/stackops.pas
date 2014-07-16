@@ -1804,18 +1804,6 @@ begin
  run(segs);
 end;
 
-procedure finalize;
-begin
- if mainstack <> nil then begin
-  freemem(mainstack);
-  mainstack:= nil;
- end;
- if globdata <> nil then begin
-  freemem(globdata);
-  globdata:= nil;
- end;
-end;
-
 {
 procedure run(const code: opinfoarty; const constseg: pointer;
                                         const stackdepht: integer);
@@ -2029,6 +2017,18 @@ const
 function getoptable: poptablety;
 begin
  result:= @stackoptable;
+end;
+
+procedure finalize;
+begin
+ if mainstack <> nil then begin
+  freemem(mainstack);
+  mainstack:= nil;
+ end;
+ if globdata <> nil then begin
+  freemem(globdata);
+  globdata:= nil;
+ end;
 end;
 
 finalization
