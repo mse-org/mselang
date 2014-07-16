@@ -20,13 +20,26 @@ unit llvmops;
 interface
 uses
  opglob;
+
+//todo: generate bitcode
  
- function getoptable: poptablety;
+function getoptable: poptablety;
  
 implementation
+uses
+ sysutils,msestream,msesys;
 
+var
+ assstream: ttextstream;
+
+procedure outass(const atext: string);
+begin
+ assstream.writeln(atext);
+end;
+  
 procedure notimplemented();
 begin
+ raise exception.create('LLVM OP not implemented');
 end;
 
 procedure nop();
@@ -34,13 +47,20 @@ begin
  notimplemented();
 end;
 
-procedure beginop();
+procedure beginparseop();
+begin
+ freeandnil(assstream);
+ assstream:= ttextstream.create('test.ll',fm_create);
+end;
+
+procedure progendop();
 begin
  notimplemented();
 end;
-procedure endop();
+
+procedure endparseop();
 begin
- notimplemented();
+ freeandnil(assstream);
 end;
 
 procedure movesegreg0op();
@@ -645,8 +665,9 @@ const
   nil,
   @nop,
 
-  @beginop,
-  @endop,
+  @beginparseop,
+  @progendop, //oc_progend
+  @endparseop,
 
   @movesegreg0op,
   @moveframereg0op,
@@ -824,4 +845,6 @@ begin
  result:= @llvmoptable;
 end;
 
+finalization
+ freeandnil(assstream);
 end.

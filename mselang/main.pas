@@ -24,7 +24,8 @@ uses
  msegrids,msedispwidgets,mserichstring,msepostscriptprinter,mseprinter,sysutils,
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
- msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys;
+ msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
+ msescrollbar;
 
 type
  it = interface(ievent)
@@ -42,6 +43,7 @@ type
    tbutton5: tbutton;
    tbutton2: tbutton;
    filena: tfilenameedit;
+   llvm: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -64,14 +66,17 @@ uses
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
-// ar1: opinfoarty;
  stream1: ttextstream;
-// constseg: bytearty;
  bo1: boolean;
+ backend: backendty;
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
- bo1:= parser.parse(ed.gettext,bke_direct,stream1);
+ backend:= bke_direct;
+ if llvm.value then begin
+  backend:= bke_llvm;
+ end;
+ bo1:= parser.parse(ed.gettext,backend,stream1);
 
  stream1.position:= 0;
  grid[0].datalist.loadfromstream(stream1);

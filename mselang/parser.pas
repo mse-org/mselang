@@ -669,7 +669,6 @@ function parse(const input: string; const backend: backendty;
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
-// startopcount: integer;
  po1: punitinfoty;
  unit1: punitinfoty;
  int1: integer;
@@ -684,11 +683,6 @@ begin
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
     
-//    ops:= nil;
-//    constseg:= nil;
-//    constcapacity:= defaultconstsegsize;
-//    setlength(constseg,constcapacity);
-//    constsize:= 4; //0 -> not allocated
     stringbuffer:= '';
     errorstream:= aerror;
     stackdepth:= defaultstackdepth;
@@ -697,7 +691,6 @@ begin
     stackindex:= stacktop;
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
-//    setlength(ops,opcount);
     case backend of
      bke_direct: begin
       beginparser(stackops.getoptable());
@@ -706,15 +699,9 @@ begin
       beginparser(llvmops.getoptable());
      end;
     end;
-//    startopcount:= opcount;
     result:= parseunit(input,unit1);
     endparser();
    finally
-//    if not result or (opcount = startopcount) then begin
-//     ops:= nil;
-//    end;
-//    aopcode:= ops; 
-//    aconstseg:= constseg;
     system.finalize(info);
     deinit();
    end;

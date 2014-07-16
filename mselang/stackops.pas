@@ -444,12 +444,12 @@ begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress;
 end;
 
-procedure beginop();
+procedure beginparseop();
 begin
  gotoop();
 end;
 
-procedure endop();
+procedure endparseop();
 begin
  //dummy
 end;
@@ -1839,8 +1839,9 @@ const
   nil,
   @nop,
 
-  @beginop,
-  @endop,
+  @beginparseop,
+  nil, //oc_progend
+  @endparseop,
 
   @movesegreg0op,
   @moveframereg0op,

@@ -140,14 +140,14 @@ procedure beginparser(const aoptable: poptablety);
 begin
  setoptable(aoptable);
  with additem()^ do begin
-  setop(op,oc_begin); //startup vector 
+  setop(op,oc_beginparse); //startup vector 
  end;
 end;
 
 procedure endparser();
 begin
  with additem()^ do begin
-  setop(op,oc_end); //startup vector 
+  setop(op,oc_endparse); //startup vector 
  end;
 end;
 
@@ -1212,7 +1212,7 @@ begin
 // writeop(nil); //endmark
  handleunitend();
  with additem()^ do begin //endmark, will possibly replaced by goto if there 
-  setop(op,oc_none);               //is fini code
+  setop(op,oc_progend);               //is fini code
  end;
  with info do begin
   dec(stackindex);

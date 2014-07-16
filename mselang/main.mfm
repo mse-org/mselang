@@ -146,7 +146,7 @@ object mainfo: tmainfo
     taborder = 7
     bounds_x = 72
     bounds_y = 7
-    bounds_cx = 388
+    bounds_cx = 340
     anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -157,6 +157,23 @@ object mainfo: tmainfo
       )
     )
     reffontheight = 14
+  end
+  object llvm: tbooleanedit
+    frame.caption = 'llvm'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      1
+      26
+      2
+    )
+    taborder = 8
+    bounds_x = 416
+    bounds_y = 7
+    bounds_cx = 39
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
   end
   object statf: tstatfile
     filename = 'status.sta'
