@@ -35,6 +35,9 @@ type
   oc_none,
   oc_nop,
 
+  oc_begin,
+  oc_end,
+  
   oc_movesegreg0,
   oc_moveframereg0,
   oc_popreg0,

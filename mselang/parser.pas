@@ -665,7 +665,7 @@ function parse(const input: string; const acommand: ttextstream
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
- startopcount: integer;
+// startopcount: integer;
  po1: punitinfoty;
  unit1: punitinfoty;
  int1: integer;
@@ -694,9 +694,10 @@ begin
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
 //    setlength(ops,opcount);
-    initparser(stackops.getoptable());
-    startopcount:= opcount;
+    beginparser(stackops.getoptable());
+//    startopcount:= opcount;
     result:= parseunit(input,unit1);
+    endparser();
    finally
 //    if not result or (opcount = startopcount) then begin
 //     ops:= nil;

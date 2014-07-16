@@ -436,11 +436,22 @@ end;
 
 procedure nop();
 begin
+ //dummy
 end;
 
 procedure gotoop();
 begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress;
+end;
+
+procedure beginop();
+begin
+ gotoop();
+end;
+
+procedure endop();
+begin
+ //dummy
 end;
 
 procedure cmpjmpneimm4op();
@@ -1839,6 +1850,9 @@ const
  stackoptable: optablety = (
   nil,
   @nop,
+
+  @beginop,
+  @endop,
 
   @movesegreg0op,
   @moveframereg0op,
