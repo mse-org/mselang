@@ -24,10 +24,15 @@ uses
 //todo: generate bitcode
  
 function getoptable: poptablety;
+
+procedure run();
  
 implementation
 uses
- sysutils,msestream,msesys;
+ sysutils,msestream,msesys,segmentutils,parserglob;
+
+var
+ pc: popinfoty;
 
 var
  assstream: ttextstream;
@@ -51,11 +56,13 @@ procedure beginparseop();
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
+ outass('define i32 @main() {');
 end;
 
 procedure progendop();
 begin
- notimplemented();
+ outass(' ret i32 0');
+ outass('}');
 end;
 
 procedure endparseop();
@@ -658,6 +665,19 @@ end;
 procedure continueexceptionop();
 begin
  notimplemented();
+end;
+
+procedure run();
+var
+ endpo: pointer;
+begin
+ pc:= getsegmentbase(seg_op);
+ endpo:= pointer(pc)+getsegmentsize(seg_op);
+ inc(pc,startupoffset);
+ while pc < endpo do begin
+  pc^.op.proc();
+  inc(pc);
+ end;
 end;
 
 const

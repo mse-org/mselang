@@ -62,13 +62,15 @@ var
   
 implementation
 uses
- main_mfm,msestream,stackops,parser;
+ main_mfm,msestream,stackops,parser,llvmops,msedatalist;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
  stream1: ttextstream;
  bo1: boolean;
  backend: backendty;
+ str1: string;
+ int1: integer;
 begin
  writeln('*****************************************');
  stream1:= ttextstream.create;
@@ -82,7 +84,19 @@ begin
  grid[0].datalist.loadfromstream(stream1);
  stream1.free;
  if bo1 then begin
-  run(1024);
+  if llvm.value then begin
+   llvmops.run();
+   int1:= getprocessoutput('llvm-as test.ll','',str1);
+   if (int1 = 0) and (str1 = '') then begin
+    grid.appendrow(['**llvm OK**']);
+   end
+   else begin
+    grid[0].readpipe(str1,[aco_stripescsequence]);
+   end;
+  end
+  else begin
+   stackops.run(1024);
+  end;
  end;
 end;
 
