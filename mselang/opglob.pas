@@ -210,20 +210,6 @@ type
   oc_continueexception
  );
 
-             {oc_startup,oc_imm,oc_immgoto,
-             oc_push8,oc_push16,oc_push32,oc_push64,
-             oc_pushdatakind,
-             oc_pushglobaddress,oc_pushlocaddress,
-             oc_pushglobaddressindi,oc_pushlocaddressindi,
-             oc_pushstackaddress,oc_indirectpooffs,
-             oc_pushconstaddress,
-             oc_offset,oc_offsetaddress,oc_segment,
-             oc_locop,oc_segop,oc_poop,
-             oc_op,oc_op1,oc_opn,oc_opaddress,oc_params,
-             oc_call,oc_virtcall,oc_intfcall,oc_virttrampoline,
-             oc_stack,oc_initclass,oc_destroyclass,
-             oc_managed);}
-
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
  ppv8ty = ^pv8ty;
@@ -301,9 +287,16 @@ type
   a: locaddressty;
   offset: dataoffsty;
  end;
-                   //todo: unify
+ 
+ beginparseinfoty = record
+  exitcodeaddress: segaddressty;
+ end;  
+                 //todo: unify
  opparamty = record
   case opcodety of 
+   oc_beginparse: (
+    beginparse: beginparseinfoty;
+   );
    oc_none,oc_nop: (
     dummy: record
     end;
@@ -435,8 +428,12 @@ type
    );
   end;
 
+ opflagty = (opf_label);
+ opflagsty = set of opflagty;
+ 
  opty = record
   proc: opprocty;
+  flags: opflagsty;
  end;
  
  opinfoty = record
@@ -454,7 +451,7 @@ type
 
  optablety = array[opcodety] of opprocty;
  poptablety = ^optablety;
- 
+
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
@@ -463,17 +460,20 @@ function checkop(var aop: opty; const aopcode: opcodety): boolean;
 
 procedure setoptable(const atable: poptablety);
 
-procedure setop(var aop: opty; const aopcode: opcodety);
+procedure setop(var aop: opty; const aopcode: opcodety;
+                                   const aflags: opflagsty = []);
                        {$ifndef mse_debugparser} inline;{$endif}
 implementation
 
 var
  optable: poptablety;
  
-procedure setop(var aop: opty; const aopcode: opcodety);
+procedure setop(var aop: opty; const aopcode: opcodety;
+                                             const aflags: opflagsty);
                        {$ifndef mse_debugparser} inline;{$endif}
 begin
- aop.proc:= optable^[aopcode]
+ aop.proc:= optable^[aopcode];
+ aop.flags:= aflags;
 end;
 
 function checkop(var aop: opty; const aopcode: opcodety): boolean;

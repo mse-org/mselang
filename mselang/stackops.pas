@@ -63,11 +63,11 @@ function alignsize(const size: ptruint): ptruint;
                          {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
-procedure run({const code: opinfoarty; const constseg: pointer;}
-                                               const stackdepht: integer);
+procedure run(const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
 function getoptable: poptablety;
+procedure allocproc(const asize: integer; var address: segaddressty);
 
 //procedure dummyop;
 {
@@ -1652,7 +1652,7 @@ begin
 end;
 
 const
- stopop: opinfoty = (op: (proc:nil); par:(dummy:()));
+ stopop: opinfoty = (op: (proc:nil; flags:[]); par:(dummy:()));
 
 procedure unhandledexception(const exceptobj: pointer);
 begin
@@ -2018,6 +2018,11 @@ const
 function getoptable: poptablety;
 begin
  result:= @stackoptable;
+end;
+
+procedure allocproc(const asize: integer; var address: segaddressty);
+begin
+ //dummy
 end;
 
 procedure finalize;

@@ -175,6 +175,8 @@ begin
   globdatapo:= globdatapo + alignsize(asize);
   result.segment:= seg_globvar;
   include(aflags,af_segment);
+  allocproc(asize,result);
+  inc(allocid);
  end;
 end;
 

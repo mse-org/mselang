@@ -33,10 +33,8 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
 
-type
- backendty = (bke_direct,bke_llvm);
   
-function parse(const input: string; const backend: backendty;
+function parse(const input: string; const abackend: backendty;
                                   const aerror: ttextstream): boolean;
                               //true if ok
 function parseunit(const input: string;
@@ -268,6 +266,7 @@ end;
 {$endif}
 
 function parseunit(const input: string; const aunit: punitinfoty): boolean;
+
  procedure popparent;
  var
   int1: integer;
@@ -281,7 +280,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
    end;
   {$endif}
   end;
- end; //popparent
+ end;//popparent
 
 var
  po1,po2: pchar;
@@ -664,7 +663,7 @@ parseend:
 {$endif}
 end;
         
-function parse(const input: string; const backend: backendty;
+function parse(const input: string; const abackend: backendty;
                const aerror: ttextstream
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
@@ -680,6 +679,7 @@ begin
  with info do begin
   try
    try
+    backend:= abackend;
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
     
@@ -690,13 +690,14 @@ begin
     stacktop:= -1;
     stackindex:= stacktop;
     opcount:= startupoffset;
+    allocid:= 0;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     case backend of
      bke_direct: begin
-      beginparser(stackops.getoptable());
+      beginparser(stackops.getoptable(),@stackops.allocproc);
      end;
      bke_llvm: begin
-      beginparser(llvmops.getoptable());
+      beginparser(llvmops.getoptable(),@llvmops.allocproc);
      end;
     end;
     result:= parseunit(input,unit1);

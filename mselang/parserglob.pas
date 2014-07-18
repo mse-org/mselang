@@ -25,7 +25,7 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_rtti,seg_intf);
+              seg_op,seg_rtti,seg_intf,seg_alloc);
 
  bool8 = boolean;
  bool16 = wordbool;
@@ -563,9 +563,16 @@ type
   filenamebefore: filenamety;
   input: string;
  end;
+
+ allocprocty = procedure(const asize: integer; var address: segaddressty);  
+
+ backendty = (bke_direct,bke_llvm);
  
  parseinfoty = record
+  backend: backendty;
   unitinfo: punitinfoty;
+  allocproc: allocprocty;
+  allocid: integer;
   pb: pbranchty;
   pc: pcontextty;
   stopparser: boolean;

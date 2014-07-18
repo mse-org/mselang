@@ -72,8 +72,8 @@ type
  end;
 const
  minsize: array[segmentty] of integer = (
-//seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_rtti,seg_intf
-  0,      0,        0,          1024,         1024,  1024,    1024);          
+//seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_rtti,seg_intf,seg_alloc
+  0,      0,        0,          1024,         1024,  1024,    1024,    1024);          
   
 var
  segments: array[segmentty] of segmentinfoty;

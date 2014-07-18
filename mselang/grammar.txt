@@ -45,7 +45,7 @@
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors'
 @.tokens
- 'result'
+ 'result','exitcode'
 start,nounit,,
  ${whitespace} 
  'unit'.,unit0-

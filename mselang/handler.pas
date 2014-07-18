@@ -21,7 +21,8 @@ interface
 uses
  parserglob,opglob,typinfo,msetypes,handlerglob;
 
-procedure beginparser(const aoptable: poptablety);
+procedure beginparser(const aoptable: poptablety; 
+                                       const aallocproc: allocprocty);
 procedure endparser();
 
 //procedure push(const avalue: real); overload;
@@ -136,11 +137,23 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
 
-procedure beginparser(const aoptable: poptablety);
+procedure beginparser(const aoptable: poptablety; const aallocproc: allocprocty);
+var
+ po1: pvardataty;
+ ele1: elementoffsetty;
 begin
  setoptable(aoptable);
+ info.allocproc:= aallocproc;
+ addvar(tk_exitcode,allvisi,ele1,po1);
+ ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
+ po1^.address.indirectlevel:= 0;
+ po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
+ 
  with additem()^ do begin
   setop(op,oc_beginparse); //startup vector 
+  with par.beginparse do begin
+   exitcodeaddress:= po1^.address.segaddress;
+  end;
  end;
 end;
 
@@ -1199,8 +1212,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
 {$endif}
- with info,getoppo(startupoffset)^ do begin
-  par.opaddress:= opcount-1;
+ if info.backend = bke_direct then begin
+  with info,getoppo(startupoffset)^ do begin
+   par.opaddress:= opcount-1;
+  end;
  end;
 end;
 

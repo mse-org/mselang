@@ -88,7 +88,10 @@ begin
    llvmops.run();
    int1:= getprocessoutput('llvm-as test.ll','',str1);
    if (int1 = 0) and (str1 = '') then begin
-    grid.appendrow(['**llvm OK**']);
+    grid.appendrow(['**llvm-as OK**']);
+    int1:= getprocessoutput('lli test.bc','',str1);
+    grid[0].readpipe(str1,[aco_stripescsequence]);
+    grid.appendrow(['EXITCODE: '+inttostr(int1)]);
    end
    else begin
     grid[0].readpipe(str1,[aco_stripescsequence]);

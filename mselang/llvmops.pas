@@ -19,19 +19,21 @@ unit llvmops;
 
 interface
 uses
- opglob;
+ opglob,parserglob;
 
 //todo: generate bitcode
  
 function getoptable: poptablety;
+procedure allocproc(const asize: integer; var address: segaddressty);
 
 procedure run();
  
 implementation
 uses
- sysutils,msestream,msesys,segmentutils,parserglob;
+ sysutils,msestream,msesys,segmentutils;
 
 var
+ sp: integer; //unnamed variables
  pc: popinfoty;
 
 var
@@ -47,21 +49,77 @@ begin
  raise exception.create('LLVM OP not implemented');
 end;
 
-procedure nop();
+const
+ segprefix: array[segmentty] of string = (
+ //seg_nil,seg_stack,seg_globvar,seg_globconst,
+   '',     '@s',       '@gv',      '@gc',
+ //seg_op,seg_rtti,seg_intf,seg_alloc
+   '@o',  '@rt',   '@if',   '');
+               
+function segdataaddress(const address: segdataaddressty): string;
 begin
- notimplemented();
+ result:= segprefix[address.a.segment]+inttostr(address.a.address);
 end;
 
+function segaddress(const address: segaddressty): string;
+begin
+ result:= segprefix[address.segment]+inttostr(address.address);
+end;
+
+procedure stackassign(const offset: integer; const value: v32ty);
+begin
+ outass('%'+inttostr(sp+offset)+' = add i32 '+inttostr(int32(value))+' ,0');
+end;
+
+procedure segassign32(const offset: integer; const dest: segdataaddressty);
+begin
+ outass('store i32 %'+inttostr(sp+offset)+', i32*  '+segdataaddress(dest));
+end;
+
+procedure nop();
+begin
+ //dummy;
+end;
+
+type
+ allocinfoty = record
+  a: segaddressty;
+  size: integer;
+ end;
+ pallocinfoty = ^allocinfoty;
+
+var
+ exitcodeaddress: segaddressty;
+  
 procedure beginparseop();
+var
+ endpo: pointer;
+ allocpo: pallocinfoty;
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
+ allocpo:= getsegmentbase(seg_alloc);
+ endpo:= pointer(allocpo)+getsegmentsize(seg_alloc);
+ exitcodeaddress:= pc^.par.beginparse.exitcodeaddress;
+ while allocpo < endpo do begin
+  with allocpo^ do begin
+   case a.segment of 
+    seg_globvar: begin
+     outass(segprefix[seg_globvar]+inttostr(a.address)+' = global i'+
+                                             inttostr(8*size)+ ' 0');
+    end;
+   end;
+  end;
+  inc(allocpo);
+ end;
  outass('define i32 @main() {');
 end;
 
 procedure progendop();
 begin
- outass(' ret i32 0');
+
+ outass('%.exitcode = load i32* '+segaddress(exitcodeaddress));
+ outass('ret i32 %.exitcode');
  outass('}');
 end;
 
@@ -162,10 +220,13 @@ procedure push16op();
 begin
  notimplemented();
 end;
+
 procedure push32op();
 begin
- notimplemented();
+ stackassign(0,pc^.par.v32);
+ inc(sp);
 end;
+
 procedure push64op();
 begin
  notimplemented();
@@ -406,10 +467,13 @@ procedure popseg16op();
 begin
  notimplemented();
 end;
+
 procedure popseg32op();
 begin
- notimplemented();
+ dec(sp);
+ segassign32(0,pc^.par.segdataaddress);
 end;
+
 procedure popsegop();
 begin
  notimplemented();
@@ -671,6 +735,8 @@ procedure run();
 var
  endpo: pointer;
 begin
+ sp:= 1;
+
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
@@ -863,6 +929,17 @@ const
 function getoptable: poptablety;
 begin
  result:= @llvmoptable;
+end;
+
+procedure allocproc(const asize: integer; var address: segaddressty);
+begin
+ if address.segment = seg_globvar then begin
+  address.address:= info.allocid;
+  with pallocinfoty(allocsegmentpo(seg_alloc,sizeof(allocinfoty)))^ do begin
+   a:= address;
+   size:= asize;
+  end;
+ end;
 end;
 
 finalization
