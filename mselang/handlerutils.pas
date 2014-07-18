@@ -892,6 +892,16 @@ begin
  pushd(insertitem(stackoffset,before),address,offset,size);
 end;
 
+procedure initfactcontext(var acontext: contextdataty);
+begin
+ with acontext do begin
+  kind:= ck_fact;
+  fact.ssaindex:= info.ssaindex;
+  inc(info.ssaindex);
+  indirection:= 0;
+ end;
+end;
+
 function pushindirection(const stackoffset: integer): boolean;
 var
  int1: integer;
@@ -914,8 +924,7 @@ begin
      par.voffset:= d.ref.offset;
     end;
    end;
-   d.kind:= ck_fact;
-   d.indirection:= 0;
+   initfactcontext(d);
   end
   else begin
    errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -1037,8 +1046,7 @@ begin                    //todo: optimize
    end;
   {$endif}
   end;
-  d.kind:= ck_fact;
-  d.indirection:= 0;
+  initfactcontext(d);
  end;
  result:= true;
 end;
@@ -1065,13 +1073,13 @@ begin
   case d.kind of
    ck_ref: begin
     if d.indirection = 1 then begin
-     d.indirection:= 0;
      if endaddress then begin
       pushinsert(stackoffset,false,d.ref.address,d.ref.offset,false);
                   //address pointer on stack
-      d.kind:= ck_fact;
+      initfactcontext(d);
      end
      else begin
+      d.indirection:= 0;
       ref1:= d.ref; //todo: optimize
       d.kind:= ck_const;
       d.constval.kind:= dk_address;
@@ -1089,8 +1097,6 @@ begin
    ck_reffact: begin //
     internalerror1(ie_notimplemented,'20140404B'); //todo
     exit;
-//    inc(d.datatyp.indirectlevel);
-//    kind:= ck_fact;
    end;
    ck_fact,ck_subres: begin
     if d.indirection <> 0 then begin
@@ -1272,12 +1278,7 @@ begin
       operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
      end
      else begin
- //    {$ifdef mse_debugparser}
- //     outcommand([-2,0],opinfo.opname);
- //    {$endif}
-//      writeop(op1);
-      d.kind:= ck_fact;
-      d.indirection:= 0;
+      initfactcontext(d);
       d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
       context:= nil;
      end;
@@ -1488,7 +1489,7 @@ begin
   if indent then begin
    write('  ');
   end;
-  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
+  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,' S:',ssaindex,
   ' cont:',currentcontainer);
   if currentcontainer <> 0 then begin
    write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name));
@@ -1573,6 +1574,7 @@ begin
       end;
      end;
      ck_fact,ck_subres: begin
+      write('ssa:',d.fact.ssaindex,' ');
       writetype(d);
      end;
      ck_ref: begin

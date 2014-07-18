@@ -566,9 +566,11 @@ begin
   po1^.address:= 0; //init
   if impl1 then begin //implementation
    po1^.address:= opcount;
-   inc(sublevel);
+   inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
+    d.subdef.ssaindexbefore:= ssaindex;
+    ssaindex:= 0;
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     d.subdef.paramsize:= paramsize1;
@@ -764,6 +766,7 @@ begin
    par.stacksize:= d.subdef.paramsize;
   end;
   locdatapo:= d.subdef.parambase;
+  ssaindex:= d.subdef.ssaindexbefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   ele.releaseelement(b.elemark); //remove local definitions

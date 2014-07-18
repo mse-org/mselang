@@ -73,7 +73,12 @@ end;
 
 procedure segassign32(const offset: integer; const dest: segdataaddressty);
 begin
- outass('store i32 %'+inttostr(sp+offset)+', i32*  '+segdataaddress(dest));
+ outass('store i32 %'+inttostr(sp+offset)+', i32* '+segdataaddress(dest));
+end;
+
+procedure assignseg32(const offset: integer; const dest: segdataaddressty);
+begin
+ outass('%'+inttostr(sp+offset)+' = load i32* '+segdataaddress(dest));
 end;
 
 procedure nop();
@@ -530,10 +535,13 @@ procedure pushseg16op();
 begin
  notimplemented();
 end;
+
 procedure pushseg32op();
 begin
- notimplemented();
+ assignseg32(0,pc^.par.segdataaddress);
+ inc(sp);
 end;
+
 procedure pushsegop();
 begin
  notimplemented();

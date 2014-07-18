@@ -294,6 +294,7 @@ type
  end;
  
  factinfoty = record
+  ssaindex: integer;
   case contextkindty of
    ck_subres:(
     datasize: integer;
@@ -340,12 +341,11 @@ type
   parambase: ptruint;
   paramsize: integer; //params+stacklinksize
   varsize: integer;
-//  elementmark: markinfoty;
+  ssaindexbefore: integer;
   ref: elementoffsetty;
   match: elementoffsetty;
   error: boolean;
   flags: subflagsty;
-//  statementflagsbefore: statementflagsty;
  end;
  
  paramsdefinfoty = record
@@ -589,6 +589,7 @@ type
   stackindex: integer; 
   stacktop: integer; 
   sublevel: integer;
+  ssaindex: integer;
   unitlevel: integer;
   errorstream: ttextstream;
   errorfla: boolean;
