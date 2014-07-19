@@ -297,6 +297,7 @@ var
  stackindexbefore: integer;
  stacktopbefore: integer;
  unitinfobefore: punitinfoty;
+ ssaindexbefore: integer;
  pcbefore: pcontextty;
  stopparserbefore: boolean;
  eleparentbefore: elementoffsetty;
@@ -321,8 +322,11 @@ begin
   stackindexbefore:= stackindex;
   stacktopbefore:= stacktop;
   unitinfobefore:= unitinfo;
+  ssaindexbefore:= ssaindex;
   pcbefore:= pc;
   stopparserbefore:= stopparser;
+
+  ssaindex:= ssastart;
   currentsubchain:= 0;
   currentsubcount:= 0;
   currentstatementflagsbefore:= currentstatementflags;
@@ -645,6 +649,7 @@ parseend:
   stacktop:= stacktopbefore;
   unitinfo:= unitinfobefore;
   filename:= filenamebefore;
+  ssaindex:= ssaindexbefore;
   pc:= pcbefore;
   stopparser:= stopparserbefore;
   currentstatementflags:= currentstatementflagsbefore;
@@ -682,7 +687,8 @@ begin
     backend:= abackend;
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
-    
+
+    ssaindex:= ssastart;    
     stringbuffer:= '';
     errorstream:= aerror;
     stackdepth:= defaultstackdepth;

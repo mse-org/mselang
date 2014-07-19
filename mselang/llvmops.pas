@@ -66,9 +66,9 @@ begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
 
-procedure stackassign(const ssaindex: integer; const value: v32ty);
+procedure stackassign(const ssaindex: integer; const value: int32);
 begin
- outass('%'+inttostr(ssaindex)+' = add i32 '+inttostr(int32(value))+' ,0');
+ outass('%'+inttostr(ssaindex)+' = add i32 '+inttostr(value)+' ,0');
 end;
 
 procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
@@ -229,7 +229,7 @@ end;
 procedure push32op();
 begin
  with pc^.par do begin
-  stackassign(vpush.ssaindex,pc^.par.vpush.v32);
+  stackassign(imm.ssaindex,imm.vint32);
  end;
 end;
 

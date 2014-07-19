@@ -258,17 +258,23 @@ type
 
  destroyclassinfo = record
  end;
- 
- immty = record
-  case integer of               //todo: use target size
-   1: (vboolean: boolean);
-   2: (vcard32: card32);
-   3: (vint32: int32);
-   4: (vint64: int64);
-   5: (vfloat64: float64);
-   6: (vsize: ptrint);
-   7: (vpointer: ptruint);
-   8: (voffset: ptrint);
+  immty = record
+   ssaindex: integer;
+   case integer of               //todo: use target size
+    1: (vboolean: boolean);
+    2: (vcard8: card8);
+    3: (vcard16: card16);
+    4: (vcard32: card32);
+    5: (vcard64: card64);
+    6: (vint8: int8);
+    7: (vint16: int16);
+    8: (vint32: int32);
+    9: (vint64: int64);
+   10: (vfloat64: float64);
+   11: (vsize: ptrint);
+   12: (vpointer: ptruint);
+   13: (voffset: ptrint);
+   14: (vdatakind: datakindty);
  end;  
 
  ordimmty = record
@@ -287,7 +293,7 @@ type
   a: locaddressty;
   offset: dataoffsty;
  end;
- 
+{ 
  vpushty = record
   ssaindex: integer;
   case opcodety of
@@ -307,7 +313,7 @@ type
     vdatakind: datakindty;
    );
  end;
- 
+} 
  beginparseinfoty = record
   exitcodeaddress: segaddressty;
  end;  
@@ -349,8 +355,9 @@ type
     dummy: record
     end;
    );
-   oc_increg0,oc_push,oc_pop,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
-   oc_pushaddr: (
+   oc_push,oc_push8,oc_push16,oc_push32,oc_push64,oc_pushdatakind,oc_pushaddr,
+   oc_increg0,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
+   oc_pop: (
     imm: immty;
    );
    oc_cmpjmpneimm4,oc_cmpjmpeqimm4,oc_cmpjmploimm4,oc_cmpjmploeqimm4,
@@ -361,9 +368,11 @@ type
    oc_movesegreg0:(
     vsegment: segmentty;
    );
+  {
    oc_push8,oc_push16,oc_push32,oc_push64,oc_pushdatakind:(
     vpush: vpushty;
    );
+  }
    oc_storeframenil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
    oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,
    oc_finirefsizestackref,oc_increfsizeframe,oc_increfsizereg0,

@@ -589,6 +589,8 @@ begin
    end;
   {$endif}
   end;
+  par.imm.ssaindex:= ssaindex;
+  initfactcontext(po1^.d);
  end;
 end;
 
@@ -679,7 +681,7 @@ procedure push(const avalue: datakindty); overload;
 begin
  with additem({info})^ do begin
   setop(op,oc_pushdatakind);
-  par.vpush.vdatakind:= avalue;
+  par.imm.vdatakind:= avalue;
  end;
 end;
 
@@ -689,7 +691,7 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
 begin
  with insertitem(stackoffset,before)^ do begin
   setop(op,oc_pushdatakind);
-  par.vpush.vdatakind:= avalue;
+  par.imm.vdatakind:= avalue;
  end;
 end;
 
@@ -1051,7 +1053,7 @@ begin                    //todo: optimize
    end;
   {$endif}
   end;
-  initfactcontext(d);
+//  initfactcontext(d);
  end;
  result:= true;
 end;

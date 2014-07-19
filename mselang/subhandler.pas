@@ -55,7 +55,7 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,opglob;
- 
+
 type
  equalparaminfoty = record
   ref: psubdataty;
@@ -570,7 +570,7 @@ begin
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
     d.subdef.ssaindexbefore:= ssaindex;
-    ssaindex:= 0;
+    ssaindex:= ssastart;
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     d.subdef.paramsize:= paramsize1;

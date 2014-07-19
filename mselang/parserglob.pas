@@ -22,6 +22,7 @@ uses
 const
  firstident = 256;
  includemax = 31;
+ ssastart = 1; 
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
