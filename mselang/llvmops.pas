@@ -33,7 +33,7 @@ uses
  sysutils,msestream,msesys,segmentutils;
 
 var
- sp: integer; //unnamed variables
+// sp: integer; //unnamed variables
  pc: popinfoty;
 
 var
@@ -66,19 +66,19 @@ begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
 
-procedure stackassign(const offset: integer; const value: v32ty);
+procedure stackassign(const ssaindex: integer; const value: v32ty);
 begin
- outass('%'+inttostr(sp+offset)+' = add i32 '+inttostr(int32(value))+' ,0');
+ outass('%'+inttostr(ssaindex)+' = add i32 '+inttostr(int32(value))+' ,0');
 end;
 
-procedure segassign32(const offset: integer; const dest: segdataaddressty);
+procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
 begin
- outass('store i32 %'+inttostr(sp+offset)+', i32* '+segdataaddress(dest));
+ outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
 end;
 
-procedure assignseg32(const offset: integer; const dest: segdataaddressty);
+procedure assignseg32(const ssaindex: integer; const dest: segdataaddressty);
 begin
- outass('%'+inttostr(sp+offset)+' = load i32* '+segdataaddress(dest));
+ outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
 
 procedure nop();
@@ -228,8 +228,9 @@ end;
 
 procedure push32op();
 begin
- stackassign(0,pc^.par.vpush.v32);
- inc(sp);
+ with pc^.par do begin
+  stackassign(vpush.ssaindex,pc^.par.vpush.v32);
+ end;
 end;
 
 procedure push64op();
@@ -475,8 +476,9 @@ end;
 
 procedure popseg32op();
 begin
- dec(sp);
- segassign32(0,pc^.par.segdataaddress);
+ with pc^.par.stackop do begin
+  segassign32(ssaindex,segdataaddress);
+ end;
 end;
 
 procedure popsegop();
@@ -538,8 +540,9 @@ end;
 
 procedure pushseg32op();
 begin
- assignseg32(0,pc^.par.segdataaddress);
- inc(sp);
+ with pc^.par.stackop do begin
+  assignseg32(ssaindex,segdataaddress);
+ end;
 end;
 
 procedure pushsegop();
@@ -743,8 +746,6 @@ procedure run();
 var
  endpo: pointer;
 begin
- sp:= 1;
-
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);

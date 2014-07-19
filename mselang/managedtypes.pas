@@ -19,19 +19,19 @@ unit managedtypes;
 interface
 uses
  parserglob,handlerglob,opglob,opcode;
-
+              //todo: check ssaindex
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
-                                                        const global: boolean);
+                               const global: boolean; const ssaindex: integer);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                                const aaddress: addressvaluety);
+                      const aaddress: addressvaluety; const ssaindex: integer);
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                                 const aaddress: addressrefty);
+                       const aaddress: addressrefty; const ssaindex: integer);
 
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;
-                                                      const count: datasizety);
+                             const count: datasizety; const ssaindex: integer);
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,
@@ -47,20 +47,20 @@ const
  );
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;
-                                                      const count: datasizety);
+                             const count: datasizety; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aaddress,count);
+   inipointer(aaddress,count,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aaddress,count);
+   finirefsize(aaddress,count,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aaddress,count);
+   increfsize(aaddress,count,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aaddress,count);
+   decrefsize(aaddress,count,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -105,7 +105,8 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty;
-                       const atype: ptypedataty; const aaddress: addressrefty);
+                const atype: ptypedataty; const aaddress: addressrefty;
+                                                   const ssaindex: integer);
 var
  po2,po4: ptypedataty;
  po3: pfielddataty;
@@ -118,10 +119,11 @@ begin
  if tf_managed in atype^.flags then begin
   if atype^.kind = dk_array then begin
    ptypedataty(ele.eledataabs(atype^.infoarray.itemtypedata))^.manageproc(
-         op,aaddress,getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
+         op,aaddress,
+         getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),ssaindex);
   end
   else begin
-   atype^.manageproc(op,aaddress,1);
+   atype^.manageproc(op,aaddress,1,ssaindex);
   end;
  end
  else begin
@@ -156,7 +158,7 @@ begin
    po4:= ele.eledataabs(po3^.vf.typ);
    if po4^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
     ad1.offset:= aaddress.offset + po3^.offset;
-    writemanagedtypeop(op,po4,ad1);
+    writemanagedtypeop(op,po4,ad1,ssaindex);
    end;
    ele1:= po3^.vf.next;
   until ele1 = 0;
@@ -175,7 +177,8 @@ begin
 end;
 
 procedure writemanagedvarop(const op: managedopty;
-                         const chain: elementoffsetty; const global: boolean);
+             const chain: elementoffsetty; const global: boolean;
+                                               const ssaindex: integer);
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
@@ -194,7 +197,7 @@ begin
    po1:= ele.eledataabs(ele1);
    if tf_hasmanaged in po1^.vf.flags then begin
     ad1.offset:= po1^.address.poaddress;
-    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1);
+    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
@@ -202,7 +205,7 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                                               const aaddress: addressvaluety);
+                      const aaddress: addressvaluety; const ssaindex: integer);
 var
  ad1: addressrefty;
 begin
@@ -219,7 +222,7 @@ begin
   end;
  end;
  ad1.offset:= aaddress.poaddress;
- writemanagedtypeop(op,atype,ad1);
+ writemanagedtypeop(op,atype,ad1,ssaindex);
 end;
 
 {

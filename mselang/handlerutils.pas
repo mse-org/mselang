@@ -119,9 +119,9 @@ procedure push(const avalue: addressvaluety; const offset: dataoffsty;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                                                   const size: datasizety);
+                            const size: datasizety; const ssaindex: integer);
 procedure pushinsert(const stackoffset: integer; const before: boolean;
-                                     const avalue: datakindty); overload;
+                  const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
             const avalue: addressvaluety; const offset: dataoffsty;
                                             const indirect: boolean); overload;
@@ -132,7 +132,7 @@ procedure pushinsertsegaddress(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                                                  const size: datasizety);
+                              const size: datasizety; const ssaindex: integer);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -818,7 +818,8 @@ begin
 end;
 
 procedure pushd(const oppo: popinfoty; const address: addressvaluety;
-                     const offset: dataoffsty; const size: datasizety);
+                     const offset: dataoffsty; const size: datasizety;
+                     const ssaindex: integer);
 begin
  with oppo^,address do begin //todo: use table
   if af_segment in flags then begin
@@ -836,8 +837,8 @@ begin
      setop(op,oc_pushseg);
     end;
    end;
-   par.segdataaddress.a:= segaddress;
-   par.segdataaddress.offset:= offset;
+   par.stackop.segdataaddress.a:= segaddress;
+   par.stackop.segdataaddress.offset:= offset;
   end
   else begin
    if af_paramindirect in flags then begin
@@ -872,26 +873,27 @@ begin
      end;
     end;
    end;
-   par.locdataaddress.a:= locaddress;
-   par.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
-   par.locdataaddress.offset:= offset;
+   par.stackop.locdataaddress.a:= locaddress;
+   par.stackop.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
+   par.stackop.locdataaddress.offset:= offset;
   end;
-  par.datasize:= size;
+  par.stackop.datasize:= size;
+  par.stackop.ssaindex:= ssaindex;
  end;
 end;
 
 //todo: optimize call
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                                          const size: datasizety);
+                         const size: datasizety; const ssaindex: integer);
 begin
- pushd(additem({info}),address,offset,size);
+ pushd(additem({info}),address,offset,size,ssaindex);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                                                  const size: datasizety);
+                  const size: datasizety; const ssaindex: integer);
 begin
- pushd(insertitem(stackoffset,before),address,offset,size);
+ pushd(insertitem(stackoffset,before),address,offset,size,ssaindex);
 end;
 
 procedure initfactcontext(var acontext: contextdataty);
@@ -965,7 +967,7 @@ function getvalue(const stackoffset: integer;
      end;
      else begin
       setop(op,oc_indirect);
-      par.datasize:= si1;      
+      par.stackop.datasize:= si1;      
      end;
     end;
    end;
@@ -1012,7 +1014,8 @@ begin                    //todo: optimize
       else begin
        si1:= pointersize;
       end;
-      pushinsertdata(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,si1);
+      pushinsertdata(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,
+                                                                 si1,ssaindex);
      end;
     end;
    end;

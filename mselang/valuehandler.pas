@@ -227,9 +227,9 @@ var
       {$endif}
        with insertitem(parent-stackindex,false)^ do begin
         setop(op,oc_pushlocpo);
-        par.locdataaddress.a.framelevel:= -1;
-        par.locdataaddress.a.address:= po6^.address.poaddress;
-        par.locdataaddress.offset:= 0;
+        par.stackop.locdataaddress.a.framelevel:= -1;
+        par.stackop.locdataaddress.a.address:= po6^.address.poaddress;
+        par.stackop.locdataaddress.offset:= 0;
        end;
       end;
      end;
@@ -319,7 +319,8 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         pushinsertdata(0,false,pvardataty(po2)^.address,offs1,pointersize);
+         pushinsertdata(0,false,pvardataty(po2)^.address,offs1,
+                                                      pointersize,ssaindex);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin

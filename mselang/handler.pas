@@ -147,6 +147,7 @@ begin
  addvar(tk_exitcode,allvisi,ele1,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
+ po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
  
  with additem()^ do begin
@@ -1469,6 +1470,7 @@ var
  int1: integer;
  offs1: dataoffsty;
  ad1: addressrefty;
+ ssa1: integer;
 label
  endlab;
 begin
@@ -1481,7 +1483,7 @@ begin
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
-   with contextstack[stackindex+1] do begin //address
+   with contextstack[stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
     dest.typ:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -1527,23 +1529,16 @@ begin
     end;
                          //todo: use destinationaddress directly
     typematch:= tryconvert(stacktop-stackindex,dest.typ,int1);
+    ssa1:= contextstack[stacktop].d.dat.fact.ssaindex;
     if not typematch then begin
      assignmenterror(contextstack[stacktop].d,dest);
     end
     else begin
-    {
-     with contextstack[stacktop] do begin
-      if d.kind = ck_const then begin
-       pushconst(d);
-       outcommand([0],'push');
-      end;
-     end;
-     }
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
       ad1.base:= ab_stack;
       ad1.offset:= -si1;
       if not isconst then begin
-       writemanagedtypeop(mo_incref,dest.typ,ad1);
+       writemanagedtypeop(mo_incref,dest.typ,ad1,ssa1);
       end;
       if indi then begin
        dec(ad1.offset,si1);
@@ -1559,11 +1554,12 @@ begin
         ad1.base:= ab_frame;
        end;
       end;
-      writemanagedtypeop(mo_decref,dest.typ,ad1);
+      writemanagedtypeop(mo_decref,dest.typ,ad1,0);
      end;
 
      with additem()^ do begin
-      par.datasize:= si1;
+      par.stackop.datasize:= si1;
+      par.stackop.ssaindex:= ssa1;
       if indi then begin
        case si1 of
         1: begin
@@ -1596,8 +1592,8 @@ begin
           setop(op,oc_popseg);
          end;
         end;
-        par.segdataaddress.a:= dest.address.segaddress;
-        par.segdataaddress.offset:= 0;
+        par.stackop.segdataaddress.a:= dest.address.segaddress;
+        par.stackop.segdataaddress.offset:= 0;
        end
        else begin
         if af_paramindirect in dest.address.flags then begin
@@ -1632,10 +1628,10 @@ begin
           end;
          end;
         end;
-        par.locdataaddress.a:= dest.address.locaddress;
-        par.locdataaddress.a.framelevel:= sublevel -
+        par.stackop.locdataaddress.a:= dest.address.locaddress;
+        par.stackop.locdataaddress.a.framelevel:= sublevel -
                                            dest.address.locaddress.framelevel-1;
-        par.locdataaddress.offset:= 0;
+        par.stackop.locdataaddress.offset:= 0;
        end;
       end;
      end;

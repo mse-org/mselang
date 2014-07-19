@@ -131,7 +131,8 @@ type
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref);
  
  managedtypeprocty = procedure(const op: managedopty;
-                      const aadress: addressrefty; const count: datasizety);
+                       const aadress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 
  manageddataty = record
   managedele: elementoffsetty;

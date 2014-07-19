@@ -47,10 +47,14 @@ function insertitem(const stackoffset: integer;
                               const before: boolean): popinfoty;
 //procedure writeop(const operation: opty); inline;
 
-procedure inipointer(const aaddress: addressrefty; const count: datasizety);
-procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
-procedure increfsize(const aaddress: addressrefty; const count: datasizety);
-procedure decrefsize(const aaddress: addressrefty; const count: datasizety);
+procedure inipointer(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
+procedure finirefsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
+procedure increfsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
+procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
@@ -117,19 +121,21 @@ const
  );
 
 procedure addmanagedop(const opsar: aropadsty; 
-               const aaddress: addressrefty; const count: datasizety);
+               const aaddress: addressrefty; const count: datasizety;
+               const ssaindex: integer);
 begin
  with additem^ do begin
+  par.stackop.ssaindex:= ssaindex;
   if count > 1 then begin
    setop(op,opsar[true][aaddress.base]);
-   par.datasize:= count;
+   par.stackop.datasize:= count;
    if aaddress.base = ab_segment then begin
-    par.segdataaddress.a.address:= aaddress.offset;
-    par.segdataaddress.a.segment:= aaddress.segment;
-    par.segdataaddress.offset:= 0;
+    par.stackop.segdataaddress.a.address:= aaddress.offset;
+    par.stackop.segdataaddress.a.segment:= aaddress.segment;
+    par.stackop.segdataaddress.offset:= 0;
    end
    else begin
-    par.podataaddress:= aaddress.offset;
+    par.stackop.podataaddress:= aaddress.offset;
    end;
   end
   else begin
@@ -147,24 +153,28 @@ begin
  end;
 end;
 
-procedure inipointer(const aaddress: addressrefty; const count: datasizety);
+procedure inipointer(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 begin
- addmanagedop(storenilops,aaddress,count);
+ addmanagedop(storenilops,aaddress,count,ssaindex);
 end;
 
-procedure finirefsize(const aaddress: addressrefty; const count: datasizety);
+procedure finirefsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 begin
- addmanagedop(finirefsizeops,aaddress,count);
+ addmanagedop(finirefsizeops,aaddress,count,ssaindex);
 end;
 
-procedure increfsize(const aaddress: addressrefty; const count: datasizety);
+procedure increfsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 begin
- addmanagedop(increfsizeops,aaddress,count);
+ addmanagedop(increfsizeops,aaddress,count,ssaindex);
 end;
 
-procedure decrefsize(const aaddress: addressrefty; const count: datasizety);
+procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
+                                                     const ssaindex: integer);
 begin
- addmanagedop(decrefsizeops,aaddress,count);
+ addmanagedop(decrefsizeops,aaddress,count,ssaindex);
 end;
 
 function getglobvaraddress(const asize: integer;

@@ -289,6 +289,7 @@ type
  end;
  
  vpushty = record
+  ssaindex: integer;
   case opcodety of
    oc_push8:(
     v8: v8ty;
@@ -310,6 +311,34 @@ type
  beginparseinfoty = record
   exitcodeaddress: segaddressty;
  end;  
+
+ stackopty = record
+  datasize: datasizety;
+  ssaindex: integer;
+  case opcodety of
+   oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
+   oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
+   oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
+   oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
+    locdataaddress: locdataaddressty;
+   );
+   oc_storesegnilar,
+   oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
+   oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
+   oc_pushsegaddr,oc_pushsegaddrindi,
+   oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
+    segdataaddress: segdataaddressty;
+   );
+   oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
+   oc_storestackrefnilar,oc_finirefsizeframear,oc_finirefsizereg0ar,
+   oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizeframear,
+   oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
+   oc_decrefsizeframear,oc_decrefsizereg0ar,oc_decrefsizestackar,
+   oc_decrefsizestackrefar:(
+    podataaddress: dataaddressty;
+   );
+ end;
+
                  //todo: unify
  opparamty = record
   case opcodety of 
@@ -345,12 +374,9 @@ type
    oc_pushsegaddress,oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,
    oc_decrefsizeseg:(
     vsegaddress: segdataaddressty;
-//    vglobaddress: dataaddressty;
- //   vglobadoffs: dataoffsty;
    );
    oc_pushlocaddr,oc_pushlocaddrindi:(
     vlocaddress: locdataaddressty;
-//    vlocadoffs: dataoffsty;
    );
    oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
    oc_writeclass,oc_writeenum,oc_pushstackaddr,oc_pushstackaddrindi,
@@ -369,29 +395,7 @@ type
    oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
    oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
-    datasize: datasizety;
-    case opcodety of
-     oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
-     oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
-     oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
-     oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
-      locdataaddress: locdataaddressty;
-     );
-     oc_storesegnilar,
-     oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
-     oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
-     oc_pushsegaddr,oc_pushsegaddrindi,
-     oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
-      segdataaddress: segdataaddressty;
-     );
-     oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
-     oc_storestackrefnilar,oc_finirefsizeframear,oc_finirefsizereg0ar,
-     oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizeframear,
-     oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
-     oc_decrefsizeframear,oc_decrefsizereg0ar,oc_decrefsizestackar,
-     oc_decrefsizestackrefar:(
-      podataaddress: dataaddressty;
-     );
+    stackop: stackopty;
    );
    {
    oc_op1:(

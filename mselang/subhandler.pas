@@ -582,7 +582,7 @@ begin
      po4^[int2]:= ptruint(po2)-eledatabase;
      if tf_hasmanaged in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
-                                                                 po2^.address);
+                                                        po2^.address,0);
       po2^.vf.next:= po1^.paramfinichain;
       po1^.paramfinichain:= ele.eledatarel(po2);
      end;
@@ -727,7 +727,7 @@ begin
    end;
   end;
   if stf_hasmanaged in currentstatementflags then begin
-   writemanagedvarop(mo_ini,po1^.varchain,false);
+   writemanagedvarop(mo_ini,po1^.varchain,false,0);
   end;
  end;
 end;
@@ -744,10 +744,10 @@ begin
 //  ele.decelementparent;
   po1:= ele.eledataabs(d.subdef.ref);
   if stf_hasmanaged in currentstatementflags then begin
-   writemanagedvarop(mo_fini,po1^.varchain,false);
+   writemanagedvarop(mo_fini,po1^.varchain,false,0);
   end;
   if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_fini,po1^.paramfinichain,false);
+   writemanagedvarop(mo_fini,po1^.paramfinichain,false,0);
   end;
   if d.subdef.varsize <> 0 then begin
    with additem()^ do begin
