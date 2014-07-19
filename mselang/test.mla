@@ -1,25 +1,15 @@
 unit program;
 
-type
- tc = class
-  constructor create();
-  procedure p();
- end;
- tc1 = class(tc)
- end;
-
 implementation
 
-constructor tc.create();
+//var
+// i1: int32;
 begin
-end;
-
-procedure tc.p();
-begin
-end;
-
-var
- c: tc1;
-begin
- c:= tc.create();
+{
+ i1:= 1;
+ i1:= i1 + 2;
+ i1:= i1 + 3;
+ i1:= i1 + 4;
+}
+ exitcode:= 3;
 end;

@@ -401,6 +401,21 @@ type
   elemark: markinfoty;
  end;
  
+ datacontextty = record
+  indirection: integer; //pending
+  datatyp: typeinfoty;
+  case contextkindty of
+   ck_const:(
+    constval: dataty;
+   );
+   ck_fact,ck_subres:(
+    fact: factinfoty;
+   );
+   ck_ref:(
+    ref: refvaluety;
+   );
+ end;
+
  contextdataty = record
 //  elemark: elementoffsetty;
   case kind: contextkindty of
@@ -417,18 +432,7 @@ type
     getfact: getfactinfoty;
    );
    ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:( //datacontexts
-    indirection: integer; //pending
-    datatyp: typeinfoty;
-    case contextkindty of
-     ck_const:(
-      constval: dataty;
-     );
-     ck_fact,ck_subres:(
-      fact: factinfoty;
-     );
-     ck_ref:(
-      ref: refvaluety;
-     );
+    dat: datacontextty;
    );
    ck_index:(
     opshiftmark: integer;

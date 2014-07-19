@@ -235,7 +235,7 @@ function typename(const ainfo: contextdataty): string;
 var
  po1: ptypedataty;
 begin
- po1:= ele.eledataabs(ainfo.datatyp.typedata);
+ po1:= ele.eledataabs(ainfo.dat.datatyp.typedata);
  result:= getenumname(typeinfo(datakindty),ord(po1^.kind));
 end;
 
@@ -375,9 +375,9 @@ var
 begin
  case source.kind of
   ck_const,ck_fact,ck_ref: begin
-   po1:= ele.eleinfoabs(source.datatyp.typedata);
+   po1:= ele.eleinfoabs(source.dat.datatyp.typedata);
    sourceinfo:= getidentname(po1^.header.name);
-   for int1:= 0 to source.datatyp.indirectlevel-1 do begin
+   for int1:= 0 to source.dat.datatyp.indirectlevel-1 do begin
     sourceinfo:= '^'+sourceinfo;
    end;
    destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
@@ -416,9 +416,9 @@ begin
  with context do begin
   case kind of
    ck_const,ck_fact: begin
-    result:= charstring('^',datatyp.indirectlevel)+
-                    charstring('@',-datatyp.indirectlevel)+
-                                   typeinfoname(context.datatyp.typedata);
+    result:= charstring('^',dat.datatyp.indirectlevel)+
+                    charstring('@',-dat.datatyp.indirectlevel)+
+                                   typeinfoname(dat.datatyp.typedata);
    end
    else begin
     result:= '';

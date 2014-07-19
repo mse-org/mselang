@@ -147,6 +147,8 @@ function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
+procedure initfactcontext(var acontext: contextdataty);
+
 procedure init();
 procedure deinit();
 
@@ -537,7 +539,7 @@ end;
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
  with insertitem(stackoffset,before)^,info,
-                     contextstack[stackindex+stackoffset].d.ref do begin
+                     contextstack[stackindex+stackoffset].d.dat.ref do begin
   if af_segment in address.flags then begin
    setop(op,oc_pushsegaddr);
    par.vsegaddress.a:= address.segaddress;
@@ -558,21 +560,21 @@ var
 begin
  with insertitem(stackoffset,before)^,info do begin
   po1:= @contextstack[stackindex+stackoffset];
-  case po1^.d.constval.kind of
+  case po1^.d.dat.constval.kind of
    dk_boolean: begin
     setop(op,oc_push8);
-    par.imm.vboolean:= po1^.d.constval.vboolean;
+    par.imm.vboolean:= po1^.d.dat.constval.vboolean;
    end;
    dk_integer,dk_enum: begin
     setop(op,oc_push32);
-    par.imm.vint32:= po1^.d.constval.vinteger;
+    par.imm.vint32:= po1^.d.dat.constval.vinteger;
    end;
    dk_float: begin
     setop(op,oc_push64);
-    par.imm.vfloat64:= po1^.d.constval.vfloat;
+    par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
    end;
    dk_string8: begin
-    par.vsegaddress.a:= stringconst(po1^.d.constval.vstring);
+    par.vsegaddress.a:= stringconst(po1^.d.dat.constval.vstring);
     if par.vsegaddress.a.segment = seg_nil then begin
      setop(op,oc_pushnil);
     end
@@ -677,7 +679,7 @@ procedure push(const avalue: datakindty); overload;
 begin
  with additem({info})^ do begin
   setop(op,oc_pushdatakind);
-  par.vdatakind:= avalue;
+  par.vpush.vdatakind:= avalue;
  end;
 end;
 
@@ -687,7 +689,7 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
 begin
  with insertitem(stackoffset,before)^ do begin
   setop(op,oc_pushdatakind);
-  par.vdatakind:= avalue;
+  par.vpush.vdatakind:= avalue;
  end;
 end;
 
@@ -695,18 +697,18 @@ procedure pushconst(const avalue: contextdataty);
 //todo: optimize
 begin
  with avalue do begin
-  case constval.kind of
+  case dat.constval.kind of
    dk_boolean: begin
-    push(constval.vboolean);
+    push(dat.constval.vboolean);
    end;
    dk_integer: begin
-    push(constval.vinteger);
+    push(dat.constval.vinteger);
    end;
    dk_float: begin
-    push(constval.vfloat);
+    push(dat.constval.vfloat);
    end;
    dk_address: begin
-    push(constval.vaddress,0,false);
+    push(dat.constval.vaddress,0,false);
    end;
   end;
  end;
@@ -764,20 +766,20 @@ function convertconsts(): stackdatakindty;
                 //convert stacktop, stacktop-2
 begin
  with info,contextstack[stacktop-2] do begin
-  result:= stackdatakinds[d.constval.kind];  
-  if contextstack[stacktop].d.constval.kind <> d.constval.kind then begin
-   case contextstack[stacktop].d.constval.kind of
+  result:= stackdatakinds[d.dat.constval.kind];  
+  if contextstack[stacktop].d.dat.constval.kind <> d.dat.constval.kind then begin
+   case contextstack[stacktop].d.dat.constval.kind of
     dk_float: begin
      result:= sdk_flo64;
-     with d,constval do begin
+     with d,dat.constval do begin
       case kind of
        dk_float: begin
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+        vfloat:= vfloat + contextstack[stacktop].d.dat.constval.vfloat;
        end;
        dk_integer: begin
-        vfloat:= vinteger + contextstack[stacktop].d.constval.vfloat;
+        vfloat:= vinteger + contextstack[stacktop].d.dat.constval.vfloat;
         kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
+        dat.datatyp:= contextstack[stacktop].d.dat.datatyp;
        end;
        else begin
         result:= sdk_none;
@@ -786,16 +788,16 @@ begin
      end;
     end;
     dk_integer: begin
-     with d,constval do begin
+     with d,dat.constval do begin
       case kind of
        dk_integer: begin
-        vinteger:= vinteger + contextstack[stacktop].d.constval.vinteger;
+        vinteger:= vinteger + contextstack[stacktop].d.dat.constval.vinteger;
        end;
        dk_float: begin
         result:= sdk_flo64;
-        vfloat:= vfloat + contextstack[stacktop].d.constval.vfloat;
+        vfloat:= vfloat + contextstack[stacktop].d.dat.constval.vfloat;
         kind:= dk_float;
-        datatyp:= contextstack[stacktop].d.datatyp;
+        dat.datatyp:= contextstack[stacktop].d.dat.datatyp;
        end;
        else begin
         result:= sdk_none;
@@ -896,9 +898,9 @@ procedure initfactcontext(var acontext: contextdataty);
 begin
  with acontext do begin
   kind:= ck_fact;
-  fact.ssaindex:= info.ssaindex;
+  dat.fact.ssaindex:= info.ssaindex;
   inc(info.ssaindex);
-  indirection:= 0;
+  dat.indirection:= 0;
  end;
 end;
 
@@ -908,20 +910,20 @@ var
 begin
  result:= true;
  with info,contextstack[stackindex+stackoffset] do begin;
-  if d.indirection <= 0 then begin
-   if d.indirection = 0 then begin
-    pushinsert(stackoffset,false,d.ref.address,d.ref.offset,true);
+  if d.dat.indirection <= 0 then begin
+   if d.dat.indirection = 0 then begin
+    pushinsert(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,true);
    end
    else begin
-    pushinsert(stackoffset,false,d.ref.address,0,true);
-    for int1:= d.indirection to -2 do begin
+    pushinsert(stackoffset,false,d.dat.ref.address,0,true);
+    for int1:= d.dat.indirection to -2 do begin
      with insertitem(stackoffset,false)^ do begin
       setop(op,oc_indirectpo);
      end;
     end;
     with insertitem(stackoffset,false)^ do begin
      setop(op,oc_indirectpooffs);
-     par.voffset:= d.ref.offset;
+     par.voffset:= d.dat.ref.offset;
     end;
    end;
    initfactcontext(d);
@@ -943,11 +945,11 @@ function getvalue(const stackoffset: integer;
   op1: popinfoty;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
-   if datatyp.indirectlevel > 0 then begin
+   if dat.datatyp.indirectlevel > 0 then begin
     si1:= pointersize;
    end
    else begin
-    si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.bytesize;
+    si1:= ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.bytesize;
    end;
    op1:= insertitem(stackoffset,false);
    with op1^ do begin //todo: use table
@@ -981,12 +983,12 @@ begin                    //todo: optimize
  with info,contextstack[stackindex+stackoffset] do begin
   case d.kind of
    ck_ref: begin
-    if d.datatyp.indirectlevel < 0 then begin
+    if d.dat.datatyp.indirectlevel < 0 then begin
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
-    if d.indirection > 0 then begin //@ operator
-     if d.indirection = 1 then begin
+    if d.dat.indirection > 0 then begin //@ operator
+     if d.dat.indirection = 1 then begin
       pushinsertaddress(stackoffset,false);
      end
      else begin
@@ -995,22 +997,22 @@ begin                    //todo: optimize
      end;
     end
     else begin
-     if d.indirection < 0 then begin //dereference
-      inc(d.indirection); //correct addr handling
+     if d.dat.indirection < 0 then begin //dereference
+      inc(d.dat.indirection); //correct addr handling
       if not pushindirection(stackoffset) then begin
        exit;
       end;
       doindirect;
      end
      else begin
-      if d.datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-       po1:= ele.eledataabs(d.datatyp.typedata);
+      if d.dat.datatyp.indirectlevel <= 0 then begin //??? <0 = error?
+       po1:= ele.eledataabs(d.dat.datatyp.typedata);
        si1:= po1^.bytesize;
       end
       else begin
        si1:= pointersize;
       end;
-      pushinsertdata(stackoffset,false,d.ref.address,d.ref.offset,si1);
+      pushinsertdata(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,si1);
      end;
     end;
    end;
@@ -1025,8 +1027,8 @@ begin                    //todo: optimize
     pushinsertconst(stackoffset,false);
    end;
    ck_subres,ck_fact: begin
-    if d.indirection < 0 then begin
-     for int1:= d.indirection+2 to 0 do begin
+    if d.dat.indirection < 0 then begin
+     for int1:= d.dat.indirection+2 to 0 do begin
       with insertitem(stackoffset,false)^ do begin
        setop(op,oc_indirectpo);
       end;
@@ -1034,7 +1036,7 @@ begin                    //todo: optimize
      doindirect();
     end
     else begin
-     if d.indirection > 0 then begin
+     if d.dat.indirection > 0 then begin
       errormessage(err_cannotaddressexp,[],stackoffset);
       exit;
      end;
@@ -1064,28 +1066,28 @@ begin
    internalerror(ie_handler,'20140405A');
   end;
  {$endif}
-  inc(d.indirection);
-  inc(d.datatyp.indirectlevel);
-  if d.datatyp.indirectlevel <= 0 then begin
+  inc(d.dat.indirection);
+  inc(d.dat.datatyp.indirectlevel);
+  if d.dat.datatyp.indirectlevel <= 0 then begin
    errormessage(err_cannotassigntoaddr,[]);
    exit;
   end;
   case d.kind of
    ck_ref: begin
-    if d.indirection = 1 then begin
+    if d.dat.indirection = 1 then begin
      if endaddress then begin
-      pushinsert(stackoffset,false,d.ref.address,d.ref.offset,false);
+      pushinsert(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,false);
                   //address pointer on stack
       initfactcontext(d);
      end
      else begin
-      d.indirection:= 0;
-      ref1:= d.ref; //todo: optimize
+      d.dat.indirection:= 0;
+      ref1:= d.dat.ref; //todo: optimize
       d.kind:= ck_const;
-      d.constval.kind:= dk_address;
-      d.constval.vaddress:= ref1.address;
-      d.constval.vaddress.poaddress:= 
-                       d.constval.vaddress.poaddress + ref1.offset;
+      d.dat.constval.kind:= dk_address;
+      d.dat.constval.vaddress:= ref1.address;
+      d.dat.constval.vaddress.poaddress:= 
+                       d.dat.constval.vaddress.poaddress + ref1.offset;
      end;
     end
     else begin
@@ -1099,7 +1101,7 @@ begin
     exit;
    end;
    ck_fact,ck_subres: begin
-    if d.indirection <> 0 then begin
+    if d.dat.indirection <> 0 then begin
      result:= getvalue(stackoffset);
     end;
    end;
@@ -1160,9 +1162,9 @@ begin
    getvalue(stacktop-stackindex{,false});
   end;
   sd1:= sdk_none;
-  po1:= ele.eleinfoabs(contextstack[stacktop].d.datatyp.typedata);
+  po1:= ele.eleinfoabs(contextstack[stacktop].d.dat.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
-  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.datatyp.typedata);
+  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.dat.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
   with contextstack[stacktop-2],d do begin
    if d.kind <> ck_const then begin
@@ -1173,12 +1175,12 @@ begin
     if kind = ck_const then begin
      with insertitem(stacktop-2-stackindex,false)^ do begin
       setop(op,oc_push64);
-      case constval.kind of
+      case dat.constval.kind of
        dk_integer: begin
-        par.imm.vfloat64:= real(constval.vinteger);
+        par.imm.vfloat64:= real(dat.constval.vinteger);
        end;
        dk_float: begin
-        par.imm.vfloat64:= constval.vfloat;
+        par.imm.vfloat64:= dat.constval.vfloat;
        end;
        else begin
         sd1:= sdk_none;
@@ -1209,10 +1211,10 @@ begin
      if kind = ck_const then begin
       case kinda of
        dk_integer: begin
-        push(real(constval.vinteger));
+        push(real(dat.constval.vinteger));
        end;
        dk_float: begin
-        push(real(constval.vfloat));
+        push(real(dat.constval.vfloat));
        end;
        else begin
         sd1:= sdk_none;
@@ -1240,12 +1242,12 @@ begin
       if kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         setop(op,oc_push8);
-        par.imm.vboolean:= constval.vboolean;
+        par.imm.vboolean:= dat.constval.vboolean;
        end;
       end;
       with contextstack[stacktop].d do begin
        if kind = ck_const then begin
-        push(constval.vboolean);
+        push(dat.constval.vboolean);
        end;
       end;
      end;
@@ -1256,12 +1258,12 @@ begin
       if kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
         setop(op,oc_push32);
-        par.imm.vint32:= constval.vinteger;
+        par.imm.vint32:= dat.constval.vinteger;
        end;
       end;
       with contextstack[stacktop].d do begin
        if kind = ck_const then begin
-        push(constval.vinteger);
+        push(dat.constval.vinteger);
        end;
       end;
      end;
@@ -1279,7 +1281,7 @@ begin
      end
      else begin
       initfactcontext(d);
-      d.datatyp:= sysdatatypes[resultdatatypes[sd1]];
+      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
       context:= nil;
      end;
     end;
@@ -1418,14 +1420,14 @@ procedure outinfo(const text: string; const indent: boolean = true);
  var
   po1: ptypedataty;
  begin
-  with ainfo.datatyp do begin
+  with ainfo.dat.datatyp do begin
    po1:= ele.eledataabs(typedata);
    write('T:',typedata,' ',
           getenumname(typeinfo(datakindty),ord(po1^.kind)));
    if po1^.kind <> dk_none then begin
     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                   integer(po1^.flags),false),
-          ' I:',indirectlevel,':',ainfo.indirection,
+          ' I:',indirectlevel,':',ainfo.dat.indirection,
           ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                                             integer(flags),false),' ');
    end;
@@ -1476,7 +1478,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
  
  procedure writeref(const ainfo: contextdataty);
  begin
-  with ainfo.ref do begin
+  with ainfo.dat.ref do begin
    writeaddress(address);
    write('O:',offset,' ');
   end;
@@ -1574,7 +1576,7 @@ begin
       end;
      end;
      ck_fact,ck_subres: begin
-      write('ssa:',d.fact.ssaindex,' ');
+      write('ssa:',d.dat.fact.ssaindex,' ');
       writetype(d);
      end;
      ck_ref: begin
@@ -1587,18 +1589,18 @@ begin
      ck_const: begin
       writetype(d);
       write('V:');
-      case constval.kind of
+      case dat.constval.kind of
        dk_boolean: begin
-        write(constval.vboolean,' ');
+        write(dat.constval.vboolean,' ');
        end;
        dk_integer: begin
-        write(constval.vinteger,' ');
+        write(dat.constval.vinteger,' ');
        end;
        dk_float: begin
-        write(constval.vfloat,' ');
+        write(dat.constval.vfloat,' ');
        end;
        dk_address: begin
-        writeaddress(constval.vaddress);
+        writeaddress(dat.constval.vaddress);
        end;
       end;
      end;

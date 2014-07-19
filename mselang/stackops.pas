@@ -637,27 +637,28 @@ end;
 
 procedure push8op();
 begin
- pv8ty(stackpush(1))^:= cpu.pc^.par.v8; 
+ pv8ty(stackpush(1))^:= cpu.pc^.par.vpush.v8; 
 end;
 
 procedure push16op();
 begin
- pv16ty(stackpush(2))^:= cpu.pc^.par.v16; 
+ pv16ty(stackpush(2))^:= cpu.pc^.par.vpush.v16; 
 end;
 
 procedure push32op();
 begin
- pv32ty(stackpush(4))^:= cpu.pc^.par.v32; 
+ pv32ty(stackpush(4))^:= cpu.pc^.par.vpush.v32; 
 end;
 
 procedure push64op();
 begin
- pv64ty(stackpush(8))^:= cpu.pc^.par.v64; 
+ pv64ty(stackpush(8))^:= cpu.pc^.par.vpush.v64; 
 end;
 
 procedure pushdatakindop();
 begin
- vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= cpu.pc^.par.vdatakind; 
+ vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= 
+                                       cpu.pc^.par.vpush.vdatakind; 
 end;
 
 procedure int32toflo64op();

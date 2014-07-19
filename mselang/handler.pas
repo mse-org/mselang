@@ -196,10 +196,10 @@ begin
    end;
    stackindex:= stacktop-1;
    d.kind:= ck_const;
-   d.indirection:= 0;
-   d.datatyp:= sysdatatypes[st_int32];
-   d.constval.kind:= dk_integer;
-   d.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
+   d.dat.indirection:= 0;
+   d.dat.datatyp:= sysdatatypes[st_int32];
+   d.dat.constval.kind:= dk_integer;
+   d.dat.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
   end;
  end;
 end;
@@ -231,8 +231,8 @@ begin
      errormessage(err_constexpressionexpected,[],2);
     end
     else begin
-     if contextstack[stackindex+1].d.constval.kind <> 
-              contextstack[stacktop].d.constval.kind then begin
+     if contextstack[stackindex+1].d.dat.constval.kind <> 
+              contextstack[stacktop].d.dat.constval.kind then begin
       incompatibletypeserror(contextstack[stackindex+1].d,
                                               contextstack[stacktop].d);
 //     errormessage(info,err
@@ -455,9 +455,9 @@ begin
   stackindex:= stacktop-1;
   with contextstack[stacktop] do begin
    d.kind:= ck_const;
-   d.indirection:= 0;
-   d.datatyp:= sysdatatypes[st_float64];
-   d.constval.kind:= dk_float;
+   d.dat.indirection:= 0;
+   d.dat.datatyp:= sysdatatypes[st_float64];
+   d.dat.constval.kind:= dk_float;
    lint2:= 0;
    po1:= start.po;
    int1:= asource-po1-1;
@@ -500,7 +500,7 @@ begin
  with info do begin
 //  if stacktop > stackindex then begin //no exponent number error otherwise
    dofrac(source.po,{neg,}mant,fraclen);
-   with contextstack[stacktop].d.constval do begin
+   with contextstack[stacktop].d.dat.constval do begin
   //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
     vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
 {
@@ -558,7 +558,7 @@ begin
      exp:= exp - 32;
     end;
    end;
-   with d.constval do begin
+   with d.dat.constval do begin
     vfloat:= mant*do1;
 {
     if neg then begin
@@ -634,12 +634,12 @@ begin
    dk1:= convertconsts();
    case dk1 of
     sdk_int32: begin
-     d.constval.vinteger:= d.constval.vinteger + 
-               contextstack[stacktop].d.constval.vinteger;
+     d.dat.constval.vinteger:= d.dat.constval.vinteger + 
+               contextstack[stacktop].d.dat.constval.vinteger;
     end;
     sdk_flo64: begin
-     d.constval.vfloat:= d.constval.vfloat + 
-                            contextstack[stacktop].d.constval.vfloat;
+     d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+                            contextstack[stacktop].d.dat.constval.vfloat;
     end;
     else begin
      operationnotsupportederror(d,contextstack[stacktop].d,'+');
@@ -677,17 +677,17 @@ begin
  outhandle('DEREFERENCE');
 {$endif}
  with info,contextstack[stacktop] do begin
-  if d.datatyp.indirectlevel <= 0 then begin
+  if d.dat.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
   end
   else begin
-   dec(d.datatyp.indirectlevel);
-   dec(d.indirection);
+   dec(d.dat.datatyp.indirectlevel);
+   dec(d.dat.indirection);
    case d.kind of
     ck_ref: begin
     end;
     ck_const: begin
-     if d.constval.kind <> dk_address then begin
+     if d.dat.constval.kind <> dk_address then begin
       errormessage(err_cannotderefnonpointer,[],stacktop-stackindex);
      end
      else begin
@@ -773,18 +773,18 @@ begin
     case d.kind of
      ck_str: begin
       d.kind:= ck_const;
-      d.indirection:= 0;
-      d.datatyp:= sysdatatypes[st_string8];
-      d.constval.kind:= dk_string8;
-      d.constval.vstring:= newstring();
+      d.dat.indirection:= 0;
+      d.dat.datatyp:= sysdatatypes[st_string8];
+      d.dat.constval.kind:= dk_string8;
+      d.dat.constval.vstring:= newstring();
      end;
      ck_number: begin
       c1:= d.number.value;
       d.kind:= ck_const;
-      d.indirection:= 0;
-      d.datatyp:= sysdatatypes[st_int32];
-      d.constval.kind:= dk_integer;
-      d.constval.vinteger:= int64(c1); 
+      d.dat.indirection:= 0;
+      d.dat.datatyp:= sysdatatypes[st_int32];
+      d.dat.constval.kind:= dk_integer;
+      d.dat.constval.vinteger:= int64(c1); 
           //todo: handle cardinals and 64 bit
      end;
     end;
@@ -801,8 +801,8 @@ begin
        errormessage(err_cannotaddressconst,[],1);
       end;
       ck_ref: begin
-       inc(d.indirection);
-       inc(d.datatyp.indirectlevel);
+       inc(d.dat.indirection);
+       inc(d.dat.datatyp.indirectlevel);
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
@@ -856,7 +856,7 @@ begin
   end;
  {$endif}
   if d.kind = ck_const then begin
-   with d.constval do begin
+   with d.dat.constval do begin
     case kind of
      dk_integer: begin
       vinteger:= -vinteger;
@@ -872,7 +872,7 @@ begin
   end
   else begin
    if getvalue(1{,false}) then begin
-    po1:= ele.eledataabs(d.datatyp.typedata);
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
     with additem()^ do begin
      setop(op,negops[po1^.kind]);
      if op.proc = nil then begin
@@ -1293,8 +1293,8 @@ begin
    end
    else begin
     with contextstack[stacktop].d do begin
-     po1^.val.typ:= datatyp;
-     po1^.val.d:= constval;
+     po1^.val.typ:= dat.datatyp;
+     po1^.val.d:= dat.constval;
     end;
    end;
   end;
@@ -1386,20 +1386,20 @@ begin
   if (contextstack[stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
    dk1:= convertconsts();
-   d.constval.kind:= dk_boolean;
-   d.datatyp:= sysdatatypes[st_bool8];
+   d.dat.constval.kind:= dk_boolean;
+   d.dat.datatyp:= sysdatatypes[st_bool8];
    case dk1 of
     sdk_int32: begin
-     d.constval.vboolean:= d.constval.vinteger = 
-               contextstack[stacktop].d.constval.vinteger;
+     d.dat.constval.vboolean:= d.dat.constval.vinteger = 
+               contextstack[stacktop].d.dat.constval.vinteger;
     end;
     sdk_flo64: begin
-     d.constval.vboolean:= d.constval.vfloat = 
-                            contextstack[stacktop].d.constval.vfloat;
+     d.dat.constval.vboolean:= d.dat.constval.vfloat = 
+                            contextstack[stacktop].d.dat.constval.vfloat;
     end;
     sdk_bool8: begin
-     d.constval.vboolean:= d.constval.vboolean =
-                            contextstack[stacktop].d.constval.vboolean;
+     d.dat.constval.vboolean:= d.dat.constval.vboolean =
+                            contextstack[stacktop].d.dat.constval.vboolean;
     end;
     else begin
      operationnotsupportederror(d,contextstack[stacktop].d,'=');
@@ -1411,7 +1411,7 @@ begin
   else begin
    updateop(cmpequops);
    with info,contextstack[stacktop] do begin
-    d.datatyp:= sysdatatypes[resultdatatypes[sdk_bool8]];
+    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool8]];
    end;
   end;
  end;
@@ -1424,8 +1424,8 @@ begin
 {$endif}
  with info do begin
   if stacktop-stackindex = 2 then begin
-   include(contextstack[stacktop].d.datatyp.flags,tf_upper);
-   include(contextstack[stacktop-1].d.datatyp.flags,tf_lower);
+   include(contextstack[stacktop].d.dat.datatyp.flags,tf_upper);
+   include(contextstack[stacktop-1].d.dat.datatyp.flags,tf_lower);
   end;
  end;
 end;
@@ -1484,14 +1484,14 @@ begin
    with contextstack[stackindex+1] do begin //address
     typematch:= false;
     indi:= false;
-    dest.typ:= ele.eledataabs(d.datatyp.typedata);
-    dec(d.datatyp.indirectlevel);
+    dest.typ:= ele.eledataabs(d.dat.datatyp.typedata);
+    dec(d.dat.datatyp.indirectlevel);
    {$ifdef mse_checkinternalerror}
-    if d.datatyp.indirectlevel < 0 then begin
+    if d.dat.datatyp.indirectlevel < 0 then begin
      internalerror(ie_handler,'20131126B');
     end;
    {$endif}
-    if d.datatyp.indirectlevel > 0 then begin
+    if d.dat.datatyp.indirectlevel > 0 then begin
      si1:= pointersize;
     end
     else begin
@@ -1499,11 +1499,11 @@ begin
     end;
     case d.kind of
      ck_const: begin
-      if d.constval.kind <> dk_address then begin
+      if d.dat.constval.kind <> dk_address then begin
        errormessage(err_argnotassign,[],0);
       end
       else begin
-       dest.address:= d.constval.vaddress;
+       dest.address:= d.dat.constval.vaddress;
        typematch:= true;
       end;
      end;
@@ -1518,7 +1518,7 @@ begin
      end;
     {$endif}
     end;
-    dest.address.indirectlevel:= d.datatyp.indirectlevel;
+    dest.address.indirectlevel:= d.dat.datatyp.indirectlevel;
    end;
    if typematch and not errorfla then begin
     int1:= dest.address.indirectlevel;
@@ -1690,14 +1690,14 @@ begin
  with info,contextstack[stacktop] do begin
   case d.kind of
    ck_ref: begin
-    po1:= ele.eledataabs(d.datatyp.typedata);
-    if (d.datatyp.indirectlevel = 0) and 
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if (d.dat.datatyp.indirectlevel = 0) and 
                          (po1^.kind in [dk_record,dk_class]) then begin
 
-     with pvardataty(ele.addscope(ek_var,d.datatyp.typedata))^ do begin
-      address:= d.ref.address;
-      address.poaddress:= address.poaddress + d.ref.offset;
-      vf.typ:= d.datatyp.typedata;
+     with pvardataty(ele.addscope(ek_var,d.dat.datatyp.typedata))^ do begin
+      address:= d.dat.ref.address;
+      address.poaddress:= address.poaddress + d.dat.ref.offset;
+      vf.typ:= d.dat.datatyp.typedata;
       vf.next:= 0;
      end;
     end
@@ -1758,7 +1758,7 @@ begin
     ck_subres: begin
      with additem()^ do begin
       setop(op,oc_pop);
-      par.imm.vsize:= fact.datasize; //todo: alignment
+      par.imm.vsize:= dat.fact.datasize; //todo: alignment
      end;    
     end;
     ck_subcall: begin

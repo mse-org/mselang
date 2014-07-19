@@ -80,11 +80,11 @@ begin
 {$endif}
  with info,contextstack[stacktop] do begin
   if not (ptypedataty(ele.eledataabs(
-                         d.datatyp.typedata))^.kind = dk_boolean) then begin
+                         d.dat.datatyp.typedata))^.kind = dk_boolean) then begin
    errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
   end;
   if d.kind = ck_const then begin
-   push(d.constval.vboolean); //todo: use compiletime branch
+   push(d.dat.constval.vboolean); //todo: use compiletime branch
   end;
  end;
  with additem()^ do begin
@@ -154,8 +154,8 @@ begin
 {$endif}
  with info,contextstack[stacktop] do begin
   if (stacktop-stackindex = 1) and getvalue(1,true) and 
-                 (d.datatyp.indirectlevel = 0) and 
-         (ptypedataty(ele.eledataabs(d.datatyp.typedata))^.kind in 
+                 (d.dat.datatyp.indirectlevel = 0) and 
+         (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.kind in 
                                                  ordinaldatakinds) then begin
    if d.kind = ck_const then begin //todo: optimize const case switch
     getvalue(1);
@@ -197,17 +197,17 @@ begin
   
   for int1:= stackindex - itemcount to last do begin
    with contextstack[int1] do begin
-    if (d.kind = ck_const) and (d.datatyp.indirectlevel = 0) and
-                              (d.constval.kind in ordinaldatakinds) then begin
+    if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
+                          (d.dat.constval.kind in ordinaldatakinds) then begin
      with additem()^ do begin       //todo: signed/unsigned, use table
-      if tf_lower in d.datatyp.flags then begin
+      if tf_lower in d.dat.datatyp.flags then begin
        setop(op,oc_cmpjmploimm4);
        if int1 <> last-1 then begin
         par.immgoto:= opcount; //next check
        end;
       end
       else begin
-       if tf_upper in d.datatyp.flags then begin
+       if tf_upper in d.dat.datatyp.flags then begin
         if int1 = last then begin
          setop(op,oc_cmpjmpgtimm4);
         end
@@ -227,7 +227,7 @@ begin
        end;
       end;
       opmark.address:= opcount-1;
-      par.ordimm.vint32:= d.constval.vinteger;
+      par.ordimm.vint32:= d.dat.constval.vinteger;
      end;
     end
     else begin
@@ -269,7 +269,7 @@ begin
     end;
     with contextstack[int1-1] do begin
      po1:= getoppo(opmark.address); //last compare
-     isrange:= tf_upper in d.datatyp.flags;
+     isrange:= tf_upper in d.dat.datatyp.flags;
     end;
    {$ifdef mse_checkinternalerror}
     if not checkop(po1^.op,oc_cmpjmpneimm4) and 

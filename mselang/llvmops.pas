@@ -228,7 +228,7 @@ end;
 
 procedure push32op();
 begin
- stackassign(0,pc^.par.v32);
+ stackassign(0,pc^.par.vpush.v32);
  inc(sp);
 end;
 

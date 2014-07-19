@@ -288,6 +288,25 @@ type
   offset: dataoffsty;
  end;
  
+ vpushty = record
+  case opcodety of
+   oc_push8:(
+    v8: v8ty;
+   );
+   oc_push16:(
+    v16: v16ty;
+   );
+   oc_push32:(
+    v32: v32ty;
+   );
+   oc_push64:(
+    v64: v64ty;
+   );
+   oc_pushdatakind:(
+    vdatakind: datakindty;
+   );
+ end;
+ 
  beginparseinfoty = record
   exitcodeaddress: segaddressty;
  end;  
@@ -313,20 +332,8 @@ type
    oc_movesegreg0:(
     vsegment: segmentty;
    );
-   oc_push8:(
-    v8: v8ty;
-   );
-   oc_push16:(
-    v16: v16ty;
-   );
-   oc_push32:(
-    v32: v32ty;
-   );
-   oc_push64:(
-    v64: v64ty;
-   );
-   oc_pushdatakind:(
-    vdatakind: datakindty;
+   oc_push8,oc_push16,oc_push32,oc_push64,oc_pushdatakind:(
+    vpush: vpushty;
    );
    oc_storeframenil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
    oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,

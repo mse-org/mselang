@@ -54,7 +54,7 @@ begin
   for int1:= stacktop-paramco+1 to stacktop do begin
    with additem()^ do begin
     with contextstack[int1] do begin //todo: indirection, use table
-     po2:= ptypedataty(ele.eledataabs(d.datatyp.typedata));
+     po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
      case po2^.kind of
       dk_boolean: begin
        setop(op,oc_writeboolean);

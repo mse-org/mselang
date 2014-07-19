@@ -191,8 +191,8 @@ begin
      parent:= 0;
      kind:= dk_integer;
     }
-     min:= contextstack[stackindex+2].d.constval.vinteger;
-     max:= contextstack[stackindex+3].d.constval.vinteger;
+     min:= contextstack[stackindex+2].d.dat.constval.vinteger;
+     max:= contextstack[stackindex+3].d.dat.constval.vinteger;
     end;
    end;
   end;
@@ -593,7 +593,7 @@ begin
    offs:= 0;
    case d.kind of
     ck_ref: begin
-     itemtype:= ele.eledataabs(d.datatyp.typedata);
+     itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
      fullconst:= true;
      for int1:= stackindex+1 to stacktop do begin
       if itemtype^.kind <> dk_array then begin
@@ -606,12 +606,12 @@ begin
       with contextstack[int1] do begin
        case d.kind of
         ck_const: begin
-         if not (contextstack[int1].d.constval.kind in 
+         if not (contextstack[int1].d.dat.constval.kind in 
                                               ordinaldatakinds) then begin
           errormessage(err_ordtypeexpected,[],stacktop-stackindex);
           goto errlab;
          end;
-         li1:= getordconst(contextstack[int1].d.constval);
+         li1:= getordconst(contextstack[int1].d.dat.constval);
          if (li1 < range.min) or (li1 > range.max) then begin
           rangeerror(range,stacktop-stackindex);
           goto errlab;
@@ -644,9 +644,9 @@ begin
       end;
       offs:= offs + li1*gettypesize(itemtype^);
      end;
-     d.ref.offset:= d.ref.offset + offs;
-     d.datatyp.typedata:= ele.eledatarel(itemtype);
-     d.datatyp.indirectlevel:= itemtype^.indirectlevel;
+     d.dat.ref.offset:= d.dat.ref.offset + offs;
+     d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
+     d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
       pushinsertaddress(-1,true);
       with additem^ do begin
@@ -812,7 +812,7 @@ begin
  outhandle('ENUMITEMVALUE');
 {$endif}
  with info,contextstack[stacktop] do begin
-  if (d.kind <> ck_const) or (d.constval.kind <> dk_integer) then begin
+  if (d.kind <> ck_const) or (d.dat.constval.kind <> dk_integer) then begin
                             //todo: check already defined enum
    errormessage(err_ordinalconstexpected,[]);
    dec(stackindex);
@@ -820,7 +820,7 @@ begin
   end
   else begin
    dec(stacktop);
-   doenumitem(d.constval.vinteger);
+   doenumitem(d.dat.constval.vinteger);
   end;
  end;
 end;

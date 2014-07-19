@@ -37,8 +37,8 @@ var                     //todo: optimize, use tables, complete
  int1: integer;
 begin
  with info,contextstack[stackindex+stackoffset] do begin
-  source1:= ele.eledataabs(d.datatyp.typedata);
-  result:= destindirectlevel = d.datatyp.indirectlevel;
+  source1:= ele.eledataabs(d.dat.datatyp.typedata);
+  result:= destindirectlevel = d.dat.datatyp.indirectlevel;
   if result then begin
    result:= dest^.kind = source1^.kind;
    if not result then begin
@@ -48,7 +48,7 @@ begin
        dk_float: begin
         case source1^.kind of
          dk_integer: begin //todo: adjust data size
-          with d,constval do begin
+          with d,dat.constval do begin
            kind:= dk_float;
            vfloat:= vinteger;
           end;
@@ -87,7 +87,7 @@ begin
   end
   else begin
    if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-         (d.datatyp.indirectlevel = 1) and 
+         (d.dat.datatyp.indirectlevel = 1) and 
          (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
@@ -101,7 +101,7 @@ begin
    end;
   end;
   if result then begin
-   d.datatyp.typedata:= ele.eledatarel(dest);
+   d.dat.datatyp.typedata:= ele.eledatarel(dest);
   end;
  end;
 end;
@@ -178,7 +178,7 @@ var
         end;
        end;
       end;
-      if d.datatyp.typedata <> po6^.vf.typ then begin
+      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
        errormessage(err_incompatibletypeforarg,
                    [int1-stackindex-3,typename(d),
                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
@@ -200,10 +200,11 @@ var
       end;
       int1:= pushinsertvar(parent-stackindex,false,po3); 
                                     //alloc space for return value
-      d.fact.datasize:= int1;
+      initfactcontext(d); //set ssaindex
       d.kind:= ck_subres;
-      d.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
-      d.datatyp.typedata:= po6^.vf.typ;        
+      d.dat.fact.datasize:= int1;
+      d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
+      d.dat.datatyp.typedata:= po6^.vf.typ;        
       with additem()^ do begin //result var param
        setop(op,oc_pushstackaddr);
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
@@ -293,9 +294,9 @@ var
         case d.kind of
          ck_ref: begin
           if af_classfield in flags then begin
-           dec(d.indirection);
+           dec(d.dat.indirection);
           end;
-          d.ref.offset:= d.ref.offset + offset;
+          d.dat.ref.offset:= d.dat.ref.offset + offset;
          end;
          ck_fact: begin     //todo: check indirection
           offs1:= offs1 + offset;
@@ -306,8 +307,8 @@ var
          end;
         {$endif}
         end;
-        d.datatyp.typedata:= ele1; //todo: adress operator
-        d.datatyp.indirectlevel:= 
+        d.dat.datatyp.typedata:= ele1; //todo: adress operator
+        d.dat.datatyp.indirectlevel:= 
                        ptypedataty(ele.eledataabs(ele1))^.indirectlevel;
        end;
       end;
@@ -376,13 +377,14 @@ begin
    end;
    ck_ref: begin
     with contextstack[stackindex-1] do begin
-     po3:= ele.eledataabs(d.datatyp.typedata);
-     if (d.datatyp.indirectlevel <> 0) or (po3^.kind <> dk_record) then begin
+     po3:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (d.dat.datatyp.indirectlevel <> 0) or 
+                                (po3^.kind <> dk_record) then begin
       errormessage(err_illegalqualifier,[]);
       goto endlab;
      end
      else begin
-      ele.elementparent:= d.datatyp.typedata;
+      ele.elementparent:= d.dat.datatyp.typedata;
      end;
     end;
    end;
@@ -405,7 +407,7 @@ begin
   end;
   po2:= @po1^.data;
   with contextstack[stackindex] do begin
-   d.indirection:= 0;
+   d.dat.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
      if po1^.header.kind = ek_field then begin
@@ -423,21 +425,21 @@ begin
          goto endlab;
        {$endif}
         end;
-        d.kind:= ck_ref;
-        d.datatyp.typedata:= vf.typ;
-        d.datatyp.indirectlevel:= indirectlevel;
-        d.indirection:= -1;
-        d.ref.address:= pvardataty(ele.eledataabs(ele2))^.address;
-        d.ref.offset:= offset;
+        initfactcontext(d); 
+        d.dat.datatyp.typedata:= vf.typ;
+        d.dat.datatyp.indirectlevel:= indirectlevel;
+        d.dat.indirection:= -1;
+        d.dat.ref.address:= pvardataty(ele.eledataabs(ele2))^.address;
+        d.dat.ref.offset:= offset;
        end
        else begin
         d:= contextstack[stackindex-1].d; 
                   //todo: no double copy by handlefact
         case d.kind of
          ck_ref: begin
-          d.datatyp.typedata:= vf.typ;
-          d.datatyp.indirectlevel:= indirectlevel;
-          d.ref.offset:= offset;
+          d.dat.datatyp.typedata:= vf.typ;
+          d.dat.datatyp.indirectlevel:= indirectlevel;
+          d.dat.ref.offset:= offset;
          end;
          ck_fact: begin
           internalerror1(ie_notimplemented,'20140427E'); //todo
@@ -449,24 +451,24 @@ begin
         {$endif}
         end;
        end;
-       donotfound(d.datatyp.typedata);
+       donotfound(d.dat.datatyp.typedata);
       end;
      end
      else begin //ek_var
       if isgetfact then begin
        d.kind:= ck_ref;
-       d.ref.address:= pvardataty(po2)^.address;
-       d.ref.offset:= 0;
-       d.datatyp.typedata:= pvardataty(po2)^.vf.typ;
-       d.datatyp.indirectlevel:= d.ref.address.indirectlevel +
-               ptypedataty(ele.eledataabs(d.datatyp.typedata))^.indirectlevel;
-       d.indirection:= 0;
+       d.dat.ref.address:= pvardataty(po2)^.address;
+       d.dat.ref.offset:= 0;
+       d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
+       d.dat.datatyp.indirectlevel:= d.dat.ref.address.indirectlevel +
+           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;
+       d.dat.indirection:= 0;
       end
       else begin
        with contextstack[stackindex-1] do begin
-        if d.indirection <> 0 then begin
+        if d.dat.indirection <> 0 then begin
          getaddress(-1,false);
-         dec(d.indirection); //pending dereference
+         dec(d.dat.indirection); //pending dereference
         end;
         contextstack[stackindex].d:= d; 
                   //todo: no double copy by handlefact
@@ -478,9 +480,9 @@ begin
     ek_const: begin
      if checknoparam then begin
       d.kind:= ck_const;
-      d.indirection:= 0;
-      d.datatyp:= pconstdataty(po2)^.val.typ;
-      d.constval:= pconstdataty(po2)^.val.d;
+      d.dat.indirection:= 0;
+      d.dat.datatyp:= pconstdataty(po2)^.val.typ;
+      d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
     end;
     ek_sub: begin
@@ -527,12 +529,12 @@ begin
        with ptypedataty(po2)^ do begin
         if kind = dk_enumitem then begin
          d.kind:= ck_const;
-         d.indirection:= 0;
-         d.datatyp.flags:= [];
-         d.datatyp.typedata:= infoenumitem.enum;
-         d.datatyp.indirectlevel:= 0;
-         d.constval.kind:= dk_enum;
-         d.constval.vinteger:= infoenumitem.value;
+         d.dat.indirection:= 0;
+         d.dat.datatyp.flags:= [];
+         d.dat.datatyp.typedata:= infoenumitem.enum;
+         d.dat.datatyp.indirectlevel:= 0;
+         d.dat.constval.kind:= dk_enum;
+         d.dat.constval.vinteger:= infoenumitem.value;
         end
         else begin
          errormessage(err_illegalexpression,[],stacktop-stackindex);

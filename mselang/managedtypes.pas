@@ -82,14 +82,14 @@ begin
   end;
   if getvalue(stacktop-stackindex) then begin
    with contextstack[stacktop] do begin
-    po1:= ele.eledataabs(d.datatyp.typedata);
-    if (d.datatyp.indirectlevel <> 0) or (po1^.kind <> dk_integer) then begin
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+    if (d.dat.datatyp.indirectlevel <> 0) or (po1^.kind <> dk_integer) then begin
      incompatibletypeserror(2,'dk_integer',d);
     end
     else begin
      if getaddress(stacktop-stackindex-1,true) then begin
       with ptypedataty(ele.eledataabs(
-                 contextstack[stacktop-1].d.datatyp.typedata))^ do begin
+                 contextstack[stacktop-1].d.dat.datatyp.typedata))^ do begin
        with additem^ do begin
         setop(op,setlengthops[kind]);
         if op.proc = nil then begin
