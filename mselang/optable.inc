@@ -20,7 +20,7 @@
   @nop,
 
   @beginparseop,
-  nil,  //oc_progend
+  @progendop,  //oc_progend
   @endparseop,
 
   @movesegreg0op,
@@ -51,19 +51,21 @@
   @push16op,
   @push32op,
   @push64op,
-
   @pushdatakindop,
+  
   @int32toflo64op,
-  @mulint32op,
-  @mulimmint32op,
-  @mulflo64op,
-  @addint32op,
-  @addimmint32op,
-  @addflo64op,
+  
   @negcard32op,
   @negint32op,
   @negflo64op,
 
+  @mulint32op,
+  @mulflo64op,
+  @addint32op,
+  @addflo64op,
+
+  @addimmint32op,
+  @mulimmint32op,
   @offsetpoimm32op,
 
   @cmpequboolop,

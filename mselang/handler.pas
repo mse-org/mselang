@@ -1558,8 +1558,8 @@ begin
      end;
 
      with additem()^ do begin
-      par.stackop.datasize:= si1;
-      par.stackop.ssaindex:= ssa1;
+      par.memop.datasize:= si1;
+      par.memop.ssaindex:= ssa1;
       if indi then begin
        case si1 of
         1: begin
@@ -1592,8 +1592,8 @@ begin
           setop(op,oc_popseg);
          end;
         end;
-        par.stackop.segdataaddress.a:= dest.address.segaddress;
-        par.stackop.segdataaddress.offset:= 0;
+        par.memop.segdataaddress.a:= dest.address.segaddress;
+        par.memop.segdataaddress.offset:= 0;
        end
        else begin
         if af_paramindirect in dest.address.flags then begin
@@ -1628,10 +1628,10 @@ begin
           end;
          end;
         end;
-        par.stackop.locdataaddress.a:= dest.address.locaddress;
-        par.stackop.locdataaddress.a.framelevel:= sublevel -
+        par.memop.locdataaddress.a:= dest.address.locaddress;
+        par.memop.locdataaddress.a.framelevel:= sublevel -
                                            dest.address.locaddress.framelevel-1;
-        par.stackop.locdataaddress.offset:= 0;
+        par.memop.locdataaddress.offset:= 0;
        end;
       end;
      end;

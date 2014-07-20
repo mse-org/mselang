@@ -839,8 +839,8 @@ begin
      setop(op,oc_pushseg);
     end;
    end;
-   par.stackop.segdataaddress.a:= segaddress;
-   par.stackop.segdataaddress.offset:= offset;
+   par.memop.segdataaddress.a:= segaddress;
+   par.memop.segdataaddress.offset:= offset;
   end
   else begin
    if af_paramindirect in flags then begin
@@ -875,12 +875,12 @@ begin
      end;
     end;
    end;
-   par.stackop.locdataaddress.a:= locaddress;
-   par.stackop.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
-   par.stackop.locdataaddress.offset:= offset;
+   par.memop.locdataaddress.a:= locaddress;
+   par.memop.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
+   par.memop.locdataaddress.offset:= offset;
   end;
-  par.stackop.datasize:= size;
-  par.stackop.ssaindex:= ssaindex;
+  par.memop.datasize:= size;
+  par.memop.ssaindex:= ssaindex;
  end;
 end;
 
@@ -969,7 +969,7 @@ function getvalue(const stackoffset: integer;
      end;
      else begin
       setop(op,oc_indirect);
-      par.stackop.datasize:= si1;      
+      par.memop.datasize:= si1;      
      end;
     end;
    end;

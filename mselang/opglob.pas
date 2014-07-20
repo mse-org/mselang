@@ -70,16 +70,18 @@ type
   oc_pushdatakind,
   
   oc_int32toflo64,
-  oc_mulint32,
-  oc_mulimmint32,
-  oc_mulflo64,
-  oc_addint32,
-  oc_addimmint32,
-  oc_addflo64,
+
   oc_negcard32,
   oc_negint32,
   oc_negflo64,
 
+  oc_mulint32,
+  oc_mulflo64,
+  oc_addint32,
+  oc_addflo64,
+
+  oc_addimmint32,
+  oc_mulimmint32,
   oc_offsetpoimm32,
 
   oc_cmpequbool,
@@ -258,6 +260,7 @@ type
 
  destroyclassinfo = record
  end;
+
   immty = record
    ssaindex: integer;
    case integer of               //todo: use target size
@@ -318,7 +321,7 @@ type
   exitcodeaddress: segaddressty;
  end;  
 
- stackopty = record
+ memopty = record
   datasize: datasizety;
   ssaindex: integer;
   case opcodety of
@@ -404,7 +407,7 @@ type
    oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
    oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
-    stackop: stackopty;
+    memop: memopty;
    );
    {
    oc_op1:(

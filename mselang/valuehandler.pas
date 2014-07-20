@@ -227,9 +227,9 @@ var
       {$endif}
        with insertitem(parent-stackindex,false)^ do begin
         setop(op,oc_pushlocpo);
-        par.stackop.locdataaddress.a.framelevel:= -1;
-        par.stackop.locdataaddress.a.address:= po6^.address.poaddress;
-        par.stackop.locdataaddress.offset:= 0;
+        par.memop.locdataaddress.a.framelevel:= -1;
+        par.memop.locdataaddress.a.address:= po6^.address.poaddress;
+        par.memop.locdataaddress.offset:= 0;
        end;
       end;
      end;

@@ -477,7 +477,7 @@ end;
 
 procedure popseg32op();
 begin
- with pc^.par.stackop do begin
+ with pc^.par.memop do begin
   segassign32(ssaindex,segdataaddress);
  end;
 end;
@@ -541,7 +541,7 @@ end;
 
 procedure pushseg32op();
 begin
- with pc^.par.stackop do begin
+ with pc^.par.memop do begin
   assignseg32(ssaindex,segdataaddress);
  end;
 end;

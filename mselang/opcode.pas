@@ -125,17 +125,17 @@ procedure addmanagedop(const opsar: aropadsty;
                const ssaindex: integer);
 begin
  with additem^ do begin
-  par.stackop.ssaindex:= ssaindex;
+  par.memop.ssaindex:= ssaindex;
   if count > 1 then begin
    setop(op,opsar[true][aaddress.base]);
-   par.stackop.datasize:= count;
+   par.memop.datasize:= count;
    if aaddress.base = ab_segment then begin
-    par.stackop.segdataaddress.a.address:= aaddress.offset;
-    par.stackop.segdataaddress.a.segment:= aaddress.segment;
-    par.stackop.segdataaddress.offset:= 0;
+    par.memop.segdataaddress.a.address:= aaddress.offset;
+    par.memop.segdataaddress.a.segment:= aaddress.segment;
+    par.memop.segdataaddress.offset:= 0;
    end
    else begin
-    par.stackop.podataaddress:= aaddress.offset;
+    par.memop.podataaddress:= aaddress.offset;
    end;
   end
   else begin
