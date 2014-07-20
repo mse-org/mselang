@@ -43,6 +43,14 @@ procedure outass(const atext: string);
 begin
  assstream.writeln(atext);
 end;
+
+procedure outbinop(const atext: string);
+begin
+ with pc^.par.stackop do begin
+  outass('%'+inttostr(destssaindex)+' = '+atext+
+   ' %'+inttostr(source1ssaindex)+', %'+inttostr(source2ssaindex));
+ end;
+end;
   
 procedure notimplemented();
 begin
@@ -260,7 +268,7 @@ end;
 
 procedure addint32op();
 begin
- notimplemented();
+ outbinop('add i32');
 end;
 
 procedure addimmint32op();

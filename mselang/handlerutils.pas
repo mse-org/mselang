@@ -120,6 +120,7 @@ procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
                             const size: datasizety; const ssaindex: integer);
+
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
@@ -562,15 +563,15 @@ begin
   po1:= @contextstack[stackindex+stackoffset];
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
-    setop(op,oc_push8);
+    setop(op,oc_pushimm8);
     par.imm.vboolean:= po1^.d.dat.constval.vboolean;
    end;
    dk_integer,dk_enum: begin
-    setop(op,oc_push32);
+    setop(op,oc_pushimm32);
     par.imm.vint32:= po1^.d.dat.constval.vinteger;
    end;
    dk_float: begin
-    setop(op,oc_push64);
+    setop(op,oc_pushimm64);
     par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
    end;
    dk_string8: begin
@@ -604,26 +605,31 @@ begin
  end;
 end;
 
+function addpushimm(const aop: opcodety): popinfoty; 
+                                 {$ifndef mse_debugparser} inline; {$endif}
+begin
+ result:= additem;
+ setop(result^.op,aop);
+ result^.par.imm.ssaindex:= info.ssaindex;
+end;
+
 procedure push(const avalue: boolean); overload;
 begin
- with additem({info})^ do begin
-  setop(op,oc_push8);
+ with addpushimm(oc_pushimm8)^ do begin
   par.imm.vboolean:= avalue;
  end;
 end;
 
 procedure push(const avalue: integer); overload;
 begin
- with additem({info})^ do begin
-  setop(op,oc_push32);
+ with addpushimm(oc_pushimm32)^ do begin
   par.imm.vint32:= avalue;
  end;
 end;
 
 procedure push(const avalue: real); overload;
 begin
- with additem({info})^ do begin
-  setop(op,oc_push64);
+ with addpushimm(oc_pushimm64)^ do begin
   par.imm.vfloat64:= avalue;
  end;
 end;
@@ -679,18 +685,25 @@ end;
 procedure push(const avalue: datakindty); overload;
       //no alignsize
 begin
- with additem({info})^ do begin
-  setop(op,oc_pushdatakind);
+ with addpushimm(oc_pushimmdatakind)^ do begin
   par.imm.vdatakind:= avalue;
  end;
+end;
+
+function insertpushimm(const aop: opcodety; const stackoffset: integer;
+                       const before: boolean): popinfoty; 
+                                 {$ifndef mse_debugparser} inline; {$endif}
+begin
+ result:= insertitem(stackoffset,before);
+ setop(result^.op,aop);
+ result^.par.imm.ssaindex:= info.ssaindex;
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                                     const avalue: datakindty); overload;
       //no alignsize
 begin
- with insertitem(stackoffset,before)^ do begin
-  setop(op,oc_pushdatakind);
+ with insertpushimm(oc_pushimmdatakind,stackoffset,before)^ do begin
   par.imm.vdatakind:= avalue;
  end;
 end;
@@ -1171,21 +1184,22 @@ begin
   kinda:= ptypedataty(@po1^.data)^.kind;
   po1:= ele.eleinfoabs(contextstack[stacktop-2].d.dat.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
-  with contextstack[stacktop-2],d do begin
+  with contextstack[stacktop-2] do begin
    if d.kind <> ck_const then begin
     getvalue(stacktop-2-stackindex{,true});
+    initfactcontext(d);
    end;
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
-    if kind = ck_const then begin
+    if d.kind = ck_const then begin
      with insertitem(stacktop-2-stackindex,false)^ do begin
-      setop(op,oc_push64);
-      case dat.constval.kind of
+      setop(op,oc_pushimm64);
+      case d.dat.constval.kind of
        dk_integer: begin
-        par.imm.vfloat64:= real(dat.constval.vinteger);
+        par.imm.vfloat64:= real(d.dat.constval.vinteger);
        end;
        dk_float: begin
-        par.imm.vfloat64:= dat.constval.vfloat;
+        par.imm.vfloat64:= d.dat.constval.vfloat;
        end;
        else begin
         sd1:= sdk_none;
@@ -1244,10 +1258,10 @@ begin
     if kinda = dk_boolean then begin
      if kindb = dk_boolean then begin
       sd1:= sdk_bool8;
-      if kind = ck_const then begin
+      if d.kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
-        setop(op,oc_push8);
-        par.imm.vboolean:= dat.constval.vboolean;
+        setop(op,oc_pushimm8);
+        par.imm.vboolean:= d.dat.constval.vboolean;
        end;
       end;
       with contextstack[stacktop].d do begin
@@ -1260,15 +1274,16 @@ begin
     else begin
      if (kinda = dk_integer) and (kindb = dk_integer) then begin
       sd1:= sdk_int32;
-      if kind = ck_const then begin
+      if d.kind = ck_const then begin
        with insertitem(stacktop-2-stackindex,false)^ do begin
-        setop(op,oc_push32);
-        par.imm.vint32:= dat.constval.vinteger;
+        setop(op,oc_pushimm32);
+        par.imm.vint32:= d.dat.constval.vinteger;
        end;
       end;
-      with contextstack[stacktop].d do begin
+      with contextstack[stacktop],d do begin
        if kind = ck_const then begin
         push(dat.constval.vinteger);
+        initfactcontext(d);
        end;
       end;
      end;
@@ -1284,7 +1299,14 @@ begin
      operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
     end
     else begin
-     setstackop(stacktop,additem()^,op1);
+     with additem()^ do begin      
+      setop(op,op1);
+      with par.stackop do begin
+       destssaindex:= ssaindex;
+       source1ssaindex:= d.dat.fact.ssaindex;
+       source2ssaindex:= contextstack[stacktop].d.dat.fact.ssaindex;
+      end;
+     end;
      initfactcontext(d);
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;

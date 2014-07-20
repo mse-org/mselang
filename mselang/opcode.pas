@@ -239,11 +239,11 @@ begin
 end;
 } 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
-begin
+begin  //todo: ssaindex
  ainfo.size:= getdatabitsize(count);
  with additem()^ do begin
   if ainfo.size > das_32 then begin
-   setop(op,oc_push64);
+   setop(op,oc_pushimm64);
    par.imm.vint64:= count;
    ainfo.start:= info.opcount;
    with additem^ do begin
@@ -251,7 +251,7 @@ begin
    end;
   end
   else begin
-   setop(op,oc_push32);
+   setop(op,oc_pushimm32);
    par.imm.vint32:= count;
    ainfo.start:= info.opcount;
    with additem^ do begin

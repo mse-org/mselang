@@ -31,7 +31,7 @@ type
   paramcount: integer;
  end;
 
- opcodety = (
+ opcodety = (        //order as optable.inc
   oc_none,
   oc_nop,
 
@@ -63,11 +63,11 @@ type
   oc_push,
   oc_pop,
 
-  oc_push8,
-  oc_push16,
-  oc_push32,
-  oc_push64,
-  oc_pushdatakind,
+  oc_pushimm8,
+  oc_pushimm16,
+  oc_pushimm32,
+  oc_pushimm64,
+  oc_pushimmdatakind,
   
   oc_int32toflo64,
 
@@ -321,6 +321,15 @@ type
   exitcodeaddress: segaddressty;
  end;  
 
+ stackopty = record
+  destssaindex: integer;
+  source1ssaindex: integer;
+  case opcodety of
+   oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
+    source2ssaindex: integer;
+   );
+ end;
+ 
  memopty = record
   datasize: datasizety;
   ssaindex: integer;
@@ -358,7 +367,9 @@ type
     dummy: record
     end;
    );
-   oc_push,oc_push8,oc_push16,oc_push32,oc_push64,oc_pushdatakind,oc_pushaddr,
+   oc_push,
+   oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,oc_pushimmdatakind,
+   oc_pushaddr,
    oc_increg0,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
    oc_pop: (
     imm: immty;
@@ -371,11 +382,6 @@ type
    oc_movesegreg0:(
     vsegment: segmentty;
    );
-  {
-   oc_push8,oc_push16,oc_push32,oc_push64,oc_pushdatakind:(
-    vpush: vpushty;
-   );
-  }
    oc_storeframenil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
    oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,
    oc_finirefsizestackref,oc_increfsizeframe,oc_increfsizereg0,
@@ -399,6 +405,10 @@ type
       voffsaddress: dataaddressty;
      );
    );
+  oc_negcard32,oc_negint32,oc_negflo64,
+  oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
+   stackop: stackopty;
+  );
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_popseg,oc_pushseg,oc_poploc,oc_poplocindi,
    oc_pushloc,oc_pushlocindi,oc_indirect,oc_popindirect,
@@ -409,23 +419,9 @@ type
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
     memop: memopty;
    );
-   {
-   oc_op1:(
-    op1: op1infoty;
-   );
-   oc_opn:(
-    opn: opninfoty;
-   );
-   }
    oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
     opaddress: opaddressty; //first!
    );
-   {
-   oc_params:(
-    paramsize: datasizety;
-    paramcount: integer;
-   );
-   }
    oc_call,oc_callout:(
     callinfo: callinfoty;
    );
@@ -435,11 +431,6 @@ type
    oc_virttrampoline:(
     virttrampolineinfo: virttrampolineinfoty;
    );
-   {
-   oc_intfcall:(
-    intfcallinfo: intfcallinfoty;
-   );
-   }
    oc_locvarpush,oc_locvarpop,oc_return:(
     stacksize: datasizety;
    );
@@ -486,12 +477,8 @@ procedure setoptable(const atable: poptablety);
 procedure setop(var aop: opty; const aopcode: opcodety;
                                    const aflags: opflagsty = []);
                        {$ifndef mse_debugparser} inline;{$endif}
-procedure setstackop(const stackaddress: integer; 
-                      var aop: opinfoty; const aopcode: opcodety;
-                                   const aflags: opflagsty = []);
-
 implementation
-
+ 
 var
  optable: poptablety;
  
@@ -501,14 +488,6 @@ procedure setop(var aop: opty; const aopcode: opcodety;
 begin
  aop.proc:= optable^[aopcode];
  aop.flags:= aflags;
-end;
-
-procedure setstackop(const stackaddress: integer; 
-                     var aop: opinfoty; const aopcode: opcodety;
-                                             const aflags: opflagsty = []);
-begin
- setop(aop.op,aopcode);
-// aop.par.
 end;
 
 function checkop(var aop: opty; const aopcode: opcodety): boolean;
