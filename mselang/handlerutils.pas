@@ -1160,7 +1160,7 @@ var
  kinda,kindb: datakindty;
  po1: pelementinfoty;
  sd1: stackdatakindty;
-// op1: opty;
+ op1: opcodety;
 begin
  with info do begin
   if contextstack[stacktop].d.kind <> ck_const then begin
@@ -1279,16 +1279,15 @@ begin
                                             contextstack[stacktop].d);
    end
    else begin
-    with additem()^ do begin
-     setop(op,opsinfo.ops[sd1]);
-     if op.proc = nil then begin
-      operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
-     end
-     else begin
-      initfactcontext(d);
-      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
-      context:= nil;
-     end;
+    op1:= opsinfo.ops[sd1];
+    if op1 = oc_none then begin
+     operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
+    end
+    else begin
+     setstackop(stacktop,additem()^,op1);
+     initfactcontext(d);
+     d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
+     context:= nil;
     end;
    end;
   end;

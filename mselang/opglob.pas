@@ -67,8 +67,8 @@ type
   oc_push16,
   oc_push32,
   oc_push64,
-
   oc_pushdatakind,
+  
   oc_int32toflo64,
   oc_mulint32,
   oc_mulimmint32,
@@ -483,6 +483,10 @@ procedure setoptable(const atable: poptablety);
 procedure setop(var aop: opty; const aopcode: opcodety;
                                    const aflags: opflagsty = []);
                        {$ifndef mse_debugparser} inline;{$endif}
+procedure setstackop(const stackaddress: integer; 
+                      var aop: opinfoty; const aopcode: opcodety;
+                                   const aflags: opflagsty = []);
+
 implementation
 
 var
@@ -494,6 +498,14 @@ procedure setop(var aop: opty; const aopcode: opcodety;
 begin
  aop.proc:= optable^[aopcode];
  aop.flags:= aflags;
+end;
+
+procedure setstackop(const stackaddress: integer; 
+                     var aop: opinfoty; const aopcode: opcodety;
+                                             const aflags: opflagsty = []);
+begin
+ setop(aop.op,aopcode);
+// aop.par.
 end;
 
 function checkop(var aop: opty; const aopcode: opcodety): boolean;

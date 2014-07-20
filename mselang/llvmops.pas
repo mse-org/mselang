@@ -122,7 +122,6 @@ end;
 
 procedure progendop();
 begin
-
  outass('%.exitcode = load i32* '+segaddress(exitcodeaddress));
  outass('ret i32 %.exitcode');
  outass('}');
@@ -258,10 +257,12 @@ procedure mulflo64op();
 begin
  notimplemented();
 end;
+
 procedure addint32op();
 begin
  notimplemented();
 end;
+
 procedure addimmint32op();
 begin
  notimplemented();
@@ -756,188 +757,11 @@ begin
 end;
 
 const
- llvmoptable: optablety = (
-  nil,
-  @nop,
-
-  @beginparseop,
-  @progendop, //oc_progend
-  @endparseop,
-
-  @movesegreg0op,
-  @moveframereg0op,
-  @popreg0op,
-  @increg0op,
-
-  @gotoop,
-  @cmpjmpneimm4op,
-  @cmpjmpeqimm4op,
-  @cmpjmploimm4op,
-  @cmpjmpgtimm4op,
-  @cmpjmploeqimm4op,
-
-  @ifop,
-  @writelnop,
-  @writebooleanop,
-  @writeintegerop,
-  @writefloatop,
-  @writestring8op,
-  @writeclassop,
-  @writeenumop,
-
-  @pushop,
-  @popop,
-
-  @push8op,
-  @push16op,
-  @push32op,
-  @push64op,
-
-  @pushdatakindop,
-  @int32toflo64op,
-  @mulint32op,
-  @mulimmint32op,
-  @mulflo64op,
-  @addint32op,
-  @addimmint32op,
-  @addflo64op,
-  @negcard32op,
-  @negint32op,
-  @negflo64op,
-
-  @offsetpoimm32op,
-
-  @cmpequboolop,
-  @cmpequint32op,
-  @cmpequflo64op,
-
-  @storesegnilop,
-  @storereg0nilop,
-  @storeframenilop,
-  @storestacknilop,
-  @storestackrefnilop,
-  @storesegnilarop,
-  @storeframenilarop,
-  @storereg0nilarop,
-  @storestacknilarop,
-  @storestackrefnilarop,
-
-  @finirefsizesegop,
-  @finirefsizeframeop,
-  @finirefsizereg0op,
-  @finirefsizestackop,
-  @finirefsizestackrefop,
-  @finirefsizeframearop,
-  @finirefsizesegarop,
-  @finirefsizereg0arop,
-  @finirefsizestackarop,
-  @finirefsizestackrefarop,
-
-  @increfsizesegop,
-  @increfsizeframeop,
-  @increfsizereg0op,
-  @increfsizestackop,
-  @increfsizestackrefop,
-  @increfsizeframearop,
-  @increfsizesegarop,
-  @increfsizereg0arop,
-  @increfsizestackarop,
-  @increfsizestackrefarop,
-
-  @decrefsizesegop,
-  @decrefsizeframeop,
-  @decrefsizereg0op,
-  @decrefsizestackop,
-  @decrefsizestackrefop,
-  @decrefsizeframearop,
-  @decrefsizesegarop,
-  @decrefsizereg0arop,
-  @decrefsizestackarop,
-  @decrefsizestackrefarop,
-
-  @popseg8op,
-  @popseg16op,
-  @popseg32op,
-  @popsegop,
-
-  @poploc8op,
-  @poploc16op,
-  @poploc32op,
-  @poplocop,
-
-  @poplocindi8op,
-  @poplocindi16op,
-  @poplocindi32op,
-  @poplocindiop,
-
-  @pushnilop,
-  @pushsegaddressop,
-
-  @pushseg8op,
-  @pushseg16op,
-  @pushseg32op,
-  @pushsegop,
-
-  @pushloc8op,
-  @pushloc16op,
-  @pushloc32op,
-  @pushlocpoop,
-  @pushlocop,
-
-  @pushlocindi8op,
-  @pushlocindi16op,
-  @pushlocindi32op,
-  @pushlocindiop,
-
-  @pushaddrop,
-  @pushlocaddrop,
-  @pushlocaddrindiop,
-  @pushsegaddrop,
-  @pushsegaddrindiop,
-  @pushstackaddrop,
-  @pushstackaddrindiop,
-
-  @indirect8op,
-  @indirect16op,
-  @indirect32op,
-  @indirectpoop,
-  @indirectpooffsop, //offset after indirect
-  @indirectoffspoop, //offset before indirect
-  @indirectop,
-
-  @popindirect8op,
-  @popindirect16op,
-  @popindirect32op,
-  @popindirectop,
-
-  @callop,
-  @calloutop,
-  @callvirtop,
-  @callintfop,
-  @virttrampolineop,
-
-  @locvarpushop,
-  @locvarpopop,
-  @returnop,
-
-  @initclassop,
-  @destroyclassop,
-
-  @decloop32op,
-  @decloop64op,
-
-  @setlengthstr8op,
-
-  @raiseop,
-  @pushcpucontextop,
-  @popcpucontextop,
-  @finiexceptionop,
-  @continueexceptionop
- );
+{$include optable.inc}
 
 function getoptable: poptablety;
 begin
- result:= @llvmoptable;
+ result:= @optable;
 end;
 
 procedure allocproc(const asize: integer; var address: segaddressty);
