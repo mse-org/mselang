@@ -20,7 +20,8 @@
   @nop,
 
   @beginparseop,
-  @progendop,  //oc_progend
+  @mainop,
+  @progendop,  
   @endparseop,
 
   @movesegreg0op,
@@ -179,6 +180,9 @@
 
   @locvarpushop,
   @locvarpopop,
+
+  @subbeginop,
+  @subendop,
   @returnop,
 
   @initclassop,

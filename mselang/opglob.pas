@@ -36,6 +36,7 @@ type
   oc_nop,
 
   oc_beginparse,
+  oc_main,
   oc_progend,
   oc_endparse,
   
@@ -195,6 +196,9 @@ type
 
   oc_locvarpush,
   oc_locvarpop,
+
+  oc_subbegin,
+  oc_subend,
   oc_return,
 
   oc_initclass,
@@ -357,6 +361,13 @@ type
    );
  end;
 
+ subbeginty = record
+  subname: opaddressty;
+ end;
+
+ subendty = record
+ end;
+ 
                  //todo: unify
  opparamty = record
   case opcodety of 
@@ -421,6 +432,12 @@ type
    );
    oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
     opaddress: opaddressty; //first!
+   );   
+   oc_subbegin:(
+    subbegin: subbeginty;
+   );
+   oc_subend:(
+    subend: subendty;
    );
    oc_call,oc_callout:(
     callinfo: callinfoty;

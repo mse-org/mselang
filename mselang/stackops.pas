@@ -450,6 +450,11 @@ begin
  gotoop();
 end;
 
+procedure mainop();
+begin
+ //dummy
+end;
+
 procedure progendop();
 begin
  cpu.stop:= true;
@@ -1291,6 +1296,16 @@ end;
 procedure locvarpopop();
 begin
  stackpop(cpu.pc^.par.stacksize);
+end;
+
+procedure subbeginop();
+begin
+ //dummy
+end;
+
+procedure subendop();
+begin
+ //dummy
 end;
 
 procedure returnop();

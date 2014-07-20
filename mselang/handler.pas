@@ -1218,6 +1218,9 @@ begin
    par.opaddress:= opcount-1;
   end;
  end;
+ with additem^ do begin
+  setop(op,oc_main);
+ end;
 end;
 
 procedure handleprogblock();

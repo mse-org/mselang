@@ -300,7 +300,7 @@ function insertitem(const stackoffset: integer;
 var
  int1: integer;
  ad1: opaddressty;
-begin
+begin                         //todo: track ssaindex
  with info do begin
   int1:= stackoffset+stackindex;
   if (int1 > stacktop) or not before and (int1 = stacktop) then begin

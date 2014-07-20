@@ -720,6 +720,10 @@ begin
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
   end;
+  with additem^ do begin
+   setop(op,oc_subbegin);
+   par.subbegin.subname:= po1^.address;
+  end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin
     setop(op,oc_locvarpush);
@@ -764,6 +768,7 @@ begin
   with additem()^ do begin
    setop(op,oc_return);
    par.stacksize:= d.subdef.paramsize;
+   inc(ssaindex);
   end;
   locdatapo:= d.subdef.parambase;
   ssaindex:= d.subdef.ssaindexbefore;
@@ -786,6 +791,9 @@ begin
                                                             virtualtableoffset;
     end;
    end;
+  end;
+  with additem^ do begin
+   setop(op,oc_subend);
   end;
  end;
 end;

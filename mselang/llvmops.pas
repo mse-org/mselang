@@ -125,7 +125,12 @@ begin
   end;
   inc(allocpo);
  end;
+end;
+
+procedure mainop();
+begin
  outass('define i32 @main() {');
+// info.ssaindex:= 1;
 end;
 
 procedure progendop();
@@ -674,8 +679,11 @@ end;
 
 procedure callop();
 begin
- notimplemented();
+ with pc^.par.callinfo do begin
+  outass('call void @s'+inttostr(ad+1)+'()');
+ end;
 end;
+
 procedure calloutop();
 begin
  notimplemented();
@@ -701,9 +709,24 @@ procedure locvarpopop();
 begin
  notimplemented();
 end;
+
+procedure subbeginop();
+begin
+ with pc^.par.subbegin do begin
+  outass('define void @s'+inttostr(subname)+'(){');
+ end;
+end;
+
+procedure subendop();
+begin
+ with pc^.par.subend do begin
+  outass('}');
+ end;
+end;
+
 procedure returnop();
 begin
- notimplemented();
+ outass('ret void');
 end;
 
 procedure initclassop();
