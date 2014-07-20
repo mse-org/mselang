@@ -1051,6 +1051,7 @@ begin                    //todo: optimize
        setop(op,oc_indirectpo);
       end;
      end;
+     d.dat.indirection:= 0;
      doindirect();
     end
     else begin
@@ -1066,7 +1067,9 @@ begin                    //todo: optimize
    end;
   {$endif}
   end;
-//  initfactcontext(d);
+  if d.kind <> ck_fact then begin
+   initfactcontext(d);
+  end;
  end;
  result:= true;
 end;
@@ -1186,8 +1189,7 @@ begin
   kindb:= ptypedataty(@po1^.data)^.kind;
   with contextstack[stacktop-2] do begin
    if d.kind <> ck_const then begin
-    getvalue(stacktop-2-stackindex{,true});
-    initfactcontext(d);
+    getvalue(stacktop-2-stackindex);
    end;
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
