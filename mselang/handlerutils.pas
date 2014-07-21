@@ -559,9 +559,11 @@ end;
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 var
  po1: pcontextitemty;
+ isimm: boolean;
 begin
  with insertitem(stackoffset,before)^,info do begin
   po1:= @contextstack[stackindex+stackoffset];
+  isimm:= true;
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
     setop(op,oc_pushimm8);
@@ -576,6 +578,7 @@ begin
     par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
    end;
    dk_string8: begin
+    isimm:= false;
     par.vsegaddress.a:= stringconst(po1^.d.dat.constval.vstring);
     if par.vsegaddress.a.segment = seg_nil then begin
      setop(op,oc_pushnil);
@@ -591,7 +594,9 @@ begin
    end;
   {$endif}
   end;
-  par.imm.ssaindex:= ssaindex;
+  if isimm then begin
+   par.imm.ssaindex:= ssaindex;
+  end;
   initfactcontext(po1^.d);
  end;
 end;

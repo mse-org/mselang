@@ -2181,7 +2181,7 @@ begin
   end
   else begin
    result.address:= constoffset+sizeof(string8headerty);
-   result.segment:= seg_globconst;
+//   result.segment:= seg_globconst;
   end;
  end;
 end;
