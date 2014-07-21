@@ -107,7 +107,7 @@ begin
  with pc^.par.beginparse do begin
   allocpo:= getsegmentpo(globallocstart);
   endpo:= pointer(allocpo)+globalloccount*sizeof(allocinfoty);
-  exitcodeaddress:= pc^.par.beginparse.exitcodeaddress;
+  llvmops.exitcodeaddress:= exitcodeaddress;
   while allocpo < endpo do begin
    with allocpo^ do begin
     case a.segment of 
