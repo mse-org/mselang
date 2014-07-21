@@ -21,8 +21,8 @@ interface
 uses
  parserglob,opglob,typinfo,msetypes,handlerglob;
 
-procedure beginparser(const aoptable: poptablety; 
-                                       const aallocproc: allocprocty);
+procedure beginparser(const aoptable: poptablety{; 
+                                       const aallocproc: allocprocty});
 procedure endparser();
 
 //procedure push(const avalue: real); overload;
@@ -137,19 +137,21 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
 
-procedure beginparser(const aoptable: poptablety; const aallocproc: allocprocty);
+procedure beginparser(const aoptable: poptablety
+                                    {; const aallocproc: allocprocty});
 var
  po1: pvardataty;
  ele1: elementoffsetty;
 begin
  setoptable(aoptable);
- info.allocproc:= aallocproc;
+// info.allocproc:= aallocproc;
  addvar(tk_exitcode,allvisi,ele1,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
- 
+
+// info.beginparseop:= info.opcount; 
  with additem()^ do begin
   setop(op,oc_beginparse); //startup vector 
   with par.beginparse do begin
@@ -160,10 +162,44 @@ end;
 
 procedure endparser();
 begin
+ with getoppo(startupoffset)^.par.beginparse do begin
+  globallocstart.segment:= seg_globalloc;
+  globallocstart.address:= 0;
+  globalloccount:= info.globallocid;
+ end;
  with additem()^ do begin
   setop(op,oc_endparse); //startup vector 
  end;
 end;
+
+procedure handleprogbegin();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROGBEGIN');
+{$endif}
+ with info,getoppo(startupoffset)^ do begin
+  par.beginparse.mainad:= opcount;
+ end;
+ with additem^ do begin
+  setop(op,oc_main);
+ end;
+end;
+
+procedure handleprogblock();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROGBLOCK');
+{$endif}
+// writeop(nil); //endmark
+ handleunitend();
+ with additem()^ do begin //endmark, will possibly replaced by goto if there 
+  setop(op,oc_progend);               //is fini code
+ end;
+ with info do begin
+  dec(stackindex);
+ end;
+end;
+
 
 procedure handleint();
 var
@@ -1206,36 +1242,6 @@ begin
  outhandle('NOIDENTERROR');
 {$endif}
  errormessage(err_identexpected,[],minint,0,erl_fatal);
-end;
-
-procedure handleprogbegin();
-begin
-{$ifdef mse_debugparser}
- outhandle('PROGBEGIN');
-{$endif}
- if info.backend = bke_direct then begin
-  with info,getoppo(startupoffset)^ do begin
-   par.opaddress:= opcount-1;
-  end;
- end;
- with additem^ do begin
-  setop(op,oc_main);
- end;
-end;
-
-procedure handleprogblock();
-begin
-{$ifdef mse_debugparser}
- outhandle('PROGBLOCK');
-{$endif}
-// writeop(nil); //endmark
- handleunitend();
- with additem()^ do begin //endmark, will possibly replaced by goto if there 
-  setop(op,oc_progend);               //is fini code
- end;
- with info do begin
-  dec(stackindex);
- end;
 end;
 
 procedure handlecommentend();

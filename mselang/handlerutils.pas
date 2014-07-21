@@ -149,6 +149,7 @@ function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure initfactcontext(var acontext: contextdataty);
+procedure trackalloc(const asize: integer; var address: segaddressty);
 
 procedure init();
 procedure deinit();
@@ -1436,6 +1437,21 @@ begin
  end;
 end;
  
+procedure trackalloc(const asize: integer; var address: segaddressty);
+begin
+ if info.backend = bke_llvm then begin
+  if address.segment = seg_globvar then begin
+   address.address:= info.globallocid;
+   inc(info.globallocid);
+   with pallocinfoty(
+               allocsegmentpo(seg_globalloc,sizeof(allocinfoty)))^ do begin
+    a:= address;
+    size:= asize;
+   end;
+  end;
+ end;
+end;
+
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 begin

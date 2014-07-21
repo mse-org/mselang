@@ -696,14 +696,14 @@ begin
     stacktop:= -1;
     stackindex:= stacktop;
     opcount:= startupoffset;
-    allocid:= 0;
+    globallocid:= 0;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     case backend of
      bke_direct: begin
-      beginparser(stackops.getoptable(),@stackops.allocproc);
+      beginparser(stackops.getoptable(){,@stackops.allocproc});
      end;
      bke_llvm: begin
-      beginparser(llvmops.getoptable(),@llvmops.allocproc);
+      beginparser(llvmops.getoptable(){,@llvmops.allocproc});
      end;
     end;
     result:= parseunit(input,unit1);

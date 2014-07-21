@@ -21,6 +21,12 @@ uses
  parserglob;
  
 type
+ allocinfoty = record
+  a: segaddressty;
+  size: integer;
+ end;
+ pallocinfoty = ^allocinfoty;
+
  opprocty = procedure;
 
  op1infoty = record
@@ -322,7 +328,10 @@ type
  end;
 } 
  beginparseinfoty = record
+  globallocstart: segaddressty;
+  globalloccount: integer;
   exitcodeaddress: segaddressty;
+  mainad: opaddressty;
  end;  
 
  stackopty = record

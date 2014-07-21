@@ -24,7 +24,7 @@ uses
 //todo: generate bitcode
  
 function getoptable: poptablety;
-procedure allocproc(const asize: integer; var address: segaddressty);
+//procedure allocproc(const asize: integer; var address: segaddressty);
 
 procedure run();
  
@@ -94,13 +94,6 @@ begin
  //dummy;
 end;
 
-type
- allocinfoty = record
-  a: segaddressty;
-  size: integer;
- end;
- pallocinfoty = ^allocinfoty;
-
 var
  exitcodeaddress: segaddressty;
   
@@ -111,19 +104,21 @@ var
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
- allocpo:= getsegmentbase(seg_alloc);
- endpo:= pointer(allocpo)+getsegmentsize(seg_alloc);
- exitcodeaddress:= pc^.par.beginparse.exitcodeaddress;
- while allocpo < endpo do begin
-  with allocpo^ do begin
-   case a.segment of 
-    seg_globvar: begin
-     outass(segprefix[seg_globvar]+inttostr(a.address)+' = global i'+
-                                             inttostr(8*size)+ ' 0');
+ with pc^.par.beginparse do begin
+  allocpo:= getsegmentpo(globallocstart);
+  endpo:= pointer(allocpo)+globalloccount*sizeof(allocinfoty);
+  exitcodeaddress:= pc^.par.beginparse.exitcodeaddress;
+  while allocpo < endpo do begin
+   with allocpo^ do begin
+    case a.segment of 
+     seg_globvar: begin
+      outass(segprefix[seg_globvar]+inttostr(a.address)+' = global i'+
+                                              inttostr(8*size)+ ' 0');
+     end;
     end;
    end;
+   inc(allocpo);
   end;
-  inc(allocpo);
  end;
 end;
 
@@ -793,17 +788,6 @@ const
 function getoptable: poptablety;
 begin
  result:= @optable;
-end;
-
-procedure allocproc(const asize: integer; var address: segaddressty);
-begin
- if address.segment = seg_globvar then begin
-  address.address:= info.allocid;
-  with pallocinfoty(allocsegmentpo(seg_alloc,sizeof(allocinfoty)))^ do begin
-   a:= address;
-   size:= asize;
-  end;
- end;
 end;
 
 finalization

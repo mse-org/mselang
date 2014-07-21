@@ -67,7 +67,7 @@ procedure run(const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
 function getoptable: poptablety;
-procedure allocproc(const asize: integer; var address: segaddressty);
+//procedure allocproc(const asize: integer; var address: segaddressty);
 
 //procedure dummyop;
 {
@@ -447,7 +447,7 @@ end;
 
 procedure beginparseop();
 begin
- gotoop();
+ cpu.pc:= startpo + cpu.pc^.par.beginparse.mainad - 1;
 end;
 
 procedure mainop();
@@ -1897,12 +1897,12 @@ function getoptable: poptablety;
 begin
  result:= @optable;
 end;
-
+{
 procedure allocproc(const asize: integer; var address: segaddressty);
 begin
  //dummy
 end;
-
+}
 procedure finalize;
 begin
  if mainstack <> nil then begin

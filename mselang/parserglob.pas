@@ -26,7 +26,7 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_rtti,seg_intf,seg_alloc);
+              seg_op,seg_rtti,seg_intf,seg_globalloc);
 
  bool8 = boolean;
  bool16 = wordbool;
@@ -575,9 +575,10 @@ type
  
  parseinfoty = record
   backend: backendty;
+//  beginparseop:  integer;
   unitinfo: punitinfoty;
-  allocproc: allocprocty;
-  allocid: integer;
+//  allocproc: allocprocty;
+  globallocid: integer;
   pb: pbranchty;
   pc: pcontextty;
   stopparser: boolean;

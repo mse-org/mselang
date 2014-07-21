@@ -95,8 +95,8 @@ begin
   int3:= 0;
   for int1:= paramco-1 downto 0 do begin
    dec(po1);
-   int3:= int3-po1^.par.imm.voffset;
-   po1^.par.imm.voffset:= int3;
+   int3:= int3-po1^.par.voffset;
+   po1^.par.voffset:= int3;
   end;
  end;
 end;
