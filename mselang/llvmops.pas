@@ -88,10 +88,18 @@ procedure stackassign(const ssaindex: integer; const value: int32);
 begin
  outass('%'+inttostr(ssaindex)+' = add i32 '+inttostr(value)+' ,0');
 end;
-
+{
 procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
 begin
  outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
+end;
+}
+procedure segassign();
+begin
+ with pc^.par.memop do begin
+  outass('store i32 %'+inttostr(ssaindex)+', i'+inttostr(datasize*8)+'* '+
+                             llvmops.segdataaddress(segdataaddress));
+ end;
 end;
 
 procedure assignseg();
@@ -135,7 +143,7 @@ procedure assignloc();
 begin
  with pc^.par.memop do begin
   outass('%'+inttostr(ssaindex)+' = load i'+inttostr(datasize*8)+
-                  ' '+llvmops.locdataaddress(locdataaddress));
+                  '* '+llvmops.locdataaddress(locdataaddress));
  end;
 end;
 
@@ -561,23 +569,22 @@ end;
 
 procedure popseg8op();
 begin
- notimplemented();
+ segassign();
 end;
+
 procedure popseg16op();
 begin
- notimplemented();
+ segassign();
 end;
 
 procedure popseg32op();
 begin
- with pc^.par.memop do begin
-  segassign32(ssaindex,segdataaddress);
- end;
+ segassign();
 end;
 
 procedure popsegop();
 begin
- notimplemented();
+ segassign();
 end;
 
 procedure poploc8op();
@@ -848,6 +855,7 @@ var
  po1: pvardataty;
  bo1: boolean;
  str1: shortstring;
+ int1: integer;
 begin
  with pc^.par.subbegin do begin
   outass('define void @s'+inttostr(subname)+'(');
@@ -877,11 +885,19 @@ begin
   end;
   *)
   ele1:= varchain;
+  outass('){');
   while ele1 <> 0 do begin
    po1:= ele.eledataabs(ele1);
+   if po1^.address.indirectlevel > 0 then begin
+    int1:= pointersize;
+   end
+   else begin
+    int1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+   end;
+   outass(locaddress(po1^.address.locaddress)+' = alloca i'+inttostr(8*int1));
+
    ele1:= po1^.vf.next;
   end;
-  outass('){');
  end;
 end;
 
