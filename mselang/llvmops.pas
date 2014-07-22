@@ -94,11 +94,19 @@ begin
  outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
 end;
 
+procedure assignseg();
+begin
+ with pc^.par.memop do begin
+  outass('%'+inttostr(ssaindex)+' = load i'+inttostr(datasize)+
+                               '* '+llvmops.segdataaddress(segdataaddress));
+ end;
+end;
+{
 procedure assignseg32(const ssaindex: integer; const dest: segdataaddressty);
 begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
-
+}
 procedure locassign;
 begin
  with pc^.par.memop do begin
@@ -640,23 +648,22 @@ end;
 
 procedure pushseg8op();
 begin
- notimplemented();
+ assignseg();
 end;
+
 procedure pushseg16op();
 begin
- notimplemented();
+ assignseg();
 end;
 
 procedure pushseg32op();
 begin
- with pc^.par.memop do begin
-  assignseg32(ssaindex,segdataaddress);
- end;
+ assignseg();
 end;
 
 procedure pushsegop();
 begin
- notimplemented();
+ assignseg();
 end;
 
 procedure pushloc8op();
