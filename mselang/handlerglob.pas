@@ -278,6 +278,8 @@ type
  psysfuncdataty = ^sysfuncdataty;
 
  unitdataty = record
+  varchain: elementoffsetty;
+  next: elementoffsetty;
  end;
  punitdataty = ^unitdataty;
  implementationdataty = record

@@ -99,10 +99,10 @@ begin
  {$else}
    ele.pushelement(id1,ek_unit,[vik_units],po1);
  {$endif}
+   po1^.next:= unitinfochain;
+   unitinfochain:= ele.eledatarel(po1);
    with unitinfo^ do begin
     interfaceelement:= ele.elementparent;
-//    po2:= ele.addelement(tks_classes,globalvisi,ek_classes);
-//    classeselement:= ele.eleinforel(po2);
    end;
   end;
   stacktop:= stackindex;
@@ -313,6 +313,8 @@ begin
  po1^.data:= result;
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
+ end;
+ with info do begin
  end;
 end;
 (*

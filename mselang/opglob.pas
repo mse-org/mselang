@@ -345,8 +345,9 @@ type
  end;
 } 
  beginparseinfoty = record
-  globallocstart: segaddressty;
-  globalloccount: integer;
+//  globallocstart: segaddressty;
+//  globalloccount: integer;
+  unitinfochain: elementoffsetty;
   exitcodeaddress: segaddressty;
   mainad: opaddressty;
  end;  
@@ -387,17 +388,18 @@ type
     podataaddress: dataaddressty;
    );
  end;
-
+{
  suballocinfoty = record
   parallocs: dataoffsty;
   paralloccount: integer;
   varallocs: dataoffsty;
   varalloccount: integer;
  end;
- 
+}
  subbeginty = record
   subname: opaddressty;
-  allocs: suballocinfoty;
+  varchain: elementoffsetty;
+//  allocs: suballocinfoty;
  end;
 
  subendty = record

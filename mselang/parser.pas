@@ -635,6 +635,9 @@ parseend:
    end;
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
+  with punitdataty(ele.eledataabs(unitinfo^.interfaceelement))^ do begin
+   varchain:= unitinfo^.varchain;
+  end;
   if result and (unitlevel = 1) then begin
    unithandler.handleinifini();
 //   setlength(ops,opcount);
@@ -642,6 +645,7 @@ parseend:
     globdatasize:= globdatapo;
    end;
   end;
+  
   source:= sourcebefore;
  {$ifdef mse_debugparser}
   debugsource:= debugsourcebefore;
@@ -689,7 +693,7 @@ begin
     backend:= abackend;
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
-
+    info.unitinfo:= unit1;
     ssaindex:= ssastart;    
     stringbuffer:= '';
     errorstream:= aerror;

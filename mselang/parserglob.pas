@@ -26,7 +26,7 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_rtti,seg_intf,seg_globalloc,seg_localloc);
+              seg_op,seg_rtti,seg_intf{,seg_globalloc,seg_localloc});
 
  bool8 = boolean;
  bool16 = wordbool;
@@ -579,6 +579,7 @@ type
   backend: backendty;
 //  beginparseop:  integer;
   unitinfo: punitinfoty;
+  unitinfochain: elementoffsetty;
 //  allocproc: allocprocty;
   globallocid: integer;
   locallocid: integer;

@@ -145,12 +145,11 @@ var
 begin
  setoptable(aoptable);
 // info.allocproc:= aallocproc;
- addvar(tk_exitcode,allvisi,ele1,po1);
+ addvar(tk_exitcode,allvisi,info.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
-
 // info.beginparseop:= info.opcount; 
  with additem()^ do begin
   setop(op,oc_beginparse); //startup vector 
@@ -163,9 +162,10 @@ end;
 procedure endparser();
 begin
  with getoppo(startupoffset)^.par.beginparse do begin
-  globallocstart.segment:= seg_globalloc;
-  globallocstart.address:= 0;
-  globalloccount:= info.globallocid;
+  unitinfochain:= info.unitinfochain;
+//  globallocstart.segment:= seg_globalloc;
+//  globallocstart.address:= 0;
+//  globalloccount:= info.globallocid;
  end;
  with additem()^ do begin
   setop(op,oc_endparse); //startup vector 

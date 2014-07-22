@@ -30,7 +30,7 @@ procedure run();
  
 implementation
 uses
- sysutils,msestream,msesys,segmentutils;
+ sysutils,msestream,msesys,segmentutils,handlerglob,elements;
 
 var
 // sp: integer; //unnamed variables
@@ -62,7 +62,7 @@ const
  //seg_nil,seg_stack,seg_globvar,seg_globconst,
    '',     '@s',       '@gv',      '@gc',
  //seg_op,seg_rtti,seg_intf,seg_globalloc,seg_localloc
-   '@o',  '@rt',   '@if',   '',           '');
+   '@o',  '@rt',   '@if'{,   '',           ''});
                
 function segdataaddress(const address: segdataaddressty): string;
 begin
@@ -155,12 +155,36 @@ var
   
 procedure beginparseop();
 var
- endpo: pointer;
- allocpo: pgloballocinfoty;
+// endpo: pointer;
+// allocpo: pgloballocinfoty;
+ ele1,ele2: elementoffsetty;
+ po1: punitdataty;
+ po2: pvardataty;
+ int1: integer;
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
  with pc^.par.beginparse do begin
+  ele1:= unitinfochain;
+  while ele1 <> 0 do begin
+   po1:= ele.eledataabs(ele1);
+   ele2:= po1^.varchain;
+   while ele2 <> 0 do begin
+    po2:= ele.eledataabs(ele2);
+    if po2^.address.indirectlevel > 0 then begin
+     int1:= pointersize;
+    end
+    else begin
+     int1:= ptypedataty(ele.eledataabs(po2^.vf.typ))^.bytesize;
+    end;
+    outass(segaddress(po2^.address.segaddress)+' = global i'+
+                                              inttostr(8*int1)+ ' 0');
+    ele2:= po2^.vf.next;
+   end;
+   ele1:= po1^.next;
+  end;
+  llvmops.exitcodeaddress:= exitcodeaddress;
+ {
   allocpo:= getsegmentpo(globallocstart);
   endpo:= pointer(allocpo)+globalloccount*sizeof(globallocinfoty);
   llvmops.exitcodeaddress:= exitcodeaddress;
@@ -171,6 +195,7 @@ begin
    end;
    inc(allocpo);
   end;
+ }
  end;
 end;
 
@@ -812,13 +837,14 @@ end;
 
 procedure subbeginop();
 var
- endpo: pointer;
- allocpo: plocallocinfoty;
+ ele1: elementoffsetty;
+ po1: pvardataty;
  bo1: boolean;
  str1: shortstring;
 begin
  with pc^.par.subbegin do begin
   outass('define void @s'+inttostr(subname)+'(');
+  (*
   allocpo:= getsegmentpo(seg_localloc,allocs.parallocs);
   endpo:= pointer(allocpo)+allocs.paralloccount*sizeof(locallocinfoty);
   bo1:= true;
@@ -842,6 +868,13 @@ begin
    end;
    inc(allocpo);
   end;
+  *)
+  ele1:= varchain;
+  while ele1 <> 0 do begin
+   po1:= ele.eledataabs(ele1);
+   ele1:= po1^.vf.next;
+  end;
+  outass('){');
  end;
 end;
 
