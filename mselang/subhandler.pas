@@ -686,6 +686,8 @@ procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
  po3: ptypedataty;
+ po4: pvardataty;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -720,6 +722,14 @@ begin
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
+  end;
+  ele1:= po1^.varchain;
+  po1^.varchain:= 0;
+  while ele1 <> 0 do begin  drgw trw      //reverse order
+   po1^.varchain:= ele1;
+   po4:= ele.eledataabs(ele1);
+   ele1:= po4^.vf.next;
+   po4^.vf.next:= po1^.varchain;
   end;
   with additem^ do begin
    setop(op,oc_subbegin);
