@@ -61,8 +61,8 @@ const
  segprefix: array[segmentty] of string = (
  //seg_nil,seg_stack,seg_globvar,seg_globconst,
    '',     '@s',       '@gv',      '@gc',
- //seg_op,seg_rtti,seg_intf,seg_alloc
-   '@o',  '@rt',   '@if',   '');
+ //seg_op,seg_rtti,seg_intf,seg_globalloc,seg_localloc
+   '@o',  '@rt',   '@if',   '',           '');
                
 function segdataaddress(const address: segdataaddressty): string;
 begin
@@ -72,6 +72,16 @@ end;
 function segaddress(const address: segaddressty): string;
 begin
  result:= segprefix[address.segment]+inttostr(address.address);
+end;
+
+function locdataaddress(const address: locdataaddressty): string;
+begin
+ result:= '%l'+inttostr(address.a.address);
+end;
+
+function locaddress(const address: locaddressty): string;
+begin
+ result:= '%l'+inttostr(address.address);
 end;
 
 procedure stackassign(const ssaindex: integer; const value: int32);
@@ -89,6 +99,16 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
 
+procedure locassign32(const ssaindex: integer; const dest: locdataaddressty);
+begin
+ outass('store i32 %'+inttostr(ssaindex)+', i32* '+locdataaddress(dest));
+end;
+
+procedure assignloc32(const ssaindex: integer; const dest: locdataaddressty);
+begin
+ outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
+end;
+
 procedure nop();
 begin
  //dummy;
@@ -100,22 +120,18 @@ var
 procedure beginparseop();
 var
  endpo: pointer;
- allocpo: pallocinfoty;
+ allocpo: pgloballocinfoty;
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
  with pc^.par.beginparse do begin
   allocpo:= getsegmentpo(globallocstart);
-  endpo:= pointer(allocpo)+globalloccount*sizeof(allocinfoty);
+  endpo:= pointer(allocpo)+globalloccount*sizeof(globallocinfoty);
   llvmops.exitcodeaddress:= exitcodeaddress;
   while allocpo < endpo do begin
    with allocpo^ do begin
-    case a.segment of 
-     seg_globvar: begin
-      outass(segprefix[seg_globvar]+inttostr(a.address)+' = global i'+
+    outass(segaddress(a)+' = global i'+
                                               inttostr(8*size)+ ' 0');
-     end;
-    end;
    end;
    inc(allocpo);
   end;
@@ -503,10 +519,14 @@ procedure poploc16op();
 begin
  notimplemented();
 end;
+
 procedure poploc32op();
 begin
- notimplemented();
+ with pc^.par.memop do begin
+  locassign32(ssaindex,locdataaddress);  
+ end;
 end;
+
 procedure poplocop();
 begin
  notimplemented();
@@ -567,10 +587,14 @@ procedure pushloc16op();
 begin
  notimplemented();
 end;
+
 procedure pushloc32op();
 begin
- notimplemented();
+ with pc^.par.memop do begin
+  assignloc32(ssaindex,locdataaddress);
+ end;
 end;
+
 procedure pushlocpoop();
 begin
  notimplemented();
@@ -698,17 +722,31 @@ end;
 
 procedure locvarpushop();
 begin
- notimplemented();
+ //dummy
 end;
+
 procedure locvarpopop();
 begin
- notimplemented();
+ //dummy
 end;
 
 procedure subbeginop();
+var
+ endpo: pointer;
+ allocpo: plocallocinfoty;
 begin
  with pc^.par.subbegin do begin
   outass('define void @s'+inttostr(subname)+'(){');
+  with pc^.par.subbegin do begin
+   allocpo:= getsegmentpo(seg_localloc,varallocs);
+   endpo:= pointer(allocpo)+varalloccount*sizeof(locallocinfoty);
+   while allocpo < endpo do begin
+    with allocpo^ do begin
+     outass(locaddress(a)+' = alloca i'+inttostr(8*size));
+    end;
+    inc(allocpo);
+   end;
+  end;
  end;
 end;
 

@@ -150,6 +150,8 @@ function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure initfactcontext(var acontext: contextdataty);
 procedure trackalloc(const asize: integer; var address: segaddressty);
+procedure alloclocalvars(const asub: psubdataty; out varallocs: dataoffsty; 
+                                                 out varalloccount: integer);
 
 procedure init();
 procedure deinit();
@@ -1448,12 +1450,49 @@ begin
   if address.segment = seg_globvar then begin
    address.address:= info.globallocid;
    inc(info.globallocid);
-   with pallocinfoty(
-               allocsegmentpo(seg_globalloc,sizeof(allocinfoty)))^ do begin
+   with pgloballocinfoty(
+               allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
     a:= address;
     size:= asize;
    end;
   end;
+ end;
+end;
+
+procedure trackalloc(const asize: integer; var address: locaddressty);
+begin
+ if info.backend = bke_llvm then begin
+  address.address:= info.locallocid;
+  inc(info.locallocid);
+  with plocallocinfoty(
+              allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
+   a:= address;
+   size:= asize;
+  end;
+ end;
+end;
+
+procedure alloclocalvars(const asub: psubdataty; out varallocs: dataoffsty; 
+                                                 out varalloccount: integer);
+var
+ po1: pvardataty;
+ ele1: elementoffsetty;
+ size1: integer;
+begin
+ ele1:= asub^.varchain;
+ varallocs:= getsegmenttopoffs(seg_localloc);
+ varalloccount:= 0;
+ while ele1 <> 0 do begin
+  po1:= ele.eledataabs(ele1);
+  if po1^.address.indirectlevel > 0 then begin
+   size1:= pointersize;
+  end
+  else begin
+   size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+  end;
+  trackalloc(size1,po1^.address.locaddress);
+  inc(varalloccount);
+  ele1:= po1^.vf.next;
  end;
 end;
 

@@ -21,11 +21,17 @@ uses
  parserglob;
  
 type
- allocinfoty = record
+ globallocinfoty = record
   a: segaddressty;
   size: integer;
  end;
- pallocinfoty = ^allocinfoty;
+ pgloballocinfoty = ^globallocinfoty;
+
+ locallocinfoty = record
+  a: locaddressty;
+  size: integer;
+ end;
+ plocallocinfoty = ^locallocinfoty;
 
  opprocty = procedure;
 
@@ -372,6 +378,8 @@ type
 
  subbeginty = record
   subname: opaddressty;
+  varallocs: dataoffsty;
+  varalloccount: integer;
  end;
 
  subendty = record
@@ -430,7 +438,9 @@ type
    stackop: stackopty;
   );
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
-   oc_storestackrefnilar,oc_popseg,oc_pushseg,oc_poploc,oc_poplocindi,
+   oc_storestackrefnilar,oc_popseg,oc_pushseg,
+   oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
+   oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushloc,oc_pushlocindi,oc_indirect,oc_popindirect,
    oc_finirefsizesegar,oc_finirefsizeframe,oc_finirefsizereg0ar,
    oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizesegar,

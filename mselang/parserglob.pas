@@ -26,7 +26,7 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_rtti,seg_intf,seg_globalloc);
+              seg_op,seg_rtti,seg_intf,seg_globalloc,seg_localloc);
 
  bool8 = boolean;
  bool16 = wordbool;
@@ -341,6 +341,7 @@ type
   frameoffsetbefore: ptruint;
   parambase: ptruint;
   paramsize: integer; //params+stacklinksize
+  locallocidbefore: integer;
   varsize: integer;
   ssaindexbefore: integer;
   ref: elementoffsetty;
@@ -579,6 +580,7 @@ type
   unitinfo: punitinfoty;
 //  allocproc: allocprocty;
   globallocid: integer;
+  locallocid: integer;
   pb: pbranchty;
   pc: pcontextty;
   stopparser: boolean;

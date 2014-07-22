@@ -691,6 +691,7 @@ begin
  outhandle('SUB5A');
 {$endif}
  with info,contextstack[stackindex-2].d do begin
+  subdef.locallocidbefore:= locallocid;
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   if subdef.match <> 0 then begin
@@ -723,6 +724,7 @@ begin
   with additem^ do begin
    setop(op,oc_subbegin);
    par.subbegin.subname:= po1^.address;
+   alloclocalvars(po1,par.subbegin.varallocs,par.subbegin.varalloccount);
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin
@@ -795,6 +797,7 @@ begin
   with additem^ do begin
    setop(op,oc_subend);
   end;
+  locallocid:= d.subdef.locallocidbefore;
  end;
 end;
 

@@ -259,6 +259,8 @@ type
   trampolineaddress: opaddressty;
   nestinglevel: integer;
   varchain: elementoffsetty;
+//  varallocs: dataoffsty;
+//  varalloccount: integer;
   paramfinichain: elementoffsetty;
   paramsize: integer;
   paramcount: integer;
