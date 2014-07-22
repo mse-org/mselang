@@ -337,6 +337,7 @@ type
               sf_virtual,sf_override,sf_interface,
               sf_intfcall); //called by interface
  subflagsty = set of subflagty;
+ 
  subinfoty = record
   frameoffsetbefore: ptruint;
   parambase: ptruint;

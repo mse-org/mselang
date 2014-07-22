@@ -724,7 +724,7 @@ begin
   with additem^ do begin
    setop(op,oc_subbegin);
    par.subbegin.subname:= po1^.address;
-   alloclocalvars(po1,par.subbegin.varallocs,par.subbegin.varalloccount);
+   allocsubvars(po1,par.subbegin.allocs);
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin

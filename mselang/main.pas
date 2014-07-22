@@ -79,26 +79,31 @@ begin
   backend:= bke_llvm;
  end;
  bo1:= parser.parse(ed.gettext,backend,stream1);
-
- stream1.position:= 0;
- grid[0].datalist.loadfromstream(stream1);
- stream1.free;
- if bo1 then begin
-  if llvm.value then begin
-   llvmops.run();
-   int1:= getprocessoutput('llvm-as test.ll','',str1);
-   if (int1 = 0) and (str1 = '') then begin
-    grid.appendrow(['**llvm-as OK**']);
-    int1:= getprocessoutput('lli test.bc','',str1);
-    grid[0].readpipe(str1,[aco_stripescsequence]);
-    grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+ try
+  stream1.position:= 0;
+  grid[0].datalist.loadfromstream(stream1);
+  stream1.free;
+  if bo1 then begin
+   if llvm.value then begin
+    llvmops.run();
+    int1:= getprocessoutput('llvm-as test.ll','',str1);
+    if (int1 = 0) and (str1 = '') then begin
+     grid.appendrow(['**llvm-as OK**']);
+     int1:= getprocessoutput('lli test.bc','',str1);
+     grid[0].readpipe(str1,[aco_stripescsequence]);
+     grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+    end
+    else begin
+     grid[0].readpipe(str1,[aco_stripescsequence]);
+    end;
    end
    else begin
-    grid[0].readpipe(str1,[aco_stripescsequence]);
+    stackops.run(1024);
    end;
-  end
-  else begin
-   stackops.run(1024);
+  end;
+ finally
+  if backend = bke_llvm then begin
+   elements.clear();
   end;
  end;
 end;

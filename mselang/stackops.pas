@@ -1002,6 +1002,27 @@ begin
                                                 cpu.pc^.par.memop.datasize);
 end;
 
+procedure poppar8op();
+begin             
+ poploc8op();
+end;
+
+procedure poppar16op();
+begin
+ poploc16op();
+end;
+
+procedure poppar32op();
+begin
+ poploc32op();
+end;
+
+procedure popparop();
+begin
+ poplocop();
+end;
+
+
 procedure poplocindi8op();
 begin             
  pv8ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
@@ -1055,6 +1076,31 @@ procedure pushlocop();
 begin
  move(getlocaddress(cpu.pc^.par.memop.locdataaddress)^,
       stackpush(cpu.pc^.par.memop.datasize)^,cpu.pc^.par.memop.datasize);
+end;
+
+procedure pushpar8op();
+begin
+ pushloc8op();
+end;
+
+procedure pushpar16op();
+begin
+ pushloc16op();
+end;
+
+procedure pushpar32op();
+begin
+ pushloc32op();
+end;
+
+procedure pushparpoop();
+begin
+ pushlocpoop();
+end;
+
+procedure pushparop();
+begin
+ pushlocop();
 end;
 
 procedure pushlocindi8op();

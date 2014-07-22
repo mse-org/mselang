@@ -127,6 +127,11 @@
   @poploc32op,
   @poplocop,
 
+  @poppar8op,
+  @poppar16op,
+  @poppar32op,
+  @popparop,
+
   @poplocindi8op,
   @poplocindi16op,
   @poplocindi32op,
@@ -145,6 +150,12 @@
   @pushloc32op,
   @pushlocpoop,
   @pushlocop,
+
+  @pushpar8op,
+  @pushpar16op,
+  @pushpar32op,
+  @pushparpoop,
+  @pushparop,
 
   @pushlocindi8op,
   @pushlocindi16op,

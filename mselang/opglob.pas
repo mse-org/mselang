@@ -155,6 +155,11 @@ type
   oc_poploc32,
   oc_poploc,
 
+  oc_poppar8,
+  oc_poppar16,
+  oc_poppar32,
+  oc_poppar,
+
   oc_poplocindi8,
   oc_poplocindi16,
   oc_poplocindi32,
@@ -173,6 +178,12 @@ type
   oc_pushloc32,
   oc_pushlocpo,
   oc_pushloc,
+
+  oc_pushpar8,
+  oc_pushpar16,
+  oc_pushpar32,
+  oc_pushparpo,
+  oc_pushpar,
 
   oc_pushlocindi8,
   oc_pushlocindi16,
@@ -354,6 +365,7 @@ type
   ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
+   oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
@@ -376,10 +388,16 @@ type
    );
  end;
 
- subbeginty = record
-  subname: opaddressty;
+ suballocinfoty = record
+  parallocs: dataoffsty;
+  paralloccount: integer;
   varallocs: dataoffsty;
   varalloccount: integer;
+ end;
+ 
+ subbeginty = record
+  subname: opaddressty;
+  allocs: suballocinfoty;
  end;
 
  subendty = record
@@ -440,6 +458,7 @@ type
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_popseg,oc_pushseg,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
+   oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushloc,oc_pushlocindi,oc_indirect,oc_popindirect,
    oc_finirefsizesegar,oc_finirefsizeframe,oc_finirefsizereg0ar,

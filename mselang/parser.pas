@@ -41,8 +41,8 @@ function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
 procedure pushincludefile(const afilename: filenamety);
 
-procedure init;
-procedure deinit;
+//procedure init;
+//procedure deinit;
 
 implementation
 uses
@@ -65,14 +65,16 @@ begin
 // handler.init;
 end;
 
-procedure deinit();
+procedure deinit(const abackend: backendty);
 begin
 // handler.deinit;
 // inifini.deinit;
 // rttihandler.deinit();
  unithandler.deinit();
  handlerutils.deinit();
- elements.clear();
+ if abackend <> bke_llvm then begin
+  elements.clear();
+ end;
  segmentutils.deinit();
  
 end;
@@ -710,7 +712,7 @@ begin
     endparser();
    finally
     system.finalize(info);
-    deinit();
+    deinit(abackend);
    end;
   except
   end;

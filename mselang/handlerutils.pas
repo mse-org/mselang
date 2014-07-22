@@ -149,9 +149,9 @@ function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure initfactcontext(var acontext: contextdataty);
+procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const asize: integer; var address: segaddressty);
-procedure alloclocalvars(const asub: psubdataty; out varallocs: dataoffsty; 
-                                                 out varalloccount: integer);
+procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 
 procedure init();
 procedure deinit();
@@ -864,40 +864,59 @@ begin
    par.memop.segdataaddress.offset:= offset;
   end
   else begin
-   if af_paramindirect in flags then begin
+   if af_param in flags then begin
     case size of
      1: begin 
-      setop(op,oc_pushlocindi8);
+      setop(op,oc_pushpar8);
      end;
      2: begin
-      setop(op,oc_pushlocindi16);
+      setop(op,oc_pushpar16);
      end;
      4: begin
-      setop(op,oc_pushlocindi32);
+      setop(op,oc_pushpar32);
      end;
      else begin
-      setop(op,oc_pushlocindi);
+      setop(op,oc_pushpar);
      end;
     end;
    end
-   else begin
-    case size of
-     1: begin 
-      setop(op,oc_pushloc8);
+   else begin   
+    if af_paramindirect in flags then begin
+     case size of
+      1: begin 
+       setop(op,oc_pushlocindi8);
+      end;
+      2: begin
+       setop(op,oc_pushlocindi16);
+      end;
+      4: begin
+       setop(op,oc_pushlocindi32);
+      end;
+      else begin
+       setop(op,oc_pushlocindi);
+      end;
      end;
-     2: begin
-      setop(op,oc_pushloc16);
-     end;
-     4: begin
-      setop(op,oc_pushloc32);
-     end;
-     else begin
-      setop(op,oc_pushloc);
+    end
+    else begin
+     case size of
+      1: begin 
+       setop(op,oc_pushloc8);
+      end;
+      2: begin
+       setop(op,oc_pushloc16);
+      end;
+      4: begin
+       setop(op,oc_pushloc32);
+      end;
+      else begin
+       setop(op,oc_pushloc);
+      end;
      end;
     end;
    end;
    par.memop.locdataaddress.a:= locaddress;
-   par.memop.locdataaddress.a.framelevel:= info.sublevel-locaddress.framelevel-1;
+   par.memop.locdataaddress.a.framelevel:= 
+                                       info.sublevel-locaddress.framelevel-1;
    par.memop.locdataaddress.offset:= offset;
   end;
   par.memop.datasize:= size;
@@ -1443,22 +1462,38 @@ begin
   end;   
  end;
 end;
- 
+
 procedure trackalloc(const asize: integer; var address: segaddressty);
 begin
+ if address.segment = seg_globvar then begin
+  address.address:= info.globallocid;
+  inc(info.globallocid);
+  with pgloballocinfoty(
+             allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
+   a:= address;
+   size:= asize;
+  end;
+ end;
+end;
+ 
+procedure trackalloc(const asize: integer; var address: addressvaluety);
+begin
  if info.backend = bke_llvm then begin
-  if address.segment = seg_globvar then begin
-   address.address:= info.globallocid;
-   inc(info.globallocid);
-   with pgloballocinfoty(
-               allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
-    a:= address;
+  if af_segment in address.flags then begin
+   trackalloc(asize,address.segaddress);
+  end
+  else begin
+   address.locaddress.address:= info.locallocid;
+   inc(info.locallocid);
+   with plocallocinfoty(
+               allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
+    a:= address.locaddress;
     size:= asize;
    end;
   end;
  end;
 end;
-
+{
 procedure trackalloc(const asize: integer; var address: locaddressty);
 begin
  if info.backend = bke_llvm then begin
@@ -1471,28 +1506,46 @@ begin
   end;
  end;
 end;
-
-procedure alloclocalvars(const asub: psubdataty; out varallocs: dataoffsty; 
-                                                 out varalloccount: integer);
+}
+procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 var
  po1: pvardataty;
  ele1: elementoffsetty;
  size1: integer;
 begin
  ele1:= asub^.varchain;
- varallocs:= getsegmenttopoffs(seg_localloc);
- varalloccount:= 0;
- while ele1 <> 0 do begin
-  po1:= ele.eledataabs(ele1);
-  if po1^.address.indirectlevel > 0 then begin
-   size1:= pointersize;
-  end
-  else begin
-   size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+ with allocs do begin
+  parallocs:= getsegmenttopoffs(seg_localloc);
+  paralloccount:= 0;
+  while ele1 <> 0 do begin
+   po1:= ele.eledataabs(ele1);
+   if not (af_param in po1^.address.flags) then begin
+    break;
+   end;
+   if po1^.address.indirectlevel > 0 then begin
+    size1:= pointersize;
+   end
+   else begin
+    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+   end;
+   trackalloc(size1,po1^.address);
+   inc(paralloccount);
+   ele1:= po1^.vf.next;
   end;
-  trackalloc(size1,po1^.address.locaddress);
-  inc(varalloccount);
-  ele1:= po1^.vf.next;
+  varallocs:= getsegmenttopoffs(seg_localloc);
+  varalloccount:= 0;
+  while ele1 <> 0 do begin
+   po1:= ele.eledataabs(ele1);
+   if po1^.address.indirectlevel > 0 then begin
+    size1:= pointersize;
+   end
+   else begin
+    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+   end;
+   trackalloc(size1,po1^.address);
+   inc(varalloccount);
+   ele1:= po1^.vf.next;
+  end;
  end;
 end;
 
