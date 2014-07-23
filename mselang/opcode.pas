@@ -285,6 +285,7 @@ function additem(): popinfoty;
 begin
  with info do begin
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
+  result^.par.ssad:= ssaindex;
   {
   if high(ops) < opcount then begin
    setlength(ops,(high(ops)+257)*2);
@@ -300,7 +301,9 @@ function insertitem(const stackoffset: integer;
 var
  int1: integer;
  ad1: opaddressty;
-begin                         //todo: track ssaindex
+ po1: popinfoty;
+ poend: pointer;
+begin
  with info do begin
   int1:= stackoffset+stackindex;
   if (int1 > stacktop) or not before and (int1 = stacktop) then begin
@@ -322,6 +325,19 @@ begin                         //todo: track ssaindex
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    inc(opcount);
+   po1:= result+1;
+   poend:= po1+opcount-ad1;
+   int1:= po1^.par.ssad;
+   while po1 <= poend do begin
+    inc(po1^.par.ssad);
+    if po1^.par.ssas1 <= int1 then begin
+     inc(po1^.par.ssas1);
+    end;
+    if po1^.par.ssas2 <= int1 then begin
+     inc(po1^.par.ssas2);
+    end;
+    inc(po1);
+   end;
    for int1:= int1+1 to stacktop do begin
     inc(contextstack[int1].opmark.address);
    end;

@@ -921,7 +921,7 @@ begin
    par.memop.locdataaddress.offset:= offset;
   end;
   par.memop.datasize:= size;
-  par.ssad:= ssaindex;
+//  par.ssad:= ssaindex;
  end;
 end;
 
@@ -940,36 +940,44 @@ begin
 end;
 
 procedure initfactcontext(const stackoffset: integer);
+{
 var
  int1: integer;
  po1: pcontextitemty;
  pend: pointer;
  ssa1: integer;
+}
+var
+ int1,ssa1: integer;
+ op1: opaddressty;
 begin
- int1:= info.stackindex+stackoffset;
- po1:= pointer(info.contextstack);
- pend:= po1 + info.stacktop;
- inc(po1,int1+1);
- ssa1:= -1;
- while po1 <= pend do begin
-  with po1^ do begin
-   if d.kind = ck_fact then begin
-    if ssa1 < 0 then begin
-     ssa1:= d.dat.fact.ssaindex;
+ with info do begin
+  int1:= stackindex+stackoffset;
+  with info.contextstack[int1] do begin
+   if int1 >= stacktop then begin
+    ssa1:= ssaindex;
+    inc(ssaindex);
+   end
+   else begin
+    op1:= contextstack[int1+1].opmark.address;
+    if op1 > opmark.address then begin
+     ssa1:= getoppo(op1-1)^.par.ssad; //use last op of context
+    end
+    else begin
+     if op1 = opcount-1 then begin
+      ssa1:= ssaindex;
+      inc(ssaindex);
+     end
+     else begin
+      ssa1:= getoppo(op1)^.par.ssad; //use current op
+     end;
     end;
-    inc(d.dat.fact.ssaindex);
    end;
+   d.kind:= ck_fact;
+   d.dat.fact.ssaindex:= ssa1;
+//   inc(info.ssaindex);
+   d.dat.indirection:= 0;
   end;
-  inc(po1);
- end;
- if ssa1 < 0 then begin
-  ssa1:= info.ssaindex;
- end;
- with info.contextstack[int1].d do begin
-  kind:= ck_fact;
-  dat.fact.ssaindex:= ssa1;
-  inc(info.ssaindex);
-  dat.indirection:= 0;
  end;
 end;
 
