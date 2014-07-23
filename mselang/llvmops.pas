@@ -61,8 +61,8 @@ const
  segprefix: array[segmentty] of string = (
  //seg_nil,seg_stack,seg_globvar,seg_globconst,
    '',     '@s',       '@gv',      '@gc',
- //seg_op,seg_rtti,seg_intf,seg_globalloc,seg_localloc
-   '@o',  '@rt',   '@if'{,   '',           ''});
+ //seg_op,seg_rtti,seg_intf,seg_paralloc
+   '@o',  '@rt',   '@if',   '');
                
 function segdataaddress(const address: segdataaddressty): string;
 begin
@@ -816,9 +816,27 @@ begin
 end;
 
 procedure callop();
+var
+ parpo: pparallocinfoty;
+ endpo: pointer;
+ first: boolean;
+ str1: shortstring;
 begin
  with pc^.par.callinfo do begin
-  outass('call void @s'+inttostr(ad+1)+'()');
+  outass('call void @s'+inttostr(ad+1)+'(');
+  parpo:= getsegmentpo(seg_paralloc,params);
+  endpo:= parpo + paramcount;
+  first:= true;
+  while parpo < endpo do begin
+   str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
+   if first then begin
+    str1[1]:= ' ';
+    first:= false;
+   end;
+   outass(str1);
+   inc(parpo);
+  end;
+  outass(')');
  end;
 end;
 
@@ -853,7 +871,7 @@ procedure subbeginop();
 var
  ele1: elementoffsetty;
  po1: pvardataty;
- bo1: boolean;
+ first: boolean;
  str1: shortstring;
  int1: integer;
 begin
@@ -885,6 +903,26 @@ begin
   end;
   *)
   ele1:= varchain;
+  first:= true;
+  while ele1 <> 0 do begin
+   po1:= ele.eledataabs(ele1);
+   if not (af_param in po1^.address.flags) then begin
+    break;
+   end;
+   if po1^.address.indirectlevel > 0 then begin
+    int1:= pointersize;
+   end
+   else begin
+    int1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
+   end;
+   str1:= ',i'+inttostr(8*int1)+' '+locaddress(po1^.address.locaddress);
+   if first then begin
+    str1[1]:= ' ';
+    first:= false;
+   end;
+   outass(str1);
+   ele1:= po1^.vf.next;
+  end;
   outass('){');
   while ele1 <> 0 do begin
    po1:= ele.eledataabs(ele1);

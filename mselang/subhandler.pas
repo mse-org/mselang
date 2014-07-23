@@ -687,7 +687,7 @@ var
  po1,po2: psubdataty;
  po3: ptypedataty;
  po4: pvardataty;
- ele1: elementoffsetty;
+ ele1,ele2: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -725,17 +725,23 @@ begin
   end;
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
-  while ele1 <> 0 do begin  drgw trw      //reverse order
+  while ele1 <> 0 do begin      //reverse order
+   ele2:= po1^.varchain;
    po1^.varchain:= ele1;
    po4:= ele.eledataabs(ele1);
    ele1:= po4^.vf.next;
-   po4^.vf.next:= po1^.varchain;
+   po4^.vf.next:= ele2;
+  end;
+  ele1:= po1^.varchain;
+  while ele1 <> 0 do begin      //number params and vars
+   po4:= ele.eledataabs(ele1);
+   trackalloc(po4^.address.locaddress);
+   ele1:= po4^.vf.next;
   end;
   with additem^ do begin
    setop(op,oc_subbegin);
    par.subbegin.subname:= po1^.address;
    par.subbegin.varchain:= po1^.varchain;
-//   allocsubvars(po1,par.subbegin.allocs);
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem()^ do begin

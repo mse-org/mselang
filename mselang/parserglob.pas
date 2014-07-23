@@ -26,7 +26,7 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_rtti,seg_intf{,seg_globalloc,seg_localloc});
+              seg_op,seg_rtti,seg_intf,seg_paralloc);
 
  bool8 = boolean;
  bool16 = wordbool;

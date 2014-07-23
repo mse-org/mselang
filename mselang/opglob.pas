@@ -33,6 +33,12 @@ type
  end;
  plocallocinfoty = ^locallocinfoty;
 
+ parallocinfoty = record
+  ssaindex: integer;
+  size: integer;
+ end;
+ pparallocinfoty = ^parallocinfoty;
+ 
  opprocty = procedure;
 
  op1infoty = record
@@ -257,6 +263,8 @@ type
  callinfoty = record
   ad: opaddressty;    //first!
   linkcount: integer; //used in "for downto 0"
+  params: dataoffsty;
+  paramcount: integer;
  end; 
 
  virtcallinfoty = record

@@ -133,6 +133,8 @@ var
   po6: pvardataty;
   paramco1: integer;
   int1: integer;
+  parallocstart: dataoffsty;
+                     //todo: paralloc info for hidden params
  begin
   with info do begin
    po5:= @asub^.paramsrel;
@@ -150,6 +152,8 @@ var
     if sf_method in asub^.flags then begin
      inc(po5); //instance pointer
     end;
+    
+    parallocstart:= getsegmenttopoffs(seg_paralloc);    
     for int1:= stackindex+3+idents.high to stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
@@ -183,6 +187,16 @@ var
                    [int1-stackindex-3,typename(d),
                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
                                                         int1-stackindex);
+      end;
+      with pparallocinfoty(
+                allocsegmentpo(seg_paralloc,sizeof(parallocinfoty)))^ do begin
+       ssaindex:= d.dat.fact.ssaindex;
+       if po6^.address.indirectlevel > 0 then begin
+        size:= pointersize;
+       end
+       else begin
+        size:= ptypedataty(ele.eledataabs(po6^.vf.typ))^.bytesize;
+       end;
       end;
      end;
      inc(po5);
@@ -255,6 +269,9 @@ var
      linkmark(asub^.links,getsegaddress(seg_op,opcount*sizeof(opinfoty)));
     end;
     with additem()^ do begin
+     par.callinfo.params:= parallocstart;
+     par.callinfo.paramcount:= paramco1;
+     
      par.callinfo.ad:= asub^.address-1; //possibly invalid
      if (asub^.nestinglevel = 0) or 
                       (asub^.nestinglevel = sublevel) then begin
