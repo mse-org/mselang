@@ -598,7 +598,7 @@ begin
   {$endif}
   end;
   if isimm then begin
-   par.imm.ssaindex:= ssaindex;
+   par.ssad:= ssaindex;
   end;
   initfactcontext(po1^.d);
  end;
@@ -619,7 +619,7 @@ function addpushimm(const aop: opcodety): popinfoty;
 begin
  result:= additem;
  setop(result^.op,aop);
- result^.par.imm.ssaindex:= info.ssaindex;
+ result^.par.ssad:= info.ssaindex;
 end;
 
 procedure push(const avalue: boolean); overload;
@@ -705,7 +705,7 @@ function insertpushimm(const aop: opcodety; const stackoffset: integer;
 begin
  result:= insertitem(stackoffset,before);
  setop(result^.op,aop);
- result^.par.imm.ssaindex:= info.ssaindex;
+ result^.par.ssad:= info.ssaindex;
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
@@ -921,7 +921,7 @@ begin
    par.memop.locdataaddress.offset:= offset;
   end;
   par.memop.datasize:= size;
-  par.memop.ssaindex:= ssaindex;
+  par.ssad:= ssaindex;
  end;
 end;
 
@@ -1331,10 +1331,10 @@ begin
     else begin
      with additem()^ do begin      
       setop(op,op1);
-      with par.stackop do begin
-       destssaindex:= ssaindex;
-       source1ssaindex:= d.dat.fact.ssaindex;
-       source2ssaindex:= contextstack[stacktop].d.dat.fact.ssaindex;
+      with par do begin
+       ssad:= ssaindex;
+       ssas1:= d.dat.fact.ssaindex;
+       ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
       end;
      end;
      initfactcontext(d);

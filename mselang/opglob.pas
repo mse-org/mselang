@@ -297,7 +297,7 @@ type
  end;
 
   immty = record
-   ssaindex: integer;
+//   ssaindex: integer;
    case integer of               //todo: use target size
     1: (vboolean: boolean);
     2: (vcard8: card8);
@@ -361,17 +361,17 @@ type
  end;  
 
  stackopty = record
-  destssaindex: integer;
-  source1ssaindex: integer;
-  case opcodety of
-   oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
-    source2ssaindex: integer;
-   );
+//  destssaindex: integer;
+//  source1ssaindex: integer;
+//  case opcodety of
+//   oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
+//    source2ssaindex: integer;
+//   );
  end;
  
  memopty = record
   datasize: datasizety;
-  ssaindex: integer;
+//  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
    oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
@@ -415,6 +415,9 @@ type
  
                  //todo: unify
  opparamty = record
+  ssad: integer;
+  ssas1: integer;
+  ssas2: integer;
   case opcodety of 
    oc_beginparse: (
     beginparse: beginparseinfoty;

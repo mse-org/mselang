@@ -1754,7 +1754,8 @@ begin
 end;
 
 const
- stopop: opinfoty = (op: (proc:nil; flags:[]); par:(dummy:()));
+ stopop: opinfoty = (op: (proc:nil; flags:[]); 
+                   par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
 
 procedure unhandledexception(const exceptobj: pointer);
 begin

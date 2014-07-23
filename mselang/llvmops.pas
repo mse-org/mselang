@@ -46,9 +46,9 @@ end;
 
 procedure outbinop(const atext: string);
 begin
- with pc^.par.stackop do begin
-  outass('%'+inttostr(destssaindex)+' = '+atext+
-   ' %'+inttostr(source1ssaindex)+', %'+inttostr(source2ssaindex));
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = '+atext+
+   ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));
  end;
 end;
   
@@ -96,17 +96,17 @@ end;
 }
 procedure segassign();
 begin
- with pc^.par.memop do begin
-  outass('store i32 %'+inttostr(ssaindex)+', i'+inttostr(datasize*8)+'* '+
-                             llvmops.segdataaddress(segdataaddress));
+ with pc^.par do begin
+  outass('store i32 %'+inttostr(ssad)+', i'+inttostr(memop.datasize*8)+'* '+
+                                         segdataaddress(memop.segdataaddress));
  end;
 end;
 
 procedure assignseg();
 begin
- with pc^.par.memop do begin
-  outass('%'+inttostr(ssaindex)+' = load i'+inttostr(datasize)+
-                               '* '+llvmops.segdataaddress(segdataaddress));
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datasize*8)+
+                               '* '+segdataaddress(memop.segdataaddress));
  end;
 end;
 {
@@ -117,19 +117,19 @@ end;
 }
 procedure locassign;
 begin
- with pc^.par.memop do begin
-  outass('store i'+inttostr(datasize*8)+' %'+inttostr(ssaindex)+
-               ',i'+inttostr(datasize*8)+'* '+
-                           llvmops.locdataaddress(locdataaddress));
+ with pc^.par do begin
+  outass('store i'+inttostr(memop.datasize*8)+' %'+inttostr(ssad)+
+               ',i'+inttostr(memop.datasize*8)+'* '+
+                           locdataaddress(memop.locdataaddress));
  end;
 end;
 
 procedure parassign;
 begin
- with pc^.par.memop do begin
-  outass('%'+inttostr(ssaindex)+
-               ' = add i'+inttostr(datasize)+' '+
-               llvmops.locdataaddress(locdataaddress)+', 0');
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+
+               ' = add i'+inttostr(memop.datasize)+' '+
+               locdataaddress(memop.locdataaddress)+', 0');
  end;
 end;
 {
@@ -141,17 +141,17 @@ end;
 
 procedure assignloc();
 begin
- with pc^.par.memop do begin
-  outass('%'+inttostr(ssaindex)+' = load i'+inttostr(datasize*8)+
-                  '* '+llvmops.locdataaddress(locdataaddress));
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datasize*8)+
+                                '* '+locdataaddress(memop.locdataaddress));
  end;
 end;
 
 procedure assignpar();
 begin
- with pc^.par.memop do begin
-  outass('%'+inttostr(ssaindex)+' = add i'+inttostr(datasize*8)+
-        ' '+llvmops.locdataaddress(locdataaddress)+', 0');
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(memop.datasize*8)+
+                       ' '+locdataaddress(memop.locdataaddress)+', 0');
  end;
 end;
 
@@ -329,7 +329,7 @@ end;
 procedure push32op();
 begin
  with pc^.par do begin
-  stackassign(imm.ssaindex,imm.vint32);
+  stackassign(ssad,imm.vint32);
  end;
 end;
 

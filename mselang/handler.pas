@@ -1568,7 +1568,7 @@ begin
 
      with additem()^ do begin
       par.memop.datasize:= si1;
-      par.memop.ssaindex:= ssa1;
+      par.ssad:= ssa1;
       if indi then begin
        case si1 of
         1: begin

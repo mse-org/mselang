@@ -125,7 +125,7 @@ procedure addmanagedop(const opsar: aropadsty;
                const ssaindex: integer);
 begin
  with additem^ do begin
-  par.memop.ssaindex:= ssaindex;
+  par.ssad:= ssaindex;
   if count > 1 then begin
    setop(op,opsar[true][aaddress.base]);
    par.memop.datasize:= count;
