@@ -518,8 +518,7 @@ end;
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                        const atype: ptypedataty): integer;
 begin
- with insertitem(stackoffset,before)^ do begin
-  setop(op,oc_push);
+ with insertitem(oc_push,stackoffset,before)^ do begin
   result:= atype^.bytesize; //todo: alignment
   par.imm.vsize:= result;
  end;
@@ -529,12 +528,11 @@ procedure pushinsertsegaddress(const stackoffset: integer;
                              const before: boolean;
                              const address: segaddressty);
 begin
- with insertitem(stackoffset,before)^ do begin
-  if address.segment = seg_nil then begin
-   setop(op,oc_pushnil);
-  end
-  else begin
-   setop(op,oc_pushsegaddress);
+ if address.segment = seg_nil then begin
+  insertitem(oc_pushnil,stackoffset,before);
+ end
+ else begin
+  with insertitem(oc_pushsegaddress,stackoffset,before)^ do begin
    par.vsegaddress.a:= address;
    par.vsegaddress.offset:= 0;
   end;
@@ -543,18 +541,19 @@ end;
 
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
- with insertitem(stackoffset,before)^,info,
-                     contextstack[stackindex+stackoffset].d.dat.ref do begin
+ with info,contextstack[stackindex+stackoffset].d.dat.ref do begin
   if af_segment in address.flags then begin
-   setop(op,oc_pushsegaddr);
-   par.vsegaddress.a:= address.segaddress;
-   par.vsegaddress.offset:= offset;
+   with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
+    par.vsegaddress.a:= address.segaddress;
+    par.vsegaddress.offset:= offset;
+   end;
   end
   else begin
-   setop(op,oc_pushlocaddr);
-   par.vlocaddress.a:= address.locaddress;
-   par.vlocaddress.a.framelevel:= info.sublevel-address.locaddress.framelevel-1;
-   par.vlocaddress.offset:= offset;
+   with insertitem(oc_pushlocaddr,stackoffset,before)^ do begin
+    par.vlocaddress.a:= address.locaddress;
+    par.vlocaddress.a.framelevel:= info.sublevel-address.locaddress.framelevel-1;
+    par.vlocaddress.offset:= offset;
+   end;
   end;
  end;
 end;
@@ -563,32 +562,38 @@ procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 var
  po1: pcontextitemty;
  isimm: boolean;
+ segad1: segaddressty;
 begin
- with insertitem(stackoffset,before)^,info do begin
+ with info do begin
   po1:= @contextstack[stackindex+stackoffset];
   isimm:= true;
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
-    setop(op,oc_pushimm8);
-    par.imm.vboolean:= po1^.d.dat.constval.vboolean;
+    with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+     par.imm.vboolean:= po1^.d.dat.constval.vboolean;
+    end;
    end;
    dk_integer,dk_enum: begin
-    setop(op,oc_pushimm32);
-    par.imm.vint32:= po1^.d.dat.constval.vinteger;
+    with insertitem(oc_pushimm32,stackoffset,before)^ do begin
+     par.imm.vint32:= po1^.d.dat.constval.vinteger;
+    end;
    end;
    dk_float: begin
-    setop(op,oc_pushimm64);
-    par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
+    with insertitem(oc_pushimm64,stackoffset,before)^ do begin
+     par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
+    end;
    end;
    dk_string8: begin
     isimm:= false;
-    par.vsegaddress.a:= stringconst(po1^.d.dat.constval.vstring);
-    if par.vsegaddress.a.segment = seg_nil then begin
-     setop(op,oc_pushnil);
+    segad1:= stringconst(po1^.d.dat.constval.vstring);
+    if segad1.segment = seg_nil then begin
+     insertitem(oc_pushnil,stackoffset,before);
     end
     else begin
-     setop(op,oc_pushsegaddress);
-     par.vsegaddress.offset:= 0;
+     with insertitem(oc_pushsegaddress,stackoffset,before)^ do begin
+      par.vsegaddress.a:= segad1;
+      par.vsegaddress.offset:= 0;
+     end;
     end;
    end;
   {$ifdef mse_checkinternalerror}                             
@@ -597,9 +602,11 @@ begin
    end;
   {$endif}
   end;
+ {
   if isimm then begin
    par.ssad:= ssaindex;
   end;
+ }
   initfactcontext(stackoffset);
  end;
 end;
@@ -607,8 +614,7 @@ end;
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 begin
  if aoffset <> 0 then begin
-  with insertitem(stackoffset,false)^ do begin
-   setop(op,oc_addimmint32);
+  with insertitem(oc_addimmint32,stackoffset,false)^ do begin
    par.imm.vint32:= aoffset;
   end;
  end;
@@ -617,9 +623,8 @@ end;
 function addpushimm(const aop: opcodety): popinfoty; 
                                  {$ifndef mse_debugparser} inline; {$endif}
 begin
- result:= additem;
- setop(result^.op,aop);
- result^.par.ssad:= info.ssaindex;
+ result:= additem(aop);
+// result^.par.ssad:= info.ssaindex;
 end;
 
 procedure push(const avalue: boolean); overload;
@@ -643,35 +648,55 @@ begin
  end;
 end;
 
-procedure pushins(const aitem: popinfoty;
+procedure pushins(const ains: boolean; const stackoffset: integer;
+          const before: boolean;
           const avalue: addressvaluety; const offset: dataoffsty;
                                            const indirect: boolean);
-begin
- with aitem^ do begin
-  if af_nil in avalue.flags then begin
-   setop(op,oc_pushaddr);
-   par.imm.vpointer:= 0;
+//todo: optimize
+
+ function getop(const aop: opcodety): popinfoty;
+ begin
+  if ains then begin
+   result:= insertitem(aop,stackoffset,before);
   end
   else begin
-   if af_segment in avalue.flags then begin
-    if indirect then begin
-     setop(op,oc_pushsegaddrindi);
-    end
-    else begin
-     setop(op,oc_pushsegaddr);
-    end;
-    par.vsegaddress.a:= avalue.segaddress;
-    par.vsegaddress.offset:= offset;
+   result:= additem(aop);
+  end;
+ end;
+
+var
+ po1: popinfoty;
+  
+begin
+ if af_nil in avalue.flags then begin
+  with getop(oc_pushaddr)^ do begin
+   par.imm.vpointer:= 0;
+  end;
+ end
+ else begin
+  if af_segment in avalue.flags then begin
+   if indirect then begin
+    po1:= getop(oc_pushsegaddrindi);
    end
    else begin
-    if indirect then begin
-     setop(op,oc_pushlocaddrindi);
-    end
-    else begin
-     setop(op,oc_pushlocaddr);
-    end;
+    po1:= getop(oc_pushsegaddr);
+   end;
+   with po1^ do begin
+    par.vsegaddress.a:= avalue.segaddress;
+    par.vsegaddress.offset:= offset;
+   end;
+  end
+  else begin
+   if indirect then begin
+    po1:= getop(oc_pushlocaddrindi);
+   end
+   else begin
+    po1:= getop(oc_pushlocaddr);
+   end;
+   with po1^ do begin
     par.vlocaddress.a:= avalue.locaddress;
-    par.vlocaddress.a.framelevel:= info.sublevel-avalue.locaddress.framelevel-1;
+    par.vlocaddress.a.framelevel:= 
+                               info.sublevel-avalue.locaddress.framelevel-1;
     par.vlocaddress.offset:= offset;
    end;
   end;
@@ -681,14 +706,14 @@ end;
 procedure push(const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
- pushins(additem,avalue,offset,indirect);
+ pushins(false,0,false,avalue,offset,indirect);
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
             const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
- pushins(insertitem(stackoffset,before),avalue,offset,indirect);
+ pushins(true,stackoffset,before,avalue,offset,indirect);
 end;
 
 procedure push(const avalue: datakindty); overload;
@@ -703,9 +728,8 @@ function insertpushimm(const aop: opcodety; const stackoffset: integer;
                        const before: boolean): popinfoty; 
                                  {$ifndef mse_debugparser} inline; {$endif}
 begin
- result:= insertitem(stackoffset,before);
- setop(result^.op,aop);
- result^.par.ssad:= info.ssaindex;
+ result:= insertitem(aop,stackoffset,before);
+// result^.par.ssad:= info.ssaindex;
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
@@ -740,14 +764,7 @@ end;
 
 procedure int32toflo64({; const index: integer});
 begin
- with additem({info})^ do begin
-  setop(op,oc_int32toflo64);
-  {
-  with d.op1 do begin
-   index0:= index;
-  end;
-  }
- end;
+ additem(oc_int32toflo64);
 end;
 
 procedure setcurrentloc(const indexoffset: integer);
@@ -841,43 +858,61 @@ begin
  end;
 end;
 
-procedure pushd(const oppo: popinfoty; const address: addressvaluety;
+procedure pushd(const ains: boolean; const stackoffset: integer;
+          const before: boolean; const address: addressvaluety;
                      const offset: dataoffsty; const size: datasizety;
                      const ssaindex: integer);
+//todo: optimize
+
+ function getop(const aop: opcodety): popinfoty;
+ begin
+  if ains then begin
+   result:= insertitem(aop,stackoffset,before);
+  end
+  else begin
+   result:= additem(aop);
+  end;
+ end;
+
+var
+ po1: popinfoty;
+ 
 begin
- with oppo^,address do begin //todo: use table
+ with address do begin //todo: use table
   if af_segment in flags then begin
    case size of
     1: begin 
-     setop(op,oc_pushseg8);
+     po1:= getop(oc_pushseg8);
     end;
     2: begin
-     setop(op,oc_pushseg16);
+     po1:= getop(oc_pushseg16);
     end;
     4: begin
-     setop(op,oc_pushseg32);
+     po1:= getop(oc_pushseg32);
     end;
     else begin
-     setop(op,oc_pushseg);
+     po1:= getop(oc_pushseg);
     end;
    end;
-   par.memop.segdataaddress.a:= segaddress;
-   par.memop.segdataaddress.offset:= offset;
+   with po1^ do begin
+    par.memop.segdataaddress.a:= segaddress;
+    par.memop.segdataaddress.offset:= offset;
+   end;
   end
   else begin
    if af_param in flags then begin
     case size of
      1: begin 
-      setop(op,oc_pushpar8);
+      po1:= getop(oc_pushpar8);
      end;
      2: begin
-      setop(op,oc_pushpar16);
+      po1:= getop(oc_pushpar16);
      end;
      4: begin
-      setop(op,oc_pushpar32);
+      po1:= getop(oc_pushpar32);
      end;
      else begin
-      setop(op,oc_pushpar);
+      po1:= getop(oc_pushpar);
      end;
     end;
    end
@@ -885,42 +920,44 @@ begin
     if af_paramindirect in flags then begin
      case size of
       1: begin 
-       setop(op,oc_pushlocindi8);
+       po1:= getop(oc_pushlocindi8);
       end;
       2: begin
-       setop(op,oc_pushlocindi16);
+       po1:= getop(oc_pushlocindi16);
       end;
       4: begin
-       setop(op,oc_pushlocindi32);
+       po1:= getop(oc_pushlocindi32);
       end;
       else begin
-       setop(op,oc_pushlocindi);
+       po1:= getop(oc_pushlocindi);
       end;
      end;
     end
     else begin
      case size of
       1: begin 
-       setop(op,oc_pushloc8);
+       po1:= getop(oc_pushloc8);
       end;
       2: begin
-       setop(op,oc_pushloc16);
+       po1:= getop(oc_pushloc16);
       end;
       4: begin
-       setop(op,oc_pushloc32);
+       po1:= getop(oc_pushloc32);
       end;
       else begin
-       setop(op,oc_pushloc);
+       po1:= getop(oc_pushloc);
       end;
      end;
     end;
    end;
-   par.memop.locdataaddress.a:= locaddress;
-   par.memop.locdataaddress.a.framelevel:= 
-                                       info.sublevel-locaddress.framelevel-1;
-   par.memop.locdataaddress.offset:= offset;
+   with po1^ do begin
+    par.memop.locdataaddress.a:= locaddress;
+    par.memop.locdataaddress.a.framelevel:= 
+                                        info.sublevel-locaddress.framelevel-1;
+    par.memop.locdataaddress.offset:= offset;
+   end;
   end;
-  par.memop.datasize:= size;
+  po1^.par.memop.datasize:= size;
 //  par.ssad:= ssaindex;
  end;
 end;
@@ -929,14 +966,14 @@ end;
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
                          const size: datasizety; const ssaindex: integer);
 begin
- pushd(additem({info}),address,offset,size,ssaindex);
+ pushd(false,0,false,address,offset,size,ssaindex);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
                   const size: datasizety; const ssaindex: integer);
 begin
- pushd(insertitem(stackoffset,before),address,offset,size,ssaindex);
+ pushd(true,stackoffset,before,address,offset,size,ssaindex);
 end;
 
 procedure initfactcontext(const stackoffset: integer);
@@ -994,12 +1031,9 @@ begin
    else begin
     pushinsert(stackoffset,false,d.dat.ref.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
-     with insertitem(stackoffset,false)^ do begin
-      setop(op,oc_indirectpo);
-     end;
+     insertitem(oc_indirectpo,stackoffset,false);
     end;
-    with insertitem(stackoffset,false)^ do begin
-     setop(op,oc_indirectpooffs);
+    with insertitem(oc_indirectpooffs,stackoffset,false)^ do begin
      par.voffset:= d.dat.ref.offset;
     end;
    end;
@@ -1019,7 +1053,7 @@ function getvalue(const stackoffset: integer;
  var
   po1: ptypedataty;
   si1: datasizety;
-  op1: popinfoty;
+  op1: opcodety;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
    if dat.datatyp.indirectlevel > 0 then begin
@@ -1028,23 +1062,22 @@ function getvalue(const stackoffset: integer;
    else begin
     si1:= ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.bytesize;
    end;
-   op1:= insertitem(stackoffset,false);
-   with op1^ do begin //todo: use table
-    case si1 of
-     1: begin
-      setop(op,oc_indirect8);
-     end;
-     2: begin
-      setop(op,oc_indirect16);
-     end;
-     4: begin
-      setop(op,oc_indirect32);
-     end;
-     else begin
-      setop(op,oc_indirect);
-      par.memop.datasize:= si1;      
-     end;
+   case si1 of       //todo: use table
+    1: begin
+     op1:= oc_indirect8;
     end;
+    2: begin
+     op1:= oc_indirect16;
+    end;
+    4: begin
+     op1:= oc_indirect32;
+    end;
+    else begin
+     op1:= oc_indirect;
+    end;
+   end;
+   with insertitem(op1,stackoffset,false)^ do begin
+    par.memop.datasize:= si1;
    end;
   end;
  end;
@@ -1107,9 +1140,7 @@ begin                    //todo: optimize
    ck_subres,ck_fact: begin
     if d.dat.indirection < 0 then begin
      for int1:= d.dat.indirection+2 to 0 do begin
-      with insertitem(stackoffset,false)^ do begin
-       setop(op,oc_indirectpo);
-      end;
+      insertitem(oc_indirectpo,stackoffset,false);
      end;
      d.dat.indirection:= 0;
      doindirect();
@@ -1239,6 +1270,7 @@ var
  op1: opcodety;
 begin
  with info do begin
+                  //todo: work botom up because of less op insertions
   if contextstack[stacktop].d.kind <> ck_const then begin
    getvalue(stacktop-stackindex{,false});
   end;
@@ -1254,32 +1286,26 @@ begin
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
     if d.kind = ck_const then begin
-     with insertitem(stacktop-2-stackindex,false)^ do begin
-      setop(op,oc_pushimm64);
-      case d.dat.constval.kind of
-       dk_integer: begin
+     case d.dat.constval.kind of
+      dk_integer: begin
+       with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
         par.imm.vfloat64:= real(d.dat.constval.vinteger);
        end;
-       dk_float: begin
+      end;
+      dk_float: begin
+       with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
         par.imm.vfloat64:= d.dat.constval.vfloat;
        end;
-       else begin
-        sd1:= sdk_none;
-       end;
+      end;
+      else begin
+       sd1:= sdk_none;
       end;
      end;
     end
     else begin //ck_fact
      case kinda of
       dk_integer: begin
-       with insertitem(stacktop-2-stackindex,false)^ do begin
-        setop(op,oc_int32toflo64);
-        {
-        with par.op1 do begin
-         index0:= 0;
-        end;
-        }
-       end;
+       insertitem(oc_int32toflo64,stacktop-2-stackindex,false);
       end;
       dk_float: begin
       end;
@@ -1321,8 +1347,7 @@ begin
      if kindb = dk_boolean then begin
       sd1:= sdk_bool8;
       if d.kind = ck_const then begin
-       with insertitem(stacktop-2-stackindex,false)^ do begin
-        setop(op,oc_pushimm8);
+       with insertitem(oc_pushimm8,stacktop-2-stackindex,false)^ do begin
         par.imm.vboolean:= d.dat.constval.vboolean;
        end;
       end;
@@ -1337,8 +1362,7 @@ begin
      if (kinda = dk_integer) and (kindb = dk_integer) then begin
       sd1:= sdk_int32;
       if d.kind = ck_const then begin
-       with insertitem(stacktop-2-stackindex,false)^ do begin
-        setop(op,oc_pushimm32);
+       with insertitem(oc_pushimm32,stacktop-2-stackindex,false)^ do begin
         par.imm.vint32:= d.dat.constval.vinteger;
        end;
       end;
@@ -1361,13 +1385,10 @@ begin
      operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
     end
     else begin
-     with additem()^ do begin      
-      setop(op,op1);
-      with par do begin
-       ssad:= ssaindex;
-       ssas1:= d.dat.fact.ssaindex;
-       ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
-      end;
+     with additem(op1)^ do begin      
+      par.ssad:= ssaindex;
+      par.ssas1:= d.dat.fact.ssaindex;
+      par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
      end;
      initfactcontext(stacktop-stackindex-2);
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
@@ -1375,6 +1396,9 @@ begin
     end;
    end;
   end;
+//  if contextstack[stacktop].d.kind <> ck_const then begin
+//   getvalue(stacktop-stackindex{,false});
+//  end;
   dec(stacktop,2);
   stackindex:= stacktop-1; 
  end;

@@ -90,9 +90,8 @@ begin
      if getaddress(stacktop-stackindex-1,true) then begin
       with ptypedataty(ele.eledataabs(
                  contextstack[stacktop-1].d.dat.datatyp.typedata))^ do begin
-       with additem^ do begin
-        setop(op,setlengthops[kind]);
-        if op.proc = nil then begin
+       with additem(setlengthops[kind])^ do begin
+        if op.op = oc_none then begin
          errormessage(err_typemismatch,[]);
         end;
        end;
@@ -129,13 +128,13 @@ begin
  else begin
   if atype^.kind = dk_array then begin
    ad1.base:= ab_reg0;
-   with additem^ do begin
-    if aaddress.base = ab_segment then begin
-     setop(op,oc_movesegreg0);
+   if aaddress.base = ab_segment then begin
+    with additem(oc_movesegreg0)^ do begin
      par.vsegment:= aaddress.segment;
-    end
-    else begin
-     setop(op,oc_moveframereg0);
+    end;
+   end
+   else begin
+    with additem(oc_moveframereg0)^ do begin
     end;
    end;
    beginforloop(loopinfo,
@@ -164,13 +163,11 @@ begin
   until ele1 = 0;
 
   if atype^.kind = dk_array then begin
-   with additem^ do begin
-    setop(op,oc_increg0);
+   with additem(oc_increg0)^ do begin
     par.imm.voffset:= po2^.bytesize;
    end;
    endforloop(loopinfo);
-   with additem^ do begin
-    setop(op,oc_popreg0);
+   with additem(oc_popreg0)^ do begin
    end;
   end;
  end;

@@ -622,13 +622,11 @@ begin
          if d.kind = ck_ref then begin
           getvalue(int1-stackindex{,true});
          end;
-         with insertitem(int1-stackindex+1,false)^ do begin
-          setop(op,oc_mulimmint32);
+         with insertitem(oc_mulimmint32,int1-stackindex+1,false)^ do begin
           par.imm.vint32:= itemtype^.bytesize;
          end;
          if not fullconst then begin
-          with insertitem(int1-stackindex+1,false)^ do begin
-           setop(op,oc_addint32);
+          with insertitem(oc_addint32,int1-stackindex+1,false)^ do begin
           end;         
          end
          else begin
@@ -649,8 +647,7 @@ begin
      d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
       pushinsertaddress(-1,true);
-      with additem^ do begin
-       setop(op,oc_addint32);
+      with additem(oc_addint32)^ do begin
       end;
       d.kind:= ck_reffact;
      end;

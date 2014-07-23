@@ -67,6 +67,8 @@ procedure run(const stackdepht: integer);
 procedure run(const asegments: segmentbuffersty);
 
 function getoptable: poptablety;
+function getssatable: pssatablety;
+
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
 //procedure dummyop;
@@ -1754,7 +1756,7 @@ begin
 end;
 
 const
- stopop: opinfoty = (op: (proc:nil; flags:[]); 
+ stopop: opinfoty = (op: (op: oc_none; flags:[]); 
                    par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
 
 procedure unhandledexception(const exceptobj: pointer);
@@ -1853,6 +1855,20 @@ begin
 end;
 }
 
+var
+ globdata: pointer;
+
+const
+{$include optable.inc}
+ ssatable: ssatablety = (
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+ 
 procedure run(const asegments: segmentbuffersty);
 var
  seg1: segmentty;
@@ -1875,14 +1891,11 @@ begin
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
  while not cpu.stop do begin
-  cpu.pc^.op.proc;
+  optable[cpu.pc^.op.op]();;
   inc(cpu.pc);
  end;
 end;
 
-var
- globdata: pointer;
- 
 procedure run({const code: opinfoarty; const constseg: pointer;}
                                         const stackdepht: integer);
 var
@@ -1937,13 +1950,17 @@ begin
 end;
 }
 
-const
-{$include optable.inc}
-
+ 
 function getoptable: poptablety;
 begin
  result:= @optable;
 end;
+
+function getssatable: pssatablety;
+begin
+ result:= @ssatable;
+end;
+
 {
 procedure allocproc(const asize: integer; var address: segaddressty);
 begin

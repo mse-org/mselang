@@ -48,8 +48,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('TRYYENTRY');
 {$endif}
- with additem()^ do begin
-  setop(op,oc_pushcpucontext);
+ with additem(oc_pushcpucontext)^ do begin
  end;
 end;
 
@@ -60,8 +59,7 @@ begin
 {$endif}
  with info do begin
   getoppo(contextstack[stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
-  with additem^ do begin
-   setop(op,oc_popcpucontext);
+  with additem(oc_popcpucontext)^ do begin
   end;
  end;
 end;
@@ -72,8 +70,7 @@ begin
  outhandle('FINALLY');
 {$endif}
  with info do begin
-  with additem^ do begin
-   setop(op,oc_continueexception);
+  with additem(oc_continueexception)^ do begin
   end;
 //  dec(stackindex,1);
  end; 
@@ -84,15 +81,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPTENTRY');
 {$endif}
- with additem()^ do begin
-  setop(op,oc_goto);
+ with additem(oc_goto)^ do begin
  end;
  with info,contextstack[stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
- with additem^ do begin
-  setop(op,oc_popcpucontext);
+ with additem(oc_popcpucontext)^ do begin
  end;
 end;
 
@@ -103,8 +98,7 @@ begin
 {$endif}
  with info,contextstack[stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1; //skip exception handling code
-  with additem^ do begin
-   setop(op,oc_finiexception);
+  with additem(oc_finiexception)^ do begin
   end;
 //  dec(stackindex,1);
  end; 
@@ -126,8 +120,7 @@ begin
    bo1:= po1^.kind = dk_class;
   end;
   if bo1 then begin
-   with additem^ do begin
-    setop(op,oc_raise);
+   with additem(oc_raise)^ do begin
    end;
   end
   else begin

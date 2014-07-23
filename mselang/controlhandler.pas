@@ -87,8 +87,7 @@ begin
    push(d.dat.constval.vboolean); //todo: use compiletime branch
   end;
  end;
- with additem()^ do begin
-  setop(op,oc_if);   
+ with additem(oc_if)^ do begin
  end;
 end;
 
@@ -121,8 +120,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ELSE0');
 {$endif}
- with additem()^ do begin
-  setop(op,oc_goto);
+ with additem(oc_goto)^ do begin
  end;
 end;
 
@@ -187,6 +185,7 @@ procedure handlecasebranchentry();
 var
  int1: integer;
  itemcount,last: integer;
+ po1: popinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
@@ -199,36 +198,35 @@ begin
    with contextstack[int1] do begin
     if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
                           (d.dat.constval.kind in ordinaldatakinds) then begin
-     with additem()^ do begin       //todo: signed/unsigned, use table
-      if tf_lower in d.dat.datatyp.flags then begin
-       setop(op,oc_cmpjmploimm4);
-       if int1 <> last-1 then begin
-        par.immgoto:= opcount; //next check
+            //todo: signed/unsigned, use table
+     if tf_lower in d.dat.datatyp.flags then begin
+      po1:= additem(oc_cmpjmploimm4);
+      if int1 <> last-1 then begin
+       po1^.par.immgoto:= opcount; //next check
+      end;
+     end
+     else begin
+      if tf_upper in d.dat.datatyp.flags then begin
+       if int1 = last then begin
+        po1:= additem(oc_cmpjmpgtimm4);
+       end
+       else begin
+        po1:= additem(oc_cmpjmploeqimm4);
+        po1^.par.immgoto:= opcount+last-int1-1;
        end;
       end
       else begin
-       if tf_upper in d.dat.datatyp.flags then begin
-        if int1 = last then begin
-         setop(op,oc_cmpjmpgtimm4);
-        end
-        else begin
-         setop(op,oc_cmpjmploeqimm4);
-         par.immgoto:= opcount+last-int1-1;
-        end;
+       if int1 = last then begin
+        po1:= additem(oc_cmpjmpneimm4);
        end
        else begin
-        if int1 = last then begin
-         setop(op,oc_cmpjmpneimm4);
-        end
-        else begin
-         setop(op,oc_cmpjmpeqimm4);
-         par.immgoto:= opcount+last-int1-1;
-        end;
+        po1:= additem(oc_cmpjmpeqimm4);
+        po1^.par.immgoto:= opcount+last-int1-1;
        end;
       end;
-      opmark.address:= opcount-1;
-      par.ordimm.vint32:= d.dat.constval.vinteger;
      end;
+     opmark.address:= opcount-1;
+     po1^.par.ordimm.vint32:= d.dat.constval.vinteger;
     end
     else begin
      errormessage(err_ordinalconstexpected,[],-1);
@@ -243,8 +241,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCH');
 {$endif}
- with additem()^ do begin
-  setop(op,oc_goto);  //goto casend
+ with additem(oc_goto)^ do begin
+    //goto casend
  end;
 end;
 
@@ -305,11 +303,11 @@ begin
       internalerror(ie_handler,'20140530B');
      end;
     {$endif}
-     setop(op,oc_nop);
+     op.op:= oc_nop;
+//     setop(op,oc_nop);
     end;
    end;
-   with additem()^ do begin
-    setop(op,oc_pop);
+   with additem(oc_pop)^ do begin
     par.imm.vsize:= sizeof(int32);
    end;
   end;

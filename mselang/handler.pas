@@ -21,8 +21,7 @@ interface
 uses
  parserglob,opglob,typinfo,msetypes,handlerglob;
 
-procedure beginparser(const aoptable: poptablety{; 
-                                       const aallocproc: allocprocty});
+procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 procedure endparser();
 
 //procedure push(const avalue: real); overload;
@@ -137,13 +136,13 @@ uses
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
 
-procedure beginparser(const aoptable: poptablety
-                                    {; const aallocproc: allocprocty});
+procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
+
 var
  po1: pvardataty;
  ele1: elementoffsetty;
 begin
- setoptable(aoptable);
+ setoptable(aoptable,assatable);
 // info.allocproc:= aallocproc;
  addvar(tk_exitcode,allvisi,info.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
@@ -151,9 +150,8 @@ begin
  po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
 // info.beginparseop:= info.opcount; 
- with additem()^ do begin
-  setop(op,oc_beginparse); //startup vector 
-  with par.beginparse do begin
+ with additem(oc_beginparse)^ do begin
+  with par.beginparse do begin //startup vector 
    exitcodeaddress:= po1^.address.segaddress;
   end;
  end;
@@ -167,8 +165,8 @@ begin
 //  globallocstart.address:= 0;
 //  globalloccount:= info.globallocid;
  end;
- with additem()^ do begin
-  setop(op,oc_endparse); //startup vector 
+ with additem(oc_endparse)^ do begin
+                    //startup vector 
  end;
 end;
 
@@ -180,8 +178,7 @@ begin
  with info,getoppo(startupoffset)^ do begin
   par.beginparse.mainad:= opcount;
  end;
- with additem^ do begin
-  setop(op,oc_main);
+ with additem(oc_main)^ do begin
  end;
 end;
 
@@ -192,8 +189,8 @@ begin
 {$endif}
 // writeop(nil); //endmark
  handleunitend();
- with additem()^ do begin //endmark, will possibly replaced by goto if there 
-  setop(op,oc_progend);               //is fini code
+ with additem(oc_progend)^ do begin 
+  //endmark, will possibly replaced by goto if there is fini code
  end;
  with info do begin
   dec(stackindex);
@@ -910,9 +907,8 @@ begin
   else begin
    if getvalue(1{,false}) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    with additem()^ do begin
-     setop(op,negops[po1^.kind]);
-     if op.proc = nil then begin
+    with additem(negops[po1^.kind])^ do begin
+     if op.op = oc_none then begin
       errormessage(err_negnotpossible,[],1);
      end;
     end;
@@ -1480,6 +1476,7 @@ var
  offs1: dataoffsty;
  ad1: addressrefty;
  ssa1: integer;
+ po1: popinfoty;
 label
  endlab;
 begin
@@ -1566,84 +1563,82 @@ begin
       writemanagedtypeop(mo_decref,dest.typ,ad1,0);
      end;
 
-     with additem()^ do begin
-      par.memop.datasize:= si1;
-      par.ssad:= ssa1;
-      if indi then begin
-       case si1 of
-        1: begin
-         setop(op,oc_popindirect8);
-        end;
-        2: begin
-         setop(op,oc_popindirect16);
-        end;
-        4: begin
-         setop(op,oc_popindirect32);
-        end;
-        else begin
-         setop(op,oc_popindirect);
-        end;
+     if indi then begin
+      case si1 of
+       1: begin
+        po1:= additem(oc_popindirect8);
        end;
-      end
-      else begin
-       if af_segment in dest.address.flags then begin
-        case si1 of
-         1: begin 
-          setop(op,oc_popseg8);
-         end;
-         2: begin
-          setop(op,oc_popseg16);
-         end;
-         4: begin
-          setop(op,oc_popseg32);
-         end;
-         else begin
-          setop(op,oc_popseg);
-         end;
-        end;
-        par.memop.segdataaddress.a:= dest.address.segaddress;
-        par.memop.segdataaddress.offset:= 0;
-       end
+       2: begin
+        po1:= additem(oc_popindirect16);
+       end;
+       4: begin
+        po1:= additem(oc_popindirect32);
+       end;
        else begin
-        if af_paramindirect in dest.address.flags then begin
-         case si1 of
-          1: begin 
-           setop(op,oc_poplocindi8);
-          end;
-          2: begin
-           setop(op,oc_poplocindi16);
-          end;
-          4: begin
-           setop(op,oc_poplocindi32);
-          end;
-          else begin
-           setop(op,oc_poplocindi);
-          end;
-         end;
-        end
-        else begin
-         case si1 of
-          1: begin 
-           setop(op,oc_poploc8);
-          end;
-          2: begin
-           setop(op,oc_poploc16);
-          end;
-          4: begin
-           setop(op,oc_poploc32);
-          end;
-          else begin
-           setop(op,oc_poploc);
-          end;
-         end;
-        end;
-        par.memop.locdataaddress.a:= dest.address.locaddress;
-        par.memop.locdataaddress.a.framelevel:= sublevel -
-                                           dest.address.locaddress.framelevel-1;
-        par.memop.locdataaddress.offset:= 0;
+        po1:= additem(oc_popindirect);
        end;
       end;
+     end
+     else begin
+      if af_segment in dest.address.flags then begin
+       case si1 of
+        1: begin 
+         po1:= additem(oc_popseg8);
+        end;
+        2: begin
+         po1:= additem(oc_popseg16);
+        end;
+        4: begin
+         po1:= additem(oc_popseg32);
+        end;
+        else begin
+         po1:= additem(oc_popseg);
+        end;
+       end;
+       po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
+       po1^.par.memop.segdataaddress.offset:= 0;
+      end
+      else begin
+       if af_paramindirect in dest.address.flags then begin
+        case si1 of
+         1: begin 
+          po1:= additem(oc_poplocindi8);
+         end;
+         2: begin
+          po1:= additem(oc_poplocindi16);
+         end;
+         4: begin
+          po1:= additem(oc_poplocindi32);
+         end;
+         else begin
+          po1:= additem(oc_poplocindi);
+         end;
+        end;
+       end
+       else begin
+        case si1 of
+         1: begin 
+          po1:= additem(oc_poploc8);
+         end;
+         2: begin
+          po1:= additem(oc_poploc16);
+         end;
+         4: begin
+          po1:= additem(oc_poploc32);
+         end;
+         else begin
+          po1:= additem(oc_poploc);
+         end;
+        end;
+       end;
+       po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
+       po1^.par.memop.locdataaddress.a.framelevel:= sublevel -
+                                          dest.address.locaddress.framelevel-1;
+       po1^.par.memop.locdataaddress.offset:= 0;
+      end;
      end;
+     po1^.par.memop.datasize:= si1;
+//      po1^.par.ssad:= ssa1;
     end;
    end;
   end
@@ -1761,8 +1756,7 @@ begin
   with contextstack[stacktop].d do begin
    case kind of
     ck_subres: begin
-     with additem()^ do begin
-      setop(op,oc_pop);
+     with additem(oc_pop)^ do begin
       par.imm.vsize:= dat.fact.datasize; //todo: alignment
      end;    
     end;
@@ -1976,9 +1970,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NOP');
 {$endif}
- with additem()^ do begin
-  setop(op,oc_nop);
- end;
+ additem(oc_nop);
 end;
 
 procedure stringlineenderror();

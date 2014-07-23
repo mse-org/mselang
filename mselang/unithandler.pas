@@ -576,8 +576,8 @@ begin
  with info,unitinfo^ do begin
    initializationstop:= opcount;
   if opcount <> initializationstart then begin
-   with additem()^ do begin
-    setop(op,oc_goto);
+   with additem(oc_goto)^ do begin
+//    setop(op,oc_goto);
 //    op:= @gotoop; //address set in handleinifini
    end;
   end;
@@ -602,8 +602,8 @@ begin
  with info,unitinfo^ do begin
   if opcount <> finalizationstart then begin
    finalizationstop:= opcount;
-   with additem()^ do begin
-    setop(op,oc_goto); //address set in handleinifini
+   with additem(oc_goto)^ do begin
+//    setop(op,oc_goto); //address set in handleinifini
    end;
   end;
  end;
@@ -718,14 +718,15 @@ begin
   end;
   if start1 <> 0 then begin
    with po1[unitinfo^.codestop] do begin
-    setop(op,oc_goto);
+    op.op:= oc_goto;
+//    setop(op,oc_goto);
     par.opaddress:= start1-1;
    end;
    opad1:= unit1^.finistop;
    if opad1 = 0 then begin
     opad1:= unit1^.finalizationstop;
    end;
-   setop(po1[opad1].op,oc_none);         //stop
+   po1[opad1].op.op:= oc_none;         //stop
   end;
 
  end;

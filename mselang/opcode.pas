@@ -42,8 +42,9 @@ function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 
-function additem(): popinfoty;
-function insertitem(const stackoffset: integer;
+function additem(const aopcode: opcodety): popinfoty;
+function insertitem(const aopcode: opcodety;
+                              const stackoffset: integer;
                               const before: boolean): popinfoty;
 //procedure writeop(const operation: opty); inline;
 
@@ -59,6 +60,8 @@ procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
+procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
+
 implementation
 uses
  stackops,handlerutils,errorhandler,segmentutils;
@@ -66,6 +69,16 @@ uses
 type
  opadsty = array[addressbasety] of opcodety;
  aropadsty = array[boolean] of opadsty; 
+
+var
+ optable: poptablety;
+ ssatable: pssatablety;
+ 
+procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
+begin
+ optable:= aoptable;
+ ssatable:= assatable;
+end;
  
 const
  storenilops: aropadsty = (
@@ -124,10 +137,8 @@ procedure addmanagedop(const opsar: aropadsty;
                const aaddress: addressrefty; const count: datasizety;
                const ssaindex: integer);
 begin
- with additem^ do begin
-  par.ssad:= ssaindex;
-  if count > 1 then begin
-   setop(op,opsar[true][aaddress.base]);
+ if count > 1 then begin
+  with additem(opsar[true][aaddress.base])^ do begin
    par.memop.datasize:= count;
    if aaddress.base = ab_segment then begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
@@ -137,9 +148,10 @@ begin
    else begin
     par.memop.podataaddress:= aaddress.offset;
    end;
-  end
-  else begin
-   setop(op,opsar[false][aaddress.base]);
+  end;
+ end
+ else begin
+  with additem(opsar[false][aaddress.base])^ do begin
    if aaddress.base = ab_segment then begin
     par.vsegaddress.a.address:= aaddress.offset;
     par.vsegaddress.a.segment:= aaddress.segment;
@@ -148,7 +160,6 @@ begin
    else begin
     par.vaddress:= aaddress.offset;
    end;
-//   par.vaddress:= aaddress.offset;
   end;
  end;
 end;
@@ -241,21 +252,19 @@ end;
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin  //todo: ssaindex
  ainfo.size:= getdatabitsize(count);
- with additem()^ do begin
-  if ainfo.size > das_32 then begin
-   setop(op,oc_pushimm64);
+ if ainfo.size > das_32 then begin
+  with additem(oc_pushimm64)^ do begin
    par.imm.vint64:= count;
    ainfo.start:= info.opcount;
-   with additem^ do begin
-    setop(op,oc_decloop64);
+   with additem(oc_decloop64)^ do begin
    end;
-  end
-  else begin
-   setop(op,oc_pushimm32);
+  end;
+ end
+ else begin
+  with additem(oc_pushimm32)^ do begin
    par.imm.vint32:= count;
    ainfo.start:= info.opcount;
-   with additem^ do begin
-    setop(op,oc_decloop32);
+   with additem(oc_decloop32)^ do begin
    end;
   end;
  end;
@@ -263,15 +272,13 @@ end;
 
 procedure endforloop(const ainfo: loopinfoty);
 begin
- with additem^ do begin
-  setop(op,oc_goto);
+ with additem(oc_goto)^ do begin
   par.opaddress:= ainfo.start-1;
  end;
  with getoppo(ainfo.start)^ do begin
   par.opaddress:= info.opcount-1;
  end;
- with additem^ do begin
-  setop(op,oc_locvarpop);
+ with additem(oc_locvarpop)^ do begin
   if ainfo.size > das_32 then begin
    par.stacksize:= 8;
   end
@@ -281,35 +288,32 @@ begin
  end;
 end;
 
-function additem(): popinfoty;
+function additem(const aopcode: opcodety): popinfoty;
 begin
  with info do begin
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   result^.par.ssad:= ssaindex;
-  {
-  if high(ops) < opcount then begin
-   setlength(ops,(high(ops)+257)*2);
-  end;
-  result:= @ops[opcount];
-  }
+  inc(ssaindex,ssatable^[aopcode]);
   inc(opcount);
  end;
 end;
 
-function insertitem(const stackoffset: integer;
+function insertitem(const aopcode: opcodety; const stackoffset: integer;
                                             const before: boolean): popinfoty;
 var
  int1: integer;
  ad1: opaddressty;
  po1: popinfoty;
  poend: pointer;
+ ssadelta: integer;
 begin
  with info do begin
   int1:= stackoffset+stackindex;
   if (int1 > stacktop) or not before and (int1 = stacktop) then begin
-   result:= additem;
+   result:= additem(aopcode);
   end
   else begin
+   ssadelta:= ssatable^[aopcode];
    allocsegmentpo(seg_op,sizeof(opinfoty));
    {
    if high(ops) < opcount then begin
@@ -329,17 +333,22 @@ begin
    poend:= po1+opcount-ad1;
    int1:= po1^.par.ssad;
    while po1 <= poend do begin
-    inc(po1^.par.ssad);
+    inc(po1^.par.ssad,ssadelta);
     if po1^.par.ssas1 <= int1 then begin
-     inc(po1^.par.ssas1);
+     inc(po1^.par.ssas1,ssadelta);
     end;
     if po1^.par.ssas2 <= int1 then begin
-     inc(po1^.par.ssas2);
+     inc(po1^.par.ssas2,ssadelta);
     end;
     inc(po1);
    end;
    for int1:= int1+1 to stacktop do begin
-    inc(contextstack[int1].opmark.address);
+    with contextstack[int1] do begin
+     inc(opmark.address);
+     if d.kind = ck_fact then begin
+      inc(d.dat.fact.ssaindex,ssadelta);
+     end;
+    end;
    end;
   end;
  end;

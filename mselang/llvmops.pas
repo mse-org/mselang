@@ -996,6 +996,9 @@ begin
  notimplemented();
 end;
 
+const
+{$include optable.inc}
+
 procedure run();
 var
  endpo: pointer;
@@ -1004,13 +1007,10 @@ begin
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
  while pc < endpo do begin
-  pc^.op.proc();
+  optable[pc^.op.op]();
   inc(pc);
  end;
 end;
-
-const
-{$include optable.inc}
 
 function getoptable: poptablety;
 begin

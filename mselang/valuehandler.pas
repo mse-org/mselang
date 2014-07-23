@@ -63,13 +63,7 @@ begin
        dk_float: begin
         case source1^.kind of
          dk_integer: begin //todo: adjust data size
-          with additem()^ do begin
-           setop(op,oc_int32toflo64);
-          {
-           with par.op1 do begin
-            index0:= 0;
-           end;
-          }
+          with additem(oc_int32toflo64)^ do begin
           end;
           result:= true;
          end;
@@ -91,8 +85,7 @@ begin
          (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
-      with insertitem(stackoffset,false)^ do begin
-       setop(op,oc_offsetpoimm32);
+      with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
        par.imm.vint32:= int1;
       end;
       result:= true;
@@ -128,6 +121,7 @@ var
 
  procedure dosub(const asub: psubdataty);
  var
+  po1: popinfoty;
   po3: ptypedataty;
   po5: pelementoffsetty;
   po6: pvardataty;
@@ -219,8 +213,7 @@ var
       d.dat.fact.datasize:= int1;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
       d.dat.datatyp.typedata:= po6^.vf.typ;        
-      with additem()^ do begin //result var param
-       setop(op,oc_pushstackaddr);
+      with additem(oc_pushstackaddr)^ do begin //result var param
        par.voffset:= -asub^.paramsize+stacklinksize-int1;
       end;
       if sf_constructor in asub^.flags then begin
@@ -239,8 +232,7 @@ var
       {$else}
        ele.findcurrent(tks_self,[],allvisi,po6);
       {$endif}
-       with insertitem(parent-stackindex,false)^ do begin
-        setop(op,oc_pushlocpo);
+       with insertitem(oc_pushlocpo,parent-stackindex,false)^ do begin
         par.memop.locdataaddress.a.framelevel:= -1;
         par.memop.locdataaddress.a.address:= po6^.address.poaddress;
         par.memop.locdataaddress.offset:= 0;
@@ -250,39 +242,35 @@ var
     end;
    end;
    if asub^.flags * [sf_virtual,sf_override,sf_interface] <> [] then begin
-    with additem()^ do begin
-     par.virtcallinfo.selfinstance:= -asub^.paramsize;
-     if sf_interface in asub^.flags then begin
-      par.virtcallinfo.virtoffset:= 
-        asub^.tableindex*sizeof(intfitemty);
-      setop(op,oc_callintf);
-     end
-     else begin
-      par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
-                                                           virtualtableoffset;
-      setop(op,oc_callvirt);
-     end;
+    if sf_interface in asub^.flags then begin
+     po1:= additem(oc_callintf);
+     po1^.par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(intfitemty);
+    end
+    else begin
+     po1:= additem(oc_callvirt);
+     po1^.par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+                                                          virtualtableoffset;
     end;
+    po1^.par.virtcallinfo.selfinstance:= -asub^.paramsize;
    end
    else begin
     if asub^.address = 0 then begin //unresolved header
      linkmark(asub^.links,getsegaddress(seg_op,opcount*sizeof(opinfoty)));
     end;
-    with additem()^ do begin
+    if (asub^.nestinglevel = 0) or 
+                     (asub^.nestinglevel = sublevel) then begin
+     po1:= additem(oc_call);
+     po1^.par.callinfo.linkcount:= -1;
+    end
+    else begin
+     po1:= additem(oc_callout);
+     po1^.par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
+                                                             //for downto 0
+    end;
+    with po1^ do begin
      par.callinfo.params:= parallocstart;
-     par.callinfo.paramcount:= paramco1;
-     
+     par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid
-     if (asub^.nestinglevel = 0) or 
-                      (asub^.nestinglevel = sublevel) then begin
-      setop(op,oc_call);
-      par.callinfo.linkcount:= -1;
-     end
-     else begin
-      setop(op,oc_callout);
-      par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
-                                                              //for downto 0
-     end;
     end;
    end;
   end;

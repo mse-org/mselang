@@ -617,8 +617,7 @@ parseend:
     end
     else begin
      inistop:= opcount;
-     with additem^ do begin
-      setop(op,oc_goto);
+     with additem(oc_goto)^ do begin
      end;
     end;
     finistart:= opcount;
@@ -628,8 +627,7 @@ parseend:
     end
     else begin
      finistop:= opcount;
-     with additem^ do begin
-      setop(op,oc_goto);
+     with additem(oc_goto)^ do begin
      end;
     end;
    end;
@@ -706,10 +704,10 @@ begin
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     case backend of
      bke_direct: begin
-      beginparser(stackops.getoptable(){,@stackops.allocproc});
+      beginparser(stackops.getoptable(),stackops.getssatable());
      end;
      bke_llvm: begin
-      beginparser(llvmops.getoptable(){,@llvmops.allocproc});
+      beginparser(llvmops.getoptable(),stackops.getssatable());
      end;
     end;
     result:= parseunit(input,unit1);

@@ -717,8 +717,7 @@ begin
   end;
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentcontainer);
-   with additem^,par.initclass do begin
-    setop(op,oc_initclass);
+   with additem(oc_initclass)^,par.initclass do begin
     selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
@@ -738,14 +737,12 @@ begin
    trackalloc(po4^.address.locaddress);
    ele1:= po4^.vf.next;
   end;
-  with additem^ do begin
-   setop(op,oc_subbegin);
+  with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;
    par.subbegin.varchain:= po1^.varchain;
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
-   with additem()^ do begin
-    setop(op,oc_locvarpush);
+   with additem(oc_locvarpush)^ do begin
     par.stacksize:= subdef.varsize;
    end;
   end;
@@ -773,19 +770,16 @@ begin
    writemanagedvarop(mo_fini,po1^.paramfinichain,false,0);
   end;
   if d.subdef.varsize <> 0 then begin
-   with additem()^ do begin
-    setop(op,oc_locvarpop);
+   with additem(oc_locvarpop)^ do begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
   if sf_destructor in d.subdef.flags then begin
-   with additem^,par.destroyclass do begin
-    setop(op,oc_destroyclass);
+   with additem(oc_destroyclass)^,par.destroyclass do begin
     selfinstance:= -d.subdef.paramsize;
    end;
   end;
-  with additem()^ do begin
-   setop(op,oc_return);
+  with additem(oc_return)^ do begin
    par.stacksize:= d.subdef.paramsize;
    inc(ssaindex);
   end;
@@ -802,17 +796,15 @@ begin
                     (sf_intfcall in po1^.flags) then begin
     po1^.trampolineaddress:= opcount;
     linkresolve(po1^.trampolinelinks,po1^.trampolineaddress);
-    with additem()^ do begin 
+    with additem(oc_virttrampoline)^ do begin 
       //todo: possibly better in front of sub because of cache line
-     setop(op,oc_virttrampoline);
      par.virttrampolineinfo.selfinstance:= -d.subdef.paramsize;
      par.virttrampolineinfo.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
     end;
    end;
   end;
-  with additem^ do begin
-   setop(op,oc_subend);
+  with additem(oc_subend)^ do begin
   end;
   locallocid:= d.subdef.locallocidbefore;
  end;

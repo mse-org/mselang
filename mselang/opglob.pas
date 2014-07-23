@@ -514,7 +514,8 @@ type
  opflagsty = set of opflagty;
  
  opty = record
-  proc: opprocty;
+//  proc: opprocty;
+  op: opcodety;
   flags: opflagsty;
  end;
  
@@ -533,23 +534,25 @@ type
 
  optablety = array[opcodety] of opprocty;
  poptablety = ^optablety;
-
+ ssatablety = array[opcodety] of integer;
+ pssatablety = ^ssatablety;
+ 
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 
                                                          sizeof(opinfoty);
+
 function checkop(var aop: opty; const aopcode: opcodety): boolean;
                        {$ifndef mse_debugparser} inline;{$endif}
 
-procedure setoptable(const atable: poptablety);
-
+(*
 procedure setop(var aop: opty; const aopcode: opcodety;
                                    const aflags: opflagsty = []);
                        {$ifndef mse_debugparser} inline;{$endif}
+*)
 implementation
  
-var
- optable: poptablety;
- 
+
+(* 
 procedure setop(var aop: opty; const aopcode: opcodety;
                                              const aflags: opflagsty);
                        {$ifndef mse_debugparser} inline;{$endif}
@@ -557,16 +560,11 @@ begin
  aop.proc:= optable^[aopcode];
  aop.flags:= aflags;
 end;
-
+*)
 function checkop(var aop: opty; const aopcode: opcodety): boolean;
                        {$ifndef mse_debugparser} inline;{$endif}
 begin
- result:= aop.proc = optable^[aopcode];
-end;
-
-procedure setoptable(const atable: poptablety);
-begin
- optable:= atable;
+ result:= aop.op = aopcode;
 end;
 
 end.

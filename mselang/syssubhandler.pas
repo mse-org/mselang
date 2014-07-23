@@ -52,39 +52,45 @@ begin
    getvalue(int1-stackindex);
   end;
   for int1:= stacktop-paramco+1 to stacktop do begin
-   with additem()^ do begin
-    with contextstack[int1] do begin //todo: indirection, use table
-     po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
-     case po2^.kind of
-      dk_boolean: begin
-       setop(op,oc_writeboolean);
+//   with additem()^ do begin
+   with contextstack[int1] do begin //todo: indirection, use table
+    po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
+    case po2^.kind of
+     dk_boolean: begin
+      with additem(oc_writeboolean)^ do begin
        par.voffset:= alignsize(sizeof(boolean));
       end;
-      dk_integer: begin
-       setop(op,oc_writeinteger);
+     end;
+     dk_integer: begin
+      with additem(oc_writeinteger)^ do begin
        par.voffset:= alignsize(sizeof(int32));
       end;
-      dk_float: begin
-       setop(op,oc_writefloat);
+     end;
+     dk_float: begin
+      with additem(oc_writefloat)^ do begin
        par.voffset:= alignsize(sizeof(float64));
       end;
-      dk_string8: begin
-       setop(op,oc_writestring8);
+     end;
+     dk_string8: begin
+      with additem(oc_writestring8)^ do begin
        par.voffset:= alignsize(pointersize);
       end;
-      dk_class: begin
-       setop(op,oc_writeclass);
+     end;
+     dk_class: begin
+      with additem(oc_writeclass)^ do begin
        par.voffset:= alignsize(pointersize);
       end;
-      dk_enum: begin
-       setop(op,oc_writeenum);
+     end;
+     dk_enum: begin
+      with additem(oc_writeenum)^ do begin
        par.voffset:= alignsize(pointersize);
        par.voffsaddress:= getrtti(po2);
       end;
-      else begin
-       errormessage(err_cantreadwritevar,[],int1-stackindex);
-       setop(op,oc_none);
-       par.voffset:= 0;
+     end;
+     else begin
+      errormessage(err_cantreadwritevar,[],int1-stackindex);
+      with additem(oc_none)^ do begin
+       par.voffset:= 0;         //dummy
        par.voffsaddress:= getrtti(po2);
       end;
      end;
@@ -104,8 +110,7 @@ end;
 procedure handlewriteln(const paramco: integer);
 begin
  handlewrite(paramco);
- with additem()^ do begin
-  setop(op,oc_writeln);
+ with additem(oc_writeln)^ do begin
  end;
 end;
 
