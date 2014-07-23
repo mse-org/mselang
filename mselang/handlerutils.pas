@@ -940,10 +940,34 @@ begin
 end;
 
 procedure initfactcontext(const stackoffset: integer);
+var
+ int1: integer;
+ po1: pcontextitemty;
+ pend: pointer;
+ ssa1: integer;
 begin
- with info.contextstack[info.stackindex+stackoffset].d do begin
+ int1:= info.stackindex+stackoffset;
+ po1:= pointer(info.contextstack);
+ pend:= po1 + info.stacktop;
+ inc(po1,int1+1);
+ ssa1:= -1;
+ while po1 <= pend do begin
+  with po1^ do begin
+   if d.kind = ck_fact then begin
+    if ssa1 < 0 then begin
+     ssa1:= d.dat.fact.ssaindex;
+    end;
+    inc(d.dat.fact.ssaindex);
+   end;
+  end;
+  inc(po1);
+ end;
+ if ssa1 < 0 then begin
+  ssa1:= info.ssaindex;
+ end;
+ with info.contextstack[int1].d do begin
   kind:= ck_fact;
-  dat.fact.ssaindex:= info.ssaindex;
+  dat.fact.ssaindex:= ssa1;
   inc(info.ssaindex);
   dat.indirection:= 0;
  end;
