@@ -148,7 +148,7 @@ function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
-procedure initfactcontext(var acontext: contextdataty);
+procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(var address: segaddressty);
 procedure trackalloc(var address: locaddressty);
@@ -600,7 +600,7 @@ begin
   if isimm then begin
    par.ssad:= ssaindex;
   end;
-  initfactcontext(po1^.d);
+  initfactcontext(stackoffset);
  end;
 end;
 
@@ -939,9 +939,9 @@ begin
  pushd(insertitem(stackoffset,before),address,offset,size,ssaindex);
 end;
 
-procedure initfactcontext(var acontext: contextdataty);
+procedure initfactcontext(const stackoffset: integer);
 begin
- with acontext do begin
+ with info.contextstack[info.stackindex+stackoffset].d do begin
   kind:= ck_fact;
   dat.fact.ssaindex:= info.ssaindex;
   inc(info.ssaindex);
@@ -971,7 +971,7 @@ begin
      par.voffset:= d.dat.ref.offset;
     end;
    end;
-   initfactcontext(d);
+   initfactcontext(stackoffset);
   end
   else begin
    errormessage(err_cannotassigntoaddr,[],stackoffset);
@@ -1096,7 +1096,7 @@ begin                    //todo: optimize
   {$endif}
   end;
   if d.kind <> ck_fact then begin
-   initfactcontext(d);
+   initfactcontext(stackoffset);
   end;
  end;
  result:= true;
@@ -1127,7 +1127,7 @@ begin
      if endaddress then begin
       pushinsert(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,false);
                   //address pointer on stack
-      initfactcontext(d);
+      initfactcontext(stackoffset);
      end
      else begin
       d.dat.indirection:= 0;
@@ -1313,7 +1313,7 @@ begin
       with contextstack[stacktop],d do begin
        if kind = ck_const then begin
         push(dat.constval.vinteger);
-        initfactcontext(d);
+        initfactcontext(stacktop-stackindex);
        end;
       end;
      end;
@@ -1337,7 +1337,7 @@ begin
        ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
       end;
      end;
-     initfactcontext(d);
+     initfactcontext(stacktop-stackindex-2);
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
     end;

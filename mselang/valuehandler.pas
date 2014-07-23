@@ -214,7 +214,7 @@ var
       end;
       int1:= pushinsertvar(parent-stackindex,false,po3); 
                                     //alloc space for return value
-      initfactcontext(d); //set ssaindex
+      initfactcontext(0); //set ssaindex
       d.kind:= ck_subres;
       d.dat.fact.datasize:= int1;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
@@ -443,7 +443,7 @@ begin
          goto endlab;
        {$endif}
         end;
-        initfactcontext(d); 
+        initfactcontext(0); 
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.indirection:= -1;
