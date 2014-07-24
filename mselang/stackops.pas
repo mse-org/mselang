@@ -437,7 +437,7 @@ begin
  inc(reg0,cpu.pc^.par.imm.voffset);
 end;
 
-procedure nop();
+procedure nopop();
 begin
  //dummy
 end;
@@ -1859,7 +1859,202 @@ var
  globdata: pointer;
 
 const
+  nonessa = 0;
+  nopssa = 0;
+
+  beginparsessa = 0;
+  mainssa = 0;
+  progendssa = 0;  
+  endparsessa = 0;
+
+  movesegreg0ssa = 0;
+  moveframereg0ssa = 0;
+  popreg0ssa = 0;
+  increg0ssa = 0;
+
+  gotossa = 0;
+  cmpjmpneimm4ssa = 0;
+  cmpjmpeqimm4ssa = 0;
+  cmpjmploimm4ssa = 0;
+  cmpjmpgtimm4ssa = 0;
+  cmpjmploeqimm4ssa = 0;
+
+  ifssa = 0;
+  writelnssa = 0;
+  writebooleanssa = 0;
+  writeintegerssa = 0;
+  writefloatssa = 0;
+  writestring8ssa = 0;
+  writeclassssa = 0;
+  writeenumssa = 0;
+
+  pushssa = 0;
+  popssa = 0;
+
+  push8ssa = 0;
+  push16ssa = 0;
+  push32ssa = 0;
+  push64ssa = 0;
+  pushdatakindssa = 0;
+  
+  int32toflo64ssa = 0;
+  
+  negcard32ssa = 0;
+  negint32ssa = 0;
+  negflo64ssa = 0;
+
+  mulint32ssa = 0;
+  mulflo64ssa = 0;
+  addint32ssa = 0;
+  addflo64ssa = 0;
+
+  addimmint32ssa = 0;
+  mulimmint32ssa = 0;
+  offsetpoimm32ssa = 0;
+
+  cmpequboolssa = 0;
+  cmpequint32ssa = 0;
+  cmpequflo64ssa = 0;
+
+  storesegnilssa = 0;
+  storereg0nilssa = 0;
+  storeframenilssa = 0;
+  storestacknilssa = 0;
+  storestackrefnilssa = 0;
+  storesegnilarssa = 0;
+  storeframenilarssa = 0;
+  storereg0nilarssa = 0;
+  storestacknilarssa = 0;
+  storestackrefnilarssa = 0;
+
+  finirefsizesegssa = 0;
+  finirefsizeframessa = 0;
+  finirefsizereg0ssa = 0;
+  finirefsizestackssa = 0;
+  finirefsizestackrefssa = 0;
+  finirefsizeframearssa = 0;
+  finirefsizesegarssa = 0;
+  finirefsizereg0arssa = 0;
+  finirefsizestackarssa = 0;
+  finirefsizestackrefarssa = 0;
+
+  increfsizesegssa = 0;
+  increfsizeframessa = 0;
+  increfsizereg0ssa = 0;
+  increfsizestackssa = 0;
+  increfsizestackrefssa = 0;
+  increfsizeframearssa = 0;
+  increfsizesegarssa = 0;
+  increfsizereg0arssa = 0;
+  increfsizestackarssa = 0;
+  increfsizestackrefarssa = 0;
+
+  decrefsizesegssa = 0;
+  decrefsizeframessa = 0;
+  decrefsizereg0ssa = 0;
+  decrefsizestackssa = 0;
+  decrefsizestackrefssa = 0;
+  decrefsizeframearssa = 0;
+  decrefsizesegarssa = 0;
+  decrefsizereg0arssa = 0;
+  decrefsizestackarssa = 0;
+  decrefsizestackrefarssa = 0;
+
+  popseg8ssa = 0;
+  popseg16ssa = 0;
+  popseg32ssa = 0;
+  popsegssa = 0;
+
+  poploc8ssa = 0;
+  poploc16ssa = 0;
+  poploc32ssa = 0;
+  poplocssa = 0;
+
+  poppar8ssa = 0;
+  poppar16ssa = 0;
+  poppar32ssa = 0;
+  popparssa = 0;
+
+  poplocindi8ssa = 0;
+  poplocindi16ssa = 0;
+  poplocindi32ssa = 0;
+  poplocindissa = 0;
+
+  pushnilssa = 0;
+  pushsegaddressssa = 0;
+
+  pushseg8ssa = 0;
+  pushseg16ssa = 0;
+  pushseg32ssa = 0;
+  pushsegssa = 0;
+
+  pushloc8ssa = 0;
+  pushloc16ssa = 0;
+  pushloc32ssa = 0;
+  pushlocpossa = 0;
+  pushlocssa = 0;
+
+  pushpar8ssa = 0;
+  pushpar16ssa = 0;
+  pushpar32ssa = 0;
+  pushparpossa = 0;
+  pushparssa = 0;
+
+  pushlocindi8ssa = 0;
+  pushlocindi16ssa = 0;
+  pushlocindi32ssa = 0;
+  pushlocindissa = 0;
+
+  pushaddrssa = 0;
+  pushlocaddrssa = 0;
+  pushlocaddrindissa = 0;
+  pushsegaddrssa = 0;
+  pushsegaddrindissa = 0;
+  pushstackaddrssa = 0;
+  pushstackaddrindissa = 0;
+
+  indirect8ssa = 0;
+  indirect16ssa = 0;
+  indirect32ssa = 0;
+  indirectpossa = 0;
+  indirectpooffsssa = 0;
+  indirectoffspossa = 0;
+  indirectssa = 0;
+
+  popindirect8ssa = 0;
+  popindirect16ssa = 0;
+  popindirect32ssa = 0;
+  popindirectssa = 0;
+
+  callssa = 0;
+  calloutssa = 0;
+  callvirtssa = 0;
+  callintfssa = 0;
+  virttrampolinessa = 0;
+
+  locvarpushssa = 0;
+  locvarpopssa = 0;
+
+  subbeginssa = 0;
+  subendssa = 0;
+  returnssa = 0;
+
+  initclassssa = 0;
+  destroyclassssa = 0;
+
+  decloop32ssa = 0;
+  decloop64ssa = 0;
+
+  setlengthstr8ssa = 0;
+
+  raisessa = 0;
+  pushcpucontextssa = 0;
+  popcpucontextssa = 0;
+  finiexceptionssa = 0;
+  continueexceptionssa = 0;
+
 {$include optable.inc}
+{
  ssatable: ssatablety = (
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1868,7 +2063,7 @@ const
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
- 
+}
 procedure run(const asegments: segmentbuffersty);
 var
  seg1: segmentty;

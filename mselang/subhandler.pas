@@ -781,7 +781,7 @@ begin
   end;
   with additem(oc_return)^ do begin
    par.stacksize:= d.subdef.paramsize;
-   inc(ssaindex);
+//   inc(ssaindex);
   end;
   locdatapo:= d.subdef.parambase;
   ssaindex:= d.subdef.ssaindexbefore;

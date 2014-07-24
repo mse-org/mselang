@@ -707,7 +707,7 @@ begin
       beginparser(stackops.getoptable(),stackops.getssatable());
      end;
      bke_llvm: begin
-      beginparser(llvmops.getoptable(),stackops.getssatable());
+      beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;
     result:= parseunit(input,unit1);

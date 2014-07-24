@@ -993,7 +993,7 @@ begin
   with info.contextstack[int1] do begin
    if int1 >= stacktop then begin
     ssa1:= ssaindex;
-    inc(ssaindex);
+//    inc(ssaindex);
    end
    else begin
     op1:= contextstack[int1+1].opmark.address;
@@ -1003,7 +1003,7 @@ begin
     else begin
      if op1 = opcount-1 then begin
       ssa1:= ssaindex;
-      inc(ssaindex);
+//      inc(ssaindex);
      end
      else begin
       ssa1:= getoppo(op1)^.par.ssad; //use current op

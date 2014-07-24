@@ -24,6 +24,7 @@ uses
 //todo: generate bitcode, use static string buffers
  
 function getoptable: poptablety;
+function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
 procedure run();
@@ -161,7 +162,7 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
 end;
 }
-procedure nop();
+procedure nopop();
 begin
  //dummy;
 end;
@@ -997,6 +998,200 @@ begin
 end;
 
 const
+  nonessa = 0;
+  nopssa = 0;
+
+  beginparsessa = 0;
+  mainssa = 1;
+  progendssa = 0;  
+  endparsessa = 0;
+
+  movesegreg0ssa = 1;
+  moveframereg0ssa = 1;
+  popreg0ssa = 1;
+  increg0ssa = 1;
+
+  gotossa = 1;
+  cmpjmpneimm4ssa = 1;
+  cmpjmpeqimm4ssa = 1;
+  cmpjmploimm4ssa = 1;
+  cmpjmpgtimm4ssa = 1;
+  cmpjmploeqimm4ssa = 1;
+
+  ifssa = 1;
+  writelnssa = 1;
+  writebooleanssa = 1;
+  writeintegerssa = 1;
+  writefloatssa = 1;
+  writestring8ssa = 1;
+  writeclassssa = 1;
+  writeenumssa = 1;
+
+  pushssa = 1;
+  popssa = 1;
+
+  push8ssa = 1;
+  push16ssa = 1;
+  push32ssa = 1;
+  push64ssa = 1;
+  pushdatakindssa = 1;
+  
+  int32toflo64ssa = 1;
+  
+  negcard32ssa = 1;
+  negint32ssa = 1;
+  negflo64ssa = 1;
+
+  mulint32ssa = 1;
+  mulflo64ssa = 1;
+  addint32ssa = 1;
+  addflo64ssa = 1;
+
+  addimmint32ssa = 1;
+  mulimmint32ssa = 1;
+  offsetpoimm32ssa = 1;
+
+  cmpequboolssa = 1;
+  cmpequint32ssa = 1;
+  cmpequflo64ssa = 1;
+
+  storesegnilssa = 1;
+  storereg0nilssa = 1;
+  storeframenilssa = 1;
+  storestacknilssa = 1;
+  storestackrefnilssa = 1;
+  storesegnilarssa = 1;
+  storeframenilarssa = 1;
+  storereg0nilarssa = 1;
+  storestacknilarssa = 1;
+  storestackrefnilarssa = 1;
+
+  finirefsizesegssa = 1;
+  finirefsizeframessa = 1;
+  finirefsizereg0ssa = 1;
+  finirefsizestackssa = 1;
+  finirefsizestackrefssa = 1;
+  finirefsizeframearssa = 1;
+  finirefsizesegarssa = 1;
+  finirefsizereg0arssa = 1;
+  finirefsizestackarssa = 1;
+  finirefsizestackrefarssa = 1;
+
+  increfsizesegssa = 1;
+  increfsizeframessa = 1;
+  increfsizereg0ssa = 1;
+  increfsizestackssa = 1;
+  increfsizestackrefssa = 1;
+  increfsizeframearssa = 1;
+  increfsizesegarssa = 1;
+  increfsizereg0arssa = 1;
+  increfsizestackarssa = 1;
+  increfsizestackrefarssa = 1;
+
+  decrefsizesegssa = 1;
+  decrefsizeframessa = 1;
+  decrefsizereg0ssa = 1;
+  decrefsizestackssa = 1;
+  decrefsizestackrefssa = 1;
+  decrefsizeframearssa = 1;
+  decrefsizesegarssa = 1;
+  decrefsizereg0arssa = 1;
+  decrefsizestackarssa = 1;
+  decrefsizestackrefarssa = 1;
+
+  popseg8ssa = 1;
+  popseg16ssa = 1;
+  popseg32ssa = 1;
+  popsegssa = 1;
+
+  poploc8ssa = 1;
+  poploc16ssa = 1;
+  poploc32ssa = 1;
+  poplocssa = 1;
+
+  poppar8ssa = 1;
+  poppar16ssa = 1;
+  poppar32ssa = 1;
+  popparssa = 1;
+
+  poplocindi8ssa = 1;
+  poplocindi16ssa = 1;
+  poplocindi32ssa = 1;
+  poplocindissa = 1;
+
+  pushnilssa = 1;
+  pushsegaddressssa = 1;
+
+  pushseg8ssa = 1;
+  pushseg16ssa = 1;
+  pushseg32ssa = 1;
+  pushsegssa = 1;
+
+  pushloc8ssa = 1;
+  pushloc16ssa = 1;
+  pushloc32ssa = 1;
+  pushlocpossa = 1;
+  pushlocssa = 1;
+
+  pushpar8ssa = 1;
+  pushpar16ssa = 1;
+  pushpar32ssa = 1;
+  pushparpossa = 1;
+  pushparssa = 1;
+
+  pushlocindi8ssa = 1;
+  pushlocindi16ssa = 1;
+  pushlocindi32ssa = 1;
+  pushlocindissa = 1;
+
+  pushaddrssa = 1;
+  pushlocaddrssa = 1;
+  pushlocaddrindissa = 1;
+  pushsegaddrssa = 1;
+  pushsegaddrindissa = 1;
+  pushstackaddrssa = 1;
+  pushstackaddrindissa = 1;
+
+  indirect8ssa = 1;
+  indirect16ssa = 1;
+  indirect32ssa = 1;
+  indirectpossa = 1;
+  indirectpooffsssa = 1;
+  indirectoffspossa = 1;
+  indirectssa = 1;
+
+  popindirect8ssa = 1;
+  popindirect16ssa = 1;
+  popindirect32ssa = 1;
+  popindirectssa = 1;
+
+  callssa = 1;
+  calloutssa = 1;
+  callvirtssa = 1;
+  callintfssa = 1;
+  virttrampolinessa = 1;
+
+  locvarpushssa = 1;
+  locvarpopssa = 1;
+
+  subbeginssa = 1;
+  subendssa = 1;
+  returnssa = 1;
+
+  initclassssa = 1;
+  destroyclassssa = 1;
+
+  decloop32ssa = 1;
+  decloop64ssa = 1;
+
+  setlengthstr8ssa = 1;
+
+  raisessa = 1;
+  pushcpucontextssa = 1;
+  popcpucontextssa = 1;
+  finiexceptionssa = 1;
+  continueexceptionssa = 1;
+
 {$include optable.inc}
 
 procedure run();
@@ -1015,6 +1210,11 @@ end;
 function getoptable: poptablety;
 begin
  result:= @optable;
+end;
+
+function getssatable: pssatablety;
+begin
+ result:= @ssatable;
 end;
 
 finalization

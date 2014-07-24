@@ -15,9 +15,204 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
+ ssatable: ssatablety = (
+  nonessa,
+  nopssa,
+
+  beginparsessa,
+  mainssa,
+  progendssa,  
+  endparsessa,
+
+  movesegreg0ssa,
+  moveframereg0ssa,
+  popreg0ssa,
+  increg0ssa,
+
+  gotossa,
+  cmpjmpneimm4ssa,
+  cmpjmpeqimm4ssa,
+  cmpjmploimm4ssa,
+  cmpjmpgtimm4ssa,
+  cmpjmploeqimm4ssa,
+
+  ifssa,
+  writelnssa,
+  writebooleanssa,
+  writeintegerssa,
+  writefloatssa,
+  writestring8ssa,
+  writeclassssa,
+  writeenumssa,
+
+  pushssa,
+  popssa,
+
+  push8ssa,
+  push16ssa,
+  push32ssa,
+  push64ssa,
+  pushdatakindssa,
+  
+  int32toflo64ssa,
+  
+  negcard32ssa,
+  negint32ssa,
+  negflo64ssa,
+
+  mulint32ssa,
+  mulflo64ssa,
+  addint32ssa,
+  addflo64ssa,
+
+  addimmint32ssa,
+  mulimmint32ssa,
+  offsetpoimm32ssa,
+
+  cmpequboolssa,
+  cmpequint32ssa,
+  cmpequflo64ssa,
+
+  storesegnilssa,
+  storereg0nilssa,
+  storeframenilssa,
+  storestacknilssa,
+  storestackrefnilssa,
+  storesegnilarssa,
+  storeframenilarssa,
+  storereg0nilarssa,
+  storestacknilarssa,
+  storestackrefnilarssa,
+
+  finirefsizesegssa,
+  finirefsizeframessa,
+  finirefsizereg0ssa,
+  finirefsizestackssa,
+  finirefsizestackrefssa,
+  finirefsizeframearssa,
+  finirefsizesegarssa,
+  finirefsizereg0arssa,
+  finirefsizestackarssa,
+  finirefsizestackrefarssa,
+
+  increfsizesegssa,
+  increfsizeframessa,
+  increfsizereg0ssa,
+  increfsizestackssa,
+  increfsizestackrefssa,
+  increfsizeframearssa,
+  increfsizesegarssa,
+  increfsizereg0arssa,
+  increfsizestackarssa,
+  increfsizestackrefarssa,
+
+  decrefsizesegssa,
+  decrefsizeframessa,
+  decrefsizereg0ssa,
+  decrefsizestackssa,
+  decrefsizestackrefssa,
+  decrefsizeframearssa,
+  decrefsizesegarssa,
+  decrefsizereg0arssa,
+  decrefsizestackarssa,
+  decrefsizestackrefarssa,
+
+  popseg8ssa,
+  popseg16ssa,
+  popseg32ssa,
+  popsegssa,
+
+  poploc8ssa,
+  poploc16ssa,
+  poploc32ssa,
+  poplocssa,
+
+  poppar8ssa,
+  poppar16ssa,
+  poppar32ssa,
+  popparssa,
+
+  poplocindi8ssa,
+  poplocindi16ssa,
+  poplocindi32ssa,
+  poplocindissa,
+
+  pushnilssa,
+  pushsegaddressssa,
+
+  pushseg8ssa,
+  pushseg16ssa,
+  pushseg32ssa,
+  pushsegssa,
+
+  pushloc8ssa,
+  pushloc16ssa,
+  pushloc32ssa,
+  pushlocpossa,
+  pushlocssa,
+
+  pushpar8ssa,
+  pushpar16ssa,
+  pushpar32ssa,
+  pushparpossa,
+  pushparssa,
+
+  pushlocindi8ssa,
+  pushlocindi16ssa,
+  pushlocindi32ssa,
+  pushlocindissa,
+
+  pushaddrssa,
+  pushlocaddrssa,
+  pushlocaddrindissa,
+  pushsegaddrssa,
+  pushsegaddrindissa,
+  pushstackaddrssa,
+  pushstackaddrindissa,
+
+  indirect8ssa,
+  indirect16ssa,
+  indirect32ssa,
+  indirectpossa,
+  indirectpooffsssa,
+  indirectoffspossa,
+  indirectssa,
+
+  popindirect8ssa,
+  popindirect16ssa,
+  popindirect32ssa,
+  popindirectssa,
+
+  callssa,
+  calloutssa,
+  callvirtssa,
+  callintfssa,
+  virttrampolinessa,
+
+  locvarpushssa,
+  locvarpopssa,
+
+  subbeginssa,
+  subendssa,
+  returnssa,
+
+  initclassssa,
+  destroyclassssa,
+
+  decloop32ssa,
+  decloop64ssa,
+
+  setlengthstr8ssa,
+
+  raisessa,
+  pushcpucontextssa,
+  popcpucontextssa,
+  finiexceptionssa,
+  continueexceptionssa
+ );
  optable: optablety = ( //order as opcodety
   nil,  //oc_none
-  @nop,
+  @nopop,
 
   @beginparseop,
   @mainop,

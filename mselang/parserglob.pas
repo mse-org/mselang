@@ -600,6 +600,7 @@ type
   stacktop: integer; 
   sublevel: integer;
   ssaindex: integer;
+  nextssaindex: integer;
   unitlevel: integer;
   errorstream: ttextstream;
   errorfla: boolean;
