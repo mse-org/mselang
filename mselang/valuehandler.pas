@@ -147,7 +147,7 @@ var
      inc(po5); //instance pointer
     end;
     
-    parallocstart:= getsegmenttopoffs(seg_paralloc);    
+    parallocstart:= getsegmenttopoffs(seg_localloc);    
     for int1:= stackindex+3+idents.high to stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
@@ -183,7 +183,7 @@ var
                                                         int1-stackindex);
       end;
       with pparallocinfoty(
-                allocsegmentpo(seg_paralloc,sizeof(parallocinfoty)))^ do begin
+                allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
        ssaindex:= d.dat.fact.ssaindex;
        if po6^.address.indirectlevel > 0 then begin
         size:= pointersize;

@@ -119,7 +119,7 @@ end;
 procedure locassign;
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.datasize*8)+' %'+inttostr(ssad)+
+  outass('store i'+inttostr(memop.datasize*8)+' %'+inttostr(ssas1)+
                ',i'+inttostr(memop.datasize*8)+'* '+
                            locdataaddress(memop.locdataaddress));
  end;
@@ -825,7 +825,7 @@ var
 begin
  with pc^.par.callinfo do begin
   outass('call void @s'+inttostr(ad+1)+'(');
-  parpo:= getsegmentpo(seg_paralloc,params);
+  parpo:= getsegmentpo(seg_localloc,params);
   endpo:= parpo + paramcount;
   first:= true;
   while parpo < endpo do begin
@@ -870,8 +870,10 @@ end;
 
 procedure subbeginop();
 var
- ele1: elementoffsetty;
- po1: pvardataty;
+// ele1: elementoffsetty;
+// po1: pvardataty;
+ po1: plocallocinfoty;
+ poend: pointer;
  first: boolean;
  str1: shortstring;
  int1: integer;
@@ -903,39 +905,25 @@ begin
    inc(allocpo);
   end;
   *)
-  ele1:= varchain;
+  po1:= getsegmentpo(seg_localloc,allocs.allocs);
+  poend:= po1+allocs.alloccount;
   first:= true;
-  while ele1 <> 0 do begin
-   po1:= ele.eledataabs(ele1);
-   if not (af_param in po1^.address.flags) then begin
+  while po1 < poend do begin
+   if not (af_param in po1^.a.flags) then begin
     break;
    end;
-   if po1^.address.indirectlevel > 0 then begin
-    int1:= pointersize;
-   end
-   else begin
-    int1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
-   end;
-   str1:= ',i'+inttostr(8*int1)+' '+locaddress(po1^.address.locaddress);
+   str1:= ',i'+inttostr(8*po1^.size)+' '+locaddress(po1^.a.locaddress);
    if first then begin
     str1[1]:= ' ';
     first:= false;
    end;
    outass(str1);
-   ele1:= po1^.vf.next;
+   inc(po1);
   end;
   outass('){');
-  while ele1 <> 0 do begin
-   po1:= ele.eledataabs(ele1);
-   if po1^.address.indirectlevel > 0 then begin
-    int1:= pointersize;
-   end
-   else begin
-    int1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
-   end;
-   outass(locaddress(po1^.address.locaddress)+' = alloca i'+inttostr(8*int1));
-
-   ele1:= po1^.vf.next;
+  while po1 < poend do begin
+   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+   inc(po1);
   end;
  end;
 end;
@@ -1104,10 +1092,10 @@ const
   popseg32ssa = 0;
   popsegssa = 0;
 
-  poploc8ssa = 1;
-  poploc16ssa = 1;
-  poploc32ssa = 1;
-  poplocssa = 1;
+  poploc8ssa = 0;
+  poploc16ssa = 0;
+  poploc32ssa = 0;
+  poplocssa = 0;
 
   poppar8ssa = 1;
   poppar16ssa = 1;

@@ -28,7 +28,7 @@ type
  pgloballocinfoty = ^globallocinfoty;
 
  locallocinfoty = record
-  a: locaddressty;
+  a: addressvaluety;
   size: integer;
  end;
  plocallocinfoty = ^locallocinfoty;
@@ -396,18 +396,20 @@ type
     podataaddress: dataaddressty;
    );
  end;
-{
+
  suballocinfoty = record
-  parallocs: dataoffsty;
-  paralloccount: integer;
-  varallocs: dataoffsty;
-  varalloccount: integer;
+  allocs: dataoffsty;
+  alloccount: integer;
+//  parallocs: dataoffsty;
+//  paralloccount: integer;
+//  varallocs: dataoffsty;
+//  varalloccount: integer;
  end;
-}
+
  subbeginty = record
   subname: opaddressty;
-  varchain: elementoffsetty;
-//  allocs: suballocinfoty;
+//  varchain: elementoffsetty;
+  allocs: suballocinfoty;
  end;
 
  subendty = record

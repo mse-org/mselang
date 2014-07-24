@@ -688,6 +688,8 @@ var
  po3: ptypedataty;
  po4: pvardataty;
  ele1,ele2: elementoffsetty;
+ int1,int2: integer;
+ alloc1: dataoffsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -732,15 +734,25 @@ begin
    po4^.vf.next:= ele2;
   end;
   ele1:= po1^.varchain;
+  alloc1:= getsegmenttopoffs(seg_localloc);
+  int1:= 0;
   while ele1 <> 0 do begin      //number params and vars
    po4:= ele.eledataabs(ele1);
-   trackalloc(po4^.address.locaddress);
+   if po4^.address.indirectlevel > 0 then begin
+    int2:= pointersize;
+   end
+   else begin
+    int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bytesize;
+   end;
+   trackalloc(int2,po4^.address);
    ele1:= po4^.vf.next;
+   inc(int1);
   end;
   resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;
-   par.subbegin.varchain:= po1^.varchain;
+   par.subbegin.allocs.allocs:= alloc1;
+   par.subbegin.allocs.alloccount:= int1;
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin

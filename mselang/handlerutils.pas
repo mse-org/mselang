@@ -150,8 +150,8 @@ function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
-procedure trackalloc(var address: segaddressty);
-procedure trackalloc(var address: locaddressty);
+procedure trackalloc(const asize: integer; var address: segaddressty);
+procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 
 procedure resetssa();
@@ -1530,28 +1530,23 @@ begin
  end;
 end;
 
-procedure trackalloc(var address: segaddressty);
+procedure trackalloc(const asize: integer; var address: segaddressty);
 begin
- if address.segment = seg_globvar then begin
-  address.address:= info.globallocid;
-  inc(info.globallocid);
-  {
-  with pgloballocinfoty(
-             allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
-   a:= address;
-   size:= asize;
+ if info.backend = bke_llvm then begin
+  if address.segment = seg_globvar then begin
+   address.address:= info.globallocid;
+   inc(info.globallocid);
+   {
+   with pgloballocinfoty(
+              allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
+    a:= address;
+    size:= asize;
+   end;
+   }
   end;
-  }
  end;
 end;
 
-procedure trackalloc(var address: locaddressty);
-begin
- address.address:= info.locallocid;
- inc(info.locallocid);
-end;
-
-{ 
 procedure trackalloc(const asize: integer; var address: addressvaluety);
 begin
  if info.backend = bke_llvm then begin
@@ -1563,13 +1558,13 @@ begin
    inc(info.locallocid);
    with plocallocinfoty(
                allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
-    a:= address.locaddress;
+    a:= address;
     size:= asize;
    end;
   end;
  end;
 end;
-}
+
 {
 procedure trackalloc(const asize: integer; var address: locaddressty);
 begin
