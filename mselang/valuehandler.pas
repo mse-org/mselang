@@ -325,7 +325,7 @@ var
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
          pushinsertdata(0,false,pvardataty(po2)^.address,offs1,
-                                                      pointersize,ssaindex);
+                                                      pointersize{,ssaindex});
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin

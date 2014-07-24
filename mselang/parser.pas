@@ -299,7 +299,7 @@ var
  stackindexbefore: integer;
  stacktopbefore: integer;
  unitinfobefore: punitinfoty;
- ssaindexbefore: integer;
+ ssabefore: ssainfoty;
  pcbefore: pcontextty;
  stopparserbefore: boolean;
  eleparentbefore: elementoffsetty;
@@ -324,11 +324,11 @@ begin
   stackindexbefore:= stackindex;
   stacktopbefore:= stacktop;
   unitinfobefore:= unitinfo;
-  ssaindexbefore:= ssaindex;
+  ssabefore:= ssa;
   pcbefore:= pc;
   stopparserbefore:= stopparser;
 
-  ssaindex:= 0;
+  resetssa();
   currentsubchain:= 0;
   currentsubcount:= 0;
   currentstatementflagsbefore:= currentstatementflags;
@@ -653,7 +653,7 @@ parseend:
   stacktop:= stacktopbefore;
   unitinfo:= unitinfobefore;
   filename:= filenamebefore;
-  ssaindex:= ssaindexbefore;
+  ssa:= ssabefore;
   pc:= pcbefore;
   stopparser:= stopparserbefore;
   currentstatementflags:= currentstatementflagsbefore;

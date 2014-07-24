@@ -119,7 +119,7 @@ procedure push(const avalue: addressvaluety; const offset: dataoffsty;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                            const size: datasizety; const ssaindex: integer);
+                            const size: datasizety{; const ssaindex: integer});
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -133,7 +133,7 @@ procedure pushinsertsegaddress(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                              const size: datasizety; const ssaindex: integer);
+                              const size: datasizety{; const ssaindex: integer});
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -153,6 +153,8 @@ procedure initfactcontext(const stackoffset: integer);
 procedure trackalloc(var address: segaddressty);
 procedure trackalloc(var address: locaddressty);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
+
+procedure resetssa();
 
 procedure init();
 procedure deinit();
@@ -860,8 +862,8 @@ end;
 
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const before: boolean; const address: addressvaluety;
-                     const offset: dataoffsty; const size: datasizety;
-                     const ssaindex: integer);
+                     const offset: dataoffsty; const size: datasizety{;
+                     const ssaindex: integer});
 //todo: optimize
 
  function getop(const aop: opcodety): popinfoty;
@@ -964,16 +966,16 @@ end;
 
 //todo: optimize call
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                         const size: datasizety; const ssaindex: integer);
+                         const size: datasizety{; const ssaindex: integer});
 begin
- pushd(false,0,false,address,offset,size,ssaindex);
+ pushd(false,0,false,address,offset,size{,ssaindex});
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                  const size: datasizety; const ssaindex: integer);
+                  const size: datasizety{; const ssaindex: integer});
 begin
- pushd(true,stackoffset,before,address,offset,size,ssaindex);
+ pushd(true,stackoffset,before,address,offset,size{,ssaindex});
 end;
 
 procedure initfactcontext(const stackoffset: integer);
@@ -992,7 +994,7 @@ begin
   int1:= stackindex+stackoffset;
   with info.contextstack[int1] do begin
    if int1 >= stacktop then begin
-    ssa1:= ssaindex;
+    ssa1:= ssa.index;
 //    inc(ssaindex);
    end
    else begin
@@ -1002,7 +1004,7 @@ begin
     end
     else begin
      if op1 = opcount-1 then begin
-      ssa1:= ssaindex;
+      ssa1:= ssa.index;
 //      inc(ssaindex);
      end
      else begin
@@ -1123,7 +1125,7 @@ begin                    //todo: optimize
        si1:= pointersize;
       end;
       pushinsertdata(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,
-                                                                 si1,ssaindex);
+                                                                 si1{,ssaindex});
      end;
     end;
    end;
@@ -1261,6 +1263,14 @@ begin
  syssubhandler.deinit();
 end;
 
+procedure resetssa();
+begin
+ with info do begin
+  ssa.index:= 0;
+  ssa.nextindex:= 0;
+ end;
+end;
+
 procedure updateop(const opsinfo: opsinfoty);
 //todo: don't convert inplace, stack items will be of variable size
 var
@@ -1386,7 +1396,7 @@ begin
     end
     else begin
      with additem(op1)^ do begin      
-      par.ssad:= ssaindex;
+      par.ssad:= ssa.index;
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
      end;
@@ -1700,7 +1710,8 @@ begin
   if indent then begin
    write('  ');
   end;
-  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,' S:',ssaindex,
+  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
+  ' S:',ssa.index,' N:',ssa.nextindex,
   ' cont:',currentcontainer);
   if currentcontainer <> 0 then begin
    write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name));

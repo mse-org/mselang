@@ -569,8 +569,8 @@ begin
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
-    d.subdef.ssaindexbefore:= ssaindex;
-    ssaindex:= 0;
+    d.subdef.ssabefore:= ssa;
+    resetssa();
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     d.subdef.paramsize:= paramsize1;
@@ -737,6 +737,7 @@ begin
    trackalloc(po4^.address.locaddress);
    ele1:= po4^.vf.next;
   end;
+  resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;
    par.subbegin.varchain:= po1^.varchain;
@@ -784,7 +785,7 @@ begin
 //   inc(ssaindex);
   end;
   locdatapo:= d.subdef.parambase;
-  ssaindex:= d.subdef.ssaindexbefore;
+  ssa:= d.subdef.ssabefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   ele.releaseelement(b.elemark); //remove local definitions

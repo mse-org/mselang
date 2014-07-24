@@ -330,7 +330,12 @@ type
  opmarkty = record
   address: opaddressty;
  end;
- 
+
+ ssainfoty = record
+  index: integer;
+  nextindex: integer;
+ end;
+  
  subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
               sf_functiontype,sf_header,
               sf_virtual,sf_override,sf_interface,
@@ -343,7 +348,7 @@ type
   paramsize: integer; //params+stacklinksize
   locallocidbefore: integer;
   varsize: integer;
-  ssaindexbefore: integer;
+  ssabefore: ssainfoty;
   ref: elementoffsetty;
   match: elementoffsetty;
   error: boolean;
@@ -598,8 +603,7 @@ type
   stackindex: integer; 
   stacktop: integer; 
   sublevel: integer;
-  ssaindex: integer;
-  nextssaindex: integer;
+  ssa: ssainfoty;
   unitlevel: integer;
   errorstream: ttextstream;
   errorfla: boolean;

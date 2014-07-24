@@ -1171,11 +1171,11 @@ const
   callintfssa = 1;
   virttrampolinessa = 1;
 
-  locvarpushssa = 1;
-  locvarpopssa = 1;
+  locvarpushssa = 0; //dummy
+  locvarpopssa = 0;  //dummy
 
   subbeginssa = 1;
-  subendssa = 1;
+  subendssa = 0;
   returnssa = 1;
 
   initclassssa = 1;

@@ -178,6 +178,7 @@ begin
  with info,getoppo(startupoffset)^ do begin
   par.beginparse.mainad:= opcount;
  end;
+ resetssa();
  with additem(oc_main)^ do begin
  end;
 end;
