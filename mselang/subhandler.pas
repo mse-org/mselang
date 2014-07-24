@@ -570,7 +570,7 @@ begin
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
     d.subdef.ssaindexbefore:= ssaindex;
-    ssaindex:= ssastart;
+    ssaindex:= 0;
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     d.subdef.paramsize:= paramsize1;

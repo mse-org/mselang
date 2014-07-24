@@ -2086,7 +2086,7 @@ begin
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
  while not cpu.stop do begin
-  optable[cpu.pc^.op.op]();;
+  optable[cpu.pc^.op.op]();
   inc(cpu.pc);
  end;
 end;

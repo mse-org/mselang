@@ -328,7 +328,7 @@ begin
   pcbefore:= pc;
   stopparserbefore:= stopparser;
 
-  ssaindex:= ssastart;
+  ssaindex:= 0;
   currentsubchain:= 0;
   currentsubcount:= 0;
   currentstatementflagsbefore:= currentstatementflags;
@@ -692,7 +692,6 @@ begin
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
     info.unitinfo:= unit1;
-    ssaindex:= ssastart;    
     stringbuffer:= '';
     errorstream:= aerror;
     stackdepth:= defaultstackdepth;

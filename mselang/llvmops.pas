@@ -1099,10 +1099,10 @@ const
   decrefsizestackarssa = 1;
   decrefsizestackrefarssa = 1;
 
-  popseg8ssa = 1;
-  popseg16ssa = 1;
-  popseg32ssa = 1;
-  popsegssa = 1;
+  popseg8ssa = 0;
+  popseg16ssa = 0;
+  popseg32ssa = 0;
+  popsegssa = 0;
 
   poploc8ssa = 1;
   poploc16ssa = 1;
@@ -1122,10 +1122,10 @@ const
   pushnilssa = 1;
   pushsegaddressssa = 1;
 
-  pushseg8ssa = 1;
-  pushseg16ssa = 1;
-  pushseg32ssa = 1;
-  pushsegssa = 1;
+  pushseg8ssa = 0;
+  pushseg16ssa = 0;
+  pushseg32ssa = 0;
+  pushsegssa = 0;
 
   pushloc8ssa = 1;
   pushloc16ssa = 1;

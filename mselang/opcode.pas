@@ -291,10 +291,14 @@ end;
 function additem(const aopcode: opcodety): popinfoty;
 begin
  with info do begin
-  result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   ssaindex:= nextssaindex;
-  result^.par.ssad:= ssaindex;
   inc(nextssaindex,ssatable^[aopcode]);
+  result:= allocsegmentpo(seg_op,sizeof(opinfoty));
+  with result^ do begin
+   op.op:= aopcode;
+   op.flags:= [];
+   par.ssad:= ssaindex;
+  end;
   inc(opcount);
  end;
 end;
