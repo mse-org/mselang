@@ -98,7 +98,7 @@ end;
 procedure segassign();
 begin
  with pc^.par do begin
-  outass('store i32 %'+inttostr(ssad)+', i'+inttostr(memop.datasize*8)+'* '+
+  outass('store i32 %'+inttostr(ssas1)+', i'+inttostr(memop.datasize*8)+'* '+
                                          segdataaddress(memop.segdataaddress));
  end;
 end;

@@ -43,9 +43,8 @@ function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 
 function additem(const aopcode: opcodety): popinfoty;
-function insertitem(const aopcode: opcodety;
-                              const stackoffset: integer;
-                              const before: boolean): popinfoty;
+function insertitem(const aopcode: opcodety; const stackoffset: integer;
+                                             const before: boolean): popinfoty;
 //procedure writeop(const operation: opty); inline;
 
 procedure inipointer(const aaddress: addressrefty; const count: datasizety;

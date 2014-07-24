@@ -1638,7 +1638,7 @@ begin
       end;
      end;
      po1^.par.memop.datasize:= si1;
-//      po1^.par.ssad:= ssa1;
+     po1^.par.ssas1:= ssa1;
     end;
    end;
   end
