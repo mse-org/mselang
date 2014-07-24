@@ -1393,14 +1393,17 @@ begin
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
      operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
+     dec(stacktop,2);
     end
     else begin
      with additem(op1)^ do begin      
-      par.ssad:= ssa.index;
+//      par.ssad:= ssa.index;
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
      end;
-     initfactcontext(stacktop-stackindex-2);
+     dec(stacktop,2);
+     opmark.address:= opcount-1;
+     initfactcontext(-1{stacktop-stackindex});
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
     end;
@@ -1409,7 +1412,6 @@ begin
 //  if contextstack[stacktop].d.kind <> ck_const then begin
 //   getvalue(stacktop-stackindex{,false});
 //  end;
-  dec(stacktop,2);
   stackindex:= stacktop-1; 
  end;
 end;

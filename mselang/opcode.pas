@@ -305,7 +305,7 @@ end;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                                             const before: boolean): popinfoty;
 var
- int1: integer;
+ int1,int2: integer;
  ad1: opaddressty;
  po1: popinfoty;
  poend: pointer;
@@ -333,16 +333,21 @@ begin
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    result^.op.op:= aopcode;
-   inc(opcount);
+   if ad1 = opcount then begin
+    result^.par.ssad:= ssa.nextindex;
+    ssa.index:= ssa.nextindex;
+    inc(ssa.nextindex,ssadelta);
+   end;
    po1:= result+1;
    poend:= po1+opcount-ad1;
-   int1:= po1^.par.ssad;
+   inc(opcount);
+   int2:= po1^.par.ssad;
    while po1 <= poend do begin
     inc(po1^.par.ssad,ssadelta);
-    if po1^.par.ssas1 <= int1 then begin
+    if po1^.par.ssas1 <= int2 then begin
      inc(po1^.par.ssas1,ssadelta);
     end;
-    if po1^.par.ssas2 <= int1 then begin
+    if po1^.par.ssas2 <= int2 then begin
      inc(po1^.par.ssas2,ssadelta);
     end;
     inc(po1);
