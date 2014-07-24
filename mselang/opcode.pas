@@ -332,6 +332,7 @@ begin
    end;
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
+   result^.op.op:= aopcode;
    inc(opcount);
    po1:= result+1;
    poend:= po1+opcount-ad1;
