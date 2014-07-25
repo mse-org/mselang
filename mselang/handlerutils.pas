@@ -1402,7 +1402,7 @@ begin
       par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
      end;
      dec(stacktop,2);
-     opmark.address:= opcount-1;
+//     opmark.address:= opcount-1;
      initfactcontext(-1{stacktop-stackindex});
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
