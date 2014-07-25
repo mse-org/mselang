@@ -335,9 +335,9 @@ begin
    result^.op.op:= aopcode;
    if ad1 = opcount then begin
     result^.par.ssad:= ssa.nextindex;
-    ssa.index:= ssa.nextindex;
-    inc(ssa.nextindex,ssadelta);
    end;
+   ssa.index:= ssa.nextindex;
+   inc(ssa.nextindex,ssadelta);
    po1:= result+1;
    poend:= po1+opcount-ad1;
    inc(opcount);
