@@ -544,16 +544,17 @@ end;
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 begin
  with info,contextstack[stackindex+stackoffset].d.dat.ref do begin
-  if af_segment in address.flags then begin
+  if af_segment in c.address.flags then begin
    with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
-    par.vsegaddress.a:= address.segaddress;
+    par.vsegaddress.a:= c.address.segaddress;
     par.vsegaddress.offset:= offset;
    end;
   end
   else begin
    with insertitem(oc_pushlocaddr,stackoffset,before)^ do begin
-    par.vlocaddress.a:= address.locaddress;
-    par.vlocaddress.a.framelevel:= info.sublevel-address.locaddress.framelevel-1;
+    par.vlocaddress.a:= c.address.locaddress;
+    par.vlocaddress.a.framelevel:= info.sublevel-
+                          c.address.locaddress.framelevel-1;
     par.vlocaddress.offset:= offset;
    end;
   end;
@@ -1028,10 +1029,10 @@ begin
  with info,contextstack[stackindex+stackoffset] do begin;
   if d.dat.indirection <= 0 then begin
    if d.dat.indirection = 0 then begin
-    pushinsert(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,true);
+    pushinsert(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,true);
    end
    else begin
-    pushinsert(stackoffset,false,d.dat.ref.address,0,true);
+    pushinsert(stackoffset,false,d.dat.ref.c.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
      insertitem(oc_indirectpo,stackoffset,false);
     end;
@@ -1124,7 +1125,7 @@ begin                    //todo: optimize
       else begin
        si1:= pointersize;
       end;
-      pushinsertdata(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,
+      pushinsertdata(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,
                                                                  si1{,ssaindex});
      end;
     end;
@@ -1170,7 +1171,7 @@ end;
 function getaddress(const stackoffset: integer;
                                 const endaddress: boolean): boolean;
 var
- ref1: refvaluety;
+// ref1: refvaluety;
  int1: integer;
 begin
  result:= false;
@@ -1190,18 +1191,24 @@ begin
    ck_ref: begin
     if d.dat.indirection = 1 then begin
      if endaddress then begin
-      pushinsert(stackoffset,false,d.dat.ref.address,d.dat.ref.offset,false);
+      pushinsert(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,false);
                   //address pointer on stack
       initfactcontext(stackoffset);
      end
      else begin
+      d.kind:= ck_refconst;
       d.dat.indirection:= 0;
-      ref1:= d.dat.ref; //todo: optimize
-      d.kind:= ck_const;
+//      ref1:= d.dat.ref; //todo: optimize
+      d.dat.ref.c.address.poaddress:=
+                       d.dat.ref.c.address.poaddress + d.dat.ref.offset;
+      d.dat.ref.offset:= 0;
+//      d.dat.ref.c.address:= ref1
+      {
       d.dat.constval.kind:= dk_address;
-      d.dat.constval.vaddress:= ref1.address;
+      d.dat.constval.vaddress:= ref1.c.address;
       d.dat.constval.vaddress.poaddress:= 
                        d.dat.constval.vaddress.poaddress + ref1.offset;
+      }
      end;
     end
     else begin
@@ -1695,7 +1702,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
  procedure writeref(const ainfo: contextdataty);
  begin
   with ainfo.dat.ref do begin
-   writeaddress(address);
+   writeaddress(c.address);
    write('O:',offset,' ');
   end;
  end;//writeref

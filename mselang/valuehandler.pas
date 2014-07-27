@@ -435,8 +435,9 @@ begin
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.indirection:= -1;
-        d.dat.ref.address:= pvardataty(ele.eledataabs(ele2))^.address;
+        d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         d.dat.ref.offset:= offset;
+        d.dat.ref.c.varele:= 0;
        end
        else begin
         d:= contextstack[stackindex-1].d; 
@@ -446,6 +447,7 @@ begin
           d.dat.datatyp.typedata:= vf.typ;
           d.dat.datatyp.indirectlevel:= indirectlevel;
           d.dat.ref.offset:= offset;
+          d.dat.ref.c.varele:= 0;
          end;
          ck_fact: begin
           internalerror1(ie_notimplemented,'20140427E'); //todo
@@ -463,10 +465,11 @@ begin
      else begin //ek_var
       if isgetfact then begin
        d.kind:= ck_ref;
-       d.dat.ref.address:= pvardataty(po2)^.address;
+       d.dat.ref.c.address:= pvardataty(po2)^.address;
        d.dat.ref.offset:= 0;
+       d.dat.ref.c.varele:= ele.eledatarel(po2); //used to strore ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
-       d.dat.datatyp.indirectlevel:= d.dat.ref.address.indirectlevel +
+       d.dat.datatyp.indirectlevel:= d.dat.ref.c.address.indirectlevel +
            ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;
        d.dat.indirection:= 0;
       end

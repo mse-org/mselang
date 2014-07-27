@@ -1538,6 +1538,7 @@ begin
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
+   ssa1:= contextstack[stacktop].d.dat.fact.ssaindex;
    with contextstack[stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
@@ -1564,6 +1565,15 @@ begin
        typematch:= true;
       end;
      end;
+     ck_refconst: begin
+      dest.address:= d.dat.ref.c.address;
+      if (af_param in dest.address.flags) and 
+                      (d.dat.ref.c.varele <> 0) then begin
+       pvardataty(ele.eledataabs(d.dat.ref.c.varele))^.
+                                   address.locaddress.ssaindex:= ssa1;
+      end;
+      typematch:= true;
+     end;
      ck_fact,ck_subres: begin
       dest.address.flags:= [];
       typematch:= true;
@@ -1584,10 +1594,6 @@ begin
     end;
                          //todo: use destinationaddress directly
     typematch:= tryconvert(stacktop-stackindex,dest.typ,int1);
-    ssa1:= contextstack[stacktop].d.dat.fact.ssaindex;
-    if af_local in dest.address.flags then begin
-     dest.address.locaddress.ssaindex:= ssa1;
-    end;
     if not typematch then begin
      assignmenterror(contextstack[stacktop].d,dest);
     end
@@ -1753,7 +1759,7 @@ begin
                          (po1^.kind in [dk_record,dk_class]) then begin
 
      with pvardataty(ele.addscope(ek_var,d.dat.datatyp.typedata))^ do begin
-      address:= d.dat.ref.address;
+      address:= d.dat.ref.c.address;
       address.poaddress:= address.poaddress + d.dat.ref.offset;
       vf.typ:= d.dat.datatyp.typedata;
       vf.next:= 0;

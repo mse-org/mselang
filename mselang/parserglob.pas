@@ -105,7 +105,7 @@ const
 type 
  contextkindty = (ck_none,ck_error,ck_implementation,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
-                  ck_const,ck_range,ck_ref,ck_fact,ck_reffact,
+                  ck_const,ck_range,ck_refconst,ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
@@ -260,11 +260,19 @@ type
   enum: elementoffsetty;
  end; 
 
- refvaluety = record
+ refconstvaluety = record
   address: addressvaluety;  //indirectlevel = additional
-  offset: dataoffsty;
+  varele: elementoffsetty;
  end;
-  
+   
+ refvaluety = record
+  c: refconstvaluety;
+  case contextkindty of
+   ck_ref:(
+    offset: dataoffsty;
+   );
+ end;
+
  dataty = record
   case kind: datakindty of
    dk_boolean:(
@@ -424,7 +432,7 @@ type
    ck_fact,ck_subres:(
     fact: factinfoty;
    );
-   ck_ref:(
+   ck_refconst,ck_ref:(
     ref: refvaluety;
    );
  end;
@@ -444,7 +452,7 @@ type
    ck_getfact:(
     getfact: getfactinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:( //datacontexts
+   ck_const,ck_fact,ck_subres,ck_refconst,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
    ck_index:(
