@@ -75,14 +75,19 @@ begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
 
-function locdataaddress(const address: locdataaddressty): string;
-begin
- result:= '%l'+inttostr(address.a.address);
-end;
-
 function locaddress(const address: locaddressty): string;
 begin
- result:= '%l'+inttostr(address.address);
+ if address.ssaindex > 0 then begin
+  result:= '%'+inttostr(address.ssaindex);
+ end
+ else begin
+  result:= '%l'+inttostr(address.address);
+ end;
+end;
+
+function locdataaddress(const address: locdataaddressty): string;
+begin
+ result:= locaddress(address.a);
 end;
 
 procedure stackassign(const ssaindex: integer; const value: int32);
@@ -129,8 +134,8 @@ procedure parassign;
 begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+
-               ' = add i'+inttostr(memop.datasize)+' '+
-               locdataaddress(memop.locdataaddress)+', 0');
+               ' = add i'+inttostr(memop.datasize*8)+
+               ' %'+inttostr(ssas1)+', 0');
  end;
 end;
 {
@@ -608,6 +613,23 @@ begin
  locassign();
 end;
 
+procedure poplocindi8op();
+begin
+ notimplemented();
+end;
+procedure poplocindi16op();
+begin
+ notimplemented();
+end;
+procedure poplocindi32op();
+begin
+ notimplemented();
+end;
+procedure poplocindiop();
+begin
+ notimplemented();
+end;
+
 procedure poppar8op();
 begin
  parassign();
@@ -628,19 +650,22 @@ begin
  parassign();
 end;
 
-procedure poplocindi8op();
+procedure popparindi8op();
 begin
  notimplemented();
 end;
-procedure poplocindi16op();
+
+procedure popparindi16op();
 begin
  notimplemented();
 end;
-procedure poplocindi32op();
+
+procedure popparindi32op();
 begin
  notimplemented();
 end;
-procedure poplocindiop();
+
+procedure popparindiop();
 begin
  notimplemented();
 end;
@@ -1097,15 +1122,20 @@ const
   poploc32ssa = 0;
   poplocssa = 0;
 
+  poplocindi8ssa = 1;
+  poplocindi16ssa = 1;
+  poplocindi32ssa = 1;
+  poplocindissa = 1;
+
   poppar8ssa = 1;
   poppar16ssa = 1;
   poppar32ssa = 1;
   popparssa = 1;
 
-  poplocindi8ssa = 1;
-  poplocindi16ssa = 1;
-  poplocindi32ssa = 1;
-  poplocindissa = 1;
+  popparindi8ssa = 1;
+  popparindi16ssa = 1;
+  popparindi32ssa = 1;
+  popparindissa = 1;
 
   pushnilssa = 1;
   pushsegaddressssa = 1;
@@ -1121,16 +1151,16 @@ const
   pushlocpossa = 1;
   pushlocssa = 1;
 
+  pushlocindi8ssa = 1;
+  pushlocindi16ssa = 1;
+  pushlocindi32ssa = 1;
+  pushlocindissa = 1;
+
   pushpar8ssa = 1;
   pushpar16ssa = 1;
   pushpar32ssa = 1;
   pushparpossa = 1;
   pushparssa = 1;
-
-  pushlocindi8ssa = 1;
-  pushlocindi16ssa = 1;
-  pushlocindi32ssa = 1;
-  pushlocindissa = 1;
 
   pushaddrssa = 1;
   pushlocaddrssa = 1;

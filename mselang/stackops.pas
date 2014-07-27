@@ -829,27 +829,6 @@ begin
                                                 cpu.pc^.par.memop.datasize);
 end;
 
-procedure poppar8op();
-begin             
- poploc8op();
-end;
-
-procedure poppar16op();
-begin
- poploc16op();
-end;
-
-procedure poppar32op();
-begin
- poploc32op();
-end;
-
-procedure popparop();
-begin
- poplocop();
-end;
-
-
 procedure poplocindi8op();
 begin             
  pv8ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
@@ -873,6 +852,46 @@ begin
  move(stackpop(cpu.pc^.par.memop.datasize)^,
       getlocaddressindi(cpu.pc^.par.memop.locdataaddress)^,
                                               cpu.pc^.par.memop.datasize);
+end;
+
+procedure poppar8op();
+begin             
+ poploc8op();
+end;
+
+procedure poppar16op();
+begin
+ poploc16op();
+end;
+
+procedure poppar32op();
+begin
+ poploc32op();
+end;
+
+procedure popparop();
+begin
+ poplocop();
+end;
+
+procedure popparindi8op();
+begin             
+ poplocindi8op();
+end;
+
+procedure popparindi16op();
+begin
+ poplocindi16op();
+end;
+
+procedure popparindi32op();
+begin
+ poplocindi32op();
+end;
+
+procedure popparindiop();
+begin
+ poplocindiop();
 end;
 
 procedure pushloc8op();
@@ -1795,15 +1814,20 @@ const
   poploc32ssa = 0;
   poplocssa = 0;
 
+  poplocindi8ssa = 0;
+  poplocindi16ssa = 0;
+  poplocindi32ssa = 0;
+  poplocindissa = 0;
+
   poppar8ssa = 0;
   poppar16ssa = 0;
   poppar32ssa = 0;
   popparssa = 0;
 
-  poplocindi8ssa = 0;
-  poplocindi16ssa = 0;
-  poplocindi32ssa = 0;
-  poplocindissa = 0;
+  popparindi8ssa = 0;
+  popparindi16ssa = 0;
+  popparindi32ssa = 0;
+  popparindissa = 0;
 
   pushnilssa = 0;
   pushsegaddressssa = 0;
@@ -1819,16 +1843,16 @@ const
   pushlocpossa = 0;
   pushlocssa = 0;
 
+  pushlocindi8ssa = 0;
+  pushlocindi16ssa = 0;
+  pushlocindi32ssa = 0;
+  pushlocindissa = 0;
+
   pushpar8ssa = 0;
   pushpar16ssa = 0;
   pushpar32ssa = 0;
   pushparpossa = 0;
   pushparssa = 0;
-
-  pushlocindi8ssa = 0;
-  pushlocindi16ssa = 0;
-  pushlocindi32ssa = 0;
-  pushlocindissa = 0;
 
   pushaddrssa = 0;
   pushlocaddrssa = 0;

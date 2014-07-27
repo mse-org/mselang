@@ -127,15 +127,20 @@
   poploc32ssa,
   poplocssa,
 
+  poplocindi8ssa,
+  poplocindi16ssa,
+  poplocindi32ssa,
+  poplocindissa,
+
   poppar8ssa,
   poppar16ssa,
   poppar32ssa,
   popparssa,
 
-  poplocindi8ssa,
-  poplocindi16ssa,
-  poplocindi32ssa,
-  poplocindissa,
+  popparindi8ssa,
+  popparindi16ssa,
+  popparindi32ssa,
+  popparindissa,
 
   pushnilssa,
   pushsegaddressssa,
@@ -151,16 +156,16 @@
   pushlocpossa,
   pushlocssa,
 
+  pushlocindi8ssa,
+  pushlocindi16ssa,
+  pushlocindi32ssa,
+  pushlocindissa,
+
   pushpar8ssa,
   pushpar16ssa,
   pushpar32ssa,
   pushparpossa,
   pushparssa,
-
-  pushlocindi8ssa,
-  pushlocindi16ssa,
-  pushlocindi32ssa,
-  pushlocindissa,
 
   pushaddrssa,
   pushlocaddrssa,
@@ -322,15 +327,20 @@
   @poploc32op,
   @poplocop,
 
+  @poplocindi8op,
+  @poplocindi16op,
+  @poplocindi32op,
+  @poplocindiop,
+
   @poppar8op,
   @poppar16op,
   @poppar32op,
   @popparop,
 
-  @poplocindi8op,
-  @poplocindi16op,
-  @poplocindi32op,
-  @poplocindiop,
+  @popparindi8op,
+  @popparindi16op,
+  @popparindi32op,
+  @popparindiop,
 
   @pushnilop,
   @pushsegaddressop,
@@ -346,16 +356,16 @@
   @pushlocpoop,
   @pushlocop,
 
+  @pushlocindi8op,
+  @pushlocindi16op,
+  @pushlocindi32op,
+  @pushlocindiop,
+
   @pushpar8op,
   @pushpar16op,
   @pushpar32op,
   @pushparpoop,
   @pushparop,
-
-  @pushlocindi8op,
-  @pushlocindi16op,
-  @pushlocindi32op,
-  @pushlocindiop,
 
   @pushaddrop,
   @pushlocaddrop,

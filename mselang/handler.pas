@@ -1468,6 +1468,54 @@ begin
  end;
 end;
 
+type
+ movedestty = (mvd_segment,mvd_local,mvd_param,mvd_paramindi);
+ 
+const                //todo: segment and local indirect
+ popoptable: array[movedestty] of array [movesizety] of opcodety = (
+  (oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg), //pd_segment
+  (oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc), //pd_local
+  (oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar), //pd_param
+  (oc_popparindi8,oc_popparindi16,oc_popparindi32,oc_popparindi) //pd_paramindi
+ );
+
+function getmovesize(const asize: integer): movesizety; inline;
+begin
+ case asize of
+  1: begin
+   result:= mvs_8;
+  end;
+  2: begin
+   result:= mvs_16;
+  end;
+  3,4: begin
+   result:= mvs_32;
+  end;
+  else begin
+   result:= mvs_bytes;
+  end;
+ end; 
+end;
+
+function getmovedest(const aflags: addressflagsty): movedestty; inline;
+            //todo: use table
+begin
+ result:= mvd_local;
+ if af_segment in aflags then begin
+  result:= mvd_segment;
+ end
+ else begin
+  if af_param in aflags then begin
+   if af_paramindirect in aflags then begin
+    result:= mvd_paramindi;
+   end
+   else begin
+    result:= mvd_param;
+   end;
+  end;
+ end;
+end;
+
 procedure handleassignment();
 var
  dest: vardestinfoty;
@@ -1537,6 +1585,9 @@ begin
                          //todo: use destinationaddress directly
     typematch:= tryconvert(stacktop-stackindex,dest.typ,int1);
     ssa1:= contextstack[stacktop].d.dat.fact.ssaindex;
+    if af_local in dest.address.flags then begin
+     dest.address.locaddress.ssaindex:= ssa1;
+    end;
     if not typematch then begin
      assignmenterror(contextstack[stacktop].d,dest);
     end
@@ -1581,7 +1632,10 @@ begin
       end;
      end
      else begin
+      po1:= additem(popoptable[
+                        getmovedest(dest.address.flags)][getmovesize(si1)]);
       if af_segment in dest.address.flags then begin
+{
        case si1 of
         1: begin 
          po1:= additem(oc_popseg8);
@@ -1596,10 +1650,12 @@ begin
          po1:= additem(oc_popseg);
         end;
        end;
+}
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
        po1^.par.memop.segdataaddress.offset:= 0;
       end
       else begin
+{
        if af_paramindirect in dest.address.flags then begin
         case si1 of
          1: begin 
@@ -1632,6 +1688,7 @@ begin
          end;
         end;
        end;
+}
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
        po1^.par.memop.locdataaddress.a.framelevel:= sublevel -
                                           dest.address.locaddress.framelevel-1;

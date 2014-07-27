@@ -68,6 +68,7 @@ const
 type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer);
+ movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);
 
  visikindty = (vik_global,vik_sameunit,vik_descendent,
                vik_published,vik_ancestor,vik_units);

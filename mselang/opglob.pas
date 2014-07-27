@@ -161,15 +161,20 @@ type
   oc_poploc32,
   oc_poploc,
 
+  oc_poplocindi8,
+  oc_poplocindi16,
+  oc_poplocindi32,
+  oc_poplocindi,
+
   oc_poppar8,
   oc_poppar16,
   oc_poppar32,
   oc_poppar,
 
-  oc_poplocindi8,
-  oc_poplocindi16,
-  oc_poplocindi32,
-  oc_poplocindi,
+  oc_popparindi8,
+  oc_popparindi16,
+  oc_popparindi32,
+  oc_popparindi,
 
   oc_pushnil,
   oc_pushsegaddress,
@@ -185,16 +190,16 @@ type
   oc_pushlocpo,
   oc_pushloc,
 
+  oc_pushlocindi8,
+  oc_pushlocindi16,
+  oc_pushlocindi32,
+  oc_pushlocindi,
+
   oc_pushpar8,
   oc_pushpar16,
   oc_pushpar32,
   oc_pushparpo,
   oc_pushpar,
-
-  oc_pushlocindi8,
-  oc_pushlocindi16,
-  oc_pushlocindi32,
-  oc_pushlocindi,
 
   oc_pushaddr,
   oc_pushlocaddr,
