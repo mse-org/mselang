@@ -320,7 +320,7 @@ begin
    poend:= po1+opcount-ad1;
    inc(opcount);
    int2:= po1^.par.ssad;
-   while po1 <= poend do begin
+   while po1 < poend do begin
     inc(po1^.par.ssad,ssadelta);
     if po1^.par.ssas1 <= int2 then begin
      inc(po1^.par.ssas1,ssadelta);

@@ -1382,11 +1382,12 @@ begin
        with insertitem(oc_pushimm32,stacktop-2-stackindex,false)^ do begin
         par.imm.vint32:= d.dat.constval.vinteger;
        end;
+       initfactcontext(-1);
       end;
       with contextstack[stacktop],d do begin
        if kind = ck_const then begin
         push(dat.constval.vinteger);
-        initfactcontext(stacktop-stackindex);
+        initfactcontext(1);
        end;
       end;
      end;
