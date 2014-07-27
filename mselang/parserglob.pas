@@ -127,6 +127,14 @@ const
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
  typecontexts = [ck_typetype,ck_fieldtype];
 
+type
+ addressflagty = (af_nil,af_segment,af_local,af_param,af_paramindirect,af_const,
+                  af_classfield,af_stack);
+ addressflagsty = set of addressflagty;
+
+const
+ addresskindflags = [af_local,af_segment];
+
 type 
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure({const info: pparseinfoty});
@@ -200,10 +208,6 @@ type
                     stf_hasmanaged);
  statementflagsty = set of statementflagty;
 
- addressflagty = (af_nil,af_segment,af_param,af_paramindirect,af_const,
-                  af_classfield,af_stack);
- addressflagsty = set of addressflagty;
-
  indirectlevelty = integer;
  framelevelty = integer;
 
@@ -232,6 +236,7 @@ type
  locaddressty = record
   address: dataoffsty;
   framelevel: integer;
+  ssaindex: integer;
  end;
  
  addressvaluety = record

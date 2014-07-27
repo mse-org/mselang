@@ -105,7 +105,9 @@ begin
     source.po:= pchar(input);
     sourcestart:= source.po;
     filename:= msefileutils.filename(afilename);
+   {$ifdef mse_debugparser}
     debugsource:= source.po;
+   {$endif}
    end;
    inc(includeindex);
   end;
@@ -123,7 +125,9 @@ begin
     source:= sourcebefore;
     sourcestart:= sourcestartbefore;
     filename:= filenamebefore;
+   {$ifdef mse_debugparser}
     debugsource:= source.po;
+   {$endif}
     if source.po^ = #0 then begin
      result:= popincludefile();
     end;
@@ -196,7 +200,9 @@ begin
    end;
    context:= pc;
 //   sourcebef:= source;
+  {$ifdef mse_debugparser}
    debugstart:= debugsource;
+  {$endif}
    parent:= int1;
    opmark.address:= opcount;
   end;
@@ -354,7 +360,9 @@ begin
   if us_interfaceparsed in unitinfo^.state then begin
    if unitinfo^.impl.sourceoffset >= length(input) then begin
     errormessage(err_filetrunc,[filename]);
+   {$ifdef mse_debugparser}
     debugsource:= source.po;
+   {$endif}
     goto parseend;
    end;
    inc(source.po,unitinfo^.impl.sourceoffset);
@@ -369,7 +377,9 @@ begin
 
   pc:= contextstack[stackindex].context;
   keywordindex:= 0;
+ {$ifdef mse_debugparser}
   debugsource:= source.po;
+ {$endif}
   while true do begin
    if stackindex <= stacktopbefore then begin
     break;
@@ -508,7 +518,9 @@ handlelab:
     pc1:= pc;
     if pc1^.restoresource then begin
      source:= contextstack[stackindex].start;
+   {$ifdef mse_debugparser}
      debugsource:= source.po;
+    {$endif}
      keywordindex:= 0;
     end;
     if pc^.handleexit <> nil then begin

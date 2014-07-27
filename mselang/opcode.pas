@@ -194,9 +194,8 @@ begin
   result.address:= globdatapo;
   globdatapo:= globdatapo + alignsize(asize);
   result.segment:= seg_globvar;
-  include(aflags,af_segment);
+  aflags:= aflags - addresskindflags + [af_segment];
   trackalloc(asize,result);
-//  inc(allocid);
  end;
 end;
 
@@ -212,9 +211,10 @@ function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
 begin
  with info do begin
   result.address:= locdatapo+shift;
+  result.ssaindex:= 0;
   locdatapo:= locdatapo + alignsize(asize);
   result.framelevel:= info.sublevel;
-  exclude(aflags,af_segment);
+  aflags:= aflags - addresskindflags + [af_local];
  end;
 end;
 
@@ -222,32 +222,10 @@ function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 begin
  result:= allocsegment(seg_globconst,asize);
-// alignsegment(result);
  result.address:= result.address + shift;
- include(aflags,af_segment);
-{ 
- with info do begin
-  result.address:= constsize+shift;
-  result.segment:= seg_globconst;
-  include(aflags,af_segment);
-  constsize:= constsize+asize;
-  alignsize(constsize);
-  if constsize > constcapacity then begin
-   constcapacity:= 2*constsize;
-   setlength(constseg,constcapacity);
-  end;
- end;
-}
+ aflags:= aflags - addresskindflags + [af_segment];
 end;
-{
-function getglobopaddress(const asize: integer; var aflags: addressflagsty;
-                                       const shift: integer = 0): segaddressty;
-begin
- result:= allocsegment(seg_globconst,asize);
- result.address:= result.address + shift;
- include(aflags,af_segment);
-end;
-} 
+
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin  //todo: ssaindex
  ainfo.size:= getdatabitsize(count);

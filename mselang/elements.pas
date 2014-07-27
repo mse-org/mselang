@@ -311,7 +311,7 @@ type
  end;
  pindexidenthashdataty = ^indexidenthashdataty;
 
-{$ifdef mse_debugparser}
+//{$ifdef mse_debugparser}
  identdataty = record
   ident: identty;
   keyname: identoffsetty;
@@ -330,13 +330,13 @@ type
   public
    constructor create;
  end;
-{$endif}
+//{$endif}
   
  tindexidenthashdatalist = class(thashdatalist)
- {$ifdef mse_debugparser}
+// {$ifdef mse_debugparser}
   private
    fidents: tidenthashdatalist;
- {$endif}
+// {$endif}
   protected
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
@@ -624,7 +624,7 @@ begin
  result:= identlist.identname(aident,name);
 end;
 
-{$ifdef mse_debugparser}
+//{$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
 var
  lstr1: lstringty;
@@ -653,7 +653,7 @@ function tidenthashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
  result:= identty(akey) = identdataty(aitemdata).ident;
 end;
-{$endif}
+//{$endif}
 
 { tindexidenthashdatalist }
 
