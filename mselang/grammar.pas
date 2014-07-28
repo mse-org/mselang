@@ -651,11 +651,6 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'then0');
- then1co: contextty = (branch: nil; 
-               handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'then1');
  then2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3165,7 +3160,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bthen1: array[0..1] of branchty = (
+ bthen0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -6279,12 +6274,10 @@ begin
  if0co.handleexit:= @handleif;
  thenco.branch:= @bthen;
  thenco.handleexit:= @handlethen;
- then0co.branch:= nil;
- then0co.next:= @then1co;
+ then0co.branch:= @bthen0;
+ then0co.next:= @then2co;
  then0co.handleentry:= @handlethen0;
- then1co.branch:= @bthen1;
- then1co.next:= @then2co;
- then1co.handleentry:= @handlethen1;
+ then0co.handleexit:= @handlethen1;
  then2co.branch:= @bthen2;
  then2co.handleexit:= @handlethen2;
  else0co.branch:= nil;
