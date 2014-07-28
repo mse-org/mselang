@@ -1821,7 +1821,7 @@ begin
    case kind of
     ck_subres: begin
      with additem(oc_pop)^ do begin
-      par.imm.vsize:= dat.fact.datasize; //todo: alignment
+      setimmsize(dat.fact.datasize,par); //todo: alignment
      end;    
     end;
     ck_subcall: begin

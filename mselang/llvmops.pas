@@ -90,10 +90,38 @@ begin
  result:= locaddress(address.a);
 end;
 
-procedure stackassign(const ssaindex: integer; const value: int32);
+procedure stackimmassign8();
 begin
- outass('%'+inttostr(ssaindex)+' = add i32 '+inttostr(value)+' ,0');
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
+                                                inttostr(imm.vint8)+' ,0');
+ end;
 end;
+
+procedure stackimmassign16();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
+                                                inttostr(imm.vint16)+' ,0');
+ end;
+end;
+
+procedure stackimmassign32();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
+                                                inttostr(imm.vint32)+' ,0');
+ end;
+end;
+
+procedure stackimmassign64();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
+                                                inttostr(imm.vint64)+' ,0');
+ end;
+end;
+
 {
 procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
 begin
@@ -325,29 +353,29 @@ end;
 
 procedure pushimm8op();
 begin
- notimplemented();
+ stackimmassign8();
 end;
+
 procedure pushimm16op();
 begin
- notimplemented();
+ stackimmassign16();
 end;
 
 procedure pushimm32op();
 begin
- with pc^.par do begin
-  stackassign(ssad,imm.vint32);
- end;
+ stackimmassign32();
 end;
 
 procedure pushimm64op();
 begin
- notimplemented();
+ stackimmassign64();
 end;
 
 procedure pushimmdatakindop();
 begin
  notimplemented();
 end;
+
 procedure int32toflo64op();
 begin
  notimplemented();

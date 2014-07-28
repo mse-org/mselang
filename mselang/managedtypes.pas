@@ -164,7 +164,7 @@ begin
 
   if atype^.kind = dk_array then begin
    with additem(oc_increg0)^ do begin
-    par.imm.voffset:= po2^.bytesize;
+    setimmoffset(po2^.bytesize,par);
    end;
    endforloop(loopinfo);
    with additem(oc_popreg0)^ do begin

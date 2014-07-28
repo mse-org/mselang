@@ -308,7 +308,7 @@ begin
     end;
    end;
    with additem(oc_pop)^ do begin
-    par.imm.vsize:= sizeof(int32);
+    setimmsize(sizeof(int32),par);
    end;
   end;
   dec(stackindex);

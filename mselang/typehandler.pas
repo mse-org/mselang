@@ -623,7 +623,7 @@ begin
           getvalue(int1-stackindex{,true});
          end;
          with insertitem(oc_mulimmint32,int1-stackindex+1,false)^ do begin
-          par.imm.vint32:= itemtype^.bytesize;
+          setimmint32(itemtype^.bytesize,par);
          end;
          if not fullconst then begin
           with insertitem(oc_addint32,int1-stackindex+1,false)^ do begin

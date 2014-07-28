@@ -303,6 +303,7 @@ type
 
   immty = record
 //   ssaindex: integer;
+   datasize: integer;
    case integer of               //todo: use target size
     1: (vboolean: boolean);
     2: (vcard8: card8);
@@ -314,9 +315,9 @@ type
     8: (vint32: int32);
     9: (vint64: int64);
    10: (vfloat64: float64);
-   11: (vsize: ptrint);
-   12: (vpointer: ptruint);
-   13: (voffset: ptrint);
+   11: (vsize: datasizety);
+   12: (vpointer: dataaddressty);
+   13: (voffset: dataoffsty);
    14: (vdatakind: datakindty);
  end;  
 

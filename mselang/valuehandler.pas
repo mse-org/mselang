@@ -86,7 +86,7 @@ begin
     if getclassinterfaceoffset(source1,dest,int1) then begin
      if getvalue(stackoffset) then begin
       with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
-       par.imm.vint32:= int1;
+       setimmint32(int1,par);
       end;
       result:= true;
      end;

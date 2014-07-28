@@ -41,6 +41,20 @@ function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): locaddressty;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
+procedure setimmboolean(const value: boolean; var par: opparamty);
+procedure setimmcard8(const value: card8; var par: opparamty);
+procedure setimmcard16(const value: card16; var par: opparamty);
+procedure setimmcard32(const value: card32; var par: opparamty);
+procedure setimmcard64(const value: card64; var par: opparamty);
+procedure setimmint8(const value: int8; var par: opparamty);
+procedure setimmint16(const value: int16; var par: opparamty);
+procedure setimmint32(const value: int32; var par: opparamty);
+procedure setimmint64(const value: int64; var par: opparamty);
+procedure setimmfloat64(const value: float64; var par: opparamty);
+procedure setimmsize(const value: datasizety; var par: opparamty);
+procedure setimmpointer(const value: dataaddressty; var par: opparamty);
+procedure setimmoffset(const value: dataoffsty; var par: opparamty);
+procedure setimmdatakind(const value: datakindty; var par: opparamty);
 
 function additem(const aopcode: opcodety): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
@@ -225,6 +239,91 @@ begin
  result.address:= result.address + shift;
  aflags:= aflags - addresskindflags + [af_segment];
 end;
+
+procedure setimmboolean(const value: boolean; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vboolean:= value;
+end;
+
+procedure setimmcard8(const value: card8; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vcard8:= value;
+end;
+
+procedure setimmcard16(const value: card16; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vcard16:= value;
+end;
+
+procedure setimmcard32(const value: card32; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vcard32:= value;
+end;
+
+procedure setimmcard64(const value: card64; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vcard64:= value;
+end;
+
+procedure setimmint8(const value: int8; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vint8:= value;
+end;
+
+procedure setimmint16(const value: int16; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vint16:= value;
+end;
+
+procedure setimmint32(const value: int32; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vint32:= value;
+end;
+
+procedure setimmint64(const value: int64; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vint64:= value;
+end;
+
+procedure setimmfloat64(const value: float64; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vfloat64:= value;
+end;
+
+procedure setimmsize(const value: datasizety; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vsize:= value;
+end;
+
+procedure setimmpointer(const value: dataaddressty; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vpointer:= value;
+end;
+
+procedure setimmoffset(const value: dataoffsty; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.voffset:= value;
+end;
+
+procedure setimmdatakind(const value: datakindty; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ par.imm.vdatakind:= value;
+end;
+
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin  //todo: ssaindex

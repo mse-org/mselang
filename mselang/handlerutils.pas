@@ -522,7 +522,7 @@ function pushinsertvar(const stackoffset: integer; const before: boolean;
 begin
  with insertitem(oc_push,stackoffset,before)^ do begin
   result:= atype^.bytesize; //todo: alignment
-  par.imm.vsize:= result;
+  setimmsize(result,par);
  end;
 end;
 
@@ -573,17 +573,17 @@ begin
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
     with insertitem(oc_pushimm8,stackoffset,before)^ do begin
-     par.imm.vboolean:= po1^.d.dat.constval.vboolean;
+     setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
    dk_integer,dk_enum: begin
     with insertitem(oc_pushimm32,stackoffset,before)^ do begin
-     par.imm.vint32:= po1^.d.dat.constval.vinteger;
+     setimmint32(po1^.d.dat.constval.vinteger,par);
     end;
    end;
    dk_float: begin
     with insertitem(oc_pushimm64,stackoffset,before)^ do begin
-     par.imm.vfloat64:= po1^.d.dat.constval.vfloat;
+     setimmfloat64(po1^.d.dat.constval.vfloat,par);
     end;
    end;
    dk_string8: begin
@@ -618,7 +618,7 @@ procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 begin
  if aoffset <> 0 then begin
   with insertitem(oc_addimmint32,stackoffset,false)^ do begin
-   par.imm.vint32:= aoffset;
+   setimmint32(aoffset,par);
   end;
  end;
 end;
@@ -633,21 +633,21 @@ end;
 procedure push(const avalue: boolean); overload;
 begin
  with addpushimm(oc_pushimm8)^ do begin
-  par.imm.vboolean:= avalue;
+  setimmboolean(avalue,par);
  end;
 end;
 
 procedure push(const avalue: integer); overload;
 begin
  with addpushimm(oc_pushimm32)^ do begin
-  par.imm.vint32:= avalue;
+  setimmint32(avalue,par);
  end;
 end;
 
 procedure push(const avalue: real); overload;
 begin
  with addpushimm(oc_pushimm64)^ do begin
-  par.imm.vfloat64:= avalue;
+  setimmfloat64(avalue,par);
  end;
 end;
 
@@ -673,7 +673,7 @@ var
 begin
  if af_nil in avalue.flags then begin
   with getop(oc_pushaddr)^ do begin
-   par.imm.vpointer:= 0;
+   setimmpointer(0,par);
   end;
  end
  else begin
@@ -723,7 +723,7 @@ procedure push(const avalue: datakindty); overload;
       //no alignsize
 begin
  with addpushimm(oc_pushimmdatakind)^ do begin
-  par.imm.vdatakind:= avalue;
+  setimmdatakind(avalue,par);
  end;
 end;
 
@@ -740,7 +740,7 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
       //no alignsize
 begin
  with insertpushimm(oc_pushimmdatakind,stackoffset,before)^ do begin
-  par.imm.vdatakind:= avalue;
+  setimmdatakind(avalue,par);
  end;
 end;
 
@@ -1306,12 +1306,12 @@ begin
      case d.dat.constval.kind of
       dk_integer: begin
        with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
-        par.imm.vfloat64:= real(d.dat.constval.vinteger);
+        setimmfloat64(real(d.dat.constval.vinteger),par);
        end;
       end;
       dk_float: begin
        with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
-        par.imm.vfloat64:= d.dat.constval.vfloat;
+        setimmfloat64(d.dat.constval.vfloat,par);
        end;
       end;
       else begin
@@ -1365,7 +1365,7 @@ begin
       sd1:= sdk_bool8;
       if d.kind = ck_const then begin
        with insertitem(oc_pushimm8,stacktop-2-stackindex,false)^ do begin
-        par.imm.vboolean:= d.dat.constval.vboolean;
+        setimmboolean(d.dat.constval.vboolean,par);
        end;
       end;
       with contextstack[stacktop].d do begin
@@ -1380,7 +1380,7 @@ begin
       sd1:= sdk_int32;
       if d.kind = ck_const then begin
        with insertitem(oc_pushimm32,stacktop-2-stackindex,false)^ do begin
-        par.imm.vint32:= d.dat.constval.vinteger;
+        setimmint32(d.dat.constval.vinteger,par);
        end;
        initfactcontext(-1);
       end;
