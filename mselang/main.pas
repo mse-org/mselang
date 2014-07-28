@@ -98,7 +98,7 @@ begin
     end;
    end
    else begin
-    stackops.run(1024);
+    grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
    end;
   end;
  finally

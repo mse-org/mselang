@@ -63,8 +63,8 @@ function alignsize(const size: ptruint): ptruint;
                          {$ifdef mse_inline}inline;{$endif}
 
 procedure finalize;
-procedure run(const stackdepht: integer);
-procedure run(const asegments: segmentbuffersty);
+function run(const stackdepht: integer): integer; //returns exitcode
+function run(const asegments: segmentbuffersty): integer; //returns exitcode
 
 function getoptable: poptablety;
 function getssatable: pssatablety;
@@ -1913,7 +1913,7 @@ const
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 }
-procedure run(const asegments: segmentbuffersty);
+function run(const asegments: segmentbuffersty): integer;
 var
  seg1: segmentty;
 begin
@@ -1938,16 +1938,14 @@ begin
   optable[cpu.pc^.op.op]();
   inc(cpu.pc);
  end;
+ result:= pinteger(segments[seg_globvar].basepo)^;
 end;
 
-procedure run({const code: opinfoarty; const constseg: pointer;}
-                                        const stackdepht: integer);
+function run(const stackdepht: integer): integer;
 var
  segs: segmentbuffersty;
  seg1: segmentty;
 begin
-// trystack:= nil;
-// exceptobj:= nil;
  for seg1:= low(seg1) to high(seg1) do begin //defaults
   segs[seg1].base:= getsegmentbase(seg1); 
   segs[seg1].size:= getsegmentsize(seg1);
@@ -1961,7 +1959,7 @@ begin
   segs[seg_globvar].base:= globdata;
   segs[seg_globvar].size:= globdatasize;
  end;
- run(segs);
+ result:= run(segs);
 end;
 
 {
