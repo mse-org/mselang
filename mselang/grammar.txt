@@ -345,9 +345,9 @@ statement1,,,handlestatementexit
 assignment,,handleassignmententry,handleassignment
  '',exp^*
 #
-if0,if,handleif0,
- ${whitespace}
-if,then,handleif,
+#if0,if,handleif0,
+# ${whitespace}
+if0,then,handleif0,handleif
  '',exp^*
 then,,,handlethen
  ${whitespace}
