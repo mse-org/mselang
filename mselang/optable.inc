@@ -48,11 +48,11 @@
   pushssa,
   popssa,
 
-  push8ssa,
-  push16ssa,
-  push32ssa,
-  push64ssa,
-  pushdatakindssa,
+  pushimm8ssa,
+  pushimm16ssa,
+  pushimm32ssa,
+  pushimm64ssa,
+  pushimmdatakindssa,
   
   int32toflo64ssa,
   
@@ -248,11 +248,11 @@
   @pushop,
   @popop,
 
-  @push8op,
-  @push16op,
-  @push32op,
-  @push64op,
-  @pushdatakindop,
+  @pushimm8op,
+  @pushimm16op,
+  @pushimm32op,
+  @pushimm64op,
+  @pushimmdatakindop,
   
   @int32toflo64op,
   

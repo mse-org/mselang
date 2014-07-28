@@ -473,27 +473,27 @@ begin
  stackpop(cpu.pc^.par.imm.vsize);
 end;
 
-procedure push8op();
+procedure pushimm8op();
 begin
  pint8(stackpush(1))^:= cpu.pc^.par.imm.vint8; 
 end;
 
-procedure push16op();
+procedure pushimm16op();
 begin
  pint16(stackpush(2))^:= cpu.pc^.par.imm.vint16; 
 end;
 
-procedure push32op();
+procedure pushimm32op();
 begin
  pint32(stackpush(4))^:= cpu.pc^.par.imm.vint16; 
 end;
 
-procedure push64op();
+procedure pushimm64op();
 begin
  pint32(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
 end;
 
-procedure pushdatakindop();
+procedure pushimmdatakindop();
 begin
  vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= 
                                        cpu.pc^.par.imm.vdatakind; 
@@ -1735,11 +1735,11 @@ const
   pushssa = 0;
   popssa = 0;
 
-  push8ssa = 0;
-  push16ssa = 0;
-  push32ssa = 0;
-  push64ssa = 0;
-  pushdatakindssa = 0;
+  pushimm8ssa = 0;
+  pushimm16ssa = 0;
+  pushimm32ssa = 0;
+  pushimm64ssa = 0;
+  pushimmdatakindssa = 0;
   
   int32toflo64ssa = 0;
   

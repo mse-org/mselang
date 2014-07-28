@@ -323,28 +323,28 @@ begin
  notimplemented();
 end;
 
-procedure push8op();
+procedure pushimm8op();
 begin
  notimplemented();
 end;
-procedure push16op();
+procedure pushimm16op();
 begin
  notimplemented();
 end;
 
-procedure push32op();
+procedure pushimm32op();
 begin
  with pc^.par do begin
   stackassign(ssad,imm.vint32);
  end;
 end;
 
-procedure push64op();
+procedure pushimm64op();
 begin
  notimplemented();
 end;
 
-procedure pushdatakindop();
+procedure pushimmdatakindop();
 begin
  notimplemented();
 end;
@@ -1043,11 +1043,11 @@ const
   pushssa = 1;
   popssa = 1;
 
-  push8ssa = 1;
-  push16ssa = 1;
-  push32ssa = 1;
-  push64ssa = 1;
-  pushdatakindssa = 1;
+  pushimm8ssa = 1;
+  pushimm16ssa = 1;
+  pushimm32ssa = 1;
+  pushimm64ssa = 1;
+  pushimmdatakindssa = 1;
   
   int32toflo64ssa = 1;
   
