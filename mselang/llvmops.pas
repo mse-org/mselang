@@ -1199,10 +1199,10 @@ const
   pushnilssa = 1;
   pushsegaddressssa = 1;
 
-  pushseg8ssa = 0;
-  pushseg16ssa = 0;
-  pushseg32ssa = 0;
-  pushsegssa = 0;
+  pushseg8ssa = 1;
+  pushseg16ssa = 1;
+  pushseg32ssa = 1;
+  pushsegssa = 1;
 
   pushloc8ssa = 1;
   pushloc16ssa = 1;
