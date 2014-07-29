@@ -59,7 +59,7 @@ procedure setimmdatakind(const value: datakindty; var par: opparamty);
 function additem(const aopcode: opcodety): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                                              const before: boolean): popinfoty;
-//procedure writeop(const operation: opty); inline;
+procedure addlabel();
 
 procedure inipointer(const aaddress: addressrefty; const count: datasizety;
                                                      const ssaindex: integer);
@@ -376,6 +376,13 @@ begin
    par.ssad:= ssa.index;
   end;
   inc(opcount);
+ end;
+end;
+
+procedure addlabel();
+begin
+ with additem(oc_nop)^ do begin
+  include(op.flags,opf_label);
  end;
 end;
 

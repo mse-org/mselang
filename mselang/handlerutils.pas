@@ -785,24 +785,33 @@ begin
   getoppo(
    contextstack[stackindex+indexoffset].opmark.address-1)^.par.opaddress:=
                                                                      opcount-1;
- end; 
+  addlabel();
+ end;
 end;
 
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
+var
+ dest: integer;
 begin
  with info do begin
+  dest:= contextstack[stackindex+sourceindexoffset].opmark.address;
   getoppo(
    contextstack[stackindex+destindexoffset].opmark.address-1)^.par.opaddress:=
-         contextstack[stackindex+sourceindexoffset].opmark.address-1;
+                                                                        dest-1;
+  include(getoppo(dest)^.op.flags,opf_label);
  end; 
 end;
 
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
+var
+ dest: integer;
 begin
  with info do begin
+  dest:= contextstack[stackindex+sourceindexoffset].opmark.address;
   getoppo(
     contextstack[stackindex+destindexoffset].opmark.address)^.par.opaddress:=
-         contextstack[stackindex+sourceindexoffset].opmark.address-1;
+                                                                        dest-1;
+  include(getoppo(dest)^.op.flags,opf_label);
  end; 
 end;
 

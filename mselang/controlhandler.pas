@@ -78,16 +78,22 @@ begin
 {$ifdef mse_debugparser}
  outhandle('THEN0');
 {$endif}
- with info,contextstack[stacktop] do begin
-  if not (ptypedataty(ele.eledataabs(
-                         d.dat.datatyp.typedata))^.kind = dk_boolean) then begin
-   errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
-  end;
+ with info do begin
+  getvalue(stacktop-stackindex);
+  with contextstack[stacktop] do begin
+   if not (ptypedataty(ele.eledataabs(
+                      d.dat.datatyp.typedata))^.kind = dk_boolean) then begin
+    errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
+   end;
+  {
   if d.kind = ck_const then begin
    push(d.dat.constval.vboolean); //todo: use compiletime branch
   end;
- end;
- with additem(oc_if)^ do begin
+  }
+   with additem(oc_if)^ do begin
+    par.ssas1:= d.dat.fact.ssaindex;
+   end;
+  end;
  end;
 end;
 

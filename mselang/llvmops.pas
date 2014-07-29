@@ -197,7 +197,9 @@ end;
 }
 procedure nopop();
 begin
- //dummy;
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i1 0, 0');
+ end;
 end;
 
 var
@@ -309,10 +311,39 @@ begin
  notimplemented();
 end;
 
-procedure ifop();
+procedure curoplabel(var avalue: shortstring);
 begin
- notimplemented();
+ avalue:= 'o'+
+    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty) -
+                                                             startupoffset);
 end;
+
+procedure nextoplabel(var avalue: shortstring);
+begin
+ avalue:= 'o'+
+    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty)- 
+                                                            startupoffset+1);
+end;
+
+procedure oplabel(var avalue: shortstring);
+begin
+ avalue:= 'o'+ inttostr(pc^.par.opaddress);
+end;
+
+procedure ifop();
+var
+ tmp,lab1,lab2: shortstring;
+begin
+ with pc^.par do begin
+  tmp:= '%'+inttostr(ssad);
+  nextoplabel(lab1);
+  oplabel(lab2);
+  outass(tmp+' = icmp ne i8 %'+inttostr(ssas1)+', 0');
+  outass('br i1 '+tmp+', label %'+lab1+', label %'+lab2);
+  outass(lab1+':');
+ end;
+end;
+
 procedure writelnop();
 begin
  notimplemented();
@@ -1040,7 +1071,7 @@ end;
 
 const
   nonessa = 0;
-  nopssa = 0;
+  nopssa = 1;
 
   beginparsessa = 0;
   mainssa = 1;
@@ -1243,11 +1274,17 @@ const
 procedure run();
 var
  endpo: pointer;
+ lab: shortstring;
 begin
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
  while pc < endpo do begin
+  if opf_label in pc^.op.flags then begin
+   curoplabel(lab);
+   outass('br label %'+lab);
+   outass(lab+':');
+  end;
   optable[pc^.op.op]();
   inc(pc);
  end;
