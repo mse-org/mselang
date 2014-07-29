@@ -90,6 +90,25 @@ begin
  result:= locaddress(address.a);
 end;
 
+procedure curoplabel(var avalue: shortstring);
+begin
+ avalue:= 'o'+
+    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty) -
+                                                             startupoffset);
+end;
+
+procedure nextoplabel(var avalue: shortstring);
+begin
+ avalue:= 'o'+
+    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty)- 
+                                                            startupoffset+1);
+end;
+
+procedure oplabel(var avalue: shortstring);
+begin
+ avalue:= 'o'+ inttostr(pc^.par.opaddress);
+end;
+
 procedure stackimmassign8();
 begin
  with pc^.par do begin
@@ -287,9 +306,13 @@ begin
 end;
 
 procedure gotoop();
+var
+ lab: shortstring;
 begin
- notimplemented();
+ oplabel(lab);
+ outass('br label %'+lab);
 end;
+
 procedure cmpjmpneimm4op();
 begin
  notimplemented();
@@ -309,25 +332,6 @@ end;
 procedure cmpjmploeqimm4op();
 begin
  notimplemented();
-end;
-
-procedure curoplabel(var avalue: shortstring);
-begin
- avalue:= 'o'+
-    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty) -
-                                                             startupoffset);
-end;
-
-procedure nextoplabel(var avalue: shortstring);
-begin
- avalue:= 'o'+
-    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty)- 
-                                                            startupoffset+1);
-end;
-
-procedure oplabel(var avalue: shortstring);
-begin
- avalue:= 'o'+ inttostr(pc^.par.opaddress);
 end;
 
 procedure ifop();
