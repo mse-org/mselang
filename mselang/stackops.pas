@@ -473,6 +473,11 @@ begin
  stackpop(cpu.pc^.par.imm.vsize);
 end;
 
+procedure pushimm1op();
+begin
+ pint8(stackpush(1))^:= cpu.pc^.par.imm.vint8; 
+end;
+
 procedure pushimm8op();
 begin
  pint8(stackpush(1))^:= cpu.pc^.par.imm.vint8; 
@@ -658,9 +663,9 @@ procedure storesegnilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
-  fillqword(getsegaddress(par.memop.segdataaddress)^,par.memop.databitsize,0);
+  fillqword(getsegaddress(par.memop.segdataaddress)^,par.memop.datacount,0);
 {$else}
-  filldword(getsegaddress(par.memop.segdataaddress)^,par.memop.databitsize,0);
+  filldword(getsegaddress(par.memop.segdataaddress)^,par.memop.datacount,0);
 {$endif}
  end;
 end;
@@ -670,10 +675,10 @@ begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
   fillqword(ppointer(cpu.frame+par.memop.podataaddress)^,
-                                            par.memop.databitsize,0);
+                                            par.memop.datacount,0);
 {$else}
   filldword(ppointer(cpu.frame+par.memop.podataaddress)^,
-                                            par.memop.databitsize,0);
+                                            par.memop.datacount,0);
 {$endif}
  end;
 end;
@@ -682,9 +687,9 @@ procedure storereg0nilarop();
 begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
-  fillqword(ppointer(reg0+par.memop.podataaddress)^,par.memop.databitsize,0);
+  fillqword(ppointer(reg0+par.memop.podataaddress)^,par.memop.datacount,0);
 {$else}
-  filldword(ppointer(reg0+par.memop.podataaddress)^,par.memop.databitsize,0);
+  filldword(ppointer(reg0+par.memop.podataaddress)^,par.memop.datacount,0);
 {$endif}
  end;
 end;
@@ -694,10 +699,10 @@ begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
   fillqword(ppointer(cpu.stack+par.memop.podataaddress)^,
-                                                  par.memop.databitsize,0);
+                                                  par.memop.datacount,0);
 {$else}
   filldword(ppointer(cpu.stack+par.memop.podataaddress)^,
-                                                  par.memop.databitsize,0);
+                                                  par.memop.datacount,0);
 {$endif}
  end;
 end;
@@ -707,10 +712,10 @@ begin
  with cpu.pc^ do begin
 {$ifdef cpu64}
   fillqword(pppointer(cpu.stack+par.memop.podataaddress)^^,
-                                                    par.memop.databitsize,0);
+                                                    par.memop.datacount,0);
 {$else}
   filldword(pppointer(cpu.stack+par.memop.podataaddress)^^,
-                                                    par.memop.databitsize,0);
+                                                    par.memop.datacount,0);
 {$endif}
  end;
 end;
@@ -737,7 +742,7 @@ procedure popsegop();
 var
  int1: integer;            //todo: use byte count
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7)div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7)div 8;
  move(stackpop(int1)^,
       getsegaddress(cpu.pc^.par.memop.segdataaddress)^,int1);
 end;
@@ -764,7 +769,7 @@ procedure pushsegop();
 var
  int1: integer;         //todo: use bytecount
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  move(getsegaddress(cpu.pc^.par.memop.segdataaddress)^,
                   stackpush(int1)^,int1);
 end;
@@ -830,7 +835,7 @@ procedure poplocop();
 var
  int1: integer;         //todo: use databyte count
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  move(stackpop(int1)^,
        getlocaddress(cpu.pc^.par.memop.locdataaddress)^,int1);
 end;
@@ -857,7 +862,7 @@ procedure poplocindiop();
 var
  int1: integer;
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  move(stackpop(int1)^,
       getlocaddressindi(cpu.pc^.par.memop.locdataaddress)^,int1);
 end;
@@ -930,7 +935,7 @@ procedure pushlocop();
 var
  int1: integer;
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  move(getlocaddress(cpu.pc^.par.memop.locdataaddress)^,
       stackpush(int1)^,int1);
 end;
@@ -982,7 +987,7 @@ procedure pushlocindiop();
 var
  int1: integer;
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  move(getlocaddressindi(cpu.pc^.par.memop.locdataaddress)^,
                                                stackpush(int1)^,int1);
 end;
@@ -1079,7 +1084,7 @@ var
  po1: pointer;
  int1: integer;
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  po1:= ppointer(stackpop(sizeof(pointer)))^;
  move(po1^,stackpush(int1)^,int1);
 end;
@@ -1116,7 +1121,7 @@ var
  po1,po2: pointer;
  int1: integer;
 begin
- int1:= (cpu.pc^.par.memop.databitsize+7) div 8;
+ int1:= (cpu.pc^.par.memop.datacount+7) div 8;
  po1:= stackpop(int1);
  po2:= ppointer(stackpop(sizeof(pointer)))^;
  move(po1^,po2^,int1);
@@ -1431,31 +1436,31 @@ end;
 procedure finirefsizesegarop();
 begin
  finirefsizear(getsegaddress(cpu.pc^.par.memop.segdataaddress),
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure finirefsizeframearop();
 begin
  finirefsizear(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress),
-                                                 cpu.pc^.par.memop.databitsize);
+                                                 cpu.pc^.par.memop.datacount);
 end;
 
 procedure finirefsizereg0arop();
 begin
  finirefsizear(ppointer(reg0+cpu.pc^.par.memop.podataaddress),
-                                                 cpu.pc^.par.memop.databitsize);
+                                                 cpu.pc^.par.memop.datacount);
 end;
 
 procedure finirefsizestackarop();
 begin
  finirefsizear(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress),
-                                                 cpu.pc^.par.memop.databitsize);
+                                                 cpu.pc^.par.memop.datacount);
 end;
 
 procedure finirefsizestackrefarop();
 begin
  finirefsizear(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^,
-                                                 cpu.pc^.par.memop.databitsize);
+                                                 cpu.pc^.par.memop.datacount);
 end;
 
 procedure increfsizesegop();
@@ -1486,31 +1491,31 @@ end;
 procedure increfsizesegarop();
 begin
  increfsizear(getsegaddress(cpu.pc^.par.memop.segdataaddress),
-                                             cpu.pc^.par.memop.databitsize);
+                                             cpu.pc^.par.memop.datacount);
 end;
 
 procedure increfsizeframearop();
 begin
  increfsizear(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress),
-                                             cpu.pc^.par.memop.databitsize);
+                                             cpu.pc^.par.memop.datacount);
 end;
 
 procedure increfsizereg0arop();
 begin
  increfsizear(ppointer(reg0+cpu.pc^.par.memop.podataaddress),
-                                             cpu.pc^.par.memop.databitsize);
+                                             cpu.pc^.par.memop.datacount);
 end;
 
 procedure increfsizestackarop();
 begin
  increfsizear(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress),
-                                             cpu.pc^.par.memop.databitsize);
+                                             cpu.pc^.par.memop.datacount);
 end;
 
 procedure increfsizestackrefarop();
 begin
  increfsizear(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^,
-                                             cpu.pc^.par.memop.databitsize);
+                                             cpu.pc^.par.memop.datacount);
 end;
 
 procedure decrefsizesegop();
@@ -1541,31 +1546,31 @@ end;
 procedure decrefsizesegarop();
 begin
  decrefsizear(getsegaddress(cpu.pc^.par.memop.segdataaddress),
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure decrefsizeframearop();
 begin
  decrefsizear(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress),
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure decrefsizereg0arop();
 begin
  decrefsizear(ppointer(reg0+cpu.pc^.par.memop.podataaddress),
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure decrefsizestackarop();
 begin
  decrefsizear(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress),
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure decrefsizestackrefarop();
 begin
  decrefsizear(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^,
-                                                cpu.pc^.par.memop.databitsize);
+                                                cpu.pc^.par.memop.datacount);
 end;
 
 procedure setlengthstr8op(); //address, length
@@ -1752,6 +1757,7 @@ const
   pushssa = 0;
   popssa = 0;
 
+  pushimm1ssa = 0;
   pushimm8ssa = 0;
   pushimm16ssa = 0;
   pushimm32ssa = 0;

@@ -576,7 +576,7 @@ begin
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
     si1:= 1;
-    with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+    with insertitem(oc_pushimm1,stackoffset,before)^ do begin
      setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
@@ -976,7 +976,7 @@ begin
     par.memop.locdataaddress.offset:= offset;
    end;
   end;
-  po1^.par.memop.databitsize:= bitsize;
+  po1^.par.memop.datacount:= bitsize;
 //  par.ssad:= ssaindex;
  end;
 end;
@@ -1099,7 +1099,7 @@ var
     end;
    end;
    with insertitem(op1,stackoffset,false)^ do begin
-    par.memop.databitsize:= si1;
+    par.memop.datacount:= si1;
    end;
   end;
  end;

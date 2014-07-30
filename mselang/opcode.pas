@@ -152,7 +152,7 @@ procedure addmanagedop(const opsar: aropadsty;
 begin
  if count > 1 then begin
   with additem(opsar[true][aaddress.base])^ do begin
-   par.memop.databitsize:= count;
+   par.memop.datacount:= count;
    if aaddress.base = ab_segment then begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
     par.memop.segdataaddress.a.segment:= aaddress.segment;

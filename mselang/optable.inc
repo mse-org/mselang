@@ -48,6 +48,7 @@
   pushssa,
   popssa,
 
+  pushimm1ssa,
   pushimm8ssa,
   pushimm16ssa,
   pushimm32ssa,
@@ -248,6 +249,7 @@
   @pushop,
   @popop,
 
+  @pushimm1op,
   @pushimm8op,
   @pushimm16op,
   @pushimm32op,

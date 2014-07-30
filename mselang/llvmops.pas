@@ -133,6 +133,13 @@ begin
  avalue:= 'o'+ inttostr(pc^.par.opaddress);
 end;
 
+procedure stackimmassign1();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add i1 '+ inttostr(imm.vint8)+' ,0');
+ end;
+end;
+
 procedure stackimmassign8();
 begin
  with pc^.par do begin
@@ -174,8 +181,8 @@ end;
 procedure segassign();
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.databitsize)+
-  ' %'+inttostr(ssas1)+', i'+inttostr(memop.databitsize)+'* '+
+  outass('store i'+inttostr(memop.datacount)+
+  ' %'+inttostr(ssas1)+', i'+inttostr(memop.datacount)+'* '+
                                          segdataaddress(memop.segdataaddress));
  end;
 end;
@@ -183,7 +190,7 @@ end;
 procedure assignseg();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.databitsize)+
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datacount)+
                                '* '+segdataaddress(memop.segdataaddress));
  end;
 end;
@@ -196,8 +203,8 @@ end;
 procedure locassign();
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.databitsize)+' %'+inttostr(ssas1)+
-               ',i'+inttostr(memop.databitsize)+'* '+
+  outass('store i'+inttostr(memop.datacount)+' %'+inttostr(ssas1)+
+               ',i'+inttostr(memop.datacount)+'* '+
                            locdataaddress(memop.locdataaddress));
  end;
 end;
@@ -224,7 +231,7 @@ end;
 procedure assignloc();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.databitsize)+
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datacount)+
                                 '* '+locdataaddress(memop.locdataaddress));
  end;
 end;
@@ -427,6 +434,11 @@ end;
 procedure popop();
 begin
  notimplemented();
+end;
+
+procedure pushimm1op();
+begin
+ stackimmassign1();
 end;
 
 procedure pushimm8op();
@@ -1159,6 +1171,7 @@ const
   pushssa = 1;
   popssa = 1;
 
+  pushimm1ssa = 1;
   pushimm8ssa = 1;
   pushimm16ssa = 1;
   pushimm32ssa = 1;

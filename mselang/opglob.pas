@@ -82,6 +82,7 @@ type
   oc_push,
   oc_pop,
 
+  oc_pushimm1,
   oc_pushimm8,
   oc_pushimm16,
   oc_pushimm32,
@@ -377,7 +378,7 @@ type
  end;
  
  memopty = record
-  databitsize: datasizety;
+  datacount: datasizety;         //bit size or item count
 //  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
@@ -436,7 +437,8 @@ type
     end;
    );
    oc_push,
-   oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,oc_pushimmdatakind,
+   oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,
+   oc_pushimmdatakind,
    oc_pushaddr,
    oc_increg0,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
    oc_pop: (

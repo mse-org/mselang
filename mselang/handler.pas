@@ -1654,7 +1654,7 @@ begin
        po1^.par.memop.locdataaddress.offset:= 0;
       end;
      end;
-     po1^.par.memop.databitsize:= si1;
+     po1^.par.memop.datacount:= si1;
      po1^.par.ssas1:= ssa1;
     end;
    end;
