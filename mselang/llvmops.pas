@@ -385,7 +385,7 @@ begin
   tmp:= '%'+inttostr(ssad);
   nextoplabel(lab1);
   oplabel(lab2);
-  outass(tmp+' = icmp ne i8 %'+inttostr(ssas1)+', 0');
+  outass(tmp+' = icmp ne i1 %'+inttostr(ssas1)+', 0');
   outass('br i1 '+tmp+', label %'+lab1+', label %'+lab2);
   outass(lab1+':');
  end;

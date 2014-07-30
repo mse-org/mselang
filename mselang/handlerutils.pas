@@ -121,7 +121,7 @@ procedure push(const avalue: addressvaluety; const offset: dataoffsty;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                            const size: datasizety{; const ssaindex: integer});
+                            const bitsize: datasizetyxx);
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -135,7 +135,7 @@ procedure pushinsertsegaddress(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                              const size: datasizety{; const ssaindex: integer});
+                              const bitsize: datasizetyxx);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -181,7 +181,7 @@ const
        bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none;
        dummy: 0)),
    (name: 'bool8'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8; kind: dk_boolean;
+       bitsize: 1; bytesize: 1; datasize: das_8; kind: dk_boolean;
        dummy: 0)),
    (name: 'int32'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32;
@@ -983,16 +983,16 @@ end;
 
 //todo: optimize call
 procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                         const size: datasizety{; const ssaindex: integer});
+                         const bitsize: datasizetyxx);
 begin
- pushd(false,0,false,address,offset,size{,ssaindex});
+ pushd(false,0,false,address,offset,bitsize);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety; const offset: dataoffsty;
-                  const size: datasizety{; const ssaindex: integer});
+                  const bitsize: datasizetyxx);
 begin
- pushd(true,stackoffset,before,address,offset,size{,ssaindex});
+ pushd(true,stackoffset,before,address,offset,bitsize);
 end;
 
 procedure initfactcontext(const stackoffset: integer);
@@ -1144,8 +1144,8 @@ begin                    //todo: optimize
       else begin
        si1:= pointerbitsize;
       end;
-      pushinsertdata(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,
-                                                                 si1{,ssaindex});
+      pushinsertdata(stackoffset,false,
+                               d.dat.ref.c.address,d.dat.ref.offset,si1);
      end;
     end;
    end;
