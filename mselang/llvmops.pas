@@ -77,12 +77,25 @@ end;
 
 function locaddress(const address: locaddressty): string;
 begin
+{$ifdef mse_locvarssatracking}
  if address.ssaindex > 0 then begin
   result:= '%'+inttostr(address.ssaindex);
  end
  else begin
+{$endif}
   result:= '%l'+inttostr(address.address);
+{$ifdef mse_locvarssatracking}
  end;
+{$endif}
+end;
+
+function paraddress(const address: locaddressty): string;
+begin
+{$ifdef mse_locvarssatracking}
+ result:= '%l'+inttostr(address.address);
+{$else}
+ result:= '%p'+inttostr(address.address);
+{$endif}
 end;
 
 function locdataaddress(const address: locdataaddressty): string;
@@ -150,7 +163,8 @@ end;
 procedure segassign();
 begin
  with pc^.par do begin
-  outass('store i32 %'+inttostr(ssas1)+', i'+inttostr(memop.datasize*8)+'* '+
+  outass('store i'+inttostr(memop.datasize*8)+
+  ' %'+inttostr(ssas1)+', i'+inttostr(memop.datasize*8)+'* '+
                                          segdataaddress(memop.segdataaddress));
  end;
 end;
@@ -168,7 +182,7 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
 }
-procedure locassign;
+procedure locassign();
 begin
  with pc^.par do begin
   outass('store i'+inttostr(memop.datasize*8)+' %'+inttostr(ssas1)+
@@ -179,11 +193,15 @@ end;
 
 procedure parassign;
 begin
+{$ifdef mse_locvarssatracking}
  with pc^.par do begin
   outass('%'+inttostr(ssad)+
                ' = add i'+inttostr(memop.datasize*8)+
                ' %'+inttostr(ssas1)+', 0');
  end;
+{$else}
+ locassign();
+{$endif}
 end;
 {
 procedure locassign32(const ssaindex: integer; const dest: locdataaddressty);
@@ -202,10 +220,14 @@ end;
 
 procedure assignpar();
 begin
+{$ifdef mse_locvarssatracking}
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = add i'+inttostr(memop.datasize*8)+
                        ' '+locdataaddress(memop.locdataaddress)+', 0');
  end;
+{$else}
+ assignloc();
+{$endif}
 end;
 
 {
@@ -1000,7 +1022,7 @@ begin
    if not (af_param in po1^.a.flags) then begin
     break;
    end;
-   str1:= ',i'+inttostr(8*po1^.size)+' '+locaddress(po1^.a.locaddress);
+   str1:= ',i'+inttostr(8*po1^.size)+' '+paraddress(po1^.a.locaddress);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1009,8 +1031,16 @@ begin
    inc(po1);
   end;
   outass('){');
+{$ifndef mse_locvarssatracking}
+  po1:= getsegmentpo(seg_localloc,allocs.allocs);
+{$endif}
   while po1 < poend do begin
    outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+{$ifndef mse_locvarssatracking}
+   outass('store i'+inttostr(po1^.size*8)+' '+paraddress(po1^.a.locaddress)+
+               ',i'+inttostr(po1^.size*8)+'* '+
+                           locaddress(po1^.a.locaddress));
+{$endif}
    inc(po1);
   end;
  end;
@@ -1190,10 +1220,10 @@ const
   poplocindi32ssa = 1;
   poplocindissa = 1;
 
-  poppar8ssa = 1;
-  poppar16ssa = 1;
-  poppar32ssa = 1;
-  popparssa = 1;
+  poppar8ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  poppar16ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  poppar32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
 
   popparindi8ssa = 1;
   popparindi16ssa = 1;

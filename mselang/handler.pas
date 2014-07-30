@@ -1567,11 +1567,13 @@ begin
      end;
      ck_refconst: begin
       dest.address:= d.dat.ref.c.address;
+     {$ifdef mse_locvarssatracking}
       if (af_param in dest.address.flags) and 
                       (d.dat.ref.c.varele <> 0) then begin
        pvardataty(ele.eledataabs(d.dat.ref.c.varele))^.
                                    address.locaddress.ssaindex:= ssa1;
       end;
+     {$endif}
       typematch:= true;
      end;
      ck_fact,ck_subres: begin

@@ -237,7 +237,9 @@ type
  locaddressty = record
   address: dataoffsty;
   framelevel: integer;
+ {$ifdef mse_locvarssatracking}
   ssaindex: integer;
+ {$endif}
  end;
  
  addressvaluety = record

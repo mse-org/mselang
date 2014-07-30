@@ -225,7 +225,9 @@ function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
 begin
  with info do begin
   result.address:= locdatapo+shift;
+ {$ifdef mse_locvarssatracking}
   result.ssaindex:= 0;
+ {$endif}
   locdatapo:= locdatapo + alignsize(asize);
   result.framelevel:= info.sublevel;
   aflags:= aflags - addresskindflags + [af_local];
