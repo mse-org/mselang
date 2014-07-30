@@ -210,7 +210,7 @@ var
                                     //alloc space for return value
       initfactcontext(0); //set ssaindex
       d.kind:= ck_subres;
-      d.dat.fact.datasize:= int1;
+      d.dat.fact.databitsize:= int1*8;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
       d.dat.datatyp.typedata:= po6^.vf.typ;        
       with additem(oc_pushstackaddr)^ do begin //result var param

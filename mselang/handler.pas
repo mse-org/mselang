@@ -1550,10 +1550,10 @@ begin
     end;
    {$endif}
     if d.dat.datatyp.indirectlevel > 0 then begin
-     si1:= pointersize;
+     si1:= pointerbitsize;
     end
     else begin
-     si1:= dest.typ^.bytesize;
+     si1:= dest.typ^.bitsize;
     end;
     case d.kind of
      ck_const: begin
@@ -1602,12 +1602,13 @@ begin
     else begin
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
       ad1.base:= ab_stack;
-      ad1.offset:= -si1;
+      ad1.offset:= -((si1+7) div 8); //bytes
       if not isconst then begin
        writemanagedtypeop(mo_incref,dest.typ,ad1,ssa1);
       end;
       if indi then begin
-       dec(ad1.offset,si1);
+//       dec(ad1.offset,si1);
+       ad1.offset:= 0;
        ad1.base:= ab_stackref;
       end
       else begin
@@ -1625,13 +1626,13 @@ begin
 
      if indi then begin
       case si1 of
-       1: begin
+       1..8: begin
         po1:= additem(oc_popindirect8);
        end;
-       2: begin
+       9..16: begin
         po1:= additem(oc_popindirect16);
        end;
-       4: begin
+       17..32: begin
         po1:= additem(oc_popindirect32);
        end;
        else begin
@@ -1643,67 +1644,17 @@ begin
       po1:= additem(popoptable[
                         getmovedest(dest.address.flags)][getmovesize(si1)]);
       if af_segment in dest.address.flags then begin
-{
-       case si1 of
-        1: begin 
-         po1:= additem(oc_popseg8);
-        end;
-        2: begin
-         po1:= additem(oc_popseg16);
-        end;
-        4: begin
-         po1:= additem(oc_popseg32);
-        end;
-        else begin
-         po1:= additem(oc_popseg);
-        end;
-       end;
-}
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
        po1^.par.memop.segdataaddress.offset:= 0;
       end
       else begin
-{
-       if af_paramindirect in dest.address.flags then begin
-        case si1 of
-         1: begin 
-          po1:= additem(oc_poplocindi8);
-         end;
-         2: begin
-          po1:= additem(oc_poplocindi16);
-         end;
-         4: begin
-          po1:= additem(oc_poplocindi32);
-         end;
-         else begin
-          po1:= additem(oc_poplocindi);
-         end;
-        end;
-       end
-       else begin
-        case si1 of
-         1: begin 
-          po1:= additem(oc_poploc8);
-         end;
-         2: begin
-          po1:= additem(oc_poploc16);
-         end;
-         4: begin
-          po1:= additem(oc_poploc32);
-         end;
-         else begin
-          po1:= additem(oc_poploc);
-         end;
-        end;
-       end;
-}
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
        po1^.par.memop.locdataaddress.a.framelevel:= sublevel -
                                           dest.address.locaddress.framelevel-1;
        po1^.par.memop.locdataaddress.offset:= 0;
       end;
      end;
-     po1^.par.memop.datasize:= si1;
+     po1^.par.memop.databitsize:= si1;
      po1^.par.ssas1:= ssa1;
     end;
    end;
@@ -1823,7 +1774,7 @@ begin
    case kind of
     ck_subres: begin
      with additem(oc_pop)^ do begin
-      setimmsize(dat.fact.datasize,par); //todo: alignment
+      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
     end;
     ck_subcall: begin

@@ -311,10 +311,13 @@ type
  
  factinfoty = record
   ssaindex: integer;
+  databitsize: integer;
+ {
   case contextkindty of
    ck_subres:(
     datasize: integer;
    );
+ }
  end;
 
  numflagty = (nuf_pos,nuf_neg);

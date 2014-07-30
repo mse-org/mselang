@@ -367,6 +367,7 @@ type
  end;  
 
  stackopty = record
+  databitsize: integer;
 //  destssaindex: integer;
 //  source1ssaindex: integer;
 //  case opcodety of
@@ -376,7 +377,7 @@ type
  end;
  
  memopty = record
-  datasize: datasizety;
+  databitsize: datasizety;
 //  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
@@ -473,7 +474,8 @@ type
      );
    );
   oc_negcard32,oc_negint32,oc_negflo64,
-  oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
+  oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
+  oc_cmpequbool,oc_cmpequint32,oc_cmpequflo64:(
    stackop: stackopty;
   );
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,

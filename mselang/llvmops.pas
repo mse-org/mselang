@@ -33,6 +33,17 @@ implementation
 uses
  sysutils,msestream,msesys,segmentutils,handlerglob,elements;
 
+type
+ icomparekindty = (ick_eq,ick_ne,
+                  ick_ugt,ick_uge,ick_ult,ick_ule,
+                  ick_sgt,ick_sge,ick_slt,ick_sle);
+
+const
+ icomparetokens: array[icomparekindty] of string[3] = (
+                  'eq','ne',
+                  'ugt','uge','ult','ule',
+                  'sgt','sge','slt','sle');
+                  
 var
 // sp: integer; //unnamed variables
  pc: popinfoty;
@@ -163,8 +174,8 @@ end;
 procedure segassign();
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.datasize*8)+
-  ' %'+inttostr(ssas1)+', i'+inttostr(memop.datasize*8)+'* '+
+  outass('store i'+inttostr(memop.databitsize)+
+  ' %'+inttostr(ssas1)+', i'+inttostr(memop.databitsize)+'* '+
                                          segdataaddress(memop.segdataaddress));
  end;
 end;
@@ -172,7 +183,7 @@ end;
 procedure assignseg();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datasize*8)+
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.databitsize)+
                                '* '+segdataaddress(memop.segdataaddress));
  end;
 end;
@@ -185,8 +196,8 @@ end;
 procedure locassign();
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.datasize*8)+' %'+inttostr(ssas1)+
-               ',i'+inttostr(memop.datasize*8)+'* '+
+  outass('store i'+inttostr(memop.databitsize)+' %'+inttostr(ssas1)+
+               ',i'+inttostr(memop.databitsize)+'* '+
                            locdataaddress(memop.locdataaddress));
  end;
 end;
@@ -213,7 +224,7 @@ end;
 procedure assignloc();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datasize*8)+
+  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.databitsize)+
                                 '* '+locdataaddress(memop.locdataaddress));
  end;
 end;
@@ -222,7 +233,7 @@ procedure assignpar();
 begin
 {$ifdef mse_locvarssatracking}
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(memop.datasize*8)+
+  outass('%'+inttostr(ssad)+' = add i'+inttostr(memop.databitsize)+
                        ' '+locdataaddress(memop.locdataaddress)+', 0');
  end;
 {$else}
@@ -236,6 +247,16 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
 end;
 }
+
+procedure icompare(const akind: icomparekindty);
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
+                   ' i'+inttostr(stackop.databitsize)+
+                               ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
+ end;
+end;
+
 procedure nopop();
 begin
  with pc^.par do begin
@@ -485,10 +506,12 @@ procedure cmpequboolop();
 begin
  notimplemented();
 end;
+
 procedure cmpequint32op();
 begin
- notimplemented();
+ icompare(ick_eq);
 end;
+
 procedure cmpequflo64op();
 begin
  notimplemented();
