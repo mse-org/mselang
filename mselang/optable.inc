@@ -144,7 +144,7 @@
   popparindissa,
 
   pushnilssa,
-  pushsegaddressssa,
+//  pushsegaddressssa,
 
   pushseg8ssa,
   pushseg16ssa,
@@ -345,7 +345,7 @@
   @popparindiop,
 
   @pushnilop,
-  @pushsegaddressop,
+//  @pushsegaddressop,
 
   @pushseg8op,
   @pushseg16op,

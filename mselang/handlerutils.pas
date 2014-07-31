@@ -536,7 +536,7 @@ begin
   insertitem(oc_pushnil,stackoffset,before);
  end
  else begin
-  with insertitem(oc_pushsegaddress,stackoffset,before)^ do begin
+  with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
    par.vsegaddress.a:= address;
    par.vsegaddress.offset:= 0;
   end;
@@ -600,7 +600,7 @@ begin
      insertitem(oc_pushnil,stackoffset,before);
     end
     else begin
-     with insertitem(oc_pushsegaddress,stackoffset,before)^ do begin
+     with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
       par.vsegaddress.a:= segad1;
       par.vsegaddress.offset:= 0;
      end;

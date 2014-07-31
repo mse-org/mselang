@@ -1011,13 +1011,13 @@ end;
 procedure pushsegaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-               getsegaddress(cpu.pc^.par.memop.segdataaddress);
+               getsegaddress(cpu.pc^.par.vsegaddress);
 end;
 
 procedure pushsegaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-               getsegaddressindi(cpu.pc^.par.memop.segdataaddress);
+               getsegaddressindi(cpu.pc^.par.vsegaddress);
 end;
 
 procedure pushstackaddrop();

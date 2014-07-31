@@ -898,10 +898,15 @@ procedure pushlocaddrindiop();
 begin
  notimplemented();
 end;
+
 procedure pushsegaddrop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = add void* '+
+                      segdataaddress(memop.segdataaddress)+'*'+', 0');
+ end;
 end;
+
 procedure pushsegaddrindiop();
 begin
  notimplemented();
