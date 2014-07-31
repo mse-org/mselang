@@ -43,7 +43,8 @@ const
                   'eq','ne',
                   'ugt','uge','ult','ule',
                   'sgt','sge','slt','sle');
-                  
+ ptrintname = 'i32';
+                   
 var
 // sp: integer; //unnamed variables
  pc: popinfoty;
@@ -902,8 +903,8 @@ end;
 procedure pushsegaddrop();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add void* '+
-                      segdataaddress(memop.segdataaddress)+'*'+', 0');
+  outass('%'+inttostr(ssad)+' = ptrtoint i32* '+
+                      segdataaddress(vsegaddress)+' to '+ptrintname);
  end;
 end;
 
@@ -1317,7 +1318,7 @@ const
   popindirect32ssa = 1;
   popindirectssa = 1;
 
-  callssa = 1;
+  callssa = 0;
   calloutssa = 1;
   callvirtssa = 1;
   callintfssa = 1;

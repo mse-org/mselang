@@ -1642,7 +1642,7 @@ begin
      end
      else begin
       po1:= additem(popoptable[
-                        getmovedest(dest.address.flags)][getmovesize(si1)]);
+                     getmovedest(dest.address.flags)][getmovesize(si1 div 8)]);
       if af_segment in dest.address.flags then begin
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
        po1^.par.memop.segdataaddress.offset:= 0;

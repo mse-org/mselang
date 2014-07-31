@@ -561,6 +561,8 @@ begin
    end;
   end;
  end;
+ initfactcontext(stackoffset);
+//  po1^.d.dat.fact.databitsize:= si1;
 end;
 
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
