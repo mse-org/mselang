@@ -1058,6 +1058,7 @@ begin
      par.voffset:= d.dat.ref.offset;
     end;
    end;
+   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
    initfactcontext(stackoffset);
   end
   else begin
@@ -1120,6 +1121,9 @@ begin                    //todo: optimize
      errormessage(err_invalidderef,[],stackoffset);
      exit;
     end;
+    if af_paramindirect in d.dat.ref.c.address.flags then begin
+     dec(d.dat.indirection);
+    end;
     if d.dat.indirection > 0 then begin //@ operator
      si1:= pointerbitsize;
      if d.dat.indirection = 1 then begin
@@ -1136,6 +1140,7 @@ begin                    //todo: optimize
       if not pushindirection(stackoffset) then begin
        exit;
       end;
+      dec(d.dat.datatyp.indirectlevel); //correct addr handling
       doindirect;
      end
      else begin
@@ -1219,6 +1224,7 @@ begin
      end
      else begin
       d.kind:= ck_refconst;
+      inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);
       d.dat.indirection:= 0;
 //      ref1:= d.dat.ref; //todo: optimize
       d.dat.ref.c.address.poaddress:=
