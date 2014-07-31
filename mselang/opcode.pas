@@ -33,6 +33,11 @@ type
   start: opaddressty;
   size: databitsizety;
  end;
+
+var
+ optable: poptablety;
+ ssatable: pssatablety;
+ 
   
 function getglobvaraddress(const asize: integer;
                                     var aflags: addressflagsty): segaddressty;
@@ -83,10 +88,6 @@ type
  opadsty = array[addressbasety] of opcodety;
  aropadsty = array[boolean] of opadsty; 
 
-var
- optable: poptablety;
- ssatable: pssatablety;
- 
 procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
 begin
  optable:= aoptable;

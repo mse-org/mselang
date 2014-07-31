@@ -215,13 +215,27 @@ begin
 {$ifdef mse_locvarssatracking}
  with pc^.par do begin
   outass('%'+inttostr(ssad)+
-               ' = add i'+inttostr(memop.datasize*8)+
+               ' = add i'+inttostr(memop.datacount)+
                ' %'+inttostr(ssas1)+', 0');
  end;
 {$else}
  locassign();
 {$endif}
 end;
+
+procedure assignindirect();
+var
+ dest1,dest2: shortstring;
+begin
+ with pc^.par do begin
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  outass(dest1+' = inttoptr '+ptrintname+' %'+inttostr(ssas1)+
+                         ' to i'+inttostr(memop.datacount)+'*');
+  outass(dest2+' = load i'+inttostr(memop.datacount)+'* '+dest1);
+ end;
+end;
+
 {
 procedure locassign32(const ssaindex: integer; const dest: locdataaddressty);
 begin
@@ -233,7 +247,7 @@ procedure locassignindi();
 var
  dest1,dest2: shortstring;
 begin
- with pc^.par do begin
+ with pc^.par do begin                  //todo: add offset, nested frame
   dest1:= '%'+inttostr(ssad);
   dest2:= '%'+inttostr(ssad+1);
   outass(dest1+' = load '+ptrintname+
@@ -940,9 +954,13 @@ procedure pushlocaddrop();
 begin
  notimplemented();
 end;
-procedure pushlocaddrindiop();
+
+procedure pushlocaddrindiop();          //todo: offset, nested frames
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = load '+ptrintname+'* '+
+                                 locdataaddress(vlocaddress));
+ end;
 end;
 
 procedure pushsegaddrop();
@@ -968,20 +986,24 @@ end;
 
 procedure indirect8op();
 begin
- notimplemented();
+ assignindirect();
 end;
+
 procedure indirect16op();
 begin
- notimplemented();
+ assignindirect();
 end;
+
 procedure indirect32op();
 begin
- notimplemented();
+ assignindirect();
 end;
+
 procedure indirectpoop();
 begin
- notimplemented();
+ assignindirect();
 end;
+
 procedure indirectpooffsop();
 begin
  notimplemented();
@@ -1350,10 +1372,10 @@ const
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
 
-  indirect8ssa = 1;
-  indirect16ssa = 1;
-  indirect32ssa = 1;
-  indirectpossa = 1;
+  indirect8ssa = 2;
+  indirect16ssa = 2;
+  indirect32ssa = 2;
+  indirectpossa = 2;
   indirectpooffsssa = 1;
   indirectoffspossa = 1;
   indirectssa = 1;
