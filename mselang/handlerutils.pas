@@ -922,22 +922,6 @@ begin
   end
   else begin
    if af_param in flags then begin
-    case bitsize of
-     1..8: begin 
-      po1:= getop(oc_pushpar8);
-     end;
-     9..16: begin
-      po1:= getop(oc_pushpar16);
-     end;
-     17..32: begin
-      po1:= getop(oc_pushpar32);
-     end;
-     else begin
-      po1:= getop(oc_pushpar);
-     end;
-    end;
-   end
-   else begin   
     if af_paramindirect in flags then begin
      case bitsize of
       1..8: begin 
@@ -957,17 +941,33 @@ begin
     else begin
      case bitsize of
       1..8: begin 
-       po1:= getop(oc_pushloc8);
+       po1:= getop(oc_pushpar8);
       end;
       9..16: begin
-       po1:= getop(oc_pushloc16);
+       po1:= getop(oc_pushpar16);
       end;
       17..32: begin
-       po1:= getop(oc_pushloc32);
+       po1:= getop(oc_pushpar32);
       end;
       else begin
-       po1:= getop(oc_pushloc);
+       po1:= getop(oc_pushpar);
       end;
+     end;
+    end;
+   end
+   else begin   
+    case bitsize of
+     1..8: begin 
+      po1:= getop(oc_pushloc8);
+     end;
+     9..16: begin
+      po1:= getop(oc_pushloc16);
+     end;
+     17..32: begin
+      po1:= getop(oc_pushloc32);
+     end;
+     else begin
+      po1:= getop(oc_pushloc);
      end;
     end;
    end;

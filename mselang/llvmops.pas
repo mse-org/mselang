@@ -229,11 +229,50 @@ begin
 end;
 }
 
+procedure locassignindi();
+var
+ dest1,dest2: shortstring;
+begin
+ with pc^.par do begin
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  outass(dest1+' = load '+ptrintname+
+                               '* '+locdataaddress(memop.locdataaddress));
+  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+  outass('store i'+inttostr(memop.datacount)+' %'+inttostr(ssas1)+
+                             ', i'+inttostr(memop.datacount)+'* '+dest2);
+ end;
+end;
+
+procedure parassignindi();
+begin
+{$ifdef mse_locvarssatracking}
+ notimplemented();
+{$else}
+ locassignindi();
+{$endif}
+end;
+
 procedure assignloc();
 begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datacount)+
                                 '* '+locdataaddress(memop.locdataaddress));
+ end;
+end;
+
+procedure assignlocindi();
+var
+ dest1,dest2,dest3: shortstring;
+begin
+ with pc^.par do begin
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  dest3:= '%'+inttostr(ssad+2);
+  outass(dest1+' = load '+ptrintname+
+                               '* '+locdataaddress(memop.locdataaddress));
+  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+  outass(dest3+' = load i'+inttostr(memop.datacount)+'* '+dest2);
  end;
 end;
 
@@ -736,19 +775,22 @@ end;
 
 procedure poplocindi8op();
 begin
- notimplemented();
+ locassign();
 end;
+
 procedure poplocindi16op();
 begin
- notimplemented();
+ locassign();
 end;
+
 procedure poplocindi32op();
 begin
- notimplemented();
+ locassign();
 end;
+
 procedure poplocindiop();
 begin
- notimplemented();
+ locassign();
 end;
 
 procedure poppar8op();
@@ -773,22 +815,22 @@ end;
 
 procedure popparindi8op();
 begin
- notimplemented();
+ parassignindi()
 end;
 
 procedure popparindi16op();
 begin
- notimplemented();
+ parassignindi()
 end;
 
 procedure popparindi32op();
 begin
- notimplemented();
+ parassignindi()
 end;
 
 procedure popparindiop();
 begin
- notimplemented();
+ parassignindi()
 end;
 
 procedure pushnilop();
@@ -872,19 +914,22 @@ end;
 
 procedure pushlocindi8op();
 begin
- notimplemented();
+ assignlocindi();
 end;
+
 procedure pushlocindi16op();
 begin
- notimplemented();
+ assignlocindi();
 end;
+
 procedure pushlocindi32op();
 begin
- notimplemented();
+ assignlocindi();
 end;
+
 procedure pushlocindiop();
 begin
- notimplemented();
+ assignlocindi();
 end;
 
 procedure pushaddrop();
@@ -1257,20 +1302,20 @@ const
   poploc32ssa = 0;
   poplocssa = 0;
 
-  poplocindi8ssa = 1;
-  poplocindi16ssa = 1;
-  poplocindi32ssa = 1;
-  poplocindissa = 1;
+  poplocindi8ssa = 2;
+  poplocindi16ssa = 2;
+  poplocindi32ssa = 2;
+  poplocindissa = 2;
 
   poppar8ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   poppar16ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   poppar32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
 
-  popparindi8ssa = 1;
-  popparindi16ssa = 1;
-  popparindi32ssa = 1;
-  popparindissa = 1;
+  popparindi8ssa = 2;
+  popparindi16ssa = 2;
+  popparindi32ssa = 2;
+  popparindissa = 2;
 
   pushnilssa = 1;
   pushsegaddressssa = 1;
@@ -1286,10 +1331,10 @@ const
   pushlocpossa = 1;
   pushlocssa = 1;
 
-  pushlocindi8ssa = 1;
-  pushlocindi16ssa = 1;
-  pushlocindi32ssa = 1;
-  pushlocindissa = 1;
+  pushlocindi8ssa = 3;
+  pushlocindi16ssa = 3;
+  pushlocindi32ssa = 3;
+  pushlocindissa = 3;
 
   pushpar8ssa = 1;
   pushpar16ssa = 1;
