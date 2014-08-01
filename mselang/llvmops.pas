@@ -1143,12 +1143,19 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
   while po1 < poend do begin
+  if not (af_param in po1^.a.flags) then begin
+   break;
+  end;
    outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
 {$ifndef mse_locvarssatracking}
    outass('store i'+inttostr(po1^.size*8)+' '+paraddress(po1^.a.locaddress)+
                ',i'+inttostr(po1^.size*8)+'* '+
                            locaddress(po1^.a.locaddress));
 {$endif}
+   inc(po1);
+  end;
+  while po1 < poend do begin
+   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
    inc(po1);
   end;
  end;
