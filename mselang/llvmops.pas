@@ -485,6 +485,7 @@ procedure pushop();
 begin
  notimplemented();
 end;
+
 procedure popop();
 begin
  notimplemented();
@@ -1041,10 +1042,17 @@ var
  first: boolean;
  str1: shortstring;
 begin
- with pc^.par.callinfo do begin
-  outass('call void @s'+inttostr(ad+1)+'(');
-  parpo:= getsegmentpo(seg_localloc,params);
+ with pc^.par do begin
+  parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + paramcount;
+  if sf_function in callinfo.flags then begin
+   outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.size*8)+
+                                     ' @s'+inttostr(callinfo.ad+1)+'(');
+   inc(parpo); //skip result param
+  end
+  else begin
+   outass('call void @s'+inttostr(callinfo.ad+1)+'(');
+  end;
   first:= true;
   while parpo < endpo do begin
    str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);

@@ -718,6 +718,7 @@ begin
       beginparser(stackops.getoptable(),stackops.getssatable());
      end;
      bke_llvm: begin
+      backendhasfunction:= true;
       beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;

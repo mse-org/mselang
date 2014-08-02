@@ -600,6 +600,7 @@ type
  
  parseinfoty = record
   backend: backendty;
+  backendhasfunction: boolean;
 //  beginparseop:  integer;
   unitinfo: punitinfoty;
   unitinfochain: elementoffsetty;

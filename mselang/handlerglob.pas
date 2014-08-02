@@ -262,6 +262,7 @@ type
 //  varallocs: dataoffsty;
 //  varalloccount: integer;
   paramfinichain: elementoffsetty;
+  resulttype: elementoffsetty;
   paramsize: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty

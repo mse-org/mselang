@@ -148,6 +148,20 @@ var
     end;
     
     parallocstart:= getsegmenttopoffs(seg_localloc);    
+    if sf_function in asub^.flags then begin
+     with pparallocinfoty(
+               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+      ssaindex:= 0;
+      po3:= ele.eledataabs(asub^.resulttype);
+      if po3^.indirectlevel > 0 then begin
+       size:= pointersize;
+      end
+      else begin
+       size:= po3^.bytesize;
+      end;
+     end;
+    end;
+
     for int1:= stackindex+3+idents.high to stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
@@ -206,19 +220,23 @@ var
       else begin
        po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
       end;
-      int1:= pushinsertvar(parent-stackindex,false,po3); 
+      if not backendhasfunction then begin
+       int1:= pushinsertvar(parent-stackindex,false,po3); 
                                     //alloc space for return value
+      end;
       initfactcontext(0); //set ssaindex
       d.kind:= ck_subres;
       d.dat.fact.databitsize:= int1*8;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
       d.dat.datatyp.typedata:= po6^.vf.typ;        
-      with additem(oc_pushstackaddr)^ do begin //result var param
-       par.voffset:= -asub^.paramsize+stacklinksize-int1;
-      end;
-      if sf_constructor in asub^.flags then begin
-       pushinsertsegaddress(parent-stackindex,false,po3^.infoclass.defs);
-                                   //class type
+      if not backendhasfunction then begin
+       with additem(oc_pushstackaddr)^ do begin //result var param
+        par.voffset:= -asub^.paramsize+stacklinksize-int1;
+       end;
+       if sf_constructor in asub^.flags then begin
+        pushinsertsegaddress(parent-stackindex,false,po3^.infoclass.defs);
+                                    //class type
+       end;
       end;
      end
      else begin
@@ -268,6 +286,7 @@ var
                                                              //for downto 0
     end;
     with po1^ do begin
+     par.callinfo.flags:= asub^.flags;
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid

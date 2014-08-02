@@ -390,6 +390,7 @@ var
  bo1,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
+ resultele1: elementoffsetty;
 
 begin
 {$ifdef mse_debugparser}
@@ -412,9 +413,13 @@ begin
    tokenexpectederror(':');
   end;
   paramsize1:= 0;
+  resultele1:= 0;
   isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
   isinterface:=  stf_interfacedef in currentstatementflags;
   ismethod:= isclass or isinterface;
+  if sf_function in subflags then begin
+   resultele1:= contextstack[stacktop].d.typ.typedata;
+  end;
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
    with contextstack[stacktop] do begin
@@ -430,6 +435,7 @@ begin
    with contextstack[stacktop] do begin
     d.kind:= ck_fieldtype;
     d.typ.typedata:= currentcontainer;
+    resultele1:= currentcontainer;
     d.typ.indirectlevel:= 1;
    end;
   end;
@@ -464,6 +470,7 @@ begin
   po1^.trampolineaddress:= 0;
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
+  po1^.resulttype:= resultele1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;
   if (stf_classdef in currentstatementflags) and 
