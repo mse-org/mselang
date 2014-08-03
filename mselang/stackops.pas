@@ -1143,6 +1143,11 @@ begin
  cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
 end;
 
+procedure callfuncop();
+begin
+ callop();
+end;
+
 procedure calloutop();
 var
  i1: integer;
@@ -1904,6 +1909,7 @@ const
   popindirectssa = 0;
 
   callssa = 0;
+  callfuncssa = 0;
   calloutssa = 0;
   callvirtssa = 0;
   callintfssa = 0;

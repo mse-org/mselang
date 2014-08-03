@@ -224,6 +224,7 @@ type
   oc_popindirect,
 
   oc_call,
+  oc_callfunc,
   oc_callout,
   oc_callvirt,
   oc_callintf,
@@ -514,7 +515,7 @@ type
    oc_subend:(
     subend: subendty;
    );
-   oc_call,oc_callout:(
+   oc_call,oc_callfunc,oc_callout:(
     callinfo: callinfoty;
    );
    oc_callvirt,oc_callintf:(

@@ -190,6 +190,7 @@
   popindirectssa,
 
   callssa,
+  callfuncssa,
   calloutssa,
   callvirtssa,
   callintfssa,
@@ -392,6 +393,7 @@
   @popindirectop,
 
   @callop,
+  @callfuncop,
   @calloutop,
   @callvirtop,
   @callintfop,

@@ -280,7 +280,12 @@ var
     end;
     if (asub^.nestinglevel = 0) or 
                      (asub^.nestinglevel = sublevel) then begin
-     po1:= additem(oc_call);
+     if sf_function in asub^.flags then begin
+      po1:= additem(oc_callfunc);
+     end
+     else begin
+      po1:= additem(oc_call);
+     end;
      po1^.par.callinfo.linkcount:= -1;
     end
     else begin

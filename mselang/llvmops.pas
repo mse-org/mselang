@@ -1045,14 +1045,34 @@ begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + paramcount;
-  if sf_function in callinfo.flags then begin
-   outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.size*8)+
-                                     ' @s'+inttostr(callinfo.ad+1)+'(');
-   inc(parpo); //skip result param
-  end
-  else begin
-   outass('call void @s'+inttostr(callinfo.ad+1)+'(');
+  outass('call void @s'+inttostr(callinfo.ad+1)+'(');
+  first:= true;
+  while parpo < endpo do begin
+   str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
+   if first then begin
+    str1[1]:= ' ';
+    first:= false;
+   end;
+   outass(str1);
+   inc(parpo);
   end;
+  outass(')');
+ end;
+end;
+
+procedure callfuncop();
+var
+ parpo: pparallocinfoty;
+ endpo: pointer;
+ first: boolean;
+ str1: shortstring;
+begin
+ with pc^.par do begin
+  parpo:= getsegmentpo(seg_localloc,callinfo.params);
+  endpo:= parpo + paramcount;
+  outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.size*8)+
+                                     ' @s'+inttostr(callinfo.ad+1)+'(');
+  inc(parpo); //skip result param
   first:= true;
   while parpo < endpo do begin
    str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
@@ -1402,6 +1422,7 @@ const
   popindirectssa = 1;
 
   callssa = 0;
+  callfuncssa = 1;
   calloutssa = 1;
   callvirtssa = 1;
   callintfssa = 1;
