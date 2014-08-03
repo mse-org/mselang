@@ -1235,6 +1235,11 @@ begin
  cpu.stack:= cpu.stack-int1;
 end;
 
+procedure returnfuncop();
+begin
+ returnop();
+end;
+
 procedure initclassop();
 var
  po1: pointer;
@@ -1910,6 +1915,7 @@ const
   subbeginssa = 0;
   subendssa = 0;
   returnssa = 0;
+  returnfuncssa = 0;
 
   initclassssa = 0;
   destroyclassssa = 0;

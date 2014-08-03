@@ -235,6 +235,7 @@ type
   oc_subbegin,
   oc_subend,
   oc_return,
+  oc_returnfunc,
 
   oc_initclass,
   oc_destroyclass,
@@ -417,11 +418,19 @@ type
 
  subbeginty = record
   subname: opaddressty;
+  flags: subflagsty;
 //  varchain: elementoffsetty;
   allocs: suballocinfoty;
  end;
 
  subendty = record
+  flags: subflagsty;
+  allocs: suballocinfoty;
+ end;
+
+ returnfuncinfoty = record
+  flags: subflagsty;
+  allocs: suballocinfoty;
  end;
  
                  //todo: unify
@@ -514,8 +523,12 @@ type
    oc_virttrampoline:(
     virttrampolineinfo: virttrampolineinfoty;
    );
-   oc_locvarpush,oc_locvarpop,oc_return:(
+   oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(
     stacksize: datasizety;
+    case opcodety of
+     oc_returnfunc:(
+      returnfuncinfo: returnfuncinfoty;
+     );
    );
    oc_initclass:(
     initclass: initclassinfoty;

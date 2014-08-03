@@ -1105,34 +1105,16 @@ var
  int1: integer;
 begin
  with pc^.par.subbegin do begin
-  outass('define void @s'+inttostr(subname)+'(');
-  (*
-  allocpo:= getsegmentpo(seg_localloc,allocs.parallocs);
-  endpo:= pointer(allocpo)+allocs.paralloccount*sizeof(locallocinfoty);
-  bo1:= true;
-  while allocpo < endpo do begin
-   with allocpo^ do begin
-    str1:= ' i'+inttostr(8*size)+' '+locaddress(a);
-    if not bo1 then begin
-     str1[1]:= ',';
-    end;
-    bo1:= false;
-    outass(str1);
-   end;
-   inc(allocpo);
-  end;
-  outass('){');
-  allocpo:= getsegmentpo(seg_localloc,allocs.varallocs);
-  endpo:= pointer(allocpo)+allocs.varalloccount*sizeof(locallocinfoty);
-  while allocpo < endpo do begin
-   with allocpo^ do begin
-    outass(locaddress(a)+' = alloca i'+inttostr(8*size));
-   end;
-   inc(allocpo);
-  end;
-  *)
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
   poend:= po1+allocs.alloccount;
+
+  if sf_function in flags then begin
+   outass('define i'+inttostr(po1^.size*8)+' @s'+inttostr(subname)+'(');
+   inc(po1); //result
+  end
+  else begin
+   outass('define void @s'+inttostr(subname)+'(');
+  end;
   first:= true;
   while po1 < poend do begin
    if not (af_param in po1^.a.flags) then begin
@@ -1150,6 +1132,10 @@ begin
 {$ifndef mse_locvarssatracking}
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
+  if sf_function in flags then begin
+   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+   inc(po1); //result
+  end;
   while po1 < poend do begin
   if not (af_param in po1^.a.flags) then begin
    break;
@@ -1179,6 +1165,21 @@ end;
 procedure returnop();
 begin
  outass('ret void');
+end;
+
+procedure returnfuncop();
+var
+ po1: plocallocinfoty;
+ ty1: shortstring;
+ dest1: shortstring;
+begin
+ with pc^.par do begin
+  po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
+  ty1:= 'i'+inttostr(po1^.size*8);
+  dest1:= '%'+inttostr(ssad);
+  outass(dest1 + ' = load '+ty1+'* %l0');
+  outass('ret '+ty1+' '+dest1);
+ end;
 end;
 
 procedure initclassop();
@@ -1412,6 +1413,7 @@ const
   subbeginssa = 1;
   subendssa = 0;
   returnssa = 1;
+  returnfuncssa = 1;
 
   initclassssa = 1;
   destroyclassssa = 1;

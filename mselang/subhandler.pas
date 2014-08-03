@@ -250,7 +250,12 @@ begin
 {$endif}
  with info,contextstack[stackindex-1] do begin
   d.kind:= ck_paramsdef;
-  d.paramsdef.kind:= pk_var;
+  if backendhasfunction then begin
+   d.paramsdef.kind:= pk_value;
+  end
+  else begin
+   d.paramsdef.kind:= pk_var;
+  end;
  end;
  with info,contextstack[stackindex] do begin
   d.kind:= ck_ident;
@@ -420,6 +425,7 @@ begin
   if sf_function in subflags then begin
    resultele1:= contextstack[stacktop].d.typ.typedata;
   end;
+
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
    with contextstack[stacktop] do begin
@@ -755,11 +761,15 @@ begin
    ele1:= po4^.vf.next;
    inc(int1);
   end;
+  po1^.allocs.allocs:= alloc1;
+  po1^.allocs.alloccount:= int1;
   resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;
-   par.subbegin.allocs.allocs:= alloc1;
-   par.subbegin.allocs.alloccount:= int1;
+   par.subbegin.flags:= po1^.flags;
+   par.subbegin.allocs:= po1^.allocs;
+//   par.subbegin.allocs.allocs:= alloc1;
+//   par.subbegin.allocs.alloccount:= int1;
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
@@ -774,7 +784,7 @@ end;
 
 procedure handlesubbody6();
 var
- po1,po2: psubdataty;
+ po1{,po2}: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -799,9 +809,17 @@ begin
     selfinstance:= -d.subdef.paramsize;
    end;
   end;
-  with additem(oc_return)^ do begin
-   par.stacksize:= d.subdef.paramsize;
-//   inc(ssaindex);
+  if sf_function in po1^.flags then begin
+   with additem(oc_returnfunc)^ do begin
+    par.stacksize:= d.subdef.paramsize;
+    par.returnfuncinfo.flags:= po1^.flags;
+    par.returnfuncinfo.allocs:= po1^.allocs;
+   end;
+  end
+  else begin
+   with additem(oc_return)^ do begin
+    par.stacksize:= d.subdef.paramsize;
+   end;
   end;
   locdatapo:= d.subdef.parambase;
   ssa:= d.subdef.ssabefore;
@@ -825,6 +843,8 @@ begin
    end;
   end;
   with additem(oc_subend)^ do begin
+   par.subend.flags:= po1^.flags;
+   par.subend.allocs:= po1^.allocs;
   end;
   locallocid:= d.subdef.locallocidbefore;
  end;

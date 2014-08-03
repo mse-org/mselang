@@ -201,6 +201,7 @@
   subbeginssa,
   subendssa,
   returnssa,
+  returnfuncssa,
 
   initclassssa,
   destroyclassssa,
@@ -402,6 +403,7 @@
   @subbeginop,
   @subendop,
   @returnop,
+  @returnfuncop,
 
   @initclassop,
   @destroyclassop,

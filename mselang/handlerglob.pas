@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,opcode;
+ parserglob,opcode,opglob;
 
 const
  pointersize = sizeof(pointer);
@@ -263,6 +263,7 @@ type
 //  varalloccount: integer;
   paramfinichain: elementoffsetty;
   resulttype: elementoffsetty;
+  allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;
   paramsrel: record //array of relative pvardataty

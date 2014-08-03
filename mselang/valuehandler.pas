@@ -227,7 +227,10 @@ var
       initfactcontext(0); //set ssaindex
       d.kind:= ck_subres;
       d.dat.fact.databitsize:= int1*8;
-      d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel-1;
+      d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel;
+      if not backendhasfunction then begin
+       dec(d.dat.datatyp.indirectlevel);
+      end;
       d.dat.datatyp.typedata:= po6^.vf.typ;        
       if not backendhasfunction then begin
        with additem(oc_pushstackaddr)^ do begin //result var param
