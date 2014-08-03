@@ -575,7 +575,7 @@ begin
    end;
   end;
   int3:= paramhigh;
-  if sf_function in subflags then begin
+  if (sf_function in subflags) and backendhasfunction then begin
    int1:= 4 + paramhigh * 3;          //result
    int2:= paramhigh;
    doparam();
