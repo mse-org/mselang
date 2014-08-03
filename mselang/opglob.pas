@@ -44,11 +44,11 @@ type
  op1infoty = record
   index0: integer;
  end;
-
+{
  opninfoty = record
   paramcount: integer;
  end;
-
+}
  opcodety = (        //order as optable.inc
   oc_none,
   oc_nop,

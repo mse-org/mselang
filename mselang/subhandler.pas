@@ -379,7 +379,7 @@ var
  po2: pvardataty;
  po3: ptypedataty;
  po4: pelementoffsetaty;
- int1,int2: integer;
+ int1,int2,int3: integer;
  paramco,paramhigh: integer;
  err1: boolean;
  impl1: boolean;
@@ -397,6 +397,68 @@ var
  ident1: identty;
  resultele1: elementoffsetty;
 
+ procedure doparam();
+ begin
+  with info do begin
+   paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
+   with contextstack[int1+stackindex] do begin
+    if (isclass and
+        ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
+            addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
+     identerror(int1,err_duplicateidentifier);
+     err1:= true;
+    end;
+    po4^[int2]:= elementoffsetty(po2); //absoluteaddress
+    with contextstack[int1+stackindex+1] do begin
+     if d.kind = ck_fieldtype then begin
+      po3:= ele.eledataabs(d.typ.typedata);
+      with po2^ do begin
+       address.indirectlevel:= d.typ.indirectlevel;
+       if address.indirectlevel > 0 then begin
+        si1:= pointersize;
+       end
+       else begin
+        si1:= po3^.bytesize;
+       end;
+       if impl1 then begin
+        address.locaddress:= getlocvaraddress(si1,address.flags);
+       end;
+       address.locaddress.framelevel:= sublevel+1;
+       address.flags:= [af_param];
+       if paramkind1 = pk_const then begin
+        if si1 > pointersize then begin
+         inc(address.indirectlevel);
+         include(address.flags,af_paramindirect);
+         si1:= pointersize;
+        end;
+        include(address.flags,af_const);
+       end
+       else begin
+        if paramkind1 in [pk_var,pk_out] then begin
+         inc(address.indirectlevel);
+         include(address.flags,af_paramindirect);
+         si1:= pointersize;
+        end
+        else begin
+         if impl1 and (d.typ.indirectlevel = 0) and 
+                   (tf_hasmanaged in po3^.flags) then begin
+          include(vf.flags,tf_hasmanaged);
+         end;                     
+        end;
+       end;
+       vf.typ:= d.typ.typedata;
+      end;
+     end
+     else begin
+      err1:= true;
+     end;
+     inc(paramsize1,si1);
+    end;
+   end;
+   int1:= int1+3;
+  end;
+ end; //doparam
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB3');
@@ -487,7 +549,6 @@ begin
    end;
   end;
   po4:= @po1^.paramsrel;
-  int1:= 4;
   err1:= false;
   impl1:= (us_implementation in unitinfo^.state) and 
                                                  not (sf_header in subflags);
@@ -513,63 +574,16 @@ begin
     vf.typ:= currentcontainer;
    end;
   end;
-  for int2:= 0 to paramhigh do begin
-   paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
-   with contextstack[int1+stackindex] do begin
-    if (isclass and
-        ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
-            addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
-     identerror(int1,err_duplicateidentifier);
-     err1:= true;
-    end;
-    po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-    with contextstack[int1+stackindex+1] do begin
-     if d.kind = ck_fieldtype then begin
-      po3:= ele.eledataabs(d.typ.typedata);
-      with po2^ do begin
-       address.indirectlevel:= d.typ.indirectlevel;
-       if address.indirectlevel > 0 then begin
-        si1:= pointersize;
-       end
-       else begin
-        si1:= po3^.bytesize;
-       end;
-       if impl1 then begin
-        address.locaddress:= getlocvaraddress(si1,address.flags);
-       end;
-       address.locaddress.framelevel:= sublevel+1;
-       address.flags:= [af_param];
-       if paramkind1 = pk_const then begin
-        if si1 > pointersize then begin
-         inc(address.indirectlevel);
-         include(address.flags,af_paramindirect);
-         si1:= pointersize;
-        end;
-        include(address.flags,af_const);
-       end
-       else begin
-        if paramkind1 in [pk_var,pk_out] then begin
-         inc(address.indirectlevel);
-         include(address.flags,af_paramindirect);
-         si1:= pointersize;
-        end
-        else begin
-         if impl1 and (d.typ.indirectlevel = 0) and 
-                   (tf_hasmanaged in po3^.flags) then begin
-          include(vf.flags,tf_hasmanaged);
-         end;                     
-        end;
-       end;
-       vf.typ:= d.typ.typedata;
-      end;
-     end
-     else begin
-      err1:= true;
-     end;
-     inc(paramsize1,si1);
-    end;
-   end;
-   int1:= int1+3;
+  int3:= paramhigh;
+  if sf_function in subflags then begin
+   int1:= 4 + paramhigh * 3;          //result
+   int2:= paramhigh;
+   doparam();
+   int3:= paramhigh - 1;
+  end;
+  int1:= 4;
+  for int2:= 0 to int3 do begin
+   doparam();
   end;
   if ismethod then begin
    dec(po4);

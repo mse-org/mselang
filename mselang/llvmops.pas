@@ -1044,7 +1044,7 @@ var
 begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  endpo:= parpo + paramcount;
+  endpo:= parpo + callinfo.paramcount;
   outass('call void @s'+inttostr(callinfo.ad+1)+'(');
   first:= true;
   while parpo < endpo do begin
@@ -1069,7 +1069,7 @@ var
 begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  endpo:= parpo + paramcount;
+  endpo:= parpo + callinfo.paramcount;
   outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.size*8)+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
