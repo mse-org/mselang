@@ -592,7 +592,7 @@ begin
   po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
   if impl1 then begin //implementation
-   po1^.address:= opcount;
+//   po1^.address:= opcount;
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
@@ -725,6 +725,7 @@ begin
   subdef.locallocidbefore:= locallocid;
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
+  po1^.address:= opcount;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
