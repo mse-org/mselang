@@ -12,6 +12,8 @@
  'type'.,*
  'const'.,*
  'begin'.,*
+ 'procedure'.,*
+ 'function'.,*
 "
 {blockends}
 " 'end'.,blockend

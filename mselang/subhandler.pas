@@ -593,6 +593,8 @@ begin
   po1^.address:= 0; //init
   if impl1 then begin //implementation
 //   po1^.address:= opcount;
+   po1^.nestedvarref:= ele.addelementduplicate1(tks_nestedvarref,
+                                                           ek_none,allvisi);
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
@@ -694,7 +696,6 @@ begin
       end;
      end;
     end;
-    ele.elementparent:= parent1; //restore in sub
     with contextstack[stackindex-1] do begin
      if paramdata.match <> nil then begin
       d.subdef.match:= ele.eledatarel(paramdata.match);
@@ -704,6 +705,7 @@ begin
      end;
     end;
    end;
+   ele.elementparent:= parent1; //restore in sub
    stacktop:= stackindex;
   end;
  end;

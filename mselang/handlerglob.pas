@@ -258,6 +258,7 @@ type
   trampolinelinks: linkindexty;   //for virtual interface items
   trampolineaddress: opaddressty;
   nestinglevel: integer;
+  nestedvarref: elementoffsetty;
   varchain: elementoffsetty;
 //  varallocs: dataoffsty;
 //  varalloccount: integer;

@@ -245,6 +245,9 @@ type
                        const avislevel: visikindsty): pelementinfoty; 
                                               //nil if duplicate
    function addelementdata(const aname: identty; const akind: elementkindty;
+                       const avislevel: visikindsty): pointer; 
+                                              //nil if duplicate
+   function addelementdata(const aname: identty; const akind: elementkindty;
               const avislevel: visikindsty;
               out aelementdata: pointer): boolean;
          //false if duplicate, aelementdata always allocated
@@ -1811,6 +1814,17 @@ begin
   result:= addelementduplicate(aname,akind,avislevel);
  end;
  fscopespo:= scopebefore;
+end;
+
+function telementhashdatalist.addelementdata(const aname: identty; 
+                       const akind: elementkindty;
+                       const avislevel: visikindsty): pointer; 
+                                              //nil if duplicate
+begin
+ result:= addelement(aname,akind,avislevel);
+ if result <> nil then begin
+  result:= @pelementinfoty(result)^.data;
+ end;
 end;
 
 function telementhashdatalist.addelementdata(const aname: identty;

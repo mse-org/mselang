@@ -1197,6 +1197,38 @@ begin                    //todo: optimize
  result:= true;
 end;
 
+procedure tracklocalaccess(const value: refconstvaluety);
+var
+ int1: integer;
+ parentbefore,ele1: elementoffsetty;
+ po1: pointer;
+begin
+ if af_local in value.address.flags then begin
+  int1:= info.sublevel-value.address.locaddress.framelevel;
+  if int1 > 0 then begin
+   parentbefore:= ele.elementparent;
+   for int1:= int1-1 downto 0 do begin
+    ele.decelementparent();
+   {$ifdef mse_checkinternalerror}
+    if ele.parentelement()^.header.kind <> ek_sub then begin
+     internalerror(ie_elements,'20140811A');
+    end;
+   {$endif}
+    with psubdataty(ele.parentdata())^ do begin
+     ele1:= ele.elementparent;
+     ele.elementparent:= nestedvarref;
+     po1:= ele.addelementdata(value.varele,ek_none,allvisi);
+     if po1 = nil then begin
+      break; //already marked;
+     end;
+     ele.decelementparent();
+    end;
+   end;
+   ele.elementparent:= parentbefore;
+  end;
+ end;
+end;
+
 function getaddress(const stackoffset: integer;
                                 const endaddress: boolean): boolean;
 var
@@ -1225,6 +1257,7 @@ begin
       initfactcontext(stackoffset);
      end
      else begin
+      tracklocalaccess(d.dat.ref.c);
       d.kind:= ck_refconst;
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);
       d.dat.indirection:= 0;

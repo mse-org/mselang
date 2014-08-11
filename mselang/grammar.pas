@@ -3480,7 +3480,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bconst: array[0..10] of branchty = (
+ bconst: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $ACF19BB7{ 'implementation'}),
@@ -3496,6 +3496,12 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $8CDDBADC{'begin'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $CF19BB75{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $9E3376EB{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4042,7 +4048,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bvar: array[0..10] of branchty = (
+ bvar: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $ACF19BB7{ 'implementation'}),
@@ -4058,6 +4064,12 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $8CDDBADC{'begin'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $CF19BB75{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $9E3376EB{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -4211,7 +4223,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- btype: array[0..10] of branchty = (
+ btype: array[0..12] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $ACF19BB7{ 'implementation'}),
@@ -4227,6 +4239,12 @@ const
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $8CDDBADC{'begin'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $CF19BB75{'procedure'}),
+   (flags: [bf_nt,bf_keyword,bf_push];
+     dest: (context: nil); stack: nil; 
+     keyword: $9E3376EB{'function'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
