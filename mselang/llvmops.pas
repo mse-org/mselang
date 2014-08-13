@@ -87,7 +87,7 @@ begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
 
-function locaddress(const address: locaddressty): string;
+function locaddress(const address: dataoffsty): string;
 begin
 {$ifdef mse_locvarssatracking}
  if address.ssaindex > 0 then begin
@@ -95,24 +95,24 @@ begin
  end
  else begin
 {$endif}
-  result:= '%l'+inttostr(address.address);
+  result:= '%l'+inttostr(address);
 {$ifdef mse_locvarssatracking}
  end;
 {$endif}
 end;
 
-function paraddress(const address: locaddressty): string;
+function paraddress(const address: dataoffsty): string;
 begin
 {$ifdef mse_locvarssatracking}
  result:= '%l'+inttostr(address.address);
 {$else}
- result:= '%p'+inttostr(address.address);
+ result:= '%p'+inttostr(address);
 {$endif}
 end;
 
 function locdataaddress(const address: locdataaddressty): string;
 begin
- result:= locaddress(address.a);
+ result:= locaddress(address.a.address);
 end;
 
 procedure curoplabel(var avalue: shortstring);
@@ -1139,10 +1139,10 @@ begin
   end;
   first:= true;
   while po1 < poend do begin
-   if not (af_param in po1^.a.flags) then begin
+   if not (af_param in po1^.flags) then begin
     break;
    end;
-   str1:= ',i'+inttostr(8*po1^.size)+' '+paraddress(po1^.a.locaddress);
+   str1:= ',i'+inttostr(8*po1^.size)+' '+paraddress(po1^.address);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1155,23 +1155,23 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
   if sf_function in flags then begin
-   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
    inc(po1); //result
   end;
   while po1 < poend do begin
-  if not (af_param in po1^.a.flags) then begin
+  if not (af_param in po1^.flags) then begin
    break;
   end;
-   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
 {$ifndef mse_locvarssatracking}
-   outass('store i'+inttostr(po1^.size*8)+' '+paraddress(po1^.a.locaddress)+
+   outass('store i'+inttostr(po1^.size*8)+' '+paraddress(po1^.address)+
                ',i'+inttostr(po1^.size*8)+'* '+
-                           locaddress(po1^.a.locaddress));
+                           locaddress(po1^.address));
 {$endif}
    inc(po1);
   end;
   while po1 < poend do begin
-   outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
    inc(po1);
   end;
   if allocs.nestedalloccount > 0 then begin

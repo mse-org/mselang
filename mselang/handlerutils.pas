@@ -153,7 +153,7 @@ function getdatabitsize(const avalue: int64): databitsizety;
 procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const asize: integer; var address: segaddressty);
-procedure trackalloc(const asize: integer; var address: addressvaluety);
+//procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 
 procedure resetssa();
@@ -1669,7 +1669,7 @@ begin
   end;
  end;
 end;
-
+{
 procedure trackalloc(const asize: integer; var address: addressvaluety);
 begin
  if info.backend = bke_llvm then begin
@@ -1687,7 +1687,7 @@ begin
   end;
  end;
 end;
-
+}
 {
 procedure trackalloc(const asize: integer; var address: locaddressty);
 begin

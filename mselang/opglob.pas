@@ -28,7 +28,9 @@ type
  pgloballocinfoty = ^globallocinfoty;
 
  locallocinfoty = record
-  a: addressvaluety;
+//  a: addressvaluety;
+  flags: addressflagsty;
+  address: dataoffsty;
   size: integer;
  end;
  plocallocinfoty = ^locallocinfoty;

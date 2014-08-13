@@ -778,39 +778,52 @@ begin
    po5^.next:= ele2;
   end;
 
-  ele1:= po1^.varchain;
-  alloc1:= getsegmenttopoffs(seg_localloc);
-  int1:= 0;
-  while ele1 <> 0 do begin      //number params and vars
-   po4:= ele.eledataabs(ele1);
-   if po4^.address.indirectlevel > 0 then begin
-    int2:= pointersize;
-   end
-   else begin
-    int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bytesize;
+  if info.backend = bke_llvm then begin
+   ele1:= po1^.varchain;
+   alloc1:= getsegmenttopoffs(seg_localloc);
+   int1:= 0;
+   while ele1 <> 0 do begin      //number params and vars
+    po4:= ele.eledataabs(ele1);
+    if po4^.address.indirectlevel > 0 then begin
+     int2:= pointersize;
+    end
+    else begin
+     int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bytesize;
+    end;
+    with plocallocinfoty(
+                allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
+     address:= po4^.address.locaddress.address;
+     flags:= po4^.address.flags;
+     size:= int2;
+    end;
+ //   trackalloc(int2,po4^.address);
+    ele1:= po4^.vf.next;
+    inc(int1);
    end;
-   trackalloc(int2,po4^.address);
-   ele1:= po4^.vf.next;
-   inc(int1);
-  end;
-  po1^.allocs.allocs:= alloc1;
-  po1^.allocs.alloccount:= int1;
+   po1^.allocs.allocs:= alloc1;
+   po1^.allocs.alloccount:= int1;
 
-  ele1:= po1^.nestedvarchain;
-  po1^.allocs.nestedallocs:= getsegmenttopoffs(seg_localloc);
-  int1:= 0;
-  while ele1 <> 0 do begin      //number nested vars
-   po5:= ele.eledataabs(ele1);
-   with pnestedallocinfoty(
-      allocsegmentpo(seg_localloc,sizeof(nestedallocinfoty)))^ do begin
-    address:= po5^.address;
+   ele1:= po1^.nestedvarchain;
+   po1^.allocs.nestedallocs:= getsegmenttopoffs(seg_localloc);
+   int1:= 0;
+   while ele1 <> 0 do begin      //number nested vars
+    po5:= ele.eledataabs(ele1);
+    with pnestedallocinfoty(
+       allocsegmentpo(seg_localloc,sizeof(nestedallocinfoty)))^ do begin
+     address:= po5^.address;
+    end;
+ 
+    ele1:= po5^.next;
+    inc(int1);
    end;
-
-   ele1:= po5^.next;
-   inc(int1);
+   po1^.allocs.nestedalloccount:= int1;
+  end
+  else begin
+   po1^.allocs.allocs:= 0;
+   po1^.allocs.alloccount:= 0;
+   po1^.allocs.nestedallocs:= 0;
+   po1^.allocs.nestedalloccount:= 0;
   end;
-  po1^.allocs.nestedalloccount:= int1;
-
   resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;

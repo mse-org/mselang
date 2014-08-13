@@ -220,16 +220,40 @@ begin
   locdatapo:= locdatapo + alignsize(asize);
  end;
 end;
-
+{
+procedure trackalloc(const asize: integer; var address: addressvaluety);
+begin
+ if info.backend = bke_llvm then begin
+  if af_segment in address.flags then begin
+   trackalloc(asize,address.segaddress);
+  end
+  else begin
+   address.locaddress.address:= info.locallocid;
+   inc(info.locallocid);
+   with plocallocinfoty(
+               allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
+    a:= address;
+    size:= asize;
+   end;
+  end;
+ end;
+end;
+}
 function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): locaddressty;
 begin
  with info do begin
-  result.address:= locdatapo+shift;
- {$ifdef mse_locvarssatracking}
-  result.ssaindex:= 0;
- {$endif}
-  locdatapo:= locdatapo + alignsize(asize);
+  if backend = bke_llvm then begin
+   result.address:= info.locallocid;
+   inc(info.locallocid);
+  end
+  else begin
+   result.address:= locdatapo+shift;
+  {$ifdef mse_locvarssatracking}
+   result.ssaindex:= 0;
+  {$endif}
+   locdatapo:= locdatapo + alignsize(asize);
+  end;
   result.framelevel:= info.sublevel;
   aflags:= aflags - addresskindflags + [af_local];
  end;
