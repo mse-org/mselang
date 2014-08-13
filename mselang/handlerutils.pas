@@ -1197,31 +1197,74 @@ begin                    //todo: optimize
  result:= true;
 end;
 
-procedure tracklocalaccess(const value: refconstvaluety);
+procedure tracklocalaccess(var value: refconstvaluety; const asize: integer);
+
+var
+ pobefore: pnestedvardataty;
+ 
+ procedure trackref(const avardata: pnestedvardataty);
+ begin
+  with psubdataty(ele.parentdata())^ do begin
+   avardata^.next:= nestedvarchain;
+   avardata^.nestedindex:= nestedvarcount;
+   avardata^.address.address:= value.address.locaddress.address;
+   avardata^.address.nested:= false;
+   avardata^.address.size:= asize;
+   if pobefore <> nil then begin
+    pobefore^.address.address:= nestedvarcount;
+    pobefore^.address.nested:= true;
+   end;
+   pobefore:= avardata;
+   nestedvarchain:= ele.eledatarel(avardata);
+   inc(nestedvarcount);
+  end;
+ end; //trackref
+
 var
  int1: integer;
  parentbefore,ele1: elementoffsetty;
- po1: pointer;
+ po1: pnestedvardataty;
 begin
  if af_local in value.address.flags then begin
   int1:= info.sublevel-value.address.locaddress.framelevel;
   if int1 > 0 then begin
+   pobefore:= nil;
    parentbefore:= ele.elementparent;
-   for int1:= int1-1 downto 0 do begin
-    ele.decelementparent();
+   with psubdataty(ele.parentdata())^ do begin
+    include(flags,sf_hasnestedaccess);
+   end;
+   ele.decelementparent(); //parentsub
+  {$ifdef mse_checkinternalerror}
+   if ele.parentelement()^.header.kind <> ek_sub then begin
+    internalerror(ie_elements,'20140811A');
+   end;
+  {$endif}
+   with psubdataty(ele.parentdata())^ do begin
+    if ele.adduniquechilddata(nestedvarele,value.varele,ek_nestedvar,
+                                                      allvisi,po1) then begin
+     trackref(po1);
+    end;
+    value.address.locaddress.nestedindex:= po1^.nestedindex;
+    include(value.address.flags,af_nested);
+   end;
+   for int1:= int1-2 downto 0 do begin
+    with psubdataty(ele.parentdata())^ do begin
+     include(flags,sf_hasnestedaccess);
+    end;
+    ele.decelementparent(); //parentsub
    {$ifdef mse_checkinternalerror}
     if ele.parentelement()^.header.kind <> ek_sub then begin
      internalerror(ie_elements,'20140811A');
     end;
    {$endif}
     with psubdataty(ele.parentdata())^ do begin
-     ele1:= ele.elementparent;
-     ele.elementparent:= nestedvarref;
-     po1:= ele.addelementdata(value.varele,ek_none,allvisi);
-     if po1 = nil then begin
-      break; //already marked;
+     if ele.adduniquechilddata(nestedvarele,value.varele,ek_none,
+                                                       allvisi,po1) then begin
+      trackref(po1);
+     end
+     else begin
+      break;
      end;
-     ele.decelementparent();
     end;
    end;
    ele.elementparent:= parentbefore;
@@ -1257,10 +1300,16 @@ begin
       initfactcontext(stackoffset);
      end
      else begin
-      tracklocalaccess(d.dat.ref.c);
-      d.kind:= ck_refconst;
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);
       d.dat.indirection:= 0;
+      if d.dat.ref.c.address.indirectlevel > 0 then begin
+       int1:= pointersize;
+      end
+      else begin
+       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
+      end;
+      tracklocalaccess(d.dat.ref.c,int1);
+      d.kind:= ck_refconst;
 //      ref1:= d.dat.ref; //todo: optimize
       d.dat.ref.c.address.poaddress:=
                        d.dat.ref.c.address.poaddress + d.dat.ref.offset;

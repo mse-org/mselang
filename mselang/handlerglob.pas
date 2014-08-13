@@ -247,6 +247,13 @@ type
  end;
  pfielddataty = ^fielddataty;
 
+ nestedvardataty = record
+  next: elementoffsetty; //chain, root = subdataty nestedvarchain
+  nestedindex: integer;
+  address: nestedaddressty;
+ end;
+ pnestedvardataty = ^nestedvardataty;
+ 
  subdataty = record
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
@@ -258,7 +265,9 @@ type
   trampolinelinks: linkindexty;   //for virtual interface items
   trampolineaddress: opaddressty;
   nestinglevel: integer;
-  nestedvarref: elementoffsetty;
+  nestedvarele: elementoffsetty;
+  nestedvarchain: elementoffsetty;
+  nestedvarcount: integer;
   varchain: elementoffsetty;
 //  varallocs: dataoffsty;
 //  varalloccount: integer;

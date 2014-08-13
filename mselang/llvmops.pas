@@ -1119,10 +1119,12 @@ var
 // ele1: elementoffsetty;
 // po1: pvardataty;
  po1: plocallocinfoty;
+ po2: pnestedallocinfoty;
  poend: pointer;
  first: boolean;
- str1: shortstring;
+ str1,str2: shortstring;
  int1: integer;
+ ssa1: integer;
 begin
  with pc^.par.subbegin do begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
@@ -1171,6 +1173,24 @@ begin
   while po1 < poend do begin
    outass(locaddress(po1^.a.locaddress)+' = alloca i'+inttostr(8*po1^.size));
    inc(po1);
+  end;
+  if allocs.nestedalloccount > 0 then begin
+   outass('%f = alloca i8*, i32 '+inttostr(allocs.nestedalloccount));
+   po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
+   poend:= po2+allocs.nestedalloccount;
+   ssa1:= 1;
+   while po2 < poend do begin
+    outass('%'+inttostr(ssa1)+' = getelementptr i8** %f, i32 '+
+                                                       inttostr(ssa1 div 2));
+    inc(ssa1);
+    str1:= 'i'+ inttostr(8*po2^.address.size);
+    str2:= '%'+inttostr(ssa1);
+    outass(str2+' = bitcast i8** %'+inttostr(ssa1-1)+' to '+str1+'**');
+    inc(ssa1);
+    outass('store '+str1+'* %l'+inttostr(po2^.address.address)+', '+
+                                                            str1+'** '+str2);
+    inc(po2);
+   end;
   end;
  end;
 end;

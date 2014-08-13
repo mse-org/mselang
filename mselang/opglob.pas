@@ -32,13 +32,24 @@ type
   size: integer;
  end;
  plocallocinfoty = ^locallocinfoty;
-
+ 
  parallocinfoty = record
   ssaindex: integer;
   size: integer;
  end;
  pparallocinfoty = ^parallocinfoty;
+
+ nestedaddressty = record
+  address: dataoffsty;
+  size: integer;
+  nested: boolean;     //ref to neseted frame
+ end;
  
+ nestedallocinfoty = record
+  address: nestedaddressty;
+ end;
+ pnestedallocinfoty = ^nestedallocinfoty;
+  
  opprocty = procedure;
 
  op1infoty = record
@@ -411,6 +422,8 @@ type
  suballocinfoty = record
   allocs: dataoffsty;
   alloccount: integer;
+  nestedallocs: dataoffsty;
+  nestedalloccount: integer;
 //  parallocs: dataoffsty;
 //  paralloccount: integer;
 //  varallocs: dataoffsty;

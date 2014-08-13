@@ -593,8 +593,10 @@ begin
   po1^.address:= 0; //init
   if impl1 then begin //implementation
 //   po1^.address:= opcount;
-   po1^.nestedvarref:= ele.addelementduplicate1(tks_nestedvarref,
+   po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                            ek_none,allvisi);
+   po1^.nestedvarchain:= 0;
+   po1^.nestedvarcount:= 0;
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
@@ -716,6 +718,7 @@ var
  po1,po2: psubdataty;
  po3: ptypedataty;
  po4: pvardataty;
+ po5: pnestedvardataty;
  ele1,ele2: elementoffsetty;
  int1,int2: integer;
  alloc1: dataoffsty;
@@ -754,6 +757,7 @@ begin
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
   end;
+
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order
@@ -763,6 +767,17 @@ begin
    ele1:= po4^.vf.next;
    po4^.vf.next:= ele2;
   end;
+
+  ele1:= po1^.nestedvarchain;
+  po1^.nestedvarchain:= 0;
+  while ele1 <> 0 do begin      //reverse order
+   ele2:= po1^.nestedvarchain;
+   po1^.nestedvarchain:= ele1;
+   po5:= ele.eledataabs(ele1);
+   ele1:= po5^.next;
+   po5^.next:= ele2;
+  end;
+
   ele1:= po1^.varchain;
   alloc1:= getsegmenttopoffs(seg_localloc);
   int1:= 0;
@@ -780,6 +795,22 @@ begin
   end;
   po1^.allocs.allocs:= alloc1;
   po1^.allocs.alloccount:= int1;
+
+  ele1:= po1^.nestedvarchain;
+  po1^.allocs.nestedallocs:= getsegmenttopoffs(seg_localloc);
+  int1:= 0;
+  while ele1 <> 0 do begin      //number nested vars
+   po5:= ele.eledataabs(ele1);
+   with pnestedallocinfoty(
+      allocsegmentpo(seg_localloc,sizeof(nestedallocinfoty)))^ do begin
+    address:= po5^.address;
+   end;
+
+   ele1:= po5^.next;
+   inc(int1);
+  end;
+  po1^.allocs.nestedalloccount:= int1;
+
   resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;

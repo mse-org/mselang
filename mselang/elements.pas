@@ -42,6 +42,7 @@ type
                   ek_field,ek_classintfname,ek_classintftype,
                   ek_ancestorchain,
                   ek_sysfunc,ek_sub,{ek_classes,}{ek_class,}
+                  ek_nestedvar,
                   ek_unit,ek_implementation,
                   ek_classimpnode,ek_classintfnamenode,ek_classintftypenode,
                   ek_uses{,ek_managed});
@@ -82,8 +83,10 @@ const
   sizeof(classintfnamedataty)+elesize,sizeof(classintftypedataty)+elesize,
 //ek_ancestorchain,
   sizeof(ancestorchaindataty)+elesize,
-//ek_sysfunc,                   ek_func,
+//ek_sysfunc,                   ek_sub,
   sizeof(sysfuncdataty)+elesize,sizeof(subdataty)+elesize,
+//ek_nestedvar,
+  sizeof(nestedvardataty)+elesize,
 //ek_classes,                   ek_class,
  {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
 //ek_unit,                   ek_implementation  
@@ -255,6 +258,12 @@ type
               const avislevel: visikindsty;
               out aelementoffset: elementoffsetty): boolean;
                                                        //false if duplicate
+   function adduniquechilddata(const aparent: elementoffsetty;
+                           const achild: identty; const akind: elementkindty;
+                           const avislevel: visikindsty;
+                           out aelementdata: pointer): boolean;
+                                          //true if new
+                           
    procedure pushscopelevel();
    procedure popscopelevel();
    function addscope(const akind: elementkindty;
@@ -1855,6 +1864,22 @@ begin
  end
  else begin
   aelementoffset:= 0;
+ end;
+end;
+
+function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
+                           const achild: identty; const akind: elementkindty;
+                           const avislevel: visikindsty;
+                           out aelementdata: pointer): boolean;
+var
+ parentbefore: elementoffsetty;
+begin
+ result:= not findchilddata(aparent,achild,[akind],avislevel,aelementdata);
+ if result then begin
+  parentbefore:= felementparent;
+  elementparent:= aparent;
+  aelementdata:= addelementduplicatedata1(achild,akind,avislevel);
+  elementparent:= parentbefore;
  end;
 end;
 

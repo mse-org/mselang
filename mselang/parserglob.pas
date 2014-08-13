@@ -129,7 +129,7 @@ const
  typecontexts = [ck_typetype,ck_fieldtype];
 
 type
- addressflagty = (af_nil,af_segment,af_local,af_param,af_paramindirect,af_const,
+ addressflagty = (af_nil,af_segment,af_local,af_nested,af_param,af_paramindirect,af_const,
                   af_classfield,af_stack);
  addressflagsty = set of addressflagty;
 
@@ -237,6 +237,7 @@ type
  locaddressty = record
   address: dataoffsty;
   framelevel: integer;
+  nestedindex: integer;
  {$ifdef mse_locvarssatracking}
   ssaindex: integer;
  {$endif}
@@ -356,7 +357,7 @@ type
  end;
   
  subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,
-              sf_functiontype,sf_header,
+              sf_functiontype,sf_hasnestedaccess,sf_header,
               sf_virtual,sf_override,sf_interface,
               sf_intfcall); //called by interface
  subflagsty = set of subflagty;
