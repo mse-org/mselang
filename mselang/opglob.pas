@@ -263,7 +263,11 @@ type
   oc_pushcpucontext,
   oc_popcpucontext,
   oc_finiexception,
-  oc_continueexception
+  oc_continueexception,
+  
+//ssaonly
+  ocssa_nestedvar,
+  ocssa_popnestedvar
  );
 
  v8ty = array[0..0] of byte;

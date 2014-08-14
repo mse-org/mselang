@@ -129,7 +129,7 @@ const
  typecontexts = [ck_typetype,ck_fieldtype];
 
 type
- addressflagty = (af_nil,af_segment,af_local,af_nested,af_param,af_paramindirect,af_const,
+ addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,af_paramindirect,af_const,
                   af_classfield,af_stack);
  addressflagsty = set of addressflagty;
 
@@ -237,7 +237,7 @@ type
  locaddressty = record
   address: dataoffsty;
   framelevel: integer;
-  nestedindex: integer;
+//  nestedindex: integer;
  {$ifdef mse_locvarssatracking}
   ssaindex: integer;
  {$endif}

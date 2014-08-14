@@ -351,8 +351,8 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         pushinsertdata(0,false,pvardataty(po2)^.address,offs1,
-                                                      pointerbitsize);
+         pushinsertdata(0,false,pvardataty(po2)^.address,ele.eledatarel(po2),
+                                                         offs1,pointerbitsize);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
@@ -494,7 +494,7 @@ begin
        d.kind:= ck_ref;
        d.dat.ref.c.address:= pvardataty(po2)^.address;
        d.dat.ref.offset:= 0;
-       d.dat.ref.c.varele:= ele.eledatarel(po2); //used to strore ssaindex
+       d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= d.dat.ref.c.address.indirectlevel +
            ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;

@@ -490,7 +490,7 @@ end;
 
 procedure pushimm32op();
 begin
- pint32(stackpush(4))^:= cpu.pc^.par.imm.vint16; 
+ pint32(stackpush(4))^:= cpu.pc^.par.imm.vint32; 
 end;
 
 procedure pushimm64op();
@@ -1937,6 +1937,10 @@ const
   finiexceptionssa = 0;
   continueexceptionssa = 0;
 
+//ssa only
+  nestedvarssa = 0;
+  popnestedvarssa = 0;
+  
 {$include optable.inc}
 {
  ssatable: ssatablety = (

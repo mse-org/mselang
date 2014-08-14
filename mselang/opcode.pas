@@ -64,6 +64,8 @@ procedure setimmdatakind(const value: datakindty; var par: opparamty);
 function additem(const aopcode: opcodety): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                                              const before: boolean): popinfoty;
+function getitem(const index: integer): popinfoty;
+
 procedure addlabel();
 
 procedure inipointer(const aaddress: addressrefty; const count: datasizety;
@@ -404,6 +406,12 @@ begin
   end;
   inc(opcount);
  end;
+end;
+
+function getitem(const index: integer): popinfoty;
+begin
+ result:= getsegmentbase(seg_op);
+ inc(result,index);
 end;
 
 procedure addlabel();

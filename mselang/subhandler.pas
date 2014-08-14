@@ -827,8 +827,9 @@ begin
   resetssa();
   with additem(oc_subbegin)^ do begin
    par.subbegin.subname:= po1^.address;
-   par.subbegin.flags:= po1^.flags;
+//   par.subbegin.flags:= po1^.flags;
    par.subbegin.allocs:= po1^.allocs;
+   incssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
 //   par.subbegin.allocs.allocs:= alloc1;
 //   par.subbegin.allocs.alloccount:= int1;
   end;
@@ -908,6 +909,9 @@ begin
    par.subend.allocs:= po1^.allocs;
   end;
   locallocid:= d.subdef.locallocidbefore;
+  with getitem(po1^.address)^ do begin
+   par.subbegin.flags:= po1^.flags;
+  end;
  end;
 end;
 

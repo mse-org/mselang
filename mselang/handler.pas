@@ -1649,8 +1649,11 @@ begin
       end
       else begin
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
-       po1^.par.memop.locdataaddress.a.framelevel:= sublevel -
-                                          dest.address.locaddress.framelevel-1;
+       int1:= sublevel - dest.address.locaddress.framelevel-1;
+       if int1 >= 0 then begin
+        incssa(ocssa_popnestedvar);
+       end;
+       po1^.par.memop.locdataaddress.a.framelevel:= int1;
        po1^.par.memop.locdataaddress.offset:= 0;
       end;
      end;

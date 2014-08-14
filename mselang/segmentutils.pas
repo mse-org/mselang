@@ -226,18 +226,18 @@ end;
 function getsegmentoffset(const asegment: segmentty;
                                     const apo: pointer): dataoffsty;
 begin
- result:= apo - pointer(segments[asegment].data);
+ result:= apo - segments[asegment].data;
 end;
 
 function getsegmentpo(const asegment: segmentty;
                                     const aoffset: dataoffsty): pointer;
 begin
- result:= pointer(segments[asegment].data) + aoffset;
+ result:= segments[asegment].data + aoffset;
 end;
 
 function getsegmentpo(const aaddress: segaddressty): pointer;
 begin
- result:= pointer(segments[aaddress.segment].data) + aaddress.address;
+ result:= segments[aaddress.segment].data + aaddress.address;
 end;
 
 function getsegaddress(const asegment: segmentty;
@@ -266,7 +266,7 @@ end;
 
 function getsegmentbase(const asegment: segmentty): pointer;
 begin
- result:= pointer(segments[asegment].data);
+ result:= segments[asegment].data;
 end;
 
 function getsegmentsize(const asegment: segmentty): integer;

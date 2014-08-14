@@ -216,8 +216,12 @@
   pushcpucontextssa,
   popcpucontextssa,
   finiexceptionssa,
-  continueexceptionssa
+  continueexceptionssa,
+//ssaonly
+  nestedvarssa,
+  popnestedvarssa
  );
+
  optable: optablety = ( //order as opcodety
   nil,  //oc_none
   @nopop,
@@ -419,5 +423,9 @@
   @pushcpucontextop,
   @popcpucontextop,
   @finiexceptionop,
-  @continueexceptionop
+  @continueexceptionop,
+  
+   //ssa only
+  nil,
+  nil
  );

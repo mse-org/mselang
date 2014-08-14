@@ -120,8 +120,10 @@ procedure push(const avalue: addressvaluety; const offset: dataoffsty;
                                           const indirect: boolean); overload;
 procedure push(const avalue: datakindty); overload;
 procedure pushconst(const avalue: contextdataty);
-procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
-                            const bitsize: datasizetyxx);
+procedure pushdata(const address: addressvaluety;
+                   const varele: elementoffsetty;
+                   const offset: dataoffsty;
+                   const bitsize: datasizetyxx);
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -134,7 +136,9 @@ function pushinsertvar(const stackoffset: integer; const before: boolean;
 procedure pushinsertsegaddress(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
-                  const address: addressvaluety; const offset: dataoffsty;
+                  const address: addressvaluety;
+                  const varele: elementoffsetty;
+                  const offset: dataoffsty;
                               const bitsize: datasizetyxx);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
@@ -157,6 +161,8 @@ procedure trackalloc(const asize: integer; var address: segaddressty);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 
 procedure resetssa();
+procedure incssa(const aopcode: opcodety);
+procedure incssa(const aopcode: opcodety; const count: integer);
 
 procedure init();
 procedure deinit();
@@ -880,8 +886,86 @@ begin
  end;
 end;
 
+procedure tracklocalaccess(var aaddress: locaddressty;
+                 const avarele: elementoffsetty; const asize: integer);
+
+var
+ pobefore: pnestedvardataty;
+ 
+ procedure trackref(const avardata: pnestedvardataty);
+ begin
+  with psubdataty(ele.parentdata())^ do begin
+   avardata^.next:= nestedvarchain;
+   avardata^.nestedindex:= nestedvarcount;
+   avardata^.address.address:= aaddress.address;
+   avardata^.address.nested:= false;
+   avardata^.address.size:= asize;
+   if pobefore <> nil then begin
+    pobefore^.address.address:= nestedvarcount;
+    pobefore^.address.nested:= true;
+   end;
+   pobefore:= avardata;
+   nestedvarchain:= ele.eledatarel(avardata);
+   inc(nestedvarcount);
+  end;
+ end; //trackref
+
+var
+ int1: integer;
+ parentbefore,ele1: elementoffsetty;
+ po1: pnestedvardataty;
+begin
+ if (info.backend = bke_llvm){ and (af_local in aaddress.flags)} then begin
+  int1:= info.sublevel-aaddress.framelevel;
+  if int1 > 0 then begin
+   pobefore:= nil;
+   parentbefore:= ele.elementparent;
+   with psubdataty(ele.parentdata())^ do begin
+    include(flags,sf_hasnestedaccess);
+   end;
+   ele.decelementparent(); //parentsub
+  {$ifdef mse_checkinternalerror}
+   if ele.parentelement()^.header.kind <> ek_sub then begin
+    internalerror(ie_elements,'20140811A');
+   end;
+  {$endif}
+   with psubdataty(ele.parentdata())^ do begin
+    if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
+                                                      allvisi,po1) then begin
+     trackref(po1);
+    end;
+//    value.address.locaddress.nestedindex:= po1^.nestedindex;
+    aaddress.address:= po1^.nestedindex;
+//    include(aaddress.flags,af_nested);
+   end;
+   for int1:= int1-2 downto 0 do begin
+    with psubdataty(ele.parentdata())^ do begin
+     include(flags,sf_hasnestedaccess);
+    end;
+    ele.decelementparent(); //parentsub
+   {$ifdef mse_checkinternalerror}
+    if ele.parentelement()^.header.kind <> ek_sub then begin
+     internalerror(ie_elements,'20140811A');
+    end;
+   {$endif}
+    with psubdataty(ele.parentdata())^ do begin
+     if ele.adduniquechilddata(nestedvarele,avarele,ek_none,
+                                                       allvisi,po1) then begin
+      trackref(po1);
+     end
+     else begin
+      break;
+     end;
+    end;
+   end;
+   ele.elementparent:= parentbefore;
+  end;
+ end;
+end;
+
 procedure pushd(const ains: boolean; const stackoffset: integer;
-          const before: boolean; const address: addressvaluety;
+          const before: boolean;
+          const aaddress: addressvaluety; const avarele: elementoffsetty;
                      const offset: dataoffsty; const bitsize: datasizetyxx);
 //todo: optimize
 
@@ -899,7 +983,7 @@ var
  po1: popinfoty;
  
 begin
- with address do begin //todo: use table
+ with aaddress do begin //todo: use table
   if af_segment in flags then begin
    case bitsize of
     1..8: begin 
@@ -973,6 +1057,7 @@ begin
    end;
    with po1^ do begin
     par.memop.locdataaddress.a:= locaddress;
+    tracklocalaccess(par.memop.locdataaddress.a,avarele,(bitsize+7) div 8);
     par.memop.locdataaddress.a.framelevel:= 
                                         info.sublevel-locaddress.framelevel-1;
     par.memop.locdataaddress.offset:= offset;
@@ -984,17 +1069,21 @@ begin
 end;
 
 //todo: optimize call
-procedure pushdata(const address: addressvaluety; const offset: dataoffsty;
+procedure pushdata(const address: addressvaluety;
+                   const varele: elementoffsetty;
+                   const offset: dataoffsty;
                          const bitsize: datasizetyxx);
 begin
- pushd(false,0,false,address,offset,bitsize);
+ pushd(false,0,false,address,varele,offset,bitsize);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
-                  const address: addressvaluety; const offset: dataoffsty;
+                  const address: addressvaluety;
+                  const varele: elementoffsetty;
+                  const offset: dataoffsty;
                   const bitsize: datasizetyxx);
 begin
- pushd(true,stackoffset,before,address,offset,bitsize);
+ pushd(true,stackoffset,before,address,varele,offset,bitsize);
 end;
 
 procedure initfactcontext(const stackoffset: integer);
@@ -1153,8 +1242,8 @@ begin                    //todo: optimize
       else begin
        si1:= pointerbitsize;
       end;
-      pushinsertdata(stackoffset,false,
-                               d.dat.ref.c.address,d.dat.ref.offset,si1);
+      pushinsertdata(stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
+                                                          d.dat.ref.offset,si1);
      end;
     end;
    end;
@@ -1197,81 +1286,6 @@ begin                    //todo: optimize
  result:= true;
 end;
 
-procedure tracklocalaccess(var value: refconstvaluety; const asize: integer);
-
-var
- pobefore: pnestedvardataty;
- 
- procedure trackref(const avardata: pnestedvardataty);
- begin
-  with psubdataty(ele.parentdata())^ do begin
-   avardata^.next:= nestedvarchain;
-   avardata^.nestedindex:= nestedvarcount;
-   avardata^.address.address:= value.address.locaddress.address;
-   avardata^.address.nested:= false;
-   avardata^.address.size:= asize;
-   if pobefore <> nil then begin
-    pobefore^.address.address:= nestedvarcount;
-    pobefore^.address.nested:= true;
-   end;
-   pobefore:= avardata;
-   nestedvarchain:= ele.eledatarel(avardata);
-   inc(nestedvarcount);
-  end;
- end; //trackref
-
-var
- int1: integer;
- parentbefore,ele1: elementoffsetty;
- po1: pnestedvardataty;
-begin
- if af_local in value.address.flags then begin
-  int1:= info.sublevel-value.address.locaddress.framelevel;
-  if int1 > 0 then begin
-   pobefore:= nil;
-   parentbefore:= ele.elementparent;
-   with psubdataty(ele.parentdata())^ do begin
-    include(flags,sf_hasnestedaccess);
-   end;
-   ele.decelementparent(); //parentsub
-  {$ifdef mse_checkinternalerror}
-   if ele.parentelement()^.header.kind <> ek_sub then begin
-    internalerror(ie_elements,'20140811A');
-   end;
-  {$endif}
-   with psubdataty(ele.parentdata())^ do begin
-    if ele.adduniquechilddata(nestedvarele,value.varele,ek_nestedvar,
-                                                      allvisi,po1) then begin
-     trackref(po1);
-    end;
-    value.address.locaddress.nestedindex:= po1^.nestedindex;
-    include(value.address.flags,af_nested);
-   end;
-   for int1:= int1-2 downto 0 do begin
-    with psubdataty(ele.parentdata())^ do begin
-     include(flags,sf_hasnestedaccess);
-    end;
-    ele.decelementparent(); //parentsub
-   {$ifdef mse_checkinternalerror}
-    if ele.parentelement()^.header.kind <> ek_sub then begin
-     internalerror(ie_elements,'20140811A');
-    end;
-   {$endif}
-    with psubdataty(ele.parentdata())^ do begin
-     if ele.adduniquechilddata(nestedvarele,value.varele,ek_none,
-                                                       allvisi,po1) then begin
-      trackref(po1);
-     end
-     else begin
-      break;
-     end;
-    end;
-   end;
-   ele.elementparent:= parentbefore;
-  end;
- end;
-end;
-
 function getaddress(const stackoffset: integer;
                                 const endaddress: boolean): boolean;
 var
@@ -1308,7 +1322,10 @@ begin
       else begin
        int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
       end;
-      tracklocalaccess(d.dat.ref.c,int1);
+      if not (af_segment in d.dat.ref.c.address.flags) then begin
+       tracklocalaccess(d.dat.ref.c.address.locaddress,
+                                               d.dat.ref.c.varele,int1);
+      end;
       d.kind:= ck_refconst;
 //      ref1:= d.dat.ref; //todo: optimize
       d.dat.ref.c.address.poaddress:=
@@ -1387,6 +1404,20 @@ begin
  with info do begin
   ssa.index:= 0;
   ssa.nextindex:= 0;
+ end;
+end;
+
+procedure incssa(const aopcode: opcodety; const count: integer);
+begin
+ with info do begin
+  inc(ssa.nextindex,ssatable^[aopcode]*count);
+ end;
+end;
+
+procedure incssa(const aopcode: opcodety);
+begin
+ with info do begin
+  inc(ssa.nextindex,ssatable^[aopcode]);
  end;
 end;
 

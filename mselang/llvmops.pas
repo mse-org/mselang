@@ -202,11 +202,27 @@ begin
 end;
 }
 procedure locassign();
+var
+ str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.datacount)+' %'+inttostr(ssas1)+
-               ',i'+inttostr(memop.datacount)+'* '+
-                           locdataaddress(memop.locdataaddress));
+  str1:= 'i'+inttostr(memop.datacount);
+  str2:= '%'+inttostr(ssas1);
+  if memop.locdataaddress.a.framelevel >= 0 then begin
+   str3:= '%'+inttostr(ssad);
+   str4:= '%'+inttostr(ssad+1);
+   str5:= '%'+inttostr(ssad+2);
+   outass(str3+' = getelementptr i8** %fp, i32 '+
+                                   inttostr(memop.locdataaddress.a.address));
+   outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
+   outass(str5+' = load '+str1+'** '+str4);
+   outass('store '+str1+' '+str2+
+               ', '+str1+'* '+str5);
+  end
+  else begin
+   outass('store '+str1+' '+str2+', '+
+                         str1+'* '+ locdataaddress(memop.locdataaddress));
+  end;
  end;
 end;
 
@@ -1047,6 +1063,10 @@ begin
   endpo:= parpo + callinfo.paramcount;
   outass('call void @s'+inttostr(callinfo.ad+1)+'(');
   first:= true;
+  if sf_hasnestedaccess in callinfo.flags then begin
+   outass(' i8** %f');
+   first:= false;
+  end;
   while parpo < endpo do begin
    str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
    if first then begin
@@ -1138,6 +1158,10 @@ begin
    outass('define void @s'+inttostr(subname)+'(');
   end;
   first:= true;
+  if sf_hasnestedaccess in flags then begin
+   outass(' i8** %fp'); //parent locals
+   first:= false;
+  end;
   while po1 < poend do begin
    if not (af_param in po1^.flags) then begin
     break;
@@ -1469,6 +1493,10 @@ const
   popcpucontextssa = 1;
   finiexceptionssa = 1;
   continueexceptionssa = 1;
+
+//ssa only
+  nestedvarssa = 2;
+  popnestedvarssa = 3;
 
 {$include optable.inc}
 
