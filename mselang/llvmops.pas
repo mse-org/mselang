@@ -1158,7 +1158,7 @@ var
  po2: pnestedallocinfoty;
  poend: pointer;
  first: boolean;
- str1,str2: shortstring;
+ str1,str2,str3,str4: shortstring;
  int1: integer;
  ssa1: integer;
 begin
@@ -1220,15 +1220,27 @@ begin
    poend:= po2+allocs.nestedalloccount;
    ssa1:= 1;
    while po2 < poend do begin
-    outass('%'+inttostr(ssa1)+' = getelementptr i8** %f, i32 '+
-                                                       inttostr(ssa1 div 2));
+    str1:= '%'+inttostr(ssa1); 
+    outass(str1+' = getelementptr i8** %f, i32 '+ inttostr(ssa1 div 3));
     inc(ssa1);
-    str1:= 'i'+ inttostr(8*po2^.address.size);
     str2:= '%'+inttostr(ssa1);
-    outass(str2+' = bitcast i8** %'+inttostr(ssa1-1)+' to '+str1+'**');
     inc(ssa1);
-    outass('store '+str1+'* %l'+inttostr(po2^.address.address)+', '+
-                                                            str1+'** '+str2);
+    str3:= '%'+inttostr(ssa1);
+    inc(ssa1);
+    if po2^.address.nested then begin
+     outass(str2+' = getelementptr i8** %fp, i32 '+
+                                        inttostr(po2^.address.address));
+     outass(str3+' = load i8** '+str2);
+     outass('store i8* '+str3+', i8** '+str1);
+    end
+    else begin
+     str4:= 'i'+ inttostr(8*po2^.address.size);
+     outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
+     outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
+                                                             str4+'** '+str2);
+     outass(str3+' = add i8 0, 0'); //dummy
+    end;
+    
     inc(po2);
    end;
   end;
@@ -1511,7 +1523,7 @@ const
   continueexceptionssa = 1;
 
 //ssa only
-  nestedvarssa = 2;
+  nestedvarssa = 3;
   popnestedvarssa = 3;
   pushnestedvarssa = 3;
 
