@@ -61,13 +61,16 @@ procedure setimmpointer(const value: dataaddressty; var par: opparamty);
 procedure setimmoffset(const value: dataoffsty; var par: opparamty);
 procedure setimmdatakind(const value: datakindty; var par: opparamty);
 
-function additem(const aopcode: opcodety): popinfoty;
+function additem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
-                                             const before: boolean): popinfoty;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
 function getitem(const index: integer): popinfoty;
 
 procedure addlabel();
 
+          //refcount helpers
 procedure inipointer(const aaddress: addressrefty; const count: datasizety;
                                                      const ssaindex: integer);
 procedure finirefsize(const aaddress: addressrefty; const count: datasizety;
@@ -393,11 +396,12 @@ begin
  end;
 end;
 
-function additem(const aopcode: opcodety): popinfoty;
+function additem(const aopcode: opcodety;
+                            const ssaextension: integer = 0): popinfoty;
 begin
  with info do begin
   ssa.index:= ssa.nextindex;
-  inc(ssa.nextindex,ssatable^[aopcode]);
+  inc(ssa.nextindex,ssatable^[aopcode]+ssaextension);
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   with result^ do begin
    op.op:= aopcode;
@@ -422,7 +426,8 @@ begin
 end;
 
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
-                                            const before: boolean): popinfoty;
+                    const before: boolean;
+                    const ssaextension: integer = 0): popinfoty;
 var
  int1,int2: integer;
  ad1: opaddressty;
@@ -433,10 +438,10 @@ begin
  with info do begin
   int1:= stackoffset+stackindex;
   if (int1 > stacktop) or not before and (int1 = stacktop) then begin
-   result:= additem(aopcode);
+   result:= additem(aopcode,ssaextension);
   end
   else begin
-   ssadelta:= ssatable^[aopcode];
+   ssadelta:= ssatable^[aopcode]+ssaextension;
    allocsegmentpo(seg_op,sizeof(opinfoty));
    {
    if high(ops) < opcount then begin

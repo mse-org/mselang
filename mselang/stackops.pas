@@ -1940,6 +1940,7 @@ const
 //ssa only
   nestedvarssa = 0;
   popnestedvarssa = 0;
+  pushnestedvarssa = 0;
   
 {$include optable.inc}
 {

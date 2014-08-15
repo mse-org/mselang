@@ -267,7 +267,8 @@ type
   
 //ssaonly
   ocssa_nestedvar,
-  ocssa_popnestedvar
+  ocssa_popnestedvar,
+  ocssa_pushnestedvar
  );
 
  v8ty = array[0..0] of byte;

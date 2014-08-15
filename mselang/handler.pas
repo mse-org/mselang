@@ -1526,6 +1526,7 @@ var
  ad1: addressrefty;
  ssa1: integer;
  po1: popinfoty;
+ ssaextension1: integer;
 label
  endlab;
 begin
@@ -1641,18 +1642,22 @@ begin
       end;
      end
      else begin
+      ssaextension1:= 0;
+      if not (af_segment in dest.address.flags) then begin
+       int1:= sublevel - dest.address.locaddress.framelevel-1;
+       if int1 >= 0 then begin
+        ssaextension1:= getssa(ocssa_popnestedvar);
+       end;
+      end;
       po1:= additem(popoptable[
-                     getmovedest(dest.address.flags)][getmovesize(si1 div 8)]);
+                     getmovedest(dest.address.flags)][getmovesize(si1 div 8)],
+                     ssaextension1);
       if af_segment in dest.address.flags then begin
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
        po1^.par.memop.segdataaddress.offset:= 0;
       end
       else begin
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
-       int1:= sublevel - dest.address.locaddress.framelevel-1;
-       if int1 >= 0 then begin
-        incssa(ocssa_popnestedvar);
-       end;
        po1^.par.memop.locdataaddress.a.framelevel:= int1;
        po1^.par.memop.locdataaddress.offset:= 0;
       end;

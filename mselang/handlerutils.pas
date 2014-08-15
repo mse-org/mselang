@@ -161,8 +161,8 @@ procedure trackalloc(const asize: integer; var address: segaddressty);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 
 procedure resetssa();
-procedure incssa(const aopcode: opcodety);
-procedure incssa(const aopcode: opcodety; const count: integer);
+function getssa(const aopcode: opcodety): integer;
+function getssa(const aopcode: opcodety; const count: integer): integer;
 
 procedure init();
 procedure deinit();
@@ -969,21 +969,26 @@ procedure pushd(const ains: boolean; const stackoffset: integer;
                      const offset: dataoffsty; const bitsize: datasizetyxx);
 //todo: optimize
 
+var
+ ssaextension1: integer;
+
  function getop(const aop: opcodety): popinfoty;
  begin
   if ains then begin
-   result:= insertitem(aop,stackoffset,before);
+   result:= insertitem(aop,stackoffset,before,ssaextension1);
   end
   else begin
-   result:= additem(aop);
+   result:= additem(aop,ssaextension1);
   end;
  end;
 
 var
  po1: popinfoty;
+ framelevel1: integer;
  
 begin
  with aaddress do begin //todo: use table
+  ssaextension1:= 0;
   if af_segment in flags then begin
    case bitsize of
     1..8: begin 
@@ -1005,6 +1010,10 @@ begin
    end;
   end
   else begin
+   framelevel1:= info.sublevel-locaddress.framelevel-1;
+   if framelevel1 >= 0 then begin
+    ssaextension1:= getssa(ocssa_pushnestedvar);
+   end;
    if af_param in flags then begin
     if af_paramindirect in flags then begin
      case bitsize of
@@ -1058,8 +1067,7 @@ begin
    with po1^ do begin
     par.memop.locdataaddress.a:= locaddress;
     tracklocalaccess(par.memop.locdataaddress.a,avarele,(bitsize+7) div 8);
-    par.memop.locdataaddress.a.framelevel:= 
-                                        info.sublevel-locaddress.framelevel-1;
+    par.memop.locdataaddress.a.framelevel:= framelevel1;
     par.memop.locdataaddress.offset:= offset;
    end;
   end;
@@ -1102,8 +1110,8 @@ begin
   int1:= stackindex+stackoffset;
   with info.contextstack[int1] do begin
    if int1 >= stacktop then begin
-    ssa1:= ssa.index;
-//    inc(ssaindex);
+    ssa1:= ssa.nextindex-1;
+//    ssa1:= ssa.index;
    end
    else begin
     op1:= contextstack[int1+1].opmark.address;
@@ -1242,8 +1250,8 @@ begin                    //todo: optimize
       else begin
        si1:= pointerbitsize;
       end;
-      pushinsertdata(stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
-                                                          d.dat.ref.offset,si1);
+      pushinsertdata(stackoffset,false,d.dat.ref.c.address,
+                                 d.dat.ref.c.varele,d.dat.ref.offset,si1);
      end;
     end;
    end;
@@ -1407,17 +1415,17 @@ begin
  end;
 end;
 
-procedure incssa(const aopcode: opcodety; const count: integer);
+function getssa(const aopcode: opcodety; const count: integer): integer;
 begin
  with info do begin
-  inc(ssa.nextindex,ssatable^[aopcode]*count);
+  result:= ssatable^[aopcode]*count;
  end;
 end;
 
-procedure incssa(const aopcode: opcodety);
+function getssa(const aopcode: opcodety): integer;
 begin
  with info do begin
-  inc(ssa.nextindex,ssatable^[aopcode]);
+  result:= ssatable^[aopcode];
  end;
 end;
 

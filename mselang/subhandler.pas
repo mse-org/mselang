@@ -825,11 +825,12 @@ begin
    po1^.allocs.nestedalloccount:= 0;
   end;
   resetssa();
-  with additem(oc_subbegin)^ do begin
+  with additem(oc_subbegin,
+           getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount))^ do begin
    par.subbegin.subname:= po1^.address;
 //   par.subbegin.flags:= po1^.flags;
    par.subbegin.allocs:= po1^.allocs;
-   incssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
+   
 //   par.subbegin.allocs.allocs:= alloc1;
 //   par.subbegin.allocs.alloccount:= int1;
   end;

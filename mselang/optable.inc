@@ -219,7 +219,8 @@
   continueexceptionssa,
 //ssaonly
   nestedvarssa,
-  popnestedvarssa
+  popnestedvarssa,
+  pushnestedvarssa
  );
 
  optable: optablety = ( //order as opcodety
@@ -426,6 +427,7 @@
   @continueexceptionop,
   
    //ssa only
+  nil,
   nil,
   nil
  );
