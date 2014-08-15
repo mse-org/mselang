@@ -406,7 +406,7 @@ begin
   with result^ do begin
    op.op:= aopcode;
    op.flags:= [];
-   par.ssad:= ssa.index;
+   par.ssad:= ssa.nextindex - 1;
   end;
   inc(opcount);
  end;
@@ -457,9 +457,11 @@ begin
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    result^.op.op:= aopcode;
-   if ad1 = opcount then begin
-    result^.par.ssad:= ssa.nextindex;
-   end;
+//   if ad1 = opcount then begin
+//    result^.par.ssad:= ssa.nextindex;
+//   end;
+   result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
+                //there is at least a subbegin op
    ssa.index:= ssa.nextindex;
    inc(ssa.nextindex,ssadelta);
    po1:= result+1;

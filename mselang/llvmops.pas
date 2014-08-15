@@ -209,9 +209,9 @@ begin
   str1:= 'i'+inttostr(memop.datacount);
   str2:= '%'+inttostr(ssas1);
   if memop.locdataaddress.a.framelevel >= 0 then begin
-   str3:= '%'+inttostr(ssad);
-   str4:= '%'+inttostr(ssad+1);
-   str5:= '%'+inttostr(ssad+2);
+   str3:= '%'+inttostr(ssad-2);
+   str4:= '%'+inttostr(ssad-1);
+   str5:= '%'+inttostr(ssad);
    outass(str3+' = getelementptr i8** %fp, i32 '+
                                    inttostr(memop.locdataaddress.a.address));
    outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
@@ -289,11 +289,11 @@ var
 begin
  with pc^.par do begin
   str1:= 'i'+inttostr(memop.datacount);
-  str2:= '%'+inttostr(ssad);
   if memop.locdataaddress.a.framelevel >= 0 then begin
-   str3:= '%'+inttostr(ssad+1);
-   str4:= '%'+inttostr(ssad+2);
-   str5:= '%'+inttostr(ssad+3);
+   str2:= '%'+inttostr(ssad-3);
+   str3:= '%'+inttostr(ssad-2);
+   str4:= '%'+inttostr(ssad-1);
+   str5:= '%'+inttostr(ssad);
    outass(str2+' = getelementptr i8** %fp, i32 '+
                                    inttostr(memop.locdataaddress.a.address));
    outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
@@ -301,6 +301,7 @@ begin
    outass(str5+' = load '+str1+'* '+str4);
   end
   else begin
+   str2:= '%'+inttostr(ssad);
    outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
   end;
  end;
