@@ -750,6 +750,7 @@ begin
    end;
    linkresolve(po2^.links,po1^.address);
   end;
+  linkresolve(po1^.links,po1^.address); //nested calls
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentcontainer);
    with additem(oc_initclass)^,par.initclass do begin

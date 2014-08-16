@@ -275,9 +275,6 @@ var
     po1^.par.virtcallinfo.selfinstance:= -asub^.paramsize;
    end
    else begin
-    if asub^.address = 0 then begin //unresolved header
-     linkmark(asub^.links,getsegaddress(seg_op,opcount*sizeof(opinfoty)));
-    end;
     if (asub^.nestinglevel = 0) or 
                      (asub^.nestinglevel = sublevel) then begin
      if sf_function in asub^.flags then begin
@@ -292,6 +289,9 @@ var
      po1:= additem(oc_callout);
      po1^.par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
                                                              //for downto 0
+    end;
+    if asub^.address = 0 then begin //unresolved header
+     linkmark(asub^.links,getsegaddress(seg_op,@po1^.par.callinfo.ad));
     end;
     with po1^ do begin
      par.callinfo.flags:= asub^.flags;

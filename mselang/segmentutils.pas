@@ -49,6 +49,8 @@ function getsegmentpo(const asegment: segmentty;
 function getsegmentpo(const aaddress: segaddressty): pointer;
 function getsegaddress(const asegment: segmentty;
                              const aaddress: dataoffsty): segaddressty;
+function getsegaddress(const asegment: segmentty;
+                             const aref: pointer): segaddressty;
 
 function getsegmenttoppo(const asegment: segmentty): pointer;
 function getsegmenttopoffs(const asegment: segmentty): dataoffsty;
@@ -245,6 +247,13 @@ function getsegaddress(const asegment: segmentty;
 begin
  result.segment:= asegment;
  result.address:= aaddress;
+end;
+
+function getsegaddress(const asegment: segmentty;
+                             const aref: pointer): segaddressty;
+begin
+ result.segment:= asegment;
+ result.address:= aref-segments[asegment].data;
 end;
 
 function getoppo(const opindex: integer): popinfoty;
