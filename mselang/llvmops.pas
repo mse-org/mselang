@@ -1084,7 +1084,7 @@ begin
    first:= false;
   end;
   while parpo < endpo do begin
-   str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
+   str1:= ',i'+inttostr(parpo^.bitsize)+' %'+inttostr(parpo^.ssaindex);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1106,12 +1106,12 @@ begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;
-  outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.size*8)+
+  outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.bitsize)+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
   first:= true;
   while parpo < endpo do begin
-   str1:= ',i'+inttostr(parpo^.size*8)+' %'+inttostr(parpo^.ssaindex);
+   str1:= ',i'+inttostr(parpo^.bitsize)+' %'+inttostr(parpo^.ssaindex);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1167,7 +1167,7 @@ begin
   poend:= po1+allocs.alloccount;
 
   if sf_function in flags then begin
-   outass('define i'+inttostr(po1^.size*8)+' @s'+inttostr(subname)+'(');
+   outass('define i'+inttostr(po1^.bitsize)+' @s'+inttostr(subname)+'(');
    inc(po1); //result
   end
   else begin
@@ -1182,7 +1182,7 @@ begin
    if not (af_param in po1^.flags) then begin
     break;
    end;
-   str1:= ',i'+inttostr(8*po1^.size)+' '+paraddress(po1^.address);
+   str1:= ',i'+inttostr(po1^.bitsize)+' '+paraddress(po1^.address);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1195,23 +1195,23 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
   if sf_function in flags then begin
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
    inc(po1); //result
   end;
   while po1 < poend do begin
   if not (af_param in po1^.flags) then begin
    break;
   end;
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
 {$ifndef mse_locvarssatracking}
-   outass('store i'+inttostr(po1^.size*8)+' '+paraddress(po1^.address)+
-               ',i'+inttostr(po1^.size*8)+'* '+
+   outass('store i'+inttostr(po1^.bitsize)+' '+paraddress(po1^.address)+
+               ',i'+inttostr(po1^.bitsize)+'* '+
                            locaddress(po1^.address));
 {$endif}
    inc(po1);
   end;
   while po1 < poend do begin
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(8*po1^.size));
+   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
    inc(po1);
   end;
   if allocs.nestedalloccount > 0 then begin
@@ -1267,7 +1267,7 @@ var
 begin
  with pc^.par do begin
   po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
-  ty1:= 'i'+inttostr(po1^.size*8);
+  ty1:= 'i'+inttostr(po1^.bitsize);
   dest1:= '%'+inttostr(ssad);
   outass(dest1 + ' = load '+ty1+'* %l0');
   outass('ret '+ty1+' '+dest1);

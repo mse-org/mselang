@@ -23,7 +23,7 @@ uses
 type
  globallocinfoty = record
   a: segaddressty;
-  size: integer;
+  bitsize: integer;
  end;
  pgloballocinfoty = ^globallocinfoty;
 
@@ -31,13 +31,13 @@ type
 //  a: addressvaluety;
   flags: addressflagsty;
   address: dataoffsty;
-  size: integer;
+  bitsize: integer;
  end;
  plocallocinfoty = ^locallocinfoty;
  
  parallocinfoty = record
   ssaindex: integer;
-  size: integer;
+  bitsize: integer;
  end;
  pparallocinfoty = ^parallocinfoty;
 

@@ -154,10 +154,10 @@ var
       ssaindex:= 0;
       po3:= ele.eledataabs(asub^.resulttype);
       if po3^.indirectlevel > 0 then begin
-       size:= pointersize;
+       bitsize:= pointerbitsize;
       end
       else begin
-       size:= po3^.bytesize;
+       bitsize:= po3^.bitsize;
       end;
      end;
     end;
@@ -200,10 +200,10 @@ var
                 allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
        ssaindex:= d.dat.fact.ssaindex;
        if po6^.address.indirectlevel > 0 then begin
-        size:= pointersize;
+        bitsize:= pointerbitsize;
        end
        else begin
-        size:= ptypedataty(ele.eledataabs(po6^.vf.typ))^.bytesize;
+        bitsize:= ptypedataty(ele.eledataabs(po6^.vf.typ))^.bitsize;
        end;
       end;
      end;

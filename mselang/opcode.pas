@@ -222,7 +222,9 @@ end;
 procedure inclocvaraddress(const asize: integer);
 begin
  with info do begin
-  locdatapo:= locdatapo + alignsize(asize);
+  if backend <> bke_llvm then begin
+   locdatapo:= locdatapo + alignsize(asize);
+  end;
  end;
 end;
 {

@@ -786,16 +786,16 @@ begin
    while ele1 <> 0 do begin      //number params and vars
     po4:= ele.eledataabs(ele1);
     if po4^.address.indirectlevel > 0 then begin
-     int2:= pointersize;
+     int2:= pointerbitsize;
     end
     else begin
-     int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bytesize;
+     int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bitsize;
     end;
     with plocallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
      address:= po4^.address.locaddress.address;
      flags:= po4^.address.flags;
-     size:= int2;
+     bitsize:= int2;
     end;
  //   trackalloc(int2,po4^.address);
     ele1:= po4^.vf.next;
