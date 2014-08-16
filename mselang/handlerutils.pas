@@ -23,7 +23,7 @@ uses
 type
  datasizetyxx = type integer;
  
- systypety = (st_none,st_bool8,st_int32,st_float64,st_string8);
+ systypety = (st_none,st_bool1,st_int32,st_float64,st_string8);
  systypeinfoty = record
   name: string;
   data: typedataty;
@@ -46,18 +46,18 @@ var
 const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-   (sdk_none,sdk_bool8,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
+   (sdk_none,sdk_bool1,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
   //dk_address,dk_record,dk_string,dk_array,dk_class,dk_interface
     sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none,sdk_none,
   //dk_enum,dk_enumitem, dk_set
     sdk_none,   sdk_none, sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
-          //sdk_none,sdk_bool8,sdk_int32,sdk_flo64
+          //sdk_none,sdk_bool1,sdk_int32,sdk_flo64
            (dk_none,dk_boolean,dk_integer,dk_float);
  resultdatatypes: array[stackdatakindty] of systypety =
-          //sdk_none,sdk_bool8,sdk_int32,sdk_flo64
-           (st_none,st_bool8,st_int32,st_float64);
+          //sdk_none,sdk_bool1,sdk_int32,sdk_flo64
+           (st_none,st_bool1,st_int32,st_float64);
 
 type
  comperrorty = (ce_invalidfloat,ce_expressionexpected,ce_startbracketexpected,
@@ -186,8 +186,8 @@ const
    (name: 'none'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none;
        dummy: 0)),
-   (name: 'bool8'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
-       bitsize: 1; bytesize: 1; datasize: das_8; kind: dk_boolean;
+   (name: 'bool1'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 1; bytesize: 1; datasize: das_1; kind: dk_boolean;
        dummy: 0)),
    (name: 'int32'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 32; bytesize: 4; datasize: das_32;
@@ -202,8 +202,8 @@ const
                  ))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
-   (name: 'false'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: false)),
-   (name: 'true'; ctyp: st_bool8; cval:(kind: dk_boolean; vboolean: true))
+   (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
+   (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true))
   );
     
 { 
@@ -1513,7 +1513,7 @@ begin
    else begin
     if kinda = dk_boolean then begin
      if kindb = dk_boolean then begin
-      sd1:= sdk_bool8;
+      sd1:= sdk_bool1;
       if d.kind = ck_const then begin
        with insertitem(oc_pushimm8,stacktop-2-stackindex,false)^ do begin
         setimmboolean(d.dat.constval.vboolean,par);

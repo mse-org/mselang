@@ -111,7 +111,7 @@ type
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
- stackdatakindty = (sdk_none,sdk_bool8,sdk_int32,sdk_flo64);
+ stackdatakindty = (sdk_none,sdk_bool1,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
 
  opaddressty = ptruint;         //todo: use target size

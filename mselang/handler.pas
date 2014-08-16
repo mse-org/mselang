@@ -1394,7 +1394,7 @@ begin
                                                (d.kind = ck_const) then begin
    dk1:= convertconsts();
    d.dat.constval.kind:= dk_boolean;
-   d.dat.datatyp:= sysdatatypes[st_bool8];
+   d.dat.datatyp:= sysdatatypes[st_bool1];
    case dk1 of
     sdk_int32: begin
      d.dat.constval.vboolean:= d.dat.constval.vinteger = 
@@ -1404,7 +1404,7 @@ begin
      d.dat.constval.vboolean:= d.dat.constval.vfloat = 
                             contextstack[stacktop].d.dat.constval.vfloat;
     end;
-    sdk_bool8: begin
+    sdk_bool1: begin
      d.dat.constval.vboolean:= d.dat.constval.vboolean =
                             contextstack[stacktop].d.dat.constval.vboolean;
     end;
@@ -1418,7 +1418,7 @@ begin
   else begin
    updateop(cmpequops);
    with info,contextstack[stacktop] do begin
-    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool8]];
+    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
    end;
   end;
  end;

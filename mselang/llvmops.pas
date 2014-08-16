@@ -379,13 +379,13 @@ begin
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
     if po2^.address.indirectlevel > 0 then begin
-     int1:= pointersize;
+     int1:= pointerbitsize;
     end
     else begin
-     int1:= ptypedataty(ele.eledataabs(po2^.vf.typ))^.bytesize;
+     int1:= ptypedataty(ele.eledataabs(po2^.vf.typ))^.bitsize;
     end;
     outass(segaddress(po2^.address.segaddress)+' = global i'+
-                                              inttostr(8*int1)+ ' 0');
+                                              inttostr(int1)+ ' 0');
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
