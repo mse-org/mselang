@@ -268,7 +268,9 @@ type
 //ssaonly
   ocssa_nestedvar,
   ocssa_popnestedvar,
-  ocssa_pushnestedvar
+  ocssa_pushnestedvar,  //per item
+  ocssa_nestedcallout,  //per level
+  ocssa_hascallout
  );
 
  v8ty = array[0..0] of byte;

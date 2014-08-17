@@ -942,7 +942,10 @@ begin
    end;
    for int1:= int1-2 downto 0 do begin
     with psubdataty(ele.parentdata())^ do begin
-     include(flags,sf_hasnestedaccess);
+     include(flags,sf_hasnestedref);
+     if int1 <> 0 then begin
+      include(flags,sf_hasnestedaccess);
+     end;
     end;
     ele.decelementparent(); //parentsub
    {$ifdef mse_checkinternalerror}

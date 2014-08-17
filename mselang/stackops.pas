@@ -1941,7 +1941,9 @@ const
   nestedvarssa = 0;
   popnestedvarssa = 0;
   pushnestedvarssa = 0;
-  
+  nestedcalloutssa = 0;
+  hascalloutssa = 0;
+    
 {$include optable.inc}
 {
  ssatable: ssatablety = (

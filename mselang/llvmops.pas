@@ -1067,20 +1067,59 @@ begin
  notimplemented();
 end;
 
-procedure callop();
+procedure dooutlink(const outlinkcount: integer);
 var
- parpo: pparallocinfoty;
- endpo: pointer;
+ ssa1: integer;
+ int1: integer;
+ str1,str2: shortstring;
+ po1,po2,po3: pshortstring;
+begin
+ with pc^.par do begin
+  if (outlinkcount > 0) and (sf_hasnestedaccess in callinfo.flags) then begin
+   ssa1:= ssad-outlinkcount*2;
+   str1:= '%'+inttostr(ssa1);
+   inc(ssa1);
+   str2:= '%'+inttostr(ssa1);
+   inc(ssa1);
+   outass(str1+' = add i32 0, 0'); //dummy
+   outass(str2+' = bitcast i8** %fp to i8**');
+   po2:= @str1;
+   po1:= @str2;
+   for int1:= outlinkcount-2 downto 0 do begin;
+    po3:= po1;
+    po1:= po2;
+    po2:= po3;    //swap strings
+    po1^:= '%'+inttostr(ssa1);
+    inc(ssa1);
+    outass(po1^+' = load i8** '+po2^);
+    po2^:= '%'+inttostr(ssa1);
+    inc(ssa1);
+    outass(po2^+' = bitcast i8* '+po1^+' to i8**');
+   end;
+  end;
+ end;
+end;
+
+procedure docallparam(parpo: pparallocinfoty; const endpo: pointer;
+                      const outlinkcount: integer);
+var
  first: boolean;
+ int1: integer;
  str1: shortstring;
 begin
  with pc^.par do begin
-  parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  endpo:= parpo + callinfo.paramcount;
-  outass('call void @s'+inttostr(callinfo.ad+1)+'(');
   first:= true;
   if sf_hasnestedaccess in callinfo.flags then begin
-   outass(' i8** %f');
+   if outlinkcount > 0 then begin
+    int1:= ssad-1;
+    if sf_function in callinfo.flags then begin
+     dec(int1);
+    end;
+    outass(' i8** %'+inttostr(int1));
+   end
+   else begin
+    outass(' i8** %f');
+   end;
    first:= false;
   end;
   while parpo < endpo do begin
@@ -1093,6 +1132,19 @@ begin
    inc(parpo);
   end;
   outass(')');
+ end;
+end;
+
+procedure docall(const outlinkcount: integer);
+var
+ parpo: pparallocinfoty;
+ endpo: pointer;
+begin
+ with pc^.par do begin
+  parpo:= getsegmentpo(seg_localloc,callinfo.params);
+  endpo:= parpo + callinfo.paramcount;
+  outass('call void @s'+inttostr(callinfo.ad+1)+'(');
+  docallparam(parpo,endpo,outlinkcount);
  end;
 end;
 
@@ -1109,6 +1161,8 @@ begin
   outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.bitsize)+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
+  docallparam(parpo,endpo,0);
+{
   first:= true;
   while parpo < endpo do begin
    str1:= ',i'+inttostr(parpo^.bitsize)+' %'+inttostr(parpo^.ssaindex);
@@ -1120,13 +1174,28 @@ begin
    inc(parpo);
   end;
   outass(')');
+}
+ end;
+end;
+
+procedure callop();
+begin
+ with pc^.par do begin
+  docall(0);
  end;
 end;
 
 procedure calloutop();
+var
+ int1: integer;
 begin
- notimplemented();
+ with pc^.par do begin
+  int1:= callinfo.linkcount+2;
+  dooutlink(int1);
+  docall(int1);
+ end;
 end;
+
 procedure callvirtop();
 begin
  notimplemented();
@@ -1214,7 +1283,7 @@ begin
    outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
    inc(po1);
   end;
-  if allocs.nestedalloccount > 0 then begin
+  if sf_hasnestedref in flags then begin
    outass('%f = alloca i8*, i32 '+inttostr(allocs.nestedalloccount+1));
                    //first is room for possible oc_callout frame pointer
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
@@ -1243,6 +1312,12 @@ begin
     end;
     
     inc(po2);
+   end;
+   if sf_hascallout in flags then begin
+    str1:= '%'+inttostr(ssa1);
+    inc(ssa1);
+    outass(str1+' = bitcast i8** %fp to i8*');
+    outass('store i8* '+str1+', i8** %f');
    end;
   end;
  end;
@@ -1527,6 +1602,8 @@ const
   nestedvarssa = 3;
   popnestedvarssa = 3;
   pushnestedvarssa = 3;
+  nestedcalloutssa = 2;
+  hascalloutssa = 1;
 
 {$include optable.inc}
 

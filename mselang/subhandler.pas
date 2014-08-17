@@ -826,8 +826,11 @@ begin
    po1^.allocs.nestedalloccount:= 0;
   end;
   resetssa();
-  with additem(oc_subbegin,
-           getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount))^ do begin
+  int1:= getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
+  if sf_hascallout in po1^.flags then begin
+   int1:= int1 + getssa(ocssa_hascallout);
+  end;
+  with additem(oc_subbegin,int1)^ do begin
    par.subbegin.subname:= po1^.address;
 //   par.subbegin.flags:= po1^.flags;
    par.subbegin.allocs:= po1^.allocs;

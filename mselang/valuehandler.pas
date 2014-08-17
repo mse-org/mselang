@@ -287,13 +287,18 @@ var
      po1^.par.callinfo.linkcount:= -1;
     end
     else begin
-     po1:= additem(oc_callout);
-     po1^.par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
-                                                             //for downto 0
-     po7:= pointer(asub)-eledatashift;
-     for int1:= po1^.par.callinfo.linkcount+1 downto 0 do begin
+     int1:= sublevel-asub^.nestinglevel;
+     po1:= additem(oc_callout,getssa(ocssa_nestedcallout,int1));
+     po1^.par.callinfo.linkcount:= int1-2;      //for downto 0
+     po7:= ele.parentelement;
+     include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+     for int1:= int1-1 downto 0 do begin
       po7:= ele.eleinfoabs(po7^.header.parent);
-      include(psubdataty(@po7^.data)^.flags,sf_hascallout);
+      include(psubdataty(@po7^.data)^.flags,sf_hasnestedref);
+      if int1 <> 0 then begin
+       include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+       include(psubdataty(@po7^.data)^.flags,sf_hascallout);
+      end;
      end;
     end;
     if asub^.address = 0 then begin //unresolved header
