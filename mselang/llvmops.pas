@@ -1215,7 +1215,8 @@ begin
    inc(po1);
   end;
   if allocs.nestedalloccount > 0 then begin
-   outass('%f = alloca i8*, i32 '+inttostr(allocs.nestedalloccount));
+   outass('%f = alloca i8*, i32 '+inttostr(allocs.nestedalloccount+1));
+                   //first is room for possible oc_callout frame pointer
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
    poend:= po2+allocs.nestedalloccount;
    ssa1:= 1;
