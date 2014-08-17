@@ -593,13 +593,14 @@ begin
   po1^.address:= 0; //init
   if impl1 then begin //implementation
 //   po1^.address:= opcount;
-   po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
-                                                           ek_none,allvisi);
-   po1^.nestedvarchain:= 0;
-   po1^.nestedvarcount:= 1; //for callout frame ref
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
+    ele.markelement(b.elemark); 
+    po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
+                                                            ek_none,allvisi);
+    po1^.nestedvarchain:= 0;
+    po1^.nestedvarcount:= 1; //for callout frame ref
     d.subdef.ssabefore:= ssa;
     resetssa();
     d.subdef.frameoffsetbefore:= frameoffset;
@@ -618,7 +619,6 @@ begin
       po1^.paramfinichain:= ele.eledatarel(po2);
      end;
     end;
-    ele.markelement(b.elemark); 
    end;
   end
   else begin
