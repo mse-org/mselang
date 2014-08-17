@@ -949,7 +949,7 @@ begin
     end;
    {$endif}
     with psubdataty(ele.parentdata())^ do begin
-     if ele.adduniquechilddata(nestedvarele,avarele,ek_none,
+     if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
                                                        allvisi,po1) then begin
       trackref(po1);
      end
