@@ -239,6 +239,7 @@ type
   oc_call,
   oc_callfunc,
   oc_callout,
+  oc_callfuncout,
   oc_callvirt,
   oc_callintf,
   oc_virttrampoline,

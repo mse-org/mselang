@@ -1165,6 +1165,11 @@ begin
  cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
 end;
 
+procedure callfuncoutop();
+begin
+ calloutop();
+end;
+
 procedure callvirtop();
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
@@ -1911,6 +1916,7 @@ const
   callssa = 0;
   callfuncssa = 0;
   calloutssa = 0;
+  callfuncoutssa = 0;
   callvirtssa = 0;
   callintfssa = 0;
   virttrampolinessa = 0;

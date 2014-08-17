@@ -288,7 +288,12 @@ var
     end
     else begin
      int1:= sublevel-asub^.nestinglevel;
-     po1:= additem(oc_callout,getssa(ocssa_nestedcallout,int1));
+     if sf_function in asub^.flags then begin
+      po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,int1));
+     end
+     else begin
+      po1:= additem(oc_callout,getssa(ocssa_nestedcallout,int1));
+     end;
      po1^.par.callinfo.linkcount:= int1-2;      //for downto 0
      po7:= ele.parentelement;
      include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);

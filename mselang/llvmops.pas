@@ -515,12 +515,12 @@ end;
 
 procedure pushop();
 begin
- notimplemented();
+// notimplemented();
 end;
 
 procedure popop();
 begin
- notimplemented();
+// notimplemented();
 end;
 
 procedure pushimm1op();
@@ -1148,7 +1148,7 @@ begin
  end;
 end;
 
-procedure callfuncop();
+procedure docallfunc(const outlinkcount: integer);
 var
  parpo: pparallocinfoty;
  endpo: pointer;
@@ -1161,20 +1161,7 @@ begin
   outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.bitsize)+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
-  docallparam(parpo,endpo,0);
-{
-  first:= true;
-  while parpo < endpo do begin
-   str1:= ',i'+inttostr(parpo^.bitsize)+' %'+inttostr(parpo^.ssaindex);
-   if first then begin
-    str1[1]:= ' ';
-    first:= false;
-   end;
-   outass(str1);
-   inc(parpo);
-  end;
-  outass(')');
-}
+  docallparam(parpo,endpo,outlinkcount);
  end;
 end;
 
@@ -1182,6 +1169,13 @@ procedure callop();
 begin
  with pc^.par do begin
   docall(0);
+ end;
+end;
+
+procedure callfuncop();
+begin
+ with pc^.par do begin
+  docallfunc(0);
  end;
 end;
 
@@ -1193,6 +1187,17 @@ begin
   int1:= callinfo.linkcount+2;
   dooutlink(int1);
   docall(int1);
+ end;
+end;
+
+procedure callfuncoutop();
+var
+ int1: integer;
+begin
+ with pc^.par do begin
+  int1:= callinfo.linkcount+2;
+  dooutlink(int1);
+  docallfunc(int1);
  end;
 end;
 
@@ -1572,6 +1577,7 @@ const
   callssa = 0;
   callfuncssa = 1;
   calloutssa = 1;
+  callfuncoutssa = 1;
   callvirtssa = 1;
   callintfssa = 1;
   virttrampolinessa = 1;

@@ -474,6 +474,8 @@ begin
   with contextstack[stackindex-1] do begin
    subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
+   d.subdef.locallocidbefore:= locallocid;
+   locallocid:= 0;
   end;
   if (sf_function in subflags) and 
                       not (sf_functiontype in subflags) then begin
@@ -727,7 +729,7 @@ begin
  outhandle('SUB5A');
 {$endif}
  with info,contextstack[stackindex-2].d do begin
-  subdef.locallocidbefore:= locallocid;
+//  subdef.locallocidbefore:= locallocid;
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   po1^.address:= opcount;
