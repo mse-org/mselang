@@ -125,6 +125,7 @@ var
   po3: ptypedataty;
   po5: pelementoffsetty;
   po6: pvardataty;
+  po7: pelementinfoty;
   paramco1: integer;
   int1: integer;
   parallocstart: dataoffsty;
@@ -289,6 +290,11 @@ var
      po1:= additem(oc_callout);
      po1^.par.callinfo.linkcount:= sublevel-asub^.nestinglevel-2;
                                                              //for downto 0
+     po7:= pointer(asub)-eledatashift;
+     for int1:= po1^.par.callinfo.linkcount+1 downto 0 do begin
+      po7:= ele.eleinfoabs(po7^.header.parent);
+      include(psubdataty(@po7^.data)^.flags,sf_hascallout);
+     end;
     end;
     if asub^.address = 0 then begin //unresolved header
      linkmark(asub^.links,getsegaddress(seg_op,@po1^.par.callinfo.ad));

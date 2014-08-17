@@ -1221,7 +1221,7 @@ begin
    ssa1:= 1;
    while po2 < poend do begin
     str1:= '%'+inttostr(ssa1); 
-    outass(str1+' = getelementptr i8** %f, i32 '+ inttostr(ssa1 div 3));
+    outass(str1+' = getelementptr i8** %f, i32 '+ inttostr(ssa1 div 3 + 1));
     inc(ssa1);
     str2:= '%'+inttostr(ssa1);
     inc(ssa1);

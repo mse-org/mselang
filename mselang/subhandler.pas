@@ -596,7 +596,7 @@ begin
    po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                            ek_none,allvisi);
    po1^.nestedvarchain:= 0;
-   po1^.nestedvarcount:= 0;
+   po1^.nestedvarcount:= 1; //for callout frame ref
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[stackindex-1] do begin
@@ -889,7 +889,9 @@ begin
   ssa:= d.subdef.ssabefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
-  ele.releaseelement(b.elemark); //remove local definitions
+  if sublevel = 0 then begin
+   ele.releaseelement(b.elemark); //remove local definitions
+  end;
   ele.elementparent:= b.eleparent;
   currentstatementflags:= b.flags;
   if d.subdef.match <> 0 then begin
