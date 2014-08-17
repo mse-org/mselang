@@ -891,13 +891,14 @@ procedure tracklocalaccess(var aaddress: locaddressty;
 
 var
  pobefore: pnestedvardataty;
+ addressbefore: dataoffsty;
  
  procedure trackref(const avardata: pnestedvardataty);
  begin
   with psubdataty(ele.parentdata())^ do begin
    avardata^.next:= nestedvarchain;
    avardata^.nestedindex:= nestedvarcount;
-   avardata^.address.address:= aaddress.address;
+   avardata^.address.address:= addressbefore;
    avardata^.address.nested:= false;
    avardata^.address.size:= asize;
    if pobefore <> nil then begin
@@ -919,6 +920,7 @@ begin
   int1:= info.sublevel-aaddress.framelevel;
   if int1 > 0 then begin
    pobefore:= nil;
+   addressbefore:= aaddress.address;
    parentbefore:= ele.elementparent;
    with psubdataty(ele.parentdata())^ do begin
     include(flags,sf_hasnestedaccess);
