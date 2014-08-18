@@ -1112,9 +1112,9 @@ begin
   if sf_hasnestedaccess in callinfo.flags then begin
    if outlinkcount > 0 then begin
     int1:= ssad-1;
-    if sf_function in callinfo.flags then begin
-     dec(int1);
-    end;
+//    if sf_function in callinfo.flags then begin
+//     dec(int1);
+//    end;
     outass(' i8** %'+inttostr(int1));
    end
    else begin
