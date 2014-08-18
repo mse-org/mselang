@@ -1430,8 +1430,8 @@ const
   writeclassssa = 1;
   writeenumssa = 1;
 
-  pushssa = 1;
-  popssa = 1;
+  pushssa = 0; //dummy
+  popssa = 0;  //dummy
 
   pushimm1ssa = 1;
   pushimm8ssa = 1;
