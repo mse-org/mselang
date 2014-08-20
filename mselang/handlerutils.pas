@@ -890,22 +890,24 @@ procedure tracklocalaccess(var aaddress: locaddressty;
                  const avarele: elementoffsetty; const asize: integer);
 
 var
- pobefore: pnestedvardataty;
+// pobefore: pnestedvardataty;
  addressbefore: dataoffsty;
  
- procedure trackref(const avardata: pnestedvardataty);
+ procedure trackref(const avardata: pnestedvardataty; const last: boolean);
  begin
   with psubdataty(ele.parentdata())^ do begin
    avardata^.next:= nestedvarchain;
    avardata^.nestedindex:= nestedvarcount;
-   avardata^.address.address:= addressbefore;
-   avardata^.address.nested:= false;
    avardata^.address.size:= asize;
-   if pobefore <> nil then begin
-    pobefore^.address.address:= nestedvarcount;
-    pobefore^.address.nested:= true;
+   if last then begin
+    avardata^.address.address:= addressbefore;
+    avardata^.address.nested:= false;
+   end
+   else begin
+    avardata^.address.address:= nestedvarcount;
+    avardata^.address.nested:= true;
    end;
-   pobefore:= avardata;
+//   pobefore:= avardata;
    nestedvarchain:= ele.eledatarel(avardata);
    inc(nestedvarcount);
   end;
@@ -919,7 +921,7 @@ begin
  if (info.backend = bke_llvm){ and (af_local in aaddress.flags)} then begin
   int1:= info.sublevel-aaddress.framelevel;
   if int1 > 0 then begin
-   pobefore:= nil;
+//   pobefore:= nil;
    addressbefore:= aaddress.address;
    parentbefore:= ele.elementparent;
    with psubdataty(ele.parentdata())^ do begin
@@ -934,7 +936,7 @@ begin
    with psubdataty(ele.parentdata())^ do begin
     if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
                                                       allvisi,po1) then begin
-     trackref(po1);
+     trackref(po1,int1=1);
     end;
 //    value.address.locaddress.nestedindex:= po1^.nestedindex;
     aaddress.address:= po1^.nestedindex;
@@ -956,7 +958,7 @@ begin
     with psubdataty(ele.parentdata())^ do begin
      if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
                                                        allvisi,po1) then begin
-      trackref(po1);
+      trackref(po1,int1=0);
      end
      else begin
       break;
