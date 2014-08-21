@@ -1663,7 +1663,8 @@ begin
       end;
      end;
      po1^.par.memop.datacount:= si1;
-     po1^.par.ssas1:= ssa1;
+     po1^.par.ssas1:= ssa1;                                         //source
+     po1^.par.ssas2:= contextstack[stacktop-1].d.dat.fact.ssaindex; //dest
     end;
    end;
   end

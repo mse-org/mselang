@@ -521,7 +521,7 @@ type
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushpar8,oc_pushpar16,oc_pushpar32,oc_pushpar,
    oc_pushloc,oc_pushlocindi,
-   oc_indirect,oc_popindirect,
+   oc_indirect,oc_popindirect8,oc_popindirect16,oc_popindirect32,oc_popindirect,
    oc_finirefsizesegar,oc_finirefsizeframe,oc_finirefsizereg0ar,
    oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizesegar,
    oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
