@@ -1162,7 +1162,7 @@ begin
      par.voffset:= d.dat.ref.offset;
     end;
    end;
-   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
+//   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
    initfactcontext(stackoffset);
   end
   else begin
@@ -1246,7 +1246,7 @@ begin                    //todo: optimize
       if not pushindirection(stackoffset) then begin
        exit;
       end;
-      dec(d.dat.datatyp.indirectlevel); //correct addr handling
+//      dec(d.dat.datatyp.indirectlevel); //correct addr handling
       doindirect;
      end
      else begin
