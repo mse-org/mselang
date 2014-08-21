@@ -1208,7 +1208,7 @@ var
    with insertitem(op1,stackoffset,false)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
     par.memop.datacount:= si1;
-    d.dat.fact.ssaindex:= par.ssad + ssatable^[op1] - 1;
+    d.dat.fact.ssaindex:= par.ssad{ + ssatable^[op1] - 1};
    end;
   end;
  end;
