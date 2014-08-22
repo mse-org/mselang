@@ -1048,9 +1048,19 @@ begin
 end;
 
 procedure indirectpooffsop();
-begin
- notimplemented();
-end; //offset after indirect
+var
+ str1,str2: shortstring;
+begin //offset after indirect
+ with pc^.par do begin
+  str1:= '%'+inttostr(ssad-2);
+  str2:= '%'+inttostr(ssad-1);
+  outass(str1+' = bitcast i8* %'+inttostr(ssas1)+' to i8**');
+  outass(str2+' = load i8** '+str1);
+  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
+                                                        inttostr(voffset));
+ end;
+end; 
+
 procedure indirectoffspoop();
 begin
  notimplemented();
@@ -1590,7 +1600,7 @@ const
   indirect16ssa = 2;
   indirect32ssa = 2;
   indirectpossa = 2;
-  indirectpooffsssa = 1;
+  indirectpooffsssa = 3;
   indirectoffspossa = 1;
   indirectssa = 1;
 

@@ -1146,6 +1146,7 @@ end;
 function pushindirection(const stackoffset: integer): boolean;
 var
  int1: integer;
+ po1: popinfoty;
 begin
  result:= true;
  with info,contextstack[stackindex+stackoffset] do begin;
@@ -1158,8 +1159,10 @@ begin
     for int1:= d.dat.indirection to -2 do begin
      insertitem(oc_indirectpo,stackoffset,false);
     end;
-    with insertitem(oc_indirectpooffs,stackoffset,false)^ do begin
+    po1:= insertitem(oc_indirectpooffs,stackoffset,false);
+    with po1^ do begin
      par.voffset:= d.dat.ref.offset;
+     par.ssas1:= par.ssad - getssa(oc_indirectpooffs);
     end;
    end;
 //   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
