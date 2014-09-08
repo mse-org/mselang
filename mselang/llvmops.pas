@@ -381,13 +381,13 @@ begin
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
     if po2^.address.indirectlevel > 0 then begin
-     int1:= pointerbitsize;
+     outass(segaddress(po2^.address.segaddress)+
+                         ' = global i8* inttoptr(i32 0 to i8*)');
     end
     else begin
-     int1:= ptypedataty(ele.eledataabs(po2^.vf.typ))^.bitsize;
+     outass(segaddress(po2^.address.segaddress)+' = global i'+
+             inttostr(ptypedataty(ele.eledataabs(po2^.vf.typ))^.bitsize)+ ' 0');
     end;
-    outass(segaddress(po2^.address.segaddress)+' = global i'+
-                                              inttostr(int1)+ ' 0');
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
@@ -797,9 +797,22 @@ begin
  segassign();
 end;
 
-procedure popsegop();
+procedure popseg64op();
 begin
  segassign();
+end;
+
+procedure popsegpoop();
+begin
+ with pc^.par do begin
+  outass('store i8* %'+inttostr(ssas1)+', i8** '+
+                                         segdataaddress(memop.segdataaddress));
+ end;
+end;
+
+procedure popsegop();
+begin
+ notimplemented();
 end;
 
 procedure poploc8op();
@@ -817,9 +830,19 @@ begin
  locassign();
 end;
 
-procedure poplocop();
+procedure poploc64op();
 begin
  locassign();
+end;
+
+procedure poplocpoop();
+begin
+ notimplemented();
+end;
+
+procedure poplocop();
+begin
+ notimplemented();
 end;
 
 procedure poplocindi8op();
@@ -837,9 +860,19 @@ begin
  locassign();
 end;
 
-procedure poplocindiop();
+procedure poplocindi64op();
 begin
  locassign();
+end;
+
+procedure poplocindipoop();
+begin
+ notimplemented();
+end;
+
+procedure poplocindiop();
+begin
+ notimplemented();
 end;
 
 procedure poppar8op();
@@ -857,9 +890,19 @@ begin
  parassign();
 end;
 
-procedure popparop();
+procedure poppar64op();
 begin
  parassign();
+end;
+
+procedure popparpoop();
+begin
+ notimplemented();
+end;
+
+procedure popparop();
+begin
+ notimplemented();
 end;
 
 procedure popparindi8op();
@@ -877,9 +920,19 @@ begin
  parassignindi()
 end;
 
-procedure popparindiop();
+procedure popparindi64op();
 begin
  parassignindi()
+end;
+
+procedure popparindipoop();
+begin
+ notimplemented()
+end;
+
+procedure popparindiop();
+begin
+ notimplemented()
 end;
 
 procedure pushnilop();
@@ -999,10 +1052,24 @@ begin
 end;
 
 procedure pushsegaddrop();
+var
+ str1: shortstring;
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = ptrtoint '+ptrintname+'* '+
-                      segdataaddress(vsegaddress)+' to '+ptrintname);
+  if vsegaddress.datasize = 0 then begin
+   outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
+                                 segdataaddress(vsegaddress)+') to i8*');
+  end
+  else begin
+   if vsegaddress.datasize > 0 then begin
+    str1:= 'i'+inttostr(vsegaddress.datasize)+'* ';
+    outass('%'+inttostr(ssad)+' = bitcast '+str1+'getelementptr('+str1+
+                                       segdataaddress(vsegaddress)+') to i8*');
+   end
+   else begin
+    notimplemented(); //todo
+   end;
+  end;
  end;
 end;
 
@@ -1095,6 +1162,16 @@ end;
 procedure popindirect32op();
 begin
  popindirect();
+end;
+
+procedure popindirect64op();
+begin
+ popindirect();
+end;
+
+procedure popindirectpoop();
+begin
+ notimplemented();
 end;
 
 procedure popindirectop();
@@ -1541,26 +1618,36 @@ const
   popseg8ssa = 0;
   popseg16ssa = 0;
   popseg32ssa = 0;
+  popseg64ssa = 0;
+  popsegpossa = 0;
   popsegssa = 0;
 
   poploc8ssa = 0;
   poploc16ssa = 0;
   poploc32ssa = 0;
+  poploc64ssa = 0;
+  poplocpossa = 0;
   poplocssa = 0;
 
   poplocindi8ssa = 2;
   poplocindi16ssa = 2;
   poplocindi32ssa = 2;
+  poplocindi64ssa = 2;
+  poplocindipossa = 2;
   poplocindissa = 2;
 
   poppar8ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   poppar16ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   poppar32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  poppar64ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparpossa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
 
   popparindi8ssa = 2;
   popparindi16ssa = 2;
   popparindi32ssa = 2;
+  popparindi64ssa = 2;
+  popparindipossa = 2;
   popparindissa = 2;
 
   pushnilssa = 1;
@@ -1607,6 +1694,8 @@ const
   popindirect8ssa = 1;
   popindirect16ssa = 1;
   popindirect32ssa = 1;
+  popindirect64ssa = 1;
+  popindirectpossa = 1;
   popindirectssa = 1;
 
   callssa = 0;

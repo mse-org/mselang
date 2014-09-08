@@ -168,26 +168,36 @@ type
   oc_popseg8,
   oc_popseg16,
   oc_popseg32,
+  oc_popseg64,
+  oc_popsegpo,
   oc_popseg,
 
   oc_poploc8,
   oc_poploc16,
   oc_poploc32,
+  oc_poploc64,
+  oc_poplocpo,
   oc_poploc,
 
   oc_poplocindi8,
   oc_poplocindi16,
   oc_poplocindi32,
+  oc_poplocindi64,
+  oc_poplocindipo,
   oc_poplocindi,
 
   oc_poppar8,
   oc_poppar16,
   oc_poppar32,
+  oc_poppar64,
+  oc_popparpo,
   oc_poppar,
 
   oc_popparindi8,
   oc_popparindi16,
   oc_popparindi32,
+  oc_popparindi64,
+  oc_popparindipo,
   oc_popparindi,
 
   oc_pushnil,
@@ -234,6 +244,8 @@ type
   oc_popindirect8,
   oc_popindirect16,
   oc_popindirect32,
+  oc_popindirect64,
+  oc_popindirectpo,
   oc_popindirect,
 
   oc_call,
@@ -356,6 +368,7 @@ type
  segdataaddressty = record
   a: segaddressty;
   offset: dataoffsty;
+  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
  end;
    
  locdataaddressty = record

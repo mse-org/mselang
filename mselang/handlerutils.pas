@@ -545,25 +545,40 @@ begin
   with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
    par.vsegaddress.a:= address;
    par.vsegaddress.offset:= 0;
+   par.vsegaddress.datasize:= 0; //todo!
   end;
  end;
 end;
 
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
+var
+ int1: integer;
 begin
- with info,contextstack[stackindex+stackoffset].d.dat.ref do begin
-  if af_segment in c.address.flags then begin
+ with info,contextstack[stackindex+stackoffset].d.dat do begin
+  int1:= 0;
+  if datatyp.indirectlevel = 1 then begin
+   with ptypedataty(ele.eledataabs(datatyp.typedata))^ do begin
+    if datasize = das_none then begin
+     int1:= -bytesize;
+    end
+    else begin
+     int1:= bitsize;
+    end;
+   end;
+  end;
+  if af_segment in ref.c.address.flags then begin
    with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
-    par.vsegaddress.a:= c.address.segaddress;
-    par.vsegaddress.offset:= offset;
+    par.vsegaddress.a:= ref.c.address.segaddress;
+    par.vsegaddress.offset:= ref.offset;
+    par.vsegaddress.datasize:= int1;
    end;
   end
   else begin
    with insertitem(oc_pushlocaddr,stackoffset,before)^ do begin
-    par.vlocaddress.a:= c.address.locaddress;
+    par.vlocaddress.a:= ref.c.address.locaddress;
     par.vlocaddress.a.framelevel:= info.sublevel-
-                          c.address.locaddress.framelevel-1;
-    par.vlocaddress.offset:= offset;
+                          ref.c.address.locaddress.framelevel-1;
+    par.vlocaddress.offset:= ref.offset;
    end;
   end;
  end;
@@ -611,6 +626,7 @@ begin
      with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
       par.vsegaddress.a:= segad1;
       par.vsegaddress.offset:= 0;
+      par.vsegaddress.datasize:= 0; //todo
      end;
     end;
    end;
@@ -1157,7 +1173,10 @@ begin
    else begin
     pushinsert(stackoffset,false,d.dat.ref.c.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
-     insertitem(oc_indirectpo,stackoffset,false);
+     with insertitem(oc_indirectpo,stackoffset,false)^ do begin
+      par.memop.datacount:= pointerbitsize;
+      par.ssas1:= par.ssad - getssa(oc_indirectpo);
+     end;
     end;
     po1:= insertitem(oc_indirectpooffs,stackoffset,false);
     with po1^ do begin

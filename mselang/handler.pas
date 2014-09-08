@@ -1472,13 +1472,34 @@ type
  movedestty = (mvd_segment,mvd_local,mvd_param,mvd_paramindi);
  
 const                //todo: segment and local indirect
- popoptable: array[movedestty] of array [movesizety] of opcodety = (
-  (oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg), //pd_segment
-  (oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc), //pd_local
-  (oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar), //pd_param
-  (oc_popparindi8,oc_popparindi16,oc_popparindi32,oc_popparindi) //pd_paramindi
- );
+ popoptable: array[movedestty] of array [databitsizety] of opcodety = (
 
+ //das_none, das_1,     das_2_7,   das_8,                  //pd_segment
+  (oc_popseg,oc_popseg8,oc_popseg8,oc_popseg8,
+ //das_9_15,   das_16,     das_17_31,  das_32,     
+   oc_popseg16,oc_popseg16,oc_popseg32,oc_popseg32,
+ //das_33_63,  das_64,     das_pointer
+   oc_popseg64,oc_popseg64,oc_popsegpo), 
+ //das_none, das_1,     das_2_7,   das_8,                  //pd_local
+  (oc_poploc,oc_poploc8,oc_poploc8,oc_poploc8,
+ //das_9_15,   das_16,     das_17_31,  das_32,     
+   oc_poploc16,oc_poploc16,oc_poploc32,oc_poploc32,
+ //das_33_63,  das_64,     das_pointer
+   oc_poploc64,oc_poploc64,oc_poplocpo), 
+ //das_none, das_1,     das_2_7,   das_8,                  //pd_param
+  (oc_poppar,oc_poppar8,oc_poppar8,oc_poppar8,
+ //das_9_15,   das_16,     das_17_31,  das_32,     
+   oc_poppar16,oc_poppar16,oc_poppar32,oc_poppar32,
+ //das_33_63,  das_64,     das_pointer
+   oc_poppar64,oc_poppar64,oc_popparpo), 
+ //das_none, das_1,     das_2_7,   das_8,                  //pd_paramindi
+  (oc_popparindi,oc_popparindi8,oc_popparindi8,oc_popparindi8,
+ //das_9_15,   das_16,     das_17_31,  das_32,     
+   oc_popparindi16,oc_popparindi16,oc_popparindi32,oc_popparindi32,
+ //das_33_63,  das_64,     das_pointer
+   oc_popparindi64,oc_popparindi64,oc_popparindipo) 
+ );
+{
 function getmovesize(const asize: integer): movesizety; inline;
 begin
  case asize of
@@ -1496,7 +1517,7 @@ begin
   end;
  end; 
 end;
-
+}
 function getmovedest(const aflags: addressflagsty): movedestty; inline;
             //todo: use table
 begin
@@ -1521,6 +1542,7 @@ var
  dest: vardestinfoty;
  typematch,indi,isconst: boolean;
  si1: integer;
+ datasi1: databitsizety;
  int1: integer;
  offs1: dataoffsty;
  ad1: addressrefty;
@@ -1550,11 +1572,20 @@ begin
      internalerror(ie_handler,'20131126B');
     end;
    {$endif}
-    if d.dat.datatyp.indirectlevel > 0 then begin
-     si1:= pointerbitsize;
-    end
-    else begin
-     si1:= dest.typ^.bitsize;
+    datasi1:= dest.typ^.datasize;
+    if d.dat.datatyp.indirectlevel >= 1 then begin
+     datasi1:= das_pointer;
+    end;
+    case datasi1 of
+     das_none: begin
+      si1:= dest.typ^.bytesize;
+     end;
+     das_pointer: begin
+      si1:= pointerbitsize;
+     end;
+     else begin
+      si1:= dest.typ^.bitsize;
+     end;
     end;
     case d.kind of
      ck_const: begin
@@ -1627,6 +1658,9 @@ begin
 
      if indi then begin
       case si1 of
+       0: begin
+        po1:= additem(oc_popindirectpo);
+       end;
        1..8: begin
         po1:= additem(oc_popindirect8);
        end;
@@ -1635,6 +1669,9 @@ begin
        end;
        17..32: begin
         po1:= additem(oc_popindirect32);
+       end;
+       33..64: begin
+        po1:= additem(oc_popindirect64);
        end;
        else begin
         po1:= additem(oc_popindirect);
@@ -1650,7 +1687,7 @@ begin
        end;
       end;
       po1:= additem(popoptable[
-                     getmovedest(dest.address.flags)][getmovesize(si1 div 8)],
+                     getmovedest(dest.address.flags)][datasi1],
                      ssaextension1);
       if af_segment in dest.address.flags then begin
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
