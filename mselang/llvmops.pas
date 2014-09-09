@@ -246,10 +246,8 @@ begin
  with pc^.par do begin
   dest1:= '%'+inttostr(ssad-1);
   dest2:= '%'+inttostr(ssad);
-//  outass(dest1+' = inttoptr '+ptrintname+' %'+inttostr(ssas1)+
-//                         ' to i'+inttostr(memop.datacount)+'*');
   outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
-                         ' to i'+inttostr(memop.datacount)+'*');
+                          ' to i'+inttostr(memop.datacount)+'*');
   outass(dest2+' = load i'+inttostr(memop.datacount)+'* '+dest1);
  end;
 end;
@@ -1078,10 +1076,7 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  str1:= '%'+inttostr(ssad-1);
-  outass(str1+' = load '+ptrintname+'* '+
-                                        segdataaddress(vsegaddress));
-  outass('%'+inttostr(ssad)+' = inttoptr '+ptrintname+' '+str1+' to i8*');
+  outass('%'+inttostr(ssad)+' = load i8** '+ segdataaddress(vsegaddress));
  end;
 end;
 
@@ -1110,8 +1105,16 @@ begin
 end;
 
 procedure indirectpoop();
+var
+ dest1,dest2: shortstring;
 begin
- assignindirect();
+ with pc^.par do begin
+  dest1:= '%'+inttostr(ssad-1);
+  dest2:= '%'+inttostr(ssad);
+  outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
+                          ' to i8**');
+  outass(dest2+' = load i8** '+dest1);
+ end;
 end;
 
 procedure indirectpooffsop();
@@ -1679,7 +1682,7 @@ const
   pushlocaddrssa = 1;
   pushlocaddrindissa = 1;
   pushsegaddrssa = 1;
-  pushsegaddrindissa = 2;
+  pushsegaddrindissa = 1;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
 
