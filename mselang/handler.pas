@@ -1609,7 +1609,7 @@ begin
        typematch:= true;
       end;
      end;
-     ck_refconst: begin
+     ck_ref{const}: begin
       dest.address:= d.dat.ref.c.address;
      {$ifdef mse_locvarssatracking}
       if (af_param in dest.address.flags) and 

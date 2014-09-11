@@ -1393,10 +1393,12 @@ begin
                                  getopdatatype(d.dat.datatyp.typedata,
                                       d.dat.ref.c.address.indirectlevel,si1));
       end;
+      {
       d.kind:= ck_refconst;
       d.dat.ref.c.address.poaddress:=
                        d.dat.ref.c.address.poaddress + d.dat.ref.offset;
       d.dat.ref.offset:= 0;
+      }
      end;
     end
     else begin
