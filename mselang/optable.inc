@@ -159,22 +159,26 @@
   pushseg8ssa,
   pushseg16ssa,
   pushseg32ssa,
+  pushseg64ssa,
   pushsegssa,
 
   pushloc8ssa,
   pushloc16ssa,
   pushloc32ssa,
+  pushloc64ssa,
   pushlocpossa,
   pushlocssa,
 
   pushlocindi8ssa,
   pushlocindi16ssa,
   pushlocindi32ssa,
+  pushlocindi64ssa,
   pushlocindissa,
 
   pushpar8ssa,
   pushpar16ssa,
   pushpar32ssa,
+  pushpar64ssa,
   pushparpossa,
   pushparssa,
 
@@ -189,6 +193,7 @@
   indirect8ssa,
   indirect16ssa,
   indirect32ssa,
+  indirect64ssa,
   indirectpossa,
   indirectpooffsssa,
   indirectoffspossa,
@@ -382,22 +387,26 @@
   @pushseg8op,
   @pushseg16op,
   @pushseg32op,
+  @pushseg64op,
   @pushsegop,
 
   @pushloc8op,
   @pushloc16op,
   @pushloc32op,
+  @pushloc64op,
   @pushlocpoop,
   @pushlocop,
 
   @pushlocindi8op,
   @pushlocindi16op,
   @pushlocindi32op,
+  @pushlocindi64op,
   @pushlocindiop,
 
   @pushpar8op,
   @pushpar16op,
   @pushpar32op,
+  @pushpar64op,
   @pushparpoop,
   @pushparop,
 
@@ -412,6 +421,7 @@
   @indirect8op,
   @indirect16op,
   @indirect32op,
+  @indirect64op,
   @indirectpoop,
   @indirectpooffsop, //offset after indirect
   @indirectoffspoop, //offset before indirect

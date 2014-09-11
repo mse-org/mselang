@@ -1499,6 +1499,7 @@ const                //todo: segment and local indirect
  //das_33_63,  das_64,     das_pointer
    oc_popparindi64,oc_popparindi64,oc_popparindipo) 
  );
+ 
 {
 function getmovesize(const asize: integer): movesizety; inline;
 begin
@@ -1537,11 +1538,20 @@ begin
  end;
 end;
 
+const
+ popindioptable: array[databitsizety] of opcodety = (
+ //das_none,      das_1,          das_2_7,        das_8,
+   oc_popindirect,oc_popindirect8,oc_popindirect8,oc_popindirect8,
+ //das_9_15,        das_16,          das_17_31,       das_32,
+   oc_popindirect16,oc_popindirect16,oc_popindirect32,oc_popindirect32,
+ //das_33_63,       das_64,          das_pointer
+   oc_popindirect64,oc_popindirect64,oc_popindirectpo);
+
 procedure handleassignment();
 var
  dest: vardestinfoty;
  typematch,indi,isconst: boolean;
- si1: integer;
+// si1: integer;
  datasi1: databitsizety;
  int1: integer;
  offs1: dataoffsty;
@@ -1576,6 +1586,7 @@ begin
     if d.dat.datatyp.indirectlevel >= 1 then begin
      datasi1:= das_pointer;
     end;
+    {
     case datasi1 of
      das_none: begin
       si1:= dest.typ^.bytesize;
@@ -1587,6 +1598,7 @@ begin
       si1:= dest.typ^.bitsize;
      end;
     end;
+    }
     case d.kind of
      ck_const: begin
       if d.dat.constval.kind <> dk_address then begin
@@ -1634,7 +1646,13 @@ begin
     else begin
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
       ad1.base:= ab_stack;
-      ad1.offset:= -((si1+7) div 8); //bytes
+      if datasi1 = das_pointer then begin
+       ad1.offset:= -pointersize;
+      end
+      else begin
+       ad1.offset:= -dest.typ^.bytesize;
+      end;
+//      ad1.offset:= -((si1+7) div 8); //bytes
       if not isconst then begin
        writemanagedtypeop(mo_incref,dest.typ,ad1,ssa1);
       end;
@@ -1657,6 +1675,8 @@ begin
      end;
 
      if indi then begin
+      po1:= additem(popindioptable[datasi1]);
+      {
       case si1 of
        0: begin
         po1:= additem(oc_popindirectpo);
@@ -1677,6 +1697,7 @@ begin
         po1:= additem(oc_popindirect);
        end;
       end;
+      }
      end
      else begin
       ssaextension1:= 0;
@@ -1699,7 +1720,8 @@ begin
        po1^.par.memop.locdataaddress.offset:= 0;
       end;
      end;
-     po1^.par.memop.datacount:= si1;
+     po1^.par.memop.t:= getopdatatype(dest);
+//     count:= si1;
      po1^.par.ssas1:= ssa1;                                         //source
      po1^.par.ssas2:= contextstack[stacktop-1].d.dat.fact.ssaindex; //dest
     end;
@@ -1820,7 +1842,8 @@ begin
    case kind of
     ck_subres: begin
      with additem(oc_pop)^ do begin
-      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
+      setimmsize(getbytesize(dat.fact.opdatatype),par); //todo: alignment
+//      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
     end;
     ck_subcall: begin

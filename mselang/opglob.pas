@@ -20,7 +20,7 @@ interface
 uses
  parserglob;
  
-type
+type 
  globallocinfoty = record
   a: segaddressty;
   bitsize: integer;
@@ -43,7 +43,7 @@ type
 
  nestedaddressty = record
   address: dataoffsty;
-  size: integer;
+  datatype: opdatatypeinfoty;
   nested: boolean;     //ref to neseted frame
  end;
  
@@ -206,22 +206,26 @@ type
   oc_pushseg8,
   oc_pushseg16,
   oc_pushseg32,
+  oc_pushseg64,
   oc_pushseg,
 
   oc_pushloc8,
   oc_pushloc16,
   oc_pushloc32,
+  oc_pushloc64,
   oc_pushlocpo,
   oc_pushloc,
 
   oc_pushlocindi8,
   oc_pushlocindi16,
   oc_pushlocindi32,
+  oc_pushlocindi64,
   oc_pushlocindi,
 
   oc_pushpar8,
   oc_pushpar16,
   oc_pushpar32,
+  oc_pushpar64,
   oc_pushparpo,
   oc_pushpar,
 
@@ -236,6 +240,7 @@ type
   oc_indirect8,
   oc_indirect16,
   oc_indirect32,
+  oc_indirect64,
   oc_indirectpo,
   oc_indirectpooffs, //offset after indirect
   oc_indirectoffspo, //offset before indirect
@@ -405,7 +410,7 @@ type
  end;  
 
  stackopty = record
-  databitsize: integer;
+  t: opdatatypeinfoty;
 //  destssaindex: integer;
 //  source1ssaindex: integer;
 //  case opcodety of
@@ -413,9 +418,9 @@ type
 //    source2ssaindex: integer;
 //   );
  end;
- 
+
  memopty = record
-  datacount: datasizety;         //bit size or item count
+  t: opdatatypeinfoty;
 //  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,

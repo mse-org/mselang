@@ -227,8 +227,8 @@ var
       end;
       initfactcontext(0); //set ssaindex
       d.kind:= ck_subres;
-      d.dat.fact.databitsize:= int1*8;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel;
+      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
       if not backendhasfunction then begin
        dec(d.dat.datatyp.indirectlevel);
       end;
@@ -368,7 +368,7 @@ var
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
          pushinsertdata(0,false,pvardataty(po2)^.address,ele.eledatarel(po2),
-                                                         offs1,pointerbitsize);
+                                                         offs1,pointeroptype);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin

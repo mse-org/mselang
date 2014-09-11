@@ -20,9 +20,6 @@ interface
 uses
  parserglob,opcode,opglob;
 
-const
- pointersize = sizeof(pointer);
- pointerbitsize = pointersize*8;
 type
  ordrangety = record
   min: int64;

@@ -123,7 +123,7 @@ procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
-                   const bitsize: datasizetyxx);
+                   const opdatatype: opdatatypeinfoty);
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -139,7 +139,7 @@ procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
-                              const bitsize: datasizetyxx);
+                  const opdatatype: opdatatypeinfoty);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -163,6 +163,10 @@ procedure trackalloc(const asize: integer; var address: segaddressty);
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
 function getssa(const aopcode: opcodety; const count: integer): integer;
+function getopdatatype(const atypedata: ptypedataty;
+                           const aindirectlevel: integer): opdatatypeinfoty;
+function getopdatatype(const adest: vardestinfoty): opdatatypeinfoty;
+function getbytesize(const aopdatatype: opdatatypeinfoty): integer;
 
 procedure init();
 procedure deinit();
@@ -586,37 +590,101 @@ begin
 //  po1^.d.dat.fact.databitsize:= si1;
 end;
 
+const
+ opdatatype: array[databitsizety] of opdatatypeinfoty = (
+  (kind: odk_byte; size: 0),            //das_none,
+  (kind: odk_bit; size: 1),             //das_1,
+  (kind: odk_bit; size: 8),             //das_2_7,
+  (kind: odk_bit; size: 8),             //das_8,
+  (kind: odk_bit; size: 16),            //das_9_15,
+  (kind: odk_bit; size: 16),            //das_16,
+  (kind: odk_bit; size: 32),            //das_17_31,
+  (kind: odk_bit; size: 32),            //das_32,
+  (kind: odk_bit; size: 64),            //das_33_63,
+  (kind: odk_bit; size: 64),            //das_64,
+  (kind: odk_bit; size: pointerbitsize) //das_pointer
+ );    
+
+function getopdatatype(const atypedata: elementoffsetty;
+                           const aindirectlevel: integer; 
+                           out adatasize: databitsizety): opdatatypeinfoty;
+var
+ po1: ptypedataty;
+begin
+ if aindirectlevel > 0 then begin
+  result:= pointeroptype;
+  adatasize:= das_pointer;
+ end
+ else begin
+  po1:= ele.eledataabs(atypedata);
+  adatasize:= po1^.datasize;
+  result:= opdatatype[adatasize];
+  if result.kind in byteopdatakinds then begin
+   result.size:= po1^.bytesize;
+  end;
+ end;
+end;
+
+function getopdatatype(const atypedata: ptypedataty;
+                           const aindirectlevel: integer): opdatatypeinfoty;
+begin
+ if aindirectlevel > 0 then begin
+  result:= pointeroptype;
+ end
+ else begin
+  result:= opdatatype[atypedata^.datasize];
+  if result.kind in byteopdatakinds then begin
+   result.size:= atypedata^.bytesize;
+  end;
+ end;
+end;
+
+function getopdatatype(const adest: vardestinfoty): opdatatypeinfoty;
+begin
+ result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+end;
+
+function getbytesize(const aopdatatype: opdatatypeinfoty): integer;
+begin
+ if aopdatatype.kind in bitopdatakinds then begin
+  result:= (aopdatatype.size + 7) div 8;
+ end
+ else begin
+  result:= aopdatatype.size;
+ end;
+end;
+
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 var
  po1: pcontextitemty;
  isimm: boolean;
  segad1: segaddressty;
- si1: integer;
+ si1: databitsizety;
 begin
  with info do begin
   po1:= @contextstack[stackindex+stackoffset];
   isimm:= true;
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
-    si1:= 1;
+    si1:= das_1;
     with insertitem(oc_pushimm1,stackoffset,before)^ do begin
      setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
    dk_integer,dk_enum: begin
-    si1:= 4*8;
+    si1:= das_32;
     with insertitem(oc_pushimm32,stackoffset,before)^ do begin
      setimmint32(po1^.d.dat.constval.vinteger,par);
     end;
    end;
    dk_float: begin
-    si1:= 8*8;
+    si1:= das_64;
     with insertitem(oc_pushimm64,stackoffset,before)^ do begin
      setimmfloat64(po1^.d.dat.constval.vfloat,par);
     end;
    end;
    dk_string8: begin
-    si1:= pointerbitsize;
+    si1:= das_pointer;
     isimm:= false;
     segad1:= stringconst(po1^.d.dat.constval.vstring);
     if segad1.segment = seg_nil then begin
@@ -642,7 +710,7 @@ begin
   end;
  }
   initfactcontext(stackoffset);
-  po1^.d.dat.fact.databitsize:= si1;
+  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
  end;
 end;
 
@@ -902,8 +970,9 @@ begin
  end;
 end;
 
-procedure tracklocalaccess(var aaddress: locaddressty;
-                 const avarele: elementoffsetty; const asize: integer);
+procedure tracklocalaccess(var aaddress: locaddressty; 
+                                 const avarele: elementoffsetty;
+                                 const aopdatatype: opdatatypeinfoty);
 
 var
 // pobefore: pnestedvardataty;
@@ -914,7 +983,7 @@ var
   with psubdataty(ele.parentdata())^ do begin
    avardata^.next:= nestedvarchain;
    avardata^.nestedindex:= nestedvarcount;
-   avardata^.address.size:= asize;
+   avardata^.address.datatype:= aopdatatype;
    if last then begin
     avardata^.address.address:= addressbefore;
     avardata^.address.nested:= false;
@@ -986,10 +1055,27 @@ begin
  end;
 end;
 
+type
+ opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64);
+
+const
+ pushseg: array[opsizety] of opcodety =
+           (oc_pushseg,oc_pushseg8,oc_pushseg16,
+            oc_pushseg32,oc_pushseg64);
+ pushloc: array[opsizety] of opcodety =
+           (oc_pushloc,oc_pushloc8,oc_pushloc16,
+            oc_pushloc32,oc_pushloc64);
+ pushlocindi: array[opsizety] of opcodety =
+           (oc_pushlocindi,oc_pushlocindi8,oc_pushlocindi16,
+            oc_pushlocindi32,oc_pushlocindi64);
+ pushpar: array[opsizety] of opcodety =
+           (oc_pushpar,oc_pushpar8,oc_pushpar16,
+            oc_pushpar32,oc_pushpar64);
+ 
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const before: boolean;
           const aaddress: addressvaluety; const avarele: elementoffsetty;
-                     const offset: dataoffsty; const bitsize: datasizetyxx);
+          const offset: dataoffsty; const aopdatatype: opdatatypeinfoty);
 //todo: optimize
 
 var
@@ -1008,25 +1094,29 @@ var
 var
  po1: popinfoty;
  framelevel1: integer;
- 
+ opsize1: opsizety;
 begin
+ opsize1:= ops_none;
+ if aopdatatype.kind in bitopdatakinds then begin
+  case aopdatatype.size of
+   1..8: begin 
+    opsize1:= ops_8;
+   end;
+   9..16: begin
+    opsize1:= ops_16;
+   end;
+   17..32: begin
+    opsize1:= ops_32;
+   end;
+   33..64: begin
+    opsize1:= ops_64;
+   end;
+  end;
+ end; 
  with aaddress do begin //todo: use table
   ssaextension1:= 0;
   if af_segment in flags then begin
-   case bitsize of
-    1..8: begin 
-     po1:= getop(oc_pushseg8);
-    end;
-    9..16: begin
-     po1:= getop(oc_pushseg16);
-    end;
-    17..32: begin
-     po1:= getop(oc_pushseg32);
-    end;
-    else begin
-     po1:= getop(oc_pushseg);
-    end;
-   end;
+   po1:= getop(pushseg[opsize1]);
    with po1^ do begin
     par.memop.segdataaddress.a:= segaddress;
     par.memop.segdataaddress.offset:= offset;
@@ -1039,62 +1129,23 @@ begin
    end;
    if af_param in flags then begin
     if af_paramindirect in flags then begin
-     case bitsize of
-      1..8: begin 
-       po1:= getop(oc_pushlocindi8);
-      end;
-      9..16: begin
-       po1:= getop(oc_pushlocindi16);
-      end;
-      17..32: begin
-       po1:= getop(oc_pushlocindi32);
-      end;
-      else begin
-       po1:= getop(oc_pushlocindi);
-      end;
-     end;
+     po1:= getop(pushlocindi[opsize1]);
     end
     else begin
-     case bitsize of
-      1..8: begin 
-       po1:= getop(oc_pushpar8);
-      end;
-      9..16: begin
-       po1:= getop(oc_pushpar16);
-      end;
-      17..32: begin
-       po1:= getop(oc_pushpar32);
-      end;
-      else begin
-       po1:= getop(oc_pushpar);
-      end;
-     end;
+     po1:= getop(pushpar[opsize1]);
     end;
    end
    else begin   
-    case bitsize of
-     1..8: begin 
-      po1:= getop(oc_pushloc8);
-     end;
-     9..16: begin
-      po1:= getop(oc_pushloc16);
-     end;
-     17..32: begin
-      po1:= getop(oc_pushloc32);
-     end;
-     else begin
-      po1:= getop(oc_pushloc);
-     end;
-    end;
+    po1:= getop(pushloc[opsize1]);
    end;
    with po1^ do begin
     par.memop.locdataaddress.a:= locaddress;
-    tracklocalaccess(par.memop.locdataaddress.a,avarele,(bitsize+7) div 8);
+    tracklocalaccess(par.memop.locdataaddress.a,avarele,aopdatatype);
     par.memop.locdataaddress.a.framelevel:= framelevel1;
     par.memop.locdataaddress.offset:= offset;
    end;
   end;
-  po1^.par.memop.datacount:= bitsize;
+  po1^.par.memop.t:= aopdatatype;
 //  par.ssad:= ssaindex;
  end;
 end;
@@ -1103,18 +1154,18 @@ end;
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
-                         const bitsize: datasizetyxx);
+                         const opdatatype: opdatatypeinfoty);
 begin
- pushd(false,0,false,address,varele,offset,bitsize);
+ pushd(false,0,false,address,varele,offset,opdatatype);
 end;
 
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
-                  const bitsize: datasizetyxx);
+                  const opdatatype: opdatatypeinfoty);
 begin
- pushd(true,stackoffset,before,address,varele,offset,bitsize);
+ pushd(true,stackoffset,before,address,varele,offset,opdatatype);
 end;
 
 procedure initfactcontext(const stackoffset: integer);
@@ -1174,7 +1225,7 @@ begin
     pushinsert(stackoffset,false,d.dat.ref.c.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
      with insertitem(oc_indirectpo,stackoffset,false)^ do begin
-      par.memop.datacount:= pointerbitsize;
+      par.memop.t:= pointeroptype;
       par.ssas1:= par.ssad - getssa(oc_indirectpo);
      end;
     end;
@@ -1194,43 +1245,32 @@ begin
  end;
 end;
 
+const
+ indirect: array[databitsizety] of opcodety = (
+ //das_none,   das_1,       das_2_7,     das_8,
+   oc_indirect,oc_indirect8,oc_indirect8,oc_indirect8,
+ //das_9_15,     das_16,       das_17_31,    das_32,
+   oc_indirect16,oc_indirect16,oc_indirect32,oc_indirect32,
+ //das_33_63,    das_64,       das_pointer);
+   oc_indirect64,oc_indirect64,oc_indirectpo);
+
 function getvalue(const stackoffset: integer;
                             const retainconst: boolean = false): boolean;
 
 var
- si1: datasizety;
+ opdata1: opdatatypeinfoty;
 
  procedure doindirect();
  var
-  po1: ptypedataty;
-  si1: datasizety;
   op1: opcodety;
+  si1: databitsizety;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
-   if dat.datatyp.indirectlevel > 0 then begin
-    si1:= pointerbitsize;
-   end
-   else begin
-    si1:= ptypedataty(ele.eledataabs(dat.datatyp.typedata))^.bitsize;
-   end;
-   case si1 of       //todo: use table
-    1..8: begin
-     op1:= oc_indirect8;
-    end;
-    9..16: begin
-     op1:= oc_indirect16;
-    end;
-    17..32: begin
-     op1:= oc_indirect32;
-    end;
-    else begin
-     op1:= oc_indirect;
-    end;
-   end;
-   with insertitem(op1,stackoffset,false)^ do begin
+   opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel,si1);
+   with insertitem(indirect[si1],stackoffset,false)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
-    par.memop.datacount:= si1;
-    d.dat.fact.ssaindex:= par.ssad{ + ssatable^[op1] - 1};
+    par.memop.t:= opdata1;
+    d.dat.fact.ssaindex:= par.ssad;
    end;
   end;
  end;
@@ -1239,10 +1279,12 @@ var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
+ si1: databitsizety;
  
 begin                    //todo: optimize
  result:= false;
  with info,contextstack[stackindex+stackoffset] do begin
+  po1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
   case d.kind of
    ck_ref: begin
     if d.dat.datatyp.indirectlevel < 0 then begin
@@ -1253,7 +1295,6 @@ begin                    //todo: optimize
      dec(d.dat.indirection);
     end;
     if d.dat.indirection > 0 then begin //@ operator
-     si1:= pointerbitsize;
      if d.dat.indirection = 1 then begin
       pushinsertaddress(stackoffset,false);
      end
@@ -1272,15 +1313,10 @@ begin                    //todo: optimize
       doindirect;
      end
      else begin
-      if d.dat.datatyp.indirectlevel <= 0 then begin //??? <0 = error?
-       po1:= ele.eledataabs(d.dat.datatyp.typedata);
-       si1:= po1^.bitsize;
-      end
-      else begin
-       si1:= pointerbitsize;
-      end;
+      opdata1:= getopdatatype(d.dat.datatyp.typedata,
+                                             d.dat.datatyp.indirectlevel,si1);
       pushinsertdata(stackoffset,false,d.dat.ref.c.address,
-                                 d.dat.ref.c.varele,d.dat.ref.offset,si1);
+                               d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
      end;
     end;
    end;
@@ -1317,7 +1353,7 @@ begin                    //todo: optimize
   end;
   if d.kind <> ck_fact then begin
    initfactcontext(stackoffset);
-   d.dat.fact.databitsize:= si1;
+   d.dat.fact.opdatatype:= opdata1;
   end;
  end;
  result:= true;
@@ -1326,8 +1362,7 @@ end;
 function getaddress(const stackoffset: integer;
                                 const endaddress: boolean): boolean;
 var
-// ref1: refvaluety;
- int1: integer;
+ si1: databitsizety;
 begin
  result:= false;
  with info,contextstack[stackindex+stackoffset] do begin
@@ -1353,28 +1388,15 @@ begin
      else begin
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);
       d.dat.indirection:= 0;
-      if d.dat.ref.c.address.indirectlevel > 0 then begin
-       int1:= pointersize;
-      end
-      else begin
-       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
-      end;
       if not (af_segment in d.dat.ref.c.address.flags) then begin
-       tracklocalaccess(d.dat.ref.c.address.locaddress,
-                                               d.dat.ref.c.varele,int1);
+       tracklocalaccess(d.dat.ref.c.address.locaddress,d.dat.ref.c.varele,
+                                 getopdatatype(d.dat.datatyp.typedata,
+                                      d.dat.ref.c.address.indirectlevel,si1));
       end;
       d.kind:= ck_refconst;
-//      ref1:= d.dat.ref; //todo: optimize
       d.dat.ref.c.address.poaddress:=
                        d.dat.ref.c.address.poaddress + d.dat.ref.offset;
       d.dat.ref.offset:= 0;
-//      d.dat.ref.c.address:= ref1
-      {
-      d.dat.constval.kind:= dk_address;
-      d.dat.constval.vaddress:= ref1.c.address;
-      d.dat.constval.vaddress.poaddress:= 
-                       d.dat.constval.vaddress.poaddress + ref1.offset;
-      }
      end;
     end
     else begin
@@ -1465,6 +1487,7 @@ var
  po1: pelementinfoty;
  sd1: stackdatakindty;
  op1: opcodety;
+ si1: databitsizety;
 begin
  with info do begin
                   //todo: work botom up because of less op insertions
@@ -1574,8 +1597,7 @@ begin
     end;
    end;
    if sd1 = sdk_none then begin
-    incompatibletypeserror(contextstack[stacktop-2].d,
-                                            contextstack[stacktop].d);
+    incompatibletypeserror(contextstack[stacktop-2].d,contextstack[stacktop].d);
    end
    else begin
     op1:= opsinfo.ops[sd1];
@@ -1585,22 +1607,18 @@ begin
     end
     else begin
      with additem(op1)^ do begin      
-//      par.ssad:= ssa.index;
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
-      par.stackop.databitsize:= d.dat.fact.databitsize;
+      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                      d.dat.datatyp.indirectlevel,si1);
      end;
      dec(stacktop,2);
-//     opmark.address:= opcount-1;
-     initfactcontext(-1{stacktop-stackindex});
+     initfactcontext(-1);
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
     end;
    end;
   end;
-//  if contextstack[stacktop].d.kind <> ck_const then begin
-//   getvalue(stacktop-stackindex{,false});
-//  end;
   stackindex:= stacktop-1; 
  end;
 end;

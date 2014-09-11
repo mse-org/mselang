@@ -182,17 +182,31 @@ end;
 procedure segassign();
 begin
  with pc^.par do begin
-  outass('store i'+inttostr(memop.datacount)+
-  ' %'+inttostr(ssas1)+', i'+inttostr(memop.datacount)+'* '+
+  case memop.t.kind of
+   odk_bit: begin
+    outass('store i'+inttostr(memop.t.size)+
+    ' %'+inttostr(ssas1)+', i'+inttostr(memop.t.size)+'* '+
                                          segdataaddress(memop.segdataaddress));
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 
 procedure assignseg();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.datacount)+
+  case memop.t.kind of
+   odk_bit: begin
+    outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.t.size)+
                                '* '+segdataaddress(memop.segdataaddress));
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 {
@@ -206,22 +220,29 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  str1:= 'i'+inttostr(memop.datacount);
-  str2:= '%'+inttostr(ssas1);
-  if memop.locdataaddress.a.framelevel >= 0 then begin
-   str3:= '%'+inttostr(ssad-2);
-   str4:= '%'+inttostr(ssad-1);
-   str5:= '%'+inttostr(ssad);
-   outass(str3+' = getelementptr i8** %fp, i32 '+
-                                   inttostr(memop.locdataaddress.a.address));
-   outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
-   outass(str5+' = load '+str1+'** '+str4);
-   outass('store '+str1+' '+str2+
-               ', '+str1+'* '+str5);
-  end
-  else begin
-   outass('store '+str1+' '+str2+', '+
-                         str1+'* '+ locdataaddress(memop.locdataaddress));
+  case memop.t.kind of
+   odk_bit: begin
+    str1:= 'i'+inttostr(memop.t.size);
+    str2:= '%'+inttostr(ssas1);
+    if memop.locdataaddress.a.framelevel >= 0 then begin
+     str3:= '%'+inttostr(ssad-2);
+     str4:= '%'+inttostr(ssad-1);
+     str5:= '%'+inttostr(ssad);
+     outass(str3+' = getelementptr i8** %fp, i32 '+
+                                     inttostr(memop.locdataaddress.a.address));
+     outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
+     outass(str5+' = load '+str1+'** '+str4);
+     outass('store '+str1+' '+str2+
+                 ', '+str1+'* '+str5);
+    end
+    else begin
+     outass('store '+str1+' '+str2+', '+
+                           str1+'* '+ locdataaddress(memop.locdataaddress));
+    end;
+   end;
+   else begin
+    notimplemented();
+   end;
   end;
  end;
 end;
@@ -244,11 +265,18 @@ var
  dest1,dest2: shortstring;
 begin
  with pc^.par do begin
-  dest1:= '%'+inttostr(ssad-1);
-  dest2:= '%'+inttostr(ssad);
-  outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
-                          ' to i'+inttostr(memop.datacount)+'*');
-  outass(dest2+' = load i'+inttostr(memop.datacount)+'* '+dest1);
+  case memop.t.kind of
+   odk_bit: begin
+    dest1:= '%'+inttostr(ssad-1);
+    dest2:= '%'+inttostr(ssad);
+    outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
+                            ' to i'+inttostr(memop.t.size)+'*');
+    outass(dest2+' = load i'+inttostr(memop.t.size)+'* '+dest1);
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 
@@ -264,13 +292,20 @@ var
  dest1,dest2: shortstring;
 begin
  with pc^.par do begin                  //todo: add offset, nested frame
-  dest1:= '%'+inttostr(ssad);
-  dest2:= '%'+inttostr(ssad+1);
-  outass(dest1+' = load '+ptrintname+
-                               '* '+locdataaddress(memop.locdataaddress));
-  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  outass('store i'+inttostr(memop.datacount)+' %'+inttostr(ssas1)+
-                             ', i'+inttostr(memop.datacount)+'* '+dest2);
+  case memop.t.kind of
+   odk_bit: begin
+    dest1:= '%'+inttostr(ssad);
+    dest2:= '%'+inttostr(ssad+1);
+    outass(dest1+' = load '+ptrintname+
+                                 '* '+locdataaddress(memop.locdataaddress));
+    outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+    outass('store i'+inttostr(memop.t.size)+' %'+inttostr(ssas1)+
+                               ', i'+inttostr(memop.t.size)+'* '+dest2);
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 
@@ -288,21 +323,28 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  str1:= 'i'+inttostr(memop.datacount);
-  if memop.locdataaddress.a.framelevel >= 0 then begin
-   str2:= '%'+inttostr(ssad-3);
-   str3:= '%'+inttostr(ssad-2);
-   str4:= '%'+inttostr(ssad-1);
-   str5:= '%'+inttostr(ssad);
-   outass(str2+' = getelementptr i8** %fp, i32 '+
-                                   inttostr(memop.locdataaddress.a.address));
-   outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
-   outass(str4+' = load '+str1+'** '+str3);
-   outass(str5+' = load '+str1+'* '+str4);
-  end
-  else begin
-   str2:= '%'+inttostr(ssad);
-   outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
+  case memop.t.kind of
+   odk_bit: begin
+    str1:= 'i'+inttostr(memop.t.size);
+    if memop.locdataaddress.a.framelevel >= 0 then begin
+     str2:= '%'+inttostr(ssad-3);
+     str3:= '%'+inttostr(ssad-2);
+     str4:= '%'+inttostr(ssad-1);
+     str5:= '%'+inttostr(ssad);
+     outass(str2+' = getelementptr i8** %fp, i32 '+
+                                     inttostr(memop.locdataaddress.a.address));
+     outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
+     outass(str4+' = load '+str1+'** '+str3);
+     outass(str5+' = load '+str1+'* '+str4);
+    end
+    else begin
+     str2:= '%'+inttostr(ssad);
+     outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
+    end;
+   end;
+   else begin
+    notimplemented();
+   end;
   end;
  end;
 end;
@@ -312,13 +354,20 @@ var
  dest1,dest2,dest3: shortstring;
 begin
  with pc^.par do begin
-  dest1:= '%'+inttostr(ssad);
-  dest2:= '%'+inttostr(ssad+1);
-  dest3:= '%'+inttostr(ssad+2);
-  outass(dest1+' = load '+ptrintname+
-                               '* '+locdataaddress(memop.locdataaddress));
-  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  outass(dest3+' = load i'+inttostr(memop.datacount)+'* '+dest2);
+  case memop.t.kind of
+   odk_bit: begin
+    dest1:= '%'+inttostr(ssad);
+    dest2:= '%'+inttostr(ssad+1);
+    dest3:= '%'+inttostr(ssad+2);
+    outass(dest1+' = load '+ptrintname+
+                                 '* '+locdataaddress(memop.locdataaddress));
+    outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+    outass(dest3+' = load i'+inttostr(memop.t.size)+'* '+dest2);
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 
@@ -345,7 +394,7 @@ procedure icompare(const akind: icomparekindty);
 begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
-                   ' i'+inttostr(stackop.databitsize)+
+                   ' i'+inttostr(stackop.t.size)+
                                ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
  end;
 end;
@@ -367,6 +416,7 @@ var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
  po2: pvardataty;
+ po3: ptypedataty;
  int1: integer;
 begin
  freeandnil(assstream);
@@ -383,8 +433,15 @@ begin
                          ' = global i8* inttoptr(i32 0 to i8*)');
     end
     else begin
-     outass(segaddress(po2^.address.segaddress)+' = global i'+
-             inttostr(ptypedataty(ele.eledataabs(po2^.vf.typ))^.bitsize)+ ' 0');
+     po3:= ptypedataty(ele.eledataabs(po2^.vf.typ));
+     if po3^.bitsize = 0 then begin
+      outass(segaddress(po2^.address.segaddress)+' = global ['+
+              inttostr(po3^.bytesize)+ ' x i8] zeroinitializer');
+     end
+     else begin
+      outass(segaddress(po2^.address.segaddress)+' = global i'+
+              inttostr(po3^.bitsize)+ ' 0');
+     end;
     end;
     ele2:= po2^.vf.next;
    end;
@@ -957,6 +1014,11 @@ begin
  assignseg();
 end;
 
+procedure pushseg64op();
+begin
+ assignseg();
+end;
+
 procedure pushsegop();
 begin
  assignseg();
@@ -973,6 +1035,11 @@ begin
 end;
 
 procedure pushloc32op();
+begin
+ assignloc();
+end;
+
+procedure pushloc64op();
 begin
  assignloc();
 end;
@@ -1002,6 +1069,11 @@ begin
  assignpar();
 end;
 
+procedure pushpar64op();
+begin
+ assignpar();
+end;
+
 procedure pushparpoop();
 begin
  assignpar();
@@ -1023,6 +1095,11 @@ begin
 end;
 
 procedure pushlocindi32op();
+begin
+ assignlocindi();
+end;
+
+procedure pushlocindi64op();
 begin
  assignlocindi();
 end;
@@ -1104,6 +1181,11 @@ begin
  assignindirect();
 end;
 
+procedure indirect64op();
+begin
+ assignindirect();
+end;
+
 procedure indirectpoop();
 var
  dest1,dest2: shortstring;
@@ -1145,10 +1227,17 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par do begin
-  str1:= '%'+inttostr(ssad);
-  str2:= 'i'+inttostr(memop.datacount);
-  outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
-  outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
+  case memop.t.kind of
+   odk_bit: begin
+    str1:= '%'+inttostr(ssad);
+    str2:= 'i'+inttostr(memop.t.size);
+    outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
+    outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
+   end;
+   else begin
+    notimplemented();
+   end;
+  end;
  end;
 end;
 
@@ -1424,11 +1513,18 @@ begin
      outass('store i8* '+str3+', i8** '+str1);
     end
     else begin
-     str4:= 'i'+ inttostr(8*po2^.address.size);
-     outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
-     outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
-                                                             str4+'** '+str2);
-     outass(str3+' = add i8 0, 0'); //dummy
+     case po2^.address.datatype.kind of
+      odk_bit: begin
+       str4:= 'i'+ inttostr(po2^.address.datatype.size);
+       outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
+       outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
+                                                               str4+'** '+str2);
+       outass(str3+' = add i8 0, 0'); //dummy
+      end;
+      else begin
+       notimplemented();
+      end;
+     end;
     end;
     
     inc(po2);
@@ -1659,22 +1755,26 @@ const
   pushseg8ssa = 1;
   pushseg16ssa = 1;
   pushseg32ssa = 1;
+  pushseg64ssa = 1;
   pushsegssa = 1;
 
   pushloc8ssa = 1;
   pushloc16ssa = 1;
   pushloc32ssa = 1;
+  pushloc64ssa = 1;
   pushlocpossa = 1;
   pushlocssa = 1;
 
   pushlocindi8ssa = 3;
   pushlocindi16ssa = 3;
   pushlocindi32ssa = 3;
+  pushlocindi64ssa = 3;
   pushlocindissa = 3;
 
   pushpar8ssa = 1;
   pushpar16ssa = 1;
   pushpar32ssa = 1;
+  pushpar64ssa = 1;
   pushparpossa = 1;
   pushparssa = 1;
 
@@ -1689,6 +1789,7 @@ const
   indirect8ssa = 2;
   indirect16ssa = 2;
   indirect32ssa = 2;
+  indirect64ssa = 2;
   indirectpossa = 2;
   indirectpooffsssa = 3;
   indirectoffspossa = 1;

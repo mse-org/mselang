@@ -22,6 +22,8 @@ uses
 const
  firstident = 256;
  includemax = 31;
+ pointersize = sizeof(pointer);
+ pointerbitsize = pointersize*8;
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
@@ -60,6 +62,22 @@ type
                dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  
+type
+ opdatakindty = (odk_bit,odk_byte);
+const
+ bitopdatakinds = [odk_bit];
+ byteopdatakinds = [odk_byte];
+type
+ opdatatypeinfoty = record        //necessary for llvm
+  kind: opdatakindty;
+  size: integer;       //bits or bytes
+ end;
+const
+ pointeroptype: opdatatypeinfoty = (
+  kind: odk_bit;
+  size: pointerbitsize;
+ );
+
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
  ancestordatakinds = [dk_class];
@@ -312,7 +330,8 @@ type
  
  factinfoty = record
   ssaindex: integer;
-  databitsize: integer;
+  opdatatype: opdatatypeinfoty;
+//  databitsize: integer;
  {
   case contextkindty of
    ck_subres:(
