@@ -210,6 +210,7 @@ type
  
  vardestinfoty = record
   address: addressvaluety;
+  offset: dataoffsty;
   typ: ptypedataty;
  end;
  

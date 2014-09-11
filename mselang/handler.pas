@@ -1575,6 +1575,7 @@ begin
    with contextstack[stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
+    dest.offset:= 0;
     dest.typ:= ele.eledataabs(d.dat.datatyp.typedata);
     dec(d.dat.datatyp.indirectlevel);
    {$ifdef mse_checkinternalerror}
@@ -1611,6 +1612,7 @@ begin
      end;
      ck_ref{const}: begin
       dest.address:= d.dat.ref.c.address;
+      dest.offset:= d.dat.ref.offset;
      {$ifdef mse_locvarssatracking}
       if (af_param in dest.address.flags) and 
                       (d.dat.ref.c.varele <> 0) then begin
@@ -1712,12 +1714,12 @@ begin
                      ssaextension1);
       if af_segment in dest.address.flags then begin
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
-       po1^.par.memop.segdataaddress.offset:= 0;
+       po1^.par.memop.segdataaddress.offset:= dest.offset;
       end
       else begin
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
        po1^.par.memop.locdataaddress.a.framelevel:= int1;
-       po1^.par.memop.locdataaddress.offset:= 0;
+       po1^.par.memop.locdataaddress.offset:= dest.offset;
       end;
      end;
      po1^.par.memop.t:= getopdatatype(dest);
