@@ -86,6 +86,10 @@ const
 type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer);
+const
+ databytesizes = [das_none];
+ 
+type
  movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);
 
  visikindty = (vik_global,vik_sameunit,vik_descendent,
@@ -147,7 +151,8 @@ const
  typecontexts = [ck_typetype,ck_fieldtype];
 
 type
- addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,af_paramindirect,af_const,
+ addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
+                  af_paramindirect,af_const,
                   af_classfield,af_stack);
  addressflagsty = set of addressflagty;
 
@@ -249,6 +254,8 @@ type
 
  segaddressty = record
   address: dataoffsty;
+  size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
+                       //necessary for llvm global aggregate types
   segment: segmentty;
  end;
  

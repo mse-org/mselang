@@ -149,6 +149,8 @@ begin
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
+ po1^.address.segaddress.size:= -4;  //i32 exitcode
+
 // info.beginparseop:= info.opcount; 
  with additem(oc_beginparse)^ do begin
   with par.beginparse do begin //startup vector 
@@ -1587,19 +1589,6 @@ begin
     if d.dat.datatyp.indirectlevel >= 1 then begin
      datasi1:= das_pointer;
     end;
-    {
-    case datasi1 of
-     das_none: begin
-      si1:= dest.typ^.bytesize;
-     end;
-     das_pointer: begin
-      si1:= pointerbitsize;
-     end;
-     else begin
-      si1:= dest.typ^.bitsize;
-     end;
-    end;
-    }
     case d.kind of
      ck_const: begin
       if d.dat.constval.kind <> dk_address then begin
@@ -1678,28 +1667,6 @@ begin
 
      if indi then begin
       po1:= additem(popindioptable[datasi1]);
-      {
-      case si1 of
-       0: begin
-        po1:= additem(oc_popindirectpo);
-       end;
-       1..8: begin
-        po1:= additem(oc_popindirect8);
-       end;
-       9..16: begin
-        po1:= additem(oc_popindirect16);
-       end;
-       17..32: begin
-        po1:= additem(oc_popindirect32);
-       end;
-       33..64: begin
-        po1:= additem(oc_popindirect64);
-       end;
-       else begin
-        po1:= additem(oc_popindirect);
-       end;
-      end;
-      }
      end
      else begin
       ssaextension1:= 0;
@@ -1715,6 +1682,7 @@ begin
       if af_segment in dest.address.flags then begin
        po1^.par.memop.segdataaddress.a:= dest.address.segaddress;
        po1^.par.memop.segdataaddress.offset:= dest.offset;
+//       po1^.par.memop.segdataaddress.datasize:= 0;
       end
       else begin
        po1^.par.memop.locdataaddress.a:= dest.address.locaddress;
@@ -1723,7 +1691,6 @@ begin
       end;
      end;
      po1^.par.memop.t:= getopdatatype(dest);
-//     count:= si1;
      po1^.par.ssas1:= ssa1;                                         //source
      po1^.par.ssas2:= contextstack[stacktop-1].d.dat.fact.ssaindex; //dest
     end;

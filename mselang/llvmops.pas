@@ -180,13 +180,24 @@ begin
 end;
 }
 procedure segassign();
+var
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   case memop.t.kind of
    odk_bit: begin
-    outass('store i'+inttostr(memop.t.size)+
-    ' %'+inttostr(ssas1)+', i'+inttostr(memop.t.size)+'* '+
-                                         segdataaddress(memop.segdataaddress));
+    str1:= 'i'+inttostr(memop.t.size);
+    if memop.segdataaddress.a.size > 0 then begin
+     str2:= 'bitcast (i8* getelementptr (['+
+                  inttostr(memop.segdataaddress.a.size)+
+                  ' x i8]*' +segdataaddress(memop.segdataaddress)+
+                  ', i32 0, i32 '+inttostr(memop.segdataaddress.offset)+
+                  ') to '+str1+'*)';
+    end
+    else begin
+     str2:= segdataaddress(memop.segdataaddress);
+    end;
+    outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+str2);
    end;
    else begin
     notimplemented();
@@ -196,12 +207,25 @@ begin
 end;
 
 procedure assignseg();
+var
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   case memop.t.kind of
    odk_bit: begin
-    outass('%'+inttostr(ssad)+' = load i'+inttostr(memop.t.size)+
-                               '* '+segdataaddress(memop.segdataaddress));
+    str1:= 'i'+inttostr(memop.t.size);
+    if memop.segdataaddress.a.size > 0 then begin
+     str2:= 'bitcast (i8* getelementptr (['+
+                  inttostr(memop.segdataaddress.a.size)+
+                  ' x i8]*' +segdataaddress(memop.segdataaddress)+
+                  ', i32 0, i32 '+inttostr(memop.segdataaddress.offset)+
+                  ') to '+str1+'*)';
+    end
+    else begin
+     str2:= segdataaddress(memop.segdataaddress);
+    end;
+
+    outass('%'+inttostr(ssad)+' = load '+str1+'* '+str2);
    end;
    else begin
     notimplemented();
@@ -1131,13 +1155,13 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  if vsegaddress.datasize = 0 then begin
+  if vsegaddress.a.size = 0 then begin
    outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
                                  segdataaddress(vsegaddress)+') to i8*');
   end
   else begin
-   if vsegaddress.datasize > 0 then begin
-    str1:= 'i'+inttostr(vsegaddress.datasize)+'* ';
+   if vsegaddress.a.size < 0 then begin
+    str1:= 'i'+inttostr(-vsegaddress.a.size)+'* ';
     outass('%'+inttostr(ssad)+' = bitcast '+str1+'getelementptr('+str1+
                                        segdataaddress(vsegaddress)+') to i8*');
    end

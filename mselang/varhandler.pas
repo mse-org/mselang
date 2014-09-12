@@ -102,12 +102,20 @@ begin
      else begin
       size1:= pointersize;
      end;
-    end;
-    if sublevel = 0 then begin
-     address.segaddress:= getglobvaraddress(size1,address.flags);
-    end
-    else begin
-     address.locaddress:= getlocvaraddress(size1,address.flags,-frameoffset);
+     if sublevel = 0 then begin
+      address.segaddress:= getglobvaraddress(size1,address.flags);
+      if address.indirectlevel > 0 then begin
+       address.segaddress.size:= 0;
+      end
+      else begin
+       if not (datasize in databytesizes) then begin
+        address.segaddress.size:= -bitsize;
+       end;
+      end;
+     end
+     else begin
+      address.locaddress:= getlocvaraddress(size1,address.flags,-frameoffset);
+     end;
     end;
    end;
   end;

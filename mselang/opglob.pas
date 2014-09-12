@@ -373,7 +373,7 @@ type
  segdataaddressty = record
   a: segaddressty;
   offset: dataoffsty;
-  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
+//  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
  end;
    
  locdataaddressty = record

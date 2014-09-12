@@ -549,7 +549,7 @@ begin
   with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
    par.vsegaddress.a:= address;
    par.vsegaddress.offset:= 0;
-   par.vsegaddress.datasize:= 0; //todo!
+//   par.vsegaddress.datasize:= 0; //todo!
   end;
  end;
 end;
@@ -559,6 +559,7 @@ var
  int1: integer;
 begin
  with info,contextstack[stackindex+stackoffset].d.dat do begin
+ {
   int1:= 0;
   if datatyp.indirectlevel = 1 then begin
    with ptypedataty(ele.eledataabs(datatyp.typedata))^ do begin
@@ -570,11 +571,12 @@ begin
     end;
    end;
   end;
+  }
   if af_segment in ref.c.address.flags then begin
    with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
     par.vsegaddress.a:= ref.c.address.segaddress;
     par.vsegaddress.offset:= ref.offset;
-    par.vsegaddress.datasize:= int1;
+//    par.vsegaddress.datasize:= int1;
    end;
   end
   else begin
@@ -694,7 +696,7 @@ begin
      with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
       par.vsegaddress.a:= segad1;
       par.vsegaddress.offset:= 0;
-      par.vsegaddress.datasize:= 0; //todo
+//      par.vsegaddress.datasize:= 0; //todo
      end;
     end;
    end;
