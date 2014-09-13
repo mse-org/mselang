@@ -642,10 +642,15 @@ procedure mulint32op();
 begin
  notimplemented();
 end;
+
 procedure mulimmint32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = mul i32 %'+inttostr(ssas1)+
+         ', '+inttostr(imm.vint32));
+ end;
 end;
+
 procedure mulflo64op();
 begin
  notimplemented();
@@ -1166,7 +1171,10 @@ begin
                                        segdataaddress(vsegaddress)+') to i8*');
    end
    else begin
-    notimplemented(); //todo
+    outass('%'+inttostr(ssad)+' = getelementptr ['+
+               inttostr(vsegaddress.a.size)+' x i8]* '+
+               segdataaddress(vsegaddress)+', i32 0, i32 '+
+               inttostr(vsegaddress.offset));
    end;
   end;
  end;

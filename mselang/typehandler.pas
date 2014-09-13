@@ -623,6 +623,7 @@ begin
           getvalue(int1-stackindex{,true});
          end;
          with insertitem(oc_mulimmint32,int1-stackindex+1,false)^ do begin
+          par.ssas1:= d.dat.fact.ssaindex;
           setimmint32(itemtype^.bytesize,par);
          end;
          if not fullconst then begin
