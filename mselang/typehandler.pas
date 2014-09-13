@@ -648,8 +648,10 @@ begin
      d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
       pushinsertaddress(-1,true);
-      with additem(oc_addint32)^ do begin
-      end;
+      with insertitem(oc_addint32,int1-stackindex+1,false)^ do begin
+       par.ssas1:= d.dat.fact.ssaindex;
+       par.ssas2:= contextstack[int1-stackindex+1].d.dat.fact.ssaindex;
+      end;         
       d.kind:= ck_reffact;
      end;
     end;
