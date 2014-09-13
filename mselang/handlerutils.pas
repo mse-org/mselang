@@ -1410,8 +1410,10 @@ begin
     end;
    end;
    ck_reffact: begin //
-    internalerror1(ie_notimplemented,'20140404B'); //todo
-    exit;
+    d.kind:= ck_fact;
+    result:= true;
+//    internalerror1(ie_notimplemented,'20140404B'); //todo
+//    exit;
    end;
    ck_fact,ck_subres: begin
     if d.dat.indirection <> 0 then begin
