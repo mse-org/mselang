@@ -1266,11 +1266,13 @@ var
  var
   op1: opcodety;
   si1: databitsizety;
+  ssabefore: integer;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
    opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel,si1);
+   ssabefore:= d.dat.fact.ssaindex;
    with insertitem(indirect[si1],stackoffset,false)^ do begin
-    par.ssas1:= d.dat.fact.ssaindex;
+    par.ssas1:= ssabefore;
     par.memop.t:= opdata1;
     d.dat.fact.ssaindex:= par.ssad;
    end;

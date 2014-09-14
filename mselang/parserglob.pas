@@ -149,6 +149,7 @@ const
  dataaddresssize = sizeof(dataaddressty);
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
  typecontexts = [ck_typetype,ck_fieldtype];
+ factcontexts = [ck_fact,ck_reffact];
 
 type
  addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,

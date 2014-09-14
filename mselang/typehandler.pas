@@ -622,8 +622,9 @@ begin
          if d.kind = ck_ref then begin
           getvalue(int1-stackindex{,true});
          end;
+         lastssa:= d.dat.fact.ssaindex;
          with insertitem(oc_mulimmint32,int1-stackindex,false)^ do begin
-          par.ssas1:= d.dat.fact.ssaindex;
+          par.ssas1:= lastssa;
           setimmint32(itemtype^.bytesize,par);
          end;
          if not fullconst then begin

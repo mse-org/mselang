@@ -85,13 +85,34 @@ procedure endforloop(const ainfo: loopinfoty);
 
 procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
 
+{$ifdef mse_debugparser}
+procedure dumpops();
+{$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo;
  
 type
  opadsty = array[addressbasety] of opcodety;
  aropadsty = array[boolean] of opadsty; 
+
+{$ifdef mse_debugparser}
+procedure dumpops();
+var
+ int1: integer;
+ po1: popinfoty;
+begin
+ writeln('n ssad ssa1 ssa2 ----OPS---- ',info.ssa.index,' ',info.ssa.nextindex);
+ po1:= getsegmentpo(seg_op,0);
+ for int1:= 0 to info.opcount-1 do begin
+  with po1^.par do begin
+   writeln(int1,' ',ssad,' ',ssas1,' ',ssas2,' ',
+            getenumname(typeinfo(opcodety),ord(po1^.op.op)));
+  end;
+  inc(po1);
+ end;
+end;
+{$endif}
 
 procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
 begin
@@ -444,7 +465,7 @@ begin
    result:= additem(aopcode,ssaextension);
    if int1 = stacktop then begin
     with contextstack[stacktop] do begin
-     if d.kind = ck_fact then begin
+     if d.kind in factcontexts then begin
       d.dat.fact.ssaindex:= result^.par.ssad;
      end;
     end;
@@ -480,10 +501,10 @@ begin
    int2:= po1^.par.ssad;
    while po1 < poend do begin
     inc(po1^.par.ssad,ssadelta);
-    if po1^.par.ssas1 <= int2 then begin
+    if po1^.par.ssas1 >= int2 then begin
      inc(po1^.par.ssas1,ssadelta);
     end;
-    if po1^.par.ssas2 <= int2 then begin
+    if po1^.par.ssas2 >= int2 then begin
      inc(po1^.par.ssas2,ssadelta);
     end;
     inc(po1);
@@ -491,7 +512,7 @@ begin
    for int1:= int1+1 to stacktop do begin
     with contextstack[int1] do begin
      inc(opmark.address);
-     if d.kind = ck_fact then begin
+     if d.kind in factcontexts then begin
       inc(d.dat.fact.ssaindex,ssadelta);
      end;
     end;
