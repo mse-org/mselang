@@ -580,7 +580,7 @@ var
  range: ordrangety;
  li1: int64;
  offs: dataoffsty;
- int1: integer;
+ int1,lastssa: integer;
  fullconst: boolean;
 label
  errlab;
@@ -622,12 +622,13 @@ begin
          if d.kind = ck_ref then begin
           getvalue(int1-stackindex{,true});
          end;
-         with insertitem(oc_mulimmint32,int1-stackindex+1,false)^ do begin
+         with insertitem(oc_mulimmint32,int1-stackindex,false)^ do begin
           par.ssas1:= d.dat.fact.ssaindex;
           setimmint32(itemtype^.bytesize,par);
          end;
          if not fullconst then begin
-          with insertitem(oc_addint32,int1-stackindex+1,false)^ do begin
+          with insertitem(oc_addint32,int1-stackindex,false)^ do begin
+           //todo
           end;         
          end
          else begin
@@ -648,9 +649,10 @@ begin
      d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
       pushinsertaddress(-1,true);
-      with insertitem(oc_addint32,int1-stackindex+1,false)^ do begin
+      lastssa:= contextstack[int1].d.dat.fact.ssaindex;
+      with insertitem(oc_addint32,int1-stackindex,false)^ do begin
        par.ssas1:= d.dat.fact.ssaindex;
-       par.ssas2:= contextstack[int1-stackindex+1].d.dat.fact.ssaindex;
+       par.ssas2:= lastssa;
       end;         
       d.kind:= ck_reffact;
      end;

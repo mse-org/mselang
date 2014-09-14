@@ -442,6 +442,13 @@ begin
   int1:= stackoffset+stackindex;
   if (int1 > stacktop) or not before and (int1 = stacktop) then begin
    result:= additem(aopcode,ssaextension);
+   if int1 = stacktop then begin
+    with contextstack[stacktop] do begin
+     if d.kind = ck_fact then begin
+      d.dat.fact.ssaindex:= result^.par.ssad;
+     end;
+    end;
+   end;
   end
   else begin
    ssadelta:= ssatable^[aopcode]+ssaextension;
