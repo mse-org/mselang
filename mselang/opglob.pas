@@ -111,6 +111,7 @@ type
   oc_mulint32,
   oc_mulflo64,
   oc_addint32,
+  oc_addpoint32,
   oc_addflo64,
 
   oc_addimmint32,
@@ -529,6 +530,7 @@ type
    );
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
+   oc_addpoint32,
    oc_cmpequbool,oc_cmpequint32,oc_cmpequflo64:(
     stackop: stackopty;
    );

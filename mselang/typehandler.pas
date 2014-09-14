@@ -650,11 +650,12 @@ begin
      if not fullconst then begin
       pushinsertaddress(-1,true);
       lastssa:= contextstack[int1].d.dat.fact.ssaindex;
-      with insertitem(oc_addint32,int1-stackindex,false)^ do begin
+      with insertitem(oc_addpoint32,int1-stackindex,false)^ do begin
        par.ssas1:= d.dat.fact.ssaindex;
        par.ssas2:= lastssa;
       end;         
       d.kind:= ck_reffact;
+      d.dat.fact.ssaindex:= contextstack[int1].d.dat.fact.ssaindex;
      end;
     end;
    {$ifdef mse_checkinternalerror}

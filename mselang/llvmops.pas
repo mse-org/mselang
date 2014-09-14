@@ -661,6 +661,15 @@ begin
  outbinop('add i32');
 end;
 
+procedure addpoint32op();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = getelementptr i8* %'+inttostr(ssas1)+
+         ', i32 %'+inttostr(ssas2));
+ end;
+end;
+
+
 procedure addimmint32op();
 begin
  notimplemented();
@@ -1692,6 +1701,7 @@ const
   mulint32ssa = 1;
   mulflo64ssa = 1;
   addint32ssa = 1;
+  addpoint32ssa = 1;
   addflo64ssa = 1;
 
   addimmint32ssa = 1;

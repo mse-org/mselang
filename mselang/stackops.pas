@@ -547,6 +547,15 @@ begin
  vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
 end;
 
+procedure addpoint32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ inc(pvpointerty(po2)^,vintegerty(po1^));
+end;
+
 procedure addimmint32op();
 var
  po1: pointer;
@@ -1892,6 +1901,7 @@ const
   mulint32ssa = 0;
   mulflo64ssa = 0;
   addint32ssa = 0;
+  addpoint32ssa = 0;
   addflo64ssa = 0;
 
   addimmint32ssa = 0;
