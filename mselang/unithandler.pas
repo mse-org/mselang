@@ -726,7 +726,7 @@ begin
    if opad1 = 0 then begin
     opad1:= unit1^.finalizationstop;
    end;
-   po1[opad1].op.op:= oc_none;         //stop
+   po1[opad1].op.op:= oc_progend;         //stop
   end;
 
  end;
