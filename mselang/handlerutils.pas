@@ -47,8 +47,8 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = 
    //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_bool1,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_array,dk_class,dk_interface
-    sdk_none,  sdk_none, sdk_none, sdk_none,sdk_none,sdk_none,
+  //dk_address,dk_record,dk_string,dk_dynarray,dk_array,dk_class,dk_interface
+    sdk_none,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
   //dk_enum,dk_enumitem, dk_set
     sdk_none,   sdk_none, sdk_none);
                 

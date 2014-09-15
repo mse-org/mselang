@@ -58,7 +58,8 @@ type
  ppint32 = ^int32;
 
  datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-               dk_address,dk_record,dk_string8,dk_array,dk_class,dk_interface,
+               dk_address,dk_record,dk_string8,dk_dynarray,
+               dk_array,dk_class,dk_interface,
                dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  

@@ -230,6 +230,7 @@
   decloop64ssa,
 
   setlengthstr8ssa,
+  setlengthdynarrayssa,
 
   raisessa,
   pushcpucontextssa,
@@ -459,6 +460,7 @@
   @decloop64op,
 
   @setlengthstr8op,
+  @setlengthdynarrayop,
 
   @raiseop,
   @pushcpucontextop,

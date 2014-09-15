@@ -67,10 +67,17 @@ type
   max: double;
  end;
 
- infoarrayty = record
+ arrayiteminfoty = record
   itemtypedata: elementoffsetty;
   itemindirectlevel: integer;
+ end;
+ infoarrayty = record
+  i: arrayiteminfoty;
   indextypedata: elementoffsetty;
+ end;
+
+ infodynarrayty = record
+  i: arrayiteminfoty;
  end;
 
  infoclassflagty = (icf_virtualtablevalid);
@@ -173,11 +180,17 @@ type
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
    );
-   dk_string8:(
+   dk_string8,dk_dynarray:(
     manageproc: managedtypeprocty;
     case datakindty of
      dk_string8:(
      );
+     dk_dynarray:(
+      infodynarray: infodynarrayty;
+     );
+   );
+   dk_array:(
+    infoarray: infoarrayty;
    );
    dk_record,dk_class:(
     fieldchain: elementoffsetty;
@@ -201,9 +214,6 @@ type
    );
    dk_set:(
     infoset: infosetty;
-   );
-   dk_array:(
-    infoarray: infoarrayty;
    );
  end;
  ptypedataty = ^typedataty;

@@ -1749,6 +1749,12 @@ begin
  stackpop(pointersize+sizeof(stringsizety));
 end;
 
+procedure setlengthdynarrayop();
+begin
+// notimplemented();
+end;
+
+
 const
  stopop: opinfoty = (op: (op: oc_none; flags:[]); 
                    par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
@@ -2067,6 +2073,7 @@ const
   decloop64ssa = 0;
 
   setlengthstr8ssa = 0;
+  setlengthdynarrayssa = 0;
 
   raisessa = 0;
   pushcpucontextssa = 0;

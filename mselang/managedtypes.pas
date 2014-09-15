@@ -40,8 +40,10 @@ const
  setlengthops: array[datakindty] of opcodety = (
   //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     oc_none,oc_none,   oc_none,    oc_none,   oc_none, oc_none,
-  //dk_address,dk_record,dk_string8,     dk_array,dk_class,dk_interface,
-    oc_none,   oc_none,  oc_setlengthstr8,oc_none,oc_none, oc_none, 
+  //dk_address,dk_record,dk_string8,      dk_dynarray,         
+    oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,
+  //dk_array,dk_class,dk_interface,
+    oc_none, oc_none, oc_none, 
   //dk_enum,dk_enumitem,dk_set
     oc_none,oc_none,    oc_none
  );
@@ -117,7 +119,7 @@ var
 begin
  if tf_managed in atype^.flags then begin
   if atype^.kind = dk_array then begin
-   ptypedataty(ele.eledataabs(atype^.infoarray.itemtypedata))^.manageproc(
+   ptypedataty(ele.eledataabs(atype^.infoarray.i.itemtypedata))^.manageproc(
          op,aaddress,
          getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),ssaindex);
   end
@@ -139,7 +141,7 @@ begin
    end;
    beginforloop(loopinfo,
                getordcount(ele.eledataabs(atype^.infoarray.indextypedata)));
-   po2:= ele.eledataabs(atype^.infoarray.itemtypedata);
+   po2:= ele.eledataabs(atype^.infoarray.i.itemtypedata);
   end
   else begin
    ad1.base:= aaddress.base;

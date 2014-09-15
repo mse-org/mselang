@@ -445,22 +445,22 @@ begin
  with info do begin
   int1:= stacktop-stackindex-2;
   if (contextstack[stacktop].d.kind = ck_fieldtype) then begin
-   if (int1 > 0) then begin  //static array
-    arty:= nil;
-    with contextstack[stacktop] do begin
-     itemtyoffs:= d.typ.typedata;
-     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
-      flags1:= flags;
-      indilev:= d.typ.indirectlevel;
-      if indilev + indirectlevel > 0 then begin
-       totsize:= pointersize;
-       flags1-= [tf_managed,tf_hasmanaged];
-      end
-      else begin
-       totsize:= bytesize;
-      end;
+   arty:= nil;
+   with contextstack[stacktop] do begin
+    itemtyoffs:= d.typ.typedata;
+    with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin
+     flags1:= flags;
+     indilev:= d.typ.indirectlevel;
+     if indilev + indirectlevel > 0 then begin
+      totsize:= pointersize;
+      flags1-= [tf_managed,tf_hasmanaged];
+     end
+     else begin
+      totsize:= bytesize;
      end;
-    end;  //todo: alignment
+    end;
+   end;  //todo: alignment
+   if (int1 > 0) then begin  //static array
     int2:= stackindex + 2;
     for int1:= stacktop-1 downto int2 do begin
      with contextstack[int1] do begin
@@ -498,8 +498,8 @@ begin
        flags1-= [tf_managed,tf_hasmanaged];
       end;
       with arty^.infoarray do begin
-       itemtypedata:= itemtyoffs;
-       itemindirectlevel:= indilev;
+       i.itemtypedata:= itemtyoffs;
+       i.itemindirectlevel:= indilev;
        indextypedata:= d.typ.typedata;
       end;
       indilev:= 0; //no indirectlevel for multi dimensions
@@ -537,6 +537,20 @@ begin
    end
    else begin //dynamic array
     if int1 = -1 then begin
+     with contextstack[stackindex-2] do begin
+      if (d.kind = ck_ident) and 
+                 (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+       id1:= d.ident.ident; //typedef
+      end
+      else begin
+       id1:= getident();    //fielddef
+      end;
+     end;
+     if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
+      identerror(stacktop-stackindex,err_duplicateidentifier);
+      goto endlab;
+     end;
+//     with arty^.
     end
     else begin
      internalerror(ie_type,'20140915A');
@@ -613,7 +627,7 @@ begin
        goto errlab;
       end;
       indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
-      itemtype:= ele.eledataabs(itemtype^.infoarray.itemtypedata);
+      itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata);
       getordrange(indextype,range);
       with contextstack[int1] do begin
        case d.kind of

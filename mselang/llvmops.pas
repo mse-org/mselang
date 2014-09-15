@@ -1630,6 +1630,11 @@ begin
  notimplemented();
 end;
 
+procedure setlengthdynarrayop();
+begin
+ notimplemented();
+end;
+
 procedure raiseop();
 begin
  notimplemented();
@@ -1867,6 +1872,7 @@ const
   decloop64ssa = 1;
 
   setlengthstr8ssa = 1;
+  setlengthdynarrayssa = 1;
 
   raisessa = 1;
   pushcpucontextssa = 1;

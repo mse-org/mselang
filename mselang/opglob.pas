@@ -277,6 +277,7 @@ type
   oc_decloop64,
 
   oc_setlengthstr8,
+  oc_setlengthdynarray,
 
   oc_raise,
   oc_pushcpucontext,
