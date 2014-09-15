@@ -32,6 +32,8 @@ procedure handlesetlength(const paramco: integer);
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;
                              const count: datasizety; const ssaindex: integer);
+procedure managedynarray(const op: managedopty; const aaddress: addressrefty;
+                             const count: datasizety; const ssaindex: integer);
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,
@@ -49,6 +51,30 @@ const
  );
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;
+                             const count: datasizety; const ssaindex: integer);
+begin
+ case op of 
+  mo_ini: begin
+   inipointer(aaddress,count,ssaindex);
+  end;
+  mo_fini: begin
+   finirefsize(aaddress,count,ssaindex);
+  end;
+  mo_incref: begin
+   increfsize(aaddress,count,ssaindex);
+  end;
+  mo_decref: begin
+   decrefsize(aaddress,count,ssaindex);
+  end;
+ {$ifdef mse_checkinternalerror}                             
+  else begin
+   internalerror(ie_managed,'20140416A');
+  end;
+ {$endif}
+ end;
+end;
+
+procedure managedynarray(const op: managedopty; const aaddress: addressrefty;
                              const count: datasizety; const ssaindex: integer);
 begin
  case op of 

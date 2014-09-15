@@ -54,7 +54,7 @@ procedure checkrecordfield(const avisibility: visikindsty;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob;
+ grammar,opglob,managedtypes;
 
 procedure handletype();
 begin
@@ -435,7 +435,7 @@ var
 var
  range: ordrangety;
  flags1: typeflagsty;
- 
+                              //todo: indirection? 
 label
  endlab;
 begin
@@ -550,7 +550,10 @@ begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
-//     with arty^.
+     inittypedatasize(arty^,dk_dynarray,0,das_pointer,[tf_managed]);
+     with arty^ do begin
+      manageproc:= @managedynarray;
+     end;
     end
     else begin
      internalerror(ie_type,'20140915A');
