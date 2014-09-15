@@ -119,6 +119,7 @@ procedure handlewith2entry();
 procedure handlewith3();
 
 procedure handledumpelements();
+procedure handledumpopcode();
 procedure handleabort();
 procedure handlenop();
 
@@ -1999,6 +2000,16 @@ begin
   writeln(ar1[int1]);
  end;
  writeln('-------------------------------------------------------------------');
+{$endif}
+ with info do begin
+  dec(stackindex);
+ end;
+end;
+
+procedure handledumpopcode();
+begin
+{$ifdef mse_debugparser}
+ dumpops();
 {$endif}
  with info do begin
   dec(stackindex);

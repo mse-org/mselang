@@ -20,7 +20,7 @@ interface
 uses
  parserglob,opglob;
 type
- addressbasety = (ab_frame,ab_reg0,ab_stack,ab_stackref,ab_segment);
+ addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
  
 type
  addressrefty = record

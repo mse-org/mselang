@@ -144,6 +144,7 @@ comment0,,,handlecommentend^*>
 #comment1,,,handlecommentend^>
 directive,directive1,,*
  'dumpelements'.,dumpelements-*
+ 'dumpopcode'.,dumpopcode-*
  'abort'.,abort-*
  'nop'.,nop-*
  'include'.,include-*
@@ -162,6 +163,7 @@ include1,,,handleinclude*>
  '',-
 # 
 dumpelements,directiveend,handledumpelements,
+dumpopcode,directiveend,handledumpopcode,
 nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 directiveend,,,^*>
