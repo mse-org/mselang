@@ -3769,7 +3769,10 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- barraydef: array[0..5] of branchty = (
+ barraydef: array[0..6] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @arraydef2co); stack: nil; 
+     keyword: $ADCE6188{'of'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),

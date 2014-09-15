@@ -448,6 +448,7 @@ recordfield,,,handlerecordfield^*>
 recorddefreturn,,handlerecordtype,*^
 #
 arraydef,arraydef1,,
+ 'of'.,arraydef2-
  ${whitespace}
  '',arrayindex*
 arraydef1,,,handlearraydeferror1

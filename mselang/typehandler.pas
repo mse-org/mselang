@@ -444,95 +444,107 @@ begin
 {$endif}
  with info do begin
   int1:= stacktop-stackindex-2;
-  if (int1 > 0) and (contextstack[stacktop].d.kind = ck_fieldtype) then begin
-   arty:= nil;
-   with contextstack[stacktop] do begin
-    itemtyoffs:= d.typ.typedata;
-    with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
-     flags1:= flags;
-     indilev:= d.typ.indirectlevel;
-     if indilev + indirectlevel > 0 then begin
-      totsize:= pointersize;
-      flags1-= [tf_managed,tf_hasmanaged];
-     end
-     else begin
-      totsize:= bytesize;
-     end;
-    end;
-   end;  //todo: alignment
-   int2:= stackindex + 2;
-   for int1:= stacktop-1 downto int2 do begin
-    with contextstack[int1] do begin
-    {$ifdef mse_checkinternalerror}
-     if d.kind <> ck_fieldtype then begin
-      internalerror(ie_type,'20140327A');
-     end;
-    {$endif}
-     po1:= ele.eledataabs(d.typ.typedata);
-     if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
-       not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
-      err(err_ordtypeexpected);
-      goto endlab;
-     end;
-     if int1 = int2 then begin //first dimension
-      with contextstack[stackindex-2] do begin
-       if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
-        id1:= d.ident.ident; //typedef
-       end
-       else begin
-        id1:= getident();    //fielddef
-       end;
+  if (contextstack[stacktop].d.kind = ck_fieldtype) then begin
+   if (int1 > 0) then begin  //static array
+    arty:= nil;
+    with contextstack[stacktop] do begin
+     itemtyoffs:= d.typ.typedata;
+     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin;
+      flags1:= flags;
+      indilev:= d.typ.indirectlevel;
+      if indilev + indirectlevel > 0 then begin
+       totsize:= pointersize;
+       flags1-= [tf_managed,tf_hasmanaged];
+      end
+      else begin
+       totsize:= bytesize;
       end;
-     end
-     else begin
-      id1:= getident(); //multi dimension
      end;
-     if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
-      identerror(stacktop-stackindex,err_duplicateidentifier);
-      goto endlab;
+    end;  //todo: alignment
+    int2:= stackindex + 2;
+    for int1:= stacktop-1 downto int2 do begin
+     with contextstack[int1] do begin
+     {$ifdef mse_checkinternalerror}
+      if d.kind <> ck_fieldtype then begin
+       internalerror(ie_type,'20140327A');
+      end;
+     {$endif}
+      po1:= ele.eledataabs(d.typ.typedata);
+      if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
+        not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
+       err(err_ordtypeexpected);
+       goto endlab;
+      end;
+      if int1 = int2 then begin //first dimension
+       with contextstack[stackindex-2] do begin
+        if (d.kind = ck_ident) and 
+                   (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+         id1:= d.ident.ident; //typedef
+        end
+        else begin
+         id1:= getident();    //fielddef
+        end;
+       end;
+      end
+      else begin
+       id1:= getident(); //multi dimension
+      end;
+      if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
+       identerror(stacktop-stackindex,err_duplicateidentifier);
+       goto endlab;
+      end;
+      arty^.flags:= flags1;
+      if indilev > 0 then begin
+       flags1-= [tf_managed,tf_hasmanaged];
+      end;
+      with arty^.infoarray do begin
+       itemtypedata:= itemtyoffs;
+       itemindirectlevel:= indilev;
+       indextypedata:= d.typ.typedata;
+      end;
+      indilev:= 0; //no indirectlevel for multi dimensions
+      getordrange(po1,range);
+      si1:= range.max-range.min+1;
+      if (si1 > maxint) and (totsize > maxint) then begin
+       err(err_dataeletoolarge);
+       goto endlab;
+      end;
+      if range.max < range.min then begin
+       errormessage(err_highlowerlow,[],int1-stackindex);
+       ele.hideelementdata(arty);
+       goto endlab;     
+      end;
+      totsize:= si1*totsize;
+      if totsize > maxint then begin
+       err(err_dataeletoolarge);
+       goto endlab;
+      end;
+      with arty^ do begin
+       indirectlevel:= 0;
+       bitsize:= 0;
+       bytesize:= totsize;
+       datasize:= das_none;
+       kind:= dk_array;
+      end;
+      itemtyoffs:= ele.eledatarel(arty);
      end;
-     arty^.flags:= flags1;
-     if indilev > 0 then begin
-      flags1-= [tf_managed,tf_hasmanaged];
-     end;
-     with arty^.infoarray do begin
-      itemtypedata:= itemtyoffs;
-      itemindirectlevel:= indilev;
-      indextypedata:= d.typ.typedata;
-     end;
-     indilev:= 0; //no indirectlevel for multi dimensions
-     getordrange(po1,range);
-     si1:= range.max-range.min+1;
-     if (si1 > maxint) and (totsize > maxint) then begin
-      err(err_dataeletoolarge);
-      goto endlab;
-     end;
-     if range.max < range.min then begin
-      errormessage(err_highlowerlow,[],int1-stackindex);
-      ele.hideelementdata(arty);
-      goto endlab;     
-     end;
-     totsize:= si1*totsize;
-     if totsize > maxint then begin
-      err(err_dataeletoolarge);
-      goto endlab;
-     end;
-     with arty^ do begin
-      indirectlevel:= 0;
-      bitsize:= 0;
-      bytesize:= totsize;
-      datasize:= das_none;
-      kind:= dk_array;
-     end;
-     itemtyoffs:= ele.eledatarel(arty);
+    end;
+    with contextstack[stackindex-1] do begin
+     arty^.indirectlevel:= d.typ.indirectlevel;
+     d.typ.indirectlevel:= 0;
+     d.typ.typedata:= ele.eledatarel(arty);
+    end;
+   end
+   else begin //dynamic array
+    if int1 = -1 then begin
+    end
+    else begin
+     internalerror(ie_type,'20140915A');
     end;
    end;
-   with contextstack[stackindex-1] do begin
-    arty^.indirectlevel:= d.typ.indirectlevel;
-    d.typ.indirectlevel:= 0;
-    d.typ.typedata:= ele.eledatarel(arty);
-   end;
+  end
+  else begin
+   internalerror(ie_type,'20140915B');
   end;
 endlab:
   stacktop:= stackindex-1;
