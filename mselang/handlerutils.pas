@@ -202,8 +202,8 @@ const
    (name: 'string8'; data: (ancestor: 0; rtti: 0; 
        flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8; manageproc: @managestring8;
-                 ))
+                 kind: dk_string8; manageproc: @managestring8; itemsize: 1;
+                 dummy: 0))
   );
  sysconstinfos: array[0..1] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),

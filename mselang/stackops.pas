@@ -184,6 +184,15 @@ begin
  fillchar(result^,nullsize,0);
 end;
 
+procedure intreallocnulledmem(var po: pointer;
+                        const oldsize,newsize: integer);
+begin
+ reallocmem(po,newsize);
+ if newsize > oldsize then begin
+  fillchar((po+oldsize)^,newsize-oldsize,0);
+ end;
+end;
+
 procedure intfreemem(const mem: pointer);
 begin
  freemem(mem);
@@ -1750,10 +1759,59 @@ begin
 end;
 
 procedure setlengthdynarrayop();
+var
+ si1: dynarraysizety;
+ sil1,sil2: dynarraysizety;
+ ds,ss: pdynarrayheaderty;
+ ad: ppointer;
+ itemsize1: integer;
 begin
-// notimplemented();
+ si1:= pdynarraysizety(cpu.stack-sizeof(dynarraysizety))^;
+ ad:= ppointer(cpu.stack-(sizeof(dynarraysizety)+sizeof(pointer)))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+ end;
+ if si1 <= 0 then begin
+  if ds <> nil then begin
+   dec(ds^.ref.count);
+   if ds^.ref.count = 0 then begin
+    freemem(ds);
+   end;
+   ad^:= nil;
+  end;
+ end
+ else begin
+  itemsize1:= cpu.pc^.par.setlength.itemsize;
+  sil1:= si1*itemsize1;
+  if ds = nil then begin
+   getmem(ds,sil1+dynarrayallocsize);
+  end
+  else begin
+   if ds^.ref.count = 1 then begin
+    intreallocnulledmem(ds,ds^.len*itemsize1+dynarrayallocsize,
+                                                    sil1+dynarrayallocsize);
+   end
+   else begin //needs copy
+    ss:= ds;
+    getmem(ds,sil1+dynarrayallocsize);
+    sil2:= ss^.len*itemsize1;
+    if sil1 < sil2 then begin
+     sil2:= sil1;
+    end
+    else begin
+     fillchar((pointer(ds+1)+sil2)^,sil1-sil2,0);
+    end;    
+    move((ss+1)^,(ds+1)^,sil2); //get data copy
+   end;
+  end;
+  ds^.len:= si1;
+  ds^.ref.count:= 1;
+  inc(ds);    //data
+  ad^:= ds;
+ end;
+ stackpop(pointersize+sizeof(dynarraysizety));
 end;
-
 
 const
  stopop: opinfoty = (op: (op: oc_none; flags:[]); 

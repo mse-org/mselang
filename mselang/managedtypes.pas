@@ -111,7 +111,8 @@ begin
   if getvalue(stacktop-stackindex) then begin
    with contextstack[stacktop] do begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if (d.dat.datatyp.indirectlevel <> 0) or (po1^.kind <> dk_integer) then begin
+    if (d.dat.datatyp.indirectlevel <> 0) or 
+                                    (po1^.kind <> dk_integer) then begin
      incompatibletypeserror(2,'dk_integer',d);
     end
     else begin
@@ -121,6 +122,9 @@ begin
        with additem(setlengthops[kind])^ do begin
         if op.op = oc_none then begin
          errormessage(err_typemismatch,[]);
+        end
+        else begin
+         par.setlength.itemsize:= itemsize;
         end;
        end;
       end;

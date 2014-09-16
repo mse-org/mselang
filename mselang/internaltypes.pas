@@ -17,6 +17,8 @@ type
  managedsizety = integer;
  stringsizety = managedsizety;
  pstringsizety = ^stringsizety;
+ dynarraysizety = managedsizety;
+ pdynarraysizety = ^dynarraysizety;
  
  refinfoty = record
   count: refcountty;
@@ -33,10 +35,18 @@ type
   len: stringsizety;
  end; //following stringdata + terminating #0
  pstring8headerty = ^string8headerty;
+
+ dynarrayheaderty = record
+  ref: refinfoty;
+  len: dynarraysizety;
+ end; //following array datat
+ pdynarrayheaderty = ^dynarrayheaderty;
  
 const
  string8headersize = sizeof(string8headerty);
  string8allocsize = string8headersize+1; //terminating #0
+ dynarrayheadersize = sizeof(dynarrayheaderty);
+ dynarrayallocsize = dynarrayheadersize;
 
 implementation
 end.

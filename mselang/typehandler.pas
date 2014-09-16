@@ -550,9 +550,11 @@ begin
       identerror(stacktop-stackindex,err_duplicateidentifier);
       goto endlab;
      end;
-     inittypedatasize(arty^,dk_dynarray,0,das_pointer,[tf_managed]);
+     inittypedatasize(arty^,dk_dynarray,0,das_pointer,
+                                     [tf_managed,tf_hasmanaged]);
      with arty^ do begin
       manageproc:= @managedynarray;
+      itemsize:= totsize;
      end;
     end
     else begin

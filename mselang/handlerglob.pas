@@ -182,8 +182,10 @@ type
    );
    dk_string8,dk_dynarray:(
     manageproc: managedtypeprocty;
+    itemsize: integer; //bytes
     case datakindty of
      dk_string8:(
+      dummy: byte; //for systypeinfos list
      );
      dk_dynarray:(
       infodynarray: infodynarrayty;

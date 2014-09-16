@@ -449,6 +449,10 @@ type
    );
  end;
 
+ setlengthty = record
+  itemsize: integer;
+ end;
+ 
  suballocinfoty = record
   allocs: dataoffsty;
   alloccount: integer;
@@ -549,6 +553,9 @@ type
    oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
     memop: memopty;
+   );
+   oc_setlengthstr8,oc_setlengthdynarray:(
+    setlength: setlengthty;
    );
    oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
     opaddress: opaddressty; //first!
