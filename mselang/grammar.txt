@@ -137,6 +137,7 @@ main1,,,handlemain
  'begin'.,progbegin-
  'const'.,const-*>
  'var'.,var-*>
+ 'type'.,type-*>
 #
 comment0,,,handlecommentend^*>
  '}',-*
