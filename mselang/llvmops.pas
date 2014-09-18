@@ -454,7 +454,7 @@ var
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
- outass('declare i32 (i8*, ...)* @printf(i8*, ...)');
+ outass('declare i32 @printf(i8*, ...)');
  outass('@.wret = internal constant '+wretc);
  outass('@.wint32 = internal constant '+wint32c);
  
@@ -582,7 +582,7 @@ procedure writelnop();
 begin
  with pc^.par do begin
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wretformat+
-         ', i32 0, i32 0)');
+         ', i32 0, i32 0))');
  end;
 end;
 
