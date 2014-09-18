@@ -432,6 +432,15 @@ end;
 
 var
  exitcodeaddress: segaddressty;
+
+const
+ wret = '\0a\00';
+ wretformat = '[2 x i8]* @.wret';
+ wretc = '[2 x i8] c"'+wret+'"';
+
+ wint32 = '%d\00';
+ wint32c = '[3 x i8] c"'+wint32+'"';
+ wint32format = '[3 x i8]* @.wint32';
   
 procedure beginparseop();
 var
@@ -445,6 +454,10 @@ var
 begin
  freeandnil(assstream);
  assstream:= ttextstream.create('test.ll',fm_create);
+ outass('declare i32 (i8*, ...)* @printf(i8*, ...)');
+ outass('@.wret = internal constant '+wretc);
+ outass('@.wint32 = internal constant '+wint32c);
+ 
  with pc^.par.beginparse do begin
   ele1:= unitinfochain;
   while ele1 <> 0 do begin
@@ -567,16 +580,25 @@ end;
 
 procedure writelnop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wretformat+
+         ', i32 0, i32 0)');
+ end;
 end;
+
 procedure writebooleanop();
 begin
  notimplemented();
 end;
+ 
 procedure writeintegerop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wint32format+
+         ', i32 0, i32 0), i32 %'+inttostr(ssas1)+')');
+ end;
 end;
+
 procedure writefloatop();
 begin
  notimplemented();
