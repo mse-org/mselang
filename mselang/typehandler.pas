@@ -529,11 +529,6 @@ begin
       itemtyoffs:= ele.eledatarel(arty);
      end;
     end;
-    with contextstack[stackindex-1] do begin
-     arty^.indirectlevel:= d.typ.indirectlevel;
-     d.typ.indirectlevel:= 0;
-     d.typ.typedata:= ele.eledatarel(arty);
-    end;
    end
    else begin //dynamic array
     if int1 = -1 then begin
@@ -555,11 +550,18 @@ begin
      with arty^ do begin
       manageproc:= @managedynarray;
       itemsize:= totsize;
+      infodynarray.i.itemtypedata:= itemtyoffs;
+      infodynarray.i.itemindirectlevel:= indilev;
      end;
     end
     else begin
      internalerror(ie_type,'20140915A');
     end;
+   end;
+   with contextstack[stackindex-1] do begin
+    arty^.indirectlevel:= d.typ.indirectlevel;
+    d.typ.indirectlevel:= 0;
+    d.typ.typedata:= ele.eledatarel(arty);
    end;
   end
   else begin
@@ -613,8 +615,10 @@ var
  offs: dataoffsty;
  int1,lastssa: integer;
  fullconst: boolean;
+ isdynarray: boolean;
 label
  errlab;
+                              //todo: nested dynarray
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEX');
@@ -627,13 +631,20 @@ begin
      itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
      fullconst:= true;
      for int1:= stackindex+1 to stacktop do begin
-      if itemtype^.kind <> dk_array then begin
+      isdynarray:= itemtype^.kind = dk_dynarray;
+      if not (isdynarray or (itemtype^.kind = dk_array)) then begin
        errormessage(err_illegalqualifier,[],0);
        goto errlab;
       end;
-      indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
-      itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata);
-      getordrange(indextype,range);
+      if isdynarray then begin
+       itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
+       range.min:= 0;
+      end
+      else begin
+       indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
+       itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata);
+       getordrange(indextype,range);
+      end;
       with contextstack[int1] do begin
        case d.kind of
         ck_const: begin
@@ -643,7 +654,8 @@ begin
           goto errlab;
          end;
          li1:= getordconst(contextstack[int1].d.dat.constval);
-         if (li1 < range.min) or (li1 > range.max) then begin
+         if (li1 < range.min) or 
+                           not isdynarray and (li1 > range.max) then begin
           rangeerror(range,stacktop-stackindex);
           goto errlab;
          end;
@@ -680,7 +692,12 @@ begin
      d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
      d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
      if not fullconst then begin
-      pushinsertaddress(-1,true);
+      if isdynarray then begin //todo: nested, move to index loop
+       getvalue(-1);
+      end
+      else begin
+       pushinsertaddress(-1,true);
+      end;
       lastssa:= contextstack[int1].d.dat.fact.ssaindex;
       with insertitem(oc_addpoint32,int1-stackindex,false)^ do begin
        par.ssas1:= d.dat.fact.ssaindex;
