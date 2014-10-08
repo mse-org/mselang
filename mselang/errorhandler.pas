@@ -18,7 +18,7 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,grammar,elements,handlerglob,msetypes,msestrings;
+ parserglob,grammar,elements,handlerglob,msetypes,msestrings,msesystypes;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
@@ -50,7 +50,9 @@ type
             err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
             err_anoninterfacedef,err_interfacetypeexpected,
             err_classtypeexpected,err_nomatchingimplementation,
-            err_duplicateancestortype,err_localclassdef,err_noinputfile);
+            err_duplicateancestortype,err_localclassdef,err_noinputfile,
+            err_cannotwritetargetfile,err_cannotcreatetargetfile,
+            err_wrongversion,err_invalidprogram);
             
  errorinfoty = record
   level: errorlevelty;
@@ -149,7 +151,8 @@ const
   (level: erl_error; message: 'Expresssion type must be class or record type'),
   (level: erl_fatal; message: 'Can not find include file'),
   (level: erl_error; message: 'Too many nested include files'),
-  (level: erl_fatal; message: 'Can not read file "%s", error: %s'),
+  (level: erl_fatal; message: 'Can not read file "%s", error:'+lineend+
+                              '%s'),
   (level: erl_fatal; message: 'Anonymous class definitions are not allowed'),
   (level: erl_fatal; message: 'Class identifier expected'),
   (level: erl_error; message: 'Class field expected'),
@@ -180,13 +183,18 @@ const
           'No matching implementation for interface method "%s" found'),
   (level: erl_error; message: 'Duplicate ancestor type'),
   (level: erl_error; message: 'Local class definitions are not allowed'),
-  (level: erl_fatal; message: 'No input file defined')
+  (level: erl_fatal; message: 'No input file defined'),
+  (level: erl_fatal; message: 'Can not write target file, error:'+lineend+
+                              '%s'),
+  (level: erl_fatal; message: 'Can not create target file, error:'+lineend+
+                              '%s'),
+  (level: erl_fatal; message: 'Wrong version "%s", expected "%s"'),
+  (level: erl_fatal; message: 'Invalid program')
  );
 
 procedure message(const aerror: errorty; const values: array of const;
                        const aerrorlevel: errorlevelty = erl_none;
                        const tooutput: boolean = false); 
-
 procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -195,6 +203,9 @@ procedure errormessage(const aerror: errorty; const values: array of const;
                    const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
+function checksysok(const asyserror: syserrorty; const aerror: errorty; 
+                                   const values: array of const): boolean;
+                //true for sye_ok, appends syserror text to values
 
 procedure identerror(const astackoffset: integer;const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
@@ -389,6 +400,16 @@ begin
    sourcepos:= contextstack[int1].start;
   end;
   errormessage(sourcepos,aerror,values,coloffset,aerrorlevel);
+ end;
+end;
+
+function checksysok(const asyserror: syserrorty; const aerror: errorty; 
+                                   const values: array of const): boolean;
+                //true for sye_ok, appends syserror text to values
+begin
+ result:= asyserror = sye_ok;
+ if not result then begin
+  message(aerror,mergevarrec(values,[syserrortext(asyserror)]));
  end;
 end;
 

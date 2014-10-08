@@ -15,10 +15,10 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit segmentutils;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$goto on}{$h+}{$endif}
 interface
 uses
- parserglob,opglob,msetypes;
+ parserglob,opglob,msetypes,mclasses;
  
   //todo: use inline
   
@@ -62,9 +62,14 @@ function getoppo(const opindex: integer): popinfoty;
 procedure init();
 procedure deinit();
 
+procedure writesegmentdata(const dest: tstream; 
+                                  const storedsegments: segmentsty);
+function readsegmentdata(const source: tstream): boolean;
+                     //true if ok
+
 implementation
 uses
- errorhandler,stackops;
+ errorhandler,stackops,mseformatstr;
  
 type
  segmentinfoty = record
@@ -81,6 +86,102 @@ const
   
 var
  segments: array[segmentty] of segmentinfoty;
+
+type
+ segmentflagty = (shf_load);
+ segmentflagsty = set of segmentflagty;
+ 
+ segmentitemty = record
+  flags: segmentflagsty;
+  size: integer;
+ end;
+ segmentfileheaderty = record
+  version: integer;
+ end;
+ segmentfileinfoty = record
+  header: segmentfileheaderty;
+  case integer of
+   0: (items: array [segmentty] of segmentitemty);
+   //data following
+ end;
+  
+procedure writesegmentdata(const dest: tstream; 
+                           const storedsegments: segmentsty);
+var
+ info1: segmentfileinfoty;
+ seg1: segmentty;
+ int1: integer;
+begin
+ fillchar(info,sizeof(info1),0);
+ info1.header.version:= 0;
+ for seg1:= low(segmentsty) to high(segmentsty) do begin
+  if seg1 in storedsegments then begin
+   with info1.items[seg1] do begin
+    flags:= [shf_load];
+    with segments[seg1] do begin
+     size:= toppo - data;
+    end;
+   end;
+  end;
+ end;
+ if checksysok(dest.write(info1,sizeof(info1),int1),
+                                     err_cannotwritetargetfile,[]) then begin
+  for seg1:= low(segmentsty) to high(segmentsty) do begin
+   with info1.items[seg1] do begin
+    if shf_load in flags then begin
+     if not checksysok(dest.write(segments[seg1].data^,size,int1),
+                                    err_cannotwritetargetfile,[]) then begin
+      break;
+     end;
+    end;
+   end;
+  end;  
+ end;
+end;
+
+function readsegmentdata(const source: tstream): boolean;
+var
+ info1: segmentfileinfoty;
+ seg1: segmentty;
+ int1: integer;
+ segs1: segmentsty;
+label
+ endlab; 
+begin
+ result:= false;
+ if checksysok(source.read(info1,sizeof(info1),int1),
+                                               err_fileread,[]) then begin
+  if info1.header.version <> 0 then begin
+   message(err_wrongversion,[inttostrmse(info1.header.version),'0']);
+  end
+  else begin
+   segs1:= [];
+   for seg1:= low(segmentty) to high(segmentty) do begin
+    with info1.items[seg1] do begin
+     if shf_load in flags then begin
+      if seg1 in segs1 then begin
+       message(err_invalidprogram,[]);
+       goto endlab;
+      end;
+      include(segs1,seg1);
+      if not checksysok(source.read(allocsegmentpo(seg1,size)^,size,int1),
+                                                 err_fileread,[]) then begin
+       goto endlab;
+      end;
+     end;
+    end;
+   end;
+   if (segs1 * storedsegments <> storedsegments) or 
+                       (segs1 - storedsegments <> []) then begin
+    message(err_invalidprogram,[]);
+    goto endlab;
+   end;
+   result:= true;
+  end;
+ end;
+ 
+endlab:
+end;
 
 procedure grow(const asegment: segmentty; var ref: pointer);
 var

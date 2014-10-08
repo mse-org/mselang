@@ -4,6 +4,7 @@ interface
 uses
  msetypes,mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv,
  parserglob,msestream;
+{$goto on}
 
 type
  paramty = (pa_source); //item number in sysenv
@@ -25,26 +26,27 @@ implementation
 
 uses
  mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils;
+ msefileutils,segmentutils,sysutils,stackops;
  
 const
  startupmessage =
-'MSElang Compiler version 0.0'+lineend+
+'MSElang Runtime version 0.0'+lineend+
 'Copyright (c) 2013-2014 by Martin Schreiber';
 
 procedure tmainmo.createexe(const sender: TObject);
 begin
- sysenv.printmessage(startupmessage);
+// sysenv.printmessage(startupmessage);
 end;
 
 procedure tmainmo.eventloopexe(const sender: TObject);
 var
- inputstream: ttextstream;
+ inputstream: tmsefilestream;
  filename1: filenamety;
  str1: string;
  mstr1: msestring;
  err: syserrorty;
- targetstream: tmsefilestream;
+label
+ endlab;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -54,21 +56,19 @@ begin
   message(err_noinputfile,[]);
  end
  else begin
-  if checksysok(tryreadfiledatastring(filename1,str1),
-                                    err_fileread,[filename1]) then begin
-   if parse(str1,bke_direct) then begin
-    filename1:= replacefileext(filename1,'mlr');
-    if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
-                            err_cannotcreatetargetfile,[filename1]) then begin
-     try
-      writesegmentdata(targetstream,storedsegments);
-     finally
-      targetstream.destroy();
-     end;      
+  if checksysok(tmsefilestream.trycreate(inputstream,filename1,fm_read),
+                                        err_fileread,[filename1]) then begin
+   try
+    if readsegmentdata(inputstream) then begin
+     freeandnil(inputstream);
+     exitcode:= run(1024);
     end;
+   finally
+    inputstream.free();
    end;
   end;
  end;
+endlab:
  if (errorcount(erl_error) > 0) and (exitcode = 0) then begin
   exitcode:= 1;
  end;
