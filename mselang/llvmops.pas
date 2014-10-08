@@ -19,7 +19,7 @@ unit llvmops;
 
 interface
 uses
- opglob,parserglob;
+ opglob,parserglob,msestream;
 
 //todo: generate bitcode, use static string buffers
  
@@ -27,11 +27,11 @@ function getoptable: poptablety;
 function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
-procedure run();
+procedure run(const atarget: ttextstream);
  
 implementation
 uses
- sysutils,msestream,msesys,segmentutils,handlerglob,elements;
+ sysutils,msesys,segmentutils,handlerglob,elements;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -452,8 +452,8 @@ var
  po3: ptypedataty;
  int1: integer;
 begin
- freeandnil(assstream);
- assstream:= ttextstream.create('test.ll',fm_create);
+// freeandnil(assstream);
+// assstream:= ttextstream.create('test.ll',fm_create);
  outass('declare i32 @printf(i8*, ...)');
  outass('@.wret = internal constant '+wretc);
  outass('@.wint32 = internal constant '+wint32c);
@@ -515,7 +515,7 @@ end;
 
 procedure endparseop();
 begin
- freeandnil(assstream);
+// freeandnil(assstream);
 end;
 
 procedure movesegreg0op();
@@ -1911,11 +1911,12 @@ const
 
 {$include optable.inc}
 
-procedure run();
+procedure run(const atarget: ttextstream);
 var
  endpo: pointer;
  lab: shortstring;
 begin
+ assstream:= atarget;
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
@@ -1941,5 +1942,5 @@ begin
 end;
 
 finalization
- freeandnil(assstream);
+// freeandnil(assstream);
 end.

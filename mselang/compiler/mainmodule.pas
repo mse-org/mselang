@@ -6,7 +6,7 @@ uses
  parserglob,msestream;
 
 type
- paramty = (pa_source); //item number in sysenv
+ paramty = (pa_source,pa_llvm); //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -25,7 +25,7 @@ implementation
 
 uses
  mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils;
+ msefileutils,segmentutils,llvmops;
  
 const
  startupmessage =
@@ -45,6 +45,8 @@ var
  mstr1: msestring;
  err: syserrorty;
  targetstream: tmsefilestream;
+ llvmstream: ttextstream;
+ backend: backendty;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -56,15 +58,29 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
-   if parse(str1,bke_direct) then begin
-    filename1:= replacefileext(filename1,'mlr');
-    if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
-                            err_cannotcreatetargetfile,[filename1]) then begin
-     try
-      writesegmentdata(targetstream,storedsegments);
-     finally
-      targetstream.destroy();
-     end;      
+   backend:= bke_direct;
+   if sysenv.defined[ord(pa_llvm)] then begin
+    backend:= bke_llvm;
+   end;
+   if parse(str1,backend) then begin
+    if backend = bke_llvm then begin
+     filename1:= replacefileext(filename1,'ll');
+     if checksysok(ttextstream.trycreate(llvmstream,filename1,fm_create),
+                             err_cannotcreatetargetfile,[filename1]) then begin
+      llvmops.run(llvmstream);
+      llvmstream.destroy();
+     end;
+    end
+    else begin
+     filename1:= replacefileext(filename1,'mlr');
+     if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
+                             err_cannotcreatetargetfile,[filename1]) then begin
+      try
+       writesegmentdata(targetstream,storedsegments);
+      finally
+       targetstream.destroy();
+      end;      
+     end;
     end;
    end;
   end;
