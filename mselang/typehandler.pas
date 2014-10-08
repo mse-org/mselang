@@ -555,7 +555,9 @@ begin
      end;
     end
     else begin
+{$ifdef mse_checkinternalerror}                             
      internalerror(ie_type,'20140915A');
+{$endif}
     end;
    end;
    with contextstack[stackindex-1] do begin
@@ -565,7 +567,9 @@ begin
    end;
   end
   else begin
+{$ifdef mse_checkinternalerror}                             
    internalerror(ie_type,'20140915B');
+{$endif}
   end;
 endlab:
   stacktop:= stackindex-1;

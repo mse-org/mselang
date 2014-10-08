@@ -655,7 +655,10 @@ type
   sublevel: integer;
   ssa: ssainfoty;
   unitlevel: integer;
+  outputstream: ttextstream;
+  outputwritten: boolean;
   errorstream: ttextstream;
+  errorwritten: boolean;
   errorfla: boolean;
   errors: array[errorlevelty] of integer;
 //  constseg: bytearty;

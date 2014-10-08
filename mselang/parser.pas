@@ -33,9 +33,11 @@ const
  nokeywordendchars = keywordchars+['0'..'9','_'];
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
 
+
+procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
   
-function parse(const input: string; const abackend: backendty;
-                                  const aerror: ttextstream): boolean;
+function parse(const input: string; const abackend: backendty{;
+                                  const aerror: ttextstream}): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -683,9 +685,18 @@ parseend:
  end;
 {$endif}
 end;
+
+procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
+begin
+ fillchar(info,sizeof(info),0);
+ exitcode:= 0;
+ with info do begin
+  outputstream:= aoutput;
+  errorstream:= aerror;
+ end;
+end;
         
-function parse(const input: string; const abackend: backendty;
-               const aerror: ttextstream
+function parse(const input: string; const abackend: backendty
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
 var
@@ -693,8 +704,6 @@ var
  unit1: punitinfoty;
  int1: integer;
 begin
- exitcode:= 0;
- fillchar(info,sizeof(info),0);
  result:= false;
  init();
  with info do begin
@@ -705,7 +714,6 @@ begin
     unit1^.filepath:= 'main.mla'; //dummy
     info.unitinfo:= unit1;
     stringbuffer:= '';
-    errorstream:= aerror;
     stackdepth:= defaultstackdepth;
     setlength(contextstack,stackdepth);
     stacktop:= -1;

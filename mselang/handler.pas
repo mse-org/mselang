@@ -696,6 +696,7 @@ procedure handleterm();
 begin
 {$ifdef mse_debugparser}
  outhandle('TERM');
+{$endif}
  with info do begin
   if stacktop-stackindex = 1 then begin
    contextstack[stackindex].d:= contextstack[stackindex+1].d;
@@ -703,7 +704,6 @@ begin
   stacktop:= stackindex;
   dec(stackindex);
  end;
-{$endif}
 end;
 
 procedure handledereference();

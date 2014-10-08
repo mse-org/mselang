@@ -66,23 +66,28 @@ uses
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
- stream1: ttextstream;
+ errstream,outstream: ttextstream;
  bo1: boolean;
  backend: backendty;
  str1: string;
  int1: integer;
 begin
+{$ifdef mse_debugparser}
  writeln('*****************************************');
- stream1:= ttextstream.create;
+{$endif}
+ errstream:= ttextstream.create;
+ outstream:= ttextstream.create;
+ initio(outstream,errstream);
  backend:= bke_direct;
  if llvm.value then begin
   backend:= bke_llvm;
  end;
- bo1:= parser.parse(ed.gettext,backend,stream1);
+ bo1:= parser.parse(ed.gettext,backend);
  try
-  stream1.position:= 0;
-  grid[0].datalist.loadfromstream(stream1);
-  stream1.free;
+  errstream.position:= 0;
+  grid[0].datalist.loadfromstream(errstream);
+  errstream.destroy();
+  outstream.destroy();
   if bo1 then begin
    if llvm.value then begin
     llvmops.run();

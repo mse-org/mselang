@@ -50,7 +50,7 @@ type
             err_identtoolong,err_illegalsetele,err_setelemustbecontiguous,
             err_anoninterfacedef,err_interfacetypeexpected,
             err_classtypeexpected,err_nomatchingimplementation,
-            err_duplicateancestortype,err_localclassdef);
+            err_duplicateancestortype,err_localclassdef,err_noinputfile);
             
  errorinfoty = record
   level: errorlevelty;
@@ -179,9 +179,14 @@ const
   (level: erl_error; message: 
           'No matching implementation for interface method "%s" found'),
   (level: erl_error; message: 'Duplicate ancestor type'),
-  (level: erl_error; message: 'Local class definitions are not allowed')
+  (level: erl_error; message: 'Local class definitions are not allowed'),
+  (level: erl_fatal; message: 'No input file defined')
  );
- 
+
+procedure message(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none;
+                       const tooutput: boolean = false); 
+
 procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -227,6 +232,8 @@ procedure filereaderror(const afile: filenamety);
 function typename(const ainfo: contextdataty): string;
 function typename(const atype: typedataty): string;
 
+function errorcount(const alevel: errorlevelty): integer;
+
 implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys;
@@ -242,6 +249,74 @@ end;
 function typename(const atype: typedataty): string;
 begin
  result:= getenumname(typeinfo(datakindty),ord(atype.kind));
+end;
+
+function errorcount(const alevel: errorlevelty): integer;
+var
+ erl1: errorlevelty;
+begin
+ result:= 0;
+ for erl1:= alevel downto low(errorlevelty) do begin
+  result:= result + info.errors[erl1];
+ end;
+end;
+
+procedure writeerror(const atext: string);
+begin
+ with info do begin
+  if outputwritten then begin
+   outputwritten:= false;
+   outputstream.flush();
+  end;
+  outputstream.writeln(atext);
+  errorstream.writeln(atext);
+  errorwritten:= true;
+ end;
+end;
+
+procedure writeoutput(const atext: string);
+begin
+ with info do begin
+  if errorwritten then begin
+   errorwritten:= false;
+   errorstream.flush();
+  end;
+  outputstream.writeln(atext);
+  outputwritten:= true;
+ end;
+end;
+
+procedure message(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none;
+                       const tooutput: boolean = false); 
+var
+ str1: string;
+ level1: errorlevelty;
+begin
+ with errortext[aerror],info do begin
+  level1:= level;
+  if aerrorlevel <> erl_none then begin
+   level1:= aerrorlevel;
+  end;
+  inc(errors[level1]);
+  str1:= errorleveltext[level1]+': '+format(message,values);
+  if tooutput then begin
+   writeerror(str1);
+  end
+  else begin
+   writeoutput(str1);
+  end;
+   
+{$ifdef debugparser}
+  writeln('<<<<<<< '+str1);
+{$endif}
+  if level1 <= stoperrorlevel then begin
+   stopparser:= true;
+  end;
+  if level1 <= errorerrorlevel then begin
+   errorfla:= true;
+  end;
+ end;
 end;
   
 procedure errormessage(const asourcepos: sourceinfoty;
@@ -274,8 +349,10 @@ begin
    inc(errors[level1]);
    str1:= filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
-   errorstream.writeln(str1);
+   writeerror(str1);
+{$ifdef debugparser}
    writeln('<<<<<<< '+str1);
+{$endif}
    if level1 <= stoperrorlevel then begin
     stopparser:= true;
    end;
