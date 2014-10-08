@@ -1,0 +1,28 @@
+object mainmo: tmainmo
+  bounds_cx = 331
+  bounds_cy = 255
+  oncreate = createexe
+  oneventloopstart = eventloopexe
+  onterminated = terminatedexe
+  left = 153
+  top = 369
+  moduleclassname = 'tmsedatamodule'
+  object sysenv: tsysenvmanager
+    options = [seo_appterminateonexception, seo_terminateonerror, seo_tooutput, seo_toerror]
+    left = 24
+    top = 16
+    defs = (
+      (
+        ak_arg
+        ''
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+    )
+  end
+end
