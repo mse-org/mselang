@@ -152,7 +152,7 @@ begin
  if checksysok(source.read(info1,sizeof(info1),int1),
                                                err_fileread,[]) then begin
   if info1.header.version <> 0 then begin
-   message(err_wrongversion,[inttostrmse(info1.header.version),'0']);
+   errormessage1(err_wrongversion,[inttostrmse(info1.header.version),'0']);
   end
   else begin
    segs1:= [];
@@ -160,7 +160,7 @@ begin
     with info1.items[seg1] do begin
      if shf_load in flags then begin
       if seg1 in segs1 then begin
-       message(err_invalidprogram,[]);
+       errormessage1(err_invalidprogram,[]);
        goto endlab;
       end;
       include(segs1,seg1);
@@ -173,7 +173,7 @@ begin
    end;
    if (segs1 * storedsegments <> storedsegments) or 
                        (segs1 - storedsegments <> []) then begin
-    message(err_invalidprogram,[]);
+    errormessage1(err_invalidprogram,[]);
     goto endlab;
    end;
    result:= true;

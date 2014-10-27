@@ -1,5 +1,5 @@
 unit program;
 implementation
 begin
- writeln(123);
+ writeln('abc');
 end.

@@ -25,7 +25,7 @@ implementation
 
 uses
  mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils,llvmops;
+ msefileutils,segmentutils,llvmops,sysutils;
  
 const
  startupmessage =
@@ -53,7 +53,7 @@ begin
  initio(foutputstream,ferrorstream);
  filename1:= sysenv.value[ord(pa_source)];
  if filename1 = '' then begin
-  message(err_noinputfile,[]);
+  errormessage1(err_noinputfile,[]);
  end
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
@@ -67,7 +67,14 @@ begin
      filename1:= replacefileext(filename1,'ll');
      if checksysok(ttextstream.trycreate(llvmstream,filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
-      llvmops.run(llvmstream);
+      try
+       llvmops.run(llvmstream);
+      except
+       on e: exception do begin
+        errormessage1(msestring(e.message),[]);
+        exitcode:= 1;
+       end;
+      end;
       llvmstream.destroy();
      end;
     end

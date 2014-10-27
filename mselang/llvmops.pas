@@ -441,6 +441,10 @@ const
  wint32 = '%d\00';
  wint32c = '[3 x i8] c"'+wint32+'"';
  wint32format = '[3 x i8]* @.wint32';
+ 
+ wstring8 = '%s\00';
+ wstring8c = '[3 x i8] c"'+wstring8+'"';
+ wstring8format = '[3 x i8]* @.wstring8';
   
 procedure beginparseop();
 var
@@ -603,10 +607,15 @@ procedure writefloatop();
 begin
  notimplemented();
 end;
+
 procedure writestring8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wstring8format+
+         ', i32 0, i32 0), i32 %'+inttostr(ssas1)+')');
+ end;
 end;
+
 procedure writeclassop();
 begin
  notimplemented();

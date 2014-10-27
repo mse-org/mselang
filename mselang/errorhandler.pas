@@ -192,9 +192,14 @@ const
   (level: erl_fatal; message: 'Invalid program')
  );
 
-procedure message(const aerror: errorty; const values: array of const;
-                       const aerrorlevel: errorlevelty = erl_none;
-                       const tooutput: boolean = false); 
+procedure message1(const atext: string; const values: array of const); 
+procedure errormessage1(const atext: string; const values: array of const); 
+
+procedure message1(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none); 
+procedure errormessage1(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none); 
+
 procedure errormessage(const asourcepos: sourceinfoty;
                    const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
@@ -296,9 +301,19 @@ begin
  end;
 end;
 
-procedure message(const aerror: errorty; const values: array of const;
-                       const aerrorlevel: errorlevelty = erl_none;
-                       const tooutput: boolean = false); 
+procedure printmessage(const atext: string; const toerror: boolean);
+begin
+ if toerror then begin
+  writeoutput(atext);
+ end
+ else begin
+  writeerror(atext);
+ end;
+end;
+
+procedure printmessage(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty;
+                       const toerror: boolean);
 var
  str1: string;
  level1: errorlevelty;
@@ -310,15 +325,12 @@ begin
   end;
   inc(errors[level1]);
   str1:= errorleveltext[level1]+': '+format(message,values);
-  if tooutput then begin
-   writeoutput(str1);
-  end
-  else begin
-   writeerror(str1);
-  end;
+  printmessage(str1,toerror);
    
 {$ifdef mse_debugparser}
-  writeln('<<<<<<< '+str1);
+  if toerror then begin
+   writeln('<<<<<<< '+str1);
+  end;
 {$endif}
   if level1 <= stoperrorlevel then begin
    stopparser:= true;
@@ -327,6 +339,28 @@ begin
    errorfla:= true;
   end;
  end;
+end;
+                       
+procedure errormessage1(const atext: string; const values: array of const); 
+begin
+ printmessage(format(atext,values),true);
+end;
+
+procedure message1(const atext: string; const values: array of const); 
+begin
+ printmessage(format(atext,values),false);
+end;
+  
+procedure errormessage1(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none); 
+begin
+ printmessage(aerror,values,aerrorlevel,true);
+end;
+
+procedure message1(const aerror: errorty; const values: array of const;
+                       const aerrorlevel: errorlevelty = erl_none); 
+begin
+ printmessage(aerror,values,aerrorlevel,false);
 end;
   
 procedure errormessage(const asourcepos: sourceinfoty;
@@ -408,7 +442,7 @@ function checksysok(const asyserror: syserrorty; const aerror: errorty;
 begin
  result:= asyserror = sye_ok;
  if not result then begin
-  message(aerror,mergevarrec(values,[syserrortext(asyserror)]));
+  errormessage1(aerror,mergevarrec(values,[syserrortext(asyserror)]));
  end;
 end;
 
