@@ -1083,9 +1083,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NOIMPLEMENTATIONERROR');
 {$endif}
- tokenexpectederror(tk_implementation);
  with info do begin
-  stackindex:= -1;
+  if unitinfo^.prev <> nil then begin
+   tokenexpectederror(tk_implementation);
+  end;
+  //  stackindex:= -1;
  end;
 end;
 
@@ -1334,9 +1336,9 @@ begin
  handleunitend();
 // checkforwarderrors(info.unitinfo^.forwardlist);
  with info do begin
-  if unitlevel = 1 then begin
-   errormessage(err_syntax,['begin']);
-  end;
+//  if unitlevel = 1 then begin
+//   errormessage(err_syntax,['begin']);
+//  end;
   dec(stackindex);
  end;
 end;

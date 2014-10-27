@@ -53,7 +53,7 @@ begin
  initio(foutputstream,ferrorstream);
  filename1:= sysenv.value[ord(pa_source)];
  if filename1 = '' then begin
-  message(err_noinputfile,[]);
+  message(err_noinputfile,[],erl_none,false);
  end
  else begin
   if checksysok(tmsefilestream.trycreate(inputstream,filename1,fm_read),

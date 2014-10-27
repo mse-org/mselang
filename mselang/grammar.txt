@@ -49,9 +49,11 @@
 @.tokens
  'result','exitcode'
 start,nounit,,
- ${whitespace} 
+ ${whitespace}
  'unit'.,unit0-
+ 'program'.,program0-
 nounit,,,handlenouniterror
+program0,unit0,handleprogramentry,
 unit0,nounitname,,
  ${whitespace}
  @identstart,ident^*,unit1
@@ -104,7 +106,7 @@ commaidents2,,,^
  ',',commaidents-
 commaidentsnoidenterror,,,handlenoidenterror
 
-noimplementation,,,handlenoimplementationerror
+noimplementation,implementation,handlenoimplementationerror,
 
 implementation,implementation1,handleimplementationentry,
  '',main*

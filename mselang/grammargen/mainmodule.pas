@@ -479,7 +479,7 @@ begin
     end
     else begin //no macrodef
      mstr1:= utf8tostring(str1);
-     macrolist1.expandmacros(mstr1);
+     macrolist1.expandmacros1(mstr1);
      if (mstr1 <> '') and (mstr1[1] <> '#') then begin //no comment
       expandedtext:= breaklines(stringtoutf8(mstr1));
       for lnr:= 0 to high(expandedtext) do begin

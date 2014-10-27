@@ -23,6 +23,8 @@ uses
 function newunit(const aname: string): punitinfoty; 
 function loadunit(const aindex: integer): punitinfoty;
 
+procedure handleprogramentry();
+
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 procedure handleimplementationentry();
@@ -76,6 +78,18 @@ type
 
 var
  unitlist: tunitlist;
+
+procedure handleprogramentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROGRAMENTRY');
+{$endif}
+ with info,unitinfo^ do begin
+  if prev <> nil then begin
+   tokenexpectederror(tk_unit);
+  end;  
+ end;
+end;
  
 procedure setunitname(); //unitname on top of stack
 var
@@ -88,7 +102,7 @@ begin
 {$endif}
  with info do begin
   id1:= contextstack[stacktop].d.ident.ident;
-  if unitinfo^.key <> id1 then begin
+  if (unitinfo^.key <> id1) and (unitinfo^.prev <> nil) then begin
    identerror(1,err_illegalunitname);
   end
   else begin

@@ -279,7 +279,6 @@ begin
    outputwritten:= false;
    outputstream.flush();
   end;
-  outputstream.writeln(atext);
   errorstream.writeln(atext);
   errorwritten:= true;
  end;
@@ -312,13 +311,13 @@ begin
   inc(errors[level1]);
   str1:= errorleveltext[level1]+': '+format(message,values);
   if tooutput then begin
-   writeerror(str1);
+   writeoutput(str1);
   end
   else begin
-   writeoutput(str1);
+   writeerror(str1);
   end;
    
-{$ifdef debugparser}
+{$ifdef mse_debugparser}
   writeln('<<<<<<< '+str1);
 {$endif}
   if level1 <= stoperrorlevel then begin
@@ -361,7 +360,7 @@ begin
    str1:= filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
    writeerror(str1);
-{$ifdef debugparser}
+{$ifdef mse_debugparser}
    writeln('<<<<<<< '+str1);
 {$endif}
    if level1 <= stoperrorlevel then begin
