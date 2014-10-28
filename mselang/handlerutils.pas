@@ -696,7 +696,6 @@ begin
      with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
       par.vsegaddress.a:= segad1;
       par.vsegaddress.offset:= 0;
-//      par.vsegaddress.datasize:= 0; //todo
      end;
     end;
    end;

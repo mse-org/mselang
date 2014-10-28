@@ -2214,6 +2214,7 @@ begin
     pbyte(pointer(po1))[len]:= 0;
    end;
   end;
+  result.size:= 0; //pointer
   if len = 0 then begin
    result.address:= 0;
    result.segment:= seg_nil;

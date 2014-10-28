@@ -1,4 +1,5 @@
 unit program;
 begin
  writeln('abc');
+ writeln('def');
 end;
