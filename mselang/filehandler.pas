@@ -20,6 +20,7 @@ interface
 uses
  msestrings;
  
+function getunitfile(const aname: filenamety): filenamety;
 function getunitfile(const aname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
 
@@ -27,6 +28,14 @@ implementation
 uses
  msefileutils;
  
+function getunitfile(const aname: filenamety): filenamety;
+begin
+ result:= filepath(aname+'.mla');
+ if not findfile(result) then begin
+  result:= '';
+ end;
+end;
+
 function getunitfile(const aname: lstringty): filenamety;
 begin
 // result:= filepath(utf8tostring(aname)+'.pas');

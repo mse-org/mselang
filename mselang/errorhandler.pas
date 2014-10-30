@@ -52,7 +52,7 @@ type
             err_classtypeexpected,err_nomatchingimplementation,
             err_duplicateancestortype,err_localclassdef,err_noinputfile,
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
-            err_wrongversion,err_invalidprogram);
+            err_wrongversion,err_invalidprogram,err_compilerunitnotfound);
             
  errorinfoty = record
   level: errorlevelty;
@@ -189,7 +189,8 @@ const
   (level: erl_fatal; message: 'Can not create target file, error:'+lineend+
                               '%s'),
   (level: erl_fatal; message: 'Wrong version "%s", expected "%s"'),
-  (level: erl_fatal; message: 'Invalid program')
+  (level: erl_fatal; message: 'Invalid program'),
+  (level: erl_fatal; message: 'Compiler unit "%s" not found')  
  );
 
 procedure message1(const atext: string; const values: array of const); 

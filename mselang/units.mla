@@ -1,7 +1,7 @@
 unit program;
 uses
  unit1;
-implementation
 begin
+ writeln('main');
  tt1(123);
 end.

@@ -1,5 +1,7 @@
 unit program;
+//var
+// str1: string8;
 begin
+// str1:= 'abc';
  writeln('abc');
- writeln('def');
 end;

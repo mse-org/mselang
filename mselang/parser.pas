@@ -41,6 +41,7 @@ function parse(const input: string; const abackend: backendty{;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
+                                       
 procedure pushincludefile(const afilename: filenamety);
 
 //procedure init;
@@ -695,7 +696,7 @@ begin
   errorstream:= aerror;
  end;
 end;
-        
+
 function parse(const input: string; const abackend: backendty
                 {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
                               //true if ok
@@ -730,7 +731,10 @@ begin
       beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;
-    result:= parseunit(input,unit1);
+    result:= parsecompilerunit('__mla__compilerunit');
+    if result then begin
+     result:= parseunit(input,unit1);
+    end;
     endparser();
    finally
     system.finalize(info);

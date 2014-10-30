@@ -22,6 +22,7 @@ uses
 
 function newunit(const aname: string): punitinfoty; 
 function loadunit(const aindex: integer): punitinfoty;
+function parsecompilerunit(const aname: filenamety): boolean;
 
 procedure handleprogramentry();
 
@@ -203,17 +204,6 @@ begin
  end;
 end;
 
-function parseusesunit(const aunit: punitinfoty): boolean;
-begin
- with aunit^ do begin
-  writeln('***************************************** uses');
-  writeln(filepath);
-//todo: use mmap(), problem: no terminating 0.
-  result:= parseunit(readfiledatastring(filepath),aunit);
-  include(state,us_implementationparsed);
- end;
-end;
-
 type
  unitlinkinfoty = record  //used for ini, fini
   header: linkheaderty;
@@ -234,7 +224,45 @@ begin
   result:= unitlist.newunit(id);
  end;
 end;
- 
+
+function parseusesunit(const aunit: punitinfoty): boolean;
+begin
+ with aunit^ do begin
+{$ifdef mse_debugparser}
+  writeln('***************************************** uses');
+  writeln(filepath);
+{$endif}
+//todo: use mmap(), problem: no terminating 0.
+  result:= parseunit(readfiledatastring(filepath),aunit);
+  include(state,us_implementationparsed);
+ end;
+end;
+
+function parsecompilerunit(const aname: filenamety): boolean;
+var
+ unit1: punitinfoty;
+ str1: string;
+begin
+ result:= false;
+ str1:= stringtoutf8(aname);
+ unit1:= newunit(str1);
+ with unit1^ do begin
+  name:= str1;
+  prev:= info.unitinfo;
+  filepath:= filehandler.getunitfile(aname);
+  if filepath = '' then begin
+   filepath:= filehandler.getunitfile('compiler/'+aname);
+   if filepath = '' then begin
+    errormessage(err_compilerunitnotfound,[aname]);
+    exit;
+   end;
+  end;
+  inc(info.unitlevel);
+  result:= parseusesunit(unit1);
+  dec(info.unitlevel);
+ end;
+end;
+         
 function loadunit(const aindex: integer): punitinfoty;
 var
  lstr1: lstringty;
@@ -256,14 +284,6 @@ begin
      if not parseusesunit(result) then begin
       result:= nil;
      end
-{    
-     if not parseinterface(info,result) then begin
-      result:= nil;
-     end
-     else begin
-      implementationpending.add(result);
-     end;
-}
     end;
    end;
   end

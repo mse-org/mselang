@@ -86,6 +86,7 @@ var
  assstream: ttextstream;
  globconst: string;
 
+//todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
 const
  itemsize = 7; //'i8 123,'
@@ -167,7 +168,51 @@ const
                
 function segdataaddress(const address: segdataaddressty): string;
 begin
- result:= segprefix[address.a.segment]+inttostr(address.a.address);
+ case address.a.segment of
+  seg_globconst: begin
+   if address.a.size = 0 then begin
+    result:= 'bitcast (i8* getelementptr ('+globconst+',i32 0, i32 '+
+                                 inttostr(address.a.address)+') to i8**)';
+   end
+   else begin
+    if address.a.size < 0 then begin //int
+     result:= 'bitcast i8* (getelementptr '+globconst+',i32 0, i32 '+
+                                           inttostr(address.a.address) + 
+                          ') to i'+inttostr(-address.a.size)+'* ';
+    end
+    else begin                       //record
+     result:= 'getelementptr '+globconst+',i32 0, i32 '+
+                          inttostr(address.a.address + address.offset);
+    end;
+   end;
+  end;
+  else begin
+   result:= segprefix[address.a.segment]+inttostr(address.a.address);
+  end;
+ end;
+end;
+
+function segdataaddresspo(const address: segdataaddressty): string;
+var
+ str1: shortstring;
+begin
+ if address.a.size = 0 then begin //pointer
+  
+  result:='bitcast i8** '+segdataaddress(address)+' to i8*';
+ end
+ else begin
+  if address.a.size < 0 then begin //int
+   str1:= 'i'+inttostr(-address.a.size)+'* ';
+   result:= 'bitcast '+str1+'getelementptr('+str1+
+                                      segdataaddress(address)+') to i8*';
+  end
+  else begin                           //record
+   result:= 'getelementptr ['+
+              inttostr(address.a.size)+' x i8]* '+
+              segdataaddress(address)+', i32 0, i32 '+
+              inttostr(address.offset);
+  end;
+ end;
 end;
 
 function segaddress(const address: segaddressty): string;
@@ -962,10 +1007,16 @@ begin
  notimplemented();
 end;
 
-procedure decrefsizesegop();
+procedure decrefsize(const aaddress: string);
 begin
  notimplemented();
 end;
+
+procedure decrefsizesegop();
+begin
+ decrefsize(segdataaddress(pc^.par.vsegaddress));
+end;
+
 procedure decrefsizeframeop();
 begin
  notimplemented();
@@ -1297,29 +1348,35 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  if vsegaddress.a.size = 0 then begin
+  outass('%'+inttostr(ssad)+' = '+ segdataaddresspo(vsegaddress));
+ (*
+  if vsegaddress.a.size = 0 then begin //pointer
+   outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
+                                 segdataaddress(vsegaddress)+') to i8*');
+  {
    if vsegaddress.a.segment = seg_globconst then begin
-    outass('%'+inttostr(ssad)+' = getelementptr'+globconst+',i32 0, i32 '+
-                                             inttostr(vsegaddress.a.address));
+    outass('%'+inttostr(ssad)+' = '+segdataaddress(vsegaddress));
    end
    else begin
     outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
                                  segdataaddress(vsegaddress)+') to i8*');
    end;
+  }
   end
   else begin
-   if vsegaddress.a.size < 0 then begin
+   if vsegaddress.a.size < 0 then begin //int
     str1:= 'i'+inttostr(-vsegaddress.a.size)+'* ';
     outass('%'+inttostr(ssad)+' = bitcast '+str1+'getelementptr('+str1+
                                        segdataaddress(vsegaddress)+') to i8*');
    end
-   else begin
+   else begin                           //record
     outass('%'+inttostr(ssad)+' = getelementptr ['+
                inttostr(vsegaddress.a.size)+' x i8]* '+
                segdataaddress(vsegaddress)+', i32 0, i32 '+
                inttostr(vsegaddress.offset));
    end;
   end;
+  *)
  end;
 end;
 

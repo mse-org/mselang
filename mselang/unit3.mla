@@ -5,6 +5,7 @@ procedure tt3(p1: int32);
 implementation
 procedure tt3(p1: int32);
 begin
+// writeln('tt3');
  writeln(p1);
 end;
 {$dumpelements}

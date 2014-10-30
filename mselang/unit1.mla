@@ -6,6 +6,7 @@ implementation
 
 procedure tt1(p1: int32);
 begin
+ writeln('tt1');
  tt3(p1);
 end;
 

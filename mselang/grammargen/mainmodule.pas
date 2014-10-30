@@ -475,7 +475,7 @@ begin
       macrotext:= macrotext+lineend;
       readline(str2);
      end;
-     macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)]);
+     macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)],[]);
     end
     else begin //no macrodef
      mstr1:= utf8tostring(str1);

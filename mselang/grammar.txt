@@ -61,8 +61,11 @@ nounitname,,handlenounitnameerror,
 unit1,unit2,,setunitname*
 unit2,semicolonexpected,,
  ${whitespace}
- ';',start1-
-#
+ ';',unit3-
+unit3,start1,,
+ ${whitespace}
+ 'interface'.,start1-
+# "interface" facultative
 checksemicolon,,,^
  ${whitespace}
  ';',-*
