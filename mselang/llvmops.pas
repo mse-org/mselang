@@ -1423,6 +1423,26 @@ begin
  assignseg();
 end;
 
+procedure pushsegpoop();
+begin
+ assignseg();
+end;
+
+procedure pushsegf16op();
+begin
+ assignseg();
+end;
+
+procedure pushsegf32op();
+begin
+ assignseg();
+end;
+
+procedure pushsegf64op();
+begin
+ assignseg();
+end;
+
 procedure pushsegop();
 begin
  assignseg();
@@ -1449,6 +1469,21 @@ begin
 end;
 
 procedure pushlocpoop();
+begin
+ assignloc();
+end;
+
+procedure pushlocf16op();
+begin
+ assignloc();
+end;
+
+procedure pushlocf32op();
+begin
+ assignloc();
+end;
+
+procedure pushlocf64op();
 begin
  assignloc();
 end;
@@ -1483,6 +1518,21 @@ begin
  assignpar();
 end;
 
+procedure pushparf16op();
+begin
+ assignpar();
+end;
+
+procedure pushparf32op();
+begin
+ assignpar();
+end;
+
+procedure pushparf64op();
+begin
+ assignpar();
+end;
+
 procedure pushparop();
 begin
  assignpar();
@@ -1504,6 +1554,26 @@ begin
 end;
 
 procedure pushlocindi64op();
+begin
+ assignlocindi();
+end;
+
+procedure pushlocindipoop();
+begin
+ assignlocindi();
+end;
+
+procedure pushlocindif16op();
+begin
+ assignlocindi();
+end;
+
+procedure pushlocindif32op();
+begin
+ assignlocindi();
+end;
+
+procedure pushlocindif64op();
 begin
  assignlocindi();
 end;
@@ -2237,6 +2307,10 @@ const
   pushseg16ssa = 1;
   pushseg32ssa = 1;
   pushseg64ssa = 1;
+  pushsegpossa = 1;
+  pushsegf16ssa = 1;
+  pushsegf32ssa = 1;
+  pushsegf64ssa = 1;
   pushsegssa = 1;
 
   pushloc8ssa = 1;
@@ -2244,12 +2318,19 @@ const
   pushloc32ssa = 1;
   pushloc64ssa = 1;
   pushlocpossa = 1;
+  pushlocf16ssa = 1;
+  pushlocf32ssa = 1;
+  pushlocf64ssa = 1;
   pushlocssa = 1;
 
   pushlocindi8ssa = 3;
   pushlocindi16ssa = 3;
   pushlocindi32ssa = 3;
   pushlocindi64ssa = 3;
+  pushlocindipossa = 3;
+  pushlocindif16ssa = 3;
+  pushlocindif32ssa = 3;
+  pushlocindif64ssa = 3;
   pushlocindissa = 3;
 
   pushpar8ssa = 1;
@@ -2257,6 +2338,9 @@ const
   pushpar32ssa = 1;
   pushpar64ssa = 1;
   pushparpossa = 1;
+  pushparf16ssa = 1;
+  pushparf32ssa = 1;
+  pushparf64ssa = 1;
   pushparssa = 1;
 
   pushaddrssa = 1;

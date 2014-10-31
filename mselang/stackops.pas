@@ -818,6 +818,30 @@ begin
                                     cpu.pc^.par.memop.segdataaddress))^;
 end;
 
+procedure pushsegpoop();
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= ppointer(getsegaddress(
+                                   cpu.pc^.par.memop.segdataaddress))^;
+end;
+
+procedure pushsegf16op();
+begin
+ pv16ty(stackpush(2))^:= pv16ty(getsegaddress(
+                                cpu.pc^.par.memop.segdataaddress))^;
+end;
+
+procedure pushsegf32op();
+begin
+ pv32ty(stackpush(4))^:= pv32ty(getsegaddress(
+                                    cpu.pc^.par.memop.segdataaddress))^;
+end;
+
+procedure pushsegf64op();
+begin
+ pv64ty(stackpush(8))^:= pv64ty(getsegaddress(
+                                    cpu.pc^.par.memop.segdataaddress))^;
+end;
+
 procedure pushsegop();
 var
  int1: integer;       
@@ -1099,6 +1123,24 @@ begin
                 ppointer(getlocaddress(cpu.pc^.par.memop.locdataaddress))^;
 end;
 
+procedure pushlocf16op();
+begin
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddress(
+                                   cpu.pc^.par.memop.locdataaddress))^;
+end;
+
+procedure pushlocf32op();
+begin
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddress(
+                                   cpu.pc^.par.memop.locdataaddress))^;
+end;
+
+procedure pushlocf64op();
+begin
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddress(
+                                   cpu.pc^.par.memop.locdataaddress))^;
+end;
+
 procedure pushlocop();
 var
  int1: integer;
@@ -1133,6 +1175,21 @@ begin
  pushlocpoop();
 end;
 
+procedure pushparf16op();
+begin
+ pushlocf16op();
+end;
+
+procedure pushparf32op();
+begin
+ pushlocf32op();
+end;
+
+procedure pushparf64op();
+begin
+ pushlocf64op();
+end;
+
 procedure pushparop();
 begin
  pushlocop();
@@ -1162,6 +1219,29 @@ begin
                             cpu.pc^.par.memop.locdataaddress))^;
 end;
 
+procedure pushlocindipoop();
+begin
+ ppointer(stackpush(sizeof(pointer)))^:= ppointer(getlocaddressindi(
+                            cpu.pc^.par.memop.locdataaddress))^;
+end;
+
+procedure pushlocindif16op();
+begin
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(
+                            cpu.pc^.par.memop.locdataaddress))^;
+end;
+
+procedure pushlocindif32op();
+begin
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(
+                            cpu.pc^.par.memop.locdataaddress))^;
+end;
+
+procedure pushlocindif64op();
+begin
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddressindi(
+                            cpu.pc^.par.memop.locdataaddress))^;
+end;
 
 procedure pushlocindiop();
 var
@@ -2212,6 +2292,10 @@ const
   pushseg16ssa = 0;
   pushseg32ssa = 0;
   pushseg64ssa = 0;
+  pushsegpossa = 0;
+  pushsegf16ssa = 0;
+  pushsegf32ssa = 0;
+  pushsegf64ssa = 0;
   pushsegssa = 0;
 
   pushloc8ssa = 0;
@@ -2219,12 +2303,19 @@ const
   pushloc32ssa = 0;
   pushloc64ssa = 0;
   pushlocpossa = 0;
+  pushlocf16ssa = 0;
+  pushlocf32ssa = 0;
+  pushlocf64ssa = 0;
   pushlocssa = 0;
 
   pushlocindi8ssa = 0;
   pushlocindi16ssa = 0;
   pushlocindi32ssa = 0;
   pushlocindi64ssa = 0;
+  pushlocindipossa = 0;
+  pushlocindif16ssa = 0;
+  pushlocindif32ssa = 0;
+  pushlocindif64ssa = 0;
   pushlocindissa = 0;
 
   pushpar8ssa = 0;
@@ -2232,6 +2323,9 @@ const
   pushpar32ssa = 0;
   pushpar64ssa = 0;
   pushparpossa = 0;
+  pushparf16ssa = 0;
+  pushparf32ssa = 0;
+  pushparf64ssa = 0;
   pushparssa = 0;
 
   pushaddrssa = 0;
