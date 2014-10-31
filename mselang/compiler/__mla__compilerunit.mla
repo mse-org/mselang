@@ -12,7 +12,6 @@ interface
 
 type
  ppointer = ^pointer;
- 
 procedure __mla__decrefsize(const ref: ppointer);
 procedure __mla__finirefsize(const ref: ppointer);
 

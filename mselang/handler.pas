@@ -643,7 +643,7 @@ end;
 *)
 
 const
- mulops: opsinfoty = (ops: (oc_none,oc_none,oc_mulint32,oc_mulflo64);
+ mulops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_mulint32,oc_mulflo64);
                      opname: '*');
  
 procedure handlemulfact();
@@ -655,7 +655,7 @@ begin
 end;
 
 const
- addops: opsinfoty = (ops: (oc_none,oc_none,oc_addint32,oc_addflo64);
+ addops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_addint32,oc_addflo64);
                      opname: '+');
 
 procedure handleaddterm();
@@ -788,8 +788,8 @@ end;
 
 const
  negops: array[datakindty] of opcodety = (
- //dk_none, dk_boolean,dk_cardinal,dk_integer,dk_float,
-   oc_none, oc_none,   oc_negcard32, oc_negint32, oc_negflo64,
+ //dk_none, dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
+   oc_none, oc_none,   oc_none,   oc_negcard32, oc_negint32, oc_negflo64,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,
  //dk_array,dk_class,dk_interface,
@@ -1385,7 +1385,7 @@ begin
 end;
 
 const
- cmpequops: opsinfoty = (ops: (oc_none,oc_cmpequbool,oc_cmpequint32,
+ cmpequops: opsinfoty = (ops: (oc_none,oc_none,oc_cmpequbool,oc_cmpequint32,
                         oc_cmpequflo64);
                         opname: '=');
 

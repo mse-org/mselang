@@ -61,7 +61,8 @@ type
  pint32 = ^int32;
  ppint32 = ^int32;
 
- datakindty = (dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+ datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
+               dk_kind,
                dk_address,dk_record,dk_string8,dk_dynarray,
                dk_array,dk_class,dk_interface,
                dk_enum,dk_enumitem,dk_set);
@@ -78,6 +79,7 @@ type
 
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
+ pointerdatakinds = [dk_pointer,dk_dynarray,dk_interface,dk_class,dk_string8];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
  
@@ -148,7 +150,7 @@ type
                   ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
- stackdatakindty = (sdk_none,sdk_bool1,sdk_int32,sdk_flo64);
+ stackdatakindty = (sdk_none,sdk_pointer,sdk_bool1,sdk_int32,sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
 
  opaddressty = ptruint;         //todo: use target size

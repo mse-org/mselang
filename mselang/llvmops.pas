@@ -31,7 +31,8 @@ procedure run(const atarget: ttextstream);
  
 implementation
 uses
- sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit;
+ sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
+ handlerutils;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -40,6 +41,7 @@ type
 
 const
  breakline = c_linefeed;
+ nilconst = 'i8* inttoptr(i32 0 to i8*)';
  icomparetokens: array[icomparekindty] of string[3] = (
                   'eq','ne',
                   'ugt','uge','ult','ule',
@@ -183,6 +185,24 @@ begin
    if result = '' then begin
     result:= 'i'+inttostr(asize.size);
    end;
+  end;
+ end;
+end;
+
+function llvmglobvar(const avar: pvardataty): shortstring;
+var
+ po1: ptypedataty;
+begin
+ if (avar^.address.indirectlevel > 0) then begin
+  result:= nilconst;
+ end
+ else begin
+  po1:= ptypedataty(ele.eledataabs(avar^.vf.typ));
+  if po1^.kind in pointerdatakinds then begin
+   result:= nilconst;
+  end
+  else begin
+   result:= llvmtype(getopdatatype(po1,avar^.address.indirectlevel))+ ' 0';
   end;
  end;
 end;
@@ -656,7 +676,7 @@ var
  po1: psubdataty;
 begin
  po1:= ele.eledataabs(compilersubs[asub]);
- outass('call void @s'+inttostr(po1^.address+1)+'('+aparams+')');
+ outass('call void @s'+inttostr(po1^.address)+'('+aparams+')');
 end;
 
 procedure decrefsize(const aaddress: string);
@@ -666,7 +686,7 @@ end;
 
 procedure finirefsize(const aaddress: string);
 begin
- callcompilersub(cs_finifrefsize,aaddress);
+ callcompilersub(cs_finifrefsize,'i8* '+aaddress);
 end;
 
 procedure nopop();
@@ -724,6 +744,8 @@ begin
    ele2:= po1^.varchain;
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
+    outass(segaddress(po2^.address.segaddress)+' = global '+ llvmglobvar(po2));
+{
     if po2^.address.indirectlevel > 0 then begin
      outass(segaddress(po2^.address.segaddress)+
                          ' = global i8* inttoptr(i32 0 to i8*)');
@@ -739,6 +761,7 @@ begin
               inttostr(po3^.bitsize)+ ' 0');
      end;
     end;
+}
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
@@ -1000,7 +1023,7 @@ end;
 procedure storesegnilop();
 begin
  with pc^.par do begin
-  outass(segdataaddress(vsegaddress)+' = null');
+  outass('store '+nilconst+', i8** '+segdataaddress(vsegaddress));
  end;
 end;
 

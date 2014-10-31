@@ -40,8 +40,8 @@ uses
  stackops;
 const
  setlengthops: array[datakindty] of opcodety = (
-  //dk_none,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-    oc_none,oc_none,   oc_none,    oc_none,   oc_none, oc_none,
+  //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+    oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,      dk_dynarray,         
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,
   //dk_array,dk_class,dk_interface,
