@@ -67,21 +67,14 @@ type
                dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  
-type
- opdatakindty = (odk_bit,odk_byte);
-const
- bitopdatakinds = [odk_bit];
- byteopdatakinds = [odk_byte];
-type
+//type
+// opdatakindty = (odk_bit,odk_byte);
+{
  opdatatypeinfoty = record        //necessary for llvm
   kind: opdatakindty;
   size: integer;       //bits or bytes
  end;
-const
- pointeroptype: opdatatypeinfoty = (
-  kind: odk_bit;
-  size: pointerbitsize;
- );
+}
 
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
@@ -90,9 +83,26 @@ const
  
 type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
-                  das_33_63,das_64,das_pointer);
+                  das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64);
 const
+ alldatakinds = [das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+                  das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64];
  databytesizes = [das_none];
+ byteopdatakinds = databytesizes;
+ bitopdatakinds = alldatakinds-byteopdatakinds;
+
+type
+ typeallocinfoty = record
+  kind: databitsizety;
+  size: integer;        //bits or bytes
+ end; 
+
+const
+ pointeroptype: typeallocinfoty = (
+  kind: das_pointer;
+  size: pointerbitsize;
+ );
+
  
 type
  movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);
@@ -343,7 +353,7 @@ type
  
  factinfoty = record
   ssaindex: integer;
-  opdatatype: opdatatypeinfoty;
+  opdatatype: typeallocinfoty;
 //  databitsize: integer;
  {
   case contextkindty of

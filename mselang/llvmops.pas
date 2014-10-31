@@ -31,7 +31,7 @@ procedure run(const atarget: ttextstream);
  
 implementation
 uses
- sysutils,msesys,segmentutils,handlerglob,elements,msestrings;
+ sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -153,7 +153,7 @@ begin
    ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));
  end;
 end;
-  
+
 procedure notimplemented();
 begin
  raise exception.create('LLVM OP not implemented');
@@ -165,8 +165,29 @@ const
    '',     '@s',       '@gv',      '@gc',
  //seg_op,seg_rtti,seg_intf,seg_paralloc
    '@o',  '@rt',   '@if',   '');
-               
-function segdataaddress(const address: segdataaddressty): string;
+ 
+ typestrings: array[databitsizety] of string = (
+  //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
+    '',      'i1', '',     'i8', '',      'i16', '',       'i32',  
+  //das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64
+    '',       'i64', 'i8*',      'half', 'float','double');
+
+function llvmtype(const asize: typeallocinfoty): shortstring;
+begin
+ case asize.kind of
+  das_none: begin
+   result:= '['+inttostr(asize.size)+'x i8]';
+  end;
+  else begin
+   result:= typestrings[asize.kind];
+   if result = '' then begin
+    result:= 'i'+inttostr(asize.size);
+   end;
+  end;
+ end;
+end;
+
+function segdataaddress(const address: segdataaddressty): shortstring;
 begin
  case address.a.segment of
   seg_globconst: begin
@@ -194,22 +215,20 @@ end;
 
 function segdataaddresspo(const address: segdataaddressty): string;
 var
- str1: shortstring;
+ str1,str2: shortstring;
 begin
+ str2:= segdataaddress(address);
  if address.a.size = 0 then begin //pointer
-  
-  result:='bitcast i8** '+segdataaddress(address)+' to i8*';
+  result:='bitcast i8** '+str2+' to i8*';
  end
  else begin
   if address.a.size < 0 then begin //int
    str1:= 'i'+inttostr(-address.a.size)+'* ';
-   result:= 'bitcast '+str1+'getelementptr('+str1+
-                                      segdataaddress(address)+') to i8*';
+   result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
   end
   else begin                           //record
    result:= 'getelementptr ['+
-              inttostr(address.a.size)+' x i8]* '+
-              segdataaddress(address)+', i32 0, i32 '+
+              inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
               inttostr(address.offset);
   end;
  end;
@@ -314,9 +333,14 @@ end;
 }
 procedure segassign();
 var
- str1,str2: shortstring;
+ str1: shortstring;
 begin
  with pc^.par do begin
+  str1:= llvmtype(memop.t);
+  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
+                                     segdataaddress(memop.segdataaddress));
+
+{
   case memop.t.kind of
    odk_bit: begin
     str1:= 'i'+inttostr(memop.t.size);
@@ -336,14 +360,16 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
 procedure assignseg();
-var
- str1,str2: shortstring;
 begin
  with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = load '+llvmtype(memop.t)+'* '+
+                               segdataaddress(memop.segdataaddress));
+{
   case memop.t.kind of
    odk_bit: begin
     str1:= 'i'+inttostr(memop.t.size);
@@ -364,6 +390,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 {
@@ -377,6 +404,25 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
+  str1:= llvmtype(memop.t);
+  str2:= '%'+inttostr(ssas1);
+  if memop.locdataaddress.a.framelevel >= 0 then begin
+   str3:= '%'+inttostr(ssad-2);
+   str4:= '%'+inttostr(ssad-1);
+   str5:= '%'+inttostr(ssad);
+   outass(str3+' = getelementptr i8** %fp, i32 '+
+                                   inttostr(memop.locdataaddress.a.address));
+   outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
+   outass(str5+' = load '+str1+'** '+str4);
+   outass('store '+str1+' '+str2+
+               ', '+str1+'* '+str5);
+  end
+  else begin
+   outass('store '+str1+' '+str2+', '+
+                         str1+'* '+ locdataaddress(memop.locdataaddress));
+  end;
+
+{
   case memop.t.kind of
    odk_bit: begin
     str1:= 'i'+inttostr(memop.t.size);
@@ -401,6 +447,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -419,9 +466,16 @@ end;
 
 procedure assignindirect();
 var
- dest1,dest2: shortstring;
+ str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin
+  str1:= llvmtype(memop.t);
+  dest1:= '%'+inttostr(ssad-1);
+  dest2:= '%'+inttostr(ssad);
+  outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
+                          ' to '+str1+'*');
+  outass(dest2+' = load '+str1+'* '+dest1);
+{  
   case memop.t.kind of
    odk_bit: begin
     dest1:= '%'+inttostr(ssad-1);
@@ -434,6 +488,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -446,9 +501,18 @@ end;
 
 procedure locassignindi();
 var
- dest1,dest2: shortstring;
+ str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin                  //todo: add offset, nested frame
+  str1:= llvmtype(memop.t); 
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  outass(dest1+' = load '+ptrintname+
+                               '* '+locdataaddress(memop.locdataaddress));
+  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
+ 
+{
   case memop.t.kind of
    odk_bit: begin
     dest1:= '%'+inttostr(ssad);
@@ -463,6 +527,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -480,6 +545,23 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
+  str1:= llvmtype(memop.t);
+  if memop.locdataaddress.a.framelevel >= 0 then begin
+   str2:= '%'+inttostr(ssad-3);
+   str3:= '%'+inttostr(ssad-2);
+   str4:= '%'+inttostr(ssad-1);
+   str5:= '%'+inttostr(ssad);
+   outass(str2+' = getelementptr i8** %fp, i32 '+
+                                   inttostr(memop.locdataaddress.a.address));
+   outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
+   outass(str4+' = load '+str1+'** '+str3);
+   outass(str5+' = load '+str1+'* '+str4);
+  end
+  else begin
+   str2:= '%'+inttostr(ssad);
+   outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
+  end;
+{ 
   case memop.t.kind of
    odk_bit: begin
     str1:= 'i'+inttostr(memop.t.size);
@@ -503,6 +585,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -511,6 +594,16 @@ var
  dest1,dest2,dest3: shortstring;
 begin
  with pc^.par do begin
+  ;
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  dest3:= '%'+inttostr(ssad+2);
+  outass(dest1+' = load '+ptrintname+
+                               '* '+locdataaddress(memop.locdataaddress));
+  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+  outass(dest3+' = load '+llvmtype(memop.t)+'* '+dest2);
+
+{
   case memop.t.kind of
    odk_bit: begin
     dest1:= '%'+inttostr(ssad);
@@ -525,6 +618,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -554,6 +648,25 @@ begin
                    ' i'+inttostr(stackop.t.size)+
                                ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
  end;
+end;
+
+procedure callcompilersub(const asub: compilersubty;
+                                     const aparams: shortstring);
+var
+ po1: psubdataty;
+begin
+ po1:= ele.eledataabs(compilersubs[asub]);
+ outass('call void @s'+inttostr(po1^.address+1)+'('+aparams+')');
+end;
+
+procedure decrefsize(const aaddress: string);
+begin
+ callcompilersub(cs_decrefsize,aaddress);
+end;
+
+procedure finirefsize(const aaddress: string);
+begin
+ callcompilersub(cs_finifrefsize,aaddress);
 end;
 
 procedure nopop();
@@ -886,8 +999,11 @@ end;
 
 procedure storesegnilop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass(segdataaddress(vsegaddress)+' = null');
+ end;
 end;
+
 procedure storereg0nilop();
 begin
  notimplemented();
@@ -927,8 +1043,9 @@ end;
 
 procedure finirefsizesegop();
 begin
- notimplemented();
+ finirefsize(segdataaddress(pc^.par.vsegaddress));
 end;
+
 procedure finirefsizeframeop();
 begin
  notimplemented();
@@ -1007,11 +1124,6 @@ begin
  notimplemented();
 end;
 
-procedure decrefsize(const aaddress: string);
-begin
- notimplemented();
-end;
-
 procedure decrefsizesegop();
 begin
  decrefsize(segdataaddress(pc^.par.vsegaddress));
@@ -1078,8 +1190,23 @@ procedure popsegpoop();
 begin
  with pc^.par do begin
   outass('store i8* %'+inttostr(ssas1)+', i8** '+
-                                         segdataaddress(memop.segdataaddress));
+                      segdataaddress(memop.segdataaddress));
  end;
+end;
+
+procedure popsegf16op();
+begin
+ segassign();
+end;
+
+procedure popsegf32op();
+begin
+ segassign();
+end;
+
+procedure popsegf64op();
+begin
+ segassign();
 end;
 
 procedure popsegop();
@@ -1112,6 +1239,21 @@ begin
  notimplemented();
 end;
 
+procedure poplocf16op();
+begin
+ locassign();
+end;
+
+procedure poplocf32op();
+begin
+ locassign();
+end;
+
+procedure poplocf64op();
+begin
+ locassign();
+end;
+
 procedure poplocop();
 begin
  notimplemented();
@@ -1140,6 +1282,21 @@ end;
 procedure poplocindipoop();
 begin
  notimplemented();
+end;
+
+procedure poplocindif16op();
+begin
+ locassign();
+end;
+
+procedure poplocindif32op();
+begin
+ locassign();
+end;
+
+procedure poplocindif64op();
+begin
+ locassign();
 end;
 
 procedure poplocindiop();
@@ -1172,6 +1329,21 @@ begin
  notimplemented();
 end;
 
+procedure popparf16op();
+begin
+ parassign();
+end;
+
+procedure popparf32op();
+begin
+ parassign();
+end;
+
+procedure popparf64op();
+begin
+ parassign();
+end;
+
 procedure popparop();
 begin
  notimplemented();
@@ -1200,6 +1372,21 @@ end;
 procedure popparindipoop();
 begin
  notimplemented()
+end;
+
+procedure popparindif16op();
+begin
+ parassignindi()
+end;
+
+procedure popparindif32op();
+begin
+ parassignindi()
+end;
+
+procedure popparindif64op();
+begin
+ parassignindi()
 end;
 
 procedure popparindiop();
@@ -1381,8 +1568,6 @@ begin
 end;
 
 procedure pushsegaddrindiop();
-var
- str1: shortstring;
 begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = load i8** '+ segdataaddress(vsegaddress));
@@ -1431,6 +1616,21 @@ begin
  end;
 end;
 
+procedure indirectf16op();
+begin
+ assignindirect();
+end;
+
+procedure indirectf32op();
+begin
+ assignindirect();
+end;
+
+procedure indirectf64op();
+begin
+ assignindirect();
+end;
+
 procedure indirectpooffsop();
 var
  str1,str2: shortstring;
@@ -1459,6 +1659,11 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par do begin
+  str1:= '%'+inttostr(ssad);
+  str2:= llvmtype(memop.t);
+  outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
+  outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
+{  
   case memop.t.kind of
    odk_bit: begin
     str1:= '%'+inttostr(ssad);
@@ -1470,6 +1675,7 @@ begin
     notimplemented();
    end;
   end;
+}
  end;
 end;
 
@@ -1496,6 +1702,21 @@ end;
 procedure popindirectpoop();
 begin
  notimplemented();
+end;
+
+procedure popindirectf16op();
+begin
+ popindirect();
+end;
+
+procedure popindirectf32op();
+begin
+ popindirect();
+end;
+
+procedure popindirectf64op();
+begin
+ popindirect();
 end;
 
 procedure popindirectop();
@@ -1676,8 +1897,8 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
   poend:= po1+allocs.alloccount;
 
-  if sf_function in flags then begin
-   outass('define i'+inttostr(po1^.bitsize)+' @s'+inttostr(subname)+'(');
+  if sf_function in flags then begin //todo: correct type
+   outass('define '+llvmtype(po1^.size)+' @s'+inttostr(subname)+'(');
    inc(po1); //result
   end
   else begin
@@ -1692,7 +1913,7 @@ begin
    if not (af_param in po1^.flags) then begin
     break;
    end;
-   str1:= ',i'+inttostr(po1^.bitsize)+' '+paraddress(po1^.address);
+   str1:= ','+llvmtype(po1^.size)+' '+paraddress(po1^.address);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1705,23 +1926,23 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
   if sf_function in flags then begin
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
+   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
    inc(po1); //result
   end;
   while po1 < poend do begin
   if not (af_param in po1^.flags) then begin
    break;
   end;
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
+   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
 {$ifndef mse_locvarssatracking}
-   outass('store i'+inttostr(po1^.bitsize)+' '+paraddress(po1^.address)+
-               ',i'+inttostr(po1^.bitsize)+'* '+
-                           locaddress(po1^.address));
+   str1:= llvmtype(po1^.size);
+   outass('store '+str1+' '+paraddress(po1^.address)+
+               ','+str1+'* '+locaddress(po1^.address));
 {$endif}
    inc(po1);
   end;
   while po1 < poend do begin
-   outass(locaddress(po1^.address)+' = alloca i'+inttostr(po1^.bitsize));
+   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
    inc(po1);
   end;
   if sf_hasnestedref in flags then begin
@@ -1745,6 +1966,12 @@ begin
      outass('store i8* '+str3+', i8** '+str1);
     end
     else begin
+     str4:= llvmtype(po2^.address.datatype);
+     outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
+     outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
+                                                             str4+'** '+str2);
+     outass(str3+' = add i8 0, 0'); //dummy
+{        
      case po2^.address.datatype.kind of
       odk_bit: begin
        str4:= 'i'+ inttostr(po2^.address.datatype.size);
@@ -1757,6 +1984,7 @@ begin
        notimplemented();
       end;
      end;
+}
     end;
     
     inc(po2);
@@ -1791,7 +2019,7 @@ var
 begin
  with pc^.par do begin
   po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
-  ty1:= 'i'+inttostr(po1^.bitsize);
+  ty1:= llvmtype(po1^.size);
   dest1:= '%'+inttostr(ssad);
   outass(dest1 + ' = load '+ty1+'* %l0');
   outass('ret '+ty1+' '+dest1);
@@ -1957,6 +2185,9 @@ const
   popseg32ssa = 0;
   popseg64ssa = 0;
   popsegpossa = 0;
+  popsegf16ssa = 0;
+  popsegf32ssa = 0;
+  popsegf64ssa = 0;
   popsegssa = 0;
 
   poploc8ssa = 0;
@@ -1964,6 +2195,9 @@ const
   poploc32ssa = 0;
   poploc64ssa = 0;
   poplocpossa = 0;
+  poplocf16ssa = 0;
+  poplocf32ssa = 0;
+  poplocf64ssa = 0;
   poplocssa = 0;
 
   poplocindi8ssa = 2;
@@ -1971,6 +2205,9 @@ const
   poplocindi32ssa = 2;
   poplocindi64ssa = 2;
   poplocindipossa = 2;
+  poplocindif16ssa = 2;
+  poplocindif32ssa = 2;
+  poplocindif64ssa = 2;
   poplocindissa = 2;
 
   poppar8ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
@@ -1978,6 +2215,9 @@ const
   poppar32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   poppar64ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparpossa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparf16ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparf32ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
+  popparf64ssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
   popparssa = {$ifdef mse_locvarssatracking}1{$else}0{$endif};
 
   popparindi8ssa = 2;
@@ -1985,6 +2225,9 @@ const
   popparindi32ssa = 2;
   popparindi64ssa = 2;
   popparindipossa = 2;
+  popparindif16ssa = 2;
+  popparindif32ssa = 2;
+  popparindif64ssa = 2;
   popparindissa = 2;
 
   pushnilssa = 1;
@@ -2029,6 +2272,9 @@ const
   indirect32ssa = 2;
   indirect64ssa = 2;
   indirectpossa = 2;
+  indirectf16ssa = 2;
+  indirectf32ssa = 2;
+  indirectf64ssa = 2;
   indirectpooffsssa = 3;
   indirectoffspossa = 1;
   indirectssa = 1;
@@ -2038,6 +2284,9 @@ const
   popindirect32ssa = 1;
   popindirect64ssa = 1;
   popindirectpossa = 1;
+  popindirectf16ssa = 1;
+  popindirectf32ssa = 1;
+  popindirectf64ssa = 1;
   popindirectssa = 1;
 
   callssa = 0;

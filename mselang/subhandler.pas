@@ -722,7 +722,7 @@ var
  po4: pvardataty;
  po5: pnestedvardataty;
  ele1,ele2: elementoffsetty;
- int1,int2: integer;
+ int1{,int2}: integer;
  alloc1: dataoffsty;
 begin
 {$ifdef mse_debugparser}
@@ -787,19 +787,22 @@ begin
    int1:= 0;
    while ele1 <> 0 do begin      //number params and vars
     po4:= ele.eledataabs(ele1);
+    {
     if po4^.address.indirectlevel > 0 then begin
-     int2:= pointerbitsize;
+     int2:= 0;
     end
     else begin
-     int2:= ptypedataty(ele.eledataabs(po4^.vf.typ))^.bitsize;
+     with ptypedataty(ele.eledataabs(po4^.vf.typ))^ do begin
+      int2:= bitsize;
+     end;
     end;
+    }
     with plocallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
      address:= po4^.address.locaddress.address;
      flags:= po4^.address.flags;
-     bitsize:= int2;
+     size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
     end;
- //   trackalloc(int2,po4^.address);
     ele1:= po4^.vf.next;
     inc(int1);
    end;

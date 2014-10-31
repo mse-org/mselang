@@ -57,7 +57,7 @@ implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  mselinklist,handlerutils,msearrayutils,listutils,opcode,
- {stackops,}segmentutils,classhandler;
+ {stackops,}segmentutils,classhandler,compilerunit;
  
 type
  unithashdataty = record
@@ -259,6 +259,9 @@ begin
   end;
   inc(info.unitlevel);
   result:= parseusesunit(unit1);
+  if result then begin
+   initcompilersubs(unit1);
+  end;
   dec(info.unitlevel);
  end;
 end;

@@ -124,6 +124,9 @@
   popseg32ssa,
   popseg64ssa,
   popsegpossa,
+  popsegf16ssa,
+  popsegf32ssa,
+  popsegf64ssa,
   popsegssa,
 
   poploc8ssa,
@@ -131,6 +134,9 @@
   poploc32ssa,
   poploc64ssa,
   poplocpossa,
+  poplocf16ssa,
+  poplocf32ssa,
+  poplocf64ssa,
   poplocssa,
 
   poplocindi8ssa,
@@ -138,6 +144,9 @@
   poplocindi32ssa,
   poplocindi64ssa,
   poplocindipossa,
+  poplocindif16ssa,
+  poplocindif32ssa,
+  poplocindif64ssa,
   poplocindissa,
 
   poppar8ssa,
@@ -145,6 +154,9 @@
   poppar32ssa,
   poppar64ssa,
   popparpossa,
+  popparf16ssa,
+  popparf32ssa,
+  popparf64ssa,
   popparssa,
 
   popparindi8ssa,
@@ -152,6 +164,9 @@
   popparindi32ssa,
   popparindi64ssa,
   popparindipossa,
+  popparindif16ssa,
+  popparindif32ssa,
+  popparindif64ssa,
   popparindissa,
 
   pushnilssa,
@@ -196,6 +211,9 @@
   indirect32ssa,
   indirect64ssa,
   indirectpossa,
+  indirectf16ssa,
+  indirectf32ssa,
+  indirectf64ssa,
   indirectpooffsssa,
   indirectoffspossa,
   indirectssa,
@@ -205,6 +223,9 @@
   popindirect32ssa,
   popindirect64ssa,
   popindirectpossa,
+  popindirectf16ssa,
+  popindirectf32ssa,
+  popindirectf64ssa,
   popindirectssa,
 
   callssa,
@@ -354,6 +375,9 @@
   @popseg32op,
   @popseg64op,
   @popsegpoop,
+  @popsegf16op,
+  @popsegf32op,
+  @popsegf64op,
   @popsegop,
 
   @poploc8op,
@@ -361,6 +385,9 @@
   @poploc32op,
   @poploc64op,
   @poplocpoop,
+  @poplocf16op,
+  @poplocf32op,
+  @poplocf64op,
   @poplocop,
 
   @poplocindi8op,
@@ -368,6 +395,9 @@
   @poplocindi32op,
   @poplocindi64op,
   @poplocindipoop,
+  @poplocindif16op,
+  @poplocindif32op,
+  @poplocindif64op,
   @poplocindiop,
 
   @poppar8op,
@@ -375,6 +405,9 @@
   @poppar32op,
   @poppar64op,
   @popparpoop,
+  @popparf16op,
+  @popparf32op,
+  @popparf64op,
   @popparop,
 
   @popparindi8op,
@@ -382,6 +415,9 @@
   @popparindi32op,
   @popparindi64op,
   @popparindipoop,
+  @popparindif16op,
+  @popparindif32op,
+  @popparindif64op,
   @popparindiop,
 
   @pushnilop,
@@ -426,6 +462,9 @@
   @indirect32op,
   @indirect64op,
   @indirectpoop,
+  @indirectf16op,
+  @indirectf32op,
+  @indirectf64op,
   @indirectpooffsop, //offset after indirect
   @indirectoffspoop, //offset before indirect
   @indirectop,
@@ -435,6 +474,9 @@
   @popindirect32op,
   @popindirect64op,
   @popindirectpoop,
+  @popindirectf16op,
+  @popindirectf32op,
+  @popindirectf64op,
   @popindirectop,
 
   @callop,

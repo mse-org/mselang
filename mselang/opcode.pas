@@ -249,25 +249,7 @@ begin
   end;
  end;
 end;
-{
-procedure trackalloc(const asize: integer; var address: addressvaluety);
-begin
- if info.backend = bke_llvm then begin
-  if af_segment in address.flags then begin
-   trackalloc(asize,address.segaddress);
-  end
-  else begin
-   address.locaddress.address:= info.locallocid;
-   inc(info.locallocid);
-   with plocallocinfoty(
-               allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
-    a:= address;
-    size:= asize;
-   end;
-  end;
- end;
-end;
-}
+
 function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): locaddressty;
 begin

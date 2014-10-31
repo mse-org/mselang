@@ -20,7 +20,7 @@ interface
 uses
  parserglob;
  
-type 
+type
  globallocinfoty = record
   a: segaddressty;
   bitsize: integer;
@@ -31,7 +31,7 @@ type
 //  a: addressvaluety;
   flags: addressflagsty;
   address: dataoffsty;
-  bitsize: integer;
+  size: typeallocinfoty;
  end;
  plocallocinfoty = ^locallocinfoty;
  
@@ -43,7 +43,7 @@ type
 
  nestedaddressty = record
   address: dataoffsty;
-  datatype: opdatatypeinfoty;
+  datatype: typeallocinfoty;
   nested: boolean;     //ref to neseted frame
  end;
  
@@ -171,6 +171,9 @@ type
   oc_popseg32,
   oc_popseg64,
   oc_popsegpo,
+  oc_popsegf16,
+  oc_popsegf32,
+  oc_popsegf64,
   oc_popseg,
 
   oc_poploc8,
@@ -178,6 +181,9 @@ type
   oc_poploc32,
   oc_poploc64,
   oc_poplocpo,
+  oc_poplocf16,
+  oc_poplocf32,
+  oc_poplocf64,
   oc_poploc,
 
   oc_poplocindi8,
@@ -185,6 +191,9 @@ type
   oc_poplocindi32,
   oc_poplocindi64,
   oc_poplocindipo,
+  oc_poplocindif16,
+  oc_poplocindif32,
+  oc_poplocindif64,
   oc_poplocindi,
 
   oc_poppar8,
@@ -192,6 +201,9 @@ type
   oc_poppar32,
   oc_poppar64,
   oc_popparpo,
+  oc_popparf16,
+  oc_popparf32,
+  oc_popparf64,
   oc_poppar,
 
   oc_popparindi8,
@@ -199,6 +211,9 @@ type
   oc_popparindi32,
   oc_popparindi64,
   oc_popparindipo,
+  oc_popparindif16,
+  oc_popparindif32,
+  oc_popparindif64,
   oc_popparindi,
 
   oc_pushnil,
@@ -243,6 +258,9 @@ type
   oc_indirect32,
   oc_indirect64,
   oc_indirectpo,
+  oc_indirectf16,
+  oc_indirectf32,
+  oc_indirectf64,
   oc_indirectpooffs, //offset after indirect
   oc_indirectoffspo, //offset before indirect
   oc_indirect,
@@ -252,6 +270,9 @@ type
   oc_popindirect32,
   oc_popindirect64,
   oc_popindirectpo,
+  oc_popindirectf16,
+  oc_popindirectf32,
+  oc_popindirectf64,
   oc_popindirect,
 
   oc_call,
@@ -412,7 +433,7 @@ type
  end;  
 
  stackopty = record
-  t: opdatatypeinfoty;
+  t: typeallocinfoty;
 //  destssaindex: integer;
 //  source1ssaindex: integer;
 //  case opcodety of
@@ -422,7 +443,7 @@ type
  end;
 
  memopty = record
-  t: opdatatypeinfoty;
+  t: typeallocinfoty;
 //  ssaindex: integer;
   case opcodety of
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,

@@ -768,6 +768,24 @@ begin
                                        ppointer(stackpop(sizeof(pointer)))^;
 end;
 
+procedure popsegf16op();
+begin
+ puint16(getsegaddress(cpu.pc^.par.memop.segdataaddress))^:= 
+                                                      puint16(stackpop(2))^;
+end;
+
+procedure popsegf32op();
+begin
+ puint32(getsegaddress(cpu.pc^.par.memop.segdataaddress))^:= 
+                                                      puint32(stackpop(4))^;
+end;
+
+procedure popsegf64op();
+begin
+ puint64(getsegaddress(cpu.pc^.par.memop.segdataaddress))^:= 
+                                                      puint64(stackpop(8))^;
+end;
+
 procedure popsegop();
 var
  int1: integer;
@@ -878,6 +896,24 @@ begin
                                  ppointer(stackpop(sizeof(pointer)))^;
 end;
 
+procedure poplocf16op();
+begin
+ pv16ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                  pv16ty(stackpop(2))^;
+end;
+
+procedure poplocf32op();
+begin
+ pv32ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                  pv32ty(stackpop(4))^;
+end;
+
+procedure poplocf64op();
+begin
+ pv64ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                  pv64ty(stackpop(8))^;
+end;
+
 procedure poplocop();
 var
  int1: integer;
@@ -916,6 +952,24 @@ begin
                                     ppointer(stackpop(sizeof(pointer)))^;
 end;
 
+procedure poplocindif16op();
+begin
+ pv16ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                    pv16ty(stackpop(2))^;
+end;
+
+procedure poplocindif32op();
+begin
+ pv32ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                    pv32ty(stackpop(4))^;
+end;
+
+procedure poplocindif64op();
+begin
+ pv64ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
+                                                    pv64ty(stackpop(8))^;
+end;
+
 procedure poplocindiop();
 var
  int1: integer;
@@ -950,6 +1004,21 @@ begin
  poplocpoop();
 end;
 
+procedure popparf16op();
+begin
+ poploc16op();
+end;
+
+procedure popparf32op();
+begin
+ poploc32op();
+end;
+
+procedure popparf64op();
+begin
+ poploc64op();
+end;
+
 procedure popparop();
 begin
  poplocop();
@@ -978,6 +1047,21 @@ end;
 procedure popparindipoop();
 begin
  poplocindipoop();
+end;
+
+procedure popparindif16op();
+begin
+ poplocindi16op();
+end;
+
+procedure popparindif32op();
+begin
+ poplocindi32op();
+end;
+
+procedure popparindif64op();
+begin
+ poplocindi64op();
 end;
 
 procedure popparindiop();
@@ -1167,6 +1251,30 @@ begin
  ppointer(po1)^:=  ppointer(ppointer(po1)^)^;
 end;
 
+procedure indirectf16op();
+var
+ po1: pointer;
+begin
+ po1:= cpu.stack-alignstep;
+ pv16ty(po1)^:=  pv16ty(ppointer(po1)^)^;
+end;
+
+procedure indirectf32op();
+var
+ po1: pointer;
+begin
+ po1:= cpu.stack-alignstep;
+ pv32ty(po1)^:=  pv32ty(ppointer(po1)^)^;
+end;
+
+procedure indirectf64op();
+var
+ po1: pointer;
+begin
+ po1:= cpu.stack-alignstep;
+ pv64ty(po1)^:=  pv64ty(ppointer(po1)^)^;
+end;
+
 procedure indirectpooffsop();
 var
  po1: pointer;
@@ -1236,6 +1344,33 @@ begin
  po1:= stackpop(4);
  po2:= ppointer(stackpop(sizeof(pointer)))^;
  ppointer(po2)^:= ppointer(po1)^;
+end;
+
+procedure popindirectf16op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(2);
+ po2:= ppointer(stackpop(sizeof(pointer)))^;
+ pv16ty(po2)^:= pv16ty(po1)^;
+end;
+
+procedure popindirectf32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(4);
+ po2:= ppointer(stackpop(sizeof(pointer)))^;
+ pv32ty(po2)^:= pv32ty(po1)^;
+end;
+
+procedure popindirectf64op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(4);
+ po2:= ppointer(stackpop(sizeof(pointer)))^;
+ pv64ty(po2)^:= pv64ty(po1)^;
 end;
 
 procedure popindirectop();
@@ -2025,6 +2160,9 @@ const
   popseg32ssa = 0;
   popseg64ssa = 0;
   popsegpossa = 0;
+  popsegf16ssa = 0;
+  popsegf32ssa = 0;
+  popsegf64ssa = 0;
   popsegssa = 0;
 
   poploc8ssa = 0;
@@ -2032,6 +2170,9 @@ const
   poploc32ssa = 0;
   poploc64ssa = 0;
   poplocpossa = 0;
+  poplocf16ssa = 0;
+  poplocf32ssa = 0;
+  poplocf64ssa = 0;
   poplocssa = 0;
 
   poplocindi8ssa = 0;
@@ -2039,6 +2180,9 @@ const
   poplocindi32ssa = 0;
   poplocindi64ssa = 0;
   poplocindipossa = 0;
+  poplocindif16ssa = 0;
+  poplocindif32ssa = 0;
+  poplocindif64ssa = 0;
   poplocindissa = 0;
 
   poppar8ssa = 0;
@@ -2046,6 +2190,9 @@ const
   poppar32ssa = 0;
   poppar64ssa = 0;
   popparpossa = 0;
+  popparf16ssa = 0;
+  popparf32ssa = 0;
+  popparf64ssa = 0;
   popparssa = 0;
 
   popparindi8ssa = 0;
@@ -2053,6 +2200,9 @@ const
   popparindi32ssa = 0;
   popparindi64ssa = 0;
   popparindipossa = 0;
+  popparindif16ssa = 0;
+  popparindif32ssa = 0;
+  popparindif64ssa = 0;
   popparindissa = 0;
 
   pushnilssa = 0;
@@ -2097,6 +2247,9 @@ const
   indirect32ssa = 0;
   indirect64ssa = 0;
   indirectpossa = 0;
+  indirectf16ssa = 0;
+  indirectf32ssa = 0;
+  indirectf64ssa = 0;
   indirectpooffsssa = 0;
   indirectoffspossa = 0;
   indirectssa = 0;
@@ -2106,6 +2259,9 @@ const
   popindirect32ssa = 0;
   popindirect64ssa = 0;
   popindirectpossa = 0;
+  popindirectf16ssa = 0;
+  popindirectf32ssa = 0;
+  popindirectf64ssa = 0;
   popindirectssa = 0;
 
   callssa = 0;

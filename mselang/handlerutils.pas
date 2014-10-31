@@ -23,7 +23,7 @@ uses
 type
  datasizetyxx = type integer;
  
- systypety = (st_none,st_bool1,st_int32,st_float64,st_string8);
+ systypety = (st_none,st_pointer,st_bool1,st_int32,st_float64,st_string8);
  systypeinfoty = record
   name: string;
   data: typedataty;
@@ -58,26 +58,6 @@ const
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_bool1,sdk_int32,sdk_flo64
            (st_none,st_bool1,st_int32,st_float64);
-
-type
- comperrorty = (ce_invalidfloat,ce_expressionexpected,ce_startbracketexpected,
-               ce_endbracketexpected);
-const
- errormessages: array[comperrorty] of msestring = (
-  'Invalid Float',
-  'Expression expected',
-  '''('' expected',
-  ''')'' expected'
- );
-
-//procedure error(const error: comperrorty;
-//                   const pos: pchar=nil);
-//procedure parsererror(const info: pparseinfoty; const text: string);
-//procedure identnotfounderror(const info: contextitemty; const text: string);
-//procedure wrongidentkinderror(const info: contextitemty; 
-//       wantedtype: elementkindty; const text: string);
-//procedure outcommand(const items: array of integer;
-//                     const text: string);
 
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
@@ -123,7 +103,7 @@ procedure pushconst(const avalue: contextdataty);
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
-                   const opdatatype: opdatatypeinfoty);
+                   const opdatatype: typeallocinfoty);
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -139,7 +119,7 @@ procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
-                  const opdatatype: opdatatypeinfoty);
+                  const opdatatype: typeallocinfoty);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
@@ -163,10 +143,12 @@ procedure trackalloc(const asize: integer; var address: segaddressty);
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
 function getssa(const aopcode: opcodety; const count: integer): integer;
+function getopdatatype(const atypedata: elementoffsetty;
+                           const aindirectlevel: integer): typeallocinfoty;
 function getopdatatype(const atypedata: ptypedataty;
-                           const aindirectlevel: integer): opdatatypeinfoty;
-function getopdatatype(const adest: vardestinfoty): opdatatypeinfoty;
-function getbytesize(const aopdatatype: opdatatypeinfoty): integer;
+                           const aindirectlevel: integer): typeallocinfoty;
+function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
+function getbytesize(const aopdatatype: typeallocinfoty): integer;
 
 procedure init();
 procedure deinit();
@@ -188,6 +170,9 @@ const
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
    (name: 'none'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none;
+       dummy: 0)),
+   (name: 'pointer'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 1;
        bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none;
        dummy: 0)),
    (name: 'bool1'; data: (ancestor: 0; rtti: 0; flags: []; indirectlevel: 0;
@@ -591,7 +576,7 @@ begin
  initfactcontext(stackoffset);
 //  po1^.d.dat.fact.databitsize:= si1;
 end;
-
+{
 const
  opdatatype: array[databitsizety] of opdatatypeinfoty = (
   (kind: odk_byte; size: 0),            //das_none,
@@ -604,55 +589,48 @@ const
   (kind: odk_bit; size: 32),            //das_32,
   (kind: odk_bit; size: 64),            //das_33_63,
   (kind: odk_bit; size: 64),            //das_64,
-  (kind: odk_bit; size: pointerbitsize) //das_pointer
+  (kind: odk_bit; size: pointerbitsize),//das_pointer
+  (kind: odk_bit; size: 16),            //das_f16
+  (kind: odk_bit; size: 32),            //das_f32
+  (kind: odk_bit; size: 64)             //das_f64
  );    
-
-function getopdatatype(const atypedata: elementoffsetty;
-                           const aindirectlevel: integer; 
-                           out adatasize: databitsizety): opdatatypeinfoty;
-var
- po1: ptypedataty;
-begin
- if aindirectlevel > 0 then begin
-  result:= pointeroptype;
-  adatasize:= das_pointer;
- end
- else begin
-  po1:= ele.eledataabs(atypedata);
-  adatasize:= po1^.datasize;
-  result:= opdatatype[adatasize];
-  if result.kind in byteopdatakinds then begin
-   result.size:= po1^.bytesize;
-  end;
- end;
-end;
+}
 
 function getopdatatype(const atypedata: ptypedataty;
-                           const aindirectlevel: integer): opdatatypeinfoty;
+                           const aindirectlevel: integer): typeallocinfoty;
 begin
  if aindirectlevel > 0 then begin
   result:= pointeroptype;
  end
  else begin
-  result:= opdatatype[atypedata^.datasize];
+  result.kind:= atypedata^.datasize;
   if result.kind in byteopdatakinds then begin
    result.size:= atypedata^.bytesize;
+  end
+  else begin
+   result.size:= atypedata^.bitsize;
   end;
  end;
 end;
 
-function getopdatatype(const adest: vardestinfoty): opdatatypeinfoty;
+function getopdatatype(const atypedata: elementoffsetty;
+                           const aindirectlevel: integer): typeallocinfoty;
+begin
+ result:= getopdatatype(ele.eledataabs(atypedata),aindirectlevel);
+end;
+
+function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 begin
  result:= getopdatatype(adest.typ,adest.address.indirectlevel);
 end;
 
-function getbytesize(const aopdatatype: opdatatypeinfoty): integer;
+function getbytesize(const aopdatatype: typeallocinfoty): integer;
 begin
- if aopdatatype.kind in bitopdatakinds then begin
-  result:= (aopdatatype.size + 7) div 8;
+ if aopdatatype.kind = das_none then begin
+  result:= aopdatatype.size;
  end
  else begin
-  result:= aopdatatype.size;
+  result:= bytesizes[aopdatatype.kind];
  end;
 end;
 
@@ -680,7 +658,7 @@ begin
     end;
    end;
    dk_float: begin
-    si1:= das_64;
+    si1:= das_f64;
     with insertitem(oc_pushimm64,stackoffset,before)^ do begin
      setimmfloat64(po1^.d.dat.constval.vfloat,par);
     end;
@@ -711,7 +689,11 @@ begin
   end;
  }
   initfactcontext(stackoffset);
-  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
+  with po1^.d.dat.fact.opdatatype do begin
+   kind:= si1;
+   size:= bitsizes[si1];
+  end;
+//  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
  end;
 end;
 
@@ -973,7 +955,7 @@ end;
 
 procedure tracklocalaccess(var aaddress: locaddressty; 
                                  const avarele: elementoffsetty;
-                                 const aopdatatype: opdatatypeinfoty);
+                                 const aopdatatype: typeallocinfoty);
 
 var
 // pobefore: pnestedvardataty;
@@ -1076,7 +1058,7 @@ const
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const before: boolean;
           const aaddress: addressvaluety; const avarele: elementoffsetty;
-          const offset: dataoffsty; const aopdatatype: opdatatypeinfoty);
+          const offset: dataoffsty; const aopdatatype: typeallocinfoty);
 //todo: optimize
 
 var
@@ -1155,7 +1137,7 @@ end;
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
-                         const opdatatype: opdatatypeinfoty);
+                         const opdatatype: typeallocinfoty);
 begin
  pushd(false,0,false,address,varele,offset,opdatatype);
 end;
@@ -1164,7 +1146,7 @@ procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
-                  const opdatatype: opdatatypeinfoty);
+                  const opdatatype: typeallocinfoty);
 begin
  pushd(true,stackoffset,before,address,varele,offset,opdatatype);
 end;
@@ -1252,14 +1234,16 @@ const
    oc_indirect,oc_indirect8,oc_indirect8,oc_indirect8,
  //das_9_15,     das_16,       das_17_31,    das_32,
    oc_indirect16,oc_indirect16,oc_indirect32,oc_indirect32,
- //das_33_63,    das_64,       das_pointer);
-   oc_indirect64,oc_indirect64,oc_indirectpo);
+ //das_33_63,    das_64,       das_pointer,
+   oc_indirect64,oc_indirect64,oc_indirectpo,
+ //das_f16,       das_f32,       das_f64
+   oc_indirectf16,oc_indirectf32,oc_indirectf64);
 
 function getvalue(const stackoffset: integer;
                             const retainconst: boolean = false): boolean;
 
 var
- opdata1: opdatatypeinfoty;
+ opdata1: typeallocinfoty;
 
  procedure doindirect();
  var
@@ -1268,9 +1252,9 @@ var
   ssabefore: integer;
  begin
   with info,contextstack[stackindex+stackoffset],d do begin
-   opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel,si1);
+   opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
    ssabefore:= d.dat.fact.ssaindex;
-   with insertitem(indirect[si1],stackoffset,false)^ do begin
+   with insertitem(indirect[opdata1.kind],stackoffset,false)^ do begin
     par.ssas1:= ssabefore;
     par.memop.t:= opdata1;
     d.dat.fact.ssaindex:= par.ssad;
@@ -1282,7 +1266,6 @@ var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
- si1: databitsizety;
  
 begin                    //todo: optimize
  result:= false;
@@ -1317,7 +1300,7 @@ begin                    //todo: optimize
      end
      else begin
       opdata1:= getopdatatype(d.dat.datatyp.typedata,
-                                             d.dat.datatyp.indirectlevel,si1);
+                                             d.dat.datatyp.indirectlevel);
       pushinsertdata(stackoffset,false,d.dat.ref.c.address,
                                d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
      end;
@@ -1394,7 +1377,7 @@ begin
       if not (af_segment in d.dat.ref.c.address.flags) then begin
        tracklocalaccess(d.dat.ref.c.address.locaddress,d.dat.ref.c.varele,
                                  getopdatatype(d.dat.datatyp.typedata,
-                                      d.dat.ref.c.address.indirectlevel,si1));
+                                      d.dat.ref.c.address.indirectlevel));
       end;
       {
       d.kind:= ck_refconst;
@@ -1494,7 +1477,6 @@ var
  po1: pelementinfoty;
  sd1: stackdatakindty;
  op1: opcodety;
- si1: databitsizety;
 begin
  with info do begin
                   //todo: work botom up because of less op insertions
@@ -1617,7 +1599,7 @@ begin
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
-                                      d.dat.datatyp.indirectlevel,si1);
+                                      d.dat.datatyp.indirectlevel);
      end;
      dec(stacktop,2);
      initfactcontext(-1);
@@ -1752,92 +1734,10 @@ begin
   if address.segment = seg_globvar then begin
    address.address:= info.globallocid;
    inc(info.globallocid);
-   {
-   with pgloballocinfoty(
-              allocsegmentpo(seg_globalloc,sizeof(globallocinfoty)))^ do begin
-    a:= address;
-    size:= asize;
-   end;
-   }
   end;
  end;
 end;
-{
-procedure trackalloc(const asize: integer; var address: addressvaluety);
-begin
- if info.backend = bke_llvm then begin
-  if af_segment in address.flags then begin
-   trackalloc(asize,address.segaddress);
-  end
-  else begin
-   address.locaddress.address:= info.locallocid;
-   inc(info.locallocid);
-   with plocallocinfoty(
-               allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
-    a:= address;
-    size:= asize;
-   end;
-  end;
- end;
-end;
-}
-{
-procedure trackalloc(const asize: integer; var address: locaddressty);
-begin
- if info.backend = bke_llvm then begin
-  address.address:= info.locallocid;
-  inc(info.locallocid);
-  with plocallocinfoty(
-              allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
-   a:= address;
-   size:= asize;
-  end;
- end;
-end;
-}
-{
-procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
-var
- po1: pvardataty;
- ele1: elementoffsetty;
- size1: integer;
-begin
- ele1:= asub^.varchain;
- with allocs do begin
-  parallocs:= getsegmenttopoffs(seg_localloc);
-  paralloccount:= 0;
-  while ele1 <> 0 do begin
-   po1:= ele.eledataabs(ele1);
-   if not (af_param in po1^.address.flags) then begin
-    break;
-   end;
-   if po1^.address.indirectlevel > 0 then begin
-    size1:= pointersize;
-   end
-   else begin
-    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
-   end;
-   trackalloc(size1,po1^.address);
-   inc(paralloccount);
-   ele1:= po1^.vf.next;
-  end;
-  varallocs:= getsegmenttopoffs(seg_localloc);
-  varalloccount:= 0;
-  while ele1 <> 0 do begin
-   po1:= ele.eledataabs(ele1);
-   if po1^.address.indirectlevel > 0 then begin
-    size1:= pointersize;
-   end
-   else begin
-    size1:= ptypedataty(ele.eledataabs(po1^.vf.typ))^.bytesize;
-   end;
-   trackalloc(size1,po1^.address);
-   inc(varalloccount);
-   ele1:= po1^.vf.next;
-  end;
- end;
-end;
-}
+
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 begin

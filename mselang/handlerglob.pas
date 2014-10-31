@@ -339,30 +339,7 @@ type
  visibledataty = record
  end;
  pvisibledataty = ^visibledataty;
- 
-function gettypesize(const typedata: typedataty): datasizety; inline;
-procedure inittypedatabit(var atype: typedataty; akind: datakindty;
-            aindirectlevel: integer; abitsize: integer;
-            aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
-procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
-            aindirectlevel: integer; abytesize: integer;
-            aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
-procedure inittypedatasize(var atype: typedataty; akind: datakindty;
-            aindirectlevel: integer; adatasize: databitsizety;
-            aflags: typeflagsty = [];
-            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 
-implementation
-
-function gettypesize(const typedata: typedataty): datasizety; inline;
-begin
- result:= typedata.bytesize;
- if typedata.indirectlevel <> 0 then begin
-  result:= pointersize;
- end;
-end;
 
 const 
  datasizes: array[0..64] of databitsizety = (
@@ -388,15 +365,40 @@ const
  bitsizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      7,    8,      15,    16,       31,    32,
-//das_33_63,das_64,das_pointer
-         63,    64,pointerbitsize);
+//das_33_63,das_64,das_pointer,das_f16,das_f23,das_f64
+         63,    64,pointerbitsize,16,  32,     64);
          
  bytesizes: array[databitsizety] of integer =
 //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
  (    0,       1,      1,    1,       2,     2,        4,     4,
-//das_33_63,das_64,das_pointer
-          8,     8,pointersize);
+//das_33_63,das_64,das_pointer,das_f16,das_f23,das_f64
+          8,     8,pointersize,2,      4,      8);
  
+ 
+function gettypesize(const typedata: typedataty): datasizety; inline;
+procedure inittypedatabit(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abitsize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; abytesize: integer;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+procedure inittypedatasize(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; adatasize: databitsizety;
+            aflags: typeflagsty = [];
+            artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
+
+implementation
+
+function gettypesize(const typedata: typedataty): datasizety; inline;
+begin
+ result:= typedata.bytesize;
+ if typedata.indirectlevel <> 0 then begin
+  result:= pointersize;
+ end;
+end;
+
 procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
             artti: dataaddressty; aancestor: elementoffsetty); inline;
