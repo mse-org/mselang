@@ -1,6 +1,12 @@
-unit program;
+program test;
+
+procedure proc1(p1: int32);
+begin
+end;
+
 var
- str1: string8;
+// str1: string8;
+ int1: int32;
 begin
 // str1:= 'abc';
 // writeln(str1);

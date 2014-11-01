@@ -62,9 +62,10 @@ unit1,unit2,,setunitname*
 unit2,semicolonexpected,,
  ${whitespace}
  ';',unit3-
-unit3,start1,,
+unit3,implementation,,
  ${whitespace}
  'interface'.,start1-
+ 'implementation'.,implementation-
 # "interface" facultative
 checksemicolon,,,^
  ${whitespace}

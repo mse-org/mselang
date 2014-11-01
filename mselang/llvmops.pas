@@ -686,7 +686,7 @@ end;
 
 procedure finirefsize(const aaddress: string);
 begin
- callcompilersub(cs_finifrefsize,'i8* '+aaddress);
+ callcompilersub(cs_finifrefsize,'i8** '+aaddress);
 end;
 
 procedure nopop();
