@@ -23,7 +23,7 @@ uses
 type
  globallocinfoty = record
   a: segaddressty;
-  bitsize: integer;
+  size: typeallocinfoty;
  end;
  pgloballocinfoty = ^globallocinfoty;
 
@@ -37,7 +37,7 @@ type
  
  parallocinfoty = record
   ssaindex: integer;
-  bitsize: integer;
+  size: typeallocinfoty;
  end;
  pparallocinfoty = ^parallocinfoty;
 

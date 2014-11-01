@@ -21,7 +21,7 @@ interface
 uses
  opglob,parserglob,msestream;
 
-//todo: generate bitcode, use static string buffers
+//todo: generate bitcode, use static string buffers, no ansistrings
  
 function getoptable: poptablety;
 function getssatable: pssatablety;
@@ -679,14 +679,14 @@ begin
  outass('call void @s'+inttostr(po1^.address)+'('+aparams+')');
 end;
 
-procedure decrefsize(const aaddress: string);
+procedure decrefsize(const aaddress: shortstring);
 begin
  callcompilersub(cs_decrefsize,aaddress);
 end;
 
-procedure finirefsize(const aaddress: string);
+procedure finirefsize(const aaddress: shortstring);
 begin
- callcompilersub(cs_finifrefsize,'i8** '+aaddress);
+ callcompilersub(cs_finifrefsize,'i8* '+aaddress);
 end;
 
 procedure nopop();
@@ -1065,8 +1065,15 @@ begin
 end;
 
 procedure finirefsizesegop();
+var
+ str1: shortstring;
 begin
- finirefsize(segdataaddress(pc^.par.vsegaddress));
+ with pc^.par do begin
+  str1:= '%'+inttostr(ssad);
+  outass(str1+' = bitcast i8** '+ 
+                   segdataaddress(vsegaddress)+' to i8*');
+  finirefsize(str1);
+ end;
 end;
 
 procedure finirefsizeframeop();
@@ -1873,7 +1880,7 @@ begin
    first:= false;
   end;
   while parpo < endpo do begin
-   str1:= ',i'+inttostr(parpo^.bitsize)+' %'+inttostr(parpo^.ssaindex);
+   str1:= ','+llvmtype(parpo^.size)+' %'+inttostr(parpo^.ssaindex);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1908,7 +1915,7 @@ begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;
-  outass('%'+inttostr(ssad)+' = call i'+inttostr(parpo^.bitsize)+
+  outass('%'+inttostr(ssad)+' = call '+llvmtype(parpo^.size)+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
   docallparam(parpo,endpo,outlinkcount);

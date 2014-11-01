@@ -616,7 +616,12 @@ end;
 function getopdatatype(const atypedata: elementoffsetty;
                            const aindirectlevel: integer): typeallocinfoty;
 begin
- result:= getopdatatype(ele.eledataabs(atypedata),aindirectlevel);
+ if aindirectlevel > 0 then begin
+  result:= pointeroptype;
+ end
+ else begin
+  result:= getopdatatype(ele.eledataabs(atypedata),aindirectlevel);
+ end;
 end;
 
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
