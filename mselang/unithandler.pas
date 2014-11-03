@@ -598,12 +598,12 @@ end;
 
 procedure handleinitializationstart();
 var
- po1: psubdataty;
+ ad1: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATIONSTART');
 {$endif}
- getinternalsub(tks_ini,po1);
+ getinternalsub(isub_ini,ad1);
  writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
 {
  with info,unitinfo^ do begin
@@ -633,12 +633,12 @@ end;
 
 procedure handlefinalizationstart();
 var
- po1: psubdataty;
+ ad1: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATIONSTART');
 {$endif}
- getinternalsub(tks_fini,po1);
+ getinternalsub(isub_fini,ad1);
 {
  with info,unitinfo^ do begin
   finalizationstart:= opcount;

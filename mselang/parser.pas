@@ -297,7 +297,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
 var
  po1,po2: pchar;
  pc1: pcontextty;
- inifinisub: psubdataty;
+ inifinisub: opaddressty;
  int1: integer;
  bo1: boolean;
  keywordindex: identty;
@@ -627,11 +627,11 @@ parseend:
 {$endif}
   if stf_hasmanaged in currentstatementflags then begin
    with unitinfo^ do begin
-    if getinternalsub(tks_ini,inifinisub) then begin //no initialization section                                               
+    if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
      writemanagedvarop(mo_ini,varchain,true,0);
      endinternalsub();
     end;
-    if getinternalsub(tks_fini,inifinisub) then begin //no finalization section
+    if getinternalsub(isub_fini,inifinisub) then begin //no finalization section
      writemanagedvarop(mo_fini,varchain,true,0);
      endinternalsub();
     end;

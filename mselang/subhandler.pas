@@ -50,10 +50,10 @@ procedure handleendexpected();
 procedure handleimplementationexpected();
 
 function checkparams(const po1,ref: psubdataty): boolean; 
-function getinternalsub(const aident: identty; 
-                             out asubdata: psubdataty): boolean; //true if new
+function getinternalsub(const asub: internalsubty;
+                         out aaddress: opaddressty): boolean; //true if new
 procedure endinternalsub();
-procedure callinternalsub(const asub: psubdataty);
+procedure callinternalsub(const asub: opaddressty); //ignores op address 0
 
 implementation
 uses
@@ -66,38 +66,39 @@ type
   match: psubdataty;
  end;
 
-function getinternalsub(const aident: identty; 
-                             out asubdata: psubdataty): boolean;
+function getinternalsub(const asub: internalsubty;
+                                   out aaddress: opaddressty): boolean;
 begin
- result:= not ele.findchilddata(info.unitinfo^.interfaceelement,aident,
-                                                   [],[vik_global],asubdata);
- if result then begin
-  asubdata:= ele.addchildduplicatedata(info.unitinfo^.interfaceelement,
-                                                  aident,ek_sub,[vik_global]);
-  fillchar(asubdata^,sizeof(asubdata^),0);
-  with asubdata^ do begin
-   address:= info.opcount;
+ with info.unitinfo^ do begin
+  aaddress:=  internalsubs[asub];
+  result:= aaddress = 0;
+  if result then begin
+   aaddress:= info.opcount;
    resetssa();
    with additem(oc_subbegin)^ do begin
-    par.subbegin.subname:= address;
+    par.subbegin.subname:= aaddress;
    end;
+   internalsubs[asub]:= aaddress;
   end;
  end;
 end;
 
 procedure endinternalsub();
 begin
+ with additem(oc_return)^ do begin
+  par.stacksize:= 0;
+ end;
  with additem(oc_subend)^ do begin
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
  end;
 end;
 
-procedure callinternalsub(const asub: psubdataty);
+procedure callinternalsub(const asub: opaddressty);
 begin
  with additem(oc_call)^.par.callinfo do begin
-  ad:= asub^.address;
-  flags:= asub^.flags;
+  ad:= asub;
+  flags:= [];
   linkcount:= 0;
   paramcount:= 0;
  end;

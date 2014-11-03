@@ -604,6 +604,8 @@ type
 //  ancestor: elementoffsetty;
  end;
  pendinginfoarty = array of pendinginfoty;
+
+ internalsubty = (isub_ini,isub_fini);
  
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
@@ -622,6 +624,7 @@ type
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
   impl: implinfoty; //start of implementation parsing
+  internalsubs: array[internalsubty] of opaddressty;
   codestop: opaddressty;
   {
   initializationstart: opaddressty;  //0 if none

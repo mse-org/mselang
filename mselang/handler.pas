@@ -176,16 +176,17 @@ end;
 procedure handleprogbegin();
 var
  ad1: listadty;
- po1: psubdataty;
+ ad2: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
 {$endif}
  with info do begin
   if stf_hasmanaged in currentstatementflags then begin
-   getinternalsub(tks_ini,po1);
-   writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
-   endinternalsub;
+   if getinternalsub(isub_ini,ad2) then begin
+    writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+    endinternalsub();
+   end;
   end;
   
   with getoppo(startupoffset)^ do begin
@@ -199,9 +200,8 @@ begin
    while ad1 <> 0 do begin         //insert ini calls
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
-      if ele.findchilddata(interfaceelement,tks_ini,
-                                         [],allvisi,po1) then begin
-       callinternalsub(po1);
+      if internalsubs[isub_ini] <> 0 then begin
+       callinternalsub(internalsubs[isub_ini]);
       end;
      end;
      ad1:= header.next;
@@ -214,7 +214,7 @@ end;
 procedure handleprogblock();
 var
  ad1: listadty;
- po1: psubdataty;
+ ad2: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -222,9 +222,10 @@ begin
 // writeop(nil); //endmark
  handleunitend();
  if stf_hasmanaged in info.currentstatementflags then begin
-  getinternalsub(tks_fini,po1);
-  writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
-  endinternalsub;
+  if getinternalsub(isub_fini,ad2) then begin
+   writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
+   endinternalsub();
+  end;
  end;
  invertlist(unitlinklist,unitchain);
  with unitlinklist do begin
@@ -232,9 +233,8 @@ begin
   while ad1 <> 0 do begin         //insert ini calls
    with punitlinkinfoty(list+ad1)^ do begin
     with ref^ do begin
-     if ele.findchilddata(interfaceelement,tks_fini,
-                                        [],allvisi,po1) then begin
-      callinternalsub(po1);
+     if internalsubs[isub_fini] <> 0 then begin
+      callinternalsub(internalsubs[isub_fini]);
      end;
     end;
     ad1:= header.next;
