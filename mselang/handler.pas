@@ -174,15 +174,35 @@ begin
 end;
 
 procedure handleprogbegin();
+var
+ ad1: listadty;
+ po1: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
 {$endif}
- with info,getoppo(startupoffset)^ do begin
-  par.beginparse.mainad:= opcount;
- end;
- resetssa();
- with additem(oc_main)^ do begin
+ with info do begin
+  with getoppo(startupoffset)^ do begin
+   par.beginparse.mainad:= opcount;
+  end;
+  resetssa();
+  with additem(oc_main)^ do begin
+  end;
+ {
+  with unitlinklist do begin
+   ad1:= unitchain;
+   while ad1 <> 0 do begin         //insert ini calls
+    with punitlinkinfoty(list+ad1)^ do begin
+     with ref^ do begin
+      if ele.findchilddata(
+      if inistart <> 0 then begin
+       if start1 = 0 then begin
+        start1:= inistart;
+       end
+       else begin
+        if unit1^.initializationstop <> 0 then begin
+         po1[unit1^.initializationstop].par.opaddress:= inistart-1; //goto
+ }
  end;
 end;
 

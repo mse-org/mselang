@@ -50,6 +50,9 @@ procedure handleendexpected();
 procedure handleimplementationexpected();
 
 function checkparams(const po1,ref: psubdataty): boolean; 
+function getinternalsub(const aident: identty; 
+                             out asubdata: psubdataty): boolean; //true if new
+procedure endinternalsub();
 
 implementation
 uses
@@ -61,6 +64,30 @@ type
   ref: psubdataty;
   match: psubdataty;
  end;
+
+function getinternalsub(const aident: identty; 
+                             out asubdata: psubdataty): boolean;
+begin
+ result:= ele.addelementdata(tks_ini,ek_sub,allvisi,asubdata);
+ if result then begin
+  fillchar(asubdata^,sizeof(asubdata^),0);
+  with asubdata^ do begin
+   address:= info.opcount;
+   resetssa();
+   with additem(oc_subbegin)^ do begin
+    par.subbegin.subname:= address;
+   end;
+  end;
+ end;
+end;
+
+procedure endinternalsub();
+begin
+ with additem(oc_subend)^ do begin
+  par.subend.allocs.alloccount:= 0;
+  par.subend.allocs.nestedalloccount:= 0;
+ end;
+end;
 
 function checkparams(const po1,ref: psubdataty): boolean; 
 //                                  {$ifndef mse_debugparser} inline;{$endif}
@@ -461,7 +488,7 @@ var
  
 begin
 {$ifdef mse_debugparser}
- outhandle('SUB3');
+ outhandle('SUBHEADER');
 {$endif}
 //|-2        |-1  0     1     2           3           4        5    
 //|classdef0,|sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
@@ -850,7 +877,7 @@ begin
   end;
   if stf_hasmanaged in currentstatementflags then begin
    writemanagedvarop(mo_ini,po1^.varchain,false,0);
-  end;
+  end;           //todo: implicit try-finally
  end;
 end;
 
@@ -864,13 +891,13 @@ begin
  with info,contextstack[stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
-  po1:= ele.eledataabs(d.subdef.ref);
+  po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
   if stf_hasmanaged in currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain,false,0);
   end;
   if po1^.paramfinichain <> 0 then begin
    writemanagedvarop(mo_fini,po1^.paramfinichain,false,0);
-  end;
+  end;          
   if d.subdef.varsize <> 0 then begin
    with additem(oc_locvarpop)^ do begin
     par.stacksize:= d.subdef.varsize;

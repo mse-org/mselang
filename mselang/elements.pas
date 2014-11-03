@@ -253,11 +253,11 @@ type
    function addelementdata(const aname: identty; const akind: elementkindty;
               const avislevel: visikindsty;
               out aelementdata: pointer): boolean;
-         //false if duplicate, aelementdata always allocated
+         //false if duplicate, aelementdata = new or duplicate
    function addelement(const aname: identty; const akind: elementkindty;
               const avislevel: visikindsty;
               out aelementoffset: elementoffsetty): boolean;
-                                                       //false if duplicate
+         //false if duplicate, aelementoffset = 0 if duplicate
    function adduniquechilddata(const aparent: elementoffsetty;
                            const achild: identty; const akind: elementkindty;
                            const avislevel: visikindsty;
@@ -1839,21 +1839,28 @@ end;
 function telementhashdatalist.addelementdata(const aname: identty;
            const akind: elementkindty; const avislevel: visikindsty;
            out aelementdata: pointer): boolean;
-                    //false if duplicate, aelement always allocated
+         //false if duplicate, aelementdata = new or duplicate
+var
+ scopebefore: pscopeinfoty;
+ ele1: elementoffsetty;
 begin
- aelementdata:= addelement(aname,akind,avislevel);
- result:= aelementdata <> nil;
- if not result then begin
-  aelementdata:= addelementduplicate(aname,akind,avislevel);
+ scopebefore:= fscopespo;
+ fscopespo:= nil;
+ result:= findcurrent(aname,[],allvisi{ffindvislevel},ele1);
+ if result then begin
+  aelementdata:= eledataabs(ele1);
+ end
+ else begin
+  aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
  end;
- aelementdata:= @(pelementinfoty(aelementdata)^.data);
+ fscopespo:= scopebefore;
 end;
 
 function telementhashdatalist.addelement(const aname: identty;
               const akind: elementkindty;
               const avislevel: visikindsty;
               out aelementoffset: elementoffsetty): boolean;
-                                                       //false if duplicate
+         //false if duplicate, aelementoffset = 0 if duplicate
 var
  po1: pelementinfoty;
 begin

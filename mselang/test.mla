@@ -10,6 +10,8 @@ var
 // int1: int32;
 // po1: pointer;
 begin
+{$dumpelements}
+{$abort}
 // int1:= 123;
 // proc1(po1);
 // str1:= 'abc';

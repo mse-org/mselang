@@ -51,7 +51,8 @@ implementation
 uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
- handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops;
+ handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
+ subhandler;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -296,6 +297,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
 var
  po1,po2: pchar;
  pc1: pcontextty;
+ inifinisub: psubdataty;
  int1: integer;
  bo1: boolean;
  keywordindex: identty;
@@ -625,25 +627,13 @@ parseend:
 {$endif}
   if stf_hasmanaged in currentstatementflags then begin
    with unitinfo^ do begin
-    inistart:= opcount;
-    writemanagedvarop(mo_ini,varchain,true,0);
-    if inistart = opcount then begin
-     inistart:= 0;
-    end
-    else begin
-     inistop:= opcount;
-     with additem(oc_goto)^ do begin
-     end;
+    if getinternalsub(tks_ini,inifinisub) then begin //no initialization section                                               
+     writemanagedvarop(mo_ini,varchain,true,0);
+     endinternalsub();
     end;
-    finistart:= opcount;
-    writemanagedvarop(mo_fini,varchain,true,0);
-    if finistart = opcount then begin
-     finistart:= 0;
-    end
-    else begin
-     finistop:= opcount;
-     with additem(oc_goto)^ do begin
-     end;
+    if getinternalsub(tks_fini,inifinisub) then begin //no finalization section
+     writemanagedvarop(mo_fini,varchain,true,0);
+     endinternalsub();
     end;
    end;
   end;
@@ -652,7 +642,7 @@ parseend:
    varchain:= unitinfo^.varchain;
   end;
   if result and (unitlevel = 1) then begin
-   unithandler.handleinifini();
+///////////////////////   unithandler.handleinifini();
 //   setlength(ops,opcount);
    with pstartupdataty(getoppo(0))^ do begin
     globdatasize:= globdatapo;

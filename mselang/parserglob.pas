@@ -622,6 +622,7 @@ type
   varchain: elementoffsetty;
   impl: implinfoty;
   codestop: opaddressty;
+  {
   initializationstart: opaddressty;  //0 if none
   initializationstop: opaddressty;   //0 if none, last op is goto
   finalizationstart: opaddressty;    //0 if none
@@ -630,6 +631,7 @@ type
   inistop: opaddressty;    //-> gotoop
   finistart: opaddressty;  //0 if none
   finistop: opaddressty;   //-> gotoop
+  }
  end;
  ppunitinfoty = ^punitinfoty;
 

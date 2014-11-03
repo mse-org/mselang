@@ -18,7 +18,17 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings,parserglob,opglob,elements,handlerglob;
+ mselinklist,listutils,msestrings,parserglob,opglob,elements,handlerglob;
+
+type
+ unitlinkinfoty = record  //used for ini, fini
+  header: linkheaderty;
+  ref: punitinfoty
+ end;
+ punitlinkinfoty = ^unitlinkinfoty;
+var 
+ unitlinklist: linklistty;
+ unitchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
 function loadunit(const aindex: integer): punitinfoty;
@@ -44,7 +54,7 @@ procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
 procedure handleunitend();
-procedure handleinifini();
+//procedure handleinifini();
 procedure handleinitializationstart();
 procedure handleinitialization();
 procedure handlefinalizationstart();
@@ -56,8 +66,8 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- mselinklist,handlerutils,msearrayutils,listutils,opcode,
- {stackops,}segmentutils,classhandler,compilerunit;
+ handlerutils,msearrayutils,opcode,subhandler,
+ {stackops,}segmentutils,classhandler,compilerunit,managedtypes;
  
 type
  unithashdataty = record
@@ -203,16 +213,6 @@ begin
   dec(stackindex,2);
  end;
 end;
-
-type
- unitlinkinfoty = record  //used for ini, fini
-  header: linkheaderty;
-  ref: punitinfoty
- end;
- punitlinkinfoty = ^unitlinkinfoty;
-var 
- unitlinklist: linklistty;
- unitchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
 var
@@ -596,13 +596,19 @@ begin
 end;
 
 procedure handleinitializationstart();
+var
+ po1: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATIONSTART');
 {$endif}
+ getinternalsub(tks_ini,po1);
+ writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+{
  with info,unitinfo^ do begin
   initializationstart:= opcount;
  end;
+}
 end;
 
 procedure handleinitialization();
@@ -610,6 +616,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATION');
 {$endif}
+ endinternalsub();
+{
  with info,unitinfo^ do begin
    initializationstop:= opcount;
   if opcount <> initializationstart then begin
@@ -619,16 +627,22 @@ begin
    end;
   end;
  end;
+}
 end;
 
 procedure handlefinalizationstart();
+var
+ po1: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATIONSTART');
 {$endif}
+ getinternalsub(tks_fini,po1);
+{
  with info,unitinfo^ do begin
   finalizationstart:= opcount;
  end;
+}
 end;
 
 procedure handlefinalization();
@@ -636,6 +650,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATION');
 {$endif}
+ writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
+ endinternalsub();
+{
  with info,unitinfo^ do begin
   if opcount <> finalizationstart then begin
    finalizationstop:= opcount;
@@ -644,8 +661,9 @@ begin
    end;
   end;
  end;
+}
 end;
-
+(*
 procedure handleinifini();
 var
  start1: opaddressty;
@@ -704,8 +722,10 @@ begin
    if opad1 = 0 then begin
     opad1:= unit1^.inistop;
    end;
-   po1[opad1].par.opaddress:= po1[startupoffset].par.opaddress; //goto                                      
+   po1[opad1].par.opaddress:= po1[startupoffset].par.opaddress; //goto
+   include(po1[po1[startupoffset].par.opaddress].op.flags,opf_label);
    po1[startupoffset].par.opaddress:= start1-1; //inject ini code
+   include(po1[start1].op.flags,opf_label);
   end;
 
   invertlist(unitlinklist,unitchain);
@@ -758,6 +778,7 @@ begin
     op.op:= oc_goto;
 //    setop(op,oc_goto);
     par.opaddress:= start1-1;
+    include(po1[start1].op.flags,opf_label);
    end;
    opad1:= unit1^.finistop;
    if opad1 = 0 then begin
@@ -768,7 +789,7 @@ begin
 
  end;
 end;
-
+*)
 procedure clear;
 begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);

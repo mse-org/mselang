@@ -45,7 +45,7 @@
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
  '.classintfname','.classintftype','.classimp','.self'
- '.units','.ancestors','.nestedvarref'
+ '.units','.ancestors','.nestedvarref','.ini','.fini'
 @.tokens
  'result','exitcode'
 start,nounit,,
