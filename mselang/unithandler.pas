@@ -169,6 +169,7 @@ begin
   {$else}
    ele.pushelement(tk_implementation,ek_implementation,implementationvisi,po1);
   {$endif}
+   unitinfo^.implementationelement:= ele.eledatarel(po1);
   end;
   with contextstack[stackindex] do begin
    d.kind:= ck_implementation;

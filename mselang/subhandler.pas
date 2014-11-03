@@ -53,6 +53,7 @@ function checkparams(const po1,ref: psubdataty): boolean;
 function getinternalsub(const aident: identty; 
                              out asubdata: psubdataty): boolean; //true if new
 procedure endinternalsub();
+procedure callinternalsub(const asub: psubdataty);
 
 implementation
 uses
@@ -68,8 +69,11 @@ type
 function getinternalsub(const aident: identty; 
                              out asubdata: psubdataty): boolean;
 begin
- result:= ele.addelementdata(tks_ini,ek_sub,allvisi,asubdata);
+ result:= not ele.findchilddata(info.unitinfo^.interfaceelement,aident,
+                                                   [],[vik_global],asubdata);
  if result then begin
+  asubdata:= ele.addchildduplicatedata(info.unitinfo^.interfaceelement,
+                                                  aident,ek_sub,[vik_global]);
   fillchar(asubdata^,sizeof(asubdata^),0);
   with asubdata^ do begin
    address:= info.opcount;
@@ -86,6 +90,16 @@ begin
  with additem(oc_subend)^ do begin
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
+ end;
+end;
+
+procedure callinternalsub(const asub: psubdataty);
+begin
+ with additem(oc_call)^.par.callinfo do begin
+  ad:= asub^.address;
+  flags:= asub^.flags;
+  linkcount:= 0;
+  paramcount:= 0;
  end;
 end;
 

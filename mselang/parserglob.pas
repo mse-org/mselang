@@ -614,13 +614,14 @@ type
   filepath: filenamety; //todo: use lstringty
   state: unitstatesty;
   interfaceelement: elementoffsetty;
+  implementationelement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   pendingcount: integer;
   pendingcapacity: integer;
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
-  impl: implinfoty;
+  impl: implinfoty; //start of implementation parsing
   codestop: opaddressty;
   {
   initializationstart: opaddressty;  //0 if none

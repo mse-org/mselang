@@ -263,6 +263,10 @@ type
                            const avislevel: visikindsty;
                            out aelementdata: pointer): boolean;
                                           //true if new
+   function addchildduplicatedata(const aparent: elementoffsetty;
+                           const achild: identty; const akind: elementkindty;
+                           const avislevel: visikindsty): pointer;
+                     
                            
    procedure pushscopelevel();
    procedure popscopelevel();
@@ -1846,12 +1850,12 @@ var
 begin
  scopebefore:= fscopespo;
  fscopespo:= nil;
- result:= findcurrent(aname,[],allvisi{ffindvislevel},ele1);
+ result:= not findcurrent(aname,[],allvisi{ffindvislevel},ele1);
  if result then begin
-  aelementdata:= eledataabs(ele1);
+  aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
  end
  else begin
-  aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
+  aelementdata:= eledataabs(ele1);
  end;
  fscopespo:= scopebefore;
 end;
@@ -1888,6 +1892,19 @@ begin
   aelementdata:= addelementduplicatedata1(achild,akind,avislevel);
   elementparent:= parentbefore;
  end;
+end;
+
+function telementhashdatalist.addchildduplicatedata(
+                           const aparent: elementoffsetty;
+                           const achild: identty; const akind: elementkindty;
+                           const avislevel: visikindsty): pointer;
+var
+ parentbefore: elementoffsetty;
+begin
+ parentbefore:= felementparent;
+ elementparent:= aparent;
+ result:= addelementduplicatedata1(achild,akind,avislevel);
+ elementparent:= parentbefore;
 end;
 
 function telementhashdatalist.popelement: pelementinfoty;

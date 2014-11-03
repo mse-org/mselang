@@ -135,7 +135,7 @@ implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
- subhandler,managedtypes,syssubhandler,valuehandler,segmentutils;
+ subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils;
 
 procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 
@@ -182,37 +182,65 @@ begin
  outhandle('PROGBEGIN');
 {$endif}
  with info do begin
+  if stf_hasmanaged in currentstatementflags then begin
+   getinternalsub(tks_ini,po1);
+   writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+   endinternalsub;
+  end;
+  
   with getoppo(startupoffset)^ do begin
    par.beginparse.mainad:= opcount;
   end;
   resetssa();
   with additem(oc_main)^ do begin
   end;
- {
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
-      if ele.findchilddata(
-      if inistart <> 0 then begin
-       if start1 = 0 then begin
-        start1:= inistart;
-       end
-       else begin
-        if unit1^.initializationstop <> 0 then begin
-         po1[unit1^.initializationstop].par.opaddress:= inistart-1; //goto
- }
+      if ele.findchilddata(interfaceelement,tks_ini,
+                                         [],allvisi,po1) then begin
+       callinternalsub(po1);
+      end;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
  end;
 end;
 
 procedure handleprogblock();
+var
+ ad1: listadty;
+ po1: psubdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
 {$endif}
 // writeop(nil); //endmark
  handleunitend();
+ if stf_hasmanaged in info.currentstatementflags then begin
+  getinternalsub(tks_fini,po1);
+  writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
+  endinternalsub;
+ end;
+ invertlist(unitlinklist,unitchain);
+ with unitlinklist do begin
+  ad1:= unitchain;
+  while ad1 <> 0 do begin         //insert ini calls
+   with punitlinkinfoty(list+ad1)^ do begin
+    with ref^ do begin
+     if ele.findchilddata(interfaceelement,tks_fini,
+                                        [],allvisi,po1) then begin
+      callinternalsub(po1);
+     end;
+    end;
+    ad1:= header.next;
+   end;
+  end;
+ end;
  with additem(oc_progend)^ do begin 
   //endmark, will possibly replaced by goto if there is fini code
  end;

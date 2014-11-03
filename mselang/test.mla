@@ -11,7 +11,7 @@ var
 // po1: pointer;
 begin
 {$dumpelements}
-{$abort}
+//{$abort}
 // int1:= 123;
 // proc1(po1);
 // str1:= 'abc';
