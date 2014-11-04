@@ -74,6 +74,7 @@ begin
   result:= aaddress = 0;
   if result then begin
    aaddress:= info.opcount;
+   internalsubs[asub]:= aaddress;
    resetssa();
    with additem(oc_subbegin)^.par.subbegin do begin
     subname:= aaddress;
@@ -81,7 +82,6 @@ begin
     allocs.alloccount:= 0;
     allocs.nestedalloccount:= 0;
    end;
-   internalsubs[asub]:= aaddress;
   end;
  end;
 end;
@@ -100,7 +100,7 @@ end;
 procedure callinternalsub(const asub: opaddressty);
 begin
  with additem(oc_call)^.par.callinfo do begin
-  ad:= asub;
+  ad:= asub-1;
   flags:= [];
   linkcount:= 0;
   paramcount:= 0;
