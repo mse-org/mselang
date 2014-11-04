@@ -75,8 +75,11 @@ begin
   if result then begin
    aaddress:= info.opcount;
    resetssa();
-   with additem(oc_subbegin)^ do begin
-    par.subbegin.subname:= aaddress;
+   with additem(oc_subbegin)^.par.subbegin do begin
+    subname:= aaddress;
+    flags:= [];
+    allocs.alloccount:= 0;
+    allocs.nestedalloccount:= 0;
    end;
    internalsubs[asub]:= aaddress;
   end;
