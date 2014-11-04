@@ -642,7 +642,7 @@ parseend:
    varchain:= unitinfo^.varchain;
   end;
   if result and (unitlevel = 1) then begin
-///////////////////////   unithandler.handleinifini();
+//   unithandler.handleinifini();
 //   setlength(ops,opcount);
    with pstartupdataty(getoppo(0))^ do begin
     globdatasize:= globdatapo;

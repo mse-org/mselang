@@ -183,8 +183,12 @@ begin
 {$endif}
  with info do begin
   if stf_hasmanaged in currentstatementflags then begin
-   if getinternalsub(isub_ini,ad2) then begin
+   if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+    endinternalsub();
+   end;
+   if getinternalsub(isub_fini,ad2) then begin  //no finalization
+    writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
     endinternalsub();
    end;
   end;
@@ -221,12 +225,6 @@ begin
 {$endif}
 // writeop(nil); //endmark
  handleunitend();
- if stf_hasmanaged in info.currentstatementflags then begin
-  if getinternalsub(isub_fini,ad2) then begin
-   writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
-   endinternalsub();
-  end;
- end;
  invertlist(unitlinklist,unitchain);
  with unitlinklist do begin
   ad1:= unitchain;
