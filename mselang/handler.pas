@@ -893,6 +893,9 @@ begin
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
       end;
+      ck_typearg: begin
+       errormessage(err_cannotaddresstype,[],1);
+      end;
      {$ifdef mse_checkinternalerror}
       else begin
        internalerror(ie_handler,'20140403C');

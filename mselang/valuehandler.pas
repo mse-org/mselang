@@ -426,12 +426,12 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-  case contextstack[stackindex-1].d.kind of
-   ck_getfact: begin
-    isgetfact:= true;
-   end;
-   ck_ref: begin
-    with contextstack[stackindex-1] do begin
+  with contextstack[stackindex-1] do begin
+   case d.kind of
+    ck_getfact: begin
+     isgetfact:= true;
+    end;
+    ck_ref: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                                 (po3^.kind <> dk_record) then begin
@@ -442,9 +442,9 @@ begin
       ele.elementparent:= d.dat.datatyp.typedata;
      end;
     end;
-   end;
-   else begin
-    internalerror1(ie_notimplemented,'20140406A');
+    else begin
+     internalerror1(ie_notimplemented,'20140406A');
+    end;
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
@@ -552,33 +552,6 @@ begin
      end;
      with psysfuncdataty(po2)^ do begin
       sysfuncs[func](paramco);
-(*      
-      case func of
-       sf_setlength: begin
-        handlesetlength(paramco);
-       end;
-       sf_writeln: begin //todo: use open array of constrec
-        int2:= stacktop-stackindex-2-idents.high; //count
-        stacksize1:= 0;
-        int3:= int2+2+stackindex+idents.high;
-        for int1:= 3+stackindex+idents.high to int3 do begin
-         with contextstack[int1] do begin
-          getvalue(int1-stackindex{,true});
-          with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
-           push(kind);
-           stacksize1:= stacksize1 + alignsize(bytesize);
-          end;
-         end;
-        end;
-        with additem()^ do begin
-         op:= @writelnop;
-         par.paramcount:= int2;
-         par.paramsize:= stacksize1;
-        end;
-        //todo: handle function
-       end;
-      end;
-    *)
      end;
     end;
     ek_type: begin
@@ -594,8 +567,21 @@ begin
          d.dat.constval.kind:= dk_enum;
          d.dat.constval.vinteger:= infoenumitem.value;
         end
-        else begin
+        else begin         
+         with ptypedataty(po2)^ do begin
+          d.kind:= ck_typearg;
+          d.typ.flags:= flags;
+          d.typ.typedata:= ele.eledatarel(po2);
+          d.typ.indirectlevel:= indirectlevel;
+          if not isgetfact then begin
+           d.typ.indirectlevel:= d.typ.indirectlevel +
+                    contextstack[stackindex-1].d.dat.indirection;
+          end;
+         end;
+         
+       {
          errormessage(err_illegalexpression,[],stacktop-stackindex);
+       }
         end;
        end;
       end

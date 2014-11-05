@@ -147,7 +147,8 @@ type
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
                   ck_typedata,ck_typeref,
-                  ck_typetype,ck_fieldtype,ck_var,ck_field,ck_statement,
+                  ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
+                  ck_statement,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_pointer,sdk_bool1,sdk_int32,sdk_flo64);
@@ -165,7 +166,7 @@ type
 const
  dataaddresssize = sizeof(dataaddressty);
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
- typecontexts = [ck_typetype,ck_fieldtype];
+ typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
  factcontexts = [ck_fact,ck_reffact];
 
 type
@@ -527,7 +528,7 @@ type
    ck_typeref:(
     typeref: elementoffsetty;
    );
-   ck_typetype,ck_fieldtype:(
+   ck_typetype,ck_fieldtype,ck_typearg:(
     typ: typeinfoty;
    );
    ck_recorddef:(

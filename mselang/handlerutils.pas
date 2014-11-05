@@ -1336,6 +1336,10 @@ begin                    //todo: optimize
      end;
     end;
    end;
+   ck_typearg: begin
+    errormessage(err_valueexpected,[],stackoffset);
+    exit;
+   end;
   {$ifdef mse_checkinternalerror}                             
    else begin
     internalerror(ie_notimplemented,'20140401B');

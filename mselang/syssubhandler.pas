@@ -24,11 +24,12 @@ type
  
 procedure handlewriteln(const paramco: integer);
 procedure handlewrite(const paramco: integer);
+procedure handlesizeof(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
-  //sf_write,   sf_writeln,    sf_setlength
-  @handlewrite,@handlewriteln,@handlesetlength);
+  //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof
+  @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof);
   
 procedure init();
 procedure deinit();
@@ -37,6 +38,10 @@ implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
  segmentutils;
+
+procedure handlesizeof(const paramco: integer);
+begin
+end;
 
 procedure handlewrite(const paramco: integer);
 var
@@ -149,7 +154,8 @@ const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
    (name: 'write'; data: (func: sf_write)),
    (name: 'writeln'; data: (func: sf_writeln)),
-   (name: 'setlength'; data: (func: sf_setlength))
+   (name: 'setlength'; data: (func: sf_setlength)),
+   (name: 'sizeof'; data: (func: sf_sizeof))
   );
 
 procedure init();

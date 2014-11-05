@@ -721,10 +721,10 @@ begin
       beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;
-    result:= parsecompilerunit('__mla__compilerunit');
-    if result then begin
+///////    result:= parsecompilerunit('__mla__compilerunit');
+///////    if result then begin
      result:= parseunit(input,unit1);
-    end;
+///////    end;
     endparser();
    finally
     system.finalize(info);

@@ -52,7 +52,8 @@ type
             err_classtypeexpected,err_nomatchingimplementation,
             err_duplicateancestortype,err_localclassdef,err_noinputfile,
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
-            err_wrongversion,err_invalidprogram,err_compilerunitnotfound);
+            err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
+            err_cannotaddresstype,err_valueexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -190,7 +191,9 @@ const
                               '%s'),
   (level: erl_fatal; message: 'Wrong version "%s", expected "%s"'),
   (level: erl_fatal; message: 'Invalid program'),
-  (level: erl_fatal; message: 'Compiler unit "%s" not found')  
+  (level: erl_fatal; message: 'Compiler unit "%s" not found'),
+  (level: erl_error; message: 'Can''t take the addreess of type'),
+  (level: erl_error; message: 'Value expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

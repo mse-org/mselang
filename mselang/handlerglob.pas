@@ -291,7 +291,7 @@ type
  end;
  psubdataty = ^subdataty;
 
- sysfuncty = (sf_write,sf_writeln,sf_setlength);
+ sysfuncty = (sf_write,sf_writeln,sf_setlength,sf_sizeof);
 
  sysfuncdataty = record
   func: sysfuncty;

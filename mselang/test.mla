@@ -1,19 +1,4 @@
 program test;
-{
-procedure proc1(p1: pointer);
 begin
- writeln(123);
-end;
-}
-var
- str1: string8;
-// int1: int32;
-// po1: pointer;
-begin
-{$dumpelements}
-//{$abort}
-// int1:= 123;
-// proc1(po1);
-// str1:= 'abc';
-// writeln(str1);
+ writeln(int32);
 end;

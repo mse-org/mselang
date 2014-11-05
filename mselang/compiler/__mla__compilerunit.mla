@@ -16,7 +16,7 @@ procedure __mla__decrefsize(const ref: ppointer);
 procedure __mla__finirefsize(const ref: ppointer);
 
 implementation
-
+{
 procedure __mla__decrefsize(const ref: ppointer);
 begin
 end;
@@ -24,7 +24,8 @@ end;
 procedure __mla__finirefsize(const ref: ppointer);
 begin
 end;
-{
+}
+
 type             //todo: use "internaltypes"
  refcountty = int32;
  managedsizety = int32;
@@ -77,5 +78,5 @@ begin
   end;
  end;
 end;
-}
+
 end.

@@ -47,7 +47,7 @@
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref'
 @.tokens
- 'result','exitcode'
+ 'result','exitcode','sizeof'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
