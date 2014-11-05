@@ -1,16 +1,8 @@
 program test;
-type
- r = record
-  a: int32;
-  b: int32;
-  c: int32;
- end;
- pr = ^r;
 var
  po1: pointer;
- pr1: pr;
- int1: int32;
 begin
- po1:= po1;
- pr1:= po1;
+ if po1 = nil then begin
+  writeln(abc);
+ end;
 end;

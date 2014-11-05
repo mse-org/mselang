@@ -106,7 +106,7 @@ end;
 procedure handlechecktypeident();
 var
  po1,po2: pelementinfoty;
- po3: ptypedataty;
+ po3,po4: ptypedataty;
  idcontext: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
@@ -120,17 +120,19 @@ begin
  {$endif}
   if findkindelements(1,[ek_type],allvisi,po2) then begin
    d.typ.typedata:= ele.eleinforel(po2);
-   d.typ.flags:= ptypedataty(@po2^.data)^.flags;
+   po3:= ptypedataty(@po2^.data);
+   d.typ.flags:= po3^.flags;
+   inc(d.typ.indirectlevel,po3^.indirectlevel);
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[stackindex-3];
     if idcontext^.d.kind = ck_ident then begin
      po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
      if po1 <> nil then begin
-      po3:= @po1^.data;
-      po3^:= ptypedataty(@po2^.data)^;
-      inc(po3^.indirectlevel,d.typ.indirectlevel);
-      if po3^.indirectlevel > 0 then begin
-       po3^.flags-= [tf_managed,tf_hasmanaged];
+      po4:= @po1^.data;
+      po4^:= po3^;
+      po4^.indirectlevel:= d.typ.indirectlevel;
+      if po4^.indirectlevel > 0 then begin
+       po4^.flags-= [tf_managed,tf_hasmanaged];
       end;
      end
      else begin //duplicate
