@@ -1598,6 +1598,21 @@ begin
         initfactcontext(1);
        end;
       end;
+     end
+     else begin
+      if (kinda = dk_pointer) and (kindb = dk_pointer) then begin
+       sd1:= sdk_pointer;
+       if d.kind = ck_const then begin
+        pushinsert(stacktop-2-stackindex,false,d.dat.constval.vaddress,0,false);
+        initfactcontext(-1);
+       end;
+       with contextstack[stacktop],d do begin
+        if kind = ck_const then begin
+         push(dat.constval.vaddress,0,false);
+         initfactcontext(1);
+        end;
+       end;
+      end
      end;
     end;
    end;
