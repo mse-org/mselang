@@ -533,8 +533,9 @@ begin
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
-       d.dat.datatyp.indirectlevel:= d.dat.ref.c.address.indirectlevel{ +
-           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel};
+       d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
+       {d.dat.ref.c.address.indirectlevel}{ +
+           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;}
        d.dat.indirection:= 0;
       end
       else begin

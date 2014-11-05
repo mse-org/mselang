@@ -88,7 +88,7 @@ begin
     po2:= ele.eleinfoabs(vf.typ);
     address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
     with ptypedataty(@po2^.data)^ do begin
-     address.indirectlevel:= address.indirectlevel+indirectlevel;
+//     address.indirectlevel:= address.indirectlevel+indirectlevel;
      if kind in pointervarkinds then begin
       inc(address.indirectlevel);
      end;
