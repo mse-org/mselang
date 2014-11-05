@@ -3,6 +3,6 @@ var
  po1: pointer;
 begin
  if po1 = nil then begin
-  writeln(abc);
+  writeln('abc');
  end;
 end;

@@ -1439,8 +1439,12 @@ begin
    po1:= ele.addelement(getident(name),ek_type,globalvisi);
    po2:= @po1^.data;
    po2^:= data;
+   with sysdatatypes[ty1] do begin
+    flags:= data.flags;
+    indirectlevel:= data.indirectlevel;
+    typedata:= ele.eleinforel(po1);
+   end;
   end;
-  sysdatatypes[ty1].typedata:= ele.eleinforel(po1);
 //  sysdatatypes[ty1].flags:= [];
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
