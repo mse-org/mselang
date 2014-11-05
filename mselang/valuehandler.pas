@@ -42,53 +42,68 @@ begin
   if result then begin
    result:= dest^.kind = source1^.kind;
    if not result then begin
-    case d.kind of
-     ck_const: begin
-      case dest^.kind of //todo: use table
-       dk_float: begin
-        case source1^.kind of
-         dk_integer: begin //todo: adjust data size
-          with d,dat.constval do begin
-           kind:= dk_float;
-           vfloat:= vinteger;
+    if destindirectlevel = 0 then begin
+     case d.kind of
+      ck_const: begin
+       case dest^.kind of //todo: use table
+        dk_float: begin
+         case source1^.kind of
+          dk_integer: begin //todo: adjust data size
+           with d,dat.constval do begin
+            kind:= dk_float;
+            vfloat:= vinteger;
+           end;
+           result:= true;
           end;
-          result:= true;
          end;
         end;
        end;
       end;
-     end;
-     ck_fact: begin
-      case dest^.kind of //todo: use table
-       dk_float: begin
-        case source1^.kind of
-         dk_integer: begin //todo: adjust data size
-          with additem(oc_int32toflo64)^ do begin
+      ck_fact: begin
+       case dest^.kind of //todo: use table
+        dk_float: begin
+         case source1^.kind of
+          dk_integer: begin //todo: adjust data size
+           with additem(oc_int32toflo64)^ do begin
+           end;
+           result:= true;
           end;
-          result:= true;
          end;
         end;
        end;
       end;
+     {$ifdef mse_checkinternalerror}
+      else begin
+       internalerror(ie_handler,'20131121B');
+      end;
+     {$endif}
      end;
-    {$ifdef mse_checkinternalerror}
-     else begin
-      internalerror(ie_handler,'20131121B');
+    end
+    else begin
+     if (destindirectlevel = 1) and 
+          ((dest^.kind = dk_pointer) or (source1^.kind = dk_pointer)) then begin
+      result:= true; //untyped pointer
      end;
-    {$endif}
     end;
    end;
   end
   else begin
-   if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-         (d.dat.datatyp.indirectlevel = 1) and 
-         (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
-    if getclassinterfaceoffset(source1,dest,int1) then begin
-     if getvalue(stackoffset) then begin
-      with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
-       setimmint32(int1,par);
+   if (dest^.kind = dk_pointer) and (destindirectlevel = 1) or 
+      (source1^.kind = dk_pointer) and 
+                                 (d.dat.datatyp.indirectlevel = 1) then begin
+    result:= true; //untyped pointer
+   end
+   else begin
+    if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
+          (d.dat.datatyp.indirectlevel = 1) and 
+          (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
+     if getclassinterfaceoffset(source1,dest,int1) then begin
+      if getvalue(stackoffset) then begin
+       with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+        setimmint32(int1,par);
+       end;
+       result:= true;
       end;
-      result:= true;
      end;
     end;
    end;
@@ -518,8 +533,8 @@ begin
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
-       d.dat.datatyp.indirectlevel:= d.dat.ref.c.address.indirectlevel +
-           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;
+       d.dat.datatyp.indirectlevel:= d.dat.ref.c.address.indirectlevel{ +
+           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel};
        d.dat.indirection:= 0;
       end
       else begin

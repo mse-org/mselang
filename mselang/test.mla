@@ -1,11 +1,16 @@
 program test;
 type
- r=record
+ r = record
   a: int32;
   b: int32;
   c: int32;
  end;
-
+ pr = ^r;
+var
+ po1: pointer;
+ pr1: pr;
+ int1: int32;
 begin
- writeln(sizeof(r));
+ po1:= po1;
+ pr1:= po1;
 end;
