@@ -1612,7 +1612,6 @@ procedure handleassignment();
 var
  dest: vardestinfoty;
  typematch,indi,isconst: boolean;
-// si1: integer;
  datasi1: databitsizety;
  int1: integer;
  offs1: dataoffsty;
