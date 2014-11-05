@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit handlerutils;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  handlerglob,parserglob,opglob,elements,msestrings,msetypes;
@@ -157,7 +157,7 @@ procedure deinit();
 procedure outhandle(const text: string);
 procedure outinfo(const text: string; const indent: boolean);
 {$endif}
-                           
+
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
@@ -1271,7 +1271,7 @@ var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
- 
+label errlab; 
 begin                    //todo: optimize
  result:= false;
  with info,contextstack[stackindex+stackoffset] do begin
@@ -1338,7 +1338,7 @@ begin                    //todo: optimize
    end;
    ck_typearg: begin
     errormessage(err_valueexpected,[],stackoffset);
-    exit;
+    goto errlab;
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin
@@ -1346,6 +1346,7 @@ begin                    //todo: optimize
    end;
   {$endif}
   end;
+errlab:
   if d.kind <> ck_fact then begin
    initfactcontext(stackoffset);
    d.dat.fact.opdatatype:= opdata1;
@@ -1596,6 +1597,7 @@ begin
    end;
    if sd1 = sdk_none then begin
     incompatibletypeserror(contextstack[stacktop-2].d,contextstack[stacktop].d);
+    dec(stacktop,2);
    end
    else begin
     op1:= opsinfo.ops[sd1];

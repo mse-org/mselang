@@ -587,7 +587,7 @@ begin
       end
       else begin          //type conversion
        if paramco > 1 then begin
-        errormessage(err_closeparentexpected,[],4,-1);
+        errormessage(err_tokenexpected,[')'],4,-1);
        end
        else begin
         if not tryconvert(stacktop-stackindex,po2,

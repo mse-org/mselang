@@ -40,7 +40,50 @@ uses
  segmentutils;
 
 procedure handlesizeof(const paramco: integer);
+var
+ int1: integer;
 begin
+ case paramco of
+  0: begin
+   errormessage(err_illegalexpression,[]);
+  end;
+  1: begin
+   with info,contextstack[stackindex] do begin
+    d.kind:= ck_const;
+    d.dat.indirection:= 0;
+    d.dat.datatyp:= sysdatatypes[st_int32];
+    d.dat.constval.kind:= dk_integer;
+    with contextstack[stacktop] do begin
+     case d.kind of
+      ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
+       if d.dat.datatyp.indirectlevel > 0 then begin
+        int1:= pointersize;
+       end
+       else begin
+        int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
+       end;
+      end;
+      ck_typetype,ck_fieldtype,ck_typearg: begin
+       if d.typ.indirectlevel > 0 then begin
+        int1:= pointersize;
+       end
+       else begin
+        int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.bytesize;
+       end;
+      end;
+      else begin
+       int1:= 0;
+       errormessage(err_cannotgetsize,[]);
+      end;
+     end;
+    end;      
+    d.dat.constval.vinteger:= int1;
+   end;
+  end;
+  else begin
+   errormessage(err_tokenexpected,[')']);
+  end;
+ end;
 end;
 
 procedure handlewrite(const paramco: integer);

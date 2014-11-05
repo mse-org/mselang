@@ -31,7 +31,7 @@ type
             err_typeidentexpected,err_identexpected,err_incompatibletypes,
             err_illegalqualifier,err_illegalexpression,err_varidentexpected,
             err_argnotassign,err_illegalcharacter,err_numberexpected,
-            err_negnotpossible,err_closeparentexpected,err_illegalconversion,
+            err_negnotpossible,{err_closeparentexpected,}err_illegalconversion,
             err_operationnotsupported,err_invalidtoken,err_sameparamlist,
             err_functionheadernotmatch,err_forwardnotsolved,err_filetrunc,
             err_circularreference,err_variableexpected,err_stringexeedsline,
@@ -53,7 +53,7 @@ type
             err_duplicateancestortype,err_localclassdef,err_noinputfile,
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
-            err_cannotaddresstype,err_valueexpected);
+            err_cannotaddresstype,err_valueexpected,err_cannotgetsize);
             
  errorinfoty = record
   level: errorlevelty;
@@ -121,7 +121,7 @@ const
   (level: erl_fatal; message: 'Illegal character %s'),
   (level: erl_error; message: 'Number expected'),
   (level: erl_error; message: 'Negation not possible'),
-  (level: erl_fatal; message: 'Syntax error, ")" expected'),
+//  (level: erl_fatal; message: 'Syntax error, ")" expected'),
   (level: erl_error; message: 'Illegal type conversion: "%s" to "%s"'),
   (level: erl_error; message: 'Operation "%s" not supported for "%s" and "%s"'),
   (level: erl_fatal; message: 'Invalid token "%s"'),
@@ -193,7 +193,8 @@ const
   (level: erl_fatal; message: 'Invalid program'),
   (level: erl_fatal; message: 'Compiler unit "%s" not found'),
   (level: erl_error; message: 'Can''t take the addreess of type'),
-  (level: erl_error; message: 'Value expected')
+  (level: erl_error; message: 'Value expected'),
+  (level: erl_error; message: 'Can not get size of this expression')
  );
 
 procedure message1(const atext: string; const values: array of const); 

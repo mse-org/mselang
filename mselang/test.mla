@@ -1,4 +1,11 @@
 program test;
+type
+ r=record
+  a: int32;
+  b: int32;
+  c: int32;
+ end;
+
 begin
- writeln(int32);
+ writeln(sizeof(r));
 end;
