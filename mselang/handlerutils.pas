@@ -190,9 +190,11 @@ const
                  kind: dk_string8; manageproc: @managestring8; itemsize: 1;
                  dummy: 0))
   );
- sysconstinfos: array[0..1] of sysconstinfoty = (
+ sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
-   (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true))
+   (name: 'true'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: true)),
+   (name: 'nil'; ctyp: st_pointer; cval:(kind: dk_pointer; 
+             vaddress: (flags: [af_nil]; indirectlevel: 0; poaddress: 0)))
   );
     
 { 
