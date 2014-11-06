@@ -620,13 +620,17 @@ interfaceparam3,,,handleidentexpected*
 
 statementend,,,handlestatementend!
 
-exp,exp1,,
+exp,,,handleexp^
+ '',callexp*
+callexp,exp1,,
  '',simpexp*
-exp1,,,handleexp^
+exp1,,,handleexp1
  ${whitespace}
- '=',equsimpexp-*
+ '=',equsimpexp-* 
+
 equsimpexp,,,handleequsimpexp
  '',simpexp*
+
 simpexp,simpexp1,,
  '',term*
 simpexp1,simpexp1,,
@@ -677,7 +681,7 @@ negfact,,,handlenegfact
 #
 #
 bracketstart,bracketend,,
- '',simpexp*
+ '',callexp*
 bracketend,,,handlebracketend
  ${whitespace}
 #

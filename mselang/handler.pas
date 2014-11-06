@@ -84,6 +84,7 @@ procedure handleidentpath2a();
 procedure handleidentpath2();
 
 procedure handleexp();
+procedure handleexp1();
 procedure handleequsimpexp();
 procedure handlecommaseprange();
 
@@ -1374,6 +1375,18 @@ begin
  with info do begin
   contextstack[stacktop-1].d:= contextstack[stacktop].d;
   dec(stacktop);
+ end;
+end;
+
+procedure handleexp1();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXP1');
+{$endif}
+ with info do begin
+  contextstack[stacktop-1].d:= contextstack[stacktop].d;
+  stacktop:= stackindex;
+  dec(stackindex);
  end;
 end;
 

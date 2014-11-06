@@ -4,7 +4,6 @@ var
  bo1: bool1;
  int1: int32;
 begin
- int1:= (1+1);
- bo1:= (true = false);
+ bo1:= true = false;
  writeln(bo1);
 end;

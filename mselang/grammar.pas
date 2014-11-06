@@ -1094,12 +1094,17 @@ var
  expco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'exp');
+ callexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'callexp');
  exp1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'exp1');
  equsimpexpco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
@@ -4979,6 +4984,16 @@ const
    );
  bexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @callexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bcallexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @simpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
@@ -5354,7 +5369,7 @@ const
    );
  bbracketstart: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @simpexpco); stack: nil; keys: (
+     dest: (context: @callexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -6549,9 +6564,11 @@ begin
  statementendco.branch:= nil;
  statementendco.handleexit:= @handlestatementend;
  expco.branch:= @bexp;
- expco.next:= @exp1co;
+ expco.handleexit:= @handleexp;
+ callexpco.branch:= @bcallexp;
+ callexpco.next:= @exp1co;
  exp1co.branch:= @bexp1;
- exp1co.handleexit:= @handleexp;
+ exp1co.handleexit:= @handleexp1;
  equsimpexpco.branch:= @bequsimpexp;
  equsimpexpco.handleexit:= @handleequsimpexp;
  simpexpco.branch:= @bsimpexp;
