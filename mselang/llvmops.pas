@@ -1025,6 +1025,26 @@ begin
  notimplemented();
 end;
 
+procedure cmpnequpoop();
+begin
+ notimplemented();
+end;
+
+procedure cmpnequboolop();
+begin
+ notimplemented();
+end;
+
+procedure cmpnequint32op();
+begin
+ icompare(ick_eq);
+end;
+
+procedure cmpnequflo64op();
+begin
+ notimplemented();
+end;
+
 procedure storesegnilop();
 begin
  with pc^.par do begin
@@ -2241,6 +2261,11 @@ const
   cmpequboolssa = 1;
   cmpequint32ssa = 1;
   cmpequflo64ssa = 1;
+
+  cmpnequpossa = 1;
+  cmpnequboolssa = 1;
+  cmpnequint32ssa = 1;
+  cmpnequflo64ssa = 1;
 
   storesegnilssa = 1;
   storereg0nilssa = 1;

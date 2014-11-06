@@ -86,6 +86,7 @@ procedure handleidentpath2();
 procedure handleexp();
 procedure handleexp1();
 procedure handleequsimpexp();
+procedure handlenequsimpexp();
 procedure handlecommaseprange();
 
 procedure handlemain();
@@ -1446,10 +1447,88 @@ begin
  end;
 end;
 
+type
+ cmpopty = (cmpo_equ,cmpo_nequ);
 const
- cmpequops: opsinfoty = (ops: (oc_none,oc_cmpequpo,oc_cmpequbool,oc_cmpequint32,
+ cmpops: array[cmpopty] of opsinfoty = (
+  (ops: (oc_none,oc_cmpequpo,oc_cmpequbool,oc_cmpequint32,
                         oc_cmpequflo64);
-                        opname: '=');
+                        opname: '='),
+  (ops: (oc_none,oc_cmpnequpo,oc_cmpnequbool,
+                        oc_cmpnequint32,oc_cmpnequflo64);
+                        opname: '<>')
+ );
+
+procedure handlecomparison(const aop: cmpopty);
+
+procedure notsupported();
+begin
+ with info,contextstack[stacktop-2] do begin
+  operationnotsupportederror(d,contextstack[stacktop].d,cmpops[aop].opname);
+ end;
+end;
+
+var
+ dk1:stackdatakindty;
+ int1: integer;
+begin
+ with info,contextstack[stacktop-2] do begin
+  if (contextstack[stacktop].d.kind = ck_const) and 
+                                               (d.kind = ck_const) then begin
+   dk1:= convertconsts();
+   d.dat.constval.kind:= dk_boolean;
+   d.dat.datatyp:= sysdatatypes[st_bool1];
+   case aop of
+    cmpo_equ: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger = 
+                 contextstack[stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat = 
+                              contextstack[stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean =
+                              contextstack[stacktop].d.dat.constval.vboolean;
+      end;
+      else begin
+       notsupported();
+      end;
+     end;
+    end;
+    cmpo_nequ: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger <>
+                 contextstack[stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat <>
+                              contextstack[stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean <>
+                              contextstack[stacktop].d.dat.constval.vboolean;
+      end;
+      else begin
+       notsupported();
+      end;
+     end;
+    end;
+   end;
+   dec(stacktop,2);
+   stackindex:= stacktop-1;
+  end
+  else begin
+   updateop(cmpops[aop]);
+   with info,contextstack[stacktop] do begin
+    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
+   end;
+  end;
+ end;
+end;
 
 procedure handleequsimpexp();
 var
@@ -1458,39 +1537,17 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EQUSIMPEXP');
 {$endif}
- with info,contextstack[stacktop-2] do begin
-  if (contextstack[stacktop].d.kind = ck_const) and 
-                                               (d.kind = ck_const) then begin
-   dk1:= convertconsts();
-   d.dat.constval.kind:= dk_boolean;
-   d.dat.datatyp:= sysdatatypes[st_bool1];
-   case dk1 of
-    sdk_int32: begin
-     d.dat.constval.vboolean:= d.dat.constval.vinteger = 
-               contextstack[stacktop].d.dat.constval.vinteger;
-    end;
-    sdk_flo64: begin
-     d.dat.constval.vboolean:= d.dat.constval.vfloat = 
-                            contextstack[stacktop].d.dat.constval.vfloat;
-    end;
-    sdk_bool1: begin
-     d.dat.constval.vboolean:= d.dat.constval.vboolean =
-                            contextstack[stacktop].d.dat.constval.vboolean;
-    end;
-    else begin
-     operationnotsupportederror(d,contextstack[stacktop].d,'=');
-    end;
-   end;
-   dec(stacktop,2);
-   stackindex:= stacktop-1;
-  end
-  else begin
-   updateop(cmpequops);
-   with info,contextstack[stacktop] do begin
-    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
-   end;
-  end;
- end;
+ handlecomparison(cmpo_equ);
+end;
+
+procedure handlenequsimpexp();
+var
+ dk1:stackdatakindty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('NEQUSIMPEXP');
+{$endif}
+ handlecomparison(cmpo_nequ);
 end;
 
 procedure handlecommaseprange();

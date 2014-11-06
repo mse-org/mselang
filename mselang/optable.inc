@@ -76,6 +76,11 @@
   cmpequint32ssa,
   cmpequflo64ssa,
 
+  cmpnequpossa,
+  cmpnequboolssa,
+  cmpnequint32ssa,
+  cmpnequflo64ssa,
+
   storesegnilssa,
   storereg0nilssa,
   storeframenilssa,
@@ -341,6 +346,11 @@
   @cmpequboolop,
   @cmpequint32op,
   @cmpequflo64op,
+
+  @cmpnequpoop,
+  @cmpnequboolop,
+  @cmpnequint32op,
+  @cmpnequflo64op,
 
   @storesegnilop,
   @storereg0nilop,

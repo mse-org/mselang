@@ -1111,6 +1111,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'equsimpexp');
+ nequsimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'nequsimpexp');
  simpexpco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5002,7 +5007,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexp1: array[0..5] of branchty = (
+ bexp1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5014,6 +5019,13 @@ const
      dest: (context: @linecomment0co); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['/']),
     (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @nequsimpexpco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['<']),
+    (kind: bkk_char; chars: ['>']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
@@ -5041,6 +5053,16 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bequsimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @simpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bnequsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @simpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -6571,6 +6593,8 @@ begin
  exp1co.handleexit:= @handleexp1;
  equsimpexpco.branch:= @bequsimpexp;
  equsimpexpco.handleexit:= @handleequsimpexp;
+ nequsimpexpco.branch:= @bnequsimpexp;
+ nequsimpexpco.handleexit:= @handlenequsimpexp;
  simpexpco.branch:= @bsimpexp;
  simpexpco.next:= @simpexp1co;
  simpexp1co.branch:= @bsimpexp1;

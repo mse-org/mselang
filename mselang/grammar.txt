@@ -627,8 +627,11 @@ callexp,exp1,,
 exp1,,,handleexp1
  ${whitespace}
  '=',equsimpexp-* 
+ '<>',nequsimpexp-* 
 
 equsimpexp,,,handleequsimpexp
+ '',simpexp*
+nequsimpexp,,,handlenequsimpexp
  '',simpexp*
 
 simpexp,simpexp1,,

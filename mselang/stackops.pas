@@ -622,6 +622,42 @@ begin
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
+procedure cmpnequpoop();
+var
+ po1,po2: pvpointerty;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ po2:= stackpop(sizeof(vpointerty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+end;
+
+procedure cmpnequboolop();
+var
+ po1,po2: pvbooleanty;
+begin
+ po1:= stackpop(sizeof(vbooleanty));
+ po2:= po1-alignsize(sizeof(vbooleanty));
+ po2^:= po2^ <> po1^;
+end;
+
+procedure cmpnequint32op();
+var
+ po1,po2: pvintegerty;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= stackpop(sizeof(vintegerty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+end;
+
+procedure cmpnequflo64op();
+var
+ po1,po2: pvfloatty;
+begin
+ po1:= stackpop(sizeof(vfloatty));
+ po2:= stackpop(sizeof(vfloatty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+end;
+
 procedure addflo64op();
 var
  po1,po2: pointer;
@@ -2205,6 +2241,11 @@ const
   cmpequboolssa = 0;
   cmpequint32ssa = 0;
   cmpequflo64ssa = 0;
+
+  cmpnequpossa = 0;
+  cmpnequboolssa = 0;
+  cmpnequint32ssa = 0;
+  cmpnequflo64ssa = 0;
 
   storesegnilssa = 0;
   storereg0nilssa = 0;

@@ -123,6 +123,11 @@ type
   oc_cmpequint32,
   oc_cmpequflo64,
 
+  oc_cmpnequpo,
+  oc_cmpnequbool,
+  oc_cmpnequint32,
+  oc_cmpnequflo64,
+
   oc_storesegnil,
   oc_storereg0nil,
   oc_storeframenil,
