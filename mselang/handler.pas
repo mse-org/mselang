@@ -1434,7 +1434,7 @@ begin
 end;
 
 const
- cmpequops: opsinfoty = (ops: (oc_none,oc_none,oc_cmpequbool,oc_cmpequint32,
+ cmpequops: opsinfoty = (ops: (oc_none,oc_cmpequpo,oc_cmpequbool,oc_cmpequint32,
                         oc_cmpequflo64);
                         opname: '=');
 

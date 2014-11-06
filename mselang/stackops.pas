@@ -140,6 +140,11 @@ var                       //todo: use threadvars where necessary
 // constdata: pointer;
 
  segments: array[segmentty] of segmentrangety;
+
+procedure notimplemented();
+begin
+ raise exception.create('stackops OP not implemented');
+end;
  
 procedure internalerror(const atext: string);
 begin
@@ -579,6 +584,15 @@ var
 begin
  po1:= cpu.stack - alignsize(sizeof(vpointerty));
  vpointerty(po1^):= vpointerty(po1^)+cpu.pc^.par.imm.vint32;
+end;
+
+procedure cmpequpoop();
+var
+ po1,po2: pvpointerty;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ po2:= stackpop(sizeof(vpointerty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
 end;
 
 procedure cmpequboolop();
@@ -2187,6 +2201,7 @@ const
   mulimmint32ssa = 0;
   offsetpoimm32ssa = 0;
 
+  cmpequpossa = 0;
   cmpequboolssa = 0;
   cmpequint32ssa = 0;
   cmpequflo64ssa = 0;

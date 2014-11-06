@@ -1005,6 +1005,11 @@ begin
  notimplemented();
 end;
 
+procedure cmpequpoop();
+begin
+ notimplemented();
+end;
+
 procedure cmpequboolop();
 begin
  notimplemented();
@@ -2232,6 +2237,7 @@ const
   mulimmint32ssa = 1;
   offsetpoimm32ssa = 1;
 
+  cmpequpossa = 1;
   cmpequboolssa = 1;
   cmpequint32ssa = 1;
   cmpequflo64ssa = 1;

@@ -619,6 +619,7 @@ interfaceparam3,,,handleidentexpected*
  @identstart,interfaceparam1*
 
 statementend,,,handlestatementend!
+
 exp,exp1,,
  '',simpexp*
 exp1,,,handleexp^
@@ -633,8 +634,19 @@ simpexp1,simpexp1,,
  '+',addterm-*
  '',simpexp1a
 simpexp1a,,,handlesimpexp1
+
 addterm,,,handleaddterm
  '',term*
+
+term,term1,,
+ '',fact*
+term1,,,handleterm
+ ${whitespace}
+ '*',mulfact*>
+
+mulfact,,,handlemulfact
+ '',fact*
+
 fact,fact1,handlefactstart,
  ${whitespace}
  '+',-
@@ -662,6 +674,12 @@ fact2,fact1,handlefact2entry,
 #
 negfact,,,handlenegfact
  '',fact*
+#
+#
+bracketstart,bracketend,,
+ '',simpexp*
+bracketend,,,handlebracketend
+ ${whitespace}
 #
 valueidentifier,checkvalueparams,,
  '',identpath^*
@@ -696,24 +714,8 @@ getindex1,,,handleindex
 getindex2,getindex1,,
  '',exp^*
 #
-term,term1,,
-# ${whitespace}
-# '@',getaddress-
- '',fact*
-#getaddress,term1,,handleaddress
-# '',fact*
-#
-term1,,,handleterm
- ${whitespace}
- '*',mulfact*>
-# '',term1a
-#term1a,,,handleterm1
-#negterm,term,handlenegterm,
-#
 illegalexpression,,,handleillegalexpression*
 #
-mulfact,,,handlemulfact
- '',fact*
 #todo: use handler for number evaluation
 num,,,handleint
  @decnum,-
@@ -797,9 +799,4 @@ identpath2,,,handleidentpath2^
  ${whitespace}
  @identstart,identpath*
 #
-#
-bracketstart,bracketend,,
- '',simpexp*
-bracketend,,,handlebracketend
- ${whitespace}
 numberexpected,,,handlenumberexpected*

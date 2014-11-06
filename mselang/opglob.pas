@@ -118,6 +118,7 @@ type
   oc_mulimmint32,
   oc_offsetpoimm32,
 
+  oc_cmpequpo,
   oc_cmpequbool,
   oc_cmpequint32,
   oc_cmpequflo64,

@@ -71,6 +71,7 @@
   mulimmint32ssa,
   offsetpoimm32ssa,
 
+  cmpequpossa,
   cmpequboolssa,
   cmpequint32ssa,
   cmpequflo64ssa,
@@ -336,6 +337,7 @@
   @mulimmint32op,
   @offsetpoimm32op,
 
+  @cmpequpoop,
   @cmpequboolop,
   @cmpequint32op,
   @cmpequflo64op,

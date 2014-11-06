@@ -1,8 +1,10 @@
 program test;
 var
  po1: pointer;
+ bo1: bool1;
+ int1: int32;
 begin
- if po1 = nil then begin
-  writeln('abc');
- end;
+ int1:= (1+1);
+ bo1:= (true = false);
+ writeln(bo1);
 end;
