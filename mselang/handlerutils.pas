@@ -48,7 +48,7 @@ const
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
    (sdk_none,sdk_pointer,sdk_bool1,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
   //dk_address,dk_record,dk_string,dk_dynarray,dk_array,dk_class,dk_interface
-    sdk_none,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
+    sdk_pointer,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
   //dk_enum,dk_enumitem, dk_set
     sdk_none,   sdk_none, sdk_none);
                 
@@ -88,6 +88,8 @@ function addvar(const aname: identty; const avislevel: visikindsty;
 
 procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
+function compaddress(const a,b: addressvaluety): integer;
+
 function getvalue(const stackoffset: integer;
                                const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
@@ -161,7 +163,7 @@ procedure outinfo(const text: string; const indent: boolean);
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes,grammar,segmentutils;
+ syssubhandler,managedtypes,grammar,segmentutils,valuehandler;
    
 const
  mindouble = -1.7e308;
@@ -684,6 +686,27 @@ begin
      end;
     end;
    end;
+   dk_pointer: begin
+    with po1^.d.dat.constval do begin
+     if af_nil in vaddress.flags then begin
+      insertitem(oc_pushnil,stackoffset,before);
+     end
+     else begin
+      if af_segment in vaddress.flags then begin
+       with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
+        par.vsegaddress.a:= vaddress.segaddress;
+        par.vsegaddress.offset:= 0;
+       end;
+      end
+      else begin
+       with insertitem(oc_pushlocaddr{ess},stackoffset,before)^ do begin
+        par.vlocaddress.a:= vaddress.locaddress;
+        par.vlocaddress.offset:= 0;
+       end;
+      end;
+     end;
+    end;
+   end;
   {$ifdef mse_checkinternalerror}                             
    else begin
     internalerror(ie_handler,'20131121A');
@@ -720,21 +743,21 @@ begin
 // result^.par.ssad:= info.ssaindex;
 end;
 
-procedure push(const avalue: boolean); overload;
+procedure push(const avalue: boolean);
 begin
  with addpushimm(oc_pushimm8)^ do begin
   setimmboolean(avalue,par);
  end;
 end;
 
-procedure push(const avalue: integer); overload;
+procedure push(const avalue: integer);
 begin
  with addpushimm(oc_pushimm32)^ do begin
   setimmint32(avalue,par);
  end;
 end;
 
-procedure push(const avalue: real); overload;
+procedure push(const avalue: real);
 begin
  with addpushimm(oc_pushimm64)^ do begin
   setimmfloat64(avalue,par);
@@ -848,8 +871,11 @@ begin
    dk_float: begin
     push(dat.constval.vfloat);
    end;
-   dk_address: begin
+   dk_address,dk_pointer: begin
     push(dat.constval.vaddress,0,false);
+   end;
+   else begin
+    internalerror(ie_handler,'2014118A');
    end;
   end;
  end;
@@ -905,12 +931,27 @@ begin
  end; 
 end;
 
+function compaddress(const a,b: addressvaluety): integer;
+        //todo: handle runtime address calculation
+begin
+ result:= maxint;
+ if a.flags * addresscompflags = b.flags * addresscompflags then begin
+  if af_nil in a.flags then begin
+   result:= 0;
+  end
+  else begin
+   result:= a.poaddress - b.poaddress;
+  end;
+ end;
+end;
+
 function convertconsts(): stackdatakindty;
                 //convert stacktop, stacktop-2
 begin
  with info,contextstack[stacktop-2] do begin
   result:= stackdatakinds[d.dat.constval.kind];  
-  if contextstack[stacktop].d.dat.constval.kind <> d.dat.constval.kind then begin
+  if contextstack[stacktop].d.dat.constval.kind <> 
+                                              d.dat.constval.kind then begin
    case contextstack[stacktop].d.dat.constval.kind of
     dk_float: begin
      result:= sdk_flo64;
@@ -1487,6 +1528,81 @@ begin
 end;
 
 procedure updateop(const opsinfo: opsinfoty);
+var
+ kinda,kindb: datakindty;
+// po1: pelementinfoty;
+ int1: integer;
+ sd1: stackdatakindty;
+ op1: opcodety;
+ po1: ptypedataty;
+ bo1: boolean;
+begin
+ with info do begin
+  bo1:= false;
+  with contextstack[stacktop-2] do begin
+   if d.kind <> ck_const then begin
+    getvalue(stacktop-stackindex-2);
+   end;
+   if contextstack[stacktop].d.kind <> ck_const then begin
+    getvalue(stacktop-stackindex);
+   end;
+   po1:= ele.eledataabs(d.dat.datatyp.typedata);
+   int1:= d.dat.datatyp.indirectlevel;
+   if not tryconvert(stacktop-stackindex,po1,int1) then begin
+    with contextstack[stacktop] do begin
+     po1:= ele.eledataabs(d.dat.datatyp.typedata);
+     int1:= d.dat.datatyp.indirectlevel;
+    end;
+    if tryconvert(stacktop-stackindex-2,po1,int1) then begin
+     bo1:= true;
+    end;
+   end
+   else begin
+    bo1:= true;
+   end;
+   if not bo1 then begin
+    incompatibletypeserror(contextstack[stacktop-2].d,contextstack[stacktop].d);
+    dec(stacktop,2);
+   end
+   else begin
+    if int1 > 0 then begin //indirectlevel
+     sd1:= sdk_pointer;
+    end
+    else begin
+     sd1:= stackdatakinds[po1^.kind];
+    end;
+    op1:= opsinfo.ops[sd1];
+    if op1 = oc_none then begin
+     operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
+     dec(stacktop,2);
+    end
+    else begin
+     if d.kind = ck_const then begin
+      pushinsertconst(stacktop-stackindex-2,false);
+     end;
+     with contextstack[stacktop] do begin
+      if d.kind = ck_const then begin
+       pushconst(d);
+      end;
+     end;
+     with additem(op1)^ do begin      
+      par.ssas1:= d.dat.fact.ssaindex;
+      par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
+      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                      d.dat.datatyp.indirectlevel);
+     end;
+     initfactcontext(-1);
+    end;
+    dec(stacktop,2);
+//    d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
+    context:= nil;
+   end;
+  end;
+  stackindex:= stacktop-1; 
+ end;
+end;
+(*
+procedure updateop(const opsinfo: opsinfoty);
 //todo: don't convert inplace, stack items will be of variable size
 var
  kinda,kindb: datakindty;
@@ -1643,7 +1759,7 @@ begin
   stackindex:= stacktop-1; 
  end;
 end;
-
+*)
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 begin
  with typedata^ do begin

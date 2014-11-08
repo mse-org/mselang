@@ -177,6 +177,7 @@ type
 
 const
  addresskindflags = [af_local,af_segment];
+ addresscompflags = addresskindflags + [af_nil];
 
 type 
  pparseinfoty = ^parseinfoty;
@@ -272,14 +273,14 @@ type
  end;
 
  segaddressty = record
-  address: dataoffsty;
+  address: dataoffsty; //first, must map poaddress
   size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
                        //necessary for llvm global aggregate types
   segment: segmentty;
  end;
  
  locaddressty = record
-  address: dataoffsty;
+  address: dataoffsty; //first, must map poaddress
   framelevel: integer;
 //  nestedindex: integer;
  {$ifdef mse_locvarssatracking}

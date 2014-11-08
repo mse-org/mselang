@@ -4,6 +4,7 @@ var
  bo1: bool1;
  int1: int32;
 begin
- bo1:= true <> false;
+ po1:= @po1;
+ bo1:= po1 = nil;
  writeln(bo1);
 end;

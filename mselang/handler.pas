@@ -1493,6 +1493,10 @@ begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean =
                               contextstack[stacktop].d.dat.constval.vboolean;
       end;
+      sdk_pointer: begin
+       d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
+                  contextstack[stacktop].d.dat.constval.vaddress) = 0;
+      end;
       else begin
        notsupported();
       end;
