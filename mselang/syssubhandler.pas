@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit syssubhandler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  handlerglob,opglob,managedtypes,msetypes;
@@ -25,11 +25,15 @@ type
 procedure handlewriteln(const paramco: integer);
 procedure handlewrite(const paramco: integer);
 procedure handlesizeof(const paramco: integer);
+procedure handleinc(const paramco: integer);
+procedure handledec(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
-  //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof
-  @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof);
+  //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof,
+  @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
+  //sf_inc,  sf_dec
+  @handleinc,@handledec);
   
 procedure init();
 procedure deinit();
@@ -86,14 +90,178 @@ begin
  end;
 end;
 
+type
+ memopty = (meo_segment,meo_local,meo_param,meo_paramindi);
+ memoparty = array[memopty] of opcodety;
+  
+function addmemop(var dat: datacontextty; const ops: memoparty): popinfoty;
+var
+ ssaextension1: integer;
+ framelevel1: integer;
+ opdatatype1: typeallocinfoty;
+begin
+ opdatatype1:= getopdatatype(dat.datatyp);
+ if af_segment in dat.ref.c.address.flags then begin
+  result:= additem(ops[meo_segment]);
+  with result^.par do begin
+   memop.segdataaddress.a:= dat.ref.c.address.segaddress;
+   memop.segdataaddress.offset:= dat.ref.offset;
+  end;
+ end
+ else begin
+  framelevel1:= info.sublevel-dat.ref.c.address.locaddress.framelevel-1;
+  if framelevel1 >= 0 then begin
+   ssaextension1:= getssa(ocssa_nestedvar);
+  end;
+  if af_param in dat.ref.c.address.flags then begin
+   if af_paramindirect in dat.ref.c.address.flags then begin
+    result:= additem(ops[meo_paramindi],ssaextension1);
+   end
+   else begin
+    result:= additem(ops[meo_param],ssaextension1);
+   end;
+  end
+  else begin   
+   result:= additem(ops[meo_local],ssaextension1);
+  end;
+  with result^ do begin
+   par.memop.locdataaddress.a:= dat.ref.c.address.locaddress;
+   par.memop.locdataaddress.a.framelevel:= framelevel1;
+   par.memop.locdataaddress.offset:= dat.ref.offset;
+  end;
+  tracklocalaccess(dat.ref.c.address.locaddress,dat.ref.c.varele,opdatatype1);
+ end;
+ result^.par.memop.t:= opdatatype1;
+end;
+
+const
+ incdecimmint32ops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_incdecsegimmint32,oc_incdeclocimmint32,oc_incdecparimmint32,
+//meo_paramindi
+  oc_incdecparindiimmint32);
+ 
+ incdecimmpoops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_incdecsegimmpo32,oc_incdeclocimmpo32,oc_incdecparimmpo32,
+//meo_paramindi
+  oc_incdecparindiimmpo32);
+ 
+procedure handleincdec(const paramco: integer; const adec: boolean);
+var
+ po1,po2: ptypedataty;
+ int1: integer;
+ po3: popinfoty;
+ par2isconst: boolean;
+label
+ factlab;
+begin
+ with info do begin
+  if (paramco < 1) or (paramco > 2) then begin
+   identerror(1,err_wrongnumberofparameters);
+  end
+  else begin
+   int1:= 1;
+   par2isconst:= true;
+   if paramco > 1 then begin
+    with contextstack[stacktop] do begin
+     po2:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (d.dat.datatyp.indirectlevel <> 0) or 
+                  not (po2^.kind in ordinaldatakinds) then begin
+      errormessage(err_ordinalexpexpected,[],stacktop-stackindex);      
+     end
+     else begin
+      if d.kind = ck_const then begin
+       int1:= d.dat.constval.vinteger;
+      end
+      else begin
+       par2isconst:= false;
+       if d.kind <> ck_none then begin //parameter error otherwise
+        getvalue(stacktop-stackindex);
+        int1:= -1; //no imm
+       end;
+      end;
+     end;
+    end;
+   end;
+   if int1 <> 0 then begin //ignore otherwise
+    with contextstack[stacktop-paramco+1] do begin //dest
+     case d.kind of
+      ck_ref: begin
+       if d.dat.indirection <> 0 then begin
+        getvalue(stacktop-paramco+1);
+        goto factlab;
+       end;
+       po1:= ele.eledataabs(d.dat.datatyp.typedata);
+       if (paramco = 1) or par2isconst then begin
+        if (d.dat.datatyp.indirectlevel > 0) then begin
+         po3:= addmemop(d.dat,incdecimmpoops);
+         if d.dat.datatyp.indirectlevel = 1 then begin
+          if po1^.kind = dk_pointer then begin
+           po3^.par.memimm.vint32:= 1;
+          end
+          else begin
+           po3^.par.memimm.vint32:= po1^.bytesize;
+          end;
+         end
+         else begin
+          po3^.par.memimm.vint32:= pointersize;
+         end;
+        end
+        else begin
+         po3:= addmemop(d.dat,incdecimmint32ops);
+         po3^.par.memimm.vint32:= po1^.bytesize;
+        end;
+        if par2isconst and (paramco > 1) then begin
+         po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
+                           contextstack[stacktop].d.dat.constval.vinteger;
+        end;
+       end
+       else begin
+        internalerror(ie_handler,'20141110A');
+       end;
+       if adec then begin
+        po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
+       end;
+      end;
+      ck_fact: begin
+factlab:
+       internalerror(ie_notimplemented,'20141110A');
+      end;
+      ck_const: begin
+       errormessage(err_variableexpected,[],stacktop-stackindex-paramco+1);
+      end;
+      ck_none: begin
+       //error in parameter, ignore
+      end;
+      else begin
+       internalerror(ie_handler,'20141109A');
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handleinc(const paramco: integer);
+begin
+ handleincdec(paramco,false);
+end;
+
+procedure handledec(const paramco: integer);
+begin
+ handleincdec(paramco,true);
+end;
+
 procedure handlewrite(const paramco: integer);
 var
  int1,int3: integer;
- stacksize1: datasizety;
+// stacksize1: datasizety;
  po1: popinfoty; 
  po2: ptypedataty;
 begin
- stacksize1:= 0;
+// stacksize1:= 0;
  with info do begin
   int3:= 0;
   for int1:= stacktop-paramco+1 to stacktop do begin
@@ -198,7 +366,9 @@ const
    (name: 'write'; data: (func: sf_write)),
    (name: 'writeln'; data: (func: sf_writeln)),
    (name: 'setlength'; data: (func: sf_setlength)),
-   (name: 'sizeof'; data: (func: sf_sizeof))
+   (name: 'sizeof'; data: (func: sf_sizeof)),
+   (name: 'inc'; data: (func: sf_inc)),
+   (name: 'dec'; data: (func: sf_dec))
   );
 
 procedure init();

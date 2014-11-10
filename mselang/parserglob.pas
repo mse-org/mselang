@@ -505,7 +505,7 @@ type
    ck_getfact:(
     getfact: getfactinfoty;
    );
-   ck_const,ck_fact,ck_subres,{ck_refconst,}ck_ref,ck_reffact:( //datacontexts
+   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
    ck_index:(
@@ -684,13 +684,8 @@ type
   errorstream: ttextstream;
   errorwritten: boolean;
   errorfla: boolean;
-  errors: array[errorlevelty] of integer;
-//  constseg: bytearty;
-//  constsize: integer;
-//  constcapacity: integer;
-//  ops: opinfoarty;
+  errors: array[errorlevelty] of integer; //total count
   opcount: integer;
-//  opshift: integer;
   start: integer;
   globdatapo: ptruint;
   locdatapo: ptruint;
@@ -698,7 +693,6 @@ type
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
   currentcontainer: elementoffsetty;
-//  currentclassvislevel: vislevelty;
   currentclassvislevel: visikindsty;
   currentstatementflags: statementflagsty;
   stringbuffer: string; //todo: use faster type

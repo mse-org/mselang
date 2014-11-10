@@ -165,6 +165,45 @@ begin
                               aaddress.a.address)^ + aaddress.offset;
 end;
 
+//todo: make special locvar access funcs for inframe variables
+//and loop unroll
+
+function getlocaddress(const aaddress: locdataaddressty): pointer; 
+                                          {$ifdef mse_inline}inline;{$endif}
+var
+ i1: integer;
+ po1: pointer;
+begin
+ if aaddress.a.framelevel < 0 then begin
+  result:= cpu.frame + aaddress.a.address + aaddress.offset;
+ end
+ else begin
+  po1:= cpu.stacklink;
+  for i1:= aaddress.a.framelevel downto 0 do begin
+   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  end;
+  result:= po1 + aaddress.a.address + aaddress.offset;
+ end;
+end;
+
+function getlocaddressindi(const aaddress: locdataaddressty): pointer; 
+                                          {$ifdef mse_inline}inline;{$endif}
+var
+ i1: integer;
+ po1: pointer;
+begin
+ if aaddress.a.framelevel < 0 then begin
+  result:= ppointer(cpu.frame + aaddress.a.address)^ + aaddress.offset;
+ end
+ else begin
+  po1:= cpu.stacklink;
+  for i1:= aaddress.a.framelevel downto 0 do begin
+   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  end;
+  result:= ppointer(po1 + aaddress.a.address)^ + aaddress.offset;
+ end;
+end;
+
 function alignsize(const size: ptruint): ptruint; 
                              {$ifdef mse_inline}inline;{$endif}
 begin
@@ -586,6 +625,76 @@ begin
  vpointerty(po1^):= vpointerty(po1^)+cpu.pc^.par.imm.vint32;
 end;
 
+procedure incdecsegimmint32op();
+var
+ po1: pinteger;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getsegaddress(mem.segdataaddress);
+  inc(po1^,vint32);
+ end; 
+end;
+
+procedure incdecsegimmpo32op();
+var
+ po1: ppointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getsegaddress(mem.segdataaddress);
+  inc(po1^,vint32);
+ end; 
+end;
+
+procedure incdeclocimmint32op();
+var
+ po1: pinteger;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getlocaddress(mem.locdataaddress);
+  inc(po1^,vint32);
+ end; 
+end;
+
+procedure incdeclocimmpo32op();
+var
+ po1: ppointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getlocaddress(mem.locdataaddress);
+  inc(po1^,vint32);
+ end; 
+end;
+
+procedure incdecparimmint32op();
+begin
+ incdeclocimmint32op();
+end;
+
+procedure incdecparimmpo32op();
+begin
+ incdeclocimmpo32op();
+end;
+
+procedure incdecparindiimmint32op();
+var
+ po1: ^pinteger;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getlocaddress(mem.locdataaddress);
+  inc(po1^^,vint32);
+ end; 
+end;
+
+procedure incdecparindiimmpo32op();
+var
+ po1: pppointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= getlocaddress(mem.locdataaddress);
+  inc(po1^^,vint32);
+ end; 
+end;
+
 procedure cmpequpoop();
 var
  po1,po2: pvpointerty;
@@ -899,45 +1008,6 @@ begin
  int1:= cpu.pc^.par.memop.t.size;
  move(getsegaddress(cpu.pc^.par.memop.segdataaddress)^,
                   stackpush(int1)^,int1);
-end;
-
-//todo: make special locvar access funcs for inframe variables
-//and loop unroll
-
-function getlocaddress(const aaddress: locdataaddressty): pointer; 
-                                          {$ifdef mse_inline}inline;{$endif}
-var
- i1: integer;
- po1: pointer;
-begin
- if aaddress.a.framelevel < 0 then begin
-  result:= cpu.frame + aaddress.a.address + aaddress.offset;
- end
- else begin
-  po1:= cpu.stacklink;
-  for i1:= aaddress.a.framelevel downto 0 do begin
-   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
-  end;
-  result:= po1 + aaddress.a.address + aaddress.offset;
- end;
-end;
-
-function getlocaddressindi(const aaddress: locdataaddressty): pointer; 
-                                          {$ifdef mse_inline}inline;{$endif}
-var
- i1: integer;
- po1: pointer;
-begin
- if aaddress.a.framelevel < 0 then begin
-  result:= ppointer(cpu.frame + aaddress.a.address)^ + aaddress.offset;
- end
- else begin
-  po1:= cpu.stacklink;
-  for i1:= aaddress.a.framelevel downto 0 do begin
-   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
-  end;
-  result:= ppointer(po1 + aaddress.a.address)^ + aaddress.offset;
- end;
 end;
 
 procedure poploc8op();
@@ -2236,6 +2306,18 @@ const
   addimmint32ssa = 0;
   mulimmint32ssa = 0;
   offsetpoimm32ssa = 0;
+
+  incdecsegimmint32ssa = 0;
+  incdecsegimmpo32ssa = 0;
+
+  incdeclocimmint32ssa = 0;
+  incdeclocimmpo32ssa = 0;
+
+  incdecparimmint32ssa = 0;
+  incdecparimmpo32ssa = 0;
+
+  incdecparindiimmint32ssa = 0;
+  incdecparindiimmpo32ssa = 0;
 
   cmpequpossa = 0;
   cmpequboolssa = 0;

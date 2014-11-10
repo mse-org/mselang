@@ -141,10 +141,14 @@ procedure initfactcontext(const stackoffset: integer);
 procedure trackalloc(const asize: integer; var address: segaddressty);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
+procedure tracklocalaccess(var aaddress: locaddressty; 
+                                 const avarele: elementoffsetty;
+                                 const aopdatatype: typeallocinfoty);
 
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
 function getssa(const aopcode: opcodety; const count: integer): integer;
+function getopdatatype(const atypeinfo: typeinfoty): typeallocinfoty;
 function getopdatatype(const atypedata: elementoffsetty;
                            const aindirectlevel: integer): typeallocinfoty;
 function getopdatatype(const atypedata: ptypedataty;
@@ -626,6 +630,11 @@ begin
  else begin
   result:= getopdatatype(ele.eledataabs(atypedata),aindirectlevel);
  end;
+end;
+
+function getopdatatype(const atypeinfo: typeinfoty): typeallocinfoty;
+begin
+ result:= getopdatatype(atypeinfo.typedata,atypeinfo.indirectlevel);
 end;
 
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;

@@ -118,6 +118,18 @@ type
   oc_mulimmint32,
   oc_offsetpoimm32,
 
+  oc_incdecsegimmint32,
+  oc_incdecsegimmpo32,
+
+  oc_incdeclocimmint32,
+  oc_incdeclocimmpo32,
+
+  oc_incdecparimmint32,
+  oc_incdecparimmpo32,
+
+  oc_incdecparindiimmint32,
+  oc_incdecparindiimmpo32,
+
   oc_cmpequpo,
   oc_cmpequbool,
   oc_cmpequint32,
@@ -383,9 +395,6 @@ type
   selfinstance: dataoffsty; //stackoffset
  end;
 
- destroyclassinfo = record
- end;
-
   immty = record
 //   ssaindex: integer;
    datasize: integer;
@@ -490,6 +499,17 @@ type
    );
  end;
 
+ memimmopty = record
+  mem: memopty;
+  case opcodety of
+   oc_incdecsegimmint32,oc_incdecsegimmpo32,
+   oc_incdeclocimmint32,oc_incdeclocimmpo32,
+   oc_incdecparimmint32,oc_incdecparimmpo32,
+   oc_incdecparindiimmint32,oc_incdecparindiimmpo32:(
+    vint32: int32;
+   );
+ end;
+ 
  setlengthty = record
   itemsize: integer;
  end;
@@ -543,6 +563,13 @@ type
    oc_pop: (
     imm: immty;
    );
+   oc_incdecsegimmint32,oc_incdecsegimmpo32,
+   oc_incdeclocimmint32,oc_incdeclocimmpo32,
+   oc_incdecparimmint32,oc_incdecparimmpo32,
+   oc_incdecparindiimmint32,oc_incdecparindiimmpo32:(
+    memimm: memimmopty;
+   );
+  
    oc_cmpjmpneimm4,oc_cmpjmpeqimm4,oc_cmpjmploimm4,oc_cmpjmploeqimm4,
    oc_cmpjmpgtimm4: (
     ordimm: ordimmty;

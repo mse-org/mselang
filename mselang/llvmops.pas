@@ -1005,6 +1005,46 @@ begin
  notimplemented();
 end;
 
+procedure incdecsegimmint32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecsegimmpo32op();
+begin
+ notimplemented();
+end;
+
+procedure incdeclocimmint32op();
+begin
+ notimplemented();
+end;
+
+procedure incdeclocimmpo32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecparimmint32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecparimmpo32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecparindiimmint32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecparindiimmpo32op();
+begin
+ notimplemented();
+end;
+
 procedure cmpequpoop();
 begin
  notimplemented();
@@ -2256,6 +2296,18 @@ const
   addimmint32ssa = 1;
   mulimmint32ssa = 1;
   offsetpoimm32ssa = 1;
+
+  incdecsegimmint32ssa = 1;
+  incdecsegimmpo32ssa = 1;
+
+  incdeclocimmint32ssa = 1;
+  incdeclocimmpo32ssa = 1;
+
+  incdecparimmint32ssa = 1;
+  incdecparimmpo32ssa = 1;
+
+  incdecparindiimmint32ssa = 1;
+  incdecparindiimmpo32ssa = 1;
 
   cmpequpossa = 1;
   cmpequboolssa = 1;

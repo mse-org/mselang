@@ -1,10 +1,12 @@
 program test;
 var
- po1: pointer;
- bo1: bool1;
  int1: int32;
+ int2: int32;
+ po1: ^int32;
 begin
- po1:= @po1;
- bo1:= po1 = nil;
- writeln(bo1);
+ int1:= 1;
+ int2:= 2;
+ po1:= @int1;
+ inc(po1);
+ writeln(po1^);
 end;

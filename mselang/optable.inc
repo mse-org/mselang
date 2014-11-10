@@ -71,6 +71,18 @@
   mulimmint32ssa,
   offsetpoimm32ssa,
 
+  incdecsegimmint32ssa,
+  incdecsegimmpo32ssa,
+
+  incdeclocimmint32ssa,
+  incdeclocimmpo32ssa,
+
+  incdecparimmint32ssa,
+  incdecparimmpo32ssa,
+
+  incdecparindiimmint32ssa,
+  incdecparindiimmpo32ssa,
+
   cmpequpossa,
   cmpequboolssa,
   cmpequint32ssa,
@@ -341,6 +353,18 @@
   @addimmint32op,
   @mulimmint32op,
   @offsetpoimm32op,
+
+  @incdecsegimmint32op,
+  @incdecsegimmpo32op,
+
+  @incdeclocimmint32op,
+  @incdeclocimmpo32op,
+
+  @incdecparimmint32op,
+  @incdecparimmpo32op,
+
+  @incdecparindiimmint32op,
+  @incdecparindiimmpo32op,
 
   @cmpequpoop,
   @cmpequboolop,
