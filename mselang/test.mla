@@ -1,3 +1,4 @@
+{$stoponerror}
 program test;
 type
  rty = record

@@ -537,17 +537,17 @@ begin
   end;
 
   if isclass and (sf_constructor in subflags) then begin //add return type
-   inc(stacktop);
+   inc(s.stacktop);
    with contextstack[s.stacktop] do begin
     d.kind:= ck_paramsdef;
     d.paramsdef.kind:= pk_var;
    end;
-   inc(stacktop);
+   inc(s.stacktop);
    with contextstack[s.stacktop] do begin
     d.kind:= ck_ident;
     d.ident.ident:= tk_result;
    end;
-   inc(stacktop);
+   inc(s.stacktop);
    with contextstack[s.stacktop] do begin
     d.kind:= ck_fieldtype;
     d.typ.typedata:= currentcontainer;

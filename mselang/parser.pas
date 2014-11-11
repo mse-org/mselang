@@ -143,7 +143,7 @@ end;
 procedure incstack({const info: pparseinfoty});
 begin
  with info do begin
-  inc(stacktop);
+  inc(s.stacktop);
   s.stackindex:= s.stacktop;
   if s.stacktop >= stackdepth then begin
    stackdepth:= 2*stackdepth;

@@ -496,7 +496,7 @@ var
 begin
  with info do begin
   for int1:= 0 to high(items) do begin
-   with contextstack[stacktop+items[int1]].d do begin
+   with contextstack[s.stacktop+items[int1]].d do begin
     command.write([getenumname(typeinfo(kind),ord(kind)),': ']);
     case kind of
      ck_const: begin
@@ -955,7 +955,7 @@ begin
 end;
 
 function convertconsts(): stackdatakindty;
-                //convert stacktop, stacktop-2
+                //convert s.stacktop, s.stacktop-2
 begin
  with info,contextstack[s.stacktop-2] do begin
   result:= stackdatakinds[d.dat.constval.kind];  

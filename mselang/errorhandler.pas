@@ -334,15 +334,20 @@ begin
    
 {$ifdef mse_debugparser}
   if toerror then begin
-   writeln('<<<<<<< '+str1);
+   writeln('<<<message<<< '+str1);
   end;
 {$endif}
+{
   if level1 <= stoperrorlevel then begin
    s.stopparser:= true;
   end;
   if level1 <= errorerrorlevel then begin
    errorfla:= true;
+   if s.unitinfo^.stoponerror then begin
+    s.stopparser:= true;
+   end;
   end;
+}
  end;
 end;
                        
@@ -407,6 +412,9 @@ begin
    end;
    if level1 <= errorerrorlevel then begin
     errorfla:= true;
+    if s.unitinfo^.stoponerror then begin
+     s.stopparser:= true;
+    end;
    end;
   end;
  end;
