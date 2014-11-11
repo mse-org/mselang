@@ -628,6 +628,7 @@ type
   impl: implinfoty; //start of implementation parsing
   internalsubs: array[internalsubty] of opaddressty;
   codestop: opaddressty;
+  stoponerror: boolean;
   {
   initializationstart: opaddressty;  //0 if none
   initializationstop: opaddressty;   //0 if none, last op is goto
@@ -651,33 +652,40 @@ type
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
 
  backendty = (bke_direct,bke_llvm);
- 
+
+ savedparseinfoty = record
+  filename: filenamety;
+  source: sourceinfoty;
+{$ifdef mse_debugparser}
+  debugsource: pchar;
+{$endif}
+  sourcestart: pchar; //todo: use file cache for include files
+  stackindex: integer; 
+  stacktop: integer; 
+  unitinfo: punitinfoty;
+  ssa: ssainfoty;
+  pc: pcontextty;
+  stopparser: boolean;
+  stoponerror: boolean;
+  currentstatementflags: statementflagsty;
+ end;
+  
  parseinfoty = record
+  s: savedparseinfoty;
   backend: backendty;
   backendhasfunction: boolean;
 //  beginparseop:  integer;
-  unitinfo: punitinfoty;
   unitinfochain: elementoffsetty;
 //  allocproc: allocprocty;
   globallocid: integer;
   locallocid: integer;
   pb: pbranchty;
-  pc: pcontextty;
-  stopparser: boolean;
-  filename: filenamety;
-  sourcestart: pchar; //todo: use file cache for include files
-  source{,sourcebef}: sourceinfoty;
+  
   beforeeat: pchar;
-{$ifdef mse_debugparser}
-  debugsource: pchar;
-{$endif}
   consumed: pchar;
   contextstack: array of contextitemty;
   stackdepth: integer;
-  stackindex: integer; 
-  stacktop: integer; 
   sublevel: integer;
-  ssa: ssainfoty;
   unitlevel: integer;
   outputstream: ttextstream;
   outputwritten: boolean;
@@ -694,7 +702,6 @@ type
   currentsubcount: integer;
   currentcontainer: elementoffsetty;
   currentclassvislevel: visikindsty;
-  currentstatementflags: statementflagsty;
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;

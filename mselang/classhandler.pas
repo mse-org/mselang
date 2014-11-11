@@ -152,24 +152,24 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if stackindex < 3 then begin
+  if s.stackindex < 3 then begin
    internalerror(ie_handler,'20140325D');
   end;
  {$endif}
-  include(currentstatementflags,stf_classdef);
+  include(s.currentstatementflags,stf_classdef);
   if sublevel > 0 then begin
    errormessage(err_localclassdef,[]);
   end;
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.kind:= ck_classdef;
    d.cla.visibility:= classpublishedvisi;
    d.cla.intfindex:= 0;
    d.cla.fieldoffset:= pointersize; //pointer to virtual methodtable
    d.cla.virtualindex:= 0;
   end;
-  with contextstack[stackindex-2] do begin
+  with contextstack[s.stackindex-2] do begin
    if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                  (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
     id1:= d.ident.ident; //typedef
    end
    else begin
@@ -177,10 +177,10 @@ begin
     exit;
    end;
   end;
-  contextstack[stackindex].b.eleparent:= ele.elementparent;
-  with contextstack[stackindex-1] do begin
+  contextstack[s.stackindex].b.eleparent:= ele.elementparent;
+  with contextstack[s.stackindex-1] do begin
    if not ele.pushelement(id1,ek_type,globalvisi,d.typ.typedata) then begin
-    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+    identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
    end;
    ele1:= ele.addelementduplicate1(tks_classintfname,
                                           ek_classintfnamenode,globalvisi);
@@ -228,7 +228,7 @@ begin
      ele.elementparent:= 
                  ptypedataty(ele.eledataabs(ele1))^.infoclass.intfnamenode;
      if ele.addelementduplicatedata(
-           contextstack[stackindex+1].d.ident.ident,
+           contextstack[s.stackindex+1].d.ident.ident,
            ek_classintfname,[vik_global],po3,allvisi-[vik_ancestor]) then begin
       with po3^ do begin
        intftype:= ele.eledatarel(po2);
@@ -241,7 +241,7 @@ begin
                    ek_classintftype,[vik_global]);
       with po4^ do begin
        intftype:= po3^.intftype;
-       with contextstack[stackindex-2] do begin
+       with contextstack[s.stackindex-2] do begin
         intfindex:= d.cla.intfindex;
         inc(d.cla.intfindex);
        end;
@@ -260,7 +260,7 @@ begin
      po1^.ancestor:= ele.eledatarel(po2);
      po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
      po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
-     with contextstack[stackindex-2] do begin
+     with contextstack[s.stackindex-2] do begin
       d.cla.fieldoffset:= po2^.infoclass.allocsize;
       d.cla.virtualindex:= po2^.infoclass.virtualcount;
      end;
@@ -286,7 +286,7 @@ begin
 {$endif}
  classheader(true); //interfacedef
  with info do begin
-//  dec(stackindex);
+//  dec(s.stackindex);
  end;
 end;
 
@@ -398,14 +398,14 @@ begin
  outhandle('CLASSDEFRETURN');
 {$endif}
  with info do begin
-  exclude(currentstatementflags,stf_classdef);
-  with contextstack[stackindex-1],ptypedataty(ele.eledataabs(
+  exclude(s.currentstatementflags,stf_classdef);
+  with contextstack[s.stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
 testvar:= ptypedataty(ele.eledataabs(d.typ.typedata));
    regclass(d.typ.typedata);
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;
-   classinfo1:= @contextstack[stackindex].d.cla;
+   classinfo1:= @contextstack[s.stackindex].d.cla;
 
                      
    intfcount:= 0;
@@ -471,7 +471,7 @@ testvar:= ptypedataty(ele.eledataabs(d.typ.typedata));
   }
   end;
     
-  ele.elementparent:= contextstack[stackindex].b.eleparent;
+  ele.elementparent:= contextstack[s.stackindex].b.eleparent;
   currentcontainer:= 0;
  end;
 end;
@@ -489,7 +489,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPRIVATE');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.cla.visibility:= classprivatevisi;
  end;
 end;
@@ -499,7 +499,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROTECTED');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.cla.visibility:= classprotectedvisi;
  end;
 end;
@@ -509,7 +509,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLIC');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.cla.visibility:= classpublicvisi;
  end;
 end;
@@ -519,7 +519,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPUBLISHED');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.cla.visibility:= classpublishedvisi;
  end;
 end;
@@ -533,9 +533,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CLASSFIELD');
 {$endif}
- with info,contextstack[stackindex-1] do begin
+ with info,contextstack[s.stackindex-1] do begin
   checkrecordfield(d.cla.visibility,[af_classfield],d.cla.fieldoffset,
-                                   contextstack[stackindex-2].d.typ.flags);
+                                   contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
 
@@ -544,7 +544,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHPROCEDUREENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method];
  end;
@@ -555,7 +555,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHFUNCTIONENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function,sf_header,sf_method];
  end;
@@ -566,7 +566,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHCONSTRUCTORENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method,sf_constructor];
  end;
@@ -577,7 +577,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHDESTRUCTORENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_header,sf_method,sf_destructor];
  end;
@@ -588,7 +588,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONSTRUCTORENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_method,sf_constructor];
  end;
@@ -599,7 +599,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DESTRUCTORENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_method,sf_destructor];
  end;

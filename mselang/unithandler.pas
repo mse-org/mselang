@@ -95,7 +95,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROGRAMENTRY');
 {$endif}
- with info,unitinfo^ do begin
+ with info,s.unitinfo^ do begin
   if prev <> nil then begin
    tokenexpectederror(tk_unit);
   end;  
@@ -112,8 +112,8 @@ begin
  outhandle('SETUNITNAME');
 {$endif}
  with info do begin
-  id1:= contextstack[stacktop].d.ident.ident;
-  if (unitinfo^.key <> id1) and (unitinfo^.prev <> nil) then begin
+  id1:= contextstack[s.stacktop].d.ident.ident;
+  if (s.unitinfo^.key <> id1) and (s.unitinfo^.prev <> nil) then begin
    identerror(1,err_illegalunitname);
   end
   else begin
@@ -126,11 +126,11 @@ begin
  {$endif}
    po1^.next:= unitinfochain;
    unitinfochain:= ele.eledatarel(po1);
-   with unitinfo^ do begin
+   with s.unitinfo^ do begin
     interfaceelement:= ele.elementparent;
    end;
   end;
-  stacktop:= stackindex;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -154,13 +154,13 @@ begin
  outhandle('IMPLEMENTATIONENTRY');
 {$endif}
  with info do begin
-  include(unitinfo^.state,us_interfaceparsed);
-  if us_implementation in unitinfo^.state then begin
+  include(s.unitinfo^.state,us_interfaceparsed);
+  if us_implementation in s.unitinfo^.state then begin
    errormessage(err_invalidtoken,['implementation']);
   end
   else begin
-   include(unitinfo^.state,us_implementation);
-   include(currentstatementflags,stf_implementation);
+   include(s.unitinfo^.state,us_implementation);
+   include(s.currentstatementflags,stf_implementation);
   {$ifdef mse_checkinternalerror}                             
    if not ele.pushelement(tk_implementation,ek_implementation,
                                     implementationvisi,po1) then begin
@@ -169,9 +169,9 @@ begin
   {$else}
    ele.pushelement(tk_implementation,ek_implementation,implementationvisi,po1);
   {$endif}
-   unitinfo^.implementationelement:= ele.eledatarel(po1);
+   s.unitinfo^.implementationelement:= ele.eledatarel(po1);
   end;
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.kind:= ck_implementation;
    ele.markelement(d.impl.elemark);
   end;
@@ -184,10 +184,10 @@ begin
  outhandle('IMPLEMENTATION');
 {$endif}
  with info do begin
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    ele.releaseelement(d.impl.elemark);
   end;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -205,13 +205,13 @@ begin
    lstr1.len:= length(stringbuffer);
    filepath:= filehandler.getincludefile(lstr1);
    if filepath = '' then begin
-    errormessage(err_cannotfindinclude,[],stacktop-stackindex);
+    errormessage(err_cannotfindinclude,[],s.stacktop-s.stackindex);
    end
    else begin
     pushincludefile(filepath);
    end;
   end;
-  dec(stackindex,2);
+  dec(s.stackindex,2);
  end;
 end;
 
@@ -249,7 +249,7 @@ begin
  unit1:= newunit(str1);
  with unit1^ do begin
   name:= str1;
-  prev:= info.unitinfo;
+  prev:= info.s.unitinfo;
   filepath:= filehandler.getunitfile(aname);
   if filepath = '' then begin
    filepath:= filehandler.getunitfile('compiler/'+aname);
@@ -276,13 +276,13 @@ begin
   if result = nil then begin
    result:= unitlist.newunit(d.ident.ident);
    with result^ do begin
-    prev:= info.unitinfo;
+    prev:= info.s.unitinfo;
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
     name:= lstringtostring(lstr1);
     filepath:= filehandler.getunitfile(lstr1);
     if filepath = '' then begin
-     identerror(aindex-info.stackindex,err_cantfindunit);
+     identerror(aindex-info.s.stackindex,err_cantfindunit);
     end
     else begin
      if not parseusesunit(result) then begin
@@ -293,7 +293,7 @@ begin
   end
   else begin
    if not (us_interfaceparsed in result^.state) then begin
-    circularerror(aindex-info.stackindex,result);
+    circularerror(aindex-info.s.stackindex,result);
     result:= nil;
    end;
   end;
@@ -394,7 +394,7 @@ end;
 
 procedure regclass(const aclass: elementoffsetty);
 begin
- with info.unitinfo^ do begin
+ with info.s.unitinfo^ do begin
  {$ifdef mse_checkinternalerror}                             
   if us_end in state then begin
    internalerror(ie_unit,'201400402B');
@@ -530,7 +530,7 @@ begin
   po1:= @forwards[fo1];
   deletedlinks:= po1^.next;
  end;
- with info.unitinfo^ do begin
+ with info.s.unitinfo^ do begin
   po1^.prev:= 0;
   po1^.next:= forwardlist;
   po1^.source:= asource;
@@ -544,8 +544,8 @@ procedure forwardresolve(const aforward: forwardindexty);
 begin
  if aforward <> 0 then begin
   with forwards[aforward] do begin
-   if info.unitinfo^.forwardlist = aforward then begin
-    info.unitinfo^.forwardlist:= next;
+   if info.s.unitinfo^.forwardlist = aforward then begin
+    info.s.unitinfo^.forwardlist:= next;
    end;
    forwards[next].prev:= prev;
    forwards[prev].next:= next;
@@ -581,7 +581,7 @@ var
  int1: integer;
  ad1: listadty;
 begin
- with info,unitinfo^ do begin
+ with info,s.unitinfo^ do begin
   codestop:= opcount;
   checkforwarderrors(forwardlist);
   for int1:= 0 to pendingcount-1 do begin
@@ -604,7 +604,7 @@ begin
  outhandle('INITIALIZATIONSTART');
 {$endif}
  getinternalsub(isub_ini,ad1);
- writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+ writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
 {
  with info,unitinfo^ do begin
   initializationstart:= opcount;
@@ -651,7 +651,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATION');
 {$endif}
- writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
+ writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
  endinternalsub();
 {
  with info,unitinfo^ do begin

@@ -69,7 +69,7 @@ type
 function getinternalsub(const asub: internalsubty;
                                    out aaddress: opaddressty): boolean;
 begin
- with info.unitinfo^ do begin
+ with info.s.unitinfo^ do begin
   aaddress:=  internalsubs[asub];
   result:= aaddress = 0;
   if result then begin
@@ -180,7 +180,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMSDEF0ENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_paramsdef;
   paramsdef.kind:= pk_value;
  end;
@@ -192,10 +192,10 @@ begin
  outhandle('PARAMS0ENTRY');
 {$endif}
  with info do begin
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.kind:= ck_params;
-   b.flags:= currentstatementflags;
-   include(currentstatementflags,stf_params);
+   b.flags:= s.currentstatementflags;
+   include(s.currentstatementflags,stf_params);
   end;
  end;
 end;
@@ -206,7 +206,7 @@ begin
  outhandle('CONSTPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -220,7 +220,7 @@ begin
  outhandle('VARPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -234,7 +234,7 @@ begin
  outhandle('OUTPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramsdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -248,7 +248,7 @@ begin
  outhandle('PARAMDEF2');
 {$endif}
  with info do begin
-  if stacktop-stackindex <> 2 then begin
+  if s.stacktop-s.stackindex <> 2 then begin
    errormessage(err_typeidentexpected,[]);
   end;
  end;
@@ -260,8 +260,8 @@ begin
  outhandle('PARAMSEND');
 {$endif}
  with info do begin
-  with contextstack[stackindex] do begin
-   currentstatementflags:= b.flags;
+  with contextstack[s.stackindex] do begin
+   s.currentstatementflags:= b.flags;
   end;
  end;
 end;
@@ -271,7 +271,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROCEDUREENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [];
  end;
@@ -282,7 +282,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FUNCTIONENTRY');
 {$endif}
- with info,contextstack[stackindex].d do begin
+ with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function];
  end;
@@ -293,7 +293,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHECKFUNCTIONTYPE');
 {$endif}
- with info,contextstack[stackindex-1] do begin
+ with info,contextstack[s.stackindex-1] do begin
   d.kind:= ck_paramsdef;
   if backendhasfunction then begin
    d.paramsdef.kind:= pk_value;
@@ -302,7 +302,7 @@ begin
    d.paramsdef.kind:= pk_var;
   end;
  end;
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.kind:= ck_ident;
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
@@ -324,13 +324,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB1ENTRY');
 {$endif}
- with info,contextstack[stackindex-1] do begin
-  b.flags:= currentstatementflags;
+ with info,contextstack[s.stackindex-1] do begin
+  b.flags:= s.currentstatementflags;
   b.eleparent:= ele.elementparent;
-  exclude(currentstatementflags,stf_hasmanaged);
-  int1:= stacktop-stackindex; 
+  exclude(s.currentstatementflags,stf_hasmanaged);
+  int1:= s.stacktop-s.stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
-   if not ele.findupward(contextstack[stackindex+1].d.ident.ident,[],
+   if not ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
              implementationvisi,ele1) then begin
     identerror(1,err_identifiernotfound,erl_fatal);
    end
@@ -345,10 +345,11 @@ begin
       errormessage(err_syntax,[';'],2);
      end
      else begin     //class sub
-      include(currentstatementflags,stf_classimp);
+      include(s.currentstatementflags,stf_classimp);
       currentcontainer:= ele1;
-      contextstack[stackindex+1].d.ident:= contextstack[stackindex+2].d.ident;
-      stacktop:= stackindex+1;
+      contextstack[s.stackindex+1].d.ident:= 
+                                       contextstack[s.stackindex+2].d.ident;
+      s.stacktop:= s.stackindex+1;
       ele.pushelementparent(
                      ptypedataty(ele.eledataabs(ele1))^.infoclass.implnode);
      end;
@@ -356,7 +357,7 @@ begin
    end;
   end
   else begin
-   exclude(currentstatementflags,stf_classimp);
+   exclude(s.currentstatementflags,stf_classimp);
   end;
  end;
 end;
@@ -364,10 +365,10 @@ end;
 function checkclassdef(): boolean;
 begin
  result:= true;
- with info,contextstack[stackindex-1] do begin
-  if not (stf_classdef in currentstatementflags) then begin
+ with info,contextstack[s.stackindex-1] do begin
+  if not (stf_classdef in s.currentstatementflags) then begin
    result:= false;
-   if stf_implementation in currentstatementflags then begin
+   if stf_implementation in s.currentstatementflags then begin
     handlebeginexpected();
    end
    else begin
@@ -383,7 +384,7 @@ begin
  outhandle('VIRTUAL');
 {$endif}
  if checkclassdef() then begin
-  with info,contextstack[stackindex-1] do begin
+  with info,contextstack[s.stackindex-1] do begin
    if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
     errormessage(err_procdirectiveconflict,['virtual']);
    end
@@ -400,7 +401,7 @@ begin
  outhandle('OVERRIDE');
 {$endif}
  if checkclassdef() then begin
-  with info,contextstack[stackindex-1] do begin
+  with info,contextstack[s.stackindex-1] do begin
    if d.subdef.flags * [sf_virtual,sf_override] <> [] then begin
     errormessage(err_procdirectiveconflict,['override']);
    end
@@ -445,8 +446,8 @@ var
  procedure doparam();
  begin
   with info do begin
-   paramkind1:= contextstack[int1+stackindex-1].d.paramsdef.kind;
-   with contextstack[int1+stackindex] do begin
+   paramkind1:= contextstack[int1+s.stackindex-1].d.paramsdef.kind;
+   with contextstack[int1+s.stackindex] do begin
     if (isclass and
         ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
             addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
@@ -454,7 +455,7 @@ var
      err1:= true;
     end;
     po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-    with contextstack[int1+stackindex+1] do begin
+    with contextstack[int1+s.stackindex+1] do begin
      if d.kind = ck_fieldtype then begin
       po3:= ele.eledataabs(d.typ.typedata);
       with po2^ do begin
@@ -516,7 +517,7 @@ begin
               //todo: multi level type
  with info do begin
 //  subflags:= contextstack[stackindex-1].d.subdef.flags;
-  with contextstack[stackindex-1] do begin
+  with contextstack[s.stackindex-1] do begin
    subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
    d.subdef.locallocidbefore:= locallocid;
@@ -528,33 +529,33 @@ begin
   end;
   paramsize1:= 0;
   resultele1:= 0;
-  isclass:= currentstatementflags * [stf_classdef,stf_classimp] <> [];
-  isinterface:=  stf_interfacedef in currentstatementflags;
+  isclass:= s.currentstatementflags * [stf_classdef,stf_classimp] <> [];
+  isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isclass or isinterface;
   if sf_function in subflags then begin
-   resultele1:= contextstack[stacktop].d.typ.typedata;
+   resultele1:= contextstack[s.stacktop].d.typ.typedata;
   end;
 
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(stacktop);
-   with contextstack[stacktop] do begin
+   with contextstack[s.stacktop] do begin
     d.kind:= ck_paramsdef;
     d.paramsdef.kind:= pk_var;
    end;
    inc(stacktop);
-   with contextstack[stacktop] do begin
+   with contextstack[s.stacktop] do begin
     d.kind:= ck_ident;
     d.ident.ident:= tk_result;
    end;
    inc(stacktop);
-   with contextstack[stacktop] do begin
+   with contextstack[s.stacktop] do begin
     d.kind:= ck_fieldtype;
     d.typ.typedata:= currentcontainer;
     resultele1:= currentcontainer;
     d.typ.indirectlevel:= 1;
    end;
   end;
-  paramco:= (stacktop-stackindex-2) div 3;
+  paramco:= (s.stacktop-s.stackindex-2) div 3;
   paramhigh:= paramco-1;
   if ismethod then begin
    inc(paramco); //self pointer
@@ -562,7 +563,7 @@ begin
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_sub];
   ele.checkcapacity(int2); //absolute addresses can be used
   eledatabase:= ele.eledataoffset();
-  ident1:= contextstack[stackindex+1].d.ident.ident;
+  ident1:= contextstack[s.stackindex+1].d.ident.ident;
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
        (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
@@ -588,16 +589,16 @@ begin
   po1^.resulttype:= resultele1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;
-  if (stf_classdef in currentstatementflags) and 
+  if (stf_classdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
-   with contextstack[stackindex-2] do begin
+   with contextstack[s.stackindex-2] do begin
     po1^.tableindex:= d.cla.virtualindex;
     inc(d.cla.virtualindex);
    end;
   end;
   po4:= @po1^.paramsrel;
   err1:= false;
-  impl1:= (us_implementation in unitinfo^.state) and 
+  impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
@@ -642,13 +643,13 @@ begin
 //   po1^.address:= opcount;
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
-   with contextstack[stackindex-1] do begin
+   with contextstack[s.stackindex-1] do begin
     ele.markelement(b.elemark); 
     po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                             ek_none,allvisi);
     po1^.nestedvarchain:= 0;
     po1^.nestedvarcount:= 1; //for callout frame ref
-    d.subdef.ssabefore:= ssa;
+    d.subdef.ssabefore:= s.ssa;
     resetssa();
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
@@ -673,7 +674,7 @@ begin
     dec(po4^[int2],eledatabase); //relative address
    end;
    if not isinterface then begin
-    forwardmark(po1^.mark,source);
+    forwardmark(po1^.mark,s.source);
    end
    else begin
     po1^.mark:= -1;
@@ -686,20 +687,20 @@ begin
    match:= nil;
   end;                                    
   if sf_override in subflags then begin
-   if not ele.forallancestor(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+   if not ele.forallancestor(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
                              allvisi,@checkequalheader,paramdata) then begin
     err1:= true;
     errormessage(err_noancestormethod,[]);
    end
    else begin
     po1^.tableindex:= paramdata.match^.tableindex;
-    with contextstack[stackindex-2] do begin
+    with contextstack[s.stackindex-2] do begin
      dec(d.cla.virtualindex);
     end;
    end;
   end
   else begin
-   if ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+   if ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
                              allvisi,@checkequalheader,paramdata) then begin
     err1:= true;
     errormessage(err_sameparamlist,[]);
@@ -711,7 +712,7 @@ begin
     paramdata.match:= nil;
     if isclass then begin
      ele.pushelementparent(currentcontainer);
-     bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+     bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
                                  allvisi,@checkequalparam,paramdata);
      ele.popelementparent();       
      if not bo1 then begin
@@ -719,11 +720,11 @@ begin
      end;
     end
     else begin
-     bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+     bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
                                  allvisi,@checkequalparam,paramdata);
      if not bo1 then begin
       ele.decelementparent; //interface
-      bo1:= ele.forallcurrent(contextstack[stackindex+1].d.ident.ident,[ek_sub],
+      bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
                                 allvisi,@checkequalparam,paramdata);
      end;
     end;
@@ -740,12 +741,12 @@ begin
              err_functionheadernotmatch,
                 [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
-                                      stacktop-stackindex-3*(paramco-int1-1)-1);
+                                      s.stacktop-s.stackindex-3*(paramco-int1-1)-1);
        end;
       end;
      end;
     end;
-    with contextstack[stackindex-1] do begin
+    with contextstack[s.stackindex-1] do begin
      if paramdata.match <> nil then begin
       d.subdef.match:= ele.eledatarel(paramdata.match);
      end
@@ -755,7 +756,7 @@ begin
     end;
    end;
    ele.elementparent:= parent1; //restore in sub
-   stacktop:= stackindex;
+   s.stacktop:= s.stackindex;
   end;
  end;
 end;
@@ -773,7 +774,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
 {$endif}
- with info,contextstack[stackindex-2].d do begin
+ with info,contextstack[s.stackindex-2].d do begin
 //  subdef.locallocidbefore:= locallocid;
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
@@ -893,7 +894,7 @@ begin
     par.stacksize:= subdef.varsize;
    end;
   end;
-  if stf_hasmanaged in currentstatementflags then begin
+  if stf_hasmanaged in s.currentstatementflags then begin
    writemanagedvarop(mo_ini,po1^.varchain,false,0);
   end;           //todo: implicit try-finally
  end;
@@ -906,11 +907,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
 {$endif}
- with info,contextstack[stackindex-2] do begin
+ with info,contextstack[s.stackindex-2] do begin
    //todo: check local forward
 //  ele.decelementparent;
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
-  if stf_hasmanaged in currentstatementflags then begin
+  if stf_hasmanaged in s.currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain,false,0);
   end;
   if po1^.paramfinichain <> 0 then begin
@@ -939,14 +940,14 @@ begin
    end;
   end;
   locdatapo:= d.subdef.parambase;
-  ssa:= d.subdef.ssabefore;
+  s.ssa:= d.subdef.ssabefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   if sublevel = 0 then begin
    ele.releaseelement(b.elemark); //remove local definitions
   end;
   ele.elementparent:= b.eleparent;
-  currentstatementflags:= b.flags;
+  s.currentstatementflags:= b.flags;
   if d.subdef.match <> 0 then begin
    po1:= ele.eledataabs(d.subdef.match);
    if (po1^.flags * [sf_virtual,sf_override] <> []) and 
@@ -979,7 +980,7 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('begin');
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -990,7 +991,7 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('end');
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1001,7 +1002,7 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('implementation');
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 

@@ -233,7 +233,7 @@ function findkindelementdata(
               const visibility: visikindsty; out ainfo: pointer): boolean;
 begin
  with info do begin
-  result:= findkindelementdata(contextstack[stackindex+astackoffset].d,
+  result:= findkindelementdata(contextstack[s.stackindex+astackoffset].d,
                                                       akinds,visibility,ainfo);
  end;
 end;
@@ -246,7 +246,7 @@ var
  identcount: integer;
 begin
  with info do begin
-  po1:= @contextstack[stackindex+astackoffset];
+  po1:= @contextstack[s.stackindex+astackoffset];
   identcount:= -1;
   for int1:= 0 to high(idents.d) do begin
    idents.d[int1]:= po1^.d.ident.ident;
@@ -294,18 +294,18 @@ begin
     result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
     if not result then begin //todo: use cache
      ele2:= ele.elementparent;
-     for int1:= 0 to high(info.unitinfo^.implementationuses) do begin
+     for int1:= 0 to high(info.s.unitinfo^.implementationuses) do begin
       ele.elementparent:=
-        info.unitinfo^.implementationuses[int1]^.interfaceelement;
+        info.s.unitinfo^.implementationuses[int1]^.interfaceelement;
       result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
       if result then begin
        break;
       end;
      end;
      if not result then begin
-      for int1:= 0 to high(info.unitinfo^.interfaceuses) do begin
+      for int1:= 0 to high(info.s.unitinfo^.interfaceuses) do begin
        ele.elementparent:=
-         info.unitinfo^.interfaceuses[int1]^.interfaceelement;
+         info.s.unitinfo^.interfaceuses[int1]^.interfaceelement;
        result:= ele.findupward(idents,akinds,visibility,eleres,firstnotfound);
        if result then begin
         break;
@@ -468,7 +468,7 @@ end;
 procedure parsererror(const info: pparseinfoty; const text: string);
 begin
  with info^ do begin
-  contextstack[stackindex].d.kind:= ck_error;
+  contextstack[s.stackindex].d.kind:= ck_error;
   writeln(' ***ERROR*** '+text);
  end; 
 end;
@@ -551,7 +551,7 @@ procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 var
  int1: integer;
 begin
- with info,contextstack[stackindex+stackoffset].d.dat do begin
+ with info,contextstack[s.stackindex+stackoffset].d.dat do begin
  {
   int1:= 0;
   if datatyp.indirectlevel = 1 then begin
@@ -660,7 +660,7 @@ var
  si1: databitsizety;
 begin
  with info do begin
-  po1:= @contextstack[stackindex+stackoffset];
+  po1:= @contextstack[s.stackindex+stackoffset];
   isimm:= true;
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
@@ -899,7 +899,7 @@ procedure setcurrentloc(const indexoffset: integer);
 begin 
  with info do begin
   getoppo(
-   contextstack[stackindex+indexoffset].opmark.address)^.par.opaddress:=
+   contextstack[s.stackindex+indexoffset].opmark.address)^.par.opaddress:=
                                                                      opcount-1;
  end; 
 end;
@@ -908,7 +908,7 @@ procedure setcurrentlocbefore(const indexoffset: integer);
 begin 
  with info do begin
   getoppo(
-   contextstack[stackindex+indexoffset].opmark.address-1)^.par.opaddress:=
+   contextstack[s.stackindex+indexoffset].opmark.address-1)^.par.opaddress:=
                                                                      opcount-1;
   addlabel();
  end;
@@ -919,9 +919,9 @@ var
  dest: integer;
 begin
  with info do begin
-  dest:= contextstack[stackindex+sourceindexoffset].opmark.address;
+  dest:= contextstack[s.stackindex+sourceindexoffset].opmark.address;
   getoppo(
-   contextstack[stackindex+destindexoffset].opmark.address-1)^.par.opaddress:=
+   contextstack[s.stackindex+destindexoffset].opmark.address-1)^.par.opaddress:=
                                                                         dest-1;
   include(getoppo(dest)^.op.flags,opf_label);
  end; 
@@ -932,9 +932,9 @@ var
  dest: integer;
 begin
  with info do begin
-  dest:= contextstack[stackindex+sourceindexoffset].opmark.address;
+  dest:= contextstack[s.stackindex+sourceindexoffset].opmark.address;
   getoppo(
-    contextstack[stackindex+destindexoffset].opmark.address)^.par.opaddress:=
+    contextstack[s.stackindex+destindexoffset].opmark.address)^.par.opaddress:=
                                                                         dest-1;
   include(getoppo(dest)^.op.flags,opf_label);
  end; 
@@ -957,22 +957,22 @@ end;
 function convertconsts(): stackdatakindty;
                 //convert stacktop, stacktop-2
 begin
- with info,contextstack[stacktop-2] do begin
+ with info,contextstack[s.stacktop-2] do begin
   result:= stackdatakinds[d.dat.constval.kind];  
-  if contextstack[stacktop].d.dat.constval.kind <> 
+  if contextstack[s.stacktop].d.dat.constval.kind <> 
                                               d.dat.constval.kind then begin
-   case contextstack[stacktop].d.dat.constval.kind of
+   case contextstack[s.stacktop].d.dat.constval.kind of
     dk_float: begin
      result:= sdk_flo64;
      with d,dat.constval do begin
       case kind of
        dk_float: begin
-        vfloat:= vfloat + contextstack[stacktop].d.dat.constval.vfloat;
+        vfloat:= vfloat + contextstack[s.stacktop].d.dat.constval.vfloat;
        end;
        dk_integer: begin
-        vfloat:= vinteger + contextstack[stacktop].d.dat.constval.vfloat;
+        vfloat:= vinteger + contextstack[s.stacktop].d.dat.constval.vfloat;
         kind:= dk_float;
-        dat.datatyp:= contextstack[stacktop].d.dat.datatyp;
+        dat.datatyp:= contextstack[s.stacktop].d.dat.datatyp;
        end;
        else begin
         result:= sdk_none;
@@ -984,13 +984,13 @@ begin
      with d,dat.constval do begin
       case kind of
        dk_integer: begin
-        vinteger:= vinteger + contextstack[stacktop].d.dat.constval.vinteger;
+        vinteger:= vinteger + contextstack[s.stacktop].d.dat.constval.vinteger;
        end;
        dk_float: begin
         result:= sdk_flo64;
-        vfloat:= vfloat + contextstack[stacktop].d.dat.constval.vfloat;
+        vfloat:= vfloat + contextstack[s.stacktop].d.dat.constval.vfloat;
         kind:= dk_float;
-        dat.datatyp:= contextstack[stacktop].d.dat.datatyp;
+        dat.datatyp:= contextstack[s.stacktop].d.dat.datatyp;
        end;
        else begin
         result:= sdk_none;
@@ -1004,8 +1004,8 @@ begin
    end;
   end;
   if result = sdk_none then begin
-   incompatibletypeserror(contextstack[stacktop-2].d,
-                                           contextstack[stacktop].d);
+   incompatibletypeserror(contextstack[s.stacktop-2].d,
+                                           contextstack[s.stacktop].d);
   end;
  end;
 end;
@@ -1221,10 +1221,10 @@ var
  op1: opaddressty;
 begin
  with info do begin
-  int1:= stackindex+stackoffset;
+  int1:= s.stackindex+stackoffset;
   with info.contextstack[int1] do begin
-   if int1 >= stacktop then begin
-    ssa1:= ssa.nextindex-1;
+   if int1 >= s.stacktop then begin
+    ssa1:= s.ssa.nextindex-1;
 //    ssa1:= ssa.index;
    end
    else begin
@@ -1234,7 +1234,7 @@ begin
     end
     else begin
      if op1 = opcount-1 then begin
-      ssa1:= ssa.index;
+      ssa1:= s.ssa.index;
 //      inc(ssaindex);
      end
      else begin
@@ -1256,7 +1256,7 @@ var
  po1: popinfoty;
 begin
  result:= true;
- with info,contextstack[stackindex+stackoffset] do begin;
+ with info,contextstack[s.stackindex+stackoffset] do begin;
   if d.dat.indirection <= 0 then begin
    if d.dat.indirection = 0 then begin
     pushinsert(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,true);
@@ -1308,7 +1308,7 @@ var
   si1: databitsizety;
   ssabefore: integer;
  begin
-  with info,contextstack[stackindex+stackoffset],d do begin
+  with info,contextstack[s.stackindex+stackoffset],d do begin
    opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
    ssabefore:= d.dat.fact.ssaindex;
    with insertitem(indirect[opdata1.kind],stackoffset,false)^ do begin
@@ -1326,7 +1326,7 @@ var
 label errlab; 
 begin                    //todo: optimize
  result:= false;
- with info,contextstack[stackindex+stackoffset] do begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
   po1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
   case d.kind of
    ck_ref: begin
@@ -1413,7 +1413,7 @@ var
  si1: databitsizety;
 begin
  result:= false;
- with info,contextstack[stackindex+stackoffset] do begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
  {$ifdef mse_checkinternalerror}                             
   if not (d.kind in datacontexts) then begin
    internalerror(ie_handler,'20140405A');
@@ -1517,8 +1517,8 @@ end;
 procedure resetssa();
 begin
  with info do begin
-  ssa.index:= 0;
-  ssa.nextindex:= 0;
+  s.ssa.index:= 0;
+  s.ssa.nextindex:= 0;
  end;
 end;
 
@@ -1548,21 +1548,21 @@ var
 begin
  with info do begin
   bo1:= false;
-  with contextstack[stacktop-2] do begin
+  with contextstack[s.stacktop-2] do begin
    if d.kind <> ck_const then begin
-    getvalue(stacktop-stackindex-2);
+    getvalue(s.stacktop-s.stackindex-2);
    end;
-   if contextstack[stacktop].d.kind <> ck_const then begin
-    getvalue(stacktop-stackindex);
+   if contextstack[s.stacktop].d.kind <> ck_const then begin
+    getvalue(s.stacktop-s.stackindex);
    end;
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    int1:= d.dat.datatyp.indirectlevel;
-   if not tryconvert(stacktop-stackindex,po1,int1) then begin
-    with contextstack[stacktop] do begin
+   if not tryconvert(s.stacktop-s.stackindex,po1,int1) then begin
+    with contextstack[s.stacktop] do begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      int1:= d.dat.datatyp.indirectlevel;
     end;
-    if tryconvert(stacktop-stackindex-2,po1,int1) then begin
+    if tryconvert(s.stacktop-s.stackindex-2,po1,int1) then begin
      bo1:= true;
     end;
    end
@@ -1570,8 +1570,8 @@ begin
     bo1:= true;
    end;
    if not bo1 then begin
-    incompatibletypeserror(contextstack[stacktop-2].d,contextstack[stacktop].d);
-    dec(stacktop,2);
+    incompatibletypeserror(contextstack[s.stacktop-2].d,contextstack[s.stacktop].d);
+    dec(s.stacktop,2);
    end
    else begin
     if int1 > 0 then begin //indirectlevel
@@ -1582,32 +1582,32 @@ begin
     end;
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
-     operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
-     dec(stacktop,2);
+     operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
+     dec(s.stacktop,2);
     end
     else begin
      if d.kind = ck_const then begin
-      pushinsertconst(stacktop-stackindex-2,false);
+      pushinsertconst(s.stacktop-s.stackindex-2,false);
      end;
-     with contextstack[stacktop] do begin
+     with contextstack[s.stacktop] do begin
       if d.kind = ck_const then begin
        pushconst(d);
       end;
      end;
      with additem(op1)^ do begin      
       par.ssas1:= d.dat.fact.ssaindex;
-      par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
+      par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
                                       d.dat.datatyp.indirectlevel);
      end;
      initfactcontext(-1);
     end;
-    dec(stacktop,2);
+    dec(s.stacktop,2);
 //    d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
     context:= nil;
    end;
   end;
-  stackindex:= stacktop-1; 
+  s.stackindex:= s.stacktop-1; 
  end;
 end;
 (*
@@ -1621,29 +1621,29 @@ var
 begin
  with info do begin
                   //todo: work botom up because of less op insertions
-  if contextstack[stacktop].d.kind <> ck_const then begin
-   getvalue(stacktop-stackindex{,false});
+  if contextstack[s.stacktop].d.kind <> ck_const then begin
+   getvalue(s.stacktop-s.stackindex{,false});
   end;
   sd1:= sdk_none;
-  po1:= ele.eleinfoabs(contextstack[stacktop].d.dat.datatyp.typedata);
+  po1:= ele.eleinfoabs(contextstack[s.stacktop].d.dat.datatyp.typedata);
   kinda:= ptypedataty(@po1^.data)^.kind;
-  po1:= ele.eleinfoabs(contextstack[stacktop-2].d.dat.datatyp.typedata);
+  po1:= ele.eleinfoabs(contextstack[s.stacktop-2].d.dat.datatyp.typedata);
   kindb:= ptypedataty(@po1^.data)^.kind;
-  with contextstack[stacktop-2] do begin
+  with contextstack[s.stacktop-2] do begin
    if d.kind <> ck_const then begin
-    getvalue(stacktop-2-stackindex);
+    getvalue(s.stacktop-2-s.stackindex);
    end;
    if (kinda = dk_float) or (kindb = dk_float) then begin
     sd1:= sdk_flo64;
     if d.kind = ck_const then begin
      case d.dat.constval.kind of
       dk_integer: begin
-       with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
+       with insertitem(oc_pushimm64,s.stacktop-2-s.stackindex,false)^ do begin
         setimmfloat64(real(d.dat.constval.vinteger),par);
        end;
       end;
       dk_float: begin
-       with insertitem(oc_pushimm64,stacktop-2-stackindex,false)^ do begin
+       with insertitem(oc_pushimm64,s.stacktop-2-s.stackindex,false)^ do begin
         setimmfloat64(d.dat.constval.vfloat,par);
        end;
       end;
@@ -1655,7 +1655,7 @@ begin
     else begin //ck_fact
      case kinda of
       dk_integer: begin
-       insertitem(oc_int32toflo64,stacktop-2-stackindex,false);
+       insertitem(oc_int32toflo64,s.stacktop-2-s.stackindex,false);
       end;
       dk_float: begin
       end;
@@ -1664,7 +1664,7 @@ begin
       end;
      end;
     end;
-    with contextstack[stacktop].d do begin
+    with contextstack[s.stacktop].d do begin
      if kind = ck_const then begin
       case kinda of
        dk_integer: begin
@@ -1697,11 +1697,11 @@ begin
      if kindb = dk_boolean then begin
       sd1:= sdk_bool1;
       if d.kind = ck_const then begin
-       with insertitem(oc_pushimm8,stacktop-2-stackindex,false)^ do begin
+       with insertitem(oc_pushimm8,s.stacktop-2-s.stackindex,false)^ do begin
         setimmboolean(d.dat.constval.vboolean,par);
        end;
       end;
-      with contextstack[stacktop].d do begin
+      with contextstack[s.stacktop].d do begin
        if kind = ck_const then begin
         push(dat.constval.vboolean);
        end;
@@ -1712,12 +1712,12 @@ begin
      if (kinda = dk_integer) and (kindb = dk_integer) then begin
       sd1:= sdk_int32;
       if d.kind = ck_const then begin
-       with insertitem(oc_pushimm32,stacktop-2-stackindex,false)^ do begin
+       with insertitem(oc_pushimm32,s.stacktop-2-s.stackindex,false)^ do begin
         setimmint32(d.dat.constval.vinteger,par);
        end;
        initfactcontext(-1);
       end;
-      with contextstack[stacktop],d do begin
+      with contextstack[s.stacktop],d do begin
        if kind = ck_const then begin
         push(dat.constval.vinteger);
         initfactcontext(1);
@@ -1728,10 +1728,10 @@ begin
       if (kinda = dk_pointer) and (kindb = dk_pointer) then begin
        sd1:= sdk_pointer;
        if d.kind = ck_const then begin
-        pushinsert(stacktop-2-stackindex,false,d.dat.constval.vaddress,0,false);
+        pushinsert(s.stacktop-2-s.stackindex,false,d.dat.constval.vaddress,0,false);
         initfactcontext(-1);
        end;
-       with contextstack[stacktop],d do begin
+       with contextstack[s.stacktop],d do begin
         if kind = ck_const then begin
          push(dat.constval.vaddress,0,false);
          initfactcontext(1);
@@ -1742,30 +1742,30 @@ begin
     end;
    end;
    if sd1 = sdk_none then begin
-    incompatibletypeserror(contextstack[stacktop-2].d,contextstack[stacktop].d);
-    dec(stacktop,2);
+    incompatibletypeserror(contextstack[s.stacktop-2].d,contextstack[s.stacktop].d);
+    dec(s.stacktop,2);
    end
    else begin
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
-     operationnotsupportederror(d,contextstack[stacktop].d,opsinfo.opname);
-     dec(stacktop,2);
+     operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
+     dec(s.stacktop,2);
     end
     else begin
      with additem(op1)^ do begin      
       par.ssas1:= d.dat.fact.ssaindex;
-      par.ssas2:= contextstack[stacktop].d.dat.fact.ssaindex;
+      par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
                                       d.dat.datatyp.indirectlevel);
      end;
-     dec(stacktop,2);
+     dec(s.stacktop,2);
      initfactcontext(-1);
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
      context:= nil;
     end;
    end;
   end;
-  stackindex:= stacktop-1; 
+  s.stackindex:= s.stacktop-1; 
  end;
 end;
 *)
@@ -1978,26 +1978,26 @@ begin
   if indent then begin
    write('  ');
   end;
-  write(text,' T:',stacktop,' I:',stackindex,' O:',opcount,
-  ' S:',ssa.index,' N:',ssa.nextindex,
+  write(text,' T:',s.stacktop,' I:',s.stackindex,' O:',opcount,
+  ' S:',s.ssa.index,' N:',s.ssa.nextindex,
   ' cont:',currentcontainer);
   if currentcontainer <> 0 then begin
    write(' ',getidentname(ele.eleinfoabs(currentcontainer)^.header.name));
   end;
   write(' ',settostring(ptypeinfo(typeinfo(statementflagsty)),
-                         integer(currentstatementflags),true));
-  write(' L:'+inttostr(source.line+1)+':''',psubstr(debugsource,source.po)+''','''+
-                         singleline(source.po),'''');
+                         integer(s.currentstatementflags),true));
+  write(' L:'+inttostr(s.source.line+1)+':''',psubstr(s.debugsource,s.source.po)+''','''+
+                         singleline(s.source.po),'''');
   writeln;
-  for int1:= 0 to stacktop do begin
+  for int1:= 0 to s.stacktop do begin
    write(fitstring(inttostr(int1),3,sp_right));
-   if int1 = stackindex then begin
+   if int1 = s.stackindex then begin
     write('*');
    end
    else begin
     write(' ');
    end;
-   if (int1 < stacktop) and (int1 = contextstack[int1+1].parent) then begin
+   if (int1 < s.stacktop) and (int1 = contextstack[int1+1].parent) then begin
     write('-');
    end
    else begin

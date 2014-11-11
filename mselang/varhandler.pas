@@ -37,7 +37,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('VARDEFSTART');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.kind:= ck_var;
   d.vari.indirectlevel:= 0;
 //  d.vari.flags:= [];
@@ -59,12 +59,12 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (stacktop-stackindex < 2) or 
-            (contextstack[stackindex+2].d.kind <> ck_fieldtype) then begin
+  if (s.stacktop-s.stackindex < 2) or 
+            (contextstack[s.stackindex+2].d.kind <> ck_fieldtype) then begin
    internalerror(ie_handler,'20140325B');
   end;
  {$endif}
-  ident1:= contextstack[stackindex+1].d.ident.ident;
+  ident1:= contextstack[s.stackindex+1].d.ident.ident;
   bo1:= false;
   if (currentcontainer = 0) or not ele.findchild(info.currentcontainer,ident1,
                                                    [],allvisi,ele1) then begin
@@ -73,7 +73,7 @@ begin
     po3:= @(psubdataty(ele.parentdata)^.varchain);
    end
    else begin
-    po3:= @unitinfo^.varchain;
+    po3:= @s.unitinfo^.varchain;
    end;
    bo1:= addvar(ident1,allvisi,po3^,po1);
 //   po1:= ele.addelement(ident1,allvisi,ek_var);
@@ -84,9 +84,9 @@ begin
   else begin
    with po1^ do begin
     address.flags:= [];
-    vf.typ:= contextstack[stackindex+2].d.typ.typedata;
+    vf.typ:= contextstack[s.stackindex+2].d.typ.typedata;
     po2:= ele.eleinfoabs(vf.typ);
-    address.indirectlevel:= contextstack[stackindex+2].d.typ.indirectlevel;
+    address.indirectlevel:= contextstack[s.stackindex+2].d.typ.indirectlevel;
     with ptypedataty(@po2^.data)^ do begin
 //     address.indirectlevel:= address.indirectlevel+indirectlevel;
      if kind in pointervarkinds then begin
@@ -95,7 +95,7 @@ begin
      if address.indirectlevel = 0 then begin
       size1:= bytesize;
       if tf_hasmanaged in flags then begin
-       include(currentstatementflags,stf_hasmanaged);
+       include(s.currentstatementflags,stf_hasmanaged);
        include(vf.flags,tf_hasmanaged);
       end;
      end
@@ -127,7 +127,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('POINTERVAR');
 {$endif}
- with info,contextstack[stackindex].d.vari do begin
+ with info,contextstack[s.stackindex].d.vari do begin
   if indirectlevel > 0 then begin
    errormessage(err_typeidentexpected,[]);
   end;

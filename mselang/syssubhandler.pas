@@ -52,12 +52,12 @@ begin
    errormessage(err_illegalexpression,[]);
   end;
   1: begin
-   with info,contextstack[stackindex] do begin
+   with info,contextstack[s.stackindex] do begin
     d.kind:= ck_const;
     d.dat.indirection:= 0;
     d.dat.datatyp:= sysdatatypes[st_int32];
     d.dat.constval.kind:= dk_integer;
-    with contextstack[stacktop] do begin
+    with contextstack[s.stacktop] do begin
      case d.kind of
       ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
        if d.dat.datatyp.indirectlevel > 0 then begin
@@ -164,11 +164,11 @@ begin
    int1:= 1;
    par2isconst:= true;
    if paramco > 1 then begin
-    with contextstack[stacktop] do begin
+    with contextstack[s.stacktop] do begin
      po2:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                   not (po2^.kind in ordinaldatakinds) then begin
-      errormessage(err_ordinalexpexpected,[],stacktop-stackindex);      
+      errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);      
      end
      else begin
       if d.kind = ck_const then begin
@@ -177,7 +177,7 @@ begin
       else begin
        par2isconst:= false;
        if d.kind <> ck_none then begin //parameter error otherwise
-        getvalue(stacktop-stackindex);
+        getvalue(s.stacktop-s.stackindex);
         int1:= -1; //no imm
        end;
       end;
@@ -185,11 +185,11 @@ begin
     end;
    end;
    if int1 <> 0 then begin //ignore otherwise
-    with contextstack[stacktop-paramco+1] do begin //dest
+    with contextstack[s.stacktop-paramco+1] do begin //dest
      case d.kind of
       ck_ref: begin
        if d.dat.indirection <> 0 then begin
-        getvalue(stacktop-paramco+1);
+        getvalue(s.stacktop-paramco+1);
         goto factlab;
        end;
        po1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -214,7 +214,7 @@ begin
         end;
         if par2isconst and (paramco > 1) then begin
          po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
-                           contextstack[stacktop].d.dat.constval.vinteger;
+                           contextstack[s.stacktop].d.dat.constval.vinteger;
         end;
        end
        else begin
@@ -229,7 +229,7 @@ factlab:
        internalerror(ie_notimplemented,'20141110A');
       end;
       ck_const: begin
-       errormessage(err_variableexpected,[],stacktop-stackindex-paramco+1);
+       errormessage(err_variableexpected,[],s.stacktop-s.stackindex-paramco+1);
       end;
       ck_none: begin
        //error in parameter, ignore
@@ -264,10 +264,10 @@ begin
 // stacksize1:= 0;
  with info do begin
   int3:= 0;
-  for int1:= stacktop-paramco+1 to stacktop do begin
-   getvalue(int1-stackindex);
+  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
+   getvalue(int1-s.stackindex);
   end;
-  for int1:= stacktop-paramco+1 to stacktop do begin
+  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
 //   with additem()^ do begin
    with contextstack[int1] do begin //todo: indirection, use table
     po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
@@ -298,7 +298,7 @@ begin
       po1^.par.voffsaddress:= getrtti(po2);
      end;
      else begin
-      errormessage(err_cantreadwritevar,[],int1-stackindex);
+      errormessage(err_cantreadwritevar,[],int1-s.stackindex);
       po1:= additem(oc_none);
       po1^.par.voffset:= 0;         //dummy
       po1^.par.voffsaddress:= getrtti(po2);
@@ -332,10 +332,10 @@ var
 begin
  stacksize1:= 0;
  with info do begin
-  for int1:= stacktop-paramco+1 to stacktop do begin
-   getvalue(int1-stackindex{,true});
+  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
+   getvalue(int1-s.stackindex{,true});
   end;
-  for int1:= stacktop-paramco+1 to stacktop do begin
+  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
    with contextstack[int1] do begin
     with ptypedataty(ele.eledataabs(d.datatyp.typedata))^ do begin
      push(kind);

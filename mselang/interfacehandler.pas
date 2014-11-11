@@ -47,14 +47,14 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if stackindex < 3 then begin
+  if s.stackindex < 3 then begin
    internalerror(ie_handler,'20140704A');
   end;
  {$endif}
-  include(currentstatementflags,stf_interfacedef);
+  include(s.currentstatementflags,stf_interfacedef);
   currentsubchain:= 0;
   currentsubcount:= 0;
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.kind:= ck_interfacedef;
 //   d.intf.intfindex:= 0;
   {
@@ -63,9 +63,9 @@ begin
    d.cla.virtualindex:= 0;
   }
   end;
-  with contextstack[stackindex-2] do begin
+  with contextstack[s.stackindex-2] do begin
    if (d.kind = ck_ident) and 
-                  (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                  (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
     id1:= d.ident.ident; //typedef
    end
    else begin
@@ -73,10 +73,10 @@ begin
     exit;
    end;
   end;
-  contextstack[stackindex].b.eleparent:= ele.elementparent;
-  with contextstack[stackindex-1] do begin
+  contextstack[s.stackindex].b.eleparent:= ele.elementparent;
+  with contextstack[s.stackindex-1] do begin
    if not ele.pushelement(id1,ek_type,globalvisi,d.typ.typedata) then begin
-    identerror(stacktop-stackindex,err_duplicateidentifier,erl_fatal);
+    identerror(s.stacktop-s.stackindex,err_duplicateidentifier,erl_fatal);
    end;
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
@@ -107,8 +107,8 @@ begin
    infointerface.subchain:= currentsubchain;
    infointerface.subcount:= currentsubcount;
   end;
-  ele.elementparent:= contextstack[stackindex].b.eleparent;
-  exclude(currentstatementflags,stf_interfacedef);
+  ele.elementparent:= contextstack[s.stackindex].b.eleparent;
+  exclude(s.currentstatementflags,stf_interfacedef);
  end;
 end;
 
@@ -126,13 +126,13 @@ begin
     errormessage(err_interfacetypeexpected,[]);
    end
    else begin
-    with contextstack[stackindex] do begin
+    with contextstack[s.stackindex] do begin
      d.kind:= ck_typeref;
      d.typeref:= ele.eledatarel(po1);
     end;
    end;
   end;
-  stacktop:= stackindex;
+  s.stacktop:= s.stackindex;
   ele.elementparent:= currentcontainer;
  end;
 end;
@@ -149,9 +149,9 @@ begin
 {$endif}
  with info do begin
   ele.pushelement(tks_ancestors,ek_none,allvisi);
-  ele.checkcapacity(ek_ancestorchain,stacktop-stackindex);
+  ele.checkcapacity(ek_ancestorchain,s.stacktop-s.stackindex);
   ele1:= 0;
-  for int1:= stacktop downto stackindex + 1 do begin
+  for int1:= s.stacktop downto s.stackindex + 1 do begin
               //todo: check recursion
    with contextstack[int1] do begin
     if not ele.addelementdata(identty(d.typeref),

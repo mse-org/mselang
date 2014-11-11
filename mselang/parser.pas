@@ -102,15 +102,15 @@ begin
      filereaderror(afilename);
      exit;
     end;
-    sourcebefore:= source;
-    sourcestartbefore:= sourcestart;
-    filenamebefore:= filename;
-    source.line:= 0;
-    source.po:= pchar(input);
-    sourcestart:= source.po;
-    filename:= msefileutils.filename(afilename);
+    sourcebefore:= s.source;
+    sourcestartbefore:= s.sourcestart;
+    filenamebefore:= s.filename;
+    s.source.line:= 0;
+    s.source.po:= pchar(input);
+    s.sourcestart:= s.source.po;
+    s.filename:= msefileutils.filename(afilename);
    {$ifdef mse_debugparser}
-    debugsource:= source.po;
+    s.debugsource:= s.source.po;
    {$endif}
    end;
    inc(includeindex);
@@ -126,13 +126,13 @@ begin
    dec(includeindex);
    with includestack[includeindex] do begin
     input:= '';
-    source:= sourcebefore;
-    sourcestart:= sourcestartbefore;
-    filename:= filenamebefore;
+    s.source:= sourcebefore;
+    s.sourcestart:= sourcestartbefore;
+    s.filename:= filenamebefore;
    {$ifdef mse_debugparser}
-    debugsource:= source.po;
+    s.debugsource:= s.source.po;
    {$endif}
-    if source.po^ = #0 then begin
+    if s.source.po^ = #0 then begin
      result:= popincludefile();
     end;
    end;
@@ -144,8 +144,8 @@ procedure incstack({const info: pparseinfoty});
 begin
  with info do begin
   inc(stacktop);
-  stackindex:= stacktop;
-  if stacktop >= stackdepth then begin
+  s.stackindex:= s.stacktop;
+  if s.stacktop >= stackdepth then begin
    stackdepth:= 2*stackdepth;
    setlength(contextstack,stackdepth+contextstackreserve);
   end;
@@ -165,79 +165,79 @@ begin
  result:= true;
  bo1:= false;
  with info do begin
-  pc:= pb^.dest.context;
-  contextstack[stackindex].transitionflags:= pb^.flags;
+  s.pc:= pb^.dest.context;
+  contextstack[s.stackindex].transitionflags:= pb^.flags;
   if not (bf_changeparentcontext in pb^.flags) then begin
-   contextstack[stackindex].returncontext:= pb^.stack;
+   contextstack[s.stackindex].returncontext:= pb^.stack;
          //replace return context
   end;
 
-  int1:= contextstack[stackindex].parent;
+  int1:= contextstack[s.stackindex].parent;
   if bf_setparentbeforepush in pb^.flags then begin
-   int1:= stackindex;
+   int1:= s.stackindex;
   end;
   if bf_push in pb^.flags then begin
    bo1:= true;
    incstack();
    if bf_setparentafterpush in pb^.flags then begin
-    int1:= stacktop;
+    int1:= s.stacktop;
    end;
   end;
   if bf_changeparentcontext in pb^.flags then begin
    contextstack[int1].context:= pb^.stack;
          //replace return context
   end;
-  with contextstack[stackindex],d do begin
+  with contextstack[s.stackindex],d do begin
    if bf_push in pb^.flags then begin
     kind:= ck_none;
 //    start:= source;
-    start:= contextstack[stackindex-1].start; //default
+    start:= contextstack[s.stackindex-1].start; //default
    end;
    if not (bf_nostartafter in pb^.flags) then begin
-    start:= source;
+    start:= s.source;
    end
    else begin
     if not (bf_nostartbefore in pb^.flags) then begin
-     start:= source;
+     start:= s.source;
      start.po:= beforeeat;
     end;
    end;
-   context:= pc;
+   context:= s.pc;
 //   sourcebef:= source;
   {$ifdef mse_debugparser}
-   debugstart:= debugsource;
+   debugstart:= s.debugsource;
   {$endif}
    parent:= int1;
    opmark.address:= opcount;
   end;
 
-  while pc^.branch = nil do begin //handle transition chain
-   if pc^.next = nil then begin
+  while s.pc^.branch = nil do begin //handle transition chain
+   if s.pc^.next = nil then begin
     result:= false;  //open transition chain
     break;
    end;
-   if pc^.handleentry <> nil then begin
-    pc^.handleentry(); //transition handler
-    if stopparser then begin
+   if s.pc^.handleentry <> nil then begin
+    s.pc^.handleentry(); //transition handler
+    if s.stopparser then begin
      result:= false;
      exit;
     end;
    end;
-   if pc^.handleexit <> nil then begin
-    pc^.handleexit(); //transition handler
-    if stopparser then begin
+   if s.pc^.handleexit <> nil then begin
+    s.pc^.handleexit(); //transition handler
+    if s.stopparser then begin
      result:= false;
      exit;
     end;
    end;
-   if pc^.nexteat then begin
-    contextstack[stackindex].start:= source;
+   if s.pc^.nexteat then begin
+    contextstack[s.stackindex].start:= s.source;
    end;
-   if pc^.cutafter or pc^.cutbefore then begin
-    stacktop:= stackindex;
+   if s.pc^.cutafter or s.pc^.cutbefore then begin
+    s.stacktop:= s.stackindex;
    end;
-   pc:= pc^.next;
-   contextstack[stackindex].context:= pc;
+   s.pc:= s.pc^.next;
+   contextstack[s.stackindex].context:= s.pc;
   end;
 {$ifdef mse_debugparser1}
   ch1:= ' ';
@@ -248,16 +248,16 @@ begin
    ch1:= '+';
   end;
   if bo1 then begin
-   writeln('^'+ch1+pc^.caption); //push context
+   writeln('^'+ch1+s.pc^.caption); //push context
   end
   else begin
-   writeln('>'+ch1+pc^.caption); //switch context
+   writeln('>'+ch1+s.pc^.caption); //switch context
   end;
 {$endif}
-  pb:= pc^.branch;
-  if (pc^.handleentry <> nil) then begin
-   pc^.handleentry();
-   if stopparser then begin
+  pb:= s.pc^.branch;
+  if (s.pc^.handleentry <> nil) then begin
+   s.pc^.handleentry();
+   if s.stopparser then begin
     result:= false;
    end;
   end;
@@ -268,9 +268,9 @@ end;
 procedure writeinfoline(const text: string);
 begin
  with info do begin
-  write('! '+text+' '+inttostr(stackindex)+':'+inttostr(stacktop));
-  if pc <> nil then begin
-   write(' '+pc^.caption);
+  write('! '+text+' '+inttostr(s.stackindex)+':'+inttostr(s.stacktop));
+  if s.pc <> nil then begin
+   write(' '+s.pc^.caption);
   end;
   writeln();
  end;
@@ -284,10 +284,10 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
   int1: integer;
  begin
   with info do begin
-   int1:= stackindex;
-   stackindex:= contextstack[stackindex].parent;
+   int1:= s.stackindex;
+   s.stackindex:= contextstack[s.stackindex].parent;
   {$ifdef mse_checkinternalerror}                             
-   if int1 = stackindex then begin
+   if int1 = s.stackindex then begin
     internalerror(ie_parser,'20140324A');
    end;
   {$endif}
@@ -303,21 +303,23 @@ var
  keywordindex: identty;
  keywordend: pchar;
  linebreaks: integer;
- 
- sourcebefore: sourceinfoty;
- filenamebefore: filenamety;
- sourcestartbefore: pchar;
- stackindexbefore: integer;
- stacktopbefore: integer;
- unitinfobefore: punitinfoty;
- ssabefore: ssainfoty;
- pcbefore: pcontextty;
- stopparserbefore: boolean;
+
+ statebefore: savedparseinfoty;
+  
+// sourcebefore: sourceinfoty;
+// filenamebefore: filenamety;
+// sourcestartbefore: pchar;
+// stackindexbefore: integer;
+// stacktopbefore: integer;
+// unitinfobefore: punitinfoty;
+// ssabefore: ssainfoty;
+// pcbefore: pcontextty;
+// stopparserbefore: boolean;
  eleparentbefore: elementoffsetty;
- currentstatementflagsbefore: statementflagsty;
-{$ifdef mse_debugparser}
- debugsourcebefore: pchar;
-{$endif}
+// currentstatementflagsbefore: statementflagsty;
+//{$ifdef mse_debugparser}
+// debugsourcebefore: pchar;
+//{$endif}
 label
  handlelab{,stophandlelab},parseend;
 begin
@@ -325,81 +327,68 @@ begin
  eleparentbefore:= ele.elementparent;
  ele.elementparent:= unitsele;
  with info do begin
-  filenamebefore:= filename;
-  sourcebefore:= source;
-//  sourcebefbefore:= sourcebef;
- {$ifdef mse_debugparser}
-  debugsourcebefore:= debugsource;
- {$endif}
-  sourcestartbefore:= sourcestart;
-  stackindexbefore:= stackindex;
-  stacktopbefore:= stacktop;
-  unitinfobefore:= unitinfo;
-  ssabefore:= ssa;
-  pcbefore:= pc;
-  stopparserbefore:= stopparser;
+  statebefore:= s;
 
   resetssa();
   currentsubchain:= 0;
   currentsubcount:= 0;
-  currentstatementflagsbefore:= currentstatementflags;
-  currentstatementflags:= [];
+  s.currentstatementflags:= [];
   inc(unitlevel);
   
-  sourcestart:= pchar(input); //todo: use filecache and include stack
-  source.po:= sourcestart;
-  source.line:= 0;
+  s.sourcestart:= pchar(input); //todo: use filecache and include stack
+  s.source.po:= s.sourcestart;
+  s.source.line:= 0;
 
   incstack();
-  with contextstack[stackindex],d do begin
+  with contextstack[s.stackindex],d do begin
    kind:= ck_none;
    context:= startcontext;
    start.po:= pchar(input);
    debugstart:= start.po;
    start.line:= 0;
-   parent:= stackindex;
+   parent:= s.stackindex;
   end;
 
-  unitinfo:= aunit;
-  filename:= msefileutils.filename(unitinfo^.filepath);
-  if us_interfaceparsed in unitinfo^.state then begin
-   if unitinfo^.impl.sourceoffset >= length(input) then begin
-    errormessage(err_filetrunc,[filename]);
+  s.unitinfo:= aunit;
+  s.filename:= msefileutils.filename(s.unitinfo^.filepath);
+  if us_interfaceparsed in s.unitinfo^.state then begin
+   if s.unitinfo^.impl.sourceoffset >= length(input) then begin
+    errormessage(err_filetrunc,[s.filename]);
    {$ifdef mse_debugparser}
-    debugsource:= source.po;
+    s.debugsource:= s.source.po;
    {$endif}
     goto parseend;
    end;
-   inc(source.po,unitinfo^.impl.sourceoffset);
-   source.line:= unitinfo^.impl.sourceline;
-   with contextstack[stackindex],d do begin
-    start:= source;
+   inc(s.source.po,s.unitinfo^.impl.sourceoffset);
+   s.source.line:= s.unitinfo^.impl.sourceline;
+   with contextstack[s.stackindex],d do begin
+    start:= s.source;
     debugstart:= start.po;
-    context:= unitinfo^.impl.context;
+    context:= s.unitinfo^.impl.context;
    end;
-   ele.elementparent:= unitinfo^.impl.eleparent;
+   ele.elementparent:= s.unitinfo^.impl.eleparent;
   end;
 
-  pc:= contextstack[stackindex].context;
+  s.pc:= contextstack[s.stackindex].context;
   keywordindex:= 0;
  {$ifdef mse_debugparser}
-  debugsource:= source.po;
+  s.debugsource:= s.source.po;
  {$endif}
   while true do begin
-   if stackindex <= stacktopbefore then begin
+   if s.stackindex <= statebefore.stacktop then begin
     break;
    end;
-   if (source.po^ = #0) and not popincludefile() then begin
+   if (s.source.po^ = #0) and not popincludefile() then begin
     break;
    end;
    while true do begin
-    if stackindex <= stacktopbefore then begin
+    if s.stackindex <= statebefore.stacktop then begin
      break;
     end;
-    if (source.po^ = #0) and not popincludefile() then begin
+    if (s.source.po^ = #0) and not popincludefile() then begin
      break;
     end;
-    pb:= pc^.branch;
+    pb:= s.pc^.branch;
     if pb = nil then begin
      break; //no branch
     end;
@@ -410,21 +399,21 @@ begin
     else begin
      while pb^.flags <> [] do begin
            //check match
-      po1:= source.po;
+      po1:= s.source.po;
       linebreaks:= 0;
       if bf_keyword in pb^.flags then begin
        if keywordindex = 0 then begin
         while po1^ in keywordchars do begin
          inc(po1);
         end; 
-        if (po1 <> source.po) and not (po1^ in nokeywordendchars) then begin
-         keywordindex:= getident(source.po,po1);
+        if (po1 <> s.source.po) and not (po1^ in nokeywordendchars) then begin
+         keywordindex:= getident(s.source.po,po1);
          keywordend:= po1;
         end
         else begin
          keywordindex:= idstart; //invalid
         end;
-        po1:= source.po;
+        po1:= s.source.po;
        end;
        bo1:= keywordindex = pb^.keyword;
        if bo1 then begin
@@ -472,14 +461,14 @@ begin
       end;
       if bo1 then begin //match
       {$ifdef mse_debugparser}
-       debugsource:= source.po;
+       s.debugsource:= s.source.po;
       {$endif}
-       beforeeat:= source.po;
+       beforeeat:= s.source.po;
        if bf_eat in pb^.flags then begin
-        source.line:= source.line + linebreaks;
+        s.source.line:= s.source.line + linebreaks;
         linebreaks:= 0;
         keywordindex:= 0;
-        source.po:= po1;
+        s.source.po:= po1;
        end;
        if (pb^.dest.context = nil) and (bf_push in pb^.flags) then begin
         break; //terminate current context
@@ -487,7 +476,7 @@ begin
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
          pb^.dest.handler();
-         if stopparser then begin
+         if s.stopparser then begin
           goto parseend;
          end;
          if bf_push in pb^.flags then begin
@@ -498,7 +487,7 @@ begin
          repeat
           if not pushcont() then begin 
                 //can not continue
-           if stopparser then begin
+           if s.stopparser then begin
             goto parseend;
            end;
            goto handlelab;
@@ -506,7 +495,7 @@ begin
          until not (bf_emptytoken in pb^.flags); //no start default branch
         end;
        end;
-       pb:= pc^.branch; //restart branch evaluation
+       pb:= s.pc^.branch; //restart branch evaluation
        continue;
       end;
       inc(pb); //next branch
@@ -520,49 +509,49 @@ handlelab:
           //context terminated, pop stack
 {$endif}
    repeat
-    pc1:= pc;
+    pc1:= s.pc;
     if pc1^.restoresource then begin
-     source:= contextstack[stackindex].start;
+     s.source:= contextstack[s.stackindex].start;
    {$ifdef mse_debugparser}
-     debugsource:= source.po;
+     s.debugsource:= s.source.po;
     {$endif}
      keywordindex:= 0;
     end;
-    if pc^.handleexit <> nil then begin
+    if s.pc^.handleexit <> nil then begin
          //call context termination handler
-     pc^.handleexit();
-     if stopparser then begin
+     s.pc^.handleexit();
+     if s.stopparser then begin
       goto parseend;
      end;
          //take context terminate actions
-     if pc^.cutbefore then begin
-      stacktop:= stackindex;
+     if s.pc^.cutbefore then begin
+      s.stacktop:= s.stackindex;
      end;
-     if (pc^.next = nil) and pc^.pop then begin
+     if (s.pc^.next = nil) and s.pc^.pop then begin
       popparent;
      end;
     end
     else begin
          //no handler, automatic stack decrement
-     if pc^.cutbefore then begin
-      stacktop:= stackindex;
+     if s.pc^.cutbefore then begin
+      s.stacktop:= s.stackindex;
      end;
-     if pc^.next = nil then begin
-      if pc^.pop then begin
+     if s.pc^.next = nil then begin
+      if s.pc^.pop then begin
        popparent;
       end
       else begin
-       dec(stackindex);
+       dec(s.stackindex);
       end;
      end;
     end;
-    if pc^.cutafter then begin
-     stacktop:= stackindex;
+    if s.pc^.cutafter then begin
+     s.stacktop:= s.stackindex;
     end;
-    if (stackindex <= stacktopbefore) or stopparser then begin
+    if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
      goto parseend;
     end;
-    pc:= contextstack[stackindex].context;
+    s.pc:= contextstack[s.stackindex].context;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser1}
      writeinfoline('popexe');
@@ -570,46 +559,46 @@ handlelab:
      goto handlelab;    
     end;
 {$ifdef mse_debugparser1}
-    if not pc1^.continue and (pc^.next = nil) then begin
+    if not pc1^.continue and (s.pc^.next = nil) then begin
      writeinfoline('no next, no continue');
     end;
 {$endif}
-   until pc1^.continue or (pc^.next <> nil) or 
-                 (bf_continue in contextstack[stackindex].transitionflags);
+   until pc1^.continue or (s.pc^.next <> nil) or 
+                 (bf_continue in contextstack[s.stackindex].transitionflags);
       //continue with branch checking
-   with contextstack[stackindex] do begin
+   with contextstack[s.stackindex] do begin
     if pc1^.continue or (returncontext <> nil) or 
                               (bf_continue in transitionflags) then begin
      exclude(transitionflags,bf_continue);
      if returncontext <> nil then begin
       context:= returncontext;
-      pc:= returncontext;
+      s.pc:= returncontext;
       returncontext:= nil;
      end;
 {$ifdef mse_debugparser}
-     writeinfoline(pc1^.caption+'.>'+pc^.caption);
+     writeinfoline(pc1^.caption+'.>'+s.pc^.caption);
 {$endif}
     end
     else begin
-     if pc^.restoresource then begin
-      source:= start;
+     if s.pc^.restoresource then begin
+      s.source:= start;
      end
      else begin
-      if pc^.nexteat then begin
-       start:= source;
+      if s.pc^.nexteat then begin
+       start:= s.source;
       end;
      end;
-     if pc^.cutafter then begin
-      stacktop:= stackindex;
+     if s.pc^.cutafter then begin
+      s.stacktop:= s.stackindex;
      end;
 {$ifdef mse_debugparser}
-     writeinfoline(pc^.caption+'->'+pc^.next^.caption);
+     writeinfoline(s.pc^.caption+'->'+s.pc^.next^.caption);
 {$endif}
-     pc:= pc^.next;
-     context:= pc;
-     if pc^.handleentry <> nil then begin
-      pc^.handleentry();
-      if stopparser then begin
+     s.pc:= s.pc^.next;
+     context:= s.pc;
+     if s.pc^.handleentry <> nil then begin
+      s.pc^.handleentry();
+      if s.stopparser then begin
        goto parseend;
       end;
      end;
@@ -621,12 +610,12 @@ handlelab:
   end;
 parseend:
 {$ifdef mse_debugparser1}
-  if not stopparser then begin
+  if not s.stopparser then begin
    writeinfoline('after2');
   end;
 {$endif}
-  if stf_hasmanaged in currentstatementflags then begin
-   with unitinfo^ do begin
+  if stf_hasmanaged in s.currentstatementflags then begin
+   with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
      writemanagedvarop(mo_ini,varchain,true,0);
      endinternalsub();
@@ -638,8 +627,8 @@ parseend:
    end;
   end;
   result:= (errors[erl_fatal] = 0) and (errors[erl_error] = 0);
-  with punitdataty(ele.eledataabs(unitinfo^.interfaceelement))^ do begin
-   varchain:= unitinfo^.varchain;
+  with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin
+   varchain:= s.unitinfo^.varchain;
   end;
   if result and (unitlevel = 1) then begin
 //   unithandler.handleinifini();
@@ -648,20 +637,8 @@ parseend:
     globdatasize:= globdatapo;
    end;
   end;
-  
-  source:= sourcebefore;
- {$ifdef mse_debugparser}
-  debugsource:= debugsourcebefore;
- {$endif}
-  sourcestart:= sourcestartbefore;
-  stackindex:= stackindexbefore;
-  stacktop:= stacktopbefore;
-  unitinfo:= unitinfobefore;
-  filename:= filenamebefore;
-  ssa:= ssabefore;
-  pc:= pcbefore;
-  stopparser:= stopparserbefore;
-  currentstatementflags:= currentstatementflagsbefore;
+
+  s:= statebefore;  
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;
  end;
@@ -703,12 +680,12 @@ begin
     backend:= abackend;
     unit1:= newunit('program');
     unit1^.filepath:= 'main.mla'; //dummy
-    info.unitinfo:= unit1;
+    info.s.unitinfo:= unit1;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;
     setlength(contextstack,stackdepth);
-    stacktop:= -1;
-    stackindex:= stacktop;
+    s.stacktop:= -1;
+    s.stackindex:= s.stacktop;
     opcount:= startupoffset;
     globallocid:= 0;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));

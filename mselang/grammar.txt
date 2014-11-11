@@ -153,6 +153,7 @@ directive,directive1,,*
  'dumpelements'.,dumpelements-*
  'dumpopcode'.,dumpopcode-*
  'abort'.,abort-*
+ 'stoponerror'.,stoponerror-*
  'nop'.,nop-*
  'include'.,include-*
  '}',-*
@@ -173,6 +174,7 @@ dumpelements,directiveend,handledumpelements,
 dumpopcode,directiveend,handledumpopcode,
 nop,directiveend,handlenop,
 abort,directiveend,handleabort,
+stoponerror,directiveend,handlestoponerror,
 directiveend,,,^*>
  '}',-*
  '',

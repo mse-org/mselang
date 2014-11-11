@@ -38,7 +38,7 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('finally');
-  dec(stackindex);
+  dec(s.stackindex);
  end; 
 end;
 
@@ -58,7 +58,7 @@ begin
  outhandle('FINALLYENTRY');
 {$endif}
  with info do begin
-  getoppo(contextstack[stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
+  getoppo(contextstack[s.stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
   with additem(oc_popcpucontext)^ do begin
   end;
  end;
@@ -72,7 +72,7 @@ begin
  with info do begin
   with additem(oc_continueexception)^ do begin
   end;
-//  dec(stackindex,1);
+//  dec(s.stackindex,1);
  end; 
 end;
 
@@ -83,7 +83,7 @@ begin
 {$endif}
  with additem(oc_goto)^ do begin
  end;
- with info,contextstack[stackindex-1] do begin
+ with info,contextstack[s.stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
@@ -96,11 +96,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPT');
 {$endif}
- with info,contextstack[stackindex-1] do begin
+ with info,contextstack[s.stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress:= opcount-1; //skip exception handling code
   with additem(oc_finiexception)^ do begin
   end;
-//  dec(stackindex,1);
+//  dec(s.stackindex,1);
  end; 
 end;
 
@@ -112,8 +112,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('RAISE');
 {$endif}
- with info,contextstack[stacktop] do begin
-  bo1:= (stacktop-stackindex = 1) and (d.kind in datacontexts) and
+ with info,contextstack[s.stacktop] do begin
+  bo1:= (s.stacktop-s.stackindex = 1) and (d.kind in datacontexts) and
                             getvalue(1) and (d.dat.datatyp.indirectlevel = 1);
   if bo1 then begin
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -126,7 +126,7 @@ begin
   else begin
    errormessage(err_classinstanceexpected,[]);
   end;
-  dec(stackindex);
+  dec(s.stackindex);
  end; 
 end;
 

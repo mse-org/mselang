@@ -106,19 +106,19 @@ begin
  with info do begin
   if paramco <> 2 then begin
    errormessage(err_wrongnumberofparameters,['setlength'],
-                                     stacktop-paramcount-stackindex);
+                                     s.stacktop-paramcount-s.stackindex);
   end;
-  if getvalue(stacktop-stackindex) then begin
-   with contextstack[stacktop] do begin
+  if getvalue(s.stacktop-s.stackindex) then begin
+   with contextstack[s.stacktop] do begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     if (d.dat.datatyp.indirectlevel <> 0) or 
                                     (po1^.kind <> dk_integer) then begin
      incompatibletypeserror(2,'dk_integer',d);
     end
     else begin
-     if getaddress(stacktop-stackindex-1,true) then begin
+     if getaddress(s.stacktop-s.stackindex-1,true) then begin
       with ptypedataty(ele.eledataabs(
-                 contextstack[stacktop-1].d.dat.datatyp.typedata))^ do begin
+                 contextstack[s.stacktop-1].d.dat.datatyp.typedata))^ do begin
        with additem(setlengthops[kind])^ do begin
         if op.op = oc_none then begin
          errormessage(err_typemismatch,[]);

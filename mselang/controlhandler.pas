@@ -46,7 +46,7 @@ begin
  outhandle('IF0');
 {$endif}
  with info do begin
-  include(currentstatementflags,stf_rightside);
+  include(s.currentstatementflags,stf_rightside);
  end;
 end;
 
@@ -56,8 +56,8 @@ begin
  outhandle('IF');
 {$endif}
  with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -68,8 +68,8 @@ begin
 {$endif}
  tokenexpectederror(tk_then);
  with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -79,11 +79,11 @@ begin
  outhandle('THEN0');
 {$endif}
  with info do begin
-  getvalue(stacktop-stackindex);
-  with contextstack[stacktop] do begin
+  getvalue(s.stacktop-s.stackindex);
+  with contextstack[s.stacktop] do begin
    if not (ptypedataty(ele.eledataabs(
                       d.dat.datatyp.typedata))^.kind = dk_boolean) then begin
-    errormessage(err_booleanexpressionexpected,[],stacktop-stackindex);
+    errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
    end;
   {
   if d.kind = ck_const then begin
@@ -103,8 +103,8 @@ begin
  outhandle('THEN1');
 {$endif}
  with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -116,8 +116,8 @@ begin //boolexp,thenmark
 {$endif}
  setcurrentlocbefore(2); //set gotoaddress
  with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -139,8 +139,8 @@ begin //boolexp,thenmark,elsemark
  setlocbefore(2,3);      //set gotoaddress for handlethen0
  setcurrentlocbefore(3); //set gotoaddress for handleelse0
  with info do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -156,8 +156,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CASEEXPRESSION');
 {$endif}
- with info,contextstack[stacktop] do begin
-  if (stacktop-stackindex = 1) and getvalue(1,true) and 
+ with info,contextstack[s.stacktop] do begin
+  if (s.stacktop-s.stackindex = 1) and getvalue(1,true) and 
                  (d.dat.datatyp.indirectlevel = 0) and 
          (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.kind in 
                                                  ordinaldatakinds) then begin
@@ -197,10 +197,10 @@ begin
  outhandle('CASEBRANCHENTRY');
 {$endif}
  with info do begin
-  last:= stackindex-1;
-  itemcount:= stackindex - contextstack[last].parent - 1;
+  last:= s.stackindex-1;
+  itemcount:= s.stackindex - contextstack[last].parent - 1;
   
-  for int1:= stackindex - itemcount to last do begin
+  for int1:= s.stackindex - itemcount to last do begin
    with contextstack[int1] do begin
     if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
                           (d.dat.constval.kind in ordinaldatakinds) then begin
@@ -266,8 +266,8 @@ begin
  with info do begin
   if errors[erl_error] = 0 then begin
    endad:= opcount - 1;
-   int1:= stackindex + 5;
-   while int1 <= stacktop do begin
+   int1:= s.stackindex + 5;
+   while int1 <= s.stacktop do begin
     while contextstack[int1].d.kind = ck_const do begin
      inc(int1);
     end;
@@ -302,7 +302,7 @@ begin
     end;
     inc(int1,3);
    end;
-   if int1 - stacktop = 3 then begin
+   if int1 - s.stacktop = 3 then begin
     with getoppo(opcount-1)^ do begin
     {$ifdef mse_checkinternalerror}
      if not checkop(op,oc_goto) then begin
@@ -317,7 +317,7 @@ begin
     setimmsize(sizeof(int32),par);
    end;
   end;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 

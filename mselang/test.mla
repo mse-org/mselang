@@ -1,12 +1,16 @@
 program test;
+type
+ rty = record
+  a: int32;
+  b: int32;
+ end;
+ prty = ^rty;
 var
- int1: int32;
- int2: int32;
- po1: ^int32;
+ r1: rty;
+ p1: prty;
 begin
- int1:= 1;
- int2:= 2;
- po1:= @int1;
- inc(po1);
- writeln(po1^);
+ p1:= @r1;
+ p1^.b:= 123;
+{$abort}
+ writeln(r1.b);
 end;

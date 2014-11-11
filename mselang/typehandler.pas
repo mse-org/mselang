@@ -61,9 +61,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('TYPE');
 {$endif}
- with info,contextstack[stacktop] do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+ with info,contextstack[s.stacktop] do begin
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -72,7 +72,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GETFIELDTYPESTART');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.kind:= ck_fieldtype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
@@ -85,7 +85,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GETTYPETYPESTART');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.kind:= ck_typetype;
   d.typ.indirectlevel:= 0;
   d.typ.typedata:= 0;
@@ -98,7 +98,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('POINTERTYPE');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   inc(d.typ.indirectlevel);
  end;
 end;
@@ -112,9 +112,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CHECKTYPEIDENT');
 {$endif}
- with info,contextstack[stackindex-2] do begin
+ with info,contextstack[s.stackindex-2] do begin
  {$ifdef mse_checkinternalerror}
-  if stackindex < 3 then begin
+  if s.stackindex < 3 then begin
    internalerror(ie_type,'20140325A');
   end;
  {$endif}
@@ -124,7 +124,7 @@ begin
    d.typ.flags:= po3^.flags;
    inc(d.typ.indirectlevel,po3^.indirectlevel);
    if d.kind = ck_typetype then begin
-    idcontext:= @contextstack[stackindex-3];
+    idcontext:= @contextstack[s.stackindex-3];
     if idcontext^.d.kind = ck_ident then begin
      po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
      if po1 <> nil then begin
@@ -145,12 +145,12 @@ begin
    {$endif}
     end;
    end;
-   stacktop:= stackindex-1;
-   stackindex:= contextstack[stackindex].parent;
+   s.stacktop:= s.stackindex-1;
+   s.stackindex:= contextstack[s.stackindex].parent;
   end
   else begin
-   stackindex:= stackindex-1;
-   stacktop:= stackindex;
+   s.stackindex:= s.stackindex-1;
+   s.stacktop:= s.stackindex;
   end;
  end;
 end;
@@ -164,17 +164,17 @@ begin
  outhandle('CHECKRANGETYPE');
 {$endif}
  with info do begin
-  if stacktop-stackindex = 3 then begin
-   with contextstack[stackindex-2] do begin
+  if s.stacktop-s.stackindex = 3 then begin
+   with contextstack[s.stackindex-2] do begin
     if (d.kind = ck_ident) and 
-                   (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                   (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
      id1:= d.ident.ident; //typedef
     end
     else begin
      id1:= getident();
     end;
    end;
-   with contextstack[stackindex-1] do begin
+   with contextstack[s.stackindex-1] do begin
     if not ele.addelementduplicatedata(id1,ek_type,allvisi,po1) then begin
      identerror(-1,err_duplicateidentifier);
     end;
@@ -193,21 +193,21 @@ begin
      parent:= 0;
      kind:= dk_integer;
     }
-     min:= contextstack[stackindex+2].d.dat.constval.vinteger;
-     max:= contextstack[stackindex+3].d.dat.constval.vinteger;
+     min:= contextstack[s.stackindex+2].d.dat.constval.vinteger;
+     max:= contextstack[s.stackindex+3].d.dat.constval.vinteger;
     end;
    end;
   end;
-  stacktop:= stackindex-1;
-  stackindex:= contextstack[stackindex].parent;
+  s.stacktop:= s.stackindex-1;
+  s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
 
 function gettypeident(): identty;
 begin
- with info,contextstack[stackindex-2] do begin
+ with info,contextstack[s.stackindex-2] do begin
   if (d.kind = ck_ident) and 
-                 (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                 (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
    result:= d.ident.ident; //typedef
   end
   else begin
@@ -226,19 +226,19 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if stackindex < 3 then begin
+  if s.stackindex < 3 then begin
    internalerror(ie_type,'20140325D');
   end;
  {$endif}
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    b.eleparent:= ele.elementparent;
    d.kind:= ck_recorddef;
    d.rec.fieldoffset:= 0;
   end;
-  with contextstack[stackindex-1] do begin
+  with contextstack[s.stackindex-1] do begin
    if not ele.pushelementduplicatedata(
                       gettypeident(),ek_type,allvisi,po1) then begin
-    identerror(stacktop-stackindex,err_duplicateidentifier);
+    identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
    end;
    d.typ.typedata:= ele.eledatarel(po1);
    with po1^ do begin
@@ -257,7 +257,7 @@ begin
  outhandle('RECORDDEFERROR');
 {$endif}
  with info do begin
-  ele.elementparent:= contextstack[stackindex].b.eleparent;
+  ele.elementparent:= contextstack[s.stackindex].b.eleparent;
  end;
 end;
 
@@ -272,12 +272,12 @@ var
 begin
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (stacktop-stackindex < 3) or 
-            (contextstack[stackindex+3].d.kind <> ck_fieldtype) then begin
+  if (s.stacktop-s.stackindex < 3) or 
+            (contextstack[s.stackindex+3].d.kind <> ck_fieldtype) then begin
    internalerror(ie_type,'20140325C');
   end;
  {$endif}
-  if not ele.addelementduplicatedata(contextstack[stackindex+2].d.ident.ident,
+  if not ele.addelementduplicatedata(contextstack[s.stackindex+2].d.ident.ident,
                                            ek_field,avisibility,po1) then begin
    identerror(2,err_duplicateidentifier);
   end;
@@ -288,7 +288,7 @@ begin
    po1^.vf.next:= fieldchain;
    fieldchain:= ele.eledatarel(po1);
   end;
-  with contextstack[stackindex+3] do begin
+  with contextstack[s.stackindex+3] do begin
    po1^.vf.typ:= d.typ.typedata;
    po1^.indirectlevel:= d.typ.indirectlevel;
    po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
@@ -312,11 +312,11 @@ begin
    end;
   end;
   aoffset:= aoffset+size1;
-  with contextstack[stackindex].d do begin
+  with contextstack[s.stackindex].d do begin
    kind:= ck_field;
    field.fielddata:= ele.eledatarel(po1);
   end;
-  stacktop:= stackindex;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -326,8 +326,8 @@ begin
  outhandle('RECORDFIELD');
 {$endif}
  with info do begin
-  checkrecordfield(allvisi,[],contextstack[stackindex-1].d.rec.fieldoffset,
-                            contextstack[stackindex-2].d.typ.flags);
+  checkrecordfield(allvisi,[],contextstack[s.stackindex-1].d.rec.fieldoffset,
+                            contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
 
@@ -342,15 +342,15 @@ begin
  outhandle('RECORDTYPE');
 {$endif}
  with info do begin
-  ele.elementparent:= contextstack[stackindex].b.eleparent; //restore
-  with contextstack[stackindex-1] do begin
+  ele.elementparent:= contextstack[s.stackindex].b.eleparent; //restore
+  with contextstack[s.stackindex-1] do begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
-                       contextstack[stackindex].d.rec.fieldoffset,d.typ.flags);
+                       contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
 {   
    kind:= dk_record; //fieldchain set in handlerecorddefstart()
    datasize:= das_none;
-   bytesize:= contextstack[stackindex].d.rec.fieldoffset;
+   bytesize:= contextstack[s.stackindex].d.rec.fieldoffset;
    bitsize:= bytesize*8;
    indirectlevel:= d.typ.indirectlevel;
    flags:= d.typ.flags;
@@ -367,8 +367,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SETTYPE');
 {$endif}
- with info,contextstack[stacktop] do begin
-  if (stacktop-stackindex = 1) and (d.typ.typedata <> 0) then begin
+ with info,contextstack[s.stacktop] do begin
+  if (s.stacktop-s.stackindex = 1) and (d.typ.typedata <> 0) then begin
    ele1:= d.typ.typedata;
    po1:= ele.eledataabs(ele1);
    if d.typ.indirectlevel = 0 then begin
@@ -394,8 +394,8 @@ begin
      exit;
     end;
     inittypedatasize(po1^,dk_set,
-           contextstack[stackindex-1].d.typ.indirectlevel,das_32);
-    with {contextstack[stackindex-1],}po1^ do begin
+           contextstack[s.stackindex-1].d.typ.indirectlevel,das_32);
+    with {contextstack[s.stackindex-1],}po1^ do begin
     {
      kind:= dk_set; //fieldchain set in handlerecorddefstart()
      datasize:= das_32;
@@ -426,11 +426,11 @@ var
  procedure err(const aerror: errorty);
  begin
   with info do begin
-   errormessage(aerror,[],int1-stackindex); 
+   errormessage(aerror,[],int1-s.stackindex); 
    if arty <> nil then begin
     ele.hideelementdata(arty);
    end;
-   contextstack[stackindex-1].d.kind:= ck_none;
+   contextstack[s.stackindex-1].d.kind:= ck_none;
   end;
  end;
 
@@ -445,10 +445,10 @@ begin
  outhandle('ARRAYTYPE');
 {$endif}
  with info do begin
-  int1:= stacktop-stackindex-2;
-  if (contextstack[stacktop].d.kind = ck_fieldtype) then begin
+  int1:= s.stacktop-s.stackindex-2;
+  if (contextstack[s.stacktop].d.kind = ck_fieldtype) then begin
    arty:= nil;
-   with contextstack[stacktop] do begin
+   with contextstack[s.stacktop] do begin
     itemtyoffs:= d.typ.typedata;
     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin
      flags1:= flags;
@@ -463,8 +463,8 @@ begin
     end;
    end;  //todo: alignment
    if (int1 > 0) then begin  //static array
-    int2:= stackindex + 2;
-    for int1:= stacktop-1 downto int2 do begin
+    int2:= s.stackindex + 2;
+    for int1:= s.stacktop-1 downto int2 do begin
      with contextstack[int1] do begin
      {$ifdef mse_checkinternalerror}
       if d.kind <> ck_fieldtype then begin
@@ -478,9 +478,9 @@ begin
        goto endlab;
       end;
       if int1 = int2 then begin //first dimension
-       with contextstack[stackindex-2] do begin
+       with contextstack[s.stackindex-2] do begin
         if (d.kind = ck_ident) and 
-                   (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                   (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
          id1:= d.ident.ident; //typedef
         end
         else begin
@@ -492,7 +492,7 @@ begin
        id1:= getident(); //multi dimension
       end;
       if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
-       identerror(stacktop-stackindex,err_duplicateidentifier);
+       identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
        goto endlab;
       end;
       arty^.flags:= flags1;
@@ -512,7 +512,7 @@ begin
        goto endlab;
       end;
       if range.max < range.min then begin
-       errormessage(err_highlowerlow,[],int1-stackindex);
+       errormessage(err_highlowerlow,[],int1-s.stackindex);
        ele.hideelementdata(arty);
        goto endlab;     
       end;
@@ -534,9 +534,9 @@ begin
    end
    else begin //dynamic array
     if int1 = -1 then begin
-     with contextstack[stackindex-2] do begin
+     with contextstack[s.stackindex-2] do begin
       if (d.kind = ck_ident) and 
-                 (contextstack[stackindex-1].d.kind = ck_typetype) then begin
+                 (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
        id1:= d.ident.ident; //typedef
       end
       else begin
@@ -544,7 +544,7 @@ begin
       end;
      end;
      if not ele.addelementdata(id1,ek_type,allvisi,arty) then begin
-      identerror(stacktop-stackindex,err_duplicateidentifier);
+      identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
       goto endlab;
      end;
      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
@@ -562,7 +562,7 @@ begin
 {$endif}
     end;
    end;
-   with contextstack[stackindex-1] do begin
+   with contextstack[s.stackindex-1] do begin
     arty^.indirectlevel:= d.typ.indirectlevel;
     d.typ.indirectlevel:= 0;
     d.typ.typedata:= ele.eledatarel(arty);
@@ -574,8 +574,8 @@ begin
 {$endif}
   end;
 endlab:
-  stacktop:= stackindex-1;
-  stackindex:= contextstack[stackindex-1].parent;  
+  s.stacktop:= s.stackindex-1;
+  s.stackindex:= contextstack[s.stackindex-1].parent;  
  end;
 end;
 
@@ -608,7 +608,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
 {$endif}
- with info,contextstack[stackindex] do begin
+ with info,contextstack[s.stackindex] do begin
   d.kind:= ck_index;
  end;
 end;
@@ -629,14 +629,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEX');
 {$endif}
- with info,contextstack[stackindex-1] do begin
-  if stacktop - stackindex > 0 then begin
+ with info,contextstack[s.stackindex-1] do begin
+  if s.stacktop - s.stackindex > 0 then begin
    offs:= 0;
    case d.kind of
     ck_ref: begin
      itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
      fullconst:= true;
-     for int1:= stackindex+1 to stacktop do begin
+     for int1:= s.stackindex+1 to s.stacktop do begin
       isdynarray:= itemtype^.kind = dk_dynarray;
       if not (isdynarray or (itemtype^.kind = dk_array)) then begin
        errormessage(err_illegalqualifier,[],0);
@@ -656,28 +656,28 @@ begin
         ck_const: begin
          if not (contextstack[int1].d.dat.constval.kind in 
                                               ordinaldatakinds) then begin
-          errormessage(err_ordtypeexpected,[],stacktop-stackindex);
+          errormessage(err_ordtypeexpected,[],s.stacktop-s.stackindex);
           goto errlab;
          end;
          li1:= getordconst(contextstack[int1].d.dat.constval);
          if (li1 < range.min) or 
                            not isdynarray and (li1 > range.max) then begin
-          rangeerror(range,stacktop-stackindex);
+          rangeerror(range,s.stacktop-s.stackindex);
           goto errlab;
          end;
         end;
         ck_ref,ck_fact: begin //todo: check type
          li1:= 0;
          if d.kind = ck_ref then begin
-          getvalue(int1-stackindex{,true});
+          getvalue(int1-s.stackindex{,true});
          end;
          lastssa:= d.dat.fact.ssaindex;
-         with insertitem(oc_mulimmint32,int1-stackindex,false)^ do begin
+         with insertitem(oc_mulimmint32,int1-s.stackindex,false)^ do begin
           par.ssas1:= lastssa;
           setimmint32(itemtype^.bytesize,par);
          end;
          if not fullconst then begin
-          with insertitem(oc_addint32,int1-stackindex,false)^ do begin
+          with insertitem(oc_addint32,int1-s.stackindex,false)^ do begin
            //todo
           end;         
          end
@@ -705,7 +705,7 @@ begin
        pushinsertaddress(-1,true);
       end;
       lastssa:= contextstack[int1].d.dat.fact.ssaindex;
-      with insertitem(oc_addpoint32,int1-stackindex,false)^ do begin
+      with insertitem(oc_addpoint32,int1-s.stackindex,false)^ do begin
        par.ssas1:= d.dat.fact.ssaindex;
        par.ssas2:= lastssa;
       end;         
@@ -724,8 +724,8 @@ begin
 errlab:
    d.kind:= ck_none;
   end;
-  stacktop:= stackindex-1;
-  stackindex:= contextstack[stackindex].parent;
+  s.stacktop:= s.stackindex-1;
+  s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
 
@@ -739,22 +739,22 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if contextstack[stackindex-2].d.kind <> ck_ident then begin
+  if contextstack[s.stackindex-2].d.kind <> ck_ident then begin
    internalerror(ie_type,'20140603A');
   end;
-  if contextstack[stackindex-1].d.kind <> ck_typetype then begin
+  if contextstack[s.stackindex-1].d.kind <> ck_typetype then begin
    internalerror(ie_type,'20140603B');
   end;
  {$endif}
-  if not ele.pushelementduplicatedata(contextstack[stackindex-2].d.ident.ident,
+  if not ele.pushelementduplicatedata(contextstack[s.stackindex-2].d.ident.ident,
                                                ek_type,allvisi,po1) then begin
    identerror(-2,err_duplicateidentifier);
   end;
   ele1:= ele.eledatarel(po1);
-  with contextstack[stackindex-1] do begin
+  with contextstack[s.stackindex-1] do begin
    d.typ.typedata:= ele1;
   end;
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.enu.enum:= ele1;
    d.enu.first:= 0;
    d.enu.flags:= [enf_contiguous];
@@ -775,7 +775,7 @@ begin
  outhandle('ENUMDEF');
 {$endif}
  with info do begin
-  ele2:= contextstack[stackindex].d.enu.first;
+  ele2:= contextstack[s.stackindex].d.enu.first;
   ele1:= 0;
   ele3:= 0;
   int1:= 0;
@@ -789,7 +789,7 @@ begin
     ele1:= ele3;
    end;
   end;
-  with contextstack[stackindex-1] do begin
+  with contextstack[s.stackindex-1] do begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatasize(po1^,dk_enum,d.typ.indirectlevel,das_32);
    with po1^.infoenum do begin
@@ -800,7 +800,7 @@ begin
     bitsize:= 32;
     indirectlevel:= d.typ.indirectlevel;
    }
-    flags:= contextstack[stackindex].d.enu.flags;
+    flags:= contextstack[s.stackindex].d.enu.flags;
     first:= ele3;
     itemcount:= int1;
    end;
@@ -816,8 +816,8 @@ var
  ele1: elementoffsetty;
  ident1: identty;
 begin
- with info,contextstack[stackindex] do begin
-  ident1:= contextstack[stackindex+1].d.ident.ident;
+ with info,contextstack[s.stackindex] do begin
+  ident1:= contextstack[s.stackindex+1].d.ident.ident;
   if ele.addelementdata(ident1,ek_type,allvisi,po1) then begin
    inittypedatasize(po1^,dk_enumitem,0,das_32);
    with po1^ do begin
@@ -860,7 +860,7 @@ begin
  outhandle('ENUMITEM');
 {$endif}
  with info do begin
-  doenumitem(contextstack[contextstack[stackindex].parent].d.enu.value);
+  doenumitem(contextstack[contextstack[s.stackindex].parent].d.enu.value);
  end;
 end;
 
@@ -869,15 +869,15 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ENUMITEMVALUE');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
   if (d.kind <> ck_const) or (d.dat.constval.kind <> dk_integer) then begin
                             //todo: check already defined enum
    errormessage(err_ordinalconstexpected,[]);
-   dec(stackindex);
-   stacktop:= stackindex;
+   dec(s.stackindex);
+   s.stacktop:= s.stackindex;
   end
   else begin
-   dec(stacktop);
+   dec(s.stacktop);
    doenumitem(d.dat.constval.vinteger);
   end;
  end;

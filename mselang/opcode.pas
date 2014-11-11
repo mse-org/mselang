@@ -102,7 +102,7 @@ var
  int1: integer;
  po1: popinfoty;
 begin
- writeln('n ssad ssa1 ssa2 ----OPS---- ',info.ssa.index,' ',info.ssa.nextindex);
+ writeln('n ssad ssa1 ssa2 ----OPS---- ',info.s.ssa.index,' ',info.s.ssa.nextindex);
  po1:= getsegmentpo(seg_op,0);
  for int1:= 0 to info.opcount-1 do begin
   with po1^.par do begin
@@ -406,13 +406,13 @@ function additem(const aopcode: opcodety;
                             const ssaextension: integer = 0): popinfoty;
 begin
  with info do begin
-  ssa.index:= ssa.nextindex;
-  inc(ssa.nextindex,ssatable^[aopcode]+ssaextension);
+  s.ssa.index:= s.ssa.nextindex;
+  inc(s.ssa.nextindex,ssatable^[aopcode]+ssaextension);
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   with result^ do begin
    op.op:= aopcode;
    op.flags:= [];
-   par.ssad:= ssa.nextindex - 1;
+   par.ssad:= s.ssa.nextindex - 1;
   end;
   inc(opcount);
  end;
@@ -442,11 +442,11 @@ var
  ssadelta: integer;
 begin
  with info do begin
-  int1:= stackoffset+stackindex;
-  if (int1 > stacktop) or not before and (int1 = stacktop) then begin
+  int1:= stackoffset+s.stackindex;
+  if (int1 > s.stacktop) or not before and (int1 = s.stacktop) then begin
    result:= additem(aopcode,ssaextension);
-   if int1 = stacktop then begin
-    with contextstack[stacktop] do begin
+   if int1 = s.stacktop then begin
+    with contextstack[s.stacktop] do begin
      if d.kind in factcontexts then begin
       d.dat.fact.ssaindex:= result^.par.ssad;
      end;
@@ -475,8 +475,8 @@ begin
 //   end;
    result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
                 //there is at least a subbegin op
-   ssa.index:= ssa.nextindex;
-   inc(ssa.nextindex,ssadelta);
+   s.ssa.index:= s.ssa.nextindex;
+   inc(s.ssa.nextindex,ssadelta);
    po1:= result+1;
    poend:= po1+opcount-ad1;
    inc(opcount);
@@ -491,7 +491,7 @@ begin
     end;
     inc(po1);
    end;
-   for int1:= int1+1 to stacktop do begin
+   for int1:= int1+1 to s.stacktop do begin
     with contextstack[int1] do begin
      inc(opmark.address);
      if d.kind in factcontexts then begin
@@ -507,12 +507,12 @@ function insertitemafter(const stackoffset: integer;
                                          const shift: integer=0): popinfoty;
 begin
  with info do begin
-  if stackoffset+stackindex > stacktop then begin
+  if stackoffset+s.stackindex > s.stacktop then begin
    result:= additem;
   end
   else begin
    result:= insertitem(
-                 contextstack[stackindex+stackoffset+1].opmark.address+shift);
+                 contextstack[s.stackindex+stackoffset+1].opmark.address+shift);
   end;
  end;
 end;

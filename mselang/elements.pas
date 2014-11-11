@@ -854,7 +854,7 @@ begin
      with po2^.header do begin
       if (name = aident) and (parent = felementparent) and 
              ((visibility * avislevel <> []) or 
-          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
+          (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
                                 ((akinds = []) or (kind in akinds)) then begin
        ahandler(po2,adata,result);
       end;
@@ -948,7 +948,7 @@ begin
       with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
        if (name = aident) and (parent = parentele) and 
                                     ((visibility * avislevel <> []) or 
-           (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
+           (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
                             ((akinds = []) or (kind in akinds)) then begin
         element:= po1^.data.data;
         goto endlab;
@@ -1385,7 +1385,7 @@ begin
           with pelementinfoty(pointer(felementdata) +
                                 po2^.childparent)^.header do begin //parent
           if ((visibility * avislevel <> [])  or 
-          (vik_sameunit in visibility) and (defunit = info.unitinfo^.key)) and 
+          (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
                              ((akinds = []) or (kind in akinds)) then begin
            aparent:= po2^.element;
            result:= true;
@@ -1681,8 +1681,8 @@ begin
   path:= felementpath;
   name:= aname;
   visibility:= avislevel;
-  if info.unitinfo <> nil then begin
-   defunit:= info.unitinfo^.key;
+  if info.s.unitinfo <> nil then begin
+   defunit:= info.s.unitinfo^.key;
   end
   else begin
    defunit:= 0;
@@ -1775,8 +1775,8 @@ begin
   path:= felementpath;
   name:= aname;
   visibility:= avislevel;
-  if info.unitinfo <> nil then begin
-   defunit:= info.unitinfo^.key;
+  if info.s.unitinfo <> nil then begin
+   defunit:= info.s.unitinfo^.key;
   end
   else begin
    defunit:= 0;

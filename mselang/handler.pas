@@ -123,6 +123,7 @@ procedure handlewith3();
 procedure handledumpelements();
 procedure handledumpopcode();
 procedure handleabort();
+procedure handlestoponerror();
 procedure handlenop();
 
 procedure stringlineenderror();
@@ -147,7 +148,7 @@ var
 begin
  setoptable(aoptable,assatable);
 // info.allocproc:= aallocproc;
- addvar(tk_exitcode,allvisi,info.unitinfo^.varchain,po1);
+ addvar(tk_exitcode,allvisi,info.s.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
@@ -184,13 +185,13 @@ begin
  outhandle('PROGBEGIN');
 {$endif}
  with info do begin
-  if stf_hasmanaged in currentstatementflags then begin
+  if stf_hasmanaged in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.unitinfo^.varchain,true,0);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
     endinternalsub();
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.unitinfo^.varchain,true,0);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
     endinternalsub();
    end;
   end;
@@ -245,7 +246,7 @@ begin
   //endmark, will possibly replaced by goto if there is fini code
  end;
  with info do begin
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -259,8 +260,8 @@ begin
  outhandle('INT');
 {$endif}
  with info do begin
-  with contextstack[stacktop] do begin
-   consumed:= source.po;
+  with contextstack[s.stacktop] do begin
+   consumed:= s.source.po;
    po1:= start.po;
    while (po1^ = '0') do begin
     inc(po1);
@@ -269,18 +270,18 @@ begin
  //  18446744073709551615
    int1:= 20-(consumed-po1);
    if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+    errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
    end
    else begin
-    while po1 < source.po do begin
+    while po1 < s.source.po do begin
      c1:= c1*10 + (ord(po1^)-ord('0'));
      inc(po1);
     end;
     if (int1 = 0) and (c1 < 10000000000000000000) then begin
-     errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+     errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
     end;
    end;
-   stackindex:= stacktop-1;
+   s.stackindex:= s.stacktop-1;
    d.kind:= ck_const;
    d.dat.indirection:= 0;
    d.dat.datatyp:= sysdatatypes[st_int32];
@@ -297,8 +298,8 @@ begin
 {$endif}
  with info do begin
   errormessage(err_errintypedef,[]);
-  stackindex:= stackindex-1;
-  stacktop:= stackindex;
+  s.stackindex:= s.stackindex-1;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -308,30 +309,30 @@ begin
  outhandle('RANGE3');
 {$endif}
  with info do begin
-  if stacktop-stackindex = 2 then begin
-   if contextstack[stackindex+1].d.kind <> ck_const then begin
+  if s.stacktop-s.stackindex = 2 then begin
+   if contextstack[s.stackindex+1].d.kind <> ck_const then begin
     errormessage(err_constexpressionexpected,[],1);
    end
    else begin
-    if contextstack[stackindex+2].d.kind <> ck_const then begin
+    if contextstack[s.stackindex+2].d.kind <> ck_const then begin
      errormessage(err_constexpressionexpected,[],2);
     end
     else begin
-     if contextstack[stackindex+1].d.dat.constval.kind <> 
-              contextstack[stacktop].d.dat.constval.kind then begin
-      incompatibletypeserror(contextstack[stackindex+1].d,
-                                              contextstack[stacktop].d);
+     if contextstack[s.stackindex+1].d.dat.constval.kind <> 
+              contextstack[s.stacktop].d.dat.constval.kind then begin
+      incompatibletypeserror(contextstack[s.stackindex+1].d,
+                                              contextstack[s.stacktop].d);
 //     errormessage(info,err
      end
      else begin
-      with contextstack[stackindex] do begin
+      with contextstack[s.stackindex] do begin
        d.kind:= ck_range;
       end;
      end;
     end;
    end;
   end;
-//  stacktop:= stackindex;
+//  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -340,7 +341,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NUMBERENTRY');
 {$endif}
- with info,contextstack[stacktop].d do begin
+ with info,contextstack[s.stacktop].d do begin
   kind:= ck_number;
   number.flags:= [];
  end;
@@ -351,7 +352,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('POSNUMBER');
 {$endif}
- with info,contextstack[stacktop].d do begin
+ with info,contextstack[s.stacktop].d do begin
   if number.flags <> [] then begin
    illegalcharactererror(true);
   end;
@@ -364,7 +365,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NEGNUMBER');
 {$endif}
- with info,contextstack[stacktop].d do begin
+ with info,contextstack[s.stacktop].d do begin
   if number.flags <> [] then begin
    illegalcharactererror(true);
   end;
@@ -381,25 +382,25 @@ begin
 {$ifdef mse_debugparser}
  outhandle('BINNUM');
 {$endif}
- with info,contextstack[stacktop] do begin
-  consumed:= source.po;
+ with info,contextstack[s.stacktop] do begin
+  consumed:= s.source.po;
   po1:= start.po;
   while (po1^ = '0') do begin
    inc(po1);
   end;
   c1:= 0;
   if consumed-po1 > 64 then begin
-   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
   end
   else begin
-   while po1 < source.po do begin
+   while po1 < s.source.po do begin
     c1:= c1*2 + (ord(po1^)-ord('0'));
     inc(po1);
    end;
   end;
   d.kind:= ck_number;
   d.number.value:= c1;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -412,8 +413,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OCTNUM');
 {$endif}
- with info,contextstack[stacktop] do begin
-  consumed:= source.po;
+ with info,contextstack[s.stacktop] do begin
+  consumed:= s.source.po;
   po1:= start.po;
   while (po1^ = '0') do begin
    inc(po1);
@@ -422,17 +423,17 @@ begin
 //  1777777777777777777777
   int1:= 22-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
   end
   else begin
-   while po1 < source.po do begin
+   while po1 < s.source.po do begin
     c1:= c1*8 + (ord(po1^)-ord('0'));
     inc(po1);
    end;
   end;
   d.kind:= ck_number;
   d.number.value:= c1;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -445,8 +446,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DECNUM');
 {$endif}
- with info,contextstack[stacktop] do begin
-  consumed:= source.po;
+ with info,contextstack[s.stacktop] do begin
+  consumed:= s.source.po;
   po1:= start.po;
   while (po1^ = '0') do begin
    inc(po1);
@@ -455,20 +456,20 @@ begin
 //  18446744073709551615
   int1:= 20-(consumed-po1);
   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
-   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
   end
   else begin
-   while po1 < source.po do begin
+   while po1 < s.source.po do begin
     c1:= c1*10 + (ord(po1^)-ord('0'));
     inc(po1);
    end;
    if (int1 = 0) and (c1 < 10000000000000000000) then begin
-    errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+    errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
    end;
   end;
   d.kind:= ck_number;
   d.number.value:= c1;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -480,25 +481,25 @@ begin
 {$ifdef mse_debugparser}
  outhandle('HEXNUM');
 {$endif}
- with info,contextstack[stacktop] do begin
-  consumed:= source.po;
+ with info,contextstack[s.stacktop] do begin
+  consumed:= s.source.po;
   po1:= start.po;
   while (po1^ = '0') do begin
    inc(po1);
   end;
   c1:= 0;
   if consumed-po1 > 16 then begin
-   errormessage(err_invalidintegerexpression,[],stacktop-stackindex);
+   errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
   end
   else begin
-   while po1 < source.po do begin
+   while po1 < s.source.po do begin
     c1:= c1*$10 + hexchars[po1^];
     inc(po1);
    end;
   end;
   d.kind:= ck_number;
   d.number.value:= c1;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -509,8 +510,8 @@ begin
 {$endif}
  with info do begin
   illegalcharactererror(false);
-//  errormessage(info,stacktop-stackindex,err_numberexpected,[]);
-  dec(stackindex);
+//  errormessage(info,s.stacktop-s.stackindex,err_numberexpected,[]);
+  dec(s.stackindex);
  end;
 end;
 
@@ -534,12 +535,12 @@ var
  rea1: real;
 begin
  with info do begin
-  with contextstack[stacktop] do begin
+  with contextstack[s.stacktop] do begin
    fraclen:= asource-start.po;
   end;
-  stacktop:= stacktop - 1;
-  stackindex:= stacktop-1;
-  with contextstack[stacktop] do begin
+  s.stacktop:= s.stacktop - 1;
+  s.stackindex:= s.stacktop-1;
+  with contextstack[s.stacktop] do begin
    d.kind:= ck_const;
    d.dat.indirection:= 0;
    d.dat.datatyp:= sysdatatypes[st_float64];
@@ -548,7 +549,7 @@ begin
    po1:= start.po;
    int1:= asource-po1-1;
    if int1 > 20 then begin
-    errormessage(err_invalidfloat,[],stacktop-stackindex);
+    errormessage(err_invalidfloat,[],s.stacktop-s.stackindex);
 //    error(ce_invalidfloat,asource);
    end
    else begin
@@ -561,7 +562,7 @@ begin
     end;
     if (int1 = 20) and (lint2 < $8AC7230489E80000) then begin 
                                             //todo: check correctness
-     errormessage(err_invalidfloat,[],stacktop-stackindex);
+     errormessage(err_invalidfloat,[],s.stacktop-s.stackindex);
 //     error(ce_invalidfloat,asource);
      mantissa:= 0;
 //     neg:= false;
@@ -584,9 +585,9 @@ begin
  outhandle('FRAC');
 {$endif}
  with info do begin
-//  if stacktop > stackindex then begin //no exponent number error otherwise
-   dofrac(source.po,{neg,}mant,fraclen);
-   with contextstack[stacktop].d.dat.constval do begin
+//  if s.stacktop > s.stackindex then begin //no exponent number error otherwise
+   dofrac(s.source.po,{neg,}mant,fraclen);
+   with contextstack[s.stacktop].d.dat.constval do begin
   //  vfloat:= mant/floatexps[fraclen]; //todo: round lsb;   
     vfloat:= mant*floatnegexps[fraclen]; //todo: round lsb;   
 {
@@ -594,12 +595,12 @@ begin
      vfloat:= -vfloat; 
     end;
 }
-    consumed:= source.po;
+    consumed:= s.source.po;
    end;
 //  end
 //  else begin
-//   dec(stackindex);
-//   stacktop:= stackindex;
+//   dec(s.stackindex);
+//   s.stacktop:= s.stackindex;
 //  end;
  end;
 end;
@@ -615,20 +616,20 @@ begin
  outhandle('EXPONENT');
 {$endif}
  with info do begin
-  with contextstack[stacktop].d.number do begin
+  with contextstack[s.stacktop].d.number do begin
    exp:= value;
    if nuf_neg in flags then begin
     exp:= -exp;
    end;
   end;
-  dec(stacktop,2);
-  dofrac(contextstack[stackindex].start.po-1,{neg,}mant,fraclen);
+  dec(s.stacktop,2);
+  dofrac(contextstack[s.stackindex].start.po-1,{neg,}mant,fraclen);
   if fraclen < 0 then begin
    fraclen:= 0;  //no frac 123e4
   end;
   exp:= exp-fraclen;
-  with contextstack[stacktop] do begin
-   consumed:= source.po; //todo: overflow check
+  with contextstack[s.stacktop] do begin
+   consumed:= s.source.po; //todo: overflow check
    if exp < 0 then begin
     exp:= -exp;
     do1:= floatnegexps[exp and $1f];
@@ -665,11 +666,11 @@ var
  do1: double;
 begin
  with info^ do begin
-  exp:= contextstack[stacktop].d.constval.vinteger;
-  dec(stacktop,3);
-  dofrac(info,contextstack[stackindex-1].start.po,neg,mant,fraclen);
+  exp:= contextstack[s.stacktop].d.constval.vinteger;
+  dec(s.stacktop,3);
+  dofrac(info,contextstack[s.stackindex-1].start.po,neg,mant,fraclen);
   exp:= exp+fraclen;
-  with contextstack[stacktop] do begin
+  with contextstack[s.stacktop] do begin
    consumed:= source.po; //todo: overflow check
    do1:= floatexps[exp and $1f];
    while exp >= 32 do begin
@@ -714,25 +715,25 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ADDTERM');
 {$endif}
- with info,contextstack[stacktop-2] do begin
-  if (contextstack[stacktop].d.kind = ck_const) and 
+ with info,contextstack[s.stacktop-2] do begin
+  if (contextstack[s.stacktop].d.kind = ck_const) and 
               (d.kind = ck_const) then begin
    dk1:= convertconsts();
    case dk1 of
     sdk_int32: begin
      d.dat.constval.vinteger:= d.dat.constval.vinteger + 
-               contextstack[stacktop].d.dat.constval.vinteger;
+               contextstack[s.stacktop].d.dat.constval.vinteger;
     end;
     sdk_flo64: begin
      d.dat.constval.vfloat:= d.dat.constval.vfloat + 
-                            contextstack[stacktop].d.dat.constval.vfloat;
+                            contextstack[s.stacktop].d.dat.constval.vfloat;
     end;
     else begin
-     operationnotsupportederror(d,contextstack[stacktop].d,'+');
+     operationnotsupportederror(d,contextstack[s.stacktop].d,'+');
     end;
    end;
-   dec(stacktop,2);
-   stackindex:= stacktop-1;
+   dec(s.stacktop,2);
+   s.stackindex:= s.stacktop-1;
   end
   else begin
    updateop(addops);
@@ -746,11 +747,11 @@ begin
  outhandle('TERM');
 {$endif}
  with info do begin
-  if stacktop-stackindex = 1 then begin
-   contextstack[stackindex].d:= contextstack[stackindex+1].d;
+  if s.stacktop-s.stackindex = 1 then begin
+   contextstack[s.stackindex].d:= contextstack[s.stackindex+1].d;
   end;
-  stacktop:= stackindex;
-  dec(stackindex);
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
 end;
 
@@ -762,7 +763,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
   if d.dat.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
   end
@@ -774,7 +775,7 @@ begin
     end;
     ck_const: begin
      if d.dat.constval.kind <> dk_address then begin
-      errormessage(err_cannotderefnonpointer,[],stacktop-stackindex);
+      errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
      end
      else begin
       internalerror1(ie_notimplemented,'20140402B'); //todo
@@ -796,7 +797,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FACTSTART');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
   stringbuffer:= '';
   d.kind:= ck_getfact;
   with d.getfact do begin
@@ -813,7 +814,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
   inc(d.getfact.negcount);
   if d.getfact.indicount <> 0 then begin
    errormessage(err_illegalexpression,[]);
@@ -826,7 +827,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ADRESSFACT');
 {$endif}
- with info,contextstack[stacktop].d.getfact do begin
+ with info,contextstack[s.stacktop].d.getfact do begin
   if ff_address in flags then begin
    errormessage(err_cannotassigntoaddr,[]);
   end;
@@ -856,8 +857,8 @@ begin
  outhandle('FACT');
 {$endif}
  with info do begin
-  if stackindex < stacktop then begin
-   with contextstack[stacktop] do begin
+  if s.stackindex < s.stacktop then begin
+   with contextstack[s.stacktop] do begin
     case d.kind of
      ck_str: begin
       d.kind:= ck_const;
@@ -877,12 +878,12 @@ begin
      end;
     end;
    end;
-   with contextstack[stackindex] do begin
+   with contextstack[s.stackindex] do begin
     fl1:= [];
     if d.kind = ck_getfact then begin
      fl1:= d.getfact.flags;
     end;
-    d:= contextstack[stacktop].d;
+    d:= contextstack[s.stacktop].d;
     if ff_address in fl1 then begin
      case d.kind of
       ck_const: begin
@@ -908,10 +909,10 @@ begin
    end;
   end
   else begin
-   errormessage(err_illegalexpression,[],stacktop-stackindex);
+   errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
   end;
-  stacktop:= stackindex;
-  dec(stackindex);
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
 end;
 
@@ -922,12 +923,12 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if stacktop-stackindex <> 1 then begin
+  if s.stacktop-s.stackindex <> 1 then begin
    internalerror(ie_handler,'20140406B');
   end;
  {$endif}
-  contextstack[stackindex].d:= contextstack[stackindex+1].d;
-  dec(stacktop);
+  contextstack[s.stackindex].d:= contextstack[s.stackindex+1].d;
+  dec(s.stacktop);
  end;
 end;
 
@@ -940,9 +941,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
  {$ifdef mse_checkinternalerror}
-  if stacktop-stackindex <> 1 then begin
+  if s.stacktop-s.stackindex <> 1 then begin
    internalerror(ie_handler,'20140404A');
   end;
  {$endif}
@@ -971,9 +972,9 @@ begin
     end;
    end;
   end;
-  contextstack[stackindex].d:= d;
-  stacktop:= stackindex;
-  dec(stackindex);
+  contextstack[s.stackindex].d:= d;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
 end;
 
@@ -983,10 +984,10 @@ begin
  outhandle('SIMPEXP');
 {$endif}
  with info do begin
-  contextstack[stacktop-1]:= contextstack[stacktop];
-  dec(stacktop);
-  stackindex:= stacktop;
-  dec(stackindex);
+  contextstack[s.stacktop-1]:= contextstack[s.stacktop];
+  dec(s.stacktop);
+  s.stackindex:= s.stacktop;
+  dec(s.stackindex);
  end;
 end;
 
@@ -996,11 +997,11 @@ begin
  outhandle('SIMPEXP1');
 {$endif}
  with info do begin
-  if stacktop > stackindex then begin
-   contextstack[stacktop-1]:= contextstack[stacktop];
+  if s.stacktop > s.stackindex then begin
+   contextstack[s.stacktop-1]:= contextstack[s.stacktop];
   end;
-  dec(stacktop);
-  dec(stackindex);
+  dec(s.stacktop);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1010,24 +1011,24 @@ begin
  outhandle('BRACKETEND');
 {$endif}
  with info do begin
-  if source.po^ <> ')' then begin
+  if s.source.po^ <> ')' then begin
    tokenexpectederror(')',erl_error);
 //   error(ce_endbracketexpected);
 //   outcommand(info,[],'*ERROR* '')'' expected');
   end
   else begin
-   inc(source.po);
+   inc(s.source.po);
   end;
-  if stackindex < stacktop then begin
-   contextstack[stacktop-1]:= contextstack[stacktop];
+  if s.stackindex < s.stacktop then begin
+   contextstack[s.stacktop-1]:= contextstack[s.stacktop];
   end
   else begin
    errormessage(err_expressionexpected,[]);
 //   error(ce_expressionexpected);
 //   outcommand(info,[],'*ERROR* Expression expected');
   end;
-  dec(stacktop);
-  dec(stackindex);
+  dec(s.stacktop);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1036,9 +1037,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IDENT');
 {$endif}
- with info,contextstack[stacktop],d do begin
+ with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
-  ident.len:= source.po-start.po;
+  ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
   ident.continued:= false;
   if ident.len = 0 then begin
@@ -1052,9 +1053,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IDENTPATH1A');
 {$endif}
- with info,contextstack[stacktop],d do begin
+ with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
-  ident.len:= source.po-start.po;
+  ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
   ident.continued:= false;
   if ident.len = 0 then begin
@@ -1068,7 +1069,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IDENTPATH2A');
 {$endif}
- with info,contextstack[stacktop],d do begin
+ with info,contextstack[s.stacktop],d do begin
   ident.continued:= true;
  end;
 end;
@@ -1086,7 +1087,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('STATEMENTEND');
 {$endif}
- with info,contextstack[stacktop],d do begin
+ with info,contextstack[s.stacktop],d do begin
   kind:= ck_end;
  end;
 end;
@@ -1097,7 +1098,7 @@ begin
  outhandle('BLOCKEND');
 {$endif}
 // with info^ do begin
-//  stackindex:= stackindex-2;
+//  s.stackindex:= s.stackindex-2;
 // end;
 end;
 (*
@@ -1106,8 +1107,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMSTART0');
 {$endif}
- with info^,contextstack[stacktop] do begin
-  parent:= stacktop;
+ with info^,contextstack[s.stacktop] do begin
+  parent:= s.stacktop;
  end;
 end;
 
@@ -1116,8 +1117,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAM');
 {$endif}
- with info^,contextstack[stacktop] do begin
-  stackindex:= parent+1;
+ with info^,contextstack[s.stacktop] do begin
+  s.stackindex:= parent+1;
  end;
 end;
 
@@ -1135,10 +1136,10 @@ begin
  outhandle('NOIMPLEMENTATIONERROR');
 {$endif}
  with info do begin
-  if unitinfo^.prev <> nil then begin
+  if s.unitinfo^.prev <> nil then begin
    tokenexpectederror(tk_implementation);
   end;
-  //  stackindex:= -1;
+  //  s.stackindex:= -1;
  end;
 end;
 
@@ -1222,7 +1223,7 @@ begin
 {$endif}
  with info do begin
   errormessage(err_illegalexpression,[]);
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1233,8 +1234,8 @@ begin
 {$endif}
  with info do begin
   errormessage(err_syntax,[';']);
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1249,16 +1250,16 @@ begin
  outhandle('USES');
 {$endif}
  with info do begin
-  int2:= stacktop-stackindex-1;
+  int2:= s.stacktop-s.stackindex-1;
   setlength(ar1,int2);
   for int1:= 0 to int2-1 do begin
-   if not ele.addelement(contextstack[stackindex+int1+2].d.ident.ident,
+   if not ele.addelement(contextstack[s.stackindex+int1+2].d.ident.ident,
                                     ek_uses,[vik_global],ar1[int1]) then begin
     identerror(int1+2,err_duplicateidentifier);
    end;
   end;
 //  offs1:= ele.decelementparent;
-  with unitinfo^ do begin
+  with s.unitinfo^ do begin
    if us_interfaceparsed in state then begin
 //    ele.decelementparent;
     setlength(implementationuses,int2);
@@ -1271,11 +1272,11 @@ begin
   end;
   inc(po1,int2);
   int2:= 0;
-  for int1:= stackindex+2 to stacktop do begin
+  for int1:= s.stackindex+2 to s.stacktop do begin
    dec(po1);
    po1^:= loadunit(int1);
    if po1^ = nil then begin
-    stopparser:= true;
+    s.stopparser:= true;
     break;
    end;
    if ar1[int2] <> 0 then begin
@@ -1286,8 +1287,8 @@ begin
    inc(int2);
   end;
 //  ele.elementparent:= offs1;
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1306,8 +1307,8 @@ begin
 {$endif}
 {
  with info^ do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 }
 end;
@@ -1317,9 +1318,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONST');
 {$endif}
- with info^,contextstack[stacktop] do begin
-  dec(stackindex);
-  stacktop:= stackindex;
+ with info^,contextstack[s.stacktop] do begin
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1328,9 +1329,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONST0');
 {$endif}
-// with info^,contextstack[stacktop] do begin
-//  dec(stackindex);
-//  stacktop:= stackindex;
+// with info^,contextstack[s.stacktop] do begin
+//  dec(s.stackindex);
+//  s.stacktop:= s.stackindex;
 // end;
 end;
 *)
@@ -1343,28 +1344,28 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (stacktop-stackindex <> 2) or 
-            (contextstack[stackindex+1].d.kind <> ck_ident) then begin
+  if (s.stacktop-s.stackindex <> 2) or 
+            (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
    internalerror(ie_handler,'20140326C');
   end;
  {$endif}
-  if contextstack[stacktop].d.kind <> ck_const then begin
-   errormessage(err_constexpressionexpected,[],stacktop-stackindex);
+  if contextstack[s.stacktop].d.kind <> ck_const then begin
+   errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
   end
   else begin
-   if not ele.addelementdata(contextstack[stackindex+1].d.ident.ident,
+   if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
                                             ek_const,allvisi,po1) then begin
     identerror(1,err_duplicateidentifier);
    end
    else begin
-    with contextstack[stacktop].d do begin
+    with contextstack[s.stacktop].d do begin
      po1^.val.typ:= dat.datatyp;
      po1^.val.d:= dat.constval;
     end;
    end;
   end;
-  stackindex:= stackindex;
-  stacktop:= stackindex;
+  s.stackindex:= s.stackindex;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1374,8 +1375,8 @@ begin
  outhandle('EXP');
 {$endif}
  with info do begin
-  contextstack[stacktop-1].d:= contextstack[stacktop].d;
-  dec(stacktop);
+  contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
+  dec(s.stacktop);
  end;
 end;
 
@@ -1385,9 +1386,9 @@ begin
  outhandle('EXP1');
 {$endif}
  with info do begin
-  contextstack[stacktop-1].d:= contextstack[stacktop].d;
-  stacktop:= stackindex;
-  dec(stackindex);
+  contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
 end;
 
@@ -1402,7 +1403,7 @@ begin
 //  if unitlevel = 1 then begin
 //   errormessage(err_syntax,['begin']);
 //  end;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 {
@@ -1422,9 +1423,9 @@ begin
  outhandle('MAIN1');
 {$endif}
 {
- with info^,contextstack[stacktop],d do begin
+ with info^,contextstack[s.stacktop],d do begin
   ident1:= ident;
-  stacktop:= stackindex;
+  s.stacktop:= s.stackindex;
   if ident1 <= ord(high(keywordty)) then begin
    po1:= mainkeywords[keywordty(ident)];
    if po1 <> nil then begin
@@ -1440,9 +1441,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('KEYWORD');
 {$endif}
- with info,contextstack[stacktop],d do begin
+ with info,contextstack[s.stacktop],d do begin
   kind:= ck_ident;
-  ident.len:= source.po-start.po;
+  ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
  end;
 end;
@@ -1463,8 +1464,8 @@ procedure handlecomparison(const aop: cmpopty);
 
 procedure notsupported();
 begin
- with info,contextstack[stacktop-2] do begin
-  operationnotsupportederror(d,contextstack[stacktop].d,cmpops[aop].opname);
+ with info,contextstack[s.stacktop-2] do begin
+  operationnotsupportederror(d,contextstack[s.stacktop].d,cmpops[aop].opname);
  end;
 end;
 
@@ -1472,8 +1473,8 @@ var
  dk1:stackdatakindty;
  int1: integer;
 begin
- with info,contextstack[stacktop-2] do begin
-  if (contextstack[stacktop].d.kind = ck_const) and 
+ with info,contextstack[s.stacktop-2] do begin
+  if (contextstack[s.stacktop].d.kind = ck_const) and 
                                                (d.kind = ck_const) then begin
    dk1:= convertconsts();
    d.dat.constval.kind:= dk_boolean;
@@ -1483,19 +1484,19 @@ begin
      case dk1 of
       sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger = 
-                 contextstack[stacktop].d.dat.constval.vinteger;
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
       sdk_flo64: begin
        d.dat.constval.vboolean:= d.dat.constval.vfloat = 
-                              contextstack[stacktop].d.dat.constval.vfloat;
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
       end;
       sdk_bool1: begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean =
-                              contextstack[stacktop].d.dat.constval.vboolean;
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
       end;
       sdk_pointer: begin
        d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
-                  contextstack[stacktop].d.dat.constval.vaddress) = 0;
+                  contextstack[s.stacktop].d.dat.constval.vaddress) = 0;
       end;
       else begin
        notsupported();
@@ -1506,15 +1507,15 @@ begin
      case dk1 of
       sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger <>
-                 contextstack[stacktop].d.dat.constval.vinteger;
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
       sdk_flo64: begin
        d.dat.constval.vboolean:= d.dat.constval.vfloat <>
-                              contextstack[stacktop].d.dat.constval.vfloat;
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
       end;
       sdk_bool1: begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean <>
-                              contextstack[stacktop].d.dat.constval.vboolean;
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
       end;
       else begin
        notsupported();
@@ -1522,12 +1523,12 @@ begin
      end;
     end;
    end;
-   dec(stacktop,2);
-   stackindex:= stacktop-1;
+   dec(s.stacktop,2);
+   s.stackindex:= s.stacktop-1;
   end
   else begin
    updateop(cmpops[aop]);
-   with info,contextstack[stacktop] do begin
+   with info,contextstack[s.stacktop] do begin
     d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
    end;
   end;
@@ -1560,9 +1561,9 @@ begin
  outhandle('COMMASEPRANGE');
 {$endif}
  with info do begin
-  if stacktop-stackindex = 2 then begin
-   include(contextstack[stacktop].d.dat.datatyp.flags,tf_upper);
-   include(contextstack[stacktop-1].d.dat.datatyp.flags,tf_lower);
+  if s.stacktop-s.stackindex = 2 then begin
+   include(contextstack[s.stacktop].d.dat.datatyp.flags,tf_upper);
+   include(contextstack[s.stacktop-1].d.dat.datatyp.flags,tf_lower);
   end;
  end;
 end;
@@ -1594,7 +1595,7 @@ begin
 {$endif}
  with info do begin
 //  opshift:= 0;
-  include(currentstatementflags,stf_rightside);
+  include(s.currentstatementflags,stf_rightside);
  end;
 end;
 
@@ -1700,13 +1701,13 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
  with info do begin       //todo: use direct move if possible
-  if (stacktop-stackindex = 2) and not errorfla then begin
-   isconst:= contextstack[stackindex+2].d.kind = ck_const;
+  if (s.stacktop-s.stackindex = 2) and not errorfla then begin
+   isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
-   ssa1:= contextstack[stacktop].d.dat.fact.ssaindex;
-   with contextstack[stackindex+1] do begin //dest address
+   ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+   with contextstack[s.stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
     dest.offset:= 0;
@@ -1762,9 +1763,9 @@ begin
      dec(int1);
     end;
                          //todo: use destinationaddress directly
-    typematch:= tryconvert(stacktop-stackindex,dest.typ,int1);
+    typematch:= tryconvert(s.stacktop-s.stackindex,dest.typ,int1);
     if not typematch then begin
-     assignmenterror(contextstack[stacktop].d,dest);
+     assignmenterror(contextstack[s.stacktop].d,dest);
     end
     else begin
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
@@ -1824,7 +1825,7 @@ begin
      end;
      po1^.par.memop.t:= getopdatatype(dest);
      po1^.par.ssas1:= ssa1;                                         //source
-     po1^.par.ssas2:= contextstack[stacktop-1].d.dat.fact.ssaindex; //dest
+     po1^.par.ssas2:= contextstack[s.stacktop-1].d.dat.fact.ssaindex; //dest
     end;
    end;
   end
@@ -1832,8 +1833,8 @@ begin
    errormessage(err_illegalexpression,[]);
   end;
 endlab:
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1844,7 +1845,7 @@ begin
 {$endif}
  with info do begin
   tokenexpectederror('do');
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1873,7 +1874,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITH1');
 {$endif}
- with info,contextstack[stacktop] do begin
+ with info,contextstack[s.stacktop] do begin
   case d.kind of
    ck_ref: begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -1897,7 +1898,7 @@ begin
     internalerror1(ie_notimplemented,'20140407A');
    end;
   end;
-  stacktop:= stackindex;
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -1908,7 +1909,7 @@ begin
 {$endif}
  with info do begin
   ele.popscopelevel();
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1919,9 +1920,9 @@ begin
 {$endif}
  with info do begin
 //  opshift:= 0;
-  currentstatementflags-= [stf_rightside,stf_params,
+  s.currentstatementflags-= [stf_rightside,stf_params,
                            stf_leftreference,stf_proccall];
-  with contextstack[stacktop].d,statement do begin
+  with contextstack[s.stacktop].d,statement do begin
    kind:= ck_statement;
 //   flags:= [];
   end;
@@ -1935,11 +1936,11 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if stacktop-stackindex <> 1 then begin
+  if s.stacktop-s.stackindex <> 1 then begin
    internalerror(ie_handler,'20140216A');
   end;
  {$endif}
-  with contextstack[stacktop].d do begin
+  with contextstack[s.stacktop].d do begin
    case kind of
     ck_subres: begin
      with additem(oc_pop)^ do begin      
@@ -1954,7 +1955,7 @@ begin
     end;
    end;
   end;
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -1968,8 +1969,8 @@ procedure handlestatement1();
 begin
  with info^ do begin
  {
-  if (stacktop - stackindex = 1) then begin
-   with contextstack[stacktop] do begin
+  if (s.stacktop - s.stackindex = 1) then begin
+   with contextstack[s.stacktop] do begin
     if d.kind = ck_ident then begin
      case d.ident of 
       ord(kw_if): begin
@@ -1989,8 +1990,8 @@ begin
    error('stacksize');
   end;
   }
-  dec(stackindex);
-  stacktop:= stackindex;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 
@@ -2008,18 +2009,18 @@ begin
 {$endif}
  with info^ do begin
   if findkindelementsdata(info,1,[ek_func],vis_max,po2) then begin
-   paramco:= stacktop-stackindex-1-identcount;
+   paramco:= s.stacktop-s.stackindex-1-identcount;
    if paramco <> po2^.paramcount then begin
     identerror(info,1,err_wrongnumberofparameters);
    end
    else begin
     po3:= @po2^.paramsrel;
-    for int1:= stackindex+3 to stacktop do begin
+    for int1:= s.stackindex+3 to s.stacktop do begin
      po4:= ele.eledataabs(po3^);
      with contextstack[int1] do begin
       if d.datatyp.typedata <> po4^.typ then begin
-       errormessage(int1-stackindex,err_incompatibletypeforarg,
-         [int1-stackindex-2,typename(d),
+       errormessage(int1-s.stackindex,err_incompatibletypeforarg,
+         [int1-s.stackindex-2,typename(d),
                     typename(ptypedataty(ele.eledataabs(po4^.typ))^)]);
       end;
      end;
@@ -2030,16 +2031,16 @@ begin
     op:= @callop;
     d.opaddress:= po2^.address-1;
    end;
-   dec(stackindex);
-   stacktop:= stackindex;
+   dec(s.stackindex);
+   s.stacktop:= s.stackindex;
   end
   else begin
    if findkindelementsdata(info,1,[ek_sysfunc],vis_max,po1) then begin
     with po1^ do begin
      case func of
       sf_writeln: begin
-       int2:= stacktop-stackindex-2;
-       for int1:= 3+stackindex to int2+2+stackindex do begin
+       int2:= s.stacktop-s.stackindex-2;
+       for int1:= 3+s.stackindex to int2+2+s.stackindex do begin
         push(info,ptypedataty(
                 ele.eledataabs(contextstack[int1].d.datatyp.typedata))^.kind);
        end;
@@ -2053,8 +2054,8 @@ begin
     identerror(info,1,err_identifiernotfound); 
      //todo: use first missing identifier in error message
    end;
-   dec(stackindex);
-   stacktop:= stackindex;
+   dec(s.stackindex);
+   s.stacktop:= s.stackindex;
   end;
  end;
 end;
@@ -2069,7 +2070,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SETDESTREFERENCE');
 {$endif}
- with info^,contextstack[stackindex].d.statement do begin
+ with info^,contextstack[s.stackindex].d.statement do begin
   if sf_leftreference in flags then begin
    
   end
@@ -2102,7 +2103,7 @@ begin
 {$endif}
  with info do begin
   errormessage(err_syntax,[';']);
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -2113,7 +2114,7 @@ begin
 {$endif}
  with info do begin
   errormessage(err_syntax,[';']);
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -2133,7 +2134,7 @@ begin
  writeln('-------------------------------------------------------------------');
 {$endif}
  with info do begin
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
@@ -2143,22 +2144,32 @@ begin
  dumpops();
 {$endif}
  with info do begin
-  dec(stackindex);
+  dec(s.stackindex);
  end;
 end;
 
 procedure handleabort();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ABORT');
+{$endif}
+ with info do begin
+  s.stopparser:= true;
+  errormessage(err_abort,[]);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlestoponerror();
 var
- ar1: msestringarty;
  int1: integer;
 begin
 {$ifdef mse_debugparser}
  outhandle('ABORT');
 {$endif}
  with info do begin
-  stopparser:= true;
-  errormessage(err_abort,[]);
-  dec(stackindex);
+  s.unitinfo^.stoponerror:= true;
+  dec(s.stackindex);
  end;
 end;
 
@@ -2184,9 +2195,9 @@ begin
  outhandle('STRINGSTART');
 {$endif}
  with info do begin
-  with contextstack[stacktop] do begin
+  with contextstack[s.stacktop] do begin
    d.kind:= ck_str;
-   d.str.start:= source.po;
+   d.str.start:= s.source.po;
   end;
  end;
 end;
@@ -2197,9 +2208,9 @@ begin
  outhandle('COPYSTRING');
 {$endif}
  with info do begin
-  with contextstack[stacktop] do begin
-   stringbuffer:= stringbuffer+psubstr(d.str.start,source.po-1);
-   d.str.start:= source.po;
+  with contextstack[s.stacktop] do begin
+   stringbuffer:= stringbuffer+psubstr(d.str.start,s.source.po-1);
+   d.str.start:= s.source.po;
   end;
  end;
 end;
@@ -2210,9 +2221,9 @@ begin
  outhandle('COPYAPOSTROPHE');
 {$endif}
  with info do begin
-  with contextstack[stacktop] do begin
+  with contextstack[s.stacktop] do begin
    stringbuffer:= stringbuffer+'''';
-   d.str.start:= source.po;
+   d.str.start:= s.source.po;
   end;
  end;
 end;
@@ -2222,9 +2233,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('COPYTOKEN');
 {$endif}
- with info,contextstack[stacktop] do begin
-  stringbuffer:= stringbuffer+psubstr(d.str.start,source.po);
-  dec(stackindex);
+ with info,contextstack[s.stacktop] do begin
+  stringbuffer:= stringbuffer+psubstr(d.str.start,s.source.po);
+  dec(s.stackindex);
  end;
 end;
 
@@ -2237,14 +2248,14 @@ begin
  outhandle('CHAR');
 {$endif}
  with info do begin
-  with contextstack[stacktop] do begin
+  with contextstack[s.stacktop] do begin
   {$ifdef mse_checkinternalerror}
    if d.kind <> ck_number then begin
     internalerror(ie_handler,'20140220A');
    end;
   {$endif}
    if d.number.value > $10ffff then begin
-    errormessage(err_illegalcharconst,[],stacktop-stackindex);
+    errormessage(err_illegalcharconst,[],s.stacktop-s.stackindex);
    end
    else begin //todo: optimize
     i2:= 1;
@@ -2277,7 +2288,7 @@ begin
     end;
     stringbuffer:= stringbuffer+s1;
    end;
-   dec(stacktop);
+   dec(s.stacktop);
   end;
  end;
 end;

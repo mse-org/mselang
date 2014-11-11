@@ -338,7 +338,7 @@ begin
   end;
 {$endif}
   if level1 <= stoperrorlevel then begin
-   stopparser:= true;
+   s.stopparser:= true;
   end;
   if level1 <= errorerrorlevel then begin
    errorfla:= true;
@@ -388,7 +388,7 @@ begin
    end;
   end
   else begin
-   po1:= info.sourcestart-1;
+   po1:= info.s.sourcestart-1;
   end;
   with errortext[aerror],info do begin
    level1:= level;
@@ -396,14 +396,14 @@ begin
     level1:= aerrorlevel;
    end;
    inc(errors[level1]);
-   str1:= filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
+   str1:= s.filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
        errorleveltext[level1]+': '+format(message,values);
    writeerror(str1);
 {$ifdef mse_debugparser}
    writeln('<<<<<<< '+str1);
 {$endif}
    if level1 <= stoperrorlevel then begin
-    stopparser:= true;
+    s.stopparser:= true;
    end;
    if level1 <= errorerrorlevel then begin
     errorfla:= true;
@@ -425,12 +425,12 @@ var
 begin
  with info do begin
   if astackoffset = minint then begin
-   sourcepos:= source;
+   sourcepos:= s.source;
   end
   else begin
-   int1:= stackindex+astackoffset;
+   int1:= s.stackindex+astackoffset;
   {$ifdef mse_checkinternalerror}
-   if (int1 > stacktop) or (int1 < 0) then begin
+   if (int1 > s.stacktop) or (int1 < 0) then begin
     internalerror(ie_error,'20140326A');
     exit;
    end;
@@ -456,19 +456,19 @@ var
  po1: pchar;
 begin
  with info do begin
-  po1:= source.po;   //todo: utf-8 decoding
+  po1:= s.source.po;   //todo: utf-8 decoding
   if eaten then begin
    dec(po1);
   end;
   errormessage(err_illegalcharacter,
-           ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')'],stacktop-stackindex);
+    ['"'+po1^+'" (#$'+hextostr(ord(po1^),2)+')'],s.stacktop-s.stackindex);
  end;
 end;
 
 procedure identerror(const astackoffset: integer;
             const aerror: errorty; const aerrorlevel: errorlevelty = erl_none);
 begin
- with info,contextstack[stackindex+astackoffset] do begin
+ with info,contextstack[s.stackindex+astackoffset] do begin
   errormessage(aerror,[lstringtostring(start.po,d.ident.len)],
                                     astackoffset,d.ident.len,aerrorlevel);
  end;
@@ -625,7 +625,7 @@ var
  str1: string;
  po1: punitinfoty;
 begin
- po1:= info.unitinfo;
+ po1:= info.s.unitinfo;
  str1:= '';
  while po1 <> nil do begin
   str1:= po1^.name+'->'+str1;
@@ -634,7 +634,7 @@ begin
   end;
   po1:= po1^.prev;
  end;
- str1:= info.unitinfo^.name+'->'+str1;
+ str1:= info.s.unitinfo^.name+'->'+str1;
  setlength(str1,length(str1)-2);
  errormessage(err_circularreference,[str1],astackoffset);
 end;

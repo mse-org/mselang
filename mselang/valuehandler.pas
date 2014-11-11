@@ -36,7 +36,7 @@ var                     //todo: optimize, use tables, complete
  source1: ptypedataty;
  int1: integer;
 begin
- with info,contextstack[stackindex+stackoffset] do begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
   if result then begin
@@ -122,7 +122,7 @@ var
  begin
   result:= paramco = 0;
   if not result then begin
-   with info,contextstack[stackindex].d do begin
+   with info,contextstack[s.stackindex].d do begin
     errormessage(err_syntax,[';'],1,ident.len);
    end;
   end;
@@ -181,39 +181,39 @@ var
      end;
     end;
 
-    for int1:= stackindex+3+idents.high to stacktop do begin
+    for int1:= s.stackindex+3+idents.high to s.stacktop do begin
      po6:= ele.eledataabs(po5^);
      with contextstack[int1] do begin
       if af_paramindirect in po6^.address.flags then begin
        case d.kind of
         ck_const: begin
          if not (af_const in po6^.address.flags) then begin
-          errormessage(err_variableexpected,[],int1-stackindex);
+          errormessage(err_variableexpected,[],int1-s.stackindex);
          end
          else begin
           internalerror1(ie_notimplemented,'20140405B'); //todo
          end;
         end;
         ck_ref: begin
-         pushinsertaddress(int1-stackindex,false);
+         pushinsertaddress(int1-s.stackindex,false);
         end;
        end;
       end
       else begin
        case d.kind of
         ck_const: begin
-         pushinsertconst(int1-stackindex,false);
+         pushinsertconst(int1-s.stackindex,false);
         end;
         ck_ref: begin
-         getvalue(int1-stackindex{,true});
+         getvalue(int1-s.stackindex{,true});
         end;
        end;
       end;
       if d.dat.datatyp.typedata <> po6^.vf.typ then begin
        errormessage(err_incompatibletypeforarg,
-                   [int1-stackindex-3,typename(d),
+                   [int1-s.stackindex-3,typename(d),
                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
-                                                        int1-stackindex);
+                                                        int1-s.stackindex);
       end;
       with pparallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
@@ -232,7 +232,7 @@ var
      inc(po5);
     end;
               //todo: exeenv flag for constructor and destructor
-    with contextstack[stackindex] do begin //result data
+    with contextstack[s.stackindex] do begin //result data
      if [sf_constructor,sf_function] * asub^.flags <> [] then begin
       po6:= ele.eledataabs(po5^);
       if (sf_constructor in asub^.flags) and 
@@ -243,7 +243,7 @@ var
        po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
       end;
       if not backendhasfunction then begin
-       int1:= pushinsertvar(parent-stackindex,false,po3); 
+       int1:= pushinsertvar(parent-s.stackindex,false,po3); 
                                     //alloc space for return value
       end;
       initfactcontext(0); //set ssaindex
@@ -259,7 +259,7 @@ var
         par.voffset:= -asub^.paramsize+stacklinksize-int1;
        end;
        if sf_constructor in asub^.flags then begin
-        pushinsertsegaddress(parent-stackindex,false,po3^.infoclass.defs);
+        pushinsertsegaddress(parent-s.stackindex,false,po3^.infoclass.defs);
                                     //class type
        end;
       end;
@@ -275,7 +275,7 @@ var
       {$else}
        ele.findcurrent(tks_self,[],allvisi,po6);
       {$endif}
-       with insertitem(oc_pushlocpo,parent-stackindex,false)^ do begin
+       with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
         par.memop.locdataaddress.a.framelevel:= -1;
         par.memop.locdataaddress.a.address:= po6^.address.poaddress;
         par.memop.locdataaddress.offset:= 0;
@@ -358,7 +358,7 @@ var
        exit;
       end;
       ek_field: begin
-       with contextstack[stackindex],pfielddataty(po4)^ do begin
+       with contextstack[s.stackindex],pfielddataty(po4)^ do begin
         ele1:= pfielddataty(po4)^.vf.typ;
         case d.kind of
          ck_ref: begin
@@ -441,7 +441,7 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-  with contextstack[stackindex-1] do begin
+  with contextstack[s.stackindex-1] do begin
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
@@ -463,7 +463,7 @@ begin
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
-   paramco:= stacktop-stackindex-2-idents.high;
+   paramco:= s.stacktop-s.stackindex-2-idents.high;
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context
    end;
@@ -476,7 +476,7 @@ begin
    po1:= ele.eleinfoabs(prefdataty(@po1^.data)^.ref);
   end;
   po2:= @po1^.data;
-  with contextstack[stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
     ek_var,ek_field: begin
@@ -504,7 +504,7 @@ begin
         d.dat.ref.c.varele:= 0;
        end
        else begin
-        d:= contextstack[stackindex-1].d; 
+        d:= contextstack[s.stackindex-1].d; 
                   //todo: no double copy by handlefact
         case d.kind of
          ck_ref: begin
@@ -539,12 +539,12 @@ begin
        d.dat.indirection:= 0;
       end
       else begin
-       with contextstack[stackindex-1] do begin
+       with contextstack[s.stackindex-1] do begin
         if d.dat.indirection <> 0 then begin
          getaddress(-1,false);
          dec(d.dat.indirection); //pending dereference
         end;
-        contextstack[stackindex].d:= d; 
+        contextstack[s.stackindex].d:= d; 
                   //todo: no double copy by handlefact
        end;
       end;
@@ -563,7 +563,7 @@ begin
      dosub(psubdataty(po2));
     end;
     ek_sysfunc: begin
-     with contextstack[stackindex] do begin
+     with contextstack[s.stackindex] do begin
       d.kind:= ck_subcall;
      end;
      with psysfuncdataty(po2)^ do begin
@@ -591,12 +591,12 @@ begin
           d.typ.indirectlevel:= indirectlevel;
           if not isgetfact then begin
            d.typ.indirectlevel:= d.typ.indirectlevel +
-                    contextstack[stackindex-1].d.dat.indirection;
+                    contextstack[s.stackindex-1].d.dat.indirection;
           end;
          end;
          
        {
-         errormessage(err_illegalexpression,[],stacktop-stackindex);
+         errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
        }
         end;
        end;
@@ -606,13 +606,13 @@ begin
         errormessage(err_tokenexpected,[')'],4,-1);
        end
        else begin
-        if not tryconvert(stacktop-stackindex,po2,
+        if not tryconvert(s.stacktop-s.stackindex,po2,
                                  ptypedataty(po2)^.indirectlevel) then begin
-         illegalconversionerror(contextstack[stacktop].d,po2,
+         illegalconversionerror(contextstack[s.stacktop].d,po2,
                                      ptypedataty(po2)^.indirectlevel);
         end
         else begin
-         contextstack[stackindex].d:= contextstack[stacktop].d;
+         contextstack[s.stackindex].d:= contextstack[s.stacktop].d;
         end;
        end;
       end;
@@ -625,8 +625,8 @@ begin
   end;
 endlab:
   ele.popelementparent();
-  stacktop:= stackindex;
-  dec(stackindex);
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
  end;
 end;
 
