@@ -1,4 +1,5 @@
-!todo: use optimised handler for whitespace and the like
+//grammar for mselang compiler, pascal mode
+//todo: use optimised handler for whitespace and the like
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -65,7 +66,7 @@ unit2,semicolonexpected,,
 unit3,implementation,,
  ${whitespace}
  'interface'.,start1-
- 'implementation'.,implementation- ! "interface" facultative
+ 'implementation'.,implementation- // "interface" facultative
 checksemicolon,,,^
  ${whitespace}
  ';',-*
@@ -99,7 +100,7 @@ start2,noimplementation,,
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
 
-commaidents,commaidentsnoidenterror,, !comma separated idents on stack
+commaidents,commaidentsnoidenterror,, //comma separated idents on stack
  ${whitespace}
  @identstart,commaidents1
 commaidents1,commaidents2,,
@@ -269,7 +270,7 @@ subbody5,subbody5b,,
  '',statementblock^*
 subbody5b,,,handleendexpected*
  'end'.,subbody6-
-subbody6,checkterminatorpop,handlesubbody6, !return, release
+subbody6,checkterminatorpop,handlesubbody6, //return, release
 
 checkterminator,,,handlecheckterminator
  ';',terminatorok-
@@ -296,9 +297,9 @@ statement,,,*
 
 compoundstatement,checkend,,*
  '',statementblock-^*
-!
-! exception
-!
+//
+// exception
+//
 try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
@@ -349,9 +350,9 @@ statement1,,,handlestatementexit
  ':=',assignment-
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-!
-! control
-!
+//
+// control
+//
 if0,then,handleif0,handleif
  '',exp^*
 then,,,handlethen
@@ -476,9 +477,9 @@ gettype,,,*^
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
  '',simpletype^*
-!
-! defs
-!
+//
+// defs
+//
 type,,,handletype>
  ${whitespace}
  ${blockswitch}
@@ -605,9 +606,9 @@ interfaceparam3,,,handleidentexpected*
  @identstart,interfaceparam1*
 
 statementend,,,handlestatementend!
-!
-! expression
-!
+//
+// expression
+//
 exp,,,handleexp^
  '',callexp*
 callexp,exp1,,
@@ -710,7 +711,7 @@ getindex2,getindex1,,
 
 illegalexpression,,,handleillegalexpression*
 
-! todo: use handler for number evaluation
+// todo: use handler for number evaluation
 num,,,handleint
  @decnum,-
  '.',checkfrac-+*
@@ -779,13 +780,13 @@ identpathcontinue,,,^>
  '',identpath^*
 identpath,identpath1a,,
  @identstart,@decnum,-
-identpath1a,identpath1,handleidentpath1a, !set ident
-identpath1,,,^                            !finish
+identpath1a,identpath1,handleidentpath1a, //set ident
+identpath1,,,^                            //finish
  ${whitespace}
  '..',*
  '.',identpath2a+-
-identpath2a,identpath2,handleidentpath2a, !set continue flag
-identpath2,,,handleidentpath2^            !error
+identpath2a,identpath2,handleidentpath2a, //set continue flag
+identpath2,,,handleidentpath2^            //error
  ${whitespace}
  @identstart,identpath*
 

@@ -72,7 +72,7 @@ const
 '                                                      ([''!''HANDLER][-][*][^])'+lineend+
 '        ['','' (PUSHEDCONTEXT | (PARENTCONTEXT''^''))]';
 
- commentchar = '!';
+ commentchar = '/';
  quotechar = '''';
  
 type
@@ -287,10 +287,11 @@ var
   pe:= po1 + length(astr);
   inquote:= false;
   while po1 < pe do begin
-   if po1^ = quotechar then begin
+   if (po1^ = quotechar) then begin
     inquote:= not inquote;
    end;
-   if (po1^ = commentchar) and not inquote then begin
+   if (po1^ = commentchar) and ((po1+1)^ = commentchar) and 
+                                                   not inquote then begin
     break;
    end;
    inc(po1);
@@ -500,7 +501,7 @@ begin
     else begin //no macrodef
      mstr1:= utf8tostring(str1);
      macrolist1.expandmacros1(mstr1);
-     if (mstr1 <> '') and (mstr1[1] <> commentchar) then begin //no comment
+     if (mstr1 <> '') then begin //no comment
       expandedtext:= breaklines(stringtoutf8(mstr1));
       for lnr:= 0 to high(expandedtext) do begin
        str1:= expandedtext[lnr];
@@ -513,165 +514,163 @@ begin
          intokendef:= true;
         end
         else begin
-         if (str1[1] <> commentchar) then begin
-          if str1[1] <> ' ' then begin
-           intokendef:= false;
-          end;
-          if intokendef then begin
-           po1:= @str1[2];
-           with tokendefs[high(tokendefs)] do begin
-            while true do begin
-             po3:= po1;
-             if po1^= '@' then begin
-              inc(po3);
-              while not (po1^ in [',',#0]) do begin
-               inc(po1)
-              end;
-              if not gettokendef(psubstr(po3,po1),'') then begin
-               exit;
-              end;
+         if str1[1] <> ' ' then begin
+          intokendef:= false;
+         end;
+         if intokendef then begin
+          po1:= @str1[2];
+          with tokendefs[high(tokendefs)] do begin
+           while true do begin
+            po3:= po1;
+            if po1^= '@' then begin
+             inc(po3);
+             while not (po1^ in [',',#0]) do begin
+              inc(po1)
+             end;
+             if not gettokendef(psubstr(po3,po1),'') then begin
+              exit;
+             end;
+            end
+            else begin
+             getpascalstring(po1);
+             if po1 = po3 then begin
+              error('Invalid string');
+              exit;
+             end;
+             setlength(tokens,high(tokens)+2);
+             setstring(tokens[high(tokens)],po3,po1-po3);
+             if name = '.internaltokens' then begin
+              nextid;
              end
              else begin
-              getpascalstring(po1);
-              if po1 = po3 then begin
-               error('Invalid string');
-               exit;
-              end;
-              setlength(tokens,high(tokens)+2);
-              setstring(tokens[high(tokens)],po3,po1-po3);
-              if name = '.internaltokens' then begin
-               nextid;
-              end
-              else begin
-               if name = '.tokens' then begin
-                if not getkeyword(tokens[high(tokens)],kw1) then begin
-                 exit;
-                end;
+              if name = '.tokens' then begin
+               if not getkeyword(tokens[high(tokens)],kw1) then begin
+                exit;
                end;
               end;
              end;
-             if po1^ = #0 then begin
-              break;
-             end;
-             if po1^ <> ',' then begin
-              error('Format of tokendef is "''string''{,''string''}"');
-              exit;
-             end;
-             inc(po1);
             end;
-           end;
-          end
-          else begin
-           if str1[1] <> ' ' then begin
-            if context <> '' then begin
-             handlecontext; //new context
+            if po1^ = #0 then begin
+             break;
             end;
-            context:= str1;
-            contextline:= splitstring(context,',',true);
-            contextlinenr:= line;
-            if length(contextline) <> contlast+1 then begin
-             error(contextformat);
+            if po1^ <> ',' then begin
+             error('Format of tokendef is "''string''{,''string''}"');
              exit;
             end;
-            branches:= nil;
-           end
-           else begin
-            int1:= findlastchar(str1,',');
-            if int1 = 0 then begin
+            inc(po1);
+           end;
+          end;
+         end
+         else begin
+          if str1[1] <> ' ' then begin
+           if context <> '' then begin
+            handlecontext; //new context
+           end;
+           context:= str1;
+           contextline:= splitstring(context,',',true);
+           contextlinenr:= line;
+           if length(contextline) <> contlast+1 then begin
+            error(contextformat);
+            exit;
+           end;
+           branches:= nil;
+          end
+          else begin
+           int1:= findlastchar(str1,',');
+           if int1 = 0 then begin
+            error(branchformat);
+            exit;
+           end;
+           setlength(branches,high(branches)+2);
+           str2:= trim(copy(str1,int1+1,bigint));
+           with branches[high(branches)] do begin
+            dest:= str2;
+           end;
+           po1:= pchar(str1)+1;
+           po2:= po1+int1-3;
+           while po2 > po1 do begin
+            if po2^ = ',' then begin
+             with branches[high(branches)] do begin
+              stack:= dest;
+              setstring(dest,po2+1,int1-(po2-po1)-3);
+              dest:= trim(dest);
+              int1:= (po2-po1)+2;
+             end;
+             break;
+            end;
+            if po2^ in ['''','@'] then begin
+             break;
+            end;
+            dec(po2);
+           end;
+           
+           po2:= po1+int1-2;
+           while true do begin
+            po3:= po1;
+            if po1^ = '@' then begin
+             inc(po3);
+             while po1^ <> ',' do begin
+              inc(po1);
+             end;
+             if not gettokendef(psubstr(po3,po1),str2) then begin
+              exit;
+             end;
+            end
+            else begin
+             getpascalstring(po1);
+             if po1 = po3 then begin
+              error('Invalid string');
+              exit;
+             end;
+             if po1^ = '.' then begin
+              inc(po1);
+             end;
+             setstring(str3,po3,po1-po3);
+             additem(branches[high(branches)].tokens,str3);
+            end;
+            if po1 = po2 then begin
+             break;
+            end;
+            if po1^ <> ',' then begin
              error(branchformat);
              exit;
             end;
-            setlength(branches,high(branches)+2);
-            str2:= trim(copy(str1,int1+1,bigint));
-            with branches[high(branches)] do begin
-             dest:= str2;
-            end;
-            po1:= pchar(str1)+1;
-            po2:= po1+int1-3;
-            while po2 > po1 do begin
-             if po2^ = ',' then begin
-              with branches[high(branches)] do begin
-               stack:= dest;
-               setstring(dest,po2+1,int1-(po2-po1)-3);
-               dest:= trim(dest);
-               int1:= (po2-po1)+2;
-              end;
-              break;
-             end;
-             if po2^ in ['''','@'] then begin
-              break;
-             end;
-             dec(po2);
-            end;
-            
-            po2:= po1+int1-2;
-            while true do begin
-             po3:= po1;
-             if po1^ = '@' then begin
-              inc(po3);
-              while po1^ <> ',' do begin
-               inc(po1);
-              end;
-              if not gettokendef(psubstr(po3,po1),str2) then begin
+            inc(po1);
+           end;
+           with branches[high(branches)] do begin
+            bline:= line;
+            for int1:= 0 to high(tokens) do begin
+             if (tokens[int1] = '''''') then begin
+              if (length(tokens) > 1) then begin
+               error(branchformat);
                exit;
               end;
+              emptytoken:= true;
+              tokens[int1]:= '';
              end
              else begin
-              getpascalstring(po1);
-              if po1 = po3 then begin
-               error('Invalid string');
-               exit;
-              end;
-              if po1^ = '.' then begin
-               inc(po1);
-              end;
-              setstring(str3,po3,po1-po3);
-              additem(branches[high(branches)].tokens,str3);
-             end;
-             if po1 = po2 then begin
-              break;
-             end;
-             if po1^ <> ',' then begin
-              error(branchformat);
-              exit;
-             end;
-             inc(po1);
-            end;
-            with branches[high(branches)] do begin
-             bline:= line;
-             for int1:= 0 to high(tokens) do begin
-              if (tokens[int1] = '''''') then begin
-               if (length(tokens) > 1) then begin
+              if tokens[int1][length(tokens[int1])] = '.' then begin
+               if keyword > 0 then begin
                 error(branchformat);
                 exit;
                end;
-               emptytoken:= true;
-               tokens[int1]:= '';
+               setlength(tokens[int1],length(tokens[int1])-1);
+               if not getkeyword(tokens[int1],keyword) then begin
+                exit;
+               end;
               end
               else begin
-               if tokens[int1][length(tokens[int1])] = '.' then begin
-                if keyword > 0 then begin
+               po1:= pchar(tokens[int1]);
+               tokens[int1]:= getpascalstring(po1);
+               if length(tokens[int1]) > 1 then begin
+                if high(tokens) > 0 then begin
                  error(branchformat);
                  exit;
                 end;
-                setlength(tokens[int1],length(tokens[int1])-1);
-                if not getkeyword(tokens[int1],keyword) then begin
-                 exit;
-                end;
-               end
-               else begin
-                po1:= pchar(tokens[int1]);
-                tokens[int1]:= getpascalstring(po1);
-                if length(tokens[int1]) > 1 then begin
-                 if high(tokens) > 0 then begin
-                  error(branchformat);
-                  exit;
-                 end;
-                end;
-                if length(tokens[int1]) > branchkeymaxcount then begin
-                 error(branchformat);
-                 exit;
-                end;
+               end;
+               if length(tokens[int1]) > branchkeymaxcount then begin
+                error(branchformat);
+                exit;
                end;
               end;
              end;
