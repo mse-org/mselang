@@ -1,4 +1,4 @@
-#todo: use optimised handler for whitespace and the like
+!todo: use optimised handler for whitespace and the like
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -65,8 +65,7 @@ unit2,semicolonexpected,,
 unit3,implementation,,
  ${whitespace}
  'interface'.,start1-
- 'implementation'.,implementation-
-# "interface" facultative
+ 'implementation'.,implementation- ! "interface" facultative
 checksemicolon,,,^
  ${whitespace}
  ';',-*
@@ -100,8 +99,7 @@ start2,noimplementation,,
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
 
-#comma separated idents on stack
-commaidents,commaidentsnoidenterror,,
+commaidents,commaidentsnoidenterror,, !comma separated idents on stack
  ${whitespace}
  @identstart,commaidents1
 commaidents1,commaidents2,,
@@ -144,11 +142,10 @@ main1,,,handlemain
  'const'.,const-*>
  'var'.,var-*>
  'type'.,type-*>
-#
+
 comment0,,,handlecommentend^*>
  '}',-*
  '',-
-#comment1,,,handlecommentend^>
 directive,directive1,,*
  'dumpelements'.,dumpelements-*
  'dumpopcode'.,dumpopcode-*
@@ -161,7 +158,7 @@ directive,directive1,,*
 directive1,,,*
  '}',-*
  '',-
-#
+
 include,include1,,
  @whitespace,-
  '''',string-*
@@ -169,7 +166,7 @@ include,include1,,
 include1,,,handleinclude*>
  '}',-*
  '',-
-# 
+ 
 dumpelements,directiveend,handledumpelements,
 dumpopcode,directiveend,handledumpopcode,
 nop,directiveend,handlenop,
@@ -185,7 +182,7 @@ linecomment1,,,handlecommentend^*>
 progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*
-#
+
 paramsdef0,,,
  ${whitespace}
  '(',paramsdef1-
@@ -207,9 +204,7 @@ paramdef1,,,*
  ':',paramdef2-
 paramdef2,,,handleparamdef2^
  '',getfieldtype*
-# ${whitespace}
-# @identstart,ident^*
-#
+
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
 methfunctionheader,subheader,handlemethfunctionentry,
@@ -222,7 +217,7 @@ function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
-#
+
 sub,suba,,
  '',subheader0*
 suba,,,
@@ -251,18 +246,16 @@ subheader4,,,
 virtual,subheader3,handlevirtual,
 override,subheader3,handleoverride,
 overload,subheader3,handleoverload, 
-#
+
 functiontype,,,
  '',resultident*
 resultident,,checkfunctiontype,
  '',getfieldtype*
-#
-# same layout as parameter
-functiontypea,,,
+
+functiontypea,,, ! same layout as parameter
  ${whitespace}
  @identstart,ident^*
-#
-#subbody4,checkterminator,,
+
 subbody4,,,handlebeginexpected*
  ${whitespace}
  'begin'.,subbody5a-
@@ -271,14 +264,13 @@ subbody4,,,handlebeginexpected*
  'type'.,type-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
-subbody5a,subbody5,handlesubbody5a,
-# set procstartaddress
+subbody5a,subbody5,handlesubbody5a, !set procstartaddress
 subbody5,subbody5b,,
  '',statementblock^*
 subbody5b,,,handleendexpected*
  'end'.,subbody6-
-subbody6,checkterminatorpop,handlesubbody6,
-# return, release
+subbody6,checkterminatorpop,handlesubbody6, !return, release
+
 checkterminator,,,handlecheckterminator
  ';',terminatorok-
  ${whitespace}
@@ -301,10 +293,12 @@ statement,,,*
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
-#
+
 compoundstatement,checkend,,*
  '',statementblock-^*
-#
+!
+! exception
+!
 try,try1,handletryentry,
  '',statementblock^*
 try1,,,handlefinallyexpected*
@@ -318,15 +312,15 @@ except,except1,handleexceptentry,
  '',statementblock^*
 except1,,handleexcept,*
  '',checkend*
-#
+
 raise,,,handleraise*
  '',exp^*
-#
+
 checkend,,,*
  ${whitespace}
  'end'.,-*
  '',!handleendexpected*
-#
+
 with,with1,,handlewithentry
 with1,with2,,
  '',fact*
@@ -336,7 +330,7 @@ with2,,handlewith2entry,handledoexpected*
  'do'.,with3-
 with3,,,handlewith3*
  '',statement*
-#
+
 endcontext,,,
 blockend,,,handleblockend^*
 simplestatement,,,*
@@ -347,26 +341,22 @@ statementblock1,,,handlestatementblock1*
  ${whitespace}
  ';',statementblock-
  ${blockends}
-#
+
 statement0,statement1,handlestatement0entry,
  '',exp^*
-# '',identpath^*
 statement1,,,handlestatementexit
  ${whitespace}
  ':=',assignment-
-# '^',!setleftreference
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-#
-#if0,if,handleif0,
-# ${whitespace}
+!
+! control
+!
 if0,then,handleif0,handleif
  '',exp^*
 then,,,handlethen
  ${whitespace}
  'then'.,then0-
-#then0,then1,handlethen0,
-#then1,then2,handlethen1,
 then0,then2,handlethen0,handlethen1
  '',statementstack^*
 then2,,,handlethen2
@@ -375,17 +365,7 @@ then2,,,handlethen2
 else0,else,handleelse0,
 else,,,handleelse
  '',statementstack^*
-#
-commasepexp,commasepexp1,,
- '',exp^*
-commasepexp1,,,^
- ',',commasepexp-
- '..',commasepexp2-
-commasepexp2,commasepexp3,,
- '',exp^*
-commasepexp3,,handlecommaseprange,^
- ',',commasepexp-
-#
+
 case,caseof,handlecasestart,
  '',exp^*
 caseof,,handlecaseexpression,handlecase*
@@ -414,22 +394,17 @@ checkcaseend,caseend,,
  ';',-
  '',checkend*
 caseend,,,^
-#
-const,,,*>
- ${whitespace}
- ${blockswitch}
- '',const0^*
-const0,const1,,handleidentexpected^
- ${whitespace}
- @identstart,ident^*
-const1,,,handleequalityexpected^
- ${whitespace}
- '=',const2-
-const2,const3,,
+
+commasepexp,commasepexp1,,
  '',exp^*
-const3,,handleconst3,
- '',checksemicolon1
-#
+commasepexp1,,,^
+ ',',commasepexp-
+ '..',commasepexp2-
+commasepexp2,commasepexp3,,
+ '',exp^*
+commasepexp3,,handlecommaseprange,^
+ ',',commasepexp-
+
 simpletype,rangetype,,+
  @identstart,typeident*
 typeident,checktypeident,,
@@ -437,15 +412,13 @@ typeident,checktypeident,,
 checktypeident,,,handlechecktypeident
 rangetype,,,handlecheckrangetype*^
  '',getrange^*
-# 
-#handlesimpletype*^
-#
+
 setdef,,,handleofexpected
  ${whitespace}
  'of'.,setdef1-
 setdef1,,,handlesettype*^
  '',getfieldtype^*
-#
+
 recorddef,recorddef1,handlerecorddefstart,
 recorddef1,recorddeferror,,
  ${whitespace}
@@ -455,7 +428,7 @@ recorddeferror,,,handlerecorddeferror^
 recordfield,,,handlerecordfield^*>
  '',vardef^*
 recorddefreturn,,handlerecordtype,*^
-#
+
 arraydef,arraydef1,,
  'of'.,arraydef2-
  ${whitespace}
@@ -465,7 +438,7 @@ arraydef1,,,handlearraydeferror1
  'of'.,arraydef2-
 arraydef2,,,handlearraytype
  '',getfieldtype^*
-#
+
 enumdef,enumdef1,handleenumdefentry,
  '',getenumitem^*
 enumdef1,,,handlecloseroundbracketexpected^*
@@ -474,7 +447,7 @@ enumdef1,,,handlecloseroundbracketexpected^*
 enumdef2,enumdef1,,
  '',getenumitem^*
 enumdef3,,,handleenumdef^*
-#
+
 getenumitem,getenumitem1,,
  '',getident^*
 getenumitem1,,,handleenumitem^
@@ -490,45 +463,22 @@ arrayindex2,,,
  ',',getfieldtype-^*>
  ']',-*
   '',!handlearrayindexerror2*
-#
+
 getfieldtype,gettype,handlegetfieldtypestart,
 gettypetype,gettype,handlegettypetypestart,
 gettype,,,*^
  ${whitespace}
  '^',!handlepointertype-
  '(',enumdef-^*
-# @identstart,simpletype^*
  'set'.,setdef-^*
  'record'.,recorddef-^*
  'array'.,arraydef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
  '',simpletype^*
-# '',identexpected
-#
-var,,,*>
- ${whitespace}
- ${blockswitch}
- '',var0*^
-var0,var1,,
- @identstart,ident^*
-var1,,handlevardefstart,
- ${whitespace}
- ':',var2-
-var2,var3,,
- '',getfieldtype^*
-var3,checksemicolon2,,handlevar3
-#
-vardef,vardef0,,
- '',ident^*
-vardef0,,handlevardefstart,
- ${whitespace}
- ':',vardef1-
-vardef1,checksemicolon,,
- '',getfieldtype^*
-# ${whitespace}
-# @identstart,identpath^*
-#
+!
+! defs
+!
 type,,,handletype>
  ${whitespace}
  ${blockswitch}
@@ -544,7 +494,43 @@ type3,,,*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
-#
+
+const,,,*>
+ ${whitespace}
+ ${blockswitch}
+ '',const0^*
+const0,const1,,handleidentexpected^
+ ${whitespace}
+ @identstart,ident^*
+const1,,,handleequalityexpected^
+ ${whitespace}
+ '=',const2-
+const2,const3,,
+ '',exp^*
+const3,,handleconst3,
+ '',checksemicolon1
+
+var,,,*>
+ ${whitespace}
+ ${blockswitch}
+ '',var0*^
+var0,var1,,
+ @identstart,ident^*
+var1,,handlevardefstart,
+ ${whitespace}
+ ':',var2-
+var2,var3,,
+ '',getfieldtype^*
+var3,checksemicolon2,,handlevar3
+
+vardef,vardef0,,
+ '',ident^*
+vardef0,,handlevardefstart,
+ ${whitespace}
+ ':',vardef1-
+vardef1,checksemicolon,,
+ '',getfieldtype^*
+
 getrange,getrange1,,
  '',exp^*
 getrange1,,,handlerange1
@@ -553,7 +539,6 @@ getrange1,,,handlerange1
 getrange3,,,handlerange3^
  '',exp^*
 
-#
 classdef,classdef0,handleclassdefstart,
  ${whitespace}
  '(',classdefparam-*
@@ -587,10 +572,9 @@ classdefparam2a,,,*
 classdefparam3,classdefparam3a,,
  '',identpath^*
 classdefparam3a,classdefparam2a,,handleclassdefparam3a*
-#
+
 classfield,,,handleclassfield^*
  '',vardef^*
-#
 
 interfacedef,interfacedef0,handleinterfacedefstart,
  ${whitespace}
@@ -621,7 +605,9 @@ interfaceparam3,,,handleidentexpected*
  @identstart,interfaceparam1*
 
 statementend,,,handlestatementend!
-
+!
+! expression
+!
 exp,,,handleexp^
  '',callexp*
 callexp,exp1,,
@@ -670,32 +656,31 @@ fact,fact1,handlefactstart,
  '#',char-*
  @identstart,valueidentifier*
  '',illegalexpression
-#
+
 fact1,,,handlefact
  ${whitespace}
  '^',!handledereference-
  '[',getindex-^*>
  '..',*
  '.',fact2-
-#
+
 fact2,fact1,handlefact2entry,
  '',valueidentifierwhite*
-#
+
 negfact,,,handlenegfact
  '',fact*
-#
-#
+
 bracketstart,bracketend,,
  '',callexp*
 bracketend,,,handlebracketend
  ${whitespace}
-#
+
 valueidentifier,checkvalueparams,,
  '',identpath^*
 valueidentifierwhite,checkvalueparams,,
  ${whitespace}
  '',identpath^*
-#
+
 checkvalueparams,,,handlevalueidentifier
  ${whitespace}
  '(',params0-^*
@@ -712,7 +697,7 @@ params2,,,
  ',',params1-
  ')',paramsend-
 paramsend,,handleparamsend,^
-#
+
 getindex,getindex1,handleindexstart,
  '',exp^*
 getindex1,,,handleindex
@@ -722,10 +707,10 @@ getindex1,,,handleindex
  '',!handleclosesquarebracketexpected
 getindex2,getindex1,,
  '',exp^*
-#
+
 illegalexpression,,,handleillegalexpression*
-#
-#todo: use handler for number evaluation
+
+! todo: use handler for number evaluation
 num,,,handleint
  @decnum,-
  '.',checkfrac-+*
@@ -746,14 +731,14 @@ number,,handlenumberentry,
  '',numberexpected
 decnum,,,handledecnum
  @decnum,-
-#
+
 binnum,,,handlebinnum
  @binnum,-
 octnum,,,handleoctnum
  @octnum,-
 hexnum,,,handlehexnum
  @hexnum,-
-# 
+ 
 ordnum,,,
  @decnum,decnum
  '%',binnum-
@@ -773,7 +758,7 @@ apostrophe,,copyapostrophe,
 token,,handlestringstart,copytoken
  @whitespace,'}',*
  '',-
-#
+
 char,char1,handlestringstart,
  '',ordnum*
 char1,string,handlechar,
@@ -781,31 +766,27 @@ char1,string,handlechar,
  '#',char-
  '',char2
 char2,,,
-#
+
 ident,,,handleident^
  @identstart,@decnum,-
-#
+
 getident,,,^
  ${whitespace}
  @identstart,ident
  '',!handleidentexpected*
-#
+
 identpathcontinue,,,^>
  '',identpath^*
 identpath,identpath1a,,
  @identstart,@decnum,-
-identpath1a,identpath1,handleidentpath1a,
-#set ident
-identpath1,,,^
-#finish
+identpath1a,identpath1,handleidentpath1a, !set ident
+identpath1,,,^                            !finish
  ${whitespace}
  '..',*
  '.',identpath2a+-
-identpath2a,identpath2,handleidentpath2a,
-# set continue flag
-identpath2,,,handleidentpath2^
-#error
+identpath2a,identpath2,handleidentpath2a, !set continue flag
+identpath2,,,handleidentpath2^            !error
  ${whitespace}
  @identstart,identpath*
-#
+
 numberexpected,,,handlenumberexpected*

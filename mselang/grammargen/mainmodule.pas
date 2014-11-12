@@ -21,7 +21,7 @@ uses
  mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv;
 
 (*
-'#'COMMENT
+[STATEMENT]'!'COMMENT
 
 '{'MACRONAME'}' '"'MACROTEXT'"' 
  macrotext can be multiline, "" -> "
@@ -72,6 +72,9 @@ const
 '                                                      ([''!''HANDLER][-][*][^])'+lineend+
 '        ['','' (PUSHEDCONTEXT | (PARENTCONTEXT''^''))]';
 
+ commentchar = '!';
+ quotechar = '''';
+ 
 type
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -274,8 +277,25 @@ var
  end;
 
  procedure readline(var astr: string);
+ var
+  pe,po1: pchar;
+  inquote: boolean;
  begin
   grammarstream.readln(astr);
+  astr:= trimright(astr);
+  po1:= pointer(astr);
+  pe:= po1 + length(astr);
+  inquote:= false;
+  while po1 < pe do begin
+   if po1^ = quotechar then begin
+    inquote:= not inquote;
+   end;
+   if (po1^ = commentchar) and not inquote then begin
+    break;
+   end;
+   inc(po1);
+  end;
+  setlength(astr,po1-pchar(pointer(astr)));
   inc(line);
  end;
  
@@ -480,7 +500,7 @@ begin
     else begin //no macrodef
      mstr1:= utf8tostring(str1);
      macrolist1.expandmacros1(mstr1);
-     if (mstr1 <> '') and (mstr1[1] <> '#') then begin //no comment
+     if (mstr1 <> '') and (mstr1[1] <> commentchar) then begin //no comment
       expandedtext:= breaklines(stringtoutf8(mstr1));
       for lnr:= 0 to high(expandedtext) do begin
        str1:= expandedtext[lnr];
@@ -493,7 +513,7 @@ begin
          intokendef:= true;
         end
         else begin
-         if (str1[1] <> '#') then begin
+         if (str1[1] <> commentchar) then begin
           if str1[1] <> ' ' then begin
            intokendef:= false;
           end;

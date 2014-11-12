@@ -3,7 +3,7 @@ program test;
 type
  rty = record
   a: int32;
-  b: int32;
+  ba: int32;
  end;
  prty = ^rty;
 var
@@ -11,7 +11,8 @@ var
  p1: prty;
 begin
  p1:= @r1;
- p1^.b:= 123;
+{$dumpelements}
+ p1^.ba:= 123;
 {$abort}
  writeln(r1.b);
 end;
