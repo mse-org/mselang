@@ -130,6 +130,9 @@ begin
      if po1 <> nil then begin
       po4:= @po1^.data;
       po4^:= po3^;
+      if po3^.base = 0 then begin
+       po4^.base:= d.typ.typedata;
+      end;
       po4^.indirectlevel:= d.typ.indirectlevel;
       if po4^.indirectlevel > 0 then begin
        po4^.flags-= [tf_managed,tf_hasmanaged];

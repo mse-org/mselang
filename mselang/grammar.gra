@@ -253,7 +253,7 @@ functiontype,,,
 resultident,,checkfunctiontype,
  '',getfieldtype*
 
-functiontypea,,, ! same layout as parameter
+functiontypea,,, //same layout as parameter
  ${whitespace}
  @identstart,ident^*
 
@@ -265,7 +265,7 @@ subbody4,,,handlebeginexpected*
  'type'.,type-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
-subbody5a,subbody5,handlesubbody5a, !set procstartaddress
+subbody5a,subbody5,handlesubbody5a, //set procstartaddress
 subbody5,subbody5b,,
  '',statementblock^*
 subbody5b,,,handleendexpected*

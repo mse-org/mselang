@@ -7,10 +7,10 @@ type
  end;
  prty = ^rty;
 var
- r1: rty;
+// r1: rty;
  p1: prty;
 begin
- p1:= @r1;
+// p1:= @r1;
 {$dumpelements}
  p1^.ba:= 123;
 {$abort}

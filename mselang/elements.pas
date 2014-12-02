@@ -1421,6 +1421,7 @@ function telementhashdatalist.dumpelements: msestringarty;
   po2:= eleinfoabs(atyp);
   result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
   with ptypedataty(@po2^.data)^ do begin
+   result:= result+' B:'+inttostr(base);
    result:= result+' K:'+getenumname(typeinfo(kind),ord(kind));
    if kind <> dk_none then begin
     result:= result+

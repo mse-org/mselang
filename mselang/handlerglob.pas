@@ -151,6 +151,8 @@ type
  typedataty = record
   ancestor: elementoffsetty; //first, 
             //valid for ancestordatakinds and ancestorchaindatakinds
+  base: elementoffsetty; //base type, ex: precordty = ^recordty -> recordty type
+                         //used for addressing record fields.
   rtti: dataaddressty; //0 -> none
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count

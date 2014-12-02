@@ -454,7 +454,12 @@ begin
       goto endlab;
      end
      else begin
-      ele.elementparent:= d.dat.datatyp.typedata;
+      if po3^.base <> 0 then begin
+       ele.elementparent:= po3^.base;
+      end
+      else begin
+       ele.elementparent:= d.dat.datatyp.typedata;
+      end;
      end;
     end;
     else begin

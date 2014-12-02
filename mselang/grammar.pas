@@ -6347,13 +6347,11 @@ begin
  resultidentco.branch:= @bresultident;
  resultidentco.handleentry:= @checkfunctiontype;
  functiontypeaco.branch:= @bfunctiontypea;
- functiontypeaco.handleexit:= @! same layout as parameter;
  subbody4co.branch:= @bsubbody4;
  subbody4co.handleexit:= @handlebeginexpected;
  subbody5aco.branch:= nil;
  subbody5aco.next:= @subbody5co;
  subbody5aco.handleentry:= @handlesubbody5a;
- subbody5aco.handleexit:= @!set procstartaddress;
  subbody5co.branch:= @bsubbody5;
  subbody5co.next:= @subbody5bco;
  subbody5bco.branch:= @bsubbody5b;
