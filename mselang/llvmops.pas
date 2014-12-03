@@ -286,7 +286,8 @@ begin
 {$endif}
 end;
 
-function locdataaddress(const address: locdataaddressty): shortstring;
+procedure locdataaddress(const address: locdataaddressty;
+                                            out result: shortstring);
 begin
  locaddress(address.a.address,result);
 end;
@@ -447,8 +448,9 @@ begin
                ', '+str1+'* '+str5);
   end
   else begin
+   locdataaddress(memop.locdataaddress,str3);
    outass('store '+str1+' '+str2+', '+
-                         str1+'* '+ locdataaddress(memop.locdataaddress));
+                         str1+'* '+str3);
   end;
 
 {
@@ -530,14 +532,14 @@ end;
 
 procedure locassignindi();
 var
- str1,dest1,dest2: shortstring;
+ str1,str2,dest1,dest2: shortstring;
 begin
  with pc^.par do begin                  //todo: add offset, nested frame
   llvmtype(memop.t,str1); 
   dest1:= '%'+inttostr(ssad);
   dest2:= '%'+inttostr(ssad+1);
-  outass(dest1+' = load '+ptrintname+
-                               '* '+locdataaddress(memop.locdataaddress));
+  locdataaddress(memop.locdataaddress,str2);
+  outass(dest1+' = load '+ptrintname+'* '+str2);
   outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
  
@@ -588,7 +590,8 @@ begin
   end
   else begin
    str2:= '%'+inttostr(ssad);
-   outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
+   locdataaddress(memop.locdataaddress,str3);
+   outass(str2+' = load '+str1+'* '+str3);
   end;
 { 
   case memop.t.kind of
@@ -621,15 +624,15 @@ end;
 procedure assignlocindi();
 var
  dest1,dest2,dest3: shortstring;
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   ;
   dest1:= '%'+inttostr(ssad);
   dest2:= '%'+inttostr(ssad+1);
   dest3:= '%'+inttostr(ssad+2);
-  outass(dest1+' = load '+ptrintname+
-                               '* '+locdataaddress(memop.locdataaddress));
+  locdataaddress(memop.locdataaddress,str2);
+  outass(dest1+' = load '+ptrintname+'* '+str2);
   outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
   llvmtype(memop.t,str1);
   outass(dest3+' = load '+str1+'* '+dest2);
@@ -1684,10 +1687,12 @@ begin
 end;
 
 procedure pushlocaddrindiop();          //todo: offset, nested frames
+var
+ str1: shortstring;
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load '+ptrintname+'* '+
-                                 locdataaddress(vlocaddress));
+  locdataaddress(vlocaddress,str1);
+  outass('%'+inttostr(ssad)+' = load '+ptrintname+'* '+str1);
  end;
 end;
 
