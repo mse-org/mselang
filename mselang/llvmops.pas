@@ -292,23 +292,23 @@ begin
  locaddress(address.a.address,result);
 end;
 
-procedure curoplabel(var avalue: shortstring);
+procedure curoplabel(out result: shortstring);
 begin
- avalue:= 'o'+
+ result:= 'o'+
     inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty) -
                                                              startupoffset);
 end;
 
-procedure nextoplabel(var avalue: shortstring);
+procedure nextoplabel(out result: shortstring);
 begin
- avalue:= 'o'+
+ result:= 'o'+
     inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty)- 
                                                             startupoffset+1);
 end;
 
-procedure oplabel(var avalue: shortstring);
+procedure oplabel(out result: shortstring);
 begin
- avalue:= 'o'+ inttostr(pc^.par.opaddress);
+ result:= 'o'+ inttostr(pc^.par.opaddress);
 end;
 
 procedure stackimmassign1();
