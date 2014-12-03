@@ -258,7 +258,7 @@ begin
  end;
 end;
 
-function segaddress(const address: segaddressty): string;
+procedure segaddress(const address: segaddressty; out result: shortstring);
 begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
@@ -732,7 +732,7 @@ var
  po2: pvardataty;
  po3: ptypedataty;
  int1: integer;
- str1: shortstring;
+ str1,str2: shortstring;
 begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
@@ -757,7 +757,8 @@ begin
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
     llvmglobvar(po2,str1);
-    outass(segaddress(po2^.address.segaddress)+' = global '+str1);
+    segaddress(po2^.address.segaddress,str2);
+    outass(str2+' = global '+str1);
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
@@ -773,8 +774,11 @@ begin
 end;
 
 procedure progendop();
+var
+ str1: shortstring;
 begin
- outass('%.exitcode = load i32* '+segaddress(exitcodeaddress));
+ segaddress(exitcodeaddress,str1);
+ outass('%.exitcode = load i32* '+str1);
  outass('ret i32 %.exitcode');
  outass('}');
 end;
