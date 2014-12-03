@@ -175,7 +175,7 @@ const
   //das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64
     '',       'i64', 'i8*',      'half', 'float','double');
 
-function llvmtype(const asize: typeallocinfoty): shortstring;
+procedure llvmtype(const asize: typeallocinfoty; out result: shortstring);
 begin
  case asize.kind of
   das_none: begin
@@ -203,8 +203,8 @@ begin
    result:= nilconst;
   end
   else begin
-   result:= llvmtype(getopdatatype(po1,avar^.address.indirectlevel))+ 
-                                                          ' zeroinitializer';
+   llvmtype(getopdatatype(po1,avar^.address.indirectlevel),result);
+   result:= result+' zeroinitializer';
   end;
  end;
 end;
@@ -358,7 +358,7 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par do begin
-  str1:= llvmtype(memop.t);
+  llvmtype(memop.t,str1);
   str2:= segdataaddresspo(memop.segdataaddress);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
             'bitcast (i8* '+str2+ ' to '+str1+'*)');
@@ -392,7 +392,7 @@ var
  str1, str2: shortstring;
 begin
  with pc^.par do begin
-  str1:= llvmtype(memop.t);
+  llvmtype(memop.t,str1);
   str2:= segdataaddresspo(memop.segdataaddress);
   outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
                                                           ' to '+str1+'* )');
@@ -431,7 +431,7 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  str1:= llvmtype(memop.t);
+  llvmtype(memop.t,str1);
   str2:= '%'+inttostr(ssas1);
   if memop.locdataaddress.a.framelevel >= 0 then begin
    str3:= '%'+inttostr(ssad-2);
@@ -496,7 +496,7 @@ var
  str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin
-  str1:= llvmtype(memop.t);
+  llvmtype(memop.t,str1);
   dest1:= '%'+inttostr(ssad-1);
   dest2:= '%'+inttostr(ssad);
   outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
@@ -531,7 +531,7 @@ var
  str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin                  //todo: add offset, nested frame
-  str1:= llvmtype(memop.t); 
+  llvmtype(memop.t,str1); 
   dest1:= '%'+inttostr(ssad);
   dest2:= '%'+inttostr(ssad+1);
   outass(dest1+' = load '+ptrintname+
@@ -572,7 +572,7 @@ var
  str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  str1:= llvmtype(memop.t);
+  llvmtype(memop.t,str1);
   if memop.locdataaddress.a.framelevel >= 0 then begin
    str2:= '%'+inttostr(ssad-3);
    str3:= '%'+inttostr(ssad-2);
@@ -619,6 +619,7 @@ end;
 procedure assignlocindi();
 var
  dest1,dest2,dest3: shortstring;
+ str1: shortstring;
 begin
  with pc^.par do begin
   ;
@@ -628,7 +629,8 @@ begin
   outass(dest1+' = load '+ptrintname+
                                '* '+locdataaddress(memop.locdataaddress));
   outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  outass(dest3+' = load '+llvmtype(memop.t)+'* '+dest2);
+  llvmtype(memop.t,str1);
+  outass(dest3+' = load '+str1+'* '+dest2);
 
 {
   case memop.t.kind of
@@ -1803,7 +1805,7 @@ var
 begin
  with pc^.par do begin
   str1:= '%'+inttostr(ssad);
-  str2:= llvmtype(memop.t);
+  llvmtype(memop.t,str2);
   outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
   outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
 {  
@@ -1905,7 +1907,7 @@ procedure docallparam(parpo: pparallocinfoty; const endpo: pointer;
 var
  first: boolean;
  int1: integer;
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   first:= true;
@@ -1923,7 +1925,8 @@ begin
    first:= false;
   end;
   while parpo < endpo do begin
-   str1:= ','+llvmtype(parpo^.size)+' %'+inttostr(parpo^.ssaindex);
+   llvmtype(parpo^.size,str2);
+   str1:= ','+str2+' %'+inttostr(parpo^.ssaindex);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -1958,7 +1961,8 @@ begin
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;
-  outass('%'+inttostr(ssad)+' = call '+llvmtype(parpo^.size)+
+  llvmtype(parpo^.size,str1);
+  outass('%'+inttostr(ssad)+' = call '+str1+
                                      ' @s'+inttostr(callinfo.ad+1)+'(');
   inc(parpo); //skip result param
   docallparam(parpo,endpo,outlinkcount);
@@ -2041,7 +2045,8 @@ begin
   poend:= po1+allocs.alloccount;
 
   if sf_function in flags then begin //todo: correct type
-   outass('define '+llvmtype(po1^.size)+' @s'+inttostr(subname)+'(');
+   llvmtype(po1^.size,str1);
+   outass('define '+str1+' @s'+inttostr(subname)+'(');
    inc(po1); //result
   end
   else begin
@@ -2056,7 +2061,8 @@ begin
    if not (af_param in po1^.flags) then begin
     break;
    end;
-   str1:= ','+llvmtype(po1^.size)+' '+paraddress(po1^.address);
+   llvmtype(po1^.size,str2);
+   str1:= ','+str2+' '+paraddress(po1^.address);
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -2069,23 +2075,25 @@ begin
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
 {$endif}
   if sf_function in flags then begin
-   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
+   llvmtype(po1^.size,str1);
+   outass(locaddress(po1^.address)+' = alloca '+str1);
    inc(po1); //result
   end;
   while po1 < poend do begin
-  if not (af_param in po1^.flags) then begin
-   break;
-  end;
-   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
+   if not (af_param in po1^.flags) then begin
+    break;
+   end;
+   llvmtype(po1^.size,str1);
+   outass(locaddress(po1^.address)+' = alloca '+str1);
 {$ifndef mse_locvarssatracking}
-   str1:= llvmtype(po1^.size);
    outass('store '+str1+' '+paraddress(po1^.address)+
                ','+str1+'* '+locaddress(po1^.address));
 {$endif}
    inc(po1);
   end;
   while po1 < poend do begin
-   outass(locaddress(po1^.address)+' = alloca '+llvmtype(po1^.size));
+   llvmtype(po1^.size,str1);
+   outass(locaddress(po1^.address)+' = alloca '+str1);
    inc(po1);
   end;
   if sf_hasnestedref in flags then begin
@@ -2109,7 +2117,7 @@ begin
      outass('store i8* '+str3+', i8** '+str1);
     end
     else begin
-     str4:= llvmtype(po2^.address.datatype);
+     llvmtype(po2^.address.datatype,str4);
      outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
      outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
                                                              str4+'** '+str2);
@@ -2162,7 +2170,7 @@ var
 begin
  with pc^.par do begin
   po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
-  ty1:= llvmtype(po1^.size);
+  llvmtype(po1^.size,ty1);
   dest1:= '%'+inttostr(ssad);
   outass(dest1 + ' = load '+ty1+'* %l0');
   outass('ret '+ty1+' '+dest1);
