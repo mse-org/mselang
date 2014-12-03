@@ -1743,11 +1743,14 @@ end;
 
 procedure pushsegaddrindiop();
 var
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   segdataaddress(vsegaddress,str1);
-  outass('%'+inttostr(ssad)+' = load i8** '+str1);
+  str2:= '%'+inttostr(ssad-1);
+  outass(str2+' = load i8** '+str1);
+  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
+                                          inttostr(vsegaddress.offset));
  end;
 end;
 
@@ -2483,7 +2486,7 @@ const
   pushlocaddrssa = 1;
   pushlocaddrindissa = 1;
   pushsegaddrssa = 1;
-  pushsegaddrindissa = 1;
+  pushsegaddrindissa = 2;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
 
