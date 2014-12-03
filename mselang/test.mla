@@ -5,9 +5,12 @@ type
   a: int32;
   b: int32;
  end;
+ prty = ^rty;
 var
  r1: rty;
+ p1: prty;
 begin
- r1.b:= 123;
+ p1:= @r1;
+ p1^.b:= 123;
  writeln(r1.b);
 end;

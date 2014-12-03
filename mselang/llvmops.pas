@@ -237,7 +237,7 @@ begin
 end;
 
 procedure segdataaddresspo(const address: segdataaddressty;
-                                            out result: shortstring);
+                     const brackets: boolean; out result: shortstring);
 var
  str1,str2: shortstring;
 begin
@@ -251,9 +251,16 @@ begin
    result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
   end
   else begin                           //record
-   result:= 'getelementptr (['+
+   if brackets then begin
+    result:= 'getelementptr (['+
               inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
               inttostr(address.offset)+')';
+   end
+   else begin
+    result:= 'getelementptr ['+
+              inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
+              inttostr(address.offset);
+   end;
   end;
  end;
 end;
@@ -362,7 +369,7 @@ var
 begin
  with pc^.par do begin
   llvmtype(memop.t,str1);
-  segdataaddresspo(memop.segdataaddress,str2);
+  segdataaddresspo(memop.segdataaddress,true,str2);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
             'bitcast (i8* '+str2+ ' to '+str1+'*)');
 
@@ -396,7 +403,7 @@ var
 begin
  with pc^.par do begin
   llvmtype(memop.t,str1);
-  segdataaddresspo(memop.segdataaddress,str2);
+  segdataaddresspo(memop.segdataaddress,true,str2);
   outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
                                                           ' to '+str1+'* )');
 {
@@ -1701,7 +1708,7 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  segdataaddresspo(vsegaddress,str1);
+  segdataaddresspo(vsegaddress,false,str1);
   outass('%'+inttostr(ssad)+' = '+str1);
  (*
   if vsegaddress.a.size = 0 then begin //pointer
