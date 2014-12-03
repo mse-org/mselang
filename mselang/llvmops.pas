@@ -190,7 +190,7 @@ begin
  end;
 end;
 
-function llvmglobvar(const avar: pvardataty): shortstring;
+procedure llvmglobvar(const avar: pvardataty; out result: shortstring);
 var
  po1: ptypedataty;
 begin
@@ -209,7 +209,8 @@ begin
  end;
 end;
 
-function segdataaddress(const address: segdataaddressty): shortstring;
+procedure segdataaddress(const address: segdataaddressty;
+                                             out result: shortstring);
 begin
  case address.a.segment of
   seg_globconst: begin
@@ -239,7 +240,7 @@ function segdataaddresspo(const address: segdataaddressty): string;
 var
  str1,str2: shortstring;
 begin
- str2:= segdataaddress(address);
+ segdataaddress(address,str2);
  if address.a.size = 0 then begin //pointer
   result:='bitcast i8** '+str2+' to i8*';
  end
@@ -730,6 +731,7 @@ var
  po2: pvardataty;
  po3: ptypedataty;
  int1: integer;
+ str1: shortstring;
 begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
@@ -753,7 +755,8 @@ begin
    ele2:= po1^.varchain;
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
-    outass(segaddress(po2^.address.segaddress)+' = global '+ llvmglobvar(po2));
+    llvmglobvar(po2,str1);
+    outass(segaddress(po2^.address.segaddress)+' = global '+str1);
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
@@ -1066,9 +1069,12 @@ begin
 end;
 
 procedure storesegnilop();
+var
+ str1: shortstring;
 begin
  with pc^.par do begin
-  outass('store '+nilconst+', i8** '+segdataaddress(vsegaddress));
+  segdataaddress(vsegaddress,str1);
+  outass('store '+nilconst+', i8** '+str1);
  end;
 end;
 
@@ -1111,12 +1117,12 @@ end;
 
 procedure finirefsizesegop();
 var
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   str1:= '%'+inttostr(ssad);
-  outass(str1+' = bitcast i8** '+ 
-                   segdataaddress(vsegaddress)+' to i8*');
+  segdataaddress(vsegaddress,str2);
+  outass(str1+' = bitcast i8** '+str2+' to i8*');
   finirefsize(str1);
  end;
 end;
@@ -1200,8 +1206,11 @@ begin
 end;
 
 procedure decrefsizesegop();
+var
+ str1: shortstring;
 begin
- decrefsize(segdataaddress(pc^.par.vsegaddress));
+ segdataaddress(pc^.par.vsegaddress,str1);
+ decrefsize(str1);
 end;
 
 procedure decrefsizeframeop();
@@ -1262,10 +1271,12 @@ begin
 end;
 
 procedure popsegpoop();
+var
+ str1: shortstring;
 begin
  with pc^.par do begin
-  outass('store i8* %'+inttostr(ssas1)+', i8** '+
-                      segdataaddress(memop.segdataaddress));
+  segdataaddress(memop.segdataaddress,str1);
+  outass('store i8* %'+inttostr(ssas1)+', i8** '+str1);
  end;
 end;
 
@@ -1713,9 +1724,12 @@ begin
 end;
 
 procedure pushsegaddrindiop();
+var
+ str1: shortstring;
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load i8** '+ segdataaddress(vsegaddress));
+  segdataaddress(vsegaddress,str1);
+  outass('%'+inttostr(ssad)+' = load i8** '+str1);
  end;
 end;
 
