@@ -41,7 +41,8 @@ type
 
 const
  breakline = c_linefeed;
- nilconst = 'i8* inttoptr(i32 0 to i8*)';
+// nilconst = 'i8* inttoptr(i32 0 to i8*)';
+ nilconst = 'i8* zeroinitializer';
  icomparetokens: array[icomparekindty] of string[3] = (
                   'eq','ne',
                   'ugt','uge','ult','ule',
@@ -202,7 +203,8 @@ begin
    result:= nilconst;
   end
   else begin
-   result:= llvmtype(getopdatatype(po1,avar^.address.indirectlevel))+ ' 0';
+   result:= llvmtype(getopdatatype(po1,avar^.address.indirectlevel))+ 
+                                                          ' zeroinitializer';
   end;
  end;
 end;
@@ -745,40 +747,11 @@ begin
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
     outass(segaddress(po2^.address.segaddress)+' = global '+ llvmglobvar(po2));
-{
-    if po2^.address.indirectlevel > 0 then begin
-     outass(segaddress(po2^.address.segaddress)+
-                         ' = global i8* inttoptr(i32 0 to i8*)');
-    end
-    else begin
-     po3:= ptypedataty(ele.eledataabs(po2^.vf.typ));
-     if po3^.bitsize = 0 then begin
-      outass(segaddress(po2^.address.segaddress)+' = global ['+
-              inttostr(po3^.bytesize)+ ' x i8] zeroinitializer');
-     end
-     else begin
-      outass(segaddress(po2^.address.segaddress)+' = global i'+
-              inttostr(po3^.bitsize)+ ' 0');
-     end;
-    end;
-}
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
   end;
   llvmops.exitcodeaddress:= exitcodeaddress;
- {
-  allocpo:= getsegmentpo(globallocstart);
-  endpo:= pointer(allocpo)+globalloccount*sizeof(globallocinfoty);
-  llvmops.exitcodeaddress:= exitcodeaddress;
-  while allocpo < endpo do begin
-   with allocpo^ do begin
-    outass(segaddress(a)+' = global i'+
-                                              inttostr(8*size)+ ' 0');
-   end;
-   inc(allocpo);
-  end;
- }
  end;
 end;
 
