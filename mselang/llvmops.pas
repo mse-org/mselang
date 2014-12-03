@@ -277,7 +277,7 @@ begin
 {$endif}
 end;
 
-function paraddress(const address: dataoffsty): string;
+procedure paraddress(const address: dataoffsty; out result: shortstring);
 begin
 {$ifdef mse_locvarssatracking}
  result:= '%l'+inttostr(address.address);
@@ -2082,7 +2082,8 @@ begin
     break;
    end;
    llvmtype(po1^.size,str2);
-   str1:= ','+str2+' '+paraddress(po1^.address);
+   paraddress(po1^.address,str3);
+   str1:= ','+str2+' '+str3;
    if first then begin
     str1[1]:= ' ';
     first:= false;
@@ -2108,7 +2109,8 @@ begin
    locaddress(po1^.address,str2);
    outass(str2+' = alloca '+str1);
 {$ifndef mse_locvarssatracking}
-   outass('store '+str1+' '+paraddress(po1^.address)+
+   paraddress(po1^.address,str3);
+   outass('store '+str1+' '+str3+
                ','+str1+'* '+str2);
 {$endif}
    inc(po1);
