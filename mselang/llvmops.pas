@@ -263,7 +263,7 @@ begin
  result:= segprefix[address.segment]+inttostr(address.address);
 end;
 
-function locaddress(const address: dataoffsty): string;
+procedure locaddress(const address: dataoffsty; out result: shortstring);
 begin
 {$ifdef mse_locvarssatracking}
  if address.ssaindex > 0 then begin
@@ -286,9 +286,9 @@ begin
 {$endif}
 end;
 
-function locdataaddress(const address: locdataaddressty): string;
+function locdataaddress(const address: locdataaddressty): shortstring;
 begin
- result:= locaddress(address.a.address);
+ locaddress(address.a.address,result);
 end;
 
 procedure curoplabel(var avalue: shortstring);
@@ -2096,7 +2096,8 @@ begin
 {$endif}
   if sf_function in flags then begin
    llvmtype(po1^.size,str1);
-   outass(locaddress(po1^.address)+' = alloca '+str1);
+   locaddress(po1^.address,str2);
+   outass(str2+' = alloca '+str1);
    inc(po1); //result
   end;
   while po1 < poend do begin
@@ -2104,16 +2105,18 @@ begin
     break;
    end;
    llvmtype(po1^.size,str1);
-   outass(locaddress(po1^.address)+' = alloca '+str1);
+   locaddress(po1^.address,str2);
+   outass(str2+' = alloca '+str1);
 {$ifndef mse_locvarssatracking}
    outass('store '+str1+' '+paraddress(po1^.address)+
-               ','+str1+'* '+locaddress(po1^.address));
+               ','+str1+'* '+str2);
 {$endif}
    inc(po1);
   end;
   while po1 < poend do begin
    llvmtype(po1^.size,str1);
-   outass(locaddress(po1^.address)+' = alloca '+str1);
+   locaddress(po1^.address,str2);
+   outass(str2+' = alloca '+str1);
    inc(po1);
   end;
   if sf_hasnestedref in flags then begin
