@@ -249,9 +249,9 @@ begin
    result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
   end
   else begin                           //record
-   result:= 'getelementptr ['+
+   result:= 'getelementptr (['+
               inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
-              inttostr(address.offset);
+              inttostr(address.offset)+')';
   end;
  end;
 end;
@@ -355,12 +355,13 @@ end;
 }
 procedure segassign();
 var
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   str1:= llvmtype(memop.t);
+  str2:= segdataaddresspo(memop.segdataaddress);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
-                                     segdataaddress(memop.segdataaddress));
+            'bitcast (i8* '+str2+ ' to '+str1+'*)');
 
 {
   case memop.t.kind of
@@ -387,10 +388,14 @@ begin
 end;
 
 procedure assignseg();
+var
+ str1, str2: shortstring;
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = load '+llvmtype(memop.t)+'* '+
-                               segdataaddress(memop.segdataaddress));
+  str1:= llvmtype(memop.t);
+  str2:= segdataaddresspo(memop.segdataaddress);
+  outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
+                                                          ' to '+str1+'* )');
 {
   case memop.t.kind of
    odk_bit: begin

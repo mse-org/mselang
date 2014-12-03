@@ -1,6 +1,16 @@
-unit program;
+{$stoponerror}
+program test;
+type
+ rty = record
+  a: int32;
+  b: int32;
+ end;
+ prty = ^rty;
 var
- po1: pointer;
+ r1: rty;
+ p1: prty;
 begin
- po1:= po1;
-end.
+ p1:= @r1;
+ p1^.b:= 123;
+ writeln(r1.b);
+end;
