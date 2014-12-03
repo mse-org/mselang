@@ -236,7 +236,8 @@ begin
  end;
 end;
 
-function segdataaddresspo(const address: segdataaddressty): string;
+procedure segdataaddresspo(const address: segdataaddressty;
+                                            out result: shortstring);
 var
  str1,str2: shortstring;
 begin
@@ -360,7 +361,7 @@ var
 begin
  with pc^.par do begin
   llvmtype(memop.t,str1);
-  str2:= segdataaddresspo(memop.segdataaddress);
+  segdataaddresspo(memop.segdataaddress,str2);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
             'bitcast (i8* '+str2+ ' to '+str1+'*)');
 
@@ -394,7 +395,7 @@ var
 begin
  with pc^.par do begin
   llvmtype(memop.t,str1);
-  str2:= segdataaddresspo(memop.segdataaddress);
+  segdataaddresspo(memop.segdataaddress,str2);
   outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
                                                           ' to '+str1+'* )');
 {
@@ -1691,7 +1692,8 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = '+ segdataaddresspo(vsegaddress));
+  segdataaddresspo(vsegaddress,str1);
+  outass('%'+inttostr(ssad)+' = '+str1);
  (*
   if vsegaddress.a.size = 0 then begin //pointer
    outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
