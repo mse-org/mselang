@@ -889,7 +889,9 @@ begin
     push(dat.constval.vaddress,0,false);
    end;
    else begin
+   {$ifdef mse_checkinternalerror}   
     internalerror(ie_handler,'2014118A');
+   {$endif}
    end;
   end;
  end;

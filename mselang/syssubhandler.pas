@@ -218,7 +218,9 @@ begin
         end;
        end
        else begin
+       {$ifdef mse_checkinternalerror}   
         internalerror(ie_handler,'20141110A');
+       {$endif} 
        end;
        if adec then begin
         po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
@@ -226,7 +228,9 @@ begin
       end;
       ck_fact: begin
 factlab:
+      {$ifdef mse_checkinternalerror}   
        internalerror(ie_notimplemented,'20141110A');
+      {$endif}
       end;
       ck_const: begin
        errormessage(err_variableexpected,[],s.stacktop-s.stackindex-paramco+1);
@@ -235,7 +239,9 @@ factlab:
        //error in parameter, ignore
       end;
       else begin
+      {$ifdef mse_checkinternalerror}   
        internalerror(ie_handler,'20141109A');
+      {$endif}
       end;
      end;
     end;
