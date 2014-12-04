@@ -1,16 +1,9 @@
 {$stoponerror}
 program test;
-type
- rty = record
-  a: int32;
-  b: int32;
- end;
- prty = ^rty;
 var
- r1: rty;
- p1: prty;
+ i1: int32;
 begin
- p1:= @r1;
- p1^.b:= 123;
- writeln(r1.b);
+ inc(i1);
+ inc(i1);
+ writeln(i1);
 end;

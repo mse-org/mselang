@@ -112,7 +112,7 @@ var
  seg1: segmentty;
  int1: integer;
 begin
- fillchar(info,sizeof(info1),0);
+ fillchar(info1,sizeof(info1),0);
  info1.header.version:= 0;
  for seg1:= low(segmentsty) to high(segmentsty) do begin
   if seg1 in storedsegments then begin
