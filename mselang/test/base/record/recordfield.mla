@@ -1,0 +1,12 @@
+program recordfield;
+
+var
+ r1: record
+  a: int32;
+  b: int32;
+ end;
+
+begin
+ r1.b:= 123; 
+ exitcode:= r1.b;
+end.

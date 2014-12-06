@@ -1,0 +1,4 @@
+program minprog;
+begin
+ exitcode:= 123;
+end.

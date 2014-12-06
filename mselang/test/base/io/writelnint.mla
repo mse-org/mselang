@@ -1,0 +1,4 @@
+program writelnint;
+begin
+ writeln(123);
+end.

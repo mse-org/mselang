@@ -1,0 +1,4 @@
+program writelnstr;
+begin
+ writeln('abc');
+end.

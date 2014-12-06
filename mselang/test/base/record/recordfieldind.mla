@@ -1,0 +1,16 @@
+program recordfieldind;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+ precty = ^recty;
+var
+ r1: recty;
+ po1: precty;
+
+begin
+ po1:= @r1;
+ po1^.b:= 123; 
+ exitcode:= po1^.b;
+end.
