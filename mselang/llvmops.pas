@@ -243,22 +243,34 @@ var
 begin
  segdataaddress(address,str2);
  if address.a.size = 0 then begin //pointer
-  result:='bitcast i8** '+str2+' to i8*';
+  if brackets then begin
+   result:='bitcast (i8** '+str2+' to i8*)';
+  end
+  else begin
+   result:='bitcast i8** '+str2+' to i8*';
+  end;
  end
  else begin
   if address.a.size < 0 then begin //int
    str1:= 'i'+inttostr(-address.a.size)+'* ';
-   result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
+   if brackets then begin
+    result:= 'bitcast ('+str1+'getelementptr('+str1+str2+') to i8*)';
+   end
+   else begin
+    result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
+   end;
   end
   else begin                           //record
    if brackets then begin
     result:= 'getelementptr (['+
-              inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
+              inttostr(address.a.size)+' x i8]* '+str2+
+              ', i32 0, i32 '+
               inttostr(address.offset)+')';
    end
    else begin
     result:= 'getelementptr ['+
-              inttostr(address.a.size)+' x i8]* '+str2+', i32 0, i32 '+
+              inttostr(address.a.size)+' x i8]* '+str2+
+              ', i32 0, i32 '+
               inttostr(address.offset);
    end;
   end;
