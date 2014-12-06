@@ -4,3 +4,6 @@
 *.bak
 *.bak?
 *.rst
+*.bc
+*.ll
+*.mlr

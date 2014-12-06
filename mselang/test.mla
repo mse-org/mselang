@@ -1,4 +1,6 @@
-program minprog;
+program inctest;
+var
+ 
 begin
  exitcode:= 123;
 end.
