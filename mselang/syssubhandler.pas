@@ -210,7 +210,7 @@ begin
         end
         else begin
          po3:= addmemop(d.dat,incdecimmint32ops);
-         po3^.par.memimm.vint32:= po1^.bytesize;
+         po3^.par.memimm.vint32:= 1;
         end;
         if par2isconst and (paramco > 1) then begin
          po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *

@@ -1,6 +1,9 @@
-program inctest;
+program incdec;
 var
- 
+ i1: int32;
 begin
- exitcode:= 123;
+ i1:= 124;
+ inc(i1);
+ dec(i1,2);
+ exitcode:= i1;
 end.

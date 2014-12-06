@@ -1016,8 +1016,17 @@ begin
 end;
 
 procedure incdecsegimmint32op();
+var
+ str1,str2,str3: shortstring;
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  segdataaddresspo(mem.segdataaddress,true,str1);
+  str2:= '%'+inttostr(ssad-1);
+  str3:= '%'+inttostr(ssad);
+  outass(str2+' = load i32* bitcast (i8* '+str1+' to i32*)');
+  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
+  outass('store i32 '+str3+', i32* bitcast (i8* '+str1+' to i32*)');
+ end;
 end;
 
 procedure incdecsegimmpo32op();
@@ -2335,7 +2344,7 @@ const
   mulimmint32ssa = 1;
   offsetpoimm32ssa = 1;
 
-  incdecsegimmint32ssa = 1;
+  incdecsegimmint32ssa = 2;
   incdecsegimmpo32ssa = 1;
 
   incdeclocimmint32ssa = 1;

@@ -108,12 +108,12 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=1
   (
   kind=1
-  a=0,665,4,base
-  c=5
+  a=0,665,5,base
+  c=6
    (
    kind=1
    a=0,664,4,empty
@@ -404,7 +404,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfield
+    a=0,648,1,recordfieldind
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -424,7 +424,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfield lc
+    a=0,648,1,recordfieldind lc
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -444,7 +444,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfield lr
+    a=0,648,1,recordfieldind lr
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -464,6 +464,84 @@ c=3
     )
    teststate=1
    path=record/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,665,5,math
+   c=3
+    (
+    kind=2
+    a=0,648,1,incdec
+    teststate=1
+    path=incdec.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,incdec lc
+    teststate=2
+    path=incdec.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=1
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,incdec lr
+    teststate=2
+    path=incdec.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=1
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=2
+   path=arith/
    comment=
    cc=
    cd=
@@ -618,7 +696,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -632,7 +710,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -732,7 +810,11 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=15
+rowstate=19
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
