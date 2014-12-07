@@ -72,7 +72,7 @@ c=3
  teststate=1
  path=${mselangdir}compiler/mlc.pas
  comment=
- cc=${fpc} ${file}
+ cc=${fpc} -B -dmse_checkinternalerror ${file}
  cd=
  rc=
  rd=
@@ -875,7 +875,7 @@ y=395
 cx=672
 cy=449
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
 propcolwidthref=581

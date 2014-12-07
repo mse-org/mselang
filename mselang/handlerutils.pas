@@ -701,6 +701,7 @@ begin
     end;
    end;
    dk_pointer: begin
+    si1:= das_pointer;
     with po1^.d.dat.constval do begin
      if af_nil in vaddress.flags then begin
       insertitem(oc_pushnil,stackoffset,before);
