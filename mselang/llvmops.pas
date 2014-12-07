@@ -1096,7 +1096,7 @@ end;
 
 procedure cmpnequint32op();
 begin
- icompare(ick_eq);
+ icompare(ick_ne);
 end;
 
 procedure cmpnequflo64op();
