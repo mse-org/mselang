@@ -101,7 +101,7 @@ procedure push(const avalue: real); overload;
 procedure push(const avalue: addressvaluety; const offset: dataoffsty;
                                           const indirect: boolean); overload;
 procedure push(const avalue: datakindty); overload;
-procedure pushconst(const avalue: contextdataty);
+//procedure pushconst(var avalue: contextdataty);
 procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
@@ -870,8 +870,8 @@ begin
   setimmdatakind(avalue,par);
  end;
 end;
-
-procedure pushconst(const avalue: contextdataty);
+(*
+procedure pushconst(var avalue: contextdataty);
 //todo: optimize
 begin
  with avalue do begin
@@ -894,9 +894,16 @@ begin
    {$endif}
    end;
   end;
+  kind:= ck_ref;
+  dat.fact.ssaindex:= info.s.ssa.index;
+  dat.indirection:= 0;
+  with dat.fact.opdatatype do begin
+   kind:= dat.constval.kind;
+   size:= bitsizes[kind];
+  end;
  end;
 end;
-
+*)
 procedure int32toflo64({; const index: integer});
 begin
  additem(oc_int32toflo64);
@@ -1598,7 +1605,7 @@ begin
      end;
      with contextstack[s.stacktop] do begin
       if d.kind = ck_const then begin
-       pushconst(d);
+       pushinsertconst(s.stacktop-s.stackindex,false);
       end;
      end;
      with additem(op1)^ do begin      

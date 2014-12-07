@@ -1,9 +1,9 @@
-program incdec;
+program iftest;
 var
  i1: int32;
 begin
- i1:= 124;
- inc(i1);
- dec(i1,2);
- exitcode:= i1;
+// i1:= 123;
+ if i1 = 123 then begin
+  exitcode:= 1;
+ end;
 end.

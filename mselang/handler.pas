@@ -1462,12 +1462,12 @@ const
 
 procedure handlecomparison(const aop: cmpopty);
 
-procedure notsupported();
-begin
- with info,contextstack[s.stacktop-2] do begin
-  operationnotsupportederror(d,contextstack[s.stacktop].d,cmpops[aop].opname);
+ procedure notsupported();
+ begin
+  with info,contextstack[s.stacktop-2] do begin
+   operationnotsupportederror(d,contextstack[s.stacktop].d,cmpops[aop].opname);
+  end;
  end;
-end;
 
 var
  dk1:stackdatakindty;
