@@ -1614,7 +1614,10 @@ begin
       par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
                                       d.dat.datatyp.indirectlevel);
      end;
-     initfactcontext(-1);
+     d.kind:= ck_fact;
+     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+     d.dat.indirection:= 0;   
+//     initfactcontext(-1);
     end;
     dec(s.stacktop,2);
 //    d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
