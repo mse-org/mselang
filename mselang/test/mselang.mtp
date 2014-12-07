@@ -113,7 +113,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=6
+  c=7
    (
    kind=1
    a=0,664,4,empty
@@ -556,6 +556,84 @@ c=3
    )
    (
    kind=1
+   a=0,665,4,control
+   c=3
+    (
+    kind=2
+    a=0,648,1,iftest
+    teststate=1
+    path=iftest.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=99
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,iftest lc
+    teststate=1
+    path=iftest.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,iftest lr
+    teststate=1
+    path=iftest.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=99
+    ie=0
+    )
+   teststate=1
+   path=control/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
    a=0,664,4,IO
    c=6
     (
@@ -795,7 +873,7 @@ stackedunder=
 x=479
 y=395
 cx=672
-cy=423
+cy=449
 wsize=0
 active=1
 visible=1
@@ -810,7 +888,11 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=19
+rowstate=23
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
