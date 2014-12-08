@@ -25,7 +25,7 @@ uses
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
- msescrollbar;
+ msescrollbar,msesyntaxpainter;
 
 type
  it = interface(ievent)
@@ -44,6 +44,7 @@ type
    tbutton2: tbutton;
    filena: tfilenameedit;
    llvm: tbooleanedit;
+   tsyntaxpainter1: tsyntaxpainter;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
