@@ -349,7 +349,7 @@ begin
   with contextstack[s.stackindex-1] do begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
-                       contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
+                     contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
 {   
    kind:= dk_record; //fieldchain set in handlerecorddefstart()
    datasize:= das_none;

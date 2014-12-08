@@ -405,6 +405,7 @@ procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
             artti: dataaddressty; aancestor: elementoffsetty); inline;
 begin
+ atype.base:= 0;
  atype.rtti:= artti;
  atype.flags:= aflags;
  atype.indirectlevel:= aindirectlevel;

@@ -9,7 +9,11 @@ var
  rec1: recty;
  po1: precty;
 begin
- if po1^.b > 0 then begin
+ if po1^.b = 0 then begin
+  exitcode:= 1;
+ end
+ else begin
+  exitcode:= 2;
  end;
 end;
 
