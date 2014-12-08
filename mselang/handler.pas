@@ -85,8 +85,13 @@ procedure handleidentpath2();
 
 procedure handleexp();
 procedure handleexp1();
-procedure handleequsimpexp();
-procedure handlenequsimpexp();
+procedure handleeqsimpexp();
+procedure handlenesimpexp();
+procedure handlegtsimpexp();
+procedure handleltsimpexp();
+procedure handlegesimpexp();
+procedure handlelesimpexp();
+
 procedure handlecommaseprange();
 
 procedure handlemain();
@@ -1449,15 +1454,27 @@ begin
 end;
 
 type
- cmpopty = (cmpo_equ,cmpo_nequ);
+ cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le);
 const
  cmpops: array[cmpopty] of opsinfoty = (
-  (ops: (oc_none,oc_cmpequpo,oc_cmpequbool,oc_cmpequint32,
-                        oc_cmpequflo64);
+  (ops: (oc_none,oc_cmpeqpo,oc_cmpeqbool,oc_cmpeqint32,
+                        oc_cmpeqflo64);
                         opname: '='),
-  (ops: (oc_none,oc_cmpnequpo,oc_cmpnequbool,
-                        oc_cmpnequint32,oc_cmpnequflo64);
-                        opname: '<>')
+  (ops: (oc_none,oc_cmpnepo,oc_cmpnebool,
+                        oc_cmpneint32,oc_cmpneflo64);
+                        opname: '<>'),
+  (ops: (oc_none,oc_cmpgtpo,oc_cmpgtbool,
+                        oc_cmpgtint32,oc_cmpgtflo64);
+                        opname: '>'),
+  (ops: (oc_none,oc_cmpltpo,oc_cmpltbool,
+                        oc_cmpltint32,oc_cmpltflo64);
+                        opname: '<'),
+  (ops: (oc_none,oc_cmpgepo,oc_cmpgebool,
+                        oc_cmpgeint32,oc_cmpgeflo64);
+                        opname: '>='),
+  (ops: (oc_none,oc_cmplepo,oc_cmplebool,
+                        oc_cmpleint32,oc_cmpleflo64);
+                        opname: '<=')
  );
 
 procedure handlecomparison(const aop: cmpopty);
@@ -1480,7 +1497,7 @@ begin
    d.dat.constval.kind:= dk_boolean;
    d.dat.datatyp:= sysdatatypes[st_bool1];
    case aop of
-    cmpo_equ: begin
+    cmpo_eq: begin
      case dk1 of
       sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger = 
@@ -1503,7 +1520,7 @@ begin
       end;
      end;
     end;
-    cmpo_nequ: begin
+    cmpo_ne: begin
      case dk1 of
       sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger <>
@@ -1515,6 +1532,79 @@ begin
       end;
       sdk_bool1: begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean <>
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+      else begin
+       notsupported();
+      end;
+     end;
+    end;
+    cmpo_gt: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger >
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat >
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean >
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+      else begin
+       notsupported();
+      end;
+     end;
+    end;
+    cmpo_lt: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger <
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat <
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean <
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+     end;
+    end;
+    cmpo_ge: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger >=
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat >=
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean >=
+                              contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+      else begin
+       notsupported();
+      end;
+     end;
+    end;
+    cmpo_le: begin
+     case dk1 of
+      sdk_int32: begin
+       d.dat.constval.vboolean:= d.dat.constval.vinteger <=
+                 contextstack[s.stacktop].d.dat.constval.vinteger;
+      end;
+      sdk_flo64: begin
+       d.dat.constval.vboolean:= d.dat.constval.vfloat <=
+                              contextstack[s.stacktop].d.dat.constval.vfloat;
+      end;
+      sdk_bool1: begin
+       d.dat.constval.vboolean:= d.dat.constval.vboolean <=
                               contextstack[s.stacktop].d.dat.constval.vboolean;
       end;
       else begin
@@ -1535,24 +1625,56 @@ begin
  end;
 end;
 
-procedure handleequsimpexp();
+procedure handleeqsimpexp();
 var
  dk1:stackdatakindty;
 begin
 {$ifdef mse_debugparser}
- outhandle('EQUSIMPEXP');
+ outhandle('EQSIMPEXP');
 {$endif}
- handlecomparison(cmpo_equ);
+ handlecomparison(cmpo_eq);
 end;
 
-procedure handlenequsimpexp();
+procedure handlenesimpexp();
 var
  dk1:stackdatakindty;
 begin
 {$ifdef mse_debugparser}
- outhandle('NEQUSIMPEXP');
+ outhandle('NESIMPEXP');
 {$endif}
- handlecomparison(cmpo_nequ);
+ handlecomparison(cmpo_ne);
+end;
+
+procedure handlegtsimpexp();
+begin
+{$ifdef mse_debugparser}
+ outhandle('GTSIMPEXP');
+{$endif}
+ handlecomparison(cmpo_gt);
+end;
+
+procedure handleltsimpexp();
+begin
+{$ifdef mse_debugparser}
+ outhandle('LTSIMPEXP');
+{$endif}
+ handlecomparison(cmpo_lt);
+end;
+
+procedure handlegesimpexp();
+begin
+{$ifdef mse_debugparser}
+ outhandle('GESIMPEXP');
+{$endif}
+ handlecomparison(cmpo_ge);
+end;
+
+procedure handlelesimpexp();
+begin
+{$ifdef mse_debugparser}
+ outhandle('LESIMPEXP');
+{$endif}
+ handlecomparison(cmpo_le);
 end;
 
 procedure handlecommaseprange();

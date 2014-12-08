@@ -130,15 +130,35 @@ type
   oc_incdecparindiimmint32,
   oc_incdecparindiimmpo32,
 
-  oc_cmpequpo,
-  oc_cmpequbool,
-  oc_cmpequint32,
-  oc_cmpequflo64,
+  oc_cmpeqpo,
+  oc_cmpeqbool,
+  oc_cmpeqint32,
+  oc_cmpeqflo64,
 
-  oc_cmpnequpo,
-  oc_cmpnequbool,
-  oc_cmpnequint32,
-  oc_cmpnequflo64,
+  oc_cmpnepo,
+  oc_cmpnebool,
+  oc_cmpneint32,
+  oc_cmpneflo64,
+
+  oc_cmpgtpo,
+  oc_cmpgtbool,
+  oc_cmpgtint32,
+  oc_cmpgtflo64,
+
+  oc_cmpltpo,
+  oc_cmpltbool,
+  oc_cmpltint32,
+  oc_cmpltflo64,
+
+  oc_cmpgepo,
+  oc_cmpgebool,
+  oc_cmpgeint32,
+  oc_cmpgeflo64,
+
+  oc_cmplepo,
+  oc_cmplebool,
+  oc_cmpleint32,
+  oc_cmpleflo64,
 
   oc_storesegnil,
   oc_storereg0nil,
@@ -604,7 +624,12 @@ type
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
    oc_addpoint32,
-   oc_cmpequbool,oc_cmpequint32,oc_cmpequflo64:(
+   oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
+   oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,
+   oc_cmpgtbool,oc_cmpgtint32,oc_cmpgtflo64,
+   oc_cmpltbool,oc_cmpltint32,oc_cmpltflo64,
+   oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
+   oc_cmplebool,oc_cmpleint32,oc_cmpleflo64:(
     stackop: stackopty;
    );
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,

@@ -1064,42 +1064,122 @@ begin
  notimplemented();
 end;
 
-procedure cmpequpoop();
+procedure cmpeqpoop();
 begin
  notimplemented();
 end;
 
-procedure cmpequboolop();
+procedure cmpeqboolop();
 begin
  notimplemented();
 end;
 
-procedure cmpequint32op();
+procedure cmpeqint32op();
 begin
  icompare(ick_eq);
 end;
 
-procedure cmpequflo64op();
+procedure cmpeqflo64op();
 begin
  notimplemented();
 end;
 
-procedure cmpnequpoop();
+procedure cmpnepoop();
 begin
  notimplemented();
 end;
 
-procedure cmpnequboolop();
+procedure cmpneboolop();
 begin
  notimplemented();
 end;
 
-procedure cmpnequint32op();
+procedure cmpneint32op();
 begin
  icompare(ick_ne);
 end;
 
-procedure cmpnequflo64op();
+procedure cmpneflo64op();
+begin
+ notimplemented();
+end;
+
+procedure cmpgtpoop();
+begin
+ notimplemented();
+end;
+
+procedure cmpgtboolop();
+begin
+ notimplemented();
+end;
+
+procedure cmpgtint32op();
+begin
+ icompare(ick_sgt);
+end;
+
+procedure cmpgtflo64op();
+begin
+ notimplemented();
+end;
+
+procedure cmpltpoop();
+begin
+ notimplemented();
+end;
+
+procedure cmpltboolop();
+begin
+ notimplemented();
+end;
+
+procedure cmpltint32op();
+begin
+ icompare(ick_slt);
+end;
+
+procedure cmpltflo64op();
+begin
+ notimplemented();
+end;
+
+procedure cmpgepoop();
+begin
+ notimplemented();
+end;
+
+procedure cmpgeboolop();
+begin
+ notimplemented();
+end;
+
+procedure cmpgeint32op();
+begin
+ icompare(ick_sge);
+end;
+
+procedure cmpgeflo64op();
+begin
+ notimplemented();
+end;
+
+procedure cmplepoop();
+begin
+ notimplemented();
+end;
+
+procedure cmpleboolop();
+begin
+ notimplemented();
+end;
+
+procedure cmpleint32op();
+begin
+ icompare(ick_sle);
+end;
+
+procedure cmpleflo64op();
 begin
  notimplemented();
 end;
@@ -2356,15 +2436,35 @@ const
   incdecparindiimmint32ssa = 1;
   incdecparindiimmpo32ssa = 1;
 
-  cmpequpossa = 1;
-  cmpequboolssa = 1;
-  cmpequint32ssa = 1;
-  cmpequflo64ssa = 1;
+  cmpeqpossa = 1;
+  cmpeqboolssa = 1;
+  cmpeqint32ssa = 1;
+  cmpeqflo64ssa = 1;
 
-  cmpnequpossa = 1;
-  cmpnequboolssa = 1;
-  cmpnequint32ssa = 1;
-  cmpnequflo64ssa = 1;
+  cmpnepossa = 1;
+  cmpneboolssa = 1;
+  cmpneint32ssa = 1;
+  cmpneflo64ssa = 1;
+
+  cmpgtpossa = 1;
+  cmpgtboolssa = 1;
+  cmpgtint32ssa = 1;
+  cmpgtflo64ssa = 1;
+
+  cmpltpossa = 1;
+  cmpltboolssa = 1;
+  cmpltint32ssa = 1;
+  cmpltflo64ssa = 1;
+
+  cmpgspossa = 1;
+  cmpgsboolssa = 1;
+  cmpgsint32ssa = 1;
+  cmpgsflo64ssa = 1;
+
+  cmplspossa = 1;
+  cmplsboolssa = 1;
+  cmplsint32ssa = 1;
+  cmplsflo64ssa = 1;
 
   storesegnilssa = 1;
   storereg0nilssa = 1;

@@ -1112,16 +1112,36 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'exp1');
- equsimpexpco: contextty = (branch: nil; 
+ eqsimpexpco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'equsimpexp');
- nequsimpexpco: contextty = (branch: nil; 
+               caption: 'eqsimpexp');
+ nesimpexpco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'nequsimpexp');
+               caption: 'nesimpexp');
+ gtsimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'gtsimpexp');
+ ltsimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'ltsimpexp');
+ gesimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'gesimpexp');
+ lesimpexpco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'lesimpexp');
  simpexpco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5016,7 +5036,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexp1: array[0..6] of branchty = (
+ bexp1: array[0..10] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5032,9 +5052,23 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @nequsimpexpco); stack: nil; keys: (
+     dest: (context: @nesimpexpco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['<']),
     (kind: bkk_char; chars: ['>']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @gesimpexpco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['>']),
+    (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @lesimpexpco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['<']),
+    (kind: bkk_char; chars: ['=']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
@@ -5053,15 +5087,29 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @equsimpexpco); stack: nil; keys: (
+     dest: (context: @eqsimpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: ['=']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @gtsimpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['>']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @ltsimpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['<']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bequsimpexp: array[0..1] of branchty = (
+ beqsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @simpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -5071,7 +5119,47 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bnequsimpexp: array[0..1] of branchty = (
+ bnesimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @simpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgtsimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @simpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bltsimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @simpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bgesimpexp: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @simpexpco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ blesimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @simpexpco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -6603,10 +6691,18 @@ begin
  callexpco.next:= @exp1co;
  exp1co.branch:= @bexp1;
  exp1co.handleexit:= @handleexp1;
- equsimpexpco.branch:= @bequsimpexp;
- equsimpexpco.handleexit:= @handleequsimpexp;
- nequsimpexpco.branch:= @bnequsimpexp;
- nequsimpexpco.handleexit:= @handlenequsimpexp;
+ eqsimpexpco.branch:= @beqsimpexp;
+ eqsimpexpco.handleexit:= @handleeqsimpexp;
+ nesimpexpco.branch:= @bnesimpexp;
+ nesimpexpco.handleexit:= @handlenesimpexp;
+ gtsimpexpco.branch:= @bgtsimpexp;
+ gtsimpexpco.handleexit:= @handlegtsimpexp;
+ ltsimpexpco.branch:= @bltsimpexp;
+ ltsimpexpco.handleexit:= @handleltsimpexp;
+ gesimpexpco.branch:= @bgesimpexp;
+ gesimpexpco.handleexit:= @handlegesimpexp;
+ lesimpexpco.branch:= @blesimpexp;
+ lesimpexpco.handleexit:= @handlelesimpexp;
  simpexpco.branch:= @bsimpexp;
  simpexpco.next:= @simpexp1co;
  simpexp1co.branch:= @bsimpexp1;

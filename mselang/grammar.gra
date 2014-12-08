@@ -615,12 +615,24 @@ callexp,exp1,,
  '',simpexp*
 exp1,,,handleexp1
  ${whitespace}
- '=',equsimpexp-* 
- '<>',nequsimpexp-* 
+ '=',eqsimpexp-* 
+ '<>',nesimpexp-* 
+ '>',gtsimpexp-* 
+ '<',ltsimpexp-* 
+ '>=',gesimpexp-* 
+ '<=',lesimpexp-* 
 
-equsimpexp,,,handleequsimpexp
+eqsimpexp,,,handleeqsimpexp
  '',simpexp*
-nequsimpexp,,,handlenequsimpexp
+nesimpexp,,,handlenesimpexp
+ '',simpexp*
+gtsimpexp,,,handlegtsimpexp
+ '',simpexp*
+ltsimpexp,,,handleltsimpexp
+ '',simpexp*
+gesimpexp,,,handlegesimpexp
+ '',simpexp*
+lesimpexp,,,handlelesimpexp
  '',simpexp*
 
 simpexp,simpexp1,,
