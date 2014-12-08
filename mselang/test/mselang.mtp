@@ -109,10 +109,48 @@ c=3
  (
  kind=1
  a=0,665,4,testdir
- c=1
+ c=2
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,3,syntax
+  c=1
+   (
+   kind=2
+   a=0,648,0,missingend
+   teststate=0
+   path=missingend.mla
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cr=0
+   ao=
+   ae=
+   aec=0
+   ie=0
+   )
+  teststate=0
+  path=syntax/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ee=
+  eec=
+  cdef=
+  pdef=
+  )
+  (
+  kind=1
+  a=0,664,4,base
   c=7
    (
    kind=1
@@ -318,7 +356,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,4,record
    c=6
     (
     kind=2
@@ -456,7 +494,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,math
+   a=0,664,4,math
    c=3
     (
     kind=2
@@ -534,8 +572,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
-   c=3
+   a=0,664,4,control
+   c=6
     (
     kind=2
     a=0,648,1,iftest
@@ -581,6 +619,66 @@ c=3
     a=0,648,1,iftest lr
     teststate=1
     path=iftest.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=99
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recifindi
+    teststate=1
+    path=recifindi.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=99
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recifindi lc
+    teststate=1
+    path=recifindi.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=99
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recifindi lr
+    teststate=1
+    path=recifindi.mla
     comment=
     cc=${llvm-as}
     cd=
@@ -866,24 +964,7 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=23
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=6
  0 0
  0 0
  0 0
