@@ -2399,6 +2399,24 @@ begin
  end;
 end;
 
+procedure getmemop();
+var
+ int1: int32;
+ po1: ppointer;
+begin
+ int1:= pinteger(stackpop(sizeof(int32)))^;
+ po1:= ppointer(stackpop(pointersize))^;
+ getmem(po1^,int1); //todo: out of memory
+end;
+
+procedure freememop();
+var
+ po1: pointer;
+begin
+ po1:= ppointer(stackpop(pointersize))^;
+ freemem(po1);
+end;
+
 {
 procedure pophandlecpucontext();
 var
@@ -2713,6 +2731,8 @@ const
   popcpucontextssa = 0;
   finiexceptionssa = 0;
   continueexceptionssa = 0;
+  getmemssa = 0;
+  freememssa = 0;
 
 //ssa only
   nestedvarssa = 0;

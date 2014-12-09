@@ -2389,6 +2389,17 @@ begin
  notimplemented();
 end;
 
+procedure getmemop();
+begin
+ notimplemented();
+end;
+
+procedure freememop();
+begin
+ notimplemented();
+end;
+
+
 const
   nonessa = 0;
   nopssa = 1;
@@ -2687,6 +2698,8 @@ const
   popcpucontextssa = 1;
   finiexceptionssa = 1;
   continueexceptionssa = 1;
+  getmemssa = 1;
+  freememssa = 1;
 
 //ssa only
   nestedvarssa = 3;

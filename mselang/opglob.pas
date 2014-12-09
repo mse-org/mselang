@@ -361,6 +361,9 @@ type
   oc_finiexception,
   oc_continueexception,
   
+  oc_getmem,
+  oc_freemem,
+  
 //ssaonly
   ocssa_nestedvar,
   ocssa_popnestedvar,

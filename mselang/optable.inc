@@ -313,6 +313,8 @@
   popcpucontextssa,
   finiexceptionssa,
   continueexceptionssa,
+  getmemssa,
+  freememssa,
 //ssaonly
   nestedvarssa,
   popnestedvarssa,
@@ -619,6 +621,9 @@
   @popcpucontextop,
   @finiexceptionop,
   @continueexceptionop,
+
+  @getmemop,
+  @freememop,
   
    //ssa only
   nil,

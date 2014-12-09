@@ -92,6 +92,8 @@ const
  databytesizes = [das_none];
  byteopdatakinds = databytesizes;
  bitopdatakinds = alldatakinds-byteopdatakinds;
+ floatopdatakinds = [das_f16,das_f32,das_f64];
+ ordinalopdatakinds = bitopdatakinds-floatopdatakinds;
 
 type
  typeallocinfoty = record

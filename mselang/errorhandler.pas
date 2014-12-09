@@ -53,7 +53,8 @@ type
             err_duplicateancestortype,err_localclassdef,err_noinputfile,
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
-            err_cannotaddresstype,err_valueexpected,err_cannotgetsize);
+            err_cannotaddresstype,err_valueexpected,err_cannotgetsize,
+            err_pointertypeexpected);
             
  errorinfoty = record
   level: errorlevelty;
@@ -194,7 +195,8 @@ const
   (level: erl_fatal; message: 'Compiler unit "%s" not found'),
   (level: erl_error; message: 'Can''t take the addreess of type'),
   (level: erl_error; message: 'Value expected'),
-  (level: erl_error; message: 'Can not get size of this expression')
+  (level: erl_error; message: 'Can not get size of this expression'),
+  (level: erl_error; message: 'Pointer type expected')
  );
 
 procedure message1(const atext: string; const values: array of const); 

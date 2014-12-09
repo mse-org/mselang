@@ -27,13 +27,15 @@ procedure handlewrite(const paramco: integer);
 procedure handlesizeof(const paramco: integer);
 procedure handleinc(const paramco: integer);
 procedure handledec(const paramco: integer);
+procedure handlegetmem(const paramco: integer);
+procedure handlefreemem(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
   //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof,
   @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
-  //sf_inc,  sf_dec
-  @handleinc,@handledec);
+  //sf_inc,  sf_dec     sf_getmem,    sf_freemem
+  @handleinc,@handledec,@handlegetmem,@handlefreemem);
   
 procedure init();
 procedure deinit();
@@ -43,49 +45,56 @@ uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
  segmentutils;
 
+function checkparamco(const wanted, actual: integer): boolean;
+begin
+ result:= wanted = actual;
+ if not result then begin
+  with info do begin
+   if actual > wanted then begin
+    errormessage(err_tokenexpected,[')'],s.stacktop-s.stackindex-actual+wanted);
+   end
+   else begin
+    identerror(1,err_wrongnumberofparameters);
+   end;
+  end;
+ end;
+end;
+
 procedure handlesizeof(const paramco: integer);
 var
  int1: integer;
 begin
- case paramco of
-  0: begin
-   errormessage(err_illegalexpression,[]);
-  end;
-  1: begin
-   with info,contextstack[s.stackindex] do begin
-    d.kind:= ck_const;
-    d.dat.indirection:= 0;
-    d.dat.datatyp:= sysdatatypes[st_int32];
-    d.dat.constval.kind:= dk_integer;
-    with contextstack[s.stacktop] do begin
-     case d.kind of
-      ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
-       if d.dat.datatyp.indirectlevel > 0 then begin
-        int1:= pointersize;
-       end
-       else begin
-        int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
-       end;
-      end;
-      ck_typetype,ck_fieldtype,ck_typearg: begin
-       if d.typ.indirectlevel > 0 then begin
-        int1:= pointersize;
-       end
-       else begin
-        int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.bytesize;
-       end;
-      end;
+ if checkparamco(1,paramco) then begin
+  with info,contextstack[s.stackindex] do begin
+   d.kind:= ck_const;
+   d.dat.indirection:= 0;
+   d.dat.datatyp:= sysdatatypes[st_int32];
+   d.dat.constval.kind:= dk_integer;
+   with contextstack[s.stacktop] do begin
+    case d.kind of
+     ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
+      if d.dat.datatyp.indirectlevel > 0 then begin
+       int1:= pointersize;
+      end
       else begin
-       int1:= 0;
-       errormessage(err_cannotgetsize,[]);
+       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
       end;
      end;
-    end;      
-    d.dat.constval.vinteger:= int1;
-   end;
-  end;
-  else begin
-   errormessage(err_tokenexpected,[')']);
+     ck_typetype,ck_fieldtype,ck_typearg: begin
+      if d.typ.indirectlevel > 0 then begin
+       int1:= pointersize;
+      end
+      else begin
+       int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.bytesize;
+      end;
+     end;
+     else begin
+      int1:= 0;
+      errormessage(err_cannotgetsize,[]);
+     end;
+    end;
+   end;      
+   d.dat.constval.vinteger:= int1;
   end;
  end;
 end;
@@ -246,7 +255,7 @@ begin
         getaddress(s.stacktop-paramco+1-s.stackindex,true);
        end
        else begin
-        inc(d.dat.indirection);
+        inc(d.dat.indirection);         //address
         inc(d.dat.datatyp.indirectlevel);
        end;
        handleimm(po1);
@@ -384,6 +393,45 @@ end;
 procedure handlesetlength(const paramco: integer);
 begin
 end;
+
+procedure handlegetmem(const paramco: integer);
+begin
+ if checkparamco(2,paramco) then begin
+  with info,contextstack[s.stacktop-1] do begin
+   if getaddress(s.stacktop-s.stackindex-1,true) and
+                   getvalue(s.stacktop-s.stackindex) then begin
+    if d.dat.datatyp.indirectlevel <= 0 then begin
+     errormessage(err_pointertypeexpected,[]);
+     exit;
+    end;
+    if not (contextstack[s.stacktop].d.dat.fact.opdatatype.kind in
+                                            ordinalopdatakinds) then begin
+     errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);
+     exit;
+    end;    
+    with additem(oc_getmem)^ do begin
+     par.ssas1:= info.s.ssa.index-1;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handlefreemem(const paramco: integer);
+begin
+ if checkparamco(1,paramco) then begin
+  with info,contextstack[s.stacktop] do begin
+   getvalue(s.stacktop-s.stackindex);
+   if d.dat.datatyp.indirectlevel <= 0 then begin
+    errormessage(err_pointertypeexpected,[]);
+    exit;
+   end;
+   with additem(oc_freemem)^ do begin
+    par.ssas1:= info.s.ssa.index-1;
+   end;
+  end;
+ end;
+end;
  
 type
  sysfuncinfoty = record
@@ -397,7 +445,9 @@ const
    (name: 'setlength'; data: (func: sf_setlength)),
    (name: 'sizeof'; data: (func: sf_sizeof)),
    (name: 'inc'; data: (func: sf_inc)),
-   (name: 'dec'; data: (func: sf_dec))
+   (name: 'dec'; data: (func: sf_dec)),
+   (name: 'getmem'; data: (func: sf_getmem)),
+   (name: 'freemem'; data: (func: sf_freemem))
   );
 
 procedure init();
