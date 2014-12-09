@@ -83,6 +83,9 @@
   incdecparindiimmint32ssa,
   incdecparindiimmpo32ssa,
 
+  incdecindiimmint32ssa,
+  incdecindiimmpo32ssa,
+
   cmpeqpossa,
   cmpeqboolssa,
   cmpeqint32ssa,
@@ -385,6 +388,9 @@
 
   @incdecparindiimmint32op,
   @incdecparindiimmpo32op,
+
+  @incdecindiimmint32op,
+  @incdecindiimmpo32op,
 
   @cmpeqpoop,
   @cmpeqboolop,

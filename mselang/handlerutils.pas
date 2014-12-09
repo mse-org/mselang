@@ -1330,6 +1330,7 @@ var
     par.ssas1:= ssabefore;
     par.memop.t:= opdata1;
     d.dat.fact.ssaindex:= par.ssad;
+    d.dat.fact.opdatatype:= opdata1;
    end;
   end;
  end;

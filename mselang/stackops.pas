@@ -695,6 +695,26 @@ begin
  end; 
 end;
 
+procedure incdecindiimmint32op();
+var
+ po1: ^pinteger;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= stackpop(sizeof(vpointerty));
+  inc(po1^^,vint32);
+ end; 
+end;
+
+procedure incdecindiimmpo32op();
+var
+ po1: pppointer;
+begin
+ with cpu.pc^.par.memimm do begin
+  po1:= stackpop(sizeof(vpointerty));
+  inc(po1^^,vint32);
+ end; 
+end;
+
 procedure cmpeqpoop();
 var
  po1,po2: pvpointerty;
@@ -2462,6 +2482,9 @@ const
 
   incdecparindiimmint32ssa = 0;
   incdecparindiimmpo32ssa = 0;
+
+  incdecindiimmint32ssa = 0;
+  incdecindiimmpo32ssa = 0;
 
   cmpeqpossa = 0;
   cmpeqboolssa = 0;

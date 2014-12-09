@@ -1064,6 +1064,16 @@ begin
  notimplemented();
 end;
 
+procedure incdecindiimmint32op();
+begin
+ notimplemented();
+end;
+
+procedure incdecindiimmpo32op();
+begin
+ notimplemented();
+end;
+
 procedure cmpeqpoop();
 begin
  notimplemented();
@@ -2435,6 +2445,9 @@ const
 
   incdecparindiimmint32ssa = 1;
   incdecparindiimmpo32ssa = 1;
+
+  incdecindiimmint32ssa = 1;
+  incdecindiimmpo32ssa = 1;
 
   cmpeqpossa = 1;
   cmpeqboolssa = 1;

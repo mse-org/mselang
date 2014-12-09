@@ -91,45 +91,52 @@ begin
 end;
 
 type
- memopty = (meo_segment,meo_local,meo_param,meo_paramindi);
+ memopty = (meo_segment,meo_local,meo_param,meo_paramindi,meo_indi);
  memoparty = array[memopty] of opcodety;
   
-function addmemop(var dat: datacontextty; const ops: memoparty): popinfoty;
+function addmemop(var context: contextdataty; const ops: memoparty): popinfoty;
 var
  ssaextension1: integer;
  framelevel1: integer;
  opdatatype1: typeallocinfoty;
 begin
- opdatatype1:= getopdatatype(dat.datatyp);
- if af_segment in dat.ref.c.address.flags then begin
-  result:= additem(ops[meo_segment]);
-  with result^.par do begin
-   memop.segdataaddress.a:= dat.ref.c.address.segaddress;
-   memop.segdataaddress.offset:= dat.ref.offset;
-  end;
+ opdatatype1:= getopdatatype(context.dat.datatyp);
+ if context.kind = ck_fact then begin
+  result:= additem(ops[meo_indi]);
  end
  else begin
-  framelevel1:= info.sublevel-dat.ref.c.address.locaddress.framelevel-1;
-  if framelevel1 >= 0 then begin
-   ssaextension1:= getssa(ocssa_nestedvar);
-  end;
-  if af_param in dat.ref.c.address.flags then begin
-   if af_paramindirect in dat.ref.c.address.flags then begin
-    result:= additem(ops[meo_paramindi],ssaextension1);
-   end
-   else begin
-    result:= additem(ops[meo_param],ssaextension1);
+  if af_segment in context.dat.ref.c.address.flags then begin
+   result:= additem(ops[meo_segment]);
+   with result^.par do begin
+    memop.segdataaddress.a:= context.dat.ref.c.address.segaddress;
+    memop.segdataaddress.offset:= context.dat.ref.offset;
    end;
   end
-  else begin   
-   result:= additem(ops[meo_local],ssaextension1);
+  else begin
+   framelevel1:= info.sublevel-
+                         context.dat.ref.c.address.locaddress.framelevel-1;
+   if framelevel1 >= 0 then begin
+    ssaextension1:= getssa(ocssa_nestedvar);
+   end;
+   if af_param in context.dat.ref.c.address.flags then begin
+    if af_paramindirect in context.dat.ref.c.address.flags then begin
+     result:= additem(ops[meo_paramindi],ssaextension1);
+    end
+    else begin
+     result:= additem(ops[meo_param],ssaextension1);
+    end;
+   end
+   else begin   
+    result:= additem(ops[meo_local],ssaextension1);
+   end;
+   with result^ do begin
+    par.memop.locdataaddress.a:= context.dat.ref.c.address.locaddress;
+    par.memop.locdataaddress.a.framelevel:= framelevel1;
+    par.memop.locdataaddress.offset:= context.dat.ref.offset;
+   end;
+   tracklocalaccess(context.dat.ref.c.address.locaddress,
+                                          context.dat.ref.c.varele,opdatatype1);
   end;
-  with result^ do begin
-   par.memop.locdataaddress.a:= dat.ref.c.address.locaddress;
-   par.memop.locdataaddress.a.framelevel:= framelevel1;
-   par.memop.locdataaddress.offset:= dat.ref.offset;
-  end;
-  tracklocalaccess(dat.ref.c.address.locaddress,dat.ref.c.varele,opdatatype1);
  end;
  result^.par.memop.t:= opdatatype1;
 end;
@@ -138,23 +145,68 @@ const
  incdecimmint32ops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
   oc_incdecsegimmint32,oc_incdeclocimmint32,oc_incdecparimmint32,
-//meo_paramindi
-  oc_incdecparindiimmint32);
+//meo_paramindi          //meo_indi
+  oc_incdecparindiimmint32,oc_incdecindiimmint32);
  
  incdecimmpoops: memoparty = (
 //meo_segment,        meo_local,          meo_param,
   oc_incdecsegimmpo32,oc_incdeclocimmpo32,oc_incdecparimmpo32,
-//meo_paramindi
-  oc_incdecparindiimmpo32);
+//meo_paramindi         //meo_indi
+  oc_incdecparindiimmpo32,oc_incdecindiimmpo32);
  
 procedure handleincdec(const paramco: integer; const adec: boolean);
+
 var
- po1,po2: ptypedataty;
- int1: integer;
- po3: popinfoty;
  par2isconst: boolean;
-label
- factlab;
+
+ procedure handleimm(const dest: pcontextitemty);
+ var
+  po1: ptypedataty;
+  po3: popinfoty;
+ begin
+  with dest^ do begin
+   dec(d.dat.datatyp.indirectlevel); //dest type
+   po1:= ele.eledataabs(d.dat.datatyp.typedata);
+   if (paramco = 1) or par2isconst then begin
+    if (d.dat.datatyp.indirectlevel > 0) then begin
+     po3:= addmemop(d,incdecimmpoops);
+     if d.dat.datatyp.indirectlevel = 1 then begin
+      if po1^.kind = dk_pointer then begin
+       po3^.par.memimm.vint32:= 1;
+      end
+      else begin
+       po3^.par.memimm.vint32:= po1^.bytesize;
+      end;
+     end
+     else begin
+      po3^.par.memimm.vint32:= pointersize;
+     end;
+    end
+    else begin
+     po3:= addmemop(d,incdecimmint32ops);
+     po3^.par.memimm.vint32:= 1;
+    end;
+    if par2isconst and (paramco > 1) then begin
+     po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
+                info.contextstack[info.s.stacktop].d.dat.constval.vinteger;
+    end;
+   end
+   else begin
+    notimplementederror('20141110A');
+   end;
+   if adec then begin
+    po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
+   end;
+  end;
+ end;
+
+var
+ po1: pcontextitemty;
+ {po1,}po2: ptypedataty;
+ int1: integer;
+// po3: popinfoty;
+//label
+// factlab;
 begin
  with info do begin
   if (paramco < 1) or (paramco > 2) then begin
@@ -185,52 +237,22 @@ begin
     end;
    end;
    if int1 <> 0 then begin //ignore otherwise
-    with contextstack[s.stacktop-paramco+1] do begin //dest
+    po1:= @contextstack[s.stacktop-paramco+1];
+    with po1^ do begin //dest
      case d.kind of
       ck_ref: begin
        if d.dat.indirection <> 0 then begin
-        getvalue(s.stacktop-paramco+1);
-        goto factlab;
-       end;
-       po1:= ele.eledataabs(d.dat.datatyp.typedata);
-       if (paramco = 1) or par2isconst then begin
-        if (d.dat.datatyp.indirectlevel > 0) then begin
-         po3:= addmemop(d.dat,incdecimmpoops);
-         if d.dat.datatyp.indirectlevel = 1 then begin
-          if po1^.kind = dk_pointer then begin
-           po3^.par.memimm.vint32:= 1;
-          end
-          else begin
-           po3^.par.memimm.vint32:= po1^.bytesize;
-          end;
-         end
-         else begin
-          po3^.par.memimm.vint32:= pointersize;
-         end;
-        end
-        else begin
-         po3:= addmemop(d.dat,incdecimmint32ops);
-         po3^.par.memimm.vint32:= 1;
-        end;
-        if par2isconst and (paramco > 1) then begin
-         po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
-                           contextstack[s.stacktop].d.dat.constval.vinteger;
-        end;
+        getaddress(s.stacktop-paramco+1-s.stackindex,true);
        end
        else begin
-       {$ifdef mse_checkinternalerror}   
-        internalerror(ie_handler,'20141110A');
-       {$endif} 
+        inc(d.dat.indirection);
+        inc(d.dat.datatyp.indirectlevel);
        end;
-       if adec then begin
-        po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
-       end;
+       handleimm(po1);
       end;
       ck_fact: begin
-factlab:
-      {$ifdef mse_checkinternalerror}   
-       internalerror(ie_notimplemented,'20141110A');
-      {$endif}
+       getaddress(s.stacktop-paramco+1-s.stackindex,true);
+       handleimm(po1);
       end;
       ck_const: begin
        errormessage(err_variableexpected,[],s.stacktop-s.stackindex-paramco+1);

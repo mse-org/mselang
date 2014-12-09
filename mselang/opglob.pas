@@ -130,6 +130,9 @@ type
   oc_incdecparindiimmint32,
   oc_incdecparindiimmpo32,
 
+  oc_incdecindiimmint32,
+  oc_incdecindiimmpo32,
+
   oc_cmpeqpo,
   oc_cmpeqbool,
   oc_cmpeqint32,
@@ -483,14 +486,16 @@ type
 
  stackopty = record
   t: typeallocinfoty;
-//  destssaindex: integer;
-//  source1ssaindex: integer;
-//  case opcodety of
-//   oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64:(
-//    source2ssaindex: integer;
-//   );
  end;
-
+{
+ stackimmopty = record
+  t: typeallocinfoty;
+  case opcodety of
+   oc_incdecindimmint32,oc_incdecindimmpo32:(
+    vint32: int32;
+   );
+ end;
+}
  memopty = record
   t: typeallocinfoty;
 //  ssaindex: integer;
@@ -525,7 +530,8 @@ type
    oc_incdecsegimmint32,oc_incdecsegimmpo32,
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
-   oc_incdecparindiimmint32,oc_incdecparindiimmpo32:(
+   oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
+   oc_incdecindiimmint32,oc_incdecindiimmpo32:(
     vint32: int32;
    );
  end;
@@ -586,7 +592,8 @@ type
    oc_incdecsegimmint32,oc_incdecsegimmpo32,
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
-   oc_incdecparindiimmint32,oc_incdecparindiimmpo32:(
+   oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
+   oc_incdecindiimmint32,oc_incdecindiimmpo32:(
     memimm: memimmopty;
    );
   

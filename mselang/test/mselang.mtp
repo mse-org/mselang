@@ -56,7 +56,7 @@ groupedit.sta=9
  [groupeditfo]
  stackedunder=
  x=247
- y=722
+ y=419
  cx=596
  cy=581
  wsize=0
@@ -108,33 +108,76 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,664,4,testdir
  c=2
   (
   kind=1
-  a=0,665,3,syntax
+  a=0,665,4,syntax
   c=1
    (
-   kind=2
-   a=0,648,0,missingend
-   teststate=0
-   path=missingend.mla
+   kind=1
+   a=0,665,4,error check
+   c=2
+    (
+    kind=2
+    a=0,648,1,missingend
+    teststate=1
+    path=missingend.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=1
+    cr=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
+    +
+    aec=1
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,missingendok
+    teststate=1
+    path=missingendok.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=
+    aec=0
+    ie=0
+    )
+   teststate=1
+   path=errorcheck/
    comment=
    cc=
    cd=
-   rc=
+   rc=${mlctest}
    rd=
    in=
    eo=
    ee=
    eec=
-   cr=0
-   ao=
-   ae=
-   aec=0
-   ie=0
+   cdef=
+   pdef=
    )
-  teststate=0
+  teststate=1
   path=syntax/
   comment=
   cc=
@@ -154,7 +197,7 @@ c=3
   c=7
    (
    kind=1
-   a=0,664,4,empty
+   a=0,665,4,empty
    c=3
     (
     kind=2
@@ -885,7 +928,7 @@ checked=0
 [mainmo.stoponcomperr]
 checked=0
 [mainmo.trttistat1]
-macronames=16
+macronames=17
  fpcflags
  fpcdir
  fpc1
@@ -897,12 +940,13 @@ macronames=16
  mselangunits
  mselangdir
  mlc
+ mlctest
  mlr
  testdir
  mlc_llvm
  llvm-as
  lli
-macrovalues=16
+macrovalues=17
  -dsvnfixes_2_6
  /home/mse/packs/standard/svn/fp/fixes_2_6/
  ${fpcdir}compiler/ppc386 ${fpcflags} ${mseunits} ${mselangunits}
@@ -914,17 +958,19 @@ macrovalues=16
  -Fu${mselangdir}
  /home/mse/packs/standard/git/mselang/mselang/
  ${mselangdir}compiler/mlc ${FILE}
+ ${mlc}
  ${mselangdir}runtime/mlr ${FILE_NOEXT(${FILE})}.mlr
  ${mselangdir}test/
  ${mselangdir}compiler/mlc --llvm ${FILE}
  llvm-as ${FILE_NOEXT(${FILE})}.ll
  lli ${FILE_NOEXT(${FILE})}.bc
-macroon=16
+macroon=17
  63
  63
  63
  61
  2
+ 63
  63
  63
  63
@@ -964,10 +1010,7 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=6
- 0 0
- 0 0
- 0 0
+rowstate=3
  0 0
  0 0
  0 0

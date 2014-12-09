@@ -239,6 +239,7 @@ procedure operationnotsupportederror(const a,b: contextdataty;
                                              const operation: string);
 
 procedure illegalcharactererror(const eaten: boolean);
+procedure notimplementederror(const id: string);
 
 {$ifdef mse_checkinternalerror}                             
 procedure internalerror(const kind: internalerrorkindty; const id: string);
@@ -619,6 +620,11 @@ begin
  errormessage(err_internalerror,[internalerrorlabels[kind]+id]);
  exitcode:= integer(kind);
  abort();
+end;
+
+procedure notimplementederror(const id: string);
+begin
+ internalerror1(ie_notimplemented,id);
 end;
 
 {$ifdef mse_checkinternalerror}

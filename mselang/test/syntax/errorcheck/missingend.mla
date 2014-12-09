@@ -1,28 +1,6 @@
-program recifinidi;
-type
- recty = record
-  a: int32;
-  b: int32;
- end;
- precty = ^recty;
-var
- rec1: recty;
- po1: precty;
+program missingend;
 begin
- rec1.b:= 1;
- po1:= @rec1;
  if exitcode = 1 then begin
-  if rec1.b < 2 then begin
-   exitcode:= 3;
-  end;
-  if exitcode = 3 then begin
-   if rec1.b >= 1 then begin
-    if po1^.b <= 1 then begin
-     exitcode:= 99;
-    end;
-   end;
-  end;
 // end;
-end;
 
 end.
