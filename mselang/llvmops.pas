@@ -1065,8 +1065,19 @@ begin
 end;
 
 procedure incdecindiimmint32op();
+var
+ str1,str2,str3,str4: shortstring;
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  str1:= '%'+inttostr(ssas1);
+  str2:= '%'+inttostr(ssad-2);
+  str3:= '%'+inttostr(ssad-1);
+  str4:= '%'+inttostr(ssad);
+  outass(str2+' = bitcast i8* '+str1+' to i32*');
+  outass(str3+' = load i32* '+str2);
+  outass(str4+' = add i32 '+str3+', '+inttostr(vint32));
+  outass('store i32 '+str4+', i32* '+str2);
+ end;
 end;
 
 procedure incdecindiimmpo32op();
@@ -2435,19 +2446,19 @@ const
   offsetpoimm32ssa = 1;
 
   incdecsegimmint32ssa = 2;
-  incdecsegimmpo32ssa = 1;
+  incdecsegimmpo32ssa = 2;
 
-  incdeclocimmint32ssa = 1;
-  incdeclocimmpo32ssa = 1;
+  incdeclocimmint32ssa = 2;
+  incdeclocimmpo32ssa = 2;
 
-  incdecparimmint32ssa = 1;
-  incdecparimmpo32ssa = 1;
+  incdecparimmint32ssa = 2;
+  incdecparimmpo32ssa = 2;
 
-  incdecparindiimmint32ssa = 1;
-  incdecparindiimmpo32ssa = 1;
+  incdecparindiimmint32ssa = 2;
+  incdecparindiimmpo32ssa = 2;
 
-  incdecindiimmint32ssa = 1;
-  incdecindiimmpo32ssa = 1;
+  incdecindiimmint32ssa = 3;
+  incdecindiimmpo32ssa = 3;
 
   cmpeqpossa = 1;
   cmpeqboolssa = 1;

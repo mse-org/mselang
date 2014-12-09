@@ -194,6 +194,7 @@ var
    else begin
     notimplementederror('20141110A');
    end;
+   po3^.par.ssas1:= info.s.ssa.index - 1;
    if adec then begin
     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
    end;

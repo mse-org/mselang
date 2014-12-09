@@ -108,7 +108,7 @@ c=3
  )
  (
  kind=1
- a=0,664,4,testdir
+ a=0,665,4,testdir
  c=2
   (
   kind=1
@@ -193,11 +193,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=7
    (
    kind=1
-   a=0,665,4,empty
+   a=0,664,4,empty
    c=3
     (
     kind=2
@@ -537,8 +537,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,math
-   c=3
+   a=0,665,4,math
+   c=6
     (
     kind=2
     a=0,648,1,incdec
@@ -584,6 +584,66 @@ c=3
     a=0,648,1,incdec lr
     teststate=1
     path=incdec.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,incdecind
+    teststate=1
+    path=incdecind.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,incdecind lc
+    teststate=1
+    path=incdecind.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,incdecind lr
+    teststate=1
+    path=incdecind.mla
     comment=
     cc=${llvm-as}
     cd=
@@ -1010,7 +1070,25 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=3
+rowstate=21
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
