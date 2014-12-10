@@ -654,7 +654,8 @@ type
    oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizesegar,
    oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
    oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
-   oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar:(
+   oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar,
+   oc_getmem:(
     memop: memopty;
    );
    oc_setlengthstr8,oc_setlengthdynarray:(

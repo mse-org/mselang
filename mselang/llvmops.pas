@@ -759,6 +759,8 @@ begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
  outass('declare i32 @printf(i8*, ...)');
+ outass('declare i8* @malloc(i32)');
+ outass('declare void @free(i8*)');
  outass('@.wret = internal constant '+wretc);
  outass('@.wint32 = internal constant '+wint32c);
  outass('@.wstring8 = internal constant '+wstring8c);
@@ -2390,13 +2392,24 @@ begin
 end;
 
 procedure getmemop();
+var
+ str1,str2,str3: shortstring;
 begin
- notimplemented();
+ with pc^.par do begin
+  llvmtype(memop.t,str1);
+  str2:= '%'+inttostr(ssad-1);
+  str3:= '%'+inttostr(ssad);
+  outass(str2+' = call i8* @malloc('+str1+' %'+inttostr(ssas2)+')');
+  outass(str3+' = bitcast i8* '+'%'+inttostr(ssas1)+' to i8**');
+  outass('store i8* '+str2+', i8** '+str3);
+ end;
 end;
 
 procedure freememop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('call void @free(i8* %'+inttostr(ssas1)+')');
+ end;
 end;
 
 
@@ -2698,7 +2711,7 @@ const
   popcpucontextssa = 1;
   finiexceptionssa = 1;
   continueexceptionssa = 1;
-  getmemssa = 1;
+  getmemssa = 2;
   freememssa = 1;
 
 //ssa only

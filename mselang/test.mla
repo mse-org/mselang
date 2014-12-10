@@ -4,6 +4,6 @@ var
 begin
  getmem(po1,100);
  po1^:= 123;
- writeln(po1^);
+ exitcode:= po1^;
  freemem(po1);
 end.

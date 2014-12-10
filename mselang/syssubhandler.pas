@@ -395,22 +395,30 @@ begin
 end;
 
 procedure handlegetmem(const paramco: integer);
+var
+ po1,po2: pcontextitemty;
 begin
  if checkparamco(2,paramco) then begin
-  with info,contextstack[s.stacktop-1] do begin
-   if getaddress(s.stacktop-s.stackindex-1,true) and
-                   getvalue(s.stacktop-s.stackindex) then begin
-    if d.dat.datatyp.indirectlevel <= 0 then begin
-     errormessage(err_pointertypeexpected,[]);
-     exit;
-    end;
-    if not (contextstack[s.stacktop].d.dat.fact.opdatatype.kind in
-                                            ordinalopdatakinds) then begin
-     errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);
-     exit;
-    end;    
-    with additem(oc_getmem)^ do begin
-     par.ssas1:= info.s.ssa.index-1;
+  with info do begin
+   po2:= @contextstack[s.stacktop];
+   po1:= po2-1;
+   with po1^ do begin
+    if getaddress(s.stacktop-s.stackindex-1,true) and
+                    getvalue(s.stacktop-s.stackindex) then begin
+     if d.dat.datatyp.indirectlevel <= 0 then begin
+      errormessage(err_pointertypeexpected,[]);
+      exit;
+     end;
+     if not (contextstack[s.stacktop].d.dat.fact.opdatatype.kind in
+                                             ordinalopdatakinds) then begin
+      errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);
+      exit;
+     end;    
+     with additem(oc_getmem)^ do begin
+      par.ssas1:= d.dat.fact.ssaindex;
+      par.ssas2:= po2^.d.dat.fact.ssaindex;
+      par.memop.t:= po2^.d.dat.fact.opdatatype;
+     end;
     end;
    end;
   end;
