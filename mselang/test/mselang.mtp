@@ -194,7 +194,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=7
+  c=8
    (
    kind=1
    a=0,664,4,empty
@@ -537,7 +537,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,math
+   a=0,664,4,math
    c=6
     (
     kind=2
@@ -953,6 +953,84 @@ c=3
    cdef=
    pdef=
    )
+   (
+   kind=1
+   a=0,665,4,mem
+   c=3
+    (
+    kind=2
+    a=0,648,1,getmem
+    teststate=1
+    path=getmem.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,getmem lc
+    teststate=1
+    path=getmem.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,getmem lr
+    teststate=1
+    path=getmem.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=mem/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cdef=
+   pdef=
+   )
   teststate=1
   path=base/
   comment=
@@ -1063,16 +1141,14 @@ visible=1
 propcolwidthref=581
 width0=50
 sortdescend0=0
-width1=197
+width1=187
 sortdescend1=0
 width2=159
 sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=21
- 0 0
- 0 0
+rowstate=19
  0 0
  0 0
  0 0
