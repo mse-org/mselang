@@ -135,310 +135,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2014 by Martin Schreiber
-    +*PROGRAMENTRY* T:0 I:0 O:2 S:0 N:0 cont:0 [] L:1:'program',' missingend;'
-    +  0*   0        2<program0> ck_none  1:'program',' missingend;'
-    +> unit0
-    +^-ident
-    +*** terminate context
-    +*IDENT* T:1 I:1 O:2 S:0 N:0 cont:0 [] L:1:'d',';'
-    +  0 -  0        2<unit0> ck_none  1:'program',' missingend;'
-    +  1*   0   ^    2<ident> ck_none  1:'','missingend;'
-    +! ident.>unit1 0:1 unit1
-    +! after1 0:1 unit1
-    +*** terminate context
-    +*SETUNITNAME* T:1 I:0 O:2 S:0 N:0 cont:0 [] L:1:'d',';'
-    +  0*-  0     -  2<unit1> ck_none  1:'program',' missingend;'
-    +  1    0   ^    2<ident> ck_ident $11CBE839:10  missingend 1:'','missingend;'
-    +! unit1->unit2 0:0 unit1
-    +! after1 0:0 unit2
-    +> unit3
-    +*** terminate context
-    +! unit3->implementation 0:0 unit3
-    +*IMPLEMENTATIONENTRY* T:0 I:0 O:2 S:0 N:0 cont:0 [] L:2:'
-    +','begin'
-    +  0*   0        2<implementation> ck_none  1:';',''
-    +! after1 0:0 implementation
-    +^ main
-    +*** terminate context
-    +! main->main1 1:1 main
-    +! after1 1:1 main1
-    +*PROGBEGIN* T:1 I:1 O:2 S:0 N:0 cont:0 [stf_implementation] L:2:'begin',''
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1*   0        2<progbegin> ck_none  2:'begin',''
-    +> progblock
-    +^-statementblock
-    +^ statement
-    +> if0
-    +*IF0* T:3 I:3 O:3 S:0 N:0 cont:0 [stf_implementation] L:3:'if',' exitcode = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*   1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +^-exp
-    +^ callexp
-    +^ simpexp
-    +^ term
-    +^ fact
-    +*FACTSTART* T:8 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'if',' exitcode = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8*   3        3<fact> ck_none  3:'if',' exitcode = 1 then begin'
-    +^ valueidentifier
-    +^-identpath
-    +*** terminate context
-    +! identpath->identpath1a 10:10 identpath
-    +*IDENTPATH1A* T:10 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'e',' = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9 -  3        3<valueidentifier> ck_none  3:'','exitcode = 1 then begin'
-    + 10*   9        3<identpath1a> ck_none  3:'','exitcode = 1 then begin'
-    +! after1 10:10 identpath1a
-    +*** terminate context
-    +! identpath1a->identpath1 10:10 identpath1a
-    +! after1 10:10 identpath1
-    +*** terminate context
-    +! valueidentifier->checkvalueparams 9:10 valueidentifier
-    +! after1 9:10 checkvalueparams
-    +*** terminate context
-    +*VALUEIDENTIFIER* T:10 I:9 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9*-  3        3<checkvalueparams> ck_none  3:'','exitcode = 1 then begin'
-    + 10    9   ^    3<identpath1> ck_ident $159E3376:8  exitcode 3:'','exitcode = 1 then begin'
-    +! fact->fact1 8:9 fact
-    +! after1 8:9 fact1
-    +*** terminate context
-    +*FACT* T:9 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8*   3        3<fact1> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9    3        3<checkvalueparams> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'','exitcode = 1 then begin'
-    +! term->term1 7:8 term
-    +! after1 7:8 term1
-    +*** terminate context
-    +*TERM* T:8 I:7 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7*   3        3<term1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! simpexp->simpexp1 6:7 simpexp
-    +! after1 6:7 simpexp1
-    +> simpexp1a
-    +*** terminate context
-    +*SIMPEXP1* T:7 I:6 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6*   3        3<simpexp1a> ck_none  3:'','= 1 then begin'
-    +  7    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! callexp->exp1 5:6 callexp
-    +! after1 5:6 exp1
-    +^ eqsimpexp
-    +^ simpexp
-    +^ term
-    +^ fact
-    +*FACTSTART* T:10 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'=',' 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10*   3        3<fact> ck_none  3:'=',' 1 then begin'
-    +^ num
-    +*** terminate context
-    +*INT* T:11 I:11 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'1',' then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10    3        3<fact> ck_getfact flags:[] 3:'=',' 1 then begin'
-    + 11*   3        3<num> ck_none  3:'','1 then begin'
-    +! fact->fact1 10:11 fact
-    +! after1 10:11 fact1
-    +*** terminate context
-    +*FACT* T:11 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10*   3        3<fact1> ck_getfact flags:[] 3:'=',' 1 then begin'
-    + 11    3        3<num> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'','1 then begin'
-    +! term->term1 9:10 term
-    +! after1 9:10 term1
-    +*** terminate context
-    +*TERM* T:10 I:9 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9*   3        3<term1> ck_none  3:'=',' 1 then begin'
-    + 10    3        3<fact1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! simpexp->simpexp1 8:9 simpexp
-    +! after1 8:9 simpexp1
-    +> simpexp1a
-    +*** terminate context
-    +*SIMPEXP1* T:9 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8*   3        3<simpexp1a> ck_none  3:'','then begin'
-    +  9    3        3<term1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! no next, no continue 7:8 eqsimpexp
-    +*EQSIMPEXP* T:8 I:7 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7*   3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<term1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! no next, no continue 5:6 exp1
-    +*EXP1* T:6 I:5 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5*   3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3    3<NIL> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! no next, no continue 4:5 exp
-    +*EXP* T:5 I:4 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4*   3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! if0->then 3:4 if0
-    +! after1 3:4 then
-    +> then0
-    +*THEN0* T:4 I:3 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'then',' begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*-  1        6<then0> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +^-statementstack
-    +^ statement
-    +> compoundstatement
-    +^-statementblock
-    +^ statement
-    +^-linecomment0
-    +> linecomment1
-    +*** terminate context
-    +*COMMENTEND* T:9 I:9 O:7 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:5:'
-    +',''
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        6<then0> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  5    3   ^    7<statementstack> ck_none  3:'then',' begin'
-    +  6 -  3     -  7<compoundstatement> ck_none  3:'begin',''
-    +  7    6     -  7<statementblock> ck_none  3:'begin',''
-    +  8 -  6     -  7<statement> ck_none  3:'begin',''
-    +  9*   8   ^ -  7<linecomment1> ck_none  5:'
-    +',''
-    +! linecomment1.>statement 8:8 statement
-    +! after1 8:8 statement
-    +> blockend
-    +*** terminate context
-    +*BLOCKEND* T:8 I:8 O:7 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:6:'','end.'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        6<then0> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  5    3   ^    7<statementstack> ck_none  3:'then',' begin'
-    +  6 -  3     -  7<compoundstatement> ck_none  3:'begin',''
-    +  7    6     -  7<statementblock> ck_none  3:'begin',''
-    +  8*   6   ^ -  7<blockend> ck_none  6:'','end.'
-    +! compoundstatement->checkend 6:6 compoundstatement
-    +! after1 6:6 checkend
-    +*** terminate context
-    +! no next, no continue 5:5 statementstack
-    +! then0->then2 3:5 then0
-    +! after1 3:5 then2
-    +*** terminate context
-    +*THEN2* T:5 I:3 O:7 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:6:'end','.'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*-  1        6<then2> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  5    3   ^    7<statementstack> ck_none  3:'then',' begin'
-    +! statementblock->statementblock1 2:2 statementblock
-    +! after1 2:2 statementblock1
-    +*** terminate context
-    +*STATEMENTBLOCK1* T:2 I:2 O:8 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:6:'end','.'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2*   1     -  3<statementblock1> ck_none  2:'begin',''
-    +<<<<<<< main.mla(6,4) Fatal: Syntax error, ";" expected
-    +**** end **** ! main.mla -1:-1
     +
     ae=main.mla(6,4) Fatal: Syntax error, ";" expected
     +
@@ -462,306 +158,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2014 by Martin Schreiber
-    +*PROGRAMENTRY* T:0 I:0 O:2 S:0 N:0 cont:0 [] L:1:'program',' missingend;'
-    +  0*   0        2<program0> ck_none  1:'program',' missingend;'
-    +> unit0
-    +^-ident
-    +*** terminate context
-    +*IDENT* T:1 I:1 O:2 S:0 N:0 cont:0 [] L:1:'d',';'
-    +  0 -  0        2<unit0> ck_none  1:'program',' missingend;'
-    +  1*   0   ^    2<ident> ck_none  1:'','missingend;'
-    +! ident.>unit1 0:1 unit1
-    +! after1 0:1 unit1
-    +*** terminate context
-    +*SETUNITNAME* T:1 I:0 O:2 S:0 N:0 cont:0 [] L:1:'d',';'
-    +  0*-  0     -  2<unit1> ck_none  1:'program',' missingend;'
-    +  1    0   ^    2<ident> ck_ident $11CBE839:10  missingend 1:'','missingend;'
-    +! unit1->unit2 0:0 unit1
-    +! after1 0:0 unit2
-    +> unit3
-    +*** terminate context
-    +! unit3->implementation 0:0 unit3
-    +*IMPLEMENTATIONENTRY* T:0 I:0 O:2 S:0 N:0 cont:0 [] L:2:'
-    +','begin'
-    +  0*   0        2<implementation> ck_none  1:';',''
-    +! after1 0:0 implementation
-    +^ main
-    +*** terminate context
-    +! main->main1 1:1 main
-    +! after1 1:1 main1
-    +*PROGBEGIN* T:1 I:1 O:2 S:0 N:0 cont:0 [stf_implementation] L:2:'begin',''
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1*   0        2<progbegin> ck_none  2:'begin',''
-    +> progblock
-    +^-statementblock
-    +^ statement
-    +> if0
-    +*IF0* T:3 I:3 O:3 S:0 N:0 cont:0 [stf_implementation] L:3:'if',' exitcode = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*   1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +^-exp
-    +^ callexp
-    +^ simpexp
-    +^ term
-    +^ fact
-    +*FACTSTART* T:8 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'if',' exitcode = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8*   3        3<fact> ck_none  3:'if',' exitcode = 1 then begin'
-    +^ valueidentifier
-    +^-identpath
-    +*** terminate context
-    +! identpath->identpath1a 10:10 identpath
-    +*IDENTPATH1A* T:10 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'e',' = 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9 -  3        3<valueidentifier> ck_none  3:'','exitcode = 1 then begin'
-    + 10*   9        3<identpath1a> ck_none  3:'','exitcode = 1 then begin'
-    +! after1 10:10 identpath1a
-    +*** terminate context
-    +! identpath1a->identpath1 10:10 identpath1a
-    +! after1 10:10 identpath1
-    +*** terminate context
-    +! valueidentifier->checkvalueparams 9:10 valueidentifier
-    +! after1 9:10 checkvalueparams
-    +*** terminate context
-    +*VALUEIDENTIFIER* T:10 I:9 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9*-  3        3<checkvalueparams> ck_none  3:'','exitcode = 1 then begin'
-    + 10    9   ^    3<identpath1> ck_ident $159E3376:8  exitcode 3:'','exitcode = 1 then begin'
-    +! fact->fact1 8:9 fact
-    +! after1 8:9 fact1
-    +*** terminate context
-    +*FACT* T:9 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<term> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8*   3        3<fact1> ck_getfact flags:[] 3:'if',' exitcode = 1 then begin'
-    +  9    3        3<checkvalueparams> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'','exitcode = 1 then begin'
-    +! term->term1 7:8 term
-    +! after1 7:8 term1
-    +*** terminate context
-    +*TERM* T:8 I:7 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<simpexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  7*   3        3<term1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  8    3        3<fact1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! simpexp->simpexp1 6:7 simpexp
-    +! after1 6:7 simpexp1
-    +> simpexp1a
-    +*** terminate context
-    +*SIMPEXP1* T:7 I:6 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','= 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<callexp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6*   3        3<simpexp1a> ck_none  3:'','= 1 then begin'
-    +  7    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! callexp->exp1 5:6 callexp
-    +! after1 5:6 exp1
-    +^ eqsimpexp
-    +^ simpexp
-    +^ term
-    +^ fact
-    +*FACTSTART* T:10 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'=',' 1 then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10*   3        3<fact> ck_none  3:'=',' 1 then begin'
-    +^ num
-    +*** terminate context
-    +*INT* T:11 I:11 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'1',' then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10    3        3<fact> ck_getfact flags:[] 3:'=',' 1 then begin'
-    + 11*   3        3<num> ck_none  3:'','1 then begin'
-    +! fact->fact1 10:11 fact
-    +! after1 10:11 fact1
-    +*** terminate context
-    +*FACT* T:11 I:10 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9    3        3<term> ck_none  3:'=',' 1 then begin'
-    + 10*   3        3<fact1> ck_getfact flags:[] 3:'=',' 1 then begin'
-    + 11    3        3<num> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'','1 then begin'
-    +! term->term1 9:10 term
-    +! after1 9:10 term1
-    +*** terminate context
-    +*TERM* T:10 I:9 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:' ','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<simpexp> ck_none  3:'=',' 1 then begin'
-    +  9*   3        3<term1> ck_none  3:'=',' 1 then begin'
-    + 10    3        3<fact1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! simpexp->simpexp1 8:9 simpexp
-    +! after1 8:9 simpexp1
-    +> simpexp1a
-    +*** terminate context
-    +*SIMPEXP1* T:9 I:8 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7    3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8*   3        3<simpexp1a> ck_none  3:'','then begin'
-    +  9    3        3<term1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! no next, no continue 7:8 eqsimpexp
-    +*EQSIMPEXP* T:8 I:7 O:3 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3        3<term1> ck_ref I:0 A:0 [af_segment]  S:seg_globvar O:0 T:460 dk_integer F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  7*   3        3<eqsimpexp> ck_none  3:'=',' 1 then begin'
-    +  8    3        3<term1> ck_const T:460 dk_integer F: I:0:0 F: V:1  3:'=',' 1 then begin'
-    +! no next, no continue 5:6 exp1
-    +*EXP1* T:6 I:5 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4    3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5*   3        3<exp1> ck_none  3:'if',' exitcode = 1 then begin'
-    +  6    3    3<NIL> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! no next, no continue 4:5 exp
-    +*EXP* T:5 I:4 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'','then begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        3<if0> ck_none  3:'if',' exitcode = 1 then begin'
-    +  4*   3   ^    3<exp> ck_none  3:'if',' exitcode = 1 then begin'
-    +  5    3        3<exp1> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +! if0->then 3:4 if0
-    +! after1 3:4 then
-    +> then0
-    +*THEN0* T:4 I:3 O:6 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:3:'then',' begin'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*-  1        6<then0> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +^-statementstack
-    +^ statement
-    +> compoundstatement
-    +^-statementblock
-    +^ statement
-    +> blockend
-    +*** terminate context
-    +*BLOCKEND* T:8 I:8 O:7 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:4:'','end;'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3 -  1        6<then0> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  5    3   ^    7<statementstack> ck_none  3:'then',' begin'
-    +  6 -  3     -  7<compoundstatement> ck_none  3:'begin',''
-    +  7    6     -  7<statementblock> ck_none  3:'begin',''
-    +  8*   6   ^ -  7<blockend> ck_none  4:'','end;'
-    +! compoundstatement->checkend 6:6 compoundstatement
-    +! after1 6:6 checkend
-    +*** terminate context
-    +! no next, no continue 5:5 statementstack
-    +! then0->then2 3:5 then0
-    +! after1 3:5 then2
-    +*** terminate context
-    +*THEN2* T:5 I:3 O:7 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:4:'end',';'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  3<statementblock> ck_none  2:'begin',''
-    +  3*-  1        6<then2> ck_none  3:'then',' begin'
-    +  4    3   ^    3<exp> ck_fact ssa:-1 T:328 dk_boolean F: I:0:0 F:  3:'if',' exitcode = 1 then begin'
-    +  5    3   ^    7<statementstack> ck_none  3:'then',' begin'
-    +! statementblock->statementblock1 2:2 statementblock
-    +! after1 2:2 statementblock1
-    +> statementblock
-    +^ statement
-    +> blockend
-    +*** terminate context
-    +*BLOCKEND* T:3 I:3 O:8 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:5:'','end;'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1 -  0     -  2<progblock> ck_none  2:'begin',''
-    +  2    1     -  8<statementblock> ck_none  4:';',''
-    +  3*   1   ^ -  8<blockend> ck_none  5:'','end;'
-    +! no next, no continue 1:1 progblock
-    +*PROGBLOCK* T:1 I:1 O:8 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:5:'','end;'
-    +  0 -  0        2<implementation> ck_implementation  1:';',''
-    +  1*   0     -  2<progblock> ck_none  2:'begin',''
-    +! implementation->implementation1 0:0 implementation
-    +! after1 0:0 implementation1
-    +> implementationend
-    +*** terminate context
-    +*IMPLEMENTATION* T:0 I:0 O:9 S:0 N:0 cont:0 [stf_rightside,stf_implementation] L:5:'end',';'
-    +  0*   0     -  9<implementationend> ck_implementation  5:'end',';'
-    +! after2 -1:-1 implementationend
-    +**** end **** ! main.mla -1:-1
     +
     ae=
     aec=0
@@ -798,7 +194,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=8
+  c=10
    (
    kind=1
    a=0,664,4,empty
@@ -995,28 +391,6 @@ c=3
    cr=1
    ao=MSElang Compiler version 0.0
    +Copyright (c) 2013-2014 by Martin Schreiber
-   +> unit0
-   +^-ident
-   +*** terminate context
-   +*IDENT* T:1 I:1 O:2 S:0 N:0 cont:0 [] L:1:'t',' compiler;'
-   +  0 -  0        2<unit0> ck_none  1:'unit',' compilerunit compiler;'
-   +  1*   0   ^    2<ident> ck_none  1:'','compilerunit compiler;'
-   +! ident.>unit1 0:1 unit1
-   +! after1 0:1 unit1
-   +*** terminate context
-   +*SETUNITNAME* T:1 I:0 O:2 S:0 N:0 cont:0 [] L:1:'t',' compiler;'
-   +  0*-  0     -  2<unit1> ck_none  1:'unit',' compilerunit compiler;'
-   +  1    0   ^    2<ident> ck_ident $11CBE839:12  compilerunit 1:'','compilerunit compiler;'
-   +! unit1->unit2 0:0 unit1
-   +! after1 0:0 unit2
-   +*** terminate context
-   +! unit2->semicolonexpected 0:0 unit2
-   +! after1 0:0 semicolonexpected
-   +*** terminate context
-   +*SEMICOLONEXPECTED* T:0 I:0 O:2 S:0 N:0 cont:0 [] L:1:' ','compiler;'
-   +  0*   0        2<semicolonexpected> ck_none  1:'unit',' compilerunit compiler;'
-   +<<<<<<< main.mla(1,19) Fatal: Syntax error, ";" expected
-   +**** end **** ! main.mla -1:-1
    +
    ae=main.mla(1,19) Fatal: Syntax error, ";" expected
    +
@@ -1025,7 +399,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
+   a=0,665,4,record
    c=6
     (
     kind=2
@@ -1163,7 +537,163 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,math
+   a=0,665,4,string
+   c=3
+    (
+    kind=2
+    a=0,648,1,stringtest
+    teststate=1
+    path=stringtest.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,stringtest lc
+    teststate=1
+    path=stringtest.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=0
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,640,0,stringtest lr
+    teststate=0
+    path=stringtest.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=123
+    cr=1
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=string/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,665,4,conversions
+   c=3
+    (
+    kind=2
+    a=0,648,1,potoint32
+    teststate=1
+    path=potoint32.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=1
+    cr=0
+    ao=
+    ae=
+    aec=1
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,potoint32 lc
+    teststate=1
+    path=potoint32.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ee=
+    eec=1
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,potoint32 lr
+    teststate=1
+    path=potoint32.mla
+    comment=
+    cc=${llvm-as}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ee=
+    eec=1
+    cr=0
+    ao=
+    ae=
+    aec=1
+    ie=0
+    )
+   teststate=1
+   path=conversions/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ee=
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,665,4,arith
    c=6
     (
     kind=2
@@ -1581,7 +1111,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,mem
+   a=0,664,4,mem
    c=3
     (
     kind=2
@@ -1688,9 +1218,9 @@ c=3
 teststate=0
 [options]
 [mainmo.stoponfirsterr]
-checked=0
+checked=1
 [mainmo.stoponcomperr]
-checked=0
+checked=1
 [mainmo.trttistat1]
 macronames=17
  fpcflags
@@ -1746,7 +1276,7 @@ macroon=17
  63
  63
  63
-macrogroup=0
+macrogroup=1
 groupcomment=6
  Make
  Build
@@ -1764,17 +1294,34 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=581
+propcolwidthref=566
 width0=50
 sortdescend0=0
-width1=187
+width1=182
 sortdescend1=0
-width2=159
+width2=155
 sortdescend2=0
-width3=214
+width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=19
+rowstate=36
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
