@@ -331,6 +331,10 @@ begin
       po1:= additem(oc_writeclass);
       po1^.par.voffset:= alignsize(pointersize);
      end;
+     dk_pointer: begin
+      po1:= additem(oc_writepointer);
+      po1^.par.voffset:= alignsize(pointersize);
+     end;
      dk_enum: begin
       po1:= additem(oc_writeenum);
       po1^.par.voffset:= alignsize(pointersize);
@@ -340,7 +344,7 @@ begin
       errormessage(err_cantreadwritevar,[],int1-s.stackindex);
       po1:= additem(oc_none);
       po1^.par.voffset:= 0;         //dummy
-      po1^.par.voffsaddress:= getrtti(po2);
+//      po1^.par.voffsaddress:= getrtti(po2);
      end;
     end;
     po1^.par.ssas1:= d.dat.fact.ssaindex;

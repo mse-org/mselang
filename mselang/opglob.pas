@@ -89,6 +89,7 @@ type
   oc_writeinteger,
   oc_writefloat,
   oc_writestring8,
+  oc_writepointer,
   oc_writeclass,
   oc_writeenum,
 
@@ -630,7 +631,8 @@ type
     vlocaddress: locdataaddressty;
    );
    oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
-   oc_writeclass,oc_writeenum,oc_pushstackaddr,oc_pushstackaddrindi,
+   oc_writepointer,oc_writeclass,oc_writeenum,
+   oc_pushstackaddr,oc_pushstackaddrindi,
    oc_indirectpooffs,oc_indirectoffspo:(
     voffset: dataoffsty;
     case opcodety of

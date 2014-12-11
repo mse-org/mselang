@@ -427,6 +427,11 @@ begin
  end;
 end;
 
+procedure writepointerop();
+begin
+ write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.voffset)^)));
+end;
+
 procedure writeclassop();
 begin
  write(hextostr(vpointerty((cpu.stack+cpu.pc^.par.voffset)^)));
@@ -2465,6 +2470,7 @@ const
   writeintegerssa = 0;
   writefloatssa = 0;
   writestring8ssa = 0;
+  writepointerssa = 0;
   writeclassssa = 0;
   writeenumssa = 0;
 

@@ -752,6 +752,10 @@ const
  wstring8 = '%s\00';
  wstring8c = '[3 x i8] c"'+wstring8+'"';
  wstring8format = '[3 x i8]* @.wstring8';
+
+ wpointer = '%p\00';
+ wpointerc = '[3 x i8] c"'+wpointer+'"';
+ wpointerformat = '[3 x i8]* @.wpointer';
   
 procedure beginparseop();
 var
@@ -772,6 +776,7 @@ begin
  outass('@.wret = internal constant '+wretc);
  outass('@.wint32 = internal constant '+wint32c);
  outass('@.wstring8 = internal constant '+wstring8c);
+ outass('@.wpointer = internal constant '+wpointerc);
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconst:= '['+inttostr(int1)+' x i8]';
@@ -910,6 +915,14 @@ procedure writestring8op();
 begin
  with pc^.par do begin
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wstring8format+
+         ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
+ end;
+end;
+
+procedure writepointerop();
+begin
+ with pc^.par do begin
+  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wpointerformat+
          ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
  end;
 end;
@@ -1122,8 +1135,19 @@ begin
 end;
 
 procedure incdecindiimmpo32op();
+var
+ str1,str2,str3,str4: shortstring;
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  str1:= '%'+inttostr(ssas1);
+  str2:= '%'+inttostr(ssad-2);
+  str3:= '%'+inttostr(ssad-1);
+  str4:= '%'+inttostr(ssad);
+  outass(str2+' = bitcast i8* '+str1+' to i8**');
+  outass(str3+' = load i8** '+str2);
+  outass(str4+' = getelementptr i8* '+str3+', i32 '+inttostr(vint32));
+  outass('store i8* '+str4+', i8** '+str2);
+ end;
 end;
 
 procedure cmpeqpoop();
@@ -1859,17 +1883,16 @@ begin
  notimplemented();
 end;
 
-procedure pushlocaddrindiop();          //todo: offset, nested frames
+procedure pushlocaddrindiop();          //todo: nested frames
 var
- str1,str2,str3: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par do begin
   locdataaddress(vlocaddress,str1);
-  str2:= '%'+inttostr(ssad-2);
-  str3:= '%'+inttostr(ssad-1);
+  str2:= '%'+inttostr(ssad-1);
   outass(str2+' = load i8** '+str1);
-  outass(str3+' = bitcast i8* '+str2+' to i8**');
-  outass('%'+inttostr(ssad)+' = load i8** '+str3);
+  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
+                                ', i32 '+inttostr(vlocaddress.offset));
  end;
 end;
 
@@ -2479,6 +2502,7 @@ const
   writeintegerssa = 1;
   writefloatssa = 1;
   writestring8ssa = 1;
+  writepointerssa = 1;
   writeclassssa = 1;
   writeenumssa = 1;
 
@@ -2692,7 +2716,7 @@ const
 
   pushaddrssa = 1;
   pushlocaddrssa = 1;
-  pushlocaddrindissa = 3;
+  pushlocaddrindissa = 2;
   pushsegaddrssa = 1;
   pushsegaddrindissa = 2;
   pushstackaddrssa = 1;

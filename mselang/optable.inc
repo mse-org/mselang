@@ -42,6 +42,7 @@
   writeintegerssa,
   writefloatssa,
   writestring8ssa,
+  writepointerssa,
   writeclassssa,
   writeenumssa,
 
@@ -352,6 +353,7 @@
   @writeintegerop,
   @writefloatop,
   @writestring8op,
+  @writepointerop,
   @writeclassop,
   @writeenumop,
 
