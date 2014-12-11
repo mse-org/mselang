@@ -124,6 +124,7 @@ begin
   else begin
    framelevel1:= info.sublevel-
                          context.dat.ref.c.address.locaddress.framelevel-1;
+   ssaextension1:= 0;
    if framelevel1 >= 0 then begin
     ssaextension1:= getssa(ocssa_nestedvar);
    end;

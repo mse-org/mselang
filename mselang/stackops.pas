@@ -2417,6 +2417,11 @@ begin
  freemem(po1);
 end;
 
+procedure lineinfoop();
+begin
+ //dummy
+end;
+
 {
 procedure pophandlecpucontext();
 var
@@ -2733,6 +2738,8 @@ const
   continueexceptionssa = 0;
   getmemssa = 0;
   freememssa = 0;
+  
+  lineinfossa = 0;
 
 //ssa only
   nestedvarssa = 0;

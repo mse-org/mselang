@@ -315,6 +315,8 @@
   continueexceptionssa,
   getmemssa,
   freememssa,
+  lineinfossa,
+
 //ssaonly
   nestedvarssa,
   popnestedvarssa,
@@ -624,7 +626,9 @@
 
   @getmemop,
   @freememop,
-  
+ 
+  @lineinfoop,
+   
    //ssa only
   nil,
   nil,

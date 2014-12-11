@@ -703,6 +703,14 @@ begin
  end;
 end;
 
+procedure pocompare(const akind: icomparekindty);
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
+                   ' i8* %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
+ end;
+end;
+
 procedure callcompilersub(const asub: compilersubty;
                                      const aparams: shortstring);
 var
@@ -1017,17 +1025,40 @@ begin
  notimplemented();
 end;
 
+procedure incdecimmint32(const adest: shortstring);
+var
+ str2,str3: shortstring;
+begin
+ with pc^.par,memimm do begin
+  str2:= '%'+inttostr(ssad-1);
+  str3:= '%'+inttostr(ssad);
+  outass(str2+' = load i32* bitcast (i8* '+adest+' to i32*)');
+  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
+  outass('store i32 '+str3+', i32* bitcast (i8* '+adest+' to i32*)');
+ end;
+end;
+
+procedure incdecimmpo(const adest: shortstring);
+var
+ str2,str3: shortstring;
+begin
+ with pc^.par,memimm do begin
+  str2:= '%'+inttostr(ssad-1);
+  str3:= '%'+inttostr(ssad);
+  outass(str2+' = load i32* bitcast (i8* '+adest+' to i32*)');
+  outass(str3+' = i8* getelementptr i8* '+str2+', i32 '+inttostr(vint32));
+//  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
+  outass('store i32 '+str3+', i32* bitcast (i8* '+adest+' to i32*)');
+ end;
+end;
+
 procedure incdecsegimmint32op();
 var
- str1,str2,str3: shortstring;
+ str1: shortstring;
 begin
  with pc^.par,memimm do begin
   segdataaddresspo(mem.segdataaddress,true,str1);
-  str2:= '%'+inttostr(ssad-1);
-  str3:= '%'+inttostr(ssad);
-  outass(str2+' = load i32* bitcast (i8* '+str1+' to i32*)');
-  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
-  outass('store i32 '+str3+', i32* bitcast (i8* '+str1+' to i32*)');
+  incdecimmint32(str1);
  end;
 end;
 
@@ -1042,8 +1073,14 @@ begin
 end;
 
 procedure incdeclocimmpo32op();
+var
+ str1: shortstring;
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  locdataaddress(mem.locdataaddress,str1);
+  outass('%'+inttostr(ssad)+' = i8* getelementpointer i8* '+str1+', i32 '+
+                            inttostr(vint32));
+ end;
 end;
 
 procedure incdecparimmint32op();
@@ -1109,7 +1146,7 @@ end;
 
 procedure cmpnepoop();
 begin
- notimplemented();
+ pocompare(ick_ne);
 end;
 
 procedure cmpneboolop();
@@ -1461,7 +1498,7 @@ end;
 
 procedure poplocpoop();
 begin
- notimplemented();
+ locassign();
 end;
 
 procedure poplocf16op();
@@ -1621,8 +1658,11 @@ end;
 
 procedure pushnilop();
 begin
- notimplemented();
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = zeroinitializer')
+ end;
 end;
+
 procedure pushsegaddressop();
 begin
  notimplemented();
@@ -1967,19 +2007,6 @@ begin
   llvmtype(memop.t,str2);
   outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
   outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
-{  
-  case memop.t.kind of
-   odk_bit: begin
-    str1:= '%'+inttostr(ssad);
-    str2:= 'i'+inttostr(memop.t.size);
-    outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
-    outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
-}
  end;
 end;
 
@@ -2005,7 +2032,7 @@ end;
 
 procedure popindirectpoop();
 begin
- notimplemented();
+ popindirect();
 end;
 
 procedure popindirectf16op();
@@ -2412,6 +2439,12 @@ begin
  end;
 end;
 
+procedure lineinfoop();
+begin
+ with pc^.par.lineinfo do begin
+  outass(';'+inttostr(nr+1)+':'+lstringtostring(line)); //todo: optimize
+ end;
+end;
 
 const
   nonessa = 0;
@@ -2713,6 +2746,8 @@ const
   continueexceptionssa = 1;
   getmemssa = 2;
   freememssa = 1;
+  
+  lineinfossa = 0;
 
 //ssa only
   nestedvarssa = 3;

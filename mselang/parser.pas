@@ -277,6 +277,38 @@ begin
 end;
 {$endif}
 
+function linelen(const astr: pchar): integer;
+var
+ po1: pchar;
+begin
+ po1:= astr;
+ while not (po1^ in [#0,c_return,c_linefeed]) do begin
+  inc(po1);
+ end;
+ result:= po1-astr;
+end;
+
+procedure checklinebreak(var achar: pchar; var linebreaks: integer) inline;
+begin
+ if do_lineinfo in info.debugoptions then begin
+  if not (stf_newlineposted in info.s.currentstatementflags) then begin
+   include(info.s.currentstatementflags,stf_newlineposted);
+   if info.backend = bke_llvm then begin
+    with additem(oc_lineinfo)^ do begin
+     par.lineinfo.line.po:= achar;
+     par.lineinfo.line.len:= linelen(achar);
+     par.lineinfo.nr:= linebreaks+info.s.source.line;
+    end;
+   end;
+  end;
+ end;
+ if achar^ = c_linefeed then begin
+  inc(linebreaks);
+  exclude(info.s.currentstatementflags,stf_newlineposted);
+ end;
+ inc(achar);
+end;
+
 function parseunit(const input: string; const aunit: punitinfoty): boolean;
 
  procedure popparent;
@@ -304,22 +336,9 @@ var
  keywordend: pchar;
  linebreaks: integer;
 
- statebefore: savedparseinfoty;
-  
-// sourcebefore: sourceinfoty;
-// filenamebefore: filenamety;
-// sourcestartbefore: pchar;
-// stackindexbefore: integer;
-// stacktopbefore: integer;
-// unitinfobefore: punitinfoty;
-// ssabefore: ssainfoty;
-// pcbefore: pcontextty;
-// stopparserbefore: boolean;
+ statebefore: savedparseinfoty;  
  eleparentbefore: elementoffsetty;
-// currentstatementflagsbefore: statementflagsty;
-//{$ifdef mse_debugparser}
-// debugsourcebefore: pchar;
-//{$endif}
+ 
 label
  handlelab{,stophandlelab},parseend;
 begin
@@ -423,34 +442,22 @@ begin
       else begin
        bo1:= po1^ in pb^.keys[0].chars;
        if bo1 then begin
-        if po1^ = c_linefeed then begin
-         inc(linebreaks);
-        end;
-        inc(po1);
+        checklinebreak(po1,linebreaks);
         if pb^.keys[0].kind = bkk_charcontinued then begin
          bo1:= charset32ty(pb^.keys[1].chars)[byte(po1^) shr 5] and 
                                             bits[byte(po1^) and $1f] <> 0;
          if bo1 then begin
-          if po1^ = c_linefeed then begin
-           inc(linebreaks);
-          end;       
-          inc(po1);
+          checklinebreak(po1,linebreaks);
           if pb^.keys[1].kind = bkk_charcontinued then begin
            bo1:= charset32ty(pb^.keys[2].chars)[byte(po1^) shr 5] and 
                                               bits[byte(po1^) and $1f] <> 0;
            if bo1 then begin
-            if po1^ = c_linefeed then begin
-             inc(linebreaks);
-            end;       
-            inc(po1);
+            checklinebreak(po1,linebreaks);
             if pb^.keys[2].kind = bkk_charcontinued then begin
              bo1:= charset32ty(pb^.keys[3].chars)[byte(po1^) shr 5] and 
                                                 bits[byte(po1^) and $1f] <> 0;
              if bo1 then begin
-              if po1^ = c_linefeed then begin
-               inc(linebreaks);
-              end;       
-              inc(po1);
+              checklinebreak(po1,linebreaks);
              end;
             end;
            end;
@@ -655,8 +662,12 @@ parseend:
 end;
 
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
+var
+ debugoptionsbefore: debugoptionsty;
 begin
+ debugoptionsbefore:= info.debugoptions;
  fillchar(info,sizeof(info),0);
+ info.debugoptions:= debugoptionsbefore;
  exitcode:= 0;
  with info do begin
   outputstream:= aoutput;
@@ -698,10 +709,14 @@ begin
       beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;
-//    result:= parsecompilerunit('__mla__compilerunit');
-//    if result then begin
+   {$ifndef mse_nocompilerunit}
+    result:= parsecompilerunit('__mla__compilerunit');
+    if result then begin
+   {$endif}
      result:= parseunit(input,unit1);
-//    end;
+   {$ifndef mse_nocompilerunit}
+    end;
+   {$endif}
     endparser();
    finally
     system.finalize(info);

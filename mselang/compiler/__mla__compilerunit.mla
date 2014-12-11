@@ -79,4 +79,8 @@ begin
  end;
 end;
 
+procedure __mla__finirefsize(const ref: ppointer);
+begin
+end;
+
 end.

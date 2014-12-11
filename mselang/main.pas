@@ -45,6 +45,7 @@ type
    filena: tfilenameedit;
    llvm: tbooleanedit;
    tsyntaxpainter1: tsyntaxpainter;
+   debuged: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -53,6 +54,8 @@ type
    procedure aftreadexe(const sender: TObject);
    procedure befwriteexe(const sender: TObject);
 //   procedure tbutton2();
+   procedure debuset(const sender: TObject; var avalue: Boolean;
+                   var accept: Boolean);
   protected
 //   function test: integer; override;
  end;
@@ -63,7 +66,8 @@ var
   
 implementation
 uses
- main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,msesystypes;
+ main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,
+ msesystypes;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -149,6 +153,17 @@ end;
 procedure tmainfo.befwriteexe(const sender: TObject);
 begin
  saveexe(nil);
+end;
+
+procedure tmainfo.debuset(const sender: TObject; var avalue: Boolean;
+               var accept: Boolean);
+begin
+ if avalue then begin
+  include(info.debugoptions,do_lineinfo);
+ end
+ else begin
+  exclude(info.debugoptions,do_lineinfo);
+ end;
 end;
 
 end.

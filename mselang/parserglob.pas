@@ -251,7 +251,7 @@ type
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
-                    stf_hasmanaged);
+                    stf_hasmanaged,stf_newlineposted);
  statementflagsty = set of statementflagty;
 
  indirectlevelty = integer;
@@ -654,6 +654,8 @@ type
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
 
  backendty = (bke_direct,bke_llvm);
+ debugoptionty = (do_lineinfo);
+ debugoptionsty = set of debugoptionty;
 
  savedparseinfoty = record
   filename: filenamety;
@@ -676,6 +678,7 @@ type
   s: savedparseinfoty;
   backend: backendty;
   backendhasfunction: boolean;
+  debugoptions: debugoptionsty;
 //  beginparseop:  integer;
   unitinfochain: elementoffsetty;
 //  allocproc: allocprocty;

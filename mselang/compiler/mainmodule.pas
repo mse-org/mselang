@@ -6,13 +6,14 @@ uses
  parserglob,msestream;
 
 type
- paramty = (pa_source,pa_llvm); //item number in sysenv
+ paramty = (pa_source,pa_llvm,pa_debug); //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
    procedure eventloopexe(const sender: TObject);
    procedure terminatedexe(const sender: TObject);
    procedure createexe(const sender: TObject);
+   procedure sysenvexe(sender: tsysenvmanager);
   private
    foutputstream: ttextstream;
    ferrorstream: ttextstream;
@@ -102,6 +103,13 @@ procedure tmainmo.terminatedexe(const sender: TObject);
 begin
  foutputstream.free();
  ferrorstream.free();
+end;
+
+procedure tmainmo.sysenvexe(sender: tsysenvmanager);
+begin
+ if sender.defined[ord(pa_debug)] then begin
+  include(info.debugoptions,deo_lineinfo);
+ end;
 end;
 
 end.

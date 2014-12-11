@@ -18,7 +18,7 @@ unit opglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ parserglob,msestrings;
  
 type
  globallocinfoty = record
@@ -363,7 +363,9 @@ type
   
   oc_getmem,
   oc_freemem,
-  
+
+  oc_lineinfo,
+    
 //ssaonly
   ocssa_nestedvar,
   ocssa_popnestedvar,
@@ -570,7 +572,12 @@ type
   flags: subflagsty;
   allocs: suballocinfoty;
  end;
- 
+
+ lineinfoty = record
+  line: lstringty;
+  nr: integer;
+ end;
+  
                  //todo: unify
  opparamty = record
   ssad: integer;
@@ -692,6 +699,9 @@ type
    oc_destroyclass:(
     destroyclass: destroyclassinfoty;
    );
+   oc_lineinfo:(
+    lineinfo: lineinfoty;
+   )
   end;
 
  opflagty = (opf_label);

@@ -1,9 +1,86 @@
-program getmem;
-var
- po1: ^int32;
+{ MSEgui Copyright (c) 2014 by Martin Schreiber
+
+    See the file COPYING.MSE, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+}
+unit __mla__compilerunit;
+interface 
+
+type
+ ppointer = ^pointer;
+procedure __mla__decrefsize(const ref: ppointer);
+procedure __mla__finirefsize(const ref: ppointer);
+
+implementation
+{
+procedure __mla__decrefsize(const ref: ppointer);
 begin
- getmem(po1,100);
- po1^:= 123;
- exitcode:= po1^;
- freemem(po1);
+end;
+
+procedure __mla__finirefsize(const ref: ppointer);
+begin
+end;
+}
+
+type             //todo: use "internaltypes"
+ refcountty = int32;
+ managedsizety = int32;
+ stringsizety = managedsizety;
+ pstringsizety = ^stringsizety;
+ dynarraysizety = managedsizety;
+ pdynarraysizety = ^dynarraysizety;
+ 
+ refinfoty = record
+  count: refcountty;
+ end;
+ prefinfoty = ^refinfoty;
+ refsizeinfoty = record
+  ref: refinfoty;
+  sizedummy: managedsizety;
+ end;
+ prefsizeinfoty = ^refsizeinfoty;
+ 
+ string8headerty = record
+  ref: refinfoty;
+  len: stringsizety;
+ end; //following stringdata + terminating #0
+ pstring8headerty = ^string8headerty;
+
+ dynarrayheaderty = record
+  ref: refinfoty;
+  len: dynarraysizety;
+ end; //following array datat
+ pdynarrayheaderty = ^dynarrayheaderty;
+ 
+const
+ string8headersize = sizeof(string8headerty);
+ string8allocsize = string8headersize+1; //terminating #0
+ dynarrayheadersize = sizeof(dynarrayheaderty);
+ dynarrayallocsize = dynarrayheadersize;
+
+procedure __mla__decrefsize(const ref: ppointer);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+   ref^:= nil;
+  end;
+ end;
+end;
+
+procedure __mla__finirefsize(const ref: ppointer);
+begin
+end;
+
 end.

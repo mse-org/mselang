@@ -108,7 +108,7 @@ object mainfo: tmainfo
       optionsedit1 = [oe1_autopopupmenu, oe1_keyexecute, oe1_savestate, oe1_checkvalueafterstatread]
       oneditnotifcation = editnotiexe
       syntaxpainter = tsyntaxpainter1
-      defaultsyntax = True
+      options = [seo_defaultsyntax]
       reffontheight = 14
     end
   end
@@ -148,7 +148,7 @@ object mainfo: tmainfo
     taborder = 7
     bounds_x = 72
     bounds_y = 7
-    bounds_cx = 340
+    bounds_cx = 292
     anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -170,12 +170,30 @@ object mainfo: tmainfo
       2
     )
     taborder = 8
-    bounds_x = 416
+    bounds_x = 368
     bounds_y = 7
     bounds_cx = 39
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
+  end
+  object debuged: tbooleanedit
+    frame.caption = 'dbu'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      1
+      27
+      2
+    )
+    taborder = 9
+    bounds_x = 416
+    bounds_y = 7
+    bounds_cx = 40
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
+    onsetvalue = debuset
   end
   object statf: tstatfile
     filename = 'status.sta'
