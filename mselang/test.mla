@@ -66,6 +66,7 @@ procedure __mla__decrefsize(const ref: ppointer);
 var
  d: prefsizeinfoty;
 begin
+{$nop}
  d:= ref^;
  if d <> nil then begin
   dec(d);
@@ -83,4 +84,8 @@ procedure __mla__finirefsize(const ref: ppointer);
 begin
 end;
 
+var
+ p1: pointer;
+begin
+  __mla__decrefsize(@p1);
 end.

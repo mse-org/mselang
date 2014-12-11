@@ -113,6 +113,30 @@ begin
   end;
  end;
 end;
+
+function checkcompatiblefacttype(var afact: contextdataty;
+                                   const atypedata: elementoffsetty): boolean;
+var
+ po1,po2: ptypedataty;
+begin
+{$ifdef mse_checkinternalerror}
+ if afact.kind <> ck_fact then begin
+  internalerror(ie_parser,'141211A');
+ end;
+{$endif}
+ po1:= ele.eledataabs(atypedata);
+ result:= po1^.indirectlevel = afact.dat.datatyp.indirectlevel;
+ if result then begin
+  po2:= ele.eledataabs(afact.dat.datatyp.typedata);
+  if po1^.base <> 0 then begin
+   po1:= ele.eledataabs(po1^.base);
+  end;
+  if po2^.base <> 0 then begin
+   po2:= ele.eledataabs(po2^.base);
+  end;
+  result:= po1 = po2; //todo: try conversion
+ end;
+end;
  
 procedure handlevalueidentifier();
 var
@@ -209,7 +233,8 @@ var
         end;
        end;
       end;
-      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
+//      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
+      if not checkcompatiblefacttype(d,po6^.vf.typ) then begin
        errormessage(err_incompatibletypeforarg,
                    [int1-s.stackindex-3,typename(d),
                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],

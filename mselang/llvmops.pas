@@ -1074,12 +1074,14 @@ end;
 
 procedure incdeclocimmpo32op();
 var
- str1: shortstring;
+ str1,str2: shortstring;
 begin
  with pc^.par,memimm do begin
   locdataaddress(mem.locdataaddress,str1);
-  outass('%'+inttostr(ssad)+' = i8* getelementpointer i8* '+str1+', i32 '+
-                            inttostr(vint32));
+  str2:= '%'+inttostr(ssad-1);
+  outass(str2+' = load i8** '+str1);
+  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
+                                          ', i32 '+inttostr(vint32));
  end;
 end;
 
@@ -1659,7 +1661,7 @@ end;
 procedure pushnilop();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = zeroinitializer')
+  outass('%'+inttostr(ssad)+' = getelementptr i8* null, i32 0')
  end;
 end;
 
@@ -1859,11 +1861,15 @@ end;
 
 procedure pushlocaddrindiop();          //todo: offset, nested frames
 var
- str1: shortstring;
+ str1,str2,str3: shortstring;
 begin
  with pc^.par do begin
   locdataaddress(vlocaddress,str1);
-  outass('%'+inttostr(ssad)+' = load '+ptrintname+'* '+str1);
+  str2:= '%'+inttostr(ssad-2);
+  str3:= '%'+inttostr(ssad-1);
+  outass(str2+' = load i8** '+str1);
+  outass(str3+' = bitcast i8* '+str2+' to i8**');
+  outass('%'+inttostr(ssad)+' = load i8** '+str3);
  end;
 end;
 
@@ -2686,7 +2692,7 @@ const
 
   pushaddrssa = 1;
   pushlocaddrssa = 1;
-  pushlocaddrindissa = 1;
+  pushlocaddrindissa = 3;
   pushsegaddrssa = 1;
   pushsegaddrindissa = 2;
   pushstackaddrssa = 1;
@@ -2745,7 +2751,7 @@ const
   finiexceptionssa = 1;
   continueexceptionssa = 1;
   getmemssa = 2;
-  freememssa = 1;
+  freememssa = 0;
   
   lineinfossa = 0;
 
