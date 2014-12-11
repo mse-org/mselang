@@ -528,7 +528,7 @@ begin
  end
  else begin
   po1:= @forwards[fo1];
-  deletedlinks:= po1^.next;
+  deletedforwards:= po1^.next;
  end;
  with info.s.unitinfo^ do begin
   po1^.prev:= 0;
