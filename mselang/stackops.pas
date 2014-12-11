@@ -570,6 +570,14 @@ begin
  vfloatty(stackpush(sizeof(vfloatty))^):= vintegerty(po1^);
 end;
 
+procedure potoint32op();
+var
+ po1: ppointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ vintegerty(stackpush(sizeof(vintegerty))^):= vintegerty(po1^);
+end;
+
 procedure mulint32op();
 var
  po1,po2: pointer;
@@ -2485,6 +2493,7 @@ const
   pushimmdatakindssa = 0;
   
   int32toflo64ssa = 0;
+  potoint32ssa = 0;
   
   negcard32ssa = 0;
   negint32ssa = 0;

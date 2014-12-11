@@ -980,6 +980,14 @@ procedure int32toflo64op();
 begin
  notimplemented();
 end;
+
+procedure potoint32op();
+begin
+ with pc^.par do begin
+  outass('%'+inttostr(ssad)+' = ptrtoint i8* %'+inttostr(ssas1)+' to i32');
+ end;
+end;
+
 procedure mulint32op();
 begin
  notimplemented();
@@ -1058,10 +1066,9 @@ begin
  with pc^.par,memimm do begin
   str2:= '%'+inttostr(ssad-1);
   str3:= '%'+inttostr(ssad);
-  outass(str2+' = load i32* bitcast (i8* '+adest+' to i32*)');
-  outass(str3+' = i8* getelementptr i8* '+str2+', i32 '+inttostr(vint32));
-//  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
-  outass('store i32 '+str3+', i32* bitcast (i8* '+adest+' to i32*)');
+  outass(str2+' = load i8** bitcast (i8* '+adest+' to i8**)');
+  outass(str3+' = getelementptr i8* '+str2+', i32 '+inttostr(vint32));
+  outass('store i8* '+str3+', i8** bitcast (i8* '+adest+' to i8**)');
  end;
 end;
 
@@ -1076,8 +1083,13 @@ begin
 end;
 
 procedure incdecsegimmpo32op();
+var
+ str1: shortstring;
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  segdataaddresspo(mem.segdataaddress,true,str1);
+  incdecimmpo(str1);
+ end;
 end;
 
 procedure incdeclocimmint32op();
@@ -2517,6 +2529,7 @@ const
   pushimmdatakindssa = 1;
   
   int32toflo64ssa = 1;
+  potoint32ssa = 1;
   
   negcard32ssa = 1;
   negint32ssa = 1;

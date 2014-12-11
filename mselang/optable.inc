@@ -57,6 +57,7 @@
   pushimmdatakindssa,
   
   int32toflo64ssa,
+  potoint32ssa,
   
   negcard32ssa,
   negint32ssa,
@@ -368,6 +369,7 @@
   @pushimmdatakindop,
   
   @int32toflo64op,
+  @potoint32op,
   
   @negcard32op,
   @negint32op,

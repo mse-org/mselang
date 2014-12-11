@@ -104,6 +104,7 @@ type
   oc_pushimmdatakind,
   
   oc_int32toflo64,
+  oc_potoint32,
 
   oc_negcard32,
   oc_negint32,
