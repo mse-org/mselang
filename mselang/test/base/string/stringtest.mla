@@ -1,0 +1,6 @@
+program stringtest;
+var
+ str1: string8;
+begin
+
+end.
