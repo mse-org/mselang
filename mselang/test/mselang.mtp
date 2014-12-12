@@ -1241,7 +1241,7 @@ macronames=17
  llvm-as
  lli
 macrovalues=17
- -dsvnfixes_2_6 -dmse_nocompilerunit
+ -dsvnfixes_2_6 -dmse_nocompilerunitxx
  /home/mse/packs/standard/svn/fp/fixes_2_6/
  ${fpcdir}compiler/ppc386 ${fpcflags} ${mseunits} ${mselangunits}
  ${fpc1}
