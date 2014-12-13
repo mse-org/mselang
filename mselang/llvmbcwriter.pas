@@ -93,6 +93,7 @@ type
    procedure write8(const avalue: int8);
    procedure write16(const avalue: int16);
    procedure write32(const avalue: int32);
+   procedure writeback32(const avalue: int32; const apos: int32);
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
@@ -183,6 +184,22 @@ begin
  fbufpos:= fbufpos + 4;
 end;
 
+procedure tllvmbcwriter.writeback32(const avalue: int32; const apos: int32);
+begin
+ if (apos < fpos) then begin
+  flushbuffer();              //not in buffer
+  position:= apos;
+  writebuffer(avalue,4);
+  position:= fpos;
+ end
+ else begin
+  if (fbufpos + 4 >= fbufend) then begin
+   flushbuffer();
+  end;
+  pint32(pointer(@fbuffer) + apos - fpos)^:= avalue;                                                            
+ end;
+end;
+
 type
  beginblockrecord = record //         4      8   fblockidsize
   header: uint32;          //    nextidsize id ENTER_SUBBLOCK
@@ -214,18 +231,8 @@ var
  int1,int2: integer;
 begin
  int1:= fblockstackpo^.startpos - 4; //address blocklen
- if int1 < fpos then begin
-  flushbuffer;              //not in buffer
-  position:= int1;
-  int1:= (fpos-int1) div 4 - 1;
-  writebuffer(int1,4);
-  position:= fpos;
- end
- else begin
-  int2:= (fpos + (fbufpos - pointer(@fbuffer)) - int1); //byte length
-  pint32(pointer(fbufpos) - int2)^:= int2 div 4 - 1;    //word length without
-                                                        //blocklen
- end;
+ writeback32((fpos + (fbufpos - pointer(@fbuffer)) - int1) div 4 - 1,int1); 
+                                     //word length without blocklen
  write32(0);
  dec(fblockstackpo);
 {$ifdef mse_checkinternalerror}
