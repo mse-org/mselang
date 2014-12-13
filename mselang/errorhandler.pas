@@ -54,7 +54,7 @@ type
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
             err_cannotaddresstype,err_valueexpected,err_cannotgetsize,
-            err_pointertypeexpected);
+            err_pointertypeexpected,err_write);
             
  errorinfoty = record
   level: errorlevelty;
@@ -72,7 +72,8 @@ type
                         ie_value,    //error in value handler
                         ie_elements, //error in element list
                         ie_rtti,     //error in rtti handler
-                        ie_segment   //error in segment handler
+                        ie_segment,  //error in segment handler
+                        ie_bcwriter  //error in llvm bc writer
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -80,8 +81,8 @@ const
      '',     'N',              'P',      'H',       'R',     'U',    
  //ie_type,ie_managed
      'T',    'M',
- //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment
-     'SUB',   'V',   'E',        'I',    'SEG'
+ //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter
+     'SUB',   'V',   'E',        'I',    'SEG',     'BC'
  );
  
  stoperrorlevel = erl_fatal;
@@ -196,7 +197,8 @@ const
   (level: erl_error; message: 'Can''t take the addreess of type'),
   (level: erl_error; message: 'Value expected'),
   (level: erl_error; message: 'Can not get size of this expression'),
-  (level: erl_error; message: 'Pointer type expected')
+  (level: erl_error; message: 'Pointer type expected'),
+  (level: erl_error; message: 'Write error')
  );
 
 procedure message1(const atext: string; const values: array of const); 
