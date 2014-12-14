@@ -220,6 +220,7 @@ type
    procedure flushbuffer(); override;
    procedure beginblock(const id: blockidty; const nestedidsize: int32);
    procedure endblock();
+   function bitpos(): int32;
  end;
  
 implementation
@@ -507,6 +508,11 @@ procedure tllvmbcwriter.writeabbrev;
 begin
 // beginblock(DEFINE_ABBREV,4);
 // endblock();
+end;
+
+function tllvmbcwriter.bitpos: int32;
+begin
+ result:= (fpos + fbufpos - pointer(@fbuffer)) * 8 + fbitpos;
 end;
 
 end.
