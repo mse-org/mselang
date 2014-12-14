@@ -180,7 +180,12 @@ type
   startpos: integer;
  end;
  pblockstackinfoty = ^blockstackinfoty;
- 
+
+ bcdataty = record
+  bitsize: integer;
+  data: pcard8;
+ end;
+  
  tllvmbcwriter = class(tmsefilestream)
   private
    fbuffer: array[0..bcwriterbuffersize-1] of byte;
@@ -205,9 +210,10 @@ type
    procedure writeabbrev();
    procedure emit(const asize: integer; const avalue: int32);
    procedure emit6(const avalue: int32);
-   procedure emit8(const avalue: int32);
+   procedure emit8(const avalue: card8);
    procedure emitvbr6(avalue: int32);
    procedure pad32();
+   procedure emitdata(const avalue: bcdataty);
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
@@ -220,6 +226,18 @@ implementation
 uses
  errorhandler,msesys,sysutils,msebits;
 
+type
+ mlaabbrevty = (mab_card);
+ 
+const
+ mabcardbitsize = 6;
+ mabcard: array[0..mabcardbitsize-1] of card8 = (
+  0,1,2,3,4,5
+ );
+ 
+ mlaabbrevs: array[mlaabbrevty] of bcdataty = (
+  (bitsize: mabcardbitsize; data: @mabcard)
+ ); 
 //type
 // mlablockty = (mlb_internalconst);
 { tllvmbcwriter }
@@ -237,7 +255,7 @@ begin
                                 //llvm ir signature
  beginblock(MODULE_BLOCK_ID,3);
  beginblock(BLOCKINFO_BLOCK_ID,3);
-// writedata(mlaabbrevs[mab_int]^);
+ emitdata(mlaabbrevs[mab_card]);
 // writeint32rec(ord(BLOCKINFO_CODE_SETBID),ord(CONSTANTS_BLOCK_ID));
  endblock();
  
@@ -322,14 +340,9 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emit8(const avalue: int32);
+procedure tllvmbcwriter.emit8(const avalue: card8);
 begin
-{$ifdef mse_checkinternalerror}
- if avalue and not $ff <> 0 then begin
-  internalerror(ie_bcwriter,'141213C');
- end;
-{$endif}
- fbitbuf:= fbitbuf shl 8 or avalue;
+ fbitbuf:= (fbitbuf shl 8) or avalue;
  if fbufpos + 1 >= fbufend then begin
   flushbuffer();
  end;
@@ -363,6 +376,19 @@ begin
   pcard8(fbufpos)^:= 0;
   inc(fbufpos);
  end;
+end;
+
+procedure tllvmbcwriter.emitdata(const avalue: bcdataty);
+var
+ po1,pe: pcard8;
+begin
+ po1:= avalue.data;
+ pe:= po1 + avalue.bitsize div 8;
+ while po1 < pe do begin
+  emit8(po1^);
+  inc(po1);
+ end;
+ emit(avalue.bitsize and $7,po1^);
 end;
 
 procedure tllvmbcwriter.write8(const avalue: int8);
