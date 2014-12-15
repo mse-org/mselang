@@ -16,14 +16,23 @@ var
  
 implementation
 uses
- main_mfm,msesys;
+ main_mfm,msesys,parser,msestream;
  
 procedure tmainfo.exe(const sender: TObject);
 var
  stream: tllvmbcwriter;
+ foutputstream,ferrorstream: ttextstream;
 begin
- stream:= tllvmbcwriter.create('test.bc',fm_create);
- stream.free();
+ foutputstream:= ttextstream.create(stdoutputhandle);
+ ferrorstream:= ttextstream.create(stderrorhandle);
+ initio(foutputstream,ferrorstream);
+ try
+  stream:= tllvmbcwriter.create('test.bc',fm_create);
+  stream.free();
+ finally
+  foutputstream.destroy();
+  ferrorstream.destroy();
+ end;
 end;
 
 end.

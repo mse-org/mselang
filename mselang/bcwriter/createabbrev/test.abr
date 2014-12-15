@@ -1,20 +1,16 @@
+[mainfo.abbrevidstart]
+value=4
 [mainfo.grid]
-propcolwidthref=54
-values0=3
- abcde
- 
- efg
+propcolwidthref=244
+values0=1
+ int
 sortdescend0=0
-values1=3
- 0
- 0
- 0
+values1=1
+ 2
 values1_ci=-1
 sortdescend1=0
-values2=3
- 0
- 0
- 0
+values2=1
+ 6
 values2_ci=-1
 sortdescend2=0
 [mainfo.idsize]

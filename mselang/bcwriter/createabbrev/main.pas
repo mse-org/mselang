@@ -34,7 +34,7 @@ var
  mainfo: tmainfo;
 implementation
 uses
- main_mfm,llvmbcwriter,mseformatstr,parser;
+ main_mfm,llvmbcwriter,mseformatstr,parser,msearrayutils;
 
 type
  encodingty = (en_literal,en_fixed,en_vbr,en_array,en_char6,en_blob);
@@ -48,73 +48,89 @@ end;
 procedure tmainfo.datentexe(const sender: TObject);
 var
  writer1: tllvmbcwriter1;
- int1,int2,int3,int4: int32;
+ i1,i2,i3,i4: int32;
  str1: string;
- mstr1,nam1: msestring;
+ mstr1,nam1,comment: msestring;
  foutputstream,ferrorstream: ttextstream;
  id: integer;
+ names: msestringarty;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
  try
   initio(foutputstream,ferrorstream);
-  int4:= 0;
+  i4:= 0;
   mstr1:= '';
   id:= abbrevidstart.value;
   repeat
-   nam1:= nameed[int4];
+   nam1:= nameed[i4];
+   additem(names,'@mab'+nam1);
+   comment:= '';
    writer1:= tllvmbcwriter1(tllvmbcwriter.create());
-   int1:= writer1.bitpos;
+   i1:= writer1.bitpos;
    writer1.emit(idsize.value,define_abbrev);
-   writer1.emitvbr5(grid.rowcount);
-   int3:= int4;
+   for i3:= i4+1 to grid.rowcount do begin
+    if (i3 = grid.rowcount) or (nameed[i3] <> '') then begin
+     writer1.emitvbr5(i3-i4);
+    end;
+   end;
+   i3:= i4;
    repeat
-    case encodingty(encoding[int3]) of
+    case encodingty(encoding[i3]) of
      en_literal: begin
       writer1.emit(1,1);
-      writer1.emitvbr8(valueed[int3]);
+      writer1.emitvbr8(valueed[i3]);
+      comment:= comment+'literal '+inttostr(valueed[i3])+',';
      end;
      en_fixed: begin
       writer1.emit(1,0);
       writer1.emit(3,1);
-      writer1.emitvbr5(valueed[int3]);
+      writer1.emitvbr5(valueed[i3]);
+      comment:= comment+'fixed '+inttostr(valueed[i3])+',';
      end;
      en_vbr: begin
       writer1.emit(1,0);
       writer1.emit(3,2);
-      writer1.emitvbr5(valueed[int3]);
+      writer1.emitvbr5(valueed[i3]);
+      comment:= comment+'vbr '+inttostr(valueed[i3])+',';
      end;
      en_array: begin
       writer1.emit(1,0);
       writer1.emit(3,3);
+      comment:= comment+'array,';
         //next operand is type
      end;
      en_char6: begin
       writer1.emit(1,0);
       writer1.emit(3,4);
+      comment:= comment+'char6,';
      end;
      en_blob: begin
       writer1.emit(1,0);
       writer1.emit(3,4);
+      comment:= comment+'blob,';
      end;
     end;
-    inc(int3);
-   until (nameed[int3] <> '') or (int3 >= grid.rowcount);
-   int2:= writer1.bitpos;
+    inc(i3);
+   until (nameed[i3] <> '') or (i3 >= grid.rowcount);
+   i2:= writer1.bitpos;
    writer1.pad32;
    writer1.flush();
    writer1.position:= 0;
-   str1:= copy(writer1.readdatastring(),int1 div 8 + 1,(int2-int1+7) div 8);
+   str1:= copy(writer1.readdatastring(),i1 div 8 + 1,(i2-i1+7) div 8);
    writer1.free;
-   mstr1:= mstr1 + 'abbr_'+nam1+' = '+inttostr(id)+';'+lineend+
-           nam1+'dat : array[0..'+
+   setlength(comment,length(comment)-1);
+   mstr1:= mstr1 + 'mab_'+nam1+' = '+inttostr(id)+'; //'+comment+lineend+
+           'mab'+nam1+'dat : array[0..'+
            inttostr(length(str1)-1)+'] of card8 = ('+lineend+
            bytestrtostr(str1,nb_dec,',')+');'+lineend+
-     nam1+': bcdataty = (bitsize: '+inttostr(int2-int1)+'; data: @'+
-     nam1+'dat);'+lineend;
+     'mab'+nam1+': bcdataty = (bitsize: '+inttostr(i2-i1)+'; data: @'+
+     'mab'+nam1+'dat);'+lineend;
    inc(id);
-   int4:= int3;
-  until int4 >= grid.rowcount;
+   i4:= i3;
+  until i4 >= grid.rowcount;
+  mstr1:= mstr1+'mabs: array[0..'+inttostr(high(names))+'] of pbcdataty = ('+
+  concatstrings(names,',')+');'+lineend;
   code.value:= mstr1
  except
   application.handleexception();

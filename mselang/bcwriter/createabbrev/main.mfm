@@ -34,9 +34,9 @@ object mainfo: tmainfo
   object grid: twidgetgrid
     taborder = 1
     bounds_x = 8
-    bounds_y = 32
+    bounds_y = 35
     bounds_cx = 489
-    bounds_cy = 184
+    bounds_cy = 181
     anchors = [an_left, an_top, an_right, an_bottom]
     optionsgrid = [og_rowinserting, og_rowdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_appendempty, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     fixcols.count = 1
