@@ -207,13 +207,17 @@ type
    procedure write64(const avalue: int64);
    procedure writeback32(const avalue: int32; const apos: int32);
    procedure writeint32rec(const id: int32; const value: int32);
-   procedure writeabbrev();
+//   procedure writeabbrev();
+   procedure checkbitflush();
    procedure emit(const asize: integer; const avalue: int32);
-   procedure emit6(const avalue: int32);
+   procedure emit5(const avalue: card8);
+   procedure emit6(const avalue: card8);
    procedure emit8(const avalue: card8);
+   procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32);
-   procedure pad32();
+   procedure emitvbr8(avalue: int32);
    procedure emitdata(const avalue: bcdataty);
+   procedure pad32();
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
@@ -322,15 +326,8 @@ begin
  end; 
 end;
 
-procedure tllvmbcwriter.emit6(const avalue: int32);
+procedure tllvmbcwriter.checkbitflush();
 begin
-{$ifdef mse_checkinternalerror}
- if avalue and not $3f <> 0 then begin
-  internalerror(ie_bcwriter,'141213C');
- end;
-{$endif}
- fbitbuf:= fbitbuf shl 6 or avalue;
- fbitpos:= fbitpos + 6;
  if fbitpos >= 8 then begin
   fbitpos:= fbitpos - 8;
   if fbufpos + 1 >= fbufend then begin
@@ -341,6 +338,30 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emit5(const avalue: card8);
+begin
+{$ifdef mse_checkinternalerror}
+ if avalue and not $1f <> 0 then begin
+  internalerror(ie_bcwriter,'141213C');
+ end;
+{$endif}
+ fbitbuf:= fbitbuf shl 5 or avalue;
+ fbitpos:= fbitpos + 5;
+ checkbitflush();
+end;
+
+procedure tllvmbcwriter.emit6(const avalue: card8);
+begin
+{$ifdef mse_checkinternalerror}
+ if avalue and not $3f <> 0 then begin
+  internalerror(ie_bcwriter,'141213C');
+ end;
+{$endif}
+ fbitbuf:= fbitbuf shl 6 or avalue;
+ fbitpos:= fbitpos + 6;
+ checkbitflush();
+end;
+
 procedure tllvmbcwriter.emit8(const avalue: card8);
 begin
  fbitbuf:= (fbitbuf shl 8) or avalue;
@@ -349,6 +370,20 @@ begin
  end;
  pint8(fbufpos)^:= fbitbuf shr fbitpos;
  fbufpos:= fbufpos + 1;
+end;
+
+procedure tllvmbcwriter.emitvbr5(avalue: int32);
+var
+ i1: int32;
+begin
+ repeat
+  i1:= avalue and $f;
+  if card32(avalue) - i1 <> 0 then begin
+   i1:= i1 or $10;
+  end;
+  emit5(i1);
+  avalue:= card32(avalue) shr 4;
+ until avalue = 0;
 end;
 
 procedure tllvmbcwriter.emitvbr6(avalue: int32);
@@ -362,6 +397,20 @@ begin
   end;
   emit6(i1);
   avalue:= card32(avalue) shr 5;
+ until avalue = 0;
+end;
+
+procedure tllvmbcwriter.emitvbr8(avalue: int32);
+var
+ i1: int32;
+begin
+ repeat
+  i1:= avalue and $7f;
+  if card32(avalue) - i1 <> 0 then begin
+   i1:= i1 or $80;
+  end;
+  emit8(i1);
+  avalue:= card32(avalue) shr 8;
  until avalue = 0;
 end;
 
@@ -503,13 +552,13 @@ begin
  end;
 {$endif}
 end;
-
+{
 procedure tllvmbcwriter.writeabbrev;
 begin
 // beginblock(DEFINE_ABBREV,4);
 // endblock();
 end;
-
+}
 function tllvmbcwriter.bitpos: int32;
 begin
  result:= (fpos + fbufpos - pointer(@fbuffer)) * 8 + fbitpos;

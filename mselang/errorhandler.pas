@@ -417,7 +417,7 @@ begin
    end;
    if level1 <= errorerrorlevel then begin
     errorfla:= true;
-    if s.unitinfo^.stoponerror then begin
+    if (s.unitinfo <> nil) and s.unitinfo^.stoponerror then begin
      s.stopparser:= true;
     end;
    end;

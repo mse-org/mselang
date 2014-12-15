@@ -1,0 +1,21 @@
+[mainfo.grid]
+propcolwidthref=54
+values0=3
+ abcde
+ 
+ efg
+sortdescend0=0
+values1=3
+ 0
+ 0
+ 0
+values1_ci=-1
+sortdescend1=0
+values2=3
+ 0
+ 0
+ 0
+values2_ci=-1
+sortdescend2=0
+[mainfo.idsize]
+value=3

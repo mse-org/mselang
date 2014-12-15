@@ -1,0 +1,222 @@
+object mainfo: tmainfo
+  bounds_x = 127
+  bounds_y = 244
+  bounds_cx = 504
+  bounds_cy = 293
+  container.bounds = (
+    0
+    0
+    504
+    293
+  )
+  statfile = mainstat
+  caption = 'MSElang Abbreviation Generator'
+  onclose = closeexe
+  moduleclassname = 'tmainform'
+  object idsize: tintegeredit
+    frame.caption = 'idsize'
+    frame.captionpos = cp_right
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      0
+      37
+      0
+    )
+    bounds_x = 8
+    bounds_y = 8
+    bounds_cx = 89
+    statfile = projectstat
+    ondataentered = datentexe
+    value = 3
+    reffontheight = 14
+  end
+  object grid: twidgetgrid
+    taborder = 1
+    bounds_x = 8
+    bounds_y = 32
+    bounds_cx = 489
+    bounds_cy = 184
+    anchors = [an_left, an_top, an_right, an_bottom]
+    optionsgrid = [og_rowinserting, og_rowdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_appendempty, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
+    fixcols.count = 1
+    fixcols.items = <    
+      item
+        numstep = 1
+      end>
+    fixrows.count = 1
+    fixrows.items = <    
+      item
+        height = 16
+        captions.count = 3
+        captions.items = <        
+          item
+            caption = 'name'
+          end        
+          item
+            caption = 'encoding'
+          end        
+          item
+            caption = 'value'
+          end>
+      end>
+    datacols.count = 3
+    datacols.items = <    
+      item[nameed]
+        width = 205
+        options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
+        widgetname = 'nameed'
+        dataclass = tgridmsestringdatalist
+      end    
+      item[encoding]
+        width = 100
+        widgetname = 'encoding'
+        dataclass = tgridenumdatalist
+      end    
+      item[valueed]
+        width = 126
+        widgetname = 'valueed'
+        dataclass = tgridintegerdatalist
+      end>
+    datarowheight = 16
+    statfile = projectstat
+    onrowcountchanged = rowcontchaexe
+    reffontheight = 14
+    object encoding: tenumtypeedit
+      optionswidget1 = [ow1_fontglyphheight]
+      optionsskin = [osk_framebuttononly]
+      frame.levelo = 0
+      frame.colorclient = -2147483645
+      frame.localprops = [frl_levelo, frl_leveli, frl_colorclient]
+      frame.button.color = -1879048187
+      taborder = 1
+      visible = False
+      bounds_x = 206
+      bounds_y = 0
+      bounds_cy = 16
+      ondataentered = datentexe
+      value = 0
+      valuedefault = 0
+      dropdown.cols.count = 1
+      dropdown.cols.items = <      
+        item
+        end>
+      oninit = initencoding
+      reffontheight = 14
+    end
+    object valueed: tintegeredit
+      optionswidget1 = [ow1_fontglyphheight]
+      optionsskin = [osk_framebuttononly]
+      taborder = 2
+      visible = False
+      bounds_x = 307
+      bounds_y = 0
+      bounds_cx = 126
+      bounds_cy = 16
+      ondataentered = datentexe
+      reffontheight = 14
+    end
+    object nameed: tstringedit
+      optionswidget1 = [ow1_fontglyphheight]
+      optionsskin = [osk_framebuttononly]
+      taborder = 3
+      visible = False
+      bounds_x = 0
+      bounds_y = 0
+      bounds_cx = 205
+      bounds_cy = 16
+      ondataentered = datentexe
+      reffontheight = 14
+    end
+  end
+  object code: tmemoedit
+    frame.levelo = -1
+    frame.sbhorz.pagesize = 1
+    frame.sbvert.pagesize = 1
+    frame.localprops = [frl_levelo, frl_colorclient]
+    taborder = 2
+    bounds_x = 8
+    bounds_y = 220
+    bounds_cx = 489
+    bounds_cy = 64
+    anchors = [an_left, an_right, an_bottom]
+    optionsedit = [oe_readonly, oe_closequery, oe_checkmrcancel, oe_linebreak, oe_eatreturn, oe_resetselectonexit, oe_nofirstarrownavig, oe_autoselect, oe_autoselectonfirstclick, oe_focusrectonreadonly]
+    reffontheight = 14
+  end
+  object tsplitter1: tsplitter
+    color = -1879048189
+    taborder = 3
+    bounds_x = 8
+    bounds_y = 216
+    bounds_cx = 489
+    bounds_cy = 4
+    anchors = [an_left, an_top, an_right]
+    options = [spo_vmove, spo_vprop, spo_dockleft, spo_docktop, spo_dockright, spo_dockbottom]
+    linktop = grid
+    linkbottom = code
+    statfile = mainstat
+  end
+  object tfilenameedit1: tfilenameedit
+    frame.button.imagenr = 17
+    taborder = 4
+    bounds_x = 192
+    bounds_y = 8
+    bounds_cx = 249
+    anchors = [an_left, an_top, an_right]
+    statfile = mainstat
+    textflags = [tf_noselect, tf_ellipseleft]
+    onsetvalue = filenamesetexe
+    controller.filterlist.data = (
+      (
+        'Abbreviation list'
+        '*.abr'
+      )
+    )
+    controller.defaultext = 'abr'
+    controller.options = [fdo_save, fdo_checkexist, fdo_savelastdir]
+    reffontheight = 14
+  end
+  object tbutton1: tbutton
+    taborder = 5
+    bounds_x = 445
+    bounds_y = 8
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_top, an_right]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'save'
+    onexecute = saveexe
+  end
+  object abbrevidstart: tintegeredit
+    frame.caption = 'id'#10'start'
+    frame.captionpos = cp_right
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      5
+      33
+      5
+    )
+    taborder = 6
+    bounds_x = 104
+    bounds_y = 3
+    bounds_cx = 85
+    bounds_cy = 30
+    statfile = projectstat
+    ondataentered = datentexe
+    value = 4
+    reffontheight = 14
+  end
+  object projectstat: tstatfile
+    filename = 'status.sta'
+    statfile = mainstat
+    left = 160
+    top = 160
+  end
+  object mainstat: tstatfile
+    filename = '^/.msetools/mseabbrev.sta'
+    options = [sfo_createpath, sfo_transaction, sfo_activatorread, sfo_activatorwrite]
+    left = 160
+    top = 128
+  end
+end
