@@ -22,6 +22,7 @@ type
    mainstat: tstatfile;
    tbutton1: tbutton;
    abbrevidstart: tintegeredit;
+   commented: tstringedit;
    procedure initencoding(const sender: tenumtypeedit);
    procedure datentexe(const sender: TObject);
    procedure rowcontchaexe(const sender: tcustomgrid);
@@ -76,41 +77,43 @@ begin
    end;
    i3:= i4;
    repeat
+    comment:= comment+commented[i3]+' (';
     case encodingty(encoding[i3]) of
      en_literal: begin
       writer1.emit(1,1);
       writer1.emitvbr8(valueed[i3]);
-      comment:= comment+'literal '+inttostr(valueed[i3])+',';
+      comment:= comment+'literal '+inttostr(valueed[i3]);
      end;
      en_fixed: begin
       writer1.emit(1,0);
       writer1.emit(3,1);
       writer1.emitvbr5(valueed[i3]);
-      comment:= comment+'fixed '+inttostr(valueed[i3])+',';
+      comment:= comment+'fixed '+inttostr(valueed[i3]);
      end;
      en_vbr: begin
       writer1.emit(1,0);
       writer1.emit(3,2);
       writer1.emitvbr5(valueed[i3]);
-      comment:= comment+'vbr '+inttostr(valueed[i3])+',';
+      comment:= comment+'vbr '+inttostr(valueed[i3]);
      end;
      en_array: begin
       writer1.emit(1,0);
       writer1.emit(3,3);
-      comment:= comment+'array,';
+      comment:= comment+'array';
         //next operand is type
      end;
      en_char6: begin
       writer1.emit(1,0);
       writer1.emit(3,4);
-      comment:= comment+'char6,';
+      comment:= comment+'char6';
      end;
      en_blob: begin
       writer1.emit(1,0);
       writer1.emit(3,4);
-      comment:= comment+'blob,';
+      comment:= comment+'blob';
      end;
     end;
+    comment:= comment+'), ';
     inc(i3);
    until (nameed[i3] <> '') or (i3 >= grid.rowcount);
    i2:= writer1.bitpos;
@@ -119,7 +122,7 @@ begin
    writer1.position:= 0;
    str1:= copy(writer1.readdatastring(),i1 div 8 + 1,(i2-i1+7) div 8);
    writer1.free;
-   setlength(comment,length(comment)-1);
+   setlength(comment,length(comment)-2);
    mstr1:= mstr1 + 'mab_'+nam1+' = '+inttostr(id)+'; //'+comment+lineend+
            'mab'+nam1+'dat : array[0..'+
            inttostr(length(str1)-1)+'] of card8 = ('+lineend+

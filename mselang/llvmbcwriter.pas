@@ -218,7 +218,7 @@ type
    procedure emitrec(const id: int32; const data: array of int32);
 //   procedure emitint32rec(const id: int32; const value: int32);
    procedure pad32();
-   procedure emitintrec(const avalue: int32);
+   procedure emitintconst(const avalue: int32);
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
@@ -233,10 +233,10 @@ uses
  errorhandler,msesys,sysutils,msebits;
 
 const
-mab_int = 4; //vbr 6
-mabintdat : array[0..2] of card8 = (
-10,100,0);
-mabint: bcdataty = (bitsize: 17; data: @mabintdat);
+mab_int = 4; //id (vbr 6), value (vbr 6)
+mabintdat : array[0..3] of card8 = (
+18,100,200,0);
+mabint: bcdataty = (bitsize: 26; data: @mabintdat);
 mabs: array[0..0] of pbcdataty = (@mabint);
 
 { tllvmbcwriter }
@@ -259,7 +259,7 @@ begin
  emitdata(mabs);
  endblock();
  beginblock(CONSTANTS_BLOCK_ID,3);
- emitintrec(123);
+ emitintconst(123);
  endblock();
 end;
 
@@ -541,9 +541,10 @@ begin
  result:= (fpos + fbufpos - pointer(@fbuffer)) * 8 + fbitpos;
 end;
 
-procedure tllvmbcwriter.emitintrec(const avalue: int32);
+procedure tllvmbcwriter.emitintconst(const avalue: int32);
 begin
  emitcode(mab_int);
+ emitvbr6(ord(CST_CODE_INTEGER));
  emitvbr6(avalue);
 end;
 
