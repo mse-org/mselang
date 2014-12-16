@@ -99,12 +99,20 @@ type
  typeallocinfoty = record
   kind: databitsizety;
   size: integer;        //bits or bytes
+  listindex: integer;
  end; 
+ ptypeallocinfoty = ^typeallocinfoty;
 
 const
  pointeroptype: typeallocinfoty = (
   kind: das_pointer;
   size: pointerbitsize;
+  listindex: 0;
+ );
+ byteoptype: typeallocinfoty = (
+  kind: das_8;
+  size: 8;
+  listindex: 0;
  );
 
  

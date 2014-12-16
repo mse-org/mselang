@@ -18,7 +18,7 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes,llvmbitcodes;
+ msestream,msetypes,llvmbitcodes,parserglob,elements;
 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
@@ -73,6 +73,8 @@ type
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
+   procedure start(const types: ttypehashdatalist);
+   procedure stop();
    procedure flushbuffer(); override;
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
@@ -81,7 +83,7 @@ type
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits,parserglob;
+ errorhandler,msesys,sysutils,msebits;
 
  //abreviations, made by createabbrev tool
  
@@ -103,6 +105,18 @@ begin
  fblockstackendpo:= fblockstackpo + blockstacksize;
  fblockstackpo^.idsize:= 2; //start default
  inherited;
+end;
+
+destructor tllvmbcwriter.destroy();
+begin
+ inherited;
+end;
+
+procedure tllvmbcwriter.start(const types: ttypehashdatalist);
+var
+ po1: ptypeallocinfoty;
+ i1: int32;
+begin
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
@@ -117,9 +131,37 @@ begin
  beginblock(CONSTANTS_BLOCK_ID,3);
  emitintconst(123);
  endblock();
+ 
+ if types.count > 0 then begin
+  beginblock(TYPE_BLOCK_ID_NEW,3);
+  emitrec(ord(TYPE_CODE_NUMENTRY),[types.count]);
+  po1:= types.first;
+  for i1:= types.count - 1 downto 0 do begin
+   if po1^.kind in ordinalopdatakinds then begin
+    if po1^.kind = das_pointer then begin
+     emitrec(ord(TYPE_CODE_POINTER),[0]); //first entry is byte
+    end
+    else begin
+     emitrec(ord(TYPE_CODE_INTEGER),[po1^.size]);
+    end;
+   end
+   else begin
+    if po1^.kind in byteopdatakinds then begin
+     emitrec(ord(TYPE_CODE_ARRAY),[po1^.size,0]); //first entry is byte     
+    end
+    else begin
+    {$ifdef mse_checkinternalerror}
+     internalerror(ie_bcwriter,'141216A');
+    {$endif}
+    end;
+   end;
+   po1:= types.next();
+  end;
+  endblock(); 
+ end;
 end;
 
-destructor tllvmbcwriter.destroy();
+procedure tllvmbcwriter.stop;
 begin
  endblock();
 {$ifdef mse_checkinternalerror}
@@ -127,8 +169,8 @@ begin
   internalerror(ie_bcwriter,'141213C');
  end;
 {$endif}
- inherited;
 end;
+
 
 {$ifdef mse_checkinternalerror}
 procedure tllvmbcwriter.checkalignment(const bytes: integer);

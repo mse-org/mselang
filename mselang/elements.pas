@@ -286,6 +286,27 @@ type
    procedure popelementparent;
 //   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
+
+ typehashdataty = record
+  header: hashheaderty;
+  data: typeallocinfoty;
+ end;
+ ptypehashdataty = ^typehashdataty;
+
+ ttypehashdatalist = class(thashdatalist)
+  private
+   fdestroying: boolean;
+  protected
+   function hashkey(const akey): hashvaluety override;
+   function checkkey(const akey; const aitemdata): boolean override;
+  public
+   constructor create();
+   destructor destroy(); override;
+   procedure clear(); override; //automatic first entry byteoptype
+   procedure addunique(var avalue: typeallocinfoty);
+   function first: ptypeallocinfoty;
+   function next: ptypeallocinfoty;
+ end;
  
 procedure clear;
 procedure init;
@@ -2249,6 +2270,71 @@ begin
 //   result.segment:= seg_globconst;
   end;
  end;
+end;
+
+{ ttypehashdatalist }
+
+constructor ttypehashdatalist.create();
+begin
+ inherited create(sizeof(typeallocinfoty));
+ clear();
+end;
+
+destructor ttypehashdatalist.destroy();
+begin
+ fdestroying:= true;
+ inherited;
+end;
+
+procedure ttypehashdatalist.clear;
+var
+ t1: typeallocinfoty;
+begin
+ if not fdestroying then begin
+  t1:= byteoptype;
+  addunique(t1);
+ end;
+end;
+
+procedure ttypehashdatalist.addunique(var avalue: typeallocinfoty);
+var
+ po1: ptypehashdataty;
+begin
+ po1:= pointer(internalfind(avalue));
+ if po1 = nil then begin
+  with ptypehashdataty(internaladd(avalue))^ do begin
+   avalue.listindex:= count-1;
+   data:= avalue;
+  end;
+ end
+ else begin
+  avalue.listindex:= po1^.data.listindex;
+ end;
+end;
+
+function ttypehashdatalist.hashkey(const akey): hashvaluety;
+begin
+ with typeallocinfoty(akey) do begin
+  result:= (ord(kind)+size shl 5) xor size;
+ end;
+end;
+
+function ttypehashdatalist.checkkey(const akey; const aitemdata): boolean;
+begin
+ with typeallocinfoty(akey) do begin
+  result:= (kind = typeallocinfoty(aitemdata).kind) and
+                         (size = typeallocinfoty(aitemdata).size);
+ end;
+end;
+
+function ttypehashdatalist.first: ptypeallocinfoty;
+begin
+ result:= pointer(internalfirst());
+end;
+
+function ttypehashdatalist.next: ptypeallocinfoty;
+begin
+ result:= pointer(internalnext());
 end;
 
 initialization
