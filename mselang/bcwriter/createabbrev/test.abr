@@ -17,7 +17,7 @@ values2=2
 values2_ci=-1
 sortdescend2=0
 values3=2
- field
+ id
  value
 sortdescend3=0
 [mainfo.idsize]

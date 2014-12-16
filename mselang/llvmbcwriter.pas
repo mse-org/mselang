@@ -18,162 +18,12 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes;
+ msestream,msetypes,llvmbitcodes;
 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
  blockstacksize  = 256;
 
-  // The standard abbrev namespace always has a way to exit a block, enter a
-  // nested block, define abbrevs, and define an unabbreviated record.
- END_BLOCK = 0;  // Must be zero to guarantee termination for broken bitcode.
- ENTER_SUBBLOCK = 1;
-
- /// DEFINE_ABBREV - Defines an abbrev for the current block.  It consists
- /// of a vbr5 for # operand infos.  Each operand info is emitted with a
- /// single bit to indicate if it is a literal encoding.  If so, the value is
- /// emitted with a vbr8.  If not, the encoding is emitted as 3 bits followed
- /// by the info value as a vbr5 if needed.
- DEFINE_ABBREV = 2;
-
- // UNABBREV_RECORDs are emitted with a vbr6 for the record code, followed by
- // a vbr6 for the # operands, followed by vbr6's for each operand.
- UNABBREV_RECORD = 3;
-
- // This is not a code, this is a marker for the first abbrev assignment.
- FIRST_APPLICATION_ABBREV = 4;
-
-type
-  /// MODULE blocks have a number of optional fields and subblocks.
- modulecodety = (
-    MODULE_CODE_VERSION     = 1,    // VERSION:     [version#]
-    MODULE_CODE_TRIPLE      = 2,    // TRIPLE:      [strchr x N]
-    MODULE_CODE_DATALAYOUT  = 3,    // DATALAYOUT:  [strchr x N]
-    MODULE_CODE_ASM         = 4,    // ASM:         [strchr x N]
-    MODULE_CODE_SECTIONNAME = 5,    // SECTIONNAME: [strchr x N]
-
-    // FIXME: Remove DEPLIB in 4.0.
-    MODULE_CODE_DEPLIB      = 6,    // DEPLIB:      [strchr x N]
-
-    // GLOBALVAR: [pointer type, isconst, initid,
-    //             linkage, alignment, section, visibility, threadlocal]
-    MODULE_CODE_GLOBALVAR   = 7,
-
-    // FUNCTION:  [type, callingconv, isproto, linkage, paramattrs, alignment,
-    //             section, visibility, gc, unnamed_addr]
-    MODULE_CODE_FUNCTION    = 8,
-
-    // ALIAS: [alias type, aliasee val#, linkage, visibility]
-    MODULE_CODE_ALIAS       = 9,
-
-    // MODULE_CODE_PURGEVALS: [numvals]
-    MODULE_CODE_PURGEVALS   = 10,
-
-    MODULE_CODE_GCNAME      = 11   // GCNAME: [strchr x N]
-  );
-
-
- cstcodety = (
-  CST_CODE_SETTYPE       =  1,  // SETTYPE:       [typeid]
-  CST_CODE_NULL          =  2,  // NULL
-  CST_CODE_UNDEF         =  3,  // UNDEF
-  CST_CODE_INTEGER       =  4,  // INTEGER:       [intval]
-  CST_CODE_WIDE_INTEGER  =  5,  // WIDE_INTEGER:  [n x intval]
-  CST_CODE_FLOAT         =  6,  // FLOAT:         [fpval]
-  CST_CODE_AGGREGATE     =  7,  // AGGREGATE:     [n x value number]
-  CST_CODE_STRING        =  8,  // STRING:        [values]
-  CST_CODE_CSTRING       =  9,  // CSTRING:       [values]
-  CST_CODE_CE_BINOP      = 10,  // CE_BINOP:      [opcode, opval, opval]
-  CST_CODE_CE_CAST       = 11,  // CE_CAST:       [opcode, opty, opval]
-  CST_CODE_CE_GEP        = 12,  // CE_GEP:        [n x operands]
-  CST_CODE_CE_SELECT     = 13,  // CE_SELECT:     [opval, opval, opval]
-  CST_CODE_CE_EXTRACTELT = 14,  // CE_EXTRACTELT: [opty, opval, opval]
-  CST_CODE_CE_INSERTELT  = 15,  // CE_INSERTELT:  [opval, opval, opval]
-  CST_CODE_CE_SHUFFLEVEC = 16,  // CE_SHUFFLEVEC: [opval, opval, opval]
-  CST_CODE_CE_CMP        = 17,  // CE_CMP:        [opty, opval, opval, pred]
-  CST_CODE_INLINEASM_OLD = 18,  // INLINEASM:     [sideeffect|alignstack,
-                                //                 asmstr,conststr]
-  CST_CODE_CE_SHUFVEC_EX = 19,  // SHUFVEC_EX:    [opty, opval, opval, opval]
-  CST_CODE_CE_INBOUNDS_GEP = 20,// INBOUNDS_GEP:  [n x operands]
-  CST_CODE_BLOCKADDRESS  = 21,  // CST_CODE_BLOCKADDRESS [fnty, fnval, bb#]
-  CST_CODE_DATA          = 22,  // DATA:          [n x elements]
-  CST_CODE_INLINEASM     = 23   // INLINEASM:     [sideeffect|alignstack|
-                                //                 asmdialect,asmstr,conststr]
- );
-
- blockidty = (
-    /// BLOCKINFO_BLOCK is used to define metadata about blocks, for example,
-    /// standard abbrevs that should be available to all blocks of a specified
-    /// ID.
-    BLOCKINFO_BLOCK_ID = 0,
-
-    // Block IDs 1-7 are reserved for future expansion.
-//    FIRST_APPLICATION_BLOCKID = 8,
-
-  // The only top-level block type defined is for a module.
-    // Blocks
-    MODULE_BLOCK_ID          = 8{= FIRST_APPLICATION_BLOCKID},
-
-    // Module sub-block id's.
-    PARAMATTR_BLOCK_ID,
-    PARAMATTR_GROUP_BLOCK_ID,
-
-    CONSTANTS_BLOCK_ID,
-    FUNCTION_BLOCK_ID,
-
-    UNUSED_ID1,
-
-    VALUE_SYMTAB_BLOCK_ID,
-    METADATA_BLOCK_ID,
-    METADATA_ATTACHMENT_ID,
-
-    TYPE_BLOCK_ID_NEW,
-
-    USELIST_BLOCK_ID
- );
- 
-   /// BlockInfoCodes - The blockinfo block contains metadata about user-defined
-  /// blocks.
-  blockinfocodety = (
-    // DEFINE_ABBREV has magic semantics here, applying to the current SETBID'd
-    // block, instead of the BlockInfo block.
-
-    BLOCKINFO_CODE_SETBID        = 1, // SETBID: [blockid#]
-    BLOCKINFO_CODE_BLOCKNAME     = 2, // BLOCKNAME: [name]
-    BLOCKINFO_CODE_SETRECORDNAME = 3  // BLOCKINFO_CODE_SETRECORDNAME:
-                                      //                             [id, name]
-  );
-
-{ 
- blockidty = (
-    BLOCKINFO_BLOCK_ID,
-    res1_block_id,
-    res2_block_id,
-    res3_block_id,
-    res4_block_id,
-    res5_block_id,
-    res6_block_id,
-    res7_block_id,
-    MODULE_BLOCK_ID,
-
-    // Module sub-block id's.
-    PARAMATTR_BLOCK_ID,
-    PARAMATTR_GROUP_BLOCK_ID,
-
-    CONSTANTS_BLOCK_ID,
-    FUNCTION_BLOCK_ID,
-
-    UNUSED_ID1,
-
-    VALUE_SYMTAB_BLOCK_ID,
-    METADATA_BLOCK_ID,
-    METADATA_ATTACHMENT_ID,
-
-    TYPE_BLOCK_ID_NEW,
-
-    USELIST_BLOCK_ID
- );
-}  
 type
  blockstackinfoty = record
   idsize: integer;
@@ -223,7 +73,7 @@ type
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
    procedure flushbuffer(); override;
-   procedure beginblock(const id: blockidty; const nestedidsize: int32);
+   procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
    function bitpos(): int32;
  end;
@@ -414,7 +264,7 @@ procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32);
 var
  i1: int32;
 begin
- emitcode(UNABBREV_RECORD);
+ emitcode(ord(UNABBREV_RECORD));
  emitvbr6(id);
  emitvbr6(length(data));
  for i1:= 0 to high(data) do begin
@@ -494,14 +344,14 @@ type
  end;
  pbeginblockrecord = ^beginblockrecord;
  
-procedure tllvmbcwriter.beginblock(const id: blockidty;
+procedure tllvmbcwriter.beginblock(const id: blockids;
                                        const nestedidsize: int32);
 begin
  if fbufpos + sizeof(beginblockrecord) >= fbufend then begin
   flushbuffer();
  end;
  pbeginblockrecord(fbufpos)^.header:= 
-    ENTER_SUBBLOCK or (int32(id) shl fblockstackpo^.idsize) or 
+    ord(ENTER_SUBBLOCK) or (int32(id) shl fblockstackpo^.idsize) or 
                                  (nestedidsize shl (fblockstackpo^.idsize + 8));
  fbufpos:= fbufpos + sizeof(beginblockrecord);
 
@@ -526,7 +376,7 @@ begin
   internalerror(ie_bcwriter,'141213B');
  end;
 {$endif}
- emitcode(END_BLOCK);
+ emitcode(ord(END_BLOCK));
  pad32();
 end;
 {
