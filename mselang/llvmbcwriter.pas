@@ -59,6 +59,7 @@ type
    procedure writeback32(const apos: int32; const avalue: int32);
 //   procedure writeabbrev();
    procedure emit(const asize: integer; const avalue: card8);
+   procedure emitvbr4(avalue: int32);
    procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32);
    procedure emitvbr8(avalue: int32);
@@ -80,14 +81,17 @@ type
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits;
+ errorhandler,msesys,sysutils,msebits,parserglob;
 
+ //abreviations, made by createabbrev tool
+ 
+type
+ mabty = (
+  mab_int = 4 //id (vbr 6), value (vbr 6)
+ );
 const
-mab_int = 4; //id (vbr 6), value (vbr 6)
-mabintdat : array[0..3] of card8 = (
-18,100,200,0);
-mabint: bcdataty = (bitsize: 26; data: @mabintdat);
-mabs: array[0..0] of pbcdataty = (@mabint);
+ mabsdat: array[0..3] of card8 = (18,100,200,0);
+ mabs: bcdataty = (bitsize: 26; data: @mabsdat);
 
 { tllvmbcwriter }
 
@@ -103,11 +107,13 @@ begin
                                                              uint32('B')));
                                 //llvm ir signature
  beginblock(MODULE_BLOCK_ID,3);
+ emitrec(ord(MODULE_CODE_VERSION),[1]);
 
  beginblock(BLOCKINFO_BLOCK_ID,3);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
  emitdata(mabs);
  endblock();
+
  beginblock(CONSTANTS_BLOCK_ID,3);
  emitintconst(123);
  endblock();
@@ -130,7 +136,7 @@ begin
  if fbitpos <> 0 then begin
   internalerror(ie_bcwriter,'141214A');
  end;
- if (fbufpos - pointer(@fbuffer)) mod bytes <> 0 then begin
+ if (fbufpos - pointer(@fbuffer)+fpos) mod bytes <> 0 then begin
   internalerror(ie_bcwriter,'141214B');
  end;
 end;
@@ -172,6 +178,20 @@ begin
   fbitbuf:= fbitbuf shr 8;
   fbitpos:= fbitpos - 8;
  end;
+end;
+
+procedure tllvmbcwriter.emitvbr4(avalue: int32);
+var
+ i1: int32;
+begin
+ repeat
+  i1:= avalue and $7;
+  if card32(avalue) - i1 <> 0 then begin
+   i1:= i1 or $80;
+  end;
+  emit(4,i1);
+  avalue:= card32(avalue) shr 3;
+ until avalue = 0;
 end;
 
 procedure tllvmbcwriter.emitvbr5(avalue: int32);
@@ -220,14 +240,15 @@ procedure tllvmbcwriter.pad32;
 var
  i1: int32;
 begin
- if fbufpos + 4 >= fbufend then begin
+ if fbufpos + 5 >= fbufend then begin
   flushbuffer();
  end;
  if fbitpos <> 0 then begin
   emit(8-fbitpos,0);  
  end;
- i1:= ((4 - (fpos+(fbufpos-pointer(@fbuffer)))) and $3) - 1;
- for i1:= i1 downto 0 do begin
+ i1:= fpos + (fbufpos-pointer(@fbuffer));  //byte pos
+ i1:= ((i1+3) and not $3) - i1;            //pad count
+ for i1:= i1-1 downto 0 do begin
   pcard8(fbufpos)^:= 0;
   inc(fbufpos);
  end;
@@ -337,16 +358,18 @@ procedure tllvmbcwriter.writeint32rec(const id: int32; const value: int32);
 begin
 end;
 }
+{
 type
  beginblockrecord = record //         4      8   fblockidsize
   header: uint32;          //    nextidsize id ENTER_SUBBLOCK
   blocklen: uint32;
  end;
  pbeginblockrecord = ^beginblockrecord;
- 
+} 
 procedure tllvmbcwriter.beginblock(const id: blockids;
                                        const nestedidsize: int32);
 begin
+{
  if fbufpos + sizeof(beginblockrecord) >= fbufend then begin
   flushbuffer();
  end;
@@ -354,11 +377,16 @@ begin
     ord(ENTER_SUBBLOCK) or (int32(id) shl fblockstackpo^.idsize) or 
                                  (nestedidsize shl (fblockstackpo^.idsize + 8));
  fbufpos:= fbufpos + sizeof(beginblockrecord);
-
+}
+ emitcode(ord(ENTER_SUBBLOCK));
+ emitvbr8(ord(id));
+ emitvbr4(nestedidsize);
+ pad32();
  inc(fblockstackpo);
  if fblockstackpo >= fblockstackendpo then begin
   internalerror1(ie_bcwriter,'141213A'); //stack overflow
  end;
+ write32(0); //blocklen
  fblockstackpo^.idsize:= nestedidsize;
  fblockstackpo^.startpos:= fpos + (fbufpos - pointer(@fbuffer));
 end;
@@ -393,7 +421,7 @@ end;
 
 procedure tllvmbcwriter.emitintconst(const avalue: int32);
 begin
- emitcode(mab_int);
+ emitcode(ord(mab_int));
  emitvbr6(ord(CST_CODE_INTEGER));
  emitvbr6(avalue);
 end;

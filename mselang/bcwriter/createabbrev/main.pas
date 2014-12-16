@@ -23,6 +23,7 @@ type
    tbutton1: tbutton;
    abbrevidstart: tintegeredit;
    commented: tstringedit;
+   tbutton2: tbutton;
    procedure initencoding(const sender: tenumtypeedit);
    procedure datentexe(const sender: TObject);
    procedure rowcontchaexe(const sender: tcustomgrid);
@@ -35,7 +36,7 @@ var
  mainfo: tmainfo;
 implementation
 uses
- main_mfm,llvmbcwriter,mseformatstr,parser,msearrayutils;
+ main_mfm,llvmbcwriter,mseformatstr,parser,msearrayutils,llvmbitcodes;
 
 type
  encodingty = (en_literal,en_fixed,en_vbr,en_array,en_char6,en_blob);
@@ -49,12 +50,13 @@ end;
 procedure tmainfo.datentexe(const sender: TObject);
 var
  writer1: tllvmbcwriter1;
- i1,i2,i3,i4: int32;
+ i1,i3,i4: int32;
+ bitstart,bitend: int32;
  str1: string;
  mstr1,nam1,comment: msestring;
  foutputstream,ferrorstream: ttextstream;
  id: integer;
- names: msestringarty;
+ names,enums,comments: msestringarty;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -63,13 +65,14 @@ begin
   i4:= 0;
   mstr1:= '';
   id:= abbrevidstart.value;
+  writer1:= tllvmbcwriter1(tllvmbcwriter.create());
+  bitstart:= writer1.bitpos;
   repeat
    nam1:= nameed[i4];
    additem(names,'@mab'+nam1);
+   additem(enums,'mab_'+nam1);
    comment:= '';
-   writer1:= tllvmbcwriter1(tllvmbcwriter.create());
-   i1:= writer1.bitpos;
-   writer1.emit(idsize.value,define_abbrev);
+   writer1.emit(idsize.value,ord(define_abbrev));
    for i3:= i4+1 to grid.rowcount do begin
     if (i3 = grid.rowcount) or (nameed[i3] <> '') then begin
      writer1.emitvbr5(i3-i4);
@@ -116,24 +119,36 @@ begin
     comment:= comment+'), ';
     inc(i3);
    until (nameed[i3] <> '') or (i3 >= grid.rowcount);
-   i2:= writer1.bitpos;
-   writer1.pad32;
-   writer1.flush();
-   writer1.position:= 0;
-   str1:= copy(writer1.readdatastring(),i1 div 8 + 1,(i2-i1+7) div 8);
-   writer1.free;
    setlength(comment,length(comment)-2);
-   mstr1:= mstr1 + 'mab_'+nam1+' = '+inttostr(id)+'; //'+comment+lineend+
-           'mab'+nam1+'dat : array[0..'+
-           inttostr(length(str1)-1)+'] of card8 = ('+lineend+
-           bytestrtostr(str1,nb_dec,',')+');'+lineend+
-     'mab'+nam1+': bcdataty = (bitsize: '+inttostr(i2-i1)+'; data: @'+
-     'mab'+nam1+'dat);'+lineend;
+   additem(comments,comment);
    inc(id);
    i4:= i3;
   until i4 >= grid.rowcount;
-  mstr1:= mstr1+'mabs: array[0..'+inttostr(high(names))+'] of pbcdataty = ('+
-  concatstrings(names,',')+');'+lineend;
+  bitend:= writer1.bitpos;
+  writer1.pad32;
+  writer1.flush();
+  writer1.position:= 0;
+  str1:= copy(writer1.readdatastring(),bitstart div 8 + 1,
+                                                  (bitend-bitstart+7) div 8);
+  writer1.free;
+  mstr1:= 'type'+lineend+
+          ' mabty = ('+lineend;
+  for i1:= 0 to high(enums) do begin
+   mstr1:= mstr1 + '  '+enums[i1];
+   if i1 = 0 then begin
+    mstr1:= mstr1 + ' = ' + inttostr(abbrevidstart.value);
+   end;
+   if i1 <> high(enums) then begin
+    mstr1:= mstr1 + ',';
+   end;
+   mstr1:= mstr1 + ' //'+comments[i1]+lineend;
+  end;
+  mstr1:= mstr1+' );'+lineend;
+  mstr1:= mstr1+'const'+lineend+
+  ' mabsdat: array[0..'+inttostr(length(str1)-1)+'] of card8 = ('+
+                             bytestrtostr(str1,nb_dec,',')+');'+lineend;
+  mstr1:= mstr1+' mabs: bcdataty = (bitsize: '+inttostr(bitend-bitstart)+
+                       '; data: @mabsdat);'+lineend;
   code.value:= mstr1
  except
   application.handleexception();
