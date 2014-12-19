@@ -206,7 +206,7 @@ type
 
  markinfoty = record
   hashref: ptruint;
-  dataref: ptruint;
+  bufferref: ptruint;
  end;
 
  elementoffsetty = ptrint;
