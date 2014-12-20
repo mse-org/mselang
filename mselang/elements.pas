@@ -286,11 +286,11 @@ type
 //   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
 
- typehashdataty = record
+ typelisthashdataty = record
   header: hashheaderty;
   data: typeallocinfoty;
  end;
- ptypehashdataty = ^typehashdataty;
+ ptypelisthashdataty = ^typelisthashdataty;
 
  ttypehashdatalist = class(thashdatalist)
   protected
@@ -298,16 +298,18 @@ type
    function checkkey(const akey; const aitemdata): boolean override;
   public
    constructor create();
-   procedure clear(); override; //automatic first entry byteoptype
-   procedure addunique(var avalue: typeallocinfoty);
+   procedure clear(); override; //automatic entries for bitsize optypes
+   procedure addvalue(var avalue: typeallocinfoty);
+   function addbytevalue(const asize: integer): integer;
+                                      //returns listid
    function first: ptypeallocinfoty;
    function next: ptypeallocinfoty;
  end;
 
  bufferdataty = record
-  index: int32;
+  listindex: int32;
   buffersize: int32;
-  buffer: ptruint; //direct data or buffer offset if size > sizeof(ptruint)
+  buffer: card32; //direct data or buffer offset if size > sizeof(ptruint)
  end;
  
  bufferhashdataty = record
@@ -324,7 +326,6 @@ type
  buffermarkinfoty = record
   hashref: ptruint;
   bufferref: ptruint;
-  indexref: integer;
  end;
  
  tbufferhashdatalist = class(thashdatalist)
@@ -333,32 +334,53 @@ type
    fbuffersize: integer;
    fbuffercapacity: integer;
   protected
-   findex: integer;
    procedure checkbuffercapacity(const asize: integer);
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
+   function addunique(const adata: bufferallocdataty): pbufferhashdataty;
+   function addunique(const adata: card32): pbufferhashdataty;
+   function addunique(const adata; const size: integer): pbufferhashdataty;
   public
    constructor create(const datasize: integer);
    procedure clear(); override;
    procedure mark(out ref: buffermarkinfoty);
    procedure release(const ref: buffermarkinfoty);
-   function addunique(const adata: ptruint): integer; //returns id
-   function addunique(const adata; const size: integer): integer; //returns id
+   function absdata(const aoffset: ptruint): pointer; inline;
  end;
+
+ constlistdataty = record
+  header: bufferdataty;
+  typeid: integer;
+ end;
+ pconstlistdataty = ^constlistdataty;
+ 
+ constlisthashdataty = record
+  header: hashheaderty;
+  data: constlistdataty;
+ end;
+ pconstlisthashdataty = ^constlisthashdataty;
 
  constallocdataty = record
+  header: bufferallocdataty;
+  typeid: integer;
  end;
  
- constallochashdataty = record
-  header: bufferhashdataty;
-  data: constallocdataty;
- end;
-
  tconsthashdatalist = class(tbufferhashdatalist)
+  private
+   ftypelist: ttypehashdatalist;
   protected
+   function hashkey(const akey): hashvaluety override;
+   function checkkey(const akey; const aitemdata): boolean override;
   public
-   constructor create();
+   constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override;
+   function addvalue(const avalue: int32): integer; //returns id
+   function addvalue(const avalue; const asize: int32;
+                                      const atypeid: integer): integer;
+                                                    //returns id
+   property typelist: ttypehashdatalist read ftypelist;
+   function first(): pconstlistdataty;
+   function next(): pconstlistdataty;
  end;
     
 procedure clear;
@@ -2330,21 +2352,24 @@ end;
 procedure ttypehashdatalist.clear;
 var
  t1: typeallocinfoty;
+ k1: databitsizety;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
-  t1:= byteoptype;
-  addunique(t1);
+  for k1:= low(databitsizety) to high(databitsizety) do begin
+   t1:= bitoptypes[k1];
+   addvalue(t1);
+  end;
  end;
 end;
 
-procedure ttypehashdatalist.addunique(var avalue: typeallocinfoty);
+procedure ttypehashdatalist.addvalue(var avalue: typeallocinfoty);
 var
- po1: ptypehashdataty;
+ po1: ptypelisthashdataty;
 begin
  po1:= pointer(internalfind(avalue));
  if po1 = nil then begin
-  with ptypehashdataty(internaladd(avalue))^ do begin
+  with ptypelisthashdataty(internaladd(avalue))^ do begin
    avalue.listindex:= count-1;
    data:= avalue;
   end;
@@ -2352,6 +2377,16 @@ begin
  else begin
   avalue.listindex:= po1^.data.listindex;
  end;
+end;
+
+function ttypehashdatalist.addbytevalue(const asize: integer): integer;
+var
+ t1: typeallocinfoty;
+begin
+ t1.kind:= das_none;
+ t1.size:= asize;
+ addvalue(t1);
+ result:= t1.listindex;
 end;
 
 function ttypehashdatalist.hashkey(const akey): hashvaluety;
@@ -2404,28 +2439,25 @@ begin
   fbuffercapacity:= 0;
  end;
  fbuffersize:= 0;
- findex:= 0;
 end;
 
 procedure tbufferhashdatalist.mark(out ref: buffermarkinfoty);
 begin
  inherited mark(ref.hashref);
  ref.bufferref:= fbuffersize;
- ref.indexref:= findex;
 end;
 
 procedure tbufferhashdatalist.release(const ref: buffermarkinfoty);
 begin
  inherited release(ref.hashref);
  fbuffersize:= ref.bufferref;
- findex:= ref.indexref;
 end;
 
 function tbufferhashdatalist.hashkey(const akey): hashvaluety;
 begin
  with bufferallocdataty(akey) do begin
   if size < 0 then begin
-   result:= pointerhash(pointer(data));
+   result:= scramble(hashvaluety(ptruint(pointer(data))));
   end
   else begin
    result:= datahash2(data^,size);
@@ -2464,51 +2496,62 @@ testvar:= bufferdataty(aitemdata); testvar2:= bufferallocdataty(akey);
  end;
 end;
 
-function tbufferhashdatalist.addunique(const adata: ptruint): integer;
+function tbufferhashdatalist.addunique(
+                          const adata: bufferallocdataty): pbufferhashdataty;
+var
+ po1: pbufferhashdataty;
+begin
+ po1:= pointer(internalfind(adata));
+ if po1 = nil then begin
+  po1:= pointer(internaladd(adata));
+  if adata.size < 0 then begin
+   po1^.data.buffersize:= -1;
+   po1^.data.buffer:= ptruint(adata.data);
+  end
+  else begin
+   checkbuffercapacity(adata.size);
+   po1^.data.buffersize:= adata.size;
+   po1^.data.buffer:= fbuffersize;
+   move(adata.data^,(fbuffer+fbuffersize)^,adata.size);
+   fbuffersize:= fbuffersize + adata.size;
+  end;
+  po1^.data.listindex:= count-1;
+ end;
+ result:= po1;
+end;
+
+function tbufferhashdatalist.addunique(const adata: card32): pbufferhashdataty;
 var
  a1: bufferallocdataty;
  po1: pbufferhashdataty;
 begin
  a1.size:= -1;
- a1.data:= pointer(adata);
- po1:= pointer(internalfind(a1));
- if po1 = nil then begin
-  po1:= pointer(internaladd(a1));
-  po1^.data.buffersize:= -1;
-  po1^.data.buffer:= adata;
-  po1^.data.index:= findex;
-  inc(findex);
- end;
- result:= po1^.data.index;
+ a1.data:= pointer(ptruint(adata));
+ result:= addunique(a1);
 end;
 
 function tbufferhashdatalist.addunique(const adata;
-                                    const size: integer): integer;
+                                    const size: integer): pbufferhashdataty;
 var
  a1: bufferallocdataty;
  po1: pbufferhashdataty;
 begin
  a1.size:= size;
  a1.data:= @adata;
- po1:= pointer(internalfind(a1));
- if po1 = nil then begin
-  checkbuffercapacity(size);
-  po1:= pointer(internaladd(a1));
-  po1^.data.buffersize:= size;
-  po1^.data.buffer:= fbuffersize;
-  move(adata,(fbuffer+fbuffersize)^,size);
-  fbuffersize:= fbuffersize + size;
-  po1^.data.index:= findex;
-  inc(findex);
- end;
- result:= po1^.data.index;
+ result:= addunique(a1);
+end;
+
+function tbufferhashdatalist.absdata(const aoffset: ptruint): pointer; inline;
+begin
+ result:= fbuffer+aoffset;
 end;
 
 { tconsthashdatalist }
 
-constructor tconsthashdatalist.create;
+constructor tconsthashdatalist.create(const atypelist: ttypehashdatalist);
 
 begin
+ ftypelist:= atypelist;
  inherited create(sizeof(constallocdataty));
  clear(); //create default entries
 end;
@@ -2518,6 +2561,57 @@ begin
  inherited;
  if not (hls_destroying in fstate) then begin
  end;
+end;
+
+function tconsthashdatalist.hashkey(const akey): hashvaluety;
+begin
+ result:= inherited hashkey(akey) xor scramble(constallocdataty(akey).typeid);
+end;
+var testvar3: constlistdataty; testvar4: constallocdataty;
+function tconsthashdatalist.checkkey(const akey; const aitemdata): boolean;
+begin
+testvar3:= constlistdataty(aitemdata);
+testvar4:= constallocdataty(akey);
+ result:= (constlistdataty(aitemdata).typeid = 
+                           constallocdataty(akey).typeid) and 
+                                    inherited checkkey(akey,aitemdata);
+end;
+
+function tconsthashdatalist.addvalue(const avalue: int32): integer;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptruint(avalue));
+ alloc1.typeid:= ord(das_32);
+ po1:= pointer(addunique(bufferallocdataty((@alloc1)^)));
+ po1^.data.typeid:= alloc1.typeid;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addvalue(const avalue; const asize: int32;
+               const atypeid: integer): integer;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= asize;
+ alloc1.header.data:= @avalue;
+ alloc1.typeid:= ftypelist.addbytevalue(asize);
+ po1:= pointer(addunique(bufferallocdataty((@alloc1)^)));
+ po1^.data.typeid:= alloc1.typeid;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.first: pconstlistdataty;
+begin
+ result:= pointer(internalfirst());
+end;
+
+function tconsthashdatalist.next: pconstlistdataty;
+begin
+ result:= pointer(internalnext());
 end;
 
 initialization

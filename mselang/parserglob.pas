@@ -104,15 +104,21 @@ type
  ptypeallocinfoty = ^typeallocinfoty;
 
 const
- pointeroptype: typeallocinfoty = (
-  kind: das_pointer;
-  size: pointerbitsize;
-  listindex: 0;
- );
- byteoptype: typeallocinfoty = (
-  kind: das_8;
-  size: 8;
-  listindex: 0;
+ bitoptypes: array[databitsizety] of typeallocinfoty = (
+  (kind: das_none; size: 0; listindex: 0),
+  (kind: das_1; size: 1; listindex: 0),
+  (kind: das_2_7; size: 7; listindex: 0),
+  (kind: das_8; size: 8; listindex: 0),
+  (kind: das_9_15; size: 15; listindex: 0),
+  (kind: das_16; size: 16; listindex: 0),
+  (kind: das_17_31; size: 31; listindex: 0),
+  (kind: das_32; size: 32; listindex: 0),
+  (kind: das_33_63; size: 63; listindex: 0),
+  (kind: das_64; size: 64; listindex: 0),
+  (kind: das_pointer; size: pointerbitsize; listindex: 0),
+  (kind: das_f16; size: 16; listindex: 0),
+  (kind: das_f32; size: 32; listindex: 0),
+  (kind: das_f64; size: 64; listindex: 0)
  );
 
  

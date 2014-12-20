@@ -613,7 +613,7 @@ function getopdatatype(const atypedata: ptypedataty;
                            const aindirectlevel: integer): typeallocinfoty;
 begin
  if aindirectlevel > 0 then begin
-  result:= pointeroptype;
+  result:= bitoptypes[das_pointer];
  end
  else begin
   result.kind:= atypedata^.datasize;
@@ -630,7 +630,7 @@ function getopdatatype(const atypedata: elementoffsetty;
                            const aindirectlevel: integer): typeallocinfoty;
 begin
  if aindirectlevel > 0 then begin
-  result:= pointeroptype;
+  result:= bitoptypes[das_pointer];
  end
  else begin
   result:= getopdatatype(ele.eledataabs(atypedata),aindirectlevel);
@@ -1280,7 +1280,7 @@ begin
     pushinsert(stackoffset,false,d.dat.ref.c.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
      with insertitem(oc_indirectpo,stackoffset,false)^ do begin
-      par.memop.t:= pointeroptype;
+      par.memop.t:= bitoptypes[das_pointer];
       par.ssas1:= par.ssad - getssa(oc_indirectpo);
      end;
     end;
