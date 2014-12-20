@@ -149,7 +149,12 @@ begin
    end
    else begin
     if po1^.kind in byteopdatakinds then begin
-     emitrec(ord(TYPE_CODE_ARRAY),[po1^.size,ord(das_8)]);     
+     if po1^.size = 0 then begin
+      emitrec(ord(TYPE_CODE_VOID),[]);     
+     end
+     else begin
+      emitrec(ord(TYPE_CODE_ARRAY),[po1^.size,ord(das_8)]);     
+     end;
     end
     else begin
      case po1^.kind of
@@ -195,6 +200,7 @@ begin
       emitdataconst(consts.absdata(po2^.header.buffer)^,po2^.header.buffersize);
      end;
     end;
+    po2:= consts.next();
    end;
    endblock(); 
   end;
