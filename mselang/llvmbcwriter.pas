@@ -92,12 +92,13 @@ uses
  
 type
  mabty = (
-  mab_int = 4, //id (vbr 6), value (vbr 6)
-  mab_data //id (vbr 6), count (vbr 6), array (array), data (fixed 8)
+  mab_data = 4, //id (vbr 6), count (vbr 6), array (array), data (fixed 8)
+  mab_int //id (vbr 6), value (vbr 6)
  );
 const
- mabsdat: array[0..8] of card8 = (18,134,12,25,17,50,100,76,16);
- mabs: bcdataty = (bitsize: 70; data: @mabsdat);
+ mabsdat: array[0..8] of card8 = (34,100,200,152,32,9,50,100,0);
+ mabs: bcdataty = (bitsize: 65; data: @mabsdat);
+
 
 { tllvmbcwriter }
 

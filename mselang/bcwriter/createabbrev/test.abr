@@ -2,23 +2,27 @@
 value=4
 [mainfo.grid]
 propcolwidthref=143
-values0=2
- int
+values0=3
+ ar
+ 
  
 sortdescend0=0
-values1=2
+values1=3
  2
- 2
+ 3
+ 1
 values1_ci=-1
 sortdescend1=0
-values2=2
+values2=3
  6
- 6
+ 0
+ 8
 values2_ci=-1
 sortdescend2=0
-values3=2
+values3=3
  id
- value
+ data
+ 
 sortdescend3=0
 [mainfo.idsize]
 value=3

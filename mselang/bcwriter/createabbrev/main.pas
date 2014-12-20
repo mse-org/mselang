@@ -76,6 +76,7 @@ begin
    for i3:= i4+1 to grid.rowcount do begin
     if (i3 = grid.rowcount) or (nameed[i3] <> '') then begin
      writer1.emitvbr5(i3-i4);
+     break;
     end;
    end;
    i3:= i4;
