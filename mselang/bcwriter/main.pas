@@ -17,7 +17,7 @@ var
  
 implementation
 uses
- main_mfm,msesys,parser,msestream,parserglob,elements;
+ main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes;
  
 procedure tmainfo.exe(const sender: TObject);
 var
@@ -37,14 +37,20 @@ begin
  constlist:= tconsthashdatalist.create(typelist);
  try
 
+  typ1.kind:= das_32;
+  typ1.size:= 32;
+  typelist.addvalue(typ1);
+
+  typ1.kind:= das_none;
+  typ1.size:= 6;
+  typelist.addvalue(typ1);
+  typelist.addvalue(typ1);
+
   i1:= constlist.addvalue(1);
   i1:= constlist.addvalue(2);
   i1:= constlist.addvalue(1);
   i1:= constlist.addvalue(2);
 
-  typ1.kind:= das_none;
-  typ1.size:= 6;
-  typelist.addvalue(typ1);
   
   str1:= 'abcde';
   str2:= '123567';
@@ -56,6 +62,8 @@ begin
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
+//  stream.beginblock(FUNCTION_BLOCK_ID,3);
+//  stream.endblock();
   stream.stop();
   stream.free();
  finally

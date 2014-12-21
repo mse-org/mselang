@@ -118,7 +118,7 @@ end;
 
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist);
 var
- po1: ptypeallocinfoty;
+ po1: ptypelistdataty;
  po2: pconstlistdataty;
  i1: int32;
  id1: int32;
@@ -143,16 +143,16 @@ begin
      emitrec(ord(TYPE_CODE_POINTER),[ord(das_8)]);
     end
     else begin
-     emitrec(ord(TYPE_CODE_INTEGER),[po1^.size]);
+     emitrec(ord(TYPE_CODE_INTEGER),[po1^.header.buffer]);
     end;
    end
    else begin
     if po1^.kind in byteopdatakinds then begin
-     if po1^.size = 0 then begin
+     if po1^.header.buffer = 0 then begin
       emitrec(ord(TYPE_CODE_VOID),[]);     
      end
      else begin
-      emitrec(ord(TYPE_CODE_ARRAY),[po1^.size,ord(das_8)]);     
+      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,ord(das_8)]);     
      end;
     end
     else begin
