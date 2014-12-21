@@ -92,13 +92,12 @@ uses
  
 type
  mabty = (
-  mab_data = 4, //id (vbr 6), count (vbr 6), array (array), data (fixed 8)
-  mab_int //id (vbr 6), value (vbr 6)
+  mab_int = 4, //id (vbr 6), value (vbr 6)
+  mab_data //id (vbr 6), array (array), data (fixed 8)
  );
 const
- mabsdat: array[0..8] of card8 = (34,100,200,152,32,9,50,100,0);
- mabs: bcdataty = (bitsize: 65; data: @mabsdat);
-
+ mabsdat: array[0..6] of card8 = (18,100,200,104,144,49,65);
+ mabs: bcdataty = (bitsize: 56; data: @mabsdat);
 
 { tllvmbcwriter }
 
@@ -535,6 +534,22 @@ begin
  emitvbr6(ord(CST_CODE_SETTYPE));
  emitvbr6(avalue);
 end;
+{
+procedure tllvmbcwriter.emitdataconst(const avalue; const asize: int32);
+var
+ po1: pcard8;
+ i1: int32;
+ ar1: integerarty;
+begin
+ setlength(ar1,asize);
+ po1:= @avalue;
+ for i1:= 0 to high(ar1) do begin
+  ar1[i1]:= po1^;
+  inc(po1);
+ end;
+ emitrec(ord(CST_CODE_AGGREGATE),ar1);
+end;
+}
 
 procedure tllvmbcwriter.emitdataconst(const avalue; const asize: int32);
 var

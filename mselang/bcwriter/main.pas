@@ -52,6 +52,7 @@ begin
   i1:= constlist.addvalue(str2[1],length(str2),typ1.listindex);
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
   i1:= constlist.addvalue(str2[1],length(str2),typ1.listindex);
+  i1:= constlist.addvalue(3);
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
