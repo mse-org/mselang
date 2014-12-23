@@ -1,60 +1,64 @@
 [mainfo.abbrevidstart]
 value=4
 [mainfo.grid]
-propcolwidthref=143
+propcolwidthref=246
 values0=11
- int
- 
- data
- 
- 
  subtype
  
  
  
  
  
+ int
+ 
+ data
+ 
+ 
+width0=103
 sortdescend0=0
 values1=11
- 2
- 2
- 2
- 3
- 1
  0
  1
  0
  2
  3
  2
+ 2
+ 2
+ 2
+ 3
+ 1
 values1_ci=-1
+width1=98
 sortdescend1=0
 values2=11
+ 21
+ 1
+ 0
+ 6
+ 0
+ 6
  6
  6
  6
  0
  8
- 9
- 1
- 0
- 6
- 0
- 6
 values2_ci=-1
+width2=23
 sortdescend2=0
 values3=11
- id
- value
- id
- array
- data
  TYPE_CODE_FUNCTION
  vararg
  ignored
  retty
  paramty
  
+ id
+ value
+ id
+ array
+ data
+width3=237
 sortdescend3=0
 [mainfo.idsize]
 value=3

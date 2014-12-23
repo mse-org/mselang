@@ -93,12 +93,12 @@ uses
  
 type
  mabty = (
-  mab_int = 4, //id (vbr 6), value (vbr 6)
-  mab_data, //id (vbr 6), array (array), data (fixed 8)
-  mab_subtype //TYPE_CODE_FUNCTION (literal 9), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
+  mab_subtype = 4, //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
+  mab_int, //id (vbr 6), value (vbr 6)
+  mab_data //id (vbr 6), array (array), data (fixed 8)
  );
 const
- mabsdat: array[0..14] of card8 = (18,100,200,104,144,49,65,50,19,36,4,32,99,100,0);
+ mabsdat: array[0..14] of card8 = (50,43,36,4,32,99,100,36,200,144,209,32,99,130,0);
  mabs: bcdataty = (bitsize: 113; data: @mabsdat);
 
 { tllvmbcwriter }
@@ -177,18 +177,20 @@ testvar:= psubtypedataty(
        with psubtypedataty(
                consts.typelist.absdata(po1^.header.buffer))^ do begin
                      //todo: vararg
+//        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
+
         emitcode(ord(mab_subtype));
         emit1(0);      //vararg
         po3:= @params;
         po4:= po3+header.paramcount;
         if sf_function in header.flags then begin
          emitvbr6(po3^.listindex); //retval
-         emitvbr6(paramcount-1);
+         emitvbr6(header.paramcount-1);
          inc(po3);
         end
         else begin
          emitvbr6(ord(das_none)); //void retval
-         emitvbr6(paramcount);
+         emitvbr6(header.paramcount);
         end;
         while po3 < po4 do begin
          emitvbr6(po3^.listindex);
@@ -196,6 +198,7 @@ testvar:= psubtypedataty(
         end;
 //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
                         //vararg,ignored,
+
        end;
       end;
       else begin
