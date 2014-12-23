@@ -172,8 +172,8 @@ const
  typestrings: array[databitsizety] of string = (
   //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
     '',      'i1', '',     'i8', '',      'i16', '',       'i32',  
-  //das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64
-    '',       'i64', 'i8*',      'half', 'float','double');
+  //das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,  das_sub
+    '',       'i64', 'i8*',      'half', 'float','double','sub');
 
 procedure llvmtype(const asize: typeallocinfoty; out result: shortstring);
 begin

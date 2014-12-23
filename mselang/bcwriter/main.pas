@@ -25,7 +25,7 @@ var
  foutputstream,ferrorstream: ttextstream;
  typelist: ttypehashdatalist;
  constlist: tconsthashdatalist;
- typ1: typeallocinfoty;
+ typ1,typ2: typeallocinfoty;
  i1,i2: int32;
  str1,str2: string;
 
@@ -41,10 +41,16 @@ begin
   typ1.size:= 32;
   typelist.addvalue(typ1);
 
+  str1:= 'abcde';
   typ1.kind:= das_none;
-  typ1.size:= 6;
+  typ1.size:= length(str1);
+  str2:= '123567';
   typelist.addvalue(typ1);
-  typelist.addvalue(typ1);
+  typ2.kind:= das_none;
+  typ2.size:= length(str2);
+  typelist.addvalue(typ2);
+  i1:= typelist.addsubvalue(nil);
+  i1:= typelist.addsubvalue(nil);
 
   i1:= constlist.addvalue(1);
   i1:= constlist.addvalue(2);
@@ -52,12 +58,10 @@ begin
   i1:= constlist.addvalue(2);
 
   
-  str1:= 'abcde';
-  str2:= '123567';
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
-  i1:= constlist.addvalue(str2[1],length(str2),typ1.listindex);
+  i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
-  i1:= constlist.addvalue(str2[1],length(str2),typ1.listindex);
+  i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
   i1:= constlist.addvalue(3);
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);

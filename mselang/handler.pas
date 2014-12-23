@@ -1732,19 +1732,26 @@ const                //todo: segment and local indirect
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_popseg16,oc_popseg16,oc_popseg32,oc_popseg32,
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
-   oc_popseg64,oc_popseg64,oc_popsegpo,oc_popsegf16,oc_popsegf32,oc_popsegf64), 
+   oc_popseg64,oc_popseg64,oc_popsegpo,oc_popsegf16,oc_popsegf32,oc_popsegf64,
+ //das_sub
+   oc_popsegpo), 
  //das_none, das_1,     das_2_7,   das_8,                  //pd_local
   (oc_poploc,oc_poploc8,oc_poploc8,oc_poploc8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_poploc16,oc_poploc16,oc_poploc32,oc_poploc32,
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
-   oc_poploc64,oc_poploc64,oc_poplocpo,oc_poplocf16,oc_poplocf32,oc_poplocf64), 
+   oc_poploc64,oc_poploc64,oc_poplocpo,oc_poplocf16,oc_poplocf32,oc_poplocf64,
+ //das_sub
+   oc_poplocpo), 
  //das_none, das_1,     das_2_7,   das_8,                  //pd_param
   (oc_poppar,oc_poppar8,oc_poppar8,oc_poppar8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
    oc_poppar16,oc_poppar16,oc_poppar32,oc_poppar32,
  //das_33_63,  das_64,     das_pointer,das_f16,     das_f32,     das_f64
-   oc_poppar64,oc_poppar64,oc_popparpo,oc_popparf16,oc_popparf32,oc_popparf64), 
+   oc_poppar64,oc_poppar64,oc_popparpo,oc_popparf16,oc_popparf32,oc_popparf64,
+ //das_sub
+   oc_popparpo
+   ), 
  //das_none, das_1,     das_2_7,   das_8,                  //pd_paramindi
   (oc_popparindi,oc_popparindi8,oc_popparindi8,oc_popparindi8,
  //das_9_15,   das_16,     das_17_31,  das_32,     
@@ -1752,7 +1759,10 @@ const                //todo: segment and local indirect
  //das_33_63,      das_64,         das_pointer,
    oc_popparindi64,oc_popparindi64,oc_popparindipo,
  //das_f16,         das_f32,          das_f64
-   oc_popparindif16,oc_popparindif32,oc_popparindif64) 
+   oc_popparindif16,oc_popparindif32,oc_popparindif64,
+ //das_sub
+   oc_popparindipo
+   ) 
  );
  
 {
@@ -1802,7 +1812,9 @@ const
  //das_33_63,       das_64,          das_pointer
    oc_popindirect64,oc_popindirect64,oc_popindirectpo,
  //das_f16,          das_f32,          das_f64
-   oc_popindirectf16,oc_popindirectf32,oc_popindirectf64
+   oc_popindirectf16,oc_popindirectf32,oc_popindirectf64,
+ //das_sub
+   oc_popindirectpo
    );
 
 procedure handleassignment();

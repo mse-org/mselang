@@ -63,6 +63,7 @@ type
    procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32);
    procedure emitvbr8(avalue: int32);
+   procedure emit1(const avalue: card8);
    procedure emit8(const avalue: card8);
    procedure emitcode(const avalue: int32);
    procedure emitdata(const avalue: bcdataty);
@@ -93,11 +94,12 @@ uses
 type
  mabty = (
   mab_int = 4, //id (vbr 6), value (vbr 6)
-  mab_data //id (vbr 6), array (array), data (fixed 8)
+  mab_data, //id (vbr 6), array (array), data (fixed 8)
+  mab_subtype //TYPE_CODE_FUNCTION (literal 9), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
  );
 const
- mabsdat: array[0..6] of card8 = (18,100,200,104,144,49,65);
- mabs: bcdataty = (bitsize: 56; data: @mabsdat);
+ mabsdat: array[0..14] of card8 = (18,100,200,104,144,49,65,50,19,36,4,32,99,100,0);
+ mabs: bcdataty = (bitsize: 113; data: @mabsdat);
 
 { tllvmbcwriter }
 
@@ -115,11 +117,12 @@ destructor tllvmbcwriter.destroy();
 begin
  inherited;
 end;
-
+var testvar: psubtypedataty;
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist);
 var
  po1: ptypelistdataty;
  po2: pconstlistdataty;
+ po3,po4: ptypeallocinfoty;
  i1: int32;
  id1: int32;
 begin
@@ -131,6 +134,8 @@ begin
 
  beginblock(BLOCKINFO_BLOCK_ID,3);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
+ emitdata(mabs);
+ emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
  emitdata(mabs);
  endblock();
  if consts.typelist.count > 0 then begin
@@ -166,6 +171,33 @@ begin
       das_f64: begin
        emitrec(ord(TYPE_CODE_DOUBLE),[]);     
       end;
+      das_sub: begin
+testvar:= psubtypedataty(
+               consts.typelist.absdata(po1^.header.buffer));
+       with psubtypedataty(
+               consts.typelist.absdata(po1^.header.buffer))^ do begin
+                     //todo: vararg
+        emitcode(ord(mab_subtype));
+        emit1(0);      //vararg
+        po3:= @params;
+        po4:= po3+header.paramcount;
+        if sf_function in header.flags then begin
+         emitvbr6(po3^.listindex); //retval
+         emitvbr6(paramcount-1);
+         inc(po3);
+        end
+        else begin
+         emitvbr6(ord(das_none)); //void retval
+         emitvbr6(paramcount);
+        end;
+        while po3 < po4 do begin
+         emitvbr6(po3^.listindex);
+         inc(po3);
+        end;
+//        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
+                        //vararg,ignored,
+       end;
+      end;
       else begin
       {$ifdef mse_checkinternalerror}
        internalerror(ie_bcwriter,'141216A');
@@ -192,7 +224,7 @@ begin
      end;
      else begin
      {$ifdef mse_checkinternalerror}
-      if databitsizety(po2^.typeid) <= high(databitsizety) then begin
+      if databitsizety(po2^.typeid) <= lastdatakind then begin
        internalerror(ie_bcwriter,'141220A');
       end;
      {$endif}
@@ -267,10 +299,10 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emit8(const avalue: card8);
+procedure tllvmbcwriter.emit1(const avalue: card8);
 begin
  fbitbuf:= fbitbuf or (avalue shl fbitpos);
- fbitpos:= fbitpos + 8;
+ fbitpos:= fbitpos + 1;
  if fbitpos >= 8 then begin
   if fbufpos + 1 >= fbufend then begin
    flushbuffer();
@@ -280,6 +312,19 @@ begin
   fbitbuf:= fbitbuf shr 8;
   fbitpos:= fbitpos - 8;
  end;
+end;
+
+procedure tllvmbcwriter.emit8(const avalue: card8);
+begin
+ fbitbuf:= fbitbuf or (avalue shl fbitpos);
+ fbitpos:= fbitpos + 8;
+ if fbufpos + 1 >= fbufend then begin
+  flushbuffer();
+ end;
+ pint8(fbufpos)^:= fbitbuf;
+ fbufpos:= fbufpos + 1;
+ fbitbuf:= fbitbuf shr 8;
+ fbitpos:= fbitpos - 8;
 end;
 
 procedure tllvmbcwriter.emitvbr4(avalue: int32);

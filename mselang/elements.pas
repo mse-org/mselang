@@ -349,10 +349,23 @@ type
   kind: databitsizety;
  end;
 
+ subtypeheaderty = record
+  flags: subflagsty;
+  paramcount: integer;
+ end;
+
+ subtypedataty = record
+  header: subtypeheaderty;
+  params: record           //array of typeallocinfoty
+  end;
+ end;
+ psubtypedataty = ^subtypedataty;
+ 
  ttypehashdatalist = class(tbufferhashdatalist)
   protected
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
+   function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
   public
    constructor create();
    procedure clear(); override; //automatic entries for bitsize optypes
@@ -2508,10 +2521,18 @@ var
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
-  for k1:= low(databitsizety) to high(databitsizety) do begin
+  for k1:= low(databitsizety) to lastdatakind do begin
    t1:= bitoptypes[k1];
    addvalue(t1);
   end;
+ end;
+end;
+
+function ttypehashdatalist.addvalue(
+                 var avalue: typeallocdataty): ptypelisthashdataty; inline;
+begin
+ if addunique(bufferallocdataty((@avalue)^),pointer(result)) then begin
+  result^.data.kind:= avalue.kind;
  end;
 end;
 
@@ -2520,14 +2541,13 @@ var
  alloc1: typeallocdataty;
  po1: ptypelisthashdataty;
 begin
-
  alloc1.header.size:= -1;
  alloc1.header.data:= pointer(ptruint(avalue.size));
  alloc1.kind:= avalue.kind;
- if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
-  po1^.data.kind:= avalue.kind;
-// po1^.data.size:= avalue.size;
- end;
+ po1:= addvalue(alloc1);
+// if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+//  po1^.data.kind:= avalue.kind;
+// end;
  avalue.listindex:= po1^.data.header.listindex;
 end;
 
@@ -2539,6 +2559,40 @@ begin
  t1.size:= asize;
  addvalue(t1);
  result:= t1.listindex;
+end;
+
+function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
+
+const
+ maxparamcount = 512;
+type
+ subtypebufferty = record
+  header: subtypeheaderty;
+  params: array[0..maxparamcount-1] of typeallocinfoty;
+ end;
+
+var
+ alloc1: typeallocdataty;
+ po1: ptypelisthashdataty;
+ parbuf: subtypebufferty;
+  
+begin
+ if avalue = nil then begin //main()
+  with parbuf do begin
+   header.flags:= [sf_function];
+   header.paramcount:= 1;
+   params[0]:= bitoptypes[das_32];
+   addvalue(params[0]);
+  end;
+ end
+ else begin
+  notimplementederror('20141222');
+ end;
+ alloc1.kind:= das_sub;
+ alloc1.header.size:= sizeof(subtypeheaderty) + 
+             parbuf.header.paramcount * sizeof(typeallocinfoty);
+ alloc1.header.data:= @parbuf;
+ result:= addvalue(alloc1)^.data.header.listindex;
 end;
 
 function ttypehashdatalist.hashkey(const akey): hashvaluety;
@@ -2561,10 +2615,6 @@ end;
 function ttypehashdatalist.next: ptypelistdataty;
 begin
  result:= pointer(internalnext());
-end;
-
-function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
-begin
 end;
 
 { tconsthashdatalist }

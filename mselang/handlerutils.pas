@@ -1309,7 +1309,7 @@ const
  //das_33_63,    das_64,       das_pointer,
    oc_indirect64,oc_indirect64,oc_indirectpo,
  //das_f16,       das_f32,       das_f64
-   oc_indirectf16,oc_indirectf32,oc_indirectf64);
+   oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo);
 
 function getvalue(const stackoffset: integer;
                             const retainconst: boolean = false): boolean;
