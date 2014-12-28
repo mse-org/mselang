@@ -17,6 +17,9 @@ order14=0
 order15=0
 order16=0
 order17=0
+order18=0
+order19=0
+order20=0
 [projectoptions]
 projectdir=/home/mse/packs/standard/git/mselang/mselang/bcwriter
 projectfilename=/home/mse/packs/standard/git/mselang/mselang/bcwriter/bcwritertest.prj
@@ -88,10 +91,10 @@ options=99
  firsttab=0
  index=2
  [projectoptionsfo.exceptionsgrid]
- propcolwidthref=590
+ propcolwidthref=665
  width0=47
  sortdescend0=0
- width1=584
+ width1=659
  sortdescend1=0
  [projectoptionsfo.ttabwidget1]
  firsttab=0
@@ -113,7 +116,7 @@ options=99
  index=0
  [projectoptionsfo.tabwidget]
  firsttab=0
- index=2
+ index=3
  [projectoptionsfo]
  stackedunder=
  x=151
@@ -125,10 +128,7 @@ targetfile=${PROJECTNAME}
 messageoutputfile=
 makecommand=${COMPILER}
 makedir=
-unitdirs=7
- ${optreldir}/*/
- ${optreldir}/
- ${electrotexlibdir}/
+unitdirs=4
  ${MSELIBDIR}kernel/$TARGETOSDIR
  ${MSELIBDIR}kernel/
  ${MSELIBDIR}*/
@@ -316,32 +316,14 @@ makeoptionson=4
  34
  32
 aftcommandon=0
-unitdirson=7
- 983103
- 65599
- 983103
+unitdirson=4
  65599
  196671
  65599
  196671
-macroon=5
- 63
- 63
- 63
- 63
- 63
-macronames=5
- msedir
- fpcdir
- optreldir
- compiler
- fpcflags
-macrovalues=5
- /home/mse/packs/standard/git/mseide-msegui/
- /home/mse/packs/standard/svn/fp/fixes_2_6/
- /home/mse/mse/optrel/git/MSE/optlib/msegui
- ${fpcdir}compiler/ppc386
- -dsvnfixes_2_6
+macroon=0
+macronames=0
+macrovalues=0
 macrogroup=0
 groupcomments=6
  
@@ -630,13 +612,13 @@ windowlayout=562
  ncx=0
  ncy=0
  x=4
- y=24
+ y=25
  cx=286
  cy=74
  rcx=0
  rcy=0
  wsize=0
- active=0
+ active=1
  visible=1
  [targetconsolefo]
  splitdir=0
@@ -677,7 +659,7 @@ windowlayout=562
  [memoryfo]
  splitdir=0
  useroptions=16507
- stackedunder=componentpalettefo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -704,7 +686,7 @@ windowlayout=562
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=findinfilefo
+ stackedunder=mainfo.panel1
  parent=
  mdistate=0
  nx=0
@@ -723,7 +705,7 @@ windowlayout=562
  [findinfilefo]
  splitdir=0
  useroptions=16491
- stackedunder=mainfo.panel1
+ stackedunder=componentstorefo
  parent=
  mdistate=0
  nx=0
@@ -739,7 +721,7 @@ windowlayout=562
  [projecttreefo]
  splitdir=0
  useroptions=16491
- stackedunder=memoryfo
+ stackedunder=objectinspectorfo
  parent=
  mdistate=0
  nx=0
@@ -827,7 +809,7 @@ windowlayout=562
  [breakpointsfo]
  splitdir=0
  useroptions=16491
- stackedunder=projecttreefo
+ stackedunder=memoryfo
  parent=
  mdistate=0
  nx=0
@@ -848,7 +830,7 @@ windowlayout=562
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=disassfo
+ stackedunder=componentpalettefo
  parent=
  mdistate=0
  nx=0
@@ -873,7 +855,7 @@ windowlayout=562
  [symbolfo]
  splitdir=0
  useroptions=16507
- stackedunder=cpui386fo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1030,7 +1012,7 @@ windowlayout=562
  [componentpalettefo]
  splitdir=0
  useroptions=24683
- stackedunder=componentstorefo
+ stackedunder=disassfo
  parent=
  mdistate=0
  nx=0
@@ -1061,7 +1043,7 @@ windowlayout=562
  x=0
  y=0
  cx=276
- cy=22
+ cy=38
  rcx=0
  rcy=0
  [sourcefo]
