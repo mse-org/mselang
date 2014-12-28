@@ -83,6 +83,13 @@ type
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
    function bitpos(): int32;
+   procedure emitsub(const atype: int32; const acallingconv: callingconvty;
+               const alinkage: linkagety; const aparamattr: int32{;
+               const aalignment: int32; const asection: int32;
+               const avisibility: visibility; const agc: int32
+               const aprologdata: int32;
+               const adllstorageclass: dllstorageclassty; const acomdat: int32;
+               const aprefixdata: int32});
  end;
  
 implementation
@@ -99,6 +106,7 @@ type
 const
  mabconstsdat: array[0..6] of card8 = (18,100,200,104,144,49,65);
  mabconsts: bcdataty = (bitsize: 56; data: @mabconstsdat);
+
 type
  mabtypety = (
   mabtype_subtype = 4 //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
@@ -106,6 +114,14 @@ type
 const
  mabtypesdat: array[0..7] of card8 = (50,43,36,4,32,99,100,0);
  mabtypes: bcdataty = (bitsize: 57; data: @mabtypesdat);
+
+type
+ mabmodty = (
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6)
+ );
+const
+ mabmodsdat: array[0..6] of card8 = (42,17,200,4,32,67,6);
+ mabmods: bcdataty = (bitsize: 53; data: @mabmodsdat);
 
 { tllvmbcwriter }
 
@@ -143,6 +159,8 @@ begin
  emitdata(mabconsts);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
  emitdata(mabtypes);
+ emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(MODULE_BLOCK_ID)]);
+ emitdata(mabmods);
  endblock();
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -619,6 +637,16 @@ begin
   emit8(po1^);
   inc(po1);
  end;
+end;
+
+procedure tllvmbcwriter.emitsub(const atype: int32;
+               const acallingconv: callingconvty; const alinkage: linkagety;
+               const aparamattr: int32);
+begin
+ emitcode(ord(mabmod_sub));
+ emitvbr6(ord(acallingconv));
+ emitvbr6(ord(alinkage));
+ emitvbr6(aparamattr); 
 end;
 
 end.

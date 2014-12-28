@@ -63,9 +63,12 @@ begin
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
   i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
   i1:= constlist.addvalue(3);
+
+  i1:= typelist.addsubvalue(nil);
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
+  stream.emitsub(i1,cv_ccc,li_code,0);
 //  stream.beginblock(FUNCTION_BLOCK_ID,3);
 //  stream.endblock();
   stream.stop();

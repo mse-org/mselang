@@ -145,7 +145,8 @@ type
     // MODULE_CODE_PURGEVALS: [numvals]
     MODULE_CODE_PURGEVALS   = 10,
 
-    MODULE_CODE_GCNAME      = 11   // GCNAME: [strchr x N]
+    MODULE_CODE_GCNAME      = 11,  // GCNAME: [strchr x N]
+    MODULE_CODE_COMDAT      = 12   // COMDAT: [selection_kind, name]
   );
 
   /// PARAMATTR blocks have code for defining a parameter attribute set.
@@ -405,5 +406,50 @@ type
     USELIST_CODE_ENTRY = 1   // USELIST_CODE_ENTRY: TBD.
   );
 
+
+//mse
+ callingconvty = (
+  cv_ccc = 0,
+  cv_fastcc = 8,
+  cv_coldcc = 9,
+  cv_webkit_jscc = 12,
+  cv_anyregcc = 13,
+  cv_preserve_mostcc = 14,
+  cv_preserve_allcc = 15,
+  cv_x86_stdcallcc = 64,
+  cv_x86_fastcallcc = 65,
+  cv_arm_apcscc = 66,
+  cv_arm_aapcscc = 67,
+  cv_arm_aapcs_vfpcc = 68
+ );
+ 
+ linkagety = (
+  li_code = 0,
+  li_weak = 1,
+  li_appending = 2,
+  li_internal = 3,
+  li_linkonce = 4,
+  li_dllimport = 5,
+  li_dllexport = 6,
+  li_extern_weak = 7,
+  li_common = 8,
+  li_private = 9,
+  li_weak_odr = 10,
+  li_linkonce_odr = 11,
+  li_available_externally = 12
+ );
+ 
+ visibilityty = (
+  vi_default = 0,
+  vi_hidden = 1,
+  vi_protected = 2
+ );
+
+ dllstorageclassty = (
+  ds_default = 0,
+  ds_dllimport = 1,
+  ds_dllexport = 2
+ );
+ 
 implementation
 end.

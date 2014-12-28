@@ -579,11 +579,12 @@ windowlayout=562
  cy=0
  [mainfo.projectfiledia]
  filenames=1
-  /home/mse/packs/standard/git/mselang/mselang/bcwriter/mse_bcwritertest.prj
- lastdir=/home/mse/packs/standard/git/mselang/mselang/bcwriter/
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/createabbrev/mse_createabbrev.prj
+ lastdir=/home/mse/packs/standard/git/mselang/mselang/bcwriter/createabbrev/
  filehistory=10
-  /home/mse/packs/standard/git/mselang/mselang/bcwriter/mse_bcwritertest.prj
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/createabbrev/mse_createabbrev.prj
   /home/mse/packs/standard/git/mselang/mselang/bcwriter/bcwritertest.prj
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/mse_bcwritertest.prj
   /home/mse/packs/standard/git/mseuniverse/tools/msegit/mse_msegit.prj
   /home/mse/proj/testa/testa.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
@@ -591,7 +592,6 @@ windowlayout=562
   /home/mse/proj/msegui/testcase/mse/opengl/openglgdi/openglgdi.prj
   /home/mse/proj/test3/test.prj
   /home/mse/proj/msegui/testcase/misu_kun/test/test.prj
-  /home/mse/proj/dist/mseguidist/test/msegui/apps/ide/templates/crossarmdefault.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=103
