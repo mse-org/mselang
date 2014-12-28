@@ -24,6 +24,7 @@ type
    abbrevidstart: tintegeredit;
    commented: tstringedit;
    tbutton2: tbutton;
+   prefix: tstringedit;
    procedure initencoding(const sender: tenumtypeedit);
    procedure datentexe(const sender: TObject);
    procedure rowcontchaexe(const sender: tcustomgrid);
@@ -69,8 +70,8 @@ begin
   bitstart:= writer1.bitpos;
   repeat
    nam1:= nameed[i4];
-   additem(names,'@mab'+nam1);
-   additem(enums,'mab_'+nam1);
+   additem(names,'@'+prefix.value+nam1);
+   additem(enums,prefix.value+'_'+nam1);
    comment:= '';
    writer1.emit(idsize.value,ord(define_abbrev));
    for i3:= i4+1 to grid.rowcount do begin
@@ -133,7 +134,7 @@ begin
                                                   (bitend-bitstart+7) div 8);
   writer1.free;
   mstr1:= 'type'+lineend+
-          ' mabty = ('+lineend;
+          ' '+prefix.value+'ty = ('+lineend;
   for i1:= 0 to high(enums) do begin
    mstr1:= mstr1 + '  '+enums[i1];
    if i1 = 0 then begin
@@ -146,10 +147,11 @@ begin
   end;
   mstr1:= mstr1+' );'+lineend;
   mstr1:= mstr1+'const'+lineend+
-  ' mabsdat: array[0..'+inttostr(length(str1)-1)+'] of card8 = ('+
+  ' '+prefix.value+'sdat: array[0..'+inttostr(length(str1)-1)+'] of card8 = ('+
                              bytestrtostr(str1,nb_dec,',')+');'+lineend;
-  mstr1:= mstr1+' mabs: bcdataty = (bitsize: '+inttostr(bitend-bitstart)+
-                       '; data: @mabsdat);'+lineend;
+  mstr1:= mstr1+' '+prefix.value+'s: bcdataty = (bitsize: '+
+                       inttostr(bitend-bitstart)+
+                       '; data: @'+prefix.value+'sdat);'+lineend;
   code.value:= mstr1
  except
   application.handleexception();

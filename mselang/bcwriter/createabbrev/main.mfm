@@ -15,17 +15,17 @@ object mainfo: tmainfo
   moduleclassname = 'tmainform'
   object idsize: tintegeredit
     frame.caption = 'idsize'
-    frame.captionpos = cp_right
     frame.dummy = 0
     frame.outerframe = (
       0
+      17
       0
-      37
       0
     )
-    bounds_x = 8
-    bounds_y = 8
-    bounds_cx = 89
+    bounds_x = 80
+    bounds_y = 7
+    bounds_cx = 52
+    bounds_cy = 37
     statfile = projectstat
     ondataentered = datentexe
     value = 3
@@ -34,9 +34,9 @@ object mainfo: tmainfo
   object grid: twidgetgrid
     taborder = 1
     bounds_x = 8
-    bounds_y = 35
+    bounds_y = 51
     bounds_cx = 489
-    bounds_cy = 181
+    bounds_cy = 165
     anchors = [an_left, an_top, an_right, an_bottom]
     optionsgrid = [og_colsizing, og_keyrowmoving, og_rowinserting, og_rowdeleting, og_selectedrowsdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_appendempty, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     fixcols.count = 1
@@ -182,11 +182,19 @@ object mainfo: tmainfo
     statfile = mainstat
   end
   object tfilenameedit1: tfilenameedit
+    frame.caption = 'file'
     frame.button.imagenr = 17
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
     taborder = 4
     bounds_x = 192
-    bounds_y = 8
+    bounds_y = 7
     bounds_cx = 249
+    bounds_cy = 37
     anchors = [an_left, an_top, an_right]
     statfile = mainstat
     textflags = [tf_noselect, tf_ellipseleft]
@@ -204,7 +212,7 @@ object mainfo: tmainfo
   object tbutton1: tbutton
     taborder = 5
     bounds_x = 445
-    bounds_y = 8
+    bounds_y = 24
     bounds_cx = 50
     bounds_cy = 20
     anchors = [an_top, an_right]
@@ -213,23 +221,41 @@ object mainfo: tmainfo
     onexecute = saveexe
   end
   object abbrevidstart: tintegeredit
-    frame.caption = 'id'#10'start'
-    frame.captionpos = cp_right
+    frame.caption = 'idstart'
     frame.dummy = 0
     frame.outerframe = (
       0
-      5
-      33
-      5
+      17
+      0
+      0
     )
     taborder = 6
-    bounds_x = 104
-    bounds_y = 3
-    bounds_cx = 85
-    bounds_cy = 30
+    bounds_x = 136
+    bounds_y = 7
+    bounds_cx = 52
+    bounds_cy = 37
     statfile = projectstat
     ondataentered = datentexe
     value = 4
+    reffontheight = 14
+  end
+  object prefix: tstringedit
+    frame.caption = 'prefix'
+    frame.dummy = 0
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 7
+    bounds_x = 8
+    bounds_y = 7
+    bounds_cx = 68
+    bounds_cy = 37
+    statfile = projectstat
+    ondataentered = datentexe
+    value = 'mab'
     reffontheight = 14
   end
   object projectstat: tstatfile

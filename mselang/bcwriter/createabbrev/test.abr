@@ -1,3 +1,5 @@
+[mainfo.prefix]
+value=mab
 [mainfo.abbrevidstart]
 value=4
 [mainfo.grid]
