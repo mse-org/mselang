@@ -92,14 +92,20 @@ uses
  //abreviations, made by createabbrev tool
  
 type
- mabty = (
-  mab_subtype = 4, //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
-  mab_int, //id (vbr 6), value (vbr 6)
-  mab_data //id (vbr 6), array (array), data (fixed 8)
+ mabconstty = (
+  mabconst_int = 4, //id (vbr 6), value (vbr 6)
+  mabconst_data //id (vbr 6), array (array), data (fixed 8)
  );
 const
- mabsdat: array[0..14] of card8 = (50,43,36,4,32,99,100,36,200,144,209,32,99,130,0);
- mabs: bcdataty = (bitsize: 113; data: @mabsdat);
+ mabconstsdat: array[0..6] of card8 = (18,100,200,104,144,49,65);
+ mabconsts: bcdataty = (bitsize: 56; data: @mabconstsdat);
+type
+ mabtypety = (
+  mabtype_subtype = 4 //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
+ );
+const
+ mabtypesdat: array[0..7] of card8 = (50,43,36,4,32,99,100,0);
+ mabtypes: bcdataty = (bitsize: 57; data: @mabtypesdat);
 
 { tllvmbcwriter }
 
@@ -134,9 +140,9 @@ begin
 
  beginblock(BLOCKINFO_BLOCK_ID,3);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
- emitdata(mabs);
+ emitdata(mabconsts);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
- emitdata(mabs);
+ emitdata(mabtypes);
  endblock();
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -179,7 +185,7 @@ testvar:= psubtypedataty(
                      //todo: vararg
 //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
 
-        emitcode(ord(mab_subtype));
+        emitcode(ord(mabtype_subtype));
         emit1(0);      //vararg
         po3:= @params;
         po4:= po3+header.paramcount;
@@ -571,14 +577,14 @@ end;
 
 procedure tllvmbcwriter.emitintconst(const avalue: int32);
 begin
- emitcode(ord(mab_int));
+ emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
  emitvbr6(avalue);
 end;
 
 procedure tllvmbcwriter.emittypeid(const avalue: int32);
 begin
- emitcode(ord(mab_int));
+ emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_SETTYPE));
  emitvbr6(avalue);
 end;
@@ -604,7 +610,7 @@ var
  po1,pe: pcard8;
  i1: int32;
 begin
- emitcode(ord(mab_data));
+ emitcode(ord(mabconst_data));
  emitvbr6(ord(CST_CODE_AGGREGATE));
  emitvbr6(asize);
  po1:= @avalue;

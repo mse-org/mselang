@@ -17,6 +17,9 @@ order14=0
 order15=0
 order16=0
 order17=0
+order18=0
+order19=0
+order20=0
 [projectoptions]
 projectdir=/home/mse/packs/standard/git/mselang/mselang/bcwriter
 projectfilename=/home/mse/packs/standard/git/mselang/mselang/bcwriter/bcwritertest.prj
@@ -576,19 +579,19 @@ windowlayout=562
  cy=0
  [mainfo.projectfiledia]
  filenames=1
-  /home/mse/test/test1/test1.prj
- lastdir=/home/mse/test/test1/
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/mse_bcwritertest.prj
+ lastdir=/home/mse/packs/standard/git/mselang/mselang/bcwriter/
  filehistory=10
-  /home/mse/test/test1/test1.prj
-  /home/mse/packs/standard/git/mseide-msegui/apps/ide/templates/mse_default.prj
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/mse_bcwritertest.prj
+  /home/mse/packs/standard/git/mselang/mselang/bcwriter/bcwritertest.prj
+  /home/mse/packs/standard/git/mseuniverse/tools/msegit/mse_msegit.prj
+  /home/mse/proj/testa/testa.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
-  /home/mse/packs/standard/git/mseide-msegui/apps/demo/mse_demo.prj
-  /home/mse/packs/standard/git/mseide-msegui/apps/i18ndemo/mse_i18ndemo.prj
-  /home/mse/packs/standard/git/mseide-msegui/tools/i18n/mse_msei18n.prj
-  /home/mse/packs/standard/git/mseide-msegui/apps/demo/demo.prj
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/grammargen/mse_grammargen.prj
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/mse_expint.prj
-  /home/mse/packs/standard/git/mseexperiments/expressioninterpreter/expint.prj
+  /home/mse/proj/msegui/testcase/mse/opengl/openglcanvas/openglcanvas.prj
+  /home/mse/proj/msegui/testcase/mse/opengl/openglgdi/openglgdi.prj
+  /home/mse/proj/test3/test.prj
+  /home/mse/proj/msegui/testcase/misu_kun/test/test.prj
+  /home/mse/proj/dist/mseguidist/test/msegui/apps/ide/templates/crossarmdefault.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=103
@@ -630,13 +633,13 @@ windowlayout=562
  ncx=0
  ncy=0
  x=4
- y=24
+ y=25
  cx=286
  cy=74
  rcx=0
  rcy=0
  wsize=0
- active=0
+ active=1
  visible=1
  [targetconsolefo]
  splitdir=0
@@ -677,7 +680,7 @@ windowlayout=562
  [memoryfo]
  splitdir=0
  useroptions=16507
- stackedunder=componentpalettefo
+ stackedunder=cpui386fo
  parent=
  mdistate=0
  nx=0
@@ -704,7 +707,7 @@ windowlayout=562
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=findinfilefo
+ stackedunder=symbolfo
  parent=
  mdistate=0
  nx=0
@@ -848,7 +851,7 @@ windowlayout=562
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=disassfo
+ stackedunder=breakpointsfo
  parent=
  mdistate=0
  nx=0
@@ -873,7 +876,7 @@ windowlayout=562
  [symbolfo]
  splitdir=0
  useroptions=16507
- stackedunder=cpui386fo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -967,7 +970,7 @@ windowlayout=562
  [componentstorefo]
  splitdir=0
  useroptions=24699
- stackedunder=symbolfo
+ stackedunder=disassfo
  parent=
  mdistate=0
  nx=0
@@ -1061,7 +1064,7 @@ windowlayout=562
  x=0
  y=0
  cx=276
- cy=22
+ cy=38
  rcx=0
  rcy=0
  [sourcefo]
@@ -1088,7 +1091,7 @@ windowlayout=562
  irqoff=0
  splitdir=0
  useroptions=16491
- stackedunder=watchfo
+ stackedunder=componentpalettefo
  parent=
  mdistate=0
  nx=0

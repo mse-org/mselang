@@ -1,0 +1,38 @@
+[mainfo.prefix]
+value=mabconst
+[mainfo.abbrevidstart]
+value=4
+[mainfo.grid]
+propcolwidthref=349
+values0=5
+ int
+ 
+ data
+ 
+ 
+sortdescend0=0
+values1=5
+ 2
+ 2
+ 2
+ 3
+ 1
+values1_ci=-1
+sortdescend1=0
+values2=5
+ 6
+ 6
+ 6
+ 0
+ 8
+values2_ci=-1
+sortdescend2=0
+values3=5
+ id
+ value
+ id
+ array
+ data
+sortdescend3=0
+[mainfo.idsize]
+value=3
