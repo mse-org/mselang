@@ -403,8 +403,9 @@ type
    function checkkey(const akey; const aitemdata): boolean override;
   public
    constructor create(const atypelist: ttypehashdatalist);
-   procedure clear(); override;
-   function addvalue(const avalue: int32): integer; //returns id
+   procedure clear(); override; //init first entries with 0..255
+   function addcard8value(const avalue: card8): integer; //returns id
+   function addint32value(const avalue: int32): integer; //returns id
    function addvalue(const avalue; const asize: int32;
                                       const atypeid: integer): integer;
                                                     //returns id
@@ -2629,9 +2630,14 @@ begin
 end;
 
 procedure tconsthashdatalist.clear;
+var
+ c1: card8;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
+  for c1:= low(c1) to high(c1) do begin
+   addcard8value(c1);
+  end;
  end;
 end;
 
@@ -2649,7 +2655,21 @@ testvar4:= constallocdataty(akey);
                                     inherited checkkey(akey,aitemdata);
 end;
 
-function tconsthashdatalist.addvalue(const avalue: int32): integer;
+function tconsthashdatalist.addcard8value(const avalue: card8): integer;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptruint(avalue));
+ alloc1.typeid:= ord(das_8);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addint32value(const avalue: int32): integer;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;

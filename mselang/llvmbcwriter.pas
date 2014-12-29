@@ -59,12 +59,15 @@ type
    procedure writeback32(const apos: int32; const avalue: int32);
 //   procedure writeabbrev();
    procedure emit(const asize: integer; const avalue: card8);
+   procedure emit1(const avalue: card8);
+   procedure emit4(const avalue: card8);
+   procedure emit5(const avalue: card8);
+   procedure emit6(const avalue: card8);
+   procedure emit8(const avalue: card8);
    procedure emitvbr4(avalue: int32);
    procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32);
    procedure emitvbr8(avalue: int32);
-   procedure emit1(const avalue: card8);
-   procedure emit8(const avalue: card8);
    procedure emitcode(const avalue: int32);
    procedure emitdata(const avalue: bcdataty);
    procedure emitdata(const avalues: array of pbcdataty);
@@ -122,6 +125,16 @@ type
 const
  mabmodsdat: array[0..6] of card8 = (42,17,200,4,32,67,6);
  mabmods: bcdataty = (bitsize: 53; data: @mabmodsdat);
+
+function signedvbr(const avalue: integer): integer;// inline;
+begin
+ if avalue < 0 then begin
+  result:= (-avalue shl 1) or 1;
+ end
+ else begin
+  result:= avalue shl 1;
+ end;
+end;
 
 { tllvmbcwriter }
 
@@ -246,8 +259,8 @@ testvar:= psubtypedataty(
      emittypeid(id1);
     end;
     case databitsizety(po2^.typeid) of
-     das_32: begin
-      emitintconst(ptruint(po2^.header.buffer));
+     das_8..das_32: begin
+      emitintconst(int32(ptruint(po2^.header.buffer)));
      end;
      else begin
      {$ifdef mse_checkinternalerror}
@@ -341,6 +354,51 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emit4(const avalue: card8);
+begin
+ fbitbuf:= fbitbuf or (avalue shl fbitpos);
+ fbitpos:= fbitpos + 4;
+ if fbitpos >= 8 then begin
+  if fbufpos + 1 >= fbufend then begin
+   flushbuffer();
+  end;
+  pint8(fbufpos)^:= fbitbuf;
+  fbufpos:= fbufpos + 1;
+  fbitbuf:= fbitbuf shr 8;
+  fbitpos:= fbitpos - 8;
+ end;
+end;
+
+procedure tllvmbcwriter.emit5(const avalue: card8);
+begin
+ fbitbuf:= fbitbuf or (avalue shl fbitpos);
+ fbitpos:= fbitpos + 5;
+ if fbitpos >= 8 then begin
+  if fbufpos + 1 >= fbufend then begin
+   flushbuffer();
+  end;
+  pint8(fbufpos)^:= fbitbuf;
+  fbufpos:= fbufpos + 1;
+  fbitbuf:= fbitbuf shr 8;
+  fbitpos:= fbitpos - 8;
+ end;
+end;
+
+procedure tllvmbcwriter.emit6(const avalue: card8);
+begin
+ fbitbuf:= fbitbuf or (avalue shl fbitpos);
+ fbitpos:= fbitpos + 6;
+ if fbitpos >= 8 then begin
+  if fbufpos + 1 >= fbufend then begin
+   flushbuffer();
+  end;
+  pint8(fbufpos)^:= fbitbuf;
+  fbufpos:= fbufpos + 1;
+  fbitbuf:= fbitbuf shr 8;
+  fbitpos:= fbitpos - 8;
+ end;
+end;
+
 procedure tllvmbcwriter.emit8(const avalue: card8);
 begin
  fbitbuf:= fbitbuf or (avalue shl fbitpos);
@@ -363,7 +421,7 @@ begin
   if card32(avalue) - i1 <> 0 then begin
    i1:= i1 or $80;
   end;
-  emit(4,i1);
+  emit4(i1);
   avalue:= card32(avalue) shr 3;
  until avalue = 0;
 end;
@@ -377,7 +435,7 @@ begin
   if card32(avalue) - i1 <> 0 then begin
    i1:= i1 or $10;
   end;
-  emit(5,i1);
+  emit5(i1);
   avalue:= card32(avalue) shr 4;
  until avalue = 0;
 end;
@@ -391,7 +449,7 @@ begin
   if card32(avalue) - i1 <> 0 then begin
    i1:= i1 or $20;
   end;
-  emit(6,i1);
+  emit6(i1);
   avalue:= card32(avalue) shr 5;
  until avalue = 0;
 end;
@@ -597,7 +655,7 @@ procedure tllvmbcwriter.emitintconst(const avalue: int32);
 begin
  emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
- emitvbr6(avalue);
+ emitvbr6(signedvbr(avalue));
 end;
 
 procedure tllvmbcwriter.emittypeid(const avalue: int32);
@@ -643,10 +701,14 @@ procedure tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty; const alinkage: linkagety;
                const aparamattr: int32);
 begin
+ emitrec(ord(MODULE_CODE_FUNCTION),[atype,ord(acallingconv),0,ord(alinkage),
+ aparamattr]);
+{ no abbrevs in MODULE_BLOCK?
  emitcode(ord(mabmod_sub));
  emitvbr6(ord(acallingconv));
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr); 
+}
 end;
 
 end.

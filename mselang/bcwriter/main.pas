@@ -44,25 +44,28 @@ begin
   str1:= 'abcde';
   typ1.kind:= das_none;
   typ1.size:= length(str1);
-  str2:= '123567';
   typelist.addvalue(typ1);
+  str2:= '123567';
   typ2.kind:= das_none;
   typ2.size:= length(str2);
   typelist.addvalue(typ2);
+
   i1:= typelist.addsubvalue(nil);
   i1:= typelist.addsubvalue(nil);
 
-  i1:= constlist.addvalue(1);
-  i1:= constlist.addvalue(2);
-  i1:= constlist.addvalue(1);
-  i1:= constlist.addvalue(2);
-
+  i1:= constlist.addcard8value(1);
+  i1:= constlist.addcard8value(2);
+  i1:= constlist.addcard8value(1);
+  i1:= constlist.addcard8value(2);
+ 
   
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
   i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
+
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
   i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
-  i1:= constlist.addvalue(3);
+
+  i1:= constlist.addint32value(3);
 
   i1:= typelist.addsubvalue(nil);
     
