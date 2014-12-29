@@ -112,21 +112,26 @@ const
 
 type
  mabtypety = (
-  mabtype_subtype = 4 //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), ignored (literal 0), retty (vbr 6), paramty (array),  (vbr 6)
+  mabtype_subtype = 4 //TYPE_CODE_FUNCTION (literal 21), vararg (fixed 1), retty (vbr 6), paramty (array),  (vbr 6)
  );
 const
- mabtypesdat: array[0..7] of card8 = (50,43,36,4,32,99,100,0);
- mabtypes: bcdataty = (bitsize: 57; data: @mabtypesdat);
+ mabtypesdat: array[0..5] of card8 = (42,43,36,144,49,50);
+ mabtypes: bcdataty = (bitsize: 48; data: @mabtypesdat);
 
 type
  mabmodty = (
-  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6)
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0)
  );
 const
- mabmodsdat: array[0..6] of card8 = (42,17,200,4,32,67,6);
- mabmods: bcdataty = (bitsize: 53; data: @mabmodsdat);
+ mabmodsdat: array[0..9] of card8 = (66,17,200,4,32,67,38,64,128,0);
+ mabmods: bcdataty = (bitsize: 80; data: @mabmodsdat);
 
-function signedvbr(const avalue: integer): integer;// inline;
+const
+ typeindexstep = 3;   //type list stack =   basetype [0]
+                      //                   *basetype [1]
+                      //                  **basetype [2]
+ 
+function signedvbr(const avalue: integer): integer; inline;
 begin
  if avalue < 0 then begin
   result:= (-avalue shl 1) or 1;
@@ -134,6 +139,16 @@ begin
  else begin
   result:= avalue shl 1;
  end;
+end;
+
+function typeindex(const avalue: databitsizety): integer; inline;
+begin
+ result:= ord(avalue) * typeindexstep;
+end;
+
+function typeindex(const avalue: integer): integer; inline;
+begin
+ result:= avalue * typeindexstep;
 end;
 
 { tllvmbcwriter }
@@ -177,12 +192,12 @@ begin
  endblock();
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
-  emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count]);
+  emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
   po1:= consts.typelist.first();
   for i1:= consts.typelist.count - 1 downto 0 do begin
    if po1^.kind in ordinalopdatakinds then begin
     if po1^.kind = das_pointer then begin
-     emitrec(ord(TYPE_CODE_POINTER),[ord(das_8)]);
+     emitrec(ord(TYPE_CODE_POINTER),[typeindex(das_8)]);
     end
     else begin
      emitrec(ord(TYPE_CODE_INTEGER),[po1^.header.buffer]);
@@ -192,9 +207,13 @@ begin
     if po1^.kind in byteopdatakinds then begin
      if po1^.header.buffer = 0 then begin
       emitrec(ord(TYPE_CODE_VOID),[]);     
+      emitrec(ord(TYPE_CODE_VOID),[]); //dummy *type
+      emitrec(ord(TYPE_CODE_VOID),[]); //dummy **type
+      po1:= consts.typelist.next();
+      continue;
      end
      else begin
-      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,ord(das_8)]);     
+      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeindex(das_8)]);     
      end;
     end
     else begin
@@ -221,16 +240,16 @@ testvar:= psubtypedataty(
         po3:= @params;
         po4:= po3+header.paramcount;
         if sf_function in header.flags then begin
-         emitvbr6(po3^.listindex); //retval
+         emitvbr6(typeindex(po3^.listindex)); //retval
          emitvbr6(header.paramcount-1);
          inc(po3);
         end
         else begin
-         emitvbr6(ord(das_none)); //void retval
+         emitvbr6(typeindex(das_none)); //void retval
          emitvbr6(header.paramcount);
         end;
         while po3 < po4 do begin
-         emitvbr6(po3^.listindex);
+         emitvbr6(typeindex(po3^.listindex));
          inc(po3);
         end;
 //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
@@ -246,6 +265,8 @@ testvar:= psubtypedataty(
      end;
     end;
    end;
+   emitrec(ord(TYPE_CODE_POINTER),[po1^.header.listindex*typeindexstep]);
+   emitrec(ord(TYPE_CODE_POINTER),[po1^.header.listindex*typeindexstep+1]);
    po1:= consts.typelist.next();
   end;
   endblock(); 
@@ -256,7 +277,7 @@ testvar:= psubtypedataty(
    for i1:= 0 to consts.count-1 do begin
     if id1 <> po2^.typeid then begin
      id1:= po2^.typeid;
-     emittypeid(id1);
+     emittypeid(id1*typeindexstep);
     end;
     case databitsizety(po2^.typeid) of
      das_8..das_32: begin
@@ -701,8 +722,9 @@ procedure tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty; const alinkage: linkagety;
                const aparamattr: int32);
 begin
- emitrec(ord(MODULE_CODE_FUNCTION),[atype,ord(acallingconv),0,ord(alinkage),
- aparamattr]);
+ emitrec(ord(MODULE_CODE_FUNCTION),[atype*typeindexstep+1,
+                                        ord(acallingconv),0,ord(alinkage),
+ aparamattr,0,0,0]);
 { no abbrevs in MODULE_BLOCK?
  emitcode(ord(mabmod_sub));
  emitvbr6(ord(acallingconv));

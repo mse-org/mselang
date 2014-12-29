@@ -3,36 +3,48 @@ value=mabmod
 [mainfo.abbrevidstart]
 value=4
 [mainfo.grid]
-propcolwidthref=349
-values0=5
+propcolwidthref=143
+values0=8
  sub
  
  
  
  
+ 
+ 
+ 
 sortdescend0=0
-values1=5
+values1=8
  0
  2
  0
  2
  2
+ 0
+ 0
+ 0
 values1_ci=-1
 sortdescend1=0
-values2=5
+values2=8
  8
  6
  0
  6
  6
+ 0
+ 0
+ 0
 values2_ci=-1
 sortdescend2=0
-values3=5
+values3=8
  MODULE_CODE_FUNCTION
  callingconv
  isproto
  linkagetype
  paramattr
+ alignment
+ section
+ visibility
 sortdescend3=0
 [mainfo.idsize]
 value=3

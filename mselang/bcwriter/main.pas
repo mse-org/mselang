@@ -72,8 +72,8 @@ begin
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
   stream.emitsub(i1,cv_ccc,li_code,0);
-//  stream.beginblock(FUNCTION_BLOCK_ID,3);
-//  stream.endblock();
+  stream.beginblock(FUNCTION_BLOCK_ID,3);
+  stream.endblock();
   stream.stop();
   stream.free();
  finally
