@@ -1,0 +1,34 @@
+[mainfo.prefix]
+value=mabsym
+[mainfo.abbrevidstart]
+value=4
+[mainfo.grid]
+propcolwidthref=143
+values0=4
+ entry
+ 
+ 
+ 
+sortdescend0=0
+values1=4
+ 0
+ 2
+ 3
+ 4
+values1_ci=-1
+sortdescend1=0
+values2=4
+ 1
+ 6
+ 0
+ 0
+values2_ci=-1
+sortdescend2=0
+values3=4
+ VST_CODE_ENTRY
+ valid
+ namechar
+ 
+sortdescend3=0
+[mainfo.idsize]
+value=3
