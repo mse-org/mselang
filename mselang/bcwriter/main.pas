@@ -17,7 +17,7 @@ var
  
 implementation
 uses
- main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes;
+ main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes,msestrings;
  
 procedure tmainfo.exe(const sender: TObject);
 var
@@ -75,6 +75,7 @@ begin
   stream.beginblock(FUNCTION_BLOCK_ID,3);
   stream.endblock();
   stream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
+  stream.emitvstentry(123,stringtolstring('main'));
   stream.endblock();
   stream.stop();
   stream.free();

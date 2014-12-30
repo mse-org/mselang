@@ -18,7 +18,7 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes,llvmbitcodes,parserglob,elements;
+ msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings;
 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
@@ -71,6 +71,8 @@ type
    procedure emitcode(const avalue: int32);
    procedure emitdata(const avalue: bcdataty);
    procedure emitdata(const avalues: array of pbcdataty);
+//   procedure emitchar6(const avalue: shortstring);
+   procedure emitchar6(const avalue: pchar; const alength: integer);
    procedure emitrec(const id: int32; const data: array of int32);
 //   procedure emitint32rec(const id: int32; const value: int32);
    procedure pad32();
@@ -94,6 +96,7 @@ type
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
+   procedure emitvstentry(const aid: integer; const aname: lstringty);
  end;
  
 implementation
@@ -127,10 +130,43 @@ const
  mabmodsdat: array[0..17] of card8 = (122,17,200,144,9,64,134,76,128,0,1,2,4,8,16,32,64,0);
  mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
 
+type
+ mabsymty = (
+  mabsym_entry = 4 //VST_CODE_ENTRY (literal 1), valid (vbr 6), namechar (array),  (char6)
+ );
+const
+ mabsymsdat: array[0..4] of card8 = (34,3,200,24,2);
+ mabsyms: bcdataty = (bitsize: 34; data: @mabsymsdat);
+
 const
  typeindexstep = 3;   //type list stack =   basetype [0]
                       //                   *basetype [1]
                       //                  **basetype [2]
+
+ char6tab: array[char] of card8 = (
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+//                                                        '.'
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$3e,$ff,
+//'0','1','2','3','4','5','6','7','8','9'
+  $34,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d,$ff,$ff,$ff,$ff,$ff,$ff,
+//    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O' ,
+  $ff,$1a,$1b,$1c,$1d,$1e,$1f,$20,$21,$22,$23,$24,$25,$26,$27,$28,
+//'P','Q','R','S','T','U','V','W','X','Y','Z'                 '_'
+  $29,$2a,$2b,$2c,$2d,$2e,$2f,$30,$31,$32,$33,$ff,$ff,$ff,$ff,$3f,
+//    'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+  $ff,$00,$01,$02,$03,$04,$05,$06,$07,$08,$09,$0a,$0b,$0c,$0d,$0e,
+//'p','q','r','s','t','u','v','w','x','y','z'
+  $0f,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
+  $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+ );
  
 function signedvbr(const avalue: integer): integer; inline;
 begin
@@ -190,6 +226,8 @@ begin
  emitdata(mabtypes);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(MODULE_BLOCK_ID)]);
  emitdata(mabmods);
+ emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(VALUE_SYMTAB_BLOCK_ID)]);
+ emitdata(mabsyms);
  endblock();
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -737,4 +775,36 @@ begin
 }
 end;
 
+procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
+var
+ po1,pe: pchar;
+begin
+ emitvbr6(alength);
+ po1:= avalue;
+ pe:= po1 + alength;
+ while po1 < pe do begin
+ {$ifdef mse_checkinternalerror}
+  if char6tab[po1^] = $ff then begin
+   internalerror(ie_bcwriter,'20141230A');
+  end;
+ {$endif}
+  emit6(char6tab[po1^]);
+  inc(po1);
+ end;
+end;
+
+procedure tllvmbcwriter.emitvstentry(const aid: integer; 
+                                               const aname: lstringty);
+begin
+ emitcode(ord(mabsym_entry));
+ emitvbr6(aid);
+ emitchar6(aname.po,aname.len);
+end;
+
+{
+procedure tllvmbcwriter.emitchar6(const avalue: shortstring);
+begin
+ emitchar6(@avalue[1],length(avalue));
+end;
+}
 end.
