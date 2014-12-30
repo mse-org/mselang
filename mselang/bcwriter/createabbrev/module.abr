@@ -4,7 +4,7 @@ value=mabmod
 value=4
 [mainfo.grid]
 propcolwidthref=143
-values0=8
+values0=15
  sub
  
  
@@ -13,31 +13,53 @@ values0=8
  
  
  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 sortdescend0=0
-values1=8
+values1=15
  0
  2
+ 2
  0
  2
  2
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
  0
  0
  0
 values1_ci=-1
 sortdescend1=0
-values2=8
+values2=15
  8
+ 6
  6
  0
  6
  6
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
  0
  0
  0
 values2_ci=-1
 sortdescend2=0
-values3=8
+values3=15
  MODULE_CODE_FUNCTION
+ type
  callingconv
  isproto
  linkagetype
@@ -45,6 +67,12 @@ values3=8
  alignment
  section
  visibility
+ gc
+ unnamed_addr
+ prologdata
+ dllstorageclass
+ comdat
+ prefixdata
 sortdescend3=0
 [mainfo.idsize]
 value=3

@@ -89,7 +89,8 @@ type
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
-               const avisibility: visibility; const agc: int32
+               const avisibility: visibility; const agc: int32;
+               const unnamed_addr: int32;
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
@@ -120,11 +121,11 @@ const
 
 type
  mabmodty = (
-  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0)
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
  );
 const
- mabmodsdat: array[0..9] of card8 = (66,17,200,4,32,67,38,64,128,0);
- mabmods: bcdataty = (bitsize: 80; data: @mabmodsdat);
+ mabmodsdat: array[0..17] of card8 = (122,17,200,144,9,64,134,76,128,0,1,2,4,8,16,32,64,0);
+ mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
 
 const
  typeindexstep = 3;   //type list stack =   basetype [0]
@@ -648,8 +649,13 @@ procedure tllvmbcwriter.endblock;
 var
  int1,int2: integer;
 begin
+// int1:= fblockstackpo^.startpos - 4; //address blocklen
+// writeback32(int1,((fpos + (fbufpos - pointer(@fbuffer)) - int1)+3) div 4 - 1); 
+//                                     //word length without blocklen
+ emitcode(ord(END_BLOCK));
+ pad32();
  int1:= fblockstackpo^.startpos - 4; //address blocklen
- writeback32(int1,((fpos + (fbufpos - pointer(@fbuffer)) - int1)+3) div 4 - 1); 
+ writeback32(int1,((fpos + (fbufpos - pointer(@fbuffer)) - int1) div 4 - 1)); 
                                      //word length without blocklen
  dec(fblockstackpo);
 {$ifdef mse_checkinternalerror}
@@ -657,8 +663,6 @@ begin
   internalerror(ie_bcwriter,'141213B');
  end;
 {$endif}
- emitcode(ord(END_BLOCK));
- pad32();
 end;
 {
 procedure tllvmbcwriter.writeabbrev;
