@@ -71,12 +71,17 @@ begin
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
+
   stream.emitsub(i1,cv_ccc,li_code,0);
-  stream.beginblock(FUNCTION_BLOCK_ID,3);
-  stream.endblock();
+
   stream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-  stream.emitvstentry(123,stringtolstring('main'));
+  stream.emitvstentry(259,stringtolstring('main'));
   stream.endblock();
+
+  stream.beginblock(FUNCTION_BLOCK_ID,3);
+  stream.emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
+  stream.endblock();
+
   stream.stop();
   stream.free();
  finally

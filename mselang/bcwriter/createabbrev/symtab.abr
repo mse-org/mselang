@@ -4,28 +4,44 @@ value=mabsym
 value=4
 [mainfo.grid]
 propcolwidthref=143
-values0=4
+values0=8
  entry
  
  
  
+ bbentry
+ 
+ 
+ 
 sortdescend0=0
-values1=4
+values1=8
+ 0
+ 2
+ 3
+ 4
  0
  2
  3
  4
 values1_ci=-1
 sortdescend1=0
-values2=4
+values2=8
  1
+ 6
+ 0
+ 0
+ 2
  6
  0
  0
 values2_ci=-1
 sortdescend2=0
-values3=4
+values3=8
  VST_CODE_ENTRY
+ valid
+ namechar
+ 
+ VST_CODE_BBENTRY
  valid
  namechar
  

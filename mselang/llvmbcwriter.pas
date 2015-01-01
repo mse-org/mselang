@@ -73,7 +73,6 @@ type
    procedure emitdata(const avalues: array of pbcdataty);
 //   procedure emitchar6(const avalue: shortstring);
    procedure emitchar6(const avalue: pchar; const alength: integer);
-   procedure emitrec(const id: int32; const data: array of int32);
 //   procedure emitint32rec(const id: int32; const value: int32);
    procedure pad32();
    procedure emittypeid(const avalue: int32);
@@ -85,9 +84,11 @@ type
    procedure start(const consts: tconsthashdatalist);
    procedure stop();
    procedure flushbuffer(); override;
+   function bitpos(): int32;
+
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
-   function bitpos(): int32;
+   procedure emitrec(const id: int32; const data: array of int32);
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
@@ -97,6 +98,7 @@ type
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
    procedure emitvstentry(const aid: integer; const aname: lstringty);
+   procedure emitvstbbentry(const aid: integer; const aname: lstringty);
  end;
  
 implementation
@@ -105,6 +107,14 @@ uses
 
  //abreviations, made by createabbrev tool
  
+type
+ mabmodty = (
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
+ );
+const
+ mabmodsdat: array[0..17] of card8 = (122,17,200,144,9,64,134,76,128,0,1,2,4,8,16,32,64,0);
+ mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
+
 type
  mabconstty = (
   mabconst_int = 4, //id (vbr 6), value (vbr 6)
@@ -123,20 +133,13 @@ const
  mabtypes: bcdataty = (bitsize: 48; data: @mabtypesdat);
 
 type
- mabmodty = (
-  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
- );
-const
- mabmodsdat: array[0..17] of card8 = (122,17,200,144,9,64,134,76,128,0,1,2,4,8,16,32,64,0);
- mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
-
-type
  mabsymty = (
-  mabsym_entry = 4 //VST_CODE_ENTRY (literal 1), valid (vbr 6), namechar (array),  (char6)
+  mabsym_entry = 4, //VST_CODE_ENTRY (literal 1), valid (vbr 6), namechar (array),  (char6)
+  mabsym_bbentry //VST_CODE_BBENTRY (literal 2), valid (vbr 6), namechar (array),  (char6)
  );
 const
- mabsymsdat: array[0..4] of card8 = (34,3,200,24,2);
- mabsyms: bcdataty = (bitsize: 34; data: @mabsymsdat);
+ mabsymsdat: array[0..8] of card8 = (34,3,200,24,138,20,32,99,8);
+ mabsyms: bcdataty = (bitsize: 68; data: @mabsymsdat);
 
 const
  typeindexstep = 3;   //type list stack =   basetype [0]
@@ -188,6 +191,16 @@ begin
  result:= avalue * typeindexstep;
 end;
 
+function ptypeindex(const avalue: integer): integer; inline;
+begin
+ result:= avalue * typeindexstep + 1;
+end;
+
+function pptypeindex(const avalue: integer): integer; inline;
+begin
+ result:= avalue * typeindexstep + 2;
+end;
+
 { tllvmbcwriter }
 
 constructor tllvmbcwriter.create(ahandle: integer);
@@ -216,9 +229,6 @@ begin
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
- beginblock(MODULE_BLOCK_ID,3);
- emitrec(ord(MODULE_CODE_VERSION),[1]);
-
  beginblock(BLOCKINFO_BLOCK_ID,3);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
  emitdata(mabconsts);
@@ -229,6 +239,10 @@ begin
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(VALUE_SYMTAB_BLOCK_ID)]);
  emitdata(mabsyms);
  endblock();
+
+ beginblock(MODULE_BLOCK_ID,3);
+ emitrec(ord(MODULE_CODE_VERSION),[1]);
+
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
@@ -764,15 +778,16 @@ procedure tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty; const alinkage: linkagety;
                const aparamattr: int32);
 begin
+{
  emitrec(ord(MODULE_CODE_FUNCTION),[atype*typeindexstep+1,
                                         ord(acallingconv),0,ord(alinkage),
  aparamattr,0,0,0]);
-{ no abbrevs in MODULE_BLOCK?
+}
  emitcode(ord(mabmod_sub));
+ emitvbr6(ptypeindex(atype));
  emitvbr6(ord(acallingconv));
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr); 
-}
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
@@ -797,6 +812,14 @@ procedure tllvmbcwriter.emitvstentry(const aid: integer;
                                                const aname: lstringty);
 begin
  emitcode(ord(mabsym_entry));
+ emitvbr6(aid);
+ emitchar6(aname.po,aname.len);
+end;
+
+procedure tllvmbcwriter.emitvstbbentry(const aid: integer; 
+                                               const aname: lstringty);
+begin
+ emitcode(ord(mabsym_bbentry));
  emitvbr6(aid);
  emitchar6(aname.po,aname.len);
 end;
