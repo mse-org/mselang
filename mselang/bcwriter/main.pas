@@ -80,6 +80,7 @@ begin
 
   stream.beginblock(FUNCTION_BLOCK_ID,3);
   stream.emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
+  stream.emitretop();
   stream.endblock();
 
   stream.stop();
