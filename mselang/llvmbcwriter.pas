@@ -99,6 +99,8 @@ type
                const aprefixdata: int32});
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
+   procedure emitretop();
+   procedure emitretop(const atype: integer; const avalue: integer);
  end;
  
 implementation
@@ -140,6 +142,18 @@ type
 const
  mabsymsdat: array[0..8] of card8 = (34,3,200,24,138,20,32,99,8);
  mabsyms: bcdataty = (bitsize: 68; data: @mabsymsdat);
+
+type
+ mabfuncty = (
+  mabfunc_inst0 = 4, //instruction code (fixed 6)
+  mabfunc_inst1, //instruction code (fixed 6), par1 (vbr 6)
+  mabfunc_inst2 //instruction code (fixed 6), par1 (vbr 6), par2 (vbr 6)
+ );
+const
+ mabfuncsdat: array[0..9] of card8 = (10,98,36,196,144,209,16,67,134,12);
+ mabfuncs: bcdataty = (bitsize: 78; data: @mabfuncsdat);
+
+
 
 const
  typeindexstep = 3;   //type list stack =   basetype [0]
@@ -238,6 +252,8 @@ begin
  emitdata(mabmods);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(VALUE_SYMTAB_BLOCK_ID)]);
  emitdata(mabsyms);
+ emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(FUNCTION_BLOCK_ID)]);
+ emitdata(mabfuncs);
  endblock();
 
  beginblock(MODULE_BLOCK_ID,3);
@@ -822,6 +838,20 @@ begin
  emitcode(ord(mabsym_bbentry));
  emitvbr6(aid);
  emitchar6(aname.po,aname.len);
+end;
+
+procedure tllvmbcwriter.emitretop();
+begin
+ emitcode(ord(mabfunc_inst0));
+ emit6(ord(FUNC_CODE_INST_RET));
+end;
+
+procedure tllvmbcwriter.emitretop(const atype: integer; const avalue: integer);
+begin
+ emitcode(ord(mabfunc_inst2));
+ emit6(ord(FUNC_CODE_INST_RET));
+ emitvbr6(atype);
+ emitvbr6(avalue);
 end;
 
 {
