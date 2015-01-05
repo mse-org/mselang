@@ -26,7 +26,7 @@ var
  typelist: ttypehashdatalist;
  constlist: tconsthashdatalist;
  typ1,typ2: typeallocinfoty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  str1,str2: string;
 
 begin
@@ -68,20 +68,21 @@ begin
   i1:= constlist.addint32value(3);
 
   i1:= typelist.addsubvalue(nil);
+  i2:= constlist.addint32value(124);
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist);
 
-  stream.emitsub(i1,cv_ccc,li_code,0);
+  i3:= stream.emitsub(i1,cv_ccc,li_code,0);
 
   stream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-  stream.emitvstentry(259,stringtolstring('main'));
+  stream.emitvstentry(i3{259},stringtolstring('main'));
   stream.endblock();
 
-  stream.beginblock(FUNCTION_BLOCK_ID,3);
+  stream.beginsub();
   stream.emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
-  stream.emitretop();
-  stream.endblock();
+  stream.emitretop(stream.constop(i2));
+  stream.endsub();
 
   stream.stop();
   stream.free();

@@ -354,6 +354,7 @@ type
     FUNC_CODE_INST_CMP         =  9, // CMP:        [opty, opval, opval, pred]
 
     FUNC_CODE_INST_RET         = 10, // RET:        [opty,opval<both optional>]
+                 //mse: // RET:        [opval<optional>]
     FUNC_CODE_INST_BR          = 11, // BR:         [bb#, bb#, cond] or [bb#]
     FUNC_CODE_INST_SWITCH      = 12, // SWITCH:     [opty, op0, op1, ...]
     FUNC_CODE_INST_INVOKE      = 13, // INVOKE:     [attr, fnty, op0,op1, ...]

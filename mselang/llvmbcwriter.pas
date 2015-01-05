@@ -49,6 +49,9 @@ type
    fbitpos: integer;
    fbitbuf: card16;
   protected
+//   fconstopstart: int32;
+   fsubopstart: int32;
+   fsubopindex: int32;
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -85,22 +88,28 @@ type
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
+   
+   function typeop(const typeid: databitsizety): integer; inline;
+   function typeop(const typeid: int32): integer; inline;
+   function constop(const constid: int32): integer; inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
    procedure emitrec(const id: int32; const data: array of int32);
-   procedure emitsub(const atype: int32; const acallingconv: callingconvty;
+   function emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
                const avisibility: visibility; const agc: int32;
                const unnamed_addr: int32;
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
-               const aprefixdata: int32});
+               const aprefixdata: int32}): int32; //returns opindex
+   procedure beginsub();
+   procedure endsub();
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
    procedure emitretop();
-   procedure emitretop(const atype: integer; const avalue: integer);
+   procedure emitretop({const atype: integer;} const avalue: integer);
  end;
  
 implementation
@@ -259,6 +268,9 @@ begin
  beginblock(MODULE_BLOCK_ID,3);
  emitrec(ord(MODULE_CODE_VERSION),[1]);
 
+// fconstopstart:= consts.typelist.count * typeindexstep;
+ fsubopstart:= {fconstopstart +} consts.count;
+ 
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
@@ -790,9 +802,9 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emitsub(const atype: int32;
+function tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty; const alinkage: linkagety;
-               const aparamattr: int32);
+               const aparamattr: int32): int32;
 begin
 {
  emitrec(ord(MODULE_CODE_FUNCTION),[atype*typeindexstep+1,
@@ -803,7 +815,9 @@ begin
  emitvbr6(ptypeindex(atype));
  emitvbr6(ord(acallingconv));
  emitvbr6(ord(alinkage));
- emitvbr6(aparamattr); 
+ emitvbr6(aparamattr);
+ result:= fsubopstart;
+ inc(fsubopstart);
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
@@ -844,14 +858,45 @@ procedure tllvmbcwriter.emitretop();
 begin
  emitcode(ord(mabfunc_inst0));
  emit6(ord(FUNC_CODE_INST_RET));
+ inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitretop(const atype: integer; const avalue: integer);
+procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: integer);
 begin
+ emitrec(ord(FUNC_CODE_INST_RET),[avalue]);
+{
  emitcode(ord(mabfunc_inst2));
  emit6(ord(FUNC_CODE_INST_RET));
  emitvbr6(atype);
  emitvbr6(avalue);
+}
+ inc(fsubopindex);
+end;
+
+function tllvmbcwriter.typeop(const typeid: databitsizety): integer;
+begin
+ result:= typeop(ord(typeid));
+end;
+
+function tllvmbcwriter.typeop(const typeid: int32): integer;
+begin
+ result:= {fsubopindex -} typeindex(typeid);
+end;
+
+function tllvmbcwriter.constop(const constid: int32): integer;
+begin
+ result:= fsubopindex - ({fconstopstart +} constid);
+end;
+
+procedure tllvmbcwriter.beginsub();
+begin
+ fsubopindex:= fsubopstart;
+ beginblock(FUNCTION_BLOCK_ID,3);
+end;
+
+procedure tllvmbcwriter.endsub();
+begin
+ endblock();
 end;
 
 {
