@@ -148,9 +148,11 @@ type
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
  end;
- 
+
+ globallockindty = (gak_var,gak_sub); 
  globallocdataty = record
   typeindex: int32;
+  kind: globallockindty;
  end;
  pgloballocdataty = ^globallocdataty;
  
@@ -520,6 +522,7 @@ var
 begin
  ftypelist.addvalue(avalue);
  dat1.typeindex:= avalue.listindex;
+ dat1.kind:= gak_var;
  avalue.listindex:= fcount;
  inccount();
  (pgloballocdataty(fdata) + avalue.listindex)^:= dat1;
@@ -540,6 +543,7 @@ var
  dat1: globallocdataty;
 begin
  dat1.typeindex:= ftypelist.addsubvalue(avalue);
+ dat1.kind:= gak_sub;
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;

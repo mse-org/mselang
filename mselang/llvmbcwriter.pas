@@ -97,14 +97,15 @@ type
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
    procedure emitrec(const id: int32; const data: array of int32);
-   function emitsub(const atype: int32; const acallingconv: callingconvty;
+   procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
                const avisibility: visibility; const agc: int32;
                const unnamed_addr: int32;
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
-               const aprefixdata: int32}): int32; //returns opindex
+               const aprefixdata: int32});
+   procedure emitvar(const atype: int32);
    procedure beginsub();
    procedure endsub();
    procedure emitvstentry(const aid: integer; const aname: lstringty);
@@ -248,6 +249,7 @@ var
  po1: ptypelistdataty;
  po2: pconstlistdataty;
  po3,po4: ptypeallocinfoty;
+ po5,po6: pgloballocdataty;
  i1: int32;
  id1: int32;
 begin
@@ -271,7 +273,7 @@ begin
  emitrec(ord(MODULE_CODE_VERSION),[1]);
 
 // fconstopstart:= consts.typelist.count * typeindexstep;
- fsubopstart:= {fconstopstart +} consts.count;
+ fsubopstart:= {fconstopstart +} consts.count + globals.count;
  
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -379,6 +381,19 @@ testvar:= psubtypedataty(
    end;
    endblock(); 
   end;
+  po5:= globals.datapo;
+  po6:= po5 + globals.count;
+  while po5 < po6 do begin
+   case po5^.kind of
+    gak_sub: begin
+     emitsub(po5^.typeindex,cv_ccc,li_code,0);
+    end;
+    gak_var: begin
+     emitvar(po5^.typeindex);
+    end;
+   end;
+   inc(po5);
+  end;  
  end;
 end;
 
@@ -804,9 +819,9 @@ begin
  end;
 end;
 
-function tllvmbcwriter.emitsub(const atype: int32;
+procedure tllvmbcwriter.emitsub(const atype: int32;
                const acallingconv: callingconvty; const alinkage: linkagety;
-               const aparamattr: int32): int32;
+               const aparamattr: int32);
 begin
 {
  emitrec(ord(MODULE_CODE_FUNCTION),[atype*typeindexstep+1,
@@ -818,8 +833,13 @@ begin
  emitvbr6(ord(acallingconv));
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr);
- result:= fsubopstart;
- inc(fsubopstart);
+// result:= fsubopstart;
+// inc(fsubopstart);
+end;
+
+procedure tllvmbcwriter.emitvar(const atype: int32);
+begin
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[typeindex(atype),0,0,0,0,0]);
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
