@@ -73,17 +73,13 @@ begin
   i1:= typelist.addsubvalue(nil);
   i2:= constlist.addint32value(124);
     
-  i3:= globlist.addsubvalue(nil);
+  i3:= globlist.addsubvalue(nil,stringtolstring('main'));
   globlist.addbytevalue(4);
 
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);
 
 //  i3:= stream.emitsub(i1,cv_ccc,li_code,0);
-
-  stream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-  stream.emitvstentry(i3+constlist.count{259},stringtolstring('main'));
-  stream.endblock();
 
   stream.beginsub();
   stream.emitretop(stream.constop(i2));

@@ -50,6 +50,7 @@ type
    fbitbuf: card16;
   protected
 //   fconstopstart: int32;
+   fglobstart: int32;
    fsubopstart: int32;
    fsubopindex: int32;
   {$ifdef mse_checkinternalerror}
@@ -250,6 +251,7 @@ var
  po2: pconstlistdataty;
  po3,po4: ptypeallocinfoty;
  po5,po6: pgloballocdataty;
+ po7,po8: pglobnamedataty;
  i1: int32;
  id1: int32;
 begin
@@ -381,6 +383,7 @@ testvar:= psubtypedataty(
    end;
    endblock(); 
   end;
+  fglobstart:= consts.count;
   po5:= globals.datapo;
   po6:= po5 + globals.count;
   while po5 < po6 do begin
@@ -393,7 +396,17 @@ testvar:= psubtypedataty(
     end;
    end;
    inc(po5);
-  end;  
+  end;
+  if globals.namelist.count > 0 then begin
+   beginblock(VALUE_SYMTAB_BLOCK_ID,3);
+   po7:= globals.namelist.datapo;
+   po8:= po7 + globals.namelist.count;
+   while po7 < po8 do begin
+    emitvstentry(fglobstart+po7^.listindex,po7^.name);
+    inc(po7);
+   end;
+   endblock();
+  end;
  end;
 end;
 

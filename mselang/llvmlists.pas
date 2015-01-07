@@ -18,7 +18,7 @@ unit llvmlists;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,msehash,parserglob,handlerglob,mselist;
+ msetypes,msehash,parserglob,handlerglob,mselist,msestrings;
  
 type
  bufferdataty = record
@@ -149,6 +149,17 @@ type
    function next(): pconstlistdataty;
  end;
 
+ globnamedataty = record
+  name: lstringty;
+  listindex: integer;
+ end;
+ pglobnamedataty = ^globnamedataty;
+ tglobnamelist = class(trecordlist)
+  public
+   constructor create;
+   procedure addname(const aname: lstringty; const alistindex: integer);
+ end;
+ 
  globallockindty = (gak_var,gak_sub); 
  globallocdataty = record
   typeindex: int32;
@@ -159,13 +170,19 @@ type
  tgloballocdatalist = class(trecordlist)
   private
    ftypelist: ttypehashdatalist;
+   fnamelist: tglobnamelist;
   public
    constructor create(const atypelist: ttypehashdatalist);
+   destructor destroy(); override;
    procedure addvalue(var avalue: typeallocinfoty);
    function addbytevalue(const asize: integer): integer;
                                       //returns listid
    function addsubvalue(const avalue: psubdataty): integer;
                                       //returns listid
+   function addsubvalue(const avalue: psubdataty;
+                                     const aname: lstringty): integer;
+                                      //returns listid
+   property namelist: tglobnamelist read fnamelist;
  end;
 
 implementation
@@ -508,12 +525,36 @@ begin
  result:= pointer(internalnext());
 end;
 
+{ tglobnamelist }
+
+constructor tglobnamelist.create;
+begin
+ inherited create(sizeof(globnamedataty));
+end;
+
+procedure tglobnamelist.addname(const aname: lstringty;
+               const alistindex: integer);
+begin
+ inccount();
+ with (pglobnamedataty(fdata)+fcount-1)^ do begin
+  name:= aname;
+  listindex:= alistindex;
+ end;
+end;
+
 { tgloballocdatalist }
 
 constructor tgloballocdatalist.create(const atypelist: ttypehashdatalist);
 begin
  ftypelist:= atypelist;
+ fnamelist:= tglobnamelist.create;
  inherited create(sizeof(globallocdataty));
+end;
+
+destructor tgloballocdatalist.destroy();
+begin
+ inherited;
+ fnamelist.free();
 end;
 
 procedure tgloballocdatalist.addvalue(var avalue: typeallocinfoty);
@@ -547,6 +588,13 @@ begin
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
+end;
+
+function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
+                                  const aname: lstringty): integer;
+begin
+ result:= addsubvalue(avalue);
+ fnamelist.addname(aname,result);
 end;
 
 end.
