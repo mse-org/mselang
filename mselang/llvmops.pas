@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ unit llvmops;
 
 interface
 uses
- opglob,parserglob,msestream;
+ opglob,parserglob,msestream{$ifdef mse_llvmbc},llvmbcwriter{$endif};
 
 //todo: generate bitcode, use static string buffers, no ansistrings
  
@@ -27,7 +27,8 @@ function getoptable: poptablety;
 function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
-procedure run(const atarget: ttextstream);
+procedure run(const atarget: 
+                   {$ifdef mse_llvmbc}tllvmbcwriter{$else}ttextstream{$endif});
  
 implementation
 uses
@@ -86,7 +87,11 @@ var
  pc: popinfoty;
 
 var
+{$ifdef mse_llvmbc}
+ bcstream: tllvmbcwriter;
+{$else}
  assstream: ttextstream;
+{$endif}
  globconst: string;
 
 //todo: use c"..." form
@@ -146,7 +151,11 @@ end;
 
 procedure outass(const atext: string);
 begin
+{$ifdef mse_llvmbc}
+ raise exception.create('LLVM bitcode only!');
+{$else}
  assstream.writeln(atext);
+{$endif}
 end;
 
 procedure outbinop(const atext: string);
@@ -2801,12 +2810,17 @@ const
 
 {$include optable.inc}
 
-procedure run(const atarget: ttextstream);
+procedure run(const atarget: 
+           {$ifdef mse_llvmbc}tllvmbcwriter{$else}ttextstream{$endif});
 var
  endpo: pointer;
  lab: shortstring;
 begin
+{$ifdef mse_llvmbc}
+ bcstream:= atarget;
+{$else}
  assstream:= atarget;
+{$endif}
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);

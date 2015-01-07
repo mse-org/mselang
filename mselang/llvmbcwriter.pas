@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings;
+ msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,llvmlists;
 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
@@ -84,7 +84,8 @@ type
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
-   procedure start(const consts: tconsthashdatalist);
+   procedure start(const consts: tconsthashdatalist; 
+                                     const globals: tgloballocdatalist);
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
@@ -241,7 +242,8 @@ begin
  inherited;
 end;
 var testvar: psubtypedataty;
-procedure tllvmbcwriter.start(const consts: tconsthashdatalist);
+procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
+                                 const globals: tgloballocdatalist);
 var
  po1: ptypelistdataty;
  po2: pconstlistdataty;
@@ -892,6 +894,7 @@ procedure tllvmbcwriter.beginsub();
 begin
  fsubopindex:= fsubopstart;
  beginblock(FUNCTION_BLOCK_ID,3);
+ emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
 end;
 
 procedure tllvmbcwriter.endsub();

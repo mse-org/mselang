@@ -17,7 +17,8 @@ var
  
 implementation
 uses
- main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes,msestrings;
+ main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes,msestrings,
+ llvmlists;
  
 procedure tmainfo.exe(const sender: TObject);
 var
@@ -25,6 +26,7 @@ var
  foutputstream,ferrorstream: ttextstream;
  typelist: ttypehashdatalist;
  constlist: tconsthashdatalist;
+ globlist: tgloballocdatalist;
  typ1,typ2: typeallocinfoty;
  i1,i2,i3: int32;
  str1,str2: string;
@@ -35,8 +37,9 @@ begin
  initio(foutputstream,ferrorstream);
  typelist:= ttypehashdatalist.create();
  constlist:= tconsthashdatalist.create(typelist);
- try
+ globlist:= tgloballocdatalist.create(typelist);
 
+ try
   typ1.kind:= das_32;
   typ1.size:= 32;
   typelist.addvalue(typ1);
@@ -71,7 +74,7 @@ begin
   i2:= constlist.addint32value(124);
     
   stream:= tllvmbcwriter.create('test.bc',fm_create);
-  stream.start(constlist);
+  stream.start(constlist,globlist);
 
   i3:= stream.emitsub(i1,cv_ccc,li_code,0);
 
@@ -80,7 +83,6 @@ begin
   stream.endblock();
 
   stream.beginsub();
-  stream.emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
   stream.emitretop(stream.constop(i2));
   stream.endsub();
 
