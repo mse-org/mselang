@@ -74,6 +74,7 @@ begin
   i2:= constlist.addint32value(124);
     
   i3:= globlist.addsubvalue(nil);
+  globlist.addbytevalue(4);
 
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);

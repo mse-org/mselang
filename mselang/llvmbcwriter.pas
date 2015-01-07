@@ -839,7 +839,7 @@ end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[typeindex(atype),0,0,0,0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,0,0,0]);
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
