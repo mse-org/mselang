@@ -37,21 +37,15 @@ begin
  initio(foutputstream,ferrorstream);
  typelist:= ttypehashdatalist.create();
  constlist:= tconsthashdatalist.create(typelist);
- globlist:= tgloballocdatalist.create(typelist);
+ globlist:= tgloballocdatalist.create(typelist,constlist);
 
  try
-  typ1.kind:= das_32;
-  typ1.size:= 32;
-  typelist.addvalue(typ1);
+  typelist.addbitvalue(das_32);
 
   str1:= 'abcde';
-  typ1.kind:= das_none;
-  typ1.size:= length(str1);
-  typelist.addvalue(typ1);
+  typelist.addbytevalue(length(str1));
   str2:= '123567';
-  typ2.kind:= das_none;
-  typ2.size:= length(str2);
-  typelist.addvalue(typ2);
+  typelist.addbytevalue(length(str2));
 
   i1:= typelist.addsubvalue(nil);
   i1:= typelist.addsubvalue(nil);
@@ -75,6 +69,7 @@ begin
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
   globlist.addbytevalue(4);
+  globlist.addinitvalue(i2);
 
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);

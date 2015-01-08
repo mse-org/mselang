@@ -425,7 +425,7 @@ type
  );
  
  linkagety = (
-  li_code = 0,
+  li_external = 0,
   li_weak = 1,
   li_appending = 2,
   li_internal = 3,

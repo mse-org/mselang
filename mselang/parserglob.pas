@@ -105,6 +105,7 @@ type
  ptypeallocinfoty = ^typeallocinfoty;
 
 const
+
  bitoptypes: array[databitsizety] of typeallocinfoty = (
   (kind: das_none; size: 0; listindex: 0),
   (kind: das_1; size: 1; listindex: 0),
@@ -123,6 +124,23 @@ const
   (kind: das_sub; size: pointerbitsize; listindex: 0)
  );
 
+ bitopsizes: array[databitsizety] of int32 = (
+  0,             //das_none
+  1,             //das_1
+  7,             //das_2_7
+  8,             //das_8
+  15,            //das_9_15
+  16,            //das_16
+  31,            //das_17_31
+  32,            //das_32
+  63,            //das_33_63
+  64,            //das_64
+  pointerbitsize,//das_pointer
+  16,            //das_f16
+  32,            //das_f32
+  64,            //das_f64
+  pointerbitsize //das_sub
+ );
  
 type
  movesizety = (mvs_8,mvs_16,mvs_32,mvs_bytes);

@@ -107,6 +107,7 @@ type
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
    procedure emitvar(const atype: int32);
+   procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure beginsub();
    procedure endsub();
    procedure emitvstentry(const aid: integer; const aname: lstringty);
@@ -249,7 +250,7 @@ procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
 var
  po1: ptypelistdataty;
  po2: pconstlistdataty;
- po3,po4: ptypeallocinfoty;
+ po3,po4: pparamitemty;
  po5,po6: pgloballocdataty;
  po7,po8: pglobnamedataty;
  i1: int32;
@@ -327,7 +328,7 @@ testvar:= psubtypedataty(
         po3:= @params;
         po4:= po3+header.paramcount;
         if sf_function in header.flags then begin
-         emitvbr6(typeindex(po3^.listindex)); //retval
+         emitvbr6(typeindex(po3^.typelistindex)); //retval
          emitvbr6(header.paramcount-1);
          inc(po3);
         end
@@ -336,7 +337,7 @@ testvar:= psubtypedataty(
          emitvbr6(header.paramcount);
         end;
         while po3 < po4 do begin
-         emitvbr6(typeindex(po3^.listindex));
+         emitvbr6(typeindex(po3^.typelistindex));
          inc(po3);
         end;
 //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
@@ -389,10 +390,15 @@ testvar:= psubtypedataty(
   while po5 < po6 do begin
    case po5^.kind of
     gak_sub: begin
-     emitsub(po5^.typeindex,cv_ccc,li_code,0);
+     emitsub(po5^.typeindex,cv_ccc,li_internal,0);
     end;
     gak_var: begin
-     emitvar(po5^.typeindex);
+     if po5^.initconstindex >= 0 then begin
+      emitvar(po5^.typeindex,po5^.initconstindex);
+     end
+     else begin
+      emitvar(po5^.typeindex);
+     end;
     end;
    end;
    inc(po5);
@@ -852,7 +858,14 @@ end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,0,0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,
+                                                    ord(li_internal),0,0]);
+end;
+
+procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32);
+begin
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,ainitconst+1,
+                                                     ord(li_internal),0,0]);
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);

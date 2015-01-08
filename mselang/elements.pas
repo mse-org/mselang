@@ -23,7 +23,7 @@ unit elements;
 interface
 uses
  msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils,
- classhandler,mselist;
+ classhandler,mselist,llvmlists;
 
 {$define mse_debug_parser}
 
@@ -305,6 +305,9 @@ function getidentname(const aident: identty): string;
 
 var
  ele: telementhashdatalist;
+ typelist: ttypehashdatalist;
+ constlist: tconsthashdatalist;
+ globlist: tgloballocdatalist;
 
 implementation
 uses
@@ -618,6 +621,9 @@ begin
  stringident:= 0;
  
  stringbuf.clear;
+ typelist.clear();
+ constlist.clear();
+ globlist.clear();
 end;
 
 procedure init;
@@ -2249,9 +2255,15 @@ initialization
  identlist:= tindexidenthashdatalist.create;
  stringbuf:= tstringbuffer.create;
  ele:= telementhashdatalist.create;
- clear;
+ typelist:= ttypehashdatalist.create();
+ constlist:= tconsthashdatalist.create(typelist);
+ globlist:= tgloballocdatalist.create(typelist,constlist);
+ clear();
 finalization
- identlist.free;
- stringbuf.free;
- ele.free;
+ identlist.free();
+ stringbuf.free();
+ ele.free();
+ typelist.free();
+ constlist.free();
+ globlist.free();
 end.

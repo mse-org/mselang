@@ -89,9 +89,14 @@ type
   paramcount: integer;
  end;
 
+ paramitemty = record
+  typelistindex: int32;
+ end;
+ pparamitemty = ^paramitemty;
+
  subtypedataty = record
   header: subtypeheaderty;
-  params: record           //array of typeallocinfoty
+  params: record           //array of paramitemty
   end;
  end;
  psubtypedataty = ^subtypedataty;
@@ -104,11 +109,9 @@ type
   public
    constructor create();
    procedure clear(); override; //automatic entries for bitsize optypes
-   procedure addvalue(var avalue: typeallocinfoty);
-   function addbytevalue(const asize: integer): integer;
-                                      //returns listid
-   function addsubvalue(const avalue: psubdataty): integer;
-                                      //returns listid
+   function addbitvalue(const asize: databitsizety): integer; //returns listid
+   function addbytevalue(const asize: integer): integer; //returns listid
+   function addsubvalue(const avalue: psubdataty): integer; //returns listid
    function first: ptypelistdataty;
    function next: ptypelistdataty;
  end;
@@ -163,6 +166,7 @@ type
  globallockindty = (gak_var,gak_sub); 
  globallocdataty = record
   typeindex: int32;
+  initconstindex: int32;
   kind: globallockindty;
  end;
  pgloballocdataty = ^globallocdataty;
@@ -171,17 +175,21 @@ type
   private
    ftypelist: ttypehashdatalist;
    fnamelist: tglobnamelist;
+   fconstlist: tconsthashdatalist;
   public
-   constructor create(const atypelist: ttypehashdatalist);
+   constructor create(const atypelist: ttypehashdatalist;
+                          const aconstlist: tconsthashdatalist);
    destructor destroy(); override;
-   procedure addvalue(var avalue: typeallocinfoty);
-   function addbytevalue(const asize: integer): integer;
+//   function addvalue(var avalue: typeallocinfoty): int32;
+   function addvalue(const avalue: pvardataty): int32;
+   function addbytevalue(const asize: integer): int32;
                                       //returns listid
-   function addsubvalue(const avalue: psubdataty): integer;
+   function addsubvalue(const avalue: psubdataty): int32;
                                       //returns listid
    function addsubvalue(const avalue: psubdataty;
-                                     const aname: lstringty): integer;
+                                     const aname: lstringty): int32;
                                       //returns listid
+   function addinitvalue(const aconstlistindex: integer): int32;
    property namelist: tglobnamelist read fnamelist;
  end;
 
@@ -334,14 +342,12 @@ end;
 
 procedure ttypehashdatalist.clear;
 var
- t1: typeallocinfoty;
  k1: databitsizety;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
   for k1:= low(databitsizety) to lastdatakind do begin
-   t1:= bitoptypes[k1];
-   addvalue(t1);
+   addbitvalue(k1);
   end;
  end;
 end;
@@ -354,29 +360,34 @@ begin
  end;
 end;
 
-procedure ttypehashdatalist.addvalue(var avalue: typeallocinfoty);
+function ttypehashdatalist.addbitvalue(const asize: databitsizety): integer;
 var
- alloc1: typeallocdataty;
+ t1: typeallocdataty;
  po1: ptypelisthashdataty;
 begin
- alloc1.header.size:= -1;
- alloc1.header.data:= pointer(ptruint(avalue.size));
- alloc1.kind:= avalue.kind;
- po1:= addvalue(alloc1);
+ t1.header.size:= -1;
+ t1.header.data:= pointer(ptruint(bitopsizes[asize]));
+ t1.kind:= asize;
+ po1:= addvalue(t1);
 // if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
 //  po1^.data.kind:= avalue.kind;
 // end;
- avalue.listindex:= po1^.data.header.listindex;
+ result:= po1^.data.header.listindex;
 end;
 
 function ttypehashdatalist.addbytevalue(const asize: integer): integer;
 var
- t1: typeallocinfoty;
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
 begin
+ t1.header.size:= -1;
+ t1.header.data:= pointer(ptruint(asize));
  t1.kind:= das_none;
- t1.size:= asize;
- addvalue(t1);
- result:= t1.listindex;
+ po1:= addvalue(t1);
+// if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+//  po1^.data.kind:= avalue.kind;
+// end;
+ result:= po1^.data.header.listindex;
 end;
 
 function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
@@ -386,7 +397,7 @@ const
 type
  subtypebufferty = record
   header: subtypeheaderty;
-  params: array[0..maxparamcount-1] of typeallocinfoty;
+  params: array[0..maxparamcount-1] of paramitemty;
  end;
 
 var
@@ -399,8 +410,7 @@ begin
   with parbuf do begin
    header.flags:= [sf_function];
    header.paramcount:= 1;
-   params[0]:= bitoptypes[das_32];
-   addvalue(params[0]);
+   params[0].typelistindex:= ord(das_32);
   end;
  end
  else begin
@@ -408,7 +418,7 @@ begin
  end;
  alloc1.kind:= das_sub;
  alloc1.header.size:= sizeof(subtypeheaderty) + 
-             parbuf.header.paramcount * sizeof(typeallocinfoty);
+             parbuf.header.paramcount * sizeof(paramitemty);
  alloc1.header.data:= @parbuf;
  result:= addvalue(alloc1)^.data.header.listindex;
 end;
@@ -544,9 +554,11 @@ end;
 
 { tgloballocdatalist }
 
-constructor tgloballocdatalist.create(const atypelist: ttypehashdatalist);
+constructor tgloballocdatalist.create(const atypelist: ttypehashdatalist;
+                                       const aconstlist: tconsthashdatalist);
 begin
  ftypelist:= atypelist;
+ fconstlist:= aconstlist;
  fnamelist:= tglobnamelist.create;
  inherited create(sizeof(globallocdataty));
 end;
@@ -556,42 +568,67 @@ begin
  inherited;
  fnamelist.free();
 end;
-
-procedure tgloballocdatalist.addvalue(var avalue: typeallocinfoty);
+{
+function tgloballocdatalist.addvalue(var avalue: typeallocinfoty): int32;
 var
  dat1: globallocdataty;
 begin
  ftypelist.addvalue(avalue);
  dat1.typeindex:= avalue.listindex;
  dat1.kind:= gak_var;
+ dat1.initconstindex:= -1;
  avalue.listindex:= fcount;
  inccount();
  (pgloballocdataty(fdata) + avalue.listindex)^:= dat1;
 end;
-
-function tgloballocdatalist.addbytevalue(const asize: integer): integer;
+}
+function tgloballocdatalist.addvalue(const avalue: pvardataty): int32;
 var
- t1: typeallocinfoty;
+ alc1: typeallocinfoty;
 begin
- t1.kind:= das_none;
- t1.size:= asize;
- addvalue(t1);
- result:= t1.listindex;
+// alc1:= 
 end;
 
-function tgloballocdatalist.addsubvalue(const avalue: psubdataty): integer;
+function tgloballocdatalist.addbytevalue(const asize: integer): int32;
+var
+ dat1: globallocdataty;
+begin 
+ dat1.typeindex:= ftypelist.addbytevalue(asize);
+ dat1.kind:= gak_var;
+ dat1.initconstindex:= -1;
+ result:= fcount;
+ inccount();
+ (pgloballocdataty(fdata) + result)^:= dat1;
+end;
+
+function tgloballocdatalist.addinitvalue(
+              const aconstlistindex: integer): int32;
+var
+ dat1: globallocdataty;
+begin
+ dat1.typeindex:= (pconstlisthashdataty(fconstlist.fdata)+
+                                             aconstlistindex+1)^.data.typeid;
+ dat1.kind:= gak_var;
+ dat1.initconstindex:= aconstlistindex; 
+ result:= fcount;
+ inccount();
+ (pgloballocdataty(fdata) + result)^:= dat1;
+end;
+
+function tgloballocdatalist.addsubvalue(const avalue: psubdataty): int32;
 var
  dat1: globallocdataty;
 begin
  dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.kind:= gak_sub;
+ dat1.initconstindex:= -1;
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
-                                  const aname: lstringty): integer;
+                                             const aname: lstringty): int32;
 begin
  result:= addsubvalue(avalue);
  fnamelist.addname(aname,result);

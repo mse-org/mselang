@@ -93,6 +93,7 @@ var
  assstream: ttextstream;
 {$endif}
  globconst: string;
+ globconstid: int32;
 
 //todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
@@ -779,6 +780,7 @@ var
 begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
+{
  outass('declare i32 @printf(i8*, ...)');
  outass('declare i8* @malloc(i32)');
  outass('declare void @free(i8*)');
@@ -786,13 +788,12 @@ begin
  outass('@.wint32 = internal constant '+wint32c);
  outass('@.wstring8 = internal constant '+wstring8c);
  outass('@.wpointer = internal constant '+wpointerc);
+}
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
-  globconst:= '['+inttostr(int1)+' x i8]';
-  outass('@.globconst = internal constant '+globconst+' ['+
-  breakline+
-  encodebytes(getsegmentpo(seg_globconst,0),int1)+breakline+']');
-  globconst:= globconst + '* @.globconst';
+  globconstid:= globlist.addinitvalue(
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1,
+                                             typelist.addbytevalue(int1)));
  end;
  
  with pc^.par.beginparse do begin
@@ -802,9 +803,7 @@ begin
    ele2:= po1^.varchain;
    while ele2 <> 0 do begin
     po2:= ele.eledataabs(ele2);
-    llvmglobvar(po2,str1);
-    segaddress(po2^.address.segaddress,str2);
-    outass(str2+' = global '+str1);
+    globlist.addvalue(po2);
     ele2:= po2^.vf.next;
    end;
    ele1:= po1^.next;
