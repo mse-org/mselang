@@ -85,7 +85,8 @@ const
  
 type
  databitsizety = (das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
-                  das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,das_sub);
+                  das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,
+                  das_sub);
 const
  lastdatakind = das_64;
  alldatakinds = [das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,

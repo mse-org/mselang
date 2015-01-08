@@ -366,6 +366,7 @@ type
     // 18 is unused.
     FUNC_CODE_INST_ALLOCA      = 19, // ALLOCA:     [instty, op, align]
     FUNC_CODE_INST_LOAD        = 20, // LOAD:       [opty, op, align, vol]
+                                  //mse LOAD:       [op, align, vol]
     // 21 is unused.
     // 22 is unused.
     FUNC_CODE_INST_VAARG       = 23, // VAARG:      [valistty, valist, instty]

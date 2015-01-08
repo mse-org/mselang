@@ -100,7 +100,10 @@ type
   end;
  end;
  psubtypedataty = ^subtypedataty;
- 
+
+const
+ voidtype = ord(das_none);
+type
  ttypehashdatalist = class(tbufferhashdatalist)
   protected
    function hashkey(const akey): hashvaluety override;
@@ -112,6 +115,7 @@ type
    function addbitvalue(const asize: databitsizety): integer; //returns listid
    function addbytevalue(const asize: integer): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
+                         //nil -> main sub
    function first: ptypelistdataty;
    function next: ptypelistdataty;
  end;
@@ -132,7 +136,10 @@ type
   header: bufferallocdataty;  //header.data = ord value if size = -1
   typeid: integer;
  end;
- 
+
+const
+ nullconst = 256;
+type 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
@@ -141,7 +148,7 @@ type
    function checkkey(const akey; const aitemdata): boolean override;
   public
    constructor create(const atypelist: ttypehashdatalist);
-   procedure clear(); override; //init first entries with 0..255
+   procedure clear(); override; //init first entries with 0..255,NULL
    function addcard8value(const avalue: card8): integer; //returns id
    function addint32value(const avalue: int32): integer; //returns id
    function addvalue(const avalue; const asize: int32;
@@ -187,8 +194,10 @@ type
    function addbitvalue(const asize: databitsizety): int32; //returns listid
    function addbytevalue(const asize: integer): int32; //returns listid
    function addsubvalue(const avalue: psubdataty): int32; //returns listid
+                               //nil -> main sub
    function addsubvalue(const avalue: psubdataty;
                            const aname: lstringty): int32;  //returns listid
+                               //nil -> main sub
    function addinitvalue(const aconstlistindex: integer): int32; 
                                                             //returns listid
    property namelist: tglobnamelist read fnamelist;
@@ -344,6 +353,7 @@ end;
 procedure ttypehashdatalist.clear;
 var
  k1: databitsizety;
+// t1: typeallocdataty;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
@@ -351,6 +361,12 @@ begin
    addbitvalue(k1);
   end;
  end;
+ {
+ t1.header.size:= -1;
+ t1.header.data:= nil;
+ t1.kind:= das_none;
+ addvalue(t1);        //void
+ }
 end;
 
 function ttypehashdatalist.addvalue(
@@ -460,6 +476,8 @@ end;
 procedure tconsthashdatalist.clear;
 var
  c1: card8;
+ po1: pconstlisthashdataty;
+ alloc1: constallocdataty;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
@@ -467,6 +485,11 @@ begin
    addcard8value(c1);
   end;
  end;
+ alloc1.header.size:= -1;
+ alloc1.header.data:= nil;
+ alloc1.typeid:= voidtype;
+ addunique(bufferallocdataty((@alloc1)^),pointer(po1));
+ po1^.data.typeid:= alloc1.typeid;
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;
@@ -520,7 +543,7 @@ begin
  alloc1.header.size:= asize;
  alloc1.header.data:= @avalue;
  alloc1.typeid:= ftypelist.addbytevalue(asize);
- if  addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result:= po1^.data.header.listindex

@@ -795,7 +795,7 @@ begin
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1,
                                              typelist.addbytevalue(int1)));
  end;
-
+ globlist.addsubvalue(nil,stringtolstring('main'));
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
  {
@@ -817,18 +817,23 @@ end;
 
 procedure mainop();
 begin
- outass('define i32 @main() {');
-// info.ssaindex:= 1;
+ bcstream.beginsub();
+// outass('define i32 @main() {');
 end;
 
 procedure progendop();
 var
- str1: shortstring;
+ i1: int32;
 begin
+ bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
+ bcstream.emitretop(bcstream.ssaindex-1);
+ bcstream.endsub();
+(*
  segaddress(exitcodeaddress,str1);
  outass('%.exitcode = load i32* '+str1);
  outass('ret i32 %.exitcode');
  outass('}');
+*)
 end;
 
 procedure endparseop();

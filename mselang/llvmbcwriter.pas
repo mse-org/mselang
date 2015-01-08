@@ -114,6 +114,9 @@ type
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
    procedure emitretop();
    procedure emitretop({const atype: integer;} const avalue: integer);
+   procedure emitloadop(const avalue: integer);
+   function valindex(const aadress: segaddressty): integer;
+   property ssaindex: int32 read fsubopindex;
  end;
  
 implementation
@@ -371,12 +374,18 @@ begin
       emitintconst(int32(ptruint(po2^.header.buffer)));
      end;
      else begin
-     {$ifdef mse_checkinternalerror}
-      if databitsizety(po2^.typeid) <= lastdatakind then begin
-       internalerror(ie_bcwriter,'141220A');
+      if po2^.typeid = voidtype then begin
+       emitrec(ord(CST_CODE_NULL),[]);
+      end
+      else begin
+      {$ifdef mse_checkinternalerror}
+       if databitsizety(po2^.typeid) <= lastdatakind then begin
+        internalerror(ie_bcwriter,'141220A');
+       end;
+      {$endif}
+       emitdataconst(consts.absdata(po2^.header.buffer)^,
+                                                po2^.header.buffersize);
       end;
-     {$endif}
-      emitdataconst(consts.absdata(po2^.header.buffer)^,po2^.header.buffersize);
      end;
     end;
     po2:= consts.next();
@@ -857,7 +866,7 @@ end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,nullconst+1,
                                                     ord(li_internal),0,0]);
 end;
 
@@ -910,13 +919,19 @@ end;
 
 procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: integer);
 begin
- emitrec(ord(FUNC_CODE_INST_RET),[avalue]);
+ emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
 {
  emitcode(ord(mabfunc_inst2));
  emit6(ord(FUNC_CODE_INST_RET));
  emitvbr6(atype);
  emitvbr6(avalue);
 }
+ inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitloadop(const avalue: integer);
+begin
+ emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-avalue,0,0]);
  inc(fsubopindex);
 end;
 
@@ -945,6 +960,14 @@ end;
 procedure tllvmbcwriter.endsub();
 begin
  endblock();
+end;
+
+function tllvmbcwriter.valindex(const aadress: segaddressty): integer;
+begin
+ result:= aadress.address;
+ if aadress.segment = seg_globvar then begin
+  result:= result + fglobstart;
+ end;
 end;
 
 {
