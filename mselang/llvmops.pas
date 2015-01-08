@@ -795,8 +795,10 @@ begin
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1,
                                              typelist.addbytevalue(int1)));
  end;
- 
+
  with pc^.par.beginparse do begin
+  bcstream.start(constlist,globlist);
+ {
   ele1:= unitinfochain;
   while ele1 <> 0 do begin
    po1:= ele.eledataabs(ele1);
@@ -808,6 +810,7 @@ begin
    end;
    ele1:= po1^.next;
   end;
+  }
   llvmops.exitcodeaddress:= exitcodeaddress;
  end;
 end;
@@ -830,6 +833,7 @@ end;
 
 procedure endparseop();
 begin
+ bcstream.stop();
 // freeandnil(assstream);
 end;
 
@@ -2491,7 +2495,9 @@ end;
 procedure lineinfoop();
 begin
  with pc^.par.lineinfo do begin
+{$ifndef mse_llvmbc}
   outass(';'+inttostr(nr+1)+':'+lstringtostring(line)); //todo: optimize
+{$endif}
  end;
 end;
 

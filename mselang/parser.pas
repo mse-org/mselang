@@ -698,7 +698,7 @@ begin
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
     opcount:= startupoffset;
-    globallocid:= 0;
+//    globallocid:= 0;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     case backend of
      bke_direct: begin

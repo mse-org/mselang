@@ -39,7 +39,7 @@ var
  ssatable: pssatablety;
  
   
-function getglobvaraddress(const asize: integer;
+function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
                                     var aflags: addressflagsty): segaddressty;
 procedure inclocvaraddress(const asize: integer);
 function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
@@ -228,16 +228,17 @@ begin
  addmanagedop(decrefsizeops,aaddress,count,ssaindex);
 end;
 
-function getglobvaraddress(const asize: integer;
+function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
                                     var aflags: addressflagsty): segaddressty;
 begin
  with info do begin
   result.address:= globdatapo;
   result.size:= asize; //necessary for llvm global aggregate types
+                       //todo: remove it, not necessary for bitcode
   globdatapo:= globdatapo + alignsize(asize);
   result.segment:= seg_globvar;
   aflags:= aflags - addresskindflags + [af_segment];
-  trackalloc(asize,result);
+  trackalloc(adatasize,asize,result);
  end;
 end;
 

@@ -49,6 +49,7 @@ var
  po1: pvardataty;
  po2: pelementinfoty;
  po3: pelementoffsetty;
+ datasize1: databitsizety;
  size1: integer;
  ident1: identty;
  ele1: elementoffsetty;
@@ -89,6 +90,7 @@ begin
     address.indirectlevel:= contextstack[s.stackindex+2].d.typ.indirectlevel;
     with ptypedataty(@po2^.data)^ do begin
 //     address.indirectlevel:= address.indirectlevel+indirectlevel;
+     datasize1:= datasize;
      if kind in pointervarkinds then begin
       inc(address.indirectlevel);
      end;
@@ -103,7 +105,10 @@ begin
       size1:= pointersize;
      end;
      if sublevel = 0 then begin
-      address.segaddress:= getglobvaraddress(size1,address.flags);
+      if indirectlevel > 0 then begin
+       datasize1:= das_pointer;
+      end;
+      address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
       if address.indirectlevel > 0 then begin
        address.segaddress.size:= 0;
       end

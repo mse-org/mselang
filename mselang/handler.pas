@@ -157,7 +157,7 @@ begin
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
- po1^.address.segaddress:= getglobvaraddress(4,po1^.address.flags);
+ po1^.address.segaddress:= getglobvaraddress(das_32,4,po1^.address.flags);
  po1^.address.segaddress.size:= -32;  //i32 exitcode
 
 // info.beginparseop:= info.opcount; 

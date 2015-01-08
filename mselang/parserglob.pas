@@ -312,6 +312,7 @@ type
   address: dataoffsty; //first, must map poaddress
   size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
                        //necessary for llvm global aggregate types
+                       //todo: remove size, not necessary for  bitcode
   segment: segmentty;
  end;
  
@@ -716,7 +717,7 @@ type
 //  beginparseop:  integer;
   unitinfochain: elementoffsetty;
 //  allocproc: allocprocty;
-  globallocid: integer;
+//  globallocid: integer;
   locallocid: integer;
   pb: pbranchty;
   

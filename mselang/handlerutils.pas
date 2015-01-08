@@ -138,7 +138,8 @@ function getdatabitsize(const avalue: int64): databitsizety;
 
 procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
-procedure trackalloc(const asize: integer; var address: segaddressty);
+procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
+                                                     var address: segaddressty);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 procedure tracklocalaccess(var aaddress: locaddressty; 
@@ -1904,12 +1905,17 @@ begin
  end;
 end;
 
-procedure trackalloc(const asize: integer; var address: segaddressty);
+procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
+                                                 var address: segaddressty);
 begin
  if info.backend = bke_llvm then begin
   if address.segment = seg_globvar then begin
-   address.address:= info.globallocid;
-   inc(info.globallocid);
+   if adatasize = das_none then begin
+    address.address:= globlist.addbytevalue(asize);
+   end
+   else begin
+    address.address:= globlist.addbitvalue(adatasize);
+   end;
   end;
  end;
 end;

@@ -244,7 +244,7 @@ destructor tllvmbcwriter.destroy();
 begin
  inherited;
 end;
-var testvar: psubtypedataty;
+
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                                  const globals: tgloballocdatalist);
 var
@@ -259,7 +259,8 @@ begin
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
- beginblock(BLOCKINFO_BLOCK_ID,3);
+
+ beginblock(BLOCKINFO_BLOCK_ID,3); //abbreviations
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
  emitdata(mabconsts);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
@@ -316,8 +317,6 @@ begin
        emitrec(ord(TYPE_CODE_DOUBLE),[]);     
       end;
       das_sub: begin
-testvar:= psubtypedataty(
-               consts.typelist.absdata(po1^.header.buffer));
        with psubtypedataty(
                consts.typelist.absdata(po1^.header.buffer))^ do begin
                      //todo: vararg
