@@ -122,7 +122,7 @@ type
 
  constlistdataty = record
   header: bufferdataty;
-  typeid: integer;
+  typeid: integer; // < 0 -> NULL value
  end;
  pconstlistdataty = ^constlistdataty;
  
@@ -148,14 +148,14 @@ type
    function checkkey(const akey; const aitemdata): boolean override;
   public
    constructor create(const atypelist: ttypehashdatalist);
-   procedure clear(); override; //init first entries with 0..255,NULL
+   procedure clear(); override; //init first entries with 0..255
    function addi1(const avalue: boolean): int32; //returns id
    function addi8(const avalue: int8): int32; //returns id
    function addi16(const avalue: int16): int32; //returns id
    function addi32(const avalue: int32): int32; //returns id
    function addi64(const avalue: int64): int32; //returns id
-   function addvalue(const avalue; const asize: int32): integer;
-                                                    //returns id
+   function addvalue(const avalue; const asize: int32): int32; //returns id
+   function addnullvalue(const atypeid: int32): int32; //returns id
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
@@ -588,7 +588,7 @@ begin
 {$endif}
 end;
 
-function tconsthashdatalist.addvalue(const avalue; const asize: int32): integer;
+function tconsthashdatalist.addvalue(const avalue; const asize: int32): int32;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -596,6 +596,20 @@ begin
  alloc1.header.size:= asize;
  alloc1.header.data:= @avalue;
  alloc1.typeid:= ftypelist.addbytevalue(asize);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addnullvalue(const atypeid: int32): int32;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptruint(0));
+ alloc1.typeid:= -atypeid;
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
@@ -665,7 +679,7 @@ var
 begin 
  dat1.typeindex:= atyp;
  dat1.kind:= gak_var;
- dat1.initconstindex:= -1;
+ dat1.initconstindex:= fconstlist.addnullvalue(atyp);
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;

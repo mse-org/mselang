@@ -366,8 +366,8 @@ begin
    id1:= -1;
    po2:= consts.first;
    for i1:= 0 to consts.count-1 do begin
-    if id1 <> po2^.typeid then begin
-     id1:= po2^.typeid;
+    if id1 <> abs(po2^.typeid) then begin
+     id1:= abs(po2^.typeid);
      emittypeid(id1*typeindexstep);
     end;
     case databitsizety(po2^.typeid) of
@@ -375,7 +375,7 @@ begin
       emitintconst(int32(ptruint(po2^.header.buffer)));
      end;
      else begin
-      if po2^.typeid = voidtype then begin
+      if po2^.typeid < 0 then begin
        emitrec(ord(CST_CODE_NULL),[]);
       end
       else begin
