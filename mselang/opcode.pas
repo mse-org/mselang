@@ -90,7 +90,7 @@ procedure dumpops();
 {$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils,typinfo;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo,elements;
  
 type
  opadsty = array[addressbasety] of opcodety;
@@ -282,87 +282,156 @@ end;
 procedure setimmboolean(const value: boolean; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vboolean:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi1(value);
+ end
+ else begin
+  par.imm.vboolean:= value;
+ end;
 end;
 
 procedure setimmcard8(const value: card8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vcard8:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi8(value);
+ end
+ else begin
+  par.imm.vcard8:= value;
+ end;
 end;
 
 procedure setimmcard16(const value: card16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vcard16:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi16(value);
+ end
+ else begin
+  par.imm.vcard16:= value;
+ end;
 end;
 
 procedure setimmcard32(const value: card32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vcard32:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi32(value);
+ end
+ else begin
+  par.imm.vcard32:= value;
+ end;
 end;
 
 procedure setimmcard64(const value: card64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vcard64:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi64(value);
+ end
+ else begin
+  par.imm.vcard64:= value;
+ end;
 end;
 
 procedure setimmint8(const value: int8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vint8:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi8(value);
+ end
+ else begin
+  par.imm.vint8:= value;
+ end;
 end;
 
 procedure setimmint16(const value: int16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vint16:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi16(value);
+ end
+ else begin
+  par.imm.vint16:= value;
+ end;
 end;
 
 procedure setimmint32(const value: int32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vint32:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi32(value);
+ end
+ else begin
+  par.imm.vint32:= value;
+ end;
 end;
 
 procedure setimmint64(const value: int64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vint64:= value;
+ if info.backend = bke_llvm then begin
+  par.imm.listindex:= constlist.addi64(value);
+ end
+ else begin
+  par.imm.vint64:= value;
+ end;
 end;
 
 procedure setimmfloat64(const value: float64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vfloat64:= value;
+ if info.backend = bke_llvm then begin
+  notimplementederror('20150109A');
+ end
+ else begin
+  par.imm.vfloat64:= value;
+ end;
 end;
 
 procedure setimmsize(const value: datasizety; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vsize:= value;
+ if info.backend = bke_llvm then begin
+  notimplementederror('20150109B');
+ end
+ else begin
+  par.imm.vsize:= value;
+ end;
 end;
 
 procedure setimmpointer(const value: dataaddressty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vpointer:= value;
+ if info.backend = bke_llvm then begin
+  notimplementederror('20150109C');
+ end
+ else begin
+  par.imm.vpointer:= value;
+ end;
 end;
 
 procedure setimmoffset(const value: dataoffsty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.voffset:= value;
+ if info.backend = bke_llvm then begin
+  notimplementederror('20150109D');
+ end
+ else begin
+  par.imm.voffset:= value;
+ end;
 end;
 
 procedure setimmdatakind(const value: datakindty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- par.imm.vdatakind:= value;
+ if info.backend = bke_llvm then begin
+  notimplementederror('20150109E');
+ end
+ else begin
+  par.imm.vdatakind:= value;
+ end;
 end;
-
 
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 begin  //todo: ssaindex

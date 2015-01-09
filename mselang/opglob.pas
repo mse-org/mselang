@@ -427,8 +427,9 @@ type
 
   immty = record
 //   ssaindex: integer;
-   datasize: integer;
+   datasize: integer;            //todo: remove, not necessafy for bitcode
    case integer of               //todo: use target size
+    0: (listindex: int32);
     1: (vboolean: boolean);
     2: (vcard8: card8);
     3: (vcard16: card16);

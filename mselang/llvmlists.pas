@@ -149,8 +149,11 @@ type
   public
    constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override; //init first entries with 0..255,NULL
-   function addcard8value(const avalue: card8): integer; //returns id
-   function addint32value(const avalue: int32): integer; //returns id
+   function addi1(const avalue: boolean): int32; //returns id
+   function addi8(const avalue: int8): int32; //returns id
+   function addi16(const avalue: int16): int32; //returns id
+   function addi32(const avalue: int32): int32; //returns id
+   function addi64(const avalue: int64): int32; //returns id
    function addvalue(const avalue; const asize: int32;
                                       const atypeid: integer): integer;
                                                     //returns id
@@ -482,9 +485,10 @@ begin
  inherited;
  if not (hls_destroying in fstate) then begin
   for c1:= low(c1) to high(c1) do begin
-   addcard8value(c1);
+   addi8(int8(c1));
   end;
  end;
+exit;
  alloc1.header.size:= -1;
  alloc1.header.data:= nil;
  alloc1.typeid:= voidtype;
@@ -506,7 +510,26 @@ testvar4:= constallocdataty(akey);
                                     inherited checkkey(akey,aitemdata);
 end;
 
-function tconsthashdatalist.addcard8value(const avalue: card8): integer;
+function tconsthashdatalist.addi1(const avalue: boolean): int32;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ if avalue then begin
+  alloc1.header.data:= pointer(ptruint(1));
+ end
+ else begin
+  alloc1.header.data:= pointer(ptruint(0));
+ end;
+ alloc1.typeid:= ord(das_1);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addi8(const avalue: int8): int32;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -520,7 +543,21 @@ begin
  result:= po1^.data.header.listindex
 end;
 
-function tconsthashdatalist.addint32value(const avalue: int32): integer;
+function tconsthashdatalist.addi16(const avalue: int16): int32;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptruint(avalue));
+ alloc1.typeid:= ord(das_16);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addi32(const avalue: int32): int32;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -532,6 +569,24 @@ begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result:= po1^.data.header.listindex
+end;
+
+function tconsthashdatalist.addi64(const avalue: int64): int32;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+{$ifdef cpu64}
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptruint(avalue));
+ alloc1.typeid:= ord(das_64);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex
+{$else}
+ result:= addvalue(avalue,8,ord(das_64));
+{$endif}
 end;
 
 function tconsthashdatalist.addvalue(const avalue; const asize: int32;

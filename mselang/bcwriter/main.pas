@@ -50,10 +50,10 @@ begin
   i1:= typelist.addsubvalue(nil);
   i1:= typelist.addsubvalue(nil);
 
-  i1:= constlist.addcard8value(1);
-  i1:= constlist.addcard8value(2);
-  i1:= constlist.addcard8value(1);
-  i1:= constlist.addcard8value(2);
+  i1:= constlist.addi8(1);
+  i1:= constlist.addi8(2);
+  i1:= constlist.addi8(1);
+  i1:= constlist.addi8(2);
  
   
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
@@ -62,10 +62,10 @@ begin
   i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
   i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
 
-  i1:= constlist.addint32value(3);
+  i1:= constlist.addi32(3);
 
   i1:= typelist.addsubvalue(nil);
-  i2:= constlist.addint32value(124);
+  i2:= constlist.addi32(124);
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
   globlist.addbytevalue(4);

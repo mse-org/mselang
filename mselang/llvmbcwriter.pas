@@ -92,8 +92,8 @@ type
    function bitpos(): int32;
    
    function typeop(const typeid: databitsizety): integer; inline;
-   function typeop(const typeid: int32): integer; inline;
-   function constop(const constid: int32): integer; inline;
+   function typeop(const typeid: int32): int32; inline;
+   function constop(const constid: int32): int32;// inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
@@ -866,7 +866,7 @@ end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,nullconst+1,
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0{nullconst+1},
                                                     ord(li_internal),0,0]);
 end;
 
@@ -947,7 +947,8 @@ end;
 
 function tllvmbcwriter.constop(const constid: int32): integer;
 begin
- result:= fsubopindex - ({fconstopstart +} constid);
+ result:= constid;
+// result:= fsubopindex - ({fconstopstart +} constid);
 end;
 
 procedure tllvmbcwriter.beginsub();
