@@ -345,6 +345,7 @@ type
     FUNC_CODE_DECLAREBLOCKS    =  1, // DECLAREBLOCKS: [n]
 
     FUNC_CODE_INST_BINOP       =  2, // BINOP:      [opcode, ty, opval, opval]
+                        //mse:       // BINOP:      [opval, opval, opcode]
     FUNC_CODE_INST_CAST        =  3, // CAST:       [opcode, ty, opty, opval]
     FUNC_CODE_INST_GEP         =  4, // GEP:        [n x operands]
     FUNC_CODE_INST_SELECT      =  5, // SELECT:     [ty, opval, opval, opval]
@@ -354,7 +355,7 @@ type
     FUNC_CODE_INST_CMP         =  9, // CMP:        [opty, opval, opval, pred]
 
     FUNC_CODE_INST_RET         = 10, // RET:        [opty,opval<both optional>]
-                 //mse: // RET:        [opval<optional>]
+                        //mse:       // RET:        [opval<optional>]
     FUNC_CODE_INST_BR          = 11, // BR:         [bb#, bb#, cond] or [bb#]
     FUNC_CODE_INST_SWITCH      = 12, // SWITCH:     [opty, op0, op1, ...]
     FUNC_CODE_INST_INVOKE      = 13, // INVOKE:     [attr, fnty, op0,op1, ...]

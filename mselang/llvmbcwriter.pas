@@ -116,6 +116,8 @@ type
    procedure emitretop();
    procedure emitretop({const atype: integer;} const avalue: integer);
    procedure emitloadop(const avalue: integer);
+   procedure emitbinop(const aop: BinaryOpcodes; 
+                         const valueida: int32; const valueidb: int32);
    function valindex(const aadress: segaddressty): integer;
    property ssaindex: int32 read fsubopindex;
  end;
@@ -371,7 +373,7 @@ begin
      emittypeid(id1*typeindexstep);
     end;
     case databitsizety(po2^.typeid) of
-     das_8..das_32: begin
+     das_1..das_32: begin //todo: das_64
       emitintconst(int32(ptruint(po2^.header.buffer)));
      end;
      else begin
@@ -936,6 +938,13 @@ begin
  inc(fsubopindex);
 end;
 
+procedure tllvmbcwriter.emitbinop(const aop: BinaryOpcodes;
+               const valueida: int32; const valueidb: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_BINOP),[fsubopindex-valueida,fsubopindex-valueidb,
+                                                                     ord(aop)]);
+end;
+
 function tllvmbcwriter.typeop(const typeid: databitsizety): integer;
 begin
  result:= typeop(ord(typeid));
@@ -976,6 +985,7 @@ begin
   result:= result + fglobstart;
  end;
 end;
+
 
 {
 procedure tllvmbcwriter.emitchar6(const avalue: shortstring);

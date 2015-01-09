@@ -366,6 +366,7 @@ end;
 procedure stackimmassign32();
 begin
  with pc^.par do begin
+//  bcstream.emitbinop  
   outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
                                                 inttostr(imm.vint32)+' ,0');
  end;

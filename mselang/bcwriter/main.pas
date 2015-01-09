@@ -71,6 +71,8 @@ begin
   globlist.addbytevalue(4);
   i3:= globlist.addinitvalue(i2);
 
+  i1:= constlist.addi32(3);
+
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);
 
@@ -79,6 +81,8 @@ begin
   stream.beginsub();
 //  stream.emitretop(stream.constop(i2));
   stream.emitloadop(stream.globop(i3));
+  stream.emitbinop(BINOP_ADD,stream.constop(i1),stream.ssaindex-1);
+//  stream.emitloadop(stream.globop(i3));
   stream.emitretop(stream.ssaindex-1);
   stream.endsub();
 
