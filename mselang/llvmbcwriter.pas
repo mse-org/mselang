@@ -95,6 +95,7 @@ type
    function typeop(const typeid: int32): int32; inline;
    function constop(const constid: int32): int32; inline;
    function globop(const globid: int32): int32; inline;
+   function subop(const subid: int32): int32;// inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
@@ -976,6 +977,11 @@ end;
 function tllvmbcwriter.globop(const globid: int32): int32;
 begin
  result:= globid + fglobstart;
+end;
+
+function tllvmbcwriter.subop(const subid: int32): int32;
+begin
+ result:= subid + fsubopstart;
 end;
 
 procedure tllvmbcwriter.beginsub();

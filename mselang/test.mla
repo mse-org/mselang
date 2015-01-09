@@ -1,4 +1,5 @@
 program potoint32;
 begin
  exitcode:= 123;
+ exitcode:= exitcode+exitcode+1;
 end.

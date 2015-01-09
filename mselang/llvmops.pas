@@ -19,7 +19,8 @@ unit llvmops;
 
 interface
 uses
- opglob,parserglob,msestream{$ifdef mse_llvmbc},llvmbcwriter{$endif};
+ opglob,parserglob,msestream
+  {$ifdef mse_llvmbc},llvmbcwriter,llvmbitcodes{$endif};
 
 //todo: generate bitcode, use static string buffers, no ansistrings
  
@@ -164,6 +165,13 @@ begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = '+atext+
    ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));
+ end;
+end;
+
+procedure outbinop(const aop: BinaryOpcodes);
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(aop,bcstream.subop(ssas1),bcstream.subop(ssas2));
  end;
 end;
 
@@ -389,50 +397,32 @@ begin
 end;
 }
 procedure segassign();
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin
  with pc^.par do begin
-//  bcstream.emitstoreop
-  
+  bcstream.emitstoreop(bcstream.subop(ssas1),
+                     bcstream.globop(memop.segdataaddress.a.address));
+{  
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
             'bitcast (i8* '+str2+ ' to '+str1+'*)');
-
+}
  end;
 end;
 
 procedure assignseg();
-var
- str1, str2: shortstring;
+//var
+// str1, str2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitloadop(bcstream.globop(memop.segdataaddress.a.address));
+{
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
   outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
                                                           ' to '+str1+'* )');
-{
-  case memop.t.kind of
-   odk_bit: begin
-    str1:= 'i'+inttostr(memop.t.size);
-    if memop.segdataaddress.a.size > 0 then begin
-     str2:= 'bitcast (i8* getelementptr (['+
-                  inttostr(memop.segdataaddress.a.size)+
-                  ' x i8]*' +segdataaddress(memop.segdataaddress)+
-                  ', i32 0, i32 '+inttostr(memop.segdataaddress.offset)+
-                  ') to '+str1+'*)';
-    end
-    else begin
-     str2:= segdataaddress(memop.segdataaddress);
-    end;
-
-    outass('%'+inttostr(ssad)+' = load '+str1+'* '+str2);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
 }
  end;
 end;
@@ -1008,7 +998,7 @@ end;
 
 procedure addint32op();
 begin
- outbinop('add i32');
+ outbinop(BINOP_ADD);
 end;
 
 procedure addpoint32op();
@@ -2494,7 +2484,7 @@ const
   nopssa = 1;
 
   beginparsessa = 0;
-  mainssa = 1;
+  mainssa = 0;//1;
   progendssa = 0;  
   endparsessa = 0;
 
@@ -2770,7 +2760,7 @@ const
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
 
-  subbeginssa = 1;
+  subbeginssa = 0; //1;
   subendssa = 0;
   returnssa = 1;
   returnfuncssa = 1;
