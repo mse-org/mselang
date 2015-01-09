@@ -137,8 +137,8 @@ type
   typeid: integer;
  end;
 
-const
- nullconst = 256;
+//const
+// nullconst = 256;
 type 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
@@ -154,8 +154,7 @@ type
    function addi16(const avalue: int16): int32; //returns id
    function addi32(const avalue: int32): int32; //returns id
    function addi64(const avalue: int64): int32; //returns id
-   function addvalue(const avalue; const asize: int32;
-                                      const atypeid: integer): integer;
+   function addvalue(const avalue; const asize: int32): integer;
                                                     //returns id
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
@@ -585,12 +584,11 @@ begin
  end;
  result:= po1^.data.header.listindex
 {$else}
- result:= addvalue(avalue,8,ord(das_64));
+ result:= addvalue(avalue,8);
 {$endif}
 end;
 
-function tconsthashdatalist.addvalue(const avalue; const asize: int32;
-               const atypeid: integer): integer;
+function tconsthashdatalist.addvalue(const avalue; const asize: int32): integer;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;

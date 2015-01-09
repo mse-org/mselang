@@ -792,8 +792,7 @@ begin
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconstid:= globlist.addinitvalue(
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1,
-                                             typelist.addbytevalue(int1)));
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1));
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
  with pc^.par.beginparse do begin

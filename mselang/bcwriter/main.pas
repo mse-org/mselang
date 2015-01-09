@@ -28,7 +28,7 @@ var
  constlist: tconsthashdatalist;
  globlist: tgloballocdatalist;
  typ1,typ2: typeallocinfoty;
- i1,i2,i3: int32;
+ b1,b2,i1,i2,i3: int32;
  str1,str2: string;
 
 begin
@@ -43,9 +43,9 @@ begin
   typelist.addbitvalue(das_32);
 
   str1:= 'abcde';
-  typelist.addbytevalue(length(str1));
+  b1:= typelist.addbytevalue(length(str1));
   str2:= '123567';
-  typelist.addbytevalue(length(str2));
+  b2:= typelist.addbytevalue(length(str2));
 
   i1:= typelist.addsubvalue(nil);
   i1:= typelist.addsubvalue(nil);
@@ -56,11 +56,11 @@ begin
   i1:= constlist.addi8(2);
  
   
-  i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
-  i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
+  i1:= constlist.addvalue(str1[1],length(str1));
+  i1:= constlist.addvalue(str2[1],length(str2));
 
-  i1:= constlist.addvalue(str1[1],length(str1),typ1.listindex);
-  i1:= constlist.addvalue(str2[1],length(str2),typ2.listindex);
+  i1:= constlist.addvalue(str1[1],length(str1));
+  i1:= constlist.addvalue(str2[1],length(str2));
 
   i1:= constlist.addi32(3);
 
@@ -69,7 +69,7 @@ begin
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
   globlist.addbytevalue(4);
-  globlist.addinitvalue(i2);
+  i3:= globlist.addinitvalue(i2);
 
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);
@@ -77,7 +77,9 @@ begin
 //  i3:= stream.emitsub(i1,cv_ccc,li_code,0);
 
   stream.beginsub();
-  stream.emitretop(stream.constop(i2));
+//  stream.emitretop(stream.constop(i2));
+  stream.emitloadop(stream.globop(i3));
+  stream.emitretop(stream.ssaindex-1);
   stream.endsub();
 
   stream.stop();

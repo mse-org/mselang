@@ -93,7 +93,8 @@ type
    
    function typeop(const typeid: databitsizety): integer; inline;
    function typeop(const typeid: int32): int32; inline;
-   function constop(const constid: int32): int32;// inline;
+   function constop(const constid: int32): int32; inline;
+   function globop(const globid: int32): int32; inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
@@ -949,6 +950,11 @@ function tllvmbcwriter.constop(const constid: int32): integer;
 begin
  result:= constid;
 // result:= fsubopindex - ({fconstopstart +} constid);
+end;
+
+function tllvmbcwriter.globop(const globid: int32): int32;
+begin
+ result:= globid + fglobstart;
 end;
 
 procedure tllvmbcwriter.beginsub();
