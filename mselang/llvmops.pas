@@ -171,7 +171,7 @@ end;
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
-  bcstream.emitbinop(aop,bcstream.subop(ssas1),bcstream.subop(ssas2));
+  bcstream.emitbinop(aop,bcstream.subval(ssas1),bcstream.subval(ssas2));
  end;
 end;
 
@@ -401,8 +401,8 @@ procedure segassign();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitstoreop(bcstream.subop(ssas1),
-                     bcstream.globop(memop.segdataaddress.a.address));
+  bcstream.emitstoreop(bcstream.subval(ssas1),
+                     bcstream.globval(memop.segdataaddress.a.address));
 {  
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
@@ -417,7 +417,7 @@ procedure assignseg();
 // str1, str2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitloadop(bcstream.globop(memop.segdataaddress.a.address));
+  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
 {
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);

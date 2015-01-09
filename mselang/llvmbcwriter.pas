@@ -91,11 +91,11 @@ type
    procedure flushbuffer(); override;
    function bitpos(): int32;
    
-   function typeop(const typeid: databitsizety): integer; inline;
-   function typeop(const typeid: int32): int32; inline;
-   function constop(const constid: int32): int32; inline;
-   function globop(const globid: int32): int32; inline;
-   function subop(const subid: int32): int32;// inline;
+   function typeval(const typeid: databitsizety): integer; inline;
+   function typeval(const typeid: int32): int32; inline;
+   function constval(const constid: int32): int32; inline;
+   function globval(const globid: int32): int32; inline;
+   function subval(const subid: int32): int32; inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
@@ -958,28 +958,28 @@ begin
  inc(fsubopindex);
 end;
 
-function tllvmbcwriter.typeop(const typeid: databitsizety): integer;
+function tllvmbcwriter.typeval(const typeid: databitsizety): int32;
 begin
- result:= typeop(ord(typeid));
+ result:= typeval(ord(typeid));
 end;
 
-function tllvmbcwriter.typeop(const typeid: int32): integer;
+function tllvmbcwriter.typeval(const typeid: int32): int32;
 begin
  result:= {fsubopindex -} typeindex(typeid);
 end;
 
-function tllvmbcwriter.constop(const constid: int32): integer;
+function tllvmbcwriter.constval(const constid: int32): int32;
 begin
  result:= constid;
 // result:= fsubopindex - ({fconstopstart +} constid);
 end;
 
-function tllvmbcwriter.globop(const globid: int32): int32;
+function tllvmbcwriter.globval(const globid: int32): int32;
 begin
  result:= globid + fglobstart;
 end;
 
-function tllvmbcwriter.subop(const subid: int32): int32;
+function tllvmbcwriter.subval(const subid: int32): int32;
 begin
  result:= subid + fsubopstart;
 end;
@@ -1006,7 +1006,7 @@ end;
 
 procedure tllvmbcwriter.emiti32const(const aconstid: int32);
 begin
- emitbinop(BINOP_ADD,constop(aconstid),constop(ord(nc_i32)));
+ emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
 end;
 
 
