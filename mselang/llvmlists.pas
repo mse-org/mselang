@@ -193,6 +193,7 @@ type
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
    destructor destroy(); override;
+   procedure clear(); override;
 //   function addvalue(var avalue: typeallocinfoty): int32;
    function addvalue(const avalue: pvardataty): int32; //returns listid
    function addbitvalue(const asize: databitsizety): int32; //returns listid
@@ -660,6 +661,13 @@ begin
  inherited;
  fnamelist.free();
 end;
+
+procedure tgloballocdatalist.clear;
+begin
+ inherited;
+ fnamelist.clear();
+end;
+
 {
 function tgloballocdatalist.addvalue(var avalue: typeallocinfoty): int32;
 var
