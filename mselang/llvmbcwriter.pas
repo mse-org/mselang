@@ -113,9 +113,14 @@ type
    procedure endsub();
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
+
    procedure emitretop();
-   procedure emitretop({const atype: integer;} const avalue: integer);
-   procedure emitloadop(const avalue: integer);
+   procedure emitretop({const atype: integer;} const avalue: int32);
+   procedure emitloadop(const asource: int32);
+   procedure emitstoreop(const asource: int32; const adest: int32);
+
+   procedure emiti32const(const aconstid: int32);
+   
    procedure emitbinop(const aop: BinaryOpcodes; 
                          const valueida: int32; const valueidb: int32);
    function valindex(const aadress: segaddressty): integer;
@@ -920,7 +925,7 @@ begin
  inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: integer);
+procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
 {
@@ -932,10 +937,16 @@ begin
  inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitloadop(const avalue: integer);
+procedure tllvmbcwriter.emitloadop(const asource: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-avalue,0,0]);
+ emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-asource,0,0]);
  inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitstoreop(const asource: int32; const adest: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_STORE),[fsubopindex-adest,fsubopindex-asource,0,0]);
+// inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitbinop(const aop: BinaryOpcodes;
@@ -943,6 +954,7 @@ procedure tllvmbcwriter.emitbinop(const aop: BinaryOpcodes;
 begin
  emitrec(ord(FUNC_CODE_INST_BINOP),[fsubopindex-valueida,fsubopindex-valueidb,
                                                                      ord(aop)]);
+ inc(fsubopindex);
 end;
 
 function tllvmbcwriter.typeop(const typeid: databitsizety): integer;
@@ -984,6 +996,11 @@ begin
  if aadress.segment = seg_globvar then begin
   result:= result + fglobstart;
  end;
+end;
+
+procedure tllvmbcwriter.emiti32const(const aconstid: int32);
+begin
+ emitbinop(BINOP_ADD,constop(aconstid),constop(ord(nc_i32)));
 end;
 
 

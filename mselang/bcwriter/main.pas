@@ -82,6 +82,8 @@ begin
 //  stream.emitretop(stream.constop(i2));
   stream.emitloadop(stream.globop(i3));
   stream.emitbinop(BINOP_ADD,stream.constop(i1),stream.ssaindex-1);
+  stream.emitstoreop(stream.ssaindex-1,stream.globop(i3));
+  stream.emitloadop(stream.globop(i3));
 //  stream.emitloadop(stream.globop(i3));
   stream.emitretop(stream.ssaindex-1);
   stream.endsub();

@@ -345,7 +345,7 @@ type
     FUNC_CODE_DECLAREBLOCKS    =  1, // DECLAREBLOCKS: [n]
 
     FUNC_CODE_INST_BINOP       =  2, // BINOP:      [opcode, ty, opval, opval]
-                        //mse:       // BINOP:      [opval, opval, opcode]
+                                 //mse: BINOP:      [opval, opval, opcode]
     FUNC_CODE_INST_CAST        =  3, // CAST:       [opcode, ty, opty, opval]
     FUNC_CODE_INST_GEP         =  4, // GEP:        [n x operands]
     FUNC_CODE_INST_SELECT      =  5, // SELECT:     [ty, opval, opval, opval]
@@ -367,7 +367,7 @@ type
     // 18 is unused.
     FUNC_CODE_INST_ALLOCA      = 19, // ALLOCA:     [instty, op, align]
     FUNC_CODE_INST_LOAD        = 20, // LOAD:       [opty, op, align, vol]
-                                  //mse LOAD:       [op, align, vol]
+                                 //mse: LOAD:       [op, align, vol]
     // 21 is unused.
     // 22 is unused.
     FUNC_CODE_INST_VAARG       = 23, // VAARG:      [valistty, valist, instty]
@@ -375,6 +375,7 @@ type
     // this is so information only available in the pointer type (e.g. address
     // spaces) is retained.
     FUNC_CODE_INST_STORE       = 24, // STORE:      [ptrty,ptr,val, align, vol]
+                                 //mse: STORE:      [ptr,val, align, vol]
     // 25 is unused.
     FUNC_CODE_INST_EXTRACTVAL  = 26, // EXTRACTVAL: [n x operands]
     FUNC_CODE_INST_INSERTVAL   = 27, // INSERTVAL:  [n x operands]

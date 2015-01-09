@@ -366,9 +366,11 @@ end;
 procedure stackimmassign32();
 begin
  with pc^.par do begin
-//  bcstream.emitbinop  
+  bcstream.emiti32const(imm.listindex);
+{
   outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
                                                 inttostr(imm.vint32)+' ,0');
+}
  end;
 end;
 
@@ -391,32 +393,13 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par do begin
+//  bcstream.emitstoreop
+  
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
             'bitcast (i8* '+str2+ ' to '+str1+'*)');
 
-{
-  case memop.t.kind of
-   odk_bit: begin
-    str1:= 'i'+inttostr(memop.t.size);
-    if memop.segdataaddress.a.size > 0 then begin
-     str2:= 'bitcast (i8* getelementptr (['+
-                  inttostr(memop.segdataaddress.a.size)+
-                  ' x i8]*' +segdataaddress(memop.segdataaddress)+
-                  ', i32 0, i32 '+inttostr(memop.segdataaddress.offset)+
-                  ') to '+str1+'*)';
-    end
-    else begin
-     str2:= segdataaddress(memop.segdataaddress);
-    end;
-    outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+str2);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
-}
  end;
 end;
 

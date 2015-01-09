@@ -140,6 +140,8 @@ type
 //const
 // nullconst = 256;
 type 
+ nullconstty = (nc_i1 = 256, nc_i8, nc_i16, nc_i32, nc_i64);
+ 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
@@ -487,12 +489,11 @@ begin
    addi8(int8(c1));
   end;
  end;
-exit;
- alloc1.header.size:= -1;
- alloc1.header.data:= nil;
- alloc1.typeid:= voidtype;
- addunique(bufferallocdataty((@alloc1)^),pointer(po1));
- po1^.data.typeid:= alloc1.typeid;
+ addnullvalue(ord(das_1));
+ addnullvalue(ord(das_8));
+ addnullvalue(ord(das_16));
+ addnullvalue(ord(das_32));
+ addnullvalue(ord(das_64));
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;
