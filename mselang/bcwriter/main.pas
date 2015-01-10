@@ -18,7 +18,7 @@ var
 implementation
 uses
  main_mfm,msesys,parser,msestream,parserglob,elements,llvmbitcodes,msestrings,
- llvmlists;
+ llvmlists,opglob;
  
 procedure tmainfo.exe(const sender: TObject);
 var
@@ -31,7 +31,10 @@ var
  b1,b2,i1,i2,i3: int32;
  str1,str2: string;
  t0: int32;
-
+ v1: int32;
+ c1,c2: int32;
+ segad1: segdataaddressty;
+ 
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -66,13 +69,14 @@ begin
   i1:= constlist.addi32(3);
 
   i1:= typelist.addsubvalue(nil);
-  i2:= constlist.addi32(124);
+  c2:= constlist.addi32(124);
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
-  globlist.addbytevalue(4,t0);
-  i3:= globlist.addinitvalue(i2,t0);
+  v1:= globlist.addbytevalue(4,t0);
+  i3:= globlist.addinitvalue(c2,t0);
 
   i1:= constlist.addi32(3);
+  c1:= constlist.addi32(1);
 
   stream:= tllvmbcwriter.create('test.bc',fm_create);
   stream.start(constlist,globlist);
@@ -81,12 +85,19 @@ begin
 
   stream.beginsub();
 //  stream.emitretop(stream.constop(i2));
-  stream.emitloadop(stream.globval(i3));
-  stream.emitbinop(BINOP_ADD,stream.constval(i1),stream.ssaindex-1);
-  stream.emitstoreop(stream.ssaindex-1,stream.globval(i3));
-  stream.emitloadop(stream.globval(i3));
+//  stream.emitloadop(stream.globval(i3));
+  segad1.a.address:= v1;
+  segad1.a.typeid:= ord(das_32);
+  segad1.offset:= c1;
+  stream.emitstoreop(stream.constval(c2),stream.emitsegdataaddresspo(segad1));
+  
+
+//  stream.emitbinop(BINOP_ADD,stream.constval(i1),stream.ssaindex-1);
+//  stream.emitstoreop(stream.ssaindex-1,stream.globval(i3));
+//  stream.emitloadop(stream.globval(i3));
 //  stream.emitloadop(stream.globop(i3));
-  stream.emitretop(stream.ssaindex-1);
+//  stream.emitretop(stream.ssaindex-1);
+  stream.emitretop(stream.emitloadop(stream.emitsegdataaddresspo(segad1)));
   stream.endsub();
 
   stream.stop();

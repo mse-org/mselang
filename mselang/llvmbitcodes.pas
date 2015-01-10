@@ -347,6 +347,7 @@ type
     FUNC_CODE_INST_BINOP       =  2, // BINOP:      [opcode, ty, opval, opval]
                                  //mse: BINOP:      [opval, opval, opcode]
     FUNC_CODE_INST_CAST        =  3, // CAST:       [opcode, ty, opty, opval]
+                                 //mse: CAST:       [opval, destty, castopcode]
     FUNC_CODE_INST_GEP         =  4, // GEP:        [n x operands]
     FUNC_CODE_INST_SELECT      =  5, // SELECT:     [ty, opval, opval, opval]
     FUNC_CODE_INST_EXTRACTELT  =  6, // EXTRACTELT: [opty, opval, opval]

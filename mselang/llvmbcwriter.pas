@@ -91,9 +91,12 @@ type
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
-   
+
+   function relval(const offset: int32): integer; inline;   
    function typeval(const typeid: databitsizety): integer; inline;
+   function ptypeval(const typeid: databitsizety): integer; inline;
    function typeval(const typeid: int32): int32; inline;
+   function ptypeval(const typeid: int32): int32; inline;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
    function subval(const subid: int32): int32; inline;
@@ -119,10 +122,11 @@ type
    procedure emitretop();
    procedure emitretop({const atype: integer;} const avalue: int32);
 
-   function emitsegdataadresspo(const aadress: segdataaddressty): int32;
+   function emitsegdataaddresspo(const aadress: segdataaddressty): int32;
                                  //returns valid
+   procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
                                  
-   procedure emitloadop(const asource: int32);
+   function emitloadop(const asource: int32): int32;
    procedure emitstoreop(const asource: int32; const adest: int32);
 
    procedure emiti32const(const aconstid: int32);
@@ -943,15 +947,30 @@ begin
  inc(fsubopindex);
 end;
 
-function tllvmbcwriter.emitsegdataadresspo(
-              const aadress: segdataaddressty): int32;
+procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
+                                                   const aoffset: int32);
 begin
- 
+ emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,ptypeval(das_8),
+                                                   ord(CAST_BITCAST)]);
+ inc(fsubopindex);
+ emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aoffset]);
+ inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitloadop(const asource: int32);
+function tllvmbcwriter.emitsegdataaddresspo(
+              const aadress: segdataaddressty): int32;
+begin
+ emitgetelementptr(globval(aadress.a.address),constval(aadress.offset));
+ result:= fsubopindex;
+ emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aadress.a.typeid),
+                                                   ord(CAST_BITCAST)]);
+ inc(fsubopindex);
+end;
+
+function tllvmbcwriter.emitloadop(const asource: int32): int32;
 begin
  emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-asource,0,0]);
+ result:= fsubopindex;
  inc(fsubopindex);
 end;
 
@@ -969,14 +988,29 @@ begin
  inc(fsubopindex);
 end;
 
+function tllvmbcwriter.relval(const offset: int32): int32;
+begin
+ result:= fsubopindex + offset;
+end;
+
 function tllvmbcwriter.typeval(const typeid: databitsizety): int32;
 begin
  result:= typeval(ord(typeid));
 end;
 
+function tllvmbcwriter.ptypeval(const typeid: databitsizety): int32;
+begin
+ result:= ptypeval(ord(typeid));
+end;
+
 function tllvmbcwriter.typeval(const typeid: int32): int32;
 begin
- result:= {fsubopindex -} typeindex(typeid);
+ result:= typeindex(typeid);
+end;
+
+function tllvmbcwriter.ptypeval(const typeid: int32): int32;
+begin
+ result:= ptypeindex(typeid);
 end;
 
 function tllvmbcwriter.constval(const constid: int32): int32;
