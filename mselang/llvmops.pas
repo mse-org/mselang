@@ -95,6 +95,7 @@ var
 {$endif}
  globconst: string;
  globconstid: int32;
+ globconsttype: int32;
 
 //todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
@@ -230,6 +231,8 @@ end;
 procedure segdataaddress(const address: segdataaddressty;
                                              out result: shortstring);
 begin
+ notimplemented();
+{
  case address.a.segment of
   seg_globconst: begin
    if address.a.size = 0 then begin
@@ -252,6 +255,7 @@ begin
    result:= segprefix[address.a.segment]+inttostr(address.a.address);
   end;
  end;
+}
 end;
 
 procedure segdataaddresspo(const address: segdataaddressty;
@@ -259,6 +263,8 @@ procedure segdataaddresspo(const address: segdataaddressty;
 var
  str1,str2: shortstring;
 begin
+ notimplemented();
+{
  segdataaddress(address,str2);
  if address.a.size = 0 then begin //pointer
   if brackets then begin
@@ -293,6 +299,7 @@ begin
    end;
   end;
  end;
+}
 end;
 
 procedure segaddress(const address: segaddressty; out result: shortstring);
@@ -401,6 +408,7 @@ procedure segassign();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
+//  bcstream.emitsegdataadresspo
   bcstream.emitstoreop(bcstream.subval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
 {  
@@ -766,7 +774,8 @@ begin
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconstid:= globlist.addinitvalue(
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1));
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1),
+                                                           globconsttype);
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
  with pc^.par.beginparse do begin

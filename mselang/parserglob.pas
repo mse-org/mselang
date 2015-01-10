@@ -209,7 +209,7 @@ const
 type
  addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
                   af_paramindirect,af_const,
-                  af_classfield,af_stack);
+                  af_classfield,af_stack,af_segmentpo);
  addressflagsty = set of addressflagty;
 
 const
@@ -311,7 +311,8 @@ type
 
  segaddressty = record
   address: dataoffsty; //first, must map poaddress
-  size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
+  typeid: int32;
+//  size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
                        //necessary for llvm global aggregate types
                        //todo: remove size, not necessary for  bitcode
   segment: segmentty;

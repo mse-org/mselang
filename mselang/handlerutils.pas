@@ -1911,10 +1911,10 @@ begin
  if info.backend = bke_llvm then begin
   if address.segment = seg_globvar then begin
    if adatasize = das_none then begin
-    address.address:= globlist.addbytevalue(asize);
+    address.address:= globlist.addbytevalue(asize,address.typeid);
    end
    else begin
-    address.address:= globlist.addbitvalue(adatasize);
+    address.address:= globlist.addbitvalue(adatasize,address.typeid);
    end;
   end;
  end;

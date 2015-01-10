@@ -18,7 +18,8 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,llvmlists;
+ msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,llvmlists,
+ opglob;
 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
@@ -117,6 +118,10 @@ type
 
    procedure emitretop();
    procedure emitretop({const atype: integer;} const avalue: int32);
+
+   function emitsegdataadresspo(const aadress: segdataaddressty): int32;
+                                 //returns valid
+                                 
    procedure emitloadop(const asource: int32);
    procedure emitstoreop(const asource: int32; const adest: int32);
 
@@ -938,6 +943,12 @@ begin
  inc(fsubopindex);
 end;
 
+function tllvmbcwriter.emitsegdataadresspo(
+              const aadress: segdataaddressty): int32;
+begin
+ 
+end;
+
 procedure tllvmbcwriter.emitloadop(const asource: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-asource,0,0]);
@@ -1008,7 +1019,6 @@ procedure tllvmbcwriter.emiti32const(const aconstid: int32);
 begin
  emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
 end;
-
 
 {
 procedure tllvmbcwriter.emitchar6(const avalue: shortstring);

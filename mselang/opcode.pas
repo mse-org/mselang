@@ -233,7 +233,7 @@ function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
 begin
  with info do begin
   result.address:= globdatapo;
-  result.size:= asize; //necessary for llvm global aggregate types
+//  result.size:= asize; //necessary for llvm global aggregate types
                        //todo: remove it, not necessary for bitcode
   globdatapo:= globdatapo + alignsize(asize);
   result.segment:= seg_globvar;

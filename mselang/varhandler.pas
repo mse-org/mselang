@@ -107,8 +107,10 @@ begin
      if sublevel = 0 then begin
       if indirectlevel > 0 then begin
        datasize1:= das_pointer;
+       include(address.flags,af_segmentpo);
       end;
       address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
+{
       if address.indirectlevel > 0 then begin
        address.segaddress.size:= 0;
       end
@@ -117,6 +119,7 @@ begin
         address.segaddress.size:= -bitsize;
        end;
       end;
+}
      end
      else begin
       address.locaddress:= getlocvaraddress(size1,address.flags,-frameoffset);

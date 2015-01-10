@@ -30,6 +30,7 @@ var
  typ1,typ2: typeallocinfoty;
  b1,b2,i1,i2,i3: int32;
  str1,str2: string;
+ t0: int32;
 
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
@@ -68,8 +69,8 @@ begin
   i2:= constlist.addi32(124);
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
-  globlist.addbytevalue(4);
-  i3:= globlist.addinitvalue(i2);
+  globlist.addbytevalue(4,t0);
+  i3:= globlist.addinitvalue(i2,t0);
 
   i1:= constlist.addi32(3);
 
@@ -80,10 +81,10 @@ begin
 
   stream.beginsub();
 //  stream.emitretop(stream.constop(i2));
-  stream.emitloadop(stream.globop(i3));
-  stream.emitbinop(BINOP_ADD,stream.constop(i1),stream.ssaindex-1);
-  stream.emitstoreop(stream.ssaindex-1,stream.globop(i3));
-  stream.emitloadop(stream.globop(i3));
+  stream.emitloadop(stream.globval(i3));
+  stream.emitbinop(BINOP_ADD,stream.constval(i1),stream.ssaindex-1);
+  stream.emitstoreop(stream.ssaindex-1,stream.globval(i3));
+  stream.emitloadop(stream.globval(i3));
 //  stream.emitloadop(stream.globop(i3));
   stream.emitretop(stream.ssaindex-1);
   stream.endsub();

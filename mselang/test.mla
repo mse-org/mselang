@@ -5,9 +5,8 @@ type
   b: int32;
  end;
 var
-// r1: recty;
+ r1: recty;
  i1: int32;
 begin
- exitcode:= 123;
- exitcode:= exitcode+exitcode+1;
+ exitcode:= r1.b;
 end.
