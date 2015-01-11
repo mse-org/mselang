@@ -238,6 +238,9 @@ begin
   globdatapo:= globdatapo + alignsize(asize);
   result.segment:= seg_globvar;
   aflags:= aflags - addresskindflags + [af_segment];
+  if adatasize = das_none then begin
+   include(aflags,af_aggregate);
+  end;
   trackalloc(adatasize,asize,result);
  end;
 end;

@@ -617,6 +617,12 @@ begin
   result:= bitoptypes[das_pointer];
  end
  else begin
+  if atypedata^.datasize = das_none then begin
+   result.listindex:= typelist.addbytevalue(atypedata^.bytesize);
+  end
+  else begin
+   result.listindex:= ord(atypedata^.datasize);
+  end;
   result.kind:= atypedata^.datasize;
   if result.kind in byteopdatakinds then begin
    result.size:= atypedata^.bytesize;
@@ -645,7 +651,12 @@ end;
 
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 begin
- result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+ if af_aggregate in adest.address.flags then begin
+  result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+ end
+ else begin
+  result.listindex:= -1; //none
+ end;
 end;
 
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
@@ -1172,6 +1183,9 @@ begin
  with aaddress do begin //todo: use table
   ssaextension1:= 0;
   if af_segment in flags then begin
+   if af_aggregate in flags then begin
+    ssaextension1:= getssa(ocssa_pushsegaggregate);
+   end;
    po1:= getop(pushseg[opsize1]);
    with po1^ do begin
     par.memop.segdataaddress.a:= segaddress;

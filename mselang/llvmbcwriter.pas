@@ -99,7 +99,7 @@ type
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
    function locval(const locid: int32): int32; inline;
-   function relval(const offset: int32): integer; inline; 
+   function relval(const offset: int32): int32; inline; 
                     //0 -> result of last op
 //   function subval(const subid: int32): int32; inline;
 
@@ -125,7 +125,6 @@ type
    procedure emitretop({const atype: integer;} const avalue: int32);
 
    procedure emitsegdataaddresspo(const aaddress: memopty);
-                                 //returns valid
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
                                  
    procedure emitloadop(const asource: int32);
@@ -1020,7 +1019,7 @@ end;
 
 function tllvmbcwriter.relval(const offset: int32): int32;
 begin
- result:= fsubopindex + offset - 1;
+ result:= fsubopindex - offset - 1;
 end;
 
 function tllvmbcwriter.locval(const locid: int32): int32;

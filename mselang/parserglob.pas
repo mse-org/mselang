@@ -108,21 +108,21 @@ type
 const
 
  bitoptypes: array[databitsizety] of typeallocinfoty = (
-  (kind: das_none; size: 0; listindex: 0),
-  (kind: das_1; size: 1; listindex: 0),
-  (kind: das_2_7; size: 7; listindex: 0),
-  (kind: das_8; size: 8; listindex: 0),
-  (kind: das_9_15; size: 15; listindex: 0),
-  (kind: das_16; size: 16; listindex: 0),
-  (kind: das_17_31; size: 31; listindex: 0),
-  (kind: das_32; size: 32; listindex: 0),
-  (kind: das_33_63; size: 63; listindex: 0),
-  (kind: das_64; size: 64; listindex: 0),
-  (kind: das_pointer; size: pointerbitsize; listindex: 0),
-  (kind: das_f16; size: 16; listindex: 0),
-  (kind: das_f32; size: 32; listindex: 0),
-  (kind: das_f64; size: 64; listindex: 0),
-  (kind: das_sub; size: pointerbitsize; listindex: 0)
+  (kind: das_none; size: 0; listindex: -1),
+  (kind: das_1; size: 1; listindex: ord(das_1)),
+  (kind: das_2_7; size: 7; listindex: ord(das_2_7)),
+  (kind: das_8; size: 8; listindex: ord(das_8)),
+  (kind: das_9_15; size: 15; listindex: ord(das_9_15)),
+  (kind: das_16; size: 16; listindex: ord(das_16)),
+  (kind: das_17_31; size: 31; listindex: ord(das_17_31)),
+  (kind: das_32; size: 32; listindex: ord(das_32)),
+  (kind: das_33_63; size: 63; listindex: ord(das_33_63)),
+  (kind: das_64; size: 64; listindex: ord(das_64)),
+  (kind: das_pointer; size: pointerbitsize; listindex: ord(das_pointer)),
+  (kind: das_f16; size: 16; listindex: ord(das_f16)),
+  (kind: das_f32; size: 32; listindex: ord(das_f32)),
+  (kind: das_f64; size: 64; listindex: ord(das_f64)),
+  (kind: das_sub; size: pointerbitsize; listindex: -1)
  );
 
  bitopsizes: array[databitsizety] of int32 = (
@@ -209,11 +209,11 @@ const
 type
  addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
                   af_paramindirect,af_const,
-                  af_classfield,af_stack,af_segmentpo);
+                  af_classfield,af_stack,af_segmentpo,af_aggregate);
  addressflagsty = set of addressflagty;
 
 const
- addresskindflags = [af_local,af_segment];
+ addresskindflags = [af_local,af_segment,af_aggregate];
  addresscompflags = addresskindflags + [af_nil];
 
 type 

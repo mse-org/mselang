@@ -408,9 +408,14 @@ procedure segassign();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
-//  bcstream.emitsegdataadresspo
-  bcstream.emitstoreop(bcstream.locval(ssas1),
+  if memop.t.listindex >= 0 then begin
+   bcstream.emitsegdataaddresspo(memop);
+   bcstream.emitstoreop(bcstream.locval(ssas1),bcstream.relval(0));
+  end
+  else begin
+   bcstream.emitstoreop(bcstream.locval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
+  end;
 {  
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
@@ -425,7 +430,13 @@ procedure assignseg();
 // str1, str2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
+  if memop.t.listindex >= 0 then begin
+   bcstream.emitsegdataaddresspo(memop);
+   bcstream.emitloadop(bcstream.relval(0));
+  end
+  else begin
+   bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
+  end;
 {
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
@@ -2796,7 +2807,9 @@ const
 //ssa only
   nestedvarssa = 3;
   popnestedvarssa = 3;
+  popsegaggregatessa = 3;
   pushnestedvarssa = 3;
+  pushsegaggregatessa = 3;
   nestedcalloutssa = 2;
   hascalloutssa = 1;
 
