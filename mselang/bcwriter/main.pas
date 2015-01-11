@@ -30,10 +30,10 @@ var
  typ1,typ2: typeallocinfoty;
  b1,b2,i1,i2,i3: int32;
  str1,str2: string;
- t0: int32;
+// t0: int32;
  v1: int32;
  c1,c2: int32;
- segad1: segdataaddressty;
+ segad1: memopty;
  
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
@@ -72,8 +72,8 @@ begin
   c2:= constlist.addi32(124);
     
   i3:= globlist.addsubvalue(nil,stringtolstring('main'));
-  v1:= globlist.addbytevalue(4,t0);
-  i3:= globlist.addinitvalue(c2,t0);
+  v1:= globlist.addbytevalue(4);
+  i3:= globlist.addinitvalue(c2);
 
   i1:= constlist.addi32(3);
   c1:= constlist.addi32(1);
@@ -86,10 +86,13 @@ begin
   stream.beginsub();
 //  stream.emitretop(stream.constop(i2));
 //  stream.emitloadop(stream.globval(i3));
-  segad1.a.address:= v1;
-  segad1.a.typeid:= ord(das_32);
-  segad1.offset:= c1;
-  stream.emitstoreop(stream.constval(c2),stream.emitsegdataaddresspo(segad1));
+  with segad1 do begin
+   t.listindex:= ord(das_32);
+   segdataaddress.a.address:= v1;
+   segdataaddress.offset:= c1;
+  end;
+  stream.emitsegdataaddresspo(segad1);
+  stream.emitstoreop(stream.constval(c2),stream.relval(0));
   
 
 //  stream.emitbinop(BINOP_ADD,stream.constval(i1),stream.ssaindex-1);
@@ -97,7 +100,9 @@ begin
 //  stream.emitloadop(stream.globval(i3));
 //  stream.emitloadop(stream.globop(i3));
 //  stream.emitretop(stream.ssaindex-1);
-  stream.emitretop(stream.emitloadop(stream.emitsegdataaddresspo(segad1)));
+  stream.emitsegdataaddresspo(segad1);
+  stream.emitloadop(stream.relval(0));
+  stream.emitretop(stream.relval(0));
   stream.endsub();
 
   stream.stop();

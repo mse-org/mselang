@@ -195,19 +195,19 @@ type
    destructor destroy(); override;
    procedure clear(); override;
 //   function addvalue(var avalue: typeallocinfoty): int32;
-   function addvalue(const avalue: pvardataty; out atypeid: int32): int32; 
+   function addvalue(const avalue: pvardataty): int32; 
                                                             //returns listid
-   function addbitvalue(const asize: databitsizety; out atypeid: int32): int32;
+   function addbitvalue(const asize: databitsizety): int32;
                                                             //returns listid
-   function addbytevalue(const asize: integer; out atypeid: int32): int32;
+   function addbytevalue(const asize: integer): int32;
                                                            //returns listid
    function addsubvalue(const avalue: psubdataty): int32; //returns listid
                                //nil -> main sub
    function addsubvalue(const avalue: psubdataty;
                            const aname: lstringty): int32;  //returns listid
                                //nil -> main sub
-   function addinitvalue(const aconstlistindex: integer;
-                                out atypeid: int32): int32; //returns listid
+   function addinitvalue(const aconstlistindex: integer): int32;
+                                                            //returns listid
    property namelist: tglobnamelist read fnamelist;
  end;
 
@@ -697,42 +697,35 @@ begin
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
 
-function tgloballocdatalist.addvalue(const avalue: pvardataty; 
-                                               out atypeid: int32): int32;
+function tgloballocdatalist.addvalue(const avalue: pvardataty): int32;
 var
  po1: ptypedataty;
 begin 
  po1:= ele.eledataabs(avalue^.vf.typ);
  if po1^.datasize = das_none then begin
-  result:= addbytevalue(po1^.bytesize,atypeid);
+  result:= addbytevalue(po1^.bytesize);
  end
  else begin
-  result:= addbitvalue(po1^.datasize,atypeid);
+  result:= addbitvalue(po1^.datasize);
  end;
 end;
 
-function tgloballocdatalist.addbytevalue(const asize: integer;
-                                       out atypeid: int32): int32;
+function tgloballocdatalist.addbytevalue(const asize: integer): int32;
 begin 
- atypeid:= ftypelist.addbytevalue(asize);
- addnoinit(atypeid);
+ addnoinit(ftypelist.addbytevalue(asize));
 end;
 
-function tgloballocdatalist.addbitvalue(const asize: databitsizety;
-                                       out atypeid: int32): int32;
+function tgloballocdatalist.addbitvalue(const asize: databitsizety): int32;
 begin 
- atypeid:= ftypelist.addbitvalue(asize);
- addnoinit(atypeid);
+ addnoinit(ftypelist.addbitvalue(asize));
 end;
 
-function tgloballocdatalist.addinitvalue(const aconstlistindex: integer;
-                                                   out atypeid: int32): int32;
+function tgloballocdatalist.addinitvalue(const aconstlistindex: integer): int32;
 var
  dat1: globallocdataty;
 begin
- atypeid:= (pconstlisthashdataty(fconstlist.fdata)+
+ dat1.typeindex:= (pconstlisthashdataty(fconstlist.fdata)+
                                              aconstlistindex+1)^.data.typeid;
- dat1.typeindex:= atypeid;
  dat1.kind:= gak_var;
  dat1.initconstindex:= aconstlistindex; 
  result:= fcount;

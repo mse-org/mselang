@@ -95,7 +95,7 @@ var
 {$endif}
  globconst: string;
  globconstid: int32;
- globconsttype: int32;
+// globconsttype: int32;
 
 //todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
@@ -172,7 +172,7 @@ end;
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
-  bcstream.emitbinop(aop,bcstream.subval(ssas1),bcstream.subval(ssas2));
+  bcstream.emitbinop(aop,bcstream.relval(ssas1),bcstream.relval(ssas2));
  end;
 end;
 
@@ -409,7 +409,7 @@ procedure segassign();
 begin
  with pc^.par do begin
 //  bcstream.emitsegdataadresspo
-  bcstream.emitstoreop(bcstream.subval(ssas1),
+  bcstream.emitstoreop(bcstream.relval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
 {  
   llvmtype(memop.t,str1);
@@ -774,8 +774,8 @@ begin
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconstid:= globlist.addinitvalue(
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1),
-                                                           globconsttype);
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1){,
+                                                           globconsttype});
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
  with pc^.par.beginparse do begin

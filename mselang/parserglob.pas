@@ -311,7 +311,7 @@ type
 
  segaddressty = record
   address: dataoffsty; //first, must map poaddress
-  typeid: int32;
+//  typeid: int32;
 //  size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
                        //necessary for llvm global aggregate types
                        //todo: remove size, not necessary for  bitcode
