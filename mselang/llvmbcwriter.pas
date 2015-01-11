@@ -92,14 +92,15 @@ type
    procedure flushbuffer(); override;
    function bitpos(): int32;
 
-   function relval(const offset: int32): integer; inline; 
-                    //0 -> result of last op
    function typeval(const typeid: databitsizety): integer; inline;
    function ptypeval(const typeid: databitsizety): integer; inline;
    function typeval(const typeid: int32): int32; inline;
    function ptypeval(const typeid: int32): int32; inline;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
+   function locval(const locid: int32): int32; inline;
+   function relval(const offset: int32): integer; inline; 
+                    //0 -> result of last op
 //   function subval(const subid: int32): int32; inline;
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
@@ -986,11 +987,6 @@ begin
  inc(fsubopindex);
 end;
 
-function tllvmbcwriter.relval(const offset: int32): int32;
-begin
- result:= fsubopindex + offset - 1;
-end;
-
 function tllvmbcwriter.typeval(const typeid: databitsizety): int32;
 begin
  result:= typeval(ord(typeid));
@@ -1021,6 +1017,17 @@ function tllvmbcwriter.globval(const globid: int32): int32;
 begin
  result:= globid + fglobstart;
 end;
+
+function tllvmbcwriter.relval(const offset: int32): int32;
+begin
+ result:= fsubopindex + offset - 1;
+end;
+
+function tllvmbcwriter.locval(const locid: int32): int32;
+begin
+ result:= locid + fsubopstart;
+end;
+
 {
 function tllvmbcwriter.subval(const subid: int32): int32;
 begin

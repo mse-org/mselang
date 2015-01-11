@@ -172,7 +172,7 @@ end;
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
-  bcstream.emitbinop(aop,bcstream.relval(ssas1),bcstream.relval(ssas2));
+  bcstream.emitbinop(aop,bcstream.locval(ssas1),bcstream.locval(ssas2));
  end;
 end;
 
@@ -409,7 +409,7 @@ procedure segassign();
 begin
  with pc^.par do begin
 //  bcstream.emitsegdataadresspo
-  bcstream.emitstoreop(bcstream.relval(ssas1),
+  bcstream.emitstoreop(bcstream.locval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
 {  
   llvmtype(memop.t,str1);
