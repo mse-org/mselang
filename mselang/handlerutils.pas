@@ -126,10 +126,10 @@ procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 
-procedure setcurrentloc(const indexoffset: integer);
+//procedure setcurrentloc(const indexoffset: integer);
 procedure setcurrentlocbefore(const indexoffset: integer);
 procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
-procedure setloc(const destindexoffset,sourceindexoffset: integer);
+//procedure setloc(const destindexoffset,sourceindexoffset: integer);
 
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 function getordcount(const typedata: ptypedataty): int64;
@@ -921,7 +921,7 @@ procedure int32toflo64({; const index: integer});
 begin
  additem(oc_int32toflo64);
 end;
-
+{
 procedure setcurrentloc(const indexoffset: integer);
 begin 
  with info do begin
@@ -930,7 +930,7 @@ begin
                                                                      opcount-1;
  end; 
 end;
-
+}
 procedure setcurrentlocbefore(const indexoffset: integer);
 begin 
  with info do begin
@@ -953,7 +953,7 @@ begin
   include(getoppo(dest)^.op.flags,opf_label);
  end; 
 end;
-
+{
 procedure setloc(const destindexoffset,sourceindexoffset: integer);
 var
  dest: integer;
@@ -966,7 +966,7 @@ begin
   include(getoppo(dest)^.op.flags,opf_label);
  end; 
 end;
-
+}
 function compaddress(const a,b: addressvaluety): integer;
         //todo: handle runtime address calculation
 begin

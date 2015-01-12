@@ -1,17 +1,9 @@
 program potoint32;
-type
-
- recty = record
-  a: int32;
-  b: int32;
- end;
-
-var
- r1: recty;
-// i1: int32;
 begin
- r1.b:= 123;
- r1.a:= 1;
-// r1.a:= 1;
- exitcode:= r1.b+r1.a+1;
+ if true then begin
+  exitcode:= 1;
+ end
+ else begin
+  exitcode:= 2;
+ end;
 end.

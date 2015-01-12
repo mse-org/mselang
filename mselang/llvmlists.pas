@@ -712,12 +712,12 @@ end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer): int32;
 begin 
- addnoinit(ftypelist.addbytevalue(asize));
+ result:= addnoinit(ftypelist.addbytevalue(asize));
 end;
 
 function tgloballocdatalist.addbitvalue(const asize: databitsizety): int32;
 begin 
- addnoinit(ftypelist.addbitvalue(asize));
+ result:= addnoinit(ftypelist.addbitvalue(asize));
 end;
 
 function tgloballocdatalist.addinitvalue(const aconstlistindex: integer): int32;
