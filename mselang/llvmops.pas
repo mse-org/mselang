@@ -740,6 +740,15 @@ begin
  end;
 end;
 
+procedure labelop();
+var
+ lab: shortstring;
+begin
+ curoplabel(lab);
+ outass('br label %'+lab);
+ outass(lab+':');
+end;
+
 var
  exitcodeaddress: segaddressty;
 
@@ -2502,6 +2511,7 @@ end;
 const
   nonessa = 0;
   nopssa = 1;
+  labelssa = 1;
 
   beginparsessa = 0;
   mainssa = 0;//1;

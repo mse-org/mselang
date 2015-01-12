@@ -62,9 +62,10 @@ type
   paramcount: integer;
  end;
 }
- opcodety = (        //order as optable.inc
+ opcodety = (        //order like optable.inc
   oc_none,
   oc_nop,
+  oc_label,
 
   oc_beginparse,
   oc_main,
@@ -582,7 +583,10 @@ type
   line: lstringty;
   nr: integer;
  end;
-  
+
+ labty = record
+  labindex: int32;
+ end;
                  //todo: unify
  opparamty = record
   ssad: integer;
@@ -595,6 +599,9 @@ type
    oc_none,oc_nop: (
     dummy: record
     end;
+   );
+   oc_label: (
+    lab: labty;
    );
    oc_push,
    oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,

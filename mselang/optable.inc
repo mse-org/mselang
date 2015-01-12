@@ -18,6 +18,7 @@
  ssatable: ssatablety = (
   nonessa,
   nopssa,
+  labelssa,
 
   beginparsessa,
   mainssa,
@@ -332,6 +333,7 @@
  optable: optablety = ( //order as opcodety
   nil,  //oc_none
   @nopop,
+  @labelop,
 
   @beginparseop,
   @mainop,

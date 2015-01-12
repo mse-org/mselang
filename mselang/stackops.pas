@@ -320,6 +320,11 @@ begin
  //dummy
 end;
 
+procedure labelop();
+begin
+ //dummy
+end;
+
 procedure gotoop();
 begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress;
@@ -2454,6 +2459,7 @@ var
 const
   nonessa = 0;
   nopssa = 0;
+  labelssa = 0;
 
   beginparsessa = 0;
   mainssa = 0;
