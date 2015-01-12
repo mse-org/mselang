@@ -11,6 +11,7 @@ var
 // i1: int32;
 begin
  r1.b:= 123;
+ r1.a:= 1;
 // r1.a:= 1;
- exitcode:= r1.b;
+ exitcode:= r1.b+r1.a+1;
 end.
