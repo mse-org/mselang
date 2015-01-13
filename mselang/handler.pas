@@ -250,6 +250,11 @@ begin
  with additem(oc_progend)^ do begin 
   //endmark, will possibly replaced by goto if there is fini code
  end;
+ with info.contextstack[info.s.stackindex] do begin
+  with getoppo(opmark.address)^ do begin
+   par.main.blockcount:= info.s.ssa.blockindex;
+  end;  
+ end;
  with info do begin
   dec(s.stackindex);
  end;

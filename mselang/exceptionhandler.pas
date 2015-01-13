@@ -58,7 +58,8 @@ begin
  outhandle('FINALLYENTRY');
 {$endif}
  with info do begin
-  getoppo(contextstack[s.stackindex-1].opmark.address)^.par.opaddress:= opcount-1;
+  getoppo(contextstack[s.stackindex-1].opmark.address)^.
+                                            par.lab.opaddress:= opcount-1;
   with additem(oc_popcpucontext)^ do begin
   end;
  end;
@@ -84,7 +85,7 @@ begin
  with additem(oc_goto)^ do begin
  end;
  with info,contextstack[s.stackindex-1] do begin
-  getoppo(opmark.address)^.par.opaddress:= opcount-1;
+  getoppo(opmark.address)^.par.lab.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
  end;
  with additem(oc_popcpucontext)^ do begin
@@ -97,7 +98,8 @@ begin
  outhandle('EXCEPT');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  getoppo(opmark.address)^.par.opaddress:= opcount-1; //skip exception handling code
+  getoppo(opmark.address)^.par.lab.opaddress:= opcount-1; 
+                                      //skip exception handling code
   with additem(oc_finiexception)^ do begin
   end;
 //  dec(s.stackindex,1);

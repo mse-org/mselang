@@ -327,7 +327,7 @@ end;
 
 procedure gotoop();
 begin
- cpu.pc:= startpo + cpu.pc^.par.opaddress;
+ cpu.pc:= startpo + cpu.pc^.par.lab.opaddress;
 end;
 
 procedure beginparseop();
@@ -398,7 +398,7 @@ end;
 procedure ifop();
 begin
  if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
-  cpu.pc:= startpo + cpu.pc^.par.opaddress;
+  cpu.pc:= startpo + cpu.pc^.par.lab.opaddress;
  end;
 end;
 
@@ -1930,7 +1930,7 @@ begin
  po1:= pinteger(cpu.stack-4);
  dec(po1^);
  if po1^ < 0 then begin
-  cpu.pc:= startpo+cpu.pc^.par.opaddress;
+  cpu.pc:= startpo + cpu.pc^.par.lab.opaddress;
  end;
 end;
 
@@ -1941,7 +1941,7 @@ begin
  po1:= pint64(cpu.stack-8);
  dec(po1^);
  if po1^ < 0 then begin
-  cpu.pc:= startpo+cpu.pc^.par.opaddress;
+  cpu.pc:= startpo + cpu.pc^.par.lab.opaddress;
  end;
 end;
 
@@ -2331,7 +2331,7 @@ begin
 end;
 
 const
- stopop: opinfoty = (op: (op: oc_none; flags:[]); 
+ stopop: opinfoty = (op: (op: oc_none{; flags:[]}); 
                    par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
 
 procedure unhandledexception(const exceptobj: pointer);
@@ -2367,7 +2367,7 @@ var
 begin
  po1:= stackpush(sizeof(jumpinfoty));
  po1^.cpu:= cpu;
- po1^.cpu.pc:= startpo + cpu.pc^.par.opaddress;
+ po1^.cpu.pc:= startpo + cpu.pc^.par.lab.opaddress;
  po1^.next:= exceptioninfo.trystack;
  exceptioninfo.trystack:= po1;
 end;

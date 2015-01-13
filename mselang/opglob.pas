@@ -585,7 +585,12 @@ type
  end;
 
  labty = record
-  labindex: int32;
+  opaddress: opaddressty; //first! dummy for oc_label 
+  bbindex: int32;         //llvm basic block
+ end;
+ 
+ mainty = record
+  blockcount: int32;
  end;
                  //todo: unify
  opparamty = record
@@ -602,6 +607,9 @@ type
    );
    oc_label: (
     lab: labty;
+   );
+   oc_main: (
+    main: mainty;
    );
    oc_push,
    oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,
@@ -682,7 +690,7 @@ type
     setlength: setlengthty;
    );
    oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
-    opaddress: opaddressty; //first!
+    opaddress: labty; //first!
    );   
    oc_subbegin:(
     subbegin: subbeginty;
@@ -717,13 +725,13 @@ type
    )
   end;
 
- opflagty = (opf_label);
- opflagsty = set of opflagty;
+// opflagty = (opf_label);
+// opflagsty = set of opflagty;
  
  opty = record
 //  proc: opprocty;
   op: opcodety;
-  flags: opflagsty;
+//  flags: opflagsty;
  end;
  
  opinfoty = record

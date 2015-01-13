@@ -352,13 +352,14 @@ end;
 
 procedure oplabel(out result: shortstring);
 begin
- result:= 'o'+ inttostr(pc^.par.opaddress);
+ result:= 'o'+ inttostr(pc^.par.lab.opaddress);
 end;
 
 procedure stackimmassign1();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i1 '+ inttostr(imm.vint8)+' ,0');
+  bcstream.emiti1const(imm.listindex);
+//  outass('%'+inttostr(ssad)+' = add i1 '+ inttostr(imm.vint8)+' ,0');
  end;
 end;
 
@@ -891,16 +892,20 @@ begin
 end;
 
 procedure ifop();
-var
- tmp,lab1,lab2: shortstring;
+//var
+// tmp,lab1,lab2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitbrop(bcstream.locval(ssas1),
+              getoppo(lab.opaddress)^.par.lab.bbindex,lab.bbindex);
+{
   tmp:= '%'+inttostr(ssad);
   nextoplabel(lab1);
   oplabel(lab2);
   outass(tmp+' = icmp ne i1 %'+inttostr(ssas1)+', 0');
   outass('br i1 '+tmp+', label %'+lab1+', label %'+lab2);
   outass(lab1+':');
+}
  end;
 end;
 
@@ -2530,7 +2535,7 @@ const
   cmpjmpgtimm4ssa = 1;
   cmpjmploeqimm4ssa = 1;
 
-  ifssa = 1;
+  ifssa = 0;
   writelnssa = 1;
   writebooleanssa = 1;
   writeintegerssa = 1;
@@ -2840,11 +2845,13 @@ begin
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
  while pc < endpo do begin
+ {
   if opf_label in pc^.op.flags then begin
    curoplabel(lab);
    outass('br label %'+lab);
    outass(lab+':');
   end;
+  }
   optable[pc^.op.op]();
   inc(pc);
  end;

@@ -437,8 +437,9 @@ type
  end;
 
  ssainfoty = record
-  index: integer;
-  nextindex: integer;
+  index: int32;
+  nextindex: int32;
+  blockindex: int32;
  end;
   
  subflagty = (sf_function,sf_method,sf_constructor,sf_destructor,

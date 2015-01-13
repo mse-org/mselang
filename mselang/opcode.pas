@@ -460,10 +460,10 @@ end;
 procedure endforloop(const ainfo: loopinfoty);
 begin
  with additem(oc_goto)^ do begin
-  par.opaddress:= ainfo.start-1;
+  par.lab.opaddress:= ainfo.start-1;
  end;
  with getoppo(ainfo.start)^ do begin
-  par.opaddress:= info.opcount-1;
+  par.lab.opaddress:= info.opcount-1;
  end;
  with additem(oc_locvarpop)^ do begin
   if ainfo.size > das_32 then begin
@@ -484,7 +484,7 @@ begin
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   with result^ do begin
    op.op:= aopcode;
-   op.flags:= [];
+//   op.flags:= [];
    par.ssad:= s.ssa.nextindex - 1;
   end;
   inc(opcount);
@@ -499,8 +499,11 @@ end;
 
 procedure addlabel();
 begin
- with additem(oc_nop)^ do begin
-  include(op.flags,opf_label);
+ with additem(oc_label)^ do begin
+  par.lab.opaddress:= info.opcount-1;
+  par.lab.bbindex:= info.s.ssa.blockindex;
+  inc(info.s.ssa.blockindex);
+//  include(op.flags,opf_label);
  end;
 end;
 
