@@ -252,7 +252,7 @@ begin
  end;
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(opmark.address)^ do begin
-   par.main.blockcount:= info.s.ssa.blockindex;
+   par.main.blockcount:= info.s.ssa.blockindex+1;
   end;  
  end;
  with info do begin

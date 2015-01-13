@@ -67,6 +67,8 @@ function insertitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
                           const ssaextension: integer = 0): popinfoty;
 function getitem(const index: integer): popinfoty;
+function addcontrolitem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
 
 procedure addlabel();
 
@@ -460,10 +462,10 @@ end;
 procedure endforloop(const ainfo: loopinfoty);
 begin
  with additem(oc_goto)^ do begin
-  par.lab.opaddress:= ainfo.start-1;
+  par.opaddress.opaddress:= ainfo.start-1;
  end;
  with getoppo(ainfo.start)^ do begin
-  par.lab.opaddress:= info.opcount-1;
+  par.opaddress.opaddress:= info.opcount-1;
  end;
  with additem(oc_locvarpop)^ do begin
   if ainfo.size > das_32 then begin
@@ -491,6 +493,19 @@ begin
  end;
 end;
 
+function addcontrolitem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (aopcode in controlops) then begin
+  internalerror(ie_parser,'20150113A');
+ end;
+{$endif}
+ result:= additem(aopcode,ssaextension);
+ inc(info.s.ssa.blockindex);
+ result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+end;
+
 function getitem(const index: integer): popinfoty;
 begin
  result:= getsegmentbase(seg_op);
@@ -499,11 +514,8 @@ end;
 
 procedure addlabel();
 begin
- with additem(oc_label)^ do begin
-  par.lab.opaddress:= info.opcount-1;
-  par.lab.bbindex:= info.s.ssa.blockindex;
-  inc(info.s.ssa.blockindex);
-//  include(op.flags,opf_label);
+ with addcontrolitem(oc_label)^ do begin
+  par.opaddress.opaddress:= info.opcount-1;
  end;
 end;
 

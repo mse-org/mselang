@@ -90,10 +90,9 @@ begin
    push(d.dat.constval.vboolean); //todo: use compiletime branch
   end;
   }
-   with additem(oc_if)^ do begin
+   with addcontrolitem(oc_if)^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
    end;
-   inc(info.s.ssa.blockindex);
   end;
  end;
 end;
@@ -128,9 +127,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('ELSE0');
 {$endif}
- with additem(oc_goto)^ do begin
+ with addcontrolitem(oc_goto)^ do begin  
  end;
- inc(info.s.ssa.blockindex);
 end;
 
 procedure handleelse();
@@ -139,9 +137,9 @@ begin //boolexp,thenmark,elsemark
 {$ifdef mse_debugparser}
  outhandle('ELSE');
 {$endif}
+ addlabel();
  setlocbefore(2,3);      //set gotoaddress for handlethen0
  setcurrentlocbefore(3); //set gotoaddress for handleelse0
- addlabel();
  with info do begin
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
@@ -301,7 +299,7 @@ begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
-      par.lab.opaddress:= endad;
+      par.opaddress.opaddress:= endad;
      end;
     end;
     inc(int1,3);

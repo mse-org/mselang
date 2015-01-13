@@ -352,7 +352,7 @@ end;
 
 procedure oplabel(out result: shortstring);
 begin
- result:= 'o'+ inttostr(pc^.par.lab.opaddress);
+ result:= 'o'+ inttostr(pc^.par.opaddress.opaddress);
 end;
 
 procedure stackimmassign1();
@@ -742,12 +742,17 @@ begin
 end;
 
 procedure labelop();
-var
- lab: shortstring;
+//var
+// lab: shortstring;
 begin
+ with pc^.par do begin
+  bcstream.emitbrop(opaddress.bbindex);
+ end;
+{
  curoplabel(lab);
  outass('br label %'+lab);
  outass(lab+':');
+}
 end;
 
 var
@@ -820,7 +825,9 @@ end;
 
 procedure mainop();
 begin
- bcstream.beginsub();
+ with pc^.par do begin
+  bcstream.beginsub(main.blockcount);
+ end;
 // outass('define i32 @main() {');
 end;
 
@@ -863,11 +870,16 @@ begin
 end;
 
 procedure gotoop();
-var
- lab: shortstring;
+//var
+// lab: shortstring;
 begin
+ with pc^.par do begin
+  bcstream.emitbrop(getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
+ end;
+{
  oplabel(lab);
  outass('br label %'+lab);
+}
 end;
 
 procedure cmpjmpneimm4op();
@@ -897,7 +909,8 @@ procedure ifop();
 begin
  with pc^.par do begin
   bcstream.emitbrop(bcstream.locval(ssas1),
-              getoppo(lab.opaddress)^.par.lab.bbindex,lab.bbindex);
+              getoppo(opaddress.opaddress)^.par.opaddress.bbindex,
+                                                       opaddress.bbindex);
 {
   tmp:= '%'+inttostr(ssad);
   nextoplabel(lab1);

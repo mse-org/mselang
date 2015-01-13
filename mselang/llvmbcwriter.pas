@@ -116,7 +116,7 @@ type
                const aprefixdata: int32});
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
-   procedure beginsub();
+   procedure beginsub(const bbcount: int32);
    procedure endsub();
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
@@ -1058,11 +1058,11 @@ begin
  result:= subid + fsubopstart;
 end;
 }
-procedure tllvmbcwriter.beginsub();
+procedure tllvmbcwriter.beginsub(const bbcount: int32);
 begin
  fsubopindex:= fsubopstart;
  beginblock(FUNCTION_BLOCK_ID,3);
- emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[1]);
+ emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
 end;
 
 procedure tllvmbcwriter.endsub();

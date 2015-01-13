@@ -935,7 +935,7 @@ procedure setcurrentlocbefore(const indexoffset: integer);
 begin 
  with info do begin
   getoppo(contextstack[s.stackindex+indexoffset].opmark.address-1)^.
-                                               par.lab.opaddress:= opcount-1;
+                                      par.opaddress.opaddress:= opcount-1;
 //  addlabel();
  end;
 end;
@@ -947,7 +947,7 @@ begin
  with info do begin
   dest:= contextstack[s.stackindex+sourceindexoffset].opmark.address;
   getoppo(contextstack[s.stackindex+destindexoffset].opmark.address-1)^.
-                                                  par.lab.opaddress:= dest-1;
+                                            par.opaddress.opaddress:= dest-1;
 //  include(getoppo(dest)^.op.flags,opf_label);
  end; 
 end;
@@ -1548,7 +1548,7 @@ begin
  with info do begin
   s.ssa.index:= 0;
   s.ssa.nextindex:= 0;
-  s.ssa.blockindex:= 1;
+  s.ssa.blockindex:= 0;
  end;
 end;
 

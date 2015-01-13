@@ -592,6 +592,12 @@ type
  mainty = record
   blockcount: int32;
  end;
+
+const
+ controlops = [oc_label,oc_goto,oc_if,oc_decloop32,oc_decloop64,
+                                                      oc_pushcpucontext];
+
+type
                  //todo: unify
  opparamty = record
   ssad: integer;
@@ -605,9 +611,11 @@ type
     dummy: record
     end;
    );
+   {
    oc_label: (
     lab: labty;
    );
+   }
    oc_main: (
     main: mainty;
    );
@@ -689,7 +697,8 @@ type
    oc_setlengthstr8,oc_setlengthdynarray:(
     setlength: setlengthty;
    );
-   oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
+   oc_label,oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
+                                                                  //controlops
     opaddress: labty; //first!
    );   
    oc_subbegin:(
