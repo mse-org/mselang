@@ -2529,7 +2529,7 @@ end;
 const
   nonessa = 0;
   nopssa = 1;
-  labelssa = 1;
+  labelssa = 0;
 
   beginparsessa = 0;
   mainssa = 0;//1;
@@ -2541,7 +2541,7 @@ const
   popreg0ssa = 1;
   increg0ssa = 1;
 
-  gotossa = 1;
+  gotossa = 0;
   cmpjmpneimm4ssa = 1;
   cmpjmpeqimm4ssa = 1;
   cmpjmploimm4ssa = 1;
