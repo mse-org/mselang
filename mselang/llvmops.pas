@@ -2207,12 +2207,18 @@ var
  parpo: pparallocinfoty;
  endpo: pointer;
 begin
+ with pc^.par do begin               //todo: params, calling convention
+  bcstream.emitcallop(bcstream.globval(
+                      getoppo(callinfo.ad+1)^.par.subbegin.globid),emptyidar);
+ end;
+{
  with pc^.par do begin
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;
   outass('call void @s'+inttostr(callinfo.ad+1)+'(');
   docallparam(parpo,endpo,outlinkcount);
  end;
+}
 end;
 
 procedure docallfunc(const outlinkcount: integer);
@@ -2292,6 +2298,14 @@ begin
  //dummy
 end;
 
+procedure subbeginop();
+begin
+ with pc^.par.subbegin do begin
+  bcstream.beginsub(blockcount);
+ end;
+end;
+
+(*
 procedure subbeginop();
 var
 // ele1: elementoffsetty;
@@ -2418,17 +2432,22 @@ begin
   end;
  end;
 end;
+*)
 
 procedure subendop();
 begin
  with pc^.par.subend do begin
-  outass('}');
+  bcstream.emitretop(); //todo: function
+  bcstream.endsub();
+//  outass('}');
  end;
 end;
 
 procedure returnop();
 begin
- outass('ret void');
+ //dummy
+// bcstream.emitretop();
+// outass('ret void');
 end;
 
 procedure returnfuncop();

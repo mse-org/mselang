@@ -567,6 +567,8 @@ type
   flags: subflagsty;
 //  varchain: elementoffsetty;
   allocs: suballocinfoty;
+  globid: int32;
+  blockcount: int32;
  end;
 
  subendty = record
@@ -598,7 +600,7 @@ const
                                                       oc_pushcpucontext];
 
 type
-                 //todo: unify
+                 //todo: unify, variable size
  opparamty = record
   ssad: integer;
   ssas1: integer;

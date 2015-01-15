@@ -669,7 +669,7 @@ begin
     end;
    end;
   end
-  else begin
+  else begin //interface
    for int2:= 0 to paramco-1 do begin
     dec(po4^[int2],eledatabase); //relative address
    end;
@@ -679,6 +679,7 @@ begin
    else begin
     po1^.mark:= -1;
    end;
+   
   end;
 
   parent1:= ele.decelementparent;
@@ -754,6 +755,9 @@ begin
       d.subdef.match:= 0;
      end;
     end;
+   end;
+   if backend = bke_llvm then begin
+    po1^.globid:= globlist.addsubvalue(po1);
    end;
    ele.elementparent:= parent1; //restore in sub
    s.stacktop:= s.stackindex;
@@ -883,6 +887,7 @@ begin
   end;
   with additem(oc_subbegin,int1)^ do begin
    par.subbegin.subname:= po1^.address;
+   par.subbegin.globid:= po1^.globid;
 //   par.subbegin.flags:= po1^.flags;
    par.subbegin.allocs:= po1^.allocs;
    
@@ -969,6 +974,7 @@ begin
   locallocid:= d.subdef.locallocidbefore;
   with getitem(po1^.address)^ do begin
    par.subbegin.flags:= po1^.flags;
+   par.subbegin.blockcount:= s.ssa.blockindex + 1;
   end;
  end;
 end;

@@ -114,6 +114,7 @@ type
    procedure clear(); override; //automatic entries for bitsize optypes
    function addbitvalue(const asize: databitsizety): integer; //returns listid
    function addbytevalue(const asize: integer): integer; //returns listid
+   function addvarvalue(const avalue: pvardataty): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
                          //nil -> main sub
    function first: ptypelistdataty;
@@ -429,7 +430,8 @@ var
  alloc1: typeallocdataty;
  po1: ptypelisthashdataty;
  parbuf: subtypebufferty;
-  
+ po2: pelementoffsetty;
+ i1: int32;
 begin
  if avalue = nil then begin //main()
   with parbuf do begin
@@ -439,13 +441,37 @@ begin
   end;
  end
  else begin
-  notimplementederror('20141222');
+  with parbuf do begin
+   header.flags:= avalue^.flags;
+   header.paramcount:= avalue^.paramcount;
+   if header.paramcount > maxparamcount then begin
+    header.paramcount:= 0;
+    errormessage(err_toomanyparams,[]);
+   end;
+   po2:= @avalue^.paramsrel;
+   for i1:= 0 to header.paramcount - 1 do begin //todo: const var out...
+    params[i1].typelistindex:= addvarvalue(ele.eledataabs(po2[i1]));
+   end;
+  end;
  end;
  alloc1.kind:= das_sub;
  alloc1.header.size:= sizeof(subtypeheaderty) + 
              parbuf.header.paramcount * sizeof(paramitemty);
  alloc1.header.data:= @parbuf;
  result:= addvalue(alloc1)^.data.header.listindex;
+end;
+
+function ttypehashdatalist.addvarvalue(const avalue: pvardataty): integer;
+var
+ po1: ptypedataty;
+begin 
+ po1:= ele.eledataabs(avalue^.vf.typ);
+ if po1^.datasize = das_none then begin
+  result:= addbytevalue(po1^.bytesize);
+ end
+ else begin
+  result:= addbitvalue(po1^.datasize);
+ end;
 end;
 
 function ttypehashdatalist.hashkey(const akey): hashvaluety;
@@ -698,16 +724,8 @@ begin
 end;
 
 function tgloballocdatalist.addvalue(const avalue: pvardataty): int32;
-var
- po1: ptypedataty;
-begin 
- po1:= ele.eledataabs(avalue^.vf.typ);
- if po1^.datasize = das_none then begin
-  result:= addbytevalue(po1^.bytesize);
- end
- else begin
-  result:= addbitvalue(po1^.datasize);
- end;
+begin
+ result:= addnoinit(ftypelist.addvarvalue(avalue));
 end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer): int32;

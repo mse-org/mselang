@@ -1,9 +1,9 @@
 program potoint32;
+
+procedure test();
 begin
- if true then begin
-  exitcode:= 1;
- end
- else begin
-  exitcode:= 2;
- end;
+end;
+
+begin
+ test();
 end.

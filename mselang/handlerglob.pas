@@ -288,7 +288,8 @@ type
   allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;
-  paramsrel: record //array of relative pvardataty
+  globid: int32; //for llvm
+  paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;
  end;
  psubdataty = ^subdataty;

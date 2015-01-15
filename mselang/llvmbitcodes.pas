@@ -392,7 +392,7 @@ type
     FUNC_CODE_DEBUG_LOC_AGAIN  = 33, // DEBUG_LOC_AGAIN
 
     FUNC_CODE_INST_CALL        = 34, // CALL:       [attr, fnty, fnid, args...]
-
+                             //mse: CALL: [paramattrs, cc, fnid, arg0, arg1...]
     FUNC_CODE_DEBUG_LOC        = 35, // DEBUG_LOC:  [Line,Col,ScopeVal, IAVal]
     FUNC_CODE_INST_FENCE       = 36, // FENCE: [ordering, synchscope]
     FUNC_CODE_INST_CMPXCHG     = 37, // CMPXCHG: [ptrty,ptr,cmp,new, align, vol,

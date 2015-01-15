@@ -20,7 +20,15 @@ interface
 uses
  msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,llvmlists,
  opglob;
-
+ 
+type
+ idarty = record
+  count: int32;
+  ids: pint32;
+ end;
+const
+ emptyidar: idarty = (count: 0; ids: nil);
+ 
 const
  bcwriterbuffersize = 16; //test flushbuffer, todo: make it bigger
  blockstacksize  = 256;
@@ -106,6 +114,8 @@ type
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
    procedure emitrec(const id: int32; const data: array of int32);
+   procedure emitrec(const id: int32; const data: array of int32;
+                                                 const adddata: idarty);
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
@@ -118,6 +128,8 @@ type
    procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure beginsub(const bbcount: int32);
    procedure endsub();
+   procedure emitcallop(const valueid: int32; const aparams: idarty);
+   
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
 
@@ -695,6 +707,26 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32;
+                                                         const adddata: idarty);
+var
+ i1: int32;
+ po1,pe: pint32;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(id);
+ emitvbr6(length(data) + adddata.count);
+ for i1:= 0 to high(data) do begin
+  emitvbr6(data[i1]);
+ end;
+ po1:= adddata.ids;
+ pe:= po1 + adddata.count;
+ while po1 < pe do begin
+  emitvbr6(po1^);
+  inc(po1);
+ end;
+end;
+
 procedure tllvmbcwriter.write8(const avalue: int8);
 begin
 {$ifdef mse_checkinternalerror}
@@ -1068,6 +1100,11 @@ end;
 procedure tllvmbcwriter.endsub();
 begin
  endblock();
+end;
+
+procedure tllvmbcwriter.emitcallop(const valueid: int32; const aparams: idarty);
+begin
+ emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
 end;
 
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;
