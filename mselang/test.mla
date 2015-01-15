@@ -2,6 +2,7 @@ program potoint32;
 
 procedure test();
 begin
+ exitcode:= 123;
 end;
 
 begin

@@ -434,7 +434,7 @@ begin
   while po5 < po6 do begin
    case po5^.kind of
     gak_sub: begin
-     emitsub(po5^.typeindex,cv_ccc,li_internal,0);
+     emitsub(po5^.typeindex,cv_ccc,po5^.linkage,0);
     end;
     gak_var: begin
      if po5^.initconstindex >= 0 then begin

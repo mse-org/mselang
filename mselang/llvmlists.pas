@@ -18,7 +18,7 @@ unit llvmlists;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,msehash,parserglob,handlerglob,mselist,msestrings;
+ msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes;
 
 type
  bufferdataty = record
@@ -179,7 +179,8 @@ type
  globallocdataty = record
   typeindex: int32;
   initconstindex: int32;
-  kind: globallockindty;
+  case kind: globallockindty of
+   gak_sub: (linkage: linkagety)
  end;
  pgloballocdataty = ^globallocdataty;
  
@@ -714,7 +715,8 @@ end;
 function tgloballocdatalist.addnoinit(const atyp: int32): int32;
 var
  dat1: globallocdataty;
-begin 
+begin
+ fillchar(dat1,sizeof(dat1),0);
  dat1.typeindex:= atyp;
  dat1.kind:= gak_var;
  dat1.initconstindex:= fconstlist.addnullvalue(atyp);
@@ -742,6 +744,7 @@ function tgloballocdatalist.addinitvalue(const aconstlistindex: integer): int32;
 var
  dat1: globallocdataty;
 begin
+ fillchar(dat1,sizeof(dat1),0);
  dat1.typeindex:= (pconstlisthashdataty(fconstlist.fdata)+
                                              aconstlistindex+1)^.data.typeid;
  dat1.kind:= gak_var;
@@ -757,6 +760,12 @@ var
 begin
  dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.kind:= gak_sub;
+ if avalue = nil then begin
+  dat1.linkage:= li_external;
+ end
+ else begin
+  dat1.linkage:= li_internal;
+ end;
  dat1.initconstindex:= -1;
  result:= fcount;
  inccount();
