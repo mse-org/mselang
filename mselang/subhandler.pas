@@ -872,7 +872,8 @@ begin
    po1^.allocs.nestedalloccount:= 0;
   end;
   resetssa();
-  int1:= getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
+  int1:= getssa(ocssa_alloc,po1^.allocs.alloccount);
+  int1:= int1 + getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
   if sf_hascallout in po1^.flags then begin
    int1:= int1 + getssa(ocssa_hascallout);
   end;

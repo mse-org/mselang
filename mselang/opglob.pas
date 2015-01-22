@@ -375,6 +375,7 @@ type
   ocssa_popsegaggregate,
   ocssa_pushnestedvar,  //per item
   ocssa_pushsegaggregate,
+  ocssa_alloc,          //per item
   ocssa_nestedcallout,  //per level
   ocssa_hascallout
  );

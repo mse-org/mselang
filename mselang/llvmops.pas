@@ -2906,6 +2906,7 @@ const
   popsegaggregatessa = 3;
   pushnestedvarssa = 3;
   pushsegaggregatessa = 3;
+  allocssa = 1;
   nestedcalloutssa = 2;
   hascalloutssa = 1;
 

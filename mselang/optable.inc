@@ -326,6 +326,7 @@
   popsegaggregatessa,
   pushnestedvarssa,
   pushsegaggregatessa,
+  allocssa,
   nestedcalloutssa,
   hascalloutssa
  );
@@ -638,6 +639,7 @@
   @lineinfoop,
    
    //ssa only
+  nil,
   nil,
   nil,
   nil,
