@@ -136,6 +136,7 @@ type
    procedure beginsub(const allocs: suballocinfoty; const bbcount: int32);
    procedure endsub();
    procedure emitcallop(const valueid: int32; const aparams: idarty);
+                                          //changes aparams
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
@@ -1148,7 +1149,12 @@ begin
 end;
 
 procedure tllvmbcwriter.emitcallop(const valueid: int32; const aparams: idarty);
+var
+ i1: int32;
 begin
+ for i1:= aparams.count-1 downto 0 do begin
+  aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
+ end;
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
 end;
 

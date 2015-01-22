@@ -2221,7 +2221,7 @@ begin
   ids.count:= callinfo.paramcount;
   po1:= ids.ids;
   while parpo < endpo do begin
-   po1^:= parpo^.ssaindex;
+   po1^:= bcstream.locval(parpo^.ssaindex);
    inc(po1);
    inc(parpo);
   end;
