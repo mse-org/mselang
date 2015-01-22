@@ -104,6 +104,8 @@ type
 
 const
  voidtype = ord(das_none);
+ bittypemax = ord(lastdatakind);
+ 
 type
  ttypehashdatalist = class(tbufferhashdatalist)
   protected

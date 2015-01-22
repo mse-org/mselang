@@ -34,7 +34,7 @@ procedure run(const atarget:
 implementation
 uses
  sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
- handlerutils;
+ handlerutils,llvmlists;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -409,14 +409,8 @@ procedure segassign();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
-  if memop.t.listindex >= 0 then begin
-   bcstream.emitsegdataaddresspo(memop);
-   bcstream.emitstoreop(bcstream.locval(ssas1),bcstream.relval(0));
-  end
-  else begin
-   bcstream.emitstoreop(bcstream.locval(ssas1),
+  bcstream.emitstoreop(bcstream.locval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
-  end;
 {  
   llvmtype(memop.t,str1);
   segdataaddresspo(memop.segdataaddress,true,str2);
@@ -431,7 +425,7 @@ procedure assignseg();
 // str1, str2: shortstring;
 begin
  with pc^.par do begin
-  if memop.t.listindex >= 0 then begin
+  if memop.t.listindex > bittypemax then begin
    bcstream.emitsegdataaddresspo(memop);
    bcstream.emitloadop(bcstream.relval(0));
   end
@@ -457,20 +451,13 @@ procedure locassign();
 // str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  if memop.t.listindex >= 0 then begin
-   notimplemented();
-   bcstream.emitsegdataaddresspo(memop);
-   bcstream.emitstoreop(bcstream.locval(ssas1),bcstream.relval(0));
-  end
-  else begin
-   with memop.locdataaddress do begin
-    if a.framelevel >= 0 then begin
-     notimplemented();
-    end
-    else begin
-     bcstream.emitstoreop(bcstream.locval(ssas1),
-                                        bcstream.allocval(a.address));
-    end;
+  with memop.locdataaddress do begin
+   if a.framelevel >= 0 then begin
+    notimplemented();
+   end
+   else begin
+    bcstream.emitstoreop(bcstream.locval(ssas1),
+                                       bcstream.allocval(a.address));
    end;
   end;
 {
@@ -613,10 +600,19 @@ begin
 end;
 
 procedure assignloc();
-var
- str1,str2,str3,str4,str5: shortstring;
+//var
+// str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
+  with memop.locdataaddress do begin
+   if a.framelevel >= 0 then begin
+    notimplemented();
+   end
+   else begin
+    bcstream.emitloadop(bcstream.allocval(a.address));
+   end;
+  end;
+{
   llvmtype(memop.t,str1);
   if memop.locdataaddress.a.framelevel >= 0 then begin
    str2:= '%'+inttostr(ssad-3);
@@ -633,30 +629,6 @@ begin
    str2:= '%'+inttostr(ssad);
    locdataaddress(memop.locdataaddress,str3);
    outass(str2+' = load '+str1+'* '+str3);
-  end;
-{ 
-  case memop.t.kind of
-   odk_bit: begin
-    str1:= 'i'+inttostr(memop.t.size);
-    if memop.locdataaddress.a.framelevel >= 0 then begin
-     str2:= '%'+inttostr(ssad-3);
-     str3:= '%'+inttostr(ssad-2);
-     str4:= '%'+inttostr(ssad-1);
-     str5:= '%'+inttostr(ssad);
-     outass(str2+' = getelementptr i8** %fp, i32 '+
-                                     inttostr(memop.locdataaddress.a.address));
-     outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
-     outass(str4+' = load '+str1+'** '+str3);
-     outass(str5+' = load '+str1+'* '+str4);
-    end
-    else begin
-     str2:= '%'+inttostr(ssad);
-     outass(str2+' = load '+str1+'* '+locdataaddress(memop.locdataaddress));
-    end;
-   end;
-   else begin
-    notimplemented();
-   end;
   end;
 }
  end;

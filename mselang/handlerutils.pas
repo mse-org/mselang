@@ -651,12 +651,15 @@ end;
 
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 begin
+ result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+{
  if af_aggregate in adest.address.flags then begin
   result:= getopdatatype(adest.typ,adest.address.indirectlevel);
  end
  else begin
   result.listindex:= -1; //none
  end;
+}
 end;
 
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
