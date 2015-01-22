@@ -1,15 +1,13 @@
 program potoint32;
-{
+
 procedure test();
 var
  i1: int32;
 begin
  i1:= 123;
- exitcode:= i1;
+ exitcode:= i1+i1;
 end;
-}
+
 begin
-// test();
-// exitcode:= 123;
- exitcode:= exitcode;
+ test();
 end.

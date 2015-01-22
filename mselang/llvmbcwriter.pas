@@ -1076,12 +1076,12 @@ end;
 function tllvmbcwriter.typeval(const alloc: typeallocinfoty): int32;
 begin
  with alloc do begin
-  if listindex < 0 then begin
-   result:= typeval(kind);
-  end
-  else begin
-   result:= typeval(listindex);
-  end;
+//  if listindex < 0 then begin
+//   result:= typeval(kind);
+//  end
+//  else begin
+  result:= typeval(listindex);
+//  end;
  end;
 end;
 
