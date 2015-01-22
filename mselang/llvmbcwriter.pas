@@ -112,7 +112,7 @@ type
    function globval(const globid: int32): int32; inline;
    function paramval(const paramid: int32): int32; inline;
    function allocval(const allocid: int32): int32; inline;
-   function locval(const locid: int32): int32; inline;
+   function ssaval(const ssaid: int32): int32; inline;
    function relval(const offset: int32): int32; inline; 
                     //0 -> result of last op
 //   function subval(const subid: int32): int32; inline;
@@ -1120,9 +1120,9 @@ begin
  result:= allocid + fsublocstart;
 end;
 
-function tllvmbcwriter.locval(const locid: int32): int32;
+function tllvmbcwriter.ssaval(const ssaid: int32): int32;
 begin
- result:= locid + fsubopstart;
+ result:= ssaid + fsubopstart;
 end;
 
 {

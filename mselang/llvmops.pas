@@ -173,7 +173,7 @@ end;
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
-  bcstream.emitbinop(aop,bcstream.locval(ssas1),bcstream.locval(ssas2));
+  bcstream.emitbinop(aop,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
  end;
 end;
 
@@ -410,7 +410,7 @@ procedure segassign();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitstoreop(bcstream.locval(ssas1),
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
 {  
   llvmtype(memop.t,str1);
@@ -457,7 +457,7 @@ begin
     notimplemented();
    end
    else begin
-    bcstream.emitstoreop(bcstream.locval(ssas1),
+    bcstream.emitstoreop(bcstream.ssaval(ssas1),
                                        bcstream.allocval(a.address));
    end;
   end;
@@ -908,7 +908,7 @@ procedure ifop();
 // tmp,lab1,lab2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitbrop(bcstream.locval(ssas1),
+  bcstream.emitbrop(bcstream.ssaval(ssas1),
               getoppo(opaddress.opaddress)^.par.opaddress.bbindex,
                                                        opaddress.bbindex);
 {
@@ -2221,7 +2221,7 @@ begin
   ids.count:= callinfo.paramcount;
   po1:= ids.ids;
   while parpo < endpo do begin
-   po1^:= bcstream.locval(parpo^.ssaindex);
+   po1^:= bcstream.ssaval(parpo^.ssaindex);
    inc(po1);
    inc(parpo);
   end;
