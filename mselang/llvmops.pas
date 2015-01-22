@@ -814,10 +814,19 @@ begin
  end;
 end;
 
+const
+ nullallocs: suballocinfoty = (
+  allocs: 0;
+  alloccount: 0;
+  paramcount: 0;
+  nestedallocs: 0;
+  nestedalloccount: 0;
+ );
+ 
 procedure mainop();
 begin
  with pc^.par do begin
-  bcstream.beginsub(0,main.blockcount);
+  bcstream.beginsub(nullallocs,main.blockcount);
  end;
 // outass('define i32 @main() {');
 end;
@@ -2212,7 +2221,7 @@ begin
   ids.count:= callinfo.paramcount;
   po1:= ids.ids;
   while parpo < endpo do begin
-   po1^:= bcstream.locval(parpo^.ssaindex);
+   po1^:= parpo^.ssaindex;
    inc(po1);
    inc(parpo);
   end;
@@ -2326,15 +2335,22 @@ var
  poend: pointer;
 begin
  with pc^.par.subbegin do begin
-  bcstream.beginsub(allocs.alloccount,blockcount);
+  bcstream.beginsub(allocs,blockcount);
+  if sf_function in flags then begin
+   notimplemented();
+  end;
+  if sf_hasnestedaccess in flags then begin
+   notimplemented();
+  end;
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
   poend:= po1 + allocs.alloccount;
-  po1:= po1 + allocs.paramcount;
   while po1 < poend do begin
    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
    inc(po1);
   end;
-    //todo: nestedallocs
+  for i1:= 0 to allocs.paramcount-1 do begin
+   bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
+  end;  
  end;
 end;
 

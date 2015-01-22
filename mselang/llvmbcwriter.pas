@@ -60,7 +60,8 @@ type
   protected
 //   fconstopstart: int32;
    fglobstart: int32;    //start of global variables
-   fsubstart: int32;     //start of sub values
+   fsubstart: int32;     //param allocs
+   fsublocstart: int32;  //local var allocs
    fsubopstart: int32;  //start of op ssa id's
    fsubopindex: int32;   //current op ssa is
   {$ifdef mse_checkinternalerror}
@@ -109,6 +110,7 @@ type
    function ptypeval(const alloc: typeallocinfoty): int32;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
+   function paramval(const paramid: int32): int32; inline;
    function allocval(const allocid: int32): int32; inline;
    function locval(const locid: int32): int32; inline;
    function relval(const offset: int32): int32; inline; 
@@ -131,7 +133,7 @@ type
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32);
-   procedure beginsub(const alloccount: int32; const bbcount: int32);
+   procedure beginsub(const allocs: suballocinfoty; const bbcount: int32);
    procedure endsub();
    procedure emitcallop(const valueid: int32; const aparams: idarty);
    
@@ -940,6 +942,7 @@ end;
 procedure tllvmbcwriter.emitalloca(const atype: int32);
 begin                       
  emitrec(ord(FUNC_CODE_INST_ALLOCA),[atype,typeval(das_8),constval(1),0]);
+ inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
@@ -1106,9 +1109,14 @@ begin
  result:= fsubopindex - offset - 1;
 end;
 
+function tllvmbcwriter.paramval(const paramid: int32): int32;
+begin
+ result:= paramid + fsubstart;
+end;
+
 function tllvmbcwriter.allocval(const allocid: int32): int32;
 begin
- result:= allocid + fsubstart;
+ result:= allocid + fsublocstart;
 end;
 
 function tllvmbcwriter.locval(const locid: int32): int32;
@@ -1122,10 +1130,14 @@ begin
  result:= subid + fsubopstart;
 end;
 }
-procedure tllvmbcwriter.beginsub(const alloccount: int32; const bbcount: int32);
+procedure tllvmbcwriter.beginsub(const allocs: suballocinfoty;
+                                                      const bbcount: int32);
 begin
- fsubopstart:= fsubstart+alloccount;
- fsubopindex:= fsubopstart;
+ with allocs do begin
+  fsublocstart:= fsubstart+paramcount;
+  fsubopstart:= fsubstart+alloccount;
+  fsubopindex:= fsubopstart;
+ end;
  beginblock(FUNCTION_BLOCK_ID,3);
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
 end;
