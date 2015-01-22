@@ -73,7 +73,8 @@ type
                         ie_elements, //error in element list
                         ie_rtti,     //error in rtti handler
                         ie_segment,  //error in segment handler
-                        ie_bcwriter  //error in llvm bc writer
+                        ie_bcwriter, //error in llvm bc writer
+                        ie_llvm      //error in llvm code generator
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -81,8 +82,8 @@ const
      '',     'N',              'P',      'H',       'R',     'U',    
  //ie_type,ie_managed
      'T',    'M',
- //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter
-     'SUB',   'V',   'E',        'I',    'SEG',     'BC'
+ //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
+     'SUB',   'V',   'E',        'I',    'SEG',     'BC',     'LLVM'
  );
  
  stoperrorlevel = erl_fatal;

@@ -21,6 +21,9 @@ interface
 uses
  msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes;
 
+const
+ maxparamcount = 512;
+
 type
  bufferdataty = record
   listindex: int32;
@@ -422,8 +425,6 @@ end;
 
 function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
 
-const
- maxparamcount = 512;
 type
  subtypebufferty = record
   header: subtypeheaderty;

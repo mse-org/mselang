@@ -34,13 +34,14 @@ procedure run(const atarget:
 implementation
 uses
  sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
- handlerutils,llvmlists;
+ handlerutils,llvmlists,errorhandler;
 
 type
  icomparekindty = (ick_eq,ick_ne,
                   ick_ugt,ick_uge,ick_ult,ick_ule,
                   ick_sgt,ick_sge,ick_slt,ick_sle);
-
+ idsarty = array[0..maxparamcount-1] of int32;
+ 
 const
  breakline = c_linefeed;
 // nilconst = 'i8* inttoptr(i32 0 to i8*)';
@@ -2192,14 +2193,43 @@ begin
  end;
 end;
 
+procedure docallparam(const outlinkcount: int32; var ids: idarty);
+var
+ parpo,endpo: pparallocinfoty;
+ po1: pint32;
+begin
+ with pc^.par do begin
+  if sf_hasnestedaccess in callinfo.flags then begin
+   notimplemented;
+  end;
+ {$ifdef mse_checkinternalerror}
+  if callinfo.paramcount > high(idsarty) then begin
+   internalerror(ie_llvm,'20150122');
+  end;
+ {$endif}
+  parpo:= getsegmentpo(seg_localloc,callinfo.params);
+  endpo:= parpo + callinfo.paramcount;  
+  ids.count:= callinfo.paramcount;
+  po1:= ids.ids;
+  while parpo < endpo do begin
+   po1^:= bcstream.locval(parpo^.ssaindex);
+   inc(po1);
+   inc(parpo);
+  end;
+ end;
+end;
+
 procedure docall(const outlinkcount: integer);
 var
- parpo: pparallocinfoty;
- endpo: pointer;
+ ids: idsarty;
+ idar: idarty;
+ 
 begin
- with pc^.par do begin               //todo: params, calling convention
+ with pc^.par do begin               //todo: calling convention
+  idar.ids:= @ids;
+  docallparam(outlinkcount,idar);
   bcstream.emitcallop(bcstream.globval(
-                      getoppo(callinfo.ad+1)^.par.subbegin.globid),emptyidar);
+             getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
  end;
 {
  with pc^.par do begin
