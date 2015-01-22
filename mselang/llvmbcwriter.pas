@@ -59,9 +59,10 @@ type
    fbitbuf: card16;
   protected
 //   fconstopstart: int32;
-   fglobstart: int32;
-   fsubopstart: int32;
-   fsubopindex: int32;
+   fglobstart: int32;    //start of global variables
+   fsubstart: int32;     //start of sub values
+   fsubopstart: int32;  //start of op ssa id's
+   fsubopindex: int32;   //current op ssa is
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -104,8 +105,11 @@ type
    function ptypeval(const typeid: databitsizety): integer; inline;
    function typeval(const typeid: int32): int32; inline;
    function ptypeval(const typeid: int32): int32; inline;
+   function typeval(const alloc: typeallocinfoty): int32; 
+   function ptypeval(const alloc: typeallocinfoty): int32;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
+   function allocval(const allocid: int32): int32; inline;
    function locval(const locid: int32): int32; inline;
    function relval(const offset: int32): int32; inline; 
                     //0 -> result of last op
@@ -126,7 +130,8 @@ type
                const aprefixdata: int32});
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
-   procedure beginsub(const bbcount: int32);
+   procedure emitalloca(const atype: int32);
+   procedure beginsub(const alloccount: int32; const bbcount: int32);
    procedure endsub();
    procedure emitcallop(const valueid: int32; const aparams: idarty);
    
@@ -316,7 +321,7 @@ begin
  beginblock(MODULE_BLOCK_ID,3);
  emitrec(ord(MODULE_CODE_VERSION),[1]);
 
- fsubopstart:= consts.count + globals.count;
+ fsubstart:= consts.count + globals.count;
  
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -932,6 +937,11 @@ begin
                                                      ord(li_internal),0,0]);
 end;
 
+procedure tllvmbcwriter.emitalloca(const atype: int32);
+begin                       
+ emitrec(ord(FUNC_CODE_INST_ALLOCA),[atype,typeval(das_8),constval(1),0]);
+end;
+
 procedure tllvmbcwriter.emitchar6(const avalue: pchar; const alength: integer);
 var
  po1,pe: pchar;
@@ -1063,6 +1073,23 @@ begin
  result:= ptypeindex(typeid);
 end;
 
+function tllvmbcwriter.typeval(const alloc: typeallocinfoty): int32;
+begin
+ with alloc do begin
+  if listindex < 0 then begin
+   result:= typeval(kind);
+  end
+  else begin
+   result:= typeval(listindex);
+  end;
+ end;
+end;
+
+function tllvmbcwriter.ptypeval(const alloc: typeallocinfoty): int32;
+begin
+ result:= typeval(alloc) + 1;
+end;
+
 function tllvmbcwriter.constval(const constid: int32): int32;
 begin
  result:= constid;
@@ -1079,6 +1106,11 @@ begin
  result:= fsubopindex - offset - 1;
 end;
 
+function tllvmbcwriter.allocval(const allocid: int32): int32;
+begin
+ result:= allocid + fsubstart;
+end;
+
 function tllvmbcwriter.locval(const locid: int32): int32;
 begin
  result:= locid + fsubopstart;
@@ -1090,8 +1122,9 @@ begin
  result:= subid + fsubopstart;
 end;
 }
-procedure tllvmbcwriter.beginsub(const bbcount: int32);
+procedure tllvmbcwriter.beginsub(const alloccount: int32; const bbcount: int32);
 begin
+ fsubopstart:= fsubstart+alloccount;
  fsubopindex:= fsubopstart;
  beginblock(FUNCTION_BLOCK_ID,3);
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);

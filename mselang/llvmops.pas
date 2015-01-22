@@ -453,9 +453,27 @@ begin
 end;
 }
 procedure locassign();
-var
- str1,str2,str3,str4,str5: shortstring;
+//var
+// str1,str2,str3,str4,str5: shortstring;
 begin
+ with pc^.par do begin
+  if memop.t.listindex >= 0 then begin
+   notimplemented();
+   bcstream.emitsegdataaddresspo(memop);
+   bcstream.emitstoreop(bcstream.locval(ssas1),bcstream.relval(0));
+  end
+  else begin
+   with memop.locdataaddress do begin
+    if a.framelevel >= 0 then begin
+     notimplemented();
+    end
+    else begin
+     bcstream.emitstoreop(bcstream.locval(ssas1),
+                                        bcstream.allocval(a.address));
+    end;
+   end;
+  end;
+{
  with pc^.par do begin
   llvmtype(memop.t,str1);
   str2:= '%'+inttostr(ssas1);
@@ -475,7 +493,7 @@ begin
    outass('store '+str1+' '+str2+', '+
                          str1+'* '+str3);
   end;
-
+}
 {
   case memop.t.kind of
    odk_bit: begin
@@ -826,7 +844,7 @@ end;
 procedure mainop();
 begin
  with pc^.par do begin
-  bcstream.beginsub(main.blockcount);
+  bcstream.beginsub(0,main.blockcount);
  end;
 // outass('define i32 @main() {');
 end;
@@ -2299,9 +2317,22 @@ begin
 end;
 
 procedure subbeginop();
+var
+ po1: plocallocinfoty;
+ po2: pnestedallocinfoty;
+ i1: int32;
+ poend: pointer;
 begin
  with pc^.par.subbegin do begin
-  bcstream.beginsub(blockcount);
+  bcstream.beginsub(allocs.alloccount,blockcount);
+  po1:= getsegmentpo(seg_localloc,allocs.allocs);
+  poend:= po1 + allocs.alloccount;
+  po1:= po1 + allocs.paramcount;
+  while po1 < poend do begin
+   bcstream.emitalloca(bcstream.ptypeval(po1^.size));
+   inc(po1);
+  end;
+    //todo: nestedallocs
  end;
 end;
 

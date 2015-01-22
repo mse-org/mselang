@@ -1,8 +1,10 @@
 program potoint32;
 
 procedure test();
+var
+ i1: int32;
 begin
- exitcode:= 123;
+ i1:= 123;
 end;
 
 begin

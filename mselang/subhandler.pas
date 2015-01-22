@@ -837,16 +837,6 @@ begin
    int1:= 0;
    while ele1 <> 0 do begin      //number params and vars
     po4:= ele.eledataabs(ele1);
-    {
-    if po4^.address.indirectlevel > 0 then begin
-     int2:= 0;
-    end
-    else begin
-     with ptypedataty(ele.eledataabs(po4^.vf.typ))^ do begin
-      int2:= bitsize;
-     end;
-    end;
-    }
     with plocallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(locallocinfoty)))^ do begin
      address:= po4^.address.locaddress.address;
@@ -858,6 +848,7 @@ begin
    end;
    po1^.allocs.allocs:= alloc1;
    po1^.allocs.alloccount:= int1;
+   po1^.allocs.paramcount:= po1^.paramcount;
 
    ele1:= po1^.nestedvarchain;
    po1^.allocs.nestedallocs:= getsegmenttopoffs(seg_localloc);
@@ -868,7 +859,6 @@ begin
        allocsegmentpo(seg_localloc,sizeof(nestedallocinfoty)))^ do begin
      address:= po5^.address;
     end;
- 
     ele1:= po5^.next;
     inc(int1);
    end;
@@ -877,6 +867,7 @@ begin
   else begin
    po1^.allocs.allocs:= 0;
    po1^.allocs.alloccount:= 0;
+   po1^.allocs.paramcount:= 0;
    po1^.allocs.nestedallocs:= 0;
    po1^.allocs.nestedalloccount:= 0;
   end;

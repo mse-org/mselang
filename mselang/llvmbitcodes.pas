@@ -367,6 +367,7 @@ type
     // 17 is unused.
     // 18 is unused.
     FUNC_CODE_INST_ALLOCA      = 19, // ALLOCA:     [instty, op, align]
+                          //mse: ALLOCA ^type,memtype,memcount,align/inalloca
     FUNC_CODE_INST_LOAD        = 20, // LOAD:       [opty, op, align, vol]
                                  //mse: LOAD:       [op, align, vol]
     // 21 is unused.
