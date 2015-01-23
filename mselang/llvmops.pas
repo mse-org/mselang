@@ -1950,36 +1950,11 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitsegdataaddresspo(memop);
+ {
   segdataaddresspo(vsegaddress,false,str1);
   outass('%'+inttostr(ssad)+' = '+str1);
- (*
-  if vsegaddress.a.size = 0 then begin //pointer
-   outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
-                                 segdataaddress(vsegaddress)+') to i8*');
-  {
-   if vsegaddress.a.segment = seg_globconst then begin
-    outass('%'+inttostr(ssad)+' = '+segdataaddress(vsegaddress));
-   end
-   else begin
-    outass('%'+inttostr(ssad)+' = bitcast i8** getelementptr(i8** '+
-                                 segdataaddress(vsegaddress)+') to i8*');
-   end;
-  }
-  end
-  else begin
-   if vsegaddress.a.size < 0 then begin //int
-    str1:= 'i'+inttostr(-vsegaddress.a.size)+'* ';
-    outass('%'+inttostr(ssad)+' = bitcast '+str1+'getelementptr('+str1+
-                                       segdataaddress(vsegaddress)+') to i8*');
-   end
-   else begin                           //record
-    outass('%'+inttostr(ssad)+' = getelementptr ['+
-               inttostr(vsegaddress.a.size)+' x i8]* '+
-               segdataaddress(vsegaddress)+', i32 0, i32 '+
-               inttostr(vsegaddress.offset));
-   end;
-  end;
-  *)
+ }
  end;
 end;
 
