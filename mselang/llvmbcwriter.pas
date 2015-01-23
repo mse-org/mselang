@@ -1124,7 +1124,7 @@ end;
 
 function tllvmbcwriter.ssaval(const ssaid: int32): int32;
 begin
- result:= ssaid + fsubopstart;
+ result:= ssaid + fsublocstart; //fsubopstart;
 end;
 
 {
