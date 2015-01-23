@@ -1526,8 +1526,12 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),
+                     bcstream.globval(memop.segdataaddress.a.address));
+{
   segdataaddress(memop.segdataaddress,str1);
   outass('store i8* %'+inttostr(ssas1)+', i8** '+str1);
+}
  end;
 end;
 
