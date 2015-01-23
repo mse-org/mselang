@@ -2217,6 +2217,9 @@ begin
   end;
  {$endif}
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
+  if sf_function in callinfo.flags then begin
+   inc(parpo); //skip result param
+  end;
   endpo:= parpo + callinfo.paramcount;  
   ids.count:= callinfo.paramcount;
   po1:= ids.ids;
@@ -2278,7 +2281,7 @@ end;
 procedure callfuncop();
 begin
  with pc^.par do begin
-  docallfunc(0);
+  docall(0);
  end;
 end;
 
@@ -2337,7 +2340,7 @@ begin
  with pc^.par.subbegin do begin
   bcstream.beginsub(allocs,blockcount);
   if sf_function in flags then begin
-   notimplemented();
+//   notimplemented();
   end;
   if sf_hasnestedaccess in flags then begin
    notimplemented();
@@ -2486,7 +2489,7 @@ end;
 procedure subendop();
 begin
  with pc^.par.subend do begin
-  bcstream.emitretop(); //todo: function
+//  bcstream.emitretop(); //todo: function
   bcstream.endsub();
 //  outass('}');
  end;
@@ -2494,6 +2497,7 @@ end;
 
 procedure returnop();
 begin
+ bcstream.emitretop();
  //dummy
 // bcstream.emitretop();
 // outass('ret void');
@@ -2506,11 +2510,15 @@ var
  dest1: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitretop(bcstream.allocval(0));
+  
+{
   po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
   llvmtype(po1^.size,ty1);
   dest1:= '%'+inttostr(ssad);
   outass(dest1 + ' = load '+ty1+'* %l0');
   outass('ret '+ty1+' '+dest1);
+}
  end;
 end;
 
