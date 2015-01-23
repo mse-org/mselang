@@ -98,8 +98,8 @@ function getaddress(const stackoffset: integer;
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
 procedure push(const avalue: real); overload;
-procedure push(const avalue: addressvaluety; const offset: dataoffsty;
-                                          const indirect: boolean); overload;
+procedure push( const atype: typeinfoty; const avalue: addressvaluety;
+                const offset: dataoffsty; const indirect: boolean); overload;
 procedure push(const avalue: datakindty); overload;
 //procedure pushconst(var avalue: contextdataty);
 procedure pushdata(const address: addressvaluety;
@@ -110,12 +110,13 @@ procedure pushdata(const address: addressvaluety;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
 procedure pushinsert(const stackoffset: integer; const before: boolean;
+            const atype: typeinfoty;
             const avalue: addressvaluety; const offset: dataoffsty;
                                             const indirect: boolean); overload;
             //class field address
 function pushinsertvar(const stackoffset: integer; const before: boolean;
                                      const atype: ptypedataty): integer;
-procedure pushinsertsegaddress(const stackoffset: integer;
+procedure pushinsertsegaddresspo(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const address: addressvaluety;
@@ -537,7 +538,7 @@ begin
  end;
 end;
 
-procedure pushinsertsegaddress(const stackoffset: integer;
+procedure pushinsertsegaddresspo(const stackoffset: integer;
                              const before: boolean;
                              const address: segaddressty);
 begin
@@ -546,9 +547,10 @@ begin
  end
  else begin
   with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
-   par.vsegaddress.a:= address;
-   par.vsegaddress.offset:= 0;
-//   par.vsegaddress.datasize:= 0; //todo!
+   par.memop.segdataaddress.a:= address;
+   par.memop.segdataaddress.offset:= 0;
+   par.memop.t:= bitoptypes[das_pointer];
+//   par.memop.segdataaddress.datasize:= 0; //todo!
   end;
  end;
 end;
@@ -573,9 +575,10 @@ begin
   }
   if af_segment in ref.c.address.flags then begin
    with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
-    par.vsegaddress.a:= ref.c.address.segaddress;
-    par.vsegaddress.offset:= ref.offset;
-//    par.vsegaddress.datasize:= int1;
+    par.memop.segdataaddress.a:= ref.c.address.segaddress; //todo:typelistindex
+    par.memop.segdataaddress.offset:= ref.offset;
+    par.memop.t:= getopdatatype(datatyp);
+//    par.memop.segdataaddress.datasize:= int1;
    end;
   end
   else begin
@@ -710,8 +713,9 @@ begin
     end
     else begin
      with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
-      par.vsegaddress.a:= segad1;
-      par.vsegaddress.offset:= 0;
+      par.memop.segdataaddress.a:= segad1; //todo:typelistindex
+      par.memop.segdataaddress.offset:= 0;
+      par.memop.t:= bitoptypes[das_pointer];
      end;
     end;
    end;
@@ -724,8 +728,9 @@ begin
      else begin
       if af_segment in vaddress.flags then begin
        with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
-        par.vsegaddress.a:= vaddress.segaddress;
-        par.vsegaddress.offset:= 0;
+        par.memop.segdataaddress.a:= vaddress.segaddress;//todo:typelistindex
+        par.memop.segdataaddress.offset:= 0;
+        par.memop.t:= bitoptypes[das_pointer];
        end;
       end
       else begin
@@ -795,7 +800,7 @@ begin
 end;
 
 procedure pushins(const ains: boolean; const stackoffset: integer;
-          const before: boolean;
+          const before: boolean; const atype: typeinfoty;
           const avalue: addressvaluety; const offset: dataoffsty;
                                            const indirect: boolean);
 //todo: optimize
@@ -828,8 +833,9 @@ begin
     po1:= getop(oc_pushsegaddr);
    end;
    with po1^ do begin
-    par.vsegaddress.a:= avalue.segaddress;
-    par.vsegaddress.offset:= offset;
+    par.memop.segdataaddress.a:= avalue.segaddress;//todo:typelistindex
+    par.memop.segdataaddress.offset:= offset;
+    par.memop.t:= getopdatatype(atype);
    end;
   end
   else begin
@@ -849,17 +855,18 @@ begin
  end;
 end;
 
-procedure push(const avalue: addressvaluety; const offset: dataoffsty;
+procedure push(const atype: typeinfoty; const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
- pushins(false,0,false,avalue,offset,indirect);
+ pushins(false,0,false,atype,avalue,offset,indirect);
 end;
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
+            const atype: typeinfoty;
             const avalue: addressvaluety; const offset: dataoffsty;
             const indirect: boolean); overload;
 begin
- pushins(true,stackoffset,before,avalue,offset,indirect);
+ pushins(true,stackoffset,before,atype,avalue,offset,indirect);
 end;
 
 procedure push(const avalue: datakindty); overload;
@@ -1290,10 +1297,11 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin;
   if d.dat.indirection <= 0 then begin
    if d.dat.indirection = 0 then begin
-    pushinsert(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,true);
+    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+                                                     d.dat.ref.offset,true);
    end
    else begin
-    pushinsert(stackoffset,false,d.dat.ref.c.address,0,true);
+    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,0,true);
     for int1:= d.dat.indirection to -2 do begin
      with insertitem(oc_indirectpo,stackoffset,false)^ do begin
       par.memop.t:= bitoptypes[das_pointer];
@@ -1461,7 +1469,8 @@ begin
    ck_ref: begin
     if d.dat.indirection = 1 then begin
      if endaddress then begin
-      pushinsert(stackoffset,false,d.dat.ref.c.address,d.dat.ref.offset,false);
+      pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+                                                       d.dat.ref.offset,false);
                   //address pointer on stack
       initfactcontext(stackoffset);
      end

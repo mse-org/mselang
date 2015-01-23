@@ -1324,7 +1324,7 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  segdataaddress(vsegaddress,str1);
+  segdataaddress(memop.segdataaddress,str1);
   outass('store '+nilconst+', i8** '+str1);
  end;
 end;
@@ -1372,7 +1372,7 @@ var
 begin
  with pc^.par do begin
   str1:= '%'+inttostr(ssad);
-  segdataaddress(vsegaddress,str2);
+  segdataaddress(memop.segdataaddress,str2);
   outass(str1+' = bitcast i8** '+str2+' to i8*');
   finirefsize(str1);
  end;
@@ -1460,7 +1460,7 @@ procedure decrefsizesegop();
 var
  str1: shortstring;
 begin
- segdataaddress(pc^.par.vsegaddress,str1);
+ segdataaddress(pc^.par.memop.segdataaddress,str1);
  decrefsize(str1);
 end;
 
@@ -1952,7 +1952,7 @@ begin
  with pc^.par do begin
   bcstream.emitsegdataaddresspo(memop);
  {
-  segdataaddresspo(vsegaddress,false,str1);
+  segdataaddresspo(memop.segdataaddress,false,str1);
   outass('%'+inttostr(ssad)+' = '+str1);
  }
  end;
@@ -1963,11 +1963,11 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par do begin
-  segdataaddress(vsegaddress,str1);
+  segdataaddress(memop.segdataaddress,str1);
   str2:= '%'+inttostr(ssad-1);
   outass(str2+' = load i8** '+str1);
   outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
-                                          inttostr(vsegaddress.offset));
+                                          inttostr(memop.segdataaddress.offset));
  end;
 end;
 

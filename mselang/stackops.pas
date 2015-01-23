@@ -990,12 +990,12 @@ end;
 procedure pushsegaddressop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= 
-                                    getsegaddress(cpu.pc^.par.vsegaddress); 
+                                    getsegaddress(cpu.pc^.par.memop.segdataaddress); 
 end;
 
 procedure storesegnilop();
 begin
- ppointer(getsegaddress(cpu.pc^.par.vsegaddress))^:= nil;
+ ppointer(getsegaddress(cpu.pc^.par.memop.segdataaddress))^:= nil;
 end;
 
 procedure storeframenilop();
@@ -1573,13 +1573,13 @@ end;
 procedure pushsegaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-               getsegaddress(cpu.pc^.par.vsegaddress);
+               getsegaddress(cpu.pc^.par.memop.segdataaddress);
 end;
 
 procedure pushsegaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-               getsegaddressindi(cpu.pc^.par.vsegaddress);
+               getsegaddressindi(cpu.pc^.par.memop.segdataaddress);
 end;
 
 procedure pushstackaddrop();
@@ -2064,7 +2064,7 @@ end;
 
 procedure finirefsizesegop();
 begin
- finirefsize(getsegaddress(cpu.pc^.par.vsegaddress));
+ finirefsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
 end;
 
 procedure finirefsizeframeop();
@@ -2119,7 +2119,7 @@ end;
 
 procedure increfsizesegop();
 begin
- increfsize(getsegaddress(cpu.pc^.par.vsegaddress));
+ increfsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
 end;
 
 procedure increfsizeframeop();
@@ -2174,7 +2174,7 @@ end;
 
 procedure decrefsizesegop();
 begin
- decrefsize(getsegaddress(cpu.pc^.par.vsegaddress));
+ decrefsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
 end;
 
 procedure decrefsizeframeop();

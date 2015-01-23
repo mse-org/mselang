@@ -654,10 +654,12 @@ type
    oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref:(
     vaddress: dataaddressty;
    );
+   (*
    {oc_pushsegaddress,}oc_pushsegaddr,oc_pushsegaddrindi,
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg:(
     vsegaddress: segdataaddressty;
    );
+   *)
    oc_pushlocaddr,oc_pushlocaddrindi:(
     vlocaddress: locdataaddressty;
    );
@@ -682,6 +684,7 @@ type
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64:(
     stackop: stackopty;
    );
+   oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_popseg,oc_pushseg,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,

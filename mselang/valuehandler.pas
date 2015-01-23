@@ -299,7 +299,7 @@ var
         par.voffset:= -asub^.paramsize+stacklinksize-int1;
        end;
        if sf_constructor in asub^.flags then begin
-        pushinsertsegaddress(parent-s.stackindex,false,po3^.infoclass.defs);
+        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
                                     //class type
        end;
       end;
@@ -436,7 +436,7 @@ var
           errormessage(err_classref,[],int1+1);
           exit;
          end;
-         pushinsert(0,false,nilad,0,false);
+         pushinsert(0,false,sysdatatypes[st_pointer],nilad,0,false);
         end;
         else begin
          internalerror1(ie_notimplemented,'20140417A');

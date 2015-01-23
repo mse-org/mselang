@@ -186,6 +186,7 @@ begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
     par.memop.segdataaddress.a.segment:= aaddress.segment;
     par.memop.segdataaddress.offset:= 0;
+    par.memop.t:= bitoptypes[das_pointer];
    end
    else begin
     par.memop.podataaddress:= aaddress.offset;
@@ -195,9 +196,10 @@ begin
  else begin
   with additem(opsar[false][aaddress.base])^ do begin
    if aaddress.base = ab_segment then begin
-    par.vsegaddress.a.address:= aaddress.offset;
-    par.vsegaddress.a.segment:= aaddress.segment;
-    par.vsegaddress.offset:= 0;
+    par.memop.segdataaddress.a.address:= aaddress.offset;//todo:typelistindex
+    par.memop.segdataaddress.a.segment:= aaddress.segment;
+    par.memop.segdataaddress.offset:= 0;
+    par.memop.t:= bitoptypes[das_pointer];
    end
    else begin
     par.vaddress:= aaddress.offset;
