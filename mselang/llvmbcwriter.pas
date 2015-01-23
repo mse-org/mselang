@@ -59,11 +59,12 @@ type
    fbitbuf: card16;
   protected
 //   fconstopstart: int32;
-   fglobstart: int32;    //start of global variables
-   fsubstart: int32;     //param allocs
-   fsublocstart: int32;  //local var allocs
-   fsubopstart: int32;  //start of op ssa id's
-   fsubopindex: int32;   //current op ssa is
+   fglobstart: int32;       //start of global variables
+   fsubstart: int32;        //start of sub values (params)
+   fsubparamstart: int32;   //reference for param access
+   fsuballocstart: int32;   //reference for allocs
+   fsubopstart: int32;      //start of op ssa id's
+   fsubopindex: int32;      //current op ssa is
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -1114,17 +1115,17 @@ end;
 
 function tllvmbcwriter.paramval(const paramid: int32): int32;
 begin
- result:= paramid + fsubstart;
+ result:= paramid + fsubparamstart;
 end;
 
 function tllvmbcwriter.allocval(const allocid: int32): int32;
 begin
- result:= allocid + fsublocstart;
+ result:= allocid + fsuballocstart;
 end;
 
 function tllvmbcwriter.ssaval(const ssaid: int32): int32;
 begin
- result:= ssaid + fsublocstart; //fsubopstart;
+ result:= ssaid + fsubopstart;
 end;
 
 {
@@ -1137,12 +1138,13 @@ procedure tllvmbcwriter.beginsub(const afunc: boolean;
                           const allocs: suballocinfoty; const bbcount: int32);
 begin
  with allocs do begin
-  fsublocstart:= fsubstart+paramcount;
+  fsubparamstart:= fsubstart;
   if afunc then begin
-   dec(fsublocstart); //skip result param
+   dec(fsubparamstart); //skip result param
   end;
-  fsubopstart:= fsubstart+alloccount;
-  fsubopindex:= fsublocstart; //pending allocs done in llvmops.subbeginop()
+  fsuballocstart:= fsubparamstart+paramcount;
+  fsubopstart:= fsuballocstart+alloccount;
+  fsubopindex:= fsuballocstart; //pending allocs done in llvmops.subbeginop()
  end;
  beginblock(FUNCTION_BLOCK_ID,3);
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
