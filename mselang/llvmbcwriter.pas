@@ -135,7 +135,8 @@ type
    procedure emitalloca(const atype: int32);
    procedure beginsub(const allocs: suballocinfoty; const bbcount: int32);
    procedure endsub();
-   procedure emitcallop(const valueid: int32; const aparams: idarty);
+   procedure emitcallop(const valueid: int32; const afunc: boolean;
+                                                      const aparams: idarty);
                                           //changes aparams
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
@@ -1148,7 +1149,8 @@ begin
  endblock();
 end;
 
-procedure tllvmbcwriter.emitcallop(const valueid: int32; const aparams: idarty);
+procedure tllvmbcwriter.emitcallop(const valueid: int32; const afunc: boolean;
+                                                   const aparams: idarty);
 var
  i1: int32;
 begin
@@ -1156,6 +1158,9 @@ begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ if afunc then begin
+  inc(fsubopindex);
+ end;
 end;
 
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;

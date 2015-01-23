@@ -2217,11 +2217,12 @@ begin
   end;
  {$endif}
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  if sf_function in callinfo.flags then begin
-   inc(parpo); //skip result param
-  end;
   endpo:= parpo + callinfo.paramcount;  
   ids.count:= callinfo.paramcount;
+  if sf_function in callinfo.flags then begin
+   inc(parpo);            //skip result param
+   dec(ids.count);
+  end;
   po1:= ids.ids;
   while parpo < endpo do begin
    po1^:= bcstream.ssaval(parpo^.ssaindex);
@@ -2235,22 +2236,14 @@ procedure docall(const outlinkcount: integer);
 var
  ids: idsarty;
  idar: idarty;
- 
 begin
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(outlinkcount,idar);
   bcstream.emitcallop(bcstream.globval(
-             getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
+             getoppo(callinfo.ad+1)^.par.subbegin.globid),
+                                    sf_function in callinfo.flags,idar);
  end;
-{
- with pc^.par do begin
-  parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  endpo:= parpo + callinfo.paramcount;
-  outass('call void @s'+inttostr(callinfo.ad+1)+'(');
-  docallparam(parpo,endpo,outlinkcount);
- end;
-}
 end;
 
 procedure docallfunc(const outlinkcount: integer);
@@ -2334,14 +2327,11 @@ procedure subbeginop();
 var
  po1: plocallocinfoty;
  po2: pnestedallocinfoty;
- i1: int32;
+ i1,i2: int32;
  poend: pointer;
 begin
  with pc^.par.subbegin do begin
   bcstream.beginsub(allocs,blockcount);
-  if sf_function in flags then begin
-//   notimplemented();
-  end;
   if sf_hasnestedaccess in flags then begin
    notimplemented();
   end;
@@ -2351,7 +2341,11 @@ begin
    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
    inc(po1);
   end;
-  for i1:= 0 to allocs.paramcount-1 do begin
+  i2:= 0;
+  if sf_function in flags then begin
+   i2:= 1; //skip result param
+  end;
+  for i1:= i2 to allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;  
  end;
