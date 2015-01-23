@@ -133,9 +133,10 @@ type
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32);
-   procedure beginsub(const allocs: suballocinfoty; const bbcount: int32);
+   procedure beginsub(const afunc: boolean; const allocs: suballocinfoty;
+                                                            const bbcount: int32);
    procedure endsub();
-   procedure emitcallop(const valueid: int32; const afunc: boolean;
+   procedure emitcallop(const afunc: boolean; const valueid: int32;
                                                       const aparams: idarty);
                                           //changes aparams
    
@@ -1132,13 +1133,16 @@ begin
  result:= subid + fsubopstart;
 end;
 }
-procedure tllvmbcwriter.beginsub(const allocs: suballocinfoty;
-                                                      const bbcount: int32);
+procedure tllvmbcwriter.beginsub(const afunc: boolean;
+                          const allocs: suballocinfoty; const bbcount: int32);
 begin
  with allocs do begin
   fsublocstart:= fsubstart+paramcount;
+  if afunc then begin
+   dec(fsublocstart); //skip result param
+  end;
   fsubopstart:= fsubstart+alloccount;
-  fsubopindex:= fsubopstart;
+  fsubopindex:= fsublocstart; //pending allocs done in llvmops.subbeginop()
  end;
  beginblock(FUNCTION_BLOCK_ID,3);
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
@@ -1149,7 +1153,7 @@ begin
  endblock();
 end;
 
-procedure tllvmbcwriter.emitcallop(const valueid: int32; const afunc: boolean;
+procedure tllvmbcwriter.emitcallop(const afunc: boolean; const valueid: int32;
                                                    const aparams: idarty);
 var
  i1: int32;

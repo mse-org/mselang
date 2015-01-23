@@ -826,7 +826,7 @@ const
 procedure mainop();
 begin
  with pc^.par do begin
-  bcstream.beginsub(nullallocs,main.blockcount);
+  bcstream.beginsub(false,nullallocs,main.blockcount);
  end;
 // outass('define i32 @main() {');
 end;
@@ -2240,9 +2240,8 @@ begin
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(outlinkcount,idar);
-  bcstream.emitcallop(bcstream.globval(
-             getoppo(callinfo.ad+1)^.par.subbegin.globid),
-                                    sf_function in callinfo.flags,idar);
+  bcstream.emitcallop(sf_function in callinfo.flags,
+      bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
  end;
 end;
 
@@ -2331,7 +2330,7 @@ var
  poend: pointer;
 begin
  with pc^.par.subbegin do begin
-  bcstream.beginsub(allocs,blockcount);
+  bcstream.beginsub(sf_function in flags,allocs,blockcount);
   if sf_hasnestedaccess in flags then begin
    notimplemented();
   end;
@@ -2504,7 +2503,8 @@ var
  dest1: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitretop(bcstream.allocval(0));
+  bcstream.emitloadop(bcstream.allocval(0));
+  bcstream.emitretop(bcstream.relval(0));
   
 {
   po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
@@ -2880,7 +2880,7 @@ const
 
   subbeginssa = 0; //1;
   subendssa = 0;
-  returnssa = 1;
+  returnssa = 0;
   returnfuncssa = 1;
 
   initclassssa = 1;
