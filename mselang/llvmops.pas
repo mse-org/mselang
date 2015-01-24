@@ -1954,7 +1954,7 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitsegdataaddresspo(memop);
+  bcstream.emitsegdataaddress(memop);
  {
   segdataaddresspo(memop.segdataaddress,false,str1);
   outass('%'+inttostr(ssad)+' = '+str1);
@@ -2819,7 +2819,7 @@ const
   pushaddrssa = 1;
   pushlocaddrssa = 1;
   pushlocaddrindissa = 2;
-  pushsegaddrssa = 1;
+  pushsegaddrssa = 2;
   pushsegaddrindissa = 2;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;

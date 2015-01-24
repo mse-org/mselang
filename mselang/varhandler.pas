@@ -105,7 +105,7 @@ begin
       size1:= pointersize;
      end;
      if sublevel = 0 then begin
-      if indirectlevel > 0 then begin
+      if address.indirectlevel > 0 then begin
        datasize1:= das_pointer;
        include(address.flags,af_segmentpo);
       end;

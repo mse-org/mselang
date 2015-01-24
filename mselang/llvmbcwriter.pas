@@ -150,7 +150,8 @@ type
    procedure emitretop();
    procedure emitretop({const atype: integer;} const avalue: int32);
 
-   procedure emitsegdataaddresspo(const aaddress: memopty);
+   procedure emitsegdataaddress(const aaddress: memopty); //i8*
+   procedure emitsegdataaddresspo(const aaddress: memopty); //for load/store
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
                                  
    procedure emitloadop(const asource: int32);
@@ -1021,6 +1022,12 @@ begin
  inc(fsubopindex);
  emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aoffset]);
  inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitsegdataaddress(const aaddress: memopty);
+begin
+ emitgetelementptr(globval(aaddress.segdataaddress.a.address),
+                                   constval(aaddress.segdataaddress.offset));
 end;
 
 procedure tllvmbcwriter.emitsegdataaddresspo(const aaddress: memopty);
