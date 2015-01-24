@@ -2052,14 +2052,19 @@ begin
 end;
 
 procedure popindirect();
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas2),
+                              bcstream.ptypeval(memop.t.listindex));
+  bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+{
   str1:= '%'+inttostr(ssad);
   llvmtype(memop.t,str2);
   outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
   outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
+}
  end;
 end;
 
