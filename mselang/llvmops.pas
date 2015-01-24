@@ -1935,6 +1935,9 @@ procedure pushlocaddrindiop();          //todo: nested frames
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
+  if memop.locdataaddress.a.framelevel >= 0 then begin
+   notimplemented();
+  end;
   bcstream.emitloadop(bcstream.allocval(memop.locdataaddress.a.address));
   bcstream.emitgetelementptr(bcstream.relval(0),
                 bcstream.constval(memop.locdataaddress.offset));
