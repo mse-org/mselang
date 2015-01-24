@@ -153,6 +153,9 @@ type
    procedure emitsegdataaddress(const aaddress: memopty); //i8*
    procedure emitsegdataaddresspo(const aaddress: memopty); //for load/store
 
+   procedure emitlocdataaddress(const aaddress: memopty); //i8*
+   procedure emitlocdataaddresspo(const aaddress: memopty); //for load/store
+
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
    procedure emitbitcast(const asource: int32; const adesttype: int32);
                                  
@@ -1044,6 +1047,21 @@ procedure tllvmbcwriter.emitsegdataaddresspo(const aaddress: memopty);
 begin
  emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
+ emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
+                                                   ord(CAST_BITCAST)]);
+ inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitlocdataaddress(const aaddress: memopty);
+begin
+ emitgetelementptr(allocval(aaddress.locdataaddress.a.address),
+                                   constval(aaddress.locdataaddress.offset));
+end;
+
+procedure tllvmbcwriter.emitlocdataaddresspo(const aaddress: memopty);
+begin
+ emitgetelementptr(allocval(aaddress.locdataaddress.a.address),
+                                   constval(aaddress.locdataaddress.offset));
  emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
                                                    ord(CAST_BITCAST)]);
  inc(fsubopindex);

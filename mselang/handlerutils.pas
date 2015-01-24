@@ -583,10 +583,11 @@ begin
   end
   else begin
    with insertitem(oc_pushlocaddr,stackoffset,before)^ do begin
-    par.vlocaddress.a:= ref.c.address.locaddress;
-    par.vlocaddress.a.framelevel:= info.sublevel-
+    par.memop.locdataaddress.a:= ref.c.address.locaddress;
+    par.memop.locdataaddress.a.framelevel:= info.sublevel-
                           ref.c.address.locaddress.framelevel-1;
-    par.vlocaddress.offset:= ref.offset;
+    par.memop.locdataaddress.offset:= ref.offset;
+    par.memop.t:= getopdatatype(datatyp);
    end;
   end;
  end;
@@ -735,8 +736,9 @@ begin
       end
       else begin
        with insertitem(oc_pushlocaddr{ess},stackoffset,before)^ do begin
-        par.vlocaddress.a:= vaddress.locaddress;
-        par.vlocaddress.offset:= 0;
+        par.memop.locdataaddress.a:= vaddress.locaddress;
+        par.memop.locdataaddress.offset:= 0;
+        par.memop.t:= bitoptypes[das_pointer];
        end;
       end;
      end;
@@ -846,10 +848,11 @@ begin
     po1:= getop(oc_pushlocaddr);
    end;
    with po1^ do begin
-    par.vlocaddress.a:= avalue.locaddress;
-    par.vlocaddress.a.framelevel:= 
+    par.memop.locdataaddress.a:= avalue.locaddress;
+    par.memop.locdataaddress.a.framelevel:= 
                                info.sublevel-avalue.locaddress.framelevel-1;
-    par.vlocaddress.offset:= offset;
+    par.memop.locdataaddress.offset:= offset;
+    par.memop.t:= getopdatatype(atype);
    end;
   end;
  end;

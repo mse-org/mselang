@@ -1922,21 +1922,29 @@ procedure pushaddrop();
 begin
  notimplemented();
 end;
+
 procedure pushlocaddrop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitlocdataaddress(memop);
+ end;
 end;
 
 procedure pushlocaddrindiop();          //todo: nested frames
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitloadop(bcstream.allocval(memop.locdataaddress.a.address));
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                bcstream.constval(memop.locdataaddress.offset));
+{
   locdataaddress(vlocaddress,str1);
   str2:= '%'+inttostr(ssad-1);
   outass(str2+' = load i8** '+str1);
   outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
                                 ', i32 '+inttostr(vlocaddress.offset));
+}
  end;
 end;
 
@@ -2818,8 +2826,8 @@ const
   pushparssa = 1;
 
   pushaddrssa = 1;
-  pushlocaddrssa = 1;
-  pushlocaddrindissa = 2;
+  pushlocaddrssa = 2;
+  pushlocaddrindissa = 3;
   pushsegaddrssa = 2;
   pushsegaddrindissa = 3;
   pushstackaddrssa = 1;

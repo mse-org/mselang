@@ -660,9 +660,11 @@ type
     vsegaddress: segdataaddressty;
    );
    *)
+   (*
    oc_pushlocaddr,oc_pushlocaddrindi:(
     vlocaddress: locdataaddressty;
    );
+   *)
    oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
    oc_pushstackaddr,oc_pushstackaddrindi,
@@ -684,7 +686,9 @@ type
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64:(
     stackop: stackopty;
    );
+   oc_pushsegaddr,oc_pushsegaddrindi,
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
+   oc_pushlocaddr,oc_pushlocaddrindi,
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_popseg,oc_pushseg,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,

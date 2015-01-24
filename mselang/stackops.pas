@@ -1561,13 +1561,14 @@ end;
 
 procedure pushlocaddrop();
 begin
- ppointer(stackpush(sizeof(pointer)))^:= getlocaddress(cpu.pc^.par.vlocaddress);
+ ppointer(stackpush(sizeof(pointer)))^:=
+                          getlocaddress(cpu.pc^.par.memop.locdataaddress);
 end;
 
 procedure pushlocaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-                           getlocaddressindi(cpu.pc^.par.vlocaddress);
+                         getlocaddressindi(cpu.pc^.par.memop.locdataaddress);
 end;
 
 procedure pushsegaddrop();
