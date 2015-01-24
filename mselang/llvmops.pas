@@ -525,29 +525,20 @@ begin
 end;
 
 procedure assignindirect();
-var
- str1,dest1,dest2: shortstring;
+//var
+// str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),
+                    bcstream.ptypeval(memop.t.listindex));
+  bcstream.emitloadop(bcstream.relval(0));
+{
   llvmtype(memop.t,str1);
   dest1:= '%'+inttostr(ssad-1);
   dest2:= '%'+inttostr(ssad);
   outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
                           ' to '+str1+'*');
   outass(dest2+' = load '+str1+'* '+dest1);
-{  
-  case memop.t.kind of
-   odk_bit: begin
-    dest1:= '%'+inttostr(ssad-1);
-    dest2:= '%'+inttostr(ssad);
-    outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
-                            ' to i'+inttostr(memop.t.size)+'*');
-    outass(dest2+' = load i'+inttostr(memop.t.size)+'* '+dest1);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
 }
  end;
 end;
@@ -1963,15 +1954,20 @@ begin
 end;
 
 procedure pushsegaddrindiop();
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                bcstream.constval(memop.segdataaddress.offset));
+{
   segdataaddress(memop.segdataaddress,str1);
   str2:= '%'+inttostr(ssad-1);
   outass(str2+' = load i8** '+str1);
   outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
                                           inttostr(memop.segdataaddress.offset));
+}
  end;
 end;
 
@@ -2820,7 +2816,7 @@ const
   pushlocaddrssa = 1;
   pushlocaddrindissa = 2;
   pushsegaddrssa = 2;
-  pushsegaddrindissa = 2;
+  pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
 

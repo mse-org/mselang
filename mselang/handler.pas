@@ -158,7 +158,7 @@ begin
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
  po1^.address.segaddress:= getglobvaraddress(das_32,4,po1^.address.flags);
-// po1^.address.segaddress.size:= -32;  //i32 exitcode
+                                                               //i32 exitcode
 
 // info.beginparseop:= info.opcount; 
  with additem(oc_beginparse)^ do begin
