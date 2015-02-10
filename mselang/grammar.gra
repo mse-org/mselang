@@ -5,7 +5,8 @@
 {whitespace}
 "@whitespace,-
  '{$',directive-^*
- '{',comment0-^*
+ '{',curlycomment0-^*
+ '(*',bracecomment0-^*
  '//',linecomment0-^*"
 {blockswitch}
 " 'implementation'.,*
@@ -144,8 +145,11 @@ main1,,,handlemain
  'var'.,var-*>
  'type'.,type-*>
 
-comment0,,,handlecommentend^*>
+curlycomment0,,,handlecommentend^*>
  '}',-*
+ '',-
+bracecomment0,,,handlecommentend^*>
+ '*)',-*
  '',-
 directive,directive1,,*
  'dumpelements'.,dumpelements-*
