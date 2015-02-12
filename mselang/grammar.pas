@@ -274,12 +274,12 @@ var
                caption: 'main1');
  curlycomment0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: true; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'curlycomment0');
  bracecomment0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: true; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'bracecomment0');
  directiveco: contextty = (branch: nil; 
@@ -339,7 +339,7 @@ var
                caption: 'linecomment0');
  linecomment1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: true; restoresource: false; cutafter: true; 
+               continue: true; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'linecomment1');
  progbeginco: contextty = (branch: nil; 

@@ -1315,12 +1315,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('COMMENTEND');
 {$endif}
-{
- with info^ do begin
-  dec(s.stackindex);
-  s.stacktop:= s.stackindex;
+ with info do begin
+  dec(s.stacktop);
  end;
-}
 end;
 (*
 procedure handleconst();

@@ -145,10 +145,10 @@ main1,,,handlemain
  'var'.,var-*>
  'type'.,type-*>
 
-curlycomment0,,,handlecommentend^*>
+curlycomment0,,,handlecommentend^>
  '}',-*
  '',-
-bracecomment0,,,handlecommentend^*>
+bracecomment0,,,handlecommentend^>
  '*)',-*
  '',-
 directive,directive1,,*
@@ -183,7 +183,7 @@ directiveend,,,^*>
 linecomment0,,,*
  #$0a,linecomment1-
  '',-
-linecomment1,,,handlecommentend^*>
+linecomment1,,,handlecommentend^>
 progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*

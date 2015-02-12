@@ -497,6 +497,7 @@ var
      end
      else begin
       err1:= true;
+      internalerror1(ie_parser,'20150212A');
      end;
      inc(paramsize1,si1);
     end;
