@@ -152,6 +152,26 @@ begin
  end;
 end;
 
+{$ifdef mse_debugparser}
+procedure writetransitioninfo(const text: string);
+begin
+ with info do begin
+  write(text+' I:'+inttostr(s.stackindex)+' T:'+inttostr(s.stacktop)+' P:'+
+             inttostr(contextstack[s.stackindex].parent));
+  if s.pc <> nil then begin
+   write(' '+s.pc^.caption);
+  end;
+  writeln();
+ end;
+end;
+
+procedure writeinfoline(const text: string);
+begin
+ writetransitioninfo('! '+text);
+end;
+{$endif}
+
+
 function pushcont({const info: pparseinfoty}): boolean;
         //handle branch transition flags, transitionhandler, set pc
         //returns false for stopparser or open transistion chain
@@ -248,10 +268,10 @@ begin
    ch1:= '+';
   end;
   if bo1 then begin
-   writeln('^'+ch1+s.pc^.caption); //push context
+   writetransitioninfo('^'+ch1+s.pc^.caption); //push context
   end
   else begin
-   writeln('>'+ch1+s.pc^.caption); //switch context
+   writetransitioninfo('>'+ch1+s.pc^.caption); //switch context
   end;
 {$endif}
   pb:= s.pc^.branch;
@@ -263,19 +283,6 @@ begin
   end;
  end;
 end;
-
-{$ifdef mse_debugparser}
-procedure writeinfoline(const text: string);
-begin
- with info do begin
-  write('! '+text+' '+inttostr(s.stackindex)+':'+inttostr(s.stacktop));
-  if s.pc <> nil then begin
-   write(' '+s.pc^.caption);
-  end;
-  writeln();
- end;
-end;
-{$endif}
 
 function linelen(const astr: pchar): integer;
 var

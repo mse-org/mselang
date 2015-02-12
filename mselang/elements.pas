@@ -1412,7 +1412,7 @@ endloop:
   end; 
  end;
 end;
-
+var testvar: pvardataty;
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 
@@ -1420,24 +1420,29 @@ function telementhashdatalist.dumpelements: msestringarty;
  var
   po2: pelementinfoty;
  begin
-  po2:= eleinfoabs(atyp);
-  result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
-  with ptypedataty(@po2^.data)^ do begin
-   result:= result+' B:'+inttostr(base);
-   result:= result+' K:'+getenumname(typeinfo(kind),ord(kind));
-   if kind <> dk_none then begin
-    result:= result+
-    ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
-    ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
-    case kind of
-     dk_enumitem: begin
-      result:= result+' value:'+inttostr(infoenumitem.value);
-     end;
-     dk_set: begin
-      result:= result+' itemtyp:'+inttostr(infoset.itemtype);
-     end;
-     dk_interface: begin
-      result:= result+' subco:'+inttostr(infointerface.subcount);
+  if atyp < 0 then begin
+   result:= ' T:invalid';
+  end
+  else begin
+   po2:= eleinfoabs(atyp);
+   result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
+   with ptypedataty(@po2^.data)^ do begin
+    result:= result+' B:'+inttostr(base);
+    result:= result+' K:'+getenumname(typeinfo(kind),ord(kind));
+    if kind <> dk_none then begin
+     result:= result+
+     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
+     ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
+     case kind of
+      dk_enumitem: begin
+       result:= result+' value:'+inttostr(infoenumitem.value);
+      end;
+      dk_set: begin
+       result:= result+' itemtyp:'+inttostr(infoset.itemtype);
+      end;
+      dk_interface: begin
+       result:= result+' subco:'+inttostr(infointerface.subcount);
+      end;
      end;
     end;
    end;
@@ -1476,6 +1481,7 @@ begin
                                  integer(po1^.header.visibility),false);
   case po1^.header.kind of
    ek_var: begin
+testvar:= pvardataty(@po1^.data);
     with pvardataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' A:'+inttostr(address.poaddress)+' I:'+
                inttostr(address.indirectlevel)+ ' ' +
