@@ -757,9 +757,11 @@ begin
      end;
     end;
    end;
+   {
    if backend = bke_llvm then begin
     po1^.globid:= globlist.addsubvalue(po1);
    end;
+   }
    ele.elementparent:= parent1; //restore in sub
    s.stacktop:= s.stackindex;
   end;
@@ -871,6 +873,9 @@ begin
    po1^.allocs.paramcount:= 0;
    po1^.allocs.nestedallocs:= 0;
    po1^.allocs.nestedalloccount:= 0;
+  end;
+  if backend = bke_llvm then begin
+   po1^.globid:= globlist.addsubvalue(po1); //nested subs first
   end;
   resetssa();
   {
