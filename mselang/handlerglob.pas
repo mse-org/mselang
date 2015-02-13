@@ -261,7 +261,7 @@ type
 
  nestedvardataty = record
   next: elementoffsetty; //chain, root = subdataty nestedvarchain
-  nestedindex: integer;
+//  nestedindex: integer;
   address: nestedaddressty;
  end;
  pnestedvardataty = ^nestedvardataty;

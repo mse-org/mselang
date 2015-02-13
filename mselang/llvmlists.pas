@@ -449,13 +449,26 @@ begin
   with parbuf do begin
    header.flags:= avalue^.flags;
    header.paramcount:= avalue^.paramcount;
+   i1:= avalue^.allocs.nestedalloccount;
+   if i1 > 0 then begin
+                   //array of pointer for pointer to nested vars
+    avalue^.allocs.nestedallocstypeindex:= addbytevalue(i1*pointersize);
+    parbuf.params[0].typelistindex:= ord(das_pointer);
+    inc(header.paramcount);
+    i1:= 1;
+   end
+   else begin
+    avalue^.allocs.nestedallocstypeindex:= -1;
+    i1:= 0;
+   end;
    if header.paramcount > maxparamcount then begin
     header.paramcount:= 0;
     errormessage(err_toomanyparams,[]);
    end;
    po2:= @avalue^.paramsrel;
-   for i1:= 0 to header.paramcount - 1 do begin //todo: const var out...
-    params[i1].typelistindex:= addvarvalue(ele.eledataabs(po2[i1]));
+   for i1:= i1 to i1 + header.paramcount - 1 do begin //todo: const var out...
+    params[i1].typelistindex:= addvarvalue(ele.eledataabs(po2^));
+    inc(po2);
    end;
   end;
  end;
@@ -762,14 +775,14 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty): int32;
 var
  dat1: globallocdataty;
 begin
- dat1.typeindex:= ftypelist.addsubvalue(avalue);
- dat1.kind:= gak_sub;
  if avalue = nil then begin
   dat1.linkage:= li_external;
  end
  else begin
   dat1.linkage:= li_internal;
  end;
+ dat1.kind:= gak_sub;
+ dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.initconstindex:= -1;
  result:= fcount;
  inccount();

@@ -554,10 +554,11 @@ type
  
  suballocinfoty = record
   allocs: dataoffsty;
-  alloccount: integer;
-  paramcount: integer;
+  alloccount: int32;
+  paramcount: int32;
   nestedallocs: dataoffsty;
-  nestedalloccount: integer;
+  nestedalloccount: int32;
+  nestedallocstypeindex: int32;
 //  parallocs: dataoffsty;
 //  paralloccount: integer;
 //  varallocs: dataoffsty;

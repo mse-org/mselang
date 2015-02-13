@@ -105,14 +105,18 @@ type
 
    function typeval(const typeid: databitsizety): integer; inline;
    function ptypeval(const typeid: databitsizety): integer; inline;
+   function pptypeval(const typeid: databitsizety): integer; inline;
    function typeval(const typeid: int32): int32; inline;
    function ptypeval(const typeid: int32): int32; inline;
+   function pptypeval(const typeid: int32): int32; inline;
    function typeval(const alloc: typeallocinfoty): int32; 
    function ptypeval(const alloc: typeallocinfoty): int32;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
    function paramval(const paramid: int32): int32; inline;
    function allocval(const allocid: int32): int32; inline;
+   function subval(const offset: int32): int32; inline; 
+                          //0 -> first param
    function ssaval(const ssaid: int32): int32; inline;
    function relval(const offset: int32): int32; inline; 
                     //0 -> result of last op
@@ -123,6 +127,8 @@ type
    procedure emitrec(const id: int32; const data: array of int32);
    procedure emitrec(const id: int32; const data: array of int32;
                                                  const adddata: idarty);
+   procedure emitnopop(); //1 ssa
+   
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
@@ -133,9 +139,10 @@ type
                const aprefixdata: int32});
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
-   procedure emitalloca(const atype: int32);
+   procedure emitalloca(const atype: int32); //1 ssa
+   
    procedure beginsub(const afunc: boolean; const allocs: suballocinfoty;
-                                                            const bbcount: int32);
+                                                         const bbcount: int32);
    procedure endsub();
    procedure emitcallop(const afunc: boolean; const valueid: int32;
                                                       const aparams: idarty);
@@ -153,11 +160,14 @@ type
    procedure emitsegdataaddress(const aaddress: memopty); //i8*
    procedure emitsegdataaddresspo(const aaddress: memopty); //for load/store
 
-   procedure emitlocdataaddress(const aaddress: memopty); //i8*
-   procedure emitlocdataaddresspo(const aaddress: memopty); //for load/store
+   procedure emitlocdataaddress(const aaddress: memopty); //i8*, 2 ssa
+   procedure emitlocdataaddresspo(const aaddress: memopty);
+                               //for load/store, 3 ssa
 
+   procedure emitgetelementptrindex(const avalue: int32; const aindex: int32);
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
-   procedure emitbitcast(const asource: int32; const adesttype: int32);
+                                         //aoffset = byteoffset, 2 ssa
+   procedure emitbitcast(const asource: int32; const adesttype: int32); //1 ssa
                                  
    procedure emitloadop(const asource: int32);
    procedure emitstoreop(const asource: int32; const adest: int32);
@@ -744,6 +754,11 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitnopop();
+begin
+ emitbinop(binop_add,constval(0),constval(0));
+end;
+
 procedure tllvmbcwriter.write8(const avalue: int8);
 begin
 {$ifdef mse_checkinternalerror}
@@ -1019,6 +1034,13 @@ begin
  inc(fsubopindex);
 end;
 
+procedure tllvmbcwriter.emitgetelementptrindex(const avalue: int32;
+                                                   const aindex: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aindex]);
+ inc(fsubopindex);
+end;
+
 procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
                                                    const aoffset: int32);
 begin
@@ -1105,6 +1127,11 @@ begin
  result:= ptypeval(ord(typeid));
 end;
 
+function tllvmbcwriter.pptypeval(const typeid: databitsizety): int32;
+begin
+ result:= pptypeval(ord(typeid));
+end;
+
 function tllvmbcwriter.typeval(const typeid: int32): int32;
 begin
  result:= typeindex(typeid);
@@ -1113,6 +1140,11 @@ end;
 function tllvmbcwriter.ptypeval(const typeid: int32): int32;
 begin
  result:= ptypeindex(typeid);
+end;
+
+function tllvmbcwriter.pptypeval(const typeid: int32): int32;
+begin
+ result:= pptypeindex(typeid);
 end;
 
 function tllvmbcwriter.typeval(const alloc: typeallocinfoty): int32;
@@ -1158,6 +1190,11 @@ begin
  result:= allocid + fsuballocstart;
 end;
 
+function tllvmbcwriter.subval(const offset: int32): int32;
+begin
+ result:= offset + fsubstart;
+end;
+
 function tllvmbcwriter.ssaval(const ssaid: int32): int32;
 begin
  result:= ssaid + fsubopstart;
@@ -1177,8 +1214,14 @@ begin
   if afunc then begin
    dec(fsubparamstart); //skip result param
   end;
+  if nestedalloccount > 0 then begin
+   dec(fsubparamstart); //skip nested var array pointer
+  end;
   fsuballocstart:= fsubparamstart+paramcount;
   fsubopstart:= fsuballocstart+alloccount;
+  if nestedalloccount > 0 then begin
+   inc(fsubopstart); //nested var array
+  end;
   fsubopindex:= fsuballocstart; //pending allocs done in llvmops.subbeginop()
  end;
  beginblock(FUNCTION_BLOCK_ID,3);

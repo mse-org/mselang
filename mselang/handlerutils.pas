@@ -1060,14 +1060,15 @@ var
  begin
   with psubdataty(ele.parentdata())^ do begin
    avardata^.next:= nestedvarchain;
-   avardata^.nestedindex:= nestedvarcount;
+//   avardata^.nestedindex:= nestedvarcount;
    avardata^.address.datatype:= aopdatatype;
    if last then begin
     avardata^.address.address:= addressbefore;
     avardata^.address.nested:= false;
    end
    else begin
-    avardata^.address.address:= nestedvarcount;
+    avardata^.address.address:= constlist.addi32(nestedvarcount*pointersize);
+//    avardata^.address.address:= nestedvarcount;
     avardata^.address.nested:= true;
    end;
 //   pobefore:= avardata;
@@ -1083,7 +1084,7 @@ var
 begin
  if (info.backend = bke_llvm){ and (af_local in aaddress.flags)} then begin
   int1:= info.sublevel-aaddress.framelevel;
-  if int1 > 0 then begin
+  if int1 > 0 then begin   //var in outer sub
 //   pobefore:= nil;
    addressbefore:= aaddress.address;
    parentbefore:= ele.elementparent;
@@ -1102,7 +1103,6 @@ begin
      trackref(po1,int1=1);
     end;
 //    value.address.locaddress.nestedindex:= po1^.nestedindex;
-    aaddress.address:= po1^.nestedindex;
 //    include(aaddress.flags,af_nested);
    end;
    for int1:= int1-2 downto 0 do begin

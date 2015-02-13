@@ -1,17 +1,9 @@
 unit program;
 
-procedure test;
-implementation
-
-procedure test1;
-begin
- test;
-end;
-
-procedure test;
+procedure test(p1: int32);
 begin
 end;
 
 begin
- test1;
+ test(123);
 end.

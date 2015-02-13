@@ -452,9 +452,14 @@ procedure locassign();
 // str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  with memop.locdataaddress do begin
+  with memop,locdataaddress do begin
    if a.framelevel >= 0 then begin
-    notimplemented();
+    bcstream.emitgetelementptr(bcstream.subval(0),
+            //pointer to array of pointer to local alloc
+                                           bcstream.constval(a.address));
+            //byte offset in array
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+    bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
    end
    else begin
     bcstream.emitstoreop(bcstream.ssaval(ssas1),
@@ -2199,22 +2204,24 @@ var
  po1: pint32;
 begin
  with pc^.par do begin
+  ids.count:= callinfo.paramcount;
+  po1:= ids.ids;
   if sf_hasnestedaccess in callinfo.flags then begin
-   notimplemented;
+   po1^:= bcstream.ssaval(-1); //last alloc is nested var ref table
+   inc(po1);
+   inc(ids.count);
   end;
  {$ifdef mse_checkinternalerror}
-  if callinfo.paramcount > high(idsarty) then begin
+  if ids.count >= high(idsarty) then begin
    internalerror(ie_llvm,'20150122');
   end;
  {$endif}
   parpo:= getsegmentpo(seg_localloc,callinfo.params);
   endpo:= parpo + callinfo.paramcount;  
-  ids.count:= callinfo.paramcount;
   if sf_function in callinfo.flags then begin
    inc(parpo);            //skip result param
    dec(ids.count);
   end;
-  po1:= ids.ids;
   while parpo < endpo do begin
    po1^:= bcstream.ssaval(parpo^.ssaindex);
    inc(po1);
@@ -2322,9 +2329,6 @@ var
 begin
  with pc^.par.subbegin do begin
   bcstream.beginsub(sf_function in flags,allocs,blockcount);
-  if sf_hasnestedaccess in flags then begin
-   notimplemented();
-  end;
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
   poend:= po1 + allocs.alloccount;
   while po1 < poend do begin
@@ -2337,7 +2341,32 @@ begin
   end;
   for i1:= i2 to allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
-  end;  
+  end;
+  if allocs.nestedalloccount > 0 then begin
+   bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
+   po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
+   poend:= po2+allocs.nestedalloccount;
+   i1:= 0;
+   while po2 < poend do begin
+    if po2^.address.nested then begin
+     bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.address);
+                              //pointer to parent nestedvars, 2 ssa
+     bcstream.emitbitcast(bcstream.relval(0),bcstream.pptypeval(das_8));
+     bcstream.emitloadop(bcstream.relval(0)); //1 ssa
+    end
+    else begin
+     bcstream.emitnopop();
+     bcstream.emitnopop();
+     bcstream.emitnopop();
+     bcstream.emitbitcast(bcstream.allocval(po2^.address.address),
+                                                 bcstream.ptypeval(das_8));
+    end;
+    bcstream.emitgetelementptr(bcstream.ssaval(-1),i1*pointersize);
+    bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+    inc(po2);
+    inc(i1);
+   end;
+  end;
  end;
 end;
 
