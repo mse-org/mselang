@@ -102,21 +102,21 @@ type
     MODULE_BLOCK_ID          = 8, //FIRST_APPLICATION_BLOCKID,
 
     // Module sub-block id's.
-    PARAMATTR_BLOCK_ID,
-    PARAMATTR_GROUP_BLOCK_ID,
+    PARAMATTR_BLOCK_ID,          //9
+    PARAMATTR_GROUP_BLOCK_ID,    //10
 
-    CONSTANTS_BLOCK_ID,
-    FUNCTION_BLOCK_ID,
+    CONSTANTS_BLOCK_ID,          //11
+    FUNCTION_BLOCK_ID,           //12
 
-    UNUSED_ID1,
+    UNUSED_ID1,                  //13
 
-    VALUE_SYMTAB_BLOCK_ID,
-    METADATA_BLOCK_ID,
-    METADATA_ATTACHMENT_ID,
+    VALUE_SYMTAB_BLOCK_ID,       //14
+    METADATA_BLOCK_ID,           //15
+    METADATA_ATTACHMENT_ID,      //16
 
-    TYPE_BLOCK_ID_NEW,
+    TYPE_BLOCK_ID_NEW,           //17
 
-    USELIST_BLOCK_ID
+    USELIST_BLOCK_ID             //18
   );
 
 
