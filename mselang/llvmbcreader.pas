@@ -25,10 +25,30 @@ uses
 const
  bcreaderbuffersize = 16; //test fillbuffer, todo: make it bigger
 type
- valuearty = array of int64;
+ valuety = int64;
+ valuearty = array of valuety;
+
+ abbrevkindty = (ak_literal,ak_fix,ak_var,ak_array,ak_char6,ak_blob);
+ abbrevitemty = record
+  case kind: abbrevkindty of
+   ak_literal: (
+    literal: valuety;
+   );
+   ak_fix,ak_var: (
+    size: int32;
+   );
+   ak_array: (
+    arraytype: int32; //index in farraytypes
+   );
+ end;
+ abbrevty = array of abbrevitemty;
+ abbrevarty = array of abbrevty;
+  
  blockinfoty = record
   id: int32;
   oldidsize: int32;
+  blockabbrev: abbrevarty;
+  abbrevs: abbrevarty;
  end;
  blockinfoarty = array of blockinfoty;
  
@@ -44,8 +64,14 @@ type
    findent: int32;
    fblocklevel: int32;
    fblockstack: blockinfoarty;
+   farraytypes: array of abbrevitemty;
+   fblockinfoid: int32;
+   fblockabbrevs: array of abbrevarty; //blockid is array index
   protected
    procedure error(const message: string);
+   procedure checkdatalen(const arec: valuearty; const alen: integer);
+   procedure checkmindatalen(const arec: valuearty; const alen: integer);
+
    function finished: boolean;
    function tryfillbuffer(): boolean;
    procedure fillbuffer();
@@ -53,18 +79,23 @@ type
    function getbits(const bitcount: int32): card8;
    procedure readbits(const bitcount: int32; out buffer);
    function read32(const bitcount: int32 = 32): int32;
-   function readvbr(const bitsize: int32): int32;
+   function readvbr(const bitsize: int32): valuety;
    procedure align32();
    function readitem(): valuearty;
           //nil if internal read, first array item = code
    procedure readblockheader(out blockid: int32; 
                                out newabbrevlen: int32; out blocklen: int32);
+
+   procedure output(const kind: outputkindty; const text: string);
+   procedure outrecord(const aname: string; const values: array of const);
+   procedure unknownrec(const arec: valuearty);
+	
    procedure beginblock(const aid: int32; const newidsize: int32);
    procedure endblock();
    procedure readblock();
+   procedure readblockinfoblock();
    procedure readmoduleblock();
    procedure skip(const words: int32);
-   procedure output(const kind: outputkindty; const text: string);
   public
    constructor create(ahandle: integer); override;
    procedure dump(const aoutput: tstream);
@@ -200,6 +231,13 @@ begin
   id:= aid;
   oldidsize:= fidsize;
   fidsize:= newidsize;
+  if high(fblockabbrevs) >= id then begin
+   blockabbrev:= fblockabbrevs[id];
+  end
+  else begin
+   blockabbrev:= nil;
+  end;
+  abbrevs:= nil;
  end;
  inc(fblocklevel);
 end;
@@ -213,6 +251,7 @@ begin
  with fblockstack[fblocklevel] do begin
   fidsize:= oldidsize;
  end;
+ align32();
 end;
 
 procedure tllvmbcreader.readblockheader(out blockid: int32; 
@@ -235,6 +274,39 @@ begin
  end;
 end;
 
+procedure tllvmbcreader.readblockinfoblock;
+var
+ i1: int32;
+ val1: valuearty;
+ str1: string;
+begin
+ output(ok_begin,blockidnames[BLOCKINFO_BLOCK_ID]);
+ i1:= fblocklevel;
+ while not finished and (fblocklevel >= i1) do begin
+  val1:= readitem();
+  if val1 <> nil then begin
+   case blockinfocodes(val1[0]) of
+    BLOCKINFO_CODE_SETBID: begin
+     checkdatalen(val1,1);
+     fblockinfoid:= val1[1];
+     str1:= inttostr(fblockinfoid);
+     if fblockinfoid <= ord(high(blockidnames)) then begin
+      str1:= str1+'.'+blockidnames[blockids(fblockinfoid)];
+     end;
+     outrecord('SETBID',[str1]);
+     if fblockinfoid > high(fblockabbrevs) then begin
+      setlength(fblockabbrevs,fblockinfoid+1);
+     end;
+    end;
+    else begin
+     unknownrec(val1);
+    end;
+   end;
+  end;
+ end;
+ fblockinfoid:= 0;
+end;
+
 procedure tllvmbcreader.readblock();
 var
  blockid,newabbrevlen,blocklen: int32;
@@ -255,6 +327,9 @@ begin
  end
  else begin
   case blockids(blockid) of
+   BLOCKINFO_BLOCK_ID: begin
+    readblockinfoblock();
+   end;
    MODULE_BLOCK_ID: begin
     readmoduleblock();
    end;
@@ -268,8 +343,63 @@ end;
 function tllvmbcreader.readitem(): valuearty;
           //nil if internal read, first array item = code
 var
+ str1: string;
+ numops: int32;
+ 
+ procedure readabbrevitem(var abbrev1: abbrevitemty);
+ var
+  by1: card8;
+ begin
+  with abbrev1 do begin
+   if getbits(1) = 1 then begin
+    kind:= ak_literal;
+    literal:= readvbr(8);
+    str1:= str1+'LITERAL:'+inttostr(literal);
+   end
+   else begin
+    by1:= getbits(3);     
+    case by1 of
+     1: begin
+      kind:= ak_fix;
+      size:= readvbr(5);
+      str1:= str1+'FIX'+inttostr(size);
+     end;
+     2: begin
+      kind:= ak_var;
+      size:= readvbr(5);     
+      str1:= str1+'VAR'+inttostr(size);
+     end;
+     3: begin
+      kind:= ak_array;
+      setlength(farraytypes,high(farraytypes)+2);
+      arraytype:= high(farraytypes);
+      str1:= str1+'ARRAY(';
+      dec(numops);
+      readabbrevitem(farraytypes[arraytype]);
+      setlength(str1,length(str1)-1);
+      str1:= str1+')';
+     end;
+     4: begin
+      kind:= ak_char6;
+      str1:= 'CHAR6';
+     end;
+     5: begin
+      kind:= ak_blob;
+      str1:= 'BLOB';
+     end;
+     else begin
+      error('Invalid abbrev encoding '+inttostr(by1));
+     end;
+    end;
+   end;
+   str1:= str1+',';
+  end;
+ end; //readabbrevitem
+ 
+var
  ca1: card32;
- i1,code,numops: int32;
+ i1,code: int32;
+ abbrev1: abbrevty;
 begin
  result:= nil;
  ca1:= read32(fidsize);
@@ -297,6 +427,35 @@ begin
    for i1:= 1 to numops do begin
     result[i1]:= readvbr(6);
    end;
+  end;
+  define_abbrev: begin
+   abbrev1:= nil;
+   numops:= readvbr(5);
+   allocuninitedarray(numops,sizeof(abbrev1[0]),abbrev1);
+   str1:= '';
+   i1:= 0;
+   while i1 < numops do begin
+    readabbrevitem(abbrev1[i1]);
+    inc(i1);
+   end;
+   if str1 <> '' then begin
+    setlength(str1,length(str1)-1); //remove last comma
+   end;
+   if fblockinfoid > 0 then begin
+    i1:= high(fblockabbrevs[fblockinfoid])+1;
+    setlength(fblockabbrevs[fblockinfoid],i1+1);
+    fblockabbrevs[fblockinfoid][i1]:= abbrev1;
+   end
+   else begin
+    with fblockstack[fblocklevel] do begin
+     i1:= high(abbrevs)+1;
+     setlength(abbrevs,i1+1);
+     abbrevs[i1]:= abbrev1;
+     i1:= i1+length(fblockabbrevs);
+    end;
+   end;
+   output(ok_beginend,'DEFINE_ABBREV:'+inttostr(i1+4)+':('+str1+')');
+   
   end;
   else begin
    error('Unknown abbrev');
@@ -341,7 +500,7 @@ begin
  fbitpos:= 0;
 end;
 
-function tllvmbcreader.readvbr(const bitsize: int32): int32;
+function tllvmbcreader.readvbr(const bitsize: int32): valuety;
 var
  ca1,mask: card32;
  i1,masksize: int32;
@@ -353,7 +512,7 @@ begin
  mask:= bitmask[masksize];
  repeat
   readbits(bitsize,ca1);
-  result:= result or ((ca1 and mask) shl i1);
+  result:= result or ((ca1 and mask) shl valuety(i1));
   i1:= i1 + masksize;
  until ca1 and bits[masksize] = 0;
 end;
@@ -392,6 +551,55 @@ end;
 procedure tllvmbcreader.error(const message: string);
 begin
  raise exception.create(message+'.');
+end;
+
+procedure tllvmbcreader.outrecord(const aname: string;
+               const values: array of const);
+var
+ str1: string;
+ i1: int32;
+begin
+ str1:= '';
+ for i1:= 0 to high(values) do begin
+  str1:= tvarrectoansistring(values[i1])+',';
+ end;
+ if str1 <> '' then begin
+  setlength(str1,length(str1)-1);
+ end;
+ output(ok_beginend,aname+':'+str1);
+end;
+
+procedure tllvmbcreader.checkdatalen(const arec: valuearty;
+               const alen: integer);
+begin
+ if high(arec) <> alen then begin
+  error('Invalid record length '+inttostr(high(arec))+
+                                   ', should be '+inttostr(alen));
+ end;
+end;
+
+procedure tllvmbcreader.checkmindatalen(const arec: valuearty;
+               const alen: integer);
+begin
+ if high(arec) < alen then begin
+  error('Invalid record length '+inttostr(high(arec))+
+                                ', should be at least '+inttostr(alen));
+ end;
+end;
+
+procedure tllvmbcreader.unknownrec(const arec: valuearty);
+var
+ str1: string;
+ i1: int32;
+begin
+ str1:= '';
+ for i1:= 1 to high(arec) do begin
+  str1:= inttostr(arec[i1])+',';
+ end;
+ if str1 <> '' then begin
+  setlength(str1,length(str1)-1);
+ end;
+ output(ok_beginend,'UNKNOWN_REC'+inttostr(arec[0])+':'+str1);
 end;
 
 end.
