@@ -123,6 +123,22 @@ const
     'USELIST_BLOCK'
   );
 
+ modulecodenames: array[modulecodes] of string = (
+  '',             //0
+  'VERSION',      //1
+  'TRIPLE',       //2
+  'DATALAYOUT',   //3
+  'ASM',          //4
+  'SECTIONNAME',  //5
+  'DEPLIB',       //6
+  'GLOBALVAR',    //7
+  'FUNCTION',     //8
+  'ALIAS',        //9
+  'PURGEVALS',    //10
+  'GCNAME',       //11
+  'COMDAT'        //12
+ );
+ 
  char6tab: array[card8] of char = (
 // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
   'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s',
@@ -312,7 +328,12 @@ begin
  while not finished and (fblocklevel >= i1) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
-   unknownrec(rec1);
+   if (rec1[1] > ord(high(modulecodenames))) or 
+             (modulecodenames[modulecodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end;
+   outrecord(modulecodenames[modulecodes(rec1[1])],
+                       dynarraytoopenarray(copy(rec1,2,bigint)));
   end;
  end;
 end;

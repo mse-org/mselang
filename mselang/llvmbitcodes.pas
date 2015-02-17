@@ -93,13 +93,20 @@ type
     /// BLOCKINFO_BLOCK is used to define metadata about blocks, for example,
     /// standard abbrevs that should be available to all blocks of a specified
     /// ID.
-    BLOCKINFO_BLOCK_ID = 0,
+    BLOCKINFO_BLOCK_ID,// = 0,
+    BLOCKINFO_BLOCK_1,
+    BLOCKINFO_BLOCK_2,
+    BLOCKINFO_BLOCK_3,
+    BLOCKINFO_BLOCK_4,
+    BLOCKINFO_BLOCK_5,
+    BLOCKINFO_BLOCK_6,
+    BLOCKINFO_BLOCK_7,
 
     // Block IDs 1-7 are reserved for future expansion.
 //    FIRST_APPLICATION_BLOCKID = 8,
 
     // Blocks
-    MODULE_BLOCK_ID          = 8, //FIRST_APPLICATION_BLOCKID,
+    MODULE_BLOCK_ID,//          = 8, //FIRST_APPLICATION_BLOCKID,
 
     // Module sub-block id's.
     PARAMATTR_BLOCK_ID,          //9
@@ -122,31 +129,32 @@ type
 
   /// MODULE blocks have a number of optional fields and subblocks.
   ModuleCodes = (
-    MODULE_CODE_VERSION     = 1,    // VERSION:     [version#]
-    MODULE_CODE_TRIPLE      = 2,    // TRIPLE:      [strchr x N]
-    MODULE_CODE_DATALAYOUT  = 3,    // DATALAYOUT:  [strchr x N]
-    MODULE_CODE_ASM         = 4,    // ASM:         [strchr x N]
-    MODULE_CODE_SECTIONNAME = 5,    // SECTIONNAME: [strchr x N]
+    MODULE_CODE_0,
+    MODULE_CODE_VERSION,//     = 1,    // VERSION:     [version#]
+    MODULE_CODE_TRIPLE,//      = 2,    // TRIPLE:      [strchr x N]
+    MODULE_CODE_DATALAYOUT,//  = 3,    // DATALAYOUT:  [strchr x N]
+    MODULE_CODE_ASM,//         = 4,    // ASM:         [strchr x N]
+    MODULE_CODE_SECTIONNAME,// = 5,    // SECTIONNAME: [strchr x N]
 
     // FIXME: Remove DEPLIB in 4.0.
-    MODULE_CODE_DEPLIB      = 6,    // DEPLIB:      [strchr x N]
+    MODULE_CODE_DEPLIB,//      = 6,    // DEPLIB:      [strchr x N]
 
     // GLOBALVAR: [pointer type, isconst, initid,
     //             linkage, alignment, section, visibility, threadlocal]
-    MODULE_CODE_GLOBALVAR   = 7,
+    MODULE_CODE_GLOBALVAR,//   = 7,
 
     // FUNCTION:  [type, callingconv, isproto, linkage, paramattrs, alignment,
     //             section, visibility, gc, unnamed_addr]
-    MODULE_CODE_FUNCTION    = 8,
+    MODULE_CODE_FUNCTION,//    = 8,
 
     // ALIAS: [alias type, aliasee val#, linkage, visibility]
-    MODULE_CODE_ALIAS       = 9,
+    MODULE_CODE_ALIAS,//       = 9,
 
     // MODULE_CODE_PURGEVALS: [numvals]
-    MODULE_CODE_PURGEVALS   = 10,
+    MODULE_CODE_PURGEVALS,//   = 10,
 
-    MODULE_CODE_GCNAME      = 11,  // GCNAME: [strchr x N]
-    MODULE_CODE_COMDAT      = 12   // COMDAT: [selection_kind, name]
+    MODULE_CODE_GCNAME,//      = 11,  // GCNAME: [strchr x N]
+    MODULE_CODE_COMDAT//      = 12   // COMDAT: [selection_kind, name]
   );
 
   /// PARAMATTR blocks have code for defining a parameter attribute set.
