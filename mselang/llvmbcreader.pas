@@ -333,7 +333,7 @@ begin
     unknownrec(rec1);
    end;
    outrecord(modulecodenames[modulecodes(rec1[1])],
-                       dynarraytoopenarray(copy(rec1,2,bigint)));
+                       dynarraytovararray(copy(rec1,2,bigint)));
   end;
  end;
 end;
