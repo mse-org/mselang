@@ -162,6 +162,8 @@ type
    procedure readmoduleblock();
    procedure readtypeblock();
    procedure readconstantsblock();
+   procedure readvaluesymtabblock();
+   procedure readfunctionblock();
    procedure skip(const words: int32);
   public
    constructor create(ahandle: integer); override;
@@ -257,7 +259,59 @@ const
     'DATA',
     'INLINEASM'
   );
- 
+
+ valuesymtabcodesnames: array[valuesymtabcodes] of string = (
+  '', 
+  'ENTRY',
+  'BBENTRY'
+  );
+  
+  functioncodesnames: array[functioncodes] of string = (
+    '',
+    'DECLAREBLOCKS',
+    'INST_BINOP',
+    'INST_CAST',
+    'INST_GEP',
+    'INST_SELECT',
+    'INST_EXTRACTELT',
+    'INST_INSERTELT',
+    'INST_SHUFFLEVEC',
+    'INST_CMP',
+    'INST_RET',
+    'INST_BR',
+    'INST_SWITCH',
+    'INST_INVOKE',
+    '',
+    'INST_UNREACHABLE',
+    'INST_PHI',
+    '',
+    '',
+    'INST_ALLOCA',
+    'INST_LOAD',
+    '',
+    '',
+    'INST_VAARG',
+    'INST_STORE',
+    '',
+    'INST_EXTRACTVAL',
+    'INST_INSERTVAL',
+    'INST_CMP2',
+    'INST_VSELECT',
+    'INST_INBOUNDS_GEP',
+    'INST_INDIRECTBR',
+    '',
+    'DEBUG_LOC_AGAIN',
+    'INST_CALL',
+    'DEBUG_LOC',
+    'INST_FENCE',
+    'INST_CMPXCHG',
+    'INST_ATOMICRMW',
+    'INST_RESUME',
+    'LANDINGPAD',
+    'INST_LOADATOMIC',
+    'INST_STOREATOMIC'
+  );
+
  char6tab: array[card8] of char = (
 // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
   'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s',
@@ -301,6 +355,18 @@ begin
  raise exception.create(message+'.');
 end;
 
+function valueartostring(const avalue: valuearty): string;
+var
+ i1: int32;
+ po1: pchar;
+begin
+ setlength(result,length(avalue));
+ po1:= pointer(result);
+ for i1:= 0 to high(avalue) do begin
+  po1^:= char(avalue[i1]);
+  inc(po1);
+ end;
+end;
   
 { ttypelist }
 
@@ -729,21 +795,78 @@ begin
  end;
 end;
 
+procedure tllvmbcreader.readvaluesymtabblock();
+var
+ i1: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[VALUE_SYMTAB_BLOCK_ID]);
+ i1:= fblocklevel;
+ while not finished and (fblocklevel >= i1) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(valuesymtabcodesnames))) or 
+             (valuesymtabcodesnames[valuesymtabcodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin 
+    case valuesymtabcodes(rec1[1]) of
+     VST_CODE_ENTRY,VST_CODE_BBENTRY: begin
+      checkmindatalen(rec1,3);
+      outrecord(valuesymtabcodesnames[valuesymtabcodes(rec1[1])],
+                              [rec1[2],valueartostring(copy(rec1,3,bigint))]);
+     end;
+     else begin
+      unknownrec(rec1);
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readfunctionblock();
+var
+ i1: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]);
+ i1:= fblocklevel;
+ while not finished and (fblocklevel >= i1) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(functioncodesnames))) or 
+   (functioncodesnames[functioncodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin
+    if high(rec1) > 1 then begin
+     outrecord(functioncodesnames[functioncodes(rec1[1])],
+              dynarraytovararray(copy(rec1,2,bigint)));
+    end
+    else begin
+     outrecord(functioncodesnames[functioncodes(rec1[1])],[]);
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure tllvmbcreader.readblockinfoblock;
 var
  i1: int32;
- val1: valuearty;
+ rec1: valuearty;
  str1: string;
 begin
  output(ok_begin,blockidnames[BLOCKINFO_BLOCK_ID]);
  i1:= fblocklevel;
  while not finished and (fblocklevel >= i1) do begin
-  val1:= readitem();
-  if val1 <> nil then begin
-   case blockinfocodes(val1[1]) of
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   case blockinfocodes(rec1[1]) of
     BLOCKINFO_CODE_SETBID: begin
-     checkdatalen(val1,2);
-     fblockinfoid:= val1[2];
+     checkdatalen(rec1,2);
+     fblockinfoid:= rec1[2];
      str1:= inttostr(fblockinfoid);
      if fblockinfoid <= ord(high(blockidnames)) then begin
       str1:= str1+'.'+blockidnames[blockids(fblockinfoid)];
@@ -754,7 +877,7 @@ begin
      end;
     end;
     else begin
-     unknownrec(val1);
+     unknownrec(rec1);
     end;
    end;
   end;
@@ -793,6 +916,12 @@ begin
    end;
    CONSTANTS_BLOCK_ID: begin
     readconstantsblock();
+   end;
+   VALUE_SYMTAB_BLOCK_ID: begin
+    readvaluesymtabblock();
+   end;
+   FUNCTION_BLOCK_ID: begin
+    readfunctionblock();
    end;
    else begin
     unknownblock();
