@@ -423,6 +423,7 @@ begin
    po1:= consts.typelist.next();
   end;
   endblock(); 
+
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;

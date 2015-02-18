@@ -66,15 +66,54 @@ type
     arraysize: int32;
     arraytype: int32; //index
    );
+   TYPE_CODE_FUNCTION:(
+    subvararg: boolean;
+    subparamcount: int32;
+    subparamindex: int32;
+   );
  end;
  ptypeinfoty = ^typeinfoty;
  
  ttypelist = class(trecordlist)
+  protected
+   fsubparamcount: int32;
+   fsubparams: integerarty; //typeindex
   public
    constructor create();
    function typename(const aindex: int32): string;
  end;
+
+ globkindty = (gk_const,gk_var,gk_sub);
+ constkindty = (ck_integer);
  
+ globinfoty = record
+  case kind: globkindty of
+   gk_const: (
+    consttype: int32;
+    case constkind: constantscodes of
+     cst_code_integer: (
+      intconst: valuety;
+     );
+   );
+   gk_var: (
+    vartype: int32;
+   );
+   gk_sub: (
+    subtype: int32;
+    subindex: int32;    
+   );
+ end;
+ pglobinfoty = ^globinfoty;
+ 
+ tgloblist = class(trecordlist)
+  protected
+   ftypelist: ttypelist;
+   fsettype: int32;
+  public
+   constructor create(const typelist: ttypelist);
+   function constname(const aid: int32): string;
+ end;
+  
  tllvmbcreader = class(tmsefilestream)
   private
    fbuffer: array[0..bcreaderbuffersize-1] of byte;
@@ -89,10 +128,11 @@ type
    farraytypes: array of abbrevitemty;
    fblockinfoid: int32;
    fblockabbrevs: array of abbrevarty; //blockid is array index
-   fglobindex: int32;
+//   fglobindex: int32;
    ftypelist: ttypelist;
+   fgloblist: tgloblist;
+   fsubheadercount: int32;
   protected
-   procedure error(const message: string);
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
 
@@ -121,6 +161,7 @@ type
    procedure readblockinfoblock();
    procedure readmoduleblock();
    procedure readtypeblock();
+   procedure readconstantsblock();
    procedure skip(const words: int32);
   public
    constructor create(ahandle: integer); override;
@@ -189,6 +230,33 @@ const
   'TRUCT_NAMED',
   'FUNCTION'
   );
+  
+ constantscodesnames: array[constantscodes] of string = (
+    '',
+    'SETTYPE',
+    'NULL',
+    'UNDEF',
+    'INTEGER',
+    'WIDE_INTEGER',
+    'FLOAT',
+    'AGGREGATE',
+    'STRING',
+    'CSTRING',
+    'CE_BINOP',
+    'CE_CAST',
+    'CE_GEP',
+    'CE_SELECT',
+    'CE_EXTRACTELT',
+    'CE_INSERTELT',
+    'CE_SHUFFLEVEC',
+    'CE_CMP',
+    'INLINEASM_OLD',
+    'CE_SHUFVEC_EX',
+    'CE_INBOUNDS_GEP',
+    'BLOCKADDRESS',
+    'DATA',
+    'INLINEASM'
+  );
  
  char6tab: array[card8] of char = (
 // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
@@ -227,6 +295,12 @@ const
   #0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,
 // $f0
   #0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0);
+
+procedure error(const message: string);
+begin
+ raise exception.create(message+'.');
+end;
+
   
 { ttypelist }
 
@@ -236,6 +310,8 @@ begin
 end;
 
 function ttypelist.typename(const aindex: int32): string;
+var
+ i1: int32;
 begin
  if (aindex < 0) or (aindex >= fcount) then begin
   raise exception.create('Invalid type '+inttostr(aindex));
@@ -254,6 +330,14 @@ begin
    TYPE_CODE_INTEGER: begin
     result:= typecodenames[kind]+':'+inttostr(size);
    end;
+   TYPE_CODE_FUNCTION: begin
+    result:= typecodenames[kind]+'(';
+    for i1:= subparamindex to subparamindex+subparamcount-1 do begin
+     result:= result+typename(fsubparams[i1])+',';
+    end;
+    setlength(result,length(result)-1);
+    result:= result+')';
+   end;
    else begin
     result:= typecodenames[kind];
    end;
@@ -262,11 +346,52 @@ begin
  result:= inttostr(aindex)+'.'+result;
 end;
 
+{ tgloblist }
+
+constructor tgloblist.create(const typelist: ttypelist);
+begin
+ ftypelist:= typelist;
+ inherited create(sizeof(globinfoty));
+end;
+
+function tgloblist.constname(const aid: int32): string;
+ 
+ procedure consterror();
+ begin
+  error('Invalid const '+inttostr(aid));
+ end; //consterror
+ 
+begin
+ result:= '';
+ if aid >= 0 then begin
+  if (aid < count) then begin
+   with pglobinfoty(fdata)[aid] do begin
+    if kind <> gk_const then begin
+     consterror();
+    end;
+    result:= inttostr(aid)+':'+ftypelist.typename(consttype)+':';
+    case constkind of
+     CST_CODE_INTEGER: begin
+      result:= result+inttostr(intconst);
+     end;
+     else begin
+      result:= result + constantscodesnames[constkind];
+     end;
+    end;
+   end;
+  end
+  else begin
+   consterror();
+  end;
+ end;
+end;
+
 { tllvmbcreader }
 
 constructor tllvmbcreader.create(ahandle: integer);
 begin
  ftypelist:= ttypelist.create();
+ fgloblist:= tgloblist.create(ftypelist);
  inherited;
  fbufpos:= @fbuffer;
  fbufend:= fbufpos;
@@ -279,6 +404,7 @@ end;
 destructor tllvmbcreader.destroy;
 begin
  ftypelist.free();
+ fgloblist.free();
  inherited;
 end;
 
@@ -415,13 +541,16 @@ var
  i1: int32;
  rec1: valuearty;
 
- procedure outglobalvalue(const message: string);
+ procedure outglobalvalue(const message: string; const params: array of const);
  begin
-  output(ok_beginend,modulecodenames[modulecodes(rec1[1])]+
-             '.'+inttostr(fglobindex)+':'+message);
-  inc(fglobindex);
+//  output(ok_beginend,modulecodenames[modulecodes(rec1[1])]+
+//             '.'+inttostr(fgloblist.count)+':'+message);
+  outrecord(modulecodenames[modulecodes(rec1[1])]+
+             '.'+inttostr(fgloblist.count-1)+':'+message,params);
+//  inc(fglobindex);
  end;
- 
+var
+ str1: string; 
 begin
  output(ok_begin,blockidnames[MODULE_BLOCK_ID]);
  i1:= fblocklevel;
@@ -435,10 +564,30 @@ begin
    else begin
     case modulecodes(rec1[1]) of
      MODULE_CODE_GLOBALVAR: begin
-      outglobalvalue('');
+      checkmindatalen(rec1,5);
+      with pglobinfoty(fgloblist.add())^ do begin
+       kind:= gk_var;
+       vartype:= rec1[2];
+       outglobalvalue(ftypelist.typename(vartype)+','+inttostr(rec1[3])+','+
+                    fgloblist.constname(rec1[4]-1),
+                                      dynarraytovararray(copy(rec1,5,bigint)));
+      end;
      end;
      MODULE_CODE_FUNCTION: begin
-      outglobalvalue('');
+      checkmindatalen(rec1,2);
+      with pglobinfoty(fgloblist.add())^ do begin
+       kind:= gk_sub;
+       subtype:= rec1[2];
+       subindex:= fsubheadercount;
+       str1:= inttostr(subindex)+':'+ftypelist.typename(subtype);
+       if high(rec1) > 2 then begin
+        outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)));
+       end
+       else begin
+        outglobalvalue(str1,[]);
+       end;
+       inc(fsubheadercount);
+      end;
      end;
      else begin
       outrecord(modulecodenames[modulecodes(rec1[1])],
@@ -452,7 +601,7 @@ end;
 
 procedure tllvmbcreader.readtypeblock();
 var
- i1: int32;
+ i1,i2,i3: int32;
  rec1: valuearty;
  po1: ptypeinfoty;
 begin
@@ -489,10 +638,89 @@ begin
        po1^.size:= rec1[2];
        output(ok_beginend,ftypelist.typename(ftypelist.count-1));
       end;
+      TYPE_CODE_FUNCTION: begin
+       checkmindatalen(rec1,3);
+       po1^.subvararg:= rec1[2] <> 0;
+       po1^.subparamcount:= high(rec1)-4+1+1; //+result type
+       with ftypelist do begin
+        po1^.subparamindex:= fsubparamcount;
+        fsubparamcount:= fsubparamcount+po1^.subparamcount;
+        if fsubparamcount > high(fsubparams) then begin
+         reallocuninitedarray(2*fsubparamcount+256,sizeof(fsubparams[0]),
+                                                               fsubparams);
+        end;
+        i2:= po1^.subparamindex;
+        fsubparams[i2]:= rec1[3]; //result type
+        inc(i2);
+        for i3:= 4 to high(rec1) do begin
+         fsubparams[i2]:= rec1[i3];
+         inc(i2);
+        end;
+       end;
+       output(ok_beginend,ftypelist.typename(ftypelist.count-1));
+      end;
       else begin
        outrecord(inttostr(ftypelist.count-1)+'.'+
                    typecodenames[typecodes(rec1[1])],
                         dynarraytovararray(copy(rec1,2,bigint)));
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readconstantsblock();
+var
+ i1: int32;
+ rec1: valuearty;
+ po1: ptypeinfoty;
+ 
+ procedure outconst(const avalues: array of const);
+ begin
+  outrecord(inttostr(fgloblist.count-1)+'.'+
+                    constantscodesnames[constantscodes(rec1[1])],avalues);
+ end; //outconst
+ 
+begin
+ output(ok_begin,blockidnames[CONSTANTS_BLOCK_ID]);
+ i1:= fblocklevel;
+ while not finished and (fblocklevel >= i1) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(constantscodesnames))) or 
+             (constantscodesnames[constantscodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin
+    if constantscodes(rec1[1]) = CST_CODE_SETTYPE then begin
+     checkdatalen(rec1,2);
+     fgloblist.fsettype:= rec1[2];
+     output(ok_beginend,constantscodesnames[constantscodes(rec1[1])]+':'+
+                                       ftypelist.typename(fgloblist.fsettype));
+    end
+    else begin
+     with pglobinfoty(fgloblist.add())^ do begin
+      kind:= gk_const;
+      consttype:= fgloblist.fsettype;
+      constkind:= constantscodes(rec1[1]);
+      if high(rec1) = 1 then begin
+       outconst([]);
+      end
+      else begin //length > 2
+       case constkind of
+        CST_CODE_INTEGER: begin
+         intconst:= rec1[2] shr 1;
+         if odd(rec1[2]) then begin
+          intconst:= -intconst;
+         end;
+         outconst([inttostr(intconst)]);
+        end
+        else begin
+         outconst(dynarraytovararray(copy(rec1,2,bigint)));
+        end;
+       end;
       end;
      end;
     end;
@@ -562,6 +790,9 @@ begin
    end;
    TYPE_BLOCK_ID_NEW: begin
     readtypeblock();
+   end;
+   CONSTANTS_BLOCK_ID: begin
+    readconstantsblock();
    end;
    else begin
     unknownblock();
@@ -871,11 +1102,6 @@ begin
  if kind = ok_begin then begin
   inc(findent);
  end;
-end;
-
-procedure tllvmbcreader.error(const message: string);
-begin
- raise exception.create(message+'.');
 end;
 
 procedure tllvmbcreader.outrecord(const aname: string;
