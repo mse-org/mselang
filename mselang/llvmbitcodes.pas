@@ -94,13 +94,13 @@ type
     /// standard abbrevs that should be available to all blocks of a specified
     /// ID.
     BLOCKINFO_BLOCK_ID,// = 0,
-    BLOCKINFO_BLOCK_1,
-    BLOCKINFO_BLOCK_2,
-    BLOCKINFO_BLOCK_3,
-    BLOCKINFO_BLOCK_4,
-    BLOCKINFO_BLOCK_5,
-    BLOCKINFO_BLOCK_6,
-    BLOCKINFO_BLOCK_7,
+    BLOCK_1,
+    BLOCK_2,
+    BLOCK_3,
+    BLOCK_4,
+    BLOCK_5,
+    BLOCK_6,
+    BLOCK_7,
 
     // Block IDs 1-7 are reserved for future expansion.
 //    FIRST_APPLICATION_BLOCKID = 8,
@@ -169,41 +169,42 @@ type
 
   /// TYPE blocks have codes for each type primitive they use.
   TypeCodes = (
-    TYPE_CODE_NUMENTRY =  1,    // NUMENTRY: [numentries]
+    TYPE_CODE_0,
+    TYPE_CODE_NUMENTRY,// =  1,    // NUMENTRY: [numentries]
 
     // Type Codes
-    TYPE_CODE_VOID     =  2,    // VOID
-    TYPE_CODE_FLOAT    =  3,    // FLOAT
-    TYPE_CODE_DOUBLE   =  4,    // DOUBLE
-    TYPE_CODE_LABEL    =  5,    // LABEL
-    TYPE_CODE_OPAQUE   =  6,    // OPAQUE
-    TYPE_CODE_INTEGER  =  7,    // INTEGER: [width]
-    TYPE_CODE_POINTER  =  8,    // POINTER: [pointee type]
+    TYPE_CODE_VOID,//     =  2,    // VOID
+    TYPE_CODE_FLOAT,//    =  3,    // FLOAT
+    TYPE_CODE_DOUBLE,//   =  4,    // DOUBLE
+    TYPE_CODE_LABEL,//    =  5,    // LABEL
+    TYPE_CODE_OPAQUE,//   =  6,    // OPAQUE
+    TYPE_CODE_INTEGER,//  =  7,    // INTEGER: [width]
+    TYPE_CODE_POINTER,//  =  8,    // POINTER: [pointee type]
 
-    TYPE_CODE_FUNCTION_OLD = 9, // FUNCTION: [vararg, attrid, retty,
+    TYPE_CODE_FUNCTION_OLD,// = 9, // FUNCTION: [vararg, attrid, retty,
                                 //            paramty x N]
 
-    TYPE_CODE_HALF     =  10,   // HALF
+    TYPE_CODE_HALF,//     =  10,   // HALF
 
-    TYPE_CODE_ARRAY    = 11,    // ARRAY: [numelts, eltty]
-    TYPE_CODE_VECTOR   = 12,    // VECTOR: [numelts, eltty]
+    TYPE_CODE_ARRAY,//    = 11,    // ARRAY: [numelts, eltty]
+    TYPE_CODE_VECTOR,//   = 12,    // VECTOR: [numelts, eltty]
 
     // These are not with the other floating point types because they're
     // a late addition, and putting them in the right place breaks
     // binary compatibility.
-    TYPE_CODE_X86_FP80 = 13,    // X86 LONG DOUBLE
-    TYPE_CODE_FP128    = 14,    // LONG DOUBLE (112 bit mantissa)
-    TYPE_CODE_PPC_FP128= 15,    // PPC LONG DOUBLE (2 doubles)
+    TYPE_CODE_X86_FP80,// = 13,    // X86 LONG DOUBLE
+    TYPE_CODE_FP128,//    = 14,    // LONG DOUBLE (112 bit mantissa)
+    TYPE_CODE_PPC_FP128,//= 15,    // PPC LONG DOUBLE (2 doubles)
 
-    TYPE_CODE_METADATA = 16,    // METADATA
+    TYPE_CODE_METADATA,// = 16,    // METADATA
 
-    TYPE_CODE_X86_MMX = 17,     // X86 MMX
+    TYPE_CODE_X86_MMX,// = 17,     // X86 MMX
 
-    TYPE_CODE_STRUCT_ANON = 18, // STRUCT_ANON: [ispacked, eltty x N]
-    TYPE_CODE_STRUCT_NAME = 19, // STRUCT_NAME: [strchr x N]
-    TYPE_CODE_STRUCT_NAMED = 20,// STRUCT_NAMED: [ispacked, eltty x N]
+    TYPE_CODE_STRUCT_ANON,// = 18, // STRUCT_ANON: [ispacked, eltty x N]
+    TYPE_CODE_STRUCT_NAME,// = 19, // STRUCT_NAME: [strchr x N]
+    TYPE_CODE_STRUCT_NAMED,// = 20,// STRUCT_NAMED: [ispacked, eltty x N]
 
-    TYPE_CODE_FUNCTION = 21     // FUNCTION: [vararg, retty, paramty x N]
+    TYPE_CODE_FUNCTION// = 21     // FUNCTION: [vararg, retty, paramty x N]
   );
 
   // The type symbol table only has one code (TST_ENTRY_CODE).

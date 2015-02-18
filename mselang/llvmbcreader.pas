@@ -18,7 +18,7 @@ unit llvmbcreader;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,classes,mclasses,msetypes,msestrings;
+ msestream,classes,mclasses,msetypes,msestrings,mselist,llvmbitcodes;
 //
 //not optimized, for debug purpose only
 //
@@ -53,6 +53,28 @@ type
  blockinfoarty = array of blockinfoty;
  
  outputkindty = (ok_begin,ok_end,ok_beginend);
+
+ typeinfoty = record
+  case kind: typecodes of
+   TYPE_CODE_INTEGER:(
+    size: int32;
+   );
+   TYPE_CODE_POINTER:(
+    base: int32; //index
+   );
+   TYPE_CODE_ARRAY:(
+    arraysize: int32;
+    arraytype: int32; //index
+   );
+ end;
+ ptypeinfoty = ^typeinfoty;
+ 
+ ttypelist = class(trecordlist)
+  public
+   constructor create();
+   function typename(const aindex: int32): string;
+ end;
+ 
  tllvmbcreader = class(tmsefilestream)
   private
    fbuffer: array[0..bcreaderbuffersize-1] of byte;
@@ -67,6 +89,8 @@ type
    farraytypes: array of abbrevitemty;
    fblockinfoid: int32;
    fblockabbrevs: array of abbrevarty; //blockid is array index
+   fglobindex: int32;
+   ftypelist: ttypelist;
   protected
    procedure error(const message: string);
    procedure checkdatalen(const arec: valuearty; const alen: integer);
@@ -96,16 +120,18 @@ type
    procedure readblock();
    procedure readblockinfoblock();
    procedure readmoduleblock();
+   procedure readtypeblock();
    procedure skip(const words: int32);
   public
    constructor create(ahandle: integer); override;
+   destructor destroy(); override;
    procedure dump(const aoutput: tstream);
  end;
  
 implementation
 uses
- msebits,sysutils,mseformatstr,llvmbitcodes,msearrayutils;
-
+ msebits,sysutils,mseformatstr,msearrayutils;
+ 
 const
  blockidnames: array[blockids] of string = (
     'BLOCKINFO_BLOCK',
@@ -138,6 +164,31 @@ const
   'GCNAME',       //11
   'COMDAT'        //12
  );
+ 
+ typecodenames: array[typecodes] of string = (
+  '',
+  'NUMENTRY',
+  'VOID',
+  'FLOAT',
+  'DOUBLE',
+  'LABEL',
+  'OPAQUE',
+  'INTEGER',
+  'POINTER',
+  'FUNCTION_OLD',
+  'HALF',
+  'ARRAY',
+  'VECTOR',
+  'X86_FP80',
+  'FP128',
+  'PPC_FP128',
+  'METADATA',
+  'X86_MMX',
+  'STRUCT_ANON',
+  'STRUCT_NAME',
+  'TRUCT_NAMED',
+  'FUNCTION'
+  );
  
  char6tab: array[card8] of char = (
 // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
@@ -177,10 +228,45 @@ const
 // $f0
   #0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0);
   
+{ ttypelist }
+
+constructor ttypelist.create;
+begin
+ inherited create(sizeof(typeinfoty));
+end;
+
+function ttypelist.typename(const aindex: int32): string;
+begin
+ if (aindex < 0) or (aindex >= fcount) then begin
+  raise exception.create('Invalid type '+inttostr(aindex));
+ end;
+ with ptypeinfoty(pointer(fdata)+aindex*sizeof(typeinfoty))^ do begin
+  if (ord(kind) < 0) or (kind > high(typecodenames)) then begin
+   raise exception.create('Invalid type '+inttostr(ord(kind)));
+  end;
+  case kind of
+   TYPE_CODE_POINTER: begin
+    result:= '^'+typename(base);
+   end;
+   TYPE_CODE_ARRAY: begin
+    result:= 'array['+inttostr(arraysize)+'] of '+typename(arraytype);
+   end;
+   TYPE_CODE_INTEGER: begin
+    result:= typecodenames[kind]+':'+inttostr(size);
+   end;
+   else begin
+    result:= typecodenames[kind];
+   end;
+  end;
+ end;
+ result:= inttostr(aindex)+'.'+result;
+end;
+
 { tllvmbcreader }
 
 constructor tllvmbcreader.create(ahandle: integer);
 begin
+ ftypelist:= ttypelist.create();
  inherited;
  fbufpos:= @fbuffer;
  fbufend:= fbufpos;
@@ -188,6 +274,12 @@ begin
  fbitbuf:= fbufpos^;
  inc(fbufpos);
  fidsize:= 2;
+end;
+
+destructor tllvmbcreader.destroy;
+begin
+ ftypelist.free();
+ inherited;
 end;
 
 function tllvmbcreader.tryfillbuffer: boolean;
@@ -322,6 +414,14 @@ procedure tllvmbcreader.readmoduleblock;
 var
  i1: int32;
  rec1: valuearty;
+
+ procedure outglobalvalue(const message: string);
+ begin
+  output(ok_beginend,modulecodenames[modulecodes(rec1[1])]+
+             '.'+inttostr(fglobindex)+':'+message);
+  inc(fglobindex);
+ end;
+ 
 begin
  output(ok_begin,blockidnames[MODULE_BLOCK_ID]);
  i1:= fblocklevel;
@@ -331,9 +431,72 @@ begin
    if (rec1[1] > ord(high(modulecodenames))) or 
              (modulecodenames[modulecodes(rec1[1])] = '') then begin
     unknownrec(rec1);
-   end;
-   outrecord(modulecodenames[modulecodes(rec1[1])],
+   end
+   else begin
+    case modulecodes(rec1[1]) of
+     MODULE_CODE_GLOBALVAR: begin
+      outglobalvalue('');
+     end;
+     MODULE_CODE_FUNCTION: begin
+      outglobalvalue('');
+     end;
+     else begin
+      outrecord(modulecodenames[modulecodes(rec1[1])],
                        dynarraytovararray(copy(rec1,2,bigint)));
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readtypeblock();
+var
+ i1: int32;
+ rec1: valuearty;
+ po1: ptypeinfoty;
+begin
+ output(ok_begin,blockidnames[TYPE_BLOCK_ID_NEW]);
+ i1:= fblocklevel;
+ while not finished and (fblocklevel >= i1) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(typecodenames))) or 
+             (typecodenames[typecodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin
+    if typecodes(rec1[1]) <> TYPE_CODE_NUMENTRY then begin
+     po1:= ftypelist.add();
+     po1^.kind:= typecodes(rec1[1]);
+    end;
+    if high(rec1) = 1 then begin
+     output(ok_beginend,typecodenames[typecodes(rec1[1])]);
+    end
+    else begin //length > 2
+     case typecodes(rec1[1]) of
+      TYPE_CODE_POINTER: begin
+       po1^.base:= rec1[2];
+       output(ok_beginend,ftypelist.typename(ftypelist.count-1));
+      end;
+      TYPE_CODE_ARRAY: begin
+       checkmindatalen(rec1,3);
+       po1^.arraysize:= rec1[2];
+       po1^.arraytype:= rec1[3];
+       output(ok_beginend,ftypelist.typename(ftypelist.count-1));
+      end;
+      TYPE_CODE_INTEGER: begin
+       po1^.size:= rec1[2];
+       output(ok_beginend,ftypelist.typename(ftypelist.count-1));
+      end;
+      else begin
+       outrecord(inttostr(ftypelist.count-1)+'.'+
+                   typecodenames[typecodes(rec1[1])],
+                        dynarraytovararray(copy(rec1,2,bigint)));
+      end;
+     end;
+    end;
+   end;
   end;
  end;
 end;
@@ -397,6 +560,9 @@ begin
    MODULE_BLOCK_ID: begin
     readmoduleblock();
    end;
+   TYPE_BLOCK_ID_NEW: begin
+    readtypeblock();
+   end;
    else begin
     unknownblock();
    end;
@@ -410,22 +576,17 @@ var
  outindex: int32;
 
  procedure doread(const abbrev: abbrevty);
- var
-  abbrevindex: int32;
 
-  procedure readarray(); forward;
+  procedure readarray(const item: abbrevitemty); forward;
   
-  procedure readvalue();
+  procedure readvalue(const item: abbrevitemty);
   var
    by1: card8;
   begin
-   if abbrevindex > high(abbrev) then begin
-    error('Invalid abbrev record');
-   end;
    if outindex > high(values) then begin
     reallocuninitedarray(outindex*2+4,sizeof(values[0]),values);
    end;
-   with abbrev[abbrevindex] do begin
+   with item do begin
     case kind of
      ak_literal: begin
       values[outindex]:= literal;
@@ -438,7 +599,7 @@ var
       values[outindex]:= readvbr(size);
      end;
      ak_array: begin
-      readarray();
+      readarray(item);
      end;
      ak_char6: begin
       by1:= 0;
@@ -447,38 +608,29 @@ var
      end;
      ak_blob: begin
      end;
+     else begin
+      error('Invalid abbrev kind '+inttostr(ord(kind)));
+     end;
     end;
    end;
    inc(outindex);
-  end;
+  end; //readvalue
   
-  procedure readarray();
+  procedure readarray(const item: abbrevitemty);
   var
    i1: int32;
   begin
-   inc(abbrevindex);
    for i1:= readvbr(6) - 1 downto 0 do begin
-    readvalue();
+    readvalue(farraytypes[item.arraytype]);
    end;
-  end;
+   dec(outindex); //compensate inc() at end of readvalue 
+  end; //readarray
   
+ var
+  i1: int32;
  begin
-  abbrevindex:= 0;
-  while abbrevindex <= high(abbrev) do begin
-   with abbrev[abbrevindex] do begin
-   {
-    if kind = ak_array then begin
-     readarray();
-     if abbrevindex <= high(abbrev) then begin
-      error('Invalid array');
-     end;
-    end
-    else begin
-    }
-     readvalue();
-     inc(abbrevindex);
-//    end;
-   end;
+  for i1:= 0 to high(abbrev) do begin
+   readvalue(abbrev[i1]);
   end;
   setlength(values,outindex);
  end;
@@ -603,6 +755,7 @@ begin
     readabbrevitem(abbrev1[i1]);
     inc(i1);
    end;
+   setlength(abbrev1,numops); //possibly changed by array operand
    if str1 <> '' then begin
     setlength(str1,length(str1)-1); //remove last comma
    end;
@@ -733,7 +886,7 @@ var
 begin
  str1:= '';
  for i1:= 0 to high(values) do begin
-  str1:= tvarrectoansistring(values[i1])+',';
+  str1:= str1+tvarrectoansistring(values[i1])+',';
  end;
  if str1 <> '' then begin
   setlength(str1,length(str1)-1);
