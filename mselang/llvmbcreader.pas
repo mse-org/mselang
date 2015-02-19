@@ -113,7 +113,7 @@ type
    constructor create(const typelist: ttypelist);
    function constname(const aid: int32): string;
  end;
-  
+
  tllvmbcreader = class(tmsefilestream)
   private
    fbuffer: array[0..bcreaderbuffersize-1] of byte;
@@ -132,6 +132,8 @@ type
    ftypelist: ttypelist;
    fgloblist: tgloblist;
    fsubheadercount: int32;
+   fsubheaders: integerarty; //index in fgloblist
+   fsubimplementationcount: int32;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -641,10 +643,11 @@ begin
      end;
      MODULE_CODE_FUNCTION: begin
       checkmindatalen(rec1,2);
+      additem(fsubheaders,fgloblist.count,fsubheadercount);
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_sub;
        subtype:= rec1[2];
-       subindex:= fsubheadercount;
+       subindex:= fsubheadercount-1;
        str1:= inttostr(subindex)+':'+ftypelist.typename(subtype);
        if high(rec1) > 2 then begin
         outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)));
@@ -652,7 +655,6 @@ begin
        else begin
         outglobalvalue(str1,[]);
        end;
-       inc(fsubheadercount);
       end;
      end;
      else begin
@@ -829,8 +831,16 @@ procedure tllvmbcreader.readfunctionblock();
 var
  i1: int32;
  rec1: valuearty;
+ ssaindex: int32;
 begin
- output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]);
+ if fsubimplementationcount >= fsubheadercount then begin
+  error('Function without header');
+ end;
+ i1:= fsubheaders[fsubimplementationcount];
+ output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]+'.'+
+            inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
+            ftypelist.typename(pglobinfoty(fgloblist.fdata)[i1].subtype));
+ inc(fsubimplementationcount);
  i1:= fblocklevel;
  while not finished and (fblocklevel >= i1) do begin
   rec1:= readitem();
