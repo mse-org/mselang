@@ -269,18 +269,18 @@ type
   /// have no fixed relation to the LLVM IR enum values.  Changing these will
   /// break compatibility with old files.
   CastOpcodes = (
-    CAST_TRUNC    =  0,
-    CAST_ZEXT     =  1,
-    CAST_SEXT     =  2,
-    CAST_FPTOUI   =  3,
-    CAST_FPTOSI   =  4,
-    CAST_UITOFP   =  5,
-    CAST_SITOFP   =  6,
-    CAST_FPTRUNC  =  7,
-    CAST_FPEXT    =  8,
-    CAST_PTRTOINT =  9,
-    CAST_INTTOPTR = 10,
-    CAST_BITCAST  = 11
+    CAST_TRUNC,//    =  0,
+    CAST_ZEXT,//     =  1,
+    CAST_SEXT,//     =  2,
+    CAST_FPTOUI,//   =  3,
+    CAST_FPTOSI,//   =  4,
+    CAST_UITOFP,//   =  5,
+    CAST_SITOFP,//   =  6,
+    CAST_FPTRUNC,//  =  7,
+    CAST_FPEXT,//    =  8,
+    CAST_PTRTOINT,// =  9,
+    CAST_INTTOPTR,// = 10,
+    CAST_BITCAST//  = 11
   );
 
   /// BinaryOpcodes - These are values used in the bitcode files to encode which
@@ -288,19 +288,19 @@ type
   /// have no fixed relation to the LLVM IR enum values.  Changing these will
   /// break compatibility with old files.
   BinaryOpcodes  = (
-    BINOP_ADD  =  0,
-    BINOP_SUB  =  1,
-    BINOP_MUL  =  2,
-    BINOP_UDIV =  3,
-    BINOP_SDIV =  4,    // overloaded for FP
-    BINOP_UREM =  5,
-    BINOP_SREM =  6,    // overloaded for FP
-    BINOP_SHL  =  7,
-    BINOP_LSHR =  8,
-    BINOP_ASHR =  9,
-    BINOP_AND  = 10,
-    BINOP_OR   = 11,
-    BINOP_XOR  = 12
+    BINOP_ADD,//  =  0,
+    BINOP_SUB,//  =  1,
+    BINOP_MUL,//  =  2,
+    BINOP_UDIV,// =  3,
+    BINOP_SDIV,// =  4,    // overloaded for FP
+    BINOP_UREM,// =  5,
+    BINOP_SREM,// =  6,    // overloaded for FP
+    BINOP_SHL,//  =  7,
+    BINOP_LSHR,// =  8,
+    BINOP_ASHR,// =  9,
+    BINOP_AND,//  = 10,
+    BINOP_OR,//   = 11,
+    BINOP_XOR//  = 12
   );
 
   /// These are values used in the bitcode files to encode AtomicRMW operations.

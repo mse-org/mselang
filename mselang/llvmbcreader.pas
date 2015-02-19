@@ -80,26 +80,29 @@ type
    fsubparams: integerarty; //typeindex
   public
    constructor create();
+   procedure checkvalidindex(const aindex: int32);
    function typename(const aindex: int32): string;
+   function iskind(const aindex: int32; const akind: typecodes): boolean;
+   function parentiskind(const aindex: int32; const akind: typecodes): boolean;
+   function parenttype(const aindex: int32): ptypeinfoty;
+   function itemtypeindex(const aindex: integer): int32;
  end;
 
  globkindty = (gk_const,gk_var,gk_sub);
  constkindty = (ck_integer);
  
  globinfoty = record
+  valuetype: int32;
   case kind: globkindty of
    gk_const: (
-    consttype: int32;
     case constkind: constantscodes of
-     cst_code_integer: (
+     CST_CODE_INTEGER: (
       intconst: valuety;
      );
    );
    gk_var: (
-    vartype: int32;
    );
    gk_sub: (
-    subtype: int32;
     subindex: int32;    
    );
  end;
@@ -111,7 +114,9 @@ type
    fsettype: int32;
   public
    constructor create(const typelist: ttypelist);
+   procedure checkvalidindex(const aindex: int32);
    function constname(const aid: int32): string;
+   function typeid(const aindex: int32): int32;
  end;
 
  tllvmbcreader = class(tmsefilestream)
@@ -179,20 +184,20 @@ uses
  
 const
  blockidnames: array[blockids] of string = (
-    'BLOCKINFO_BLOCK',
-    '','','','','','','',
-    'MODULE_BLOCK',
-    'PARAMATTR_BLOCK',
-    'PARAMATTR_GROUP_BLOCK',
-    'CONSTANTS_BLOCK',
-    'FUNCTION_BLOCK',
-    'UNUSED_BLOCK',
-    'VALUE_SYMTAB_BLOCK',
-    'METADATA_BLOCK',
-    'METADATA_ATTACHMENT',
-    'TYPE_BLOCK_NEW',
-    'USELIST_BLOCK'
-  );
+  'BLOCKINFO_BLOCK',
+  '','','','','','','',
+  'MODULE_BLOCK',
+  'PARAMATTR_BLOCK',
+  'PARAMATTR_GROUP_BLOCK',
+  'CONSTANTS_BLOCK',
+  'FUNCTION_BLOCK',
+  'UNUSED_BLOCK',
+  'VALUE_SYMTAB_BLOCK',
+  'METADATA_BLOCK',
+  'METADATA_ATTACHMENT',
+  'TYPE_BLOCK_NEW',
+  'USELIST_BLOCK'
+ );
 
  modulecodenames: array[modulecodes] of string = (
   '',             //0
@@ -233,86 +238,117 @@ const
   'STRUCT_NAME',
   'TRUCT_NAMED',
   'FUNCTION'
-  );
+ );
   
  constantscodesnames: array[constantscodes] of string = (
-    '',
-    'SETTYPE',
-    'NULL',
-    'UNDEF',
-    'INTEGER',
-    'WIDE_INTEGER',
-    'FLOAT',
-    'AGGREGATE',
-    'STRING',
-    'CSTRING',
-    'CE_BINOP',
-    'CE_CAST',
-    'CE_GEP',
-    'CE_SELECT',
-    'CE_EXTRACTELT',
-    'CE_INSERTELT',
-    'CE_SHUFFLEVEC',
-    'CE_CMP',
-    'INLINEASM_OLD',
-    'CE_SHUFVEC_EX',
-    'CE_INBOUNDS_GEP',
-    'BLOCKADDRESS',
-    'DATA',
-    'INLINEASM'
-  );
+  '',
+  'SETTYPE',
+  'NULL',
+  'UNDEF',
+  'INTEGER',
+  'WIDE_INTEGER',
+  'FLOAT',
+  'AGGREGATE',
+  'STRING',
+  'CSTRING',
+  'CE_BINOP',
+  'CE_CAST',
+  'CE_GEP',
+  'CE_SELECT',
+  'CE_EXTRACTELT',
+  'CE_INSERTELT',
+  'CE_SHUFFLEVEC',
+  'CE_CMP',
+  'INLINEASM_OLD',
+  'CE_SHUFVEC_EX',
+  'CE_INBOUNDS_GEP',
+  'BLOCKADDRESS',
+  'DATA',
+  'INLINEASM'
+ );
 
  valuesymtabcodesnames: array[valuesymtabcodes] of string = (
   '', 
   'ENTRY',
   'BBENTRY'
-  );
+ );
   
-  functioncodesnames: array[functioncodes] of string = (
-    '',
-    'DECLAREBLOCKS',
-    'INST_BINOP',
-    'INST_CAST',
-    'INST_GEP',
-    'INST_SELECT',
-    'INST_EXTRACTELT',
-    'INST_INSERTELT',
-    'INST_SHUFFLEVEC',
-    'INST_CMP',
-    'INST_RET',
-    'INST_BR',
-    'INST_SWITCH',
-    'INST_INVOKE',
-    '',
-    'INST_UNREACHABLE',
-    'INST_PHI',
-    '',
-    '',
-    'INST_ALLOCA',
-    'INST_LOAD',
-    '',
-    '',
-    'INST_VAARG',
-    'INST_STORE',
-    '',
-    'INST_EXTRACTVAL',
-    'INST_INSERTVAL',
-    'INST_CMP2',
-    'INST_VSELECT',
-    'INST_INBOUNDS_GEP',
-    'INST_INDIRECTBR',
-    '',
-    'DEBUG_LOC_AGAIN',
-    'INST_CALL',
-    'DEBUG_LOC',
-    'INST_FENCE',
-    'INST_CMPXCHG',
-    'INST_ATOMICRMW',
-    'INST_RESUME',
-    'LANDINGPAD',
-    'INST_LOADATOMIC',
-    'INST_STOREATOMIC'
-  );
+ functioncodesnames: array[functioncodes] of string = (
+  '',
+  'DECLAREBLOCKS',
+  'INST_BINOP',
+  'INST_CAST',
+  'INST_GEP',
+  'INST_SELECT',
+  'INST_EXTRACTELT',
+  'INST_INSERTELT',
+  'INST_SHUFFLEVEC',
+  'INST_CMP',
+  'INST_RET',
+  'INST_BR',
+  'INST_SWITCH',
+  'INST_INVOKE',
+  '',
+  'INST_UNREACHABLE',
+  'INST_PHI',
+  '',
+  '',
+  'INST_ALLOCA',
+  'INST_LOAD',
+  '',
+  '',
+  'INST_VAARG',
+  'INST_STORE',
+  '',
+  'INST_EXTRACTVAL',
+  'INST_INSERTVAL',
+  'INST_CMP2',
+  'INST_VSELECT',
+  'INST_INBOUNDS_GEP',
+  'INST_INDIRECTBR',
+  '',
+  'DEBUG_LOC_AGAIN',
+  'INST_CALL',
+  'DEBUG_LOC',
+  'INST_FENCE',
+  'INST_CMPXCHG',
+  'INST_ATOMICRMW',
+  'INST_RESUME',
+  'LANDINGPAD',
+  'INST_LOADATOMIC',
+  'INST_STOREATOMIC'
+ );
+
+ binaryopcodesnames: array[binaryopcodes] of string = (
+  'ADD',
+  'SUB',
+  'MUL',
+  'UDIV',
+  'SDIV',
+  'UREM',
+  'SREM',
+  'SHL',
+  'LSHR',
+  'ASHR',
+  'AND',
+  'OR',
+  'XOR'
+ );
+
+ castopcodesnames: array[castopcodes] of string = (
+  'TRUNC',
+  'ZEXT',
+  'SEXT',
+  'FPTOUI',
+  'FPTOSI',
+  'UITOFP',
+  'SITOFP',
+  'FPTRUNC',
+  'FPEXT',
+  'PTRTOINT',
+  'INTTOPTR',
+  'BITCAST'
+ );
 
  char6tab: array[card8] of char = (
 // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
@@ -381,37 +417,101 @@ function ttypelist.typename(const aindex: int32): string;
 var
  i1: int32;
 begin
- if (aindex < 0) or (aindex >= fcount) then begin
-  raise exception.create('Invalid type '+inttostr(aindex));
- end;
- with ptypeinfoty(pointer(fdata)+aindex*sizeof(typeinfoty))^ do begin
-  if (ord(kind) < 0) or (kind > high(typecodenames)) then begin
-   raise exception.create('Invalid type '+inttostr(ord(kind)));
+ if aindex < 0 then begin
+  result:= '^'+typename(-aindex);
+ end
+ else begin
+  if invalidindex(aindex) then begin
+   raise exception.create('Invalid type '+inttostr(aindex));
   end;
-  case kind of
-   TYPE_CODE_POINTER: begin
-    result:= '^'+typename(base);
+  with ptypeinfoty(pointer(fdata)+aindex*sizeof(typeinfoty))^ do begin
+   if (ord(kind) < 0) or (kind > high(typecodenames)) then begin
+    raise exception.create('Invalid type '+inttostr(ord(kind)));
    end;
-   TYPE_CODE_ARRAY: begin
-    result:= 'array['+inttostr(arraysize)+'] of '+typename(arraytype);
-   end;
-   TYPE_CODE_INTEGER: begin
-    result:= typecodenames[kind]+':'+inttostr(size);
-   end;
-   TYPE_CODE_FUNCTION: begin
-    result:= typecodenames[kind]+'(';
-    for i1:= subparamindex to subparamindex+subparamcount-1 do begin
-     result:= result+typename(fsubparams[i1])+',';
+   case kind of
+    TYPE_CODE_POINTER: begin
+     result:= '^'+typename(base);
     end;
-    setlength(result,length(result)-1);
-    result:= result+')';
+    TYPE_CODE_ARRAY: begin
+     result:= 'array['+inttostr(arraysize)+'] of '+typename(arraytype);
+    end;
+    TYPE_CODE_INTEGER: begin
+     result:= typecodenames[kind]+':'+inttostr(size);
+    end;
+    TYPE_CODE_FUNCTION: begin
+     result:= typecodenames[kind]+'(';
+     for i1:= subparamindex to subparamindex+subparamcount-1 do begin
+      result:= result+typename(fsubparams[i1])+',';
+     end;
+     setlength(result,length(result)-1);
+     result:= result+')';
+    end;
+    else begin
+     result:= typecodenames[kind];
+    end;
    end;
-   else begin
-    result:= typecodenames[kind];
+  end;
+  result:= inttostr(aindex)+'.'+result;
+ end;
+end;
+
+function ttypelist.iskind(const aindex: int32; const akind: typecodes): boolean;
+begin
+ result:= validindex(aindex) and (ptypeinfoty(fdata)[aindex].kind = akind);
+end;
+
+function ttypelist.parentiskind(const aindex: int32;
+               const akind: typecodes): boolean;
+begin
+ result:= validindex(aindex);
+ if result then begin
+  with ptypeinfoty(fdata)[aindex] do begin
+   result:= (kind = TYPE_CODE_POINTER) and validindex(base) and
+                   (ptypeinfoty(fdata)[base].kind = akind);
+  end;
+ end;
+end;
+
+function ttypelist.parenttype(const aindex: int32): ptypeinfoty;
+begin
+ checkvalidindex(aindex);
+ with ptypeinfoty(fdata)[aindex] do begin
+  if (kind <> TYPE_CODE_POINTER) or invalidindex(base) then begin
+   error('Invalid pointer type');
+  end;
+  result:= @ptypeinfoty(fdata)[base];
+ end;
+end;
+
+procedure ttypelist.checkvalidindex(const aindex: int32);
+begin
+ if invalidindex(aindex) then begin
+  error('Invalid type index');
+ end;
+end;
+
+function ttypelist.itemtypeindex(const aindex: integer): int32;
+begin
+ if aindex < 0 then begin
+  result:= -aindex;
+  checkvalidindex(result);
+ end
+ else begin
+  checkvalidindex(aindex);
+  with ptypeinfoty(fdata)[aindex] do begin
+   case kind of
+    TYPE_CODE_POINTER: begin
+     result:= base;
+    end;
+    TYPE_CODE_ARRAY: begin
+     result:= arraytype;
+    end;
+    else begin
+     error('Invalid item type');
+    end;
    end;
   end;
  end;
- result:= inttostr(aindex)+'.'+result;
 end;
 
 { tgloblist }
@@ -437,7 +537,7 @@ begin
     if kind <> gk_const then begin
      consterror();
     end;
-    result:= inttostr(aid)+':'+ftypelist.typename(consttype)+':';
+    result:= inttostr(aid)+':'+ftypelist.typename(valuetype)+':';
     case constkind of
      CST_CODE_INTEGER: begin
       result:= result+inttostr(intconst);
@@ -451,6 +551,21 @@ begin
   else begin
    consterror();
   end;
+ end;
+end;
+
+function tgloblist.typeid(const aindex: int32): int32;
+begin
+ checkvalidindex(aindex);
+ with pglobinfoty(fdata)[aindex] do begin
+  result:= valuetype;
+ end;
+end;
+
+procedure tgloblist.checkvalidindex(const aindex: int32);
+begin
+ if invalidindex(aindex) then begin
+  error('Invalid global index');
  end;
 end;
 
@@ -606,7 +721,6 @@ end;
 
 procedure tllvmbcreader.readmoduleblock;
 var
- i1: int32;
  rec1: valuearty;
 
  procedure outglobalvalue(const message: string; const params: array of const);
@@ -617,12 +731,15 @@ var
              '.'+inttostr(fgloblist.count-1)+':'+message,params);
 //  inc(fglobindex);
  end;
+
 var
  str1: string; 
+ blocklevelbefore: int32;
+
 begin
  output(ok_begin,blockidnames[MODULE_BLOCK_ID]);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    if (rec1[1] > ord(high(modulecodenames))) or 
@@ -635,8 +752,8 @@ begin
       checkmindatalen(rec1,5);
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_var;
-       vartype:= rec1[2];
-       outglobalvalue(ftypelist.typename(vartype)+','+inttostr(rec1[3])+','+
+       valuetype:= rec1[2];
+       outglobalvalue(ftypelist.typename(valuetype)+','+inttostr(rec1[3])+','+
                     fgloblist.constname(rec1[4]-1),
                                       dynarraytovararray(copy(rec1,5,bigint)));
       end;
@@ -646,9 +763,12 @@ begin
       additem(fsubheaders,fgloblist.count,fsubheadercount);
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_sub;
-       subtype:= rec1[2];
+       valuetype:= rec1[2];
+       if not ftypelist.parentiskind(valuetype,TYPE_CODE_FUNCTION) then begin
+        error('Invalid function type');
+       end;
        subindex:= fsubheadercount-1;
-       str1:= inttostr(subindex)+':'+ftypelist.typename(subtype);
+       str1:= inttostr(subindex)+':'+ftypelist.typename(valuetype);
        if high(rec1) > 2 then begin
         outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)));
        end
@@ -669,13 +789,13 @@ end;
 
 procedure tllvmbcreader.readtypeblock();
 var
- i1,i2,i3: int32;
+ blocklevelbefore,i2,i3: int32;
  rec1: valuearty;
  po1: ptypeinfoty;
 begin
  output(ok_begin,blockidnames[TYPE_BLOCK_ID_NEW]);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    if (rec1[1] > ord(high(typecodenames))) or 
@@ -741,20 +861,22 @@ end;
 
 procedure tllvmbcreader.readconstantsblock();
 var
- i1: int32;
  rec1: valuearty;
- po1: ptypeinfoty;
  
  procedure outconst(const avalues: array of const);
  begin
   outrecord(inttostr(fgloblist.count-1)+'.'+
                     constantscodesnames[constantscodes(rec1[1])],avalues);
  end; //outconst
+
+var
+ blocklevelbefore: int32;
+ po1: ptypeinfoty;
  
 begin
  output(ok_begin,blockidnames[CONSTANTS_BLOCK_ID]);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    if (rec1[1] > ord(high(constantscodesnames))) or 
@@ -771,7 +893,7 @@ begin
     else begin
      with pglobinfoty(fgloblist.add())^ do begin
       kind:= gk_const;
-      consttype:= fgloblist.fsettype;
+      valuetype:= fgloblist.fsettype;
       constkind:= constantscodes(rec1[1]);
       if high(rec1) = 1 then begin
        outconst([]);
@@ -799,12 +921,12 @@ end;
 
 procedure tllvmbcreader.readvaluesymtabblock();
 var
- i1: int32;
+ blocklevelbefore: int32;
  rec1: valuearty;
 begin
  output(ok_begin,blockidnames[VALUE_SYMTAB_BLOCK_ID]);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    if (rec1[1] > ord(high(valuesymtabcodesnames))) or 
@@ -829,20 +951,102 @@ end;
 
 procedure tllvmbcreader.readfunctionblock();
 var
- i1: int32;
  rec1: valuearty;
- ssaindex: int32;
+ paramcount,ssastart,ssaindex: int32;
+ ssatypes: integerarty;
+ 
+ procedure outssarecord(const atype: int32; const avalue: string);
+ begin
+  output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+':S'+
+              inttostr(ssaindex)+'='+avalue+':'+ftypelist.typename(atype));
+  additem(ssatypes,atype,ssaindex);
+ end; //outfuncrecord
+
+ function absvalue(const avalue: int32): int32;
+ begin
+  result:= ssaindex+ssastart-avalue;
+ end; //absvalue
+ 
+ function typeid(avalue: int32): int32;
+ begin
+  avalue:= ssaindex-avalue;
+  if avalue < 0 then begin
+   result:= fgloblist.typeid(avalue+ssastart);
+  end
+  else begin
+   if avalue >= ssaindex then begin
+    error('Invalid ssa index');
+   end;
+   result:= ssatypes[avalue];
+  end;
+ end; //typeid
+
+ function opname(avalue: int32): string;
+ begin
+  avalue:= ssaindex-avalue;
+  if avalue < 0 then begin
+   avalue:= avalue+ssastart;
+   with pglobinfoty(fgloblist.fdata)[avalue] do begin
+    if kind = gk_const then begin
+     result:= 'C'+inttostr(avalue)+'=';
+     case constkind of
+      CST_CODE_INTEGER: begin
+       result:= result+inttostr(intconst);
+      end;
+      CST_CODE_NULL: begin
+       result:= result+'NULL';
+      end;
+     end;
+    end
+    else begin
+     result:= 'G'+inttostr(avalue);
+    end;
+   end;
+  end
+  else begin
+   if avalue >= ssaindex then begin
+    error('Invalid ssa index');
+   end;
+   if avalue <= paramcount then begin
+    result:= 'P'+inttostr(avalue);
+   end
+   else begin
+    result:= 'S'+inttostr(avalue-paramcount);
+   end;
+  end;
+ end;
+  
+var
+ subtyp1: int32;
+ blocklevelbefore: int32;
+ i1,i2: int32;
+ str1: string;
+ 
 begin
  if fsubimplementationcount >= fsubheadercount then begin
   error('Function without header');
  end;
  i1:= fsubheaders[fsubimplementationcount];
+ subtyp1:= pglobinfoty(fgloblist.fdata)[i1].valuetype;
  output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]+'.'+
             inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
-            ftypelist.typename(pglobinfoty(fgloblist.fdata)[i1].subtype));
+            ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ ssastart:= fgloblist.count;
+ with ftypelist.parenttype(subtyp1)^ do begin
+// ssaindex:= ptypeinfoty(ftypelist.fdata)[
+//                 ptypeinfoty(ftypelist.fdata)[subtyp1].base].subparamcount-1;
+  ssaindex:= subparamcount-1;
+  paramcount:= ssaindex;
+  setlength(ssatypes,ssaindex);
+  i2:= subparamindex;
+  for i1:= 0 to high(ssatypes) do begin
+   ssatypes[i1]:= ftypelist.fsubparams[i2];
+   inc(i2);
+  end;
+ end;
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    if (rec1[1] > ord(high(functioncodesnames))) or 
@@ -851,8 +1055,48 @@ begin
    end
    else begin
     if high(rec1) > 1 then begin
-     outrecord(functioncodesnames[functioncodes(rec1[1])],
-              dynarraytovararray(copy(rec1,2,bigint)));
+     case functioncodes(rec1[1]) of
+      FUNC_CODE_INST_BINOP: begin
+       checkdatalen(rec1,4);
+       if rec1[4] > ord(high(binaryopcodesnames)) then begin
+        error('Invalid binary opcode');
+       end;
+       str1:= binaryopcodesnames[binaryopcodes(rec1[4])]+
+        '('+opname(rec1[2])+','+opname(rec1[3])+')';
+       i1:= typeid(rec1[2]);
+       i2:= typeid(rec1[3]);
+       outssarecord(i1,str1);
+       if i1 <> i2 then begin
+        error('Incompatible type');
+       end;
+      end;
+      FUNC_CODE_INST_CAST: begin
+       checkdatalen(rec1,4);
+       str1:= castopcodesnames[castopcodes(rec1[4])]+
+       '('+opname(rec1[2])+':'+ftypelist.typename(typeid(rec1[2]))+')';
+       i1:= rec1[3];
+       outssarecord(i1,str1);
+      end;
+      FUNC_CODE_INST_GEP: begin
+       checkmindatalen(rec1,2);
+       str1:= opname(rec1[2])+'[';
+       i2:= typeid(rec1[2]);
+       for i1:= 3 to high(rec1) do begin
+        str1:= str1+opname(rec1[i1])+',';
+        i2:= ftypelist.itemtypeindex(i2);
+       end;
+       if high(rec1) >= 3 then begin
+        setlength(str1,length(str1)-1);
+        i2:= -i2; //pointer
+       end;
+       str1:= str1+']';
+       outssarecord(i2,str1);
+      end;
+      else begin
+       outrecord(functioncodesnames[functioncodes(rec1[1])],
+               dynarraytovararray(copy(rec1,2,bigint)));
+      end;
+     end;
     end
     else begin
      outrecord(functioncodesnames[functioncodes(rec1[1])],[]);
@@ -864,13 +1108,13 @@ end;
 
 procedure tllvmbcreader.readblockinfoblock;
 var
- i1: int32;
+ blocklevelbefore: int32;
  rec1: valuearty;
  str1: string;
 begin
  output(ok_begin,blockidnames[BLOCKINFO_BLOCK_ID]);
- i1:= fblocklevel;
- while not finished and (fblocklevel >= i1) do begin
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
    case blockinfocodes(rec1[1]) of
