@@ -85,6 +85,7 @@ type
    function iskind(const aindex: int32; const akind: typecodes): boolean;
    function parentiskind(const aindex: int32; const akind: typecodes): boolean;
    function parenttype(const aindex: int32): ptypeinfoty;
+   function parenttypeindex(const aindex: int32): int32;
    function itemtypeindex(const aindex: integer): int32;
  end;
 
@@ -480,6 +481,23 @@ begin
    error('Invalid pointer type');
   end;
   result:= @ptypeinfoty(fdata)[base];
+ end;
+end;
+
+function ttypelist.parenttypeindex(const aindex: int32): int32;
+begin
+ if aindex < 0 then begin
+  result:= -aindex;
+  checkvalidindex(result);
+ end
+ else begin
+  checkvalidindex(aindex);
+  with ptypeinfoty(fdata)[aindex] do begin
+   if (kind <> TYPE_CODE_POINTER) or invalidindex(base) then begin
+    error('Invalid pointer type');
+   end;
+   result:= base;
+  end;
  end;
 end;
 
@@ -957,8 +975,8 @@ var
  
  procedure outssarecord(const atype: int32; const avalue: string);
  begin
-  output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+':S'+
-              inttostr(ssaindex)+'='+avalue+':'+ftypelist.typename(atype));
+  output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+': S'+
+              inttostr(ssaindex)+':= '+avalue+': '+ftypelist.typename(atype));
   additem(ssatypes,atype,ssaindex);
  end; //outfuncrecord
 
@@ -1007,7 +1025,7 @@ var
    if avalue >= ssaindex then begin
     error('Invalid ssa index');
    end;
-   if avalue <= paramcount then begin
+   if avalue < paramcount then begin
     result:= 'P'+inttostr(avalue);
    end
    else begin
@@ -1091,6 +1109,40 @@ begin
        end;
        str1:= str1+']';
        outssarecord(i2,str1);
+      end;
+      FUNC_CODE_INST_STORE: begin
+       checkmindatalen(rec1,3);
+       i1:= typeid(rec1[2]); //dest
+       i2:= typeid(rec1[3]); //source
+       str1:= functioncodesnames[functioncodes(rec1[1])]+
+               ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
+                                                 ftypelist.typename(i2);
+       if high(rec1) > 3 then begin
+        outrecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
+       end
+       else begin
+        outrecord(str1,[]);
+       end;
+       if ftypelist.parenttypeindex(i1) <> i2 then begin
+        error('Invalid pointer type');
+       end;
+      end;
+      FUNC_CODE_INST_LOAD: begin
+       checkmindatalen(rec1,2);
+       outssarecord(ftypelist.parenttypeindex(typeid(rec1[2])),
+                            opname(rec1[2])+'^');
+      end;
+      FUNC_CODE_INST_ALLOCA: begin
+       outssarecord(rec1[2],'@');
+      end;
+      FUNC_CODE_INST_RET: begin
+       if high(rec1) = 2 then begin
+        outrecord(functioncodesnames[functioncodes(rec1[1])],[opname(rec1[2])]);
+       end
+       else begin
+        outrecord(functioncodesnames[functioncodes(rec1[1])],
+               dynarraytovararray(copy(rec1,2,bigint)));
+       end;
       end;
       else begin
        outrecord(functioncodesnames[functioncodes(rec1[1])],
