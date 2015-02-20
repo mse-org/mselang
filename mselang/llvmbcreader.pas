@@ -77,10 +77,11 @@ type
  ttypelist = class(trecordlist)
   protected
    fsubparamcount: int32;
-   fsubparams: integerarty; //typeindex
+   fsubparams: integerarty; //array of typeindex
   public
    constructor create();
    procedure checkvalidindex(const aindex: int32);
+   function item(const aindex: int32): ptypeinfoty;
    function typename(const aindex: int32): string;
    function iskind(const aindex: int32; const akind: typecodes): boolean;
    function parentiskind(const aindex: int32; const akind: typecodes): boolean;
@@ -104,7 +105,7 @@ type
    gk_var: (
    );
    gk_sub: (
-    subindex: int32;    
+    subheaderindex: int32;    
    );
  end;
  pglobinfoty = ^globinfoty;
@@ -118,6 +119,7 @@ type
    procedure checkvalidindex(const aindex: int32);
    function constname(const aid: int32): string;
    function typeid(const aindex: int32): int32;
+   function item(const aindex: int32): pglobinfoty;
  end;
 
  tllvmbcreader = class(tmsefilestream)
@@ -532,6 +534,12 @@ begin
  end;
 end;
 
+function ttypelist.item(const aindex: int32): ptypeinfoty;
+begin
+ checkvalidindex(aindex);
+ result:= @ptypeinfoty(fdata)[aindex];
+end;
+
 { tgloblist }
 
 constructor tgloblist.create(const typelist: ttypelist);
@@ -585,6 +593,12 @@ begin
  if invalidindex(aindex) then begin
   error('Invalid global index');
  end;
+end;
+
+function tgloblist.item(const aindex: int32): pglobinfoty;
+begin
+ checkvalidindex(aindex);
+ result:= @pglobinfoty(fdata)[aindex];
 end;
 
 { tllvmbcreader }
@@ -785,8 +799,8 @@ begin
        if not ftypelist.parentiskind(valuetype,TYPE_CODE_FUNCTION) then begin
         error('Invalid function type');
        end;
-       subindex:= fsubheadercount-1;
-       str1:= inttostr(subindex)+':'+ftypelist.typename(valuetype);
+       subheaderindex:= fsubheadercount-1;
+       str1:= inttostr(subheaderindex)+':'+ftypelist.typename(valuetype);
        if high(rec1) > 2 then begin
         outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)));
        end
@@ -976,7 +990,8 @@ var
  procedure outssarecord(const atype: int32; const avalue: string);
  begin
   output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+': S'+
-              inttostr(ssaindex)+':= '+avalue+': '+ftypelist.typename(atype));
+                          inttostr(ssaindex-paramcount)+':= '+
+                                       avalue+': '+ftypelist.typename(atype));
   additem(ssatypes,atype,ssaindex);
  end; //outfuncrecord
 
@@ -1037,7 +1052,7 @@ var
 var
  subtyp1: int32;
  blocklevelbefore: int32;
- i1,i2: int32;
+ i1,i2,i3: int32;
  str1: string;
  
 begin
@@ -1057,7 +1072,7 @@ begin
   ssaindex:= subparamcount-1;
   paramcount:= ssaindex;
   setlength(ssatypes,ssaindex);
-  i2:= subparamindex;
+  i2:= subparamindex+1; //skip result type
   for i1:= 0 to high(ssatypes) do begin
    ssatypes[i1]:= ftypelist.fsubparams[i2];
    inc(i2);
@@ -1142,6 +1157,43 @@ begin
        else begin
         outrecord(functioncodesnames[functioncodes(rec1[1])],
                dynarraytovararray(copy(rec1,2,bigint)));
+       end;
+      end;
+      FUNC_CODE_INST_CALL: begin
+       checkmindatalen(rec1,4);
+       with fgloblist.item(absvalue(rec1[4]))^ do begin
+        if kind <> gk_sub then begin
+         error('Invalid sub');
+        end;
+        str1:= opname(rec1[4])+':'+inttostr(subheaderindex)+'(';
+        for i1:= 5 to high(rec1) do begin
+         str1:= str1+opname(rec1[i1])+',';
+        end;
+        if high(rec1) >= 5 then begin
+         setlength(str1,length(str1)-1);
+        end;
+        str1:= str1+')';
+        with ftypelist.parenttype(valuetype)^ do begin
+         i2:= subparamindex;    //result type
+         i3:= subparamcount;
+        end;
+        i1:= ftypelist.fsubparams[i2];             
+        if ftypelist.item(i1)^.kind = TYPE_CODE_VOID then begin
+         outrecord(functioncodesnames[functioncodes(rec1[1])],[str1]);
+        end
+        else begin
+         outssarecord(i1,str1);
+        end;
+        if high(rec1)-3 <> i3 then begin
+         error('Invalid param count');
+        end;
+        inc(i2); //first param
+        for i1:= 5 to high(rec1) do begin
+         if typeid(rec1[i1]) <> ftypelist.fsubparams[i2] then begin
+          error('Invalid param');
+         end;
+         inc(i2);
+        end;
        end;
       end;
       else begin
