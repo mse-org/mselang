@@ -649,6 +649,7 @@ begin
     po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                             ek_none,allvisi);
     po1^.nestedvarchain:= 0;
+//    po1^.nestedvarcount:= 0; //?????
     po1^.nestedvarcount:= 1; //for callout frame ref
     d.subdef.ssabefore:= s.ssa;
     resetssa();

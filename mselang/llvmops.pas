@@ -453,11 +453,14 @@ procedure locassign();
 begin
  with pc^.par do begin
   with memop,locdataaddress do begin
-   if a.framelevel >= 0 then begin
+   if a.framelevel >= 0 then begin  //nested variable
     bcstream.emitgetelementptr(bcstream.subval(0),
             //pointer to array of pointer to local alloc
                                            bcstream.constval(a.address));
             //byte offset in array
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+    bcstream.emitloadop(bcstream.relval(0));
+            //pointer to variable
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
     bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
    end
@@ -2335,8 +2338,6 @@ begin
   end;
   if allocs.nestedalloccount > 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
-   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
-                                 //pointer to nestedallocs
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
    poend:= po2+allocs.nestedalloccount;
    i1:= 0;
@@ -2348,19 +2349,20 @@ begin
      bcstream.emitloadop(bcstream.relval(0));                       //source
     end
     else begin
-//     bcstream.emitnopop();
-     bcstream.emitnopop();
-     bcstream.emitnopop();
      bcstream.emitbitcast(bcstream.allocval(po2^.address.address),
-                                     bcstream.typeval(das_pointer));     //source
+                                    bcstream.typeval(das_pointer)); //source
     end;
-    bcstream.emitgetelementptr(bcstream.ssaval(-1),i1*pointersize); //dest
+    bcstream.emitgetelementptr(bcstream.ssaval(0),i1*pointersize); //dest
                         //pointer to nestedallocs
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
-    bcstream.emitstoreop(bcstream.relval(2),bcstream.relval(0));
+    bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
     inc(po2);
     inc(i1);
    end;
+   bcstream.emitbitcast(bcstream.allocval(allocs.alloccount),
+                                               bcstream.typeval(das_pointer));
+                                 //pointer to nestedallocs
+   bcstream.resetssa();
   end;
  end;
 end;
@@ -2918,10 +2920,10 @@ const
   lineinfossa = 0;
 
 //ssa only
-  nestedvarssa = 3;
-  popnestedvarssa = 3;
+  nestedvarssa = 5;
+  popnestedvarssa = 5;
   popsegaggregatessa = 3;
-  pushnestedvarssa = 3;
+  pushnestedvarssa = 5;
   pushsegaggregatessa = 3;
   allocssa = 1;
   nestedcalloutssa = 2;

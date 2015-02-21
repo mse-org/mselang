@@ -1179,7 +1179,7 @@ begin
         end;
         i1:= ftypelist.fsubparams[i2];             
         if ftypelist.item(i1)^.kind = TYPE_CODE_VOID then begin
-         outrecord(functioncodesnames[functioncodes(rec1[1])],[str1]);
+         outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
         end
         else begin
          outssarecord(i1,str1);

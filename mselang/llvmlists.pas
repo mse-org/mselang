@@ -542,12 +542,12 @@ begin
   for c1:= low(c1) to high(c1) do begin
    addi8(int8(c1));
   end;
+  addnullvalue(ord(das_1));
+  addnullvalue(ord(das_8));
+  addnullvalue(ord(das_16));
+  addnullvalue(ord(das_32));
+  addnullvalue(ord(das_64));
  end;
- addnullvalue(ord(das_1));
- addnullvalue(ord(das_8));
- addnullvalue(ord(das_16));
- addnullvalue(ord(das_32));
- addnullvalue(ord(das_64));
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;

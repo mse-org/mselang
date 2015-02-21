@@ -140,6 +140,7 @@ type
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32); //1 ssa
+   procedure resetssa(); //sets ssastart to current ssa
    
    procedure beginsub(const aflags: subflagsty; const allocs: suballocinfoty;
                                                          const bbcount: int32);
@@ -1220,13 +1221,20 @@ begin
   end;
   fsuballocstart:= fsubparamstart+paramcount;
   fsubopstart:= fsuballocstart+alloccount;
+ {
   if nestedalloccount > 0 then begin
    inc(fsubopstart,2); //nested var array alloc + byte pointer
   end;
+ }
   fsubopindex:= fsuballocstart; //pending allocs done in llvmops.subbeginop()
  end;
  beginblock(FUNCTION_BLOCK_ID,3);
  emitrec(ord(FUNC_CODE_DECLAREBLOCKS),[bbcount]);
+end;
+
+procedure tllvmbcwriter.resetssa();
+begin
+ fsubopstart:= fsubopindex;
 end;
 
 procedure tllvmbcwriter.endsub();

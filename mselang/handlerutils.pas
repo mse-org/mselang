@@ -1067,7 +1067,7 @@ var
     avardata^.address.nested:= false;
    end
    else begin
-    avardata^.address.address:= constlist.addi32(nestedvarcount*pointersize);
+    avardata^.address.address:= constlist.addi32((nestedvarcount-1)*pointersize);
 //    avardata^.address.address:= nestedvarcount;
     avardata^.address.nested:= true;
    end;
@@ -1100,11 +1100,12 @@ begin
    with psubdataty(ele.parentdata())^ do begin
     if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
                                                       allvisi,po1) then begin
-     trackref(po1,int1=1);
+     trackref(po1,false{int1=1});
     end;
 //    value.address.locaddress.nestedindex:= po1^.nestedindex;
 //    include(aaddress.flags,af_nested);
    end;
+   aaddress.address:= po1^.address.address;
    for int1:= int1-2 downto 0 do begin
     with psubdataty(ele.parentdata())^ do begin
      include(flags,sf_hasnestedref);
