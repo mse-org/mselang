@@ -810,19 +810,10 @@ begin
  end;
 end;
 
-const
- nullallocs: suballocinfoty = (
-  allocs: 0;
-  alloccount: 0;
-  paramcount: 0;
-  nestedallocs: 0;
-  nestedalloccount: 0;
- );
- 
 procedure mainop();
 begin
  with pc^.par do begin
-  bcstream.beginsub(false,nullallocs,main.blockcount);
+  bcstream.beginsub([]{false},nullallocs,main.blockcount);
  end;
 // outass('define i32 @main() {');
 end;
@@ -2328,7 +2319,7 @@ var
  poend: pointer;
 begin
  with pc^.par.subbegin do begin
-  bcstream.beginsub(sf_function in flags,allocs,blockcount);
+  bcstream.beginsub(flags,allocs,blockcount);
   po1:= getsegmentpo(seg_localloc,allocs.allocs);
   poend:= po1 + allocs.alloccount;
   while po1 < poend do begin
@@ -2344,6 +2335,8 @@ begin
   end;
   if allocs.nestedalloccount > 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                 //pointer to nestedallocs
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
    poend:= po2+allocs.nestedalloccount;
    i1:= 0;
@@ -2351,18 +2344,20 @@ begin
     if po2^.address.nested then begin
      bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.address);
                               //pointer to parent nestedvars, 2 ssa
-     bcstream.emitbitcast(bcstream.relval(0),bcstream.pptypeval(das_8));
-     bcstream.emitloadop(bcstream.relval(0)); //1 ssa
+     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+     bcstream.emitloadop(bcstream.relval(0));                       //source
     end
     else begin
-     bcstream.emitnopop();
+//     bcstream.emitnopop();
      bcstream.emitnopop();
      bcstream.emitnopop();
      bcstream.emitbitcast(bcstream.allocval(po2^.address.address),
-                                                 bcstream.ptypeval(das_8));
+                                     bcstream.typeval(das_pointer));     //source
     end;
-    bcstream.emitgetelementptr(bcstream.ssaval(-1),i1*pointersize);
-    bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+    bcstream.emitgetelementptr(bcstream.ssaval(-1),i1*pointersize); //dest
+                        //pointer to nestedallocs
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+    bcstream.emitstoreop(bcstream.relval(2),bcstream.relval(0));
     inc(po2);
     inc(i1);
    end;

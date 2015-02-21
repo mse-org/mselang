@@ -565,6 +565,17 @@ type
 //  varalloccount: integer;
  end;
 
+const
+ nullallocs: suballocinfoty = (
+  allocs: 0;
+  alloccount: 0;
+  paramcount: 0;
+  nestedallocs: 0;
+  nestedalloccount: 0;
+  nestedallocstypeindex: -1;
+);
+ 
+type
  subbeginty = record
   subname: opaddressty;
   flags: subflagsty;

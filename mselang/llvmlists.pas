@@ -1,4 +1,3 @@
-
 { MSElang Copyright (c) 2014-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
@@ -28,7 +27,7 @@ type
  bufferdataty = record
   listindex: int32;
   buffersize: int32;
-  buffer: card32; //direct data or buffer offset if size > sizeof(ptruint)
+  buffer: card32; //direct data or buffer offset if buffersize > sizeof(ptruint)
  end;
  
  bufferhashdataty = record
@@ -92,6 +91,7 @@ type
   flags: subflagsty;
   paramcount: integer;
  end;
+ psubtypeheaderty = ^subtypeheaderty;
 
  paramitemty = record
   typelistindex: int32;
@@ -214,6 +214,8 @@ type
    function addsubvalue(const avalue: psubdataty;
                            const aname: lstringty): int32;  //returns listid
                                //nil -> main sub
+   procedure updatesubtype(const avalue: psubdataty); 
+                 //new type for changed flags sf_hasnestedaccess
    function addinitvalue(const aconstlistindex: integer): int32;
                                                             //returns listid
    property namelist: tglobnamelist read fnamelist;
@@ -451,14 +453,18 @@ begin
    header.paramcount:= avalue^.paramcount;
    i1:= avalue^.allocs.nestedalloccount;
    if i1 > 0 then begin
-                   //array of pointer for pointer to nested vars
     avalue^.allocs.nestedallocstypeindex:= addbytevalue(i1*pointersize);
+   end
+   else begin
+    avalue^.allocs.nestedallocstypeindex:= -1;
+   end;
+   if sf_hasnestedaccess in header.flags then begin
+                   //array of pointer for pointer to nested vars
     parbuf.params[0].typelistindex:= ord(das_pointer);
     inc(header.paramcount);
     i1:= 1;
    end
    else begin
-    avalue^.allocs.nestedallocstypeindex:= -1;
     i1:= 0;
    end;
    if header.paramcount > maxparamcount then begin
@@ -466,7 +472,7 @@ begin
     errormessage(err_toomanyparams,[]);
    end;
    po2:= @avalue^.paramsrel;
-   for i1:= i1 to i1 + header.paramcount - 1 do begin //todo: const var out...
+   for i1:= i1 to header.paramcount - 1 do begin //todo: const var out...
     params[i1].typelistindex:= addvarvalue(ele.eledataabs(po2^));
     inc(po2);
    end;
@@ -787,6 +793,15 @@ begin
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
+end;
+
+procedure tgloballocdatalist.updatesubtype(const avalue: psubdataty);
+var
+ po1: psubtypeheaderty;
+begin
+ with pgloballocdataty(fdata)[avalue^.globid] do begin
+  typeindex:= ftypelist.addsubvalue(avalue);
+ end;
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;

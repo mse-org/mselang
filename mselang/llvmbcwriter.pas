@@ -141,7 +141,7 @@ type
    procedure emitvar(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32); //1 ssa
    
-   procedure beginsub(const afunc: boolean; const allocs: suballocinfoty;
+   procedure beginsub(const aflags: subflagsty; const allocs: suballocinfoty;
                                                          const bbcount: int32);
    procedure endsub();
    procedure emitcallop(const afunc: boolean; const valueid: int32;
@@ -1045,7 +1045,7 @@ end;
 procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
                                                    const aoffset: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,ptypeval(das_8),
+ emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,typeval(das_pointer),
                                                    ord(CAST_BITCAST)]);
  inc(fsubopindex);
  emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aoffset]);
@@ -1207,21 +1207,21 @@ begin
  result:= subid + fsubopstart;
 end;
 }
-procedure tllvmbcwriter.beginsub(const afunc: boolean;
+procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                           const allocs: suballocinfoty; const bbcount: int32);
 begin
  with allocs do begin
   fsubparamstart:= fsubstart;
-  if afunc then begin
+  if sf_function in aflags then begin
    dec(fsubparamstart); //skip result param
   end;
-  if nestedalloccount > 0 then begin
-   dec(fsubparamstart); //skip nested var array pointer
+  if sf_hasnestedaccess in aflags then begin
+   inc(fsubparamstart); //skip nested var array pointer
   end;
   fsuballocstart:= fsubparamstart+paramcount;
   fsubopstart:= fsuballocstart+alloccount;
   if nestedalloccount > 0 then begin
-   inc(fsubopstart); //nested var array
+   inc(fsubopstart,2); //nested var array alloc + byte pointer
   end;
   fsubopindex:= fsuballocstart; //pending allocs done in llvmops.subbeginop()
  end;

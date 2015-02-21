@@ -868,11 +868,14 @@ begin
    po1^.allocs.nestedalloccount:= int1;
   end
   else begin
+   po1^.allocs:= nullallocs;
+   {
    po1^.allocs.allocs:= 0;
    po1^.allocs.alloccount:= 0;
    po1^.allocs.paramcount:= 0;
    po1^.allocs.nestedallocs:= 0;
    po1^.allocs.nestedalloccount:= 0;
+   }
   end;
   if backend = bke_llvm then begin
    po1^.globid:= globlist.addsubvalue(po1); //nested subs first
@@ -918,6 +921,11 @@ begin
    //todo: check local forward
 //  ele.decelementparent;
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
+  if backend = bke_llvm then begin
+   if sf_hasnestedaccess in po1^.flags then begin
+    globlist.updatesubtype(po1);
+   end;
+  end;
   if stf_hasmanaged in s.currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain,false,0);
   end;
