@@ -1100,7 +1100,7 @@ begin
    with psubdataty(ele.parentdata())^ do begin
     if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
                                                       allvisi,po1) then begin
-     trackref(po1,false{int1=1});
+     trackref(po1,int1=1);
     end;
 //    value.address.locaddress.nestedindex:= po1^.nestedindex;
 //    include(aaddress.flags,af_nested);
