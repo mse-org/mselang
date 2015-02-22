@@ -604,9 +604,17 @@ procedure assignloc();
 // str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
-  with memop.locdataaddress do begin
+  with memop,locdataaddress do begin
    if a.framelevel >= 0 then begin
-    notimplemented();
+    bcstream.emitgetelementptr(bcstream.subval(0),
+            //pointer to array of pointer to local alloc
+                                           bcstream.constval(a.address));
+            //byte offset in array
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+    bcstream.emitloadop(bcstream.relval(0));
+            //pointer to variable
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+    bcstream.emitloadop(bcstream.relval(0));
    end
    else begin
     bcstream.emitloadop(bcstream.allocval(a.address));
