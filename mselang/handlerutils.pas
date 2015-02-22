@@ -1053,83 +1053,62 @@ procedure tracklocalaccess(var aaddress: locaddressty;
                                  const aopdatatype: typeallocinfoty);
 
 var
-// pobefore: pnestedvardataty;
- addressbefore: dataoffsty;
- 
- procedure trackref(const avardata: pnestedvardataty; const last: boolean);
- begin
-  with psubdataty(ele.parentdata())^ do begin
-   avardata^.next:= nestedvarchain;
-//   avardata^.nestedindex:= nestedvarcount;
-   avardata^.address.datatype:= aopdatatype;
-   if last then begin
-    avardata^.address.address:= addressbefore;
-    avardata^.address.nested:= false;
-   end
-   else begin
-    avardata^.address.address:= constlist.addi32((nestedvarcount-1)*pointersize);
-//    avardata^.address.address:= nestedvarcount;
-    avardata^.address.nested:= true;
-   end;
-//   pobefore:= avardata;
-   nestedvarchain:= ele.eledatarel(avardata);
-   inc(nestedvarcount);
-  end;
- end; //trackref
-
-var
  int1: integer;
  parentbefore,ele1: elementoffsetty;
  po1: pnestedvardataty;
+ first: boolean;
+ bo1: boolean;
+ addressbefore: dataoffsty;
 begin
  if (info.backend = bke_llvm){ and (af_local in aaddress.flags)} then begin
   int1:= info.sublevel-aaddress.framelevel;
   if int1 > 0 then begin   //var in outer sub
-//   pobefore:= nil;
    addressbefore:= aaddress.address;
    parentbefore:= ele.elementparent;
-   with psubdataty(ele.parentdata())^ do begin
-    include(flags,sf_hasnestedaccess);
-   end;
-   ele.decelementparent(); //parentsub
-  {$ifdef mse_checkinternalerror}
-   if ele.parentelement()^.header.kind <> ek_sub then begin
-    internalerror(ie_elements,'20140811A');
-   end;
-  {$endif}
-   with psubdataty(ele.parentdata())^ do begin
-    if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
-                                                      allvisi,po1) then begin
-     trackref(po1,int1=1);
+   first:= true;
+   for int1:= int1-1 downto 0 do begin
+    with psubdataty(ele.parentdata())^ do begin //current sub
+     include(flags,sf_hasnestedaccess);
     end;
-//    value.address.locaddress.nestedindex:= po1^.nestedindex;
-//    include(aaddress.flags,af_nested);
-   end;
-   aaddress.address:= po1^.address.address;
-   for int1:= int1-2 downto 0 do begin
-    with psubdataty(ele.parentdata())^ do begin
-     include(flags,sf_hasnestedref);
-     if int1 <> 0 then begin
-      include(flags,sf_hasnestedaccess);
-     end;
-    end;
-    ele.decelementparent(); //parentsub
+    ele.decelementparent();
    {$ifdef mse_checkinternalerror}
     if ele.parentelement()^.header.kind <> ek_sub then begin
      internalerror(ie_elements,'20140811A');
     end;
    {$endif}
-    with psubdataty(ele.parentdata())^ do begin
-     if ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
-                                                       allvisi,po1) then begin
-      trackref(po1,int1=0);
-     end
-     else begin
-      break;
+    with psubdataty(ele.parentdata())^ do begin //parent sub
+     bo1:= ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
+                                                       allvisi,po1);
+     if bo1 then begin
+      include(flags,sf_hasnestedref);
+      po1^.next:= nestedvarchain;
+      po1^.address.datatype:= aopdatatype;
+      po1^.address.arrayoffset:= 
+                     constlist.addi32((nestedvarcount-1)*pointersize);
+      po1^.address.origin:= addressbefore;
+      po1^.address.nested:= true;
+      if int1 = 0 then begin //last
+       po1^.address.nested:= false;
+      end;
+      nestedvarchain:= ele.eledatarel(po1);
+      inc(nestedvarcount);
      end;
+     if first then begin
+      aaddress.address:= po1^.address.arrayoffset; //nested var offset
+      first:= false;
+     end;
+     {
+     if int1 = 0 then begin //last
+      po1^.address.address:= addressbefore; //restore
+      po1^.address.nested:= false;
+     end;
+     }
+    end;
+    if not bo1 then begin //already tracked
+     break;
     end;
    end;
-   ele.elementparent:= parentbefore;
+   ele.elementparent:= parentbefore; //restore
   end;
  end;
 end;

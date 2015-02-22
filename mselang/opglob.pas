@@ -42,7 +42,8 @@ type
  pparallocinfoty = ^parallocinfoty;
 
  nestedaddressty = record
-  address: dataoffsty;
+  arrayoffset: dataoffsty;
+  origin: dataoffsty;
   datatype: typeallocinfoty;
   nested: boolean;     //ref to neseted frame
  end;

@@ -2343,13 +2343,13 @@ begin
    i1:= 0;
    while po2 < poend do begin
     if po2^.address.nested then begin
-     bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.address);
+     bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.arrayoffset);
                               //pointer to parent nestedvars, 2 ssa
      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
      bcstream.emitloadop(bcstream.relval(0));                       //source
     end
     else begin
-     bcstream.emitbitcast(bcstream.allocval(po2^.address.address),
+     bcstream.emitbitcast(bcstream.allocval(po2^.address.origin),
                                     bcstream.typeval(das_pointer)); //source
     end;
     bcstream.emitgetelementptr(bcstream.ssaval(0),i1*pointersize); //dest
