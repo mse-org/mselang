@@ -695,10 +695,11 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
 end;
 }
-
+{
 procedure icompare(const akind: icomparekindty);
 begin
  with pc^.par do begin
+  
   outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
                    ' i'+inttostr(stackop.t.size)+
                                ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
@@ -710,6 +711,15 @@ begin
  with pc^.par do begin
   outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
                    ' i8* %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
+ end;
+end;
+}
+
+procedure compare(const apredicate: predicate);
+begin
+ with pc^.par do begin
+  bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
+                                               bcstream.ssaval(ssas2));
  end;
 end;
 
@@ -1208,7 +1218,7 @@ end;
 
 procedure cmpeqint32op();
 begin
- icompare(ick_eq);
+ compare(icmp_eq);
 end;
 
 procedure cmpeqflo64op();
@@ -1218,7 +1228,7 @@ end;
 
 procedure cmpnepoop();
 begin
- pocompare(ick_ne);
+ compare(icmp_ne);
 end;
 
 procedure cmpneboolop();
@@ -1228,7 +1238,7 @@ end;
 
 procedure cmpneint32op();
 begin
- icompare(ick_ne);
+ compare(icmp_ne);
 end;
 
 procedure cmpneflo64op();
@@ -1248,7 +1258,7 @@ end;
 
 procedure cmpgtint32op();
 begin
- icompare(ick_sgt);
+ compare(icmp_sgt);
 end;
 
 procedure cmpgtflo64op();
@@ -1268,7 +1278,7 @@ end;
 
 procedure cmpltint32op();
 begin
- icompare(ick_slt);
+ compare(icmp_slt);
 end;
 
 procedure cmpltflo64op();
@@ -1288,7 +1298,7 @@ end;
 
 procedure cmpgeint32op();
 begin
- icompare(ick_sge);
+ compare(icmp_sge);
 end;
 
 procedure cmpgeflo64op();
@@ -1308,7 +1318,7 @@ end;
 
 procedure cmpleint32op();
 begin
- icompare(ick_sle);
+ compare(icmp_sle);
 end;
 
 procedure cmpleflo64op();
