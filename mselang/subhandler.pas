@@ -956,7 +956,7 @@ begin
    end;
   end;
   locdatapo:= d.subdef.parambase;
-  s.ssa:= d.subdef.ssabefore;
+//  s.ssa:= d.subdef.ssabefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   if sublevel = 0 then begin
@@ -987,6 +987,7 @@ begin
    par.subbegin.flags:= po1^.flags;
    par.subbegin.blockcount:= s.ssa.blockindex + 1;
   end;
+  s.ssa:= d.subdef.ssabefore;
  end;
 end;
 
