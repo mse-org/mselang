@@ -142,6 +142,7 @@ type
    fsubheadercount: int32;
    fsubheaders: integerarty; //index in fgloblist
    fsubimplementationcount: int32;
+   fbb,fbbbefore: int32;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -616,28 +617,28 @@ begin
  fidsize:= 2;
 end;
 
-destructor tllvmbcreader.destroy;
+destructor tllvmbcreader.destroy();
 begin
  ftypelist.free();
  fgloblist.free();
  inherited;
 end;
 
-function tllvmbcreader.tryfillbuffer: boolean;
+function tllvmbcreader.tryfillbuffer(): boolean;
 begin
  fbufpos:= @fbuffer;
  fbufend:= fbufpos + read(fbuffer,sizeof(fbuffer));
  result:= fbufend > fbufpos;
 end;
 
-procedure tllvmbcreader.fillbuffer;
+procedure tllvmbcreader.fillbuffer();
 begin
  if not tryfillbuffer then begin
   error('Unexpected end of file');
  end;
 end;
 
-function tllvmbcreader.finished: boolean;
+function tllvmbcreader.finished(): boolean;
 begin
  result:= fbufpos >= fbufend;
  if result then begin
@@ -710,6 +711,85 @@ begin
  readbits(bitcount,result);
 end;
 
+procedure tllvmbcreader.checkdatalen(const arec: valuearty;
+               const alen: integer);
+begin
+ if high(arec) <> alen then begin
+  error('Invalid record length '+inttostr(high(arec))+
+                                   ', should be '+inttostr(alen));
+ end;
+end;
+
+procedure tllvmbcreader.checkmindatalen(const arec: valuearty;
+               const alen: integer);
+begin
+ if high(arec) < alen then begin
+  error('Invalid record length '+inttostr(high(arec))+
+                                ', should be at least '+inttostr(alen));
+ end;
+end;
+
+procedure tllvmbcreader.output(const kind: outputkindty; const text: string);
+var
+ str1: string;
+begin
+ if fbb <> fbbbefore then begin
+  str1:= inttostr(fbb)+':';
+  extendstring(str1,5);
+  fbbbefore:= fbb;
+ end
+ else begin
+  str1:= '     ';
+ end;
+ system.write(str1);
+ if kind = ok_end then begin
+  dec(findent);
+  if findent < 0 then begin
+   error('Invalid block end');
+  end;
+ end;
+ system.write(charstring(' ',findent)+'<'+text);
+ if kind in [ok_end,ok_beginend] then begin
+  system.write('/');
+ end;
+ writeln('>');
+ if kind = ok_begin then begin
+  inc(findent);
+ end;
+end;
+
+procedure tllvmbcreader.outrecord(const aname: string;
+               const values: array of const);
+var
+ str1: string;
+ i1: int32;
+begin
+ str1:= '';
+ for i1:= 0 to high(values) do begin
+  str1:= str1+tvarrectoansistring(values[i1])+',';
+ end;
+ if str1 <> '' then begin
+  setlength(str1,length(str1)-1);
+ end;
+ output(ok_beginend,aname+':'+str1);
+end;
+
+procedure tllvmbcreader.unknownrec(const arec: valuearty);
+var
+ str1: string;
+ i1: int32;
+begin
+ str1:= '';
+ for i1:= 2 to high(arec) do begin
+  str1:= str1+inttostr(arec[i1])+',';
+ end;
+ if str1 <> '' then begin
+  setlength(str1,length(str1)-1);
+ end;
+ output(ok_beginend,'UNKNOWN_REC_'+inttostr(arec[0])+'.'+inttostr(arec[1])+
+                                                                     ':'+str1);
+end;
+
 procedure tllvmbcreader.beginblock(const aid: int32; const newidsize: int32);
 begin
  if high(fblockstack) < fblocklevel then begin
@@ -751,7 +831,7 @@ begin
  blocklen:= read32();
 end;
 
-procedure tllvmbcreader.readmoduleblock;
+procedure tllvmbcreader.readmoduleblock();
 var
  rec1: valuearty;
 
@@ -989,6 +1069,9 @@ var
  
  procedure outssarecord(const atype: int32; const avalue: string);
  begin
+  if fbb = -1 then begin
+   fbb:= 0;
+  end;
   output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+': S'+
                           inttostr(ssaindex-paramcount)+':= '+
                                        avalue+': '+ftypelist.typename(atype));
@@ -1048,6 +1131,11 @@ var
    end;
   end;
  end;
+ 
+ function destname(const avalue: int32): string;
+ begin
+  result:= '->'+inttostr(avalue);
+ end;
   
 var
  subtyp1: int32;
@@ -1063,9 +1151,11 @@ begin
  subtyp1:= pglobinfoty(fgloblist.fdata)[i1].valuetype;
  output(ok_begin,blockidnames[FUNCTION_BLOCK_ID]+'.'+
             inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
-            ftypelist.typename(subtyp1));
+                                            ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
  ssastart:= fgloblist.count;
+ fbbbefore:= -1;
+ fbb:= -1;
  with ftypelist.parenttype(subtyp1)^ do begin
 // ssaindex:= ptypeinfoty(ftypelist.fdata)[
 //                 ptypeinfoty(ftypelist.fdata)[subtyp1].base].subparamcount-1;
@@ -1126,6 +1216,9 @@ begin
        outssarecord(i2,str1);
       end;
       FUNC_CODE_INST_STORE: begin
+       if fbb = -1 then begin
+        fbb:= 0;
+       end;
        checkmindatalen(rec1,3);
        i1:= typeid(rec1[2]); //dest
        i2:= typeid(rec1[3]); //source
@@ -1151,6 +1244,9 @@ begin
        outssarecord(rec1[2],'@');
       end;
       FUNC_CODE_INST_RET: begin
+       if fbb = -1 then begin
+        fbb:= 0;
+       end;
        if high(rec1) = 2 then begin
         outrecord(functioncodesnames[functioncodes(rec1[1])],[opname(rec1[2])]);
        end
@@ -1158,6 +1254,7 @@ begin
         outrecord(functioncodesnames[functioncodes(rec1[1])],
                dynarraytovararray(copy(rec1,2,bigint)));
        end;
+       inc(fbb);
       end;
       FUNC_CODE_INST_CALL: begin
        checkmindatalen(rec1,4);
@@ -1196,9 +1293,22 @@ begin
         end;
        end;
       end;
+      FUNC_CODE_INST_BR: begin
+       checkmindatalen(rec1,2);
+       if high(rec1) > 2 then begin
+        checkdatalen(rec1,4);
+        str1:=opname(rec1[4])+','+
+                             destname(rec1[2])+','+destname(rec1[3]);
+       end
+       else begin
+        str1:= destname(rec1[2]);
+       end;
+       outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+       inc(fbb);
+      end;
       else begin
        outrecord(functioncodesnames[functioncodes(rec1[1])],
-               dynarraytovararray(copy(rec1,2,bigint)));
+                                 dynarraytovararray(copy(rec1,2,bigint)));
       end;
      end;
     end
@@ -1208,9 +1318,11 @@ begin
    end;
   end;
  end;
+ fbb:= 0;
+ fbbbefore:= 0;
 end;
 
-procedure tllvmbcreader.readblockinfoblock;
+procedure tllvmbcreader.readblockinfoblock();
 var
  blocklevelbefore: int32;
  rec1: valuearty;
@@ -1573,72 +1685,5 @@ begin
  fbitpos:= 8; //empty bitbuffer
 end;
 
-procedure tllvmbcreader.output(const kind: outputkindty; const text: string);
-begin
- if kind = ok_end then begin
-  dec(findent);
-  if findent < 0 then begin
-   error('Invalid block end');
-  end;
- end;
- system.write(charstring(' ',findent)+'<'+text);
- if kind in [ok_end,ok_beginend] then begin
-  system.write('/');
- end;
- writeln('>');
- if kind = ok_begin then begin
-  inc(findent);
- end;
-end;
-
-procedure tllvmbcreader.outrecord(const aname: string;
-               const values: array of const);
-var
- str1: string;
- i1: int32;
-begin
- str1:= '';
- for i1:= 0 to high(values) do begin
-  str1:= str1+tvarrectoansistring(values[i1])+',';
- end;
- if str1 <> '' then begin
-  setlength(str1,length(str1)-1);
- end;
- output(ok_beginend,aname+':'+str1);
-end;
-
-procedure tllvmbcreader.checkdatalen(const arec: valuearty;
-               const alen: integer);
-begin
- if high(arec) <> alen then begin
-  error('Invalid record length '+inttostr(high(arec))+
-                                   ', should be '+inttostr(alen));
- end;
-end;
-
-procedure tllvmbcreader.checkmindatalen(const arec: valuearty;
-               const alen: integer);
-begin
- if high(arec) < alen then begin
-  error('Invalid record length '+inttostr(high(arec))+
-                                ', should be at least '+inttostr(alen));
- end;
-end;
-
-procedure tllvmbcreader.unknownrec(const arec: valuearty);
-var
- str1: string;
- i1: int32;
-begin
- str1:= '';
- for i1:= 2 to high(arec) do begin
-  str1:= str1+inttostr(arec[i1])+',';
- end;
- if str1 <> '' then begin
-  setlength(str1,length(str1)-1);
- end;
- output(ok_beginend,'UNKNOWN_REC_'+inttostr(arec[0])+'.'+inttostr(arec[1])+
-                                                                     ':'+str1);
-end;
 
 end.

@@ -906,9 +906,8 @@ procedure ifop();
 // tmp,lab1,lab2: shortstring;
 begin
  with pc^.par do begin
-  bcstream.emitbrop(bcstream.ssaval(ssas1),
-              getoppo(opaddress.opaddress)^.par.opaddress.bbindex,
-                                                       opaddress.bbindex);
+  bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
+                         getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
 {
   tmp:= '%'+inttostr(ssad);
   nextoplabel(lab1);

@@ -1009,7 +1009,7 @@ end;
 procedure tllvmbcwriter.emitbrop(const acond: int32; const bb1: int32; 
                                                          const bb0: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_BR),[fsubopindex-acond,bb1,bb0]);
+ emitrec(ord(FUNC_CODE_INST_BR),[bb1,bb0,fsubopindex-acond]);
 end;
                               
 procedure tllvmbcwriter.emitbrop(const bb: int32);

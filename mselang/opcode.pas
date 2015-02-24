@@ -518,6 +518,7 @@ procedure addlabel();
 begin
  with addcontrolitem(oc_label)^ do begin
   par.opaddress.opaddress:= info.opcount-1;
+  par.opaddress.bbindex:= info.s.ssa.blockindex;
  end;
 end;
 

@@ -114,8 +114,9 @@ begin //boolexp,thenmark
 {$ifdef mse_debugparser}
  outhandle('THEN2');
 {$endif}
- setcurrentlocbefore(2); //set gotoaddress
  addlabel();
+ setcurrentlocbefore(2); //set gotoaddress
+// addlabel();
  with info do begin
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
