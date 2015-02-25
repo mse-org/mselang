@@ -339,6 +339,54 @@ const
   'XOR'
  );
 
+ predicatenames: array[predicate] of string = (
+  'FCMP_FALSE',
+  'FCMP_OEQ',
+  'FCMP_OGT',
+  'FCMP_OGE',
+  'FCMP_OLT',
+  'FCMP_OLE',
+  'FCMP_ONE',
+  'FCMP_ORD',
+  'FCMP_UNO',
+  'FCMP_UEQ',
+  'FCMP_UGT',
+  'FCMP_UGE',
+  'FCMP_ULT',
+  'FCMP_ULE',
+  'FCMP_UNE',
+  'FCMP_TRUE',
+  'FCMP_16',
+  'FCMP_17',
+  'FCMP_18',
+  'FCMP_19',
+  'FCMP_20',
+  'FCMP_21',
+  'FCMP_22',
+  'FCMP_23',
+  'FCMP_24',
+  'FCMP_25',
+  'FCMP_26',
+  'FCMP_27',
+  'FCMP_28',
+  'FCMP_29',
+  'FCMP_30',
+  'FCMP_31',
+  'ICMP_EQ',
+  'ICMP_NE',
+  'ICMP_UGT',
+  'ICMP_UGE',
+  'ICMP_ULT',
+  'ICMP_ULE',
+  'ICMP_SGT',
+  'ICMP_SGE',
+  'ICMP_SLT',
+  'ICMP_SLE'
+ );
+
+
+
+
  castopcodesnames: array[castopcodes] of string = (
   'TRUNC',
   'ZEXT',
@@ -1179,13 +1227,21 @@ begin
    else begin
     if high(rec1) > 1 then begin
      case functioncodes(rec1[1]) of
-      FUNC_CODE_INST_BINOP: begin
+      FUNC_CODE_INST_BINOP,FUNC_CODE_INST_CMP: begin
        checkdatalen(rec1,4);
-       if rec1[4] > ord(high(binaryopcodesnames)) then begin
-        error('Invalid binary opcode');
+       if functioncodes(rec1[1]) = FUNC_CODE_INST_BINOP then begin
+        if rec1[4] > ord(high(binaryopcodesnames)) then begin
+         error('Invalid binary opcode');
+        end;
+        str1:= binaryopcodesnames[binaryopcodes(rec1[4])];
+       end
+       else begin
+        if rec1[4] > ord(high(predicatenames)) then begin
+         error('Invalid predicate');
+        end;
+        str1:= predicatenames[predicate(rec1[4])];
        end;
-       str1:= binaryopcodesnames[binaryopcodes(rec1[4])]+
-        '('+opname(rec1[2])+','+opname(rec1[3])+')';
+       str1:= str1+ '('+opname(rec1[2])+','+opname(rec1[3])+')';
        i1:= typeid(rec1[2]);
        i2:= typeid(rec1[3]);
        outssarecord(i1,str1);

@@ -1114,7 +1114,7 @@ end;
 procedure tllvmbcwriter.emitcmpop(const apred: Predicate;
                                const valueida: int32; const valueidb: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_CMP2),[fsubopindex-valueida,fsubopindex-valueidb,
+ emitrec(ord(FUNC_CODE_INST_CMP),[fsubopindex-valueida,fsubopindex-valueidb,
                                                                    ord(apred)]);
  inc(fsubopindex);
 end;
