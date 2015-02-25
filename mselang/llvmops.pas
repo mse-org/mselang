@@ -2357,7 +2357,7 @@ begin
    bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
    poend:= po2+allocs.nestedalloccount;
-   i1:= 0;
+   i1:= 1;
    while po2 < poend do begin
     if po2^.address.nested then begin
      bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.arrayoffset);
@@ -2369,7 +2369,8 @@ begin
      bcstream.emitbitcast(bcstream.allocval(po2^.address.origin),
                                     bcstream.typeval(das_pointer)); //source
     end;
-    bcstream.emitgetelementptr(bcstream.ssaval(0),i1*pointersize); //dest
+    bcstream.emitgetelementptr(bcstream.ssaval(0),
+                                 constlist.pointeroffset(i1)); //dest
                         //pointer to nestedallocs
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));

@@ -146,8 +146,10 @@ type
 
 //const
 // nullconst = 256;
+const
+ maxpointeroffset = 32; //preallocated pointeroffset
 type 
- nullconstty = (nc_i1 = 256, nc_i8, nc_i16, nc_i32, nc_i64);
+ nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64);
  
  tconsthashdatalist = class(tbufferhashdatalist)
   private
@@ -168,6 +170,7 @@ type
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
+   function pointeroffset(const aindex: int32): int32; //offset in pointer array
  end;
 
  globnamedataty = record
@@ -224,7 +227,7 @@ type
 implementation
 uses
  errorhandler,elements;
- 
+  
 { tbufferhashdatalist }
 
 constructor tbufferhashdatalist.create(const datasize: integer);
@@ -451,8 +454,9 @@ begin
   with parbuf do begin
    header.flags:= avalue^.flags;
    header.paramcount:= avalue^.paramcount;
-   i1:= avalue^.allocs.nestedalloccount;
-   if i1 > 0 then begin
+   i1:= avalue^.allocs.nestedalloccount+1; 
+            //first item is possible pointer to outer frame
+   if i1 > 1 then begin
     avalue^.allocs.nestedallocstypeindex:= addbytevalue(i1*pointersize);
    end
    else begin
@@ -536,17 +540,34 @@ var
  c1: card8;
  po1: pconstlisthashdataty;
  alloc1: constallocdataty;
+ i1: int32;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
   for c1:= low(c1) to high(c1) do begin
    addi8(int8(c1));
   end;
+  for i1:= 0 to maxpointeroffset do begin
+   addi32(i1*pointersize);
+  end;
   addnullvalue(ord(das_1));
   addnullvalue(ord(das_8));
   addnullvalue(ord(das_16));
   addnullvalue(ord(das_32));
   addnullvalue(ord(das_64));
+ end;
+end;
+
+function tconsthashdatalist.pointeroffset(const aindex: int32): int32;
+begin
+ if aindex <= maxpointeroffset then begin
+  result:= high(card8)+1+aindex
+ end
+ else begin
+  result:= addi32(aindex+pointersize);
+  if result = count-1 then begin
+   internalerror1(ie_llvmlist,'20150225');
+  end;
  end;
 end;
 

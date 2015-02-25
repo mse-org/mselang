@@ -1086,7 +1086,7 @@ begin
       po1^.next:= nestedvarchain;
       po1^.address.datatype:= aopdatatype;
       po1^.address.arrayoffset:= 
-                     constlist.addi32((nestedvarcount-1)*pointersize);
+                     constlist.addi32((nestedvarcount{-1})*pointersize);
       po1^.address.origin:= addressbefore;
       po1^.address.nested:= true;
       if int1 = 0 then begin //last
