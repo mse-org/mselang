@@ -147,7 +147,9 @@ type
 //const
 // nullconst = 256;
 const
- maxpointeroffset = 32; //preallocated pointeroffset
+ maxpointeroffset = 32; //preallocated pointeroffset values
+ nullpointeroffset = high(card8)+1; //constlist index
+ 
 type 
  nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64);
  
@@ -171,6 +173,7 @@ type
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
+   function i8(const avalue: int8): int32; //returns id
  end;
 
  globnamedataty = record
@@ -569,6 +572,11 @@ begin
    internalerror1(ie_llvmlist,'20150225');
   end;
  end;
+end;
+
+function tconsthashdatalist.i8(const avalue: int8): int32;
+begin
+ result:= card8(avalue);
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;

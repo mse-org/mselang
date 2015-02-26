@@ -2142,6 +2142,23 @@ end;
 
 procedure dooutlink(const outlinkcount: integer);
 var
+ i1: int32;
+begin
+ with pc^.par do begin
+  if (outlinkcount > 0) and (sf_hasnestedaccess in callinfo.flags) then begin
+   bcstream.emitgetelementptr(bcstream.subval(0),
+                     bcstream.constval(nullpointeroffset)); //nested vars
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+   for i1:= outlinkcount-2 downto 0 do begin;
+    bcstream.emitloadop(bcstream.relval(0));
+   end;
+  end;
+ end;
+end;
+
+{
+procedure dooutlink(const outlinkcount: integer);
+var
  ssa1: integer;
  int1: integer;
  str1,str2: shortstring;
@@ -2172,6 +2189,7 @@ begin
   end;
  end;
 end;
+}
 
 procedure docallparam(parpo: pparallocinfoty; const endpo: pointer;
                       const outlinkcount: integer);
@@ -2218,7 +2236,12 @@ begin
   ids.count:= callinfo.paramcount;
   po1:= ids.ids;
   if sf_hasnestedaccess in callinfo.flags then begin
-   po1^:= bcstream.ssaval(-1); //last alloc is nested var ref table
+   if outlinkcount > 0 then begin
+    po1^:= bcstream.relval(0);
+   end
+   else begin
+    po1^:= bcstream.ssaval(-1); //last alloc is nested var ref table
+   end;
    inc(po1);
    inc(ids.count);
   end;
@@ -2253,7 +2276,7 @@ begin
       bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
  end;
 end;
-
+{
 procedure docallfunc(const outlinkcount: integer);
 var
  parpo: pparallocinfoty;
@@ -2271,7 +2294,7 @@ begin
   docallparam(parpo,endpo,outlinkcount);
  end;
 end;
-
+}
 procedure callop();
 begin
  with pc^.par do begin
@@ -2304,7 +2327,7 @@ begin
  with pc^.par do begin
   int1:= callinfo.linkcount+2;
   dooutlink(int1);
-  docallfunc(int1);
+  docall(int1);
  end;
 end;
 
@@ -2355,6 +2378,14 @@ begin
   end;
   if allocs.nestedalloccount > 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
+   if sf_hascallout in flags then begin
+    bcstream.emitgetelementptr(bcstream.subval(0),constlist.i8(0)); 
+                                        //param parent nested var,source
+    bcstream.emitgetelementptr(bcstream.ssaval(0),nullpointeroffset);
+                                                  //nested var array,dest
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+    bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
+   end;
    po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
    poend:= po2+allocs.nestedalloccount;
    i1:= 1;

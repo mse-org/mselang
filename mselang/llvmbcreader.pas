@@ -1190,6 +1190,7 @@ var
  blocklevelbefore: int32;
  i1,i2,i3: int32;
  str1: string;
+ bo1: boolean;
  
 begin
  if fsubimplementationcount >= fsubheadercount then begin
@@ -1287,7 +1288,13 @@ begin
        else begin
         outrecord(str1,[]);
        end;
-       if ftypelist.parenttypeindex(i1) <> i2 then begin
+       if i2 < 0 then begin
+        bo1:= ftypelist.parenttypeindex(ftypelist.parenttypeindex(i1)) <> -i2;
+       end
+       else begin
+        bo1:= ftypelist.parenttypeindex(i1) <> i2;
+       end;
+       if bo1 then begin
         error('Invalid pointer type');
        end;
       end;
