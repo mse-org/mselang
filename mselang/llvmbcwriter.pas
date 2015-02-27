@@ -127,7 +127,7 @@ type
    procedure emitrec(const id: int32; const data: array of int32);
    procedure emitrec(const id: int32; const data: array of int32;
                                                  const adddata: idarty);
-   procedure emitnopop(); //1 ssa
+   procedure emitnopssaop(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
                const alinkage: linkagety; const aparamattr: int32{;
@@ -756,7 +756,7 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emitnopop();
+procedure tllvmbcwriter.emitnopssaop();
 begin
  emitbinop(binop_add,constval(0),constval(0));
 end;
