@@ -2148,8 +2148,8 @@ begin
   if (outlinkcount > 0) and (sf_hasnestedaccess in callinfo.flags) then begin
    bcstream.emitgetelementptr(bcstream.subval(0),
                      bcstream.constval(nullpointeroffset)); //nested vars
-   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
    for i1:= outlinkcount-2 downto 0 do begin;
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitloadop(bcstream.relval(0));
    end;
   end;
@@ -2935,7 +2935,7 @@ const
 
   callssa = 0;
   callfuncssa = 1;
-  calloutssa = 1;
+  calloutssa = 0;
   callfuncoutssa = 1;
   callvirtssa = 1;
   callintfssa = 1;
