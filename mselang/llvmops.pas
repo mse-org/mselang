@@ -2190,7 +2190,7 @@ begin
  end;
 end;
 }
-
+{
 procedure docallparam(parpo: pparallocinfoty; const endpo: pointer;
                       const outlinkcount: integer);
 var
@@ -2226,7 +2226,7 @@ begin
   outass(')');
  end;
 end;
-
+}
 procedure docallparam(const outlinkcount: int32; var ids: idarty);
 var
  parpo,endpo: pparallocinfoty;
