@@ -130,6 +130,7 @@ type
    procedure emitnopssaop(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
+               const aflags: subflagsty;
                const alinkage: linkagety; const aparamattr: int32{;
                const aalignment: int32; const asection: int32;
                const avisibility: visibility; const agc: int32;
@@ -192,10 +193,10 @@ uses
  
 type
  mabmodty = (
-  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (literal 0), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
+  mabmod_sub = 4 //MODULE_CODE_FUNCTION (literal 8), type (vbr 6), callingconv (vbr 6), isproto (fixed 1), linkagetype (vbr 6), paramattr (vbr 6), alignment (literal 0), section (literal 0), visibility (literal 0), gc (literal 0), unnamed_addr (literal 0), prologdata (literal 0), dllstorageclass (literal 0), comdat (literal 0), prefixdata (literal 0)
  );
 const
- mabmodsdat: array[0..17] of card8 = (122,17,200,144,9,64,134,76,128,0,1,2,4,8,16,32,64,0);
+ mabmodsdat: array[0..17] of card8 = (122,17,200,144,145,64,134,76,128,0,1,2,4,8,16,32,64,0);
  mabmods: bcdataty = (bitsize: 143; data: @mabmodsdat);
 
 type
@@ -321,7 +322,7 @@ var
  po3,po4: pparamitemty;
  po5,po6: pgloballocdataty;
  po7,po8: pglobnamedataty;
- i1: int32;
+ i1,i2: int32;
  id1: int32;
 begin
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
@@ -390,18 +391,24 @@ begin
 //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
 
         emitcode(ord(mabtype_subtype));
-        emit1(0);      //vararg
+        i2:= header.paramcount;
         po3:= @params;
-        po4:= po3+header.paramcount;
+        if sf_vararg in header.flags then begin
+         emit1(1);      //vararg
+        end
+        else begin
+         emit1(0);      //no vararg
+        end;
         if sf_function in header.flags then begin
          emitvbr6(typeindex(po3^.typelistindex)); //retval
-         emitvbr6(header.paramcount-1);
+         dec(i2);
          inc(po3);
         end
         else begin
          emitvbr6(typeindex(das_none)); //void retval
-         emitvbr6(header.paramcount);
         end;
+        emitvbr6(i2); //param count
+        po4:= po3+i2;
         while po3 < po4 do begin
          emitvbr6(typeindex(po3^.typelistindex));
          inc(po3);
@@ -463,7 +470,7 @@ begin
   while po5 < po6 do begin
    case po5^.kind of
     gak_sub: begin
-     emitsub(po5^.typeindex,cv_ccc,po5^.linkage,0);
+     emitsub(po5^.typeindex,cv_ccc,po5^.flags,po5^.linkage,0);
     end;
     gak_var: begin
      if po5^.initconstindex >= 0 then begin
@@ -937,7 +944,8 @@ begin
 end;
 
 procedure tllvmbcwriter.emitsub(const atype: int32;
-               const acallingconv: callingconvty; const alinkage: linkagety;
+               const acallingconv: callingconvty;
+               const aflags: subflagsty; const alinkage: linkagety;
                const aparamattr: int32);
 begin
 {
@@ -948,6 +956,12 @@ begin
  emitcode(ord(mabmod_sub));
  emitvbr6(ptypeindex(atype));
  emitvbr6(ord(acallingconv));
+ if sf_proto in aflags then begin
+  emit1(1);
+ end
+ else begin
+  emit1(0);
+ end;
  emitvbr6(ord(alinkage));
  emitvbr6(aparamattr);
 // result:= fsubopstart;

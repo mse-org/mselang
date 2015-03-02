@@ -93,8 +93,11 @@ type
  end;
  psubtypeheaderty = ^subtypeheaderty;
 
+ paramitemflagty = (pif_dumy);
+ paramitemflagsty = set of paramitemflagty;
  paramitemty = record
   typelistindex: int32;
+  flags: paramitemflagsty;
  end;
  pparamitemty = ^paramitemty;
 
@@ -107,6 +110,7 @@ type
 
 const
  voidtype = ord(das_none);
+ pointertype = ord(das_pointer);
  bittypemax = ord(lastdatakind);
  
 type
@@ -123,6 +127,9 @@ type
    function addvarvalue(const avalue: pvardataty): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
                          //nil -> main sub
+   function addsubvalue(const aflags: subflagsty; 
+                               const aparams: array of paramitemty): int32;
+            //first item can be result type, returns listid
    function first: ptypelistdataty;
    function next: ptypelistdataty;
  end;
@@ -192,7 +199,7 @@ type
   typeindex: int32;
   initconstindex: int32;
   case kind: globallockindty of
-   gak_sub: (linkage: linkagety)
+   gak_sub: (flags: subflagsty; linkage: linkagety;)
  end;
  pgloballocdataty = ^globallocdataty;
  
@@ -220,6 +227,15 @@ type
    function addsubvalue(const avalue: psubdataty;
                            const aname: lstringty): int32;  //returns listid
                                //nil -> main sub
+   function addsubvalue(const aflags: subflagsty; const alinkage: linkagety; 
+                             const aparams: array of paramitemty): int32; 
+                                                             //returns listid
+   function addinternalsubvalue(const aflags: subflagsty; 
+                 const aparams: array of paramitemty): int32; //returns listid
+   function addexternalsubvalue(const aflags: subflagsty; 
+                       const aparams: array of paramitemty;
+                           const aname: lstringty): int32;  //returns listid
+
    procedure updatesubtype(const avalue: psubdataty); 
                  //new type for changed flags sf_hasnestedaccess
    function addinitvalue(const aconstlistindex: integer): int32;
@@ -431,13 +447,13 @@ begin
  result:= po1^.data.header.listindex;
 end;
 
-function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
-
 type
  subtypebufferty = record
   header: subtypeheaderty;
   params: array[0..maxparamcount-1] of paramitemty;
  end;
+
+function ttypehashdatalist.addsubvalue(const avalue: psubdataty): integer;
 
 var
  alloc1: typeallocdataty;
@@ -450,7 +466,10 @@ begin
   with parbuf do begin
    header.flags:= [sf_function];
    header.paramcount:= 1;
-   params[0].typelistindex:= ord(das_32);
+   with params[0] do begin
+    flags:= [];
+    typelistindex:= ord(das_32);
+   end;
   end;
  end
  else begin
@@ -467,7 +486,10 @@ begin
    end;
    if sf_hasnestedaccess in header.flags then begin
                    //array of pointer for pointer to nested vars
-    parbuf.params[0].typelistindex:= ord(das_pointer);
+    with parbuf.params[0] do begin
+     flags:= [];
+     typelistindex:= ord(das_pointer);
+    end;
     inc(header.paramcount);
     i1:= 1;
    end
@@ -480,7 +502,10 @@ begin
    end;
    po2:= @avalue^.paramsrel;
    for i1:= i1 to header.paramcount - 1 do begin //todo: const var out...
-    params[i1].typelistindex:= addvarvalue(ele.eledataabs(po2^));
+    with params[i1] do begin
+     flags:= [];
+     typelistindex:= addvarvalue(ele.eledataabs(po2^));
+    end;
     inc(po2);
    end;
   end;
@@ -488,6 +513,28 @@ begin
  alloc1.kind:= das_sub;
  alloc1.header.size:= sizeof(subtypeheaderty) + 
              parbuf.header.paramcount * sizeof(paramitemty);
+ alloc1.header.data:= @parbuf;
+ result:= addvalue(alloc1)^.data.header.listindex;
+end;
+
+function ttypehashdatalist.addsubvalue(const aflags: subflagsty; 
+              const aparams: array of paramitemty): int32;
+var
+ alloc1: typeallocdataty;
+ po1: ptypelisthashdataty;
+ parbuf: subtypebufferty;
+ i1,i2: int32;
+begin
+ with parbuf do begin
+  header.flags:= aflags;
+  header.paramcount:= length(aparams);
+  for i1:= 0 to high(aparams) do begin
+   params[i1]:= aparams[i1];
+  end;
+ end;
+ alloc1.kind:= das_sub;
+ alloc1.header.size:= sizeof(subtypeheaderty) + 
+             length(aparams) * sizeof(paramitemty);
  alloc1.header.data:= @parbuf;
  result:= addvalue(alloc1)^.data.header.listindex;
 end;
@@ -810,6 +857,7 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty): int32;
 var
  dat1: globallocdataty;
 begin
+ dat1.flags:= [];
  if avalue = nil then begin
   dat1.linkage:= li_external;
  end
@@ -837,6 +885,37 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                              const aname: lstringty): int32;
 begin
  result:= addsubvalue(avalue);
+ fnamelist.addname(aname,result);
+end;
+
+function tgloballocdatalist.addsubvalue(const aflags: subflagsty; 
+                             const alinkage: linkagety; 
+                             const aparams: array of paramitemty): int32; 
+                                                             //returns listid
+var
+ dat1: globallocdataty;
+begin
+ dat1.linkage:= alinkage;
+ dat1.flags:= aflags;
+ dat1.kind:= gak_sub;
+ dat1.typeindex:= ftypelist.addsubvalue(aflags,aparams);
+ dat1.initconstindex:= -1;
+ result:= fcount;
+ inccount();
+ (pgloballocdataty(fdata) + result)^:= dat1;
+end;
+
+function tgloballocdatalist.addinternalsubvalue(const aflags: subflagsty; 
+                                const aparams: array of paramitemty): int32;
+begin
+ result:= addsubvalue(aflags,li_internal,aparams);
+end;
+
+function tgloballocdatalist.addexternalsubvalue(const aflags: subflagsty; 
+              const aparams: array of paramitemty;
+               const aname: lstringty): int32;
+begin
+ result:= addsubvalue(aflags,li_external,aparams);
  fnamelist.addname(aname,result);
 end;
 

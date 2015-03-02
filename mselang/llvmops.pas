@@ -793,6 +793,11 @@ var
  po3: ptypedataty;
  int1: integer;
  str1,str2: shortstring;
+const
+// voidparam: paramitemty = (typelistindex: voidtype; flags: []);
+ pointerparam: paramitemty = (typelistindex: pointertype; flags: []);
+// varargparam: paramitemty = (typelistindex: 0; flags: [pif_vararg]);
+ 
 begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
@@ -812,6 +817,9 @@ begin
                                                            globconsttype});
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
+ globlist.addexternalsubvalue([sf_vararg,sf_proto],[pointerparam],
+                                         stringtolstring('printf'));
+ 
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
  {
