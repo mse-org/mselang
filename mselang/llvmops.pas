@@ -856,7 +856,7 @@ begin
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
   with internalfuncconsts[funcs1] do begin
    internalfuncs[funcs1]:= globlist.addexternalsubvalue(flags,params^,
-                                                         stringtolstring(name));
+                                                    stringtolstring(name));
   end;
  end;
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
@@ -865,6 +865,7 @@ begin
                               constlist.addvalue(pointer(text)^,length(text)));
   end;
  end;
+ 
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
  {

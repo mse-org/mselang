@@ -153,7 +153,7 @@ type
                                                       const aparams: idarty);
                                           //changes aparams
    procedure emitcallop(const afunc: boolean; const valueid: int32;
-                                              const aparams: array of int32);
+                                              aparams: array of int32);
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
@@ -770,13 +770,18 @@ begin
   inc(po1);
  end;
 end;
-
+var testvar: array[0..20] of int32; testvar1,testvar2: int32;
 procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32;
                                                 const adddata: array of int32);
 var
  i1: int32;
  po1,pe: pint32;
 begin
+testvar1:= length(adddata);
+for testvar2:= 0 to high(adddata) do begin
+testvar[testvar2]:= adddata[testvar2];
+end;
+
  emitcode(ord(UNABBREV_RECORD));
  emitvbr6(id);
  emitvbr6(length(data) + length(adddata));
@@ -1302,8 +1307,17 @@ begin
 end;
 
 procedure tllvmbcwriter.emitcallop(const afunc: boolean; const valueid: int32;
-                                                 const aparams: array of int32);
+                                                 aparams: array of int32);
+var
+ i1: int32;
 begin
+testvar1:= length(aparams);
+for testvar2:= 0 to high(aparams) do begin
+testvar[testvar2]:= aparams[testvar2];
+end;
+ for i1:= high(aparams) downto 0 do begin
+  aparams[i1]:= fsubopindex-aparams[i1];
+ end;
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  if afunc then begin
   inc(fsubopindex);
