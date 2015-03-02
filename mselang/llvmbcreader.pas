@@ -1350,7 +1350,7 @@ begin
          error('Invalid param count');
         end;
         inc(i2); //first param
-        for i1:= 5 to high(rec1) do begin
+        for i1:= 5 to i3+3 do begin
          if typeid(rec1[i1]) <> ftypelist.fsubparams[i2] then begin
           error('Invalid param');
          end;

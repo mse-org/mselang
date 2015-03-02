@@ -986,8 +986,9 @@ end;
 procedure writelnop();
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_ret]),pointertype);
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-   [bcstream.globval(internalstrings[is_ret])]);
+                                                      [bcstream.relval(0)]);
 {
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wretformat+
          ', i32 0, i32 0))');
@@ -1003,8 +1004,9 @@ end;
 procedure writeintegerop();
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_int32]),pointertype);
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
-   [bcstream.globval(internalstrings[is_int32]),bcstream.ssaval(ssas1)]);
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
 {
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wint32format+
          ', i32 0, i32 0), i32 %'+inttostr(ssas1)+')');
@@ -2747,14 +2749,14 @@ const
   cmpjmploeqimm4ssa = 1;
 
   ifssa = 0;
-  writelnssa = 1;
-  writebooleanssa = 1;
-  writeintegerssa = 1;
-  writefloatssa = 1;
-  writestring8ssa = 1;
-  writepointerssa = 1;
-  writeclassssa = 1;
-  writeenumssa = 1;
+  writelnssa = 2;
+  writebooleanssa = 2;
+  writeintegerssa = 2;
+  writefloatssa = 2;
+  writestring8ssa = 2;
+  writepointerssa = 2;
+  writeclassssa = 2;
+  writeenumssa = 2;
 
   pushssa = 0; //dummy
   popssa = 0;  //dummy
