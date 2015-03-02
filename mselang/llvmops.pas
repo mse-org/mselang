@@ -87,6 +87,35 @@ const
 var
 // sp: integer; //unnamed variables
  pc: popinfoty;
+type
+ internalfuncinfoty = record
+  name: string;
+  flags: subflagsty;
+  params: pparamsty;
+ end;
+ internalfuncty = (if_printf);
+const
+ printfpar: array[0..0] of paramitemty = (
+              (typelistindex: pointertype; flags: [])
+ );
+ printfparams: paramsty = (count: 1; items: @printfpar);
+ 
+ internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
+  (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams)
+ );
+
+type
+ internalstringinfoty = record
+  text: string;
+ end;
+ internalstringty = (is_ret,is_int32,is_string8,is_pointer);
+const
+ internalstringconsts: array[internalstringty] of internalstringinfoty = (
+  (text: #$a#0),        //is_ret,
+  (text: '%d'#0),       //is_int32,
+  (text: '%s'#0),       //is_string8,
+  (text: '%p'#0)        //is_pointer
+ );  
 
 var
 {$ifdef mse_llvmbc}
@@ -96,7 +125,11 @@ var
 {$endif}
  globconst: string;
  globconstid: int32;
+ internalfuncs: array[internalfuncty] of int32;
+ internalstrings: array[internalstringty] of int32;
+ 
 // globconsttype: int32;
+
 
 //todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
@@ -793,11 +826,14 @@ var
  po3: ptypedataty;
  int1: integer;
  str1,str2: shortstring;
+ funcs1: internalfuncty;
+ strings1: internalstringty;
+{
 const
 // voidparam: paramitemty = (typelistindex: voidtype; flags: []);
  pointerparam: paramitemty = (typelistindex: pointertype; flags: []);
 // varargparam: paramitemty = (typelistindex: 0; flags: [pif_vararg]);
- 
+} 
 begin
 // freeandnil(assstream);
 // assstream:= ttextstream.create('test.ll',fm_create);
@@ -812,14 +848,23 @@ begin
 }
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
-  globconstid:= globlist.addinitvalue(
+  globconstid:= globlist.addinitvalue(gak_var,
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1){,
                                                            globconsttype});
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
- globlist.addexternalsubvalue([sf_vararg,sf_proto],[pointerparam],
-                                         stringtolstring('printf'));
- 
+ for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
+  with internalfuncconsts[funcs1] do begin
+   internalfuncs[funcs1]:= globlist.addexternalsubvalue(flags,params^,
+                                                         stringtolstring(name));
+  end;
+ end;
+ for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
+  with internalstringconsts[strings1] do begin
+   internalstrings[strings1]:= globlist.addinitvalue(gak_const,
+                              constlist.addvalue(pointer(text)^,length(text)));
+  end;
+ end;
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
  {
@@ -940,8 +985,12 @@ end;
 procedure writelnop();
 begin
  with pc^.par do begin
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+   [bcstream.globval(internalstrings[is_ret])]);
+{
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wretformat+
          ', i32 0, i32 0))');
+}
  end;
 end;
 
@@ -953,8 +1002,12 @@ end;
 procedure writeintegerop();
 begin
  with pc^.par do begin
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+   [bcstream.globval(internalstrings[is_int32]),bcstream.ssaval(ssas1)]);
+{
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wint32format+
          ', i32 0, i32 0), i32 %'+inttostr(ssas1)+')');
+}
  end;
 end;
 

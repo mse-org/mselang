@@ -1191,6 +1191,7 @@ var
  i1,i2,i3: int32;
  str1: string;
  bo1: boolean;
+ vararg1: boolean;
  
 begin
  if fsubimplementationcount >= fsubheadercount then begin
@@ -1336,6 +1337,7 @@ begin
         with ftypelist.parenttype(valuetype)^ do begin
          i2:= subparamindex;    //result type
          i3:= subparamcount;
+         vararg1:= subvararg;
         end;
         i1:= ftypelist.fsubparams[i2];             
         if ftypelist.item(i1)^.kind = TYPE_CODE_VOID then begin
@@ -1344,7 +1346,7 @@ begin
         else begin
          outssarecord(i1,str1);
         end;
-        if high(rec1)-3 <> i3 then begin
+        if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
          error('Invalid param count');
         end;
         inc(i2); //first param

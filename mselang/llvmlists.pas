@@ -108,6 +108,12 @@ type
  end;
  psubtypedataty = ^subtypedataty;
 
+ paramsty = record
+  count: int32;
+  items: pparamitemty;
+ end;
+ pparamsty = ^paramsty;
+ 
 const
  voidtype = ord(das_none);
  pointertype = ord(das_pointer);
@@ -128,7 +134,7 @@ type
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
                          //nil -> main sub
    function addsubvalue(const aflags: subflagsty; 
-                               const aparams: array of paramitemty): int32;
+                                          const aparams: paramsty): int32;
             //first item can be result type, returns listid
    function first: ptypelistdataty;
    function next: ptypelistdataty;
@@ -194,7 +200,7 @@ type
    procedure addname(const aname: lstringty; const alistindex: integer);
  end;
  
- globallockindty = (gak_var,gak_sub); 
+ globallockindty = (gak_var,gak_const,gak_sub); 
  globallocdataty = record
   typeindex: int32;
   initconstindex: int32;
@@ -228,17 +234,18 @@ type
                            const aname: lstringty): int32;  //returns listid
                                //nil -> main sub
    function addsubvalue(const aflags: subflagsty; const alinkage: linkagety; 
-                             const aparams: array of paramitemty): int32; 
+                             const aparams: paramsty): int32; 
                                                              //returns listid
    function addinternalsubvalue(const aflags: subflagsty; 
-                 const aparams: array of paramitemty): int32; //returns listid
+                 const aparams: paramsty): int32; //returns listid
    function addexternalsubvalue(const aflags: subflagsty; 
-                       const aparams: array of paramitemty;
+                       const aparams: paramsty;
                            const aname: lstringty): int32;  //returns listid
 
    procedure updatesubtype(const avalue: psubdataty); 
                  //new type for changed flags sf_hasnestedaccess
-   function addinitvalue(const aconstlistindex: integer): int32;
+   function addinitvalue(const akind: globallockindty;
+                                     const aconstlistindex: integer): int32;
                                                             //returns listid
    property namelist: tglobnamelist read fnamelist;
  end;
@@ -518,7 +525,7 @@ begin
 end;
 
 function ttypehashdatalist.addsubvalue(const aflags: subflagsty; 
-              const aparams: array of paramitemty): int32;
+                                             const aparams: paramsty): int32;
 var
  alloc1: typeallocdataty;
  po1: ptypelisthashdataty;
@@ -527,14 +534,14 @@ var
 begin
  with parbuf do begin
   header.flags:= aflags;
-  header.paramcount:= length(aparams);
-  for i1:= 0 to high(aparams) do begin
-   params[i1]:= aparams[i1];
+  header.paramcount:= aparams.count;
+  for i1:= 0 to aparams.count - 1 do begin
+   params[i1]:= aparams.items[i1];
   end;
  end;
  alloc1.kind:= das_sub;
  alloc1.header.size:= sizeof(subtypeheaderty) + 
-             length(aparams) * sizeof(paramitemty);
+             aparams.count * sizeof(paramitemty);
  alloc1.header.data:= @parbuf;
  result:= addvalue(alloc1)^.data.header.listindex;
 end;
@@ -839,14 +846,15 @@ begin
  result:= addnoinit(ftypelist.addbitvalue(asize));
 end;
 
-function tgloballocdatalist.addinitvalue(const aconstlistindex: integer): int32;
+function tgloballocdatalist.addinitvalue(const akind: globallockindty;
+                                       const aconstlistindex: integer): int32;
 var
  dat1: globallocdataty;
 begin
  fillchar(dat1,sizeof(dat1),0);
  dat1.typeindex:= (pconstlisthashdataty(fconstlist.fdata)+
                                              aconstlistindex+1)^.data.typeid;
- dat1.kind:= gak_var;
+ dat1.kind:= akind;
  dat1.initconstindex:= aconstlistindex; 
  result:= fcount;
  inccount();
@@ -890,7 +898,7 @@ end;
 
 function tgloballocdatalist.addsubvalue(const aflags: subflagsty; 
                              const alinkage: linkagety; 
-                             const aparams: array of paramitemty): int32; 
+                             const aparams: paramsty): int32; 
                                                              //returns listid
 var
  dat1: globallocdataty;
@@ -906,14 +914,13 @@ begin
 end;
 
 function tgloballocdatalist.addinternalsubvalue(const aflags: subflagsty; 
-                                const aparams: array of paramitemty): int32;
+                                              const aparams: paramsty): int32;
 begin
  result:= addsubvalue(aflags,li_internal,aparams);
 end;
 
 function tgloballocdatalist.addexternalsubvalue(const aflags: subflagsty; 
-              const aparams: array of paramitemty;
-               const aname: lstringty): int32;
+                      const aparams: paramsty; const aname: lstringty): int32;
 begin
  result:= addsubvalue(aflags,li_external,aparams);
  fnamelist.addname(aname,result);

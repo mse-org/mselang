@@ -127,6 +127,8 @@ type
    procedure emitrec(const id: int32; const data: array of int32);
    procedure emitrec(const id: int32; const data: array of int32;
                                                  const adddata: idarty);
+   procedure emitrec(const id: int32; const data: array of int32;
+                                                const adddata: array of int32);
    procedure emitnopssaop(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
@@ -140,6 +142,7 @@ type
                const aprefixdata: int32});
    procedure emitvar(const atype: int32);
    procedure emitvar(const atype: int32; const ainitconst: int32);
+   procedure emitconst(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32); //1 ssa
    procedure resetssa(); //sets ssastart to current ssa
    
@@ -149,6 +152,8 @@ type
    procedure emitcallop(const afunc: boolean; const valueid: int32;
                                                       const aparams: idarty);
                                           //changes aparams
+   procedure emitcallop(const afunc: boolean; const valueid: int32;
+                                              const aparams: array of int32);
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
@@ -472,6 +477,9 @@ begin
     gak_sub: begin
      emitsub(po5^.typeindex,cv_ccc,po5^.flags,po5^.linkage,0);
     end;
+    gak_const: begin
+     emitconst(po5^.typeindex,po5^.initconstindex);
+    end;
     gak_var: begin
      if po5^.initconstindex >= 0 then begin
       emitvar(po5^.typeindex,po5^.initconstindex);
@@ -763,6 +771,23 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32;
+                                                const adddata: array of int32);
+var
+ i1: int32;
+ po1,pe: pint32;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(id);
+ emitvbr6(length(data) + length(adddata));
+ for i1:= 0 to high(data) do begin
+  emitvbr6(data[i1]);
+ end;
+ for i1:= 0 to high(adddata) do begin
+  emitvbr6(adddata[i1]);
+ end;
+end;
+
 procedure tllvmbcwriter.emitnopssaop();
 begin
  emitbinop(binop_add,constval(0),constval(0));
@@ -977,6 +1002,12 @@ end;
 procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32);
 begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,ainitconst+1,
+                                                     ord(li_internal),0,0]);
+end;
+
+procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);
+begin
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),1,ainitconst+1,
                                                      ord(li_internal),0,0]);
 end;
 
@@ -1264,6 +1295,15 @@ begin
  for i1:= aparams.count-1 downto 0 do begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
+ emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ if afunc then begin
+  inc(fsubopindex);
+ end;
+end;
+
+procedure tllvmbcwriter.emitcallop(const afunc: boolean; const valueid: int32;
+                                                 const aparams: array of int32);
+begin
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  if afunc then begin
   inc(fsubopindex);
