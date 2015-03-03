@@ -2744,7 +2744,11 @@ end;
 procedure freememop();
 begin
  with pc^.par do begin
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
+                                                    [bcstream.ssaval(ssas1)]);
+{
   outass('call void @free(i8* %'+inttostr(ssas1)+')');
+}
  end;
 end;
 
