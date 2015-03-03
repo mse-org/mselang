@@ -1024,16 +1024,28 @@ end;
 procedure writestring8op();
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+{
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wstring8format+
          ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
+}
  end;
 end;
 
 procedure writepointerop();
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_pointer]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+{
   outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wpointerformat+
          ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
+}
  end;
 end;
 
