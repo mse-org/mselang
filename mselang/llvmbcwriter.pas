@@ -1334,12 +1334,18 @@ end;
 
 procedure tllvmbcwriter.emiti1const(const aconstid: int32);
 begin
- emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
+ emitrec(ord(FUNC_CODE_INST_CAST),
+       [fsubopindex-constval(aconstid),typeval(ord(das_1)),ord(CAST_BITCAST)]);
+ inc(fsubopindex);
+// emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
 end;
 
 procedure tllvmbcwriter.emiti32const(const aconstid: int32);
 begin
- emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
+ emitrec(ord(FUNC_CODE_INST_CAST),
+       [fsubopindex-constval(aconstid),typeval(ord(das_32)),ord(CAST_BITCAST)]);
+ inc(fsubopindex);
+// emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
 end;
 
 {
