@@ -18,7 +18,8 @@ unit llvmlists;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes;
+ msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes,
+ opglob;
 
 const
  maxparamcount = 512;
@@ -184,18 +185,19 @@ type
   public
    constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override; //init first entries with 0..255
-   function addi1(const avalue: boolean): int32; //returns id
-   function addi8(const avalue: int8): int32; //returns id
-   function addi16(const avalue: int16): int32; //returns id
-   function addi32(const avalue: int32): int32; //returns id
-   function addi64(const avalue: int64): int32; //returns id
-   function addvalue(const avalue; const asize: int32): int32; //returns id
-   function addnullvalue(const atypeid: int32): int32; //returns id
+   function addi1(const avalue: boolean): llvmconstty;
+   function addi8(const avalue: int8): llvmconstty;
+   function addi16(const avalue: int16): llvmconstty;
+   function addi32(const avalue: int32): llvmconstty;
+   function addi64(const avalue: int64): llvmconstty;
+   function addvalue(const avalue; const asize: int32): llvmconstty;
+   function addnullvalue(const atypeid: int32): llvmconstty;
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
+   function typeid(const aindex: int32): int32;
  end;
 
  globnamedataty = record
@@ -631,7 +633,7 @@ begin
   result:= high(card8)+1+aindex
  end
  else begin
-  result:= addi32(aindex+pointersize);
+  result:= addi32(aindex+pointersize).listid;
   if result = count-1 then begin
    internalerror1(ie_llvmlist,'20150225');
   end;
@@ -657,7 +659,7 @@ testvar4:= constallocdataty(akey);
                                     inherited checkkey(akey,aitemdata);
 end;
 
-function tconsthashdatalist.addi1(const avalue: boolean): int32;
+function tconsthashdatalist.addi1(const avalue: boolean): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -673,10 +675,11 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi8(const avalue: int8): int32;
+function tconsthashdatalist.addi8(const avalue: int8): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -687,10 +690,11 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi16(const avalue: int16): int32;
+function tconsthashdatalist.addi16(const avalue: int16): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -701,10 +705,11 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi32(const avalue: int32): int32;
+function tconsthashdatalist.addi32(const avalue: int32): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -715,10 +720,11 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi64(const avalue: int64): int32;
+function tconsthashdatalist.addi64(const avalue: int64): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -736,7 +742,8 @@ begin
 {$endif}
 end;
 
-function tconsthashdatalist.addvalue(const avalue; const asize: int32): int32;
+function tconsthashdatalist.addvalue(const avalue;
+                                            const asize: int32): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -747,10 +754,11 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addnullvalue(const atypeid: int32): int32;
+function tconsthashdatalist.addnullvalue(const atypeid: int32): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -761,7 +769,8 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
 function tconsthashdatalist.first: pconstlistdataty;
@@ -772,6 +781,11 @@ end;
 function tconsthashdatalist.next: pconstlistdataty;
 begin
  result:= pointer(internalnext());
+end;
+
+function tconsthashdatalist.typeid(const aindex: int32): int32;
+begin
+ result:= pconstlisthashdataty(fdata)[aindex].data.typeid;
 end;
 
 { tglobnamelist }
@@ -835,7 +849,7 @@ begin
  fillchar(dat1,sizeof(dat1),0);
  dat1.typeindex:= atyp;
  dat1.kind:= gak_var;
- dat1.initconstindex:= fconstlist.addnullvalue(atyp);
+ dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;

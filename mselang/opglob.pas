@@ -429,12 +429,15 @@ type
  destroyclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
  end;
-
+  llvmconstty = record
+   listid: int32;
+   typeid: int32;
+  end;
   immty = record
 //   ssaindex: integer;
-   datasize: integer;            //todo: remove, not necessafy for bitcode
+   datasize: integer;            //todo: remove, not necessary for bitcode
    case integer of               //todo: use target size
-    0: (listindex: int32);
+    0: (llvm: llvmconstty);
     1: (vboolean: boolean);
     2: (vcard8: card8);
     3: (vcard16: card16);

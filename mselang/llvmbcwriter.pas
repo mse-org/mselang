@@ -179,8 +179,7 @@ type
    procedure emitloadop(const asource: int32);
    procedure emitstoreop(const asource: int32; const adest: int32);
 
-   procedure emiti32const(const aconstid: int32);
-   procedure emiti1const(const aconstid: int32);
+   procedure emitpushconst(const aconst: llvmconstty);
    
    procedure emitbinop(const aop: BinaryOpcodes; 
                          const valueida: int32; const valueidb: int32);
@@ -1332,14 +1331,15 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emiti1const(const aconstid: int32);
+procedure tllvmbcwriter.emitpushconst(const aconst: llvmconstty);
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),
-       [fsubopindex-constval(aconstid),typeval(ord(das_1)),ord(CAST_BITCAST)]);
+       [fsubopindex-constval(aconst.listid),typeval(aconst.typeid),
+                                                          ord(CAST_BITCAST)]);
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
 end;
-
+{
 procedure tllvmbcwriter.emiti32const(const aconstid: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),
@@ -1347,7 +1347,7 @@ begin
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
 end;
-
+}
 {
 procedure tllvmbcwriter.emitchar6(const avalue: shortstring);
 begin

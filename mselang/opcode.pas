@@ -290,7 +290,7 @@ procedure setimmboolean(const value: boolean; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi1(value);
+  par.imm.llvm:= constlist.addi1(value);
  end
  else begin
   par.imm.vboolean:= value;
@@ -301,7 +301,7 @@ procedure setimmcard8(const value: card8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi8(value);
+  par.imm.llvm:= constlist.addi8(value);
  end
  else begin
   par.imm.vcard8:= value;
@@ -312,7 +312,7 @@ procedure setimmcard16(const value: card16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi16(value);
+  par.imm.llvm:= constlist.addi16(value);
  end
  else begin
   par.imm.vcard16:= value;
@@ -323,7 +323,7 @@ procedure setimmcard32(const value: card32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi32(value);
+  par.imm.llvm:= constlist.addi32(value);
  end
  else begin
   par.imm.vcard32:= value;
@@ -334,7 +334,7 @@ procedure setimmcard64(const value: card64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi64(value);
+  par.imm.llvm:= constlist.addi64(value);
  end
  else begin
   par.imm.vcard64:= value;
@@ -345,7 +345,7 @@ procedure setimmint8(const value: int8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi8(value);
+  par.imm.llvm:= constlist.addi8(value);
  end
  else begin
   par.imm.vint8:= value;
@@ -356,7 +356,7 @@ procedure setimmint16(const value: int16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi16(value);
+  par.imm.llvm:= constlist.addi16(value);
  end
  else begin
   par.imm.vint16:= value;
@@ -367,7 +367,7 @@ procedure setimmint32(const value: int32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi32(value);
+  par.imm.llvm:= constlist.addi32(value);
  end
  else begin
   par.imm.vint32:= value;
@@ -378,7 +378,7 @@ procedure setimmint64(const value: int64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.listindex:= constlist.addi64(value);
+  par.imm.llvm:= constlist.addi64(value);
  end
  else begin
   par.imm.vint64:= value;

@@ -399,11 +399,11 @@ procedure oplabel(out result: shortstring);
 begin
  result:= 'o'+ inttostr(pc^.par.opaddress.opaddress);
 end;
-
+(*
 procedure stackimmassign1();
 begin
  with pc^.par do begin
-  bcstream.emiti1const(imm.listindex);
+  bcstream.emitpushconst(imm.listindex,imm.typeindex);
 //  outass('%'+inttostr(ssad)+' = add i1 '+ inttostr(imm.vint8)+' ,0');
  end;
 end;
@@ -411,8 +411,9 @@ end;
 procedure stackimmassign8();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
-                                                inttostr(imm.vint8)+' ,0');
+  bcstream.emitpushconst(imm.listindex,imm.typeindex);
+//  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
+//                                                inttostr(imm.vint8)+' ,0');
  end;
 end;
 
@@ -442,7 +443,7 @@ begin
                                                 inttostr(imm.vint64)+' ,0');
  end;
 end;
-
+*)
 {
 procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
 begin
@@ -860,7 +861,7 @@ begin
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconstid:= globlist.addinitvalue(gak_var,
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1){,
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid{,
                                                            globconsttype});
  end;
  globlist.addsubvalue(nil,stringtolstring('main'));
@@ -873,7 +874,7 @@ begin
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
   with internalstringconsts[strings1] do begin
    internalstrings[strings1]:= globlist.addinitvalue(gak_const,
-                              constlist.addvalue(pointer(text)^,length(text)));
+                     constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
  
@@ -1081,27 +1082,37 @@ end;
 
 procedure pushimm1op();
 begin
- stackimmassign1();
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
 end;
 
 procedure pushimm8op();
 begin
- stackimmassign8();
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
 end;
 
 procedure pushimm16op();
 begin
- stackimmassign16();
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
 end;
 
 procedure pushimm32op();
 begin
- stackimmassign32();
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
 end;
 
 procedure pushimm64op();
 begin
- stackimmassign64();
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
 end;
 
 procedure pushimmdatakindop();
