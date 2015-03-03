@@ -986,7 +986,8 @@ end;
 procedure writelnop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.globval(internalstrings[is_ret]),pointertype);
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_ret]),
+                                             bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                                       [bcstream.relval(0)]);
 {
@@ -1004,7 +1005,8 @@ end;
 procedure writeintegerop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.globval(internalstrings[is_int32]),pointertype);
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_int32]),
+                                           bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
 {
