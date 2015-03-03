@@ -1834,7 +1834,13 @@ end;
 procedure pushnilop();
 begin
  with pc^.par do begin
+//  bcstream.emitgetelementptr(bcstream.constval(ord(nc_i8)),
+//                                                bcstream.constval(0));
+  bcstream.emitbitcast(bcstream.constval(nullpointer),
+                               bcstream.typeval(pointertype));
+{
   outass('%'+inttostr(ssad)+' = getelementptr i8* null, i32 0')
+}
  end;
 end;
 

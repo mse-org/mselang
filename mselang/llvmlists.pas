@@ -169,8 +169,12 @@ const
  nullpointeroffset = high(card8)+1; //constlist index
  
 type 
- nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64);
+ nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64,
+                nc_pointer);
+const
+ nullpointer = ord(nc_pointer);
  
+type 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
@@ -617,6 +621,7 @@ begin
   addnullvalue(ord(das_16));
   addnullvalue(ord(das_32));
   addnullvalue(ord(das_64));
+  addnullvalue(ord(das_pointer));
  end;
 end;
 
