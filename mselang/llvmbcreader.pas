@@ -1339,12 +1339,14 @@ begin
          i3:= subparamcount;
          vararg1:= subvararg;
         end;
-        i1:= ftypelist.fsubparams[i2];             
-        if ftypelist.item(i1)^.kind = TYPE_CODE_VOID then begin
-         outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+        i1:= ftypelist.fsubparams[i2];
+        bo1:= ftypelist.item(i1)^.kind <> TYPE_CODE_VOID;
+        if bo1 then begin
+         outssarecord(i1,str1);
+         dec(ssaindex); //for parameter check
         end
         else begin
-         outssarecord(i1,str1);
+         outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
         end;
         if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
          error('Invalid param count');
@@ -1355,6 +1357,9 @@ begin
           error('Invalid param');
          end;
          inc(i2);
+        end;
+        if bo1 then begin
+         inc(ssaindex); //restore
         end;
        end;
       end;

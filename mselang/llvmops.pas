@@ -93,15 +93,26 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf);
+ internalfuncty = (if_printf,if_malloc,if_free);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
  );
  printfparams: paramsty = (count: 1; items: @printfpar);
+ mallocpar: array[0..1] of paramitemty = (
+              (typelistindex: pointertype; flags: []),
+              (typelistindex: sizetype; flags: [])
+ );
+ mallocparams: paramsty = (count: 2; items: @mallocpar);
+ freepar: array[0..0] of paramitemty = (
+              (typelistindex: pointertype; flags: [])
+ );
+ freeparams: paramsty = (count: 1; items: @freepar);
  
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
-  (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams)
+  (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
+  (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
+  (name: 'free'; flags: [sf_proto]; params: @freeparams)
  );
 
 type
@@ -2711,16 +2722,22 @@ begin
 end;
 
 procedure getmemop();
-var
- str1,str2,str3: shortstring;
+//var
+// str1,str2,str3: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_malloc]),
+                                                    [bcstream.ssaval(ssas2)]);
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+{
   llvmtype(memop.t,str1);
   str2:= '%'+inttostr(ssad-1);
   str3:= '%'+inttostr(ssad);
   outass(str2+' = call i8* @malloc('+str1+' %'+inttostr(ssas2)+')');
   outass(str3+' = bitcast i8* '+'%'+inttostr(ssas1)+' to i8**');
   outass('store i8* '+str2+', i8** '+str3);
+}
  end;
 end;
 

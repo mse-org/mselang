@@ -117,6 +117,11 @@ type
 const
  voidtype = ord(das_none);
  pointertype = ord(das_pointer);
+{$if pointersize = 64}
+ sizetype = ord(das_64);
+{$else}
+ sizetype = ord(das_32);
+{$endif}
  bittypemax = ord(lastdatakind);
  
 type
