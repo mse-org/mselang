@@ -578,7 +578,7 @@ begin
 {$endif}
 end;
 *)
-procedure assignindirect();
+procedure loadindirect();
 //var
 // str1,dest1,dest2: shortstring;
 begin
@@ -2145,22 +2145,22 @@ end;
 
 procedure indirect8op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirect16op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirect32op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirect64op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirectpoop();
@@ -2182,17 +2182,17 @@ end;
 
 procedure indirectf16op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirectf32op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirectf64op();
 begin
- assignindirect();
+ loadindirect();
 end;
 
 procedure indirectpooffsop();
