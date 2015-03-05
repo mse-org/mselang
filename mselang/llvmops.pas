@@ -722,7 +722,7 @@ begin
 }
  end;
 end;
-
+(*
 procedure assignpar();
 begin
 {$ifdef mse_locvarssatracking}
@@ -734,7 +734,7 @@ begin
  loadloc();
 {$endif}
 end;
-
+*)
 {
 procedure loadloc32(const ssaindex: integer; const dest: locdataaddressty);
 begin
@@ -1982,47 +1982,47 @@ end;
 
 procedure pushpar8op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushpar16op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushpar32op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushpar64op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushparpoop();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushparf16op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushparf32op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushparf64op();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushparop();
 begin
- assignpar();
+ loadloc();
 end;
 
 procedure pushlocindi8op();
