@@ -26,6 +26,7 @@ type
   count: int32;
   ids: pint32;
  end;
+
 const
  emptyidar: idarty = (count: 0; ids: nil);
  
@@ -185,6 +186,8 @@ type
                          const valueida: int32; const valueidb: int32);
    procedure emitcmpop(const apred: Predicate; const valueida: int32;
                                                       const valueidb: int32);
+   procedure emitdebugloc(const avalue: debuglocty);
+   
    function valindex(const aadress: segaddressty): integer;
    property ssaindex: int32 read fsubopindex;
  end;
@@ -1329,6 +1332,11 @@ begin
                                                           ord(CAST_BITCAST)]);
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
+end;
+
+procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);
+begin
+ emitrec(ord(FUNC_CODE_DEBUG_LOC),[avalue.line,avalue.col,0,0]);
 end;
 {
 procedure tllvmbcwriter.emiti32const(const aconstid: int32);

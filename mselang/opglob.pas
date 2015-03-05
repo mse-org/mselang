@@ -602,9 +602,15 @@ type
   allocs: suballocinfoty;
  end;
 
+ debuglocty = record
+  line: int32;
+  col: int32;
+ end;
+ 
  lineinfoty = record
   line: lstringty;
-  nr: integer;
+  loc: debuglocty;
+//  nr: integer;
  end;
 
  labty = record

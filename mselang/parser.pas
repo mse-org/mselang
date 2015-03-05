@@ -304,7 +304,8 @@ begin
     with additem(oc_lineinfo)^ do begin
      par.lineinfo.line.po:= achar;
      par.lineinfo.line.len:= linelen(achar);
-     par.lineinfo.nr:= linebreaks+info.s.source.line;
+     par.lineinfo.loc.line:= linebreaks+info.s.source.line;
+     par.lineinfo.loc.col:= 0;
     end;
    end;
   end;

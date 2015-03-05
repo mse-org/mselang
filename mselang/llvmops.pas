@@ -2572,9 +2572,7 @@ end;
 procedure lineinfoop();
 begin
  with pc^.par.lineinfo do begin
-{$ifndef mse_llvmbc}
-  outass(';'+inttostr(nr+1)+':'+lstringtostring(line)); //todo: optimize
-{$endif}
+  bcstream.emitdebugloc(loc);
  end;
 end;
 
