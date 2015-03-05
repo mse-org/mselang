@@ -400,57 +400,7 @@ procedure oplabel(out result: shortstring);
 begin
  result:= 'o'+ inttostr(pc^.par.opaddress.opaddress);
 end;
-(*
-procedure stackimmassign1();
-begin
- with pc^.par do begin
-  bcstream.emitpushconst(imm.listindex,imm.typeindex);
-//  outass('%'+inttostr(ssad)+' = add i1 '+ inttostr(imm.vint8)+' ,0');
- end;
-end;
 
-procedure stackimmassign8();
-begin
- with pc^.par do begin
-  bcstream.emitpushconst(imm.listindex,imm.typeindex);
-//  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
-//                                                inttostr(imm.vint8)+' ,0');
- end;
-end;
-
-procedure stackimmassign16();
-begin
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
-                                                inttostr(imm.vint16)+' ,0');
- end;
-end;
-
-procedure stackimmassign32();
-begin
- with pc^.par do begin
-  bcstream.emiti32const(imm.listindex);
-{
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
-                                                inttostr(imm.vint32)+' ,0');
-}
- end;
-end;
-
-procedure stackimmassign64();
-begin
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(imm.datasize*8)+' '+
-                                                inttostr(imm.vint64)+' ,0');
- end;
-end;
-*)
-{
-procedure segassign32(const ssaindex: integer; const dest: segdataaddressty);
-begin
- outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
-end;
-}
 procedure storeseg(const source: int32);
 begin
  with pc^.par do begin
@@ -469,8 +419,6 @@ begin
 end;
 
 procedure loadseg();
-//var
-// str1, str2: shortstring;
 begin
  with pc^.par do begin
   if memop.t.listindex > bittypemax then begin
@@ -480,20 +428,9 @@ begin
   else begin
    bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
   end;
-{
-  llvmtype(memop.t,str1);
-  segdataaddresspo(memop.segdataaddress,true,str2);
-  outass('%'+inttostr(ssad)+' = load '+str1+'* bitcast (i8* '+str2+
-                                                          ' to '+str1+'* )');
-}
  end;
 end;
-{
-procedure loadseg32(const ssaindex: integer; const dest: segdataaddressty);
-begin
- outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
-end;
-}
+
 procedure storeloc(const source: int32);
 begin
  with pc^.par do begin
@@ -526,23 +463,7 @@ begin
  storeloc(bcstream.relval(0));
 end;
 
-(*
-procedure parassign;
-begin
-{$ifdef mse_locvarssatracking}
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+
-               ' = add i'+inttostr(memop.datacount)+
-               ' %'+inttostr(ssas1)+', 0');
- end;
-{$else}
- storeloc();
-{$endif}
-end;
-*)
 procedure loadindirect();
-//var
-// str1,dest1,dest2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
