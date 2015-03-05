@@ -43,7 +43,7 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils;
+ segmentutils,llvmlists;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin
@@ -207,6 +207,11 @@ var
    po3^.par.ssas1:= info.s.ssa.index - 1;
    if adec then begin
     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
+   end;
+   if info.backend = bke_llvm then begin
+    with po3^.par.memimm do begin
+     llvm:= constlist.addi32(vint32);
+    end;
    end;
   end;
  end;

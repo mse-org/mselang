@@ -1259,11 +1259,15 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par,memimm do begin
+  assignloc();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
+{
   locdataaddress(mem.locdataaddress,str1);
   str2:= '%'+inttostr(ssad-1);
   outass(str2+' = load i8** '+str1);
   outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
                                           ', i32 '+inttostr(vint32));
+}
  end;
 end;
 

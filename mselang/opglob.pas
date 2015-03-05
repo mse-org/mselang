@@ -543,6 +543,9 @@ type
  memimmopty = record
   mem: memopty;
   case opcodety of
+   oc_none:(
+    llvm: llvmconstty;
+   );
    oc_incdecsegimmint32,oc_incdecsegimmpo32,
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
