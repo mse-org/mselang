@@ -452,18 +452,18 @@ begin
 end;
 }
 procedure storeseg();
-//var
-// str1,str2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitstoreop(bcstream.ssaval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
-{  
-  llvmtype(memop.t,str1);
-  segdataaddresspo(memop.segdataaddress,true,str2);
-  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+
-            'bitcast (i8* '+str2+ ' to '+str1+'*)');
-}
+ end;
+end;
+
+procedure storelastseg(); //store last ssa value
+begin
+ with pc^.par do begin
+  bcstream.emitstoreop(bcstream.relval(0),
+                     bcstream.globval(memop.segdataaddress.a.address));
  end;
 end;
 
@@ -1230,12 +1230,18 @@ begin
 end;
 
 procedure incdecsegimmint32op();
-var
- str1: shortstring;
+//var
+// str1: shortstring;
 begin
  with pc^.par,memimm do begin
+  loadseg();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.constval(llvm.listid));
+  storelastseg();
+{
   segdataaddresspo(mem.segdataaddress,true,str1);
   incdecimmint32(str1);
+}
  end;
 end;
 
