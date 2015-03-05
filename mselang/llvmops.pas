@@ -467,7 +467,7 @@ begin
  end;
 end;
 
-procedure assignseg();
+procedure loadseg();
 //var
 // str1, str2: shortstring;
 begin
@@ -488,7 +488,7 @@ begin
  end;
 end;
 {
-procedure assignseg32(const ssaindex: integer; const dest: segdataaddressty);
+procedure loadseg32(const ssaindex: integer; const dest: segdataaddressty);
 begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
@@ -1892,47 +1892,47 @@ end;
 
 procedure pushseg8op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushseg16op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushseg32op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushseg64op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushsegpoop();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushsegf16op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushsegf32op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushsegf64op();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushsegop();
 begin
- assignseg();
+ loadseg();
 end;
 
 procedure pushloc8op();
