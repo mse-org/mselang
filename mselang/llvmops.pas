@@ -564,7 +564,7 @@ begin
 }
  end;
 end;
-
+(*
 procedure parassign;
 begin
 {$ifdef mse_locvarssatracking}
@@ -577,7 +577,7 @@ begin
  storeloc();
 {$endif}
 end;
-
+*)
 procedure assignindirect();
 //var
 // str1,dest1,dest2: shortstring;
@@ -1784,22 +1784,22 @@ end;
 
 procedure poppar8op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure poppar16op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure poppar32op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure poppar64op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure popparpoop();
@@ -1809,17 +1809,17 @@ end;
 
 procedure popparf16op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure popparf32op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure popparf64op();
 begin
- parassign();
+ storeloc();
 end;
 
 procedure popparop();
