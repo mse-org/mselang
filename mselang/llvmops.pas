@@ -604,7 +604,7 @@ begin
 end;
 }
 
-procedure locassignindi();
+procedure storelocindi();
 var
  str1,str2,dest1,dest2: shortstring;
 begin
@@ -641,7 +641,7 @@ begin
 {$ifdef mse_locvarssatracking}
  notimplemented();
 {$else}
- locassignindi();
+ storelocindi();
 {$endif}
 end;
 
