@@ -129,6 +129,7 @@ const
  );  
 
 var
+ compilersubids: array[compilersubty] of int32;
 {$ifdef mse_llvmbc}
  bcstream: tllvmbcwriter;
 {$else}
@@ -777,6 +778,12 @@ begin
  outass('call void @s'+inttostr(po1^.address)+'('+aparams+')');
 end;
 
+procedure callcompilersub(const asub: compilersubty; const afunc: boolean;
+                                     const aparams: array of int32);
+begin
+ bcstream.emitcallop(afunc,compilersubids[asub],aparams);
+end;
+
 procedure decrefsize(const aaddress: shortstring);
 begin
  callcompilersub(cs_decrefsize,aaddress);
@@ -840,6 +847,7 @@ var
  str1,str2: shortstring;
  funcs1: internalfuncty;
  strings1: internalstringty;
+ compilersub1: compilersubty;
 {
 const
 // voidparam: paramitemty = (typelistindex: voidtype; flags: []);
@@ -876,6 +884,11 @@ begin
    internalstrings[strings1]:= globlist.addinitvalue(gak_const,
                      constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
+ end;
+
+ for compilersub1:= low(compilersubids) to high(compilersubids) do begin
+  compilersubids[compilersub1]:= psubdataty(
+                  ele.eledataabs(compilersubs[compilersub1]))^.globid;  
  end;
  
  with pc^.par.beginparse do begin
@@ -1431,8 +1444,10 @@ var
  str1: shortstring;
 begin
  with pc^.par do begin
-  segdataaddress(memop.segdataaddress,str1);
-  outass('store '+nilconst+', i8** '+str1);
+  bcstream.emitstoreop(bcstream.constval(nullpointer),
+                     bcstream.globval(memop.segdataaddress.a.address));
+//  segdataaddress(memop.segdataaddress,str1);
+//  outass('store '+nilconst+', i8** '+str1);
  end;
 end;
 
@@ -1474,14 +1489,18 @@ begin
 end;
 
 procedure finirefsizesegop();
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin
  with pc^.par do begin
+  callcompilersub(cs_finifrefsize,false,
+         [bcstream.globval(memop.segdataaddress.a.address)]);
+{
   str1:= '%'+inttostr(ssad);
   segdataaddress(memop.segdataaddress,str2);
   outass(str1+' = bitcast i8** '+str2+' to i8*');
   finirefsize(str1);
+}
  end;
 end;
 
@@ -2138,11 +2157,15 @@ var
  dest1,dest2: shortstring;
 begin
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+{
   dest1:= '%'+inttostr(ssad-1);
   dest2:= '%'+inttostr(ssad);
   outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
                           ' to i8**');
   outass(dest2+' = load i8** '+dest1);
+}
  end;
 end;
 
@@ -2521,135 +2544,6 @@ begin
   end;
  end;
 end;
-
-(*
-procedure subbeginop();
-var
-// ele1: elementoffsetty;
-// po1: pvardataty;
- po1: plocallocinfoty;
- po2: pnestedallocinfoty;
- poend: pointer;
- first: boolean;
- str1,str2,str3,str4: shortstring;
- int1: integer;
- ssa1: integer;
-begin
- with pc^.par.subbegin do begin
-  po1:= getsegmentpo(seg_localloc,allocs.allocs);
-  poend:= po1+allocs.alloccount;
-
-  if sf_function in flags then begin //todo: correct type
-   llvmtype(po1^.size,str1);
-   outass('define '+str1+' @s'+inttostr(subname)+'(');
-   inc(po1); //result
-  end
-  else begin
-   outass('define void @s'+inttostr(subname)+'(');
-  end;
-  first:= true;
-  if sf_hasnestedaccess in flags then begin
-   outass(' i8** %fp'); //parent locals
-   first:= false;
-  end;
-  while po1 < poend do begin
-   if not (af_param in po1^.flags) then begin
-    break;
-   end;
-   llvmtype(po1^.size,str2);
-   paraddress(po1^.address,str3);
-   str1:= ','+str2+' '+str3;
-   if first then begin
-    str1[1]:= ' ';
-    first:= false;
-   end;
-   outass(str1);
-   inc(po1);
-  end;
-  outass('){');
-{$ifndef mse_locvarssatracking}
-  po1:= getsegmentpo(seg_localloc,allocs.allocs);
-{$endif}
-  if sf_function in flags then begin
-   llvmtype(po1^.size,str1);
-   locaddress(po1^.address,str2);
-   outass(str2+' = alloca '+str1);
-   inc(po1); //result
-  end;
-  while po1 < poend do begin
-   if not (af_param in po1^.flags) then begin
-    break;
-   end;
-   llvmtype(po1^.size,str1);
-   locaddress(po1^.address,str2);
-   outass(str2+' = alloca '+str1);
-{$ifndef mse_locvarssatracking}
-   paraddress(po1^.address,str3);
-   outass('store '+str1+' '+str3+
-               ','+str1+'* '+str2);
-{$endif}
-   inc(po1);
-  end;
-  while po1 < poend do begin
-   llvmtype(po1^.size,str1);
-   locaddress(po1^.address,str2);
-   outass(str2+' = alloca '+str1);
-   inc(po1);
-  end;
-  if sf_hasnestedref in flags then begin
-   outass('%f = alloca i8*, i32 '+inttostr(allocs.nestedalloccount+1));
-                   //first is room for possible oc_callout frame pointer
-   po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
-   poend:= po2+allocs.nestedalloccount;
-   ssa1:= 1;
-   while po2 < poend do begin
-    str1:= '%'+inttostr(ssa1); 
-    outass(str1+' = getelementptr i8** %f, i32 '+ inttostr(ssa1 div 3 + 1));
-    inc(ssa1);
-    str2:= '%'+inttostr(ssa1);
-    inc(ssa1);
-    str3:= '%'+inttostr(ssa1);
-    inc(ssa1);
-    if po2^.address.nested then begin
-     outass(str2+' = getelementptr i8** %fp, i32 '+
-                                        inttostr(po2^.address.address));
-     outass(str3+' = load i8** '+str2);
-     outass('store i8* '+str3+', i8** '+str1);
-    end
-    else begin
-     llvmtype(po2^.address.datatype,str4);
-     outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
-     outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
-                                                             str4+'** '+str2);
-     outass(str3+' = add i8 0, 0'); //dummy
-{        
-     case po2^.address.datatype.kind of
-      odk_bit: begin
-       str4:= 'i'+ inttostr(po2^.address.datatype.size);
-       outass(str2+' = bitcast i8** '+str1+' to '+str4+'**');
-       outass('store '+str4+'* %l'+inttostr(po2^.address.address)+', '+
-                                                               str4+'** '+str2);
-       outass(str3+' = add i8 0, 0'); //dummy
-      end;
-      else begin
-       notimplemented();
-      end;
-     end;
-}
-    end;
-    
-    inc(po2);
-   end;
-   if sf_hascallout in flags then begin
-    str1:= '%'+inttostr(ssa1);
-    inc(ssa1);
-    outass(str1+' = bitcast i8** %fp to i8*');
-    outass('store i8* '+str1+', i8** %f');
-   end;
-  end;
- end;
-end;
-*)
 
 procedure subendop();
 begin
