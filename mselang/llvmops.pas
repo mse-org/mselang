@@ -688,7 +688,7 @@ begin
  end;
 end;
 
-procedure assignlocindi();
+procedure loadlocindi();
 var
  dest1,dest2,dest3: shortstring;
  str1,str2: shortstring;
@@ -2027,47 +2027,47 @@ end;
 
 procedure pushlocindi8op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindi16op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindi32op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindi64op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindipoop();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindif16op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindif32op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindif64op();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushlocindiop();
 begin
- assignlocindi();
+ loadlocindi();
 end;
 
 procedure pushaddrop();
