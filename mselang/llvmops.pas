@@ -493,7 +493,7 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
 }
-procedure locassign();
+procedure storeloc();
 //var
 // str1,str2,str3,str4,str5: shortstring;
 begin
@@ -574,7 +574,7 @@ begin
                ' %'+inttostr(ssas1)+', 0');
  end;
 {$else}
- locassign();
+ storeloc();
 {$endif}
 end;
 
@@ -1694,42 +1694,42 @@ end;
 
 procedure poploc8op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poploc16op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poploc32op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poploc64op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocpoop();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocf16op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocf32op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocf64op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocop();
@@ -1739,22 +1739,22 @@ end;
 
 procedure poplocindi8op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindi16op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindi32op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindi64op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindipoop();
@@ -1764,17 +1764,17 @@ end;
 
 procedure poplocindif16op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindif32op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindif64op();
 begin
- locassign();
+ storeloc();
 end;
 
 procedure poplocindiop();
