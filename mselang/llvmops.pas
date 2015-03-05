@@ -451,20 +451,21 @@ begin
  outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
 end;
 }
-procedure storeseg();
+procedure storeseg(const source: int32);
 begin
  with pc^.par do begin
-  bcstream.emitstoreop(bcstream.ssaval(ssas1),
-                     bcstream.globval(memop.segdataaddress.a.address));
+  bcstream.emitstoreop(source,bcstream.globval(memop.segdataaddress.a.address));
  end;
+end;
+
+procedure storeseg();
+begin
+ storeseg(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure storelastseg(); //store last ssa value
 begin
- with pc^.par do begin
-  bcstream.emitstoreop(bcstream.relval(0),
-                     bcstream.globval(memop.segdataaddress.a.address));
- end;
+ storeseg(bcstream.relval(0));
 end;
 
 procedure loadseg();
@@ -493,9 +494,7 @@ begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+segdataaddress(dest));
 end;
 }
-procedure storeloc();
-//var
-// str1,str2,str3,str4,str5: shortstring;
+procedure storeloc(const source: int32);
 begin
  with pc^.par do begin
   with memop,locdataaddress do begin
@@ -508,62 +507,25 @@ begin
     bcstream.emitloadop(bcstream.relval(0));
             //pointer to variable
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-    bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
+    bcstream.emitstoreop(source,bcstream.relval(0));
    end
    else begin
-    bcstream.emitstoreop(bcstream.ssaval(ssas1),
-                                       bcstream.allocval(a.address));
+    bcstream.emitstoreop(source,bcstream.allocval(a.address));
    end;
   end;
-{
- with pc^.par do begin
-  llvmtype(memop.t,str1);
-  str2:= '%'+inttostr(ssas1);
-  if memop.locdataaddress.a.framelevel >= 0 then begin
-   str3:= '%'+inttostr(ssad-2);
-   str4:= '%'+inttostr(ssad-1);
-   str5:= '%'+inttostr(ssad);
-   outass(str3+' = getelementptr i8** %fp, i32 '+
-                                   inttostr(memop.locdataaddress.a.address));
-   outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
-   outass(str5+' = load '+str1+'** '+str4);
-   outass('store '+str1+' '+str2+
-               ', '+str1+'* '+str5);
-  end
-  else begin
-   locdataaddress(memop.locdataaddress,str3);
-   outass('store '+str1+' '+str2+', '+
-                         str1+'* '+str3);
-  end;
-}
-{
-  case memop.t.kind of
-   odk_bit: begin
-    str1:= 'i'+inttostr(memop.t.size);
-    str2:= '%'+inttostr(ssas1);
-    if memop.locdataaddress.a.framelevel >= 0 then begin
-     str3:= '%'+inttostr(ssad-2);
-     str4:= '%'+inttostr(ssad-1);
-     str5:= '%'+inttostr(ssad);
-     outass(str3+' = getelementptr i8** %fp, i32 '+
-                                     inttostr(memop.locdataaddress.a.address));
-     outass(str4+' = bitcast i8** '+str3+' to '+str1+'**');
-     outass(str5+' = load '+str1+'** '+str4);
-     outass('store '+str1+' '+str2+
-                 ', '+str1+'* '+str5);
-    end
-    else begin
-     outass('store '+str1+' '+str2+', '+
-                           str1+'* '+ locdataaddress(memop.locdataaddress));
-    end;
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
-}
  end;
 end;
+
+procedure storeloc();
+begin
+ storeloc(bcstream.ssaval(pc^.par.ssas1));
+end;
+
+procedure storelastloc(); //store last ssa value
+begin
+ storeloc(bcstream.relval(0));
+end;
+
 (*
 procedure parassign;
 begin
@@ -1257,7 +1219,12 @@ end;
 
 procedure incdeclocimmint32op();
 begin
- notimplemented();
+ with pc^.par,memimm do begin
+  loadloc();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.constval(llvm.listid));
+  storelastloc();
+ end;
 end;
 
 procedure incdeclocimmpo32op();
@@ -1267,6 +1234,7 @@ begin
  with pc^.par,memimm do begin
   loadloc();
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
+  storelastloc();
 {
   locdataaddress(mem.locdataaddress,str1);
   str2:= '%'+inttostr(ssad-1);
