@@ -451,7 +451,7 @@ begin
  outass('store i32 %'+inttostr(ssaindex)+', i32* '+segdataaddress(dest));
 end;
 }
-procedure segassign();
+procedure segstore();
 //var
 // str1,str2: shortstring;
 begin
@@ -1640,22 +1640,22 @@ end;
 
 procedure popseg8op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popseg16op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popseg32op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popseg64op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popsegpoop();
@@ -1674,17 +1674,17 @@ end;
 
 procedure popsegf16op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popsegf32op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popsegf64op();
 begin
- segassign();
+ segstore();
 end;
 
 procedure popsegop();
