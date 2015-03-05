@@ -635,7 +635,7 @@ begin
 }
  end;
 end;
-
+(*
 procedure parassignindi();
 begin
 {$ifdef mse_locvarssatracking}
@@ -644,7 +644,7 @@ begin
  storelocindi();
 {$endif}
 end;
-
+*)
 procedure loadloc();
 //var
 // str1,str2,str3,str4,str5: shortstring;
@@ -1829,22 +1829,22 @@ end;
 
 procedure popparindi8op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindi16op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindi32op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindi64op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindipoop();
@@ -1854,17 +1854,17 @@ end;
 
 procedure popparindif16op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindif32op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindif64op();
 begin
- parassignindi()
+ storelocindi()
 end;
 
 procedure popparindiop();
