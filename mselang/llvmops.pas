@@ -1292,10 +1292,16 @@ begin
 end;
 
 procedure incdecindiimmint32op();
-var
- str1,str2,str3,str4: shortstring;
+//var
+// str1,str2,str3,str4: shortstring;
 begin
  with pc^.par,memimm do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_32));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                  bcstream.constval(llvm.listid));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+{
   str1:= '%'+inttostr(ssas1);
   str2:= '%'+inttostr(ssad-2);
   str3:= '%'+inttostr(ssad-1);
@@ -1304,6 +1310,7 @@ begin
   outass(str3+' = load i32* '+str2);
   outass(str4+' = add i32 '+str3+', '+inttostr(vint32));
   outass('store i32 '+str4+', i32* '+str2);
+}
  end;
 end;
 
