@@ -118,6 +118,7 @@ begin
    internalerror(ie_type,'20140325A');
   end;
  {$endif}
+  ele.checkcapacity(ek_type);
   if findkindelements(1,[ek_type],allvisi,po2) then begin
    d.typ.typedata:= ele.eleinforel(po2);
    po3:= ptypedataty(@po2^.data);
