@@ -645,7 +645,7 @@ begin
 {$endif}
 end;
 
-procedure assignloc();
+procedure loadloc();
 //var
 // str1,str2,str3,str4,str5: shortstring;
 begin
@@ -731,12 +731,12 @@ begin
                        ' '+locdataaddress(memop.locdataaddress)+', 0');
  end;
 {$else}
- assignloc();
+ loadloc();
 {$endif}
 end;
 
 {
-procedure assignloc32(const ssaindex: integer; const dest: locdataaddressty);
+procedure loadloc32(const ssaindex: integer; const dest: locdataaddressty);
 begin
  outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
 end;
@@ -1259,7 +1259,7 @@ var
  str1,str2: shortstring;
 begin
  with pc^.par,memimm do begin
-  assignloc();
+  loadloc();
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
 {
   locdataaddress(mem.locdataaddress,str1);
@@ -1937,47 +1937,47 @@ end;
 
 procedure pushloc8op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushloc16op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushloc32op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushloc64op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushlocpoop();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushlocf16op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushlocf32op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushlocf64op();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushlocop();
 begin
- assignloc();
+ loadloc();
 end;
 
 procedure pushpar8op();
