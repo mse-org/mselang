@@ -380,7 +380,7 @@ end;
 // fields
 // interface table  <- fieldsize
 //                  <- allocsize
-var testvar: ptypedataty;
+
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -401,7 +401,6 @@ begin
   exclude(s.currentstatementflags,stf_classdef);
   with contextstack[s.stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
-testvar:= ptypedataty(ele.eledataabs(d.typ.typedata));
    regclass(d.typ.typedata);
    flags:= d.typ.flags;
    indirectlevel:= d.typ.indirectlevel;

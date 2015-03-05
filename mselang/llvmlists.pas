@@ -315,12 +315,11 @@ begin
   end;
  end;
 end;
-var testvar: bufferdataty; testvar2: bufferallocdataty;
+
 function tbufferhashdatalist.checkkey(const akey; const aitemdata): boolean;
 var
  po1,po2,pe: pcard8;
 begin
-testvar:= bufferdataty(aitemdata); testvar2:= bufferallocdataty(akey);
  result:= true;
  with bufferdataty(aitemdata) do begin
   if buffersize <> bufferallocdataty(akey).size then begin
@@ -575,7 +574,7 @@ begin
  result:= inherited hashkey(akey) xor 
                scramble(ord(typeallocdataty(akey).kind));
 end;
-//var testvar1: typeallocdataty; testvar2: 
+
 function ttypehashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
  result:= (typeallocdataty(akey).kind = typelistdataty(aitemdata).kind) and
@@ -649,11 +648,9 @@ function tconsthashdatalist.hashkey(const akey): hashvaluety;
 begin
  result:= inherited hashkey(akey) xor scramble(constallocdataty(akey).typeid);
 end;
-var testvar3: constlistdataty; testvar4: constallocdataty;
+
 function tconsthashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
-testvar3:= constlistdataty(aitemdata);
-testvar4:= constallocdataty(akey);
  result:= (constlistdataty(aitemdata).typeid = 
                            constallocdataty(akey).typeid) and 
                                     inherited checkkey(akey,aitemdata);

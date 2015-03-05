@@ -1412,7 +1412,7 @@ endloop:
   end; 
  end;
 end;
-var testvar: pvardataty;
+
 {$ifdef mse_debugparser}
 function telementhashdatalist.dumpelements: msestringarty;
 
@@ -1481,7 +1481,6 @@ begin
                                  integer(po1^.header.visibility),false);
   case po1^.header.kind of
    ek_var: begin
-testvar:= pvardataty(@po1^.data);
     with pvardataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' A:'+inttostr(address.poaddress)+' I:'+
                inttostr(address.indirectlevel)+ ' ' +
