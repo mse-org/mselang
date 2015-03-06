@@ -2572,7 +2572,7 @@ end;
 procedure lineinfoop();
 begin
  with pc^.par.lineinfo do begin
-  bcstream.emitdebugloc(loc);
+  bcstream.debugloc:= loc;
  end;
 end;
 

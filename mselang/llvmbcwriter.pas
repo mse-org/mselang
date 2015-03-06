@@ -58,8 +58,10 @@ type
    fpos: integer;
    fbitpos: integer;
    fbitbuf: card16;
+   fdebugloc: debuglocty;
   protected
 //   fconstopstart: int32;
+   flastdebugloc: debuglocty;
    fglobstart: int32;       //start of global variables
    fsubstart: int32;        //start of sub values (params)
    fsubparamstart: int32;   //reference for param access
@@ -95,6 +97,7 @@ type
    procedure emittypeid(const avalue: int32);
    procedure emitintconst(const avalue: int32);
    procedure emitdataconst(const avalue; const asize: int32);
+   procedure checkdebugloc();
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
@@ -187,9 +190,11 @@ type
    procedure emitcmpop(const apred: Predicate; const valueida: int32;
                                                       const valueidb: int32);
    procedure emitdebugloc(const avalue: debuglocty);
+   procedure emitdebuglocagain();
    
    function valindex(const aadress: segaddressty): integer;
    property ssaindex: int32 read fsubopindex;
+   property debugloc: debuglocty read fdebugloc write fdebugloc;
  end;
  
 implementation
@@ -332,6 +337,10 @@ var
  i1,i2: int32;
  id1: int32;
 begin
+ fdebugloc.line:= -1;
+ fdebugloc.col:= 0;
+ flastdebugloc.line:= -1;
+ flastdebugloc.col:= 0;
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
@@ -1016,6 +1025,7 @@ end;
 procedure tllvmbcwriter.emitalloca(const atype: int32);
 begin                       
  emitrec(ord(FUNC_CODE_INST_ALLOCA),[atype,typeval(das_8),constval(1),0]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1057,23 +1067,27 @@ procedure tllvmbcwriter.emitbrop(const acond: int32; const bb1: int32;
                                                          const bb0: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_BR),[bb1,bb0,fsubopindex-acond]);
+ checkdebugloc();
 end;
                               
 procedure tllvmbcwriter.emitbrop(const bb: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_BR),[bb]);
+ checkdebugloc();
 end;
                               
 procedure tllvmbcwriter.emitretop();
 begin
  emitcode(ord(mabfunc_inst0));
  emit6(ord(FUNC_CODE_INST_RET));
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
+ checkdebugloc();
 {
  emitcode(ord(mabfunc_inst2));
  emit6(ord(FUNC_CODE_INST_RET));
@@ -1087,6 +1101,7 @@ procedure tllvmbcwriter.emitgetelementptrindex(const avalue: int32;
                                                    const aindex: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aindex]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1095,8 +1110,10 @@ procedure tllvmbcwriter.emitgetelementptr(const avalue: int32;
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,typeval(das_pointer),
                                                    ord(CAST_BITCAST)]);
+ checkdebugloc();
  inc(fsubopindex);
  emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aoffset]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1105,6 +1122,7 @@ procedure tllvmbcwriter.emitbitcast(const asource: int32;
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-asource,adesttype,
                                                    ord(CAST_BITCAST)]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1120,6 +1138,7 @@ begin
                                    constval(aaddress.segdataaddress.offset));
  emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
                                                    ord(CAST_BITCAST)]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1135,19 +1154,21 @@ begin
                                    constval(aaddress.locdataaddress.offset));
  emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
                                                    ord(CAST_BITCAST)]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitloadop(const asource: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_LOAD),[fsubopindex-asource,0,0]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitstoreop(const asource: int32; const adest: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_STORE),[fsubopindex-adest,fsubopindex-asource,0,0]);
-// inc(fsubopindex);
+ checkdebugloc();
 end;
 
 procedure tllvmbcwriter.emitbinop(const aop: BinaryOpcodes;
@@ -1155,6 +1176,7 @@ procedure tllvmbcwriter.emitbinop(const aop: BinaryOpcodes;
 begin
  emitrec(ord(FUNC_CODE_INST_BINOP),[fsubopindex-valueida,fsubopindex-valueidb,
                                                                      ord(aop)]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1163,6 +1185,7 @@ procedure tllvmbcwriter.emitcmpop(const apred: Predicate;
 begin
  emitrec(ord(FUNC_CODE_INST_CMP),[fsubopindex-valueida,fsubopindex-valueidb,
                                                                    ord(apred)]);
+ checkdebugloc();
  inc(fsubopindex);
 end;
 
@@ -1258,6 +1281,8 @@ end;
 procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                           const allocs: suballocinfoty; const bbcount: int32);
 begin
+ flastdebugloc.line:= -1;
+ flastdebugloc.col:= 0;
  with allocs do begin
   fsubparamstart:= fsubstart;
   if sf_function in aflags then begin
@@ -1298,6 +1323,7 @@ begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ checkdebugloc();
  if afunc then begin
   inc(fsubopindex);
  end;
@@ -1312,6 +1338,7 @@ begin
   aparams[i1]:= fsubopindex-aparams[i1];
  end;
  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ checkdebugloc();
  if afunc then begin
   inc(fsubopindex);
  end;
@@ -1330,6 +1357,7 @@ begin
  emitrec(ord(FUNC_CODE_INST_CAST),
        [fsubopindex-constval(aconst.listid),typeval(aconst.typeid),
                                                           ord(CAST_BITCAST)]);
+ checkdebugloc();
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
 end;
@@ -1338,19 +1366,23 @@ procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);
 begin
  emitrec(ord(FUNC_CODE_DEBUG_LOC),[avalue.line,avalue.col,0,0]);
 end;
-{
-procedure tllvmbcwriter.emiti32const(const aconstid: int32);
+
+procedure tllvmbcwriter.emitdebuglocagain;
 begin
- emitrec(ord(FUNC_CODE_INST_CAST),
-       [fsubopindex-constval(aconstid),typeval(ord(das_32)),ord(CAST_BITCAST)]);
- inc(fsubopindex);
-// emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i32)));
+ emitrec(ord(FUNC_CODE_DEBUG_LOC_AGAIN),[]);
 end;
-}
-{
-procedure tllvmbcwriter.emitchar6(const avalue: shortstring);
+
+procedure tllvmbcwriter.checkdebugloc();
 begin
- emitchar6(@avalue[1],length(avalue));
+ if fdebugloc.line <> flastdebugloc.line then begin
+  emitdebugloc(fdebugloc);
+  flastdebugloc:= debugloc;
+ end
+ else begin
+  if fdebugloc.line >= 0 then begin
+   emitdebuglocagain();
+  end;
+ end;
 end;
-}
+
 end.
