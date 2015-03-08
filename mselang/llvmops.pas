@@ -680,7 +680,8 @@ end;
 procedure nopop();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i1 0, 0');
+  bcstream.emitnopssaop();
+//  outass('%'+inttostr(ssad)+' = add i1 0, 0');
  end;
 end;
 

@@ -1376,6 +1376,13 @@ begin
        outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
        inc(fbb);
       end;
+      FUNC_CODE_DEBUG_LOC: begin
+       checkdatalen(rec1,5);
+       outrecord(' *',dynarraytovararray(copy(rec1,2,bigint)));
+      end;
+      FUNC_CODE_DEBUG_LOC_AGAIN: begin
+       checkdatalen(rec1,1); //error
+      end;
       else begin
        outrecord(functioncodesnames[functioncodes(rec1[1])],
                                  dynarraytovararray(copy(rec1,2,bigint)));
@@ -1383,7 +1390,14 @@ begin
      end;
     end
     else begin
-     outrecord(functioncodesnames[functioncodes(rec1[1])],[]);
+     case functioncodes(rec1[1]) of 
+      FUNC_CODE_DEBUG_LOC_AGAIN: begin
+       //no output
+      end;
+      else begin      
+       outrecord(functioncodesnames[functioncodes(rec1[1])],[]);
+      end;
+     end;
     end;
    end;
   end;

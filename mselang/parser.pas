@@ -295,7 +295,8 @@ begin
  result:= po1-astr;
 end;
 
-procedure checklinebreak(var achar: pchar; var linebreaks: integer) inline;
+procedure checklinebreak(var achar: pchar; var linebreaks: integer) 
+                          {$ifndef mse_debugparser} inline{$endif};
 begin
  if do_lineinfo in info.debugoptions then begin
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
