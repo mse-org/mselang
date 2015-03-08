@@ -1842,7 +1842,7 @@ begin
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
-   ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+   ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //source
    with contextstack[s.stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
