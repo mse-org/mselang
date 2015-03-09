@@ -116,6 +116,10 @@ type
  pparamsty = ^paramsty;
  
 const
+ noparams: paramsty = (
+  count: 0;
+  items: nil;
+ );
  voidtype = ord(das_none);
  pointertype = ord(das_pointer);
 {$if pointersize = 64}

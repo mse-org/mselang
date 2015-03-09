@@ -58,7 +58,7 @@ procedure callinternalsub(const asub: opaddressty); //ignores op address 0
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils,classhandler,opglob;
+ managedtypes,segmentutils,classhandler,opglob,llvmlists;
 
 type
  equalparaminfoty = record
@@ -78,9 +78,12 @@ begin
    resetssa();
    with additem(oc_subbegin)^.par.subbegin do begin
     subname:= aaddress;
+    if info.backend = bke_llvm then begin
+     globid:= globlist.addinternalsubvalue([],noparams);
+    end;
     flags:= [];
-    allocs.alloccount:= 0;
-    allocs.nestedalloccount:= 0;
+    allocs:= nullallocs;
+    blockcount:= 1;
    end;
   end;
  end;

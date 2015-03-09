@@ -33,12 +33,13 @@ const
  
 var
  compilersubs: array[compilersubty] of elementoffsetty;
+ compilersubids: array[compilersubty] of int32;
  
 procedure initcompilersubs(const aunit: punitinfoty);
 
 implementation
 uses
- elements,errorhandler;
+ elements,errorhandler,handlerglob;
  
 procedure initcompilersubs(const aunit: punitinfoty);
 var
@@ -50,6 +51,8 @@ begin
                                               compilersubs[sub1]) then begin
    internalerror1(ie_parser,'20141031A');
   end;
+  compilersubids[sub1]:= psubdataty(ele.eledataabs(
+       psubdataty(ele.eledataabs(compilersubs[sub1]))^.impl))^.globid;  
  end;
  ele.popelementparent();
 end;

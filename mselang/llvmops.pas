@@ -129,7 +129,6 @@ const
  );  
 
 var
- compilersubids: array[compilersubty] of int32;
 {$ifdef mse_llvmbc}
  bcstream: tllvmbcwriter;
 {$else}
@@ -651,7 +650,7 @@ begin
                                                bcstream.ssaval(ssas2));
  end;
 end;
-
+{
 procedure callcompilersub(const asub: compilersubty;
                                      const aparams: shortstring);
 var
@@ -660,13 +659,13 @@ begin
  po1:= ele.eledataabs(compilersubs[asub]);
  outass('call void @s'+inttostr(po1^.address)+'('+aparams+')');
 end;
-
+}
 procedure callcompilersub(const asub: compilersubty; const afunc: boolean;
                                      const aparams: array of int32);
 begin
- bcstream.emitcallop(afunc,compilersubids[asub],aparams);
+ bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams);
 end;
-
+{
 procedure decrefsize(const aaddress: shortstring);
 begin
  callcompilersub(cs_decrefsize,aaddress);
@@ -676,7 +675,7 @@ procedure finirefsize(const aaddress: shortstring);
 begin
  callcompilersub(cs_finifrefsize,'i8* '+aaddress);
 end;
-
+}
 procedure nopop();
 begin
  with pc^.par do begin
@@ -769,12 +768,12 @@ begin
                      constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
-
+{
  for compilersub1:= low(compilersubids) to high(compilersubids) do begin
-  compilersubids[compilersub1]:= psubdataty(
-                  ele.eledataabs(compilersubs[compilersub1]))^.globid;  
+  compilersubids[compilersub1]:= psubdataty(ele.eledataabs(
+         psubdataty(ele.eledataabs(compilersubs[compilersub1]))^.impl))^.globid;  
  end;
- 
+} 
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
  {
@@ -1400,8 +1399,9 @@ procedure finirefsizesegop();
 // str1,str2: shortstring;
 begin
  with pc^.par do begin
-  callcompilersub(cs_finifrefsize,false,
-         [bcstream.globval(memop.segdataaddress.a.address)]);
+  bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
+                                                bcstream.typeval(pointertype));
+  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
 {
   str1:= '%'+inttostr(ssad);
   segdataaddress(memop.segdataaddress,str2);
@@ -1490,11 +1490,12 @@ begin
 end;
 
 procedure decrefsizesegop();
-var
- str1: shortstring;
+//var
+// str1: shortstring;
 begin
- segdataaddress(pc^.par.memop.segdataaddress,str1);
- decrefsize(str1);
+ notimplemented();
+// segdataaddress(pc^.par.memop.segdataaddress,str1);
+// decrefsize(str1);
 end;
 
 procedure decrefsizeframeop();
@@ -2681,7 +2682,7 @@ const
   cmplsint32ssa = 1;
   cmplsflo64ssa = 1;
 
-  storesegnilssa = 1;
+  storesegnilssa = 0;
   storereg0nilssa = 1;
   storeframenilssa = 1;
   storestacknilssa = 1;
@@ -2692,7 +2693,7 @@ const
   storestacknilarssa = 1;
   storestackrefnilarssa = 1;
 
-  finirefsizesegssa = 1;
+  finirefsizesegssa = 2;
   finirefsizeframessa = 1;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
