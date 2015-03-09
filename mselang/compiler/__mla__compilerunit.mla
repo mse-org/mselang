@@ -12,19 +12,6 @@ interface
 
 type
  ppointer = ^pointer;
-procedure __mla__decrefsize(const ref: ppointer);
-procedure __mla__finirefsize(const ref: ppointer);
-
-implementation
-{
-procedure __mla__decrefsize(const ref: ppointer);
-begin
-end;
-
-procedure __mla__finirefsize(const ref: ppointer);
-begin
-end;
-}
 
 type             //todo: use "internaltypes"
  refcountty = int32;
@@ -43,6 +30,7 @@ type             //todo: use "internaltypes"
   sizedummy: managedsizety;
  end;
  prefsizeinfoty = ^refsizeinfoty;
+ pprefsizeinfoty = ^prefsizeinfoty;
  
  string8headerty = record
   ref: refinfoty;
@@ -62,7 +50,25 @@ const
  dynarrayheadersize = sizeof(dynarrayheaderty);
  dynarrayallocsize = dynarrayheadersize;
 
-procedure __mla__decrefsize(const ref: ppointer);
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+
+implementation
+
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+begin
+ if ref <> nil then begin
+  dec(ref);
+  if ref^.ref.count > 0 then begin
+   dec(ref^.ref.count);
+   if ref^.ref.count = 0 then begin
+    freemem(ref);
+   end;
+  end;
+ end;
+end;
+
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 var
  d: prefsizeinfoty;
 begin
@@ -74,13 +80,9 @@ begin
    if d^.ref.count = 0 then begin
     freemem(d);
    end;
-   ref^:= nil;
   end;
+  ref^:= nil;
  end;
-end;
-
-procedure __mla__finirefsize(const ref: ppointer);
-begin
 end;
 
 end.

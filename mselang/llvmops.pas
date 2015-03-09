@@ -1156,13 +1156,6 @@ begin
   loadloc();
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
   storelastloc();
-{
-  locdataaddress(mem.locdataaddress,str1);
-  str2:= '%'+inttostr(ssad-1);
-  outass(str2+' = load i8** '+str1);
-  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
-                                          ', i32 '+inttostr(vint32));
-}
  end;
 end;
 
@@ -1173,7 +1166,7 @@ end;
 
 procedure incdecparimmpo32op();
 begin
- notimplemented();
+ incdeclocimmpo32op();
 end;
 
 procedure incdecparindiimmint32op();

@@ -565,11 +565,16 @@ var
  po1: ptypedataty;
 begin 
  po1:= ele.eledataabs(avalue^.vf.typ);
- if po1^.datasize = das_none then begin
-  result:= addbytevalue(po1^.bytesize);
+ if po1^.indirectlevel > 0 then begin
+  result:= pointertype;
  end
  else begin
-  result:= addbitvalue(po1^.datasize);
+  if po1^.datasize = das_none then begin
+   result:= addbytevalue(po1^.bytesize);
+  end
+  else begin
+   result:= addbitvalue(po1^.datasize);
+  end;
  end;
 end;
 
