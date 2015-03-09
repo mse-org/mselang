@@ -179,7 +179,7 @@ const
  idstart = $12345678;
 
 type 
- contextkindty = (ck_none,ck_error,ck_implementation,
+ contextkindty = (ck_none,ck_error,ck_implementation,ck_prog,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_getfact,
@@ -516,6 +516,10 @@ type
   elemark: markinfoty;
  end;
  
+ progcontinfoty = record
+  blockcountad: integer;
+ end;
+ 
  datacontextty = record
   indirection: integer; //pending
   datatyp: typeinfoty;
@@ -597,6 +601,9 @@ type
    ck_implementation:(
     impl: implcontinfoty;
    );
+   ck_prog:(
+    prog: progcontinfoty;
+   )
  end;
 
  contextbackupty = record

@@ -205,7 +205,12 @@ begin
    par.beginparse.mainad:= opcount;
   end;
   resetssa();
+  with info.contextstack[info.s.stackindex] do begin
+   d.kind:= ck_prog;
+   d.prog.blockcountad:= info.opcount;
+  end;
   with additem(oc_main)^ do begin
+   //blockcount set in handleprogblock() 
   end;
   with unitlinklist do begin
    ad1:= unitchain;
@@ -251,7 +256,7 @@ begin
   //endmark, will possibly replaced by goto if there is fini code
  end;
  with info.contextstack[info.s.stackindex] do begin
-  with getoppo(opmark.address)^ do begin
+  with getoppo(d.prog.blockcountad)^ do begin
    par.main.blockcount:= info.s.ssa.blockindex+1;
   end;  
  end;
