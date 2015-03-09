@@ -468,23 +468,8 @@ begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
                     bcstream.ptypeval(memop.t.listindex));
   bcstream.emitloadop(bcstream.relval(0));
-{
-  llvmtype(memop.t,str1);
-  dest1:= '%'+inttostr(ssad-1);
-  dest2:= '%'+inttostr(ssad);
-  outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
-                          ' to '+str1+'*');
-  outass(dest2+' = load '+str1+'* '+dest1);
-}
  end;
 end;
-
-{
-procedure locassign32(const ssaindex: integer; const dest: locdataaddressty);
-begin
- outass('store i32 %'+inttostr(ssaindex)+', i32* '+locdataaddress(dest));
-end;
-}
 
 procedure storelocindi();
 var
@@ -499,37 +484,10 @@ begin
   outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
   outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
  
-{
-  case memop.t.kind of
-   odk_bit: begin
-    dest1:= '%'+inttostr(ssad);
-    dest2:= '%'+inttostr(ssad+1);
-    outass(dest1+' = load '+ptrintname+
-                                 '* '+locdataaddress(memop.locdataaddress));
-    outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-    outass('store i'+inttostr(memop.t.size)+' %'+inttostr(ssas1)+
-                               ', i'+inttostr(memop.t.size)+'* '+dest2);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
-}
  end;
 end;
-(*
-procedure parassignindi();
-begin
-{$ifdef mse_locvarssatracking}
- notimplemented();
-{$else}
- storelocindi();
-{$endif}
-end;
-*)
+
 procedure loadloc();
-//var
-// str1,str2,str3,str4,str5: shortstring;
 begin
  with pc^.par do begin
   with memop,locdataaddress do begin
@@ -548,25 +506,6 @@ begin
     bcstream.emitloadop(bcstream.allocval(a.address));
    end;
   end;
-{
-  llvmtype(memop.t,str1);
-  if memop.locdataaddress.a.framelevel >= 0 then begin
-   str2:= '%'+inttostr(ssad-3);
-   str3:= '%'+inttostr(ssad-2);
-   str4:= '%'+inttostr(ssad-1);
-   str5:= '%'+inttostr(ssad);
-   outass(str2+' = getelementptr i8** %fp, i32 '+
-                                   inttostr(memop.locdataaddress.a.address));
-   outass(str3+' = bitcast i8** '+str2+' to '+str1+'**');
-   outass(str4+' = load '+str1+'** '+str3);
-   outass(str5+' = load '+str1+'* '+str4);
-  end
-  else begin
-   str2:= '%'+inttostr(ssad);
-   locdataaddress(memop.locdataaddress,str3);
-   outass(str2+' = load '+str1+'* '+str3);
-  end;
-}
  end;
 end;
 
@@ -585,63 +524,8 @@ begin
   outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
   llvmtype(memop.t,str1);
   outass(dest3+' = load '+str1+'* '+dest2);
-
-{
-  case memop.t.kind of
-   odk_bit: begin
-    dest1:= '%'+inttostr(ssad);
-    dest2:= '%'+inttostr(ssad+1);
-    dest3:= '%'+inttostr(ssad+2);
-    outass(dest1+' = load '+ptrintname+
-                                 '* '+locdataaddress(memop.locdataaddress));
-    outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-    outass(dest3+' = load i'+inttostr(memop.t.size)+'* '+dest2);
-   end;
-   else begin
-    notimplemented();
-   end;
-  end;
-}
  end;
 end;
-(*
-procedure assignpar();
-begin
-{$ifdef mse_locvarssatracking}
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = add i'+inttostr(memop.databitsize)+
-                       ' '+locdataaddress(memop.locdataaddress)+', 0');
- end;
-{$else}
- loadloc();
-{$endif}
-end;
-*)
-{
-procedure loadloc32(const ssaindex: integer; const dest: locdataaddressty);
-begin
- outass('%'+inttostr(ssaindex)+' = load i32* '+locdataaddress(dest));
-end;
-}
-{
-procedure icompare(const akind: icomparekindty);
-begin
- with pc^.par do begin
-  
-  outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
-                   ' i'+inttostr(stackop.t.size)+
-                               ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
- end;
-end;
-
-procedure pocompare(const akind: icomparekindty);
-begin
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = icmp '+icomparetokens[akind]+
-                   ' i8* %'+inttostr(ssas1)+', %'+inttostr(ssas2));  
- end;
-end;
-}
 
 procedure compare(const apredicate: predicate);
 begin
@@ -650,78 +534,32 @@ begin
                                                bcstream.ssaval(ssas2));
  end;
 end;
-{
-procedure callcompilersub(const asub: compilersubty;
-                                     const aparams: shortstring);
-var
- po1: psubdataty;
-begin
- po1:= ele.eledataabs(compilersubs[asub]);
- outass('call void @s'+inttostr(po1^.address)+'('+aparams+')');
-end;
-}
+
 procedure callcompilersub(const asub: compilersubty; const afunc: boolean;
                                      const aparams: array of int32);
 begin
  bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams);
 end;
-{
-procedure decrefsize(const aaddress: shortstring);
-begin
- callcompilersub(cs_decrefsize,aaddress);
-end;
 
-procedure finirefsize(const aaddress: shortstring);
-begin
- callcompilersub(cs_finifrefsize,'i8* '+aaddress);
-end;
-}
 procedure nopop();
 begin
  with pc^.par do begin
   bcstream.emitnopssaop();
-//  outass('%'+inttostr(ssad)+' = add i1 0, 0');
  end;
 end;
 
 procedure labelop();
-//var
-// lab: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbrop(opaddress.bbindex);
  end;
-{
- curoplabel(lab);
- outass('br label %'+lab);
- outass(lab+':');
-}
 end;
 
 var
  exitcodeaddress: segaddressty;
 
-const
- wret = '\0a\00';
- wretformat = '[2 x i8]* @.wret';
- wretc = '[2 x i8] c"'+wret+'"';
-
- wint32 = '%d\00';
- wint32c = '[3 x i8] c"'+wint32+'"';
- wint32format = '[3 x i8]* @.wint32';
- 
- wstring8 = '%s\00';
- wstring8c = '[3 x i8] c"'+wstring8+'"';
- wstring8format = '[3 x i8]* @.wstring8';
-
- wpointer = '%p\00';
- wpointerc = '[3 x i8] c"'+wpointer+'"';
- wpointerformat = '[3 x i8]* @.wpointer';
-  
 procedure beginparseop();
 var
-// endpo: pointer;
-// allocpo: pgloballocinfoty;
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
  po2: pvardataty;
@@ -731,24 +569,7 @@ var
  funcs1: internalfuncty;
  strings1: internalstringty;
  compilersub1: compilersubty;
-{
-const
-// voidparam: paramitemty = (typelistindex: voidtype; flags: []);
- pointerparam: paramitemty = (typelistindex: pointertype; flags: []);
-// varargparam: paramitemty = (typelistindex: 0; flags: [pif_vararg]);
-} 
 begin
-// freeandnil(assstream);
-// assstream:= ttextstream.create('test.ll',fm_create);
-{
- outass('declare i32 @printf(i8*, ...)');
- outass('declare i8* @malloc(i32)');
- outass('declare void @free(i8*)');
- outass('@.wret = internal constant '+wretc);
- outass('@.wint32 = internal constant '+wint32c);
- outass('@.wstring8 = internal constant '+wstring8c);
- outass('@.wpointer = internal constant '+wpointerc);
-}
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   globconstid:= globlist.addinitvalue(gak_var,
@@ -768,27 +589,8 @@ begin
                      constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
-{
- for compilersub1:= low(compilersubids) to high(compilersubids) do begin
-  compilersubids[compilersub1]:= psubdataty(ele.eledataabs(
-         psubdataty(ele.eledataabs(compilersubs[compilersub1]))^.impl))^.globid;  
- end;
-} 
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
- {
-  ele1:= unitinfochain;
-  while ele1 <> 0 do begin
-   po1:= ele.eledataabs(ele1);
-   ele2:= po1^.varchain;
-   while ele2 <> 0 do begin
-    po2:= ele.eledataabs(ele2);
-    globlist.addvalue(po2);
-    ele2:= po2^.vf.next;
-   end;
-   ele1:= po1^.next;
-  end;
-  }
   llvmops.exitcodeaddress:= exitcodeaddress;
  end;
 end;
@@ -798,7 +600,6 @@ begin
  with pc^.par do begin
   bcstream.beginsub([]{false},nullallocs,main.blockcount);
  end;
-// outass('define i32 @main() {');
 end;
 
 procedure progendop();
@@ -808,12 +609,6 @@ begin
  bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
  bcstream.emitretop(bcstream.ssaindex-1);
  bcstream.endsub();
-(*
- segaddress(exitcodeaddress,str1);
- outass('%.exitcode = load i32* '+str1);
- outass('ret i32 %.exitcode');
- outass('}');
-*)
 end;
 
 procedure endparseop();
@@ -840,16 +635,10 @@ begin
 end;
 
 procedure gotoop();
-//var
-// lab: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbrop(getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
  end;
-{
- oplabel(lab);
- outass('br label %'+lab);
-}
 end;
 
 procedure cmpjmpneimm4op();
@@ -874,20 +663,10 @@ begin
 end;
 
 procedure ifop();
-//var
-// tmp,lab1,lab2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
                          getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
-{
-  tmp:= '%'+inttostr(ssad);
-  nextoplabel(lab1);
-  oplabel(lab2);
-  outass(tmp+' = icmp ne i1 %'+inttostr(ssas1)+', 0');
-  outass('br i1 '+tmp+', label %'+lab1+', label %'+lab2);
-  outass(lab1+':');
-}
  end;
 end;
 
@@ -898,10 +677,6 @@ begin
                                              bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                                       [bcstream.relval(0)]);
-{
-  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wretformat+
-         ', i32 0, i32 0))');
-}
  end;
 end;
 
@@ -917,10 +692,6 @@ begin
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
-{
-  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wint32format+
-         ', i32 0, i32 0), i32 %'+inttostr(ssas1)+')');
-}
  end;
 end;
 
@@ -936,10 +707,6 @@ begin
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
-{
-  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wstring8format+
-         ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
-}
  end;
 end;
 
@@ -1113,18 +880,12 @@ begin
 end;
 
 procedure incdecsegimmint32op();
-//var
-// str1: shortstring;
 begin
  with pc^.par,memimm do begin
   loadseg();
   bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
                                 bcstream.constval(llvm.listid));
   storelastseg();
-{
-  segdataaddresspo(mem.segdataaddress,true,str1);
-  incdecimmint32(str1);
-}
  end;
 end;
 
@@ -1180,8 +941,6 @@ begin
 end;
 
 procedure incdecindiimmint32op();
-//var
-// str1,str2,str3,str4: shortstring;
 begin
  with pc^.par,memimm do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_32));
@@ -1189,16 +948,6 @@ begin
   bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
                                   bcstream.constval(llvm.listid));
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
-{
-  str1:= '%'+inttostr(ssas1);
-  str2:= '%'+inttostr(ssad-2);
-  str3:= '%'+inttostr(ssad-1);
-  str4:= '%'+inttostr(ssad);
-  outass(str2+' = bitcast i8* '+str1+' to i32*');
-  outass(str3+' = load i32* '+str2);
-  outass(str4+' = add i32 '+str3+', '+inttostr(vint32));
-  outass('store i32 '+str4+', i32* '+str2);
-}
  end;
 end;
 
@@ -1345,8 +1094,6 @@ begin
  with pc^.par do begin
   bcstream.emitstoreop(bcstream.constval(nullpointer),
                      bcstream.globval(memop.segdataaddress.a.address));
-//  segdataaddress(memop.segdataaddress,str1);
-//  outass('store '+nilconst+', i8** '+str1);
  end;
 end;
 
@@ -1388,19 +1135,11 @@ begin
 end;
 
 procedure finirefsizesegop();
-//var
-// str1,str2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
                                                 bcstream.typeval(pointertype));
   callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
-{
-  str1:= '%'+inttostr(ssad);
-  segdataaddress(memop.segdataaddress,str2);
-  outass(str1+' = bitcast i8** '+str2+' to i8*');
-  finirefsize(str1);
-}
  end;
 end;
 
@@ -1483,12 +1222,8 @@ begin
 end;
 
 procedure decrefsizesegop();
-//var
-// str1: shortstring;
 begin
  notimplemented();
-// segdataaddress(pc^.par.memop.segdataaddress,str1);
-// decrefsize(str1);
 end;
 
 procedure decrefsizeframeop();
@@ -1555,10 +1290,6 @@ begin
  with pc^.par do begin
   bcstream.emitstoreop(bcstream.ssaval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
-{
-  segdataaddress(memop.segdataaddress,str1);
-  outass('store i8* %'+inttostr(ssas1)+', i8** '+str1);
-}
  end;
 end;
 
@@ -1765,13 +1496,8 @@ end;
 procedure pushnilop();
 begin
  with pc^.par do begin
-//  bcstream.emitgetelementptr(bcstream.constval(ord(nc_i8)),
-//                                                bcstream.constval(0));
   bcstream.emitbitcast(bcstream.constval(nullpointer),
                                bcstream.typeval(pointertype));
-{
-  outass('%'+inttostr(ssad)+' = getelementptr i8* null, i32 0')
-}
  end;
 end;
 
@@ -1973,8 +1699,6 @@ begin
 end;
 
 procedure pushlocaddrindiop();          //todo: nested frames
-//var
-// str1,str2: shortstring;
 begin
  with pc^.par do begin
   if memop.locdataaddress.a.framelevel >= 0 then begin
@@ -1983,13 +1707,6 @@ begin
   bcstream.emitloadop(bcstream.allocval(memop.locdataaddress.a.address));
   bcstream.emitgetelementptr(bcstream.relval(0),
                 bcstream.constval(memop.locdataaddress.offset));
-{
-  locdataaddress(vlocaddress,str1);
-  str2:= '%'+inttostr(ssad-1);
-  outass(str2+' = load i8** '+str1);
-  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+
-                                ', i32 '+inttostr(vlocaddress.offset));
-}
  end;
 end;
 
@@ -1999,28 +1716,15 @@ var
 begin
  with pc^.par do begin
   bcstream.emitsegdataaddress(memop);
- {
-  segdataaddresspo(memop.segdataaddress,false,str1);
-  outass('%'+inttostr(ssad)+' = '+str1);
- }
  end;
 end;
 
 procedure pushsegaddrindiop();
-//var
-// str1,str2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
   bcstream.emitgetelementptr(bcstream.relval(0),
                 bcstream.constval(memop.segdataaddress.offset));
-{
-  segdataaddress(memop.segdataaddress,str1);
-  str2:= '%'+inttostr(ssad-1);
-  outass(str2+' = load i8** '+str1);
-  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
-                                          inttostr(memop.segdataaddress.offset));
-}
  end;
 end;
 
@@ -2060,13 +1764,6 @@ begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
-{
-  dest1:= '%'+inttostr(ssad-1);
-  dest2:= '%'+inttostr(ssad);
-  outass(dest1+' = bitcast i8* %'+inttostr(ssas1)+
-                          ' to i8**');
-  outass(dest2+' = load i8** '+dest1);
-}
  end;
 end;
 
@@ -2109,19 +1806,11 @@ begin
 end;
 
 procedure popindirect();
-//var
-// str1,str2: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas2),
                               bcstream.ptypeval(memop.t.listindex));
   bcstream.emitstoreop(bcstream.ssaval(ssas1),bcstream.relval(0));
-{
-  str1:= '%'+inttostr(ssad);
-  llvmtype(memop.t,str2);
-  outass(str1+' = bitcast i8* %'+inttostr(ssas2)+' to '+str2+'*');
-  outass('store '+str2+' %'+inttostr(ssas1)+', '+str2+'* '+str1);
-}
  end;
 end;
 
@@ -2186,77 +1875,6 @@ begin
  end;
 end;
 
-{
-procedure dooutlink(const outlinkcount: integer);
-var
- ssa1: integer;
- int1: integer;
- str1,str2: shortstring;
- po1,po2,po3: pshortstring;
-begin
- with pc^.par do begin
-  if (outlinkcount > 0) and (sf_hasnestedaccess in callinfo.flags) then begin
-   ssa1:= ssad-outlinkcount*2;
-   str1:= '%'+inttostr(ssa1);
-   inc(ssa1);
-   str2:= '%'+inttostr(ssa1);
-   inc(ssa1);
-   outass(str1+' = add i32 0, 0'); //dummy
-   outass(str2+' = bitcast i8** %fp to i8**');
-   po2:= @str1;
-   po1:= @str2;
-   for int1:= outlinkcount-2 downto 0 do begin;
-    po3:= po1;
-    po1:= po2;
-    po2:= po3;    //swap strings
-    po1^:= '%'+inttostr(ssa1);
-    inc(ssa1);
-    outass(po1^+' = load i8** '+po2^);
-    po2^:= '%'+inttostr(ssa1);
-    inc(ssa1);
-    outass(po2^+' = bitcast i8* '+po1^+' to i8**');
-   end;
-  end;
- end;
-end;
-}
-{
-procedure docallparam(parpo: pparallocinfoty; const endpo: pointer;
-                      const outlinkcount: integer);
-var
- first: boolean;
- int1: integer;
- str1,str2: shortstring;
-begin
- with pc^.par do begin
-  first:= true;
-  if sf_hasnestedaccess in callinfo.flags then begin
-   if outlinkcount > 0 then begin
-    int1:= ssad-1;
-//    if sf_function in callinfo.flags then begin
-//     dec(int1);
-//    end;
-    outass(' i8** %'+inttostr(int1));
-   end
-   else begin
-    outass(' i8** %f');
-   end;
-   first:= false;
-  end;
-  while parpo < endpo do begin
-   llvmtype(parpo^.size,str2);
-   str1:= ','+str2+' %'+inttostr(parpo^.ssaindex);
-   if first then begin
-    str1[1]:= ' ';
-    first:= false;
-   end;
-   outass(str1);
-   inc(parpo);
-  end;
-  outass(')');
- end;
-end;
-}
 procedure docallparam(const outlinkcount: int32; var ids: idarty);
 var
  parpo,endpo: pparallocinfoty;
