@@ -1152,10 +1152,11 @@ procedure tllvmbcwriter.emitsegdataaddresspo(const aaddress: memopty);
 begin
  emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
- emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
-                                                   ord(CAST_BITCAST)]);
- checkdebugloc();
- inc(fsubopindex);
+ emitbitcast(relval(0),ptypeval(aaddress.t.listindex));
+// emitrec(ord(FUNC_CODE_INST_CAST),[1,ptypeval(aaddress.t.listindex),
+//                                                   ord(CAST_BITCAST)]);
+// checkdebugloc();
+// inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitlocdataaddress(const aaddress: memopty);

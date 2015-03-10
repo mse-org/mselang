@@ -197,10 +197,15 @@ begin
  end;
 end;
 
+procedure bconly();
+begin
+ raise exception.create('LLVM bitcode only!');
+end;
+
 procedure outass(const atext: string);
 begin
 {$ifdef mse_llvmbc}
- raise exception.create('LLVM bitcode only!');
+ bconly();
 {$else}
  assstream.writeln(atext);
 {$endif}
@@ -403,7 +408,17 @@ end;
 procedure storeseg(const source: int32);
 begin
  with pc^.par do begin
-  bcstream.emitstoreop(source,bcstream.globval(memop.segdataaddress.a.address));
+  if af_aggregate in memop.t.flags then begin
+   bcstream.emitsegdataaddresspo(memop);
+//   bcstream.emitgetelementptr(bcstream.globval(a.address),
+//                                         bcstream.constval(offset));
+//   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+   bcstream.emitstoreop(source,bcstream.relval(0));
+  end
+  else begin
+   bcstream.emitstoreop(source,
+                  bcstream.globval(memop.segdataaddress.a.address));
+  end;
  end;
 end;
 
@@ -420,7 +435,7 @@ end;
 procedure loadseg();
 begin
  with pc^.par do begin
-  if memop.t.listindex > bittypemax then begin
+  if af_aggregate in memop.t.flags then begin
    bcstream.emitsegdataaddresspo(memop);
    bcstream.emitloadop(bcstream.relval(0));
   end

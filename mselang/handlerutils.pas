@@ -636,6 +636,7 @@ begin
   else begin
    result.size:= atypedata^.bitsize;
   end;
+  result.flags:= [];
  end;
 end;
 
@@ -658,6 +659,7 @@ end;
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 begin
  result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+ result.flags:= adest.address.flags;
 {
  if af_aggregate in adest.address.flags then begin
   result:= getopdatatype(adest.typ,adest.address.indirectlevel);
@@ -1214,6 +1216,7 @@ begin
    end;
   end;
   po1^.par.memop.t:= aopdatatype;
+  po1^.par.memop.t.flags:= aaddress.flags;
 //  par.ssad:= ssaindex;
  end;
 end;

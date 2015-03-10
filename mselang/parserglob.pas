@@ -98,31 +98,43 @@ const
  ordinalopdatakinds = bitopdatakinds-floatopdatakinds;
 
 type
+ addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
+                  af_paramindirect,af_const,
+                  af_classfield,af_stack,af_segmentpo,af_aggregate);
+ addressflagsty = set of addressflagty;
+
+const
+ addresskindflags = [af_local,af_segment,af_aggregate];
+ addresscompflags = addresskindflags + [af_nil];
+
+type
  typeallocinfoty = record
   kind: databitsizety;
   size: integer;        //bits or bytes
   listindex: integer;
+  flags: addressflagsty;
  end; 
  ptypeallocinfoty = ^typeallocinfoty;
 
 const
 
  bitoptypes: array[databitsizety] of typeallocinfoty = (
-  (kind: das_none; size: 0; listindex: -1),
-  (kind: das_1; size: 1; listindex: ord(das_1)),
-  (kind: das_2_7; size: 7; listindex: ord(das_2_7)),
-  (kind: das_8; size: 8; listindex: ord(das_8)),
-  (kind: das_9_15; size: 15; listindex: ord(das_9_15)),
-  (kind: das_16; size: 16; listindex: ord(das_16)),
-  (kind: das_17_31; size: 31; listindex: ord(das_17_31)),
-  (kind: das_32; size: 32; listindex: ord(das_32)),
-  (kind: das_33_63; size: 63; listindex: ord(das_33_63)),
-  (kind: das_64; size: 64; listindex: ord(das_64)),
-  (kind: das_pointer; size: pointerbitsize; listindex: ord(das_pointer)),
-  (kind: das_f16; size: 16; listindex: ord(das_f16)),
-  (kind: das_f32; size: 32; listindex: ord(das_f32)),
-  (kind: das_f64; size: 64; listindex: ord(das_f64)),
-  (kind: das_sub; size: pointerbitsize; listindex: -1)
+  (kind: das_none; size: 0; listindex: -1; flags: []),
+  (kind: das_1; size: 1; listindex: ord(das_1); flags: []),
+  (kind: das_2_7; size: 7; listindex: ord(das_2_7); flags: []),
+  (kind: das_8; size: 8; listindex: ord(das_8); flags: []),
+  (kind: das_9_15; size: 15; listindex: ord(das_9_15); flags: []),
+  (kind: das_16; size: 16; listindex: ord(das_16); flags: []),
+  (kind: das_17_31; size: 31; listindex: ord(das_17_31); flags: []),
+  (kind: das_32; size: 32; listindex: ord(das_32); flags: []),
+  (kind: das_33_63; size: 63; listindex: ord(das_33_63); flags: []),
+  (kind: das_64; size: 64; listindex: ord(das_64); flags: []),
+  (kind: das_pointer; size: pointerbitsize;
+                                   listindex: ord(das_pointer); flags: []),
+  (kind: das_f16; size: 16; listindex: ord(das_f16); flags: []),
+  (kind: das_f32; size: 32; listindex: ord(das_f32); flags: []),
+  (kind: das_f64; size: 64; listindex: ord(das_f64); flags: []),
+  (kind: das_sub; size: pointerbitsize; listindex: -1; flags: [])
  );
 
  bitopsizes: array[databitsizety] of int32 = (
@@ -205,16 +217,6 @@ const
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
  factcontexts = [ck_fact,ck_reffact];
-
-type
- addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
-                  af_paramindirect,af_const,
-                  af_classfield,af_stack,af_segmentpo,af_aggregate);
- addressflagsty = set of addressflagty;
-
-const
- addresskindflags = [af_local,af_segment,af_aggregate];
- addresscompflags = addresskindflags + [af_nil];
 
 type 
  pparseinfoty = ^parseinfoty;
