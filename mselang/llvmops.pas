@@ -1223,7 +1223,10 @@ end;
 
 procedure decrefsizesegop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
+  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure decrefsizeframeop();

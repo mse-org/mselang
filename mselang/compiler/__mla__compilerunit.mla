@@ -41,7 +41,7 @@ type             //todo: use "internaltypes"
  dynarrayheaderty = record
   ref: refinfoty;
   len: dynarraysizety;
- end; //following array datat
+ end; //following array data
  pdynarrayheaderty = ^dynarrayheaderty;
  
 const
