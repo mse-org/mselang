@@ -1136,10 +1136,15 @@ procedure storereg0nilop();
 begin
  notimplemented();
 end;
+
 procedure storeframenilop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitstoreop(bcstream.constval(nullpointer),
+                                         bcstream.allocval(vaddress));
+ end;
 end;
+
 procedure storestacknilop();
 begin
  notimplemented();
@@ -1180,8 +1185,13 @@ end;
 
 procedure finirefsizeframeop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.allocval(vaddress),
+                                                bcstream.typeval(pointertype));
+  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+ end;
 end;
+
 procedure finirefsizereg0op();
 begin
  notimplemented();
@@ -1266,8 +1276,12 @@ end;
 
 procedure decrefsizeframeop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.allocval(vaddress));
+  callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
+ end;
 end;
+
 procedure decrefsizereg0op();
 begin
  notimplemented();
@@ -2333,7 +2347,7 @@ const
 
   storesegnilssa = 0;
   storereg0nilssa = 1;
-  storeframenilssa = 1;
+  storeframenilssa = 0;
   storestacknilssa = 1;
   storestackrefnilssa = 1;
   storesegnilarssa = 1;
