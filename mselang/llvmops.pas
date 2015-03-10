@@ -457,11 +457,21 @@ begin
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitloadop(bcstream.relval(0));
             //pointer to variable
+    if af_aggregate in t.flags then begin
+     bcstream.emitnopssaop();          //agregatessa = 3
+     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
+    end;
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
     bcstream.emitstoreop(source,bcstream.relval(0));
    end
    else begin
-    bcstream.emitstoreop(source,bcstream.allocval(a.address));
+    if af_aggregate in t.flags then begin
+     bcstream.emitlocdataaddresspo(memop);
+     bcstream.emitstoreop(source,bcstream.relval(0));
+    end
+    else begin
+     bcstream.emitstoreop(source,bcstream.allocval(a.address));
+    end;
    end;
   end;
  end;
@@ -514,11 +524,21 @@ begin
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitloadop(bcstream.relval(0));
             //pointer to variable
+    if af_aggregate in t.flags then begin
+     bcstream.emitnopssaop();          //agregatessa = 3
+     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
+    end;
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
     bcstream.emitloadop(bcstream.relval(0));
    end
    else begin
-    bcstream.emitloadop(bcstream.allocval(a.address));
+    if af_aggregate in t.flags then begin
+     bcstream.emitlocdataaddresspo(memop);
+     bcstream.emitloadop(bcstream.relval(0));
+    end
+    else begin
+     bcstream.emitloadop(bcstream.allocval(a.address));
+    end;
    end;
   end;
  end;
@@ -2516,9 +2536,9 @@ const
 //ssa only
   nestedvarssa = 5;
   popnestedvarssa = 5;
-  popsegaggregatessa = 3;
+//  popsegaggregatessa = 3;
   pushnestedvarssa = 5;
-  pushsegaggregatessa = 3;
+  aggregatessa = 3;
   allocssa = 1;
   nestedcalloutssa = 2;
   hascalloutssa = 1;

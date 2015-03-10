@@ -1943,16 +1943,16 @@ begin
       po1:= additem(popindioptable[datasi1]);
      end
      else begin
-      ssaextension1:= 0;
-      if af_segment in dest.address.flags then begin
-       if af_aggregate in dest.address.flags then begin
-        ssaextension1:= getssa(ocssa_popsegaggregate);
-       end;
+      if af_aggregate in dest.address.flags then begin
+       ssaextension1:= getssa(ocssa_aggregate);
       end
       else begin
+       ssaextension1:= 0;
+      end;
+      if not (af_segment in dest.address.flags) then begin
        int1:= sublevel - dest.address.locaddress.framelevel-1;
        if int1 >= 0 then begin
-        ssaextension1:= getssa(ocssa_popnestedvar);
+        ssaextension1:= ssaextension1 + getssa(ocssa_popnestedvar);
        end;
       end;
       po1:= additem(popoptable[

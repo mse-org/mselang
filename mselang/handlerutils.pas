@@ -1181,11 +1181,13 @@ begin
   end;
  end; 
  with aaddress do begin //todo: use table
-  ssaextension1:= 0;
+  if af_aggregate in flags then begin
+   ssaextension1:= getssa(ocssa_aggregate);
+  end
+  else begin
+   ssaextension1:= 0;
+  end;
   if af_segment in flags then begin
-   if af_aggregate in flags then begin
-    ssaextension1:= getssa(ocssa_pushsegaggregate);
-   end;
    po1:= getop(pushseg[opsize1]);
    with po1^ do begin
     par.memop.segdataaddress.a:= segaddress;
@@ -1195,7 +1197,7 @@ begin
   else begin
    framelevel1:= info.sublevel-locaddress.framelevel-1;
    if framelevel1 >= 0 then begin
-    ssaextension1:= getssa(ocssa_pushnestedvar);
+    ssaextension1:= ssaextension1 + getssa(ocssa_pushnestedvar);
    end;
    if af_param in flags then begin
     if af_paramindirect in flags then begin

@@ -42,8 +42,8 @@ var
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
                                     var aflags: addressflagsty): segaddressty;
 procedure inclocvaraddress(const asize: integer);
-function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
-                                       const shift: integer = 0): locaddressty;
+function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
+            var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 procedure setimmboolean(const value: boolean; var par: opparamty);
@@ -263,8 +263,8 @@ begin
  end;
 end;
 
-function getlocvaraddress(const asize: integer; var aflags: addressflagsty;
-                                       const shift: integer = 0): locaddressty;
+function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
+           var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 begin
  with info do begin
   if backend = bke_llvm then begin
@@ -280,6 +280,9 @@ begin
   end;
   result.framelevel:= info.sublevel;
   aflags:= aflags - addresskindflags + [af_local];
+  if adatasize = das_none then begin
+   include(aflags,af_aggregate);
+  end;
  end;
 end;
 

@@ -470,7 +470,7 @@ var
         si1:= po3^.bytesize;
        end;
        if impl1 then begin
-        address.locaddress:= getlocvaraddress(si1,address.flags);
+        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
        end;
        address.locaddress.framelevel:= sublevel+1;
        address.flags:= [af_param];
@@ -618,7 +618,8 @@ begin
     inc(paramsize1,pointersize);
     address.indirectlevel:= 1;
     if impl1 then begin
-     address.locaddress:= getlocvaraddress(pointersize,address.flags);
+     address.locaddress:= getlocvaraddress(das_pointer,pointersize,
+                                                              address.flags);
     end;
     address.locaddress.framelevel:= sublevel+1;
     address.flags:= [af_param];

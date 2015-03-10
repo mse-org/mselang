@@ -2766,9 +2766,9 @@ const
 //ssa only
   nestedvarssa = 0;
   popnestedvarssa = 0;
-  popsegaggregatessa = 0;
+//  popsegaggregatessa = 0;
   pushnestedvarssa = 0;
-  pushsegaggregatessa = 0;
+  aggregatessa = 0;
   allocssa = 0;
   nestedcalloutssa = 0;
   hascalloutssa = 0;

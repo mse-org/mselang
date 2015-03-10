@@ -110,19 +110,10 @@ begin
        include(address.flags,af_segmentpo);
       end;
       address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
-{
-      if address.indirectlevel > 0 then begin
-       address.segaddress.size:= 0;
-      end
-      else begin
-       if not (datasize in databytesizes) then begin
-        address.segaddress.size:= -bitsize;
-       end;
-      end;
-}
      end
      else begin
-      address.locaddress:= getlocvaraddress(size1,address.flags,-frameoffset);
+      address.locaddress:= getlocvaraddress(datasize1,size1,address.flags,
+                                                                 -frameoffset);
      end;
     end;
    end;

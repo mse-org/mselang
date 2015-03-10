@@ -373,9 +373,9 @@ type
 //ssaonly
   ocssa_nestedvar,
   ocssa_popnestedvar,
-  ocssa_popsegaggregate,
+//  ocssa_popsegaggregate,
   ocssa_pushnestedvar,  //per item
-  ocssa_pushsegaggregate,
+  ocssa_aggregate,
   ocssa_alloc,          //per item
   ocssa_nestedcallout,  //per level
   ocssa_hascallout,
