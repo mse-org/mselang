@@ -378,7 +378,11 @@ type
   ocssa_pushsegaggregate,
   ocssa_alloc,          //per item
   ocssa_nestedcallout,  //per level
-  ocssa_hascallout
+  ocssa_hascallout,
+
+  ocssa_pushsegaddrnil,
+  ocssa_pushsegaddrglobvar,
+  ocssa_pushsegaddrglobconst
  );
 
  v8ty = array[0..0] of byte;

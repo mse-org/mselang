@@ -2246,15 +2246,15 @@ begin
     pbyte(pointer(po1))[len]:= 0;
    end;
   end;
-//  result.typeid:= pointertypeid;
-//  result.size:= 0; //pointer
   if len = 0 then begin
    result.address:= 0;
    result.segment:= seg_nil;
   end
   else begin
    result.address:= constoffset+sizeof(string8headerty);
-//   result.segment:= seg_globconst;
+   if info.backend = bke_llvm then begin
+    result.address:= constlist.adddataoffs(result.address).listid;
+   end;
   end;
  end;
 end;

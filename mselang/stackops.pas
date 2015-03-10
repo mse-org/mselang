@@ -2772,6 +2772,10 @@ const
   allocssa = 0;
   nestedcalloutssa = 0;
   hascalloutssa = 0;
+
+  pushsegaddrnilssa = 0;
+  pushsegaddrglobvarssa = 0;
+  pushsegaddrglobconstssa = 0;
     
 {$include optable.inc}
 {

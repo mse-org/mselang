@@ -546,7 +546,8 @@ begin
   insertitem(oc_pushnil,stackoffset,before);
  end
  else begin
-  with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
+  with insertitem(oc_pushsegaddr,stackoffset,before,
+                                 pushsegaddrssaar[address.segment])^ do begin
    par.memop.segdataaddress.a:= address;
    par.memop.segdataaddress.offset:= 0;
    par.memop.t:= bitoptypes[das_pointer];
@@ -574,7 +575,8 @@ begin
   end;
   }
   if af_segment in ref.c.address.flags then begin
-   with insertitem(oc_pushsegaddr,stackoffset,before)^ do begin
+   with insertitem(oc_pushsegaddr,stackoffset,before,
+                 pushsegaddrssaar[ref.c.address.segaddress.segment])^ do begin
     par.memop.segdataaddress.a:= ref.c.address.segaddress; //todo:typelistindex
     par.memop.segdataaddress.offset:= ref.offset;
     par.memop.t:= getopdatatype(datatyp);
@@ -713,8 +715,9 @@ begin
      insertitem(oc_pushnil,stackoffset,before);
     end
     else begin
-     with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
-      par.memop.segdataaddress.a:= segad1; //todo:typelistindex
+     with insertitem(oc_pushsegaddr,stackoffset,before,
+                               pushsegaddrssaar[segad1.segment])^ do begin
+      par.memop.segdataaddress.a:= segad1;
       par.memop.segdataaddress.offset:= 0;
       par.memop.t:= bitoptypes[das_pointer];
      end;
@@ -728,7 +731,8 @@ begin
      end
      else begin
       if af_segment in vaddress.flags then begin
-       with insertitem(oc_pushsegaddr{ess},stackoffset,before)^ do begin
+       with insertitem(oc_pushsegaddr,stackoffset,before,
+                  pushsegaddrssaar[vaddress.segaddress.segment])^ do begin
         par.memop.segdataaddress.a:= vaddress.segaddress;//todo:typelistindex
         par.memop.segdataaddress.offset:= 0;
         par.memop.t:= bitoptypes[das_pointer];
@@ -807,13 +811,13 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
                                            const indirect: boolean);
 //todo: optimize
 
- function getop(const aop: opcodety): popinfoty;
+ function getop(const aop: opcodety; const ssaextension: int32 = 0): popinfoty;
  begin
   if ains then begin
-   result:= insertitem(aop,stackoffset,before);
+   result:= insertitem(aop,stackoffset,before,ssaextension);
   end
   else begin
-   result:= additem(aop);
+   result:= additem(aop,ssaextension);
   end;
  end;
 
@@ -832,10 +836,11 @@ begin
     po1:= getop(oc_pushsegaddrindi);
    end
    else begin
-    po1:= getop(oc_pushsegaddr);
+    po1:= getop(oc_pushsegaddr,
+                 pushsegaddrssaar[avalue.segaddress.segment]);
    end;
    with po1^ do begin
-    par.memop.segdataaddress.a:= avalue.segaddress;//todo:typelistindex
+    par.memop.segdataaddress.a:= avalue.segaddress;
     par.memop.segdataaddress.offset:= offset;
     par.memop.t:= getopdatatype(atype);
    end;

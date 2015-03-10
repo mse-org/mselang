@@ -135,7 +135,7 @@ var
  assstream: ttextstream;
 {$endif}
  globconst: string;
- globconstid: int32;
+// globconstid: int32;
  internalfuncs: array[internalfuncty] of int32;
  internalstrings: array[internalstringty] of int32;
  
@@ -572,7 +572,7 @@ var
 begin
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
-  globconstid:= globlist.addinitvalue(gak_var,
+  bcstream.constseg:= globlist.addinitvalue(gak_var,
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid{,
                                                            globconsttype});
  end;
@@ -2433,7 +2433,7 @@ const
   pushaddrssa = 1;
   pushlocaddrssa = 2;
   pushlocaddrindissa = 3;
-  pushsegaddrssa = 2;
+  pushsegaddrssa = 1;
   pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
@@ -2505,6 +2505,10 @@ const
   nestedcalloutssa = 2;
   hascalloutssa = 1;
 
+  pushsegaddrnilssa = 0;
+  pushsegaddrglobvarssa = 1;
+  pushsegaddrglobconstssa = 3;
+  
 {$include optable.inc}
 
 procedure run(const atarget: 

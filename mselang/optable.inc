@@ -328,7 +328,10 @@
   pushsegaggregatessa,
   allocssa,
   nestedcalloutssa,
-  hascalloutssa
+  hascalloutssa,
+  pushsegaddrnilssa,
+  pushsegaddrglobvarssa,
+  pushsegaddrglobconstssa
  );
 
  optable: optablety = ( //order as opcodety
@@ -644,6 +647,10 @@
   nil,
   nil,
   nil,
+  nil,
+  nil,
+  nil,
+  
   nil,
   nil,
   nil

@@ -37,7 +37,7 @@ type
 var
  optable: poptablety;
  ssatable: pssatablety;
- 
+ pushsegaddrssaar: array[segmentty] of int32;
   
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
                                     var aflags: addressflagsty): segaddressty;
@@ -120,6 +120,11 @@ procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
 begin
  optable:= aoptable;
  ssatable:= assatable;
+ fillchar(pushsegaddrssaar,sizeof(pushsegaddrssaar),0);
+ pushsegaddrssaar[seg_nil]:= ssatable^[ocssa_pushsegaddrnil];
+ pushsegaddrssaar[seg_globvar]:= ssatable^[ocssa_pushsegaddrglobvar];
+ pushsegaddrssaar[seg_globconst]:= ssatable^[ocssa_pushsegaddrglobconst];
+ 
 end;
  
 const

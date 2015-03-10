@@ -60,7 +60,7 @@ type
    fbitbuf: card16;
    fdebugloc: debuglocty;
   protected
-//   fconstopstart: int32;
+   fconstseg: int32;
    flastdebugloc: debuglocty;
    fglobstart: int32;       //start of global variables
    fsubstart: int32;        //start of sub values (params)
@@ -193,6 +193,7 @@ type
    procedure emitdebuglocagain();
    
    function valindex(const aadress: segaddressty): integer;
+   property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
  end;
@@ -1128,8 +1129,23 @@ end;
 
 procedure tllvmbcwriter.emitsegdataaddress(const aaddress: memopty);
 begin
- emitgetelementptr(globval(aaddress.segdataaddress.a.address),
+ case aaddress.segdataaddress.a.segment of
+  seg_globvar: begin
+   emitgetelementptr(globval(aaddress.segdataaddress.a.address),
                                    constval(aaddress.segdataaddress.offset));
+  end;
+  seg_globconst: begin
+   emitgetelementptr(globval(fconstseg),
+                                   constval(aaddress.segdataaddress.a.address));
+   emitgetelementptr(relval(0),constval(aaddress.segdataaddress.offset));
+  end;
+  seg_nil: begin
+   emitpushconst(nullconst);
+  end;
+  else begin
+   internalerror1(ie_llvm,'20150310A');
+  end;
+ end;
 end;
 
 procedure tllvmbcwriter.emitsegdataaddresspo(const aaddress: memopty);

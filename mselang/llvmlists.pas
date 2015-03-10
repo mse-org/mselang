@@ -178,6 +178,10 @@ type
                 nc_pointer);
 const
  nullpointer = ord(nc_pointer);
+ nullconst: llvmconstty = (
+             listid: nullpointer;
+             typeid: pointertype;
+            );
  
 type 
  tconsthashdatalist = class(tbufferhashdatalist)
@@ -194,6 +198,7 @@ type
    function addi16(const avalue: int16): llvmconstty;
    function addi32(const avalue: int32): llvmconstty;
    function addi64(const avalue: int64): llvmconstty;
+   function adddataoffs(const avalue: dataoffsty): llvmconstty;
    function addvalue(const avalue; const asize: int32): llvmconstty;
    function addnullvalue(const atypeid: int32): llvmconstty;
    property typelist: ttypehashdatalist read ftypelist;
@@ -746,6 +751,15 @@ begin
 {$else}
  result:= addvalue(avalue,8);
 {$endif}
+end;
+
+function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmconstty;
+begin
+{$if sizeof(dataoffsty) = 4}
+ result:= addi32(avalue);
+{$else}
+ result:= addi64(avalue);
+{$ifend}
 end;
 
 function tconsthashdatalist.addvalue(const avalue;
