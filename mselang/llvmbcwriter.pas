@@ -179,6 +179,8 @@ type
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
                                          //aoffset = byteoffset, 2 ssa
    procedure emitbitcast(const asource: int32; const adesttype: int32); //1 ssa
+   procedure emitcastop(const asource: int32; const adesttype: int32;
+                                               const aop: castopcodes); //1 ssa
                                  
    procedure emitloadop(const asource: int32);
    procedure emitstoreop(const asource: int32; const adest: int32);
@@ -1123,6 +1125,14 @@ procedure tllvmbcwriter.emitbitcast(const asource: int32;
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-asource,adesttype,
                                                    ord(CAST_BITCAST)]);
+ checkdebugloc();
+ inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitcastop(const asource: int32; const adesttype: int32;
+                                               const aop: castopcodes); //1 ssa
+begin
+ emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-asource,adesttype,ord(aop)]);
  checkdebugloc();
  inc(fsubopindex);
 end;

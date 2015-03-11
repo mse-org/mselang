@@ -816,7 +816,8 @@ end;
 procedure potoint32op();
 begin
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = ptrtoint i8* %'+inttostr(ssas1)+' to i32');
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_32),
+                                                               CAST_PTRTOINT);
  end;
 end;
 
@@ -915,12 +916,11 @@ begin
 end;
 
 procedure incdecsegimmpo32op();
-var
- str1: shortstring;
 begin
  with pc^.par,memimm do begin
-  segdataaddresspo(mem.segdataaddress,true,str1);
-  incdecimmpo(str1);
+  loadseg();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
+  storelastseg();
  end;
 end;
 
