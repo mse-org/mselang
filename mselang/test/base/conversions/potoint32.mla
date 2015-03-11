@@ -1,9 +1,7 @@
 program potoint32;
+var
+ p1: pointer;
 begin
- if true then begin
-  exitcode:= 1;
- end
- else begin
-  exitcode:= 2;
- end;
+ inc(p1);
+ exitcode:= int32(p1);
 end.
