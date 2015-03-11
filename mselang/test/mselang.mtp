@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=2
   (
   kind=1
@@ -200,12 +200,12 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=10
    (
    kind=1
    a=0,665,4,empty
-   c=3
+   c=2
     (
     kind=2
     a=0,648,1,unit
@@ -226,28 +226,6 @@ c=3
     ao=0
     ae=0
     aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,640,0,exitcode
-    teststate=2
-    path=
-    comment=
-    cc=
-    cd=
-    rc=/home/mse/packs/standard/git/mseuniverse/tools/msetest/testprog/exitcode
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=111
-    ao=0
-    ae=0
-    aec=111
     ie=0
     )
     (
@@ -291,29 +269,7 @@ c=3
    (
    kind=1
    a=0,665,4,minimal
-   c=3
-    (
-    kind=2
-    a=0,640,0,exitcode
-    teststate=2
-    path=
-    comment=
-    cc=
-    cd=
-    rc=/home/mse/packs/standard/git/mseuniverse/tools/msetest/testprog/exitcode
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=111
-    ao=0
-    ae=0
-    aec=112
-    ie=0
-    )
+   c=2
     (
     kind=2
     a=0,648,1,program
@@ -506,7 +462,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,string
+   a=0,665,4,string
    c=2
     (
     kind=2
@@ -552,7 +508,7 @@ c=3
     aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=string/
    comment=
    cc=
@@ -634,8 +590,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,arith
-   c=5
+   a=0,665,4,arith
+   c=4
     (
     kind=2
     a=0,648,1,incdec
@@ -704,35 +660,11 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incdecind llvm
-    teststate=2
-    path=incdecind.mla
-    comment=
-    cc=${mlc_llvm}
-    cd=
-    rc=${lli}
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=0
-    ao=
-    ae=0  libLLVMSupport.so 0xb78a50f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
-    +1  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1215672112
-    +
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,incdecind lr
+    a=0,648,1,incdecind llvm
     teststate=1
     path=incdecind.mla
     comment=
-    cc=${llvm-as}
+    cc=${mlc_llvm}
     cd=
     rc=${lli}
     rd=
@@ -748,7 +680,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=arith/
    comment=
    cc=
@@ -766,8 +698,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=6
+   a=0,665,4,control
+   c=4
     (
     kind=2
     a=0,648,1,iftest
@@ -792,33 +724,11 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,iftest lc
+    a=0,648,1,iftest llvm
     teststate=1
     path=iftest.mla
     comment=
     cc=${mlc_llvm}
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=99
-    cr=0
-    ao=0
-    ae=0
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,iftest lr
-    teststate=1
-    path=iftest.mla
-    comment=
-    cc=${llvm-as}
     cd=
     rc=${lli}
     rd=
@@ -858,33 +768,11 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi lc
+    a=0,648,1,recifindi llvm
     teststate=1
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=99
-    cr=0
-    ao=0
-    ae=0
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,recifindi lr
-    teststate=1
-    path=recifindi.mla
-    comment=
-    cc=${llvm-as}
     cd=
     rc=${lli}
     rd=
@@ -918,8 +806,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,IO
-   c=6
+   a=0,665,4,IO
+   c=4
     (
     kind=2
     a=0,648,1,writeln int
@@ -944,33 +832,11 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,writeln int lc
+    a=0,648,1,writeln int llvm
     teststate=1
     path=writelnint.mla
     comment=
     cc=${mlc_llvm}
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=0
-    ao=0
-    ae=0
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,writeln int lr
-    teststate=1
-    path=writelnint.mla
-    comment=
-    cc=${llvm-as}
     cd=
     rc=${lli}
     rd=
@@ -1016,28 +882,6 @@ c=3
     comment=
     cc=${mlc_llvm}
     cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=0
-    ao=0
-    ae=0
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,writeln string lr
-    teststate=1
-    path=writelnstr.mla
-    comment=
-    cc=${llvm-as}
-    cd=
     rc=${lli}
     rd=
     in=
@@ -1070,8 +914,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,mem
-   c=3
+   a=0,665,4,mem
+   c=2
     (
     kind=2
     a=0,648,1,getmem
@@ -1101,28 +945,6 @@ c=3
     path=getmem.mla
     comment=
     cc=${mlc_llvm}
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=0
-    ee=
-    ae=0
-    eec=0
-    cr=0
-    ao=0
-    ae=0
-    aec=0
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,getmem lr
-    teststate=1
-    path=getmem.mla
-    comment=
-    cc=${llvm-as}
     cd=
     rc=${lli}
     rd=
@@ -1154,7 +976,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -1170,7 +992,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -1275,7 +1097,14 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=37
+rowstate=44
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
