@@ -879,32 +879,6 @@ begin
  notimplemented();
 end;
 
-procedure incdecimmint32(const adest: shortstring);
-var
- str2,str3: shortstring;
-begin
- with pc^.par,memimm do begin
-  str2:= '%'+inttostr(ssad-1);
-  str3:= '%'+inttostr(ssad);
-  outass(str2+' = load i32* bitcast (i8* '+adest+' to i32*)');
-  outass(str3+' = add i32 '+str2+', '+inttostr(vint32));
-  outass('store i32 '+str3+', i32* bitcast (i8* '+adest+' to i32*)');
- end;
-end;
-
-procedure incdecimmpo(const adest: shortstring);
-var
- str2,str3: shortstring;
-begin
- with pc^.par,memimm do begin
-  str2:= '%'+inttostr(ssad-1);
-  str3:= '%'+inttostr(ssad);
-  outass(str2+' = load i8** bitcast (i8* '+adest+' to i8**)');
-  outass(str3+' = getelementptr i8* '+str2+', i32 '+inttostr(vint32));
-  outass('store i8* '+str3+', i8** bitcast (i8* '+adest+' to i8**)');
- end;
-end;
-
 procedure incdecsegimmint32op();
 begin
  with pc^.par,memimm do begin
@@ -977,10 +951,15 @@ begin
 end;
 
 procedure incdecindiimmpo32op();
-var
- str1,str2,str3,str4: shortstring;
+//var
+// str1,str2,str3,str4: shortstring;
 begin
  with pc^.par,memimm do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitptroffset(bcstream.relval(0),bcstream.constval(llvm.listid));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+{
   str1:= '%'+inttostr(ssas1);
   str2:= '%'+inttostr(ssad-2);
   str3:= '%'+inttostr(ssad-1);
@@ -989,6 +968,7 @@ begin
   outass(str3+' = load i8** '+str2);
   outass(str4+' = getelementptr i8* '+str3+', i32 '+inttostr(vint32));
   outass('store i8* '+str4+', i8** '+str2);
+}
  end;
 end;
 

@@ -175,7 +175,7 @@ type
    procedure emitlocdataaddresspo(const aaddress: memopty);
                                //for load/store, 3 ssa
 
-   procedure emitgetelementptrindex(const avalue: int32; const aindex: int32);
+   procedure emitptroffset(const avalue: int32; const aoffset: int32);
    procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
                                          //aoffset = byteoffset, 2 ssa
    procedure emitbitcast(const asource: int32; const adesttype: int32); //1 ssa
@@ -1100,10 +1100,10 @@ begin
  inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitgetelementptrindex(const avalue: int32;
-                                                   const aindex: int32);
+procedure tllvmbcwriter.emitptroffset(const avalue: int32;
+                                                   const aoffset: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_GEP),[1,fsubopindex-aindex]);
+ emitrec(ord(FUNC_CODE_INST_GEP),[fsubopindex-avalue,fsubopindex-aoffset]);
  checkdebugloc();
  inc(fsubopindex);
 end;
