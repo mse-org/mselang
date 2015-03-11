@@ -103,7 +103,8 @@ type
  memopty = (meo_segment,meo_local,meo_param,meo_paramindi,meo_indi);
  memoparty = array[memopty] of opcodety;
   
-function addmemop(var context: contextdataty; const ops: memoparty): popinfoty;
+function addmemop(var context: contextdataty; const ops: memoparty;
+                        const readwrite: boolean): popinfoty;
 var
  ssaextension1: integer;
  framelevel1: integer;
@@ -114,8 +115,18 @@ begin
   result:= additem(ops[meo_indi]);
  end
  else begin
-  if af_segment in context.dat.ref.c.address.flags then begin
-   result:= additem(ops[meo_segment]);
+  opdatatype1.flags:= context.dat.ref.c.address.flags;
+  if af_aggregate in opdatatype1.flags then begin
+   ssaextension1:= getssa(ocssa_aggregate);
+   if readwrite then begin
+    ssaextension1:= ssaextension1 + ssaextension1;
+   end;
+  end
+  else begin
+   ssaextension1:= 0;
+  end;
+  if af_segment in opdatatype1.flags then begin
+   result:= additem(ops[meo_segment],ssaextension1);
    with result^.par do begin
     memop.segdataaddress.a:= context.dat.ref.c.address.segaddress;
     memop.segdataaddress.offset:= context.dat.ref.offset;
@@ -124,9 +135,8 @@ begin
   else begin
    framelevel1:= info.sublevel-
                          context.dat.ref.c.address.locaddress.framelevel-1;
-   ssaextension1:= 0;
    if framelevel1 >= 0 then begin
-    ssaextension1:= getssa(ocssa_nestedvar);
+    ssaextension1:= ssaextension1 + getssa(ocssa_nestedvar);
    end;
    if af_param in context.dat.ref.c.address.flags then begin
     if af_paramindirect in context.dat.ref.c.address.flags then begin
@@ -179,7 +189,7 @@ var
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    if (paramco = 1) or par2isconst then begin
     if (d.dat.datatyp.indirectlevel > 0) then begin
-     po3:= addmemop(d,incdecimmpoops);
+     po3:= addmemop(d,incdecimmpoops,true);
      if d.dat.datatyp.indirectlevel = 1 then begin
       if po1^.kind = dk_pointer then begin
        po3^.par.memimm.vint32:= 1;
@@ -193,7 +203,7 @@ var
      end;
     end
     else begin
-     po3:= addmemop(d,incdecimmint32ops);
+     po3:= addmemop(d,incdecimmint32ops,true);
      po3^.par.memimm.vint32:= 1;
     end;
     if par2isconst and (paramco > 1) then begin
