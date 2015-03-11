@@ -83,8 +83,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
@@ -105,8 +105,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
@@ -134,13 +134,16 @@ c=3
     rd=
     in=
     eo=
-    ao=0
+    ao=1
     ee=
-    ae=0
+    ae=1
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
+    +
     aec=1
     ie=0
     )
@@ -156,13 +159,15 @@ c=3
     rd=
     in=
     eo=
-    ao=0
+    ao=1
     ee=
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -223,8 +228,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -245,8 +250,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -287,8 +292,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -309,8 +314,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -347,8 +352,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=0
    ie=0
    )
@@ -373,8 +378,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -395,8 +400,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -417,8 +422,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -439,8 +444,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -481,8 +486,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -503,8 +508,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -545,8 +550,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -567,8 +572,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -609,8 +614,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -631,8 +636,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -653,8 +658,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -675,8 +680,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -717,8 +722,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -739,8 +744,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -761,8 +766,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -783,8 +788,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -825,8 +830,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -847,8 +853,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -869,8 +876,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -891,8 +899,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -933,8 +942,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -955,8 +964,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
