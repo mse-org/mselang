@@ -252,8 +252,8 @@ var
       if not checkcompatiblefacttype(d,po6^.vf.typ) then begin
        errormessage(err_incompatibletypeforarg,
                    [int1-s.stackindex-3,typename(d),
-                   typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^)],
-                                                        int1-s.stackindex);
+                   typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^,
+                              po6^.address.indirectlevel)],int1-s.stackindex);
       end;
       with pparallocinfoty(
                 allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin

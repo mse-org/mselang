@@ -260,8 +260,10 @@ procedure rangeerror(const range: ordrangety;
                                const stackoffset: integer = minint);
 procedure filereaderror(const afile: filenamety);
 
-function typename(const ainfo: contextdataty): string;
-function typename(const atype: typedataty): string;
+function typename(const ainfo: contextdataty;
+                               const indirectlevel: int32=0): string;
+function typename(const atype: typedataty;
+                               const indirectlevel: int32=0): string;
 
 function errorcount(const alevel: errorlevelty): integer;
 
@@ -269,17 +271,22 @@ implementation
 uses
  sysutils,mseformatstr,typinfo,msefileutils,msesysutils,msesysintf1,msesys;
  
-function typename(const ainfo: contextdataty): string;
+function typename(const ainfo: contextdataty;
+                                    const indirectlevel: int32=0): string;
 var
  po1: ptypedataty;
 begin
  po1:= ele.eledataabs(ainfo.dat.datatyp.typedata);
- result:= getenumname(typeinfo(datakindty),ord(po1^.kind));
+ result:= charstring('^',po1^.indirectlevel+ainfo.dat.datatyp.indirectlevel+
+                                                           indirectlevel)+
+                           getenumname(typeinfo(datakindty),ord(po1^.kind));
 end;
 
-function typename(const atype: typedataty): string;
+function typename(const atype: typedataty;
+                                  const indirectlevel: int32=0): string;
 begin
- result:= getenumname(typeinfo(datakindty),ord(atype.kind));
+ result:= charstring('^',atype.indirectlevel+indirectlevel)+
+                    getenumname(typeinfo(datakindty),ord(atype.kind));
 end;
 
 function errorcount(const alevel: errorlevelty): integer;

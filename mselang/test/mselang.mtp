@@ -201,7 +201,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=10
+  c=11
    (
    kind=1
    a=0,664,4,empty
@@ -354,7 +354,26 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,3,indirect
+   teststate=0
+   path=indirect/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,664,4,record
    c=6
     (
     kind=2
@@ -1185,12 +1204,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=31
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=26
  0 0
  0 0
  0 0

@@ -200,7 +200,7 @@ procedure outass(const atext: string);
 begin
  bconly();
 end;
-
+{
 procedure outbinop(const atext: string);
 begin
  with pc^.par do begin
@@ -208,7 +208,7 @@ begin
    ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));
  end;
 end;
-
+}
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
