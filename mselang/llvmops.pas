@@ -742,10 +742,6 @@ begin
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
-{
-  outass('call i32 (i8*, ...)* @printf( i8* getelementptr ('+wpointerformat+
-         ', i32 0, i32 0), i8* %'+inttostr(ssas1)+')');
-}
  end;
 end;
 
@@ -951,24 +947,12 @@ begin
 end;
 
 procedure incdecindiimmpo32op();
-//var
-// str1,str2,str3,str4: shortstring;
 begin
  with pc^.par,memimm do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
   bcstream.emitptroffset(bcstream.relval(0),bcstream.constval(llvm.listid));
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
-{
-  str1:= '%'+inttostr(ssas1);
-  str2:= '%'+inttostr(ssad-2);
-  str3:= '%'+inttostr(ssad-1);
-  str4:= '%'+inttostr(ssad);
-  outass(str2+' = bitcast i8* '+str1+' to i8**');
-  outass(str3+' = load i8** '+str2);
-  outass(str4+' = getelementptr i8* '+str3+', i32 '+inttostr(vint32));
-  outass('store i8* '+str4+', i8** '+str2);
-}
  end;
 end;
 
@@ -1741,7 +1725,7 @@ begin
  end;
 end;
 
-procedure pushsegaddrindiop();
+procedure pushsegaddrindiop(); //offset after load
 begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.globval(memop.segdataaddress.a.address));
@@ -1805,16 +1789,20 @@ begin
 end;
 
 procedure indirectpooffsop();
-var
- str1,str2: shortstring;
+//var
+// str1,str2: shortstring;
 begin //offset after indirect
  with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitptroffset(bcstream.relval(0),bcstream.constval(voffset));
+{
   str1:= '%'+inttostr(ssad-2);
   str2:= '%'+inttostr(ssad-1);
   outass(str1+' = bitcast i8* %'+inttostr(ssas1)+' to i8**');
   outass(str2+' = load i8** '+str1);
   outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
                                                         inttostr(voffset));
+}
  end;
 end; 
 
@@ -2455,7 +2443,7 @@ const
   indirectf16ssa = 2;
   indirectf32ssa = 2;
   indirectf64ssa = 2;
-  indirectpooffsssa = 3;
+  indirectpooffsssa = 2;
   indirectoffspossa = 1;
   indirectssa = 1;
 

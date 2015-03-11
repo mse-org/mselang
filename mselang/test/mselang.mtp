@@ -354,8 +354,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
-   c=4
+   a=0,665,4,record
+   c=6
     (
     kind=2
     a=0,648,1,recordfield
@@ -441,6 +441,50 @@ c=3
     cr=0
     ao=0
     ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recordfieldind2
+    teststate=1
+    path=recordfieldind2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recordfieldind2 llvm
+    teststate=1
+    path=recordfieldind2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -590,7 +634,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=6
     (
     kind=2

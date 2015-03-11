@@ -1306,6 +1306,9 @@ begin
     po1:= insertitem(oc_indirectpooffs,stackoffset,false);
     with po1^ do begin
      par.voffset:= d.dat.ref.offset;
+     if info.backend = bke_llvm then begin
+      par.voffset:= constlist.addi32(par.voffset).listid;
+     end;
      par.ssas1:= par.ssad - getssa(oc_indirectpooffs);
     end;
    end;
