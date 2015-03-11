@@ -2204,22 +2204,12 @@ begin
 end;
 
 procedure getmemop();
-//var
-// str1,str2,str3: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_malloc]),
                                                     [bcstream.ssaval(ssas2)]);
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
-{
-  llvmtype(memop.t,str1);
-  str2:= '%'+inttostr(ssad-1);
-  str3:= '%'+inttostr(ssad);
-  outass(str2+' = call i8* @malloc('+str1+' %'+inttostr(ssas2)+')');
-  outass(str3+' = bitcast i8* '+'%'+inttostr(ssas1)+' to i8**');
-  outass('store i8* '+str2+', i8** '+str3);
-}
  end;
 end;
 
@@ -2228,9 +2218,6 @@ begin
  with pc^.par do begin
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
                                                     [bcstream.ssaval(ssas1)]);
-{
-  outass('call void @free(i8* %'+inttostr(ssas1)+')');
-}
  end;
 end;
 
