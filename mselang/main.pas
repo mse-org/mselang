@@ -67,12 +67,12 @@ var
 implementation
 uses
  main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,
- msesystypes{$ifdef mse_llvmbc},llvmbcwriter{$endif};
+ msesystypes,llvmbcwriter;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
  errstream,outstream: ttextstream;
- targetstream: {$ifdef mse_llvmbc}tllvmbcwriter{$else}ttextstream{$endif};
+ targetstream: tllvmbcwriter;
  bo1: boolean;
  backend: backendty;
  str1: string;
@@ -97,38 +97,17 @@ begin
   outstream.destroy();
   if bo1 then begin
    if llvm.value then begin
-   {$ifdef mse_llvmbc}
     filename1:= replacefileext(filena.value,'bc');
     if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                filename1,fm_create) <> sye_ok then begin
-   {$else}
-    filename1:= replacefileext(filena.value,'ll');
-    if ttextstream.trycreate(targetstream,filename1,fm_create) <> 
-                                                       sye_ok then begin
-   {$endif}
      grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
     end
     else begin
      llvmops.run(targetstream);
      targetstream.destroy();
-    {$ifdef mse_llvmbc}
      int1:= getprocessoutput('lli '+filename1,'',str1);
      grid[0].readpipe(str1,[aco_stripescsequence]);
      grid.appendrow(['EXITCODE: '+inttostr(int1)]);
-    {$else }
-     int1:= getprocessoutput('llvm-as '+filename1,'',str1);
-     if (int1 = 0) and (str1 = '') then begin
-      grid.appendrow(['**llvm-as OK**']);
-      grid.appendrow(['']);
-      int1:= getprocessoutput('lli '+replacefileext(filename1,'bc')
-                                                               ,'',str1);
-      grid[0].readpipe(str1,[aco_stripescsequence]);
-      grid.appendrow(['EXITCODE: '+inttostr(int1)]);
-     end
-     else begin
-      grid[0].readpipe(str1,[aco_stripescsequence]);
-     end;
-    {$endif}
     end;
    end
    else begin

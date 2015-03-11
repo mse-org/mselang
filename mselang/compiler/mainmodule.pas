@@ -26,7 +26,7 @@ implementation
 
 uses
  mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils,llvmops,sysutils;
+ msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter;
  
 const
  startupmessage =
@@ -46,7 +46,7 @@ var
  mstr1: msestring;
  err: syserrorty;
  targetstream: tmsefilestream;
- llvmstream: ttextstream;
+ llvmstream: tllvmbcwriter;
  backend: backendty;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
@@ -65,8 +65,9 @@ begin
    end;
    if parse(str1,backend) then begin
     if backend = bke_llvm then begin
-     filename1:= replacefileext(filename1,'ll');
-     if checksysok(ttextstream.trycreate(llvmstream,filename1,fm_create),
+     filename1:= replacefileext(filename1,'bc');
+     if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
+                          filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
       try
        llvmops.run(llvmstream);

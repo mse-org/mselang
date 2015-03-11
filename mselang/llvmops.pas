@@ -19,8 +19,7 @@ unit llvmops;
 
 interface
 uses
- opglob,parserglob,msestream
-  {$ifdef mse_llvmbc},llvmbcwriter,llvmbitcodes{$endif};
+ opglob,parserglob,msestream,llvmbcwriter,llvmbitcodes;
 
 //todo: generate bitcode, use static string buffers, no ansistrings
  
@@ -28,8 +27,7 @@ function getoptable: poptablety;
 function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
-procedure run(const atarget: 
-                   {$ifdef mse_llvmbc}tllvmbcwriter{$else}ttextstream{$endif});
+procedure run(const atarget: tllvmbcwriter);
  
 implementation
 uses
@@ -129,11 +127,7 @@ const
  );  
 
 var
-{$ifdef mse_llvmbc}
  bcstream: tllvmbcwriter;
-{$else}
- assstream: ttextstream;
-{$endif}
  globconst: string;
 // globconstid: int32;
  internalfuncs: array[internalfuncty] of int32;
@@ -204,11 +198,7 @@ end;
 
 procedure outass(const atext: string);
 begin
-{$ifdef mse_llvmbc}
  bconly();
-{$else}
- assstream.writeln(atext);
-{$endif}
 end;
 
 procedure outbinop(const atext: string);
@@ -2550,17 +2540,12 @@ const
   
 {$include optable.inc}
 
-procedure run(const atarget: 
-           {$ifdef mse_llvmbc}tllvmbcwriter{$else}ttextstream{$endif});
+procedure run(const atarget: tllvmbcwriter);
 var
  endpo: pointer;
  lab: shortstring;
 begin
-{$ifdef mse_llvmbc}
  bcstream:= atarget;
-{$else}
- assstream:= atarget;
-{$endif}
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
