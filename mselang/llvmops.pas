@@ -491,15 +491,13 @@ notimplemented();
    end
    else begin
     bcstream.emitloadop(bcstream.allocval(a.address)); //^variable
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
     if af_aggregate in t.flags then begin
-notimplemented();
-     bcstream.emitlocdataaddresspo(memop);
-     bcstream.emitstoreop(source,bcstream.relval(0));
-    end
-    else begin
-     bcstream.emitstoreop(source,bcstream.relval(0));
+     bcstream.emitnopssaop(); //aggregatessa = 3
+     bcstream.emitgetelementptr(bcstream.relval(1),
+                           bcstream.constval(offset));
     end;
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+    bcstream.emitstoreop(source,bcstream.relval(0));
    end;
   end;
  end;
