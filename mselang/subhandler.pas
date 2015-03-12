@@ -475,6 +475,9 @@ var
        end;
        address.locaddress.framelevel:= sublevel+1;
        address.flags:= [af_param];
+       if po3^.datasize = das_none then begin
+        include(address.flags,af_aggregate);
+       end;
        if paramkind1 = pk_const then begin
         if si1 > pointersize then begin
          inc(address.indirectlevel);
