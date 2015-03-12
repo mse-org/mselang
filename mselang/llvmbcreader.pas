@@ -1178,13 +1178,32 @@ var
     result:= 'S'+inttostr(avalue-paramcount);
    end;
   end;
- end;
+ end; //opname
  
  function destname(const avalue: int32): string;
  begin
   result:= '->'+inttostr(avalue);
- end;
-  
+ end; //destname
+
+ function checktypeids(const a: int32; const b: int32): boolean;
+ begin
+  result:= a = b;
+  if not result then begin
+   if a < 0 then begin
+    if b >= 0 then begin
+     result:= -a = ftypelist.parenttypeindex(b);
+    end;
+   end
+   else begin
+    if b < 0 then begin
+     if a >= 0 then begin
+      result:= -b = ftypelist.parenttypeindex(a);
+     end;
+    end;
+   end;
+  end;
+ end; //checktypeids
+ 
 var
  subtyp1: int32;
  blocklevelbefore: int32;
@@ -1247,7 +1266,7 @@ begin
        i1:= typeid(rec1[2]);
        i2:= typeid(rec1[3]);
        outssarecord(i1,str1);
-       if i1 <> i2 then begin
+       if not checktypeids(i1,i2) then begin
         error('Incompatible type');
        end;
       end;
@@ -1353,7 +1372,8 @@ begin
         end;
         inc(i2); //first param
         for i1:= 5 to i3+3 do begin
-         if typeid(rec1[i1]) <> ftypelist.fsubparams[i2] then begin
+         if not checktypeids(typeid(rec1[i1]),
+                                     ftypelist.fsubparams[i2]) then begin
           error('Invalid param');
          end;
          inc(i2);
