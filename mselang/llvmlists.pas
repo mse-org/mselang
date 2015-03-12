@@ -527,7 +527,7 @@ begin
     errormessage(err_toomanyparams,[]);
    end;
    po2:= @avalue^.paramsrel;
-   for i1:= i1 to header.paramcount - 1 do begin //todo: const var out...
+   for i1:= i1 to header.paramcount - 1 do begin
     with params[i1] do begin
      flags:= [];
      typelistindex:= addvarvalue(ele.eledataabs(po2^));
@@ -570,7 +570,8 @@ var
  po1: ptypedataty;
 begin 
  po1:= ele.eledataabs(avalue^.vf.typ);
- if po1^.indirectlevel > 0 then begin
+ if (po1^.indirectlevel > 0) or 
+                      (af_paramindirect in avalue^.address.flags) then begin
   result:= pointertype;
  end
  else begin

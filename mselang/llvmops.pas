@@ -467,6 +467,54 @@ begin
  end;
 end;
 
+procedure storelocindi(const source: int32);
+var
+ str1,str2,dest1,dest2: shortstring;
+begin
+ with pc^.par do begin           
+  with memop,locdataaddress do begin
+   if a.framelevel >= 0 then begin  //nested variable
+notimplemented();
+    bcstream.emitgetelementptr(bcstream.subval(0),
+            //pointer to array of pointer to local alloc
+                                           bcstream.constval(a.address));
+            //byte offset in array
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+    bcstream.emitloadop(bcstream.relval(0));
+            //pointer to variable
+    if af_aggregate in t.flags then begin
+     bcstream.emitnopssaop();          //agregatessa = 3
+     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
+    end;
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+    bcstream.emitstoreop(source,bcstream.relval(0));
+   end
+   else begin
+    bcstream.emitloadop(bcstream.allocval(a.address)); //^variable
+    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+    if af_aggregate in t.flags then begin
+notimplemented();
+     bcstream.emitlocdataaddresspo(memop);
+     bcstream.emitstoreop(source,bcstream.relval(0));
+    end
+    else begin
+     bcstream.emitstoreop(source,bcstream.relval(0));
+    end;
+   end;
+  end;
+ end;
+{
+  llvmtype(memop.t,str1); 
+  dest1:= '%'+inttostr(ssad);
+  dest2:= '%'+inttostr(ssad+1);
+  locdataaddress(memop.locdataaddress,str2);
+  outass(dest1+' = load '+ptrintname+'* '+str2);
+  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
+  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
+ end;
+}
+end;
+
 procedure storeloc();
 begin
  storeloc(bcstream.ssaval(pc^.par.ssas1));
@@ -483,22 +531,6 @@ begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),
                     bcstream.ptypeval(memop.t.listindex));
   bcstream.emitloadop(bcstream.relval(0));
- end;
-end;
-
-procedure storelocindi();
-var
- str1,str2,dest1,dest2: shortstring;
-begin
- with pc^.par do begin                  //todo: add offset, nested frame
-  llvmtype(memop.t,str1); 
-  dest1:= '%'+inttostr(ssad);
-  dest2:= '%'+inttostr(ssad+1);
-  locdataaddress(memop.locdataaddress,str2);
-  outass(dest1+' = load '+ptrintname+'* '+str2);
-  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
- 
  end;
 end;
 
@@ -1456,47 +1488,47 @@ end;
 
 procedure popparindi8op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindi16op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindi32op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindi64op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindipoop();
 begin
- notimplemented()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindif16op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindif32op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindif64op();
 begin
- storelocindi()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure popparindiop();
 begin
- notimplemented()
+ storelocindi(bcstream.ssaval(pc^.par.ssas1));
 end;
 
 procedure pushnilop();

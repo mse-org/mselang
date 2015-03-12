@@ -657,8 +657,14 @@ begin
 end;
 
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
+var
+ i1: int32;
 begin
- result:= getopdatatype(adest.typ,adest.address.indirectlevel);
+ i1:= adest.address.indirectlevel;
+ if af_paramindirect in adest.address.flags then begin
+  dec(i1);
+ end;
+ result:= getopdatatype(adest.typ,i1);
  result.flags:= adest.address.flags;
 {
  if af_aggregate in adest.address.flags then begin
