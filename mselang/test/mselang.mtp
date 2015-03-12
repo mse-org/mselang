@@ -139,11 +139,8 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
-    +
-    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
@@ -164,10 +161,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
-    +
-    ae=
+    ao=1
+    ae=0
     aec=0
     ie=0
     )
@@ -228,8 +223,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -250,8 +245,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -292,8 +287,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -314,8 +309,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -352,15 +347,15 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
    (
    kind=1
    a=0,665,4,indirect
-   c=4
+   c=8
     (
     kind=2
     a=0,648,1,indirectloc
@@ -449,6 +444,94 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,0,varpar
+    teststate=0
+    path=varpar.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=1
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varpar llvm
+    teststate=1
+    path=varpar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varparrec
+    teststate=1
+    path=varparrec.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mlr}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varparrec llvm
+    teststate=1
+    path=varparrec.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
    teststate=1
    path=indirect/
    comment=
@@ -467,7 +550,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,4,record
    c=6
     (
     kind=2
@@ -486,8 +569,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -508,8 +591,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -530,8 +613,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -552,8 +635,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -574,8 +657,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -596,8 +679,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -638,8 +721,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -660,8 +743,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -702,8 +785,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -724,8 +807,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -766,8 +849,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -788,8 +871,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -810,8 +893,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -832,8 +915,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -854,8 +937,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -876,8 +959,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -918,8 +1001,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -940,8 +1023,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -962,8 +1045,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -984,8 +1067,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -1026,9 +1109,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1049,9 +1131,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1072,9 +1153,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1095,9 +1175,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1138,8 +1217,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1160,8 +1239,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1302,9 +1381,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=36
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

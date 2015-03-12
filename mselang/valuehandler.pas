@@ -423,7 +423,7 @@ var
         {$endif}
         end;
         d.dat.datatyp.typedata:= ele1; //todo: adress operator
-        d.dat.datatyp.indirectlevel:= 
+        d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                        ptypedataty(ele.eledataabs(ele1))^.indirectlevel;
        end;
       end;
