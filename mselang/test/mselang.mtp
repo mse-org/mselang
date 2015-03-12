@@ -105,14 +105,14 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=2
   (
   kind=1
@@ -139,8 +139,11 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=1
-    ae=1
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
+    +
     aec=1
     ie=0
     )
@@ -161,8 +164,10 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=1
-    ae=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2014 by Martin Schreiber
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -200,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=11
    (
    kind=1
@@ -223,8 +228,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -245,8 +250,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -287,8 +292,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -309,8 +314,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -347,14 +352,14 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=0
    ie=0
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,665,5,indirect
    c=8
     (
     kind=2
@@ -446,8 +451,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,0,varpar
-    teststate=0
+    a=0,648,1,varpar
+    teststate=1
     path=varpar.mla
     comment=
     cc=${mlc}
@@ -460,9 +465,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -483,15 +488,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparrec
-    teststate=1
+    a=0,648,2,varparrec
+    teststate=2
     path=varparrec.mla
     comment=
     cc=${mlc}
@@ -505,9 +510,10 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
-    aec=123
+    ao=Access violation
+    +
+    ae=
+    aec=1
     ie=0
     )
     (
@@ -527,12 +533,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=indirect/
    comment=
    cc=
@@ -1260,7 +1266,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -1276,7 +1282,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
