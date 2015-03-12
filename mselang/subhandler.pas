@@ -463,7 +463,8 @@ var
       po3:= ele.eledataabs(d.typ.typedata);
       with po2^ do begin
        address.indirectlevel:= d.typ.indirectlevel;
-       if address.indirectlevel > 0 then begin
+       if (address.indirectlevel > 0) or 
+                         (af_paramindirect in address.flags) then begin
         si1:= pointersize;
        end
        else begin
