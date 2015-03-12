@@ -130,7 +130,8 @@ begin
 end;
 
 function checkcompatiblefacttype(var afact: contextdataty;
-                                   const atypedata: elementoffsetty): boolean;
+                              const atypedata: elementoffsetty;
+                                     const aindirection: int32): boolean;
 var
  po1,po2: ptypedataty;
 begin
@@ -140,7 +141,7 @@ begin
  end;
 {$endif}
  po1:= ele.eledataabs(atypedata);
- result:= po1^.indirectlevel = afact.dat.datatyp.indirectlevel;
+ result:= po1^.indirectlevel+aindirection = afact.dat.datatyp.indirectlevel;
  if result then begin
   po2:= ele.eledataabs(afact.dat.datatyp.typedata);
   if po1^.base <> 0 then begin
@@ -249,7 +250,8 @@ var
        end;
       end;
 //      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
-      if not checkcompatiblefacttype(d,po6^.vf.typ) then begin
+      if not checkcompatiblefacttype(d,
+                             po6^.vf.typ,po6^.address.indirectlevel) then begin
        errormessage(err_incompatibletypeforarg,
                    [int1-s.stackindex-3,typename(d),
                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^,
