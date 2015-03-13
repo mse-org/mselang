@@ -473,44 +473,22 @@ var
 begin
  with pc^.par do begin           
   with memop,locdataaddress do begin
-   if a.framelevel >= 0 then begin  //nested variable
-notimplemented();
-    bcstream.emitgetelementptr(bcstream.subval(0),
-            //pointer to array of pointer to local alloc
-                                           bcstream.constval(a.address));
-            //byte offset in array
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
-    bcstream.emitloadop(bcstream.relval(0));
-            //pointer to variable
-    if af_aggregate in t.flags then begin
-     bcstream.emitnopssaop();          //agregatessa = 3
-     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
-    end;
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-    bcstream.emitstoreop(source,bcstream.relval(0));
-   end
-   else begin
-    bcstream.emitloadop(bcstream.allocval(a.address)); //^variable
-    if af_aggregate in t.flags then begin
-     bcstream.emitnopssaop(); //aggregatessa = 3
-     bcstream.emitgetelementptr(bcstream.relval(1),
-                           bcstream.constval(offset));
-    end;
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-    bcstream.emitstoreop(source,bcstream.relval(0));
+  {$ifdef mse_checkinternalerror}
+   if a.framelevel >= 0 then begin  //nested variable not possible, called from
+                                    //popparindi*() only.
+    internalerror(ie_llvm,'20150313A');
    end;
+  {$endif}
+   bcstream.emitloadop(bcstream.allocval(a.address)); //^variable
+   if af_aggregate in t.flags then begin
+    bcstream.emitnopssaop(); //aggregatessa = 3
+    bcstream.emitgetelementptr(bcstream.relval(1),
+                          bcstream.constval(offset));
+   end;
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+   bcstream.emitstoreop(source,bcstream.relval(0));
   end;
  end;
-{
-  llvmtype(memop.t,str1); 
-  dest1:= '%'+inttostr(ssad);
-  dest2:= '%'+inttostr(ssad+1);
-  locdataaddress(memop.locdataaddress,str2);
-  outass(dest1+' = load '+ptrintname+'* '+str2);
-  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  outass('store '+str1+' %'+inttostr(ssas1)+', '+str1+'* '+dest2);
- end;
-}
 end;
 
 procedure storeloc();
@@ -565,21 +543,8 @@ begin
 end;
 
 procedure loadlocindi();
-var
- dest1,dest2,dest3: shortstring;
- str1,str2: shortstring;
 begin
- with pc^.par do begin
-  ;
-  dest1:= '%'+inttostr(ssad);
-  dest2:= '%'+inttostr(ssad+1);
-  dest3:= '%'+inttostr(ssad+2);
-  locdataaddress(memop.locdataaddress,str2);
-  outass(dest1+' = load '+ptrintname+'* '+str2);
-  outass(dest2+' = inttoptr '+ptrintname+' '+dest1+' to i32*');
-  llvmtype(memop.t,str1);
-  outass(dest3+' = load '+str1+'* '+dest2);
- end;
+ notimplemented(); //not used
 end;
 
 procedure compare(const apredicate: predicate);
