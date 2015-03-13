@@ -39,10 +39,10 @@ type
                   ick_ugt,ick_uge,ick_ult,ick_ule,
                   ick_sgt,ick_sge,ick_slt,ick_sle);
  idsarty = array[0..maxparamcount-1] of int32;
- 
+(* 
 const
  breakline = c_linefeed;
-// nilconst = 'i8* inttoptr(i32 0 to i8*)';
+// nilconst = 'i8* inttoptr(i32 0 to i8* )';
  nilconst = 'i8* zeroinitializer';
  icomparetokens: array[icomparekindty] of string[3] = (
                   'eq','ne',
@@ -82,6 +82,7 @@ const
   '232','233','234','235','236','237','238','239',
   '240','241','242','243','244','245','246','247',
   '248','249','250','251','252','253','254','255');
+*)
 var
 // sp: integer; //unnamed variables
  pc: popinfoty;
@@ -135,7 +136,7 @@ var
  
 // globconsttype: int32;
 
-
+(*
 //todo: use c"..." form
 function encodebytes(const source: pointer; const count: integer): string;
 const
@@ -190,7 +191,8 @@ begin
   setlength(result,pointer(pd)-pointer(result));
  end;
 end;
-
+*)
+(*
 procedure bconly();
 begin
  raise exception.create('LLVM bitcode only!');
@@ -200,6 +202,7 @@ procedure outass(const atext: string);
 begin
  bconly();
 end;
+*)
 {
 procedure outbinop(const atext: string);
 begin
@@ -220,7 +223,7 @@ procedure notimplemented();
 begin
  raise exception.create('LLVM OP not implemented');
 end;
-
+(*
 const
  segprefix: array[segmentty] of string = (
  //seg_nil,seg_stack,seg_globvar,seg_globconst,
@@ -277,7 +280,7 @@ begin
   seg_globconst: begin
    if address.a.size = 0 then begin
     result:= 'bitcast (i8* getelementptr ('+globconst+',i32 0, i32 '+
-                                 inttostr(address.a.address)+') to i8**)';
+                                 inttostr(address.a.address)+') to i8** )';
    end
    else begin
     if address.a.size < 0 then begin //int
@@ -308,7 +311,7 @@ begin
  segdataaddress(address,str2);
  if address.a.size = 0 then begin //pointer
   if brackets then begin
-   result:='bitcast (i8** '+str2+' to i8*)';
+   result:='bitcast (i8** '+str2+' to i8* )';
   end
   else begin
    result:='bitcast i8** '+str2+' to i8*';
@@ -318,7 +321,7 @@ begin
   if address.a.size < 0 then begin //int
    str1:= 'i'+inttostr(-address.a.size)+'* ';
    if brackets then begin
-    result:= 'bitcast ('+str1+'getelementptr('+str1+str2+') to i8*)';
+    result:= 'bitcast ('+str1+'getelementptr('+str1+str2+') to i8* )';
    end
    else begin
     result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
@@ -394,7 +397,7 @@ procedure oplabel(out result: shortstring);
 begin
  result:= 'o'+ inttostr(pc^.par.opaddress.opaddress);
 end;
-
+*)
 procedure storeseg(const source: int32);
 begin
  with pc^.par do begin
@@ -819,9 +822,10 @@ end;
 
 procedure mulimmint32op();
 begin
+ notimplemented();
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = mul i32 %'+inttostr(ssas1)+
-         ', '+inttostr(imm.vint32));
+//  outass('%'+inttostr(ssad)+' = mul i32 %'+inttostr(ssas1)+
+//         ', '+inttostr(imm.vint32));
  end;
 end;
 
@@ -837,9 +841,10 @@ end;
 
 procedure addpoint32op();
 begin
+ notimplemented();
  with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = getelementptr i8* %'+inttostr(ssas1)+
-         ', i32 %'+inttostr(ssas2));
+//  outass('%'+inttostr(ssad)+' = getelementptr i8* %'+inttostr(ssas1)+
+//         ', i32 %'+inttostr(ssas2));
  end;
 end;
 

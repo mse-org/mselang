@@ -1396,7 +1396,7 @@ begin                    //todo: optimize
       if not pushindirection(stackoffset) then begin
        exit;
       end;
-//      dec(d.dat.datatyp.indirectlevel); //correct addr handling
+      dec(d.dat.datatyp.indirectlevel); //correct addr handling
       doindirect;
      end
      else begin
