@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=2
   (
   kind=1
-  a=0,664,4,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=11
    (
    kind=1
@@ -359,8 +359,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
-   c=8
+   a=0,665,5,indirect
+   c=16
     (
     kind=2
     a=0,648,1,indirectloc
@@ -537,7 +537,186 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+    (
+    kind=2
+    a=0,648,1,varparload
+    teststate=1
+    path=varparload.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,varparload llvm
+    teststate=1
+    path=varparload.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,varparrecload
+    teststate=2
+    path=varparrecload.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=1
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,varparrecload llvm
+    teststate=2
+    path=varparrecload.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=1
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recindi
+    teststate=1
+    path=recindi.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recindi llvm
+    teststate=1
+    path=recindi.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,parrecindi
+    teststate=1
+    path=parrecindi.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,parrecindi llvm
+    teststate=2
+    path=parrecindi.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=0  libLLVMSupport.so 0xb706b0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +1  libLLVMSupport.so 0xbffb6358 llvm::sys::PrintStackTrace(_IO_FILE*) + 150254216
+    +2  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1224298288
+    +
+    aec=0
+    ie=0
+    )
+   teststate=2
    path=indirect/
    comment=
    cc=
@@ -1269,7 +1448,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -1285,7 +1464,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -1304,9 +1483,9 @@ c=3
 teststate=0
 [options]
 [mainmo.stoponfirsterr]
-checked=1
+checked=0
 [mainmo.stoponcomperr]
-checked=1
+checked=0
 [mainmo.trttistat1]
 macronames=17
  fpcflags
@@ -1390,7 +1569,18 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=54
+rowstate=65
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
