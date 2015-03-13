@@ -463,17 +463,16 @@ var
       po3:= ele.eledataabs(d.typ.typedata);
       with po2^ do begin
        address.indirectlevel:= d.typ.indirectlevel;
-       if (address.indirectlevel > 0) or 
-                         (af_paramindirect in address.flags) then begin
+       if (address.indirectlevel > 0) then begin
         si1:= pointersize;
        end
        else begin
         si1:= po3^.bytesize;
        end;
-       if impl1 then begin
-        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
-       end;
-       address.locaddress.framelevel:= sublevel+1;
+//       if impl1 then begin
+//        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
+//       end;
+//       address.locaddress.framelevel:= sublevel+1;
        address.flags:= [af_param];
        if po3^.datasize = das_none then begin
         include(address.flags,af_aggregate);
@@ -499,6 +498,10 @@ var
          end;                     
         end;
        end;
+       if impl1 then begin
+        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
+       end;
+       address.locaddress.framelevel:= sublevel+1;
        vf.typ:= d.typ.typedata;
       end;
      end
