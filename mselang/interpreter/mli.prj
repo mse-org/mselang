@@ -17,9 +17,10 @@ order14=0
 order15=0
 order16=0
 order17=0
+order18=0
 [projectoptions]
-projectdir=/home/mse/packs/standard/git/mselang/mselang/compiler
-projectfilename=/home/mse/packs/standard/git/mselang/mselang/compiler/mlc.prj
+projectdir=/home/mse/packs/standard/git/mselang/mselang/interpreter
+projectfilename=/home/mse/packs/standard/git/mselang/mselang/interpreter/mli.prj
 options=99
  [projectoptionsfo.twidgetgrid3]
  propcolwidthref=583
@@ -362,7 +363,7 @@ filemasks=3
 showgrid=1
 snaptogrid=1
 moveonfirstclick=1
-formdesignerdocking=0
+noformdesignerdocking=0
 gridsizex=8
 gridsizey=8
 autoindent=1
@@ -499,6 +500,7 @@ cx=704
 cy=473
 [progparams]
 progparamhistory=0
+workdirparamhistory=0
 envvarons=0
 [edit]
 hintwidth=185
@@ -537,19 +539,19 @@ windowlayout=558
  cy=0
  [mainfo.projectfiledia]
  filenames=1
-  /home/mse/packs/standard/git/mselang/mselang/runtime/mlr.prj
- lastdir=/home/mse/packs/standard/git/mselang/mselang/runtime/
- filehistory=10
-  /home/mse/packs/standard/git/mselang/mselang/runtime/mlr.prj
-  /home/mse/packs/standard/git/mselang/mselang/compiler/mlc.prj
   /home/mse/packs/standard/git/mselang/mselang/compiler/mse_mlc.prj
+ lastdir=/home/mse/packs/standard/git/mselang/mselang/compiler/
+ filehistory=10
+  /home/mse/packs/standard/git/mselang/mselang/compiler/mse_mlc.prj
+  /home/mse/packs/standard/git/mselang/mselang/interpreter/mli.prj
+  /home/mse/packs/standard/git/mselang/mselang/interpreter/mse_mli.prj
+  /home/mse/packs/standard/git/mselang/mselang/interpreter/mse_mlr.prj
+  /home/mse/packs/standard/git/mselang/mselang/runtime/mse_mlr.prj
+  /home/mse/packs/standard/git/mselang/mselang/llvmdump/mse_llvmdump.prj
   /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
-  /home/mse/proj/test3/test3.prj
+  /home/mse/proj/msegui/testcase/liuzg/test2/ddd.prj
+  /home/mse/packs/standard/git/mselang/mselang/llvmtest.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
-  /home/mse/packs/standard/git/mseuniverse/tools/msetest/mse_msetest.prj
-  /home/mse/packs/standard/git/mseuniverse/tools/msetest/testprog/mse_testprog.prj
-  /home/mse/packs/standard/git/mseuniverse/tools/msegit/mse_msegit.prj
-  /home/mse/packs/standard/git/mseuniverse/tools/msespice/mse_msespice.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=134
@@ -575,7 +577,7 @@ windowlayout=558
  [mainfo]
  splitdir=0
  useroptions=33554555
- stackedunder=targetconsolefo
+ stackedunder=
  parent=
  mdistate=0
  nx=0
@@ -589,7 +591,7 @@ windowlayout=558
  rcx=0
  rcy=0
  wsize=0
- active=0
+ active=1
  visible=1
  [targetconsolefo]
  splitdir=0
@@ -657,7 +659,7 @@ windowlayout=558
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=stackfo
+ stackedunder=symbolfo
  parent=
  mdistate=0
  nx=0
@@ -776,7 +778,7 @@ windowlayout=558
  [breakpointsfo]
  splitdir=0
  useroptions=16491
- stackedunder=watchpointsfo
+ stackedunder=projecttreefo
  parent=
  mdistate=0
  nx=0
@@ -797,7 +799,7 @@ windowlayout=558
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=componentpalettefo
+ stackedunder=breakpointsfo
  parent=
  mdistate=0
  nx=0
@@ -822,7 +824,7 @@ windowlayout=558
  [symbolfo]
  splitdir=0
  useroptions=16507
- stackedunder=disassfo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -907,22 +909,22 @@ windowlayout=558
  splitdir=0
  useroptions=49259
  parent=mainfo.panel1.container
- visible=0
+ visible=1
  mdistate=0
  nx=0
  ny=0
  ncx=0
  ncy=0
  x=0
- y=493
+ y=519
  cx=720
- cy=70
- rcx=813
- rcy=879
+ cy=44
+ rcx=0
+ rcy=0
  [componentstorefo]
  splitdir=0
  useroptions=24699
- stackedunder=symbolfo
+ stackedunder=disassfo
  parent=
  mdistate=0
  nx=0
@@ -985,7 +987,7 @@ windowlayout=558
  [componentpalettefo]
  splitdir=0
  useroptions=24683
- stackedunder=mainfo
+ stackedunder=componentstorefo
  parent=
  mdistate=0
  nx=0
@@ -1032,7 +1034,7 @@ windowlayout=558
  x=0
  y=0
  cx=720
- cy=563
+ cy=516
  rcx=0
  rcy=0
  [actionsmo.watchesonact]
@@ -1043,7 +1045,7 @@ windowlayout=558
  irqoff=0
  splitdir=0
  useroptions=16491
- stackedunder=componentstorefo
+ stackedunder=componentpalettefo
  parent=
  mdistate=0
  nx=0
@@ -1062,7 +1064,7 @@ windowlayout=558
  [mainfo.panel1]
  splitdir=2
  useroptions=32235
- stackedunder=
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -1076,7 +1078,7 @@ windowlayout=558
  rcx=0
  rcy=0
  wsize=0
- active=1
+ active=0
  visible=1
 [targetconsole]
 finddtext=

@@ -72,7 +72,7 @@ c=3
  teststate=1
  path=${mselangdir}compiler/mlc.pas
  comment=
- cc=${fpc} -dmse_checkinternalerror ${file}
+ cc=${fpc} -B -dmse_checkinternalerror ${file}
  cd=
  rc=
  rd=
@@ -90,11 +90,11 @@ c=3
  )
  (
  kind=2
- a=0,648,1,mlr
+ a=0,648,1,mli
  teststate=1
- path=${mselangdir}runtime/mlr.pas
+ path=${mselangdir}interpreter/mli.pas
  comment=
- cc=${fpc} ${file}
+ cc=${fpc} -B ${file}
  cd=
  rc=
  rd=
@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=2
   (
   kind=1
@@ -205,11 +205,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=11
    (
    kind=1
-   a=0,664,4,empty
+   a=0,665,4,empty
    c=2
     (
     kind=2
@@ -273,7 +273,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,minimal
+   a=0,665,4,minimal
    c=2
     (
     kind=2
@@ -283,7 +283,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -359,7 +359,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,indirect
+   a=0,665,4,indirect
    c=8
     (
     kind=2
@@ -369,7 +369,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -413,7 +413,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -457,7 +457,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -495,13 +495,13 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varparrec
-    teststate=2
+    a=0,648,1,varparrec
+    teststate=1
     path=varparrec.mla
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -510,10 +510,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -538,7 +537,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=indirect/
    comment=
    cc=
@@ -556,7 +555,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
+   a=0,665,4,record
    c=6
     (
     kind=2
@@ -566,7 +565,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -575,8 +574,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -597,8 +596,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -610,7 +609,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -619,8 +618,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -641,8 +640,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -654,7 +653,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -663,8 +662,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -685,8 +684,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -708,7 +707,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
+   a=0,665,4,string
    c=2
     (
     kind=2
@@ -718,7 +717,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -727,8 +726,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -749,8 +748,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -772,7 +771,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,4,conversions
    c=2
     (
     kind=2
@@ -782,7 +781,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -791,8 +790,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -813,8 +812,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -836,7 +835,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=6
     (
     kind=2
@@ -846,7 +845,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -855,8 +854,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -877,8 +876,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -890,7 +889,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -899,8 +898,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -921,8 +920,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -934,7 +933,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -943,8 +942,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -965,8 +964,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -998,7 +997,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -1007,8 +1006,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1029,8 +1028,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1042,7 +1041,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -1051,8 +1050,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1073,8 +1072,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1106,7 +1105,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=123
@@ -1115,8 +1114,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -1137,8 +1137,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -1150,7 +1151,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=abc
@@ -1159,8 +1160,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -1181,8 +1183,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -1214,7 +1217,7 @@ c=3
     comment=
     cc=${mlc}
     cd=
-    rc=${mlr}
+    rc=${mli}
     rd=
     in=
     eo=
@@ -1223,8 +1226,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1245,8 +1248,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1266,7 +1269,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -1282,7 +1285,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -1318,7 +1321,7 @@ macronames=17
  mselangdir
  mlc
  mlctest
- mlr
+ mli
  testdir
  mlc_llvm
  llvm-as
@@ -1336,7 +1339,7 @@ macrovalues=17
  /home/mse/packs/standard/git/mselang/mselang/
  ${mselangdir}compiler/mlc ${FILE}
  ${mlc}
- ${mselangdir}runtime/mlr ${FILE_NOEXT(${FILE})}.mlr
+ ${mselangdir}interpreter/mli ${FILE_NOEXT(${FILE})}.mli
  ${mselangdir}test/
  ${mselangdir}compiler/mlc --llvm ${FILE}
  llvm-as ${FILE_NOEXT(${FILE})}.ll
@@ -1359,7 +1362,7 @@ macroon=17
  63
  63
  63
-macrogroup=1
+macrogroup=0
 groupcomment=6
  Make
  Build
@@ -1387,7 +1390,27 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=34
+rowstate=54
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -5,6 +5,9 @@ uses
  msetypes,mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv,
  parserglob,msestream;
 
+const
+ mliextension = 'mli';
+ llvmbcextension = 'bc'; 
 type
  paramty = (pa_source,pa_llvm,pa_debug); //item number in sysenv
  
@@ -65,7 +68,7 @@ begin
    end;
    if parse(str1,backend) then begin
     if backend = bke_llvm then begin
-     filename1:= replacefileext(filename1,'bc');
+     filename1:= replacefileext(filename1,llvmbcextension);
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
                           filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
@@ -81,7 +84,7 @@ begin
      end;
     end
     else begin
-     filename1:= replacefileext(filename1,'mlr');
+     filename1:= replacefileext(filename1,mliextension);
      if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
       try
