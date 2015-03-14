@@ -39,52 +39,7 @@ type
                   ick_ugt,ick_uge,ick_ult,ick_ule,
                   ick_sgt,ick_sge,ick_slt,ick_sle);
  idsarty = array[0..maxparamcount-1] of int32;
-(* 
-const
- breakline = c_linefeed;
-// nilconst = 'i8* inttoptr(i32 0 to i8* )';
- nilconst = 'i8* zeroinitializer';
- icomparetokens: array[icomparekindty] of string[3] = (
-                  'eq','ne',
-                  'ugt','uge','ult','ule',
-                  'sgt','sge','slt','sle');
- ptrintname = 'i32';
- bytestrings: array[byte] of array[0..2] of char = (
-  '  0','  1','  2','  3','  4','  5','  6','  7',
-  '  8','  9',' 10',' 11',' 12',' 13',' 14',' 15',
-  ' 16',' 17',' 18',' 19',' 20',' 21',' 22',' 23',
-  ' 24',' 25',' 26',' 27',' 28',' 29',' 30',' 31',
-  ' 32',' 33',' 34',' 35',' 36',' 37',' 38',' 39',
-  ' 40',' 41',' 42',' 43',' 44',' 45',' 46',' 47',
-  ' 48',' 49',' 50',' 51',' 52',' 53',' 54',' 55',
-  ' 56',' 57',' 58',' 59',' 60',' 61',' 62',' 63',
-  ' 64',' 65',' 66',' 67',' 68',' 69',' 70',' 71',
-  ' 72',' 73',' 74',' 75',' 76',' 77',' 78',' 79',
-  ' 80',' 81',' 82',' 83',' 84',' 85',' 86',' 87',
-  ' 88',' 89',' 90',' 91',' 92',' 93',' 94',' 95',
-  ' 96',' 97',' 98',' 99','100','101','102','103',
-  '104','105','106','107','108','109','110','111',
-  '112','113','114','115','116','117','118','119',
-  '120','121','122','123','124','125','126','127',
-  '128','129','130','131','132','133','134','135',
-  '136','137','138','139','140','141','142','143',
-  '144','145','146','147','148','149','150','151',
-  '152','153','154','155','156','157','158','159',
-  '160','161','162','163','164','165','166','167',
-  '168','169','170','171','172','173','174','175',
-  '176','177','178','179','180','181','182','183',
-  '184','185','186','187','188','189','190','191',
-  '192','193','194','195','196','197','198','199',
-  '200','201','202','203','204','205','206','207',
-  '208','209','210','211','212','213','214','215',
-  '216','217','218','219','220','221','222','223',
-  '224','225','226','227','228','229','230','231',
-  '232','233','234','235','236','237','238','239',
-  '240','241','242','243','244','245','246','247',
-  '248','249','250','251','252','253','254','255');
-*)
 var
-// sp: integer; //unnamed variables
  pc: popinfoty;
 type
  internalfuncinfoty = record
@@ -130,88 +85,9 @@ const
 var
  bcstream: tllvmbcwriter;
  globconst: string;
-// globconstid: int32;
  internalfuncs: array[internalfuncty] of int32;
  internalstrings: array[internalstringty] of int32;
  
-// globconsttype: int32;
-
-(*
-//todo: use c"..." form
-function encodebytes(const source: pointer; const count: integer): string;
-const
- itemsize = 7; //'i8 123,'
-var
- int1,int2: integer;
- ps,pe: pbyte;
- po1: pchar;
- pd,pr: pchar;
-begin
- result:= '';
- int1:= count * itemsize;
- int2:= 80 div itemsize; //items per row
- int1:= int1 + (count div int2); //for c_linefeed
- setlength(result,int1); //max
- ps:= source;
- pe:= ps + count;
- pd:= pointer(result);
- int2:= int2 * itemsize;
- pr:= pd + int2;
- while ps < pe do begin
-  pd^:= 'i';
-  inc(pd);
-  pd^:= '8';
-  inc(pd);
-  pd^:= ' ';
-  inc(pd);
-  po1:= @bytestrings[ps^];
-  pd^:= po1^;
-  inc(pd);
-  inc(po1);
-  pd^:= po1^;
-  inc(pd);
-  inc(po1);
-  pd^:= po1^;
-  inc(pd);
-  inc(po1);
-  pd^:= ',';
-  inc(pd);
-  if pd >= pr then begin
-   pd^:= c_linefeed;
-   inc(pd);
-   pr:= pd + int2;
-  end;
-  inc(ps);
- end;
- if count > 0 then begin
-  dec(pd);                            //remove last comma
-  if pd^ = c_linefeed then begin
-   dec(pd);
-  end;
-  setlength(result,pointer(pd)-pointer(result));
- end;
-end;
-*)
-(*
-procedure bconly();
-begin
- raise exception.create('LLVM bitcode only!');
-end;
-
-procedure outass(const atext: string);
-begin
- bconly();
-end;
-*)
-{
-procedure outbinop(const atext: string);
-begin
- with pc^.par do begin
-  outass('%'+inttostr(ssad)+' = '+atext+
-   ' %'+inttostr(ssas1)+', %'+inttostr(ssas2));
- end;
-end;
-}
 procedure outbinop(const aop: BinaryOpcodes);
 begin
  with pc^.par do begin
@@ -223,181 +99,7 @@ procedure notimplemented();
 begin
  raise exception.create('LLVM OP not implemented');
 end;
-(*
-const
- segprefix: array[segmentty] of string = (
- //seg_nil,seg_stack,seg_globvar,seg_globconst,
-   '',     '@s',       '@gv',      '@gc',
- //seg_op,seg_rtti,seg_intf,seg_paralloc
-   '@o',  '@rt',   '@if',   '');
- 
- typestrings: array[databitsizety] of string = (
-  //das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
-    '',      'i1', '',     'i8', '',      'i16', '',       'i32',  
-  //das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64,  das_sub
-    '',       'i64', 'i8*',      'half', 'float','double','sub');
 
-procedure llvmtype(const asize: typeallocinfoty; out result: shortstring);
-begin
- case asize.kind of
-  das_none: begin
-   result:= '['+inttostr(asize.size)+'x i8]';
-  end;
-  else begin
-   result:= typestrings[asize.kind];
-   if result = '' then begin
-    result:= 'i'+inttostr(asize.size);
-   end;
-  end;
- end;
-end;
-
-procedure llvmglobvar(const avar: pvardataty; out result: shortstring);
-var
- po1: ptypedataty;
-begin
- if (avar^.address.indirectlevel > 0) then begin
-  result:= nilconst;
- end
- else begin
-  po1:= ptypedataty(ele.eledataabs(avar^.vf.typ));
-  if po1^.kind in pointerdatakinds then begin
-   result:= nilconst;
-  end
-  else begin
-   llvmtype(getopdatatype(po1,avar^.address.indirectlevel),result);
-   result:= result+' zeroinitializer';
-  end;
- end;
-end;
-
-procedure segdataaddress(const address: segdataaddressty;
-                                             out result: shortstring);
-begin
- notimplemented();
-{
- case address.a.segment of
-  seg_globconst: begin
-   if address.a.size = 0 then begin
-    result:= 'bitcast (i8* getelementptr ('+globconst+',i32 0, i32 '+
-                                 inttostr(address.a.address)+') to i8** )';
-   end
-   else begin
-    if address.a.size < 0 then begin //int
-     result:= 'bitcast i8* (getelementptr '+globconst+',i32 0, i32 '+
-                                           inttostr(address.a.address) + 
-                          ') to i'+inttostr(-address.a.size)+'* ';
-    end
-    else begin                       //record
-     result:= 'getelementptr '+globconst+',i32 0, i32 '+
-                          inttostr(address.a.address + address.offset);
-    end;
-   end;
-  end;
-  else begin
-   result:= segprefix[address.a.segment]+inttostr(address.a.address);
-  end;
- end;
-}
-end;
-
-procedure segdataaddresspo(const address: segdataaddressty;
-                     const brackets: boolean; out result: shortstring);
-var
- str1,str2: shortstring;
-begin
- notimplemented();
-{
- segdataaddress(address,str2);
- if address.a.size = 0 then begin //pointer
-  if brackets then begin
-   result:='bitcast (i8** '+str2+' to i8* )';
-  end
-  else begin
-   result:='bitcast i8** '+str2+' to i8*';
-  end;
- end
- else begin
-  if address.a.size < 0 then begin //int
-   str1:= 'i'+inttostr(-address.a.size)+'* ';
-   if brackets then begin
-    result:= 'bitcast ('+str1+'getelementptr('+str1+str2+') to i8* )';
-   end
-   else begin
-    result:= 'bitcast '+str1+'getelementptr('+str1+str2+') to i8*';
-   end;
-  end
-  else begin                           //record
-   if brackets then begin
-    result:= 'getelementptr (['+
-              inttostr(address.a.size)+' x i8]* '+str2+
-              ', i32 0, i32 '+
-              inttostr(address.offset)+')';
-   end
-   else begin
-    result:= 'getelementptr ['+
-              inttostr(address.a.size)+' x i8]* '+str2+
-              ', i32 0, i32 '+
-              inttostr(address.offset);
-   end;
-  end;
- end;
-}
-end;
-
-procedure segaddress(const address: segaddressty; out result: shortstring);
-begin
- result:= segprefix[address.segment]+inttostr(address.address);
-end;
-
-procedure locaddress(const address: dataoffsty; out result: shortstring);
-begin
-{$ifdef mse_locvarssatracking}
- if address.ssaindex > 0 then begin
-  result:= '%'+inttostr(address.ssaindex);
- end
- else begin
-{$endif}
-  result:= '%l'+inttostr(address);
-{$ifdef mse_locvarssatracking}
- end;
-{$endif}
-end;
-
-procedure paraddress(const address: dataoffsty; out result: shortstring);
-begin
-{$ifdef mse_locvarssatracking}
- result:= '%l'+inttostr(address.address);
-{$else}
- result:= '%p'+inttostr(address);
-{$endif}
-end;
-
-procedure locdataaddress(const address: locdataaddressty;
-                                            out result: shortstring);
-begin
- locaddress(address.a.address,result);
-end;
-
-procedure curoplabel(out result: shortstring);
-begin
- result:= 'o'+
-    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty) -
-                                                             startupoffset);
-end;
-
-procedure nextoplabel(out result: shortstring);
-begin
- result:= 'o'+
-    inttostr((pointer(pc)-getsegmentbase(seg_op)) div sizeof(opinfoty)- 
-                                                            startupoffset+1);
-end;
-
-procedure oplabel(out result: shortstring);
-begin
- result:= 'o'+ inttostr(pc^.par.opaddress.opaddress);
-end;
-*)
 procedure storeseg(const source: int32);
 begin
  with pc^.par do begin
@@ -637,7 +339,6 @@ end;
 procedure endparseop();
 begin
  bcstream.stop();
-// freeandnil(assstream);
 end;
 
 procedure movesegreg0op();
@@ -1789,20 +1490,10 @@ begin
 end;
 
 procedure indirectpooffsop();
-//var
-// str1,str2: shortstring;
 begin //offset after indirect
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitptroffset(bcstream.relval(0),bcstream.constval(voffset));
-{
-  str1:= '%'+inttostr(ssad-2);
-  str2:= '%'+inttostr(ssad-1);
-  outass(str1+' = bitcast i8* %'+inttostr(ssas1)+' to i8**');
-  outass(str2+' = load i8** '+str1);
-  outass('%'+inttostr(ssad)+' = getelementptr i8* '+str2+', i32 '+
-                                                        inttostr(voffset));
-}
  end;
 end; 
 
@@ -1934,25 +1625,7 @@ begin
       bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
  end;
 end;
-{
-procedure docallfunc(const outlinkcount: integer);
-var
- parpo: pparallocinfoty;
- endpo: pointer;
- first: boolean;
- str1: shortstring;
-begin
- with pc^.par do begin
-  parpo:= getsegmentpo(seg_localloc,callinfo.params);
-  endpo:= parpo + callinfo.paramcount;
-  llvmtype(parpo^.size,str1);
-  outass('%'+inttostr(ssad)+' = call '+str1+
-                                     ' @s'+inttostr(callinfo.ad+1)+'(');
-  inc(parpo); //skip result param
-  docallparam(parpo,endpo,outlinkcount);
- end;
-end;
-}
+
 procedure callop();
 begin
  with pc^.par do begin
@@ -2092,22 +1765,10 @@ begin
 end;
 
 procedure returnfuncop();
-var
- po1: plocallocinfoty;
- ty1: shortstring;
- dest1: shortstring;
 begin
  with pc^.par do begin
   bcstream.emitloadop(bcstream.allocval(0));
   bcstream.emitretop(bcstream.relval(0));
-  
-{
-  po1:= getsegmentpo(seg_localloc,returnfuncinfo.allocs.allocs);
-  llvmtype(po1^.size,ty1);
-  dest1:= '%'+inttostr(ssad);
-  outass(dest1 + ' = load '+ty1+'* %l0');
-  outass('ret '+ty1+' '+dest1);
-}
  end;
 end;
 
