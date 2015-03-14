@@ -570,8 +570,8 @@ var
  po1: ptypedataty;
 begin 
  po1:= ele.eledataabs(avalue^.vf.typ);
- if (po1^.indirectlevel > 0) or 
-                      (af_paramindirect in avalue^.address.flags) then begin
+ if (af_paramindirect in avalue^.address.flags) or 
+      (po1^.indirectlevel+avalue^.address.indirectlevel > 0) then begin
   result:= pointertype;
  end
  else begin
