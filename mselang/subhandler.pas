@@ -924,7 +924,8 @@ end;
 
 procedure handlesubbody6();
 var
- po1{,po2}: psubdataty;
+ po1: psubdataty;
+ po2: popinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -994,7 +995,11 @@ begin
    par.subend.allocs:= po1^.allocs;
   end;
   locallocid:= d.subdef.locallocidbefore;
-  with getitem(po1^.address)^ do begin
+  po2:= getitem(po1^.address);
+  if po2^.op.op = oc_initclass then begin
+   inc(po2);
+  end;
+  with po2^ do begin
    par.subbegin.flags:= po1^.flags;
    par.subbegin.blockcount:= s.ssa.blockindex + 1;
   end;
