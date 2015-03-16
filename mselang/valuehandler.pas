@@ -296,15 +296,15 @@ var
       d.kind:= ck_subres;
       d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel;
       d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-      if not backendhasfunction then begin
+//      if not backendhasfunction then begin
        dec(d.dat.datatyp.indirectlevel);
-      end;
+//      end;
       d.dat.datatyp.typedata:= po6^.vf.typ;        
       if not backendhasfunction then begin
        with additem(oc_pushstackaddr)^ do begin //result var param
         par.voffset:= -asub^.paramsize+stacklinksize-int1;
        end;
-       if sf_constructor in asub^.flags then begin
+       if sf_constructor in asub^.flags then begin //???? where in llvm?
         pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
                                     //class type
        end;
