@@ -546,9 +546,11 @@ begin
          goto endlab;
        {$endif}
         end;
-        initfactcontext(0); 
+//        initfactcontext(0);
+        d.kind:= ck_ref;
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
+        d.dat.datatyp.flags:= vf.flags;
         d.dat.indirection:= -1;
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         d.dat.ref.offset:= offset;
