@@ -113,7 +113,7 @@ c=3
  (
  kind=1
  a=0,665,4,testdir
- c=2
+ c=3
   (
   kind=1
   a=0,664,4,syntax
@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=11
    (
    kind=1
@@ -1461,6 +1461,48 @@ c=3
   cdef=
   pdef=
   )
+  (
+  kind=1
+  a=0,665,4,class
+  c=1
+   (
+   kind=2
+   a=0,648,1,classminimal
+   teststate=1
+   path=classminimal.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=1
+  path=class/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ao=0
+  ee=
+  ae=0
+  eec=
+  cdef=
+  pdef=
+  )
  teststate=1
  path=${testdir}
  comment=
@@ -1566,16 +1608,7 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=16
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=7
  0 0
  0 0
  0 0
