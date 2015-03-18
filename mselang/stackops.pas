@@ -1905,7 +1905,7 @@ begin
   po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
   ppointer(po1)^:= po2;    //class type info
   self1^:= po1;            //class instance
-  ppointer(cpu.stack-3*pointersize)^:= po1; //result
+  ppointer(cpu.stack-2*pointersize)^:= po1; //result
 
   pd:= po1 + po2^.header.fieldsize; //copy interface table
   pe:= po1 + po2^.header.allocsize;

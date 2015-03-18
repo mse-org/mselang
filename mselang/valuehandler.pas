@@ -296,18 +296,20 @@ var
 //      if not backendhasfunction then begin
 //       dec(d.dat.datatyp.indirectlevel);
 //      end;
-      if not backendhasfunction then begin
-       with additem(oc_pushstackaddr)^ do begin //result var param
-        par.voffset:= -asub^.paramsize+stacklinksize-int1;
-       end;
-//       if sf_constructor in asub^.flags then begin //???? where in llvm?
-//        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
-                                    //class type
-//       end;
-      end;
       if sf_constructor in asub^.flags then begin //???? where in llvm?
        with additem(oc_initclass)^,par.initclass do begin
         classdef:= po3^.infoclass.defs.address;
+       end;
+      end
+      else begin
+       if not backendhasfunction then begin
+        with additem(oc_pushstackaddr)^ do begin //result var param
+         par.voffset:= -asub^.paramsize+stacklinksize-int1;
+        end;
+ //       if sf_constructor in asub^.flags then begin //???? where in llvm?
+ //        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
+                                     //class type
+ //       end;
        end;
       end;
      end
