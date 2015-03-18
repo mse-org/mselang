@@ -23,12 +23,14 @@ uses
 type
  compilersubty = (
   cs_decrefsize,
-  cs_finifrefsize
+  cs_finifrefsize,
+  cs_initclass
  );
 const
  compilersubnames: array[compilersubty] of string = (
   '__mla__decrefsize',
-  '__mla__finirefsize'
+  '__mla__finirefsize',
+  '__mla__initclass'
  );
  
 var

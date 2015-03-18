@@ -14,7 +14,7 @@ uses
 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
-//function __mla__initclass(const classinfo: classinfoty): pointer;
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
 
 implementation
 
@@ -47,9 +47,10 @@ begin
   ref^:= nil;
  end;
 end;
-{
-function __mla__initclass(const classinfo: classinfoty): pointer;
+
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
 begin
+ writeln(@classinfo);
 end;
-}
+
 end.

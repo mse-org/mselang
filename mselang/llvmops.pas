@@ -1775,7 +1775,8 @@ end;
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
-  notimplemented();
+  callcompilersub(cs_initclass,true,[bcstream.relval(0)]);
+//  notimplemented();
  end;
 end;
 

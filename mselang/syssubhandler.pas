@@ -323,43 +323,49 @@ begin
   end;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
 //   with additem()^ do begin
-   with contextstack[int1] do begin //todo: indirection, use table
-    po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
-    case po2^.kind of
-     dk_boolean: begin
-      po1:= additem(oc_writeboolean);
-      po1^.par.voffset:= alignsize(sizeof(boolean));
-     end;
-     dk_integer: begin
-      po1:= additem(oc_writeinteger);
-      po1^.par.voffset:= alignsize(sizeof(int32));
-     end;
-     dk_float: begin
-      po1:=  additem(oc_writefloat);
-      po1^.par.voffset:= alignsize(sizeof(float64));
-     end;
-     dk_string8: begin
-      po1:= additem(oc_writestring8);
-      po1^.par.voffset:= alignsize(pointersize);
-     end;
-     dk_class: begin
-      po1:= additem(oc_writeclass);
-      po1^.par.voffset:= alignsize(pointersize);
-     end;
-     dk_pointer: begin
-      po1:= additem(oc_writepointer);
-      po1^.par.voffset:= alignsize(pointersize);
-     end;
-     dk_enum: begin
-      po1:= additem(oc_writeenum);
-      po1^.par.voffset:= alignsize(pointersize);
-      po1^.par.voffsaddress:= getrtti(po2);
-     end;
-     else begin
-      errormessage(err_cantreadwritevar,[],int1-s.stackindex);
-      po1:= additem(oc_none);
-      po1^.par.voffset:= 0;         //dummy
-//      po1^.par.voffsaddress:= getrtti(po2);
+   with contextstack[int1] do begin //todo: use table
+    if d.dat.datatyp.indirectlevel > 0 then begin
+     po1:= additem(oc_writepointer);
+     po1^.par.voffset:= alignsize(pointersize);
+    end
+    else begin
+     po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
+     case po2^.kind of
+      dk_boolean: begin
+       po1:= additem(oc_writeboolean);
+       po1^.par.voffset:= alignsize(sizeof(boolean));
+      end;
+      dk_integer: begin
+       po1:= additem(oc_writeinteger);
+       po1^.par.voffset:= alignsize(sizeof(int32));
+      end;
+      dk_float: begin
+       po1:=  additem(oc_writefloat);
+       po1^.par.voffset:= alignsize(sizeof(float64));
+      end;
+      dk_string8: begin
+       po1:= additem(oc_writestring8);
+       po1^.par.voffset:= alignsize(pointersize);
+      end;
+      dk_class: begin
+       po1:= additem(oc_writeclass);
+       po1^.par.voffset:= alignsize(pointersize);
+      end;
+      dk_pointer: begin
+       po1:= additem(oc_writepointer);
+       po1^.par.voffset:= alignsize(pointersize);
+      end;
+      dk_enum: begin
+       po1:= additem(oc_writeenum);
+       po1^.par.voffset:= alignsize(pointersize);
+       po1^.par.voffsaddress:= getrtti(po2);
+      end;
+      else begin
+       errormessage(err_cantreadwritevar,[],int1-s.stackindex);
+       po1:= additem(oc_none);
+       po1^.par.voffset:= 0;         //dummy
+ //      po1^.par.voffsaddress:= getrtti(po2);
+      end;
      end;
     end;
     po1^.par.ssas1:= d.dat.fact.ssaindex;
