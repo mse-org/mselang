@@ -16,6 +16,8 @@
  'begin'.,*
  'procedure'.,*
  'function'.,*
+ 'constructor'.,*
+ 'destructor'.,*
 "
 {blockends}
 " 'end'.,blockend
