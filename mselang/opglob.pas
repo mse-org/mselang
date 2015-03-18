@@ -425,9 +425,9 @@ type
  end;
   
  initclassinfoty = record
-  selfinstance: dataoffsty; //stackoffset
-//  classdef: dataoffsty;
-  result: dataoffsty;   //stackoffset to result pointer
+//  selfinstance: dataoffsty; //stackoffset
+  classdef: dataoffsty;
+//  result: dataoffsty;   //stackoffset to result pointer
  end;
 
  destroyclassinfoty = record

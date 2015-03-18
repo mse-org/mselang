@@ -194,7 +194,7 @@ var
   with info do begin
    po5:= @asub^.paramsrel;
    paramco1:= paramco;
-   if [sf_function,sf_constructor] * asub^.flags <> [] then begin
+   if [sf_function{,sf_constructor}] * asub^.flags <> [] then begin
     inc(paramco1); //result parameter
    end;
    if sf_method in asub^.flags then begin
@@ -280,33 +280,34 @@ var
               //todo: exeenv flag for constructor and destructor
     with contextstack[s.stackindex] do begin //result data
      if [sf_constructor,sf_function] * asub^.flags <> [] then begin
-      po6:= ele.eledataabs(po5^);
-      if (sf_constructor in asub^.flags) and 
-                                  (ele.lastdescendent <> 0) then begin
-       po3:= ptypedataty(ele.eledataabs(ele.lastdescendent));
-      end
-      else begin
-       po3:= ptypedataty(ele.eledataabs(po6^.vf.typ));
+      initfactcontext(0); //set ssaindex
+      d.kind:= ck_subres;
+      po3:= ele.eledataabs(asub^.resulttype);
+      d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
+      d.dat.datatyp.typedata:= asub^.resulttype;        
+      if sf_constructor in asub^.flags then begin
+       inc(d.dat.datatyp.indirectlevel);
       end;
       if not backendhasfunction then begin
        int1:= pushinsertvar(parent-s.stackindex,false,po3); 
                                     //alloc space for return value
       end;
-      initfactcontext(0); //set ssaindex
-      d.kind:= ck_subres;
-      d.dat.datatyp.indirectlevel:= po6^.address.indirectlevel;
       d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
 //      if not backendhasfunction then begin
-       dec(d.dat.datatyp.indirectlevel);
+//       dec(d.dat.datatyp.indirectlevel);
 //      end;
-      d.dat.datatyp.typedata:= po6^.vf.typ;        
       if not backendhasfunction then begin
        with additem(oc_pushstackaddr)^ do begin //result var param
         par.voffset:= -asub^.paramsize+stacklinksize-int1;
        end;
-       if sf_constructor in asub^.flags then begin //???? where in llvm?
-        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
+//       if sf_constructor in asub^.flags then begin //???? where in llvm?
+//        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
                                     //class type
+//       end;
+      end;
+      if sf_constructor in asub^.flags then begin //???? where in llvm?
+       with additem(oc_initclass)^,par.initclass do begin
+        classdef:= po3^.infoclass.defs.address;
        end;
       end;
      end

@@ -546,7 +546,7 @@ begin
   if sf_function in subflags then begin
    resultele1:= contextstack[s.stacktop].d.typ.typedata;
   end;
-
+{
   if isclass and (sf_constructor in subflags) then begin //add return type
    inc(s.stacktop);
    with contextstack[s.stacktop] do begin
@@ -566,13 +566,14 @@ begin
     d.typ.indirectlevel:= 1;
    end;
   end;
+}
   paramco:= (s.stacktop-s.stackindex-2) div 3;
   paramhigh:= paramco-1;
   if ismethod then begin
    inc(paramco); //self pointer
   end;
   int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_sub];
-  ele.checkcapacity(int2); //absolute addresses can be used
+  ele.checkcapacity(int2); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
@@ -591,6 +592,9 @@ begin
    po1^.tableindex:= -1; //none
   end;
   inc(currentsubcount);
+  if isclass and (sf_constructor in subflags) then begin
+   resultele1:= currentcontainer;
+  end;
   po1^.paramcount:= paramco;
   po1^.links:= 0;
   po1^.trampolinelinks:= 0;   //for virtual interface items
@@ -818,6 +822,7 @@ begin
    linkresolve(po2^.links,po1^.address);
   end;
   linkresolve(po1^.links,po1^.address); //nested calls
+{
   if sf_constructor in subdef.flags then begin
    po3:= ele.eledataabs(currentcontainer);
    with additem(oc_initclass)^,par.initclass do begin
@@ -825,7 +830,7 @@ begin
     result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
    end;
   end;
-
+}
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order

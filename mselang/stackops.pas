@@ -1898,13 +1898,14 @@ var
  ps,pd,pe: popaddressty;
 begin
  with cpu.pc^.par do begin
-//  po2:= pclassdefinfoty(initclass.classdef+constdata);
-  self1:= cpu.frame+initclass.selfinstance;
-  po2:= self1^;  //class type
+  po2:= pclassdefinfoty(ppointer(segments[seg_globconst].basepo) +
+                                                        initclass.classdef);
+  self1:= stackpush(pointersize);
+//  po2:= self1^;  //class type
   po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
   ppointer(po1)^:= po2;    //class type info
   self1^:= po1;            //class instance
-  pppointer(cpu.frame+initclass.result)^^:= po1; //result
+  ppointer(cpu.stack-3*pointersize)^:= po1; //result
 
   pd:= po1 + po2^.header.fieldsize; //copy interface table
   pe:= po1 + po2^.header.allocsize;
