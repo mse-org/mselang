@@ -251,17 +251,13 @@ begin
   name:= str1;
   prev:= info.s.unitinfo;
   filepath:= filehandler.getunitfile(aname);
-  if filepath = '' then begin
-   filepath:= filehandler.getunitfile('compiler/'+aname);
+//  if filepath = '' then begin
+//   filepath:= filehandler.getsysfile(aname);
    if filepath = '' then begin
-    filepath:= filehandler.getunitfile(
-              '/home/mse/packs/standard/git/mselang/mselang/compiler/'+aname);
-    if filepath = '' then begin
-     errormessage(err_compilerunitnotfound,[aname]);
-     exit;
-    end;
+    errormessage(err_compilerunitnotfound,[aname]);
+    exit;
    end;
-  end;
+//  end;
   inc(info.unitlevel);
   result:= parseusesunit(unit1);
   if result then begin

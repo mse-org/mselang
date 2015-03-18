@@ -20,36 +20,59 @@ interface
 uses
  msestrings;
  
+//todo: use search tree and cache
+
 function getunitfile(const aname: filenamety): filenamety;
 function getunitfile(const aname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
+
+function getsysfile(const aname: filenamety): filenamety;
 
 implementation
 uses
  msefileutils;
- 
+
+procedure getfile(var aname: filenamety);
+begin
+ if findfile(aname) then begin
+  aname:= filepath(aname);
+ end
+ else begin
+  aname:= getsysfile(aname);
+ end;
+end;
+
 function getunitfile(const aname: filenamety): filenamety;
 begin
- result:= filepath(aname+'.mla');
- if not findfile(result) then begin
-  result:= '';
- end;
+ result:= aname+'.mla';
+ getfile(result);
 end;
 
 function getunitfile(const aname: lstringty): filenamety;
 begin
-// result:= filepath(utf8tostring(aname)+'.pas');
- result:= filepath(utf8tostring(aname)+'.mla');
- if not findfile(result) then begin
-  result:= '';
- end;
+ result:= utf8tostring(aname)+'.mla';
+ getfile(result);
 end;
 
 function getincludefile(const aname: lstringty): filenamety;
 begin
- result:= filepath(utf8tostring(aname));
+ result:= utf8tostring(aname);
+ getfile(result);
+end;
+
+//todo: make it portable
+
+function getsysfile(const aname: filenamety): filenamety;
+begin
+ result:= 'compiler/'+aname;
  if not findfile(result) then begin
-  result:= '';
+  result:= '/home/mse/packs/standard/git/mselang/mselang/compiler/'+aname;
+  if not findfile(result) then begin
+   result:= '';
+  end;
+ end
+ else begin
+  result:= filepath(result);
  end;
 end;
 

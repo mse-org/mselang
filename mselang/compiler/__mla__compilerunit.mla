@@ -1,4 +1,4 @@
-{ MSEgui Copyright (c) 2014 by Martin Schreiber
+{ MSEgui Copyright (c) 2014-2015 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -9,49 +9,12 @@
 }
 unit __mla__compilerunit;
 interface 
-
-type
- ppointer = ^pointer;
-
-type             //todo: use "internaltypes"
- refcountty = int32;
- managedsizety = int32;
- stringsizety = managedsizety;
- pstringsizety = ^stringsizety;
- dynarraysizety = managedsizety;
- pdynarraysizety = ^dynarraysizety;
- 
- refinfoty = record
-  count: refcountty;
- end;
- prefinfoty = ^refinfoty;
- refsizeinfoty = record
-  ref: refinfoty;
-  sizedummy: managedsizety;
- end;
- prefsizeinfoty = ^refsizeinfoty;
- pprefsizeinfoty = ^prefsizeinfoty;
- 
- string8headerty = record
-  ref: refinfoty;
-  len: stringsizety;
- end; //following stringdata + terminating #0
- pstring8headerty = ^string8headerty;
-
- dynarrayheaderty = record
-  ref: refinfoty;
-  len: dynarraysizety;
- end; //following array data
- pdynarrayheaderty = ^dynarrayheaderty;
- 
-const
- string8headersize = sizeof(string8headerty);
- string8allocsize = string8headersize+1; //terminating #0
- dynarrayheadersize = sizeof(dynarrayheaderty);
- dynarrayallocsize = dynarrayheadersize;
+uses
+ __mla__internaltypes;
 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+//function __mla__initclass(const classinfo: classinfoty): pointer;
 
 implementation
 
@@ -84,5 +47,9 @@ begin
   ref^:= nil;
  end;
 end;
-
+{
+function __mla__initclass(const classinfo: classinfoty): pointer;
+begin
+end;
+}
 end.

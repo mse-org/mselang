@@ -1774,8 +1774,11 @@ end;
 
 procedure initclassop();
 begin
- notimplemented();
+ with pc^.par.initclass do begin
+  notimplemented();
+ end;
 end;
+
 procedure destroyclassop();
 begin
  notimplemented();
