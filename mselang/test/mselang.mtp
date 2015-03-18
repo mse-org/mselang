@@ -1553,7 +1553,7 @@ macrovalues=17
  /home/mse/packs/standard/git/mseide-msegui/
  ${msedir}lib/common/
  -Fu${mselibdir}* -Fu${mselibdir}kernel/linux
- -Fu${mselangdir}
+ -Fu${mselangdir} -Fu${mselangdir}compiler
  /home/mse/packs/standard/git/mselang/mselang/
  ${mselangdir}compiler/mlc ${FILE}
  ${mlc}
