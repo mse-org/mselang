@@ -11,7 +11,7 @@ unit __mla__internaltypes;
 interface 
 
 type
- dataoffsty = ptrint;
+ dataoffsty = int32; //todo: use target size
  ppointer = ^pointer;
 
 type            
@@ -55,9 +55,9 @@ const
 type
  classdefheaderty = record
   parentclass: dataoffsty;
-  allocsize: integer;
-  fieldsize: integer;
-  interfacestart: integer;
+  allocsize: int32;
+  fieldsize: int32;
+  interfacestart: int32;
  end;
  pclassdefheaderty = ^classdefheaderty;
  

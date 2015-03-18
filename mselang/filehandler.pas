@@ -52,6 +52,10 @@ function getunitfile(const aname: lstringty): filenamety;
 begin
  result:= utf8tostring(aname)+'.mla';
  getfile(result);
+ if result = '' then begin
+  result:= utf8tostring(aname)+'.pas';
+  getfile(result);
+ end;
 end;
 
 function getincludefile(const aname: lstringty): filenamety;
