@@ -1565,6 +1565,9 @@ begin
      ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
      ' idx:'+inttostr(tableindex)+' impl:'+inttostr(impl)+
      ' op:'+inttostr(address);
+     if flags * [sf_functiontype,sf_constructor] <> [] then begin
+      mstr1:= mstr1+lineend+' result:'+dumptyp(resulttype);
+     end;
     end;
    end;
    ek_uses: begin
