@@ -515,7 +515,7 @@ var
    int1:= int1+3;
   end;
  end; //doparam
- 
+
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -572,7 +572,8 @@ begin
   if ismethod then begin
    inc(paramco); //self pointer
   end;
-  int2:= paramco*(sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_sub];
+  int2:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + 
+                              elesizes[ek_sub] + elesizes[ek_none];
   ele.checkcapacity(int2); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
