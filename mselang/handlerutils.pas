@@ -1381,6 +1381,11 @@ begin                    //todo: optimize
     if af_paramindirect in d.dat.ref.c.address.flags then begin
      dec(d.dat.indirection);
      dec(d.dat.datatyp.indirectlevel);
+     if d.dat.datatyp.indirectlevel > 0 then begin
+      d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags - 
+                                            [af_aggregate,af_paramindirect];
+                //??? correct?
+     end;
     end;
     if d.dat.indirection > 0 then begin //@ operator
      if d.dat.indirection = 1 then begin

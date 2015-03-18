@@ -249,7 +249,8 @@ end;
 
 procedure loadlocindi();
 begin
- notimplemented(); //not used
+ loadloc();
+ bcstream.emitloadop(bcstream.relval(0));
 end;
 
 procedure compare(const apredicate: predicate);
@@ -2072,15 +2073,15 @@ const
   pushlocf64ssa = 1;
   pushlocssa = 1;
 
-  pushlocindi8ssa = 3;
-  pushlocindi16ssa = 3;
-  pushlocindi32ssa = 3;
-  pushlocindi64ssa = 3;
-  pushlocindipossa = 3;
-  pushlocindif16ssa = 3;
-  pushlocindif32ssa = 3;
-  pushlocindif64ssa = 3;
-  pushlocindissa = 3;
+  pushlocindi8ssa = 2;
+  pushlocindi16ssa = 2;
+  pushlocindi32ssa = 2;
+  pushlocindi64ssa = 2;
+  pushlocindipossa = 2;
+  pushlocindif16ssa = 2;
+  pushlocindif32ssa = 2;
+  pushlocindif64ssa = 2;
+  pushlocindissa = 2;
 
   pushpar8ssa = 1;
   pushpar16ssa = 1;
