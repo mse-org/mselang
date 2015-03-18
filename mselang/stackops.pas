@@ -72,7 +72,7 @@ function getssatable: pssatablety;
 implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
- segmentutils,classhandler,interfacehandler;
+ segmentutils,classhandler,interfacehandler,__mla__internaltypes;
 {
  stackinfoty = record
   case datakindty of

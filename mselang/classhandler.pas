@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob;
+ parserglob,handlerglob,__mla__internaltypes;
 
 type
  classintfnamedataty = record
@@ -32,24 +32,7 @@ type
   intfindex: integer;
  end;
  pclassintftypedataty = ^classintftypedataty;
-   
- classdefheaderty = record
-  parentclass: dataoffsty;
-  allocsize: integer;
-  fieldsize: integer;
-  interfacestart: integer;
- end;
- pclassdefheaderty = ^classdefheaderty;
- 
- classdefinfoty = record
-  header: classdefheaderty;
-  virtualmethods: record //array of targetpointer
-  end;
-  interfaces: record     //array of targetpointer, copied to instance
-  end;  
- end;
- pclassdefinfoty = ^classdefinfoty;
- 
+    
 const 
  virtualtableoffset = sizeof(classdefheaderty);
 

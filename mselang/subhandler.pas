@@ -58,7 +58,7 @@ procedure callinternalsub(const asub: opaddressty); //ignores op address 0
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils,classhandler,opglob,llvmlists;
+ managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes;
 
 type
  equalparaminfoty = record

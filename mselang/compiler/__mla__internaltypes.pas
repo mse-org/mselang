@@ -11,6 +11,7 @@ unit __mla__internaltypes;
 interface 
 
 type
+ dataoffsty = ptrint;
  ppointer = ^pointer;
 
 type            
@@ -43,12 +44,31 @@ type
   len: dynarraysizety;
  end; //following array data
  pdynarrayheaderty = ^dynarrayheaderty;
+
  
 const
  string8headersize = sizeof(string8headerty);
  string8allocsize = string8headersize+1; //terminating #0
  dynarrayheadersize = sizeof(dynarrayheaderty);
  dynarrayallocsize = dynarrayheadersize;
+
+type
+ classdefheaderty = record
+  parentclass: dataoffsty;
+  allocsize: integer;
+  fieldsize: integer;
+  interfacestart: integer;
+ end;
+ pclassdefheaderty = ^classdefheaderty;
+ 
+ classdefinfoty = record
+  header: classdefheaderty;
+  virtualmethods: record //array of targetpointer
+  end;
+  interfaces: record     //array of targetpointer, copied to instance
+  end;  
+ end;
+ pclassdefinfoty = ^classdefinfoty;
 
 implementation
 end.
