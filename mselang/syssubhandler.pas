@@ -28,14 +28,17 @@ procedure handlesizeof(const paramco: integer);
 procedure handleinc(const paramco: integer);
 procedure handledec(const paramco: integer);
 procedure handlegetmem(const paramco: integer);
+procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
+procedure handlesetmem(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
   //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof,
   @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
-  //sf_inc,  sf_dec     sf_getmem,    sf_freemem
-  @handleinc,@handledec,@handlegetmem,@handlefreemem);
+  //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
+  @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
+  @handlesetmem);
   
 procedure init();
 procedure deinit();
@@ -43,7 +46,7 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils,llvmlists;
+ segmentutils,llvmlists,valuehandler;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin
@@ -420,10 +423,11 @@ procedure handlesetlength(const paramco: integer);
 begin
 end;
 
-procedure handlegetmem(const paramco: integer);
+procedure call2param(const paramco: integer; const op: opcodety);
 var
  po1,po2: pcontextitemty;
 begin
+//todo: use getbasevalue
  if checkparamco(2,paramco) then begin
   with info do begin
    po2:= @contextstack[s.stacktop];
@@ -440,7 +444,7 @@ begin
       errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);
       exit;
      end;    
-     with additem(oc_getmem)^ do begin
+     with additem(op)^ do begin
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= po2^.d.dat.fact.ssaindex;
       par.memop.t:= po2^.d.dat.fact.opdatatype;
@@ -449,6 +453,16 @@ begin
    end;
   end;
  end;
+end;
+
+procedure handlegetmem(const paramco: integer);
+begin
+ call2param(paramco,oc_getmem);
+end;
+
+procedure handlegetzeromem(const paramco: integer);
+begin
+ call2param(paramco,oc_getzeromem);
 end;
 
 procedure handlefreemem(const paramco: integer);
@@ -467,6 +481,25 @@ begin
  end;
 end;
  
+procedure handlesetmem(const paramco: integer);
+var
+ po1: pcontextitemty;
+begin
+ with info do begin
+  if checkparamco(3,paramco) and getbasevalue(3,das_pointer) and 
+           getbasevalue(4,das_32) and getbasevalue(5,das_8) then begin
+   with additem(oc_setmem)^ do begin
+    po1:= @contextstack[s.stackindex+3];
+    par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
+    inc(po1);
+    par.ssas2:= po1^.d.dat.fact.ssaindex; //count
+    inc(po1);
+    par.ssas3:= po1^.d.dat.fact.ssaindex; //fill value
+   end;
+  end;
+ end;
+end;
+
 type
  sysfuncinfoty = record
   name: string;
@@ -481,7 +514,9 @@ const
    (name: 'inc'; data: (func: sf_inc)),
    (name: 'dec'; data: (func: sf_dec)),
    (name: 'getmem'; data: (func: sf_getmem)),
-   (name: 'freemem'; data: (func: sf_freemem))
+   (name: 'getzeromem'; data: (func: sf_getzeromem)),
+   (name: 'freemem'; data: (func: sf_freemem)),
+   (name: 'setmem'; data: (func: sf_setmem))
   );
 
 procedure init();

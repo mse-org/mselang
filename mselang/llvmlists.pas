@@ -122,6 +122,8 @@ const
  );
  voidtype = ord(das_none);
  pointertype = ord(das_pointer);
+ bytetype = ord(das_8);
+ inttype = ord(das_32);
 {$if pointersize = 64}
  sizetype = ord(das_64);
 {$else}

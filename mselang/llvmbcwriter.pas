@@ -186,6 +186,7 @@ type
    procedure emitstoreop(const asource: int32; const adest: int32);
 
    procedure emitpushconst(const aconst: llvmconstty);
+   procedure emitpushconstsegad(const aoffset: int32); //2ssa
    
    procedure emitbinop(const aop: BinaryOpcodes; 
                          const valueida: int32; const valueidb: int32);
@@ -1389,6 +1390,11 @@ begin
  checkdebugloc();
  inc(fsubopindex);
 // emitbinop(BINOP_ADD,constval(aconstid),constval(ord(nc_i1)));
+end;
+
+procedure tllvmbcwriter.emitpushconstsegad(const aoffset: int32); //2ssa
+begin
+ emitgetelementptr(constseg,aoffset);
 end;
 
 procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);

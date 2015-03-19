@@ -47,7 +47,7 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf,if_malloc,if_free);
+ internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -62,11 +62,26 @@ const
               (typelistindex: pointertype; flags: [])
  );
  freeparams: paramsty = (count: 1; items: @freepar);
+ callocpar: array[0..2] of paramitemty = (
+              (typelistindex: pointertype; flags: []),
+              (typelistindex: sizetype; flags: []),
+              (typelistindex: sizetype; flags: [])
+ );
+ callocparams: paramsty = (count: 3; items: @mallocpar);
+ memsetpar: array[0..3] of paramitemty = (
+              (typelistindex: pointertype; flags: []), //result
+              (typelistindex: pointertype; flags: []), //data
+              (typelistindex: inttype; flags: []),     //fill value
+              (typelistindex: sizetype; flags: [])     //count
+ );
+ memsetparams: paramsty = (count: 4; items: @memsetpar);
  
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
   (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
   (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
-  (name: 'free'; flags: [sf_proto]; params: @freeparams)
+  (name: 'free'; flags: [sf_proto]; params: @freeparams),
+  (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
+  (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams)
  );
 
 type
@@ -1776,8 +1791,8 @@ end;
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
-  callcompilersub(cs_initclass,true,[bcstream.relval(0)]);
-//  notimplemented();
+  bcstream.emitpushconstsegad(classdef); //2ssa
+  callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
  end;
 end;
 
@@ -1837,11 +1852,30 @@ begin
  end;
 end;
 
+procedure getzeromemop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
+                           [bcstream.ssaval(ssas2),bcstream.constval(1)]);
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
+ end;
+end;
+
 procedure freememop();
 begin
  with pc^.par do begin
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
                                                     [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure setmemop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memset]),
+            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas3),
+                                                    bcstream.ssaval(ssas2)]);
  end;
 end;
 
@@ -2154,7 +2188,9 @@ const
   finiexceptionssa = 1;
   continueexceptionssa = 1;
   getmemssa = 2;
+  getzeromemssa = 2;
   freememssa = 0;
+  setmemssa = 1;
   
   lineinfossa = 0;
 

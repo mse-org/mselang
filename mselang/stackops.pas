@@ -215,7 +215,7 @@ begin
  result:= getmem(size);
 end;
 
-function intgetnulledmem(const size: integer): pointer;
+function intgetzeromem(const size: integer): pointer;
 begin
  result:= getmem(size);
  fillchar(result^,size,0);
@@ -2429,12 +2429,35 @@ begin
  getmem(po1^,int1); //todo: out of memory
 end;
 
+procedure getzeromemop();
+var
+ int1: int32;
+ po1: ppointer;
+begin
+ int1:= pinteger(stackpop(sizeof(int32)))^;
+ po1:= ppointer(stackpop(pointersize))^;
+ po1^:= intgetzeromem(int1);
+// getmem(po1^,int1); //todo: out of memory
+end;
+
 procedure freememop();
 var
  po1: pointer;
 begin
  po1:= ppointer(stackpop(pointersize))^;
  freemem(po1);
+end;
+
+procedure setmemop();
+var
+ po1: pointer;
+ i1: int32;
+ b1: byte;
+begin
+ b1:= pinteger(stackpop(sizeof(int32)))^;
+ i1:= pinteger(stackpop(sizeof(int32)))^;
+ po1:= ppointer(stackpop(pointersize))^;
+ fillchar(po1^,i1,b1);
 end;
 
 procedure lineinfoop();
@@ -2760,7 +2783,9 @@ const
   finiexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 0;
+  getzeromemssa = 0;
   freememssa = 0;
+  setmemssa = 0;
   
   lineinfossa = 0;
 

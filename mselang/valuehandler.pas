@@ -22,7 +22,8 @@ uses
  
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
-
+function getbasevalue(const stackoffset: int32;
+                             const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
 
 implementation
@@ -126,6 +127,35 @@ begin
   if result then begin
    d.dat.datatyp.typedata:= ele.eledatarel(dest);
   end;
+ end;
+end;
+
+function getbasevalue(const stackoffset: int32;
+                         const dest: databitsizety): boolean;
+var
+ po1: ptypedataty;
+begin
+ po1:= getbasetypedata(dest);
+ if info.contextstack[info.s.stackindex+stackoffset].d.kind = 
+                                                        ck_const then begin
+  result:= tryconvert(stackoffset,po1,po1^.indirectlevel);
+  if not result then begin
+   illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
+                       po1,po1^.indirectlevel);
+  end
+  else begin
+   result:= getvalue(stackoffset);
+  end;
+ end
+ else begin
+  result:= getvalue(stackoffset);
+  if result then begin
+   result:= tryconvert(stackoffset,po1,po1^.indirectlevel);
+   if not result then begin
+    illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
+                       po1,po1^.indirectlevel);
+   end;
+  end; 
  end;
 end;
 

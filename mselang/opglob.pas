@@ -366,7 +366,9 @@ type
   oc_continueexception,
   
   oc_getmem,
+  oc_getzeromem,
   oc_freemem,
+  oc_setmem,
 
   oc_lineinfo,
     
@@ -633,10 +635,13 @@ const
 type
                  //todo: unify, variable size
  opparamty = record
-  ssad: integer;
-  ssas1: integer;
-  ssas2: integer;
+  ssad: int32;
+  ssas1: int32;
+  ssas2: int32;
   case opcodety of 
+   oc_setmem: (
+    ssas3: int32;
+   );
    oc_beginparse: (
     beginparse: beginparseinfoty;
    );

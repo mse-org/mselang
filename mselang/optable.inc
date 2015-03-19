@@ -317,7 +317,9 @@
   finiexceptionssa,
   continueexceptionssa,
   getmemssa,
+  getzeromemssa,
   freememssa,
+  setmemssa,
   lineinfossa,
 
 //ssaonly
@@ -637,7 +639,9 @@
   @continueexceptionop,
 
   @getmemop,
+  @getzeromemop,
   @freememop,
+  @setmemop,
  
   @lineinfoop,
    
