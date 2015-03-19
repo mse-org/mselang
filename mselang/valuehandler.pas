@@ -329,6 +329,9 @@ var
       if sf_constructor in asub^.flags then begin //???? where in llvm?
        with additem(oc_initclass)^,par.initclass do begin
         classdef:= po3^.infoclass.defs.address;
+        if backend = bke_llvm then begin
+         classdef:= constlist.adddataoffs(classdef).listid;
+        end;
        end;
       end
       else begin

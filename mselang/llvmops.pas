@@ -1946,19 +1946,19 @@ const
   offsetpoimm32ssa = 1;
 
   incdecsegimmint32ssa = 2;
-  incdecsegimmpo32ssa = 2;
+  incdecsegimmpo32ssa = 3;
 
   incdeclocimmint32ssa = 2;
-  incdeclocimmpo32ssa = 2;
+  incdeclocimmpo32ssa = 3;
 
   incdecparimmint32ssa = 2;
-  incdecparimmpo32ssa = 2;
+  incdecparimmpo32ssa = 3;
 
   incdecparindiimmint32ssa = 3;
-  incdecparindiimmpo32ssa = 3;
+  incdecparindiimmpo32ssa = 4;
 
   incdecindiimmint32ssa = 3;
-  incdecindiimmpo32ssa = 3;
+  incdecindiimmpo32ssa = 4;
 
   cmpeqpossa = 1;
   cmpeqboolssa = 1;
