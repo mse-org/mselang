@@ -427,14 +427,13 @@ procedure call2param(const paramco: integer; const op: opcodety);
 var
  po1,po2: pcontextitemty;
 begin
-//todo: use getbasevalue
  if checkparamco(2,paramco) then begin
   with info do begin
    po2:= @contextstack[s.stacktop];
    po1:= po2-1;
    with po1^ do begin
     if getaddress(s.stacktop-s.stackindex-1,true) and
-                    getvalue(s.stacktop-s.stackindex) then begin
+                    getbasevalue(s.stacktop-s.stackindex,das_32) then begin
      if d.dat.datatyp.indirectlevel <= 0 then begin
       errormessage(err_pointertypeexpected,[]);
       exit;
@@ -467,15 +466,13 @@ end;
 
 procedure handlefreemem(const paramco: integer);
 begin
- if checkparamco(1,paramco) then begin
-  with info,contextstack[s.stacktop] do begin
-   getvalue(s.stacktop-s.stackindex);
-   if d.dat.datatyp.indirectlevel <= 0 then begin
-    errormessage(err_pointertypeexpected,[]);
-    exit;
-   end;
-   with additem(oc_freemem)^ do begin
-    par.ssas1:= info.s.ssa.index-1;
+ with info do begin
+  if checkparamco(1,paramco) and 
+          getbasevalue(s.stacktop-s.stackindex,das_pointer) then begin
+   with contextstack[s.stacktop] do begin
+    with additem(oc_freemem)^ do begin
+     par.ssas1:= info.s.ssa.index-1;
+    end;
    end;
   end;
  end;
@@ -484,10 +481,12 @@ end;
 procedure handlesetmem(const paramco: integer);
 var
  po1: pcontextitemty;
+ i1: int32;
 begin
  with info do begin
-  if checkparamco(3,paramco) and getbasevalue(3,das_pointer) and 
-           getbasevalue(4,das_32) and getbasevalue(5,das_8) then begin
+  i1:= s.stacktop-s.stackindex;
+  if checkparamco(3,paramco) and getbasevalue(i1-2,das_pointer) and 
+           getbasevalue(i1-1,das_32) and getbasevalue(i1,das_32) then begin
    with additem(oc_setmem)^ do begin
     po1:= @contextstack[s.stackindex+3];
     par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
