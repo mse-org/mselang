@@ -649,7 +649,7 @@ begin
   result:= high(card8)+1+aindex
  end
  else begin
-  result:= addi32(aindex+pointersize).listid;
+  result:= addi32(aindex*pointersize).listid;
   if result = count-1 then begin
    internalerror1(ie_llvmlist,'20150225');
   end;

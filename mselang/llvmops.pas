@@ -41,6 +41,8 @@ type
  idsarty = array[0..maxparamcount-1] of int32;
 var
  pc: popinfoty;
+ i32consts: array[0..32] of int32;
+ 
 type
  internalfuncinfoty = record
   name: string;
@@ -311,6 +313,9 @@ var
  strings1: internalstringty;
  compilersub1: compilersubty;
 begin
+ for int1:= low(i32consts) to high(i32consts) do begin
+  i32consts[int1]:= constlist.addi32(int1).listid;
+ end;
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   bcstream.constseg:= globlist.addinitvalue(gak_var,
@@ -1856,7 +1861,7 @@ procedure getzeromemop();
 begin
  with pc^.par do begin
   bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
-                           [bcstream.ssaval(ssas2),bcstream.constval(1)]);
+                           [bcstream.ssaval(ssas2),i32consts[1]]);
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
