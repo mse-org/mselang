@@ -1394,7 +1394,7 @@ end;
 
 procedure tllvmbcwriter.emitpushconstsegad(const aoffset: int32); //2ssa
 begin
- emitgetelementptr(constseg,aoffset);
+ emitgetelementptr(globval(constseg),aoffset);
 end;
 
 procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);
