@@ -49,10 +49,20 @@ begin
 end;
 
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
+var
+ ps,pd,pe: popaddressty;
 begin
  writeln(@classinfo);
  writeln(classinfo.header.allocsize);
  getzeromem(result,classinfo.header.allocsize);
+ pd:= result + classinfo.header.fieldsize; //copy interface table
+ pe:= result + classinfo.header.allocsize;
+ ps:= @classinfo + classinfo.header.interfacestart;
+ while pd < pe do begin
+  pd^:= ps^;
+  inc(pd);
+  inc(ps);
+ end;
  writeln(result);
 end;
 

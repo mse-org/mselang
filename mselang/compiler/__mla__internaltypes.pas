@@ -57,7 +57,7 @@ type
   parentclass: dataoffsty;
   allocsize: int32;
   fieldsize: int32;
-  interfacestart: int32;
+  interfacestart: int32; //offset in classdefheaderty
  end;
  pclassdefheaderty = ^classdefheaderty;
  

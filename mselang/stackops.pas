@@ -221,7 +221,7 @@ begin
  fillchar(result^,size,0);
 end;
 
-function intgetnulledmem(const allocsize: integer;
+function intgetzeroedmem(const allocsize: integer;
                            const nullsize: integer): pointer;
 begin
  result:= getmem(allocsize);
@@ -1902,7 +1902,7 @@ begin
                                                         initclass.classdef);
   self1:= stackpush(pointersize);
 //  po2:= self1^;  //class type
-  po1:= intgetnulledmem(po2^.header.allocsize,po2^.header.fieldsize);
+  po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
   ppointer(po1)^:= po2;    //class type info
   self1^:= po1;            //class instance
   ppointer(cpu.stack-2*pointersize)^:= po1; //result
