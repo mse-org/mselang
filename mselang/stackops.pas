@@ -618,6 +618,15 @@ begin
  vintegerty(po2^):= vintegerty(po2^)+vintegerty(po1^);
 end;
 
+procedure subint32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^)-vintegerty(po1^);
+end;
+
 procedure addpoint32op();
 var
  po1,po2: pointer;
@@ -956,6 +965,15 @@ begin
  po1:= stackpop(sizeof(vfloatty));
  po2:= po1-alignsize(sizeof(vfloatty));
  vfloatty(po2^):= vfloatty(po2^)+vfloatty(po1^);
+end;
+
+procedure subflo64op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vfloatty));
+ po2:= po1-alignsize(sizeof(vfloatty));
+ vfloatty(po2^):= vfloatty(po2^)-vfloatty(po1^);
 end;
 
 procedure negcard32op();
@@ -2533,8 +2551,10 @@ const
   mulint32ssa = 0;
   mulflo64ssa = 0;
   addint32ssa = 0;
+  subint32ssa = 0;
   addpoint32ssa = 0;
   addflo64ssa = 0;
+  subflo64ssa = 0;
 
   addimmint32ssa = 0;
   mulimmint32ssa = 0;

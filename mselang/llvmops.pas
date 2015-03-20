@@ -561,6 +561,11 @@ begin
  outbinop(BINOP_ADD);
 end;
 
+procedure subint32op();
+begin
+ outbinop(BINOP_SUB);
+end;
+
 procedure addpoint32op();
 begin
  notimplemented();
@@ -575,10 +580,17 @@ procedure addimmint32op();
 begin
  notimplemented();
 end;
+
 procedure addflo64op();
 begin
  notimplemented();
 end;
+
+procedure subflo64op();
+begin
+ notimplemented();
+end;
+
 procedure negcard32op();
 begin
  notimplemented();
@@ -1943,8 +1955,10 @@ const
   mulint32ssa = 1;
   mulflo64ssa = 1;
   addint32ssa = 1;
+  subint32ssa = 1;
   addpoint32ssa = 1;
   addflo64ssa = 1;
+  subflo64ssa = 1;
 
   addimmint32ssa = 1;
   mulimmint32ssa = 1;

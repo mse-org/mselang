@@ -109,6 +109,7 @@ procedure handlefact2entry();
 procedure handleterm();
 procedure handledereference();
 procedure handleaddterm();
+procedure handlesubterm();
 procedure handlebracketend();
 procedure handlesimpexp();
 procedure handlesimpexp1();
@@ -717,31 +718,42 @@ begin
 {$endif}
  updateop(mulops);
 end;
-
+//todo: different datasizes
 const
  addops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_addint32,oc_addflo64);
                      opname: '+');
+ subops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_subint32,oc_subflo64);
+                     opname: '+');
 
-procedure handleaddterm();
+procedure addsubterm(const issub: boolean);
  
 var 
  dk1: stackdatakindty;
 begin
-{$ifdef mse_debugparser}
- outhandle('ADDTERM');
-{$endif}
  with info,contextstack[s.stacktop-2] do begin
   if (contextstack[s.stacktop].d.kind = ck_const) and 
               (d.kind = ck_const) then begin
    dk1:= convertconsts();
    case dk1 of
     sdk_int32: begin
-     d.dat.constval.vinteger:= d.dat.constval.vinteger + 
+     if issub then begin
+      d.dat.constval.vinteger:= d.dat.constval.vinteger -
                contextstack[s.stacktop].d.dat.constval.vinteger;
+     end
+     else begin
+      d.dat.constval.vinteger:= d.dat.constval.vinteger + 
+               contextstack[s.stacktop].d.dat.constval.vinteger;
+     end;
     end;
     sdk_flo64: begin
-     d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+     if issub then begin
+      d.dat.constval.vfloat:= d.dat.constval.vfloat + 
                             contextstack[s.stacktop].d.dat.constval.vfloat;
+     end
+     else begin
+      d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+                            contextstack[s.stacktop].d.dat.constval.vfloat;
+     end;
     end;
     else begin
      operationnotsupportederror(d,contextstack[s.stacktop].d,'+');
@@ -751,9 +763,30 @@ begin
    s.stackindex:= s.stacktop-1;
   end
   else begin
-   updateop(addops);
+   if issub then begin
+    updateop(subops);
+   end
+   else begin
+    updateop(addops);
+   end;
   end;
  end;
+end;
+
+procedure handleaddterm();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ADDTERM');
+{$endif}
+ addsubterm(false);
+end;
+
+procedure handlesubterm();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBTERM');
+{$endif}
+ addsubterm(true);
 end;
 
 procedure handleterm();

@@ -646,10 +646,14 @@ simpexp,simpexp1,,
 simpexp1,simpexp1,,
  ${whitespace}
  '+',addterm-*
+ '-',subterm-*
  '',simpexp1a
 simpexp1a,,,handlesimpexp1
 
 addterm,,,handleaddterm
+ '',term*
+
+subterm,,,handlesubterm
  '',term*
 
 term,term1,,

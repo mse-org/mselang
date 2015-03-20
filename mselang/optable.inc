@@ -67,8 +67,10 @@
   mulint32ssa,
   mulflo64ssa,
   addint32ssa,
+  subint32ssa,
   addpoint32ssa,
   addflo64ssa,
+  subflo64ssa,
 
   addimmint32ssa,
   mulimmint32ssa,
@@ -388,8 +390,10 @@
   @mulint32op,
   @mulflo64op,
   @addint32op,
+  @subint32op,
   @addpoint32op,
   @addflo64op,
+  @subflo64op,
 
   @addimmint32op,
   @mulimmint32op,

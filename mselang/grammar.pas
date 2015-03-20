@@ -1167,6 +1167,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'addterm');
+ subtermco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subterm');
  termco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -5660,7 +5665,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsimpexp1: array[0..7] of branchty = (
+ bsimpexp1: array[0..8] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5703,6 +5708,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @subtermco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['-']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @simpexp1aco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -5713,6 +5725,16 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  baddterm: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @termco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bsubterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @termco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
@@ -7292,6 +7314,8 @@ begin
  simpexp1aco.handleexit:= @handlesimpexp1;
  addtermco.branch:= @baddterm;
  addtermco.handleexit:= @handleaddterm;
+ subtermco.branch:= @bsubterm;
+ subtermco.handleexit:= @handlesubterm;
  termco.branch:= @bterm;
  termco.next:= @term1co;
  term1co.branch:= @bterm1;

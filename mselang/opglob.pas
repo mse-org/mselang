@@ -115,8 +115,10 @@ type
   oc_mulint32,
   oc_mulflo64,
   oc_addint32,
+  oc_subint32,
   oc_addpoint32,
   oc_addflo64,
+  oc_subflo64,
 
   oc_addimmint32,
   oc_mulimmint32,
