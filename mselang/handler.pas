@@ -723,12 +723,28 @@ const
  addops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_addint32,oc_addflo64);
                      opname: '+');
  subops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_subint32,oc_subflo64);
-                     opname: '+');
+                     opname: '-');
 
 procedure addsubterm(const issub: boolean);
  
+ procedure opnotsupported();
+ var
+  ch1: char;
+ begin
+  with info,contextstack[s.stacktop-2] do begin
+   if issub then begin
+    ch1:= '-';
+   end
+   else begin
+    ch1:= '+';
+   end;
+   operationnotsupportederror(d,contextstack[s.stacktop].d,ch1);
+  end;
+ end; //opnotsupported
+ 
 var 
  dk1: stackdatakindty;
+ i1: int32;
 begin
  with info,contextstack[s.stacktop-2] do begin
   if (contextstack[s.stacktop].d.kind = ck_const) and 
@@ -756,18 +772,48 @@ begin
      end;
     end;
     else begin
-     operationnotsupportederror(d,contextstack[s.stacktop].d,'+');
+     opnotsupported();
     end;
    end;
    dec(s.stacktop,2);
    s.stackindex:= s.stacktop-1;
   end
   else begin
-   if issub then begin
-    updateop(subops);
+  {$ifdef mse_debugparser}
+   if not (d.kind in datacontexts) or 
+             not (contextstack[s.stacktop].d.kind in datacontexts)then begin
+    internalerror(ie_handler,'20150320B');
+   end;
+  {$endif}
+   if d.dat.datatyp.indirectlevel > 0 then begin
+    i1:= contextstack[s.stacktop].d.dat.datatyp.indirectlevel;
+    if d.dat.datatyp.indirectlevel = i1 then begin
+                                                                //pointer diff
+     if not issub then begin
+      opnotsupported();
+     end
+     else begin
+      notimplementederror('20150320D');
+     end;
+    end
+    else begin
+     if i1 = 0 then begin  //inc/dec
+      notimplementederror('20150320C');
+     end
+     else begin
+      opnotsupported();
+     end;
+    end;
+    dec(s.stacktop,2);
+    s.stackindex:= s.stacktop-1;
    end
    else begin
-    updateop(addops);
+    if issub then begin
+     updateop(subops);
+    end
+    else begin
+     updateop(addops);
+    end;
    end;
   end;
  end;
