@@ -54,66 +54,74 @@ var
  ident1: identty;
  ele1: elementoffsetty;
  bo1: boolean;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex < 2) or 
-            (contextstack[s.stackindex+2].d.kind <> ck_fieldtype) then begin
+  if (s.stacktop-s.stackindex < 3) or 
+            (contextstack[s.stacktop].d.kind <> ck_fieldtype) then begin
    internalerror(ie_handler,'20140325B');
   end;
  {$endif}
-  ident1:= contextstack[s.stackindex+1].d.ident.ident;
-  bo1:= false;
-  if (currentcontainer = 0) or not ele.findchild(info.currentcontainer,ident1,
-                                                   [],allvisi,ele1) then begin
-   if sublevel > 0 then begin
-    ele.checkcapacity(elesizes[ek_var]); //no change by addvar
-    po3:= @(psubdataty(ele.parentdata)^.varchain);
+  for i1:= s.stackindex+2 to s.stacktop - 1 do begin
+ {$ifdef mse_checkinternalerror}
+   if contextstack[i1].d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20150320A0');
+   end;
+ {$endif}
+   ident1:= contextstack[i1].d.ident.ident;
+   bo1:= false;
+   if (currentcontainer = 0) or not ele.findchild(info.currentcontainer,ident1,
+                                                    [],allvisi,ele1) then begin
+    if sublevel > 0 then begin
+     ele.checkcapacity(elesizes[ek_var]); //no change by addvar
+     po3:= @(psubdataty(ele.parentdata)^.varchain);
+    end
+    else begin
+     po3:= @s.unitinfo^.varchain;
+    end;
+    bo1:= addvar(ident1,allvisi,po3^,po1);
+ //   po1:= ele.addelement(ident1,allvisi,ek_var);
+   end;
+   if not bo1 then begin //duplicate
+    identerror(i1-s.stackindex,err_duplicateidentifier);
    end
    else begin
-    po3:= @s.unitinfo^.varchain;
-   end;
-   bo1:= addvar(ident1,allvisi,po3^,po1);
-//   po1:= ele.addelement(ident1,allvisi,ek_var);
-  end;
-  if not bo1 then begin //duplicate
-   identerror(1,err_duplicateidentifier);
-  end
-  else begin
-   with po1^ do begin
-    address.flags:= [];
-    vf.typ:= contextstack[s.stackindex+2].d.typ.typedata;
-    po2:= ele.eleinfoabs(vf.typ);
-    address.indirectlevel:= contextstack[s.stackindex+2].d.typ.indirectlevel;
-    with ptypedataty(@po2^.data)^ do begin
-//     address.indirectlevel:= address.indirectlevel+indirectlevel;
-     datasize1:= datasize;
-     if kind in pointervarkinds then begin
-      inc(address.indirectlevel);
-     end;
-     if address.indirectlevel = 0 then begin
-      size1:= bytesize;
-      if tf_hasmanaged in flags then begin
-       include(s.currentstatementflags,stf_hasmanaged);
-       include(vf.flags,tf_hasmanaged);
+    with po1^ do begin
+     address.flags:= [];
+     vf.typ:= contextstack[s.stacktop].d.typ.typedata;
+     po2:= ele.eleinfoabs(vf.typ);
+     address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
+     with ptypedataty(@po2^.data)^ do begin
+ //     address.indirectlevel:= address.indirectlevel+indirectlevel;
+      datasize1:= datasize;
+      if kind in pointervarkinds then begin
+       inc(address.indirectlevel);
       end;
-     end
-     else begin
-      size1:= pointersize;
-     end;
-     if sublevel = 0 then begin
-      if address.indirectlevel > 0 then begin
-       datasize1:= das_pointer;
-       include(address.flags,af_segmentpo);
+      if address.indirectlevel = 0 then begin
+       size1:= bytesize;
+       if tf_hasmanaged in flags then begin
+        include(s.currentstatementflags,stf_hasmanaged);
+        include(vf.flags,tf_hasmanaged);
+       end;
+      end
+      else begin
+       size1:= pointersize;
       end;
-      address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
-     end
-     else begin
-      address.locaddress:= getlocvaraddress(datasize1,size1,address.flags,
-                                                                 -frameoffset);
+      if sublevel = 0 then begin
+       if address.indirectlevel > 0 then begin
+        datasize1:= das_pointer;
+        include(address.flags,af_segmentpo);
+       end;
+       address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
+      end
+      else begin
+       address.locaddress:= getlocvaraddress(datasize1,size1,address.flags,
+                                                                  -frameoffset);
+      end;
      end;
     end;
    end;

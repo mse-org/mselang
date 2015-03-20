@@ -49,9 +49,10 @@ begin
 end;
 
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
-var
- ps,pd,pe: popaddressty;
+//var
+// ps,pd,pe: popaddressty;
 begin
+{
  writeln(@classinfo);
  writeln(classinfo.header.allocsize);
  getzeromem(result,classinfo.header.allocsize);
@@ -64,6 +65,7 @@ begin
   inc(ps);
  end;
  writeln(result);
+}
 end;
 
 end.

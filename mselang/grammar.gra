@@ -522,7 +522,7 @@ var,,,*>
  ${blockswitch}
  '',var0*^
 var0,var1,,
- @identstart,ident^*
+ @identstart,commaidents^*
 var1,,handlevardefstart,
  ${whitespace}
  ':',var2-
