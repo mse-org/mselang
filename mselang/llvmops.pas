@@ -1963,7 +1963,7 @@ const
   incdecparindiimmpo32ssa = 4;
 
   incdecindiimmint32ssa = 3;
-  incdecindiimmpo32ssa = 4;
+  incdecindiimmpo32ssa = 3;
 
   cmpeqpossa = 1;
   cmpeqboolssa = 1;
