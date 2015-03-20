@@ -1,0 +1,16 @@
+program recindi;
+
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+var
+ rec1: recty;
+ po1: ^recty;
+begin
+ rec1.a:= 1;
+ po1:= @rec1;
+ po1^.b:= 122;
+ exitcode:= po1^.b+rec1.a;
+end.

@@ -1,0 +1,13 @@
+program varparload;
+
+procedure test(var p1: int32);
+begin
+ exitcode:= p1;
+end;
+
+var
+ i1: int32;
+begin
+ i1:= 123;
+ test(i1);
+end.

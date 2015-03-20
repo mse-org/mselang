@@ -6,4 +6,4 @@
 *.rst
 *.bc
 *.ll
-*.mlr
+*.mli

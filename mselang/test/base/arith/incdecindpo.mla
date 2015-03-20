@@ -1,0 +1,10 @@
+program incdecindpo;
+var
+ po1: pointer;
+ po2: ^pointer;
+
+begin
+ po2:= @po1;
+ inc(po2^);
+ exitcode:= int32(po1);
+end.

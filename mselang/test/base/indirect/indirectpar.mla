@@ -1,0 +1,10 @@
+program indirectpar;
+
+procedure test(p1: ^int32);
+begin
+ p1^:= 123;
+end;
+
+begin
+ test(@exitcode);
+end.

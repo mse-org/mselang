@@ -1,0 +1,19 @@
+program varparrec;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+
+procedure test(var p1: recty);
+begin
+ p1.b:= 122;
+end;
+
+var
+ r1: recty;
+begin
+ r1.a:= 1;
+ test(r1);
+ exitcode:= r1.a+r1.b;
+end.

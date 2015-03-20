@@ -1,0 +1,10 @@
+program varpar;
+
+procedure test(var p1: int32);
+begin
+ p1:= 123;
+end;
+
+begin
+ test(exitcode);
+end.

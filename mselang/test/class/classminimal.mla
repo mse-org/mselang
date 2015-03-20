@@ -1,0 +1,42 @@
+program classminimal;
+
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+
+ ttest = class
+  public
+   ff: recty;
+   constructor create();
+   destructor destroy();
+   procedure test();
+
+ end;
+
+var
+ i1: int32;
+ c1: ttest;
+
+constructor ttest.create();
+begin
+ ff.a:= 1;
+ ff.b:= 121;
+end;
+
+destructor ttest.destroy();
+begin
+ exitcode:= ff.a+ff.b;
+end;
+
+procedure ttest.test();
+begin
+ ff.b:= ff.a+ff.b;
+end;
+
+begin
+ c1:= ttest.create();
+ c1.test();
+ c1.destroy();
+end.

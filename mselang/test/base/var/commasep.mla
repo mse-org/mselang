@@ -1,0 +1,10 @@
+program classminimal;
+
+var
+ i1,i2: int32;
+
+begin
+ i1:= 122;
+ i2:= 1;
+ exitcode:= i1+i2;
+end.

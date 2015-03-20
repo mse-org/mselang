@@ -1,0 +1,20 @@
+program parrecindi;
+
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+ 
+procedure test(p1: ^recty);
+begin
+ exitcode:= p1^.a + p1^.b;
+end;
+
+var
+ rec1: recty;
+begin
+ rec1.a:= 1;
+ rec1.b:= 122;
+ test(@rec1);
+end.

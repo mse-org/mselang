@@ -1,0 +1,18 @@
+program indirectloc;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+ precty = ^recty;
+var
+ r1: recty;
+ po1: precty;
+ po2: ^precty;
+
+begin
+ po1:= @r1;
+ po2:= @po1;
+ po2^^.b:= 123; 
+ exitcode:= po2^^.b;
+end.
