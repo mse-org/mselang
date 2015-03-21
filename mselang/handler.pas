@@ -1020,7 +1020,7 @@ const
 
 procedure handlefact();
 var
- int1: integer;
+ i1: integer;
  c1: card64;
  fl1: factflagsty;
 begin
@@ -1062,7 +1062,9 @@ begin
       end;
       ck_ref: begin
        inc(d.dat.indirection);
-       inc(d.dat.datatyp.indirectlevel);
+       i1:= (d.dat.datatyp.indirectlevel+1);
+       d.dat.datatyp:= sysdatatypes[st_pointer];
+       d.dat.datatyp.indirectlevel:= i1;
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
