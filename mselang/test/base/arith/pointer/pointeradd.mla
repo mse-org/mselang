@@ -1,0 +1,10 @@
+program pointeradd;
+var
+ po1: pointer;
+ i1: int32;
+begin
+ i1:= 125;
+ po1:= po1+i1;
+ po1:= po1-2;
+ exitcode:= int32(po1);
+end.

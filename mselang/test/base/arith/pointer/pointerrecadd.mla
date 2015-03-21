@@ -1,0 +1,15 @@
+program pointerrecadd;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+var
+ po1: ^recty;
+ i1: int32;
+begin
+ i1:= 10;
+ po1:= po1+i1;
+ po1:= po1-2;
+ exitcode:= int32(po1)+123-64;
+end.

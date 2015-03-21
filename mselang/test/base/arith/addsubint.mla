@@ -1,0 +1,8 @@
+program addsubint;
+var
+ i1,i2: int32;
+begin
+ i1:= 2;
+ i2:= 125;
+ exitcode:= i2+i2-i1-i2;
+end.
