@@ -744,62 +744,39 @@ procedure addsubterm(const issub: boolean);
  
 var 
  dk1: stackdatakindty;
- i1: int32;
+ i1,i2: int32;
+ poa,pob: pcontextitemty;
+label
+ errlab;
 begin
- with info,contextstack[s.stacktop-2] do begin
-  if (contextstack[s.stacktop].d.kind = ck_const) and 
-              (d.kind = ck_const) then begin
-   dk1:= convertconsts();
-   case dk1 of
-    sdk_int32: begin
-     if issub then begin
-      d.dat.constval.vinteger:= d.dat.constval.vinteger -
-               contextstack[s.stacktop].d.dat.constval.vinteger;
-     end
-     else begin
-      d.dat.constval.vinteger:= d.dat.constval.vinteger + 
-               contextstack[s.stacktop].d.dat.constval.vinteger;
+ with info do begin
+  poa:= @contextstack[s.stacktop-2];
+  pob:= @contextstack[s.stacktop];
+  with poa^ do begin
+   if (pob^.d.kind = ck_const) and 
+               (d.kind = ck_const) then begin
+    dk1:= convertconsts();
+    case dk1 of
+     sdk_int32: begin
+      if issub then begin
+       d.dat.constval.vinteger:= d.dat.constval.vinteger -
+                pob^.d.dat.constval.vinteger;
+      end
+      else begin
+       d.dat.constval.vinteger:= d.dat.constval.vinteger + 
+                pob^.d.dat.constval.vinteger;
+      end;
      end;
-    end;
-    sdk_flo64: begin
-     if issub then begin
-      d.dat.constval.vfloat:= d.dat.constval.vfloat + 
-                            contextstack[s.stacktop].d.dat.constval.vfloat;
-     end
-     else begin
-      d.dat.constval.vfloat:= d.dat.constval.vfloat + 
-                            contextstack[s.stacktop].d.dat.constval.vfloat;
+     sdk_flo64: begin
+      if issub then begin
+       d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+                             pob^.d.dat.constval.vfloat;
+      end
+      else begin
+       d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+                             pob^.d.dat.constval.vfloat;
+      end;
      end;
-    end;
-    else begin
-     opnotsupported();
-    end;
-   end;
-   dec(s.stacktop,2);
-   s.stackindex:= s.stacktop-1;
-  end
-  else begin
-  {$ifdef mse_debugparser}
-   if not (d.kind in datacontexts) or 
-             not (contextstack[s.stacktop].d.kind in datacontexts)then begin
-    internalerror(ie_handler,'20150320B');
-   end;
-  {$endif}
-   if d.dat.datatyp.indirectlevel > 0 then begin
-    i1:= contextstack[s.stacktop].d.dat.datatyp.indirectlevel;
-    if d.dat.datatyp.indirectlevel = i1 then begin
-                                                                //pointer diff
-     if not issub then begin
-      opnotsupported();
-     end
-     else begin
-      notimplementederror('20150320D');
-     end;
-    end
-    else begin
-     if i1 = 0 then begin  //inc/dec
-      notimplementederror('20150320C');
-     end
      else begin
       opnotsupported();
      end;
@@ -808,15 +785,104 @@ begin
     s.stackindex:= s.stacktop-1;
    end
    else begin
-    if issub then begin
-     updateop(subops);
+   {$ifdef mse_debugparser}
+    if not (d.kind in datacontexts) or 
+              not (pob^.d.kind in datacontexts)then begin
+     internalerror(ie_handler,'20150320B');
+    end;
+   {$endif}
+    if d.dat.datatyp.indirectlevel > 0 then begin //pointer math
+     i1:= pob^.d.dat.datatyp.indirectlevel;
+     if d.dat.datatyp.indirectlevel = i1 then begin
+                                                                 //pointer diff
+      if not issub then begin
+       opnotsupported();
+      end
+      else begin
+       notimplementederror('20150320D');
+      end;
+     end
+     else begin
+      if d.dat.datatyp.indirectlevel > 1 then begin
+       i2:= pointersize;
+      end
+      else begin
+       with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+        if datasize = das_pointer then begin
+         i2:= 1;
+        end
+        else begin
+         i2:= bytesize;
+        end;
+       end;
+      end;
+      if i1 = 0 then begin  //inc/dec
+       if pob^.d.kind = ck_const then begin
+        if pob^.d.dat.constval.kind <> dk_integer then begin
+         opnotsupported();
+         goto errlab;
+        end
+        else begin
+         if issub then begin
+          pob^.d.dat.constval.vinteger:= -pob^.d.dat.constval.vinteger;
+         end;
+         pob^.d.dat.constval.vinteger:= pob^.d.dat.constval.vinteger*i2;
+         i2:= s.stacktop-s.stackindex-2;
+         getvalue(i2);
+         i1:= d.dat.fact.ssaindex;
+         with additem(oc_offsetpoimm32)^ do begin
+          par.imm.vint32:= pob^.d.dat.constval.vinteger;
+          if backend = bke_llvm then begin
+           par.imm.llvm:= constlist.addi32(par.imm.vint32);
+          end;
+          par.ssas1:= i1;
+         end;
+        end;
+       end
+       else begin
+        i1:= s.stacktop-s.stackindex;
+        if getvalue(s.stacktop-s.stackindex-2) and getvalue(i1) then begin
+         if tryconvert(i1,st_int32) then begin //todo: data size
+          i1:= pob^.d.dat.fact.ssaindex;
+          if i2 <> 1 then begin
+           with additem(oc_mulimmint32)^ do begin
+            par.imm.vint32:= i2;
+            par.ssas1:= i1;
+           end;
+           i1:= s.ssa.nextindex-1;
+          end;
+          with additem(oc_addpoint32)^ do begin
+           par.ssas1:= d.dat.fact.ssaindex;
+           par.ssas2:= i1;
+          end;
+          pob^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+         end
+         else begin
+          opnotsupported();
+         end;
+        end;
+       end;
+      end
+      else begin
+       opnotsupported();
+      end;
+     end;
+ errlab:
+     dec(s.stacktop,2);
+     s.stackindex:= s.stacktop-1;
     end
     else begin
-     updateop(addops);
+     if issub then begin
+      updateop(subops);
+     end
+     else begin
+      updateop(addops);
+     end;
     end;
    end;
   end;
  end;
+// outhandle('ADDSUBTERM2');
 end;
 
 procedure handleaddterm();
@@ -1926,7 +1992,6 @@ begin
    if not getaddress(1,false) or not getvalue(2) then begin
     goto endlab;
    end;
-   ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //source
    with contextstack[s.stackindex+1] do begin //dest address
     typematch:= false;
     indi:= false;
@@ -1955,13 +2020,6 @@ begin
      ck_ref{const}: begin
       dest.address:= d.dat.ref.c.address;
       dest.offset:= d.dat.ref.offset;
-     {$ifdef mse_locvarssatracking}
-      if (af_param in dest.address.flags) and 
-                      (d.dat.ref.c.varele <> 0) then begin
-       pvardataty(ele.eledataabs(d.dat.ref.c.varele))^.
-                                   address.locaddress.ssaindex:= ssa1;
-      end;
-     {$endif}
       typematch:= true;
      end;
      ck_fact,ck_subres: begin
@@ -1988,6 +2046,7 @@ begin
      assignmenterror(contextstack[s.stacktop].d,dest);
     end
     else begin
+     ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //source
      if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
       ad1.base:= ab_stack;
       if datasi1 = das_pointer then begin

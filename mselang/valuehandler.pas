@@ -22,6 +22,7 @@ uses
  
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; const destindirectlevel: integer): boolean;
+function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
@@ -127,6 +128,13 @@ begin
   if result then begin
    d.dat.datatyp.typedata:= ele.eledatarel(dest);
   end;
+ end;
+end;
+
+function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
+begin
+ with sysdatatypes[dest] do begin
+  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel);
  end;
 end;
 

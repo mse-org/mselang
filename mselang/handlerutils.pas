@@ -23,8 +23,6 @@ uses
 type
  datasizetyxx = type integer;
  
- systypety = (st_none,st_pointer,st_bool1,st_int8,st_int16,st_int32,st_int64,
-              st_float64,st_string8);
  systypeinfoty = record
   name: string;
   data: typedataty;

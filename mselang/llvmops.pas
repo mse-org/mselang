@@ -568,10 +568,8 @@ end;
 
 procedure addpoint32op();
 begin
- notimplemented();
  with pc^.par do begin
-//  outass('%'+inttostr(ssad)+' = getelementptr i8* %'+inttostr(ssas1)+
-//         ', i32 %'+inttostr(ssas2));
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
  end;
 end;
 
@@ -606,7 +604,10 @@ end;
 
 procedure offsetpoimm32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),
+                                    bcstream.constval(imm.llvm.listid));
+ end;
 end;
 
 procedure incdecsegimmint32op();
@@ -1956,7 +1957,7 @@ const
   mulflo64ssa = 1;
   addint32ssa = 1;
   subint32ssa = 1;
-  addpoint32ssa = 1;
+  addpoint32ssa = 2;
   addflo64ssa = 1;
   subflo64ssa = 1;
 
