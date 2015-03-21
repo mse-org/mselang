@@ -544,10 +544,9 @@ end;
 
 procedure mulimmint32op();
 begin
- notimplemented();
  with pc^.par do begin
-//  outass('%'+inttostr(ssad)+' = mul i32 %'+inttostr(ssas1)+
-//         ', '+inttostr(imm.vint32));
+  bcstream.emitbinop(BINOP_MUL,bcstream.ssaval(ssas1),
+                                    bcstream.constval(imm.llvm.listid));
  end;
 end;
 

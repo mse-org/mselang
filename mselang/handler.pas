@@ -841,9 +841,11 @@ begin
          getvalue(i2);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
-          par.imm.vint32:= pob^.d.dat.constval.vinteger;
           if backend = bke_llvm then begin
-           par.imm.llvm:= constlist.addi32(par.imm.vint32);
+           par.imm.llvm:= constlist.addi32(pob^.d.dat.constval.vinteger);
+          end
+          else begin
+           par.imm.vint32:= pob^.d.dat.constval.vinteger;
           end;
           par.ssas1:= i1;
          end;
@@ -857,7 +859,12 @@ begin
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
            with additem(oc_mulimmint32)^ do begin
-            par.imm.vint32:= i2;
+            if backend = bke_llvm then begin
+             par.imm.llvm:= constlist.addi32(i2);
+            end
+            else begin
+             par.imm.vint32:= i2;
+            end;
             par.ssas1:= i1;
            end;
            i1:= s.ssa.nextindex-1;

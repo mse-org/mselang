@@ -82,7 +82,7 @@ begin
      end;
     end
     else begin
-     if (destindirectlevel = 1) and 
+     if (destindirectlevel > 0) and 
           ((dest^.kind = dk_pointer) or (source1^.kind = dk_pointer)) then begin
       result:= true; //untyped pointer
      end;
