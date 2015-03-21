@@ -1069,9 +1069,9 @@ begin
       end;
       ck_ref: begin
        inc(d.dat.indirection);
-       i1:= (d.dat.datatyp.indirectlevel+1);
-       d.dat.datatyp:= sysdatatypes[st_pointer];
-       d.dat.datatyp.indirectlevel:= i1;
+//       i1:= (d.dat.datatyp.indirectlevel+1);
+       d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+//       d.dat.datatyp.indirectlevel:= i1;
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);

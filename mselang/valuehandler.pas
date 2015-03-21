@@ -90,41 +90,39 @@ begin
    end;
   end
   else begin
-   if (dest^.kind = dk_pointer) and (destindirectlevel = 1) and 
-                                     (source1^.kind = dk_pointer) or 
-      (source1^.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
-                                           (dest^.kind = dk_pointer) then begin
-    result:= true; //untyped pointer
+   if (dest^.kind = dk_integer) and (destindirectlevel = 0) and 
+                      (d.dat.datatyp.indirectlevel > 0) then begin
+        //todo: remove implicit pointer -> int conversion
+    if getvalue(stackoffset) then begin //pointer to int
+     int1:= d.dat.fact.ssaindex;        //todo: operand size
+     with insertitem(oc_potoint32,stackoffset,false)^ do begin
+      par.ssas1:= int1;
+     end;
+     d.dat.datatyp.typedata:= ele.eledatarel(dest);
+     d.dat.datatyp.indirectlevel:= 0;
+     result:= true;
+    end;
    end
    else begin
-    if (dest^.kind = dk_integer) and (destindirectlevel = 0) and 
-                       (d.dat.datatyp.indirectlevel > 0) then begin
-         //todo: remove implicit pointer -> int conversion
-     if getvalue(stackoffset) then begin //pointer to int
-      int1:= d.dat.fact.ssaindex;        //todo: operand size
-      with insertitem(oc_potoint32,stackoffset,false)^ do begin
-       par.ssas1:= int1;
-      end;
-      d.dat.datatyp.typedata:= ele.eledatarel(dest);
-      d.dat.datatyp.indirectlevel:= 0;
-      result:= true;
-     end;
-    end
-    else begin
-     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-           (d.dat.datatyp.indirectlevel = 1) and 
-           (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
-      if getclassinterfaceoffset(source1,dest,int1) then begin
-       if getvalue(stackoffset) then begin
-        with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
-         setimmint32(int1,par);
-        end;
-        result:= true;
+    if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
+          (d.dat.datatyp.indirectlevel = 1) and 
+          (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
+     if getclassinterfaceoffset(source1,dest,int1) then begin
+      if getvalue(stackoffset) then begin
+       with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+        setimmint32(int1,par);
        end;
+       result:= true;
       end;
      end;
     end;
    end;
+  end;
+  if not result then begin
+   result:= (dest^.kind = dk_pointer) and (destindirectlevel = 1) and 
+                                          (source1^.kind = dk_pointer) or 
+      (source1^.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
+                                                        (destindirectlevel > 0);
   end;
   if result then begin
    d.dat.datatyp.typedata:= ele.eledatarel(dest);
@@ -181,13 +179,13 @@ begin
  end;
 {$endif}
  po1:= ele.eledataabs(atypedata);
- i1:= aadress.indirectlevel;
+ i1:= aadress.indirectlevel+po1^.indirectlevel;
  if af_paramindirect in aadress.flags then begin
   dec(i1);
  end;
- result:= po1^.indirectlevel+i1 = afact.dat.datatyp.indirectlevel;
+ po2:= ele.eledataabs(afact.dat.datatyp.typedata);
+ result:= i1 = afact.dat.datatyp.indirectlevel;
  if result then begin
-  po2:= ele.eledataabs(afact.dat.datatyp.typedata);
   if po1^.base <> 0 then begin
    po1:= ele.eledataabs(po1^.base);
   end;
@@ -195,6 +193,10 @@ begin
    po2:= ele.eledataabs(po2^.base);
   end;
   result:= po1 = po2; //todo: try conversion
+ end;
+ if not result then begin
+  result:= (afact.dat.datatyp.indirectlevel = 1 ) and 
+               (po2^.kind = dk_pointer) and (i1 > 0); 
  end;
 end;
  

@@ -823,7 +823,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2
+    a=0,648,2,recordfieldind2
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -845,7 +845,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2 llvm
+    a=0,648,2,recordfieldind2 llvm
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -1016,7 +1016,7 @@ c=3
     (
     kind=1
     a=0,665,4,pointer
-    c=2
+    c=4
      (
      kind=2
      a=0,648,1,pointeradd
@@ -1044,6 +1044,50 @@ c=3
      a=0,648,1,pointeradd llvm
      teststate=1
      path=pointeradd.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerrecadd
+     teststate=1
+     path=pointerrecadd.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,pointerecadd llvm
+     teststate=1
+     path=pointerrecadd.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -1826,7 +1870,9 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=48
+rowstate=50
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

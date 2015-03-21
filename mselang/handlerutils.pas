@@ -1423,6 +1423,7 @@ begin                    //todo: optimize
     if d.dat.indirection > 0 then begin //@ operator
      if d.dat.indirection = 1 then begin
       pushinsertaddress(stackoffset,false);
+      d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
      end
      else begin
       errormessage(err_cannotassigntoaddr,[],stackoffset);
