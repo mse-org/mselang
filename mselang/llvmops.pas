@@ -1963,7 +1963,7 @@ const
 
   addimmint32ssa = 1;
   mulimmint32ssa = 1;
-  offsetpoimm32ssa = 1;
+  offsetpoimm32ssa = 2;
 
   incdecsegimmint32ssa = 2;
   incdecsegimmpo32ssa = 3;

@@ -837,6 +837,7 @@ begin
           end;
           par.ssas1:= i1;
          end;
+         d.dat.fact.ssaindex:= s.ssa.nextindex-1;
         end;
        end
        else begin
@@ -855,7 +856,7 @@ begin
            par.ssas1:= d.dat.fact.ssaindex;
            par.ssas2:= i1;
           end;
-          pob^.d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+          d.dat.fact.ssaindex:= s.ssa.nextindex-1;
          end
          else begin
           opnotsupported();
@@ -882,7 +883,7 @@ begin
    end;
   end;
  end;
-// outhandle('ADDSUBTERM2');
+//outhandle('ADDSUBTERM2');
 end;
 
 procedure handleaddterm();
