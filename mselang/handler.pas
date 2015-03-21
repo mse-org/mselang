@@ -746,6 +746,7 @@ var
  dk1: stackdatakindty;
  i1,i2: int32;
  poa,pob: pcontextitemty;
+ india,indib: int32;
 label
  errlab;
 begin
@@ -791,9 +792,18 @@ begin
      internalerror(ie_handler,'20150320B');
     end;
    {$endif}
-    if d.dat.datatyp.indirectlevel > 0 then begin //pointer math
-     i1:= pob^.d.dat.datatyp.indirectlevel;
-     if d.dat.datatyp.indirectlevel = i1 then begin
+    india:= d.dat.datatyp.indirectlevel;
+    if (d.kind = ck_ref) and 
+              (af_paramindirect in d.dat.ref.c.address.flags) then begin
+     dec(india);
+    end;
+    indib:= pob^.d.dat.datatyp.indirectlevel;
+    if (pob^.d.kind = ck_ref) and 
+              (af_paramindirect in pob^.d.dat.ref.c.address.flags) then begin
+     dec(indib);
+    end;
+    if india > 0 then begin //pointer math
+     if india = indib then begin
                                                                  //pointer diff
       if not issub then begin
        opnotsupported();
@@ -803,7 +813,7 @@ begin
       end;
      end
      else begin
-      if d.dat.datatyp.indirectlevel > 1 then begin
+      if india > 1 then begin
        i2:= pointersize;
       end
       else begin
@@ -816,7 +826,7 @@ begin
         end;
        end;
       end;
-      if i1 = 0 then begin  //inc/dec
+      if indib = 0 then begin  //inc/dec
        if pob^.d.kind = ck_const then begin
         if pob^.d.dat.constval.kind <> dk_integer then begin
          opnotsupported();
