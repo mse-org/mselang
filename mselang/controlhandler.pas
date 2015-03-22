@@ -142,9 +142,10 @@ begin //boolexp,thenmark,elsemark
 {$ifdef mse_debugparser}
  outhandle('ELSE');
 {$endif}
- addlabel();
+// addlabel();
  setlocbefore(2,3);      //set gotoaddress for handlethen0
  setcurrentlocbefore(3); //set gotoaddress for handleelse0
+ addlabel();
  with info do begin
   dec(s.stackindex);
   s.stacktop:= s.stackindex;

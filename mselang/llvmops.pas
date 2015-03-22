@@ -382,7 +382,7 @@ end;
 procedure gotoop();
 begin
  with pc^.par do begin
-  bcstream.emitbrop(getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
+  bcstream.emitbrop(getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex);
  end;
 end;
 
@@ -417,7 +417,10 @@ end;
 
 procedure whileop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
+                         getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
+ end;
 end;
 
 procedure writelnop();
