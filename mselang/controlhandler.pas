@@ -152,7 +152,7 @@ begin //boolexp,thenmark,elsemark
  end;
 end;
 
-procedure handlewhilestart();
+procedure handlewhilestart();   //todo: check abort at end -> single jump
 begin
 {$ifdef mse_debugparser}
  outhandle('WHILESTART');
