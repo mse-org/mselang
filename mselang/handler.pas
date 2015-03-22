@@ -2148,7 +2148,7 @@ begin
  outhandle('DOEXPECTED');
 {$endif}
  with info do begin
-  tokenexpectederror('do');
+  tokenexpectederror('tk_do');
   dec(s.stackindex);
  end;
 end;

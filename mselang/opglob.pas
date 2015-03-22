@@ -86,6 +86,7 @@ type
   oc_cmpjmploeqimm4,
 
   oc_if,
+  oc_while,
   oc_writeln,
   oc_writeboolean,
   oc_writeinteger,
@@ -631,7 +632,7 @@ type
  end;
 
 const
- controlops = [oc_label,oc_goto,oc_if,oc_decloop32,oc_decloop64,
+ controlops = [oc_label,oc_goto,oc_if,oc_while,oc_decloop32,oc_decloop64,
                                                       oc_pushcpucontext];
 
 type

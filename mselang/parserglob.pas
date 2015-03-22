@@ -199,7 +199,7 @@ type
                   ck_subres,ck_subcall,ck_getfact,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
-                  ck_statement,
+                  ck_statement,ck_control,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,sdk_pointer,sdk_bool1,sdk_int32,sdk_flo64);
@@ -436,6 +436,7 @@ type
    )
    }
  end;
+
  opmarkty = record
   address: opaddressty;
  end;
@@ -515,7 +516,11 @@ type
  statementinfoty = record
 //  flags: statementflagsty;
  end;
- 
+
+ controlinfoty = record
+  opmark1: opmarkty;
+ end;
+  
  implcontinfoty = record
   elemark: markinfoty;
  end;
@@ -601,6 +606,9 @@ type
    );
    ck_statement:(
     statement: statementinfoty;
+   );
+   ck_control:(
+    control: controlinfoty;
    );
    ck_implementation:(
     impl: implcontinfoty;

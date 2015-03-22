@@ -402,6 +402,13 @@ begin
  end;
 end;
 
+procedure whileop();
+begin
+ if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure writebooleanop();
 begin
  write(vbooleanty((cpu.stack+cpu.pc^.par.voffset)^));
@@ -2522,6 +2529,7 @@ const
   cmpjmploeqimm4ssa = 0;
 
   ifssa = 0;
+  whilessa = 0;
   writelnssa = 0;
   writebooleanssa = 0;
   writeintegerssa = 0;

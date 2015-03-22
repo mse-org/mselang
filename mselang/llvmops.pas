@@ -415,6 +415,11 @@ begin
  end;
 end;
 
+procedure whileop();
+begin
+ notimplemented();
+end;
+
 procedure writelnop();
 begin
  with pc^.par do begin
@@ -1926,6 +1931,7 @@ const
   cmpjmploeqimm4ssa = 1;
 
   ifssa = 0;
+  whilessa = 0;
   writelnssa = 1;
   writebooleanssa = 1;
   writeintegerssa = 1;

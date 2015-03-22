@@ -38,6 +38,7 @@
   cmpjmploeqimm4ssa,
 
   ifssa,
+  whilessa,
   writelnssa,
   writebooleanssa,
   writeintegerssa,
@@ -361,6 +362,7 @@
   @cmpjmploeqimm4op,
 
   @ifop,
+  @whileop,
   @writelnop,
   @writebooleanop,
   @writeintegerop,

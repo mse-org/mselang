@@ -297,6 +297,7 @@ statement,,,*
  'with'.,with-
  'if'.,if0-
  'case'.,case-
+ 'while'.,while-
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
@@ -357,8 +358,8 @@ statement1,,,handlestatementexit
 assignment,,handleassignmententry,handleassignment
  '',exp^*
 //
-// control
-//
+// control todo: better names instead of *n
+//          
 if0,then,handleif0,handleif
  '',exp^*
 then,,,handlethen
@@ -371,6 +372,14 @@ then2,,,handlethen2
  'else'.,else0-
 else0,else,handleelse0,
 else,,,handleelse
+ '',statementstack^*
+
+while,whiledo,handlewhilestart,
+ '',exp^*
+whiledo,,,handledoexpected
+ ${whitespace}
+ 'do'.,whiledo0-
+whiledo0,,handlewhileexpression,handlewhileend
  '',statementstack^*
 
 case,caseof,handlecasestart,

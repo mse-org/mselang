@@ -27,6 +27,10 @@ procedure handlethen2();
 procedure handleelse0();
 procedure handleelse();
 
+procedure handlewhilestart();
+procedure handlewhileexpression();
+procedure handlewhileend();
+
 procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
@@ -40,6 +44,22 @@ uses
  handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
  stackops,segmentutils,opglob;
  
+procedure startcontrol(const aopcode: opcodety);
+begin
+ with info do begin
+  getvalue(s.stacktop-s.stackindex);
+  with contextstack[s.stacktop] do begin
+   if (d.dat.datatyp.indirectlevel <> 0) or (ptypedataty(ele.eledataabs(
+                      d.dat.datatyp.typedata))^.kind <> dk_boolean) then begin
+    errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
+   end;
+   with addcontrolitem(aopcode)^ do begin
+    par.ssas1:= d.dat.fact.ssaindex;
+   end;
+  end;
+ end;
+end;
+
 procedure handleif0();
 begin
 {$ifdef mse_debugparser}
@@ -50,7 +70,7 @@ begin
  end;
 end;
 
-procedure handleif();
+procedure handleif();          //not used???? todo: remove it
 begin
 {$ifdef mse_debugparser}
  outhandle('IF');
@@ -78,23 +98,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('THEN0');
 {$endif}
- with info do begin
-  getvalue(s.stacktop-s.stackindex);
-  with contextstack[s.stacktop] do begin
-   if not (ptypedataty(ele.eledataabs(
-                      d.dat.datatyp.typedata))^.kind = dk_boolean) then begin
-    errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
-   end;
-  {
-  if d.kind = ck_const then begin
-   push(d.dat.constval.vboolean); //todo: use compiletime branch
-  end;
-  }
-   with addcontrolitem(oc_if)^ do begin
-    par.ssas1:= d.dat.fact.ssaindex;
-   end;
-  end;
- end;
+ startcontrol(oc_if);
 end;
 
 procedure handlethen1();
@@ -144,6 +148,40 @@ begin //boolexp,thenmark,elsemark
  with info do begin
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handlewhilestart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WHILESTART');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_control;
+  d.control.opmark1.address:= opcount; //label address
+ end;
+ addlabel();
+end;
+
+procedure handlewhileexpression();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WHILEEXPRESSION');
+{$endif}
+ startcontrol(oc_while);
+end;
+
+procedure handlewhileend();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WHILEEND');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  with addcontrolitem(oc_goto)^ do begin
+   par.opaddress.opaddress:= d.control.opmark1.address-1; //label
+  end;
+  setcurrentlocbefore(2); //dest for oc_while
+  dec(s.stackindex);
  end;
 end;
 

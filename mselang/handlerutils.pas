@@ -2215,6 +2215,9 @@ begin
      ck_typetype,ck_fieldtype: begin
       writetyp(typ);
      end;
+     ck_control: begin
+      write(' OP1:',control.opmark1.address);
+     end;
     end;
     writeln(' '+inttostr(start.line+1)+':''',
              psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
