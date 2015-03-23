@@ -1,0 +1,33 @@
+program cmppointer;
+
+var
+ po1,po2: pointer;
+
+begin
+ inc(po1);
+ if po1 > po2 then begin
+  exitcode:= 1;
+ end;
+ dec(po2);
+ if po1 > po2 then begin
+  exitcode:= 1;
+ end
+ else begin
+  exitcode:= exitcode+122;
+ end;
+ po1:= nil;
+ po2:= nil;
+ if exitcode = 123 then begin
+  inc(po2);
+  if po1 < po2 then begin
+   exitcode:= 1;
+  end;
+  dec(po1);
+  if po1 < po2 then begin
+   exitcode:= 1;
+  end
+  else begin
+   exitcode:= exitcode+122;
+  end;
+ end;
+end.

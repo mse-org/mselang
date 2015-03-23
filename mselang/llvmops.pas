@@ -740,7 +740,7 @@ end;
 
 procedure cmpgtpoop();
 begin
- notimplemented();
+ compare(icmp_ugt);
 end;
 
 procedure cmpgtboolop();
@@ -760,7 +760,7 @@ end;
 
 procedure cmpltpoop();
 begin
- notimplemented();
+ compare(icmp_ult);
 end;
 
 procedure cmpltboolop();
