@@ -1,82 +1,43 @@
-{ MSEgui Copyright (c) 2014 by Martin Schreiber
-
-    See the file COPYING.MSE, included in this distribution,
-    for details about the copyright.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-}
-unit __mla__compilerunit;
-interface 
+program classminimal;
 
 type
- ppointer = ^pointer;
-procedure __mla__decrefsize(const ref: ppointer);
-procedure __mla__finirefsize(const ref: ppointer);
+ recty = record
+  a: int32;
+  b: int32;
+ end;
 
-implementation
+ ttest = class
+  public
+   ff: recty;
+   constructor create(p1: int32);
 {
-procedure __mla__decrefsize(const ref: ppointer);
-begin
-end;
+   destructor destroy();
+}
+   procedure test();
 
-procedure __mla__finirefsize(const ref: ppointer);
+ end;
+var
+ i1: int32;
+ c1: ttest;
+
+constructor ttest.create(p1: int32);
 begin
+ ff.a:= 1;
+ ff.b:= 121;
+end;
+{
+destructor ttest.destroy();
+begin
+ exitcode:= ff.a+ff.b;
 end;
 }
-
-type             //todo: use "internaltypes"
- refcountty = int32;
- managedsizety = int32;
- stringsizety = managedsizety;
- pstringsizety = ^stringsizety;
- dynarraysizety = managedsizety;
- pdynarraysizety = ^dynarraysizety;
- 
- refinfoty = record
-  count: refcountty;
- end;
- prefinfoty = ^refinfoty;
- refsizeinfoty = record
-  ref: refinfoty;
-  sizedummy: managedsizety;
- end;
- prefsizeinfoty = ^refsizeinfoty;
- 
- string8headerty = record
-  ref: refinfoty;
-  len: stringsizety;
- end; //following stringdata + terminating #0
- pstring8headerty = ^string8headerty;
-
- dynarrayheaderty = record
-  ref: refinfoty;
-  len: dynarraysizety;
- end; //following array datat
- pdynarrayheaderty = ^dynarrayheaderty;
- 
-const
- string8headersize = sizeof(string8headerty);
- string8allocsize = string8headersize+1; //terminating #0
- dynarrayheadersize = sizeof(dynarrayheaderty);
- dynarrayallocsize = dynarrayheadersize;
-
-procedure __mla__decrefsize(const ref: ppointer);
-var
- d: prefsizeinfoty;
+procedure ttest.test();
 begin
- d:= ref^;
- if d <> nil then begin
-  dec(d);
-  if d^.ref.count > 0 then begin
-   dec(d^.ref.count);
-   if d^.ref.count = 0 then begin
-    freemem(d);
-   end;
-   ref^:= nil;
-  end;
- end;
+ ff.b:= ff.a+ff.b;
 end;
 
+begin
+ c1:= ttest.create(123);
+ c1.test();
+// c1.destroy();
 end.

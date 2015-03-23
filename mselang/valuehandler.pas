@@ -489,6 +489,7 @@ var
         ek_var: begin //todo: check class procedures
          pushinsertdata(0,false,pvardataty(po2)^.address,ele.eledatarel(po2),
                                                 offs1,bitoptypes[das_pointer]);
+         initfactcontext(0); //set ssa
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
