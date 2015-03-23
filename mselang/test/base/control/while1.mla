@@ -1,0 +1,10 @@
+program while1;
+var
+ i1,i2: int32;
+begin
+ while i1 < 5 do begin
+  inc(i1);
+  i2:= i1+i2;
+ end;
+ exitcode:= i2+108;
+end.

@@ -83,8 +83,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=
- ae=
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
@@ -105,8 +105,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=
- ae=
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
@@ -139,11 +139,8 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
-    +
-    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
@@ -164,10 +161,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
-    +
-    ae=
+    ao=1
+    ae=0
     aec=0
     ie=0
     )
@@ -228,8 +223,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -250,8 +245,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -292,8 +287,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -314,8 +309,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -352,8 +347,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
@@ -378,14 +373,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,indirectloc llvm
+    a=0,648,1,indirectloc llvm
     teststate=1
     path=indirectloc.mla
     comment=
@@ -400,8 +395,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -422,14 +417,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,indirectpar llvm
+    a=0,648,1,indirectpar llvm
     teststate=1
     path=indirectpar.mla
     comment=
@@ -444,8 +439,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -466,14 +461,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,varpar llvm
+    a=0,648,1,varpar llvm
     teststate=1
     path=varpar.mla
     comment=
@@ -488,8 +483,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -510,14 +505,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,varparrec llvm
+    a=0,648,1,varparrec llvm
     teststate=1
     path=varparrec.mla
     comment=
@@ -532,8 +527,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -554,14 +549,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,varparload llvm
+    a=0,648,1,varparload llvm
     teststate=1
     path=varparload.mla
     comment=
@@ -576,8 +571,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -598,14 +593,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,varparrecload llvm
+    a=0,648,1,varparrecload llvm
     teststate=1
     path=varparrecload.mla
     comment=
@@ -620,8 +615,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -642,14 +637,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,recindi llvm
+    a=0,648,1,recindi llvm
     teststate=1
     path=recindi.mla
     comment=
@@ -664,8 +659,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -686,14 +681,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,parrecindi llvm
+    a=0,648,1,parrecindi llvm
     teststate=1
     path=parrecindi.mla
     comment=
@@ -708,8 +703,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -750,14 +745,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,recordfield llvm
+    a=0,648,1,recordfield llvm
     teststate=1
     path=recordfield.mla
     comment=
@@ -772,8 +767,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -794,14 +789,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,recordfieldind llvm
+    a=0,648,1,recordfieldind llvm
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -816,8 +811,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -838,14 +833,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,recordfieldind2 llvm
+    a=0,648,1,recordfieldind2 llvm
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -860,8 +855,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -902,14 +897,14 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,2,stringtest llvm
+    a=0,648,1,stringtest llvm
     teststate=1
     path=stringtest.mla
     comment=
@@ -924,8 +919,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -966,14 +961,14 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,2,potoint32 llvm
+    a=0,648,1,potoint32 llvm
     teststate=1
     path=potoint32.mla
     comment=
@@ -988,8 +983,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -1034,14 +1029,14 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,2,pointeradd llvm
+     a=0,648,1,pointeradd llvm
      teststate=1
      path=pointeradd.mla
      comment=
@@ -1056,8 +1051,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
@@ -1078,14 +1073,14 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,2,pointerecadd llvm
+     a=0,648,1,pointerecadd llvm
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -1100,8 +1095,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
@@ -1138,14 +1133,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,addsubint llvm
+    a=0,648,1,addsubint llvm
     teststate=1
     path=addsubint.mla
     comment=
@@ -1160,8 +1155,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1182,14 +1177,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,incdec llvm
+    a=0,648,1,incdec llvm
     teststate=1
     path=incdec.mla
     comment=
@@ -1204,8 +1199,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1226,14 +1221,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,incdecind llvm
+    a=0,648,1,incdecind llvm
     teststate=1
     path=incdecind.mla
     comment=
@@ -1248,8 +1243,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1270,14 +1265,14 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,2,incdecindpo llvm
+    a=0,648,1,incdecindpo llvm
     teststate=1
     path=incdecindpo.mla
     comment=
@@ -1292,8 +1287,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
@@ -1334,8 +1329,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -1356,8 +1351,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -1378,8 +1373,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -1400,8 +1395,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
@@ -1422,8 +1417,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1444,8 +1439,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1486,15 +1481,14 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,2,writeln int llvm
+    a=0,648,1,writeln int llvm
     teststate=1
     path=writelnint.mla
     comment=
@@ -1509,9 +1503,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1532,15 +1525,14 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,2,writeln string lc
+    a=0,648,1,writeln string lc
     teststate=1
     path=writelnstr.mla
     comment=
@@ -1555,9 +1547,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1598,8 +1589,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1620,8 +1611,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1662,14 +1653,14 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,getmem llvm
+    a=0,648,1,getmem llvm
     teststate=1
     path=getmem.mla
     comment=
@@ -1684,8 +1675,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1706,15 +1697,14 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=-1
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,2,setmem llvm
+    a=0,648,1,setmem llvm
     teststate=1
     path=setmem.mla
     comment=
@@ -1729,9 +1719,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=-1
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -1788,8 +1777,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
