@@ -1068,9 +1068,15 @@ begin
        errormessage(err_cannotaddressconst,[],1);
       end;
       ck_ref: begin
-       inc(d.dat.indirection);
+       if af_paramindirect in d.dat.ref.c.address.flags then begin
+        exclude(d.dat.ref.c.address.flags,af_paramindirect);
+       end
+       else begin
+        inc(d.dat.indirection);
+       end;
 //       i1:= (d.dat.datatyp.indirectlevel+1);
        d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+       
 //       d.dat.datatyp.indirectlevel:= i1;
       end;
       ck_fact: begin
