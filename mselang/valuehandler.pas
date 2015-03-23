@@ -247,15 +247,39 @@ var
     identerror(idents.high+1,err_wrongnumberofparameters);
    end
    else begin
-    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
-    parallocstart:= getsegmenttopoffs(seg_localloc);    
-    if sf_method in asub^.flags then begin
-     selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
-     with selfpo^ do begin
-      ssaindex:= 123; //???
-      size:= bitoptypes[das_pointer];
+    with contextstack[s.stackindex] do begin //result data
+     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
+     if hasresult then begin
+      initfactcontext(0); //set ssaindex
+      d.kind:= ck_subres;
+      po3:= ele.eledataabs(asub^.resulttype);
+      d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
+      d.dat.datatyp.typedata:= asub^.resulttype;        
+      if sf_constructor in asub^.flags then begin
+       inc(d.dat.datatyp.indirectlevel);
+      end;
+      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
+      if sf_constructor in asub^.flags then begin //???? where in llvm?
+//       dec(d.dat.fact.ssaindex);
+       with insertitem(oc_initclass,0,false)^,par.initclass do begin
+        classdef:= po3^.infoclass.defs.address;
+        if backend = bke_llvm then begin
+         classdef:= constlist.adddataoffs(classdef).listid;
+        end;
+       end;
+      end;
      end;
-     inc(po5); //instance pointer
+
+     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
+     parallocstart:= getsegmenttopoffs(seg_localloc);    
+     if sf_method in asub^.flags then begin
+      selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
+      with selfpo^ do begin
+       ssaindex:= d.dat.fact.ssaindex;
+       size:= bitoptypes[das_pointer];
+      end;
+      inc(po5); //instance pointer
+     end;
     end;
     
     if sf_function in asub^.flags then begin
@@ -328,42 +352,14 @@ var
     end;
               //todo: exeenv flag for constructor and destructor
     with contextstack[s.stackindex] do begin //result data
-     if [sf_constructor,sf_function] * asub^.flags <> [] then begin
-      initfactcontext(0); //set ssaindex
-      d.kind:= ck_subres;
-      po3:= ele.eledataabs(asub^.resulttype);
-      d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
-      d.dat.datatyp.typedata:= asub^.resulttype;        
-      if sf_constructor in asub^.flags then begin
-       inc(d.dat.datatyp.indirectlevel);
-      end;
+     if hasresult then begin
       if not backendhasfunction then begin
        int1:= pushinsertvar(parent-s.stackindex,false,po3); 
                                     //alloc space for return value
-      end;
-      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-//      if not backendhasfunction then begin
-//       dec(d.dat.datatyp.indirectlevel);
-//      end;
-      if sf_constructor in asub^.flags then begin //???? where in llvm?
-       dec(d.dat.fact.ssaindex);
-       with insertitem(oc_initclass,0,false)^,par.initclass do begin
-        classdef:= po3^.infoclass.defs.address;
-        if backend = bke_llvm then begin
-         classdef:= constlist.adddataoffs(classdef).listid;
-        end;
-       end;
-       selfpo^.ssaindex:= d.dat.fact.ssaindex;
-      end
-      else begin
-       if not backendhasfunction then begin
-        with additem(oc_pushstackaddr)^ do begin //result var param
-         par.voffset:= -asub^.paramsize+stacklinksize-int1;
-        end;
- //       if sf_constructor in asub^.flags then begin //???? where in llvm?
- //        pushinsertsegaddresspo(parent-s.stackindex,false,po3^.infoclass.defs);
-                                     //class type
- //       end;
+       if not (sf_constructor in asub^.flags) then begin
+         with additem(oc_pushstackaddr)^ do begin //result var param
+          par.voffset:= -asub^.paramsize+stacklinksize-int1;
+         end;
        end;
       end;
      end

@@ -1483,7 +1483,7 @@ begin                    //todo: optimize
   {$endif}
   end;
 errlab:
-  if d.kind <> ck_fact then begin
+  if not (d.kind in [ck_fact,ck_subres]) then begin
    initfactcontext(stackoffset);
    d.dat.fact.opdatatype:= opdata1;
   end;
