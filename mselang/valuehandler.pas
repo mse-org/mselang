@@ -231,6 +231,8 @@ var
   int1: integer;
   parallocstart: dataoffsty;
                      //todo: paralloc info for hidden params
+  selfpo: pparallocinfoty;
+  hasresult: boolean;
  begin
   with info do begin
    po5:= @asub^.paramsrel;
@@ -245,14 +247,20 @@ var
     identerror(idents.high+1,err_wrongnumberofparameters);
    end
    else begin
+    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
+    parallocstart:= getsegmenttopoffs(seg_localloc);    
     if sf_method in asub^.flags then begin
+     selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
+     with selfpo^ do begin
+      ssaindex:= 123; //???
+      size:= bitoptypes[das_pointer];
+     end;
      inc(po5); //instance pointer
     end;
     
-    parallocstart:= getsegmenttopoffs(seg_localloc);    
     if sf_function in asub^.flags then begin
      with pparallocinfoty(
-               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+              allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
       ssaindex:= 0;
       po3:= ele.eledataabs(asub^.resulttype);
       size:= getopdatatype(po3,po3^.indirectlevel);
@@ -338,12 +346,14 @@ var
 //       dec(d.dat.datatyp.indirectlevel);
 //      end;
       if sf_constructor in asub^.flags then begin //???? where in llvm?
-       with additem(oc_initclass)^,par.initclass do begin
+       dec(d.dat.fact.ssaindex);
+       with insertitem(oc_initclass,0,false)^,par.initclass do begin
         classdef:= po3^.infoclass.defs.address;
         if backend = bke_llvm then begin
          classdef:= constlist.adddataoffs(classdef).listid;
         end;
        end;
+       selfpo^.ssaindex:= d.dat.fact.ssaindex;
       end
       else begin
        if not backendhasfunction then begin

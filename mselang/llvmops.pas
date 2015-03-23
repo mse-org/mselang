@@ -2201,7 +2201,7 @@ const
   returnssa = 0;
   returnfuncssa = 1;
 
-  initclassssa = 1;
+  initclassssa = 3;
   destroyclassssa = 1;
 
   decloop32ssa = 1;

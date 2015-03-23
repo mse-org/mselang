@@ -590,6 +590,11 @@ begin
     end;
     inc(po1);
    end;
+   with contextstack[int1] do begin
+    if d.kind in factcontexts then begin
+     inc(d.dat.fact.ssaindex,ssadelta);
+    end;
+   end;
    for int1:= int1+1 to s.stacktop do begin
     with contextstack[int1] do begin
      inc(opmark.address);

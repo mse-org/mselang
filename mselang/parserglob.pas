@@ -218,7 +218,7 @@ const
  dataaddresssize = sizeof(dataaddressty);
  datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
- factcontexts = [ck_fact,ck_reffact];
+ factcontexts = [ck_fact,ck_reffact,ck_subres];
 
 type 
  pparseinfoty = ^parseinfoty;
