@@ -440,7 +440,8 @@ var
     end;
    end;
    if sf_destructor in asub^.flags then begin
-    with additem(oc_destroyclass)^ do begin
+        //todo: call freemem direcly if there is no finalization
+    with additem(oc_destroyclass)^ do begin 
      par.ssas1:= d.dat.fact.ssaindex;
 //     selfinstance:= -d.subdef.paramsize;
     end;
