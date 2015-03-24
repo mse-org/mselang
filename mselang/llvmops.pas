@@ -1484,6 +1484,10 @@ procedure pushstackaddrindiop();
 begin
  notimplemented();
 end;
+procedure pushduppoop();
+begin
+ notimplemented();
+end;
 
 procedure indirect8op();
 begin
@@ -1823,7 +1827,10 @@ end;
 
 procedure destroyclassop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_free]),
+                                                    [bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure decloop32op();
@@ -2162,6 +2169,8 @@ const
   pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
   pushstackaddrindissa = 1;
+  
+  pushduppossa = 1;
 
   indirect8ssa = 2;
   indirect16ssa = 2;

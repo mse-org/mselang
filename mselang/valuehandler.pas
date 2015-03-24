@@ -234,7 +234,8 @@ var
   selfpo: pparallocinfoty;
   hasresult: boolean;
  begin
-  with info do begin
+  with info,contextstack[s.stackindex] do begin
+
    po5:= @asub^.paramsrel;
    paramco1:= paramco;
    if [sf_function{,sf_constructor}] * asub^.flags <> [] then begin
@@ -242,30 +243,33 @@ var
    end;
    if sf_method in asub^.flags then begin
     inc(paramco1); //self parameter
+    if (sf_destructor in asub^.flags) and (backend = bke_direct) then begin
+     with insertitem(oc_pushduppo,0,false)^ do begin 
+                                      //needed for oc_destroyclass
+     end;
+    end;
    end;
    if paramco1 <> asub^.paramcount then begin
     identerror(idents.high+1,err_wrongnumberofparameters);
    end
    else begin
-    with contextstack[s.stackindex] do begin //result data
-     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
-     if hasresult then begin
-      initfactcontext(0); //set ssaindex
-      d.kind:= ck_subres;
-      po3:= ele.eledataabs(asub^.resulttype);
-      d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
-      d.dat.datatyp.typedata:= asub^.resulttype;        
-      if sf_constructor in asub^.flags then begin
-       inc(d.dat.datatyp.indirectlevel);
-      end;
-      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-      if sf_constructor in asub^.flags then begin //???? where in llvm?
+    hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
+    if hasresult then begin
+     initfactcontext(0); //set ssaindex
+     d.kind:= ck_subres;
+     po3:= ele.eledataabs(asub^.resulttype);
+     d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
+     d.dat.datatyp.typedata:= asub^.resulttype;        
+     if sf_constructor in asub^.flags then begin
+      inc(d.dat.datatyp.indirectlevel);
+     end;
+     d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
+     if sf_constructor in asub^.flags then begin //???? where in llvm?
 //       dec(d.dat.fact.ssaindex);
-       with insertitem(oc_initclass,0,false)^,par.initclass do begin
-        classdef:= po3^.infoclass.defs.address;
-        if backend = bke_llvm then begin
-         classdef:= constlist.adddataoffs(classdef).listid;
-        end;
+      with insertitem(oc_initclass,0,false)^,par.initclass do begin
+       classdef:= po3^.infoclass.defs.address;
+       if backend = bke_llvm then begin
+        classdef:= constlist.adddataoffs(classdef).listid;
        end;
       end;
      end;
@@ -351,34 +355,32 @@ var
      inc(po5);
     end;
               //todo: exeenv flag for constructor and destructor
-    with contextstack[s.stackindex] do begin //result data
-     if hasresult then begin
-      if not backendhasfunction then begin
-       int1:= pushinsertvar(parent-s.stackindex,false,po3); 
-                                    //alloc space for return value
-       if not (sf_constructor in asub^.flags) then begin
-         with additem(oc_pushstackaddr)^ do begin //result var param
-          par.voffset:= -asub^.paramsize+stacklinksize-int1;
-         end;
-       end;
+    if hasresult then begin
+     if not backendhasfunction then begin
+      int1:= pushinsertvar(parent-s.stackindex,false,po3); 
+                                   //alloc space for return value
+      if not (sf_constructor in asub^.flags) then begin
+        with additem(oc_pushstackaddr)^ do begin //result var param
+         par.voffset:= -asub^.paramsize+stacklinksize-int1;
+        end;
       end;
-     end
-     else begin
-      d.kind:= ck_subcall;
-      if (sf_method in asub^.flags) and (idents.high = 0) then begin
-                 //owned method
-      {$ifdef mse_checkinternalerror}
-       if ele.findcurrent(tks_self,[],allvisi,po6) <> ek_var then begin
-        internalerror(ie_value,'20140505A');
-       end;
-      {$else}
-       ele.findcurrent(tks_self,[],allvisi,po6);
-      {$endif}
-       with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
-        par.memop.locdataaddress.a.framelevel:= -1;
-        par.memop.locdataaddress.a.address:= po6^.address.poaddress;
-        par.memop.locdataaddress.offset:= 0;
-       end;
+     end;
+    end
+    else begin
+     d.kind:= ck_subcall;
+     if (sf_method in asub^.flags) and (idents.high = 0) then begin
+                //owned method
+     {$ifdef mse_checkinternalerror}
+      if ele.findcurrent(tks_self,[],allvisi,po6) <> ek_var then begin
+       internalerror(ie_value,'20140505A');
+      end;
+     {$else}
+      ele.findcurrent(tks_self,[],allvisi,po6);
+     {$endif}
+      with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
+       par.memop.locdataaddress.a.framelevel:= -1;
+       par.memop.locdataaddress.a.address:= po6^.address.poaddress;
+       par.memop.locdataaddress.offset:= 0;
       end;
      end;
     end;
@@ -434,6 +436,12 @@ var
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid
+    end;
+   end;
+   if sf_destructor in asub^.flags then begin
+    with additem(oc_destroyclass)^ do begin
+     par.ssas1:= d.dat.fact.ssaindex;
+//     selfinstance:= -d.subdef.paramsize;
     end;
    end;
   end;

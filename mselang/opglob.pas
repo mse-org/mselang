@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -315,6 +315,8 @@ type
   oc_pushstackaddr,
   oc_pushstackaddrindi,
 
+  oc_pushduppo,
+  
   oc_indirect8,
   oc_indirect16,
   oc_indirect32,

@@ -266,6 +266,8 @@
   pushsegaddrindissa,
   pushstackaddrssa,
   pushstackaddrindissa,
+  
+  pushduppossa,
 
   indirect8ssa,
   indirect16ssa,
@@ -590,6 +592,8 @@
   @pushsegaddrindiop,
   @pushstackaddrop,
   @pushstackaddrindiop,
+  
+  @pushduppoop,
 
   @indirect8op,
   @indirect16op,

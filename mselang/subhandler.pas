@@ -956,11 +956,13 @@ begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
+ {
   if sf_destructor in d.subdef.flags then begin
    with additem(oc_destroyclass)^,par.destroyclass do begin
     selfinstance:= -d.subdef.paramsize;
    end;
   end;
+ }
   if sf_function in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
     par.stacksize:= d.subdef.paramsize;

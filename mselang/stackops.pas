@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -1619,6 +1619,14 @@ begin
         ppointer(cpu.stack+cpu.pc^.par.voffset)^+cpu.pc^.par.voffsaddress;
 end;
 
+procedure pushduppoop();
+var
+ po1: ppointer;
+begin
+ po1:= ppointer(stackpush(sizeof(pointer)));
+ po1^:= (po1-1)^
+end;
+
 procedure indirect8op();
 var
  po1: pointer;
@@ -1946,7 +1954,7 @@ end;
 procedure destroyclassop();
 begin
  with cpu.pc^.par do begin
-  intfreemem(ppointer(cpu.frame+destroyclass.selfinstance)^);
+  intfreemem(ppointer(stackpop(sizeof(pointer)))^);
  end;
 end;
 
@@ -2758,6 +2766,8 @@ const
   pushstackaddrssa = 0;
   pushstackaddrindissa = 0;
 
+  pushduppossa = 0;
+  
   indirect8ssa = 0;
   indirect16ssa = 0;
   indirect32ssa = 0;
