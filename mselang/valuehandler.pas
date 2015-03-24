@@ -273,17 +273,17 @@ var
        end;
       end;
      end;
+    end;
 
-     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
-     parallocstart:= getsegmenttopoffs(seg_localloc);    
-     if sf_method in asub^.flags then begin
-      selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
-      with selfpo^ do begin
-       ssaindex:= d.dat.fact.ssaindex;
-       size:= bitoptypes[das_pointer];
-      end;
-      inc(po5); //instance pointer
+    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
+    parallocstart:= getsegmenttopoffs(seg_localloc);    
+    if sf_method in asub^.flags then begin
+     selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
+     with selfpo^ do begin
+      ssaindex:= d.dat.fact.ssaindex;
+      size:= bitoptypes[das_pointer];
      end;
+     inc(po5); //instance pointer
     end;
     
     if sf_function in asub^.flags then begin

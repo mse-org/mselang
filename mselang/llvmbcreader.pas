@@ -1150,6 +1150,9 @@ var
   avalue:= ssaindex-avalue;
   if avalue < 0 then begin
    avalue:= avalue+ssastart;
+   if (avalue < 0) or (avalue >= fgloblist.count) then begin
+    error('Invalid global index');
+   end;
    with pglobinfoty(fgloblist.fdata)[avalue] do begin
     if kind = gk_const then begin
      result:= 'C'+inttostr(avalue)+'=';
