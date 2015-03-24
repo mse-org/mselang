@@ -52,9 +52,6 @@ function __mla__initclass(const classinfo: classdefinfoty): pointer;
 var
  ps,pd,pe: ppointer;
 begin
-
- writeln(@classinfo);
- writeln(classinfo.header.allocsize);
  getzeromem(result,classinfo.header.allocsize);
  pd:= result + classinfo.header.fieldsize; //copy interface table
  pe:= result + classinfo.header.allocsize;
@@ -64,8 +61,6 @@ begin
   inc(pd);
   inc(ps);
  end;
- writeln(result);
-
 end;
 
 end.

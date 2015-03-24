@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -264,8 +264,9 @@ var
       inc(d.dat.datatyp.indirectlevel);
      end;
      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-     if sf_constructor in asub^.flags then begin //???? where in llvm?
-//       dec(d.dat.fact.ssaindex);
+     if sf_constructor in asub^.flags then begin 
+                                 //todo: check instance call
+      dec(d.dat.fact.ssaindex);
       with insertitem(oc_initclass,0,false)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
        if backend = bke_llvm then begin

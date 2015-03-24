@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=3
   (
   kind=1
@@ -140,7 +140,7 @@ c=3
     eec=1
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
+    +Copyright (c) 2013-2015 by Martin Schreiber
     +
     ae=main.mla(6,4) Fatal: Syntax error, ";" expected
     +
@@ -165,7 +165,7 @@ c=3
     eec=0
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2014 by Martin Schreiber
+    +Copyright (c) 2013-2015 by Martin Schreiber
     +
     ae=
     aec=0
@@ -1011,7 +1011,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=10
     (
     kind=1
@@ -1643,7 +1643,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,var
+   a=0,664,4,var
    c=2
     (
     kind=2
@@ -1707,7 +1707,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,mem
+   a=0,665,4,mem
    c=4
     (
     kind=2
@@ -1833,8 +1833,8 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
-  c=1
+  a=0,665,5,class
+  c=2
    (
    kind=2
    a=0,648,1,classminimal
@@ -1857,7 +1857,29 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+   (
+   kind=2
+   a=0,648,2,classminimal llvm
+   teststate=2
+   path=classminimal.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo= 
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=2
   path=class/
   comment=
   cc=
@@ -1873,7 +1895,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -1968,26 +1990,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=566
+propcolwidthref=581
 width0=50
 sortdescend0=0
-width1=182
+width1=187
 sortdescend1=0
-width2=155
+width2=159
 sortdescend2=0
-width3=208
+width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=33
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=24
  0 0
  0 0
  0 0
