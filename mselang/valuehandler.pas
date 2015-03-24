@@ -266,7 +266,7 @@ var
      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
      if sf_constructor in asub^.flags then begin 
                                  //todo: check instance call
-      dec(d.dat.fact.ssaindex);
+//      dec(d.dat.fact.ssaindex);
       with insertitem(oc_initclass,0,false)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
        if backend = bke_llvm then begin

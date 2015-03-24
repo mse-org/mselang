@@ -1301,11 +1301,11 @@ begin
    end
    else begin
     op1:= contextstack[int1+1].opmark.address;
-    if op1 > opmark.address then begin
+    if op1 >= opmark.address then begin
      ssa1:= getoppo(op1-1)^.par.ssad; //use last op of context
     end
     else begin
-     if op1 = opcount-1 then begin
+     if op1 >= opcount-1 then begin
       ssa1:= s.ssa.index;
 //      inc(ssaindex);
      end
