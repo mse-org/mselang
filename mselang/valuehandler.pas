@@ -229,10 +229,13 @@ var
   po7: pelementinfoty;
   paramco1: integer;
   int1: integer;
+  bo1: boolean;
   parallocstart: dataoffsty;
                      //todo: paralloc info for hidden params
   selfpo: pparallocinfoty;
   hasresult: boolean;
+  idents1: identvecty;
+  firstnotfound1: integer;
  begin
   with info,contextstack[s.stackindex] do begin
 
@@ -256,16 +259,15 @@ var
     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
     if hasresult then begin
      initfactcontext(0); //set ssaindex
-     d.kind:= ck_subres;
-     po3:= ele.eledataabs(asub^.resulttype);
-     d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
-     d.dat.datatyp.typedata:= asub^.resulttype;        
-     if sf_constructor in asub^.flags then begin
-      inc(d.dat.datatyp.indirectlevel);
-     end;
-     d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
      if sf_constructor in asub^.flags then begin 
                                  //todo: check instance call
+      bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
+                                          //get class type
+     {$ifdef mse_debugparser}
+      if not bo1 or (firstnotfound <= idents1.high) then begin 
+       internalerror(ie_handler,'20150325A'); 
+      end;
+     {$endif}     
 //      dec(d.dat.fact.ssaindex);
       with insertitem(oc_initclass,0,false)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
@@ -273,7 +275,17 @@ var
         classdef:= constlist.adddataoffs(classdef).listid;
        end;
       end;
+     end
+     else begin
+      po3:= ele.eledataabs(asub^.resulttype);
      end;
+     d.kind:= ck_subres;
+     d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
+     d.dat.datatyp.typedata:= ele.eledatarel(po3);        
+     if sf_constructor in asub^.flags then begin
+      inc(d.dat.datatyp.indirectlevel);
+     end;
+     d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
     end;
 
     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
@@ -291,8 +303,8 @@ var
      with pparallocinfoty(
               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
       ssaindex:= 0;
-      po3:= ele.eledataabs(asub^.resulttype);
-      size:= getopdatatype(po3,po3^.indirectlevel);
+//      po3:= ele.eledataabs(asub^.resulttype);
+      size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       {
       if po3^.indirectlevel > 0 then begin
        bitsize:= pointerbitsize;

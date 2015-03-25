@@ -75,14 +75,16 @@ function findkindelementdata(const aident: contextdataty;
 function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
-           out firstnotfound: integer; out idents: identvecty): boolean;
+           out firstnotfound: integer; out idents: identvecty;
+            const rest: int32 = 0): boolean;
 function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty): boolean;
 function findkindelementsdata(
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer;
-              out firstnotfound: integer; out idents: identvecty): boolean;
+              out firstnotfound: integer; out idents: identvecty;
+              const rest: int32 = 0): boolean;
 function findkindelementsdata(
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
@@ -304,7 +306,8 @@ function findkindelements(const astackoffset: integer;
             const akinds: elementkindsty; 
             const visibility: visikindsty;
             out aelement: pelementinfoty;
-            out firstnotfound: integer; out idents: identvecty): boolean;
+            out firstnotfound: integer; out idents: identvecty;
+            const rest: int32 = 0): boolean;
 var
  eleres,ele1,ele2: elementoffsetty;
  int1: integer;
@@ -312,6 +315,11 @@ begin
  result:= false;
  aelement:= nil;
  if getidents(astackoffset,idents) then begin
+  idents.high:= idents.high - rest;
+  if idents.high < 0 then begin
+   idents.high:= -1;
+   exit;
+  end;
   with info do begin
    if ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
     result:= true;
@@ -414,10 +422,11 @@ function findkindelementsdata(
              const astackoffset: integer;
              const akinds: elementkindsty; const visibility: visikindsty; 
              out ainfo: pointer; out firstnotfound: integer;
-             out idents: identvecty): boolean;
+             out idents: identvecty;
+             const rest: int32 = 0): boolean;
 begin
  result:= findkindelements(astackoffset,akinds,visibility,ainfo,
-                                firstnotfound,idents);
+                                firstnotfound,idents,rest);
  if result then begin
   ainfo:= @pelementinfoty(ainfo)^.data;
  end;

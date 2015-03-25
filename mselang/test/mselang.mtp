@@ -359,7 +359,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
+   a=0,665,4,indirect
    c=16
     (
     kind=2
@@ -2142,17 +2142,33 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=581
+propcolwidthref=566
 width0=50
 sortdescend0=0
-width1=187
+width1=182
 sortdescend1=0
-width2=159
+width2=155
 sortdescend2=0
-width3=214
+width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=23
+rowstate=39
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
