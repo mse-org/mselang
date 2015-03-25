@@ -1,0 +1,10 @@
+program function1;
+
+function test(const p1: int32; p2: int32): int32;
+begin
+ result:= p1+p2;
+end;
+
+begin
+ exitcode:= test(10,113);
+end.

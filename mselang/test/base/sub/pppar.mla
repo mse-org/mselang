@@ -11,5 +11,5 @@ var
  p1: pointer;
 begin
  test(@p1);
- exitcode:= int32(p1);
+ exitcode:= int32(p1)+122;
 end.

@@ -439,6 +439,9 @@ var
      par.callinfo.ad:= asub^.address-1; //possibly invalid
     end;
    end;
+   if sf_function in asub^.flags then begin
+    d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+   end;
    if sf_destructor in asub^.flags then begin
         //todo: call freemem direcly if there is no finalization
     with additem(oc_destroyclass)^ do begin 
