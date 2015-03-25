@@ -407,18 +407,22 @@ type
 
    //todo: simplify nested procedure link handling
 
+ virtcallinfoty = record
+  selfinstance: dataoffsty; //stackoffset
+  virtoffset: dataoffsty;   //offset in classdefinfoty
+ end;
+
  callinfoty = record
   ad: opaddressty;    //first!
   flags: subflagsty;
   linkcount: integer; //used in "for downto 0"
   params: dataoffsty;
   paramcount: integer;
+  case opcodety of
+   oc_callvirt,oc_callintf:(
+    virt: virtcallinfoty;
+   );
  end; 
-
- virtcallinfoty = record
-  selfinstance: dataoffsty; //stackoffset
-  virtoffset: dataoffsty;   //offset in classdefinfoty
- end;
 
  virttrampolineinfoty = record
   selfinstance: dataoffsty; //frameoffset
@@ -757,11 +761,8 @@ type
    oc_subend:(
     subend: subendty;
    );
-   oc_call,oc_callfunc,oc_callout:(
+   oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf:(
     callinfo: callinfoty;
-   );
-   oc_callvirt,oc_callintf:(
-    virtcallinfo: virtcallinfoty;
    );
    oc_virttrampoline:(
     virttrampolineinfo: virttrampolineinfoty;

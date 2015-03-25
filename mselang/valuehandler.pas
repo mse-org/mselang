@@ -401,14 +401,15 @@ var
    if asub^.flags * [sf_virtual,sf_override,sf_interface] <> [] then begin
     if sf_interface in asub^.flags then begin
      po1:= additem(oc_callintf);
-     po1^.par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(intfitemty);
+     po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty);
     end
     else begin
      po1:= additem(oc_callvirt);
-     po1^.par.virtcallinfo.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+     po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                           virtualtableoffset;
     end;
-    po1^.par.virtcallinfo.selfinstance:= -asub^.paramsize;
+    po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
+    po1^.par.callinfo.linkcount:= -1;
    end
    else begin
     if (asub^.nestinglevel = 0) or 
@@ -444,12 +445,12 @@ var
     if asub^.address = 0 then begin //unresolved header
      linkmark(asub^.links,getsegaddress(seg_op,@po1^.par.callinfo.ad));
     end;
-    with po1^ do begin
-     par.callinfo.flags:= asub^.flags;
-     par.callinfo.params:= parallocstart;
-     par.callinfo.paramcount:= paramco1;    
-     par.callinfo.ad:= asub^.address-1; //possibly invalid
-    end;
+   end;
+   with po1^ do begin
+    par.callinfo.flags:= asub^.flags;
+    par.callinfo.params:= parallocstart;
+    par.callinfo.paramcount:= paramco1;    
+    par.callinfo.ad:= asub^.address-1; //possibly invalid
    end;
    if sf_function in asub^.flags then begin
     d.dat.fact.ssaindex:= s.ssa.nextindex-1;

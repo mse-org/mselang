@@ -1852,7 +1852,7 @@ begin
  end;
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
- with cpu.pc^.par.virtcallinfo do begin
+ with cpu.pc^.par.callinfo.virt do begin
   cpu.pc:= startpo+pptruint(pppointer(cpu.stack+selfinstance)^^+virtoffset)^;
 //  cpu.pc:= startpo+ptruint(ppppointer(cpu.stack+selfinstance)^^[virtindex]); 
  end;
@@ -1870,7 +1870,7 @@ begin
  end;
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
- with cpu.pc^.par.virtcallinfo do begin
+ with cpu.pc^.par.callinfo.virt do begin
   po1:= cpu.stack + selfinstance;
   po2:= segments[seg_intf].basepo + pptrint(po1^)^;
   inc(po1^,po2^.instanceshift);

@@ -1708,9 +1708,19 @@ begin
 end;
 
 procedure callvirtop();
+var
+ ids: idsarty;
+ idar: idarty;
 begin
+ with pc^.par do begin               //todo: calling convention
+  idar.ids:= @ids;
+  docallparam(0,idar);
+  bcstream.emitcallop(sf_function in callinfo.flags,
+      bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
+ end;
  notimplemented();
 end;
+
 procedure callintfop();
 begin
  notimplemented();
