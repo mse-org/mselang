@@ -473,6 +473,7 @@ var
          ck_ref: begin
           if af_classfield in flags then begin
            dec(d.dat.indirection);
+           dec(d.dat.datatyp.indirectlevel);
           end;
           d.dat.ref.offset:= d.dat.ref.offset + offset;
          end;
