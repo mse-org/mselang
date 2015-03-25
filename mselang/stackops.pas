@@ -1931,8 +1931,7 @@ var
  ps,pd,pe: popaddressty;
 begin
  with cpu.pc^.par do begin
-  po2:= pclassdefinfoty(ppointer(segments[seg_globconst].basepo) +
-                                                        initclass.classdef);
+  po2:= pclassdefinfoty(segments[seg_globconst].basepo+initclass.classdef);
   self1:= stackpush(pointersize);
 //  po2:= self1^;  //class type
   po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
