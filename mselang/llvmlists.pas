@@ -208,7 +208,7 @@ type
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
-   function typeid(const aindex: int32): int32;
+   function gettype(const aindex: int32): int32;
  end;
 
  globnamedataty = record
@@ -269,6 +269,7 @@ type
    function addinitvalue(const akind: globallockindty;
                                      const aconstlistindex: integer): int32;
                                                             //returns listid
+   function gettype(const alistid: int32): int32; //returns type listid
    property namelist: tglobnamelist read fnamelist;
  end;
 
@@ -806,7 +807,7 @@ begin
  result:= pointer(internalnext());
 end;
 
-function tconsthashdatalist.typeid(const aindex: int32): int32;
+function tconsthashdatalist.gettype(const aindex: int32): int32;
 begin
  result:= pconstlisthashdataty(fdata)[aindex].data.typeid;
 end;
@@ -971,6 +972,11 @@ function tgloballocdatalist.addexternalsubvalue(const aflags: subflagsty;
 begin
  result:= addsubvalue(aflags,li_external,aparams);
  fnamelist.addname(aname,result);
+end;
+
+function tgloballocdatalist.gettype(const alistid: int32): int32;
+begin
+ result:= (pgloballocdataty(fdata) + alistid)^.typeindex;
 end;
 
 end.

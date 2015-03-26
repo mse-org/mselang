@@ -1711,14 +1711,18 @@ procedure callvirtop();
 var
  ids: idsarty;
  idar: idarty;
+ i1: int32;
 begin
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(0,idar);
-  bcstream.emitcallop(sf_function in callinfo.flags,
-      bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
+  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitgetelementptr(bcstream.relval(0),callinfo.virt.virtoffset);
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(
+            globlist.gettype(getoppo(callinfo.ad+1)^.par.subbegin.globid)));
+  bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
  end;
- notimplemented();
 end;
 
 procedure callintfop();

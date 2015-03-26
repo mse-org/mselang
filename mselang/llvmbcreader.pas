@@ -18,10 +18,12 @@ unit llvmbcreader;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,classes,mclasses,msetypes,msestrings,mselist,llvmbitcodes;
+ msestream,classes,mclasses,msetypes,msestrings,
+ llvmbitcodes,mselist;
 //
 //not optimized, for debug purpose only
 //
+
 const
  bcreaderbuffersize = 16; //test fillbuffer, todo: make it bigger
 type
@@ -88,6 +90,7 @@ type
    function parenttype(const aindex: int32): ptypeinfoty;
    function parenttypeindex(const aindex: int32): int32;
    function itemtypeindex(const aindex: integer): int32;
+//   function item(const aindex: int32): ptypeinfoty;
  end;
 
  globkindty = (gk_const,gk_var,gk_sub);
@@ -184,8 +187,7 @@ type
  
 implementation
 uses
- msebits,sysutils,mseformatstr,msearrayutils;
- 
+ mseformatstr,msearrayutils,msebits,sysutils,llvmlists;
 const
  blockidnames: array[blockids] of string = (
   'BLOCKINFO_BLOCK',
@@ -1214,6 +1216,7 @@ var
  str1: string;
  bo1: boolean;
  vararg1: boolean;
+ po1: ptypeinfoty;
  
 begin
  if fsubimplementationcount >= fsubheadercount then begin
@@ -1344,46 +1347,52 @@ begin
       end;
       FUNC_CODE_INST_CALL: begin
        checkmindatalen(rec1,4);
-       with fgloblist.item(absvalue(rec1[4]))^ do begin
-        if kind <> gk_sub then begin
-         error('Invalid sub');
+       po1:= ftypelist.parenttype(typeid(rec1[4]));
+       if po1^.kind <> TYPE_CODE_FUNCTION then begin
+        error('Invalid sub');
+       end;
+       str1:= opname(rec1[4])+':';
+       i1:= absvalue(rec1[4]);
+       if (i1 >= 0) and (i1 < fgloblist.count) then begin
+        with fgloblist.item(i1)^ do begin
+         str1:= str1+inttostr(subheaderindex);
         end;
-        str1:= opname(rec1[4])+':'+inttostr(subheaderindex)+'(';
-        for i1:= 5 to high(rec1) do begin
-         str1:= str1+opname(rec1[i1])+',';
+       end;
+       str1:= str1+'(';
+       for i1:= 5 to high(rec1) do begin
+        str1:= str1+opname(rec1[i1])+',';
+       end;
+       if high(rec1) >= 5 then begin
+        setlength(str1,length(str1)-1);
+       end;
+       str1:= str1+')';
+       with po1^ do begin
+        i2:= subparamindex;    //result type
+        i3:= subparamcount;
+        vararg1:= subvararg;
+       end;
+       i1:= ftypelist.fsubparams[i2];
+       bo1:= ftypelist.item(i1)^.kind <> TYPE_CODE_VOID;
+       if bo1 then begin
+        outssarecord(i1,str1);
+        dec(ssaindex); //for parameter check
+       end
+       else begin
+        outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+       end;
+       if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
+        error('Invalid param count');
+       end;
+       inc(i2); //first param
+       for i1:= 5 to i3+3 do begin
+        if not checktypeids(typeid(rec1[i1]),
+                                    ftypelist.fsubparams[i2]) then begin
+         error('Invalid param');
         end;
-        if high(rec1) >= 5 then begin
-         setlength(str1,length(str1)-1);
-        end;
-        str1:= str1+')';
-        with ftypelist.parenttype(valuetype)^ do begin
-         i2:= subparamindex;    //result type
-         i3:= subparamcount;
-         vararg1:= subvararg;
-        end;
-        i1:= ftypelist.fsubparams[i2];
-        bo1:= ftypelist.item(i1)^.kind <> TYPE_CODE_VOID;
-        if bo1 then begin
-         outssarecord(i1,str1);
-         dec(ssaindex); //for parameter check
-        end
-        else begin
-         outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
-        end;
-        if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
-         error('Invalid param count');
-        end;
-        inc(i2); //first param
-        for i1:= 5 to i3+3 do begin
-         if not checktypeids(typeid(rec1[i1]),
-                                     ftypelist.fsubparams[i2]) then begin
-          error('Invalid param');
-         end;
-         inc(i2);
-        end;
-        if bo1 then begin
-         inc(ssaindex); //restore
-        end;
+        inc(i2);
+       end;
+       if bo1 then begin
+        inc(ssaindex); //restore
        end;
       end;
       FUNC_CODE_INST_BR: begin

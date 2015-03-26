@@ -1,43 +1,43 @@
-program classminimal;
-
+program classvirtual;
 type
- recty = record
-  a: int32;
-  b: int32;
- end;
-
- ttest = class
+ tc1 = class
   public
-   ff: recty;
-   constructor create(p1: int32);
-{
+   constructor create();
    destructor destroy();
-}
-   procedure test();
-
+   procedure test(); virtual;
  end;
+
+ tc2 = class(tc1)
+  public
+//   constructor create();
+   procedure test(); override;
+ end;
+
+constructor tc1.create();
+begin
+end;
+
+destructor tc1.destroy();
+begin
+end;
+
+procedure tc1.test();
+begin
+ exitcode:= 112;
+end;
+
+procedure tc2.test();
+begin
+// inherited test();
+// exitcode:= exitcode+11;
+ exitcode:= 123;
+end;
+
 var
- i1: int32;
- c1: ttest;
-
-constructor ttest.create(p1: int32);
-begin
- ff.a:= 1;
- ff.b:= 121;
-end;
-{
-destructor ttest.destroy();
-begin
- exitcode:= ff.a+ff.b;
-end;
-}
-procedure ttest.test();
-begin
- ff.b:= ff.a+ff.b;
-end;
+ c1: tc2;
 
 begin
- c1:= ttest.create(123);
- c1.test();
-// c1.destroy();
+ c1:= tc2.create();
+// c1.test();
+ c1.destroy();
 end.
