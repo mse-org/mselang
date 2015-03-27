@@ -18,7 +18,7 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,opglob;
+ msetypes,parserglob,opglob;
 type
  addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
  
@@ -46,7 +46,10 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
             var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
-function getclassinfoaddress(const asize: integer): segaddressty;
+function getclassinfoaddress(const asize: int32;
+                                 const ainterfacecount: int32): segaddressty;
+function getinterfacecount(const classindex: int32): int32;
+
 procedure setimmboolean(const value: boolean; var par: opparamty);
 procedure setimmcard8(const value: card8; var par: opparamty);
 procedure setimmcard16(const value: card16; var par: opparamty);
@@ -87,17 +90,23 @@ procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
 procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
-
+{
+procedure init();
+procedure deinit();
+}
 {$ifdef mse_debugparser}
 procedure dumpops();
 {$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils,typinfo,elements;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils;
  
 type
  opadsty = array[addressbasety] of opcodety;
- aropadsty = array[boolean] of opadsty; 
+ aropadsty = array[boolean] of opadsty;
+//var
+// classdefinterfacecount: integerarty;
+// classdefcount: int32;
 
 {$ifdef mse_debugparser}
 procedure dumpops();
@@ -116,7 +125,18 @@ begin
  end;
 end;
 {$endif}
+{
+procedure init();
+begin
+ //dummy
+end;
 
+procedure deinit();
+begin
+ classdefinterfacecount:= nil;
+ classdefcount:= 0;
+end;
+}
 procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
 begin
  optable:= aoptable;
@@ -296,9 +316,16 @@ begin
  aflags:= aflags - addresskindflags + [af_segment];
 end;
 
-function getclassinfoaddress(const asize: integer): segaddressty;
+function getclassinfoaddress(const asize: int32;
+                                   const ainterfacecount: int32): segaddressty;
 begin
  result:= allocsegment(seg_classdef,asize);
+ pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
+end;
+
+function getinterfacecount(const classindex: int32): int32;
+begin
+ result:= pint32(getsegmentpo(seg_classintfcount,classindex*sizeof(int32)))^;
 end;
 
 procedure setimmboolean(const value: boolean; var par: opparamty);

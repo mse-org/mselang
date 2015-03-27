@@ -794,6 +794,7 @@ var
  ele1,ele2: elementoffsetty;
  int1{,int2}: integer;
  alloc1: dataoffsty;
+ ad1: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -803,6 +804,9 @@ begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   po1^.address:= opcount;
+  if backend = bke_llvm then begin
+   po1^.globid:= globlist.addsubvalue(po1); //nested subs first
+  end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
@@ -815,9 +819,15 @@ begin
     end;
    {$endif}
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
+     if backend = bke_llvm then begin
+      ad1:= po1^.globid;
+     end
+     else begin
+      ad1:= po1^.address-1; //compensate oppo inc
+     end;
      popaddressty(@pclassdefinfoty(getsegmentpo(infoclass.defs))^.
-                      virtualmethods)[po2^.tableindex]:= po1^.address-1;
-              //resolve virtual table entry, compensate oppo inc
+                      virtualmethods)[po2^.tableindex]:= ad1;
+              //resolve virtual table entry
     end;
    end;
    linkresolve(po2^.links,po1^.address);
@@ -895,9 +905,11 @@ begin
    po1^.allocs.nestedalloccount:= 0;
    }
   end;
+  {
   if backend = bke_llvm then begin
    po1^.globid:= globlist.addsubvalue(po1); //nested subs first
   end;
+  }
   resetssa();
   {
   int1:= getssa(ocssa_alloc,po1^.allocs.alloccount);

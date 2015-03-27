@@ -413,8 +413,8 @@ begin
                     //interfacetable start
 //   classdefs1:= getglobconstaddress(int1 +
 //                                   pointersize*infoclass.interfacecount,fla1);
-   classdefs1:= getclassinfoaddress(int1 +
-                                   pointersize*infoclass.interfacecount);
+   classdefs1:= getclassinfoaddress(int1 +pointersize*infoclass.interfacecount,
+                                                      infoclass.interfacecount);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
     header.parentclass:= 0;

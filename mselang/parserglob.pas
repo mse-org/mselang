@@ -22,12 +22,13 @@ uses
 const
  firstident = 256;
  includemax = 31;
- pointersize = sizeof(pointer);
+ pointersize = sizeof(pointer); //todo: use target size
  pointerbitsize = pointersize*8;
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_classdef,seg_rtti,seg_intf,seg_localloc);
+              seg_op,seg_classdef,seg_rtti,seg_intf,seg_localloc,
+              seg_classintfcount);
  segmentsty = set of segmentty;
  
 const

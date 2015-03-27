@@ -19,7 +19,7 @@ unit llvmlists;
 interface
 uses
  msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes,
- opglob;
+ opglob,__mla__internaltypes;
 
 const
  maxparamcount = 512;
@@ -202,6 +202,9 @@ type
    function addi64(const avalue: int64): llvmconstty;
    function adddataoffs(const avalue: dataoffsty): llvmconstty;
    function addvalue(const avalue; const asize: int32): llvmconstty;
+   function addclassdef(const header: classdefheaderty;
+      const virtualcount: int32; const virtualsubs: pint32;
+                               const virtualsubtypes: pint32): llvmconstty;
    function addnullvalue(const atypeid: int32): llvmconstty;
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
@@ -810,6 +813,12 @@ end;
 function tconsthashdatalist.gettype(const aindex: int32): int32;
 begin
  result:= pconstlisthashdataty(fdata)[aindex].data.typeid;
+end;
+
+function tconsthashdatalist.addclassdef(const header: classdefheaderty;
+               const virtualcount: int32; const virtualsubs: pint32;
+                                   const virtualsubtypes: pint32): llvmconstty;
+begin
 end;
 
 { tglobnamelist }

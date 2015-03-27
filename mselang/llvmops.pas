@@ -32,7 +32,7 @@ procedure run(const atarget: tllvmbcwriter);
 implementation
 uses
  sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
- handlerutils,llvmlists,errorhandler;
+ handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -300,7 +300,7 @@ end;
 
 var
  exitcodeaddress: segaddressty;
-
+var testvar: int32; testvar1: popinfoty;
 procedure beginparseop();
 var
  ele1,ele2: elementoffsetty;
@@ -312,6 +312,11 @@ var
  funcs1: internalfuncty;
  strings1: internalstringty;
  compilersub1: compilersubty;
+ poclassdef,peclassdef: pclassdefinfoty;
+ povirtual,pevirtual: popaddressty;
+ i1,i2: int32;
+ virtualcapacity: int32;
+ virtualsubs,virtualtypes: pint32;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
@@ -334,6 +339,43 @@ begin
   with internalstringconsts[strings1] do begin
    internalstrings[strings1]:= globlist.addinitvalue(gak_const,
                      constlist.addvalue(pointer(text)^,length(text)).listid);
+  end;
+ end;
+ poclassdef:= getsegmentpo(seg_classdef,0);
+ peclassdef:= getsegmenttoppo(seg_classdef);
+ i1:= 0;
+ virtualcapacity:= 0;
+ virtualsubs:= nil; 
+ virtualtypes:= nil; 
+ try
+  while poclassdef < peclassdef do begin
+   povirtual:= @poclassdef^.virtualmethods;
+   pevirtual:= pointer(poclassdef)+poclassdef^.header.interfacestart;
+   i2:= pevirtual - povirtual;
+   if i2 > virtualcapacity then begin
+    if virtualsubs <> nil then begin
+     freemem(virtualsubs);
+     freemem(virtualtypes);
+    end;
+    virtualcapacity:= i2*2+256;
+    getmem(virtualsubs,virtualcapacity*sizeof(int32));
+    getmem(virtualtypes,virtualcapacity*sizeof(int32));
+   end;
+   i2:= 0;
+   while povirtual < pevirtual do begin
+    virtualsubs[i2]:= povirtual^;
+    virtualtypes[i2]:= globlist.gettype(povirtual^);
+    inc(povirtual);    
+    inc(i2);
+   end;
+   constlist.addclassdef(poclassdef^.header,i2,virtualsubs,virtualtypes);
+   poclassdef:= pointer(pevirtual)+getinterfacecount(i1)*pointersize;
+   inc(i1);
+  end;
+ finally
+  if virtualsubs <> nil then begin
+   freemem(virtualsubs);
+   freemem(virtualtypes);
   end;
  end;
  with pc^.par.beginparse do begin

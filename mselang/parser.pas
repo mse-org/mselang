@@ -64,6 +64,7 @@ begin
  elements.init();
  handlerutils.init();
  unithandler.init();
+// opcode.init();
 // rttihandler.init();
 // inifini.init;
 // handler.init;
@@ -74,6 +75,7 @@ begin
 // handler.deinit;
 // inifini.deinit;
 // rttihandler.deinit();
+// opcode.deinit();
  unithandler.deinit();
  handlerutils.deinit();
  if abackend <> bke_llvm then begin
