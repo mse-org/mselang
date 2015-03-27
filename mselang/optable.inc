@@ -338,7 +338,8 @@
   hascalloutssa,
   pushsegaddrnilssa,
   pushsegaddrglobvarssa,
-  pushsegaddrglobconstssa
+  pushsegaddrglobconstssa,
+  pushsegaddrclassdefssa
  );
 
  optable: optablety = ( //order as opcodety
@@ -664,6 +665,7 @@
   nil,
   nil,
   
+  nil,
   nil,
   nil,
   nil

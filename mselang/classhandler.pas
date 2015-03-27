@@ -95,8 +95,8 @@ procedure copyvirtualtable(const source,dest: segaddressty;
 var
  ps,pd,pe: popaddressty;
 begin
- ps:= getsegmentpo(seg_globconst,source.address + virtualtableoffset);
- pd:= getsegmentpo(seg_globconst,dest.address + virtualtableoffset);
+ ps:= getsegmentpo(seg_classdef,source.address + virtualtableoffset);
+ pd:= getsegmentpo(seg_classdef,dest.address + virtualtableoffset);
  pe:= pd+itemcount;
  while pd < pe do begin
   if pd^ = 0 then begin
@@ -411,8 +411,10 @@ begin
    infoclass.virtualcount:= classinfo1^.virtualindex;
    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                     //interfacetable start
-   classdefs1:= getglobconstaddress(int1 +
-                                   pointersize*infoclass.interfacecount,fla1);
+//   classdefs1:= getglobconstaddress(int1 +
+//                                   pointersize*infoclass.interfacecount,fla1);
+   classdefs1:= getclassinfoaddress(int1 +
+                                   pointersize*infoclass.interfacecount);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
     header.parentclass:= 0;

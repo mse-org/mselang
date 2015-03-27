@@ -46,6 +46,7 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
             var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
+function getclassinfoaddress(const asize: integer): segaddressty;
 procedure setimmboolean(const value: boolean; var par: opparamty);
 procedure setimmcard8(const value: card8; var par: opparamty);
 procedure setimmcard16(const value: card16; var par: opparamty);
@@ -124,6 +125,7 @@ begin
  pushsegaddrssaar[seg_nil]:= ssatable^[ocssa_pushsegaddrnil];
  pushsegaddrssaar[seg_globvar]:= ssatable^[ocssa_pushsegaddrglobvar];
  pushsegaddrssaar[seg_globconst]:= ssatable^[ocssa_pushsegaddrglobconst];
+ pushsegaddrssaar[seg_classdef]:= ssatable^[ocssa_pushsegaddrclassdef];
  
 end;
  
@@ -292,6 +294,11 @@ begin
  result:= allocsegment(seg_globconst,asize);
  result.address:= result.address + shift;
  aflags:= aflags - addresskindflags + [af_segment];
+end;
+
+function getclassinfoaddress(const asize: integer): segaddressty;
+begin
+ result:= allocsegment(seg_classdef,asize);
 end;
 
 procedure setimmboolean(const value: boolean; var par: opparamty);

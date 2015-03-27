@@ -1150,6 +1150,9 @@ begin
                                    constval(aaddress.segdataaddress.a.address));
    emitgetelementptr(relval(0),constval(aaddress.segdataaddress.offset));
   end;
+  seg_classdef: begin
+   notimplementederror('20150327A');
+  end;
   seg_nil: begin
    emitpushconst(nullconst);
   end;

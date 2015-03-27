@@ -389,7 +389,8 @@ type
 
   ocssa_pushsegaddrnil,
   ocssa_pushsegaddrglobvar,
-  ocssa_pushsegaddrglobconst
+  ocssa_pushsegaddrglobconst,
+  ocssa_pushsegaddrclassdef
  );
 
  v8ty = array[0..0] of byte;

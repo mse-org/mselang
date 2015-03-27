@@ -322,6 +322,7 @@ begin
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid{,
                                                            globconsttype});
  end;
+ //todo: classdefseg
  globlist.addsubvalue(nil,stringtolstring('main'));
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
   with internalfuncconsts[funcs1] do begin
@@ -2258,6 +2259,7 @@ const
   pushsegaddrnilssa = 0;
   pushsegaddrglobvarssa = 1;
   pushsegaddrglobconstssa = 3;
+  pushsegaddrclassdefssa = 3;
   
 {$include optable.inc}
 
