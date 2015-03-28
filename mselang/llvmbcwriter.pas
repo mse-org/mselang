@@ -727,7 +727,7 @@ begin
    i1:= i1 or $80;
   end;
   emit(8,i1);
-  avalue:= card32(avalue) shr 8;
+  avalue:= card32(avalue) shr 7;
  until avalue = 0;
 end;
 

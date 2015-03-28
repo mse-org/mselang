@@ -3,7 +3,7 @@ value=mabconst
 [mainfo.abbrevidstart]
 value=4
 [mainfo.grid]
-propcolwidthref=349
+propcolwidthref=208
 values0=5
  int
  
@@ -16,7 +16,7 @@ values1=5
  2
  2
  3
- 1
+ 2
 values1_ci=-1
 sortdescend1=0
 values2=5
