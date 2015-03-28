@@ -62,7 +62,7 @@ type
   protected
    fconstseg: int32;
    flastdebugloc: debuglocty;
-   fglobstart: int32;       //start of global variables
+   fconststart: int32;      //start of global constants
    fsubstart: int32;        //start of sub values (params)
    fsubparamstart: int32;   //reference for param access
    fsuballocstart: int32;   //reference for allocs
@@ -376,7 +376,8 @@ begin
  beginblock(MODULE_BLOCK_ID,3);
  emitrec(ord(MODULE_CODE_VERSION),[1]);
 
- fsubstart:= consts.count + globals.count;
+ fconststart:= globals.count;
+ fsubstart:= globals.count+consts.count;
  
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
@@ -463,49 +464,6 @@ begin
   end;
   endblock(); 
 
-  fglobstart:= consts.count;
-  if consts.count > 0 then begin
-   beginblock(CONSTANTS_BLOCK_ID,3);
-   id1:= -1;
-   po2:= consts.first;
-   for i1:= 0 to consts.count-1 do begin
-    if po2^.typeid < 0 then begin
-     case consttypety(-po2^.typeid) of
-      ct_null: begin       
-       checkconsttypeid(int32(po2^.header.buffer));
-       emitrec(ord(CST_CODE_NULL),[]);
-      end;
-      ct_pointercast: begin
-       checkconsttypeid(pointertype);
-       emitpointercastconst(globval(po2^.header.buffer),
-                               typeval(globlist.gettype(po2^.header.buffer)));
-      end;
-      else begin
-       internalerror1(ie_bcwriter,'20150328A');
-      end;
-     end;
-    end
-    else begin
-     checkconsttypeid(po2^.typeid);
-     case databitsizety(po2^.typeid) of
-      das_1..das_32: begin //todo: das_64
-       emitintconst(int32(po2^.header.buffer));
-      end;
-      else begin
-      {$ifdef mse_checkinternalerror}
-       if databitsizety(po2^.typeid) <= lastdatakind then begin
-        internalerror(ie_bcwriter,'141220A');
-       end;
-      {$endif}
-       emitdataconst(consts.absdata(po2^.header.buffer)^,
-                                                po2^.header.buffersize);
-      end;
-     end;
-    end;
-    po2:= consts.next();
-   end;
-   endblock(); 
-  end;
   po5:= globals.datapo;
   po6:= po5 + globals.count;
   while po5 < po6 do begin
@@ -532,10 +490,53 @@ begin
    po7:= globals.namelist.datapo;
    po8:= po7 + globals.namelist.count;
    while po7 < po8 do begin
-    emitvstentry(fglobstart+po7^.listindex,po7^.name);
+    emitvstentry({fglobstart+}po7^.listindex,po7^.name);
     inc(po7);
    end;
    endblock();
+  end;
+
+  if consts.count > 0 then begin
+   beginblock(CONSTANTS_BLOCK_ID,3);
+   id1:= -1;
+   po2:= consts.first;
+   for i1:= 0 to consts.count-1 do begin
+    if po2^.typeid < 0 then begin
+     case consttypety(-po2^.typeid) of
+      ct_null: begin       
+       checkconsttypeid(int32(po2^.header.buffer));
+       emitrec(ord(CST_CODE_NULL),[]);
+      end;
+      ct_pointercast: begin
+       checkconsttypeid(pointertype);
+       emitpointercastconst(globval(po2^.header.buffer),
+                               ptypeval(globlist.gettype(po2^.header.buffer)));
+      end;
+      else begin
+       internalerror1(ie_bcwriter,'20150328A');
+      end;
+     end;
+    end
+    else begin
+     checkconsttypeid(po2^.typeid);
+     case databitsizety(po2^.typeid) of
+      das_1..das_32: begin //todo: das_64
+       emitintconst(int32(po2^.header.buffer));
+      end;
+      else begin
+      {$ifdef mse_checkinternalerror}
+       if databitsizety(po2^.typeid) <= lastdatakind then begin
+        internalerror(ie_bcwriter,'141220A');
+       end;
+      {$endif}
+       emitdataconst(consts.absdata(po2^.header.buffer)^,
+                                                po2^.header.buffersize);
+      end;
+     end;
+    end;
+    po2:= consts.next();
+   end;
+   endblock(); 
   end;
  end;
 end;
@@ -1037,20 +1038,20 @@ end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0{nullconst+1},
-                                                    ord(li_internal),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
+                          0+fconststart{nullconst+1},ord(li_internal),0,0]);
 end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,ainitconst+1,
-                                                     ord(li_internal),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
+                     ainitconst+1+fconststart,ord(li_internal),0,0]);
 end;
 
 procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),1,ainitconst+1,
-                                                     ord(li_internal),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),1,
+                        ainitconst+1+fconststart,ord(li_internal),0,0]);
 end;
 
 procedure tllvmbcwriter.emitalloca(const atype: int32);
@@ -1298,13 +1299,13 @@ end;
 
 function tllvmbcwriter.constval(const constid: int32): int32;
 begin
- result:= constid;
+ result:= constid + fconststart;
 // result:= fsubopindex - ({fconstopstart +} constid);
 end;
 
 function tllvmbcwriter.globval(const globid: int32): int32;
 begin
- result:= globid + fglobstart;
+ result:= globid{ + fglobstart};
 end;
 
 function tllvmbcwriter.relval(const offset: int32): int32;
@@ -1407,9 +1408,14 @@ end;
 function tllvmbcwriter.valindex(const aadress: segaddressty): integer;
 begin
  result:= aadress.address;
+ if aadress.segment in [seg_globconst,seg_classdef] then begin
+  result:= result + fconststart;
+ end;
+ {
  if aadress.segment = seg_globvar then begin
   result:= result + fglobstart;
  end;
+ }
 end;
 
 procedure tllvmbcwriter.emitpushconst(const aconst: llvmconstty);

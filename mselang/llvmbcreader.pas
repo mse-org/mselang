@@ -626,7 +626,8 @@ begin
    end;
   end
   else begin
-   consterror();
+   result:= inttostr(aid)+':forward';
+//   consterror();
   end;
  end;
 end;
