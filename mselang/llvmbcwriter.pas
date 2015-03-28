@@ -219,10 +219,10 @@ const
 type
  mabconstty = (
   mabconst_int = 4, //id (vbr 6), value (vbr 6)
-  mabconst_data //id (vbr 6), array (array), data (fixed 8)
+  mabconst_data //id (vbr 6), array (array), data (vbr 8)
  );
 const
- mabconstsdat: array[0..6] of card8 = (18,100,200,104,144,49,65);
+ mabconstsdat: array[0..6] of card8 = (18,100,200,104,144,49,66);
  mabconsts: bcdataty = (bitsize: 56; data: @mabconstsdat);
 
 type
@@ -1000,7 +1000,7 @@ begin
  po1:= @avalue;
  pe:= po1+asize;
  while po1 < pe do begin
-  emit8(po1^);
+  emitvbr8(po1^+fconststart);
   inc(po1);
  end;
 end;
