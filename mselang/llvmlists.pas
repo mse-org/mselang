@@ -28,7 +28,8 @@ type
  bufferdataty = record
   listindex: int32;
   buffersize: int32;
-  buffer: card32; //direct data or buffer offset if buffersize > sizeof(ptruint)
+  buffer: ptruint{card32}; 
+             //direct data or buffer offset if buffersize > sizeof(ptruint)
  end;
  
  bufferhashdataty = record
@@ -152,9 +153,11 @@ type
    function next: ptypelistdataty;
  end;
 
+ consttypety = (ct_none,ct_null,ct_pointercast); //stored as negative typeid
+
  constlistdataty = record
   header: bufferdataty;
-  typeid: integer; // < 0 -> NULL value
+  typeid: integer; // < 0 -> consttypety
  end;
  pconstlistdataty = ^constlistdataty;
  
@@ -202,6 +205,7 @@ type
    function addi64(const avalue: int64): llvmconstty;
    function adddataoffs(const avalue: dataoffsty): llvmconstty;
    function addvalue(const avalue; const asize: int32): llvmconstty;
+   function addpointercast(const aid: int32): llvmconstty;
    function addclassdef(const header: classdefheaderty;
       const virtualcount: int32; const virtualsubs: pint32;
                                const virtualsubtypes: pint32): llvmconstty;
@@ -791,13 +795,28 @@ var
  po1: pconstlisthashdataty;
 begin
  alloc1.header.size:= -1;
- alloc1.header.data:= pointer(ptruint(0));
- alloc1.typeid:= -atypeid;
+ alloc1.header.data:= pointer(ptrint(atypeid));
+ alloc1.typeid:= -ord(ct_null);
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result.listid:= po1^.data.header.listindex;
- result.typeid:= po1^.data.typeid;
+ result.typeid:= po1^.data.header.buffer;
+end;
+
+function tconsthashdatalist.addpointercast(const aid: int32): llvmconstty;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= -1;
+ alloc1.header.data:= pointer(ptrint(aid));
+ alloc1.typeid:= -ord(ct_pointercast);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= pointertype;
 end;
 
 function tconsthashdatalist.first: pconstlistdataty;
@@ -818,7 +837,15 @@ end;
 function tconsthashdatalist.addclassdef(const header: classdefheaderty;
                const virtualcount: int32; const virtualsubs: pint32;
                                    const virtualsubtypes: pint32): llvmconstty;
+var
+ po1,pe: pint32;
 begin
+ po1:= virtualsubs;
+ pe:= po1+virtualcount;
+ while po1 < pe do begin
+  addpointercast(po1^);
+  inc(po1);
+ end;
 end;
 
 { tglobnamelist }

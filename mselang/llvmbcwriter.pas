@@ -97,6 +97,7 @@ type
    procedure emittypeid(const avalue: int32);
    procedure emitintconst(const avalue: int32);
    procedure emitdataconst(const avalue; const asize: int32);
+   procedure emitpointercastconst(const avalue: int32; const atype: int32);
    procedure checkdebugloc();
   public
    constructor create(ahandle: integer); override;
@@ -333,13 +334,23 @@ end;
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                                  const globals: tgloballocdatalist);
 var
+ id1: int32;
+ 
+ procedure checkconsttypeid(const aid: int32);
+ begin
+  if id1 <> aid then begin
+   id1:= aid;
+   emittypeid(id1*typeindexstep);
+  end;
+ end; //checkconsttypeid
+ 
+var
  po1: ptypelistdataty;
  po2: pconstlistdataty;
  po3,po4: pparamitemty;
  po5,po6: pgloballocdataty;
  po7,po8: pglobnamedataty;
  i1,i2: int32;
- id1: int32;
 begin
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
@@ -440,7 +451,7 @@ begin
       end;
       else begin
       {$ifdef mse_checkinternalerror}
-       internalerror(ie_bcwriter,'141216A');
+       internalerror(ie_bcwriter,'20141216A');
       {$endif}
       end;
      end;
@@ -452,23 +463,34 @@ begin
   end;
   endblock(); 
 
+  fglobstart:= consts.count;
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;
    po2:= consts.first;
    for i1:= 0 to consts.count-1 do begin
-    if id1 <> abs(po2^.typeid) then begin
-     id1:= abs(po2^.typeid);
-     emittypeid(id1*typeindexstep);
-    end;
-    case databitsizety(po2^.typeid) of
-     das_1..das_32: begin //todo: das_64
-      emitintconst(int32(ptruint(po2^.header.buffer)));
-     end;
-     else begin
-      if po2^.typeid < 0 then begin
+    if po2^.typeid < 0 then begin
+     case consttypety(-po2^.typeid) of
+      ct_null: begin       
+       checkconsttypeid(int32(po2^.header.buffer));
        emitrec(ord(CST_CODE_NULL),[]);
-      end
+      end;
+      ct_pointercast: begin
+       checkconsttypeid(pointertype);
+       emitpointercastconst(globval(po2^.header.buffer),
+                               typeval(globlist.gettype(po2^.header.buffer)));
+      end;
+      else begin
+       internalerror1(ie_bcwriter,'20150328A');
+      end;
+     end;
+    end
+    else begin
+     checkconsttypeid(po2^.typeid);
+     case databitsizety(po2^.typeid) of
+      das_1..das_32: begin //todo: das_64
+       emitintconst(int32(po2^.header.buffer));
+      end;
       else begin
       {$ifdef mse_checkinternalerror}
        if databitsizety(po2^.typeid) <= lastdatakind then begin
@@ -484,7 +506,6 @@ begin
    end;
    endblock(); 
   end;
-  fglobstart:= consts.count;
   po5:= globals.datapo;
   po6:= po5 + globals.count;
   while po5 < po6 do begin
@@ -981,6 +1002,12 @@ begin
   emit8(po1^);
   inc(po1);
  end;
+end;
+
+procedure tllvmbcwriter.emitpointercastconst(const avalue: int32;
+                                                       const atype: int32);
+begin
+ emitrec(ord(CST_CODE_CE_CAST),[ord(CAST_BITCAST),atype,avalue]);
 end;
 
 procedure tllvmbcwriter.emitsub(const atype: int32;

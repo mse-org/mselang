@@ -93,8 +93,6 @@ begin
  try
   errstream.position:= 0;
   grid[0].datalist.loadfromstream(errstream);
-  errstream.destroy();
-  outstream.destroy();
   if bo1 then begin
    if llvm.value then begin
     filename1:= replacefileext(filena.value,'bc');
@@ -115,6 +113,8 @@ begin
    end;
   end;
  finally
+  errstream.destroy();
+  outstream.destroy();
   if backend = bke_llvm then begin
    elements.clear();
   end;
