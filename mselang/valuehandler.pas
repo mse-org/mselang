@@ -271,9 +271,11 @@ var
 //      dec(d.dat.fact.ssaindex);
       with insertitem(oc_initclass,0,false)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
+       {
        if backend = bke_llvm then begin
         classdef:= constlist.adddataoffs(classdef).listid;
        end;
+       }
       end;
      end
      else begin

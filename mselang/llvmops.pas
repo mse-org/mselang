@@ -300,7 +300,7 @@ end;
 
 var
  exitcodeaddress: segaddressty;
-var testvar: int32; testvar1: popinfoty;
+
 procedure beginparseop();
 var
  ele1,ele2: elementoffsetty;
@@ -314,9 +314,9 @@ var
  compilersub1: compilersubty;
  poclassdef,peclassdef: pclassdefinfoty;
  povirtual,pevirtual: popaddressty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  virtualcapacity: int32;
- virtualsubs,virtualtypes: pint32;
+ virtualsubs,virtualsubconsts: pint32;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
@@ -346,36 +346,40 @@ begin
  i1:= 0;
  virtualcapacity:= 0;
  virtualsubs:= nil; 
- virtualtypes:= nil; 
+ virtualsubconsts:= nil; 
  try
   while poclassdef < peclassdef do begin
    povirtual:= @poclassdef^.virtualmethods;
    pevirtual:= pointer(poclassdef)+poclassdef^.header.interfacestart;
    i2:= pevirtual - povirtual;
-   if i2 > virtualcapacity then begin
+   if i2 > virtualcapacity-1 then begin //last item used by addclassdef
     if virtualsubs <> nil then begin
      freemem(virtualsubs);
-     freemem(virtualtypes);
+     freemem(virtualsubconsts);
     end;
     virtualcapacity:= i2*2+256;
     getmem(virtualsubs,virtualcapacity*sizeof(int32));
-    getmem(virtualtypes,virtualcapacity*sizeof(int32));
+    getmem(virtualsubconsts,virtualcapacity*sizeof(int32));
    end;
    i2:= 0;
    while povirtual < pevirtual do begin
     virtualsubs[i2]:= povirtual^;
-    virtualtypes[i2]:= globlist.gettype(povirtual^);
+//    virtualtypes[i2]:= globlist.gettype(povirtual^);
     inc(povirtual);    
     inc(i2);
    end;
-   constlist.addclassdef(poclassdef^.header,i2,virtualsubs,virtualtypes);
-   poclassdef:= pointer(pevirtual)+getinterfacecount(i1)*pointersize;
+   i3:= getinterfacecount(i1)*pointersize;
+   pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
+             constlist.addclassdef(poclassdef^.header,i2,
+                                     virtualsubs,virtualsubconsts).listid);
+                 //virtualsubconsts set in addclassdef
+   poclassdef:= pointer(pevirtual)+i3;
    inc(i1);
   end;
  finally
   if virtualsubs <> nil then begin
    freemem(virtualsubs);
-   freemem(virtualtypes);
+   freemem(virtualsubconsts);
   end;
  end;
  with pc^.par.beginparse do begin
@@ -1877,7 +1881,10 @@ end;
 procedure initclassop();
 begin
  with pc^.par.initclass do begin
-  bcstream.emitpushconstsegad(classdef); //2ssa
+//  bcstream.emitpushconstsegad(classdef); //2ssa
+  bcstream.emitgetelementptr(bcstream.globval(
+               pint32(getsegmentpo(seg_classdef,classdef))^),
+                                   bcstream.constval(constlist.i8(0))); //2ssa
   callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
  end;
 end;

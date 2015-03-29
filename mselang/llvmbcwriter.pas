@@ -129,7 +129,8 @@ type
 
    procedure beginblock(const id: blockids; const nestedidsize: int32);
    procedure endblock();
-   procedure emitrec(const id: int32; const data: array of int32);
+   procedure emitrec(const id: int32; const data: array of int32;
+                                         const extensioncount: int32 = 0);
    procedure emitrec(const id: int32; const data: array of int32;
                                                  const adddata: idarty);
    procedure emitrec(const id: int32; const data: array of int32;
@@ -350,7 +351,9 @@ var
  po3,po4: pparamitemty;
  po5,po6: pgloballocdataty;
  po7,po8: pglobnamedataty;
+ pa,pe: pint32;
  i1,i2: int32;
+ po9: paggregateconstty;
 begin
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
@@ -384,76 +387,98 @@ begin
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
   po1:= consts.typelist.first();
   for i1:= consts.typelist.count - 1 downto 0 do begin
-   if po1^.kind in ordinalopdatakinds then begin
-    if po1^.kind = das_pointer then begin
-     emitrec(ord(TYPE_CODE_POINTER),[typeindex(das_8)]);
-    end
-    else begin
-     emitrec(ord(TYPE_CODE_INTEGER),[po1^.header.buffer]);
+   if ord(po1^.kind) < 0 then begin
+    case aggregatekindty(-ord(po1^.kind)) of
+     ak_pointerarray: begin
+      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeval(pointertype)]);
+     end;
+     ak_struct: begin
+      i2:= po1^.header.buffersize div sizeof(int32);
+      emitrec(ord(TYPE_CODE_STRUCT_ANON),[0],i2);
+      pa:= typelist.absdata(po1^.header.buffer);
+      pe:= pa+i2;
+      while pa < pe do begin
+       emitvbr6(typeval(pa^));
+       inc(pa);
+      end;
+     end;
+     else begin
+      internalerror1(ie_bcwriter,'20150329A');
+     end;
     end;
    end
    else begin
-    if po1^.kind in byteopdatakinds then begin
-     if po1^.header.buffer = 0 then begin
-      emitrec(ord(TYPE_CODE_VOID),[]);     
-      emitrec(ord(TYPE_CODE_VOID),[]); //dummy *type
-      emitrec(ord(TYPE_CODE_VOID),[]); //dummy **type
-      po1:= consts.typelist.next();
-      continue;
+    if po1^.kind in ordinalopdatakinds then begin
+     if po1^.kind = das_pointer then begin
+      emitrec(ord(TYPE_CODE_POINTER),[typeindex(das_8)]);
      end
      else begin
-      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeindex(das_8)]);     
+      emitrec(ord(TYPE_CODE_INTEGER),[po1^.header.buffer]);
      end;
     end
     else begin
-     case po1^.kind of
-      das_f16: begin
-       emitrec(ord(TYPE_CODE_HALF),[]);     
-      end;
-      das_f32: begin
-       emitrec(ord(TYPE_CODE_FLOAT),[]);     
-      end;
-      das_f64: begin
-       emitrec(ord(TYPE_CODE_DOUBLE),[]);     
-      end;
-      das_sub: begin
-       with psubtypedataty(
-               consts.typelist.absdata(po1^.header.buffer))^ do begin
-                     //todo: vararg
-//        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
-
-        emitcode(ord(mabtype_subtype));
-        i2:= header.paramcount;
-        po3:= @params;
-        if sf_vararg in header.flags then begin
-         emit1(1);      //vararg
-        end
-        else begin
-         emit1(0);      //no vararg
-        end;
-        if sf_function in header.flags then begin
-         emitvbr6(typeindex(po3^.typelistindex)); //retval
-         dec(i2);
-         inc(po3);
-        end
-        else begin
-         emitvbr6(typeindex(das_none)); //void retval
-        end;
-        emitvbr6(i2); //param count
-        po4:= po3+i2;
-        while po3 < po4 do begin
-         emitvbr6(typeindex(po3^.typelistindex));
-         inc(po3);
-        end;
-//        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
-                        //vararg,ignored,
-
-       end;
-      end;
+     if po1^.kind in byteopdatakinds then begin
+      if po1^.header.buffer = 0 then begin
+       emitrec(ord(TYPE_CODE_VOID),[]);     
+       emitrec(ord(TYPE_CODE_VOID),[]); //dummy *type
+       emitrec(ord(TYPE_CODE_VOID),[]); //dummy **type
+       po1:= consts.typelist.next();
+       continue;
+      end
       else begin
-      {$ifdef mse_checkinternalerror}
-       internalerror(ie_bcwriter,'20141216A');
-      {$endif}
+       emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeindex(das_8)]);     
+      end;
+     end
+     else begin
+      case po1^.kind of
+       das_f16: begin
+        emitrec(ord(TYPE_CODE_HALF),[]);     
+       end;
+       das_f32: begin
+        emitrec(ord(TYPE_CODE_FLOAT),[]);     
+       end;
+       das_f64: begin
+        emitrec(ord(TYPE_CODE_DOUBLE),[]);     
+       end;
+       das_sub: begin
+        with psubtypedataty(
+                consts.typelist.absdata(po1^.header.buffer))^ do begin
+                      //todo: vararg
+ //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
+ 
+         emitcode(ord(mabtype_subtype));
+         i2:= header.paramcount;
+         po3:= @params;
+         if sf_vararg in header.flags then begin
+          emit1(1);      //vararg
+         end
+         else begin
+          emit1(0);      //no vararg
+         end;
+         if sf_function in header.flags then begin
+          emitvbr6(typeindex(po3^.typelistindex)); //retval
+          dec(i2);
+          inc(po3);
+         end
+         else begin
+          emitvbr6(typeindex(das_none)); //void retval
+         end;
+         emitvbr6(i2); //param count
+         po4:= po3+i2;
+         while po3 < po4 do begin
+          emitvbr6(typeindex(po3^.typelistindex));
+          inc(po3);
+         end;
+ //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
+                         //vararg,ignored,
+ 
+        end;
+       end;
+       else begin
+       {$ifdef mse_checkinternalerror}
+        internalerror(ie_bcwriter,'20141216A');
+       {$endif}
+       end;
       end;
      end;
     end;
@@ -511,6 +536,29 @@ begin
        checkconsttypeid(pointertype);
        emitpointercastconst(globval(po2^.header.buffer),
                                ptypeval(globlist.gettype(po2^.header.buffer)));
+      end;
+      ct_pointerarray: begin
+       pa:= constlist.absdata(po2^.header.buffer);
+       i2:= po2^.header.buffersize div sizeof(int32) - 1;
+       checkconsttypeid(pa[i2]); //last item is type
+       emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
+       pe:= pa+i2;
+       while pa < pe do begin
+        emitvbr6(constval(pa^));
+        inc(pa);
+       end;
+      end;
+      ct_aggregate: begin
+       po9:= constlist.absdata(po2^.header.buffer);
+       checkconsttypeid(po9^.typeid);
+       pa:= @po9^.items;
+       i2:= po9^.itemcount;
+       emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
+       pe:= pa+i2;
+       while pa < pe do begin
+        emitvbr6(constval(pa^));
+        inc(pa);
+       end;
       end;
       else begin
        internalerror1(ie_bcwriter,'20150328A');
@@ -776,13 +824,14 @@ begin
  end;
 end;
 
-procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32);
+procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32;
+                                               const extensioncount: int32 = 0);
 var
  i1: int32;
 begin
  emitcode(ord(UNABBREV_RECORD));
  emitvbr6(id);
- emitvbr6(length(data));
+ emitvbr6(length(data)+extensioncount);
  for i1:= 0 to high(data) do begin
   emitvbr6(data[i1]);
  end;
@@ -994,13 +1043,13 @@ var
  po1,pe: pcard8;
  i1: int32;
 begin
- emitcode(ord(mabconst_data));
+ emitcode(ord(mabconst_data)); 
  emitvbr6(ord(CST_CODE_AGGREGATE));
  emitvbr6(asize);
  po1:= @avalue;
  pe:= po1+asize;
  while po1 < pe do begin
-  emitvbr8(po1^+fconststart);
+  emitvbr8(po1^+fconststart);  //todo: better encoding
   inc(po1);
  end;
 end;

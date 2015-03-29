@@ -833,15 +833,6 @@ begin
    linkresolve(po2^.links,po1^.address);
   end;
   linkresolve(po1^.links,po1^.address); //nested calls
-{
-  if sf_constructor in subdef.flags then begin
-   po3:= ele.eledataabs(currentcontainer);
-   with additem(oc_initclass)^,par.initclass do begin
-    selfinstance:= subdef.parambase-locdatapo+subdef.varsize;
-    result:= selfinstance+subdef.paramsize-stacklinksize-pointersize;
-   end;
-  end;
-}
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order
