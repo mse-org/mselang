@@ -907,18 +907,25 @@ var
 begin
  poa:= virtualsubs;
  pob:= virtualsubconsts;
- pe:= poa+virtualcount;
- while poa < pe do begin
-  pob^:= addpointercast(poa^).listid;
-  inc(poa);
-  inc(pob);
+ if virtualcount > 0 then begin
+  pe:= poa+virtualcount;
+  while poa < pe do begin
+   pob^:= addpointercast(poa^).listid;
+   inc(poa);
+   inc(pob);
+  end;
+  co1:= addpointerarray(virtualcount,virtualsubconsts);
+  classdef.header.typeid:= 
+               ftypelist.addstructvalue([ftypelist.fclassdef,co1.typeid]);
+  classdef.virtualtable:= co1.listid;
+  classdef.header.itemcount:= 2;
+ end
+ else begin
+  classdef.header.typeid:= 
+               ftypelist.addstructvalue([ftypelist.fclassdef]);
+  classdef.header.itemcount:= 1;
  end;
- co1:= addpointerarray(virtualcount,virtualsubconsts);
- classdef.header.typeid:= 
-              ftypelist.addstructvalue([ftypelist.fclassdef,co1.typeid]);
- classdef.header.itemcount:= 2;
  classdef.info:= addvalue(header,sizeof(header)).listid;
- classdef.virtualtable:= co1.listid;
  result:= addaggregate(@classdef); 
 end;
 
