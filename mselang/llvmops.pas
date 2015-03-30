@@ -522,8 +522,9 @@ end;
 
 procedure writeclassop();
 begin
- notimplemented();
+ writepointerop();
 end;
+
 procedure writeenumop();
 begin
  notimplemented();
@@ -1765,7 +1766,8 @@ begin
   docallparam(0,idar);
   bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitgetelementptr(bcstream.relval(0),callinfo.virt.virtoffset);
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                     bcstream.constval(callinfo.virt.virtoffset));
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(
             globlist.gettype(getoppo(callinfo.ad+1)^.par.subbegin.globid)));
   bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
