@@ -125,6 +125,7 @@ begin
                                                         (destindirectlevel > 0);
   end;
   if result then begin
+   d.dat.datatyp.indirectlevel:= destindirectlevel;
    d.dat.datatyp.typedata:= ele.eledatarel(dest);
   end;
  end;
@@ -409,6 +410,11 @@ var
      po1:= additem(oc_callvirt);
      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                           virtualtableoffset;
+     if backend = bke_llvm then begin
+      po1^.par.callinfo.virt.virtoffset:= 
+
+              constlist.adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
+     end;
     end;
     po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
     po1^.par.callinfo.linkcount:= -1;
