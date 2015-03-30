@@ -1764,11 +1764,11 @@ begin
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(0,idar);
-  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype));
-  bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitgetelementptr(bcstream.relval(0),
-                     bcstream.constval(callinfo.virt.virtoffset));
-  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(
+  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                     //1ssa
+  bcstream.emitgetelementptr(bcstream.relval(0),               
+                     bcstream.constval(callinfo.virt.virtoffset));//2ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(      //1ssa
             globlist.gettype(getoppo(callinfo.ad+1)^.par.subbegin.globid)));
   bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
  end;
@@ -2264,7 +2264,7 @@ const
   callfuncssa = 1;
   calloutssa = 0;
   callfuncoutssa = 1;
-  callvirtssa = 1;
+  callvirtssa = 5;
   callintfssa = 1;
   virttrampolinessa = 1;
 
