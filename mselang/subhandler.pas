@@ -792,6 +792,7 @@ begin
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    po2^.address:= po1^.address;
+   po2^.globid:= po1^.globid;
    po1^.flags:= po2^.flags;
    po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
