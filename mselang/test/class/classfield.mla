@@ -1,0 +1,51 @@
+program classfield;
+
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+
+ ttest = class
+  public
+   ff: recty;
+   constructor create();
+   destructor destroy();
+   procedure test();
+ end;
+
+var
+ i1: int32;
+ c1: ttest;
+
+constructor ttest.create();
+begin
+ ff.a:= 1;
+ ff.b:= 121;
+end;
+
+destructor ttest.destroy();
+begin
+ exitcode:= ff.a+ff.b;
+end;
+
+procedure ttest.test();
+begin
+ ff.b:= ff.a+ff.b;
+ exitcode:= ff.a+ff.b+5;
+end;
+
+begin
+ c1:= nil;
+ c1:= ttest.create();
+ c1.test();
+ if exitcode = 128 then begin
+  c1.ff.a:= 22;
+  c1.ff.b:= 100;
+  exitcode:= c1.ff.a+c1.ff.b+2;
+  if exitcode = 124 then begin
+   c1.ff.b:= 101;
+  end;
+ end;
+ c1.destroy();
+end.
