@@ -300,7 +300,8 @@ type
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
                tf_hasmanaged,  //has nested tf_managed
                tf_lower,       //in range expression
-               tf_upper        //in range expression
+               tf_upper,       //in range expression
+               tf_subad        //sub address
                ); 
  typeflagsty = set of typeflagty;   
  
@@ -316,11 +317,8 @@ type
 
  segaddressty = record
   address: dataoffsty; //first, must map poaddress
-//  typeid: int32;
-//  size: integer;    //>0 = bytes, 0 = pointer, <0 = bits
-                       //necessary for llvm global aggregate types
-                       //todo: remove size, not necessary for  bitcode
   segment: segmentty;
+  element: elementoffsetty; //for unresoved address
  end;
  
  locaddressty = record
@@ -341,7 +339,7 @@ type
    2: (locaddress: locaddressty);
  end;
  paddressvaluety = ^addressvaluety;
-
+ 
  stringvaluety = record
   offset: ptruint; //offset in string buffer
  // len: databytesizety;
@@ -777,6 +775,12 @@ const
   indirectlevel: 0;
   poaddress: 0;
  );
+ nilopad: addressvaluety = (
+  flags: [af_segment];
+  indirectlevel: 0;
+  segaddress: (address: 0; segment: seg_op; element: 0)
+ );
+ 
 
 var
  info: parseinfoty;

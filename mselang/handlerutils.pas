@@ -177,7 +177,7 @@ procedure outinfo(const text: string; const indent: boolean);
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes,grammar,segmentutils,valuehandler;
+ syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler;
    
 const
  mindouble = -1.7e308;
@@ -588,28 +588,30 @@ end;
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 var
  int1: integer;
+ po1: psubdataty;
 begin
  with info,contextstack[s.stackindex+stackoffset].d.dat do begin
- {
-  int1:= 0;
-  if datatyp.indirectlevel = 1 then begin
-   with ptypedataty(ele.eledataabs(datatyp.typedata))^ do begin
-    if datasize = das_none then begin
-     int1:= -bytesize;
-    end
-    else begin
-     int1:= bitsize;
-    end;
-   end;
-  end;
-  }
   if af_segment in ref.c.address.flags then begin
    with insertitem(oc_pushsegaddr,stackoffset,before,
                  pushsegaddrssaar[ref.c.address.segaddress.segment])^ do begin
     par.memop.segdataaddress.a:= ref.c.address.segaddress; //todo:typelistindex
     par.memop.segdataaddress.offset:= ref.offset;
     par.memop.t:= getopdatatype(datatyp);
-//    par.memop.segdataaddress.datasize:= int1;
+    if tf_subad in datatyp.flags then begin
+     po1:= ele.eledataabs(ref.c.address.segaddress.element);
+     if backend = bke_llvm then begin
+      par.memop.segdataaddress.a.address:= po1^.globid;
+     end
+     else begin
+      if po1^.address = 0 then begin
+       linkmark(po1^.links,getsegaddress(seg_op,
+                                         @par.memop.segdataaddress.a.address));
+      end
+      else begin
+       par.memop.segdataaddress.a.address:= po1^.address;
+      end;
+     end;
+    end;
    end;
   end
   else begin
@@ -623,27 +625,7 @@ begin
   end;
  end;
  initfactcontext(stackoffset);
-//  po1^.d.dat.fact.databitsize:= si1;
 end;
-{
-const
- opdatatype: array[databitsizety] of opdatatypeinfoty = (
-  (kind: odk_byte; size: 0),            //das_none,
-  (kind: odk_bit; size: 1),             //das_1,
-  (kind: odk_bit; size: 8),             //das_2_7,
-  (kind: odk_bit; size: 8),             //das_8,
-  (kind: odk_bit; size: 16),            //das_9_15,
-  (kind: odk_bit; size: 16),            //das_16,
-  (kind: odk_bit; size: 32),            //das_17_31,
-  (kind: odk_bit; size: 32),            //das_32,
-  (kind: odk_bit; size: 64),            //das_33_63,
-  (kind: odk_bit; size: 64),            //das_64,
-  (kind: odk_bit; size: pointerbitsize),//das_pointer
-  (kind: odk_bit; size: 16),            //das_f16
-  (kind: odk_bit; size: 32),            //das_f32
-  (kind: odk_bit; size: 64)             //das_f64
- );    
-}
 
 function getopdatatype(const atypedata: ptypedataty;
                            const aindirectlevel: integer): typeallocinfoty;

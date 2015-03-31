@@ -128,6 +128,11 @@ type
   itemtype: elementoffsetty;
  end;
 
+ infoaddressty = record
+  case integer of
+   0: (sub: elementoffsetty);
+ end;
+
 // writeiniprocty = procedure (const address: dataoffsty);
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
@@ -195,6 +200,9 @@ type
    );
    dk_array:(
     infoarray: infoarrayty;
+   );
+   dk_address:(
+    infoaddress: infoaddressty;
    );
    dk_record,dk_class:(
     fieldchain: elementoffsetty;
@@ -269,6 +277,7 @@ type
  subdataty = record
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
+  typ: elementoffsetty;  //typedataty dk_address
   links: linkindexty;    //calls which need to be resolved
   mark: forwardindexty;
   flags: subflagsty;

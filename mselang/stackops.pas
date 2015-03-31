@@ -73,24 +73,6 @@ implementation
 uses
  sysutils,handlerglob,mseformatstr,msetypes,internaltypes,mserttiutils,
  segmentutils,classhandler,interfacehandler,__mla__internaltypes;
-{
- stackinfoty = record
-  case datakindty of
-   dk_kind: (vdatakind: datakindty);
-   dk_boolean: (vboolean: boolean);
-   dk_cardinal: (vcardinal: card32);
-   dk_integer: (vinteger: int32);
-   dk_float: (vfloat: float64);
-   dk_address: (vaddress: pointer);
- end;
- stackinfoarty = array of stackinfoty;
- 
-var
- mainstack: stackinfoarty; 
- mainstackpo: integer;
- framepointer: integer;
-}
-
   
 type
  cputy = record

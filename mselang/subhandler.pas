@@ -469,10 +469,6 @@ var
        else begin
         si1:= po3^.bytesize;
        end;
-//       if impl1 then begin
-//        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
-//       end;
-//       address.locaddress.framelevel:= sublevel+1;
        address.flags:= [af_param];
        if po3^.datasize = das_none then begin
         include(address.flags,af_aggregate);
@@ -515,7 +511,7 @@ var
    int1:= int1+3;
   end;
  end; //doparam
-
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -527,7 +523,6 @@ begin
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
  with info do begin
-//  subflags:= contextstack[stackindex-1].d.subdef.flags;
   with contextstack[s.stackindex-1] do begin
    subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
@@ -546,27 +541,6 @@ begin
   if sf_function in subflags then begin
    resultele1:= contextstack[s.stacktop].d.typ.typedata;
   end;
-{
-  if isclass and (sf_constructor in subflags) then begin //add return type
-   inc(s.stacktop);
-   with contextstack[s.stacktop] do begin
-    d.kind:= ck_paramsdef;
-    d.paramsdef.kind:= pk_var;
-   end;
-   inc(s.stacktop);
-   with contextstack[s.stacktop] do begin
-    d.kind:= ck_ident;
-    d.ident.ident:= tk_result;
-   end;
-   inc(s.stacktop);
-   with contextstack[s.stacktop] do begin
-    d.kind:= ck_fieldtype;
-    d.typ.typedata:= currentcontainer;
-    resultele1:= currentcontainer;
-    d.typ.indirectlevel:= 1;
-   end;
-  end;
-}
   paramco:= (s.stacktop-s.stackindex-2) div 3;
   paramhigh:= paramco-1;
   if ismethod then begin
@@ -585,6 +559,14 @@ begin
                                       paramco*sizeof(pvardataty))^.data);
   po1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(po1);
+
+  po3:= ele.addelementdata(getident(),ek_type,allvisi);
+  po1^.typ:= ele.eledatarel(po3);
+  inittypedatasize(po3^,dk_address,0,das_pointer);
+  with po3^ do begin
+   infoaddress.sub:= currentsubchain;
+  end;
+
   if isinterface then begin
    include(subflags,sf_interface);
    po1^.tableindex:= currentsubcount;

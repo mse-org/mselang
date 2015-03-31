@@ -1075,7 +1075,9 @@ begin
         inc(d.dat.indirection);
        end;
 //       i1:= (d.dat.datatyp.indirectlevel+1);
-       d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+       if not (tf_subad in d.dat.datatyp.flags) then begin
+        d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+       end;
        
 //       d.dat.datatyp.indirectlevel:= i1;
       end;
