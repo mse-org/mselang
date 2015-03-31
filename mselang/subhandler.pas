@@ -423,7 +423,7 @@ begin
 end;
 
 procedure handlesubheader();
-var
+var                       //todo: move after doparam
  po1: psubdataty;
  po2: pvardataty;
  po3: ptypedataty;
@@ -511,7 +511,7 @@ var
    int1:= int1+3;
   end;
  end; //doparam
- 
+  
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -547,7 +547,7 @@ begin
    inc(paramco); //self pointer
   end;
   int2:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + 
-                              elesizes[ek_sub] + elesizes[ek_none];
+                 elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type];
   ele.checkcapacity(int2); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
@@ -556,7 +556,7 @@ begin
    identerror(1,err_overloadnotfunc);
   end;
   po1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
-                                      paramco*sizeof(pvardataty))^.data);
+                                     paramco*sizeof(pvardataty))^.data);
   po1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(po1);
 
