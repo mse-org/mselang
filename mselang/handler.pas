@@ -79,6 +79,7 @@ procedure handleexponent();
 procedure handlestatementend();
 procedure handleblockend();
 procedure handleident();
+procedure handleidentpathstart();
 procedure handleidentpath1a();
 procedure handleidentpath2a();
 procedure handleidentpath2();
@@ -1229,10 +1230,18 @@ begin
   kind:= ck_ident;
   ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
-  ident.continued:= false;
+  exclude(ident.flags,idf_continued);
+//  ident.continued:= false;
   if ident.len = 0 then begin
    errormessage(err_identexpected,[]);
   end;
+ end;
+end;
+
+procedure handleidentpathstart();
+begin
+ with info,contextstack[s.stacktop],d do begin
+  ident.flags:= [];
  end;
 end;
 
@@ -1245,7 +1254,8 @@ begin
   kind:= ck_ident;
   ident.len:= s.source.po-start.po;
   ident.ident:= getident(start.po,ident.len);
-  ident.continued:= false;
+  exclude(ident.flags,idf_continued);
+//  ident.continued:= false;
   if ident.len = 0 then begin
    errormessage(err_identexpected,[]);
   end;
@@ -1258,7 +1268,8 @@ begin
  outhandle('IDENTPATH2A');
 {$endif}
  with info,contextstack[s.stacktop],d do begin
-  ident.continued:= true;
+  include(ident.flags,idf_continued);
+//  ident.continued:= true;
  end;
 end;
 

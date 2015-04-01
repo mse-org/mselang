@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=13
    (
    kind=1
@@ -273,7 +273,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,minimal
+   a=0,664,4,minimal
    c=2
     (
     kind=2
@@ -359,7 +359,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=16
     (
     kind=2
@@ -1531,7 +1531,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=4
     (
     kind=2
@@ -1942,7 +1942,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=4
+  c=6
    (
    kind=2
    a=0,648,1,classminimal
@@ -2014,6 +2014,50 @@ c=3
    a=0,648,1,classfield llvm
    teststate=1
    path=classfield.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classvirtual
+   teststate=1
+   path=classvirtual.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classvirtual llvm
+   teststate=1
+   path=classvirtual.mla
    comment=
    cc=${mlc_llvm}
    cd=
@@ -2142,50 +2186,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=566
+propcolwidthref=581
 width0=50
 sortdescend0=0
-width1=182
+width1=187
 sortdescend1=0
-width2=155
+width2=159
 sortdescend2=0
-width3=208
+width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=45
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=12
  0 0
  0 0
  0 0

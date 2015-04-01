@@ -279,7 +279,7 @@ begin
   identcount:= -1;
   for int1:= 0 to high(idents.d) do begin
    idents.d[int1]:= po1^.d.ident.ident;
-   if not po1^.d.ident.continued then begin
+   if not (idf_continued in po1^.d.ident.flags) then begin
     identcount:= int1;
     break;
    end;
@@ -2134,13 +2134,17 @@ begin
     case kind of
      ck_ident: begin
       write('$',hextostr(ident.ident,8),':',ident.len);
+      write(' ',getidentname(ident.ident));
+      write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
+                                           integer(ident.flags),true));
+      {
       if ident.continued then begin
        write('c ');
       end
       else begin
        write('  ');
       end;
-      write(getidentname(ident.ident));
+      }
      end;
      ck_getfact: begin
       with getfact do begin

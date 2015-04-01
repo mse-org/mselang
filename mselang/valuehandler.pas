@@ -26,6 +26,11 @@ function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
+procedure handlevaluepathstart();
+procedure handlevaluepath1a();
+procedure handlevaluepath2a();
+procedure handlevaluepath2();
+procedure handlevalueinherited();
 
 implementation
 uses
@@ -198,6 +203,60 @@ begin
  if not result then begin
   result:= (afact.dat.datatyp.indirectlevel = 1 ) and 
                (po2^.kind = dk_pointer) and (i1 > 0); 
+ end;
+end;
+
+procedure handlevaluepathstart();
+begin
+ with info,contextstack[s.stacktop],d do begin
+  ident.flags:= [];
+ end;
+end;
+
+procedure handlevaluepath1a();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VALUEPATH1A');
+{$endif}
+ with info,contextstack[s.stacktop],d do begin
+  kind:= ck_ident;
+  ident.len:= s.source.po-start.po;
+  ident.ident:= getident(start.po,ident.len);
+  exclude(ident.flags,idf_continued);
+  if ident.len = 0 then begin
+   errormessage(err_identexpected,[]);
+  end;
+ end;
+end;
+
+procedure handlevaluepath2a();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VALUEPATH2A');
+{$endif}
+ with info,contextstack[s.stacktop],d do begin
+  include(ident.flags,idf_continued);
+ end;
+end;
+
+procedure handlevaluepath2();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VALUEPATH2');
+{$endif}
+ errormessage(err_syntax,['identifier'],0);
+end;
+
+procedure handlevalueinherited();
+begin
+{$ifdef mse_debugparser}
+ outhandle('VALUEINHRITED');
+{$endif}
+ with info,contextstack[s.stacktop],d do begin
+  if idf_inherited in ident.flags then begin
+   errormessage(err_identexpected,[]);
+  end;
+  include(ident.flags,idf_inherited);
  end;
 end;
  

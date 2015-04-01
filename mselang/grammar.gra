@@ -1,5 +1,6 @@
 //grammar for mselang compiler, pascal mode
 //todo: use optimised handler for whitespace and the like
+//todo: check reserved words
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -708,10 +709,10 @@ bracketend,,,handlebracketend
  ${whitespace}
 
 valueidentifier,checkvalueparams,,
- '',identpath^*
+ '',valuepath^*
 valueidentifierwhite,checkvalueparams,,
  ${whitespace}
- '',identpath^*
+ '',valuepath^*
 
 checkvalueparams,,,handlevalueidentifier
  ${whitespace}
@@ -809,7 +810,7 @@ getident,,,^
 
 identpathcontinue,,,^>
  '',identpath^*
-identpath,identpath1a,,
+identpath,identpath1a,handleidentpathstart,
  @identstart,@decnum,-
 identpath1a,identpath1,handleidentpath1a, //set ident
 identpath1,,,^                            //finish
@@ -820,5 +821,23 @@ identpath2a,identpath2,handleidentpath2a, //set continue flag
 identpath2,,,handleidentpath2^            //error
  ${whitespace}
  @identstart,identpath*
+
+valuepathcontinue,,,^>
+ '',valuepath^*
+valuepath,valuepath0,,
+valuepath0,valuepath0a-,handlevaluepathstart,
+ ${whitespace}
+ 'inherited'.,!handlevalueinherited-
+valuepath0a,valuepath1a,,
+ @identstart,@decnum,-
+valuepath1a,valuepath1,handlevaluepath1a, //set ident
+valuepath1,,,^                            //finish
+ ${whitespace}
+// '..',*
+ '.',valuepath2a+-
+valuepath2a,valuepath2,handlevaluepath2a, //set continue flag
+valuepath2,,,handlevaluepath2^            //error
+ ${whitespace}
+ @identstart,valuepath*
 
 numberexpected,,,handlenumberexpected*

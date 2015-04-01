@@ -421,19 +421,15 @@ type
   start: pchar;
  end;
  
- paramkindty = (pk_value,pk_const,pk_var,pk_out);
-
- identkindty = (ik_param); 
+ identflagty = (idf_continued,idf_inherited);
+ identflagsty = set of identflagty;
+ 
+// identkindty = (ik_param); 
  identinfoty = record
   ident: identty;
   len: integer;
-  continued: boolean;
-  {
-  case identkindty of
-   ik_param:(
-    paramkind: paramkindty;
-   )
-   }
+  flags: identflagsty;
+//  continued: boolean;
  end;
 
  opmarkty = record
@@ -466,6 +462,8 @@ type
   error: boolean;
   flags: subflagsty;
  end;
+
+ paramkindty = (pk_value,pk_const,pk_var,pk_out);
  
  paramsdefinfoty = record
   kind: paramkindty;
