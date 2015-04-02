@@ -247,8 +247,8 @@ begin
  errormessage(err_syntax,['identifier'],0);
 end;
 
-procedure handlevalueinherited();
-begin
+procedure handlevalueinherited();  //todo: anonymous inherited
+begin                   
 {$ifdef mse_debugparser}
  outhandle('VALUEINHRITED');
 {$endif}
@@ -280,7 +280,8 @@ var
  po1: pelementinfoty;
  po2: pointer;
  getfactflags: factflagsty;
-
+ isinherited: boolean;
+ 
  procedure dosub(const asub: psubdataty);
  var
   po1: popinfoty;
@@ -376,7 +377,7 @@ var
      if sf_function in asub^.flags then begin
       with pparallocinfoty(
                allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-       ssaindex:= 0;
+       ssaindex:= 0; //not used
  //      po3:= ele.eledataabs(asub^.resulttype);
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
        {
@@ -465,14 +466,17 @@ var
        ele.findcurrent(tks_self,[],allvisi,po6);
       {$endif}
        with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
+        par.memop.t:= bitoptypes[das_pointer];
         par.memop.locdataaddress.a.framelevel:= -1;
         par.memop.locdataaddress.a.address:= po6^.address.poaddress;
         par.memop.locdataaddress.offset:= 0;
+        selfpo^.ssaindex:= par.ssad;
        end;
       end;
      end;
     end;
-    if asub^.flags * [sf_virtual,sf_override,sf_interface] <> [] then begin
+    if not isinherited and 
+         (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
      if sf_interface in asub^.flags then begin
       po1:= additem(oc_callintf);
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty);
@@ -527,6 +531,9 @@ var
     end;
     with po1^ do begin
      par.callinfo.flags:= asub^.flags;
+     if isinherited then begin
+      exclude(par.callinfo.flags,sf_virtual);
+     end;
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid
@@ -640,6 +647,7 @@ var
  stacksize1: datasizety;
  paramco1: integer;
  isgetfact: boolean;
+ origparent: elementoffsetty;
 label
  endlab;
 begin
@@ -677,7 +685,44 @@ begin
     end;
    end;
   end;
+ {$ifdef mse_checkinternalerror}
+  if (s.stacktop <= s.stackindex) or 
+           (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
+   internalerror(ie_parser,'20150401A');
+  end;
+ {$endif}
+  isinherited:= idf_inherited in contextstack[s.stackindex+1].d.ident.flags;
+  if isinherited then begin
+   if stf_classimp in s.currentstatementflags then begin
+    origparent:= ele.elementparent;
+    ele.decelementparent(); //ek_classimpnode
+    ele.decelementparent(); //ek_class
+    po1:= ele.parentelement;
+   {$ifdef mse_checkinternalerror}
+    if (po1^.header.kind <> ek_type) or 
+        (ptypedataty(@po1^.data)^.kind <> dk_class) then begin
+     internalerror(ie_parser,'20150401B');
+    end;
+   {$endif}
+    with ptypedataty(@po1^.data)^ do begin
+     if ancestor = 0 then begin
+      errormessage(err_noancestor,[]); //todo: source pos
+      goto endlab;
+     end
+     else begin
+      ele.elementparent:= ancestor;
+     end;
+    end;
+   end
+   else begin
+    errormessage(err_identexpected,[]); //todo: source pos
+    goto endlab;
+   end;
+  end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
+   if isinherited then begin
+    ele.elementparent:= origparent;
+   end;
    paramco:= s.stacktop-s.stackindex-2-idents.high;
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context

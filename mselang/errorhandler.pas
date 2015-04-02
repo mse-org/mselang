@@ -54,7 +54,8 @@ type
             err_cannotwritetargetfile,err_cannotcreatetargetfile,
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
             err_cannotaddresstype,err_valueexpected,err_cannotgetsize,
-            err_pointertypeexpected,err_write,err_toomanyparams);
+            err_pointertypeexpected,err_write,err_toomanyparams,
+            err_noancestor);
             
  errorinfoty = record
   level: errorlevelty;
@@ -203,7 +204,8 @@ const
   (level: erl_error; message: 'Can not get size of this expression'),
   (level: erl_error; message: 'Pointer type expected'),
   (level: erl_error; message: 'Write error'),
-  (level: erl_error; message: 'Too many parameters')
+  (level: erl_error; message: 'Too many parameters'),
+  (level: erl_error; message: 'There is no ancestor')
  );
 
 procedure message1(const atext: string; const values: array of const); 

@@ -1942,7 +1942,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=6
+  c=8
    (
    kind=2
    a=0,648,1,classminimal
@@ -2058,6 +2058,50 @@ c=3
    a=0,648,1,classvirtual llvm
    teststate=1
    path=classvirtual.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,callinherited
+   teststate=1
+   path=callinherited.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,callinherited llvm
+   teststate=1
+   path=callinherited.mla
    comment=
    cc=${mlc_llvm}
    cd=
@@ -2196,7 +2240,9 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=12
+rowstate=14
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
