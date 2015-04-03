@@ -80,12 +80,8 @@ begin
    end;
    currentcontainer:= d.typ.typedata;
    po1:= ele.eledataabs(currentcontainer);
-   inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
-{
-   with po1^.infointerface do begin
-    ancestorchain:= 0;
-   end;
-}
+   inittypedatasize(po1^,dk_interface,0,das_pointer);
+//   inittypedatasize(po1^,dk_interface,d.typ.indirectlevel,das_pointer);
   end;
  end;
 end;

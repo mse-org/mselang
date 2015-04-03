@@ -21,7 +21,7 @@ uses
  parserglob,handlerglob;
  
 function tryconvert(const stackoffset: integer;
-          const dest: ptypedataty; const destindirectlevel: integer): boolean;
+          const dest: ptypedataty; destindirectlevel: integer): boolean;
 function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
@@ -38,7 +38,7 @@ uses
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler;
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
-          const dest: ptypedataty; const destindirectlevel: integer): boolean;
+          const dest: ptypedataty; destindirectlevel: integer): boolean;
 var                     //todo: optimize, use tables, complete
  source1: ptypedataty;
  int1: integer;
@@ -118,6 +118,7 @@ begin
         setimmint32(int1,par);
        end;
        result:= true;
+       destindirectlevel:= 1;
       end;
      end;
     end;
