@@ -308,6 +308,7 @@ var
  po1: punitdataty;
  po2: pvardataty;
  po3: ptypedataty;
+ po4: popinfoty;
  int1: integer;
  str1,str2: shortstring;
  funcs1: internalfuncty;
@@ -319,7 +320,7 @@ var
  virtualcapacity: int32;
  virtualsubs,virtualsubconsts: pint32;
  countpo,counte: pint32;
- intfpo,intfe: pintfitemty;
+ intfpo: pintfitemty;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
@@ -349,10 +350,10 @@ begin
  counte:= getsegmenttoppo(seg_intfitemcount);
  intfpo:= getsegmentbase(seg_intf);
  while countpo < counte do begin
-  intfe:= intfpo + countpo^;
-  while intfpo < intfe do begin
-   inc(intfpo);
+  if countpo^ > 0 then begin
+   pint32(intfpo)^:= constlist.addintfdef(intfpo,countpo^).listid;
   end;
+  inc(intfpo,countpo^);
   inc(countpo);
  end;
 

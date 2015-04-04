@@ -392,6 +392,12 @@ begin
      ak_pointerarray: begin
       emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeval(pointertype)]);
      end;
+     ak_aggregatearray: begin
+      with paggregatearraytypedataty(
+                       typelist.absdata(po1^.header.buffer))^ do begin
+       emitrec(ord(TYPE_CODE_ARRAY),[size,typeval(typ)]);
+      end;
+     end;
      ak_struct: begin
       i2:= po1^.header.buffersize div sizeof(int32);
       emitrec(ord(TYPE_CODE_STRUCT_ANON),[0],i2);
@@ -537,7 +543,7 @@ begin
        emitpointercastconst(globval(po2^.header.buffer),
                                ptypeval(globlist.gettype(po2^.header.buffer)));
       end;
-      ct_pointerarray: begin
+      ct_pointerarray,ct_aggregatearray: begin
        pa:= constlist.absdata(po2^.header.buffer);
        i2:= po2^.header.buffersize div sizeof(int32) - 1;
        checkconsttypeid(pa[i2]); //last item is type
@@ -558,6 +564,13 @@ begin
        while pa < pe do begin
         emitvbr6(constval(pa^));
         inc(pa);
+       end;
+      end;
+      ct_intfitem: begin
+       checkconsttypeid(consts.typelist.intfitem);
+       with pintfitemconstty(constlist.absdata(po2^.header.buffer))^ do begin
+        emitrec(ord(CST_CODE_AGGREGATE),[instanceshiftid+fconststart,
+                                                        subid+fconststart]);
        end;
       end;
       else begin

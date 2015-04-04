@@ -19,7 +19,7 @@ unit llvmlists;
 interface
 uses
  msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes,
- opglob,__mla__internaltypes;
+ opglob,__mla__internaltypes,interfacehandler;
 
 const
  maxparamcount = 512;
@@ -84,7 +84,7 @@ type
  end;
  ptypelisthashdataty = ^typelisthashdataty;
 
- aggregatekindty = (ak_none,ak_pointerarray,ak_struct);
+ aggregatekindty = (ak_none,ak_pointerarray,ak_struct,ak_aggregatearray);
  typeallocdataty = record
   header: bufferallocdataty; //header.data -> alloc size if size = -1
   kind: databitsizety; //aggregatekindty if negative
@@ -116,6 +116,12 @@ type
   items: pparamitemty;
  end;
  pparamsty = ^paramsty;
+
+ aggregatearraytypedataty = record
+  size: int32;
+  typ: int32;
+ end;
+ paggregatearraytypedataty = ^aggregatearraytypedataty;
  
 const
  noparams: paramsty = (
@@ -137,6 +143,7 @@ type
  ttypehashdatalist = class(tbufferhashdatalist)
   protected
    fclassdef: int32;
+   fintfitem: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
@@ -146,6 +153,8 @@ type
    function addbitvalue(const asize: databitsizety): integer; //returns listid
    function addbytevalue(const asize: integer): integer; //returns listid
    function addpointerarrayvalue(const asize: int32): integer;
+   function addaggregatearrayvalue(const asize: int32;
+                                            const atype: int32): integer;
    function addstructvalue(const atypes: array of int32): integer;
    function addvarvalue(const avalue: pvardataty): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
@@ -155,10 +164,13 @@ type
             //first item can be result type, returns listid
    function first: ptypelistdataty;
    function next: ptypelistdataty;
+   property classdef: int32 read fclassdef;
+   property intfitem: int32 read fintfitem;
  end;
 
  consttypety = (ct_none,ct_null,ct_pointercast,
-                ct_pointerarray,ct_aggregate); //stored as negative typeid
+                ct_pointerarray,ct_aggregatearray,ct_aggregate,ct_intfitem);
+                                            //stored as negative typeid
 
  constlistdataty = record
   header: bufferdataty;
@@ -201,12 +213,19 @@ type
  end;
  paggregateconstty = ^aggregateconstty;
  
+ intfitemconstty = record
+  instanceshiftid: int32;
+  subid: int32;
+ end;
+ pintfitemconstty = ^intfitemconstty;
+ 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
   protected
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
+   function addintfitem(const aitem: intfitemconstty): int32;
   public
    constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override; //init first entries with 0..255
@@ -217,15 +236,21 @@ type
    function addi64(const avalue: int64): llvmconstty;
    function adddataoffs(const avalue: dataoffsty): llvmconstty;
    function addvalue(const avalue; const asize: int32): llvmconstty;
-   function addpointerarray(const acount: int32;
+   function addpointerarray(const asize: int32;
                                      const ids: pint32): llvmconstty;
-                                     //ids[acount] used for type id
+                                     //ids[asize] used for type id
+   function addaggregatearray(const asize: int32; const atype: int32; 
+                                              const ids: pint32): llvmconstty;
+                                     //ids[asize] used for type id
    function addpointercast(const aid: int32): llvmconstty;
    function addaggregate(const avalue: paggregateconstty): llvmconstty;
    function addclassdef(const header: classdefheaderty;
                         const virtualcount: int32; const virtualsubs: pint32;
                                    const virtualsubconsts: pint32): llvmconstty;
                         //virtualsubconsts[virtualcount] used fot typeid
+   function addintfdef(const aintf: pintfitemty;
+                                       const acount: int32): llvmconstty;
+                                                   //overwrites aintf data
    function addnullvalue(const atypeid: int32): llvmconstty;
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
@@ -299,7 +324,7 @@ type
 
 implementation
 uses
- errorhandler,elements;
+ errorhandler,elements,segmentutils;
   
 { tbufferhashdatalist }
 
@@ -454,6 +479,7 @@ begin
    addbitvalue(k1);
   end;
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
+  fintfitem:= addstructvalue([inttype,pointertype]);
  end;
  {
  t1.header.size:= -1;
@@ -506,6 +532,22 @@ begin
  t1.header.size:= -1;
  t1.header.data:= pointer(ptruint(asize));
  t1.kind:= databitsizety(-(ord(ak_pointerarray)));
+ po1:= addvalue(t1);
+ result:= po1^.data.header.listindex;
+end;
+
+function ttypehashdatalist.addaggregatearrayvalue(const asize: int32;
+                                                  const atype: int32): integer;
+var
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
+ info1: aggregatearraytypedataty;
+begin
+ info1.size:= asize;
+ info1.typ:= atype;
+ t1.header.size:= sizeof(info1);
+ t1.header.data:= @info1;
+ t1.kind:= databitsizety(-(ord(ak_aggregatearray)));
  po1:= addvalue(t1);
  result:= po1^.data.header.listindex;
 end;
@@ -859,21 +901,39 @@ begin
  result.typeid:= pointertype;
 end;
 
-function tconsthashdatalist.addpointerarray(const acount: int32;
+function tconsthashdatalist.addpointerarray(const asize: int32;
                                               const ids: pint32): llvmconstty;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
 begin
- alloc1.header.size:= (acount+1)*sizeof(int32);
+ alloc1.header.size:= (asize+1)*sizeof(int32);
  alloc1.header.data:= ids;
- ids[acount]:= ftypelist.addpointerarrayvalue(acount);
+ ids[asize]:= ftypelist.addpointerarrayvalue(asize);
  alloc1.typeid:= -ord(ct_pointerarray);
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
  result.listid:= po1^.data.header.listindex;
- result.typeid:= ids[acount];
+ result.typeid:= ids[asize];
+end;
+
+function tconsthashdatalist.addaggregatearray(const asize: int32;
+                           const atype: int32; const ids: pint32): llvmconstty;
+                                     //ids[asize] used for type id
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= (asize+1)*sizeof(int32);
+ alloc1.header.data:= ids;
+ ids[asize]:= ftypelist.addaggregatearrayvalue(asize,atype);
+ alloc1.typeid:= -ord(ct_aggregatearray);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= ids[asize];
 end;
 
 function tconsthashdatalist.addaggregate(
@@ -927,6 +987,48 @@ begin
  end;
  classdef.info:= addvalue(header,sizeof(header)).listid;
  result:= addaggregate(@classdef); 
+end;
+
+function tconsthashdatalist.addintfitem(const aitem: intfitemconstty): int32;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+ alloc1.header.size:= sizeof(aitem);
+ alloc1.header.data:= @aitem;
+ alloc1.typeid:= -ord(ct_intfitem);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+ result:= po1^.data.header.listindex;
+end;
+
+function tconsthashdatalist.addintfdef(const aintf: pintfitemty;
+               const acount: int32): llvmconstty;
+                //overwrites aintf data
+var
+ intfpo,intfe: pintfitemty;
+ oppo: popinfoty;
+ item1: intfitemconstty;
+ pi1: pint32;
+begin
+ intfpo:= aintf;
+ intfe:= aintf+acount;
+ item1.instanceshiftid:= addi32(intfpo^.instanceshift).listid;
+ pi1:= pointer(intfpo);
+ while intfpo < intfe do begin
+  oppo:= getoppo(intfpo^.subad+1);
+ {$ifdef mse_checkinternalerror}
+  if oppo^.op.op <> oc_subbegin then begin
+   internalerror(ie_llvm,'20150404A');
+  end;
+ {$endif}
+  item1.subid:= addpointercast(oppo^.par.subbegin.globid).listid;
+  pi1^:= addintfitem(item1);
+  inc(pi1);
+  inc(intfpo);  
+ end;
+ result:= addaggregatearray(acount,ftypelist.fintfitem,pint32(aintf));
 end;
 
 function tconsthashdatalist.first: pconstlistdataty;
