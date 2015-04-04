@@ -275,7 +275,7 @@ end;
 
 function checkinterface(const instanceshift: integer;
                         const ainterface: pclassintfnamedataty): dataoffsty;
-             //todo: name alias, delegation end the like
+             //todo: name alias, delegation and the like
 
 type
  scaninfoty = record
@@ -348,6 +348,8 @@ var
 begin
  scaninfo.intfele:= ainterface^.intftype;
  intftypepo:= ptypedataty(ele.eledataabs(scaninfo.intfele));
+ pint32(allocsegmentpo(seg_intfitemcount,sizeof(int32)))^:= 
+                                           intftypepo^.infointerface.subcount;
  int1:= intftypepo^.infointerface.subcount*sizeof(intfitemty);
  result:= allocsegmentoffset(seg_intf,int1);
  with scaninfo do begin

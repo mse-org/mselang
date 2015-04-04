@@ -48,7 +48,7 @@ function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 function getclassinfoaddress(const asize: int32;
                                  const ainterfacecount: int32): segaddressty;
-function getinterfacecount(const classindex: int32): int32;
+//function getinterfacecount(const classindex: int32): int32;
 
 procedure setimmboolean(const value: boolean; var par: opparamty);
 procedure setimmcard8(const value: card8; var par: opparamty);
@@ -322,12 +322,12 @@ begin
  result:= allocsegment(seg_classdef,asize);
  pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
 end;
-
+{
 function getinterfacecount(const classindex: int32): int32;
 begin
  result:= pint32(getsegmentpo(seg_classintfcount,classindex*sizeof(int32)))^;
 end;
-
+}
 procedure setimmboolean(const value: boolean; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);

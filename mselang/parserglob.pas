@@ -27,12 +27,14 @@ const
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
-              seg_op,seg_classdef,seg_rtti,seg_intf,seg_localloc,
-              seg_classintfcount);
+              seg_op,seg_classdef,seg_rtti,seg_intf,
+              seg_localloc,
+              seg_classintfcount,seg_intfitemcount);
  segmentsty = set of segmentty;
  
 const
- storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf];
+ storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
+                   seg_classintfcount,seg_intfitemcount];
 type
  bool8 = boolean;
  bool16 = wordbool;

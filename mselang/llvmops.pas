@@ -32,7 +32,8 @@ procedure run(const atarget: tllvmbcwriter);
 implementation
 uses
  sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
- handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils;
+ handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
+ interfacehandler;
 
 type
  icomparekindty = (ick_eq,ick_ne,
@@ -317,6 +318,8 @@ var
  i1,i2,i3: int32;
  virtualcapacity: int32;
  virtualsubs,virtualsubconsts: pint32;
+ countpo,counte: pint32;
+ intfpo,intfe: pintfitemty;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
@@ -341,12 +344,25 @@ begin
                      constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
- poclassdef:= getsegmentpo(seg_classdef,0);
+
+ countpo:= getsegmentbase(seg_intfitemcount);
+ counte:= getsegmenttoppo(seg_intfitemcount);
+ intfpo:= getsegmentbase(seg_intf);
+ while countpo < counte do begin
+  intfe:= intfpo + countpo^;
+  while intfpo < intfe do begin
+   inc(intfpo);
+  end;
+  inc(countpo);
+ end;
+
+ poclassdef:= getsegmentbase(seg_classdef);
  peclassdef:= getsegmenttoppo(seg_classdef);
- i1:= 0;
+// i1:= 0;
  virtualcapacity:= 0;
  virtualsubs:= nil; 
- virtualsubconsts:= nil; 
+ virtualsubconsts:= nil;
+ countpo:= getsegmentbase(seg_classintfcount);
  try
   while poclassdef < peclassdef do begin
    povirtual:= @poclassdef^.virtualmethods;
@@ -368,13 +384,14 @@ begin
     inc(povirtual);    
     inc(i2);
    end;
-   i3:= getinterfacecount(i1)*pointersize;
+//   i3:= getinterfacecount(i1)*pointersize;
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
              constlist.addclassdef(poclassdef^.header,i2,
                                      virtualsubs,virtualsubconsts).listid);
                  //virtualsubconsts set in addclassdef
-   poclassdef:= pointer(pevirtual)+i3;
-   inc(i1);
+   poclassdef:= pointer(pevirtual)+countpo^*pointersize;
+   inc(countpo);
+//   inc(i1);
   end;
  finally
   if virtualsubs <> nil then begin
