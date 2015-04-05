@@ -156,6 +156,7 @@ type
    function addaggregatearrayvalue(const asize: int32;
                                             const atype: int32): integer;
    function addstructvalue(const atypes: array of int32): integer;
+   function addstructvalue(const asize: int32; const atypes: pint32): integer;
    function addvarvalue(const avalue: pvardataty): integer; //returns listid
    function addsubvalue(const avalue: psubdataty): integer; //returns listid
                          //nil -> main sub
@@ -569,6 +570,20 @@ begin
  result:= po1^.data.header.listindex;
 end;
 
+function ttypehashdatalist.addstructvalue(const asize: int32;
+                                               const atypes: pint32): integer;
+var
+ t1: typeallocdataty;
+ po1: ptypelisthashdataty;
+begin
+ t1.header.size:= asize*sizeof(int32);
+ t1.header.data:= atypes;
+ t1.kind:= databitsizety(-(ord(ak_struct)));
+ po1:= addvalue(t1);
+ result:= po1^.data.header.listindex;
+end;
+
+
 type
  subtypebufferty = record
   header: subtypeheaderty;
@@ -961,37 +976,53 @@ function tconsthashdatalist.addclassdef(const aclassdef: pclassdefinfoty;
 type
  classdefty = record
   header: aggregateconstty;
-  info,virtualtable: int32; //constlist ids
+  items: array[0..2] of int32; //constlist ids
  end;
 var
- poa,pob,pe: pint32;
+ pd: pint32;
  co1: llvmconstty;
  classdef1: classdefty;
+ types1: array[0..2] of int32;
  i1: int32;
- povirtual,pevirtual: popaddressty;
+ ps1,ps,pe: popaddressty;
+ po1: pointer;
 begin
- povirtual:= @aclassdef^.virtualmethods;
- pevirtual:= pointer(aclassdef)+aclassdef^.header.interfacestart;
- i1:= pevirtual - povirtual;
+ co1:= addvalue(aclassdef^.header,sizeof(aclassdef^.header));
+ classdef1.items[0]:= co1.listid;
+ types1[0]:= co1.typeid;             
+ classdef1.header.header.itemcount:= 1;
+ 
+ ps:= @aclassdef^.virtualmethods;
+ pd:= pointer(ps);
+ pe:= pointer(aclassdef)+aclassdef^.header.interfacestart;
+ i1:= pe - ps;
  if i1 > 0 then begin
-  poa:= pointer(povirtual);
-  while povirtual < pevirtual do begin
-   poa^:= addpointercast(povirtual^).listid;
-   inc(poa);
-   inc(povirtual);
+  while ps < pe do begin
+   pd^:= addpointercast(ps^).listid;
+   inc(pd);
+   inc(ps);
   end;
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
-  classdef1.header.header.typeid:= 
-               ftypelist.addstructvalue([ftypelist.fclassdef,co1.typeid]);
-  classdef1.virtualtable:= co1.listid;
+  classdef1.items[1]:= co1.listid;
+  types1[1]:= co1.typeid;
   classdef1.header.header.itemcount:= 2;
- end
- else begin
-  classdef1.header.header.typeid:= 
-               ftypelist.addstructvalue([ftypelist.fclassdef]);
-  classdef1.header.header.itemcount:= 1;
  end;
- classdef1.info:= addvalue(aclassdef^.header,sizeof(aclassdef^.header)).listid;
+ if aintfcount > 0 then begin
+  po1:= getsegmentbase(seg_intf);
+  ps1:= ps;
+  pe:= ps+aintfcount;
+  while ps < pe do begin
+   pd^:= addpointercast(pint32(po1+ps^)^).listid;
+   inc(pd);
+   inc(ps);
+  end;
+  co1:= addpointerarray(aintfcount,pointer(ps1));
+  classdef1.items[classdef1.header.header.itemcount]:= co1.listid;
+  types1[classdef1.header.header.itemcount]:= co1.typeid;
+  inc(classdef1.header.header.itemcount);
+ end;
+ classdef1.header.header.typeid:= ftypelist.addstructvalue(
+                                  classdef1.header.header.itemcount,@types1);
  result:= addaggregate(@classdef1); 
 {
  poa:= virtualsubs;
