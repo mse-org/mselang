@@ -1,16 +1,25 @@
-program classvirtual;
+program classinterface;
 type
+ itest = interface
+  procedure test();
+  procedure test1();
+ end;
+ itest1 = interface
+  procedure test();
+ end;
+
  tc1 = class
+  private
+   f: int32;
   public
    constructor create();
    destructor destroy();
-   procedure test(); virtual;
  end;
 
- tc2 = class(tc1)
+ tc2 = class(tc1,itest,itest1)
   public
-//   constructor create();
-   procedure test(); override;
+   procedure test();
+   procedure test1();
  end;
 
 constructor tc1.create();
@@ -19,25 +28,31 @@ end;
 
 destructor tc1.destroy();
 begin
-end;
-
-procedure tc1.test();
-begin
- exitcode:= 112;
+ exitcode:= f+11;
 end;
 
 procedure tc2.test();
 begin
-// inherited test();
-// exitcode:= exitcode+11;
- exitcode:= 123;
+ f:= 112;
+end;
+
+procedure tc2.test1();
+begin
+ exitcode:= 100;
 end;
 
 var
+ i1: itest;
  c1: tc2;
 
+type
+ ppointer = ^pointer;
+
 begin
+{
  c1:= tc2.create();
-// c1.test();
+ i1:= itest(c1);
+ i1.test();
  c1.destroy();
+}
 end.

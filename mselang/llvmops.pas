@@ -382,15 +382,12 @@ begin
    i2:= 0;
    while povirtual < pevirtual do begin
     virtualsubs[i2]:= povirtual^;
-//    virtualtypes[i2]:= globlist.gettype(povirtual^);
     inc(povirtual);    
     inc(i2);
    end;
-//   i3:= getinterfacecount(i1)*pointersize;
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
-             constlist.addclassdef(poclassdef^.header,i2,
+             constlist.addclassdef(poclassdef,i2,
                                      virtualsubs,virtualsubconsts).listid);
-                 //virtualsubconsts set in addclassdef
    poclassdef:= pointer(pevirtual)+countpo^*pointersize;
    inc(countpo);
 //   inc(i1);
