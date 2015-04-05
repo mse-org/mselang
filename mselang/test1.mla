@@ -49,10 +49,10 @@ type
  ppointer = ^pointer;
 
 begin
-{
+
  c1:= tc2.create();
  i1:= itest(c1);
  i1.test();
  c1.destroy();
-}
+
 end.

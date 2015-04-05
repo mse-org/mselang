@@ -1857,7 +1857,7 @@ begin
   po1:= cpu.stack + selfinstance;
   po3:= ppointer(po1^)^;
   inc(po1^,po3^.header.instanceoffset);
-  cpu.pc:= startpo + pintfitemty(@po3^.items+virtoffset)^.subad;
+  cpu.pc:= startpo + pintfitemty(pointer(po3)+virtoffset)^.subad;
 {
   po2:= segments[seg_intf].basepo + pptrint(po1^)^;
   inc(po1^,po2^.instanceshift);

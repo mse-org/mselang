@@ -411,6 +411,7 @@ type
  virtcallinfoty = record
   selfinstance: dataoffsty; //stackoffset
   virtoffset: dataoffsty;   //offset in classdefinfoty
+  typeid: int32; //for llvm
  end;
 
  callinfoty = record

@@ -1784,21 +1784,61 @@ begin
   docallparam(0,idar);
   bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa **i8
   bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
+               //class def
   bcstream.emitgetelementptr(bcstream.relval(0),               
                      bcstream.constval(callinfo.virt.virtoffset));//2ssa *i8
+               //virtual table item address
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
                                                                   //1ssa **i8
-  bcstream.emitloadop(bcstream.relval(0));                        //1ssa
+  bcstream.emitloadop(bcstream.relval(0));                        //1ssa *i8
+               //sub address
+(*
+ {$ifdef mse_checkinternalerror}
+  if getoppo(callinfo.ad+1)^.op.op <> oc_subbegin then begin
+   internalerror(ie_llvm,'20150405A');
+  end;
+ {$endif}
   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(      //1ssa
             globlist.gettype(getoppo(callinfo.ad+1)^.par.subbegin.globid)));
+*)
+  bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
+                         bcstream.ptypeval(callinfo.virt.typeid));
   bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
  end;
 end;
 
 procedure callintfop();
+var
+ ids: idsarty;
+ idar: idarty;
+ i1: int32;
 begin
- notimplemented();
+ with pc^.par do begin               //todo: calling convention
+  idar.ids:= @ids;
+  docallparam(0,idar);
+  bcstream.emitbitcast(ids[0],bcstream.ptypeval(pointertype)); //1ssa **i8
+  bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
+              //interface base
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(inttype));
+                                                               //1ssa *i32
+  bcstream.emitloadop(bcstream.relval(0));                     //1ssa i32
+              //instanceoffset
+  bcstream.emitgetelementptr(ids[0],bcstream.relval(0));       //2ssa *i8
+              //shift instance po
+  ids[0]:= bcstream.relval(0); //class instance
+  bcstream.emitgetelementptr(bcstream.relval(3),                   //2ssa *i8
+       bcstream.constval(callinfo.virt.virtoffset));
+              //interface table item address
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+                                                               //1ssa **i8
+  bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
+               //sub address
+  bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
+                         bcstream.ptypeval(callinfo.virt.typeid));
+  bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
+ end;
 end;
+
 procedure virttrampolineop();
 begin
  notimplemented();
@@ -2286,7 +2326,7 @@ const
   calloutssa = 0;
   callfuncoutssa = 1;
   callvirtssa = 7;
-  callintfssa = 1;
+  callintfssa = 11;
   virttrampolinessa = 1;
 
   locvarpushssa = 0; //dummy

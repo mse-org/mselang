@@ -35,13 +35,14 @@ procedure handlevalueinherited();
 implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
- subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler;
+ subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
+ __mla__internaltypes;
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer): boolean;
 var                     //todo: optimize, use tables, complete
  source1: ptypedataty;
- int1: integer;
+ int1,i2: integer;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -114,8 +115,10 @@ begin
           (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
      if getclassinterfaceoffset(source1,dest,int1) then begin
       if getvalue(stackoffset) then begin
+       i2:= d.dat.fact.ssaindex;
        with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
         setimmint32(int1,par);
+        par.ssas1:= i2;
        end;
        result:= true;
        destindirectlevel:= 1;
@@ -480,17 +483,18 @@ var
          (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
      if sf_interface in asub^.flags then begin
       po1:= additem(oc_callintf);
-      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty);
+      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
+                                                        sizeof(intfdefheaderty);
      end
      else begin
       po1:= additem(oc_callvirt);
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
-                                                           virtualtableoffset;
-      if backend = bke_llvm then begin
-       po1^.par.callinfo.virt.virtoffset:= 
- 
-               constlist.adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
-      end;
+                                                             virtualtableoffset;
+     end;
+     if backend = bke_llvm then begin
+      po1^.par.callinfo.virt.virtoffset:=  
+              constlist.adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
+      po1^.par.callinfo.virt.typeid:= typelist.addsubvalue(asub);
      end;
      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
      po1^.par.callinfo.linkcount:= -1;
