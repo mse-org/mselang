@@ -320,7 +320,7 @@ var
  virtualcapacity: int32;
  virtualsubs,virtualsubconsts: pint32;
  countpo,counte: pint32;
- intfpo: pintfitemty;
+ intfpo: pintfdefinfoty;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
@@ -354,7 +354,7 @@ begin
    pint32(intfpo)^:= globlist.addinitvalue(gak_const,
                           constlist.addintfdef(intfpo,countpo^).listid);
   end;
-  inc(intfpo,countpo^);
+  inc(pointer(intfpo),sizeof(intfpo^)+countpo^*opaddresssize);
   inc(countpo);
  end;
 

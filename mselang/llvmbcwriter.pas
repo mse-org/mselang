@@ -556,9 +556,9 @@ begin
       end;
       ct_aggregate: begin
        po9:= constlist.absdata(po2^.header.buffer);
-       checkconsttypeid(po9^.typeid);
+       checkconsttypeid(po9^.header.typeid);
        pa:= @po9^.items;
-       i2:= po9^.itemcount;
+       i2:= po9^.header.itemcount;
        emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
        pe:= pa+i2;
        while pa < pe do begin
@@ -566,6 +566,7 @@ begin
         inc(pa);
        end;
       end;
+      {
       ct_intfitem: begin
        checkconsttypeid(consts.typelist.intfitem);
        with pintfitemconstty(constlist.absdata(po2^.header.buffer))^ do begin
@@ -573,6 +574,7 @@ begin
                                                         subid+fconststart]);
        end;
       end;
+      }
       else begin
        internalerror1(ie_bcwriter,'20150328A');
       end;

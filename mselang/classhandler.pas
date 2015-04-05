@@ -273,7 +273,7 @@ begin
  end;
 end;
 
-function checkinterface(const instanceshift: integer;
+function checkinterface(const ainstanceoffset: int32;
                         const ainterface: pclassintfnamedataty): dataoffsty;
              //todo: name alias, delegation and the like
 
@@ -311,22 +311,22 @@ type
      include(po2^.flags,sf_intfcall);
      if sf_virtual in po2^.flags then begin
       if po2^.trampolineaddress = 0 then begin
-       linkmark(po2^.trampolinelinks,seg,sizeof(intfitemty.instanceshift));
-      end
+       linkmark(po2^.trampolinelinks,seg{,sizeof(intfitemty.instanceshift)});
+      end                                               //offset
       else begin
        sub^.subad:= po2^.trampolineaddress-1;
       end;
      end
      else begin
       if po2^.address = 0 then begin
-       linkmark(po2^.links,seg,sizeof(intfitemty.instanceshift));
-      end
+       linkmark(po2^.links,seg{,sizeof(intfitemty.instanceshift)});
+      end                                     //offset
       else begin
        sub^.subad:= po2^.address-1;
       end;
      end;
     end;
-    sub^.instanceshift:= instanceshift;
+//    sub^.instanceshift:= instanceshift;
     ele1:= psubdataty(@po1^.data)^.next;
    end;
    ele1:= intftype^.ancestor;
@@ -350,7 +350,9 @@ begin
  intftypepo:= ptypedataty(ele.eledataabs(scaninfo.intfele));
  pint32(allocsegmentpo(seg_intfitemcount,sizeof(int32)))^:= 
                                            intftypepo^.infointerface.subcount;
- int1:= intftypepo^.infointerface.subcount*sizeof(intfitemty);
+// int1:= intftypepo^.infointerface.subcount*sizeof(intfitemty);
+ int1:= sizeof(intfdefheaderty)+
+                       intftypepo^.infointerface.subcount*sizeof(intfitemty);
  result:= allocsegmentoffset(seg_intf,int1);
  with scaninfo do begin
   seg.address:= result+int1;       //top-down
@@ -358,6 +360,10 @@ begin
   seg.segment:= seg_intf;
  end;
  dointerface(scaninfo); 
+ with pintfdefheaderty(pointer(scaninfo.sub)-
+                             sizeof(intfdefheaderty))^ do begin
+  instanceoffset:= ainstanceoffset;
+ end;
 end;
 
 //class instance layout:

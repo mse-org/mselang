@@ -22,7 +22,7 @@ uses
 
 type
  intfitemty = record  //interface sub item
-  instanceshift: integer; //offset from interface pointer to instance
+//  instanceshift: integer; //offset from interface pointer to instance
   subad: opaddressty;
  end;
  pintfitemty = ^intfitemty;

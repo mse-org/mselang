@@ -63,12 +63,25 @@ type
  
  classdefinfoty = record
   header: classdefheaderty;
-  virtualmethods: record //array of targetpointer
+  virtualmethods: record //array of targetpointer to sub
   end;
-  interfaces: record     //array of targetpointer, copied to instance
+  interfaces: record     //array of targetpointer to intfdefinfoty,
+                         //copied to instance
   end;  
  end;
  pclassdefinfoty = ^classdefinfoty;
+ 
+ intfdefheaderty = record
+  instanceoffset: int32; //offset from interface pointer to class instance
+ end;
+ pintfdefheaderty = ^intfdefheaderty;
+ 
+ intfdefinfoty = record
+  header: intfdefheaderty;
+  items: record          //array of targetpointer to sub
+  end;
+ end;
+ pintfdefinfoty = ^intfdefinfoty;
 
 implementation
 end.

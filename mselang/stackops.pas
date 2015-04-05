@@ -1843,7 +1843,8 @@ end;
 procedure callintfop();
 var
  po1: ppointer;
- po2: pintfitemty;
+// po2: pintfitemty;
+ po3: pintfdefinfoty;
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -1854,9 +1855,14 @@ begin
  cpu.stacklink:= cpu.frame;
  with cpu.pc^.par.callinfo.virt do begin
   po1:= cpu.stack + selfinstance;
+  po3:= ppointer(po1^)^;
+  inc(po1^,po3^.header.instanceoffset);
+  cpu.pc:= startpo + pintfitemty(@po3^.items+virtoffset)^.subad;
+{
   po2:= segments[seg_intf].basepo + pptrint(po1^)^;
   inc(po1^,po2^.instanceshift);
   cpu.pc:= startpo + po2^.subad;
+}
  end;
 end;
 
@@ -1910,7 +1916,9 @@ var
  po1: pointer;
  po2: pclassdefinfoty;
  self1: ppointer;
- ps,pd,pe: popaddressty;
+ ps: popaddressty;
+ pd: ppointer;
+ pe: pointer;
 begin
  with cpu.pc^.par do begin
   po2:= pclassdefinfoty(segments[seg_classdef].basepo+initclass.classdef);
@@ -1925,7 +1933,7 @@ begin
   pe:= po1 + po2^.header.allocsize;
   ps:= (pointer(po2)+po2^.header.interfacestart);
   while pd < pe do begin
-   pd^:= ps^;
+   pd^:= segments[seg_intf].basepo+ps^;
    inc(pd);
    inc(ps);
   end;
