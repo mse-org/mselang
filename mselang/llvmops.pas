@@ -367,6 +367,7 @@ begin
  countpo:= getsegmentbase(seg_classintfcount);
  try
   while poclassdef < peclassdef do begin
+  {
    povirtual:= @poclassdef^.virtualmethods;
    pevirtual:= pointer(poclassdef)+poclassdef^.header.interfacestart;
    i2:= pevirtual - povirtual;
@@ -385,10 +386,11 @@ begin
     inc(povirtual);    
     inc(i2);
    end;
+   }
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
-             constlist.addclassdef(poclassdef,i2,
-                                     virtualsubs,virtualsubconsts).listid);
-   poclassdef:= pointer(pevirtual)+countpo^*pointersize;
+             constlist.addclassdef(poclassdef,countpo^).listid);
+   poclassdef:= pointer(poclassdef)+poclassdef^.header.interfacestart+
+                                                         countpo^*pointersize;
    inc(countpo);
 //   inc(i1);
   end;

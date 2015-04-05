@@ -247,9 +247,10 @@ type
                                      //ids[asize] used for type id
    function addpointercast(const aid: int32): llvmconstty;
    function addaggregate(const avalue: paggregateconstty): llvmconstty;
-   function addclassdef(const aclassdef: pclassdefinfoty;
-                        const virtualcount: int32; const virtualsubs: pint32;
-                                   const virtualsubconsts: pint32): llvmconstty;
+   function addclassdef(const aclassdef: pclassdefinfoty; 
+                                const aintfcount: int32
+                        {const virtualcount: int32; const virtualsubs: pint32;
+                                  const virtualsubconsts: pint32}): llvmconstty;
                         //virtualsubconsts[virtualcount] used fot typeid
    function addintfdef(const aintf: pintfdefinfoty;
                                        const acount: int32): llvmconstty;
@@ -956,8 +957,7 @@ begin
 end;
 
 function tconsthashdatalist.addclassdef(const aclassdef: pclassdefinfoty;
-               const virtualcount: int32; const virtualsubs: pint32;
-               const virtualsubconsts: pint32): llvmconstty;
+                                          const aintfcount: int32): llvmconstty;
 type
  classdefty = record
   header: aggregateconstty;
@@ -967,7 +967,33 @@ var
  poa,pob,pe: pint32;
  co1: llvmconstty;
  classdef1: classdefty;
+ i1: int32;
+ povirtual,pevirtual: popaddressty;
 begin
+ povirtual:= @aclassdef^.virtualmethods;
+ pevirtual:= pointer(aclassdef)+aclassdef^.header.interfacestart;
+ i1:= pevirtual - povirtual;
+ if i1 > 0 then begin
+  poa:= pointer(povirtual);
+  while povirtual < pevirtual do begin
+   poa^:= addpointercast(povirtual^).listid;
+   inc(poa);
+   inc(povirtual);
+  end;
+  co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
+  classdef1.header.header.typeid:= 
+               ftypelist.addstructvalue([ftypelist.fclassdef,co1.typeid]);
+  classdef1.virtualtable:= co1.listid;
+  classdef1.header.header.itemcount:= 2;
+ end
+ else begin
+  classdef1.header.header.typeid:= 
+               ftypelist.addstructvalue([ftypelist.fclassdef]);
+  classdef1.header.header.itemcount:= 1;
+ end;
+ classdef1.info:= addvalue(aclassdef^.header,sizeof(aclassdef^.header)).listid;
+ result:= addaggregate(@classdef1); 
+{
  poa:= virtualsubs;
  pob:= virtualsubconsts;
  if virtualcount > 0 then begin
@@ -990,6 +1016,7 @@ begin
  end;
  classdef1.info:= addvalue(aclassdef^.header,sizeof(aclassdef^.header)).listid;
  result:= addaggregate(@classdef1); 
+}
 end;
 {
 function tconsthashdatalist.addintfitem(const aitem: intfitemconstty): int32;
