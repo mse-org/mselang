@@ -1,0 +1,45 @@
+program classvirtual;
+type
+ tc1 = class
+  public
+   constructor create();
+   destructor destroy();
+   procedure test(); virtual;
+ end;
+
+ tc2 = class(tc1)
+  public
+   procedure test(); override;
+ end;
+
+constructor tc1.create();
+begin
+end;
+
+destructor tc1.destroy();
+begin
+end;
+
+procedure tc1.test();
+begin
+ exitcode:= 112;
+end;
+
+procedure tc2.test();
+begin
+// inherited test();
+// exitcode:= exitcode+11;
+ exitcode:= 123;
+end;
+
+type
+ ppointer = ^pointer;
+var
+ c1: tc2;
+ po1: ppointer;
+
+begin
+ c1:= tc2.create();
+ c1.test();
+ c1.destroy();
+end.

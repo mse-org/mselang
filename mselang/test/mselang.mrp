@@ -1942,7 +1942,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=8
+  c=10
    (
    kind=2
    a=0,648,1,classminimal
@@ -2119,6 +2119,50 @@ c=3
    aec=123
    ie=0
    )
+   (
+   kind=2
+   a=0,648,1,classinterface
+   teststate=1
+   path=classinterface.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classinterface llvm
+   teststate=1
+   path=classinterface.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
   teststate=1
   path=class/
   comment=
@@ -2240,7 +2284,9 @@ sortdescend2=0
 width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=14
+rowstate=16
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
