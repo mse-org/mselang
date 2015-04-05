@@ -1145,7 +1145,7 @@ begin
    ct_pointercast: begin
     dat1.typeindex:= pointertype;
    end;
-   ct_pointerarray: begin
+   ct_pointerarray,ct_aggregatearray: begin
     dat1.typeindex:= pint32(constlist.absdata(po1^.data.header.buffer))
                            [po1^.data.header.buffersize div sizeof(int32) - 1];
                                        //last item is type

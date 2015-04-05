@@ -351,7 +351,8 @@ begin
  intfpo:= getsegmentbase(seg_intf);
  while countpo < counte do begin
   if countpo^ > 0 then begin
-   pint32(intfpo)^:= constlist.addintfdef(intfpo,countpo^).listid;
+   pint32(intfpo)^:= globlist.addinitvalue(gak_const,
+                          constlist.addintfdef(intfpo,countpo^).listid);
   end;
   inc(intfpo,countpo^);
   inc(countpo);
