@@ -1841,7 +1841,7 @@ end;
 
 procedure virttrampolineop();
 begin
- notimplemented();
+ bcstream.marktrampoline(pc);
 end;
 
 procedure locvarpushop();
@@ -1860,25 +1860,31 @@ var
  po2: pnestedallocinfoty;
  i1,i2: int32;
  poend: pointer;
+ trampop: popinfoty;
 begin
+ bcstream.releasetrampoline(trampop);
+ if trampop <> nil then begin
+  with trampop^.par.subbegin do begin
+  end;
+ end;
  with pc^.par.subbegin do begin
-  bcstream.beginsub(flags,allocs,blockcount);
-  po1:= getsegmentpo(seg_localloc,allocs.allocs);
-  poend:= po1 + allocs.alloccount;
+  bcstream.beginsub(sub.flags,sub.allocs,sub.blockcount);
+  po1:= getsegmentpo(seg_localloc,sub.allocs.allocs);
+  poend:= po1 + sub.allocs.alloccount;
   while po1 < poend do begin
    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
    inc(po1);
   end;
   i2:= 0;
-  if sf_function in flags then begin
+  if sf_function in sub.flags then begin
    i2:= 1; //skip result param
   end;
-  for i1:= i2 to allocs.paramcount-1 do begin
+  for i1:= i2 to sub.allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
-  if allocs.nestedalloccount > 0 then begin
-   bcstream.emitalloca(bcstream.ptypeval(allocs.nestedallocstypeindex));
-   if sf_hascallout in flags then begin
+  if sub.allocs.nestedalloccount > 0 then begin
+   bcstream.emitalloca(bcstream.ptypeval(sub.allocs.nestedallocstypeindex));
+   if sf_hascallout in sub.flags then begin
     bcstream.emitgetelementptr(bcstream.subval(0),constlist.i8(0)); 
                                         //param parent nested var,source
     bcstream.emitgetelementptr(bcstream.ssaval(0),nullpointeroffset);
@@ -1886,8 +1892,8 @@ begin
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
    end;
-   po2:= getsegmentpo(seg_localloc,allocs.nestedallocs);
-   poend:= po2+allocs.nestedalloccount;
+   po2:= getsegmentpo(seg_localloc,sub.allocs.nestedallocs);
+   poend:= po2+sub.allocs.nestedalloccount;
    i1:= 1;
    while po2 < poend do begin
     if po2^.address.nested then begin
@@ -1908,7 +1914,7 @@ begin
     inc(po2);
     inc(i1);
    end;
-   bcstream.emitbitcast(bcstream.allocval(allocs.alloccount),
+   bcstream.emitbitcast(bcstream.allocval(sub.allocs.alloccount),
                                                bcstream.typeval(das_pointer));
                                  //pointer to nestedallocs
    bcstream.resetssa();
@@ -1919,9 +1925,7 @@ end;
 procedure subendop();
 begin
  with pc^.par.subend do begin
-//  bcstream.emitretop(); //todo: function
   bcstream.endsub();
-//  outass('}');
  end;
 end;
 

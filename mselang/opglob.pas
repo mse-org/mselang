@@ -426,11 +426,6 @@ type
    );
  end; 
 
- virttrampolineinfoty = record
-  selfinstance: dataoffsty; //frameoffset
-  virtoffset: dataoffsty;   //offset in classdefinfoty
- end;
-
  intfcallinfoty = record
   selfinstance: dataoffsty; 
     //stackoffset, points to interface item in obj instance.
@@ -600,13 +595,23 @@ const
 );
  
 type
+ virttrampolineinfoty = record
+  selfinstance: dataoffsty; //frameoffset
+  virtoffset: dataoffsty;   //offset in classdefinfoty
+ end;
+ 
+ subbegininfoty = record
+  flags: subflagsty;
+  allocs: suballocinfoty;
+  blockcount: int32;
+ end;
+
  subbeginty = record
   subname: opaddressty;
-  flags: subflagsty;
-//  varchain: elementoffsetty;
-  allocs: suballocinfoty;
   globid: int32;
-  blockcount: int32;
+  case integer of
+   0: (sub: subbegininfoty);
+   1: (trampoline: virttrampolineinfoty);
  end;
 
  subendty = record
@@ -660,11 +665,6 @@ type
     dummy: record
     end;
    );
-   {
-   oc_label: (
-    lab: labty;
-   );
-   }
    oc_main: (
     main: mainty;
    );
@@ -699,17 +699,6 @@ type
    oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref:(
     vaddress: dataaddressty;
    );
-   (*
-   {oc_pushsegaddress,}oc_pushsegaddr,oc_pushsegaddrindi,
-   oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg:(
-    vsegaddress: segdataaddressty;
-   );
-   *)
-   (*
-   oc_pushlocaddr,oc_pushlocaddrindi:(
-    vlocaddress: locdataaddressty;
-   );
-   *)
    oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
    oc_pushstackaddr,oc_pushstackaddrindi,
@@ -757,7 +746,7 @@ type
                                                                   //controlops
     opaddress: labty; //first!
    );   
-   oc_subbegin:(
+   oc_subbegin,oc_virttrampoline:(
     subbegin: subbeginty;
    );
    oc_subend:(
@@ -765,9 +754,6 @@ type
    );
    oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf:(
     callinfo: callinfoty;
-   );
-   oc_virttrampoline:(
-    virttrampolineinfo: virttrampolineinfoty;
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(
     stacksize: datasizety;

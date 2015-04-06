@@ -81,9 +81,9 @@ begin
     if info.backend = bke_llvm then begin
      globid:= globlist.addinternalsubvalue([],noparams);
     end;
-    flags:= [];
-    allocs:= nullallocs;
-    blockcount:= 1;
+    sub.flags:= [];
+    sub.allocs:= nullallocs;
+    sub.blockcount:= 1;
    end;
   end;
  end;
@@ -782,7 +782,6 @@ begin
  outhandle('SUB5A');
 {$endif}
  with info,contextstack[s.stackindex-2].d do begin
-//  subdef.locallocidbefore:= locallocid;
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   po1^.address:= opcount;
@@ -791,6 +790,23 @@ begin
   end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
+   if (po2^.flags * [sf_virtual,sf_override] <> []) and 
+                    (sf_intfcall in po1^.flags) then begin
+    po2^.trampolineaddress:= opcount;
+    linkresolve(po2^.trampolinelinks,po2^.trampolineaddress);
+    with additem(oc_virttrampoline)^ do begin 
+      //todo: possibly better in front of sub because of cache line
+     par.subbegin.trampoline.selfinstance:= -subdef.paramsize;
+     par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
+                                                            virtualtableoffset;
+     if backend = bke_llvm then begin
+      par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
+                                par.subbegin.trampoline.virtoffset).listid;
+      par.subbegin.globid:= globlist.addtypecopy(po1^.globid);
+     end;
+    end;
+    po1^.address:= opcount;
+   end;
    po2^.address:= po1^.address;
    po2^.globid:= po1^.globid;
    po1^.flags:= po2^.flags;
@@ -871,37 +887,12 @@ begin
   end
   else begin
    po1^.allocs:= nullallocs;
-   {
-   po1^.allocs.allocs:= 0;
-   po1^.allocs.alloccount:= 0;
-   po1^.allocs.paramcount:= 0;
-   po1^.allocs.nestedallocs:= 0;
-   po1^.allocs.nestedalloccount:= 0;
-   }
   end;
-  {
-  if backend = bke_llvm then begin
-   po1^.globid:= globlist.addsubvalue(po1); //nested subs first
-  end;
-  }
   resetssa();
-  {
-  int1:= getssa(ocssa_alloc,po1^.allocs.alloccount);
-  int1:= 0;
-  int1:= int1 + getssa(ocssa_nestedvar,po1^.allocs.nestedalloccount);
-  if sf_hascallout in po1^.flags then begin
-   int1:= int1 + getssa(ocssa_hascallout);
-  end;
-  with additem(oc_subbegin,int1)^ do begin
-  }
   with additem(oc_subbegin,0)^ do begin
    par.subbegin.subname:= po1^.address;
    par.subbegin.globid:= po1^.globid;
-//   par.subbegin.flags:= po1^.flags;
-   par.subbegin.allocs:= po1^.allocs;
-   
-//   par.subbegin.allocs.allocs:= alloc1;
-//   par.subbegin.allocs.alloccount:= int1;
+   par.subbegin.sub.allocs:= po1^.allocs;
   end;
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
@@ -924,7 +915,6 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-2] do begin
    //todo: check local forward
-//  ele.decelementparent;
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
   if backend = bke_llvm then begin
    if sf_hasnestedaccess in po1^.flags then begin
@@ -942,13 +932,6 @@ begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
- {
-  if sf_destructor in d.subdef.flags then begin
-   with additem(oc_destroyclass)^,par.destroyclass do begin
-    selfinstance:= -d.subdef.paramsize;
-   end;
-  end;
- }
   if sf_function in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
     par.stacksize:= d.subdef.paramsize;
@@ -962,7 +945,6 @@ begin
    end;
   end;
   locdatapo:= d.subdef.parambase;
-//  s.ssa:= d.subdef.ssabefore;
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   if sublevel = 0 then begin
@@ -970,6 +952,7 @@ begin
   end;
   ele.elementparent:= b.eleparent;
   s.currentstatementflags:= b.flags;
+{
   if d.subdef.match <> 0 then begin
    po1:= ele.eledataabs(d.subdef.match);
    if (po1^.flags * [sf_virtual,sf_override] <> []) and 
@@ -978,12 +961,17 @@ begin
     linkresolve(po1^.trampolinelinks,po1^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin 
       //todo: possibly better in front of sub because of cache line
-     par.virttrampolineinfo.selfinstance:= -d.subdef.paramsize;
-     par.virttrampolineinfo.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
+     par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
+     par.subbegin.trampoline.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
+     if backend = bke_llvm then begin
+      par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
+                                par.subbegin.trampoline.virtoffset).listid;
+     end;
     end;
    end;
   end;
+}
   with additem(oc_subend)^ do begin
    par.subend.flags:= po1^.flags;
    par.subend.allocs:= po1^.allocs;
@@ -994,8 +982,8 @@ begin
    inc(po2);
   end;
   with po2^ do begin
-   par.subbegin.flags:= po1^.flags;
-   par.subbegin.blockcount:= s.ssa.blockindex + 1;
+   par.subbegin.sub.flags:= po1^.flags;
+   par.subbegin.sub.blockcount:= s.ssa.blockindex + 1;
   end;
   s.ssa:= d.subdef.ssabefore;
  end;

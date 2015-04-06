@@ -1868,7 +1868,7 @@ end;
 
 procedure virttrampolineop();
 begin
- with cpu.pc^.par.virttrampolineinfo do begin
+ with cpu.pc^.par.subbegin.trampoline do begin
   cpu.pc:= startpo+pptruint(pppointer(cpu.frame+selfinstance)^^+virtoffset)^;
  end;
 end;

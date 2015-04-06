@@ -323,6 +323,7 @@ type
    function addinitvalue(const akind: globallockindty;
                                      const aconstlistindex: integer): int32;
                                                             //returns listid
+   function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
    property namelist: tglobnamelist read fnamelist;
  end;
@@ -1307,6 +1308,13 @@ end;
 function tgloballocdatalist.gettype(const alistid: int32): int32;
 begin
  result:= (pgloballocdataty(fdata) + alistid)^.typeindex;
+end;
+
+function tgloballocdatalist.addtypecopy(const alistid: int32): int32;
+begin
+ result:= fcount;
+ inccount();
+ (pgloballocdataty(fdata) + result)^:= (pgloballocdataty(fdata) + alistid)^; 
 end;
 
 end.

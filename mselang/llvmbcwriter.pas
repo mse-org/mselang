@@ -59,6 +59,7 @@ type
    fbitpos: integer;
    fbitbuf: card16;
    fdebugloc: debuglocty;
+   ftrampolineop: popinfoty;
   protected
    fconstseg: int32;
    flastdebugloc: debuglocty;
@@ -196,7 +197,10 @@ type
                                                       const valueidb: int32);
    procedure emitdebugloc(const avalue: debuglocty);
    procedure emitdebuglocagain();
-   
+
+   procedure marktrampoline(const apc: popinfoty);
+   procedure releasetrampoline(out apc: popinfoty); //nil if none
+      
    function valindex(const aadress: segaddressty): integer;
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
@@ -355,6 +359,7 @@ var
  i1,i2: int32;
  po9: paggregateconstty;
 begin
+ ftrampolineop:= nil;
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
  flastdebugloc.line:= -1;
@@ -1518,6 +1523,17 @@ begin
    emitdebuglocagain();
   end;
  end;
+end;
+
+procedure tllvmbcwriter.marktrampoline(const apc: popinfoty);
+begin
+ ftrampolineop:= apc;
+end;
+
+procedure tllvmbcwriter.releasetrampoline(out apc: popinfoty);
+begin
+ apc:= ftrampolineop;
+ ftrampolineop:= nil;
 end;
 
 end.
