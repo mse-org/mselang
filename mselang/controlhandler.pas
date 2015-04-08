@@ -31,6 +31,10 @@ procedure handlewhilestart();
 procedure handlewhileexpression();
 procedure handlewhileend();
 
+procedure handlerepeatstart();
+procedure handleuntilexpected();
+procedure handlerepeatend();
+
 procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
@@ -44,7 +48,7 @@ uses
  handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
  stackops,segmentutils,opglob;
  
-procedure startcontrol(const aopcode: opcodety);
+function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
  with info do begin
   getvalue(s.stacktop-s.stackindex);
@@ -52,8 +56,10 @@ begin
    if (d.dat.datatyp.indirectlevel <> 0) or (ptypedataty(ele.eledataabs(
                       d.dat.datatyp.typedata))^.kind <> dk_boolean) then begin
     errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
+    result:= nil;
    end;
-   with addcontrolitem(aopcode)^ do begin
+   result:= addcontrolitem(aopcode);
+   with result^ do begin
     par.ssas1:= d.dat.fact.ssaindex;
    end;
   end;
@@ -98,7 +104,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('THEN0');
 {$endif}
- startcontrol(oc_if);
+ conditionalcontrolop(oc_if);
 end;
 
 procedure handlethen1();
@@ -152,11 +158,8 @@ begin //boolexp,thenmark,elsemark
  end;
 end;
 
-procedure handlewhilestart();   //todo: check abort at end -> single jump
+procedure startlabel();
 begin
-{$ifdef mse_debugparser}
- outhandle('WHILESTART');
-{$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_control;
   d.control.opmark1.address:= opcount; //label address
@@ -164,12 +167,20 @@ begin
  addlabel();
 end;
 
+procedure handlewhilestart();   //todo: check abort at end -> single jump
+begin
+{$ifdef mse_debugparser}
+ outhandle('WHILESTART');
+{$endif}
+ startlabel();
+end;
+
 procedure handlewhileexpression();
 begin
 {$ifdef mse_debugparser}
  outhandle('WHILEEXPRESSION');
 {$endif}
- startcontrol(oc_while);
+ conditionalcontrolop(oc_while);
 end;
 
 procedure handlewhileend();
@@ -185,6 +196,42 @@ begin
   dec(s.stackindex);
  end;
 end;
+
+procedure handlerepeatstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('REPEATSTART');
+{$endif}
+ startlabel();
+end;
+
+procedure handleuntilexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNTILEXPECTED');
+{$endif}
+ with info do begin
+  tokenexpectederror('tk_until');
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlerepeatend();
+var
+ po1: popinfoty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('REPEATEND');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  po1:= conditionalcontrolop(oc_until);
+  if po1 <> nil then begin
+   po1^.par.opaddress.opaddress:= d.control.opmark1.address-1; //label
+  end;
+  dec(s.stackindex);
+ end;
+end;
+
 
 procedure handlecasestart();
 begin

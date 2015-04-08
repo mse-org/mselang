@@ -1117,6 +1117,14 @@ var
  rec1: valuearty;
  paramcount,ssastart,ssaindex: int32;
  ssatypes: integerarty;
+
+ procedure outoprecord(const aname: string; const values: array of const);
+ begin
+  if fbb = -1 then begin
+   fbb:= 0;
+  end;
+  outrecord(aname,values);
+ end;
  
  procedure outssarecord(const atype: int32; const avalue: string);
  begin
@@ -1300,9 +1308,6 @@ begin
        outssarecord(i2,str1);
       end;
       FUNC_CODE_INST_STORE: begin
-       if fbb = -1 then begin
-        fbb:= 0;
-       end;
        checkmindatalen(rec1,3);
        i1:= typeid(rec1[2]); //dest
        i2:= typeid(rec1[3]); //source
@@ -1310,10 +1315,10 @@ begin
                ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
                                                  ftypelist.typename(i2);
        if high(rec1) > 3 then begin
-        outrecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
+        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
        end
        else begin
-        outrecord(str1,[]);
+        outoprecord(str1,[]);
        end;
        if i2 < 0 then begin
         bo1:= ftypelist.parenttypeindex(ftypelist.parenttypeindex(i1)) <> -i2;
@@ -1334,14 +1339,11 @@ begin
        outssarecord(rec1[2],'@');
       end;
       FUNC_CODE_INST_RET: begin
-       if fbb = -1 then begin
-        fbb:= 0;
-       end;
        if high(rec1) = 2 then begin
-        outrecord(functioncodesnames[functioncodes(rec1[1])],[opname(rec1[2])]);
+        outoprecord(functioncodesnames[functioncodes(rec1[1])],[opname(rec1[2])]);
        end
        else begin
-        outrecord(functioncodesnames[functioncodes(rec1[1])],
+        outoprecord(functioncodesnames[functioncodes(rec1[1])],
                dynarraytovararray(copy(rec1,2,bigint)));
        end;
        inc(fbb);
@@ -1379,7 +1381,7 @@ begin
         dec(ssaindex); //for parameter check
        end
        else begin
-        outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+        outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
        end;
        if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
         error('Invalid param count');
@@ -1406,7 +1408,7 @@ begin
        else begin
         str1:= destname(rec1[2]);
        end;
-       outrecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
+       outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
        inc(fbb);
       end;
       FUNC_CODE_DEBUG_LOC: begin

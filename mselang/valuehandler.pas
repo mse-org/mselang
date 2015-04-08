@@ -124,6 +124,20 @@ begin
        destindirectlevel:= 1;
       end;
      end;
+    end
+    else begin
+     if (destindirectlevel > 0) and (source1^.indirectlevel = 0) and 
+                                (source1^.bitsize = pointerbitsize) then begin
+      if getvalue(stackoffset) then begin //any to pointer
+       int1:= d.dat.fact.ssaindex;
+       with insertitem(oc_anytopo,stackoffset,false)^ do begin
+        par.ssas1:= int1;
+       end;
+       d.dat.datatyp.typedata:= ele.eledatarel(dest);
+       d.dat.datatyp.indirectlevel:= destindirectlevel;
+       result:= true;
+      end;
+     end;
     end;
    end;
   end;

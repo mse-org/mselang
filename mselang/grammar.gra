@@ -299,6 +299,7 @@ statement,,,*
  'if'.,if0-
  'case'.,case-
  'while'.,while-
+ 'repeat'.,repeat-
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
@@ -382,6 +383,13 @@ whiledo,,,handledoexpected
  'do'.,whiledo0-
 whiledo0,,handlewhileexpression,handlewhileend
  '',statementstack^*
+
+repeat,,handlerepeatstart,handleuntilexpected
+ ${whitespace}
+ 'until'.,repeatuntil0-
+ '',statement*>
+repeatuntil0,,,handlerepeatend*
+ '',exp^*
 
 case,caseof,handlecasestart,
  '',exp^*

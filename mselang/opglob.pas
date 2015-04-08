@@ -66,7 +66,13 @@ type
  opcodety = (        //order like optable.inc
   oc_none,
   oc_nop,
-  oc_label,
+
+  oc_label,          //controlops
+  oc_if,
+  oc_while,
+  oc_until,
+  oc_decloop32,
+  oc_decloop64,
 
   oc_beginparse,
   oc_main,
@@ -85,8 +91,7 @@ type
   oc_cmpjmpgtimm4,
   oc_cmpjmploeqimm4,
 
-  oc_if,
-  oc_while,
+  
   oc_writeln,
   oc_writeboolean,
   oc_writeinteger,
@@ -108,6 +113,7 @@ type
   
   oc_int32toflo64,
   oc_potoint32,
+  oc_anytopo,
 
   oc_negcard32,
   oc_negint32,
@@ -357,9 +363,6 @@ type
 
   oc_initclass,
   oc_destroyclass,
-
-  oc_decloop32,
-  oc_decloop64,
 
   oc_setlengthstr8,
   oc_setlengthdynarray,
@@ -645,8 +648,8 @@ type
  end;
 
 const
- controlops = [oc_label,oc_goto,oc_if,oc_while,oc_decloop32,oc_decloop64,
-                                                      oc_pushcpucontext];
+ controlops = [oc_label,oc_goto,oc_if,oc_while,oc_until,oc_decloop32,
+               oc_decloop64{,oc_pushcpucontext}];
 
 type
                  //todo: unify, variable size
@@ -655,6 +658,11 @@ type
   ssas1: int32;
   ssas2: int32;
   case opcodety of 
+   oc_label,oc_goto,oc_if,oc_while,oc_until,
+   oc_decloop32,oc_decloop64, //controlops
+   oc_pushcpucontext:(
+    opaddress: labty; //first!
+   );   
    oc_setmem: (
     ssas3: int32;
    );
@@ -742,10 +750,6 @@ type
    oc_setlengthstr8,oc_setlengthdynarray:(
     setlength: setlengthty;
    );
-   oc_label,oc_goto,oc_if,oc_decloop32,oc_decloop64,oc_pushcpucontext:(
-                                                                  //controlops
-    opaddress: labty; //first!
-   );   
    oc_subbegin,oc_virttrampoline:(
     subbegin: subbeginty;
    );

@@ -977,25 +977,33 @@ function tconsthashdatalist.addclassdef(const aclassdef: pclassdefinfoty;
 type
  classdefty = record
   header: aggregateconstty;
-  items: array[0..2] of int32; //constlist ids
+  //parentclass,interfaceparent,allocs,virtualmethods,interfaces
+  //0           1               2      3              4
+  items: array[0..4] of int32; //constlist ids
  end;
 var
  pd: pint32;
  co1: llvmconstty;
+ 
  classdef1: classdefty;
  types1: array[0..2] of int32;
  i1: int32;
  ps1,ps,pe: popaddressty;
  po1: pointer;
 begin
- co1:= addvalue(aclassdef^.header,sizeof(aclassdef^.header));
- classdef1.items[0]:= co1.listid;
- types1[0]:= co1.typeid;             
- classdef1.header.header.itemcount:= 1;
+ classdef1.items[0]:= addpointercast(aclassdef^.header.parentclass).listid;
+ classdef1.items[1]:= addpointercast(aclassdef^.header.interfaceparent).listid;
+ types1[0]:= pointertype;
+ types1[1]:= pointertype;
+ co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
+ classdef1.items[2]:= co1.listid;
+ types1[2]:= co1.typeid;             
+
+ classdef1.header.header.itemcount:= 3;
  
  ps:= @aclassdef^.virtualmethods;
  pd:= pointer(ps);
- pe:= pointer(aclassdef)+aclassdef^.header.interfacestart;
+ pe:= pointer(aclassdef)+aclassdef^.header.allocs.interfacestart;
  i1:= pe - ps;
  if i1 > 0 then begin
   while ps < pe do begin

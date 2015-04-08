@@ -1,4 +1,4 @@
-program classinterface;
+program classininterfaceinh;
 type
  itest = interface
   procedure test();
@@ -10,16 +10,23 @@ type
 
  tc1 = class
   private
-   f: int32;
   public
+   fa: int32;
    constructor create();
    destructor destroy();
+   procedure test(); {virtual;}
+   procedure test1();
  end;
 
  tc2 = class(tc1,itest,itest1)
   public
-   procedure test();
-   procedure test1();
+ end;
+
+ tc3 = class(tc2)
+  private
+  public
+   fb: int32;
+//   procedure test(); {override;}
  end;
 
 constructor tc1.create();
@@ -28,31 +35,39 @@ end;
 
 destructor tc1.destroy();
 begin
- exitcode:= f+11;
+ exitcode:= fa+11;
 end;
 
-procedure tc2.test();
+procedure tc1.test();
 begin
- f:= 112;
+ fa:= 99;
 end;
 
-procedure tc2.test1();
+procedure tc1.test1();
 begin
  exitcode:= 100;
 end;
-
+{
+procedure tc3.test();
+begin
+ f:= 112;
+end;
+}
 var
  i1: itest;
- c1: tc2;
+ c1: tc3;
 
 type
  ppointer = ^pointer;
 
 begin
 
- c1:= tc2.create();
- i1:= itest(c1);
- i1.test();
+ c1:= tc3.create();
+ exitcode:= c1.fa;
+ writeln(pointer(exitcode));
+// i1:= itest(c1);
+// i1.test();
+// c1.test();
  c1.destroy();
 
 end.

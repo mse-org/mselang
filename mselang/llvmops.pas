@@ -389,7 +389,7 @@ begin
    }
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
              constlist.addclassdef(poclassdef,countpo^).listid);
-   poclassdef:= pointer(poclassdef)+poclassdef^.header.interfacestart+
+   poclassdef:= pointer(poclassdef)+poclassdef^.header.allocs.interfacestart+
                                                          countpo^*pointersize;
    inc(countpo);
 //   inc(i1);
@@ -485,6 +485,14 @@ begin
  with pc^.par do begin
   bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
                          getoppo(opaddress.opaddress)^.par.opaddress.bbindex);
+ end;
+end;
+
+procedure untilop();
+begin
+ with pc^.par do begin
+  bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
+                         getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex);
  end;
 end;
 
@@ -608,6 +616,14 @@ begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_32),
                                                                CAST_PTRTOINT);
+ end;
+end;
+
+procedure anytopoop();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(pointertype),
+                                                               CAST_BITCAST);
  end;
 end;
 
@@ -766,7 +782,7 @@ end;
 
 procedure cmpeqpoop();
 begin
- notimplemented();
+ compare(icmp_eq);
 end;
 
 procedure cmpeqboolop();
@@ -2053,6 +2069,11 @@ const
   nonessa = 0;
   nopssa = 1;
   labelssa = 0;
+  ifssa = 0;
+  whilessa = 0;
+  untilssa = 0;
+  decloop32ssa = 1;
+  decloop64ssa = 1;
 
   beginparsessa = 0;
   mainssa = 0;//1;
@@ -2071,8 +2092,6 @@ const
   cmpjmpgtimm4ssa = 1;
   cmpjmploeqimm4ssa = 1;
 
-  ifssa = 0;
-  whilessa = 0;
   writelnssa = 1;
   writebooleanssa = 1;
   writeintegerssa = 1;
@@ -2094,6 +2113,7 @@ const
   
   int32toflo64ssa = 1;
   potoint32ssa = 1;
+  anytopossa =1;
   
   negcard32ssa = 1;
   negint32ssa = 1;
@@ -2343,9 +2363,6 @@ const
 
   initclassssa = 3;
   destroyclassssa = 1;
-
-  decloop32ssa = 1;
-  decloop64ssa = 1;
 
   setlengthstr8ssa = 1;
   setlengthdynarrayssa = 1;

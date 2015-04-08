@@ -53,11 +53,14 @@ const
  dynarrayallocsize = dynarrayheadersize;
 
 type
+ allocsinfoty = record
+  size: int32;
+  interfacestart: int32; //offset in classdefheaderty
+ end;
  classdefheaderty = record
   parentclass: dataoffsty;
-  allocsize: int32;
-  fieldsize: int32;
-  interfacestart: int32; //offset in classdefheaderty
+  interfaceparent: dataoffsty; //last parent class with interfaces
+  allocs: allocsinfoty;
  end;
  pclassdefheaderty = ^classdefheaderty;
  

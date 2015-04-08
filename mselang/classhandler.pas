@@ -119,7 +119,8 @@ begin
  result:= ele.findchilddata(aclass^.infoclass.intftypenode,identty(intfele),
                                  [ek_classintftype],allvisi,pointer(po1));
  if result then begin
-  offset:= po1^.intfindex*pointersize + aclass^.infoclass.fieldsize;
+  offset:= aclass^.infoclass.allocsize - 
+              (aclass^.infoclass.interfacecount-po1^.intfindex) * pointersize;
  end;
 end;
 
@@ -182,6 +183,7 @@ begin
     infoclass.defs.address:= 0;
     infoclass.flags:= [];
     infoclass.pendingdescends:= 0;
+    infoclass.interfaceparent:= 0;
     infoclass.interfacecount:= 0;
     infoclass.interfacechain:= 0;
     infoclass.interfacesubcount:= 0;
@@ -241,8 +243,14 @@ begin
     end
     else begin
      po1^.ancestor:= ele.eledatarel(po2);
-     po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
-     po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
+     if po2^.infoclass.interfacecount > 0 then begin
+      po1^.infoclass.interfaceparent:= po1^.ancestor;
+     end
+     else begin
+      po1^.infoclass.interfaceparent:= po2^.infoclass.interfaceparent;
+     end;
+//     po1^.infoclass.interfacecount:= po2^.infoclass.interfacecount;
+//     po1^.infoclass.interfacesubcount:= po2^.infoclass.interfacesubcount;
      with contextstack[s.stackindex-2] do begin
       d.cla.fieldoffset:= po2^.infoclass.allocsize;
       d.cla.virtualindex:= po2^.infoclass.virtualcount;
@@ -383,6 +391,7 @@ var
  fla1: addressflagsty;
  int1: integer;
  po1: pdataoffsty;
+ interfacealloc: int32;
  
 begin
 {$ifdef mse_debugparser}
@@ -409,26 +418,27 @@ begin
     end;
     inc(intfcount);
    end;
-   infoclass.interfacecount:= infoclass.interfacecount + intfcount;
-   infoclass.interfacesubcount:= infoclass.interfacesubcount + intfsubcount;
+   infoclass.interfacecount:= {infoclass.interfacecount +} intfcount;
+   infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
 
          //alloc classinfo
-   infoclass.fieldsize:= classinfo1^.fieldoffset;
-   infoclass.allocsize:= infoclass.fieldsize +  
-                                  infoclass.interfacecount*pointersize;
+//   infoclass.fieldsize:= classinfo1^.fieldoffset;
+   interfacealloc:= infoclass.interfacecount*pointersize;
+   infoclass.allocsize:= classinfo1^.fieldoffset + interfacealloc;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                     //interfacetable start
 //   classdefs1:= getglobconstaddress(int1 +
 //                                   pointersize*infoclass.interfacecount,fla1);
-   classdefs1:= getclassinfoaddress(int1 +pointersize*infoclass.interfacecount,
-                                                      infoclass.interfacecount);
+   classdefs1:= getclassinfoaddress(
+                                 int1+interfacealloc,infoclass.interfacecount);
    infoclass.defs:= classdefs1;   
    with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
-    header.parentclass:= 0;
-    header.allocsize:= infoclass.allocsize;
-    header.fieldsize:= infoclass.fieldsize;
-    header.interfacestart:= int1;
+    header.allocs.size:= infoclass.allocsize;
+//    header.fieldsize:= infoclass.fieldsize;
+    header.allocs.interfacestart:= classinfo1^.fieldoffset;
+    header.parentclass:= -1;
+    header.interfaceparent:= -1;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
      header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
@@ -443,8 +453,13 @@ begin
       end;
      end;
     end;
+    if infoclass.interfaceparent <> 0 then begin
+     header.interfaceparent:= ptypedataty(
+            ele.eledataabs(infoclass.interfaceparent))^.infoclass.defs.address;
+                                                         //todo: relocate
+    end;
     if intfcount <> 0 then begin       //alloc interface table
-     po1:= pointer(@header) + header.interfacestart;
+     po1:= pointer(@header) + header.allocs.interfacestart;
      inc(po1,infoclass.interfacecount); //top - down
      int1:= -infoclass.allocsize; 
      ele1:= infoclass.interfacechain;

@@ -18,7 +18,14 @@
  ssatable: ssatablety = (
   nonessa,
   nopssa,
-  labelssa,
+
+  labelssa,          //controlops
+  ifssa,
+  whilessa,
+  untilssa,
+  decloop32ssa,
+  decloop64ssa,
+
 
   beginparsessa,
   mainssa,
@@ -37,8 +44,6 @@
   cmpjmpgtimm4ssa,
   cmpjmploeqimm4ssa,
 
-  ifssa,
-  whilessa,
   writelnssa,
   writebooleanssa,
   writeintegerssa,
@@ -60,6 +65,7 @@
   
   int32toflo64ssa,
   potoint32ssa,
+  anytopossa,
   
   negcard32ssa,
   negint32ssa,
@@ -310,9 +316,6 @@
   initclassssa,
   destroyclassssa,
 
-  decloop32ssa,
-  decloop64ssa,
-
   setlengthstr8ssa,
   setlengthdynarrayssa,
 
@@ -345,7 +348,14 @@
  optable: optablety = ( //order as opcodety
   nil,  //oc_none
   @nopop,
-  @labelop,
+
+  @labelop,       //comtrolops
+  @ifop,
+  @whileop,
+  @untilop,
+  @decloop32op,
+  @decloop64op,
+
 
   @beginparseop,
   @mainop,
@@ -364,8 +374,6 @@
   @cmpjmpgtimm4op,
   @cmpjmploeqimm4op,
 
-  @ifop,
-  @whileop,
   @writelnop,
   @writebooleanop,
   @writeintegerop,
@@ -387,6 +395,7 @@
   
   @int32toflo64op,
   @potoint32op,
+  @anytopoop,
   
   @negcard32op,
   @negint32op,
@@ -636,9 +645,6 @@
 
   @initclassop,
   @destroyclassop,
-
-  @decloop32op,
-  @decloop64op,
 
   @setlengthstr8op,
   @setlengthdynarrayop,

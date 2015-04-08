@@ -48,20 +48,26 @@ begin
  end;
 end;
 
+//todo: use simplified version without interfaces if possible
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 var
  ps,pd,pe: ppointer;
+ po1: pclassdefinfoty;
 begin
- getzeromem(result,classinfo.header.allocsize);
- pd:= result + classinfo.header.fieldsize; //copy interface table
- pe:= result + classinfo.header.allocsize;
+ getzeromem(result,classinfo.header.allocs.size);
+ po1:= @classinfo;
  ppointer(result)^:= @classinfo;
- ps:= @classinfo + classinfo.header.interfacestart;
- while pd < pe do begin
-  pd^:= ps^;
-  inc(pd);
-  inc(ps);
- end;
+ repeat
+  pd:= result + po1^.header.allocs.interfacestart; //copy interface table
+  pe:= result + po1^.header.allocs.size;
+  ps:= @classinfo + po1^.header.allocs.interfacestart;
+  while pd < pe do begin
+   pd^:= ps^;
+   inc(pd);
+   inc(ps);
+  end;
+  po1:= po1^.header.interfaceparent;
+ until po1 = nil;
 end;
 
 end.

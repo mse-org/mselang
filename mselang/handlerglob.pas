@@ -88,10 +88,11 @@ type
   implnode: elementoffsetty;
   defs: segaddressty; //classdefinfoty in target const
   pendingdescends: listadty;
-  fieldsize: dataoffsty;
+//  fieldsize: dataoffsty;
   allocsize: dataoffsty;
   virtualcount: integer;
   flags: infoclassflagsty;
+  interfaceparent: elementoffsetty; //last parent with interface items
   interfacecount: integer;
   interfacechain: elementoffsetty;
   interfacesubcount: integer;

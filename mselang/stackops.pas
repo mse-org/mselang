@@ -391,6 +391,13 @@ begin
  end;
 end;
 
+procedure untilop();
+begin
+ if not vbooleanty(stackpop(sizeof(vbooleanty))^) then begin
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure writebooleanop();
 begin
  write(vbooleanty((cpu.stack+cpu.pc^.par.voffset)^));
@@ -570,6 +577,13 @@ var
 begin
  po1:= stackpop(sizeof(vpointerty));
  vintegerty(stackpush(sizeof(vintegerty))^):= vintegerty(po1^);
+end;
+
+procedure anytopoop();
+var
+ po1: ppointer;
+begin
+ //dummy
 end;
 
 procedure mulint32op();
@@ -1924,19 +1938,28 @@ begin
   po2:= pclassdefinfoty(segments[seg_classdef].basepo+initclass.classdef);
   self1:= stackpush(pointersize);
 //  po2:= self1^;  //class type
-  po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
+//  po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
+  po1:= intgetzeromem(po2^.header.allocs.size);
   ppointer(po1)^:= po2;    //class type info
   self1^:= po1;            //class instance
   ppointer(cpu.stack-2*pointersize)^:= po1; //result
 
-  pd:= po1 + po2^.header.fieldsize; //copy interface table
-  pe:= po1 + po2^.header.allocsize;
-  ps:= (pointer(po2)+po2^.header.interfacestart);
-  while pd < pe do begin
-   pd^:= segments[seg_intf].basepo+ps^;
-   inc(pd);
-   inc(ps);
-  end;
+  repeat
+   pd:= po1 + po2^.header.allocs.interfacestart; //copy interface table
+   pe:= po1 + po2^.header.allocs.size;
+   ps:= (pointer(po2)+po2^.header.allocs.interfacestart);
+   while pd < pe do begin
+    pd^:= segments[seg_intf].basepo+ps^;
+    inc(pd);
+    inc(ps);
+   end;
+   if po2^.header.interfaceparent >= 0 then begin
+    po2:= segments[seg_classdef].basepo+po2^.header.interfaceparent;
+   end
+   else begin
+    po2:= nil;
+   end;
+  until po2 = nil;
  end;
 end;
 
@@ -2507,7 +2530,13 @@ const
   nonessa = 0;
   nopssa = 0;
   labelssa = 0;
+  ifssa = 0;
+  whilessa = 0;
+  untilssa = 0;
+  decloop32ssa = 0;
+  decloop64ssa = 0;
 
+ 
   beginparsessa = 0;
   mainssa = 0;
   progendssa = 0;  
@@ -2525,8 +2554,6 @@ const
   cmpjmpgtimm4ssa = 0;
   cmpjmploeqimm4ssa = 0;
 
-  ifssa = 0;
-  whilessa = 0;
   writelnssa = 0;
   writebooleanssa = 0;
   writeintegerssa = 0;
@@ -2548,6 +2575,7 @@ const
   
   int32toflo64ssa = 0;
   potoint32ssa = 0;
+  anytopossa = 0;
   
   negcard32ssa = 0;
   negint32ssa = 0;
@@ -2797,9 +2825,6 @@ const
 
   initclassssa = 0;
   destroyclassssa = 0;
-
-  decloop32ssa = 0;
-  decloop64ssa = 0;
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;
