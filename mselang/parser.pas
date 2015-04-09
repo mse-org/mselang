@@ -147,7 +147,10 @@ procedure switchcontext(const acontext: pcontextty);
 begin
  with info do begin
   s.pc:= acontext;
-  contextstack[s.stackindex].context:= acontext;
+  with contextstack[s.stackindex] do begin
+   context:= acontext;
+   include(transitionflags,bf_continue);
+  end;
  end;
 end;
 
@@ -331,11 +334,15 @@ end;
 
 function parseunit(const input: string; const aunit: punitinfoty): boolean;
 
+var
+ popped: boolean;
+ 
  procedure popparent;
  var
   int1: integer;
  begin
   with info do begin
+   popped:= true;
    int1:= s.stackindex;
    s.stackindex:= contextstack[s.stackindex].parent;
   {$ifdef mse_checkinternalerror}                             
@@ -348,7 +355,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
 
 var
  po1,po2: pchar;
- pc1,pc2: pcontextty;
+ pc1{,pc2}: pcontextty;
  inifinisub: opaddressty;
  int1: integer;
  bo1: boolean;
@@ -536,6 +543,7 @@ handlelab:
           //context terminated, pop stack
 {$endif}
    repeat
+    popped:= false;
     pc1:= s.pc;
     if pc1^.restoresource then begin
      s.source:= contextstack[s.stackindex].start;
@@ -572,13 +580,24 @@ handlelab:
       end;
      end;
     end;
-    if s.pc^.cutafter then begin
-     s.stacktop:= s.stackindex;
-    end;
     if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
      goto parseend;
     end;
+    if s.pc^.cutafter then begin
+     s.stacktop:= s.stackindex;
+    end;
     s.pc:= contextstack[s.stackindex].context;
+    if popped then begin
+     if (s.pc^.handleexit <> nil) and (s.pc^.next <> nil) and 
+       not (pc1^.continue or (bf_continue in 
+                        contextstack[s.stackindex].transitionflags)) then begin
+         //call context termination handler
+      s.pc^.handleexit();
+      if s.stopparser then begin
+       goto parseend;
+      end;
+     end;
+    end;
     if pc1^.popexe then begin
 {$ifdef mse_debugparser1}
      writeinfoline('popexe');
@@ -621,15 +640,17 @@ handlelab:
 {$ifdef mse_debugparser}
      writeinfoline(s.pc^.caption+'->'+s.pc^.next^.caption);
 {$endif}
-     pc2:= s.pc;
+//     pc2:= s.pc;
      s.pc:= s.pc^.next;
      context:= s.pc;
+{
      if pc2^.handleexit <> nil then begin
       pc2^.handleexit();
       if s.stopparser then begin
        goto parseend;
       end;
      end;
+}
      if s.pc^.handleentry <> nil then begin
       s.pc^.handleentry();
       if s.stopparser then begin
