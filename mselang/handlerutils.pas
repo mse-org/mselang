@@ -1116,7 +1116,7 @@ begin
     end;
    {$endif}
     with psubdataty(ele.parentdata())^ do begin //parent sub
-     bo1:= ele.adduniquechilddata(nestedvarele,avarele,ek_nestedvar,
+     bo1:= ele.adduniquechilddata(nestedvarele,[avarele],ek_nestedvar,
                                                        allvisi,po1);
      if bo1 then begin
       include(flags,sf_hasnestedref);

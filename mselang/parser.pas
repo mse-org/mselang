@@ -43,6 +43,7 @@ function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
+procedure switchcontext(const acontext: pcontextty);
 
 //procedure init;
 //procedure deinit;
@@ -139,6 +140,14 @@ begin
     end;
    end;
   end;
+ end;
+end;
+
+procedure switchcontext(const acontext: pcontextty);
+begin
+ with info do begin
+  s.pc:= acontext;
+  contextstack[s.stackindex].context:= acontext;
  end;
 end;
 
@@ -339,7 +348,7 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
 
 var
  po1,po2: pchar;
- pc1: pcontextty;
+ pc1,pc2: pcontextty;
  inifinisub: opaddressty;
  int1: integer;
  bo1: boolean;
@@ -612,8 +621,15 @@ handlelab:
 {$ifdef mse_debugparser}
      writeinfoline(s.pc^.caption+'->'+s.pc^.next^.caption);
 {$endif}
+     pc2:= s.pc;
      s.pc:= s.pc^.next;
      context:= s.pc;
+     if pc2^.handleexit <> nil then begin
+      pc2^.handleexit();
+      if s.stopparser then begin
+       goto parseend;
+      end;
+     end;
      if s.pc^.handleentry <> nil then begin
       s.pc^.handleentry();
       if s.stopparser then begin

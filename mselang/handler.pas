@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -126,12 +126,6 @@ procedure handlewithentry();
 procedure handlewith2entry();
 //procedure handlewith3entry();
 procedure handlewith3();
-
-procedure handledumpelements();
-procedure handledumpopcode();
-procedure handleabort();
-procedure handlestoponerror();
-procedure handlenop();
 
 procedure stringlineenderror();
 procedure handlestringstart();
@@ -2439,69 +2433,6 @@ begin
   errormessage(err_syntax,[';']);
   dec(s.stackindex);
  end;
-end;
-
-procedure handledumpelements();
-{$ifdef mse_debugparser}
-var
- ar1: msestringarty;
- int1: integer;
-{$endif}
-begin
-{$ifdef mse_debugparser}
- writeln('--ELEMENTS---------------------------------------------------------');
- ar1:= ele.dumpelements;
- for int1:= 0 to high(ar1) do begin
-  writeln(ar1[int1]);
- end;
- writeln('-------------------------------------------------------------------');
-{$endif}
- with info do begin
-  dec(s.stackindex);
- end;
-end;
-
-procedure handledumpopcode();
-begin
-{$ifdef mse_debugparser}
- dumpops();
-{$endif}
- with info do begin
-  dec(s.stackindex);
- end;
-end;
-
-procedure handleabort();
-begin
-{$ifdef mse_debugparser}
- outhandle('ABORT');
-{$endif}
- with info do begin
-  s.stopparser:= true;
-  errormessage(err_abort,[]);
-  dec(s.stackindex);
- end;
-end;
-
-procedure handlestoponerror();
-var
- int1: integer;
-begin
-{$ifdef mse_debugparser}
- outhandle('ABORT');
-{$endif}
- with info do begin
-  s.unitinfo^.stoponerror:= true;
-  dec(s.stackindex);
- end;
-end;
-
-procedure handlenop();
-begin
-{$ifdef mse_debugparser}
- outhandle('NOP');
-{$endif}
- additem(oc_nop);
 end;
 
 procedure stringlineenderror();

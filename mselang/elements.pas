@@ -260,12 +260,14 @@ type
               out aelementoffset: elementoffsetty): boolean;
          //false if duplicate, aelementoffset = 0 if duplicate
    function adduniquechilddata(const aparent: elementoffsetty;
-                           const achild: identty; const akind: elementkindty;
+                           const achild: array of identty; 
+                           const akind: elementkindty;
                            const avislevel: visikindsty;
                            out aelementdata: pointer): boolean;
                                           //true if new
    function addchildduplicatedata(const aparent: elementoffsetty;
-                           const achild: identty; const akind: elementkindty;
+                           const achild: array of identty;
+                           const akind: elementkindty;
                            const avislevel: visikindsty): pointer;
                      
                            
@@ -1890,31 +1892,51 @@ begin
 end;
 
 function telementhashdatalist.adduniquechilddata(const aparent: elementoffsetty;
-                           const achild: identty; const akind: elementkindty;
+                           const achild: array of identty;
+                           const akind: elementkindty;
                            const avislevel: visikindsty;
                            out aelementdata: pointer): boolean;
 var
  parentbefore: elementoffsetty;
+ i1: int32;
+ ele1: elementoffsetty;
 begin
  result:= not findchilddata(aparent,achild,[akind],avislevel,aelementdata);
  if result then begin
   parentbefore:= felementparent;
-  elementparent:= aparent;
-  aelementdata:= addelementduplicatedata1(achild,akind,avislevel);
+  ele1:= aparent;
+  for i1:= 0 to high(achild) - 1 do begin
+   if not findchild(ele1,[achild[i1]],[],allvisi,ele1) then begin
+    elementparent:= ele1;
+    ele1:= addelementduplicate1(achild[i1],ek_none,allvisi);
+   end;
+  end;
+  elementparent:= ele1;
+  aelementdata:= addelementduplicatedata1(achild[high(achild)],akind,avislevel);
   elementparent:= parentbefore;
  end;
 end;
 
 function telementhashdatalist.addchildduplicatedata(
                            const aparent: elementoffsetty;
-                           const achild: identty; const akind: elementkindty;
+                           const achild: array of identty; 
+                           const akind: elementkindty;
                            const avislevel: visikindsty): pointer;
 var
  parentbefore: elementoffsetty;
+ i1: int32;
+ ele1: elementoffsetty;
 begin
  parentbefore:= felementparent;
- elementparent:= aparent;
- result:= addelementduplicatedata1(achild,akind,avislevel);
+ ele1:= aparent;
+ for i1:= 0 to high(achild) - 1 do begin
+  if not findchild(ele1,[achild[i1]],[],allvisi,ele1) then begin
+   elementparent:= ele1;
+   ele1:= addelementduplicate1(achild[i1],ek_none,allvisi);
+  end;
+ end;
+ elementparent:= ele1;
+ result:= addelementduplicatedata1(achild[high(achild)],akind,avislevel);
  elementparent:= parentbefore;
 end;
 

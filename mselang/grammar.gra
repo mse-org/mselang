@@ -46,11 +46,11 @@
 @.handlerunits
  'handler','unithandler','classhandler','typehandler','subhandler'
  'varhandler','exceptionhandler','controlhandler','handlerutils'
- 'valuehandler','interfacehandler'
+ 'valuehandler','interfacehandler','directivehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
  '.classintfname','.classintftype','.classimp','.self'
- '.units','.ancestors','.nestedvarref'
+ '.units','.ancestors','.nestedvarref','.defines'
 @.tokens
  'result','exitcode','sizeof'
 start,nounit,,
@@ -161,6 +161,7 @@ directive,directive1,,*
  'stoponerror'.,stoponerror-*
  'nop'.,nop-*
  'include'.,include-*
+ 'define'.,define-*
  'ifdef'.,ifdef-*
  'else'.,elseif-*
  'endif'.,endif-*
@@ -183,8 +184,23 @@ dumpopcode,directiveend,handledumpopcode,
 nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 stoponerror,directiveend,handlestoponerror,
-ifdef,directiveend,handleifdef,
+
+define,directiveend,,handledefine
  '',getident^*
+
+ifdef,directiveend,,handleifdef
+ '',getident^*
+skipif,directiveend,,
+ '}',skipif0-
+ '',-
+skipif0,,,
+ '{$',skipif1->
+ '',-
+skipif1,,,
+ 'endif'.,directiveend-
+ 
+elseif,directiveend,handleelseif,
+endif,directiveend,handleendif,
 directiveend,,,^*>
  '}',-*
  '',
