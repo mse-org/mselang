@@ -29,6 +29,7 @@ procedure handledefine();
 procedure handleifdef();
 procedure handleelseif();
 procedure handleendif();
+procedure handleskipifelseentry();
 
 implementation
 uses
@@ -137,6 +138,13 @@ procedure handleendif();
 begin
 {$ifdef mse_debugparser}
  outhandle('ENDIF');
+{$endif}
+end;
+
+procedure handleskipifelseentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SKIPIFELSENTRY');
 {$endif}
 end;
 

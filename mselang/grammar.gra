@@ -190,6 +190,7 @@ define,directiveend,,handledefine
 
 ifdef,directiveend,,handleifdef
  '',getident^*
+
 skipif,directiveend,,
  '}',skipif0-
  '',-
@@ -197,10 +198,23 @@ skipif0,,,
  '{$',skipif1->
  '',-
 skipif1,,,
+ 'else'.,skipifelse-
+ 'endif'.,directiveend-
+skipifelse,directiveend,handleskipifelseentry,
+
+elseif,skipelse,,handleelseif
+
+skipelse,directiveend,,
+ '}',skipelse0-
+ '',-
+skipelse0,,,
+ '{$',skipelse1->
+ '',-
+skipelse1,,,
  'endif'.,directiveend-
  
-elseif,directiveend,handleelseif,
 endif,directiveend,handleendif,
+
 directiveend,,,^*>
  '}',-*
  '',

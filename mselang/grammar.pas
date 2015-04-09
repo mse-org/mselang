@@ -363,11 +363,31 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'skipif1');
+ skipifelseco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'skipifelse');
  elseifco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'elseif');
+ skipelseco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'skipelse');
+ skipelse0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'skipelse0');
+ skipelse1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'skipelse1');
  endifco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2469,7 +2489,50 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bskipif1: array[0..1] of branchty = (
+ bskipif1: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @skipifelseco); stack: nil; 
+     keyword: $B75B9CC3{'else'}),
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @directiveendco); stack: nil; 
+     keyword: $6EB73986{'endif'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bskipelse: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @skipelse0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['}']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bskipelse0: array[0..2] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_continue];
+     dest: (context: @skipelse1co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bskipelse1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @directiveendco); stack: nil; 
      keyword: $6EB73986{'endif'}),
@@ -7431,9 +7494,16 @@ begin
  skipifco.next:= @directiveendco;
  skipif0co.branch:= @bskipif0;
  skipif1co.branch:= @bskipif1;
+ skipifelseco.branch:= nil;
+ skipifelseco.next:= @directiveendco;
+ skipifelseco.handleentry:= @handleskipifelseentry;
  elseifco.branch:= nil;
- elseifco.next:= @directiveendco;
- elseifco.handleentry:= @handleelseif;
+ elseifco.next:= @skipelseco;
+ elseifco.handleexit:= @handleelseif;
+ skipelseco.branch:= @bskipelse;
+ skipelseco.next:= @directiveendco;
+ skipelse0co.branch:= @bskipelse0;
+ skipelse1co.branch:= @bskipelse1;
  endifco.branch:= nil;
  endifco.next:= @directiveendco;
  endifco.handleentry:= @handleendif;
