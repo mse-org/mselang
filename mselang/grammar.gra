@@ -161,6 +161,9 @@ directive,directive1,,*
  'stoponerror'.,stoponerror-*
  'nop'.,nop-*
  'include'.,include-*
+ 'ifdef'.,ifdef-*
+ 'else'.,elseif-*
+ 'endif'.,endif-*
  '}',-*
  '',-
 directive1,,,*
@@ -180,6 +183,8 @@ dumpopcode,directiveend,handledumpopcode,
 nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 stoponerror,directiveend,handlestoponerror,
+ifdef,directiveend,handleifdef,
+ '',getident^*
 directiveend,,,^*>
  '}',-*
  '',

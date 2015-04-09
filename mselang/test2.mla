@@ -1,9 +1,10 @@
-unit program;
+program classminimal;
+uses
+ __mla__internaltypes;
 
-procedure test(p1: int32);
-begin
-end;
+var
+ po1: pclassdefinfoty;
 
 begin
- test(123);
+ po1:= po1^.header.interfaceparent;
 end.
