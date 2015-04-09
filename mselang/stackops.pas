@@ -1928,14 +1928,14 @@ end;
 procedure initclassop();
 var
  po1: pointer;
- po2: pclassdefinfoty;
+ po2: classdefinfopoty;
  self1: ppointer;
  ps: popaddressty;
  pd: ppointer;
  pe: pointer;
 begin
  with cpu.pc^.par do begin
-  po2:= pclassdefinfoty(segments[seg_classdef].basepo+initclass.classdef);
+  po2:= classdefinfopoty(segments[seg_classdef].basepo+initclass.classdef);
   self1:= stackpush(pointersize);
 //  po2:= self1^;  //class type
 //  po1:= intgetzeroedmem(po2^.header.allocsize,po2^.header.fieldsize);
@@ -1945,9 +1945,9 @@ begin
   ppointer(cpu.stack-2*pointersize)^:= po1; //result
 
   repeat
-   pd:= po1 + po2^.header.allocs.interfacestart; //copy interface table
+   pd:= po1 + po2^.header.allocs.instanceinterfacestart; //copy interface table
    pe:= po1 + po2^.header.allocs.size;
-   ps:= (pointer(po2)+po2^.header.allocs.interfacestart);
+   ps:= (pointer(po2)+po2^.header.allocs.classdefinterfacestart);
    while pd < pe do begin
     pd^:= segments[seg_intf].basepo+ps^;
     inc(pd);

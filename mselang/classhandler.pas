@@ -422,26 +422,24 @@ begin
    infoclass.interfacesubcount:= {infoclass.interfacesubcount +} intfsubcount;
 
          //alloc classinfo
-//   infoclass.fieldsize:= classinfo1^.fieldoffset;
    interfacealloc:= infoclass.interfacecount*pointersize;
    infoclass.allocsize:= classinfo1^.fieldoffset + interfacealloc;
    infoclass.virtualcount:= classinfo1^.virtualindex;
    int1:= sizeof(classdefinfoty)+ pointersize*infoclass.virtualcount;
                     //interfacetable start
-//   classdefs1:= getglobconstaddress(int1 +
-//                                   pointersize*infoclass.interfacecount,fla1);
    classdefs1:= getclassinfoaddress(
                                  int1+interfacealloc,infoclass.interfacecount);
    infoclass.defs:= classdefs1;   
-   with pclassdefinfoty(getsegmentpo(classdefs1))^ do begin
+   with classdefinfoty(getsegmentpo(classdefs1)^) do begin
     header.allocs.size:= infoclass.allocsize;
-//    header.fieldsize:= infoclass.fieldsize;
-    header.allocs.interfacestart:= classinfo1^.fieldoffset;
-    header.parentclass:= -1;
+    header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;
+    header.allocs.classdefinterfacestart:= int1;
+    header.parentclass:= -1; //todo: use target size
     header.interfaceparent:= -1;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
-     header.parentclass:= parentinfoclass1^.defs.address; //todo: relocate
+     header.parentclass:= 
+                     parentinfoclass1^.defs.address; //todo: relocate
      if parentinfoclass1^.virtualcount > 0 then begin
       fillchar(virtualmethods,parentinfoclass1^.virtualcount*pointersize,0);
       if icf_virtualtablevalid in parentinfoclass1^.flags then begin
@@ -453,13 +451,13 @@ begin
       end;
      end;
     end;
-    if infoclass.interfaceparent <> 0 then begin
-     header.interfaceparent:= ptypedataty(
-            ele.eledataabs(infoclass.interfaceparent))^.infoclass.defs.address;
+    if infoclass.interfaceparent <> 0 then begin //todo: use target size
+     header.interfaceparent:= ptypedataty(ele.eledataabs(
+            infoclass.interfaceparent))^.infoclass.defs.address;
                                                          //todo: relocate
     end;
     if intfcount <> 0 then begin       //alloc interface table
-     po1:= pointer(@header) + header.allocs.interfacestart;
+     po1:= pointer(@header) + header.allocs.classdefinterfacestart;
      inc(po1,infoclass.interfacecount); //top - down
      int1:= -infoclass.allocsize; 
      ele1:= infoclass.interfacechain;

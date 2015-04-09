@@ -46,6 +46,7 @@ type
    llvm: tbooleanedit;
    tsyntaxpainter1: tsyntaxpainter;
    debuged: tbooleanedit;
+   norun: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -103,9 +104,11 @@ begin
     else begin
      llvmops.run(targetstream);
      targetstream.destroy();
-     int1:= getprocessoutput('lli '+filename1,'',str1);
-     grid[0].readpipe(str1,[aco_stripescsequence]);
-     grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+     if not norun.value then begin
+      int1:= getprocessoutput('lli '+filename1,'',str1);
+      grid[0].readpipe(str1,[aco_stripescsequence]);
+      grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+     end;
     end;
    end
    else begin

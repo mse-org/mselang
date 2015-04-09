@@ -1538,7 +1538,7 @@ begin
                       ' intf:'+inttostr(infoclass.interfacecount)+
                       ' isub:'+inttostr(infoclass.interfacesubcount)+
                       ' defs:'+inttostr(infoclass.defs.address);
-        po5:= @pclassdefinfoty(getsegmentpo(infoclass.defs))^.virtualmethods;
+        po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
         for int6:= 0 to infoclass.virtualcount-1 do begin
          if int6 mod 5 = 0 then begin
           mstr1:= mstr1+lineend+'  ';

@@ -36,6 +36,8 @@ const
  storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
                    seg_classintfcount,seg_intfitemcount];
 type
+ dataoffsty = int32;
+
  bool8 = boolean;
  bool16 = wordbool;
  bool32 = longbool;
@@ -212,7 +214,6 @@ type
  popaddressty = ^opaddressty;
  dataaddressty = ptruint;
  pdataaddressty = ^dataaddressty;
- dataoffsty = ptrint;
  pdataoffsty = ^dataoffsty;
  datasizety = ptruint;
  loopcountty = ptrint;

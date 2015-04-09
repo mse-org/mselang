@@ -223,6 +223,7 @@ type
  end;
  pintfitemconstty = ^intfitemconstty;
 }
+ 
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
@@ -248,7 +249,7 @@ type
                                      //ids[asize] used for type id
    function addpointercast(const aid: int32): llvmconstty;
    function addaggregate(const avalue: paggregateconstty): llvmconstty;
-   function addclassdef(const aclassdef: pclassdefinfoty; 
+   function addclassdef(const aclassdef: classdefinfopoty; 
                                 const aintfcount: int32
                         {const virtualcount: int32; const virtualsubs: pint32;
                                   const virtualsubconsts: pint32}): llvmconstty;
@@ -972,7 +973,7 @@ begin
  result.typeid:= avalue^.header.typeid;
 end;
 
-function tconsthashdatalist.addclassdef(const aclassdef: pclassdefinfoty;
+function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmconstty;
 type
  classdefty = record
@@ -991,8 +992,20 @@ var
  ps1,ps,pe: popaddressty;
  po1: pointer;
 begin
- classdef1.items[0]:= addpointercast(aclassdef^.header.parentclass).listid;
- classdef1.items[1]:= addpointercast(aclassdef^.header.interfaceparent).listid;
+ if aclassdef^.header.parentclass < 0 then begin
+  classdef1.items[0]:= nullpointer;
+  classdef1.items[1]:= nullpointer;
+ end
+ else begin                 
+  classdef1.items[0]:= addpointercast(aclassdef^.header.parentclass).listid;
+  if aclassdef^.header.interfaceparent < 0 then begin
+   classdef1.items[1]:= nullpointer;
+  end
+  else begin
+   classdef1.items[1]:= addpointercast(
+                                   aclassdef^.header.interfaceparent).listid;
+  end;
+ end;
  types1[0]:= pointertype;
  types1[1]:= pointertype;
  co1:= addvalue(aclassdef^.header.allocs,sizeof(aclassdef^.header.allocs));
@@ -1003,7 +1016,7 @@ begin
  
  ps:= @aclassdef^.virtualmethods;
  pd:= pointer(ps);
- pe:= pointer(aclassdef)+aclassdef^.header.allocs.interfacestart;
+ pe:= pointer(aclassdef)+aclassdef^.header.allocs.classdefinterfacestart;
  i1:= pe - ps;
  if i1 > 0 then begin
   while ps < pe do begin

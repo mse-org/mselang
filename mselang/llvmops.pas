@@ -271,11 +271,10 @@ begin
  bcstream.emitloadop(bcstream.relval(0));
 end;
 
-procedure compare(const apredicate: predicate);
+procedure comparessa(const apredicate: predicate);
 begin
  with pc^.par do begin
-  bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
-                                               bcstream.ssaval(ssas2));
+  bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
  end;
 end;
 
@@ -314,7 +313,7 @@ var
  funcs1: internalfuncty;
  strings1: internalstringty;
  compilersub1: compilersubty;
- poclassdef,peclassdef: pclassdefinfoty;
+ poclassdef,peclassdef: ^classdefinfoty;
  povirtual,pevirtual: popaddressty;
  i1,i2,i3: int32;
  virtualcapacity: int32;
@@ -389,8 +388,7 @@ begin
    }
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
              constlist.addclassdef(poclassdef,countpo^).listid);
-   poclassdef:= pointer(poclassdef)+poclassdef^.header.allocs.interfacestart+
-                                                         countpo^*pointersize;
+   poclassdef:= pointer(poclassdef+1)+countpo^*pointersize;
    inc(countpo);
 //   inc(i1);
   end;
@@ -780,9 +778,21 @@ begin
  end;
 end;
 
+procedure comparepo(const apredicate: predicate);
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                              bcstream.typeval(sizetype),CAST_PTRTOINT);
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+                              bcstream.typeval(sizetype),CAST_PTRTOINT);
+  bcstream.emitcmpop(apredicate,bcstream.relval(1),bcstream.relval(0));
+ end;
+end;
+
 procedure cmpeqpoop();
 begin
- compare(icmp_eq);
+ comparessa(icmp_eq);
+// comparepo(icmp_eq);
 end;
 
 procedure cmpeqboolop();
@@ -792,7 +802,7 @@ end;
 
 procedure cmpeqint32op();
 begin
- compare(icmp_eq);
+ comparessa(icmp_eq);
 end;
 
 procedure cmpeqflo64op();
@@ -802,7 +812,8 @@ end;
 
 procedure cmpnepoop();
 begin
- compare(icmp_ne);
+ comparessa(icmp_ne);
+// comparepo(icmp_ne);
 end;
 
 procedure cmpneboolop();
@@ -812,7 +823,7 @@ end;
 
 procedure cmpneint32op();
 begin
- compare(icmp_ne);
+ comparessa(icmp_ne);
 end;
 
 procedure cmpneflo64op();
@@ -822,7 +833,8 @@ end;
 
 procedure cmpgtpoop();
 begin
- compare(icmp_ugt);
+ comparessa(icmp_ugt);
+// comparepo(icmp_ugt);
 end;
 
 procedure cmpgtboolop();
@@ -832,7 +844,7 @@ end;
 
 procedure cmpgtint32op();
 begin
- compare(icmp_sgt);
+ comparessa(icmp_sgt);
 end;
 
 procedure cmpgtflo64op();
@@ -842,7 +854,8 @@ end;
 
 procedure cmpltpoop();
 begin
- compare(icmp_ult);
+ comparessa(icmp_ult);
+// comparepo(icmp_ult);
 end;
 
 procedure cmpltboolop();
@@ -852,7 +865,7 @@ end;
 
 procedure cmpltint32op();
 begin
- compare(icmp_slt);
+ comparessa(icmp_slt);
 end;
 
 procedure cmpltflo64op();
@@ -872,7 +885,7 @@ end;
 
 procedure cmpgeint32op();
 begin
- compare(icmp_sge);
+ comparessa(icmp_sge);
 end;
 
 procedure cmpgeflo64op();
@@ -892,7 +905,7 @@ end;
 
 procedure cmpleint32op();
 begin
- compare(icmp_sle);
+ comparessa(icmp_sle);
 end;
 
 procedure cmpleflo64op();

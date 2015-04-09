@@ -4,6 +4,8 @@ object mainfo: tmainfo
   bounds_cx = 628
   bounds_cy = 450
   anchors = [an_top, an_right]
+  container.frame.localprops = []
+  container.frame.localprops1 = []
   container.bounds = (
     0
     0
@@ -25,6 +27,8 @@ object mainfo: tmainfo
     onexecute = parseexe
   end
   object grid: tstringgrid
+    frame.localprops = []
+    frame.localprops1 = []
     taborder = 1
     bounds_x = 16
     bounds_y = 327
@@ -33,7 +37,7 @@ object mainfo: tmainfo
     anchors = [an_left, an_top, an_right, an_bottom]
     font.name = 'stf_fixed'
     font.xscale = 1
-    font.dummy = 0
+    font.localprops = [flp_xscale]
     datacols.count = 1
     datacols.items = <    
       item
@@ -65,6 +69,8 @@ object mainfo: tmainfo
     statfile = statf
   end
   object edgrid: twidgetgrid
+    frame.localprops = []
+    frame.localprops1 = []
     taborder = 3
     bounds_x = 16
     bounds_y = 32
@@ -104,7 +110,7 @@ object mainfo: tmainfo
       font.height = 12
       font.name = 'stf_fixed'
       font.xscale = 1
-      font.dummy = 0
+      font.localprops = [flp_xscale]
       optionsedit1 = [oe1_autopopupmenu, oe1_keyexecute, oe1_savestate, oe1_checkvalueafterstatread]
       oneditnotifcation = editnotiexe
       syntaxpainter = tsyntaxpainter1
@@ -113,7 +119,8 @@ object mainfo: tmainfo
     end
   end
   object coldi: tintegerdisp
-    frame.dummy = 0
+    frame.localprops = []
+    frame.localprops1 = []
     taborder = 4
     bounds_x = 16
     bounds_y = 8
@@ -144,6 +151,8 @@ object mainfo: tmainfo
     onexecute = loadexe
   end
   object filena: tfilenameedit
+    frame.localprops = []
+    frame.localprops1 = []
     frame.button.imagenr = 17
     taborder = 7
     bounds_x = 72
@@ -162,7 +171,8 @@ object mainfo: tmainfo
   end
   object llvm: tbooleanedit
     frame.caption = 'llvm'
-    frame.dummy = 0
+    frame.localprops = []
+    frame.localprops1 = []
     frame.outerframe = (
       0
       1
@@ -171,7 +181,7 @@ object mainfo: tmainfo
     )
     taborder = 8
     bounds_x = 368
-    bounds_y = 7
+    bounds_y = 1
     bounds_cx = 39
     bounds_cy = 16
     anchors = [an_top, an_right]
@@ -179,7 +189,8 @@ object mainfo: tmainfo
   end
   object debuged: tbooleanedit
     frame.caption = 'dbu'
-    frame.dummy = 0
+    frame.localprops = []
+    frame.localprops1 = []
     frame.outerframe = (
       0
       1
@@ -188,12 +199,30 @@ object mainfo: tmainfo
     )
     taborder = 9
     bounds_x = 416
-    bounds_y = 7
+    bounds_y = 1
     bounds_cx = 40
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
     onsetvalue = debuset
+  end
+  object norun: tbooleanedit
+    frame.caption = 'norun'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      40
+      2
+    )
+    taborder = 10
+    bounds_x = 368
+    bounds_y = 15
+    bounds_cx = 53
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
   end
   object statf: tstatfile
     filename = 'status.sta'

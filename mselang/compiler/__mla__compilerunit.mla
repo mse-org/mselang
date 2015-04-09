@@ -58,9 +58,10 @@ begin
  po1:= @classinfo;
  ppointer(result)^:= @classinfo;
  repeat
-  pd:= result + po1^.header.allocs.interfacestart; //copy interface table
+  pd:= result + po1^.header.allocs.instanceinterfacestart;
+                                            //copy interface table
   pe:= result + po1^.header.allocs.size;
-  ps:= @classinfo + po1^.header.allocs.interfacestart;
+  ps:= @classinfo + po1^.header.allocs.classdefinterfacestart;
   while pd < pe do begin
    pd^:= ps^;
    inc(pd);

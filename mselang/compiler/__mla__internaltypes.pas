@@ -11,10 +11,12 @@ unit __mla__internaltypes;
 interface 
 
 type
- dataoffsty = int32; //todo: use target size
  ppointer = ^pointer;
 
-type            
+type
+{$ifdef mse_compiler}
+ targetptrintty = int32;
+{$endif}
  refcountty = int32;
  managedsizety = int32;
  stringsizety = managedsizety;
@@ -45,7 +47,6 @@ type
  end; //following array data
  pdynarrayheaderty = ^dynarrayheaderty;
 
- 
 const
  string8headersize = sizeof(string8headerty);
  string8allocsize = string8headersize+1; //terminating #0
@@ -55,11 +56,18 @@ const
 type
  allocsinfoty = record
   size: int32;
-  interfacestart: int32; //offset in classdefheaderty
+  instanceinterfacestart: int32; //offset in instance record
+  classdefinterfacestart: int32; //offset in classdefheaderty
  end;
+{$ifdef mse_compiler}
+ pclassdefinfoty = targetptrintty;
+ classdefinfopoty = ^classdefinfoty;
+{$else}
+ pclassdefinfoty = ^classdefinfoty;
+{$endif}
  classdefheaderty = record
-  parentclass: dataoffsty;
-  interfaceparent: dataoffsty; //last parent class with interfaces
+  parentclass: pclassdefinfoty;
+  interfaceparent: pclassdefinfoty; //last parent class with interfaces
   allocs: allocsinfoty;
  end;
  pclassdefheaderty = ^classdefheaderty;
@@ -72,7 +80,6 @@ type
                          //copied to instance
   end;  
  end;
- pclassdefinfoty = ^classdefinfoty;
  
  intfdefheaderty = record
   instanceoffset: int32; //offset from interface pointer to class instance
