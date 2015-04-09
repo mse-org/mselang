@@ -25,6 +25,7 @@ procedure handlestoponerror();
 procedure handlenop();
 
 procedure handledefine();
+procedure handleundef();
 
 procedure handleifdef();
 procedure handleelseif();
@@ -34,7 +35,7 @@ procedure handleskipifelseentry();
 implementation
 uses
  msestrings,elements,parserglob,opcode,opglob,handlerutils,errorhandler,
- parser,grammar;
+ parser,grammar,handlerglob;
  
 procedure handledumpelements();
 {$ifdef mse_debugparser}
@@ -101,32 +102,49 @@ end;
 
 procedure handledefine();
 var
- po1: pointer;
+ po1: pconditiondataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEFINE');
 {$endif}
  with info,contextstack[s.stacktop] do begin
   ele.adduniquechilddata(s.unitinfo^.interfaceelement,
-                             [tks_defines,d.ident.ident],ek_none,allvisi,po1);
+                  [tks_defines,d.ident.ident],ek_condition,allvisi,po1);
+  po1^.deleted:= false;
+ end;
+end;
+
+procedure handleundef();
+var
+ po1: pconditiondataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNDEF');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+  if ele.findchilddata(s.unitinfo^.interfaceelement,
+                 [tks_defines,d.ident.ident],[],allvisi,po1) then begin
+   po1^.deleted:= true;
+  end;
  end;
 end;
 
 procedure handleifdef();
 var
- ele1: elementoffsetty;
+ po1: pconditiondataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('IFDEF');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  if not ele.findchild(s.unitinfo^.interfaceelement,
-               [tks_defines,d.ident.ident],[],allvisi,ele1) then begin
+  if not ele.findchilddata(s.unitinfo^.interfaceelement,
+               [tks_defines,d.ident.ident],[],allvisi,po1) or 
+                                                  po1^.deleted then begin
    switchcontext(@skipifco);
   end;
  end;
 end;
-
+//todo: check missing ifdef or double elseif
 procedure handleelseif();
 begin
 {$ifdef mse_debugparser}

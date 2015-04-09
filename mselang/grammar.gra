@@ -162,6 +162,7 @@ directive,directive1,,*
  'nop'.,nop-*
  'include'.,include-*
  'define'.,define-*
+ 'undef'.,undef-*
  'ifdef'.,ifdef-*
  'else'.,elseif-*
  'endif'.,endif-*
@@ -186,6 +187,8 @@ abort,directiveend,handleabort,
 stoponerror,directiveend,handlestoponerror,
 
 define,directiveend,,handledefine
+ '',getident^*
+undef,directiveend,,handleundef
  '',getident^*
 
 ifdef,directiveend,,handleifdef

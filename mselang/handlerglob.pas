@@ -327,6 +327,11 @@ type
  end;
  pusesdataty = ^usesdataty;
  
+ conditiondataty = record
+  deleted: boolean;
+ end;
+ pconditiondataty = ^conditiondataty;
+ 
  classimpnodedataty = record
  end;
  pclassimpnodedataty = ^classimpnodedataty;
