@@ -810,10 +810,16 @@ begin
 end;
 
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+var
+ ssabefore: int32;
 begin
  if aoffset <> 0 then begin
-  with insertitem(oc_addimmint32,stackoffset,false)^ do begin
-   setimmint32(aoffset,par);
+  with info do begin
+   ssabefore:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+   with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+    setimmint32(aoffset,par);
+    par.ssas1:= ssabefore;
+   end;
   end;
  end;
 end;

@@ -7,13 +7,13 @@ type
 
 procedure test(var p1: recty);
 begin
- exitcode:= p1.a+p1.b;
+ exitcode:= {p1.a+}p1.b;
 end;
 
 var
  r1: recty;
 begin
- r1.a:= 1;
- r1.b:= 122;
+// r1.a:= 1;
+// r1.b:= 122;
  test(r1);
 end.
