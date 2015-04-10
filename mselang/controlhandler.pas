@@ -19,7 +19,7 @@ unit controlhandler;
 interface
 
 procedure handleif0();
-procedure handleif();
+//procedure handleif();
 procedure handlethen();
 procedure handlethen0();
 procedure handlethen1();
@@ -75,7 +75,7 @@ begin
   include(s.currentstatementflags,stf_rightside);
  end;
 end;
-
+(*
 procedure handleif();          //not used???? todo: remove it
 begin
 {$ifdef mse_debugparser}
@@ -86,7 +86,7 @@ begin
   s.stacktop:= s.stackindex;
  end;
 end;
-
+*)
 procedure handlethen();
 begin
 {$ifdef mse_debugparser}

@@ -400,7 +400,7 @@ assignment,,handleassignmententry,handleassignment
 //
 // control todo: better names instead of *n
 //          
-if0,then,handleif0,handleif
+if0,then,handleif0,
  '',exp^*
 then,,,handlethen
  ${whitespace}
