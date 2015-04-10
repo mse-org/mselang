@@ -554,6 +554,9 @@ testvar1:= forwardtypeitemty(item);
     i1:= pd^.indirectlevel;
     pd^:= ps^;
     pd^.indirectlevel:= i1;
+    if pd^.base = 0 then begin
+     pd^.base:= ele.eledatarel(ps);
+    end;
     resolved:= true;
    end;
   end;
