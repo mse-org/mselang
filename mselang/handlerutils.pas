@@ -79,7 +79,8 @@ function findkindelements(
             const rest: int32 = 0): boolean;
 function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
-           const visibility: visikindsty; out aelement: pelementinfoty): boolean;
+           const visibility: visikindsty; out aelement: pelementinfoty;
+           const noerror: boolean = false): boolean;
 function findkindelementsdata(
               const astackoffset: integer; const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer;
@@ -166,6 +167,7 @@ function getopdatatype(const atypedata: ptypedataty;
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
 function getbasetypedata(const abitsize: databitsizety): ptypedataty;
+function getsystypeele(const atype: systypety): elementoffsetty;
 procedure init();
 procedure deinit();
 
@@ -359,7 +361,9 @@ end;
 
 function findkindelements(const astackoffset: integer;
            const akinds: elementkindsty; 
-           const visibility: visikindsty; out aelement: pelementinfoty): boolean;
+           const visibility: visikindsty;
+           out aelement: pelementinfoty;
+           const noerror: boolean = false): boolean;
 var
  idents: identvecty;
  firstnotfound: integer;
@@ -367,7 +371,7 @@ begin
  result:= findkindelements(astackoffset,akinds,visibility,
                               aelement,firstnotfound,idents) and 
                               (firstnotfound > idents.high);
- if not result then begin
+ if not result and not noerror then begin
   identerror(astackoffset+firstnotfound,err_identifiernotfound);
  end;
 end;
@@ -708,6 +712,11 @@ begin
  end;
 {$endif}
  result:= ele.eledataabs(sysdatatypes[typ1].typedata);
+end;
+
+function getsystypeele(const atype: systypety): elementoffsetty;
+begin
+ result:= sysdatatypes[atype].typedata;
 end;
 
 procedure pushinsertconst(const stackoffset: integer; const before: boolean);

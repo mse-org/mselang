@@ -18,7 +18,7 @@ unit parserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msestrings,msetypes,msertti;
+ msestream,msestrings,msetypes,msertti,listutils;
 const
  firstident = 256;
  includemax = 31;
@@ -174,7 +174,6 @@ type
  indexty = integer;
  linkindexty = indexty;
  forwardindexty = indexty;
- listadty = longword;
 
 const
 // vis_max = vis_0;
@@ -669,7 +668,7 @@ type
  pendinginfoarty = array of pendinginfoty;
 
  internalsubty = (isub_ini,isub_fini);
- 
+
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
@@ -682,6 +681,7 @@ type
   implementationelement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
+  forwardtypes: listadty;
   pendingcount: integer;
   pendingcapacity: integer;
   pendings: pendinginfoarty;
@@ -690,16 +690,6 @@ type
   internalsubs: array[internalsubty] of opaddressty;
   codestop: opaddressty;
   stoponerror: boolean;
-  {
-  initializationstart: opaddressty;  //0 if none
-  initializationstop: opaddressty;   //0 if none, last op is goto
-  finalizationstart: opaddressty;    //0 if none
-  finalizationstop: opaddressty;     //0 if none, last op is goto
-  inistart: opaddressty;   //0 if none
-  inistop: opaddressty;    //-> gotoop
-  finistart: opaddressty;  //0 if none
-  finistop: opaddressty;   //-> gotoop
-  }
  end;
  ppunitinfoty = ^punitinfoty;
 

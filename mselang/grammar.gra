@@ -562,9 +562,10 @@ const,,,*>
  ${whitespace}
  ${blockswitch}
  '',const0^*
-const0,const1,,handleidentexpected^
+const0,const1,,^
  ${whitespace}
  @identstart,ident^*
+ '',!handleidentexpected
 const1,,,handleequalityexpected^
  ${whitespace}
  '=',const2-

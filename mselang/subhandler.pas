@@ -781,6 +781,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
 {$endif}
+ checkforwardtypeerrors();
  with info,contextstack[s.stackindex-2].d do begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);

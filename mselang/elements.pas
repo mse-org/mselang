@@ -196,6 +196,7 @@ type
            const avislevel: visikindsty; out aparent: elementoffsetty): boolean;
                   //searches in scopestack, returns parent
    property lastdescendent: elementoffsetty read flastdescendent;
+   function elebase: pointer; inline;
    function eleoffset: ptruint; inline;
    function eledataoffset: ptruint; inline;
    function eleinfoabs(const aelement: elementoffsetty): pelementinfoty; inline;
@@ -432,6 +433,11 @@ begin
  repeat
   lfsr321(stringident);
  until stringident >= firstident;
+end;
+
+function telementhashdatalist.elebase: pointer; inline;
+begin
+ result:= pointer(felementdata);
 end;
 
 function telementhashdatalist.eleoffset: ptruint; inline;

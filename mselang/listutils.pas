@@ -17,10 +17,11 @@
 unit listutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
-uses
- parserglob;
+//uses
+// parserglob;
  
 type
+ listadty = longword;
  linkheaderty = record
   next: listadty; //offset from list
  end;
@@ -43,14 +44,18 @@ type
 
  resolvehandlerty = procedure(var item);
  resolvehandlerdataty = procedure(var item; var data);
+ checkresolvehandlerty = procedure(var item; var data; var resolved: boolean);
 
 procedure clearlist(var alist: linklistty; const aitemsize: integer;
                                               const amincapacity: integer);
 function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
-procedure deletelistchain(var alist: linklistty; const achain: listadty);
+procedure deletelistchain(var alist: linklistty; var achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
 procedure resolvelist(var alist: linklistty; const handler: resolvehandlerty;
                                                          var achain: listadty);
+procedure checkresolve(var alist: linklistty; 
+                   const handler: checkresolvehandlerty; var achain: listadty;
+                   const data: pointer);
 procedure foralllistitems(var alist: linklistty;
                     const handler: resolvehandlerty; const achain: listadty);
 procedure foralllistitemsdata(var alist: linklistty;
@@ -98,12 +103,15 @@ begin
  end; 
 end; 
 
-procedure deletelistchain(var alist: linklistty; const achain: listadty);
+procedure deletelistchain(var alist: linklistty; var achain: listadty);
 begin
- with alist do begin
-  plinkheaderty(list+achain)^.next:= deleted;
-  deleted:= achain;
- end; 
+ if achain <> 0 then begin
+  with alist do begin
+   plinkheaderty(list+achain)^.next:= deleted;
+   deleted:= achain;
+  end;
+  achain:= 0;
+ end;
 end;
 
 procedure invertlist(const alist: linklistty; var achain: listadty);
@@ -142,6 +150,45 @@ begin
    plinkheaderty(list+achain)^.next:= deleted;
    deleted:= achain;
    achain:= 0;
+  end;
+ end;
+end;
+
+procedure checkresolve(var alist: linklistty; 
+                   const handler: checkresolvehandlerty; var achain: listadty;
+                   const data: pointer);
+var
+ ad1: listadty;
+ po2: pointer;
+ po1,po3: plinkheaderty;
+ bo1: boolean;
+begin
+ if achain <> 0 then begin
+  po3:= nil;
+  ad1:= achain;
+  po2:= alist.list;
+  while ad1 <> 0 do begin
+   po1:= po2+ad1;
+   bo1:= false;
+   handler(po1^,data^,bo1);
+   if bo1 then begin
+    if po3 <> nil then begin
+     po3^.next:= po1^.next;
+    end
+    else begin
+     achain:= po1^.next;
+    end;
+    if alist.deleted <> 0 then begin
+     plinkheaderty(alist.list+alist.deleted)^.next:= ad1;
+    end;
+    alist.deleted:= ad1;
+    ad1:= po1^.next;
+    po1^.next:= 0;
+   end
+   else begin
+    ad1:= po1^.next;
+   end;
+   po3:= po1;
   end;
  end;
 end;

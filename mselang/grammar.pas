@@ -4978,7 +4978,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bconst0: array[0..6] of branchty = (
+ bconst0: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -5017,6 +5017,13 @@ const
    (flags: [bf_nt,bf_push,bf_setparentbeforepush];
      dest: (context: @identco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_handler];
+     dest: (handler: @handleidentexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7797,7 +7804,6 @@ begin
  constco.branch:= @bconst;
  const0co.branch:= @bconst0;
  const0co.next:= @const1co;
- const0co.handleexit:= @handleidentexpected;
  const1co.branch:= @bconst1;
  const1co.handleexit:= @handleequalityexpected;
  const2co.branch:= @bconst2;

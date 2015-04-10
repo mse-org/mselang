@@ -49,6 +49,11 @@ procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
 procedure forwardresolve(const aforward: forwardindexty);
 procedure checkforwarderrors(const aforward: forwardindexty);
+//function addtypedef(const aname: identty; const avislevel: visikindsty;
+//                                        out aelementdata: pointer): boolean;
+procedure markforwardtype(const atype: ptypedataty; const aforwardname: identty);
+procedure resolveforwardtype(const atype: ptypedataty);
+procedure checkforwardtypeerrors();
 
 procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendent(const aclass: elementoffsetty;
@@ -153,6 +158,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IMPLEMENTATIONENTRY');
 {$endif}
+ checkforwardtypeerrors();
  with info do begin
   include(s.unitinfo^.state,us_interfaceparsed);
   if us_implementation in s.unitinfo^.state then begin
@@ -183,6 +189,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('IMPLEMENTATION');
 {$endif}
+ checkforwardtypeerrors();
  with info do begin
   with contextstack[s.stackindex] do begin
    ele.releaseelement(d.impl.elemark);
@@ -352,8 +359,6 @@ begin
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;
- with info do begin
- end;
 end;
 (*
 { timplementationpendinglist }
@@ -423,6 +428,7 @@ type
 
 var
  classdescendlist: linklistty;
+ forwardtypes: linklistty;
  
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
@@ -496,6 +502,90 @@ begin
   deletedlinks:= alinks;
  end;
 end;
+{
+function addtypedef(const aname: identty; const avislevel: visikindsty;
+                                        out aelementdata: pointer): boolean;
+begin
+ result:= ele.addelementdata(aname,ek_type,avislevel,aelementdata);
+ if result then begin
+  resolveforwardtype(aelementdata);
+ end;
+end;
+}
+type
+ forwardtypeitemty = record
+  header: linkheaderty;
+  ref: elementoffsetty;
+  name: identty;
+ end;
+ pforwardtypeitemty = ^forwardtypeitemty;
+   
+procedure markforwardtype(const atype: ptypedataty;
+                                           const aforwardname: identty);
+begin
+ with pforwardtypeitemty(addlistitem(
+                         forwardtypes,info.s.unitinfo^.forwardtypes))^ do begin
+  ref:= ele.eledatarel(atype);
+  name:= aforwardname;
+ end;
+end; 
+
+type
+ typeresolveinfoty = record
+  base: pointer;
+  resolver: pelementinfoty;
+ end;
+var testvar: typeresolveinfoty; testvar1: forwardtypeitemty;
+procedure doresolveforwardtype(var item; var data; var resolved: boolean);
+var
+ ps,pd: ptypedataty;
+ i1: int32;
+begin
+testvar:= typeresolveinfoty(data);
+testvar1:= forwardtypeitemty(item);
+ with typeresolveinfoty(data) do begin
+  with forwardtypeitemty(item) do begin
+   pd:= base+ref;
+   if (name = resolver^.header.name) and 
+            (pelementinfoty(pointer(pd))^.header.parent = 
+                                 resolver^.header.parent) then begin
+    ps:= @resolver^.data;
+    pd:= pointer(pd)+eledatashift;
+    i1:= pd^.indirectlevel;
+    pd^:= ps^;
+    pd^.indirectlevel:= i1;
+    resolved:= true;
+   end;
+  end;
+ end;
+end;
+
+procedure resolveforwardtype(const atype: ptypedataty);
+var
+ data: typeresolveinfoty;
+begin
+ if info.s.unitinfo^.forwardtypes <> 0 then begin
+  data.base:= ele.elebase();
+  data.resolver:= pointer(atype)-eledatashift;
+  checkresolve(forwardtypes,@doresolveforwardtype,
+                                     info.s.unitinfo^.forwardtypes,@data);
+ end;
+end;
+
+procedure forwardtypeerror(var item);
+begin
+ with forwardtypeitemty(item) do begin //todo: source location
+  identerror(0,name,err_forwardtypenotfound);
+ end;
+end;
+
+procedure checkforwardtypeerrors();
+begin
+ if info.s.unitinfo^.forwardtypes <> 0 then begin
+  foralllistitems(forwardtypes,@forwardtypeerror,info.s.unitinfo^.forwardtypes);
+  deletelistchain(forwardtypes,info.s.unitinfo^.forwardtypes);
+ end;
+end;
 
 type
  forwardinfoty = record
@@ -505,7 +595,7 @@ type
  end;
  pforwardinfoty = ^forwardinfoty;
  forwardarty = array of forwardinfoty;
- 
+
 var
  forwards: forwardarty; //[0] -> dummy entry
  forwardindex: forwardindexty;
@@ -603,6 +693,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATIONSTART');
 {$endif}
+ checkforwardtypeerrors();
  getinternalsub(isub_ini,ad1);
  writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
 {
@@ -638,6 +729,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATIONSTART');
 {$endif}
+ checkforwardtypeerrors();
  getinternalsub(isub_fini,ad1);
 {
  with info,unitinfo^ do begin
@@ -795,6 +887,7 @@ procedure clear;
 begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);
  clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
+ clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
  unitchain:= 0;
   
  links:= nil;

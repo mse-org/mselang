@@ -54,7 +54,7 @@ procedure checkrecordfield(const avisibility: visikindsty;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob,managedtypes;
+ grammar,opglob,managedtypes,unithandler;
 
 procedure handletype();
 begin
@@ -108,6 +108,8 @@ var
  po1,po2: pelementinfoty;
  po3,po4: ptypedataty;
  idcontext: pcontextitemty;
+ bo1,bo2: boolean;
+ forward1: boolean;
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKTYPEIDENT');
@@ -119,7 +121,15 @@ begin
   end;
  {$endif}
   ele.checkcapacity(ek_type);
-  if findkindelements(1,[ek_type],allvisi,po2) then begin
+  bo1:= (d.typ.indirectlevel > 0) and (s.stacktop-s.stackindex = 1);
+                                        //simple type name only
+  bo2:= findkindelements(1,[ek_type],allvisi,po2,bo1);
+  forward1:= not bo2 and bo1;
+  if forward1 then begin //forward pointer
+   po2:= ele.eleinfoabs(getsystypeele(st_none));
+   bo2:= true;
+  end;
+  if bo2 then begin
    d.typ.typedata:= ele.eleinforel(po2);
    po3:= ptypedataty(@po2^.data);
    d.typ.flags:= po3^.flags;
@@ -137,6 +147,12 @@ begin
       po4^.indirectlevel:= d.typ.indirectlevel;
       if po4^.indirectlevel > 0 then begin
        po4^.flags-= [tf_managed,tf_hasmanaged];
+      end;
+      if forward1 then begin
+       markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
+      end
+      else begin
+       resolveforwardtype(po4);
       end;
      end
      else begin //duplicate
@@ -351,6 +367,7 @@ begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
                      contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
+   resolveforwardtype(po1);
 {   
    kind:= dk_record; //fieldchain set in handlerecorddefstart()
    datasize:= das_none;
@@ -408,6 +425,7 @@ begin
      indirectlevel:= d.typ.indirectlevel;
     }
      infoset.itemtype:= ele1;
+     resolveforwardtype(po1);
     end;
    end
    else begin
@@ -532,7 +550,7 @@ begin
        datasize:= das_none;
        kind:= dk_array;
       end;
-      itemtyoffs:= ele.eledatarel(arty);
+//      itemtyoffs:= ele.eledatarel(arty);
      end;
     end;
    end
@@ -571,6 +589,7 @@ begin
     d.typ.indirectlevel:= 0;
     d.typ.typedata:= ele.eledatarel(arty);
    end;
+   resolveforwardtype(arty);
   end
   else begin
 {$ifdef mse_checkinternalerror}                             

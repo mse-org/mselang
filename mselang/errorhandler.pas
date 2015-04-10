@@ -55,7 +55,7 @@ type
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
             err_cannotaddresstype,err_valueexpected,err_cannotgetsize,
             err_pointertypeexpected,err_write,err_toomanyparams,
-            err_noancestor);
+            err_noancestor,err_forwardtypenotfound);
             
  errorinfoty = record
   level: errorlevelty;
@@ -205,7 +205,8 @@ const
   (level: erl_error; message: 'Pointer type expected'),
   (level: erl_error; message: 'Write error'),
   (level: erl_error; message: 'Too many parameters'),
-  (level: erl_error; message: 'There is no ancestor')
+  (level: erl_error; message: 'There is no ancestor'),
+  (level: erl_error; message: 'Forward type "%s" not found')
  );
 
 procedure message1(const atext: string; const values: array of const); 
@@ -232,6 +233,9 @@ procedure identerror(const astackoffset: integer;const aerror: errorty;
                                    const aerrorlevel: errorlevelty = erl_none);
 procedure identerror(const aident: identty; const aerror: errorty;
                              const aerrorlevel: errorlevelty = erl_none);
+procedure identerror(const astackoffset: integer; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
 
 procedure tokenexpectederror(const atoken: identty;
                              const aerrorlevel: errorlevelty = erl_none);
@@ -505,6 +509,13 @@ procedure identerror(const aident: identty; const aerror: errorty;
                              const aerrorlevel: errorlevelty = erl_none);
 begin
  errormessage(aerror,[getidentname(aident)],-1,0,aerrorlevel);
+end;
+
+procedure identerror(const astackoffset: integer; const aident: identty; 
+                                   const aerror: errorty;
+                                   const aerrorlevel: errorlevelty = erl_none);
+begin
+ errormessage(aerror,[getidentname(aident)],astackoffset,0,aerrorlevel);
 end;
 
 procedure tokenexpectederror(const atoken: string;
