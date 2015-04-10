@@ -667,6 +667,7 @@ var
  paramco1: integer;
  isgetfact: boolean;
  origparent: elementoffsetty;
+ ssabefore: int32;
 label
  endlab;
 begin
@@ -760,6 +761,11 @@ begin
    case po1^.header.kind of
     ek_var,ek_field: begin
      if po1^.header.kind = ek_field then begin
+      if contextstack[s.stackindex-1].d.dat.indirection < 0 then begin
+       if not getaddress(-1,true) then begin
+        goto endlab;
+       end;
+      end;
       with pfielddataty(po2)^ do begin
        if isgetfact then begin
         if af_classfield in flags then begin
@@ -795,7 +801,19 @@ begin
           d.dat.ref.c.varele:= 0;
          end;
          ck_fact: begin
-          internalerror1(ie_notimplemented,'20140427E'); //todo
+          ssabefore:= d.dat.fact.ssaindex;
+          with insertitem(oc_offsetpoimm32,0,false)^ do begin
+           par.ssas1:= ssabefore;
+           if backend = bke_llvm then begin
+            par.imm.vint32:= constlist.addi32(offset).listid;
+           end
+           else begin
+            par.imm.vint32:= offset;
+           end;
+          end;
+          d.dat.datatyp.typedata:= vf.typ;
+          d.dat.datatyp.indirectlevel:= indirectlevel;
+          d.dat.indirection:= -1;
          end;
         {$ifdef mse_checkinternalerror}
          else begin
