@@ -405,7 +405,7 @@ if0,then,handleif0,
 then,,,handlethen
  ${whitespace}
  'then'.,then0-
-then0,then2,handlethen0,handlethen1
+then0,then2,handlethen0,
  '',statementstack^*
 then2,,,handlethen2
  ${whitespace}

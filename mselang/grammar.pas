@@ -7686,7 +7686,6 @@ begin
  then0co.branch:= @bthen0;
  then0co.next:= @then2co;
  then0co.handleentry:= @handlethen0;
- then0co.handleexit:= @handlethen1;
  then2co.branch:= @bthen2;
  then2co.handleexit:= @handlethen2;
  else0co.branch:= nil;

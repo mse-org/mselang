@@ -22,7 +22,7 @@ procedure handleif0();
 //procedure handleif();
 procedure handlethen();
 procedure handlethen0();
-procedure handlethen1();
+//procedure handlethen1();
 procedure handlethen2();
 procedure handleelse0();
 procedure handleelse();
@@ -106,7 +106,7 @@ begin
 {$endif}
  conditionalcontrolop(oc_if);
 end;
-
+(*
 procedure handlethen1();
 begin
 {$ifdef mse_debugparser}
@@ -117,7 +117,7 @@ begin
   s.stacktop:= s.stackindex;
  end;
 end;
-
+*)
 procedure handlethen2();
       //1       2        
 begin //boolexp,thenmark
