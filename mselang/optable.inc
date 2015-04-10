@@ -267,11 +267,11 @@
 
   pushaddrssa,
   pushlocaddrssa,
-  pushlocaddrindissa,
+//  pushlocaddrindissa,
   pushsegaddrssa,
-  pushsegaddrindissa,
+//  pushsegaddrindissa,
   pushstackaddrssa,
-  pushstackaddrindissa,
+//  pushstackaddrindissa,
   
   pushduppossa,
 
@@ -597,11 +597,11 @@
 
   @pushaddrop,
   @pushlocaddrop,
-  @pushlocaddrindiop,
+//  @pushlocaddrindiop,
   @pushsegaddrop,
-  @pushsegaddrindiop,
+//  @pushsegaddrindiop,
   @pushstackaddrop,
-  @pushstackaddrindiop,
+//  @pushstackaddrindiop,
   
   @pushduppoop,
 

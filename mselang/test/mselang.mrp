@@ -726,8 +726,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
-   c=6
+   a=0,665,4,record
+   c=8
     (
     kind=2
     a=0,648,1,recordfield
@@ -857,6 +857,50 @@ c=3
     cr=0
     ao=0
     ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,pointerinrec
+    teststate=1
+    path=pointerinrec.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,pointerinrec llvm
+    teststate=1
+    path=pointerinrec.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1854,8 +1898,8 @@ c=3
    c=2
     (
     kind=2
-    a=0,648,2,forwardpointer
-    teststate=2
+    a=0,648,1,forwardpointer
+    teststate=1
     path=forwardpointer.mla
     comment=
     cc=${mlc}
@@ -1868,7 +1912,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=0
     ae=0
     aec=123
@@ -1876,8 +1920,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forwardpointer llvm
-    teststate=1
+    a=0,648,2,forwardpointer llvm
+    teststate=2
     path=forwardpointer.mla
     comment=
     cc=${mlc_llvm}
@@ -1891,9 +1935,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
-    aec=123
+    ao=
+    ae=0  libLLVMSupport.so 0xb78a40f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +1  libLLVMSupport.so 0xbfffeec8 llvm::sys::PrintStackTrace(_IO_FILE*) + 141929976
+    +2  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1215676208
+    +
+    aec=0
     ie=0
     )
    teststate=2
@@ -2038,11 +2085,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,657,3,class
   c=10
    (
    kind=2
-   a=0,648,1,classminimal
+   a=0,648,0,classminimal
    teststate=1
    path=classminimal.mla
    comment=
@@ -2064,7 +2111,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classminimal llvm
+   a=0,648,0,classminimal llvm
    teststate=2
    path=classminimal.mla
    comment=
@@ -2086,7 +2133,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classfield
+   a=0,648,0,classfield
    teststate=1
    path=classfield.mla
    comment=
@@ -2108,7 +2155,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classfield llvm
+   a=0,648,0,classfield llvm
    teststate=2
    path=classfield.mla
    comment=
@@ -2130,7 +2177,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classvirtual
+   a=0,648,0,classvirtual
    teststate=1
    path=classvirtual.mla
    comment=
@@ -2152,7 +2199,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classvirtual llvm
+   a=0,648,0,classvirtual llvm
    teststate=2
    path=classvirtual.mla
    comment=
@@ -2174,7 +2221,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,callinherited
+   a=0,648,0,callinherited
    teststate=1
    path=callinherited.mla
    comment=
@@ -2196,7 +2243,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,callinherited llvm
+   a=0,648,0,callinherited llvm
    teststate=2
    path=callinherited.mla
    comment=
@@ -2218,7 +2265,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterface
+   a=0,648,0,classinterface
    teststate=2
    path=classinterface.mla
    comment=
@@ -2240,7 +2287,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterface llvm
+   a=0,648,0,classinterface llvm
    teststate=2
    path=classinterface.mla
    comment=
@@ -2381,7 +2428,15 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=34
+rowstate=42
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

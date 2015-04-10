@@ -315,11 +315,11 @@ type
 
   oc_pushaddr,
   oc_pushlocaddr,
-  oc_pushlocaddrindi,
+//  oc_pushlocaddrindi,
   oc_pushsegaddr,
-  oc_pushsegaddrindi,
+//  oc_pushsegaddrindi,
   oc_pushstackaddr,
-  oc_pushstackaddrindi,
+//  oc_pushstackaddrindi,
 
   oc_pushduppo,
   
@@ -541,7 +541,7 @@ type
    oc_storesegnilar,
    oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
    oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
-   oc_pushsegaddr,oc_pushsegaddrindi,
+   oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
     segdataaddress: segdataaddressty;
    );
@@ -709,11 +709,11 @@ type
    );
    oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
-   oc_pushstackaddr,oc_pushstackaddrindi,
+   oc_pushstackaddr,{oc_pushstackaddrindi,}
    oc_indirectpooffs,oc_indirectoffspo:(
     voffset: dataoffsty;
     case opcodety of
-     oc_writeenum,oc_pushstackaddrindi:(
+     oc_writeenum{,oc_pushstackaddrindi}:(
       voffsaddress: dataaddressty;
      );
    );
@@ -728,9 +728,9 @@ type
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64:(
     stackop: stackopty;
    );
-   oc_pushsegaddr,oc_pushsegaddrindi,
+   oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
-   oc_pushlocaddr,oc_pushlocaddrindi,
+   oc_pushlocaddr,{oc_pushlocaddrindi,}
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_popseg,oc_pushseg,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,

@@ -1130,10 +1130,13 @@ procedure popsegpoop();
 var
  str1: shortstring;
 begin
+ storeseg();
+{
  with pc^.par do begin
   bcstream.emitstoreop(bcstream.ssaval(ssas1),
                      bcstream.globval(memop.segdataaddress.a.address));
  end;
+}
 end;
 
 procedure popsegf16op();
@@ -1540,7 +1543,7 @@ begin
   bcstream.emitlocdataaddress(memop);
  end;
 end;
-
+{
 procedure pushlocaddrindiop();          //todo: nested frames
 begin
  with pc^.par do begin
@@ -1552,7 +1555,7 @@ begin
                 bcstream.constval(memop.locdataaddress.offset));
  end;
 end;
-
+}
 procedure pushsegaddrop();
 var
  str1: shortstring;
@@ -1561,7 +1564,7 @@ begin
   bcstream.emitsegdataaddress(memop);
  end;
 end;
-
+{
 procedure pushsegaddrindiop(); //offset after load
 begin
  with pc^.par do begin
@@ -1570,15 +1573,17 @@ begin
                 bcstream.constval(memop.segdataaddress.offset));
  end;
 end;
-
+}
 procedure pushstackaddrop();
 begin
  notimplemented();
 end;
+{
 procedure pushstackaddrindiop();
 begin
  notimplemented();
 end;
+}
 procedure pushduppoop();
 begin
  notimplemented();
@@ -2328,11 +2333,11 @@ const
 
   pushaddrssa = 1;
   pushlocaddrssa = 2;
-  pushlocaddrindissa = 3;
+//  pushlocaddrindissa = 3;
   pushsegaddrssa = 1;
-  pushsegaddrindissa = 3;
+//  pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
-  pushstackaddrindissa = 1;
+//  pushstackaddrindissa = 1;
   
   pushduppossa = 1;
 

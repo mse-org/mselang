@@ -1585,36 +1585,36 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:=
                           getlocaddress(cpu.pc^.par.memop.locdataaddress);
 end;
-
+{
 procedure pushlocaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                          getlocaddressindi(cpu.pc^.par.memop.locdataaddress);
 end;
-
+}
 procedure pushsegaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                getsegaddress(cpu.pc^.par.memop.segdataaddress);
 end;
-
+{
 procedure pushsegaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
                getsegaddressindi(cpu.pc^.par.memop.segdataaddress);
 end;
-
+}
 procedure pushstackaddrop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= cpu.stack+cpu.pc^.par.voffset;
 end;
-
+{
 procedure pushstackaddrindiop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
         ppointer(cpu.stack+cpu.pc^.par.voffset)^+cpu.pc^.par.voffsaddress;
 end;
-
+}
 procedure pushduppoop();
 var
  po1: ppointer;
@@ -2777,11 +2777,11 @@ const
 
   pushaddrssa = 0;
   pushlocaddrssa = 0;
-  pushlocaddrindissa = 0;
+//  pushlocaddrindissa = 0;
   pushsegaddrssa = 0;
-  pushsegaddrindissa = 0;
+//  pushsegaddrindissa = 0;
   pushstackaddrssa = 0;
-  pushstackaddrindissa = 0;
+//  pushstackaddrindissa = 0;
 
   pushduppossa = 0;
   
