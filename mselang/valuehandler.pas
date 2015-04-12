@@ -596,7 +596,7 @@ var
           if af_classfield in flags then begin
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
-          end;
+          end; //todo: handle indirection with existing offset
           d.dat.ref.offset:= d.dat.ref.offset + offset;
          end;
          ck_fact: begin     //todo: check indirection
@@ -840,6 +840,11 @@ begin
        {d.dat.ref.c.address.indirectlevel}{ +
            ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;}
        d.dat.indirection:= 0;
+       if af_paramindirect in d.dat.ref.c.address.flags then begin
+        exclude(d.dat.ref.c.address.flags,af_paramindirect);
+        dec(d.dat.indirection);
+        dec(d.dat.datatyp.indirectlevel);
+       end;
       end
       else begin
        with contextstack[s.stackindex-1] do begin

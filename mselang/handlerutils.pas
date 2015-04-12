@@ -1338,17 +1338,14 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin;
   if d.dat.indirection <= 0 then begin
 //   if d.dat.indirection = 0 then begin
-    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
-                                                     d.dat.ref.offset{,true});
-//   end
-//   else begin
-//    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,0,true);
+    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,0);
     for int1:= d.dat.indirection to 0 do begin
      with insertitem(oc_indirectpo,stackoffset,false)^ do begin
       par.memop.t:= bitoptypes[das_pointer];
       par.ssas1:= par.ssad - getssa(oc_indirectpo);
      end;
     end;
+    offsetad(stackoffset,d.dat.ref.offset);
     {
     po1:= insertitem(oc_indirectpooffs,stackoffset,false);
     with po1^ do begin
