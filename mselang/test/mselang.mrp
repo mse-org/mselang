@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=14
    (
    kind=1
@@ -359,7 +359,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,indirect
+   a=0,665,4,indirect
    c=20
     (
     kind=2
@@ -649,8 +649,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recindi llvm
-    teststate=2
+    a=0,648,1,recindi llvm
+    teststate=1
     path=recindi.mla
     comment=
     cc=${mlc_llvm}
@@ -666,7 +666,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=244
+    aec=123
     ie=0
     )
     (
@@ -694,7 +694,7 @@ c=3
     (
     kind=2
     a=0,648,1,parrecindi llvm
-    teststate=2
+    teststate=1
     path=parrecindi.mla
     comment=
     cc=${mlc_llvm}
@@ -710,7 +710,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=2
+    aec=123
     ie=0
     )
     (
@@ -738,7 +738,7 @@ c=3
     (
     kind=2
     a=0,648,1,recderef llvm
-    teststate=2
+    teststate=1
     path=recderef.mla
     comment=
     cc=${mlc_llvm}
@@ -754,7 +754,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
@@ -801,7 +801,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=indirect/
    comment=
    cc=
@@ -1187,7 +1187,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,arith
+   a=0,665,4,arith
    c=10
     (
     kind=1
@@ -1473,8 +1473,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,incdecind llvm
-    teststate=2
+    a=0,648,1,incdecind llvm
+    teststate=1
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -1490,7 +1490,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=121
+    aec=123
     ie=0
     )
     (
@@ -1537,7 +1537,7 @@ c=3
     aec=1
     ie=0
     )
-   teststate=2
+   teststate=1
    path=arith/
    comment=
    cc=
@@ -1555,7 +1555,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,control
+   a=0,664,4,control
    c=6
     (
     kind=2
@@ -1625,8 +1625,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi llvm
-    teststate=2
+    a=0,648,2,recifindi llvm
+    teststate=1
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1642,7 +1642,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=2
+    aec=99
     ie=0
     )
     (
@@ -1689,7 +1689,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=control/
    comment=
    cc=
@@ -1991,7 +1991,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,types
+   a=0,665,4,types
    c=2
     (
     kind=2
@@ -2017,8 +2017,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,forwardpointer llvm
-    teststate=2
+    a=0,648,1,forwardpointer llvm
+    teststate=1
     path=forwardpointer.mla
     comment=
     cc=${mlc_llvm}
@@ -2034,10 +2034,10 @@ c=3
     cr=0
     ao=
     ae=
-    aec=8
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=types/
    comment=
    cc=
@@ -2163,7 +2163,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
