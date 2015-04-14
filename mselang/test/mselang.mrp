@@ -649,8 +649,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recindi llvm
-    teststate=1
+    a=0,648,2,recindi llvm
+    teststate=2
     path=recindi.mla
     comment=
     cc=${mlc_llvm}
@@ -666,7 +666,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=244
     ie=0
     )
     (
@@ -694,7 +694,7 @@ c=3
     (
     kind=2
     a=0,648,1,parrecindi llvm
-    teststate=1
+    teststate=2
     path=parrecindi.mla
     comment=
     cc=${mlc_llvm}
@@ -710,7 +710,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=2
     ie=0
     )
     (
@@ -738,7 +738,7 @@ c=3
     (
     kind=2
     a=0,648,1,recderef llvm
-    teststate=1
+    teststate=2
     path=recderef.mla
     comment=
     cc=${mlc_llvm}
@@ -754,7 +754,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=0
     ie=0
     )
     (
@@ -781,8 +781,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,pointerrec llvm
-    teststate=2
+    a=0,648,1,pointerrec llvm
+    teststate=1
     path=pointerrec.mla
     comment=
     cc=${mlc_llvm}
@@ -798,7 +798,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
    teststate=2
@@ -1187,7 +1187,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,5,arith
    c=10
     (
     kind=1
@@ -1473,8 +1473,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
-    teststate=1
+    a=0,648,2,incdecind llvm
+    teststate=2
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -1490,7 +1490,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=121
     ie=0
     )
     (
@@ -1537,7 +1537,7 @@ c=3
     aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=arith/
    comment=
    cc=
@@ -1555,7 +1555,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
+   a=0,664,5,control
    c=6
     (
     kind=2
@@ -1625,8 +1625,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recifindi llvm
-    teststate=1
+    a=0,648,1,recifindi llvm
+    teststate=2
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1642,7 +1642,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=99
+    aec=2
     ie=0
     )
     (
@@ -1689,7 +1689,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -1991,7 +1991,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,types
+   a=0,665,5,types
    c=2
     (
     kind=2
@@ -2017,8 +2017,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forwardpointer llvm
-    teststate=1
+    a=0,648,2,forwardpointer llvm
+    teststate=2
     path=forwardpointer.mla
     comment=
     cc=${mlc_llvm}
@@ -2034,10 +2034,10 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=8
     ie=0
     )
-   teststate=1
+   teststate=2
    path=types/
    comment=
    cc=
@@ -2244,8 +2244,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -2288,8 +2288,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -2332,8 +2332,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -2376,8 +2376,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -2524,7 +2524,17 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=62
+rowstate=72
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

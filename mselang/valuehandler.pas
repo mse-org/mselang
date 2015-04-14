@@ -801,7 +801,7 @@ begin
           end;
           ck_fact: begin
            ssabefore:= d.dat.fact.ssaindex;
-           with insertitem(oc_offsetpoimm32,0,false)^ do begin
+           with insertitem(oc_offsetpoimm32,-1,false)^ do begin
             par.ssas1:= ssabefore;
             setimmint32(offset,par);
             {
