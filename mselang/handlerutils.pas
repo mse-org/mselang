@@ -856,6 +856,7 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
           const before: boolean; const atype: typeinfoty;
           const avalue: addressvaluety; const offset: dataoffsty{;
                                            const indirect: boolean});
+                 //push address on stack
 //todo: optimize
 
  function getop(const aop: opcodety; const ssaextension: int32 = 0): popinfoty;
@@ -1169,21 +1170,21 @@ begin
 end;
 
 type
- opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64);
+ opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64,ops_po);
 
 const
  pushseg: array[opsizety] of opcodety =
            (oc_pushseg,oc_pushseg8,oc_pushseg16,
-            oc_pushseg32,oc_pushseg64);
+            oc_pushseg32,oc_pushseg64,oc_pushsegpo);
  pushloc: array[opsizety] of opcodety =
            (oc_pushloc,oc_pushloc8,oc_pushloc16,
-            oc_pushloc32,oc_pushloc64);
+            oc_pushloc32,oc_pushloc64,oc_pushlocpo);
  pushlocindi: array[opsizety] of opcodety =
            (oc_pushlocindi,oc_pushlocindi8,oc_pushlocindi16,
-            oc_pushlocindi32,oc_pushlocindi64);
+            oc_pushlocindi32,oc_pushlocindi64,oc_pushlocindipo);
  pushpar: array[opsizety] of opcodety =
            (oc_pushpar,oc_pushpar8,oc_pushpar16,
-            oc_pushpar32,oc_pushpar64);
+            oc_pushpar32,oc_pushpar64,oc_pushparpo);
  
 procedure pushd(const ains: boolean; const stackoffset: integer;
           const before: boolean;
@@ -1210,22 +1211,30 @@ var
  opsize1: opsizety;
 begin
  opsize1:= ops_none;
- if aopdatatype.kind in bitopdatakinds then begin
-  case aopdatatype.size of
-   1..8: begin 
-    opsize1:= ops_8;
-   end;
-   9..16: begin
-    opsize1:= ops_16;
-   end;
-   17..32: begin
-    opsize1:= ops_32;
-   end;
-   33..64: begin
-    opsize1:= ops_64;
-   end;
+ case aopdatatype.kind of
+  das_pointer: begin
+   opsize1:= ops_po;
   end;
- end; 
+  else begin
+   if aopdatatype.kind in bitopdatakinds then begin
+    case aopdatatype.size of
+     1..8: begin 
+      opsize1:= ops_8;
+     end;
+     9..16: begin
+      opsize1:= ops_16;
+     end;
+     17..32: begin
+      opsize1:= ops_32;
+     end;
+     33..64: begin
+      opsize1:= ops_64;
+     end;
+    end;
+   end; 
+  end;
+ end;
+  
  with aaddress do begin //todo: use table
   if af_aggregate in flags then begin
    ssaextension1:= getssa(ocssa_aggregate);
@@ -1329,23 +1338,42 @@ begin
  end;
 end;
 
-function pushindirection(const stackoffset: integer): boolean;
+//todo: use better and universal algorithm
+function pushindirection(const stackoffset: integer;
+                                       const address: boolean): boolean;
 var
- int1: integer;
+ i1,i2: integer;
  po1: popinfoty;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_ref then begin
+   internalerror(ie_handler,'20150413A');
+  end;
+ {$endif}
   if d.dat.indirection <= 0 then begin
 //   if d.dat.indirection = 0 then begin
-    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,0);
-    for int1:= d.dat.indirection to 0 do begin
-     with insertitem(oc_indirectpo,stackoffset,false)^ do begin
-      par.memop.t:= bitoptypes[das_pointer];
-      par.ssas1:= par.ssad - getssa(oc_indirectpo);
-     end;
+   if address and (d.dat.datatyp.indirectlevel <> 
+                                 d.dat.ref.c.address.indirectlevel) then begin
+    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+                                                        d.dat.ref.offset);
+    i2:= 0;
+   end
+   else begin
+    pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
+                0{d.dat.ref.offset},bitoptypes[das_pointer]);
+    i2:= -1;
+   end;
+   for i1:= d.dat.indirection to i2 do begin
+    with insertitem(oc_indirectpo,stackoffset,false)^ do begin
+     par.memop.t:= bitoptypes[das_pointer];
+     par.ssas1:= par.ssad - getssa(oc_indirectpo);
     end;
+   end;
+   if not address then begin
     offsetad(stackoffset,d.dat.ref.offset);
+   end;
     {
     po1:= insertitem(oc_indirectpooffs,stackoffset,false);
     with po1^ do begin
@@ -1439,7 +1467,7 @@ begin                    //todo: optimize
     else begin
      if d.dat.indirection < 0 then begin //dereference
       inc(d.dat.indirection); //correct addr handling
-      if not pushindirection(stackoffset) then begin
+      if not pushindirection(stackoffset,false) then begin
        exit;
       end;
 //      dec(d.dat.datatyp.indirectlevel); //correct addr handling
@@ -1541,7 +1569,7 @@ begin
      end;
     end
     else begin
-     if not pushindirection(stackoffset) then begin
+     if not pushindirection(stackoffset,true) then begin
       exit;
      end;
     end;
@@ -1555,6 +1583,7 @@ begin
    ck_fact,ck_subres: begin
     if d.dat.indirection <> 0 then begin
      result:= getvalue(stackoffset);
+     exit;
     end;
    end;
   {$ifdef mse_checkinternalerror}
