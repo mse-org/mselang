@@ -945,6 +945,7 @@ begin
    dec(d.dat.indirection);
    case d.kind of
     ck_ref: begin
+     include(d.dat.ref.c.address.flags,af_startoffset);
     end;
     ck_const: begin
      if d.dat.constval.kind <> dk_address then begin

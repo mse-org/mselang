@@ -1348,9 +1348,9 @@ end;
 function pushindirection(const stackoffset: integer;
                                        const address: boolean): boolean;
 var
- i1,i2: integer;
+ i1,i2,i3: integer;
  po1: popinfoty;
- bo1: boolean;
+ bo1,bo2: boolean;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
@@ -1363,14 +1363,19 @@ begin
 //   if d.dat.indirection = 0 then begin
    bo1:= (d.dat.datatyp.indirectlevel =
                                  d.dat.ref.c.address.indirectlevel);
+   bo2:= af_startoffset in d.dat.ref.c.address.flags;
    if address and not bo1 then begin
     pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
                                                         d.dat.ref.offset);
     i2:= 0;
    end
    else begin
+    i3:= 0;
+    if bo2 then begin
+     i3:= d.dat.ref.offset;
+    end;
     pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
-                0{d.dat.ref.offset},bitoptypes[das_pointer]);
+                i3,bitoptypes[das_pointer]);
     i2:= -1;
    end;
    for i1:= d.dat.indirection to i2 do begin
@@ -1380,7 +1385,7 @@ begin
     end;
    end;
    initfactcontext(stackoffset);
-   if not address or bo1 then begin
+   if (not address or bo1) and not bo2 then begin
     offsetad(stackoffset,d.dat.ref.offset);
    end;
     {

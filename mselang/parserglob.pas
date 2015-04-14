@@ -107,7 +107,9 @@ const
 type
  addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
                   af_paramindirect,af_const,
-                  af_classfield,af_stack,af_segmentpo,af_aggregate);
+                  af_classfield,af_stack,af_segmentpo,af_aggregate,
+                  af_startoffset //for indirection
+                  );
  addressflagsty = set of addressflagty;
 
 const
