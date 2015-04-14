@@ -2002,6 +2002,8 @@ const
    oc_popindirectpo
    );
 
+//todo: indirection needs rewrite, simplify and make universal
+
 procedure handleassignment();
 var
  dest: vardestinfoty;

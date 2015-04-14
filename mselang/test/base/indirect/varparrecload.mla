@@ -3,17 +3,19 @@ type
  recty = record
   a: int32;
   b: int32;
+  c: int32;
  end;
 
 procedure test(var p1: recty);
 begin
- exitcode:= {p1.a+}p1.b;
+ p1.c:= 10;
+ exitcode:= p1.a+p1.b+p1.c;
 end;
 
 var
  r1: recty;
 begin
-// r1.a:= 1;
-// r1.b:= 122;
+ r1.a:= 1;
+ r1.b:= 112;
  test(r1);
 end.

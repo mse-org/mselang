@@ -1236,7 +1236,7 @@ begin
  end;
   
  with aaddress do begin //todo: use table
-  if af_aggregate in flags then begin
+  if af_aggregate in aopdatatype.flags then begin
    ssaextension1:= getssa(ocssa_aggregate);
   end
   else begin
@@ -1273,7 +1273,7 @@ begin
    end;
   end;
   po1^.par.memop.t:= aopdatatype;
-  po1^.par.memop.t.flags:= aaddress.flags;
+//  po1^.par.memop.t.flags:= aaddress.flags;
 //  par.ssad:= ssaindex;
  end;
 end;
@@ -1344,6 +1344,7 @@ function pushindirection(const stackoffset: integer;
 var
  i1,i2: integer;
  po1: popinfoty;
+ bo1: boolean;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
@@ -1354,8 +1355,9 @@ begin
  {$endif}
   if d.dat.indirection <= 0 then begin
 //   if d.dat.indirection = 0 then begin
-   if address and (d.dat.datatyp.indirectlevel <> 
-                                 d.dat.ref.c.address.indirectlevel) then begin
+   bo1:= (d.dat.datatyp.indirectlevel =
+                                 d.dat.ref.c.address.indirectlevel);
+   if address and not bo1 then begin
     pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
                                                         d.dat.ref.offset);
     i2:= 0;
@@ -1371,7 +1373,8 @@ begin
      par.ssas1:= par.ssad - getssa(oc_indirectpo);
     end;
    end;
-   if not address then begin
+   initfactcontext(stackoffset);
+   if not address or bo1 then begin
     offsetad(stackoffset,d.dat.ref.offset);
    end;
     {
@@ -1386,7 +1389,6 @@ begin
     }
 //   end;
 //   inc(d.dat.datatyp.indirectlevel,d.dat.indirection);
-   initfactcontext(stackoffset);
   end
   else begin
    errormessage(err_cannotassigntoaddr,[],stackoffset);
