@@ -1209,6 +1209,7 @@ var
  po1: popinfoty;
  framelevel1: integer;
  opsize1: opsizety;
+ opflags1: addressflagsty;
 begin
  opsize1:= ops_none;
  case aopdatatype.kind of
@@ -1236,7 +1237,11 @@ begin
  end;
   
  with aaddress do begin //todo: use table
-  if af_aggregate in aopdatatype.flags then begin
+  opflags1:= flags;
+  if aaddress.indirectlevel > 0 then begin
+   exclude(opflags1,af_aggregate);
+  end;
+  if af_aggregate in opflags1 then begin
    ssaextension1:= getssa(ocssa_aggregate);
   end
   else begin
@@ -1273,6 +1278,7 @@ begin
    end;
   end;
   po1^.par.memop.t:= aopdatatype;
+  po1^.par.memop.t.flags:= opflags1;
 //  po1^.par.memop.t.flags:= aaddress.flags;
 //  par.ssad:= ssaindex;
  end;
