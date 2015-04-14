@@ -791,39 +791,41 @@ begin
         d.dat.ref.c.varele:= 0;
        end
        else begin
-        d:= contextstack[s.stackindex-1].d; 
-                  //todo: no double copy by handlefact
-        case d.kind of
-         ck_ref: begin
-          d.dat.datatyp.typedata:= vf.typ;
-          d.dat.datatyp.indirectlevel:= indirectlevel;
-          d.dat.ref.offset:= offset;
-          d.dat.ref.c.varele:= 0;
-         end;
-         ck_fact: begin
-          ssabefore:= d.dat.fact.ssaindex;
-          with insertitem(oc_offsetpoimm32,0,false)^ do begin
-           par.ssas1:= ssabefore;
-           setimmint32(offset,par);
-           {
-           if backend = bke_llvm then begin
-            par.imm.vint32:= constlist.addi32(offset).listid;
-           end
-           else begin
-            par.imm.vint32:= offset;
-           end;
-           }
+        with contextstack[s.stackindex-1] do begin
+         case d.kind of
+          ck_ref: begin
+           d.dat.datatyp.typedata:= vf.typ;
+           d.dat.datatyp.indirectlevel:= indirectlevel;
+           d.dat.ref.offset:= offset;
+           d.dat.ref.c.varele:= 0;
           end;
-          d.dat.datatyp.typedata:= vf.typ;
-          d.dat.datatyp.indirectlevel:= indirectlevel;
-          d.dat.indirection:= -1;
+          ck_fact: begin
+           ssabefore:= d.dat.fact.ssaindex;
+           with insertitem(oc_offsetpoimm32,0,false)^ do begin
+            par.ssas1:= ssabefore;
+            setimmint32(offset,par);
+            {
+            if backend = bke_llvm then begin
+             par.imm.vint32:= constlist.addi32(offset).listid;
+            end
+            else begin
+             par.imm.vint32:= offset;
+            end;
+            }
+           end;
+           d.dat.datatyp.typedata:= vf.typ;
+           d.dat.datatyp.indirectlevel:= indirectlevel;
+           d.dat.indirection:= -1;
+          end;
+         {$ifdef mse_checkinternalerror}
+          else begin
+           internalerror(ie_value,'20140427D');
+          end;
+         {$endif}
          end;
-        {$ifdef mse_checkinternalerror}
-         else begin
-          internalerror(ie_value,'20140427D');
-         end;
-        {$endif}
         end;
+        d:= contextstack[s.stackindex-1].d;
+                  //todo: no double copy by handlefact
        end;
        donotfound(d.dat.datatyp.typedata);
       end;

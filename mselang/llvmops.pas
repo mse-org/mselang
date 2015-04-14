@@ -556,11 +556,13 @@ end;
 
 procedure pushop();
 begin
+ //dummy
 // notimplemented();
 end;
 
 procedure popop();
 begin
+ //dummy
 // notimplemented();
 end;
 

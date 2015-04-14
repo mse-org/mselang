@@ -48,7 +48,7 @@ begin
  end;
 end;
 
-//todo: use simplified version without interfaces if possible
+//todo: use simplified version if there are no interfaces
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 var
  ps,pd,pe: ppointer;

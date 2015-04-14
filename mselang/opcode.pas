@@ -442,7 +442,8 @@ procedure setimmsize(const value: datasizety; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  notimplementederror('20150109B');
+  par.imm.vsize:= constlist.adddataoffs(value).listid;
+//  notimplementederror('20150109B');
  end
  else begin
   par.imm.vsize:= value;

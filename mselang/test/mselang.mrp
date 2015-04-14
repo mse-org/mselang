@@ -360,7 +360,7 @@ c=3
    (
    kind=1
    a=0,665,5,indirect
-   c=18
+   c=20
     (
     kind=2
     a=0,648,1,indirectloc
@@ -517,8 +517,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,varparrec llvm
-    teststate=2
+    a=0,648,1,varparrec llvm
+    teststate=1
     path=varparrec.mla
     comment=
     cc=${mlc_llvm}
@@ -533,10 +533,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=0  libLLVMSupport.so 0xb78a40f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
-    +1  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1215676208
-    +
-    aec=0
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -759,6 +757,50 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,pointerrec
+    teststate=1
+    path=pointerrec.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,pointerrec llvm
+    teststate=2
+    path=pointerrec.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
    teststate=2
    path=indirect/
    comment=
@@ -777,7 +819,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,record
+   a=0,665,4,record
    c=8
     (
     kind=2
@@ -804,7 +846,7 @@ c=3
     (
     kind=2
     a=0,648,1,recordfield llvm
-    teststate=2
+    teststate=1
     path=recordfield.mla
     comment=
     cc=${mlc_llvm}
@@ -820,7 +862,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=0
+    aec=123
     ie=0
     )
     (
@@ -914,7 +956,7 @@ c=3
     (
     kind=2
     a=0,648,1,pointerinrec
-    teststate=2
+    teststate=1
     path=pointerinrec.mla
     comment=
     cc=${mlc}
@@ -928,16 +970,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
     kind=2
     a=0,648,1,pointerinrec llvm
-    teststate=2
+    teststate=1
     path=pointerinrec.mla
     comment=
     cc=${mlc_llvm}
@@ -952,17 +993,11 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=LLVM ERROR: Cannot select: 0x809ac98: i32 = bitcast 0x8098878 [ORD=15] [ID=19]
-    +  0x8098878: i8,ch = load 0x80987f0, 0x8098a10, 0x80983b0<LD1[@1]> [ORD=14] [ID=18]
-    +    0x8098a10: i32 = X86ISD::Wrapper 0x80984c0 [ID=14]
-    +      0x80984c0: i32 = TargetGlobalAddress<[8 x i8]* @1> 0 [ID=10]
-    +    0x80983b0: i32 = undef [ORD=5] [ID=2]
-    +In function: main
-    +
-    aec=1
+    ae=
+    aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=record/
    comment=
    cc=
@@ -1520,7 +1555,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,control
+   a=0,664,4,control
    c=6
     (
     kind=2
@@ -1591,7 +1626,7 @@ c=3
     (
     kind=2
     a=0,648,2,recifindi llvm
-    teststate=2
+    teststate=1
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1607,7 +1642,7 @@ c=3
     cr=0
     ao=
     ae=
-    aec=3
+    aec=99
     ie=0
     )
     (
@@ -1654,7 +1689,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=control/
    comment=
    cc=
@@ -2146,11 +2181,11 @@ c=3
   )
   (
   kind=1
-  a=0,657,3,class
+  a=0,665,5,class
   c=10
    (
    kind=2
-   a=0,648,0,classminimal
+   a=0,648,1,classminimal
    teststate=1
    path=classminimal.mla
    comment=
@@ -2165,15 +2200,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
    a=0,648,0,classminimal llvm
-   teststate=2
+   teststate=0
    path=classminimal.mla
    comment=
    cc=${mlc_llvm}
@@ -2186,15 +2221,15 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
-   ao=0
-   ae=0
-   aec=123
+   cr=0
+   ao=
+   ae=
+   aec=-1
    ie=0
    )
    (
    kind=2
-   a=0,648,0,classfield
+   a=0,648,1,classfield
    teststate=1
    path=classfield.mla
    comment=
@@ -2209,14 +2244,14 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,0,classfield llvm
+   a=0,648,2,classfield llvm
    teststate=2
    path=classfield.mla
    comment=
@@ -2238,7 +2273,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,0,classvirtual
+   a=0,648,1,classvirtual
    teststate=1
    path=classvirtual.mla
    comment=
@@ -2253,14 +2288,14 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,0,classvirtual llvm
+   a=0,648,2,classvirtual llvm
    teststate=2
    path=classvirtual.mla
    comment=
@@ -2282,7 +2317,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,0,callinherited
+   a=0,648,1,callinherited
    teststate=1
    path=callinherited.mla
    comment=
@@ -2297,14 +2332,14 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,0,callinherited llvm
+   a=0,648,2,callinherited llvm
    teststate=2
    path=callinherited.mla
    comment=
@@ -2326,8 +2361,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,0,classinterface
-   teststate=2
+   a=0,648,1,classinterface
+   teststate=1
    path=classinterface.mla
    comment=
    cc=${mlc}
@@ -2341,14 +2376,14 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
-   aec=1
+   ao=
+   ae=
+   aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,0,classinterface llvm
+   a=0,648,2,classinterface llvm
    teststate=2
    path=classinterface.mla
    comment=
@@ -2476,7 +2511,7 @@ y=395
 cx=672
 cy=449
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=566
@@ -2489,7 +2524,17 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=52
+rowstate=62
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
