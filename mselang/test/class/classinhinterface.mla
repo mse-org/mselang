@@ -47,6 +47,7 @@ end;
 
 var
  i1: itest;
+ i2: itest1;
  c1: tc3;
 
 type
@@ -56,6 +57,7 @@ begin
 
  c1:= tc3.create();
  i1:= itest(c1);
+ i2:= itest1(c1);
  i1.test();
  c1.destroy();
 

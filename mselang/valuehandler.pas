@@ -41,7 +41,7 @@ uses
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer): boolean;
 var                     //todo: optimize, use tables, complete
- source1: ptypedataty;
+ source1,po1: ptypedataty;
  int1,i2: integer;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
@@ -113,17 +113,30 @@ begin
     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
           (d.dat.datatyp.indirectlevel = 1) and 
           (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
-     if getclassinterfaceoffset(source1,dest,int1) then begin
-      if getvalue(stackoffset) then begin
-       i2:= d.dat.fact.ssaindex;
-       with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
-        setimmint32(int1,par);
-        par.ssas1:= i2;
+     int1:= ele.elementparent;
+     po1:= source1;
+     repeat
+      if getclassinterfaceoffset(po1,dest,int1) then begin
+       if getvalue(stackoffset) then begin
+        i2:= d.dat.fact.ssaindex;
+        with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+         setimmint32(int1,par);
+         par.ssas1:= i2;
+        end;
+        result:= true;
+        destindirectlevel:= 1;
        end;
-       result:= true;
-       destindirectlevel:= 1;
+       break;
       end;
-     end;
+      if po1^.infoclass.interfaceparent <> 0 then begin
+       ele.elementparent:= po1^.infoclass.interfaceparent;
+       po1:= ele.eledataabs(po1^.infoclass.interfaceparent);
+      end
+      else begin
+       po1:= nil;
+      end;
+     until po1 = nil;
+     ele.elementparent:= int1;
     end
     else begin
      if (destindirectlevel > 0) and (source1^.indirectlevel = 0) and 

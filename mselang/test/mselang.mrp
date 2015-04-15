@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=3
   (
   kind=1
@@ -2225,8 +2225,8 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
-  c=10
+  a=0,665,4,class
+  c=14
    (
    kind=2
    a=0,648,1,classminimal
@@ -2339,8 +2339,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classvirtual llvm
-   teststate=2
+   a=0,648,1,classvirtual llvm
+   teststate=1
    path=classvirtual.mla
    comment=
    cc=${mlc_llvm}
@@ -2355,9 +2355,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=[1mlli: /home/mse/packs/standard/git/mselang/mselang/test/class/classvirtual.bc: [0;1;31merror: [0m[1mInvalid CE_CAST record
-   +[0m
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
    (
@@ -2384,8 +2383,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,callinherited llvm
-   teststate=2
+   a=0,648,1,callinherited llvm
+   teststate=1
    path=callinherited.mla
    comment=
    cc=${mlc_llvm}
@@ -2400,9 +2399,8 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=[1mlli: /home/mse/packs/standard/git/mselang/mselang/test/class/callinherited.bc: [0;1;31merror: [0m[1mInvalid CE_CAST record
-   +[0m
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
    (
@@ -2449,7 +2447,95 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+   (
+   kind=2
+   a=0,648,1,classinhinterface
+   teststate=1
+   path=classinhinterface.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classinhinterface llvm
+   teststate=1
+   path=classinhinterface.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classinhinterface1
+   teststate=1
+   path=classinhinterface1.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classinhinterface1 llvm
+   teststate=1
+   path=classinhinterface1.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=1
   path=class/
   comment=
   cc=
@@ -2465,7 +2551,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -2570,7 +2656,11 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=42
+rowstate=46
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
