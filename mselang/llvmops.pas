@@ -300,7 +300,7 @@ end;
 
 var
  exitcodeaddress: segaddressty;
-var testvar1: pointer;
+
 procedure beginparseop();
 var
  ele1,ele2: elementoffsetty;
@@ -358,7 +358,6 @@ begin
  end;
 
  poclassdef:= getsegmentbase(seg_classdef);
-testvar1:= poclassdef;
  peclassdef:= getsegmenttoppo(seg_classdef);
 // i1:= 0;
  virtualcapacity:= 0;

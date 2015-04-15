@@ -535,14 +535,12 @@ type
   base: pointer;
   resolver: pelementinfoty;
  end;
-var testvar: typeresolveinfoty; testvar1: forwardtypeitemty;
+
 procedure doresolveforwardtype(var item; var data; var resolved: boolean);
 var
  ps,pd: ptypedataty;
  i1: int32;
 begin
-testvar:= typeresolveinfoty(data);
-testvar1:= forwardtypeitemty(item);
  with typeresolveinfoty(data) do begin
   with forwardtypeitemty(item) do begin
    pd:= base+ref;

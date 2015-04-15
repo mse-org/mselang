@@ -27,8 +27,8 @@ end;
 
 procedure tc2.test();
 begin
-// inherited test();
-// exitcode:= exitcode+11;
+ inherited test();
+ exitcode:= exitcode+11;
  exitcode:= 123;
 end;
 

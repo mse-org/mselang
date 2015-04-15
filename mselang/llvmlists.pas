@@ -975,7 +975,7 @@ begin
  result.listid:= po1^.data.header.listindex;
  result.typeid:= avalue^.header.typeid;
 end;
-var testvar: classdefinfopoty;
+
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmconstty;
  function getclassid(const asegoffset: int32): int32;
@@ -995,7 +995,7 @@ var
  co1: llvmconstty;
  
  classdef1: classdefty;
- types1: array[0..2] of int32;
+ types1: array[0..high(classdefty.items)] of int32;
  i1: int32;
  ps1,ps,pe: popaddressty;
  po1: pointer;
@@ -1005,7 +1005,6 @@ begin
   classdef1.items[1]:= nullpointer;
  end
  else begin                 
-testvar:= getsegmentpo(seg_classdef,aclassdef^.header.parentclass);
   classdef1.items[0]:= addpointercast(
                           getclassid(aclassdef^.header.parentclass)).listid;
   if aclassdef^.header.interfaceparent < 0 then begin
@@ -1035,9 +1034,9 @@ testvar:= getsegmentpo(seg_classdef,aclassdef^.header.parentclass);
    inc(ps);
   end;
   co1:= addpointerarray(i1,@aclassdef^.virtualmethods);
-  classdef1.items[1]:= co1.listid;
-  types1[1]:= co1.typeid;
-  classdef1.header.header.itemcount:= 2;
+  classdef1.items[3]:= co1.listid;
+  types1[3]:= co1.typeid;
+  classdef1.header.header.itemcount:= 4;
  end;
  if aintfcount > 0 then begin
   po1:= getsegmentbase(seg_intf);
