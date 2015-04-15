@@ -1,0 +1,21 @@
+program recderef;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+ precty = ^recty;
+ rec1ty = record
+  e: int32;
+  f: int32;
+  p: precty;
+ end;
+
+var
+ r: recty;
+ r1: rec1ty;
+begin
+ r1.p:= @r;
+ r.b:= 123;
+ exitcode:= r1.p^.b;
+end.

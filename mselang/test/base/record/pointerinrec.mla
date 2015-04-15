@@ -1,0 +1,16 @@
+program pointerinrec;
+type
+ pint32 = ^int32;
+ recty = record
+  a: int32;
+  po: pint32;
+ end;
+var
+ r1: recty;
+ i1: int32;
+begin
+ r1.a:= 10;
+ r1.po:= @i1;
+ i1:= 113;
+ exitcode:= r1.po^+r1.a;
+end.

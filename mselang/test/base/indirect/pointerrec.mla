@@ -1,0 +1,20 @@
+program pointerrec;
+type
+ headerty = record
+  a: int32;
+  b: int32;
+ end;
+ recty = record
+  header: headerty;
+ end;
+
+var
+ rec1: recty;
+ po1: ^recty;
+
+begin
+ rec1.header.a:= 11;
+ rec1.header.b:= 112;
+ po1:= @rec1;
+ exitcode:= po1^.header.b+po1^.header.a;
+end.

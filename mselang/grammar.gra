@@ -419,7 +419,7 @@ while,whiledo,handlewhilestart,
 whiledo,,,handledoexpected
  ${whitespace}
  'do'.,whiledo0-
-whiledo0,,handlewhileexpression,handlewhileend
+whiledo0,,handlewhileexpression,handlewhileend*
  '',statementstack^*
 
 repeat,,handlerepeatstart,handleuntilexpected

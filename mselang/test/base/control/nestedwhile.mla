@@ -1,0 +1,14 @@
+program nestedwhile;
+var
+ i1,i2: int32;
+begin
+ repeat
+  i2:= 0;
+  while i2 < 3 do begin
+   inc(exitcode);
+   inc(i2);
+  end;
+  inc(i1);
+ until i1 > 10;
+ exitcode:= exitcode + 123 - 33;
+end.

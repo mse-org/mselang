@@ -1,0 +1,14 @@
+program forwardpointer;
+type
+ precty = ^recty;
+ recty = record
+  po: precty;
+  a: int32;
+ end;
+var
+ r1: recty;
+begin
+ r1.a:= 123;
+ r1.po:= @r1;
+ exitcode:= r1.po^.a;
+end.

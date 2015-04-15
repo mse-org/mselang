@@ -781,7 +781,7 @@ var
                caption: 'whiledo');
  whiledo0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'whiledo0');
  repeatco: contextty = (branch: nil; 

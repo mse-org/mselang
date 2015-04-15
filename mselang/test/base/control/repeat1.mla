@@ -1,0 +1,10 @@
+program repeat1;
+var
+ i1,i2: int32;
+begin
+ repeat
+  i2:= i2+i1;
+  inc(i1);
+ until i1 = 5;
+ exitcode:= i2+113;
+end.

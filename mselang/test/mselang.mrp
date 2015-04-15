@@ -359,7 +359,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=20
     (
     kind=2
@@ -819,7 +819,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,4,record
    c=8
     (
     kind=2
@@ -1187,7 +1187,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=10
     (
     kind=1
@@ -1555,8 +1555,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=6
+   a=0,665,4,control
+   c=8
     (
     kind=2
     a=0,648,1,iftest
@@ -1625,7 +1625,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recifindi llvm
+    a=0,648,1,recifindi llvm
     teststate=1
     path=recifindi.mla
     comment=
@@ -1672,6 +1672,50 @@ c=3
     a=0,648,1,while1 llvm
     teststate=1
     path=while1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedwhile
+    teststate=1
+    path=nestedwhile.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedwhile llvm
+    teststate=1
+    path=nestedwhile.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2207,8 +2251,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,0,classminimal llvm
-   teststate=0
+   a=0,648,2,classminimal llvm
+   teststate=2
    path=classminimal.mla
    comment=
    cc=${mlc_llvm}
@@ -2222,9 +2266,10 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
+   ao=12 12 20 (nil)
+   +
    ae=
-   aec=-1
+   aec=123
    ie=0
    )
    (
@@ -2244,8 +2289,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -2265,9 +2310,10 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
-   ao=0
-   ae=0
+   cr=0
+   ao=12 12 20 (nil)
+   +
+   ae=
    aec=123
    ie=0
    )
@@ -2288,8 +2334,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -2309,10 +2355,11 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
-   ao=0
-   ae=0
-   aec=123
+   cr=0
+   ao=
+   ae=[1mlli: /home/mse/packs/standard/git/mselang/mselang/test/class/classvirtual.bc: [0;1;31merror: [0m[1mInvalid CE_CAST record
+   +[0m
+   aec=1
    ie=0
    )
    (
@@ -2332,8 +2379,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -2353,10 +2400,11 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=1
-   ao=0
-   ae=0
-   aec=123
+   cr=0
+   ao=
+   ae=[1mlli: /home/mse/packs/standard/git/mselang/mselang/test/class/callinherited.bc: [0;1;31merror: [0m[1mInvalid CE_CAST record
+   +[0m
+   aec=1
    ie=0
    )
    (
@@ -2376,8 +2424,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -2398,9 +2446,13 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
-   aec=255
+   ao=16 8 20 (nil)
+   +
+   ae=0  libLLVMSupport.so 0xb78a40f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+   +1  libLLVMSupport.so 0xbfffeec8 llvm::sys::PrintStackTrace(_IO_FILE*) + 141929976
+   +2  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1215676208
+   +
+   aec=0
    ie=0
    )
   teststate=2
@@ -2524,37 +2576,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=72
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=42
  0 0
  0 0
  0 0
