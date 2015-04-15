@@ -2251,8 +2251,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classminimal llvm
-   teststate=2
+   a=0,648,1,classminimal llvm
+   teststate=1
    path=classminimal.mla
    comment=
    cc=${mlc_llvm}
@@ -2266,8 +2266,7 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=12 12 20 (nil)
-   +
+   ao=
    ae=
    aec=123
    ie=0
@@ -2296,8 +2295,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classfield llvm
-   teststate=2
+   a=0,648,1,classfield llvm
+   teststate=1
    path=classfield.mla
    comment=
    cc=${mlc_llvm}
@@ -2311,8 +2310,7 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=12 12 20 (nil)
-   +
+   ao=
    ae=
    aec=123
    ie=0
@@ -2431,8 +2429,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterface llvm
-   teststate=2
+   a=0,648,1,classinterface llvm
+   teststate=1
    path=classinterface.mla
    comment=
    cc=${mlc_llvm}
@@ -2446,13 +2444,9 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=16 8 20 (nil)
-   +
-   ae=0  libLLVMSupport.so 0xb78a40f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
-   +1  libLLVMSupport.so 0xbfffeec8 llvm::sys::PrintStackTrace(_IO_FILE*) + 141929976
-   +2  libLLVMSupport.so 0000000000 llvm::sys::PrintStackTrace(_IO_FILE*) + 1215676208
-   +
-   aec=0
+   ao=
+   ae=
+   aec=123
    ie=0
    )
   teststate=2

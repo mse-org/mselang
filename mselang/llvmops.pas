@@ -388,7 +388,9 @@ begin
    }
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
              constlist.addclassdef(poclassdef,countpo^).listid);
-   poclassdef:= pointer(poclassdef+1)+countpo^*pointersize;
+   poclassdef:= pointer(poclassdef) +
+                        poclassdef^.header.allocs.classdefinterfacestart +
+                                                         countpo^*pointersize;
    inc(countpo);
 //   inc(i1);
   end;
