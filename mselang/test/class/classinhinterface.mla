@@ -1,0 +1,62 @@
+program classinhinterface;
+type
+ itest = interface
+  procedure test();
+  procedure test1();
+ end;
+ itest1 = interface
+  procedure test();
+ end;
+
+ tc1 = class
+  private
+   f: int32;
+  public
+   constructor create();
+   destructor destroy();
+ end;
+
+ tc2 = class(tc1,itest1)
+  public
+   procedure test();
+ end;
+
+ tc3 = class(tc2,itest)
+  public
+   procedure test1();
+ end;
+
+constructor tc1.create();
+begin
+end;
+
+destructor tc1.destroy();
+begin
+ exitcode:= f+11;
+end;
+
+procedure tc2.test();
+begin
+ f:= 112;
+end;
+
+procedure tc3.test1();
+begin
+ exitcode:= 100;
+end;
+
+var
+ i1: itest;
+ c1: tc3;
+
+type
+ ppointer = ^pointer;
+
+begin
+
+ c1:= tc3.create();
+ i1:= itest(c1);
+ i1.test();
+ c1.destroy();
+
+end.
