@@ -148,10 +148,12 @@ var
 begin
  po1:= @aelement^.data;
  with equalparaminfoty(adata) do begin
-  if (po1 <> ref) and ((po1^.flags >< ref^.flags)*[sf_header] = []) and
+  if (po1 <> ref) and 
+    ((po1^.flags >< ref^.flags)*[sf_header,sf_method] = []) and
                     (po1^.paramcount = ref^.paramcount) and
                     (po1^.paramsize = ref^.paramsize) and 
-                    ((sf_method in po1^.flags) = (sf_method in ref^.flags)) and
+                    ((po1^.flags*[sf_virtual,sf_override]<>[]) or
+                                not(sf_override in ref^.flags)) and
                                             checkparams(po1,ref) then begin
    terminate:= true;
    match:= po1;
