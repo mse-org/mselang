@@ -21,7 +21,8 @@ uses
  parserglob,opglob,msetypes,mclasses;
  
   //todo: use inline
-  
+const
+ minsegmentreserve = 32; //at least free bytes at buffer end  
 
 function allocsegment(const asegment: segmentty;
                                     asize: integer): segaddressty;
@@ -191,7 +192,7 @@ begin
  with segments[asegment] do begin
   int1:= (toppo-data)*2 + minsize[asegment];
   po1:= data;
-  reallocmem(data,int1);
+  reallocmem(data,int1+minsegmentreserve);
   endpo:= data + int1;
   toppo:= toppo + (data - po1);
   ref:= ref + (data - po1);

@@ -243,10 +243,10 @@ type
    function addvalue(const avalue; const asize: int32): llvmconstty;
    function addpointerarray(const asize: int32;
                                      const ids: pint32): llvmconstty;
-                                     //ids[asize] used for type id
+               //ids[asize] used for type id, restored
    function addaggregatearray(const asize: int32; const atype: int32; 
                                               const ids: pint32): llvmconstty;
-                                     //ids[asize] used for type id
+               //ids[asize] used for type id not restored
    function addpointercast(const aid: int32): llvmconstty;
    function addaggregate(const avalue: paggregateconstty): llvmconstty;
    function addclassdef(const aclassdef: classdefinfopoty; 
@@ -927,9 +927,11 @@ function tconsthashdatalist.addpointerarray(const asize: int32;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
+ i1: int32;
 begin
  alloc1.header.size:= (asize+1)*sizeof(int32);
  alloc1.header.data:= ids;
+ i1:= ids[asize];
  ids[asize]:= ftypelist.addpointerarrayvalue(asize);
  alloc1.typeid:= -ord(ct_pointerarray);
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
@@ -937,6 +939,7 @@ begin
  end;
  result.listid:= po1^.data.header.listindex;
  result.typeid:= ids[asize];
+ ids[asize]:= i1;
 end;
 
 function tconsthashdatalist.addaggregatearray(const asize: int32;
@@ -972,9 +975,14 @@ begin
  result.listid:= po1^.data.header.listindex;
  result.typeid:= avalue^.header.typeid;
 end;
-
+var testvar: classdefinfopoty;
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
                                           const aintfcount: int32): llvmconstty;
+ function getclassid(const asegoffset: int32): int32;
+ begin
+  result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
+ end; //getclassid
+
 type
  classdefty = record
   header: aggregateconstty;
@@ -997,13 +1005,15 @@ begin
   classdef1.items[1]:= nullpointer;
  end
  else begin                 
-  classdef1.items[0]:= addpointercast(aclassdef^.header.parentclass).listid;
+testvar:= getsegmentpo(seg_classdef,aclassdef^.header.parentclass);
+  classdef1.items[0]:= addpointercast(
+                          getclassid(aclassdef^.header.parentclass)).listid;
   if aclassdef^.header.interfaceparent < 0 then begin
    classdef1.items[1]:= nullpointer;
   end
   else begin
    classdef1.items[1]:= addpointercast(
-                                   aclassdef^.header.interfaceparent).listid;
+                    getclassid(aclassdef^.header.interfaceparent)).listid;
   end;
  end;
  types1[0]:= pointertype;

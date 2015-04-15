@@ -434,7 +434,7 @@ begin
     header.allocs.size:= infoclass.allocsize;
     header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;
     header.allocs.classdefinterfacestart:= int1;
-    header.parentclass:= -1; //todo: use target size
+    header.parentclass:= -1;
     header.interfaceparent:= -1;
     if ancestor <> 0 then begin 
      parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
@@ -451,7 +451,7 @@ begin
       end;
      end;
     end;
-    if infoclass.interfaceparent <> 0 then begin //todo: use target size
+    if infoclass.interfaceparent <> 0 then begin
      header.interfaceparent:= ptypedataty(ele.eledataabs(
             infoclass.interfaceparent))^.infoclass.defs.address;
                                                          //todo: relocate
