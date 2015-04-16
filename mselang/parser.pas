@@ -771,6 +771,7 @@ begin
     deinit(abackend);
    end;
   except
+   result:= false;
   end;
  end;
 end;
