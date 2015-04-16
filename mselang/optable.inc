@@ -76,6 +76,7 @@
   addint32ssa,
   subint32ssa,
   addpoint32ssa,
+  subpossa,
   addflo64ssa,
   subflo64ssa,
 
@@ -406,6 +407,7 @@
   @addint32op,
   @subint32op,
   @addpoint32op,
+  @subpoop,
   @addflo64op,
   @subflo64op,
 

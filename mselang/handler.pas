@@ -702,8 +702,10 @@ begin
 end;
 *)
 
-const
- mulops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_mulint32,oc_mulflo64);
+const                     
+ mulops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_mulint32,oc_mulflo64);
                      opname: '*');
  
 procedure handlemulfact();
@@ -715,9 +717,13 @@ begin
 end;
 //todo: different datasizes
 const
- addops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_addint32,oc_addflo64);
+ addops: opsinfoty = 
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
+ (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addflo64);
                      opname: '+');
- subops: opsinfoty = (ops: (oc_none,oc_none,oc_none,oc_subint32,oc_subflo64);
+ subops: opsinfoty = 
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
+ (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subflo64);
                      opname: '-');
 
 procedure addsubterm(const issub: boolean);
@@ -743,7 +749,7 @@ var
  poa,pob: pcontextitemty;
  india,indib: int32;
 label
- errlab;
+ errlab,endlab;
 begin
  with info do begin
   poa:= @contextstack[s.stacktop-2];
@@ -804,7 +810,8 @@ begin
        opnotsupported();
       end
       else begin
-       notimplementederror('20150320D');
+       updateop(subops); //todo: div by pointed size
+       goto endlab;
       end;
      end
      else begin
@@ -880,7 +887,7 @@ begin
        opnotsupported();
       end;
      end;
- errlab:
+errlab:
      dec(s.stacktop,2);
      s.stackindex:= s.stacktop-1;
     end
@@ -895,7 +902,7 @@ begin
    end;
   end;
  end;
-//outhandle('ADDSUBTERM2');
+endlab:
 end;
 
 procedure handleaddterm();

@@ -664,6 +664,17 @@ begin
  end;
 end;
 
+procedure subpoop();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(sizetype),CAST_PTRTOINT);
+  bcstream.emitcastop(bcstream.ssaval(ssas2),
+                               bcstream.typeval(sizetype),CAST_PTRTOINT);
+  bcstream.emitbinop(BINOP_SUB,bcstream.relval(1),bcstream.relval(0));
+ end;
+end;
+
 procedure addimmint32op();
 begin
  notimplemented();
@@ -2145,6 +2156,7 @@ const
   addint32ssa = 1;
   subint32ssa = 1;
   addpoint32ssa = 2;
+  subpossa = 3;
   addflo64ssa = 1;
   subflo64ssa = 1;
 

@@ -124,6 +124,7 @@ type
   oc_addint32,
   oc_subint32,
   oc_addpoint32,
+  oc_subpo,
   oc_addflo64,
   oc_subflo64,
 

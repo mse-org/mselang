@@ -1,0 +1,11 @@
+program pointerdiff;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+var
+ rec1: recty;
+begin
+ exitcode:= 119+@rec1.b-@rec1.a;
+end.
