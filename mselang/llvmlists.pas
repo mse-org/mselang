@@ -985,7 +985,7 @@ function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
 
 type
  classdefty = record
-  header: aggregateconstty;
+  header: aggregateconstty;          //optional       optional
   //parentclass,interfaceparent,allocs,virtualmethods,interfaces
   //0           1               2      3              4
   items: array[0..4] of int32; //constlist ids

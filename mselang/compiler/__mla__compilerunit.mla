@@ -57,13 +57,22 @@ begin
  getzeromem(result,classinfo.header.allocs.size);
  po1:= @classinfo;
  ppointer(result)^:= @classinfo;
+//writeln('******* ',result);
  repeat
   pd:= result + po1^.header.allocs.instanceinterfacestart;
                                             //copy interface table
   pe:= result + po1^.header.allocs.size;
-  ps:= @classinfo + po1^.header.allocs.classdefinterfacestart;
+  ps:= pointer(po1) + po1^.header.allocs.classdefinterfacestart;
+{
+writeln('* ',po1,' ',po1^.header.parentclass,' ',
+             po1^.header.interfaceparent,' ',
+             po1^.header.allocs.size,' ',
+             po1^.header.allocs.instanceinterfacestart,' ',
+             po1^.header.allocs.classdefinterfacestart);
+}
   while pd < pe do begin
    pd^:= ps^;
+//writeln(int32(pointer(pd)-result),' ',pd,':',pd^);
    inc(pd);
    inc(ps);
   end;
