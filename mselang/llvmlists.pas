@@ -1116,7 +1116,7 @@ begin
  while intfpo < intfe do begin
   oppo:= getoppo(intfpo^+1);
  {$ifdef mse_checkinternalerror}
-  if oppo^.op.op <> oc_subbegin then begin
+  if not (oppo^.op.op in [oc_subbegin,oc_virttrampoline]) then begin
    internalerror(ie_llvm,'20150404A');
   end;
  {$endif}

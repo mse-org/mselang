@@ -798,14 +798,15 @@ begin
     po2^.trampolineaddress:= opcount;
     linkresolve(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin 
-      //todo: possibly better in front of sub because of cache line
      par.subbegin.trampoline.selfinstance:= -subdef.paramsize;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
      if backend = bke_llvm then begin
       par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
-      par.subbegin.globid:= globlist.addtypecopy(po1^.globid);
+      par.subbegin.globid:= po1^.globid;               //trampoline
+      po1^.globid:= globlist.addtypecopy(po1^.globid); //real sub
+      par.subbegin.trampoline.typeid:= globlist.gettype(par.subbegin.globid);
      end;
     end;
     po1^.address:= opcount;

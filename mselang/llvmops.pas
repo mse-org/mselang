@@ -43,6 +43,8 @@ type
 var
  pc: popinfoty;
  i32consts: array[0..32] of int32;
+ trampolinealloc: suballocinfoty;
+ 
  
 type
  internalfuncinfoty = record
@@ -324,6 +326,7 @@ begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
  end;
+ fillchar(trampolinealloc,sizeof(trampolinealloc),0);
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin
   bcstream.constseg:= globlist.addinitvalue(gak_var,
@@ -1840,15 +1843,6 @@ begin
                                                                   //1ssa **i8
   bcstream.emitloadop(bcstream.relval(0));                        //1ssa *i8
                //sub address
-(*
- {$ifdef mse_checkinternalerror}
-  if getoppo(callinfo.ad+1)^.op.op <> oc_subbegin then begin
-   internalerror(ie_llvm,'20150405A');
-  end;
- {$endif}
-  bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(      //1ssa
-            globlist.gettype(getoppo(callinfo.ad+1)^.par.subbegin.globid)));
-*)
   bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
                          bcstream.ptypeval(callinfo.virt.typeid));
   bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
@@ -1909,10 +1903,45 @@ var
  i1,i2: int32;
  poend: pointer;
  trampop: popinfoty;
+ idar: idarty;
+ ids: idsarty;
+ isfunction: boolean;
 begin
+ isfunction:= sf_function in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
- if trampop <> nil then begin
+ if trampop <> nil then begin //todo: real llvm trampoline or tail call
   with trampop^.par.subbegin do begin
+   idar.count:= pc^.par.subbegin.sub.allocs.paramcount;
+   trampolinealloc.paramcount:= idar.count;
+   bcstream.beginsub([],trampolinealloc,1);
+   bcstream.emitbitcast(bcstream.subval(0), //first param, class instance
+                                 bcstream.ptypeval(pointertype)); //1ssa **i8
+   bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
+                //class def
+   bcstream.emitgetelementptr(bcstream.relval(0),               
+                     bcstream.constval(trampoline.virtoffset));//2ssa *i8
+               //virtual table item address
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
+                                                                  //1ssa **i8
+   bcstream.emitloadop(bcstream.relval(0));                        //1ssa *i8
+               //sub address
+   bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
+                         bcstream.ptypeval(trampoline.typeid));
+   if isfunction then begin
+    dec(idar.count);
+   end;
+   for i1:= 0 to idar.count-1 do begin
+    ids[i1]:= bcstream.subval(i1);
+   end;
+   idar.ids:= @ids;
+   bcstream.emitcallop(isfunction,bcstream.relval(0),idar);
+   if isfunction then begin
+    bcstream.emitretop(bcstream.relval(0));
+   end
+   else begin
+    bcstream.emitretop();
+   end;
+   bcstream.endsub();
   end;
  end;
  with pc^.par.subbegin do begin
@@ -1924,7 +1953,7 @@ begin
    inc(po1);
   end;
   i2:= 0;
-  if sf_function in sub.flags then begin
+  if isfunction then begin
    i2:= 1; //skip result param
   end;
   for i1:= i2 to sub.allocs.paramcount-1 do begin

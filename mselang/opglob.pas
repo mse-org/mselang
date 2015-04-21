@@ -602,6 +602,7 @@ type
  virttrampolineinfoty = record
   selfinstance: dataoffsty; //frameoffset
   virtoffset: dataoffsty;   //offset in classdefinfoty
+  typeid: int32;
  end;
  
  subbegininfoty = record

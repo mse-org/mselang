@@ -205,11 +205,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=14
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=10
     (
     kind=1
@@ -277,7 +277,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,pointer
+    a=0,664,4,pointer
     c=6
      (
      kind=2
@@ -2270,7 +2270,7 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=14
+  c=16
    (
    kind=2
    a=0,648,1,classminimal
@@ -2579,6 +2579,50 @@ c=3
    aec=123
    ie=0
    )
+   (
+   kind=2
+   a=0,648,1,classinterfacevirt
+   teststate=1
+   path=classinterfacevirt.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,classinterfacevirt llvm
+   teststate=1
+   path=classinterfacevirt.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
   teststate=1
   path=class/
   comment=
@@ -2690,49 +2734,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=566
+propcolwidthref=581
 width0=50
 sortdescend0=0
-width1=182
+width1=187
 sortdescend1=0
-width2=155
+width2=159
 sortdescend2=0
-width3=208
+width3=214
 sortdescend3=0
 sortdescend4=0
-rowstate=54
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=22
  0 0
  0 0
  0 0
