@@ -794,7 +794,7 @@ begin
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
    if (po2^.flags * [sf_virtual,sf_override] <> []) and 
-                    (sf_intfcall in po1^.flags) then begin
+                    (sf_intfcall in po2^.flags) then begin
     po2^.trampolineaddress:= opcount;
     linkresolve(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin 
