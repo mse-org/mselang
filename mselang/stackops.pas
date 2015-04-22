@@ -2385,17 +2385,18 @@ begin
  end;
  stackpop(pointersize+sizeof(dynarraysizety));
 end;
-
+{
 const
- stopop: opinfoty = (op: (op: oc_none{; flags:[]}); 
+ stopop: opinfoty = (op: (op: oc_none); 
                    par:(ssad: 0; ssas1: 0; ssas2: 0; dummy:()));
-
+}
 procedure unhandledexception(const exceptobj: pointer);
 begin
  writeln('An unhandled exception occured at $'+hextostr(cpu.pc));
  finiclass(@exceptobj);
- cpu.pc:= @stopop;
- dec(cpu.pc);
+ cpu.stop:= true;
+// cpu.pc:= @stopop;
+// dec(cpu.pc);
 end;
 
 procedure raiseop();

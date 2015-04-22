@@ -168,9 +168,11 @@ type
    procedure emitbrop(const acond: int32; const bb1: int32; 
                                                     const bb0: int32);
    procedure emitbrop(const bb: int32);
-   procedure emitretop();
-   procedure emitretop({const atype: integer;} const avalue: int32);
+   procedure emitretop();                    //procedure
+   procedure emitretop(const avalue: int32); //function
 
+   procedure emitresumeop(const avalue: int32);
+   
    procedure emitsegdataaddress(const aaddress: memopty); //i8*
    procedure emitsegdataaddresspo(const aaddress: memopty); //for load/store
 
@@ -1185,17 +1187,17 @@ begin
  inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitretop({const atype: integer;} const avalue: int32);
+procedure tllvmbcwriter.emitretop(const avalue: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
  checkdebugloc();
-{
- emitcode(ord(mabfunc_inst2));
- emit6(ord(FUNC_CODE_INST_RET));
- emitvbr6(atype);
- emitvbr6(avalue);
-}
  inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitresumeop(const avalue: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_RESUME),[fsubopindex-avalue]);
+ checkdebugloc();
 end;
 
 procedure tllvmbcwriter.emitptroffset(const avalue: int32;

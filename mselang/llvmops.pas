@@ -1909,7 +1909,7 @@ var
 begin
  isfunction:= sf_function in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
- if trampop <> nil then begin //todo: real llvm trampoline or tail call
+ if trampop <> nil then begin //todo: force tailcall
   with trampop^.par.subbegin do begin
    idar.count:= pc^.par.subbegin.sub.allocs.paramcount;
    trampolinealloc.paramcount:= idar.count;
@@ -2062,8 +2062,11 @@ end;
 
 procedure raiseop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitresumeop(bcstream.ssaval(ssas1));
+ end;
 end;
+
 procedure pushcpucontextop();
 begin
  notimplemented();

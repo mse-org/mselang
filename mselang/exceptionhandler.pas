@@ -122,7 +122,8 @@ begin
    bo1:= po1^.kind = dk_class;
   end;
   if bo1 then begin
-   with additem(oc_raise)^ do begin
+   with addcontrolitem(oc_raise)^ do begin
+    par.ssas1:= d.dat.fact.ssaindex;
    end;
   end
   else begin
