@@ -52,7 +52,8 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset);
+ internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset,
+                   if__Unwind_RaiseException);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -80,13 +81,21 @@ const
               (typelistindex: sizetype; flags: [])     //n count
  );
  memsetparams: paramsty = (count: 4; items: @memsetpar);
+
+ _Unwind_RaiseExceptionpar: array[0..0] of paramitemty = (
+              (typelistindex: pointertype; flags: [])  //ptr
+ );
+ _Unwind_RaiseExceptionparams: paramsty = 
+                      (count: 1; items: @_Unwind_RaiseExceptionpar);
  
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
   (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
   (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
-  (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams)
+  (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
+  (name: '_Unwind_RaiseException'; flags: [sf_proto];
+                     params: @_Unwind_RaiseExceptionparams)  
  );
 
 type
@@ -326,14 +335,14 @@ begin
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= constlist.addi32(int1).listid;
  end;
- fillchar(trampolinealloc,sizeof(trampolinealloc),0);
+ fillchar(trampolinealloc,sizeof(trampolinealloc),0); //used in subbeginop
+
  int1:= getsegmentsize(seg_globconst);
- if int1 > 0 then begin
+ if int1 > 0 then begin                               //global consts
   bcstream.constseg:= globlist.addinitvalue(gak_var,
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid{,
-                                                           globconsttype});
+             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid);
  end;
- //todo: classdefseg
+
  globlist.addsubvalue(nil,stringtolstring('main'));
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
   with internalfuncconsts[funcs1] do begin
@@ -342,13 +351,14 @@ begin
   end;
  end;
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
+                                       //string consts
   with internalstringconsts[strings1] do begin
    internalstrings[strings1]:= globlist.addinitvalue(gak_const,
                      constlist.addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
 
- countpo:= getsegmentbase(seg_intfitemcount);
+ countpo:= getsegmentbase(seg_intfitemcount); //interfaces
  counte:= getsegmenttoppo(seg_intfitemcount);
  intfpo:= getsegmentbase(seg_intf);
  while countpo < counte do begin
@@ -362,40 +372,18 @@ begin
 
  poclassdef:= getsegmentbase(seg_classdef);
  peclassdef:= getsegmenttoppo(seg_classdef);
-// i1:= 0;
  virtualcapacity:= 0;
  virtualsubs:= nil; 
  virtualsubconsts:= nil;
  countpo:= getsegmentbase(seg_classintfcount);
  try
-  while poclassdef < peclassdef do begin
-  {
-   povirtual:= @poclassdef^.virtualmethods;
-   pevirtual:= pointer(poclassdef)+poclassdef^.header.interfacestart;
-   i2:= pevirtual - povirtual;
-   if i2 > virtualcapacity-1 then begin //last item used by addclassdef
-    if virtualsubs <> nil then begin
-     freemem(virtualsubs);
-     freemem(virtualsubconsts);
-    end;
-    virtualcapacity:= i2*2+256;
-    getmem(virtualsubs,virtualcapacity*sizeof(int32));
-    getmem(virtualsubconsts,virtualcapacity*sizeof(int32));
-   end;
-   i2:= 0;
-   while povirtual < pevirtual do begin
-    virtualsubs[i2]:= povirtual^;
-    inc(povirtual);    
-    inc(i2);
-   end;
-   }
+  while poclassdef < peclassdef do begin   //classes
    pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
              constlist.addclassdef(poclassdef,countpo^).listid);
    poclassdef:= pointer(poclassdef) +
                         poclassdef^.header.allocs.classdefinterfacestart +
                                                          countpo^*pointersize;
    inc(countpo);
-//   inc(i1);
   end;
  finally
   if virtualsubs <> nil then begin
@@ -2063,7 +2051,8 @@ end;
 procedure raiseop();
 begin
  with pc^.par do begin
-  bcstream.emitresumeop(bcstream.ssaval(ssas1));
+  bcstream.emitcallop(false,bcstream.globval(
+           internalfuncs[if__Unwind_RaiseException]),[bcstream.ssaval(ssas1)]);
  end;
 end;
 
