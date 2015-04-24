@@ -343,6 +343,9 @@ end;
 
 procedure tunitlist.finalizeitem(var aitemdata);
 begin
+ with punitinfoty(aitemdata)^ do begin
+  clearlist(externallinklist,sizeof(externallinkinfoty),0);
+ end;
  system.finalize(punitinfoty(aitemdata)^);
  freemem(punitinfoty(aitemdata));
 end;
@@ -354,6 +357,7 @@ begin
  po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty));
  fillchar(result^,sizeof(result^),0);
+ clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin

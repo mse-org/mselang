@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=14
    (
    kind=1
@@ -2017,8 +2017,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
-   c=4
+   a=0,665,4,sub
+   c=5
     (
     kind=2
     a=0,648,1,pppar
@@ -2090,6 +2090,28 @@ c=3
     a=0,648,1,function1 llvm
     teststate=1
     path=function1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,external llvm
+    teststate=1
+    path=external.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2734,17 +2756,40 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=581
+propcolwidthref=566
 width0=50
 sortdescend0=0
-width1=187
+width1=182
 sortdescend1=0
-width2=159
+width2=155
 sortdescend2=0
-width3=214
+width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=22
+rowstate=45
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

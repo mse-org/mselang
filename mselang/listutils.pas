@@ -48,6 +48,7 @@ type
 
 procedure clearlist(var alist: linklistty; const aitemsize: integer;
                                               const amincapacity: integer);
+procedure freelist(var alist: linklistty);
 function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
 procedure deletelistchain(var alist: linklistty; var achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
@@ -76,6 +77,16 @@ begin
   current:= 0;
   capacity:= 0;
   deleted:= 0;  
+ end;
+end;
+
+procedure freelist(var alist: linklistty);
+begin
+ with alist do begin
+  if list <> nil then begin
+   freemem(list);
+  end;
+  fillchar(alist,sizeof(alist),0);
  end;
 end;
 

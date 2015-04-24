@@ -53,7 +53,7 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler;
+ subhandler,listutils;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -362,7 +362,7 @@ var
  keywordindex: identty;
  keywordend: pchar;
  linebreaks: integer;
-
+ ad1: listadty;
  statebefore: savedparseinfoty;  
  eleparentbefore: elementoffsetty;
  
@@ -669,6 +669,17 @@ parseend:
    writeinfoline('after2');
   end;
 {$endif}
+
+  with s.unitinfo^,externallinklist do begin
+   ad1:= externalchain;
+   while ad1 <> 0 do begin         //emit externals
+    with pexternallinkinfoty(list+ad1)^ do begin
+     ad1:= header.next;
+    end;
+   end;
+   freelist(externallinklist);
+  end;
+
   if stf_hasmanaged in s.currentstatementflags then begin
    with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               

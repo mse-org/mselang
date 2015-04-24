@@ -1994,6 +1994,11 @@ begin
  end;
 end;
 
+procedure externalsubop();
+begin
+ //dummy
+end;
+
 procedure returnop();
 begin
  bcstream.emitretop();
@@ -2412,6 +2417,7 @@ const
 
   subbeginssa = 0; //1;
   subendssa = 0;
+  externalsubssa = 0;
   returnssa = 0;
   returnfuncssa = 1;
 

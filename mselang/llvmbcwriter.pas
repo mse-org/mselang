@@ -156,6 +156,7 @@ type
    procedure beginsub(const aflags: subflagsty; const allocs: suballocinfoty;
                                                          const bbcount: int32);
    procedure endsub();
+   
    procedure emitcallop(const afunc: boolean; const valueid: int32;
                                                       const aparams: idarty);
                                           //changes aparams

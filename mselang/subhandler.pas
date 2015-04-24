@@ -18,10 +18,16 @@ unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- stackops,parserglob,handlerglob;
+ stackops,parserglob,handlerglob,listutils;
  
 const
  stacklinksize = sizeof(frameinfoty);
+type
+ externallinkinfoty = record
+  header: linkheaderty;
+  sub: elementoffsetty;
+ end;
+ pexternallinkinfoty = ^externallinkinfoty;
 
 procedure handleparamsdef0entry();
 procedure handleparams0entry();
@@ -40,6 +46,7 @@ procedure handlesub1entry();
 procedure handlevirtual();
 procedure handleoverride();
 procedure handleoverload();
+procedure handleexternal();
 procedure handlesubheader();
 //procedure handlesub4entry();
 procedure handlesubbody5a();
@@ -58,7 +65,8 @@ procedure callinternalsub(const asub: opaddressty); //ignores op address 0
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes;
+ managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
+ msestrings;
 
 type
  equalparaminfoty = record
@@ -422,6 +430,38 @@ begin
 {$ifdef mse_debugparser}
  outhandle('OVERLOAD');
 {$endif}
+ //ignored
+end;
+
+procedure handleexternal();
+begin
+{$ifdef mse_debugparser}
+ outhandle('EXTERNAL');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if (stf_classdef in s.currentstatementflags) then begin
+   errormessage(err_invaliddirective,['external']);
+  end
+  else begin
+   include(d.subdef.flags,sf_external);
+  end;
+ end;
+end;
+
+procedure addsubbegin(const aop: opcodety; const asub: psubdataty);
+begin
+{$ifdef mse_checkinternalerror}
+ if not (aop in [oc_subbegin,oc_externalsub]) then begin
+  internalerror(ie_handler,'20150424A');
+ end;
+{$endif}
+ asub^.address:= info.opcount;
+ with additem(aop,0)^ do begin
+  par.subbegin.subname:= asub^.address;
+  par.subbegin.globid:= asub^.globid;
+  par.subbegin.sub.flags:= asub^.flags;
+  par.subbegin.sub.allocs:= asub^.allocs;
+ end;
 end;
 
 procedure handlesubheader();
@@ -513,7 +553,9 @@ var                       //todo: move after doparam
    int1:= int1+3;
   end;
  end; //doparam
-  
+
+var
+ lstr1: lstringty;  
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -641,7 +683,6 @@ begin
   po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
   if impl1 then begin //implementation
-//   po1^.address:= opcount;
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[s.stackindex-1] do begin
@@ -649,7 +690,6 @@ begin
     po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                             ek_none,allvisi);
     po1^.nestedvarchain:= 0;
-//    po1^.nestedvarcount:= 0; //?????
     po1^.nestedvarcount:= 1; //for callout frame ref
     d.subdef.ssabefore:= s.ssa;
     resetssa();
@@ -676,12 +716,25 @@ begin
     dec(po4^[int2],eledatabase); //relative address
    end;
    if not isinterface then begin
-    forwardmark(po1^.mark,s.source);
+    if sf_external in subflags then begin
+     include(po1^.flags,sf_proto);
+     with pexternallinkinfoty(addlistitem(
+             s.unitinfo^.externallinklist,s.unitinfo^.externalchain))^ do begin
+      sub:= ele.eledatarel(po1);
+     end;
+     if backend = bke_llvm then begin
+      getidentname(pelementinfoty(pointer(po1)-eledatashift)^.header.name,lstr1);
+      po1^.globid:= globlist.addsubvalue(po1,lstr1);
+     end;
+     addsubbegin(oc_externalsub,po1);
+    end
+    else begin
+     forwardmark(po1^.mark,s.source);
+    end;
    end
    else begin
     po1^.mark:= -1;
-   end;
-   
+   end;   
   end;
 
   parent1:= ele.decelementparent;
@@ -893,11 +946,7 @@ begin
    po1^.allocs:= nullallocs;
   end;
   resetssa();
-  with additem(oc_subbegin,0)^ do begin
-   par.subbegin.subname:= po1^.address;
-   par.subbegin.globid:= po1^.globid;
-   par.subbegin.sub.allocs:= po1^.allocs;
-  end;
+  addsubbegin(oc_subbegin,po1);
   if subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
     par.stacksize:= subdef.varsize;

@@ -359,6 +359,7 @@ type
 
   oc_subbegin,
   oc_subend,
+  oc_externalsub,
   oc_return,
   oc_returnfunc,
 
@@ -752,7 +753,7 @@ type
    oc_setlengthstr8,oc_setlengthdynarray:(
     setlength: setlengthty;
    );
-   oc_subbegin,oc_virttrampoline:(
+   oc_subbegin,oc_virttrampoline,oc_externalsub:(
     subbegin: subbeginty;
    );
    oc_subend:(

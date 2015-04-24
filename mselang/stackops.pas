@@ -1916,6 +1916,11 @@ begin
  //dummy
 end;
 
+procedure externalsubop();
+begin
+ notimplemented();
+end;
+
 procedure returnop();
 var
  int1: integer;
@@ -2831,6 +2836,7 @@ const
 
   subbeginssa = 0;
   subendssa = 0;
+  externalsubssa = 0;
   returnssa = 0;
   returnfuncssa = 0;
 

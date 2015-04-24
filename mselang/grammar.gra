@@ -281,6 +281,7 @@ subheader3,,,
  'virtual'.,!handlevirtual-
  'override'.,!handleoverride-
  'overload'.,!handleoverload-
+ 'external'.,!handleexternal-
  ';',subheader4-
  '',semicolonexpected
 subheader4,,,
@@ -288,10 +289,12 @@ subheader4,,,
  'virtual'.,virtual-
  'override'.,override-
  'overload'.,overload-
+ 'external'.,external-
  '',!handlesubheader*
 virtual,subheader3,handlevirtual,
 override,subheader3,handleoverride,
 overload,subheader3,handleoverload, 
+external,subheader3,handleexternal, 
 
 functiontype,,,
  '',resultident*

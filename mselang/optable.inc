@@ -311,6 +311,7 @@
 
   subbeginssa,
   subendssa,
+  externalsubssa,
   returnssa,
   returnfuncssa,
 
@@ -642,6 +643,7 @@
 
   @subbeginop,
   @subendop,
+  @externalsubop,
   @returnop,
   @returnfuncop,
 

@@ -1274,8 +1274,11 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty): int32;
 var
  dat1: globallocdataty;
 begin
- dat1.flags:= [];
- if avalue = nil then begin
+ dat1.flags:= [sf_external];
+ if avalue <> nil then begin
+  dat1.flags:= avalue^.flags;
+ end;
+ if (avalue = nil) or (sf_external in dat1.flags) then begin //nil -> main
   dat1.linkage:= li_external;
  end
  else begin
