@@ -669,7 +669,7 @@ parseend:
    writeinfoline('after2');
   end;
 {$endif}
-
+{
   with s.unitinfo^,externallinklist do begin
    ad1:= externalchain;
    while ad1 <> 0 do begin         //emit externals
@@ -679,7 +679,7 @@ parseend:
    end;
    freelist(externallinklist);
   end;
-
+}
   if stf_hasmanaged in s.currentstatementflags then begin
    with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               

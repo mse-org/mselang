@@ -22,13 +22,14 @@ uses
  
 const
  stacklinksize = sizeof(frameinfoty);
+{
 type
  externallinkinfoty = record
   header: linkheaderty;
   sub: elementoffsetty;
  end;
  pexternallinkinfoty = ^externallinkinfoty;
-
+}
 procedure handleparamsdef0entry();
 procedure handleparams0entry();
 procedure setconstparam();
@@ -718,10 +719,12 @@ begin
    if not isinterface then begin
     if sf_external in subflags then begin
      include(po1^.flags,sf_proto);
+{
      with pexternallinkinfoty(addlistitem(
              s.unitinfo^.externallinklist,s.unitinfo^.externalchain))^ do begin
       sub:= ele.eledatarel(po1);
      end;
+}
      if backend = bke_llvm then begin
       getidentname(pelementinfoty(pointer(po1)-eledatashift)^.header.name,lstr1);
       po1^.globid:= globlist.addsubvalue(po1,lstr1);

@@ -684,8 +684,8 @@ type
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
-  externallinklist: linklistty;
-  externalchain: listadty;
+//  externallinklist: linklistty;
+//  externalchain: listadty;
 
   pendingcount: integer;
   pendingcapacity: integer;
