@@ -93,5 +93,28 @@ type
  end;
  pintfdefinfoty = ^intfdefinfoty;
 
+ _Unwind_Reason_Code = (
+  _URC_NO_REASON,// = 0,
+  _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
+  _URC_FATAL_PHASE2_ERROR,// = 2,
+  _URC_FATAL_PHASE1_ERROR,// = 3,
+  _URC_NORMAL_STOP,// = 4,
+  _URC_END_OF_STACK,// = 5,
+  _URC_HANDLER_FOUND,// = 6,
+  _URC_INSTALL_CONTEXT,// = 7,
+  _URC_CONTINUE_UNWIND);// = 8
+
+ p_Unwind_Exception = ^_Unwind_Exception;
+ _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+ p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
+ 
+ _Unwind_Exception = record
+  exception_class: uint64;
+  exception_cleanup: p_Unwind_Exception_Cleanup_Fn;
+  private_1: uint64;
+  private_2: uint64;
+ end;
+
 implementation
 end.

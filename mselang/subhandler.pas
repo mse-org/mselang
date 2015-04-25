@@ -41,6 +41,8 @@ procedure handleparamsend();
 
 procedure handlefunctionentry();
 procedure handleprocedureentry();
+procedure handleproceduretypedefentry();
+procedure handlesubtypedef0entry();
 
 procedure checkfunctiontype();
 procedure handlesub1entry();
@@ -67,7 +69,7 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
- msestrings;
+ msestrings,typehandler;
 
 type
  equalparaminfoty = record
@@ -288,6 +290,31 @@ begin
  with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [];
+ end;
+end;
+
+procedure handleproceduretypedefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PROCEDURETYPEENTRY');
+{$endif}
+ with info,contextstack[s.stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= [sf_typedef,sf_header];
+ end;
+end;
+
+procedure handlesubtypedef0entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBTYPEDEF0ENTRY');
+{$endif}
+ inc(info.s.stacktop);
+ with info,contextstack[s.stacktop].d do begin //add dummy ident
+  kind:= ck_ident;
+  ident.ident:= getident;
+  ident.len:= 0;
+  ident.flags:= [];
  end;
 end;
 
@@ -561,6 +588,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
 {$endif}
+//|gettype
 //|-2        |-1  0     1     2           3           4        5    
 //|classdef0,|sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
 // interfacedef0
@@ -732,7 +760,12 @@ begin
      addsubbegin(oc_externalsub,po1);
     end
     else begin
-     forwardmark(po1^.mark,s.source);
+     if sf_typedef in subflags then begin
+      setsubtype(-2,ele.eledatarel(po1));
+     end
+     else begin
+      forwardmark(po1^.mark,s.source);
+     end;
     end;
    end
    else begin

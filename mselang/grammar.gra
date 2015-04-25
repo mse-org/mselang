@@ -257,6 +257,12 @@ methfunctionheader,subheader,handlemethfunctionentry,
 methprocedureheader,subheader,handlemethprocedureentry,
 methconstructorheader,subheader,handlemethconstructorentry,
 methdestructorheader,subheader,handlemethdestructorentry,
+proceduretypedef,subtypedef,handleproceduretypedefentry,
+
+subtypedef,,,*
+ '',subtypedef0*
+subtypedef0,subheader1,handlesubtypedef0entry, //push dummy ident
+
 subheader,,,*
  '',subheader0*
 function,sub,handlefunctionentry,
@@ -541,6 +547,7 @@ gettype,,,*^
  'array'.,arraydef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
+ 'procedure'.,proceduretypedef-^*
  '',simpletype^*
 //
 // defs

@@ -50,6 +50,8 @@ procedure handlesettype();
 procedure checkrecordfield(const avisibility: visikindsty;
                        const aflags: addressflagsty; var aoffset: dataoffsty;
                                                   var atypeflags: typeflagsty);
+procedure setsubtype(const atypetypecontext: int32;
+                                           const asub: elementoffsetty);
 
 implementation
 uses
@@ -136,33 +138,31 @@ begin
    inc(d.typ.indirectlevel,po3^.indirectlevel);
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[s.stackindex-3];
-    if idcontext^.d.kind = ck_ident then begin
-     po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
-     if po1 <> nil then begin
-      po4:= @po1^.data;
-      po4^:= po3^;
-      if po3^.base = 0 then begin
-       po4^.base:= d.typ.typedata;
-      end;
-      po4^.indirectlevel:= d.typ.indirectlevel;
-      if po4^.indirectlevel > 0 then begin
-       po4^.flags-= [tf_managed,tf_hasmanaged];
-      end;
-      if forward1 then begin
-       markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
-      end
-      else begin
-       resolveforwardtype(po4);
-      end;
-     end
-     else begin //duplicate
-      identerror(-3,err_duplicateidentifier);
-     end;
-  {$ifdef mse_checkinternalerror}
-    end
-    else begin
+   {$ifdef mse_checkinternalerror}
+    if idcontext^.d.kind <> ck_ident then begin
      internalerror(ie_type,'20140324B');
+    end;
    {$endif}
+    po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
+    if po1 <> nil then begin
+     po4:= @po1^.data;
+     po4^:= po3^;
+     if po3^.base = 0 then begin
+      po4^.base:= d.typ.typedata;
+     end;
+     po4^.indirectlevel:= d.typ.indirectlevel;
+     if po4^.indirectlevel > 0 then begin
+      po4^.flags-= [tf_managed,tf_hasmanaged];
+     end;
+     if forward1 then begin
+      markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
+     end
+     else begin
+      resolveforwardtype(po4);
+     end;
+    end
+    else begin //duplicate
+     identerror(-3,err_duplicateidentifier);
     end;
    end;
    s.stacktop:= s.stackindex-1;
@@ -171,6 +171,52 @@ begin
   else begin
    s.stackindex:= s.stackindex-1;
    s.stacktop:= s.stackindex;
+  end;
+ end;
+end;
+
+procedure setsubtype(const atypetypecontext: int32; 
+                                          const asub: elementoffsetty);
+var
+ po1: ptypedataty;
+begin
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if (contextstack[s.stackindex+atypetypecontext].d.kind <> ck_typetype) or
+   (contextstack[s.stackindex+atypetypecontext-1].d.kind <> ck_ident) then begin
+   internalerror(ie_handler,'20150425A');
+  end;
+ {$endif}
+  if not ele.addelementdata(contextstack[s.stackindex+
+        atypetypecontext-1].d.ident.ident,ek_type,allvisi,po1) then begin
+   identerror(atypetypecontext-1,err_duplicateidentifier);
+  end
+  else begin
+   with contextstack[atypetypecontext] do begin
+   {
+    po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
+    if po1 <> nil then begin
+     po4:= @po1^.data;
+     po4^:= po3^;
+     if po3^.base = 0 then begin
+      po4^.base:= d.typ.typedata;
+     end;
+     po4^.indirectlevel:= d.typ.indirectlevel;
+     if po4^.indirectlevel > 0 then begin
+      po4^.flags-= [tf_managed,tf_hasmanaged];
+     end;
+     if forward1 then begin
+      markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
+     end
+     else begin
+      resolveforwardtype(po4);
+     end;
+    end
+    else begin //duplicate
+     identerror(-3,err_duplicateidentifier);
+    end;
+    }
+   end;
   end;
  end;
 end;
@@ -187,7 +233,7 @@ begin
   if s.stacktop-s.stackindex = 3 then begin
    with contextstack[s.stackindex-2] do begin
     if (d.kind = ck_ident) and 
-                   (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
+                (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
      id1:= d.ident.ident; //typedef
     end
     else begin

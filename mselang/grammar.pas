@@ -492,6 +492,21 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'methdestructorheader');
+ proceduretypedefco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'proceduretypedef');
+ subtypedefco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subtypedef');
+ subtypedef0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'subtypedef0');
  subheaderco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -2825,6 +2840,16 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bsubtypedef: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @subtypedef0co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bsubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @subheader0co); stack: nil; keys: (
@@ -4657,7 +4682,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgettype: array[0..13] of branchty = (
+ bgettype: array[0..14] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @setdefco); stack: nil; 
      keyword: $98622397{'set'}),
@@ -4673,6 +4698,9 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @interfacedefco); stack: nil; 
      keyword: $B3C66EDD{'interface'}),
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @proceduretypedefco); stack: nil; 
+     keyword: $F19BB75B{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -7588,6 +7616,13 @@ begin
  methdestructorheaderco.branch:= nil;
  methdestructorheaderco.next:= @subheaderco;
  methdestructorheaderco.handleentry:= @handlemethdestructorentry;
+ proceduretypedefco.branch:= nil;
+ proceduretypedefco.next:= @subtypedefco;
+ proceduretypedefco.handleentry:= @handleproceduretypedefentry;
+ subtypedefco.branch:= @bsubtypedef;
+ subtypedef0co.branch:= nil;
+ subtypedef0co.next:= @subheader1co;
+ subtypedef0co.handleentry:= @handlesubtypedef0entry;
  subheaderco.branch:= @bsubheader;
  functionco.branch:= nil;
  functionco.next:= @subco;
