@@ -187,44 +187,42 @@ const
  
   //will be replaced by systypes.mla
  systypeinfos: array[systypety] of systypeinfoty = (
-   (name: 'none'; data: (ancestor: 0; base: 0; rtti: 0; flags: []; 
-       indirectlevel: 0;
-       bitsize: 0; bytesize: 0; datasize: das_none; kind: dk_none;
+   (name: 'none'; data: (h: (ancestor: 0; kind: dk_none;
+       base: 0; rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 0; bytesize: 0; datasize: das_none);
        dummy: 0)),
-   (name: 'pointer'; data: (ancestor: 0; base: 0;  rtti: 0; flags: []; 
-       indirectlevel: 1;
-       bitsize: pointerbitsize; bytesize: pointersize;
-       datasize: das_pointer; kind: dk_pointer; dummy: 0)),
-   (name: 'bool1'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 1; bytesize: 1; datasize: das_1; kind: dk_boolean;
+   (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 1;
+       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);
        dummy: 0)),
-   (name: 'int8'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 8; bytesize: 1; datasize: das_8;
-                 kind: dk_integer; infoint8:(min: int8($80); max: $7f))),
-   (name: 'int16'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 16; bytesize: 2; datasize: das_16;
-                 kind: dk_integer; infoint16:(min: int16($8000); max: $7fff))),
-   (name: 'int32'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 32; bytesize: 4; datasize: das_32;
-                 kind: dk_integer; infoint32:(min: int32($80000000);
-                                                    max: $7fffffff))),
-   (name: 'int64'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64;
-                 kind: dk_integer; infoint64:(min: int64($8000000000000000);
-                                                    max: $7fffffffffffffff))),
-   (name: 'flo64'; data: (ancestor: 0; base: 0;  rtti: 0; flags: [];
-       indirectlevel: 0;
-       bitsize: 64; bytesize: 8; datasize: das_64;
-                 kind: dk_float; infofloat64:(min: mindouble; max: maxdouble))),
-   (name: 'string8'; data: (ancestor: 0; base: 0;  rtti: 0; 
-       flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
-       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer;
-                 kind: dk_string8; manageproc: @managestring8; itemsize: 1;
+   (name: 'bool1'; data: (h: (ancestor: 0; kind: dk_boolean;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 1; bytesize: 1; datasize: das_1);
+       dummy: 0)),
+   (name: 'int8'; data: (h: (ancestor: 0; kind: dk_integer;
+       base: 0;  rtti: 0; flags: [];indirectlevel: 0;
+       bitsize: 8; bytesize: 1; datasize: das_8);
+       infoint8:(min: int8($80); max: $7f))),
+   (name: 'int16'; data: (h: (ancestor: 0; kind: dk_integer;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 16; bytesize: 2; datasize: das_16);
+       infoint16:(min: int16($8000); max: $7fff))),
+   (name: 'int32'; data: (h: (ancestor: 0; kind: dk_integer;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_32);
+      infoint32:(min: int32($80000000); max: $7fffffff))),
+   (name: 'int64'; data: (h: (ancestor: 0; kind: dk_integer;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 64; bytesize: 8; datasize: das_64);
+       infoint64:(min: int64($8000000000000000); max: $7fffffffffffffff))),
+   (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 64; bytesize: 8; datasize: das_64);
+       infofloat64:(min: mindouble; max: maxdouble))),
+   (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string8;
+       base: 0;  rtti: 0; flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
+       bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);
+       manageproc: @managestring8; itemsize: 1;
                  dummy: 0))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (
@@ -566,7 +564,7 @@ function pushinsertvar(const stackoffset: integer; const before: boolean;
                                        const atype: ptypedataty): integer;
 begin
  with insertitem(oc_push,stackoffset,before)^ do begin
-  result:= atype^.bytesize; //todo: alignment
+  result:= atype^.h.bytesize; //todo: alignment
   setimmsize(result,par);
  end;
 end;
@@ -638,18 +636,18 @@ begin
   result:= bitoptypes[das_pointer];
  end
  else begin
-  if atypedata^.datasize = das_none then begin
-   result.listindex:= typelist.addbytevalue(atypedata^.bytesize);
+  if atypedata^.h.datasize = das_none then begin
+   result.listindex:= typelist.addbytevalue(atypedata^.h.bytesize);
   end
   else begin
-   result.listindex:= ord(atypedata^.datasize);
+   result.listindex:= ord(atypedata^.h.datasize);
   end;
-  result.kind:= atypedata^.datasize;
+  result.kind:= atypedata^.h.datasize;
   if result.kind in byteopdatakinds then begin
-   result.size:= atypedata^.bytesize;
+   result.size:= atypedata^.h.bytesize;
   end
   else begin
-   result.size:= atypedata^.bitsize;
+   result.size:= atypedata^.h.bitsize;
   end;
   result.flags:= [];
  end;
@@ -1623,8 +1621,8 @@ begin
    po2:= @po1^.data;
    po2^:= data;
    with sysdatatypes[ty1] do begin
-    flags:= data.flags;
-    indirectlevel:= data.indirectlevel;
+    flags:= data.h.flags;
+    indirectlevel:= data.h.indirectlevel;
     typedata:= ele.eleinforel(po1);
    end;
   end;
@@ -1712,7 +1710,7 @@ begin
      sd1:= sdk_pointer;
     end
     else begin
-     sd1:= stackdatakinds[po1^.kind];
+     sd1:= stackdatakinds[po1^.h.kind];
     end;
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
@@ -1909,14 +1907,14 @@ end;
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 begin
  with typedata^ do begin
-  case kind of
+  case h.kind of
    dk_cardinal: begin
-    if datasize <= das_8 then begin
+    if h.datasize <= das_8 then begin
      range.min:= infocard8.min;
      range.max:= infocard8.max;
     end
     else begin
-     if datasize <= das_16 then begin
+     if h.datasize <= das_16 then begin
       range.min:= infocard16.min;
       range.max:= infocard16.max;
      end
@@ -1927,12 +1925,12 @@ begin
     end;
    end;
    dk_integer: begin
-    if datasize <= das_8 then begin
+    if h.datasize <= das_8 then begin
      range.min:= infoint8.min;
      range.max:= infoint8.max;
     end
     else begin
-     if datasize <= das_16 then begin
+     if h.datasize <= das_16 then begin
       range.min:= infoint16.min;
       range.max:= infoint16.max;
      end
@@ -2052,10 +2050,10 @@ procedure outinfo(const text: string; const indent: boolean = true);
   with ainfo.dat.datatyp do begin
    po1:= ele.eledataabs(typedata);
    write('T:',typedata,' ',
-          getenumname(typeinfo(datakindty),ord(po1^.kind)));
-   if po1^.kind <> dk_none then begin
+          getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
+   if po1^.h.kind <> dk_none then begin
     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
-                  integer(po1^.flags),false),
+                  integer(po1^.h.flags),false),
           ' I:',indirectlevel,':',ainfo.dat.indirection,
           ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
                                             integer(flags),false),' ');
@@ -2074,10 +2072,10 @@ procedure outinfo(const text: string; const indent: boolean = true);
    else begin
     po1:= ele.eledataabs(typedata);
     write('T:',typedata,' ',
-           getenumname(typeinfo(datakindty),ord(po1^.kind)));
-    if po1^.kind <> dk_none then begin
+           getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
+    if po1^.h.kind <> dk_none then begin
      write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
-                  integer(po1^.flags),false),
+                  integer(po1^.h.flags),false),
            ' I:',indirectlevel);
     end;
    end;
@@ -2087,7 +2085,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
  procedure writetypedata(const adata: ptypedataty);
  begin
    write(getidentname(pelementinfoty(pointer(adata)-eledatashift)^.header.name),
-          ':',getenumname(typeinfo(datakindty),ord(adata^.kind)))
+          ':',getenumname(typeinfo(datakindty),ord(adata^.h.kind)))
   end;
  
  procedure writeaddress(const aaddress: addressvaluety);

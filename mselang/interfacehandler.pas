@@ -118,7 +118,7 @@ begin
  with info do begin
   ele.decelementparent(); //interface or implementation
   if findkindelementsdata(1,[ek_type],allvisi,po1) then begin
-   if po1^.kind <> dk_interface then begin
+   if po1^.h.kind <> dk_interface then begin
     errormessage(err_interfacetypeexpected,[]);
    end
    else begin
@@ -163,7 +163,7 @@ begin
   end;
   ele.decelementparent();
   with ptypedataty(ele.parentdata)^ do begin
-   ancestor:= ele1;
+   h.ancestor:= ele1;
 //   infointerface.ancestorchain:= ele1;
   end;
  end;

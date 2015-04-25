@@ -92,7 +92,7 @@ type
   end;
  end;
  pintfdefinfoty = ^intfdefinfoty;
-
+{
  _Unwind_Reason_Code = (
   _URC_NO_REASON,// = 0,
   _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
@@ -115,6 +115,6 @@ type
   private_1: uint64;
   private_2: uint64;
  end;
-
+}
 implementation
 end.

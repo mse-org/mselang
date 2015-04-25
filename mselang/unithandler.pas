@@ -555,11 +555,11 @@ begin
                                  resolver^.header.parent) then begin
     ps:= @resolver^.data;
     pd:= pointer(pd)+eledatashift;
-    i1:= pd^.indirectlevel;
+    i1:= pd^.h.indirectlevel;
     pd^:= ps^;
-    pd^.indirectlevel:= i1;
-    if pd^.base = 0 then begin
-     pd^.base:= ele.eledatarel(ps);
+    pd^.h.indirectlevel:= i1;
+    if pd^.h.base = 0 then begin
+     pd^.h.base:= ele.eledatarel(ps);
     end;
     resolved:= true;
    end;

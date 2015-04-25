@@ -206,7 +206,7 @@ begin
   ele.decelementparent(); //interface or implementation scope
   if findkindelementsdata(1,[ek_type],allvisi,po2) then begin
    if ainterface then begin
-    if po2^.kind <> dk_interface then begin
+    if po2^.h.kind <> dk_interface then begin
      errormessage(err_interfacetypeexpected,[]);
     end
     else begin
@@ -238,13 +238,13 @@ begin
     end;
    end
    else begin
-    if po2^.kind <> dk_class then begin
+    if po2^.h.kind <> dk_class then begin
      errormessage(err_classtypeexpected,[]);
     end
     else begin
-     po1^.ancestor:= ele.eledatarel(po2);
+     po1^.h.ancestor:= ele.eledatarel(po2);
      if po2^.infoclass.interfacecount > 0 then begin
-      po1^.infoclass.interfaceparent:= po1^.ancestor;
+      po1^.infoclass.interfaceparent:= po1^.h.ancestor;
      end
      else begin
       po1^.infoclass.interfaceparent:= po2^.infoclass.interfaceparent;
@@ -337,7 +337,7 @@ type
 //    sub^.instanceshift:= instanceshift;
     ele1:= psubdataty(@po1^.data)^.next;
    end;
-   ele1:= intftype^.ancestor;
+   ele1:= intftype^.h.ancestor;
 //   ele1:= intftype^.infointerface.ancestorchain;
    while ele1 <> 0 do begin
     po3:= ele.eledataabs(ele1);
@@ -402,8 +402,8 @@ begin
   with contextstack[s.stackindex-1],ptypedataty(ele.eledataabs(
                                                 d.typ.typedata))^ do begin
    regclass(d.typ.typedata);
-   flags:= d.typ.flags;
-   indirectlevel:= d.typ.indirectlevel;
+   h.flags:= d.typ.flags;
+   h.indirectlevel:= d.typ.indirectlevel;
    classinfo1:= @contextstack[s.stackindex].d.cla;
 
                      
@@ -436,8 +436,8 @@ begin
     header.allocs.classdefinterfacestart:= int1;
     header.parentclass:= -1;
     header.interfaceparent:= -1;
-    if ancestor <> 0 then begin 
-     parentinfoclass1:= @ptypedataty(ele.eledataabs(ancestor))^.infoclass;
+    if h.ancestor <> 0 then begin 
+     parentinfoclass1:= @ptypedataty(ele.eledataabs(h.ancestor))^.infoclass;
      header.parentclass:= 
                      parentinfoclass1^.defs.address; //todo: relocate
      if parentinfoclass1^.virtualcount > 0 then begin
@@ -447,7 +447,7 @@ begin
                                        parentinfoclass1^.virtualcount);
       end
       else begin
-       regclassdescendent(d.typ.typedata,ancestor);
+       regclassdescendent(d.typ.typedata,h.ancestor);
       end;
      end;
     end;

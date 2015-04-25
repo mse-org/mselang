@@ -80,7 +80,7 @@ begin
        int1:= pointersize;
       end
       else begin
-       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.bytesize;
+       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize;
       end;
      end;
      ck_typetype,ck_fieldtype,ck_typearg: begin
@@ -88,7 +88,7 @@ begin
        int1:= pointersize;
       end
       else begin
-       int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.bytesize;
+       int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.h.bytesize;
       end;
      end;
      else begin
@@ -194,11 +194,11 @@ var
     if (d.dat.datatyp.indirectlevel > 0) then begin
      po3:= addmemop(d,incdecimmpoops,true);
      if d.dat.datatyp.indirectlevel = 1 then begin
-      if po1^.kind = dk_pointer then begin
+      if po1^.h.kind = dk_pointer then begin
        po3^.par.memimm.vint32:= 1;
       end
       else begin
-       po3^.par.memimm.vint32:= po1^.bytesize;
+       po3^.par.memimm.vint32:= po1^.h.bytesize;
       end;
      end
      else begin
@@ -248,7 +248,7 @@ begin
     with contextstack[s.stacktop] do begin
      po2:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
-                  not (po2^.kind in ordinaldatakinds) then begin
+                  not (po2^.h.kind in ordinaldatakinds) then begin
       errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);      
      end
      else begin
@@ -333,7 +333,7 @@ begin
     end
     else begin
      po2:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
-     case po2^.kind of
+     case po2^.h.kind of
       dk_boolean: begin
        po1:= additem(oc_writeboolean);
        po1^.par.voffset:= alignsize(sizeof(boolean));

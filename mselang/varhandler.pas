@@ -97,13 +97,13 @@ begin
      address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
  //     address.indirectlevel:= address.indirectlevel+indirectlevel;
-      datasize1:= datasize;
-      if kind in pointervarkinds then begin
+      datasize1:= h.datasize;
+      if h.kind in pointervarkinds then begin
        inc(address.indirectlevel);
       end;
       if address.indirectlevel = 0 then begin
-       size1:= bytesize;
-       if tf_hasmanaged in flags then begin
+       size1:= h.bytesize;
+       if tf_hasmanaged in h.flags then begin
         include(s.currentstatementflags,stf_hasmanaged);
         include(vf.flags,tf_hasmanaged);
        end;

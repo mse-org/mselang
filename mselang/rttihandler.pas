@@ -109,9 +109,9 @@ var
  ele1: elementoffsetty;
  int1,int2: integer;
 begin
- result:= atype^.rtti;
+ result:= atype^.h.rtti;
  if result = 0 then begin
-  case atype^.kind of 
+  case atype^.h.kind of 
    dk_enum: begin
     int2:= sizeof(enumrttity)+atype^.infoenum.itemcount*sizeof(enumitemrttity);
     po1:= allocrttibuffer(dt_enum,int2);

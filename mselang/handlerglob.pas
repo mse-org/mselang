@@ -153,10 +153,11 @@ type
   ref: elementoffsetty;
  end;
  prefdataty = ^refdataty;
- 
- typedataty = record
+
+ typedataheaderty = record
   ancestor: elementoffsetty; //first, 
             //valid for ancestordatakinds and ancestorchaindatakinds
+  kind: datakindty;
   base: elementoffsetty; //base type, ex: precordty = ^recordty -> recordty type
                          //used for addressing record fields.
   rtti: dataaddressty; //0 -> none
@@ -165,7 +166,11 @@ type
   bitsize: integer;
   bytesize: integer;
   datasize: databitsizety;
-  case kind: datakindty of 
+ end;
+  
+ typedataty = record
+  h: typedataheaderty;
+  case datakindty of 
    dk_boolean:(
     dummy: byte
    );
@@ -412,8 +417,8 @@ implementation
 
 function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
- result:= typedata.bytesize;
- if typedata.indirectlevel <> 0 then begin
+ result:= typedata.h.bytesize;
+ if typedata.h.indirectlevel <> 0 then begin
   result:= pointersize;
  end;
 end;
@@ -422,12 +427,12 @@ procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
             artti: dataaddressty; aancestor: elementoffsetty); inline;
 begin
- atype.base:= 0;
- atype.rtti:= artti;
- atype.flags:= aflags;
- atype.indirectlevel:= aindirectlevel;
- atype.ancestor:= aancestor;
- atype.kind:= akind;
+ atype.h.base:= 0;
+ atype.h.rtti:= artti;
+ atype.h.flags:= aflags;
+ atype.h.indirectlevel:= aindirectlevel;
+ atype.h.ancestor:= aancestor;
+ atype.h.kind:= akind;
 end;
 
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
@@ -436,13 +441,13 @@ procedure inittypedatabit(var atype: typedataty; akind: datakindty;
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
- atype.bitsize:= abitsize;
- atype.bytesize:= (abitsize+7) div 8;
- if atype.bitsize >= 64 then begin
-  atype.datasize:= das_none;
+ atype.h.bitsize:= abitsize;
+ atype.h.bytesize:= (abitsize+7) div 8;
+ if atype.h.bitsize >= 64 then begin
+  atype.h.datasize:= das_none;
  end
  else begin
-  atype.datasize:= datasizes[atype.bitsize];
+  atype.h.datasize:= datasizes[atype.h.bitsize];
  end;
 end;
 
@@ -452,14 +457,14 @@ procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
- atype.bytesize:= abytesize;
+ atype.h.bytesize:= abytesize;
  if abytesize >= pointersize then begin
-  atype.datasize:= das_none;
-  atype.bitsize:= 0;
+  atype.h.datasize:= das_none;
+  atype.h.bitsize:= 0;
  end
  else begin
-  atype.bitsize:= abytesize*8;
-  atype.datasize:= datasizes[atype.bitsize];
+  atype.h.bitsize:= abytesize*8;
+  atype.h.datasize:= datasizes[atype.h.bitsize];
  end;  
 end;
 
@@ -469,9 +474,9 @@ procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
- atype.datasize:= adatasize;
- atype.bytesize:= bytesizes[adatasize];
- atype.bitsize:= bitsizes[adatasize];
+ atype.h.datasize:= adatasize;
+ atype.h.bytesize:= bytesizes[adatasize];
+ atype.h.bitsize:= bitsizes[adatasize];
 end;
 
 end.

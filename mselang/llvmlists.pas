@@ -684,15 +684,15 @@ var
 begin 
  po1:= ele.eledataabs(avalue^.vf.typ);
  if (af_paramindirect in avalue^.address.flags) or 
-      (po1^.indirectlevel+avalue^.address.indirectlevel > 0) then begin
+      (po1^.h.indirectlevel+avalue^.address.indirectlevel > 0) then begin
   result:= pointertype;
  end
  else begin
-  if po1^.datasize = das_none then begin
-   result:= addbytevalue(po1^.bytesize);
+  if po1^.h.datasize = das_none then begin
+   result:= addbytevalue(po1^.h.bytesize);
   end
   else begin
-   result:= addbitvalue(po1^.datasize);
+   result:= addbitvalue(po1^.h.datasize);
   end;
  end;
 end;

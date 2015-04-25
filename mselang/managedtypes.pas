@@ -112,14 +112,14 @@ begin
    with contextstack[s.stacktop] do begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     if (d.dat.datatyp.indirectlevel <> 0) or 
-                                    (po1^.kind <> dk_integer) then begin
+                                    (po1^.h.kind <> dk_integer) then begin
      incompatibletypeserror(2,'dk_integer',d);
     end
     else begin
      if getaddress(s.stacktop-s.stackindex-1,true) then begin
       with ptypedataty(ele.eledataabs(
                  contextstack[s.stacktop-1].d.dat.datatyp.typedata))^ do begin
-       with additem(setlengthops[kind])^ do begin
+       with additem(setlengthops[h.kind])^ do begin
         if op.op = oc_none then begin
          errormessage(err_typemismatch,[]);
         end
@@ -147,8 +147,8 @@ var
  ad1: addressrefty;
  ele1: elementoffsetty;
 begin
- if tf_managed in atype^.flags then begin
-  if atype^.kind = dk_array then begin
+ if tf_managed in atype^.h.flags then begin
+  if atype^.h.kind = dk_array then begin
    ptypedataty(ele.eledataabs(atype^.infoarray.i.itemtypedata))^.manageproc(
          op,aaddress,
          getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),ssaindex);
@@ -158,7 +158,7 @@ begin
   end;
  end
  else begin
-  if atype^.kind = dk_array then begin
+  if atype^.h.kind = dk_array then begin
    ad1.base:= ab_reg0;
    if aaddress.base = ab_segment then begin
     with additem(oc_movesegreg0)^ do begin
@@ -187,16 +187,16 @@ begin
   repeat
    po3:= ele.eledataabs(ele1);
    po4:= ele.eledataabs(po3^.vf.typ);
-   if po4^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+   if po4^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
     ad1.offset:= aaddress.offset + po3^.offset;
     writemanagedtypeop(op,po4,ad1,ssaindex);
    end;
    ele1:= po3^.vf.next;
   until ele1 = 0;
 
-  if atype^.kind = dk_array then begin
+  if atype^.h.kind = dk_array then begin
    with additem(oc_increg0)^ do begin
-    setimmoffset(po2^.bytesize,par);
+    setimmoffset(po2^.h.bytesize,par);
    end;
    endforloop(loopinfo);
    with additem(oc_popreg0)^ do begin

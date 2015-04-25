@@ -54,7 +54,7 @@ begin
   getvalue(s.stacktop-s.stackindex);
   with contextstack[s.stacktop] do begin
    if (d.dat.datatyp.indirectlevel <> 0) or (ptypedataty(ele.eledataabs(
-                      d.dat.datatyp.typedata))^.kind <> dk_boolean) then begin
+                      d.dat.datatyp.typedata))^.h.kind <> dk_boolean) then begin
     errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
     result:= nil;
    end;
@@ -248,7 +248,7 @@ begin
  with info,contextstack[s.stacktop] do begin
   if (s.stacktop-s.stackindex = 1) and getvalue(1,true) and 
                  (d.dat.datatyp.indirectlevel = 0) and 
-         (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.kind in 
+         (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
                                                  ordinaldatakinds) then begin
    if d.kind = ck_const then begin //todo: optimize const case switch
     getvalue(1);

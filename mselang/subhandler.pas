@@ -378,7 +378,7 @@ begin
    else begin
     po1:= ele.eleinfoabs(ele1);
     if (po1^.header.kind <> ek_type) or 
-               (ptypedataty(@po1^.data)^.kind <> dk_class) then begin
+               (ptypedataty(@po1^.data)^.h.kind <> dk_class) then begin
      errormessage(err_classidentexpected,[],1);
     end
     else begin
@@ -537,10 +537,10 @@ var                       //todo: move after doparam
         si1:= pointersize;
        end
        else begin
-        si1:= po3^.bytesize;
+        si1:= po3^.h.bytesize;
        end;
        address.flags:= [af_param];
-       if po3^.datasize = das_none then begin
+       if po3^.h.datasize = das_none then begin
         include(address.flags,af_aggregate);
        end;
        if paramkind1 = pk_const then begin
@@ -559,13 +559,14 @@ var                       //todo: move after doparam
         end
         else begin
          if impl1 and (d.typ.indirectlevel = 0) and 
-                   (tf_hasmanaged in po3^.flags) then begin
+                   (tf_hasmanaged in po3^.h.flags) then begin
           include(vf.flags,tf_hasmanaged);
          end;                     
         end;
        end;
        if impl1 then begin
-        address.locaddress:= getlocvaraddress(po3^.datasize,si1,address.flags);
+        address.locaddress:= 
+                          getlocvaraddress(po3^.h.datasize,si1,address.flags);
        end;
        address.locaddress.framelevel:= sublevel+1;
        vf.typ:= d.typ.typedata;

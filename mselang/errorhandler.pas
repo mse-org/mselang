@@ -284,16 +284,16 @@ var
  po1: ptypedataty;
 begin
  po1:= ele.eledataabs(ainfo.dat.datatyp.typedata);
- result:= charstring('^',po1^.indirectlevel+ainfo.dat.datatyp.indirectlevel+
+ result:= charstring('^',po1^.h.indirectlevel+ainfo.dat.datatyp.indirectlevel+
                                                            aindirection)+
-                           getenumname(typeinfo(datakindty),ord(po1^.kind));
+                           getenumname(typeinfo(datakindty),ord(po1^.h.kind));
 end;
 
 function typename(const atype: typedataty;
                                   const aindirection: int32=0): string;
 begin
- result:= charstring('^',atype.indirectlevel+aindirection)+
-                    getenumname(typeinfo(datakindty),ord(atype.kind));
+ result:= charstring('^',atype.h.indirectlevel+aindirection)+
+                    getenumname(typeinfo(datakindty),ord(atype.h.kind));
 end;
 
 function errorcount(const alevel: errorlevelty): integer;
@@ -555,7 +555,7 @@ begin
    for int1:= 0 to source.dat.datatyp.indirectlevel-1 do begin
     sourceinfo:= '^'+sourceinfo;
    end;
-   destinfo:= getenumname(typeinfo(dest.typ^.kind),ord(dest.typ^.kind));
+   destinfo:= getenumname(typeinfo(dest.typ^.h.kind),ord(dest.typ^.h.kind));
    for int1:= 0 to dest.address.indirectlevel-1 do begin
     destinfo:= '^'+destinfo;
    end;

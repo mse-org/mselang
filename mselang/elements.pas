@@ -892,11 +892,11 @@ begin
  po1:= eleinfoabs(felementparent);
  if (po1^.header.kind = ek_type) then begin
   po2:= @po1^.data;
-  if po2^.kind in ancestordatakinds then begin
+  if po2^.h.kind in ancestordatakinds then begin
    parentbefore:= elementparent;
-   while not result and (po2^.ancestor <> 0) do begin
-    elementparent:= po2^.ancestor;
-    po2:= eledataabs(po2^.ancestor);
+   while not result and (po2^.h.ancestor <> 0) do begin
+    elementparent:= po2^.h.ancestor;
+    po2:= eledataabs(po2^.h.ancestor);
     result:= forallcurrent(aident,akinds,avislevel,ahandler,adata);
    end;
    elementparent:= parentbefore;
@@ -912,13 +912,14 @@ begin
   with pelementinfoty(pointer(felementdata)+aele)^ do begin
    if header.kind = ek_type then begin
     with ptypedataty(@data)^ do begin
-     if kind in ancestordatakinds then begin
-      aele:= ancestor;
+     if h.kind in ancestordatakinds then begin
+      aele:= h.ancestor;
       result:= aele <> 0;
       include(avislevel,vik_descendent);
      end
      else begin
-      if kind in ancestorchaindatakinds then begin
+      if h.kind in ancestorchaindatakinds then begin
+       internalerror1(ie_elements,'20150425A');
          //todo
       end;
      end;
@@ -974,11 +975,11 @@ begin
    if vik_ancestor in avislevel then begin
     with eleinfoabs(parentele)^ do begin
      if (header.kind = ek_type) and 
-                             (ptypedataty(@data)^.kind = dk_class) then begin
+                             (ptypedataty(@data)^.h.kind = dk_class) then begin
       if classdescend = 0 then begin
        classdescend:= parentele;
       end;
-      parentele:= ptypedataty(@data)^.ancestor;
+      parentele:= ptypedataty(@data)^.h.ancestor;
       if parentele <> 0 then begin
        with eleinfoabs(parentele)^ do begin
         elepath:= header.path+header.name;
@@ -1435,13 +1436,13 @@ function telementhashdatalist.dumpelements: msestringarty;
    po2:= eleinfoabs(atyp);
    result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
    with ptypedataty(@po2^.data)^ do begin
-    result:= result+' B:'+inttostr(base);
-    result:= result+' K:'+getenumname(typeinfo(kind),ord(kind));
-    if kind <> dk_none then begin
+    result:= result+' B:'+inttostr(h.base);
+    result:= result+' K:'+getenumname(typeinfo(h.kind),ord(h.kind));
+    if h.kind <> dk_none then begin
      result:= result+
-     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
-     ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
-     case kind of
+     ' F:'+settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false)+
+     ' S:'+inttostr(h.bytesize)+' I:'+inttostr(h.indirectlevel);
+     case h.kind of
       dk_enumitem: begin
        result:= result+' value:'+inttostr(infoenumitem.value);
       end;
@@ -1537,9 +1538,9 @@ begin
      ' K:'+getenumname(typeinfo(kind),ord(kind))+
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      }
-     if kind in ancestordatakinds then begin
-      mstr1:= mstr1+' A:'+inttostr(ancestor);
-      case kind of
+     if h.kind in ancestordatakinds then begin
+      mstr1:= mstr1+' A:'+inttostr(h.ancestor);
+      case h.kind of
        dk_class: begin
         mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
                       ' virt:'+inttostr(infoclass.virtualcount)+

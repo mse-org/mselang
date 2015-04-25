@@ -119,7 +119,7 @@ begin
                             getvalue(1) and (d.dat.datatyp.indirectlevel = 1);
   if bo1 then begin
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-   bo1:= po1^.kind = dk_class;
+   bo1:= po1^.h.kind = dk_class;
   end;
   if bo1 then begin
 //   with addcontrolitem(oc_raise)^ do begin

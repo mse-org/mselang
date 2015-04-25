@@ -820,11 +820,11 @@ begin
       end
       else begin
        with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
-        if datasize = das_pointer then begin
+        if h.datasize = das_pointer then begin
          i2:= 1;
         end
         else begin
-         i2:= bytesize;
+         i2:= h.bytesize;
         end;
        end;
       end;
@@ -1156,7 +1156,7 @@ begin
   else begin
    if getvalue(1{,false}) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    with additem(negops[po1^.kind])^ do begin
+    with additem(negops[po1^.h.kind])^ do begin
      if op.op = oc_none then begin
       errormessage(err_negnotpossible,[],1);
      end;
@@ -2046,7 +2046,7 @@ begin
      internalerror(ie_handler,'20131126B');
     end;
    {$endif}
-    datasi1:= dest.typ^.datasize;
+    datasi1:= dest.typ^.h.datasize;
     if d.dat.datatyp.indirectlevel >= 1 then begin
      datasi1:= das_pointer;
     end;
@@ -2090,13 +2090,13 @@ begin
     end
     else begin
      ssa1:= contextstack[s.stacktop].d.dat.fact.ssaindex; //source
-     if (int1 = 0) and (tf_hasmanaged in dest.typ^.flags) then begin
+     if (int1 = 0) and (tf_hasmanaged in dest.typ^.h.flags) then begin
       ad1.base:= ab_stack;
       if datasi1 = das_pointer then begin
        ad1.offset:= -pointersize;
       end
       else begin
-       ad1.offset:= -dest.typ^.bytesize;
+       ad1.offset:= -dest.typ^.h.bytesize;
       end;
 //      ad1.offset:= -((si1+7) div 8); //bytes
       if not isconst then begin
@@ -2206,7 +2206,7 @@ begin
    ck_ref: begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     if (d.dat.datatyp.indirectlevel = 0) and 
-                         (po1^.kind in [dk_record,dk_class]) then begin
+                         (po1^.h.kind in [dk_record,dk_class]) then begin
 
      with pvardataty(ele.addscope(ek_var,d.dat.datatyp.typedata))^ do begin
       address:= d.dat.ref.c.address;

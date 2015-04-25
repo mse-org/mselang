@@ -134,8 +134,8 @@ begin
   if bo2 then begin
    d.typ.typedata:= ele.eleinforel(po2);
    po3:= ptypedataty(@po2^.data);
-   d.typ.flags:= po3^.flags;
-   inc(d.typ.indirectlevel,po3^.indirectlevel);
+   d.typ.flags:= po3^.h.flags;
+   inc(d.typ.indirectlevel,po3^.h.indirectlevel);
    if d.kind = ck_typetype then begin
     idcontext:= @contextstack[s.stackindex-3];
    {$ifdef mse_checkinternalerror}
@@ -147,12 +147,12 @@ begin
     if po1 <> nil then begin
      po4:= @po1^.data;
      po4^:= po3^;
-     if po3^.base = 0 then begin
-      po4^.base:= d.typ.typedata;
+     if po3^.h.base = 0 then begin
+      po4^.h.base:= d.typ.typedata;
      end;
-     po4^.indirectlevel:= d.typ.indirectlevel;
-     if po4^.indirectlevel > 0 then begin
-      po4^.flags-= [tf_managed,tf_hasmanaged];
+     po4^.h.indirectlevel:= d.typ.indirectlevel;
+     if po4^.h.indirectlevel > 0 then begin
+      po4^.h.flags-= [tf_managed,tf_hasmanaged];
      end;
      if forward1 then begin
       markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
@@ -195,6 +195,7 @@ begin
    with contextstack[atypetypecontext] do begin
    {
     po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
+ inittypedata
     if po1 <> nil then begin
      po4:= @po1^.data;
      po4^:= po3^;
@@ -310,7 +311,7 @@ begin
    with po1^ do begin
 //    flags:= [];
 //    datasize:= das_none;
-    kind:= dk_none; //inhibit dump
+    h.kind:= dk_none; //inhibit dump
     fieldchain:= 0;  //used in checkrecordfield()
    end;
   end;
@@ -359,7 +360,7 @@ begin
    po1^.indirectlevel:= d.typ.indirectlevel;
    po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
    if po1^.indirectlevel = 0 then begin      //todo: alignment
-    if po2^.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+    if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
      include(atypeflags,tf_hasmanaged);
      include(po1^.vf.flags,tf_hasmanaged);
      {
@@ -371,7 +372,7 @@ begin
      end;
      }
     end;
-    size1:= po2^.bytesize;
+    size1:= po2^.h.bytesize;
    end
    else begin
     size1:= pointersize;
@@ -439,7 +440,7 @@ begin
    ele1:= d.typ.typedata;
    po1:= ele.eledataabs(ele1);
    if d.typ.indirectlevel = 0 then begin
-    case po1^.kind of        //todo: check size and offset
+    case po1^.h.kind of        //todo: check size and offset
      dk_boolean,dk_integer,dk_cardinal: begin
      end;
      dk_enum: begin
@@ -519,14 +520,14 @@ begin
    with contextstack[s.stacktop] do begin
     itemtyoffs:= d.typ.typedata;
     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin
-     flags1:= flags;
+     flags1:= h.flags;
      indilev:= d.typ.indirectlevel;
-     if indilev + indirectlevel > 0 then begin
+     if indilev + h.indirectlevel > 0 then begin
       totsize:= pointersize;
       flags1-= [tf_managed,tf_hasmanaged];
      end
      else begin
-      totsize:= bytesize;
+      totsize:= h.bytesize;
      end;
     end;
    end;  //todo: alignment
@@ -540,8 +541,8 @@ begin
       end;
      {$endif}
       po1:= ele.eledataabs(d.typ.typedata);
-      if (d.typ.indirectlevel <> 0) or (po1^.indirectlevel <> 0) or
-        not (po1^.kind in ordinaldatakinds) or (po1^.bitsize > 32) then begin
+      if (d.typ.indirectlevel <> 0) or (po1^.h.indirectlevel <> 0) or
+        not (po1^.h.kind in ordinaldatakinds) or (po1^.h.bitsize > 32) then begin
        err(err_ordtypeexpected);
        goto endlab;
       end;
@@ -563,7 +564,7 @@ begin
        identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
        goto endlab;
       end;
-      arty^.flags:= flags1;
+      arty^.h.flags:= flags1;
       if indilev > 0 then begin
        flags1-= [tf_managed,tf_hasmanaged];
       end;
@@ -590,11 +591,11 @@ begin
        goto endlab;
       end;
       with arty^ do begin
-       indirectlevel:= 0;
-       bitsize:= 0;
-       bytesize:= totsize;
-       datasize:= das_none;
-       kind:= dk_array;
+       h.indirectlevel:= 0;
+       h.bitsize:= 0;
+       h.bytesize:= totsize;
+       h.datasize:= das_none;
+       h.kind:= dk_array;
       end;
 //      itemtyoffs:= ele.eledatarel(arty);
      end;
@@ -631,7 +632,7 @@ begin
     end;
    end;
    with contextstack[s.stackindex-1] do begin
-    arty^.indirectlevel:= d.typ.indirectlevel;
+    arty^.h.indirectlevel:= d.typ.indirectlevel;
     d.typ.indirectlevel:= 0;
     d.typ.typedata:= ele.eledatarel(arty);
    end;
@@ -706,8 +707,8 @@ begin
      itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
      fullconst:= true;
      for int1:= s.stackindex+1 to s.stacktop do begin
-      isdynarray:= itemtype^.kind = dk_dynarray;
-      if not (isdynarray or (itemtype^.kind = dk_array)) then begin
+      isdynarray:= itemtype^.h.kind = dk_dynarray;
+      if not (isdynarray or (itemtype^.h.kind = dk_array)) then begin
        errormessage(err_illegalqualifier,[],0);
        goto errlab;
       end;
@@ -743,7 +744,7 @@ begin
          lastssa:= d.dat.fact.ssaindex;
          with insertitem(oc_mulimmint32,int1-s.stackindex,false)^ do begin
           par.ssas1:= lastssa;
-          setimmint32(itemtype^.bytesize,par);
+          setimmint32(itemtype^.h.bytesize,par);
          end;
          if not fullconst then begin
           with insertitem(oc_addint32,int1-s.stackindex,false)^ do begin
@@ -765,7 +766,7 @@ begin
      end;
      d.dat.ref.offset:= d.dat.ref.offset + offs;
      d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
-     d.dat.datatyp.indirectlevel:= itemtype^.indirectlevel;
+     d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel;
      if not fullconst then begin
       if isdynarray then begin //todo: nested, move to index loop
        getvalue(-1);
@@ -829,7 +830,7 @@ begin
    d.enu.flags:= [enf_contiguous];
   end;
   with po1^ do begin
-   kind:= dk_none; //incomplete
+   h.kind:= dk_none; //incomplete
   end;
  end;
 end;

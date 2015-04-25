@@ -48,14 +48,14 @@ begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
   if result then begin
-   result:= dest^.kind = source1^.kind;
+   result:= dest^.h.kind = source1^.h.kind;
    if not result then begin
     if destindirectlevel = 0 then begin
      case d.kind of
       ck_const: begin
-       case dest^.kind of //todo: use table
+       case dest^.h.kind of //todo: use table
         dk_float: begin
-         case source1^.kind of
+         case source1^.h.kind of
           dk_integer: begin //todo: adjust data size
            with d,dat.constval do begin
             kind:= dk_float;
@@ -68,9 +68,9 @@ begin
        end;
       end;
       ck_fact: begin
-       case dest^.kind of //todo: use table
+       case dest^.h.kind of //todo: use table
         dk_float: begin
-         case source1^.kind of
+         case source1^.h.kind of
           dk_integer: begin //todo: adjust data size
            with additem(oc_int32toflo64)^ do begin
            end;
@@ -89,14 +89,15 @@ begin
     end
     else begin
      if (destindirectlevel > 0) and 
-          ((dest^.kind = dk_pointer) or (source1^.kind = dk_pointer)) then begin
+          ((dest^.h.kind = dk_pointer) or 
+                          (source1^.h.kind = dk_pointer)) then begin
       result:= true; //untyped pointer
      end;
     end;
    end;
   end
   else begin
-   if (dest^.kind = dk_integer) and (destindirectlevel = 0) and 
+   if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
                       (d.dat.datatyp.indirectlevel > 0) then begin
         //todo: remove implicit pointer -> int conversion
     if getvalue(stackoffset) then begin //pointer to int
@@ -112,7 +113,8 @@ begin
    else begin
     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
           (d.dat.datatyp.indirectlevel = 1) and 
-          (source1^.kind = dk_class) and (dest^.kind = dk_interface) then begin
+             (source1^.h.kind = dk_class) and 
+                     (dest^.h.kind = dk_interface) then begin
      int1:= ele.elementparent;
      po1:= source1;
      repeat
@@ -139,8 +141,8 @@ begin
      ele.elementparent:= int1;
     end
     else begin
-     if (destindirectlevel > 0) and (source1^.indirectlevel = 0) and 
-                                (source1^.bitsize = pointerbitsize) then begin
+     if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
+                                (source1^.h.bitsize = pointerbitsize) then begin
       if getvalue(stackoffset) then begin //any to pointer
        int1:= d.dat.fact.ssaindex;
        with insertitem(oc_anytopo,stackoffset,false)^ do begin
@@ -155,9 +157,9 @@ begin
    end;
   end;
   if not result then begin
-   result:= (dest^.kind = dk_pointer) and (destindirectlevel = 1) and 
-                                          (source1^.kind = dk_pointer) or 
-      (source1^.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
+   result:= (dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
+                                          (source1^.h.kind = dk_pointer) or 
+      (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
                                                         (destindirectlevel > 0);
   end;
   if result then begin
@@ -182,10 +184,10 @@ begin
  po1:= getbasetypedata(dest);
  if info.contextstack[info.s.stackindex+stackoffset].d.kind = 
                                                         ck_const then begin
-  result:= tryconvert(stackoffset,po1,po1^.indirectlevel);
+  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel);
   if not result then begin
    illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
-                       po1,po1^.indirectlevel);
+                       po1,po1^.h.indirectlevel);
   end
   else begin
    result:= getvalue(stackoffset);
@@ -194,10 +196,10 @@ begin
  else begin
   result:= getvalue(stackoffset);
   if result then begin
-   result:= tryconvert(stackoffset,po1,po1^.indirectlevel);
+   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel);
    if not result then begin
     illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
-                       po1,po1^.indirectlevel);
+                       po1,po1^.h.indirectlevel);
    end;
   end; 
  end;
@@ -216,24 +218,24 @@ begin
  end;
 {$endif}
  po1:= ele.eledataabs(atypedata);
- i1:= aadress.indirectlevel+po1^.indirectlevel;
+ i1:= aadress.indirectlevel+po1^.h.indirectlevel;
  if af_paramindirect in aadress.flags then begin
   dec(i1);
  end;
  po2:= ele.eledataabs(afact.dat.datatyp.typedata);
  result:= i1 = afact.dat.datatyp.indirectlevel;
  if result then begin
-  if po1^.base <> 0 then begin
-   po1:= ele.eledataabs(po1^.base);
+  if po1^.h.base <> 0 then begin
+   po1:= ele.eledataabs(po1^.h.base);
   end;
-  if po2^.base <> 0 then begin
-   po2:= ele.eledataabs(po2^.base);
+  if po2^.h.base <> 0 then begin
+   po2:= ele.eledataabs(po2^.h.base);
   end;
   result:= po1 = po2; //todo: try conversion
  end;
  if not result then begin
   result:= (afact.dat.datatyp.indirectlevel = 1 ) and 
-               (po2^.kind = dk_pointer) and (i1 > 0); 
+               (po2^.h.kind = dk_pointer) and (i1 > 0); 
  end;
 end;
 
@@ -386,7 +388,7 @@ var
        po3:= ele.eledataabs(asub^.resulttype);
       end;
       d.kind:= ck_subres;
-      d.dat.datatyp.indirectlevel:= po3^.indirectlevel;
+      d.dat.datatyp.indirectlevel:= po3^.h.indirectlevel;
       d.dat.datatyp.typedata:= ele.eledatarel(po3);        
       if sf_constructor in asub^.flags then begin
        inc(d.dat.datatyp.indirectlevel);
@@ -623,7 +625,7 @@ var
         end;
         d.dat.datatyp.typedata:= ele1; //todo: adress operator
         d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
-                       ptypedataty(ele.eledataabs(ele1))^.indirectlevel;
+                       ptypedataty(ele.eledataabs(ele1))^.h.indirectlevel;
        end;
       end;
       ek_sub: begin
@@ -700,13 +702,13 @@ begin
     ck_ref: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
-                                (po3^.kind <> dk_record) then begin
+                                (po3^.h.kind <> dk_record) then begin
       errormessage(err_illegalqualifier,[]);
       goto endlab;
      end
      else begin
-      if po3^.base <> 0 then begin
-       ele.elementparent:= po3^.base;
+      if po3^.h.base <> 0 then begin
+       ele.elementparent:= po3^.h.base;
       end
       else begin
        ele.elementparent:= d.dat.datatyp.typedata;
@@ -733,17 +735,17 @@ begin
     po1:= ele.parentelement;
    {$ifdef mse_checkinternalerror}
     if (po1^.header.kind <> ek_type) or 
-        (ptypedataty(@po1^.data)^.kind <> dk_class) then begin
+        (ptypedataty(@po1^.data)^.h.kind <> dk_class) then begin
      internalerror(ie_parser,'20150401B');
     end;
    {$endif}
     with ptypedataty(@po1^.data)^ do begin
-     if ancestor = 0 then begin
+     if h.ancestor = 0 then begin
       errormessage(err_noancestor,[]); //todo: source pos
       goto endlab;
      end
      else begin
-      ele.elementparent:= ancestor;
+      ele.elementparent:= h.ancestor;
      end;
     end;
    end
@@ -897,7 +899,7 @@ begin
      if firstnotfound > idents.high then begin
       if paramco = 0 then begin
        with ptypedataty(po2)^ do begin
-        if kind = dk_enumitem then begin
+        if h.kind = dk_enumitem then begin
          d.kind:= ck_const;
          d.dat.indirection:= 0;
          d.dat.datatyp.flags:= [];
@@ -909,9 +911,9 @@ begin
         else begin         
          with ptypedataty(po2)^ do begin
           d.kind:= ck_typearg;
-          d.typ.flags:= flags;
+          d.typ.flags:= h.flags;
           d.typ.typedata:= ele.eledatarel(po2);
-          d.typ.indirectlevel:= indirectlevel;
+          d.typ.indirectlevel:= h.indirectlevel;
           if not isgetfact then begin
            d.typ.indirectlevel:= d.typ.indirectlevel +
                     contextstack[s.stackindex-1].d.dat.indirection;
@@ -930,9 +932,9 @@ begin
        end
        else begin
         if not tryconvert(s.stacktop-s.stackindex,po2,
-                                 ptypedataty(po2)^.indirectlevel) then begin
+                                 ptypedataty(po2)^.h.indirectlevel) then begin
          illegalconversionerror(contextstack[s.stacktop].d,po2,
-                                     ptypedataty(po2)^.indirectlevel);
+                                     ptypedataty(po2)^.h.indirectlevel);
         end
         else begin
          contextstack[s.stackindex].d:= contextstack[s.stacktop].d;
