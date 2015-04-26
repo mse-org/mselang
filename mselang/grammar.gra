@@ -547,8 +547,9 @@ gettype,,,*^
  'array'.,arraydef-^*
  'class'.,classdef-^*
  'interface'.,interfacedef-^*
- 'procedure'.,proceduretypedef-^*
+ 'procedure'.,proceduretypedef-*,typedefreturn^
  '',simpletype^*
+typedefreturn,,,*>
 //
 // defs
 //

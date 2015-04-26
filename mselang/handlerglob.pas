@@ -112,6 +112,11 @@ type
  end;
  pinfointerfacety = ^infointerfacety;
 
+ infosubty = record
+  sub: elementoffsetty;
+ end;
+ pinfosubty = ^infosubty;
+ 
  infoenumitemty = record
   value: integer;
   enum: elementoffsetty;
@@ -223,6 +228,9 @@ type
    );
    dk_interface:(
     infointerface: infointerfacety;
+   );
+   dk_sub:(
+    infosub: infosubty;
    );
    dk_enum:(
     infoenum: infoenumty;
@@ -400,6 +408,9 @@ const
  
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
+procedure inittypedata(var atype: typedataty; akind: datakindty;
+            aindirectlevel: integer; aflags: typeflagsty;
+            artti: dataaddressty; aancestor: elementoffsetty); inline;
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; abitsize: integer;
             aflags: typeflagsty = [];

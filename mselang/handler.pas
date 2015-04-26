@@ -1018,12 +1018,12 @@ end;
 
 const
  negops: array[datakindty] of opcodety = (
- //dk_none, dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
-   oc_none, oc_none,   oc_none,   oc_negcard32, oc_negint32, oc_negflo64,
+ //dk_none, dk_pointer,dk_boolean,dk_cardinal, dk_integer, dk_float,
+   oc_none, oc_none,   oc_none,   oc_negcard32,oc_negint32,oc_negflo64,
  //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,
- //dk_array,dk_class,dk_interface,
-   oc_none, oc_none, oc_none,
+ //dk_array,dk_class,dk_interface,dk_sub
+   oc_none, oc_none, oc_none,     oc_none,
  //dk_enum,dk_enumitem,dk_set
    oc_none,oc_none,    oc_none
  );

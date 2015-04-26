@@ -44,8 +44,8 @@ const
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,      dk_dynarray,         
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,
-  //dk_array,dk_class,dk_interface,
-    oc_none, oc_none, oc_none, 
+  //dk_array,dk_class,dk_interface,dk_sub,
+    oc_none, oc_none, oc_none,     oc_none,
   //dk_enum,dk_enumitem,dk_set
     oc_none,oc_none,    oc_none
  );

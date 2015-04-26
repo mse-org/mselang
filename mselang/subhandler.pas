@@ -762,7 +762,10 @@ begin
     end
     else begin
      if sf_typedef in subflags then begin
+      ele.decelementparent();
       setsubtype(-2,ele.eledatarel(po1));
+      dec(info.s.stackindex);
+      exit;
      end
      else begin
       forwardmark(po1^.mark,s.source);

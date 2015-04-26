@@ -50,7 +50,7 @@ procedure handlesettype();
 procedure checkrecordfield(const avisibility: visikindsty;
                        const aflags: addressflagsty; var aoffset: dataoffsty;
                                                   var atypeflags: typeflagsty);
-procedure setsubtype(const atypetypecontext: int32;
+procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
 
 implementation
@@ -107,7 +107,7 @@ end;
 
 procedure handlechecktypeident();
 var
- po1,po2: pelementinfoty;
+ {po1,}po2: pelementinfoty;
  po3,po4: ptypedataty;
  idcontext: pcontextitemty;
  bo1,bo2: boolean;
@@ -143,9 +143,8 @@ begin
      internalerror(ie_type,'20140324B');
     end;
    {$endif}
-    po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
-    if po1 <> nil then begin
-     po4:= @po1^.data;
+    if ele.addelementdata(idcontext^.d.ident.ident,
+                                          ek_type,allvisi,po4) then begin
      po4^:= po3^;
      if po3^.h.base = 0 then begin
       po4^.h.base:= d.typ.typedata;
@@ -175,50 +174,31 @@ begin
  end;
 end;
 
-procedure setsubtype(const atypetypecontext: int32; 
+procedure setsubtype(atypetypecontext: int32; 
                                           const asub: elementoffsetty);
 var
  po1: ptypedataty;
 begin
  with info do begin
+  atypetypecontext:= atypetypecontext+s.stackindex;
  {$ifdef mse_checkinternalerror}
-  if (contextstack[s.stackindex+atypetypecontext].d.kind <> ck_typetype) or
-   (contextstack[s.stackindex+atypetypecontext-1].d.kind <> ck_ident) then begin
+  if (contextstack[atypetypecontext].d.kind <> ck_typetype) or
+   (contextstack[atypetypecontext-1].d.kind <> ck_ident) then begin
    internalerror(ie_handler,'20150425A');
   end;
  {$endif}
-  if not ele.addelementdata(contextstack[s.stackindex+
-        atypetypecontext-1].d.ident.ident,ek_type,allvisi,po1) then begin
+  if not ele.addelementdata(contextstack[atypetypecontext-1].d.ident.ident,
+                                                 ek_type,allvisi,po1) then begin
    identerror(atypetypecontext-1,err_duplicateidentifier);
   end
   else begin
    with contextstack[atypetypecontext] do begin
-   {
-    po1:= ele.addelement(idcontext^.d.ident.ident,ek_type,allvisi);
- inittypedata
-    if po1 <> nil then begin
-     po4:= @po1^.data;
-     po4^:= po3^;
-     if po3^.base = 0 then begin
-      po4^.base:= d.typ.typedata;
-     end;
-     po4^.indirectlevel:= d.typ.indirectlevel;
-     if po4^.indirectlevel > 0 then begin
-      po4^.flags-= [tf_managed,tf_hasmanaged];
-     end;
-     if forward1 then begin
-      markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
-     end
-     else begin
-      resolveforwardtype(po4);
-     end;
-    end
-    else begin //duplicate
-     identerror(-3,err_duplicateidentifier);
-    end;
-    }
+    inittypedatasize(po1^,dk_sub,d.typ.indirectlevel+1,das_pointer);
+    po1^.infosub.sub:= asub;
    end;
   end;
+//  s.stackindex:= contextstack[atypetypecontext].parent-1;//todo: record field?
+//  s.stacktop:= s.stackindex;
  end;
 end;
 

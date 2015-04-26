@@ -55,6 +55,8 @@ const
     sdk_none,sdk_pointer,sdk_bool1,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
   //dk_address,dk_record,dk_string,dk_dynarray,dk_array,dk_class,dk_interface
     sdk_pointer,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
+  //dk_sub
+    sdk_pointer,
   //dk_enum,dk_enumitem, dk_set
     sdk_none,   sdk_none, sdk_none);
                 

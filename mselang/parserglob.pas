@@ -69,7 +69,7 @@ type
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
                dk_kind,
                dk_address,dk_record,dk_string8,dk_dynarray,
-               dk_array,dk_class,dk_interface,
+               dk_array,dk_class,dk_interface,dk_sub,
                dk_enum,dk_enumitem,dk_set);
  pdatakindty = ^datakindty;
  

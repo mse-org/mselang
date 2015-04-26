@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -656,7 +656,6 @@ begin
  result:= identlist.identname(aident,name);
 end;
 
-//{$ifdef mse_debugparser}
 function getidentname(const aident: identty): string;
 var
  lstr1: lstringty;
@@ -665,7 +664,7 @@ begin
   result:= lstringtostring(lstr1);
  end
  else begin
-  result:= '';
+  result:= '°';
  end;
 end;
 
@@ -1451,6 +1450,9 @@ function telementhashdatalist.dumpelements: msestringarty;
       end;
       dk_interface: begin
        result:= result+' subco:'+inttostr(infointerface.subcount);
+      end;
+      dk_sub: begin
+       result:= result+' sub:'+inttostr(infosub.sub);
       end;
      end;
     end;

@@ -1017,6 +1017,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
                caption: 'gettype');
+ typedefreturnco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: true; restoresource: false; cutafter: true; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'typedefreturn');
  typeco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: false; 
@@ -4698,8 +4703,8 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @interfacedefco); stack: nil; 
      keyword: $B3C66EDD{'interface'}),
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush];
-     dest: (context: @proceduretypedefco); stack: nil; 
+   (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_changeparentcontext];
+     dest: (context: @proceduretypedefco); stack: @typedefreturnco; 
      keyword: $F19BB75B{'procedure'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -7842,6 +7847,7 @@ begin
  gettypetypeco.next:= @gettypeco;
  gettypetypeco.handleentry:= @handlegettypetypestart;
  gettypeco.branch:= @bgettype;
+ typedefreturnco.branch:= nil;
  typeco.branch:= @btype;
  typeco.handleexit:= @handletype;
  type0co.branch:= @btype0;
