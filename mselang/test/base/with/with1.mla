@@ -1,0 +1,16 @@
+program with1;
+
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+var
+ r1: recty;
+begin
+ with r1 do begin
+  a:= 1;
+  b:= 122;
+ end;
+ exitcode:= r1.a+r1.b;
+end.

@@ -1,0 +1,19 @@
+program subvar;
+interface
+type
+ procty = procedure(a: int32);
+ recty = record
+  p: procty;
+  a: int32;
+ end;
+implementation
+var
+ r1: recty;
+ p: procty;
+begin
+ r1.a:= 123;
+ r1.p:= nil;
+ if r1.p = nil then begin
+  exitcode:= r1.a;
+ end;
+end.

@@ -1,0 +1,17 @@
+program external;
+
+interface
+uses
+ __mla__compilerunit;
+ 
+implementation
+
+procedure test();
+begin
+ exitcode:= 123;
+end;
+
+begin
+ _Unwind_RaiseException(nil); //does nothing
+ test();
+end.

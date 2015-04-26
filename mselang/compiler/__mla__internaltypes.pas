@@ -16,6 +16,7 @@ type
 type
 {$ifdef mse_compiler}
  targetptrintty = int32;
+ card64 = qword;
 {$endif}
  refcountty = int32;
  managedsizety = int32;
@@ -107,14 +108,19 @@ type
  p_Unwind_Exception = ^_Unwind_Exception;
  _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
- p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
+// p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
  
  _Unwind_Exception = record
-  exception_class: uint64;
-  exception_cleanup: p_Unwind_Exception_Cleanup_Fn;
-  private_1: uint64;
-  private_2: uint64;
+  exception_class: card64;
+  exception_cleanup: {p}_Unwind_Exception_Cleanup_Fn;
+  private_1: card64;
+  private_2: card64;
  end;
+ exceptinfoty = record
+  header: _Unwind_Exception;
+  data: pointer;
+ end;
+ pexceptinfoty = ^exceptinfoty;
 
 implementation
 end.

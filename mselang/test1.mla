@@ -1,73 +1,87 @@
 program classininterfaceinh;
-type
- itest = interface
-  procedure test();
-  procedure test1();
- end;
- itest1 = interface
-  procedure test();
- end;
+interface 
+uses
+ __mla__internaltypes;
 
- tc1 = class
-  private
-  public
-   fa: int32;
-   constructor create();
-   destructor destroy();
-   procedure test(); {virtual;}
-   procedure test1();
- end;
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
+procedure __mla__raise(const data: pointer);
 
- tc2 = class(tc1,itest,itest1)
-  public
- end;
+function _Unwind_RaiseException(
+           exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
 
- tc3 = class(tc2)
-  private
-  public
-   fb: int32;
-//   procedure test(); {override;}
- end;
+implementation
 
-constructor tc1.create();
+procedure __mla__decrefsize(ref: prefsizeinfoty);
 begin
+ if ref <> nil then begin
+  dec(ref);
+  if ref^.ref.count > 0 then begin
+   dec(ref^.ref.count);
+   if ref^.ref.count = 0 then begin
+    freemem(ref);
+   end;
+  end;
+ end;
 end;
 
-destructor tc1.destroy();
-begin
- exitcode:= fa+11;
-end;
-
-procedure tc1.test();
-begin
- fa:= 99;
-end;
-
-procedure tc1.test1();
-begin
- exitcode:= 100;
-end;
-{
-procedure tc3.test();
-begin
- f:= 112;
-end;
-}
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 var
- i1: itest;
- c1: tc3;
-
-type
- ppointer = ^pointer;
-
+ d: prefsizeinfoty;
 begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+  end;
+  ref^:= nil;
+ end;
+end;
 
- c1:= tc3.create();
- exitcode:= c1.fa;
- writeln(pointer(exitcode));
-// i1:= itest(c1);
-// i1.test();
-// c1.test();
- c1.destroy();
+//todo: use simplified version if there are no interfaces
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
+var
+ ps,pd,pe: ppointer;
+ po1: pclassdefinfoty;
+begin
+ getzeromem(result,classinfo.header.allocs.size);
+ po1:= @classinfo;
+ ppointer(result)^:= @classinfo;
+//writeln('******* ',result);
+ repeat
+  pd:= result + po1^.header.allocs.instanceinterfacestart;
+                                            //copy interface table
+  pe:= result + po1^.header.allocs.size;
+  ps:= pointer(po1) + po1^.header.allocs.classdefinterfacestart;
+{
+writeln('* ',po1,' ',po1^.header.parentclass,' ',
+             po1^.header.interfaceparent,' ',
+             po1^.header.allocs.size,' ',
+             po1^.header.allocs.instanceinterfacestart,' ',
+             po1^.header.allocs.classdefinterfacestart);
+}
+  while pd < pe do begin
+   pd^:= ps^;
+//writeln(int32(pointer(pd)-result),' ',pd,':',pd^);
+   inc(pd);
+   inc(ps);
+  end;
+  po1:= po1^.header.interfaceparent;
+ until po1 = nil;
+end;
 
+procedure __mla__raise(const data: pointer);
+var
+ po1: pexceptinfoty;
+begin
+ getmem(po1,sizeof(exceptinfoty);
+ with po1^.header do begin
+ end;
+end;
+begin
 end.

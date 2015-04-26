@@ -232,7 +232,7 @@ const
    (name: 'card64'; data: (h: (ancestor: 0; kind: dk_cardinal;
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64);
-       infocard64:(min: int64($0000000000000000); max: $ffffffffffffffff))),
+       infocard64:(min: $0000000000000000; max: card64($ffffffffffffffff)))),
    (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64);

@@ -15,6 +15,10 @@ uses
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
+procedure __mla__raise(const data: pointer);
+
+function _Unwind_RaiseException(
+           exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
 
 implementation
 
@@ -78,6 +82,15 @@ writeln('* ',po1,' ',po1^.header.parentclass,' ',
   end;
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
+end;
+
+procedure __mla__raise(const data: pointer);
+var
+ po1: pexceptinfoty;
+begin
+ getmem(po1,sizeof(exceptinfoty);
+// with po1^.header do begin
+// end;
 end;
 
 end.
