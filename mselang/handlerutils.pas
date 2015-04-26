@@ -217,6 +217,22 @@ const
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64);
        infoint64:(min: int64($8000000000000000); max: $7fffffffffffffff))),
+   (name: 'card8'; data: (h: (ancestor: 0; kind: dk_cardinal;
+       base: 0;  rtti: 0; flags: [];indirectlevel: 0;
+       bitsize: 8; bytesize: 1; datasize: das_8);
+       infocard8:(min: int8($00); max: $ff))),
+   (name: 'card16'; data: (h: (ancestor: 0; kind: dk_cardinal;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 16; bytesize: 2; datasize: das_16);
+       infocard16:(min: int16($0000); max: $ffff))),
+   (name: 'card32'; data: (h: (ancestor: 0; kind: dk_cardinal;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_32);
+      infocard32:(min: int32($00000000); max: $ffffffff))),
+   (name: 'card64'; data: (h: (ancestor: 0; kind: dk_cardinal;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 64; bytesize: 8; datasize: das_64);
+       infocard64:(min: int64($0000000000000000); max: $ffffffffffffffff))),
    (name: 'flo64'; data: (h: (ancestor: 0; kind: dk_float;
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_64);
