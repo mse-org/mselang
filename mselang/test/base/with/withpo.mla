@@ -1,4 +1,4 @@
-program address;
+program withpo;
 
 type
  recty = record
@@ -11,9 +11,9 @@ var
  po1: precty;
 begin
  po1:= @r1;
- if po1 = @r1 then begin
-  po1^.a:= 1;
-  po1^.b:= 122;
+ with po1^ do begin
+  a:= 1;
+  b:= 122;
  end;
  exitcode:= r1.a+r1.b;
 end.

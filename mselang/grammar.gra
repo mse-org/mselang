@@ -380,7 +380,7 @@ checkend,,,*
 
 with,with1,,handlewithentry
 with1,with2,,
- '',fact*
+ '',factad*
 with2,,handlewith2entry,handledoexpected*
  ${whitespace}
  ',',with1-
@@ -733,7 +733,9 @@ term1,,,handleterm
 mulfact,,,handlemulfact
  '',fact*
 
-fact,fact1,handlefactstart,
+factad,fact0,handlefactadentry,
+fact,fact0,handlefactentry,
+fact0,fact1,,
  ${whitespace}
  '+',-
  '-',negfact-*

@@ -98,7 +98,8 @@ procedure handlecommaseprange();
 procedure handlemain();
 procedure handlekeyword();
 
-procedure handlefactstart();
+procedure handlefactentry();
+procedure handlefactadentry();
 procedure handlenegfact();
 procedure handleaddressfact();
 procedure handlefact();
@@ -973,36 +974,31 @@ begin
  end;
 end;
 
-procedure handlefactstart();
+procedure handlefactentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('FACTSTART');
+ outhandle('FACTENTRY');
 {$endif}
  with info,contextstack[s.stacktop] do begin
   stringbuffer:= '';
   d.kind:= ck_getfact;
   with d.getfact do begin
    flags:= [];
-//   negcount:= 0;
-//   indicount:= 0;
-//   derefcount:= 0;
   end;
  end;
 end;
-(*
-procedure handlenegfact();
+
+procedure handlefactadentry();
 begin
 {$ifdef mse_debugparser}
- outhandle('NEGFACT');
+ outhandle('FACTADENTRY');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  inc(d.getfact.negcount);
-  if d.getfact.indicount <> 0 then begin
-   errormessage(err_illegalexpression,[]);
-  end;
+ handlefactentry();
+ with info,contextstack[s.stacktop].d.getfact do begin
+  include(flags,ff_addressfact);
  end;
 end;
-*)
+
 procedure handleaddressfact();
 begin
 {$ifdef mse_debugparser}
@@ -1065,7 +1061,7 @@ begin
      fl1:= d.getfact.flags;
     end;
     d:= contextstack[s.stacktop].d;
-    if ff_address in fl1 then begin
+    if fl1 * [ff_address,ff_addressfact] <> [] then begin
      case d.kind of
       ck_const: begin
        errormessage(err_cannotaddressconst,[],1);
@@ -1076,13 +1072,12 @@ begin
        end
        else begin
         inc(d.dat.indirection);
+        inc(d.dat.datatyp.indirectlevel);
        end;
-//       i1:= (d.dat.datatyp.indirectlevel+1);
-       if not (tf_subad in d.dat.datatyp.flags) then begin
+       if not (ff_addressfact in fl1) and
+                   not (tf_subad in d.dat.datatyp.flags) then begin
         d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
        end;
-       
-//       d.dat.datatyp.indirectlevel:= i1;
       end;
       ck_fact: begin
        errormessage(err_cannotaddressexp,[],1);
@@ -2206,8 +2201,10 @@ begin
   case d.kind of
    ck_ref: begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if (d.dat.datatyp.indirectlevel = 0) and 
+    if (d.dat.datatyp.indirectlevel = 1) and 
                          (po1^.h.kind in [dk_record,dk_class]) then begin
+     dec(d.dat.datatyp.indirectlevel);
+     dec(d.dat.indirection);
      if getaddress(s.stacktop-s.stackindex,true) then begin
       with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
        address:= getpointertempaddress();

@@ -1011,8 +1011,52 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
-   c=20
+   a=0,665,4,indirect
+   c=22
+    (
+    kind=2
+    a=0,648,1,address
+    teststate=1
+    path=address.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,address llvm
+    teststate=1
+    path=address.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
     (
     kind=2
     a=0,648,1,indirectloc
@@ -2319,7 +2363,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=4
     (
     kind=2
@@ -2918,7 +2962,25 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=25
+rowstate=43
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

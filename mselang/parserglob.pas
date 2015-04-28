@@ -393,7 +393,7 @@ type
   d: dataty;
  end;
 
- factflagty = (ff_address);
+ factflagty = (ff_address,ff_addressfact);
  factflagsty = set of factflagty;
  
  getfactinfoty = record

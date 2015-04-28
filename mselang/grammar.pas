@@ -1312,11 +1312,21 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'mulfact');
+ factadco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'factad');
  factco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'fact');
+ fact0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'fact0');
  fact1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3566,7 +3576,7 @@ const
    );
  bwith1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @factco); stack: nil; keys: (
+     dest: (context: @factadco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -6253,7 +6263,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bfact: array[0..17] of branchty = (
+ bfact0: array[0..17] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -7964,9 +7974,14 @@ begin
  term1co.handleexit:= @handleterm;
  mulfactco.branch:= @bmulfact;
  mulfactco.handleexit:= @handlemulfact;
- factco.branch:= @bfact;
- factco.next:= @fact1co;
- factco.handleentry:= @handlefactstart;
+ factadco.branch:= nil;
+ factadco.next:= @fact0co;
+ factadco.handleentry:= @handlefactadentry;
+ factco.branch:= nil;
+ factco.next:= @fact0co;
+ factco.handleentry:= @handlefactentry;
+ fact0co.branch:= @bfact0;
+ fact0co.next:= @fact1co;
  fact1co.branch:= @bfact1;
  fact1co.handleexit:= @handlefact;
  fact2co.branch:= @bfact2;
