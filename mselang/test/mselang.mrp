@@ -1011,7 +1011,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,664,4,indirect
    c=22
     (
     kind=2
@@ -2363,8 +2363,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,with
-   c=4
+   a=0,665,4,with
+   c=6
     (
     kind=2
     a=0,648,1,with1
@@ -2392,6 +2392,50 @@ c=3
     a=0,648,1,with1 llvm
     teststate=1
     path=with1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,with2
+    teststate=1
+    path=with2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,with2 llvm
+    teststate=1
+    path=with2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2962,23 +3006,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=43
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=27
  0 0
  0 0
  0 0

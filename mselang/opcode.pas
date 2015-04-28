@@ -322,7 +322,7 @@ begin
    locdatapo:= locdatapo + pointersize;
   end
   else begin
-   result.locaddress.ssaindex:= info.s.ssa.index;
+   result.locaddress.ssaindex:= info.s.ssa.nextindex-1;
   end;
  end;
 end;
