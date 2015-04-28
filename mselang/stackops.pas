@@ -319,7 +319,7 @@ end;
 
 procedure mainop();
 begin
- //dummy
+ cpu.frame:= cpu.stack;
 end;
 
 procedure progendop();

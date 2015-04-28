@@ -2193,13 +2193,14 @@ begin
  end;
 end;
 *)
-
+var testvar: pvardataty;
 procedure handlewith2entry();
 var
  po1: ptypedataty;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
- outhandle('WITH1');
+ outhandle('WITH2ENTRY');
 {$endif}
  with info,contextstack[s.stacktop] do begin
   case d.kind of
@@ -2207,12 +2208,17 @@ begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     if (d.dat.datatyp.indirectlevel = 0) and 
                          (po1^.h.kind in [dk_record,dk_class]) then begin
+     if getaddress(s.stacktop-s.stackindex,true) then begin
+//      with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
 
-     with pvardataty(ele.addscope(ek_var,d.dat.datatyp.typedata))^ do begin
-      address:= d.dat.ref.c.address;
-      address.poaddress:= address.poaddress + d.dat.ref.offset;
-      vf.typ:= d.dat.datatyp.typedata;
-      vf.next:= 0;
+testvar:=pvardataty(ele.addscope(ek_var,basetype(po1)));
+with testvar^ do begin
+       address:= getpointertempaddress();
+       include(address.flags,af_withindirect);
+       vf.typ:= d.dat.datatyp.typedata;
+       vf.flags:= [];
+       vf.next:= 0;
+      end;
      end;
     end
     else begin
@@ -2237,6 +2243,7 @@ begin
  with info do begin
   ele.popscopelevel();
   dec(s.stackindex);
+  releasepointertempaddress();
  end;
 end;
 

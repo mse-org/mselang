@@ -292,6 +292,8 @@ begin
   include(ident.flags,idf_inherited);
  end;
 end;
+
+//todo: simplify, use unified indirection handling
  
 procedure handlevalueidentifier();
 var
@@ -594,7 +596,7 @@ var
   offs1: dataoffsty;
  begin
   if firstnotfound <= idents.high then begin
-   ele1:= typeele;
+   ele1:= basetype(typeele);
    offs1:= 0;
    with info do begin
     for int1:= firstnotfound to idents.high do begin //fields
@@ -854,11 +856,11 @@ begin
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
        d.dat.datatyp.flags:= [];
-       {d.dat.ref.c.address.indirectlevel}{ +
-           ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.indirectlevel;}
        d.dat.indirection:= 0;
-       if af_paramindirect in d.dat.ref.c.address.flags then begin
-        exclude(d.dat.ref.c.address.flags,af_paramindirect);
+       if d.dat.ref.c.address.flags *
+                          [af_paramindirect,af_withindirect] <> [] then begin
+        d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-
+                                       [af_paramindirect,af_withindirect];
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;

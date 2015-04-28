@@ -44,6 +44,9 @@ function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
 procedure inclocvaraddress(const asize: integer);
 function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
             var aflags: addressflagsty; const shift: integer = 0): locaddressty;
+function getpointertempaddress(): addressvaluety;
+procedure releasepointertempaddress();
+
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
 function getclassinfoaddress(const asize: int32;
@@ -304,6 +307,30 @@ begin
   aflags:= aflags - addresskindflags + [af_local];
   if adatasize = das_none then begin
    include(aflags,af_aggregate);
+  end;
+ end;
+end;
+
+function getpointertempaddress(): addressvaluety;
+begin
+ with info do begin
+  result.flags:= [af_local];
+  result.indirectlevel:= 1;
+  result.locaddress.framelevel:= info.sublevel;
+  if backend <> bke_llvm then begin
+   result.locaddress.address:= locdatapo;
+   locdatapo:= locdatapo + pointersize;
+  end
+  else begin
+  end;
+ end;
+end;
+
+procedure releasepointertempaddress();
+begin
+ with info do begin
+  if backend <> bke_llvm then begin
+   locdatapo:= locdatapo - pointersize;
   end;
  end;
 end;

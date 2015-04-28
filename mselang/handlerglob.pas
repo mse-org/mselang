@@ -408,6 +408,9 @@ const
  
  
 function gettypesize(const typedata: typedataty): datasizety; inline;
+function basetype(const atype: ptypedataty): elementoffsetty;
+function basetype(const atype: elementoffsetty): elementoffsetty;
+
 procedure inittypedata(var atype: typedataty; akind: datakindty;
             aindirectlevel: integer; aflags: typeflagsty;
             artti: dataaddressty; aancestor: elementoffsetty); inline;
@@ -425,12 +428,30 @@ procedure inittypedatasize(var atype: typedataty; akind: datakindty;
             artti: dataaddressty = 0; aancestor: elementoffsetty = 0); inline;
 
 implementation
-
+uses
+ elements;
+ 
 function gettypesize(const typedata: typedataty): datasizety; inline;
 begin
  result:= typedata.h.bytesize;
  if typedata.h.indirectlevel <> 0 then begin
   result:= pointersize;
+ end;
+end;
+
+function basetype(const atype: ptypedataty): elementoffsetty;
+begin
+ result:= atype^.h.base;
+ if result = 0 then begin
+  result:= ele.eledatarel(atype);
+ end;
+end;
+
+function basetype(const atype: elementoffsetty): elementoffsetty;
+begin
+ result:= ptypedataty(ele.eledataabs(atype))^.h.base;
+ if result = 0 then begin
+  result:= atype;
  end;
 end;
 
