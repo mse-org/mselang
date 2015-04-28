@@ -2193,7 +2193,7 @@ begin
  end;
 end;
 *)
-var testvar: pvardataty;
+
 procedure handlewith2entry();
 var
  po1: ptypedataty;
@@ -2209,10 +2209,7 @@ begin
     if (d.dat.datatyp.indirectlevel = 0) and 
                          (po1^.h.kind in [dk_record,dk_class]) then begin
      if getaddress(s.stacktop-s.stackindex,true) then begin
-//      with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
-
-testvar:=pvardataty(ele.addscope(ek_var,basetype(po1)));
-with testvar^ do begin
+      with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
        address:= getpointertempaddress();
        include(address.flags,af_withindirect);
        vf.typ:= d.dat.datatyp.typedata;

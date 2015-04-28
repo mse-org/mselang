@@ -314,7 +314,7 @@ end;
 function getpointertempaddress(): addressvaluety;
 begin
  with info do begin
-  result.flags:= [af_local];
+  result.flags:= [af_temp];
   result.indirectlevel:= 1;
   result.locaddress.framelevel:= info.sublevel;
   if backend <> bke_llvm then begin
@@ -322,6 +322,7 @@ begin
    locdatapo:= locdatapo + pointersize;
   end
   else begin
+   result.locaddress.ssaindex:= info.s.ssa.index;
   end;
  end;
 end;
@@ -331,6 +332,9 @@ begin
  with info do begin
   if backend <> bke_llvm then begin
    locdatapo:= locdatapo - pointersize;
+   with additem(oc_pop)^ do begin
+    par.imm.vsize:= pointersize;
+   end;
   end;
  end;
 end;

@@ -106,7 +106,7 @@ const
  ordinalopdatakinds = bitopdatakinds-floatopdatakinds;
 
 type
- addressflagty = (af_nil,af_segment,af_local,{af_nested,}af_param,
+ addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,
                   af_paramindirect,af_const,af_withindirect,
                   af_classfield,af_stack,af_segmentpo,af_aggregate,
                   af_startoffset //for indirection
@@ -330,10 +330,7 @@ type
  locaddressty = record
   address: dataoffsty; //first, must map poaddress
   framelevel: integer;
-//  nestedindex: integer;
- {$ifdef mse_locvarssatracking}
-  ssaindex: integer;
- {$endif}
+  ssaindex: integer; //for llvm temp var
  end;
  
  addressvaluety = record

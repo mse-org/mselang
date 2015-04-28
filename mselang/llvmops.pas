@@ -264,12 +264,17 @@ begin
     bcstream.emitloadop(bcstream.relval(0));
    end
    else begin
-    if af_aggregate in t.flags then begin
-     bcstream.emitlocdataaddresspo(memop);
-     bcstream.emitloadop(bcstream.relval(0));
+    if af_temp in t.flags then begin
+     bcstream.emitbitcast(bcstream.ssaval(a.ssaindex),t.listindex);
     end
     else begin
-     bcstream.emitloadop(bcstream.allocval(a.address));
+     if af_aggregate in t.flags then begin
+      bcstream.emitlocdataaddresspo(memop);
+      bcstream.emitloadop(bcstream.relval(0));
+     end
+     else begin
+      bcstream.emitloadop(bcstream.allocval(a.address));
+     end;
     end;
    end;
   end;
