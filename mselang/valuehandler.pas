@@ -779,7 +779,8 @@ begin
    case po1^.header.kind of
     ek_var,ek_field: begin
      if po1^.header.kind = ek_field then begin
-      if contextstack[s.stackindex-1].d.dat.indirection < 0 then begin
+      if not isgetfact and 
+               (contextstack[s.stackindex-1].d.dat.indirection < 0) then begin
        if not getaddress(-1,true) then begin
         goto endlab;
        end;
