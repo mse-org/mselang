@@ -1353,7 +1353,7 @@ function pushindirection(const stackoffset: integer;
 var
  i1,i2,i3: integer;
  po1: popinfoty;
- bo1,bo2: boolean;
+ bo1,isstartoffset: boolean;
  ssabefore: int32;
 begin
  result:= true;
@@ -1366,12 +1366,17 @@ begin
   if d.dat.indirection <= 0 then begin
    bo1:= (d.dat.datatyp.indirectlevel =
                                  d.dat.ref.c.address.indirectlevel);
-   bo2:= af_startoffset in d.dat.ref.c.address.flags;
+   isstartoffset:= af_startoffset in d.dat.ref.c.address.flags;
+   i3:= 0;
+   if isstartoffset then begin
+    i3:= d.dat.ref.offset;
+   end;
    if address and not bo1 then begin
+    i2:= 0;
     if d.dat.indirection = 0 then begin
      pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
-                0,bitoptypes[das_pointer]);
-     if d.dat.ref.offset <> 0 then begin
+                i3,bitoptypes[das_pointer]);
+     if not isstartoffset and (d.dat.ref.offset <> 0) then begin
       ssabefore:= getcontextssa(stackoffset);
       with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
        par.ssas1:= ssabefore;
@@ -1379,18 +1384,14 @@ begin
       end;
       inc(d.dat.indirection);
      end;
+     i2:= -1;
     end
     else begin
      pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
                                                         d.dat.ref.offset);
     end;
-    i2:= 0;
    end
    else begin
-    i3:= 0;
-    if bo2 then begin
-     i3:= d.dat.ref.offset;
-    end;
     pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
                 i3,bitoptypes[das_pointer]);
     i2:= -1;
@@ -1402,7 +1403,7 @@ begin
     end;
    end;
    initfactcontext(stackoffset);
-   if (not address or bo1) and not bo2 then begin
+   if (not address or bo1) and not isstartoffset then begin
     offsetad(stackoffset,d.dat.ref.offset);
    end;
     {
