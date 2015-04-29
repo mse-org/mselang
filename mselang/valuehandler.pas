@@ -56,10 +56,37 @@ begin
        case dest^.h.kind of //todo: use table
         dk_float: begin
          case source1^.h.kind of
-          dk_integer: begin //todo: adjust data size
+          dk_integer: begin
            with d,dat.constval do begin
             kind:= dk_float;
             vfloat:= vinteger;
+           end;
+           result:= true;
+          end;
+          dk_cardinal: begin
+           with d,dat.constval do begin
+            kind:= dk_float;
+            vfloat:= vcardinal;
+           end;
+           result:= true;
+          end;
+         end;
+        end;
+        dk_cardinal: begin
+         case source1^.h.kind of
+          dk_integer: begin
+           with d,dat.constval do begin
+            kind:= dk_cardinal;
+           end;
+           result:= true;
+          end;
+         end;
+        end;
+        dk_integer: begin
+         case source1^.h.kind of
+          dk_cardinal: begin
+           with d,dat.constval do begin
+            kind:= dk_integer;
            end;
            result:= true;
           end;
@@ -71,9 +98,23 @@ begin
        case dest^.h.kind of //todo: use table
         dk_float: begin
          case source1^.h.kind of
-          dk_integer: begin //todo: adjust data size
+          dk_integer: begin //todo: data size
            with additem(oc_int32toflo64)^ do begin
            end;
+           result:= true;
+          end;
+         end;
+        end;
+        dk_cardinal: begin
+         case source1^.h.kind of
+          dk_integer: begin  //todo: data size
+           result:= true;
+          end;
+         end;
+        end;
+        dk_integer: begin
+         case source1^.h.kind of
+          dk_cardinal: begin  //todo: data size
            result:= true;
           end;
          end;

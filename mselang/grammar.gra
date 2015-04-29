@@ -734,12 +734,13 @@ mulfact,,,handlemulfact
  '',fact*
 
 addressfact,fact0,handleaddressfactentry,
+addressopfact,fact0,handleaddressopfactentry,
 fact,fact0,handlefactentry,
 fact0,fact1,,
  ${whitespace}
  '+',-
  '-',negfact-*
- '@',addressfact-*
+ '@',addressopfact-*
 // '@',!handleaddressfact-
  '(',bracketstart-*
  @decnum,num*

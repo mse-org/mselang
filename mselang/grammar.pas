@@ -1317,6 +1317,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'addressfact');
+ addressopfactco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'addressopfact');
  factco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -6314,7 +6319,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat,bf_push];
-     dest: (context: @addressfactco); stack: nil; keys: (
+     dest: (context: @addressopfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['@']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -7977,6 +7982,9 @@ begin
  addressfactco.branch:= nil;
  addressfactco.next:= @fact0co;
  addressfactco.handleentry:= @handleaddressfactentry;
+ addressopfactco.branch:= nil;
+ addressopfactco.next:= @fact0co;
+ addressopfactco.handleentry:= @handleaddressopfactentry;
  factco.branch:= nil;
  factco.next:= @fact0co;
  factco.handleentry:= @handlefactentry;

@@ -752,7 +752,7 @@ begin
      setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
-   dk_integer,dk_enum: begin
+   dk_integer,dk_cardinal,dk_enum: begin //todo: datasize
     si1:= das_32;
     with insertitem(oc_pushimm32,stackoffset,before)^ do begin
      setimmint32(po1^.d.dat.constval.vinteger,par);

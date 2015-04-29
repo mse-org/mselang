@@ -94,6 +94,9 @@ type
  end;
  pintfdefinfoty = ^intfdefinfoty;
 
+const            //M S E   m l a
+ mlaexceptionid = $4d5345006d6c6100;
+type
  _Unwind_Reason_Code = (
   _URC_NO_REASON,// = 0,
   _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
@@ -112,7 +115,8 @@ type
  
  _Unwind_Exception = record
   exception_class: card64;
-  exception_cleanup: {p}_Unwind_Exception_Cleanup_Fn;
+  exception_cleanup: pointer;
+//  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
   private_1: card64;
   private_2: card64;
  end;

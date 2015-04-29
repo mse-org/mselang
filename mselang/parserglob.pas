@@ -374,7 +374,10 @@ type
     vboolean: bool8;
    );
    dk_integer:(
-    vinteger: int32;
+    vinteger: int64;
+   );
+   dk_cardinal:(
+    vcardinal: card64;
    );
    dk_float:(
     vfloat: float64;
