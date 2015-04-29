@@ -860,18 +860,12 @@ begin
            d.dat.ref.c.varele:= 0;
           end;
           ck_fact: begin
-           ssabefore:= d.dat.fact.ssaindex;
-           with insertitem(oc_offsetpoimm32,-1,false)^ do begin
-            par.ssas1:= ssabefore;
-            setimmint32(offset,par);
-            {
-            if backend = bke_llvm then begin
-             par.imm.vint32:= constlist.addi32(offset).listid;
-            end
-            else begin
-             par.imm.vint32:= offset;
+           if offset <> 0 then begin
+            ssabefore:= d.dat.fact.ssaindex;
+            with insertitem(oc_offsetpoimm32,-1,false)^ do begin
+             par.ssas1:= ssabefore;
+             setimmint32(offset,par);
             end;
-            }
            end;
            d.dat.datatyp.typedata:= vf.typ;
            d.dat.datatyp.indirectlevel:= indirectlevel;

@@ -1,0 +1,26 @@
+program withpo1;
+
+type
+ rec1ty = record
+  e: int32;
+  f: int32;
+ end;
+ recty = record
+  a: int32;
+  b: int32;
+  c: rec1ty;
+ end;
+ precty = ^recty;
+var
+ r1: recty;
+ po1: precty;
+begin
+ po1:= @r1;
+ r1.a:= 1;
+ r1.b:= 2;
+ with po1^.c do begin
+  e:= 10;
+  f:= 110;
+ end;
+ exitcode:= r1.a+r1.b+r1.c.e+r1.c.f;
+end.

@@ -1012,7 +1012,7 @@ c=3
    (
    kind=1
    a=0,664,4,indirect
-   c=22
+   c=24
     (
     kind=2
     a=0,648,1,address
@@ -1480,6 +1480,50 @@ c=3
     a=0,648,1,pointerrec llvm
     teststate=1
     path=pointerrec.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,pointerrec1
+    teststate=1
+    path=pointerrec1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,pointerrec1 llvm
+    teststate=1
+    path=pointerrec1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2364,7 +2408,7 @@ c=3
    (
    kind=1
    a=0,665,4,with
-   c=6
+   c=10
     (
     kind=2
     a=0,648,1,with1
@@ -2480,6 +2524,94 @@ c=3
     a=0,648,1,withpo llvm
     teststate=1
     path=withpo.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,withpo1
+    teststate=1
+    path=withpo1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,withpo1 llvm
+    teststate=1
+    path=withpo1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,withpo2
+    teststate=1
+    path=withpo2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,withpo2 llvm
+    teststate=1
+    path=withpo2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3006,7 +3138,11 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=27
+rowstate=31
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

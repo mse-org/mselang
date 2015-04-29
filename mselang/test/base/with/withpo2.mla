@@ -1,0 +1,22 @@
+program withpo2;
+type
+ rec1ty = record
+  a: int32;
+  b: pointer;
+ end;
+ recty = record
+  c: rec1ty;
+  d: int32;
+ end;
+var
+ po1: ^recty;
+ r1: recty;
+begin
+ po1:= @r1;
+ r1.d:= 13;
+ with po1^.c do begin
+  b:= nil;
+  a:= 110;
+ end;
+ exitcode:= r1.c.a+r1.d;
+end.
