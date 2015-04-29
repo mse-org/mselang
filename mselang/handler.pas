@@ -1064,7 +1064,13 @@ begin
        end;
       end;
       ck_fact: begin
-       errormessage(err_cannotaddressexp,[],1);
+       if d.dat.indirection = -1 then begin
+        d.dat.indirection:= 0;
+        inc(d.dat.datatyp.indirectlevel);
+       end
+       else begin
+        errormessage(err_cannotaddressexp,[],1);
+       end;
       end;
       ck_typearg: begin
        errormessage(err_cannotaddresstype,[],1);
