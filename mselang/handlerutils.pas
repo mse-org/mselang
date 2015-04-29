@@ -148,6 +148,7 @@ function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
+function getcontextssa(const stackoffset: integer): int32;
 procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
@@ -896,13 +897,8 @@ begin
  end
  else begin
   if af_segment in avalue.flags then begin
-//   if indirect then begin
-//    po1:= getop(oc_pushsegaddrindi);
-//   end
-//   else begin
-    po1:= getop(oc_pushsegaddr,
+   po1:= getop(oc_pushsegaddr,
                  pushsegaddrssaar[avalue.segaddress.segment]);
-//   end;
    with po1^ do begin
     par.memop.segdataaddress.a:= avalue.segaddress;
     par.memop.segdataaddress.offset:= offset;
@@ -910,12 +906,7 @@ begin
    end;
   end
   else begin
-//   if indirect then begin
-//    po1:= getop(oc_pushlocaddrindi);
-//   end
-//   else begin
-    po1:= getop(oc_pushlocaddr);
-//   end;
+   po1:= getop(oc_pushlocaddr);
    with po1^ do begin
     par.memop.locdataaddress.a:= avalue.locaddress;
     par.memop.locdataaddress.a.framelevel:= 
@@ -1318,45 +1309,41 @@ begin
  pushd(true,stackoffset,before,address,varele,offset,opdatatype);
 end;
 
-procedure initfactcontext(const stackoffset: integer);
-{
+function getcontextssa(const stackoffset: integer): int32;
 var
- int1: integer;
- po1: pcontextitemty;
- pend: pointer;
- ssa1: integer;
-}
-var
- int1,ssa1: integer;
+ i1: int32;
  op1: opaddressty;
 begin
  with info do begin
-  int1:= s.stackindex+stackoffset;
-  with info.contextstack[int1] do begin
-   if int1 >= s.stacktop then begin
-    ssa1:= s.ssa.nextindex-1;
-//    ssa1:= ssa.index;
+  i1:= s.stackindex+stackoffset;
+  with info.contextstack[i1] do begin
+   if i1 >= s.stacktop then begin
+    result:= s.ssa.nextindex-1;
    end
    else begin
-    op1:= contextstack[int1+1].opmark.address;
+    op1:= contextstack[i1+1].opmark.address;
     if op1 >= opmark.address then begin
-     ssa1:= getoppo(op1-1)^.par.ssad; //use last op of context
+     result:= getoppo(op1-1)^.par.ssad; //use last op of context
     end
     else begin
      if op1 >= opcount-1 then begin
-      ssa1:= s.ssa.index;
-//      inc(ssaindex);
+      result:= s.ssa.index;
      end
      else begin
-      ssa1:= getoppo(op1)^.par.ssad; //use current op
+      result:= getoppo(op1)^.par.ssad; //use current op
      end;
     end;
    end;
-   d.kind:= ck_fact;
-   d.dat.fact.ssaindex:= ssa1;
-//   inc(info.ssaindex);
-   d.dat.indirection:= 0;
   end;
+ end;
+end;
+
+procedure initfactcontext(const stackoffset: integer);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  d.kind:= ck_fact;
+  d.dat.fact.ssaindex:= getcontextssa(stackoffset);
+  d.dat.indirection:= 0;
  end;
 end;
 
@@ -1367,6 +1354,7 @@ var
  i1,i2,i3: integer;
  po1: popinfoty;
  bo1,bo2: boolean;
+ ssabefore: int32;
 begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
@@ -1376,13 +1364,26 @@ begin
   end;
  {$endif}
   if d.dat.indirection <= 0 then begin
-//   if d.dat.indirection = 0 then begin
    bo1:= (d.dat.datatyp.indirectlevel =
                                  d.dat.ref.c.address.indirectlevel);
    bo2:= af_startoffset in d.dat.ref.c.address.flags;
    if address and not bo1 then begin
-    pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+    if d.dat.indirection = 0 then begin
+     pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
+                0,bitoptypes[das_pointer]);
+     if d.dat.ref.offset <> 0 then begin
+      ssabefore:= getcontextssa(stackoffset);
+      with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+       par.ssas1:= ssabefore;
+       setimmint32(d.dat.ref.offset,par);
+      end;
+      inc(d.dat.indirection);
+     end;
+    end
+    else begin
+     pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
                                                         d.dat.ref.offset);
+    end;
     i2:= 0;
    end
    else begin
