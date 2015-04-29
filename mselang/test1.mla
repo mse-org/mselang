@@ -1,38 +1,23 @@
 program withpo1;
-//uses
-// __mla__internaltypes;
-type
- _Unwind_Exception = record
-  exception_class: card64;
-  exception_cleanup: pointer;
-//  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
-  private_1: card64;
-  private_2: card64;
- end;
- exceptinfoty = record
-  header: _Unwind_Exception;
-  data: pointer;
- end;
- pexceptinfoty = ^exceptinfoty;
-{
+uses
+ __mla__internaltypes,__mla__compilerunit;
+
 procedure __mla__raise(const data: pointer);
 var
  po1: pexceptinfoty;
-begin
-// getmem(po1,sizeof(exceptinfoty);
+begin  //todo: handle out of memory situation
+ getmem(po1,sizeof(exceptinfoty);
  with po1^.header do begin
-//  exception_class:= mlaexceptionid;
+  exception_class:= mlaexceptionid;
   exception_cleanup:= nil;
  end;
+ po1^.data:= data;
+ _Unwind_RaiseException(@po1^.header);
+ //halt();
 end;
-}
-var
- po1: pexceptinfoty;
+
 begin
-// getmem(po1,sizeof(exceptinfoty);
- with po1^.header do begin
-//  exception_class:= mlaexceptionid;
-  exception_cleanup:= nil;
- end;
-end;
+ exitcode:= 123;
+ __mla__raise(nil);
+ exitcode:= 11;
 end.
