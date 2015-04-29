@@ -380,7 +380,7 @@ checkend,,,*
 
 with,with1,,handlewithentry
 with1,with2,,
- '',factad*
+ '',addressfact*
 with2,,handlewith2entry,handledoexpected*
  ${whitespace}
  ',',with1-
@@ -733,13 +733,14 @@ term1,,,handleterm
 mulfact,,,handlemulfact
  '',fact*
 
-factad,fact0,handlefactadentry,
+addressfact,fact0,handleaddressfactentry,
 fact,fact0,handlefactentry,
 fact0,fact1,,
  ${whitespace}
  '+',-
  '-',negfact-*
- '@',!handleaddressfact-
+ '@',addressfact-*
+// '@',!handleaddressfact-
  '(',bracketstart-*
  @decnum,num*
  '%',binnum-*
@@ -750,7 +751,7 @@ fact0,fact1,,
  @identstart,valueidentifier*
  '',illegalexpression
 
-fact1,,,handlefact
+fact1,,,handlefact1
  ${whitespace}
  '^',!handledereference-
  '[',getindex-^*>
@@ -762,6 +763,9 @@ fact2,fact1,handlefact2entry,
 
 negfact,,,handlenegfact
  '',fact*
+
+//addressfact,,handleaddressfactentry,handleaddressfact
+// '',fact*
 
 bracketstart,bracketend,,
  '',callexp*

@@ -2219,12 +2219,14 @@ begin
       end;
       }
      end;
+     {
      ck_getfact: begin
       with getfact do begin
        write('flags:',settostring(ptypeinfo(typeinfo(factflagsty)),
                                            integer(getfact.flags),true));
       end;
      end;
+     }
      ck_fact,ck_subres: begin
       write('ssa:',d.dat.fact.ssaindex,' ');
       writetype(d);

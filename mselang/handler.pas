@@ -99,10 +99,14 @@ procedure handlemain();
 procedure handlekeyword();
 
 procedure handlefactentry();
-procedure handlefactadentry();
+//procedure handlefact();
+procedure handleaddressfactentry();
+procedure handleaddressopfactentry();
+//procedure handleaddressfact();
+procedure handlefact1();
+
+//procedure handlefactadentry();
 procedure handlenegfact();
-procedure handleaddressfact();
-procedure handlefact();
 procedure handlemulfact();
 
 procedure handlefact2entry();
@@ -976,20 +980,7 @@ begin
  end;
 end;
 
-procedure handlefactentry();
-begin
-{$ifdef mse_debugparser}
- outhandle('FACTENTRY');
-{$endif}
- with info,contextstack[s.stacktop] do begin
-  stringbuffer:= '';
-  d.kind:= ck_getfact;
-  with d.getfact do begin
-   flags:= [];
-  end;
- end;
-end;
-
+(*
 procedure handlefactadentry();
 begin
 {$ifdef mse_debugparser}
@@ -1000,20 +991,7 @@ begin
   include(flags,ff_addressfact);
  end;
 end;
-
-procedure handleaddressfact();
-begin
-{$ifdef mse_debugparser}
- outhandle('ADRESSFACT');
-{$endif}
- with info,contextstack[s.stacktop].d.getfact do begin
-  if ff_address in flags then begin
-   errormessage(err_cannotassigntoaddr,[]);
-  end;
-  include(flags,ff_address);
- end;
-end;
-
+*)
 const
  negops: array[datakindty] of opcodety = (
  //dk_none, dk_pointer,dk_boolean,dk_cardinal, dk_integer, dk_float,
@@ -1026,14 +1004,14 @@ const
    oc_none,oc_none,    oc_none
  );
 
-procedure handlefact();
+procedure handlefact1();
 var
  i1: integer;
  c1: card64;
- fl1: factflagsty;
+// fl1: factflagsty;
 begin
 {$ifdef mse_debugparser}
- outhandle('FACT');
+ outhandle('FACT1');
 {$endif}
  with info do begin
   if s.stackindex < s.stacktop then begin
@@ -1058,12 +1036,15 @@ begin
     end;
    end;
    with contextstack[s.stackindex] do begin
+   {
     fl1:= [];
     if d.kind = ck_getfact then begin
      fl1:= d.getfact.flags;
     end;
+   }
     d:= contextstack[s.stacktop].d;
-    if fl1 * [ff_address,ff_addressfact] <> [] then begin
+    if stf_getaddress in s.currentstatementflags
+               {fl1 * [ff_address,ff_addressfact] <> []} then begin
      case d.kind of
       ck_const: begin
        errormessage(err_cannotaddressconst,[],1);
@@ -1076,7 +1057,8 @@ begin
         inc(d.dat.indirection);
         inc(d.dat.datatyp.indirectlevel);
        end;
-       if not (ff_addressfact in fl1) and
+       if (stf_addressop in s.currentstatementflags)
+                   {not (ff_addressfact in fl1)} and
                    not (tf_subad in d.dat.datatyp.flags) then begin
         d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
        end;
@@ -1094,6 +1076,7 @@ begin
      {$endif}
      end;
     end;
+    s.currentstatementflags:= b.flags;
    end;
   end
   else begin
@@ -1120,6 +1103,88 @@ begin
  end;
 end;
 
+procedure dofactentry();
+begin
+ with info,contextstack[s.stacktop] do begin
+  b.flags:= s.currentstatementflags;
+  stringbuffer:= '';
+  d.kind:= ck_getfact;
+ {
+  with d.getfact do begin
+   flags:= [];
+  end;
+ }
+ end;
+end;
+
+procedure handlefactentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FACTENTRY');
+{$endif}
+ dofactentry();
+ info.s.currentstatementflags:= info.s.currentstatementflags - 
+                                            [stf_getaddress,stf_addressop];
+end;
+
+procedure handleaddressfactentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ADRESSFACTENTRY');
+{$endif}
+ dofactentry();
+ include(info.s.currentstatementflags,stf_getaddress);
+end;
+
+procedure handleaddressopfactentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ADRESSOPFACTENTRY');
+{$endif}
+ dofactentry();
+ info.s.currentstatementflags:= info.s.currentstatementflags + 
+                                       [stf_getaddress,stf_addressop];
+end;
+
+(*
+procedure handleaddressfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ADRESSFACT');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {
+  if ff_address in flags then begin
+   errormessage(err_cannotassigntoaddr,[]);
+  end;
+  include(flags,ff_address);
+ }
+  d:= contextstack[s.stacktop].d;
+  s.currentstatementflags:= b.flags;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handleadfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FACT');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {
+  if ff_address in flags then begin
+   errormessage(err_cannotassigntoaddr,[]);
+  end;
+  include(flags,ff_address);
+ }
+  d:= contextstack[s.stacktop].d;
+  s.currentstatementflags:= b.flags;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
+ end;
+end;
+*)
 procedure handlenegfact;
 var
  po1: ptypedataty;

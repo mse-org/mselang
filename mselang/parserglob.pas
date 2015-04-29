@@ -298,6 +298,7 @@ type
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
+                    stf_getaddress,stf_addressop,
                     stf_hasmanaged,stf_newlineposted);
  statementflagsty = set of statementflagty;
 
@@ -393,12 +394,12 @@ type
   typ: typeinfoty;
   d: dataty;
  end;
-
+{
  factflagty = (ff_address,ff_addressfact);
  factflagsty = set of factflagty;
- 
+} 
  getfactinfoty = record
-  flags: factflagsty;
+//  flags: factflagsty;
  end;
  
  factinfoty = record

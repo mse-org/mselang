@@ -1312,11 +1312,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'mulfact');
- factadco: contextty = (branch: nil; 
+ addressfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'factad');
+               caption: 'addressfact');
  factco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -3576,7 +3576,7 @@ const
    );
  bwith1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
-     dest: (context: @factadco); stack: nil; keys: (
+     dest: (context: @addressfactco); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -6313,8 +6313,8 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
-   (flags: [bf_nt,bf_handler,bf_eat];
-     dest: (handler: @handleaddressfact); stack: nil; keys: (
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: @addressfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['@']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -7974,16 +7974,16 @@ begin
  term1co.handleexit:= @handleterm;
  mulfactco.branch:= @bmulfact;
  mulfactco.handleexit:= @handlemulfact;
- factadco.branch:= nil;
- factadco.next:= @fact0co;
- factadco.handleentry:= @handlefactadentry;
+ addressfactco.branch:= nil;
+ addressfactco.next:= @fact0co;
+ addressfactco.handleentry:= @handleaddressfactentry;
  factco.branch:= nil;
  factco.next:= @fact0co;
  factco.handleentry:= @handlefactentry;
  fact0co.branch:= @bfact0;
  fact0co.next:= @fact1co;
  fact1co.branch:= @bfact1;
- fact1co.handleexit:= @handlefact;
+ fact1co.handleexit:= @handlefact1;
  fact2co.branch:= @bfact2;
  fact2co.next:= @fact1co;
  fact2co.handleentry:= @handlefact2entry;

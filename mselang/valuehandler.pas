@@ -314,7 +314,7 @@ var
  firstnotfound: integer;
  po1: pelementinfoty;
  po2: pointer;
- getfactflags: factflagsty;
+// getfactflags: factflagsty;
  isinherited: boolean;
  
  procedure dosub(const asub: psubdataty);
@@ -335,7 +335,8 @@ var
   firstnotfound1: integer;
  begin
   with info,contextstack[s.stackindex] do begin
-   if ff_address in getfactflags then begin
+   if stf_getaddress in s.currentstatementflags
+                            {ff_address in getfactflags} then begin
     d.kind:= ck_ref;
     d.dat.datatyp.typedata:= asub^.typ;
     d.dat.datatyp.indirectlevel:= 1;
@@ -694,12 +695,12 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-  getfactflags:= [];
+//  getfactflags:= [];
   with contextstack[s.stackindex-1] do begin
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
-     getfactflags:= d.getfact.flags;
+//     getfactflags:= d.getfact.flags;
     end;
     ck_ref: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -864,7 +865,8 @@ begin
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;
-       if ff_address in getfactflags then begin
+       if stf_getaddress in s.currentstatementflags
+                      {ff_address in getfactflags} then begin
         include(d.dat.ref.c.address.flags,af_getaddress);
        end;
       end
