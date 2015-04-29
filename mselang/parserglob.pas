@@ -109,8 +109,8 @@ type
  addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,
                   af_paramindirect,af_const,af_withindirect,
                   af_classfield,af_stack,af_segmentpo,af_aggregate,
-                  af_startoffset, //for indirection
-                  af_getaddress
+                  af_startoffset{, //for indirection
+                  af_getaddress}
                   );
  addressflagsty = set of addressflagty;
 

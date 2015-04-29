@@ -866,10 +866,12 @@ begin
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;
+       (*
        if stf_getaddress in s.currentstatementflags
                       {ff_address in getfactflags} then begin
         include(d.dat.ref.c.address.flags,af_getaddress);
        end;
+       *)
       end
       else begin
        with contextstack[s.stackindex-1] do begin

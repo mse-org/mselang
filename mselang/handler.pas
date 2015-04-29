@@ -957,7 +957,7 @@ begin
    dec(d.dat.indirection);
    case d.kind of
     ck_ref: begin        //todo: make universal
-     if not (af_getaddress in d.dat.ref.c.address.flags) then begin
+     if not (stf_getaddress in s.currentstatementflags) then begin
       include(d.dat.ref.c.address.flags,af_startoffset);
      end;
     end;
