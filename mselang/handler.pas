@@ -952,8 +952,10 @@ begin
    dec(d.dat.datatyp.indirectlevel);
    dec(d.dat.indirection);
    case d.kind of
-    ck_ref: begin
-     include(d.dat.ref.c.address.flags,af_startoffset);
+    ck_ref: begin        //todo: make universal
+     if not (af_getaddress in d.dat.ref.c.address.flags) then begin
+      include(d.dat.ref.c.address.flags,af_startoffset);
+     end;
     end;
     ck_const: begin
      if d.dat.constval.kind <> dk_address then begin
