@@ -1,0 +1,29 @@
+program recparpo;
+type
+ rec1ty = record
+  a: int32;
+  b: int32;
+ end;
+ prec1ty = ^rec1ty;
+ recty = record
+  h: rec1ty;
+  c: int32;
+ end;
+ precty = ^recty;
+
+function test(p: prec1ty): int32;
+begin
+ p^.b:= 110;
+end;
+
+var
+ r1: recty;
+ po1: precty;
+ po2: prec1ty;
+begin
+ r1.h.a:= 13;
+ po1:= @r1;
+ po2:= @po1^.h;
+ test(po2);
+ exitcode:= r1.h.a+r1.h.b;
+end.

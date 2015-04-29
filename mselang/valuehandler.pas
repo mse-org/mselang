@@ -259,7 +259,7 @@ begin
  end;
 {$endif}
  po1:= ele.eledataabs(atypedata);
- i1:= aadress.indirectlevel+po1^.h.indirectlevel;
+ i1:= aadress.indirectlevel{+po1^.h.indirectlevel};
  if af_paramindirect in aadress.flags then begin
   dec(i1);
  end;
