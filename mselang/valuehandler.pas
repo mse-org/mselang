@@ -586,7 +586,12 @@ var
        else begin
         po1:= additem(oc_callindi);
        end;
-       po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
+       if backend = bke_llvm then begin
+        po1^.par.callinfo.indi.calladdr:= callssa;
+       end
+       else begin
+        po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
+       end;
       end
       else begin
        if sf_function in asub^.flags then begin

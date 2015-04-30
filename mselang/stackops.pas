@@ -136,8 +136,14 @@ end;
 function getsegaddress(const aaddress: segdataaddressty): pointer; 
                                   {$ifdef mse_inline}inline;{$endif}
 begin
- result:= segments[aaddress.a.segment].basepo + 
+ if aaddress.a.segment = seg_op then begin
+  result:= segments[seg_op].basepo + 
+        aaddress.a.address*sizeof(opinfoty) + aaddress.offset;
+ end
+ else begin
+  result:= segments[aaddress.a.segment].basepo + 
                               aaddress.a.address + aaddress.offset;
+ end;
 end;
 
 function getsegaddressindi(const aaddress: segdataaddressty): pointer;
