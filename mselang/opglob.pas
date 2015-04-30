@@ -423,7 +423,8 @@ type
  end;
  
  indicallinfoty = record
-  calladdr: dataoffsty; //stackoffset or ssaindex
+  calladdr: dataoffsty; //stackoffset
+  typeid: int32; //for llvm
  end;
 
  callinfoty = record

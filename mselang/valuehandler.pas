@@ -587,7 +587,8 @@ var
         po1:= additem(oc_callindi);
        end;
        if backend = bke_llvm then begin
-        po1^.par.callinfo.indi.calladdr:= callssa;
+        po1^.par.ssas1:= callssa;
+        po1^.par.callinfo.indi.typeid:= typelist.addsubvalue(asub);
        end
        else begin
         po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;

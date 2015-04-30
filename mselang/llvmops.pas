@@ -1772,15 +1772,20 @@ procedure docall(const outlinkcount: integer; const aindirect: boolean);
 var
  ids: idsarty;
  idar: idarty;
+ i1: int32;
 begin
- if aindirect then begin
-  notimplemented();
- end;
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
+  if aindirect then begin
+   bcstream.emitbitcast(bcstream.ssaval(ssas1),                     //1ssa
+                         bcstream.ptypeval(callinfo.indi.typeid));
+   i1:= bcstream.relval(0);
+  end
+  else begin
+   i1:= bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid);
+  end;
   docallparam(outlinkcount,idar);
-  bcstream.emitcallop(sf_function in callinfo.flags,
-      bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid),idar);
+  bcstream.emitcallop(sf_function in callinfo.flags,i1,idar);
  end;
 end;
 
@@ -2389,7 +2394,7 @@ const
   pushaddrssa = 1;
   pushlocaddrssa = 2;
 //  pushlocaddrindissa = 3;
-  pushsegaddrssa = 1;
+  pushsegaddrssa = 2;
 //  pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
 //  pushstackaddrindissa = 1;
@@ -2426,8 +2431,8 @@ const
   callintfssa = 11;
   virttrampolinessa = 1;
 
-  callindissa = 0;
-  callfuncindissa = 1;
+  callindissa = 1;
+  callfuncindissa = 2;
 
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy
