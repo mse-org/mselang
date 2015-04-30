@@ -206,7 +206,7 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=15
+  c=16
    (
    kind=1
    a=0,664,4,arith
@@ -1011,8 +1011,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
-   c=24
+   a=0,665,4,address
+   c=2
     (
     kind=2
     a=0,648,1,address
@@ -1057,6 +1057,26 @@ c=3
     aec=123
     ie=0
     )
+   teststate=1
+   path=address/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
+   a=0,664,4,indirect
+   c=22
     (
     kind=2
     a=0,648,1,indirectloc
@@ -2105,8 +2125,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,sub
-   c=7
+   a=0,665,4,sub
+   c=9
     (
     kind=2
     a=0,648,1,pppar
@@ -2244,6 +2264,50 @@ c=3
     a=0,648,1,subvar llvm
     teststate=1
     path=subvar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recparpo
+    teststate=1
+    path=recparpo.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,recparpo llvm
+    teststate=1
+    path=recparpo.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2407,7 +2471,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=10
     (
     kind=2
@@ -3138,7 +3202,9 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=31
+rowstate=33
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

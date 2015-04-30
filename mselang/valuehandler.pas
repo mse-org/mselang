@@ -358,7 +358,7 @@ var
 // getfactflags: factflagsty;
  isinherited: boolean;
  
- procedure dosub(const asub: psubdataty);
+ procedure dosub(const asub: psubdataty; const aindirect: boolean);
  var
   po1: popinfoty;
   po3: ptypedataty;
@@ -374,6 +374,7 @@ var
   hasresult: boolean;
   idents1: identvecty;
   firstnotfound1: integer;
+  callssa: int32;
  begin
   with info,contextstack[s.stackindex] do begin
    if stf_getaddress in s.currentstatementflags
@@ -389,6 +390,9 @@ var
     d.dat.ref.c.varele:= 0;
    end
    else begin
+    if aindirect then begin
+     callssa:= d.dat.fact.ssaindex;
+    end;
     po5:= @asub^.paramsrel;
     paramco1:= paramco;
     if [sf_function{,sf_constructor}] * asub^.flags <> [] then begin
@@ -575,11 +579,22 @@ var
     else begin
      if (asub^.nestinglevel = 0) or 
                       (asub^.nestinglevel = sublevel) then begin
-      if sf_function in asub^.flags then begin
-       po1:= additem(oc_callfunc);
+      if aindirect then begin
+       if sf_function in asub^.flags then begin
+        po1:= additem(oc_callfuncindi);
+       end
+       else begin
+        po1:= additem(oc_callindi);
+       end;
+       po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
       end
       else begin
-       po1:= additem(oc_call);
+       if sf_function in asub^.flags then begin
+        po1:= additem(oc_callfunc);
+       end
+       else begin
+        po1:= additem(oc_call);
+       end;
       end;
       po1^.par.callinfo.linkcount:= -1;
      end
@@ -621,9 +636,14 @@ var
     end;
     if sf_destructor in asub^.flags then begin
          //todo: call freemem direcly if there is no finalization
-     with additem(oc_destroyclass)^ do begin 
+     with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
  //     selfinstance:= -d.subdef.paramsize;
+     end;
+    end;
+    if aindirect then begin
+     with additem(oc_pop)^ do begin          //insertitem???
+      setimmsize(pointersize,par); //remove call address
      end;
     end;
    end;
@@ -695,7 +715,7 @@ var
          internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
-       dosub(psubdataty(po4));
+       dosub(psubdataty(po4),false);
        exit;
       end;
       else begin
@@ -918,7 +938,17 @@ begin
                   //todo: no double copy by handlefact
        end;
       end;
-      donotfound(pvardataty(po2)^.vf.typ);
+      donotfound(pvardataty(po2)^.vf.typ); //todo: call of sub function results
+      if (stf_params in s.currentstatementflags) and
+                           (d.kind in datacontexts) then begin
+       if getvalue(0) then begin
+        po3:= ele.eledataabs(d.dat.datatyp.typedata);
+        if (d.dat.datatyp.indirectlevel = 1) and 
+                              (po3^.h.kind = dk_sub) then begin
+         dosub(ele.eledataabs(po3^.infosub.sub),true);
+        end;
+       end;     
+      end;
      end;
     end;
     ek_const: begin
@@ -930,7 +960,7 @@ begin
      end;
     end;
     ek_sub: begin
-     dosub(psubdataty(po2));
+     dosub(psubdataty(po2),false);
     end;
     ek_sysfunc: begin //todo: handle ff_address
      with contextstack[s.stackindex] do begin

@@ -1768,11 +1768,14 @@ begin
  end;
 end;
 
-procedure docall(const outlinkcount: integer);
+procedure docall(const outlinkcount: integer; const aindirect: boolean);
 var
  ids: idsarty;
  idar: idarty;
 begin
+ if aindirect then begin
+  notimplemented();
+ end;
  with pc^.par do begin               //todo: calling convention
   idar.ids:= @ids;
   docallparam(outlinkcount,idar);
@@ -1783,16 +1786,22 @@ end;
 
 procedure callop();
 begin
- with pc^.par do begin
-  docall(0);
- end;
+ docall(0,false);
 end;
 
 procedure callfuncop();
 begin
- with pc^.par do begin
-  docall(0);
- end;
+ docall(0,false);
+end;
+
+procedure callindiop();
+begin
+ docall(0,true);
+end;
+
+procedure callfuncindiop();
+begin
+ docall(0,true);
 end;
 
 procedure calloutop();
@@ -1802,7 +1811,7 @@ begin
  with pc^.par do begin
   int1:= callinfo.linkcount+2;
   dooutlink(int1);
-  docall(int1);
+  docall(int1,false);
  end;
 end;
 
@@ -1813,7 +1822,7 @@ begin
  with pc^.par do begin
   int1:= callinfo.linkcount+2;
   dooutlink(int1);
-  docall(int1);
+  docall(int1,false);
  end;
 end;
 
@@ -2416,6 +2425,9 @@ const
   callvirtssa = 7;
   callintfssa = 11;
   virttrampolinessa = 1;
+
+  callindissa = 0;
+  callfuncindissa = 1;
 
   locvarpushssa = 0; //dummy
   locvarpopssa = 0;  //dummy

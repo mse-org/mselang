@@ -1113,6 +1113,7 @@ procedure dofactentry();
 begin
  with info,contextstack[s.stacktop] do begin
   b.flags:= s.currentstatementflags;
+  s.currentstatementflags-= [stf_getaddress,stf_addressop,stf_params];
   stringbuffer:= '';
   d.kind:= ck_getfact;
  {
@@ -1129,8 +1130,6 @@ begin
  outhandle('FACTENTRY');
 {$endif}
  dofactentry();
- info.s.currentstatementflags:= info.s.currentstatementflags - 
-                                            [stf_getaddress,stf_addressop];
 end;
 
 procedure handleaddressfactentry();
@@ -2327,7 +2326,7 @@ begin
 {$endif}
  with info do begin
 //  opshift:= 0;
-  s.currentstatementflags-= [stf_rightside,stf_params,
+  s.currentstatementflags-= [stf_rightside,{stf_params,}
                            stf_leftreference,stf_proccall];
   with contextstack[s.stacktop].d,statement do begin
    kind:= ck_statement;

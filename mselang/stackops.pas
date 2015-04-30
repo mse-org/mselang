@@ -1809,7 +1809,7 @@ end;
 //                  |cpu.frame    |cpu.stack
 // params frameinfo locvars      
 //
-procedure callop();
+procedure docall();
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
@@ -1818,6 +1818,11 @@ begin
  end;
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
+end;
+
+procedure callop();
+begin
+ docall();
  cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
 end;
 
@@ -1825,6 +1830,21 @@ procedure callfuncop();
 begin
  callop();
 end;
+
+procedure callindiop();
+begin
+ docall();
+ with cpu.pc^.par do begin
+  cpu.pc:= ppointer(cpu.frame+callinfo.indi.calladdr)^;
+  dec(cpu.pc);
+ end;
+end;
+
+procedure callfuncindiop();
+begin
+ callindiop();
+end;
+
 
 procedure calloutop();
 var
@@ -2830,6 +2850,9 @@ const
   callvirtssa = 0;
   callintfssa = 0;
   virttrampolinessa = 0;
+
+  callindissa = 0;
+  callfuncindissa = 0;
 
   locvarpushssa = 0;
   locvarpopssa = 0;

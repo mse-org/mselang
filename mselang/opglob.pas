@@ -73,6 +73,7 @@ type
   oc_until,
   oc_decloop32,
   oc_decloop64,
+  oc_raise,
 
   oc_beginparse,
   oc_main,
@@ -354,6 +355,9 @@ type
   oc_callintf,
   oc_virttrampoline,
 
+  oc_callindi,
+  oc_callfuncindi,
+
   oc_locvarpush,
   oc_locvarpop,
 
@@ -369,7 +373,6 @@ type
   oc_setlengthstr8,
   oc_setlengthdynarray,
 
-  oc_raise,
   oc_pushcpucontext,
   oc_popcpucontext,
   oc_finiexception,
@@ -418,6 +421,10 @@ type
   virtoffset: dataoffsty;   //offset in classdefinfoty
   typeid: int32; //for llvm
  end;
+ 
+ indicallinfoty = record
+  calladdr: dataoffsty; //stackoffset or ssaindex
+ end;
 
  callinfoty = record
   ad: opaddressty;    //first!
@@ -428,6 +435,9 @@ type
   case opcodety of
    oc_callvirt,oc_callintf:(
     virt: virtcallinfoty;
+   );
+   oc_callindi,oc_callfuncindi:(
+    indi: indicallinfoty;
    );
  end; 
 
@@ -759,7 +769,8 @@ type
    oc_subend:(
     subend: subendty;
    );
-   oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf:(
+   oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf,
+   oc_callindi,oc_callfuncindi:(
     callinfo: callinfoty;
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(

@@ -25,7 +25,7 @@
   untilssa,
   decloop32ssa,
   decloop64ssa,
-
+  raisessa,
 
   beginparsessa,
   mainssa,
@@ -306,6 +306,9 @@
   callintfssa,
   virttrampolinessa,
 
+  callindissa,
+  callfuncindissa,
+
   locvarpushssa,
   locvarpopssa,
 
@@ -321,7 +324,6 @@
   setlengthstr8ssa,
   setlengthdynarrayssa,
 
-  raisessa,
   pushcpucontextssa,
   popcpucontextssa,
   finiexceptionssa,
@@ -357,7 +359,7 @@
   @untilop,
   @decloop32op,
   @decloop64op,
-
+  @raiseop,
 
   @beginparseop,
   @mainop,
@@ -638,6 +640,9 @@
   @callintfop,
   @virttrampolineop,
 
+  @callindiop,
+  @callfuncindiop,
+
   @locvarpushop,
   @locvarpopop,
 
@@ -653,7 +658,6 @@
   @setlengthstr8op,
   @setlengthdynarrayop,
 
-  @raiseop,
   @pushcpucontextop,
   @popcpucontextop,
   @finiexceptionop,

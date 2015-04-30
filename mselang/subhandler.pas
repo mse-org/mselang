@@ -275,11 +275,13 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PARAMSEND');
 {$endif}
+{
  with info do begin
   with contextstack[s.stackindex] do begin
    s.currentstatementflags:= b.flags;
   end;
  end;
+}
 end;
 
 procedure handleprocedureentry();
