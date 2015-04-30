@@ -2394,7 +2394,7 @@ const
   pushaddrssa = 1;
   pushlocaddrssa = 2;
 //  pushlocaddrindissa = 3;
-  pushsegaddrssa = 2;
+  pushsegaddrssa = 1;
 //  pushsegaddrindissa = 3;
   pushstackaddrssa = 1;
 //  pushstackaddrindissa = 1;

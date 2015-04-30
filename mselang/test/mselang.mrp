@@ -40,7 +40,7 @@ testedit.sta=9
  cx=881
  cy=637
  wsize=0
- active=1
+ active=0
  visible=1
 edit.sta=9
  [groupeditfo]
@@ -209,7 +209,7 @@ c=3
   c=16
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=10
     (
     kind=1
@@ -277,7 +277,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,665,4,pointer
     c=6
      (
      kind=2
@@ -713,7 +713,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi llvm
+    a=0,648,2,recifindi llvm
     teststate=1
     path=recifindi.mla
     comment=
@@ -1075,7 +1075,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
+   a=0,665,4,indirect
    c=22
     (
     kind=2
@@ -1652,7 +1652,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,writeln string lc
+    a=0,648,2,writeln string lc
     teststate=1
     path=writelnstr.mla
     comment=
@@ -1717,7 +1717,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,getmem llvm
+    a=0,648,2,getmem llvm
     teststate=1
     path=getmem.mla
     comment=
@@ -1762,7 +1762,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setmem llvm
+    a=0,648,2,setmem llvm
     teststate=1
     path=setmem.mla
     comment=
@@ -1935,7 +1935,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind llvm
+    a=0,648,2,recordfieldind llvm
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -1979,7 +1979,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2 llvm
+    a=0,648,2,recordfieldind2 llvm
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -2023,7 +2023,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,pointerinrec llvm
+    a=0,648,2,pointerinrec llvm
     teststate=1
     path=pointerinrec.mla
     comment=
@@ -2126,7 +2126,7 @@ c=3
    (
    kind=1
    a=0,665,4,sub
-   c=9
+   c=11
     (
     kind=2
     a=0,648,1,pppar
@@ -2283,6 +2283,50 @@ c=3
     )
     (
     kind=2
+    a=0,648,1,subvar1
+    teststate=1
+    path=subvar1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,subvar1 llvm
+    teststate=1
+    path=subvar1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,recparpo
     teststate=1
     path=recparpo.mla
@@ -2343,7 +2387,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,types
+   a=0,665,4,types
    c=2
     (
     kind=2
@@ -2497,7 +2541,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,with1 llvm
+    a=0,648,2,with1 llvm
     teststate=1
     path=with1.mla
     comment=
@@ -2541,7 +2585,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,with2 llvm
+    a=0,648,2,with2 llvm
     teststate=1
     path=with2.mla
     comment=
@@ -2585,7 +2629,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,withpo llvm
+    a=0,648,2,withpo llvm
     teststate=1
     path=withpo.mla
     comment=
@@ -2629,7 +2673,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,withpo1 llvm
+    a=0,648,2,withpo1 llvm
     teststate=1
     path=withpo1.mla
     comment=
@@ -2673,7 +2717,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,withpo2 llvm
+    a=0,648,2,withpo2 llvm
     teststate=1
     path=withpo2.mla
     comment=
@@ -3202,7 +3246,49 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=33
+rowstate=75
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -147,6 +147,7 @@ begin
  fillchar(pushsegaddrssaar,sizeof(pushsegaddrssaar),0);
  pushsegaddrssaar[seg_nil]:= ssatable^[ocssa_pushsegaddrnil];
  pushsegaddrssaar[seg_globvar]:= ssatable^[ocssa_pushsegaddrglobvar];
+ pushsegaddrssaar[seg_op]:= ssatable^[ocssa_pushsegaddrglobvar];
  pushsegaddrssaar[seg_globconst]:= ssatable^[ocssa_pushsegaddrglobconst];
  pushsegaddrssaar[seg_classdef]:= ssatable^[ocssa_pushsegaddrclassdef];
  
