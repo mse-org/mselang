@@ -109,7 +109,7 @@ begin
      targetstream.destroy();
      if not norun.value then begin
       int1:= getprocessoutput(llvmbindir+'lli '+filename1,'',str1);
-      grid[0].readpipe(str1,[aco_stripescsequence]);
+      grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
       grid.appendrow(['EXITCODE: '+inttostr(int1)]);
      end;
     end;

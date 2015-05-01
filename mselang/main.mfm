@@ -38,18 +38,20 @@ object mainfo: tmainfo
     font.name = 'stf_fixed'
     font.xscale = 1
     font.localprops = [flp_xscale]
+    optionsgrid = [og_focuscellonenter, og_rowheight, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
     datacols.count = 1
+    datacols.options1 = [co1_rowfont, co1_rowcolor, co1_zebracolor, co1_rowcoloractive, co1_rowcolorfocused, co1_rowreadonly, co1_autorowheight]
     datacols.items = <    
       item
-        width = 539
-        options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
+        width = 2000
+        options1 = [co1_rowfont, co1_rowcolor, co1_zebracolor, co1_rowcoloractive, co1_rowcolorfocused, co1_rowreadonly, co1_autorowheight]
         valuefalse = '0'
         valuetrue = '1'
       end>
     fixcols.count = 1
     fixcols.items = <    
       item
-        numstart = -1
+        numstart = 1
         numstep = 1
       end>
     datarowheight = 16
@@ -90,7 +92,7 @@ object mainfo: tmainfo
     datacols.options = [co_savestate, co_mousescrollrow]
     datacols.items = <    
       item[ed]
-        width = 2016
+        width = 2000
         options = [co_savestate, co_mousescrollrow]
         widgetname = 'ed'
         dataclass = tgridrichstringdatalist
@@ -105,7 +107,7 @@ object mainfo: tmainfo
       visible = False
       bounds_x = 0
       bounds_y = 0
-      bounds_cx = 2016
+      bounds_cx = 2000
       bounds_cy = 14
       font.height = 12
       font.name = 'stf_fixed'
@@ -153,6 +155,11 @@ object mainfo: tmainfo
   object filena: tfilenameedit
     frame.localprops = []
     frame.localprops1 = []
+    frame.buttons.count = 1
+    frame.buttons.items = <    
+      item
+        imagenr = 17
+      end>
     frame.button.imagenr = 17
     taborder = 7
     bounds_x = 72
