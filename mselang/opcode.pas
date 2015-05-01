@@ -58,6 +58,7 @@ procedure setimmcard8(const value: card8; var par: opparamty);
 procedure setimmcard16(const value: card16; var par: opparamty);
 procedure setimmcard32(const value: card32; var par: opparamty);
 procedure setimmcard64(const value: card64; var par: opparamty);
+procedure setimmint1(const value: int8; var par: opparamty);
 procedure setimmint8(const value: int8; var par: opparamty);
 procedure setimmint16(const value: int16; var par: opparamty);
 procedure setimmint32(const value: int32; var par: opparamty);
@@ -412,6 +413,17 @@ begin
  end
  else begin
   par.imm.vcard64:= value;
+ end;
+end;
+
+procedure setimmint1(const value: int8; var par: opparamty);
+begin
+ par.imm.datasize:= sizeof(value);
+ if info.backend = bke_llvm then begin
+  par.imm.llvm:= constlist.addi1(value);
+ end
+ else begin
+  par.imm.vint8:= value;
  end;
 end;
 
