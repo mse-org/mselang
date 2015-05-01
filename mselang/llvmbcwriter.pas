@@ -470,9 +470,9 @@ begin
           emit1(0);      //no vararg
          end;
          if sf_function in header.flags then begin
-          emitvbr6(typeindex(po3^.typelistindex)); //retval
           dec(i2);
-          inc(po3);
+          emitvbr6(typeindex(po3[i2].typelistindex)); //retval
+//          inc(po3);
          end
          else begin
           emitvbr6(typeindex(das_none)); //void retval

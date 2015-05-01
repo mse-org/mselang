@@ -699,7 +699,7 @@ begin
   end;
   int3:= paramhigh;
   if (sf_function in subflags) and backendhasfunction then begin
-   int1:= 4 + paramhigh * 3;          //result
+   int1:= 4 + paramhigh * 3;          //allocate result var first
    int2:= paramhigh;
    doparam();
    int3:= paramhigh - 1;
