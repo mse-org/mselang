@@ -164,13 +164,16 @@ begin
      identerror(-3,err_duplicateidentifier);
     end;
    end;
-   s.stacktop:= s.stackindex-1;
-   s.stackindex:= contextstack[s.stackindex].parent;
+//   s.stacktop:= s.stackindex-1;
+//   s.stackindex:= contextstack[s.stackindex].parent;
   end
   else begin
-   s.stackindex:= s.stackindex-1;
-   s.stacktop:= s.stackindex;
+   d.typ.typedata:= 0;
+//   s.stackindex:= s.stackindex-1;
+//   s.stacktop:= s.stackindex;
   end;
+  s.stacktop:= s.stackindex-1;
+  s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
 

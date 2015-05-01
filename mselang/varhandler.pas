@@ -66,6 +66,9 @@ begin
    internalerror(ie_handler,'20140325B');
   end;
  {$endif}
+  if contextstack[s.stacktop].d.typ.typedata = 0 then begin
+   exit; //type not found
+  end;
   for i1:= s.stackindex+2 to s.stacktop - 1 do begin
  {$ifdef mse_checkinternalerror}
    if contextstack[i1].d.kind <> ck_ident then begin
