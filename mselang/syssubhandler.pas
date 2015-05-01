@@ -258,7 +258,7 @@ begin
       else begin
        par2isconst:= false;
        if d.kind <> ck_none then begin //parameter error otherwise
-        getvalue(s.stacktop-s.stackindex);
+        getvalue(s.stacktop-s.stackindex,das_none);
         int1:= -1; //no imm
        end;
       end;
@@ -322,7 +322,7 @@ begin
  with info do begin
   int3:= 0;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-   getvalue(int1-s.stackindex);
+   getvalue(int1-s.stackindex,das_none);
   end;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
 //   with additem()^ do begin

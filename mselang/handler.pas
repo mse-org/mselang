@@ -845,7 +845,7 @@ begin
          end;
          pob^.d.dat.constval.vinteger:= pob^.d.dat.constval.vinteger*i2;
          i2:= s.stacktop-s.stackindex-2;
-         getvalue(i2);
+         getvalue(i2,das_none);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
           if backend = bke_llvm then begin
@@ -861,7 +861,8 @@ begin
        end
        else begin
         i1:= s.stacktop-s.stackindex;
-        if getvalue(s.stacktop-s.stackindex-2) and getvalue(i1) then begin
+        if getvalue(s.stacktop-s.stackindex-2,das_pointer) and 
+                                           getvalue(i1,das_32) then begin
          if tryconvert(i1,st_int32) then begin //todo: data size
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
@@ -1221,7 +1222,7 @@ begin
    end;
   end
   else begin
-   if getvalue(1{,false}) then begin
+   if getvalue(1,das_none) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     with additem(negops[po1^.h.kind])^ do begin
      if op.op = oc_none then begin
@@ -2090,6 +2091,7 @@ var
  ssa1: integer;
  po1: popinfoty;
  ssaextension1: integer;
+ si1: databitsizety;
 label
  endlab;
 begin
@@ -2099,7 +2101,20 @@ begin
  with info do begin       //todo: use direct move if possible
   if (s.stacktop-s.stackindex = 2) and not errorfla then begin
    isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
-   if not getaddress(1,false) or not getvalue(2) then begin
+   if not getaddress(1,false) then begin
+    with contextstack[s.stackindex+1] do begin
+     if d.dat.datatyp.indirectlevel > 1 then begin
+      si1:= das_pointer;
+     end
+     else begin
+      si1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize;
+     end;
+    end;
+    if not getvalue(2,si1) then begin
+     goto endlab;
+    end;
+   end
+   else begin
     goto endlab;
    end;
    with contextstack[s.stackindex+1] do begin //dest address

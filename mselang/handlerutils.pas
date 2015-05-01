@@ -101,7 +101,7 @@ procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
-function getvalue(const stackoffset: integer;
+function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
@@ -135,7 +135,8 @@ procedure pushinsertdata(const stackoffset: integer; const before: boolean;
                   const offset: dataoffsty;
                   const opdatatype: typeallocinfoty);
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
-procedure pushinsertconst(const stackoffset: integer; const before: boolean);
+procedure pushinsertconst(const stackoffset: integer; const before: boolean;
+                                              const adatasize: databitsizety);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 
 //procedure setcurrentloc(const indexoffset: integer);
@@ -736,7 +737,8 @@ begin
  result:= sysdatatypes[atype].typedata;
 end;
 
-procedure pushinsertconst(const stackoffset: integer; const before: boolean);
+procedure pushinsertconst(const stackoffset: integer; const before: boolean;
+                                               const adatasize: databitsizety);
 var
  po1: pcontextitemty;
  isimm: boolean;
@@ -753,10 +755,53 @@ begin
      setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
-   dk_integer,dk_cardinal,dk_enum: begin //todo: datasize
-    si1:= das_32;
-    with insertitem(oc_pushimm32,stackoffset,before)^ do begin
-     setimmint32(po1^.d.dat.constval.vinteger,par);
+   dk_integer,dk_cardinal,dk_enum: begin //todo: datasize warning
+    if adatasize = das_none then begin //todo das_1..das_16
+     si1:= das_32;
+     if po1^.d.dat.constval.kind = dk_cardinal then begin
+      if po1^.d.dat.constval.vcardinal > $ffffffff then begin
+       si1:= das_64;
+      end;
+     end
+     else begin
+      if (po1^.d.dat.constval.vinteger > $7ffffff) or 
+               (po1^.d.dat.constval.vinteger < -$80000000) then begin
+       si1:= das_64;
+      end;
+     end;
+    end
+    else begin
+     si1:= adatasize;
+    end;
+    case si1 of
+     das_1: begin
+      with insertitem(oc_pushimm1,stackoffset,before)^ do begin
+       setimmint1(po1^.d.dat.constval.vinteger,par);
+      end;
+     end;
+     das_8: begin
+      with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+       setimmint8(po1^.d.dat.constval.vinteger,par);
+      end;
+     end;
+     das_16: begin
+      with insertitem(oc_pushimm16,stackoffset,before)^ do begin
+       setimmint16(po1^.d.dat.constval.vinteger,par);
+      end;
+     end;
+     das_32: begin
+      with insertitem(oc_pushimm32,stackoffset,before)^ do begin
+       setimmint32(po1^.d.dat.constval.vinteger,par);
+      end;
+     end;
+     das_64: begin
+      with insertitem(oc_pushimm64,stackoffset,before)^ do begin
+       setimmint64(po1^.d.dat.constval.vinteger,par);
+      end;
+     end;
+     else begin
+      internalerror1(ie_handler,'20150501A');
+     end;
     end;
    end;
    dk_float: begin
@@ -1437,8 +1482,8 @@ const
  //das_f16,       das_f32,       das_f64
    oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo);
 
-function getvalue(const stackoffset: integer;
-                            const retainconst: boolean = false): boolean;
+function getvalue(const stackoffset: integer; const adatasize: databitsizety;
+                                  const retainconst: boolean = false): boolean;
 
 var
  opdata1: typeallocinfoty;
@@ -1520,7 +1565,7 @@ begin                    //todo: optimize
      result:= true;
      exit;
     end;
-    pushinsertconst(stackoffset,false);
+    pushinsertconst(stackoffset,false,adatasize);
    end;
    ck_subres,ck_fact: begin
     if d.dat.indirection < 0 then begin
@@ -1613,7 +1658,7 @@ begin
    end;
    ck_fact,ck_subres: begin
     if d.dat.indirection <> 0 then begin
-     result:= getvalue(stackoffset);
+     result:= getvalue(stackoffset,das_none);
      exit;
     end;
    end;
@@ -1697,15 +1742,16 @@ var
  op1: opcodety;
  po1: ptypedataty;
  bo1: boolean;
+ si1: databitsizety;
 begin
  with info do begin
   bo1:= false;
   with contextstack[s.stacktop-2] do begin
    if d.kind <> ck_const then begin
-    getvalue(s.stacktop-s.stackindex-2);
+    getvalue(s.stacktop-s.stackindex-2,das_none);
    end;
    if contextstack[s.stacktop].d.kind <> ck_const then begin
-    getvalue(s.stacktop-s.stackindex);
+    getvalue(s.stacktop-s.stackindex,das_none);
    end;
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    int1:= d.dat.datatyp.indirectlevel;
@@ -1722,7 +1768,8 @@ begin
     bo1:= true;
    end;
    if not bo1 then begin
-    incompatibletypeserror(contextstack[s.stacktop-2].d,contextstack[s.stacktop].d);
+    incompatibletypeserror(contextstack[s.stacktop-2].d,
+                                               contextstack[s.stacktop].d);
     dec(s.stacktop,2);
    end
    else begin
@@ -1738,12 +1785,18 @@ begin
      dec(s.stacktop,2);
     end
     else begin
+     if int1 > 0 then begin
+      si1:= das_pointer;
+     end
+     else begin
+      si1:= po1^.h.datasize;
+     end;
      if d.kind = ck_const then begin
-      pushinsertconst(s.stacktop-s.stackindex-2,false);
+      pushinsertconst(s.stacktop-s.stackindex-2,false,si1);
      end;
      with contextstack[s.stacktop] do begin
       if d.kind = ck_const then begin
-       pushinsertconst(s.stacktop-s.stackindex,false);
+       pushinsertconst(s.stacktop-s.stackindex,false,si1);
       end;
      end;
      with additem(op1)^ do begin      

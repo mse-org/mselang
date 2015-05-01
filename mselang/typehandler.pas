@@ -722,7 +722,7 @@ begin
         ck_ref,ck_fact: begin //todo: check type
          li1:= 0;
          if d.kind = ck_ref then begin
-          getvalue(int1-s.stackindex{,true});
+          getvalue(int1-s.stackindex,das_32);
          end;
          lastssa:= d.dat.fact.ssaindex;
          with insertitem(oc_mulimmint32,int1-s.stackindex,false)^ do begin
@@ -752,7 +752,7 @@ begin
      d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel;
      if not fullconst then begin
       if isdynarray then begin //todo: nested, move to index loop
-       getvalue(-1);
+       getvalue(-1,das_32);
       end
       else begin
        pushinsertaddress(-1,true);

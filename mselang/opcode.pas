@@ -420,7 +420,7 @@ procedure setimmint1(const value: int8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if info.backend = bke_llvm then begin
-  par.imm.llvm:= constlist.addi1(value);
+  par.imm.llvm:= constlist.addi1(odd(value));
  end
  else begin
   par.imm.vint8:= value;

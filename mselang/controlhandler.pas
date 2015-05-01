@@ -51,7 +51,7 @@ uses
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
  with info do begin
-  getvalue(s.stacktop-s.stackindex);
+  getvalue(s.stacktop-s.stackindex,das_none);
   with contextstack[s.stacktop] do begin
    if (d.dat.datatyp.indirectlevel <> 0) or (ptypedataty(ele.eledataabs(
                       d.dat.datatyp.typedata))^.h.kind <> dk_boolean) then begin
@@ -246,12 +246,12 @@ begin
  outhandle('CASEEXPRESSION');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  if (s.stacktop-s.stackindex = 1) and getvalue(1,true) and 
+  if (s.stacktop-s.stackindex = 1) and getvalue(1,das_none,true) and 
                  (d.dat.datatyp.indirectlevel = 0) and 
          (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
                                                  ordinaldatakinds) then begin
    if d.kind = ck_const then begin //todo: optimize const case switch
-    getvalue(1);
+    getvalue(1,das_none);
    end;
   end
   else begin

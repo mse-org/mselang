@@ -116,7 +116,7 @@ begin
 {$endif}
  with info,contextstack[s.stacktop] do begin
   bo1:= (s.stacktop-s.stackindex = 1) and (d.kind in datacontexts) and
-                            getvalue(1) and (d.dat.datatyp.indirectlevel = 1);
+                     getvalue(1,das_none) and (d.dat.datatyp.indirectlevel = 1);
   if bo1 then begin
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    bo1:= po1^.h.kind = dk_class;

@@ -108,7 +108,7 @@ begin
    errormessage(err_wrongnumberofparameters,['setlength'],
                                      s.stacktop-paramcount-s.stackindex);
   end;
-  if getvalue(s.stacktop-s.stackindex) then begin
+  if getvalue(s.stacktop-s.stackindex,das_32) then begin
    with contextstack[s.stacktop] do begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     if (d.dat.datatyp.indirectlevel <> 0) or 

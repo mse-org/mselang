@@ -141,7 +141,7 @@ begin
    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
                       (d.dat.datatyp.indirectlevel > 0) then begin
         //todo: remove implicit pointer -> int conversion
-    if getvalue(stackoffset) then begin //pointer to int
+    if getvalue(stackoffset,das_pointer) then begin //pointer to int
      int1:= d.dat.fact.ssaindex;        //todo: operand size
      with insertitem(oc_potoint32,stackoffset,false)^ do begin
       par.ssas1:= int1;
@@ -160,7 +160,7 @@ begin
      po1:= source1;
      repeat
       if getclassinterfaceoffset(po1,dest,int1) then begin
-       if getvalue(stackoffset) then begin
+       if getvalue(stackoffset,das_pointer) then begin
         i2:= d.dat.fact.ssaindex;
         with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
          setimmint32(int1,par);
@@ -184,7 +184,7 @@ begin
     else begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                                 (source1^.h.bitsize = pointerbitsize) then begin
-      if getvalue(stackoffset) then begin //any to pointer
+      if getvalue(stackoffset,pointerintsize) then begin //any to pointer
        int1:= d.dat.fact.ssaindex; //todo: no int source
        with insertitem(oc_inttopo,stackoffset,false)^ do begin
         par.ssas1:= int1;
@@ -231,11 +231,11 @@ begin
                        po1,po1^.h.indirectlevel);
   end
   else begin
-   result:= getvalue(stackoffset);
+   result:= getvalue(stackoffset,dest);
   end;
  end
  else begin
-  result:= getvalue(stackoffset);
+  result:= getvalue(stackoffset,dest);
   if result then begin
    result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel);
    if not result then begin
@@ -247,8 +247,7 @@ begin
 end;
 
 function checkcompatiblefacttype(var afact: contextdataty;
-                              const atypedata: elementoffsetty;
-                                     const aadress: addressvaluety): boolean;
+        const atypedata: elementoffsetty; const aadress: addressvaluety): boolean;
 var
  po1,po2: ptypedataty;
  i1: int32;
@@ -375,6 +374,7 @@ var
   idents1: identvecty;
   firstnotfound1: integer;
   callssa: int32;
+  si1: databitsizety;
  begin
   with info,contextstack[s.stackindex] do begin
    if stf_getaddress in s.currentstatementflags
@@ -491,12 +491,20 @@ var
         end;
        end
        else begin
+         with ptypedataty(ele.eledataabs(po6^.vf.typ))^ do begin
+          if h.indirectlevel > 0 then begin
+           si1:= das_pointer;
+          end
+          else begin
+           si1:= h.datasize;
+          end;
+         end;
         case d.kind of
          ck_const: begin
-          pushinsertconst(int1-s.stackindex,false);
+          pushinsertconst(int1-s.stackindex,false,si1);
          end;
          ck_ref: begin
-          getvalue(int1-s.stackindex{,true});
+          getvalue(int1-s.stackindex,si1);
          end;
         end;
        end;
@@ -705,7 +713,7 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         getvalue(0);
+         getvalue(0,das_none);
 //         pushinsertdata(0,false,pvardataty(po2)^.address,ele.eledatarel(po2),
 //                                                offs1,bitoptypes[das_pointer]);
 //         initfactcontext(0); //set ssa
@@ -927,12 +935,6 @@ begin
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;
-       (*
-       if stf_getaddress in s.currentstatementflags
-                      {ff_address in getfactflags} then begin
-        include(d.dat.ref.c.address.flags,af_getaddress);
-       end;
-       *)
       end
       else begin
        with contextstack[s.stackindex-1] do begin
@@ -947,7 +949,7 @@ begin
       donotfound(pvardataty(po2)^.vf.typ); //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and
                            (d.kind in datacontexts) then begin
-       if getvalue(0) then begin
+       if getvalue(0,das_none) then begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
         if (d.dat.datatyp.indirectlevel = 1) and 
                               (po3^.h.kind = dk_sub) then begin

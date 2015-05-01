@@ -22,8 +22,6 @@ uses
 const
  firstident = 256;
  includemax = 31;
- pointersize = sizeof(pointer); //todo: use target size
- pointerbitsize = pointersize*8;
 
 type
  segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
@@ -104,6 +102,10 @@ const
  bitopdatakinds = alldatakinds-byteopdatakinds;
  floatopdatakinds = [das_f16,das_f32,das_f64];
  ordinalopdatakinds = bitopdatakinds-floatopdatakinds;
+
+ pointersize = sizeof(pointer); //todo: use target size
+ pointerbitsize = pointersize*8;
+ pointerintsize = das_32;
 
 type
  addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,
