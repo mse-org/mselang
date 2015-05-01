@@ -65,7 +65,7 @@
   
   int32toflo64ssa,
   potoint32ssa,
-  anytopossa,
+  inttopossa,
   
   negcard32ssa,
   negint32ssa,
@@ -399,7 +399,7 @@
   
   @int32toflo64op,
   @potoint32op,
-  @anytopoop,
+  @inttopoop,
   
   @negcard32op,
   @negint32op,

@@ -114,7 +114,7 @@ type
   
   oc_int32toflo64,
   oc_potoint32,
-  oc_anytopo,
+  oc_inttopo,
 
   oc_negcard32,
   oc_negint32,

@@ -40,7 +40,7 @@ testedit.sta=9
  cx=881
  cy=637
  wsize=0
- active=0
+ active=1
  visible=1
 edit.sta=9
  [groupeditfo]
@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=3
   (
   kind=1
@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=16
    (
    kind=1
@@ -713,7 +713,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recifindi llvm
+    a=0,648,1,recifindi llvm
     teststate=1
     path=recifindi.mla
     comment=
@@ -839,7 +839,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,5,conversions
    c=4
     (
     kind=2
@@ -909,8 +909,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,anytopo llvm
-    teststate=1
+    a=0,648,2,anytopo llvm
+    teststate=2
     path=anytopo.mla
     comment=
     cc=${mlc_llvm}
@@ -925,11 +925,28 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=lli: /home/mse/packs/standard/git/llvm/llvm/lib/IR/Instructions.cpp:2377: static llvm::CastInst *llvm::CastInst::Create(Instruction::CastOps, llvm::Value *, llvm::Type *, const llvm::Twine &, llvm::Instruction *): Assertion `castIsValid(op, S, Ty) && "Invalid cast!"' failed.
+    +0  lli             0x09488128 llvm::sys::PrintStackTrace(_IO_FILE*) + 72
+    +1  lli             0x094884cb
+    +2  lli             0x0948a477
+    +3  linux-gate.so.1 0xb7fdc400 __kernel_sigreturn + 0
+    +4  lli             0x090b96be llvm::BitcodeReader::ParseFunctionBody(llvm::Function*) + 5614
+    +5  lli             0x090c1019 llvm::BitcodeReader::Materialize(llvm::GlobalValue*) + 569
+    +6  lli             0x090c18a7 llvm::BitcodeReader::MaterializeModule(llvm::Module*) + 311
+    +7  lli             0x093ce18a llvm::Module::materializeAll() + 138
+    +8  lli             0x093ce1e4 llvm::Module::materializeAllPermanently(bool) + 68
+    +9  lli             0x090c2a07 llvm::parseBitcodeFile(llvm::MemoryBuffer*, llvm::LLVMContext&) + 183
+    +10 lli             0x082dc405 llvm::ParseIR(llvm::MemoryBuffer*, llvm::SMDiagnostic&, llvm::LLVMContext&) + 277
+    +11 lli             0x082dca79 llvm::ParseIRFile(std::string const&, llvm::SMDiagnostic&, llvm::LLVMContext&) + 585
+    +12 lli             0x0828a533 main + 339
+    +13 libc.so.6       0xb7c609d3 __libc_start_main + 243
+    +Stack dump:
+    +0.	Program arguments: /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/lli /home/mse/packs/standard/git/mselang/mselang/test/base/conversions/anytopo.bc 
+    +
+    aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=conversions/
    comment=
    cc=
@@ -1652,7 +1669,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,writeln string lc
+    a=0,648,1,writeln string lc
     teststate=1
     path=writelnstr.mla
     comment=
@@ -1717,7 +1734,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,getmem llvm
+    a=0,648,1,getmem llvm
     teststate=1
     path=getmem.mla
     comment=
@@ -1762,7 +1779,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setmem llvm
+    a=0,648,1,setmem llvm
     teststate=1
     path=setmem.mla
     comment=
@@ -1935,7 +1952,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordfieldind llvm
+    a=0,648,1,recordfieldind llvm
     teststate=1
     path=recordfieldind.mla
     comment=
@@ -1979,7 +1996,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,recordfieldind2 llvm
+    a=0,648,1,recordfieldind2 llvm
     teststate=1
     path=recordfieldind2.mla
     comment=
@@ -2023,7 +2040,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,pointerinrec llvm
+    a=0,648,1,pointerinrec llvm
     teststate=1
     path=pointerinrec.mla
     comment=
@@ -2125,7 +2142,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,665,5,sub
    c=11
     (
     kind=2
@@ -2217,8 +2234,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,external llvm
-    teststate=1
+    a=0,648,2,external llvm
+    teststate=2
     path=external.mla
     comment=
     cc=${mlc_llvm}
@@ -2233,8 +2250,27 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=lli: /home/mse/packs/standard/git/llvm/llvm/lib/Bitcode/Reader/BitcodeReader.cpp:316: llvm::Value *llvm::BitcodeReaderValueList::getValueFwdRef(unsigned int, llvm::Type *): Assertion `(!Ty || Ty == V->getType()) && "Type mismatch in value table!"' failed.
+    +0  lli             0x09488128 llvm::sys::PrintStackTrace(_IO_FILE*) + 72
+    +1  lli             0x094884cb
+    +2  lli             0x0948a477
+    +3  linux-gate.so.1 0xb7fdc400 __kernel_sigreturn + 0
+    +4  lli             0x090c040a
+    +5  lli             0x090c02a5
+    +6  lli             0x090bf1a3 llvm::BitcodeReader::ParseFunctionBody(llvm::Function*) + 28883
+    +7  lli             0x090c1019 llvm::BitcodeReader::Materialize(llvm::GlobalValue*) + 569
+    +8  lli             0x090c18a7 llvm::BitcodeReader::MaterializeModule(llvm::Module*) + 311
+    +9  lli             0x093ce18a llvm::Module::materializeAll() + 138
+    +10 lli             0x093ce1e4 llvm::Module::materializeAllPermanently(bool) + 68
+    +11 lli             0x090c2a07 llvm::parseBitcodeFile(llvm::MemoryBuffer*, llvm::LLVMContext&) + 183
+    +12 lli             0x082dc405 llvm::ParseIR(llvm::MemoryBuffer*, llvm::SMDiagnostic&, llvm::LLVMContext&) + 277
+    +13 lli             0x082dca79 llvm::ParseIRFile(std::string const&, llvm::SMDiagnostic&, llvm::LLVMContext&) + 585
+    +14 lli             0x0828a533 main + 339
+    +15 libc.so.6       0xb7c609d3 __libc_start_main + 243
+    +Stack dump:
+    +0.	Program arguments: /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/lli /home/mse/packs/standard/git/mselang/mselang/test/base/sub/external.bc 
+    +
+    aec=0
     ie=0
     )
     (
@@ -2349,8 +2385,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recparpo llvm
-    teststate=1
+    a=0,648,2,recparpo llvm
+    teststate=2
     path=recparpo.mla
     comment=
     cc=${mlc_llvm}
@@ -2365,11 +2401,32 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=lli: /home/mse/packs/standard/git/llvm/llvm/lib/Bitcode/Reader/BitcodeReader.cpp:316: llvm::Value *llvm::BitcodeReaderValueList::getValueFwdRef(unsigned int, llvm::Type *): Assertion `(!Ty || Ty == V->getType()) && "Type mismatch in value table!"' failed.
+    +0  lli             0x09488128 llvm::sys::PrintStackTrace(_IO_FILE*) + 72
+    +1  lli             0x094884cb
+    +2  lli             0x0948a477
+    +3  linux-gate.so.1 0xb7fdc400 __kernel_sigreturn + 0
+    +4  lli             0x090c040a
+    +5  lli             0x090c02a5
+    +6  lli             0x090db026
+    +7  lli             0x090c01af
+    +8  lli             0x090bdcd2 llvm::BitcodeReader::ParseFunctionBody(llvm::Function*) + 23554
+    +9  lli             0x090c1019 llvm::BitcodeReader::Materialize(llvm::GlobalValue*) + 569
+    +10 lli             0x090c18a7 llvm::BitcodeReader::MaterializeModule(llvm::Module*) + 311
+    +11 lli             0x093ce18a llvm::Module::materializeAll() + 138
+    +12 lli             0x093ce1e4 llvm::Module::materializeAllPermanently(bool) + 68
+    +13 lli             0x090c2a07 llvm::parseBitcodeFile(llvm::MemoryBuffer*, llvm::LLVMContext&) + 183
+    +14 lli             0x082dc405 llvm::ParseIR(llvm::MemoryBuffer*, llvm::SMDiagnostic&, llvm::LLVMContext&) + 277
+    +15 lli             0x082dca79 llvm::ParseIRFile(std::string const&, llvm::SMDiagnostic&, llvm::LLVMContext&) + 585
+    +16 lli             0x0828a533 main + 339
+    +17 libc.so.6       0xb7c609d3 __libc_start_main + 243
+    +Stack dump:
+    +0.	Program arguments: /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/lli /home/mse/packs/standard/git/mselang/mselang/test/base/sub/recparpo.bc 
+    +
+    aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -2541,7 +2598,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,with1 llvm
+    a=0,648,1,with1 llvm
     teststate=1
     path=with1.mla
     comment=
@@ -2585,7 +2642,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,with2 llvm
+    a=0,648,1,with2 llvm
     teststate=1
     path=with2.mla
     comment=
@@ -2629,7 +2686,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,withpo llvm
+    a=0,648,1,withpo llvm
     teststate=1
     path=withpo.mla
     comment=
@@ -2673,7 +2730,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,withpo1 llvm
+    a=0,648,1,withpo1 llvm
     teststate=1
     path=withpo1.mla
     comment=
@@ -2717,7 +2774,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,withpo2 llvm
+    a=0,648,1,withpo2 llvm
     teststate=1
     path=withpo2.mla
     comment=
@@ -2753,7 +2810,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -3141,7 +3198,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -3164,7 +3221,7 @@ checked=0
 [mainmo.stoponcomperr]
 checked=0
 [mainmo.trttistat1]
-macronames=17
+macronames=18
  fpcflags
  fpcdir
  fpc1
@@ -3175,6 +3232,7 @@ macronames=17
  mseunits
  mselangunits
  mselangdir
+ llvmbindir
  mlc
  mlctest
  mli
@@ -3182,7 +3240,7 @@ macronames=17
  mlc_llvm
  llvm-as
  lli
-macrovalues=17
+macrovalues=18
  -dsvnfixes_2_6 -dmse_nocompilerunitxx
  /home/mse/packs/standard/svn/fp/fixes_2_6/
  ${fpcdir}compiler/ppc386 ${fpcflags} ${mseunits} ${mselangunits}
@@ -3193,19 +3251,21 @@ macrovalues=17
  -Fu${mselibdir}* -Fu${mselibdir}kernel/linux
  -Fu${mselangdir} -Fu${mselangdir}compiler
  /home/mse/packs/standard/git/mselang/mselang/
+ /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/
  ${mselangdir}compiler/mlc ${FILE}
  ${mlc}
  ${mselangdir}interpreter/mli ${FILE_NOEXT(${FILE})}.mli
  ${mselangdir}test/
  ${mselangdir}compiler/mlc --llvm ${FILE}
- llvm-as ${FILE_NOEXT(${FILE})}.ll
- lli ${FILE_NOEXT(${FILE})}.bc
-macroon=17
+ ${llvmbindir}llvm-as ${FILE_NOEXT(${FILE})}.ll
+ ${llvmbindir}lli ${FILE_NOEXT(${FILE})}.bc
+macroon=18
  63
  63
  63
  61
  2
+ 63
  63
  63
  63
@@ -3246,7 +3306,11 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=75
+rowstate=79
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

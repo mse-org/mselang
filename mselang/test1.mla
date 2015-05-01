@@ -1,6 +1,48 @@
 program withpo1;
-uses
- __mla__internaltypes,__mla__compilerunit;
+interface
+
+const            //M S E   m l a
+ mlaexceptionid = $4d5345006d6c6100;
+type
+ _Unwind_Reason_Code = (
+  _URC_NO_REASON,// = 0,
+  _URC_FOREIGN_EXCEPTION_CAUGHT,// = 1,
+  _URC_FATAL_PHASE2_ERROR,// = 2,
+  _URC_FATAL_PHASE1_ERROR,// = 3,
+  _URC_NORMAL_STOP,// = 4,
+  _URC_END_OF_STACK,// = 5,
+  _URC_HANDLER_FOUND,// = 6,
+  _URC_INSTALL_CONTEXT,// = 7,
+  _URC_CONTINUE_UNWIND);// = 8
+
+ p_Unwind_Exception = ^_Unwind_Exception;
+ _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+// p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
+ 
+ _Unwind_Exception = record
+  exception_class: card64;
+  exception_cleanup: pointer;
+//  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
+  private_1: card64;
+  private_2: card64;
+ end;
+ exceptinfoty = record
+  header: _Unwind_Exception;
+  data: pointer;
+ end;
+ pexceptinfoty = ^exceptinfoty;
+
+function _Unwind_RaiseException(
+           exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
+
+implementation
+
+procedure exceptioncleanup(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+begin
+ freemem(exc);
+end;
 
 procedure __mla__raise(const data: pointer);
 var
@@ -9,7 +51,7 @@ begin  //todo: handle out of memory situation
  getmem(po1,sizeof(exceptinfoty);
  with po1^.header do begin
   exception_class:= mlaexceptionid;
-  exception_cleanup:= nil;
+  exception_cleanup:= @exceptioncleanup;
  end;
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);

@@ -27,6 +27,9 @@ uses
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
  msescrollbar,msesyntaxpainter;
 
+const
+ llvmbindir = 
+     '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
 type
  it = interface(ievent)
  end;
@@ -105,7 +108,7 @@ begin
      llvmops.run(targetstream);
      targetstream.destroy();
      if not norun.value then begin
-      int1:= getprocessoutput('lli '+filename1,'',str1);
+      int1:= getprocessoutput(llvmbindir+'lli '+filename1,'',str1);
       grid[0].readpipe(str1,[aco_stripescsequence]);
       grid.appendrow(['EXITCODE: '+inttostr(int1)]);
      end;

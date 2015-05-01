@@ -585,7 +585,7 @@ begin
  vintegerty(stackpush(sizeof(vintegerty))^):= vintegerty(po1^);
 end;
 
-procedure anytopoop();
+procedure inttopoop();
 var
  po1: ppointer;
 begin
@@ -2616,7 +2616,7 @@ const
   
   int32toflo64ssa = 0;
   potoint32ssa = 0;
-  anytopossa = 0;
+  inttopossa = 0;
   
   negcard32ssa = 0;
   negint32ssa = 0;

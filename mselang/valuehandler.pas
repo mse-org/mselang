@@ -185,8 +185,8 @@ begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                                 (source1^.h.bitsize = pointerbitsize) then begin
       if getvalue(stackoffset) then begin //any to pointer
-       int1:= d.dat.fact.ssaindex;
-       with insertitem(oc_anytopo,stackoffset,false)^ do begin
+       int1:= d.dat.fact.ssaindex; //todo: no int source
+       with insertitem(oc_inttopo,stackoffset,false)^ do begin
         par.ssas1:= int1;
        end;
        d.dat.datatyp.typedata:= ele.eledatarel(dest);

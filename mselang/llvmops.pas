@@ -617,11 +617,11 @@ begin
  end;
 end;
 
-procedure anytopoop();
+procedure inttopoop();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(pointertype),
-                                                               CAST_BITCAST);
+                                                               CAST_INTTOPTR);
  end;
 end;
 
@@ -2190,7 +2190,7 @@ const
   
   int32toflo64ssa = 1;
   potoint32ssa = 1;
-  anytopossa =1;
+  inttopossa =1;
   
   negcard32ssa = 1;
   negint32ssa = 1;
