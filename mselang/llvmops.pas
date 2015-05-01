@@ -60,8 +60,8 @@ const
  );
  printfparams: paramsty = (count: 1; items: @printfpar);
  mallocpar: array[0..1] of paramitemty = (
-              (typelistindex: pointertype; flags: []), //result
-              (typelistindex: sizetype; flags: [])     //size
+              (typelistindex: sizetype; flags: []),    //size
+              (typelistindex: pointertype; flags: [])  //result
  );
  mallocparams: paramsty = (count: 2; items: @mallocpar);
  freepar: array[0..0] of paramitemty = (
@@ -69,16 +69,16 @@ const
  );
  freeparams: paramsty = (count: 1; items: @freepar);
  callocpar: array[0..2] of paramitemty = (
-              (typelistindex: pointertype; flags: []), //result
               (typelistindex: sizetype; flags: []),    //nelm
-              (typelistindex: sizetype; flags: [])     //elsize
+              (typelistindex: sizetype; flags: []),    //elsize
+              (typelistindex: pointertype; flags: [])  //result
  );
  callocparams: paramsty = (count: 3; items: @callocpar);
  memsetpar: array[0..3] of paramitemty = (
-              (typelistindex: pointertype; flags: []), //result
               (typelistindex: pointertype; flags: []), //s data
               (typelistindex: inttype; flags: []),     //c fill value
-              (typelistindex: sizetype; flags: [])     //n count
+              (typelistindex: sizetype; flags: []),    //n count
+              (typelistindex: pointertype; flags: [])  //result
  );
  memsetparams: paramsty = (count: 4; items: @memsetpar);
 
