@@ -2101,7 +2101,7 @@ begin
  with info do begin       //todo: use direct move if possible
   if (s.stacktop-s.stackindex = 2) and not errorfla then begin
    isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
-   if not getaddress(1,false) then begin
+   if getaddress(1,false) then begin
     with contextstack[s.stackindex+1] do begin
      if d.dat.datatyp.indirectlevel > 1 then begin
       si1:= das_pointer;

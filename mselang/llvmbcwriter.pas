@@ -594,6 +594,13 @@ begin
       das_1..das_32: begin //todo: das_64
        emitintconst(int32(po2^.header.buffer));
       end;
+      das_64: begin
+     {$ifdef cpu64}
+       emitdataconst(int64(po2^.header.buffer),8);
+     {$else}
+       emitdataconst(consts.absdata(po2^.header.buffer)^,8);
+     {$endif}
+      end;
       else begin
       {$ifdef mse_checkinternalerror}
        if databitsizety(po2^.typeid) <= lastdatakind then begin

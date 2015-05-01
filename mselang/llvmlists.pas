@@ -861,10 +861,17 @@ begin
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;
- result:= po1^.data.header.listindex
 {$else}
- result:= addvalue(avalue,8);
+ alloc1.header.size:= 8;
+ alloc1.header.data:= @avalue;
+ alloc1.typeid:= ord(das_64);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+// result:= addvalue(avalue,8);
 {$endif}
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
 end;
 
 function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmconstty;
