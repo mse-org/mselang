@@ -1,0 +1,6 @@
+program unituses1;
+uses
+ unit1;
+begin
+ exitcode:= 22;
+end.

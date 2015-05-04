@@ -1,0 +1,5 @@
+unit unit1;
+implementation
+finalization
+ exitcode:= 123;
+end.

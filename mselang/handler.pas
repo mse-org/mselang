@@ -194,11 +194,11 @@ begin
   if stf_hasmanaged in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
-    endinternalsub();
+    endsimplesub();
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
     writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
-    endinternalsub();
+    endsimplesub();
    end;
   end;
   
@@ -233,6 +233,8 @@ procedure handleprogblock();
 var
  ad1: listadty;
  ad2: opaddressty;
+ hasfini: boolean;
+ finicall: opaddressty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -240,17 +242,25 @@ begin
 // writeop(nil); //endmark
  handleunitend();
  invertlist(unitlinklist,unitchain);
+ hasfini:= false;
  with unitlinklist do begin
   ad1:= unitchain;
-  while ad1 <> 0 do begin         //insert ini calls
-   with punitlinkinfoty(list+ad1)^ do begin
-    with ref^ do begin
-     if internalsubs[isub_fini] <> 0 then begin
-      callinternalsub(internalsubs[isub_fini]);
-     end;
+  while ad1 <> 0 do begin         //insert fini calls
+   with punitlinkinfoty(list+ad1)^,ref^ do begin
+    if internalsubs[isub_fini] <> 0 then begin
+     hasfini:= true;
+     break;
     end;
     ad1:= header.next;
    end;
+  end;
+ end;
+ if hasfini then begin
+  finicall:= info.opcount;
+  with additem(oc_call)^.par.callinfo do begin
+   flags:= [];
+   params:= 0;
+   paramcount:= 0;
   end;
  end;
  with additem(oc_progend)^ do begin 
@@ -260,6 +270,26 @@ begin
   with getoppo(d.prog.blockcountad)^ do begin
    par.main.blockcount:= info.s.ssa.blockindex+1;
   end;  
+ end;
+ if info.backend = bke_llvm then begin
+  globlist.addsubvalue(nil,stringtolstring('main'));
+ end;
+ if hasfini then begin
+  getoppo(finicall)^.par.callinfo.ad:= startsimplesub() - 1;
+  with unitlinklist do begin
+   ad1:= unitchain;
+   while ad1 <> 0 do begin         //insert fini calls
+    with punitlinkinfoty(list+ad1)^ do begin
+     with ref^ do begin
+      if internalsubs[isub_fini] <> 0 then begin
+       callinternalsub(internalsubs[isub_fini]);
+      end;
+     end;
+     ad1:= header.next;
+    end;
+   end;
+  end;
+  endsimplesub();
  end;
  with info do begin
   dec(s.stackindex);

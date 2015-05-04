@@ -62,8 +62,9 @@ procedure handleimplementationexpected();
 function checkparams(const po1,ref: psubdataty): boolean; 
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
-procedure endinternalsub();
 procedure callinternalsub(const asub: opaddressty); //ignores op address 0
+function startsimplesub: opaddressty;
+procedure endsimplesub();
 
 implementation
 uses
@@ -77,30 +78,22 @@ type
   match: psubdataty;
  end;
 
-function getinternalsub(const asub: internalsubty;
-                                   out aaddress: opaddressty): boolean;
+function startsimplesub: opaddressty;
 begin
- with info.s.unitinfo^ do begin
-  aaddress:=  internalsubs[asub];
-  result:= aaddress = 0;
-  if result then begin
-   aaddress:= info.opcount;
-   internalsubs[asub]:= aaddress;
-   resetssa();
-   with additem(oc_subbegin)^.par.subbegin do begin
-    subname:= aaddress;
-    if info.backend = bke_llvm then begin
-     globid:= globlist.addinternalsubvalue([],noparams);
-    end;
-    sub.flags:= [];
-    sub.allocs:= nullallocs;
-    sub.blockcount:= 1;
-   end;
+ result:= info.opcount;
+ resetssa();
+ with additem(oc_subbegin)^.par.subbegin do begin
+  subname:= result;
+  if info.backend = bke_llvm then begin
+   globid:= globlist.addinternalsubvalue([],noparams);
   end;
+  sub.flags:= [];
+  sub.allocs:= nullallocs;
+  sub.blockcount:= 1;
  end;
 end;
 
-procedure endinternalsub();
+procedure endsimplesub();
 begin
  with additem(oc_return)^ do begin
   par.stacksize:= 0;
@@ -108,6 +101,19 @@ begin
  with additem(oc_subend)^ do begin
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
+ end;
+end;
+
+function getinternalsub(const asub: internalsubty;
+                                   out aaddress: opaddressty): boolean;
+begin
+ with info.s.unitinfo^ do begin
+  aaddress:=  internalsubs[asub];
+  result:= aaddress = 0;
+  if result then begin
+   aaddress:= startsimplesub();
+   internalsubs[asub]:= aaddress;
+  end;
  end;
 end;
 

@@ -348,7 +348,7 @@ begin
              constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid);
  end;
 
- globlist.addsubvalue(nil,stringtolstring('main'));
+// globlist.addsubvalue(nil,stringtolstring('main'));
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
   with internalfuncconsts[funcs1] do begin
    internalfuncs[funcs1]:= globlist.addexternalsubvalue(flags,params^,

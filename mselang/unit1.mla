@@ -1,13 +1,17 @@
 unit unit1;
+{
 uses
  unit3;
 procedure tt1(p1: int32);
+}
 implementation
-
+{
 procedure tt1(p1: int32);
 begin
  writeln('tt1');
  tt3(p1);
 end;
-
+}
+finalization
+ exitcode:= 123;
 end.

@@ -684,11 +684,11 @@ parseend:
    with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
      writemanagedvarop(mo_ini,varchain,true,0);
-     endinternalsub();
+     endsimplesub();
     end;
     if getinternalsub(isub_fini,inifinisub) then begin //no finalization section
      writemanagedvarop(mo_fini,varchain,true,0);
-     endinternalsub();
+     endsimplesub();
     end;
    end;
   end;

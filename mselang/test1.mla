@@ -1,5 +1,7 @@
 program withpo1;
 interface
+uses
+ unit1;
 
 const            //M S E   m l a
  mlaexceptionid = $4d5345006d6c6100;
@@ -18,12 +20,10 @@ type
  p_Unwind_Exception = ^_Unwind_Exception;
  _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
-// p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
  
  _Unwind_Exception = record
   exception_class: card64;
-  exception_cleanup: pointer;
-//  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
+  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
   private_1: card64;
   private_2: card64;
  end;
@@ -37,6 +37,8 @@ function _Unwind_RaiseException(
            exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
 
 implementation
+const
+ exco_unhandledexception = 217;
 
 procedure exceptioncleanup(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
@@ -55,11 +57,12 @@ begin  //todo: handle out of memory situation
  end;
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
- //halt();
+ exitcode:= exco_unhandledexception; //no handler found
+// halt();
 end;
 
 begin
  exitcode:= 123;
- __mla__raise(nil);
- exitcode:= 11;
+// __mla__raise(nil);
+// exitcode:= 11;
 end.
