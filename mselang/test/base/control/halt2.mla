@@ -1,0 +1,8 @@
+program halt2;
+uses
+ uhalt1; //with finalization
+begin
+ exitcode:= 100;
+ halt();
+ exitcode:= 11;
+end.

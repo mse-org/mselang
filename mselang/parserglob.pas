@@ -738,10 +738,7 @@ type
   backend: backendty;
   backendhasfunction: boolean;
   debugoptions: debugoptionsty;
-//  beginparseop:  integer;
   unitinfochain: elementoffsetty;
-//  allocproc: allocprocty;
-//  globallocid: integer;
   locallocid: integer;
   pb: pbranchty;
   
@@ -757,8 +754,8 @@ type
   errorwritten: boolean;
   errorfla: boolean;
   errors: array[errorlevelty] of integer; //total count
-  opcount: integer;
-  start: integer;
+  opcount: int32;
+  start: int32;
   globdatapo: ptruint;
   locdatapo: ptruint;
   frameoffset: ptruint;

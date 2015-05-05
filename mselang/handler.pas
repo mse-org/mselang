@@ -153,7 +153,6 @@ var
  ele1: elementoffsetty;
 begin
  setoptable(aoptable,assatable);
-// info.allocproc:= aallocproc;
  addvar(tk_exitcode,allvisi,info.s.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
@@ -165,6 +164,7 @@ begin
  with additem(oc_beginparse)^ do begin
   with par.beginparse do begin //startup vector 
    exitcodeaddress:= po1^.address.segaddress;
+   finisub:= 0;
   end;
  end;
 end;
@@ -235,6 +235,7 @@ var
  ad2: opaddressty;
  hasfini: boolean;
  finicall: opaddressty;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -257,6 +258,7 @@ begin
  end;
  if hasfini then begin
   finicall:= info.opcount;
+            //todo: what about precompiled units with halt()?
   with additem(oc_call)^.par.callinfo do begin
    flags:= [];
    params:= 0;
@@ -275,7 +277,11 @@ begin
   globlist.addsubvalue(nil,stringtolstring('main'));
  end;
  if hasfini then begin
-  getoppo(finicall)^.par.callinfo.ad:= startsimplesub() - 1;
+  with getoppo(startupoffset)^ do begin
+   par.beginparse.finisub:= info.opcount;
+  end;
+  i1:= startsimplesub();
+  getoppo(finicall)^.par.callinfo.ad:= i1-1;
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert fini calls

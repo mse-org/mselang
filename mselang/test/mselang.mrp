@@ -643,8 +643,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=8
+   a=0,665,4,control
+   c=12
     (
     kind=2
     a=0,648,1,iftest
@@ -804,6 +804,94 @@ c=3
     a=0,648,1,nestedwhile llvm
     teststate=1
     path=nestedwhile.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,halt1
+    teststate=1
+    path=halt1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,halt1 llvm
+    teststate=1
+    path=halt1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,halt2
+    teststate=1
+    path=halt2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,halt2 llvm
+    teststate=1
+    path=halt2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3209,7 +3297,7 @@ c=3
  path=${testdir}
  comment=
  cc=
- cd=
+ cd=${FILE_NONAME(${file})}
  rc=
  rd=
  in=
@@ -3313,7 +3401,19 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=27
+rowstate=39
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

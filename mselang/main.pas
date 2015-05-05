@@ -82,6 +82,7 @@ var
  str1: string;
  int1: integer;
  filename1: filenamety;
+ dirbefore: msestring;
 begin
 {$ifdef mse_debugparser}
  writeln('*****************************************');
@@ -93,37 +94,42 @@ begin
  if llvm.value then begin
   backend:= bke_llvm;
  end;
- bo1:= parser.parse(ed.gettext,backend);
+ dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
-  errstream.position:= 0;
-  grid[0].datalist.loadfromstream(errstream);
-  if bo1 then begin
-   if llvm.value then begin
-    filename1:= replacefileext(filena.value,'bc');
-    if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
-                               filename1,fm_create) <> sye_ok then begin
-     grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
+  bo1:= parser.parse(ed.gettext,backend);
+  try
+   errstream.position:= 0;
+   grid[0].datalist.loadfromstream(errstream);
+   if bo1 then begin
+    if llvm.value then begin
+     filename1:= replacefileext(filena.value,'bc');
+     if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
+                                filename1,fm_create) <> sye_ok then begin
+      grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
+     end
+     else begin
+      llvmops.run(targetstream);
+      targetstream.destroy();
+      if not norun.value then begin
+       int1:= getprocessoutput(llvmbindir+'lli '+filename1,'',str1);
+       grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+       grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+      end;
+     end;
     end
     else begin
-     llvmops.run(targetstream);
-     targetstream.destroy();
-     if not norun.value then begin
-      int1:= getprocessoutput(llvmbindir+'lli '+filename1,'',str1);
-      grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-      grid.appendrow(['EXITCODE: '+inttostr(int1)]);
-     end;
+     grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
     end;
-   end
-   else begin
-    grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
+   end;
+  finally
+   errstream.destroy();
+   outstream.destroy();
+   if backend = bke_llvm then begin
+    elements.clear();
    end;
   end;
  finally
-  errstream.destroy();
-  outstream.destroy();
-  if backend = bke_llvm then begin
-   elements.clear();
-  end;
+  setcurrentdirmse(dirbefore);
  end;
 end;
 

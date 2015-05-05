@@ -118,6 +118,8 @@ var                       //todo: use threadvars where necessary
  oppo: popinfoty;
 }
  startpo: popinfoty;
+ finihandler: opaddressty;
+ halting: boolean;
 // globdata: pointer;
 // constdata: pointer;
 
@@ -320,7 +322,11 @@ end;
 
 procedure beginparseop();
 begin
- cpu.pc:= startpo + cpu.pc^.par.beginparse.mainad - 1;
+ with cpu.pc^ do begin
+  finihandler:= par.beginparse.finisub;
+  halting:= false;
+  cpu.pc:= startpo + par.beginparse.mainad - 1;
+ end;
 end;
 
 procedure mainop();
@@ -336,11 +342,6 @@ end;
 procedure endparseop();
 begin
  //dummy
-end;
-
-procedure haltop();
-begin
- cpu.stop:= true;
 end;
 
 procedure cmpjmpneimm4op();
@@ -1829,6 +1830,19 @@ begin
  end;
  cpu.frame:= cpu.stack;
  cpu.stacklink:= cpu.frame;
+end;
+
+procedure haltop();
+begin
+ if not halting and (finihandler <> 0) then begin
+  halting:= true;
+  dec(cpu.pc); //return to haltop()
+  docall();
+  cpu.pc:= startpo+finihandler-1;
+ end
+ else begin
+  cpu.stop:= true;
+ end;
 end;
 
 procedure callop();

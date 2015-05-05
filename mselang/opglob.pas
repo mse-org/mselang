@@ -527,6 +527,7 @@ type
   unitinfochain: elementoffsetty;
   exitcodeaddress: segaddressty;
   mainad: opaddressty;
+  finisub: opaddressty; //0 -> none
  end;  
 
  stackopty = record

@@ -323,6 +323,7 @@ end;
 
 var
  exitcodeaddress: segaddressty;
+ finihandler: int32; //globid
 
 procedure beginparseop();
 var
@@ -406,6 +407,12 @@ begin
  with pc^.par.beginparse do begin
   bcstream.start(constlist,globlist);
   llvmops.exitcodeaddress:= exitcodeaddress;
+  if finisub = 0 then begin
+   llvmops.finihandler:= 0;
+  end
+  else begin
+   llvmops.finihandler:= getoppo(finisub)^.par.subbegin.globid;
+  end;
  end;
 end;
 
@@ -432,6 +439,9 @@ end;
 
 procedure haltop();
 begin
+ if finihandler <> 0 then begin
+  bcstream.emitcallop(false,bcstream.globval(finihandler),[]);
+ end;  
  bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if__exit]),
                                                       [bcstream.relval(0)]);
@@ -2492,7 +2502,7 @@ const
   pushsegaddrclassdefssa = 3;
   
 {$include optable.inc}
-
+var testvar: popinfoty;
 procedure run(const atarget: tllvmbcwriter);
 var
  endpo: pointer;
@@ -2500,6 +2510,7 @@ var
 begin
  bcstream:= atarget;
  pc:= getsegmentbase(seg_op);
+testvar:= pc;
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
  while pc < endpo do begin
