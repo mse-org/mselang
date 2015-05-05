@@ -318,7 +318,7 @@ type
  psubdataty = ^subdataty;
 
  sysfuncty = (sf_write,sf_writeln,sf_setlength,sf_sizeof,sf_inc,sf_dec,
-              sf_getmem,sf_getzeromem,sf_freemem,sf_setmem);
+              sf_getmem,sf_getzeromem,sf_freemem,sf_setmem,sf_halt);
 
  sysfuncdataty = record
   func: sysfuncty;

@@ -79,6 +79,7 @@ type
   oc_main,
   oc_progend,
   oc_endparse,
+  oc_halt,
   
   oc_movesegreg0,
   oc_moveframereg0,

@@ -1,0 +1,6 @@
+program halt1;
+begin
+ exitcode:= 123;
+ halt();
+ exitcode:= 11;
+end.

@@ -53,6 +53,7 @@ type
   params: pparamsty;
  end;
  internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset,
+                   if__exit,
                    if__Unwind_RaiseException);
 const
  printfpar: array[0..0] of paramitemty = (
@@ -82,6 +83,11 @@ const
  );
  memsetparams: paramsty = (count: 4; items: @memsetpar);
 
+ _exitpar: array[0..0] of paramitemty = (
+              (typelistindex: inttype; flags: [])      //status
+ );
+ _exitparams: paramsty = (count: 1; items: @_exitpar);
+
  _Unwind_RaiseExceptionpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])  //ptr
  );
@@ -94,6 +100,7 @@ const
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
+  (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: '_Unwind_RaiseException'; flags: [sf_proto];
                      params: @_Unwind_RaiseExceptionparams)  
  );
@@ -421,6 +428,13 @@ end;
 procedure endparseop();
 begin
  bcstream.stop();
+end;
+
+procedure haltop();
+begin
+ bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
+ bcstream.emitcallop(false,bcstream.globval(internalfuncs[if__exit]),
+                                                      [bcstream.relval(0)]);
 end;
 
 procedure movesegreg0op();
@@ -2156,6 +2170,7 @@ const
   mainssa = 0;//1;
   progendssa = 0;  
   endparsessa = 0;
+  haltssa = 1;
 
   movesegreg0ssa = 1;
   moveframereg0ssa = 1;

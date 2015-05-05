@@ -31,6 +31,7 @@
   mainssa,
   progendssa,  
   endparsessa,
+  haltssa,
 
   movesegreg0ssa,
   moveframereg0ssa,
@@ -365,6 +366,7 @@
   @mainop,
   @progendop,  
   @endparseop,
+  @haltop,
 
   @movesegreg0op,
   @moveframereg0op,

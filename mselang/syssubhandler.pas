@@ -31,6 +31,7 @@ procedure handlegetmem(const paramco: integer);
 procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
 procedure handlesetmem(const paramco: integer);
+procedure handlehalt(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -38,7 +39,8 @@ const
   @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
   //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
-  @handlesetmem);
+  //sf_setmem,  sf_halt
+  @handlesetmem,@handlehalt);
   
 procedure init();
 procedure deinit();
@@ -499,6 +501,16 @@ begin
  end;
 end;
 
+procedure handlehalt(const paramco: integer);
+begin
+ with info do begin
+  if checkparamco(0,paramco) then begin
+   with additem(oc_halt)^ do begin
+   end;
+  end;
+ end;
+end;
+
 type
  sysfuncinfoty = record
   name: string;
@@ -515,7 +527,8 @@ const
    (name: 'getmem'; data: (func: sf_getmem)),
    (name: 'getzeromem'; data: (func: sf_getzeromem)),
    (name: 'freemem'; data: (func: sf_freemem)),
-   (name: 'setmem'; data: (func: sf_setmem))
+   (name: 'setmem'; data: (func: sf_setmem)),
+   (name: 'halt'; data: (func: sf_halt))
   );
 
 procedure init();

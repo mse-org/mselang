@@ -338,6 +338,11 @@ begin
  //dummy
 end;
 
+procedure haltop();
+begin
+ cpu.stop:= true;
+end;
+
 procedure cmpjmpneimm4op();
 begin
  with cpu.pc^.par do begin
@@ -2582,6 +2587,7 @@ const
   mainssa = 0;
   progendssa = 0;  
   endparsessa = 0;
+  haltssa = 0;
 
   movesegreg0ssa = 0;
   moveframereg0ssa = 0;
