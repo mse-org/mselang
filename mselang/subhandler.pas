@@ -479,7 +479,7 @@ begin
    errormessage(err_invaliddirective,['external']);
   end
   else begin
-   include(d.subdef.flags,sf_external);
+   d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
   end;
  end;
 end;
@@ -865,6 +865,10 @@ begin
    end;
    }
    ele.elementparent:= parent1; //restore in sub
+   s.stacktop:= s.stackindex;
+  end
+  else begin
+   dec(s.stackindex);
    s.stacktop:= s.stackindex;
   end;
  end;

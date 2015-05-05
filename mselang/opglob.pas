@@ -73,6 +73,7 @@ type
   oc_until,
   oc_decloop32,
   oc_decloop64,
+
   oc_raise,
 
   oc_beginparse,
@@ -665,7 +666,7 @@ type
 
 const
  controlops = [oc_label,oc_goto,oc_if,oc_while,oc_until,oc_decloop32,
-               oc_decloop64,oc_raise{,oc_pushcpucontext}];
+               oc_decloop64{,oc_raise}{,oc_pushcpucontext}];
 
 type
                  //todo: unify, variable size

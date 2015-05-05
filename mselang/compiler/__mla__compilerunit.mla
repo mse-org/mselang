@@ -84,13 +84,26 @@ writeln('* ',po1,' ',po1^.header.parentclass,' ',
  until po1 = nil;
 end;
 
+procedure exceptioncleanup(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+begin
+ freemem(exc);
+end;
+
 procedure __mla__raise(const data: pointer);
 var
  po1: pexceptinfoty;
-begin
+begin  //todo: handle out of memory situation
  getmem(po1,sizeof(exceptinfoty);
-// with po1^.header do begin
-// end;
+ with po1^.header do begin
+  exception_class:= mlaexceptionid;
+  exception_cleanup:= @exceptioncleanup;
+ end;
+ po1^.data:= data;
+ _Unwind_RaiseException(@po1^.header);
+ freemem(po1);
+ exitcode:= exco_unhandledexception; //no handler found
+ halt();
 end;
 
 end.

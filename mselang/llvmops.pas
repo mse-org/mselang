@@ -2099,7 +2099,7 @@ end;
 procedure raiseop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(false,bcstream.globval(
+  bcstream.emitcallop(true,bcstream.globval(
            internalfuncs[if__Unwind_RaiseException]),[bcstream.ssaval(ssas1)]);
  end;
 end;
@@ -2502,7 +2502,7 @@ const
   pushsegaddrclassdefssa = 3;
   
 {$include optable.inc}
-var testvar: popinfoty;
+
 procedure run(const atarget: tllvmbcwriter);
 var
  endpo: pointer;
@@ -2510,7 +2510,6 @@ var
 begin
  bcstream:= atarget;
  pc:= getsegmentbase(seg_op);
-testvar:= pc;
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  inc(pc,startupoffset);
  while pc < endpo do begin

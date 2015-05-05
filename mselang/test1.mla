@@ -57,12 +57,13 @@ begin  //todo: handle out of memory situation
  end;
  po1^.data:= data;
  _Unwind_RaiseException(@po1^.header);
+ freemem(po1);
  exitcode:= exco_unhandledexception; //no handler found
-// halt();
+ halt();
 end;
 
 begin
  exitcode:= 123;
-// __mla__raise(nil);
-// exitcode:= 11;
+ __mla__raise(nil);
+ exitcode:= 11;
 end.

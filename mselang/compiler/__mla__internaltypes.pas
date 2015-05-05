@@ -111,12 +111,10 @@ type
  p_Unwind_Exception = ^_Unwind_Exception;
  _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
-// p_Unwind_Exception_Cleanup_Fn = ^_Unwind_Exception_Cleanup_Fn;
  
  _Unwind_Exception = record
   exception_class: card64;
-  exception_cleanup: pointer;
-//  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
+  exception_cleanup: _Unwind_Exception_Cleanup_Fn;
   private_1: card64;
   private_2: card64;
  end;
@@ -125,6 +123,9 @@ type
   data: pointer;
  end;
  pexceptinfoty = ^exceptinfoty;
+
+const
+ exco_unhandledexception = 217;
 
 implementation
 end.

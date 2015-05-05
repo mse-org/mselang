@@ -29,7 +29,7 @@ procedure endparser();
 //procedure int32toflo64();
  
 //procedure dummyhandler();
-
+procedure dummyhandler();
 procedure handlenoimplementationerror();
 
 procedure checkstart();
@@ -261,6 +261,7 @@ begin
             //todo: what about precompiled units with halt()?
   with additem(oc_call)^.par.callinfo do begin
    flags:= [];
+   linkcount:= -1;
    params:= 0;
    paramcount:= 0;
   end;
@@ -1434,6 +1435,13 @@ begin
 {$endif}
 end;
 *)
+
+procedure dummyhandler();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DUMMY');
+{$endif}
+end;
 
 procedure handlenoimplementationerror();
 begin
