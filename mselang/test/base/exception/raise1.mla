@@ -1,0 +1,16 @@
+program raise1;
+
+type
+ t1 = class
+  public
+   constructor create();
+ end;
+
+constructor t1.create();
+begin
+end;
+begin
+ exitcode:= 123;
+ raise t1.create();
+ exitcode:= 11;
+end.

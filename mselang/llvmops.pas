@@ -2099,7 +2099,7 @@ end;
 procedure raiseop();
 begin
  with pc^.par do begin
-  callcompilersub(cs_raise,true,[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_raise,false,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
@@ -2473,7 +2473,7 @@ const
   setlengthstr8ssa = 1;
   setlengthdynarrayssa = 1;
 
-  raisessa = 1;
+  raisessa = 0;
   pushcpucontextssa = 1;
   popcpucontextssa = 1;
   finiexceptionssa = 1;

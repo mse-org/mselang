@@ -3383,10 +3383,10 @@ groupcomment=6
  
 [mainfo]
 stackedunder=
-x=479
-y=395
+x=724
+y=20
 cx=672
-cy=449
+cy=380
 wsize=0
 active=1
 visible=1
