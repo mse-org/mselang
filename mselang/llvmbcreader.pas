@@ -922,8 +922,10 @@ begin
       end;
      end;
      MODULE_CODE_FUNCTION: begin
-      checkmindatalen(rec1,2);
-      additem(fsubheaders,fgloblist.count,fsubheadercount);
+      checkmindatalen(rec1,4);
+      if rec1[4] = 0 then begin //no proto
+       additem(fsubheaders,fgloblist.count,fsubheadercount);
+      end;
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_sub;
        valuetype:= rec1[2];

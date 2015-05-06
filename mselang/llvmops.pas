@@ -53,8 +53,8 @@ type
   params: pparamsty;
  end;
  internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset,
-                   if__exit,
-                   if__Unwind_RaiseException);
+                   if__exit{,
+                   if__Unwind_RaiseException});
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -100,9 +100,9 @@ const
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
-  (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
+  (name: '_exit'; flags: [sf_proto]; params: @_exitparams){,
   (name: '_Unwind_RaiseException'; flags: [sf_proto];
-                     params: @_Unwind_RaiseExceptionparams)  
+                     params: @_Unwind_RaiseExceptionparams)}  
  );
 
 type
@@ -2099,8 +2099,7 @@ end;
 procedure raiseop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(true,bcstream.globval(
-           internalfuncs[if__Unwind_RaiseException]),[bcstream.ssaval(ssas1)]);
+  callcompilersub(cs_raise,true,[bcstream.ssaval(ssas1)]);
  end;
 end;
 
