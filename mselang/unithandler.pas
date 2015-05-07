@@ -71,7 +71,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerutils,msearrayutils,opcode,subhandler,
+ handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes;
  
 type
@@ -435,6 +435,7 @@ type
 var
  classdescendlist: linklistty;
  forwardtypes: linklistty;
+ trystack: linklistty;
  
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
@@ -895,6 +896,7 @@ begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);
  clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
  clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
+ clearlist(trystack,sizeof(trystackitemty),256);
  unitchain:= 0;
   
  links:= nil;

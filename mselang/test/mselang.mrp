@@ -206,7 +206,71 @@ c=3
   (
   kind=1
   a=0,665,4,base
-  c=17
+  c=18
+   (
+   kind=1
+   a=0,664,4,address
+   c=2
+    (
+    kind=2
+    a=0,648,1,address
+    teststate=1
+    path=address.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,address llvm
+    teststate=1
+    path=address.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=address/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
    (
    kind=1
    a=0,664,4,arith
@@ -643,7 +707,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=12
     (
     kind=2
@@ -927,7 +991,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,4,conversions
    c=4
     (
     kind=2
@@ -1099,13 +1163,13 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,address
+   a=0,665,4,exception
    c=2
     (
     kind=2
-    a=0,648,1,address
+    a=0,648,1,raise1
     teststate=1
-    path=address.mla
+    path=raise1.mla
     comment=
     cc=${mlc}
     cd=
@@ -1113,21 +1177,22 @@ c=3
     rd=
     in=
     eo=
-    ao=0
+    ao=1
     ee=
     ae=0
     eec=123
     cr=0
-    ao=
+    ao=An unhandled exception occured at $B7323BE8
+    +
     ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,address llvm
+    a=0,648,1,raise1 llvm
     teststate=1
-    path=address.mla
+    path=raise1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -1138,15 +1203,15 @@ c=3
     ao=0
     ee=
     ae=0
-    eec=123
+    eec=217
     cr=0
     ao=
     ae=
-    aec=123
+    aec=217
     ie=0
     )
    teststate=1
-   path=address/
+   path=exception/
    comment=
    cc=
    cd=
@@ -2475,7 +2540,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,types
+   a=0,664,4,types
    c=2
     (
     kind=2
@@ -3401,14 +3466,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=39
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=32
  0 0
  0 0
  0 0

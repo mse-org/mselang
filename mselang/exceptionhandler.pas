@@ -17,6 +17,14 @@
 unit exceptionhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
+uses
+ listutils;
+
+type
+ trystackitemty = record
+  header: linkheaderty;
+ end;
+ ptrystackitemty = ^trystackitemty;
 
 procedure handlefinallyexpected();
 procedure handletryentry();

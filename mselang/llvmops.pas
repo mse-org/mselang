@@ -2105,15 +2105,17 @@ end;
 
 procedure pushcpucontextop();
 begin
- notimplemented();
+// notimplemented(); todo
 end;
+
 procedure popcpucontextop();
 begin
- notimplemented();
+// notimplemented();
 end;
+
 procedure finiexceptionop();
 begin
- notimplemented();
+// notimplemented();
 end;
 
 procedure continueexceptionop();
