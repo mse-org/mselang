@@ -70,39 +70,13 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
- msestrings,typehandler;
+ msestrings,typehandler,exceptionhandler;
 
 type
  equalparaminfoty = record
   ref: psubdataty;
   match: psubdataty;
  end;
-
-function startsimplesub: opaddressty;
-begin
- result:= info.opcount;
- resetssa();
- with additem(oc_subbegin)^.par.subbegin do begin
-  subname:= result;
-  if info.backend = bke_llvm then begin
-   globid:= globlist.addinternalsubvalue([],noparams);
-  end;
-  sub.flags:= [];
-  sub.allocs:= nullallocs;
-  sub.blockcount:= 1;
- end;
-end;
-
-procedure endsimplesub();
-begin
- with additem(oc_return)^ do begin
-  par.stacksize:= 0;
- end;
- with additem(oc_subend)^ do begin
-  par.subend.allocs.alloccount:= 0;
-  par.subend.allocs.nestedalloccount:= 0;
- end;
-end;
 
 function getinternalsub(const asub: internalsubty;
                                    out aaddress: opaddressty): boolean;
@@ -491,13 +465,75 @@ begin
   internalerror(ie_handler,'20150424A');
  end;
 {$endif}
- asub^.address:= info.opcount;
- with additem(aop,0)^ do begin
-  par.subbegin.subname:= asub^.address;
-  par.subbegin.globid:= asub^.globid;
-  par.subbegin.sub.flags:= asub^.flags;
-  par.subbegin.sub.allocs:= asub^.allocs;
+ with info do begin
+  asub^.address:= opcount;
+  with additem(aop,0)^ do begin
+   par.subbegin.subname:= asub^.address;
+   par.subbegin.globid:= asub^.globid;
+   par.subbegin.sub.flags:= asub^.flags;
+   par.subbegin.sub.allocs:= asub^.allocs;
+  end;
+ {$ifdef mse_checkinternalerror}
+  if s.trystack <> 0 then begin
+   internalerror(ie_handler,'20150507A');
+  end;
+ {$endif}
+  s.trystacklevel:= 0;
  end;
+end;
+
+procedure addsubend(const asub: psubdataty);
+begin
+ with additem(oc_subend)^ do begin
+  par.subend.flags:= asub^.flags;
+  par.subend.allocs:= asub^.allocs;
+ end;
+ with info do begin
+  deletelistchain(trystacklist,s.trystack); //normally already empty
+  s.trystacklevel:= 0;
+ end;
+end;
+
+function startsimplesub: opaddressty;
+begin
+ result:= info.opcount;
+ resetssa();
+ with additem(oc_subbegin)^.par.subbegin do begin
+  subname:= result;
+  if info.backend = bke_llvm then begin
+   globid:= globlist.addinternalsubvalue([],noparams);
+  end;
+  sub.flags:= [];
+  sub.allocs:= nullallocs;
+  sub.blockcount:= 1;
+ end;
+(*
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if s.trystack <> 0 then begin
+   internalerror(ie_handler,'20150507A');
+  end;
+ {$endif}
+  s.trystacklevel:= 0;
+ end;
+*)
+end;
+
+procedure endsimplesub();
+begin
+ with additem(oc_return)^ do begin
+  par.stacksize:= 0;
+ end;
+ with additem(oc_subend)^ do begin
+  par.subend.allocs.alloccount:= 0;
+  par.subend.allocs.nestedalloccount:= 0;
+ end;
+(*
+ with info do begin
+  deletelistchain(trystacklist,s.trystack); //normally already empty
+  s.trystacklevel:= 0;
+ end;
+*)
 end;
 
 procedure handlesubheader();
@@ -1077,10 +1113,7 @@ begin
    end;
   end;
 }
-  with additem(oc_subend)^ do begin
-   par.subend.flags:= po1^.flags;
-   par.subend.allocs:= po1^.allocs;
-  end;
+  addsubend(po1);
   locallocid:= d.subdef.locallocidbefore;
   po2:= getitem(po1^.address);
   if po2^.op.op = oc_initclass then begin

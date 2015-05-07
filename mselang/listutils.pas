@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ procedure clearlist(var alist: linklistty; const aitemsize: integer;
                                               const amincapacity: integer);
 procedure freelist(var alist: linklistty);
 function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+procedure deletelistitem(var alist: linklistty; var achain: listadty);
 procedure deletelistchain(var alist: linklistty; var achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
 procedure resolvelist(var alist: linklistty; const handler: resolvehandlerty;
@@ -114,11 +115,33 @@ begin
  end; 
 end; 
 
-procedure deletelistchain(var alist: linklistty; var achain: listadty);
+procedure deletelistitem(var alist: linklistty; var achain: listadty);
+var
+ next1: listadty;
 begin
  if achain <> 0 then begin
   with alist do begin
+   next1:= plinkheaderty(list+achain)^.next;
    plinkheaderty(list+achain)^.next:= deleted;
+   deleted:= achain;
+  end;
+  achain:= next1;
+ end;
+end;
+
+procedure deletelistchain(var alist: linklistty; var achain: listadty);
+var
+ ad1: listadty;
+ po1: plinkheaderty;
+begin
+ if achain <> 0 then begin
+  with alist do begin
+   ad1:= achain;
+   repeat
+    po1:= alist.list+ad1;
+    ad1:= po1^.next;
+   until ad1 = 0;
+   po1^.next:= deleted;
    deleted:= achain;
   end;
   achain:= 0;

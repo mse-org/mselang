@@ -25,6 +25,8 @@ type
   header: linkheaderty;
  end;
  ptrystackitemty = ^trystackitemty;
+var
+ trystacklist: linklistty;
 
 procedure handlefinallyexpected();
 procedure handletryentry();
@@ -56,7 +58,20 @@ begin
 {$ifdef mse_debugparser}
  outhandle('TRYYENTRY');
 {$endif}
+ with info do begin
+  inc(s.trystacklevel);
+  with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
+  end;
+ end;
  with additem(oc_pushcpucontext)^ do begin
+ end;
+end;
+
+procedure tryexit();
+begin
+ with info do begin
+  deletelistitem(trystacklist,s.trystack);
+  dec(s.trystacklevel);
  end;
 end;
 
@@ -83,6 +98,7 @@ begin
   end;
 //  dec(s.stackindex,1);
  end; 
+ tryexit();
 end;
 
 procedure handleexceptentry();
@@ -112,6 +128,7 @@ begin
   end;
 //  dec(s.stackindex,1);
  end; 
+ tryexit();
 end;
 
 procedure handleraise();

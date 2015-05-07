@@ -731,6 +731,8 @@ type
   stopparser: boolean;
   stoponerror: boolean;
   currentstatementflags: statementflagsty;
+  trystack: listadty;
+  trystacklevel: int32;
  end;
   
  parseinfoty = record
