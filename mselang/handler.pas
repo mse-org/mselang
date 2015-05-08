@@ -105,6 +105,8 @@ procedure handleaddressopfactentry();
 //procedure handleaddressfact();
 procedure handlefact1();
 
+procedure handleandfact();
+
 //procedure handlefactadentry();
 procedure handlenegfact();
 procedure handlemulfact();
@@ -116,6 +118,7 @@ procedure handleterm();
 procedure handledereference();
 procedure handleaddterm();
 procedure handlesubterm();
+procedure handleorterm();
 procedure handlebracketend();
 procedure handlesimpexp();
 procedure handlesimpexp1();
@@ -749,14 +752,28 @@ const
        //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
   (ops: (oc_none, oc_none,    oc_none,  oc_mulint32,oc_mulflo64);
                      opname: '*');
+
+ andops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,oc_none);
+                     opname: 'and');
  
 procedure handlemulfact();
 begin
 {$ifdef mse_debugparser}
  outhandle('MULFACT');
 {$endif}
- updateop(mulops);
+ updateop(mulops);  //todo: optimize constants
 end;
+
+procedure handleandfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ANDFACT');
+{$endif}
+ updateop(andops);  //todo: optimize constants
+end;
+
 //todo: different datasizes
 const
  addops: opsinfoty = 
@@ -767,6 +784,10 @@ const
       //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
  (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subflo64);
                      opname: '-');
+ orops: opsinfoty = 
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
+ (ops: (oc_none, oc_none,   oc_or1,  oc_or32,oc_none);
+                     opname: 'or');
 
 procedure addsubterm(const issub: boolean);
  
@@ -962,6 +983,14 @@ begin
  outhandle('SUBTERM');
 {$endif}
  addsubterm(true);
+end;
+
+procedure handleorterm(); //todo: optimize constants
+begin
+{$ifdef mse_debugparser}
+ outhandle('ORTERM');
+{$endif}
+ updateop(orops);
 end;
 
 procedure handleterm();

@@ -715,22 +715,27 @@ simpexp1,simpexp1,,
  ${whitespace}
  '+',addterm-*
  '-',subterm-*
+ 'or'.,orterm-*
  '',simpexp1a
 simpexp1a,,,handlesimpexp1
 
 addterm,,,handleaddterm
  '',term*
-
 subterm,,,handlesubterm
+ '',term*
+orterm,,,handleorterm
  '',term*
 
 term,term1,,
  '',fact*
 term1,,,handleterm
  ${whitespace}
- '*',mulfact*>
+ '*',mulfact-*>
+ 'and'.,andfact-*>
 
 mulfact,,,handlemulfact
+ '',fact*
+andfact,,,handleandfact
  '',fact*
 
 addressfact,fact0,handleaddressfactentry,
@@ -749,6 +754,8 @@ fact0,fact1,,
  '$',hexnum-*
  '''',string-*
  '#',char-*
+ 'and'.,*
+ 'or'.,*
  @identstart,valueidentifier*
  '',illegalexpression
 

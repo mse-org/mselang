@@ -598,6 +598,42 @@ begin
  //dummy
 end;
 
+procedure and1op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vbooleanty));
+ po2:= po1-alignsize(sizeof(vbooleanty));
+ vbooleanty(po2^):= vbooleanty(po2^) and vbooleanty(po1^);
+end;
+
+procedure and32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) and vintegerty(po1^);
+end;
+
+procedure or1op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vbooleanty));
+ po2:= po1-alignsize(sizeof(vbooleanty));
+ vbooleanty(po2^):= vbooleanty(po2^) or vbooleanty(po1^);
+end;
+
+procedure or32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) or vintegerty(po1^);
+end;
+
 procedure mulint32op();
 var
  po1,po2: pointer;
@@ -2637,6 +2673,11 @@ const
   int32toflo64ssa = 0;
   potoint32ssa = 0;
   inttopossa = 0;
+  
+  and1ssa = 0;
+  and32ssa = 0;
+  or1ssa = 0;
+  or32ssa = 0;
   
   negcard32ssa = 0;
   negint32ssa = 0;

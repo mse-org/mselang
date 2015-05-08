@@ -1,28 +1,26 @@
 program raise2;
 
 type
- t1 = class
+ tc = class
   public
    constructor create();
+   destructor destroy();
  end;
 
-constructor t1.create();
+constructor tc.create();
 begin
 end;
-
+destructor tc.destroy();
+begin
+end;
 procedure test();
 begin
- raise t1.create();
+ raise tc.create();
 end;
 
 begin
- exitcode:= 1;
  try
-  exitcode:= exitcode+10;
   test();
-  exitcode:= 11;
  except
-  exitcode:= exitcode+100;
  end;
- exitcode:= exitcode+12; 
 end.

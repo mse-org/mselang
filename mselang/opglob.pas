@@ -118,6 +118,11 @@ type
   oc_potoint32,
   oc_inttopo,
 
+  oc_and1,
+  oc_and32,
+  oc_or1,
+  oc_or32,
+  
   oc_negcard32,
   oc_negint32,
   oc_negflo64,

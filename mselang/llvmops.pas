@@ -649,6 +649,26 @@ begin
  end;
 end;
 
+procedure and1op();
+begin
+ outbinop(BINOP_AND);
+end;
+
+procedure and32op();
+begin
+ outbinop(BINOP_AND);
+end;
+
+procedure or1op();
+begin
+ outbinop(BINOP_OR);
+end;
+
+procedure or32op();
+begin
+ outbinop(BINOP_OR);
+end;
+
 procedure mulint32op();
 begin
  notimplemented();
@@ -2223,6 +2243,11 @@ const
   int32toflo64ssa = 1;
   potoint32ssa = 1;
   inttopossa =1;
+
+  and1ssa = 1;
+  and32ssa = 1;
+  or1ssa = 1;
+  or32ssa = 1;
   
   negcard32ssa = 1;
   negint32ssa = 1;
