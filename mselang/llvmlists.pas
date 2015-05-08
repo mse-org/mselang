@@ -144,6 +144,7 @@ type
   protected
    fclassdef: int32;
    fintfitem: int32;
+   flandingpad: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
@@ -167,6 +168,7 @@ type
    function next: ptypelistdataty;
    property classdef: int32 read fclassdef;
    property intfitem: int32 read fintfitem;
+   property landingpad: int32 read flandingpad;
  end;
 
  consttypety = (ct_none,ct_null,ct_pointercast,
@@ -487,6 +489,7 @@ begin
   end;
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fintfitem:= addstructvalue([inttype,pointertype]);
+  flandingpad:= addstructvalue([pointertype,inttype]);
  end;
  {
  t1.header.size:= -1;

@@ -2114,7 +2114,7 @@ procedure popcpucontextop();
 begin
  with pc^.par do begin
   bcstream.landingpad:= opaddress.bbindex;
-  bcstream.emitlandingpad(bcstream.typeval(voidtype),
+  bcstream.emitlandingpad(bcstream.typeval(typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality]));
  end;
 end;
@@ -2483,7 +2483,7 @@ const
 
   raisessa = 0;
   pushcpucontextssa = 0;
-  popcpucontextssa = 0;
+  popcpucontextssa = 1;
   finiexceptionssa = 0;
   continueexceptionssa = 0;
   getmemssa = 2;

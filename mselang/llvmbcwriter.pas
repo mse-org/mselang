@@ -201,7 +201,7 @@ type
    procedure emitcmpop(const apred: Predicate; const valueida: int32;
                                                       const valueidb: int32);
    procedure emitlandingpad(const aresulttype: int32; 
-                                        const apersonality: int32);
+                                        const apersonality: int32); //1ssa
    procedure emitdebugloc(const avalue: debuglocty);
    procedure emitdebuglocagain();
 
@@ -1573,7 +1573,9 @@ end;
 procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
                                                    const apersonality: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_LANDINGPAD),[aresulttype,apersonality,1,0]);
+ emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
+                                   [aresulttype,fsubopindex-apersonality,1,0]);
+ inc(fsubopindex);
 end;
 
 end.

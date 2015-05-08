@@ -1127,7 +1127,7 @@ var
   end;
   outrecord(aname,values);
  end;
- 
+
  procedure outssarecord(const atype: int32; const avalue: string);
  begin
   if fbb = -1 then begin
@@ -1420,6 +1420,11 @@ begin
        if functioncodes(rec1[1]) = FUNC_CODE_INST_INVOKE then begin
         incbb();
        end;
+      end;
+      FUNC_CODE_INST_LANDINGPAD: begin
+       checkmindatalen(rec1,5);
+       outssarecord(rec1[2],opname(rec1[3])+','+inttostr(rec1[4])+
+                                                      ','+inttostr(rec1[5]));
       end;
       FUNC_CODE_INST_BR: begin
        checkmindatalen(rec1,2);
