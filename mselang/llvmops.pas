@@ -301,8 +301,8 @@ begin
  end;
 end;
 
-procedure callcompilersub(const asub: compilersubty; const afunc: boolean;
-                                     const aparams: array of int32);
+procedure callcompilersub(const asub: compilersubty;
+          const afunc: boolean; const aparams: array of int32);
 begin
  bcstream.emitcallop(afunc,bcstream.globval(compilersubids[asub]),aparams);
 end;
@@ -2111,6 +2111,10 @@ end;
 procedure popcpucontextop();
 begin
 // notimplemented();
+ with pc^.par do begin
+  bcstream.emitlandingpad(bcstream.typeval(voidtype),
+                       bcstream.globval(compilersubids[cs_personality]));
+ end;
 end;
 
 procedure finiexceptionop();
@@ -2120,7 +2124,7 @@ end;
 
 procedure continueexceptionop();
 begin
- notimplemented();
+// notimplemented();
 end;
 
 procedure getmemop();
@@ -2476,10 +2480,10 @@ const
   setlengthdynarrayssa = 1;
 
   raisessa = 0;
-  pushcpucontextssa = 1;
-  popcpucontextssa = 1;
-  finiexceptionssa = 1;
-  continueexceptionssa = 1;
+  pushcpucontextssa = 0;
+  popcpucontextssa = 0;
+  finiexceptionssa = 0;
+  continueexceptionssa = 0;
   getmemssa = 2;
   getzeromemssa = 2;
   freememssa = 0;

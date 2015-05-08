@@ -372,7 +372,10 @@ type
                         //mse:       // RET:        [opval<optional>]
     FUNC_CODE_INST_BR,//          = 11, // BR:         [bb#, bb#, cond] or [bb#]
     FUNC_CODE_INST_SWITCH,//      = 12, // SWITCH:     [opty, op0, op1, ...]
-    FUNC_CODE_INST_INVOKE,//      = 13, // INVOKE:     [attr, fnty, op0,op1, ...]
+    FUNC_CODE_INST_INVOKE,//      = 13,
+          // INVOKE:     [attr, fnty, op0,op1, ...]
+          //mse INVOKE: [paramattrs, cc, normBB, unwindBB, fnid, arg0,arg1, ...]
+
     FUNC_CODE_14,
     // 14 is unused.
     FUNC_CODE_INST_UNREACHABLE,// = 15, // UNREACHABLE
@@ -416,13 +419,18 @@ type
                              //mse: CALL: [paramattrs, cc, fnid, arg0, arg1...]
     FUNC_CODE_DEBUG_LOC,//        = 35, // DEBUG_LOC:  [Line,Col,ScopeVal, IAVal]
     FUNC_CODE_INST_FENCE,//       = 36, // FENCE: [ordering, synchscope]
-    FUNC_CODE_INST_CMPXCHG,//     = 37, // CMPXCHG: [ptrty,ptr,cmp,new, align, vol,
+    FUNC_CODE_INST_CMPXCHG,//     = 37, 
+                           // CMPXCHG: [ptrty,ptr,cmp,new, align, vol,
                                      //           ordering, synchscope]
     FUNC_CODE_INST_ATOMICRMW,//   = 38, // ATOMICRMW: [ptrty,ptr,val, operation,
                                      //             align, vol,
                                      //             ordering, synchscope]
     FUNC_CODE_INST_RESUME,//      = 39, // RESUME:     [opval]
-    FUNC_CODE_INST_LANDINGPAD,//  = 40, // LANDINGPAD: [ty,val,val,num,id0,val0...]
+    FUNC_CODE_INST_LANDINGPAD,//  = 40, 
+     // LANDINGPAD: [ty,val,val,num,id0,val0...]
+     //mse: LANDINGPAD: 
+     //         [resultty,PersFn,IsCleanup,NumClauses,
+     //                   {lpc_catch,GlobVal|lpc_filter,GlobArray}]
     FUNC_CODE_INST_LOADATOMIC,//  = 41, // LOAD: [opty, op, align, vol,
                                      //        ordering, synchscope]
     FUNC_CODE_INST_STOREATOMIC// = 42  // STORE: [ptrty,ptr,val, align, vol
@@ -436,6 +444,11 @@ type
 
 //mse
 
+ landingpadclausety = (
+  lpc_catch,
+  lpc_filter
+ );
+ 
  callingconvty = (
   cv_ccc = 0,
   cv_fastcc = 8,

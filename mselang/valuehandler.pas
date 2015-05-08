@@ -36,7 +36,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- __mla__internaltypes;
+ __mla__internaltypes,exceptionhandler,listutils;
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer): boolean;
@@ -644,6 +644,13 @@ var
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid
+     if s.trystack <> 0 then begin
+      linkmark(ptrystackitemty(getlistitem(trystacklist,s.trystack))^.links,
+                               getsegaddress(seg_op,@par.callinfo.exceptdest));
+     end
+     else begin
+      par.callinfo.exceptdest:= 0;
+     end;
     end;
     if sf_function in asub^.flags then begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;

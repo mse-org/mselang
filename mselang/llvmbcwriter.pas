@@ -69,6 +69,8 @@ type
    fsuballocstart: int32;   //reference for allocs
    fsubopstart: int32;      //start of op ssa id's
    fsubopindex: int32;      //current op ssa is
+   fcurrentbb: int32;
+   flandingpad: int32;
   {$ifdef mse_checkinternalerror}
    procedure checkalignment(const bytes: integer);
   {$endif}
@@ -157,11 +159,11 @@ type
                                                          const bbcount: int32);
    procedure endsub();
    
-   procedure emitcallop(const afunc: boolean; const valueid: int32;
-                                                      const aparams: idarty);
+   procedure emitcallop(const afunc: boolean;
+             const valueid: int32; const aparams: idarty);
                                           //changes aparams
-   procedure emitcallop(const afunc: boolean; const valueid: int32;
-                                              aparams: array of int32);
+   procedure emitcallop(const afunc: boolean;
+             const valueid: int32; aparams: array of int32);
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
@@ -198,6 +200,8 @@ type
                          const valueida: int32; const valueidb: int32);
    procedure emitcmpop(const apred: Predicate; const valueida: int32;
                                                       const valueidb: int32);
+   procedure emitlandingpad(const aresulttype: int32; 
+                                        const apersonality: int32);
    procedure emitdebugloc(const avalue: debuglocty);
    procedure emitdebuglocagain();
 
@@ -1185,6 +1189,7 @@ procedure tllvmbcwriter.emitbrop(const bb: int32);
 begin
  emitrec(ord(FUNC_CODE_INST_BR),[bb]);
  checkdebugloc();
+ inc(fcurrentbb);
 end;
                               
 procedure tllvmbcwriter.emitretop();
@@ -1193,6 +1198,7 @@ begin
  emit6(ord(FUNC_CODE_INST_RET));
  checkdebugloc();
  inc(fsubopindex);
+ inc(fcurrentbb);
 end;
 
 procedure tllvmbcwriter.emitretop(const avalue: int32);
@@ -1200,6 +1206,7 @@ begin
  emitrec(ord(FUNC_CODE_INST_RET),[fsubopindex-avalue]);
  checkdebugloc();
  inc(fsubopindex);
+ inc(fcurrentbb);
 end;
 
 procedure tllvmbcwriter.emitresumeop(const avalue: int32);
@@ -1421,6 +1428,7 @@ end;
 procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                           const allocs: suballocinfoty; const bbcount: int32);
 begin
+ fcurrentbb:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
  with allocs do begin
@@ -1454,30 +1462,42 @@ begin
  endblock();
 end;
 
-procedure tllvmbcwriter.emitcallop(const afunc: boolean; const valueid: int32;
-                                                   const aparams: idarty);
+procedure tllvmbcwriter.emitcallop(const afunc: boolean;
+                           const valueid: int32; const aparams: idarty);
 var
  i1: int32;
 begin
  for i1:= aparams.count-1 downto 0 do begin
   aparams.ids[i1]:= fsubopindex-aparams.ids[i1];
  end;
- emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ if flandingpad = 0 then begin
+  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ end
+ else begin
+  emitrec(ord(FUNC_CODE_INST_CALL),
+                  [fcurrentbb,flandingpad,0,0,fsubopindex-valueid],aparams);
+ end;
  checkdebugloc();
  if afunc then begin
   inc(fsubopindex);
  end;
 end;
 
-procedure tllvmbcwriter.emitcallop(const afunc: boolean; const valueid: int32;
-                                                 aparams: array of int32);
+procedure tllvmbcwriter.emitcallop(const afunc: boolean; 
+                          const valueid: int32; aparams: array of int32);
 var
  i1: int32;
 begin
  for i1:= high(aparams) downto 0 do begin
   aparams[i1]:= fsubopindex-aparams[i1];
  end;
- emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ if flandingpad = 0 then begin
+  emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
+ end
+ else begin
+  emitrec(ord(FUNC_CODE_INST_CALL),
+                    [fcurrentbb,flandingpad,0,0,fsubopindex-valueid],aparams);
+ end;
  checkdebugloc();
  if afunc then begin
   inc(fsubopindex);
@@ -1544,6 +1564,12 @@ procedure tllvmbcwriter.releasetrampoline(out apc: popinfoty);
 begin
  apc:= ftrampolineop;
  ftrampolineop:= nil;
+end;
+
+procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
+                                                   const apersonality: int32);
+begin
+ emitrec(ord(FUNC_CODE_INST_LANDINGPAD),[aresulttype,apersonality,1,0]);
 end;
 
 end.

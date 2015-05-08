@@ -1182,7 +1182,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7323BE8
+    ao=An unhandled exception occured at $B72F9BE8
     +
     ae=
     aec=123
@@ -3453,7 +3453,7 @@ y=20
 cx=672
 cy=380
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
 propcolwidthref=566

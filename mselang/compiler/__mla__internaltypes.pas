@@ -8,8 +8,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit __mla__internaltypes;
-interface 
-
+interface
 type
  ppointer = ^pointer;
 
@@ -18,6 +17,8 @@ type
  targetptrintty = int32;
  card64 = qword;
 {$endif}
+ targetcint = int32;
+ 
  refcountty = int32;
  managedsizety = int32;
  stringsizety = managedsizety;
@@ -123,8 +124,16 @@ type
   data: pointer;
  end;
  pexceptinfoty = ^exceptinfoty;
-
+ _Unwind_Context = record
+ end;
+ p_Unwind_Context = ^_Unwind_Context;
+ 
+ _Unwind_Action = targetcint;
 const
+ _UA_SEARCH_PHASE = 1;
+ _UA_CLEANUP_PHASE = 2;
+ _UA_HANDLER_FRAME = 4;
+ _UA_FORCE_UNWIND = 8;
  exco_unhandledexception = 217;
 
 implementation

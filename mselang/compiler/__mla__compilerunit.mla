@@ -16,6 +16,11 @@ procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
+function __mla__personality(version: targetcint;
+             actions: _Unwind_Action;
+             exceptionClass: card64;
+             exceptionObject: p_Unwind_Exception;
+             context: p_Unwind_Context): _Unwind_Reason_Code;
 
 function _Unwind_RaiseException(
            exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
@@ -104,6 +109,15 @@ begin  //todo: handle out of memory situation
  freemem(po1);
  exitcode:= exco_unhandledexception; //no handler found
  halt();
+end;
+
+function __mla__personality(version: targetcint;
+             actions: _Unwind_Action;
+             exceptionClass: card64;
+             exceptionObject: p_Unwind_Exception;
+             context: p_Unwind_Context): _Unwind_Reason_Code;
+begin
+ result:= _URC_CONTINUE_UNWIND;
 end;
 
 end.

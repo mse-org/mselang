@@ -18,11 +18,12 @@ unit exceptionhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- listutils;
+ listutils,parserglob;
 
 type
  trystackitemty = record
   header: linkheaderty;
+  links: linkindexty;
  end;
  ptrystackitemty = ^trystackitemty;
 var
@@ -38,8 +39,8 @@ procedure handleraise();
 
 implementation
 uses
- handlerutils,errorhandler,parserglob,handlerglob,elements,opcode,stackops,
- segmentutils,opglob;
+ handlerutils,errorhandler,handlerglob,elements,opcode,stackops,
+ segmentutils,opglob,unithandler;
  
 procedure handlefinallyexpected();
 begin
@@ -61,10 +62,17 @@ begin
  with info do begin
   inc(s.trystacklevel);
   with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
+   links:= 0;
   end;
  end;
  with additem(oc_pushcpucontext)^ do begin
  end;
+end;
+
+procedure tryhandle();
+begin
+ linkresolveint(ptrystackitemty(
+     getlistitem(trystacklist,info.s.trystack))^.links,info.s.ssa.blockindex);
 end;
 
 procedure tryexit();
@@ -83,6 +91,7 @@ begin
  with info do begin
   getoppo(contextstack[s.stackindex-1].opmark.address)^.
                                           par.opaddress.opaddress:= opcount-1;
+  tryhandle();
   with additem(oc_popcpucontext)^ do begin
   end;
  end;
@@ -106,8 +115,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXCEPTENTRY');
 {$endif}
- with additem(oc_goto)^ do begin
+ with addcontrolitem(oc_goto)^ do begin
  end;
+ tryhandle();
  with info,contextstack[s.stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
   opmark.address:= opcount-1; //gotoop
@@ -124,6 +134,7 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1; 
                                       //skip exception handling code
+  addlabel();
   with additem(oc_finiexception)^ do begin
   end;
 //  dec(s.stackindex,1);

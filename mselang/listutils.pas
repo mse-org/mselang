@@ -50,6 +50,7 @@ procedure clearlist(var alist: linklistty; const aitemsize: integer;
                                               const amincapacity: integer);
 procedure freelist(var alist: linklistty);
 function addlistitem(var alist: linklistty; var aitem: listadty): pointer;
+function getlistitem(const alist: linklistty; const aitem: listadty): pointer;
 procedure deletelistitem(var alist: linklistty; var achain: listadty);
 procedure deletelistchain(var alist: linklistty; var achain: listadty);
 procedure invertlist(const alist: linklistty; var achain: listadty);
@@ -114,6 +115,11 @@ begin
   aitem:= li1;  
  end; 
 end; 
+
+function getlistitem(const alist: linklistty; const aitem: listadty): pointer;
+begin
+ result:= alist.list+aitem;
+end;
 
 procedure deletelistitem(var alist: linklistty; var achain: listadty);
 var

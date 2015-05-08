@@ -44,7 +44,9 @@ procedure handleinclude();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
-procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
+procedure linkresolveopad(const alinks: linkindexty; 
+                                                 const aaddress: opaddressty);
+procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
 procedure forwardresolve(const aforward: forwardindexty);
@@ -489,7 +491,7 @@ begin
  alinks:= li1;
 end;
 
-procedure linkresolve(const alinks: linkindexty; const aaddress: opaddressty);
+procedure linkresolveopad(const alinks: linkindexty; const aaddress: opaddressty);
 var
  li1: linkindexty;
 begin
@@ -508,6 +510,27 @@ begin
   deletedlinks:= alinks;
  end;
 end;
+
+procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
+var
+ li1: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    pint32(getsegmentpo(dest))^:= avalue;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
 {
 function addtypedef(const aname: identty; const avislevel: visikindsty;
                                         out aelementdata: pointer): boolean;

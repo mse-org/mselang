@@ -25,14 +25,16 @@ type
   cs_decrefsize,
   cs_finifrefsize,
   cs_initclass,
-  cs_raise
+  cs_raise,
+  cs_personality
  );
 const
  compilersubnames: array[compilersubty] of string = (
   '__mla__decrefsize',
   '__mla__finirefsize',
   '__mla__initclass',
-  '__mla__raise'
+  '__mla__raise',
+  '__mla__personality'
  );
  
 var

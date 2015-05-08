@@ -937,7 +937,7 @@ begin
    if (po2^.flags * [sf_virtual,sf_override] <> []) and 
                     (sf_intfcall in po2^.flags) then begin
     po2^.trampolineaddress:= opcount;
-    linkresolve(po2^.trampolinelinks,po2^.trampolineaddress);
+    linkresolveopad(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin 
      par.subbegin.trampoline.selfinstance:= -subdef.paramsize;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
@@ -974,9 +974,9 @@ begin
               //resolve virtual table entry
     end;
    end;
-   linkresolve(po2^.links,po1^.address);
+   linkresolveopad(po2^.links,po1^.address);
   end;
-  linkresolve(po1^.links,po1^.address); //nested calls
+  linkresolveopad(po1^.links,po1^.address); //nested calls
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order
