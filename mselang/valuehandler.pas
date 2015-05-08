@@ -644,13 +644,6 @@ var
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
      par.callinfo.ad:= asub^.address-1; //possibly invalid
-     if s.trystack <> 0 then begin
-      linkmark(ptrystackitemty(getlistitem(trystacklist,s.trystack))^.links,
-                               getsegaddress(seg_op,@par.callinfo.exceptdest));
-     end
-     else begin
-      par.callinfo.exceptdest:= 0;
-     end;
     end;
     if sf_function in asub^.flags then begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;

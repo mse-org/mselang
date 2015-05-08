@@ -431,7 +431,6 @@ type
 
  callinfoty = record
   ad: opaddressty;    //first!
-  exceptdest: int32;
   flags: subflagsty;
   linkcount: integer; //used in "for downto 0"
   params: dataoffsty;
