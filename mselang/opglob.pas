@@ -677,7 +677,7 @@ type
   case opcodety of 
    oc_label,oc_goto,oc_if,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
-   oc_pushcpucontext:(
+   oc_pushcpucontext,oc_popcpucontext:(
     opaddress: labty; //first!
    );   
    oc_setmem: (

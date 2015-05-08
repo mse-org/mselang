@@ -209,6 +209,7 @@ type
    procedure releasetrampoline(out apc: popinfoty); //nil if none
       
    function valindex(const aadress: segaddressty): integer;
+   property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
@@ -1429,6 +1430,7 @@ procedure tllvmbcwriter.beginsub(const aflags: subflagsty;
                           const allocs: suballocinfoty; const bbcount: int32);
 begin
  fcurrentbb:= 0;
+ flandingpad:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
  with allocs do begin

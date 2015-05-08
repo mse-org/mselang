@@ -23,6 +23,7 @@ uses
 type
  trystackitemty = record
   header: linkheaderty;
+//  entry: int32;  //index of op_pushcpucontext
   links: linkindexty;
  end;
  ptrystackitemty = ^trystackitemty;
@@ -54,7 +55,6 @@ begin
 end;
 
 procedure handletryentry();
-              //todo: don't use push/pop stack
 begin
 {$ifdef mse_debugparser}
  outhandle('TRYYENTRY');
@@ -63,16 +63,28 @@ begin
   inc(s.trystacklevel);
   with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
    links:= 0;
+   with additem(oc_pushcpucontext)^ do begin
+    linkmark(links,getsegaddress(seg_op,@par.opaddress.bbindex));
+   end;
   end;
- end;
- with additem(oc_pushcpucontext)^ do begin
  end;
 end;
 
 procedure tryhandle();
 begin
- linkresolveint(ptrystackitemty(
-     getlistitem(trystacklist,info.s.trystack))^.links,info.s.ssa.blockindex);
+ with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
+  linkresolveint(links,info.s.ssa.blockindex);
+  with additem(oc_popcpucontext)^ do begin
+   if info.s.trystack > 1 then begin //restore parent landingpad
+    with ptrystackitemty(getlistitem(trystacklist,info.s.trystack-1))^ do begin
+     linkmark(links,getsegaddress(seg_op,@par.opaddress.bbindex));
+    end;
+   end
+   else begin
+    par.opaddress.bbindex:= 0;
+   end;
+  end;
+ end;
 end;
 
 procedure tryexit();
@@ -92,8 +104,6 @@ begin
   getoppo(contextstack[s.stackindex-1].opmark.address)^.
                                           par.opaddress.opaddress:= opcount-1;
   tryhandle();
-  with additem(oc_popcpucontext)^ do begin
-  end;
  end;
 end;
 
@@ -120,9 +130,7 @@ begin
  tryhandle();
  with info,contextstack[s.stackindex-1] do begin
   getoppo(opmark.address)^.par.opaddress.opaddress:= opcount-1;
-  opmark.address:= opcount-1; //gotoop
- end;
- with additem(oc_popcpucontext)^ do begin
+  opmark.address:= opcount-2; //gotoop
  end;
 end;
 

@@ -2105,13 +2105,15 @@ end;
 
 procedure pushcpucontextop();
 begin
-// notimplemented(); todo
+ with pc^.par do begin
+  bcstream.landingpad:= opaddress.bbindex;
+ end;
 end;
 
 procedure popcpucontextop();
 begin
-// notimplemented();
  with pc^.par do begin
+  bcstream.landingpad:= opaddress.bbindex;
   bcstream.emitlandingpad(bcstream.typeval(voidtype),
                        bcstream.globval(compilersubids[cs_personality]));
  end;
