@@ -1476,8 +1476,9 @@ begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  end
  else begin
-  emitrec(ord(FUNC_CODE_INST_CALL),
-                  [fcurrentbb,flandingpad,0,0,fsubopindex-valueid],aparams);
+  inc(fcurrentbb);
+  emitrec(ord(FUNC_CODE_INST_INVOKE),
+                  [0,0,fcurrentbb,flandingpad,fsubopindex-valueid],aparams);
  end;
  checkdebugloc();
  if afunc then begin
@@ -1497,8 +1498,9 @@ begin
   emitrec(ord(FUNC_CODE_INST_CALL),[0,0,fsubopindex-valueid],aparams);
  end
  else begin
-  emitrec(ord(FUNC_CODE_INST_CALL),
-                    [fcurrentbb,flandingpad,0,0,fsubopindex-valueid],aparams);
+  inc(fcurrentbb);
+  emitrec(ord(FUNC_CODE_INST_INVOKE),
+                    [0,0,fcurrentbb,flandingpad,fsubopindex-valueid],aparams);
  end;
  checkdebugloc();
  if afunc then begin

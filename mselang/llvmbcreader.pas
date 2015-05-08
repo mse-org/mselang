@@ -1219,11 +1219,19 @@ var
    end;
   end;
  end; //checktypeids
+
+ procedure incbb();
+ begin
+  if fbb < 0 then begin
+   fbb:= 0;
+  end;
+  inc(fbb);
+ end;
  
 var
  subtyp1: int32;
  blocklevelbefore: int32;
- i1,i2,i3: int32;
+ i1,i2,i3,i4: int32;
  str1: string;
  bo1: boolean;
  vararg1: boolean;
@@ -1348,26 +1356,35 @@ begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],
                dynarraytovararray(copy(rec1,2,bigint)));
        end;
-       inc(fbb);
+       incbb();
       end;
-      FUNC_CODE_INST_CALL: begin
-       checkmindatalen(rec1,4);
-       po1:= ftypelist.parenttype(typeid(rec1[4]));
+      FUNC_CODE_INST_CALL,FUNC_CODE_INST_INVOKE: begin
+       if functioncodes(rec1[1]) = FUNC_CODE_INST_INVOKE then begin
+        checkmindatalen(rec1,6);
+        i4:= 6;
+        str1:= '->'+inttostr(rec1[4])+'->'+inttostr(rec1[5])+' ';
+       end
+       else begin
+        checkmindatalen(rec1,4);
+        i4:= 4;
+        str1:= '';
+       end;
+       po1:= ftypelist.parenttype(typeid(rec1[i4]));
        if po1^.kind <> TYPE_CODE_FUNCTION then begin
         error('Invalid sub');
        end;
-       str1:= opname(rec1[4])+':';
-       i1:= absvalue(rec1[4]);
+       str1:= str1 + opname(rec1[i4])+':';
+       i1:= absvalue(rec1[i4]);
        if (i1 >= 0) and (i1 < fgloblist.count) then begin
         with fgloblist.item(i1)^ do begin
          str1:= str1+inttostr(subheaderindex);
         end;
        end;
        str1:= str1+'(';
-       for i1:= 5 to high(rec1) do begin
+       for i1:= i4+1 to high(rec1) do begin
         str1:= str1+opname(rec1[i1])+',';
        end;
-       if high(rec1) >= 5 then begin
+       if high(rec1) >= i4+1 then begin
         setlength(str1,length(str1)-1);
        end;
        str1:= str1+')';
@@ -1385,11 +1402,12 @@ begin
        else begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
        end;
-       if (high(rec1)-3 < i3) or (high(rec1)-3 > i3) and not vararg1 then begin
+       if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
+                                                 not vararg1 then begin
         error('Invalid param count');
        end;
        inc(i2); //first param
-       for i1:= 5 to i3+3 do begin
+       for i1:= i4+1 to i3+3 do begin
         if not checktypeids(typeid(rec1[i1]),
                                     ftypelist.fsubparams[i2]) then begin
          error('Invalid param');
@@ -1398,6 +1416,9 @@ begin
        end;
        if bo1 then begin
         inc(ssaindex); //restore
+       end;
+       if functioncodes(rec1[1]) = FUNC_CODE_INST_INVOKE then begin
+        incbb();
        end;
       end;
       FUNC_CODE_INST_BR: begin
@@ -1411,7 +1432,7 @@ begin
         str1:= destname(rec1[2]);
        end;
        outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
-       inc(fbb);
+       incbb();
       end;
       FUNC_CODE_DEBUG_LOC: begin
        checkdatalen(rec1,5);
@@ -1432,7 +1453,7 @@ begin
        //no output
       end;
       else begin      
-       outrecord(functioncodesnames[functioncodes(rec1[1])],[]);
+       outoprecord(functioncodesnames[functioncodes(rec1[1])],[]);
       end;
      end;
     end;

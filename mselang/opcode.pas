@@ -77,6 +77,8 @@ function insertitem(const aopcode: opcodety; const stackoffset: integer;
 function getitem(const index: integer): popinfoty;
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
+function addcallitem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
 
 procedure addlabel();
 
@@ -593,6 +595,15 @@ begin
  result:= additem(aopcode,ssaextension);
  inc(info.s.ssa.blockindex);
  result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+end;
+
+function addcallitem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
+begin
+ result:= additem(aopcode,ssaextension);
+ if info.s.trystacklevel > 0 then begin
+  inc(info.s.ssa.blockindex);
+ end;
 end;
 
 function getitem(const index: integer): popinfoty;
