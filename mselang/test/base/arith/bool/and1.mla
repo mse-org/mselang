@@ -1,0 +1,8 @@
+program and1;
+
+var
+ i1: int32;
+begin
+ i1:= $fe;
+ exitcode:= i1 and $f + (123-14);
+end.

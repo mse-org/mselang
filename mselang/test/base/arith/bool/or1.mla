@@ -1,0 +1,8 @@
+program or1;
+
+var
+ i1: int32;
+begin
+ i1:= $1000;
+ exitcode:= i1 or 123;// - $1000;
+end.
