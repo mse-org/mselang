@@ -75,8 +75,9 @@ begin
  with ptrystackitemty(getlistitem(trystacklist,info.s.trystack))^ do begin
   linkresolveint(links,info.s.ssa.blockindex);
   with additem(oc_popcpucontext)^ do begin
-   if info.s.trystack > 1 then begin //restore parent landingpad
-    with ptrystackitemty(getlistitem(trystacklist,info.s.trystack-1))^ do begin
+   if info.s.trystacklevel > 1 then begin //restore parent landingpad
+    with ptrystackitemty(
+            getnextlistitem(trystacklist,info.s.trystack))^ do begin
      linkmark(links,getsegaddress(seg_op,@par.opaddress.bbindex));
     end;
    end

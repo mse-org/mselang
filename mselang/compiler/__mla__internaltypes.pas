@@ -15,12 +15,16 @@ type
 type
 {$ifdef mse_compiler}
  targetptrintty = int32;
+ card32 = longword;
  card64 = qword;
 {$endif}
  targetcint = int32;
  
+ ptrint = int32;
+ ptrcard = card32;
+ 
  refcountty = int32;
- managedsizety = int32;
+ managedsizety = ptrint;
  stringsizety = managedsizety;
  pstringsizety = ^stringsizety;
  dynarraysizety = managedsizety;
@@ -112,12 +116,15 @@ type
  p_Unwind_Exception = ^_Unwind_Exception;
  _Unwind_Exception_Cleanup_Fn = procedure(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
+ _Unwind_Exception_Class = card64;
+ _Unwind_Word = card32;
+ _Unwind_Sword = int32;
  
  _Unwind_Exception = record
-  exception_class: card64;
+  exception_class: _Unwind_Exception_Class;
   exception_cleanup: _Unwind_Exception_Cleanup_Fn;
-  private_1: card64;
-  private_2: card64;
+  private_1: _Unwind_Word;
+  private_2: _Unwind_Word;
  end;
  exceptinfoty = record
   header: _Unwind_Exception;

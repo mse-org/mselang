@@ -52,7 +52,7 @@ const
 
  stackdatakinds: array[datakindty] of stackdatakindty = (
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
-    sdk_none,sdk_pointer,sdk_bool1,sdk_int32,   sdk_int32, sdk_flo64,sdk_none,
+    sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32, sdk_flo64,sdk_none,
   //dk_address,dk_record,dk_string,dk_dynarray,dk_array,dk_class,dk_interface
     sdk_pointer,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
   //dk_sub
@@ -61,11 +61,11 @@ const
     sdk_none,   sdk_none, sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
-          //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,sdk_flo64
-           (dk_none,dk_pointer,dk_boolean,dk_integer,dk_float);
+          //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
+           (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float);
  resultdatatypes: array[stackdatakindty] of systypety =
-          //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,sdk_flo64
-           (st_none,st_pointer,st_bool1,st_int32,st_float64);
+          //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
+           (st_none,st_pointer,st_bool1,st_card32,st_int32,st_float64);
 
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
@@ -1818,165 +1818,7 @@ begin
   s.stackindex:= s.stacktop-1; 
  end;
 end;
-(*
-procedure updateop(const opsinfo: opsinfoty);
-//todo: don't convert inplace, stack items will be of variable size
-var
- kinda,kindb: datakindty;
- po1: pelementinfoty;
- sd1: stackdatakindty;
- op1: opcodety;
-begin
- with info do begin
-                  //todo: work botom up because of less op insertions
-  if contextstack[s.stacktop].d.kind <> ck_const then begin
-   getvalue(s.stacktop-s.stackindex{,false});
-  end;
-  sd1:= sdk_none;
-  po1:= ele.eleinfoabs(contextstack[s.stacktop].d.dat.datatyp.typedata);
-  kinda:= ptypedataty(@po1^.data)^.kind;
-  po1:= ele.eleinfoabs(contextstack[s.stacktop-2].d.dat.datatyp.typedata);
-  kindb:= ptypedataty(@po1^.data)^.kind;
-  with contextstack[s.stacktop-2] do begin
-   if d.kind <> ck_const then begin
-    getvalue(s.stacktop-2-s.stackindex);
-   end;
-   if (kinda = dk_float) or (kindb = dk_float) then begin
-    sd1:= sdk_flo64;
-    if d.kind = ck_const then begin
-     case d.dat.constval.kind of
-      dk_integer: begin
-       with insertitem(oc_pushimm64,s.stacktop-2-s.stackindex,false)^ do begin
-        setimmfloat64(real(d.dat.constval.vinteger),par);
-       end;
-      end;
-      dk_float: begin
-       with insertitem(oc_pushimm64,s.stacktop-2-s.stackindex,false)^ do begin
-        setimmfloat64(d.dat.constval.vfloat,par);
-       end;
-      end;
-      else begin
-       sd1:= sdk_none;
-      end;
-     end;
-    end
-    else begin //ck_fact
-     case kinda of
-      dk_integer: begin
-       insertitem(oc_int32toflo64,s.stacktop-2-s.stackindex,false);
-      end;
-      dk_float: begin
-      end;
-      else begin
-       sd1:= sdk_none;
-      end;
-     end;
-    end;
-    with contextstack[s.stacktop].d do begin
-     if kind = ck_const then begin
-      case kinda of
-       dk_integer: begin
-        push(real(dat.constval.vinteger));
-       end;
-       dk_float: begin
-        push(real(dat.constval.vfloat));
-       end;
-       else begin
-        sd1:= sdk_none;
-       end;
-      end;
-     end
-     else begin
-      case kinda of
-       dk_integer: begin
-         int32toflo64({info});
-       end;
-       dk_float: begin
-       end;
-       else begin
-        sd1:= sdk_none;
-       end;
-      end;
-     end;
-    end;
-   end
-   else begin
-    if kinda = dk_boolean then begin
-     if kindb = dk_boolean then begin
-      sd1:= sdk_bool1;
-      if d.kind = ck_const then begin
-       with insertitem(oc_pushimm8,s.stacktop-2-s.stackindex,false)^ do begin
-        setimmboolean(d.dat.constval.vboolean,par);
-       end;
-      end;
-      with contextstack[s.stacktop].d do begin
-       if kind = ck_const then begin
-        push(dat.constval.vboolean);
-       end;
-      end;
-     end;
-    end
-    else begin
-     if (kinda = dk_integer) and (kindb = dk_integer) then begin
-      sd1:= sdk_int32;
-      if d.kind = ck_const then begin
-       with insertitem(oc_pushimm32,s.stacktop-2-s.stackindex,false)^ do begin
-        setimmint32(d.dat.constval.vinteger,par);
-       end;
-       initfactcontext(-1);
-      end;
-      with contextstack[s.stacktop],d do begin
-       if kind = ck_const then begin
-        push(dat.constval.vinteger);
-        initfactcontext(1);
-       end;
-      end;
-     end
-     else begin
-      if (kinda = dk_pointer) and (kindb = dk_pointer) then begin
-       sd1:= sdk_pointer;
-       if d.kind = ck_const then begin
-        pushinsert(s.stacktop-2-s.stackindex,false,d.dat.constval.vaddress,0,false);
-        initfactcontext(-1);
-       end;
-       with contextstack[s.stacktop],d do begin
-        if kind = ck_const then begin
-         push(dat.constval.vaddress,0,false);
-         initfactcontext(1);
-        end;
-       end;
-      end
-     end;
-    end;
-   end;
-   if sd1 = sdk_none then begin
-    incompatibletypeserror(contextstack[s.stacktop-2].d,contextstack[s.stacktop].d);
-    dec(s.stacktop,2);
-   end
-   else begin
-    op1:= opsinfo.ops[sd1];
-    if op1 = oc_none then begin
-     operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
-     dec(s.stacktop,2);
-    end
-    else begin
-     with additem(op1)^ do begin      
-      par.ssas1:= d.dat.fact.ssaindex;
-      par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
-      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
-                                      d.dat.datatyp.indirectlevel);
-     end;
-     dec(s.stacktop,2);
-     initfactcontext(-1);
-     d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
-     context:= nil;
-    end;
-   end;
-  end;
-  s.stackindex:= s.stacktop-1; 
- end;
-end;
-*)
+
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
 begin
  with typedata^ do begin

@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=373
- y=494
+ x=627
+ y=485
  cx=690
  cy=396
 macros.sta=9
@@ -273,11 +273,119 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
-   c=10
+   a=0,665,4,arith
+   c=11
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,665,4,bool
+    c=4
+     (
+     kind=2
+     a=0,648,1,and1
+     teststate=1
+     path=and1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,and1 llvm
+     teststate=1
+     path=and1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,or1
+     teststate=1
+     path=or1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,or1 llvm
+     teststate=1
+     path=or1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=1
+    path=bool/
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=
+    cdef=
+    pdef=
+    )
+    (
+    kind=1
+    a=0,665,4,cmp
     c=2
      (
      kind=2
@@ -991,7 +1099,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=4
     (
     kind=2
@@ -1163,7 +1271,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=2
     (
     kind=2
@@ -1182,7 +1290,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B731ED38
+    ao=An unhandled exception occured at $B7BE24E0
     +
     ae=
     aec=123
@@ -3448,8 +3556,8 @@ groupcomment=6
  
 [mainfo]
 stackedunder=
-x=724
-y=20
+x=695
+y=122
 cx=672
 cy=380
 wsize=0
@@ -3466,7 +3574,18 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=32
+rowstate=43
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

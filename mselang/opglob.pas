@@ -127,6 +127,7 @@ type
   oc_negint32,
   oc_negflo64,
 
+  oc_mulcard32,
   oc_mulint32,
   oc_mulflo64,
   oc_addint32,
@@ -167,21 +168,25 @@ type
 
   oc_cmpgtpo,
   oc_cmpgtbool,
+  oc_cmpgtcard32,
   oc_cmpgtint32,
   oc_cmpgtflo64,
 
   oc_cmpltpo,
   oc_cmpltbool,
+  oc_cmpltcard32,
   oc_cmpltint32,
   oc_cmpltflo64,
 
   oc_cmpgepo,
   oc_cmpgebool,
+  oc_cmpgecard32,
   oc_cmpgeint32,
   oc_cmpgeflo64,
 
   oc_cmplepo,
   oc_cmplebool,
+  oc_cmplecard32,
   oc_cmpleint32,
   oc_cmpleflo64,
 

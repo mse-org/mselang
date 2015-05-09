@@ -461,7 +461,7 @@ end;
 procedure addsubbegin(const aop: opcodety; const asub: psubdataty);
 begin
 {$ifdef mse_checkinternalerror}
- if not (aop in [oc_subbegin,oc_externalsub]) then begin
+ if not ((aop = oc_subbegin) or (aop = oc_externalsub)) then begin
   internalerror(ie_handler,'20150424A');
  end;
 {$endif}

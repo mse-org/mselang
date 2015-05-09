@@ -106,6 +106,8 @@ procedure handleaddressopfactentry();
 procedure handlefact1();
 
 procedure handleandfact();
+procedure handleshlfact();
+procedure handleshrfact();
 
 //procedure handlefactadentry();
 procedure handlenegfact();
@@ -749,14 +751,22 @@ end;
 
 const                     
  mulops: opsinfoty = 
-       //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_mulint32,oc_mulflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_mulcard32,oc_mulint32,oc_mulflo64);
                      opname: '*');
 
  andops: opsinfoty = 
-       //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,oc_none);
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,  oc_and32, oc_none);
                      opname: 'and');
+ shlops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_none,   oc_none, oc_none);
+                     opname: 'shl');
+ shrops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_none,   oc_none, oc_none);
+                     opname: 'shr');
  
 procedure handlemulfact();
 begin
@@ -774,19 +784,35 @@ begin
  updateop(andops);  //todo: optimize constants
 end;
 
+procedure handleshlfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SHLFACT');
+{$endif}
+ updateop(shlops);  //todo: optimize constants
+end;
+
+procedure handleshrfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SHRFACT');
+{$endif}
+ updateop(shrops);  //todo: optimize constants
+end;
+
 //todo: different datasizes
 const
  addops: opsinfoty = 
-      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addflo64);
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
+ (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addint32,oc_addflo64);
                      opname: '+');
  subops: opsinfoty = 
-      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subflo64);
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
+ (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subint32,oc_subflo64);
                      opname: '-');
  orops: opsinfoty = 
-      //sdk_none,sdk_pointer,sdk_bool1,sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_none,   oc_or1,  oc_or32,oc_none);
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+ (ops: (oc_none, oc_none,   oc_or1,    oc_or32,   oc_or32,  oc_none);
                      opname: 'or');
 
 procedure addsubterm(const issub: boolean);
@@ -822,7 +848,7 @@ begin
                (d.kind = ck_const) then begin
     dk1:= convertconsts();
     case dk1 of
-     sdk_int32: begin
+     sdk_card32,sdk_int32: begin
       if issub then begin
        d.dat.constval.vinteger:= d.dat.constval.vinteger -
                 pob^.d.dat.constval.vinteger;
@@ -1791,23 +1817,23 @@ type
  cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le);
 const
  cmpops: array[cmpopty] of opsinfoty = (
-  (ops: (oc_none,oc_cmpeqpo,oc_cmpeqbool,oc_cmpeqint32,
+  (ops: (oc_none,oc_cmpeqpo,oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqint32,
                         oc_cmpeqflo64);
                         opname: '='),
   (ops: (oc_none,oc_cmpnepo,oc_cmpnebool,
-                        oc_cmpneint32,oc_cmpneflo64);
+                        oc_cmpneint32,oc_cmpneint32,oc_cmpneflo64);
                         opname: '<>'),
   (ops: (oc_none,oc_cmpgtpo,oc_cmpgtbool,
-                        oc_cmpgtint32,oc_cmpgtflo64);
+                        oc_cmpgtcard32,oc_cmpgtint32,oc_cmpgtflo64);
                         opname: '>'),
   (ops: (oc_none,oc_cmpltpo,oc_cmpltbool,
-                        oc_cmpltint32,oc_cmpltflo64);
+                        oc_cmpltcard32,oc_cmpltint32,oc_cmpltflo64);
                         opname: '<'),
   (ops: (oc_none,oc_cmpgepo,oc_cmpgebool,
-                        oc_cmpgeint32,oc_cmpgeflo64);
+                        oc_cmpgecard32,oc_cmpgeint32,oc_cmpgeflo64);
                         opname: '>='),
   (ops: (oc_none,oc_cmplepo,oc_cmplebool,
-                        oc_cmpleint32,oc_cmpleflo64);
+                        oc_cmplecard32,oc_cmpleint32,oc_cmpleflo64);
                         opname: '<=')
  );
 
@@ -1833,7 +1859,7 @@ begin
    case aop of
     cmpo_eq: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger = 
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
@@ -1856,7 +1882,7 @@ begin
     end;
     cmpo_ne: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger <>
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
@@ -1875,7 +1901,7 @@ begin
     end;
     cmpo_gt: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger >
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
@@ -1894,7 +1920,7 @@ begin
     end;
     cmpo_lt: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger <
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
@@ -1910,7 +1936,7 @@ begin
     end;
     cmpo_ge: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger >=
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;
@@ -1929,7 +1955,7 @@ begin
     end;
     cmpo_le: begin
      case dk1 of
-      sdk_int32: begin
+      sdk_card32,sdk_int32: begin
        d.dat.constval.vboolean:= d.dat.constval.vinteger <=
                  contextstack[s.stacktop].d.dat.constval.vinteger;
       end;

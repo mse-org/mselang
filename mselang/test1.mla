@@ -22,5 +22,6 @@ begin
  try
   test();
  except
+  exitcode:= 123;
  end;
 end.

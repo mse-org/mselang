@@ -634,6 +634,15 @@ begin
  vintegerty(po2^):= vintegerty(po2^) or vintegerty(po1^);
 end;
 
+procedure mulcard32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vcardinalty(po2^)*vcardinalty(po1^);
+end;
+
 procedure mulint32op();
 var
  po1,po2: pointer;
@@ -892,6 +901,15 @@ begin
  po2^:= po2^ > po1^;
 end;
 
+procedure cmpgtcard32op();
+var
+ po1,po2: pvcardinalty;
+begin
+ po1:= stackpop(sizeof(vcardinalty));
+ po2:= stackpop(sizeof(vcardinalty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+end;
+
 procedure cmpgtint32op();
 var
  po1,po2: pvintegerty;
@@ -926,6 +944,15 @@ begin
  po1:= stackpop(sizeof(vbooleanty));
  po2:= po1-alignsize(sizeof(vbooleanty));
  po2^:= po2^ < po1^;
+end;
+
+procedure cmpltcard32op();
+var
+ po1,po2: pvcardinalty;
+begin
+ po1:= stackpop(sizeof(vcardinalty));
+ po2:= stackpop(sizeof(vcardinalty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
 end;
 
 procedure cmpltint32op();
@@ -964,6 +991,15 @@ begin
  po2^:= po2^ >= po1^;
 end;
 
+procedure cmpgecard32op();
+var
+ po1,po2: pvcardinalty;
+begin
+ po1:= stackpop(sizeof(vcardinalty));
+ po2:= stackpop(sizeof(vcardinalty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+end;
+
 procedure cmpgeint32op();
 var
  po1,po2: pvintegerty;
@@ -998,6 +1034,15 @@ begin
  po1:= stackpop(sizeof(vbooleanty));
  po2:= po1-alignsize(sizeof(vbooleanty));
  po2^:= po2^ <= po1^;
+end;
+
+procedure cmplecard32op();
+var
+ po1,po2: pvcardinalty;
+begin
+ po1:= stackpop(sizeof(vcardinalty));
+ po2:= stackpop(sizeof(vcardinalty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
 end;
 
 procedure cmpleint32op();
@@ -2683,6 +2728,7 @@ const
   negint32ssa = 0;
   negflo64ssa = 0;
 
+  mulcard32ssa = 0;
   mulint32ssa = 0;
   mulflo64ssa = 0;
   addint32ssa = 0;
@@ -2723,21 +2769,25 @@ const
 
   cmpgtpossa = 0;
   cmpgtboolssa = 0;
+  cmpgtcard32ssa = 0;
   cmpgtint32ssa = 0;
   cmpgtflo64ssa = 0;
 
   cmpltpossa = 0;
   cmpltboolssa = 0;
+  cmpltcard32ssa = 0;
   cmpltint32ssa = 0;
   cmpltflo64ssa = 0;
 
   cmpgspossa = 0;
   cmpgsboolssa = 0;
+  cmpgscard32ssa = 0;
   cmpgsint32ssa = 0;
   cmpgsflo64ssa = 0;
 
   cmplspossa = 0;
   cmplsboolssa = 0;
+  cmplscard32ssa = 0;
   cmplsint32ssa = 0;
   cmplsflo64ssa = 0;
 

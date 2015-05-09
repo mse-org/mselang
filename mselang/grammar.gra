@@ -732,10 +732,16 @@ term1,,,handleterm
  ${whitespace}
  '*',mulfact-*>
  'and'.,andfact-*>
+ 'shl'.,shlfact-*>
+ 'shr'.,shrfact-*>
 
 mulfact,,,handlemulfact
  '',fact*
 andfact,,,handleandfact
+ '',fact*
+shlfact,,,handleshlfact
+ '',fact*
+shrfact,,,handleshrfact
  '',fact*
 
 addressfact,fact0,handleaddressfactentry,
@@ -755,6 +761,8 @@ fact0,fact1,,
  '''',string-*
  '#',char-*
  'and'.,*
+ 'shl'.,*
+ 'shr'.,*
  'or'.,*
  @identstart,valueidentifier*
  '',illegalexpression

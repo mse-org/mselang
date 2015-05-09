@@ -669,9 +669,14 @@ begin
  outbinop(BINOP_OR);
 end;
 
+procedure mulcard32op();
+begin
+ outbinop(BINOP_MUL);
+end;
+
 procedure mulint32op();
 begin
- notimplemented();
+ outbinop(BINOP_MUL);
 end;
 
 procedure mulimmint32op();
@@ -896,6 +901,11 @@ begin
  notimplemented();
 end;
 
+procedure cmpgtcard32op();
+begin
+ comparessa(icmp_ugt);
+end;
+
 procedure cmpgtint32op();
 begin
  comparessa(icmp_sgt);
@@ -915,6 +925,11 @@ end;
 procedure cmpltboolop();
 begin
  notimplemented();
+end;
+
+procedure cmpltcard32op();
+begin
+ comparessa(icmp_ult);
 end;
 
 procedure cmpltint32op();
@@ -937,6 +952,11 @@ begin
  notimplemented();
 end;
 
+procedure cmpgecard32op();
+begin
+ comparessa(icmp_uge);
+end;
+
 procedure cmpgeint32op();
 begin
  comparessa(icmp_sge);
@@ -955,6 +975,11 @@ end;
 procedure cmpleboolop();
 begin
  notimplemented();
+end;
+
+procedure cmplecard32op();
+begin
+ comparessa(icmp_sle);
 end;
 
 procedure cmpleint32op();
@@ -2253,6 +2278,7 @@ const
   negint32ssa = 1;
   negflo64ssa = 1;
 
+  mulcard32ssa = 1;
   mulint32ssa = 1;
   mulflo64ssa = 1;
   addint32ssa = 1;
@@ -2293,21 +2319,25 @@ const
 
   cmpgtpossa = 1;
   cmpgtboolssa = 1;
+  cmpgtcard32ssa = 1;
   cmpgtint32ssa = 1;
   cmpgtflo64ssa = 1;
 
   cmpltpossa = 1;
   cmpltboolssa = 1;
+  cmpltcard32ssa = 1;
   cmpltint32ssa = 1;
   cmpltflo64ssa = 1;
 
   cmpgspossa = 1;
   cmpgsboolssa = 1;
+  cmpgscard32ssa = 1;
   cmpgsint32ssa = 1;
   cmpgsflo64ssa = 1;
 
   cmplspossa = 1;
   cmplsboolssa = 1;
+  cmplscard32ssa = 1;
   cmplsint32ssa = 1;
   cmplsflo64ssa = 1;
 

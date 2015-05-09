@@ -77,6 +77,7 @@
   negint32ssa,
   negflo64ssa,
 
+  mulcard32ssa,
   mulint32ssa,
   mulflo64ssa,
   addint32ssa,
@@ -117,21 +118,25 @@
 
   cmpgtpossa,
   cmpgtboolssa,
+  cmpgtcard32ssa,
   cmpgtint32ssa,
   cmpgtflo64ssa,
 
   cmpltpossa,
   cmpltboolssa,
+  cmpltcard32ssa,
   cmpltint32ssa,
   cmpltflo64ssa,
 
   cmpgspossa,
   cmpgsboolssa,
+  cmpgscard32ssa,
   cmpgsint32ssa,
   cmpgsflo64ssa,
 
   cmplspossa,
   cmplsboolssa,
+  cmplscard32ssa,
   cmplsint32ssa,
   cmplsflo64ssa,
 
@@ -417,6 +422,7 @@
   @negint32op,
   @negflo64op,
 
+  @mulcard32op,
   @mulint32op,
   @mulflo64op,
   @addint32op,
@@ -457,21 +463,25 @@
 
   @cmpgtpoop,
   @cmpgtboolop,
+  @cmpgtcard32op,
   @cmpgtint32op,
   @cmpgtflo64op,
 
   @cmpltpoop,
   @cmpltboolop,
+  @cmpltcard32op,
   @cmpltint32op,
   @cmpltflo64op,
 
   @cmpgepoop,
   @cmpgeboolop,
+  @cmpgecard32op,
   @cmpgeint32op,
   @cmpgeflo64op,
 
   @cmplepoop,
   @cmpleboolop,
+  @cmplecard32op,
   @cmpleint32op,
   @cmpleflo64op,
 

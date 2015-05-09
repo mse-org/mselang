@@ -18,15 +18,18 @@ function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
 function __mla__personality(version: targetcint;
              actions: _Unwind_Action;
-             exceptionClass: card64;
+             exceptionClass: _Unwind_Exception_Class;
              exceptionObject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 
 function _Unwind_RaiseException(
            exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
-
+function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
+                                                                       external;
 implementation
-
+type
+ pcard8 = ^card8;
+ 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 begin
  if ref <> nil then begin
@@ -110,14 +113,42 @@ begin  //todo: handle out of memory situation
  exitcode:= exco_unhandledexception; //no handler found
  halt();
 end;
-
+{
+function readssleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ while po1^ and $80 <> 0 do begin
+  inc(po1);
+  result:= (result shl 7) or (po1^ and $7f);
+ end;
+ adata:= po1+1;
+end;
+}
 function __mla__personality(version: targetcint;
              actions: _Unwind_Action;
-             exceptionClass: card64;
+             exceptionClass: _Unwind_Exception_Class;
              exceptionObject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
+var
+ po1: pointer;
 begin
- result:= _URC_CONTINUE_UNWIND;
+ if actions and _UA_SEARCH_PHASE <> 0 then begin
+  po1:= _Unwind_GetLanguageSpecificData(context);
+  if po1 <> nil then begin
+   result:= _URC_HANDLER_FOUND;
+  end
+  else begin
+   result:= _URC_CONTINUE_UNWIND;
+  end;
+ end
+ else begin
+  if actions and _UA_HANDLER_FRAME <> 0 then begin
+   result:= _URC_INSTALL_CONTEXT;
+  end;
+ end;
 end;
 
 end.
