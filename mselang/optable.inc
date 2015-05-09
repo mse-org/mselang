@@ -72,6 +72,10 @@
   and32ssa,
   or1ssa,
   or32ssa,
+
+  shl32ssa,
+  shr32ssa,
+//  shrint32ssa,
   
   negcard32ssa,
   negint32ssa,
@@ -417,6 +421,11 @@
   @and32op,
   @or1op,
   @or32op,
+  
+  @shl32op,
+  @shr32op,
+//  @shrint32op,
+
   
   @negcard32op,
   @negint32op,

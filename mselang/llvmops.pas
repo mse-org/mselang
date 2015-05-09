@@ -669,6 +669,21 @@ begin
  outbinop(BINOP_OR);
 end;
 
+procedure shl32op();
+begin
+ outbinop(BINOP_SHL);
+end;
+
+procedure shr32op();
+begin
+ outbinop(BINOP_LSHR);
+end;
+{
+procedure shrint32op();
+begin
+ outbinop(BINOP_ASHR);
+end;
+}
 procedure mulcard32op();
 begin
  outbinop(BINOP_MUL);
@@ -737,12 +752,20 @@ end;
 
 procedure negcard32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SUB,bcstream.constval(nullpointeroffset),
+                                                    bcstream.ssaval(ssas1));
+ end;
 end;
+
 procedure negint32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SUB,bcstream.constval(nullpointeroffset),
+                                                    bcstream.ssaval(ssas1));
+ end;
 end;
+
 procedure negflo64op();
 begin
  notimplemented();
@@ -2273,6 +2296,10 @@ const
   and32ssa = 1;
   or1ssa = 1;
   or32ssa = 1;
+  
+  shl32ssa = 1;
+  shr32ssa = 1;
+//  shrint32ssa = 1;
   
   negcard32ssa = 1;
   negint32ssa = 1;

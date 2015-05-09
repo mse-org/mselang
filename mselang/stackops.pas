@@ -634,6 +634,33 @@ begin
  vintegerty(po2^):= vintegerty(po2^) or vintegerty(po1^);
 end;
 
+procedure shl32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) shl vintegerty(po1^);
+end;
+{
+procedure shrcard32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vcardinalty));
+ po2:= po1-alignsize(sizeof(vcardinalty));
+ vintegerty(po2^):= vcardinalty(po2^) shr vcardinalty(po1^);
+end;
+}
+procedure shr32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) shr vintegerty(po1^);
+end;
+
 procedure mulcard32op();
 var
  po1,po2: pointer;
@@ -2723,6 +2750,10 @@ const
   and32ssa = 0;
   or1ssa = 0;
   or32ssa = 0;
+  
+  shl32ssa = 0;
+  shr32ssa = 0;
+//  shrint32ssa = 0;
   
   negcard32ssa = 0;
   negint32ssa = 0;

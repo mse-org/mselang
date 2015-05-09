@@ -209,7 +209,7 @@ c=3
   c=18
    (
    kind=1
-   a=0,664,4,address
+   a=0,665,4,address
    c=2
     (
     kind=2
@@ -274,10 +274,10 @@ c=3
    (
    kind=1
    a=0,665,4,arith
-   c=11
+   c=15
     (
     kind=1
-    a=0,665,4,bool
+    a=0,664,4,bool
     c=4
      (
      kind=2
@@ -385,7 +385,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,cmp
+    a=0,664,4,cmp
     c=2
      (
      kind=2
@@ -714,6 +714,94 @@ c=3
     a=0,648,1,incdecind llvm
     teststate=1
     path=incdecind.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,shl1
+    teststate=1
+    path=shl1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,shl1 llvm
+    teststate=1
+    path=shl1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,shr1
+    teststate=1
+    path=shr1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,shr1 llvm
+    teststate=1
+    path=shr1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -1290,7 +1378,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7BE24E0
+    ao=An unhandled exception occured at $B73294E0
     +
     ae=
     aec=123

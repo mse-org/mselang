@@ -123,6 +123,10 @@ type
   oc_or1,
   oc_or32,
   
+  oc_shl32,
+  oc_shr32,
+//  oc_shrint32,
+  
   oc_negcard32,
   oc_negint32,
   oc_negflo64,

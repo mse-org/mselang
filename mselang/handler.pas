@@ -761,11 +761,11 @@ const
                      opname: 'and');
  shlops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_none,   oc_none, oc_none);
+  (ops: (oc_none, oc_none,    oc_none,  oc_shl32,  oc_shl32, oc_none);
                      opname: 'shl');
  shrops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_none,   oc_none, oc_none);
+  (ops: (oc_none, oc_none,    oc_none,  oc_shr32,  oc_shr32, oc_none);
                      opname: 'shr');
  
 procedure handlemulfact();
@@ -1320,6 +1320,7 @@ begin
      if op.op = oc_none then begin
       errormessage(err_negnotpossible,[],1);
      end;
+     par.ssas1:= d.dat.fact.ssaindex;
     end;
    end;
   end;

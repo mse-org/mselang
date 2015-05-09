@@ -215,8 +215,8 @@ type
  stackdatakindty = (sdk_none,
                     sdk_pointer,
                     sdk_bool1,
-                    sdk_int32,
                     sdk_card32,
+                    sdk_int32,
                     sdk_flo64);
  stackdatakindsty = set of stackdatakindty;
 
