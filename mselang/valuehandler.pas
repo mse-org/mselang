@@ -37,12 +37,210 @@ uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
  __mla__internaltypes,exceptionhandler,listutils;
+type
+ converttablety = array[intbitsizety,databitsizety] of opcodety;
+
+const 
+ cardtocard: converttablety = (
+  (//ibs_none
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_8
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_card8tocard16,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_card8tocard32,oc_none,  oc_card8tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_16
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_card16tocard8,oc_none, oc_none,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card16tocard32,oc_none,  oc_card16tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_32
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card32tocard8,oc_none, oc_card32tocard16,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_card32tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_64
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card64tocard8,oc_none, oc_card64tocard16,oc_none,
+  //das_32,          das_33_63, das_64,             
+    oc_card64tocard32,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  )
+ );
+
+ inttoint: converttablety = (
+  (//ibs_none
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_8
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_int8toint16,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_int8toint32,oc_none,  oc_int8toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_16
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_int16toint8,oc_none, oc_none,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_int16toint32,oc_none,  oc_int16toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_32
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_int32toint8,oc_none, oc_int32toint16,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_int32toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_64
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_int64toint8,oc_none, oc_int64toint16,oc_none,
+  //das_32,          das_33_63, das_64,             
+    oc_int64toint32,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  )
+ );
+
+ cardtoint: converttablety = (
+  (//ibs_none
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_8
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_card8toint8,oc_none, oc_card8toint16,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_card8toint32,oc_none,  oc_card8toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_16
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card16toint8,oc_none, oc_card16toint16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card16toint32,oc_none,  oc_card16toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_32
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card32toint8,oc_none, oc_card32toint16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card32toint32,oc_none,  oc_card32toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_64
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card64toint8,oc_none, oc_card64toint16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card64toint32,oc_none,  oc_card64toint64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  )
+ );
+
+ inttocard: converttablety = (
+  (//ibs_none
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
+    oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
+  //das_32, das_33_63,das_64,             
+    oc_none,oc_none,  oc_none,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_8
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_int8tocard8,oc_none, oc_int8tocard16,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_int8tocard32,oc_none,  oc_int8tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_16
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_int16tocard8,oc_none, oc_int16tocard16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_int16tocard32,oc_none,  oc_int16tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_32
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_int32tocard8,oc_none, oc_int32tocard16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_int32tocard32,oc_none,  oc_int32tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  ),
+  (//ibs_64
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_int64tocard8,oc_none, oc_int64tocard16,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_int64tocard32,oc_none,  oc_int64tocard64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub
+    oc_none,    oc_none,oc_none,oc_none, oc_none
+  )
+ );
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer): boolean;
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
  int1,i2: integer;
+
+ procedure convertsize(const atable: converttablety);
+ var
+  op1: opcodety;
+  i1: int32;
+ begin
+  result:= true;
+  if source1^.h.datasize <> dest^.h.datasize then begin
+   op1:= atable[intbits[source1^.h.datasize]][dest^.h.datasize];
+   if op1 = oc_none then begin
+    result:= false;
+   end
+   else begin
+    with info do begin
+     i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+    end;
+    with insertitem(op1,stackoffset,false)^ do begin
+     par.ssas1:= i1;
+    end;
+   end;
+  end;
+ end; //tryconvert
+
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -99,7 +297,8 @@ begin
         dk_float: begin
          case source1^.h.kind of
           dk_integer: begin //todo: data size
-           with additem(oc_int32toflo64)^ do begin
+           with insertitem(oc_int32toflo64,stackoffset,false)^ do begin
+            par.ssas1:= d.dat.fact.ssaindex;
            end;
            result:= true;
           end;
@@ -107,15 +306,21 @@ begin
         end;
         dk_cardinal: begin
          case source1^.h.kind of
-          dk_integer: begin  //todo: data size
-           result:= true;
+          dk_integer: begin
+           convertsize(inttocard);
+          end;
+          dk_cardinal: begin
+           convertsize(cardtocard);
           end;
          end;
         end;
         dk_integer: begin
          case source1^.h.kind of
-          dk_cardinal: begin  //todo: data size
-           result:= true;
+          dk_cardinal: begin
+           convertsize(cardtoint);
+          end;
+          dk_integer: begin
+           convertsize(inttoint);
           end;
          end;
         end;

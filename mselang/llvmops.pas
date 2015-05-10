@@ -750,6 +750,430 @@ begin
  notimplemented();
 end;
 
+procedure card8tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_16)),CAST_ZEXT);
+ end;
+end;
+
+procedure card8tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                            bcstream.typeval(ord(das_32)),CAST_ZEXT);
+ end;
+end;
+
+procedure card8tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                            bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card16tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card16tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_32)),CAST_ZEXT);
+ end;
+end;
+
+procedure card16tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card32tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card32tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure card32tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card64tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card64tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure card64tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_32)),CAST_TRUNC);
+ end;
+end;
+
+procedure int8toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                             bcstream.typeval(ord(das_16)),CAST_SEXT);
+ end;
+end;
+
+procedure int8toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                              bcstream.typeval(ord(das_32)),CAST_SEXT);
+ end;
+end;
+
+procedure int8toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int16toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int16toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(ord(das_32)),CAST_SEXT);
+ end;
+end;
+
+procedure int16toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int32toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                               bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int32toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure int32toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int64toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int64toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure int64toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_TRUNC);
+ end;
+end;
+
+procedure card8toint8op();
+begin
+ //dummy
+end;
+
+procedure card8toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_ZEXT);
+ end;
+end;
+
+procedure card8toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_ZEXT);
+ end;
+end;
+
+procedure card8toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card16toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card16toint16op();
+begin
+ //dummy
+end;
+
+procedure card16toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_ZEXT);
+ end;
+end;
+
+procedure card16toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card32toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card32toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card32toint32op();
+begin
+ //dummy
+end;
+
+procedure card32toint64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_ZEXT);
+ end;
+end;
+
+procedure card64toint8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure card64toint16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure card64toint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_TRUNC);
+ end;
+end;
+
+procedure card64toint64op();
+begin
+ //dummy
+end;
+
+procedure int8tocard8op();
+begin
+ //dummy
+end;
+
+procedure int8tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_SEXT);
+ end;
+end;
+
+procedure int8tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_SEXT);
+ end;
+end;
+
+procedure int8tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int16tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int16tocard16op();
+begin
+ //dummy
+end;
+
+procedure int16tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_SEXT);
+ end;
+end;
+
+procedure int16tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int32tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int32tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure int32tocard32op();
+begin
+ //dummy
+end;
+
+procedure int32tocard64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_64)),CAST_SEXT);
+ end;
+end;
+
+procedure int64tocard8op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_8)),CAST_TRUNC);
+ end;
+end;
+
+procedure int64tocard16op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_16)),CAST_TRUNC);
+ end;
+end;
+
+procedure int64tocard32op();
+begin
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),
+                                bcstream.typeval(ord(das_32)),CAST_TRUNC);
+ end;
+end;
+
+procedure int64tocard64op();
+begin
+ //dummy
+end;
+
 procedure negcard32op();
 begin
  with pc^.par do begin
@@ -2301,6 +2725,66 @@ const
   shr32ssa = 1;
 //  shrint32ssa = 1;
   
+  card8tocard16ssa = 1;
+  card8tocard32ssa = 1;
+  card8tocard64ssa = 1;
+  card16tocard8ssa = 1;
+  card16tocard32ssa = 1;
+  card16tocard64ssa = 1;
+  card32tocard8ssa = 1;
+  card32tocard16ssa = 1;
+  card32tocard64ssa = 1;
+  card64tocard8ssa = 1;
+  card64tocard16ssa = 1;
+  card64tocard32ssa = 1;
+
+  int8toint16ssa = 1;
+  int8toint32ssa = 1;
+  int8toint64ssa = 1;
+  int16toint8ssa = 1;
+  int16toint32ssa = 1;
+  int16toint64ssa = 1;
+  int32toint8ssa = 1;
+  int32toint16ssa = 1;
+  int32toint64ssa = 1;
+  int64toint8ssa = 1;
+  int64toint16ssa = 1;
+  int64toint32ssa = 1;
+
+  card8toint8ssa = 0;
+  card8toint16ssa = 1;
+  card8toint32ssa = 1;
+  card8toint64ssa = 1;
+  card16toint8ssa = 1;
+  card16toint16ssa = 0;
+  card16toint32ssa = 1;
+  card16toint64ssa = 1;
+  card32toint8ssa = 1;
+  card32toint16ssa = 1;
+  card32toint32ssa = 0;
+  card32toint64ssa = 1;
+  card64toint8ssa = 1;
+  card64toint16ssa = 1;
+  card64toint32ssa = 1;
+  card64toint64ssa = 0;
+
+  int8tocard8ssa = 0;
+  int8tocard16ssa = 1;
+  int8tocard32ssa = 1;
+  int8tocard64ssa = 1;
+  int16tocard8ssa = 1;
+  int16tocard16ssa = 0;
+  int16tocard32ssa = 1;
+  int16tocard64ssa = 1;
+  int32tocard8ssa = 1;
+  int32tocard16ssa = 1;
+  int32tocard32ssa = 0;
+  int32tocard64ssa = 1;
+  int64tocard8ssa = 1;
+  int64tocard16ssa = 1;
+  int64tocard32ssa = 1;
+  int64tocard64ssa = 0;
+
   negcard32ssa = 1;
   negint32ssa = 1;
   negflo64ssa = 1;

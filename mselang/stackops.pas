@@ -1108,6 +1108,430 @@ begin
  vfloatty(po2^):= vfloatty(po2^)-vfloatty(po1^);
 end;
 
+procedure card8tocard16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card8));
+ pcard16(po1)^:= pcard8(po1)^;
+end;
+
+procedure card8tocard32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card8));
+ pcard32(po1)^:= pcard8(po1)^;
+end;
+
+procedure card8tocard64op();
+var
+ da1: card8;
+begin
+ da1:= pcard8(stackpop(sizeof(card8)))^;
+ pcard64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure card16tocard8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card16));
+ pcard16(po1)^:= pcard16(po1)^;
+end;
+
+procedure card16tocard32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card16));
+ pcard32(po1)^:= pcard16(po1)^;
+end;
+
+procedure card16tocard64op();
+var
+ da1: card16;
+begin
+ da1:= pcard16(stackpop(sizeof(card16)))^;
+ pcard64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure card32tocard8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card32));
+ pcard8(po1)^:= pcard32(po1)^;
+end;
+
+procedure card32tocard16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card32));
+ pcard16(po1)^:= pcard16(po1)^;
+end;
+
+procedure card32tocard64op();
+var
+ da1: card32;
+begin
+ da1:= pcard32(stackpop(sizeof(card32)))^;
+ pcard64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure card64tocard8op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pcard8(stackpush(sizeof(card8)))^:= da1;
+end;
+
+procedure card64tocard16op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pcard16(stackpush(sizeof(card16)))^:= da1;
+end;
+
+procedure card64tocard32op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pcard32(stackpush(sizeof(card32)))^:= da1;
+end;
+
+procedure int8toint16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int8));
+ pint16(po1)^:= pint8(po1)^;
+end;
+
+procedure int8toint32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int8));
+ pint32(po1)^:= pint8(po1)^;
+end;
+
+procedure int8toint64op();
+var
+ da1: int8;
+begin
+ da1:= pint8(stackpop(sizeof(int8)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure int16toint8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int16));
+ pint8(po1)^:= pint16(po1)^;
+end;
+
+procedure int16toint32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int16));
+ pint32(po1)^:= pint16(po1)^;
+end;
+
+procedure int16toint64op();
+var
+ da1: int16;
+begin
+ da1:= pint16(stackpop(sizeof(int16)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure int32toint8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int32));
+ pint8(po1)^:= pint32(po1)^;
+end;
+
+procedure int32toint16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int32));
+ pint16(po1)^:= pint32(po1)^;
+end;
+
+procedure int32toint64op();
+var
+ da1: int32;
+begin
+ da1:= pint32(stackpop(sizeof(int32)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure int64toint8op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint8(stackpush(sizeof(int8)))^:= da1;
+end;
+
+procedure int64toint16op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint16(stackpush(sizeof(int16)))^:= da1;
+end;
+
+procedure int64toint32op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint32(stackpush(sizeof(int32)))^:= da1;
+end;
+
+procedure card8toint8op();
+begin
+ //dummy
+end;
+
+procedure card8toint16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card8));
+ pint16(po1)^:= pcard8(po1)^;
+end;
+
+procedure card8toint32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card8));
+ pint32(po1)^:= pcard8(po1)^;
+end;
+
+procedure card8toint64op();
+var
+ da1: card8;
+begin
+ da1:= pcard8(stackpop(sizeof(card8)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure card16toint8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card16));
+ pint8(po1)^:= pcard16(po1)^;
+end;
+
+procedure card16toint16op();
+begin
+ //dummy
+end;
+
+procedure card16toint32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card16));
+ pint32(po1)^:= pcard16(po1)^;
+end;
+
+procedure card16toint64op();
+var
+ da1: card16;
+begin
+ da1:= pcard16(stackpop(sizeof(card16)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure card32toint8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card32));
+ pint8(po1)^:= pcard32(po1)^;
+end;
+
+procedure card32toint16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(card32));
+ pint16(po1)^:= pcard32(po1)^;
+end;
+
+procedure card32toint32op();
+begin
+ //dummy
+end;
+
+procedure card32toint64op();
+var
+ da1: card32;
+begin
+ da1:= pcard32(stackpop(sizeof(card32)))^;
+ pint64(stackpush(sizeof(int64)))^:= da1;
+end;
+
+procedure card64toint8op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pint8(stackpush(sizeof(int8)))^:= da1;
+end;
+
+procedure card64toint16op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pint16(stackpush(sizeof(int16)))^:= da1;
+end;
+
+procedure card64toint32op();
+var
+ da1: card64;
+begin
+ da1:= pcard64(stackpop(sizeof(card64)))^;
+ pint32(stackpush(sizeof(int32)))^:= da1;
+end;
+
+procedure card64toint64op();
+begin
+ //dummy
+end;
+
+procedure int8tocard8op();
+begin
+ //dummy
+end;
+
+procedure int8tocard16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int8));
+ pcard16(po1)^:= pcard8(po1)^;
+end;
+
+procedure int8tocard32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int8));
+ pcard32(po1)^:= pcard8(po1)^;
+end;
+
+procedure int8tocard64op();
+var
+ da1: int8;
+begin
+ da1:= pint8(stackpop(sizeof(int8)))^;
+ pint64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure int16tocard8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int16));
+ pcard8(po1)^:= pint16(po1)^;
+end;
+
+procedure int16tocard16op();
+begin
+ //dummy
+end;
+
+procedure int16tocard32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int16));
+ pcard32(po1)^:= pint16(po1)^;
+end;
+
+procedure int16tocard64op();
+var
+ da1: int16;
+begin
+ da1:= pint16(stackpop(sizeof(int16)))^;
+ pint64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure int32tocard8op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int32));
+ pcard8(po1)^:= pint32(po1)^;
+end;
+
+procedure int32tocard16op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(int32));
+ pcard16(po1)^:= pint32(po1)^;
+end;
+
+procedure int32tocard32op();
+begin
+ //dummy
+end;
+
+procedure int32tocard64op();
+var
+ da1: int32;
+begin
+ da1:= pint32(stackpop(sizeof(int16)))^;
+ pint64(stackpush(sizeof(card64)))^:= da1;
+end;
+
+procedure int64tocard8op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint8(stackpush(sizeof(int8)))^:= da1;
+end;
+
+procedure int64tocard16op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint16(stackpush(sizeof(int16)))^:= da1;
+end;
+
+procedure int64tocard32op();
+var
+ da1: int64;
+begin
+ da1:= pint64(stackpop(sizeof(int64)))^;
+ pint32(stackpush(sizeof(int32)))^:= da1;
+end;
+
+procedure int64tocard64op();
+begin
+ //dummy
+end;
+
 procedure negcard32op();
 var
  po1: pointer;
@@ -2755,6 +3179,66 @@ const
   shr32ssa = 0;
 //  shrint32ssa = 0;
   
+  card8tocard16ssa = 0;
+  card8tocard32ssa = 0;
+  card8tocard64ssa = 0;
+  card16tocard8ssa = 0;
+  card16tocard32ssa = 0;
+  card16tocard64ssa = 0;
+  card32tocard8ssa = 0;
+  card32tocard16ssa = 0;
+  card32tocard64ssa = 0;
+  card64tocard8ssa = 0;
+  card64tocard16ssa = 0;
+  card64tocard32ssa = 0;
+
+  int8toint16ssa = 0;
+  int8toint32ssa = 0;
+  int8toint64ssa = 0;
+  int16toint8ssa = 0;
+  int16toint32ssa = 0;
+  int16toint64ssa = 0;
+  int32toint8ssa = 0;
+  int32toint16ssa = 0;
+  int32toint64ssa = 0;
+  int64toint8ssa = 0;
+  int64toint16ssa = 0;
+  int64toint32ssa = 0;
+
+  card8toint8ssa = 0;
+  card8toint16ssa = 0;
+  card8toint32ssa = 0;
+  card8toint64ssa = 0;
+  card16toint8ssa = 0;
+  card16toint16ssa = 0;
+  card16toint32ssa = 0;
+  card16toint64ssa = 0;
+  card32toint8ssa = 0;
+  card32toint16ssa = 0;
+  card32toint32ssa = 0;
+  card32toint64ssa = 0;
+  card64toint8ssa = 0;
+  card64toint16ssa = 0;
+  card64toint32ssa = 0;
+  card64toint64ssa = 0;
+
+  int8tocard8ssa = 0;
+  int8tocard16ssa = 0;
+  int8tocard32ssa = 0;
+  int8tocard64ssa = 0;
+  int16tocard8ssa = 0;
+  int16tocard16ssa = 0;
+  int16tocard32ssa = 0;
+  int16tocard64ssa = 0;
+  int32tocard8ssa = 0;
+  int32tocard16ssa = 0;
+  int32tocard32ssa = 0;
+  int32tocard64ssa = 0;
+  int64tocard8ssa = 0;
+  int64tocard16ssa = 0;
+  int64tocard32ssa = 0;
+  int64tocard64ssa = 0;
+
   negcard32ssa = 0;
   negint32ssa = 0;
   negflo64ssa = 0;

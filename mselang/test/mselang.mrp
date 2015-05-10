@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=3
   (
   kind=1
@@ -205,11 +205,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=18
    (
    kind=1
-   a=0,665,4,address
+   a=0,664,4,address
    c=2
     (
     kind=2
@@ -273,8 +273,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
-   c=15
+   a=0,664,4,arith
+   c=17
     (
     kind=1
     a=0,664,4,bool
@@ -626,6 +626,50 @@ c=3
     a=0,648,1,addsubint llvm
     teststate=1
     path=addsubint.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,bitexp1
+    teststate=1
+    path=bitexp1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,bitexp1 llvm
+    teststate=1
+    path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -1187,8 +1231,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
-   c=4
+   a=0,665,4,conversions
+   c=6
     (
     kind=2
     a=0,648,1,potoint32
@@ -1260,6 +1304,50 @@ c=3
     a=0,648,1,anytopo llvm
     teststate=1
     path=anytopo.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,sizeconvert1
+    teststate=1
+    path=sizeconvert1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,sizeconvert1 llvm
+    teststate=1
+    path=sizeconvert1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -1359,7 +1447,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,exception
+   a=0,665,5,exception
    c=2
     (
     kind=2
@@ -1378,7 +1466,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73234E0
+    ao=An unhandled exception occured at $B7337518
     +
     ae=
     aec=123
@@ -1386,8 +1474,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise1 llvm
-    teststate=1
+    a=0,648,2,raise1 llvm
+    teststate=2
     path=raise1.mla
     comment=
     cc=${mlc_llvm}
@@ -1402,11 +1490,14 @@ c=3
     eec=217
     cr=0
     ao=
-    ae=
-    aec=217
+    ae=Type too small for SExt
+    +  %12 = sext i64 %11 to i64
+    +LLVM ERROR: Broken function found, compilation aborted!
+    +
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=exception/
    comment=
    cc=
@@ -3166,7 +3257,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -3554,7 +3645,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -3662,16 +3753,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=43
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

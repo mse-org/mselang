@@ -127,6 +127,26 @@ type
   oc_shr32,
 //  oc_shrint32,
   
+  oc_card8tocard16,oc_card8tocard32,oc_card8tocard64,
+  oc_card16tocard8,oc_card16tocard32,oc_card16tocard64,
+  oc_card32tocard8,oc_card32tocard16,oc_card32tocard64,
+  oc_card64tocard8,oc_card64tocard16,oc_card64tocard32,
+
+  oc_int8toint16,oc_int8toint32,oc_int8toint64,
+  oc_int16toint8,oc_int16toint32,oc_int16toint64,
+  oc_int32toint8,oc_int32toint16,oc_int32toint64,
+  oc_int64toint8,oc_int64toint16,oc_int64toint32,
+
+  oc_card8toint8,oc_card8toint16,oc_card8toint32,oc_card8toint64,
+  oc_card16toint8,oc_card16toint16,oc_card16toint32,oc_card16toint64,
+  oc_card32toint8,oc_card32toint16,oc_card32toint32,oc_card32toint64,
+  oc_card64toint8,oc_card64toint16,oc_card64toint32,oc_card64toint64,
+
+  oc_int8tocard8,oc_int8tocard16,oc_int8tocard32,oc_int8tocard64,
+  oc_int16tocard8,oc_int16tocard16,oc_int16tocard32,oc_int16tocard64,
+  oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
+  oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
+
   oc_negcard32,
   oc_negint32,
   oc_negflo64,
@@ -748,6 +768,27 @@ type
       voffsaddress: dataaddressty;
      );
    );
+
+   oc_card8tocard16,oc_card8tocard32,oc_card8tocard64,
+   oc_card16tocard8,oc_card16tocard32,oc_card16tocard64,
+   oc_card32tocard8,oc_card32tocard16,oc_card32tocard64,
+   oc_card64tocard8,oc_card64tocard16,oc_card64tocard32,
+
+   oc_int8toint16,oc_int8toint32,oc_int8toint64,
+   oc_int16toint8,oc_int16toint32,oc_int16toint64,
+   oc_int32toint8,oc_int32toint16,oc_int32toint64,
+   oc_int64toint8,oc_int64toint16,oc_int64toint32,
+
+   oc_card8toint8,oc_card8toint16,oc_card8toint32,oc_card8toint64,
+   oc_card16toint8,oc_card16toint16,oc_card16toint32,oc_card16toint64,
+   oc_card32toint8,oc_card32toint16,oc_card32toint32,oc_card32toint64,
+   oc_card64toint8,oc_card64toint16,oc_card64toint32,oc_card64toint64,
+
+   oc_int8tocard8,oc_int8tocard16,oc_int8tocard32,oc_int8tocard64,
+   oc_int16tocard8,oc_int16tocard16,oc_int16tocard32,oc_int16tocard64,
+   oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
+   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
+   
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
    oc_addpoint32,
