@@ -1,0 +1,6 @@
+program shl1;
+
+begin
+ exitcode:= 11;
+ exitcode:= ((exitcode shl 2) + (123 - 44));
+end.

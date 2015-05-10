@@ -1,0 +1,16 @@
+program bitexp1;
+const
+ val = 300;
+var
+ vval,v7f,v80,v7,v8: int32;
+begin
+ vval:= val;
+ v7f:= $7f;
+ v80:= $80;
+ v7:= 7;
+ v8:= 8;
+ exitcode:= (vval and v7f or v80) or (((vval shr v7) and v7f) shl v8)-684+123; //684
+ if exitcode = 123 then begin
+  exitcode:= (val and $7f or $80) or (((val shr 7) and $7f) shl 8)-684+123; //684
+ end;
+end.

@@ -1741,8 +1741,10 @@ var
  sd1: stackdatakindty;
  op1: opcodety;
  po1: ptypedataty;
- bo1: boolean;
+ bo1,bo2: boolean;
  si1: databitsizety;
+label
+ endlab;
 begin
  with info do begin
   bo1:= false;
@@ -1770,7 +1772,7 @@ begin
    if not bo1 then begin
     incompatibletypeserror(contextstack[s.stacktop-2].d,
                                                contextstack[s.stacktop].d);
-    dec(s.stacktop,2);
+    goto endlab;
    end
    else begin
     if int1 > 0 then begin //indirectlevel
@@ -1785,6 +1787,36 @@ begin
      dec(s.stacktop,2);
     end
     else begin
+     bo2:= false;
+     if (d.kind = ck_const) and 
+                      (contextstack[s.stacktop].d.kind = ck_const) then begin
+      bo2:= true;
+      case op1 of
+       oc_and32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) and
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
+       oc_or32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
+       oc_shl32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shl
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
+       oc_shr32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shr
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
+       else begin
+        bo2:= false;
+       end;
+      end;
+     end;
+     if bo2 then begin
+      goto endlab;
+     end;
+
      if int1 > 0 then begin
       si1:= das_pointer;
      end
@@ -1810,6 +1842,7 @@ begin
      d.dat.indirection:= 0;   
 //     initfactcontext(-1);
     end;
+endlab:
     dec(s.stacktop,2);
 //    d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
     context:= nil;

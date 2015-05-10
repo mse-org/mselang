@@ -1,0 +1,6 @@
+program shr1;
+
+begin
+ exitcode:= 11*4;
+ exitcode:= ((exitcode shr 2) + (123 - 11));
+end.
