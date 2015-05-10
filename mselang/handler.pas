@@ -342,7 +342,12 @@ begin
    s.stackindex:= s.stacktop-1;
    d.kind:= ck_const;
    d.dat.indirection:= 0;
-   d.dat.datatyp:= sysdatatypes[st_int32];
+   if (int64(c1) > maxint) or (int64(c1) < minint) then begin
+    d.dat.datatyp:= sysdatatypes[st_int64];
+   end
+   else begin
+    d.dat.datatyp:= sysdatatypes[st_int32];
+   end;
    d.dat.constval.kind:= dk_integer;
    d.dat.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
   end;
@@ -1121,7 +1126,12 @@ begin
       c1:= d.number.value;
       d.kind:= ck_const;
       d.dat.indirection:= 0;
-      d.dat.datatyp:= sysdatatypes[st_int32];
+      if (int64(c1) > maxint) or (int64(c1) < minint) then begin
+       d.dat.datatyp:= sysdatatypes[st_int64];
+      end
+      else begin
+       d.dat.datatyp:= sysdatatypes[st_int32];
+      end;
       d.dat.constval.kind:= dk_integer;
       d.dat.constval.vinteger:= int64(c1); 
           //todo: handle cardinals and 64 bit
