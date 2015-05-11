@@ -47,6 +47,7 @@
 
   writelnssa,
   writebooleanssa,
+  writecardinalssa,
   writeintegerssa,
   writefloatssa,
   writestring8ssa,
@@ -419,6 +420,7 @@
 
   @writelnop,
   @writebooleanop,
+  @writecardinalop,
   @writeintegerop,
   @writefloatop,
   @writestring8op,

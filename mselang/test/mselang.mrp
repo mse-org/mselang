@@ -184,12 +184,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=17
     (
     kind=1
-    a=0,664,4,bool
-    c=4
+    a=0,665,4,bool
+    c=6
      (
      kind=2
      a=0,648,1,and1
@@ -261,6 +261,50 @@ c=3
      a=0,648,1,or1 llvm
      teststate=1
      path=or1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,not1
+     teststate=1
+     path=not1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,not1 llvm
+     teststate=1
+     path=not1.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -1142,7 +1186,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=6
     (
     kind=2
@@ -1377,7 +1421,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73714E0
+    ao=An unhandled exception occured at $B7385F20
     +
     ae=
     aec=123
@@ -3814,7 +3858,24 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=35
+rowstate=52
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

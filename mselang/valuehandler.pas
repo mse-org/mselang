@@ -36,6 +36,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
+ controlhandler,
  __mla__internaltypes,exceptionhandler,listutils;
 type
  converttablety = array[intbitsizety,databitsizety] of opcodety;
@@ -975,12 +976,10 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-//  getfactflags:= [];
   with contextstack[s.stackindex-1] do begin
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
-//     getfactflags:= d.getfact.flags;
     end;
     ck_ref: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -1038,16 +1037,19 @@ begin
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
-   if isinherited then begin
-    ele.elementparent:= origparent;
-   end;
    paramco:= s.stacktop-s.stackindex-2-idents.high;
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context
    end;
+   if isinherited then begin
+    ele.elementparent:= origparent;
+   end;
   end
   else begin
-   identerror(1,err_identifiernotfound);
+   if not isgetfact or not(stf_loop in s.currentstatementflags) or 
+                                           not checkloopcommand() then begin
+    identerror(1,err_identifiernotfound);
+   end;
    goto endlab;
   end;
   if po1^.header.kind = ek_ref then begin

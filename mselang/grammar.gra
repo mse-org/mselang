@@ -52,7 +52,7 @@
  '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref','.defines'
 @.tokens
- 'result','exitcode','sizeof'
+ 'result','exitcode','sizeof','break','continue'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-
@@ -435,7 +435,7 @@ repeat,,handlerepeatstart,handleuntilexpected
  ${whitespace}
  'until'.,repeatuntil0-
  '',statement*>
-repeatuntil0,,,handlerepeatend*
+repeatuntil0,,handleuntilentry,handlerepeatend*
  '',exp^*
 
 case,caseof,handlecasestart,

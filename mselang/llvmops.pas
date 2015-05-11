@@ -108,10 +108,11 @@ type
  internalstringinfoty = record
   text: string;
  end;
- internalstringty = (is_ret,is_int32,is_string8,is_pointer);
+ internalstringty = (is_ret,is_card32,is_int32,is_string8,is_pointer);
 const
  internalstringconsts: array[internalstringty] of internalstringinfoty = (
   (text: #$a#0),        //is_ret,
+  (text: '%u'#0),       //is_card32,
   (text: '%d'#0),       //is_int32,
   (text: '%s'#0),       //is_string8,
   (text: '%p'#0)        //is_pointer
@@ -530,6 +531,16 @@ begin
  notimplemented();
 end;
  
+procedure writecardinalop();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_card32]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure writeintegerop();
 begin
  with pc^.par do begin
@@ -2710,6 +2721,7 @@ const
 
   writelnssa = 1;
   writebooleanssa = 1;
+  writecardinalssa = 1;
   writeintegerssa = 1;
   writefloatssa = 1;
   writestring8ssa = 1;

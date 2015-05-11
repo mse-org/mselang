@@ -1582,7 +1582,7 @@ begin                    //todo: optimize
      end;
     end;
    end;
-   ck_typearg: begin
+   ck_typearg,ck_controltoken: begin
     errormessage(err_valueexpected,[],stackoffset);
     goto errlab;
    end;
@@ -2216,7 +2216,10 @@ begin
       writetyp(typ);
      end;
      ck_control: begin
-      write(' OP1:',control.opmark1.address);
+      with control do begin
+       write('kind:',getenumname(typeinfo(kind),ord(kind)),' OP1:',
+                                                       opmark1.address);
+      end;
      end;
     end;
     writeln(' '+inttostr(start.line+1)+':''',

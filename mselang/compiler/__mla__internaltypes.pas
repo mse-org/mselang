@@ -18,9 +18,10 @@ type
  card32 = longword;
  card64 = qword;
 {$endif}
- targetcint = int32;
+ cint = int32;
  
  ptrint = int32;
+ pptrint = ^ptrint;
  ptrcard = card32;
  
  refcountty = int32;
@@ -135,7 +136,7 @@ type
  end;
  p_Unwind_Context = ^_Unwind_Context;
  
- _Unwind_Action = targetcint;
+ _Unwind_Action = cint;
 const
  _UA_SEARCH_PHASE = 1;
  _UA_CLEANUP_PHASE = 2;

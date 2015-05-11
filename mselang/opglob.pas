@@ -97,6 +97,7 @@ type
   
   oc_writeln,
   oc_writeboolean,
+  oc_writecardinal,
   oc_writeinteger,
   oc_writefloat,
   oc_writestring8,

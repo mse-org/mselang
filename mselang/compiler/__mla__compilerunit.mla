@@ -16,7 +16,7 @@ procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
-function __mla__personality(version: targetcint;
+function __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionClass: _Unwind_Exception_Class;
              exceptionObject: p_Unwind_Exception;
@@ -26,6 +26,14 @@ function _Unwind_RaiseException(
            exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
 function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
                                                                        external;
+function _Unwind_GetIP(context: p_Unwind_Context): pointer; external;
+procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer);
+function _Unwind_GetGR(context: p_Unwind_Context; index: cint): ptrint;
+procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint; 
+                                                      new_value: ptrint);
+
+function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
+
 implementation
 type
  pcard8 = ^card8;
@@ -155,28 +163,93 @@ begin
  halt();
 end;
 
-function __mla__personality(version: targetcint;
+const
+{$ifdef target_x86_64}
+ exceptionregno = 0;
+ selectorregno = 1;
+{$else}
+ exceptionregno = 0;
+ selectorregno = 2;
+{$endif}
+
+function installfinallycontext(const actions: _Unwind_Action;
+             const exceptiondata: p_Unwind_Exception;
+             const context: p_Unwind_Context;
+             const landingpad: pointer): _Unwind_Reason_Code;
+begin
+ if actions and _UA_SEARCH_PHASE <> 0 then begin
+  result:= _URC_HANDLER_FOUND;
+ end
+ else begin
+  if actions and _UA_HANDLER_FRAME <> 0 then begin
+   _Unwind_SetGR(context,exceptionregno,ptrint(exceptiondata));
+   _Unwind_SetGR(context,selectorregno,0);
+   _Unwind_SetIP(context,landingpad);
+   result:= _URC_INSTALL_CONTEXT;
+  end
+  else begin
+   result:= _URC_CONTINUE_UNWIND;
+  end;
+ end;
+end;
+
+function __mla__personality(version: cint;
              actions: _Unwind_Action;
              exceptionClass: _Unwind_Exception_Class;
              exceptionObject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 var
  po1: pointer;
- baseoffset: ptrcard;
+ c1: ptrcard;
+ typebaseoffset: ptrcard;
  tablelength: ptrcard;
  bo1: bool1;
+ typestable: pointer;
+ callsitetable: pointer;
+ actiontable: pointer;
+ ip,regionstart: pointer;
 begin
- if actions and _UA_SEARCH_PHASE <> 0 then begin
+// if actions and _UA_SEARCH_PHASE <> 0 then begin
   po1:= _Unwind_GetLanguageSpecificData(context);
   if po1 <> nil then begin
+   result:= _URC_CONTINUE_UNWIND;
    bo1:= false;
    if pcard8(po1)^ = $ff then begin
     inc(po1);
     if pcard8(po1)^ = 0 then begin
-     baseoffset:= readusleb128(po1);
+     inc(po1);
+     c1:= readusleb128(po1);
+     typestable:= po1 + c1;
+writeln(c1);
      if pcard8(po1)^ = 3 then begin
       inc(po1);
-      tablelength:= readusleb128(po1);
+      c1:= readusleb128(po1);
+writeln(c1);
+      callsitetable:= po1;
+      actiontable:= po1 + c1;
+      ip:= _Unwind_GetIP(context){-1};
+      regionstart:= _Unwind_GetRegionStart(context);
+writeln('IP            ',ip);
+writeln('regionstart   ',regionstart);
+writeln('typestable    ',typestable);
+writeln('callsitetable ',callsitetable);
+writeln('actiontable   ',actiontable);
+      while callsitetable < actiontable do begin
+       po1:= callsitetable + pptrint(callsitetable)^;    //blockstart
+       if po1 > ip then begin
+        break;                //no region found
+       end;
+       po1:= po1 + (pptrint(callsitetable)+1)^;          //blockend
+       if po1 > ip then begin //region found
+        po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
+        inc(callsitetable,3*sizeof(ptrint));
+        actionoffset:= readusleb128(callsitetable);
+        if actionoffset = 0 then begin
+         result:= installfinallycontext(actions,exceptionobject,context,po1);
+        end;
+        break;
+       end;
+      end;
       bo1:= true;
      end;
     end;
@@ -184,16 +257,14 @@ begin
    if not bo1 then begin
     fatalerror();
    end;
-   result:= _URC_HANDLER_FOUND;
   end
   else begin
-   result:= _URC_CONTINUE_UNWIND;
   end;
- end
- else begin
-  if actions and _UA_HANDLER_FRAME <> 0 then begin
-   result:= _URC_INSTALL_CONTEXT;
-  end;
+// end
+// else begin
+//  if actions and _UA_HANDLER_FRAME <> 0 then begin
+//   result:= _URC_INSTALL_CONTEXT;
+//  end;
  end;
 end;
 

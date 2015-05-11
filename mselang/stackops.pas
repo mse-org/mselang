@@ -415,6 +415,11 @@ begin
  write(vbooleanty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
+procedure writecardinalop();
+begin
+ write(vcardinalty((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
 procedure writeintegerop();
 begin
  write(vintegerty((cpu.stack+cpu.pc^.par.voffset)^));
@@ -3165,6 +3170,7 @@ const
 
   writelnssa = 0;
   writebooleanssa = 0;
+  writecardinalssa = 0;
   writeintegerssa = 0;
   writefloatssa = 0;
   writestring8ssa = 0;

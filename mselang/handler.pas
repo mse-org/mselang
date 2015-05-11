@@ -1194,6 +1194,9 @@ begin
       ck_typearg: begin
        errormessage(err_cannotaddresstype,[],1);
       end;
+      ck_controltoken: begin
+       errormessage(err_invalidcontroltoken,[],1);
+      end;
      {$ifdef mse_checkinternalerror}
       else begin
        internalerror(ie_handler,'20140403C');
@@ -2542,7 +2545,7 @@ begin
 //      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
     end;
-    ck_subcall: begin
+    ck_subcall,ck_controltoken: begin
     end;
     else begin
      errormessage(err_illegalexpression,[],1);

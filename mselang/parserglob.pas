@@ -227,7 +227,7 @@ type
  contextkindty = (ck_none,ck_error,ck_implementation,ck_prog,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
-                  ck_subres,ck_subcall,ck_getfact,
+                  ck_subres,ck_subcall,ck_controltoken,ck_getfact,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,
@@ -324,6 +324,7 @@ type
  end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
+                    stf_loop,
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
@@ -550,8 +551,11 @@ type
 //  flags: statementflagsty;
  end;
 
+ controlkindty = (cok_none,cok_loop);
  controlinfoty = record
   opmark1: opmarkty;
+  links: linkindexty;
+  kind: controlkindty;
  end;
   
  implcontinfoty = record

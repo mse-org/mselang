@@ -33,6 +33,7 @@ procedure handlewhileend();
 
 procedure handlerepeatstart();
 procedure handleuntilexpected();
+procedure handleuntilentry();
 procedure handlerepeatend();
 
 procedure handlecasestart();
@@ -43,10 +44,12 @@ procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
 
+function checkloopcommand(): boolean; //true if ok
+
 implementation
 uses
  handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
- stackops,segmentutils,opglob;
+ stackops,segmentutils,opglob,unithandler;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -158,13 +161,82 @@ begin //boolexp,thenmark,elsemark
  end;
 end;
 
-procedure startlabel();
+procedure startlabel(const akind: controlkindty = cok_none);
 begin
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_control;
   d.control.opmark1.address:= opcount; //label address
+  d.control.kind:= akind;
+  d.control.links:= 0;
  end;
  addlabel();
+end;
+
+procedure beginloop();
+begin
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_control then begin
+   internalerror(ie_handler,'20150511A');
+  end;
+ {$endif}
+  b.flags:= s.currentstatementflags;
+  include(s.currentstatementflags,stf_loop);
+ end;
+end;
+
+procedure endloop();
+begin
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_control then begin
+   internalerror(ie_handler,'20150511A');
+  end;
+ {$endif}
+  s.currentstatementflags:= b.flags;
+ end;
+end;
+
+function checkloopcommand(): boolean; //true if ok
+var
+ i1: int32;
+ ident1: identty;
+begin
+ result:= false;
+ with info do begin
+  with contextstack[s.stackindex+1] do begin
+  {$ifdef mse_checkinternalerror}
+   if d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20150511B');
+   end;
+  {$endif}
+   if not (idf_continued in d.ident.flags) then begin 
+                                 //todo: check 'system.' prefix
+    ident1:= d.ident.ident;
+    if (ident1 = tk_break) or (ident1 = tk_continue) then begin
+     for i1:= s.stackindex downto 0 do begin
+      with contextstack[i1] do begin
+       if (d.kind = ck_control) and (d.control.kind = cok_loop) then begin
+        with addcontrolitem(oc_goto)^ do begin
+         if ident1 = tk_continue then begin
+          par.opaddress.opaddress:= d.control.opmark1.address-1; //label
+         end
+         else begin
+          linkmark(d.control.links,
+                       getsegaddress(seg_op,@par.opaddress.opaddress));
+         end;
+        end;
+        contextstack[s.stackindex].d.kind:= ck_controltoken;
+        result:= true;
+        exit;
+       end;
+      end;
+     end;
+     internalerror1(ie_handler,'20150511C');
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure handlewhilestart();   //todo: check abort at end -> single jump
@@ -172,7 +244,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WHILESTART');
 {$endif}
- startlabel();
+ startlabel(cok_loop);
 end;
 
 procedure handlewhileexpression();
@@ -180,6 +252,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WHILEEXPRESSION');
 {$endif}
+ beginloop();
  conditionalcontrolop(oc_while);
 end;
 
@@ -193,6 +266,9 @@ begin
    par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
   setcurrentlocbefore(2); //dest for oc_while
+  endloop();
+  addlabel();
+  linkresolveopad(d.control.links,opcount-1);
   dec(s.stackindex);
  end;
 end;
@@ -202,7 +278,8 @@ begin
 {$ifdef mse_debugparser}
  outhandle('REPEATSTART');
 {$endif}
- startlabel();
+ startlabel(cok_loop);
+ beginloop();
 end;
 
 procedure handleuntilexpected();
@@ -214,6 +291,14 @@ begin
   tokenexpectederror('tk_until');
   dec(s.stackindex);
  end;
+end;
+
+procedure handleuntilentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNTILENTRY');
+{$endif}
+ endloop();
 end;
 
 procedure handlerepeatend();
@@ -228,10 +313,11 @@ begin
   if po1 <> nil then begin
    po1^.par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
+  addlabel();
+  linkresolveopad(d.control.links,opcount-1);
   dec(s.stackindex);
  end;
 end;
-
 
 procedure handlecasestart();
 begin

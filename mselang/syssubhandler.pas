@@ -316,18 +316,15 @@ end;
 procedure handlewrite(const paramco: integer);
 var
  int1,int3: integer;
-// stacksize1: datasizety;
  po1: popinfoty; 
  po2: ptypedataty;
-begin
-// stacksize1:= 0;
+begin                             //todo: datasize
  with info do begin
   int3:= 0;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
    getvalue(int1-s.stackindex,das_none);
   end;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-//   with additem()^ do begin
    with contextstack[int1] do begin //todo: use table
     if d.dat.datatyp.indirectlevel > 0 then begin
      po1:= additem(oc_writepointer);
@@ -342,6 +339,10 @@ begin
       end;
       dk_integer: begin
        po1:= additem(oc_writeinteger);
+       po1^.par.voffset:= alignsize(sizeof(int32));
+      end;
+      dk_cardinal: begin
+       po1:= additem(oc_writecardinal);
        po1^.par.voffset:= alignsize(sizeof(int32));
       end;
       dk_float: begin
