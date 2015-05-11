@@ -113,20 +113,48 @@ begin  //todo: handle out of memory situation
  exitcode:= exco_unhandledexception; //no handler found
  halt();
 end;
-{
-function readssleb128(var adata: pointer): ptrint;
+
+function readusleb128(var adata: pointer): ptrint;
 var
  po1: pcard8;
+ shift,i1: int32;
 begin
  po1:= adata;
  result:= po1^ and $7f;
- while po1^ and $80 <> 0 do begin
+ shift:= 7;
+ while po1^ and $80 <> 0 do begin       //todo: overflow check
   inc(po1);
-  result:= (result shl 7) or (po1^ and $7f);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
  end;
  adata:= po1+1;
 end;
-}
+
+function readssleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do begin       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ if po1^ and $40 <> 0 then begin   //sign
+  result:= result or ptrint(-1) shl shift; //negative
+ end;
+ adata:= po1+1;
+end;
+
+procedure fatalerror();
+begin
+ writeln('Fatal error');
+ halt();
+end;
+
 function __mla__personality(version: targetcint;
              actions: _Unwind_Action;
              exceptionClass: _Unwind_Exception_Class;
@@ -134,10 +162,28 @@ function __mla__personality(version: targetcint;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 var
  po1: pointer;
+ baseoffset: ptrcard;
+ tablelength: ptrcard;
+ bo1: bool1;
 begin
  if actions and _UA_SEARCH_PHASE <> 0 then begin
   po1:= _Unwind_GetLanguageSpecificData(context);
   if po1 <> nil then begin
+   bo1:= false;
+   if pcard8(po1)^ = $ff then begin
+    inc(po1);
+    if pcard8(po1)^ = 0 then begin
+     baseoffset:= readusleb128(po1);
+     if pcard8(po1)^ = 3 then begin
+      inc(po1);
+      tablelength:= readusleb128(po1);
+      bo1:= true;
+     end;
+    end;
+   end;
+   if not bo1 then begin
+    fatalerror();
+   end;
    result:= _URC_HANDLER_FOUND;
   end
   else begin

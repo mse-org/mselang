@@ -100,9 +100,8 @@ const
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
-  (name: '_exit'; flags: [sf_proto]; params: @_exitparams){,
-  (name: '_Unwind_RaiseException'; flags: [sf_proto];
-                     params: @_Unwind_RaiseExceptionparams)}  
+  (name: '_exit'; flags: [sf_proto]; params: @_exitparams)
+//  (name: 'exit'; flags: [sf_proto]; params: @_exitparams)
  );
 
 type

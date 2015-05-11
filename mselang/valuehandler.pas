@@ -292,7 +292,7 @@ begin
         end;
        end;
       end;
-      ck_fact: begin
+      ck_fact,ck_subres: begin
        case dest^.h.kind of //todo: use table
         dk_float: begin
          case source1^.h.kind of
