@@ -1,0 +1,10 @@
+program not1;
+var
+ bo1: bool1;
+begin
+ bo1:= false;
+ bo1:= not bo1;
+ if bo1 then begin
+  exitcode:= 123;
+ end;
+end.

@@ -147,6 +147,9 @@ type
   oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
 
+  oc_not1,
+  oc_not32,
+  
   oc_negcard32,
   oc_negint32,
   oc_negflo64,

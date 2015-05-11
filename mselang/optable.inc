@@ -97,6 +97,9 @@
   int32tocard8ssa,int32tocard16ssa,int32tocard32ssa,int32tocard64ssa,
   int64tocard8ssa,int64tocard16ssa,int64tocard32ssa,int64tocard64ssa,
 
+  not1ssa,
+  not32ssa,
+  
   negcard32ssa,
   negint32ssa,
   negflo64ssa,
@@ -505,6 +508,9 @@
   @int64tocard16op,
   @int64tocard32op,
   @int64tocard64op,
+  
+  @not1op,
+  @not32op,
   
   @negcard32op,
   @negint32op,

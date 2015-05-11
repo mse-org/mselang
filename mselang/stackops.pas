@@ -1532,6 +1532,22 @@ begin
  //dummy
 end;
 
+procedure not1op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(vbooleanty));
+ vbooleanty(po1^):= not vbooleanty(po1^);
+end;
+
+procedure not32op();
+var
+ po1: pointer;
+begin
+ po1:= stacktop(sizeof(vcardinalty));
+ vcardinalty(po1^):= not vcardinalty(po1^);
+end;
+
 procedure negcard32op();
 var
  po1: pointer;
@@ -3239,6 +3255,9 @@ const
   int64tocard32ssa = 0;
   int64tocard64ssa = 0;
 
+  not1ssa = 0;
+  not32ssa = 0;
+  
   negcard32ssa = 0;
   negint32ssa = 0;
   negflo64ssa = 0;

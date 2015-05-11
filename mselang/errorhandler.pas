@@ -55,7 +55,8 @@ type
             err_wrongversion,err_invalidprogram,err_compilerunitnotfound,
             err_cannotaddresstype,err_valueexpected,err_cannotgetsize,
             err_pointertypeexpected,err_write,err_toomanyparams,
-            err_noancestor,err_forwardtypenotfound,err_invaliddirective);
+            err_noancestor,err_forwardtypenotfound,err_invaliddirective,
+            err_notnotpossible);
             
  errorinfoty = record
   level: errorlevelty;
@@ -207,7 +208,8 @@ const
   (level: erl_error; message: 'Too many parameters'),
   (level: erl_error; message: 'There is no ancestor'),
   (level: erl_error; message: 'Forward type "%s" not found'),
-  (level: erl_error; message: 'Invalid directive "%s"')
+  (level: erl_error; message: 'Invalid directive "%s"'),
+  (level: erl_error; message: 'not operation not possible')
  );
 
 procedure message1(const atext: string; const values: array of const); 

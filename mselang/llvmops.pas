@@ -1173,10 +1173,26 @@ begin
  //dummy
 end;
 
+procedure not1op();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mc_i1)),
+                                                    bcstream.ssaval(ssas1));
+ end;
+end;
+
+procedure not32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mc_i32)),
+                                                    bcstream.ssaval(ssas1));
+ end;
+end;
+
 procedure negcard32op();
 begin
  with pc^.par do begin
-  bcstream.emitbinop(BINOP_SUB,bcstream.constval(nullpointeroffset),
+  bcstream.emitbinop(BINOP_SUB,bcstream.constval(ord(nc_i32)),
                                                     bcstream.ssaval(ssas1));
  end;
 end;
@@ -1184,7 +1200,7 @@ end;
 procedure negint32op();
 begin
  with pc^.par do begin
-  bcstream.emitbinop(BINOP_SUB,bcstream.constval(nullpointeroffset),
+  bcstream.emitbinop(BINOP_SUB,bcstream.constval(ord(nc_i32)),
                                                     bcstream.ssaval(ssas1));
  end;
 end;
@@ -2784,6 +2800,9 @@ const
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
 
+  not1ssa = 1;
+  not32ssa = 1;
+  
   negcard32ssa = 1;
   negint32ssa = 1;
   negflo64ssa = 1;

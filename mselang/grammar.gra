@@ -751,6 +751,7 @@ fact0,fact1,,
  ${whitespace}
  '+',-
  '-',negfact-*
+ 'not'.,notfact-*
  '@',addressopfact-*
 // '@',!handleaddressfact-
  '(',bracketstart-*
@@ -778,6 +779,8 @@ fact2,fact1,handlefact2entry,
  '',valueidentifierwhite*
 
 negfact,,,handlenegfact
+ '',fact*
+notfact,,,handlenotfact
  '',fact*
 
 //addressfact,,handleaddressfactentry,handleaddressfact

@@ -111,6 +111,7 @@ procedure handleshrfact();
 
 //procedure handlefactadentry();
 procedure handlenegfact();
+procedure handlenotfact();
 procedure handlemulfact();
 
 procedure handlefact2entry();
@@ -1106,6 +1107,17 @@ const
    oc_none,oc_none,    oc_none
  );
 
+ notops: array[datakindty] of opcodety = (
+ //dk_none, dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
+   oc_none, oc_none,   oc_not1,   oc_not32,   oc_not32,  oc_none,
+ //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,
+   oc_none, oc_none,   oc_none,  oc_none,   oc_none,
+ //dk_array,dk_class,dk_interface,dk_sub
+   oc_none, oc_none, oc_none,     oc_none,
+ //dk_enum,dk_enumitem,dk_set
+   oc_none,oc_none,    oc_none
+ );
+
 procedure handlefact1();
 var
  i1: integer;
@@ -1300,7 +1312,6 @@ end;
 procedure handlenegfact;
 var
  po1: ptypedataty;
-// op1: opty;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
@@ -1335,6 +1346,54 @@ begin
       errormessage(err_negnotpossible,[],1);
      end;
      par.ssas1:= d.dat.fact.ssaindex;
+    end;
+   end;
+  end;
+  contextstack[s.stackindex].d:= d;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlenotfact;
+var
+ po1: ptypedataty;
+ i1: int32;
+begin
+// handlefact;
+{$ifdef mse_debugparser}
+ outhandle('NEGFACT');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+ {$ifdef mse_checkinternalerror}
+  if s.stacktop-s.stackindex <> 1 then begin
+   internalerror(ie_handler,'20140404A');
+  end;
+ {$endif}
+  if d.kind = ck_const then begin
+   with d.dat.constval do begin
+    case kind of
+     dk_integer: begin
+      vinteger:= not vinteger;
+     end;
+     dk_boolean: begin
+      vboolean:= not vboolean;
+     end;
+     else begin
+      errormessage(err_notnotpossible,[],1);
+     end;
+    end;
+   end;
+  end
+  else begin
+   if getvalue(1,das_none) then begin
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+    i1:= d.dat.fact.ssaindex;
+    with insertitem(notops[po1^.h.kind],1,false)^ do begin
+     if op.op = oc_none then begin
+      errormessage(err_notnotpossible,[],1);
+     end;
+     par.ssas1:= i1;
     end;
    end;
   end;
