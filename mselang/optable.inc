@@ -134,6 +134,36 @@
   incdecindiimmint32ssa,
   incdecindiimmpo32ssa,
 
+  incsegint32ssa,
+  incsegpo32ssa,
+
+  inclocint32ssa,
+  inclocpo32ssa,
+
+  incparint32ssa,
+  incparpo32ssa,
+
+  incparindiint32ssa,
+  incparindipo32ssa,
+
+  incindiint32ssa,
+  incindipo32ssa,
+
+  decsegint32ssa,
+  decsegpo32ssa,
+
+  declocint32ssa,
+  declocpo32ssa,
+
+  decparint32ssa,
+  decparpo32ssa,
+
+  decparindiint32ssa,
+  decparindipo32ssa,
+
+  decindiint32ssa,
+  decindipo32ssa,
+
   cmpeqpossa,
   cmpeqboolssa,
   cmpeqint32ssa,
@@ -546,6 +576,36 @@
 
   @incdecindiimmint32op,
   @incdecindiimmpo32op,
+
+  @incsegint32op,
+  @incsegpo32op,
+
+  @inclocint32op,
+  @inclocpo32op,
+
+  @incparint32op,
+  @incparpo32op,
+
+  @incparindiint32op,
+  @incparindipo32op,
+
+  @incindiint32op,
+  @incindipo32op,
+
+  @decsegint32op,
+  @decsegpo32op,
+
+  @declocint32op,
+  @declocpo32op,
+
+  @decparint32op,
+  @decparpo32op,
+
+  @decparindiint32op,
+  @decparindipo32op,
+
+  @decindiint32op,
+  @decindipo32op,
 
   @cmpeqpoop,
   @cmpeqboolop,

@@ -843,6 +843,263 @@ begin
  end; 
 end;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+procedure incsegint32op();
+var
+ po1: pinteger;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getsegaddress(segdataaddress);
+  inc(po1^,pint32(stackpop(sizeof(int32)))^);
+ end; 
+end;
+
+procedure incsegpo32op();
+var
+ po1: ppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getsegaddress(segdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^,i1);
+ end; 
+end;
+
+procedure inclocint32op();
+var
+ po1: pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^,i1);
+ end; 
+end;
+
+procedure inclocpo32op();
+var
+ po1: ppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^,i1);
+ end; 
+end;
+
+procedure incparint32op();
+begin
+ inclocint32op();
+end;
+
+procedure incparpo32op();
+begin
+ inclocpo32op();
+end;
+
+procedure incparindiint32op();
+var
+ po1: ^pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^^,i1);
+ end; 
+end;
+
+procedure incparindipo32op();
+var
+ po1: pppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^^,i1);
+ end; 
+end;
+
+procedure incindiint32op();
+var
+ po1: ^pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= stackpop(sizeof(vpointerty));
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  inc(po1^^,i1);
+ end; 
+end;
+
+procedure incindipo32op();
+var
+ po1: pppointer;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= stackpop(sizeof(vpointerty));
+  inc(po1^^,pint32(stackpop(sizeof(int32)))^);
+ end; 
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+procedure decsegint32op();
+var
+ po1: pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getsegaddress(segdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^,i1);
+ end; 
+end;
+
+procedure decsegpo32op();
+var
+ po1: ppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getsegaddress(segdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^,i1);
+ end; 
+end;
+
+procedure declocint32op();
+var
+ po1: pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^,i1);
+ end; 
+end;
+
+procedure declocpo32op();
+var
+ po1: ppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^,i1);
+ end; 
+end;
+
+procedure decparint32op();
+begin
+ declocint32op();
+end;
+
+procedure decparpo32op();
+begin
+ declocpo32op();
+end;
+
+procedure decparindiint32op();
+var
+ po1: ^pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^^,i1);
+ end; 
+end;
+
+procedure decparindipo32op();
+var
+ po1: pppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= getlocaddress(locdataaddress);
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^^,i1);
+ end; 
+end;
+
+procedure decindiint32op();
+var
+ po1: ^pinteger;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= stackpop(sizeof(vpointerty));
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^^,i1);
+ end; 
+end;
+
+procedure decindipo32op();
+var
+ po1: pppointer;
+ i1: int32;
+begin
+ with cpu.pc^.par.memop do begin
+  po1:= stackpop(sizeof(vpointerty));
+  i1:= pint32(stackpop(sizeof(int32)))^;
+  dec(po1^^,i1);
+ end; 
+end;
+
+
 procedure cmpeqpoop();
 var
  po1,po2: pvpointerty;
@@ -3296,6 +3553,36 @@ const
 
   incdecindiimmint32ssa = 0;
   incdecindiimmpo32ssa = 0;
+
+  incsegint32ssa = 0;
+  incsegpo32ssa = 0;
+
+  inclocint32ssa = 0;
+  inclocpo32ssa = 0;
+
+  incparint32ssa = 0;
+  incparpo32ssa = 0;
+
+  incparindiint32ssa = 0;
+  incparindipo32ssa = 0;
+
+  incindiint32ssa = 0;
+  incindipo32ssa = 0;
+
+  decsegint32ssa = 0;
+  decsegpo32ssa = 0;
+
+  declocint32ssa = 0;
+  declocpo32ssa = 0;
+
+  decparint32ssa = 0;
+  decparpo32ssa = 0;
+
+  decparindiint32ssa = 0;
+  decparindipo32ssa = 0;
+
+  decindiint32ssa = 0;
+  decindipo32ssa = 0;
 
   cmpeqpossa = 0;
   cmpeqboolssa = 0;

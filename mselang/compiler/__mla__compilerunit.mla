@@ -18,8 +18,8 @@ function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
 function __mla__personality(version: cint;
              actions: _Unwind_Action;
-             exceptionClass: _Unwind_Exception_Class;
-             exceptionObject: p_Unwind_Exception;
+             exceptionclass: _Unwind_Exception_Class;
+             exceptionobject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 
 function _Unwind_RaiseException(
@@ -27,10 +27,12 @@ function _Unwind_RaiseException(
 function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
                                                                        external;
 function _Unwind_GetIP(context: p_Unwind_Context): pointer; external;
-procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer);
+procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer); 
+                                                                  external;
 function _Unwind_GetGR(context: p_Unwind_Context; index: cint): ptrint;
+                                                                   external;
 procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint; 
-                                                      new_value: ptrint);
+                                                new_value: ptrint); external;                                                                    
 
 function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 
@@ -195,14 +197,15 @@ end;
 
 function __mla__personality(version: cint;
              actions: _Unwind_Action;
-             exceptionClass: _Unwind_Exception_Class;
-             exceptionObject: p_Unwind_Exception;
+             exceptionclass: _Unwind_Exception_Class;
+             exceptionobject: p_Unwind_Exception;
              context: p_Unwind_Context): _Unwind_Reason_Code;
 var
  po1: pointer;
  c1: ptrcard;
  typebaseoffset: ptrcard;
  tablelength: ptrcard;
+ actionoffset: ptrcard;
  bo1: bool1;
  typestable: pointer;
  callsitetable: pointer;

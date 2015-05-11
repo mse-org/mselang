@@ -184,6 +184,36 @@ type
   oc_incdecindiimmint32,
   oc_incdecindiimmpo32,
 
+  oc_incsegint32,
+  oc_incsegpo32,
+
+  oc_inclocint32,
+  oc_inclocpo32,
+
+  oc_incparint32,
+  oc_incparpo32,
+
+  oc_incparindiint32,
+  oc_incparindipo32,
+
+  oc_incindiint32,
+  oc_incindipo32,
+
+  oc_decsegint32,
+  oc_decsegpo32,
+
+  oc_declocint32,
+  oc_declocpo32,
+
+  oc_decparint32,
+  oc_decparpo32,
+
+  oc_decparindiint32,
+  oc_decparindipo32,
+
+  oc_decindiint32,
+  oc_decindipo32,
+
   oc_cmpeqpo,
   oc_cmpeqbool,
   oc_cmpeqint32,
@@ -820,7 +850,17 @@ type
    oc_increfsizeframear,oc_increfsizereg0ar,oc_increfsizestackar,
    oc_increfsizestackrefar,oc_decrefsizesegar,oc_decrefsizeframear,
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar,
-   oc_getmem:(
+   oc_getmem,
+   oc_incsegint32,oc_incsegpo32,
+   oc_inclocint32,oc_inclocpo32,
+   oc_incparint32,oc_incparpo32,
+   oc_incparindiint32,oc_incparindipo32,
+   oc_incindiint32,oc_incindipo32,
+   oc_decsegint32,oc_decsegpo32,
+   oc_declocint32,oc_declocpo32, 
+   oc_decparint32,oc_decparpo32,
+   oc_decparindiint32,oc_decparindipo32,
+   oc_decindiint32,oc_decindipo32:(
     memop: memopty;
    );
    oc_setlengthstr8,oc_setlengthdynarray:(

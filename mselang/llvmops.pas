@@ -1259,8 +1259,6 @@ begin
 end;
 
 procedure incdeclocimmpo32op();
-var
- str1,str2: shortstring;
 begin
  with pc^.par,memimm do begin
   loadloc();
@@ -1306,6 +1304,164 @@ begin
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
   bcstream.emitptroffset(bcstream.relval(0),bcstream.constval(llvm.listid));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure incsegint32op();
+begin
+ with pc^.par do begin
+  loadseg();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.ssaval(ssas2));
+  storelastseg();
+ end;
+end;
+
+procedure incsegpo32op();
+begin
+ with pc^.par do begin
+  loadseg();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
+  storelastseg();
+ end;
+end;
+
+procedure inclocint32op();
+begin
+ with pc^.par do begin
+  loadloc();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.ssaval(ssas2));
+  storelastloc();
+ end;
+end;
+
+procedure inclocpo32op();
+begin
+ with pc^.par do begin
+  loadloc();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
+  storelastloc();
+ end;
+end;
+
+procedure incparint32op();
+begin
+ notimplemented();
+end;
+
+procedure incparpo32op();
+begin
+ inclocpo32op();
+end;
+
+procedure incparindiint32op();
+begin
+ notimplemented();
+end;
+
+procedure incparindipo32op();
+begin
+ notimplemented();
+end;
+
+procedure incindiint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_32));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                  bcstream.ssaval(ssas2));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure incindipo32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitptroffset(bcstream.relval(0),bcstream.ssaval(ssas2));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure decsegint32op();
+begin
+ with pc^.par do begin
+  loadseg();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.ssaval(ssas2));
+  storelastseg();
+ end;
+end;
+
+procedure decsegpo32op();
+begin
+ with pc^.par do begin
+  loadseg();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
+  storelastseg();
+ end;
+end;
+
+procedure declocint32op();
+begin
+ with pc^.par do begin
+  loadloc();
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                bcstream.ssaval(ssas2));
+  storelastloc();
+ end;
+end;
+
+procedure declocpo32op();
+begin
+ with pc^.par do begin
+  loadloc();
+  bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas1));
+  storelastloc();
+ end;
+end;
+
+procedure decparint32op();
+begin
+ notimplemented();
+end;
+
+procedure decparpo32op();
+begin
+ declocpo32op();
+end;
+
+procedure decparindiint32op();
+begin
+ notimplemented();
+end;
+
+procedure decparindipo32op();
+begin
+ notimplemented();
+end;
+
+procedure decindiint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_32));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
+                                  bcstream.ssaval(ssas2));
+  bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
+ end;
+end;
+
+procedure decindipo32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitptroffset(bcstream.relval(0),bcstream.ssaval(ssas2));
   bcstream.emitstoreop(bcstream.relval(0),bcstream.relval(2));
  end;
 end;
@@ -2847,6 +3003,36 @@ const
 
   incdecindiimmint32ssa = 3;
   incdecindiimmpo32ssa = 3;
+
+  incsegint32ssa = 2;
+  incsegpo32ssa = 3;
+
+  inclocint32ssa = 2;
+  inclocpo32ssa = 3;
+
+  incparint32ssa = 2;
+  incparpo32ssa = 3;
+
+  incparindiint32ssa = 3;
+  incparindipo32ssa = 4;
+
+  incindiint32ssa = 3;
+  incindipo32ssa = 3;
+
+  decsegint32ssa = 2;
+  decsegpo32ssa = 3;
+
+  declocint32ssa = 2;
+  declocpo32ssa = 3;
+
+  decparint32ssa = 2;
+  decparpo32ssa = 3;
+
+  decparindiint32ssa = 3;
+  decparindipo32ssa = 4;
+
+  decindiint32ssa = 3;
+  decindipo32ssa = 3;
 
   cmpeqpossa = 1;
   cmpeqboolssa = 1;

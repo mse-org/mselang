@@ -178,6 +178,30 @@ const
   oc_incdecsegimmpo32,oc_incdeclocimmpo32,oc_incdecparimmpo32,
 //meo_paramindi         //meo_indi
   oc_incdecparindiimmpo32,oc_incdecindiimmpo32);
+
+ incint32ops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_incsegint32,oc_inclocint32,oc_incparint32,
+//meo_paramindi          //meo_indi
+  oc_incparindiint32,oc_incindiint32);
+
+ decint32ops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_decsegint32,oc_declocint32,oc_decparint32,
+//meo_paramindi          //meo_indi
+  oc_decparindiint32,oc_decindiint32);
+ 
+ incpoops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_incsegpo32,oc_inclocpo32,oc_incparpo32,
+//meo_paramindi         //meo_indi
+  oc_incparindipo32,oc_incindipo32);
+
+ decpoops: memoparty = (
+//meo_segment,        meo_local,          meo_param,
+  oc_decsegpo32,oc_declocpo32,oc_decparpo32,
+//meo_paramindi         //meo_indi
+  oc_decparindipo32,oc_decindipo32);
  
 procedure handleincdec(const paramco: integer; const adec: boolean);
 
@@ -188,8 +212,9 @@ var
  var
   po1: ptypedataty;
   po3: popinfoty;
+  i1,i2: int32;
  begin
-  with dest^ do begin
+  with info,dest^ do begin
    dec(d.dat.datatyp.indirectlevel); //dest type
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    if (paramco = 1) or par2isconst then begin
@@ -217,13 +242,56 @@ var
     end;
    end
    else begin
-    notimplementederror('20141110A');
+    if (d.dat.datatyp.indirectlevel > 0) then begin
+     if d.dat.datatyp.indirectlevel = 1 then begin
+      if po1^.h.kind = dk_pointer then begin
+       i1:= 1;
+      end
+      else begin
+       i1:= po1^.h.bytesize;
+      end;
+     end
+     else begin
+      i1:= pointersize;
+     end;
+     with contextstack[s.stacktop] do begin
+      if i1 <> 1 then begin
+       i2:= d.dat.fact.ssaindex;
+       with insertitem(oc_mulimmint32,s.stacktop-s.stackindex,false)^ do begin
+        par.ssas1:= i2;
+        setimmint32(i1,par);
+       end;
+      end;
+      i2:= d.dat.fact.ssaindex;
+     end;
+     if adec then begin
+      po3:= addmemop(d,decpoops,true);
+     end
+     else begin
+      po3:= addmemop(d,incpoops,true);
+     end;
+     po3^.par.ssas2:= i2;
+    end
+    else begin
+     i1:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+     if adec then begin
+      po3:= addmemop(d,decint32ops,true);
+     end
+     else begin
+      po3:= addmemop(d,incint32ops,true);
+     end;
+     po3^.par.ssas2:= i1;
+    end;
+    if par2isconst and (paramco > 1) then begin
+     po3^.par.memimm.vint32:= po3^.par.memimm.vint32 *
+                contextstack[s.stacktop].d.dat.constval.vinteger;
+    end;
    end;
    po3^.par.ssas1:= info.s.ssa.index - 1;
    if adec then begin
     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
    end;
-   if info.backend = bke_llvm then begin
+   if backend = bke_llvm then begin
     with po3^.par.memimm do begin
      llvm:= constlist.addi32(vint32);
     end;
