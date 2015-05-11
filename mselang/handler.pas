@@ -836,7 +836,7 @@ procedure addsubterm(const issub: boolean);
    operationnotsupportederror(d,contextstack[s.stacktop].d,ch1);
   end;
  end; //opnotsupported
- 
+                                         //todo: operand size 
 var 
  dk1: stackdatakindty;
  i1,i2: int32;
@@ -905,6 +905,10 @@ begin
       end
       else begin
        updateop(subops); //todo: div by pointed size
+       with poa^ do begin
+        d.dat.datatyp:= sysdatatypes[ptrintsystype];
+        d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp);
+       end;
        goto endlab;
       end;
      end

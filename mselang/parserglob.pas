@@ -106,6 +106,18 @@ type
               st_card8,st_card16,st_card32,st_card64,
               st_float64,st_string8);
 const
+ pointersize = sizeof(pointer); //todo: use target size
+ pointerbitsize = pointersize*8;
+{$if pointersize = 8}
+ ptrcardsystype = st_card64;
+ ptrintsystype = st_int64;
+ pointerintsize = das_64;
+{$else}
+ pointerintsize = das_32;
+ ptrcardsystype = st_card32;
+ ptrintsystype = st_int32;
+{$endif} 
+ 
  lastdatakind = das_f64;
  alldatakinds = [das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64];
@@ -115,9 +127,6 @@ const
  floatopdatakinds = [das_f16,das_f32,das_f64];
  ordinalopdatakinds = bitopdatakinds-floatopdatakinds;
 
- pointersize = sizeof(pointer); //todo: use target size
- pointerbitsize = pointersize*8;
- pointerintsize = das_32;
 
 type
  addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,

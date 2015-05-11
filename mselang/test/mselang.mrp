@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=3
   (
   kind=1
@@ -205,7 +205,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=18
    (
    kind=1
@@ -1447,7 +1447,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,exception
+   a=0,665,4,exception
    c=2
     (
     kind=2
@@ -1466,7 +1466,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7337518
+    ao=An unhandled exception occured at $B73C74E0
     +
     ae=
     aec=123
@@ -1474,8 +1474,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise1 llvm
-    teststate=2
+    a=0,648,1,raise1 llvm
+    teststate=1
     path=raise1.mla
     comment=
     cc=${mlc_llvm}
@@ -1490,14 +1490,11 @@ c=3
     eec=217
     cr=0
     ao=
-    ae=Type too small for SExt
-    +  %12 = sext i64 %11 to i64
-    +LLVM ERROR: Broken function found, compilation aborted!
-    +
-    aec=1
+    ae=
+    aec=217
     ie=0
     )
-   teststate=2
+   teststate=1
    path=exception/
    comment=
    cc=
@@ -3257,7 +3254,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -3645,7 +3642,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
