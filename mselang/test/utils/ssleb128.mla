@@ -1,0 +1,42 @@
+program ssleb128;
+
+type
+ ptrint = int32;
+ pcard8 = ^card8;
+
+function readssleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do begin       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ if po1^ and $40 <> 0 then begin   //sign
+  result:= result or ptrint(-1) shl shift; //negative
+ end;
+ adata:= po1+1;
+end;
+
+const
+ val = 300;
+var
+ i1: int32;
+ po1: pointer;
+begin
+ i1:= (val and $7f or $80) or (((val shr 7) and $7f) shl 8);
+ po1:= @i1;
+ if (readssleb128(po1) = val) and (po1-@i1 = 2) then begin
+  exitcode:= 1;
+  i1:= (-val and $7f or $80) or (((-val shr 7) and $7f) shl 8);
+  po1:= @i1;
+  if (readssleb128(po1) = -val) and (po1-@i1 = 2) then begin
+   exitcode:= 123;
+  end;
+ end;
+end.

@@ -113,96 +113,7 @@ c=3
  (
  kind=1
  a=0,665,4,testdir
- c=3
-  (
-  kind=1
-  a=0,664,4,syntax
-  c=1
-   (
-   kind=1
-   a=0,664,4,error check
-   c=2
-    (
-    kind=2
-    a=0,648,1,missingend
-    teststate=1
-    path=missingend.mla
-    comment=
-    cc=
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=1
-    ee=
-    ae=1
-    eec=1
-    cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
-    +
-    aec=1
-    ie=0
-    )
-    (
-    kind=2
-    a=0,648,1,missingendok
-    teststate=1
-    path=missingendok.mla
-    comment=
-    cc=
-    cd=
-    rc=
-    rd=
-    in=
-    eo=
-    ao=1
-    ee=
-    ae=0
-    eec=0
-    cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=
-    aec=0
-    ie=0
-    )
-   teststate=1
-   path=errorcheck/
-   comment=
-   cc=
-   cd=
-   rc=${mlctest}
-   rd=
-   in=
-   eo=
-   ao=0
-   ee=
-   ae=0
-   eec=
-   cdef=
-   pdef=
-   )
-  teststate=1
-  path=syntax/
-  comment=
-  cc=
-  cd=
-  rc=
-  rd=
-  in=
-  eo=
-  ao=0
-  ee=
-  ae=0
-  eec=
-  cdef=
-  pdef=
-  )
+ c=4
   (
   kind=1
   a=0,665,4,base
@@ -1466,7 +1377,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73C74E0
+    ao=An unhandled exception occured at $B73714E0
     +
     ae=
     aec=123
@@ -2888,7 +2799,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,units
+   a=0,664,4,units
    c=2
     (
     kind=2
@@ -3642,6 +3553,159 @@ c=3
   cdef=
   pdef=
   )
+  (
+  kind=1
+  a=0,664,4,syntax
+  c=1
+   (
+   kind=1
+   a=0,664,4,error check
+   c=2
+    (
+    kind=2
+    a=0,648,1,missingend
+    teststate=1
+    path=missingend.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=1
+    ee=
+    ae=1
+    eec=1
+    cr=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2015 by Martin Schreiber
+    +
+    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
+    +
+    aec=1
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,missingendok
+    teststate=1
+    path=missingendok.mla
+    comment=
+    cc=
+    cd=
+    rc=
+    rd=
+    in=
+    eo=
+    ao=1
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2015 by Martin Schreiber
+    +
+    ae=
+    aec=0
+    ie=0
+    )
+   teststate=1
+   path=errorcheck/
+   comment=
+   cc=
+   cd=
+   rc=${mlctest}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+  teststate=1
+  path=syntax/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ao=0
+  ee=
+  ae=0
+  eec=
+  cdef=
+  pdef=
+  )
+  (
+  kind=1
+  a=0,665,4,utils
+  c=2
+   (
+   kind=2
+   a=0,648,1,ssleb128
+   teststate=1
+   path=ssleb128.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,ssleb128 llvm
+   teststate=1
+   path=ssleb128.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+  teststate=1
+  path=utils/
+  comment=
+  cc=
+  cd=
+  rc=
+  rd=
+  in=
+  eo=
+  ao=0
+  ee=
+  ae=0
+  eec=
+  cdef=
+  pdef=
+  )
  teststate=1
  path=${testdir}
  comment=
@@ -3750,7 +3814,8 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=34
+rowstate=35
+ 0 0
  0 0
  0 0
  0 0
