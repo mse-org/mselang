@@ -110,10 +110,19 @@ begin
      else begin
       llvmops.run(targetstream);
       targetstream.destroy();
-      if not norun.value then begin
-       int1:= getprocessoutput(llvmbindir+'lli '+filename1,'',str1);
+      int1:= getprocessoutput(llvmbindir+'llc '+filename1,'',str1);
+      grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+      if int1 = 0 then begin
+       int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
+                         filenamebase(filename1)+'.s','',str1);
        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-       grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+       if int1 = 0 then begin
+        if not norun.value then begin
+         int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+        end;
+       end;
       end;
      end;
     end

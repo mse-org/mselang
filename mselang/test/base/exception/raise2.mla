@@ -1,0 +1,27 @@
+program raise2;
+
+type
+ tc = class
+  public
+   constructor create();
+   destructor destroy();
+ end;
+
+constructor tc.create();
+begin
+end;
+destructor tc.destroy();
+begin
+end;
+procedure test();
+begin
+ raise tc.create();
+end;
+
+begin
+ try
+  test();
+ except
+  exitcode:= 123;
+ end;
+end.

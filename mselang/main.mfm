@@ -205,7 +205,7 @@ object mainfo: tmainfo
       2
     )
     taborder = 9
-    bounds_x = 416
+    bounds_x = 424
     bounds_y = 1
     bounds_cx = 40
     bounds_cy = 16

@@ -1573,7 +1573,7 @@ end;
 
 procedure cmpgepoop();
 begin
- notimplemented();
+ comparessa(icmp_uge);
 end;
 
 procedure cmpgeboolop();
