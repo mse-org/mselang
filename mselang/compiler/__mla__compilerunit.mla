@@ -212,6 +212,8 @@ var
  actiontable: pointer;
  ip,regionstart: pointer;
 begin
+   result:= _URC_CONTINUE_UNWIND;
+(*
 // if actions and _UA_SEARCH_PHASE <> 0 then begin
   po1:= _Unwind_GetLanguageSpecificData(context);
   if po1 <> nil then begin
@@ -269,6 +271,7 @@ writeln('actiontable   ',actiontable);
 //   result:= _URC_INSTALL_CONTEXT;
 //  end;
  end;
+*)
 end;
 
 end.

@@ -1,0 +1,12 @@
+program breakrepeat;
+var
+ i1: int32;
+begin
+ repeat
+  if i1 = 5 then begin
+   break;
+  end;
+  inc(i1);
+ until i1 = 10;
+ exitcode:= i1+123-5;
+end.

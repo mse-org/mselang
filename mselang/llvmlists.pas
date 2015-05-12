@@ -431,11 +431,10 @@ begin
    po1^.data.buffer:= ptruint(adata.data);
   end
   else begin
+   po1^.data.buffer:= fbuffersize;
    checkbuffercapacity(adata.size);
    po1^.data.buffersize:= adata.size;
-   po1^.data.buffer:= fbuffersize;
-   move(adata.data^,(fbuffer+fbuffersize)^,adata.size);
-   fbuffersize:= fbuffersize + adata.size;
+   move(adata.data^,(fbuffer+po1^.data.buffer)^,adata.size);
   end;
   po1^.data.listindex:= count-1;
  end;

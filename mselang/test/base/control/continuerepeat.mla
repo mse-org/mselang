@@ -1,0 +1,13 @@
+program continuerepeat;
+var
+ i1,i2: int32;
+begin
+ repeat
+  inc(i1);
+  if i1 <= 5 then begin
+   continue;
+  end;
+  inc(i2);
+ until i1 = 10;
+ exitcode:= i2+123-5;
+end.

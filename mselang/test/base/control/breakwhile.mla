@@ -1,0 +1,12 @@
+program breakwhile;
+var
+ i1: int32;
+begin
+ while i1 < 10 do begin
+  if i1 = 5 then begin
+   break;
+  end;
+  inc(i1);
+ end;
+ exitcode:= i1+123-5;
+end.
