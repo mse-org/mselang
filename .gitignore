@@ -7,3 +7,5 @@
 *.bc
 *.ll
 *.mli
+*.bin
+*.s

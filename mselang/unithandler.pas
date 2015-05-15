@@ -353,7 +353,7 @@ begin
 }
  system.finalize(punitinfoty(aitemdata)^);
  with punitinfoty(aitemdata)^ do begin
-  metalist.free();
+  metadatalist.free();
  end;
  freemem(punitinfoty(aitemdata));
 end;
@@ -368,7 +368,7 @@ begin
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
- result^.metalist:= tmetadatalist.create();
+ result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;

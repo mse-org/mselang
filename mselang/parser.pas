@@ -36,8 +36,8 @@ const
 
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
   
-function parse(const input: string; const abackend: backendty{;
-                                  const aerror: ttextstream}): boolean;
+function parse(const input: string; const afilename: filenamety;
+                                     const abackend: backendty): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -734,8 +734,8 @@ begin
  end;
 end;
 
-function parse(const input: string; const abackend: backendty
-                {out aopcode: opinfoarty; out aconstseg: bytearty}): boolean;
+function parse(const input: string; const afilename: filenamety; 
+                                 const abackend: backendty): boolean;
                               //true if ok
 var
  po1: punitinfoty;
@@ -749,7 +749,8 @@ begin
    try
     backend:= abackend;
     unit1:= newunit('program');
-    unit1^.filepath:= 'main.mla'; //dummy
+    unit1^.filepath:= afilename;
+    unit1^.filepathmeta:= unit1^.metadatalist.adddifile(afilename);
     info.s.unitinfo:= unit1;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;

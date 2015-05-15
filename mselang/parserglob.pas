@@ -470,13 +470,14 @@ type
   name: string;      //todo: use lstringty
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
+  filepathmeta: int32;
   state: unitstatesty;
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
-  metalist: tmetadatalist;
+  metadatalist: tmetadatalist;
 
   pendingcount: integer;
   pendingcapacity: integer;

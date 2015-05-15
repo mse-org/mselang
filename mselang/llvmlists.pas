@@ -334,13 +334,20 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
+ bufferheaderty = record
+  size: bufferoffsetty;
+  data: record
+  end;
+ end;
+ pbufferheaderty = ^bufferheaderty;
+ 
  tbufferdatalist = class
   private
    fbuffer: pointer;
    fbuffersize: bufferoffsetty;
    fbuffercapacity: bufferoffsetty;
   protected
-   function add(const asize: int32): pointer;
+   function add(asize: int32): pointer;
    function add(const asize: int32; out aoffset: bufferoffsetty): pointer;
   public
    constructor create();
@@ -1469,11 +1476,13 @@ begin
 end;
 }
 
-function tbufferdatalist.add(const asize: int32): pointer;
+function tbufferdatalist.add(asize: int32): pointer;
 begin
+ asize:= asize + sizeof(bufferheaderty);
  checkcapacity(asize);
  result:= fbuffer + fbuffersize;
  fbuffersize:= fbuffersize + asize;
+ pbufferheaderty(result)^.size:= asize;
 end;
 
 function tbufferdatalist.add(const asize: int32;
@@ -1513,7 +1522,7 @@ begin
   filelen:= i2;
   dirlen:= i1;
   move(pointer(na)^,data,i2);
-  move(pointer(dir)^,data,i2);
+  move(pointer(dir)^,data,i1);
  end;
  result:= fid;
  inc(fid);

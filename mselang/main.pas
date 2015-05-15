@@ -96,7 +96,7 @@ begin
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
-  bo1:= parser.parse(ed.gettext,backend);
+  bo1:= parser.parse(ed.gettext,filena.value,backend);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);

@@ -106,7 +106,8 @@ type
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
    procedure start(const consts: tconsthashdatalist; 
-                                     const globals: tgloballocdatalist);
+                       const globals: tgloballocdatalist;
+                              const metadata: tmetadatalist);
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
@@ -345,7 +346,8 @@ begin
 end;
 
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
-                                 const globals: tgloballocdatalist);
+                                const globals: tgloballocdatalist;
+                                       const metadata: tmetadatalist);
 var
  id1: int32;
  
