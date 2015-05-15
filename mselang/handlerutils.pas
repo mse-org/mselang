@@ -18,7 +18,7 @@ unit handlerutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- handlerglob,parserglob,opglob,elements,msestrings,msetypes;
+ globtypes,handlerglob,parserglob,opglob,elements,msestrings,msetypes;
 
 type
  datasizetyxx = type integer;

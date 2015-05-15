@@ -4203,7 +4203,7 @@ y=122
 cx=672
 cy=380
 wsize=0
-active=0
+active=1
 visible=1
 [mainfo.grid]
 propcolwidthref=566

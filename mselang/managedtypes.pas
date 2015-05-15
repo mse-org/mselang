@@ -18,7 +18,7 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob,opglob,opcode;
+ globtypes,parserglob,handlerglob,opglob,opcode;
               //todo: check ssaindex
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                const global: boolean; const ssaindex: integer);

@@ -18,7 +18,7 @@ unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- stackops,parserglob,handlerglob,listutils;
+ globtypes,stackops,parserglob,handlerglob,listutils;
  
 const
  stacklinksize = sizeof(frameinfoty);

@@ -18,7 +18,7 @@ unit typehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$coperators on}{$endif}
 interface
 uses
- parserglob;
+ globtypes,parserglob;
 
 procedure handletype();
 procedure handlegettypetypestart();

@@ -18,7 +18,7 @@ unit interfacehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ globtypes,parserglob;
 
 type
  intfitemty = record  //interface sub item

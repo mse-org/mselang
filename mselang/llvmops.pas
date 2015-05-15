@@ -31,7 +31,8 @@ procedure run(const atarget: tllvmbcwriter);
  
 implementation
 uses
- sysutils,msesys,segmentutils,handlerglob,elements,msestrings,compilerunit,
+ globtypes,sysutils,msesys,segmentutils,handlerglob,elements,msestrings,
+ compilerunit,
  handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
  interfacehandler;
 

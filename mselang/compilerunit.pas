@@ -18,7 +18,7 @@ unit compilerunit;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ globtypes,parserglob;
  
 type
  compilersubty = (

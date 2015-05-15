@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mselinklist,listutils,msestrings,parserglob,opglob,elements,handlerglob;
+ globtypes,unitglob,mselinklist,listutils,msestrings,parserglob,opglob,elements,
+ handlerglob;
 
 type
  unitlinkinfoty = record  //used for ini, fini
@@ -73,7 +74,7 @@ procedure deinit;
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
- handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,
+ handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes;
  
 type
@@ -351,6 +352,9 @@ begin
  end;
 }
  system.finalize(punitinfoty(aitemdata)^);
+ with punitinfoty(aitemdata)^ do begin
+  metalist.free();
+ end;
  freemem(punitinfoty(aitemdata));
 end;
 
@@ -364,6 +368,7 @@ begin
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
+ result^.metalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;

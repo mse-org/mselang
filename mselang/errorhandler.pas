@@ -18,7 +18,8 @@ unit errorhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,grammar,elements,handlerglob,msetypes,msestrings,msesystypes;
+ globtypes,parserglob,grammar,elements,handlerglob,msetypes,msestrings,
+                                                               msesystypes;
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,

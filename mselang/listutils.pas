@@ -17,11 +17,10 @@
 unit listutils;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
-//uses
-// parserglob;
+uses
+ globtypes;
  
 type
- listadty = longword;
  linkheaderty = record
   next: listadty; //offset from list
  end;

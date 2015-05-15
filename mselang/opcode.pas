@@ -18,17 +18,9 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,parserglob,opglob;
-type
- addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
+ msetypes,parserglob,globtypes,opglob;
  
 type
- addressrefty = record
-  offset: dataoffsty;
-  case base: addressbasety of
-   ab_segment: (segment: segmentty);
- end;
-
  loopinfoty = record
   start: opaddressty;
   size: databitsizety;

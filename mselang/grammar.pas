@@ -18,7 +18,7 @@ unit grammar;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,elements;
+ globtypes,parserglob,elements;
  
 function startcontext: pcontextty;
 

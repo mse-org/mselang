@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,opcode,opglob,listutils;
+ globtypes,{opcode,}opglob,listutils;
 
 type
  ordrangety = record

@@ -21,7 +21,7 @@ unit parser;
 {$endif}
 interface
 uses
- msetypes,msestream,parserglob,opglob,msestrings;
+ globtypes,msetypes,msestream,parserglob,opglob,msestrings;
 
 //
 //todo: use efficient data structures and procedures, 

@@ -18,7 +18,7 @@ unit valuehandler;
 {$ifdef FPC}{$mode objfpc}{$goto on}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob;
+ globtypes,parserglob,handlerglob;
  
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer): boolean;

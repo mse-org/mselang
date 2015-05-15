@@ -18,8 +18,8 @@ unit llvmlists;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,msehash,parserglob,handlerglob,mselist,msestrings,llvmbitcodes,
- opglob,__mla__internaltypes,interfacehandler;
+ msetypes,msehash,globtypes,handlerglob,mselist,msestrings,llvmbitcodes,
+ opglob,__mla__internaltypes{,interfacehandler};
 
 const
  maxparamcount = 512;
@@ -71,6 +71,8 @@ type
    function absdata(const aoffset: ptruint): pointer; inline;
  end;
 
+ bufferoffsetty = int32;
+ 
  typelistdataty = record
   header: bufferdataty; //header.buffer -> alloc size if size = -1
   kind: databitsizety;
@@ -332,9 +334,58 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
+ tbufferdatalist = class
+  private
+   fbuffer: pointer;
+   fbuffersize: bufferoffsetty;
+   fbuffercapacity: bufferoffsetty;
+  protected
+   function add(const asize: int32): pointer;
+   function add(const asize: int32; out aoffset: bufferoffsetty): pointer;
+  public
+   constructor create();
+   destructor destroy(); override;
+   procedure checkcapacity(const asize: int32);
+   procedure clear(); virtual;
+   procedure mark(out ref: bufferoffsetty);
+   procedure release(const ref: bufferoffsetty);
+   function absdata(const aoffset: bufferoffsetty): pointer; inline;
+ end;
+
+ difilety = record
+  filelen: int32;
+  dirlen: int32;
+  data: record
+  end;
+ end; //characters appended
+ pdifilety = ^difilety;
+
+ metadatakindty = (mdk_none,mdk_file);
+ 
+ metadataheaderty = record
+  kind: metadatakindty;
+ end;
+ pmetadataheaderty = ^metadataheaderty;
+ 
+ metadataty = record
+  header: metadataheaderty;
+  data: record
+  end;
+ end;
+ pmetadataty = ^metadataty;
+  
+ tmetadatalist = class(tbufferdatalist)
+  protected
+   fid: int32;
+   function add(const akind: metadatakindty; const adatasize: int32): pointer;
+  public
+   procedure clear(); override;
+   function adddifile(const afilename: filenamety): int32; //returns id
+ end;
+
 implementation
 uses
- errorhandler,elements,segmentutils;
+ parserglob,errorhandler,elements,segmentutils,msefileutils;
   
 { tbufferhashdatalist }
 
@@ -1364,6 +1415,108 @@ begin
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= (pgloballocdataty(fdata) + alistid)^; 
+end;
+
+{ tbufferdatalist }
+
+constructor tbufferdatalist.create;
+begin
+end;
+
+destructor tbufferdatalist.destroy();
+begin
+ clear();
+end;
+
+procedure tbufferdatalist.clear;
+begin
+ if fbuffer <> nil then begin
+  freemem(fbuffer);
+  fbuffer:= nil;
+  fbuffersize:= 0;
+  fbuffercapacity:= 0;
+ end;
+end;
+
+procedure tbufferdatalist.mark(out ref: bufferoffsetty);
+begin
+ ref:= fbuffersize;
+end;
+
+procedure tbufferdatalist.release(const ref: bufferoffsetty);
+begin
+ fbuffersize:= ref;
+end;
+
+function tbufferdatalist.absdata(const aoffset: bufferoffsetty): pointer;
+begin
+ result:= fbuffer + aoffset;
+end;
+
+procedure tbufferdatalist.checkcapacity(const asize: int32);
+begin
+ fbuffersize:= fbuffersize + asize;
+ if fbuffersize > fbuffercapacity then begin
+  fbuffercapacity:= fbuffersize*2 + 1024;
+  reallocmem(fbuffer,fbuffercapacity);
+ end;
+end;
+{
+procedure tbufferdatalist.add(const asize: int32);
+begin
+ checkcapacity(asize);
+ fbuffersize:= fbuffersize + asize;
+end;
+}
+
+function tbufferdatalist.add(const asize: int32): pointer;
+begin
+ checkcapacity(asize);
+ result:= fbuffer + fbuffersize;
+ fbuffersize:= fbuffersize + asize;
+end;
+
+function tbufferdatalist.add(const asize: int32;
+                                    out aoffset: bufferoffsetty): pointer;
+begin
+ aoffset:= fbuffersize;
+ result:= add(asize);
+ fbuffersize:= fbuffersize + asize;
+end;
+
+{ tmetadatalist }
+
+procedure tmetadatalist.clear;
+begin
+ inherited;
+ fid:= 0;
+end;
+
+function tmetadatalist.add(const akind: metadatakindty; 
+                                            const adatasize: int32): pointer;
+begin
+ result:= inherited add(adatasize+sizeof(metadataheaderty));
+ with pmetadataheaderty(result)^ do begin
+  kind:= akind;
+ end;
+end;
+
+function tmetadatalist.adddifile(const afilename: filenamety): int32;
+var
+ i1,i2: int32;
+ dir,na: filenamety;
+begin
+ splitfilepath(afilename,dir,na);
+ i1:= length(dir);
+ i2:= length(na);
+ with pdifilety(add(mdk_file,sizeof(difilety)+i1+i2))^ do begin
+  filelen:= i2;
+  dirlen:= i1;
+  move(pointer(na)^,data,i2);
+  move(pointer(dir)^,data,i2);
+ end;
+ result:= fid;
+ inc(fid);
 end;
 
 end.

@@ -18,7 +18,7 @@ unit rttihandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob;
+ globtypes,parserglob,handlerglob;
  
 function getrtti(const atype: ptypedataty): dataaddressty;
 {

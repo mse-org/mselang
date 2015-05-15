@@ -19,7 +19,7 @@ unit handler;
             {$implicitexceptions off}{$endif}
 interface
 uses
- parserglob,opglob,typinfo,msetypes,handlerglob;
+ globtypes,parserglob,opglob,typinfo,msetypes,handlerglob;
 
 procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 procedure endparser();

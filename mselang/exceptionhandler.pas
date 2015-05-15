@@ -18,7 +18,7 @@ unit exceptionhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- listutils,parserglob;
+ globtypes,listutils,parserglob;
 
 type
  trystackitemty = record

@@ -19,7 +19,7 @@ unit varhandler;
 
 interface
 uses
- parserglob;
+ globtypes,parserglob;
  
 const 
  pointervarkinds = [dk_class,dk_interface];

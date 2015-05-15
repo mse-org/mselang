@@ -18,9 +18,16 @@ unit opglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,msestrings;
+ globtypes,msestrings;
  
 type
+ addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
+ addressrefty = record
+  offset: dataoffsty;
+  case base: addressbasety of
+   ab_segment: (segment: segmentty);
+ end;
+
  globallocinfoty = record
   a: segaddressty;
   size: typeallocinfoty;

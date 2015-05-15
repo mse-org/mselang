@@ -18,7 +18,7 @@ unit segmentutils;
 {$ifdef FPC}{$mode objfpc}{$goto on}{$h+}{$endif}
 interface
 uses
- parserglob,opglob,msetypes,mclasses;
+ globtypes,opglob,msetypes,mclasses;
  
   //todo: use inline
 const

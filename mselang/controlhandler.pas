@@ -48,8 +48,8 @@ function checkloopcommand(): boolean; //true if ok
 
 implementation
 uses
- handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,opcode,
- stackops,segmentutils,opglob,unithandler;
+ globtypes,handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,
+ opcode,stackops,segmentutils,opglob,unithandler;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin

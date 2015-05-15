@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,handlerglob,__mla__internaltypes;
+ globtypes,handlerglob,__mla__internaltypes;
 
 type
  classintfnamedataty = record
@@ -61,7 +61,7 @@ procedure handledestructorentry();
 
 implementation
 uses
- elements,handler,errorhandler,unithandler,grammar,handlerutils,
+ parserglob,elements,handler,errorhandler,unithandler,grammar,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler;
 {
 const

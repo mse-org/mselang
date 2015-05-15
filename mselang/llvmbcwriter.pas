@@ -18,8 +18,8 @@ unit llvmbcwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,llvmlists,
- opglob;
+ globtypes,msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,
+ llvmlists,opglob;
  
 type
  idarty = record
