@@ -882,7 +882,7 @@ begin
     s.stackindex:= s.stacktop-1;
    end
    else begin
-   {$ifdef mse_debugparser}
+   {$ifdef mse_checkinternalerror}
     if not (d.kind in datacontexts) or 
               not (pob^.d.kind in datacontexts)then begin
      internalerror(ie_handler,'20150320B');

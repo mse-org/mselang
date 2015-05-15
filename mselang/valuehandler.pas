@@ -623,7 +623,7 @@ var
                                   //todo: check instance call
        bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
                                            //get class type
-      {$ifdef mse_debugparser}
+      {$ifdef mse_checkinternalerror}
        if not bo1 or (firstnotfound <= idents1.high) then begin 
         internalerror(ie_handler,'20150325A'); 
        end;

@@ -18,7 +18,7 @@ unit unithandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,unitglob,mselinklist,listutils,msestrings,parserglob,opglob,elements,
+ globtypes,mselinklist,listutils,msestrings,parserglob,opglob,elements,
  handlerglob;
 
 type

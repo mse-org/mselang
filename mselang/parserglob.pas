@@ -18,7 +18,7 @@ unit parserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,msestream,msestrings,msetypes,msertti,listutils,unitglob,llvmlists;
+ globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists;
 const
  firstident = 256;
  includemax = 31;
