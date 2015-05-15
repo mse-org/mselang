@@ -136,6 +136,7 @@ begin
    if backend = bke_llvm then begin
     elements.clear();
    end;
+   freeandnil(mainmetadatalist);
   end;
  finally
   setcurrentdirmse(dirbefore);

@@ -758,7 +758,6 @@ begin
     s.stacktop:= -1;
     s.stackindex:= s.stacktop;
     opcount:= startupoffset;
-//    globallocid:= 0;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     case backend of
      bke_direct: begin
@@ -778,6 +777,8 @@ begin
     end;
    {$endif}
     endparser();
+    mainmetadatalist:= unit1^.metadatalist;
+    unit1^.metadatalist:= nil;
    finally
     system.finalize(info);
     deinit(abackend);

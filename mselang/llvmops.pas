@@ -405,7 +405,7 @@ begin
   end;
  end;
  with pc^.par.beginparse do begin
-  bcstream.start(constlist,globlist,info.s.unitinfo^.metadatalist);
+  bcstream.start(constlist,globlist,mainmetadatalist);
   llvmops.exitcodeaddress:= exitcodeaddress;
   if finisub = 0 then begin
    llvmops.finihandler:= 0;

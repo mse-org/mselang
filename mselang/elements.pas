@@ -313,6 +313,7 @@ var
  typelist: ttypehashdatalist;
  constlist: tconsthashdatalist;
  globlist: tgloballocdatalist;
+ mainmetadatalist: tmetadatalist;
 
 implementation
 uses
