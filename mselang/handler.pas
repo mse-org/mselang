@@ -265,7 +265,7 @@ begin
  if hasfini then begin
   finicall:= info.opcount;
             //todo: what about precompiled units with halt()?
-  with addcallitem(oc_call)^.par.callinfo do begin
+  with additem(oc_call)^.par.callinfo do begin
    flags:= [];
    linkcount:= -1;
    params:= 0;

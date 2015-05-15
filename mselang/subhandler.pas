@@ -93,7 +93,7 @@ end;
 
 procedure callinternalsub(const asub: opaddressty);
 begin
- with addcallitem(oc_call)^.par.callinfo do begin
+ with additem(oc_call)^.par.callinfo do begin
   ad:= asub-1;
   flags:= [];
   linkcount:= 0;

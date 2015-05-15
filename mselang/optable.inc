@@ -25,7 +25,22 @@
   untilssa,
   decloop32ssa,
   decloop64ssa,
-  raisessa,
+
+  raisessa,         //callops
+
+  callssa,
+  callfuncssa,
+  calloutssa,
+  callfuncoutssa,
+  callvirtssa,
+  callintfssa,
+  virttrampolinessa,
+
+  callindissa,
+  callfuncindissa,
+
+  initclassssa,
+  destroyclassssa,
 
   beginparsessa,
   mainssa,
@@ -367,17 +382,6 @@
   popindirectf64ssa,
   popindirectssa,
 
-  callssa,
-  callfuncssa,
-  calloutssa,
-  callfuncoutssa,
-  callvirtssa,
-  callintfssa,
-  virttrampolinessa,
-
-  callindissa,
-  callfuncindissa,
-
   locvarpushssa,
   locvarpopssa,
 
@@ -386,9 +390,6 @@
   externalsubssa,
   returnssa,
   returnfuncssa,
-
-  initclassssa,
-  destroyclassssa,
 
   setlengthstr8ssa,
   setlengthdynarrayssa,
@@ -428,7 +429,22 @@
   @untilop,
   @decloop32op,
   @decloop64op,
-  @raiseop,
+
+  @raiseop,      //callops
+
+  @callop,
+  @callfuncop,
+  @calloutop,
+  @callfuncoutop,
+  @callvirtop,
+  @callintfop,
+  @virttrampolineop,
+
+  @callindiop,
+  @callfuncindiop,
+
+  @initclassop,
+  @destroyclassop,
 
   @beginparseop,
   @mainop,
@@ -810,17 +826,6 @@
   @popindirectf64op,
   @popindirectop,
 
-  @callop,
-  @callfuncop,
-  @calloutop,
-  @callfuncoutop,
-  @callvirtop,
-  @callintfop,
-  @virttrampolineop,
-
-  @callindiop,
-  @callfuncindiop,
-
   @locvarpushop,
   @locvarpopop,
 
@@ -829,9 +834,6 @@
   @externalsubop,
   @returnop,
   @returnfuncop,
-
-  @initclassop,
-  @destroyclassop,
 
   @setlengthstr8op,
   @setlengthdynarrayop,

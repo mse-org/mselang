@@ -74,11 +74,16 @@ function additem(const aopcode: opcodety;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
                           const ssaextension: integer = 0): popinfoty;
+{
+function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
+}
 function getitem(const index: integer): popinfoty;
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
-function addcallitem(const aopcode: opcodety;
-                               const ssaextension: integer = 0): popinfoty;
+//function addcallitem(const aopcode: opcodety;
+//                               const ssaextension: integer = 0): popinfoty;
 
 procedure addlabel();
 
@@ -581,6 +586,11 @@ begin
    par.ssad:= s.ssa.nextindex - 1;
   end;
   inc(opcount);
+  if aopcode in callops then begin
+   if info.s.trystacklevel > 0 then begin
+    inc(info.s.ssa.blockindex);
+   end;
+  end;
  end;
 end;
 
@@ -596,7 +606,7 @@ begin
  inc(info.s.ssa.blockindex);
  result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
 end;
-
+{
 function addcallitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 begin
@@ -605,7 +615,7 @@ begin
   inc(info.s.ssa.blockindex);
  end;
 end;
-
+}
 function getitem(const index: integer): popinfoty;
 begin
  result:= getsegmentbase(seg_op);
@@ -645,11 +655,6 @@ begin
   else begin
    ssadelta:= ssatable^[aopcode]+ssaextension;
    allocsegmentpo(seg_op,sizeof(opinfoty));
-   {
-   if high(ops) < opcount then begin
-    setlength(ops,(high(ops)+257)*2);
-   end;
-   }
    if before then begin
     ad1:= contextstack[int1].opmark.address;
    end
@@ -659,9 +664,6 @@ begin
    result:= getoppo(ad1);
    move(result^,(result+1)^,(opcount-ad1)*sizeof(opinfoty));
    result^.op.op:= aopcode;
-//   if ad1 = opcount then begin
-//    result^.par.ssad:= ssa.nextindex;
-//   end;
    result^.par.ssad:= (result-1)^.par.ssad + ssadelta; 
                 //there is at least a subbegin op
    s.ssa.index:= s.ssa.nextindex;
@@ -694,8 +696,24 @@ begin
     end;
    end;
   end;
+  if aopcode in callops then begin
+   if info.s.trystacklevel > 0 then begin
+    inc(info.s.ssa.blockindex);
+   end;
+  end;   
  end;
 end;
+{
+function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
+begin
+ result:= insertitem(aopcode,stackoffset,before,ssaextension);
+ if info.s.trystacklevel > 0 then begin
+  inc(info.s.ssa.blockindex);
+ end;
+end;
+}
 {
 function insertitemafter(const stackoffset: integer;
                                          const shift: integer=0): popinfoty;

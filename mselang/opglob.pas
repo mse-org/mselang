@@ -74,7 +74,21 @@ type
   oc_decloop32,
   oc_decloop64,
 
-  oc_raise,
+  oc_raise,         //callops
+
+  oc_call,
+  oc_callfunc,
+  oc_callout,
+  oc_callfuncout,
+  oc_callvirt,
+  oc_callintf,
+  oc_virttrampoline,
+
+  oc_callindi,
+  oc_callfuncindi,
+
+  oc_initclass,
+  oc_destroyclass,
 
   oc_beginparse,
   oc_main,
@@ -417,17 +431,6 @@ type
   oc_popindirectf64,
   oc_popindirect,
 
-  oc_call,
-  oc_callfunc,
-  oc_callout,
-  oc_callfuncout,
-  oc_callvirt,
-  oc_callintf,
-  oc_virttrampoline,
-
-  oc_callindi,
-  oc_callfuncindi,
-
   oc_locvarpush,
   oc_locvarpop,
 
@@ -436,9 +439,6 @@ type
   oc_externalsub,
   oc_return,
   oc_returnfunc,
-
-  oc_initclass,
-  oc_destroyclass,
 
   oc_setlengthstr8,
   oc_setlengthdynarray,
@@ -733,8 +733,40 @@ type
  end;
 
 const
- controlops = [oc_label,oc_goto,oc_if,oc_while,oc_until,oc_decloop32,
-               oc_decloop64{,oc_raise}{,oc_pushcpucontext}];
+ controlops = [
+  oc_label,
+  oc_goto,
+  oc_if,
+  oc_while,
+  oc_until,
+  oc_decloop32,
+  oc_decloop64];
+
+ callops = [
+  oc_raise,
+  oc_writeln,
+  oc_writeboolean,
+  oc_writecardinal,
+  oc_writeinteger,
+  oc_writefloat,
+  oc_writestring8,
+  oc_writepointer,
+  oc_writeclass,
+  oc_writeenum,
+  oc_call,
+  oc_callfunc,
+  oc_callout,
+  oc_callfuncout,
+  oc_callvirt,
+  oc_callintf,
+  oc_virttrampoline,
+
+  oc_callindi,
+  oc_callfuncindi,
+
+  oc_initclass,
+  oc_destroyclass
+ ];
 
 type
                  //todo: unify, variable size

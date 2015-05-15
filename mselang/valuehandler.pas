@@ -773,12 +773,12 @@ var
     if not isinherited and 
          (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
      if sf_interface in asub^.flags then begin
-      po1:= addcallitem(oc_callintf);
+      po1:= additem(oc_callintf);
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
                                                         sizeof(intfdefheaderty);
      end
      else begin
-      po1:= addcallitem(oc_callvirt);
+      po1:= additem(oc_callvirt);
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                              virtualtableoffset;
      end;
@@ -810,10 +810,10 @@ var
       end
       else begin
        if sf_function in asub^.flags then begin
-        po1:= addcallitem(oc_callfunc);
+        po1:= additem(oc_callfunc);
        end
        else begin
-        po1:= addcallitem(oc_call);
+        po1:= additem(oc_call);
        end;
       end;
       po1^.par.callinfo.linkcount:= -1;
@@ -821,10 +821,10 @@ var
      else begin
       int1:= sublevel-asub^.nestinglevel;
       if sf_function in asub^.flags then begin
-       po1:= addcallitem(oc_callfuncout,getssa(ocssa_nestedcallout,int1));
+       po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,int1));
       end
       else begin
-       po1:= addcallitem(oc_callout,getssa(ocssa_nestedcallout,int1));
+       po1:= additem(oc_callout,getssa(ocssa_nestedcallout,int1));
       end;
       po1^.par.callinfo.linkcount:= int1-2;      //for downto 0
       po7:= ele.parentelement;
