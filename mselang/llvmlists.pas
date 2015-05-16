@@ -346,10 +346,10 @@ type
    fbuffer: pointer;
    fbuffersize: bufferoffsetty;
    fbuffercapacity: bufferoffsetty;
-   fcurrentitem: bufferoffsetty;
+   fnextitem: bufferoffsetty;
   protected
-   function add(asize: int32): pointer;
-   function add(const asize: int32; out aoffset: bufferoffsetty): pointer;
+   function adddata(asize: int32): pointer;
+   function adddata(const asize: int32; out aoffset: bufferoffsetty): pointer;
   public
    constructor create();
    destructor destroy(); override;
@@ -358,8 +358,8 @@ type
    procedure mark(out ref: bufferoffsetty);
    procedure release(const ref: bufferoffsetty);
    function absdata(const aoffset: bufferoffsetty): pointer; inline;
-   function first: pointer;
-   function next: pointer;
+   function firstdata: pointer; //nil if none
+   function nextdata: pointer;  //nil if none
  end;
 
  difilety = record
@@ -387,13 +387,14 @@ type
  tmetadatalist = class(tbufferdatalist)
   protected
    fid: int32;
-   function add(const akind: metadatakindty; const adatasize: int32): pointer;
+   function adddata(const akind: metadatakindty;
+                              const adatasize: int32): pointer;
   public
    procedure clear(); override;
    function adddifile(const afilename: filenamety): int32; //returns id
    function count: int32;
-   function first: pmetadataty;
-   function next: pmetadataty;
+   function first: pmetadataty; //nil if none
+   function next: pmetadataty;  //nil if none
  end;
 
 implementation
@@ -1468,7 +1469,7 @@ end;
 
 procedure tbufferdatalist.checkcapacity(const asize: int32);
 begin
- fbuffersize:= fbuffersize + asize;
+ fbuffersize:= fbuffersize + ((asize+3) and not 3); //4 byte align
  if fbuffersize > fbuffercapacity then begin
   fbuffercapacity:= fbuffersize*2 + 1024;
   reallocmem(fbuffer,fbuffercapacity);
@@ -1482,38 +1483,42 @@ begin
 end;
 }
 
-function tbufferdatalist.add(asize: int32): pointer;
+function tbufferdatalist.adddata(asize: int32): pointer;
+var
+ i1: bufferoffsetty;
 begin
  asize:= asize + sizeof(bufferheaderty);
+ i1:= fbuffersize;
  checkcapacity(asize);
- result:= fbuffer + fbuffersize;
- fbuffersize:= fbuffersize + asize;
- pbufferheaderty(result)^.size:= asize;
+ result:= fbuffer + i1;
+ pbufferheaderty(result)^.size:= fbuffersize-i1;
+ inc(result,sizeof(bufferheaderty));
 end;
 
-function tbufferdatalist.add(const asize: int32;
+function tbufferdatalist.adddata(const asize: int32;
                                     out aoffset: bufferoffsetty): pointer;
 begin
  aoffset:= fbuffersize;
- result:= add(asize);
- fbuffersize:= fbuffersize + asize;
+ result:= adddata(asize);
 end;
 
-function tbufferdatalist.first: pointer;
+function tbufferdatalist.firstdata: pointer;
 begin
  result:= nil;
  if fbuffersize > 0 then begin
-  result:= fbuffer + sizeof(bufferheaderty);
-  fcurrentitem:= pbufferheaderty(result)^.size + sizeof(bufferheaderty);
+  result:= fbuffer;
+  fnextitem:= pbufferheaderty(result)^.size;
+  inc(result,sizeof(bufferheaderty));
  end;
 end;
 
-function tbufferdatalist.next: pointer;
+function tbufferdatalist.nextdata: pointer;
 begin
  result:= nil;
- if fcurrentitem < fbuffersize then begin
-  result:= fbuffer + fcurrentitem;
-  inc(fcurrentitem,pbufferheaderty(result)^.size);
+ if fnextitem < fbuffersize then begin
+  result:= fbuffer + fnextitem;
+  inc(fnextitem,pbufferheaderty(result)^.size);
+  inc(result,sizeof(bufferheaderty));
  end;
 end;
 
@@ -1525,13 +1530,14 @@ begin
  fid:= 0;
 end;
 
-function tmetadatalist.add(const akind: metadatakindty; 
+function tmetadatalist.adddata(const akind: metadatakindty; 
                                             const adatasize: int32): pointer;
 begin
- result:= inherited add(adatasize+sizeof(metadataheaderty));
+ result:= inherited adddata(adatasize+sizeof(metadataheaderty));
  with pmetadataheaderty(result)^ do begin
   kind:= akind;
  end;
+ inc(result,sizeof(metadataheaderty));
 end;
 
 function tmetadatalist.adddifile(const afilename: filenamety): int32;
@@ -1542,7 +1548,7 @@ begin
  splitfilepath(afilename,dir,na);
  i1:= length(dir);
  i2:= length(na);
- with pdifilety(add(mdk_file,sizeof(difilety)+i1+i2))^ do begin
+ with pdifilety(adddata(mdk_file,sizeof(difilety)+i1+i2))^ do begin
   filelen:= i2;
   dirlen:= i1;
   move(pointer(na)^,data,i2);
@@ -1559,12 +1565,12 @@ end;
 
 function tmetadatalist.first: pmetadataty;
 begin
- result:= inherited first();
+ result:= firstdata();
 end;
 
 function tmetadatalist.next: pmetadataty;
 begin
- result:= inherited next();
+ result:= nextdata();
 end;
 
 end.

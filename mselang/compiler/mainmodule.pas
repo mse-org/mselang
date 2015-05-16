@@ -28,7 +28,7 @@ var
 implementation
 
 uses
- mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
+ globtypes,mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
  msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter;
  
 const
@@ -66,7 +66,7 @@ begin
    if sysenv.defined[ord(pa_llvm)] then begin
     backend:= bke_llvm;
    end;
-   if parse(str1,backend) then begin
+   if parse(str1,filename1,backend) then begin
     if backend = bke_llvm then begin
      filename1:= replacefileext(filename1,llvmbcextension);
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
