@@ -360,14 +360,15 @@ var
  end; //checkconsttypeid
  
 var
- po1: ptypelistdataty;
- po2: pconstlistdataty;
- po3,po4: pparamitemty;
- po5,po6: pgloballocdataty;
- po7,po8: pglobnamedataty;
+ pt1: ptypelistdataty;
+ pc2: pconstlistdataty;
+ pp3,pp4: pparamitemty;
+ pga5,pgae: pgloballocdataty;
+ pgn7,pgne: pglobnamedataty;
  pa,pe: pint32;
  i1,i2: int32;
  po9: paggregateconstty;
+ pm1: pmetadataty;
 begin
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
@@ -393,30 +394,38 @@ begin
 
  beginblock(MODULE_BLOCK_ID,3);
  emitrec(ord(MODULE_CODE_VERSION),[1]);
-
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
  
+ if metadata.count > 0 then begin
+  beginblock(METADATA_BLOCK_ID,3);
+  pm1:= metadata.first();
+  while pm1 <> nil do begin
+   pm1:= metadata.next();
+  end;
+  endblock();  
+ end;
+
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
-  po1:= consts.typelist.first();
+  pt1:= consts.typelist.first();
   for i1:= consts.typelist.count - 1 downto 0 do begin
-   if ord(po1^.kind) < 0 then begin
-    case aggregatekindty(-ord(po1^.kind)) of
+   if ord(pt1^.kind) < 0 then begin
+    case aggregatekindty(-ord(pt1^.kind)) of
      ak_pointerarray: begin
-      emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeval(pointertype)]);
+      emitrec(ord(TYPE_CODE_ARRAY),[pt1^.header.buffer,typeval(pointertype)]);
      end;
      ak_aggregatearray: begin
       with paggregatearraytypedataty(
-                       typelist.absdata(po1^.header.buffer))^ do begin
+                       typelist.absdata(pt1^.header.buffer))^ do begin
        emitrec(ord(TYPE_CODE_ARRAY),[size,typeval(typ)]);
       end;
      end;
      ak_struct: begin
-      i2:= po1^.header.buffersize div sizeof(int32);
+      i2:= pt1^.header.buffersize div sizeof(int32);
       emitrec(ord(TYPE_CODE_STRUCT_ANON),[0],i2);
-      pa:= typelist.absdata(po1^.header.buffer);
+      pa:= typelist.absdata(pt1^.header.buffer);
       pe:= pa+i2;
       while pa < pe do begin
        emitvbr6(typeval(pa^));
@@ -429,29 +438,29 @@ begin
     end;
    end
    else begin
-    if po1^.kind in ordinalopdatakinds then begin
-     if po1^.kind = das_pointer then begin
+    if pt1^.kind in ordinalopdatakinds then begin
+     if pt1^.kind = das_pointer then begin
       emitrec(ord(TYPE_CODE_POINTER),[typeindex(das_8)]);
      end
      else begin
-      emitrec(ord(TYPE_CODE_INTEGER),[po1^.header.buffer]);
+      emitrec(ord(TYPE_CODE_INTEGER),[pt1^.header.buffer]);
      end;
     end
     else begin
-     if po1^.kind in byteopdatakinds then begin
-      if po1^.header.buffer = 0 then begin
+     if pt1^.kind in byteopdatakinds then begin
+      if pt1^.header.buffer = 0 then begin
        emitrec(ord(TYPE_CODE_VOID),[]);     
        emitrec(ord(TYPE_CODE_VOID),[]); //dummy *type
        emitrec(ord(TYPE_CODE_VOID),[]); //dummy **type
-       po1:= consts.typelist.next();
+       pt1:= consts.typelist.next();
        continue;
       end
       else begin
-       emitrec(ord(TYPE_CODE_ARRAY),[po1^.header.buffer,typeindex(das_8)]);     
+       emitrec(ord(TYPE_CODE_ARRAY),[pt1^.header.buffer,typeindex(das_8)]);     
       end;
      end
      else begin
-      case po1^.kind of
+      case pt1^.kind of
        das_f16: begin
         emitrec(ord(TYPE_CODE_HALF),[]);     
        end;
@@ -463,13 +472,13 @@ begin
        end;
        das_sub: begin
         with psubtypedataty(
-                consts.typelist.absdata(po1^.header.buffer))^ do begin
+                consts.typelist.absdata(pt1^.header.buffer))^ do begin
                       //todo: vararg
  //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
  
          emitcode(ord(mabtype_subtype));
          i2:= header.paramcount;
-         po3:= @params;
+         pp3:= @params;
          if sf_vararg in header.flags then begin
           emit1(1);      //vararg
          end
@@ -478,17 +487,17 @@ begin
          end;
          if sf_function in header.flags then begin
           dec(i2);
-          emitvbr6(typeindex(po3[i2].typelistindex)); //retval
+          emitvbr6(typeindex(pp3[i2].typelistindex)); //retval
 //          inc(po3);
          end
          else begin
           emitvbr6(typeindex(das_none)); //void retval
          end;
          emitvbr6(i2); //param count
-         po4:= po3+i2;
-         while po3 < po4 do begin
-          emitvbr6(typeindex(po3^.typelistindex));
-          inc(po3);
+         pp4:= pp3+i2;
+         while pp3 < pp4 do begin
+          emitvbr6(typeindex(pp3^.typelistindex));
+          inc(pp3);
          end;
  //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
                          //vararg,ignored,
@@ -504,40 +513,40 @@ begin
      end;
     end;
    end;
-   emitrec(ord(TYPE_CODE_POINTER),[po1^.header.listindex*typeindexstep]);
-   emitrec(ord(TYPE_CODE_POINTER),[po1^.header.listindex*typeindexstep+1]);
-   po1:= consts.typelist.next();
+   emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep]);
+   emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep+1]);
+   pt1:= consts.typelist.next();
   end;
   endblock(); 
 
-  po5:= globals.datapo;
-  po6:= po5 + globals.count;
-  while po5 < po6 do begin
-   case po5^.kind of
+  pga5:= globals.datapo;
+  pgae:= pga5 + globals.count;
+  while pga5 < pgae do begin
+   case pga5^.kind of
     gak_sub: begin
-     emitsub(po5^.typeindex,cv_ccc,po5^.flags,po5^.linkage,0);
+     emitsub(pga5^.typeindex,cv_ccc,pga5^.flags,pga5^.linkage,0);
     end;
     gak_const: begin
-     emitconst(po5^.typeindex,po5^.initconstindex);
+     emitconst(pga5^.typeindex,pga5^.initconstindex);
     end;
     gak_var: begin
-     if po5^.initconstindex >= 0 then begin
-      emitvar(po5^.typeindex,po5^.initconstindex);
+     if pga5^.initconstindex >= 0 then begin
+      emitvar(pga5^.typeindex,pga5^.initconstindex);
      end
      else begin
-      emitvar(po5^.typeindex);
+      emitvar(pga5^.typeindex);
      end;
     end;
    end;
-   inc(po5);
+   inc(pga5);
   end;
   if globals.namelist.count > 0 then begin
    beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-   po7:= globals.namelist.datapo;
-   po8:= po7 + globals.namelist.count;
-   while po7 < po8 do begin
-    emitvstentry({fglobstart+}po7^.listindex,po7^.name);
-    inc(po7);
+   pgn7:= globals.namelist.datapo;
+   pgne:= pgn7 + globals.namelist.count;
+   while pgn7 < pgne do begin
+    emitvstentry(pgn7^.listindex,pgn7^.name);
+    inc(pgn7);
    end;
    endblock();
   end;
@@ -545,22 +554,22 @@ begin
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;
-   po2:= consts.first;
+   pc2:= consts.first;
    for i1:= 0 to consts.count-1 do begin
-    if po2^.typeid < 0 then begin
-     case consttypety(-po2^.typeid) of
+    if pc2^.typeid < 0 then begin
+     case consttypety(-pc2^.typeid) of
       ct_null: begin       
-       checkconsttypeid(int32(po2^.header.buffer));
+       checkconsttypeid(int32(pc2^.header.buffer));
        emitrec(ord(CST_CODE_NULL),[]);
       end;
       ct_pointercast: begin
        checkconsttypeid(pointertype);
-       emitpointercastconst(globval(po2^.header.buffer),
-                               ptypeval(globlist.gettype(po2^.header.buffer)));
+       emitpointercastconst(globval(pc2^.header.buffer),
+                               ptypeval(globlist.gettype(pc2^.header.buffer)));
       end;
       ct_pointerarray,ct_aggregatearray: begin
-       pa:= constlist.absdata(po2^.header.buffer);
-       i2:= po2^.header.buffersize div sizeof(int32) - 1;
+       pa:= constlist.absdata(pc2^.header.buffer);
+       i2:= pc2^.header.buffersize div sizeof(int32) - 1;
        checkconsttypeid(pa[i2]); //last item is type
        emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
        pe:= pa+i2;
@@ -570,7 +579,7 @@ begin
        end;
       end;
       ct_aggregate: begin
-       po9:= constlist.absdata(po2^.header.buffer);
+       po9:= constlist.absdata(pc2^.header.buffer);
        checkconsttypeid(po9^.header.typeid);
        pa:= @po9^.items;
        i2:= po9^.header.itemcount;
@@ -596,30 +605,30 @@ begin
      end;
     end
     else begin
-     checkconsttypeid(po2^.typeid);
-     case databitsizety(po2^.typeid) of
+     checkconsttypeid(pc2^.typeid);
+     case databitsizety(pc2^.typeid) of
       das_1..das_32: begin //todo: das_64
-       emitintconst(int32(po2^.header.buffer));
+       emitintconst(int32(pc2^.header.buffer));
       end;
       das_64: begin
      {$ifdef cpu64}
-       emitdataconst(int64(po2^.header.buffer),8);
+       emitdataconst(int64(pc2^.header.buffer),8);
      {$else}
-       emitdataconst(consts.absdata(po2^.header.buffer)^,8);
+       emitdataconst(consts.absdata(pc2^.header.buffer)^,8);
      {$endif}
       end;
       else begin
       {$ifdef mse_checkinternalerror}
-       if databitsizety(po2^.typeid) <= lastdatakind then begin
+       if databitsizety(pc2^.typeid) <= lastdatakind then begin
         internalerror(ie_bcwriter,'141220A');
        end;
       {$endif}
-       emitdataconst(consts.absdata(po2^.header.buffer)^,
-                                                po2^.header.buffersize);
+       emitdataconst(consts.absdata(pc2^.header.buffer)^,
+                                                pc2^.header.buffersize);
       end;
      end;
     end;
-    po2:= consts.next();
+    pc2:= consts.next();
    end;
    endblock(); 
   end;

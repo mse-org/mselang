@@ -346,6 +346,7 @@ type
    fbuffer: pointer;
    fbuffersize: bufferoffsetty;
    fbuffercapacity: bufferoffsetty;
+   fcurrentitem: bufferoffsetty;
   protected
    function add(asize: int32): pointer;
    function add(const asize: int32; out aoffset: bufferoffsetty): pointer;
@@ -357,6 +358,8 @@ type
    procedure mark(out ref: bufferoffsetty);
    procedure release(const ref: bufferoffsetty);
    function absdata(const aoffset: bufferoffsetty): pointer; inline;
+   function first: pointer;
+   function next: pointer;
  end;
 
  difilety = record
@@ -388,6 +391,9 @@ type
   public
    procedure clear(); override;
    function adddifile(const afilename: filenamety): int32; //returns id
+   function count: int32;
+   function first: pmetadataty;
+   function next: pmetadataty;
  end;
 
 implementation
@@ -1493,6 +1499,24 @@ begin
  fbuffersize:= fbuffersize + asize;
 end;
 
+function tbufferdatalist.first: pointer;
+begin
+ result:= nil;
+ if fbuffersize > 0 then begin
+  result:= fbuffer + sizeof(bufferheaderty);
+  fcurrentitem:= pbufferheaderty(result)^.size + sizeof(bufferheaderty);
+ end;
+end;
+
+function tbufferdatalist.next: pointer;
+begin
+ result:= nil;
+ if fcurrentitem < fbuffersize then begin
+  result:= fbuffer + fcurrentitem;
+  inc(fcurrentitem,pbufferheaderty(result)^.size);
+ end;
+end;
+
 { tmetadatalist }
 
 procedure tmetadatalist.clear;
@@ -1526,6 +1550,21 @@ begin
  end;
  result:= fid;
  inc(fid);
+end;
+
+function tmetadatalist.count: int32;
+begin
+ result:= fid;
+end;
+
+function tmetadatalist.first: pmetadataty;
+begin
+ result:= inherited first();
+end;
+
+function tmetadatalist.next: pmetadataty;
+begin
+ result:= inherited next();
 end;
 
 end.
