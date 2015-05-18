@@ -479,19 +479,35 @@ begin
  raise exception.create(message+'.');
 end;
 
-function valueartostring(const avalue: valuearty): string;
+function valueartostring(const avalue: valuearty; const start: int32): string;
 var
  i1: int32;
  po1: pchar;
 begin
- setlength(result,length(avalue));
- po1:= pointer(result);
- for i1:= 0 to high(avalue) do begin
-  po1^:= char(avalue[i1]);
-  inc(po1);
+ result:= '';
+ if start <= high(avalue) then begin
+  setlength(result,length(avalue)-start);
+  po1:= pointer(result);
+  for i1:= start to high(avalue) do begin
+   po1^:= char(avalue[i1]);
+   inc(po1);
+  end;
  end;
 end;
-  
+
+function intvalueartostring(const avalue: valuearty; const start: int32): string;
+var
+ i1: int32;
+begin
+ result:= '';
+ if start <= high(avalue) then begin
+  for i1:= start to high(avalue) do begin
+   result:= result + inttostr(avalue[i1])+',';
+  end;
+  setlength(result,length(result)-1);
+ end;
+end;
+
 { ttypelist }
 
 constructor ttypelist.create;
@@ -1145,9 +1161,19 @@ begin
 end;
 
 procedure tllvmbcreader.readmetadatablock();
+
+var
+ rec1: valuearty;
+ 
+ procedure outmetarecord(const atext: string);
+ begin
+  output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': M'+
+                          inttostr(fmetalist.count-1)+':= '+
+                          atext);
+ end; //outmetarecord
+
 var
  blocklevelbefore: int32;
- rec1: valuearty;
 begin
  output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1159,10 +1185,14 @@ begin
     unknownrec(rec1);
    end
    else begin 
+    fmetalist.add();
     case metadatacodes(rec1[1]) of
-     METADATA_STRING,METADATA_NAME,METADATA_KIND,METADATA_NODE,
+     METADATA_STRING,METADATA_NAME: begin
+      outmetarecord(valueartostring(rec1,2));
+     end;
+     METADATA_KIND,METADATA_NODE,
      METADATA_FN_NODE,METADATA_NAMED_NODE,METADATA_ATTACHMENT: begin
-      fmetalist.add();
+      outmetarecord(intvalueartostring(rec1,2));
      {
       fgloblist.fsettype:= metatype;
       with pglobinfoty(fgloblist.add())^ do begin
@@ -1180,7 +1210,7 @@ begin
      end;
      }
      else begin
-      unknownrec(rec1);
+      outmetarecord(intvalueartostring(rec1,2));
      end;
     end;
    end;
@@ -1207,7 +1237,7 @@ begin
      VST_CODE_ENTRY,VST_CODE_BBENTRY: begin
       checkmindatalen(rec1,3);
       outrecord(valuesymtabcodesnames[valuesymtabcodes(rec1[1])],
-                              [rec1[2],valueartostring(copy(rec1,3,bigint))]);
+                              [rec1[2],valueartostring(rec1,3)]);
      end;
      else begin
       unknownrec(rec1);
