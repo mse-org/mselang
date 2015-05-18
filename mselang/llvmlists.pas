@@ -145,6 +145,7 @@ type
    fclassdef: int32;
    fintfitem: int32;
    flandingpad: int32;
+   fmetadata: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
@@ -169,6 +170,7 @@ type
    property classdef: int32 read fclassdef;
    property intfitem: int32 read fintfitem;
    property landingpad: int32 read flandingpad;
+   property metadata: int32 read fmetadata;
  end;
 
  consttypety = (ct_none,ct_null,ct_pointercast,
@@ -528,6 +530,7 @@ begin
   for k1:= low(databitsizety) to lastdatakind do begin
    addbitvalue(k1);
   end;
+  fmetadata:= addbitvalue(das_meta);
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
@@ -557,9 +560,6 @@ begin
  t1.header.data:= pointer(ptruint(bitopsizes[asize]));
  t1.kind:= asize;
  po1:= addvalue(t1);
-// if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
-//  po1^.data.kind:= avalue.kind;
-// end;
  result:= po1^.data.header.listindex;
 end;
 

@@ -522,6 +522,7 @@ type
   currentstatementflags: statementflagsty;
   trystack: listadty;
   trystacklevel: int32;
+  debugoptions: debugoptionsty;
  end;
   
  parseinfoty = record

@@ -61,6 +61,7 @@ type
    fdebugloc: debuglocty;
    ftrampolineop: popinfoty;
   protected
+   fmetadata: tmetadatalist;
    fconstseg: int32;
    flastdebugloc: debuglocty;
    fconststart: int32;      //start of global constants
@@ -369,13 +370,13 @@ var
  pa,pe: pint32;
  i1,i2: int32;
  po9: paggregateconstty;
- pm1: pmetadataty;
 begin
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
+ fmetadata:= metadata;
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
@@ -398,27 +399,6 @@ begin
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
  
- if metadata.count > 0 then begin
-  beginblock(METADATA_BLOCK_ID,3);
-  pm1:= metadata.first();
-  while pm1 <> nil do begin
-   case pm1^.header.kind of
-    mdk_string: begin
-     with pstringmetaty(pm1)^ do begin
-      emitrec(ord(METADATA_STRING),len,@data);
-     end;
-    end;
-    mdk_file: begin
-    end;
-    else begin
-     internalerror1(ie_llvm,'20150516A');
-    end;
-   end;
-   pm1:= metadata.next();
-  end;
-  endblock();  
- end;
-
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
@@ -487,8 +467,6 @@ begin
         with psubtypedataty(
                 consts.typelist.absdata(pt1^.header.buffer))^ do begin
                       //todo: vararg
- //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,ord(das_none)]);
- 
          emitcode(ord(mabtype_subtype));
          i2:= header.paramcount;
          pp3:= @params;
@@ -501,7 +479,6 @@ begin
          if sf_function in header.flags then begin
           dec(i2);
           emitvbr6(typeindex(pp3[i2].typelistindex)); //retval
-//          inc(po3);
          end
          else begin
           emitvbr6(typeindex(das_none)); //void retval
@@ -512,10 +489,10 @@ begin
           emitvbr6(typeindex(pp3^.typelistindex));
           inc(pp3);
          end;
- //        emitrec(ord(TYPE_CODE_FUNCTION),[0,0,
-                         //vararg,ignored,
- 
         end;
+       end;
+       das_meta: begin
+        emitrec(ord(TYPE_CODE_METADATA),[]);     
        end;
        else begin
        {$ifdef mse_checkinternalerror}
@@ -526,8 +503,14 @@ begin
      end;
     end;
    end;
-   emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep]);
-   emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep+1]);
+   if pt1^.kind = das_meta then begin
+    emitrec(ord(TYPE_CODE_METADATA),[]);
+    emitrec(ord(TYPE_CODE_METADATA),[]);
+   end
+   else begin
+    emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep]);
+    emitrec(ord(TYPE_CODE_POINTER),[pt1^.header.listindex*typeindexstep+1]);
+   end;
    pt1:= consts.typelist.next();
   end;
   endblock(); 
@@ -649,7 +632,30 @@ begin
 end;
 
 procedure tllvmbcwriter.stop;
+var
+ pm1: pmetadataty;
 begin
+ if fmetadata.count > 0 then begin
+  beginblock(METADATA_BLOCK_ID,3);
+  pm1:= fmetadata.first();
+  while pm1 <> nil do begin
+   case pm1^.header.kind of
+    mdk_string: begin
+     with pstringmetaty(pm1)^ do begin
+      emitrec(ord(METADATA_STRING),len,@data);
+     end;
+    end;
+    mdk_file: begin
+    end;
+    else begin
+     internalerror1(ie_llvm,'20150516A');
+    end;
+   end;
+   pm1:= fmetadata.next();
+  end;
+  endblock();  
+ end;
+
  endblock();
 {$ifdef mse_checkinternalerror}
  if fblockstackpo <> @fblockstack then begin

@@ -397,7 +397,13 @@ begin
 
   s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
-  if us_interfaceparsed in s.unitinfo^.state then begin
+  if not (us_interfaceparsed in s.unitinfo^.state) then begin
+   if s.debugoptions <> [] then begin
+    s.unitinfo^.filepathmeta:= 
+                      s.unitinfo^.metadatalist.adddifile(s.unitinfo^.filepath);
+   end;
+  end
+  else begin
    if s.unitinfo^.impl.sourceoffset >= length(input) then begin
     errormessage(err_filetrunc,[s.filename]);
    {$ifdef mse_debugparser}
@@ -735,7 +741,7 @@ begin
 end;
 
 function parse(const input: string; const afilename: filenamety; 
-                                 const abackend: backendty): boolean;
+                                        const abackend: backendty): boolean;
                               //true if ok
 var
  po1: punitinfoty;
@@ -748,10 +754,10 @@ begin
   try
    try
     backend:= abackend;
+    s.debugoptions:= debugoptions;
     unit1:= newunit('program');
     unit1^.filepath:= afilename;
-    unit1^.filepathmeta:= unit1^.metadatalist.adddifile(afilename);
-    info.s.unitinfo:= unit1;
+    s.unitinfo:= unit1;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;
     setlength(contextstack,stackdepth);
