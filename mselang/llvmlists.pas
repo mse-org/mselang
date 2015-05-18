@@ -362,15 +362,20 @@ type
    function nextdata: pointer;  //nil if none
  end;
 
- difilety = record
-  filelen: int32;
-  dirlen: int32;
-  data: record
+ stringmetaty = record
+  len: int32;
+  data: record  //array of card8
   end;
- end; //characters appended
+ end;
+ pstringmetaty = ^stringmetaty;
+ 
+ difilety = record
+  fileid: int32;
+  dirid: int32;
+ end;
  pdifilety = ^difilety;
 
- metadatakindty = (mdk_none,mdk_file);
+ metadatakindty = (mdk_none,mdk_string,mdk_file);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -388,9 +393,10 @@ type
   protected
    fid: int32;
    function adddata(const akind: metadatakindty;
-                              const adatasize: int32): pointer;
+                              const adatasize: int32; out aid: int32): pointer;
   public
    procedure clear(); override;
+   function addstring(const avalue: lstringty): int32;
    function adddifile(const afilename: filenamety): int32; //returns id
    function count: int32;
    function first: pmetadataty; //nil if none
@@ -1530,34 +1536,6 @@ begin
  fid:= 0;
 end;
 
-function tmetadatalist.adddata(const akind: metadatakindty; 
-                                            const adatasize: int32): pointer;
-begin
- result:= inherited adddata(adatasize+sizeof(metadataheaderty));
- with pmetadataheaderty(result)^ do begin
-  kind:= akind;
- end;
- inc(result,sizeof(metadataheaderty));
-end;
-
-function tmetadatalist.adddifile(const afilename: filenamety): int32;
-var
- i1,i2: int32;
- dir,na: filenamety;
-begin
- splitfilepath(afilename,dir,na);
- i1:= length(dir);
- i2:= length(na);
- with pdifilety(adddata(mdk_file,sizeof(difilety)+i1+i2))^ do begin
-  filelen:= i2;
-  dirlen:= i1;
-  move(pointer(na)^,data,i2);
-  move(pointer(dir)^,data,i1);
- end;
- result:= fid;
- inc(fid);
-end;
-
 function tmetadatalist.count: int32;
 begin
  result:= fid;
@@ -1571,6 +1549,41 @@ end;
 function tmetadatalist.next: pmetadataty;
 begin
  result:= nextdata();
+end;
+
+function tmetadatalist.adddata(const akind: metadatakindty; 
+                              const adatasize: int32; out aid: int32): pointer;
+begin
+ result:= inherited adddata(adatasize+sizeof(metadataheaderty));
+ with pmetadataheaderty(result)^ do begin
+  kind:= akind;
+ end;
+ inc(result,sizeof(metadataheaderty));
+ aid:= fid;
+ inc(fid);
+end;
+
+function tmetadatalist.addstring(const avalue: lstringty): int32;
+begin
+ with pstringmetaty(
+          adddata(mdk_string,sizeof(stringmetaty)+avalue.len,result))^ do begin
+  len:= avalue.len;
+  move(avalue.po^,data,len);
+ end;
+end;
+
+function tmetadatalist.adddifile(const afilename: filenamety): int32;
+var
+ i1,i2: int32;
+ dir,na: filenamety;
+begin
+ splitfilepath(afilename,dir,na);
+ i1:= addstring(stringtolstring(string(dir)));
+ i2:= addstring(stringtolstring(string(na)));
+ with pdifilety(adddata(mdk_file,sizeof(difilety),result))^ do begin
+  dirid:= i1;
+  fileid:= i2;
+ end;
 end;
 
 end.

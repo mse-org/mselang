@@ -220,17 +220,18 @@ type
   );
 
   MetadataCodes = (
-    METADATA_STRING        = 1,   // MDSTRING:      [values]
-    // 2 is unused.
-    // 3 is unused.
-    METADATA_NAME          = 4,   // STRING:        [values]
-    // 5 is unused.
-    METADATA_KIND          = 6,   // [n x [id, name]]
-    // 7 is unused.
-    METADATA_NODE          = 8,   // NODE:          [n x (type num, value num)]
-    METADATA_FN_NODE       = 9,   // FN_NODE:       [n x (type num, value num)]
-    METADATA_NAMED_NODE    = 10,  // NAMED_NODE:    [n x mdnodes]
-    METADATA_ATTACHMENT    = 11   // [m x [value, [n x [id, mdnode]]]
+    METADATA_0,
+    METADATA_STRING,//        = 1,   // MDSTRING:      [values]
+    METADATA_2,    // 2 is unused.
+    METADATA_3,    // 3 is unused.
+    METADATA_NAME,//          = 4,   // STRING:        [values]
+    METADATA_5,   // 5 is unused.
+    METADATA_KIND,//          = 6,   // [n x [id, name]]
+    METADATA_7,    // 7 is unused.
+    METADATA_NODE,//        = 8,   // NODE:          [n x (type num, value num)]
+    METADATA_FN_NODE,//     = 9,   // FN_NODE:       [n x (type num, value num)]
+    METADATA_NAMED_NODE,//    = 10,  // NAMED_NODE:    [n x mdnodes]
+    METADATA_ATTACHMENT //    = 11   // [m x [value, [n x [id, mdnode]]]
   );
 
   // The constants block (CONSTANTS_BLOCK_ID) describes emission for each

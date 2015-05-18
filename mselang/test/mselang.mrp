@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73E46F8
+    ao=An unhandled exception occured at $B73B36F8
     +
     ae=
     aec=123
@@ -3977,7 +3977,7 @@ c=3
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
     +
-    ae=main.mla(6,4) Fatal: Syntax error, ";" expected
+    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     +
     aec=1
     ie=0
@@ -4203,7 +4203,7 @@ y=122
 cx=672
 cy=380
 wsize=0
-active=1
+active=0
 visible=1
 [mainfo.grid]
 propcolwidthref=566

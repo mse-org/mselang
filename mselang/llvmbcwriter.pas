@@ -139,6 +139,7 @@ type
                                                  const adddata: idarty);
    procedure emitrec(const id: int32; const data: array of int32;
                                                 const adddata: array of int32);
+   procedure emitrec(const id: int32; const len: int32; const data: pcard8);
    procedure emitnopssaop(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
@@ -401,6 +402,18 @@ begin
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
   while pm1 <> nil do begin
+   case pm1^.header.kind of
+    mdk_string: begin
+     with pstringmetaty(pm1)^ do begin
+      emitrec(ord(METADATA_STRING),len,@data);
+     end;
+    end;
+    mdk_file: begin
+    end;
+    else begin
+     internalerror1(ie_llvm,'20150516A');
+    end;
+   end;
    pm1:= metadata.next();
   end;
   endblock();  
@@ -917,6 +930,23 @@ begin
  end;
  for i1:= 0 to high(adddata) do begin
   emitvbr6(adddata[i1]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitrec(const id: int32; 
+                      const len: int32; const data: pcard8);
+                                //todo: use abbrev
+var
+ po1,pe: pcard8;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(id);
+ emitvbr6(len);
+ po1:= data;
+ pe:= data+len;
+ while po1 < pe do begin
+  emitvbr6(po1^);
+  inc(po1);
  end;
 end;
 

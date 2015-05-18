@@ -46,16 +46,6 @@ type
  abbrevty = array of abbrevitemty;
  abbrevarty = array of abbrevty;
   
- blockinfoty = record
-  id: int32;
-  oldidsize: int32;
-  blockabbrev: abbrevarty;
-  abbrevs: abbrevarty;
- end;
- blockinfoarty = array of blockinfoty;
- 
- outputkindty = (ok_begin,ok_end,ok_beginend);
-
  typeinfoty = record
   case kind: typecodes of
    TYPE_CODE_INTEGER:(
@@ -93,7 +83,7 @@ type
 //   function item(const aindex: int32): ptypeinfoty;
  end;
 
- globkindty = (gk_const,gk_var,gk_sub);
+ globkindty = (gk_const,gk_var,gk_sub,gk_meta);
  constkindty = (ck_integer);
  
  globinfoty = record
@@ -110,9 +100,13 @@ type
    gk_sub: (
     subheaderindex: int32;    
    );
+   gk_meta: (
+   );
  end;
  pglobinfoty = ^globinfoty;
- 
+const
+ metatype = -1;
+type 
  tgloblist = class(trecordlist)
   protected
    ftypelist: ttypelist;
@@ -124,6 +118,27 @@ type
    function typeid(const aindex: int32): int32;
    function item(const aindex: int32): pglobinfoty;
  end;
+ 
+ metainfoty = record
+ end;
+ 
+ tmetalist = class(trecordlist)
+  public
+   constructor create();
+   procedure add();
+ end;
+
+ blockinfoty = record
+  id: int32;
+  oldidsize: int32;
+  blockabbrev: abbrevarty;
+  abbrevs: abbrevarty;
+  list: tgloblist;
+  ssapo: pint32;
+ end;
+ blockinfoarty = array of blockinfoty;
+ 
+ outputkindty = (ok_begin,ok_end,ok_beginend);
 
  tllvmbcreader = class(tmsefilestream)
   private
@@ -142,6 +157,7 @@ type
 //   fglobindex: int32;
    ftypelist: ttypelist;
    fgloblist: tgloblist;
+   fmetalist: tmetalist;
    fsubheadercount: int32;
    fsubheaders: integerarty; //index in fgloblist
    fsubimplementationcount: int32;
@@ -175,7 +191,8 @@ type
    procedure readblockinfoblock();
    procedure readmoduleblock();
    procedure readtypeblock();
-   procedure readconstantsblock();
+   procedure readconstantsblock(const alist: tgloblist);
+   procedure readmetadatablock();
    procedure readvaluesymtabblock();
    procedure readfunctionblock();
    procedure skip(const words: int32);
@@ -277,6 +294,21 @@ const
   '', 
   'ENTRY',
   'BBENTRY'
+ );
+
+ metadatacodesnames: array[metadatacodes] of string = (
+    '',
+    'METADATA_STRING',
+    '',
+    '',
+    'METADATA_NAME',
+    '',
+    'METADATA_KIND',
+    '',
+    'METADATA_NODE',
+    'METADATA_FN_NODE',
+    'METADATA_NAMED_NODE',
+    'METADATA_ATTACHMENT'
  );
   
  functioncodesnames: array[functioncodes] of string = (
@@ -591,6 +623,20 @@ begin
  result:= @ptypeinfoty(fdata)[aindex];
 end;
 
+{ tmetalist }
+
+constructor tmetalist.create;
+begin
+ inherited create(sizeof(metainfoty));
+end;
+
+procedure tmetalist.add;
+var
+ dummy: int32 = 0;
+begin
+ inherited add(dummy);
+end;
+
 { tgloblist }
 
 constructor tgloblist.create(const typelist: ttypelist);
@@ -659,6 +705,7 @@ constructor tllvmbcreader.create(ahandle: integer);
 begin
  ftypelist:= ttypelist.create();
  fgloblist:= tgloblist.create(ftypelist);
+ fmetalist:= tmetalist.create;
  inherited;
  fbufpos:= @fbuffer;
  fbufend:= fbufpos;
@@ -672,6 +719,7 @@ destructor tllvmbcreader.destroy();
 begin
  ftypelist.free();
  fgloblist.free();
+ fmetalist.free();
  inherited;
 end;
 
@@ -857,6 +905,11 @@ begin
    blockabbrev:= nil;
   end;
   abbrevs:= nil;
+  list:= nil;
+  ssapo:= nil;
+  if fblocklevel > 0 then begin
+   ssapo:= fblockstack[fblocklevel-1].ssapo;
+  end;
  end;
  inc(fblocklevel);
 end;
@@ -869,6 +922,7 @@ begin
  end;
  with fblockstack[fblocklevel] do begin
   fidsize:= oldidsize;
+  list.free();
  end;
  align32();
 end;
@@ -1024,23 +1078,24 @@ begin
  end;
 end;
 
-procedure tllvmbcreader.readconstantsblock();
+procedure tllvmbcreader.readconstantsblock(const alist: tgloblist);
 var
  rec1: valuearty;
  
  procedure outconst(const avalues: array of const);
  begin
-  outrecord(inttostr(fgloblist.count-1)+'.'+
+  outrecord(inttostr(alist.count-1)+'.'+
                     constantscodesnames[constantscodes(rec1[1])],avalues);
  end; //outconst
 
 var
  blocklevelbefore: int32;
  po1: ptypeinfoty;
- 
+ countbefore: int32; 
 begin
  output(ok_begin,blockidnames[CONSTANTS_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
+ countbefore:= alist.count;
  while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
@@ -1051,14 +1106,14 @@ begin
    else begin
     if constantscodes(rec1[1]) = CST_CODE_SETTYPE then begin
      checkdatalen(rec1,2);
-     fgloblist.fsettype:= rec1[2];
+     alist.fsettype:= rec1[2];
      output(ok_beginend,constantscodesnames[constantscodes(rec1[1])]+':'+
-                                       ftypelist.typename(fgloblist.fsettype));
+                                       ftypelist.typename(alist.fsettype));
     end
     else begin
-     with pglobinfoty(fgloblist.add())^ do begin
+     with pglobinfoty(alist.add())^ do begin
       kind:= gk_const;
-      valuetype:= fgloblist.fsettype;
+      valuetype:= alist.fsettype;
       constkind:= constantscodes(rec1[1]);
       if high(rec1) = 1 then begin
        outconst([]);
@@ -1077,6 +1132,55 @@ begin
         end;
        end;
       end;
+     end;
+    end;
+   end;
+  end;
+ end;
+ with fblockstack[fblocklevel-1] do begin
+  if ssapo <> nil then begin
+   ssapo^:= ssapo^ + alist.count - countbefore;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readmetadatablock();
+var
+ blocklevelbefore: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(metadatacodesnames))) or 
+             (metadatacodesnames[metadatacodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin 
+    case metadatacodes(rec1[1]) of
+     METADATA_STRING,METADATA_NAME,METADATA_KIND,METADATA_NODE,
+     METADATA_FN_NODE,METADATA_NAMED_NODE,METADATA_ATTACHMENT: begin
+      fmetalist.add();
+     {
+      fgloblist.fsettype:= metatype;
+      with pglobinfoty(fgloblist.add())^ do begin
+       kind:= gk_meta;
+       valuetype:= fgloblist.fsettype;
+       unknownrec(rec1);
+      end;
+     }
+     end;
+     {
+     VST_CODE_ENTRY,VST_CODE_BBENTRY: begin
+      checkmindatalen(rec1,3);
+      outrecord(valuesymtabcodesnames[valuesymtabcodes(rec1[1])],
+                              [rec1[2],valueartostring(copy(rec1,3,bigint))]);
+     end;
+     }
+     else begin
+      unknownrec(rec1);
      end;
     end;
    end;
@@ -1113,12 +1217,13 @@ begin
   end;
  end;
 end;
-
+var testvar: pglobinfoty;
 procedure tllvmbcreader.readfunctionblock();
 var
  rec1: valuearty;
- paramcount,ssastart,ssaindex: int32;
+ paramcount,ssastart,conststart,ssaindex: int32;
  ssatypes: integerarty;
+ currentconstlist: tgloblist;
 
  procedure outoprecord(const aname: string; const values: array of const);
  begin
@@ -1148,7 +1253,13 @@ var
  begin
   avalue:= ssaindex-avalue;
   if avalue < 0 then begin
-   result:= fgloblist.typeid(avalue+ssastart);
+   avalue:= avalue+ssastart;
+   if avalue >= conststart then begin
+    result:= currentconstlist.typeid(avalue-conststart);
+   end
+   else begin
+    result:= fgloblist.typeid(avalue);
+   end;
   end
   else begin
    if avalue >= ssaindex then begin
@@ -1159,22 +1270,38 @@ var
  end; //typeid
 
  function opname(avalue: int32): string;
+ var
+  list1: tgloblist;
+  constname: string[2];
  begin
   avalue:= ssaindex-avalue;
   if avalue < 0 then begin
    avalue:= avalue+ssastart;
-   if (avalue < 0) or (avalue >= fgloblist.count) then begin
+   if avalue >= conststart then begin
+    avalue:= avalue-conststart;
+    list1:= currentconstlist;
+    constname:= 'CL';
+   end
+   else begin
+    list1:= fgloblist;
+    constname:= 'C';
+   end;
+   if (avalue < 0) or (avalue >= list1.count) then begin
     error('Invalid global index');
    end;
-   with pglobinfoty(fgloblist.fdata)[avalue] do begin
+testvar:= @pglobinfoty(list1.fdata)[avalue];
+   with pglobinfoty(list1.fdata)[avalue] do begin
     if kind = gk_const then begin
-     result:= 'C'+inttostr(avalue)+'=';
+     result:= constname+inttostr(avalue)+'=';
      case constkind of
       CST_CODE_INTEGER: begin
        result:= result+inttostr(intconst);
       end;
       CST_CODE_NULL: begin
        result:= result+'NULL';
+      end;
+      else begin
+       result:= result+constantscodesnames[constkind];
       end;
      end;
     end
@@ -1238,6 +1365,11 @@ var
  po1: ptypeinfoty;
  
 begin
+ with fblockstack[fblocklevel-1] do begin
+  list:= tgloblist.create(ftypelist);
+  ssapo:= @ssastart;
+  currentconstlist:= list;
+ end;
  if fsubimplementationcount >= fsubheadercount then begin
   error('Function without header');
  end;
@@ -1247,7 +1379,8 @@ begin
             inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
                                             ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
- ssastart:= fgloblist.count;
+ conststart:= fgloblist.count;
+ ssastart:= conststart;
  fbbbefore:= -1;
  fbb:= -1;
  with ftypelist.parenttype(subtyp1)^ do begin
@@ -1532,13 +1665,23 @@ begin
     readtypeblock();
    end;
    CONSTANTS_BLOCK_ID: begin
-    readconstantsblock();
+    with fblockstack[fblocklevel-2] do begin
+     if (fblocklevel < 2) or (list = nil) then begin
+      readconstantsblock(fgloblist);
+     end
+     else begin
+      readconstantsblock(list);
+     end;
+    end;
    end;
    VALUE_SYMTAB_BLOCK_ID: begin
     readvaluesymtabblock();
    end;
    FUNCTION_BLOCK_ID: begin
     readfunctionblock();
+   end;
+   METADATA_BLOCK_ID: begin
+    readmetadatablock();
    end;
    else begin
     unknownblock();
@@ -1742,7 +1885,7 @@ begin
     fblockabbrevs[fblockinfoid][i1]:= abbrev1;
    end
    else begin
-    with fblockstack[fblocklevel] do begin
+    with fblockstack[fblocklevel-1] do begin
      i1:= high(abbrevs)+1;
      setlength(abbrevs,i1+1);
      abbrevs[i1]:= abbrev1;
