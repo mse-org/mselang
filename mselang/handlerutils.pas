@@ -46,8 +46,8 @@ const
  basedatatypes: array[databitsizety] of systypety = (
  //das_none,das_1,   das_2_7,das_8,  das_9_15,das_16,  das_17_31,das_32,
   st_none,  st_bool1,st_none,st_int8,st_int16,st_int16,st_int32, st_int32,
-//das_33_63,das_64,  das_pointer,das_f16,das_f32,das_f64,   das_sub 
-  st_int64, st_int64,st_pointer, st_none,st_none,st_float64,st_none
+//das_33_63,das_64,  das_pointer,das_f16,das_f32,das_f64,   das_sub,das_meta
+  st_int64, st_int64,st_pointer, st_none,st_none,st_float64,st_none,st_none
  );
 
  stackdatakinds: array[datakindty] of stackdatakindty = (
@@ -1479,8 +1479,8 @@ const
    oc_indirect16,oc_indirect16,oc_indirect32,oc_indirect32,
  //das_33_63,    das_64,       das_pointer,
    oc_indirect64,oc_indirect64,oc_indirectpo,
- //das_f16,       das_f32,       das_f64
-   oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo);
+ //das_f16,       das_f32,       das_f64        das_sub,      das_meta
+   oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo,oc_none);
 
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                   const retainconst: boolean = false): boolean;

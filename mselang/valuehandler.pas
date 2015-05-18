@@ -48,40 +48,40 @@ const
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_8
   //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16,         das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_card8tocard16,oc_none,
   //das_32,         das_33_63,das_64,             
     oc_card8tocard32,oc_none,  oc_card8tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_16
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_card16tocard8,oc_none, oc_none,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_card16tocard32,oc_none,  oc_card16tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_32
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_card32tocard8,oc_none, oc_card32tocard16,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_card32tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_64
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_card64tocard8,oc_none, oc_card64tocard16,oc_none,
   //das_32,          das_33_63, das_64,             
     oc_card64tocard32,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   )
  );
 
@@ -91,40 +91,40 @@ const
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_8
-  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16,         das_17_31,
+  //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16,        das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_int8toint16,oc_none,
   //das_32,         das_33_63,das_64,             
     oc_int8toint32,oc_none,  oc_int8toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_16
-  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16, das_17_31,
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_int16toint8,oc_none, oc_none,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_int16toint32,oc_none,  oc_int16toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_32
-  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
     oc_none, oc_none,oc_none,oc_int32toint8,oc_none, oc_int32toint16,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_int32toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_mta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_64
-  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
     oc_none, oc_none,oc_none,oc_int64toint8,oc_none, oc_int64toint16,oc_none,
   //das_32,          das_33_63, das_64,             
     oc_int64toint32,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   )
  );
 
@@ -134,40 +134,40 @@ const
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_8
   //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
     oc_none, oc_none,oc_none,oc_card8toint8,oc_none, oc_card8toint16,oc_none,
   //das_32,         das_33_63,das_64,             
     oc_card8toint32,oc_none,  oc_card8toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_16
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_card16toint8,oc_none, oc_card16toint16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_card16toint32,oc_none,  oc_card16toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_32
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_card32toint8,oc_none, oc_card32toint16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_card32toint32,oc_none,  oc_card32toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_64
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_card64toint8,oc_none, oc_card64toint16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_card64toint32,oc_none,  oc_card64toint64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   )
  );
 
@@ -177,40 +177,40 @@ const
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
   //das_32, das_33_63,das_64,             
     oc_none,oc_none,  oc_none,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_8
   //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
     oc_none, oc_none,oc_none,oc_int8tocard8,oc_none, oc_int8tocard16,oc_none,
   //das_32,         das_33_63,das_64,             
     oc_int8tocard32,oc_none,  oc_int8tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_16
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_int16tocard8,oc_none, oc_int16tocard16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_int16tocard32,oc_none,  oc_int16tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_32
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_int32tocard8,oc_none, oc_int32tocard16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_int32tocard32,oc_none,  oc_int32tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   ),
   (//ibs_64
   //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
     oc_none, oc_none,oc_none,oc_int64tocard8,oc_none, oc_int64tocard16,oc_none,
   //das_32,          das_33_63,das_64,             
     oc_int64tocard32,oc_none,  oc_int64tocard64,
-  //das_pointer,das_f16,das_f32,das_f64, das_sub
-    oc_none,    oc_none,oc_none,oc_none, oc_none
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
   )
  );
 

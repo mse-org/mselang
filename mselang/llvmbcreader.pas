@@ -28,6 +28,7 @@ const
  bcreaderbuffersize = 16; //test fillbuffer, todo: make it bigger
 type
  valuety = int64;
+ pvaluety = ^valuety;
  valuearty = array of valuety;
 
  abbrevkindty = (ak_literal,ak_fix,ak_var,ak_array,ak_char6,ak_blob);
@@ -104,8 +105,7 @@ type
    );
  end;
  pglobinfoty = ^globinfoty;
-const
- metatype = -1;
+
 type 
  tgloblist = class(trecordlist)
   protected
@@ -118,13 +118,20 @@ type
    function typeid(const aindex: int32): int32;
    function item(const aindex: int32): pglobinfoty;
  end;
- 
+{
+ tmetakindlist = class(tbufferdatalist)
+  public
+ end;
+}  
  metainfoty = record
  end;
  
  tmetalist = class(trecordlist)
+  protected
+//   fkindlist: tmetakindlist;
   public
    constructor create();
+   destructor destroy(); override;
    procedure add();
  end;
 
@@ -641,9 +648,16 @@ end;
 
 { tmetalist }
 
-constructor tmetalist.create;
+constructor tmetalist.create();
 begin
  inherited create(sizeof(metainfoty));
+// fkindlist:= tmetakindlist.create();
+end;
+
+destructor tmetalist.destroy();
+begin
+// fkindlist.free();
+ inherited;
 end;
 
 procedure tmetalist.add;
@@ -1172,8 +1186,50 @@ var
                           atext);
  end; //outmetarecord
 
+ function typevaluepair(const start: int32): string;
+ var
+  po1,pe: pvaluety;
+ begin
+  result:= '';
+  po1:= @rec1[start];
+  pe:= @rec1[high(rec1)];
+  while po1 < pe do begin
+   with ftypelist.item(po1^)^ do begin
+    if kind = TYPE_CODE_METADATA then begin
+     result:= result+'M'+inttostr((po1+1)^);
+    end
+    else begin
+     with fgloblist.item((po1+1)^)^ do begin
+      case kind of 
+       gk_const: begin
+        result:= result+'C'+inttostr((po1+1)^)+'=';
+        case constkind of
+         CST_CODE_INTEGER: begin
+          result:= result+inttostr(intconst);
+         end;
+         CST_CODE_NULL: begin
+          result:= result+'NULL';
+         end;
+        end;
+       end;
+       else begin
+        result:= result+'G'+inttostr((po1+1)^);
+       end;
+      end;
+     end;
+    end;
+   end;
+   result:= result + ',';
+   inc(po1,2);
+  end;
+  if result <> '' then begin
+   setlength(result,length(result)-1);
+  end;
+ end;
+
 var
  blocklevelbefore: int32;
+ name1: string;
 begin
  output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1185,32 +1241,33 @@ begin
     unknownrec(rec1);
    end
    else begin 
-    fmetalist.add();
     case metadatacodes(rec1[1]) of
-     METADATA_STRING,METADATA_NAME: begin
+     METADATA_STRING: begin
+      fmetalist.add();
       outmetarecord(valueartostring(rec1,2));
      end;
-     METADATA_KIND,METADATA_NODE,
-     METADATA_FN_NODE,METADATA_NAMED_NODE,METADATA_ATTACHMENT: begin
-      outmetarecord(intvalueartostring(rec1,2));
-     {
-      fgloblist.fsettype:= metatype;
-      with pglobinfoty(fgloblist.add())^ do begin
-       kind:= gk_meta;
-       valuetype:= fgloblist.fsettype;
-       unknownrec(rec1);
-      end;
-     }
+     METADATA_NAME: begin
+      name1:= valueartostring(rec1,2);
      end;
-     {
-     VST_CODE_ENTRY,VST_CODE_BBENTRY: begin
+     METADATA_NAMED_NODE: begin
+      fmetalist.add();
+      output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': '+
+                name1+':= '+intvalueartostring(rec1,2));
+      name1:= '';
+     end;
+     METADATA_KIND: begin
       checkmindatalen(rec1,3);
-      outrecord(valuesymtabcodesnames[valuesymtabcodes(rec1[1])],
-                              [rec1[2],valueartostring(copy(rec1,3,bigint))]);
+      output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
+                             inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
-     }
+     METADATA_NODE,
+     METADATA_FN_NODE,METADATA_ATTACHMENT: begin
+      fmetalist.add();
+      outmetarecord(typevaluepair(2));
+     end;
      else begin
-      outmetarecord(intvalueartostring(rec1,2));
+      fmetalist.add();
+      outmetarecord(typevaluepair(2));
      end;
     end;
    end;

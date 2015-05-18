@@ -71,8 +71,6 @@ type
    function absdata(const aoffset: ptruint): pointer; inline;
  end;
 
- bufferoffsetty = int32;
- 
  typelistdataty = record
   header: bufferdataty; //header.buffer -> alloc size if size = -1
   kind: databitsizety;
@@ -332,34 +330,6 @@ type
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
    property namelist: tglobnamelist read fnamelist;
- end;
-
- bufferheaderty = record
-  size: bufferoffsetty;
-  data: record
-  end;
- end;
- pbufferheaderty = ^bufferheaderty;
- 
- tbufferdatalist = class
-  private
-   fbuffer: pointer;
-   fbuffersize: bufferoffsetty;
-   fbuffercapacity: bufferoffsetty;
-   fnextitem: bufferoffsetty;
-  protected
-   function adddata(asize: int32): pointer;
-   function adddata(const asize: int32; out aoffset: bufferoffsetty): pointer;
-  public
-   constructor create();
-   destructor destroy(); override;
-   procedure checkcapacity(const asize: int32);
-   procedure clear(); virtual;
-   procedure mark(out ref: bufferoffsetty);
-   procedure release(const ref: bufferoffsetty);
-   function absdata(const aoffset: bufferoffsetty): pointer; inline;
-   function firstdata: pointer; //nil if none
-   function nextdata: pointer;  //nil if none
  end;
 
  stringmetaty = record
@@ -1435,97 +1405,6 @@ begin
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= (pgloballocdataty(fdata) + alistid)^; 
-end;
-
-{ tbufferdatalist }
-
-constructor tbufferdatalist.create;
-begin
-end;
-
-destructor tbufferdatalist.destroy();
-begin
- clear();
-end;
-
-procedure tbufferdatalist.clear;
-begin
- if fbuffer <> nil then begin
-  freemem(fbuffer);
-  fbuffer:= nil;
-  fbuffersize:= 0;
-  fbuffercapacity:= 0;
- end;
-end;
-
-procedure tbufferdatalist.mark(out ref: bufferoffsetty);
-begin
- ref:= fbuffersize;
-end;
-
-procedure tbufferdatalist.release(const ref: bufferoffsetty);
-begin
- fbuffersize:= ref;
-end;
-
-function tbufferdatalist.absdata(const aoffset: bufferoffsetty): pointer;
-begin
- result:= fbuffer + aoffset;
-end;
-
-procedure tbufferdatalist.checkcapacity(const asize: int32);
-begin
- fbuffersize:= fbuffersize + ((asize+3) and not 3); //4 byte align
- if fbuffersize > fbuffercapacity then begin
-  fbuffercapacity:= fbuffersize*2 + 1024;
-  reallocmem(fbuffer,fbuffercapacity);
- end;
-end;
-{
-procedure tbufferdatalist.add(const asize: int32);
-begin
- checkcapacity(asize);
- fbuffersize:= fbuffersize + asize;
-end;
-}
-
-function tbufferdatalist.adddata(asize: int32): pointer;
-var
- i1: bufferoffsetty;
-begin
- asize:= asize + sizeof(bufferheaderty);
- i1:= fbuffersize;
- checkcapacity(asize);
- result:= fbuffer + i1;
- pbufferheaderty(result)^.size:= fbuffersize-i1;
- inc(result,sizeof(bufferheaderty));
-end;
-
-function tbufferdatalist.adddata(const asize: int32;
-                                    out aoffset: bufferoffsetty): pointer;
-begin
- aoffset:= fbuffersize;
- result:= adddata(asize);
-end;
-
-function tbufferdatalist.firstdata: pointer;
-begin
- result:= nil;
- if fbuffersize > 0 then begin
-  result:= fbuffer;
-  fnextitem:= pbufferheaderty(result)^.size;
-  inc(result,sizeof(bufferheaderty));
- end;
-end;
-
-function tbufferdatalist.nextdata: pointer;
-begin
- result:= nil;
- if fnextitem < fbuffersize then begin
-  result:= fbuffer + fnextitem;
-  inc(fnextitem,pbufferheaderty(result)^.size);
-  inc(result,sizeof(bufferheaderty));
- end;
 end;
 
 { tmetadatalist }
