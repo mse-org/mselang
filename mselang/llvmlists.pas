@@ -207,8 +207,8 @@ type
 const
  nullpointer = ord(nc_pointer);
  nullconst: llvmconstty = (
-             listid: nullpointer;
              typeid: pointertype;
+             listid: nullpointer;
             ); 
 type
  aggregateconstheaderty = record
@@ -334,20 +334,47 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
+ metavaluety = llvmconstty;
+ pmetavaluety = ^metavaluety;
+ 
+ nodemetaty = record
+  len: int32;
+  data: record  //array of metavaluety
+  end;
+ end;
+ pnodemetaty = ^nodemetaty;
+
+ namednodemetaty = record
+  len: int32;
+  namelen: int32;
+  data: record  //array of metavaluety,name
+  end;
+ end;
+ pnamednodemetaty = ^namednodemetaty;
+ 
  stringmetaty = record
   len: int32;
   data: record  //array of card8
   end;
  end;
  pstringmetaty = ^stringmetaty;
- 
+
  difilety = record
-  fileid: int32;
-  dirid: int32;
+  filename: metavaluety;
+  dirname: metavaluety;
  end;
  pdifilety = ^difilety;
+ 
+ ditcompileunitty = record
+  difile: metavaluety;
+  sourcelanguage: metavaluety;
+  producer: metavaluety;
+  emissionkind: metavaluety;
+ end;
+ pditcompileunit = ^ditcompileunitty;
 
- metadatakindty = (mdk_none,mdk_string,mdk_file);
+ metadatakindty = (mdk_none,mdk_node,mdk_namednode,
+                   mdk_string,mdk_difile,mdk_ditcompileunit);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -360,16 +387,24 @@ type
   end;
  end;
  pmetadataty = ^metadataty;
-  
+ 
  tmetadatalist = class(tbufferdatalist)
   protected
    fid: int32;
    function adddata(const akind: metadatakindty;
-                              const adatasize: int32; out aid: int32): pointer;
+                    const adatasize: int32; out avalue: metavaluety): pointer;
+   function addi32const(const avalue: int32): metavaluety;
   public
    procedure clear(); override;
-   function addstring(const avalue: lstringty): int32;
-   function adddifile(const afilename: filenamety): int32; //returns id
+   function addnode(const avalues: array of metavaluety): metavaluety;
+   function addnamednode(const aname: lstringty;
+                                const avalues: array of int32): metavaluety;
+   function addstring(const avalue: lstringty): metavaluety;
+   function adddifile(const afilename: filenamety): metavaluety;
+   function addditcompileunit(const afile: metavaluety; 
+              const asourcelanguage: int32; const aproducer: string; 
+              const aemissionkind: DebugEmissionKind): metavaluety;
+
    function count: int32;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
@@ -1431,18 +1466,54 @@ begin
 end;
 
 function tmetadatalist.adddata(const akind: metadatakindty; 
-                              const adatasize: int32; out aid: int32): pointer;
+               const adatasize: int32; out avalue: metavaluety): pointer;
 begin
  result:= inherited adddata(adatasize+sizeof(metadataheaderty));
  with pmetadataheaderty(result)^ do begin
   kind:= akind;
  end;
  inc(result,sizeof(metadataheaderty));
- aid:= fid;
+ avalue.typeid:= typelist.metadata;
+ avalue.listid:= fid;
  inc(fid);
 end;
 
-function tmetadatalist.addstring(const avalue: lstringty): int32;
+function tmetadatalist.addi32const(const avalue: int32): metavaluety;
+begin
+ result:= constlist.addi32(avalue);
+end;
+
+function tmetadatalist.addnode(
+                        const avalues: array of metavaluety): metavaluety;
+var
+ i1: int32;
+begin
+ i1:= length(avalues)*sizeof(avalues[0]);
+ with pnodemetaty(
+    adddata(mdk_node,
+     sizeof(nodemetaty)+i1,result))^ do begin
+  len:= length(avalues);
+  move(avalues,data,i1);
+ end;
+end;
+
+function tmetadatalist.addnamednode(const aname: lstringty;
+               const avalues: array of int32): metavaluety;
+var
+ i1: int32;
+begin
+ i1:= length(avalues)*sizeof(avalues[0]);
+ with pnamednodemetaty(
+    adddata(mdk_namednode,
+     sizeof(namednodemetaty)+i1+aname.len,result))^ do begin
+  len:= length(avalues);
+  move(avalues,data,i1);
+  namelen:= aname.len;
+  move(aname.po^,(@data+i1)^,aname.len);
+ end;
+end;
+
+function tmetadatalist.addstring(const avalue: lstringty): metavaluety;
 begin
  with pstringmetaty(
           adddata(mdk_string,sizeof(stringmetaty)+avalue.len,result))^ do begin
@@ -1451,17 +1522,30 @@ begin
  end;
 end;
 
-function tmetadatalist.adddifile(const afilename: filenamety): int32;
+function tmetadatalist.adddifile(const afilename: filenamety): metavaluety;
 var
- i1,i2: int32;
+ m1,m2: metavaluety;
  dir,na: filenamety;
 begin
  splitfilepath(afilename,dir,na);
- i1:= addstring(stringtolstring(string(dir)));
- i2:= addstring(stringtolstring(string(na)));
- with pdifilety(adddata(mdk_file,sizeof(difilety),result))^ do begin
-  dirid:= i1;
-  fileid:= i2;
+ m1:= addstring(stringtolstring(string(dir)));
+ m2:= addstring(stringtolstring(string(na)));
+ with pdifilety(adddata(mdk_difile,sizeof(difilety),result))^ do begin
+  dirname:= m1;
+  filename:= m2;
+ end;
+end;
+
+function tmetadatalist.addditcompileunit(const afile: metavaluety; 
+              const asourcelanguage: int32; const aproducer: string; 
+                          const aemissionkind: DebugEmissionKind): metavaluety;
+begin
+ with pditcompileunit(adddata(mdk_ditcompileunit,
+                    sizeof(ditcompileunitty),result))^ do begin
+  difile:= afile;
+  sourcelanguage:= addi32const(asourcelanguage);
+  producer:= addstring(stringtolstring(aproducer));
+  emissionkind:= addi32const(ord(aemissionkind));
  end;
 end;
 

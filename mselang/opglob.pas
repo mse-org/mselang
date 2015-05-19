@@ -535,8 +535,8 @@ type
   selfinstance: dataoffsty; //stackoffset
  end;
   llvmconstty = record
-   listid: int32;
-   typeid: int32;
+   typeid: int32;        //order fix because of metadata bcwriter
+   listid: int32;        //
   end;
   immty = record
 //   ssaindex: integer;

@@ -556,6 +556,168 @@ const
   FIRST_ICMP_PREDICATE = ICMP_EQ;
   LAST_ICMP_PREDICATE = ICMP_SLE;
   BAD_ICMP_PREDICATE = predicate(ord(ICMP_SLE) + 1);
- 
+
+//
+// llvm version 3.5.1
+//
+//from llvm/Support/Dwarf.h
+  //llvm debug version
+  LLVMDebugVersion = (12 shl 16);    // Current version of debug information.
+  LLVMDebugVersion11 = (11 shl 16);  // Constant for version 11.
+  LLVMDebugVersion10 = (10 shl 16);  // Constant for version 10.
+  LLVMDebugVersion9 = (9 shl 16);    // Constant for version 9.
+  LLVMDebugVersion8 = (8 shl 16);    // Constant for version 8.
+  LLVMDebugVersion7 = (7 shl 16);    // Constant for version 7.
+  LLVMDebugVersion6 = (6 shl 16);    // Constant for version 6.
+  LLVMDebugVersion5 = (5 shl 16);    // Constant for version 5.
+  LLVMDebugVersion4 = (4 shl 16);    // Constant for version 4.
+  LLVMDebugVersionMask = $ffff0000;  // Mask for version number.
+
+  //tags
+  DW_TAG_array_type = $01;
+  DW_TAG_class_type = $02;
+  DW_TAG_entry_point = $03;
+  DW_TAG_enumeration_type = $04;
+  DW_TAG_formal_parameter = $05;
+  DW_TAG_imported_declaration = $08;
+  DW_TAG_label = $0a;
+  DW_TAG_lexical_block = $0b;
+  DW_TAG_member = $0d;
+  DW_TAG_pointer_type = $0f;
+  DW_TAG_reference_type = $10;
+  DW_TAG_compile_unit = $11;
+  DW_TAG_string_type = $12;
+  DW_TAG_structure_type = $13;
+  DW_TAG_subroutine_type = $15;
+  DW_TAG_typedef = $16;
+  DW_TAG_union_type = $17;
+  DW_TAG_unspecified_parameters = $18;
+  DW_TAG_variant = $19;
+  DW_TAG_common_block = $1a;
+  DW_TAG_common_inclusion = $1b;
+  DW_TAG_inheritance = $1c;
+  DW_TAG_inlined_subroutine = $1d;
+  DW_TAG_module = $1e;
+  DW_TAG_ptr_to_member_type = $1f;
+  DW_TAG_set_type = $20;
+  DW_TAG_subrange_type = $21;
+  DW_TAG_with_stmt = $22;
+  DW_TAG_access_declaration = $23;
+  DW_TAG_base_type = $24;
+  DW_TAG_catch_block = $25;
+  DW_TAG_const_type = $26;
+  DW_TAG_constant = $27;
+  DW_TAG_enumerator = $28;
+  DW_TAG_file_type = $29;
+  DW_TAG_friend = $2a;
+  DW_TAG_namelist = $2b;
+  DW_TAG_namelist_item = $2c;
+  DW_TAG_packed_type = $2d;
+  DW_TAG_subprogram = $2e;
+  DW_TAG_template_type_parameter = $2f;
+  DW_TAG_template_value_parameter = $30;
+  DW_TAG_thrown_type = $31;
+  DW_TAG_try_block = $32;
+  DW_TAG_variant_part = $33;
+  DW_TAG_variable = $34;
+  DW_TAG_volatile_type = $35;
+  DW_TAG_dwarf_procedure = $36;
+  DW_TAG_restrict_type = $37;
+  DW_TAG_interface_type = $38;
+  DW_TAG_namespace = $39;
+  DW_TAG_imported_module = $3a;
+  DW_TAG_unspecified_type = $3b;
+  DW_TAG_partial_unit = $3c;
+  DW_TAG_imported_unit = $3d;
+  DW_TAG_condition = $3f;
+  DW_TAG_shared_type = $40;
+  DW_TAG_type_unit = $41;
+  DW_TAG_rvalue_reference_type = $42;
+  DW_TAG_template_alias = $43;
+
+  // New in DWARF 5:
+  DW_TAG_coarray_type = $44;
+  DW_TAG_generic_subrange = $45;
+  DW_TAG_dynamic_type = $46;
+
+  DW_TAG_MIPS_loop = $4081;
+  DW_TAG_format_label = $4101;
+  DW_TAG_function_template = $4102;
+  DW_TAG_class_template = $4103;
+  DW_TAG_GNU_template_template_param = $4106;
+  DW_TAG_GNU_template_parameter_pack = $4107;
+  DW_TAG_GNU_formal_parameter_pack = $4108;
+  DW_TAG_lo_user = $4080;
+  DW_TAG_APPLE_property = $4200;
+  DW_TAG_hi_user = $ffff;
+
+  // Language names
+  DW_LANG_C89 = $0001;
+  DW_LANG_C = $0002;
+  DW_LANG_Ada83 = $0003;
+  DW_LANG_C_plus_plus = $0004;
+  DW_LANG_Cobol74 = $0005;
+  DW_LANG_Cobol85 = $0006;
+  DW_LANG_Fortran77 = $0007;
+  DW_LANG_Fortran90 = $0008;
+  DW_LANG_Pascal83 = $0009;
+  DW_LANG_Modula2 = $000a;
+  DW_LANG_Java = $000b;
+  DW_LANG_C99 = $000c;
+  DW_LANG_Ada95 = $000d;
+  DW_LANG_Fortran95 = $000e;
+  DW_LANG_PLI = $000f;
+  DW_LANG_ObjC = $0010;
+  DW_LANG_ObjC_plus_plus = $0011;
+  DW_LANG_UPC = $0012;
+  DW_LANG_D = $0013;
+  // New in DWARF 5:
+  DW_LANG_Python = $0014;
+  DW_LANG_OpenCL = $0015;
+  DW_LANG_Go = $0016;
+  DW_LANG_Modula3 = $0017;
+  DW_LANG_Haskell = $0018;
+  DW_LANG_C_plus_plus_03 = $0019;
+  DW_LANG_C_plus_plus_11 = $001a;
+  DW_LANG_OCaml = $001b;
+
+  DW_LANG_lo_user = $8000;
+  DW_LANG_Mips_Assembler = $8001;
+  DW_LANG_hi_user = $ffff;
+
+{DI* metadata nodes from llvm/IR/DebugInfo.h, llvm/lib/IR/DebugInfo.cpp}
+
+//first field is (LLVMDebugVersion or DW_TAG_*)                         //0
+//DIScope
+(*
+  StringRef getName() const;
+  StringRef getFilename() const;                -+combined to subnode   //1
+  StringRef getDirectory() const;               -+                       
+*)
+
+// DICompileUnit(DIScope)
+(*
+  dwarf::SourceLanguage getLanguage() const {
+    return static_cast<dwarf::SourceLanguage>(getUnsignedField(2));     //2
+  }
+  StringRef getProducer() const { return getStringField(3); }           //3
+
+  bool isOptimized() const { return getUnsignedField(4) != 0; }         //4
+  StringRef getFlags() const { return getStringField(5); }              //5
+  unsigned getRunTimeVersion() const { return getUnsignedField(6); }    //6
+
+  DIArray getEnumTypes() const;                                         //7
+  DIArray getRetainedTypes() const;                                     //8
+  DIArray getSubprograms() const;                                       //9
+  DIArray getGlobalVariables() const;                                   //10
+  DIArray getImportedEntities() const;                                  //11
+
+  StringRef getSplitDebugFilename() const { return getStringField(12); }//12
+  unsigned getEmissionKind() const { return getUnsignedField(13); }     //13
+*)
+type
+ DebugEmissionKind = (FullDebug=1, LineTablesOnly);
+                           //from llvm/include/llvm/IR/DIBuilder.h
+
 implementation
 end.

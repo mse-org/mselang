@@ -472,7 +472,10 @@ type
   name: string;      //todo: use lstringty
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
-  filepathmeta: int32;
+  
+  filepathmeta: metavaluety;
+  compileunitmeta: metavaluety;
+  
   state: unitstatesty;
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;

@@ -53,7 +53,7 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler,listutils;
+ subhandler,listutils,llvmbitcodes;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -401,6 +401,10 @@ begin
    if s.debugoptions <> [] then begin
     s.unitinfo^.filepathmeta:= 
                       s.unitinfo^.metadatalist.adddifile(s.unitinfo^.filepath);
+    s.unitinfo^.compileunitmeta:= s.unitinfo^.metadatalist.addditcompileunit(
+          s.unitinfo^.filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',FullDebug);
+    s.unitinfo^.metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
+                                          [s.unitinfo^.compileunitmeta.listid]);
    end;
   end
   else begin

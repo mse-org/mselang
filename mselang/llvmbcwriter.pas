@@ -61,7 +61,8 @@ type
    fdebugloc: debuglocty;
    ftrampolineop: popinfoty;
   protected
-   fmetadata: tmetadatalist;
+//   fmetadata: tmetadatalist;
+   fmetadatatype: int32;
    fconstseg: int32;
    flastdebugloc: debuglocty;
    fconststart: int32;      //start of global constants
@@ -119,8 +120,8 @@ type
    function typeval(const typeid: int32): int32; inline;
    function ptypeval(const typeid: int32): int32; inline;
    function pptypeval(const typeid: int32): int32; inline;
-   function typeval(const alloc: typeallocinfoty): int32; 
-   function ptypeval(const alloc: typeallocinfoty): int32;
+   function typeval(const alloc: typeallocinfoty): int32; inline;
+   function ptypeval(const alloc: typeallocinfoty): int32; inline;
    function constval(const constid: int32): int32; inline;
    function globval(const globid: int32): int32; inline;
    function paramval(const paramid: int32): int32; inline;
@@ -141,6 +142,8 @@ type
    procedure emitrec(const id: int32; const data: array of int32;
                                                 const adddata: array of int32);
    procedure emitrec(const id: int32; const len: int32; const data: pcard8);
+   procedure emitrec(const id: int32; const len: int32; const data: pint32);
+
    procedure emitnopssaop(); //1 ssa
    
    procedure emitsub(const atype: int32; const acallingconv: callingconvty;
@@ -210,7 +213,9 @@ type
 
    procedure marktrampoline(const apc: popinfoty);
    procedure releasetrampoline(out apc: popinfoty); //nil if none
-      
+  
+   procedure emitmetadatanode(const len: int32; const values: pmetavaluety);
+   procedure emitmetadatanode(const values: array of metavaluety);
    function valindex(const aadress: segaddressty): integer;
    property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
@@ -370,13 +375,17 @@ var
  pa,pe: pint32;
  i1,i2: int32;
  po9: paggregateconstty;
+ pm1: pmetadataty;
+ metadatatype: int32;
+ metanullint,metanullstring,metanullnode,
+ metaDW_TAG_compile_unit: metavaluety;
 begin
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;
  flastdebugloc.line:= -1;
  flastdebugloc.col:= 0;
- fmetadata:= metadata;
+ fmetadatatype:= consts.typelist.metadata;
  write32(int32((uint32($dec0) shl 16) or (uint32(byte('C')) shl 8) or
                                                              uint32('B')));
                                 //llvm ir signature
@@ -396,9 +405,16 @@ begin
 
  beginblock(MODULE_BLOCK_ID,3);
  emitrec(ord(MODULE_CODE_VERSION),[1]);
+ 
+ if metadata.count > 0 then begin
+  metanullint.listid:= ord(nc_i8);
+  metanullint.typeid:= ord(das_8);
+  metaDW_TAG_compile_unit:= consts.addi32(
+               DW_TAG_compile_unit or LLVMDebugVersion);
+ end;
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
- 
+
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
@@ -546,7 +562,7 @@ begin
    end;
    endblock();
   end;
-
+  
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;
@@ -629,33 +645,52 @@ begin
    endblock(); 
   end;
  end;
-end;
-
-procedure tllvmbcwriter.stop;
-var
- pm1: pmetadataty;
-begin
- if fmetadata.count > 0 then begin
+ if metadata.count > 0 then begin
+  metanullstring:= metadata.addstring(emptylstring);
+  metanullnode:= metadata.addnode([]);
   beginblock(METADATA_BLOCK_ID,3);
-  pm1:= fmetadata.first();
+  pm1:= metadata.first();
   while pm1 <> nil do begin
    case pm1^.header.kind of
     mdk_string: begin
-     with pstringmetaty(pm1)^ do begin
-      emitrec(ord(METADATA_STRING),len,@data);
+     with pstringmetaty(@pm1^.data)^ do begin
+      emitrec(ord(METADATA_STRING),len,pcard8(@data));
      end;
     end;
-    mdk_file: begin
+    mdk_node: begin
+     with pnodemetaty(@pm1^.data)^ do begin
+      emitmetadatanode(len,@data);
+     end;
+    end;
+    mdk_difile: begin
+     with pdifilety(@pm1^.data)^ do begin
+      emitmetadatanode([filename,dirname]);
+     end;
+    end;
+    mdk_ditcompileunit: begin
+     with pditcompileunit(@pm1^.data)^ do begin
+      emitmetadatanode([metaDW_TAG_compile_unit,
+      //                      isoptimized flags          runtimeversion
+        difile,sourcelanguage,metanullint,metanullstring,metanullint,
+      //enumtypes    retainedtypes subprograms globalvariables importedentities
+        metanullnode,metanullnode, metanullnode,metanullnode,  metanullnode,
+      //splitdebugfilename emissionkind
+        metanullstring,    emissionkind]);
+     end;     
     end;
     else begin
      internalerror1(ie_llvm,'20150516A');
     end;
    end;
-   pm1:= fmetadata.next();
+   pm1:= metadata.next();
   end;
   endblock();  
  end;
 
+end;
+
+procedure tllvmbcwriter.stop;
+begin
  endblock();
 {$ifdef mse_checkinternalerror}
  if fblockstackpo <> @fblockstack then begin
@@ -944,6 +979,22 @@ procedure tllvmbcwriter.emitrec(const id: int32;
                                 //todo: use abbrev
 var
  po1,pe: pcard8;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(id);
+ emitvbr6(len);
+ po1:= data;
+ pe:= data+len;
+ while po1 < pe do begin
+  emitvbr6(po1^);
+  inc(po1);
+ end;
+end;
+
+procedure tllvmbcwriter.emitrec(const id: int32; const len: int32;
+                                                      const data: pint32);
+var
+ po1,pe: pint32;
 begin
  emitcode(ord(UNABBREV_RECORD));
  emitvbr6(id);
@@ -1623,6 +1674,36 @@ begin
  emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
                                    [aresulttype,fsubopindex-apersonality,1,0]);
  inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitmetadatanode(const len: int32;
+               const values: pmetavaluety);
+var
+ po1,pe: pmetavaluety;
+begin
+ po1:= values;
+ pe:= po1+len;
+ while po1 < pe do begin
+  if po1^.typeid <> fmetadatatype then begin
+   po1^.listid:= po1^.listid + fconststart;
+  end;
+  po1^.typeid:= po1^.typeid * typeindexstep;
+  inc(po1);
+ end;
+ emitrec(ord(METADATA_NODE),len*2,pint32(values));
+ po1:= values;
+ while po1 < pe do begin //restore
+  po1^.typeid:= po1^.typeid div typeindexstep;
+  if po1^.typeid <> fmetadatatype then begin
+   po1^.listid:= po1^.listid - fconststart;
+  end;
+  inc(po1);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetadatanode(const values: array of metavaluety);
+begin
+ emitmetadatanode(length(values),@values[0]);
 end;
 
 end.
