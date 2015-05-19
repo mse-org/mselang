@@ -146,6 +146,7 @@ type
    fintfitem: int32;
    flandingpad: int32;
    fmetadata: int32;
+   fvoid: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
@@ -171,6 +172,7 @@ type
    property intfitem: int32 read fintfitem;
    property landingpad: int32 read flandingpad;
    property metadata: int32 read fmetadata;
+   property void: int32 read fvoid;
  end;
 
  consttypety = (ct_none,ct_null,ct_pointercast,
@@ -334,7 +336,13 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
- metavaluety = llvmconstty;
+ metavalueflagty = (mvf_globval,mvf_sub);
+ metavalueflagsty = set of metavalueflagty;
+ 
+ metavaluety = record
+  value: llvmconstty;
+  flags: metavalueflagsty;
+ end;
  pmetavaluety = ^metavaluety;
  
  nodemetaty = record
@@ -365,16 +373,26 @@ type
  end;
  pdifilety = ^difilety;
  
- ditcompileunitty = record
+ dicompileunitty = record
   difile: metavaluety;
   sourcelanguage: metavaluety;
   producer: metavaluety;
   emissionkind: metavaluety;
  end;
- pditcompileunit = ^ditcompileunitty;
+ pdicompileunitty = ^dicompileunitty;
+ 
+ disubprogramty = record
+  difile: metavaluety;
+  context: metavaluety;
+  linenumber: metavaluety;
+  functionid: metavaluety;
+  name: metavaluety;
+ end;
+ pdisubprogramty = ^disubprogramty;
 
  metadatakindty = (mdk_none,mdk_node,mdk_namednode,
-                   mdk_string,mdk_difile,mdk_ditcompileunit);
+                   mdk_string,mdk_difile,
+                   mdk_dicompileunit,mdk_disubprogram);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -394,6 +412,7 @@ type
    function adddata(const akind: metadatakindty;
                     const adatasize: int32; out avalue: metavaluety): pointer;
    function addi32const(const avalue: int32): metavaluety;
+   function dwarftag(const atag: int32): metavaluety;
   public
    procedure clear(); override;
    function addnode(const avalues: array of metavaluety): metavaluety;
@@ -401,10 +420,13 @@ type
                                 const avalues: array of int32): metavaluety;
    function addstring(const avalue: lstringty): metavaluety;
    function adddifile(const afilename: filenamety): metavaluety;
-   function addditcompileunit(const afile: metavaluety; 
+   function addfiletype(const afile: metavaluety): metavaluety; //name-dir-pair
+   function adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string; 
               const aemissionkind: DebugEmissionKind): metavaluety;
-
+   function adddisubprogram(const afile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const alinenumber: int32; const afunction: metavaluety): metavaluety;
    function count: int32;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
@@ -558,7 +580,7 @@ end;
 procedure ttypehashdatalist.clear;
 var
  k1: databitsizety;
-// t1: typeallocdataty;
+ t1: typeallocdataty;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
@@ -569,6 +591,10 @@ begin
   fclassdef:= addbytevalue(sizeof(classdefheaderty));
   fintfitem:= addstructvalue([inttype,pointertype]);
   flandingpad:= addstructvalue([pointertype,inttype]);
+  t1.header.size:= -1;
+  t1.header.data:= nil;
+  t1.kind:= das_none;
+  fvoid:= addvalue(t1)^.data.header.listindex;
  end;
  {
  t1.header.size:= -1;
@@ -875,7 +901,7 @@ var
 begin
  alloc1.header.size:= -1;
  if avalue then begin
-  alloc1.header.data:= pointer(ptruint(1));
+  alloc1.header.data:= pointer(ptruint(-1));
  end
  else begin
   alloc1.header.data:= pointer(ptruint(0));
@@ -1473,14 +1499,16 @@ begin
   kind:= akind;
  end;
  inc(result,sizeof(metadataheaderty));
- avalue.typeid:= typelist.metadata;
- avalue.listid:= fid;
+ avalue.value.typeid:= typelist.metadata;
+ avalue.value.listid:= fid;
+ avalue.flags:= [];
  inc(fid);
 end;
 
 function tmetadatalist.addi32const(const avalue: int32): metavaluety;
 begin
- result:= constlist.addi32(avalue);
+ result.value:= constlist.addi32(avalue);
+ result.flags:= [];
 end;
 
 function tmetadatalist.addnode(
@@ -1536,17 +1564,45 @@ begin
  end;
 end;
 
-function tmetadatalist.addditcompileunit(const afile: metavaluety; 
+function tmetadatalist.adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string; 
                           const aemissionkind: DebugEmissionKind): metavaluety;
 begin
- with pditcompileunit(adddata(mdk_ditcompileunit,
-                    sizeof(ditcompileunitty),result))^ do begin
+ with pdicompileunitty(adddata(mdk_dicompileunit,
+                    sizeof(dicompileunitty),result))^ do begin
   difile:= afile;
   sourcelanguage:= addi32const(asourcelanguage);
   producer:= addstring(stringtolstring(aproducer));
   emissionkind:= addi32const(ord(aemissionkind));
  end;
+end;
+
+function tmetadatalist.adddisubprogram(const afile: metavaluety;
+          const acontext: metavaluety; const aname: lstringty;
+          const alinenumber: int32; const afunction: metavaluety): metavaluety;
+var
+ m1: metavaluety;
+begin
+ m1:= addstring(aname);
+ with pdisubprogramty(adddata(mdk_disubprogram,
+                    sizeof(disubprogramty),result))^ do begin
+  difile:= afile;
+  context:= acontext;
+  linenumber:= addi32const(alinenumber);
+  functionid:= afunction;
+  name:= m1;
+ end;
+end;
+
+function tmetadatalist.dwarftag(const atag: int32): metavaluety;
+begin
+ result.value:= constlist.addi32(atag or LLVMDebugVersion);
+ result.flags:= [];
+end;
+
+function tmetadatalist.addfiletype(const afile: metavaluety): metavaluety;
+begin
+ result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;
 
 end.

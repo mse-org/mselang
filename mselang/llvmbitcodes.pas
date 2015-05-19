@@ -715,6 +715,195 @@ const
   StringRef getSplitDebugFilename() const { return getStringField(12); }//12
   unsigned getEmissionKind() const { return getUnsignedField(13); }     //13
 *)
+
+//DIType(DIScope)
+
+(*
+protected:
+  friend class DIDescriptor;
+  void printInternal(raw_ostream &OS) const;
+
+public:
+  explicit DIType(const MDNode *N = nullptr) : DIScope(N) {}
+  operator DITypeRef () const {
+    assert(isType() &&
+           "constructing DITypeRef from an MDNode that is not a type");
+    return DITypeRef(&*getRef());
+  }
+
+  /// Verify - Verify that a type descriptor is well formed.
+  bool Verify() const;
+
+  DIScopeRef getContext() const { return getFieldAs<DIScopeRef>(2); }     //2
+  StringRef getName() const { return getStringField(3); }                 //3
+  unsigned getLineNumber() const { return getUnsignedField(4); }          //4
+  uint64_t getSizeInBits() const { return getUInt64Field(5); }            //5
+  uint64_t getAlignInBits() const { return getUInt64Field(6); }           //6
+  // FIXME: Offset is only used for DW_TAG_member nodes.  Making every type
+  // carry this is just plain insane.
+  uint64_t getOffsetInBits() const { return getUInt64Field(7); }          //7
+  unsigned getFlags() const { return getUnsignedField(8); }               //8
+  bool isPrivate() const { return (getFlags() & FlagPrivate) != 0; }
+  bool isProtected() const { return (getFlags() & FlagProtected) != 0; }
+  bool isForwardDecl() const { return (getFlags() & FlagFwdDecl) != 0; }
+  // isAppleBlock - Return true if this is the Apple Blocks extension.
+  bool isAppleBlockExtension() const {
+    return (getFlags() & FlagAppleBlock) != 0;
+  }
+  bool isBlockByrefStruct() const {
+    return (getFlags() & FlagBlockByrefStruct) != 0;
+  }
+  bool isVirtual() const { return (getFlags() & FlagVirtual) != 0; }
+  bool isArtificial() const { return (getFlags() & FlagArtificial) != 0; }
+  bool isObjectPointer() const { return (getFlags() & FlagObjectPointer) != 0; }
+  bool isObjcClassComplete() const {
+    return (getFlags() & FlagObjcClassComplete) != 0;
+  }
+  bool isVector() const { return (getFlags() & FlagVector) != 0; }
+  bool isStaticMember() const { return (getFlags() & FlagStaticMember) != 0; }
+  bool isLValueReference() const {
+    return (getFlags() & FlagLValueReference) != 0;
+  }
+  bool isRValueReference() const {
+    return (getFlags() & FlagRValueReference) != 0;
+  }
+  bool isValid() const { return DbgNode && isType(); }
+
+  /// replaceAllUsesWith - Replace all uses of debug info referenced by
+  /// this descriptor.
+  void replaceAllUsesWith(LLVMContext &VMContext, DIDescriptor D);
+  void replaceAllUsesWith(MDNode *D);
+};
+*)
+
+//DIDerivedType(DIType)
+(*
+  DITypeRef getTypeDerivedFrom() const { return getFieldAs<DITypeRef>(9); } //9
+
+  /// getObjCProperty - Return property node, if this ivar is
+  /// associated with one.
+  MDNode *getObjCProperty() const;
+
+  DITypeRef getClassType() const {
+    assert(getTag() == dwarf::DW_TAG_ptr_to_member_type);
+    return getFieldAs<DITypeRef>(10);
+  }
+
+  Constant *getConstant() const {
+    assert((getTag() == dwarf::DW_TAG_member) && isStaticMember());
+    return getConstantField(10);
+  }
+
+  /// Verify - Verify that a derived type descriptor is well formed.
+  bool Verify() const;
+};
+*)
+
+//DICompositeType(DIDerivedType)
+(*
+  DIArray getTypeArray() const { return getFieldAs<DIArray>(10); }       //10
+  unsigned getRunTimeLang() const { return getUnsignedField(11); }       //11
+  DITypeRef getContainingType() const { return getFieldAs<DITypeRef>(12); }//12
+  void setContainingType(DICompositeType ContainingType);
+  DIArray getTemplateParams() const { return getFieldAs<DIArray>(13); }  //13
+  MDString *getIdentifier() const;                                       //14
+};
+
+DICompositeType DIBuilder::createSubroutineType(DIFile File,
+                                                DIArray ParameterTypes,
+                                                unsigned Flags) {
+  // TAG_subroutine_type is encoded in DICompositeType format.
+  Value *Elts[] = {
+    GetTagConstant(VMContext, dwarf::DW_TAG_subroutine_type),
+    Constant::getNullValue(Type::getInt32Ty(VMContext)),
+    nullptr,
+    MDString::get(VMContext, ""),
+    ConstantInt::get(Type::getInt32Ty(VMContext), 0), // Line
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Size
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Align
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Offset
+    ConstantInt::get(Type::getInt32Ty(VMContext), Flags), // Flags
+    nullptr,
+    ParameterTypes,
+    ConstantInt::get(Type::getInt32Ty(VMContext), 0),
+    nullptr,
+    nullptr,
+    nullptr  // Type Identifer
+  };
+  return DICompositeType(MDNode::get(VMContext, Elts));
+}
+*)
+
+//DISubprogram(DIScope)
+(*
+  DIScopeRef getContext() const { return getFieldAs<DIScopeRef>(2); }   //2
+  StringRef getName() const { return getStringField(3); }               //3
+  StringRef getDisplayName() const { return getStringField(4); }        //4
+  StringRef getLinkageName() const { return getStringField(5); }        //5
+  unsigned getLineNumber() const { return getUnsignedField(6); }        //6
+  DICompositeType getType() const { return getFieldAs<DICompositeType>(7); }
+                                    //DW_TAG_subroutine_type
+  /// isLocalToUnit - Return true if this subprogram is local to the current
+  /// compile unit, like 'static' in C.
+  unsigned isLocalToUnit() const { return getUnsignedField(8); }        //8
+  unsigned isDefinition() const { return getUnsignedField(9); }         //9
+
+  unsigned getVirtuality() const { return getUnsignedField(10); }       //10
+  unsigned getVirtualIndex() const { return getUnsignedField(11); }     //11
+
+  DITypeRef getContainingType() const { return getFieldAs<DITypeRef>(12); }
+
+  unsigned getFlags() const { return getUnsignedField(13); }            //13
+
+  unsigned isArtificial() const {
+    return (getUnsignedField(13) & FlagArtificial) != 0;
+  }
+  /// isPrivate - Return true if this subprogram has "private"
+  /// access specifier.
+  bool isPrivate() const { return (getUnsignedField(13) & FlagPrivate) != 0; }
+  /// isProtected - Return true if this subprogram has "protected"
+  /// access specifier.
+  bool isProtected() const {
+    return (getUnsignedField(13) & FlagProtected) != 0;
+  }
+  /// isExplicit - Return true if this subprogram is marked as explicit.
+  bool isExplicit() const { return (getUnsignedField(13) & FlagExplicit) != 0; }
+  /// isPrototyped - Return true if this subprogram is prototyped.
+  bool isPrototyped() const {
+    return (getUnsignedField(13) & FlagPrototyped) != 0;
+  }
+
+  /// Return true if this subprogram is a C++11 reference-qualified
+  /// non-static member function (void foo() &).
+  unsigned isLValueReference() const {
+    return (getUnsignedField(13) & FlagLValueReference) != 0;
+  }
+
+  /// Return true if this subprogram is a C++11
+  /// rvalue-reference-qualified non-static member function
+  /// (void foo() &&).
+  unsigned isRValueReference() const {
+    return (getUnsignedField(13) & FlagRValueReference) != 0;
+  }
+
+  unsigned isOptimized() const;                                        //14
+
+  Function *getFunction() const { return getFunctionField(15); }       //15
+  void replaceFunction(Function *F) { replaceFunctionField(15, F); }
+  DIArray getTemplateParams() const { return getFieldAs<DIArray>(16); }//16
+  DISubprogram getFunctionDeclaration() const {
+    return getFieldAs<DISubprogram>(17);                               //17
+  }
+  MDNode *getVariablesNodes() const;                                   //18
+  DIArray getVariables() const;
+
+  /// getScopeLineNumber - Get the beginning of the scope of the
+  /// function, not necessarily where the name of the program
+  /// starts.
+  unsigned getScopeLineNumber() const { return getUnsignedField(19); } //19
+*)
+
+
 type
  DebugEmissionKind = (FullDebug=1, LineTablesOnly);
                            //from llvm/include/llvm/IR/DIBuilder.h

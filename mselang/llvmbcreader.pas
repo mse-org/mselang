@@ -1057,7 +1057,8 @@ begin
      po1^.kind:= typecodes(rec1[1]);
     end;
     if high(rec1) = 1 then begin
-     output(ok_beginend,typecodenames[typecodes(rec1[1])]);
+     output(ok_beginend,inttostr(ftypelist.count-1)+'.'+
+                                typecodenames[typecodes(rec1[1])]);
     end
     else begin //length > 2
      case typecodes(rec1[1]) of
@@ -1173,7 +1174,7 @@ begin
   end;
  end;
 end;
-
+var testvar: pglobinfoty;
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1195,25 +1196,34 @@ var
   pe:= @rec1[high(rec1)];
   while po1 < pe do begin
    with ftypelist.item(po1^)^ do begin
-    if kind = TYPE_CODE_METADATA then begin
-     result:= result+'M'+inttostr((po1+1)^);
-    end
-    else begin
-     with fgloblist.item((po1+1)^)^ do begin
-      case kind of 
-       gk_const: begin
-        result:= result+'C'+inttostr((po1+1)^)+'=';
-        case constkind of
-         CST_CODE_INTEGER: begin
-          result:= result+inttostr(intconst);
-         end;
-         CST_CODE_NULL: begin
-          result:= result+'NULL';
+    case kind of 
+     TYPE_CODE_METADATA: begin
+       result:= result+'M'+inttostr((po1+1)^);
+     end;
+     TYPE_CODE_VOID: begin
+      result:= result+'NULL';
+     end;
+     else begin
+testvar:= fgloblist.item((po1+1)^);
+      with fgloblist.item((po1+1)^)^ do begin
+       if valuetype <> po1^ then begin
+        error('Value types do not match');
+       end;
+       case kind of 
+        gk_const: begin
+         result:= result+'C'+inttostr((po1+1)^)+'=';
+         case constkind of
+          CST_CODE_INTEGER: begin
+           result:= result+inttostr(intconst);
+          end;
+          CST_CODE_NULL: begin
+           result:= result+'NULL';
+          end;
          end;
         end;
-       end;
-       else begin
-        result:= result+'G'+inttostr((po1+1)^);
+        else begin
+         result:= result+'G'+inttostr((po1+1)^);
+        end;
        end;
       end;
      end;
@@ -1304,7 +1314,7 @@ begin
   end;
  end;
 end;
-var testvar: pglobinfoty;
+
 procedure tllvmbcreader.readfunctionblock();
 var
  rec1: valuearty;
@@ -1376,7 +1386,6 @@ var
    if (avalue < 0) or (avalue >= list1.count) then begin
     error('Invalid global index');
    end;
-testvar:= @pglobinfoty(list1.fdata)[avalue];
    with pglobinfoty(list1.fdata)[avalue] do begin
     if kind = gk_const then begin
      result:= constname+inttostr(avalue)+'=';

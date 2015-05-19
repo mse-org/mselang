@@ -150,7 +150,8 @@ implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
- subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils;
+ subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
+ llvmlists;
 
 procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 
@@ -242,6 +243,8 @@ var
  hasfini: boolean;
  finicall: opaddressty;
  i1: int32;
+ lstr1: lstringty;
+ m1: metavaluety;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -281,7 +284,17 @@ begin
   end;  
  end;
  if info.backend = bke_llvm then begin
-  globlist.addsubvalue(nil,stringtolstring('main'));
+  lstr1:= stringtolstring('main');
+  m1.value.listid:= globlist.addsubvalue(nil,lstr1);
+  m1.value.typeid:= globlist.gettype(m1.value.listid);
+  m1.flags:= [mvf_globval,mvf_sub];
+  if info.s.debugoptions <> [] then begin
+   with info.s.unitinfo^ do begin
+    metadatalist.adddisubprogram(filepathmeta,
+         metadatalist.addfiletype(filepathmeta),lstr1,
+         info.contextstack[info.s.stackindex].start.line+1,m1);
+   end;
+  end;
  end;
  if hasfini then begin
   with getoppo(startupoffset)^ do begin

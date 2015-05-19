@@ -401,10 +401,10 @@ begin
    if s.debugoptions <> [] then begin
     s.unitinfo^.filepathmeta:= 
                       s.unitinfo^.metadatalist.adddifile(s.unitinfo^.filepath);
-    s.unitinfo^.compileunitmeta:= s.unitinfo^.metadatalist.addditcompileunit(
+    s.unitinfo^.compileunitmeta:= s.unitinfo^.metadatalist.adddicompileunit(
           s.unitinfo^.filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',FullDebug);
     s.unitinfo^.metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
-                                          [s.unitinfo^.compileunitmeta.listid]);
+                                   [s.unitinfo^.compileunitmeta.value.listid]);
    end;
   end
   else begin
