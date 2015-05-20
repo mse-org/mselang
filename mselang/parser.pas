@@ -322,7 +322,6 @@ begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
      loc.scope:= info.s.currentfilemeta;
-     loc.iaval:= info.s.currentcompileunitmeta;
     end;
    end;
   end;
@@ -407,7 +406,7 @@ begin
 //     debugfilemeta:= metadatalist.add
      compileunitmeta:= metadatalist.adddicompileunit(
            filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
-     metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
+     metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
                                            [compileunitmeta.value.listid]);
     end;
    end;

@@ -723,7 +723,6 @@ type
   line: int32;  //llvm constlistid
   col: int32;   //llvm constlistid
   scope: int32; //llvm file
-  iaval: int32; //llvm compile unit
  end;
  
  lineinfoty = record
