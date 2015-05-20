@@ -869,21 +869,21 @@ DICompositeType DIBuilder::createSubroutineType(DIFile File,
                                                 unsigned Flags) {
   // TAG_subroutine_type is encoded in DICompositeType format.
   Value *Elts[] = {
-    GetTagConstant(VMContext, dwarf::DW_TAG_subroutine_type),
-    Constant::getNullValue(Type::getInt32Ty(VMContext)),
-    nullptr,
-    MDString::get(VMContext, ""),
-    ConstantInt::get(Type::getInt32Ty(VMContext), 0), // Line
-    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Size
-    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Align
-    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Offset
-    ConstantInt::get(Type::getInt32Ty(VMContext), Flags), // Flags
-    nullptr,
-    ParameterTypes,
-    ConstantInt::get(Type::getInt32Ty(VMContext), 0),
-    nullptr,
-    nullptr,
-    nullptr  // Type Identifer
+    GetTagConstant(VMContext, dwarf::DW_TAG_subroutine_type),         //0
+    Constant::getNullValue(Type::getInt32Ty(VMContext)),              //1
+    nullptr,                                                          //2
+    MDString::get(VMContext, ""),                                     //3
+    ConstantInt::get(Type::getInt32Ty(VMContext), 0), // Line         //4
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Size         //5
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Align        //6
+    ConstantInt::get(Type::getInt64Ty(VMContext), 0), // Offset       //6
+    ConstantInt::get(Type::getInt32Ty(VMContext), Flags), // Flags    //8
+    nullptr,                                                          //9
+    ParameterTypes,                                                   //10
+    ConstantInt::get(Type::getInt32Ty(VMContext), 0),                 //11
+    nullptr,                                                          //12
+    nullptr,                                                          //13
+    nullptr  // Type Identifer                                        //14
   };
   return DICompositeType(MDNode::get(VMContext, Elts));
 }

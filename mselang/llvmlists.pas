@@ -392,13 +392,19 @@ type
   context: metavaluety;
   linenumber: metavaluety;
   functionid: metavaluety;
+  typeid: metavaluety;
   name: metavaluety;
  end;
  pdisubprogramty = ^disubprogramty;
 
+ disubroutinetypety = record
+  params: metavaluety;
+ end;
+ pdisubroutinetypety = ^disubroutinetypety;
+
  metadatakindty = (mdk_none,mdk_node,mdk_namednode,
                    mdk_string,mdk_difile,
-                   mdk_dicompileunit,mdk_disubprogram);
+                   mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -413,15 +419,18 @@ type
  pmetadataty = ^metadataty;
  
  tmetadatalist = class(tindexbufferdatalist)
+  private
+   fnullnode: metavaluety;
   protected
 //   fid: int32;
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
    function dwarftag(const atag: int32): metavaluety;
   public
-//   procedure clear(); override;
+   procedure clear(); override;
    function i8const(const avalue: int8): metavaluety;
    function i32const(const avalue: int32): metavaluety;
+   property nullnode: metavaluety read fnullnode;
 
    function addnode(const avalues: array of metavaluety): metavaluety;
    procedure addnamednode(const aname: lstringty;
@@ -435,8 +444,14 @@ type
               const aemissionkind: DebugEmissionKind): metavaluety;
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
-           const alinenumber: int32; const afunction: metavaluety): metavaluety;
-//   function count: int32;
+           const alinenumber: int32; const afunction: metavaluety;
+           const atype: metavaluety): metavaluety;
+   function adddisubroutinetype(const aparams: metavaluety): metavaluety;
+   
+  {
+   function adddicompositetype(const atag: int32; 
+                       const aitems: array of metavaluety): metavaluety;
+  }
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
  end;
@@ -1484,18 +1499,15 @@ begin
 end;
 
 { tmetadatalist }
-{
+
 procedure tmetadatalist.clear;
 begin
  inherited;
- fid:= 0;
+ if not (bdls_destroying in fstate) then begin
+  fnullnode:= addnode([]);
+ end;
 end;
 
-function tmetadatalist.count: int32;
-begin
- result:= fid;
-end;
-}
 function tmetadatalist.first: pmetadataty;
 begin
  result:= firstdata();
@@ -1603,7 +1615,8 @@ end;
 
 function tmetadatalist.adddisubprogram(const afile: metavaluety;
           const acontext: metavaluety; const aname: lstringty;
-          const alinenumber: int32; const afunction: metavaluety): metavaluety;
+          const alinenumber: int32; const afunction: metavaluety;
+          const atype: metavaluety): metavaluety;
 var
  m1: metavaluety;
 begin
@@ -1615,6 +1628,7 @@ begin
   linenumber:= i32const(alinenumber);
   functionid:= afunction;
   name:= m1;
+  typeid:= atype;
  end;
 end;
 
@@ -1629,4 +1643,20 @@ begin
  result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;
 
+function tmetadatalist.adddisubroutinetype(
+                               const aparams: metavaluety): metavaluety;
+begin
+ with pdisubroutinetypety(adddata(mdk_disubroutinetype,
+                    sizeof(disubroutinetypety),result))^ do begin
+  params:= aparams;
+ end;
+end;
+
+{
+function tmetadatalist.adddicompositetype(const atag: int32;
+               const aitems: array of metavaluety): metavaluety;
+begin
+ result:= addnode([dwarftag(atag)],aitems);
+end;
+}
 end.

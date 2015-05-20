@@ -381,7 +381,8 @@ var
  metadatatype: int32;
  metanull,metanullint,metanullstring,metanullnode,
  metatrue,
- metaDW_TAG_compile_unit,metaDW_TAG_subprogram: metavaluety;
+ metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
+ metaDW_TAG_subroutine_type: metavaluety;
  m1: metavaluety;
 begin
  ftrampolineop:= nil;
@@ -425,6 +426,9 @@ begin
   metaDW_TAG_subprogram.value:= consts.addi32(
                DW_TAG_subprogram or LLVMDebugVersion);
   metaDW_TAG_subprogram.flags:= [];
+  metaDW_TAG_subroutine_type.value:= consts.addi32(
+               DW_TAG_subroutine_type or LLVMDebugVersion);
+  metaDW_TAG_subroutine_type.flags:= [];
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
     [
@@ -702,14 +706,27 @@ begin
     mdk_disubprogram: begin
      with pdisubprogramty(@pm1^.data)^ do begin
       emitmetadatanode([metaDW_TAG_subprogram,
-      //       context,name,displayname,linkagename,   linenumber,type, todo:!!
-        difile,context,name,name,       metanullstring,linenumber,metanullnode,
+      //       context,name,displayname,linkagename,   linenumber,type,
+        difile,context,name,name,       metanullstring,linenumber,typeid,
       //localtounit,definition,virtuality, virtualindex,containingtype,
         metanullint,metatrue,  metanullint,metanullint, metanull,
       //flags,      optimized,  function,  templateparams,functiondeclaration,
         metanullint,metanullint,functionid,metanull,      metanull,
       //variablesnodes,scopelinenumber
         metanullnode,  linenumber]);
+     end;
+    end;
+    mdk_disubroutinetype: begin
+     with pdisubroutinetypety(@pm1^.data)^ do begin
+      emitmetadatanode([metaDW_TAG_subroutine_type,
+    //scope,   context, name,          linenumber,
+      metanull,metanull,metanullstring,metanullint,
+    //sizeinbits, aligninbits,offsetinbits,
+      metanullint,metanullint,metanullint,
+    //flags,      typederivedfrom,typearray,runtimelang,contyainingtype,
+      metanullint,metanull,       params,   metanullint,metanull,
+    //templateparams,identifier
+      metanull,      metanull]);
      end;
     end;
     else begin

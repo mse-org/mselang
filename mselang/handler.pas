@@ -151,7 +151,7 @@ uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
- llvmlists;
+ llvmlists,llvmbitcodes;
 
 procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 
@@ -243,8 +243,9 @@ begin
    if info.s.debugoptions <> [] then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
-                            debugfilemeta,lstr1,
-                         info.contextstack[info.s.stackindex].start.line+1,m1);
+            debugfilemeta,lstr1,
+                  info.contextstack[info.s.stackindex].start.line+1,m1,
+                  metadatalist.adddisubroutinetype(metadatalist.nullnode));
      m1:= metadatalist.addnode([mainsubmeta]);
      pdicompileunitty(
              metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
@@ -301,25 +302,6 @@ begin
   end;  
  end;
  
-{
- if info.backend = bke_llvm then begin
-  lstr1:= stringtolstring('main');
-  m1.value.listid:= globlist.addsubvalue(nil,lstr1);
-  m1.value.typeid:= globlist.gettype(m1.value.listid);
-  m1.flags:= [mvf_globval,mvf_sub];
-  if info.s.debugoptions <> [] then begin
-   with info.s.unitinfo^ do begin
-    mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
-                           debugfilemeta,lstr1,
-                        info.contextstack[info.s.stackindex].start.line+1,m1);
-    m1:= metadatalist.addnode([mainsubmeta]);
-    pdicompileunitty(
-            metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
-    info.s.currentscopemeta:= mainsubmeta.value.listid;
-   end;
-  end;
- end;
-}
  if hasfini then begin
   with getoppo(startupoffset)^ do begin
    par.beginparse.finisub:= info.opcount;
