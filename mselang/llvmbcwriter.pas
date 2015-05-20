@@ -1715,7 +1715,7 @@ begin
  while po1 < pe do begin
   with po1^ do begin
    i2:= value.listid;
-   if (value.typeid <> fmetadatatype) and not (mvf_globval in flags) then begin
+   if flags * [mvf_globval,mvf_meta] = [] then begin
     inc(i2,fconststart);
    end;
    i1:= value.typeid * typeindexstep;

@@ -336,7 +336,7 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
- metavalueflagty = (mvf_globval,mvf_sub);
+ metavalueflagty = (mvf_globval,mvf_sub,mvf_meta);
  metavalueflagsty = set of metavalueflagty;
  
  metavaluety = record
@@ -1501,7 +1501,7 @@ begin
  inc(result,sizeof(metadataheaderty));
  avalue.value.typeid:= typelist.metadata;
  avalue.value.listid:= fid;
- avalue.flags:= [];
+ avalue.flags:= [mvf_meta];
  inc(fid);
 end;
 
