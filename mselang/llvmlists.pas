@@ -270,6 +270,7 @@ type
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
+   function i8const(const avalue: int8): llvmconstty;
    function gettype(const aindex: int32): int32;
  end;
 
@@ -416,10 +417,12 @@ type
 //   fid: int32;
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
-   function addi32const(const avalue: int32): metavaluety;
    function dwarftag(const atag: int32): metavaluety;
   public
 //   procedure clear(); override;
+   function i8const(const avalue: int8): metavaluety;
+   function i32const(const avalue: int32): metavaluety;
+
    function addnode(const avalues: array of metavaluety): metavaluety;
    function addnamednode(const aname: lstringty;
                                 const avalues: array of int32): metavaluety;
@@ -886,6 +889,12 @@ end;
 function tconsthashdatalist.i8(const avalue: int8): int32;
 begin
  result:= card8(avalue);
+end;
+
+function tconsthashdatalist.i8const(const avalue: int8): llvmconstty;
+begin
+ result.listid:= card8(avalue);
+ result.typeid:= ord(das_8);
 end;
 
 function tconsthashdatalist.hashkey(const akey): hashvaluety;
@@ -1510,7 +1519,13 @@ begin
  inc(result,sizeof(metadataheaderty));
 end;
 
-function tmetadatalist.addi32const(const avalue: int32): metavaluety;
+function tmetadatalist.i8const(const avalue: int8): metavaluety;
+begin
+ result.value:= constlist.i8const(avalue);
+ result.flags:= [];
+end;
+
+function tmetadatalist.i32const(const avalue: int32): metavaluety;
 begin
  result.value:= constlist.addi32(avalue);
  result.flags:= [];
@@ -1577,10 +1592,10 @@ begin
  with pdicompileunitty(adddata(mdk_dicompileunit,
                     sizeof(dicompileunitty),result))^ do begin
   difile:= afile;
-  sourcelanguage:= addi32const(asourcelanguage);
+  sourcelanguage:= i32const(asourcelanguage);
   producer:= addstring(stringtolstring(aproducer));
   subprograms:= asubprograms;
-  emissionkind:= addi32const(ord(aemissionkind));
+  emissionkind:= i32const(ord(aemissionkind));
  end;
 end;
 
@@ -1595,7 +1610,7 @@ begin
                     sizeof(disubprogramty),result))^ do begin
   difile:= afile;
   context:= acontext;
-  linenumber:= addi32const(alinenumber);
+  linenumber:= i32const(alinenumber);
   functionid:= afunction;
   name:= m1;
  end;

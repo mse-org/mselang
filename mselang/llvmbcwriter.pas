@@ -425,6 +425,17 @@ begin
   metaDW_TAG_subprogram.value:= consts.addi32(
                DW_TAG_subprogram or LLVMDebugVersion);
   metaDW_TAG_subprogram.flags:= [];
+  with metadata do begin
+   addnamednode(stringtolstring('llvm.module.flags'),
+    [
+     addnode([i8const(ord(mfb_warning)),
+                addstring(stringtolstring('Dwarf Version')),
+                                       i8const(DWARF_VERSION)]).value.listid,
+     addnode([i8const(ord(mfb_warning)),
+                addstring(stringtolstring('Debug Info Version')),
+                               i8const(DEBUG_METADATA_VERSION)]).value.listid
+    ]);
+  end;
  end;
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;

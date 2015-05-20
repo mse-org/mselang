@@ -560,7 +560,61 @@ const
 //
 // llvm version 3.5.1
 //
+//from llvm/include/llvm/IR/Module.h
+type
+  ModFlagBehavior = (
+    /// Emits an error if two values disagree, otherwise the resulting value is
+    /// that of the operands.
+    mfb_Error = 1,
+
+    /// Emits a warning if two values disagree. The result value will be the
+    /// operand for the flag from the first module being linked.
+    mfb_Warning = 2,
+
+    /// Adds a requirement that another module flag be present and have a
+    /// specified value after linking is performed. The value must be a metadata
+    /// pair, where the first element of the pair is the ID of the module flag
+    /// to be restricted, and the second element of the pair is the value the
+    /// module flag should be restricted to. This behavior can be used to
+    /// restrict the allowable results (via triggering of an error) of linking
+    /// IDs with the **Override** behavior.
+    mfb_Require = 3,
+
+    /// Uses the specified value, regardless of the behavior or value of the
+    /// other module. If both modules specify **Override**, but the values
+    /// differ, an error will be emitted.
+    mfb_Override = 4,
+
+    /// Appends the two values, which are required to be metadata nodes.
+    mfb_Append = 5,
+
+    /// Appends the two values, which are required to be metadata
+    /// nodes. However, duplicate entries in the second list are dropped
+    /// during the append operation.
+    mfb_AppendUnique = 6
+  );
+
+const
+
+//from llvm/include/llvm/IR/Metadata.h
+ DEBUG_METADATA_VERSION = 1;  // Current debug info version number.
+
 //from llvm/Support/Dwarf.h
+
+ //LLVMConstants
+  // llvm mock tags
+  DW_TAG_invalid = -1; // Tag for invalid results.
+
+  DW_TAG_auto_variable = $100; // Tag for local (auto) variables.
+  DW_TAG_arg_variable = $101;  // Tag for argument variables.
+
+  DW_TAG_user_base = $1000; // Recommended base for user tags.
+
+  DWARF_VERSION = 4;       // Default dwarf version we output.
+  DW_PUBTYPES_VERSION = 2; // Section version number for .debug_pubtypes.
+  DW_PUBNAMES_VERSION = 2; // Section version number for .debug_pubnames.
+  DW_ARANGES_VERSION = 2;   // Section version number for .debug_aranges.
+
   //llvm debug version
   LLVMDebugVersion = (12 shl 16);    // Current version of debug information.
   LLVMDebugVersion11 = (11 shl 16);  // Constant for version 11.
