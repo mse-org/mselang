@@ -424,8 +424,8 @@ type
    function i32const(const avalue: int32): metavaluety;
 
    function addnode(const avalues: array of metavaluety): metavaluety;
-   function addnamednode(const aname: lstringty;
-                                const avalues: array of int32): metavaluety;
+   procedure addnamednode(const aname: lstringty;
+                                const avalues: array of int32);
    function addstring(const avalue: lstringty): metavaluety;
    function addfile(const afilename: filenamety): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
@@ -1545,20 +1545,22 @@ begin
  end;
 end;
 
-function tmetadatalist.addnamednode(const aname: lstringty;
-               const avalues: array of int32): metavaluety;
+procedure tmetadatalist.addnamednode(const aname: lstringty;
+               const avalues: array of int32);
 var
  i1: int32;
+ m1: metavaluety;
 begin
  i1:= length(avalues)*sizeof(avalues[0]);
  with pnamednodemetaty(
     adddata(mdk_namednode,
-     sizeof(namednodemetaty)+i1+aname.len,result))^ do begin
+     sizeof(namednodemetaty)+i1+aname.len,m1))^ do begin
   len:= length(avalues);
   move(avalues,data,i1);
   namelen:= aname.len;
   move(aname.po^,(@data+i1)^,aname.len);
  end;
+ dec(fcount); //has no index
 end;
 
 function tmetadatalist.addstring(const avalue: lstringty): metavaluety;

@@ -1259,7 +1259,7 @@ begin
       name1:= valueartostring(rec1,2);
      end;
      METADATA_NAMED_NODE: begin
-      fmetalist.add();
+//      fmetalist.add();
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': '+
                 name1+':= '+intvalueartostring(rec1,2));
       name1:= '';
