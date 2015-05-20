@@ -720,12 +720,14 @@ type
  end;
 
  debuglocty = record
-  line: int32;
-  col: int32;
+  line: int32;  //llvm constlistid
+  col: int32;   //llvm constlistid
+  scope: int32; //llvm file
+  iaval: int32; //llvm compile unit
  end;
  
  lineinfoty = record
-  line: lstringty;
+//  line: lstringty;
   loc: debuglocty;
 //  nr: integer;
  end;

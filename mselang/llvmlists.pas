@@ -424,8 +424,8 @@ type
    function addnamednode(const aname: lstringty;
                                 const avalues: array of int32): metavaluety;
    function addstring(const avalue: lstringty): metavaluety;
-   function adddifile(const afilename: filenamety): metavaluety;
-   function addfiletype(const afile: metavaluety): metavaluety; //name-dir-pair
+   function addfile(const afilename: filenamety): metavaluety;
+   function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string;
               const asubprograms: metavaluety;
@@ -1555,7 +1555,7 @@ begin
  end;
 end;
 
-function tmetadatalist.adddifile(const afilename: filenamety): metavaluety;
+function tmetadatalist.addfile(const afilename: filenamety): metavaluety;
 var
  m1,m2: metavaluety;
  dir,na: filenamety;
@@ -1607,7 +1607,7 @@ begin
  result.flags:= [];
 end;
 
-function tmetadatalist.addfiletype(const afile: metavaluety): metavaluety;
+function tmetadatalist.adddifile(const afile: metavaluety): metavaluety;
 begin
  result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;

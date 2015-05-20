@@ -1659,7 +1659,8 @@ end;
 
 procedure tllvmbcwriter.emitdebugloc(const avalue: debuglocty);
 begin
- emitrec(ord(FUNC_CODE_DEBUG_LOC),[avalue.line+1,avalue.col,0,0]);
+ emitrec(ord(FUNC_CODE_DEBUG_LOC),
+      [avalue.line+1,avalue.col+1,avalue.scope,avalue.iaval]);
 end;
 
 procedure tllvmbcwriter.emitdebuglocagain;

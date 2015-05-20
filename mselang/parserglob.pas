@@ -474,6 +474,7 @@ type
   filepath: filenamety; //todo: use lstringty
   
   filepathmeta: metavaluety;
+  debugfilemeta: metavaluety;
   compileunitmeta: metavaluety;
   mainsubmeta: metavaluety;
   
@@ -527,6 +528,8 @@ type
   trystack: listadty;
   trystacklevel: int32;
   debugoptions: debugoptionsty;
+  currentcompileunitmeta: int32;
+  currentfilemeta: int32;
  end;
   
  parseinfoty = record

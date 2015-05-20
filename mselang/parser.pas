@@ -312,15 +312,17 @@ end;
 procedure checklinebreak(var achar: pchar; var linebreaks: integer) 
                           {$ifndef mse_debugparser} inline{$endif};
 begin
- if do_lineinfo in info.debugoptions then begin
+ if do_lineinfo in info.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
    if info.backend = bke_llvm then begin
-    with additem(oc_lineinfo)^ do begin
-     par.lineinfo.line.po:= achar;
-     par.lineinfo.line.len:= linelen(achar);
-     par.lineinfo.loc.line:= linebreaks+info.s.source.line;
-     par.lineinfo.loc.col:= 0;
+    with additem(oc_lineinfo)^.par.lineinfo do begin
+//     par.lineinfo.line.po:= achar;
+//     par.lineinfo.line.len:= linelen(achar);
+     loc.line:= linebreaks+info.s.source.line;
+     loc.col:= 0;
+     loc.scope:= info.s.currentfilemeta;
+     loc.iaval:= info.s.currentcompileunitmeta;
     end;
    end;
   end;
@@ -400,7 +402,9 @@ begin
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
    if s.debugoptions <> [] then begin
     with s.unitinfo^ do begin
-     filepathmeta:= metadatalist.adddifile(filepath);
+     filepathmeta:= metadatalist.addfile(filepath);
+     debugfilemeta:= metadatalist.adddifile(filepathmeta);
+//     debugfilemeta:= metadatalist.add
      compileunitmeta:= metadatalist.adddicompileunit(
            filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
      metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
@@ -424,6 +428,11 @@ begin
     context:= s.unitinfo^.impl.context;
    end;
    ele.elementparent:= s.unitinfo^.impl.eleparent;
+  end;
+
+  with s.unitinfo^ do begin
+   s.currentfilemeta:= debugfilemeta.value.listid;
+   s.currentcompileunitmeta:= compileunitmeta.value.listid;
   end;
 
   s.pc:= contextstack[s.stackindex].context;

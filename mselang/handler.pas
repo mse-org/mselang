@@ -291,7 +291,7 @@ begin
   if info.s.debugoptions <> [] then begin
    with info.s.unitinfo^ do begin
     mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
-                           metadatalist.addfiletype(filepathmeta),lstr1,
+                           debugfilemeta,lstr1,
                         info.contextstack[info.s.stackindex].start.line+1,m1);
     m1:= metadatalist.addnode([mainsubmeta]);
     pdicompileunitty(
