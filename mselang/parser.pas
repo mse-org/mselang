@@ -53,7 +53,7 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler,listutils,llvmbitcodes;
+ subhandler,listutils,llvmbitcodes,llvmlists;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -399,12 +399,13 @@ begin
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
    if s.debugoptions <> [] then begin
-    s.unitinfo^.filepathmeta:= 
-                      s.unitinfo^.metadatalist.adddifile(s.unitinfo^.filepath);
-    s.unitinfo^.compileunitmeta:= s.unitinfo^.metadatalist.adddicompileunit(
-          s.unitinfo^.filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',FullDebug);
-    s.unitinfo^.metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
-                                   [s.unitinfo^.compileunitmeta.value.listid]);
+    with s.unitinfo^ do begin
+     filepathmeta:= metadatalist.adddifile(filepath);
+     compileunitmeta:= metadatalist.adddicompileunit(
+           filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
+     metadatalist.addnamednode(stringtolstring('llvm.debug.cu'),
+                                           [compileunitmeta.value.listid]);
+    end;
    end;
   end
   else begin

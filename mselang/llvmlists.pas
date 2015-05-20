@@ -336,7 +336,7 @@ type
    property namelist: tglobnamelist read fnamelist;
  end;
 
- metavalueflagty = (mvf_globval,mvf_sub,mvf_meta);
+ metavalueflagty = (mvf_globval,mvf_sub,mvf_meta,mvf_dummy);
  metavalueflagsty = set of metavalueflagty;
  
  metavaluety = record
@@ -344,7 +344,10 @@ type
   flags: metavalueflagsty;
  end;
  pmetavaluety = ^metavaluety;
- 
+const
+ dummymeta: metavaluety = (value: (typeid: 0; listid: 0);
+                                                 flags: [mvf_dummy]);
+type
  nodemetaty = record
   len: int32;
   data: record  //array of metavaluety
@@ -377,6 +380,7 @@ type
   difile: metavaluety;
   sourcelanguage: metavaluety;
   producer: metavaluety;
+  subprograms: metavaluety;
   emissionkind: metavaluety;
  end;
  pdicompileunitty = ^dicompileunitty;
@@ -422,7 +426,8 @@ type
    function adddifile(const afilename: filenamety): metavaluety;
    function addfiletype(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
-              const asourcelanguage: int32; const aproducer: string; 
+              const asourcelanguage: int32; const aproducer: string;
+              const asubprograms: metavaluety;
               const aemissionkind: DebugEmissionKind): metavaluety;
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
@@ -1566,6 +1571,7 @@ end;
 
 function tmetadatalist.adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string; 
+              const asubprograms: metavaluety;
                           const aemissionkind: DebugEmissionKind): metavaluety;
 begin
  with pdicompileunitty(adddata(mdk_dicompileunit,
@@ -1573,6 +1579,7 @@ begin
   difile:= afile;
   sourcelanguage:= addi32const(asourcelanguage);
   producer:= addstring(stringtolstring(aproducer));
+  subprograms:= asubprograms;
   emissionkind:= addi32const(ord(aemissionkind));
  end;
 end;

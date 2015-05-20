@@ -353,7 +353,7 @@ destructor tllvmbcwriter.destroy();
 begin
  inherited;
 end;
-var testvar: pdisubprogramty; testvar1: pdicompileunitty;
+
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                                 const globals: tgloballocdatalist;
                                        const metadata: tmetadatalist);
@@ -678,19 +678,17 @@ begin
      end;
     end;
     mdk_dicompileunit: begin
-testvar1:= pdicompileunitty(@pm1^.data);
      with pdicompileunitty(@pm1^.data)^ do begin
       emitmetadatanode([metaDW_TAG_compile_unit,
-      //                      isoptimized flags,         runtimeversion,
-        difile,sourcelanguage,metanullint,metanullstring,metanullint,
+      //       sourcelanguage,producer,isoptimized flags,         runtimeversion,
+        difile,sourcelanguage,producer,metanullint,metanullstring,metanullint,
       //enumtypes,   retainedtypes,subprograms,globalvariables,importedentities,
-        metanullnode,metanullnode, metanullnode,metanullnode,  metanullnode,
+        metanullnode,metanullnode, subprograms,metanullnode,  metanullnode,
       //splitdebugfilename,emissionkind
         metanullstring,    emissionkind]);
      end;     
     end;
     mdk_disubprogram: begin
-testvar:= pdisubprogramty(@pm1^.data);
      with pdisubprogramty(@pm1^.data)^ do begin
       emitmetadatanode([metaDW_TAG_subprogram,
       //       context,name,displayname,linkagename,   linenumber,type, todo:!!
@@ -1714,6 +1712,11 @@ begin
  pe:= po1+len;
  while po1 < pe do begin
   with po1^ do begin
+  {$ifdef mse_checkinternalerror}
+   if mvf_dummy in flags then begin
+    internalerror(ie_llvm,'20150520A');
+   end;
+  {$endif}
    i2:= value.listid;
    if flags * [mvf_globval,mvf_meta] = [] then begin
     inc(i2,fconststart);

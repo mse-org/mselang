@@ -475,6 +475,7 @@ type
   
   filepathmeta: metavaluety;
   compileunitmeta: metavaluety;
+  mainsubmeta: metavaluety;
   
   state: unitstatesty;
   interfaceelement: elementoffsetty;

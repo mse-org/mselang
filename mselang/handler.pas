@@ -290,9 +290,10 @@ begin
   m1.flags:= [mvf_globval,mvf_sub];
   if info.s.debugoptions <> [] then begin
    with info.s.unitinfo^ do begin
-    metadatalist.adddisubprogram(filepathmeta,
-         metadatalist.addfiletype(filepathmeta),lstr1,
-         info.contextstack[info.s.stackindex].start.line+1,m1);
+    info.s.unitinfo^.mainsubmeta:=
+        metadatalist.adddisubprogram(filepathmeta,
+                           metadatalist.addfiletype(filepathmeta),lstr1,
+                        info.contextstack[info.s.stackindex].start.line+1,m1);
    end;
   end;
  end;

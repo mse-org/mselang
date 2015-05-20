@@ -1174,7 +1174,7 @@ begin
   end;
  end;
 end;
-var testvar: pglobinfoty;
+
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1204,7 +1204,6 @@ var
       result:= result+'NULL';
      end;
      else begin
-testvar:= fgloblist.item((po1+1)^);
       with fgloblist.item((po1+1)^)^ do begin
        if valuetype <> po1^ then begin
         error('Value types do not match');
