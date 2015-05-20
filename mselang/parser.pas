@@ -321,7 +321,7 @@ begin
 //     par.lineinfo.line.len:= linelen(achar);
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
-     loc.scope:= info.s.currentfilemeta;
+     loc.scope:= info.s.currentscopemeta;
     end;
    end;
   end;
@@ -431,6 +431,7 @@ begin
 
   with s.unitinfo^ do begin
    s.currentfilemeta:= debugfilemeta.value.listid;
+   s.currentscopemeta:= s.currentfilemeta;
    s.currentcompileunitmeta:= compileunitmeta.value.listid;
   end;
 

@@ -193,6 +193,8 @@ procedure handleprogbegin();
 var
  ad1: listadty;
  ad2: opaddressty;
+ lstr1: lstringty;
+ m1: metavaluety;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
@@ -233,6 +235,23 @@ begin
     end;
    end;
   end;
+  if info.backend = bke_llvm then begin
+   lstr1:= stringtolstring('main');
+   m1.value.listid:= globlist.addsubvalue(nil,lstr1);
+   m1.value.typeid:= globlist.gettype(m1.value.listid);
+   m1.flags:= [mvf_globval,mvf_sub];
+   if info.s.debugoptions <> [] then begin
+    with info.s.unitinfo^ do begin
+     mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
+                            debugfilemeta,lstr1,
+                         info.contextstack[info.s.stackindex].start.line+1,m1);
+     m1:= metadatalist.addnode([mainsubmeta]);
+     pdicompileunitty(
+             metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
+     info.s.currentscopemeta:= mainsubmeta.value.listid;
+    end;
+   end;
+  end;
  end;
 end;
 
@@ -243,8 +262,6 @@ var
  hasfini: boolean;
  finicall: opaddressty;
  i1: int32;
- lstr1: lstringty;
- m1: metavaluety;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -283,6 +300,8 @@ begin
    par.main.blockcount:= info.s.ssa.blockindex+1;
   end;  
  end;
+ 
+{
  if info.backend = bke_llvm then begin
   lstr1:= stringtolstring('main');
   m1.value.listid:= globlist.addsubvalue(nil,lstr1);
@@ -296,9 +315,11 @@ begin
     m1:= metadatalist.addnode([mainsubmeta]);
     pdicompileunitty(
             metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
+    info.s.currentscopemeta:= mainsubmeta.value.listid;
    end;
   end;
  end;
+}
  if hasfini then begin
   with getoppo(startupoffset)^ do begin
    par.beginparse.finisub:= info.opcount;

@@ -530,6 +530,7 @@ type
   debugoptions: debugoptionsty;
   currentcompileunitmeta: int32;
   currentfilemeta: int32;
+  currentscopemeta: int32;
  end;
   
  parseinfoty = record
