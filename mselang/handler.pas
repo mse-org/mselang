@@ -290,10 +290,12 @@ begin
   m1.flags:= [mvf_globval,mvf_sub];
   if info.s.debugoptions <> [] then begin
    with info.s.unitinfo^ do begin
-    info.s.unitinfo^.mainsubmeta:=
-        metadatalist.adddisubprogram(filepathmeta,
+    mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
                            metadatalist.addfiletype(filepathmeta),lstr1,
                         info.contextstack[info.s.stackindex].start.line+1,m1);
+    m1:= metadatalist.addnode([mainsubmeta]);
+    pdicompileunitty(
+            metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
    end;
   end;
  end;

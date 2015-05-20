@@ -344,6 +344,7 @@ type
   flags: metavalueflagsty;
  end;
  pmetavaluety = ^metavaluety;
+
 const
  dummymeta: metavaluety = (value: (typeid: 0; listid: 0);
                                                  flags: [mvf_dummy]);
@@ -410,15 +411,15 @@ type
  end;
  pmetadataty = ^metadataty;
  
- tmetadatalist = class(tbufferdatalist)
+ tmetadatalist = class(tindexbufferdatalist)
   protected
-   fid: int32;
+//   fid: int32;
    function adddata(const akind: metadatakindty;
-                    const adatasize: int32; out avalue: metavaluety): pointer;
+       const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
    function addi32const(const avalue: int32): metavaluety;
    function dwarftag(const atag: int32): metavaluety;
   public
-   procedure clear(); override;
+//   procedure clear(); override;
    function addnode(const avalues: array of metavaluety): metavaluety;
    function addnamednode(const aname: lstringty;
                                 const avalues: array of int32): metavaluety;
@@ -432,7 +433,7 @@ type
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety): metavaluety;
-   function count: int32;
+//   function count: int32;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
  end;
@@ -1474,7 +1475,7 @@ begin
 end;
 
 { tmetadatalist }
-
+{
 procedure tmetadatalist.clear;
 begin
  inherited;
@@ -1485,7 +1486,7 @@ function tmetadatalist.count: int32;
 begin
  result:= fid;
 end;
-
+}
 function tmetadatalist.first: pmetadataty;
 begin
  result:= firstdata();
@@ -1499,15 +1500,14 @@ end;
 function tmetadatalist.adddata(const akind: metadatakindty; 
                const adatasize: int32; out avalue: metavaluety): pointer;
 begin
+ avalue.value.typeid:= typelist.metadata;
+ avalue.value.listid:= fcount;
+ avalue.flags:= [mvf_meta];
  result:= inherited adddata(adatasize+sizeof(metadataheaderty));
  with pmetadataheaderty(result)^ do begin
   kind:= akind;
  end;
  inc(result,sizeof(metadataheaderty));
- avalue.value.typeid:= typelist.metadata;
- avalue.value.listid:= fid;
- avalue.flags:= [mvf_meta];
- inc(fid);
 end;
 
 function tmetadatalist.addi32const(const avalue: int32): metavaluety;
