@@ -229,7 +229,7 @@ implementation
 uses
  errorhandler,msesys,sysutils,msebits;
 
- //abreviations, made by createabbrev tool
+ //abreviations, made by createabbrev tool todo: use more abbrevs
  
 type
  mabmodty = (
@@ -1705,32 +1705,25 @@ procedure tllvmbcwriter.emitmetadatanode(const len: int32;
                const values: pmetavaluety);
 var
  po1,pe: pmetavaluety;
+ i1,i2: int32;
 begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(ord(METADATA_NODE));
+ emitvbr6(len*2);
  po1:= values;
  pe:= po1+len;
  while po1 < pe do begin
   with po1^ do begin
+   i2:= value.listid;
    if (value.typeid <> fmetadatatype) and not (mvf_globval in flags) then begin
-    inc(value.listid,fconststart);
+    inc(i2,fconststart);
    end;
-   value.typeid:= value.typeid * typeindexstep;
+   i1:= value.typeid * typeindexstep;
    if mvf_sub in flags then begin
-    inc(value.typeid); //pointer
+    inc(i1); //pointer
    end;
-  end;
-  inc(po1);
- end;
- emitrec(ord(METADATA_NODE),len*2,pint32(values));
- po1:= values;
- while po1 < pe do begin //restore
-  with po1^ do begin
-   if mvf_sub in flags then begin
-    dec(value.typeid);
-   end;
-   value.typeid:= value.typeid div typeindexstep;
-   if (value.typeid <> fmetadatatype) and not (mvf_globval in flags) then begin
-    dec(value.listid,fconststart);
-   end;
+   emitvbr6(i1);
+   emitvbr6(i2);
   end;
   inc(po1);
  end;
