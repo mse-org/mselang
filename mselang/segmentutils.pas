@@ -22,6 +22,10 @@ uses
  
   //todo: use inline
 const
+ mlasignature = ord('M') or (ord('L') shl 8) or (ord('A') shl 16) or
+                                                          (ord('0') shl 24);
+ mlafileversion = 0;
+ 
  minsegmentreserve = 32; //at least free bytes at buffer end  
 
 function allocsegment(const asegment: segmentty;
@@ -63,9 +67,10 @@ function getoppo(const opindex: integer): popinfoty;
 procedure init();
 procedure deinit();
 
-procedure writesegmentdata(const dest: tstream; 
-                                  const storedsegments: segmentsty);
-function readsegmentdata(const source: tstream): boolean;
+procedure writesegmentdata(const adest: tstream; 
+                                  const astoredsegments: segmentsty);
+function readsegmentdata(const asource: tstream;
+                                  const astoredsegments: segmentsty): boolean;
                      //true if ok
 
 implementation
@@ -93,41 +98,74 @@ type
  segmentflagsty = set of segmentflagty;
  
  segmentitemty = record
+  kind: segmentty;
   flags: segmentflagsty;
-  size: integer;
+  size: int32;
  end;
+ 
  segmentfileheaderty = record
-  version: integer;
+  signature: card32;
+  version: int32;
+  segmentcount: int32;
  end;
+ 
  segmentfileinfoty = record
   header: segmentfileheaderty;
-  case integer of
-   0: (items: array [segmentty] of segmentitemty);
-   //data following
+  data: record
+   //array [segmencount] of segmentitemty;
+   //segmentdata
+  end;
+//  case integer of
+//   0: (items: array [segmentty] of segmentitemty);
  end;
   
-procedure writesegmentdata(const dest: tstream; 
-                           const storedsegments: segmentsty);
+procedure writesegmentdata(const adest: tstream; 
+                           const astoredsegments: segmentsty);
+
+ function writedata(const adata; const alen: int32): boolean;
+ var
+  i1: int32;
+ begin
+  result:= checksysok(adest.write(adata,alen,i1),err_cannotwritetargetfile,[]);
+ end; //writedata
+ 
 var
  info1: segmentfileinfoty;
+ segitems: array[segmentty] of segmentitemty;
  seg1: segmentty;
- int1: integer;
+ i1: integer;
 begin
  fillchar(info1,sizeof(info1),0);
- info1.header.version:= 0;
- for seg1:= low(segmentsty) to high(segmentsty) do begin
-  if seg1 in storedsegments then begin
-   with info1.items[seg1] do begin
-    flags:= [shf_load];
-    with segments[seg1] do begin
-     size:= toppo - data;
+ with info1.header do begin
+  signature:= mlasignature;
+  version:= mlafileversion;
+  i1:= 0;
+  for seg1:= low(segmentsty) to high(segmentsty) do begin
+   if seg1 in astoredsegments then begin
+    with segitems[segmentty(i1)] do begin
+     kind:= seg1;
+     flags:= [shf_load];
+     with segments[seg1] do begin
+      size:= toppo - data;
+     end;
     end;
+    inc(i1);
    end;
   end;
+  segmentcount:= i1;
  end;
- if checksysok(dest.write(info1,sizeof(info1),int1),
-                                     err_cannotwritetargetfile,[]) then begin
+ if writedata(info1,sizeof(info1)) and 
+      writedata(segitems,
+                  info1.header.segmentcount*sizeof(segmentitemty)) then begin
   for seg1:= low(segmentsty) to high(segmentsty) do begin
+   if seg1 in storedsegments then begin
+    with segments[seg1] do begin
+     if not writedata(data^,toppo-data) then begin
+      break;
+     end;
+    end;
+   end;
+{
    with info1.items[seg1] do begin
     if shf_load in flags then begin
      if not checksysok(dest.write(segments[seg1].data^,size,int1),
@@ -136,22 +174,67 @@ begin
      end;
     end;
    end;
+}
   end;  
  end;
 end;
 
-function readsegmentdata(const source: tstream): boolean;
+function readsegmentdata(const asource: tstream; 
+                        const astoredsegments: segmentsty): boolean;
+
+ function readdata(out adata; const alen: int32): boolean;
+ var
+  i1: int32;
+ begin
+  result:= checksysok(asource.read(adata,alen,i1),err_fileread,[])
+ end; //readdata
+ 
 var
  info1: segmentfileinfoty;
+ segitems: array[segmentty] of segmentitemty;
  seg1: segmentty;
- int1: integer;
+ i1: integer;
  segs1: segmentsty;
-label
- endlab; 
 begin
  result:= false;
- if checksysok(source.read(info1,sizeof(info1),int1),
-                                               err_fileread,[]) then begin
+ if readdata(info1,sizeof(info1)) then begin
+  with info1.header do begin
+   if signature <> mlasignature then begin
+    errormessage1(err_wrongsignature,[]);
+   end
+   else begin
+    if version <> mlafileversion then begin
+     errormessage1(err_wrongversion,[inttostrmse(version),
+                                        inttostrmse(mlafileversion)]);
+    end
+    else begin
+     if (segmentcount <= ord(high(segmentty))+1) and 
+           readdata(segitems,segmentcount*sizeof(segmentitemty))then begin
+      segs1:= [];
+      result:= true;
+      for i1:= 0 to segmentcount-1 do begin
+       with segitems[segmentty(i1)] do begin
+        if (kind in segs1) or not (kind in storedsegments) then begin
+         result:= false;
+         break;
+        end;         
+        if not readdata(allocsegmentpo(kind,size)^,size) then begin
+         result:= false;
+         exit;
+        end;
+        include(segs1,kind);
+       end;
+      end;
+      result:= result and (segs1 = astoredsegments);
+      if not result then begin
+       errormessage1(err_invalidprogram,[]);
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+{    
   if info1.header.version <> 0 then begin
    errormessage1(err_wrongversion,[inttostrmse(info1.header.version),'0']);
   end
@@ -179,9 +262,7 @@ begin
    end;
    result:= true;
   end;
- end;
- 
-endlab:
+}
 end;
 
 procedure grow(const asegment: segmentty; var ref: pointer);
