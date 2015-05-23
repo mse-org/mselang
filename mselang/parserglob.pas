@@ -507,6 +507,8 @@ type
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
 
  backendty = (bke_direct,bke_llvm);
+ compileoptionty = (co_mlaruntime,co_llvm,co_hasfunction);
+ compileoptionsty = set of compileoptionty;
  debugoptionty = (do_lineinfo);
  debugoptionsty = set of debugoptionty;
 
@@ -535,8 +537,9 @@ type
   
  parseinfoty = record
   s: savedparseinfoty;
-  backend: backendty;
-  backendhasfunction: boolean;
+//  backend: backendty;
+//  backendhasfunction: boolean;
+  compileoptions: compileoptionsty;
   debugoptions: debugoptionsty;
   unitinfochain: elementoffsetty;
   locallocid: integer;

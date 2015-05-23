@@ -606,7 +606,8 @@ var
     end;
     if sf_method in asub^.flags then begin
      inc(paramco1); //self parameter
-     if (sf_destructor in asub^.flags) and (backend = bke_direct) then begin
+     if (sf_destructor in asub^.flags) and 
+                         (co_mlaruntime in compileoptions) then begin
       with insertitem(oc_pushduppo,0,false)^ do begin 
                                        //needed for oc_destroyclass
       end;
@@ -739,7 +740,7 @@ var
      end;
                //todo: exeenv flag for constructor and destructor
      if hasresult then begin
-      if not backendhasfunction then begin
+      if not (co_hasfunction in compileoptions) then begin
        int1:= pushinsertvar(parent-s.stackindex,false,po3); 
                                     //alloc space for return value
        if not (sf_constructor in asub^.flags) then begin
@@ -782,7 +783,7 @@ var
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                              virtualtableoffset;
      end;
-     if backend = bke_llvm then begin
+     if co_llvm in compileoptions then begin
       po1^.par.callinfo.virt.virtoffset:=  
               constlist.adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
       po1^.par.callinfo.virt.typeid:= typelist.addsubvalue(asub);
@@ -800,7 +801,7 @@ var
        else begin
         po1:= additem(oc_callindi);
        end;
-       if backend = bke_llvm then begin
+       if co_llvm in compileoptions then begin
         po1^.par.ssas1:= callssa;
         po1^.par.callinfo.indi.typeid:= typelist.addsubvalue(asub);
        end

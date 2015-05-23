@@ -215,7 +215,7 @@ begin
    par.beginparse.mainad:= opcount;
   end;
   resetssa();
-  with info.contextstack[info.s.stackindex] do begin
+  with contextstack[s.stackindex] do begin
    d.kind:= ck_prog;
    d.prog.blockcountad:= info.opcount;
   end;
@@ -235,7 +235,7 @@ begin
     end;
    end;
   end;
-  if info.backend = bke_llvm then begin
+  if co_llvm in compileoptions then begin
    lstr1:= stringtolstring('main');
    m1.value.listid:= globlist.addsubvalue(nil,lstr1);
    m1.value.typeid:= globlist.gettype(m1.value.listid);
@@ -961,7 +961,7 @@ begin
          getvalue(i2,das_none);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
-          if backend = bke_llvm then begin
+          if co_llvm in compileoptions then begin
            par.imm.llvm:= constlist.addi32(pob^.d.dat.constval.vinteger);
           end
           else begin
@@ -980,7 +980,7 @@ begin
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
            with additem(oc_mulimmint32)^ do begin
-            if backend = bke_llvm then begin
+            if co_llvm in compileoptions then begin
              par.imm.llvm:= constlist.addi32(i2);
             end
             else begin

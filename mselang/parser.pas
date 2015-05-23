@@ -315,7 +315,7 @@ begin
  if do_lineinfo in info.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
-   if info.backend = bke_llvm then begin
+   if co_llvm in info.compileoptions then begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
 //     par.lineinfo.line.po:= achar;
 //     par.lineinfo.line.len:= linelen(achar);
@@ -767,7 +767,7 @@ begin
  with info do begin
   try
    try
-    backend:= abackend;
+    compileoptions:= [];
     s.debugoptions:= debugoptions;
     unit1:= newunit('program');
     unit1^.filepath:= afilename;
@@ -779,12 +779,13 @@ begin
     s.stackindex:= s.stacktop;
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
-    case backend of
+    case abackend of
      bke_direct: begin
+      compileoptions:= compileoptions + [co_mlaruntime];
       beginparser(stackops.getoptable(),stackops.getssatable());
      end;
      bke_llvm: begin
-      backendhasfunction:= true;
+      compileoptions:= compileoptions + [co_llvm,co_hasfunction];
       beginparser(llvmops.getoptable(),llvmops.getssatable());
      end;
     end;

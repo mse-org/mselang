@@ -283,7 +283,7 @@ end;
 procedure inclocvaraddress(const asize: integer);
 begin
  with info do begin
-  if backend <> bke_llvm then begin
+  if not (co_llvm in compileoptions) then begin
    locdatapo:= locdatapo + alignsize(asize);
   end;
  end;
@@ -293,7 +293,7 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
            var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 begin
  with info do begin
-  if backend = bke_llvm then begin
+  if co_llvm in compileoptions then begin
    result.address:= info.locallocid;
    inc(info.locallocid);
   end
@@ -318,7 +318,7 @@ begin
   result.flags:= [af_temp];
   result.indirectlevel:= 1;
   result.locaddress.framelevel:= info.sublevel;
-  if backend <> bke_llvm then begin
+  if not (co_llvm in compileoptions) then begin
    result.locaddress.address:= locdatapo;
    locdatapo:= locdatapo + pointersize;
   end
@@ -331,7 +331,7 @@ end;
 procedure releasepointertempaddress();
 begin
  with info do begin
-  if backend <> bke_llvm then begin
+  if not (co_llvm in compileoptions) then begin
    locdatapo:= locdatapo - pointersize;
    with additem(oc_pop)^ do begin
     par.imm.vsize:= pointersize;
@@ -363,7 +363,7 @@ end;
 procedure setimmboolean(const value: boolean; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi1(value);
  end
  else begin
@@ -374,7 +374,7 @@ end;
 procedure setimmcard8(const value: card8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi8(value);
  end
  else begin
@@ -385,7 +385,7 @@ end;
 procedure setimmcard16(const value: card16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi16(value);
  end
  else begin
@@ -396,7 +396,7 @@ end;
 procedure setimmcard32(const value: card32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi32(value);
  end
  else begin
@@ -407,7 +407,7 @@ end;
 procedure setimmcard64(const value: card64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi64(value);
  end
  else begin
@@ -418,7 +418,7 @@ end;
 procedure setimmint1(const value: int8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi1(odd(value));
  end
  else begin
@@ -429,7 +429,7 @@ end;
 procedure setimmint8(const value: int8; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi8(value);
  end
  else begin
@@ -440,7 +440,7 @@ end;
 procedure setimmint16(const value: int16; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi16(value);
  end
  else begin
@@ -451,7 +451,7 @@ end;
 procedure setimmint32(const value: int32; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi32(value);
  end
  else begin
@@ -462,7 +462,7 @@ end;
 procedure setimmint64(const value: int64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.llvm:= constlist.addi64(value);
  end
  else begin
@@ -473,7 +473,7 @@ end;
 procedure setimmfloat64(const value: float64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   notimplementederror('20150109A');
  end
  else begin
@@ -484,7 +484,7 @@ end;
 procedure setimmsize(const value: datasizety; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   par.imm.vsize:= constlist.adddataoffs(value).listid;
 //  notimplementederror('20150109B');
  end
@@ -496,7 +496,7 @@ end;
 procedure setimmpointer(const value: dataaddressty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   notimplementederror('20150109C');
  end
  else begin
@@ -507,7 +507,7 @@ end;
 procedure setimmoffset(const value: dataoffsty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   notimplementederror('20150109D');
  end
  else begin
@@ -518,7 +518,7 @@ end;
 procedure setimmdatakind(const value: datakindty; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
- if info.backend = bke_llvm then begin
+ if co_llvm in info.compileoptions then begin
   notimplementederror('20150109E');
  end
  else begin

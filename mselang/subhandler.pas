@@ -318,7 +318,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   d.kind:= ck_paramsdef;
-  if backendhasfunction then begin
+  if co_hasfunction in compileoptions then begin
    d.paramsdef.kind:= pk_value;
   end
   else begin
@@ -500,7 +500,7 @@ begin
  resetssa();
  with additem(oc_subbegin)^.par.subbegin do begin
   subname:= result;
-  if info.backend = bke_llvm then begin
+  if co_llvm in info.compileoptions then begin
    globid:= globlist.addinternalsubvalue([],noparams);
   end;
   sub.flags:= [];
@@ -740,7 +740,7 @@ begin
    end;
   end;
   int3:= paramhigh;
-  if (sf_function in subflags) and backendhasfunction then begin
+  if (sf_function in subflags) and (co_hasfunction in compileoptions) then begin
    int1:= 4 + paramhigh * 3;          //allocate result var first
    int2:= paramhigh;
    doparam();
@@ -798,7 +798,7 @@ begin
       sub:= ele.eledatarel(po1);
      end;
 }
-     if backend = bke_llvm then begin
+     if co_llvm in compileoptions then begin
       getidentname(pelementinfoty(pointer(po1)-eledatashift)^.header.name,lstr1);
       po1^.globid:= globlist.addsubvalue(po1,lstr1);
      end;
@@ -929,7 +929,7 @@ begin
   subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
   po1:= ele.eledataabs(subdef.ref);
   po1^.address:= opcount;
-  if backend = bke_llvm then begin
+  if co_llvm in compileoptions then begin
    po1^.globid:= globlist.addsubvalue(po1); //nested subs first
   end;
   if subdef.match <> 0 then begin
@@ -942,7 +942,7 @@ begin
      par.subbegin.trampoline.selfinstance:= -subdef.paramsize;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
-     if backend = bke_llvm then begin
+     if co_llvm in compileoptions then begin
       par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
       par.subbegin.globid:= po1^.globid;               //trampoline
@@ -963,7 +963,7 @@ begin
     end;
    {$endif}
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     if backend = bke_llvm then begin
+     if co_llvm in compileoptions then begin
       ad1:= po1^.globid;
      end
      else begin
@@ -997,7 +997,7 @@ begin
    po5^.next:= ele2;
   end;
 
-  if info.backend = bke_llvm then begin
+  if co_llvm in compileoptions then begin
    ele1:= po1^.varchain;
    alloc1:= getsegmenttopoffs(seg_localloc);
    int1:= 0;
@@ -1057,7 +1057,7 @@ begin
  with info,contextstack[s.stackindex-2] do begin
    //todo: check local forward
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
-  if backend = bke_llvm then begin
+  if co_llvm in compileoptions then begin
    if sf_hasnestedaccess in po1^.flags then begin
     globlist.updatesubtype(po1);
    end;

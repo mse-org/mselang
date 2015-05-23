@@ -291,7 +291,7 @@ var
    if adec then begin
     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
    end;
-   if backend = bke_llvm then begin
+   if co_llvm in compileoptions then begin
     with po3^.par.memimm do begin
      llvm:= constlist.addi32(vint32);
     end;

@@ -2288,7 +2288,7 @@ begin
   else begin
    result.segment:= seg_globconst;
    result.address:= constoffset+sizeof(string8headerty);
-   if info.backend = bke_llvm then begin
+   if co_llvm in info.compileoptions then begin
     result.address:= constlist.adddataoffs(result.address).listid;
    end;
   end;
