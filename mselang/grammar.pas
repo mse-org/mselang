@@ -7604,6 +7604,7 @@ begin
  unit2co.next:= @semicolonexpectedco;
  unit3co.branch:= @bunit3;
  unit3co.next:= @implementationco;
+ unit3co.handleexit:= @handleafterintfuses;
  checksemicolonco.branch:= @bchecksemicolon;
  checksemicolon1co.branch:= @bchecksemicolon1;
  checksemicolon2co.branch:= @bchecksemicolon2;

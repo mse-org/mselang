@@ -93,7 +93,8 @@ const
  idstart = $12345678;
 
 type 
- contextkindty = (ck_none,ck_error,ck_implementation,ck_prog,
+ contextkindty = (ck_none,ck_error,
+                  ck_interface,ck_implementation,ck_prog,
                   ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_controltoken,ck_getfact,
@@ -335,7 +336,7 @@ type
  end;
   
  implcontinfoty = record
-  elemark: markinfoty;
+//  elemark: markinfoty;
  end;
  
  progcontinfoty = record
@@ -492,6 +493,8 @@ type
   state: unitstatesty;
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
+  interfacestart: markinfoty;
+  implementationstart: markinfoty;
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;

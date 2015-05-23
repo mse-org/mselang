@@ -67,7 +67,7 @@ unit1,unit2,,setunitname*
 unit2,semicolonexpected,,
  ${whitespace}
  ';',unit3-
-unit3,implementation,,
+unit3,implementation,,handleafterintfuses
  ${whitespace}
  'interface'.,start1-
  'implementation'.,implementation- // "interface" facultative

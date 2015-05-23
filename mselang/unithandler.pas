@@ -39,6 +39,7 @@ procedure handleprogramentry();
 
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
+procedure handleafterintfuses();
 procedure handleimplementationentry();
 procedure handleafterimpluses();
 procedure handleimplementation();
@@ -155,6 +156,20 @@ begin
 end;
 *)
 
+procedure handleafterintfuses();
+begin
+{$ifdef mse_debugparser}
+ outhandle('AFTERINTFUSES');
+{$endif}
+ with info do begin
+  ele.markelement(s.unitinfo^.interfacestart);
+  with contextstack[s.stackindex] do begin
+   d.kind:= ck_interface;
+//   ele.markelement(d.impl.elemark);
+  end;
+ end;
+end;
+
 procedure handleimplementationentry();
 var
  po1: pimplementationdataty;
@@ -194,10 +209,13 @@ begin
  outhandle('AFTERIMPLUSES');
 {$endif}
  with info do begin
+  ele.markelement(s.unitinfo^.implementationstart);
+  {
   with contextstack[s.stackindex-1] do begin
 //   d.kind:= ck_implementation;
    ele.markelement(d.impl.elemark);
   end;
+  }
  end;
 end;
 
@@ -208,9 +226,12 @@ begin
 {$endif}
  checkforwardtypeerrors();
  with info do begin
+  ele.releaseelement(s.unitinfo^.implementationstart);
+  {
   with contextstack[s.stackindex] do begin
    ele.releaseelement(d.impl.elemark);
   end;
+  }
   dec(s.stackindex);
  end;
 end;
