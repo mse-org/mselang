@@ -40,6 +40,7 @@ procedure handleprogramentry();
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 procedure handleimplementationentry();
+procedure handleafterimpluses();
 procedure handleimplementation();
 procedure handleinclude();
 
@@ -182,6 +183,19 @@ begin
   end;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_implementation;
+//   ele.markelement(d.impl.elemark);
+  end;
+ end;
+end;
+
+procedure handleafterimpluses();
+begin
+{$ifdef mse_debugparser}
+ outhandle('AFTERIMPLUSES');
+{$endif}
+ with info do begin
+  with contextstack[s.stackindex-1] do begin
+//   d.kind:= ck_implementation;
    ele.markelement(d.impl.elemark);
   end;
  end;

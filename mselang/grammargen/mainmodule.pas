@@ -18,7 +18,8 @@ unit mainmodule;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv;
+ mseglob,mseapplication,mseclasses,msedatamodules,msestrings,msesysenv,
+ globtypes;
 
 (*
 [STATEMENT]'!'COMMENT
@@ -729,7 +730,7 @@ begin
 '{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
 'interface'+lineend+
 'uses'+lineend+
-' parserglob,elements;'+lineend+
+' globtypes,parserglob,elements;'+lineend+
 ' '+lineend+
 'function startcontext: pcontextty;'+lineend+
 ''+lineend;

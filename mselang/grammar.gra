@@ -134,7 +134,7 @@ finalization1,,handlefinalization,handleendexpected
  'end'.,implementationend-
 implementationend,,,handleimplementation*
 
-main,main1,,
+main,main1,,handleafterimpluses
  ${whitespace}
  'uses'.,uses0-*
 main1,,,handlemain

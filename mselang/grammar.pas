@@ -7654,6 +7654,7 @@ begin
  implementationendco.handleexit:= @handleimplementation;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
+ mainco.handleexit:= @handleafterimpluses;
  main1co.branch:= @bmain1;
  main1co.handleexit:= @handlemain;
  curlycomment0co.branch:= @bcurlycomment0;

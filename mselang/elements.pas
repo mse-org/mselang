@@ -318,7 +318,7 @@ var
 implementation
 uses
  msearrayutils,sysutils,typinfo,mselfsr,grammar,mseformatstr,
- mselinklist,stackops,msesysutils,opcode,syssubhandler,
+ mselinklist,{stackops,}msesysutils,opcode,{syssubhandler,}
  internaltypes,__mla__internaltypes,errorhandler;
  
 type
