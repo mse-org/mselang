@@ -77,7 +77,8 @@ implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
- {stackops,}segmentutils,classhandler,compilerunit,managedtypes;
+ {stackops,}segmentutils,classhandler,compilerunit,managedtypes,
+ rtunitwriter;
  
 type
  unithashdataty = record

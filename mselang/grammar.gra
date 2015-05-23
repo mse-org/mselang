@@ -95,7 +95,7 @@ uses1,useserror,,
 useserror,,,handleuseserror
 usesok,,,handleuses
 
-start2,noimplementation,,
+start2,noimplementation,handleafterintfuses,
  ${whitespace}
  'implementation'.,implementation-
  'const'.,const-*

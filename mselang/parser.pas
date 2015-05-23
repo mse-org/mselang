@@ -53,7 +53,7 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler,listutils,llvmbitcodes,llvmlists;
+ subhandler,listutils,llvmbitcodes,llvmlists,rtunitwriter;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -727,6 +727,10 @@ parseend:
   s:= statebefore;  
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;
+ end;
+
+ if result and (co_rtunits in info.compileoptions) then begin
+  result:= writertunit(aunit);
  end;
  
 {$ifdef mse_debugparser}

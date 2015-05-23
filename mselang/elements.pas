@@ -52,7 +52,7 @@ type
  
  elementheaderty = record
  // size: integer; //for debugging
-  next: elementoffsetty; //for debugging
+//  next: elementoffsetty; //for debugging
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
@@ -68,6 +68,12 @@ type
   end;
  end;
  pelementinfoty = ^elementinfoty;
+
+ elementdataty = record
+  key: identty;
+  data: elementoffsetty; //offset in elementdata
+ end;
+ pelementdataty = ^elementdataty;
  
 const
  elesize = sizeof(elementinfoty);
@@ -291,6 +297,22 @@ type
 //   property findvislevel: visikindsty read ffindvislevel write ffindvislevel;
  end;
 
+ identheaderty = record
+  ident: identty;
+ end;
+ pidentheaderty = ^identheaderty;
+
+ tidenthashdatalist = class(thashdatalist)
+  protected
+   function hashkey(const akey): hashvaluety; override;
+   function checkkey(const akey; const aitemdata): boolean; override;
+  public
+   constructor create(const asize: int32); 
+                    //total datasize including identheaderty
+   function adduniquedata(const akey: identty; out adata: pointer): boolean;
+                              //false if duplicate
+ end;
+  
     
 procedure clear;
 procedure init;
@@ -301,7 +323,7 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
-function newstring(): stringvaluety;
+function newstring(): stringvaluety; //save info.stringbuffer
 function stringconst(const astring: stringvaluety): segaddressty;
 
 function getidentname(const aident: identty; out name: lstringty): boolean;
@@ -323,7 +345,7 @@ uses
  
 type
 
- identoffsetty = integer;
+ identoffsetty = int32;
  
  indexidentdataty = record
   key: identoffsetty; //index of null terminated string
@@ -336,9 +358,8 @@ type
  end;
  pindexidenthashdataty = ^indexidenthashdataty;
 
-//{$ifdef mse_debugparser}
  identdataty = record
-  ident: identty;
+  header:identheaderty;
   keyname: identoffsetty;
   keylen: integer;
  end;
@@ -348,15 +369,6 @@ type
  end;
  pidenthashdataty = ^identhashdataty;
 
- tidenthashdatalist = class(thashdatalist)
-  protected
-   function hashkey(const akey): hashvaluety; override;
-   function checkkey(const akey; const aitemdata): boolean; override;
-  public
-   constructor create;
- end;
-//{$endif}
-  
  tindexidenthashdatalist = class(thashdatalist)
 // {$ifdef mse_debugparser}
   private
@@ -373,11 +385,6 @@ type
    function getident(const aname: lstringty): identty;
  end;
 
- elementdataty = record
-  key: identty;
-  data: elementoffsetty;
- end;
- pelementdataty = ^elementdataty;
  elementhashdataty = record
   header: hashheaderty;
   data: elementdataty;
@@ -671,9 +678,9 @@ end;
 
 { tidenthashdataty }
 
-constructor tidenthashdatalist.create;
+constructor tidenthashdatalist.create(const asize: int32);
 begin
- inherited create(sizeof(identdataty));
+ inherited create(asize);
 end;
 
 function tidenthashdatalist.hashkey(const akey): hashvaluety;
@@ -683,16 +690,25 @@ end;
 
 function tidenthashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
- result:= identty(akey) = identdataty(aitemdata).ident;
+ result:= identty(akey) = identheaderty(aitemdata).ident;
 end;
-//{$endif}
+
+function tidenthashdatalist.adduniquedata(const akey: identty;
+                                         out adata: pointer): boolean;
+begin
+ adata:= internalfind(akey);
+ result:= adata = nil;
+ if result then begin
+  adata:= internaladd(akey)+sizeof(hashheaderty);
+ end;
+end;
 
 { tindexidenthashdatalist }
 
 constructor tindexidenthashdatalist.create;
 begin
  inherited create(sizeof(indexidentdataty));
- fidents:= tidenthashdatalist.create;
+ fidents:= tidenthashdatalist.create(sizeof(identdataty));
 end;
 
 destructor tindexidenthashdatalist.destroy;
@@ -738,7 +754,7 @@ begin
    data:= stringident;
    key:= storestring(aname);
    with pidenthashdataty(fidents.internaladdhash(data))^.data do begin
-    ident:= data;
+    header.ident:= data;
     keyname:= key;
     keylen:= aname.len;
    end;
@@ -1589,7 +1605,7 @@ begin
    end;
   end;
   int4:= 0;
-  int1:= po1^.header.next;
+//  int1:= po1^.header.next;
   with ar1[int2-1] do begin
    parent:= po1^.header.parent;
    int3:= po1^.header.parentlevel;
@@ -1698,7 +1714,7 @@ begin
  checkbuffersize;
  result:= pointer(felementdata)+ele1;
  with result^.header do begin
-  next:= fnextelement; //for debugging
+//  next:= fnextelement; //for debugging
   parent:= felementparent;
   parentlevel:= fparentlevel;
   path:= felementpath;
@@ -1792,7 +1808,7 @@ begin
  checkbuffersize;
 // result:= pointer(felementdata)+ele1;
  with eleinfoabs(result)^.header do begin
-  next:= fnextelement;
+//  next:= fnextelement;
   parent:= felementparent;
   parentlevel:= fparentlevel;
   path:= felementpath;

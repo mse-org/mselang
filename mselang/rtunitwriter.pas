@@ -17,5 +17,104 @@
 unit rtunitwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
+uses
+ parserglob;
+ 
+function writertunit(const aunit: punitinfoty): boolean; //true if ok
+
 implementation
+uses
+ elements,segmentutils,globtypes,errorhandler,msestrings;
+{
+type
+ unitrecheaderty = record
+  kind: elementkindty;
+  size: int32;
+ end;
+ punitrecheaderty = ^unitrecheaderty;
+ 
+ unitrecty = record
+  header: unitrecheaderty;
+  data: record
+  end;
+ end;
+ punitrecty = ^unitrecty;
+} 
+
+type
+ identstringty = packed record
+  len: byte;
+  data: record //max 255 characters
+  end;
+ end;
+ pidentstringty = ^identstringty;
+ 
+ identbufferdataty = record
+  header: identheaderty;
+  nameindex: int32;
+ end;
+ pidentbufferdataty = ^identbufferdataty;
+ 
+ tidentlist = class(tidenthashdatalist)
+  private
+  public
+   constructor create();
+ end;
+
+{ tidentlist }
+
+constructor tidentlist.create;
+begin
+ inherited create(sizeof(identbufferdataty));
+end;
+ 
+function writertunit(const aunit: punitinfoty): boolean; //true if ok
+var
+ s1: ptrint;
+ ps,pd,pe: pelementinfoty;
+ identlist: tidentlist;
+ po1: pidentbufferdataty;
+ nameindex1: int32;
+ lstr1: lstringty;
+begin
+ result:= false;
+ ps:= ele.eleinfoabs(aunit^.interfacestart.bufferref);
+ s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ pd:= allocsegmentpo(seg_unitintf,s1);
+ move(ps^,pd^,s1);
+ identlist:= tidentlist.create;
+ try
+  pe:= pointer(pd) + s1;
+  nameindex1:= 0;
+  while pd < pe do begin
+   with pd^ do begin
+    if identlist.adduniquedata(header.name,po1) then begin
+     if getidentname(header.name,lstr1) then begin
+      with pidentstringty(allocsegmentpo(seg_unitidents,lstr1.len+1))^ do begin
+       len:= lstr1.len;
+       move(lstr1.po^,data,lstr1.len);
+      end;
+      po1^.nameindex:= nameindex1;
+      inc(nameindex1);
+     end
+     else begin
+      po1^.nameindex:= -1;
+     end;
+    end;
+    case pd^.header.kind of
+     ek_var: begin
+     end
+     else begin
+      internalerror1(ie_module,'20150523A');
+     end;
+    end;
+    inc(pointer(pd),elesizes[header.kind]);
+   end;
+  end;
+  result:= true;
+ finally
+  identlist.destroy();
+ end;
+end;
+
 end.

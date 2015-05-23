@@ -7624,6 +7624,7 @@ begin
  usesokco.handleexit:= @handleuses;
  start2co.branch:= @bstart2;
  start2co.next:= @noimplementationco;
+ start2co.handleentry:= @handleafterintfuses;
  commaidentsco.branch:= @bcommaidents;
  commaidentsco.next:= @commaidentsnoidenterrorco;
  commaidents1co.branch:= @bcommaidents1;

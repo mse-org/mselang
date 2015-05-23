@@ -79,7 +79,8 @@ type
                         ie_segment,  //error in segment handler
                         ie_bcwriter, //error in llvm bc writer
                         ie_llvm,     //error in llvm code generator
-                        ie_llvmlist  //error in llvm lists
+                        ie_llvmlist, //error in llvm lists
+                        ie_module    //error in modular compilation
                        ); 
 const
  internalerrorlabels: array[internalerrorkindty] of string = (
@@ -89,8 +90,8 @@ const
      'T',    'M',
  //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
      'SUB',   'V',   'E',        'I',    'SEG',     'BC',     'LLVM',
- //ie_llvmlist
-     'LLVML'
+ //ie_llvmlist,ie_module
+     'LLVML',  'MO'
  );
  
  stoperrorlevel = erl_fatal;

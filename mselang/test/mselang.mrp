@@ -9,8 +9,8 @@ savedmemoryfiles=6
 run.sta=6
  [runfo]
  stackedunder=
- x=627
- y=485
+ x=650
+ y=480
  cx=690
  cy=396
 macros.sta=9
@@ -120,7 +120,7 @@ c=3
   c=18
    (
    kind=1
-   a=0,664,4,address
+   a=0,665,4,address
    c=2
     (
     kind=2
@@ -1666,7 +1666,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,664,4,exception
    c=6
     (
     kind=2
@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73356F8
+    ao=An unhandled exception occured at $B73C56F8
     +
     ae=
     aec=123
@@ -1693,7 +1693,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise1 llvm
+    a=0,648,2,raise1 llvm
     teststate=1
     path=raise1.mla
     comment=
@@ -1737,7 +1737,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise2 llvm
+    a=0,648,2,raise2 llvm
     teststate=1
     path=raise2.mla
     comment=
@@ -1781,7 +1781,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,raise3 llvm
+    a=0,648,2,raise3 llvm
     teststate=1
     path=raise3.mla
     comment=
@@ -4216,11 +4216,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=33
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=29
  0 0
  0 0
  0 0

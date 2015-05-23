@@ -231,6 +231,24 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     statfile = statf
   end
+  object rtued: tbooleanedit
+    frame.caption = 'rtu'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      21
+      2
+    )
+    taborder = 11
+    bounds_x = 424
+    bounds_y = 15
+    bounds_cx = 34
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
+  end
   object statf: tstatfile
     filename = 'status.sta'
     onstatbeforewrite = befwriteexe
