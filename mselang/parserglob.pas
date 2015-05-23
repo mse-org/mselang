@@ -120,7 +120,10 @@ const
 
 type 
  backendty = (bke_direct,bke_llvm);
- compileoptionty = (co_mlaruntime,co_llvm,co_hasfunction);
+ compileoptionty = (co_mlaruntime, //mla interpreter
+                    co_llvm,co_hasfunction,
+                    co_rtunits     //write unitfiles with rt-code
+                    );
  compileoptionsty = set of compileoptionty;
 const
  mlaruntimecompileoptions = [co_mlaruntime];
