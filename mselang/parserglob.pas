@@ -118,6 +118,17 @@ const
  factcontexts = [ck_fact,ck_reffact,ck_subres];
 
 type 
+ backendty = (bke_direct,bke_llvm);
+ compileoptionty = (co_mlaruntime,co_llvm,co_hasfunction);
+ compileoptionsty = set of compileoptionty;
+const
+ mlaruntimecompileoptions = [co_mlaruntime];
+ llvmcompileoptions = [co_llvm,co_hasfunction];
+ 
+type
+ debugoptionty = (do_lineinfo);
+ debugoptionsty = set of debugoptionty;
+
  pparseinfoty = ^parseinfoty;
  contexthandlerty = procedure({const info: pparseinfoty});
 
@@ -505,12 +516,6 @@ type
  end;
 
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
-
- backendty = (bke_direct,bke_llvm);
- compileoptionty = (co_mlaruntime,co_llvm,co_hasfunction);
- compileoptionsty = set of compileoptionty;
- debugoptionty = (do_lineinfo);
- debugoptionsty = set of debugoptionty;
 
  savedparseinfoty = record
   filename: filenamety;

@@ -50,7 +50,7 @@ var
  err: syserrorty;
  targetstream: tmsefilestream;
  llvmstream: tllvmbcwriter;
- backend: backendty;
+ compoptions: compileoptionsty;
 begin
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
@@ -62,12 +62,12 @@ begin
  else begin
   if checksysok(tryreadfiledatastring(filename1,str1),
                                     err_fileread,[filename1]) then begin
-   backend:= bke_direct;
+   compoptions:= mlaruntimecompileoptions;
    if sysenv.defined[ord(pa_llvm)] then begin
-    backend:= bke_llvm;
+    compoptions:= llvmcompileoptions;
    end;
-   if parse(str1,filename1,backend) then begin
-    if backend = bke_llvm then begin
+   if parse(str1,filename1,compoptions) then begin
+    if co_llvm in compoptions then begin
      filename1:= replacefileext(filename1,llvmbcextension);
      if checksysok(tllvmbcwriter.trycreate(tmsefilestream(llvmstream),
                           filename1,fm_create),

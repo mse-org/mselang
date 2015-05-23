@@ -37,7 +37,7 @@ const
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
   
 function parse(const input: string; const afilename: filenamety;
-                                     const abackend: backendty): boolean;
+                                     const aoptions: compileoptionsty): boolean;
                               //true if ok
 function parseunit(const input: string;
                                        const aunit: punitinfoty): boolean;
@@ -71,7 +71,7 @@ begin
 // handler.init;
 end;
 
-procedure deinit(const abackend: backendty);
+procedure deinit();
 begin
 // handler.deinit;
 // inifini.deinit;
@@ -79,7 +79,7 @@ begin
 // opcode.deinit();
  unithandler.deinit();
  handlerutils.deinit();
- if abackend <> bke_llvm then begin
+ if co_mlaruntime in info.compileoptions then begin
   elements.clear();
  end;
  segmentutils.deinit();
@@ -755,7 +755,7 @@ begin
 end;
 
 function parse(const input: string; const afilename: filenamety; 
-                                        const abackend: backendty): boolean;
+                                     const aoptions: compileoptionsty): boolean;
                               //true if ok
 var
  po1: punitinfoty;
@@ -767,7 +767,7 @@ begin
  with info do begin
   try
    try
-    compileoptions:= [];
+    compileoptions:= aoptions;
     s.debugoptions:= debugoptions;
     unit1:= newunit('program');
     unit1^.filepath:= afilename;
@@ -779,15 +779,11 @@ begin
     s.stackindex:= s.stacktop;
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
-    case abackend of
-     bke_direct: begin
-      compileoptions:= compileoptions + [co_mlaruntime];
-      beginparser(stackops.getoptable(),stackops.getssatable());
-     end;
-     bke_llvm: begin
-      compileoptions:= compileoptions + [co_llvm,co_hasfunction];
-      beginparser(llvmops.getoptable(),llvmops.getssatable());
-     end;
+    if co_llvm in compileoptions then begin
+     beginparser(llvmops.getoptable(),llvmops.getssatable());
+    end
+    else begin
+     beginparser(stackops.getoptable(),stackops.getssatable());
     end;
    {$ifndef mse_nocompilerunit}
     result:= parsecompilerunit('__mla__compilerunit');
@@ -802,7 +798,7 @@ begin
     unit1^.metadatalist:= nil;
    finally
     system.finalize(info);
-    deinit(abackend);
+    deinit();
    end;
   except
    result:= false;

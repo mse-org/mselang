@@ -78,7 +78,7 @@ var
  errstream,outstream: ttextstream;
  targetstream: tllvmbcwriter;
  bo1: boolean;
- backend: backendty;
+ compoptions: compileoptionsty;
  str1: string;
  int1: integer;
  filename1: filenamety;
@@ -90,13 +90,15 @@ begin
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
  initio(outstream,errstream);
- backend:= bke_direct;
  if llvm.value then begin
-  backend:= bke_llvm;
+  compoptions:= llvmcompileoptions;
+ end
+ else begin
+  compoptions:= mlaruntimecompileoptions;
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
-  bo1:= parser.parse(ed.gettext,filena.value,backend);
+  bo1:= parser.parse(ed.gettext,filena.value,compoptions);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
@@ -133,7 +135,7 @@ begin
   finally
    errstream.destroy();
    outstream.destroy();
-   if backend = bke_llvm then begin
+   if not (co_mlaruntime in compoptions) then begin
     elements.clear();
    end;
    freeandnil(mainmetadatalist);
