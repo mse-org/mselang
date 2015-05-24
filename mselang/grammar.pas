@@ -220,6 +220,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'usesok');
+ start2aco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'start2a');
  start2co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1968,7 +1973,7 @@ const
    );
  bstart1: array[0..6] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @uses0co); stack: @start2co; 
+     dest: (context: @uses0co); stack: @start2aco; 
      keyword: $3C66EDD6{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -7622,6 +7627,8 @@ begin
  useserrorco.handleexit:= @handleuseserror;
  usesokco.branch:= nil;
  usesokco.handleexit:= @handleuses;
+ start2aco.branch:= nil;
+ start2aco.next:= @start2co;
  start2co.branch:= @bstart2;
  start2co.next:= @noimplementationco;
  start2co.handleentry:= @handleafterintfuses;

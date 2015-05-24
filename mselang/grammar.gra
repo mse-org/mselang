@@ -87,14 +87,14 @@ semicolonexpected,,,handlesemicolonexpected
 identexpected,,,handleidentexpected
 start1,start2,,
  ${whitespace}
- 'uses'.,uses0-*,start2
+ 'uses'.,uses0-*,start2a
 uses0,uses1,,
  '',commaidents^*
 uses1,useserror,,
  ';',usesok-
 useserror,,,handleuseserror
 usesok,,,handleuses
-
+start2a,start2,,
 start2,noimplementation,handleafterintfuses,
  ${whitespace}
  'implementation'.,implementation-

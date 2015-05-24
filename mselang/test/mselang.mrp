@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73C56F8
+    ao=An unhandled exception occured at $B73C96F8
     +
     ae=
     aec=123
@@ -1693,7 +1693,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise1 llvm
+    a=0,648,1,raise1 llvm
     teststate=1
     path=raise1.mla
     comment=
@@ -1737,7 +1737,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise2 llvm
+    a=0,648,1,raise2 llvm
     teststate=1
     path=raise2.mla
     comment=
@@ -1781,7 +1781,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,raise3 llvm
+    a=0,648,1,raise3 llvm
     teststate=1
     path=raise3.mla
     comment=

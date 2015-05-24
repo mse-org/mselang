@@ -24,7 +24,7 @@ function writertunit(const aunit: punitinfoty): boolean; //true if ok
 
 implementation
 uses
- elements,segmentutils,globtypes,errorhandler,msestrings;
+ elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob;
 {
 type
  unitrecheaderty = record
@@ -42,6 +42,17 @@ type
 } 
 
 type
+ unitintfheaderty = record
+  namecount: int32;
+  anoncount: int32;
+ end;
+ unitintfinfoty = record
+  header: unitintfheaderty;
+  data: record  //dump of elements
+  end;
+ end;
+ punitintfinfoty = ^unitintfinfoty;
+ 
  identstringty = packed record
   len: byte;
   data: record //max 255 characters
@@ -74,18 +85,26 @@ var
  ps,pd,pe: pelementinfoty;
  identlist: tidentlist;
  po1: pidentbufferdataty;
- nameindex1: int32;
+ po2: punitintfinfoty;
+ po3: pointer;
+ nameindex1,anonindex1: int32;
  lstr1: lstringty;
+ baseoffset: elementoffsetty;
 begin
  result:= false;
- ps:= ele.eleinfoabs(aunit^.interfacestart.bufferref);
+ baseoffset:= aunit^.interfacestart.bufferref;
+ ps:= ele.eleinfoabs(baseoffset);
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
- pd:= allocsegmentpo(seg_unitintf,s1);
+ po2:= allocsegmentpo(seg_unitintf,s1+sizeof(unitintfinfoty));
+ with po2^ do begin
+  pd:= @data;
+ end;
  move(ps^,pd^,s1);
  identlist:= tidentlist.create;
  try
   pe:= pointer(pd) + s1;
   nameindex1:= 0;
+  anonindex1:= -1;
   while pd < pe do begin
    with pd^ do begin
     if identlist.adduniquedata(header.name,po1) then begin
@@ -98,18 +117,51 @@ begin
       inc(nameindex1);
      end
      else begin
-      po1^.nameindex:= -1;
+      po1^.nameindex:= anonindex1;
+      dec(anonindex1);
      end;
     end;
+    po3:= @data;
     case pd^.header.kind of
+     ek_type: begin
+      with ptypedataty(po3)^ do begin
+      end;
+     end;
+     ek_field: begin
+      with pfielddataty(po3)^ do begin
+      end;
+     end;
      ek_var: begin
-     end
+      with pvardataty(po3)^ do begin
+      end;
+     end;
+     ek_const: begin
+      with pconstdataty(po3)^ do begin
+      end;
+     end;
+     ek_ref: begin
+      with prefdataty(po3)^ do begin
+      end;
+     end;
+     ek_sub: begin
+      with psubdataty(po3)^ do begin
+       inc(pointer(pd),paramcount*sizeof(elementoffsetty));
+      end;
+     end;
+     ek_implementation: begin
+      with pimplementationdataty(po3)^ do begin
+      end;
+     end;
      else begin
       internalerror1(ie_module,'20150523A');
      end;
     end;
     inc(pointer(pd),elesizes[header.kind]);
    end;
+  end;
+  with po2^.header do begin
+   namecount:= nameindex1;
+   anoncount:= -anonindex1 - 1;
   end;
   result:= true;
  finally

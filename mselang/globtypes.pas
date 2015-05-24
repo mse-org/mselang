@@ -18,7 +18,9 @@ unit globtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 type
- elementoffsetty = ptrint;
+// elementoffsetty = ptrint;
+ elementoffsetty = int32; //same size for 64 and 32 bit compilers because of
+                          //dump in unit files
  pelementoffsetty = ^elementoffsetty;
  elementoffsetarty = array of elementoffsetty;
 
