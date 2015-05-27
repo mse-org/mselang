@@ -39,8 +39,7 @@ procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 function parse(const input: string; const afilename: filenamety;
                                      const aoptions: compileoptionsty): boolean;
                               //true if ok
-function parseunit(const input: string;
-                                       const aunit: punitinfoty): boolean;
+function parseunit(const input: string; const aunit: punitinfoty): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
 procedure switchcontext(const acontext: pcontextty);
@@ -730,7 +729,7 @@ parseend:
  end;
 
  if result and (co_rtunits in info.compileoptions) then begin
-  result:= writertunit(aunit);
+  result:= putunitintf(aunit);
  end;
  
 {$ifdef mse_debugparser}
@@ -774,7 +773,8 @@ begin
     compileoptions:= aoptions;
     s.debugoptions:= debugoptions;
     unit1:= newunit('program');
-    unit1^.filepath:= afilename;
+    getunitfile(unit1,afilename);
+//    unit1^.filepath:= afilename;
     s.unitinfo:= unit1;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;

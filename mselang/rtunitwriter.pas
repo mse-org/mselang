@@ -20,7 +20,7 @@ interface
 uses
  parserglob;
  
-function writertunit(const aunit: punitinfoty): boolean; //true if ok
+function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 
 implementation
 uses
@@ -43,8 +43,9 @@ type
 
 type
  unitintfheaderty = record
-  namecount: int32;
-  anoncount: int32;
+  sourcetimestamp: tdatetime;
+  namecount: int32; //idents
+  anoncount: int32; //idents without name
  end;
  unitintfinfoty = record
   header: unitintfheaderty;
@@ -79,7 +80,7 @@ begin
  inherited create(sizeof(identbufferdataty));
 end;
  
-function writertunit(const aunit: punitinfoty): boolean; //true if ok
+function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 var
  s1: ptrint;
  ps,pd,pe: pelementinfoty;
@@ -160,6 +161,7 @@ begin
    end;
   end;
   with po2^.header do begin
+   sourcetimestamp:= aunit^.filetimestamp;
    namecount:= nameindex1;
    anoncount:= -anonindex1 - 1;
   end;

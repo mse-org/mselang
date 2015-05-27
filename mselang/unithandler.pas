@@ -32,6 +32,10 @@ var
  unitchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
+function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
+function getunitfile(const aunit: punitinfoty;
+                                        const aname: filenamety): boolean;
+
 function loadunit(const aindex: integer): punitinfoty;
 function parsecompilerunit(const aname: filenamety): boolean;
 
@@ -285,6 +289,24 @@ begin
  end;
 end;
 
+function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
+begin
+ with aunit^ do begin
+  name:= lstringtostring(aname);
+  filepath:= filehandler.getunitfile(aname);
+  result:= filepath <> '';
+  if result then begin
+   filetimestamp:= getfilemodtime(filepath);
+  end;
+ end;
+end;
+
+function getunitfile(const aunit: punitinfoty; 
+                                    const aname: filenamety): boolean;
+begin
+ result:= getunitfile(aunit,stringtolstring(string(aname)));
+end;
+         
 function parsecompilerunit(const aname: filenamety): boolean;
 var
  unit1: punitinfoty;
@@ -294,16 +316,12 @@ begin
  str1:= stringtoutf8(aname);
  unit1:= newunit(str1);
  with unit1^ do begin
-  name:= str1;
+//  name:= str1;
   prev:= info.s.unitinfo;
-  filepath:= filehandler.getunitfile(aname);
-//  if filepath = '' then begin
-//   filepath:= filehandler.getsysfile(aname);
-   if filepath = '' then begin
-    errormessage(err_compilerunitnotfound,[aname]);
-    exit;
-   end;
-//  end;
+  if not getunitfile(unit1,aname) then begin
+   errormessage(err_compilerunitnotfound,[aname]);
+   exit;
+  end;
   inc(info.unitlevel);
   result:= parseusesunit(unit1);
   if result then begin
@@ -312,7 +330,7 @@ begin
   dec(info.unitlevel);
  end;
 end;
-         
+
 function loadunit(const aindex: integer): punitinfoty;
 var
  lstr1: lstringty;
@@ -325,9 +343,8 @@ begin
     prev:= info.s.unitinfo;
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
-    name:= lstringtostring(lstr1);
-    filepath:= filehandler.getunitfile(lstr1);
-    if filepath = '' then begin
+    getunitfile(result,lstr1);
+    if not getunitfile(result,lstr1) then begin
      identerror(aindex-info.s.stackindex,err_cantfindunit);
     end
     else begin

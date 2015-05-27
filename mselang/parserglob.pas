@@ -487,6 +487,7 @@ type
   name: string;      //todo: use lstringty
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
+  filetimestamp: tdatetime;
   
   filepathmeta: metavaluety;
   debugfilemeta: metavaluety;
