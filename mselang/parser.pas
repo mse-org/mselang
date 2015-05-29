@@ -411,6 +411,8 @@ begin
    end;
   end
   else begin
+   internalerror1(ie_parser,'20120529A');
+  (*
    if s.unitinfo^.impl.sourceoffset >= length(input) then begin
     errormessage(err_filetrunc,[s.filename]);
    {$ifdef mse_debugparser}
@@ -426,6 +428,7 @@ begin
     context:= s.unitinfo^.impl.context;
    end;
    ele.elementparent:= s.unitinfo^.impl.eleparent;
+  *)
   end;
 
   with s.unitinfo^ do begin
