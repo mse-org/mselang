@@ -728,7 +728,7 @@ parseend:
   ele.elementparent:= eleparentbefore;
  end;
 
- if result and (co_rtunits in info.compileoptions) then begin
+ if result and (co_writertunits in info.compileoptions) then begin
   result:= putunitintf(aunit);
   if result then begin
    writeunitfile(aunit);

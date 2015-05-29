@@ -164,7 +164,7 @@ object mainfo: tmainfo
     taborder = 7
     bounds_x = 72
     bounds_y = 7
-    bounds_cx = 292
+    bounds_cx = 228
     anchors = [an_left, an_top, an_right]
     statfile = statf
     textflags = [tf_ycentered, tf_noselect, tf_ellipseleft]
@@ -187,7 +187,7 @@ object mainfo: tmainfo
       2
     )
     taborder = 8
-    bounds_x = 368
+    bounds_x = 304
     bounds_y = 1
     bounds_cx = 39
     bounds_cy = 16
@@ -205,7 +205,7 @@ object mainfo: tmainfo
       2
     )
     taborder = 9
-    bounds_x = 424
+    bounds_x = 360
     bounds_y = 1
     bounds_cx = 40
     bounds_cy = 16
@@ -224,27 +224,45 @@ object mainfo: tmainfo
       2
     )
     taborder = 10
-    bounds_x = 368
+    bounds_x = 304
     bounds_y = 15
     bounds_cx = 53
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf
   end
-  object rtued: tbooleanedit
-    frame.caption = 'rtu'
+  object wrtued: tbooleanedit
+    frame.caption = 'wrtu'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (
       0
       1
-      21
+      30
       2
     )
     taborder = 11
-    bounds_x = 424
+    bounds_x = 400
+    bounds_y = 1
+    bounds_cx = 43
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
+  end
+  object rrtued: tbooleanedit
+    frame.caption = 'rrtu'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      26
+      2
+    )
+    taborder = 12
+    bounds_x = 400
     bounds_y = 15
-    bounds_cx = 34
+    bounds_cx = 39
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf

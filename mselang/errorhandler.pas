@@ -42,7 +42,7 @@ type
             err_cannotaddressconst,err_cannotderefnonpointer,
             err_cannotassigntoaddr,err_cannotaddressexp,err_invalidderef,
             err_expmustbeclassorrec,err_cannotfindinclude,err_toomanyincludes,
-            err_fileread,err_anonclassdef,err_classidentexpected,
+            err_fileread,err_filewrite,err_anonclassdef,err_classidentexpected,
             err_classfieldexpected,err_noclass,err_classref,err_invalidfloat,
             err_expressionexpected,err_overloadnotfunc,
             err_procdirectiveconflict,err_noancestormethod,err_methodexpected,
@@ -165,6 +165,8 @@ const
   (level: erl_error; message: 'Too many nested include files'),
   (level: erl_fatal; message: 'Can not read file "%s", error:'+lineend+
                               '%s'),
+  (level: erl_fatal; message: 'Can not write file "%s", error:'+lineend+
+                              '%s'),
   (level: erl_fatal; message: 'Anonymous class definitions are not allowed'),
   (level: erl_fatal; message: 'Class identifier expected'),
   (level: erl_error; message: 'Class field expected'),
@@ -273,6 +275,7 @@ procedure circularerror(const astackoffset: integer; const adest: punitinfoty);
 procedure rangeerror(const range: ordrangety;
                                const stackoffset: integer = minint);
 procedure filereaderror(const afile: filenamety);
+procedure filewriteerror(const afile: filenamety);
 
 function typename(const ainfo: contextdataty;
                                const aindirection: int32=0): string;
@@ -700,6 +703,11 @@ end;
 procedure filereaderror(const afile: filenamety);
 begin
  errormessage(err_fileread,[afile,sys_geterrortext(mselasterror)]);
+end;
+
+procedure filewriteerror(const afile: filenamety);
+begin
+ errormessage(err_filewrite,[afile,sys_geterrortext(mselasterror)]);
 end;
 
 end.

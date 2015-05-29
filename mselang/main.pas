@@ -50,7 +50,8 @@ type
    tsyntaxpainter1: tsyntaxpainter;
    debuged: tbooleanedit;
    norun: tbooleanedit;
-   rtued: tbooleanedit;
+   wrtued: tbooleanedit;
+   rrtued: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -97,8 +98,11 @@ begin
  else begin
   compoptions:= mlaruntimecompileoptions;
  end;
- if rtued.value then begin
-  include(compoptions,co_rtunits);
+ if wrtued.value then begin
+  include(compoptions,co_writertunits);
+ end;
+ if rrtued.value then begin
+  include(compoptions,co_readrtunits);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try

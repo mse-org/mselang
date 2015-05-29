@@ -28,7 +28,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
- msefileutils,msesys;
+ msefileutils,msesys,msesystypes;
 {
 type
  unitrecheaderty = record
@@ -178,14 +178,24 @@ end;
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
  stat1: segmentstatety;
+ stream1: tmsefilestream;
+ fna1: filenamety;
 begin
  result:= false;
- stat1:= setsubsegment(aunit^.opseg);
- stream1:=
- writesegmentdata(tmsefilestream.create(
-   replacefileext(aunit^.filepath,rtunitext),fm_create),[seg_unitintf,seg_op]);
-                             //todo: complete 
- setsegment(stat1);
+ fna1:= replacefileext(aunit^.filepath,rtunitext);
+ if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
+  stat1:= setsubsegment(aunit^.opseg);
+  try
+   writesegmentdata(stream1,[seg_unitintf,seg_op]);
+                              //todo: complete 
+  finally
+   setsegment(stat1);
+   stream1.destroy();
+  end;
+ end
+ else begin
+  filewriteerror(fna1);
+ end;
 end;
 
 end.
