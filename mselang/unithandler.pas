@@ -215,6 +215,7 @@ begin
 {$endif}
  with info do begin
   ele.markelement(s.unitinfo^.implementationstart);
+  s.unitinfo^.opseg:= getsubsegment(seg_op);
   {
   with contextstack[s.stackindex-1] do begin
 //   d.kind:= ck_implementation;
@@ -231,6 +232,7 @@ begin
 {$endif}
  checkforwardtypeerrors();
  with info do begin
+  setsubsegmentsize(s.unitinfo^.opseg); 
   ele.releaseelement(s.unitinfo^.implementationstart);
   {
   with contextstack[s.stackindex] do begin

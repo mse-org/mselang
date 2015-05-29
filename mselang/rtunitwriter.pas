@@ -19,12 +19,16 @@ unit rtunitwriter;
 interface
 uses
  parserglob;
- 
+const
+ rtunitext = 'mru';
+  
 function putunitintf(const aunit: punitinfoty): boolean; //true if ok
+function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 
 implementation
 uses
- elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob;
+ elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
+ msefileutils,msesys;
 {
 type
  unitrecheaderty = record
@@ -169,6 +173,19 @@ begin
  finally
   identlist.destroy();
  end;
+end;
+
+function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
+var
+ stat1: segmentstatety;
+begin
+ result:= false;
+ stat1:= setsubsegment(aunit^.opseg);
+ stream1:=
+ writesegmentdata(tmsefilestream.create(
+   replacefileext(aunit^.filepath,rtunitext),fm_create),[seg_unitintf,seg_op]);
+                             //todo: complete 
+ setsegment(stat1);
 end;
 
 end.

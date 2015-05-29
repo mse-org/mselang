@@ -18,7 +18,8 @@ unit parserglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists;
+ globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
+ segmentutils;
 const
  firstident = 256;
  includemax = 31;
@@ -493,7 +494,9 @@ type
   debugfilemeta: metavaluety;
   compileunitmeta: metavaluety;
   mainsubmeta: metavaluety;
-  
+
+  opseg: subsegmentty;
+    
   state: unitstatesty;
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;

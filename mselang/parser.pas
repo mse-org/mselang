@@ -730,6 +730,9 @@ parseend:
 
  if result and (co_rtunits in info.compileoptions) then begin
   result:= putunitintf(aunit);
+  if result then begin
+   writeunitfile(aunit);
+  end;
  end;
  
 {$ifdef mse_debugparser}

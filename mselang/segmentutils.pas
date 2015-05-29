@@ -19,7 +19,22 @@ unit segmentutils;
 interface
 uses
  globtypes,opglob,msetypes,mclasses;
- 
+type
+ segmentinfoty = record
+  data: pointer;
+  toppo: pointer;
+  endpo: pointer;
+ end;
+ segmentstatety = record
+  segment: segmentty;
+  state: segmentinfoty;
+ end;
+ subsegmentty = record
+  segment: segmentty;
+  start: int32;
+  size: int32;
+ end;
+  
   //todo: use inline
 const
  mlasignature = ord('M') or (ord('L') shl 8) or (ord('A') shl 16) or
@@ -41,10 +56,15 @@ procedure checksegmentcapacity(const asegment: segmentty;
 function checksegmentcapacity(const asegment: segmentty;
                                 asize: integer): pointer;
                                  //returns alloc top
-//function alignsegment(const asegment: segmentty): pointer;
-//procedure alignsegment(var aaddress:segaddressty);
 
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
+procedure resetsegment(const asegment: segmentty);
+function getsubsegment(const asegment: segmentty): subsegmentty;
+function setsubsegment(const asubseg: subsegmentty): segmentstatety;
+                                //returns old state, do not change size
+procedure setsubsegmentsize(var asubseg: subsegmentty);
+
+procedure setsegment(const aseg: segmentstatety);
 
 function getsegmentoffset(const asegment: segmentty;
                                     const apo: pointer): dataoffsty;
@@ -77,12 +97,6 @@ implementation
 uses
  errorhandler,stackops,mseformatstr;
  
-type
- segmentinfoty = record
-  data: pointer;
-  toppo: pointer;
-  endpo: pointer;
- end;
 const
  minsize: array[segmentty] of integer = (
 //seg_nil,seg_stack,seg_globvar,seg_globconst,seg_op,seg_classinfo,seg_rtti,
@@ -404,10 +418,46 @@ procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
 begin
  with segments[asegment] do begin
   toppo:= atop;
- {$ifdef mse_checkinternalerror}
-  internalerror(ie_segment,'20140709');
- {$endif}
  end; 
+end;
+
+procedure resetsegment(const asegment: segmentty);
+begin
+ with segments[asegment] do begin
+  toppo:= data;
+ end; 
+end;
+
+function setsubsegment(const asubseg: subsegmentty): segmentstatety; 
+                                                 //returns old state
+begin
+ result.segment:= asubseg.segment;
+ result.state:= segments[asubseg.segment];
+ with segments[asubseg.segment] do begin
+  data:= data + asubseg.start;
+  toppo:= data + asubseg.size;
+ end;
+end;
+
+function getsubsegment(const asegment: segmentty): subsegmentty;
+begin
+ result.segment:= asegment;
+ with segments[asegment] do begin
+  result.start:= toppo-data;
+  result.size:= 0;
+ end;
+end;
+
+procedure setsubsegmentsize(var asubseg: subsegmentty);
+begin
+ with segments[asubseg.segment] do begin
+  asubseg.size:= toppo - data - asubseg.start;
+ end;
+end;
+
+procedure setsegment(const aseg: segmentstatety);
+begin
+ segments[aseg.segment]:= aseg.state;
 end;
 
 function getsegmentoffset(const asegment: segmentty;
