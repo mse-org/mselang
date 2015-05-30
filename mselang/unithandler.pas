@@ -295,7 +295,7 @@ function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 begin
  with aunit^ do begin
   name:= lstringtostring(aname);
-  filepath:= filehandler.getunitfile(aname);
+  filepath:= filehandler.getsourceunitfile(aname);
   result:= filepath <> '';
   if result then begin
    filetimestamp:= getfilemodtime(filepath);

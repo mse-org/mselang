@@ -465,7 +465,7 @@ type
 
 
 // opinfoarty = array of opinfoty;
- errorlevelty = (erl_none,erl_fatal,erl_error);
+ errorlevelty = (erl_none,erl_fatal,erl_error,erl_note);
 
  implinfoty = record
   sourceoffset: integer;

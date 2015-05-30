@@ -98,7 +98,7 @@ const
  errorerrorlevel = erl_error;
  
  errorleveltext: array[errorlevelty] of string = (
-  '','Fatal','Error'
+  '','Fatal','Error','Note'
  );
  errortext: array[errorty] of errorinfoty = (
   (level: erl_none; message: ''),
@@ -236,7 +236,8 @@ procedure errormessage(const aerror: errorty; const values: array of const;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
 function checksysok(const asyserror: syserrorty; const aerror: errorty; 
-                                   const values: array of const): boolean;
+                                   const values: array of const;
+                     const aerrorlevel: errorlevelty = erl_none): boolean;
                 //true for sye_ok, appends syserror text to values
 
 procedure identerror(const astackoffset: integer;const aerror: errorty;
@@ -484,12 +485,14 @@ begin
 end;
 
 function checksysok(const asyserror: syserrorty; const aerror: errorty; 
-                                   const values: array of const): boolean;
+                     const values: array of const;
+                     const aerrorlevel: errorlevelty = erl_none): boolean;
                 //true for sye_ok, appends syserror text to values
 begin
  result:= asyserror = sye_ok;
  if not result then begin
-  errormessage1(aerror,mergevarrec(values,[syserrortext(asyserror)]));
+  errormessage1(aerror,mergevarrec(values,[syserrortext(asyserror)]),
+                                                                aerrorlevel);
  end;
 end;
 

@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73C96F8
+    ao=An unhandled exception occured at $B73626F8
     +
     ae=
     aec=123
@@ -3977,7 +3977,7 @@ c=3
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
     +
-    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
+    ae=(6,4) Fatal: Syntax error, ";" expected
     +
     aec=1
     ie=0

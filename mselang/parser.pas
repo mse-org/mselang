@@ -52,7 +52,7 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler,listutils,llvmbitcodes,llvmlists,rtunitwriter;
+ subhandler,listutils,llvmbitcodes,llvmlists,rtunitwriter,rtunitreader;
   
 //
 //todo: move context-end flag handling to handler procedures.
@@ -369,6 +369,11 @@ var
 label
  handlelab{,stophandlelab},parseend;
 begin
+ result:= false;
+ if co_readrtunits in info.compileoptions then begin
+  if readunitfile(aunit) then begin
+  end;
+ end;
  linebreaks:= 0;
  eleparentbefore:= ele.elementparent;
  ele.elementparent:= unitsele;
@@ -736,6 +741,7 @@ parseend:
   if result then begin
    writeunitfile(aunit);
   end;
+  resetsegment(seg_unitintf);
  end;
  
 {$ifdef mse_debugparser}

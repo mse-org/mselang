@@ -18,7 +18,7 @@ unit segmentutils;
 {$ifdef FPC}{$mode objfpc}{$goto on}{$h+}{$endif}
 interface
 uses
- globtypes,opglob,msetypes,mclasses;
+ globtypes,opglob,msetypes,classes,mclasses;
 type
  segmentinfoty = record
   data: pointer;
@@ -88,14 +88,16 @@ procedure init();
 procedure deinit();
 
 procedure writesegmentdata(const adest: tstream; 
-                                  const astoredsegments: segmentsty);
+                const astoredsegments: segmentsty; const atimestamp: tdatetime);
 function readsegmentdata(const asource: tstream;
                                   const astoredsegments: segmentsty): boolean;
                      //true if ok
+function checksegmentdata(const asource: tstream;
+                                  const atimestamp: tdatetime): boolean;
 
 implementation
 uses
- errorhandler,stackops,mseformatstr;
+ errorhandler,stackops,mseformatstr,msesystypes,msestream,msestrings,parserglob;
  
 const
  minsize: array[segmentty] of integer = (
@@ -123,6 +125,7 @@ type
   signature: card32;
   version: int32;
   segmentcount: int32;
+  reftimestamp: tdatetime;
  end;
  
  segmentfileinfoty = record
@@ -136,7 +139,8 @@ type
  end;
   
 procedure writesegmentdata(const adest: tstream; 
-                           const astoredsegments: segmentsty);
+                           const astoredsegments: segmentsty;
+                           const atimestamp: tdatetime);
 
  function writedata(const adata; const alen: int32): boolean;
  var
@@ -155,6 +159,7 @@ begin
  with info1.header do begin
   signature:= mlasignature;
   version:= mlafileversion;
+  reftimestamp:= atimestamp;
   i1:= 0;
   for seg1:= low(segmentsty) to high(segmentsty) do begin
    if seg1 in astoredsegments then begin
@@ -174,7 +179,7 @@ begin
       writedata(segitems,
                   info1.header.segmentcount*sizeof(segmentitemty)) then begin
   for seg1:= low(segmentsty) to high(segmentsty) do begin
-   if seg1 in storedsegments then begin
+   if seg1 in astoredsegments then begin
     with segments[seg1] do begin
      if not writedata(data^,toppo-data) then begin
       break;
@@ -195,15 +200,42 @@ begin
  end;
 end;
 
+function checksegmentdata(const asource: tstream;
+                                  const atimestamp: tdatetime): boolean;
+var
+ header1: segmentfileheaderty;
+ posbefore: int64;
+begin
+ result:= false;
+ posbefore:= asource.position;
+ if asource.tryreadbuffer(header1,sizeof(header1)) = sye_ok then begin
+  with header1 do begin
+   result:= (signature = mlasignature) and (version = mlafileversion) and 
+                                                  (reftimestamp = atimestamp);
+  end;
+ end;
+ asource.position:= posbefore;
+end;
+
 function readsegmentdata(const asource: tstream; 
                         const astoredsegments: segmentsty): boolean;
-
+var
+ fna1: filenamety;
+ 
  function readdata(out adata; const alen: int32): boolean;
  var
   i1: int32;
  begin
-  result:= checksysok(asource.read(adata,alen,i1),err_fileread,[])
+  result:= checksysok(asource.read(adata,alen,i1),err_fileread,[fna1],erl_note)
  end; //readdata
+
+ function skipdata(const alen: int32): boolean;
+ var
+  i1: int64;
+ begin
+  result:= checksysok(asource.seek(int64(alen),socurrent,i1),
+                                              err_fileread,[fna1],erl_note);
+ end; //skipdata
  
 var
  info1: segmentfileinfoty;
@@ -213,6 +245,12 @@ var
  segs1: segmentsty;
 begin
  result:= false;
+ if asource is tmsefilestream then begin
+  fna1:= tmsefilestream(asource).filename;
+ end
+ else begin
+  fna1:= '<none>';
+ end;
  if readdata(info1,sizeof(info1)) then begin
   with info1.header do begin
    if signature <> mlasignature then begin
@@ -230,15 +268,23 @@ begin
       result:= true;
       for i1:= 0 to segmentcount-1 do begin
        with segitems[segmentty(i1)] do begin
-        if (kind in segs1) or not (kind in storedsegments) then begin
+        if (kind in segs1) {or not (kind in storedsegments)} then begin
          result:= false;
          break;
         end;         
-        if not readdata(allocsegmentpo(kind,size)^,size) then begin
-         result:= false;
-         exit;
+        if kind in astoredsegments then begin
+         if not readdata(allocsegmentpo(kind,size)^,size) then begin
+          result:= false;
+          exit;
+         end;
+         include(segs1,kind);
+        end
+        else begin
+         if not skipdata(size) then begin
+          result:= false;
+          exit;
+         end;
         end;
-        include(segs1,kind);
        end;
       end;
       result:= result and (segs1 = astoredsegments);

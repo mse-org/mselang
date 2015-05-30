@@ -22,9 +22,17 @@ uses
  
 //todo: use search tree and cache
 
-function getunitfile(const aname: filenamety): filenamety;
-function getunitfile(const aname: lstringty): filenamety;
+const
+ rtunitextension = 'mru';
+ mlaextension = 'mla';
+ pasextension = 'pas';
+
+function getsourceunitfile(const aname: filenamety): filenamety;
+function getsourceunitfile(const aname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
+
+function getrtunitfile(const aname: string): filenamety;
+function getrtunitfilename(const aname: filenamety): filenamety;
 
 function getsysfile(const aname: filenamety): filenamety;
 
@@ -32,7 +40,7 @@ implementation
 uses
  msefileutils;
 
-procedure getfile(var aname: filenamety);
+procedure getsourcefile(var aname: filenamety); //todo: use directory options
 begin
  if findfile(aname) then begin
   aname:= filepath(aname);
@@ -42,26 +50,47 @@ begin
  end;
 end;
 
-function getunitfile(const aname: filenamety): filenamety;
+procedure getrtfile(var aname: filenamety); //todo: use directory options
 begin
- result:= aname+'.mla';
- getfile(result);
+ if findfile(aname) then begin
+  aname:= filepath(aname);
+ end
+ else begin
+  aname:= getsysfile(aname);
+ end;
 end;
 
-function getunitfile(const aname: lstringty): filenamety;
+function getsourceunitfile(const aname: filenamety): filenamety;
 begin
- result:= utf8tostring(aname)+'.mla';
- getfile(result);
+ result:= aname+'.'+mlaextension;
+ getsourcefile(result);
+end;
+
+function getsourceunitfile(const aname: lstringty): filenamety;
+begin
+ result:= utf8tostring(aname)+'.'+mlaextension;
+ getsourcefile(result);
  if result = '' then begin
-  result:= utf8tostring(aname)+'.pas';
-  getfile(result);
+  result:= utf8tostring(aname)+'.'+pasextension;
+  getsourcefile(result);
  end;
 end;
 
 function getincludefile(const aname: lstringty): filenamety;
 begin
  result:= utf8tostring(aname);
- getfile(result);
+ getsourcefile(result);
+end;
+
+function getrtunitfilename(const aname: filenamety): filenamety;
+begin
+ result:= replacefileext(aname,rtunitextension);
+end;
+
+function getrtunitfile(const aname: string): filenamety;
+begin
+ result:= utf8tostring(aname)+'.'+rtunitextension;
+ getrtfile(result);
 end;
 
 //todo: make it portable

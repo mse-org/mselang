@@ -19,8 +19,6 @@ unit rtunitwriter;
 interface
 uses
  parserglob;
-const
- rtunitext = 'mru';
   
 function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
@@ -28,7 +26,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
- msefileutils,msesys,msesystypes;
+ msefileutils,msesys,msesystypes,filehandler;
 {
 type
  unitrecheaderty = record
@@ -100,6 +98,7 @@ begin
  baseoffset:= aunit^.interfacestart.bufferref;
  ps:= ele.eleinfoabs(baseoffset);
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ resetsegment(seg_unitintf);
  po2:= allocsegmentpo(seg_unitintf,s1+sizeof(unitintfinfoty));
  with po2^ do begin
   pd:= @data;
@@ -182,11 +181,11 @@ var
  fna1: filenamety;
 begin
  result:= false;
- fna1:= replacefileext(aunit^.filepath,rtunitext);
+ fna1:= getrtunitfilename(aunit^.filepath);
  if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
   stat1:= setsubsegment(aunit^.opseg);
   try
-   writesegmentdata(stream1,[seg_unitintf,seg_op]);
+   writesegmentdata(stream1,[seg_unitintf,seg_op],aunit^.filetimestamp);
                               //todo: complete 
   finally
    setsegment(stat1);
