@@ -440,6 +440,8 @@ begin
    s.currentfilemeta:= debugfilemeta.value.listid;
    s.currentscopemeta:= s.currentfilemeta;
    s.currentcompileunitmeta:= compileunitmeta.value.listid;
+   ele.markelement(interfacestart); 
+     //possibly overridden by unithandler.handleafterintfuses().
   end;
 
   s.pc:= contextstack[s.stackindex].context;

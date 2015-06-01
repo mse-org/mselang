@@ -17,5 +17,18 @@
 unit rtunitglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
+type
+ unitintfheaderty = record
+  sourcetimestamp: tdatetime;
+  namecount: int32; //idents
+  anoncount: int32; //idents without name
+ end;
+ unitintfinfoty = record
+  header: unitintfheaderty;
+  data: record  //dump of elements
+  end;
+ end;
+ punitintfinfoty = ^unitintfinfoty;
+
 implementation
 end.

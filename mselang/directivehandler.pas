@@ -38,19 +38,9 @@ uses
  parser,grammar,handlerglob;
  
 procedure handledumpelements();
-{$ifdef mse_debugparser}
-var
- ar1: msestringarty;
- int1: integer;
-{$endif}
 begin
 {$ifdef mse_debugparser}
- writeln('--ELEMENTS---------------------------------------------------------');
- ar1:= ele.dumpelements;
- for int1:= 0 to high(ar1) do begin
-  writeln(ar1[int1]);
- end;
- writeln('-------------------------------------------------------------------');
+ dumpelements();
 {$endif}
  with info do begin
   dec(s.stackindex);

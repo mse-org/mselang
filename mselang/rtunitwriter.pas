@@ -18,7 +18,7 @@ unit rtunitwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob;
+ parserglob,rtunitglob;
   
 function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
@@ -26,7 +26,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
- msefileutils,msesys,msesystypes,filehandler;
+ msefileutils,msesys,msesystypes,filehandler,handlerutils;
 {
 type
  unitrecheaderty = record
@@ -44,17 +44,6 @@ type
 } 
 
 type
- unitintfheaderty = record
-  sourcetimestamp: tdatetime;
-  namecount: int32; //idents
-  anoncount: int32; //idents without name
- end;
- unitintfinfoty = record
-  header: unitintfheaderty;
-  data: record  //dump of elements
-  end;
- end;
- punitintfinfoty = ^unitintfinfoty;
  
  identstringty = packed record
   len: byte;
@@ -94,6 +83,7 @@ var
  lstr1: lstringty;
  baseoffset: elementoffsetty;
 begin
+dumpelements();
  result:= false;
  baseoffset:= aunit^.interfacestart.bufferref;
  ps:= ele.eleinfoabs(baseoffset);
@@ -152,9 +142,13 @@ begin
        inc(pointer(pd),paramcount*sizeof(elementoffsetty));
       end;
      end;
+     ek_unit: begin
+     end;
      ek_implementation: begin
       with pimplementationdataty(po3)^ do begin
       end;
+     end;
+     ek_none: begin
      end;
      else begin
       internalerror1(ie_module,'20150523A');

@@ -178,6 +178,7 @@ procedure deinit();
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 procedure outinfo(const text: string; const indent: boolean);
+procedure dumpelements();
 {$endif}
 
 implementation
@@ -2229,6 +2230,21 @@ begin
  end;
 end;
 
+{$endif}
+
+{$ifdef mse_debugparser}
+procedure dumpelements();
+var
+ ar1: msestringarty;
+ int1: integer;
+begin
+ writeln('--ELEMENTS---------------------------------------------------------');
+ ar1:= ele.dumpelements;
+ for int1:= 0 to high(ar1) do begin
+  writeln(ar1[int1]);
+ end;
+ writeln('-------------------------------------------------------------------');
+end;
 {$endif}
 
 end.
