@@ -25,8 +25,6 @@ uses
  msestrings,msetypes,msehash,parserglob,handlerglob,segmentutils,globtypes,
  classhandler,mselist,llvmlists;
 
-{$define mse_debug_parser}
-
 const
  maxidentvector = 200;
  pointertypeid = -1;
@@ -51,8 +49,10 @@ type
  elementkindsty = set of elementkindty;
  
  elementheaderty = record
+ {$ifdef mse_debugparser}
  // size: integer; //for debugging
-//  next: elementoffsetty; //for debugging
+  next: elementoffsetty; //for debugging
+ {$endif}
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
@@ -1605,7 +1605,7 @@ begin
    end;
   end;
   int4:= 0;
-//  int1:= po1^.header.next;
+  int1:= po1^.header.next;
   with ar1[int2-1] do begin
    parent:= po1^.header.parent;
    int3:= po1^.header.parentlevel;
@@ -1714,7 +1714,9 @@ begin
  checkbuffersize;
  result:= pointer(felementdata)+ele1;
  with result^.header do begin
-//  next:= fnextelement; //for debugging
+ {$ifdef mse_debugparser}
+  next:= fnextelement; //for debugging
+ {$endif}
   parent:= felementparent;
   parentlevel:= fparentlevel;
   path:= felementpath;
@@ -1808,7 +1810,9 @@ begin
  checkbuffersize;
 // result:= pointer(felementdata)+ele1;
  with eleinfoabs(result)^.header do begin
-//  next:= fnextelement;
+ {$ifdef mse_debugparser}
+  next:= fnextelement;
+ {$endif}
   parent:= felementparent;
   parentlevel:= fparentlevel;
   path:= felementpath;
