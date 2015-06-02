@@ -409,7 +409,9 @@ begin
   
   s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
+
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
+                            //parse from start
    s.input:= input;
    s.sourcestart:= pchar(input); //todo: use filecache and include stack
    s.source.po:= s.sourcestart;
@@ -436,9 +438,17 @@ begin
                                            [compileunitmeta.value.listid]);
     end;
    end;
+   ele.markelement(s.unitinfo^.interfacestart); 
+     //possibly overridden by unithandler.handleafterintfuses().
   end
-  else begin
-   internalerror1(ie_parser,'20120529A');
+  else begin //continue with implementation parsing
+  {$ifdef mse_checkinternalerror}
+   if s.unitinfo^.impl = nil then begin
+    internalerror1(ie_parser,'20120529A');
+   end;
+   restoreparsercontext(s.unitinfo^.impl);
+   freeparsercontext(s.unitinfo^.impl);
+  {$endif}
   (*
    if s.unitinfo^.impl.sourceoffset >= length(input) then begin
     errormessage(err_filetrunc,[s.filename]);
@@ -462,8 +472,6 @@ begin
    s.currentfilemeta:= debugfilemeta.value.listid;
    s.currentscopemeta:= s.currentfilemeta;
    s.currentcompileunitmeta:= compileunitmeta.value.listid;
-   ele.markelement(interfacestart); 
-     //possibly overridden by unithandler.handleafterintfuses().
   end;
 
   s.pc:= contextstack[s.stackindex].context;
