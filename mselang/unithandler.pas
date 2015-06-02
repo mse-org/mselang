@@ -200,6 +200,12 @@ begin
    ele.pushelement(tk_implementation,ek_implementation,implementationvisi,po1);
   {$endif}
    s.unitinfo^.implementationelement:= ele.eledatarel(po1);
+{
+   s.unitinfo^.impl.sourceoffset:= s.source.po - s.sourcestart;
+   if s.interfaceonly then begin
+    s.stopparser:= true;
+   end;
+}
   end;
   with contextstack[s.stackindex] do begin
    d.kind:= ck_implementation;

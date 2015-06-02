@@ -542,6 +542,7 @@ type
   pc: pcontextty;
   stopparser: boolean;
   stoponerror: boolean;
+//  interfaceonly: boolean;
   currentstatementflags: statementflagsty;
   trystack: listadty;
   trystacklevel: int32;

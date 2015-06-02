@@ -88,7 +88,7 @@ begin
      if checksysok(tmsefilestream.trycreate(targetstream,filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
       try
-       writesegmentdata(targetstream,storedsegments);
+       writesegmentdata(targetstream,storedsegments,now);
       finally
        targetstream.destroy();
       end;      

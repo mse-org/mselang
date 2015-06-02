@@ -83,7 +83,7 @@ var
  lstr1: lstringty;
  baseoffset: elementoffsetty;
 begin
-dumpelements();
+//dumpelements();
  result:= false;
  baseoffset:= aunit^.interfacestart.bufferref;
  ps:= ele.eleinfoabs(baseoffset);
