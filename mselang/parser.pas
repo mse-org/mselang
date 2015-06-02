@@ -43,6 +43,10 @@ function parseunit(const input: string; const aunit: punitinfoty): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
 procedure switchcontext(const acontext: pcontextty);
+procedure saveparsercontext(var acontext: pparsercontextty; 
+                                               const astackcount: int32);
+procedure restoreparsercontext(const acontext: pparsercontextty);
+procedure freeparsercontext(var acontext: pparsercontextty);
 
 //procedure init;
 //procedure deinit;
@@ -150,6 +154,23 @@ begin
    context:= acontext;
    include(transitionflags,bf_continue);
   end;
+ end;
+end;
+
+procedure saveparsercontext(var acontext: pparsercontextty; const astackcount: int32);
+begin
+end;
+
+procedure restoreparsercontext(const acontext: pparsercontextty);
+begin
+end;
+
+procedure freeparsercontext(var acontext: pparsercontextty);
+begin
+ if acontext <> nil then begin
+  system.finalize(acontext^);
+  freemem(acontext);
+  acontext:= nil;
  end;
 end;
 
@@ -386,23 +407,24 @@ begin
   s.currentstatementflags:= [];
   inc(unitlevel);
   
-  s.sourcestart:= pchar(input); //todo: use filecache and include stack
-  s.source.po:= s.sourcestart;
-  s.source.line:= 0;
-
-  incstack();
-  with contextstack[s.stackindex],d do begin
-   kind:= ck_none;
-   context:= startcontext;
-   start.po:= pchar(input);
-   debugstart:= start.po;
-   start.line:= 0;
-   parent:= s.stackindex;
-  end;
-
   s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
+   s.input:= input;
+   s.sourcestart:= pchar(input); //todo: use filecache and include stack
+   s.source.po:= s.sourcestart;
+   s.source.line:= 0;
+ 
+   incstack();
+   with contextstack[s.stackindex],d do begin
+    kind:= ck_none;
+    context:= startcontext;
+    start.po:= pchar(input);
+    debugstart:= start.po;
+    start.line:= 0;
+    parent:= s.stackindex;
+   end;
+ 
    if s.debugoptions <> [] then begin
     with s.unitinfo^ do begin
      filepathmeta:= metadatalist.addfile(filepath);

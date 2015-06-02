@@ -45,6 +45,7 @@ procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 procedure handleafterintfuses();
 procedure handleimplementationentry();
+procedure handleimplusesentry();
 procedure handleafterimpluses();
 procedure handleimplementation();
 procedure handleinclude();
@@ -210,6 +211,18 @@ begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_implementation;
 //   ele.markelement(d.impl.elemark);
+  end;
+ end;
+end;
+
+procedure handleimplusesentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IMPLUSESENTRY');
+{$endif}
+ with info do begin
+  if s.interfaceonly then begin
+   saveparsercontext(s.unitinfo^.impl,2);
   end;
  end;
 end;
@@ -415,6 +428,7 @@ begin
  system.finalize(punitinfoty(aitemdata)^);
  with punitinfoty(aitemdata)^ do begin
   metadatalist.free();
+  freeparsercontext(impl);
  end;
  freemem(punitinfoty(aitemdata));
 end;

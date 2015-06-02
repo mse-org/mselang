@@ -466,13 +466,24 @@ type
 
 // opinfoarty = array of opinfoty;
  errorlevelty = (erl_none,erl_fatal,erl_error,erl_note);
-
+{
  implinfoty = record
   sourceoffset: integer;
   sourceline: integer;
   context: pcontextty;
   eleparent: elementoffsetty;
  end;
+}
+ parsercontextty = record
+  source: string;
+  sourceoffset: integer;
+  sourceline: integer;
+  eleparent: elementoffsetty;
+  contextcount: int32;
+  contextstack: record    //array of contextdataty
+  end;
+ end;
+ pparsercontextty = ^parsercontextty;
  
  unitstatety = ({us_interface,}us_interfaceparsed,
                      us_implementation,us_implementationparsed,
@@ -512,7 +523,8 @@ type
   pendingcapacity: integer;
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
-  impl: implinfoty; //start of implementation parsing
+//  impl: implinfoty; //start of implementation parsing
+  impl: pparsercontextty;
   internalsubs: array[internalsubty] of opaddressty;
   codestop: opaddressty;
   stoponerror: boolean;
@@ -530,6 +542,7 @@ type
 
  savedparseinfoty = record
   filename: filenamety;
+  input: string;
   source: sourceinfoty;
 {$ifdef mse_debugparser}
   debugsource: pchar;
@@ -542,7 +555,7 @@ type
   pc: pcontextty;
   stopparser: boolean;
   stoponerror: boolean;
-//  interfaceonly: boolean;
+  interfaceonly: boolean;
   currentstatementflags: statementflagsty;
   trystack: listadty;
   trystacklevel: int32;

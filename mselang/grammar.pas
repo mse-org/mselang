@@ -295,6 +295,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'main');
+ implusesco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'impluses');
  main1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2281,8 +2286,8 @@ const
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bmain: array[0..6] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @uses0co); stack: nil; 
+   (flags: [bf_nt,bf_keyword,bf_eat];
+     dest: (context: @implusesco); stack: nil; 
      keyword: $3C66EDD6{'uses'}),
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
@@ -2315,6 +2320,16 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bimpluses: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push];
+     dest: (context: @uses0co); stack: nil; keys: (
+    (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7664,6 +7679,10 @@ begin
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  mainco.handleexit:= @handleafterimpluses;
+ implusesco.branch:= @bimpluses;
+ implusesco.next:= @main1co;
+ implusesco.handleentry:= @handleimplusesentry;
+ implusesco.handleexit:= @handleafterimpluses;
  main1co.branch:= @bmain1;
  main1co.handleexit:= @handlemain;
  curlycomment0co.branch:= @bcurlycomment0;
