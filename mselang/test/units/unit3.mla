@@ -1,0 +1,18 @@
+unit unit3;
+interface
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+
+implementation
+uses
+ unit2;
+{$dumpelements}
+//{$abort}
+procedure test(var p: rec1ty);
+begin
+end;
+
+end.
