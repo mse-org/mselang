@@ -70,7 +70,7 @@ var
  ps,pd,pe: pelementinfoty;
  identlist: tidentlist;
  po2: punitintfinfoty;
- po3: pointer;
+ po: pointer;
  nameindex1,anonindex1: int32;
  baseoffset: elementoffsetty;
 
@@ -95,24 +95,24 @@ var
    end;
   end;
   result:= po1^.nameindex;
- end;
+ end; //updateident
 
-procedure putdata(var po: pointer; const adata: unitinfopoarty);
-var
- pd,pe: pidentty;
- ps: ppunitinfoty;
-begin
- pint32(po)^:= length(adata);
- pd:= pointer(pint32(po)+1);
- pe:= pd+length(adata);
- ps:= pointer(adata);
- while pd < pe do begin
-  pd^:= updateident(ps^^.key);
-  inc(ps);
-  inc(pd);
- end;
- po:= pe;
-end;
+ procedure putdata(var po: pointer; const adata: unitinfopoarty);
+ var
+  pd,pe: pidentty;
+  ps: ppunitinfoty;
+ begin
+  pint32(po)^:= length(adata);
+  pd:= pointer(pint32(po)+1);
+  pe:= pd+length(adata);
+  ps:= pointer(adata);
+  while pd < pe do begin
+   pd^:= updateident(ps^^.key);
+   inc(ps);
+   inc(pd);
+  end;
+  po:= pe;
+ end; //putdata
 
 begin
 //dumpelements();
@@ -130,10 +130,10 @@ begin
  identlist:= tidentlist.create;
  try
   with po2^ do begin
-   po3:= @interfaceuses;
-   putdata(po3,aunit^.interfaceuses);
-   putdata(po3,aunit^.implementationuses);
-   pd:= po3;
+   po:= @interfaceuses;
+   putdata(po,aunit^.interfaceuses);
+   putdata(po,aunit^.implementationuses);
+   pd:= po;
   end;
   ps:= ele.eleinfoabs(baseoffset);
   move(ps^,pd^,s1);
@@ -141,37 +141,37 @@ begin
   while pd < pe do begin
    with pd^ do begin
     header.name:= updateident(header.name);
-    po3:= @data;
-    case pd^.header.kind of
+    po:= @data;
+    case header.kind of
      ek_type: begin
-      with ptypedataty(po3)^ do begin
+      with ptypedataty(po)^ do begin
       end;
      end;
      ek_field: begin
-      with pfielddataty(po3)^ do begin
+      with pfielddataty(po)^ do begin
       end;
      end;
      ek_var: begin
-      with pvardataty(po3)^ do begin
+      with pvardataty(po)^ do begin
       end;
      end;
      ek_const: begin
-      with pconstdataty(po3)^ do begin
+      with pconstdataty(po)^ do begin
       end;
      end;
      ek_ref: begin
-      with prefdataty(po3)^ do begin
+      with prefdataty(po)^ do begin
       end;
      end;
      ek_sub: begin
-      with psubdataty(po3)^ do begin
+      with psubdataty(po)^ do begin
        inc(pointer(pd),paramcount*sizeof(elementoffsetty));
       end;
      end;
      ek_unit: begin
      end;
      ek_implementation: begin
-      with pimplementationdataty(po3)^ do begin
+      with pimplementationdataty(po)^ do begin
       end;
      end;
      ek_none: begin

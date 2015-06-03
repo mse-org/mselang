@@ -25,7 +25,7 @@ function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
- msearrayutils,elements,sysutils;
+ msearrayutils,elements,sysutils,handlerglob;
  
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
@@ -74,6 +74,8 @@ var
 
 var
  interfaceuses1,implementationuses1: identarty;
+ pele1: pelementinfoty;
+ po: pointer;
 begin
  result:= false;
  fna1:= getrtunitfile(aunit^.name);
@@ -116,6 +118,55 @@ begin
      po3:= @po1^.interfaceuses;
      getdata(po3,interfaceuses1);
      getdata(po3,implementationuses1);
+     pele1:= pointer(po3);
+     poend:= getsegmentbase(seg_unitintf) + getsegmentsize(seg_unitintf);     
+     while pele1 < poend do begin
+      with pele1^ do begin
+       updateident(int32(header.name));
+       po:= @data;
+       case header.kind of
+        ek_type: begin
+         with ptypedataty(po)^ do begin
+         end;
+        end;
+        ek_field: begin
+         with pfielddataty(po)^ do begin
+         end;
+        end;
+        ek_var: begin
+         with pvardataty(po)^ do begin
+         end;
+        end;
+        ek_const: begin
+         with pconstdataty(po)^ do begin
+         end;
+        end;
+        ek_ref: begin
+         with prefdataty(po)^ do begin
+         end;
+        end;
+        ek_sub: begin
+         with psubdataty(po)^ do begin
+          inc(pointer(pele1),paramcount*sizeof(elementoffsetty));
+         end;
+        end;
+        ek_unit: begin
+        end;
+        ek_implementation: begin
+         with pimplementationdataty(po)^ do begin
+         end;
+        end;
+        ek_none: begin
+        end;
+        else begin
+         exit;
+        end;
+       end;
+       inc(pointer(pele1),elesizes[header.kind]);
+      end;     
+     end;
+     if pele1 = poend then begin //ok
+     end;
     end;
    finally
     stream1.destroy();
