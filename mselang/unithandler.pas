@@ -30,6 +30,8 @@ type
 var 
  unitlinklist: linklistty;
  unitchain: listadty;
+ intfparsedlinklist: linklistty;
+ intfparsedchain: listadty;
 
 function newunit(const aname: string): punitinfoty; 
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
@@ -43,6 +45,10 @@ procedure handleprogramentry();
 
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
+
+procedure handleuseserror();
+procedure handleuses();
+
 procedure handleafterintfuses();
 procedure handleimplementationentry();
 procedure handleimplusesentry();
@@ -162,6 +168,71 @@ begin
 end;
 *)
 
+procedure handleuseserror();
+begin
+{$ifdef mse_debugparser}
+ outhandle('USESERROR');
+{$endif}
+ with info do begin
+  errormessage(err_syntax,[';']);
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
+procedure handleuses();
+var
+ int1,int2: integer;
+// offs1: elementoffsetty;
+ po1: ppunitinfoty;
+ ar1: elementoffsetarty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('USES');
+{$endif}
+ with info do begin
+  int2:= s.stacktop-s.stackindex-1;
+  setlength(ar1,int2);
+  for int1:= 0 to int2-1 do begin
+   if not ele.addelement(contextstack[s.stackindex+int1+2].d.ident.ident,
+                                    ek_uses,[vik_global],ar1[int1]) then begin
+    identerror(int1+2,err_duplicateidentifier);
+   end;
+  end;
+//  offs1:= ele.decelementparent;
+  with s.unitinfo^ do begin
+   if us_interfaceparsed in state then begin
+//    ele.decelementparent;
+    setlength(implementationuses,int2);
+    po1:= pointer(implementationuses);
+   end
+   else begin
+    setlength(interfaceuses,int2);
+    po1:= pointer(interfaceuses);
+   end;
+  end;
+  inc(po1,int2);
+  int2:= 0;
+  for int1:= s.stackindex+2 to s.stacktop do begin
+   dec(po1);
+   po1^:= loadunit(int1);
+   if po1^ = nil then begin
+    s.stopparser:= true;
+    break;
+   end;
+   if ar1[int2] <> 0 then begin
+    with pusesdataty(ele.eledataabs(ar1[int2]))^ do begin
+     ref:= po1^^.interfaceelement;
+    end;
+   end;
+   inc(int2);
+  end;
+//  ele.elementparent:= offs1;
+  dec(s.stackindex);
+  s.stacktop:= s.stackindex;
+ end;
+end;
+
 procedure handleafterintfuses();
 begin
 {$ifdef mse_debugparser}
@@ -222,7 +293,8 @@ begin
 {$endif}
  with info do begin
   if s.interfaceonly then begin
-   saveparsercontext(s.unitinfo^.impl,2);
+   saveparsercontext(s.unitinfo^.implstart,2);
+   s.stopparser:= true;
   end;
  end;
 end;
@@ -251,8 +323,12 @@ begin
 {$endif}
  checkforwardtypeerrors();
  with info do begin
-  setsubsegmentsize(s.unitinfo^.opseg); 
-  ele.releaseelement(s.unitinfo^.implementationstart);
+  with s.unitinfo^ do begin
+   setsubsegmentsize(opseg); 
+   ele.releaseelement(implementationstart);
+   freeparsercontext(implstart);
+   include(state,us_implementationparsed);
+  end;
   {
   with contextstack[s.stackindex] do begin
    ele.releaseelement(d.impl.elemark);
@@ -305,8 +381,7 @@ begin
   writeln(filepath);
 {$endif}
 //todo: use mmap(), problem: no terminating 0.
-  result:= parseunit(readfiledatastring(filepath),aunit);
-  include(state,us_implementationparsed);
+  result:= parseunit(readfiledatastring(filepath),aunit,true);
  end;
 end;
 
@@ -364,7 +439,7 @@ begin
     prev:= info.s.unitinfo;
     lstr1.po:= start.po;
     lstr1.len:= d.ident.len;
-    getunitfile(result,lstr1);
+//    getunitfile(result,lstr1);
     if not getunitfile(result,lstr1) then begin
      identerror(aindex-info.s.stackindex,err_cantfindunit);
     end
@@ -428,7 +503,7 @@ begin
  system.finalize(punitinfoty(aitemdata)^);
  with punitinfoty(aitemdata)^ do begin
   metadatalist.free();
-  freeparsercontext(impl);
+  freeparsercontext(implstart);
  end;
  freemem(punitinfoty(aitemdata));
 end;
@@ -997,9 +1072,11 @@ procedure clear;
 begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);
  clearlist(unitlinklist,sizeof(unitlinkinfoty),256);
+ clearlist(intfparsedlinklist,sizeof(unitlinkinfoty),256);
  clearlist(forwardtypes,sizeof(forwardtypeitemty),256);
  clearlist(trystacklist,sizeof(trystackitemty),256);
  unitchain:= 0;
+ intfparsedchain:= 0;
   
  links:= nil;
  linkindex:= 0;

@@ -39,7 +39,8 @@ procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 function parse(const input: string; const afilename: filenamety;
                                      const aoptions: compileoptionsty): boolean;
                               //true if ok
-function parseunit(const input: string; const aunit: punitinfoty): boolean;
+function parseunit(const input: string; const aunit: punitinfoty;
+                   const ainterfaceonly: boolean): boolean;
                                        
 procedure pushincludefile(const afilename: filenamety);
 procedure switchcontext(const acontext: pcontextty);
@@ -157,12 +158,63 @@ begin
  end;
 end;
 
-procedure saveparsercontext(var acontext: pparsercontextty; const astackcount: int32);
+procedure incstack(const acount: int32 = 1);
 begin
+ with info do begin
+  inc(s.stacktop,acount);
+  s.stackindex:= s.stacktop;
+  if s.stacktop >= stackdepth then begin
+   stackdepth:= 2*stackdepth;
+   setlength(contextstack,stackdepth+contextstackreserve);
+  end;
+ end;
+end;
+
+procedure saveparsercontext(var acontext: pparsercontextty;
+                                          const astackcount: int32);
+var
+ stacksize1: int32;
+begin
+ stacksize1:= astackcount*sizeof(contextitemty);
+ acontext:= getmem(sizeof(parsercontextty)+stacksize1);
+ fillchar(acontext^,sizeof(acontext),0);
+ with acontext^ do begin
+  source:= info.s.input;
+  sourceoffset:= info.s.source.po-info.s.sourcestart;
+  sourceline:= info.s.source.line;
+  eleparent:= ele.elementparent;
+  stackcount:= astackcount;
+  stackindex:= info.s.stackindex;
+  stacktop:= info.s.stacktop;
+
+  move(info.contextstack[info.s.stacktop-astackcount-1],
+                                             contextstack,stacksize1);
+ end;
 end;
 
 procedure restoreparsercontext(const acontext: pparsercontextty);
+var
+ stacksize1: int32;
+ i1: int32;
+ delta1: int32;
 begin
+ with acontext^ do begin
+  stacksize1:= stackcount*sizeof(contextitemty);
+  incstack(stackcount);
+  move(contextstack,info.contextstack[info.s.stacktop-stackcount-1],stacksize1);
+  delta1:= info.s.stacktop - stacktop;
+  for i1:= info.s.stacktop - stackcount + 1 to info.s.stacktop do begin
+   with info.contextstack[i1] do begin
+    parent:= parent + delta1;
+   end;
+  end;
+  info.s.input:= source;
+  info.s.sourcestart:= pchar(source);
+  info.s.source.po:= info.s.sourcestart + sourceoffset;
+  info.s.source.line:= sourceline;
+  ele.elementparent:= eleparent;
+  info.s.stackindex:= stackindex+delta1;
+ end;
 end;
 
 procedure freeparsercontext(var acontext: pparsercontextty);
@@ -171,18 +223,6 @@ begin
   system.finalize(acontext^);
   freemem(acontext);
   acontext:= nil;
- end;
-end;
-
-procedure incstack({const info: pparseinfoty});
-begin
- with info do begin
-  inc(s.stacktop);
-  s.stackindex:= s.stacktop;
-  if s.stacktop >= stackdepth then begin
-   stackdepth:= 2*stackdepth;
-   setlength(contextstack,stackdepth+contextstackreserve);
-  end;
  end;
 end;
 
@@ -353,7 +393,8 @@ begin
  inc(achar);
 end;
 
-function parseunit(const input: string; const aunit: punitinfoty): boolean;
+function parseunit(const input: string; const aunit: punitinfoty;
+                                      const ainterfaceonly: boolean): boolean;
 
 var
  popped: boolean;
@@ -409,6 +450,7 @@ begin
   
   s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
+  s.interfaceonly:= ainterfaceonly;
 
   if not (us_interfaceparsed in s.unitinfo^.state) then begin
                             //parse from start
@@ -443,12 +485,15 @@ begin
   end
   else begin //continue with implementation parsing
   {$ifdef mse_checkinternalerror}
-   if s.unitinfo^.impl = nil then begin
-    internalerror1(ie_parser,'20120529A');
+   if s.unitinfo^.implstart = nil then begin
+    internalerror(ie_parser,'20120529A');
    end;
-   restoreparsercontext(s.unitinfo^.impl);
-   freeparsercontext(s.unitinfo^.impl);
+   if us_implementationparsed in s.unitinfo^.state then begin
+    internalerror(ie_parser,'20130603A');
+   end;
   {$endif}
+   restoreparsercontext(s.unitinfo^.implstart);
+   freeparsercontext(s.unitinfo^.implstart);
   (*
    if s.unitinfo^.impl.sourceoffset >= length(input) then begin
     errormessage(err_filetrunc,[s.filename]);
@@ -755,11 +800,30 @@ parseend:
   with punitdataty(ele.eledataabs(s.unitinfo^.interfaceelement))^ do begin
    varchain:= s.unitinfo^.varchain;
   end;
-  if result and (unitlevel = 1) then begin
-//   unithandler.handleinifini();
-//   setlength(ops,opcount);
-   with pstartupdataty(getoppo(0))^ do begin
-    globdatasize:= globdatapo;
+  if result then begin
+   if s.interfaceonly and 
+            not (us_implementationparsed in s.unitinfo^.state) then begin
+    with punitlinkinfoty(addlistitem(
+                               intfparsedlinklist,intfparsedchain))^ do begin
+     ref:= s.unitinfo;
+    end;       
+   end;
+   if (unitlevel = 1) then begin
+    while (intfparsedchain <> 0) and result do begin
+    {$ifdef mse_debugparser}
+      writeln('***************************************** implementation');
+      writeln(punitlinkinfoty(
+             getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
+    {$endif}
+     result:= parseunit('',punitlinkinfoty(
+                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,false);
+     deletelistitem(intfparsedlinklist,intfparsedchain);
+    end;
+    if result then begin
+     with pstartupdataty(getoppo(0))^ do begin
+      globdatasize:= globdatapo;
+     end;
+    end;
    end;
   end;
 
@@ -837,7 +901,7 @@ begin
     result:= parsecompilerunit('__mla__compilerunit');
     if result then begin
    {$endif}
-     result:= parseunit(input,unit1);
+     result:= parseunit(input,unit1,false);
    {$ifndef mse_nocompilerunit}
     end;
    {$endif}

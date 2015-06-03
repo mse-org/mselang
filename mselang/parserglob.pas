@@ -479,7 +479,9 @@ type
   sourceoffset: integer;
   sourceline: integer;
   eleparent: elementoffsetty;
-  contextcount: int32;
+  stackindex: int32;
+  stacktop: int32;
+  stackcount: int32;
   contextstack: record    //array of contextdataty
   end;
  end;
@@ -524,7 +526,7 @@ type
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
 //  impl: implinfoty; //start of implementation parsing
-  impl: pparsercontextty;
+  implstart: pparsercontextty; //start of implementation parsing
   internalsubs: array[internalsubty] of opaddressty;
   codestop: opaddressty;
   stoponerror: boolean;

@@ -42,8 +42,6 @@ procedure handleequalityexpected();
 procedure handleidentexpected();
 procedure handleillegalexpression();
 
-procedure handleuseserror();
-procedure handleuses();
 procedure handlenoidenterror();
 
 procedure handleprogbegin();
@@ -1688,71 +1686,6 @@ begin
  with info do begin
   errormessage(err_illegalexpression,[]);
   dec(s.stackindex);
- end;
-end;
-
-procedure handleuseserror();
-begin
-{$ifdef mse_debugparser}
- outhandle('USESERROR');
-{$endif}
- with info do begin
-  errormessage(err_syntax,[';']);
-  dec(s.stackindex);
-  s.stacktop:= s.stackindex;
- end;
-end;
-
-procedure handleuses();
-var
- int1,int2: integer;
-// offs1: elementoffsetty;
- po1: ppunitinfoty;
- ar1: elementoffsetarty;
-begin
-{$ifdef mse_debugparser}
- outhandle('USES');
-{$endif}
- with info do begin
-  int2:= s.stacktop-s.stackindex-1;
-  setlength(ar1,int2);
-  for int1:= 0 to int2-1 do begin
-   if not ele.addelement(contextstack[s.stackindex+int1+2].d.ident.ident,
-                                    ek_uses,[vik_global],ar1[int1]) then begin
-    identerror(int1+2,err_duplicateidentifier);
-   end;
-  end;
-//  offs1:= ele.decelementparent;
-  with s.unitinfo^ do begin
-   if us_interfaceparsed in state then begin
-//    ele.decelementparent;
-    setlength(implementationuses,int2);
-    po1:= pointer(implementationuses);
-   end
-   else begin
-    setlength(interfaceuses,int2);
-    po1:= pointer(interfaceuses);
-   end;
-  end;
-  inc(po1,int2);
-  int2:= 0;
-  for int1:= s.stackindex+2 to s.stacktop do begin
-   dec(po1);
-   po1^:= loadunit(int1);
-   if po1^ = nil then begin
-    s.stopparser:= true;
-    break;
-   end;
-   if ar1[int2] <> 0 then begin
-    with pusesdataty(ele.eledataabs(ar1[int2]))^ do begin
-     ref:= po1^^.interfaceelement;
-    end;
-   end;
-   inc(int2);
-  end;
-//  ele.elementparent:= offs1;
-  dec(s.stackindex);
-  s.stacktop:= s.stackindex;
  end;
 end;
 
