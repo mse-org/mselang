@@ -35,6 +35,7 @@ var
  names1,anons1: identarty;
  pd,pe: pint32;
  ns,ne: pchar;
+ po2: pointer;
 begin
  result:= false;
  fna1:= getrtunitfile(aunit^.name);
@@ -46,21 +47,36 @@ begin
    result:= checksegmentdata(stream1,aunit^.filetimestamp) and
              readsegmentdata(stream1,[seg_unitintf,seg_unitidents{,seg_op}]);
    if result then begin
+    if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
+     exit; //invalid
+    end;
     po1:= getsegmentbase(seg_unitintf);
-    allocuninitedarray(po1^.header.anoncount,sizeof(identty),anons1);
+    try
+     allocuninitedarray(po1^.header.anoncount,sizeof(identty),anons1);
+    except
+     exit;
+    end;
     pd:= pointer(anons1);
     pe:= pd + length(anons1);
     while pd < pe do begin
      pd^:= getident();
      inc(pd);
     end;
-    allocuninitedarray(po1^.header.namecount,sizeof(identty),names1);
+    try
+     allocuninitedarray(po1^.header.namecount,sizeof(identty),names1);
+    except
+     exit;
+    end;
     pd:= pointer(names1);
     pe:= pd + length(names1);
     ne:= getsegmentbase(seg_unitidents);
+    po2:= pointer(ne) + getsegmentsize(seg_unitidents);     
     while pd < pe do begin
      ns:= @pidentstringty(ne)^.data;
      ne:= ns + pidentstringty(ne)^.len;
+     if ne > po2 then begin
+      exit; //invalid
+     end;
      pd^:= getident(ns,ne);
      inc(pd);
     end;
