@@ -1052,6 +1052,11 @@ begin
    if path = 0 then begin
     break;
    end;
+  {$ifdef mse_checkinternalerror}
+   if felementparent = 0 then begin
+    internalerror(ie_elements,'20150503A');
+   end;
+  {$endif}
    felementpath:= felementpath-name;
    felementparent:= parent;
   end;

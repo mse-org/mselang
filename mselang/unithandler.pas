@@ -324,8 +324,13 @@ begin
  checkforwardtypeerrors();
  with info do begin
   with s.unitinfo^ do begin
-   setsubsegmentsize(opseg); 
-   ele.releaseelement(implementationstart);
+   setsubsegmentsize(opseg);
+   if unitlevel > 1 then begin
+    ele.releaseelement(implementationstart);
+        //possible pending implementation units
+        //todo: compile implementation units as soon as possible in order to
+        //save resources
+   end;
    freeparsercontext(implstart);
    include(state,us_implementationparsed);
   end;
