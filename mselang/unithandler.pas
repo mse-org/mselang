@@ -377,6 +377,7 @@ function parseusesunit(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
 {$ifdef mse_debugparser}
+  writeln();
   writeln('***************************************** uses');
   writeln(filepath);
 {$endif}

@@ -523,6 +523,7 @@ begin
   keywordindex:= 0;
  {$ifdef mse_debugparser}
   s.debugsource:= s.source.po;
+  outinfo('START',false);
  {$endif}
   while true do begin
    if s.stackindex <= statebefore.stacktop then begin
@@ -684,11 +685,11 @@ handlelab:
       end;
      end;
     end;
-    if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
-     goto parseend;
-    end;
     if s.pc^.cutafter then begin
      s.stacktop:= s.stackindex;
+    end;
+    if (s.stackindex <= statebefore.stacktop) or s.stopparser then begin
+     goto parseend;
     end;
     s.pc:= contextstack[s.stackindex].context;
     if popped then begin
@@ -811,6 +812,7 @@ parseend:
    if (unitlevel = 1) then begin
     while (intfparsedchain <> 0) and result do begin
     {$ifdef mse_debugparser}
+      writeln();
       writeln('***************************************** implementation');
       writeln(punitlinkinfoty(
              getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
