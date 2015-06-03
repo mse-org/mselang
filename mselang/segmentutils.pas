@@ -49,6 +49,8 @@ function allocsegmentoffset(const asegment: segmentty;
                                     asize: integer): dataoffsty;
 function allocsegmentpo(const asegment: segmentty;
                                     asize: integer): pointer;
+function allocsegmentpounaligned(const asegment: segmentty;
+                                                const asize: integer): pointer;
 function allocsegmentpo(const asegment: segmentty;
                                  asize: integer; var buffer: pointer): pointer;
 procedure checksegmentcapacity(const asegment: segmentty;
@@ -387,6 +389,18 @@ begin
  with segments[asegment] do begin
   result:= toppo;
   sizealign(asize);
+  inc(toppo,asize);
+  if toppo > endpo then begin
+   grow(asegment,result);
+  end;
+ end;
+end;
+
+function allocsegmentpounaligned(const asegment: segmentty;
+                                                const asize: integer): pointer;
+begin
+ with segments[asegment] do begin
+  result:= toppo;
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment,result);

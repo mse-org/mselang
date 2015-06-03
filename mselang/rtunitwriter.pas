@@ -44,14 +44,7 @@ type
 } 
 
 type
- 
- identstringty = packed record
-  len: byte;
-  data: record //max 255 characters
-  end;
- end;
- pidentstringty = ^identstringty;
- 
+  
  identbufferdataty = record
   header: identheaderty;
   nameindex: int32;
@@ -88,7 +81,8 @@ var
  begin
   if identlist.adduniquedata(aident,po1) then begin
    if getidentname(aident,lstr1) then begin
-    with pidentstringty(allocsegmentpo(seg_unitidents,lstr1.len+1))^ do begin
+    with pidentstringty(allocsegmentpounaligned(seg_unitidents,
+                       lstr1.len + sizeof(identstringty)))^ do begin
      len:= lstr1.len;
      move(lstr1.po^,data,lstr1.len);
     end;

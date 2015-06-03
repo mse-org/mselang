@@ -18,11 +18,19 @@ unit rtunitglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 type
+ identstringty = packed record
+  len: byte;
+  data: record //max 255 characters
+  end;
+ end;
+ pidentstringty = ^identstringty;
+
  lenidentty = record
   len: int32;
   data: record //array of identty
   end;
  end;
+ plenidentty = ^lenidentty;
  
  unitintfheaderty = record
   sourcetimestamp: tdatetime;
