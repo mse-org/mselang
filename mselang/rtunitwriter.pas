@@ -73,48 +73,80 @@ end;
  
 function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 var
- s1: ptrint;
+ s1,s2: ptrint;
  ps,pd,pe: pelementinfoty;
  identlist: tidentlist;
- po1: pidentbufferdataty;
  po2: punitintfinfoty;
  po3: pointer;
  nameindex1,anonindex1: int32;
- lstr1: lstringty;
  baseoffset: elementoffsetty;
+
+ function updateident(const aident: identty): identty;
+ var
+  po1: pidentbufferdataty;
+  lstr1: lstringty;
+ begin
+  if identlist.adduniquedata(aident,po1) then begin
+   if getidentname(aident,lstr1) then begin
+    with pidentstringty(allocsegmentpo(seg_unitidents,lstr1.len+1))^ do begin
+     len:= lstr1.len;
+     move(lstr1.po^,data,lstr1.len);
+    end;
+    po1^.nameindex:= nameindex1;
+    inc(nameindex1);
+   end
+   else begin
+    po1^.nameindex:= anonindex1;
+    dec(anonindex1);
+   end;
+  end;
+  result:= po1^.nameindex;
+ end;
+
+procedure putdata(var po: pointer; const adata: unitinfopoarty);
+var
+ pd,pe: pidentty;
+ ps: ppunitinfoty;
+begin
+ pint32(po)^:= length(adata);
+ pd:= pointer(pint32(po)+1);
+ pe:= pd+length(adata);
+ ps:= pointer(adata);
+ while pd < pe do begin
+  pd^:= updateident(ps^^.key);
+  inc(ps);
+  inc(pd);
+ end;
+ po:= pe;
+end;
+
 begin
 //dumpelements();
  result:= false;
  baseoffset:= aunit^.interfacestart.bufferref;
- ps:= ele.eleinfoabs(baseoffset);
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ s2:= 2*sizeof(lenidentty) + 
+       (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
+                                                               sizeof(identty);
  resetsegment(seg_unitintf);
- po2:= allocsegmentpo(seg_unitintf,s1+sizeof(unitintfinfoty));
- with po2^ do begin
-  pd:= @data;
- end;
- move(ps^,pd^,s1);
+ resetsegment(seg_unitidents);
+ po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
+ nameindex1:= 0;
+ anonindex1:= -1;
  identlist:= tidentlist.create;
  try
+  with po2^ do begin
+   po3:= @interfaceuses;
+   putdata(po3,aunit^.interfaceuses);
+   putdata(po3,aunit^.implementationuses);
+   pd:= po3;
+  end;
+  ps:= ele.eleinfoabs(baseoffset);
+  move(ps^,pd^,s1);
   pe:= pointer(pd) + s1;
-  nameindex1:= 0;
-  anonindex1:= -1;
   while pd < pe do begin
    with pd^ do begin
-    if identlist.adduniquedata(header.name,po1) then begin
-     if getidentname(header.name,lstr1) then begin
-      with pidentstringty(allocsegmentpo(seg_unitidents,lstr1.len+1))^ do begin
-       len:= lstr1.len;
-       move(lstr1.po^,data,lstr1.len);
-      end;
-      po1^.nameindex:= nameindex1;
-      inc(nameindex1);
-     end
-     else begin
-      po1^.nameindex:= anonindex1;
-      dec(anonindex1);
-     end;
-    end;
+    header.name:= updateident(header.name);
     po3:= @data;
     case pd^.header.kind of
      ek_type: begin
@@ -179,7 +211,8 @@ begin
  if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
   stat1:= setsubsegment(aunit^.opseg);
   try
-   writesegmentdata(stream1,[seg_unitintf,seg_op],aunit^.filetimestamp);
+   writesegmentdata(stream1,[seg_unitintf,seg_unitidents,seg_op],
+                                                   aunit^.filetimestamp);
                               //todo: complete 
   finally
    setsegment(stat1);

@@ -840,6 +840,7 @@ parseend:
    writeunitfile(aunit);
   end;
   resetsegment(seg_unitintf);
+  resetsegment(seg_unitidents);
  end;
  
 {$ifdef mse_debugparser}

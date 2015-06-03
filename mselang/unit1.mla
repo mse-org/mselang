@@ -1,17 +1,8 @@
 unit unit1;
-{
+interface
 uses
- unit3;
-procedure tt1(p1: int32);
-}
+ unit2;
 implementation
-{
-procedure tt1(p1: int32);
-begin
- writeln('tt1');
- tt3(p1);
-end;
-}
 finalization
  exitcode:= 123;
 end.

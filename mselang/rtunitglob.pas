@@ -18,6 +18,12 @@ unit rtunitglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 type
+ lenidentty = record
+  len: int32;
+  data: record //array of identty
+  end;
+ end;
+ 
  unitintfheaderty = record
   sourcetimestamp: tdatetime;
   namecount: int32; //idents
@@ -25,6 +31,8 @@ type
  end;
  unitintfinfoty = record
   header: unitintfheaderty;
+  interfaceuses: lenidentty;
+  implementationuses: lenidentty;
   data: record  //dump of elements
   end;
  end;
