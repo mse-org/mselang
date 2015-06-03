@@ -187,7 +187,7 @@ begin
   stackindex:= info.s.stackindex;
   stacktop:= info.s.stacktop;
 
-  move(info.contextstack[info.s.stacktop-astackcount-1],
+  move(info.contextstack[info.s.stacktop-astackcount+1],
                                              contextstack,stacksize1);
  end;
 end;
@@ -201,7 +201,7 @@ begin
  with acontext^ do begin
   stacksize1:= stackcount*sizeof(contextitemty);
   incstack(stackcount);
-  move(contextstack,info.contextstack[info.s.stacktop-stackcount-1],stacksize1);
+  move(contextstack,info.contextstack[info.s.stacktop-stackcount+1],stacksize1);
   delta1:= info.s.stacktop - stacktop;
   for i1:= info.s.stacktop - stackcount + 1 to info.s.stacktop do begin
    with info.contextstack[i1] do begin
