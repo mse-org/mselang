@@ -1,0 +1,23 @@
+unit unit3;
+interface
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+
+procedure test1(var p: recty);
+
+implementation
+uses
+ unit2;
+var
+ r1: rec1ty;
+ 
+procedure test1(var p: recty);
+begin
+ r1.a:= p.b+p.a;
+ exitcode:= r1.a;
+end;
+
+end.

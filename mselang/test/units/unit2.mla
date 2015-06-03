@@ -1,0 +1,19 @@
+unit unit2;
+interface
+uses
+ unit3;
+type
+ rec1ty = record
+  a: int32;
+ end;
+ 
+procedure test(const p: recty);
+ 
+implementation
+
+procedure test(const p: recty);
+begin
+ exitcode:= p.b;
+end;
+
+end.

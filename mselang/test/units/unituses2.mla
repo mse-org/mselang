@@ -1,0 +1,12 @@
+program unituses2;
+uses
+ unit2,unit3;
+var
+ rec1: recty;
+begin
+ exitcode:= 22;
+ rec1.a:= 23;
+ rec1.b:= 100;
+ test(rec1);
+ test1(rec1);
+end.
