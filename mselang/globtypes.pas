@@ -79,7 +79,7 @@ type
               seg_op,seg_classdef,seg_rtti,seg_intf,
               seg_localloc,
               seg_classintfcount,seg_intfitemcount,
-              seg_unitintf,seg_unitidents);
+              seg_unitintf,seg_unitidents,seg_unitlinks);
  segmentsty = set of segmentty;
  
 const

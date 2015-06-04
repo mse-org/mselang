@@ -40,8 +40,13 @@ const
  mlasignature = ord('M') or (ord('L') shl 8) or (ord('A') shl 16) or
                                                           (ord('0') shl 24);
  mlafileversion = 0;
- 
+type
+ mlafilekindty = (mlafk_rtunit);
+const
+ filekindstep = 10;
  minsegmentreserve = 32; //at least free bytes at buffer end  
+
+function getfilekind(const akind: mlafilekindty): int32;
 
 function allocsegment(const asegment: segmentty;
                                     asize: integer): segaddressty;
@@ -89,13 +94,13 @@ function getoppo(const opindex: integer): popinfoty;
 procedure init();
 procedure deinit();
 
-procedure writesegmentdata(const adest: tstream; 
+procedure writesegmentdata(const adest: tstream; const akind: int32;
                 const astoredsegments: segmentsty; const atimestamp: tdatetime);
-function readsegmentdata(const asource: tstream;
+function readsegmentdata(const asource: tstream; const akind: int32;
                                   const astoredsegments: segmentsty): boolean;
                      //true if ok
-function checksegmentdata(const asource: tstream;
-                                  const atimestamp: tdatetime): boolean;
+function checksegmentdata(const asource: tstream; const akind: int32;
+                                        const atimestamp: tdatetime): boolean;
 
 implementation
 uses
@@ -107,11 +112,19 @@ const
   0,      0,        0,          1024,         1024,  1024,         1024,
 //seg_intf,seg_paralloc,seg_classintfcount,seg_intfitemcount,
   1024,    1024,        1024,              1024,             
-//seg_unitintf,seg_unitidents
-  1024,        1024);          
+//seg_unitintf,seg_unitidents,seg_unitlinks
+  1024,        1024,          1024);          
   
 var
  segments: array[segmentty] of segmentinfoty;
+
+function getfilekind(const akind: mlafilekindty): int32;
+begin
+ result:= ord(akind)*filekindstep;
+{$ifdef mse_debugparser}
+ inc(result); 
+{$endif} 
+end;
 
 type
  segmentflagty = (shf_load);
@@ -126,6 +139,7 @@ type
  segmentfileheaderty = record
   signature: card32;
   version: int32;
+  kind: int32;
   segmentcount: int32;
   reftimestamp: tdatetime;
  end;
@@ -140,7 +154,7 @@ type
 //   0: (items: array [segmentty] of segmentitemty);
  end;
   
-procedure writesegmentdata(const adest: tstream; 
+procedure writesegmentdata(const adest: tstream; const akind: int32;
                            const astoredsegments: segmentsty;
                            const atimestamp: tdatetime);
 
@@ -160,6 +174,7 @@ begin
  fillchar(info1,sizeof(info1),0);
  with info1.header do begin
   signature:= mlasignature;
+  kind:= akind;
   version:= mlafileversion;
   reftimestamp:= atimestamp;
   i1:= 0;
@@ -202,7 +217,7 @@ begin
  end;
 end;
 
-function checksegmentdata(const asource: tstream;
+function checksegmentdata(const asource: tstream; const akind: int32;
                                   const atimestamp: tdatetime): boolean;
 var
  header1: segmentfileheaderty;
@@ -213,13 +228,13 @@ begin
  if asource.tryreadbuffer(header1,sizeof(header1)) = sye_ok then begin
   with header1 do begin
    result:= (signature = mlasignature) and (version = mlafileversion) and 
-                                                  (reftimestamp = atimestamp);
+                                (kind = akind) and (reftimestamp = atimestamp);
   end;
  end;
  asource.position:= posbefore;
 end;
 
-function readsegmentdata(const asource: tstream; 
+function readsegmentdata(const asource: tstream; const akind: int32;
                         const astoredsegments: segmentsty): boolean;
 var
  fna1: filenamety;
@@ -259,39 +274,44 @@ begin
     errormessage1(err_wrongsignature,[]);
    end
    else begin
-    if version <> mlafileversion then begin
-     errormessage1(err_wrongversion,[inttostrmse(version),
-                                        inttostrmse(mlafileversion)]);
+    if kind <> akind then begin
+     errormessage1(err_wrongkind,[]);
     end
     else begin
-     if (segmentcount <= ord(high(segmentty))+1) and 
-           readdata(segitems,segmentcount*sizeof(segmentitemty))then begin
-      segs1:= [];
-      result:= true;
-      for i1:= 0 to segmentcount-1 do begin
-       with segitems[segmentty(i1)] do begin
-        if (kind in segs1) {or not (kind in storedsegments)} then begin
-         result:= false;
-         break;
-        end;         
-        if kind in astoredsegments then begin
-         if not readdata(allocsegmentpo(kind,size)^,size) then begin
+     if version <> mlafileversion then begin
+      errormessage1(err_wrongversion,[inttostrmse(version),
+                                         inttostrmse(mlafileversion)]);
+     end
+     else begin
+      if (segmentcount <= ord(high(segmentty))+1) and 
+            readdata(segitems,segmentcount*sizeof(segmentitemty))then begin
+       segs1:= [];
+       result:= true;
+       for i1:= 0 to segmentcount-1 do begin
+        with segitems[segmentty(i1)] do begin
+         if (kind in segs1) {or not (kind in storedsegments)} then begin
           result:= false;
-          exit;
-         end;
-         include(segs1,kind);
-        end
-        else begin
-         if not skipdata(size) then begin
-          result:= false;
-          exit;
+          break;
+         end;         
+         if kind in astoredsegments then begin
+          if not readdata(allocsegmentpo(kind,size)^,size) then begin
+           result:= false;
+           exit;
+          end;
+          include(segs1,kind);
+         end
+         else begin
+          if not skipdata(size) then begin
+           result:= false;
+           exit;
+          end;
          end;
         end;
        end;
-      end;
-      result:= result and (segs1 = astoredsegments);
-      if not result then begin
-       errormessage1(err_invalidprogram,[]);
+       result:= result and (segs1 = astoredsegments);
+       if not result then begin
+        errormessage1(err_invalidprogram,[]);
+       end;
       end;
      end;
     end;

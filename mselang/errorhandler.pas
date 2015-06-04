@@ -58,7 +58,7 @@ type
             err_pointertypeexpected,err_write,err_toomanyparams,
             err_noancestor,err_forwardtypenotfound,err_invaliddirective,
             err_notnotpossible,err_invalidcontroltoken,
-            err_wrongsignature);
+            err_wrongsignature,err_wrongkind,err_toomanynestinglevels);
             
  errorinfoty = record
   level: errorlevelty;
@@ -216,7 +216,9 @@ const
   (level: erl_error; message: 'Invalid directive "%s"'),
   (level: erl_error; message: '"not" operation not possible'),
   (level: erl_error; message: 'Invalid control token'),
-  (level: erl_error; message: 'Wrong signature')
+  (level: erl_error; message: 'Wrong signature'),
+  (level: erl_error; message: 'Wrong file kind'),
+  (level: erl_fatal; message: 'Too many nesting levels')
  );
 
 procedure message1(const atext: string; const values: array of const); 

@@ -17,6 +17,9 @@
 unit rtunitglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
+uses
+ globtypes;
+ 
 type
  identstringty = packed record
   len: byte;
@@ -35,7 +38,7 @@ type
  unitintfheaderty = record
   sourcetimestamp: tdatetime;
   namecount: int32; //idents
-  anoncount: int32; //idents without name
+  anoncount: int32; //idents without name, first item is parserglob.idstart
  end;
  unitintfinfoty = record
   header: unitintfheaderty;
@@ -46,5 +49,12 @@ type
  end;
  punitintfinfoty = ^unitintfinfoty;
 
+ unitlinkty = record
+//  dest: elementoffsetty;
+  len: int32;
+  ids: record //array of identty in reverse order
+  end;
+ end;
+ punitlinkty = ^unitlinkty;
 implementation
 end.

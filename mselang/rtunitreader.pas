@@ -38,6 +38,14 @@ var
  poend: pointer;
  po3: plenidentty;
  idmin1,idmax1: int32;
+ baseoffset: elementoffsetty;
+
+ procedure resetsegments();
+ begin
+  resetsegment(seg_unitintf);
+  resetsegment(seg_unitidents);
+  resetsegment(seg_unitlinks);
+ end; //resetsegments
  
  procedure updateident(var aident: int32);
  begin
@@ -72,10 +80,20 @@ var
   source:= pointer(pe);
  end; //getdata
 
+ procedure updateref(var ref: elementoffsetty);
+ begin
+  if ref >= 0 then begin
+   ref:= ref + baseoffset;
+  end
+  else begin
+  end;
+ end;
+ 
 var
  interfaceuses1,implementationuses1: identarty;
  pele1: pelementinfoty;
  po: pointer;
+ i1: int32;
 begin
  result:= false;
  fna1:= getrtunitfile(aunit^.name);
@@ -83,18 +101,24 @@ begin
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin    
   try
    try
-    resetsegment(seg_unitintf);
-    resetsegment(seg_unitidents);
-    result:= checksegmentdata(stream1,aunit^.filetimestamp) and
-              readsegmentdata(stream1,[seg_unitintf,seg_unitidents{,seg_op}]);
+    resetsegments();
+    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
+                                               aunit^.filetimestamp) and
+              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
+                                      [seg_unitintf,seg_unitidents{,seg_op}]);
     if result then begin
      if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
       exit; //invalid
      end;
      po1:= getsegmentbase(seg_unitintf);
+     if po1^.header.anoncount < 1 then begin
+      exit; //in valid, no parserglob.idstart
+     end;
      allocuninitedarray(po1^.header.anoncount,sizeof(identty),anons1);
      pd:= pointer(anons1);
      pe:= pd + length(anons1);
+     pd^:= idstart;
+     inc(pd);
      while pd < pe do begin
       pd^:= getident();
       inc(pd);
@@ -118,11 +142,23 @@ begin
      po3:= @po1^.interfaceuses;
      getdata(po3,interfaceuses1);
      getdata(po3,implementationuses1);
-     pele1:= pointer(po3);
-     poend:= getsegmentbase(seg_unitintf) + getsegmentsize(seg_unitintf);     
+     baseoffset:= ele.eletopoffset;
+     i1:= getsegmentsize(seg_unitintf) + 
+                         (getsegmentbase(seg_unitintf)-pointer(po3));
+     pele1:= ele.addbuffer(i1);
+     poend:= pointer(pele1) + i1;
+     move(po3^,pele1^,i1); //todo: read segment data directly to ele buffer
      while pele1 < poend do begin
       with pele1^ do begin
        updateident(int32(header.name));
+      {$ifdef mse_debugparser}
+       inc(header.next,baseoffset);
+      {$endif}
+       if (header.parentlevel >= maxidentvector) or 
+                          (header.parentlevel < 0) then begin
+        exit; //invalid
+       end;
+       updateref(header.parent);
        po:= @data;
        case header.kind of
         ek_type: begin
@@ -170,8 +206,7 @@ begin
     end;
    finally
     stream1.destroy();
-    resetsegment(seg_unitintf);
-    resetsegment(seg_unitidents);
+    resetsegments();
    end;
   except
   end;

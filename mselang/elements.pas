@@ -56,7 +56,7 @@ type
   name: identty;
   path: identty;
   parent: elementoffsetty; //offset in data array
-  parentlevel: integer;
+  parentlevel: integer;    //max = maxidentvector-1
   kind: elementkindty;
   visibility: visikindsty;
   defunit: identty;
@@ -149,6 +149,7 @@ type
    procedure checkcapacity(const areserve: integer);
    procedure checkcapacity(const akind: elementkindty;
                                         const acount: integer = 1);
+   function addbuffer(const asize: int32): pointer;
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
@@ -209,6 +210,7 @@ type
    function eleinforel(const aelement: pelementinfoty): elementoffsetty; inline;
    function eledataabs(const aelement: elementoffsetty): pointer; inline;
    function eledatarel(const aelement: pointer): elementoffsetty; inline;
+   property eletopoffset: elementoffsetty read fnextelement;
    
   {$ifdef mse_debugparser}
    function dumpelements: msestringarty;
@@ -676,6 +678,11 @@ begin
  end;
 end;
 
+function alignsize(const asize: int32): int32; inline;
+begin
+ result:= (asize+3) and not 3;
+end;
+
 { tidenthashdataty }
 
 constructor tidenthashdatalist.create(const asize: int32);
@@ -687,9 +694,11 @@ function tidenthashdatalist.hashkey(const akey): hashvaluety;
 begin
  result:= identty(akey);
 end;
-
+var testvar: identty; testvar1: pidentheaderty;
 function tidenthashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
+testvar:= identty(akey);
+testvar1:= @aitemdata;
  result:= identty(akey) = identheaderty(aitemdata).ident;
 end;
 
@@ -699,7 +708,11 @@ begin
  adata:= internalfind(akey);
  result:= adata = nil;
  if result then begin
-  adata:= internaladd(akey)+sizeof(hashheaderty);
+  adata:= addr(internaladd(akey)^.data);
+  pidentheaderty(adata)^.ident:= akey;
+ end
+ else begin
+  inc(adata,sizeof(hashheaderty));
  end;
 end;
 
@@ -1707,6 +1720,16 @@ begin
  end;
 end;
 
+function telementhashdatalist.addbuffer(const asize: int32): pointer;
+var
+ ele1: elementoffsetty;
+begin
+ ele1:= fnextelement;
+ fnextelement:= fnextelement+alignsize(asize);
+ checkbuffersize();
+ result:= pointer(felementdata)+ele1;
+end;
+
 function telementhashdatalist.pushelementduplicate(const aname: identty;
                   const akind: elementkindty;
                   const avislevel: visikindsty;
@@ -1715,7 +1738,7 @@ var
  ele1: elementoffsetty;
 begin
  ele1:= fnextelement;
- fnextelement:= fnextelement+(elesizes[akind])+sizeextend;
+ fnextelement:= fnextelement+(elesizes[akind])+alignsize(sizeextend);
  checkbuffersize;
  result:= pointer(felementdata)+ele1;
  with result^.header do begin
@@ -1737,6 +1760,9 @@ begin
  end;
  felementparent:= ele1;
  inc(fparentlevel);
+ if fparentlevel >= maxidentvector then begin
+  errormessage(err_toomanynestinglevels,[]);
+ end;
  felementpath:= felementpath+aname;
  addelement(felementpath,avislevel,ele1);
 end;

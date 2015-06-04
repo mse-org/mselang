@@ -72,7 +72,8 @@ var
  po2: punitintfinfoty;
  po: pointer;
  nameindex1,anonindex1: int32;
- baseoffset: elementoffsetty;
+ sourcestart,sourceend: elementoffsetty;
+ deststart: pointer;
 
  function updateident(const aident: identty): identty;
  var
@@ -114,33 +115,73 @@ var
   po:= pe;
  end; //putdata
 
+ procedure updateref(var ref: elementoffsetty);
+          //>= 0 -> relative offset, -seg_unitlinks offset - 1 otherwise
+ var
+  po1: punitlinkty;
+  po2,pe: pidentty;
+  po3: pelementinfoty;
+  i1: int32;
+ begin
+  if (ref >= sourcestart) and (ref < sourceend) then begin
+   ref:= ref - sourcestart;
+  end
+  else begin //not in streamed segment
+   po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
+                            (maxidentvector+1)*sizeof(identty));
+//   po1^.dest:= @ref-deststart;
+   po2:= @po1^.ids;
+   po3:= ele.eleinfoabs(ref);
+   while true do begin
+    po2^:= updateident(po3^.header.name);
+    inc(po2);
+    if po3^.header.parentlevel <= 0 then begin
+     break;
+    end;
+    po3:= ele.eleinfoabs(po3^.header.parent);
+   end;
+   po1^.len:= po2 - pidentty(@po1^.ids);
+   setsegmenttop(seg_unitlinks,po2);
+   ref:= -getsegmentoffset(seg_unitlinks,po1)-1;
+  end;
+ end;
+
 begin
 //dumpelements();
  result:= false;
- baseoffset:= aunit^.interfacestart.bufferref;
+ sourcestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ sourceend:= sourcestart + s1;
  s2:= 2*sizeof(lenidentty) + 
        (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
                                                                sizeof(identty);
  resetsegment(seg_unitintf);
  resetsegment(seg_unitidents);
+ resetsegment(seg_unitlinks);
+ 
  po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
  nameindex1:= 0;
  anonindex1:= -1;
  identlist:= tidentlist.create;
  try
+  updateident(idstart);
   with po2^ do begin
    po:= @interfaceuses;
    putdata(po,aunit^.interfaceuses);
    putdata(po,aunit^.implementationuses);
    pd:= po;
   end;
-  ps:= ele.eleinfoabs(baseoffset);
+  ps:= ele.eleinfoabs(sourcestart);
   move(ps^,pd^,s1);
+  deststart:= pd;
   pe:= pointer(pd) + s1;
   while pd < pe do begin
    with pd^ do begin
     header.name:= updateident(header.name);
+   {$ifdef mse_debugparser}
+    dec(header.next,sourcestart);
+   {$endif}
+    updateref(header.parent);
     po:= @data;
     case header.kind of
      ek_type: begin
@@ -205,8 +246,9 @@ begin
  if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
   stat1:= setsubsegment(aunit^.opseg);
   try
-   writesegmentdata(stream1,[seg_unitintf,seg_unitidents,seg_op],
-                                                   aunit^.filetimestamp);
+   writesegmentdata(stream1,getfilekind(mlafk_rtunit),
+           [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
+                                                    aunit^.filetimestamp);
                               //todo: complete 
   finally
    setsegment(stat1);
