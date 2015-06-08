@@ -40,6 +40,7 @@ type
   namecount: int32; //idents
   anoncount: int32; //idents without name, first item is parserglob.idstart
  end;
+ 
  unitintfinfoty = record
   header: unitintfheaderty;
   interfaceuses: lenidentty;
@@ -56,5 +57,18 @@ type
   end;
  end;
  punitlinkty = ^unitlinkty;
+
+procedure resetunitsegments();
+
 implementation
+uses
+ segmentutils;
+ 
+procedure resetunitsegments();
+begin
+ resetsegment(seg_unitintf);
+ resetsegment(seg_unitidents);
+ resetsegment(seg_unitlinks);
+end; //resetsegments
+
 end.

@@ -147,7 +147,7 @@ var
  end;
 
 begin
-//dumpelements();
+dumpelements();
  result:= false;
  sourcestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
@@ -155,9 +155,7 @@ begin
  s2:= 2*sizeof(lenidentty) + 
        (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
                                                                sizeof(identty);
- resetsegment(seg_unitintf);
- resetsegment(seg_unitidents);
- resetsegment(seg_unitlinks);
+ resetunitsegments();
  
  po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
  nameindex1:= 0;
@@ -251,6 +249,7 @@ begin
                                                     aunit^.filetimestamp);
                               //todo: complete 
   finally
+   resetunitsegments();
    setsegment(stat1);
    stream1.destroy();
   end;

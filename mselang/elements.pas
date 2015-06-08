@@ -150,6 +150,7 @@ type
    procedure checkcapacity(const akind: elementkindty;
                                         const acount: integer = 1);
    function addbuffer(const asize: int32): pointer;
+   procedure enterbufferitem(const adata: pelementinfoty);
 
    function forallcurrent(const aident: identty; const akinds: elementkindsty;
                  const avislevel: visikindsty; const ahandler: elehandlerprocty;
@@ -177,6 +178,9 @@ type
                       out firstnotfound: integer): boolean; overload;
                   //searches in current scope and above, -1 if not found
                   //firstnotfound = index of first not matching in aident
+   function findreverse(const alen: int32; const aids: pidentty;
+                        out element: elementoffsetty): boolean;
+                  //last id is top, returns true if found
 
    function findchild(aparent: elementoffsetty; 
                  const achild: identty; const akinds: elementkindsty;
@@ -694,11 +698,9 @@ function tidenthashdatalist.hashkey(const akey): hashvaluety;
 begin
  result:= identty(akey);
 end;
-var testvar: identty; testvar1: pidentheaderty;
+
 function tidenthashdatalist.checkkey(const akey; const aitemdata): boolean;
 begin
-testvar:= identty(akey);
-testvar1:= @aitemdata;
  result:= identty(akey) = identheaderty(aitemdata).ident;
 end;
 
@@ -868,6 +870,14 @@ begin
  with pelementhashdataty(internaladdhash(aident))^.data do begin
   key:= aident;
   data:= aelement;
+ end;
+end;
+
+procedure telementhashdatalist.enterbufferitem(const adata: pelementinfoty);
+begin
+ with pelementhashdataty(internaladdhash(adata^.header.path))^.data do begin
+  key:= adata^.header.path+adata^.header.name;
+  data:= eleinforel(adata);
  end;
 end;
 
@@ -1126,6 +1136,58 @@ begin //todo: optimize
    end;
   end;
  end;
+end;
+
+function telementhashdatalist.findreverse(const alen: int32;
+               const aids: pidentty; out element: elementoffsetty): boolean;
+var
+ po1,pe: pidentty;
+ h1: hashvaluety;
+ lca1: ptruint;
+ po2: pelementhashdataty;
+ po3,po4: pelementinfoty;
+label
+ nextlab;
+begin
+ h1:= 0;
+ po1:= aids;
+ pe:= po1 + alen;
+ while po1 < pe do begin
+  h1:= h1 + po1^;
+  inc(po1);
+ end;
+ lca1:= fhashtable[h1 and fmask];
+ if lca1 <> 0 then begin
+  po2:= fdata + lca1;
+  while true do begin
+   if (po2^.data.key = h1) then begin
+    po3:= pointer(felementdata)+po2^.data.data;
+    po4:= po3;
+    po1:= aids;
+    while po1 < pe do begin
+     with po3^.header do begin
+      if name <> po1^ then begin
+       goto nextlab;
+      end;
+      inc(po1);
+      if (parentlevel = 0) and (po1 = pe) then begin
+       element:= eleinforel(po4);
+       result:= true;
+       exit;
+      end;
+      po3:= pointer(felementdata)+parent;
+     end;
+    end;
+   end;
+nextlab:
+   if po2^.header.nexthash = 0 then begin
+    break;
+   end;
+   po2:= pelementhashdataty(fdata + po2^.header.nexthash);
+  end;
+ end;
+ result:= false;
+ element:= -1;
 end;
 
 (*
