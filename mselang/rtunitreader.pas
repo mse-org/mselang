@@ -26,7 +26,7 @@ function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
- msearrayutils,elements,sysutils,handlerglob,handlerutils;
+ msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler;
  
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
@@ -172,23 +172,21 @@ begin
     end;
     idmin1:= -length(anons1);
     idmax1:= high(names1);
-    po3:= @po1^.interfaceuses;
-    getdata(po3,interfaceuses1);
-    for i1:= 0 to high(interfaceuses1) do begin
-     if not updateident(interfaceuses1[i1]) then begin
-      exit;
-     end;
+    po3:= @po1^.interfaceuses; //todo: don't read the whole file before loading
+                               //uses units
+    if not getdata(po3,interfaceuses1) then begin
+     exit;
     end;
-    getdata(po3,implementationuses1);
-    for i1:= 0 to high(implementationuses1) do begin
-     if not updateident(implementationuses1[i1]) then begin
-      exit;
-     end;
+    for i1:= 0 to high(interfaceuses1) do begin
+     loadunitbyid(interfaceuses1[i1]);
+    end;
+    if not getdata(po3,implementationuses1) then begin
+     exit;
     end;
     baseoffset:= ele.eletopoffset;
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
-dumpelements();
+//dumpelements();
     ele.markelement(startref);
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
@@ -258,8 +256,7 @@ dumpelements();
 errorlab:
    ele.releaseelement(startref);
 oklab:
-dumpelements();
-//ele.releaseelement(startref);
+//dumpelements();
   finally
    stream1.destroy();
    resetunitsegments();

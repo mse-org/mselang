@@ -59,7 +59,8 @@ begin
   if checksysok(tmsefilestream.trycreate(inputstream,filename1,fm_read),
                                         err_fileread,[filename1]) then begin
    try
-    if readsegmentdata(inputstream,storedsegments) then begin
+    if readsegmentdata(inputstream,getfilekind(mlafk_rtprogram),
+                                                 storedsegments) then begin
      freeandnil(inputstream);
      exitcode:= run(1024);
     end;

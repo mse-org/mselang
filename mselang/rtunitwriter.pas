@@ -147,7 +147,7 @@ var
  end;
 
 begin
-dumpelements();
+//dumpelements();
  result:= false;
  sourcestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;

@@ -41,7 +41,7 @@ const
                                                           (ord('0') shl 24);
  mlafileversion = 0;
 type
- mlafilekindty = (mlafk_rtunit);
+ mlafilekindty = (mlafk_rtunit,mlafk_rtprogram);
 const
  filekindstep = 10;
  minsegmentreserve = 32; //at least free bytes at buffer end  

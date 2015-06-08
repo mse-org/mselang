@@ -19,7 +19,7 @@ unit unithandler;
 interface
 uses
  globtypes,mselinklist,listutils,msestrings,parserglob,opglob,elements,
- handlerglob;
+ handlerglob,msetypes;
 
 type
  unitlinkinfoty = record  //used for ini, fini
@@ -38,6 +38,8 @@ function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 function getunitfile(const aunit: punitinfoty;
                                         const aname: filenamety): boolean;
 
+function loadunitbyid(const aid: identty; 
+                    const astackoffset: int32 = minint): punitinfoty;
 function loadunit(const aindex: integer): punitinfoty;
 function parsecompilerunit(const aname: filenamety): boolean;
 
@@ -433,37 +435,44 @@ begin
  end;
 end;
 
-function loadunit(const aindex: integer): punitinfoty;
+function loadunitbyid(const aid: identty;
+                      const astackoffset: int32 = minint): punitinfoty;
 var
  lstr1: lstringty;
 begin
- with info.contextstack[aindex] do begin
-  result:= unitlist.findunit(d.ident.ident);
-  if result = nil then begin
-   result:= unitlist.newunit(d.ident.ident);
-   with result^ do begin
-    prev:= info.s.unitinfo;
-    lstr1.po:= start.po;
-    lstr1.len:= d.ident.len;
+ result:= unitlist.findunit(aid);
+ if result = nil then begin
+  result:= unitlist.newunit(aid);
+  with result^ do begin
+   prev:= info.s.unitinfo;
+   getidentname(aid,lstr1);
+//   lstr1.po:= start.po;
+//   lstr1.len:= d.ident.len;
 //    getunitfile(result,lstr1);
-    if not getunitfile(result,lstr1) then begin
-     identerror(aindex-info.s.stackindex,err_cantfindunit);
+   if not getunitfile(result,lstr1) then begin
+    identerror(astackoffset,err_cantfindunit);
+   end
+   else begin
+    if not parseusesunit(result) then begin
+     result:= nil;
     end
-    else begin
-     if not parseusesunit(result) then begin
-      result:= nil;
-     end
-    end;
    end;
-  end
-  else begin
-   if not (us_interfaceparsed in result^.state) then begin
-    circularerror(aindex-info.s.stackindex,result);
-    result:= nil;
-   end;
+  end;
+ end
+ else begin
+  if not (us_interfaceparsed in result^.state) then begin
+   circularerror(astackoffset,result);
+   result:= nil;
   end;
  end;
 end;
+
+function loadunit(const aindex: integer): punitinfoty;
+begin
+ result:= loadunitbyid(info.contextstack[aindex].d.ident.ident,
+                                                aindex-info.s.stackindex);
+end;
+
 {
 function nextunitimplementation: punitinfoty;
 begin
