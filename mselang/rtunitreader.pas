@@ -138,6 +138,7 @@ begin
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
                          [seg_unitintf,seg_unitlinks,seg_unitidents{,seg_op}]);
    if result then begin
+    result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
      exit; //invalid
     end;
@@ -186,7 +187,7 @@ begin
     baseoffset:= ele.eletopoffset;
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
-//dumpelements();
+dumpelements();
     ele.markelement(startref);
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
@@ -250,18 +251,19 @@ begin
      end;     
     end;
     if pele1 = poend then begin //ok
+     goto oklab;
     end;
-   end;
-   goto oklab;
 errorlab:
-   ele.releaseelement(startref);
+    ele.releaseelement(startref);
+    exit;
 oklab:
-//dumpelements();
+    result:= true;
+ dumpelements();
+   end;
   finally
    stream1.destroy();
    resetunitsegments();
   end;
-  result:= true;
  end;
 end;
 

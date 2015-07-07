@@ -69,6 +69,6 @@ begin
  resetsegment(seg_unitintf);
  resetsegment(seg_unitidents);
  resetsegment(seg_unitlinks);
-end; //resetsegments
+end;
 
 end.

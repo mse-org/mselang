@@ -250,7 +250,7 @@ begin
                               //todo: complete 
   finally
    resetunitsegments();
-   setsegment(stat1);
+   restoresegment(stat1);
    stream1.destroy();
   end;
  end

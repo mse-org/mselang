@@ -69,9 +69,12 @@ procedure resetsegment(const asegment: segmentty);
 function getsubsegment(const asegment: segmentty): subsegmentty;
 function setsubsegment(const asubseg: subsegmentty): segmentstatety;
                                 //returns old state, do not change size
+procedure restoresegment(const aseg: segmentstatety);
 procedure setsubsegmentsize(var asubseg: subsegmentty);
 
-procedure setsegment(const aseg: segmentstatety);
+//procedure setsegment(const aseg: segmentstatety);
+//procedure getsegment(out aseg: segmentstatety);
+//procedure freesegment(const aseg: segmentstatety);
 
 function getsegmentoffset(const asegment: segmentty;
                                     const apo: pointer): dataoffsty;
@@ -535,7 +538,7 @@ begin
  end;
 end;
 
-procedure setsegment(const aseg: segmentstatety);
+procedure restoresegment(const aseg: segmentstatety);
 begin
  segments[aseg.segment]:= aseg.state;
 end;

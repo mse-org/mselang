@@ -3,6 +3,4 @@ interface
 uses
  unit2;
 implementation
-finalization
- exitcode:= 123;
 end.
