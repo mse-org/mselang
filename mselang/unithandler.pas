@@ -37,6 +37,7 @@ function newunit(const aname: string): punitinfoty;
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 function getunitfile(const aunit: punitinfoty;
                                         const aname: filenamety): boolean;
+function initunitfileinfo(const aunit: punitinfoty): boolean;
 
 function loadunitbyid(const aid: identty; 
                     const astackoffset: int32 = minint): punitinfoty;
@@ -377,6 +378,7 @@ begin
  result:= unitlist.findunit(id);
  if result = nil then begin
   result:= unitlist.newunit(id);
+  result^.name:= aname;
  end;
 end;
 
@@ -393,6 +395,14 @@ begin
  end;
 end;
 
+function initunitfileinfo(const aunit: punitinfoty): boolean;
+begin
+ with aunit^ do begin
+  filetimestamp:= getfilemodtime(filepath);
+  result:= filetimestamp <> emptydatetime;
+ end;
+end;
+
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 begin
  with aunit^ do begin
@@ -400,7 +410,7 @@ begin
   filepath:= filehandler.getsourceunitfile(aname);
   result:= filepath <> '';
   if result then begin
-   filetimestamp:= getfilemodtime(filepath);
+   initunitfileinfo(aunit);
   end;
  end;
 end;

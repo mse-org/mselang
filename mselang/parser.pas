@@ -872,7 +872,7 @@ end;
 function parse(const input: string; const afilename: filenamety; 
                                      const aoptions: compileoptionsty): boolean;
                               //true if ok
-var
+var                           
  po1: punitinfoty;
  unit1: punitinfoty;
  int1: integer;
@@ -885,8 +885,11 @@ begin
     compileoptions:= aoptions;
     s.debugoptions:= debugoptions;
     unit1:= newunit('program');
-    getunitfile(unit1,afilename);
-//    unit1^.filepath:= afilename;
+    unit1^.filepath:= afilename; //todo: file reading
+    if not initunitfileinfo(unit1) then begin
+     //todo: error message
+    end;
+//    getunitfile(unit1,afilename);
     s.unitinfo:= unit1;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;
