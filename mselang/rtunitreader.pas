@@ -138,6 +138,7 @@ begin
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
                          [seg_unitintf,seg_unitlinks,seg_unitidents{,seg_op}]);
    if result then begin
+    include(aunit^.state,us_interfaceparsed);
     result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
      exit; //invalid
