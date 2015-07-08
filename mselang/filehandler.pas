@@ -18,7 +18,7 @@ unit filehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msestrings;
+ msestrings,parserglob;
  
 //todo: use search tree and cache
 
@@ -31,7 +31,7 @@ function getsourceunitfile(const aname: filenamety): filenamety;
 function getsourceunitfile(const aname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
 
-function getrtunitfile(const aname: string): filenamety;
+function getrtunitfile(const aunit: punitinfoty): filenamety;
 function getrtunitfilename(const aname: filenamety): filenamety;
 
 function getsysfile(const aname: filenamety): filenamety;
@@ -87,10 +87,13 @@ begin
  result:= replacefileext(aname,rtunitextension);
 end;
 
-function getrtunitfile(const aname: string): filenamety;
+function getrtunitfile(const aunit: punitinfoty): filenamety;
 begin
- result:= utf8tostring(aname)+'.'+rtunitextension;
- getrtfile(result);
+ result:= replacefileext(aunit^.filepath,rtunitextension);
+ if not findfile(result) then begin
+  result:= utf8tostring(aunit^.name)+'.'+rtunitextension;
+  getrtfile(result);
+ end;
 end;
 
 //todo: make it portable

@@ -427,6 +427,7 @@ var
  ad1: listadty;
  statebefore: savedparseinfoty;  
  eleparentbefore: elementoffsetty;
+ i1: int32;
  
 label
  handlelab{,stophandlelab},parseend;
@@ -660,7 +661,11 @@ handlelab:
     end;
     if s.pc^.handleexit <> nil then begin
          //call context termination handler
+     i1:= s.stackindex;
      s.pc^.handleexit();
+     if s.stackindex < i1 then begin
+      popped:= true;
+     end;
      if s.stopparser then begin
       goto parseend;
      end;

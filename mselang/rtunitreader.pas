@@ -125,12 +125,12 @@ var
  i1: int32;
  startref: markinfoty;
 label
- errorlab,oklab;
+ errorlab,oklab,endlab;
 begin
  result:= false;
- fna1:= getrtunitfile(aunit^.name);
+ fna1:= getrtunitfile(aunit);
  if (fna1 <> '') and 
-       (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin    
+       (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
   try
    resetunitsegments();
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
@@ -140,13 +140,13 @@ begin
    if result then begin
     result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
-     exit; //invalid
+     goto endlab; //invalid
     end;
     linksstart:= getsegmentbase(seg_unitlinks);
     linksend:= linksstart + getsegmentsize(seg_unitlinks);
     po1:= getsegmentbase(seg_unitintf);
     if po1^.header.anoncount < 1 then begin
-     exit; //invalid, no parserglob.idstart
+     goto endlab; //invalid, no parserglob.idstart
     end;
     allocuninitedarray(po1^.header.anoncount,sizeof(identty),anons1);
     pd:= pointer(anons1);
@@ -166,7 +166,7 @@ begin
      ns:= @pidentstringty(ne)^.data;
      ne:= ns + pidentstringty(ne)^.len;
      if ne > poend then begin
-      exit; //invalid
+      goto endlab; //invalid
      end;
      pd^:= getident(ns,ne);
      inc(pd);
@@ -176,7 +176,7 @@ begin
     po3:= @po1^.interfaceuses; //todo: don't read the whole file before loading
                                //uses units
     if not getdata(po3,interfaceuses1) then begin
-     exit;
+     goto endlab;
     end;
     for i1:= 0 to high(interfaceuses1) do begin
      loadunitbyid(interfaceuses1[i1]);
@@ -187,7 +187,7 @@ begin
     baseoffset:= ele.eletopoffset;
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
-dumpelements();
+//dumpelements();
     ele.markelement(startref);
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
@@ -195,7 +195,7 @@ dumpelements();
     while pele1 < poend do begin
      with pele1^ do begin
       if not updateident(int32(header.name)) then begin
-       goto errorlab;
+       goto endlab;
       end;
      {$ifdef mse_debugparser}
       inc(header.next,baseoffset);
@@ -255,15 +255,16 @@ dumpelements();
     end;
 errorlab:
     ele.releaseelement(startref);
-    exit;
+    goto endlab;
 oklab:
     result:= true;
- dumpelements();
+//dumpelements();
+endlab:
    end;
-  finally
-   stream1.destroy();
-   resetunitsegments();
+  except //catch all exceptions of an invalid unit file
   end;
+  stream1.destroy();
+  resetunitsegments();
  end;
 end;
 
