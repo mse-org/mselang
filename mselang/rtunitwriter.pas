@@ -209,6 +209,8 @@ begin
      end;
      ek_unit: begin
      end;
+     ek_uses: begin
+     end;
      ek_implementation: begin
       with pimplementationdataty(po)^ do begin
       end;
