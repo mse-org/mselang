@@ -111,7 +111,6 @@ var
     inc(po2);
    end;
    po2:= @po1^.ids;
-dumpelements();
    if not ele.findreverse(po1^.len,po2,ref) then begin
     exit();
    end;
@@ -129,6 +128,7 @@ var
 label
  errorlab,oklab,endlab;
 begin
+dumpelements();
  result:= false;
  fna1:= getrtunitfile(aunit);
  if (fna1 <> '') and 
@@ -277,6 +277,7 @@ endlab:
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;
+dumpelements();
 end;
 
 end.

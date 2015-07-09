@@ -72,7 +72,7 @@ var
  po2: punitintfinfoty;
  po: pointer;
  nameindex1,anonindex1: int32;
- sourcestart,sourceend: elementoffsetty;
+ elestart,eleend: elementoffsetty;
  deststart: pointer;
 
  function updateident(const aident: identty): identty;
@@ -123,8 +123,8 @@ var
   po3: pelementinfoty;
   i1: int32;
  begin
-  if (ref >= sourcestart) and (ref < sourceend) then begin
-   ref:= ref - sourcestart;
+  if (ref >= elestart) and (ref < eleend) then begin
+   ref:= ref - elestart;
   end
   else begin //not in streamed segment
    po1:= checksegmentcapacity(seg_unitlinks,sizeof(unitlinkty) +
@@ -149,9 +149,9 @@ var
 begin
 //dumpelements();
  result:= false;
- sourcestart:= aunit^.interfacestart.bufferref;
+ elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
- sourceend:= sourcestart + s1;
+ eleend:= elestart + s1;
  s2:= 2*sizeof(lenidentty) + 
        (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
                                                                sizeof(identty);
@@ -169,7 +169,7 @@ begin
    putdata(po,aunit^.implementationuses);
    pd:= po;
   end;
-  ps:= ele.eleinfoabs(sourcestart);
+  ps:= ele.eleinfoabs(elestart);
   move(ps^,pd^,s1);
   deststart:= pd;
   pe:= pointer(pd) + s1;
@@ -177,7 +177,7 @@ begin
    with pd^ do begin
     header.name:= updateident(header.name);
    {$ifdef mse_debugparser}
-    dec(header.next,sourcestart);
+    dec(header.next,elestart);
    {$endif}
     updateref(header.parent);
     po:= @data;

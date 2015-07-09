@@ -25,6 +25,8 @@ type
   toppo: pointer;
   endpo: pointer;
  end;
+ psegmentinfoty = ^segmentinfoty;
+ 
  segmentstatety = record
   segment: segmentty;
   state: segmentinfoty;
@@ -626,18 +628,30 @@ end;
 procedure saveunitsegments(out state: unitsegmentsstatety);
 var
  i1: int32;
+ po1: psegmentinfoty;
 begin
  for i1:= 0 to high(state) do begin
-  state[i1]:= segments[unitsegments[i1]];
+  po1:= @segments[unitsegments[i1]];
+  state[i1]:= po1^;
+  with po1^ do begin
+   data:= nil;
+   toppo:= nil;
+   endpo:= nil;
+  end;   
  end;
 end;
 
 procedure restoreunitsegments(const state: unitsegmentsstatety);
 var
  i1: int32;
+ po1: psegmentinfoty;
 begin
  for i1:= 0 to high(state) do begin
-  segments[unitsegments[i1]]:= state[i1];
+  po1:= @segments[unitsegments[i1]];
+  if po1^.data <> nil then begin
+   freemem(po1^.data);
+  end;
+  po1^:= state[i1];
  end;
 end;
 
