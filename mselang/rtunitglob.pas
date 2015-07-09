@@ -58,17 +58,6 @@ type
  end;
  punitlinkty = ^unitlinkty;
 
-procedure resetunitsegments();
-
 implementation
-uses
- segmentutils;
- 
-procedure resetunitsegments();
-begin
- resetsegment(seg_unitintf);
- resetsegment(seg_unitidents);
- resetsegment(seg_unitlinks);
-end;
-
+  
 end.

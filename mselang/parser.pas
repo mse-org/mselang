@@ -435,6 +435,7 @@ begin
  result:= false;
  if co_readrtunits in info.compileoptions then begin
   if readunitfile(aunit) then begin
+   result:= true;
    exit;
   end;
  end;

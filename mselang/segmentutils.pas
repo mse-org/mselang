@@ -46,6 +46,13 @@ const
  filekindstep = 10;
  minsegmentreserve = 32; //at least free bytes at buffer end  
 
+const
+ unitsegmentcount = 3;
+ unitsegments: array[0..unitsegmentcount-1] of segmentty = 
+               (seg_unitintf,seg_unitidents,seg_unitlinks);
+type
+ unitsegmentsstatety = array[0..unitsegmentcount-1] of segmentinfoty;
+
 function getfilekind(const akind: mlafilekindty): int32;
 
 function allocsegment(const asegment: segmentty;
@@ -104,6 +111,10 @@ function readsegmentdata(const asource: tstream; const akind: int32;
                      //true if ok
 function checksegmentdata(const asource: tstream; const akind: int32;
                                         const atimestamp: tdatetime): boolean;
+
+procedure resetunitsegments();
+procedure saveunitsegments(out state: unitsegmentsstatety);
+procedure restoreunitsegments(const state: unitsegmentsstatety);
 
 implementation
 uses
@@ -600,6 +611,33 @@ function getsegmentsize(const asegment: segmentty): integer;
 begin
  with segments[asegment] do begin
   result:= toppo-pointer(data);
+ end;
+end;
+
+procedure resetunitsegments();
+var
+ i1: int32;
+begin
+ for i1:= 0 to high(unitsegments) do begin
+  resetsegment(unitsegments[i1]);
+ end;
+end;
+
+procedure saveunitsegments(out state: unitsegmentsstatety);
+var
+ i1: int32;
+begin
+ for i1:= 0 to high(state) do begin
+  state[i1]:= segments[unitsegments[i1]];
+ end;
+end;
+
+procedure restoreunitsegments(const state: unitsegmentsstatety);
+var
+ i1: int32;
+begin
+ for i1:= 0 to high(state) do begin
+  segments[unitsegments[i1]]:= state[i1];
  end;
 end;
 

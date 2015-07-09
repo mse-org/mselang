@@ -111,6 +111,7 @@ var
     inc(po2);
    end;
    po2:= @po1^.ids;
+dumpelements();
    if not ele.findreverse(po1^.len,po2,ref) then begin
     exit();
    end;
@@ -124,6 +125,7 @@ var
  po: pointer;
  i1: int32;
  startref: markinfoty;
+ unitsegments1: unitsegmentsstatety;
 label
  errorlab,oklab,endlab;
 begin
@@ -138,7 +140,6 @@ begin
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
                          [seg_unitintf,seg_unitlinks,seg_unitidents{,seg_op}]);
    if result then begin
-    include(aunit^.state,us_interfaceparsed);
     result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
      goto endlab; //invalid
@@ -179,11 +180,17 @@ begin
     if not getdata(po3,interfaceuses1) then begin
      goto endlab;
     end;
+    include(aunit^.state,us_interfaceparsed);
+    saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
-     loadunitbyid(interfaceuses1[i1]);
+     if loadunitbyid(interfaceuses1[i1]) = nil then begin
+      restoreunitsegments(unitsegments1);
+      goto endlab;
+     end;
     end;
+    restoreunitsegments(unitsegments1);
     if not getdata(po3,implementationuses1) then begin
-     exit;
+     goto endlab;
     end;
     baseoffset:= ele.eletopoffset;
     i1:= getsegmentsize(seg_unitintf) + 
@@ -196,7 +203,7 @@ begin
     while pele1 < poend do begin
      with pele1^ do begin
       if not updateident(int32(header.name)) then begin
-       goto endlab;
+       goto errorlab;
       end;
      {$ifdef mse_debugparser}
       inc(header.next,baseoffset);
@@ -266,6 +273,9 @@ endlab:
   end;
   stream1.destroy();
   resetunitsegments();
+  if not result then begin
+   exclude(aunit^.state,us_interfaceparsed);
+  end;
  end;
 end;
 
