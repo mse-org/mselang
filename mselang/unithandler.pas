@@ -46,6 +46,7 @@ function parsecompilerunit(const aname: filenamety): boolean;
 
 procedure handleprogramentry();
 procedure beginunit(const aname: identty; const nopush: boolean);
+procedure markinterfacestart();
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 
@@ -159,6 +160,11 @@ begin
  end;
 end;
 
+procedure markinterfacestart();
+begin
+ ele.markelement(info.s.unitinfo^.interfacestart); 
+end;
+
 procedure setunitname(); //unitname on top of stack
 var
  id1: identty;
@@ -175,7 +181,8 @@ begin
   else begin
    s.unitinfo^.key:= id1; //overwrite "program"
    beginunit(id1,false);
-   ele.markelement(s.unitinfo^.interfacestart);
+   markinterfacestart();
+//   ele.markelement(s.unitinfo^.interfacestart);
   end;
   s.stacktop:= s.stackindex;
  end;
@@ -264,7 +271,8 @@ begin
  outhandle('AFTERINTFUSES');
 {$endif}
  with info do begin
-  ele.markelement(s.unitinfo^.interfacestart);
+  markinterfacestart();
+//  ele.markelement(s.unitinfo^.interfacestart);
   with contextstack[s.stackindex] do begin
    d.kind:= ck_interface;
 //   ele.markelement(d.impl.elemark);

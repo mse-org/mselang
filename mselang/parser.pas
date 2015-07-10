@@ -434,8 +434,8 @@ label
 begin
  result:= false;
  with info do begin
+  inc(unitlevel);
   if co_readrtunits in info.compileoptions then begin
-   inc(unitlevel);
    if readunitfile(aunit) then begin
     result:= true;
     dec(unitlevel);
@@ -490,7 +490,7 @@ begin
                                            [compileunitmeta.value.listid]);
     end;
    end;
-   ele.markelement(s.unitinfo^.interfacestart); 
+   markinterfacestart();
      //possibly overridden by unithandler.setunitname() or 
      //handleafterintfuses().
   end
