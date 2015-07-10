@@ -29,6 +29,12 @@ type
  
  segmentstatety = record
   segment: segmentty;
+  data: pointer;
+  toppo: pointer;
+ end;
+
+ subsegmentstatety = record
+  segment: segmentty;
   state: segmentinfoty;
  end;
  subsegmentty = record
@@ -75,10 +81,12 @@ function checksegmentcapacity(const asegment: segmentty;
 
 procedure setsegmenttop(const asegment: segmentty; const atop: pointer);
 procedure resetsegment(const asegment: segmentty);
-function getsubsegment(const asegment: segmentty): subsegmentty;
-function setsubsegment(const asubseg: subsegmentty): segmentstatety;
-                                //returns old state, do not change size
+function savesegment(const asegment: segmentty): segmentstatety;
 procedure restoresegment(const aseg: segmentstatety);
+function getsubsegment(const asegment: segmentty): subsegmentty;
+function setsubsegment(const asubseg: subsegmentty): subsegmentstatety;
+                                //returns old state, do not change size
+procedure restoresubsegment(const aseg: subsegmentstatety);
 procedure setsubsegmentsize(var asubseg: subsegmentty);
 
 //procedure setsegment(const aseg: segmentstatety);
@@ -524,7 +532,26 @@ begin
  end; 
 end;
 
-function setsubsegment(const asubseg: subsegmentty): segmentstatety; 
+function savesegment(const asegment: segmentty): segmentstatety;
+begin
+ result.segment:= asegment;
+ with segments[asegment] do begin
+  result.data:= data;
+  result.toppo:= toppo;
+ end;
+end;
+
+procedure restoresegment(const aseg: segmentstatety);
+begin
+ with segments[aseg.segment] do begin
+  toppo:= aseg.toppo + (data-aseg.data);
+  if toppo > endpo then begin
+   internalerror1(ie_segment,'20150710B'); //invalid size
+  end;
+ end;
+end;
+
+function setsubsegment(const asubseg: subsegmentty): subsegmentstatety; 
                                                  //returns old state
 begin
  result.segment:= asubseg.segment;
@@ -551,7 +578,7 @@ begin
  end;
 end;
 
-procedure restoresegment(const aseg: segmentstatety);
+procedure restoresubsegment(const aseg: subsegmentstatety);
 begin
  segments[aseg.segment]:= aseg.state;
 end;

@@ -208,7 +208,7 @@ begin
     endsimplesub();
    end;
   end;
-  
+  s.unitinfo^.mainad:= opcount;
   with getoppo(startupoffset)^ do begin
    par.beginparse.mainad:= opcount;
   end;

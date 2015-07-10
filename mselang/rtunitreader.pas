@@ -125,10 +125,10 @@ var
  i1: int32;
  startref: markinfoty;
  unitsegments1: unitsegmentsstatety;
+ segstate1: segmentstatety;
 label
  errorlab,oklab,endlab;
 begin
-dumpelements();
  result:= false;
  fna1:= getrtunitfile(aunit);
  if (fna1 <> '') and 
@@ -181,6 +181,7 @@ dumpelements();
      goto endlab;
     end;
     include(aunit^.state,us_interfaceparsed);
+    aunit^.mainad:= po1^.header.mainad; //todo: relocate
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
      if loadunitbyid(interfaceuses1[i1]) = nil then begin
@@ -199,7 +200,6 @@ dumpelements();
      goto errorlab;
     end;
     beginunit(po1^.header.key,true);
-dumpelements();
     baseoffset:= ele.eletopoffset;
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
@@ -269,7 +269,15 @@ errorlab:
     ele.releaseelement(startref);
     goto endlab;
 oklab:
-    result:= true;
+    stream1.position:= 0;           //todo: linker
+    segstate1:= savesegment(seg_op);
+    try
+     result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
+    finally
+     if not result then begin
+      restoresegment(segstate1);
+     end;
+    end;
 //dumpelements();
 endlab:
    end;
@@ -281,7 +289,6 @@ endlab:
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;
-dumpelements();
 end;
 
 end.

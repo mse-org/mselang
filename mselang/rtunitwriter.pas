@@ -147,7 +147,6 @@ var
  end;
 
 begin
-dumpelements();
  result:= false;
  elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
@@ -165,6 +164,7 @@ dumpelements();
   updateident(idstart);
   with po2^ do begin
    header.key:= updateident(aunit^.key);
+   header.mainad:= aunit^.mainad; //todo: relocate
    po:= @interfaceuses;
    putdata(po,aunit^.interfaceuses);
    putdata(po,aunit^.implementationuses);
@@ -238,7 +238,7 @@ end;
 
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
- stat1: segmentstatety;
+ stat1: subsegmentstatety;
  stream1: tmsefilestream;
  fna1: filenamety;
 begin
@@ -253,7 +253,7 @@ begin
                               //todo: complete 
   finally
    resetunitsegments();
-   restoresegment(stat1);
+   restoresubsegment(stat1);
    stream1.destroy();
   end;
  end

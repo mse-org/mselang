@@ -433,23 +433,30 @@ label
  handlelab{,stophandlelab},parseend;
 begin
  result:= false;
- if co_readrtunits in info.compileoptions then begin
-  if readunitfile(aunit) then begin
-   result:= true;
-   exit;
-  end;
- end;
- linebreaks:= 0;
- eleparentbefore:= ele.elementparent;
- ele.elementparent:= unitsele;
  with info do begin
+  if co_readrtunits in info.compileoptions then begin
+   inc(unitlevel);
+   if readunitfile(aunit) then begin
+    result:= true;
+    dec(unitlevel);
+    if unitlevel = 0 then begin
+     with getoppo(startupoffset)^ do begin
+      par.beginparse.mainad:= info.s.unitinfo^.mainad;
+     end;
+    end;
+    exit;
+   end;
+  end;
+  linebreaks:= 0;
+  eleparentbefore:= ele.elementparent;
+  ele.elementparent:= unitsele;
   statebefore:= s;
 
   resetssa();
   currentsubchain:= 0;
   currentsubcount:= 0;
   s.currentstatementflags:= [];
-  inc(unitlevel);
+//  inc(unitlevel);
   
   s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);

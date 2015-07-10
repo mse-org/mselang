@@ -510,6 +510,7 @@ type
   mainsubmeta: metavaluety;
 
   opseg: subsegmentty;
+  mainad: int32;
     
   state: unitstatesty;
   interfaceelement: elementoffsetty;
