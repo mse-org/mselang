@@ -484,7 +484,8 @@ begin
     end;
    end;
    ele.markelement(s.unitinfo^.interfacestart); 
-     //possibly overridden by unithandler.handleafterintfuses().
+     //possibly overridden by unithandler.setunitname() or 
+     //handleafterintfuses().
   end
   else begin //continue with implementation parsing
   {$ifdef mse_checkinternalerror}

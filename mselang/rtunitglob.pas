@@ -37,6 +37,7 @@ type
  
  unitintfheaderty = record
   sourcetimestamp: tdatetime;
+  key: identty;
   namecount: int32; //idents
   anoncount: int32; //idents without name, first item is parserglob.idstart
  end;

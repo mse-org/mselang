@@ -45,7 +45,7 @@ function loadunit(const aindex: integer): punitinfoty;
 function parsecompilerunit(const aname: filenamety): boolean;
 
 procedure handleprogramentry();
-
+procedure beginunit(const aname: identty; const nopush: boolean);
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 
@@ -127,10 +127,41 @@ begin
  end;
 end;
  
+procedure beginunit(const aname: identty; const nopush: boolean);
+var
+ po1: punitdataty;
+begin
+ if nopush then begin
+ {$ifdef mse_checkinternalerror}                             
+  if not ele.adduniquechilddata(unitsele,[aname],ek_unit,
+                                           [vik_units],po1) then begin
+   internalerror(ie_unit,'150710A');
+  end;
+ {$else}
+  ele.adduniquechilddata(unitsele,[aname],ek_unit,[vik_units],po1);
+ {$endif}
+ end
+ else begin
+ {$ifdef mse_checkinternalerror}                             
+  if not ele.pushelement(aname,ek_unit,[vik_units],po1) then begin
+   internalerror(ie_unit,'131018A');
+  end;
+ {$else}
+  ele.pushelement(aname,ek_unit,[vik_units],po1);
+ {$endif}
+ end;
+ with info do begin
+  po1^.next:= unitinfochain;
+  unitinfochain:= ele.eledatarel(po1);
+  with s.unitinfo^ do begin
+   interfaceelement:= ele.elementparent;
+  end;
+ end;
+end;
+
 procedure setunitname(); //unitname on top of stack
 var
  id1: identty;
- po1: punitdataty;
 // po2: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
@@ -142,18 +173,9 @@ begin
    identerror(1,err_illegalunitname);
   end
   else begin
- {$ifdef mse_checkinternalerror}                             
-   if not ele.pushelement(id1,ek_unit,[vik_units],po1) then begin
-    internalerror(ie_unit,'131018A');
-   end;
- {$else}
-   ele.pushelement(id1,ek_unit,[vik_units],po1);
- {$endif}
-   po1^.next:= unitinfochain;
-   unitinfochain:= ele.eledatarel(po1);
-   with s.unitinfo^ do begin
-    interfaceelement:= ele.elementparent;
-   end;
+   s.unitinfo^.key:= id1; //overwrite "program"
+   beginunit(id1,false);
+   ele.markelement(s.unitinfo^.interfacestart);
   end;
   s.stacktop:= s.stackindex;
  end;

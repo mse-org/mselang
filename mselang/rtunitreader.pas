@@ -192,11 +192,15 @@ dumpelements();
     if not getdata(po3,implementationuses1) then begin
      goto endlab;
     end;
-    baseoffset:= ele.eletopoffset;
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
-//dumpelements();
     ele.markelement(startref);
+    if not updateident(int32(po1^.header.key)) then begin
+     goto errorlab;
+    end;
+    beginunit(po1^.header.key,true);
+dumpelements();
+    baseoffset:= ele.eletopoffset;
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
     move(po3^,pele1^,i1); //todo: read segment data directly to ele buffer

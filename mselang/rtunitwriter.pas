@@ -147,7 +147,7 @@ var
  end;
 
 begin
-//dumpelements();
+dumpelements();
  result:= false;
  elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
@@ -164,6 +164,7 @@ begin
  try
   updateident(idstart);
   with po2^ do begin
+   header.key:= updateident(aunit^.key);
    po:= @interfaceuses;
    putdata(po,aunit^.interfaceuses);
    putdata(po,aunit^.implementationuses);
