@@ -20,7 +20,6 @@ interface
 uses
  parserglob,rtunitglob;
   
-function putunitintf(const aunit: punitinfoty): boolean; //true if ok
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 
 implementation
@@ -64,7 +63,7 @@ begin
  inherited create(sizeof(identbufferdataty));
 end;
  
-function putunit(const aunit: punitinfoty; const impl: boolean): boolean; 
+function putunit(const aunit: punitinfoty): boolean; 
 //true if ok
 var
  s1,s2: ptrint;
@@ -241,35 +240,34 @@ begin
  end;
 end;
 
-function putunitintf(const aunit: punitinfoty): boolean; //true if ok
-begin
- result:= putunit(aunit,false);
-end;
-
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
  stat1: subsegmentstatety;
  stream1: tmsefilestream;
  fna1: filenamety;
 begin
- result:= false;
- fna1:= getrtunitfilename(aunit^.filepath);
- if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
-  stat1:= setsubsegment(aunit^.opseg);
-  try
-   writesegmentdata(stream1,getfilekind(mlafk_rtunit),
-           [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
-                                                    aunit^.filetimestamp);
-                              //todo: complete 
-  finally
-   resetunitsegments();
-   restoresubsegment(stat1);
-   stream1.destroy();
+ result:= putunit(aunit);
+ if result then begin
+  fna1:= getrtunitfilename(aunit^.filepath);
+  if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
+   stat1:= setsubsegment(aunit^.opseg);
+   try
+    writesegmentdata(stream1,getfilekind(mlafk_rtunit),
+            [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
+                                                     aunit^.filetimestamp);
+                               //todo: complete 
+   finally
+    resetunitsegments();
+    restoresubsegment(stat1);
+    stream1.destroy();
+   end;
+  end
+  else begin
+   filewriteerror(fna1);
   end;
- end
- else begin
-  filewriteerror(fna1);
  end;
+ resetsegment(seg_unitintf);
+ resetsegment(seg_unitidents);
 end;
 
 end.

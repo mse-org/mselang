@@ -854,12 +854,7 @@ parseend:
  end;
 
  if result and (co_writertunits in info.compileoptions) then begin
-  result:= putunitintf(aunit);
-  if result then begin
-   writeunitfile(aunit);
-  end;
-  resetsegment(seg_unitintf);
-  resetsegment(seg_unitidents);
+  result:= writeunitfile(aunit);
  end;
  
 {$ifdef mse_debugparser}
