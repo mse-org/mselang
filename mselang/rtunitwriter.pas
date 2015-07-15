@@ -251,23 +251,18 @@ begin
   fna1:= getrtunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    stat1:= setsubsegment(aunit^.opseg);
-   try
-    writesegmentdata(stream1,getfilekind(mlafk_rtunit),
+   writesegmentdata(stream1,getfilekind(mlafk_rtunit),
             [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
                                                      aunit^.filetimestamp);
                                //todo: complete 
-   finally
-    resetunitsegments();
-    restoresubsegment(stat1);
-    stream1.destroy();
-   end;
+   restoresubsegment(stat1);
+   stream1.destroy();
   end
   else begin
    filewriteerror(fna1);
   end;
  end;
- resetsegment(seg_unitintf);
- resetsegment(seg_unitidents);
+ resetunitsegments();
 end;
 
 end.
