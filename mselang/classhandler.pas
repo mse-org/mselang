@@ -62,7 +62,8 @@ procedure handledestructorentry();
 implementation
 uses
  parserglob,elements,handler,errorhandler,unithandler,grammar,handlerutils,
- parser,typehandler,opcode,subhandler,segmentutils,interfacehandler;
+ parser,typehandler,opcode,subhandler,segmentutils,interfacehandler,
+ identutils;
 {
 const
  vic_private = vis_3;

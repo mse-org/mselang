@@ -27,7 +27,7 @@ procedure deinit();
 }
 implementation
 uses
- errorhandler,elements,msestrings,msertti,opcode,segmentutils;
+ errorhandler,elements,msestrings,msertti,opcode,segmentutils,identutils;
 
 //var
 // rttibuffer: pointer;

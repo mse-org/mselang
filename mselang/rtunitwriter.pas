@@ -26,7 +26,7 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
- msefileutils,msesys,msesystypes,filehandler,handlerutils;
+ msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils;
 {
 type
  unitrecheaderty = record

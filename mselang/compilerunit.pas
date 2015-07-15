@@ -45,7 +45,7 @@ procedure initcompilersubs(const aunit: punitinfoty);
 
 implementation
 uses
- elements,errorhandler,handlerglob;
+ elements,errorhandler,handlerglob,identutils;
  
 procedure initcompilersubs(const aunit: punitinfoty);
 var

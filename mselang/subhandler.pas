@@ -70,7 +70,7 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
- msestrings,typehandler,exceptionhandler;
+ msestrings,typehandler,exceptionhandler,identutils;
 
 type
  equalparaminfoty = record

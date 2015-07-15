@@ -48,7 +48,7 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils,llvmlists,valuehandler;
+ segmentutils,llvmlists,valuehandler,identutils;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin

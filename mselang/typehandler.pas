@@ -56,7 +56,7 @@ procedure setsubtype(atypetypecontext: int32;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob,managedtypes,unithandler;
+ grammar,opglob,managedtypes,unithandler,identutils;
 
 procedure handletype();
 begin

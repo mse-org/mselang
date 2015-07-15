@@ -98,7 +98,7 @@ uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes,
- rtunitwriter;
+ rtunitwriter,identutils;
  
 type
  unithashdataty = record

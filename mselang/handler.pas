@@ -149,7 +149,7 @@ uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
- llvmlists,llvmbitcodes;
+ llvmlists,llvmbitcodes,identutils;
 
 procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
 

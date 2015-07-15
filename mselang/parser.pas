@@ -57,7 +57,8 @@ uses
  typinfo,grammar,handler,elements,sysutils,handlerglob,
  msebits,unithandler,msefileutils,errorhandler,mseformatstr,opcode,
  handlerutils,managedtypes,rttihandler,segmentutils,stackops,llvmops,
- subhandler,listutils,llvmbitcodes,llvmlists,rtunitwriter,rtunitreader;
+ subhandler,listutils,llvmbitcodes,llvmlists,rtunitwriter,rtunitreader,
+ identutils;
   
 //
 //todo: move context-end flag handling to handler procedures.

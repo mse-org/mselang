@@ -36,7 +36,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- controlhandler,
+ controlhandler,identutils,
  __mla__internaltypes,exceptionhandler,listutils;
 type
  converttablety = array[intbitsizety,databitsizety] of opcodety;

@@ -864,7 +864,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,0,shr1
+    a=0,648,1,shr1
     teststate=1
     path=shr1.mla
     comment=
@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B734F6F8
+    ao=An unhandled exception occured at $B73DD6F8
     +
     ae=
     aec=123

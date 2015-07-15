@@ -184,7 +184,8 @@ procedure dumpelements();
 implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
- syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler;
+ syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler,
+ identutils;
    
 const
  mindouble = -1.7e308;
