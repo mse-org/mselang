@@ -18,35 +18,6 @@ unit globtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 type
-// elementoffsetty = ptrint;
- elementoffsetty = int32; //same size for 64 and 32 bit compilers because of
-                          //dump in unit files
- pelementoffsetty = ^elementoffsetty;
- elementoffsetarty = array of elementoffsetty;
-
- identty = uint32;
- pidentty = ^identty;
- keywordty = identty;
-
- indexty = integer;
- linkindexty = indexty;
- forwardindexty = indexty;
-
- listadty = longword;
-
- dataoffsty = int32;
-
- opaddressty = ptruint;         //todo: use target size
- popaddressty = ^opaddressty;
- dataaddressty = ptruint;
- pdataaddressty = ^dataaddressty;
- pdataoffsty = ^dataoffsty;
- datasizety = ptruint;
- loopcountty = ptrint;
- indirectlevelty = int32;
- framelevelty = int32;
-
-  
  bool8 = boolean;
  bool16 = wordbool;
  bool32 = longbool;
@@ -75,7 +46,36 @@ type
  pint32 = ^int32;
  ppint32 = ^int32;
 
- segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
+// elementoffsetty = ptrint;
+ elementoffsetty = int32; //same size for 64 and 32 bit compilers because of
+                          //dump in unit files
+ pelementoffsetty = ^elementoffsetty;
+ elementoffsetarty = array of elementoffsetty;
+
+ identty = uint32;
+ pidentty = ^identty;
+ keywordty = identty;
+ targetcard = card32;
+
+ indexty = integer;
+ linkindexty = indexty;
+ forwardindexty = indexty;
+
+ listadty = longword;
+
+ dataoffsty = int32;
+
+ opaddressty = ptruint;         //todo: use target size
+ popaddressty = ^opaddressty;
+ dataaddressty = ptruint;
+ pdataaddressty = ^dataaddressty;
+ pdataoffsty = ^dataoffsty;
+ datasizety = ptruint;
+ loopcountty = ptrint;
+ indirectlevelty = int32;
+ framelevelty = int32;
+
+   segmentty = (seg_nil,seg_stack,seg_globvar,seg_globconst,
               seg_op,seg_classdef,seg_rtti,seg_intf,
               seg_localloc,
               seg_classintfcount,seg_intfitemcount,

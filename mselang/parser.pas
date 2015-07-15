@@ -440,6 +440,9 @@ begin
     result:= true;
     dec(unitlevel);
     if unitlevel = 0 then begin
+     with pstartupdataty(getoppo(0))^ do begin
+      globdatasize:= globdatapo;
+     end;
      with getoppo(startupoffset)^ do begin
       par.beginparse.mainad:= info.s.unitinfo^.mainad;
      end;

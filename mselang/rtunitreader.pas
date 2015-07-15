@@ -126,11 +126,16 @@ var
  startref: markinfoty;
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
+ globpobefore: targetcard;
+ 
 label
  errorlab,oklab,endlab;
 begin
  result:= false;
  fna1:= getrtunitfile(aunit);
+{$ifdef mse_debugparser}
+ write('***** reading unit '+fna1);
+{$endif}
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
   try
@@ -195,7 +200,11 @@ begin
     end;
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
+
     ele.markelement(startref);
+    globpobefore:= info.globdatapo;
+    inc(info.globdatapo,po1^.header.interfaceglobsize); 
+
     if not updateident(int32(po1^.header.key)) then begin
      goto errorlab;
     end;
@@ -267,6 +276,7 @@ begin
     end;
 errorlab:
     ele.releaseelement(startref);
+    info.globdatapo:= globpobefore;
     goto endlab;
 oklab:
     stream1.position:= 0;           //todo: linker
@@ -289,6 +299,14 @@ endlab:
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;
+{$ifdef mse_debugparser}
+ if result then begin
+  writeln(' OK');
+ end
+ else begin
+  writeln(' ***ERROR***');
+ end;
+{$endif}
 end;
 
 end.

@@ -64,7 +64,8 @@ begin
  inherited create(sizeof(identbufferdataty));
 end;
  
-function putunitintf(const aunit: punitinfoty): boolean; //true if ok
+function putunit(const aunit: punitinfoty; const impl: boolean): boolean; 
+//true if ok
 var
  s1,s2: ptrint;
  ps,pd,pe: pelementinfoty;
@@ -165,6 +166,10 @@ begin
   with po2^ do begin
    header.key:= updateident(aunit^.key);
    header.mainad:= aunit^.mainad; //todo: relocate
+   header.interfaceglobstart:= aunit^.interfaceglobstart;
+   header.interfaceglobsize:= aunit^.interfaceglobsize;
+   header.implementationglobstart:= aunit^.implementationglobstart;
+   header.implementationglobsize:= aunit^.implementationglobsize;
    po:= @interfaceuses;
    putdata(po,aunit^.interfaceuses);
    putdata(po,aunit^.implementationuses);
@@ -234,6 +239,11 @@ begin
  finally
   identlist.destroy();
  end;
+end;
+
+function putunitintf(const aunit: punitinfoty): boolean; //true if ok
+begin
+ result:= putunit(aunit,false);
 end;
 
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok

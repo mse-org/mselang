@@ -46,10 +46,15 @@ function parsecompilerunit(const aname: filenamety): boolean;
 
 procedure handleprogramentry();
 procedure beginunit(const aname: identty; const nopush: boolean);
-procedure markinterfacestart();
 procedure setunitname(); //unitname on top of stack
 //procedure interfacestop();
 
+procedure markinterfacestart();
+{
+procedure markinterfaceend();
+procedure markimplementationstart();
+procedure markunitend();
+}
 procedure handleuseserror();
 procedure handleuses();
 
@@ -162,7 +167,34 @@ end;
 
 procedure markinterfacestart();
 begin
- ele.markelement(info.s.unitinfo^.interfacestart); 
+ with info.s.unitinfo^ do begin
+  ele.markelement(interfacestart); 
+  interfaceglobstart:= info.globdatapo;
+ end;
+end;
+
+procedure markinterfaceend();
+begin
+ with info.s.unitinfo^ do begin
+  interfaceglobsize:= info.globdatapo - interfaceglobstart;
+ end;
+end;
+
+procedure markimplementationstart();
+begin
+ with info.s.unitinfo^ do begin
+  ele.markelement(implementationstart);
+  implementationglobstart:= info.globdatapo;
+  opseg:= getsubsegment(seg_op);
+ end;
+end;
+
+procedure markunitend();
+begin
+ with info.s.unitinfo^ do begin
+  setsubsegmentsize(opseg);
+  implementationglobsize:= info.globdatapo - implementationglobstart;
+ end;
 end;
 
 procedure setunitname(); //unitname on top of stack
@@ -288,6 +320,7 @@ begin
  outhandle('IMPLEMENTATIONENTRY');
 {$endif}
  checkforwardtypeerrors();
+ markinterfaceend();
  with info do begin
   include(s.unitinfo^.state,us_interfaceparsed);
   if us_implementation in s.unitinfo^.state then begin
@@ -337,16 +370,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('AFTERIMPLUSES');
 {$endif}
- with info do begin
-  ele.markelement(s.unitinfo^.implementationstart);
-  s.unitinfo^.opseg:= getsubsegment(seg_op);
-  {
-  with contextstack[s.stackindex-1] do begin
-//   d.kind:= ck_implementation;
-   ele.markelement(d.impl.elemark);
-  end;
-  }
- end;
+ markimplementationstart();
 end;
 
 procedure handleimplementation();
@@ -355,9 +379,10 @@ begin
  outhandle('IMPLEMENTATION');
 {$endif}
  checkforwardtypeerrors();
+ markunitend();
  with info do begin
   with s.unitinfo^ do begin
-   setsubsegmentsize(opseg);
+//   setsubsegmentsize(opseg);
    if unitlevel > 1 then begin
     ele.releaseelement(implementationstart);
         //possible pending implementation units
@@ -367,11 +392,6 @@ begin
    freeparsercontext(implstart);
    include(state,us_implementationparsed);
   end;
-  {
-  with contextstack[s.stackindex] do begin
-   ele.releaseelement(d.impl.elemark);
-  end;
-  }
   dec(s.stackindex);
  end;
 end;

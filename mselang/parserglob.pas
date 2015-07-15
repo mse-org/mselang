@@ -516,7 +516,12 @@ type
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;
+  interfaceglobstart: ptruint;
+  interfaceglobsize: ptruint;
   implementationstart: markinfoty;
+  implementationglobstart: ptruint;
+  implementationglobsize: ptruint;
+
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
@@ -592,9 +597,9 @@ type
   errors: array[errorlevelty] of integer; //total count
   opcount: int32;
   start: int32;
-  globdatapo: ptruint;
-  locdatapo: ptruint;
-  frameoffset: ptruint;
+  globdatapo: targetcard;
+  locdatapo: targetcard;
+  frameoffset: targetcard;
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
   currentcontainer: elementoffsetty;
