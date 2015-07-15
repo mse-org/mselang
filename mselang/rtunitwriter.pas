@@ -26,7 +26,8 @@ function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
- msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils;
+ msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
+ sysutils;
 {
 type
  unitrecheaderty = record
@@ -43,33 +44,12 @@ type
  punitrecty = ^unitrecty;
 } 
 
-type
-  
- identbufferdataty = record
-  header: identheaderty;
-  nameindex: int32;
- end;
- pidentbufferdataty = ^identbufferdataty;
- 
- tidentlist = class(tidenthashdatalist)
-  private
-  public
-   constructor create();
- end;
-
-{ tidentlist }
-
-constructor tidentlist.create;
-begin
- inherited create(sizeof(identbufferdataty));
-end;
- 
 function putunit(const aunit: punitinfoty; const impl: boolean): boolean; 
 //true if ok
 var
  s1,s2: ptrint;
  ps,pd,pe: pelementinfoty;
- identlist: tidentlist;
+// identlist: tidentlist;
  po2: punitintfinfoty;
  po: pointer;
  nameindex1,anonindex1: int32;
@@ -81,7 +61,7 @@ var
   po1: pidentbufferdataty;
   lstr1: lstringty;
  begin
-  if identlist.adduniquedata(aident,po1) then begin
+  if aunit^.identlist.adduniquedata(aident,po1) then begin
    if getidentname(aident,lstr1) then begin
     with pidentstringty(allocsegmentpounaligned(seg_unitidents,
                        lstr1.len + sizeof(identstringty)))^ do begin
@@ -160,7 +140,7 @@ begin
  po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
  nameindex1:= 0;
  anonindex1:= -1;
- identlist:= tidentlist.create;
+ aunit^.identlist:= tidentlist.create;
  try
   updateident(idstart);
   with po2^ do begin
@@ -237,7 +217,7 @@ begin
   end;
   result:= true;
  finally
-  identlist.destroy();
+  freeandnil(aunit^.identlist);
  end;
 end;
 

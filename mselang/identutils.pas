@@ -36,6 +36,18 @@ type
    function adduniquedata(const akey: identty; out adata: pointer): boolean;
                               //false if duplicate
  end;
+  
+ identbufferdataty = record
+  header: identheaderty;
+  nameindex: int32;
+ end;
+ pidentbufferdataty = ^identbufferdataty;
+ 
+ tidentlist = class(tidenthashdatalist)
+  private
+  public
+   constructor create();
+ end;
 
 function getident(): identty; overload;
 function getident(const astart,astop: pchar): identty; overload;
@@ -358,6 +370,13 @@ begin
  end;
 end;
 
+{ tidentlist }
+
+constructor tidentlist.create;
+begin
+ inherited create(sizeof(identbufferdataty));
+end;
+ 
 initialization
  identlist:= tindexidenthashdatalist.create;
 finalization
