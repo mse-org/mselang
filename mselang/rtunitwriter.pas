@@ -146,35 +146,10 @@ var
   end;
  end;
 
-begin
- result:= false;
- elestart:= aunit^.interfacestart.bufferref;
- s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
- eleend:= elestart + s1;
- s2:= 2*sizeof(lenidentty) + 
-       (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
-                                                               sizeof(identty);
- resetunitsegments();
- 
- po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
- nameindex1:= 0;
- anonindex1:= -1;
- identlist:= tidentlist.create;
- try
-  updateident(idstart);
-  with po2^ do begin
-   header.key:= updateident(aunit^.key);
-   header.mainad:= aunit^.mainad; //todo: relocate
-   header.interfaceglobstart:= aunit^.interfaceglobstart;
-   header.interfaceglobsize:= aunit^.interfaceglobsize;
-   header.implementationglobstart:= aunit^.implementationglobstart;
-   header.implementationglobsize:= aunit^.implementationglobsize;
-   po:= @interfaceuses;
-   putdata(po,aunit^.interfaceuses);
-   putdata(po,aunit^.implementationuses);
-   pd:= po;
-  end;
-  ps:= ele.eleinfoabs(elestart);
+ procedure puteledata(ps,pd: pelementinfoty; const s1: int32);
+ var
+  pe: pelementinfoty;
+ begin
   move(ps^,pd^,s1);
   deststart:= pd;
   pe:= pointer(pd) + s1;
@@ -229,6 +204,38 @@ begin
     inc(pointer(pd),elesizes[header.kind]);
    end;
   end;
+ end; //puteledata
+
+begin
+ result:= false;
+ elestart:= aunit^.interfacestart.bufferref;
+ s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ eleend:= elestart + s1;
+ s2:= 2*sizeof(lenidentty) + 
+       (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
+                                                               sizeof(identty);
+ resetunitsegments();
+ 
+ po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);
+ nameindex1:= 0;
+ anonindex1:= -1;
+ identlist:= tidentlist.create;
+ try
+  updateident(idstart);
+  with po2^ do begin
+   header.key:= updateident(aunit^.key);
+   header.mainad:= aunit^.mainad; //todo: relocate
+   header.interfaceglobstart:= aunit^.interfaceglobstart;
+   header.interfaceglobsize:= aunit^.interfaceglobsize;
+   header.implementationglobstart:= aunit^.implementationglobstart;
+   header.implementationglobsize:= aunit^.implementationglobsize;
+   po:= @interfaceuses;
+   putdata(po,aunit^.interfaceuses);
+   putdata(po,aunit^.implementationuses);
+   pd:= po;
+  end;
+  ps:= ele.eleinfoabs(elestart);
+  puteledata(ps,pd,s1);
   with po2^.header do begin
    sourcetimestamp:= aunit^.filetimestamp;
    namecount:= nameindex1;
