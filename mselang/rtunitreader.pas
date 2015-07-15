@@ -140,11 +140,12 @@ begin
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
   try
+   globpobefore:= info.globdatapo;
    resetunitsegments();
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filetimestamp) and
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
-                         [seg_unitintf,seg_unitlinks,seg_unitidents{,seg_op}]);
+                         [seg_unitintf,seg_unitlinks,seg_unitidents]);
    if result then begin
     result:= false;
     if getsegmentsize(seg_unitintf) < sizeof(unitintfinfoty) then begin
@@ -188,6 +189,10 @@ begin
     end;
     include(aunit^.state,us_interfaceparsed);
     aunit^.mainad:= po1^.header.mainad; //todo: relocate
+
+    if info.unitlevel = 1 then begin
+     info.globdatapo:= po1^.header.interfaceglobstart;
+    end;
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
      if loadunitbyid(interfaceuses1[i1]) = nil then begin
@@ -196,6 +201,7 @@ begin
      end;
     end;
     restoreunitsegments(unitsegments1);
+
     if not getdata(po3,implementationuses1) then begin
      goto endlab;
     end;
@@ -203,7 +209,6 @@ begin
                         (getsegmentbase(seg_unitintf)-pointer(po3));
 
     ele.markelement(startref);
-    globpobefore:= info.globdatapo;
     inc(info.globdatapo,po1^.header.interfaceglobsize); 
 
     if not updateident(int32(po1^.header.key)) then begin
@@ -272,12 +277,22 @@ begin
       inc(pointer(pele1),elesizes[header.kind]);
      end;     
     end;
-    if pele1 = poend then begin //ok
-     goto oklab;
+    if pele1 <> poend then begin
+     goto errorlab;
     end;
+
+    saveunitsegments(unitsegments1);
+    for i1:= 0 to high(interfaceuses1) do begin
+     if loadunitbyid(implementationuses1[i1]) = nil then begin
+      restoreunitsegments(unitsegments1);
+      goto errorlab;
+     end;
+    end;
+    restoreunitsegments(unitsegments1);
+    inc(info.globdatapo,po1^.header.implementationglobsize); 
+    goto oklab;
 errorlab:
     ele.releaseelement(startref);
-    info.globdatapo:= globpobefore;
     goto endlab;
 oklab:
     stream1.position:= 0;           //todo: linker
@@ -297,6 +312,7 @@ endlab:
   stream1.destroy();
   resetunitsegments();
   if not result then begin
+   info.globdatapo:= globpobefore;
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;

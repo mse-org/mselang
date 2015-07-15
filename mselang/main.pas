@@ -137,7 +137,9 @@ begin
      end;
     end
     else begin
-     grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
+     if not norun.value then begin
+      grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
+     end;
     end;
    end;
   finally
