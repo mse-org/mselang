@@ -19,7 +19,7 @@ unit parserglob;
 interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
- segmentutils,identutils;
+ segmentutils;
 const
  firstident = 256;
  includemax = 31;
@@ -521,7 +521,6 @@ type
   implementationstart: markinfoty;
   implementationglobstart: ptruint;
   implementationglobsize: ptruint;
-  identlist: tidentlist;
 
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;

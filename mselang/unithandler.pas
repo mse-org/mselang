@@ -578,7 +578,6 @@ begin
  system.finalize(punitinfoty(aitemdata)^);
  with punitinfoty(aitemdata)^ do begin
   metadatalist.free();
-  identlist.free();
   freeparsercontext(implstart);
  end;
  freemem(punitinfoty(aitemdata));
