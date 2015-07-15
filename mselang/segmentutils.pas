@@ -55,9 +55,9 @@ const
  minsegmentreserve = 32; //at least free bytes at buffer end  
 
 const
- unitsegmentcount = 3;
+ unitsegmentcount = 4;
  unitsegments: array[0..unitsegmentcount-1] of segmentty = 
-               (seg_unitintf,seg_unitidents,seg_unitlinks);
+               (seg_unitintf,seg_unitidents,seg_unitlinks,seg_unitimpl);
 type
  unitsegmentsstatety = array[0..unitsegmentcount-1] of segmentinfoty;
 
@@ -136,8 +136,8 @@ const
   0,      0,        0,          1024,         1024,  1024,         1024,
 //seg_intf,seg_paralloc,seg_classintfcount,seg_intfitemcount,
   1024,    1024,        1024,              1024,             
-//seg_unitintf,seg_unitidents,seg_unitlinks
-  1024,        1024,          1024);          
+//seg_unitintf,seg_unitidents,seg_unitlinks,segunitimpl
+  1024,        1024,          1024,         1024);          
   
 var
  segments: array[segmentty] of segmentinfoty;
