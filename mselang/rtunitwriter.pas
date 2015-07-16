@@ -100,7 +100,7 @@ var
 
  procedure putdata(var po: pointer; const adata: unitinfopoarty);
  var
-  pd,pe: pidentty;
+  pd,pe: pusesitemty;
   ps: ppunitinfoty;
  begin
   pint32(po)^:= length(adata);
@@ -108,7 +108,7 @@ var
   pe:= pd+length(adata);
   ps:= pointer(adata);
   while pd < pe do begin
-   pd^:= updateident(ps^^.key);
+   pd^.id:= updateident(ps^^.key);
    inc(ps);
    inc(pd);
   end;
@@ -211,9 +211,9 @@ begin
  elestart:= aunit^.interfacestart.bufferref;
  s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
  eleend:= elestart + s1;
- s2:= 2*sizeof(lenidentty) + 
+ s2:= 2*sizeof(lenitemty) + 
        (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
-                                                               sizeof(identty);
+                                                            sizeof(usesitemty);
  resetunitsegments();
  
  po2:= allocsegmentpo(seg_unitintf,sizeof(unitintfheaderty)+s1+s2);

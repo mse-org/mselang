@@ -28,12 +28,18 @@ type
  end;
  pidentstringty = ^identstringty;
 
- lenidentty = record
+ lenitemty = record
   len: int32;
-  data: record //array of identty
+  data: record //array of items
   end;
  end;
- plenidentty = ^lenidentty;
+ plenitemty = ^lenitemty;
+
+ usesitemty = record
+  id: identty;
+ end;
+ pusesitemty = ^usesitemty;
+ usesitemarty = array of usesitemty;
  
  unitintfheaderty = record
   sourcetimestamp: tdatetime;
@@ -49,8 +55,8 @@ type
  
  unitintfinfoty = record
   header: unitintfheaderty;
-  interfaceuses: lenidentty;
-  implementationuses: lenidentty;
+  interfaceuses: lenitemty;
+  implementationuses: lenitemty;
   data: record  //dump of elements
   end;
  end;

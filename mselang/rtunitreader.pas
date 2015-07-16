@@ -38,7 +38,7 @@ var
  pd,pe: pint32;
  ns,ne: pchar;
  poend: pointer;
- po3: plenidentty;
+ po3: plenitemty;
  idmin1,idmax1: int32;
  baseoffset: elementoffsetty;
  linksstart,linksend: pointer;
@@ -58,12 +58,12 @@ var
   result:= true;
  end; //updateident
 
- function getdata(var source: plenidentty; out dest: identarty): boolean;
+ function getdata(var source: plenitemty; out dest: usesitemarty): boolean;
  var
-  ps,pd,pe: pidentty;
+  ps,pd,pe: pusesitemty;
  begin
   result:= false;
-  allocuninitedarray(source^.len,sizeof(identty),dest);
+  allocuninitedarray(source^.len,sizeof(usesitemty),dest);
   ps:= @source^.data;
   pe:= ps+source^.len;
   if pointer(pe) > poend then begin
@@ -72,7 +72,7 @@ var
   pd:= pointer(dest);
   while ps < pe do begin
    pd^:= ps^;
-   if not updateident(int32(pd^)) then begin
+   if not updateident(int32(pd^.id)) then begin
     exit;
    end;
    inc(pd);
@@ -120,7 +120,7 @@ var
  end;
  
 var
- interfaceuses1,implementationuses1: identarty;
+ interfaceuses1,implementationuses1: usesitemarty;
  pele1: pelementinfoty;
  po: pointer;
  i1: int32;
@@ -135,7 +135,7 @@ begin
  result:= false;
  fna1:= getrtunitfile(aunit);
 {$ifdef mse_debugparser}
- write('***** reading unit '+fna1);
+ writeln('***** reading unit '+fna1);
 {$endif}
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
@@ -195,7 +195,7 @@ begin
     end;
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
-     if loadunitbyid(interfaceuses1[i1]) = nil then begin
+     if loadunitbyid(interfaceuses1[i1].id) = nil then begin
       restoreunitsegments(unitsegments1);
       goto endlab;
      end;
@@ -282,8 +282,8 @@ begin
     end;
 
     saveunitsegments(unitsegments1);
-    for i1:= 0 to high(interfaceuses1) do begin
-     if loadunitbyid(implementationuses1[i1]) = nil then begin
+    for i1:= 0 to high(implementationuses1) do begin
+     if loadunitbyid(implementationuses1[i1].id) = nil then begin
       restoreunitsegments(unitsegments1);
       goto errorlab;
      end;
@@ -318,10 +318,10 @@ endlab:
  end;
 {$ifdef mse_debugparser}
  if result then begin
-  writeln(' OK');
+  writeln('** read unit '+fna1+' OK');
  end
  else begin
-  writeln(' ***ERROR***');
+  writeln('** read unit '+fna1+' ***ERROR***');
  end;
 {$endif}
 end;
