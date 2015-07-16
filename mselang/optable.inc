@@ -14,7 +14,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-
+{
  ssatable: ssatablety = (
   nonessa,
   nopssa,
@@ -864,10 +864,9 @@
   nil,
   nil
  );
+}
 
-//  (ssa: ssa; proc: @op; flags: []), //oc_nopssa,
-
- optablex: opdeftablety = (
+ optable: optablety = (
 //oc_none
   (ssa: nonessa; proc: nil; flags: []), 
 //oc_nop

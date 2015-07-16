@@ -912,10 +912,10 @@ begin
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
     if co_llvm in compileoptions then begin
-     beginparser(llvmops.getoptable(),llvmops.getssatable());
+     beginparser(llvmops.getoptable());
     end
     else begin
-     beginparser(stackops.getoptable(),stackops.getssatable());
+     beginparser(stackops.getoptable());
     end;
    {$ifndef mse_nocompilerunit}
     result:= parsecompilerunit('__mla__compilerunit');

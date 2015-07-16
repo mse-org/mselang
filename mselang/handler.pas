@@ -21,7 +21,7 @@ interface
 uses
  globtypes,parserglob,opglob,typinfo,msetypes,handlerglob;
 
-procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
+procedure beginparser(const aoptable: poptablety);
 procedure endparser();
 
 //procedure push(const avalue: real); overload;
@@ -151,13 +151,13 @@ uses
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
  llvmlists,llvmbitcodes,identutils;
 
-procedure beginparser(const aoptable: poptablety; const assatable: pssatablety);
+procedure beginparser(const aoptable: poptablety);
 
 var
  po1: pvardataty;
  ele1: elementoffsetty;
 begin
- setoptable(aoptable,assatable);
+ setoptable(aoptable);
  addvar(tk_exitcode,allvisi,info.s.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;

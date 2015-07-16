@@ -67,7 +67,7 @@ function run(const stackdepht: integer): integer; //returns exitcode
 function run(const asegments: segmentbuffersty): integer; //returns exitcode
 
 function getoptable: poptablety;
-function getssatable: pssatablety;
+//function getssatable: pssatablety;
 
 implementation
 uses
@@ -3864,7 +3864,7 @@ begin
 // constdata:= segments[seg_globconst].basepo;
  inc(cpu.pc,startupoffset);
  while not cpu.stop do begin
-  optable[cpu.pc^.op.op]();
+  optable[cpu.pc^.op.op].proc();
   inc(cpu.pc);
  end;
  result:= pinteger(segments[seg_globvar].basepo)^;
@@ -3926,12 +3926,12 @@ function getoptable: poptablety;
 begin
  result:= @optable;
 end;
-
+{
 function getssatable: pssatablety;
 begin
  result:= @ssatable;
 end;
-
+}
 {
 procedure allocproc(const asize: integer; var address: segaddressty);
 begin

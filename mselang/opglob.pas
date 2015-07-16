@@ -956,10 +956,10 @@ type
  end;
  pstartupdataty = ^startupdataty;
 
- optablety = array[opcodety] of opprocty;
- poptablety = ^optablety;
- ssatablety = array[opcodety] of integer;
- pssatablety = ^ssatablety;
+// optablety = array[opcodety] of opprocty;
+// poptablety = ^optablety;
+// ssatablety = array[opcodety] of integer;
+// pssatablety = ^ssatablety;
 
  opflagty = (of_relocseg); 
  opflagsty = set of opflagty;
@@ -969,7 +969,8 @@ type
   proc: opprocty;
   flags: opflagsty;
  end;
- opdeftablety = array[opcodety] of opdefty;
+ optablety = array[opcodety] of opdefty;
+ poptablety = ^optablety;
  
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 

@@ -28,7 +28,7 @@ type
 
 var
  optable: poptablety;
- ssatable: pssatablety;
+// ssatable: pssatablety;
  pushsegaddrssaar: array[segmentty] of int32;
   
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
@@ -92,7 +92,7 @@ procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
-procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
+procedure setoptable(const aoptable: poptablety);
 {
 procedure init();
 procedure deinit();
@@ -140,16 +140,16 @@ begin
  classdefcount:= 0;
 end;
 }
-procedure setoptable(const aoptable: poptablety; const assatable: pssatablety);
+procedure setoptable(const aoptable: poptablety);
 begin
  optable:= aoptable;
- ssatable:= assatable;
+// ssatable:= assatable;
  fillchar(pushsegaddrssaar,sizeof(pushsegaddrssaar),0);
- pushsegaddrssaar[seg_nil]:= ssatable^[ocssa_pushsegaddrnil];
- pushsegaddrssaar[seg_globvar]:= ssatable^[ocssa_pushsegaddrglobvar];
- pushsegaddrssaar[seg_op]:= ssatable^[ocssa_pushsegaddrglobvar];
- pushsegaddrssaar[seg_globconst]:= ssatable^[ocssa_pushsegaddrglobconst];
- pushsegaddrssaar[seg_classdef]:= ssatable^[ocssa_pushsegaddrclassdef];
+ pushsegaddrssaar[seg_nil]:= optable^[ocssa_pushsegaddrnil].ssa;
+ pushsegaddrssaar[seg_globvar]:= optable^[ocssa_pushsegaddrglobvar].ssa;
+ pushsegaddrssaar[seg_op]:= optable^[ocssa_pushsegaddrglobvar].ssa;
+ pushsegaddrssaar[seg_globconst]:= optable^[ocssa_pushsegaddrglobconst].ssa;
+ pushsegaddrssaar[seg_classdef]:= optable^[ocssa_pushsegaddrclassdef].ssa;
  
 end;
  
@@ -570,7 +570,7 @@ function additem(const aopcode: opcodety;
 begin
  with info do begin
   s.ssa.index:= s.ssa.nextindex;
-  inc(s.ssa.nextindex,ssatable^[aopcode]+ssaextension);
+  inc(s.ssa.nextindex,optable^[aopcode].ssa+ssaextension);
   result:= allocsegmentpo(seg_op,sizeof(opinfoty));
   with result^ do begin
    op.op:= aopcode;
@@ -645,7 +645,7 @@ begin
    end;
   end
   else begin
-   ssadelta:= ssatable^[aopcode]+ssaextension;
+   ssadelta:= optable^[aopcode].ssa+ssaextension;
    allocsegmentpo(seg_op,sizeof(opinfoty));
    if before then begin
     ad1:= contextstack[int1].opmark.address;

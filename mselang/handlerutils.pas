@@ -1724,14 +1724,14 @@ end;
 function getssa(const aopcode: opcodety; const count: integer): integer;
 begin
  with info do begin
-  result:= ssatable^[aopcode]*count;
+  result:= optable^[aopcode].ssa*count;
  end;
 end;
 
 function getssa(const aopcode: opcodety): integer;
 begin
  with info do begin
-  result:= ssatable^[aopcode];
+  result:= optable^[aopcode].ssa;
  end;
 end;
 

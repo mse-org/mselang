@@ -24,7 +24,7 @@ uses
 //todo: generate bitcode, use static string buffers, no ansistrings
  
 function getoptable: poptablety;
-function getssatable: pssatablety;
+//function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
 procedure run(const atarget: tllvmbcwriter);
@@ -3309,7 +3309,7 @@ begin
    outass(lab+':');
   end;
   }
-  optable[pc^.op.op]();
+  optable[pc^.op.op].proc();
   inc(pc);
  end;
 end;
@@ -3318,12 +3318,12 @@ function getoptable: poptablety;
 begin
  result:= @optable;
 end;
-
+{
 function getssatable: pssatablety;
 begin
  result:= @ssatable;
 end;
-
+}
 finalization
 // freeandnil(assstream);
 end.
