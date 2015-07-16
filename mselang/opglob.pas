@@ -477,7 +477,7 @@ type
   ocssa_pushsegaddrglobconst,
   ocssa_pushsegaddrclassdef
  );
-
+ 
  v8ty = array[0..0] of byte;
  pv8ty = ^v8ty;
  ppv8ty = ^pv8ty;
@@ -960,6 +960,16 @@ type
  poptablety = ^optablety;
  ssatablety = array[opcodety] of integer;
  pssatablety = ^ssatablety;
+
+ opflagty = (of_relocseg); 
+ opflagsty = set of opflagty;
+
+ opdefty = record
+  ssa: int32;
+  proc: opprocty;
+  flags: opflagsty;
+ end;
+ opdeftablety = array[opcodety] of opdefty;
  
 const
  startupoffset = (sizeof(startupdataty)+sizeof(opinfoty)-1) div 

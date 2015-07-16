@@ -3606,17 +3606,17 @@ const
   cmpltint32ssa = 0;
   cmpltflo64ssa = 0;
 
-  cmpgspossa = 0;
-  cmpgsboolssa = 0;
-  cmpgscard32ssa = 0;
-  cmpgsint32ssa = 0;
-  cmpgsflo64ssa = 0;
+  cmpgepossa = 0;
+  cmpgeboolssa = 0;
+  cmpgecard32ssa = 0;
+  cmpgeint32ssa = 0;
+  cmpgeflo64ssa = 0;
 
-  cmplspossa = 0;
-  cmplsboolssa = 0;
-  cmplscard32ssa = 0;
-  cmplsint32ssa = 0;
-  cmplsflo64ssa = 0;
+  cmplepossa = 0;
+  cmpleboolssa = 0;
+  cmplecard32ssa = 0;
+  cmpleint32ssa = 0;
+  cmpleflo64ssa = 0;
 
   storesegnilssa = 0;
   storereg0nilssa = 0;
