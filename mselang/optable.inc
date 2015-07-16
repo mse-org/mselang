@@ -1298,7 +1298,7 @@
   (ssa: cmpleflo64ssa; proc: @cmpleflo64op; flags: []), 
 
 //oc_storesegnil
-  (ssa: storesegnilssa; proc: @storesegnilop; flags: []), 
+  (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 
 //oc_storereg0nil
   (ssa: storereg0nilssa; proc: @storereg0nilop; flags: []), 
 //oc_storeframenil
@@ -1308,7 +1308,7 @@
 //oc_storestackrefnil
   (ssa: storestackrefnilssa; proc: @storestackrefnilop; flags: []), 
 //oc_storesegnilar
-  (ssa: storesegnilarssa; proc: @storesegnilarop; flags: []), 
+  (ssa: storesegnilarssa; proc: @storesegnilarop; flags: [of_relocseg]), 
 //oc_storeframenilar
   (ssa: storeframenilarssa; proc: @storeframenilarop; flags: []), 
 //oc_storereg0nilar
@@ -1319,7 +1319,7 @@
   (ssa: storestackrefnilarssa; proc: @storestackrefnilarop; flags: []), 
 
 //oc_finirefsizeseg
-  (ssa: finirefsizesegssa; proc: @finirefsizesegop; flags: []), 
+  (ssa: finirefsizesegssa; proc: @finirefsizesegop; flags: [of_relocseg]), 
 //oc_finirefsizeframe
   (ssa: finirefsizeframessa; proc: @finirefsizeframeop; flags: []), 
 //oc_finirefsizereg0
@@ -1331,7 +1331,7 @@
 //oc_finirefsizeframear
   (ssa: finirefsizeframearssa; proc: @finirefsizeframearop; flags: []), 
 //oc_finirefsizesegar
-  (ssa: finirefsizesegarssa; proc: @finirefsizesegarop; flags: []), 
+  (ssa: finirefsizesegarssa; proc: @finirefsizesegarop; flags: [of_relocseg]), 
 //oc_finirefsizereg0ar
   (ssa: finirefsizereg0arssa; proc: @finirefsizereg0arop; flags: []), 
 //oc_finirefsizestackar
@@ -1340,7 +1340,7 @@
   (ssa: finirefsizestackrefarssa; proc: @finirefsizestackrefarop; flags: []), 
 
 //oc_increfsizeseg
-  (ssa: increfsizesegssa; proc: @increfsizesegop; flags: []), 
+  (ssa: increfsizesegssa; proc: @increfsizesegop; flags: [of_relocseg]),
 //oc_increfsizeframe
   (ssa: increfsizeframessa; proc: @increfsizeframeop; flags: []), 
 //oc_increfsizereg0
@@ -1352,7 +1352,7 @@
 //oc_increfsizeframear
   (ssa: increfsizeframearssa; proc: @increfsizeframearop; flags: []), 
 //oc_increfsizesegar
-  (ssa: increfsizesegarssa; proc: @increfsizesegarop; flags: []), 
+  (ssa: increfsizesegarssa; proc: @increfsizesegarop; flags: [of_relocseg]),
 //oc_increfsizereg0ar
   (ssa: increfsizereg0arssa; proc: @increfsizereg0arop; flags: []), 
 //oc_increfsizestackar
@@ -1361,7 +1361,7 @@
   (ssa: increfsizestackrefarssa; proc: @increfsizestackrefarop; flags: []), 
 
 //oc_decrefsizeseg
-  (ssa: decrefsizesegssa; proc: @decrefsizesegop; flags: []), 
+  (ssa: decrefsizesegssa; proc: @decrefsizesegop; flags: [of_relocseg]),
 //oc_decrefsizeframe
   (ssa: decrefsizeframessa; proc: @decrefsizeframeop; flags: []), 
 //oc_decrefsizereg0
@@ -1373,7 +1373,7 @@
 //oc_decrefsizeframear
   (ssa: decrefsizeframearssa; proc: @decrefsizeframearop; flags: []), 
 //oc_decrefsizesegar
-  (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; flags: []), 
+  (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; flags: [of_relocseg]),
 //oc_decrefsizereg0ar
   (ssa: decrefsizereg0arssa; proc: @decrefsizereg0arop; flags: []), 
 //oc_decrefsizestackar
@@ -1382,23 +1382,23 @@
   (ssa: decrefsizestackrefarssa; proc: @decrefsizestackrefarop; flags: []), 
 
 //oc_popseg8
-  (ssa: popseg8ssa; proc: @popseg8op; flags: []), 
+  (ssa: popseg8ssa; proc: @popseg8op; flags: [of_relocseg]), 
 //oc_popseg16
-  (ssa: popseg16ssa; proc: @popseg16op; flags: []), 
+  (ssa: popseg16ssa; proc: @popseg16op; flags: [of_relocseg]), 
 //oc_popseg32
-  (ssa: popseg32ssa; proc: @popseg32op; flags: []), 
+  (ssa: popseg32ssa; proc: @popseg32op; flags: [of_relocseg]), 
 //oc_popseg64
-  (ssa: popseg64ssa; proc: @popseg64op; flags: []), 
+  (ssa: popseg64ssa; proc: @popseg64op; flags: [of_relocseg]), 
 //oc_popsegpo
-  (ssa: popsegpossa; proc: @popsegpoop; flags: []), 
+  (ssa: popsegpossa; proc: @popsegpoop; flags: [of_relocseg]), 
 //oc_popsegf16
-  (ssa: popsegf16ssa; proc: @popsegf16op; flags: []), 
+  (ssa: popsegf16ssa; proc: @popsegf16op; flags: [of_relocseg]), 
 //oc_popsegf32
-  (ssa: popsegf32ssa; proc: @popsegf32op; flags: []), 
+  (ssa: popsegf32ssa; proc: @popsegf32op; flags: [of_relocseg]), 
 //oc_popsegf64
-  (ssa: popsegf64ssa; proc: @popsegf64op; flags: []), 
+  (ssa: popsegf64ssa; proc: @popsegf64op; flags: [of_relocseg]), 
 //oc_popseg
-  (ssa: popsegssa; proc: @popsegop; flags: []), 
+  (ssa: popsegssa; proc: @popsegop; flags: [of_relocseg]), 
 
 //oc_poploc8
   (ssa: poploc8ssa; proc: @poploc8op; flags: []), 
@@ -1481,23 +1481,23 @@
 //  pushsegaddress
 
 //oc_pushseg8
-  (ssa: pushseg8ssa; proc: @pushseg8op; flags: []), 
+  (ssa: pushseg8ssa; proc: @pushseg8op; flags: [of_relocseg]), 
 //oc_pushseg16
-  (ssa: pushseg16ssa; proc: @pushseg16op; flags: []), 
+  (ssa: pushseg16ssa; proc: @pushseg16op; flags: [of_relocseg]),
 //oc_pushseg32
-  (ssa: pushseg32ssa; proc: @pushseg32op; flags: []), 
+  (ssa: pushseg32ssa; proc: @pushseg32op; flags: [of_relocseg]),
 //oc_pushseg64
-  (ssa: pushseg64ssa; proc: @pushseg64op; flags: []), 
+  (ssa: pushseg64ssa; proc: @pushseg64op; flags: [of_relocseg]),
 //oc_pushsegpo
-  (ssa: pushsegpossa; proc: @pushsegpoop; flags: []), 
+  (ssa: pushsegpossa; proc: @pushsegpoop; flags: [of_relocseg]),
 //oc_pushsegf16
-  (ssa: pushsegf16ssa; proc: @pushsegf16op; flags: []), 
+  (ssa: pushsegf16ssa; proc: @pushsegf16op; flags: [of_relocseg]),
 //oc_pushsegf32
-  (ssa: pushsegf32ssa; proc: @pushsegf32op; flags: []), 
+  (ssa: pushsegf32ssa; proc: @pushsegf32op; flags: [of_relocseg]),
 //oc_pushsegf64
-  (ssa: pushsegf64ssa; proc: @pushsegf64op; flags: []), 
+  (ssa: pushsegf64ssa; proc: @pushsegf64op; flags: [of_relocseg]),
 //oc_pushseg
-  (ssa: pushsegssa; proc: @pushsegop; flags: []), 
+  (ssa: pushsegssa; proc: @pushsegop; flags: [of_relocseg]),
 
 //oc_pushloc8
   (ssa: pushloc8ssa; proc: @pushloc8op; flags: []), 
@@ -1561,7 +1561,7 @@
 //oc_pushlocaddr
   (ssa: pushlocaddrssa; proc: @pushlocaddrop; flags: []), 
 //oc_pushsegaddr
-  (ssa: pushsegaddrssa; proc: @pushsegaddrop; flags: []), 
+  (ssa: pushsegaddrssa; proc: @pushsegaddrop; flags: [of_relocseg]),
 //oc_pushstackaddr
   (ssa: pushstackaddrssa; proc: @pushstackaddrop; flags: []), 
 

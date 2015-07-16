@@ -629,10 +629,11 @@ type
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
     locdataaddress: locdataaddressty;
    );
-   oc_storesegnilar,
+   oc_storesegnil,oc_storesegnilar,
    oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
    oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
    oc_pushsegaddr,{oc_pushsegaddrindi,}
+   oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
    oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
     segdataaddress: segdataaddressty;
    );
