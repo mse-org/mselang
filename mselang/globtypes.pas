@@ -55,7 +55,10 @@ type
  identty = uint32;
  pidentty = ^identty;
  keywordty = identty;
- targetcard = card32;
+ targetcardty = card32;
+ targetadty = card32;
+ targetoffsty = int32;
+ targetsizety = int32;
 
  indexty = integer;
  linkindexty = indexty;

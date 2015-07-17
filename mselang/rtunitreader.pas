@@ -27,13 +27,56 @@ implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
- identutils;
- 
+ identutils,opglob,opcode;
+
+type
+ relocinfoty = record
+  base: targetadty; //first!
+  offset: targetoffsty;
+  size: targetsizety;
+ end;
+ prelocinfoty = ^relocinfoty;
+ relocinfoarty = array of relocinfoty;
+  
+{$if sizeof(targetadty) = 4}
+function cmpreloc(const l,r): integer;
+begin
+ result:= relocinfoty(l).base-relocinfoty(r).base;
+end;
+{$endif}
+
+function reloc(const list: relocinfoarty; var ad: targetadty): boolean;
+                 //list <> nil
+var
+ ilo,ihi,i1: int32;
+begin
+ result:= false;
+ ilo:= 0;
+ ihi:= high(list);
+ while ilo <= ihi do begin
+  i1:= (ilo+ihi+1) div 2;
+  with list[i1] do begin
+   if ad >= base then begin
+    ilo:= i1;
+    if ihi = ilo then begin
+     break;
+    end;
+   end
+   else begin
+    ihi:= i1-1;
+   end;
+  end;
+ end;
+ if (ihi >= 0) then begin
+  with list[ihi] do begin
+   result:= ad < base + size;
+   ad:= ad + offset;
+  end;
+ end;
+end;
+
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
- stream1: tmsefilestream;
- fna1: filenamety;
- po1: punitintfinfoty;
  names1,anons1: identarty;
  pd,pe: pint32;
  ns,ne: pchar;
@@ -118,8 +161,11 @@ var
   end;
   result:= true;
  end;
- 
+
 var
+ stream1: tmsefilestream;
+ fna1: filenamety;
+ intf: punitintfinfoty;
  interfaceuses1,implementationuses1: usesitemarty;
  pele1: pelementinfoty;
  po: pointer;
@@ -127,7 +173,11 @@ var
  startref: markinfoty;
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
- globpobefore: targetcard;
+ globpobefore: targetcardty;
+ globreloc1: array of relocinfoty;
+ unit1: punitinfoty;
+ needsreloc: boolean;
+ op1,ope: popinfoty;
  
 label
  errorlab,oklab,endlab;
@@ -153,11 +203,11 @@ begin
     end;
     linksstart:= getsegmentbase(seg_unitlinks);
     linksend:= linksstart + getsegmentsize(seg_unitlinks);
-    po1:= getsegmentbase(seg_unitintf);
-    if po1^.header.anoncount < 1 then begin
+    intf:= getsegmentbase(seg_unitintf);
+    if intf^.header.anoncount < 1 then begin
      goto endlab; //invalid, no parserglob.idstart
     end;
-    allocuninitedarray(po1^.header.anoncount,sizeof(identty),anons1);
+    allocuninitedarray(intf^.header.anoncount,sizeof(identty),anons1);
     pd:= pointer(anons1);
     pe:= pd + length(anons1);
     pd^:= idstart;
@@ -166,7 +216,7 @@ begin
      pd^:= getident();
      inc(pd);
     end;
-    allocuninitedarray(po1^.header.namecount,sizeof(identty),names1);
+    allocuninitedarray(intf^.header.namecount,sizeof(identty),names1);
     pd:= pointer(names1);
     pe:= pd + length(names1);
     ne:= getsegmentbase(seg_unitidents);
@@ -182,39 +232,60 @@ begin
     end;
     idmin1:= -length(anons1);
     idmax1:= high(names1);
-    po3:= @po1^.interfaceuses; //todo: don't read the whole file before loading
-                               //uses units
-    if not getdata(po3,interfaceuses1) then begin
+    po3:= @intf^.interfaceuses;
+    poend:= getsegmenttop(seg_unitintf);
+    if not getdata(po3,interfaceuses1) or
+                              not getdata(po3,implementationuses1) then begin
      goto endlab;
     end;
+    setlength(globreloc1,length(interfaceuses1)+length(implementationuses1)+3);
+         //+ own interface and implementation globvar block,
+         //exitcode todo: remove this
+    needsreloc:= false;
+
     include(aunit^.state,us_interfaceparsed);
-    aunit^.mainad:= po1^.header.mainad; //todo: relocate
+    aunit^.mainad:= intf^.header.mainad; //todo: relocate
 
     if info.unitlevel = 1 then begin
-     info.globdatapo:= po1^.header.interfaceglobstart;
+     info.globdatapo:= intf^.header.interfaceglobstart;
     end;
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
-     if loadunitbyid(interfaceuses1[i1].id) = nil then begin
+     unit1:= loadunitbyid(interfaceuses1[i1].id);
+     if (unit1 = nil) or
+          (unit1^.interfaceglobsize <> 
+                       interfaceuses1[i1].interfaceglobsize) then begin
       restoreunitsegments(unitsegments1);
       goto endlab;
      end;
+     with globreloc1[i1] do begin
+      size:= unit1^.interfaceglobsize;
+      base:= interfaceuses1[i1].interfaceglobstart;
+      offset:= base-unit1^.interfaceglobstart;
+      needsreloc:= needsreloc or (offset <> 0); 
+             //todo: check changed interface
+     end;
     end;
     restoreunitsegments(unitsegments1);
-
-    if not getdata(po3,implementationuses1) then begin
-     goto endlab;
+    aunit^.interfaceglobstart:= info.globdatapo;
+    with globreloc1[high(globreloc1)-1] do begin //own interface globvars
+     size:= intf^.header.interfaceglobsize;
+     base:= intf^.header.interfaceglobstart;
+     offset:= base-info.globdatapo;
+     needsreloc:= needsreloc or (offset <> 0);
     end;
+    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
+    inc(info.globdatapo,intf^.header.interfaceglobsize); 
+
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
 
     ele.markelement(startref);
-    inc(info.globdatapo,po1^.header.interfaceglobsize); 
 
-    if not updateident(int32(po1^.header.key)) then begin
+    if not updateident(int32(intf^.header.key)) then begin
      goto errorlab;
     end;
-    beginunit(po1^.header.key,true);
+    beginunit(intf^.header.key,true);
     baseoffset:= ele.eletopoffset;
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
@@ -283,26 +354,76 @@ begin
 
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(implementationuses1) do begin
-     if loadunitbyid(implementationuses1[i1].id) = nil then begin
+     unit1:= loadunitbyid(implementationuses1[i1].id);
+     if (unit1 = nil) or 
+          (unit1^.interfaceglobsize <> 
+                       implementationuses1[i1].interfaceglobsize) then begin
+             //todo: check changed interface
       restoreunitsegments(unitsegments1);
       goto errorlab;
      end;
+     with globreloc1[i1+length(interfaceuses1)] do begin
+      size:= unit1^.interfaceglobsize;
+      base:= interfaceuses1[i1].interfaceglobstart;
+      offset:= base-unit1^.interfaceglobstart;
+      needsreloc:= needsreloc or (offset <> 0);
+     end;
     end;
     restoreunitsegments(unitsegments1);
-    inc(info.globdatapo,po1^.header.implementationglobsize); 
+    aunit^.implementationglobstart:= info.globdatapo;
+    with globreloc1[high(globreloc1)] do begin //own implementation globvars
+     size:= intf^.header.implementationglobsize;
+     base:= intf^.header.implementationglobstart;
+     offset:= base-info.globdatapo;
+     needsreloc:= needsreloc or (offset <> 0);
+    end;
+    with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
+     size:= 4;
+     base:= 0;
+     offset:= 0;
+    end;
+    aunit^.implementationglobsize:= intf^.header.implementationglobsize;
+    inc(info.globdatapo,intf^.header.implementationglobsize);
+   {$ifdef mse_debugreloc}
+    needsreloc:= true;
+   {$endif}
+    if needsreloc then begin
+     sortarray(globreloc1,sizeof(globreloc1[0]),@cmpreloc);
+     for i1:= 0 to high(globreloc1) - 1 do begin
+      with globreloc1[i1] do begin
+       if base + size > globreloc1[i1+1].base then begin
+        goto errorlab;
+       end;
+      end;
+     end;
+    end;
     goto oklab;
 errorlab:
     ele.releaseelement(startref);
     goto endlab;
 oklab:
-    stream1.position:= 0;           //todo: linker
+    stream1.position:= 0;           //todo: linker, reduce file seeking
     segstate1:= savesegment(seg_op);
-    try
-     result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
-    finally
-     if not result then begin
-      restoresegment(segstate1);
+    op1:= getsegmenttop(seg_op);
+    result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
+    if needsreloc and result then begin
+     pointer(op1):= pointer(op1)+(getsegmentbase(seg_op)-segstate1.data);
+     ope:= getsegmenttop(seg_op);
+     while op1 < ope do begin
+      with optable^[op1^.op.op] do begin
+       if of_relocseg in flags then begin
+        if not reloc(globreloc1,
+                targetadty(op1^.par.memop.segdataaddress.a.address)) then begin
+         result:= false;
+         break;
+        end;
+       end;
+      end;
+      inc(op1);
      end;
+    end;
+    if not result then begin
+     restoresegment(segstate1);
     end;
 //dumpelements();
 endlab:

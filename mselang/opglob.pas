@@ -626,7 +626,8 @@ type
    oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
-   oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi:(
+   oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
+   oc_incdeclocimmint32,oc_incdeclocimmpo32:(
     locdataaddress: locdataaddressty;
    );
    oc_storesegnil,oc_storesegnilar,
@@ -634,7 +635,8 @@ type
    oc_pushseg8,oc_pushseg16,oc_pushseg32,oc_pushseg,
    oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
-   oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar:(
+   oc_finirefsizesegar,oc_increfsizesegar,oc_decrefsizesegar,
+   oc_incdecsegimmint32,oc_incdecsegimmpo32:(
     segdataaddress: segdataaddressty;
    );
    oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
@@ -778,7 +780,7 @@ const
  ];
 
 type
-                 //todo: unify, variable size
+     //todo: unify, variable size, maybe use objects instead of records
  opparamty = record
   ssad: int32;
   ssas1: int32;

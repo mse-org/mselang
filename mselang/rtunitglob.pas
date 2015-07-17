@@ -37,6 +37,8 @@ type
 
  usesitemty = record
   id: identty;
+  interfaceglobstart: targetadty;
+  interfaceglobsize: targetsizety;
  end;
  pusesitemty = ^usesitemty;
  usesitemarty = array of usesitemty;

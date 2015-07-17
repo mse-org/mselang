@@ -109,6 +109,8 @@ var
   ps:= pointer(adata);
   while pd < pe do begin
    pd^.id:= updateident(ps^^.key);
+   pd^.interfaceglobstart:= ps^^.interfaceglobstart;
+   pd^.interfaceglobsize:= ps^^.interfaceglobsize;
    inc(ps);
    inc(pd);
   end;

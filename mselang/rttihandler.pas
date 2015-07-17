@@ -126,7 +126,7 @@ begin
     for int1:= 0 to atype^.infoenum.itemcount-1 do begin
      po2:= ele.eledataabs(ele1);
      po3^.value:= po2^.infoenumitem.value;
-     po3^.name:= getsegmenttoppo(seg_rtti)-pointer(po3);
+     po3^.name:= getsegmenttop(seg_rtti)-pointer(po3);
 //     po3^.name:= rttibufferindex-(pointer(po3)-rttibuffer);
      addname(pelementinfoty(pointer(po2)-eledatashift)^.header.name,po2);
      inc(po3);

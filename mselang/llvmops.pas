@@ -372,7 +372,7 @@ begin
  end;
 
  countpo:= getsegmentbase(seg_intfitemcount); //interfaces
- counte:= getsegmenttoppo(seg_intfitemcount);
+ counte:= getsegmenttop(seg_intfitemcount);
  intfpo:= getsegmentbase(seg_intf);
  while countpo < counte do begin
   if countpo^ > 0 then begin
@@ -384,7 +384,7 @@ begin
  end;
 
  poclassdef:= getsegmentbase(seg_classdef);
- peclassdef:= getsegmenttoppo(seg_classdef);
+ peclassdef:= getsegmenttop(seg_classdef);
  virtualcapacity:= 0;
  virtualsubs:= nil; 
  virtualsubconsts:= nil;

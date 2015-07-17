@@ -1161,9 +1161,9 @@
   (ssa: offsetpoimm32ssa; proc: @offsetpoimm32op; flags: []), 
 
 //oc_incdecsegimmint32
-  (ssa: incdecsegimmint32ssa; proc: @incdecsegimmint32op; flags: []), 
+  (ssa: incdecsegimmint32ssa; proc: @incdecsegimmint32op; flags: [of_relocseg]), 
 //oc_incdecsegimmpo32
-  (ssa: incdecsegimmpo32ssa; proc: @incdecsegimmpo32op; flags: []), 
+  (ssa: incdecsegimmpo32ssa; proc: @incdecsegimmpo32op; flags: [of_relocseg]), 
 
 //oc_incdeclocimmint32
   (ssa: incdeclocimmint32ssa; proc: @incdeclocimmint32op; flags: []), 
