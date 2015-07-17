@@ -108,9 +108,12 @@ var
   pe:= pd+length(adata);
   ps:= pointer(adata);
   while pd < pe do begin
-   pd^.id:= updateident(ps^^.key);
-   pd^.interfaceglobstart:= ps^^.interfaceglobstart;
-   pd^.interfaceglobsize:= ps^^.interfaceglobsize;
+   with ps^^ do begin
+    pd^.id:= updateident(key);
+    pd^.interfaceglobstart:= interfaceglobstart;
+    pd^.interfaceglobsize:= interfaceglobsize;
+    pd^.filetimestamp:= filetimestamp;
+   end;
    inc(ps);
    inc(pd);
   end;

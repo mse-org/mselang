@@ -252,11 +252,12 @@ begin
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
-     if (unit1 = nil) or
-          (unit1^.interfaceglobsize <> 
-                       interfaceuses1[i1].interfaceglobsize) then begin
-      restoreunitsegments(unitsegments1);
-      goto endlab;
+     with interfaceuses1[i1] do begin
+      if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
+           (unit1^.interfaceglobsize <> interfaceglobsize) then begin
+       restoreunitsegments(unitsegments1);
+       goto endlab;
+      end;
      end;
      with globreloc1[i1] do begin
       size:= unit1^.interfaceglobsize;

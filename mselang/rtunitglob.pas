@@ -37,6 +37,7 @@ type
 
  usesitemty = record
   id: identty;
+  filetimestamp: tdatetime;
   interfaceglobstart: targetadty;
   interfaceglobsize: targetsizety;
  end;
