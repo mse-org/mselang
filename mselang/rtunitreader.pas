@@ -246,9 +246,9 @@ begin
     include(aunit^.state,us_interfaceparsed);
     aunit^.mainad:= intf^.header.mainad; //todo: relocate
 
-    if info.unitlevel = 1 then begin
-     info.globdatapo:= intf^.header.interfaceglobstart;
-    end;
+//    if info.unitlevel = 1 then begin
+//     info.globdatapo:= intf^.header.interfaceglobstart;
+//    end;
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(interfaceuses1) do begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);

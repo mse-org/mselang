@@ -2,5 +2,7 @@ unit unit1;
 interface
 uses
  unit2;
+var
+ uni1: int32;
 implementation
 end.
