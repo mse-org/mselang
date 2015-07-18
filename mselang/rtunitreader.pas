@@ -169,11 +169,11 @@ var
  interfaceuses1,implementationuses1: usesitemarty;
  pele1: pelementinfoty;
  po: pointer;
- i1: int32;
+ i1,i2: int32;
  startref: markinfoty;
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
- globpobefore: targetcardty;
+// globpobefore: targetcardty;
  globreloc1: array of relocinfoty;
  unit1: punitinfoty;
  needsreloc: boolean;
@@ -190,7 +190,7 @@ begin
  if (fna1 <> '') and 
        (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
   try
-   globpobefore:= info.globdatapo;
+//   globpobefore:= info.globdatapo;
    resetunitsegments();
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
                                               aunit^.filetimestamp) and
@@ -356,12 +356,12 @@ begin
     saveunitsegments(unitsegments1);
     for i1:= 0 to high(implementationuses1) do begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
-     if (unit1 = nil) or 
-          (unit1^.interfaceglobsize <> 
-                       implementationuses1[i1].interfaceglobsize) then begin
-             //todo: check changed interface
-      restoreunitsegments(unitsegments1);
-      goto errorlab;
+     with implementationuses1[i1] do begin
+      if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
+           (unit1^.interfaceglobsize <> interfaceglobsize) then begin
+       restoreunitsegments(unitsegments1);
+       goto errorlab;
+      end;
      end;
      with globreloc1[i1+length(interfaceuses1)] do begin
       size:= unit1^.interfaceglobsize;
@@ -387,6 +387,34 @@ begin
     inc(info.globdatapo,intf^.header.implementationglobsize);
    {$ifdef mse_debugreloc}
     needsreloc:= true;
+    writeln('* reloc '+aunit^.name);
+    for i1:= 0 to high(interfaceuses1) do begin
+     with globreloc1[i1] do begin
+      writeln(' intf '+getunitname(interfaceuses1[i1].id),
+                               ' b:',base,' s:',size,' o:',offset);
+     end;
+    end;
+    i2:= length(interfaceuses1);
+    for i1:= i2 to i2 + high(implementationuses1) do begin
+     with globreloc1[i1] do begin
+      writeln(' impl '+getunitname(implementationuses1[i1-i2].id),
+                               ' b:',base,' s:',size,' o:',offset);
+     end;
+    end;
+    i2:= high(globreloc1);
+    with globreloc1[i2-2] do begin
+     writeln(' ini '+getunitname(implementationuses1[i1-i2].id),
+                              ' b:',base,' s:',size,' o:',offset);
+    end;
+    with globreloc1[i2-1] do begin
+     writeln(' unitintf '+getunitname(implementationuses1[i1-i2].id),
+                              ' b:',base,' s:',size,' o:',offset);
+    end;
+    with globreloc1[i2] do begin
+     writeln(' unitiimpl '+getunitname(implementationuses1[i1-i2].id),
+                              ' b:',base,' s:',size,' o:',offset);
+    end;
+    
    {$endif}
     if needsreloc then begin
      sortarray(globreloc1,sizeof(globreloc1[0]),@cmpreloc);
@@ -434,7 +462,7 @@ endlab:
   stream1.destroy();
   resetunitsegments();
   if not result then begin
-   info.globdatapo:= globpobefore;
+//   info.globdatapo:= globpobefore; not possible because of uses modules
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;

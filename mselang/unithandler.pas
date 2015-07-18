@@ -47,6 +47,8 @@ function parsecompilerunit(const aname: filenamety): boolean;
 procedure handleprogramentry();
 procedure beginunit(const aname: identty; const nopush: boolean);
 procedure setunitname(); //unitname on top of stack
+function getunitname(const id: identty): string;
+
 //procedure interfacestop();
 
 procedure markinterfacestart();
@@ -429,6 +431,19 @@ begin
  if result = nil then begin
   result:= unitlist.newunit(id);
   result^.name:= aname;
+ end;
+end;
+
+function getunitname(const id: identty): string;
+var
+ po1: punitinfoty;
+begin
+ po1:= unitlist.findunit(id);
+ if po1 <> nil then begin
+  result:= po1^.name;
+ end
+ else begin
+  result:= '';
  end;
 end;
 

@@ -1,3 +1,7 @@
 unit unit2;
+interface
+var
+ uni2: int32; 
+ uni2a: int32; 
 implementation
 end.

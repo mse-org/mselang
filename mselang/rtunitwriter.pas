@@ -247,6 +247,13 @@ begin
    anoncount:= -anonindex1 - 1;
   end;
   result:= true;
+{$ifdef mse_debugparser}
+  with po2^.header do begin
+   writeln('** write unit '+aunit^.name,
+          ' intfb:',interfaceglobstart,' intfs:',interfaceglobsize,
+          ' implb:',implementationglobstart,' impls:',implementationglobsize);
+  end;
+{$endif}
  finally
   identlist.destroy();
  end;
