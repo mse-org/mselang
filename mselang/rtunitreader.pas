@@ -262,7 +262,7 @@ begin
      with globreloc1[i1] do begin
       size:= unit1^.interfaceglobsize;
       base:= interfaceuses1[i1].interfaceglobstart;
-      offset:= base-unit1^.interfaceglobstart;
+      offset:= unit1^.interfaceglobstart-base;
       needsreloc:= needsreloc or (offset <> 0); 
              //todo: check changed interface
      end;
@@ -272,7 +272,7 @@ begin
     with globreloc1[high(globreloc1)-1] do begin //own interface globvars
      size:= intf^.header.interfaceglobsize;
      base:= intf^.header.interfaceglobstart;
-     offset:= base-info.globdatapo;
+     offset:= info.globdatapo-base;
      needsreloc:= needsreloc or (offset <> 0);
     end;
     aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
@@ -366,7 +366,7 @@ begin
      with globreloc1[i1+length(interfaceuses1)] do begin
       size:= unit1^.interfaceglobsize;
       base:= interfaceuses1[i1].interfaceglobstart;
-      offset:= base-unit1^.interfaceglobstart;
+      offset:= unit1^.interfaceglobstart-base;
       needsreloc:= needsreloc or (offset <> 0);
      end;
     end;
@@ -375,7 +375,7 @@ begin
     with globreloc1[high(globreloc1)] do begin //own implementation globvars
      size:= intf^.header.implementationglobsize;
      base:= intf^.header.implementationglobstart;
-     offset:= base-info.globdatapo;
+     offset:= info.globdatapo-base;
      needsreloc:= needsreloc or (offset <> 0);
     end;
     with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
