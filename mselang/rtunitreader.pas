@@ -268,6 +268,11 @@ begin
      end;
     end;
     for i1:= 0 to high(implementationuses1) do begin
+     with implementationuses1[i1] do begin
+      if getunittimestamp(id) <> filetimestamp then begin
+       goto endlab; //needs recompilation
+      end;
+     end;
     end;
     restoreunitsegments(unitsegments1);
     aunit^.interfaceglobstart:= info.globdatapo;
@@ -364,6 +369,7 @@ begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
            (unit1^.interfaceglobsize <> interfaceglobsize) then begin
        restoreunitsegments(unitsegments1);
+                   //todo: try restart instead of fatal error
        if unit1 <> nil then begin
         errormessage(err_invalidunitfile,[unit1^.filepath]);
        end

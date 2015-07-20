@@ -48,6 +48,7 @@ procedure handleprogramentry();
 procedure beginunit(const aname: identty; const nopush: boolean);
 procedure setunitname(); //unitname on top of stack
 function getunitname(const id: identty): string;
+function getunittimestamp(const id: identty): tdatetime;
 
 //procedure interfacestop();
 
@@ -452,6 +453,31 @@ begin
  end;
 end;
 
+function getunittimestamp(const id: identty): tdatetime;
+var
+ po1: punitinfoty;
+ lstr1: lstringty;
+ fna1: filenamety;
+begin
+ po1:= unitlist.findunit(id);
+ if po1 <> nil then begin
+  result:= po1^.filetimestamp;
+ end
+ else begin
+  getidentname(id,lstr1);
+  fna1:= getsourceunitfile(lstr1);
+  if fna1 = '' then begin
+   fna1:= getrtunitfile(lstr1);
+  end;
+  if fna1 = '' then begin
+   result:= emptydatetime;
+  end
+  else begin
+   result:= getfilemodtime(fna1);
+  end;
+ end;
+end;
+
 function parseusesunit(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
@@ -520,15 +546,14 @@ function loadunitbyid(const aid: identty;
 var
  lstr1: lstringty;
 begin
+ //todo: load unitfile without source
+ 
  result:= unitlist.findunit(aid);
  if result = nil then begin
   result:= unitlist.newunit(aid);
   with result^ do begin
    prev:= info.s.unitinfo;
    getidentname(aid,lstr1);
-//   lstr1.po:= start.po;
-//   lstr1.len:= d.ident.len;
-//    getunitfile(result,lstr1);
    if not getunitfile(result,lstr1) then begin
     identerror(astackoffset,err_cantfindunit);
    end

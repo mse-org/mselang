@@ -28,10 +28,11 @@ const
  pasextension = 'pas';
 
 function getsourceunitfile(const aname: filenamety): filenamety;
-function getsourceunitfile(const aname: lstringty): filenamety;
+function getsourceunitfile(const aunitname: lstringty): filenamety;
 function getincludefile(const aname: lstringty): filenamety;
 
 function getrtunitfile(const aunit: punitinfoty): filenamety;
+function getrtunitfile(const aunitname: lstringty): filenamety;
 function getrtunitfilename(const aname: filenamety): filenamety;
 
 function getsysfile(const aname: filenamety): filenamety;
@@ -66,12 +67,12 @@ begin
  getsourcefile(result);
 end;
 
-function getsourceunitfile(const aname: lstringty): filenamety;
+function getsourceunitfile(const aunitname: lstringty): filenamety;
 begin
- result:= utf8tostring(aname)+'.'+mlaextension;
+ result:= utf8tostring(aunitname)+'.'+mlaextension;
  getsourcefile(result);
  if result = '' then begin
-  result:= utf8tostring(aname)+'.'+pasextension;
+  result:= utf8tostring(aunitname)+'.'+pasextension;
   getsourcefile(result);
  end;
 end;
@@ -94,6 +95,12 @@ begin
   result:= utf8tostring(aunit^.name)+'.'+rtunitextension;
   getrtfile(result);
  end;
+end;
+
+function getrtunitfile(const aunitname: lstringty): filenamety;
+begin
+ result:= utf8tostring(aunitname)+'.'+rtunitextension;
+ getrtfile(result);
 end;
 
 //todo: make it portable
