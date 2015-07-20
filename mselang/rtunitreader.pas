@@ -44,7 +44,7 @@ begin
  result:= relocinfoty(l).base-relocinfoty(r).base;
 end;
 {$endif}
-
+{
 function reloc(const list: relocinfoarty; var ad: targetadty): boolean;
                  //list <> nil
 var
@@ -71,6 +71,36 @@ begin
   with list[ihi] do begin
    result:= ad < base + size;
    ad:= ad + offset;
+  end;
+ end;
+end;
+}
+procedure reloc(const list: relocinfoarty; var ad: targetadty);
+                 //list <> nil
+var
+ ilo,ihi,i1: int32;
+begin
+ ilo:= 0;
+ ihi:= high(list);
+ while ilo <= ihi do begin
+  i1:= (ilo+ihi+1) div 2;
+  with list[i1] do begin
+   if ad >= base then begin
+    ilo:= i1;
+    if ihi = ilo then begin
+     break;
+    end;
+   end
+   else begin
+    ihi:= i1-1;
+   end;
+  end;
+ end;
+ if (ihi >= 0) then begin
+  with list[ihi] do begin
+   if ad < base + size then begin
+    ad:= ad + offset;
+   end;
   end;
  end;
 end;
@@ -176,7 +206,8 @@ var
 // globpobefore: targetcardty;
  globreloc1: array of relocinfoty;
  unit1: punitinfoty;
- needsreloc: boolean;
+// needsreloc: boolean;
+ globvarreloccount: int32;
  op1,ope: popinfoty;
  
 label
@@ -239,9 +270,9 @@ begin
      goto endlab;
     end;
     setlength(globreloc1,length(interfaceuses1)+length(implementationuses1)+3);
-         //+ own interface and implementation globvar block,
+         //max, + own interface and implementation globvar block,
          //exitcode todo: remove this
-    needsreloc:= false;
+    globvarreloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
     aunit^.mainad:= intf^.header.mainad; //todo: relocate
@@ -259,12 +290,13 @@ begin
        goto endlab;
       end;
      end;
-     with globreloc1[i1] do begin
+     with globreloc1[globvarreloccount] do begin
       size:= unit1^.interfaceglobsize;
       base:= interfaceuses1[i1].interfaceglobstart;
       offset:= unit1^.interfaceglobstart-base;
-      needsreloc:= needsreloc or (offset <> 0); 
-             //todo: check changed interface
+      if offset <> 0 then begin
+       inc(globvarreloccount);
+      end;
      end;
     end;
     for i1:= 0 to high(implementationuses1) do begin
@@ -276,11 +308,13 @@ begin
     end;
     restoreunitsegments(unitsegments1);
     aunit^.interfaceglobstart:= info.globdatapo;
-    with globreloc1[high(globreloc1)-1] do begin //own interface globvars
+    with globreloc1[globvarreloccount] do begin //own interface globvars
      size:= intf^.header.interfaceglobsize;
      base:= intf^.header.interfaceglobstart;
      offset:= info.globdatapo-base;
-     needsreloc:= needsreloc or (offset <> 0);
+     if offset <> 0 then begin
+      inc(globvarreloccount);
+     end;
     end;
     aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
     inc(info.globdatapo,intf^.header.interfaceglobsize); 
@@ -380,30 +414,37 @@ begin
        goto errorlab;
       end;
      end;
-     with globreloc1[i1+length(interfaceuses1)] do begin
-      size:= unit1^.interfaceglobsize;
+     with globreloc1[globvarreloccount] do begin
+      size:= unit1^.interfaceglobsize;          //own interface globvars
       base:= implementationuses1[i1].interfaceglobstart;
       offset:= unit1^.interfaceglobstart-base;
-      needsreloc:= needsreloc or (offset <> 0);
+      if offset <> 0 then begin
+       inc(globvarreloccount);
+      end;
      end;
     end;
     restoreunitsegments(unitsegments1);
     aunit^.implementationglobstart:= info.globdatapo;
-    with globreloc1[high(globreloc1)] do begin //own implementation globvars
+    with globreloc1[globvarreloccount] do begin //own implementation globvars
      size:= intf^.header.implementationglobsize;
      base:= intf^.header.implementationglobstart;
      offset:= info.globdatapo-base;
-     needsreloc:= needsreloc or (offset <> 0);
+     if offset <> 0 then begin
+      inc(globvarreloccount);
+     end;
     end;
+    {
     with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
      size:= 4;
      base:= 0;
      offset:= 0;
     end;
+    }
+    setlength(globreloc1,globvarreloccount);
     aunit^.implementationglobsize:= intf^.header.implementationglobsize;
     inc(info.globdatapo,intf^.header.implementationglobsize);
    {$ifdef mse_debugreloc}
-    needsreloc:= true;
+   {
     writeln('* reloc '+aunit^.name);
     for i1:= 0 to high(interfaceuses1) do begin
      with globreloc1[i1] do begin
@@ -431,9 +472,9 @@ begin
      writeln(' unitiimpl '+getunitname(implementationuses1[i1-i2].id),
                               ' b:',base,' s:',size,' o:',offset);
     end;
-    
+   }
    {$endif}
-    if needsreloc then begin
+    if globreloc1 <> nil then begin
      sortarray(globreloc1,sizeof(globreloc1[0]),@cmpreloc);
      for i1:= 0 to high(globreloc1) - 1 do begin
       with globreloc1[i1] do begin
@@ -452,17 +493,13 @@ oklab:
     segstate1:= savesegment(seg_op);
     op1:= getsegmenttop(seg_op);
     result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
-    if needsreloc and result then begin
+    if (globreloc1 <> nil) and result then begin
      pointer(op1):= pointer(op1)+(getsegmentbase(seg_op)-segstate1.data);
      ope:= getsegmenttop(seg_op);
      while op1 < ope do begin
       with optable^[op1^.op.op] do begin
        if of_relocseg in flags then begin
-        if not reloc(globreloc1,
-                targetadty(op1^.par.memop.segdataaddress.a.address)) then begin
-         result:= false;
-         break;
-        end;
+        reloc(globreloc1,targetadty(op1^.par.memop.segdataaddress.a.address));
        end;
       end;
       inc(op1);
