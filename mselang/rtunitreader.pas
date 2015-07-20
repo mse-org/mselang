@@ -376,7 +376,7 @@ begin
      end;
      with globreloc1[i1+length(interfaceuses1)] do begin
       size:= unit1^.interfaceglobsize;
-      base:= interfaceuses1[i1].interfaceglobstart;
+      base:= implementationuses1[i1].interfaceglobstart;
       offset:= unit1^.interfaceglobstart-base;
       needsreloc:= needsreloc or (offset <> 0);
      end;
