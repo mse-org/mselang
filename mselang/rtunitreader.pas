@@ -27,7 +27,7 @@ implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
- identutils,opglob,opcode;
+ identutils,opglob,opcode,errorhandler;
 
 type
  relocinfoty = record
@@ -267,6 +267,8 @@ begin
              //todo: check changed interface
      end;
     end;
+    for i1:= 0 to high(implementationuses1) do begin
+    end;
     restoreunitsegments(unitsegments1);
     aunit^.interfaceglobstart:= info.globdatapo;
     with globreloc1[high(globreloc1)-1] do begin //own interface globvars
@@ -360,6 +362,13 @@ begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
            (unit1^.interfaceglobsize <> interfaceglobsize) then begin
        restoreunitsegments(unitsegments1);
+       if unit1 <> nil then begin
+        errormessage(err_invalidunitfile,[unit1^.filepath]);
+       end
+       else begin
+        errormessage(err_invalidunitfile,
+                                    [getidentname(implementationuses1[i1].id)]);
+       end;
        goto errorlab;
       end;
      end;
