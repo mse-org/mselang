@@ -1256,7 +1256,8 @@ var
 begin
  int1:= 0;
  int2:= 0;
- int5:= pelementinfoty(pointer(felementdata))^.header.name; //root
+// int5:= pelementinfoty(pointer(felementdata))^.header.name; //root
+ int5:= 0; //root
  while int1 < fnextelement do begin
   msearrayutils.additem(ar1,typeinfo(dumpinfoty),int2);
   po1:= pelementinfoty(pointer(felementdata)+int1);
@@ -1266,6 +1267,12 @@ begin
   end
   else begin
    mstr1:= ' ';
+  end;
+  if po1 <> pointer(felementdata) then begin
+   po2:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
+   if po1^.header.path <> po2^.header.path + po2^.header.name then begin
+    mstr1:= mstr1 + '*WRONG PATH $'+hextostr(po1^.header.path,8)+'* ';
+   end;
   end;
   mstr1:= mstr1+'O:'+inttostr(int1) +
             ' P:'+inttostr(po1^.header.parent)+' N:$'+

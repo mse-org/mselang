@@ -162,7 +162,12 @@ begin
   po1^.next:= unitinfochain;
   unitinfochain:= ele.eledatarel(po1);
   with s.unitinfo^ do begin
-   interfaceelement:= ele.elementparent;
+   if nopush then begin
+    interfaceelement:= ele.eledatarel(po1);
+   end
+   else begin
+    interfaceelement:= ele.elementparent;
+   end;
   end;
  end;
 end;

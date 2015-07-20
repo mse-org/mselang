@@ -436,9 +436,12 @@ begin
  result:= false;
  with info do begin
   inc(unitlevel);
+  statebefore:= s;
+  s.unitinfo:= aunit;
   if co_readrtunits in info.compileoptions then begin
    if readunitfile(aunit) then begin
     result:= true;
+    s:= statebefore;
     dec(unitlevel);
     if unitlevel = 0 then begin
      with pstartupdataty(getoppo(0))^ do begin
@@ -454,7 +457,6 @@ begin
   linebreaks:= 0;
   eleparentbefore:= ele.elementparent;
   ele.elementparent:= unitsele;
-  statebefore:= s;
 
   resetssa();
   currentsubchain:= 0;
@@ -462,7 +464,7 @@ begin
   s.currentstatementflags:= [];
 //  inc(unitlevel);
   
-  s.unitinfo:= aunit;
+//  s.unitinfo:= aunit;
   s.filename:= msefileutils.filename(s.unitinfo^.filepath);
   s.interfaceonly:= ainterfaceonly;
 

@@ -372,6 +372,9 @@ begin
        goto errorlab;
       end;
      end;
+errormessage(err_invalidunitfile,[unit1^.filepath]);
+errormessage(err_invalidunitfile,
+                                    [getidentname(implementationuses1[i1].id)]);
      with globreloc1[i1+length(interfaceuses1)] do begin
       size:= unit1^.interfaceglobsize;
       base:= interfaceuses1[i1].interfaceglobstart;
