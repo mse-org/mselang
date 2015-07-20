@@ -561,9 +561,12 @@ begin
 end;
 
 procedure telementhashdatalist.enterbufferitem(const adata: pelementinfoty);
+var
+ id1: identty;
 begin
- with pelementhashdataty(internaladdhash(adata^.header.path))^.data do begin
-  key:= adata^.header.path+adata^.header.name;
+ id1:= adata^.header.path+adata^.header.name;
+ with pelementhashdataty(internaladdhash(id1))^.data do begin
+  key:= id1;
   data:= eleinforel(adata);
  end;
 end;
