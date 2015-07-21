@@ -205,9 +205,11 @@ var
  segstate1: segmentstatety;
 // globpobefore: targetcardty;
  globreloc1: array of relocinfoty;
+ opreloc1: array of relocinfoty;
  unit1: punitinfoty;
 // needsreloc: boolean;
  globvarreloccount: int32;
+ opreloccount: int32;
  op1,ope: popinfoty;
  
 label
@@ -273,6 +275,7 @@ begin
          //max, + own interface and implementation globvar block,
          //exitcode todo: remove this
     globvarreloccount:= 0;
+    opreloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
     aunit^.mainad:= intf^.header.mainad; //todo: relocate
@@ -285,15 +288,16 @@ begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
      with interfaceuses1[i1] do begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
-           (unit1^.interfaceglobsize <> interfaceglobsize) then begin
+       (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
+       (unit1^.reloc.opsize <> reloc.opsize) then begin
        restoreunitsegments(unitsegments1);
        goto endlab;
       end;
      end;
      with globreloc1[globvarreloccount] do begin
-      size:= unit1^.interfaceglobsize;
-      base:= interfaceuses1[i1].interfaceglobstart;
-      offset:= unit1^.interfaceglobstart-base;
+      size:= unit1^.reloc.interfaceglobsize;
+      base:= interfaceuses1[i1].reloc.interfaceglobstart;
+      offset:= unit1^.reloc.interfaceglobstart-base;
       if offset <> 0 then begin
        inc(globvarreloccount);
       end;
@@ -307,17 +311,18 @@ begin
      end;
     end;
     restoreunitsegments(unitsegments1);
-    aunit^.interfaceglobstart:= info.globdatapo;
+    aunit^.reloc:= intf^.header.reloc;
+    aunit^.reloc.interfaceglobstart:= info.globdatapo;
     with globreloc1[globvarreloccount] do begin //own interface globvars
-     size:= intf^.header.interfaceglobsize;
-     base:= intf^.header.interfaceglobstart;
+     size:= intf^.header.reloc.interfaceglobsize;
+     base:= intf^.header.reloc.interfaceglobstart;
      offset:= info.globdatapo-base;
      if offset <> 0 then begin
       inc(globvarreloccount);
      end;
     end;
-    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
-    inc(info.globdatapo,intf^.header.interfaceglobsize); 
+//    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
+    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
     i1:= getsegmentsize(seg_unitintf) + 
                         (getsegmentbase(seg_unitintf)-pointer(po3));
@@ -401,7 +406,7 @@ begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
      with implementationuses1[i1] do begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
-           (unit1^.interfaceglobsize <> interfaceglobsize) then begin
+         (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) then begin
        restoreunitsegments(unitsegments1);
                    //todo: try restart instead of fatal error
        if unit1 <> nil then begin
@@ -415,9 +420,9 @@ begin
       end;
      end;
      with globreloc1[globvarreloccount] do begin
-      size:= unit1^.interfaceglobsize;          //own interface globvars
-      base:= implementationuses1[i1].interfaceglobstart;
-      offset:= unit1^.interfaceglobstart-base;
+      size:= unit1^.reloc.interfaceglobsize;          //own interface globvars
+      base:= implementationuses1[i1].reloc.interfaceglobstart;
+      offset:= unit1^.reloc.interfaceglobstart-base;
       if offset <> 0 then begin
        inc(globvarreloccount);
       end;

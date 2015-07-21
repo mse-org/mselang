@@ -177,14 +177,14 @@ procedure markinterfacestart();
 begin
  with info.s.unitinfo^ do begin
   ele.markelement(interfacestart); 
-  interfaceglobstart:= info.globdatapo;
+  reloc.interfaceglobstart:= info.globdatapo;
  end;
 end;
 
 procedure markinterfaceend();
 begin
  with info.s.unitinfo^ do begin
-  interfaceglobsize:= info.globdatapo - interfaceglobstart;
+  reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
  end;
 end;
 
@@ -193,6 +193,7 @@ begin
  with info.s.unitinfo^ do begin
   ele.markelement(implementationstart);
   implementationglobstart:= info.globdatapo;
+  reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
  end;
 end;
@@ -201,6 +202,7 @@ procedure markunitend();
 begin
  with info.s.unitinfo^ do begin
   setsubsegmentsize(opseg);
+  reloc.opsize:= info.opcount-reloc.opstart;
   implementationglobsize:= info.globdatapo - implementationglobstart;
  end;
 end;

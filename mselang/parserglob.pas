@@ -495,6 +495,13 @@ type
 
  internalsubty = (isub_ini,isub_fini);
 
+ unitrelocty = record
+  interfaceglobstart: targetadty;
+  interfaceglobsize: targetsizety;
+  opstart: targetadty;
+  opsize: targetsizety;
+ end;
+
  punitinfoty = ^unitinfoty;
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
@@ -516,8 +523,10 @@ type
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;
-  interfaceglobstart: targetadty;
-  interfaceglobsize: targetadty;
+  reloc: unitrelocty;
+  
+//  interfaceglobstart: targetadty;
+//  interfaceglobsize: targetadty;
   implementationstart: markinfoty;
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;

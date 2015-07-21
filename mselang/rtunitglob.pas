@@ -18,7 +18,7 @@ unit rtunitglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes;
+ globtypes,parserglob;
  
 type
  identstringty = packed record
@@ -38,8 +38,7 @@ type
  usesitemty = record
   id: identty;
   filetimestamp: tdatetime;
-  interfaceglobstart: targetadty;
-  interfaceglobsize: targetsizety;
+  reloc: unitrelocty;
  end;
  pusesitemty = ^usesitemty;
  usesitemarty = array of usesitemty;
@@ -48,8 +47,9 @@ type
   sourcetimestamp: tdatetime;
   key: identty;
   mainad: card32;
-  interfaceglobstart: card32;
-  interfaceglobsize: card32;
+  reloc: unitrelocty;
+//  interfaceglobstart: card32;
+//  interfaceglobsize: card32;
   implementationglobstart: card32;
   implementationglobsize: card32;
   namecount: int32; //idents

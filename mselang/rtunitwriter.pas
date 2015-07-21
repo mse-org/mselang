@@ -110,8 +110,9 @@ var
   while pd < pe do begin
    with ps^^ do begin
     pd^.id:= updateident(key);
-    pd^.interfaceglobstart:= interfaceglobstart;
-    pd^.interfaceglobsize:= interfaceglobsize;
+    pd^.reloc:= reloc;
+//    pd^.interfaceglobstart:= interfaceglobstart;
+//    pd^.interfaceglobsize:= interfaceglobsize;
     pd^.filetimestamp:= filetimestamp;
    end;
    inc(ps);
@@ -230,8 +231,9 @@ begin
   with po2^ do begin
    header.key:= updateident(aunit^.key);
    header.mainad:= aunit^.mainad; //todo: relocate
-   header.interfaceglobstart:= aunit^.interfaceglobstart;
-   header.interfaceglobsize:= aunit^.interfaceglobsize;
+   header.reloc:= aunit^.reloc;
+//   header.interfaceglobstart:= aunit^.interfaceglobstart;
+//   header.interfaceglobsize:= aunit^.interfaceglobsize;
    header.implementationglobstart:= aunit^.implementationglobstart;
    header.implementationglobsize:= aunit^.implementationglobsize;
    po:= @interfaceuses;
@@ -248,7 +250,7 @@ begin
   end;
   result:= true;
 {$ifdef mse_debugparser}
-  with po2^.header do begin
+  with po2^.header,reloc do begin
    writeln('** write unit '+aunit^.name,
           ' intfb:',interfaceglobstart,' intfs:',interfaceglobsize,
           ' implb:',implementationglobstart,' impls:',implementationglobsize);
