@@ -230,6 +230,7 @@ var
  unit1: punitinfoty;
 // needsreloc: boolean;
  globvarreloccount: int32;
+ globvaroffset: elementoffsetty;
  opreloccount: int32;
  op1,ope: popinfoty;
  
@@ -346,7 +347,8 @@ begin
     with globreloc1[globvarreloccount] do begin //own interface globvars
      size:= intf^.header.reloc.interfaceglobsize;
      base:= intf^.header.reloc.interfaceglobstart;
-     offset:= info.globdatapo-base;
+     globvaroffset:= info.globdatapo-base;
+     offset:= globvaroffset;
      if offset <> 0 then begin
       inc(globvarreloccount);
      end;
@@ -395,6 +397,10 @@ begin
        end;
        ek_var: begin
         with pvardataty(po)^ do begin
+         //todo: reloc type
+         if af_segment in address.flags then begin
+          inc(address.segaddress.address,globvaroffset);
+         end;
         end;
        end;
        ek_const: begin
