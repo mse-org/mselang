@@ -135,13 +135,13 @@ begin
   end;  
  end;
 end;
- 
+
 procedure beginunit(const aname: identty; const nopush: boolean);
 var
  po1: punitdataty;
 begin
  if nopush then begin
- {$ifdef mse_checkinternalerror}                             
+ {$ifdef mse_checkinternalerror}
   if not ele.adduniquechilddata(unitsele,[aname],ek_unit,
                                            [vik_units],po1) then begin
    internalerror(ie_unit,'150710A');
@@ -184,6 +184,7 @@ end;
 procedure markinterfaceend();
 begin
  with info.s.unitinfo^ do begin
+  ele.markelement(interfaceend);
   reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
  end;
 end;

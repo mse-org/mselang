@@ -192,6 +192,27 @@ var
   result:= true;
  end;
 
+type
+ relocinfoarty = array of relocinfoty;
+
+ function dosort(var ar: relocinfoarty): boolean;
+ var
+  i1: int32;
+ begin
+  result:= true;
+  if ar <> nil then begin
+   sortarray(ar,sizeof(ar[0]),@cmpreloc);
+   for i1:= 0 to high(ar) - 1 do begin
+    with ar[i1] do begin
+     if base + size > ar[i1+1].base then begin
+      result:= false;
+      break;
+     end;
+    end;
+   end;
+  end;
+ end;
+ 
 var
  stream1: tmsefilestream;
  fna1: filenamety;
@@ -204,8 +225,8 @@ var
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
 // globpobefore: targetcardty;
- globreloc1: array of relocinfoty;
- opreloc1: array of relocinfoty;
+ globreloc1: relocinfoarty;
+ opreloc1: relocinfoarty;
  unit1: punitinfoty;
 // needsreloc: boolean;
  globvarreloccount: int32;
@@ -274,6 +295,7 @@ begin
     setlength(globreloc1,length(interfaceuses1)+length(implementationuses1)+3);
          //max, + own interface and implementation globvar block,
          //exitcode todo: remove this
+    setlength(opreloc1,length(globreloc1)); //max
     globvarreloccount:= 0;
     opreloccount:= 0;
 
@@ -300,6 +322,14 @@ begin
       offset:= unit1^.reloc.interfaceglobstart-base;
       if offset <> 0 then begin
        inc(globvarreloccount);
+      end;
+     end;
+     with opreloc1[opreloccount] do begin
+      size:= unit1^.reloc.opsize;
+      base:= interfaceuses1[i1].reloc.opstart;
+      offset:= unit1^.reloc.opstart-base;
+      if offset <> 0 then begin
+       inc(opreloccount);
       end;
      end;
     end;
@@ -406,7 +436,8 @@ begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
      with implementationuses1[i1] do begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
-         (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) then begin
+         (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or
+                          (unit1^.reloc.opsize <> reloc.opsize) then begin
        restoreunitsegments(unitsegments1);
                    //todo: try restart instead of fatal error
        if unit1 <> nil then begin
@@ -420,11 +451,19 @@ begin
       end;
      end;
      with globreloc1[globvarreloccount] do begin
-      size:= unit1^.reloc.interfaceglobsize;          //own interface globvars
+      size:= unit1^.reloc.interfaceglobsize;        
       base:= implementationuses1[i1].reloc.interfaceglobstart;
       offset:= unit1^.reloc.interfaceglobstart-base;
       if offset <> 0 then begin
        inc(globvarreloccount);
+      end;
+     end;
+     with opreloc1[opreloccount] do begin
+      size:= unit1^.reloc.opsize;
+      base:= interfaceuses1[i1].reloc.opstart;
+      offset:= unit1^.reloc.opstart-base;
+      if offset <> 0 then begin
+       inc(opreloccount);
       end;
      end;
     end;
@@ -438,6 +477,14 @@ begin
       inc(globvarreloccount);
      end;
     end;
+    with opreloc1[opreloccount] do begin //own op segment
+     size:= intf^.header.reloc.opsize;
+     base:= intf^.header.reloc.opstart;
+     offset:= info.opcount-base;
+     if offset <> 0 then begin
+      inc(opreloccount);
+     end;
+    end;
     {
     with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
      size:= 4;
@@ -446,6 +493,7 @@ begin
     end;
     }
     setlength(globreloc1,globvarreloccount);
+    setlength(opreloc1,opreloccount);
     aunit^.implementationglobsize:= intf^.header.implementationglobsize;
     inc(info.globdatapo,intf^.header.implementationglobsize);
    {$ifdef mse_debugreloc}
@@ -479,15 +527,8 @@ begin
     end;
    }
    {$endif}
-    if globreloc1 <> nil then begin
-     sortarray(globreloc1,sizeof(globreloc1[0]),@cmpreloc);
-     for i1:= 0 to high(globreloc1) - 1 do begin
-      with globreloc1[i1] do begin
-       if base + size > globreloc1[i1+1].base then begin
-        goto errorlab;
-       end;
-      end;
-     end;
+    if not dosort(globreloc1) or not dosort(opreloc1) then begin
+     goto errorlab;
     end;
     goto oklab;
 errorlab:

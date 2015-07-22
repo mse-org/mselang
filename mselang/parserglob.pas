@@ -523,6 +523,7 @@ type
   interfaceelement: elementoffsetty;
   implementationelement: elementoffsetty;
   interfacestart: markinfoty;
+  interfaceend: markinfoty;
   reloc: unitrelocty;
   
 //  interfaceglobstart: targetadty;

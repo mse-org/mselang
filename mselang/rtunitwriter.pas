@@ -215,7 +215,7 @@ var
 begin
  result:= false;
  elestart:= aunit^.interfacestart.bufferref;
- s1:= aunit^.implementationstart.bufferref - aunit^.interfacestart.bufferref;
+ s1:= aunit^.interfaceend.bufferref - aunit^.interfacestart.bufferref;
  eleend:= elestart + s1;
  s2:= 2*sizeof(lenitemty) + 
        (length(aunit^.interfaceuses)+length(aunit^.implementationuses)) * 
