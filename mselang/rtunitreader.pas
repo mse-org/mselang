@@ -300,7 +300,7 @@ begin
     opreloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
-    aunit^.mainad:= intf^.header.mainad; //todo: relocate
+//    aunit^.mainad:= intf^.header.mainad; //todo: relocate
 
 //    if info.unitlevel = 1 then begin
 //     info.globdatapo:= intf^.header.interfaceglobstart;
@@ -535,7 +535,9 @@ errorlab:
     ele.releaseelement(startref);
     goto endlab;
 oklab:
-    stream1.position:= 0;           //todo: linker, reduce file seeking
+    aunit^.mainad:= intf^.header.mainad + info.opcount - 
+                                       intf^.header.reloc.opstart;
+    stream1.position:= 0;           //todo: reduce file seeking
     segstate1:= savesegment(seg_op);
     op1:= getsegmenttop(seg_op);
     result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
@@ -551,7 +553,10 @@ oklab:
       inc(op1);
      end;
     end;
-    if not result then begin
+    if result then begin
+     inc(info.opcount,intf^.header.reloc.opsize);
+    end
+    else begin
      restoresegment(segstate1);
     end;
 //dumpelements();
