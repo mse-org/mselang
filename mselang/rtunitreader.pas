@@ -252,6 +252,7 @@ var
  fna1: filenamety;
  intf: punitintfinfoty;
  interfaceuses1,implementationuses1: usesitemarty;
+ interfaceunits1: unitinfopoarty;
  pele1: pelementinfoty;
  po: pointer;
  i1,i2: int32;
@@ -340,8 +341,10 @@ begin
 //     info.globdatapo:= intf^.header.interfaceglobstart;
 //    end;
     saveunitsegments(unitsegments1);
+    setlength(interfaceunits1,length(interfaceuses1));
     for i1:= 0 to high(interfaceuses1) do begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
+     interfaceunits1[i1]:= unit1;
      with interfaceuses1[i1] do begin
       if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
        (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
@@ -351,9 +354,6 @@ begin
       end;
      end;
      addrelocs(unit1,interfaceuses1[i1].reloc);
-     addrelocitem(interfaceuses1[i1].reloc.interfaceelestart,
-           unit1^.reloc.interfaceelestart,unit1^.reloc.interfaceelesize,
-           elereloc1,elereloccount);
     {
      with interfaceuses1[i1].reloc do begin
       addrelocitem(interfaceglobstart,
@@ -415,8 +415,16 @@ begin
                    interfaceelesize,elereloc1,elereloccount);
                                                  //own interface elements
     end;
+    for i1:= 0 to high(interfaceunits1) do begin
+     with interfaceunits1[i1]^ do begin
+      addrelocitem(interfaceuses1[i1].reloc.interfaceelestart,
+           reloc.interfaceelestart,reloc.interfaceelesize,
+           elereloc1,elereloccount);
+     end;
+    end;
     setlength(elereloc1,elereloccount);
     haselereloc:= elereloc1 <> nil;
+     
     {
     with globreloc1[globvarreloccount] do begin //own interface globvars
      size:= intf^.header.reloc.interfaceglobsize;
@@ -436,7 +444,8 @@ begin
 
     ele.markelement(startref);
 
-    if not updateident(int32(intf^.header.key)) then begin
+    if not updateident(int32(intf^.header.key)) or 
+                               not dosort(elereloc1) then begin
      goto errorlab;
     end;
     beginunit(intf^.header.key,true);
@@ -667,6 +676,7 @@ endlab:
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;
+dumpelements;
 {$ifdef mse_debugparser}
  if result then begin
   writeln('** read unit '+fna1+' OK');

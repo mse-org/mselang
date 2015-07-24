@@ -1,12 +1,6 @@
 unit unit3;
-//uses
-// unit2;
-procedure tt3(p1: int32);
+interface
+type
+ uni3ty = int32;
 implementation
-procedure tt3(p1: int32);
-begin
-// writeln('tt3');
- writeln(p1);
-end;
-{$dumpelements}
 end.

@@ -1,7 +1,9 @@
 unit unit2;
 interface
+uses
+ unit3;
 var
  uni2: int32; 
- uni2a: int32; 
+ uni2a: uni3ty; 
 implementation
 end.
