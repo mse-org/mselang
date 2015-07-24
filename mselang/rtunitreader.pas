@@ -244,9 +244,6 @@ var
    addrelocitem(opstart,
         aunit^.reloc.opstart,aunit^.reloc.opsize,
         opreloc1,opreloccount);
-   addrelocitem(interfaceglobstart,
-        aunit^.reloc.interfaceelestart,aunit^.reloc.interfaceelesize,
-        elereloc1,elereloccount);
   end;
  end;
  
@@ -354,6 +351,9 @@ begin
       end;
      end;
      addrelocs(unit1,interfaceuses1[i1].reloc);
+     addrelocitem(interfaceuses1[i1].reloc.interfaceelestart,
+           unit1^.reloc.interfaceelestart,unit1^.reloc.interfaceelesize,
+           elereloc1,elereloccount);
     {
      with interfaceuses1[i1].reloc do begin
       addrelocitem(interfaceglobstart,
@@ -402,13 +402,21 @@ begin
      end;
     end;
     restoreunitsegments(unitsegments1);
+
     aunit^.reloc:= intf^.header.reloc;
     aunit^.reloc.interfaceglobstart:= info.globdatapo;
-    with intf^.header.reloc do begin       //own interface globvars
+    aunit^.reloc.interfaceelestart:= ele.buffertop;
+    with intf^.header.reloc do begin       
      addrelocitem(interfaceglobstart,info.globdatapo,interfaceglobsize,
                                                  globreloc1,globvarreloccount);
+                                                 //own interface globvars
      globvaroffset:= info.globdatapo-interfaceglobstart;
+     addrelocitem(interfaceelestart,aunit^.reloc.interfaceelestart,
+                   interfaceelesize,elereloc1,elereloccount);
+                                                 //own interface elements
     end;
+    setlength(elereloc1,elereloccount);
+    haselereloc:= elereloc1 <> nil;
     {
     with globreloc1[globvarreloccount] do begin //own interface globvars
      size:= intf^.header.reloc.interfaceglobsize;
@@ -464,7 +472,9 @@ begin
        end;
        ek_var: begin
         with pvardataty(po)^ do begin
-         //todo: reloc type
+         if haselereloc then begin
+          reloc(elereloc1,targetadty(vf.typ)); //todo: 64 bit
+         end;
          if af_segment in address.flags then begin
           inc(address.segaddress.address,globvaroffset);
          end;
@@ -535,7 +545,7 @@ begin
      end;
      with opreloc1[opreloccount] do begin
       size:= unit1^.reloc.opsize;
-      base:= interfaceuses1[i1].reloc.opstart;
+      base:= implementationuses1[i1].reloc.opstart;
       offset:= unit1^.reloc.opstart-base;
       if offset <> 0 then begin
        inc(opreloccount);
@@ -545,11 +555,13 @@ begin
     end;
     restoreunitsegments(unitsegments1);
     aunit^.implementationglobstart:= info.globdatapo;
-    with intf^.header do begin            //own implementation globvars
+    with intf^.header do begin            
      addrelocitem(implementationglobstart,info.globdatapo,
                           implementationglobsize,globreloc1,globvarreloccount);
+                                      //own implementation globvars
      addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
                                                     opreloc1,opreloccount);
+                                      //own op segment
     end;
     {
     with globreloc1[globvarreloccount] do begin //own implementation globvars

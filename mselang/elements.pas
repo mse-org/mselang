@@ -292,6 +292,7 @@ type
    function decelementparent: elementoffsetty; //returns old offset
    procedure markelement(out ref: markinfoty);
    procedure releaseelement(const ref: markinfoty);
+   property buffertop: elementoffsetty read fnextelement;
    procedure hideelementdata(const adata: pointer); //for error handling only
    property elementparent: elementoffsetty read felementparent 
                                                  write setelementparent;
