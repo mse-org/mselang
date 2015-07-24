@@ -403,9 +403,33 @@ begin
     end;
     restoreunitsegments(unitsegments1);
 
+     
+    {
+    with globreloc1[globvarreloccount] do begin //own interface globvars
+     size:= intf^.header.reloc.interfaceglobsize;
+     base:= intf^.header.reloc.interfaceglobstart;
+     globvaroffset:= info.globdatapo-base;
+     offset:= globvaroffset;
+     if offset <> 0 then begin
+      inc(globvarreloccount);
+     end;
+    end;
+    }
+//    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
+    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
+
+    ele.markelement(startref);
+
+    if not updateident(int32(intf^.header.key)) then begin
+     goto errorlab;
+    end;
+    beginunit(intf^.header.key,true);
+
+    baseoffset:= ele.eletopoffset;
+
     aunit^.reloc:= intf^.header.reloc;
     aunit^.reloc.interfaceglobstart:= info.globdatapo;
-    aunit^.reloc.interfaceelestart:= ele.buffertop;
+    aunit^.reloc.interfaceelestart:= baseoffset;
     with intf^.header.reloc do begin       
      addrelocitem(interfaceglobstart,info.globdatapo,interfaceglobsize,
                                                  globreloc1,globvarreloccount);
@@ -424,32 +448,11 @@ begin
     end;
     setlength(elereloc1,elereloccount);
     haselereloc:= elereloc1 <> nil;
-     
-    {
-    with globreloc1[globvarreloccount] do begin //own interface globvars
-     size:= intf^.header.reloc.interfaceglobsize;
-     base:= intf^.header.reloc.interfaceglobstart;
-     globvaroffset:= info.globdatapo-base;
-     offset:= globvaroffset;
-     if offset <> 0 then begin
-      inc(globvarreloccount);
-     end;
-    end;
-    }
-//    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
-    inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
-
-    i1:= getsegmentsize(seg_unitintf) + 
-                        (getsegmentbase(seg_unitintf)-pointer(po3));
-
-    ele.markelement(startref);
-
-    if not updateident(int32(intf^.header.key)) or 
-                               not dosort(elereloc1) then begin
+    if not dosort(elereloc1) then begin
      goto errorlab;
     end;
-    beginunit(intf^.header.key,true);
-    baseoffset:= ele.eletopoffset;
+    i1:= getsegmentsize(seg_unitintf) + 
+                        (getsegmentbase(seg_unitintf)-pointer(po3));
     pele1:= ele.addbuffer(i1);
     poend:= pointer(pele1) + i1;
     move(po3^,pele1^,i1); //todo: read segment data directly to ele buffer
@@ -685,6 +688,6 @@ dumpelements;
   writeln('** read unit '+fna1+' ***ERROR***');
  end;
 {$endif}
-end;
+ end;
 
 end.

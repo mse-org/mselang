@@ -269,6 +269,7 @@ var
 begin
  result:= putunit(aunit);
  if result then begin
+dumpelements;
   fna1:= getrtunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    stat1:= setsubsegment(aunit^.opseg);
