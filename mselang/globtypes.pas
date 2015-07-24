@@ -49,6 +49,8 @@ type
 // elementoffsetty = ptrint;
  elementoffsetty = int32; //same size for 64 and 32 bit compilers because of
                           //dump in unit files
+ elementsizety = uint32;
+ 
  pelementoffsetty = ^elementoffsetty;
  elementoffsetarty = array of elementoffsetty;
 

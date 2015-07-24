@@ -496,6 +496,8 @@ type
  internalsubty = (isub_ini,isub_fini);
 
  unitrelocty = record
+  interfaceelestart: elementoffsetty;
+  interfaceelesize: elementsizety;
   interfaceglobstart: targetadty;
   interfaceglobsize: targetsizety;
   opstart: targetadty;

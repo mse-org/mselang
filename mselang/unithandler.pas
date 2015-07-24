@@ -177,6 +177,7 @@ procedure markinterfacestart();
 begin
  with info.s.unitinfo^ do begin
   ele.markelement(interfacestart); 
+  reloc.interfaceelestart:= interfacestart.bufferref;
   reloc.interfaceglobstart:= info.globdatapo;
  end;
 end;
@@ -185,6 +186,7 @@ procedure markinterfaceend();
 begin
  with info.s.unitinfo^ do begin
   ele.markelement(interfaceend);
+  reloc.interfaceelesize:= interfaceend.bufferref- interfacestart.bufferref;
   reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
  end;
 end;

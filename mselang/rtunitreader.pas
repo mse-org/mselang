@@ -212,6 +212,43 @@ type
    end;
   end;
  end;
+
+ procedure addrelocitem(const abase: targetadty; const aref: targetadty;
+                            const asize: targetadty; 
+                                 var alist: relocinfoarty; var acount: int32);
+ begin
+  with alist[acount] do begin
+   offset:= aref-abase;
+   if offset <> 0 then begin
+    size:= asize;
+    base:= abase;
+    inc(acount);
+   end;
+  end;
+ end;
+
+var
+ globreloc1: relocinfoarty;
+ opreloc1: relocinfoarty;
+ elereloc1: relocinfoarty;
+ globvarreloccount: int32;
+ opreloccount: int32;
+ elereloccount: int32;
+
+ procedure addrelocs(const aunit: punitinfoty; const auses: unitrelocty);
+ begin
+  with auses do begin
+   addrelocitem(interfaceglobstart,
+        aunit^.reloc.interfaceglobstart,aunit^.reloc.interfaceglobsize,
+        globreloc1,globvarreloccount);
+   addrelocitem(opstart,
+        aunit^.reloc.opstart,aunit^.reloc.opsize,
+        opreloc1,opreloccount);
+   addrelocitem(interfaceglobstart,
+        aunit^.reloc.interfaceelestart,aunit^.reloc.interfaceelesize,
+        elereloc1,elereloccount);
+  end;
+ end;
  
 var
  stream1: tmsefilestream;
@@ -225,13 +262,10 @@ var
  unitsegments1: unitsegmentsstatety;
  segstate1: segmentstatety;
 // globpobefore: targetcardty;
- globreloc1: relocinfoarty;
- opreloc1: relocinfoarty;
+ haselereloc: boolean;
  unit1: punitinfoty;
 // needsreloc: boolean;
- globvarreloccount: int32;
  globvaroffset: elementoffsetty;
- opreloccount: int32;
  op1,ope: popinfoty;
  
 label
@@ -297,8 +331,10 @@ begin
          //max, + own interface and implementation globvar block,
          //exitcode todo: remove this
     setlength(opreloc1,length(globreloc1)); //max
+    setlength(elereloc1,length(globreloc1)); //max
     globvarreloccount:= 0;
     opreloccount:= 0;
+    elereloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
 //    aunit^.mainad:= intf^.header.mainad; //todo: relocate
@@ -317,6 +353,21 @@ begin
        goto endlab;
       end;
      end;
+     addrelocs(unit1,interfaceuses1[i1].reloc);
+    {
+     with interfaceuses1[i1].reloc do begin
+      addrelocitem(interfaceglobstart,
+           unit1^.reloc.interfaceglobstart,unit1^.reloc.interfaceglobsize,
+           globreloc1,globvarreloccount);
+      addrelocitem(opstart,
+           unit1^.reloc.opstart,unit1^.reloc.opsize,
+           opreloc1,opreloccount);
+      addrelocitem(interfaceglobstart,
+           unit1^.reloc.interfaceelestart,unit1^.reloc.interfaceelesize,
+           elereloc1,elereloccount);
+     end;
+    }
+    {
      with globreloc1[globvarreloccount] do begin
       size:= unit1^.reloc.interfaceglobsize;
       base:= interfaceuses1[i1].reloc.interfaceglobstart;
@@ -333,6 +384,15 @@ begin
        inc(opreloccount);
       end;
      end;
+     with elereloc1[elereloccount] do begin
+      size:= unit1^.reloc.interfaceelesize;
+      base:= interfaceuses1[i1].reloc.interfaceelestart;
+      offset:= unit1^.reloc.interfaceelestart-base;
+      if offset <> 0 then begin
+       inc(opreloccount);
+      end;
+     end;
+    }
     end;
     for i1:= 0 to high(implementationuses1) do begin
      with implementationuses1[i1] do begin
@@ -344,6 +404,12 @@ begin
     restoreunitsegments(unitsegments1);
     aunit^.reloc:= intf^.header.reloc;
     aunit^.reloc.interfaceglobstart:= info.globdatapo;
+    with intf^.header.reloc do begin       //own interface globvars
+     addrelocitem(interfaceglobstart,info.globdatapo,interfaceglobsize,
+                                                 globreloc1,globvarreloccount);
+     globvaroffset:= info.globdatapo-interfaceglobstart;
+    end;
+    {
     with globreloc1[globvarreloccount] do begin //own interface globvars
      size:= intf^.header.reloc.interfaceglobsize;
      base:= intf^.header.reloc.interfaceglobstart;
@@ -353,6 +419,7 @@ begin
       inc(globvarreloccount);
      end;
     end;
+    }
 //    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
     inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
@@ -456,6 +523,8 @@ begin
        goto errorlab;
       end;
      end;
+     addrelocs(unit1,implementationuses1[i1].reloc);
+     {
      with globreloc1[globvarreloccount] do begin
       size:= unit1^.reloc.interfaceglobsize;        
       base:= implementationuses1[i1].reloc.interfaceglobstart;
@@ -472,9 +541,17 @@ begin
        inc(opreloccount);
       end;
      end;
+     }
     end;
     restoreunitsegments(unitsegments1);
     aunit^.implementationglobstart:= info.globdatapo;
+    with intf^.header do begin            //own implementation globvars
+     addrelocitem(implementationglobstart,info.globdatapo,
+                          implementationglobsize,globreloc1,globvarreloccount);
+     addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
+                                                    opreloc1,opreloccount);
+    end;
+    {
     with globreloc1[globvarreloccount] do begin //own implementation globvars
      size:= intf^.header.implementationglobsize;
      base:= intf^.header.implementationglobstart;
@@ -491,6 +568,7 @@ begin
       inc(opreloccount);
      end;
     end;
+    }
     {
     with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
      size:= 4;
