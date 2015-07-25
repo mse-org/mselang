@@ -247,6 +247,7 @@ begin
    sourcetimestamp:= aunit^.filetimestamp;
    namecount:= nameindex1;
    anoncount:= -anonindex1 - 1;
+   internalsubs:= aunit^.internalsubs;
   end;
   result:= true;
 {$ifdef mse_debugparser}
@@ -269,7 +270,6 @@ var
 begin
  result:= putunit(aunit);
  if result then begin
-dumpelements;
   fna1:= getrtunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    stat1:= setsubsegment(aunit^.opseg);

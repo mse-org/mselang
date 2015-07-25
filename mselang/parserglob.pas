@@ -494,7 +494,8 @@ type
  unitstatesty = set of unitstatety;
 
  internalsubty = (isub_ini,isub_fini);
-
+ internalsubarty = array[internalsubty] of opaddressty;
+ 
  unitrelocty = record
   interfaceelestart: elementoffsetty;
   interfaceelesize: elementsizety;
@@ -545,7 +546,7 @@ type
   varchain: elementoffsetty;
 //  impl: implinfoty; //start of implementation parsing
   implstart: pparsercontextty; //start of implementation parsing
-  internalsubs: array[internalsubty] of opaddressty;
+  internalsubs: internalsubarty;
   codestop: opaddressty;
   stoponerror: boolean;
  end;

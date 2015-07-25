@@ -264,7 +264,9 @@ var
  unit1: punitinfoty;
 // needsreloc: boolean;
  globvaroffset: elementoffsetty;
+ opoffset: targetoffsty;
  op1,ope: popinfoty;
+ isub1: internalsubty;
  
 label
  errorlab,oklab,endlab;
@@ -335,11 +337,6 @@ begin
     elereloccount:= 0;
 
     include(aunit^.state,us_interfaceparsed);
-//    aunit^.mainad:= intf^.header.mainad; //todo: relocate
-
-//    if info.unitlevel = 1 then begin
-//     info.globdatapo:= intf^.header.interfaceglobstart;
-//    end;
     saveunitsegments(unitsegments1);
     setlength(interfaceunits1,length(interfaceuses1));
     for i1:= 0 to high(interfaceuses1) do begin
@@ -354,45 +351,6 @@ begin
       end;
      end;
      addrelocs(unit1,interfaceuses1[i1].reloc);
-    {
-     with interfaceuses1[i1].reloc do begin
-      addrelocitem(interfaceglobstart,
-           unit1^.reloc.interfaceglobstart,unit1^.reloc.interfaceglobsize,
-           globreloc1,globvarreloccount);
-      addrelocitem(opstart,
-           unit1^.reloc.opstart,unit1^.reloc.opsize,
-           opreloc1,opreloccount);
-      addrelocitem(interfaceglobstart,
-           unit1^.reloc.interfaceelestart,unit1^.reloc.interfaceelesize,
-           elereloc1,elereloccount);
-     end;
-    }
-    {
-     with globreloc1[globvarreloccount] do begin
-      size:= unit1^.reloc.interfaceglobsize;
-      base:= interfaceuses1[i1].reloc.interfaceglobstart;
-      offset:= unit1^.reloc.interfaceglobstart-base;
-      if offset <> 0 then begin
-       inc(globvarreloccount);
-      end;
-     end;
-     with opreloc1[opreloccount] do begin
-      size:= unit1^.reloc.opsize;
-      base:= interfaceuses1[i1].reloc.opstart;
-      offset:= unit1^.reloc.opstart-base;
-      if offset <> 0 then begin
-       inc(opreloccount);
-      end;
-     end;
-     with elereloc1[elereloccount] do begin
-      size:= unit1^.reloc.interfaceelesize;
-      base:= interfaceuses1[i1].reloc.interfaceelestart;
-      offset:= unit1^.reloc.interfaceelestart-base;
-      if offset <> 0 then begin
-       inc(opreloccount);
-      end;
-     end;
-    }
     end;
     for i1:= 0 to high(implementationuses1) do begin
      with implementationuses1[i1] do begin
@@ -403,19 +361,6 @@ begin
     end;
     restoreunitsegments(unitsegments1);
 
-     
-    {
-    with globreloc1[globvarreloccount] do begin //own interface globvars
-     size:= intf^.header.reloc.interfaceglobsize;
-     base:= intf^.header.reloc.interfaceglobstart;
-     globvaroffset:= info.globdatapo-base;
-     offset:= globvaroffset;
-     if offset <> 0 then begin
-      inc(globvarreloccount);
-     end;
-    end;
-    }
-//    aunit^.interfaceglobsize:= intf^.header.interfaceglobsize;
     inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
     ele.markelement(startref);
@@ -546,24 +491,6 @@ begin
       end;
      end;
      addrelocs(unit1,implementationuses1[i1].reloc);
-     {
-     with globreloc1[globvarreloccount] do begin
-      size:= unit1^.reloc.interfaceglobsize;        
-      base:= implementationuses1[i1].reloc.interfaceglobstart;
-      offset:= unit1^.reloc.interfaceglobstart-base;
-      if offset <> 0 then begin
-       inc(globvarreloccount);
-      end;
-     end;
-     with opreloc1[opreloccount] do begin
-      size:= unit1^.reloc.opsize;
-      base:= implementationuses1[i1].reloc.opstart;
-      offset:= unit1^.reloc.opstart-base;
-      if offset <> 0 then begin
-       inc(opreloccount);
-      end;
-     end;
-     }
     end;
     restoreunitsegments(unitsegments1);
     aunit^.implementationglobstart:= info.globdatapo;
@@ -574,67 +501,13 @@ begin
      addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
                                                     opreloc1,opreloccount);
                                       //own op segment
+     opoffset:= info.opcount-reloc.opstart;
+     aunit^.internalsubs:= internalsubs;
     end;
-    {
-    with globreloc1[globvarreloccount] do begin //own implementation globvars
-     size:= intf^.header.implementationglobsize;
-     base:= intf^.header.implementationglobstart;
-     offset:= info.globdatapo-base;
-     if offset <> 0 then begin
-      inc(globvarreloccount);
-     end;
-    end;
-    with opreloc1[opreloccount] do begin //own op segment
-     size:= intf^.header.reloc.opsize;
-     base:= intf^.header.reloc.opstart;
-     offset:= info.opcount-base;
-     if offset <> 0 then begin
-      inc(opreloccount);
-     end;
-    end;
-    }
-    {
-    with globreloc1[high(globreloc1)-2] do begin //exitcode todo: remove this
-     size:= 4;
-     base:= 0;
-     offset:= 0;
-    end;
-    }
     setlength(globreloc1,globvarreloccount);
     setlength(opreloc1,opreloccount);
     aunit^.implementationglobsize:= intf^.header.implementationglobsize;
     inc(info.globdatapo,intf^.header.implementationglobsize);
-   {$ifdef mse_debugreloc}
-   {
-    writeln('* reloc '+aunit^.name);
-    for i1:= 0 to high(interfaceuses1) do begin
-     with globreloc1[i1] do begin
-      writeln(' intf '+getunitname(interfaceuses1[i1].id),
-                               ' b:',base,' s:',size,' o:',offset);
-     end;
-    end;
-    i2:= length(interfaceuses1);
-    for i1:= i2 to i2 + high(implementationuses1) do begin
-     with globreloc1[i1] do begin
-      writeln(' impl '+getunitname(implementationuses1[i1-i2].id),
-                               ' b:',base,' s:',size,' o:',offset);
-     end;
-    end;
-    i2:= high(globreloc1);
-    with globreloc1[i2-2] do begin
-     writeln(' ini '+getunitname(implementationuses1[i1-i2].id),
-                              ' b:',base,' s:',size,' o:',offset);
-    end;
-    with globreloc1[i2-1] do begin
-     writeln(' unitintf '+getunitname(implementationuses1[i1-i2].id),
-                              ' b:',base,' s:',size,' o:',offset);
-    end;
-    with globreloc1[i2] do begin
-     writeln(' unitiimpl '+getunitname(implementationuses1[i1-i2].id),
-                              ' b:',base,' s:',size,' o:',offset);
-    end;
-   }
-   {$endif}
     if not dosort(globreloc1) or not dosort(opreloc1) then begin
      goto errorlab;
     end;
@@ -643,8 +516,14 @@ errorlab:
     ele.releaseelement(startref);
     goto endlab;
 oklab:
-    aunit^.mainad:= intf^.header.mainad + info.opcount - 
-                                       intf^.header.reloc.opstart;
+    with aunit^ do begin
+     mainad:= intf^.header.mainad + opoffset;
+     for isub1:= low(internalsubs) to high(internalsubs) do begin
+      if internalsubs[isub1] <> 0 then begin
+       inc(internalsubs[isub1],opoffset);
+      end;
+     end;
+    end;
     stream1.position:= 0;           //todo: reduce file seeking
     segstate1:= savesegment(seg_op);
     op1:= getsegmenttop(seg_op);
@@ -667,7 +546,6 @@ oklab:
     else begin
      restoresegment(segstate1);
     end;
-//dumpelements();
 endlab:
    end;
   except //catch all exceptions of an invalid unit file
@@ -679,7 +557,6 @@ endlab:
    exclude(aunit^.state,us_interfaceparsed);
   end;
  end;
-dumpelements;
 {$ifdef mse_debugparser}
  if result then begin
   writeln('** read unit '+fna1+' OK');
