@@ -22,6 +22,7 @@ uses
  segmentutils;
 const
  firstident = 256;
+ maxidentlen = 256;
  includemax = 31;
 
  bitoptypes: array[databitsizety] of typeallocinfoty = (
@@ -509,7 +510,8 @@ type
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
   key: identty;
-  name: string;      //todo: use lstringty
+  name: lstringty;
+  namestring: string;
   prev: punitinfoty; //current uses compiled item
   filepath: filenamety; //todo: use lstringty
   filetimestamp: tdatetime;
@@ -534,6 +536,7 @@ type
   implementationstart: markinfoty;
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;
+  globallocstart: int32; //first index in llvm globallocdatalist
 
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
@@ -549,6 +552,10 @@ type
   internalsubs: internalsubarty;
   codestop: opaddressty;
   stoponerror: boolean;
+//  namebuffer: lstringty;
+//  namebufferdata: array[0..maxidentlen+2*sizeof(card32)] of char;
+                    //<unitname>+'.'+hex(id)
+//  namebufferstart: int32; //index of id
  end;
  ppunitinfoty = ^punitinfoty;
 

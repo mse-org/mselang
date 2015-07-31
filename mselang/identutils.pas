@@ -52,7 +52,7 @@ procedure init();
       
 implementation
 uses
- mselfsr,parserglob;
+ mselfsr,parserglob,errorhandler;
 type
  identoffsetty = int32;
  
@@ -301,6 +301,11 @@ var
  po1: pindexidenthashdataty;
  ha1: hashvaluety;
 begin
+ if aname.len > maxidentlen then begin
+  errormessage(err_identtoolong,[lstringtostring(aname)]);
+  result:= 0;
+  exit;
+ end;
  ha1:= hashkey1(aname);
  po1:= pointer(internalfind(aname,ha1));
  if po1 = nil then begin

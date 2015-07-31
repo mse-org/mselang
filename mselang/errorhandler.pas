@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ uses
 
 type
  errorty = (err_ok,err_duplicateidentifier,err_identifiernotfound,
+            err_identifiertoolong,
             {err_thenexpected,}err_syntax,
             err_booleanexpressionexpected,
             err_wrongnumberofparameters,err_incompatibletypeforarg,
@@ -105,6 +106,7 @@ const
   (level: erl_none; message: ''),
   (level: erl_error; message: 'Duplicate identifier "%s"'),
   (level: erl_error; message: 'Identifier not found "%s"'),
+  (level: erl_fatal; message: 'Identifier too long "%s"'),
 //  (level: erl_fatal; message: 'Syntax error, "then" expected'),
   (level: erl_fatal; message: 'Syntax error, "%s" expected'),
   (level: erl_error; message: 'Boolean expression expected'),
@@ -690,13 +692,13 @@ begin
  po1:= info.s.unitinfo;
  str1:= '';
  while po1 <> nil do begin
-  str1:= po1^.name+'->'+str1;
+  str1:= po1^.namestring+'->'+str1;
   if po1 = adest then begin
    break;
   end;
   po1:= po1^.prev;
  end;
- str1:= info.s.unitinfo^.name+'->'+str1;
+ str1:= info.s.unitinfo^.namestring+'->'+str1;
  setlength(str1,length(str1)-2);
  errormessage(err_circularreference,[str1],astackoffset);
 end;

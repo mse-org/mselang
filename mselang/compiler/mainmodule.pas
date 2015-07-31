@@ -29,7 +29,7 @@ implementation
 
 uses
  globtypes,mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter;
+ msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler;
  
 const
  startupmessage =
@@ -80,6 +80,7 @@ begin
         exitcode:= 1;
        end;
       end;
+      unithandler.deinit(true); //destroy unitlist
       llvmstream.destroy();
      end;
     end

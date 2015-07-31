@@ -274,15 +274,24 @@ type
    function gettype(const aindex: int32): int32;
  end;
 
+ unitnamety = record //same layout as lstringty, used in tglobnamelist
+  unitpo: pointer;   //punitinfoty;
+  dummy: int32;      //= 0
+ end;
+  
  globnamedataty = record
-  name: lstringty;
   listindex: integer;
+  case int32 of
+   0: (name: lstringty);
+   1: (unitname: unitnamety);
  end;
  pglobnamedataty = ^globnamedataty;
  tglobnamelist = class(trecordlist)
   public
    constructor create;
    procedure addname(const aname: lstringty; const alistindex: integer);
+   procedure addname(const aunit: pointer; //punitinfoty
+                                  const alistindex: integer);
  end;
  
  globallockindty = (gak_var,gak_const,gak_sub); 
@@ -1312,6 +1321,17 @@ begin
  end;
 end;
 
+procedure tglobnamelist.addname(const aunit: pointer; //punitinfoty
+                                  const alistindex: integer);
+begin
+ inccount();
+ with (pglobnamedataty(fdata)+fcount-1)^ do begin
+  unitname.unitpo:= aunit;
+  unitname.dummy:= 0;
+  listindex:= alistindex;
+ end;
+end;
+
 { tgloballocdatalist }
 
 constructor tgloballocdatalist.create(const atypelist: ttypehashdatalist;
@@ -1426,7 +1446,7 @@ begin
  if avalue <> nil then begin
   dat1.flags:= avalue^.flags;
  end;
- if (avalue = nil) or (sf_external in dat1.flags) then begin //nil -> main
+ if {(avalue = nil) or} (sf_external in dat1.flags) then begin //nil -> main
   dat1.linkage:= li_external;
  end
  else begin

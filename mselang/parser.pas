@@ -76,13 +76,13 @@ begin
 // handler.init;
 end;
 
-procedure deinit();
+procedure deinit(const freeunitlist: boolean);
 begin
 // handler.deinit;
 // inifini.deinit;
 // rttihandler.deinit();
 // opcode.deinit();
- unithandler.deinit();
+ unithandler.deinit(freeunitlist);
  handlerutils.deinit();
  if co_mlaruntime in info.compileoptions then begin
   elements.clear();
@@ -932,7 +932,7 @@ begin
     unit1^.metadatalist:= nil;
    finally
     system.finalize(info);
-    deinit();
+    deinit(not result or not (co_llvm in aoptions));
    end;
   except
    result:= false;

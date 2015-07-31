@@ -684,9 +684,12 @@ begin
   with po3^ do begin
    infoaddress.sub:= currentsubchain;
   end;
-
+  if not (us_implementation in s.unitinfo^.state) then begin 
+               //interface needs name for linker
+   include(subflags,sf_named); //todo: check visibility
+  end;
   if isinterface then begin
-   include(subflags,sf_interface);
+   include(subflags,sf_interface); 
    po1^.tableindex:= currentsubcount;
   end
   else begin
@@ -955,6 +958,10 @@ begin
    po2^.address:= po1^.address;
    po2^.globid:= po1^.globid;
    po1^.flags:= po2^.flags;
+   if (sf_named in po2^.flags) and (co_llvm in compileoptions) then begin
+//    setunitsubname(po1^.globid);
+    globlist.namelist.addname(s.unitinfo,po1^.globid);
+   end;
    po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
    {$ifdef mse_checkinternalerror}

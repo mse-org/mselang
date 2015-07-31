@@ -49,6 +49,7 @@ procedure beginunit(const aname: identty; const nopush: boolean);
 procedure setunitname(); //unitname on top of stack
 function getunitname(const id: identty): string;
 function getunittimestamp(const id: identty): tdatetime;
+//procedure setunitsubname(aindex: int32); //sets namebuffer
 
 //procedure interfacestop();
 
@@ -94,14 +95,14 @@ procedure handlefinalizationstart();
 procedure handlefinalization();
 
 procedure init;
-procedure deinit;
+procedure deinit(const freeunitlist: boolean);
 
 implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes,
- rtunitwriter,identutils;
+ rtunitwriter,identutils,mseformatstr;
  
 type
  unithashdataty = record
@@ -139,6 +140,7 @@ end;
 procedure beginunit(const aname: identty; const nopush: boolean);
 var
  po1: punitdataty;
+ lstr1: lstringty;
 begin
  if nopush then begin
  {$ifdef mse_checkinternalerror}
@@ -169,6 +171,17 @@ begin
    else begin
     interfaceelement:= ele.elementparent;
    end;
+   getidentname(aname,lstr1);
+   namestring:= lstringtostring(lstr1);
+   name:= stringtolstring(namestring);
+   {
+   getidentname(aname,lstr1);
+   move(lstr1.po^,namebufferdata,lstr1.len);
+   namebufferdata[lstr1.len]:= '_';
+   namebufferstart:= lstr1.len + 1;
+   namebuffer.po:= @namebufferdata;
+   namebuffer.len:= lstr1.len+1+2*sizeof(int32);
+   }
   end;
  end;
 end;
@@ -441,7 +454,8 @@ begin
  result:= unitlist.findunit(id);
  if result = nil then begin
   result:= unitlist.newunit(id);
-  result^.name:= aname;
+  result^.namestring:= aname;
+  result^.name:= stringtolstring(result^.namestring);
  end;
 end;
 
@@ -451,7 +465,7 @@ var
 begin
  po1:= unitlist.findunit(id);
  if po1 <> nil then begin
-  result:= po1^.name;
+  result:= po1^.namestring;
  end
  else begin
   result:= '';
@@ -482,7 +496,22 @@ begin
   end;
  end;
 end;
-
+{
+procedure setunitsubname(aindex: int32); //sets namebuffer
+var
+ po1,pe: pchar;
+begin
+ with info.s.unitinfo^ do begin
+  po1:= @namebufferdata[namebufferstart];
+  pe:= po1 + 8;
+  while po1 < pe do begin
+   po1^:= charhexlower[aindex and $F];
+   aindex:= card32(aindex) shr 4;
+   inc(po1);
+  end;
+ end;
+end;
+}
 function parseusesunit(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
@@ -507,7 +536,8 @@ end;
 function getunitfile(const aunit: punitinfoty; const aname: lstringty): boolean;
 begin
  with aunit^ do begin
-  name:= lstringtostring(aname);
+  namestring:= lstringtostring(aname);
+  name:= stringtolstring(namestring);
   filepath:= filehandler.getsourceunitfile(aname);
   result:= filepath <> '';
   if result then begin
@@ -1218,10 +1248,12 @@ begin
  unitlist:= tunitlist.create;
 end;
 
-procedure deinit;
+procedure deinit(const freeunitlist: boolean);
 begin
  clear;
- unitlist.free;
+ if freeunitlist then begin
+  unitlist.free;
+ end;
 end;
 
 end.

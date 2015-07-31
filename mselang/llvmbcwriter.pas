@@ -97,6 +97,7 @@ type
    procedure emitdata(const avalues: array of pbcdataty);
 //   procedure emitchar6(const avalue: shortstring);
    procedure emitchar6(const avalue: pchar; const alength: integer);
+   procedure emitchar6(const avalue: array of lstringty);
 //   procedure emitint32rec(const id: int32; const value: int32);
    procedure pad32();
    procedure emittypeid(const avalue: int32);
@@ -172,6 +173,7 @@ type
              const valueid: int32; aparams: array of int32);
    
    procedure emitvstentry(const aid: integer; const aname: lstringty);
+   procedure emitvstentry(const aid: integer; const anames: array of lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
 
    procedure emitbrop(const acond: int32; const bb1: int32; 
@@ -227,7 +229,7 @@ type
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits;
+ errorhandler,msesys,sysutils,msebits,mseformatstr;
 
  //abreviations, made by createabbrev tool todo: use more abbrevs
  
@@ -375,7 +377,7 @@ var
  pga5,pgae: pgloballocdataty;
  pgn7,pgne: pglobnamedataty;
  pa,pe: pint32;
- i1,i2: int32;
+ i1,i2,i3: int32;
  po9: paggregateconstty;
  pm1: pmetadataty;
  metadatatype: int32;
@@ -384,6 +386,9 @@ var
  metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type: metavaluety;
  m1: metavaluety;
+ namebuffer1,separatorbuffer1: lstringty;
+ namebufferdata1: array[0..2*sizeof(int32)-1] of char;
+ separator1: char;
 begin
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
@@ -581,12 +586,33 @@ begin
    end;
    inc(pga5);
   end;
+  namebuffer1.len:= length(namebufferdata1);
+  namebuffer1.po:= @namebufferdata1;
+  separator1:= '.';
+  separatorbuffer1.po:= @separator1;
+  separatorbuffer1.len:= 1;
   if globals.namelist.count > 0 then begin
    beginblock(VALUE_SYMTAB_BLOCK_ID,3);
    pgn7:= globals.namelist.datapo;
    pgne:= pgn7 + globals.namelist.count;
    while pgn7 < pgne do begin
-    emitvstentry(pgn7^.listindex,pgn7^.name);
+    if pgn7^.name.len = 0 then begin //concat unitname and listindex
+     i1:= pgn7^.listindex - punitinfoty(pgn7^.name.po)^.globallocstart;
+     for i2:= 0 to high(namebufferdata1) do begin
+      i3:= i1 and $f;
+      namebufferdata1[i2]:= charhexlower[i3];
+      i1:= card32(i1) shr 4;
+      if i1 = 0 then begin
+       namebuffer1.len:= i2+1;
+       break;
+      end;
+     end;
+     emitvstentry(pgn7^.listindex,
+              [punitinfoty(pgn7^.name.po)^.name,separatorbuffer1,namebuffer1]);
+    end
+    else begin
+     emitvstentry(pgn7^.listindex,pgn7^.name);
+    end;
     inc(pgn7);
    end;
    endblock();
@@ -1312,12 +1338,51 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitchar6(const avalue: array of lstringty);
+var
+ po1,pe: pchar;
+ i1: int32;
+ po2,pe2: plstringty;
+begin
+ i1:= 0;
+ po2:= @avalue[0];
+ pe2:= po2 + length(avalue);
+ while po2 < pe2 do begin
+  i1:= i1 + po2^.len;
+  inc(po2);
+ end;
+ emitvbr6(i1);
+ po2:= @avalue[0];
+ while po2 < pe2 do begin
+  po1:= po2^.po;
+  pe:= po1 + po2^.len;
+  while po1 < pe do begin
+  {$ifdef mse_checkinternalerror}
+   if char6tab[po1^] = $ff then begin
+    internalerror(ie_bcwriter,'20141230A');
+   end;
+  {$endif}
+   emit6(char6tab[po1^]);
+   inc(po1);
+  end;
+  inc(po2);
+ end;
+end;
+
 procedure tllvmbcwriter.emitvstentry(const aid: integer; 
                                                const aname: lstringty);
 begin
  emitcode(ord(mabsym_entry));
  emitvbr6(aid);
  emitchar6(aname.po,aname.len);
+end;
+
+procedure tllvmbcwriter.emitvstentry(const aid: integer; 
+                                             const anames: array of lstringty);
+begin
+ emitcode(ord(mabsym_entry));
+ emitvbr6(aid);
+ emitchar6(anames);
 end;
 
 procedure tllvmbcwriter.emitvstbbentry(const aid: integer; 

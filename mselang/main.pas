@@ -73,7 +73,7 @@ var
 implementation
 uses
  main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,
- msesystypes,llvmbcwriter;
+ msesystypes,llvmbcwriter,unithandler;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -118,7 +118,11 @@ begin
       grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
      end
      else begin
-      llvmops.run(targetstream);
+      try
+       llvmops.run(targetstream);
+      finally
+       unithandler.deinit(true); //destroy unitlist
+      end;
       targetstream.destroy();
       int1:= getprocessoutput(llvmbindir+'llc '+filename1,'',str1);
       grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);

@@ -358,6 +358,7 @@ begin
  end;
 
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
+                                             //llvm utility functions
   with internalfuncconsts[funcs1] do begin
    internalfuncs[funcs1]:= globlist.addexternalsubvalue(flags,params^,
                                                     stringtolstring(name));
