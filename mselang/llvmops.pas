@@ -347,28 +347,31 @@ var
  intfpo: pintfdefinfoty;
 begin
  for int1:= low(i32consts) to high(i32consts) do begin
-  i32consts[int1]:= constlist.addi32(int1).listid;
+  i32consts[int1]:= info.s.unitinfo^.llvmlists.constlist.addi32(int1).listid;
  end;
  fillchar(trampolinealloc,sizeof(trampolinealloc),0); //used in subbeginop
 
  int1:= getsegmentsize(seg_globconst);
  if int1 > 0 then begin                               //global consts
-  bcstream.constseg:= globlist.addinitvalue(gak_var,
-             constlist.addvalue(getsegmentpo(seg_globconst,0)^,int1).listid);
+  bcstream.constseg:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_var,
+             info.s.unitinfo^.llvmlists.constlist.
+                         addvalue(getsegmentpo(seg_globconst,0)^,int1).listid);
  end;
 
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
                                              //llvm utility functions
   with internalfuncconsts[funcs1] do begin
-   internalfuncs[funcs1]:= globlist.addexternalsubvalue(flags,params^,
-                                                    stringtolstring(name));
+   internalfuncs[funcs1]:= info.s.unitinfo^.llvmlists.globlist.
+                      addexternalsubvalue(flags,params^,stringtolstring(name));
   end;
  end;
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin
                                        //string consts
   with internalstringconsts[strings1] do begin
-   internalstrings[strings1]:= globlist.addinitvalue(gak_const,
-                     constlist.addvalue(pointer(text)^,length(text)).listid);
+   internalstrings[strings1]:= info.s.unitinfo^.llvmlists.globlist.
+            addinitvalue(gak_const,
+                     info.s.unitinfo^.llvmlists.constlist.
+                             addvalue(pointer(text)^,length(text)).listid);
   end;
  end;
 
@@ -377,8 +380,10 @@ begin
  intfpo:= getsegmentbase(seg_intf);
  while countpo < counte do begin
   if countpo^ > 0 then begin
-   pint32(intfpo)^:= globlist.addinitvalue(gak_const,
-                          constlist.addintfdef(intfpo,countpo^).listid);
+   pint32(intfpo)^:= info.s.unitinfo^.llvmlists.globlist.
+          addinitvalue(gak_const,
+              info.s.unitinfo^.llvmlists.constlist.
+                                       addintfdef(intfpo,countpo^).listid);
   end;
   inc(pointer(intfpo),sizeof(intfpo^)+countpo^*opaddresssize);
   inc(countpo);
@@ -392,8 +397,9 @@ begin
  countpo:= getsegmentbase(seg_classintfcount);
  try
   while poclassdef < peclassdef do begin   //classes
-   pint32(poclassdef)^:= globlist.addinitvalue(gak_const,
-             constlist.addclassdef(poclassdef,countpo^).listid);
+   pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
+            addinitvalue(gak_const,info.s.unitinfo^.llvmlists.constlist.
+                                     addclassdef(poclassdef,countpo^).listid);
    poclassdef:= pointer(poclassdef) +
                         poclassdef^.header.allocs.classdefinterfacestart +
                                                          countpo^*pointersize;
@@ -406,7 +412,9 @@ begin
   end;
  end;
  with pc^.par.beginparse do begin
-  bcstream.start(constlist,globlist,mainmetadatalist);
+  with info.s.unitinfo^.llvmlists do begin
+   bcstream.start(constlist,globlist,metadatalist);
+  end;
   llvmops.exitcodeaddress:= exitcodeaddress;
   if finisub = 0 then begin
    llvmops.finihandler:= 0;
@@ -2668,7 +2676,8 @@ begin
   if sub.allocs.nestedalloccount > 0 then begin
    bcstream.emitalloca(bcstream.ptypeval(sub.allocs.nestedallocstypeindex));
    if sf_hascallout in sub.flags then begin
-    bcstream.emitgetelementptr(bcstream.subval(0),constlist.i8(0)); 
+    bcstream.emitgetelementptr(bcstream.subval(0),
+                          info.s.unitinfo^.llvmlists.constlist.i8(0)); 
                                         //param parent nested var,source
     bcstream.emitgetelementptr(bcstream.ssaval(0),nullpointeroffset);
                                                   //nested var array,dest
@@ -2690,7 +2699,7 @@ begin
                                     bcstream.typeval(das_pointer)); //source
     end;
     bcstream.emitgetelementptr(bcstream.ssaval(0),
-                                 constlist.pointeroffset(i1)); //dest
+                      info.s.unitinfo^.llvmlists.constlist.pointeroffset(i1)); //dest
                         //pointer to nestedallocs
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
@@ -2738,8 +2747,9 @@ begin
  with pc^.par.initclass do begin
 //  bcstream.emitpushconstsegad(classdef); //2ssa
   bcstream.emitgetelementptr(bcstream.globval(
-               pint32(getsegmentpo(seg_classdef,classdef))^),
-                                   bcstream.constval(constlist.i8(0))); //2ssa
+            pint32(getsegmentpo(seg_classdef,classdef))^),
+                bcstream.constval(info.s.unitinfo^.llvmlists.constlist.i8(0))); 
+                                                           //2ssa
   callcompilersub(cs_initclass,true,[bcstream.relval(0)]); //1ssa
  end;
 end;
@@ -2789,7 +2799,8 @@ procedure popcpucontextop();
 begin
  with pc^.par do begin
   bcstream.landingpad:= opaddress.bbindex;
-  bcstream.emitlandingpad(bcstream.typeval(typelist.landingpad),
+  bcstream.emitlandingpad(bcstream.typeval(
+                         info.s.unitinfo^.llvmlists.typelist.landingpad),
                        bcstream.globval(compilersubids[cs_personality]));
  end;
 end;

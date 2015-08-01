@@ -152,7 +152,7 @@ begin
    if not (co_mlaruntime in compoptions) then begin
     elements.clear();
    end;
-   freeandnil(mainmetadatalist);
+//   freeandnil(mainmetadatalist);
   end;
  finally
   setcurrentdirmse(dirbefore);

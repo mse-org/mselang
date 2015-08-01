@@ -293,7 +293,7 @@ var
    end;
    if co_llvm in compileoptions then begin
     with po3^.par.memimm do begin
-     llvm:= constlist.addi32(vint32);
+     llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
     end;
    end;
   end;

@@ -487,12 +487,12 @@ begin
  
    if s.debugoptions <> [] then begin
     with s.unitinfo^ do begin
-     filepathmeta:= metadatalist.addfile(filepath);
-     debugfilemeta:= metadatalist.adddifile(filepathmeta);
+     filepathmeta:= llvmlists.metadatalist.addfile(filepath);
+     debugfilemeta:= llvmlists.metadatalist.adddifile(filepathmeta);
 //     debugfilemeta:= metadatalist.add
-     compileunitmeta:= metadatalist.adddicompileunit(
+     compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
            filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
-     metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
+     llvmlists.metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
                                            [compileunitmeta.value.listid]);
     end;
    end;
@@ -928,8 +928,8 @@ begin
     end;
    {$endif}
     endparser();
-    mainmetadatalist:= unit1^.metadatalist;
-    unit1^.metadatalist:= nil;
+//    mainmetadatalist:= unit1^.metadatalist;
+//    unit1^.metadatalist:= nil;
    finally
     system.finalize(info);
     deinit(not result or not (co_llvm in aoptions));

@@ -1,8 +1,9 @@
 unit unit1;
 interface
+procedure test();
 implementation
-initialization
- exitcode:= 122;
-finalization
- exitcode:= exitcode + 1;
+procedure test();
+begin
+ exitcode:= 123;
+end;
 end.

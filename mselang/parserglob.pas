@@ -541,7 +541,8 @@ type
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
-  metadatalist: tmetadatalist;
+//  metadatalist: tmetadatalist;
+  llvmlists: tllvmlists;
 
   pendingcount: integer;
   pendingcapacity: integer;

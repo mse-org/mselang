@@ -501,7 +501,8 @@ begin
  with additem(oc_subbegin)^.par.subbegin do begin
   subname:= result;
   if co_llvm in info.compileoptions then begin
-   globid:= globlist.addinternalsubvalue([],noparams);
+   globid:= info.s.unitinfo^.llvmlists.globlist.
+                               addinternalsubvalue([],noparams);
   end;
   sub.flags:= [];
   sub.allocs:= nullallocs;
@@ -803,7 +804,7 @@ begin
 }
      if co_llvm in compileoptions then begin
       getidentname(pelementinfoty(pointer(po1)-eledatashift)^.header.name,lstr1);
-      po1^.globid:= globlist.addsubvalue(po1,lstr1);
+      po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1,lstr1);
      end;
      addsubbegin(oc_externalsub,po1);
     end
@@ -933,7 +934,8 @@ begin
   po1:= ele.eledataabs(subdef.ref);
   po1^.address:= opcount;
   if co_llvm in compileoptions then begin
-   po1^.globid:= globlist.addsubvalue(po1); //nested subs first
+   po1^.globid:= info.s.unitinfo^.llvmlists.globlist.
+                                    addsubvalue(po1); //nested subs first
   end;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
@@ -946,11 +948,14 @@ begin
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
      if co_llvm in compileoptions then begin
-      par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
+      par.subbegin.trampoline.virtoffset:= 
+           info.s.unitinfo^.llvmlists.constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
       par.subbegin.globid:= po1^.globid;               //trampoline
-      po1^.globid:= globlist.addtypecopy(po1^.globid); //real sub
-      par.subbegin.trampoline.typeid:= globlist.gettype(par.subbegin.globid);
+      po1^.globid:= info.s.unitinfo^.llvmlists.globlist.
+                                     addtypecopy(po1^.globid); //real sub
+      par.subbegin.trampoline.typeid:= 
+              info.s.unitinfo^.llvmlists.globlist.gettype(par.subbegin.globid);
      end;
     end;
     po1^.address:= opcount;
@@ -960,7 +965,8 @@ begin
    po1^.flags:= po2^.flags;
    if (sf_named in po2^.flags) and (co_llvm in compileoptions) then begin
 //    setunitsubname(po1^.globid);
-    globlist.namelist.addname(s.unitinfo,po1^.globid);
+    info.s.unitinfo^.llvmlists.globlist.namelist.
+                                     addname(s.unitinfo,po1^.globid);
    end;
    po1^.tableindex:= po2^.tableindex;
    if po2^.flags * [sf_virtual,sf_override] <> [] then begin
@@ -1066,7 +1072,7 @@ begin
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
   if co_llvm in compileoptions then begin
    if sf_hasnestedaccess in po1^.flags then begin
-    globlist.updatesubtype(po1);
+    info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
    end;
   end;
   if stf_hasmanaged in s.currentstatementflags then begin

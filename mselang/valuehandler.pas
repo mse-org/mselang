@@ -785,8 +785,10 @@ var
      end;
      if co_llvm in compileoptions then begin
       po1^.par.callinfo.virt.virtoffset:=  
-              constlist.adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
-      po1^.par.callinfo.virt.typeid:= typelist.addsubvalue(asub);
+              info.s.unitinfo^.llvmlists.constlist.
+                         adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
+      po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
+                                                            addsubvalue(asub);
      end;
      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
      po1^.par.callinfo.linkcount:= -1;
@@ -803,7 +805,8 @@ var
        end;
        if co_llvm in compileoptions then begin
         po1^.par.ssas1:= callssa;
-        po1^.par.callinfo.indi.typeid:= typelist.addsubvalue(asub);
+        po1^.par.callinfo.indi.typeid:= 
+                     info.s.unitinfo^.llvmlists.typelist.addsubvalue(asub);
        end
        else begin
         po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;

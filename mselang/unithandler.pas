@@ -657,7 +657,7 @@ begin
 }
  system.finalize(punitinfoty(aitemdata)^);
  with punitinfoty(aitemdata)^ do begin
-  metadatalist.free();
+//  metadatalist.free();
   freeparsercontext(implstart);
  end;
  freemem(punitinfoty(aitemdata));
@@ -673,7 +673,8 @@ begin
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
- result^.metadatalist:= tmetadatalist.create();
+ result^.llvmlists:= globllvmlists;
+// result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;

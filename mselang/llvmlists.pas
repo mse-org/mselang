@@ -430,12 +430,16 @@ type
  tmetadatalist = class(tindexbufferdatalist)
   private
    fnullnode: metavaluety;
+   ftypelist: ttypehashdatalist;
+   fconstlist: tconsthashdatalist;
   protected
 //   fid: int32;
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
    function dwarftag(const atag: int32): metavaluety;
   public
+   constructor create(const atypelist: ttypehashdatalist;
+                          const aconstlist: tconsthashdatalist);
    procedure clear(); override;
    function i8const(const avalue: int8): metavaluety;
    function i32const(const avalue: int32): metavaluety;
@@ -464,6 +468,23 @@ type
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
  end;
+
+ tllvmlists = class
+  private
+   ftypelist: ttypehashdatalist;
+   fconstlist: tconsthashdatalist;
+   fgloblist: tgloballocdatalist;
+   fmetadatalist: tmetadatalist;
+  public
+   constructor create();
+   destructor destroy(); override;
+   procedure clear();
+   property typelist: ttypehashdatalist read ftypelist;
+   property constlist: tconsthashdatalist read fconstlist;
+   property globlist: tgloballocdatalist read fgloblist;
+   property metadatalist: tmetadatalist read fmetadatalist;
+ end;
+ 
 
 implementation
 uses
@@ -1415,13 +1436,13 @@ begin
     dat1.typeindex:= pointertype;
    end;
    ct_pointerarray,ct_aggregatearray: begin
-    dat1.typeindex:= pint32(constlist.absdata(po1^.data.header.buffer))
+    dat1.typeindex:= pint32(fconstlist.absdata(po1^.data.header.buffer))
                            [po1^.data.header.buffersize div sizeof(int32) - 1];
                                        //last item is type
    end;
    ct_aggregate: begin
     dat1.typeindex:= paggregateconstty(
-                 constlist.absdata(po1^.data.header.buffer))^.header.typeid;
+                 fconstlist.absdata(po1^.data.header.buffer))^.header.typeid;
    end;
    else begin
     internalerror1(ie_bcwriter,'20150328C');
@@ -1520,6 +1541,14 @@ end;
 
 { tmetadatalist }
 
+constructor tmetadatalist.create(const atypelist: ttypehashdatalist;
+               const aconstlist: tconsthashdatalist);
+begin
+ ftypelist:= atypelist;
+ fconstlist:= aconstlist;
+ inherited create();
+end;
+
 procedure tmetadatalist.clear;
 begin
  inherited;
@@ -1541,7 +1570,7 @@ end;
 function tmetadatalist.adddata(const akind: metadatakindty; 
                const adatasize: int32; out avalue: metavaluety): pointer;
 begin
- avalue.value.typeid:= typelist.metadata;
+ avalue.value.typeid:= ftypelist.metadata;
  avalue.value.listid:= fcount;
  avalue.flags:= [mvf_meta];
  result:= inherited adddata(adatasize+sizeof(metadataheaderty));
@@ -1553,13 +1582,13 @@ end;
 
 function tmetadatalist.i8const(const avalue: int8): metavaluety;
 begin
- result.value:= constlist.i8const(avalue);
+ result.value:= fconstlist.i8const(avalue);
  result.flags:= [];
 end;
 
 function tmetadatalist.i32const(const avalue: int32): metavaluety;
 begin
- result.value:= constlist.addi32(avalue);
+ result.value:= fconstlist.addi32(avalue);
  result.flags:= [];
 end;
 
@@ -1654,7 +1683,7 @@ end;
 
 function tmetadatalist.dwarftag(const atag: int32): metavaluety;
 begin
- result.value:= constlist.addi32(atag or LLVMDebugVersion);
+ result.value:= fconstlist.addi32(atag or LLVMDebugVersion);
  result.flags:= [];
 end;
 
@@ -1679,4 +1708,32 @@ begin
  result:= addnode([dwarftag(atag)],aitems);
 end;
 }
+
+{ tllvmlists }
+
+constructor tllvmlists.create;
+begin
+ ftypelist:= ttypehashdatalist.create();
+ fconstlist:= tconsthashdatalist.create(ftypelist);
+ fgloblist:= tgloballocdatalist.create(ftypelist,fconstlist);
+ fmetadatalist:= tmetadatalist.create(ftypelist,fconstlist);
+end;
+
+destructor tllvmlists.destroy;
+begin
+ inherited;
+ fmetadatalist.free();
+ fgloblist.free();
+ fconstlist.free();
+ ftypelist.free();
+end;
+
+procedure tllvmlists.clear;
+begin
+ ftypelist.clear();
+ fconstlist.clear();
+ fgloblist.clear();
+ fmetadatalist.clear();
+end;
+
 end.

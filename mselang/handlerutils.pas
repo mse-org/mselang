@@ -659,7 +659,8 @@ begin
  end
  else begin
   if atypedata^.h.datasize = das_none then begin
-   result.listindex:= typelist.addbytevalue(atypedata^.h.bytesize);
+   result.listindex:= info.s.unitinfo^.llvmlists.typelist.
+                                    addbytevalue(atypedata^.h.bytesize);
   end
   else begin
    result.listindex:= ord(atypedata^.h.datasize);
@@ -1193,8 +1194,8 @@ begin
       include(flags,sf_hasnestedref);
       po1^.next:= nestedvarchain;
       po1^.address.datatype:= aopdatatype;
-      po1^.address.arrayoffset:= 
-                    constlist.addi32((nestedvarcount{-1})*pointersize).listid;
+      po1^.address.arrayoffset:= info.s.unitinfo^.llvmlists.constlist.
+                              addi32((nestedvarcount{-1})*pointersize).listid;
       po1^.address.origin:= addressbefore;
       po1^.address.nested:= true;
       if int1 = 0 then begin //last
@@ -1976,10 +1977,11 @@ begin
  if co_llvm in info.compileoptions then begin
   if address.segment = seg_globvar then begin
    if adatasize = das_none then begin
-    address.address:= globlist.addbytevalue(asize);
+    address.address:= info.s.unitinfo^.llvmlists.globlist.addbytevalue(asize);
    end
    else begin
-    address.address:= globlist.addbitvalue(adatasize);
+    address.address:= info.s.unitinfo^.llvmlists.globlist.
+                                                    addbitvalue(adatasize);
    end;
   end;
  end;

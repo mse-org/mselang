@@ -235,18 +235,20 @@ begin
   end;
   if co_llvm in compileoptions then begin
    lstr1:= stringtolstring('main');
-   m1.value.listid:= globlist.addsubvalue(nil,lstr1);
-   m1.value.typeid:= globlist.gettype(m1.value.listid);
+   m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,lstr1);
+   m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
+                                          gettype(m1.value.listid);
    m1.flags:= [mvf_globval,mvf_sub];
    if info.s.debugoptions <> [] then begin
     with info.s.unitinfo^ do begin
-     mainsubmeta:= metadatalist.adddisubprogram(filepathmeta,
-            debugfilemeta,lstr1,
-                  info.contextstack[info.s.stackindex].start.line+1,m1,
-                  metadatalist.adddisubroutinetype(metadatalist.nullnode));
-     m1:= metadatalist.addnode([mainsubmeta]);
-     pdicompileunitty(
-             metadatalist.items[compileunitmeta.value.listid])^.subprograms:= m1;
+     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
+           debugfilemeta,lstr1,
+           info.contextstack[info.s.stackindex].start.line+1,m1,
+           llvmlists.metadatalist.adddisubroutinetype(
+                                      llvmlists.metadatalist.nullnode));
+     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
+     pdicompileunitty(llvmlists.metadatalist.items[
+                            compileunitmeta.value.listid])^.subprograms:= m1;
      info.s.currentscopemeta:= mainsubmeta.value.listid;
     end;
    end;
@@ -960,7 +962,8 @@ begin
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
           if co_llvm in compileoptions then begin
-           par.imm.llvm:= constlist.addi32(pob^.d.dat.constval.vinteger);
+           par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.
+                                        addi32(pob^.d.dat.constval.vinteger);
           end
           else begin
            par.imm.vint32:= pob^.d.dat.constval.vinteger;
@@ -979,7 +982,7 @@ begin
           if i2 <> 1 then begin
            with additem(oc_mulimmint32)^ do begin
             if co_llvm in compileoptions then begin
-             par.imm.llvm:= constlist.addi32(i2);
+             par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(i2);
             end
             else begin
              par.imm.vint32:= i2;

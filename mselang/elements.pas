@@ -312,10 +312,11 @@ function stringconst(const astring: stringvaluety): segaddressty;
 
 var
  ele: telementhashdatalist;
- typelist: ttypehashdatalist;
- constlist: tconsthashdatalist;
- globlist: tgloballocdatalist;
- mainmetadatalist: tmetadatalist;
+ globllvmlists: tllvmlists;
+// typelist: ttypehashdatalist;
+// constlist: tconsthashdatalist;
+// globlist: tgloballocdatalist;
+// mainmetadatalist: tmetadatalist;
 
 implementation
 uses
@@ -482,9 +483,10 @@ begin
  ele.clear;
  
  stringbuf.clear;
- typelist.clear();
- constlist.clear();
- globlist.clear();
+ globllvmlists.clear();
+// typelist.clear();
+// constlist.clear();
+// globlist.clear();
 end;
 
 procedure init;
@@ -2099,7 +2101,8 @@ begin
    result.segment:= seg_globconst;
    result.address:= constoffset+sizeof(string8headerty);
    if co_llvm in info.compileoptions then begin
-    result.address:= constlist.adddataoffs(result.address).listid;
+    result.address:= info.s.unitinfo^.llvmlists.constlist.
+                                  adddataoffs(result.address).listid;
    end;
   end;
  end;
@@ -2108,14 +2111,16 @@ end;
 initialization
  stringbuf:= tstringbuffer.create;
  ele:= telementhashdatalist.create;
- typelist:= ttypehashdatalist.create();
- constlist:= tconsthashdatalist.create(typelist);
- globlist:= tgloballocdatalist.create(typelist,constlist);
+ globllvmlists:= tllvmlists.create();
+// typelist:= ttypehashdatalist.create();
+// constlist:= tconsthashdatalist.create(typelist);
+// globlist:= tgloballocdatalist.create(typelist,constlist);
  clear();
 finalization
  stringbuf.free();
  ele.free();
- typelist.free();
- constlist.free();
- globlist.free();
+ globllvmlists.free();
+// typelist.free();
+// constlist.free();
+// globlist.free();
 end.

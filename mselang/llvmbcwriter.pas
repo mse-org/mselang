@@ -460,15 +460,15 @@ begin
       emitrec(ord(TYPE_CODE_ARRAY),[pt1^.header.buffer,typeval(pointertype)]);
      end;
      ak_aggregatearray: begin
-      with paggregatearraytypedataty(
-                       typelist.absdata(pt1^.header.buffer))^ do begin
+      with paggregatearraytypedataty(info.s.unitinfo^.llvmlists.typelist.
+                                        absdata(pt1^.header.buffer))^ do begin
        emitrec(ord(TYPE_CODE_ARRAY),[size,typeval(typ)]);
       end;
      end;
      ak_struct: begin
       i2:= pt1^.header.buffersize div sizeof(int32);
       emitrec(ord(TYPE_CODE_STRUCT_ANON),[0],i2);
-      pa:= typelist.absdata(pt1^.header.buffer);
+      pa:= info.s.unitinfo^.llvmlists.typelist.absdata(pt1^.header.buffer);
       pe:= pa+i2;
       while pa < pe do begin
        emitvbr6(typeval(pa^));
@@ -632,10 +632,11 @@ begin
       ct_pointercast: begin
        checkconsttypeid(pointertype);
        emitpointercastconst(globval(pc2^.header.buffer),
-                               ptypeval(globlist.gettype(pc2^.header.buffer)));
+                 ptypeval(info.s.unitinfo^.llvmlists.globlist.
+                                                gettype(pc2^.header.buffer)));
       end;
       ct_pointerarray,ct_aggregatearray: begin
-       pa:= constlist.absdata(pc2^.header.buffer);
+       pa:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
        i2:= pc2^.header.buffersize div sizeof(int32) - 1;
        checkconsttypeid(pa[i2]); //last item is type
        emitrec(ord(CST_CODE_AGGREGATE),[],i2); //ids
@@ -646,7 +647,7 @@ begin
        end;
       end;
       ct_aggregate: begin
-       po9:= constlist.absdata(pc2^.header.buffer);
+       po9:= info.s.unitinfo^.llvmlists.constlist.absdata(pc2^.header.buffer);
        checkconsttypeid(po9^.header.typeid);
        pa:= @po9^.items;
        i2:= po9^.header.itemcount;
