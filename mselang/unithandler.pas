@@ -94,6 +94,9 @@ procedure handleinitialization();
 procedure handlefinalizationstart();
 procedure handlefinalization();
 
+procedure beginunit(const aunit: punitinfoty);
+function endunit(const aunit: punitinfoty): boolean;
+
 procedure init;
 procedure deinit(const freeunitlist: boolean);
 
@@ -1224,6 +1227,19 @@ begin
  end;
 end;
 *)
+
+procedure beginunit(const aunit: punitinfoty);
+begin
+end;
+
+function endunit(const aunit: punitinfoty): boolean;
+begin
+ result:= true;
+ if co_writertunits in info.compileoptions then begin
+  result:= writeunitfile(aunit);
+ end;
+end;
+
 procedure clear;
 begin
  clearlist(classdescendlist,sizeof(classdescendinfoty),256);

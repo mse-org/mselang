@@ -98,9 +98,11 @@ type
   oc_destroyclass,
 
   oc_beginparse,
+  oc_endparse,
+  oc_beginunit,
+  oc_endunit,
   oc_main,
   oc_progend,
-  oc_endparse,
   oc_halt,
   
   oc_movesegreg0,
@@ -606,6 +608,9 @@ type
   finisub: opaddressty; //0 -> none
  end;  
 
+ beginunitinfoty = record
+ end;
+ 
  stackopty = record
   t: typeallocinfoty;
  end;
@@ -796,6 +801,9 @@ type
    );
    oc_beginparse: (
     beginparse: beginparseinfoty;
+   );
+   oc_beginunit: (
+    beginunit: beginunitinfoty;
    );
    oc_none,oc_nop: (
     dummy: record

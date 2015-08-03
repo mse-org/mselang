@@ -425,6 +425,19 @@ begin
  end;
 end;
 
+procedure endparseop();
+begin
+ bcstream.stop();
+end;
+
+procedure beginunitop();
+begin
+end;
+
+procedure endunitop();
+begin
+end;
+
 procedure mainop();
 begin
  with pc^.par do begin
@@ -439,11 +452,6 @@ begin
  bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
  bcstream.emitretop(bcstream.ssaindex-1);
  bcstream.endsub();
-end;
-
-procedure endparseop();
-begin
- bcstream.stop();
 end;
 
 procedure haltop();
@@ -2870,9 +2878,11 @@ const
   decloop64ssa = 1;
 
   beginparsessa = 0;
+  endparsessa = 0;
+  beginunitssa = 0;
+  endunitssa = 0;
   mainssa = 0;//1;
   progendssa = 0;  
-  endparsessa = 0;
   haltssa = 1;
 
   movesegreg0ssa = 1;

@@ -329,6 +329,21 @@ begin
  end;
 end;
 
+procedure endparseop();
+begin
+ //dummy
+end;
+
+procedure beginunitop();
+begin
+ //dummy
+end;
+
+procedure endunitop();
+begin
+ //dummy
+end;
+
 procedure mainop();
 begin
  cpu.frame:= cpu.stack;
@@ -337,11 +352,6 @@ end;
 procedure progendop();
 begin
  cpu.stop:= true;
-end;
-
-procedure endparseop();
-begin
- //dummy
 end;
 
 procedure cmpjmpneimm4op();
@@ -3408,9 +3418,11 @@ const
 
  
   beginparsessa = 0;
+  endparsessa = 0;
+  beginunitssa = 0;
+  endunitssa = 0;
   mainssa = 0;
   progendssa = 0;  
-  endparsessa = 0;
   haltssa = 0;
 
   movesegreg0ssa = 0;

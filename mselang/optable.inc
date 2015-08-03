@@ -916,12 +916,16 @@
 
 //oc_beginparse
   (ssa: beginparsessa; proc: @beginparseop; flags: []), 
+//oc_endparse
+  (ssa: endparsessa; proc: @endparseop; flags: []), 
+//oc_beginunit
+  (ssa: beginunitssa; proc: @beginunitop; flags: []), 
+//oc_endunit
+  (ssa: endunitssa; proc: @endunitop; flags: []), 
 //oc_main
   (ssa: mainssa; proc: @mainop; flags: []), 
 //oc_progend
   (ssa: progendssa; proc: @progendop; flags: []), 
-//oc_endparse
-  (ssa: endparsessa; proc: @endparseop; flags: []), 
 //oc_halt
   (ssa: haltssa; proc: @haltop; flags: []), 
 

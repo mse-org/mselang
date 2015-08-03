@@ -485,6 +485,8 @@ begin
     parent:= s.stackindex;
    end;
  
+   beginunit(aunit);
+   
    if s.debugoptions <> [] then begin
     with s.unitinfo^ do begin
      filepathmeta:= llvmlists.metadatalist.addfile(filepath);
@@ -848,17 +850,20 @@ parseend:
      end;
     end;
    end;
+   if us_implementationparsed in aunit^.state then begin
+    result:= endunit(aunit);
+   end;
   end;
 
   s:= statebefore;  
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;
  end;
-
+{
  if result and (co_writertunits in info.compileoptions) then begin
   result:= writeunitfile(aunit);
  end;
- 
+} 
 {$ifdef mse_debugparser}
  write('**** end **** ');
  if aunit <> nil then begin
