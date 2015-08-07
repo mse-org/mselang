@@ -96,6 +96,7 @@ procedure handlefinalization();
 
 procedure beginunit(const aunit: punitinfoty);
 function endunit(const aunit: punitinfoty): boolean;
+procedure finalizeunit(const aunit: punitinfoty);
 
 procedure init;
 procedure deinit(const freeunitlist: boolean);
@@ -105,7 +106,7 @@ uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes,
- rtunitwriter,identutils,mseformatstr;
+ rtunitwriter,identutils,mseformatstr,sysutils;
  
 type
  unithashdataty = record
@@ -1237,6 +1238,15 @@ begin
  result:= true;
  if co_writertunits in info.compileoptions then begin
   result:= writeunitfile(aunit);
+ end;
+end;
+
+procedure finalizeunit(const aunit: punitinfoty);
+begin
+ with aunit^ do begin
+  if llvmlists <> globllvmlists then begin
+   freeandnil(llvmlists);
+  end;
  end;
 end;
 

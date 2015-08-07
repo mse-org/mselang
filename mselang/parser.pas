@@ -854,7 +854,9 @@ parseend:
     result:= endunit(aunit);
    end;
   end;
-
+  if (result = false) or (us_implementationparsed in aunit^.state) then begin
+   finalizeunit(aunit);
+  end;
   s:= statebefore;  
   dec(unitlevel);
   ele.elementparent:= eleparentbefore;

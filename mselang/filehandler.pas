@@ -23,7 +23,9 @@ uses
 //todo: use search tree and cache
 
 const
+ compunitextension = 'mcu';
  rtunitextension = 'mru';
+ bcunitextension = 'mbc';
  mlaextension = 'mla';
  pasextension = 'pas';
 
@@ -34,6 +36,7 @@ function getincludefile(const aname: lstringty): filenamety;
 function getrtunitfile(const aunit: punitinfoty): filenamety;
 function getrtunitfile(const aunitname: lstringty): filenamety;
 function getrtunitfilename(const aname: filenamety): filenamety;
+function getbcunitfilename(const aname: filenamety): filenamety;
 
 function getsysfile(const aname: filenamety): filenamety;
 
@@ -86,6 +89,11 @@ end;
 function getrtunitfilename(const aname: filenamety): filenamety;
 begin
  result:= replacefileext(aname,rtunitextension);
+end;
+
+function getrtunitfilename(const aname: filenamety): filenamety;
+begin
+ result:= replacefileext(aname,bcunitextension);
 end;
 
 function getrtunitfile(const aunit: punitinfoty): filenamety;

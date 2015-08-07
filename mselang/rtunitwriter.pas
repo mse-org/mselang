@@ -26,7 +26,7 @@ implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
- sysutils;
+ sysutils,llvmbcwriter;
 {
 type
  unitrecheaderty = record
@@ -267,6 +267,7 @@ var
  stat1: subsegmentstatety;
  stream1: tmsefilestream;
  fna1: filenamety;
+ llvmout1: tllvmbcwriter = nil;
 begin
  result:= putunit(aunit);
  if result then begin
@@ -276,9 +277,20 @@ begin
    writesegmentdata(stream1,getfilekind(mlafk_rtunit),
             [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
                                                      aunit^.filetimestamp);
-                               //todo: complete 
-   restoresubsegment(stat1);
+                               //todo: complete, no seg_op for llvm
    stream1.destroy();
+   if co_llvm in info.compileoptions then begin
+    fna1:= getbcunitfilename(aunit^.filepath);
+    result:= tllvmbcwriter.trycreate(
+                            tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;
+    if result then begin
+     llvmout1.free();
+    end
+    else begin
+     filewriteerror(fna1);
+    end;
+   end;
+   restoresubsegment(stat1);
   end
   else begin
    filewriteerror(fna1);
