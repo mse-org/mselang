@@ -91,7 +91,7 @@ begin
  result:= replacefileext(aname,rtunitextension);
 end;
 
-function getrtunitfilename(const aname: filenamety): filenamety;
+function getbcunitfilename(const aname: filenamety): filenamety;
 begin
  result:= replacefileext(aname,bcunitextension);
 end;
