@@ -334,7 +334,7 @@ begin
  //dummy
 end;
 
-procedure beginunitop();
+procedure beginunitcodeop();
 begin
  //dummy
 end;
@@ -3419,7 +3419,7 @@ const
  
   beginparsessa = 0;
   endparsessa = 0;
-  beginunitssa = 0;
+  beginunitcodessa = 0;
   endunitssa = 0;
   mainssa = 0;
   progendssa = 0;  

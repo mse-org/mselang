@@ -443,8 +443,9 @@ begin
     level1:= aerrorlevel;
    end;
    inc(errors[level1]);
-   str1:= s.filename+'('+inttostr(line+1)+','+inttostr(po-po1+coloffset)+') '+
-       errorleveltext[level1]+': '+format(message,values);
+   str1:= ansistring(s.filename)+'('+inttostr(line+1)+','+
+         inttostr(po-po1+coloffset)+') '+errorleveltext[level1]+': '+
+                                format(ansistring(message),values);
    writeerror(str1);
 {$ifdef mse_debugparser}
    writeln('<<<<<<< '+str1);

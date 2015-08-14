@@ -177,7 +177,7 @@ procedure deinit();
 
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
-procedure outinfo(const text: string; const indent: boolean);
+procedure outinfo(const text: string; const indent: boolean = true);
 procedure dumpelements();
 {$endif}
 
@@ -196,15 +196,15 @@ const
    (name: 'none'; data: (h: (ancestor: 0; kind: dk_none;
        base: 0; rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 0; bytesize: 0; datasize: das_none);
-       dummy: 0)),
+       dummy1: 0)),
    (name: 'pointer'; data: (h: (ancestor: 0; kind: dk_pointer;
        base: 0;  rtti: 0; flags: []; indirectlevel: 1;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);
-       dummy: 0)),
+       dummy1: 0)),
    (name: 'bool1'; data: (h: (ancestor: 0; kind: dk_boolean;
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 1; bytesize: 1; datasize: das_1);
-       dummy: 0)),
+       dummy1: 0)),
    (name: 'int8'; data: (h: (ancestor: 0; kind: dk_integer;
        base: 0;  rtti: 0; flags: [];indirectlevel: 0;
        bitsize: 8; bytesize: 1; datasize: das_8);
@@ -245,7 +245,7 @@ const
        base: 0;  rtti: 0; flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);
        manageproc: @managestring8; itemsize: 1;
-                 dummy: 0))
+                 dummy2: 0))
   );
  sysconstinfos: array[0..2] of sysconstinfoty = (
    (name: 'false'; ctyp: st_bool1; cval:(kind: dk_boolean; vboolean: false)),
@@ -2082,7 +2082,7 @@ begin
                          singleline(s.source.po),'''');
   writeln;
   for int1:= 0 to s.stacktop do begin
-   write(fitstring(inttostr(int1),3,sp_right));
+   write(fitstring(inttostrmse(int1),3,sp_right));
    if int1 = s.stackindex then begin
     write('*');
    end
@@ -2096,7 +2096,7 @@ begin
     write(' ');
    end;
    with contextstack[int1],d do begin
-    write(fitstring(inttostr(parent),3,sp_right),' ');
+    write(fitstring(inttostrmse(parent),3,sp_right),' ');
     if bf_continue in transitionflags then begin
      write('>');
     end
@@ -2130,11 +2130,11 @@ begin
        write(' ');
       end;
      end;
-     write(fitstring(inttostr(opmark.address),3,sp_right));
+     write(fitstring(inttostrmse(opmark.address),3,sp_right));
      write('<',context^.caption,'> ');
     end
     else begin
-     write(fitstring(inttostr(opmark.address),3,sp_right));
+     write(fitstring(inttostrmse(opmark.address),3,sp_right));
      write('<NIL> ');
     end;
     write(getenumname(typeinfo(kind),ord(kind)),' ');

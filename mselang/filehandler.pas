@@ -25,7 +25,7 @@ uses
 const
  compunitextension = 'mcu';
  rtunitextension = 'mru';
- bcunitextension = 'mbc';
+ bcunitextension = 'bc';
  mlaextension = 'mla';
  pasextension = 'pas';
 

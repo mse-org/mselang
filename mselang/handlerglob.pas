@@ -177,7 +177,7 @@ type
   h: typedataheaderty;
   case datakindty of 
    dk_boolean:(
-    dummy: byte
+    dummy1: byte //for systypeinfos list
    );
    dk_cardinal:(
     case databitsizety of
@@ -203,7 +203,7 @@ type
     itemsize: integer; //bytes
     case datakindty of
      dk_string8:(
-      dummy: byte; //for systypeinfos list
+      dummy2: byte; //for systypeinfos list
      );
      dk_dynarray:(
       infodynarray: infodynarrayty;

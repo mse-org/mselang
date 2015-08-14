@@ -1222,26 +1222,28 @@ function telementhashdatalist.dumpelements: msestringarty;
   end
   else begin
    po2:= eleinfoabs(atyp);
-   result:= ' T:'+inttostr(atyp)+':'+getidentname(po2^.header.name);
+   result:= ' T:'+inttostrmse(atyp)+':'+
+                         msestring(getidentname(po2^.header.name));
    with ptypedataty(@po2^.data)^ do begin
-    result:= result+' B:'+inttostr(h.base);
-    result:= result+' K:'+getenumname(typeinfo(h.kind),ord(h.kind));
+    result:= result+' B:'+inttostrmse(h.base);
+    result:= result+' K:'+msestring(getenumname(typeinfo(h.kind),ord(h.kind)));
     if h.kind <> dk_none then begin
      result:= result+
-     ' F:'+settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false)+
-     ' S:'+inttostr(h.bytesize)+' I:'+inttostr(h.indirectlevel);
+     ' F:'+msestring(
+           settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false))+
+     ' S:'+inttostrmse(h.bytesize)+' I:'+inttostrmse(h.indirectlevel);
      case h.kind of
       dk_enumitem: begin
-       result:= result+' value:'+inttostr(infoenumitem.value);
+       result:= result+' value:'+inttostrmse(infoenumitem.value);
       end;
       dk_set: begin
-       result:= result+' itemtyp:'+inttostr(infoset.itemtype);
+       result:= result+' itemtyp:'+inttostrmse(infoset.itemtype);
       end;
       dk_interface: begin
-       result:= result+' subco:'+inttostr(infointerface.subcount);
+       result:= result+' subco:'+inttostrmse(infointerface.subcount);
       end;
       dk_sub: begin
-       result:= result+' sub:'+inttostr(infosub.sub);
+       result:= result+' sub:'+inttostrmse(infosub.sub);
       end;
      end;
     end;
@@ -1276,29 +1278,31 @@ begin
   if po1 <> pointer(felementdata) then begin
    po2:= pelementinfoty(pointer(felementdata)+po1^.header.parent);
    if po1^.header.path <> po2^.header.path + po2^.header.name then begin
-    mstr1:= mstr1 + '*WRONG PATH $'+hextostr(po1^.header.path,8)+'* ';
+    mstr1:= mstr1 + '*WRONG PATH $'+hextostrmse(po1^.header.path,8)+'* ';
    end;
   end;
-  mstr1:= mstr1+'O:'+inttostr(int1) +
-            ' P:'+inttostr(po1^.header.parent)+' N:$'+
-            hextostr(po1^.header.name,8)+' '+
-            ' '+getidentname(po1^.header.name) + 
-            ' '+getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
-             ' V:'+settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
-                                 integer(po1^.header.visibility),false);
+  mstr1:= mstr1+'O:'+inttostrmse(int1) +
+            ' P:'+inttostrmse(po1^.header.parent)+' N:$'+
+            hextostrmse(po1^.header.name,8)+' '+
+            ' '+msestring(getidentname(po1^.header.name)) + 
+            ' '+msestring(
+                 getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind)))+
+             ' V:'+msestring(
+             settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
+                                 integer(po1^.header.visibility),false));
   case po1^.header.kind of
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' A:'+inttostr(address.poaddress)+' I:'+
-               inttostr(address.indirectlevel)+ ' ' +
-           settostring(ptypeinfo(typeinfo(address.flags)),
-                                         integer(address.flags),false);
+     mstr1:= mstr1+lineend+' A:'+inttostrmse(address.poaddress)+' I:'+
+               inttostrmse(address.indirectlevel)+ ' ' +
+           msestring(settostring(ptypeinfo(typeinfo(address.flags)),
+                                         integer(address.flags),false));
      if af_segment in address.flags then begin
-      mstr1:= mstr1+' S:'+getenumname(typeinfo(segmentty),
-                                    ord(address.segaddress.segment));
+      mstr1:= mstr1+' S:'+msestring(getenumname(typeinfo(segmentty),
+                                    ord(address.segaddress.segment)));
      end
      else begin
-      mstr1:= mstr1+' L:'+inttostr(address.locaddress.framelevel);
+      mstr1:= mstr1+' L:'+inttostrmse(address.locaddress.framelevel);
      end;               
 
      mstr1:= mstr1 + dumptyp(vf.typ);
@@ -1314,10 +1318,10 @@ begin
    end;
    ek_field: begin
     with pfielddataty(@po1^.data)^ do begin
-     mstr1:= mstr1+lineend+' O:'+inttostr(offset)+
-          ' I:'+inttostr(indirectlevel)+' '+
-           settostring(ptypeinfo(typeinfo(flags)),
-                                         integer(flags),false);
+     mstr1:= mstr1+lineend+' O:'+inttostrmse(offset)+
+          ' I:'+inttostrmse(indirectlevel)+' '+
+           msestring(settostring(ptypeinfo(typeinfo(flags)),
+                                         integer(flags),false));
      mstr1:= mstr1+dumptyp(vf.typ);
     {
      po2:= eleinfoabs(vf.typ);
@@ -1337,20 +1341,20 @@ begin
                       ' S:'+inttostr(bytesize)+' I:'+inttostr(indirectlevel);
      }
      if h.kind in ancestordatakinds then begin
-      mstr1:= mstr1+' A:'+inttostr(h.ancestor);
+      mstr1:= mstr1+' A:'+inttostrmse(h.ancestor);
       case h.kind of
        dk_class: begin
-        mstr1:= mstr1+' alloc:'+inttostr(infoclass.allocsize)+
-                      ' virt:'+inttostr(infoclass.virtualcount)+
-                      ' intf:'+inttostr(infoclass.interfacecount)+
-                      ' isub:'+inttostr(infoclass.interfacesubcount)+
-                      ' defs:'+inttostr(infoclass.defs.address);
+        mstr1:= mstr1+' alloc:'+inttostrmse(infoclass.allocsize)+
+                      ' virt:'+inttostrmse(infoclass.virtualcount)+
+                      ' intf:'+inttostrmse(infoclass.interfacecount)+
+                      ' isub:'+inttostrmse(infoclass.interfacesubcount)+
+                      ' defs:'+inttostrmse(infoclass.defs.address);
         po5:= @classdefinfoty(getsegmentpo(infoclass.defs)^).virtualmethods;
         for int6:= 0 to infoclass.virtualcount-1 do begin
          if int6 mod 5 = 0 then begin
           mstr1:= mstr1+lineend+'  ';
          end;
-         mstr1:= mstr1+inttostrlen(po5^,4)+' ';
+         mstr1:= mstr1+inttostrlenmse(po5^,4)+' ';
          inc(po5);
         end;
        end;
@@ -1369,9 +1373,10 @@ begin
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
-     ' F:'+settostring(ptypeinfo(typeinfo(flags)),integer(flags),false)+
-     ' idx:'+inttostr(tableindex)+' impl:'+inttostr(impl)+
-     ' op:'+inttostr(address);
+     ' F:'+msestring(
+            settostring(ptypeinfo(typeinfo(flags)),integer(flags),false))+
+     ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
+     ' op:'+inttostrmse(address);
      if flags * [sf_functiontype,sf_constructor] <> [] then begin
       mstr1:= mstr1+lineend+' result:'+dumptyp(resulttype);
      end;
@@ -1379,7 +1384,7 @@ begin
    end;
    ek_uses: begin
     with pusesdataty(@po1^.data)^ do begin
-     mstr1:= mstr1 + ' U:'+inttostr(ref);
+     mstr1:= mstr1 + ' U:'+inttostrmse(ref);
     end;
    end;
   end;
@@ -1404,7 +1409,7 @@ begin
     mstr2:= ' ';
    end;
    ar2[0]:= mstr2+charstring(msechar('.'),int3)+'$'+
-                 hextostr(longword(int5+int4+po1^.header.name),8)+ar2[0];
+                 hextostrmse(longword(int5+int4+po1^.header.name),8)+ar2[0];
 //                 hextostr(longword(po1^.header.path),8)+ar2[0];
    mstr2:= charstring(msechar(' '),int3+1);
    for int6:= 1 to high(ar2) do begin
@@ -1417,7 +1422,7 @@ begin
  setlength(ar1,int2);
  sortarray(ar1,sizeof(ar1[0]),@compdump);
  setlength(result,int2+1);
- result[0]:= 'elementpath: $'+hextostr(felementpath,8);
+ result[0]:= 'elementpath: $'+hextostrmse(felementpath,8);
  for int1:= 0 to int2-1 do begin
   result[int1+1]:= ar1[int1].text;
  end;
@@ -1428,27 +1433,29 @@ begin
   po4:= fscopes;
   for int1:= int1 to high(result) do begin
    po1:= ele.eleinfoabs(po4^.element);
-   mstr1:= getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind));
+   mstr1:= msestring(
+              getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind)));
    po1:= ele.eleinfoabs(po4^.childparent);
    mstr1:= mstr1+' CP:'+
-    getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
-    ' '+getidentname(po1^.header.name);
+    msestring(getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind))+
+    ' '+getidentname(po1^.header.name));
    result[int1]:= mstr1;
    inc(po4);
   end;
  end;
 end;
 
-function telementhashdatalist.dumppath(const aelement: pelementinfoty): msestring;
+function telementhashdatalist.dumppath(
+                               const aelement: pelementinfoty): msestring;
 var
  po1: pelementinfoty;
 begin
  result:= '';
  po1:= aelement;
- result:= getidentname(po1^.header.name);
+ result:= msestring(getidentname(po1^.header.name));
  while po1^.header.parent <> 0 do begin
   po1:= pointer(felementdata)+po1^.header.parent;
-  result:= getidentname(po1^.header.name)+'.'+result;
+  result:= msestring(getidentname(po1^.header.name)+'.')+result;
  end;
 end;
 {$endif}

@@ -73,7 +73,7 @@ var
 implementation
 uses
  main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,
- msesystypes,llvmbcwriter,unithandler;
+ msesystypes,llvmbcwriter,unithandler,mseformatstr;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
@@ -106,43 +106,45 @@ begin
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
-  bo1:= parser.parse(ed.gettext,filena.value,compoptions);
+  bo1:= parser.parse(ansistring(ed.gettext),filena.value,compoptions);
   try
    errstream.position:= 0;
    grid[0].datalist.loadfromstream(errstream);
    if bo1 then begin
     if llvm.value then begin
-     filename1:= replacefileext(filena.value,'bc');
-     if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
-                                filename1,fm_create) <> sye_ok then begin
-      grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
-     end
-     else begin
-      try
-       llvmops.run(targetstream);
-      finally
-       unithandler.deinit(true); //destroy unitlist
-      end;
-      targetstream.destroy();
-      int1:= getprocessoutput(llvmbindir+'llc '+filename1,'',str1);
-      grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-      if int1 = 0 then begin
-       int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
-                         filenamebase(filename1)+'.s','',str1);
-       grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-       if int1 = 0 then begin
-        if not norun.value then begin
-         int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+     try
+      if not wrtued.value then begin
+       filename1:= replacefileext(filena.value,'bc');
+       if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
+                                  filename1,fm_create) <> sye_ok then begin
+        grid.appendrow(['******TARGET FILE WRITE ERROR*******']);
+       end
+       else begin
+        llvmops.run(targetstream,true);
+        targetstream.destroy();
+        int1:= getprocessoutput(llvmbindir+'llc '+filename1,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        if int1 = 0 then begin
+         int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
+                           filenamebase(filename1)+'.s','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-         grid.appendrow(['EXITCODE: '+inttostr(int1)]);
+         if int1 = 0 then begin
+          if not norun.value then begin
+           int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+           grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+          end;
+         end;
         end;
        end;
       end;
+     finally
+      unithandler.deinit(true); //destroy unitlist
      end;
     end
     else begin
      if not norun.value then begin
-      grid.appendrow(['EXITCODE: '+inttostr(stackops.run(1024))]);
+      grid.appendrow(['EXITCODE: '+inttostrmse(stackops.run(1024))]);
      end;
     end;
    end;

@@ -18,7 +18,7 @@ unit unitwriter;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,rtunitglob;
+ parserglob,unitglob;
   
 function writeunitfile(const aunit: punitinfoty): boolean; //true if ok
 
@@ -26,7 +26,7 @@ implementation
 uses
  elements,segmentutils,globtypes,errorhandler,msestrings,handlerglob,msestream,
  msefileutils,msesys,msesystypes,filehandler,handlerutils,identutils,
- sysutils,llvmbcwriter;
+ sysutils,llvmbcwriter,llvmops;
 {
 type
  unitrecheaderty = record
@@ -284,7 +284,11 @@ begin
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;
     if result then begin
-     llvmout1.free();
+     try
+      llvmops.run(llvmout1,false);
+     finally
+      llvmout1.free();
+     end;
     end
     else begin
      filewriteerror(fna1);

@@ -215,6 +215,8 @@ begin
   implementationglobstart:= info.globdatapo;
   reloc.opstart:= info.opcount;
   opseg:= getsubsegment(seg_op);
+  with additem(oc_beginunitcode)^ do begin
+  end;
  end;
 end;
 
@@ -677,6 +679,7 @@ begin
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
+// if 
  result^.llvmlists:= globllvmlists;
 // result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
@@ -1235,6 +1238,8 @@ end;
 
 function endunit(const aunit: punitinfoty): boolean;
 begin
+ with additem(oc_endunit)^ do begin
+ end;
  result:= true;
  if co_writertunits in info.compileoptions then begin
   result:= writeunitfile(aunit);

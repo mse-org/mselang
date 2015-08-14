@@ -73,10 +73,10 @@ begin
                           filename1,fm_create),
                              err_cannotcreatetargetfile,[filename1]) then begin
       try
-       llvmops.run(llvmstream);
+       llvmops.run(llvmstream,true);
       except
        on e: exception do begin
-        errormessage1(msestring(e.message),[]);
+        errormessage1(e.message,[]);
         exitcode:= 1;
        end;
       end;

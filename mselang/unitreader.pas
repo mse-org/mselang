@@ -18,7 +18,7 @@ unit unitreader;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- parserglob,rtunitglob;
+ parserglob,unitglob;
 {$goto on}
  
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok

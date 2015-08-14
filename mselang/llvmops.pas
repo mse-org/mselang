@@ -27,7 +27,7 @@ function getoptable: poptablety;
 //function getssatable: pssatablety;
 //procedure allocproc(const asize: integer; var address: segaddressty);
 
-procedure run(const atarget: tllvmbcwriter);
+procedure run(const atarget: tllvmbcwriter; const amain: boolean);
  
 implementation
 uses
@@ -325,8 +325,9 @@ end;
 var
  exitcodeaddress: segaddressty;
  finihandler: int32; //globid
+ codestarted: boolean;
 
-procedure beginparseop();
+procedure startllvmcode();
 var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
@@ -346,6 +347,7 @@ var
  countpo,counte: pint32;
  intfpo: pintfdefinfoty;
 begin
+ codestarted:= true;
  for int1:= low(i32consts) to high(i32consts) do begin
   i32consts[int1]:= info.s.unitinfo^.llvmlists.constlist.addi32(int1).listid;
  end;
@@ -411,10 +413,15 @@ begin
    freemem(virtualsubconsts);
   end;
  end;
+ with info.s.unitinfo^.llvmlists do begin
+  bcstream.start(constlist,globlist,metadatalist);
+ end;
+end;
+
+procedure beginparseop();
+begin
+ startllvmcode(); 
  with pc^.par.beginparse do begin
-  with info.s.unitinfo^.llvmlists do begin
-   bcstream.start(constlist,globlist,metadatalist);
-  end;
   llvmops.exitcodeaddress:= exitcodeaddress;
   if finisub = 0 then begin
    llvmops.finihandler:= 0;
@@ -430,8 +437,11 @@ begin
  bcstream.stop();
 end;
 
-procedure beginunitop();
+procedure beginunitcodeop();
 begin
+ if not codestarted then begin
+  startllvmcode();
+ end;
 end;
 
 procedure endunitop();
@@ -2879,7 +2889,7 @@ const
 
   beginparsessa = 0;
   endparsessa = 0;
-  beginunitssa = 0;
+  beginunitcodessa = 0;
   endunitssa = 0;
   mainssa = 0;//1;
   progendssa = 0;  
@@ -3314,23 +3324,19 @@ const
   
 {$include optable.inc}
 
-procedure run(const atarget: tllvmbcwriter);
+procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 var
  endpo: pointer;
  lab: shortstring;
 begin
  bcstream:= atarget;
+ codestarted:= false;
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
- inc(pc,startupoffset);
+ if amain then begin
+  inc(pc,startupoffset);
+ end;
  while pc < endpo do begin
- {
-  if opf_label in pc^.op.flags then begin
-   curoplabel(lab);
-   outass('br label %'+lab);
-   outass(lab+':');
-  end;
-  }
   optable[pc^.op.op].proc();
   inc(pc);
  end;

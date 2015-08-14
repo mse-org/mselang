@@ -869,7 +869,7 @@ parseend:
 {$ifdef mse_debugparser}
  write('**** end **** ');
  if aunit <> nil then begin
-  writeinfoline(aunit^.filepath);
+  writeinfoline(ansistring(aunit^.filepath));
  end
  else begin
   writeinfoline('NIL');

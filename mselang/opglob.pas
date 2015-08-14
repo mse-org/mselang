@@ -99,7 +99,7 @@ type
 
   oc_beginparse,
   oc_endparse,
-  oc_beginunit,
+  oc_beginunitcode,
   oc_endunit,
   oc_main,
   oc_progend,
@@ -608,7 +608,7 @@ type
   finisub: opaddressty; //0 -> none
  end;  
 
- beginunitinfoty = record
+ beginunitcodeinfoty = record
  end;
  
  stackopty = record
@@ -802,8 +802,8 @@ type
    oc_beginparse: (
     beginparse: beginparseinfoty;
    );
-   oc_beginunit: (
-    beginunit: beginunitinfoty;
+   oc_beginunitcode: (
+    beginunitcode: beginunitcodeinfoty;
    );
    oc_none,oc_nop: (
     dummy: record

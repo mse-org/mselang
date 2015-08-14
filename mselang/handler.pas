@@ -165,9 +165,8 @@ begin
  po1^.address.segaddress:= getglobvaraddress(das_32,4,po1^.address.flags);
                                                                //i32 exitcode
 
-// info.beginparseop:= info.opcount; 
  with additem(oc_beginparse)^ do begin
-  with par.beginparse do begin //startup vector 
+  with par.beginparse do begin
    exitcodeaddress:= po1^.address.segaddress;
    finisub:= 0;
   end;
@@ -178,12 +177,8 @@ procedure endparser();
 begin
  with getoppo(startupoffset)^.par.beginparse do begin
   unitinfochain:= info.unitinfochain;
-//  globallocstart.segment:= seg_globalloc;
-//  globallocstart.address:= 0;
-//  globalloccount:= info.globallocid;
  end;
  with additem(oc_endparse)^ do begin
-                    //startup vector 
  end;
 end;
 
@@ -347,7 +342,7 @@ begin
    c1:= 0;
  //  18446744073709551615
    int1:= 20-(consumed-po1);
-   if (int1 < 0) or (int1 = 0) and (po1^ > '1') then begin
+   if (int64(int1) < 0) or (int1 = 0) and (po1^ > '1') then begin
     errormessage(err_invalidintegerexpression,[],s.stacktop-s.stackindex);
    end
    else begin
@@ -643,7 +638,7 @@ begin
       inc(po1);
      end;
     end;
-    if (int1 = 20) and (lint2 < $8AC7230489E80000) then begin 
+    if (int1 = 20) and (lint2 < qword($8AC7230489E80000)) then begin 
                                             //todo: check correctness
      errormessage(err_invalidfloat,[],s.stacktop-s.stackindex);
 //     error(ce_invalidfloat,asource);
