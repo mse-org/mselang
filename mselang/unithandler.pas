@@ -679,8 +679,14 @@ begin
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  po1^.data:= result;
-// if 
- result^.llvmlists:= globllvmlists;
+ if co_llvm in info.compileoptions then begin
+  if co_writeunits in info.compileoptions then begin
+   result^.llvmlists:= tllvmlists.create();
+  end
+  else begin 
+   result^.llvmlists:= globllvmlists;
+  end;
+ end;
 // result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
@@ -1241,8 +1247,9 @@ begin
  with additem(oc_endunit)^ do begin
  end;
  result:= true;
- if co_writertunits in info.compileoptions then begin
+ if co_writeunits in info.compileoptions then begin
   result:= writeunitfile(aunit);
+  freeandnil(aunit^.llvmlists);
  end;
 end;
 

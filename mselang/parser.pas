@@ -438,7 +438,7 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
-  if co_readrtunits in info.compileoptions then begin
+  if co_readunits in info.compileoptions then begin
    if readunitfile(aunit) then begin
     result:= true;
     s:= statebefore;

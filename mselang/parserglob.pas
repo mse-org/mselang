@@ -124,8 +124,8 @@ type
  backendty = (bke_direct,bke_llvm);
  compileoptionty = (co_mlaruntime, //mla interpreter
                     co_llvm,co_hasfunction,
-                    co_writertunits,     //write unitfiles with rt-code
-                    co_readrtunits       //read unitfiles with rt-code
+                    co_writeunits,     //write unitfiles
+                    co_readunits       //read unitfiles
                     );
  compileoptionsty = set of compileoptionty;
 const

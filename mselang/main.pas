@@ -99,10 +99,10 @@ begin
   compoptions:= mlaruntimecompileoptions;
  end;
  if wrtued.value then begin
-  include(compoptions,co_writertunits);
+  include(compoptions,co_writeunits);
  end;
  if rrtued.value then begin
-  include(compoptions,co_readrtunits);
+  include(compoptions,co_readunits);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try
