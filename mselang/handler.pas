@@ -162,6 +162,7 @@ begin
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
  po1^.address.flags:= [];
+ info.s.globlinkage:= li_internal; //todo
  po1^.address.segaddress:= getglobvaraddress(das_32,4,po1^.address.flags);
                                                                //i32 exitcode
 

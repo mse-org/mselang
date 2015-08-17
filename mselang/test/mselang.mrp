@@ -124,7 +124,7 @@ c=3
    c=2
     (
     kind=2
-    a=0,648,2,address
+    a=0,648,1,address
     teststate=1
     path=address.mla
     comment=
@@ -192,7 +192,7 @@ c=3
     c=6
      (
      kind=2
-     a=0,648,2,and1
+     a=0,648,1,and1
      teststate=1
      path=and1.mla
      comment=
@@ -236,7 +236,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,or1
+     a=0,648,1,or1
      teststate=1
      path=or1.mla
      comment=
@@ -280,7 +280,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,not1
+     a=0,648,1,not1
      teststate=1
      path=not1.mla
      comment=
@@ -344,7 +344,7 @@ c=3
     c=2
      (
      kind=2
-     a=0,648,2,cmppointer
+     a=0,648,1,cmppointer
      teststate=1
      path=cmppointer.mla
      comment=
@@ -408,7 +408,7 @@ c=3
     c=6
      (
      kind=2
-     a=0,648,2,pointeradd
+     a=0,648,1,pointeradd
      teststate=1
      path=pointeradd.mla
      comment=
@@ -452,7 +452,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerrecadd
+     a=0,648,1,pointerrecadd
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -496,7 +496,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerdiff
+     a=0,648,1,pointerdiff
      teststate=1
      path=pointerdiff.mla
      comment=

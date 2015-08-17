@@ -328,6 +328,8 @@ var
  codestarted: boolean;
 
 procedure startllvmcode();
+const
+ constlinkage = li_internal;
 var
  ele1,ele2: elementoffsetty;
  po1: punitdataty;
@@ -357,7 +359,7 @@ begin
  if int1 > 0 then begin                               //global consts
   bcstream.constseg:= info.s.unitinfo^.llvmlists.globlist.addinitvalue(gak_var,
              info.s.unitinfo^.llvmlists.constlist.
-                         addvalue(getsegmentpo(seg_globconst,0)^,int1).listid);
+             addvalue(getsegmentpo(seg_globconst,0)^,int1).listid,constlinkage);
  end;
 
  for funcs1:= low(internalfuncs) to high(internalfuncs) do begin
@@ -373,7 +375,7 @@ begin
    internalstrings[strings1]:= info.s.unitinfo^.llvmlists.globlist.
             addinitvalue(gak_const,
                      info.s.unitinfo^.llvmlists.constlist.
-                             addvalue(pointer(text)^,length(text)).listid);
+                 addvalue(pointer(text)^,length(text)).listid,constlinkage);
   end;
  end;
 
@@ -385,7 +387,7 @@ begin
    pint32(intfpo)^:= info.s.unitinfo^.llvmlists.globlist.
           addinitvalue(gak_const,
               info.s.unitinfo^.llvmlists.constlist.
-                                       addintfdef(intfpo,countpo^).listid);
+                               addintfdef(intfpo,countpo^).listid,constlinkage);
   end;
   inc(pointer(intfpo),sizeof(intfpo^)+countpo^*opaddresssize);
   inc(countpo);
@@ -401,7 +403,7 @@ begin
   while poclassdef < peclassdef do begin   //classes
    pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
             addinitvalue(gak_const,info.s.unitinfo^.llvmlists.constlist.
-                                     addclassdef(poclassdef,countpo^).listid);
+                         addclassdef(poclassdef,countpo^).listid,constlinkage);
    poclassdef:= pointer(poclassdef) +
                         poclassdef^.header.allocs.classdefinterfacestart +
                                                          countpo^*pointersize;

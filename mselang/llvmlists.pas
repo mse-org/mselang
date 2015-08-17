@@ -298,8 +298,9 @@ type
  globallocdataty = record
   typeindex: int32;
   initconstindex: int32;
+  linkage: linkagety;
   case kind: globallockindty of
-   gak_sub: (flags: subflagsty; linkage: linkagety;)
+   gak_sub: (flags: subflagsty;)
  end;
  pgloballocdataty = ^globallocdataty;
  
@@ -309,18 +310,21 @@ type
    fnamelist: tglobnamelist;
    fconstlist: tconsthashdatalist;
   protected
-   function addnoinit(const atyp: int32): int32;
+   function addnoinit(const atyp: int32; const alinkage: linkagety): int32;
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
    destructor destroy(); override;
    procedure clear(); override;
 //   function addvalue(var avalue: typeallocinfoty): int32;
-   function addvalue(const avalue: pvardataty): int32; 
+   function addvalue(const avalue: pvardataty; 
+                               const alinkage: linkagety): int32;
                                                             //returns listid
-   function addbitvalue(const asize: databitsizety): int32;
+   function addbitvalue(const asize: databitsizety;
+                               const alinkage: linkagety): int32;
                                                             //returns listid
-   function addbytevalue(const asize: integer): int32;
+   function addbytevalue(const asize: integer;
+                               const alinkage: linkagety): int32;
                                                            //returns listid
    function addsubvalue(const avalue: psubdataty): int32; //returns listid
                                //nil -> main sub
@@ -339,7 +343,7 @@ type
    procedure updatesubtype(const avalue: psubdataty); 
                  //new type for changed flags sf_hasnestedaccess
    function addinitvalue(const akind: globallockindty;
-                                     const aconstlistindex: integer): int32;
+              const aconstlistindex: integer; const alinkage: linkagety): int32;
                                                             //returns listid
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
@@ -1390,12 +1394,14 @@ begin
  (pgloballocdataty(fdata) + avalue.listindex)^:= dat1;
 end;
 }
-function tgloballocdatalist.addnoinit(const atyp: int32): int32;
+function tgloballocdatalist.addnoinit(const atyp: int32;
+                                        const alinkage: linkagety): int32;
 var
  dat1: globallocdataty;
 begin
  fillchar(dat1,sizeof(dat1),0);
  dat1.typeindex:= atyp;
+ dat1.linkage:= alinkage;
  dat1.kind:= gak_var;
  dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
  result:= fcount;
@@ -1403,23 +1409,26 @@ begin
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
 
-function tgloballocdatalist.addvalue(const avalue: pvardataty): int32;
+function tgloballocdatalist.addvalue(const avalue: pvardataty;
+                                           const alinkage: linkagety): int32;
 begin
- result:= addnoinit(ftypelist.addvarvalue(avalue));
+ result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage);
 end;
 
-function tgloballocdatalist.addbytevalue(const asize: integer): int32;
+function tgloballocdatalist.addbytevalue(const asize: integer; 
+                                       const alinkage: linkagety): int32;
 begin 
- result:= addnoinit(ftypelist.addbytevalue(asize));
+ result:= addnoinit(ftypelist.addbytevalue(asize),alinkage);
 end;
 
-function tgloballocdatalist.addbitvalue(const asize: databitsizety): int32;
+function tgloballocdatalist.addbitvalue(const asize: databitsizety; 
+                                       const alinkage: linkagety): int32;
 begin 
- result:= addnoinit(ftypelist.addbitvalue(asize));
+ result:= addnoinit(ftypelist.addbitvalue(asize),alinkage);
 end;
 
 function tgloballocdatalist.addinitvalue(const akind: globallockindty;
-                                       const aconstlistindex: integer): int32;
+              const aconstlistindex: integer; const alinkage: linkagety): int32;
 var
  dat1: globallocdataty;
  po1: pconstlisthashdataty;
@@ -1454,6 +1463,7 @@ begin
  end;
  dat1.kind:= akind;
  dat1.initconstindex:= aconstlistindex; 
+ dat1.linkage:= alinkage;
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;

@@ -1,9 +1,9 @@
 unit unit1;
 interface
-procedure test();
-implementation
 var
  g1: int32;
+procedure test();
+implementation
 procedure test();
 begin
  exitcode:= 123;

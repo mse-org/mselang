@@ -1132,7 +1132,7 @@ begin
      else begin //ek_var
       if isgetfact then begin
        d.kind:= ck_ref;
-       d.dat.ref.c.address:= pvardataty(po2)^.address;
+       d.dat.ref.c.address:= trackaccess(pvardataty(po2));
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;

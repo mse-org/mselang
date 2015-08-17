@@ -462,6 +462,7 @@ begin
   currentsubchain:= 0;
   currentsubcount:= 0;
   s.currentstatementflags:= [];
+  s.globlinkage:= li_internal;
 //  inc(unitlevel);
   
 //  s.unitinfo:= aunit;

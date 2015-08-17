@@ -159,6 +159,7 @@ procedure trackalloc(const adatasize: databitsizety; const asize: integer;
 procedure tracklocalaccess(var aaddress: locaddressty; 
                                  const avarele: elementoffsetty;
                                  const aopdatatype: typeallocinfoty);
+function trackaccess(const avar: pvardataty): addressvaluety;
 
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
@@ -1224,6 +1225,21 @@ begin
  end;
 end;
 
+function trackaccess(const avar: pvardataty): addressvaluety;
+var
+ po1: pelementinfoty;
+begin
+ result:= avar^.address;
+ if info.compileoptions * [co_llvm,co_writeunits] = 
+                                            [co_llvm,co_writeunits] then begin
+  if af_segment in avar^.address.flags then begin
+   po1:= datatoele(avar);
+   if po1^.header.defunit <> info.s.unitinfo^.key then begin
+   end;
+  end;
+ end;
+end;
+
 type
  opsizety = (ops_none,ops_8,ops_16,ops_32,ops_64,ops_po);
 
@@ -1977,11 +1993,12 @@ begin
  if co_llvm in info.compileoptions then begin
   if address.segment = seg_globvar then begin
    if adatasize = das_none then begin
-    address.address:= info.s.unitinfo^.llvmlists.globlist.addbytevalue(asize);
+    address.address:= info.s.unitinfo^.llvmlists.globlist.
+                                      addbytevalue(asize,info.s.globlinkage);
    end
    else begin
     address.address:= info.s.unitinfo^.llvmlists.globlist.
-                                                    addbitvalue(adatasize);
+                                      addbitvalue(adatasize,info.s.globlinkage);
    end;
   end;
  end;

@@ -156,8 +156,9 @@ type
                const aprologdata: int32;
                const adllstorageclass: dllstorageclassty; const acomdat: int32;
                const aprefixdata: int32});
-   procedure emitvar(const atype: int32);
-   procedure emitvar(const atype: int32; const ainitconst: int32);
+   procedure emitvar(const atype: int32; const alinkage: linkagety);
+   procedure emitvar(const atype: int32; const ainitconst: int32;
+                                                   const alinkage: linkagety);
    procedure emitconst(const atype: int32; const ainitconst: int32);
    procedure emitalloca(const atype: int32); //1 ssa
    procedure resetssa(); //sets ssastart to current ssa
@@ -577,10 +578,10 @@ begin
     end;
     gak_var: begin
      if pga5^.initconstindex >= 0 then begin
-      emitvar(pga5^.typeindex,pga5^.initconstindex);
+      emitvar(pga5^.typeindex,pga5^.initconstindex,pga5^.linkage);
      end
      else begin
-      emitvar(pga5^.typeindex);
+      emitvar(pga5^.typeindex,pga5^.linkage);
      end;
     end;
    end;
@@ -1296,16 +1297,17 @@ begin
 // inc(fsubopstart);
 end;
 
-procedure tllvmbcwriter.emitvar(const atype: int32);
+procedure tllvmbcwriter.emitvar(const atype: int32; const alinkage: linkagety);
 begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
-                          0+fconststart{nullconst+1},ord(li_internal),0,0]);
+                          0+fconststart{nullconst+1},ord(alinkage),0,0]);
 end;
 
-procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32);
+procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32;
+                                                    const alinkage: linkagety);
 begin
  emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
-                     ainitconst+1+fconststart,ord(li_internal),0,0]);
+                     ainitconst+1+fconststart,ord(alinkage),0,0]);
 end;
 
 procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);

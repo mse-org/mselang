@@ -19,7 +19,7 @@ unit parserglob;
 interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
- segmentutils;
+ segmentutils,llvmbitcodes;
 const
  firstident = 256;
  maxidentlen = 256;
@@ -592,6 +592,7 @@ type
   currentcompileunitmeta: int32;
   currentfilemeta: int32;
   currentscopemeta: int32;
+  globlinkage: linkagety
  end;
   
  parseinfoty = record

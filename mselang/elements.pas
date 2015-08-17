@@ -306,6 +306,8 @@ type
 procedure clear;
 procedure init;
 
+function eletodata(const aele: pelementinfoty): pointer; inline;
+function datatoele(const adata: pointer): pelementinfoty; inline;
 
 function newstring(): stringvaluety; //save info.stringbuffer
 function stringconst(const astring: stringvaluety): segaddressty;
@@ -323,6 +325,16 @@ uses
  msearrayutils,sysutils,typinfo,grammar,mseformatstr,
  mselinklist,{stackops,}msesysutils,opcode,{syssubhandler,}
  internaltypes,__mla__internaltypes,errorhandler,identutils;
+
+function eletodata(const aele: pelementinfoty): pointer; inline;
+begin
+ result:= pointer(aele)+sizeof(elementheaderty);
+end;
+
+function datatoele(const adata: pointer): pelementinfoty; inline;
+begin
+ result:= adata-sizeof(elementheaderty);
+end;
  
 const
  mindatasize = 1024; 
