@@ -211,7 +211,7 @@ type
  
 implementation
 uses
- mseformatstr,msearrayutils,msebits,sysutils,llvmlists;
+ mseformatstr,msearrayutils,msebits,sysutils,llvmlists,typinfo;
 const
  blockidnames: array[blockids] of string = (
   'BLOCKINFO_BLOCK',
@@ -970,13 +970,20 @@ procedure tllvmbcreader.readmoduleblock();
 var
  rec1: valuearty;
 
- procedure outglobalvalue(const message: string; const params: array of const);
+ procedure outglobalvalue(const message: string; const params: array of const;
+                          const linkageindex: int32 = -1);
+ var
+  str1: string;
  begin
-//  output(ok_beginend,modulecodenames[modulecodes(rec1[1])]+
-//             '.'+inttostr(fgloblist.count)+':'+message);
-  outrecord(modulecodenames[modulecodes(rec1[1])]+
-             '.'+inttostr(fgloblist.count-1)+':'+message,params);
-//  inc(fglobindex);
+  if (linkageindex >= 0) and (linkageindex <= high(params)) then begin
+   str1:= '.'+getenumname(typeinfo(linkagety),params[linkageindex].vint64^)+
+          ':';
+  end
+  else begin
+   str1:= ':';
+  end;
+  outrecord(modulecodenames[modulecodes(rec1[1])]+'.'+
+             inttostr(fgloblist.count-1)+str1+message,params);
  end;
 
 var
@@ -1002,13 +1009,17 @@ begin
        valuetype:= rec1[2];
        outglobalvalue(ftypelist.typename(valuetype)+','+inttostr(rec1[3])+','+
                     fgloblist.constname(rec1[4]-1),
-                                      dynarraytovararray(copy(rec1,5,bigint)));
+                                     dynarraytovararray(copy(rec1,5,bigint)),0);
       end;
      end;
      MODULE_CODE_FUNCTION: begin
       checkmindatalen(rec1,4);
       if rec1[4] = 0 then begin //no proto
        additem(fsubheaders,fgloblist.count,fsubheadercount);
+       str1:= 'D'; //definition
+      end
+      else begin
+       str1:= 'P'; //proto
       end;
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_sub;
@@ -1017,9 +1028,9 @@ begin
         error('Invalid function type');
        end;
        subheaderindex:= fsubheadercount-1;
-       str1:= inttostr(subheaderindex)+':'+ftypelist.typename(valuetype);
+       str1:= str1+inttostr(subheaderindex)+':'+ftypelist.typename(valuetype);
        if high(rec1) > 2 then begin
-        outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)));
+        outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)),2);
        end
        else begin
         outglobalvalue(str1,[]);

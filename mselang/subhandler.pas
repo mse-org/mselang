@@ -686,7 +686,7 @@ begin
    infoaddress.sub:= currentsubchain;
   end;
   if not (us_implementation in s.unitinfo^.state) then begin 
-               //interface needs name for linker
+               //interface needs name for linker ???
    include(subflags,sf_named); //todo: check visibility
   end;
   if isinterface then begin
@@ -706,6 +706,7 @@ begin
   po1^.trampolineaddress:= 0;
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
+  po1^.linkage:= s.globlinkage;
   po1^.resulttype:= resultele1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;

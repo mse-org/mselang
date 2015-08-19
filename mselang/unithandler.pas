@@ -105,7 +105,7 @@ implementation
 uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
- {stackops,}segmentutils,classhandler,compilerunit,managedtypes,
+ {stackops,}segmentutils,classhandler,compilerunit,managedtypes,llvmbitcodes,
  unitwriter,identutils,mseformatstr,sysutils;
  
 type
@@ -192,7 +192,8 @@ end;
 
 procedure markinterfacestart();
 begin
- with info.s.unitinfo^ do begin
+ with info.s,unitinfo^ do begin
+  globlinkage:= li_external;
   ele.markelement(interfacestart); 
   reloc.interfaceelestart:= interfacestart.bufferref;
   reloc.interfaceglobstart:= info.globdatapo;
@@ -201,7 +202,8 @@ end;
 
 procedure markinterfaceend();
 begin
- with info.s.unitinfo^ do begin
+ with info.s,unitinfo^ do begin
+  globlinkage:= li_private;
   ele.markelement(interfaceend);
   reloc.interfaceelesize:= interfaceend.bufferref- interfacestart.bufferref;
   reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;

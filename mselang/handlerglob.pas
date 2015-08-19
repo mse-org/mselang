@@ -18,7 +18,7 @@ unit handlerglob;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,{opcode,}opglob,listutils;
+ globtypes,{opcode,}opglob,listutils,llvmbitcodes;
 
 type
  ordrangety = record
@@ -312,6 +312,7 @@ type
   paramsize: integer;
   paramcount: integer;
   globid: int32; //for llvm
+  linkage: linkagety;
   paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;
  end;
