@@ -597,8 +597,9 @@ begin
    pgn7:= globals.namelist.datapo;
    pgne:= pgn7 + globals.namelist.count;
    while pgn7 < pgne do begin
-    if pgn7^.name.len = 0 then begin //concat unitname and listindex
-     i1:= pgn7^.listindex - punitinfoty(pgn7^.name.po)^.globallocstart;
+    if pgn7^.name.len <= 0 then begin 
+              //concat unitname and destindex
+     i1:= -pgn7^.name.len - punitinfoty(pgn7^.name.po)^.globallocstart;
      for i2:= 0 to high(namebufferdata1) do begin
       i3:= i1 and $f;
       namebufferdata1[i2]:= charhexlower[i3];

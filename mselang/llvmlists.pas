@@ -291,7 +291,7 @@ type
    constructor create;
    procedure addname(const aname: lstringty; const alistindex: integer);
    procedure addname(const aunit: pointer; //punitinfoty
-                                  const alistindex: integer);
+                       const adestindex: integer; const alistindex: int32);
  end;
  
  globallockindty = (gak_var,gak_const,gak_sub); 
@@ -1348,12 +1348,12 @@ begin
 end;
 
 procedure tglobnamelist.addname(const aunit: pointer; //punitinfoty
-                                  const alistindex: integer);
+                             const adestindex: int32; const alistindex: int32);
 begin
  inccount();
  with (pglobnamedataty(fdata)+fcount-1)^ do begin
   unitname.unitpo:= aunit;
-  unitname.dummy:= 0;
+  unitname.dummy:= -adestindex;
   listindex:= alistindex;
  end;
 end;
@@ -1474,14 +1474,24 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                   const externunit: boolean = false): int32;
 var
  dat1: globallocdataty;
+ i1: int32;
 begin
+ result:= fcount;
  if avalue <> nil then begin
   with avalue^ do begin
+   i1:= globid;
+   if i1 < 0 then begin
+    i1:= result;
+   end;
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
+    fnamelist.addname(datatoele(avalue)^.header.defunit,i1,result);
    end
    else begin
+    if sf_named in flags then begin
+     fnamelist.addname(datatoele(avalue)^.header.defunit,i1,result);
+    end;
     dat1.flags:= flags;
     dat1.linkage:= linkage;
    end;
@@ -1500,7 +1510,6 @@ begin
  dat1.kind:= gak_sub;
  dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.initconstindex:= -1;
- result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
