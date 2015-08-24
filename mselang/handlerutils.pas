@@ -160,6 +160,7 @@ procedure tracklocalaccess(var aaddress: locaddressty;
                                  const avarele: elementoffsetty;
                                  const aopdatatype: typeallocinfoty);
 function trackaccess(const avar: pvardataty): addressvaluety;
+function trackaccess(const asub: psubdataty): int32;
 
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
@@ -1225,6 +1226,25 @@ begin
  end;
 end;
 
+function llvmlink(const adata: pointer; out destunitid: identty;
+                                              out globid: int32): boolean;
+                                              // -1 -> new
+var
+ po1: pelementinfoty;
+begin
+ with info do begin
+  result:= modularllvm;
+  if result then begin
+   po1:= datatoele(adata);
+   destunitid:= po1^.header.defunit;
+   result:= destunitid <> s.unitinfo^.key;
+   if result then begin
+    globid:= -1; //new
+   end;
+  end;
+ end;
+end;
+
 function trackaccess(const avar: pvardataty): addressvaluety;
 var
  po1: pelementinfoty;
@@ -1237,6 +1257,24 @@ begin
    if po1^.header.defunit <> info.s.unitinfo^.key then begin
    end;
   end;
+ end;
+end;
+
+function trackaccess(const asub: psubdataty): int32;
+var
+ unitid: identty;
+ globid: int32;
+begin
+ if llvmlink(asub,unitid,globid) then begin
+  if globid < 0 then begin
+   result:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(asub,true);
+  end
+  else begin
+   result:= globid;
+  end;
+ end
+ else begin
+  result:= asub^.globid;
  end;
 end;
 

@@ -325,9 +325,10 @@ type
                                                             //returns listid
    function addbytevalue(const asize: integer;
                                const alinkage: linkagety): int32;
-                                                           //returns listid
-   function addsubvalue(const avalue: psubdataty): int32; //returns listid
-                               //nil -> main sub
+                                                            //returns listid
+   function addsubvalue(const avalue: psubdataty; //nil -> main sub
+                              const externunit: boolean = false): int32; 
+                                                            //returns listid
    function addsubvalue(const avalue: psubdataty;
                            const aname: lstringty): int32;  //returns listid
                                //nil -> main sub
@@ -1469,14 +1470,21 @@ begin
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
 
-function tgloballocdatalist.addsubvalue(const avalue: psubdataty): int32;
+function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
+                                  const externunit: boolean = false): int32;
 var
  dat1: globallocdataty;
 begin
  if avalue <> nil then begin
   with avalue^ do begin
-   dat1.flags:= flags;
-   dat1.linkage:= linkage;
+   if externunit then begin
+    dat1.flags:= flags+[sf_proto];
+    dat1.linkage:= li_external;
+   end
+   else begin
+    dat1.flags:= flags;
+    dat1.linkage:= linkage;
+   end;
   end;
  end
  else begin //main

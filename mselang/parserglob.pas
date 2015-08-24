@@ -601,6 +601,8 @@ type
 //  backendhasfunction: boolean;
   compileoptions: compileoptionsty;
   debugoptions: debugoptionsty;
+  modularllvm: boolean;
+
   unitinfochain: elementoffsetty;
   locallocid: integer;
   pb: pbranchty;

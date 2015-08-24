@@ -373,7 +373,7 @@ end;
 procedure checklinebreak(var achar: pchar; var linebreaks: integer) 
                           {$ifndef mse_debugparser} inline{$endif};
 begin
- if do_lineinfo in info.debugoptions then begin        //todo: columns
+ if do_lineinfo in info.s.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
    if co_llvm in info.compileoptions then begin
@@ -882,9 +882,9 @@ procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 var
  debugoptionsbefore: debugoptionsty;
 begin
- debugoptionsbefore:= info.debugoptions;
+ debugoptionsbefore:= info.s.debugoptions;
  fillchar(info,sizeof(info),0);
- info.debugoptions:= debugoptionsbefore;
+ info.s.debugoptions:= debugoptionsbefore;
  exitcode:= 0;
  with info do begin
   outputstream:= aoutput;
@@ -907,6 +907,7 @@ begin
    try
     compileoptions:= aoptions;
     s.debugoptions:= debugoptions;
+    modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
     unit1:= newunit('program');
     unit1^.filepath:= afilename; //todo: file reading
     if not initunitfileinfo(unit1) then begin

@@ -508,6 +508,7 @@ type
 
  callinfoty = record
   ad: opaddressty;    //first!
+  globid: int32;      //for llvm
   flags: subflagsty;
   linkcount: integer; //used in "for downto 0"
   params: dataoffsty;
