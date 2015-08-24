@@ -59,7 +59,7 @@ type
   parentlevel: integer;    //max = maxidentvector-1
   kind: elementkindty;
   visibility: visikindsty;
-  defunit: identty;
+  defunit: punitinfoty;
  end;
  
  elementinfoty = record
@@ -607,7 +607,7 @@ begin
      with po2^.header do begin
       if (name = aident) and (parent = felementparent) and 
              ((visibility * avislevel <> []) or 
-          (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
+          (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
                                 ((akinds = []) or (kind in akinds)) then begin
        ahandler(po2,adata,result);
       end;
@@ -702,7 +702,7 @@ begin
       with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
        if (name = aident) and (parent = parentele) and 
                                     ((visibility * avislevel <> []) or 
-           (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
+           (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
                             ((akinds = []) or (kind in akinds)) then begin
         element:= po1^.data.data;
         goto endlab;
@@ -1196,7 +1196,7 @@ begin
           with pelementinfoty(pointer(felementdata) +
                                 po2^.childparent)^.header do begin //parent
           if ((visibility * avislevel <> [])  or 
-          (vik_sameunit in visibility) and (defunit = info.s.unitinfo^.key)) and 
+          (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
                              ((akinds = []) or (kind in akinds)) then begin
            aparent:= po2^.element;
            result:= true;
@@ -1531,10 +1531,10 @@ begin
   name:= aname;
   visibility:= avislevel;
   if info.s.unitinfo <> nil then begin
-   defunit:= info.s.unitinfo^.key;
+   defunit:= info.s.unitinfo;
   end
   else begin
-   defunit:= 0;
+   defunit:= nil;
   end;
   kind:= akind;
  end;
@@ -1629,12 +1629,12 @@ begin
   path:= felementpath;
   name:= aname;
   visibility:= avislevel;
-  if info.s.unitinfo <> nil then begin
-   defunit:= info.s.unitinfo^.key;
-  end
-  else begin
-   defunit:= 0;
-  end;
+//  if info.s.unitinfo <> nil then begin
+  defunit:= info.s.unitinfo;
+//  end
+//  else begin
+//   defunit:= 0;
+//  end;
   kind:= akind;
  end; 
  addelement(felementpath+aname,avislevel,result);

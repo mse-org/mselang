@@ -1236,7 +1236,7 @@ begin
   result:= modularllvm;
   if result then begin
    po1:= datatoele(adata);
-   destunitid:= po1^.header.defunit;
+   destunitid:= po1^.header.defunit^.key;
    result:= destunitid <> s.unitinfo^.key;
    if result then begin
     globid:= -1; //new
@@ -1254,7 +1254,7 @@ begin
                                             [co_llvm,co_writeunits] then begin
   if af_segment in avar^.address.flags then begin
    po1:= datatoele(avar);
-   if po1^.header.defunit <> info.s.unitinfo^.key then begin
+   if po1^.header.defunit <> info.s.unitinfo then begin
    end;
   end;
  end;
