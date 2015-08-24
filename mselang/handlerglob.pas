@@ -292,7 +292,10 @@ type
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
   typ: elementoffsetty;  //typedataty dk_address
-  links: linkindexty;    //calls which need to be resolved
+  calllinks: linkindexty;  //calls which need to be resolved 
+                           //by linkresolvecall()
+  adlinks: linkindexty;    //calls which need to be resolved
+                           //by linkresolveopad()
   mark: forwardindexty;
   flags: subflagsty;
   tableindex: integer; //-1 = none
@@ -311,7 +314,7 @@ type
   allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;
-  globid: int32; //for llvm
+  globid: int32; //for llvm todo: unify with address
   linkage: linkagety;
   paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;

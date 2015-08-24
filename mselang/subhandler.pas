@@ -702,7 +702,8 @@ begin
    resultele1:= currentcontainer;
   end;
   po1^.paramcount:= paramco;
-  po1^.links:= 0;
+  po1^.calllinks:= 0;
+  po1^.adlinks:= 0;
   po1^.trampolinelinks:= 0;   //for virtual interface items
   po1^.trampolineaddress:= 0;
   po1^.nestinglevel:= sublevel;
@@ -989,9 +990,10 @@ begin
               //resolve virtual table entry
     end;
    end;
-   linkresolvecall(po2^.links,po1^.address,po1^.globid);
+   linkresolvecall(po2^.calllinks,po1^.address,po1^.globid);
+   linkresolveopad(po2^.adlinks,po1^.address);
   end;
-  linkresolvecall(po1^.links,po1^.address,po1^.globid); //nested calls
+  linkresolvecall(po1^.calllinks,po1^.address,po1^.globid); //nested calls
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order

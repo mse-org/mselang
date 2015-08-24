@@ -630,7 +630,7 @@ begin
      end
      else begin
       if po1^.address = 0 then begin
-       linkmark(po1^.links,getsegaddress(seg_op,
+       linkmark(po1^.adlinks,getsegaddress(seg_op,
                                          @par.memop.segdataaddress.a.address));
       end
       else begin

@@ -843,7 +843,7 @@ var
       end;
      end;
      if asub^.address = 0 then begin //unresolved header
-      linkmark(asub^.links,getsegaddress(seg_op,@po1^.par.callinfo.ad));
+      linkmark(asub^.calllinks,getsegaddress(seg_op,@po1^.par.callinfo.ad));
      end;
     end;
     with po1^ do begin

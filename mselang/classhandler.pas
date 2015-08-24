@@ -328,7 +328,7 @@ type
      end
      else begin
       if po2^.address = 0 then begin
-       linkmark(po2^.links,seg{,sizeof(intfitemty.instanceshift)});
+       linkmark(po2^.adlinks,seg{,sizeof(intfitemty.instanceshift)});
       end                                     //offset
       else begin
        sub^.subad:= po2^.address-1;
