@@ -94,7 +94,8 @@ end;
 procedure callinternalsub(const asub: opaddressty);
 begin
  with additem(oc_call)^.par.callinfo do begin
-  ad:= asub-1;
+  ad.ad:= asub-1;
+  ad.globid:= getoppo(asub)^.par.subbegin.globid;
   flags:= [];
   linkcount:= 0;
   paramcount:= 0;
@@ -988,9 +989,9 @@ begin
               //resolve virtual table entry
     end;
    end;
-   linkresolveopad(po2^.links,po1^.address);
+   linkresolvecall(po2^.links,po1^.address,po1^.globid);
   end;
-  linkresolveopad(po1^.links,po1^.address); //nested calls
+  linkresolvecall(po1^.links,po1^.address,po1^.globid); //nested calls
   ele1:= po1^.varchain;
   po1^.varchain:= 0;
   while ele1 <> 0 do begin      //reverse order

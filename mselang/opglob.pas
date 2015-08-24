@@ -506,9 +506,14 @@ type
   typeid: int32; //for llvm
  end;
 
- callinfoty = record
+ calladdressty = record
   ad: opaddressty;    //first!
   globid: int32;      //for llvm
+ end;
+ pcalladdressty = ^calladdressty;
+ callinfoty = record
+  ad: calladdressty;    //first!
+//  globid: int32;      //for llvm
   flags: subflagsty;
   linkcount: integer; //used in "for downto 0"
   params: dataoffsty;

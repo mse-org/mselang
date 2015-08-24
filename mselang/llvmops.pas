@@ -2509,7 +2509,7 @@ begin
    i1:= bcstream.relval(0);
   end
   else begin
-   i1:= bcstream.globval(callinfo.globid);
+   i1:= bcstream.globval(callinfo.ad.globid);
 //   i1:= bcstream.globval(getoppo(callinfo.ad+1)^.par.subbegin.globid);
   end;
   docallparam(outlinkcount,idar);

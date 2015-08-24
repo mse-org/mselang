@@ -303,7 +303,10 @@ begin
    par.beginparse.finisub:= info.opcount;
   end;
   i1:= startsimplesub();
-  getoppo(finicall)^.par.callinfo.ad:= i1-1;
+  with getoppo(finicall)^.par.callinfo do begin
+   ad.globid:= getoppo(i1)^.par.subbegin.globid;
+   ad.ad:= i1-1;
+  end;
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert fini calls

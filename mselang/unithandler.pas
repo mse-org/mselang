@@ -73,6 +73,8 @@ procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
+procedure linkresolvecall(const alinks: linkindexty; 
+                            const aaddress: opaddressty; const aglobid: int32);
 procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
@@ -817,7 +819,8 @@ begin
  alinks:= li1;
 end;
 
-procedure linkresolveopad(const alinks: linkindexty; const aaddress: opaddressty);
+procedure linkresolveopad(const alinks: linkindexty;
+                                   const aaddress: opaddressty);
 var
  li1: linkindexty;
 begin
@@ -826,6 +829,31 @@ begin
   while true do begin
    with links[li1] do begin
     popaddressty(getsegmentpo(dest))^:= aaddress-1;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
+procedure linkresolvecall(const alinks: linkindexty; 
+                            const aaddress: opaddressty; const aglobid: int32);
+var
+ li1: linkindexty;
+ ad1: calladdressty;
+begin
+ if alinks <> 0 then begin
+  ad1.ad:= aaddress-1;
+  ad1.globid:= aglobid;
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    pcalladdressty(getsegmentpo(dest))^:= ad1;
+//    popaddressty(getsegmentpo(dest))^:= aaddress-1;
     if next = 0 then begin
      break;
     end;

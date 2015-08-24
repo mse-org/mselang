@@ -2668,7 +2668,7 @@ end;
 procedure callop();
 begin
  docall();
- cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
+ cpu.pc:= startpo+cpu.pc^.par.callinfo.ad.ad;
 end;
 
 procedure callfuncop();
@@ -2705,7 +2705,7 @@ begin
   cpu.stacklink:= frameinfoty((cpu.stacklink-sizeof(frameinfoty))^).link;
  end;
  cpu.frame:= cpu.stack;
- cpu.pc:= startpo+cpu.pc^.par.callinfo.ad;
+ cpu.pc:= startpo+cpu.pc^.par.callinfo.ad.ad;
 end;
 
 procedure callfuncoutop();

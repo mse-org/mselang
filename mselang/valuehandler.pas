@@ -853,8 +853,8 @@ var
      end;
      par.callinfo.params:= parallocstart;
      par.callinfo.paramcount:= paramco1;    
-     par.callinfo.ad:= asub^.address-1; //possibly invalid
-     par.callinfo.globid:= trackaccess(asub);
+     par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
+     par.callinfo.ad.globid:= trackaccess(asub);
     end;
     if sf_function in asub^.flags then begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
