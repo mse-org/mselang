@@ -395,7 +395,7 @@ begin
 {$endif}
  with info do begin
   if s.interfaceonly then begin
-   saveparsercontext(s.unitinfo^.implstart,2);
+   saveparsercontext(s.unitinfo^.implstart,3);
    s.stopparser:= true;
   end;
  end;
