@@ -842,7 +842,7 @@ var
        end;
       end;
      end;
-     if asub^.address = 0 then begin //unresolved header
+     if (asub^.address = 0) and not modularllvm then begin //unresolved header
       linkmark(asub^.calllinks,getsegaddress(seg_op,@po1^.par.callinfo.ad));
      end;
     end;
