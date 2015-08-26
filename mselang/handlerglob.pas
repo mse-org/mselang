@@ -315,6 +315,7 @@ type
   paramsize: integer;
   paramcount: integer;
   globid: int32; //for llvm todo: unify with address
+  nameid: int32; //for llvm
   linkage: linkagety;
   paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;

@@ -543,6 +543,7 @@ type
   forwardtypes: listadty;
 //  metadatalist: tmetadatalist;
   llvmlists: tllvmlists;
+  nameid: int32;
 
   pendingcount: integer;
   pendingcapacity: integer;

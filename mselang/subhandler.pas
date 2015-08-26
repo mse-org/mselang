@@ -709,6 +709,8 @@ begin
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
   po1^.linkage:= s.globlinkage;
+  inc(s.unitinfo^.nameid);
+  po1^.nameid:= s.unitinfo^.nameid;
   po1^.resulttype:= resultele1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;

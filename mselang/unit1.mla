@@ -2,8 +2,10 @@ unit unit1;
 interface
 procedure test();
 implementation
+uses
+ unit2;
 procedure test();
 begin
-// exitcode:= 123;
+ test2();
 end;
 end.

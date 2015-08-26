@@ -1,9 +1,8 @@
 unit unit2;
 interface
-uses
- unit3;
-var
- uni2: int32; 
- uni2a: uni3ty; 
+procedure test2();
 implementation
+procedure test2();
+begin
+end;
 end.

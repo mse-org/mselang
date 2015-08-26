@@ -1474,23 +1474,23 @@ function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                   const externunit: boolean = false): int32;
 var
  dat1: globallocdataty;
- i1: int32;
+// i1: int32;
 begin
  result:= fcount;
  if avalue <> nil then begin
   with avalue^ do begin
-   i1:= globid;
-   if i1 < 0 then begin
-    i1:= result;
-   end;
+//   i1:= globid;
+//   if i1 < 0 then begin
+//    i1:= result;
+//   end;
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
-    fnamelist.addname(datatoele(avalue)^.header.defunit,i1,result);
+    fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
    end
    else begin
     if sf_named in flags then begin
-     fnamelist.addname(datatoele(avalue)^.header.defunit,i1,result);
+     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
     end;
     dat1.flags:= flags;
     dat1.linkage:= linkage;
