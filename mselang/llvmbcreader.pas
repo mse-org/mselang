@@ -1014,21 +1014,25 @@ begin
      end;
      MODULE_CODE_FUNCTION: begin
       checkmindatalen(rec1,4);
-      if rec1[4] = 0 then begin //no proto
-       additem(fsubheaders,fgloblist.count,fsubheadercount);
-       str1:= 'D'; //definition
-      end
-      else begin
-       str1:= 'P'; //proto
-      end;
       with pglobinfoty(fgloblist.add())^ do begin
+       if rec1[4] = 0 then begin //no proto
+        subheaderindex:= fsubheadercount;
+        additem(fsubheaders,fgloblist.count-1,fsubheadercount);
+        str1:= 'D'; //definition
+       end
+       else begin
+        subheaderindex:= -1;
+        str1:= 'P'; //proto
+       end;
        kind:= gk_sub;
        valuetype:= rec1[2];
        if not ftypelist.parentiskind(valuetype,TYPE_CODE_FUNCTION) then begin
         error('Invalid function type');
        end;
-       subheaderindex:= fsubheadercount-1;
-       str1:= str1+inttostr(subheaderindex)+':'+ftypelist.typename(valuetype);
+       if subheaderindex >= 0 then begin
+        str1:= str1+inttostr(subheaderindex)
+       end;
+       str1:= str1+':'+ftypelist.typename(valuetype);
        if high(rec1) > 2 then begin
         outglobalvalue(str1,dynarraytovararray(copy(rec1,3,bigint)),2);
        end

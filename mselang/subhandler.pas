@@ -940,6 +940,10 @@ begin
   po1^.address:= opcount;
   if subdef.match <> 0 then begin
    po2:= ele.eledataabs(subdef.match);    
+   if co_llvm in compileoptions then begin
+    po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
+          //nested subs first -> do not add to list in sub header
+   end;
    if (po2^.flags * [sf_virtual,sf_override] <> []) and 
                     (sf_intfcall in po2^.flags) then begin
     po2^.trampolineaddress:= opcount;
@@ -961,10 +965,12 @@ begin
     end;
     po1^.address:= opcount;
    end;
+{
    if co_llvm in compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
           //nested subs first -> do not add to list in sub header
    end;
+}
    po2^.address:= po1^.address;
    po2^.globid:= po1^.globid;
    po1^.flags:= po2^.flags;

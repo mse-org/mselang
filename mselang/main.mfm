@@ -24,6 +24,7 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
     caption = 'parse'
+    options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
     onexecute = parseexe
   end
   object grid: tstringgrid
