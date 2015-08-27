@@ -25,7 +25,7 @@ uses
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
- msescrollbar,msesyntaxpainter;
+ msescrollbar,msesyntaxpainter,msesercomm;
 
 const
  llvmbindir = 

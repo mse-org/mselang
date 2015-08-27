@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=5
   (
   kind=1
@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7328050
+    ao=An unhandled exception occured at $B73DC050
     +
     ae=
     aec=123
@@ -3515,7 +3515,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=16
    (
    kind=2
@@ -3849,8 +3849,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classinterfacevirt llvm
-   teststate=2
+   a=0,648,1,classinterfacevirt llvm
+   teststate=1
    path=classinterfacevirt.mla
    comment=
    cc=${mlc_llvm}
@@ -3865,12 +3865,11 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/class/classinterfacevirt.bc: [0;1;31merror: [0m[1mInsufficient function protos
-   +[0m
-   aec=1
+   ae=
+   aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -4147,7 +4146,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -4192,8 +4191,8 @@ macronames=20
  lli
  lli
 macrovalues=20
- -dsvnfixes_2_6 -dmse_nocompilerunitxx
- /home/mse/packs/standard/svn/fp/fixes_2_6/
+ -dsvnfixes_3_0 -dmse_nocompilerunitxx
+ /home/mse/packs/standard/svn/fp/fixes_3_0/
  ${fpcdir}compiler/ppc386 ${fpcflags} ${mseunits} ${mselangunits}
  ${fpc1}
  ${fpc1} -B
