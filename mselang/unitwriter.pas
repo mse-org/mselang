@@ -362,6 +362,7 @@ begin
   fna1:= getrtunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
    try
+    aunit^.rtfilepath:= fna1;
     segs1:= [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op];
     if co_llvm in info.compileoptions then begin
      exclude(segs1,seg_op);
@@ -374,10 +375,11 @@ begin
     stream1.destroy();
    end;
    if co_llvm in info.compileoptions then begin
-    fna1:= getbcunitfilename(aunit^.filepath);
+    fna1:= getbcunitfilename(aunit^.rtfilepath);
     result:= tllvmbcwriter.trycreate(
                             tmsefilestream(llvmout1),fna1,fm_create) = sye_ok;
     if result then begin
+     aunit^.bcfilepath:= fna1;
      try
       llvmops.run(llvmout1,false);
      finally
