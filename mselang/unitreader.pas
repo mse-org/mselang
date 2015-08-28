@@ -267,7 +267,6 @@ var
  opoffset: targetoffsty;
  op1,ope: popinfoty;
  isub1: internalsubty;
- selfident: int32;
  
 label
  errorlab,oklab,endlab;
@@ -365,7 +364,6 @@ begin
     inc(info.globdatapo,intf^.header.reloc.interfaceglobsize); 
 
     ele.markelement(startref);
-    selfident:= int32(ptrint(intf^.header.key));
     if not updateident(int32(ptrint(intf^.header.key))) then begin
      goto errorlab;
     end;
@@ -407,12 +405,7 @@ begin
       if not updateident(int32(header.name)) then begin
        goto errorlab;
       end;
-      if int32(ptrint(ptruint(header.defunit))) = selfident then begin
-       header.defunit:= aunit;
-      end
-      else begin
-//      tz etrz e6ru e6ue6t
-      end;
+      header.defunit:= aunit;
      {$ifdef mse_debugparser}
       inc(header.next,baseoffset);
      {$endif}

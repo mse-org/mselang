@@ -510,7 +510,7 @@ type
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
   key: identty;
-  translatedkey: boolean; //used in unitwriter
+//  translatedkey: boolean; //used in unitwriter
   name: lstringty;
   namestring: string;
   prev: punitinfoty; //current uses compiled item

@@ -98,25 +98,27 @@ var
   result:= po1^.nameindex;
  end; //updateident
 
- procedure putdata(var po: pointer; var backup: pidentty;
+ procedure putdata(var po: pointer;{ var backup: pidentty;}
                                          const adata: unitinfopoarty);
  var
   pd,pe: pusesitemty;
   ps: ppunitinfoty;
-  pb: pidentty;
+//  pb: pidentty;
  begin
   pint32(po)^:= length(adata);
   pd:= pointer(pint32(po)+1);
   pe:= pd+length(adata);
   ps:= pointer(adata);
-  pb:= backup;
+//  pb:= backup;
   while pd < pe do begin
    with ps^^ do begin
+{
     if not translatedkey then begin
      translatedkey:= true;
      pb^:= key; //backup
      key:= updateident(key);
     end;
+}
     pd^.id:= key;//updateident(key);
     pd^.reloc:= reloc;
 //    pd^.interfaceglobstart:= interfaceglobstart;
@@ -125,10 +127,10 @@ var
    end;
    inc(ps);
    inc(pd);
-   inc(pb);
+//   inc(pb);
   end;
   po:= pe;
-  backup:= pb;
+//  backup:= pb;
  end; //putdata
 
  procedure updateref(var ref: elementoffsetty);
@@ -222,12 +224,12 @@ var
    end;
   end;
  end; //puteledata
-
+{
 var
  unitkeybackup: identarty;
  pdi,pei: pidentty;
  psi: ppunitinfoty;
- 
+} 
 begin
  result:= false;
  elestart:= aunit^.interfacestart.bufferref;
@@ -252,11 +254,12 @@ begin
 //   header.interfaceglobsize:= aunit^.interfaceglobsize;
    header.implementationglobstart:= aunit^.implementationglobstart;
    header.implementationglobsize:= aunit^.implementationglobsize;
-   
+{   
                   //backup unit keys, update id
    setlength(unitkeybackup,length(aunit^.interfaceuses)+
                                      length(aunit^.implementationuses)+1);
    pdi:= pointer(unitkeybackup);
+}
 {
    pei:= pdi+length(aunit^.interfaceuses);
    psi:= pointer(aunit^.interfaceuses);
@@ -282,13 +285,15 @@ begin
    aunit^.key:= header.key;
  }  
    po:= @interfaceuses;
-   putdata(po,pdi,aunit^.interfaceuses);
-   putdata(po,pdi,aunit^.implementationuses);
+   putdata(po,{pdi,}aunit^.interfaceuses);
+   putdata(po,{pdi,}aunit^.implementationuses);
+{   
    pdi^:= aunit^.key;
    if not aunit^.translatedkey then begin
     aunit^.key:= header.key;
     aunit^.translatedkey:= true;
    end;
+}
    pd:= po;
   end;
   ps:= ele.eleinfoabs(elestart);
@@ -308,6 +313,7 @@ begin
   end;
 {$endif}
  finally
+{
                //restore unit keys
   pdi:= pointer(unitkeybackup);
   pei:= pdi+length(aunit^.interfaceuses);
@@ -338,6 +344,7 @@ begin
    aunit^.translatedkey:= false;
    aunit^.key:= pdi^;
   end;
+}
   identlist.destroy();
  end;
 end;
