@@ -267,7 +267,6 @@ var
  opoffset: targetoffsty;
  op1,ope: popinfoty;
  isub1: internalsubty;
- 
 label
  errorlab,oklab,endlab;
 begin
@@ -511,6 +510,9 @@ begin
     if not dosort(globreloc1) or not dosort(opreloc1) then begin
      goto errorlab;
     end;
+//    if co_llvm in info.options then begin
+//     info.bcfilename:= 
+//    end;
     goto oklab;
 errorlab:
     ele.releaseelement(startref);

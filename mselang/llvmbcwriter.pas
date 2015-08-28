@@ -19,7 +19,7 @@ unit llvmbcwriter;
 interface
 uses
  globtypes,msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,
- llvmlists,opglob;
+ llvmlists,opglob,bcunitglob;
  
 type
  idarty = record
@@ -60,6 +60,7 @@ type
    fbitbuf: card16;
    fdebugloc: debuglocty;
    ftrampolineop: popinfoty;
+   fstartpos: int32;
   protected
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
@@ -343,6 +344,8 @@ end;
 { tllvmbcwriter }
 
 constructor tllvmbcwriter.create(ahandle: integer);
+var
+ wrap: bc_header;
 begin
  fbufpos:= @fbuffer;
  fbufend:= fbufpos + bcwriterbuffersize;
@@ -350,6 +353,14 @@ begin
  fblockstackendpo:= fblockstackpo + blockstacksize;
  fblockstackpo^.idsize:= 2; //start default
  inherited;
+ fstartpos:= position;
+ wrap.magic:= bcheadermagic;
+ wrap.version:= bcheaderversion;
+ wrap.bitcodeoffset:= sizeof(bcunitheaderty); //from filestart
+ wrap.bitcodesize:= 0;
+ wrap.cputype:= 0;
+ writebuffer(wrap,sizeof(wrap));
+ fpos:= fstartpos+sizeof(wrap);
 end;
 
 destructor tllvmbcwriter.destroy();
@@ -770,6 +781,8 @@ begin
 end;
 
 procedure tllvmbcwriter.stop;
+var
+ i1: int32;
 begin
  endblock();
 {$ifdef mse_checkinternalerror}
@@ -777,6 +790,10 @@ begin
   internalerror(ie_bcwriter,'141213C');
  end;
 {$endif}
+ flushbuffer();
+ i1:= position - fstartpos - sizeof(bcunitheaderty);
+ position:= fstartpos + bitcodesizeoffset;
+ write(i1,sizeof(bc_header.bitcodesize));
 end;
 
 

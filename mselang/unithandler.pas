@@ -227,6 +227,8 @@ end;
 procedure markunitend();
 begin
  with info.s.unitinfo^ do begin
+  with additem(oc_endunit)^ do begin
+  end;
   setsubsegmentsize(opseg);
   reloc.opsize:= info.opcount-reloc.opstart;
   implementationglobsize:= info.globdatapo - implementationglobstart;
@@ -1274,8 +1276,6 @@ end;
 
 function endunit(const aunit: punitinfoty): boolean;
 begin
- with additem(oc_endunit)^ do begin
- end;
  result:= true;
  if co_writeunits in info.compileoptions then begin
   result:= writeunitfile(aunit);

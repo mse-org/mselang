@@ -326,6 +326,7 @@ var
  exitcodeaddress: segaddressty;
  finihandler: int32; //globid
  codestarted: boolean;
+ ismain: boolean;
 
 procedure startllvmcode();
 const
@@ -448,6 +449,9 @@ end;
 
 procedure endunitop();
 begin
+ if info.modularllvm and not ismain then begin
+  bcstream.stop();
+ end;
 end;
 
 procedure mainop();
@@ -3334,6 +3338,7 @@ var
 begin
  bcstream:= atarget;
  codestarted:= false;
+ ismain:= amain;
  pc:= getsegmentbase(seg_op);
  endpo:= pointer(pc)+getsegmentsize(seg_op);
  if amain then begin

@@ -169,6 +169,8 @@ type
    fsubheaders: integerarty; //index in fgloblist
    fsubimplementationcount: int32;
    fbb,fbbbefore: int32;
+   fwrapsize: card32;
+   fwrapcpu: card32;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -211,7 +213,8 @@ type
  
 implementation
 uses
- mseformatstr,msearrayutils,msebits,sysutils,llvmlists,typinfo;
+ mseformatstr,msearrayutils,msebits,sysutils,llvmlists,typinfo,bcunitglob,
+ msesystypes;
 const
  blockidnames: array[blockids] of string = (
   'BLOCKINFO_BLOCK',
@@ -2017,16 +2020,48 @@ begin
 end;
 
 procedure tllvmbcreader.dump(const aoutput: tstream);
+
+ procedure wrappererror();
+ begin
+  error('Invalid bitcode wrapper header');
+ end; //wrapererror
+{ 
+ procedure checkread(var buffer; const count: int32);
+ begin
+  if not (tryreadbuffer(buffer,count) = sye_ok) then begin
+   wrappererror();
+  end;
+ end;
+}
 var
  ca1: card32;
+ startoffset: int32;
 begin
  exitcode:= 1;
  ca1:= read32();
+ if ca1 = $0B17C0DE then begin
+  ca1:= read32();
+  if ca1 <> 0 then begin
+   wrappererror();
+  end;
+  startoffset:= read32(); //from file start
+  fwrapsize:= read32();
+  fwrapcpu:= read32();
+  startoffset:= startoffset - sizeof(bc_header);
+  if (startoffset < 0) or (startoffset mod 4 <> 0) then begin
+   wrappererror();
+  end;
+  skip(startoffset div 4);
+  ca1:= read32();
+ end;
  if ca1 <> $dec04342 then begin
   error('Invalid magic number '+hextostr(ntobe(ca1),8));
  end;
  while not finished do begin
   readitem();
+ end;
+ if position <> fwrapsize + startoffset + sizeof(bc_header) then begin
+  wrappererror();
  end;
  exitcode:= 0;
 end;

@@ -514,8 +514,10 @@ type
   name: lstringty;
   namestring: string;
   prev: punitinfoty; //current uses compiled item
+
   filepath: filenamety; //todo: use lstringty
   filetimestamp: tdatetime;
+  bcfilename: filenamety;
   
   filepathmeta: metavaluety;
   debugfilemeta: metavaluety;
