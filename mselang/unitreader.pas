@@ -27,7 +27,7 @@ implementation
 uses
  filehandler,segmentutils,msestream,msestrings,msesys,msesystypes,globtypes,
  msearrayutils,elements,sysutils,handlerglob,handlerutils,unithandler,
- identutils,opglob,opcode,errorhandler;
+ identutils,opglob,opcode,errorhandler,bcunitglob;
 
 type
  relocinfoty = record
@@ -248,7 +248,7 @@ var
  end;
  
 var
- stream1: tmsefilestream;
+ stream1,stream2: tmsefilestream;
  fna1: filenamety;
  intf: punitintfinfoty;
  interfaceuses1,implementationuses1: usesitemarty;
@@ -267,6 +267,8 @@ var
  opoffset: targetoffsty;
  op1,ope: popinfoty;
  isub1: internalsubty;
+ bcheader1: bcunitheaderty;
+ bo1: boolean;
 label
  errorlab,oklab,endlab;
 begin
@@ -276,12 +278,13 @@ begin
  writeln('***** reading unit '+fna1);
 {$endif}
  if (fna1 <> '') and 
-       (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin   
+       (tmsefilestream.trycreate(stream1,fna1,fm_read) = sye_ok) then begin
+  aunit^.rtfilepath:= fna1;
   try
 //   globpobefore:= info.globdatapo;
    resetunitsegments();
    result:= checksegmentdata(stream1,getfilekind(mlafk_rtunit),
-                                              aunit^.filetimestamp) and
+                                              aunit^.filematch.timestamp) and
              readsegmentdata(stream1,getfilekind(mlafk_rtunit),
                          [seg_unitintf,seg_unitlinks,seg_unitidents]);
    if result then begin
@@ -294,6 +297,23 @@ begin
     intf:= getsegmentbase(seg_unitintf);
     if intf^.header.anoncount < 1 then begin
      goto endlab; //invalid, no parserglob.idstart
+    end;
+    aunit^.filematch.guid:= intf^.header.filematch.guid;
+    if co_llvm in info.compileoptions then begin
+     fna1:= getbcunitfile(aunit);
+     if fna1 = '' then begin
+      goto endlab; //llvm bc file not found
+     end;
+     if tmsefilestream.trycreate(stream2,fna1) <> sye_ok then begin
+      goto endlab;
+     end;
+     bo1:= (stream2.tryreadbuffer(bcheader1,sizeof(bcheader1)) = sye_ok) and
+              (comparebyte(bcheader1.header.guid,
+                                     aunit^.filematch.guid,sizeof(tguid)) = 0);
+     stream2.destroy();
+     if not bo1 then begin
+      goto endlab;
+     end;
     end;
     allocuninitedarray(intf^.header.anoncount,sizeof(identty),anons1);
     pd:= pointer(anons1);
@@ -342,7 +362,7 @@ begin
      unit1:= loadunitbyid(interfaceuses1[i1].id);
      interfaceunits1[i1]:= unit1;
      with interfaceuses1[i1] do begin
-      if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
+      if (unit1 = nil) or (unit1^.filematch.timestamp <> filetimestamp) or
        (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or 
        (unit1^.reloc.opsize <> reloc.opsize) then begin
        restoreunitsegments(unitsegments1);
@@ -474,7 +494,7 @@ begin
     for i1:= 0 to high(implementationuses1) do begin
      unit1:= loadunitbyid(implementationuses1[i1].id);
      with implementationuses1[i1] do begin
-      if (unit1 = nil) or (unit1^.filetimestamp <> filetimestamp) or
+      if (unit1 = nil) or (unit1^.filematch.timestamp <> filetimestamp) or
          (unit1^.reloc.interfaceglobsize <> reloc.interfaceglobsize) or
                           (unit1^.reloc.opsize <> reloc.opsize) then begin
        restoreunitsegments(unitsegments1);

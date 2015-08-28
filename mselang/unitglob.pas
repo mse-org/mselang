@@ -44,7 +44,7 @@ type
  usesitemarty = array of usesitemty;
  
  unitintfheaderty = record
-  sourcetimestamp: tdatetime;
+  filematch: filematchinfoty;//sourcetimestamp: tdatetime;
   key: identty;
   mainad: card32;
   reloc: unitrelocty;

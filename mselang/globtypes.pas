@@ -260,5 +260,9 @@ type
  end;
  pendinginfoarty = array of pendinginfoty;
 
+ filematchinfoty = record
+  timestamp: tdatetime;
+  guid: tguid;
+ end;
 implementation
 end.

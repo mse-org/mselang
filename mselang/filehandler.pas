@@ -37,6 +37,7 @@ function getrtunitfile(const aunit: punitinfoty): filenamety;
 function getrtunitfile(const aunitname: lstringty): filenamety;
 function getrtunitfilename(const aname: filenamety): filenamety;
 function getbcunitfilename(const aname: filenamety): filenamety;
+function getbcunitfile(const aunit: punitinfoty): filenamety;
 
 function getsysfile(const aname: filenamety): filenamety;
 
@@ -94,6 +95,17 @@ end;
 function getbcunitfilename(const aname: filenamety): filenamety;
 begin
  result:= replacefileext(aname,bcunitextension);
+end;
+
+function getbcunitfile(const aunit: punitinfoty): filenamety;
+begin
+ result:= '';
+ if aunit^.rtfilepath <> '' then begin
+  result:= getbcunitfilename(aunit^.rtfilepath);
+  if not findfile(result) then begin
+   result:= '';
+  end;
+ end;
 end;
 
 function getrtunitfile(const aunit: punitinfoty): filenamety;

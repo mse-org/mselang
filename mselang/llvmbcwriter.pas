@@ -109,9 +109,10 @@ type
   public
    constructor create(ahandle: integer); override;
    destructor destroy(); override;
-   procedure start(const consts: tconsthashdatalist; 
-                       const globals: tgloballocdatalist;
-                              const metadata: tmetadatalist);
+   procedure start(const consts: tconsthashdatalist;
+                    const globals: tgloballocdatalist;
+                    const metadata: tmetadatalist;
+                    const unitheader: bcunitinfoty);
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
@@ -344,8 +345,6 @@ end;
 { tllvmbcwriter }
 
 constructor tllvmbcwriter.create(ahandle: integer);
-var
- wrap: bc_header;
 begin
  fbufpos:= @fbuffer;
  fbufend:= fbufpos + bcwriterbuffersize;
@@ -353,14 +352,6 @@ begin
  fblockstackendpo:= fblockstackpo + blockstacksize;
  fblockstackpo^.idsize:= 2; //start default
  inherited;
- fstartpos:= position;
- wrap.magic:= bcheadermagic;
- wrap.version:= bcheaderversion;
- wrap.bitcodeoffset:= sizeof(bcunitheaderty); //from filestart
- wrap.bitcodesize:= 0;
- wrap.cputype:= 0;
- writebuffer(wrap,sizeof(wrap));
- fpos:= fstartpos+sizeof(wrap);
 end;
 
 destructor tllvmbcwriter.destroy();
@@ -369,8 +360,9 @@ begin
 end;
 
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
-                                const globals: tgloballocdatalist;
-                                       const metadata: tmetadatalist);
+                              const globals: tgloballocdatalist;
+                              const metadata: tmetadatalist;
+                              const unitheader: bcunitinfoty);
 var
  id1: int32;
  
@@ -401,7 +393,18 @@ var
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
  separator1: char;
+ wrap: bcunitheaderty;
 begin
+ fstartpos:= position;
+ wrap.wrap.magic:= bcheadermagic;
+ wrap.wrap.version:= bcheaderversion;
+ wrap.wrap.bitcodeoffset:= sizeof(bcunitheaderty); //from filestart
+ wrap.wrap.bitcodesize:= 0;
+ wrap.wrap.cputype:= 0;
+ wrap.header:= unitheader;
+ writebuffer(wrap,sizeof(wrap));
+ fpos:= fstartpos+sizeof(wrap);
+
  ftrampolineop:= nil;
  fdebugloc.line:= -1;
  fdebugloc.col:= 0;

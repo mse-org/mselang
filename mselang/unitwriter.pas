@@ -123,7 +123,7 @@ var
     pd^.reloc:= reloc;
 //    pd^.interfaceglobstart:= interfaceglobstart;
 //    pd^.interfaceglobsize:= interfaceglobsize;
-    pd^.filetimestamp:= filetimestamp;
+    pd^.filetimestamp:= filematch.timestamp;
    end;
    inc(ps);
    inc(pd);
@@ -299,7 +299,7 @@ begin
   ps:= ele.eleinfoabs(elestart);
   puteledata(ps,pd,s1);
   with po2^.header do begin
-   sourcetimestamp:= aunit^.filetimestamp;
+   filematch:= aunit^.filematch;
    namecount:= nameindex1;
    anoncount:= -anonindex1 - 1;
    internalsubs:= aunit^.internalsubs;
@@ -355,17 +355,24 @@ var
  stream1: tmsefilestream;
  fna1: filenamety;
  llvmout1: tllvmbcwriter = nil;
+ segs1: segmentsty;
 begin
  result:= putunit(aunit);
  if result then begin
   fna1:= getrtunitfilename(aunit^.filepath);
   if tmsefilestream.trycreate(stream1,fna1,fm_create) = sye_ok then begin
-   stat1:= setsubsegment(aunit^.opseg);
-   writesegmentdata(stream1,getfilekind(mlafk_rtunit),
-            [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op],
-                                                     aunit^.filetimestamp);
-                               //todo: complete, no seg_op for llvm
-   stream1.destroy();
+   try
+    segs1:= [seg_unitintf,seg_unitidents,seg_unitlinks,seg_op];
+    if co_llvm in info.compileoptions then begin
+     exclude(segs1,seg_op);
+    end;
+    stat1:= setsubsegment(aunit^.opseg);
+    writesegmentdata(stream1,getfilekind(mlafk_rtunit),segs1,
+                                                     aunit^.filematch.timestamp);
+                               //todo: complete
+   finally
+    stream1.destroy();
+   end;
    if co_llvm in info.compileoptions then begin
     fna1:= getbcunitfilename(aunit^.filepath);
     result:= tllvmbcwriter.trycreate(

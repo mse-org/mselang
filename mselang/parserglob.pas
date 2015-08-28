@@ -516,7 +516,11 @@ type
   prev: punitinfoty; //current uses compiled item
 
   filepath: filenamety; //todo: use lstringty
-  filetimestamp: tdatetime;
+  filematch: filematchinfoty;
+  rtfilepath: filenamety; //elements and opcode (interpreter only)
+  bcfilepath: filenamety; //llvm bitcode
+//  filetimestamp: tdatetime;
+//  guid: tguid; //match unit file kinds (rt, bc)
   bcfilename: filenamety;
   
   filepathmeta: metavaluety;

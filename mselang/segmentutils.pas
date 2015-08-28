@@ -115,12 +115,13 @@ procedure init();
 procedure deinit();
 
 procedure writesegmentdata(const adest: tstream; const akind: int32;
-                const astoredsegments: segmentsty; const atimestamp: tdatetime);
+                              const astoredsegments: segmentsty;
+                                          const atimestamp: tdatetime);
 function readsegmentdata(const asource: tstream; const akind: int32;
                                   const astoredsegments: segmentsty): boolean;
                      //true if ok
 function checksegmentdata(const asource: tstream; const akind: int32;
-                                        const atimestamp: tdatetime): boolean;
+                                const atimestamp: tdatetime): boolean;
 
 procedure resetunitsegments();
 procedure saveunitsegments(out state: unitsegmentsstatety);
@@ -242,7 +243,7 @@ begin
 end;
 
 function checksegmentdata(const asource: tstream; const akind: int32;
-                                  const atimestamp: tdatetime): boolean;
+                                        const atimestamp: tdatetime): boolean;
 var
  header1: segmentfileheaderty;
  posbefore: int64;
@@ -252,7 +253,7 @@ begin
  if asource.tryreadbuffer(header1,sizeof(header1)) = sye_ok then begin
   with header1 do begin
    result:= (signature = mlasignature) and (version = mlafileversion) and 
-                                (kind = akind) and (reftimestamp = atimestamp);
+            (kind = akind) and (reftimestamp = atimestamp);
   end;
  end;
  asource.position:= posbefore;

@@ -492,7 +492,7 @@ var
 begin
  po1:= unitlist.findunit(id);
  if po1 <> nil then begin
-  result:= po1^.filetimestamp;
+  result:= po1^.filematch.timestamp;
  end
  else begin
   getidentname(id,lstr1);
@@ -540,8 +540,9 @@ end;
 function initunitfileinfo(const aunit: punitinfoty): boolean;
 begin
  with aunit^ do begin
-  filetimestamp:= getfilemodtime(filepath);
-  result:= filetimestamp <> emptydatetime;
+  createguid(filematch.guid);
+  filematch.timestamp:= getfilemodtime(filepath);
+  result:= filematch.timestamp <> emptydatetime;
  end;
 end;
 

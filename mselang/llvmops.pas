@@ -32,7 +32,7 @@ procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 implementation
 uses
  globtypes,sysutils,msesys,segmentutils,handlerglob,elements,msestrings,
- compilerunit,
+ compilerunit,bcunitglob,
  handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
  interfacehandler;
 
@@ -349,6 +349,7 @@ var
  virtualsubs,virtualsubconsts: pint32;
  countpo,counte: pint32;
  intfpo: pintfdefinfoty;
+ unitheader1: bcunitinfoty;
 begin
  codestarted:= true;
  for int1:= low(i32consts) to high(i32consts) do begin
@@ -416,8 +417,11 @@ begin
    freemem(virtualsubconsts);
   end;
  end;
- with info.s.unitinfo^.llvmlists do begin
-  bcstream.start(constlist,globlist,metadatalist);
+ with info.s.unitinfo^ do begin
+  unitheader1.guid:= filematch.guid;
+  with llvmlists do begin
+   bcstream.start(constlist,globlist,metadatalist,unitheader1);
+  end;
  end;
 end;
 

@@ -37,6 +37,7 @@ const
  
 type
  bcunitinfoty = record
+  guid: tguid;
  end;
  
  bcunitheaderty = record
