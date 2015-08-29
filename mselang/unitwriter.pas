@@ -119,7 +119,7 @@ var
      key:= updateident(key);
     end;
 }
-    pd^.id:= key;//updateident(key);
+    pd^.id:= updateident(key);
     pd^.reloc:= reloc;
 //    pd^.interfaceglobstart:= interfaceglobstart;
 //    pd^.interfaceglobsize:= interfaceglobsize;

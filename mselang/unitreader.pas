@@ -546,27 +546,32 @@ oklab:
       end;
      end;
     end;
-    stream1.position:= 0;           //todo: reduce file seeking
-    segstate1:= savesegment(seg_op);
-    op1:= getsegmenttop(seg_op);
-    result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
-    if (globreloc1 <> nil) and result then begin
-     pointer(op1):= pointer(op1)+(getsegmentbase(seg_op)-segstate1.data);
-     ope:= getsegmenttop(seg_op);
-     while op1 < ope do begin
-      with optable^[op1^.op.op] do begin
-       if of_relocseg in flags then begin
-        reloc(globreloc1,targetadty(op1^.par.memop.segdataaddress.a.address));
-       end;
-      end;
-      inc(op1);
-     end;
-    end;
-    if result then begin
-     inc(info.opcount,intf^.header.reloc.opsize);
+    if co_llvm in info.compileoptions then begin
+     result:= true;
     end
     else begin
-     restoresegment(segstate1);
+     stream1.position:= 0;           //todo: reduce file seeking
+     segstate1:= savesegment(seg_op);
+     op1:= getsegmenttop(seg_op);
+     result:= readsegmentdata(stream1,getfilekind(mlafk_rtunit),[seg_op]);
+     if (globreloc1 <> nil) and result then begin
+      pointer(op1):= pointer(op1)+(getsegmentbase(seg_op)-segstate1.data);
+      ope:= getsegmenttop(seg_op);
+      while op1 < ope do begin
+       with optable^[op1^.op.op] do begin
+        if of_relocseg in flags then begin
+         reloc(globreloc1,targetadty(op1^.par.memop.segdataaddress.a.address));
+        end;
+       end;
+       inc(op1);
+      end;
+     end;
+     if result then begin
+      inc(info.opcount,intf^.header.reloc.opsize);
+     end
+     else begin
+      restoresegment(segstate1);
+     end;
     end;
 endlab:
    end;

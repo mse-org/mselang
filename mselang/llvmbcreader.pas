@@ -1596,7 +1596,8 @@ begin
       end;
       FUNC_CODE_INST_RET: begin
        if high(rec1) = 2 then begin
-        outoprecord(functioncodesnames[functioncodes(rec1[1])],[opname(rec1[2])]);
+        outoprecord(functioncodesnames[functioncodes(rec1[1])],
+                                                           [opname(rec1[2])]);
        end
        else begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],
