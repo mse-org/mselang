@@ -314,6 +314,7 @@ begin
      if not bo1 then begin
       goto endlab;
      end;
+     aunit^.bcfilepath:= fna1;
     end;
     allocuninitedarray(intf^.header.anoncount,sizeof(identty),anons1);
     pd:= pointer(anons1);

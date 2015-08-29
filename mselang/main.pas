@@ -83,8 +83,9 @@ var
  compoptions: compileoptionsty;
  str1: string;
  int1: integer;
- filename1: filenamety;
+ filename1,filename2: filenamety;
  dirbefore: msestring;
+ ar1: filenamearty;
 begin
 {$ifdef mse_debugparser}
  writeln('*****************************************');
@@ -113,7 +114,7 @@ begin
    if bo1 then begin
     if llvm.value then begin
      try
-      if not wrtued.value then begin
+      if not rrtued.value then begin
        filename1:= replacefileext(filena.value,'bc');
        if tllvmbcwriter.trycreate(tmsefilestream(targetstream),
                                   filename1,fm_create) <> sye_ok then begin
@@ -127,6 +128,29 @@ begin
         if int1 = 0 then begin
          int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
                            filenamebase(filename1)+'.s','',str1);
+         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+         if int1 = 0 then begin
+          if not norun.value then begin
+           int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+           grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+          end;
+         end;
+        end;
+       end;
+      end
+      else begin
+       ar1:= bcfiles();
+       filename2:= removefileext(filena.value)+'_all.bc';
+       int1:= getprocessoutput(llvmbindir+'llvm-link -o='+filename2+' '+
+                quotefilename(ar1),'',str1);
+       grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+       if int1 = 0 then begin
+        int1:= getprocessoutput(llvmbindir+'llc '+filename2,'',str1);
+        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        if int1 = 0 then begin
+         int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
+                           filenamebase(filename2)+'.s','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if int1 = 0 then begin
           if not norun.value then begin

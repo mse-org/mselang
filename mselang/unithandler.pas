@@ -100,6 +100,8 @@ procedure beginunit(const aunit: punitinfoty);
 function endunit(const aunit: punitinfoty): boolean;
 procedure finalizeunit(const aunit: punitinfoty);
 
+function bcfiles(): filenamearty;
+
 procedure init;
 procedure deinit(const freeunitlist: boolean);
 
@@ -118,6 +120,9 @@ type
  punithashdataty = ^unithashdataty;
 
  tunitlist = class(thashdatalist)
+  private
+   ffilenameiteratepo: pfilenamety;
+   procedure filenameiterator(var aitemdata);
   protected
    function hashkey(const akey): hashvaluety; override;
    function checkkey(const akey; const aitemdata): boolean; override;
@@ -126,6 +131,7 @@ type
    constructor create;
    function findunit(const aname: identty): punitinfoty;
    function newunit(const aname: identty): punitinfoty;
+   function bcfiles(): filenamearty;
  end;
 
 var
@@ -699,6 +705,22 @@ begin
   ref:= result;
  end;
 end;
+
+procedure tunitlist.filenameiterator(var aitemdata);
+begin
+ with punitinfoty(aitemdata)^ do begin
+  ffilenameiteratepo^:= bcfilepath;
+ end;
+ inc(ffilenameiteratepo);
+end;
+
+function tunitlist.bcfiles: filenamearty;
+begin
+ setlength(result,count);
+ ffilenameiteratepo:= pointer(result);
+ iterate(@filenameiterator);
+end;
+
 (*
 { timplementationpendinglist }
 
@@ -1291,6 +1313,11 @@ begin
    freeandnil(llvmlists);
   end;
  end;
+end;
+
+function bcfiles(): filenamearty;
+begin
+ result:= unitlist.bcfiles();
 end;
 
 procedure clear;
