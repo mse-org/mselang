@@ -21,6 +21,10 @@ uses
  globtypes,mselinklist,listutils,msestrings,parserglob,opglob,elements,
  handlerglob,msetypes;
 
+const
+ systemunitname = '__mla__system';
+ compilerunitname = '__mla__compilerunit';
+ 
 type
  unitlinkinfoty = record  //used for ini, fini
   header: linkheaderty;
@@ -42,7 +46,8 @@ function initunitfileinfo(const aunit: punitinfoty): boolean;
 function loadunitbyid(const aid: identty; 
                     const astackoffset: int32 = minint): punitinfoty;
 function loadunit(const aindex: integer): punitinfoty;
-function parsecompilerunit(const aname: filenamety): boolean;
+function parsecompilerunit(const aname: filenamety;
+                                        out aunit: punitinfoty): boolean;
 
 procedure handleprogramentry();
 procedure beginunit(const aname: identty; const nopush: boolean);
@@ -310,12 +315,16 @@ begin
 //  offs1:= ele.decelementparent;
   with s.unitinfo^ do begin
    if us_interfaceparsed in state then begin
-//    ele.decelementparent;
     setlength(implementationuses,int2);
     po1:= pointer(implementationuses);
    end
    else begin
-    setlength(interfaceuses,int2);
+   {$ifdef mse_checkinternalerror}
+    if interfaceuses = nil then begin
+     internalerror(ie_parser,'20150831A');
+    end;
+   {$endif}
+    setlength(interfaceuses,int2+1);
     po1:= pointer(interfaceuses);
    end;
   end;
@@ -571,25 +580,25 @@ begin
  result:= getunitfile(aunit,stringtolstring(string(aname)));
 end;
          
-function parsecompilerunit(const aname: filenamety): boolean;
+function parsecompilerunit(const aname: filenamety; 
+                                             out aunit: punitinfoty): boolean;
 var
- unit1: punitinfoty;
  str1: string;
 begin
  result:= false;
  str1:= stringtoutf8(aname);
- unit1:= newunit(str1);
- with unit1^ do begin
+ aunit:= newunit(str1);
+ with aunit^ do begin
 //  name:= str1;
   prev:= info.s.unitinfo;
-  if not getunitfile(unit1,aname) then begin
+  if not getunitfile(aunit,aname) then begin
    errormessage(err_compilerunitnotfound,[aname]);
    exit;
   end;
   inc(info.unitlevel);
-  result:= parseusesunit(unit1);
-  if result then begin
-   initcompilersubs(unit1);
+  result:= parseusesunit(aunit);
+  if result and (aname = compilerunitname) then begin
+   initcompilersubs(aunit);
   end;
   dec(info.unitlevel);
  end;
@@ -691,7 +700,12 @@ begin
  fillchar(result^,sizeof(result^),0);
 // clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
+ if info.systemunit <> nil then begin
+  setlength(result^.interfaceuses,1);
+  result^.interfaceuses[0]:= info.systemunit;
+ end;
  po1^.data:= result;
+{
  if co_llvm in info.compileoptions then begin
   if co_writeunits in info.compileoptions then begin
    result^.llvmlists:= tllvmlists.create();
@@ -700,6 +714,7 @@ begin
    result^.llvmlists:= globllvmlists;
   end;
  end;
+}
 // result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;

@@ -158,6 +158,7 @@ var
  ele1: elementoffsetty;
 begin
  setoptable(aoptable);
+{
  addvar(tk_exitcode,allvisi,info.s.unitinfo^.varchain,po1);
  ele.findcurrent(getident('int32'),[ek_type],allvisi,po1^.vf.typ);
  po1^.address.indirectlevel:= 0;
@@ -165,16 +166,19 @@ begin
  info.s.globlinkage:= li_internal; //todo
  po1^.address.segaddress:= getglobvaraddress(das_32,4,po1^.address.flags);
                                                                //i32 exitcode
-
+}
+ info.s.globlinkage:= li_internal; //todo ???
  with additem(oc_beginparse)^ do begin
   with par.beginparse do begin
-   exitcodeaddress:= po1^.address.segaddress;
+//   exitcodeaddress:= po1^.address.segaddress;
    finisub:= 0;
   end;
  end;
 end;
 
 procedure endparser();
+var
+ ele1: elementoffsetty;
 begin
  with getoppo(startupoffset)^.par.beginparse do begin
   unitinfochain:= info.unitinfochain;
@@ -259,6 +263,7 @@ var
  hasfini: boolean;
  finicall: opaddressty;
  i1: int32;
+ ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -290,7 +295,12 @@ begin
   end;
  end;
  with additem(oc_progend)^ do begin 
-  //endmark, will possibly replaced by goto if there is fini code
+  if not ele.findchild(info.systemunit^.interfaceelement,tk_exitcode,
+                                            [ek_var],allvisi,ele1) then begin
+   internalerror1(ie_parser,'20150831A');
+  end;
+  par.progend.exitcodeaddress:= 
+            trackaccess(pvardataty(ele.eledataabs(ele1))).segaddress;
  end;
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin

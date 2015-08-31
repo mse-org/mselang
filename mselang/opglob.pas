@@ -609,12 +609,16 @@ type
 //  globallocstart: segaddressty;
 //  globalloccount: integer;
   unitinfochain: elementoffsetty;
-  exitcodeaddress: segaddressty;
+//  exitcodeaddress: segaddressty;
   mainad: opaddressty;
   finisub: opaddressty; //0 -> none
  end;  
 
  beginunitcodeinfoty = record
+ end;
+ 
+ progendty = record
+  exitcodeaddress: segaddressty;
  end;
  
  stackopty = record
@@ -817,6 +821,9 @@ type
    );
    oc_main: (
     main: mainty;
+   );
+   oc_progend: (
+    progend: progendty;
    );
    oc_push,
    oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,

@@ -476,6 +476,14 @@ begin
     exit;
    end;
   end;
+  if (aunit^.llvmlists = nil) and (co_llvm in info.compileoptions) then begin
+   if co_writeunits in info.compileoptions then begin
+    aunit^.llvmlists:= tllvmlists.create();
+   end
+   else begin 
+    aunit^.llvmlists:= globllvmlists;
+   end;
+  end;
   linebreaks:= 0;
   eleparentbefore:= ele.elementparent;
   ele.elementparent:= unitsele;
@@ -940,14 +948,20 @@ begin
     else begin
      beginparser(stackops.getoptable());
     end;
-   {$ifndef mse_nocompilerunit}
-    result:= parsecompilerunit('__mla__compilerunit');
+    result:= parsecompilerunit(systemunitname,po1);
     if result then begin
-   {$endif}
-     result:= parseunit(input,unit1,false);
-   {$ifndef mse_nocompilerunit}
+     info.systemunit:= po1;
+     setlength(unit1^.interfaceuses,1);
+     unit1^.interfaceuses[0]:= po1;
+    {$ifndef mse_nocompilerunit}
+     result:= parsecompilerunit(compilerunitname);
+     if result then begin
+    {$endif}
+      result:= parseunit(input,unit1,false);
+    {$ifndef mse_nocompilerunit}
+     end;
+    {$endif}
     end;
-   {$endif}
     endparser();
 //    mainmetadatalist:= unit1^.metadatalist;
 //    unit1^.metadatalist:= nil;

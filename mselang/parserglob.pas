@@ -641,6 +641,7 @@ type
   stringbuffer: string; //todo: use faster type
   includestack: array[0..includemax] of includeinfoty;
   includeindex: integer;
+  systemunit: punitinfoty;
  end;
 
 const

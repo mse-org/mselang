@@ -81,6 +81,7 @@ type
   frame: pointer;
   stacklink: pointer;
   stop: boolean;
+  exitcode: int32;
  end;
  pcputy = ^cputy;
  
@@ -351,6 +352,10 @@ end;
 
 procedure progendop();
 begin
+ with cpu.pc^.par.progend do begin
+  cpu.exitcode:= pint32(segments[exitcodeaddress.segment].basepo+
+                                                 exitcodeaddress.address)^;
+ end;
  cpu.stop:= true;
 end;
 
@@ -3879,7 +3884,8 @@ begin
   optable[cpu.pc^.op.op].proc();
   inc(cpu.pc);
  end;
- result:= pinteger(segments[seg_globvar].basepo)^;
+ result:= cpu.exitcode;
+// result:= pinteger(segments[seg_globvar].basepo)^;
 end;
 
 function run(const stackdepht: integer): integer;
