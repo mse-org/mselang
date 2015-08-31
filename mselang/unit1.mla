@@ -1,9 +1,11 @@
 unit unit1;
 interface
+const
+ const1 = 125;
 procedure test();
 implementation
 uses
- unit2;
+ unit2; 
 procedure test();
 begin
  test2();

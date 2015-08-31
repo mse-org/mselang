@@ -243,7 +243,7 @@ object mainfo: tmainfo
       2
     )
     taborder = 11
-    bounds_x = 400
+    bounds_x = 408
     bounds_y = 1
     bounds_cx = 43
     bounds_cy = 16
@@ -261,9 +261,27 @@ object mainfo: tmainfo
       2
     )
     taborder = 12
-    bounds_x = 400
+    bounds_x = 408
     bounds_y = 15
     bounds_cx = 39
+    bounds_cy = 16
+    anchors = [an_top, an_right]
+    statfile = statf
+  end
+  object builded: tbooleanedit
+    frame.caption = 'build'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      1
+      33
+      2
+    )
+    taborder = 13
+    bounds_x = 360
+    bounds_y = 15
+    bounds_cx = 46
     bounds_cy = 16
     anchors = [an_top, an_right]
     statfile = statf

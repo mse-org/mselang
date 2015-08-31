@@ -125,7 +125,8 @@ type
  compileoptionty = (co_mlaruntime, //mla interpreter
                     co_llvm,co_hasfunction,
                     co_writeunits,     //write unitfiles
-                    co_readunits       //read unitfiles
+                    co_readunits,      //read unitfiles
+                    co_build           //compile all unit files
                     );
  compileoptionsty = set of compileoptionty;
 const
@@ -490,7 +491,8 @@ type
  
  unitstatety = ({us_interface,}us_interfaceparsed,
                      us_implementation,us_implementationparsed,
-                     us_end //pendings resolved
+                     us_end, //pendings resolved
+                     us_invalidunitfile
                      );
  unitstatesty = set of unitstatety;
 

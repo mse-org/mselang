@@ -416,6 +416,26 @@ var
   end;
  end;//popparent
 
+ procedure parseimplementations();
+ begin
+  with info do begin
+   if (unitlevel = 1) then begin 
+                       //todo: parse implementations as soon as possible
+    while (intfparsedchain <> 0) and result do begin
+    {$ifdef mse_debugparser}
+      writeln();
+      writeln('***************************************** implementation');
+      writeln(punitlinkinfoty(
+             getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
+    {$endif}
+     result:= parseunit('',punitlinkinfoty(
+                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,false);
+     deletelistitem(intfparsedlinklist,intfparsedchain);
+    end;
+   end;
+  end;
+ end; //parseimplementations
+
 var
  po1,po2: pchar;
  pc1{,pc2}: pcontextty;
@@ -438,9 +458,11 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
-  if co_readunits in info.compileoptions then begin
-   if readunitfile(aunit) then begin
+  if compileoptions * [co_readunits,co_build] = [co_readunits] then begin
+   if not (us_invalidunitfile in aunit^.state) and 
+                                      readunitfile(aunit) then begin
     result:= true;
+    parseimplementations();
     s:= statebefore;
     dec(unitlevel);
     if unitlevel = 0 then begin
@@ -833,18 +855,8 @@ parseend:
      ref:= s.unitinfo;
     end;       
    end;
-   if (unitlevel = 1) then begin
-    while (intfparsedchain <> 0) and result do begin
-    {$ifdef mse_debugparser}
-      writeln();
-      writeln('***************************************** implementation');
-      writeln(punitlinkinfoty(
-             getlistitem(intfparsedlinklist,intfparsedchain))^.ref^.filepath);
-    {$endif}
-     result:= parseunit('',punitlinkinfoty(
-                getlistitem(intfparsedlinklist,intfparsedchain))^.ref,false);
-     deletelistitem(intfparsedlinklist,intfparsedchain);
-    end;
+   parseimplementations();
+   if (unitlevel = 1) then begin 
     if result then begin
      with pstartupdataty(getoppo(0))^ do begin
       globdatasize:= globdatapo;

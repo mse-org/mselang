@@ -583,6 +583,7 @@ endlab:
   if not result then begin
 //   info.globdatapo:= globpobefore; not possible because of uses modules
    exclude(aunit^.state,us_interfaceparsed);
+   include(aunit^.state,us_invalidunitfile);
   end;
  end;
 {$ifdef mse_debugparser}

@@ -52,6 +52,7 @@ type
    norun: tbooleanedit;
    wrtued: tbooleanedit;
    rrtued: tbooleanedit;
+   builded: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -101,6 +102,9 @@ begin
  end;
  if wrtued.value then begin
   include(compoptions,co_writeunits);
+ end;
+ if builded.value then begin
+  include(compoptions,co_build);
  end;
  if rrtued.value then begin
   include(compoptions,co_readunits);
