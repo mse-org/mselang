@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,664,4,arith
    c=21
     (
     kind=1
@@ -990,7 +990,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
+   a=0,665,4,control
    c=20
     (
     kind=2
@@ -1666,7 +1666,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,exception
+   a=0,665,4,exception
    c=6
     (
     kind=2
@@ -1685,7 +1685,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B738E050
+    ao=An unhandled exception occured at $B73960C0
     +
     ae=
     aec=123
@@ -1819,7 +1819,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
+   a=0,665,4,indirect
    c=22
     (
     kind=2
@@ -4260,7 +4260,34 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=70
+rowstate=97
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

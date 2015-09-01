@@ -323,7 +323,7 @@ begin
 end;
 
 var
- exitcodeaddress: segaddressty;
+// exitcodeaddress: segaddressty;
  finihandler: int32; //globid
  codestarted: boolean;
  ismain: boolean;
@@ -429,7 +429,7 @@ procedure beginparseop();
 begin
  startllvmcode(); 
  with pc^.par.beginparse do begin
-  llvmops.exitcodeaddress:= exitcodeaddress;
+//  llvmops.exitcodeaddress:= exitcodeaddress;
   if finisub = 0 then begin
    llvmops.finihandler:= 0;
   end
@@ -469,7 +469,9 @@ procedure progendop();
 var
  i1: int32;
 begin
- bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
+ end;
  bcstream.emitretop(bcstream.ssaindex-1);
  bcstream.endsub();
 end;
@@ -479,9 +481,11 @@ begin
  if finihandler <> 0 then begin
   bcstream.emitcallop(false,bcstream.globval(finihandler),[]);
  end;  
- bcstream.emitloadop(bcstream.valindex(exitcodeaddress));
+ with pc^.par do begin
+  bcstream.emitloadop(bcstream.valindex(progend.exitcodeaddress));
+ end;
  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if__exit]),
-                                                      [bcstream.relval(0)]);
+                                                        [bcstream.relval(0)]);
 end;
 
 procedure movesegreg0op();

@@ -187,7 +187,7 @@ implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler,
- identutils;
+ identutils,llvmbitcodes;
    
 const
  mindouble = -1.7e308;
@@ -660,7 +660,8 @@ begin
   result:= bitoptypes[das_pointer];
  end
  else begin
-  if atypedata^.h.datasize = das_none then begin
+  if (atypedata^.h.datasize = das_none) and 
+                             (co_llvm in info.compileoptions) then begin
    result.listindex:= info.s.unitinfo^.llvmlists.typelist.
                                     addbytevalue(atypedata^.h.bytesize);
   end
@@ -1247,9 +1248,22 @@ end;
 
 function trackaccess(const avar: pvardataty): addressvaluety;
 var
- po1: pelementinfoty;
+ unitid: identty;
+ globid: int32;
 begin
  result:= avar^.address;
+ if af_segment in avar^.address.flags then begin
+  if llvmlink(avar,unitid,globid) then begin
+   if globid < 0 then begin
+    result.segaddress.address:= info.s.unitinfo^.llvmlists.globlist.addvalue(
+                                                         avar,li_external,true);
+   end
+   else begin
+    result.segaddress.address:= globid;
+   end;
+  end;
+ end;
+{
  if info.compileoptions * [co_llvm,co_writeunits] = 
                                             [co_llvm,co_writeunits] then begin
   if af_segment in avar^.address.flags then begin
@@ -1258,6 +1272,7 @@ begin
    end;
   end;
  end;
+}
 end;
 
 function trackaccess(const asub: psubdataty): int32;

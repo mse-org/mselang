@@ -4,5 +4,6 @@ procedure test2();
 implementation
 procedure test2();
 begin
+ exitcode:= 123;
 end;
 end.

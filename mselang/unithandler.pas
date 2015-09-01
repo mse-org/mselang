@@ -94,6 +94,9 @@ procedure checkforwardtypeerrors();
 procedure regclass(const aclass: elementoffsetty);
 procedure regclassdescendent(const aclass: elementoffsetty;
                                 const aancestor: elementoffsetty);
+
+procedure updateprogend(const aop: popinfoty);
+
 procedure handleunitend();
 //procedure handleinifini();
 procedure handleinitializationstart();
@@ -105,6 +108,7 @@ procedure beginunit(const aunit: punitinfoty);
 function endunit(const aunit: punitinfoty): boolean;
 procedure finalizeunit(const aunit: punitinfoty);
 
+function getexitcodeaddress: segaddressty;
 function bcfiles(): filenamearty;
 
 procedure init;
@@ -326,6 +330,7 @@ begin
    {$endif}
     setlength(interfaceuses,int2+1);
     po1:= pointer(interfaceuses);
+    inc(po1);
    end;
   end;
   inc(po1,int2);
@@ -1088,6 +1093,22 @@ begin
  with classdescendinfoty(itemdata) do begin
   copyvirtualtable(source,dest,itemcount);
  end;
+end;
+
+function getexitcodeaddress: segaddressty;
+var
+ ele1: elementoffsetty;
+begin
+ if not ele.findchild(info.systemunit^.interfaceelement,tk_exitcode,
+                                           [ek_var],allvisi,ele1) then begin
+  internalerror1(ie_parser,'20150831A');
+ end;
+ result:= trackaccess(pvardataty(ele.eledataabs(ele1))).segaddress;
+end;
+
+procedure updateprogend(const aop: popinfoty);
+begin
+ aop^.par.progend.exitcodeaddress:= getexitcodeaddress();
 end;
 
 procedure handleunitend();

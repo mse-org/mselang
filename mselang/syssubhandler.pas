@@ -48,7 +48,7 @@ procedure deinit();
 implementation
 uses
  elements,parserglob,handlerutils,opcode,stackops,errorhandler,rttihandler,
- segmentutils,llvmlists,valuehandler,identutils;
+ segmentutils,llvmlists,valuehandler,identutils,unithandler;
 
 function checkparamco(const wanted, actual: integer): boolean;
 begin
@@ -574,8 +574,7 @@ procedure handlehalt(const paramco: integer);
 begin
  with info do begin
   if checkparamco(0,paramco) then begin
-   with additem(oc_halt)^ do begin
-   end;
+   updateprogend(additem(oc_halt))
   end;
  end;
 end;

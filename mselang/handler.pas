@@ -219,6 +219,7 @@ begin
   end;
   with additem(oc_main)^ do begin
    //blockcount set in handleprogblock() 
+   par.main.exitcodeaddress:= getexitcodeaddress();
   end;
   with unitlinklist do begin
    ad1:= unitchain;
@@ -263,7 +264,6 @@ var
  hasfini: boolean;
  finicall: opaddressty;
  i1: int32;
- ele1: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBLOCK');
@@ -294,14 +294,7 @@ begin
    paramcount:= 0;
   end;
  end;
- with additem(oc_progend)^ do begin 
-  if not ele.findchild(info.systemunit^.interfaceelement,tk_exitcode,
-                                            [ek_var],allvisi,ele1) then begin
-   internalerror1(ie_parser,'20150831A');
-  end;
-  par.progend.exitcodeaddress:= 
-            trackaccess(pvardataty(ele.eledataabs(ele1))).segaddress;
- end;
+ updateprogend(additem(oc_progend));
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
    par.main.blockcount:= info.s.ssa.blockindex+1;

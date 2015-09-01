@@ -756,6 +756,7 @@ type
  
  mainty = record
   blockcount: int32;
+  exitcodeaddress: segaddressty;
  end;
 
 const
@@ -822,7 +823,7 @@ type
    oc_main: (
     main: mainty;
    );
-   oc_progend: (
+   oc_progend,oc_halt: (
     progend: progendty;
    );
    oc_push,

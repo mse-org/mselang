@@ -310,15 +310,16 @@ type
    fnamelist: tglobnamelist;
    fconstlist: tconsthashdatalist;
   protected
-   function addnoinit(const atyp: int32; const alinkage: linkagety): int32;
+   function addnoinit(const atyp: int32; const alinkage: linkagety;
+                      const externunit: boolean): int32;
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
    destructor destroy(); override;
    procedure clear(); override;
 //   function addvalue(var avalue: typeallocinfoty): int32;
-   function addvalue(const avalue: pvardataty; 
-                               const alinkage: linkagety): int32;
+   function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
+                                    const externunit: boolean = false): int32;
                                                             //returns listid
    function addbitvalue(const asize: databitsizety;
                                const alinkage: linkagety): int32;
@@ -1396,7 +1397,7 @@ begin
 end;
 }
 function tgloballocdatalist.addnoinit(const atyp: int32;
-                                        const alinkage: linkagety): int32;
+                const alinkage: linkagety; const externunit: boolean): int32;
 var
  dat1: globallocdataty;
 begin
@@ -1411,21 +1412,22 @@ begin
 end;
 
 function tgloballocdatalist.addvalue(const avalue: pvardataty;
-                                           const alinkage: linkagety): int32;
+                              const alinkage: linkagety;
+                              const externunit: boolean = false): int32;
 begin
- result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage);
+ result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage,externunit);
 end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer; 
                                        const alinkage: linkagety): int32;
 begin 
- result:= addnoinit(ftypelist.addbytevalue(asize),alinkage);
+ result:= addnoinit(ftypelist.addbytevalue(asize),alinkage,false);
 end;
 
 function tgloballocdatalist.addbitvalue(const asize: databitsizety; 
                                        const alinkage: linkagety): int32;
 begin 
- result:= addnoinit(ftypelist.addbitvalue(asize),alinkage);
+ result:= addnoinit(ftypelist.addbitvalue(asize),alinkage,false);
 end;
 
 function tgloballocdatalist.addinitvalue(const akind: globallockindty;

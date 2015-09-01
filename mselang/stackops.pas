@@ -81,7 +81,6 @@ type
   frame: pointer;
   stacklink: pointer;
   stop: boolean;
-  exitcode: int32;
  end;
  pcputy = ^cputy;
  
@@ -111,6 +110,7 @@ var                       //todo: use threadvars where necessary
  mainstackend: pointer;
  reg0: pointer;
  exceptioninfo: exceptioninfoty;
+ exitcodeaddress: pint32;
  cpu: cputy;
  {
  mainstackpo: pointer;
@@ -348,14 +348,20 @@ end;
 procedure mainop();
 begin
  cpu.frame:= cpu.stack;
+ with cpu.pc^.par do begin
+  exitcodeaddress:= pint32(segments[main.exitcodeaddress.segment].basepo+
+                                                 main.exitcodeaddress.address);
+ end; 
 end;
 
 procedure progendop();
 begin
+{
  with cpu.pc^.par.progend do begin
-  cpu.exitcode:= pint32(segments[exitcodeaddress.segment].basepo+
+  exitcode:= pint32(segments[exitcodeaddress.segment].basepo+
                                                  exitcodeaddress.address)^;
  end;
+}
  cpu.stop:= true;
 end;
 
@@ -2666,7 +2672,8 @@ begin
   cpu.pc:= startpo+finihandler-1;
  end
  else begin
-  cpu.stop:= true;
+  progendop();
+//  cpu.stop:= true;
  end;
 end;
 
@@ -3884,7 +3891,7 @@ begin
   optable[cpu.pc^.op.op].proc();
   inc(cpu.pc);
  end;
- result:= cpu.exitcode;
+ result:= exitcodeaddress^;
 // result:= pinteger(segments[seg_globvar].basepo)^;
 end;
 

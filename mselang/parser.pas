@@ -917,7 +917,7 @@ function parse(const input: string; const afilename: filenamety;
                               //true if ok
 var                           
  po1: punitinfoty;
- unit1: punitinfoty;
+ unit1,unit2: punitinfoty;
  int1: integer;
 begin
  result:= false;
@@ -954,7 +954,7 @@ begin
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= po1;
     {$ifndef mse_nocompilerunit}
-     result:= parsecompilerunit(compilerunitname);
+     result:= parsecompilerunit(compilerunitname,unit2);
      if result then begin
     {$endif}
       result:= parseunit(input,unit1,false);
