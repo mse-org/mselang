@@ -463,7 +463,7 @@ begin
  end;
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
-
+                                                      //types
  if consts.typelist.count > 0 then begin
   beginblock(TYPE_BLOCK_ID_NEW,3);
   emitrec(ord(TYPE_CODE_NUMENTRY),[consts.typelist.count*typeindexstep]);
@@ -579,7 +579,7 @@ begin
    pt1:= consts.typelist.next();
   end;
   endblock(); 
-
+                                              //globals
   pga5:= globals.datapo;
   pgae:= pga5 + globals.count;
   while pga5 < pgae do begin
@@ -633,7 +633,7 @@ begin
    end;
    endblock();
   end;
-  
+                                                //consts
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;

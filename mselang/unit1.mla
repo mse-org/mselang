@@ -1,13 +1,9 @@
 unit unit1;
 interface
-uses
- unit2; 
-const
- const1 = 125;
 procedure test();
 implementation
 procedure test();
 begin
- test2();
+// exitcode:= 123;
 end;
 end.

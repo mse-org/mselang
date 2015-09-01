@@ -187,7 +187,7 @@ implementation
 uses
  errorhandler,typinfo,opcode,stackops,parser,sysutils,mseformatstr,
  syssubhandler,managedtypes,grammar,segmentutils,valuehandler,unithandler,
- identutils,llvmbitcodes;
+ identutils,llvmbitcodes,llvmlists;
    
 const
  mindouble = -1.7e308;
@@ -1232,6 +1232,7 @@ function llvmlink(const adata: pointer; out destunitid: identty;
                                               // -1 -> new
 var
  po1: pelementinfoty;
+ po2: plinkdataty;
 begin
  with info do begin
   result:= modularllvm;
@@ -1240,7 +1241,14 @@ begin
    destunitid:= po1^.header.defunit^.key;
    result:= destunitid <> s.unitinfo^.key;
    if result then begin
-    globid:= -1; //new
+    po2:= info.s.unitinfo^.llvmlists.globlist.linklist.find(
+                                              ele.eledatarel(adata));
+    if po2 <> nil then begin
+     globid:= po2^.globid;
+    end
+    else begin
+     globid:= -1; //new
+    end;
    end;
   end;
  end;

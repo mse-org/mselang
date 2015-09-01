@@ -294,6 +294,17 @@ type
                        const adestindex: integer; const alistindex: int32);
  end;
  
+ linkdataty = record
+  globid: int32;
+ end;
+ plinkdataty = ^linkdataty;
+ 
+ tlinklist = class(tintegerhashdatalist)
+  public
+   constructor create();
+   procedure addlink(const adata: pointer; const aglobid: int32);
+ end;
+ 
  globallockindty = (gak_var,gak_const,gak_sub); 
  globallocdataty = record
   typeindex: int32;
@@ -307,8 +318,9 @@ type
  tgloballocdatalist = class(trecordlist)
   private
    ftypelist: ttypehashdatalist;
-   fnamelist: tglobnamelist;
    fconstlist: tconsthashdatalist;
+   fnamelist: tglobnamelist;
+   flinklist: tlinklist;
   protected
    function addnoinit(const atyp: int32; const alinkage: linkagety;
                       const externunit: boolean): int32;
@@ -350,6 +362,7 @@ type
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
    property namelist: tglobnamelist read fnamelist;
+   property linklist: tlinklist read flinklist;
  end;
 
  metavalueflagty = (mvf_globval,mvf_sub,mvf_meta,mvf_dummy);
@@ -1367,6 +1380,7 @@ begin
  ftypelist:= atypelist;
  fconstlist:= aconstlist;
  fnamelist:= tglobnamelist.create;
+ flinklist:= tlinklist.create;
  inherited create(sizeof(globallocdataty));
 end;
 
@@ -1374,6 +1388,7 @@ destructor tgloballocdatalist.destroy();
 begin
  inherited;
  fnamelist.free();
+ flinklist.free();
 end;
 
 procedure tgloballocdatalist.clear;
@@ -1405,7 +1420,12 @@ begin
  dat1.typeindex:= atyp;
  dat1.linkage:= alinkage;
  dat1.kind:= gak_var;
- dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
+ if externunit then begin
+  dat1.initconstindex:= -1;
+ end
+ else begin
+  dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
+ end;
  result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
@@ -1489,6 +1509,7 @@ begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
+    flinklist.addlink(avalue,result);
    end
    else begin
     if sf_named in flags then begin
@@ -1769,6 +1790,20 @@ begin
  fconstlist.clear();
  fgloblist.clear();
  fmetadatalist.clear();
+end;
+
+{ tlinklist }
+
+constructor tlinklist.create;
+begin
+ inherited create(sizeof(linkdataty));
+end;
+
+procedure tlinklist.addlink(const adata: pointer; const aglobid: int32);
+begin
+ with plinkdataty(add(ele.eledatarel(adata)))^ do begin
+  globid:= aglobid;
+ end;
 end;
 
 end.
