@@ -266,6 +266,7 @@ type
  vardataty = record
   vf: vfinfoty;           //same layout as fielddataty
   address: addressvaluety; //indirectlevel = total
+  nameid: int32; //for llvm
  end;
  pvardataty = ^vardataty;
  ppvardataty = ^pvardataty;

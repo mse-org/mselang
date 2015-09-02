@@ -1412,7 +1412,8 @@ begin
 end;
 }
 function tgloballocdatalist.addnoinit(const atyp: int32;
-                const alinkage: linkagety; const externunit: boolean): int32;
+                const alinkage: linkagety;
+                const externunit: boolean): int32;
 var
  dat1: globallocdataty;
 begin
@@ -1420,13 +1421,17 @@ begin
  dat1.typeindex:= atyp;
  dat1.linkage:= alinkage;
  dat1.kind:= gak_var;
+ result:= fcount;
  if externunit then begin
   dat1.initconstindex:= -1;
  end
  else begin
   dat1.initconstindex:= fconstlist.addnullvalue(atyp).listid;
+  if alinkage = li_external then begin
+   inc(info.s.unitinfo^.nameid);
+   fnamelist.addname(info.s.unitinfo,info.s.unitinfo^.nameid,result);
+  end;
  end;
- result:= fcount;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
 end;
@@ -1436,6 +1441,10 @@ function tgloballocdatalist.addvalue(const avalue: pvardataty;
                               const externunit: boolean = false): int32;
 begin
  result:= addnoinit(ftypelist.addvarvalue(avalue),alinkage,externunit);
+ if externunit then begin
+  fnamelist.addname(datatoele(avalue)^.header.defunit,avalue^.nameid,result);
+  flinklist.addlink(avalue,result);
+ end;
 end;
 
 function tgloballocdatalist.addbytevalue(const asize: integer; 

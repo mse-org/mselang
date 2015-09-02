@@ -114,12 +114,16 @@ begin
       else begin
        size1:= pointersize;
       end;
+      nameid:= -1;
       if sublevel = 0 then begin //global variable
        if address.indirectlevel > 0 then begin
         datasize1:= das_pointer;
         include(address.flags,af_segmentpo);
        end;
        address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
+       if not (us_implementation in s.unitinfo^.state) then begin
+        nameid:= s.unitinfo^.nameid; //for llvm
+       end;
       end
       else begin
        address.locaddress:= getlocvaraddress(datasize1,size1,address.flags,

@@ -1319,9 +1319,8 @@ begin
 end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32; const alinkage: linkagety);
-begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
-                          0+fconststart{nullconst+1},ord(alinkage),0,0]);
+begin           //no init -> external
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,ord(alinkage),0,0]);
 end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32;

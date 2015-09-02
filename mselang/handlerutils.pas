@@ -153,7 +153,7 @@ function getcontextssa(const stackoffset: integer): int32;
 procedure initfactcontext(const stackoffset: integer);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                                                     var address: segaddressty);
+                                 var address: segaddressty);
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 //procedure allocsubvars(const asub: psubdataty; out allocs: suballocinfoty);
 procedure tracklocalaccess(var aaddress: locaddressty; 
@@ -2049,7 +2049,7 @@ begin
 end;
 
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
-                                                 var address: segaddressty);
+                                 var address: segaddressty);
 begin
  if co_llvm in info.compileoptions then begin
   if address.segment = seg_globvar then begin

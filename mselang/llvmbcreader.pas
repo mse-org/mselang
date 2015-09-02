@@ -1010,8 +1010,14 @@ begin
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_var;
        valuetype:= rec1[2];
+       if rec1[4] = 0 then begin
+        str1:= 'ext';
+       end
+       else begin
+        str1:= fgloblist.constname(rec1[4]-1);
+       end;
        outglobalvalue(ftypelist.typename(valuetype)+','+inttostr(rec1[3])+','+
-                    fgloblist.constname(rec1[4]-1),
+                    str1,
                                      dynarraytovararray(copy(rec1,5,bigint)),0);
       end;
      end;
