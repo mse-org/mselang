@@ -1,9 +1,10 @@
 unit unit1;
 interface
-procedure test();
+function test(p: int32): ^card8;
 implementation
-procedure test();
+
+function test(p: int32): ^card8;
 begin
- exitcode:= 123;
+ result:= nil;
 end;
 end.

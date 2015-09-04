@@ -288,7 +288,11 @@ type
   address: nestedaddressty;
  end;
  pnestedvardataty = ^nestedvardataty;
- 
+
+ resulttypety = record
+  typeele: elementoffsetty;
+  indirectlevel: int32; //total
+ end;
  subdataty = record
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
@@ -311,7 +315,7 @@ type
 //  varallocs: dataoffsty;
 //  varalloccount: integer;
   paramfinichain: elementoffsetty;
-  resulttype: elementoffsetty;
+  resulttype: resulttypety;
   allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;

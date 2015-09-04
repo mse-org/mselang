@@ -1,0 +1,13 @@
+program pofunc;
+
+function test(p: int32): ^card16;
+begin
+ result:= p;
+end;
+
+var
+ p1: ^card8;
+begin
+ p1:= test(123);
+ exitcode:= p1;
+end.

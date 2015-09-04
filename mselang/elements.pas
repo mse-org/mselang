@@ -1390,7 +1390,9 @@ begin
      ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
      ' op:'+inttostrmse(address);
      if flags * [sf_functiontype,sf_constructor] <> [] then begin
-      mstr1:= mstr1+lineend+' result:'+dumptyp(resulttype);
+      mstr1:= mstr1+lineend+' result:'+'I:'+
+               inttostrmse(resulttype.indirectlevel)+
+               dumptyp(resulttype.typeele);
      end;
     end;
    end;

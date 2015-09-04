@@ -560,7 +560,7 @@ var                       //todo: move after doparam
  bo1,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
- resultele1: elementoffsetty;
+ resulttype1: resulttypety;
 
  procedure doparam();
  begin
@@ -654,12 +654,16 @@ begin
    tokenexpectederror(':');
   end;
   paramsize1:= 0;
-  resultele1:= 0;
+  resulttype1.typeele:= 0;
+  resulttype1.indirectlevel:= 0;
   isclass:= s.currentstatementflags * [stf_classdef,stf_classimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isclass or isinterface;
   if sf_function in subflags then begin
-   resultele1:= contextstack[s.stacktop].d.typ.typedata;
+   with contextstack[s.stacktop].d.typ do begin
+    resulttype1.typeele:= typedata;
+    resulttype1.indirectlevel:= indirectlevel;
+   end;
   end;
   paramco:= (s.stacktop-s.stackindex-2) div 3;
   paramhigh:= paramco-1;
@@ -699,7 +703,8 @@ begin
   end;
   inc(currentsubcount);
   if isclass and (sf_constructor in subflags) then begin
-   resultele1:= currentcontainer;
+   resulttype1.typeele:= currentcontainer;
+   resulttype1.indirectlevel:= 1;
   end;
   po1^.paramcount:= paramco;
   po1^.calllinks:= 0;
@@ -711,7 +716,7 @@ begin
   po1^.linkage:= s.globlinkage;
   inc(s.unitinfo^.nameid);
   po1^.nameid:= s.unitinfo^.nameid;
-  po1^.resulttype:= resultele1;
+  po1^.resulttype:= resulttype1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;
   if (stf_classdef in s.currentstatementflags) and 

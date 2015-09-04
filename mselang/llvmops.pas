@@ -2020,7 +2020,7 @@ end;
 
 procedure popparpoop();
 begin
- notimplemented();
+ storeloc();
 end;
 
 procedure popparf16op();

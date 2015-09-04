@@ -640,14 +640,15 @@ var
        end;
       end
       else begin
-       po3:= ele.eledataabs(asub^.resulttype);
+       po3:= ele.eledataabs(asub^.resulttype.typeele);
       end;
       d.kind:= ck_subres;
-      d.dat.datatyp.indirectlevel:= po3^.h.indirectlevel;
+//      d.dat.datatyp.indirectlevel:= po3^.h.indirectlevel;
+      d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
       d.dat.datatyp.typedata:= ele.eledatarel(po3);        
-      if sf_constructor in asub^.flags then begin
-       inc(d.dat.datatyp.indirectlevel);
-      end;
+//      if sf_constructor in asub^.flags then begin
+//       inc(d.dat.datatyp.indirectlevel);
+//      end;
       d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
      end;
  
@@ -741,7 +742,8 @@ var
                //todo: exeenv flag for constructor and destructor
      if hasresult then begin
       if not (co_hasfunction in compileoptions) then begin
-       int1:= pushinsertvar(parent-s.stackindex,false,po3); 
+       int1:= pushinsertvar(parent-s.stackindex,false,
+                                 asub^.resulttype.indirectlevel,po3); 
                                     //alloc space for return value
        if not (sf_constructor in asub^.flags) then begin
          with additem(oc_pushstackaddr)^ do begin //result var param

@@ -125,8 +125,8 @@ procedure pushinsert(const stackoffset: integer; const before: boolean;
             const avalue: addressvaluety; const offset: dataoffsty{;
                                             const indirect: boolean}); overload;
             //class field address
-function pushinsertvar(const stackoffset: integer; const before: boolean;
-                                     const atype: ptypedataty): integer;
+function pushinsertvar(const stackoffset: int32; const before: boolean;
+              const indirectlevel: int32; const atype: ptypedataty): integer;
 procedure pushinsertsegaddresspo(const stackoffset: integer;
                             const before: boolean; const address: segaddressty);
 procedure pushinsertdata(const stackoffset: integer; const before: boolean;
@@ -584,11 +584,16 @@ begin
  end;
 end;
 *)
-function pushinsertvar(const stackoffset: integer; const before: boolean;
-                                       const atype: ptypedataty): integer;
+function pushinsertvar(const stackoffset: int32; const before: boolean;
+              const indirectlevel: int32; const atype: ptypedataty): integer;
 begin
  with insertitem(oc_push,stackoffset,before)^ do begin
-  result:= atype^.h.bytesize; //todo: alignment
+  if indirectlevel > 0 then begin
+   result:= pointersize;
+  end
+  else begin
+   result:= atype^.h.bytesize; //todo: alignment
+  end;
   setimmsize(result,par);
  end;
 end;
