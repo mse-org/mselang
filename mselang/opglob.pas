@@ -576,7 +576,7 @@ type
  end;
 
  cmpjmpimmty = record
-  ordimm: ordimmty;
+  imm: ordimmty;
   immgoto: opaddressty
  end;
 

@@ -420,13 +420,13 @@ begin
 //      po1^.par.ssas1:= 
              //todo: cardinal
       with po1^.par do begin
-       cmpjmpimm.ordimm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
+       cmpjmpimm.imm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
                                                       d.dat.constval.vinteger);
        ssas1:= expssa;
       end;
      end
      else begin
-      po1^.par.cmpjmpimm.ordimm.vint32:= d.dat.constval.vinteger;
+      po1^.par.cmpjmpimm.imm.vint32:= d.dat.constval.vinteger;
      end;
     end
     else begin
