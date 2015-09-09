@@ -1,10 +1,9 @@
 unit unit1;
 interface
-function test(p: int32): ^card8;
+const
+ c2 = 'def';
+var
+ v1: int32;
 implementation
 
-function test(p: int32): ^card8;
-begin
- result:= nil;
-end;
 end.

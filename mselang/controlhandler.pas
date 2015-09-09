@@ -367,6 +367,7 @@ var
  int1: integer;
  itemcount,last: integer;
  po1: popinfoty;
+ expssa: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
@@ -374,6 +375,14 @@ begin
  with info do begin
   last:= s.stackindex-1;
   itemcount:= s.stackindex - contextstack[last].parent - 1;
+ {$ifdef mse_checkinternalerror}
+  if contextstack[contextstack[s.stackindex].parent+1].d.kind <> 
+                                                        ck_fact then begin
+   internalerror(ie_parser,'20150909A');
+  end;
+ {$endif}
+  expssa:= contextstack[
+                 contextstack[s.stackindex].parent+1].d.dat.fact.ssaindex;
   
   for int1:= s.stackindex - itemcount to last do begin
    with contextstack[int1] do begin
@@ -383,7 +392,7 @@ begin
      if tf_lower in d.dat.datatyp.flags then begin
       po1:= additem(oc_cmpjmploimm4);
       if int1 <> last-1 then begin
-       po1^.par.immgoto:= opcount; //next check
+       po1^.par.cmpjmpimm.immgoto:= opcount; //next check
       end;
      end
      else begin
@@ -393,7 +402,7 @@ begin
        end
        else begin
         po1:= additem(oc_cmpjmploeqimm4);
-        po1^.par.immgoto:= opcount+last-int1-1;
+        po1^.par.cmpjmpimm.immgoto:= opcount+last-int1-1;
        end;
       end
       else begin
@@ -402,12 +411,23 @@ begin
        end
        else begin
         po1:= additem(oc_cmpjmpeqimm4);
-        po1^.par.immgoto:= opcount+last-int1-1;
+        po1^.par.cmpjmpimm.immgoto:= opcount+last-int1-1;
        end;
       end;
      end;
      opmark.address:= opcount-1;
-     po1^.par.ordimm.vint32:= d.dat.constval.vinteger;
+     if co_llvm in info.compileoptions then begin
+//      po1^.par.ssas1:= 
+             //todo: cardinal
+      with po1^.par do begin
+       cmpjmpimm.ordimm.llvm:= s.unitinfo^.llvmlists.constlist.addi32(
+                                                      d.dat.constval.vinteger);
+       ssas1:= expssa;
+      end;
+     end
+     else begin
+      po1^.par.cmpjmpimm.ordimm.vint32:= d.dat.constval.vinteger;
+     end;
     end
     else begin
      errormessage(err_ordinalconstexpected,[],-1);
@@ -457,14 +477,14 @@ begin
     end;
    {$endif}
     with contextstack[int1] do begin
-     po1^.par.immgoto:= opmark.address-1;
+     po1^.par.cmpjmpimm.immgoto:= opmark.address-1;
      if isrange then begin
      {$ifdef mse_checkinternalerror}
       if not checkop((po1-1)^.op,oc_cmpjmploimm4) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
-      (po1-1)^.par.immgoto:= opmark.address-1; //tf_lower
+      (po1-1)^.par.cmpjmpimm.immgoto:= opmark.address-1; //tf_lower
      end;
      with getoppo(opmark.address-1)^ do begin
      {$ifdef mse_checkinternalerror}

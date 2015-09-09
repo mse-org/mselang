@@ -569,9 +569,15 @@ type
 
  ordimmty = record
   case integer of
+   0: (llvm: llvmconstty);
    1: (vboolean: boolean);
    2: (vcard32: card32);
    3: (vint32: int32);
+ end;
+
+ cmpjmpimmty = record
+  ordimm: ordimmty;
+  immgoto: opaddressty
  end;
 
  segdataaddressty = record
@@ -844,8 +850,7 @@ type
   
    oc_cmpjmpneimm4,oc_cmpjmpeqimm4,oc_cmpjmploimm4,oc_cmpjmploeqimm4,
    oc_cmpjmpgtimm4: (
-    ordimm: ordimmty;
-    immgoto: opaddressty
+    cmpjmpimm: cmpjmpimmty;
    );
    oc_movesegreg0:(
     vsegment: segmentty;

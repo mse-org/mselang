@@ -512,10 +512,21 @@ begin
  end;
 end;
 
+procedure compjmpimm(const apredicate: predicate);
+begin
+ with pc^.par do begin
+  bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
+                        bcstream.constval(cmpjmpimm.ordimm.llvm.listid));
+  bcstream.emitbrop(bcstream.relval(0),opaddress.bbindex,
+                        getoppo(cmpjmpimm.immgoto)^.par.opaddress.bbindex);
+ end;
+end;
+
 procedure cmpjmpneimm4op();
 begin
- notimplemented();
+ compjmpimm(icmp_ne);
 end;
+
 procedure cmpjmpeqimm4op();
 begin
  notimplemented();
