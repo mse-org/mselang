@@ -518,7 +518,7 @@ begin
   bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
                         bcstream.constval(cmpjmpimm.imm.llvm.listid));
   bcstream.emitbrop(bcstream.relval(0),opaddress.bbindex,
-                        getoppo(cmpjmpimm.immgoto)^.par.opaddress.bbindex);
+                        getoppo(cmpjmpimm.destad)^.par.opaddress.bbindex);
  end;
 end;
 
