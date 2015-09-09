@@ -369,7 +369,7 @@ procedure cmpjmpneimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ <> cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad;
+   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
   end;
  end;
 end;
@@ -378,7 +378,7 @@ procedure cmpjmpeqimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ = cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad;
+   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
   end;
  end;
 end;
@@ -387,7 +387,7 @@ procedure cmpjmploimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ < cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad;
+   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
   end;
  end;
 end;
@@ -396,7 +396,7 @@ procedure cmpjmploeqimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ <= cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad;
+   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
   end;
  end;
 end;
@@ -405,7 +405,7 @@ procedure cmpjmpgtimm4op();
 begin
  with cpu.pc^.par do begin
   if pint32(cpu.stack-sizeof(int32))^ > cmpjmpimm.imm.vint32 then begin
-   cpu.pc:= startpo + cmpjmpimm.destad;
+   cpu.pc:= startpo + cmpjmpimm.destad.opaddress;
   end;
  end;
 end;

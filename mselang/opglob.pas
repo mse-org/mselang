@@ -575,9 +575,15 @@ type
    3: (vint32: int32);
  end;
 
+ labty = record
+  opaddress: opaddressty; //first! dummy for oc_label 
+  bbindex: int32;         //llvm basic block
+ end;
+ 
  cmpjmpimmty = record
+  destad: labty; //first!
   imm: ordimmty;
-  destad: opaddressty
+//  destad: opaddressty
  end;
 
  segdataaddressty = record
@@ -755,11 +761,6 @@ type
 //  nr: integer;
  end;
 
- labty = record
-  opaddress: opaddressty; //first! dummy for oc_label 
-  bbindex: int32;         //llvm basic block
- end;
- 
  mainty = record
   blockcount: int32;
   exitcodeaddress: segaddressty;

@@ -392,7 +392,7 @@ begin
      if tf_lower in d.dat.datatyp.flags then begin
       po1:= additem(oc_cmpjmploimm4);
       if int1 <> last-1 then begin
-       po1^.par.cmpjmpimm.destad:= opcount; //next check
+       po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
       end;
      end
      else begin
@@ -402,7 +402,7 @@ begin
        end
        else begin
         po1:= additem(oc_cmpjmploeqimm4);
-        po1^.par.cmpjmpimm.destad:= opcount+last-int1-1;
+        po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end
       else begin
@@ -411,7 +411,7 @@ begin
        end
        else begin
         po1:= additem(oc_cmpjmpeqimm4);
-        po1^.par.cmpjmpimm.destad:= opcount+last-int1-1;
+        po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end;
      end;
@@ -477,14 +477,14 @@ begin
     end;
    {$endif}
     with contextstack[int1] do begin
-     po1^.par.cmpjmpimm.destad:= opmark.address-1;
+     po1^.par.cmpjmpimm.destad.opaddress:= opmark.address-1;
      if isrange then begin
      {$ifdef mse_checkinternalerror}
       if not checkop((po1-1)^.op,oc_cmpjmploimm4) then begin
        internalerror(ie_handler,'20140530A');
       end;
      {$endif}
-      (po1-1)^.par.cmpjmpimm.destad:= opmark.address-1; //tf_lower
+      (po1-1)^.par.cmpjmpimm.destad.opaddress:= opmark.address-1; //tf_lower
      end;
      with getoppo(opmark.address-1)^ do begin
      {$ifdef mse_checkinternalerror}

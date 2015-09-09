@@ -517,8 +517,9 @@ begin
  with pc^.par do begin
   bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
                         bcstream.constval(cmpjmpimm.imm.llvm.listid));
-  bcstream.emitbrop(bcstream.relval(0),opaddress.bbindex,
-                        getoppo(cmpjmpimm.destad)^.par.opaddress.bbindex);
+  bcstream.emitbrop(bcstream.relval(0),cmpjmpimm.destad.bbindex,
+            getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex);
+                           //label
  end;
 end;
 
