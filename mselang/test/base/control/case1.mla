@@ -1,0 +1,17 @@
+program case1;
+
+function p(p1: int32): int32;
+begin
+ case p1 of
+  1: result:= 11;
+  2..3: result:= p1*10;
+  4: result:= 44;
+  else result:= 123;
+ end;
+end;
+
+begin
+ if (p(1) = 11) and (p(2) = 20) and (p(3) = 30) and (p(4) = 44) then begin
+  exitcode:= p(5);
+ end;
+end.

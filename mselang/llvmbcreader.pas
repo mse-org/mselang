@@ -1344,6 +1344,7 @@ var
  paramcount,ssastart,conststart,ssaindex: int32;
  ssatypes: integerarty;
  currentconstlist: tgloblist;
+ bbcount: int32;
 
  procedure outoprecord(const aname: string; const values: array of const);
  begin
@@ -1444,6 +1445,9 @@ var
  
  function destname(const avalue: int32): string;
  begin
+  if (avalue < 0) or (avalue >= bbcount) then begin
+   error('Invalid BB id '+inttostr(avalue));
+  end;
   result:= '->'+inttostr(avalue);
  end; //destname
 
@@ -1472,6 +1476,12 @@ var
    fbb:= 0;
   end;
   inc(fbb);
+ end;
+
+ procedure outrec();
+ begin
+  outrecord(functioncodesnames[functioncodes(rec1[1])],
+                                 dynarraytovararray(copy(rec1,2,bigint)));
  end;
  
 var
@@ -1515,6 +1525,7 @@ begin
   end;
  end;
  blocklevelbefore:= fblocklevel;
+ bbcount:= 0;
  while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
@@ -1525,6 +1536,11 @@ begin
    else begin
     if high(rec1) > 1 then begin
      case functioncodes(rec1[1]) of
+      FUNC_CODE_DECLAREBLOCKS: begin
+       checkdatalen(rec1,2);
+       bbcount:= rec1[2];
+       outrec();
+      end;
       FUNC_CODE_INST_BINOP,FUNC_CODE_INST_CMP: begin
        checkdatalen(rec1,4);
        if functioncodes(rec1[1]) = FUNC_CODE_INST_BINOP then begin
@@ -1702,8 +1718,9 @@ begin
        checkdatalen(rec1,1); //error
       end;
       else begin
-       outrecord(functioncodesnames[functioncodes(rec1[1])],
-                                 dynarraytovararray(copy(rec1,2,bigint)));
+       outrec();
+//       outrecord(functioncodesnames[functioncodes(rec1[1])],
+//                                 dynarraytovararray(copy(rec1,2,bigint)));
       end;
      end;
     end

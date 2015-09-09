@@ -390,7 +390,7 @@ begin
                           (d.dat.constval.kind in ordinaldatakinds) then begin
             //todo: signed/unsigned, use table
      if tf_lower in d.dat.datatyp.flags then begin
-      po1:= additem(oc_cmpjmploimm4);
+      po1:= addcontrolitem(oc_cmpjmploimm4);
       if int1 <> last-1 then begin
        po1^.par.cmpjmpimm.destad.opaddress:= opcount; //next check
       end;
@@ -398,19 +398,19 @@ begin
      else begin
       if tf_upper in d.dat.datatyp.flags then begin
        if int1 = last then begin
-        po1:= additem(oc_cmpjmpgtimm4);
+        po1:= addcontrolitem(oc_cmpjmpgtimm4);
        end
        else begin
-        po1:= additem(oc_cmpjmploeqimm4);
+        po1:= addcontrolitem(oc_cmpjmploeqimm4);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end
       else begin
        if int1 = last then begin
-        po1:= additem(oc_cmpjmpneimm4);
+        po1:= addcontrolitem(oc_cmpjmpneimm4);
        end
        else begin
-        po1:= additem(oc_cmpjmpeqimm4);
+        po1:= addcontrolitem(oc_cmpjmpeqimm4);
         po1^.par.cmpjmpimm.destad.opaddress:= opcount+last-int1-1;
        end;
       end;
@@ -442,7 +442,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCH');
 {$endif}
- with additem(oc_goto)^ do begin
+ with addcontrolitem(oc_goto)^ do begin
     //goto casend
  end;
 end;
@@ -504,10 +504,12 @@ begin
       internalerror(ie_handler,'20140530B');
      end;
     {$endif}
-     op.op:= oc_nop;
+     op.op:= oc_label;
+//     op.op:= oc_nop;
 //     setop(op,oc_nop);
     end;
    end;
+   addlabel();
    with additem(oc_pop)^ do begin
     setimmsize(sizeof(int32),par);
    end;

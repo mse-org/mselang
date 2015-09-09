@@ -517,8 +517,9 @@ begin
  with pc^.par do begin
   bcstream.emitcmpop(apredicate,bcstream.ssaval(ssas1),
                         bcstream.constval(cmpjmpimm.imm.llvm.listid));
-  bcstream.emitbrop(bcstream.relval(0),cmpjmpimm.destad.bbindex,
-            getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex);
+  bcstream.emitbrop(bcstream.relval(0),
+             getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex,
+                                                    cmpjmpimm.destad.bbindex);
                            //label
  end;
 end;
@@ -530,19 +531,22 @@ end;
 
 procedure cmpjmpeqimm4op();
 begin
- notimplemented();
+ compjmpimm(icmp_eq);
 end;
+
 procedure cmpjmploimm4op();
 begin
- notimplemented();
+ compjmpimm(icmp_slt);
 end;
+
 procedure cmpjmpgtimm4op();
 begin
- notimplemented();
+ compjmpimm(icmp_sgt);
 end;
+
 procedure cmpjmploeqimm4op();
 begin
- notimplemented();
+ compjmpimm(icmp_sle);
 end;
 
 procedure ifop();

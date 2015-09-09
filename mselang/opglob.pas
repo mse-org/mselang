@@ -770,6 +770,11 @@ const
  controlops = [
   oc_label,
   oc_goto,
+  oc_cmpjmpneimm4,
+  oc_cmpjmpeqimm4,
+  oc_cmpjmploimm4,
+  oc_cmpjmpgtimm4,
+  oc_cmpjmploeqimm4,
   oc_if,
   oc_while,
   oc_until,
