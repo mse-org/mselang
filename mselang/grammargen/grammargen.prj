@@ -18,12 +18,15 @@ order15=0
 order16=0
 order17=0
 order18=0
-order19=0
-order20=0
 [projectoptions]
 projectdir=/home/mse/packs/standard/git/mselang/mselang/grammargen
 projectfilename=/home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.prj
-options=99
+options=110
+ [projectoptionsfo.toolshortcuts]
+ dropdowncolwidths=3
+  70
+  70
+  70
  [projectoptionsfo.twidgetgrid3]
  propcolwidthref=583
  sortdescend0=0
@@ -36,6 +39,12 @@ options=99
  sortdescend5=0
  width6=238
  sortdescend6=0
+ width7=40
+ sortdescend7=0
+ width8=1
+ sortdescend8=0
+ width9=238
+ sortdescend9=0
  [projectoptionsfo.twidgetgrid4]
  propcolwidthref=407
  width0=96
@@ -91,25 +100,25 @@ options=99
  firsttab=0
  index=1
  [projectoptionsfo.exceptionsgrid]
- propcolwidthref=590
+ propcolwidthref=709
  width0=47
  sortdescend0=0
- width1=584
+ width1=703
  sortdescend1=0
  [projectoptionsfo.ttabwidget1]
  firsttab=0
  index=0
  [projectoptionsfo.grid]
- propcolwidthref=368
+ propcolwidthref=378
  width0=219
  sortdescend0=0
- width1=361
+ width1=371
  sortdescend1=0
  [projectoptionsfo.filefiltergrid]
- propcolwidthref=475
+ propcolwidthref=485
  width0=112
  sortdescend0=0
- width1=468
+ width1=478
  sortdescend1=0
  [projectoptionsfo.ttabwidget2]
  firsttab=0
@@ -156,7 +165,7 @@ targpref=-o
 befcommand=0
 aftcommand=0
 makeoptions=4
- -l -Mobjfpc -Sh -Fcutf8
+ -l -Mobjfpc -Sh -Fcutf8 -dmse_compiler
  -gl -O-
  -B
  -O2 -XX -Xs -CX
@@ -224,6 +233,8 @@ newfoforms=8
  ${TEMPLATEDIR}default/report.mfm
  ${TEMPLATEDIR}default/pascform.mfm
  ${TEMPLATEDIR}default/inheritedform.mfm
+forcezorder=0
+stripmessageesc=0
 copymessages=0
 closemessages=1
 checkmethods=1
@@ -332,6 +343,7 @@ toolsave=0
 toolhide=0
 toolparse=0
 toolmessages=0
+toolshortcuts=0
 fontalias=0
 fontancestors=0
 fontheights=0
@@ -351,6 +363,7 @@ newinheritedforms=8
  0
  0
  -1
+uid=0
 sourcefilemasks=2
  "*.pas" "*.dpr" "*.lpr" "*.pp" "*.inc"
  "*.c" "*.cc" "*.h"
@@ -368,6 +381,7 @@ filemasks=3
 showgrid=1
 snaptogrid=1
 moveonfirstclick=1
+noformdesignerdocking=0
 gridsizex=8
 gridsizey=8
 autoindent=1
@@ -408,6 +422,7 @@ afterconnect=
 beforeload=
 afterload=
 beforerun=
+sourcebase=
 sourcedirs=4
  ${MSEDIR}lib/addon/*/
  ${MSEDIR}lib/common/kernel/$TARGETOSDIR/
@@ -422,6 +437,7 @@ defineson=0
 stoponexception=0
 valuehints=1
 activateonbreak=1
+raiseonbreak=1
 showconsole=1
 externalconsole=0
 settty=1
@@ -431,6 +447,7 @@ startupbkpt=0
 startupbkpton=0
 gdbsimulator=0
 gdbserverstartonce=0
+gdbloadtimeout=
 gdbserverwait=0
 nogdbserverexit=0
 gdbservertty=0
@@ -502,7 +519,31 @@ cx=704
 cy=473
 [progparams]
 progparamhistory=0
+workdirparamhistory=0
 envvarons=0
+[edit]
+hintwidth=185
+hintheight=214
+finddtext=
+findhistory=0
+findoptions=1
+editpos=1
+ 0,0
+bookmarks0=0
+sourcefiles=1
+ /home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.pas
+relpaths=1
+ grammargen.pas
+ismoduletexts=1
+ 0
+modules=0
+moduleoptions=0
+visiblemodules=0
+nomenumodules=0
+[sourcefo.tabwidget]
+tabsize=141
+firsttab=0
+index=0
 [layout]
 windowlayout=558
  [mainfo.openform]
@@ -527,14 +568,14 @@ windowlayout=558
  filehistory=10
   /home/mse/packs/standard/git/mselang/mselang/grammargen/mse_grammargen.prj
   /home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.prj
-  /home/mse/packs/standard/git/mseexperiments/mselang/grammargen/mse_grammargen.prj
-  /home/mse/packs/standard/git/mseexperiments/mselang/mse_mselang.prj
+  /home/mse/proj/test3/test3.prj
+  /home/mse/packs/standard/git/mselang/mselang/mse_mselang.prj
   /home/mse/packs/standard/git/mseide-msegui/apps/ide/mse_mseide.prj
-  /home/mse/proj/test3/test.prj
-  /home/mse/packs/standard/git/mseide-msegui/tools/i18n/mse_msei18n.prj
-  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/staticgravitytest.prj
-  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity/mse_staticgravitytest.prj
-  /home/mse/packs/standard/git/mseuniverse/testcase/window/staticgravity_unity/mse_staticgravity_unity.prj
+  /home/mse/packs/standard/git/mseuniverse/tools/msespice/mse_msespice.prj
+  /home/mse/proj/msegui/testcase/mse/treeview/simple/mse_treeview.prj
+  /home/mse/packs/standard/git/mseuniverse/tools/msegit/mse_msegit.prj
+  /home/mse/proj/msegui/testcase/chefou/test/test.prj
+  /home/mse/packs/standard/git/mseuniverse/samples/widgets/layout/mse_layout.prj
  filefilterindex=0
  filefilter=*.prj
  filecolwidth=130
@@ -615,7 +656,7 @@ windowlayout=558
  [memoryfo]
  splitdir=0
  useroptions=16507
- stackedunder=cpui386fo
+ stackedunder=symbolfo
  parent=
  mdistate=0
  nx=0
@@ -642,7 +683,7 @@ windowlayout=558
  [disassfo]
  splitdir=0
  useroptions=16491
- stackedunder=componentpalettefo
+ stackedunder=targetconsolefo
  parent=
  mdistate=0
  nx=0
@@ -661,7 +702,7 @@ windowlayout=558
  [findinfilefo]
  splitdir=0
  useroptions=16491
- stackedunder=componentstorefo
+ stackedunder=cpui386fo
  parent=
  mdistate=0
  nx=0
@@ -677,7 +718,7 @@ windowlayout=558
  [projecttreefo]
  splitdir=0
  useroptions=16491
- stackedunder=memoryfo
+ stackedunder=objectinspectorfo
  parent=
  mdistate=0
  nx=0
@@ -761,7 +802,7 @@ windowlayout=558
  [breakpointsfo]
  splitdir=0
  useroptions=16491
- stackedunder=watchpointsfo
+ stackedunder=memoryfo
  parent=
  mdistate=0
  nx=0
@@ -782,7 +823,7 @@ windowlayout=558
  [objectinspectorfo]
  splitdir=0
  useroptions=16491
- stackedunder=breakpointsfo
+ stackedunder=componentstorefo
  parent=
  mdistate=0
  nx=0
@@ -807,7 +848,7 @@ windowlayout=558
  [symbolfo]
  splitdir=0
  useroptions=16507
- stackedunder=disassfo
+ stackedunder=findinfilefo
  parent=
  mdistate=0
  nx=0
@@ -906,8 +947,8 @@ windowlayout=558
  rcy=563
  [componentstorefo]
  splitdir=0
- useroptions=24675
- stackedunder=symbolfo
+ useroptions=24699
+ stackedunder=componentpalettefo
  parent=
  mdistate=0
  nx=0
@@ -970,7 +1011,7 @@ windowlayout=558
  [componentpalettefo]
  splitdir=0
  useroptions=24683
- stackedunder=targetconsolefo
+ stackedunder=disassfo
  parent=
  mdistate=0
  nx=0
@@ -1028,7 +1069,7 @@ windowlayout=558
  irqoff=0
  splitdir=0
  useroptions=16491
- stackedunder=findinfilefo
+ stackedunder=projecttreefo
  parent=
  mdistate=0
  nx=0
@@ -1063,29 +1104,6 @@ windowlayout=558
  wsize=0
  active=0
  visible=1
-[edit]
-hintwidth=185
-hintheight=214
-finddtext=
-findhistory=0
-findoptions=1
-editpos=1
- 0,0
-bookmarks0=0
-sourcefiles=1
- /home/mse/packs/standard/git/mselang/mselang/grammargen/grammargen.pas
-relpaths=1
- grammargen.pas
-ismoduletexts=1
- 0
-modules=0
-moduleoptions=0
-visiblemodules=0
-nomenumodules=0
-[sourcefo.tabwidget]
-tabsize=141
-firsttab=0
-index=0
 [targetconsole]
 finddtext=
 findhistory=0

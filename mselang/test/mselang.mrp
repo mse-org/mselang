@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=5
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=17
    (
    kind=1
@@ -990,8 +990,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
-   c=20
+   a=0,665,5,control
+   c=22
     (
     kind=2
     a=0,648,1,breakrepeat
@@ -1258,6 +1258,50 @@ c=3
     )
     (
     kind=2
+    a=0,648,2,case1
+    teststate=2
+    path=case1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,case1 llvm
+    teststate=1
+    path=case1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,while1
     teststate=1
     path=while1.mla
@@ -1432,7 +1476,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -1685,7 +1729,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7BE80C0
+    ao=An unhandled exception occured at $B736D0C0
     +
     ae=
     aec=123
@@ -3541,7 +3585,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -4190,7 +4234,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -4304,7 +4348,29 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=45
+rowstate=67
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

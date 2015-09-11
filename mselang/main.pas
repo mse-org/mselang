@@ -73,12 +73,14 @@ var
   
 implementation
 uses
- main_mfm,msestream,stackops,parser,llvmops,msedatalist,msefileutils,
- msesystypes,llvmbcwriter,unithandler,mseformatstr;
+ errorhandler,main_mfm,msestream,stackops,parser,llvmops,msedatalist,
+ msefileutils,
+ msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseexe(const sender: TObject);
 var
  errstream,outstream: ttextstream;
+ mlistream: tmsefilestream;
  targetstream: tllvmbcwriter;
  bo1: boolean;
  compoptions: compileoptionsty;
@@ -171,6 +173,16 @@ begin
      end;
     end
     else begin
+     filename1:= replacefileext(filena.value,'mli');
+     if checksysok(tmsefilestream.trycreate(mlistream,filename1,fm_create),
+                             err_cannotcreatetargetfile,[filename1]) then begin
+      try
+       writesegmentdata(mlistream,getfilekind(mlafk_rtprogram),
+                                                           storedsegments,now);
+      finally
+       mlistream.destroy();
+      end;      
+     end;
      if not norun.value then begin
       grid.appendrow(['EXITCODE: '+inttostrmse(stackops.run(1024))]);
      end;

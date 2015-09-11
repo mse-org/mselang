@@ -313,7 +313,7 @@ var
    result:= false;
    exit;
   end;
-  str1:= mstr1;
+  str1:= ansistring(mstr1);
   for int1:= 1 to length(str1) do begin
    if not (str1[int1] in ['a'..'z','A'..'Z']) then begin
     error('Invalid keyword "'+str1+'".');
@@ -497,10 +497,11 @@ begin
       macrotext:= macrotext+lineend;
       readline(str2);
      end;
-     macrolist1.add([utf8tostring(macroname)],[utf8tostring(macrotext)],[]);
+     macrolist1.add([utf8tostringansi(macroname)],
+                                        [utf8tostringansi(macrotext)],[]);
     end
     else begin //no macrodef
-     mstr1:= utf8tostring(str1);
+     mstr1:= utf8tostringansi(str1);
      macrolist1.expandmacros1(mstr1);
      if (mstr1 <> '') then begin //no comment
       expandedtext:= breaklines(stringtoutf8(mstr1));
@@ -662,7 +663,7 @@ begin
               end
               else begin
                po1:= pchar(tokens[int1]);
-               tokens[int1]:= getpascalstring(po1);
+               tokens[int1]:= ansistring(getpascalstring(po1));
                if length(tokens[int1]) > 1 then begin
                 if high(tokens) > 0 then begin
                  error(branchformat);
@@ -695,7 +696,7 @@ begin
    with tokendefs[int1] do begin
     if name = '.handlerunits' then begin
      for int2:= 0 to high(tokens) do begin
-      usesdef:= usesdef+pascalstringtostring(tokens[int2])+',';
+      usesdef:= usesdef+ansistring(pascalstringtostring(tokens[int2]))+',';
      end;
      if tokens <> nil then begin
       setlength(usesdef,length(usesdef)-1);
@@ -726,7 +727,7 @@ begin
 '    along with this program; if not, write to the Free Software'+lineend+
 '    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.'+lineend+
 '}'+lineend+
-'unit '+filenamebase(outfile)+';'+lineend+
+'unit '+ansistring(filenamebase(outfile))+';'+lineend+
 '{$ifdef FPC}{$mode objfpc}{$h+}{$endif}'+lineend+
 'interface'+lineend+
 'uses'+lineend+
@@ -969,7 +970,7 @@ lineend+
 'const'+lineend+
 ' tks_none = 0;'+lineend;
   for int2:= 0 to high(internaltokens) do begin
-   str2:= pascalstringtostring(internaltokens[int2]);
+   str2:= ansistring(pascalstringtostring(internaltokens[int2]));
    if (str2 <> '') and (str2[1] = '.') then begin
     str2:= copy(str2,2,bigint);
    end;
@@ -998,7 +999,7 @@ lineend+
   str2:= 
 '  ';
   for int2:= 0 to high(keywords) do begin
-   str3:= stringtopascalstring(keywords[int2])+',';
+   str3:= ansistring(stringtopascalstring(msestring(keywords[int2])))+',';
    if length(str2)+length(str3) > 80 then begin
     str5:= str5+str2+lineend;
     str2:= 

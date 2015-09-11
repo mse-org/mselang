@@ -76,6 +76,7 @@ procedure handleexponent();
 
 procedure handlestatementend();
 procedure handleblockend();
+procedure handleidentstart();
 procedure handleident();
 procedure handleidentpathstart();
 procedure handleidentpath1a();
@@ -1479,6 +1480,13 @@ begin
   end;
   dec(s.stacktop);
   dec(s.stackindex);
+ end;
+end;
+
+procedure handleidentstart();
+begin
+ with info,contextstack[s.stacktop],d do begin
+  ident.flags:= [];
  end;
 end;
 

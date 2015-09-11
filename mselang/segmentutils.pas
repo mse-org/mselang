@@ -147,7 +147,7 @@ function getfilekind(const akind: mlafilekindty): int32;
 begin
  result:= ord(akind)*filekindstep;
 {$ifdef mse_debugparser}
- inc(result); 
+// inc(result); 
 {$endif} 
 end;
 

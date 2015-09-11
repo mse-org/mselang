@@ -886,7 +886,7 @@ char1,string,handlechar,
  '',char2
 char2,,,
 
-ident,,,handleident^
+ident,,handleidentstart,handleident^
  @identstart,@decnum,-
 
 getident,,,^

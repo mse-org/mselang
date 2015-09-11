@@ -742,8 +742,11 @@ var
                //todo: exeenv flag for constructor and destructor
      if hasresult then begin
       if not (co_hasfunction in compileoptions) then begin
-       int1:= pushinsertvar(parent-s.stackindex,false,
-                                 asub^.resulttype.indirectlevel,po3); 
+       int1:= 0;
+       if sf_constructor in asub^.flags then begin
+        int1:= parent-s.stackindex;           //??? verfy!
+       end;
+       int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3); 
                                     //alloc space for return value
        if not (sf_constructor in asub^.flags) then begin
          with additem(oc_pushstackaddr)^ do begin //result var param

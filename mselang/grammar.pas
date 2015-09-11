@@ -8212,6 +8212,7 @@ begin
  char1co.handleentry:= @handlechar;
  char2co.branch:= nil;
  identco.branch:= @bident;
+ identco.handleentry:= @handleidentstart;
  identco.handleexit:= @handleident;
  getidentco.branch:= @bgetident;
  identpathcontinueco.branch:= @bidentpathcontinue;
