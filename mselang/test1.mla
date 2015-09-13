@@ -1,27 +1,12 @@
-program raise2;
+program for1;
 
-type
- tc = class
-  public
-   constructor create();
-   destructor destroy();
- end;
-
-constructor tc.create();
+procedure tt();
 begin
 end;
-destructor tc.destroy();
-begin
-end;
-procedure test();
-begin
- raise tc.create();
-end;
 
+var
+ i1: int32;
 begin
- try
-  test();
- except
-  exitcode:= 123;
+ for i1:= 0 to 4+2 do begin
  end;
 end.

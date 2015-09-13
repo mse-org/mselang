@@ -103,7 +103,7 @@ type
  addressflagsty = set of addressflagty;
 
 const
- addresskindflags = [af_local,af_segment,af_aggregate];
+ addresskindflags = [af_stack,af_local,af_segment,af_aggregate];
  addresscompflags = addresskindflags + [af_nil];
 
 type

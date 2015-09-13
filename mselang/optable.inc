@@ -1485,15 +1485,25 @@
 //  pushsegaddress
 
 //oc_pushstack8
-  (ssa: pushstack8ssa; proc: @pushstack8op; flags: []), 
+  (ssa: pushstack8ssa; proc: @pushstackindi8op; flags: []), 
 //oc_pushstack16
-  (ssa: pushstack16ssa; proc: @pushstack16op; flags: []), 
+  (ssa: pushstack16ssa; proc: @pushstackindi16op; flags: []), 
 //oc_pushstack32
-  (ssa: pushstack32ssa; proc: @pushstack32op; flags: []), 
+  (ssa: pushstack32ssa; proc: @pushstackindi32op; flags: []), 
 //oc_pushstack64
-  (ssa: pushstack64ssa; proc: @pushstack64op; flags: []), 
+  (ssa: pushstack64ssa; proc: @pushstackindi64op; flags: []), 
 //oc_pushstackpo
-  (ssa: pushstackpossa; proc: @pushstackpoop; flags: []), 
+  (ssa: pushstackpossa; proc: @pushstackindipoop; flags: []), 
+//oc_pushstackindi8
+  (ssa: pushstackindi8ssa; proc: @pushstackindi8op; flags: []), 
+//oc_pushstack16
+  (ssa: pushstackindi16ssa; proc: @pushstackindi16op; flags: []), 
+//oc_pushstack32
+  (ssa: pushstackindi32ssa; proc: @pushstackindi32op; flags: []), 
+//oc_pushstack64
+  (ssa: pushstackindi64ssa; proc: @pushstackindi64op; flags: []), 
+//oc_pushstackpo
+  (ssa: pushstackindipossa; proc: @pushstackindipoop; flags: []), 
 
 //oc_pushseg8
   (ssa: pushseg8ssa; proc: @pushseg8op; flags: [of_relocseg]), 

@@ -373,6 +373,11 @@ type
   oc_pushstack32,
   oc_pushstack64,
   oc_pushstackpo,
+  oc_pushstackindi8,
+  oc_pushstackindi16,
+  oc_pushstackindi32,
+  oc_pushstackindi64,
+  oc_pushstackindipo,
 
   oc_pushseg8,
   oc_pushseg16,

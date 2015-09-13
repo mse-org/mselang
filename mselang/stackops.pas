@@ -1905,6 +1905,46 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= po1^;
 end;
 
+procedure pushstackindi8op();
+var
+ po1: ppv8ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv8ty(stackpush(1))^:= po1^^;
+end;
+
+procedure pushstackindi16op();
+var
+ po1: ppv16ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv16ty(stackpush(2))^:= po1^^;
+end;
+
+procedure pushstackindi32op();
+var
+ po1: ppv32ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv32ty(stackpush(4))^:= po1^^;
+end;
+
+procedure pushstackindi64op();
+var
+ po1: ppv64ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv64ty(stackpush(8))^:= po1^^;
+end;
+
+procedure pushstackindipoop();
+var
+ po1: pppointer;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= po1^^;
+end;
+
 procedure pushsegaddressop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= 
@@ -3787,6 +3827,11 @@ const
   pushstack32ssa = 0;
   pushstack64ssa = 0;
   pushstackpossa = 0;
+  pushstackindi8ssa = 0;
+  pushstackindi16ssa = 0;
+  pushstackindi32ssa = 0;
+  pushstackindi64ssa = 0;
+  pushstackindipossa = 0;
   pushsegaddressssa = 0;
 
   pushseg8ssa = 0;

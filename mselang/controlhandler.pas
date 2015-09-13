@@ -381,6 +381,7 @@ procedure handleforheader();
 var
  flags1: handlerflagsty;
  initcheckad: int32;
+ po1: ptypedataty;
  
 begin
 {$ifdef mse_debugparser}
@@ -397,19 +398,19 @@ begin
     end;
    {$endif}
     with contextstack[s.stackindex+1].d.dat do begin
+     po1:= ele.eledataabs(datatyp.typedata);
      if (datatyp.indirectlevel <> 1) or 
-         not (ptypedataty(ele.eledataabs(datatyp.typedata))^.h.kind in 
-                             ordinaldatakinds) then begin
+         not (po1^.h.kind in ordinaldatakinds) then begin
       errormessage(err_ordinalexpexpected,[],1);
       sethandlererror();
      end
      else begin
-      if not getvalue(2,fact.opdatatype.kind) or 
-                        not getvalue(3,fact.opdatatype.kind) then begin
+      if not getvalue(2,po1^.h.datasize) or 
+                        not getvalue(3,po1^.h.datasize) then begin
        sethandlererror();
       end
       else begin
-       
+       pushinsertstackindi(1,false,-(pointersize+2*4)); //counter value
       end;
      end;
     end;

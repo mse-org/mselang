@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -119,6 +119,13 @@ procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
+
+procedure pushinsertstack(const stackoffset: int32; //context stack
+               const before: boolean; const sourceoffset: int32{;
+                                              const adatasize: databitsizety});
+procedure pushinsertstackindi(const stackoffset: int32; //context stack
+                          const before: boolean; const sourceoffset: int32{;
+                                              const adatasize: databitsizety});
 
 procedure pushinsert(const stackoffset: integer; const before: boolean;
                   const avalue: datakindty); overload;
@@ -980,6 +987,39 @@ begin
  end;
 end;
 
+procedure pushinsertstack(const stackoffset: int32; //context stack
+                          const before: boolean; const sourceoffset: int32);
+var
+ i1: int32;
+begin
+ with info do begin
+  i1:= s.stackindex + stackoffset;
+  with contextstack[i1] do begin
+  end;
+ end;
+end;
+
+procedure pushinsertstackindi(const stackoffset: int32; //context stack
+                          const before: boolean; const sourceoffset: int32);
+var                     //todo: optimize
+ i1: int32;
+ typ1: typeallocinfoty;
+begin
+ with info do begin
+  i1:= s.stackindex + stackoffset;
+  with contextstack[i1] do begin
+ {$ifdef mse_debugparser}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20150913A');
+   end;
+  {$endif}
+   typ1:= getopdatatype(d.dat.datatyp.typedata,d.dat.datatyp.indirectlevel-1);
+//   with insertitem(pushstackindiops[typ1.kind],stackoffset,before)^ do begin
+//   end;
+  end;
+ end;
+end;
+
 procedure push(const atype: typeinfoty; const avalue: addressvaluety;
             const offset: dataoffsty{;
             const indirect: boolean}); overload;
@@ -1718,6 +1758,7 @@ begin
                                                        d.dat.ref.offset);
                   //address pointer on stack
       initfactcontext(stackoffset);
+      d.dat.fact.opdatatype:= bitoptypes[das_pointer];
      end
      else begin
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);

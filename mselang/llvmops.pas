@@ -2137,6 +2137,31 @@ begin
  notimplemented();
 end;
 
+procedure pushstackindi8op();
+begin
+ notimplemented();
+end;
+
+procedure pushstackindi16op();
+begin
+ notimplemented();
+end;
+
+procedure pushstackindi32op();
+begin
+ notimplemented();
+end;
+
+procedure pushstackindi64op();
+begin
+ notimplemented();
+end;
+
+procedure pushstackindipoop();
+begin
+ notimplemented();
+end;
+
 procedure pushsegaddressop();
 begin
  notimplemented();
@@ -3256,6 +3281,11 @@ const
   pushstack32ssa = 1;
   pushstack64ssa = 1;
   pushstackpossa = 1;
+  pushstackindi8ssa = 1;
+  pushstackindi16ssa = 1;
+  pushstackindi32ssa = 1;
+  pushstackindi64ssa = 1;
+  pushstackindipossa = 1;
   pushsegaddressssa = 1;
 
   pushseg8ssa = 1;
