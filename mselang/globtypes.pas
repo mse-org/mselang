@@ -88,6 +88,9 @@ type
  segmentsty = set of segmentty;
  
 const
+ branchkeymaxcount = 4;
+ firstident = 256;
+ idstart = $12345678;
  storedsegments = [seg_globconst,seg_classdef,seg_op,seg_rtti,seg_intf,
                    seg_classintfcount,seg_intfitemcount];
 type
@@ -264,5 +267,62 @@ type
   timestamp: tdatetime;
   guid: tguid;
  end;
+
+ contexthandlerty = procedure({const info: pparseinfoty});
+
+ branchflagty = (bf_nt,bf_emptytoken,
+             bf_keyword,bf_handler,
+             bf_nostartbefore,bf_nostartafter,bf_eat,bf_push,
+             {bf_setpc,}bf_continue,
+             bf_setparentbeforepush,bf_setparentafterpush,
+             bf_changeparentcontext,
+             bf_handlererror 
+             );
+ branchflagsty = set of branchflagty;
+
+ charsetty = set of char;
+ charset32ty = array[0..7] of uint32;
+ branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued);
+ 
+ branchkeyinfoty = record
+  case kind: branchkeykindty of
+   bkk_char,bkk_charcontinued: (
+    chars: charsetty;
+   );
+ end;
+
+type  
+ pcontextty = ^contextty;
+
+ branchdestty = record
+  case integer of
+   0: (context: pcontextty);
+   1: (handler: contexthandlerty);
+ end;
+ branchty = record
+  flags: branchflagsty;
+  dest: branchdestty;
+  stack: pcontextty; //nil = current
+  case integer of
+   0: (keyword: keywordty);
+   1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);
+ end; //todo: use variable size array
+ pbranchty = ^branchty;
+
+ contextty = record
+  branch: pbranchty; //array
+  handleentry: contexthandlerty;
+  handleexit: contexthandlerty;
+  continue: boolean;
+  restoresource: boolean;
+  cutafter: boolean;
+  pop: boolean;
+  popexe: boolean;
+  cutbefore: boolean;
+  nexteat: boolean;
+  next: pcontextty;
+  caption: string;
+ end;
+
 implementation
 end.

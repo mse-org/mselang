@@ -241,6 +241,8 @@ procedure errormessage(const aerror: errorty; const values: array of const;
                    const astackoffset: integer = minint;
                    const coloffset: integer = 0;
                    const aerrorlevel: errorlevelty = erl_none);
+procedure seterrorflag();
+
 function checksysok(const asyserror: syserrorty; const aerror: errorty; 
                                    const values: array of const;
                      const aerrorlevel: errorlevelty = erl_none): boolean;
@@ -489,6 +491,13 @@ begin
    sourcepos:= contextstack[int1].start;
   end;
   errormessage(sourcepos,aerror,values,coloffset,aerrorlevel);
+ end;
+end;
+
+procedure seterrorflag();
+begin
+ with info do begin
+  include(contextstack[s.stackindex].transitionflags,bf_handlererror);
  end;
 end;
 

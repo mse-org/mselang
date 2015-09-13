@@ -21,7 +21,6 @@ uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
  segmentutils,llvmbitcodes;
 const
- firstident = 256;
  maxidentlen = 256;
  includemax = 31;
 
@@ -90,9 +89,7 @@ const
  defaultrttibuffersize = 256;
  
  
- branchkeymaxcount = 4;
  dummyaddress = 0;
- idstart = $12345678;
 
 type 
  contextkindty = (ck_none,ck_error,
@@ -138,63 +135,12 @@ type
  debugoptionsty = set of debugoptionty;
 
  pparseinfoty = ^parseinfoty;
- contexthandlerty = procedure({const info: pparseinfoty});
-
- branchflagty = (bf_nt,bf_emptytoken,
-             bf_keyword,bf_handler,
-             bf_nostartbefore,bf_nostartafter,bf_eat,bf_push,
-             {bf_setpc,}bf_continue,
-             bf_setparentbeforepush,bf_setparentafterpush,
-             bf_changeparentcontext);
- branchflagsty = set of branchflagty;
 
  markinfoty = record
   hashref: ptruint;
   bufferref: ptruint;
  end;
 
- charsetty = set of char;
- charset32ty = array[0..7] of uint32;
- branchkeykindty = (bkk_none,bkk_char,bkk_charcontinued);
- 
- branchkeyinfoty = record
-  case kind: branchkeykindty of
-   bkk_char,bkk_charcontinued: (
-    chars: charsetty;
-   );
- end;
-  
- pcontextty = ^contextty;
-
- branchdestty = record
-  case integer of
-   0: (context: pcontextty);
-   1: (handler: contexthandlerty);
- end;
- branchty = record
-  flags: branchflagsty;
-  dest: branchdestty;
-  stack: pcontextty; //nil = current
-  case integer of
-   0: (keyword: keywordty);
-   1: (keys: array[0..branchkeymaxcount-1] of branchkeyinfoty);
- end; //todo: use variable size array
- pbranchty = ^branchty;
-
- contextty = record
-  branch: pbranchty; //array
-  handleentry: contexthandlerty;
-  handleexit: contexthandlerty;
-  continue: boolean;
-  restoresource: boolean;
-  cutafter: boolean;
-  pop: boolean;
-  popexe: boolean;
-  cutbefore: boolean;
-  nexteat: boolean;
-  next: pcontextty;
-  caption: string;
- end;
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
                     stf_loop,

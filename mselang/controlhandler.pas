@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,13 @@ procedure handlerepeatstart();
 procedure handleuntilexpected();
 procedure handleuntilentry();
 procedure handlerepeatend();
+
+procedure handleforvar();
+procedure handleassignmentexpected();
+procedure handleforstart();
+procedure handletoexpected();
+procedure handleforheader();
+procedure handleforend();
 
 procedure handlecasestart();
 procedure handlecaseexpression();
@@ -315,6 +322,103 @@ begin
   end;
   addlabel();
   linkresolveopad(d.control.links,opcount-1);
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handleforvar();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FORVAR');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_control;
+  if not getassignaddress(1,true) then begin
+   include(transitionflags,bf_handlererror);
+  end;
+ end;
+end;
+
+procedure handleassignmentexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ASSIGNMENTEXPECTED');
+{$endif}
+ with info do begin
+  tokenexpectederror(':=');
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handleforstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FORSTART');
+{$endif}
+ with info do begin
+  if (s.stacktop-s.stackindex = 2) then begin
+  {$ifdef mse_checkinternalerror}
+   if not (contextstack[s.stackindex+1].d.kind in [ck_fact,ck_subres]) then begin
+    internalerror(ie_handler,'20150912A');
+   end;
+  {$endif}
+   with contextstack[s.stackindex+1].d.dat do begin
+    if (datatyp.indirectlevel <> 1) or 
+        not (ptypedataty(ele.eledataabs(datatyp.typedata))^.h.kind in 
+                            ordinaldatakinds) then begin
+     errormessage(err_ordinalexpexpected,[],1);
+     seterrorflag();
+    end
+    else begin
+     if not getvalue(2,fact.opdatatype.kind) then begin
+      seterrorflag();
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handletoexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('TOEXPECTED');
+{$endif}
+ with info do begin
+  tokenexpectederror('to');
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handleforheader();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FORHEADER');
+{$endif}
+ with info do begin
+  if (s.stacktop-s.stackindex = 3) and not (bf_handlererror in 
+                        contextstack[s.stackindex].transitionflags) then begin
+  {$ifdef mse_checkinternalerror}
+   if not (contextstack[s.stackindex+1].d.kind in [ck_fact,ck_subres]) then begin
+    internalerror(ie_handler,'20150912A');
+   end;
+  {$endif}
+   with contextstack[s.stackindex+1].d.dat do begin
+    if getvalue(3,fact.opdatatype.kind) then begin
+    end;
+   end;
+  end;
+ end;
+ beginloop();
+end;
+
+procedure handleforend();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FOREND');
+{$endif}
+ endloop();
+ with info do begin
   dec(s.stackindex);
  end;
 end;

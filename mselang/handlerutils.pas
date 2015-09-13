@@ -105,6 +105,8 @@ function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
+function getassignaddress(const stackoffset: integer;
+                                  const endaddress: boolean): boolean;
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -1755,6 +1757,20 @@ begin
   end;
  end;
  result:= true;
+end;
+
+function getassignaddress(const stackoffset: integer;
+                                  const endaddress: boolean): boolean;
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  if (d.kind in datacontexts) then begin
+   result:= getaddress(stackoffset,endaddress);
+  end
+  else begin
+   result:= false;
+   errormessage(err_argnotassign,[],stackoffset);
+  end;
+ end;
 end;
 
 procedure init;

@@ -350,6 +350,7 @@ statement,,,*
  'case'.,case-
  'while'.,while-
  'repeat'.,repeat-
+ 'for'.,for-
  'try'.,try-*
  'raise'.,raise-
  '',simplestatement
@@ -440,6 +441,21 @@ repeat,,handlerepeatstart,handleuntilexpected
  '',statement*>
 repeatuntil0,,handleuntilentry,handlerepeatend*
  '',exp^*
+
+for,forvar,,
+ '',exp^*
+forvar,,handleforvar,handleassignmentexpected
+ ':=',forstart-
+forstart,forto,,handleforstart
+ '',exp^*
+forto,,,handletoexpected
+ 'to'.,forstop-
+forstop,fordo,,
+ '',exp^*
+fordo,,,handledoexpected
+ 'do'.,forbody-
+forbody,,handleforheader,handleforend*
+ '',statementstack^*
 
 case,caseof,handlecasestart,
  '',exp^*
