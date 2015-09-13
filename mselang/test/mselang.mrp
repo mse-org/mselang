@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=5
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=17
    (
    kind=1
@@ -1714,7 +1714,7 @@ c=3
    c=6
     (
     kind=2
-    a=0,648,2,raise1
+    a=0,648,1,raise1
     teststate=1
     path=raise1.mla
     comment=
@@ -1729,7 +1729,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73250C0
+    ao=An unhandled exception occured at $B73B40C0
     +
     ae=
     aec=123
@@ -3347,8 +3347,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,with
-   c=10
+   a=0,665,5,with
+   c=12
     (
     kind=2
     a=0,648,1,with1
@@ -3420,6 +3420,51 @@ c=3
     a=0,648,1,with2 llvm
     teststate=1
     path=with2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,with3
+    teststate=2
+    path=with3.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=Access violation
+    +
+    ae=
+    aec=1
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,with3 llvm
+    teststate=1
+    path=with3.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -3569,7 +3614,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=with/
    comment=
    cc=
@@ -3585,7 +3630,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -4234,7 +4279,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -4348,7 +4393,19 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=45
+rowstate=57
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

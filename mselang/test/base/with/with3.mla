@@ -1,0 +1,25 @@
+program with3;
+type
+ recty = record
+  a: int32;
+  b: int32;
+ end;
+var
+ r1,r2: recty;
+
+procedure test();
+begin
+ with r1 do begin
+  a:= 1;
+  with r2 do begin
+   a:= 10;
+   b:= 20;
+  end;
+  b:= 2;
+ end;
+end;
+
+begin
+ test();
+ exitcode:= r1.a+r1.b+r2.a+r2.b+90;
+end.
