@@ -168,6 +168,9 @@ begin
    stackdepth:= 2*stackdepth;
    setlength(contextstack,stackdepth+contextstackreserve);
   end;
+  with contextstack[s.stacktop] do begin
+   handlerflags:= [];
+  end;
  end;
 end;
 

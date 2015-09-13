@@ -450,6 +450,8 @@ forstart,forto,,handleforstart
  '',exp^*
 forto,,,handletoexpected
  'to'.,forstop-
+ 'downto'.,downto-
+downto,forstop,,handledownto
 forstop,fordo,,
  '',exp^*
 fordo,,,handledoexpected

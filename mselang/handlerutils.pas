@@ -176,6 +176,10 @@ function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
 function getbasetypedata(const abitsize: databitsizety): ptypedataty;
 function getsystypeele(const atype: systypety): elementoffsetty;
+
+procedure sethandlerflag(const avalue: handlerflagty);
+procedure sethandlererror();
+
 procedure init();
 procedure deinit();
 
@@ -1771,6 +1775,18 @@ begin
    errormessage(err_argnotassign,[],stackoffset);
   end;
  end;
+end;
+
+procedure sethandlerflag(const avalue: handlerflagty);
+begin
+ with info do begin
+  include(contextstack[s.stackindex].handlerflags,avalue);
+ end;
+end;
+
+procedure sethandlererror();
+begin
+ sethandlerflag(hf_error);
 end;
 
 procedure init;

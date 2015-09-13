@@ -40,6 +40,7 @@ procedure handleforvar();
 procedure handleassignmentexpected();
 procedure handleforstart();
 procedure handletoexpected();
+procedure handledownto();
 procedure handleforheader();
 procedure handleforend();
 
@@ -334,7 +335,7 @@ begin
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_control;
   if not getassignaddress(1,true) then begin
-   include(transitionflags,bf_handlererror);
+   sethandlererror();
   end;
  end;
 end;
@@ -355,28 +356,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FORSTART');
 {$endif}
- with info do begin
-  if (s.stacktop-s.stackindex = 2) then begin
-  {$ifdef mse_checkinternalerror}
-   if not (contextstack[s.stackindex+1].d.kind in [ck_fact,ck_subres]) then begin
-    internalerror(ie_handler,'20150912A');
-   end;
-  {$endif}
-   with contextstack[s.stackindex+1].d.dat do begin
-    if (datatyp.indirectlevel <> 1) or 
-        not (ptypedataty(ele.eledataabs(datatyp.typedata))^.h.kind in 
-                            ordinaldatakinds) then begin
-     errormessage(err_ordinalexpexpected,[],1);
-     seterrorflag();
-    end
-    else begin
-     if not getvalue(2,fact.opdatatype.kind) then begin
-      seterrorflag();
-     end;
-    end;
-   end;
-  end;
- end;
+end;
+
+procedure handledownto();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DOWNTO');
+{$endif}
+ sethandlerflag(hf_down);
 end;
 
 procedure handletoexpected();
@@ -391,20 +378,37 @@ begin
 end;
 
 procedure handleforheader();
+var
+ flags1: handlerflagsty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FORHEADER');
 {$endif}
  with info do begin
-  if (s.stacktop-s.stackindex = 3) and not (bf_handlererror in 
-                        contextstack[s.stackindex].transitionflags) then begin
-  {$ifdef mse_checkinternalerror}
-   if not (contextstack[s.stackindex+1].d.kind in [ck_fact,ck_subres]) then begin
-    internalerror(ie_handler,'20150912A');
-   end;
-  {$endif}
-   with contextstack[s.stackindex+1].d.dat do begin
-    if getvalue(3,fact.opdatatype.kind) then begin
+  if (s.stacktop-s.stackindex = 3) then begin
+   flags1:= contextstack[s.stackindex].handlerflags;
+   if not (hf_error in flags1) then begin
+   {$ifdef mse_checkinternalerror}
+    if not (contextstack[s.stackindex+1].d.kind in 
+                                         [ck_fact,ck_subres]) then begin
+     internalerror(ie_handler,'20150912A');
+    end;
+   {$endif}
+    with contextstack[s.stackindex+1].d.dat do begin
+     if (datatyp.indirectlevel <> 1) or 
+         not (ptypedataty(ele.eledataabs(datatyp.typedata))^.h.kind in 
+                             ordinaldatakinds) then begin
+      errormessage(err_ordinalexpexpected,[],1);
+      sethandlererror();
+     end
+     else begin
+      if not getvalue(2,fact.opdatatype.kind) or 
+                        not getvalue(3,fact.opdatatype.kind) then begin
+       sethandlererror();
+      end
+      else begin
+      end;
+     end;
     end;
    end;
   end;

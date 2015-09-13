@@ -396,7 +396,10 @@ type
   po: pchar;
   line: integer;
  end;
-  
+
+ handlerflagty = (hf_error,hf_down);
+ handlerflagsty = set of handlerflagty;
+   
  pcontextdataty = ^contextdataty;
  contextitemty = record
   parent: integer;
@@ -404,6 +407,7 @@ type
   returncontext: pcontextty;
   start: sourceinfoty;
   debugstart: pchar;
+  handlerflags: handlerflagsty;
   transitionflags: branchflagsty;
   opmark: opmarkty;
   b: contextbackupty;
