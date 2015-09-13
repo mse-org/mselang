@@ -76,8 +76,8 @@ type
 
   oc_label,          //controlops
   oc_if,
-  oc_while,
-  oc_until,
+  oc_while,  //todo: unify with if
+  oc_until,  //todo: unify with if
   oc_decloop32,
   oc_decloop64,
 
@@ -368,6 +368,12 @@ type
   oc_pushnil,
 //  oc_pushsegaddress,
 
+  oc_pushstack8,
+  oc_pushstack16,
+  oc_pushstack32,
+  oc_pushstack64,
+  oc_pushstackpo,
+
   oc_pushseg8,
   oc_pushseg16,
   oc_pushseg32,
@@ -586,6 +592,10 @@ type
 //  destad: opaddressty
  end;
 
+ stackaddressty = record
+  address: dataoffsty;
+ end;
+ 
  segdataaddressty = record
   a: segaddressty;
   offset: dataoffsty;
@@ -666,6 +676,10 @@ type
    oc_incdecsegimmint32,oc_incdecsegimmpo32:(
     segdataaddress: segdataaddressty;
    );
+   oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo:(
+    stackaddress: stackaddressty;
+   );
+
    oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,oc_finirefsizeframear,oc_finirefsizereg0ar,
    oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizeframear,
@@ -910,6 +924,7 @@ type
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64:(
     stackop: stackopty;
    );
+   oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo,
    oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
    oc_pushlocaddr,{oc_pushlocaddrindi,}

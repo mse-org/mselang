@@ -135,7 +135,12 @@ procedure internalerror(const atext: string);
 begin
  raise exception.create('Internal error '+atext);
 end;
- 
+
+function getstackaddress(const aaddress: stackaddressty): pointer;
+begin
+ result:= cpu.stack + aaddress.address;
+end;
+
 function getsegaddress(const aaddress: segdataaddressty): pointer; 
                                   {$ifdef mse_inline}inline;{$endif}
 begin
@@ -1860,10 +1865,50 @@ begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
 end;
 
+procedure pushstack8op();
+var
+ po1: pv8ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv8ty(stackpush(1))^:= po1^;
+end;
+
+procedure pushstack16op();
+var
+ po1: pv16ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv16ty(stackpush(2))^:= po1^;
+end;
+
+procedure pushstack32op();
+var
+ po1: pv32ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv32ty(stackpush(4))^:= po1^;
+end;
+
+procedure pushstack64op();
+var
+ po1: pv64ty;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ pv64ty(stackpush(8))^:= po1^;
+end;
+
+procedure pushstackpoop();
+var
+ po1: ppointer;
+begin
+ po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= po1^;
+end;
+
 procedure pushsegaddressop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= 
-                                    getsegaddress(cpu.pc^.par.memop.segdataaddress); 
+                             getsegaddress(cpu.pc^.par.memop.segdataaddress); 
 end;
 
 procedure storesegnilop();
@@ -3737,6 +3782,11 @@ const
   popparindissa = 0;
 
   pushnilssa = 0;
+  pushstack8ssa = 0;
+  pushstack16ssa = 0;
+  pushstack32ssa = 0;
+  pushstack64ssa = 0;
+  pushstackpossa = 0;
   pushsegaddressssa = 0;
 
   pushseg8ssa = 0;

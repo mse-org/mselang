@@ -88,9 +88,9 @@ procedure increfsize(const aaddress: addressrefty; const count: datasizety;
                                                      const ssaindex: integer);
 procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
                                                      const ssaindex: integer);
-
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
+
 
 procedure setoptable(const aoptable: poptablety);
 {

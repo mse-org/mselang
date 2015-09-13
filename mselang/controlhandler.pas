@@ -380,6 +380,8 @@ end;
 procedure handleforheader();
 var
  flags1: handlerflagsty;
+ initcheckad: int32;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('FORHEADER');
@@ -407,6 +409,7 @@ begin
        sethandlererror();
       end
       else begin
+       
       end;
      end;
     end;
