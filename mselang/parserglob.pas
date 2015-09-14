@@ -134,7 +134,7 @@ type
  debugoptionty = (do_lineinfo);
  debugoptionsty = set of debugoptionty;
 
- pparseinfoty = ^parseinfoty;
+// pparseinfoty = ^parseinfoty;
 
  markinfoty = record
   hashref: ptruint;
@@ -281,11 +281,25 @@ type
 //  flags: statementflagsty;
  end;
 
- controlkindty = (cok_none,cok_loop);
+ controlkindty = (cok_none,cok_loop,cok_for);
+const
+ loopcontrols = [cok_loop,cok_for];
+ 
+type
+ forinfoty = record
+  varsize: databitsizety;
+  varad: addressvaluety; //temp vars
+  start: addressvaluety;
+  stop: addressvaluety;
+ end;
+ 
  controlinfoty = record
   opmark1: opmarkty;
   links: linkindexty;
-  kind: controlkindty;
+  case kind: controlkindty of
+   cok_for:(
+    forinfo: forinfoty;
+   );
  end;
   
  implcontinfoty = record

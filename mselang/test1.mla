@@ -1,12 +1,9 @@
 program for1;
 
-procedure tt();
-begin
-end;
-
 var
  i1: int32;
 begin
- for i1:= 0 to 4+2 do begin
+ for i1:= 0 to 4 do begin
+  exitcode:= 123;
  end;
 end.

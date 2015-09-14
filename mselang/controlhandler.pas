@@ -224,7 +224,7 @@ begin
     if (ident1 = tk_break) or (ident1 = tk_continue) then begin
      for i1:= s.stackindex downto 0 do begin
       with contextstack[i1] do begin
-       if (d.kind = ck_control) and (d.control.kind = cok_loop) then begin
+       if (d.kind = ck_control) and (d.control.kind in loopcontrols) then begin
         with addcontrolitem(oc_goto)^ do begin
          if ident1 = tk_continue then begin
           par.opaddress.opaddress:= d.control.opmark1.address-1; //label
@@ -328,13 +328,29 @@ begin
 end;
 
 procedure handleforvar();
+var
+ po1: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FORVAR');
 {$endif}
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_control;
-  if not getassignaddress(1,true) then begin
+  d.control.kind:= cok_for;
+  if getassignaddress(1,true) then begin
+   d.control.forinfo.varad:= getpointertempaddress();
+   with contextstack[s.stackindex+1].d.dat do begin
+    po1:= ele.eledataabs(datatyp.typedata);
+    if (datatyp.indirectlevel <> 1) or 
+        not (po1^.h.kind in ordinaldatakinds) then begin
+     errormessage(err_ordinalexpexpected,[],1);
+     sethandlererror();
+     exit;
+    end;
+   end;
+   d.control.forinfo.varsize:= po1^.h.datasize;
+  end
+  else begin
    sethandlererror();
   end;
  end;
@@ -356,6 +372,16 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FORSTART');
 {$endif}
+ with info do begin
+  with info,contextstack[s.stackindex] do begin
+   if getvalue(2,d.control.forinfo.varsize) then begin
+    d.control.forinfo.start:= gettempaddress(d.control.forinfo.varsize);
+   end
+   else begin
+    sethandlererror();
+   end;
+  end;
+ end;
 end;
 
 procedure handledownto();
@@ -391,12 +417,15 @@ begin
   if (s.stacktop-s.stackindex = 3) then begin
    flags1:= contextstack[s.stackindex].handlerflags;
    if not (hf_error in flags1) then begin
-   {$ifdef mse_checkinternalerror}
-    if not (contextstack[s.stackindex+1].d.kind in 
-                                         [ck_fact,ck_subres]) then begin
-     internalerror(ie_handler,'20150912A');
+    with info,contextstack[s.stackindex] do begin
+     if getvalue(3,d.control.forinfo.varsize) then begin
+      d.control.forinfo.stop:= gettempaddress(d.control.forinfo.varsize);
+     end
+     else begin
+      sethandlererror();
+     end;
     end;
-   {$endif}
+{
     with contextstack[s.stackindex+1].d.dat do begin
      po1:= ele.eledataabs(datatyp.typedata);
      if (datatyp.indirectlevel <> 1) or 
@@ -414,6 +443,7 @@ begin
       end;
      end;
     end;
+}
    end;
   end;
  end;
@@ -425,6 +455,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FOREND');
 {$endif}
+ with info do begin
+  with info,contextstack[s.stackindex].d.control.forinfo do begin
+   releasetempaddress([das_pointer,varsize,varsize]);
+  end;
+ end;
  endloop();
  with info do begin
   dec(s.stackindex);

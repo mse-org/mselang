@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=5
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=17
    (
    kind=1
@@ -1729,7 +1729,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73B40C0
+    ao=An unhandled exception occured at $B737D0C0
     +
     ae=
     aec=123
@@ -3347,7 +3347,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,with
+   a=0,665,4,with
    c=12
     (
     kind=2
@@ -3439,8 +3439,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,with3
-    teststate=2
+    a=0,648,1,with3
+    teststate=1
     path=with3.mla
     comment=
     cc=${mlc}
@@ -3454,10 +3454,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -3614,7 +3613,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=with/
    comment=
    cc=
@@ -3630,7 +3629,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -4279,7 +4278,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

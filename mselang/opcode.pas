@@ -39,6 +39,10 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
 
 function getpointertempaddress(): addressvaluety;
 procedure releasepointertempaddress();
+function gettempaddress(const asize: databitsizety): addressvaluety;
+procedure releasetempaddress(const asize: databitsizety);
+procedure releasetempaddress(const asize: array of databitsizety);
+procedure releasetempaddress(const abytesize: int32);
 
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
@@ -103,7 +107,8 @@ procedure dumpops();
 {$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils,
+ handlerglob;
  
 type
  opadsty = array[addressbasety] of opcodety;
@@ -325,6 +330,7 @@ begin
   end
   else begin
    result.locaddress.ssaindex:= info.s.ssa.nextindex-1;
+                //last result
   end;
  end;
 end;
@@ -339,6 +345,51 @@ begin
    end;
   end;
  end;
+end;
+
+function gettempaddress(const asize: databitsizety): addressvaluety;
+begin
+ with info do begin
+  result.flags:= [af_temp];
+  result.indirectlevel:= 0;
+  result.locaddress.framelevel:= info.sublevel;
+  if not (co_llvm in compileoptions) then begin
+   result.locaddress.address:= locdatapo - info.frameoffset;
+   locdatapo:= locdatapo + alignsize(bytesizes[asize]);
+  end
+  else begin
+   result.locaddress.ssaindex:= info.s.ssa.nextindex-1;
+                 //last result
+  end;
+ end;
+end;
+
+procedure releasetempaddress(const abytesize: int32);
+begin
+ with info do begin
+  if not (co_llvm in compileoptions) then begin
+   locdatapo:= locdatapo - abytesize;
+   with additem(oc_pop)^ do begin
+    par.imm.vsize:= abytesize;
+   end;
+  end;
+ end;
+end;
+
+procedure releasetempaddress(const asize: databitsizety);
+begin
+ releasetempaddress(alignsize(bytesizes[asize]));
+end;
+
+procedure releasetempaddress(const asize: array of databitsizety);
+var
+ i1,i2: int32;
+begin
+ i2:= 0;
+ for i1:= 0 to high(asize) do begin
+  i2:= i2 + alignsize(bytesizes[asize[i1]]);
+ end;
+ releasetempaddress(i2);
 end;
 
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;

@@ -61,7 +61,8 @@ type
  
 function alignsize(const size: ptruint): ptruint; 
                          {$ifdef mse_inline}inline;{$endif}
-
+            //todo: align startaddress
+            
 procedure finalize;
 function run(const stackdepht: integer): integer; //returns exitcode
 function run(const asegments: segmentbuffersty): integer; //returns exitcode
