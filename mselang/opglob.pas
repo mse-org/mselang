@@ -670,7 +670,9 @@ type
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
    oc_incdeclocimmint32,oc_incdeclocimmpo32:(
-    locdataaddress: locdataaddressty;
+    case integer of
+     0:(locdataaddress: locdataaddressty;);
+     1:(tempaddress: tempaddressty);
    );
    oc_storesegnil,oc_storesegnilar,
    oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,

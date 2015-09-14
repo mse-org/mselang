@@ -165,39 +165,53 @@ end;
 //todo: make special locvar access funcs for inframe variables
 //and loop unroll
 
-function getlocaddress(const aaddress: locdataaddressty): pointer; 
+function getlocaddress(const aaddress: memopty): pointer; 
                                           {$ifdef mse_inline}inline;{$endif}
 var
  i1: integer;
  po1: pointer;
 begin
- if aaddress.a.framelevel < 0 then begin
-  result:= cpu.frame + aaddress.a.address + aaddress.offset;
+ if af_temp in aaddress.t.flags then begin
+  result:= cpu.frame + aaddress.tempaddress.address;
  end
  else begin
-  po1:= cpu.stacklink;
-  for i1:= aaddress.a.framelevel downto 0 do begin
-   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  with aaddress.locdataaddress do begin
+   if a.framelevel < 0 then begin
+    result:= cpu.frame + a.address + offset;
+   end
+   else begin
+    po1:= cpu.stacklink;
+    for i1:= a.framelevel downto 0 do begin
+     po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+    end;
+    result:= po1 + a.address + offset;
+   end;
   end;
-  result:= po1 + aaddress.a.address + aaddress.offset;
  end;
 end;
 
-function getlocaddressindi(const aaddress: locdataaddressty): pointer; 
+function getlocaddressindi(const aaddress: memopty): pointer; 
                                           {$ifdef mse_inline}inline;{$endif}
 var
  i1: integer;
  po1: pointer;
 begin
- if aaddress.a.framelevel < 0 then begin
-  result:= ppointer(cpu.frame + aaddress.a.address)^ + aaddress.offset;
+ if af_temp in aaddress.t.flags then begin
+  result:= ppointer(cpu.frame + aaddress.tempaddress.address)^;
  end
  else begin
-  po1:= cpu.stacklink;
-  for i1:= aaddress.a.framelevel downto 0 do begin
-   po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+  with aaddress.locdataaddress do begin
+   if a.framelevel < 0 then begin
+    result:= ppointer(cpu.frame + a.address)^ + offset;
+   end
+   else begin
+    po1:= cpu.stacklink;
+    for i1:= a.framelevel downto 0 do begin
+     po1:= frameinfoty((po1-sizeof(frameinfoty))^).link;
+    end;
+    result:= ppointer(po1 + a.address)^ + offset;
+   end;
   end;
-  result:= ppointer(po1 + aaddress.a.address)^ + aaddress.offset;
  end;
 end;
 
@@ -805,7 +819,7 @@ var
  po1: pinteger;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem.locdataaddress);
+  po1:= getlocaddress(mem);
   inc(po1^,vint32);
  end; 
 end;
@@ -815,7 +829,7 @@ var
  po1: ppointer;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem.locdataaddress);
+  po1:= getlocaddress(mem);
   inc(po1^,vint32);
  end; 
 end;
@@ -835,7 +849,7 @@ var
  po1: ^pinteger;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem.locdataaddress);
+  po1:= getlocaddress(mem);
   inc(po1^^,vint32);
  end; 
 end;
@@ -845,7 +859,7 @@ var
  po1: pppointer;
 begin
  with cpu.pc^.par.memimm do begin
-  po1:= getlocaddress(mem.locdataaddress);
+  po1:= getlocaddress(mem);
   inc(po1^^,vint32);
  end; 
 end;
@@ -917,8 +931,8 @@ var
  po1: pinteger;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   inc(po1^,i1);
  end; 
@@ -929,8 +943,8 @@ var
  po1: ppointer;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   inc(po1^,i1);
  end; 
@@ -951,8 +965,8 @@ var
  po1: ^pinteger;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   inc(po1^^,i1);
  end; 
@@ -963,8 +977,8 @@ var
  po1: pppointer;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   inc(po1^^,i1);
  end; 
@@ -1049,8 +1063,8 @@ var
  po1: pinteger;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   dec(po1^,i1);
  end; 
@@ -1061,8 +1075,8 @@ var
  po1: ppointer;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   dec(po1^,i1);
  end; 
@@ -1083,8 +1097,8 @@ var
  po1: ^pinteger;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   dec(po1^^,i1);
  end; 
@@ -1095,8 +1109,8 @@ var
  po1: pppointer;
  i1: int32;
 begin
- with cpu.pc^.par.memop do begin
-  po1:= getlocaddress(locdataaddress);
+ with cpu.pc^.par do begin
+  po1:= getlocaddress(memop);
   i1:= pint32(stackpop(sizeof(int32)))^;
   dec(po1^^,i1);
  end; 
@@ -2153,50 +2167,43 @@ end;
 
 procedure poploc8op();
 begin             
- pv8ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                   pv8ty(stackpop(1))^;
+ pv8ty(getlocaddress(cpu.pc^.par.memop))^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poploc16op();
 begin
- pv16ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv16ty(stackpop(2))^;
+ pv16ty(getlocaddress(cpu.pc^.par.memop))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poploc32op();
 begin
- pv32ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv32ty(stackpop(4))^;
+ pv32ty(getlocaddress(cpu.pc^.par.memop))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poploc64op();
 begin
- pv64ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv64ty(stackpop(8))^;
+ pv64ty(getlocaddress(cpu.pc^.par.memop))^:= pv64ty(stackpop(8))^;
 end;
 
 procedure poplocpoop();
 begin
- ppointer(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                 ppointer(stackpop(sizeof(pointer)))^;
+ ppointer(getlocaddress(cpu.pc^.par.memop))^:= 
+                                   ppointer(stackpop(sizeof(pointer)))^;
 end;
 
 procedure poplocf16op();
 begin
- pv16ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv16ty(stackpop(2))^;
+ pv16ty(getlocaddress(cpu.pc^.par.memop))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poplocf32op();
 begin
- pv32ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv32ty(stackpop(4))^;
+ pv32ty(getlocaddress(cpu.pc^.par.memop))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poplocf64op();
 begin
- pv64ty(getlocaddress(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                  pv64ty(stackpop(8))^;
+ pv64ty(getlocaddress(cpu.pc^.par.memop))^:= pv64ty(stackpop(8))^;
 end;
 
 procedure poplocop();
@@ -2204,55 +2211,48 @@ var
  int1: integer;
 begin
  int1:= -cpu.pc^.par.memop.t.size;
- move(stackpop(int1)^,getlocaddress(cpu.pc^.par.memop.locdataaddress)^,int1);
+ move(stackpop(int1)^,getlocaddress(cpu.pc^.par.memop)^,int1);
 end;
 
 procedure poplocindi8op();
 begin             
- pv8ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                     pv8ty(stackpop(1))^;
+ pv8ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv8ty(stackpop(1))^;
 end;
 
 procedure poplocindi16op();
 begin
- pv16ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv16ty(stackpop(2))^;
+ pv16ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poplocindi32op();
 begin
- pv32ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv32ty(stackpop(4))^;
+ pv32ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poplocindi64op();
 begin
- pv64ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv64ty(stackpop(8))^;
+ pv64ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv64ty(stackpop(8))^;
 end;
 
 procedure poplocindipoop();
 begin
- ppointer(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                    ppointer(stackpop(sizeof(pointer)))^;
+ ppointer(getlocaddressindi(cpu.pc^.par.memop))^:= 
+                                           ppointer(stackpop(sizeof(pointer)))^;
 end;
 
 procedure poplocindif16op();
 begin
- pv16ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv16ty(stackpop(2))^;
+ pv16ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv16ty(stackpop(2))^;
 end;
 
 procedure poplocindif32op();
 begin
- pv32ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv32ty(stackpop(4))^;
+ pv32ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv32ty(stackpop(4))^;
 end;
 
 procedure poplocindif64op();
 begin
- pv64ty(getlocaddressindi(cpu.pc^.par.memop.locdataaddress))^:= 
-                                                    pv64ty(stackpop(8))^;
+ pv64ty(getlocaddressindi(cpu.pc^.par.memop))^:= pv64ty(stackpop(8))^;
 end;
 
 procedure poplocindiop();
@@ -2260,8 +2260,7 @@ var
  int1: integer;
 begin
  int1:= -cpu.pc^.par.memop.t.size;
- move(stackpop(int1)^,
-                 getlocaddressindi(cpu.pc^.par.memop.locdataaddress)^,int1);
+ move(stackpop(int1)^,getlocaddressindi(cpu.pc^.par.memop)^,int1);
 end;
 
 procedure poppar8op();
@@ -2356,50 +2355,43 @@ end;
 
 procedure pushloc8op();
 begin
- pv8ty(stackpush(1))^:= pv8ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv8ty(stackpush(1))^:= pv8ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushloc16op();
 begin
- pv16ty(stackpush(2))^:= pv16ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushloc32op();
 begin
- pv32ty(stackpush(4))^:= pv32ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushloc64op();
 begin
- pv64ty(stackpush(8))^:= pv64ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocpoop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= 
-                ppointer(getlocaddress(cpu.pc^.par.memop.locdataaddress))^;
+               ppointer(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocf16op();
 begin
- pv16ty(stackpush(2))^:= pv16ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocf32op();
 begin
- pv32ty(stackpush(4))^:= pv32ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocf64op();
 begin
- pv64ty(stackpush(8))^:= pv64ty(getlocaddress(
-                                   cpu.pc^.par.memop.locdataaddress))^;
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddress(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocop();
@@ -2407,8 +2399,7 @@ var
  int1: integer;
 begin
  int1:= cpu.pc^.par.memop.t.size;
- move(getlocaddress(cpu.pc^.par.memop.locdataaddress)^,
-      stackpush(int1)^,int1);
+ move(getlocaddress(cpu.pc^.par.memop)^,stackpush(int1)^,int1);
 end;
 
 procedure pushpar8op();
@@ -2458,50 +2449,43 @@ end;
 
 procedure pushlocindi8op();
 begin
- pv8ty(stackpush(1))^:= pv8ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv8ty(stackpush(1))^:= pv8ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindi16op();
 begin
- pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindi32op();
 begin
- pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindi64op();
 begin
- pv64ty(stackpush(8))^:= pv64ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindipoop();
 begin
  ppointer(stackpush(sizeof(pointer)))^:= ppointer(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+                                                        cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindif16op();
 begin
- pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv16ty(stackpush(2))^:= pv16ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindif32op();
 begin
- pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv32ty(stackpush(4))^:= pv32ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindif64op();
 begin
- pv64ty(stackpush(8))^:= pv64ty(getlocaddressindi(
-                            cpu.pc^.par.memop.locdataaddress))^;
+ pv64ty(stackpush(8))^:= pv64ty(getlocaddressindi(cpu.pc^.par.memop))^;
 end;
 
 procedure pushlocindiop();
@@ -2509,8 +2493,7 @@ var
  int1: integer;
 begin
  int1:= cpu.pc^.par.memop.t.size;
- move(getlocaddressindi(cpu.pc^.par.memop.locdataaddress)^,
-                                               stackpush(int1)^,int1);
+ move(getlocaddressindi(cpu.pc^.par.memop)^,stackpush(int1)^,int1);
 end;
 
 procedure pushaddrop();
@@ -2520,8 +2503,7 @@ end;
 
 procedure pushlocaddrop();
 begin
- ppointer(stackpush(sizeof(pointer)))^:=
-                          getlocaddress(cpu.pc^.par.memop.locdataaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= getlocaddress(cpu.pc^.par.memop);
 end;
 {
 procedure pushlocaddrindiop();

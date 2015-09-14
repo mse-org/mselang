@@ -255,25 +255,26 @@ end;
 procedure loadloc();
 begin
  with pc^.par do begin
-  with memop,locdataaddress do begin
-   if a.framelevel >= 0 then begin
-    bcstream.emitgetelementptr(bcstream.subval(0),
-            //pointer to array of pointer to local alloc
-                                           bcstream.constval(a.address));
-            //byte offset in array
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
-    bcstream.emitloadop(bcstream.relval(0));
-            //pointer to variable
-    if af_aggregate in t.flags then begin
-     bcstream.emitnopssaop();          //agregatessa = 3
-     bcstream.emitgetelementptr(bcstream.relval(1),bcstream.constval(offset));
-    end;
-    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
-    bcstream.emitloadop(bcstream.relval(0));
+  with memop do begin
+   if af_temp in t.flags then begin
+    bcstream.emitbitcast(bcstream.ssaval(tempaddress.ssaindex),t.listindex);
    end
    else begin
-    if af_temp in t.flags then begin
-     bcstream.emitbitcast(bcstream.ssaval(a.ssaindex),t.listindex);
+    if locdataaddress.a.framelevel >= 0 then begin
+     bcstream.emitgetelementptr(bcstream.subval(0),
+             //pointer to array of pointer to local alloc
+                             bcstream.constval(locdataaddress.a.address));
+             //byte offset in array
+     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+     bcstream.emitloadop(bcstream.relval(0));
+             //pointer to variable
+     if af_aggregate in t.flags then begin
+      bcstream.emitnopssaop();          //agregatessa = 3
+      bcstream.emitgetelementptr(bcstream.relval(1),
+                        bcstream.constval(locdataaddress.offset));
+     end;
+     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+     bcstream.emitloadop(bcstream.relval(0));
     end
     else begin
      if af_aggregate in t.flags then begin
@@ -281,7 +282,7 @@ begin
       bcstream.emitloadop(bcstream.relval(0));
      end
      else begin
-      bcstream.emitloadop(bcstream.allocval(a.address));
+      bcstream.emitloadop(bcstream.allocval(locdataaddress.a.address));
      end;
     end;
    end;

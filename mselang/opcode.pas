@@ -323,13 +323,13 @@ begin
  with info do begin
   result.flags:= [af_temp];
   result.indirectlevel:= 1;
-  result.locaddress.framelevel:= info.sublevel;
+//  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in compileoptions) then begin
-   result.locaddress.address:= locdatapo - info.frameoffset;
+   result.tempaddress.address:= locdatapo - info.frameoffset;
    locdatapo:= locdatapo + pointersize;
   end
   else begin
-   result.locaddress.ssaindex:= info.s.ssa.nextindex-1;
+   result.tempaddress.ssaindex:= info.s.ssa.nextindex-1;
                 //last result
   end;
  end;
@@ -352,13 +352,13 @@ begin
  with info do begin
   result.flags:= [af_temp];
   result.indirectlevel:= 0;
-  result.locaddress.framelevel:= info.sublevel;
+//  result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in compileoptions) then begin
-   result.locaddress.address:= locdatapo - info.frameoffset;
+   result.tempaddress.address:= locdatapo - info.frameoffset;
    locdatapo:= locdatapo + alignsize(bytesizes[asize]);
   end
   else begin
-   result.locaddress.ssaindex:= info.s.ssa.nextindex-1;
+   result.tempaddress.ssaindex:= info.s.ssa.nextindex-1;
                  //last result
   end;
  end;

@@ -420,6 +420,7 @@ begin
     with info,contextstack[s.stackindex] do begin
      if getvalue(3,d.control.forinfo.varsize) then begin
       d.control.forinfo.stop:= gettempaddress(d.control.forinfo.varsize);
+      
      end
      else begin
       sethandlererror();

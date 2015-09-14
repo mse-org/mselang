@@ -108,6 +108,8 @@ function getaddress(const stackoffset: integer;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 
+//procedure pushtempindi(const address: addressvaluety);
+
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
 procedure push(const avalue: real); overload;
@@ -1438,26 +1440,34 @@ begin
    end;
   end
   else begin
-   framelevel1:= info.sublevel-locaddress.framelevel-1;
-   if framelevel1 >= 0 then begin
-    ssaextension1:= ssaextension1 + getssa(ocssa_pushnestedvar);
-   end;
-   if af_param in flags then begin
-    if af_paramindirect in flags then begin
-     po1:= getop(pushlocindi[opsize1]);
-    end
-    else begin
-     po1:= getop(pushpar[opsize1]);
+   if af_temp in opflags1 then begin
+    po1:= getop(pushloc[opsize1]);
+    with po1^ do begin
+     par.memop.tempaddress:= tempaddress;
     end;
    end
-   else begin   
-    po1:= getop(pushloc[opsize1]);
-   end;
-   with po1^ do begin
-    par.memop.locdataaddress.a:= locaddress;
-    tracklocalaccess(par.memop.locdataaddress.a,avarele,aopdatatype);
-    par.memop.locdataaddress.a.framelevel:= framelevel1;
-    par.memop.locdataaddress.offset:= offset;
+   else begin
+    framelevel1:= info.sublevel-locaddress.framelevel-1;
+    if framelevel1 >= 0 then begin
+     ssaextension1:= ssaextension1 + getssa(ocssa_pushnestedvar);
+    end;
+    if af_param in flags then begin
+     if af_paramindirect in flags then begin
+      po1:= getop(pushlocindi[opsize1]);
+     end
+     else begin
+      po1:= getop(pushpar[opsize1]);
+     end;
+    end
+    else begin   
+     po1:= getop(pushloc[opsize1]);
+    end;
+    with po1^ do begin
+     par.memop.locdataaddress.a:= locaddress;
+     tracklocalaccess(par.memop.locdataaddress.a,avarele,aopdatatype);
+     par.memop.locdataaddress.a.framelevel:= framelevel1;
+     par.memop.locdataaddress.offset:= offset;
+    end;
    end;
   end;
   po1^.par.memop.t:= aopdatatype;

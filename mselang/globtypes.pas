@@ -116,6 +116,10 @@ type
  locaddressty = record
   address: dataoffsty; //first, must map poaddress
   framelevel: integer;
+ end;
+ 
+ tempaddressty = record
+  address: dataoffsty; //first, must map poaddress
   ssaindex: integer; //for llvm temp var
  end;
   
@@ -126,6 +130,7 @@ type
    0: (poaddress: dataoffsty);
    1: (segaddress: segaddressty);
    2: (locaddress: locaddressty);
+   2: (tempaddress: tempaddressty);
  end;
  paddressvaluety = ^addressvaluety;
  
