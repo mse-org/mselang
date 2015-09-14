@@ -36,6 +36,7 @@ function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
 procedure inclocvaraddress(const asize: integer);
 function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
             var aflags: addressflagsty; const shift: integer = 0): locaddressty;
+
 function getpointertempaddress(): addressvaluety;
 procedure releasepointertempaddress();
 
@@ -319,7 +320,7 @@ begin
   result.indirectlevel:= 1;
   result.locaddress.framelevel:= info.sublevel;
   if not (co_llvm in compileoptions) then begin
-   result.locaddress.address:= locdatapo;
+   result.locaddress.address:= locdatapo - info.frameoffset;
    locdatapo:= locdatapo + pointersize;
   end
   else begin
