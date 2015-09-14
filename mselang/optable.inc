@@ -1483,7 +1483,7 @@
 //oc_pushnil
   (ssa: pushnilssa; proc: @pushnilop; flags: []), 
 //  pushsegaddress
-
+{
 //oc_pushstack8
   (ssa: pushstack8ssa; proc: @pushstackindi8op; flags: []), 
 //oc_pushstack16
@@ -1504,7 +1504,7 @@
   (ssa: pushstackindi64ssa; proc: @pushstackindi64op; flags: []), 
 //oc_pushstackpo
   (ssa: pushstackindipossa; proc: @pushstackindipoop; flags: []), 
-
+}
 //oc_pushseg8
   (ssa: pushseg8ssa; proc: @pushseg8op; flags: [of_relocseg]), 
 //oc_pushseg16

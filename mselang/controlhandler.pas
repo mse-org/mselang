@@ -348,7 +348,7 @@ begin
      exit;
     end;
    end;
-   d.control.forinfo.varsize:= po1^.h.datasize;
+   d.control.forinfo.alloc:= getopdatatype(po1,0);
   end
   else begin
    sethandlererror();
@@ -374,8 +374,8 @@ begin
 {$endif}
  with info do begin
   with info,contextstack[s.stackindex] do begin
-   if getvalue(2,d.control.forinfo.varsize) then begin
-    d.control.forinfo.start:= gettempaddress(d.control.forinfo.varsize);
+   if getvalue(2,d.control.forinfo.alloc.kind) then begin
+    d.control.forinfo.start:= gettempaddress(d.control.forinfo.alloc.kind);
    end
    else begin
     sethandlererror();
@@ -417,10 +417,11 @@ begin
   if (s.stacktop-s.stackindex = 3) then begin
    flags1:= contextstack[s.stackindex].handlerflags;
    if not (hf_error in flags1) then begin
-    with info,contextstack[s.stackindex] do begin
-     if getvalue(3,d.control.forinfo.varsize) then begin
-      d.control.forinfo.stop:= gettempaddress(d.control.forinfo.varsize);
-      
+    with info,contextstack[s.stackindex],d.control.forinfo do begin
+     if getvalue(3,alloc.kind) then begin
+      d.control.forinfo.stop:= gettempaddress(alloc.kind);
+      pushtempindi(d.control.forinfo.varad,alloc);
+      pushtemp(d.control.forinfo.start,alloc);
      end
      else begin
       sethandlererror();
@@ -458,7 +459,7 @@ begin
 {$endif}
  with info do begin
   with info,contextstack[s.stackindex].d.control.forinfo do begin
-   releasetempaddress([das_pointer,varsize,varsize]);
+   releasetempaddress([das_pointer,alloc.kind,alloc.kind]);
   end;
  end;
  endloop();

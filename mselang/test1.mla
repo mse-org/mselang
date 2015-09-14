@@ -8,13 +8,7 @@ var
  end;
 
 begin
- with r1 do begin
-  b:= 123;
- end;
- exitcode:= r1.b;
-{
  for i1:= 0 to 4 do begin
   exitcode:= 123;
  end;
-}
 end.

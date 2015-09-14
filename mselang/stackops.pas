@@ -136,12 +136,12 @@ procedure internalerror(const atext: string);
 begin
  raise exception.create('Internal error '+atext);
 end;
-
+{
 function getstackaddress(const aaddress: stackaddressty): pointer;
 begin
  result:= cpu.stack + aaddress.address;
 end;
-
+}
 function getsegaddress(const aaddress: segdataaddressty): pointer; 
                                   {$ifdef mse_inline}inline;{$endif}
 begin
@@ -1879,7 +1879,7 @@ procedure pushnilop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= nil;
 end;
-
+{
 procedure pushstack8op();
 var
  po1: pv8ty;
@@ -1959,7 +1959,7 @@ begin
  po1:= getstackaddress(cpu.pc^.par.memop.stackaddress);
  ppointer(stackpush(sizeof(pointer)))^:= po1^^;
 end;
-
+}
 procedure pushsegaddressop();
 begin
  ppointer(stackpush(sizeof(dataaddressty)))^:= 
@@ -3805,6 +3805,7 @@ const
   popparindissa = 0;
 
   pushnilssa = 0;
+{
   pushstack8ssa = 0;
   pushstack16ssa = 0;
   pushstack32ssa = 0;
@@ -3815,6 +3816,7 @@ const
   pushstackindi32ssa = 0;
   pushstackindi64ssa = 0;
   pushstackindipossa = 0;
+}
   pushsegaddressssa = 0;
 
   pushseg8ssa = 0;

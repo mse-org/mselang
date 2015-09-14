@@ -2112,7 +2112,7 @@ begin
                                bcstream.typeval(pointertype));
  end;
 end;
-
+{
 procedure pushstack8op();
 begin
  notimplemented();
@@ -2162,7 +2162,7 @@ procedure pushstackindipoop();
 begin
  notimplemented();
 end;
-
+}
 procedure pushsegaddressop();
 begin
  notimplemented();
@@ -3277,6 +3277,7 @@ const
   popparindissa = 2;
 
   pushnilssa = 1;
+{
   pushstack8ssa = 1;
   pushstack16ssa = 1;
   pushstack32ssa = 1;
@@ -3287,6 +3288,7 @@ const
   pushstackindi32ssa = 1;
   pushstackindi64ssa = 1;
   pushstackindipossa = 1;
+ }
   pushsegaddressssa = 1;
 
   pushseg8ssa = 1;

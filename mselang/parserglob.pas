@@ -287,7 +287,7 @@ const
  
 type
  forinfoty = record
-  varsize: databitsizety;
+  alloc: typeallocinfoty;
   varad: addressvaluety; //temp vars
   start: addressvaluety;
   stop: addressvaluety;

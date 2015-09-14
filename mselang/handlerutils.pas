@@ -108,7 +108,10 @@ function getaddress(const stackoffset: integer;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 
-//procedure pushtempindi(const address: addressvaluety);
+procedure pushtemp(const address: addressvaluety;
+                                      const alloc: typeallocinfoty);
+procedure pushtempindi(const address: addressvaluety;
+                                      const alloc: typeallocinfoty);
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -909,6 +912,58 @@ begin
     par.ssas1:= ssabefore;
    end;
   end;
+ end;
+end;
+
+const
+ pushtempops: array[databitsizety] of opcodety = (
+ //das_none,das_1,    das_2_7,    das_8,
+  oc_none,oc_pushloc8,oc_pushloc8,oc_pushloc8,
+ //das_9_15,   das_16,      das_17_31,   das_32,
+  oc_pushloc16,oc_pushloc16,oc_pushloc32,oc_pushloc32,
+ //das_33_63,  das_64,      das_pointer,
+  oc_pushloc64,oc_pushloc64,oc_pushlocpo, 
+ //das_f16,     das_f32,      das_f64,      das_sub,das_meta 
+  oc_pushlocf16,oc_pushlocf32,oc_pushlocf64,oc_none,oc_none);
+
+procedure pushtemp(const address: addressvaluety;
+                                      const alloc: typeallocinfoty);
+begin
+ with additem(pushtempops[alloc.kind])^ do begin
+ {$ifdef mse_checkinternalerror}
+  if op.op = oc_none then begin
+   internalerror(ie_handler,'2050914A');
+  end;
+ {$endif}
+  par.memop.t:= alloc;
+  par.memop.t.flags:= address.flags;
+  par.memop.tempaddress:= address.tempaddress;
+ end;
+end;
+
+const
+ pushtempindiops: array[databitsizety] of opcodety = (
+ //das_none,das_1,        das_2_7,        das_8,
+  oc_none,oc_pushlocindi8,oc_pushlocindi8,oc_pushlocindi8,
+ //das_9_15,       das_16,          das_17_31,       das_32,
+  oc_pushlocindi16,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi32,
+ //das_33_63,      das_64,          das_pointer,
+  oc_pushlocindi64,oc_pushlocindi64,oc_pushlocindipo, 
+ //das_f16,         das_f32,          das_f64,          das_sub,das_meta 
+  oc_pushlocindif16,oc_pushlocindif32,oc_pushlocindif64,oc_none,oc_none);
+                  
+procedure pushtempindi(const address: addressvaluety;
+                                      const alloc: typeallocinfoty);
+begin
+ with additem(pushtempindiops[alloc.kind])^ do begin
+ {$ifdef mse_checkinternalerror}
+  if op.op = oc_none then begin
+   internalerror(ie_handler,'2050914B');
+  end;
+ {$endif}
+  par.memop.t:= alloc;
+  par.memop.t.flags:= address.flags;
+  par.memop.tempaddress:= address.tempaddress;
  end;
 end;
 
