@@ -279,7 +279,7 @@ begin
   setcurrentlocbefore(2); //dest for oc_while
   endloop();
   addlabel();
-  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address-1);
+  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address);
   linkresolveopad(d.control.linksbreak,opcount-1);
   dec(s.stackindex);
  end;
@@ -326,7 +326,7 @@ begin
    po1^.par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
   addlabel();
-  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address-1);
+  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address);
   linkresolveopad(d.control.linksbreak,opcount-1);
   dec(s.stackindex);
  end;

@@ -8,7 +8,7 @@ var
  end;
 
 begin
- for i1:= 1 downto 2 do begin
+ for i1:= 1 downto -1 do begin
   writeln(i1);
   inc(i2);
  end;
