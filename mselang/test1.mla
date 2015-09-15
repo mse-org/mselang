@@ -1,14 +1,17 @@
 program for1;
 
 var
- i1: int32;
+ i1,i2: int32;
  r1: record
   a: int32;
   b: int32;
  end;
 
 begin
- for i1:= 0 to 4 do begin
-  exitcode:= 123;
+ for i1:= 1 downto 2 do begin
+  writeln(i1);
+  inc(i2);
  end;
+ exitcode:= i2;
+ writeln('*** ',i1);
 end.

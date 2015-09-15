@@ -295,7 +295,8 @@ type
  
  controlinfoty = record
   opmark1: opmarkty;
-  links: linkindexty;
+  linksbreak: linkindexty;
+  linkscontinue: linkindexty;
   case kind: controlkindty of
    cok_for:(
     forinfo: forinfoty;

@@ -66,6 +66,10 @@ procedure setimmpointer(const value: dataaddressty; var par: opparamty);
 procedure setimmoffset(const value: dataoffsty; var par: opparamty);
 procedure setimmdatakind(const value: datakindty; var par: opparamty);
 
+procedure setmemimm(const value: int32; var par: opparamty);
+
+procedure checkopcapacity(const areserve: int32);
+                  //garanties room for areserve ops
 function additem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
@@ -511,6 +515,16 @@ begin
  end;
 end;
 
+procedure setmemimm(const value: int32; var par: opparamty);
+begin
+ if co_llvm in info.compileoptions then begin
+  par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
+ end
+ else begin
+  par.memimm.vint32:= value;
+ end;
+end;
+
 procedure setimmint64(const value: int64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
@@ -616,6 +630,12 @@ begin
    par.stacksize:= 4;
   end;
  end;
+end;
+
+procedure checkopcapacity(const areserve: int32);
+                  //garanties room for areserve ops
+begin
+ checksegmentcapacity(seg_op,areserve*sizeof(opinfoty));
 end;
 
 function additem(const aopcode: opcodety;

@@ -2205,20 +2205,6 @@ begin
  end;
 end;
 
-const
- popindioptable: array[databitsizety] of opcodety = (
- //das_none,      das_1,          das_2_7,        das_8,
-   oc_popindirect,oc_popindirect8,oc_popindirect8,oc_popindirect8,
- //das_9_15,        das_16,          das_17_31,       das_32,
-   oc_popindirect16,oc_popindirect16,oc_popindirect32,oc_popindirect32,
- //das_33_63,       das_64,          das_pointer
-   oc_popindirect64,oc_popindirect64,oc_popindirectpo,
- //das_f16,          das_f32,          das_f64
-   oc_popindirectf16,oc_popindirectf32,oc_popindirectf64,
- //das_sub,         das_meta
-   oc_popindirectpo,oc_none
-   );
-
 //todo: indirection needs rewrite, simplify and make universal
 
 procedure handleassignment();

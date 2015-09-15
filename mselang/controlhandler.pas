@@ -175,7 +175,8 @@ begin
   d.kind:= ck_control;
   d.control.opmark1.address:= opcount; //label address
   d.control.kind:= akind;
-  d.control.links:= 0;
+  d.control.linkscontinue:= 0;
+  d.control.linksbreak:= 0;
  end;
  addlabel();
 end;
@@ -227,10 +228,12 @@ begin
        if (d.kind = ck_control) and (d.control.kind in loopcontrols) then begin
         with addcontrolitem(oc_goto)^ do begin
          if ident1 = tk_continue then begin
-          par.opaddress.opaddress:= d.control.opmark1.address-1; //label
+          linkmark(d.control.linkscontinue,
+                       getsegaddress(seg_op,@par.opaddress.opaddress));
+//          par.opaddress.opaddress:= d.control.opmark1.address-1; //label
          end
          else begin
-          linkmark(d.control.links,
+          linkmark(d.control.linksbreak,
                        getsegaddress(seg_op,@par.opaddress.opaddress));
          end;
         end;
@@ -276,7 +279,8 @@ begin
   setcurrentlocbefore(2); //dest for oc_while
   endloop();
   addlabel();
-  linkresolveopad(d.control.links,opcount-1);
+  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address-1);
+  linkresolveopad(d.control.linksbreak,opcount-1);
   dec(s.stackindex);
  end;
 end;
@@ -322,7 +326,8 @@ begin
    po1^.par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
   addlabel();
-  linkresolveopad(d.control.links,opcount-1);
+  linkresolveopad(d.control.linkscontinue,d.control.opmark1.address-1);
+  linkresolveopad(d.control.linksbreak,opcount-1);
   dec(s.stackindex);
  end;
 end;
@@ -408,7 +413,10 @@ var
  flags1: handlerflagsty;
  initcheckad: int32;
  po1: ptypedataty;
- 
+ op1,op2: opcodety;
+ po2: popinfoty;
+ step: int32;
+ i1,i2: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('FORHEADER');
@@ -419,9 +427,50 @@ begin
    if not (hf_error in flags1) then begin
     with info,contextstack[s.stackindex],d.control.forinfo do begin
      if getvalue(3,alloc.kind) then begin
-      d.control.forinfo.stop:= gettempaddress(alloc.kind);
-      pushtempindi(d.control.forinfo.varad,alloc);
-      pushtemp(d.control.forinfo.start,alloc);
+      stop:= gettempaddress(alloc.kind);
+      pushtemp(start,alloc);
+      pushtemp(stop,alloc);
+      if hf_down in flags1 then begin        //todo: different types
+       op1:= oc_cmpgeint32;
+       step:= -1;
+      end
+      else begin
+       op1:= oc_cmpleint32;
+       step:= 1;
+      end;
+      with additem(op1)^.par do begin
+       ssas1:= start.tempaddress.ssaindex;
+       ssas2:= stop.tempaddress.ssaindex;
+      end;
+      checkopcapacity(10);
+      po2:= addcontrolitem(oc_if); //jump to loop end
+
+      i1:= pushtemppo(varad);
+      i2:= pushtemp(start,alloc);
+      with additem(popindioptable[alloc.kind])^ do begin
+       par.memop.t:= alloc;
+       par.ssas1:= i1;
+       par.ssas2:= i2;
+      end;
+      i1:= pushtemppo(varad);
+      with additem(oc_incdecindiimmint32)^ do begin
+       par.memimm.mem.t:= alloc;
+       par.memimm.mem.t.flags:= varad.flags;
+       par.memimm.mem.tempaddress:= varad.tempaddress;
+       setmemimm(-step,par);
+       par.ssas1:= i1;
+      end;
+      startlabel(cok_for);
+      linkmark(d.control.linksbreak,
+                       getsegaddress(seg_op,@po2^.par.opaddress.opaddress));
+      pushtemppo(varad);
+      with additem(oc_incdecindiimmint32)^ do begin
+       par.memimm.mem.t:= alloc;
+       par.memimm.mem.t.flags:= varad.flags;
+       par.memimm.mem.tempaddress:= varad.tempaddress;
+       setmemimm(step,par);
+      end;
+      beginloop();
      end
      else begin
       sethandlererror();
@@ -449,20 +498,48 @@ begin
    end;
   end;
  end;
- beginloop();
 end;
 
 procedure handleforend();
+var
+ op1: opcodety;
+ flags1: handlerflagsty;
+ po1: popinfoty;
+ i1,i2: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('FOREND');
 {$endif}
  with info do begin
-  with info,contextstack[s.stackindex].d.control.forinfo do begin
-   releasetempaddress([das_pointer,alloc.kind,alloc.kind]);
+  with info,contextstack[s.stackindex] do begin
+   flags1:= handlerflags;
+   if not (hf_error in handlerflags) then begin
+    if hf_down in flags1 then begin        //todo: different types
+     op1:= oc_cmpleint32;
+    end
+    else begin
+     op1:= oc_cmpgeint32;
+    end;
+    addlabel();
+    with d.control do begin
+     linkresolveopad(linkscontinue,opcount-1);
+     i1:= pushtempindi(forinfo.varad,forinfo.alloc);
+     i2:= pushtemp(forinfo.stop,forinfo.alloc);
+     with additem(op1)^.par do begin
+      ssas1:= i1;
+      ssas2:= i2;
+     end;    
+     with addcontrolitem(oc_if)^ do begin //jump to loop start
+      par.opaddress.opaddress:= d.control.opmark1.address-1;
+     end;
+     addlabel();
+     linkresolveopad(linksbreak,opcount-1);
+     releasetempaddress([das_pointer,forinfo.alloc.kind,forinfo.alloc.kind]);
+    end;      
+    endloop();
+   end;
   end;
  end;
- endloop();
  with info do begin
   dec(s.stackindex);
  end;

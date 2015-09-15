@@ -67,6 +67,19 @@ const
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
            (st_none,st_pointer,st_bool1,st_card32,st_int32,st_float64);
 
+ popindioptable: array[databitsizety] of opcodety = (
+ //das_none,      das_1,          das_2_7,        das_8,
+   oc_popindirect,oc_popindirect8,oc_popindirect8,oc_popindirect8,
+ //das_9_15,        das_16,          das_17_31,       das_32,
+   oc_popindirect16,oc_popindirect16,oc_popindirect32,oc_popindirect32,
+ //das_33_63,       das_64,          das_pointer
+   oc_popindirect64,oc_popindirect64,oc_popindirectpo,
+ //das_f16,          das_f32,          das_f64
+   oc_popindirectf16,oc_popindirectf32,oc_popindirectf64,
+ //das_sub,         das_meta
+   oc_popindirectpo,oc_none
+   );
+
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
 function getidents(const astackoffset: integer): identvecty; overload;
@@ -108,10 +121,14 @@ function getaddress(const stackoffset: integer;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 
-procedure pushtemp(const address: addressvaluety;
-                                      const alloc: typeallocinfoty);
-procedure pushtempindi(const address: addressvaluety;
-                                      const alloc: typeallocinfoty);
+function pushtemp(const address: addressvaluety;
+                                      const alloc: typeallocinfoty): int32;
+                                                              //returns ssad
+function pushtempindi(const address: addressvaluety;
+                                      const alloc: typeallocinfoty): int32;
+                                                              //returns ssad
+function pushtemppo(const address: addressvaluety): int32;
+                                                              //returns ssad
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -926,8 +943,8 @@ const
  //das_f16,     das_f32,      das_f64,      das_sub,das_meta 
   oc_pushlocf16,oc_pushlocf32,oc_pushlocf64,oc_none,oc_none);
 
-procedure pushtemp(const address: addressvaluety;
-                                      const alloc: typeallocinfoty);
+function pushtemp(const address: addressvaluety;
+                                      const alloc: typeallocinfoty): int32;
 begin
  with additem(pushtempops[alloc.kind])^ do begin
  {$ifdef mse_checkinternalerror}
@@ -938,6 +955,17 @@ begin
   par.memop.t:= alloc;
   par.memop.t.flags:= address.flags;
   par.memop.tempaddress:= address.tempaddress;
+  result:= par.ssad;
+ end;
+end;
+
+function pushtemppo(const address: addressvaluety): int32;
+begin
+ with additem(oc_pushlocpo)^ do begin
+  par.memop.t:= bitoptypes[das_pointer];
+  par.memop.t.flags:= address.flags;
+  par.memop.tempaddress:= address.tempaddress;
+  result:= par.ssad;
  end;
 end;
 
@@ -952,8 +980,8 @@ const
  //das_f16,         das_f32,          das_f64,          das_sub,das_meta 
   oc_pushlocindif16,oc_pushlocindif32,oc_pushlocindif64,oc_none,oc_none);
                   
-procedure pushtempindi(const address: addressvaluety;
-                                      const alloc: typeallocinfoty);
+function pushtempindi(const address: addressvaluety;
+                                      const alloc: typeallocinfoty): int32;
 begin
  with additem(pushtempindiops[alloc.kind])^ do begin
  {$ifdef mse_checkinternalerror}
@@ -964,6 +992,7 @@ begin
   par.memop.t:= alloc;
   par.memop.t.flags:= address.flags;
   par.memop.tempaddress:= address.tempaddress;
+  result:= par.ssad;
  end;
 end;
 
