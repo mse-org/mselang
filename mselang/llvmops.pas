@@ -252,12 +252,20 @@ begin
  end;
 end;
 
-procedure loadloc();
+procedure loadloc(const indirect: boolean);
+var
+ i1: int32;
 begin
  with pc^.par do begin
   with memop do begin
+   if indirect then begin
+    i1:= bcstream.ptypeval(t.listindex);
+   end
+   else begin
+    i1:= bcstream.typeval(t.listindex);
+   end;
    if af_temp in t.flags then begin
-    bcstream.emitbitcast(bcstream.ssaval(tempaddress.ssaindex),t.listindex);
+    bcstream.emitbitcast(bcstream.ssaval(tempaddress.ssaindex),i1);
    end
    else begin
     if locdataaddress.a.framelevel >= 0 then begin
@@ -273,7 +281,7 @@ begin
       bcstream.emitgetelementptr(bcstream.relval(1),
                         bcstream.constval(locdataaddress.offset));
      end;
-     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(t.listindex));
+     bcstream.emitbitcast(bcstream.relval(0),i1);
      bcstream.emitloadop(bcstream.relval(0));
     end
     else begin
@@ -283,6 +291,7 @@ begin
      end
      else begin
       bcstream.emitloadop(bcstream.allocval(locdataaddress.a.address));
+                  //indirect?
      end;
     end;
    end;
@@ -292,8 +301,10 @@ end;
 
 procedure loadlocindi();
 begin
- loadloc();
- bcstream.emitloadop(bcstream.relval(0));
+ with pc^.par.memop do begin
+  loadloc(true);
+  bcstream.emitloadop(bcstream.relval(0));
+ end;   
 end;
 
 procedure comparessa(const apredicate: predicate);
@@ -1309,7 +1320,7 @@ end;
 procedure incdeclocimmint32op();
 begin
  with pc^.par,memimm do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
                                 bcstream.constval(llvm.listid));
   storelastloc();
@@ -1319,7 +1330,7 @@ end;
 procedure incdeclocimmpo32op();
 begin
  with pc^.par,memimm do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.constval(llvm.listid));
   storelastloc();
  end;
@@ -1388,7 +1399,7 @@ end;
 procedure inclocint32op();
 begin
  with pc^.par do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
                                 bcstream.ssaval(ssas2));
   storelastloc();
@@ -1398,7 +1409,7 @@ end;
 procedure inclocpo32op();
 begin
  with pc^.par do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas2));
   storelastloc();
  end;
@@ -1467,7 +1478,7 @@ end;
 procedure declocint32op();
 begin
  with pc^.par do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitbinop(BINOP_ADD,bcstream.relval(0),
                                 bcstream.ssaval(ssas2));
   storelastloc();
@@ -1477,7 +1488,7 @@ end;
 procedure declocpo32op();
 begin
  with pc^.par do begin
-  loadloc();
+  loadloc(false);
   bcstream.emitgetelementptr(bcstream.relval(0),bcstream.ssaval(ssas1));
   storelastloc();
  end;
@@ -2215,92 +2226,92 @@ end;
 
 procedure pushloc8op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushloc16op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushloc32op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushloc64op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocpoop();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocf16op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocf32op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocf64op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocop();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushpar8op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushpar16op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushpar32op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushpar64op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushparpoop();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushparf16op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushparf32op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushparf64op();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushparop();
 begin
- loadloc();
+ loadloc(false);
 end;
 
 procedure pushlocindi8op();

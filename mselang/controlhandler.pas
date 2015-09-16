@@ -441,34 +441,37 @@ begin
       with additem(op1)^.par do begin
        ssas1:= start.tempaddress.ssaindex;
        ssas2:= stop.tempaddress.ssaindex;
+       i1:= ssad;
       end;
       checkopcapacity(10);
       po2:= addcontrolitem(oc_if); //jump to loop end
+      po2^.par.ssas1:= i1;
 
       i1:= pushtemppo(varad);
       i2:= pushtemp(start,alloc);
       with additem(popindioptable[alloc.kind])^ do begin
        par.memop.t:= alloc;
-       par.ssas1:= i1;
-       par.ssas2:= i2;
+       par.ssas1:= i2; //source
+       par.ssas2:= i1; //dest
       end;
       i1:= pushtemppo(varad);
       with additem(oc_incdecindiimmint32)^ do begin
        par.memimm.mem.t:= alloc;
-       par.memimm.mem.t.flags:= varad.flags;
-       par.memimm.mem.tempaddress:= varad.tempaddress;
+//       par.memimm.mem.t.flags:= varad.flags;
+//       par.memimm.mem.tempaddress:= varad.tempaddress;
        setmemimm(-step,par);
        par.ssas1:= i1;
       end;
       startlabel(cok_for);
       linkmark(d.control.linksbreak,
                        getsegaddress(seg_op,@po2^.par.opaddress.opaddress));
-      pushtemppo(varad);
+      i1:= pushtemppo(varad);
       with additem(oc_incdecindiimmint32)^ do begin
        par.memimm.mem.t:= alloc;
-       par.memimm.mem.t.flags:= varad.flags;
-       par.memimm.mem.tempaddress:= varad.tempaddress;
+//       par.memimm.mem.t.flags:= varad.flags;
+//       par.memimm.mem.tempaddress:= varad.tempaddress;
        setmemimm(step,par);
+       par.ssas1:= i1;
       end;
       beginloop();
      end
@@ -528,9 +531,11 @@ begin
      with additem(op1)^.par do begin
       ssas1:= i1;
       ssas2:= i2;
+      i1:= ssad;
      end;    
      with addcontrolitem(oc_if)^ do begin //jump to loop start
-      par.opaddress.opaddress:= d.control.opmark1.address-1;
+      par.opaddress.opaddress:= d.control.opmark1.address;
+      par.ssas1:= i1;
      end;
      addlabel();
      linkresolveopad(linksbreak,opcount-1);

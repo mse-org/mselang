@@ -8,9 +8,15 @@ var
  end;
 
 begin
- for i1:= 1 downto -1 do begin
+ for i1:= 1 to 5 do begin
   writeln(i1);
+  if i1= 1 then begin
+   continue;
+  end;
   inc(i2);
+  if i1 = 3 then begin
+   break;
+  end;
  end;
  exitcode:= i2;
  writeln('*** ',i1);

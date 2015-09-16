@@ -283,9 +283,6 @@ const
 
 
 const
- typeindexstep = 3;   //type list stack =   basetype [0]
-                      //                   *basetype [1]
-                      //                  **basetype [2]
 
  char6tab: array[char] of card8 = (
   $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff,
