@@ -1,0 +1,16 @@
+program forto;
+
+var
+ i1,i2,i3: int32;
+ 
+begin
+ i2:= 0;
+ i3:= 0;
+ for i1:= 2 to 5 do begin
+  inc(i2);
+  i3:= i3+i1;
+ end;
+ if i2 = 4 then begin
+  exitcode:= 123 + i3 - 14;
+ end;
+end.
