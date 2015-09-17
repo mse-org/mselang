@@ -60,7 +60,7 @@ type
             err_noancestor,err_forwardtypenotfound,err_invaliddirective,
             err_notnotpossible,err_invalidcontroltoken,
             err_wrongsignature,err_wrongkind,err_toomanynestinglevels,
-            err_invalidunitfile);
+            err_invalidunitfile,err_labelalreadydef);
             
  errorinfoty = record
   level: errorlevelty;
@@ -222,7 +222,8 @@ const
   (level: erl_error; message: 'Wrong signature'),
   (level: erl_error; message: 'Wrong file kind'),
   (level: erl_fatal; message: 'Too many nesting levels'),
-  (level: erl_fatal; message: 'Invalid unit file "%s"')  
+  (level: erl_fatal; message: 'Invalid unit file "%s"'),
+  (level: erl_error; message: 'Label already defined')
  );
 
 procedure message1(const atext: string; const values: array of const); 

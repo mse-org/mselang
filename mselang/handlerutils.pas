@@ -2419,30 +2419,17 @@ begin
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
      ck_block: begin
-      write('IDBEFORE:'+inttostrmse(block.blockidbefore));
+      write('idbefore:'+inttostrmse(block.blockidbefore));
+     end;
+     ck_label: begin
+      write('lab:'+inttostrmse(dat.lab));
      end;
      ck_ident: begin
       write('$',hextostr(ident.ident,8),':',ident.len);
       write(' ',getidentname(ident.ident));
       write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
                                            integer(ident.flags),true));
-      {
-      if ident.continued then begin
-       write('c ');
-      end
-      else begin
-       write('  ');
-      end;
-      }
      end;
-     {
-     ck_getfact: begin
-      with getfact do begin
-       write('flags:',settostring(ptypeinfo(typeinfo(factflagsty)),
-                                           integer(getfact.flags),true));
-      end;
-     end;
-     }
      ck_fact,ck_subres: begin
       write('ssa:',d.dat.fact.ssaindex,' ');
       writetype(d);

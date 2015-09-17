@@ -286,6 +286,7 @@ type
   adlinks: linkindexty;    //calls which need to be resolved
                            //by linkresolveopad()
   blockid: int32; //with and try blocks
+  address: opaddressty; //dest
  end;
  plabeldefdataty = ^labeldefdataty;
  

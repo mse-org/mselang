@@ -52,6 +52,7 @@ procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
 
+procedure handlelabeldef();
 procedure handlelabel();
 
 function checkloopcommand(): boolean; //true if ok
@@ -59,7 +60,7 @@ function checkloopcommand(): boolean; //true if ok
 implementation
 uses
  globtypes,handlerutils,parserglob,errorhandler,grammar,handlerglob,elements,
- opcode,stackops,segmentutils,opglob,unithandler;
+ opcode,stackops,segmentutils,opglob,unithandler,handler;
  
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
@@ -751,13 +752,13 @@ begin
  end;
 end;
 
-procedure handlelabel();
+procedure handlelabeldef();
 var
  i1,i2: int32;
  po1: plabeldefdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('LABEL');
+ outhandle('LABELDEF');
 {$endif}
  with info do begin
   i2:= s.stackindex + 2;
@@ -781,8 +782,40 @@ begin
      with po1^ do begin
       adlinks:= 0;
       blockid:= currentblockid; //with and try blocks 
+      address:= 0;
      end;
     end;
+   end;
+  end;
+ end;
+end;
+
+procedure handlelabel();
+var
+ po1: plabeldefdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('LABEL');
+{$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if s.stacktop-s.stackindex <> 1 then begin
+   internalerror(ie_handler,'20150916D');
+  end;
+ {$endif}
+  with contextstack[s.stacktop] do begin
+   if d.kind <> ck_label then begin
+    handlesemicolonexpected();
+   end
+   else begin
+    po1:= ele.eledataabs(contextstack[s.stacktop].d.dat.lab);
+    if po1^.address <> 0 then begin
+     errormessage(err_labelalreadydef,[],1);
+    end
+    else begin
+     po1^.address:= opcount;
+    end;
+    addlabel();
    end;
   end;
  end;

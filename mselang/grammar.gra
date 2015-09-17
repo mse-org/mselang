@@ -102,7 +102,7 @@ start2,noimplementation,handleafterintfuses,
  'type'.,type-*
  'const'.,const-*
  'var'.,var-*
- 'label'.,label-*
+ 'label'.,labeldef-*
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
 
@@ -138,7 +138,7 @@ main1,,,handlemain
  'type'.,type-*>
  'const'.,const-*>
  'var'.,var-*>
- 'label'.,label-*>
+ 'label'.,labeldef-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
  'constructor'.,constructor-^*>
@@ -313,7 +313,7 @@ subbody4,,,handlebeginexpected*
  'type'.,type-*>
  'const'.,const-*>
  'var'.,var-*>
- 'label'.,label-*>
+ 'label'.,labeldef-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
  'begin'.,subbody5a-
@@ -403,8 +403,10 @@ statement0,statement1,handlestatement0entry,
 statement1,,,handlestatementexit
  ${whitespace}
  ':=',assignment-
+ ':',label-
 assignment,,handleassignmententry,handleassignment
  '',exp^*
+label,,,handlelabel*^
 //
 // control todo: better names instead of *n
 //          
@@ -585,14 +587,14 @@ type3,,,*>
  ';',-*
  '',semicolonexpected
 
-label,identexpected,,
+labeldef,identexpected,,
  ${whitespace}
  ${blockswitch}
- '',label0
-label0,label1,,
+ '',labeldef0
+labeldef0,labeldef1,,
  @identstart,commaidents^*
  '',identexpected
-label1,,handlelabel,*
+labeldef1,,handlelabeldef,*
  ${whitespace}
  ';',-*
  '',semicolonexpected

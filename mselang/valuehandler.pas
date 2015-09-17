@@ -1249,6 +1249,13 @@ begin
       donotfound(ele.eleinforel(po1));
      end;
     end;
+    ek_labeldef: begin
+     d.kind:= ck_label;
+     d.dat.lab:= ele.eleinforel(po1);
+    end;
+    else begin
+     internalerror1(ie_parser,'20150917C');
+    end;
    end;
   end;
 endlab:

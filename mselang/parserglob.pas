@@ -97,7 +97,7 @@ type
                   ck_block,ck_end,
                   ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
-                  ck_subres,ck_subcall,ck_controltoken,ck_getfact,
+                  ck_subres,ck_subcall,ck_controltoken,ck_getfact,ck_label,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,
@@ -328,6 +328,9 @@ type
    );
    {ck_refconst,}ck_ref:(
     ref: refvaluety;
+   );
+   ck_label:(
+    lab: elementoffsetty;
    );
  end;
 

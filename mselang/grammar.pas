@@ -765,6 +765,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'assignment');
+ labelco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: true; nexteat: false; next: nil;
+               caption: 'label');
  if0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -1090,21 +1095,21 @@ var
                continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'type3');
- labelco: contextty = (branch: nil; 
+ labeldefco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'label');
- label0co: contextty = (branch: nil; 
+               caption: 'labeldef');
+ labeldef0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'label0');
- label1co: contextty = (branch: nil; 
+               caption: 'labeldef0');
+ labeldef1co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
-               caption: 'label1');
+               caption: 'labeldef1');
  constco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: true; 
@@ -2121,7 +2126,7 @@ const
      dest: (context: @varco); stack: nil; 
      keyword: $E3376EB7{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push];
-     dest: (context: @labelco); stack: nil; 
+     dest: (context: @labeldefco); stack: nil; 
      keyword: $C66EDD6E{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentafterpush];
      dest: (context: @subprocedureheaderco); stack: nil; 
@@ -2355,7 +2360,7 @@ const
      dest: (context: @varco); stack: nil; 
      keyword: $E3376EB7{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
-     dest: (context: @labelco); stack: nil; 
+     dest: (context: @labeldefco); stack: nil; 
      keyword: $C66EDD6E{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
@@ -3261,7 +3266,7 @@ const
      dest: (context: @varco); stack: nil; 
      keyword: $E3376EB7{'var'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
-     dest: (context: @labelco); stack: nil; 
+     dest: (context: @labeldefco); stack: nil; 
      keyword: $C66EDD6E{'label'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue,bf_setparentbeforepush];
      dest: (context: @procedureco); stack: nil; 
@@ -3810,7 +3815,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bstatement1: array[0..6] of branchty = (
+ bstatement1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -3849,6 +3854,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @curlycomment0co); stack: nil; keys: (
     (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: @labelco); stack: nil; keys: (
+    (kind: bkk_char; chars: [':']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5106,7 +5118,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blabel: array[0..16] of branchty = (
+ blabeldef: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_push];
      dest: (context: nil); stack: nil; 
      keyword: $9E3376EB{ 'implementation'}),
@@ -5173,7 +5185,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_emptytoken];
-     dest: (context: @label0co); stack: nil; keys: (
+     dest: (context: @labeldef0co); stack: nil; keys: (
     (kind: bkk_char; chars: [#1..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -5181,7 +5193,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blabel0: array[0..2] of branchty = (
+ blabeldef0: array[0..2] of branchty = (
    (flags: [bf_nt,bf_push,bf_setparentbeforepush];
      dest: (context: @commaidentsco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
@@ -5198,7 +5210,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blabel1: array[0..7] of branchty = (
+ blabeldef1: array[0..7] of branchty = (
    (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @directiveco); stack: nil; keys: (
     (kind: bkk_charcontinued; chars: ['{']),
@@ -8233,6 +8245,8 @@ begin
  assignmentco.branch:= @bassignment;
  assignmentco.handleentry:= @handleassignmententry;
  assignmentco.handleexit:= @handleassignment;
+ labelco.branch:= nil;
+ labelco.handleexit:= @handlelabel;
  if0co.branch:= @bif0;
  if0co.next:= @thenco;
  if0co.handleentry:= @handleif0;
@@ -8376,12 +8390,12 @@ begin
  type2co.branch:= @btype2;
  type2co.next:= @type3co;
  type3co.branch:= @btype3;
- labelco.branch:= @blabel;
- labelco.next:= @identexpectedco;
- label0co.branch:= @blabel0;
- label0co.next:= @label1co;
- label1co.branch:= @blabel1;
- label1co.handleentry:= @handlelabel;
+ labeldefco.branch:= @blabeldef;
+ labeldefco.next:= @identexpectedco;
+ labeldef0co.branch:= @blabeldef0;
+ labeldef0co.next:= @labeldef1co;
+ labeldef1co.branch:= @blabeldef1;
+ labeldef1co.handleentry:= @handlelabeldef;
  constco.branch:= @bconst;
  const0co.branch:= @bconst0;
  const0co.next:= @const1co;
