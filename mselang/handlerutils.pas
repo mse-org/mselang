@@ -2349,7 +2349,7 @@ begin
   if indent then begin
    write('  ');
   end;
-  write(text,' T:',s.stacktop,' I:',s.stackindex,' O:',opcount,
+  write(text,' I:',s.stackindex,' T:',s.stacktop,' O:',opcount,
   ' S:',s.ssa.index,' N:',s.ssa.nextindex,
   ' cont:',currentcontainer);
   if currentcontainer <> 0 then begin

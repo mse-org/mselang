@@ -1305,6 +1305,12 @@ begin
              settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
                                  integer(po1^.header.visibility),false));
   case po1^.header.kind of
+   ek_labeldef: begin
+    with plabeldefdataty(@po1^.data)^ do begin
+     mstr1:= mstr1+lineend+' B:'+inttostrmse(blockid)+
+                                           ' A:'+inttostrmse(address);     
+    end;
+   end;
    ek_var: begin
     with pvardataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+' A:'+inttostrmse(address.poaddress)+' I:'+
