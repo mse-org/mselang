@@ -333,23 +333,6 @@ checkterminatorpop,,,handlecheckterminator
  ${whitespace}
 terminatorokpop,,,^*
 
-statementstack,,,^
- '',statement*
-statement,,,*
- ${whitespace}
- ';',endcontext-
- 'begin'.,compoundstatement-
- ${blockends}
- 'with'.,with-
- 'if'.,if0-
- 'case'.,case-
- 'while'.,while-
- 'repeat'.,repeat-
- 'for'.,for-
- 'try'.,try-*
- 'raise'.,raise-
- '',simplestatement
-
 compoundstatement,checkend,,*
  '',statementblock-^*
 //
@@ -389,15 +372,9 @@ with3,,,handlewith3*
 
 endcontext,,,
 blockend,,,handleblockend^*
+
 simplestatement,,,*
  '',statement0*
-statementblock,statementblock1,,*
- '',statement*
-statementblock1,,,handlestatementblock1*
- ${whitespace}
- ';',statementblock-
- ${blockends}
-
 statement0,statement1,handlestatement0entry,
  '',exp^*
 statement1,,,handlestatementexit
@@ -406,7 +383,33 @@ statement1,,,handlestatementexit
  ':',label-
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-label,,,handlelabel*^
+label,,,handlelabel^*>
+
+statement,,,*
+ ${whitespace}
+ ';',endcontext-
+ 'begin'.,compoundstatement-
+ ${blockends}
+ 'with'.,with-
+ 'if'.,if0-
+ 'case'.,case-
+ 'while'.,while-
+ 'repeat'.,repeat-
+ 'for'.,for-
+ 'try'.,try-*
+ 'raise'.,raise-
+ '',simplestatement
+
+statementblock,statementblock1,,*
+ '',statement^*
+statementblock1,,,handlestatementblock1*
+ ${whitespace}
+ ';',statementblock-
+ ${blockends}
+
+statementstack,,,^
+ '',statement*
+
 //
 // control todo: better names instead of *n
 //          
