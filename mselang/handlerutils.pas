@@ -183,6 +183,7 @@ function getdatabitsize(const avalue: int64): databitsizety;
 function getcontextssa(const stackoffset: integer): int32;
 procedure initfactcontext(const stackoffset: int32);
 procedure initblockcontext(const stackoffset: int32);
+procedure newblockcontext(const stackoffset: int32);
 procedure finiblockcontext(const stackoffset: int32);
 
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
@@ -1625,6 +1626,14 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   d.kind:= ck_block;
   d.block.blockidbefore:= currentblockid;
+  inc(s.blockid);
+  currentblockid:= s.blockid;
+ end;
+end;
+
+procedure newblockcontext(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
   inc(s.blockid);
   currentblockid:= s.blockid;
  end;

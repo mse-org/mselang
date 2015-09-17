@@ -86,6 +86,7 @@ begin
     par.opaddress.bbindex:= 0;
    end;
   end;
+  newblockcontext(0);
  end;
 end;
 
