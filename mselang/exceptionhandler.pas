@@ -60,6 +60,7 @@ begin
  outhandle('TRYYENTRY');
 {$endif}
  with info do begin
+  initblockcontext(0);  
   inc(s.trystacklevel);
   with ptrystackitemty(addlistitem(trystacklist,s.trystack))^ do begin
    links:= 0;
@@ -91,6 +92,7 @@ end;
 procedure tryexit();
 begin
  with info do begin
+  finiblockcontext(0);  
   deletelistitem(trystacklist,s.trystack);
   dec(s.trystacklevel);
  end;

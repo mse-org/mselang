@@ -2399,6 +2399,9 @@ begin
 {$ifdef mse_debugparser}
  outhandle('WITHENTRY');
 {$endif}
+ with info do begin
+  initblockcontext(0);
+ end;
  ele.pushscopelevel();
 end;
 (*
@@ -2465,6 +2468,7 @@ begin
 {$endif}
  with info do begin
   ele.popscopelevel();
+  finiblockcontext(0);
   dec(s.stackindex);
   releasepointertempaddress();
  end;

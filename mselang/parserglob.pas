@@ -94,7 +94,8 @@ const
 type 
  contextkindty = (ck_none,ck_error,
                   ck_interface,ck_implementation,ck_prog,
-                  ck_end,ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
+                  ck_block,ck_end,
+                  ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
                   ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
                   ck_subres,ck_subcall,ck_controltoken,ck_getfact,
                   ck_typedata,ck_typeref,
@@ -203,6 +204,10 @@ type
  identflagsty = set of identflagty;
  
 // identkindty = (ik_param); 
+ blockinfoty = record
+  blockidbefore: int32;
+ end;
+ 
  identinfoty = record
   ident: identty;
   len: integer;
@@ -329,6 +334,9 @@ type
  contextdataty = record
 //  elemark: elementoffsetty;
   case kind: contextkindty of
+   ck_block:(
+    block: blockinfoty;
+   );
    ck_ident:(
     ident: identinfoty;
    );
@@ -567,7 +575,8 @@ type
   currentcompileunitmeta: int32;
   currentfilemeta: int32;
   currentscopemeta: int32;
-  globlinkage: linkagety
+  globlinkage: linkagety;
+  blockid: int32;
  end;
   
  parseinfoty = record
@@ -599,6 +608,8 @@ type
   globdatapo: targetadty;
   locdatapo: targetadty;
   frameoffset: targetcardty;
+  
+  currentblockid: int32; //with and try blocks 
   currentsubchain: elementoffsetty;
   currentsubcount: integer;
   currentcontainer: elementoffsetty;

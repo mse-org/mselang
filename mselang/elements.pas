@@ -39,7 +39,7 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
-                  ek_field,ek_classintfname,ek_classintftype,
+                  ek_field,ek_labeldef,ek_classintfname,ek_classintftype,
                   ek_ancestorchain,
                   ek_sysfunc,ek_sub,
                   ek_nestedvar,
@@ -87,6 +87,8 @@ const
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,                
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
+//ek_labeldef
+  sizeof(labeldefdataty)+elesize,
 //ek_classintfname,                   ek_classintftype,
   sizeof(classintfnamedataty)+elesize,sizeof(classintftypedataty)+elesize,
 //ek_ancestorchain,

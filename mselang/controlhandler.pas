@@ -752,10 +752,40 @@ begin
 end;
 
 procedure handlelabel();
+var
+ i1,i2: int32;
+ po1: plabeldefdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('LABEL');
 {$endif}
+ with info do begin
+  i2:= s.stackindex + 2;
+ {$ifdef mse_checkinternalerror}
+  if i2 > s.stacktop then begin
+   internalerror(ie_handler,'20150917A');
+  end;
+ {$endif}
+  for i1:= i2 to s.stacktop do begin
+   with contextstack[i1] do begin
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_ident then begin
+     internalerror(ie_handler,'20150917B');
+    end;
+   {$endif}
+    if not ele.addelementdata(
+                 d.ident.ident,ek_labeldef,[vik_sameunit],po1) then begin
+     identerror(i1-s.stackindex,err_duplicateidentifier);
+    end
+    else begin
+     with po1^ do begin
+      adlinks:= 0;
+      blockid:= currentblockid; //with and try blocks 
+     end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 end.

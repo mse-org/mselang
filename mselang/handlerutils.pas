@@ -181,7 +181,10 @@ function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
 function getcontextssa(const stackoffset: integer): int32;
-procedure initfactcontext(const stackoffset: integer);
+procedure initfactcontext(const stackoffset: int32);
+procedure initblockcontext(const stackoffset: int32);
+procedure finiblockcontext(const stackoffset: int32);
+
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
                                  var address: segaddressty);
@@ -1608,12 +1611,29 @@ begin
  end;
 end;
 
-procedure initfactcontext(const stackoffset: integer);
+procedure initfactcontext(const stackoffset: int32);
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   d.kind:= ck_fact;
   d.dat.fact.ssaindex:= getcontextssa(stackoffset);
   d.dat.indirection:= 0;
+ end;
+end;
+
+procedure initblockcontext(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  d.kind:= ck_block;
+  d.block.blockidbefore:= currentblockid;
+  inc(s.blockid);
+  currentblockid:= s.blockid;
+ end;
+end;
+
+procedure finiblockcontext(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  currentblockid:= d.block.blockidbefore;
  end;
 end;
 
@@ -2389,6 +2409,9 @@ begin
     end;
     write(getenumname(typeinfo(kind),ord(kind)),' ');
     case kind of
+     ck_block: begin
+      write('IDBEFORE:'+inttostrmse(block.blockidbefore));
+     end;
      ck_ident: begin
       write('$',hextostr(ident.ident,8),':',ident.len);
       write(' ',getidentname(ident.ident));

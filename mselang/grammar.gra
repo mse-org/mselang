@@ -9,25 +9,6 @@
  '(*',bracecomment0-^*
  '//',linecomment0-^*"
 
-//todo: complete
-{reservedwords}
-" 'implementation'.,!handlereservedword
- 'type'.,!handlereservedword
- 'const'.,!handlereservedword
- 'var'.,!handlereservedword
- 'label'.,!handlereservedword
- 'begin'.,!handlereservedword
- 'procedure'.,!handlereservedword
- 'function'.,!handlereservedword
- 'constructor'.,!handlereservedword
- 'destructor'.,!handlereservedword
- 'end'.,!handlereservedword
- 'else'.,!handlereservedword
- 'initialization'.,!handlereservedword
- 'finalization'.,!handlereservedword
- 'finally'.,!handlereservedword
- 'except'.,!handlereservedword
-"
 {blockswitch}
 " 'implementation'.,*
  'type'.,*
@@ -930,8 +911,25 @@ char1,string,handlechar,
  '',char2
 char2,,,
 
-ident,,handleidentstart,handleident^
- ${reservedwords}
+ident,ident0,,
+ 'implementation'.,reservedword
+ 'type'.,reservedword
+ 'const'.,reservedword
+ 'var'.,reservedword
+ 'label'.,reservedword
+ 'begin'.,reservedword
+ 'procedure'.,reservedword
+ 'function'.,reservedword
+ 'constructor'.,reservedword
+ 'destructor'.,reservedword
+ 'end'.,reservedword
+ 'else'.,reservedword
+ 'initialization'.,reservedword
+ 'finalization'.,reservedword
+ 'finally'.,reservedword
+ 'except'.,reservedword
+reservedword,,,handlereservedword^
+ident0,,handleidentstart,handleident^
  @identstart,@decnum,-
 
 getident,,,^

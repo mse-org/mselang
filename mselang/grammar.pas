@@ -1593,8 +1593,18 @@ var
  identco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'ident');
+ reservedwordco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'reservedword');
+ ident0co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'ident0');
  getidentco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -7499,55 +7509,58 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bident: array[0..17] of branchty = (
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
-     keyword: $9E3376EB{ 'implementation'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+ bident: array[0..16] of branchty = (
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
+     keyword: $9E3376EB{'implementation'}),
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $78CDDBAD{'type'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $F19BB75B{'const'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $E3376EB7{'var'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $C66EDD6E{'label'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $6EDD6E73{'begin'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $8CDDBADC{'procedure'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $19BB75B9{'function'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $9BB75B9C{'constructor'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $376EB739{'destructor'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $3376EB73{'end'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $75B9CC31{'else'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $66EDD6E7{'initialization'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $CDDBADCE{'finalization'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $DCE61888{'finally'}),
-   (flags: [bf_nt,bf_keyword,bf_handler];
-     dest: (handler: @handlereservedword); stack: nil; 
+   (flags: [bf_nt,bf_keyword];
+     dest: (context: @reservedwordco); stack: nil; 
      keyword: $B9CC3111{'except'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bident0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_eat];
      dest: (context: nil); stack: nil; keys: (
     (kind: bkk_char; chars: ['0'..'9','A'..'Z','_','a'..'z']),
@@ -8569,8 +8582,12 @@ begin
  char1co.handleentry:= @handlechar;
  char2co.branch:= nil;
  identco.branch:= @bident;
- identco.handleentry:= @handleidentstart;
- identco.handleexit:= @handleident;
+ identco.next:= @ident0co;
+ reservedwordco.branch:= nil;
+ reservedwordco.handleexit:= @handlereservedword;
+ ident0co.branch:= @bident0;
+ ident0co.handleentry:= @handleidentstart;
+ ident0co.handleexit:= @handleident;
  getidentco.branch:= @bgetident;
  commaidentsco.branch:= @bcommaidents;
  commaidentsco.next:= @commaidentsnoidenterrorco;

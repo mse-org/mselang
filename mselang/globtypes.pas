@@ -62,7 +62,7 @@ type
  targetoffsty = int32;
  targetsizety = int32;
 
- indexty = integer;
+ indexty = int32;
  linkindexty = indexty;
  forwardindexty = indexty;
 

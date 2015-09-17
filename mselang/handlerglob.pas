@@ -282,6 +282,13 @@ type
  end;
  pfielddataty = ^fielddataty;
 
+ labeldefdataty = record
+  adlinks: linkindexty;    //calls which need to be resolved
+                           //by linkresolveopad()
+  blockid: int32; //with and try blocks
+ end;
+ plabeldefdataty = ^labeldefdataty;
+ 
  nestedvardataty = record
   next: elementoffsetty; //chain, root = subdataty nestedvarchain
 //  nestedindex: integer;
