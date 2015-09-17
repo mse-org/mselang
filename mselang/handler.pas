@@ -40,6 +40,7 @@ procedure handlecloseroundbracketexpected();
 procedure handleclosesquarebracketexpected();
 procedure handleequalityexpected();
 procedure handleidentexpected();
+procedure handlereservedword();
 procedure handleillegalexpression();
 
 procedure handlenoidenterror();
@@ -1689,6 +1690,14 @@ begin
  with info do begin
   errormessage(err_identexpected,[],minint,0,erl_fatal);
  end;
+end;
+
+procedure handlereservedword();
+begin
+{$ifdef mse_debugparser}
+ outhandle('RESERVEDWORD');
+{$endif}
+ handleidentexpected();
 end;
 
 procedure handleillegalexpression();

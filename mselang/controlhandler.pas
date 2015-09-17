@@ -52,6 +52,8 @@ procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
 
+procedure handlelabel();
+
 function checkloopcommand(): boolean; //true if ok
 
 implementation
@@ -747,6 +749,13 @@ begin
   end;
   dec(s.stackindex);
  end;
+end;
+
+procedure handlelabel();
+begin
+{$ifdef mse_debugparser}
+ outhandle('LABEL');
+{$endif}
 end;
 
 end.

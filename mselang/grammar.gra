@@ -1,6 +1,5 @@
 //grammar for mselang compiler, pascal mode
-//todo: use optimised handler for whitespace and the like
-//todo: check reserved words
+//todo: use optimised handler for whitespace, reserved words and the like
 @whitespace
  ' ',#$0d,#$0a
 {whitespace}
@@ -9,11 +8,32 @@
  '{',curlycomment0-^*
  '(*',bracecomment0-^*
  '//',linecomment0-^*"
+
+//todo: complete
+{reservedwords}
+" 'implementation'.,!handlereservedword
+ 'type'.,!handlereservedword
+ 'const'.,!handlereservedword
+ 'var'.,!handlereservedword
+ 'label'.,!handlereservedword
+ 'begin'.,!handlereservedword
+ 'procedure'.,!handlereservedword
+ 'function'.,!handlereservedword
+ 'constructor'.,!handlereservedword
+ 'destructor'.,!handlereservedword
+ 'end'.,!handlereservedword
+ 'else'.,!handlereservedword
+ 'initialization'.,!handlereservedword
+ 'finalization'.,!handlereservedword
+ 'finally'.,!handlereservedword
+ 'except'.,!handlereservedword
+"
 {blockswitch}
 " 'implementation'.,*
- 'var'.,*
  'type'.,*
  'const'.,*
+ 'var'.,*
+ 'label'.,*
  'begin'.,*
  'procedure'.,*
  'function'.,*
@@ -98,20 +118,12 @@ start2a,start2,,
 start2,noimplementation,handleafterintfuses,
  ${whitespace}
  'implementation'.,implementation-
+ 'type'.,type-*
  'const'.,const-*
  'var'.,var-*
- 'type'.,type-*
+ 'label'.,label-*
  'procedure'.,subprocedureheader-*^>
  'function'.,subfunctionheader-*^>
-
-commaidents,commaidentsnoidenterror,, //comma separated idents on stack
- ${whitespace}
- @identstart,commaidents1
-commaidents1,commaidents2,,
- '',ident^*
-commaidents2,,,^
- ',',commaidents-
-commaidentsnoidenterror,,,handlenoidenterror
 
 noimplementation,implementation,handlenoimplementationerror,
 
@@ -142,14 +154,15 @@ impluses,main1,handleimplusesentry,handleafterimpluses
  '',uses0-*
 main1,,,handlemain
  ${whitespace}
+ 'type'.,type-*>
+ 'const'.,const-*>
+ 'var'.,var-*>
+ 'label'.,label-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
  'begin'.,progbegin-
- 'const'.,const-*>
- 'var'.,var-*>
- 'type'.,type-*>
 
 curlycomment0,,,handlecommentend^>
  '}',-*
@@ -316,12 +329,13 @@ functiontypea,,, //same layout as parameter
 
 subbody4,,,handlebeginexpected*
  ${whitespace}
- 'begin'.,subbody5a-
+ 'type'.,type-*>
  'const'.,const-*>
  'var'.,var-*>
- 'type'.,type-*>
+ 'label'.,label-*>
  'procedure'.,procedure-^*>
  'function'.,function-^*>
+ 'begin'.,subbody5a-
 subbody5a,subbody5,handlesubbody5a, //set procstartaddress
 subbody5,subbody5b,,
  '',statementblock^*
@@ -586,6 +600,18 @@ type1,,,handleequalityexpected
 type2,type3,,*
  '',gettypetype^*
 type3,,,*>
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
+
+label,identexpected,,
+ ${whitespace}
+ ${blockswitch}
+ '',label0
+label0,label1,,
+ @identstart,commaidents^*
+ '',identexpected
+label1,,handlelabel,*
  ${whitespace}
  ';',-*
  '',semicolonexpected
@@ -905,12 +931,22 @@ char1,string,handlechar,
 char2,,,
 
 ident,,handleidentstart,handleident^
+ ${reservedwords}
  @identstart,@decnum,-
 
 getident,,,^
  ${whitespace}
  @identstart,ident
  '',!handleidentexpected*
+
+commaidents,commaidentsnoidenterror,, //comma separated idents on stack
+ ${whitespace}
+ @identstart,commaidents1
+commaidents1,commaidents2,,
+ '',ident^*
+commaidents2,,,^
+ ',',commaidents-
+commaidentsnoidenterror,,,handlenoidenterror
 
 identpathcontinue,,,^>
  '',identpath^*
