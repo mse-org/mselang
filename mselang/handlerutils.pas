@@ -1836,7 +1836,7 @@ begin                    //todo: optimize
      end;
     end;
    end;
-   ck_typearg,ck_controltoken: begin
+   ck_typearg,ck_controltoken,ck_label: begin
     errormessage(err_valueexpected,[],stackoffset);
     goto errlab;
    end;

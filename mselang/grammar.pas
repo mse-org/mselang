@@ -748,7 +748,7 @@ var
  labelco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: true; restoresource: false; cutafter: true; 
-               pop: true; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'label');
  statementco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 

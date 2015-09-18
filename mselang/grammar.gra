@@ -383,7 +383,7 @@ statement1,,,handlestatementexit
  ':',label-
 assignment,,handleassignmententry,handleassignment
  '',exp^*
-label,,,handlelabel^*>
+label,,,handlelabel*>
 
 statement,,,*
  ${whitespace}

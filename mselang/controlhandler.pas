@@ -818,6 +818,7 @@ begin
     addlabel();
    end;
   end;
+  dec(s.stackindex);
  end;
 end;
 
