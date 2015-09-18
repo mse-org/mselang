@@ -805,8 +805,7 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex <> 1) or (s.stackindex < 2){ or
-    (contextstack[stackindex-1].d.kind <> ck_simplestatement} then begin
+  if (s.stacktop-s.stackindex <> 1) or (s.stackindex < 2) then begin
    internalerror(ie_handler,'20150916D');
   end;
  {$endif}
@@ -828,7 +827,7 @@ begin
     addlabel();
    end;
   end;
-  dec(s.stackindex);
+  dec(s.stackindex,2);
  end;
 end;
 
