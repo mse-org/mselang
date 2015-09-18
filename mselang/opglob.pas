@@ -588,7 +588,9 @@ type
 
  labty = record
   opaddress: opaddressty; //first! dummy for oc_label 
-  bbindex: int32;         //llvm basic block
+  case integer of
+   0: (bbindex: int32);         //llvm basic block for label
+   1: (blockid: int32);         //origin block id for goto statement
  end;
  
  cmpjmpimmty = record

@@ -284,7 +284,7 @@ type
 
  labeldefdataty = record
   adlinks: linkindexty;    //calls which need to be resolved
-                           //by linkresolveopad()
+                           //by linkresolvegoto()
   blockid: int32; //with and try blocks
   address: opaddressty; //dest
  end;

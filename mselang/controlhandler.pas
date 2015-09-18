@@ -54,6 +54,7 @@ procedure handlecase();
 
 procedure handlelabeldef();
 procedure handlelabel();
+procedure handlegoto();
 
 function checkloopcommand(): boolean; //true if ok
 
@@ -162,11 +163,16 @@ begin //boolexp,thenmark,elsemark
 {$ifdef mse_debugparser}
  outhandle('ELSE');
 {$endif}
-// addlabel();
- setlocbefore(2,3);      //set gotoaddress for handlethen0
- setcurrentlocbefore(3); //set gotoaddress for handleelse0
- addlabel();
  with info do begin
+ // addlabel();
+ {$ifdef mse_checkinternalerror}
+  if s.stacktop-s.stackindex < 3 then begin
+   internalerror(ie_parser,'20150918B');
+  end;
+ {$endif}
+  setlocbefore(2,3);      //set gotoaddress for handlethen0
+  setcurrentlocbefore(3); //set gotoaddress for handleelse0
+  addlabel();
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
  end;
@@ -779,10 +785,10 @@ begin
      identerror(i1-s.stackindex,err_duplicateidentifier);
     end
     else begin
-     with po1^ do begin
+     with po1^ do begin //init
       adlinks:= 0;
-      blockid:= currentblockid; //with and try blocks 
-      address:= 0;
+//      blockid:= 0; //with and try blocks 
+      address:= 0; //blockid invalid
      end;
     end;
    end;
@@ -799,7 +805,8 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex <> 1 then begin
+  if (s.stacktop-s.stackindex <> 1) or (s.stackindex < 2){ or
+    (contextstack[stackindex-1].d.kind <> ck_simplestatement} then begin
    internalerror(ie_handler,'20150916D');
   end;
  {$endif}
@@ -814,8 +821,47 @@ begin
     end
     else begin
      po1^.address:= opcount;
+     po1^.blockid:= currentblockid;
+     linkresolvegoto(po1^.adlinks,opcount-1,currentblockid);
+                 //todo: check blockid
     end;
     addlabel();
+   end;
+  end;
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlegoto();
+var
+ po1: plabeldefdataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('LABEL');
+{$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if (s.stacktop-s.stackindex <> 1) or 
+          (contextstack[s.stacktop].d.kind <> ck_ident) then begin
+   internalerror(ie_handler,'20150918A');
+  end;
+ {$endif}
+  if ele.findcurrent(contextstack[s.stacktop].d.ident.ident,
+                         [ek_labeldef],allvisi,po1) <> ek_labeldef then begin
+   identerror(1,err_labelnotfound);
+  end
+  else begin
+   with addcontrolitem(oc_goto)^ do begin
+    if po1^.address <> 0 then begin
+     par.opaddress.opaddress:= po1^.address-1;
+     par.opaddress.blockid:= currentblockid;
+     if currentblockid <> po1^.blockid then begin
+      errormessage(err_invalidgototarget,[]);
+     end;
+    end
+    else begin
+     linkmark(po1^.adlinks,getsegaddress(seg_op,@par.opaddress));
+    end;
    end;
   end;
   dec(s.stackindex);

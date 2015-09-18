@@ -78,6 +78,8 @@ procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
+procedure linkresolvegoto(const alinks: linkindexty; 
+                 const aaddress: opaddressty; const ablockid: int32);
 procedure linkresolvecall(const alinks: linkindexty; 
                             const aaddress: opaddressty; const aglobid: int32);
 procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
@@ -866,6 +868,27 @@ end;
 
 procedure linkresolveopad(const alinks: linkindexty;
                                    const aaddress: opaddressty);
+var
+ li1: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    popaddressty(getsegmentpo(dest))^:= aaddress-1;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
+procedure linkresolvegoto(const alinks: linkindexty; 
+                 const aaddress: opaddressty; const ablockid: int32);
 var
  li1: linkindexty;
 begin

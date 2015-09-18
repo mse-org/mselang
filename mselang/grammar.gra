@@ -354,6 +354,9 @@ except1,,handleexcept,*
 
 raise,,,handleraise*
  '',exp^*
+ 
+goto,,,handlegoto*
+ '',getident^*
 
 checkend,,,*
  ${whitespace}
@@ -398,6 +401,7 @@ statement,,,*
  'for'.,for-
  'try'.,try-*
  'raise'.,raise-
+ 'goto'.,goto-
  '',simplestatement
 
 statementblock,statementblock1,,*
