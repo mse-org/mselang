@@ -991,7 +991,7 @@ c=3
    (
    kind=1
    a=0,665,4,control
-   c=28
+   c=30
     (
     kind=2
     a=0,648,1,breakrepeat
@@ -1608,6 +1608,50 @@ c=3
     aec=123
     ie=0
     )
+    (
+    kind=2
+    a=0,648,1,goto1
+    teststate=1
+    path=goto1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,goto1 llvm
+    teststate=1
+    path=goto1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
    teststate=1
    path=control/
    comment=
@@ -1861,7 +1905,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73A00C0
+    ao=An unhandled exception occured at $B73130C0
     +
     ae=
     aec=123
@@ -4524,7 +4568,9 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=98
+rowstate=100
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

@@ -287,6 +287,7 @@ type
                            //by linkresolvegoto()
   blockid: int32; //with and try blocks
   address: opaddressty; //dest
+  mark: forwardindexty;
  end;
  plabeldefdataty = ^labeldefdataty;
  

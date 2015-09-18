@@ -789,6 +789,7 @@ begin
       adlinks:= 0;
 //      blockid:= 0; //with and try blocks 
       address:= 0; //blockid invalid
+      mark:= 0;
      end;
     end;
    end;
@@ -823,6 +824,7 @@ begin
      po1^.blockid:= currentblockid;
      linkresolvegoto(po1^.adlinks,opcount-1,currentblockid);
                  //todo: check blockid
+     forwardresolve(po1^.mark);
     end;
     addlabel();
    end;
@@ -859,6 +861,9 @@ begin
      end;
     end
     else begin
+     if po1^.mark = 0 then begin
+      forwardmark(po1^.mark,s.source); //todo: use label specific list
+     end;
      linkmark(po1^.adlinks,getsegaddress(seg_op,@par.opaddress));
     end;
    end;
