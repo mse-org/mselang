@@ -655,6 +655,13 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
      end;
     end;
     dk_enum: begin
+     if ahigh then begin
+      po1:= ele.eledataabs(po1^.infoenum.last);
+     end
+     else begin
+      po1:= ele.eledataabs(po1^.infoenum.first);
+     end;     
+     setenumconst(po1^.infoenumitem,contextstack[s.stackindex]);
     end;
     dk_set: begin
     end;

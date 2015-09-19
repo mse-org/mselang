@@ -853,7 +853,10 @@ begin
     bitsize:= 32;
     indirectlevel:= d.typ.indirectlevel;
    }
-    flags:= contextstack[s.stackindex].d.enu.flags;
+    with contextstack[s.stackindex] do begin
+     flags:= d.enu.flags;
+     last:= d.enu.first;
+    end;
     first:= ele3;
     itemcount:= int1;
    end;

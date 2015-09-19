@@ -1203,13 +1203,7 @@ begin
       if paramco = 0 then begin
        with ptypedataty(po2)^ do begin
         if h.kind = dk_enumitem then begin
-         d.kind:= ck_const;
-         d.dat.indirection:= 0;
-         d.dat.datatyp.flags:= [];
-         d.dat.datatyp.typedata:= infoenumitem.enum;
-         d.dat.datatyp.indirectlevel:= 0;
-         d.dat.constval.kind:= dk_enum;
-         d.dat.constval.vinteger:= infoenumitem.value;
+         setenumconst(infoenumitem,contextstack[s.stackindex]);
         end
         else begin         
          with ptypedataty(po2)^ do begin

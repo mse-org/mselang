@@ -1247,8 +1247,18 @@ function telementhashdatalist.dumpelements: msestringarty;
            settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false))+
      ' S:'+inttostrmse(h.bytesize)+' I:'+inttostrmse(h.indirectlevel);
      case h.kind of
+      dk_enum: begin
+       result:= result+' first:'+inttostrmse(infoenum.first)+
+                       ' last:'+inttostrmse(infoenum.last)+
+                       ' itemcount:'+inttostrmse(infoenum.itemcount)+
+                     ' flags:'+settostring(ptypeinfo(typeinfo(infoenum.flags)),
+                                                 integer(infoenum.flags),false);
+                       
+      end;
       dk_enumitem: begin
-       result:= result+' value:'+inttostrmse(infoenumitem.value);
+       result:= result+' value:'+inttostrmse(infoenumitem.value)+
+                       ' enum:'+inttostrmse(infoenumitem.enum)+
+                       ' next:'+inttostrmse(infoenumitem.next);
       end;
       dk_set: begin
        result:= result+' itemtyp:'+inttostrmse(infoset.itemtype);

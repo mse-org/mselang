@@ -213,6 +213,9 @@ function getsystypeele(const atype: systypety): elementoffsetty;
 procedure sethandlerflag(const avalue: handlerflagty);
 procedure sethandlererror();
 
+procedure setenumconst(const aenumitem: infoenumitemty; 
+                                   var acontextitem: contextitemty);
+
 procedure init();
 procedure deinit();
 
@@ -2266,6 +2269,20 @@ begin
                                       addbitvalue(adatasize,info.s.globlinkage);
    end;
   end;
+ end;
+end;
+
+procedure setenumconst(const aenumitem: infoenumitemty; 
+                                   var acontextitem: contextitemty);
+begin
+ with acontextitem do begin
+  d.kind:= ck_const;
+  d.dat.indirection:= 0;
+  d.dat.datatyp.flags:= [];
+  d.dat.datatyp.typedata:= aenumitem.enum;
+  d.dat.datatyp.indirectlevel:= 0;
+  d.dat.constval.kind:= dk_enum;
+  d.dat.constval.vinteger:= aenumitem.value;
  end;
 end;
 

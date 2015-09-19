@@ -127,6 +127,7 @@ type
  infoenumty = record
   itemcount: integer;
   first: elementoffsetty;
+  last: elementoffsetty;
   flags: enumflagsty;
  end;
  
