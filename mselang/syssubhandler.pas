@@ -689,6 +689,9 @@ begin
        end;
       end;
      end;
+     ck_typearg: begin
+      checktype(d.typ.typedata);
+     end;
      else begin
       typeerror();
      end;
