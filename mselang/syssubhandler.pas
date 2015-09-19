@@ -664,6 +664,7 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
      setenumconst(po1^.infoenumitem,contextstack[s.stackindex]);
     end;
     dk_set: begin
+     checktype(po1^.infoset.itemtype);
     end;
     else begin
      typeerror();
