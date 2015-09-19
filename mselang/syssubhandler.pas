@@ -598,10 +598,10 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
  begin
   with info,contextstack[s.stackindex] do begin
    po1:= ele.eledataabs(atype);
-   getordrange(po1,range);
    d.kind:= ck_const;
    case po1^.h.kind of
     dk_integer: begin
+     getordrange(po1,range);
      d.dat.constval.kind:= dk_integer;
      case po1^.h.datasize of  
       das_1,das_2_7,das_8: begin
@@ -628,6 +628,31 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
      end;
     end;
     dk_cardinal: begin
+     getordrange(po1,range);
+     d.dat.constval.kind:= dk_cardinal;
+     case po1^.h.datasize of  
+      das_1,das_2_7,das_8: begin
+       d.dat.datatyp:= sysdatatypes[st_card8];
+      end;
+      das_9_15,das_16: begin
+       d.dat.datatyp:= sysdatatypes[st_card16];
+      end;
+      das_17_31,das_32: begin
+       d.dat.datatyp:= sysdatatypes[st_card32];
+      end;
+      das_33_63,das_64: begin
+       d.dat.datatyp:= sysdatatypes[st_card64];
+      end;
+      else begin
+       internalerror1(ie_handler,'20150919');
+      end;
+     end;
+     if ahigh then begin
+      d.dat.constval.vcardinal:= card64(range.max);
+     end
+     else begin
+      d.dat.constval.vcardinal:= card64(range.min);
+     end;
     end;
     dk_enum: begin
     end;
@@ -659,7 +684,7 @@ begin
          checktype(po1^.infoarray.indextypedata);
         end;
         else begin
-         typeerror();
+         checktype(d.dat.datatyp.typedata);
         end;
        end;
       end;
