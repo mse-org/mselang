@@ -366,11 +366,21 @@ begin
    s.stackindex:= s.stacktop-1;
    d.kind:= ck_const;
    d.dat.indirection:= 0;
-   if (int64(c1) > maxint) or (int64(c1) < minint) then begin
-    d.dat.datatyp:= sysdatatypes[st_int64];
+   if (int64(c1) <= high(int8)) and (int64(c1) >= low(int8)) then begin
+    d.dat.datatyp:= sysdatatypes[st_int8];
    end
    else begin
-    d.dat.datatyp:= sysdatatypes[st_int32];
+    if (int64(c1) <= high(int16)) and (int64(c1) >= low(int16)) then begin
+     d.dat.datatyp:= sysdatatypes[st_int16];
+    end
+    else begin
+     if (int64(c1) <= high(int32)) and (int64(c1) >= low(int32)) then begin
+      d.dat.datatyp:= sysdatatypes[st_int32];
+     end
+     else begin
+      d.dat.datatyp:= sysdatatypes[st_int64];
+     end;
+    end;
    end;
    d.dat.constval.kind:= dk_integer;
    d.dat.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
