@@ -692,6 +692,9 @@ begin
      ck_typearg: begin
       checktype(d.typ.typedata);
      end;
+     ck_const: begin
+      checktype(d.dat.datatyp.typedata);
+     end;
      else begin
       typeerror();
      end;
