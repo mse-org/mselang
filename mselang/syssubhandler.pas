@@ -32,6 +32,8 @@ procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
 procedure handlesetmem(const paramco: integer);
 procedure handlehalt(const paramco: integer);
+procedure handlelow(const paramco: integer);
+procedure handlehigh(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -40,7 +42,7 @@ const
   //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
   //sf_setmem,  sf_halt
-  @handlesetmem,@handlehalt);
+  @handlesetmem,@handlehalt,@handlelow,@handlehigh);
   
 procedure init();
 procedure deinit();
@@ -579,6 +581,108 @@ begin
  end;
 end;
 
+procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
+
+ procedure typeerror();
+ begin
+  with info do begin
+   contextstack[s.stacktop].d.kind:= ck_error;
+   errormessage(err_typemismatch,[],s.stacktop-s.stackindex);
+  end;
+ end;
+
+ procedure checktype(const atype: elementoffsetty);
+ var
+  po1: ptypedataty;
+  range: ordrangety;
+ begin
+  with info,contextstack[s.stackindex] do begin
+   po1:= ele.eledataabs(atype);
+   getordrange(po1,range);
+   d.kind:= ck_const;
+   case po1^.h.kind of
+    dk_integer: begin
+     d.dat.constval.kind:= dk_integer;
+     case po1^.h.datasize of  
+      das_1,das_2_7,das_8: begin
+       d.dat.datatyp:= sysdatatypes[st_int8];
+      end;
+      das_9_15,das_16: begin
+       d.dat.datatyp:= sysdatatypes[st_int16];
+      end;
+      das_17_31,das_32: begin
+       d.dat.datatyp:= sysdatatypes[st_int32];
+      end;
+      das_33_63,das_64: begin
+       d.dat.datatyp:= sysdatatypes[st_int64];
+      end;
+      else begin
+       internalerror1(ie_handler,'20150919');
+      end;
+     end;
+     if ahigh then begin
+      d.dat.constval.vinteger:= range.max;
+     end
+     else begin
+      d.dat.constval.vinteger:= range.min;
+     end;
+    end;
+    dk_cardinal: begin
+    end;
+    dk_enum: begin
+    end;
+    dk_set: begin
+    end;
+    else begin
+     typeerror();
+    end;
+   end;
+  end;
+ end;
+ 
+var
+ po1: ptypedataty;
+  
+begin
+ with info do begin
+  if checkparamco(1,paramco) then begin
+   with contextstack[s.stacktop] do begin
+    case d.kind of
+     ck_ref: begin
+      if d.dat.datatyp.indirectlevel <> 0 then begin
+       typeerror();
+      end
+      else begin
+       po1:= ele.eledataabs(d.dat.datatyp.typedata);
+       case po1^.h.kind of
+        dk_array: begin
+         checktype(po1^.infoarray.indextypedata);
+        end;
+        else begin
+         typeerror();
+        end;
+       end;
+      end;
+     end;
+     else begin
+      typeerror();
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure handlelow(const paramco: integer);
+begin
+ handlelowhigh(paramco,false);
+end;
+
+procedure handlehigh(const paramco: integer);
+begin
+ handlelowhigh(paramco,true);
+end;
+
 type
  sysfuncinfoty = record
   name: string;
@@ -596,7 +700,9 @@ const
    (name: 'getzeromem'; data: (func: sf_getzeromem)),
    (name: 'freemem'; data: (func: sf_freemem)),
    (name: 'setmem'; data: (func: sf_setmem)),
-   (name: 'halt'; data: (func: sf_halt))
+   (name: 'halt'; data: (func: sf_halt)),
+   (name: 'low'; data: (func: sf_low)),
+   (name: 'high'; data: (func: sf_high))
   );
 
 procedure init();

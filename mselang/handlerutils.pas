@@ -1840,6 +1840,9 @@ begin                    //todo: optimize
     errormessage(err_valueexpected,[],stackoffset);
     goto errlab;
    end;
+   ck_error: begin
+    exit;
+   end;
   {$ifdef mse_checkinternalerror}                             
    else begin
     internalerror(ie_notimplemented,'20140401B');
