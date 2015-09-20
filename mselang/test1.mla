@@ -1,9 +1,9 @@
-program pointerdiff;
+program anytopo;
 var
- v1: int32;
  po1: pointer;
+ i1: int32;
 begin
-// po1:= pointer(int32(123));
-// v1:= int32(nil);
- exitcode:= int32(nil);
+// i1:= 123;
+ po1:= pointer(123);
+// exitcode:= int32(po1);
 end.

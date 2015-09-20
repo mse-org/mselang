@@ -243,7 +243,8 @@ var                     //todo: optimize, use tables, complete
    end;
   end;
  end; //tryconvert
-
+var
+ pointerconv: boolean;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -344,6 +345,7 @@ begin
           ((dest^.h.kind = dk_pointer) or 
                           (source1^.h.kind = dk_pointer)) then begin
       result:= true; //untyped pointer
+      pointerconv:= true;
      end;
     end;
    end;
@@ -393,7 +395,8 @@ begin
     end
     else begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
-                                (source1^.h.bitsize = pointerbitsize) then begin
+              (source1^.h.bitsize = pointerbitsize) or 
+                       (source1^.h.kind in [dk_integer,dk_cardinal])then begin
       if getvalue(stackoffset,pointerintsize) then begin //any to pointer
        int1:= d.dat.fact.ssaindex; //todo: no int source
        with insertitem(oc_inttopo,stackoffset,false)^ do begin
@@ -418,7 +421,7 @@ begin
                              (dest^.h.bytesize = source1^.h.bytesize);
   end;
   if result then begin
-   if d.kind = ck_const then begin
+   if (d.kind = ck_const) and not pointerconv then begin
     d.dat.constval.kind:= dest^.h.kind;
    end;    
    d.dat.datatyp.indirectlevel:= destindirectlevel;
