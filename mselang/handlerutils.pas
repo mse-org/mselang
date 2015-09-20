@@ -920,7 +920,7 @@ begin
    par.ssad:= ssaindex;
   end;
  }
-  if po1^.d.dat.constval.kind <> dk_enum then begin
+  if not (po1^.d.dat.constval.kind in [dk_enum,dk_string8]) then begin
    po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
   end;
   initfactcontext(stackoffset);

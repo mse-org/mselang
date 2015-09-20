@@ -1,9 +1,13 @@
-program anytopo;
-var
- po1: pointer;
- i1: int32;
+program pofunc;
+
+function test(p: int32): ^card16;
 begin
-// i1:= 123;
- po1:= pointer(123);
-// exitcode:= int32(po1);
+ result:= p;
+end;
+
+var
+ p1: ^card8;
+begin
+ p1:= test(123);
+ exitcode:= p1;
 end.

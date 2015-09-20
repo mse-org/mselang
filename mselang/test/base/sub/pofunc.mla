@@ -1,13 +1,13 @@
 program pofunc;
 
-function test(p: int32): ^card16;
+function test(p: int32): ^card8;
 begin
- result:= p;
+ result:= pointer(p);
 end;
 
 var
  p1: ^card8;
 begin
  p1:= test(123);
- exitcode:= p1;
+ exitcode:= int32(p1);
 end.
