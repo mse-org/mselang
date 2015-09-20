@@ -1,11 +1,9 @@
 program pointerdiff;
-type
- recty = record
-  a: int32;
-  b: int32;
- end;
 var
- rec1: recty;
+ v1: int32;
+ po1: pointer;
 begin
- exitcode:= 119+@rec1.b-@rec1.a;
+// po1:= pointer(int32(123));
+// v1:= int32(nil);
+ exitcode:= int32(nil);
 end.

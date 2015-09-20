@@ -21,7 +21,8 @@ uses
  globtypes,parserglob,handlerglob;
  
 function tryconvert(const stackoffset: integer;
-          const dest: ptypedataty; destindirectlevel: integer): boolean;
+          const dest: ptypedataty; destindirectlevel: integer;
+          const typeconversion: boolean): boolean;
 function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
@@ -215,7 +216,8 @@ const
  );
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
-          const dest: ptypedataty; destindirectlevel: integer): boolean;
+          const dest: ptypedataty; destindirectlevel: integer;
+                                      const typeconversion: boolean): boolean;
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
  int1,i2: integer;
@@ -247,49 +249,52 @@ begin
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
   if result then begin
-   result:= dest^.h.kind = source1^.h.kind;
+   result:= (dest^.h.kind = source1^.h.kind) and 
+                          (dest^.h.datasize = source1^.h.datasize);
    if not result then begin
     if destindirectlevel = 0 then begin
      case d.kind of
       ck_const: begin
-       case dest^.h.kind of //todo: use table
-        dk_float: begin
-         case source1^.h.kind of
-          dk_integer: begin
-           with d,dat.constval do begin
-            kind:= dk_float;
+       with d.dat.constval do begin
+        case dest^.h.kind of //todo: use table
+         dk_float: begin
+          case source1^.h.kind of
+           dk_float: begin
+            result:= true;
+           end;
+           dk_integer: begin
             vfloat:= vinteger;
+            result:= true;
            end;
-           result:= true;
-          end;
-          dk_cardinal: begin
-           with d,dat.constval do begin
-            kind:= dk_float;
+           dk_cardinal: begin
             vfloat:= vcardinal;
+            result:= true;
            end;
-           result:= true;
+          end;
+         end;
+         dk_cardinal: begin
+          case source1^.h.kind of
+           dk_cardinal: begin
+            result:= true;
+           end;
+           dk_integer: begin
+            result:= true;
+           end;
+          end;
+         end;
+         dk_integer: begin
+          case source1^.h.kind of
+           dk_integer: begin
+            result:= true;
+           end;
+           dk_cardinal: begin
+            result:= true;
+           end;
           end;
          end;
         end;
-        dk_cardinal: begin
-         case source1^.h.kind of
-          dk_integer: begin
-           with d,dat.constval do begin
-            kind:= dk_cardinal;
-           end;
-           result:= true;
-          end;
-         end;
-        end;
-        dk_integer: begin
-         case source1^.h.kind of
-          dk_cardinal: begin
-           with d,dat.constval do begin
-            kind:= dk_integer;
-           end;
-           result:= true;
-          end;
-         end;
+        if result then begin
+         d.dat.datatyp.typedata:= ele.eledatarel(dest);
         end;
        end;
       end;
@@ -411,7 +416,14 @@ begin
       (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
                                                         (destindirectlevel > 0);
   end;
+  if not result and typeconversion then begin
+   result:= (destindirectlevel = 0) and 
+                             (dest^.h.bytesize = source1^.h.bytesize);
+  end;
   if result then begin
+   if d.kind = ck_const then begin
+    d.dat.constval.kind:= dest^.h.kind;
+   end;    
    d.dat.datatyp.indirectlevel:= destindirectlevel;
    d.dat.datatyp.typedata:= ele.eledatarel(dest);
   end;
@@ -421,7 +433,7 @@ end;
 function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
 begin
  with sysdatatypes[dest] do begin
-  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel);
+  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel,false);
  end;
 end;
 
@@ -433,7 +445,7 @@ begin
  po1:= getbasetypedata(dest);
  if info.contextstack[info.s.stackindex+stackoffset].d.kind = 
                                                         ck_const then begin
-  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel);
+  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,false);
   if not result then begin
    illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
                        po1,po1^.h.indirectlevel);
@@ -445,7 +457,7 @@ begin
  else begin
   result:= getvalue(stackoffset,dest);
   if result then begin
-   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel);
+   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,false);
    if not result then begin
     illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
                        po1,po1^.h.indirectlevel);
@@ -1235,7 +1247,7 @@ begin
        end
        else begin
         if not tryconvert(s.stacktop-s.stackindex,po2,
-                                 ptypedataty(po2)^.h.indirectlevel) then begin
+                         ptypedataty(po2)^.h.indirectlevel,true) then begin
          illegalconversionerror(contextstack[s.stacktop].d,po2,
                                      ptypedataty(po2)^.h.indirectlevel);
         end

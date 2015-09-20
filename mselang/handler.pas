@@ -2312,7 +2312,7 @@ begin
      dec(int1);
     end;
                          //todo: use destinationaddress directly
-    typematch:= tryconvert(s.stacktop-s.stackindex,dest.typ,int1);
+    typematch:= tryconvert(s.stacktop-s.stackindex,dest.typ,int1,false);
     if not typematch then begin
      assignmenterror(contextstack[s.stacktop].d,dest);
     end

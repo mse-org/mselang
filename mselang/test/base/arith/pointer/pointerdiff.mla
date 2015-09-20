@@ -7,5 +7,5 @@ type
 var
  rec1: recty;
 begin
- exitcode:= 119+@rec1.b-@rec1.a;
+ exitcode:= 119+(@rec1.b-@rec1.a);
 end.
