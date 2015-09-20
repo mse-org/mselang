@@ -344,6 +344,13 @@ end;
 procedure handleforvar();
 var
  po1: ptypedataty;
+ 
+ procedure err(const aerror: errorty);
+ begin
+  errormessage(aerror,[],1);
+  sethandlererror();
+ end; //err
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('FORVAR');
@@ -357,8 +364,12 @@ begin
     po1:= ele.eledataabs(datatyp.typedata);
     if (datatyp.indirectlevel <> 1) or 
         not (po1^.h.kind in ordinaldatakinds) then begin
-     errormessage(err_ordinalexpexpected,[],1);
-     sethandlererror();
+     err(err_ordinalexpexpected);
+     exit;
+    end;
+    if (po1^.h.kind = dk_enum) and 
+                 not (enf_contiguous in po1^.infoenum.flags) then begin
+     err(err_enumnotcontiguous);
      exit;
     end;
    end;

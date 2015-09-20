@@ -61,7 +61,7 @@ type
             err_notnotpossible,err_invalidcontroltoken,
             err_wrongsignature,err_wrongkind,err_toomanynestinglevels,
             err_invalidunitfile,err_labelalreadydef,err_labelnotfound,
-            err_invalidgototarget);
+            err_invalidgototarget,err_enumnotcontiguous);
             
  errorinfoty = record
   level: errorlevelty;
@@ -226,7 +226,8 @@ const
   (level: erl_fatal; message: 'Invalid unit file "%s"'),
   (level: erl_error; message: 'Label already defined'),
   (level: erl_error; message: 'Label not found "%s"'),
-  (level: erl_error; message: 'Invalid goto target')
+  (level: erl_error; message: 'Invalid goto target'),
+  (level: erl_error; message: 'Enum type must be contiguous')
  );
 
 procedure message1(const atext: string; const values: array of const); 

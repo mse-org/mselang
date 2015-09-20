@@ -1298,6 +1298,14 @@ begin
      result:= sdk_none;
     end;
    end;
+  end
+  else begin
+   if d.dat.constval.kind = dk_enum then begin
+    if d.dat.datatyp.typedata <> 
+            contextstack[s.stacktop].d.dat.datatyp.typedata then begin
+     result:= sdk_none;
+    end;
+   end;
   end;
   if result = sdk_none then begin
    incompatibletypeserror(contextstack[s.stacktop-2].d,
@@ -1852,13 +1860,13 @@ begin                    //todo: optimize
    end;
   {$endif}
   end;
+  result:= true;
 errlab:
   if not (d.kind in [ck_fact,ck_subres]) then begin
    initfactcontext(stackoffset);
    d.dat.fact.opdatatype:= opdata1;
   end;
  end;
- result:= true;
 end;
 
 function getaddress(const stackoffset: integer;
@@ -2036,12 +2044,19 @@ begin
  with info do begin
   bo1:= false;
   with contextstack[s.stacktop-2] do begin
+   bo2:= true;
    if d.kind <> ck_const then begin
-    getvalue(s.stacktop-s.stackindex-2,das_none);
+    bo2:= getvalue(s.stacktop-s.stackindex-2,das_none);
    end;
    if contextstack[s.stacktop].d.kind <> ck_const then begin
-    getvalue(s.stacktop-s.stackindex,das_none);
+    if not getvalue(s.stacktop-s.stackindex,das_none) then begin
+     bo2:= false;
+    end;
    end;
+   if not bo2 then begin
+    goto endlab;
+   end;
+   
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    int1:= d.dat.datatyp.indirectlevel;
    if not tryconvert(s.stacktop-s.stackindex,po1,int1) then begin
@@ -2178,6 +2193,12 @@ begin
    dk_boolean: begin
     range.min:= 0;
     range.max:= 1;
+   end;
+   dk_enum: begin
+    range.min:= ptypedataty(ele.eledataabs(typedata^.infoenum.first))^.
+                                                         infoenumitem.value;
+    range.max:= ptypedataty(ele.eledataabs(typedata^.infoenum.last))^.
+                                                         infoenumitem.value;
    end;
   {$ifdef mse_checkinternalerror}
    else begin

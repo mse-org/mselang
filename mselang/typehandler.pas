@@ -525,9 +525,15 @@ begin
      {$endif}
       po1:= ele.eledataabs(d.typ.typedata);
       if (d.typ.indirectlevel <> 0) or (po1^.h.indirectlevel <> 0) or
-        not (po1^.h.kind in ordinaldatakinds) or (po1^.h.bitsize > 32) then begin
+        not (po1^.h.kind in ordinaldatakinds) or 
+                                         (po1^.h.bitsize > 32) then begin
        err(err_ordtypeexpected);
        goto endlab;
+      end;
+      if (po1^.h.kind = dk_enum) and 
+                   not (enf_contiguous in po1^.infoenum.flags) then begin
+       err(err_enumnotcontiguous);
+       goto endlab;       
       end;
       if int1 = int2 then begin //first dimension
        with contextstack[s.stackindex-2] do begin

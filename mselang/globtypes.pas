@@ -201,7 +201,7 @@ type
  pdatakindty = ^datakindty;
 
 const
- ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer];
+ ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
  pointerdatakinds = [dk_pointer,dk_dynarray,dk_interface,dk_class,dk_string8];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
