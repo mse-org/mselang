@@ -772,7 +772,7 @@ begin
  end;
 end;
 
-function getbasetypedata(const abitsize: databitsizety): ptypedataty;
+function getbasetypeele(const abitsize: databitsizety): elementoffsetty;
 var
  typ1: systypety;
 begin
@@ -782,7 +782,12 @@ begin
   internalerror(ie_handler,'20150319A');
  end;
 {$endif}
- result:= ele.eledataabs(sysdatatypes[typ1].typedata);
+ result:= sysdatatypes[typ1].typedata;
+end;
+
+function getbasetypedata(const abitsize: databitsizety): ptypedataty;
+begin
+ result:= ele.eledataabs(getbasetypeele(abitsize));
 end;
 
 function getsystypeele(const atype: systypety): elementoffsetty;
@@ -916,6 +921,7 @@ begin
   end;
  }
   initfactcontext(stackoffset);
+  po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
   with po1^.d.dat.fact.opdatatype do begin
    kind:= si1;
    size:= bitsizes[si1];

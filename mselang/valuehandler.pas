@@ -452,36 +452,39 @@ begin
  end;
 end;
 
-function checkcompatiblefacttype(var afact: contextdataty;
-        const atypedata: elementoffsetty; const aadress: addressvaluety): boolean;
+function checkcompatiblefacttype(const stackoffset: int32;
+                                  const atypedata: elementoffsetty;
+                                    const aadress: addressvaluety): boolean;
 var
  po1,po2: ptypedataty;
  i1: int32;
 begin
-{$ifdef mse_checkinternalerror}
- if afact.kind <> ck_fact then begin
-  internalerror(ie_parser,'141211A');
- end;
-{$endif}
- po1:= ele.eledataabs(atypedata);
- i1:= aadress.indirectlevel{+po1^.h.indirectlevel};
- if af_paramindirect in aadress.flags then begin
-  dec(i1);
- end;
- po2:= ele.eledataabs(afact.dat.datatyp.typedata);
- result:= i1 = afact.dat.datatyp.indirectlevel;
- if result then begin
-  if po1^.h.base <> 0 then begin
-   po1:= ele.eledataabs(po1^.h.base);
+ with info,contextstack[s.stackindex+stackoffset] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_fact then begin
+   internalerror(ie_parser,'141211A');
   end;
-  if po2^.h.base <> 0 then begin
-   po2:= ele.eledataabs(po2^.h.base);
+ {$endif}
+  po1:= ele.eledataabs(atypedata);
+  i1:= aadress.indirectlevel{+po1^.h.indirectlevel};
+  if af_paramindirect in aadress.flags then begin
+   dec(i1);
   end;
-  result:= po1 = po2; //todo: try conversion
- end;
- if not result then begin
-  result:= (afact.dat.datatyp.indirectlevel = 1 ) and 
-               (po2^.h.kind = dk_pointer) and (i1 > 0); 
+  po2:= ele.eledataabs(d.dat.datatyp.typedata);
+  result:= i1 = d.dat.datatyp.indirectlevel;
+  if result then begin
+   if po1^.h.base <> 0 then begin
+    po1:= ele.eledataabs(po1^.h.base);
+   end;
+   if po2^.h.base <> 0 then begin
+    po2:= ele.eledataabs(po2^.h.base);
+   end;
+   result:= po1 = po2; //todo: try conversion
+  end;
+  if not result then begin
+   result:= (d.dat.datatyp.indirectlevel = 1 ) and 
+                (po2^.h.kind = dk_pointer) and (i1 > 0); 
+  end;
  end;
 end;
 
@@ -717,7 +720,8 @@ var
         end;
        end;
  //      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
-       if not checkcompatiblefacttype(d,po6^.vf.typ,po6^.address) then begin
+       if not checkcompatiblefacttype(int1-s.stackindex,
+                                      po6^.vf.typ,po6^.address) then begin
         errormessage(err_incompatibletypeforarg,
                     [int1-s.stackindex-3,typename(d),
                     typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^,
