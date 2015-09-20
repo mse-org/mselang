@@ -2081,7 +2081,12 @@ begin
      sd1:= sdk_pointer;
     end
     else begin
-     sd1:= stackdatakinds[po1^.h.kind];
+     if po1^.h.kind = dk_enum then begin
+      sd1:= stackdatakinds[dk_integer];
+     end
+     else begin
+      sd1:= stackdatakinds[po1^.h.kind];
+     end;
     end;
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
