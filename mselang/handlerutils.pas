@@ -1301,9 +1301,9 @@ begin
   end
   else begin
    if d.dat.constval.kind = dk_enum then begin
-    if d.dat.datatyp.typedata <> 
+    if d.dat.datatyp.typedata = 
             contextstack[s.stacktop].d.dat.datatyp.typedata then begin
-     result:= sdk_none;
+     result:= sdk_int32; //todo: different sizes
     end;
    end;
   end;
