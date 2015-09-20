@@ -920,8 +920,10 @@ begin
    par.ssad:= ssaindex;
   end;
  }
+  if po1^.d.dat.constval.kind <> dk_enum then begin
+   po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
+  end;
   initfactcontext(stackoffset);
-  po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
   with po1^.d.dat.fact.opdatatype do begin
    kind:= si1;
    size:= bitsizes[si1];

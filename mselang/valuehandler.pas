@@ -347,6 +347,7 @@ begin
    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
                       (d.dat.datatyp.indirectlevel > 0) then begin
         //todo: remove implicit pointer -> int conversion
+{
     if getvalue(stackoffset,das_pointer) then begin //pointer to int
      int1:= d.dat.fact.ssaindex;        //todo: operand size
      with insertitem(oc_potoint32,stackoffset,false)^ do begin
@@ -356,6 +357,7 @@ begin
      d.dat.datatyp.indirectlevel:= 0;
      result:= true;
     end;
+}
    end
    else begin
     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and

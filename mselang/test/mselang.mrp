@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=5
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=17
    (
    kind=1
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,5,arith
    c=21
     (
     kind=1
@@ -340,8 +340,8 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
-    c=2
+    a=0,665,4,cmp
+    c=4
      (
      kind=2
      a=0,648,1,cmppointer
@@ -386,6 +386,50 @@ c=3
      aec=123
      ie=0
      )
+     (
+     kind=2
+     a=0,648,1,cmpenum
+     teststate=1
+     path=cmpenum.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,cmpenum llvm
+     teststate=1
+     path=cmpenum.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
     teststate=1
     path=cmp/
     comment=
@@ -404,7 +448,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,665,5,pointer
     c=6
      (
      kind=2
@@ -518,8 +562,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,pointerdiff llvm
-     teststate=1
+     a=0,648,2,pointerdiff llvm
+     teststate=2
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -534,11 +578,20 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=Both operands to a binary operator are not of the same type!
+     +  %5 = add i8 %1, i32 %4
+     +Both operands to a binary operator are not of the same type!
+     +  %9 = sub i8 %5, i32 %8
+     +Stored value type does not match pointer operand type!
+     +  store i8 %9, i32* @__mla__system.1
+     + i32Broken module found, compilation aborted!
+     +0  libLLVMSupport.so 0xb6b420f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+     +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  4995 Aborted                 $1llc $2.bc
+     +
+     aec=134
      ie=0
      )
-    teststate=1
+    teststate=2
     path=pointer/
     comment=
     cc=
@@ -886,8 +939,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
-    teststate=1
+    a=0,648,2,shr1 llvm
+    teststate=2
     path=shr1.mla
     comment=
     cc=${mlc_llvm}
@@ -902,8 +955,13 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=Stored value type does not match pointer operand type!
+    +  store i8 %3, i32* @__mla__system.1
+    + i32Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6ac90f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  5118 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -950,7 +1008,7 @@ c=3
     aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=arith/
    comment=
    cc=
@@ -990,7 +1048,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,5,control
    c=30
     (
     kind=2
@@ -1369,7 +1427,7 @@ c=3
     (
     kind=2
     a=0,648,1,forto llvm
-    teststate=1
+    teststate=2
     path=forto.mla
     comment=
     cc=${mlc_llvm}
@@ -1384,8 +1442,15 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=Both operands to a binary operator are not of the same type!
+    +  %41 = add i8 %39, i32 %40
+    +Stored value type does not match pointer operand type!
+    +  store i8 %43, i32* @__mla__system.1
+    + i32Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6b800f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  5275 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -1413,7 +1478,7 @@ c=3
     (
     kind=2
     a=0,648,1,fordownto llvm
-    teststate=1
+    teststate=2
     path=fordownto.mla
     comment=
     cc=${mlc_llvm}
@@ -1428,8 +1493,15 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=Both operands to a binary operator are not of the same type!
+    +  %41 = add i8 %39, i32 %40
+    +Stored value type does not match pointer operand type!
+    +  store i8 %43, i32* @__mla__system.1
+    + i32Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6b680f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  5286 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -1457,7 +1529,7 @@ c=3
     (
     kind=2
     a=0,648,1,forto2 llvm
-    teststate=1
+    teststate=2
     path=forto2.mla
     comment=
     cc=${mlc_llvm}
@@ -1472,8 +1544,15 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=Both operands to a binary operator are not of the same type!
+    +  %53 = add i8 %51, i32 %52
+    +Stored value type does not match pointer operand type!
+    +  store i8 %55, i32* @__mla__system.1
+    + i32Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6acb0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  5297 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -1652,7 +1731,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -1670,7 +1749,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,664,5,conversions
    c=6
     (
     kind=2
@@ -1719,7 +1798,7 @@ c=3
     (
     kind=2
     a=0,648,1,anytopo
-    teststate=1
+    teststate=2
     path=anytopo.mla
     comment=
     cc=${mlc}
@@ -1732,16 +1811,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
     a=0,648,1,anytopo llvm
-    teststate=1
+    teststate=2
     path=anytopo.mla
     comment=
     cc=${mlc_llvm}
@@ -1754,9 +1833,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1804,7 +1883,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=conversions/
    comment=
    cc=
@@ -1905,7 +1984,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73130C0
+    ao=An unhandled exception occured at $B72FD0C0
     +
     ae=
     aec=123
@@ -2543,7 +2622,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,IO
+   a=0,664,5,IO
    c=4
     (
     kind=2
@@ -2594,7 +2673,7 @@ c=3
     (
     kind=2
     a=0,648,1,writeln string
-    teststate=1
+    teststate=2
     path=writelnstr.mla
     comment=
     cc=${mlc}
@@ -2608,7 +2687,7 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
+    ao=B72E2C4C
     +
     ae=
     aec=0
@@ -2617,7 +2696,7 @@ c=3
     (
     kind=2
     a=0,648,1,writeln string lc
-    teststate=1
+    teststate=2
     path=writelnstr.mla
     comment=
     cc=${mlc_llvm}
@@ -2631,13 +2710,13 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
+    ao=0x804a06c
     +
     ae=
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=2
    path=io/
    comment=
    cc=${COMP}
@@ -3089,7 +3168,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=13
     (
     kind=2
@@ -3523,7 +3602,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,with
+   a=0,664,4,with
    c=12
     (
     kind=2
@@ -3805,7 +3884,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -4454,7 +4533,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -4568,31 +4647,7 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=100
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=76
  0 0
  0 0
  0 0

@@ -1,10 +1,9 @@
 program test;
+type
+ e = (a,b,c);
+var
+ e1: e;
 
-procedure p(a: int32);
 begin
- exitcode:= a;
-end;
-
-begin
- p(1);
+ e1:= a;
 end;

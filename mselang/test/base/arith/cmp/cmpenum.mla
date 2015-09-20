@@ -1,0 +1,14 @@
+program compenum;
+type
+ e = (a,b,c);
+ s = set of e;
+var
+ e1,e2: e;
+begin
+ e1:= a;
+ e2:= b;
+ if (a = a) and (a <> b) and (e1 = e1) and (e1 <> e2) and (b > a) and (a < b) and
+  (e2 > e1) and (e1 < e2) then begin
+  exitcode:= 123;
+ end;
+end.
