@@ -1230,6 +1230,8 @@ function telementhashdatalist.dumpelements: msestringarty;
  function dumptyp(const atyp: elementoffsetty): msestring;
  var
   po2: pelementinfoty;
+  cami,cama: card64;
+  intmi,intma: int64;
  begin
   if atyp < 0 then begin
    result:= ' T:invalid';
@@ -1245,8 +1247,51 @@ function telementhashdatalist.dumpelements: msestringarty;
      result:= result+
      ' F:'+msestring(
            settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false))+
+     ' D:'+msestring(getenumname(typeinfo(h.datasize),ord(h.datasize)))+
      ' S:'+inttostrmse(h.bytesize)+' I:'+inttostrmse(h.indirectlevel);
      case h.kind of
+      dk_cardinal: begin
+       case h.datasize of
+        das_1,das_2_7,das_8: begin
+         cami:= infocard8.min;
+         cama:= infocard8.max;
+        end;
+        das_9_15,das_16:  begin
+         cami:= infocard16.min;
+         cama:= infocard16.max;
+        end;
+        das_17_31,das_32:  begin
+         cami:= infocard32.min;
+         cama:= infocard32.max;
+        end;
+        das_33_63,das_64:  begin
+         cami:= infocard64.min;
+         cama:= infocard64.max;
+        end;
+       end;
+       result:= result+' MI:'+inttostrmse(cami)+' MA:'+inttostrmse(cama);
+      end;
+      dk_integer: begin
+       case h.datasize of
+        das_1,das_2_7,das_8: begin
+         intmi:= infoint8.min;
+         intma:= infoint8.max;
+        end;
+        das_9_15,das_16:  begin
+         intmi:= infoint16.min;
+         intma:= infoint16.max;
+        end;
+        das_17_31,das_32:  begin
+         intmi:= infoint32.min;
+         intma:= infoint32.max;
+        end;
+        das_33_63,das_64:  begin
+         intmi:= infoint64.min;
+         intma:= infoint64.max;
+        end;
+       end;
+       result:= result+' MI:'+inttostrmse(intmi)+' MA:'+inttostrmse(intma);
+      end;
       dk_enum: begin
        result:= result+' first:'+inttostrmse(infoenum.first)+
                        ' last:'+inttostrmse(infoenum.last)+
@@ -1418,6 +1463,11 @@ begin
    ek_uses: begin
     with pusesdataty(@po1^.data)^ do begin
      mstr1:= mstr1 + ' U:'+inttostrmse(ref);
+    end;
+   end;
+   ek_ref: begin
+    with prefdataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' R:'+inttostrmse(ref);
     end;
    end;
   end;

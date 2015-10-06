@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -880,6 +880,7 @@ var
 begin
  with info,contextstack[s.stackindex] do begin
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
+  ele.checkcapacity(elesizes[ek_type]+elesizes[ek_ref]); //ensure valid po1
   if ele.addelementdata(ident1,ek_type,allvisi,po1) then begin
    inittypedatasize(po1^,dk_enumitem,0,das_32);
    with po1^ do begin

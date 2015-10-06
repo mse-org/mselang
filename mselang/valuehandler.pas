@@ -1087,10 +1087,11 @@ begin
    end;
    goto endlab;
   end;
-  if po1^.header.kind = ek_ref then begin
-   po1:= ele.eleinfoabs(prefdataty(@po1^.data)^.ref);
-  end;
   po2:= @po1^.data;
+  if po1^.header.kind = ek_ref then begin
+   po1:= ele.eleinfoabs(prefdataty(po2)^.ref);
+   po2:= @po1^.data;
+  end;
   with contextstack[s.stackindex] do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
