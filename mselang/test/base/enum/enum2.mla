@@ -1,0 +1,12 @@
+program enum2;
+type
+ e = (a,b,c);
+// f = (aa,bb,cc);
+ g = e;
+//{$dumpelements}
+//{$abort}
+var
+ e1: g;
+begin
+ e1:= b;
+end.

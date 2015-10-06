@@ -1,0 +1,14 @@
+program typeequ1;
+type
+ e = (a,b,c);
+ g = e;
+ f = g;
+ k = (x,y,z);
+var
+ e1: g;
+begin
+ e1:= b;
+ if e1 = b then begin
+  exitcode:= 123;
+ end;
+end.

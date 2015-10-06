@@ -242,7 +242,8 @@ var                     //todo: optimize, use tables, complete
     end;
    end;
   end;
- end; //tryconvert
+ end; //convertsize
+ 
 var
  pointerconv: boolean;
 begin
@@ -252,6 +253,9 @@ begin
   if result then begin
    result:= (dest^.h.kind = source1^.h.kind) and 
                           (dest^.h.datasize = source1^.h.datasize);
+   if result and (dest^.h.kind = dk_enum) then begin
+    result:= issametype(dest,source1);
+   end;
    if not result then begin
     if destindirectlevel = 0 then begin
      case d.kind of

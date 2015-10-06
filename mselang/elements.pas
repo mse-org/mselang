@@ -1251,8 +1251,9 @@ function telementhashdatalist.dumpelements: msestringarty;
        result:= result+' first:'+inttostrmse(infoenum.first)+
                        ' last:'+inttostrmse(infoenum.last)+
                        ' itemcount:'+inttostrmse(infoenum.itemcount)+
-                     ' flags:'+settostring(ptypeinfo(typeinfo(infoenum.flags)),
-                                                 integer(infoenum.flags),false);
+                     ' flags:'+msestring(settostring(
+                                        ptypeinfo(typeinfo(infoenum.flags)),
+                                                integer(infoenum.flags),false));
                        
       end;
       dk_enumitem: begin

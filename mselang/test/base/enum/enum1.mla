@@ -1,0 +1,24 @@
+program enum1;
+type
+ e = (a,b,c);
+
+var
+ e1,e2: e;
+begin
+ e1:= b;
+ e2:= c;
+ if e1 = e2 then begin
+  exitcode:= 22;
+ end
+ else begin
+  if (e1 = b) and (e2 = c) then begin
+   e1:= c;
+   if (e1 = e2) then begin
+    exitcode:= 123;
+   end;
+  end
+  else begin
+   exitcode:= 33;
+  end;
+ end;
+end.

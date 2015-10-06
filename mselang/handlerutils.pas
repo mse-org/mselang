@@ -209,6 +209,8 @@ function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
 function getbasetypedata(const abitsize: databitsizety): ptypedataty;
 function getsystypeele(const atype: systypety): elementoffsetty;
+function issametype(const a,b: ptypedataty): boolean; 
+                                        //follow typex = typey chain
 
 procedure sethandlerflag(const avalue: handlerflagty);
 procedure sethandlererror();
@@ -793,6 +795,18 @@ end;
 function getsystypeele(const atype: systypety): elementoffsetty;
 begin
  result:= sysdatatypes[atype].typedata;
+end;
+
+function issametype(const a,b: ptypedataty): boolean; 
+                                        //follow typex = typey chain
+begin
+ result:= (a = b) or (a^.h.indirectlevel = b^.h.indirectlevel) and
+  (
+   (a^.h.base <> 0) and 
+       ((a^.h.base = b^.h.base) or (ele.eledatarel(b) = a^.h.base)) or
+   (b^.h.base <> 0) and 
+       ((b^.h.base = a^.h.base) or (ele.eledatarel(a) = b^.h.base))
+  );
 end;
 
 procedure pushinsertconst(const stackoffset: integer; const before: boolean;

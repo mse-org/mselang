@@ -1,0 +1,11 @@
+program typeequ2;
+type
+ e = (a,b,c);
+ g = e;
+ f = g;
+ k = (x,y,z);
+var
+ e1: k;
+begin
+ e1:= b;
+end.
