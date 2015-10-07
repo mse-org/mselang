@@ -269,6 +269,8 @@ procedure assignmenterror(const source: contextdataty;
 procedure illegalconversionerror(const source: contextdataty;
                  const dest: ptypedataty; const destindirectlevel: integer);
 procedure incompatibletypeserror(const expected,got: contextdataty);
+procedure incompatibletypeserror(const expected,got: ptypedataty; 
+                                          const astackoffset: int32 = minint);
 procedure incompatibletypeserror(const expected: string;
                                                 const got: contextdataty);
 procedure incompatibletypeserror(const param: integer; const expected: string;
@@ -628,6 +630,13 @@ begin
   end;
  end;
 end;
+
+function typeinfoname(const typedata: ptypedataty): string;
+begin
+ result:= charstring('^',typedata^.h.indirectlevel)+
+                    charstring('@',-typedata^.h.indirectlevel)+
+                                   typeinfoname(ele.eledatarel(typedata));
+end;
 {
 procedure typeinfonames(const a,b: contextdataty; out ainfo,binfo: string);
 var
@@ -651,6 +660,13 @@ procedure incompatibletypeserror(const expected,got: contextdataty);
 begin
  errormessage(err_incompatibletypes,[typeinfoname(got),
                                                    typeinfoname(expected)]);
+end;
+
+procedure incompatibletypeserror(const expected,got: ptypedataty; 
+                                          const astackoffset: int32 = minint);
+begin
+ errormessage(err_incompatibletypes,[typeinfoname(got),typeinfoname(expected)],
+                                                                  astackoffset);
 end;
 
 procedure incompatibletypeserror(const expected: string;

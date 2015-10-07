@@ -1445,6 +1445,7 @@ procedure handlesetfact();
 var
  allconst: boolean;
  i1: int32;
+ po1,po2: ptypedataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETFACT');
@@ -1459,7 +1460,32 @@ begin
     d.dat.constval.vset.settype:= 0; 
    end;
   end;
+  po2:= nil;
   for i1:= s.stackindex+1 to s.stacktop do begin
+   with contextstack[i1] do begin
+   {$ifdef mse_checkinternalerror}
+    if not (d.kind in datacontexts) then begin
+     internalerror(ie_handler,'20151007A');
+    end;
+   {$endif}
+    po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+    if po2 = nil then begin
+     po2:= po1;
+    end;
+    if not (po1^.h.kind in ordinaldatakinds) or 
+                                 (po1^.h.indirectlevel <> 0) then begin
+     errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
+    end
+    else begin
+     if po1 <> po2 then begin
+      incompatibletypeserror(po2,po1,i1-s.stackindex);
+     end;
+    end;
+    case d.kind of 
+     ck_const: begin
+     end;
+    end; 
+   end;
 //   tryconvert(
   end;
   s.stacktop:= s.stackindex;
