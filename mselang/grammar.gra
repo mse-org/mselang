@@ -792,6 +792,7 @@ fact0,fact1,,
  '@',addressopfact-*
 // '@',!handleaddressfact-
  '(',bracketstart-*
+ '[',setfact-*
  @decnum,num*
  '%',binnum-*
  '&',octnum-*
@@ -819,6 +820,16 @@ negfact,,,handlenegfact
  '',fact*
 notfact,,,handlenotfact
  '',fact*
+setfact,setfact1,,
+ ${whitespace}
+ ']',setfact3-     //empty set
+setfact1,setfact2,,
+ '',exp^*
+setfact2,,,
+ ${whitespace}
+ ',',setfact1-
+ ']',setfact3-
+setfact3,,,handlesetfact
 
 //addressfact,,handleaddressfactentry,handleaddressfact
 // '',fact*

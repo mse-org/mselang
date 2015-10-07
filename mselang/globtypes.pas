@@ -233,6 +233,11 @@ type
   enum: elementoffsetty;
  end; 
 
+ setvaluety = record
+  value: int32;  //todo: use arbitrary size
+  settype: elementoffsetty; //0 for empty set
+ end; 
+
  dataty = record
   case kind: datakindty of
    dk_boolean:(
@@ -255,6 +260,9 @@ type
    );
    dk_enum:(
     venum: enumvaluety;
+   );
+   dk_set:(
+    vset: setvaluety;
    );
  end;
 

@@ -41,6 +41,7 @@ type
 var
  unitsele: elementoffsetty;
  sysdatatypes: array[systypety] of typeinfoty;
+ emptyset: typeinfoty;
 
 const
  basedatatypes: array[databitsizety] of systypety = (
@@ -79,7 +80,7 @@ const
  //das_sub,         das_meta
    oc_popindirectpo,oc_none
    );
-
+ 
 function getidents(const astackoffset: integer;
                      out idents: identvecty): boolean; overload;
 function getidents(const astackoffset: integer): identvecty; overload;
@@ -876,6 +877,12 @@ begin
      end;
     end;
    end;
+   dk_set: begin
+    si1:= das_32;           //todo: arbitrary size
+    with insertitem(oc_pushimm32,stackoffset,before)^ do begin
+     setimmint32(po1^.d.dat.constval.vset.value,par);
+    end;
+   end;
    dk_float: begin
     si1:= das_f64;
     with insertitem(oc_pushimm64,stackoffset,before)^ do begin
@@ -934,7 +941,7 @@ begin
    par.ssad:= ssaindex;
   end;
  }
-  if not (po1^.d.dat.constval.kind in [dk_enum,dk_string8]) then begin
+  if not (po1^.d.dat.constval.kind in [dk_enum,dk_set,dk_string8]) then begin
    po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
   end;
   initfactcontext(stackoffset);
@@ -1989,7 +1996,7 @@ begin
  sethandlerflag(hf_error);
 end;
 
-procedure init;
+procedure init();
 var
  ty1: systypety;
  po1: pelementinfoty;
@@ -2008,7 +2015,6 @@ begin
     typedata:= ele.eleinforel(po1);
    end;
   end;
-//  sysdatatypes[ty1].flags:= [];
  end;
  for int1:= low(sysconstinfos) to high(sysconstinfos) do begin
   with sysconstinfos[int1] do begin
@@ -2019,6 +2025,12 @@ begin
    end;
   end;
  end;
+ po2:= ele.addelementdata(getident(),ek_type,globalvisi);
+ fillchar(po2^,sizeof(po2^),0);
+ po2^.h.kind:= dk_set;
+ fillchar(emptyset,sizeof(emptyset),0);
+ emptyset.typedata:= ele.eledatarel(po2);
+ 
  syssubhandler.init();
 end;
 
@@ -2524,6 +2536,13 @@ begin
        end;
        dk_address: begin
         writeaddress(dat.constval.vaddress);
+       end;
+       dk_enum: begin
+        write(dat.constval.venum.value,' ');
+       end;
+       dk_set: begin
+        write(hextostr(card32(dat.constval.vset.value)),' '); 
+                  //todo: arbitrary size, set format
        end;
       end;
      end;

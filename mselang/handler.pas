@@ -113,6 +113,7 @@ procedure handleshrfact();
 procedure handlenegfact();
 procedure handlenotfact();
 procedure handlemulfact();
+procedure handlesetfact();
 
 procedure handlefact2entry();
 //procedure handlefact2();
@@ -1346,7 +1347,7 @@ begin
  end;
 end;
 *)
-procedure handlenegfact;
+procedure handlenegfact();
 var
  po1: ptypedataty;
 begin
@@ -1435,6 +1436,32 @@ begin
    end;
   end;
   contextstack[s.stackindex].d:= d;
+  s.stacktop:= s.stackindex;
+  dec(s.stackindex);
+ end;
+end;
+
+procedure handlesetfact();
+var
+ allconst: boolean;
+ i1: int32;
+begin
+{$ifdef mse_debugparser}
+ outhandle('SETFACT');
+{$endif}
+ with info do begin
+  if s.stacktop = s.stackindex then begin //empty set
+   with contextstack[s.stackindex] do begin
+    d.kind:= ck_const;
+    d.dat.datatyp:= emptyset;
+    d.dat.indirection:= 0;
+    d.dat.constval.kind:= dk_set;
+    d.dat.constval.vset.settype:= 0; 
+   end;
+  end;
+  for i1:= s.stackindex+1 to s.stacktop do begin
+//   tryconvert(
+  end;
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
  end;

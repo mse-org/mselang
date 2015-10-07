@@ -335,6 +335,12 @@ begin
           end;
          end;
         end;
+        dk_set: begin
+         if (source1^.h.kind = dk_set) and 
+              (d.dat.datatyp.typedata = emptyset.typedata) then begin
+          result:= true;
+         end;
+        end;
        end;
       end;
      {$ifdef mse_checkinternalerror}
