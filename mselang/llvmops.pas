@@ -829,6 +829,15 @@ begin
  notimplemented();
 end;
 
+procedure diffsetop(); //todo: arbitrary size
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mc_i32)),
+                                         bcstream.ssaval(ssas2)); //not
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
+ end;
+end;
+
 procedure card8tocard16op();
 begin
  with pc^.par do begin
@@ -3109,6 +3118,7 @@ const
   subpossa = 3;
   addflo64ssa = 1;
   subflo64ssa = 1;
+  diffsetssa = 2;
 
   addimmint32ssa = 1;
   mulimmint32ssa = 1;

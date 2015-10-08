@@ -187,6 +187,7 @@ type
   oc_subpo,
   oc_addflo64,
   oc_subflo64,
+  oc_diffset,
 
   oc_addimmint32,
   oc_mulimmint32,
@@ -925,6 +926,7 @@ type
    
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
+   oc_subint32,oc_subflo64,oc_diffset,
    oc_addpoint32,
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
    oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,

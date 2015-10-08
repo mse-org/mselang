@@ -1156,6 +1156,8 @@
   (ssa: addflo64ssa; proc: @addflo64op; flags: []), 
 //oc_subflo64
   (ssa: subflo64ssa; proc: @subflo64op; flags: []), 
+//oc_diffset
+  (ssa: diffsetssa; proc: @diffsetop; flags: []), 
 
 //oc_addimmint32
   (ssa: addimmint32ssa; proc: @addimmint32op; flags: []), 

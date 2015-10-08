@@ -10,7 +10,10 @@ begin
  if se1 = [a,b,c] then begin
   se1:= se1*[a,b];
   if se1 = [a,b] then begin
-   exitcode:= 123;
+   se1:= se1 - [a];
+   if se1 = [b] then begin
+    exitcode:= 123;
+   end;
   end;
  end;
 end.

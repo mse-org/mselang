@@ -1411,6 +1411,15 @@ begin
  vfloatty(po2^):= vfloatty(po2^)-vfloatty(po1^);
 end;
 
+procedure diffsetop(); //todo: arbitrary size
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) and not vintegerty(po1^);
+end;
+
 procedure card8tocard16op();
 var
  po1: pointer;
@@ -3626,6 +3635,7 @@ const
   subpossa = 0;
   addflo64ssa = 0;
   subflo64ssa = 0;
+  diffsetssa = 0;
 
   addimmint32ssa = 0;
   mulimmint32ssa = 0;

@@ -860,7 +860,7 @@ const
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
  (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subint32,oc_subflo64,
        //sdk_set32
-         oc_none);
+         oc_diffset);
                      opname: '-');
  orops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
