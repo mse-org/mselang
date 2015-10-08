@@ -1452,6 +1452,7 @@ begin
  outhandle('SETFACT');
 {$endif}
  with info do begin
+  ele.checkcapacity(ek_type);
   if s.stacktop = s.stackindex then begin //empty set
    with contextstack[s.stackindex] do begin
     d.kind:= ck_const;
@@ -1464,6 +1465,7 @@ begin
   else begin
    po2:= nil;
    ca1:= 0;          //todo: arbitrary size, ranges
+   allconst:= true;
    for i1:= s.stackindex+1 to s.stacktop do begin
     with contextstack[i1] do begin
     {$ifdef mse_checkinternalerror}
@@ -1514,6 +1516,7 @@ begin
      d.dat.constval.vset.value:= ca1;
     end
     else begin
+     notimplementederror('20151008A');
     end;
    end;
   end;
