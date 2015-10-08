@@ -62,11 +62,15 @@ const
     sdk_none,   sdk_none, sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
-          //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
-           (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float);
+          //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
+           (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
+          //sdk_set32
+            dk_set);
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
-           (st_none,st_pointer,st_bool1,st_card32,st_int32,st_float64);
+           (st_none, st_pointer, st_bool1, st_card32, st_int32, st_float64,
+          //sdk_set32
+            st_card32);
 
  popindioptable: array[databitsizety] of opcodety = (
  //das_none,      das_1,          das_2_7,        das_8,
@@ -2115,11 +2119,16 @@ begin
      sd1:= sdk_pointer;
     end
     else begin
-     if po1^.h.kind = dk_enum then begin
-      sd1:= stackdatakinds[dk_integer];
-     end
-     else begin
-      sd1:= stackdatakinds[po1^.h.kind];
+     case po1^.h.kind of
+      dk_enum: begin
+       sd1:= stackdatakinds[dk_integer];
+      end;
+      dk_set: begin
+       sd1:= sdk_set32; //todo: arbitrary size
+      end;
+      else begin
+       sd1:= stackdatakinds[po1^.h.kind];
+      end;
      end;
     end;
     op1:= opsinfo.ops[sd1];

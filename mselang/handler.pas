@@ -792,20 +792,28 @@ end;
 const                     
  mulops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_mulcard32,oc_mulint32,oc_mulflo64);
+  (ops: (oc_none, oc_none,    oc_none,  oc_mulcard32,oc_mulint32,oc_mulflo64,
+       //sdk_set32
+         oc_and32);
                      opname: '*');
 
  andops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,  oc_and32, oc_none);
+  (ops: (oc_none, oc_none,    oc_and1,  oc_and32,  oc_and32, oc_none,
+       //sdk_set32
+         oc_none);
                      opname: 'and');
  shlops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_shl32,  oc_shl32, oc_none);
+  (ops: (oc_none, oc_none,    oc_none,  oc_shl32,  oc_shl32, oc_none,
+       //sdk_set32
+         oc_none);
                      opname: 'shl');
  shrops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
-  (ops: (oc_none, oc_none,    oc_none,  oc_shr32,  oc_shr32, oc_none);
+  (ops: (oc_none, oc_none,    oc_none,  oc_shr32,  oc_shr32, oc_none,
+       //sdk_set32
+         oc_none);
                      opname: 'shr');
  
 procedure handlemulfact();
@@ -844,15 +852,21 @@ end;
 const
  addops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addint32,oc_addflo64);
+ (ops: (oc_none, oc_none,    oc_none,  oc_addint32,oc_addint32,oc_addflo64,
+      //sdk_set32
+        oc_or32);
                      opname: '+');
  subops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32,  sdk_flo64)
- (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subint32,oc_subflo64);
+ (ops: (oc_none, oc_subpo,   oc_none,  oc_subint32,oc_subint32,oc_subflo64,
+       //sdk_set32
+         oc_none);
                      opname: '-');
  orops: opsinfoty = 
       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
- (ops: (oc_none, oc_none,   oc_or1,    oc_or32,   oc_or32,  oc_none);
+ (ops: (oc_none, oc_none,   oc_or1,    oc_or32,   oc_or32,  oc_none,
+      //sdk_set32
+        oc_none);
                      opname: 'or');
 
 procedure addsubterm(const issub: boolean);
@@ -1963,23 +1977,35 @@ type
  cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le);
 const
  cmpops: array[cmpopty] of opsinfoty = (
-  (ops: (oc_none,oc_cmpeqpo,oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqint32,
-                        oc_cmpeqflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
+  (ops: (oc_none, oc_cmpeqpo, oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqint32,                        
+       //sdk_flo64,    sdk_set32
+         oc_cmpeqflo64,oc_cmpeqint32);
                         opname: '='),
-  (ops: (oc_none,oc_cmpnepo,oc_cmpnebool,
-                        oc_cmpneint32,oc_cmpneint32,oc_cmpneflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
+  (ops: (oc_none, oc_cmpnepo, oc_cmpnebool,oc_cmpneint32,oc_cmpneint32,
+       //sdk_flo64,    sdk_set32
+         oc_cmpneflo64,oc_cmpneint32);
                         opname: '<>'),
-  (ops: (oc_none,oc_cmpgtpo,oc_cmpgtbool,
-                        oc_cmpgtcard32,oc_cmpgtint32,oc_cmpgtflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
+  (ops: (oc_none, oc_cmpgtpo, oc_cmpgtbool,oc_cmpgtcard32,oc_cmpgtint32,
+       //sdk_flo64,    sdk_set32
+         oc_cmpgtflo64,oc_none);
                         opname: '>'),
-  (ops: (oc_none,oc_cmpltpo,oc_cmpltbool,
-                        oc_cmpltcard32,oc_cmpltint32,oc_cmpltflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
+  (ops: (oc_none, oc_cmpltpo, oc_cmpltbool,oc_cmpltcard32,oc_cmpltint32,
+       //sdk_flo64,    sdk_set32
+         oc_cmpltflo64,oc_none);
                         opname: '<'),
-  (ops: (oc_none,oc_cmpgepo,oc_cmpgebool,
-                        oc_cmpgecard32,oc_cmpgeint32,oc_cmpgeflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
+  (ops: (oc_none,oc_cmpgepo,oc_cmpgebool,oc_cmpgecard32,oc_cmpgeint32,
+       //sdk_flo64,    sdk_set32
+         oc_cmpgeflo64,oc_none);
                         opname: '>='),
-  (ops: (oc_none,oc_cmplepo,oc_cmplebool,
-                        oc_cmplecard32,oc_cmpleint32,oc_cmpleflo64);
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
+  (ops: (oc_none,oc_cmplepo,oc_cmplebool,oc_cmplecard32,oc_cmpleint32,
+       //sdk_flo64,    sdk_set32
+         oc_cmpleflo64,oc_none); //todo: set contains
                         opname: '<=')
  );
 
