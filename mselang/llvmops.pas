@@ -1699,6 +1699,15 @@ begin
  notimplemented();
 end;
 
+procedure setcontainsop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
+  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),bcstream.constval(ord(nc_i32)));
+ end;
+end;
+
 procedure storesegnilop();
 var
  str1: shortstring;
@@ -3202,6 +3211,7 @@ const
   cmplecard32ssa = 1;
   cmpleint32ssa = 1;
   cmpleflo64ssa = 1;
+  setcontainsssa = 3;
 
   storesegnilssa = 0;
   storereg0nilssa = 1;

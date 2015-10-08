@@ -1333,10 +1333,20 @@ begin
    end;
   end
   else begin
-   if d.dat.constval.kind = dk_enum then begin
-    if d.dat.datatyp.typedata = 
-            contextstack[s.stacktop].d.dat.datatyp.typedata then begin
-     result:= sdk_int32; //todo: different sizes
+   case d.dat.constval.kind of
+    dk_enum: begin
+     if d.dat.datatyp.typedata = 
+             contextstack[s.stacktop].d.dat.datatyp.typedata then begin
+      result:= sdk_int32; //todo: different sizes
+     end;
+    end;
+    dk_set: begin                          //todo: basetype?
+     if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.infoset.itemtype = 
+            ptypedataty(ele.eledataabs(
+                contextstack[s.stacktop].d.dat.datatyp.typedata))^.
+                                                 infoset.itemtype then begin
+      result:= sdk_set32; //todo: different sizes
+     end;
     end;
    end;
   end;

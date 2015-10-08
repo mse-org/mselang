@@ -1302,6 +1302,8 @@
   (ssa: cmpleint32ssa; proc: @cmpleint32op; flags: []), 
 //oc_cmpleflo64
   (ssa: cmpleflo64ssa; proc: @cmpleflo64op; flags: []), 
+//oc_setcontains,
+  (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 

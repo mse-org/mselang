@@ -2007,7 +2007,7 @@ const
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none,oc_cmplepo,oc_cmplebool,oc_cmplecard32,oc_cmpleint32,
        //sdk_flo64,    sdk_set32
-         oc_cmpleflo64,oc_none); //todo: set contains
+         oc_cmpleflo64,oc_setcontains);
                         opname: '<=')
  );
 
@@ -2049,6 +2049,10 @@ begin
        d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
                   contextstack[s.stacktop].d.dat.constval.vaddress) = 0;
       end;
+      sdk_set32: begin
+       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
+                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
+      end;
       else begin
        notsupported();
       end;
@@ -2067,6 +2071,10 @@ begin
       sdk_bool1: begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean <>
                               contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+      sdk_set32: begin
+       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
+                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
       end;
       else begin
        notsupported();
@@ -2140,6 +2148,10 @@ begin
       sdk_bool1: begin
        d.dat.constval.vboolean:= d.dat.constval.vboolean <=
                               contextstack[s.stacktop].d.dat.constval.vboolean;
+      end;
+      sdk_set32: begin
+       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
+                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
       end;
       else begin
        notsupported();

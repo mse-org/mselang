@@ -638,8 +638,8 @@ begin
 end;
 
 procedure inttopoop();
-var
- po1: ppointer;
+//var
+// po1: ppointer;
 begin
  //dummy
 end;
@@ -1391,6 +1391,16 @@ begin
  po1:= stackpop(sizeof(vfloatty));
  po2:= stackpop(sizeof(vfloatty));
  vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+end;
+
+procedure setcontainsop();
+var
+ po1,po2: pvintegerty;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= stackpop(sizeof(vintegerty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= tintegerset(po2^) <= 
+                                                         tintegerset(po1^);
 end;
 
 procedure addflo64op();
@@ -3719,6 +3729,7 @@ const
   cmplecard32ssa = 0;
   cmpleint32ssa = 0;
   cmpleflo64ssa = 0;
+  setcontainsssa = 0;
 
   storesegnilssa = 0;
   storereg0nilssa = 0;
