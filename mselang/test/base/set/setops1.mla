@@ -1,0 +1,16 @@
+program setops1;
+type
+ e = (a,b,c);
+ se = set of e;
+
+var
+ se1: se;
+begin
+ se1:= se1 + [a,c]+[b];
+ if se1 = [a,b,c] then begin
+  se1:= se1*[a,b];
+  if se1 = [a,b] then begin
+   exitcode:= 123;
+  end;
+ end;
+end.

@@ -3134,7 +3134,7 @@ c=3
    (
    kind=1
    a=0,665,4,set
-   c=2
+   c=4
     (
     kind=2
     a=0,648,1,setconstructor1
@@ -3162,6 +3162,50 @@ c=3
     a=0,648,1,setconstructro1 llvm
     teststate=1
     path=setconstructor1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,setop1
+    teststate=1
+    path=setops1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,setop1 llvm
+    teststate=1
+    path=setops1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -4853,7 +4897,9 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=29
+rowstate=31
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
