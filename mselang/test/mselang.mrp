@@ -68,8 +68,8 @@ a=0,665,0,
 c=3
  (
  kind=2
- a=0,648,1,mlc
- teststate=1
+ a=0,648,0,mlc
+ teststate=0
  path=${mselangdir}compiler/mlc.pas
  comment=
  cc=${fpc} -dmse_compiler -B -dmse_checkinternalerror ${file}
@@ -184,8 +184,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
-   c=21
+   a=0,665,4,arith
+   c=25
     (
     kind=1
     a=0,664,4,bool
@@ -448,7 +448,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,pointer
+    a=0,664,4,pointer
     c=6
      (
      kind=2
@@ -992,6 +992,94 @@ c=3
     ao=
     ae=
     aec=1
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,not1
+    teststate=1
+    path=not1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,not1 llvm
+    teststate=1
+    path=not1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,neg1
+    teststate=1
+    path=neg1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,neg1 llvm
+    teststate=1
+    path=neg1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
     ie=0
     )
    teststate=1
@@ -3133,7 +3221,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,set
+   a=0,664,4,set
    c=4
     (
     kind=2
@@ -4897,7 +4985,28 @@ sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=31
+rowstate=52
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

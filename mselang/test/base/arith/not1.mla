@@ -1,0 +1,4 @@
+program not1;
+begin
+ exitcode:= not exitcode + 1 + 123;
+end.

@@ -1364,6 +1364,7 @@ end;
 procedure handlenegfact();
 var
  po1: ptypedataty;
+ i1: int32;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
@@ -1393,11 +1394,12 @@ begin
   else begin
    if getvalue(1,das_none) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    with additem(negops[po1^.h.kind])^ do begin
+    i1:= d.dat.fact.ssaindex;
+    with insertitem(negops[po1^.h.kind],1,false)^ do begin
      if op.op = oc_none then begin
       errormessage(err_negnotpossible,[],1);
      end;
-     par.ssas1:= d.dat.fact.ssaindex;
+     par.ssas1:= i1;
     end;
    end;
   end;

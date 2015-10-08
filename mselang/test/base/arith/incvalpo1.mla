@@ -1,0 +1,10 @@
+program incvalpo1;
+var
+ i1: int32;
+ po1: ^int32;
+begin
+ i1:= 2;
+ po1:= @i1;
+ inc(po1,i1);
+ exitcode:= (pointer(po1)-@i1)+123-8;
+end.

@@ -1,0 +1,5 @@
+program neg1;
+begin
+ exitcode:= -123;
+ exitcode:= -exitcode;
+end.
