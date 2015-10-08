@@ -235,7 +235,7 @@ type
 
  setvaluety = record
   value: int32;  //todo: use arbitrary size
-  settype: elementoffsetty; //0 for empty set
+ // settype: elementoffsetty; //0 for empty set
  end; 
 
  dataty = record

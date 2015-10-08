@@ -253,8 +253,15 @@ begin
   if result then begin
    result:= (dest^.h.kind = source1^.h.kind) and 
                           (dest^.h.datasize = source1^.h.datasize);
-   if result and (dest^.h.kind = dk_enum) then begin
-    result:= issametype(dest,source1);
+   if result then begin
+    case dest^.h.kind of
+     dk_enum: begin
+      result:= issametype(dest,source1);
+     end;
+     dk_set: begin
+      result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+     end;
+    end;
    end;
    if not result then begin
     if destindirectlevel = 0 then begin

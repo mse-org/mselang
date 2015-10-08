@@ -1441,11 +1441,12 @@ begin
  end;
 end;
 
-procedure handlesetfact();
+procedure handlesetfact(); //not finished
 var
  allconst: boolean;
  i1: int32;
  po1,po2: ptypedataty;
+ ca1,ca2: card32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETFACT');
@@ -1457,36 +1458,64 @@ begin
     d.dat.datatyp:= emptyset;
     d.dat.indirection:= 0;
     d.dat.constval.kind:= dk_set;
-    d.dat.constval.vset.settype:= 0; 
+//    d.dat.constval.vset.settype:= 0; 
    end;
-  end;
-  po2:= nil;
-  for i1:= s.stackindex+1 to s.stacktop do begin
-   with contextstack[i1] do begin
-   {$ifdef mse_checkinternalerror}
-    if not (d.kind in datacontexts) then begin
-     internalerror(ie_handler,'20151007A');
+  end
+  else begin
+   po2:= nil;
+   ca1:= 0;          //todo: arbitrary size, ranges
+   for i1:= s.stackindex+1 to s.stacktop do begin
+    with contextstack[i1] do begin
+    {$ifdef mse_checkinternalerror}
+     if not (d.kind in datacontexts) then begin
+      internalerror(ie_handler,'20151007A');
+     end;
+    {$endif}
+     po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+     if po2 = nil then begin
+      po2:= po1;
+     end;
+     if not (po1^.h.kind in ordinaldatakinds) or 
+                                  (po1^.h.indirectlevel <> 0) then begin
+      errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
+     end
+     else begin
+      if (po1 <> po2) then begin //todo: try to convert ordinals
+       incompatibletypeserror(po2,po1,i1-s.stackindex);
+      end;
+     end;
+     case d.kind of 
+      ck_const: begin
+       ca2:= 1 shl d.dat.constval.vcardinal;
+       if ca1 and ca2 <> 0 then begin
+        errormessage(err_duplicatesetelement,[],i1-s.stackindex);
+       end;
+       ca1:= ca1 or ca2;
+      end
+      else begin
+       allconst:= false;
+      end;
+     end; 
     end;
-   {$endif}
-    po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
-    if po2 = nil then begin
-     po2:= po1;
-    end;
-    if not (po1^.h.kind in ordinaldatakinds) or 
-                                 (po1^.h.indirectlevel <> 0) then begin
-     errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
+   end;
+   po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
+   inittypedatasize(po1^,dk_set,0,das_32);
+   with po1^ do begin
+    infoset.itemtype:= ele.eledatarel(po2);
+   end;
+   with contextstack[s.stackindex] do begin
+    d.dat.indirection:= 0;
+    d.dat.datatyp.flags:= [];
+    d.dat.datatyp.typedata:= ele.eledatarel(po1);
+    d.dat.datatyp.indirectlevel:= 0;
+    if allconst then begin
+     d.kind:= ck_const;
+     d.dat.constval.kind:= dk_set;
+     d.dat.constval.vset.value:= ca1;
     end
     else begin
-     if po1 <> po2 then begin
-      incompatibletypeserror(po2,po1,i1-s.stackindex);
-     end;
     end;
-    case d.kind of 
-     ck_const: begin
-     end;
-    end; 
    end;
-//   tryconvert(
   end;
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
