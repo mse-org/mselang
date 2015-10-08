@@ -1264,13 +1264,15 @@ begin
         errormessage(err_tokenexpected,[')'],4,-1);
        end
        else begin
-        if not tryconvert(s.stacktop-s.stackindex,po2,
-                         ptypedataty(po2)^.h.indirectlevel,true) then begin
-         illegalconversionerror(contextstack[s.stacktop].d,po2,
-                                     ptypedataty(po2)^.h.indirectlevel);
-        end
-        else begin
-         contextstack[s.stackindex].d:= contextstack[s.stacktop].d;
+        if getvalue(s.stacktop-s.stackindex,das_none,true) then begin
+         if not tryconvert(s.stacktop-s.stackindex,po2,
+                          ptypedataty(po2)^.h.indirectlevel,true) then begin
+          illegalconversionerror(contextstack[s.stacktop].d,po2,
+                                      ptypedataty(po2)^.h.indirectlevel);
+         end
+         else begin
+          contextstack[s.stackindex].d:= contextstack[s.stacktop].d;
+         end;
         end;
        end;
       end;
