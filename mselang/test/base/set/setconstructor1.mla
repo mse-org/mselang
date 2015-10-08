@@ -1,0 +1,11 @@
+program setconstructor1;
+type
+ e = (a,b,c);
+ se = set of e;
+
+var
+ se1: se;
+begin
+ se1:= [a,c];
+ exitcode:= int32(se1) + 123-5;
+end.
