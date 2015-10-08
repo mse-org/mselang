@@ -146,6 +146,8 @@ type
   oc_and32,
   oc_or1,
   oc_or32,
+  oc_xor1,
+  oc_xor32,
   
   oc_shl32,
   oc_shr32,
@@ -188,6 +190,7 @@ type
   oc_addflo64,
   oc_subflo64,
   oc_diffset,
+  oc_xorset,
 
   oc_addimmint32,
   oc_mulimmint32,
@@ -927,7 +930,7 @@ type
    
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
-   oc_subint32,oc_subflo64,oc_diffset,
+   oc_subint32,oc_subflo64,oc_diffset,oc_xorset,
    oc_addpoint32,
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
    oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,

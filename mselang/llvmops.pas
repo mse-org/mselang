@@ -748,6 +748,16 @@ begin
  outbinop(BINOP_OR);
 end;
 
+procedure xor1op();
+begin
+ outbinop(BINOP_XOR);
+end;
+
+procedure xor32op();
+begin
+ outbinop(BINOP_XOR);
+end;
+
 procedure shl32op();
 begin
  outbinop(BINOP_SHL);
@@ -835,6 +845,13 @@ begin
   bcstream.emitbinop(BINOP_XOR,bcstream.constval(ord(mc_i32)),
                                          bcstream.ssaval(ssas2)); //not
   bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas1),bcstream.relval(0));
+ end;
+end;
+
+procedure xorsetop(); //todo: arbitrary size
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_XOR,bcstream.ssaval(ssas1),bcstream.ssaval(ssas2));
  end;
 end;
 
@@ -3046,6 +3063,8 @@ const
   and32ssa = 1;
   or1ssa = 1;
   or32ssa = 1;
+  xor1ssa = 1;
+  xor32ssa = 1;
   
   shl32ssa = 1;
   shr32ssa = 1;
@@ -3128,6 +3147,7 @@ const
   addflo64ssa = 1;
   subflo64ssa = 1;
   diffsetssa = 2;
+  xorsetssa = 1;
 
   addimmint32ssa = 1;
   mulimmint32ssa = 1;

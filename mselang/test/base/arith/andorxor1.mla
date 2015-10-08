@@ -1,0 +1,12 @@
+program andorxor1;
+
+var
+ i1,i2,i3: int32;
+begin
+ i1:= $ff;
+ i2:= $81;
+ i3:= not $200;
+ if ((i1 xor i2) or $300) and i3 = $17e then begin
+  exitcode:= 123;
+ end;
+end.

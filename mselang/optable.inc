@@ -1003,6 +1003,10 @@
   (ssa: or1ssa; proc: @or1op; flags: []), 
 //oc_or32
   (ssa: or32ssa; proc: @or32op; flags: []), 
+//oc_xor1
+  (ssa: xor1ssa; proc: @xor1op; flags: []), 
+//oc_xor32
+  (ssa: xor32ssa; proc: @xor32op; flags: []), 
 
 //oc_shl32
   (ssa: shl32ssa; proc: @shl32op; flags: []), 
@@ -1158,6 +1162,8 @@
   (ssa: subflo64ssa; proc: @subflo64op; flags: []), 
 //oc_diffset
   (ssa: diffsetssa; proc: @diffsetop; flags: []), 
+//oc_xorset
+  (ssa: xorsetssa; proc: @xorsetop; flags: []), 
 
 //oc_addimmint32
   (ssa: addimmint32ssa; proc: @addimmint32op; flags: []), 

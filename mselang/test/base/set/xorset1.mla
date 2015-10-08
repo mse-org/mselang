@@ -1,0 +1,14 @@
+program xorset1;
+
+type
+ e = (a,b,c);
+ se = set of e;
+var
+ s1,s2: se;
+begin
+ s1:= [a,b,c];
+ s2:= [b];
+ if s1 >< s2 = [a,c] then begin
+  exitcode:= 123;
+ end;
+end.

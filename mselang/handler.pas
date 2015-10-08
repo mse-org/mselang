@@ -123,6 +123,8 @@ procedure handledereference();
 procedure handleaddterm();
 procedure handlesubterm();
 procedure handleorterm();
+procedure handlexorterm();
+procedure handlexorsetterm();
 procedure handlebracketend();
 procedure handlesimpexp();
 procedure handlesimpexp1();
@@ -869,6 +871,20 @@ const
         oc_none);
                      opname: 'or');
 
+ xorops: opsinfoty = 
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+ (ops: (oc_none, oc_none,    oc_xor1,  oc_xor32,  oc_xor32, oc_none,
+      //sdk_set32
+        oc_none);
+                     opname: 'xor');
+
+ xorsetops: opsinfoty = 
+      //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
+ (ops: (oc_none, oc_none,    oc_none,  oc_none,  oc_none, oc_none,
+      //sdk_set32
+        oc_xorset);
+                     opname: '><');
+
 procedure addsubterm(const issub: boolean);
  
  procedure opnotsupported();
@@ -1076,6 +1092,22 @@ begin
  outhandle('ORTERM');
 {$endif}
  updateop(orops);
+end;
+
+procedure handlexorterm(); //todo: optimize constants
+begin
+{$ifdef mse_debugparser}
+ outhandle('XORTERM');
+{$endif}
+ updateop(xorops);
+end;
+
+procedure handlexorsetterm(); //todo: optimize constants
+begin
+{$ifdef mse_debugparser}
+ outhandle('XORSETTERM');
+{$endif}
+ updateop(xorsetops);
 end;
 
 procedure handleterm();

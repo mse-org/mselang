@@ -680,6 +680,24 @@ begin
  vintegerty(po2^):= vintegerty(po2^) or vintegerty(po1^);
 end;
 
+procedure xor1op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vbooleanty));
+ po2:= po1-alignsize(sizeof(vbooleanty));
+ vbooleanty(po2^):= vbooleanty(po2^) xor vbooleanty(po1^);
+end;
+
+procedure xor32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) xor vintegerty(po1^);
+end;
+
 procedure shl32op();
 var
  po1,po2: pointer;
@@ -1428,6 +1446,15 @@ begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
  vintegerty(po2^):= vintegerty(po2^) and not vintegerty(po1^);
+end;
+
+procedure xorsetop(); //todo: arbitrary size
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) xor vintegerty(po1^);
 end;
 
 procedure card8tocard16op();
@@ -3564,6 +3591,8 @@ const
   and32ssa = 0;
   or1ssa = 0;
   or32ssa = 0;
+  xor1ssa = 0;
+  xor32ssa = 0;
   
   shl32ssa = 0;
   shr32ssa = 0;
@@ -3646,6 +3675,7 @@ const
   addflo64ssa = 0;
   subflo64ssa = 0;
   diffsetssa = 0;
+  xorsetssa = 0;
 
   addimmint32ssa = 0;
   mulimmint32ssa = 0;

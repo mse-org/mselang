@@ -753,6 +753,8 @@ simpexp1,simpexp1,,
  '+',addterm-*
  '-',subterm-*
  'or'.,orterm-*
+ 'xor'.,xorterm-*
+ '><',xorsetterm-*
  '',simpexp1a
 simpexp1a,,,handlesimpexp1
 
@@ -761,6 +763,10 @@ addterm,,,handleaddterm
 subterm,,,handlesubterm
  '',term*
 orterm,,,handleorterm
+ '',term*
+xorterm,,,handlexorterm
+ '',term*
+xorsetterm,,,handlexorsetterm
  '',term*
 
 term,term1,,
@@ -803,6 +809,8 @@ fact0,fact1,,
  'shl'.,*
  'shr'.,*
  'or'.,*
+ 'xor'.,*
+ '><',*
  @identstart,valueidentifier*
  '',illegalexpression
 
