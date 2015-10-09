@@ -23,7 +23,8 @@ uses
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer;
           const typeconversion: boolean): boolean;
-function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
+function tryconvert(const stackoffset: integer; const dest: systypety;
+                           const typeconversion: boolean = false): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
@@ -292,6 +293,12 @@ begin
            dk_integer: begin
             result:= true;
            end;
+           dk_set: begin
+            if typeconversion then begin
+             result:= true;
+            end;
+            vcardinal:= venum.value;
+           end;
           end;
          end;
          dk_integer: begin
@@ -301,6 +308,12 @@ begin
            end;
            dk_cardinal: begin
             result:= true;
+           end;
+           dk_set: begin
+            if typeconversion then begin
+             result:= true;
+            end;
+            vinteger:= venum.value;
            end;
           end;
          end;
@@ -447,10 +460,12 @@ begin
  end;
 end;
 
-function tryconvert(const stackoffset: integer; const dest: systypety): boolean;
+function tryconvert(const stackoffset: integer; const dest: systypety;
+                           const typeconversion: boolean = false): boolean;
 begin
  with sysdatatypes[dest] do begin
-  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel,false);
+  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel,
+                                                              typeconversion);
  end;
 end;
 

@@ -2277,7 +2277,7 @@ begin
  {$ifdef mse_checkinternalerror}
  {$endif}
   baseoffset:= s.stacktop-s.stackindex-2;
-  if tryconvert(baseoffset,st_card32) and 
+  if tryconvert(baseoffset,st_card32,true) and 
       (b^.dat.datatyp.indirectlevel = 0) and 
              (ptypedataty(ele.eledataabs(
                       b^.dat.datatyp.typedata))^.h.kind = dk_set) then begin
