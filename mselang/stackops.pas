@@ -1421,6 +1421,15 @@ begin
                                                          tintegerset(po1^);
 end;
 
+procedure setinop();
+var
+ po1,po2: pvintegerty;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= stackpop(sizeof(vintegerty));
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po1^ in tintegerset(po2^);
+end;
+
 procedure addflo64op();
 var
  po1,po2: pointer;
@@ -3760,6 +3769,7 @@ const
   cmpleint32ssa = 0;
   cmpleflo64ssa = 0;
   setcontainsssa = 0;
+  setinssa = 0;
 
   storesegnilssa = 0;
   storereg0nilssa = 0;

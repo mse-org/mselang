@@ -1,13 +1,14 @@
-program pofunc;
+program andorxor1;
 
-function test(p: int32): ^card16;
-begin
- result:= p;
-end;
-
+type
+ r = record
+  a: int32;
+  b: int32;
+ end;
+ pr = ^r;
 var
- p1: ^card8;
+ po1: pr;
+ bo1: bool1;
 begin
- p1:= test(123);
- exitcode:= p1;
+ bo1:= (po1 <> nil) and (po1^.a = 0);
 end.

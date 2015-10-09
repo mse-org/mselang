@@ -92,6 +92,7 @@ procedure handlegtsimpexp();
 procedure handleltsimpexp();
 procedure handlegesimpexp();
 procedure handlelesimpexp();
+procedure handleinsimpexp();
 
 procedure handlecommaseprange();
 
@@ -790,6 +791,8 @@ begin
 {$endif}
 end;
 *)
+
+//todo: boolean expression shortcut
 
 const                     
  mulops: opsinfoty = 
@@ -2008,7 +2011,7 @@ begin
 end;
 
 type
- cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le);
+ cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le,cmpo_in);
 const
  cmpops: array[cmpopty] of opsinfoty = (
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
@@ -2040,7 +2043,12 @@ const
   (ops: (oc_none,oc_cmplepo,oc_cmplebool,oc_cmplecard32,oc_cmpleint32,
        //sdk_flo64,    sdk_set32
          oc_cmpleflo64,oc_setcontains);
-                        opname: '<=')
+                        opname: '<='),
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
+  (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,
+       //sdk_flo64,    sdk_set32
+         oc_none,      oc_none); //special handling
+                        opname: 'in')
  );
 
 procedure handlecomparison(const aop: cmpopty);
@@ -2253,6 +2261,46 @@ begin
  outhandle('LESIMPEXP');
 {$endif}
  handlecomparison(cmpo_le);
+end;
+
+procedure handleinsimpexp();
+var
+ baseoffset: int32;
+ a,b: pcontextdataty; 
+begin
+{$ifdef mse_debugparser}
+ outhandle('INSIMPEXP');
+{$endif}
+ with info do begin
+  a:= @contextstack[s.stacktop-2].d;
+  b:= @contextstack[s.stacktop].d;
+ {$ifdef mse_checkinternalerror}
+ {$endif}
+  baseoffset:= s.stacktop-s.stackindex-2;
+  if tryconvert(baseoffset,st_card32) and 
+      (b^.dat.datatyp.indirectlevel = 0) and 
+             (ptypedataty(ele.eledataabs(
+                      b^.dat.datatyp.typedata))^.h.kind = dk_set) then begin
+   if (a^.kind = ck_const) and (b^.kind = ck_const) then begin
+    a^.dat.constval.kind:= dk_boolean;
+    a^.dat.datatyp:= sysdatatypes[st_bool1];
+    a^.dat.constval.vboolean:= a^.dat.constval.vinteger in
+                    tintegerset(b^.dat.constval.vset);
+   end
+   else begin
+    if getvalue(baseoffset,das_32) and 
+                    getvalue(baseoffset+2,das_none) then begin
+     addfactbinop(oc_setin);
+     setsysfacttype(a^,st_bool1);
+    end;
+   end;
+  end
+  else begin
+   operationnotsupportederror(a^,b^,cmpops[cmpo_in].opname);
+  end;
+  dec(s.stacktop,2);
+  s.stackindex:= s.stacktop-1; 
+ end;
 end;
 
 procedure handlecommaseprange();

@@ -275,6 +275,7 @@ type
   oc_cmpleint32,
   oc_cmpleflo64,
   oc_setcontains,
+  oc_setin,
 
   oc_storesegnil,
   oc_storereg0nil,
@@ -938,7 +939,7 @@ type
    oc_cmpltbool,oc_cmpltint32,oc_cmpltflo64,
    oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64,
-   oc_setcontains:(
+   oc_setcontains,oc_setin:(
     stackop: stackopty;
    );
    {oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo,}

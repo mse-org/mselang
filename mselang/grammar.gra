@@ -731,7 +731,8 @@ exp1,,,handleexp1
  '>',gtsimpexp-* 
  '<',ltsimpexp-* 
  '>=',gesimpexp-* 
- '<=',lesimpexp-* 
+ '<=',lesimpexp-*
+ 'in'.,insimpexp-*
 
 eqsimpexp,,,handleeqsimpexp
  '',simpexp*
@@ -744,6 +745,8 @@ ltsimpexp,,,handleltsimpexp
 gesimpexp,,,handlegesimpexp
  '',simpexp*
 lesimpexp,,,handlelesimpexp
+ '',simpexp*
+insimpexp,,,handleinsimpexp
  '',simpexp*
 
 simpexp,simpexp1,,

@@ -21,7 +21,7 @@ interface
 uses
  opglob,parserglob,msestream,llvmbcwriter,llvmbitcodes;
 
-//todo: generate bitcode, use static string buffers, no ansistrings
+//todo: handle shiftcount overflow
  
 function getoptable: poptablety;
 //function getssatable: pssatablety;
@@ -1725,6 +1725,16 @@ begin
  end;
 end;
 
+procedure setinop();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oc_i32)),
+                                    bcstream.ssaval(ssas1));
+  bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));
+  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),bcstream.constval(ord(nc_i32)));
+ end;
+end;
+
 procedure storesegnilop();
 var
  str1: shortstring;
@@ -3232,6 +3242,7 @@ const
   cmpleint32ssa = 1;
   cmpleflo64ssa = 1;
   setcontainsssa = 3;
+  setinssa = 3;
 
   storesegnilssa = 0;
   storereg0nilssa = 1;

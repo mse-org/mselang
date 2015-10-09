@@ -115,6 +115,7 @@ function findvar(const astackoffset: integer;
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
+procedure addfactbinop(const aopcode: opcodety);
 procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
@@ -213,9 +214,12 @@ function getopdatatype(const atypedata: ptypedataty;
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
 function getbasetypedata(const abitsize: databitsizety): ptypedataty;
-function getsystypeele(const atype: systypety): elementoffsetty;
 function issametype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
+
+function getsystypeele(const atype: systypety): elementoffsetty;
+procedure setsysfacttype(var acontextdata: contextdataty; 
+                                             const atype: systypety);
 
 procedure sethandlerflag(const avalue: handlerflagty);
 procedure sethandlererror();
@@ -800,6 +804,15 @@ end;
 function getsystypeele(const atype: systypety): elementoffsetty;
 begin
  result:= sysdatatypes[atype].typedata;
+end;
+
+procedure setsysfacttype(var acontextdata: contextdataty;
+                                             const atype: systypety);
+begin
+ with acontextdata do begin
+  dat.datatyp:= sysdatatypes[atype];
+  dat.fact.opdatatype:= getopdatatype(dat.datatyp);
+ end;
 end;
 
 function issametype(const a,b: ptypedataty): boolean; 
@@ -2076,10 +2089,24 @@ begin
  end;
 end;
 
+procedure addfactbinop(const aopcode: opcodety);
+begin
+ with info,contextstack[s.stacktop-2] do begin
+   with additem(aopcode)^ do begin      
+    par.ssas1:= d.dat.fact.ssaindex;
+    par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+    par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
+                                    d.dat.datatyp.indirectlevel);
+   end;
+   d.kind:= ck_fact;
+   d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+   d.dat.indirection:= 0;   
+  end;
+end;
+
 procedure updateop(const opsinfo: opsinfoty);
 var
  kinda,kindb: datakindty;
-// po1: pelementinfoty;
  int1: integer;
  sd1: stackdatakindty;
  op1: opcodety;
@@ -2160,6 +2187,10 @@ begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
                  int32(contextstack[s.stacktop].d.dat.constval.vinteger);
        end;
+       oc_xor32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
        oc_shl32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shl
                  int32(contextstack[s.stacktop].d.dat.constval.vinteger);
@@ -2191,6 +2222,8 @@ begin
        pushinsertconst(s.stacktop-s.stackindex,false,si1);
       end;
      end;
+     addfactbinop(op1);
+    {
      with additem(op1)^ do begin      
       par.ssas1:= d.dat.fact.ssaindex;
       par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
@@ -2200,12 +2233,10 @@ begin
      d.kind:= ck_fact;
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
      d.dat.indirection:= 0;   
-//     initfactcontext(-1);
+    }
     end;
 endlab:
     dec(s.stacktop,2);
-//    d.dat.datatyp:= sysdatatypes[resultdatatypes[sd1]];
-    context:= nil;
    end;
   end;
   s.stackindex:= s.stacktop-1; 

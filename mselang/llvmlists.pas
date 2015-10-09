@@ -210,6 +210,8 @@ type
                 nc_pointer);
  maxconstty = (mc_i1 = ord(high(nullconstty))+1, mc_i8=255,
                               mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
+ oneconstty = (oc_i1 = ord(high(maxconstty))+1, oc_i8=1,
+                              oc_i16=ord(oc_i1)+1,oc_i32, oc_i64);
 const
  nullpointer = ord(nc_pointer);
  nullconst: llvmconstty = (
@@ -938,6 +940,11 @@ begin
   addi16(-1);
   addi32(-1);
   addi64(-1);
+  addi1(true);
+  addi8(1);
+  addi16(1);
+  addi32(1);
+  addi64(1);
  end;
 end;
 
