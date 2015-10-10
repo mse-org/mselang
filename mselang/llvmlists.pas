@@ -210,8 +210,8 @@ type
                 nc_pointer);
  maxconstty = (mc_i1 = ord(high(nullconstty))+1, mc_i8=255,
                               mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
- oneconstty = (oc_i1 = ord(high(maxconstty))+1, oc_i8=1,
-                              oc_i16=ord(oc_i1)+1,oc_i32, oc_i64);
+ oneconstty = (oc_i1 = ord(mc_i1), oc_i8=1,
+                              oc_i16=ord(high(maxconstty))+1,oc_i32, oc_i64);
 const
  nullpointer = ord(nc_pointer);
  nullconst: llvmconstty = (
@@ -508,8 +508,7 @@ type
    property constlist: tconsthashdatalist read fconstlist;
    property globlist: tgloballocdatalist read fgloblist;
    property metadatalist: tmetadatalist read fmetadatalist;
- end;
- 
+ end; 
 
 implementation
 uses

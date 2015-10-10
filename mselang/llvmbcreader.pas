@@ -19,7 +19,7 @@ unit llvmbcreader;
 interface
 uses
  msestream,classes,mclasses,msetypes,msestrings,
- llvmbitcodes,mselist;
+ llvmbitcodes,mselist,globtypes;
 //
 //not optimized, for debug purpose only
 //
@@ -1492,6 +1492,7 @@ var
  bo1: boolean;
  vararg1: boolean;
  po1: ptypeinfoty;
+ fuco: functioncodes;
  
 begin
  with fblockstack[fblocklevel-1] do begin
@@ -1535,7 +1536,8 @@ begin
    end
    else begin
     if high(rec1) > 1 then begin
-     case functioncodes(rec1[1]) of
+     fuco:= functioncodes(rec1[1]);
+     case fuco of
       FUNC_CODE_DECLAREBLOCKS: begin
        checkdatalen(rec1,2);
        bbcount:= rec1[2];
@@ -1558,7 +1560,12 @@ begin
        str1:= str1+ '('+opname(rec1[2])+','+opname(rec1[3])+')';
        i1:= typeid(rec1[2]);
        i2:= typeid(rec1[3]);
-       outssarecord(i1,str1);
+       if fuco = FUNC_CODE_INST_CMP then begin
+        outssarecord(ord(das_1)*typeindexstep,str1);
+       end
+       else begin
+        outssarecord(i1,str1);
+       end;
        if not checktypeids(i1,i2) then begin
         error('Incompatible type');
        end;
