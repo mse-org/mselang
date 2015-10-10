@@ -1427,7 +1427,7 @@ var
 begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po1^ in tintegerset(po2^);
+ vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ in tintegerset(po1^);
 end;
 
 procedure addflo64op();

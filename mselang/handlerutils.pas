@@ -2134,12 +2134,12 @@ begin
    
    po1:= ele.eledataabs(d.dat.datatyp.typedata);
    int1:= d.dat.datatyp.indirectlevel;
-   if not tryconvert(s.stacktop-s.stackindex,po1,int1,false) then begin
+   if not tryconvert(s.stacktop-s.stackindex,po1,int1,[]) then begin
     with contextstack[s.stacktop] do begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      int1:= d.dat.datatyp.indirectlevel;
     end;
-    if tryconvert(s.stacktop-s.stackindex-2,po1,int1,false) then begin
+    if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[]) then begin
      bo1:= true;
     end;
    end

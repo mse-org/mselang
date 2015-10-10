@@ -2277,9 +2277,11 @@ begin
  {$ifdef mse_checkinternalerror}
  {$endif}
   baseoffset:= s.stacktop-s.stackindex-2;
-  if tryconvert(baseoffset,st_card32,true) and 
-      (b^.dat.datatyp.indirectlevel = 0) and 
-             (ptypedataty(ele.eledataabs(
+  if getvalue(baseoffset,das_32,true) and 
+     getvalue(baseoffset+2,das_none,true) and 
+     tryconvert(baseoffset,st_card32,[coo_enum]) and 
+     (b^.dat.datatyp.indirectlevel = 0) and 
+     (ptypedataty(ele.eledataabs(
                       b^.dat.datatyp.typedata))^.h.kind = dk_set) then begin
    if (a^.kind = ck_const) and (b^.kind = ck_const) then begin
     a^.dat.constval.kind:= dk_boolean;
@@ -2517,7 +2519,7 @@ begin
      dec(int1);
     end;
                          //todo: use destinationaddress directly
-    typematch:= tryconvert(s.stacktop-s.stackindex,dest.typ,int1,false);
+    typematch:= tryconvert(s.stacktop-s.stackindex,dest.typ,int1,[]);
     if not typematch then begin
      assignmenterror(contextstack[s.stacktop].d,dest);
     end

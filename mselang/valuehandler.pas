@@ -19,12 +19,16 @@ unit valuehandler;
 interface
 uses
  globtypes,parserglob,handlerglob;
+
+type
+ convertoptionty = (coo_type,coo_enum,coo_set);
+ convertoptionsty = set of convertoptionty;
  
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer;
-          const typeconversion: boolean): boolean;
+          const aoptions: convertoptionsty): boolean;
 function tryconvert(const stackoffset: integer; const dest: systypety;
-                           const typeconversion: boolean = false): boolean;
+                           const aoptions: convertoptionsty = []): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
@@ -218,7 +222,7 @@ const
 
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer;
-                                      const typeconversion: boolean): boolean;
+                       const aoptions: convertoptionsty): boolean;
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
  int1,i2: integer;
@@ -293,11 +297,17 @@ begin
            dk_integer: begin
             result:= true;
            end;
-           dk_set: begin
-            if typeconversion then begin
+           dk_enum: begin
+            if coo_enum in aoptions then begin
              result:= true;
             end;
             vcardinal:= venum.value;
+           end;
+           dk_set: begin //todo: arbitrary size
+            if coo_set in aoptions then begin
+             result:= true;
+            end;
+            vcardinal:= vset.value;
            end;
           end;
          end;
@@ -309,11 +319,17 @@ begin
            dk_cardinal: begin
             result:= true;
            end;
-           dk_set: begin
-            if typeconversion then begin
+           dk_enum: begin
+            if coo_enum in aoptions then begin
              result:= true;
             end;
             vinteger:= venum.value;
+           end;
+           dk_set: begin //todo: arbitrary size
+            if coo_set in aoptions then begin
+             result:= true;
+            end;
+            vinteger:= vset.value;
            end;
           end;
          end;
@@ -343,6 +359,11 @@ begin
           dk_cardinal: begin
            convertsize(cardtocard);
           end;
+          dk_enum: begin
+           if coo_enum in aoptions then begin
+            convertsize(inttocard);
+           end;
+          end;
          end;
         end;
         dk_integer: begin
@@ -352,6 +373,11 @@ begin
           end;
           dk_integer: begin
            convertsize(inttoint);
+          end;
+          dk_enum: begin
+           if coo_enum in aoptions then begin
+            convertsize(inttoint);
+           end;
           end;
          end;
         end;
@@ -382,7 +408,8 @@ begin
   end
   else begin
    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
-            (d.dat.datatyp.indirectlevel > 0) and typeconversion then begin
+            (d.dat.datatyp.indirectlevel > 0) and 
+                                         (coo_type in aoptions) then begin
     if getvalue(stackoffset,das_pointer) then begin //pointer to int
      int1:= d.dat.fact.ssaindex;        //todo: operand size
      with insertitem(oc_potoint32,stackoffset,false)^ do begin
@@ -446,7 +473,7 @@ begin
       (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
                                                         (destindirectlevel > 0);
   end;
-  if not result and typeconversion then begin
+  if not result and (coo_type in aoptions) then begin
    result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
                              (dest^.h.bytesize = source1^.h.bytesize);
   end;
@@ -461,11 +488,11 @@ begin
 end;
 
 function tryconvert(const stackoffset: integer; const dest: systypety;
-                           const typeconversion: boolean = false): boolean;
+                           const aoptions: convertoptionsty = []): boolean;
 begin
  with sysdatatypes[dest] do begin
-  result:= tryconvert(stackoffset,ele.eledataabs(typedata),indirectlevel,
-                                                              typeconversion);
+  result:= tryconvert(stackoffset,
+                              ele.eledataabs(typedata),indirectlevel,aoptions);
  end;
 end;
 
@@ -477,7 +504,7 @@ begin
  po1:= getbasetypedata(dest);
  if info.contextstack[info.s.stackindex+stackoffset].d.kind = 
                                                         ck_const then begin
-  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,false);
+  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,[]);
   if not result then begin
    illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
                        po1,po1^.h.indirectlevel);
@@ -489,7 +516,7 @@ begin
  else begin
   result:= getvalue(stackoffset,dest);
   if result then begin
-   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,false);
+   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,[]);
    if not result then begin
     illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
                        po1,po1^.h.indirectlevel);
@@ -1281,7 +1308,7 @@ begin
        else begin
         if getvalue(s.stacktop-s.stackindex,das_none,true) then begin
          if not tryconvert(s.stacktop-s.stackindex,po2,
-                          ptypedataty(po2)^.h.indirectlevel,true) then begin
+                     ptypedataty(po2)^.h.indirectlevel,[coo_type]) then begin
           illegalconversionerror(contextstack[s.stacktop].d,po2,
                                       ptypedataty(po2)^.h.indirectlevel);
          end
