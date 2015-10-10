@@ -1729,9 +1729,9 @@ procedure setinop();
 begin
  with pc^.par do begin
   bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oc_i32)),
-                                    bcstream.ssaval(ssas1));
+                                                      bcstream.ssaval(ssas1));
   bcstream.emitbinop(BINOP_AND,bcstream.ssaval(ssas2),bcstream.relval(0));
-  bcstream.emitcmpop(ICMP_EQ,bcstream.relval(0),bcstream.constval(ord(nc_i32)));
+  bcstream.emitcmpop(ICMP_NE,bcstream.relval(0),bcstream.constval(ord(nc_i32)));
  end;
 end;
 

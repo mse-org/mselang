@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=5
   (
   kind=1
@@ -2145,7 +2145,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B736A0C0
+    ao=An unhandled exception occured at $B73B20C0
     +
     ae=
     aec=123
@@ -3266,7 +3266,7 @@ c=3
    (
    kind=1
    a=0,665,4,set
-   c=8
+   c=10
     (
     kind=2
     a=0,648,1,setconstructor1
@@ -3426,6 +3426,50 @@ c=3
     a=0,648,1,setcomp1 llvm
     teststate=1
     path=setcomp1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,inset1
+    teststate=1
+    path=inset1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,inset1 llvm
+    teststate=1
+    path=inset1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -4372,7 +4416,7 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,665,5,class
   c=16
    (
    kind=2
@@ -4662,8 +4706,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classinhinterface1 llvm
-   teststate=1
+   a=0,648,2,classinhinterface1 llvm
+   teststate=2
    path=classinhinterface1.mla
    comment=
    cc=${mlc_llvm}
@@ -4678,8 +4722,36 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=
-   aec=123
+   ae=*** Error in `/home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1': free(): invalid next size (fast): 0x08394008 ***
+   +======= Backtrace: =========
+   +/lib/libc.so.6(+0x6d2a3)[0xb76272a3]
+   +/lib/libc.so.6(+0x7345a)[0xb762d45a]
+   +/lib/libc.so.6(+0x7409c)[0xb762e09c]
+   +/home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1[0x8048e1d]
+   +/lib/libc.so.6(__libc_start_main+0xf3)[0xb75d39d3]
+   +/home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1[0x80486c1]
+   +======= Memory map: ========
+   +08048000-0804a000 r-xp 00000000 08:03 6035923    /home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1
+   +0804a000-0804b000 r--p 00001000 08:03 6035923    /home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1
+   +0804b000-0804c000 rw-p 00002000 08:03 6035923    /home/mse/packs/standard/git/mselang/mselang/test/class/classinhinterface1
+   +08394000-083b5000 rw-p 00000000 00:00 0          [heap]
+   +b75b9000-b75ba000 rw-p 00000000 00:00 0 
+   +b75ba000-b7764000 r-xp 00000000 08:06 2754332    /lib/libc-2.18.so
+   +b7764000-b7766000 r--p 001aa000 08:06 2754332    /lib/libc-2.18.so
+   +b7766000-b7767000 rw-p 001ac000 08:06 2754332    /lib/libc-2.18.so
+   +b7767000-b776a000 rw-p 00000000 00:00 0 
+   +b776a000-b7785000 r-xp 00000000 08:06 2753622    /lib/libgcc_s.so.1
+   +b7785000-b7786000 r--p 0001a000 08:06 2753622    /lib/libgcc_s.so.1
+   +b7786000-b7787000 rw-p 0001b000 08:06 2753622    /lib/libgcc_s.so.1
+   +b77b5000-b77b7000 rw-p 00000000 00:00 0 
+   +b77b7000-b77b8000 r-xp 00000000 00:00 0          [vdso]
+   +b77b8000-b77d9000 r-xp 00000000 08:06 2754328    /lib/ld-2.18.so
+   +b77d9000-b77da000 r--p 00020000 08:06 2754328    /lib/ld-2.18.so
+   +b77da000-b77db000 rw-p 00021000 08:06 2754328    /lib/ld-2.18.so
+   +bfe2f000-bfe50000 rw-p 00000000 00:00 0          [stack]
+   +/home/mse/packs/standard/git/mselang/mselang/run: line 5:  7489 Aborted                 $2
+   +
+   aec=134
    ie=0
    )
    (
@@ -4726,7 +4798,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -5003,7 +5075,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -5110,14 +5182,32 @@ visible=1
 propcolwidthref=566
 width0=50
 sortdescend0=0
-width1=182
+width1=203
 sortdescend1=0
 width2=155
 sortdescend2=0
 width3=208
 sortdescend3=0
 sortdescend4=0
-rowstate=35
+rowstate=53
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
