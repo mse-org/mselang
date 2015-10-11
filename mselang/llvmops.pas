@@ -2985,7 +2985,7 @@ procedure getzeromemop();
 begin
  with pc^.par do begin
   bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_calloc]),
-                           [bcstream.ssaval(ssas2),i32consts[1]]);
+               [bcstream.ssaval(ssas2),bcstream.constval(i32consts[1])]);
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitstoreop(bcstream.relval(1),bcstream.relval(0));
  end;
