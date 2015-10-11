@@ -908,9 +908,9 @@ procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 var
  debugoptionsbefore: debugoptionsty;
 begin
- debugoptionsbefore:= info.s.debugoptions;
+ debugoptionsbefore:= info.debugoptions;
  fillchar(info,sizeof(info),0);
- info.s.debugoptions:= debugoptionsbefore;
+ info.debugoptions:= debugoptionsbefore;
  exitcode:= 0;
  with info do begin
   outputstream:= aoutput;

@@ -734,11 +734,15 @@ begin
     end;
     mdk_dicompileunit: begin
      with pdicompileunitty(@pm1^.data)^ do begin
+      m1:= subprograms;
+      if mvf_dummy in m1.flags then begin
+       m1:= metanullnode;
+      end;
       emitmetadatanode([metaDW_TAG_compile_unit,
       //       sourcelanguage,producer,isoptimized flags,         runtimeversion,
         difile,sourcelanguage,producer,metanullint,metanullstring,metanullint,
       //enumtypes,   retainedtypes,subprograms,globalvariables,importedentities,
-        metanullnode,metanullnode, subprograms,metanullnode,  metanullnode,
+        metanullnode,metanullnode, m1,metanullnode,  metanullnode,
       //splitdebugfilename,emissionkind
         metanullstring,    emissionkind]);
      end;     
