@@ -234,8 +234,11 @@ end;
 procedure writetransitioninfo(const text: string);
 begin
  with info do begin
-  write(text+' I:'+inttostr(s.stackindex)+' T:'+inttostr(s.stacktop)+' P:'+
+  write(text+' I:'+inttostr(s.stackindex)+' T:'+inttostr(s.stacktop));
+  if s.stackindex >= 0 then begin
+   write(' P:'+
              inttostr(contextstack[s.stackindex].parent));
+  end;
   if s.pc <> nil then begin
    write(' '+s.pc^.caption);
   end;
