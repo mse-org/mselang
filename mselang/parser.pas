@@ -907,10 +907,13 @@ end;
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
 var
  debugoptionsbefore: debugoptionsty;
+ compilerswitchesbefore: compilerswitchesty;
 begin
  debugoptionsbefore:= info.debugoptions;
+ compilerswitchesbefore:= info.compilerswitches;
  fillchar(info,sizeof(info),0);
  info.debugoptions:= debugoptionsbefore;
+ info.compilerswitches:= compilerswitchesbefore;
  exitcode:= 0;
  with info do begin
   outputstream:= aoutput;
@@ -933,6 +936,7 @@ begin
    try
     compileoptions:= aoptions;
     s.debugoptions:= debugoptions;
+    s.compilerswitches:= compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
     unit1:= newunit('program');
     unit1^.filepath:= afilename; //todo: file reading

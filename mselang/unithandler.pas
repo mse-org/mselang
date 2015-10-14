@@ -24,7 +24,7 @@ uses
 const
  systemunitname = '__mla__system';
  compilerunitname = '__mla__compilerunit';
- 
+
 type
  unitlinkinfoty = record  //used for ini, fini
   header: linkheaderty;
@@ -73,6 +73,15 @@ procedure handleimplusesentry();
 procedure handleafterimpluses();
 procedure handleimplementation();
 procedure handleinclude();
+
+procedure handlecompilerswitchentry();
+procedure setcompilerswitch();
+procedure handlelongcompilerswitchentry();
+procedure setlongcompilerswitch();
+procedure setdefaultcompilerswitch();
+procedure unsetcompilerswitch();
+procedure unsetlongcompilerswitch();
+procedure handlecompilerswitch();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
@@ -477,6 +486,144 @@ begin
    end;
   end;
   dec(s.stackindex,2);
+ end;
+end;
+
+procedure handlecompilerswitchentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('COMPILERSWITCHENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  handlerflags:= handlerflags -
+                    [hf_set,hf_clear,hf_long,hf_longset,hf_longclear];
+ end;
+end;
+
+procedure setcompilerswitch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SETCOMPILERSWITCH');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_set);
+ end;
+end;
+
+procedure unsetcompilerswitch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNSETCOMPILERSWITCH');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_clear);
+ end;
+end;
+
+
+procedure handlelongcompilerswitchentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('LONGCOMPILERSWITCHENTRY');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_long);
+ end;
+end;
+
+procedure setlongcompilerswitch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNSETCOMPILERSWITCH');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_longset);
+ end;
+end;
+
+procedure setdefaultcompilerswitch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('SETDEFAULTCOMPILERSWITCH');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_default);
+ end;
+end;
+
+procedure unsetlongcompilerswitch();
+begin
+{$ifdef mse_debugparser}
+ outhandle('UNSETLONGCOMPILERSWITCH');
+{$endif} 
+ with info,contextstack[s.stackindex] do begin
+  include(handlerflags,hf_longclear);
+ end;
+end;
+
+type
+ compilerswitchesidentsty = array[compilerswitchty] of identty;
+const
+ shortcompilerswitches: compilerswitchesidentsty =
+ (0,tk_b);
+ longcompilerswitches: compilerswitchesidentsty =
+ (0,tk_booleval);
+ 
+procedure handlecompilerswitch();
+ function check(const aident: identty;
+                const aswitches: compilerswitchesidentsty): compilerswitchty;
+ var
+  s1: compilerswitchty;  
+ begin
+  result:= cos_none;
+  for s1:= low(s1) to high(s1) do begin
+   if aswitches[s1] = aident then begin
+    result:= s1;
+    break;
+   end;
+  end;
+ end; //check
+
+var
+ s1: compilerswitchty;
+ ident1: identty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('COMPILERSWITCH');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  if s.stacktop > s.stackindex then begin
+  {$ifdef mse_checkinternalerror}
+   if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20151012A');
+   end;
+  {$endif}
+   ident1:= contextstack[s.stackindex+1].d.ident.ident;
+   if hf_long in handlerflags then begin
+    s1:= check(ident1,longcompilerswitches);
+    if handlerflags * [hf_longclear,hf_longset] = [] then begin
+     s1:= cos_none;
+    end;
+   end
+   else begin
+    s1:= check(ident1,shortcompilerswitches);
+    if handlerflags * [hf_clear,hf_set] = [] then begin
+     s1:= cos_none;
+    end;
+   end;
+   if s1 = cos_none then begin
+    identerror(1,err_illegaldirective);
+   end
+   else begin
+    if (handlerflags * [hf_set,hf_longset] <> []) or 
+           (hf_default in handlerflags) and (s1 in compilerswitches) then begin
+     include(s.compilerswitches,s1);
+    end
+    else begin 
+     exclude(s.compilerswitches,s1);
+    end;
+   end;
+  end;
  end;
 end;
 

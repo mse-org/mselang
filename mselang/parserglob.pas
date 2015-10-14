@@ -20,7 +20,13 @@ interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
  segmentutils,llvmbitcodes;
+
+type
+ compilerswitchty = (cos_none,cos_booleval);
+ compilerswitchesty = set of compilerswitchty;
 const
+ defaultcompilerswitches = [];
+
  maxidentlen = 256;
  includemax = 31;
 
@@ -129,13 +135,17 @@ type
                     );
  compileoptionsty = set of compileoptionty;
 const
+ defaultcompileoptions = [];
  mlaruntimecompileoptions = [co_mlaruntime];
  llvmcompileoptions = [co_llvm,co_hasfunction];
  
 type
  debugoptionty = (do_lineinfo);
  debugoptionsty = set of debugoptionty;
-
+const
+ defaultdebugoptions = [];
+ 
+type
 // pparseinfoty = ^parseinfoty;
 
  markinfoty = record
@@ -424,7 +434,8 @@ type
   line: integer;
  end;
 
- handlerflagty = (hf_error,hf_down);
+ handlerflagty = (hf_error,hf_down,hf_default,
+                  hf_set,hf_clear,hf_long,hf_longset,hf_longclear);
  handlerflagsty = set of handlerflagty;
    
  pcontextdataty = ^contextdataty;
@@ -444,7 +455,7 @@ type
 
 
 // opinfoarty = array of opinfoty;
- errorlevelty = (erl_none,erl_fatal,erl_error,erl_note);
+ errorlevelty = (erl_none,erl_fatal,erl_error,erl_warning,erl_note);
 {
  implinfoty = record
   sourceoffset: integer;
@@ -489,7 +500,6 @@ type
  unitinfopoarty = array of punitinfoty;
  unitinfoty = record
   key: identty;
-//  translatedkey: boolean; //used in unitwriter
   name: lstringty;
   namestring: string;
   prev: punitinfoty; //current uses compiled item
@@ -498,8 +508,6 @@ type
   filematch: filematchinfoty;
   rtfilepath: filenamety; //elements and opcode (interpreter only)
   bcfilepath: filenamety; //llvm bitcode
-//  filetimestamp: tdatetime;
-//  guid: tguid; //match unit file kinds (rt, bc)
   bcfilename: filenamety;
   
   filepathmeta: metavaluety;
@@ -517,8 +525,6 @@ type
   interfaceend: markinfoty;
   reloc: unitrelocty;
   
-//  interfaceglobstart: targetadty;
-//  interfaceglobsize: targetadty;
   implementationstart: markinfoty;
   implementationglobstart: targetadty;
   implementationglobsize: targetadty;
@@ -527,7 +533,6 @@ type
   interfaceuses,implementationuses: unitinfopoarty;
   forwardlist: forwardindexty;
   forwardtypes: listadty;
-//  metadatalist: tmetadatalist;
   llvmlists: tllvmlists;
   nameid: int32;
 
@@ -535,15 +540,10 @@ type
   pendingcapacity: integer;
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
-//  impl: implinfoty; //start of implementation parsing
   implstart: pparsercontextty; //start of implementation parsing
   internalsubs: internalsubarty;
   codestop: opaddressty;
   stoponerror: boolean;
-//  namebuffer: lstringty;
-//  namebufferdata: array[0..maxidentlen+2*sizeof(card32)] of char;
-                    //<unitname>+'.'+hex(id)
-//  namebufferstart: int32; //index of id
  end;
  ppunitinfoty = ^punitinfoty;
 
@@ -576,6 +576,7 @@ type
   trystack: listadty;
   trystacklevel: int32;
   debugoptions: debugoptionsty;
+  compilerswitches: compilerswitchesty;
   currentcompileunitmeta: int32;
   currentfilemeta: int32;
   currentscopemeta: int32;
@@ -585,10 +586,9 @@ type
   
  parseinfoty = record
   s: savedparseinfoty;
-//  backend: backendty;
-//  backendhasfunction: boolean;
   compileoptions: compileoptionsty;
   debugoptions: debugoptionsty;
+  compilerswitches: compilerswitchesty;
   modularllvm: boolean;
 
   unitinfochain: elementoffsetty;
@@ -641,5 +641,8 @@ var
  info: parseinfoty;
  
 implementation
-
+initialization
+ info.compileoptions:= defaultcompileoptions;
+ info.debugoptions:= defaultdebugoptions;
+ info.compilerswitches:= defaultcompilerswitches;
 end.
