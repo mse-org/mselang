@@ -2178,7 +2178,15 @@ begin
      if (d.kind = ck_const) and 
                       (contextstack[s.stacktop].d.kind = ck_const) then begin
       bo2:= true;
-      case op1 of
+      case op1 of //add and sub handled in addsubterm()
+       oc_mulint32: begin
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) *
+                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+       end;
+       oc_mulcard32: begin
+        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
+                 card32(contextstack[s.stacktop].d.dat.constval.vcardinal);
+       end;
        oc_and32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) and
                  int32(contextstack[s.stacktop].d.dat.constval.vinteger);
@@ -2198,7 +2206,7 @@ begin
        oc_shr32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shr
                  int32(contextstack[s.stacktop].d.dat.constval.vinteger);
-       end;
+       end; //todo: handle all ops
        else begin
         bo2:= false;
        end;

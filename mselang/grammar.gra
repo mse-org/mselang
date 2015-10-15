@@ -229,7 +229,7 @@ compilerswitch2,directiveend,handlelongcompilerswitchentry,handlecompilerswitch
  'on'.,!setlongcompilerswitch-*
  '-',!unsetlongcompilerswitch-*
  'off'.,!unsetlongcompilerswitch-*
- 'default'.!setdefaultcompilerswitch-*
+ 'default'.,!setdefaultcompilerswitch-*
 
 directiveend,,,^*>
  '}',-*
@@ -736,66 +736,48 @@ statementend,,,handlestatementend!
 //
 // expression
 //
-exp,,,handleexp^
- '',callexp*
-callexp,exp1,,
- '',simpexp*
-exp1,,,handleexp1
- ${whitespace}
- '=',eqsimpexp-* 
- '<>',nesimpexp-* 
- '>',gtsimpexp-* 
- '<',ltsimpexp-* 
- '>=',gesimpexp-* 
- '<=',lesimpexp-*
- 'in'.,insimpexp-*
-
-eqsimpexp,,,handleeqsimpexp
- '',simpexp*
-nesimpexp,,,handlenesimpexp
- '',simpexp*
-gtsimpexp,,,handlegtsimpexp
- '',simpexp*
-ltsimpexp,,,handleltsimpexp
- '',simpexp*
-gesimpexp,,,handlegesimpexp
- '',simpexp*
-lesimpexp,,,handlelesimpexp
- '',simpexp*
-insimpexp,,,handleinsimpexp
- '',simpexp*
-
-simpexp,simpexp1,,
- '',term*
-simpexp1,simpexp1,,
- ${whitespace}
- '+',addterm-*
- '-',subterm-*
- 'or'.,orterm-*
- 'xor'.,xorterm-*
- '><',xorsetterm-*
- '',simpexp1a
-simpexp1a,,,handlesimpexp1
-
-addterm,,,handleaddterm
- '',term*
-subterm,,,handlesubterm
- '',term*
-orterm,,,handleorterm
- '',term*
-xorterm,,,handlexorterm
- '',term*
-xorsetterm,,,handlexorsetterm
- '',term*
-
-term,term1,,
- '',fact*
-term1,,,handleterm
- ${whitespace}
- '*',mulfact-*>
+{facts}
+" '*',mulfact-*>
  'and'.,andfact-*>
  'shl'.,shlfact-*>
  'shr'.,shrfact-*>
+"
+{factswitch}
+" ${whitespace}
+ ${facts}
+"
+{terms}
+" ${facts}
+ '+',addterm-*>
+ '-',subterm-*>
+ 'or'.,orterm-*>
+ 'xor'.,xorterm-*>
+ '><',xorsetterm-*>
+"
+{termswitch}
+" ${whitespace}
+ ${terms}
+"
+{simpexps}
+" ${terms}
+ '=',eqsimpexp-*>
+ '<>',nesimpexp-*> 
+ '>',gtsimpexp-*>
+ '<',ltsimpexp-*>
+ '>=',gesimpexp-*> 
+ '<=',lesimpexp-*>
+ 'in'.,insimpexp-*>
+"
+{simpexpswitch}
+" ${whitespace}
+ ${simpexps}
+"
+exp,,,handleexp^
+ '',callexp*
+callexp,exp1,,
+ '',fact*
+exp1,,,handleexp1
+${simpexpswitch} 
 
 mulfact,,,handlemulfact
  '',fact*
@@ -805,6 +787,56 @@ shlfact,,,handleshlfact
  '',fact*
 shrfact,,,handleshrfact
  '',fact*
+
+addterm,addterm1,,
+ '',fact*
+addterm1,,,handleaddterm
+${factswitch}
+subterm,subterm1,,
+ '',fact*
+subterm1,,,handlesubterm
+${factswitch}
+orterm,orterm1,,
+ '',fact*
+orterm1,,,handleorterm
+${factswitch}
+xorterm,xorterm1,,
+ '',fact*
+xorterm1,,,handlexorterm
+${factswitch}
+xorsetterm,xorsetterm1,,
+ '',fact*
+xorsetterm1,,,handlexorsetterm
+${factswitch}
+
+eqsimpexp,eqsimpexp1,,
+ '',fact*
+eqsimpexp1,,,handleeqsimpexp
+${termswitch}
+nesimpexp,nesimpexp1,,
+ '',fact*
+nesimpexp1,,,handlenesimpexp
+${termswitch}
+gtsimpexp,gtsimpexp1,,
+ '',fact*
+gtsimpexp1,,,handlegtsimpexp
+${termswitch}
+ltsimpexp,ltsimpexp1,,
+ '',fact*
+ltsimpexp1,,,handleltsimpexp
+${termswitch}
+gesimpexp,gesimpexp1,,
+ '',fact*
+gesimpexp1,,,handlegesimpexp
+${termswitch}
+lesimpexp,lesimpexp1,,
+ '',fact*
+lesimpexp1,,,handlelesimpexp
+${termswitch}
+insimpexp,insimpexp1,,
+ '',fact*
+insimpexp1,,,handleinsimpexp
+${termswitch}
 
 addressfact,fact0,handleaddressfactentry,
 addressopfact,fact0,handleaddressopfactentry,
@@ -824,12 +856,14 @@ fact0,fact1,,
  '$',hexnum-*
  '''',string-*
  '#',char-*
- 'and'.,*
+ 'and'.,* //operators
  'shl'.,*
  'shr'.,*
  'or'.,*
  'xor'.,*
- '><',*
+ 'in'.,*
+ 'is'.,*
+ 'as'.,*
  @identstart,valueidentifier*
  '',illegalexpression
 

@@ -889,6 +889,7 @@ const
                      opname: '><');
 
 procedure addsubterm(const issub: boolean);
+             //special inc(), dec(), pointer arithmetic
  
  procedure opnotsupported();
  var

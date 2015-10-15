@@ -601,7 +601,7 @@ begin
    ident1:= contextstack[s.stackindex+1].d.ident.ident;
    if hf_long in handlerflags then begin
     s1:= check(ident1,longcompilerswitches);
-    if handlerflags * [hf_longclear,hf_longset] = [] then begin
+    if handlerflags * [hf_longclear,hf_longset,hf_default] = [] then begin
      s1:= cos_none;
     end;
    end
