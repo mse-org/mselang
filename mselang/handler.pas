@@ -118,8 +118,9 @@ procedure handlesetfact();
 
 procedure handlefact2entry();
 //procedure handlefact2();
-
+{
 procedure handleterm();
+}
 procedure handledereference();
 procedure handleaddterm();
 procedure handlesubterm();
@@ -127,9 +128,10 @@ procedure handleorterm();
 procedure handlexorterm();
 procedure handlexorsetterm();
 procedure handlebracketend();
+{
 procedure handlesimpexp();
 procedure handlesimpexp1();
-
+}
 procedure handlestatement0entry();
 //procedure handleleftside();
 procedure handlestatementexit();
@@ -1113,7 +1115,7 @@ begin
 {$endif}
  updateop(xorsetops);
 end;
-
+(*
 procedure handleterm();
 begin
 {$ifdef mse_debugparser}
@@ -1127,7 +1129,7 @@ begin
   dec(s.stackindex);
  end;
 end;
-
+*)
 procedure handledereference();
 var
  po1: ptypedataty;
@@ -1576,7 +1578,7 @@ begin
   dec(s.stackindex);
  end;
 end;
-
+(*
 procedure handlesimpexp();
 begin
 {$ifdef mse_debugparser}
@@ -1603,7 +1605,7 @@ begin
   dec(s.stackindex);
  end;
 end;
-
+*)
 procedure handlebracketend();
 begin
 {$ifdef mse_debugparser}
