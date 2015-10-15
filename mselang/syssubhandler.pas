@@ -388,7 +388,9 @@ var
  int1,int3: integer;
  po1: popinfoty; 
  po2: ptypedataty;
-begin                             //todo: datasize
+label
+ errlab;
+begin                      
  with info do begin
   int3:= 0;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
@@ -405,15 +407,44 @@ begin                             //todo: datasize
      case po2^.h.kind of
       dk_boolean: begin
        po1:= additem(oc_writeboolean);
-       po1^.par.voffset:= alignsize(sizeof(boolean));
       end;
       dk_integer: begin
-       po1:= additem(oc_writeinteger);
-       po1^.par.voffset:= alignsize(sizeof(int32));
+       case po2^.h.datasize of
+        das_2_7,das_8: begin
+         po1:= additem(oc_writeinteger8);
+        end;
+        das_9_15,das_16: begin
+         po1:= additem(oc_writeinteger16);
+        end;
+        das_17_31,das_32: begin
+         po1:= additem(oc_writeinteger32);
+        end;
+        das_33_63,das_64: begin
+         po1:= additem(oc_writeinteger64);
+        end;
+        else begin
+         goto errlab;
+        end;
+       end;
       end;
       dk_cardinal: begin
-       po1:= additem(oc_writecardinal);
-       po1^.par.voffset:= alignsize(sizeof(int32));
+       case po2^.h.datasize of
+        das_2_7,das_8: begin
+         po1:= additem(oc_writecardinal8);
+        end;
+        das_9_15,das_16: begin
+         po1:= additem(oc_writecardinal16);
+        end;
+        das_17_31,das_32: begin
+         po1:= additem(oc_writecardinal32);
+        end;
+        das_33_63,das_64: begin
+         po1:= additem(oc_writecardinal64);
+        end;
+        else begin
+         goto errlab;
+        end;
+       end;
       end;
       dk_float: begin
        po1:=  additem(oc_writefloat);
@@ -437,12 +468,14 @@ begin                             //todo: datasize
        po1^.par.voffsaddress:= getrtti(po2);
       end;
       else begin
+errlab:
        errormessage(err_cantreadwritevar,[],int1-s.stackindex);
        po1:= additem(oc_none);
        po1^.par.voffset:= 0;         //dummy
  //      po1^.par.voffsaddress:= getrtti(po2);
       end;
      end;
+     po1^.par.voffset:= alignsize(po2^.h.bytesize);
     end;
     po1^.par.ssas1:= d.dat.fact.ssaindex;
    end;

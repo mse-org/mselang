@@ -120,8 +120,14 @@ type
   
   oc_writeln,
   oc_writeboolean,
-  oc_writecardinal,
-  oc_writeinteger,
+  oc_writecardinal8,
+  oc_writecardinal16,
+  oc_writecardinal32,
+  oc_writecardinal64,
+  oc_writeinteger8,
+  oc_writeinteger16,
+  oc_writeinteger32,
+  oc_writeinteger64,
   oc_writefloat,
   oc_writestring8,
   oc_writepointer,
@@ -815,8 +821,14 @@ const
   oc_raise,
   oc_writeln,
   oc_writeboolean,
-  oc_writecardinal,
-  oc_writeinteger,
+  oc_writecardinal8,
+  oc_writecardinal16,
+  oc_writecardinal32,
+  oc_writecardinal64,
+  oc_writeinteger8,
+  oc_writeinteger16,
+  oc_writeinteger32,
+  oc_writeinteger64,
   oc_writefloat,
   oc_writestring8,
   oc_writepointer,
@@ -898,7 +910,8 @@ type
    oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref:(
     vaddress: dataaddressty;
    );
-   oc_increg0,oc_writeboolean,oc_writeinteger,oc_writefloat,oc_writestring8,
+   oc_increg0,oc_writeboolean,oc_writeinteger8,oc_writeinteger16,
+   oc_writeinteger32,oc_writeinteger64,oc_writefloat,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
    oc_pushstackaddr,{oc_pushstackaddrindi,}
    oc_indirectpooffs,oc_indirectoffspo:(

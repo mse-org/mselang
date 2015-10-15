@@ -955,10 +955,22 @@
   (ssa: writelnssa; proc: @writelnop; flags: []), 
 //oc_writeboolean
   (ssa: writebooleanssa; proc: @writebooleanop; flags: []), 
-//oc_writecardinal
-  (ssa: writecardinalssa; proc: @writecardinalop; flags: []), 
-//oc_writeinteger
-  (ssa: writeintegerssa; proc: @writeintegerop; flags: []), 
+//oc_writecardinal8
+  (ssa: writecardinal8ssa; proc: @writecardinal8op; flags: []), 
+//oc_writecardinal16
+  (ssa: writecardinal16ssa; proc: @writecardinal16op; flags: []), 
+//oc_writecardinal32
+  (ssa: writecardinal32ssa; proc: @writecardinal32op; flags: []), 
+//oc_writecardinal64
+  (ssa: writecardinal64ssa; proc: @writecardinal64op; flags: []), 
+//oc_writeinteger8
+  (ssa: writeinteger8ssa; proc: @writeinteger8op; flags: []), 
+//oc_writeinteger16
+  (ssa: writeinteger16ssa; proc: @writeinteger16op; flags: []), 
+//oc_writeinteger32
+  (ssa: writeinteger32ssa; proc: @writeinteger32op; flags: []), 
+//oc_writeinteger64
+  (ssa: writeinteger64ssa; proc: @writeinteger64op; flags: []), 
 //oc_writefloat
   (ssa: writefloatssa; proc: @writefloatop; flags: []), 
 //oc_writestring8

@@ -456,14 +456,44 @@ begin
  write(vbooleanty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
-procedure writecardinalop();
+procedure writecardinal8op();
 begin
- write(vcardinalty((cpu.stack+cpu.pc^.par.voffset)^));
+ write(card8((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
-procedure writeintegerop();
+procedure writecardinal16op();
 begin
- write(vintegerty((cpu.stack+cpu.pc^.par.voffset)^));
+ write(card16((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writecardinal32op();
+begin
+ write(card32((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writecardinal64op();
+begin
+ write(card64((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writeinteger8op();
+begin
+ write(int8((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writeinteger16op();
+begin
+ write(int16((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writeinteger32op();
+begin
+ write(int32((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
+procedure writeinteger64op();
+begin
+ write(int64((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
 procedure writefloatop();
@@ -3574,8 +3604,14 @@ const
 
   writelnssa = 0;
   writebooleanssa = 0;
-  writecardinalssa = 0;
-  writeintegerssa = 0;
+  writecardinal8ssa = 0;
+  writecardinal16ssa = 0;
+  writecardinal32ssa = 0;
+  writecardinal64ssa = 0;
+  writeinteger8ssa = 0;
+  writeinteger16ssa = 0;
+  writeinteger32ssa = 0;
+  writeinteger64ssa = 0;
   writefloatssa = 0;
   writestring8ssa = 0;
   writepointerssa = 0;

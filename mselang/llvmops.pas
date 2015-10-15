@@ -109,12 +109,16 @@ type
  internalstringinfoty = record
   text: string;
  end;
- internalstringty = (is_ret,is_card32,is_int32,is_string8,is_pointer);
+ internalstringty = (is_ret,is_card32,is_int8,is_int16,is_int32,is_int64,
+                     is_string8,is_pointer);
 const
  internalstringconsts: array[internalstringty] of internalstringinfoty = (
   (text: #$a#0),        //is_ret,
   (text: '%u'#0),       //is_card32,
+  (text: '%hhd'#0),     //is_int8,
+  (text: '%hd'#0),      //is_int16,
   (text: '%d'#0),       //is_int32,
+  (text: '%lld'#0),     //is_int64,
   (text: '%s'#0),       //is_string8,
   (text: '%p'#0)        //is_pointer
  );  
@@ -600,24 +604,64 @@ begin
  notimplemented();
 end;
  
-procedure writecardinalop();
+procedure writecardinalop(const typestring: internalstringty);
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.globval(internalstrings[is_card32]),
+  bcstream.emitbitcast(bcstream.globval(internalstrings[typestring]),
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
 end;
 
-procedure writeintegerop();
+procedure writecardinal8op();
+begin
+ writecardinalop(is_int8);
+end;
+
+procedure writecardinal16op();
+begin
+ writecardinalop(is_int16);
+end;
+
+procedure writecardinal32op();
+begin
+ writecardinalop(is_int32);
+end;
+
+procedure writecardinal64op();
+begin
+ writecardinalop(is_int64);
+end;
+
+procedure writeintegerop(const typestring: internalstringty);
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.globval(internalstrings[is_int32]),
+  bcstream.emitbitcast(bcstream.globval(internalstrings[typestring]),
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
  end;
+end;
+
+procedure writeinteger8op();
+begin
+ writeintegerop(is_int8);
+end;
+
+procedure writeinteger16op();
+begin
+ writeintegerop(is_int16);
+end;
+
+procedure writeinteger32op();
+begin
+ writeintegerop(is_int32);
+end;
+
+procedure writeinteger64op();
+begin
+ writeintegerop(is_int64);
 end;
 
 procedure writefloatop();
@@ -3047,8 +3091,14 @@ const
 
   writelnssa = 1;
   writebooleanssa = 1;
-  writecardinalssa = 1;
-  writeintegerssa = 1;
+  writecardinal8ssa = 1;
+  writecardinal16ssa = 1;
+  writecardinal32ssa = 1;
+  writecardinal64ssa = 1;
+  writeinteger8ssa = 1;
+  writeinteger16ssa = 1;
+  writeinteger32ssa = 1;
+  writeinteger64ssa = 1;
   writefloatssa = 1;
   writestring8ssa = 1;
   writepointerssa = 1;
