@@ -454,6 +454,9 @@ begin                             //todo: datasize
    int3:= int3-po1^.par.voffset;
    po1^.par.voffset:= int3;
   end;
+  with additem(oc_pop)^ do begin
+   par.imm.vsize:= -int3;
+  end;
  end;
 end;
 
