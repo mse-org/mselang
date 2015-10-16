@@ -781,7 +781,7 @@ ${simpexpswitch}
 
 mulfact,,,handlemulfact
  '',fact*
-andfact,,boolexpentry,handleandfact
+andfact,,andopentry,handleandfact
  '',fact*
 shlfact,,,handleshlfact
  '',fact*
@@ -796,7 +796,7 @@ subterm,subterm1,,
  '',fact*
 subterm1,,,handlesubterm
 ${factswitch}
-orterm,orterm1,boolexpentry,
+orterm,orterm1,oropentry,
  '',fact*
 orterm1,,,handleorterm
 ${factswitch}

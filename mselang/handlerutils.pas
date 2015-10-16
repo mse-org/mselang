@@ -116,6 +116,7 @@ function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
 procedure addfactbinop(const aopcode: opcodety);
+procedure resolveshortcuts(const stackoffset: int32);
 procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
@@ -2104,6 +2105,17 @@ begin
   end;
 end;
 
+procedure resolveshortcuts(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
+   addlabel();
+   linkresolveopad(d.shortcutexp.shortcuts,opcount-1);   
+   d.shortcutexp.shortcuts:= 0;
+  end;
+ end;
+end;
+
 procedure updateop(const opsinfo: opsinfoty);
 var
  kinda,kindb: datakindty;
@@ -2230,6 +2242,7 @@ begin
        pushinsertconst(s.stacktop-s.stackindex,false,si1);
       end;
      end;
+     
      addfactbinop(op1);
     {
      with additem(op1)^ do begin      
@@ -2640,7 +2653,8 @@ begin
       end;
      end;
      ck_shortcutexp: begin
-      write('shortcuts:',inttostr(d.shortcutexp.shortcuts));
+      write('op:',d.shortcutexp.op,' shortcuts:',
+                         inttostr(d.shortcutexp.shortcuts));
      end;
     end;
     writeln(' '+inttostr(start.line+1)+':''',

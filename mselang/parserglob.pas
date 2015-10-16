@@ -319,8 +319,10 @@ type
    );
  end;
 
+ shortcutopty = (sco_and,sco_or);
  shortcutexpty = record
-  shortcuts: linkindexty;
+  shortcuts: linkindexty; //resolved by linkresolveopad
+  op: shortcutopty;
  end;
  
  implcontinfoty = record

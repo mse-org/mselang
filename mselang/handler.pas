@@ -106,7 +106,8 @@ procedure handleaddressopfactentry();
 //procedure handleaddressfact();
 procedure handlefact1();
 
-procedure boolexpentry();
+procedure andopentry();
+procedure oropentry();
 
 procedure handleandfact();
 procedure handleshlfact();
@@ -833,11 +834,8 @@ begin
  updateop(mulops);  //todo: optimize constants
 end;
 
-procedure boolexpentry();
+procedure boolexpentry(const aop: shortcutopty);
 begin
-{$ifdef mse_debugparser}
- outhandle('BOOLEXPENTRY');
-{$endif}
  with info,contextstack[s.stackindex-2] do begin
  {$ifdef mse_debugparser}
   if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
@@ -847,8 +845,31 @@ begin
   if d.kind = ck_none then begin
    d.kind:= ck_shortcutexp;
    d.shortcutexp.shortcuts:= 0;
+   d.shortcutexp.op:= aop;
+  end
+  else begin
+   if d.shortcutexp.op <> aop then begin
+    resolveshortcuts(-2);
+    d.shortcutexp.op:= aop;
+   end;
   end;
  end;
+end;
+
+procedure andopentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('ANDOPENTRY');
+{$endif}
+ boolexpentry(sco_and);
+end;
+
+procedure oropentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('OROPENTRY');
+{$endif}
+ boolexpentry(sco_or);
 end;
 
 procedure handleandfact();
@@ -1965,20 +1986,12 @@ begin
  end;
 end;
 
-procedure resolveshortcuts();
-begin
- with info,contextstack[s.stackindex] do begin
-  if d. kind = ck_shortcutexp then begin
-  end;
- end;
-end;
-
 procedure handleexp1();
 begin
 {$ifdef mse_debugparser}
  outhandle('EXP1');
 {$endif}
- resolveshortcuts();
+ resolveshortcuts(0);
  with info do begin
   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
   s.stacktop:= s.stackindex;
