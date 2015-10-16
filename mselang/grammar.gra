@@ -652,7 +652,7 @@ var2,var3,,
 var3,checksemicolon2,,handlevar3
 
 vardef,vardef0,,
- '',ident^*
+ '',commaidents^*
 vardef0,,handlevardefstart,
  ${whitespace}
  ':',vardef1-

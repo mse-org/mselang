@@ -314,59 +314,72 @@ end;
 procedure checkrecordfield(const avisibility: visikindsty;
            const aflags: addressflagsty; var aoffset: dataoffsty;
                                       var atypeflags: typeflagsty);
+ //callstack:  |stackindex 1              2            3        3+identcount
+ //            recordfield,checksemicolon,commaidents2,ident...,gettype
+ //            |result ck_field...
+ //            |------------------3--------------------|
 var
  po1: pfielddataty;
  po2: ptypedataty;
 // ele1: elementoffsetty;
  size1: dataoffsty;
-begin
+ i1,elecount: int32;
+begin 
  with info do begin
+  elecount:= s.stacktop-s.stackindex-3;
  {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex < 3) or 
-            (contextstack[s.stackindex+3].d.kind <> ck_fieldtype) then begin
+  if (elecount < 1) or 
+               (contextstack[s.stacktop].d.kind <> ck_fieldtype) then begin
    internalerror(ie_type,'20140325C');
   end;
  {$endif}
-  if not ele.addelementduplicatedata(contextstack[s.stackindex+2].d.ident.ident,
-                                           ek_field,avisibility,po1) then begin
-   identerror(2,err_duplicateidentifier);
-  end;
-  po1^.flags:= aflags;
-  po1^.offset:= aoffset;
-  po1^.vf.flags:= [];
-  with ptypedataty(ele.parentdata)^ do begin
-   po1^.vf.next:= fieldchain;
-   fieldchain:= ele.eledatarel(po1);
-  end;
-  with contextstack[s.stackindex+3] do begin
-   po1^.vf.typ:= d.typ.typedata;
-   po1^.indirectlevel:= d.typ.indirectlevel;
-   po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
-   if po1^.indirectlevel = 0 then begin      //todo: alignment
-    if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
-     include(atypeflags,tf_hasmanaged);
-     include(po1^.vf.flags,tf_hasmanaged);
-     {
-     with pmanageddataty(
-             pointer(ele.addelementduplicate(tks_managed,[vik_managed],
-                                                               ek_managed))+
-                                            sizeof(elementheaderty))^ do begin
-      managedele:= ele.eledatarel(po1);
+  for i1:= s.stackindex to s.stackindex + elecount - 1 do begin
+  {$ifdef mse_checkinternalerror}
+   if contextstack[i1+3].d.kind <> ck_ident then begin
+    internalerror(ie_type,'20151016');
+   end;
+  {$endif}
+   if not ele.addelementduplicatedata(contextstack[i1+3].d.ident.ident,
+                                            ek_field,avisibility,po1) then begin
+    identerror(2,err_duplicateidentifier);
+   end;
+   po1^.flags:= aflags;
+   po1^.offset:= aoffset;
+   po1^.vf.flags:= [];
+   with ptypedataty(ele.parentdata)^ do begin
+    po1^.vf.next:= fieldchain;
+    fieldchain:= ele.eledatarel(po1);
+   end;
+   with contextstack[s.stacktop] do begin
+    po1^.vf.typ:= d.typ.typedata;
+    po1^.indirectlevel:= d.typ.indirectlevel;
+    po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
+    if po1^.indirectlevel = 0 then begin      //todo: alignment
+     if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+      include(atypeflags,tf_hasmanaged);
+      include(po1^.vf.flags,tf_hasmanaged);
+      {
+      with pmanageddataty(
+              pointer(ele.addelementduplicate(tks_managed,[vik_managed],
+                                                                ek_managed))+
+                                             sizeof(elementheaderty))^ do begin
+       managedele:= ele.eledatarel(po1);
+      end;
+      }
      end;
-     }
+     size1:= po2^.h.bytesize;
+    end
+    else begin
+     size1:= pointersize;
     end;
-    size1:= po2^.h.bytesize;
-   end
-   else begin
-    size1:= pointersize;
+   end;
+   aoffset:= aoffset+size1;
+   with contextstack[i1].d do begin
+    kind:= ck_field;
+    field.fielddata:= ele.eledatarel(po1);
    end;
   end;
-  aoffset:= aoffset+size1;
-  with contextstack[s.stackindex].d do begin
-   kind:= ck_field;
-   field.fielddata:= ele.eledatarel(po1);
-  end;
-  s.stacktop:= s.stackindex;
+  s.stacktop:= s.stackindex+elecount;
  end;
 end;
 
