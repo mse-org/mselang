@@ -800,7 +800,7 @@ orterm,orterm1,oropentry,
  '',fact*
 orterm1,,,handleorterm
 ${factswitch}
-xorterm,xorterm1,,
+xorterm,xorterm1,oropentry,
  '',fact*
 xorterm1,,,handlexorterm
 ${factswitch}

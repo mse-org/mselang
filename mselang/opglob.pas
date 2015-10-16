@@ -111,6 +111,8 @@ type
   oc_increg0,
 
   oc_goto,
+  oc_gotofalse,
+  oc_gototrue,
   oc_cmpjmpneimm4,
   oc_cmpjmpeqimm4,
   oc_cmpjmploimm4,
@@ -805,7 +807,7 @@ type
 const
  controlops = [
   oc_label,
-  oc_goto,
+  oc_goto,oc_gotofalse,oc_gototrue,
   oc_cmpjmpneimm4,
   oc_cmpjmpeqimm4,
   oc_cmpjmploimm4,
@@ -856,7 +858,7 @@ type
   ssas1: int32;
   ssas2: int32;
   case opcodety of 
-   oc_label,oc_goto,oc_if,oc_while,oc_until,
+   oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
    oc_pushcpucontext,oc_popcpucontext:(
     opaddress: labty; //first!

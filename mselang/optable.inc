@@ -940,6 +940,10 @@
 
 //oc_goto
   (ssa: gotossa; proc: @gotoop; flags: []), 
+//oc_gotofalse
+  (ssa: gotofalsessa; proc: @gotofalseop; flags: []), 
+//oc_gototrue
+  (ssa: gototruessa; proc: @gototrueop; flags: []), 
 //oc_cmpjmpneimm4
   (ssa: cmpjmpneimm4ssa; proc: @cmpjmpneimm4op; flags: []), 
 //oc_cmpjmpeqimm4

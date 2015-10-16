@@ -528,6 +528,23 @@ begin
  end;
 end;
 
+procedure gotofalseop();
+begin
+ with pc^.par do begin
+  bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
+             getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex);
+ end;
+end;
+
+procedure gototrueop();
+begin
+ with pc^.par do begin
+  bcstream.emitbrop(bcstream.ssaval(ssas1),
+             getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex,
+                                                         opaddress.bbindex);
+ end;
+end;
+
 procedure compjmpimm(const apredicate: predicate);
 begin
  with pc^.par do begin
@@ -3083,6 +3100,8 @@ const
   increg0ssa = 1;
 
   gotossa = 0;
+  gotofalsessa = 0;
+  gototruessa = 0;
   cmpjmpneimm4ssa = 1;
   cmpjmpeqimm4ssa = 1;
   cmpjmploimm4ssa = 1;

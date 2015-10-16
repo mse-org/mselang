@@ -117,7 +117,8 @@ function addvar(const aname: identty; const avislevel: visikindsty;
 
 procedure addfactbinop(const aopcode: opcodety);
 procedure resolveshortcuts(const stackoffset: int32);
-procedure updateop(const opsinfo: opsinfoty);
+procedure updateop(const opsinfo: opsinfoty{; 
+                                 const ashortcutop: shortcutopty = sco_none});
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
@@ -2116,7 +2117,8 @@ begin
  end;
 end;
 
-procedure updateop(const opsinfo: opsinfoty);
+procedure updateop(const opsinfo: opsinfoty{; 
+                              const ashortcutop: shortcutopty = sco_none});
 var
  kinda,kindb: datakindty;
  int1: integer;
@@ -2242,7 +2244,16 @@ begin
        pushinsertconst(s.stacktop-s.stackindex,false,si1);
       end;
      end;
-     
+     {
+     if (ashortcutop <> sco_none) then begin
+      op1:= shortcutops[ashortcutop];
+      if op1 = oc_none then begin
+       notimplementederror('20151016D');
+      end;
+      with insertcontrolitem(op1,-1,false)^ do begin
+      end;
+     end;
+     }
      addfactbinop(op1);
     {
      with additem(op1)^ do begin      

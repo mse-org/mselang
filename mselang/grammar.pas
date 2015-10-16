@@ -9631,6 +9631,7 @@ begin
  orterm1co.handleexit:= @handleorterm;
  xortermco.branch:= @bxorterm;
  xortermco.next:= @xorterm1co;
+ xortermco.handleentry:= @oropentry;
  xorterm1co.branch:= @bxorterm1;
  xorterm1co.handleexit:= @handlexorterm;
  xorsettermco.branch:= @bxorsetterm;

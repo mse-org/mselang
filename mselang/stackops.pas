@@ -341,6 +341,24 @@ begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
 end;
 
+procedure gotofalseop();
+var
+ po1: pointer;
+begin
+ if not pvbooleanty(cpu.stack-alignsize(sizeof(vbooleanty)))^ then begin
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
+procedure gototrueop();
+var
+ po1: pointer;
+begin
+ if pvbooleanty(cpu.stack-alignsize(sizeof(vbooleanty)))^ then begin
+  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
+ end;
+end;
+
 procedure beginparseop();
 begin
  with cpu.pc^ do begin
@@ -3596,6 +3614,8 @@ const
   increg0ssa = 0;
 
   gotossa = 0;
+  gotofalsessa = 0;
+  gototruessa = 0;
   cmpjmpneimm4ssa = 0;
   cmpjmpeqimm4ssa = 0;
   cmpjmploimm4ssa = 0;

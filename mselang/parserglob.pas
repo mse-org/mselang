@@ -319,7 +319,7 @@ type
    );
  end;
 
- shortcutopty = (sco_and,sco_or);
+ shortcutopty = (sco_none,sco_and,sco_or);
  shortcutexpty = record
   shortcuts: linkindexty; //resolved by linkresolveopad
   op: shortcutopty;

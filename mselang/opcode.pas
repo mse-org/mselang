@@ -83,6 +83,11 @@ function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
 function getitem(const index: integer): popinfoty;
 function addcontrolitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
+{
+function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
+}
 //function addcallitem(const aopcode: opcodety;
 //                               const ssaextension: integer = 0): popinfoty;
 
@@ -671,6 +676,23 @@ begin
  inc(info.s.ssa.blockindex);
  result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
 end;
+
+(* problematic because of existing later controlops
+
+function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (aopcode in controlops) then begin
+  internalerror(ie_parser,'20151016E');
+ end;
+{$endif}
+ result:= insertitem(aopcode,stackoffset,before,ssaextension);
+ inc(info.s.ssa.blockindex);
+ result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+end;
+*)
 {
 function addcallitem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;

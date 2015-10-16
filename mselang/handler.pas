@@ -834,12 +834,23 @@ begin
  updateop(mulops);  //todo: optimize constants
 end;
 
+const 
+ shortcutops: array[shortcutopty] of opcodety = (
+ //sco_none,sco_and,sco_or
+   oc_none, oc_gotofalse,oc_gototrue
+ );
+ 
+ 
 procedure boolexpentry(const aop: shortcutopty);
+var
+ op1: opcodety;
+ po1: popinfoty;
 begin
  with info,contextstack[s.stackindex-2] do begin
  {$ifdef mse_debugparser}
-  if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
-   internalerror(ie_parser,'20151016');
+  if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) or
+   not (contextstack[s.stackindex-1].d.kind in datacontexts) then begin
+   internalerror(ie_parser,'20151016A');
   end;
  {$endif}
   if d.kind = ck_none then begin
@@ -851,6 +862,19 @@ begin
    if d.shortcutexp.op <> aop then begin
     resolveshortcuts(-2);
     d.shortcutexp.op:= aop;
+   end;
+  end;
+  if not (cos_booleval in s.compilerswitches) then begin
+   if getvalue(-1,das_1) then begin
+    op1:= shortcutops[aop];
+    if op1 = oc_none then begin
+     notimplementederror('20151016B');
+    end;
+    po1:= addcontrolitem(op1);
+    with po1^ do begin
+     par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
+    end;
+    linkmark(d.shortcutexp.shortcuts,getsegaddress(seg_op,@po1^.par.opaddress));
    end;
   end;
  end;
