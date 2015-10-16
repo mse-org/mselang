@@ -2111,7 +2111,7 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
    addlabel();
-   linkresolveopad(d.shortcutexp.shortcuts,opcount-1);   
+   linkresolveopad(d.shortcutexp.shortcuts,opcount-1);
    d.shortcutexp.shortcuts:= 0;
   end;
  end;

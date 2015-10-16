@@ -532,7 +532,7 @@ procedure gotofalseop();
 begin
  with pc^.par do begin
   bcstream.emitbrop(bcstream.ssaval(ssas1),opaddress.bbindex,
-             getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex);
+             getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex);
  end;
 end;
 
@@ -540,7 +540,7 @@ procedure gototrueop();
 begin
  with pc^.par do begin
   bcstream.emitbrop(bcstream.ssaval(ssas1),
-             getoppo(cmpjmpimm.destad.opaddress)^.par.opaddress.bbindex,
+             getoppo(opaddress.opaddress+1)^.par.opaddress.bbindex,
                                                          opaddress.bbindex);
  end;
 end;
