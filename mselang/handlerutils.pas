@@ -2639,6 +2639,9 @@ begin
                                                        opmark1.address);
       end;
      end;
+     ck_shortcutexp: begin
+      write('shortcuts:',inttostr(d.shortcutexp.shortcuts));
+     end;
     end;
     writeln(' '+inttostr(start.line+1)+':''',
              psubstr(debugstart,start.po),''',''',singleline(start.po),'''');

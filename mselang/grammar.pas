@@ -9610,6 +9610,7 @@ begin
  mulfactco.branch:= @bmulfact;
  mulfactco.handleexit:= @handlemulfact;
  andfactco.branch:= @bandfact;
+ andfactco.handleentry:= @boolexpentry;
  andfactco.handleexit:= @handleandfact;
  shlfactco.branch:= @bshlfact;
  shlfactco.handleexit:= @handleshlfact;
@@ -9625,6 +9626,7 @@ begin
  subterm1co.handleexit:= @handlesubterm;
  ortermco.branch:= @borterm;
  ortermco.next:= @orterm1co;
+ ortermco.handleentry:= @boolexpentry;
  orterm1co.branch:= @borterm1;
  orterm1co.handleexit:= @handleorterm;
  xortermco.branch:= @bxorterm;

@@ -2145,7 +2145,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7330FA8
+    ao=An unhandled exception occured at $B73C6FA8
     +
     ae=
     aec=123
@@ -5073,7 +5073,7 @@ c=3
   c=2
    (
    kind=2
-   a=0,648,2,ssleb128
+   a=0,648,1,ssleb128
    teststate=1
    path=ssleb128.mla
    comment=
@@ -5095,7 +5095,7 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,ssleb128 llvm
+   a=0,648,1,ssleb128 llvm
    teststate=1
    path=ssleb128.mla
    comment=

@@ -106,7 +106,7 @@ type
                   ck_subres,ck_subcall,ck_controltoken,ck_getfact,ck_label,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
-                  ck_statement,ck_control,
+                  ck_statement,ck_control,ck_shortcutexp,
                   ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,
@@ -318,7 +318,11 @@ type
     forinfo: forinfoty;
    );
  end;
-  
+
+ shortcutexpty = record
+  shortcuts: linkindexty;
+ end;
+ 
  implcontinfoty = record
 //  elemark: markinfoty;
  end;
@@ -413,6 +417,9 @@ type
    );
    ck_control:(
     control: controlinfoty;
+   );
+   ck_shortcutexp:(
+    shortcutexp: shortcutexpty;
    );
    ck_implementation:(
     impl: implcontinfoty;
