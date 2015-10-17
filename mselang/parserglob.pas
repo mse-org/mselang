@@ -188,7 +188,8 @@ type
  end;
  
  factinfoty = record
-  ssaindex: integer;
+  ssaindex: int32;
+  bbindex: int32;
   opdatatype: typeallocinfoty;
 //  databitsize: integer;
  {

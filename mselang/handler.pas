@@ -874,7 +874,8 @@ begin
     with po1^ do begin
      par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
     end;
-    linkmark(d.shortcutexp.shortcuts,getsegaddress(seg_op,@po1^.par.opaddress));
+    linkmarkcontext(d.shortcutexp.shortcuts,
+             getsegmentoffset(seg_op,@po1^.par.opaddress),-2);
    end;
   end;
  end;

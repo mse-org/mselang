@@ -1686,6 +1686,7 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   d.kind:= ck_fact;
   d.dat.fact.ssaindex:= getcontextssa(stackoffset);
+  d.dat.fact.bbindex:= info.s.ssa.blockindex;
   d.dat.indirection:= 0;
  end;
 end;
@@ -2107,11 +2108,13 @@ begin
 end;
 
 procedure resolveshortcuts(const stackoffset: int32);
+var
+ philist: dataoffsty;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
    addlabel();
-   linkresolveopad(d.shortcutexp.shortcuts,opcount-1);
+   linkresolvephi(d.shortcutexp.shortcuts,opcount-1,philist);
    d.shortcutexp.shortcuts:= 0;
   end;
  end;

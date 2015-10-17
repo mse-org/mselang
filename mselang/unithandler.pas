@@ -85,6 +85,9 @@ procedure handlecompilerswitch();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
+procedure linkmarkcontext(var alinks: linkindexty; 
+                            const aaddress: dataoffsty; //in seg_op
+                                                const stackoffset: int32);
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
 procedure linkresolvegoto(const alinks: linkindexty; 
@@ -92,6 +95,9 @@ procedure linkresolvegoto(const alinks: linkindexty;
 procedure linkresolvecall(const alinks: linkindexty; 
                             const aaddress: opaddressty; const aglobid: int32);
 procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
+procedure linkresolvephi(const alinks: linkindexty; 
+                            const aaddress: opaddressty; 
+                                 out philist: dataoffsty); //in seg_localloc
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
 procedure forwardresolve(const aforward: forwardindexty);
@@ -976,9 +982,15 @@ begin
 end;
 
 type
+ contextitemty = record
+  stackindex: int32;
+  opsegoffset: dataoffsty; //in seg_op
+ end;
  linkinfoty = record
   next: linkindexty;
-  dest: segaddressty;
+  case integer of
+   1:(dest: segaddressty);
+   2:(cont: contextitemty);
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
@@ -988,11 +1000,9 @@ var
  linkindex: linkindexty;
  deletedlinks: linkindexty;
  
-procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
-                                                    const offset: integer = 0);
+function link(var alinks: linkindexty): plinkinfoty;
 var
  li1: linkindexty;
- po1: plinkinfoty;
 begin
  li1:= deletedlinks;
  if li1 = 0 then begin
@@ -1001,16 +1011,35 @@ begin
    reallocuninitedarray(high(links)*2+1024,sizeof(links[0]),links);
   end;
   li1:= linkindex;
-  po1:= @links[li1];
+  result:= @links[li1];
  end
  else begin
-  po1:= @links[li1];
-  deletedlinks:= po1^.next;
+  result:= @links[li1];
+  deletedlinks:= result^.next;
  end;
- po1^.next:= alinks;
+ result^.next:= alinks;
+ alinks:= li1;
+end;
+
+procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
+                                                    const offset: integer = 0);
+var
+ po1: plinkinfoty;
+begin
+ po1:= link(alinks);
  po1^.dest:= aaddress;
  inc(po1^.dest.address,offset); 
- alinks:= li1;
+end;
+
+procedure linkmarkcontext(var alinks: linkindexty; 
+                            const aaddress: dataoffsty; //in seg_op
+                                                const stackoffset: int32);
+var
+ po1: plinkinfoty;
+begin
+ po1:= link(alinks);
+ po1^.cont.stackindex:= info.s.stackindex + stackoffset;
+ po1^.cont.opsegoffset:= aaddress;
 end;
 
 procedure linkresolveopad(const alinks: linkindexty;
@@ -1069,6 +1098,72 @@ begin
    with links[li1] do begin
     pcalladdressty(getsegmentpo(dest))^:= ad1;
 //    popaddressty(getsegmentpo(dest))^:= aaddress-1;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
+type
+ phiitemty = record
+  ssa: int32;
+  bbc: int32; //label
+ end;
+ pphiitemty = ^phiitemty;
+
+ philistty = record
+  count: int32;
+  items: record //array of phiitemty
+  end;
+ end;
+ pphilistty = ^philistty;
+ 
+procedure linkresolvephi(const alinks: linkindexty; 
+                            const aaddress: opaddressty; 
+                                 out philist: dataoffsty); //in seg_localloc
+var
+ li1: linkindexty;
+ i1: int32;
+ po1: pphilistty;
+ po2: pphiitemty;
+begin
+ philist:= 0;
+ if alinks <> 0 then begin
+  if co_llvm in info.compileoptions then begin
+   li1:= alinks;
+   i1:= 0;
+   repeat
+    inc(i1);
+    li1:= links[li1].next;
+   until li1 = 0;
+   po1:= allocsegmentpo(seg_localloc,sizeof(philistty)+i1*sizeof(phiitemty));
+   philist:= getsegmentoffset(seg_localloc,po1);
+   with po1^ do begin
+    count:= i1;
+    po2:= @items;
+   end;
+  end;
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    popaddressty(getsegmentpo(seg_op,cont.opsegoffset))^:= aaddress-1;
+    if co_llvm in info.compileoptions then begin
+     with info.contextstack[cont.stackindex] do begin
+     {$ifdef mse_checkinternalerror}
+      if (cont.stackindex < 0) or (cont.stackindex >= info.s.stackindex) or 
+                                                  (d.kind <> ck_fact) then begin
+       internalerror(ie_parser,'20151017A');
+      end;
+     {$endif}
+      po2^.ssa:= d.dat.fact.ssaindex;
+      po2^.bbc:= d.dat.fact.bbindex;
+     end;
+    end;
     if next = 0 then begin
      break;
     end;
