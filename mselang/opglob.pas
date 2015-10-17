@@ -110,6 +110,8 @@ type
   oc_popreg0,
   oc_increg0,
 
+  oc_phi,
+  
   oc_goto,
   oc_gotofalse,
   oc_gototrue,
@@ -607,6 +609,10 @@ type
    1: (blockid: int32);         //origin block id for goto statement
  end;
  
+ phity = record
+  philist: dataoffsty; //in seg_localloc
+ end;
+ 
  cmpjmpimmty = record
   destad: labty; //first!
   imm: ordimmty;
@@ -862,7 +868,10 @@ type
    oc_decloop32,oc_decloop64, //controlops
    oc_pushcpucontext,oc_popcpucontext:(
     opaddress: labty; //first!
-   );   
+   );
+   oc_phi:(
+    phi: phity;
+   );
    oc_setmem: (
     ssas3: int32;
    );

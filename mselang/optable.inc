@@ -938,6 +938,9 @@
 //oc_increg0
   (ssa: increg0ssa; proc: @increg0op; flags: []), 
 
+//oc_phi
+  (ssa: phissa; proc: @phiop; flags: []), 
+
 //oc_goto
   (ssa: gotossa; proc: @gotoop; flags: []), 
 //oc_gotofalse

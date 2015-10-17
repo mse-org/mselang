@@ -336,6 +336,11 @@ begin
  //dummy
 end;
 
+procedure phiop();
+begin
+ //dummy
+end;
+
 procedure gotoop();
 begin
  cpu.pc:= startpo + cpu.pc^.par.opaddress.opaddress;
@@ -3613,6 +3618,8 @@ const
   popreg0ssa = 0;
   increg0ssa = 0;
 
+  phissa = 0;
+  
   gotossa = 0;
   gotofalsessa = 0;
   gototruessa = 0;

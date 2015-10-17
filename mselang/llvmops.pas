@@ -521,6 +521,11 @@ begin
  notimplemented();
 end;
 
+procedure phiop();
+begin
+ notimplemented();
+end;
+
 procedure gotoop();
 begin
  with pc^.par do begin
@@ -3098,6 +3103,8 @@ const
   moveframereg0ssa = 1;
   popreg0ssa = 1;
   increg0ssa = 1;
+
+  phissa = 0;
 
   gotossa = 0;
   gotofalsessa = 0;

@@ -1150,7 +1150,7 @@ begin
   i1:= s.stackindex + stackoffset;
   with contextstack[i1] do begin
  {$ifdef mse_debugparser}
-   if d.kind <> ck_fact then begin
+   if not (d.kind in factcontexts) then begin
     internalerror(ie_handler,'20150913A');
    end;
   {$endif}
@@ -2112,8 +2112,18 @@ var
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in factcontexts) or 
+                     (stackoffset + s.stackindex <> s.stacktop) then begin
+    internalerror(ie_handler,'20151017B');
+   end;
+  {$endif}
    addlabel();
    linkresolvephi(d.shortcutexp.shortcuts,opcount-1,philist);
+   with additem(oc_phi)^ do begin
+    par.phi.philist:=philist;
+   end;
+   d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    d.shortcutexp.shortcuts:= 0;
   end;
  end;
