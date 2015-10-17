@@ -1570,6 +1570,21 @@ begin
         error('Incompatible type');
        end;
       end;
+      FUNC_CODE_INST_PHI: begin
+       checkmindatalen(rec1,4);
+       i1:= rec1[2];
+       str1:= '[';
+       i2:= 3;
+       while i2 <= high(rec1) do begin
+        if typeid(rec1[i2]) <> i1 then begin
+         error('Incompatible phi types');
+        end;
+        str1:= str1+inttostr(ssaindex-rec1[i2])+':'+inttostr(rec1[i2+1])+',';
+        inc(i2,2);
+       end;
+       str1[length(str1)]:= ']';
+       outssarecord(i1,str1);
+      end;
       FUNC_CODE_INST_CAST: begin
        checkdatalen(rec1,4);
        str1:= castopcodesnames[castopcodes(rec1[4])]+

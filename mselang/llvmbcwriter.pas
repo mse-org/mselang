@@ -19,7 +19,7 @@ unit llvmbcwriter;
 interface
 uses
  globtypes,msestream,msetypes,llvmbitcodes,parserglob,elements,msestrings,
- llvmlists,opglob,bcunitglob;
+ llvmlists,opglob,bcunitglob,unithandler;
  
 type
  idarty = record
@@ -179,6 +179,8 @@ type
    procedure emitvstentry(const aid: integer; const anames: array of lstringty);
    procedure emitvstbbentry(const aid: integer; const aname: lstringty);
 
+   procedure emitphiop(const atyp: int32; const alist: pphilistty);
+   
    procedure emitbrop(const acond: int32; const bb1: int32; 
                                                     const bb0: int32);
    procedure emitbrop(const bb: int32);
@@ -1415,6 +1417,22 @@ begin
  emitcode(ord(mabsym_bbentry));
  emitvbr6(aid);
  emitchar6(aname.po,aname.len);
+end;
+
+procedure tllvmbcwriter.emitphiop(const atyp: int32; const alist: pphilistty);
+var
+ po1,pe: pphilistitemty;
+begin
+ emitrec(ord(FUNC_CODE_INST_PHI),[atyp],alist^.count*2);
+ po1:= @alist^.items;
+ pe:= po1 + alist^.count;
+ while po1 < pe do begin
+  emitvbr6(fsubopindex-ssaval(po1^.ssa));
+  emitvbr6(po1^.bbindex);
+  inc(po1);
+ end;
+ checkdebugloc();
+ inc(fsubopindex);
 end;
 
 procedure tllvmbcwriter.emitbrop(const acond: int32; const bb1: int32; 

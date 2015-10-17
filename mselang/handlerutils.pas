@@ -116,7 +116,7 @@ function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
 procedure addfactbinop(const aopcode: opcodety);
-procedure resolveshortcuts(const stackoffset: int32);
+procedure resolveshortcuts(const stackoffset,destoffset: int32);
 procedure updateop(const opsinfo: opsinfoty{; 
                                  const ashortcutop: shortcutopty = sco_none});
 function convertconsts(): stackdatakindty;
@@ -964,10 +964,14 @@ begin
    po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
   end;
   initfactcontext(stackoffset);
+  po1^.d.dat.fact.opdatatype:= getopdatatype(po1^.d.dat.datatyp.typedata,
+                                            po1^.d.dat.datatyp.indirectlevel);
+ {
   with po1^.d.dat.fact.opdatatype do begin
    kind:= si1;
    size:= bitsizes[si1];
   end;
+ }
 //  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
  end;
 end;
@@ -2106,24 +2110,31 @@ begin
   end;
 end;
 
-procedure resolveshortcuts(const stackoffset: int32);
+procedure resolveshortcuts(const stackoffset,destoffset: int32);
 var
  philist: dataoffsty;
+ po1: pcontextitemty;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
   {$ifdef mse_checkinternalerror}
-   if not (d.kind in factcontexts) or 
-                     (stackoffset + s.stackindex <> s.stacktop) then begin
-    internalerror(ie_handler,'20151017B');
+   with contextstack[s.stackindex+destoffset] do begin
+    if not (d.kind in factcontexts) then begin
+     internalerror(ie_handler,'20151017B');
+    end;
    end;
   {$endif}
    addlabel();
-   linkresolvephi(d.shortcutexp.shortcuts,opcount-1,philist);
-   with additem(oc_phi)^ do begin
-    par.phi.philist:=philist;
+   po1:= @contextstack[s.stackindex+destoffset];
+   linkresolvephi(d.shortcutexp.shortcuts,opcount-1,
+                                         po1^.d.dat.fact.ssaindex,philist);
+   with po1^ do begin
+    with additem(oc_phi)^ do begin
+     par.phi.t:= d.dat.fact.opdatatype;
+     par.phi.philist:=philist;
+    end;
+    d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    end;
-   d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    d.shortcutexp.shortcuts:= 0;
   end;
  end;

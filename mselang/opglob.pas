@@ -610,6 +610,7 @@ type
  end;
  
  phity = record
+  t: typeallocinfoty;
   philist: dataoffsty; //in seg_localloc
  end;
  

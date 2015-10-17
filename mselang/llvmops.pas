@@ -523,7 +523,10 @@ end;
 
 procedure phiop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitphiop(bcstream.typeval(phi.t.listindex),
+                                getsegmentpo(seg_localloc,phi.philist));
+ end;
 end;
 
 procedure gotoop();
@@ -3104,7 +3107,7 @@ const
   popreg0ssa = 1;
   increg0ssa = 1;
 
-  phissa = 0;
+  phissa = 1;
 
   gotossa = 0;
   gotofalsessa = 0;

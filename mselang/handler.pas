@@ -860,7 +860,7 @@ begin
   end
   else begin
    if d.shortcutexp.op <> aop then begin
-    resolveshortcuts(-2);
+    resolveshortcuts(-2,-1);
     d.shortcutexp.op:= aop;
    end;
   end;
@@ -873,9 +873,9 @@ begin
     po1:= addcontrolitem(op1);
     with po1^ do begin
      par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
+     linkmarkphi(d.shortcutexp.shortcuts,
+             getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
     end;
-    linkmarkphi(d.shortcutexp.shortcuts,
-             getsegmentoffset(seg_op,@po1^.par.opaddress),d.dat.fact.ssaindex);
    end;
   end;
  end;
@@ -2016,7 +2016,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXP1');
 {$endif}
- resolveshortcuts(0);
+ resolveshortcuts(0,1);
  with info do begin
   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
   s.stacktop:= s.stackindex;
