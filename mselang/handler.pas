@@ -875,7 +875,7 @@ begin
      par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
     end;
     linkmarkphi(d.shortcutexp.shortcuts,
-             getsegmentoffset(seg_op,@po1^.par.opaddress),-2);
+             getsegmentoffset(seg_op,@po1^.par.opaddress),d.dat.fact.ssaindex);
    end;
   end;
  end;

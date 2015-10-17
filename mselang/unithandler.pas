@@ -87,7 +87,7 @@ procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
 procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
-                                                const stackoffset: int32);
+                                                const ssaindex: int32);
 procedure linkresolveopad(const alinks: linkindexty; 
                                                  const aaddress: opaddressty);
 procedure linkresolvegoto(const alinks: linkindexty; 
@@ -982,15 +982,16 @@ begin
 end;
 
 type
- contextitemty = record
-  stackindex: int32;
+ phiitemty = record
   opsegoffset: dataoffsty; //in seg_op
+  ssa: int32;
+  bbindex: int32;
  end;
  linkinfoty = record
   next: linkindexty;
   case integer of
    1:(dest: segaddressty);
-   2:(cont: contextitemty);
+   2:(phi: phiitemty);
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
@@ -1029,22 +1030,6 @@ begin
  po1:= link(alinks);
  po1^.dest:= aaddress;
  inc(po1^.dest.address,offset); 
-end;
-
-procedure linkmarkphi(var alinks: linkindexty; 
-                            const aaddress: dataoffsty; //in seg_op
-                                                const stackoffset: int32);
-var
- po1: plinkinfoty;
- i1: int32;
-begin
- po1:= link(alinks);
- with info do begin
-  i1:= info.s.stackindex + stackoffset;
-  po1^.cont.stackindex:= i1;
-  po1^.cont.opsegoffset:= aaddress;
-  contextstack[i1].bbindex:= s.ssa.bbindex;
- end;
 end;
 
 procedure linkresolveopad(const alinks: linkindexty;
@@ -1114,16 +1099,48 @@ begin
  end;
 end;
 
+procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
+var
+ li1: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  while true do begin
+   with links[li1] do begin
+    pint32(getsegmentpo(dest))^:= avalue;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= alinks;
+ end;
+end;
+
+procedure linkmarkphi(var alinks: linkindexty; 
+                            const aaddress: dataoffsty; //in seg_op
+                                                const ssaindex: int32);
+var
+ po1: plinkinfoty;
+begin
+ po1:= link(alinks);
+ po1^.phi.ssa:= ssaindex;
+ po1^.phi.bbindex:= info.s.ssa.bbindex;
+ po1^.phi.opsegoffset:= aaddress;
+end;
+
 type
- phiitemty = record
+ philistitemty = record
   ssa: int32;
   bbc: int32; //label
  end;
- pphiitemty = ^phiitemty;
+ pphilistitemty = ^phiitemty;
 
  philistty = record
   count: int32;
-  items: record //array of phiitemty
+  items: record //array of philistitemty
   end;
  end;
  pphilistty = ^philistty;
@@ -1135,7 +1152,7 @@ var
  li1: linkindexty;
  i1: int32;
  po1: pphilistty;
- po2: pphiitemty;
+ po2: pphilistitemty;
 begin
  philist:= 0;
  if alinks <> 0 then begin
@@ -1156,39 +1173,11 @@ begin
   li1:= alinks;
   while true do begin
    with links[li1] do begin
-    popaddressty(getsegmentpo(seg_op,cont.opsegoffset))^:= aaddress-1;
+    popaddressty(getsegmentpo(seg_op,phi.opsegoffset))^:= aaddress-1;
     if co_llvm in info.compileoptions then begin
-     with info.contextstack[cont.stackindex] do begin
-     {$ifdef mse_checkinternalerror}
-      if (cont.stackindex < 0) or (cont.stackindex >= info.s.stackindex) or 
-                                                  (d.kind <> ck_fact) then begin
-       internalerror(ie_parser,'20151017A');
-      end;
-     {$endif}
-      po2^.ssa:= d.dat.fact.ssaindex;
-      po2^.bbc:= bbindex;
-     end;
+     po2^.ssa:= phi.ssa;
+     po2^.bbindex:= phi.bbindex;
     end;
-    if next = 0 then begin
-     break;
-    end;
-    li1:= next;
-   end;
-  end;
-  links[li1].next:= deletedlinks;
-  deletedlinks:= alinks;
- end;
-end;
-
-procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
-var
- li1: linkindexty;
-begin
- if alinks <> 0 then begin
-  li1:= alinks;
-  while true do begin
-   with links[li1] do begin
-    pint32(getsegmentpo(dest))^:= avalue;
     if next = 0 then begin
      break;
     end;

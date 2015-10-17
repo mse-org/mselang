@@ -459,7 +459,7 @@ type
   handlerflags: handlerflagsty;
   transitionflags: branchflagsty;
   opmark: opmarkty;
-  bbindex: int32; //used in linkmarkphi
+//  bbindex: int32; //used in linkmarkphi
   b: contextbackupty;
   d: contextdataty;
  end;
