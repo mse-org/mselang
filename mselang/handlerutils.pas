@@ -1686,7 +1686,6 @@ begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   d.kind:= ck_fact;
   d.dat.fact.ssaindex:= getcontextssa(stackoffset);
-  d.dat.fact.bbindex:= info.s.ssa.blockindex;
   d.dat.indirection:= 0;
  end;
 end;

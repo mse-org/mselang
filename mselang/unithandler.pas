@@ -85,7 +85,7 @@ procedure handlecompilerswitch();
 
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                   const offset: integer  = 0);
-procedure linkmarkcontext(var alinks: linkindexty; 
+procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
                                                 const stackoffset: int32);
 procedure linkresolveopad(const alinks: linkindexty; 
@@ -1031,15 +1031,20 @@ begin
  inc(po1^.dest.address,offset); 
 end;
 
-procedure linkmarkcontext(var alinks: linkindexty; 
+procedure linkmarkphi(var alinks: linkindexty; 
                             const aaddress: dataoffsty; //in seg_op
                                                 const stackoffset: int32);
 var
  po1: plinkinfoty;
+ i1: int32;
 begin
  po1:= link(alinks);
- po1^.cont.stackindex:= info.s.stackindex + stackoffset;
- po1^.cont.opsegoffset:= aaddress;
+ with info do begin
+  i1:= info.s.stackindex + stackoffset;
+  po1^.cont.stackindex:= i1;
+  po1^.cont.opsegoffset:= aaddress;
+  contextstack[i1].bbindex:= s.ssa.blockindex;
+ end;
 end;
 
 procedure linkresolveopad(const alinks: linkindexty;
@@ -1161,7 +1166,7 @@ begin
       end;
      {$endif}
       po2^.ssa:= d.dat.fact.ssaindex;
-      po2^.bbc:= d.dat.fact.bbindex;
+      po2^.bbc:= bbindex;
      end;
     end;
     if next = 0 then begin

@@ -189,7 +189,7 @@ type
  
  factinfoty = record
   ssaindex: int32;
-  bbindex: int32;
+//  bbindex: int32;
   opdatatype: typeallocinfoty;
 //  databitsize: integer;
  {
@@ -458,6 +458,7 @@ type
   handlerflags: handlerflagsty;
   transitionflags: branchflagsty;
   opmark: opmarkty;
+  bbindex: int32; //used in linkmarkphi
   b: contextbackupty;
   d: contextdataty;
  end;
