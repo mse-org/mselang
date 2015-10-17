@@ -2073,7 +2073,7 @@ begin
  with info do begin
   s.ssa.index:= 0;
   s.ssa.nextindex:= 0;
-  s.ssa.blockindex:= 0;
+  s.ssa.bbindex:= 0;
  end;
 end;
 

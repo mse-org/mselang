@@ -308,7 +308,7 @@ begin
  updateprogend(additem(oc_progend));
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
-   par.main.blockcount:= info.s.ssa.blockindex+1;
+   par.main.blockcount:= info.s.ssa.bbindex+1;
   end;  
  end;
  

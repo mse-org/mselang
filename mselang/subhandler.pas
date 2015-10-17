@@ -1159,7 +1159,7 @@ begin
   end;
   with po2^ do begin
    par.subbegin.sub.flags:= po1^.flags;
-   par.subbegin.sub.blockcount:= s.ssa.blockindex + 1;
+   par.subbegin.sub.blockcount:= s.ssa.bbindex + 1;
   end;
   s.ssa:= d.subdef.ssabefore;
  end;

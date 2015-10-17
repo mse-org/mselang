@@ -234,7 +234,8 @@ type
  ssainfoty = record
   index: int32;
   nextindex: int32;
-  blockindex: int32;
+  bbindex: int32;
+//  blockindex: int32;
  end;
   
  subinfoty = record

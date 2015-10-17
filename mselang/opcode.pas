@@ -658,7 +658,7 @@ begin
   inc(opcount);
   if aopcode in callops then begin
    if info.s.trystacklevel > 0 then begin
-    inc(info.s.ssa.blockindex);
+    inc(info.s.ssa.bbindex);
    end;
   end;
  end;
@@ -673,8 +673,8 @@ begin
  end;
 {$endif}
  result:= additem(aopcode,ssaextension);
- inc(info.s.ssa.blockindex);
- result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+ inc(info.s.ssa.bbindex);
+ result^.par.opaddress.bbindex:= info.s.ssa.bbindex;
 end;
 
 (* problematic because of existing later controlops
@@ -713,7 +713,7 @@ procedure addlabel();
 begin
  with addcontrolitem(oc_label)^ do begin
   par.opaddress.opaddress:= info.opcount-1;
-  par.opaddress.bbindex:= info.s.ssa.blockindex;
+  par.opaddress.bbindex:= info.s.ssa.bbindex;
  end;
 end;
 
@@ -785,7 +785,7 @@ begin
   end;
   if aopcode in callops then begin
    if info.s.trystacklevel > 0 then begin
-    inc(info.s.ssa.blockindex);
+    inc(info.s.ssa.bbindex);
    end;
   end;   
  end;

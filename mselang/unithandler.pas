@@ -1043,7 +1043,7 @@ begin
   i1:= info.s.stackindex + stackoffset;
   po1^.cont.stackindex:= i1;
   po1^.cont.opsegoffset:= aaddress;
-  contextstack[i1].bbindex:= s.ssa.blockindex;
+  contextstack[i1].bbindex:= s.ssa.bbindex;
  end;
 end;
 
