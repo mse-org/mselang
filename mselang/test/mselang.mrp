@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=19
    (
    kind=1
@@ -184,12 +184,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,5,arith
    c=27
     (
     kind=1
-    a=0,664,4,bool
-    c=6
+    a=0,665,5,bool
+    c=8
      (
      kind=2
      a=0,648,1,and1
@@ -214,8 +214,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
-     teststate=1
+     a=0,648,2,and1 llvm
+     teststate=2
      path=and1.mla
      comment=
      cc=${mlc_llvm}
@@ -230,8 +230,14 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=Branch condition is not 'i1' type!
+     +  br i32 %2, label %3, label %8
+     +  %2 = load i32* @0
+     +Broken module found, compilation aborted!
+     +0  libLLVMSupport.so 0xb6b7b0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+     +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  3706 Aborted                 $1llc $2.bc
+     +
+     aec=134
      ie=0
      )
      (
@@ -258,8 +264,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
-     teststate=1
+     a=0,648,2,or1 llvm
+     teststate=2
      path=or1.mla
      comment=
      cc=${mlc_llvm}
@@ -274,8 +280,14 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=Branch condition is not 'i1' type!
+     +  br i32 %2, label %6, label %3
+     +  %2 = load i32* @0
+     +Broken module found, compilation aborted!
+     +0  libLLVMSupport.so 0xb6aed0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+     +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  3717 Aborted                 $1llc $2.bc
+     +
+     aec=134
      ie=0
      )
      (
@@ -322,7 +334,51 @@ c=3
      aec=123
      ie=0
      )
-    teststate=1
+     (
+     kind=2
+     a=0,648,1,booleval1
+     teststate=1
+     path=booleval1.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,booleaval1 llvm
+     teststate=1
+     path=booleval1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+    teststate=2
     path=bool/
     comment=
     cc=
@@ -644,8 +700,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1
-    teststate=1
+    a=0,648,2,bitexp1
+    teststate=2
     path=bitexp1.mla
     comment=
     cc=${mlc}
@@ -658,16 +714,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
-    teststate=1
+    a=0,648,2,bitexp1 llvm
+    teststate=2
     path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
@@ -680,9 +736,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -1084,8 +1140,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1
-    teststate=1
+    a=0,648,2,andorxor1
+    teststate=2
     path=andorxor1.mla
     comment=
     cc=${mlc}
@@ -1101,13 +1157,13 @@ c=3
     cr=0
     ao=
     ae=
-    aec=123
+    aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
-    teststate=1
+    a=0,648,2,andorxor1 llvm
+    teststate=2
     path=andorxor1.mla
     comment=
     cc=${mlc_llvm}
@@ -1122,11 +1178,28 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=Branch condition is not 'i1' type!
+    +  br i32 %4, label %8, label %5
+    +  %4 = load i32* @0
+    +Branch condition is not 'i1' type!
+    +  br i32 %9, label %13, label %10
+    +  %9 = phi i32 [ %4, %0 ], [ %7, %5 ]
+    +Branch condition is not 'i1' type!
+    +  br i32 %14, label %15, label %20
+    +  %14 = phi i32 [ %9, %8 ], [ %12, %10 ]
+    +PHI node operands are not the same type as the result!
+    +  %21 = phi i32 [ %14, %13 ], [ %19, %15 ]
+    +Branch condition is not 'i1' type!
+    +  br i32 %21, label %22, label %24
+    +  %21 = phi i32 [ %14, %13 ], [ %19, %15 ]
+    +Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6ac90f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  4004 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
-   teststate=1
+   teststate=2
    path=arith/
    comment=
    cc=
@@ -1166,7 +1239,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
+   a=0,664,5,control
    c=30
     (
     kind=2
@@ -1457,7 +1530,7 @@ c=3
     (
     kind=2
     a=0,648,1,case1 llvm
-    teststate=1
+    teststate=2
     path=case1.mla
     comment=
     cc=${mlc_llvm}
@@ -1472,8 +1545,16 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=PHI node operands are not the same type as the result!
+    +  %24 = phi i32 [ %16, %11 ], [ %10, %5 ], [ %4, %0 ], [ %22, %17 ]
+    +Branch condition is not 'i1' type!
+    +  br i32 %24, label %25, label %28
+    +  %24 = phi i32 [ %16, %11 ], [ %10, %5 ], [ %4, %0 ], [ %22, %17 ]
+    +Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6ade0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  4113 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -1828,7 +1909,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -1998,7 +2079,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,enum
+   a=0,664,5,enum
    c=2
     (
     kind=2
@@ -2025,7 +2106,7 @@ c=3
     (
     kind=2
     a=0,648,1,enum1 llvm
-    teststate=1
+    teststate=2
     path=enum1.mla
     comment=
     cc=${mlc_llvm}
@@ -2040,11 +2121,19 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=PHI node operands are not the same type as the result!
+    +  %18 = phi i32 [ %11, %8 ], [ %16, %12 ]
+    +Branch condition is not 'i1' type!
+    +  br i32 %18, label %19, label %27
+    +  %18 = phi i32 [ %11, %8 ], [ %16, %12 ]
+    +Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6b770f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  4300 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
-   teststate=1
+   teststate=2
    path=enum/
    comment=
    cc=
@@ -2145,7 +2234,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73C6FA8
+    ao=An unhandled exception occured at $B738EFA8
     +
     ae=
     aec=123
@@ -3265,7 +3354,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,set
+   a=0,665,5,set
    c=10
     (
     kind=2
@@ -3423,8 +3512,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setcomp1 llvm
-    teststate=1
+    a=0,648,2,setcomp1 llvm
+    teststate=2
     path=setcomp1.mla
     comment=
     cc=${mlc_llvm}
@@ -3439,8 +3528,16 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=PHI node operands are not the same type as the result!
+    +  %24 = phi i32 [ %14, %7 ], [ %22, %15 ]
+    +Branch condition is not 'i1' type!
+    +  br i32 %24, label %25, label %27
+    +  %24 = phi i32 [ %14, %7 ], [ %22, %15 ]
+    +Broken module found, compilation aborted!
+    +0  libLLVMSupport.so 0xb6b1e0f9 llvm::sys::PrintStackTrace(_IO_FILE*) + 41
+    +/home/mse/packs/standard/git/mselang/mselang/run: line 3:  4731 Aborted                 $1llc $2.bc
+    +
+    aec=134
     ie=0
     )
     (
@@ -3487,7 +3584,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=set/
    comment=
    cc=
@@ -4398,7 +4495,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -5069,12 +5166,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,utils
+  a=0,664,5,utils
   c=2
    (
    kind=2
    a=0,648,1,ssleb128
-   teststate=1
+   teststate=2
    path=ssleb128.mla
    comment=
    cc=${mlc}
@@ -5087,16 +5184,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=
-   ae=
+   cr=1
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
    a=0,648,1,ssleb128 llvm
-   teststate=1
+   teststate=2
    path=ssleb128.mla
    comment=
    cc=${mlc_llvm}
@@ -5109,13 +5206,13 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=0
-   ao=
-   ae=
+   cr=1
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=utils/
   comment=
   cc=
@@ -5131,7 +5228,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -5245,7 +5342,42 @@ sortdescend2=0
 width3=225
 sortdescend3=0
 sortdescend4=0
-rowstate=57
+rowstate=92
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

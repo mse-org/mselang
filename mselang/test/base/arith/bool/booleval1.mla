@@ -1,0 +1,20 @@
+program booleval1;
+
+function andfu(): bool1;
+begin
+ result:= true;
+ exitcode:= 123;
+end;
+
+var
+ bo1: bool1;
+begin
+ bo1:= false and false and andfu() or true;
+ if bo1 and (exitcode = 0) then begin
+ {$booleval on}
+  bo1:= false and false and andfu() or true;
+  if not bo1 then begin
+   exitcode:= 111;
+  end;
+ end;
+end;
