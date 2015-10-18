@@ -382,6 +382,7 @@ type
     FUNC_CODE_INST_UNREACHABLE,// = 15, // UNREACHABLE
 
     FUNC_CODE_INST_PHI,//         = 16, // PHI:        [ty, val0,bb0, ...]
+                              //mse PHI: [ty, signed val0,bb0, ...]
     FUNC_CODE_17,
     // 17 is unused.
     FUNC_CODE_18,

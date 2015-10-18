@@ -518,6 +518,16 @@ begin
  end;
 end;
 
+procedure decodesigned1(var value: valuety);
+begin
+ if odd(value) then begin
+  value:= -(value shr 1);
+ end
+ else begin
+  value:= (value shr 1);
+ end;
+end;
+
 { ttypelist }
 
 constructor ttypelist.create;
@@ -1571,11 +1581,15 @@ begin
        end;
       end;
       FUNC_CODE_INST_PHI: begin
-       checkmindatalen(rec1,4);
+       checkmindatalen(rec1,2);
+       if odd(high(rec1)) then begin
+        error('Invalid phi record');
+       end;
        i1:= rec1[2];
        str1:= '[';
        i2:= 3;
        while i2 <= high(rec1) do begin
+        decodesigned1(rec1[i2]);
         if typeid(rec1[i2]) <> i1 then begin
          error('Incompatible phi types');
         end;

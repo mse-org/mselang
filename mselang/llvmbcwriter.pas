@@ -1427,7 +1427,7 @@ begin
  po1:= @alist^.items;
  pe:= po1 + alist^.count;
  while po1 < pe do begin
-  emitvbr6(fsubopindex-ssaval(po1^.ssa));
+  emitvbr6(signedvbr(fsubopindex-ssaval(po1^.ssa)));
   emitvbr6(po1^.bbindex);
   inc(po1);
  end;
