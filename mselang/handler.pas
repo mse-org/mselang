@@ -846,35 +846,45 @@ var
  op1: opcodety;
  po1: popinfoty;
 begin
- with info,contextstack[s.stackindex-2] do begin
- {$ifdef mse_debugparser}
-  if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) or
-   not (contextstack[s.stackindex-1].d.kind in datacontexts) then begin
-   internalerror(ie_parser,'20151016A');
-  end;
- {$endif}
-  if d.kind = ck_none then begin
-   d.kind:= ck_shortcutexp;
-   d.shortcutexp.shortcuts:= 0;
-   d.shortcutexp.op:= aop;
-  end
-  else begin
-   if d.shortcutexp.op <> aop then begin
-    resolveshortcuts(-2,-1);
-    d.shortcutexp.op:= aop;
+ with info,contextstack[s.stackindex-1] do begin
+  {$ifdef mse_debugparser}
+   if (s.stackindex < 1) or not (d.kind in datacontexts) then begin
+    internalerror(ie_parser,'20151016A');
    end;
-  end;
-  if not (cos_booleval in s.compilerswitches) then begin
-   if getvalue(-1,das_1) then begin
-    op1:= shortcutops[aop];
-    if op1 = oc_none then begin
-     notimplementederror('20151016B');
+  {$endif}
+  if (d.dat.datatyp.indirectlevel = 0) and 
+            (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
+                                                        dk_boolean) then begin
+   with contextstack[s.stackindex-2] do begin
+   {$ifdef mse_debugparser}
+    if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
+     internalerror(ie_parser,'20151016A');
     end;
-    po1:= addcontrolitem(op1);
-    with po1^ do begin
-     par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
-     linkmarkphi(d.shortcutexp.shortcuts,
-             getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
+   {$endif}
+    if d.kind = ck_none then begin
+     d.kind:= ck_shortcutexp;
+     d.shortcutexp.shortcuts:= 0;
+     d.shortcutexp.op:= aop;
+    end
+    else begin
+     if d.shortcutexp.op <> aop then begin
+      resolveshortcuts(-2,-1);
+      d.shortcutexp.op:= aop;
+     end;
+    end;
+    if not (cos_booleval in s.compilerswitches) then begin
+     if getvalue(-1,das_1) then begin
+      op1:= shortcutops[aop];
+      if op1 = oc_none then begin
+       notimplementederror('20151016B');
+      end;
+      po1:= addcontrolitem(op1);
+      with po1^ do begin
+       par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
+       linkmarkphi(d.shortcutexp.shortcuts,
+               getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
+      end;
+     end;
     end;
    end;
   end;
@@ -2276,6 +2286,7 @@ begin
    updateop(cmpops[aop]);
    with info,contextstack[s.stacktop] do begin
     d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
+    d.dat.fact.opdatatype:= bitoptypes[das_1];
    end;
   end;
  end;
