@@ -518,7 +518,8 @@ type
 
 implementation
 uses
- parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils;
+ parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
+ opcode;
   
 { tbufferhashdatalist }
 
@@ -1533,6 +1534,7 @@ begin
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
+    dat1.typeindex:= ftypelist.addsubvalue(avalue);
     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
     flinklist.addlink(avalue,result);
    end
@@ -1546,6 +1548,7 @@ begin
   end;
  end
  else begin //main
+  dat1.typeindex:= ftypelist.addsubvalue(avalue);
   dat1.flags:= [sf_external];
   dat1.linkage:= li_external;
  end;
@@ -1556,7 +1559,8 @@ begin
 //  dat1.linkage:= li_internal;
 // end;
  dat1.kind:= gak_sub;
- dat1.typeindex:= ftypelist.addsubvalue(avalue);
+// dat1.typeindex:= ftypelist.addsubvalue(avalue);
+// dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.initconstindex:= -1;
  inccount();
  (pgloballocdataty(fdata) + result)^:= dat1;
@@ -1568,6 +1572,9 @@ var
 begin
  with pgloballocdataty(fdata)[avalue^.globid] do begin
   typeindex:= ftypelist.addsubvalue(avalue);
+ end;
+ with opcode.getitem(avalue^.address)^ do begin
+  par.subbegin.sub.allocs:= avalue^.allocs;
  end;
 end;
 

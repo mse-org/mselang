@@ -2899,6 +2899,11 @@ begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
   if sub.allocs.nestedalloccount > 0 then begin
+  {$ifdef mse_checkinternalerror}
+   if sub.allocs.nestedallocstypeindex < 0 then begin
+    internalerror(ie_llvm,'20151022A');
+   end;
+  {$endif}
    bcstream.emitalloca(bcstream.ptypeval(sub.allocs.nestedallocstypeindex));
    if sf_hascallout in sub.flags then begin
     bcstream.emitgetelementptr(bcstream.subval(0),

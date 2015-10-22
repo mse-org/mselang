@@ -329,7 +329,7 @@ type
   allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;
-  globid: int32; //for llvm todo: unify with address
+  globid: int32; //for llvm
   nameid: int32; //for llvm
   linkage: linkagety;
   paramsrel: record //array of relative pvardataty (elementoffsetty)

@@ -472,7 +472,8 @@ begin
    par.subbegin.subname:= asub^.address;
    par.subbegin.globid:= asub^.globid;
    par.subbegin.sub.flags:= asub^.flags;
-   par.subbegin.sub.allocs:= asub^.allocs;
+   par.subbegin.sub.allocs:= asub^.allocs; 
+                  //will be updated for llvm nested vars
   end;
  {$ifdef mse_checkinternalerror}
   if s.trystack <> 0 then begin
@@ -719,6 +720,7 @@ begin
   po1^.resulttype:= resulttype1;
   po1^.varchain:= 0;
   po1^.paramfinichain:= 0;
+  po1^.allocs.nestedalloccount:= 0;
   if (stf_classdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[s.stackindex-2] do begin
@@ -985,7 +987,8 @@ begin
    po2:= ele.eledataabs(subdef.match);    
    if co_llvm in compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
-          //nested subs first -> do not add to list in sub header
+          //body order must be in header order-> nested subs first -> 
+                                       //do not add to list in sub header
    end;
    if (po2^.flags * [sf_virtual,sf_override] <> []) and 
                     (sf_intfcall in po2^.flags) then begin
@@ -1049,7 +1052,8 @@ begin
   else begin //no header
    if co_llvm in compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1);
-          //nested subs first -> do not add to list in sub header
+          //body order must be in header order-> nested subs first -> 
+                                       //do not add to list in sub header
    end;
   end;
   linkresolvecall(po1^.calllinks,po1^.address,po1^.globid); //nested calls
@@ -1134,9 +1138,10 @@ begin
    //todo: check local forward
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
   if co_llvm in compileoptions then begin
-   if sf_hasnestedaccess in po1^.flags then begin
+//   if sf_hasnestedaccess in po1^.flags then begin
+//   if po1^.flags * [sf_hasnestedref,hasnestedaccess] <> [] then begin
     info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
-   end;
+//   end;
   end;
   if stf_hasmanaged in s.currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain,false,0);

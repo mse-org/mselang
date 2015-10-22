@@ -112,15 +112,15 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=19
    (
    kind=1
-   a=0,664,4,address
+   a=0,664,5,address
    c=2
     (
     kind=2
@@ -147,7 +147,7 @@ c=3
     (
     kind=2
     a=0,648,1,address llvm
-    teststate=1
+    teststate=2
     path=address.mla
     comment=
     cc=${mlc_llvm}
@@ -162,11 +162,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/address/address.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=address/
    comment=
    cc=
@@ -184,11 +185,11 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,665,5,arith
    c=27
     (
     kind=1
-    a=0,665,4,bool
+    a=0,665,5,bool
     c=8
      (
      kind=2
@@ -214,8 +215,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
-     teststate=1
+     a=0,648,2,and1 llvm
+     teststate=2
      path=and1.mla
      comment=
      cc=${mlc_llvm}
@@ -230,8 +231,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/bool/and1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -258,8 +260,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
-     teststate=1
+     a=0,648,2,or1 llvm
+     teststate=2
      path=or1.mla
      comment=
      cc=${mlc_llvm}
@@ -274,8 +276,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/bool/or1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -302,8 +305,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,not1 llvm
-     teststate=1
+     a=0,648,2,not1 llvm
+     teststate=2
      path=not1.mla
      comment=
      cc=${mlc_llvm}
@@ -318,8 +321,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/bool/not1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -346,8 +350,8 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,booleaval1 llvm
-     teststate=1
+     a=0,648,2,booleaval1 llvm
+     teststate=2
      path=booleval1.mla
      comment=
      cc=${mlc_llvm}
@@ -362,11 +366,12 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/bool/booleval1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
-    teststate=1
+    teststate=2
     path=bool/
     comment=
     cc=
@@ -384,7 +389,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,664,5,cmp
     c=4
      (
      kind=2
@@ -411,7 +416,7 @@ c=3
      (
      kind=2
      a=0,648,1,cmppointer llvm
-     teststate=1
+     teststate=2
      path=cmppointer.mla
      comment=
      cc=${mlc_llvm}
@@ -426,8 +431,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/cmp/cmppointer.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -455,7 +461,7 @@ c=3
      (
      kind=2
      a=0,648,1,cmpenum llvm
-     teststate=1
+     teststate=2
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -470,11 +476,12 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/cmp/cmpenum.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
-    teststate=1
+    teststate=2
     path=cmp/
     comment=
     cc=
@@ -492,7 +499,7 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,664,5,pointer
     c=6
      (
      kind=2
@@ -519,7 +526,7 @@ c=3
      (
      kind=2
      a=0,648,1,pointeradd llvm
-     teststate=1
+     teststate=2
      path=pointeradd.mla
      comment=
      cc=${mlc_llvm}
@@ -534,8 +541,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/pointer/pointeradd.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -563,7 +571,7 @@ c=3
      (
      kind=2
      a=0,648,1,pointerecadd llvm
-     teststate=1
+     teststate=2
      path=pointerrecadd.mla
      comment=
      cc=${mlc_llvm}
@@ -578,8 +586,9 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/pointer/pointerrecadd.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
      (
@@ -607,7 +616,7 @@ c=3
      (
      kind=2
      a=0,648,1,pointerdiff llvm
-     teststate=1
+     teststate=2
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -622,11 +631,12 @@ c=3
      eec=123
      cr=0
      ao=
-     ae=
-     aec=123
+     ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/pointer/pointerdiff.bc: [0;1;31merror: [0m[1mInsufficient function protos
+     +[0m
+     aec=1
      ie=0
      )
-    teststate=1
+    teststate=2
     path=pointer/
     comment=
     cc=
@@ -666,8 +676,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint llvm
-    teststate=1
+    a=0,648,2,addsubint llvm
+    teststate=2
     path=addsubint.mla
     comment=
     cc=${mlc_llvm}
@@ -682,8 +692,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/addsubint.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -710,8 +721,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
-    teststate=1
+    a=0,648,2,bitexp1 llvm
+    teststate=2
     path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
@@ -726,8 +737,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/bitexp1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -754,8 +766,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdec llvm
-    teststate=1
+    a=0,648,2,incdec llvm
+    teststate=2
     path=incdec.mla
     comment=
     cc=${mlc_llvm}
@@ -770,8 +782,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/incdec.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -798,8 +811,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incval1 llvm
-    teststate=1
+    a=0,648,2,incval1 llvm
+    teststate=2
     path=incval1.mla
     comment=
     cc=${mlc_llvm}
@@ -814,8 +827,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/incval1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -842,8 +856,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incvalpo1 llvm
-    teststate=1
+    a=0,648,2,incvalpo1 llvm
+    teststate=2
     path=incvalpo1.mla
     comment=
     cc=${mlc_llvm}
@@ -858,8 +872,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/incvalpo1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -886,8 +901,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
-    teststate=1
+    a=0,648,2,incdecind llvm
+    teststate=2
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -902,8 +917,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/incdecind.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -930,8 +946,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shl1 llvm
-    teststate=1
+    a=0,648,2,shl1 llvm
+    teststate=2
     path=shl1.mla
     comment=
     cc=${mlc_llvm}
@@ -946,8 +962,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/shl1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -974,8 +991,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
-    teststate=1
+    a=0,648,2,shr1 llvm
+    teststate=2
     path=shr1.mla
     comment=
     cc=${mlc_llvm}
@@ -990,8 +1007,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/shr1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1018,8 +1036,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecindpo llvm
-    teststate=1
+    a=0,648,2,incdecindpo llvm
+    teststate=2
     path=incdecindpo.mla
     comment=
     cc=${mlc_llvm}
@@ -1034,7 +1052,8 @@ c=3
     eec=1
     cr=0
     ao=
-    ae=
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/incdecindpo.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
     aec=1
     ie=0
     )
@@ -1062,8 +1081,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,not1 llvm
-    teststate=1
+    a=0,648,2,not1 llvm
+    teststate=2
     path=not1.mla
     comment=
     cc=${mlc_llvm}
@@ -1078,8 +1097,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/not1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1106,8 +1126,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,neg1 llvm
-    teststate=1
+    a=0,648,2,neg1 llvm
+    teststate=2
     path=neg1.mla
     comment=
     cc=${mlc_llvm}
@@ -1122,8 +1142,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/neg1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1150,8 +1171,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
-    teststate=1
+    a=0,648,2,andorxor1 llvm
+    teststate=2
     path=andorxor1.mla
     comment=
     cc=${mlc_llvm}
@@ -1166,11 +1187,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/arith/andorxor1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=arith/
    comment=
    cc=
@@ -1210,7 +1232,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,665,5,control
    c=30
     (
     kind=2
@@ -1236,8 +1258,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakrepat llvm
-    teststate=1
+    a=0,648,2,breakrepat llvm
+    teststate=2
     path=breakrepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1252,8 +1274,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/breakrepeat.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1280,8 +1303,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakwhile llvm
-    teststate=1
+    a=0,648,2,breakwhile llvm
+    teststate=2
     path=breakwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1296,8 +1319,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/breakwhile.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1324,8 +1348,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuerepat llvm
-    teststate=1
+    a=0,648,2,continuerepat llvm
+    teststate=2
     path=continuerepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1340,8 +1364,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/continuerepeat.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1368,8 +1393,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuewhile llvm
-    teststate=1
+    a=0,648,2,continuewhile llvm
+    teststate=2
     path=continuewhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1384,8 +1409,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/continuewhile.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1412,8 +1438,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,iftest llvm
-    teststate=1
+    a=0,648,2,iftest llvm
+    teststate=2
     path=iftest.mla
     comment=
     cc=${mlc_llvm}
@@ -1428,8 +1454,9 @@ c=3
     eec=99
     cr=0
     ao=
-    ae=
-    aec=99
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/iftest.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1456,8 +1483,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,recifindi llvm
-    teststate=1
+    a=0,648,2,recifindi llvm
+    teststate=2
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1472,8 +1499,9 @@ c=3
     eec=99
     cr=0
     ao=
-    ae=
-    aec=99
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/recifindi.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1500,8 +1528,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,case1 llvm
-    teststate=1
+    a=0,648,2,case1 llvm
+    teststate=2
     path=case1.mla
     comment=
     cc=${mlc_llvm}
@@ -1516,8 +1544,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/case1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1544,8 +1573,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,while1 llvm
-    teststate=1
+    a=0,648,2,while1 llvm
+    teststate=2
     path=while1.mla
     comment=
     cc=${mlc_llvm}
@@ -1560,8 +1589,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/while1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1588,8 +1618,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto llvm
-    teststate=1
+    a=0,648,2,forto llvm
+    teststate=2
     path=forto.mla
     comment=
     cc=${mlc_llvm}
@@ -1604,8 +1634,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/forto.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1632,8 +1663,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,fordownto llvm
-    teststate=1
+    a=0,648,2,fordownto llvm
+    teststate=2
     path=fordownto.mla
     comment=
     cc=${mlc_llvm}
@@ -1648,8 +1679,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/fordownto.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1676,8 +1708,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,forto2 llvm
-    teststate=1
+    a=0,648,2,forto2 llvm
+    teststate=2
     path=forto2.mla
     comment=
     cc=${mlc_llvm}
@@ -1692,8 +1724,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/forto2.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1720,8 +1753,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,nestedwhile llvm
-    teststate=1
+    a=0,648,2,nestedwhile llvm
+    teststate=2
     path=nestedwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1736,8 +1769,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/nestedwhile.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1764,8 +1798,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt1 llvm
-    teststate=1
+    a=0,648,2,halt1 llvm
+    teststate=2
     path=halt1.mla
     comment=
     cc=${mlc_llvm}
@@ -1780,8 +1814,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/halt1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1808,8 +1843,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,halt2 llvm
-    teststate=1
+    a=0,648,2,halt2 llvm
+    teststate=2
     path=halt2.mla
     comment=
     cc=${mlc_llvm}
@@ -1824,8 +1859,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/halt2.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -1852,8 +1888,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,goto1 llvm
-    teststate=1
+    a=0,648,2,goto1 llvm
+    teststate=2
     path=goto1.mla
     comment=
     cc=${mlc_llvm}
@@ -1868,11 +1904,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/control/goto1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -1890,7 +1927,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,664,5,conversions
    c=6
     (
     kind=2
@@ -1917,7 +1954,7 @@ c=3
     (
     kind=2
     a=0,648,1,potoint32 llvm
-    teststate=1
+    teststate=2
     path=potoint32.mla
     comment=
     cc=${mlc_llvm}
@@ -1932,7 +1969,8 @@ c=3
     eec=1
     cr=0
     ao=
-    ae=
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/conversions/potoint32.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
     aec=1
     ie=0
     )
@@ -1961,7 +1999,7 @@ c=3
     (
     kind=2
     a=0,648,1,anytopo llvm
-    teststate=1
+    teststate=2
     path=anytopo.mla
     comment=
     cc=${mlc_llvm}
@@ -1976,8 +2014,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/conversions/anytopo.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2005,7 +2044,7 @@ c=3
     (
     kind=2
     a=0,648,1,sizeconvert1 llvm
-    teststate=1
+    teststate=2
     path=sizeconvert1.mla
     comment=
     cc=${mlc_llvm}
@@ -2020,11 +2059,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/conversions/sizeconvert1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=conversions/
    comment=
    cc=
@@ -2042,7 +2082,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,enum
+   a=0,665,5,enum
    c=2
     (
     kind=2
@@ -2068,8 +2108,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,enum1 llvm
-    teststate=1
+    a=0,648,2,enum1 llvm
+    teststate=2
     path=enum1.mla
     comment=
     cc=${mlc_llvm}
@@ -2084,11 +2124,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/enum/enum1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=enum/
    comment=
    cc=
@@ -2170,7 +2211,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,exception
+   a=0,664,5,exception
    c=6
     (
     kind=2
@@ -2189,7 +2230,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B733FFA8
+    ao=An unhandled exception occured at $B7390FA8
     +
     ae=
     aec=123
@@ -2198,7 +2239,7 @@ c=3
     (
     kind=2
     a=0,648,1,raise1 llvm
-    teststate=1
+    teststate=2
     path=raise1.mla
     comment=
     cc=${mlc_llvm}
@@ -2213,8 +2254,9 @@ c=3
     eec=217
     cr=0
     ao=
-    ae=
-    aec=217
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2242,7 +2284,7 @@ c=3
     (
     kind=2
     a=0,648,1,raise2 llvm
-    teststate=1
+    teststate=2
     path=raise2.mla
     comment=
     cc=${mlc_llvm}
@@ -2257,8 +2299,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise2.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2286,7 +2329,7 @@ c=3
     (
     kind=2
     a=0,648,1,raise3 llvm
-    teststate=1
+    teststate=2
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -2301,11 +2344,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/exception/raise3.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=exception/
    comment=
    cc=
@@ -2323,7 +2367,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,indirect
+   a=0,664,5,indirect
    c=22
     (
     kind=2
@@ -2350,7 +2394,7 @@ c=3
     (
     kind=2
     a=0,648,1,indirectloc llvm
-    teststate=1
+    teststate=2
     path=indirectloc.mla
     comment=
     cc=${mlc_llvm}
@@ -2365,8 +2409,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/indirectloc.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2394,7 +2439,7 @@ c=3
     (
     kind=2
     a=0,648,1,indirectpar llvm
-    teststate=1
+    teststate=2
     path=indirectpar.mla
     comment=
     cc=${mlc_llvm}
@@ -2409,8 +2454,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/indirectpar.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2438,7 +2484,7 @@ c=3
     (
     kind=2
     a=0,648,1,varpar llvm
-    teststate=1
+    teststate=2
     path=varpar.mla
     comment=
     cc=${mlc_llvm}
@@ -2453,8 +2499,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/varpar.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2482,7 +2529,7 @@ c=3
     (
     kind=2
     a=0,648,1,varparrec llvm
-    teststate=1
+    teststate=2
     path=varparrec.mla
     comment=
     cc=${mlc_llvm}
@@ -2497,8 +2544,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/varparrec.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2526,7 +2574,7 @@ c=3
     (
     kind=2
     a=0,648,1,varparload llvm
-    teststate=1
+    teststate=2
     path=varparload.mla
     comment=
     cc=${mlc_llvm}
@@ -2541,8 +2589,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/varparload.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2570,7 +2619,7 @@ c=3
     (
     kind=2
     a=0,648,1,varparrecload llvm
-    teststate=1
+    teststate=2
     path=varparrecload.mla
     comment=
     cc=${mlc_llvm}
@@ -2585,8 +2634,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/varparrecload.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2614,7 +2664,7 @@ c=3
     (
     kind=2
     a=0,648,1,recindi llvm
-    teststate=1
+    teststate=2
     path=recindi.mla
     comment=
     cc=${mlc_llvm}
@@ -2629,8 +2679,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/recindi.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2658,7 +2709,7 @@ c=3
     (
     kind=2
     a=0,648,1,parrecindi llvm
-    teststate=1
+    teststate=2
     path=parrecindi.mla
     comment=
     cc=${mlc_llvm}
@@ -2673,8 +2724,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/parrecindi.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2702,7 +2754,7 @@ c=3
     (
     kind=2
     a=0,648,1,recderef llvm
-    teststate=1
+    teststate=2
     path=recderef.mla
     comment=
     cc=${mlc_llvm}
@@ -2717,8 +2769,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/recderef.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2746,7 +2799,7 @@ c=3
     (
     kind=2
     a=0,648,1,pointerrec llvm
-    teststate=1
+    teststate=2
     path=pointerrec.mla
     comment=
     cc=${mlc_llvm}
@@ -2761,8 +2814,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/pointerrec.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2790,7 +2844,7 @@ c=3
     (
     kind=2
     a=0,648,1,pointerrec1 llvm
-    teststate=1
+    teststate=2
     path=pointerrec1.mla
     comment=
     cc=${mlc_llvm}
@@ -2805,11 +2859,12 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/indirect/pointerrec1.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=indirect/
    comment=
    cc=
@@ -2827,7 +2882,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,IO
+   a=0,664,5,IO
    c=4
     (
     kind=2
@@ -2855,7 +2910,7 @@ c=3
     (
     kind=2
     a=0,648,1,writeln int llvm
-    teststate=1
+    teststate=2
     path=writelnint.mla
     comment=
     cc=${mlc_llvm}
@@ -2869,10 +2924,10 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
-    aec=0
+    ao=
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/io/writelnint.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -2901,7 +2956,7 @@ c=3
     (
     kind=2
     a=0,648,1,writeln string lc
-    teststate=1
+    teststate=2
     path=writelnstr.mla
     comment=
     cc=${mlc_llvm}
@@ -2915,13 +2970,13 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
-    aec=0
+    ao=
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/io/writelnstr.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=io/
    comment=
    cc=${COMP}
@@ -2939,7 +2994,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,mem
+   a=0,664,5,mem
    c=4
     (
     kind=2
@@ -2966,7 +3021,7 @@ c=3
     (
     kind=2
     a=0,648,1,getmem llvm
-    teststate=1
+    teststate=2
     path=getmem.mla
     comment=
     cc=${mlc_llvm}
@@ -2981,8 +3036,9 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=
-    aec=123
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/mem/getmem.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
     (
@@ -3011,7 +3067,7 @@ c=3
     (
     kind=2
     a=0,648,1,setmem llvm
-    teststate=1
+    teststate=2
     path=setmem.mla
     comment=
     cc=${mlc_llvm}
@@ -3025,13 +3081,13 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=-1
-    +
-    ae=
-    aec=0
+    ao=
+    ae=[1mllc: /home/mse/packs/standard/git/mselang/mselang/test/base/mem/setmem.bc: [0;1;31merror: [0m[1mInsufficient function protos
+    +[0m
+    aec=1
     ie=0
     )
-   teststate=1
+   teststate=2
    path=mem/
    comment=
    cc=
@@ -3049,7 +3105,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,minimal
+   a=0,665,4,minimal
    c=2
     (
     kind=2
@@ -3075,8 +3131,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,program llvm
-    teststate=1
+    a=0,648,0,program llvm
+    teststate=0
     path=minprog.mla
     comment=
     cc=${mlc_llvm}
@@ -3090,8 +3146,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3132,8 +3188,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3154,8 +3210,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3176,8 +3232,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3198,8 +3254,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3220,8 +3276,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3242,8 +3298,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3264,8 +3320,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3286,8 +3342,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3328,8 +3384,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3350,8 +3406,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3372,8 +3428,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3394,8 +3450,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3416,8 +3472,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3438,8 +3494,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3460,8 +3516,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3482,8 +3538,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3504,8 +3560,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3526,8 +3582,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3568,8 +3624,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -3590,8 +3646,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
@@ -3632,8 +3688,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3654,8 +3710,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3676,8 +3732,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3698,8 +3754,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3720,8 +3776,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3742,8 +3798,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3764,8 +3820,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3786,8 +3842,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3808,8 +3864,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3830,8 +3886,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3852,8 +3908,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3874,8 +3930,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3896,8 +3952,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3938,8 +3994,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3960,8 +4016,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -3982,8 +4038,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4004,8 +4060,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4026,11 +4082,8 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
@@ -4051,8 +4104,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4073,8 +4126,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4115,8 +4168,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4137,8 +4190,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4179,8 +4232,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4201,8 +4254,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4223,8 +4276,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4245,8 +4298,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4267,8 +4320,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4289,8 +4342,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4311,8 +4364,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4333,8 +4386,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4355,8 +4408,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4377,8 +4430,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4399,8 +4452,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4421,8 +4474,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4442,7 +4495,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -4479,8 +4532,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4501,8 +4554,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4523,8 +4576,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4545,8 +4598,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4567,8 +4620,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4589,8 +4642,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4611,8 +4664,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4633,8 +4686,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4655,8 +4708,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4677,8 +4730,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4699,8 +4752,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4721,8 +4774,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4743,8 +4796,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4765,8 +4818,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4787,8 +4840,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4809,8 +4862,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4855,8 +4908,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4877,8 +4930,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -4935,8 +4988,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4957,8 +5010,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -4979,8 +5032,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -5001,8 +5054,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -5047,11 +5100,8 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
@@ -5072,10 +5122,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=
+    ao=1
+    ae=0
     aec=0
     ie=0
     )
@@ -5132,8 +5180,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -5154,8 +5202,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
@@ -5175,7 +5223,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -5289,7 +5337,9 @@ sortdescend2=0
 width3=225
 sortdescend3=0
 sortdescend4=0
-rowstate=126
+rowstate=128
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
