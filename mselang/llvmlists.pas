@@ -1534,7 +1534,6 @@ begin
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
-    dat1.typeindex:= ftypelist.addsubvalue(avalue);
     fnamelist.addname(datatoele(avalue)^.header.defunit,nameid{i1},result);
     flinklist.addlink(avalue,result);
    end
@@ -1544,6 +1543,9 @@ begin
     end;
     dat1.flags:= flags;
     dat1.linkage:= linkage;
+   end;
+   if sf_proto in dat1.flags then begin
+    dat1.typeindex:= ftypelist.addsubvalue(avalue);
    end;
   end;
  end
