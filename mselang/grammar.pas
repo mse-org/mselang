@@ -9310,6 +9310,7 @@ begin
  resultidentco.handleentry:= @checkfunctiontype;
  functiontypeaco.branch:= @bfunctiontypea;
  subbody4co.branch:= @bsubbody4;
+ subbody4co.handleentry:= @subbody4entry;
  subbody4co.handleexit:= @handlebeginexpected;
  subbody5aco.branch:= nil;
  subbody5aco.next:= @subbody5co;

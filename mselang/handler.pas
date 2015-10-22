@@ -247,7 +247,8 @@ begin
   end;
   if co_llvm in compileoptions then begin
    lstr1:= stringtolstring('main');
-   m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,lstr1);
+   m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
+                                                                  nil,lstr1);
    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
                                           gettype(m1.value.listid);
    m1.flags:= [mvf_globval,mvf_sub];
@@ -258,9 +259,11 @@ begin
            info.contextstack[info.s.stackindex].start.line+1,m1,
            llvmlists.metadatalist.adddisubroutinetype(
                                       llvmlists.metadatalist.nullnode));
+{
      m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
      pdicompileunitty(llvmlists.metadatalist.items[
                             compileunitmeta.value.listid])^.subprograms:= m1;
+}
      info.s.currentscopemeta:= mainsubmeta.value.listid;
     end;
    end;

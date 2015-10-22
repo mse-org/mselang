@@ -382,7 +382,8 @@ begin
  if do_lineinfo in info.s.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
-   if co_llvm in info.compileoptions then begin
+   if (co_llvm in info.compileoptions) and 
+                             (do_lineinfo in info.s.debugoptions) then begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
 //     par.lineinfo.line.po:= achar;
 //     par.lineinfo.line.len:= linelen(achar);

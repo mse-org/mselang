@@ -1592,14 +1592,32 @@ end;
 
 procedure beginunit(const aunit: punitinfoty);
 begin
+ if aunit^.llvmlists <> nil then begin
+  aunit^.llvmlists.metadatalist.beginunit();
+ end;
 end;
 
 function endunit(const aunit: punitinfoty): boolean;
+var
+ m1: metavaluety;
 begin
  result:= true;
- if co_writeunits in info.compileoptions then begin
-  result:= writeunitfile(aunit);
-  freeandnil(aunit^.llvmlists);
+ with info do begin
+  if s.debugoptions <> [] then begin
+   with aunit^.llvmlists.metadatalist do begin
+    m1:= addnode(subprograms);
+    pdicompileunitty(items[aunit^.compileunitmeta.value.listid])^.
+                                                         subprograms:= m1;
+{
+     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
+     pdicompileunitty(llvmlists.metadatalist.items[
+                            compileunitmeta.value.listid])^.subprograms:= m1;
+}  end;
+  end;
+  if co_writeunits in compileoptions then begin
+   result:= writeunitfile(aunit);
+   freeandnil(aunit^.llvmlists);
+  end;
  end;
 end;
 

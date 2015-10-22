@@ -324,7 +324,7 @@ functiontypea,,, //same layout as parameter
  ${whitespace}
  @identstart,ident^*
 
-subbody4,,,handlebeginexpected*
+subbody4,,subbody4entry,handlebeginexpected*
  ${whitespace}
  'type'.,type-*>
  'const'.,const-*>

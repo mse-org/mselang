@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ procedure handleoverride();
 procedure handleoverload();
 procedure handleexternal();
 procedure handlesubheader();
-//procedure handlesub4entry();
+procedure subbody4entry();
 procedure handlesubbody5a();
 procedure handlesubbody6();
 
@@ -920,6 +920,44 @@ begin
   else begin
    dec(s.stackindex);
    s.stacktop:= s.stackindex;
+  end;
+ end;
+end;
+
+procedure subbody4entry();
+var
+ po1: psubdataty;
+ m1: metavaluety;
+begin
+{$ifdef mse_debugparser}
+ outhandle('SUBBODY4ENTRY');
+{$endif}
+ with info do begin
+  if s.debugoptions <> [] then begin
+   with contextstack[s.stackindex-2].d do begin
+    po1:= ele.eledataabs(subdef.ref);
+(*
+    lstr1:= stringtolstring('main');
+    m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
+                                                                   nil,lstr1);
+    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
+                                           gettype(m1.value.listid);
+    m1.flags:= [mvf_globval,mvf_sub];
+    with info.s.unitinfo^ do begin
+     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
+           debugfilemeta,lstr1,
+           info.contextstack[info.s.stackindex].start.line+1,m1,
+           llvmlists.metadatalist.adddisubroutinetype(
+                                      llvmlists.metadatalist.nullnode));
+{
+     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
+     pdicompileunitty(llvmlists.metadatalist.items[
+                            compileunitmeta.value.listid])^.subprograms:= m1;
+}
+     info.s.currentscopemeta:= mainsubmeta.value.listid;
+    m1:= 
+*)
+   end;
   end;
  end;
 end;

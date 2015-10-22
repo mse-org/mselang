@@ -379,6 +379,7 @@ type
   flags: metavalueflagsty;
  end;
  pmetavaluety = ^metavaluety;
+ metavaluearty = array of metavaluety;
 
 const
  dummymeta: metavaluety = (value: (typeid: 0; listid: 0);
@@ -457,6 +458,9 @@ type
    fnullnode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
+   fsubprograms: metavaluearty;
+   fsubprogramcount: int32;
+   function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
    function adddata(const akind: metadatakindty;
@@ -466,6 +470,7 @@ type
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
    procedure clear(); override;
+   procedure beginunit();
    function i8const(const avalue: int8): metavaluety;
    function i32const(const avalue: int32): metavaluety;
    property nullnode: metavaluety read fnullnode;
@@ -492,6 +497,7 @@ type
   }
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
+   property subprograms: metavaluearty read getsubprograms;
  end;
 
  tllvmlists = class
@@ -512,7 +518,7 @@ type
 
 implementation
 uses
- parserglob,errorhandler,elements,segmentutils,msefileutils;
+ parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils;
   
 { tbufferhashdatalist }
 
@@ -1629,7 +1635,13 @@ begin
  inherited;
  if not (bdls_destroying in fstate) then begin
   fnullnode:= addnode([]);
+  fsubprogramcount:= 0;
  end;
+end;
+
+procedure tmetadatalist.beginunit;
+begin
+ fsubprogramcount:= 0;
 end;
 
 function tmetadatalist.first: pmetadataty;
@@ -1673,9 +1685,7 @@ var
  i1: int32;
 begin
  i1:= length(avalues)*sizeof(avalues[0]);
- with pnodemetaty(
-    adddata(mdk_node,
-     sizeof(nodemetaty)+i1,result))^ do begin
+ with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty)+i1,result))^ do begin
   len:= length(avalues);
   move(avalues,data,i1);
  end;
@@ -1688,9 +1698,8 @@ var
  m1: metavaluety;
 begin
  i1:= length(avalues)*sizeof(avalues[0]);
- with pnamednodemetaty(
-    adddata(mdk_namednode,
-     sizeof(namednodemetaty)+i1+aname.len,m1))^ do begin
+ with pnamednodemetaty(adddata(mdk_namednode,
+                       sizeof(namednodemetaty)+i1+aname.len,m1))^ do begin
   len:= length(avalues);
   move(avalues,data,i1);
   namelen:= aname.len;
@@ -1754,6 +1763,8 @@ begin
   name:= m1;
   typeid:= atype;
  end;
+ metavaluety(additempo(fsubprograms,
+               typeinfo(fsubprograms),fsubprogramcount)^):= result;
 end;
 
 function tmetadatalist.dwarftag(const atag: int32): metavaluety;
@@ -1774,6 +1785,11 @@ begin
                     sizeof(disubroutinetypety),result))^ do begin
   params:= aparams;
  end;
+end;
+
+function tmetadatalist.getsubprograms: metavaluearty;
+begin
+ result:= copy(fsubprograms,0,fsubprogramcount);
 end;
 
 {
