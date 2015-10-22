@@ -1,0 +1,24 @@
+program subvar1;
+interface
+type
+ procty = procedure(a: int32);
+ recty = record
+  p: procty;
+  a: int32;
+ end;
+implementation
+
+var
+ r1: recty;
+ p: procty;
+
+procedure test(a: int32);
+begin
+ exitcode:= a+r1.a;
+end;
+
+begin
+ r1.a:= 3;
+ r1.p:= @test;
+ r1.p(120);
+end.

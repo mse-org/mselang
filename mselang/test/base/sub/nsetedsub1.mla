@@ -1,0 +1,20 @@
+program nestedsub1;
+
+procedure test();
+
+var
+ i1: int32;
+ procedure test1();
+ begin
+  i1:= 123;
+ end;
+
+begin
+ i1:= 123;
+ test1();
+ exitcode:= i1;
+end;
+
+begin
+ test();
+end.

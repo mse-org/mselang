@@ -285,7 +285,7 @@ begin
       bcstream.emitgetelementptr(bcstream.relval(1),
                         bcstream.constval(locdataaddress.offset));
      end;
-     bcstream.emitbitcast(bcstream.relval(0),i1);
+     bcstream.emitbitcast(bcstream.relval(0),i1+1); //pointer
      bcstream.emitloadop(bcstream.relval(0));
     end
     else begin
@@ -2929,7 +2929,8 @@ begin
                                     bcstream.typeval(das_pointer)); //source
     end;
     bcstream.emitgetelementptr(bcstream.ssaval(0),
-                      info.s.unitinfo^.llvmlists.constlist.pointeroffset(i1)); //dest
+                  bcstream.constval(
+               info.s.unitinfo^.llvmlists.constlist.pointeroffset(i1))); //dest
                         //pointer to nestedallocs
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
