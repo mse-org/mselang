@@ -525,15 +525,17 @@ begin
  
    beginunit(aunit);
    
-   if s.debugoptions <> [] then begin
+   if (s.debugoptions <> []) then begin
     with s.unitinfo^ do begin
-     filepathmeta:= llvmlists.metadatalist.addfile(filepath);
-     debugfilemeta:= llvmlists.metadatalist.adddifile(filepathmeta);
-//     debugfilemeta:= metadatalist.add
-     compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
-           filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
-     llvmlists.metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
-                                           [compileunitmeta.value.listid]);
+     if llvmlists <> nil then begin
+      filepathmeta:= llvmlists.metadatalist.addfile(filepath);
+      debugfilemeta:= llvmlists.metadatalist.adddifile(filepathmeta);
+ //     debugfilemeta:= metadatalist.add
+      compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
+            filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
+      llvmlists.metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
+                                            [compileunitmeta.value.listid]);
+     end;
     end;
    end;
    markinterfacestart();

@@ -767,7 +767,7 @@ type
  virttrampolineinfoty = record
   selfinstance: dataoffsty; //frameoffset
   virtoffset: dataoffsty;   //offset in classdefinfoty
-  typeid: int32;
+//  typeid: int32;
  end;
  
  subbegininfoty = record
@@ -779,6 +779,7 @@ type
  subbeginty = record
   subname: opaddressty;
   globid: int32;
+  typeid: int32;
   case integer of
    0: (sub: subbegininfoty);
    1: (trampoline: virttrampolineinfoty);

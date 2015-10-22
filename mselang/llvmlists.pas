@@ -361,7 +361,6 @@ type
                            const aname: lstringty): int32;  //returns listid
 
    procedure updatesubtype(const avalue: psubdataty); 
-                 //new type for changed flags sf_hasnestedaccess
    function addinitvalue(const akind: globallockindty;
               const aconstlistindex: integer; const alinkage: linkagety): int32;
                                                             //returns listid
@@ -1571,11 +1570,19 @@ end;
 procedure tgloballocdatalist.updatesubtype(const avalue: psubdataty);
 var
  po1: psubtypeheaderty;
+ i1: int32;
 begin
+ i1:= ftypelist.addsubvalue(avalue);
  with pgloballocdataty(fdata)[avalue^.globid] do begin
-  typeindex:= ftypelist.addsubvalue(avalue);
+  typeindex:= i1;
+ end;
+ if avalue^.trampolineid >= 0 then begin
+ with pgloballocdataty(fdata)[avalue^.trampolineid] do begin
+  typeindex:= i1;
+ end;
  end;
  with opcode.getitem(avalue^.address)^ do begin
+  par.subbegin.typeid:= i1;
   par.subbegin.sub.allocs:= avalue^.allocs;
  end;
 end;

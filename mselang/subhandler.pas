@@ -712,6 +712,7 @@ begin
   po1^.adlinks:= 0;
   po1^.trampolinelinks:= 0;   //for virtual interface items
   po1^.trampolineaddress:= 0;
+  po1^.trampolineid:= -1;
   po1^.nestinglevel:= sublevel;
   po1^.flags:= subflags;
   po1^.linkage:= s.globlinkage;
@@ -1003,10 +1004,11 @@ begin
            info.s.unitinfo^.llvmlists.constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
       par.subbegin.globid:= po1^.globid;               //trampoline
+      po1^.trampolineid:= po1^.globid;
       po1^.globid:= info.s.unitinfo^.llvmlists.globlist.
                                      addtypecopy(po1^.globid); //real sub
-      par.subbegin.trampoline.typeid:= 
-              info.s.unitinfo^.llvmlists.globlist.gettype(par.subbegin.globid);
+//      par.subbegin.trampoline.typeid:= 
+//              info.s.unitinfo^.llvmlists.globlist.gettype(par.subbegin.globid);
      end;
     end;
     po1^.address:= opcount;

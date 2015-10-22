@@ -331,6 +331,7 @@ type
   paramcount: integer;
   globid: int32; //for llvm
   nameid: int32; //for llvm
+  trampolineid: int32; //for llvm
   linkage: linkagety;
   paramsrel: record //array of relative pvardataty (elementoffsetty)
   end;

@@ -2862,10 +2862,11 @@ begin
                //virtual table item address
    bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(pointertype));
                                                                   //1ssa **i8
-   bcstream.emitloadop(bcstream.relval(0));                        //1ssa *i8
+   bcstream.emitloadop(bcstream.relval(0));                       //1ssa *i8
                //sub address
-   bcstream.emitbitcast(bcstream.relval(0),                     //1ssa
-                         bcstream.ptypeval(trampoline.typeid));
+   bcstream.emitbitcast(bcstream.relval(0),
+                          bcstream.ptypeval(pc^.par.subbegin.typeid)); //1ssa
+                                          
    if isfunction then begin
     dec(idar.count);
    end;

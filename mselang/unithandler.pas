@@ -1603,7 +1603,7 @@ var
 begin
  result:= true;
  with info do begin
-  if s.debugoptions <> [] then begin
+  if (s.debugoptions <> []) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
     m1:= addnode(subprograms);
     pdicompileunitty(items[aunit^.compileunitmeta.value.listid])^.
