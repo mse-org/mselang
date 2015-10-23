@@ -249,6 +249,7 @@ type
   match: elementoffsetty;
   error: boolean;
   flags: subflagsty;
+  scopemetabefore: metavaluety;
  end;
 
  paramkindty = (pk_value,pk_const,pk_var,pk_out);
@@ -589,9 +590,9 @@ type
   trystacklevel: int32;
   debugoptions: debugoptionsty;
   compilerswitches: compilerswitchesty;
-  currentcompileunitmeta: int32;
-  currentfilemeta: int32;
-  currentscopemeta: int32;
+  currentcompileunitmeta: metavaluety;
+  currentfilemeta: metavaluety;
+  currentscopemeta: metavaluety;
   globlinkage: linkagety;
   blockid: int32;
  end;

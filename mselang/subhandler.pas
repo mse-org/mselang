@@ -929,16 +929,42 @@ end;
 
 procedure subbody4entry();
 var
- po1: psubdataty;
+ po1: pelementinfoty;
  m1: metavaluety;
+ lstr1: lstringty;
+{$ifdef mse_checkinternalerror}
+ bo1: boolean;
+{$endif}
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBBODY4ENTRY');
 {$endif}
  with info do begin
   if s.debugoptions <> [] then begin
-   with contextstack[s.stackindex-2].d do begin
-    po1:= ele.eledataabs(subdef.ref);
+   with contextstack[s.stackindex-2] do begin
+   {$ifdef mse_checkinternalerror}
+    if (s.stackindex < 2) or (d.kind <> ck_subdef) then begin
+     internalerror(ie_parser,'20151023A');
+    end;
+   {$endif}
+    d.subdef.scopemetabefore:= s.currentscopemeta;
+    po1:= ele.eleinfoabs(d.subdef.ref);
+   {$ifdef mse_checkinternalerror}
+    bo1:= 
+   {$endif}
+    getidentname(po1^.header.name,lstr1);
+   {$ifdef mse_checkinternalerror}
+    if not bo1 then begin
+     internalerror(ie_parser,'20151023B');
+    end;
+   {$endif}
+    with info.s.unitinfo^ do begin
+     s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
+           filepathmeta,s.currentscopemeta,lstr1,
+           info.contextstack[info.s.stackindex].start.line+1,dummymeta,
+           llvmlists.metadatalist.adddisubroutinetype(
+                                      llvmlists.metadatalist.nullnode));
+    end;
 (*
     lstr1:= stringtolstring('main');
     m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
@@ -1132,6 +1158,7 @@ procedure handlesubbody6();
 var
  po1: psubdataty;
  po2: popinfoty;
+ m1: metavaluety;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -1207,6 +1234,17 @@ begin
    par.subbegin.sub.blockcount:= s.ssa.bbindex + 1;
   end;
   s.ssa:= d.subdef.ssabefore;
+  if s.debugoptions <> [] then begin
+   m1.flags:= [mvf_globval,mvf_sub];
+   m1.value.listid:= po1^.globid;
+   m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
+                                           gettype(m1.value.listid);
+   with pdisubprogramty(s.unitinfo^.llvmlists.metadatalist.getdata(
+                                               s.currentscopemeta))^ do begin
+    functionid:= m1;
+   end;
+   s.currentscopemeta:= d.subdef.scopemetabefore;
+  end;
  end;
 end;
 

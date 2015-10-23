@@ -494,6 +494,7 @@ type
    function adddicompositetype(const atag: int32; 
                        const aitems: array of metavaluety): metavaluety;
   }
+   function getdata(const avalue: metavaluety): pmetadataty;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
    property subprograms: metavaluearty read getsubprograms;
@@ -1658,6 +1659,11 @@ end;
 procedure tmetadatalist.beginunit;
 begin
  fsubprogramcount:= 0;
+end;
+
+function tmetadatalist.getdata(const avalue: metavaluety): pmetadataty;
+begin
+ result:= items[avalue.value.listid];
 end;
 
 function tmetadatalist.first: pmetadataty;

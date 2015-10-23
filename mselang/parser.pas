@@ -389,7 +389,7 @@ begin
 //     par.lineinfo.line.len:= linelen(achar);
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
-     loc.scope:= info.s.currentscopemeta;
+     loc.scope:= info.s.currentscopemeta.value.listid;
     end;
    end;
   end;
@@ -573,9 +573,9 @@ begin
   end;
 
   with s.unitinfo^ do begin
-   s.currentfilemeta:= debugfilemeta.value.listid;
+   s.currentfilemeta:= debugfilemeta;
    s.currentscopemeta:= s.currentfilemeta;
-   s.currentcompileunitmeta:= compileunitmeta.value.listid;
+   s.currentcompileunitmeta:= compileunitmeta;
   end;
 
   s.pc:= contextstack[s.stackindex].context;

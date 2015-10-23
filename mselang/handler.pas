@@ -264,7 +264,7 @@ begin
      pdicompileunitty(llvmlists.metadatalist.items[
                             compileunitmeta.value.listid])^.subprograms:= m1;
 }
-     info.s.currentscopemeta:= mainsubmeta.value.listid;
+     info.s.currentscopemeta:= mainsubmeta;
     end;
    end;
   end;
