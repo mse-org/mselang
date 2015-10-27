@@ -1817,9 +1817,8 @@ procedure tmetadatalist.clear;
 begin
  inherited;
  if not (bdls_destroying in fstate) then begin
-//  adddata(mdk_null,0,fnullvalue);
+  adddata(mdk_void,0,fnullvalue);
   femptynode:= addnode([]);
-fnullvalue:= femptynode;
   fsubprogramcount:= 0;
   ftypemetalist.clear();
   fsyscontext:= adddifile(addfile('system'));
