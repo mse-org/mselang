@@ -386,7 +386,7 @@ var
  metadatatype: int32;
  metanull,metanullint,metanullstring,metanullnode,
  metatrue,
- metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
+ metaDW_TAG_base_type,metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type: metavaluety;
  m1: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
@@ -439,6 +439,10 @@ begin
   metanullint.flags:= [];
   metatrue.value:= consts.addi1(true);
   metatrue.flags:= [];
+
+  metaDW_TAG_base_type.value:= consts.addi32(
+               DW_TAG_base_type or LLVMDebugVersion);
+  metaDW_TAG_base_type.flags:= [];
   metaDW_TAG_compile_unit.value:= consts.addi32(
                DW_TAG_compile_unit or LLVMDebugVersion);
   metaDW_TAG_compile_unit.flags:= [];
@@ -448,6 +452,7 @@ begin
   metaDW_TAG_subroutine_type.value:= consts.addi32(
                DW_TAG_subroutine_type or LLVMDebugVersion);
   metaDW_TAG_subroutine_type.flags:= [];
+
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
     [
@@ -734,6 +739,15 @@ begin
       emitmetadatanode([filename,dirname]);
      end;
     end;
+    mdk_dibasictype: begin
+     with pdibasictypety(@pm1^.data)^ do begin
+      emitmetadatanode([metaDW_TAG_base_type,
+      //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
+        difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
+      //flags,encoding
+        flags,encoding]);
+     end;
+    end;
     mdk_dicompileunit: begin
      with pdicompileunitty(@pm1^.data)^ do begin
       m1:= subprograms;
@@ -741,7 +755,7 @@ begin
        m1:= metanullnode;
       end;
       emitmetadatanode([metaDW_TAG_compile_unit,
-      //       sourcelanguage,producer,isoptimized flags,         runtimeversion,
+      //difile,sourcelanguage,producer,isoptimized flags,         runtimeversion,
         difile,sourcelanguage,producer,metanullint,metanullstring,metanullint,
       //enumtypes,   retainedtypes,subprograms,globalvariables,importedentities,
         metanullnode,metanullnode, m1,metanullnode,  metanullnode,

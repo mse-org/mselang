@@ -84,6 +84,7 @@ type
                         ie_bcwriter, //error in llvm bc writer
                         ie_llvm,     //error in llvm code generator
                         ie_llvmlist, //error in llvm lists
+                        ie_llvmmeta, //error in llvm metadata
                         ie_module    //error in modular compilation
                        ); 
 const
@@ -94,8 +95,8 @@ const
      'T',    'M',
  //ie_sub,ie_value,ie_elements,ie_rtti,ie_segment,ie_bcwriter,ie_llvm
      'SUB',   'V',   'E',        'I',    'SEG',     'BC',     'LLVM',
- //ie_llvmlist,ie_module
-     'LLVML',  'MO'
+ //ie_llvmlist,ie_llvmmeta,ie_module
+     'LLVML',  'LLVMME',   'MO'
  );
  
  stoperrorlevel = erl_fatal;

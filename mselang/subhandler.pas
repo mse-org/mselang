@@ -930,7 +930,6 @@ end;
 procedure subbody4entry();
 var
  po1: pelementinfoty;
- m1: metavaluety;
  lstr1: lstringty;
 {$ifdef mse_checkinternalerror}
  bo1: boolean;
@@ -962,8 +961,7 @@ begin
      s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
            filepathmeta,s.currentscopemeta,lstr1,
            info.contextstack[info.s.stackindex].start.line+1,dummymeta,
-           llvmlists.metadatalist.adddisubroutinetype(
-                                      llvmlists.metadatalist.nullnode));
+           llvmlists.metadatalist.adddisubroutinetype(@po1^.data));
     end;
 (*
     lstr1:= stringtolstring('main');

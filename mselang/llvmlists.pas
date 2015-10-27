@@ -74,6 +74,57 @@ type
    function absdata(const aoffset: ptruint): pointer; inline;
  end;
 
+
+ keybufferdataty = record
+  buffersize: int32;
+  buffer: ptruint; //buffer offset
+ end;
+ pkeybufferdataty = ^keybufferdataty;
+ 
+ keybufferhashdataty = record
+  header: hashheaderty;
+  data: keybufferdataty;
+ end;
+ pkeybufferhashdataty = ^keybufferhashdataty;
+
+ tkeybufferhashdatalist = class(thashdatalist)
+  private
+   fbuffer: pointer;
+   fbuffersize: integer;
+   fbuffercapacity: integer;
+  protected
+   procedure checkbuffercapacity(const asize: integer);
+   function addunique(const key; const abufferdata; const size: int32;
+                      out res: pointer): boolean;
+                    //true if new
+  public
+   constructor create(const datasize: integer);
+   procedure clear(); override;
+   procedure mark(out ref: buffermarkinfoty);
+   procedure release(const ref: buffermarkinfoty);
+   function absdata(const aoffset: ptruint): pointer; inline;
+ end;
+  
+ int32bufferdataty = record
+  key: int32;
+  data: record
+  end;
+ end;
+ int32keybufferdataty = record
+  header: keybufferhashdataty;
+  data: int32bufferdataty;
+ end;
+ 
+ tint32bufferhashdatalist = class(tkeybufferhashdatalist)
+  protected
+   function hashkey(const akey): hashvaluety override;
+   function checkkey(const akey; const aitemdata): boolean override;
+   function addunique(const akey: int32; const adata; const size: integer;
+                       out res: pkeybufferdataty): boolean; //true if new
+  public
+   constructor create(const datasize: integer);
+ end;
+
  typelistdataty = record
   header: bufferdataty; //header.buffer -> alloc size if size = -1
   kind: databitsizety;
@@ -436,8 +487,30 @@ type
  end;
  pdisubroutinetypety = ^disubroutinetypety;
 
+ dibasictypety = record
+  difile: metavaluety;
+  context: metavaluety;
+  name: metavaluety;
+  linenumber: metavaluety;
+  sizeinbits: metavaluety;
+  aligninbits: metavaluety;
+  flags: metavaluety;
+  encoding: metavaluety;
+ end;
+ pdibasictypety = ^dibasictypety;
+ 
+ metaiddataty = record
+  id: int32;
+ end;
+ pmetaiddataty = ^metaiddataty;
+ 
+ ttypemetahashdatalist = class(tintegerhashdatalist)
+  public
+   constructor create();
+ end;
+ 
  metadatakindty = (mdk_none,mdk_node,mdk_namednode,
-                   mdk_string,mdk_difile,
+                   mdk_string,mdk_difile,mdk_dibasictype,
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
  
  metadataheaderty = record
@@ -451,7 +524,7 @@ type
   end;
  end;
  pmetadataty = ^metadataty;
- 
+
  tmetadatalist = class(tindexbufferdatalist)
   private
    fnullnode: metavaluety;
@@ -459,6 +532,7 @@ type
    fconstlist: tconsthashdatalist;
    fsubprograms: metavaluearty;
    fsubprogramcount: int32;
+   ftypemetalist: ttypemetahashdatalist;
    function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
@@ -468,27 +542,37 @@ type
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist);
+   destructor destroy(); override;
    procedure clear(); override;
    procedure beginunit();
    function i8const(const avalue: int8): metavaluety;
    function i32const(const avalue: int32): metavaluety;
    property nullnode: metavaluety read fnullnode;
 
+   function addnode(const avalues: pmetavaluety;
+                                     const acount: int32): metavaluety;
    function addnode(const avalues: array of metavaluety): metavaluety;
    procedure addnamednode(const aname: lstringty;
                                 const avalues: array of int32);
    function addstring(const avalue: lstringty): metavaluety;
    function addfile(const afilename: filenamety): metavaluety;
+
+   function adddibasictype(const adifile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const alinenumber: int32;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aflags: int32; const aencoding: int32): metavaluety;
+   function addtype(const atype: elementoffsetty): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string;
               const asubprograms: metavaluety;
               const aemissionkind: DebugEmissionKind): metavaluety;
+   function adddisubroutinetype(const asub: psubdataty): metavaluety;
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety;
            const atype: metavaluety): metavaluety;
-   function adddisubroutinetype(const aparams: metavaluety): metavaluety;
    
   {
    function adddicompositetype(const atag: int32; 
@@ -519,7 +603,7 @@ type
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode;
+ opcode,handlerutils,identutils;
   
 { tbufferhashdatalist }
 
@@ -649,6 +733,67 @@ begin
 end;
 
 function tbufferhashdatalist.absdata(const aoffset: ptruint): pointer; inline;
+begin
+ result:= fbuffer+aoffset;
+end;
+
+{ tkeybufferhashdatalist }
+
+constructor tkeybufferhashdatalist.create(const datasize: integer);
+begin
+ inherited create(datasize + sizeof(keybufferdataty));
+end;
+
+procedure tkeybufferhashdatalist.checkbuffercapacity(const asize: integer);
+begin
+ fbuffersize:= fbuffersize + asize;
+ if fbuffersize > fbuffercapacity then begin
+  fbuffercapacity:= fbuffersize*2 + 1024;
+  reallocmem(fbuffer,fbuffercapacity);
+ end;
+end;
+
+function tkeybufferhashdatalist.addunique(const key; const abufferdata;
+               const size: int32; out res: pointer): boolean;
+var
+ po1: pkeybufferhashdataty;
+begin
+ po1:= pointer(internalfind(key));
+ result:= po1 = nil;
+ if result then begin
+  po1:= pointer(internaladd(key));
+  po1^.data.buffer:= fbuffersize;
+  checkbuffercapacity(size);
+  po1^.data.buffersize:= size;
+  move(abufferdata,(fbuffer+po1^.data.buffer)^,size);
+ end;
+ res:= po1;
+end;
+
+procedure tkeybufferhashdatalist.clear();
+begin
+ inherited;
+ if fbuffer <> nil then begin
+  freemem(fbuffer);
+  fbuffer:= nil;
+  fbuffercapacity:= 0;
+ end;
+ fbuffersize:= 0;
+end;
+
+procedure tkeybufferhashdatalist.mark(out ref: buffermarkinfoty);
+begin
+ inherited mark(ref.hashref);
+ ref.bufferref:= fbuffersize;
+end;
+
+procedure tkeybufferhashdatalist.release(const ref: buffermarkinfoty);
+begin
+ inherited release(ref.hashref);
+ fbuffersize:= ref.bufferref;
+end;
+
+function tkeybufferhashdatalist.absdata(const aoffset: ptruint): pointer;
 begin
  result:= fbuffer+aoffset;
 end;
@@ -1637,6 +1782,13 @@ begin
  (pgloballocdataty(fdata) + result)^:= (pgloballocdataty(fdata) + alistid)^; 
 end;
 
+{ ttypemetahashdatalist }
+
+constructor ttypemetahashdatalist.create();
+begin
+ inherited create(sizeof(metaiddataty));
+end;
+
 { tmetadatalist }
 
 constructor tmetadatalist.create(const atypelist: ttypehashdatalist;
@@ -1644,7 +1796,14 @@ constructor tmetadatalist.create(const atypelist: ttypehashdatalist;
 begin
  ftypelist:= atypelist;
  fconstlist:= aconstlist;
+ ftypemetalist:= ttypemetahashdatalist.create();
  inherited create();
+end;
+
+destructor tmetadatalist.destroy();
+begin
+ inherited;
+ ftypemetalist.free();
 end;
 
 procedure tmetadatalist.clear;
@@ -1653,6 +1812,7 @@ begin
  if not (bdls_destroying in fstate) then begin
   fnullnode:= addnode([]);
   fsubprogramcount:= 0;
+  ftypemetalist.clear();
  end;
 end;
 
@@ -1701,16 +1861,22 @@ begin
  result.flags:= [];
 end;
 
-function tmetadatalist.addnode(
-                        const avalues: array of metavaluety): metavaluety;
+function tmetadatalist.addnode(const avalues: pmetavaluety;
+                                     const acount: int32): metavaluety;
 var
  i1: int32;
 begin
- i1:= length(avalues)*sizeof(avalues[0]);
+ i1:= acount*sizeof(avalues^);
  with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty)+i1,result))^ do begin
-  len:= length(avalues);
-  move(avalues,data,i1);
+  len:= acount;
+  move(avalues^,data,i1);
  end;
+end;
+
+function tmetadatalist.addnode(
+                        const avalues: array of metavaluety): metavaluety;
+begin
+ result:= addnode(@avalues,length(avalues));
 end;
 
 procedure tmetadatalist.addnamednode(const aname: lstringty;
@@ -1800,18 +1966,115 @@ begin
  result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;
 
-function tmetadatalist.adddisubroutinetype(
-                               const aparams: metavaluety): metavaluety;
+function tmetadatalist.adddisubroutinetype(const asub: psubdataty): metavaluety;
+var
+ m1: metavaluety;
+ params1: array[0..maxparamcount] of metavaluety;
+ i1: int32;
+ parcount1: int32;
+ po1: pelementoffsetty;
+ po2,pe: pmetavaluety;
+ po3: pvardataty;
 begin
+ if asub = nil then begin //main
+  parcount1:= 1;
+  params1[0]:= addtype(sysdatatypes[st_int32].typedata);
+ end
+ else begin
+  if (asub^.paramcount > maxparamcount) then begin
+   parcount1:= 0;
+   m1:= nullnode;
+  end
+  else begin
+   parcount1:= asub^.paramcount;
+   po1:= @asub^.paramsrel;
+   po2:= @params1;
+   if not (sf_function in asub^.flags) then begin //todo: handle result deref
+    po2^:= fnullnode;
+    inc(po2);
+   end;
+   pe:= po2 + parcount1;
+   while po2 < pe do begin
+    po3:= ele.eledataabs(po1^);
+    po2^:= addtype(po3^.vf.typ);
+    inc(po1);
+    inc(po2);
+   end;
+   parcount1:= pe-pmetavaluety(@params1);
+  end;
+ end;
+ if parcount1 > 0 then begin
+  m1:= addnode(@params1,parcount1);
+ end;
  with pdisubroutinetypety(adddata(mdk_disubroutinetype,
                     sizeof(disubroutinetypety),result))^ do begin
-  params:= aparams;
+  params:= m1;
  end;
 end;
 
 function tmetadatalist.getsubprograms: metavaluearty;
 begin
  result:= copy(fsubprograms,0,fsubprogramcount);
+end;
+
+function tmetadatalist.adddibasictype(const adifile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const alinenumber: int32;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aflags: int32; const aencoding: int32): metavaluety;
+var
+ m1: metavaluety;
+begin
+ with pdibasictypety(adddata(mdk_dibasictype,
+                    sizeof(dibasictypety),result))^ do begin
+  difile:= adifile;
+  context:= acontext;
+  name:= addstring(aname);
+  linenumber:= i32const(alinenumber);
+  sizeinbits:= i32const(asizeinbits);
+  aligninbits:= i32const(aaligninbits);
+  flags:= i32const(aflags);
+  encoding:= i32const(aencoding);
+ end;
+end;
+
+function tmetadatalist.addtype(const atype: elementoffsetty): metavaluety;
+var
+ po1: pmetaiddataty;
+ po2: ptypedataty;
+ offs1: card32;
+ lstr1: lstringty;
+ file1: metavaluety;
+ m1: metavaluety;
+begin
+ if ftypemetalist.addunique(atype,po1) then begin
+  offs1:= ftypemetalist.getdataoffset(po1);
+  po2:= ele.eledataabs(atype);
+  with datatoele(po2)^.header do begin
+   if defunit = nil then begin
+    file1:= fnullnode; //internal type
+   end
+   else begin
+    file1:= defunit^.filepathmeta;
+   end;
+  end;
+  getidentname(datatoele(po2)^.header.name,lstr1);
+  case po2^.h.kind of
+   dk_integer: begin                                            //context??
+    m1:= adddibasictype(file1,fnullnode,
+                        //linenumber       alignment??    flags
+                    lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
+   end;
+   else begin
+    internalerror(ie_llvmmeta,'20151026A');
+   end;
+  end;
+  po1:= ftypemetalist.getdatapo(offs1);
+  po1^.id:= m1.value.listid;
+ end;
+ result.value.typeid:= ftypelist.metadata;
+ result.value.listid:= po1^.id;
+ result.flags:= [mvf_meta];
 end;
 
 {
@@ -1861,6 +2124,30 @@ begin
  with plinkdataty(add(ele.eledatarel(adata)))^ do begin
   globid:= aglobid;
  end;
+end;
+
+{ tint32bufferhashdatalist }
+
+constructor tint32bufferhashdatalist.create(const datasize: integer);
+begin
+ inherited create(datasize+sizeof(int32bufferdataty));
+end;
+
+function tint32bufferhashdatalist.hashkey(const akey): hashvaluety;
+begin
+ result:= scramble((integer(akey) xor (integer(akey) shr 2)));
+end;
+
+function tint32bufferhashdatalist.checkkey(const akey;
+               const aitemdata): boolean;
+begin
+ result:= integer(akey) = int32keybufferdataty(aitemdata).data.key;
+end;
+
+function tint32bufferhashdatalist.addunique(const akey: int32; const adata;
+               const size: integer; out res: pkeybufferdataty): boolean;
+begin
+ result:= addunique(akey,adata,size,res);
 end;
 
 end.

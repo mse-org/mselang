@@ -741,6 +741,26 @@ const
   DW_LANG_Mips_Assembler = $8001;
   DW_LANG_hi_user = $ffff;
 
+  // Encoding attribute values
+  DW_ATE_address = $01;
+  DW_ATE_boolean = $02;
+  DW_ATE_complex_float = $03;
+  DW_ATE_float = $04;
+  DW_ATE_signed = $05;
+  DW_ATE_signed_char = $06;
+  DW_ATE_unsigned = $07;
+  DW_ATE_unsigned_char = $08;
+  DW_ATE_imaginary_float = $09;
+  DW_ATE_packed_decimal = $0a;
+  DW_ATE_numeric_string = $0b;
+  DW_ATE_edited = $0c;
+  DW_ATE_signed_fixed = $0d;
+  DW_ATE_unsigned_fixed = $0e;
+  DW_ATE_decimal_float = $0f;
+  DW_ATE_UTF = $10;
+  DW_ATE_lo_user = $80;
+  DW_ATE_hi_user = $ff;
+
 {DI* metadata nodes from llvm/IR/DebugInfo.h, llvm/lib/IR/DebugInfo.cpp}
 
 //first field is (LLVMDebugVersion or DW_TAG_*)                         //0
@@ -832,6 +852,15 @@ public:
 };
 *)
 
+/// DIBasicType - A basic type, like 'int' or 'float'.
+//DIBasicType(DIType)
+(*
+  unsigned getEncoding() const { return getUnsignedField(9); }      //9
+};
+*)
+/// DIDerivedType - A simple derived type, like a const qualified type,
+/// a typedef, a pointer or reference, et cetera.  Or, a data member of
+/// a class/struct/union.
 //DIDerivedType(DIType)
 (*
   DITypeRef getTypeDerivedFrom() const { return getFieldAs<DITypeRef>(9); } //9
@@ -898,7 +927,7 @@ DICompositeType DIBuilder::createSubroutineType(DIFile File,
   StringRef getLinkageName() const { return getStringField(5); }        //5
   unsigned getLineNumber() const { return getUnsignedField(6); }        //6
   DICompositeType getType() const { return getFieldAs<DICompositeType>(7); }
-                                    //DW_TAG_subroutine_type
+                                    //DW_TAG_subroutine_type            //7
   /// isLocalToUnit - Return true if this subprogram is local to the current
   /// compile unit, like 'static' in C.
   unsigned isLocalToUnit() const { return getUnsignedField(8); }        //8
