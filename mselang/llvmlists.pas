@@ -514,7 +514,7 @@ type
    constructor create();
  end;
  
- metadatakindty = (mdk_none,mdk_node,mdk_namednode,
+ metadatakindty = (mdk_none,mdk_void,mdk_node,mdk_namednode,
                    mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
  
@@ -532,7 +532,8 @@ type
 
  tmetadatalist = class(tindexbufferdatalist)
   private
-   fnullnode: metavaluety;
+   fnullvalue: metavaluety;
+   femptynode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
    fsubprograms: metavaluearty;
@@ -553,7 +554,7 @@ type
    procedure beginunit();
    function i8const(const avalue: int8): metavaluety;
    function i32const(const avalue: int32): metavaluety;
-   property nullnode: metavaluety read fnullnode;
+   property emptynode: metavaluety read femptynode;
 
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
@@ -1816,7 +1817,9 @@ procedure tmetadatalist.clear;
 begin
  inherited;
  if not (bdls_destroying in fstate) then begin
-  fnullnode:= addnode([]);
+//  adddata(mdk_null,0,fnullvalue);
+  femptynode:= addnode([]);
+fnullvalue:= femptynode;
   fsubprogramcount:= 0;
   ftypemetalist.clear();
   fsyscontext:= adddifile(addfile('system'));
@@ -2000,14 +2003,14 @@ begin
  else begin
   if (asub^.paramcount > maxparamcount) then begin
    parcount1:= 0;
-   m1:= nullnode;
+   m1:= femptynode;
   end
   else begin
    parcount1:= asub^.paramcount;
    po1:= @asub^.paramsrel;
    po2:= @params1;
    if not (sf_function in asub^.flags) then begin //todo: handle result deref
-    po2^:= fnullnode;
+    po2^:= fnullvalue;
     inc(po2);
    end;
    pe:= po2 + parcount1;
@@ -2069,7 +2072,7 @@ begin
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
-    file1:= fnullnode; //internal type
+    file1:= femptynode; //internal type
     context1:= fsyscontext;
    end
    else begin
