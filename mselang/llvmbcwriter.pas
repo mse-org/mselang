@@ -748,6 +748,12 @@ begin
         flags,encoding]);
      end;
     end;
+{
+    mdk_discope: begin
+     with pdiscopety(@pm1^.data)^ do begin
+      emitmetadatanode([metaDW_TAG_base_type,
+    end;
+}
     mdk_dicompileunit: begin
      with pdicompileunitty(@pm1^.data)^ do begin
       m1:= subprograms;

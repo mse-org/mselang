@@ -462,7 +462,12 @@ type
   dirname: metavaluety;
  end;
  pdifilety = ^difilety;
- 
+{ 
+ discopety = record
+  difile: metavaluety;
+ end;
+ pdiscopety = ^discopety;
+} 
  dicompileunitty = record
   difile: metavaluety;
   sourcelanguage: metavaluety;
@@ -510,7 +515,7 @@ type
  end;
  
  metadatakindty = (mdk_none,mdk_node,mdk_namednode,
-                   mdk_string,mdk_difile,mdk_dibasictype,
+                   mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
  
  metadataheaderty = record
@@ -533,6 +538,7 @@ type
    fsubprograms: metavaluearty;
    fsubprogramcount: int32;
    ftypemetalist: ttypemetahashdatalist;
+   fsyscontext: metavaluety;
    function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
@@ -1813,6 +1819,9 @@ begin
   fnullnode:= addnode([]);
   fsubprogramcount:= 0;
   ftypemetalist.clear();
+  fsyscontext:= adddifile(addfile('system'));
+//  fsyscontext:= adddicompileunit(addfile('system'),
+//            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
  end;
 end;
 
@@ -1919,6 +1928,25 @@ begin
  end;
 end;
 
+function tmetadatalist.dwarftag(const atag: int32): metavaluety;
+begin
+ result.value:= fconstlist.addi32(atag or LLVMDebugVersion);
+ result.flags:= [];
+end;
+
+function tmetadatalist.adddifile(const afile: metavaluety): metavaluety;
+begin
+ result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
+end;
+{
+function tmetadatalist.adddiscope(const afile: metavaluety): metavaluety;
+begin
+ with pdiscopety(adddata(mdk_discope,
+                    sizeof(discopety),result))^ do begin
+  difile:= afile;
+ end;
+end;
+}
 function tmetadatalist.adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string; 
               const asubprograms: metavaluety;
@@ -1953,17 +1981,6 @@ begin
  end;
  metavaluety(additempo(fsubprograms,
                typeinfo(fsubprograms),fsubprogramcount)^):= result;
-end;
-
-function tmetadatalist.dwarftag(const atag: int32): metavaluety;
-begin
- result.value:= fconstlist.addi32(atag or LLVMDebugVersion);
- result.flags:= [];
-end;
-
-function tmetadatalist.adddifile(const afile: metavaluety): metavaluety;
-begin
- result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;
 
 function tmetadatalist.adddisubroutinetype(const asub: psubdataty): metavaluety;
@@ -2045,7 +2062,7 @@ var
  offs1: card32;
  lstr1: lstringty;
  file1: metavaluety;
- m1: metavaluety;
+ m1,context1: metavaluety;
 begin
  if ftypemetalist.addunique(atype,po1) then begin
   offs1:= ftypemetalist.getdataoffset(po1);
@@ -2053,15 +2070,18 @@ begin
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
     file1:= fnullnode; //internal type
+    context1:= fsyscontext;
    end
    else begin
     file1:= defunit^.filepathmeta;
+    context1:= defunit^.compileunitmeta; 
+                        //todo: use correct context for local defines
    end;
   end;
   getidentname(datatoele(po2)^.header.name,lstr1);
   case po2^.h.kind of
    dk_integer: begin                                            //context??
-    m1:= adddibasictype(file1,fnullnode,
+    m1:= adddibasictype(file1,context1,
                         //linenumber       alignment??    flags
                     lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
    end;
