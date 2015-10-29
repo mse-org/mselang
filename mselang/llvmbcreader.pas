@@ -1221,9 +1221,10 @@ var
                           atext);
  end; //outmetarecord
 
- function typevaluepair(const start: int32): string;
+ function typevaluepair(const start: int32; const tryname: boolean): string;
  var
   po1,pe: pvaluety;
+  i1,i2: int32;
  begin
   result:= '';
   po1:= @rec1[start];
@@ -1244,6 +1245,16 @@ var
        end;
        case kind of 
         gk_const: begin
+         if tryname and (constkind = CST_CODE_INTEGER) and 
+                                   (intconst >= llvmdebugversion) then begin
+          i2:= intconst - llvmdebugversion;
+          for i1:= 0 to high(debugmetanodetags) do begin
+           if i2 = debugmetanodetags[i1].tag then begin
+            result:= result +'<'+debugmetanodetags[i1].name+'>';
+            break;
+           end;
+          end;
+         end;
          result:= result+'C'+inttostr((po1+1)^)+'=';
          case constkind of
           CST_CODE_INTEGER: begin
@@ -1273,6 +1284,7 @@ var
 var
  blocklevelbefore: int32;
  name1: string;
+ str1: string;
 begin
  output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1293,7 +1305,6 @@ begin
       name1:= valueartostring(rec1,2);
      end;
      METADATA_NAMED_NODE: begin
-//      fmetalist.add();
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': '+
                 name1+':= '+intvalueartostring(rec1,2));
       name1:= '';
@@ -1303,14 +1314,13 @@ begin
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
-     METADATA_NODE,
-     METADATA_FN_NODE,METADATA_ATTACHMENT: begin
+     METADATA_NODE,METADATA_FN_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
-      outmetarecord(typevaluepair(2));
+      outmetarecord(typevaluepair(2,rec1[1]=ord(METADATA_NODE)));
      end;
      else begin
       fmetalist.add();
-      outmetarecord(typevaluepair(2));
+      outmetarecord(typevaluepair(2,false));
      end;
     end;
    end;

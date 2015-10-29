@@ -540,6 +540,10 @@ type
    fsubprogramcount: int32;
    ftypemetalist: ttypemetahashdatalist;
    fsyscontext: metavaluety;
+   fsysfile: metavaluety;
+   fsysname: metavaluety;
+   fcompileunit: metavaluety;
+   fcompilefile: metavaluety;
    function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
@@ -562,6 +566,7 @@ type
    procedure addnamednode(const aname: lstringty;
                                 const avalues: array of int32);
    function addstring(const avalue: lstringty): metavaluety;
+   function addstring(const avalue: string): metavaluety;
    function addfile(const afilename: filenamety): metavaluety;
 
    function adddibasictype(const adifile: metavaluety;
@@ -1823,7 +1828,9 @@ begin
   femptynode:= addnode([]);
   fsubprogramcount:= 0;
   ftypemetalist.clear();
-  fsyscontext:= adddifile(addfile('system'));
+  fsysfile:= adddifile(addfile('system'));
+  fsyscontext:= fsysfile;
+  fsysname:= addstring('system');
 //  fsyscontext:= adddicompileunit(addfile('system'),
 //            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
  end;
@@ -1918,6 +1925,11 @@ begin
  end;
 end;
 
+function tmetadatalist.addstring(const avalue: string): metavaluety;
+begin
+ result:= addstring(stringtolstring(avalue));
+end;
+
 function tmetadatalist.addfile(const afilename: filenamety): metavaluety;
 var
  m1,m2: metavaluety;
@@ -1963,6 +1975,8 @@ begin
   producer:= addstring(stringtolstring(aproducer));
   subprograms:= asubprograms;
   emissionkind:= i32const(ord(aemissionkind));
+  fcompileunit:= result;
+  fcompilefile:= afile;
  end;
 end;
 
@@ -2073,8 +2087,8 @@ begin
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
-    file1:= femptynode; //internal type
-    context1:= fsyscontext;
+    file1:= fcompilefile; //internal type
+    context1:= fcompileunit;
    end
    else begin
     file1:= defunit^.filepathmeta;

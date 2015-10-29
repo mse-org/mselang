@@ -35,7 +35,9 @@
 unit llvmbitcodes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
-
+uses
+ msetypes;
+ 
 type
   StandardWidths = (
     CodeLenWidth   = 4,  // Codelen are VBR-4.
@@ -761,6 +763,79 @@ const
   DW_ATE_lo_user = $80;
   DW_ATE_hi_user = $ff;
 
+type
+ nodetaginfoty = record
+  tag: card32;
+  name: string;
+ end;
+const
+
+ debugmetanodetags: array [0..62] of nodetaginfoty = (
+  (tag: DW_TAG_array_type; name: 'array_type';),
+  (tag: DW_TAG_class_type; name: 'class_type';),
+  (tag: DW_TAG_entry_point; name: 'entry_point';),
+  (tag: DW_TAG_enumeration_type; name: 'enumeration_type';),
+  (tag: DW_TAG_formal_parameter; name: 'formal_parameter';),
+  (tag: DW_TAG_imported_declaration; name: 'imported_declaration';),
+  (tag: DW_TAG_label; name: 'label';),
+  (tag: DW_TAG_lexical_block; name: 'lexical_block';),
+  (tag: DW_TAG_member; name: 'member';),
+  (tag: DW_TAG_pointer_type; name: 'pointer_type';),
+  (tag: DW_TAG_reference_type; name: 'reference_type';),
+  (tag: DW_TAG_compile_unit; name: 'compile_unit';),
+  (tag: DW_TAG_string_type; name: 'string_type';),
+  (tag: DW_TAG_structure_type; name: 'structure_type';),
+  (tag: DW_TAG_subroutine_type; name: 'subroutine_type';),
+  (tag: DW_TAG_typedef; name: 'typedef';),
+  (tag: DW_TAG_union_type; name: 'union_type';),
+  (tag: DW_TAG_unspecified_parameters; name: 'unspecified_parameters';),
+  (tag: DW_TAG_variant; name: 'variant';),
+  (tag: DW_TAG_common_block; name: 'common_block';),
+  (tag: DW_TAG_common_inclusion; name: 'common_inclusion';),
+  (tag: DW_TAG_inheritance; name: 'inheritance';),
+  (tag: DW_TAG_inlined_subroutine; name: 'inlined_subroutine';),
+  (tag: DW_TAG_module; name: 'module';),
+  (tag: DW_TAG_ptr_to_member_type; name: 'ptr_to_member_type';),
+  (tag: DW_TAG_set_type; name: 'set_type';),
+  (tag: DW_TAG_subrange_type; name: 'subrange_type';),
+  (tag: DW_TAG_with_stmt; name: 'with_stmt';),
+  (tag: DW_TAG_access_declaration; name: 'access_declaration';),
+  (tag: DW_TAG_base_type; name: 'base_type';),
+  (tag: DW_TAG_catch_block; name: 'catch_block';),
+  (tag: DW_TAG_const_type; name: 'const_type';),
+  (tag: DW_TAG_constant; name: 'constant';),
+  (tag: DW_TAG_enumerator; name: 'enumerator';),
+  (tag: DW_TAG_file_type; name: 'file_type';),
+  (tag: DW_TAG_friend; name: 'friend';),
+  (tag: DW_TAG_namelist; name: 'namelist';),
+  (tag: DW_TAG_namelist_item; name: 'namelist_item';),
+  (tag: DW_TAG_packed_type; name: 'packed_type';),
+  (tag: DW_TAG_subprogram; name: 'subprogram';),
+  (tag: DW_TAG_template_type_parameter; name: 'template_type_parameter';),
+  (tag: DW_TAG_template_value_parameter; name: 'template_value_parameter';),
+  (tag: DW_TAG_thrown_type; name: 'thrown_type';),
+  (tag: DW_TAG_try_block; name: 'try_block';),
+  (tag: DW_TAG_variant_part; name: 'variant_part';),
+  (tag: DW_TAG_variable; name: 'variable';),
+  (tag: DW_TAG_volatile_type; name: 'volatile_type';),
+  (tag: DW_TAG_dwarf_procedure; name: 'dwarf_procedure';),
+  (tag: DW_TAG_restrict_type; name: 'restrict_type';),
+  (tag: DW_TAG_interface_type; name: 'interface_type';),
+  (tag: DW_TAG_namespace; name: 'namespace';),
+  (tag: DW_TAG_imported_module; name: 'imported_module';),
+  (tag: DW_TAG_unspecified_type; name: 'unspecified_type';),
+  (tag: DW_TAG_partial_unit; name: 'partial_unit';),
+  (tag: DW_TAG_imported_unit; name: 'imported_unit';),
+  (tag: DW_TAG_condition; name: 'condition';),
+  (tag: DW_TAG_shared_type; name: 'shared_type';),
+  (tag: DW_TAG_type_unit; name: 'type_unit';),
+  (tag: DW_TAG_rvalue_reference_type; name: 'rvalue_reference_type';),
+  (tag: DW_TAG_template_alias; name: 'template_alias';),
+  (tag: DW_TAG_coarray_type; name: 'coarray_type';),
+  (tag: DW_TAG_generic_subrange; name: 'generic_subrange';),
+  (tag: DW_TAG_dynamic_type; name: 'dynamic_type';)
+ );
+ 
 {DI* metadata nodes from llvm/IR/DebugInfo.h, llvm/lib/IR/DebugInfo.cpp}
 
 //first field is (LLVMDebugVersion or DW_TAG_*)                         //0
