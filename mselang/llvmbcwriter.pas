@@ -712,16 +712,18 @@ begin
    endblock(); 
   end;
  end;
- if metadata.count > 0 then begin
+ if metadata.count > 0 then begin         //metadata
   metanullstring:= metadata.addstring(emptylstring);
   metanullnode:= metadata.addnode([]);
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
   while pm1 <> nil do begin
    case pm1^.header.kind of
+{
     mdk_void: begin
      emitrec(ord(TYPE_CODE_VOID),[]);
     end;
+}
     mdk_string: begin
      with pstringmetaty(@pm1^.data)^ do begin
       emitrec(ord(METADATA_STRING),len,pcard8(@data));

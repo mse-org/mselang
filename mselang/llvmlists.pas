@@ -514,7 +514,7 @@ type
    constructor create();
  end;
  
- metadatakindty = (mdk_none,mdk_void,mdk_node,mdk_namednode,
+ metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
  
@@ -532,7 +532,7 @@ type
 
  tmetadatalist = class(tindexbufferdatalist)
   private
-   fnullvalue: metavaluety;
+   fvoidconst: metavaluety;
    femptynode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
@@ -1817,7 +1817,9 @@ procedure tmetadatalist.clear;
 begin
  inherited;
  if not (bdls_destroying in fstate) then begin
-  adddata(mdk_void,0,fnullvalue);
+//  adddata(mdk_void,0,fnullvalue);
+  fvoidconst.value:= nullconst;
+  fvoidconst.flags:= [];
   femptynode:= addnode([]);
   fsubprogramcount:= 0;
   ftypemetalist.clear();
@@ -2009,7 +2011,7 @@ begin
    po1:= @asub^.paramsrel;
    po2:= @params1;
    if not (sf_function in asub^.flags) then begin //todo: handle result deref
-    po2^:= fnullvalue;
+    po2^:= fvoidconst;
     inc(po2);
    end;
    pe:= po2 + parcount1;
