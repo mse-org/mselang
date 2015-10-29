@@ -2090,7 +2090,7 @@ begin
                     lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
    end;
    else begin
-    internalerror(ie_llvmmeta,'20151026A');
+    internalerror1(ie_llvmmeta,'20151026A');
    end;
   end;
   po1:= ftypemetalist.getdatapo(offs1);
