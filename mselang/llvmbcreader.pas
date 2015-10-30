@@ -1325,7 +1325,10 @@ begin
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
-     METADATA_NODE,METADATA_FN_NODE,METADATA_ATTACHMENT: begin
+     METADATA_FN_NODE: begin //todo
+      outmetarecord(inttostr(rec1[1]));
+     end;
+     METADATA_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
       outmetarecord(typevaluepair(2,rec1[1]=ord(METADATA_NODE)));
      end;
