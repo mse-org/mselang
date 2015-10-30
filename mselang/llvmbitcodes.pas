@@ -1085,6 +1085,72 @@ DICompositeType DIBuilder::createSubroutineType(DIFile File,
   unsigned getScopeLineNumber() const { return getUnsignedField(19); } //19
 *)
 
+(*
+/// DIVariable - This is a wrapper for a variable (e.g. parameter, local,
+/// global etc).
+class DIVariable : public DIDescriptor {
+  friend class DIDescriptor;
+  void printInternal(raw_ostream &OS) const;
+
+public:
+  explicit DIVariable(const MDNode *N = nullptr) : DIDescriptor(N) {}
+
+  DIScope getContext() const { return getFieldAs<DIScope>(1); }       //1
+  StringRef getName() const { return getStringField(2); }             //2
+  DIFile getFile() const { return getFieldAs<DIFile>(3); }            //3
+  unsigned getLineNumber() const { return (getUnsignedField(4) << 8) >> 8; }
+  unsigned getArgNumber() const {                                     //4
+    unsigned L = getUnsignedField(4);
+    return L >> 24;
+  }
+  DITypeRef getType() const { return getFieldAs<DITypeRef>(5); }      //5
+
+  /// isArtificial - Return true if this variable is marked as "artificial".
+  bool isArtificial() const {
+    return (getUnsignedField(6) & FlagArtificial) != 0;               //6
+  }
+
+  bool isObjectPointer() const {
+    return (getUnsignedField(6) & FlagObjectPointer) != 0;
+  }
+
+  /// \brief Return true if this variable is represented as a pointer.
+  bool isIndirect() const {
+    return (getUnsignedField(6) & FlagIndirectVariable) != 0;
+  }
+
+  /// getInlinedAt - If this variable is inlined then return inline location.
+  MDNode *getInlinedAt() const;
+
+  /// Verify - Verify that a variable descriptor is well formed.
+  bool Verify() const;
+
+  /// HasComplexAddr - Return true if the variable has a complex address.
+  bool hasComplexAddress() const { return getNumAddrElements() > 0; }
+
+  /// \brief Return the size of this variable's complex address or
+  /// zero if there is none.
+  unsigned getNumAddrElements() const {
+    if (DbgNode->getNumOperands() < 9)
+      return 0;
+    return getDescriptorField(8)->getNumOperands();                 //8
+  }
+
+  /// \brief return the Idx'th complex address element.
+  uint64_t getAddrElement(unsigned Idx) const;
+
+  /// isBlockByrefVariable - Return true if the variable was declared as
+  /// a "__block" variable (Apple Blocks).
+  bool isBlockByrefVariable(const DITypeIdentifierMap &Map) const {
+    return (getType().resolve(Map)).isBlockByrefStruct();
+  }
+
+  /// isInlinedFnArgument - Return true if this variable provides debugging
+  /// information for an inlined function arguments.
+  bool isInlinedFnArgument(const Function *CurFn);
+
+  void printExtendedName(raw_ostream &OS) const;
+*)
 
 type
  DebugEmissionKind = (FullDebug=1, LineTablesOnly);

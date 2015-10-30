@@ -1241,7 +1241,7 @@ begin
                                                s.currentscopemeta))^ do begin
     functionid:= m1;
     typeid:= llvmlists.metadatalist.adddisubroutinetype(
-                                  po1,filepathmeta,debugfilemeta);
+                                  po1{,filepathmeta,debugfilemeta});
    end;
    s.currentscopemeta:= d.subdef.scopemetabefore;
   end;

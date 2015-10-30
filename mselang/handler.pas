@@ -257,8 +257,8 @@ begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
            debugfilemeta,lstr1,
            info.contextstack[info.s.stackindex].start.line+1,m1,
-           llvmlists.metadatalist.adddisubroutinetype(nil,
-                      filepathmeta,s.currentscopemeta),[flagprototyped]);
+           llvmlists.metadatalist.adddisubroutinetype(nil{,
+                      filepathmeta,s.currentscopemeta}),[flagprototyped]);
 {
      m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
      pdicompileunitty(llvmlists.metadatalist.items[

@@ -489,8 +489,8 @@ type
  pdisubprogramty = ^disubprogramty;
 
  disubroutinetypety = record
-  difile: metavaluety;
-  context: metavaluety;
+//  difile: metavaluety;
+//  context: metavaluety;
   params: metavaluety;
  end;
  pdisubroutinetypety = ^disubroutinetypety;
@@ -583,9 +583,9 @@ type
               const asourcelanguage: int32; const aproducer: string;
               const asubprograms: metavaluety;
               const aemissionkind: DebugEmissionKind): metavaluety;
-   function adddisubroutinetype(const asub: psubdataty; 
+   function adddisubroutinetype(const asub: psubdataty{;
                      const afile: metavaluety;
-                                 const acontext: metavaluety): metavaluety;
+                                 const acontext: metavaluety}): metavaluety;
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety;
@@ -2010,8 +2010,8 @@ begin
                typeinfo(fsubprograms),fsubprogramcount)^):= result;
 end;
 
-function tmetadatalist.adddisubroutinetype(const asub: psubdataty; 
-            const afile: metavaluety; const acontext: metavaluety): metavaluety;
+function tmetadatalist.adddisubroutinetype(const asub: psubdataty{;
+            const afile: metavaluety; const acontext: metavaluety}): metavaluety;
 var
  m1: metavaluety;
  params1: array[0..maxparamcount] of metavaluety;
@@ -2053,8 +2053,8 @@ begin
  end;
  with pdisubroutinetypety(adddata(mdk_disubroutinetype,
                     sizeof(disubroutinetypety),result))^ do begin
-  difile:= afile;
-  context:= acontext;
+//  difile:= afile;
+//  context:= acontext;
   params:= m1;
  end;
 end;

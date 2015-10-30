@@ -789,8 +789,8 @@ begin
     mdk_disubroutinetype: begin
      with pdisubroutinetypety(@pm1^.data)^ do begin
       emitmetadatanode([metaDW_TAG_subroutine_type,
-    //scope, context, name,          linenumber,
-      difile,context,metanullstring,metanullint,
+    //scope, context,   name,          linenumber,
+      metanull,metanull,metanullstring,metanullint,
     //sizeinbits, aligninbits,offsetinbits,
       metanullint,metanullint,metanullint,
     //flags,      typederivedfrom,typearray,runtimelang,contyainingtype,
