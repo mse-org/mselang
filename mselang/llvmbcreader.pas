@@ -204,6 +204,9 @@ type
    procedure readmetadatablock();
    procedure readvaluesymtabblock();
    procedure readfunctionblock();
+   procedure readparamattr(const akind: blockids);
+   procedure readparamattrblock();
+   procedure readparamattrgroupblock();
    procedure skip(const words: int32);
   public
    constructor create(ahandle: integer); override;
@@ -304,6 +307,13 @@ const
   '', 
   'ENTRY',
   'BBENTRY'
+ );
+
+ attributecodesnames: array[attributecodes] of string = (
+  '', 
+  'PARAMATTR_CODE_ENTRY_OLD',
+  'PARAMATTR_CODE_ENTRY',
+  'PARAMATTR_GRP_CODE_ENTRY'
  );
 
  metadatacodesnames: array[metadatacodes] of string = (
@@ -1246,7 +1256,8 @@ var
        case kind of 
         gk_const: begin
          if tryname and (constkind = CST_CODE_INTEGER) and 
-                                   (intconst >= llvmdebugversion) then begin
+          (intconst >= llvmdebugversion) and 
+              (intconst <= llvmdebugversion+high(debugmetanodetags)) then begin
           i2:= intconst - llvmdebugversion;
           for i1:= 0 to high(debugmetanodetags) do begin
            if i2 = debugmetanodetags[i1].tag then begin
@@ -1787,6 +1798,48 @@ begin
  fbbbefore:= 0;
 end;
 
+procedure tllvmbcreader.readparamattr(const akind: blockids);
+var
+ blocklevelbefore: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[akind]);
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(attributecodesnames))) or 
+             (attributecodesnames[attributecodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin 
+    case attributecodes(rec1[1]) of
+     PARAMATTR_CODE_ENTRY_OLD,
+     PARAMATTR_CODE_ENTRY,
+     PARAMATTR_GRP_CODE_ENTRY: begin
+      checkmindatalen(rec1,1);
+      outrecord(attributecodesnames[attributecodes(rec1[1])],
+                                          [intvalueartostring(rec1,2)]);
+     end;
+     else begin
+      unknownrec(rec1);
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure tllvmbcreader.readparamattrblock();
+begin
+ readparamattr(PARAMATTR_BLOCK_ID);
+end;
+
+procedure tllvmbcreader.readparamattrgroupblock();
+begin
+ readparamattr(PARAMATTR_GROUP_BLOCK_ID);
+end;
+
 procedure tllvmbcreader.readblockinfoblock();
 var
  blocklevelbefore: int32;
@@ -1867,6 +1920,12 @@ begin
    end;
    METADATA_BLOCK_ID: begin
     readmetadatablock();
+   end;
+   PARAMATTR_BLOCK_ID: begin
+    readparamattrblock();
+   end;   
+   PARAMATTR_GROUP_BLOCK_ID: begin
+    readparamattrgroupblock();
    end;
    else begin
     unknownblock();

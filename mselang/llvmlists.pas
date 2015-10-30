@@ -594,6 +594,7 @@ type
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
    property subprograms: metavaluearty read getsubprograms;
+   property voidconst: metavaluety read fvoidconst;
  end;
 
  tllvmlists = class
@@ -1823,7 +1824,9 @@ begin
  inherited;
  if not (bdls_destroying in fstate) then begin
 //  adddata(mdk_void,0,fnullvalue);
-  fvoidconst.value:= nullconst;
+//  fvoidconst.value:= nullconst;
+  fvoidconst.value.typeid:= ftypelist.void;
+  fvoidconst.value.listid:= 0;
   fvoidconst.flags:= [];
   femptynode:= addnode([]);
   fsubprogramcount:= 0;
@@ -2087,8 +2090,10 @@ begin
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
-    file1:= fcompilefile; //internal type
-    context1:= fcompileunit;
+    file1:= fvoidconst; //internal type
+    context1:= fvoidconst;
+//    file1:= fcompilefile; //internal type
+//    context1:= fcompileunit;
    end
    else begin
     file1:= defunit^.filepathmeta;

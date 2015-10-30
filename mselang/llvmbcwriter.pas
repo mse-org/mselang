@@ -431,9 +431,7 @@ begin
  emitrec(ord(MODULE_CODE_VERSION),[1]);
  
  if metadata.count > 0 then begin
-  metanull.value.typeid:= consts.typelist.void;
-  metanull.value.listid:= 0;
-  metanull.flags:= [];
+  metanull:= metadata.voidconst;
   metanullint.value.typeid:= ord(das_8);
   metanullint.value.listid:= ord(nc_i8);
   metanullint.flags:= [];
@@ -583,7 +581,7 @@ begin
    pt1:= consts.typelist.next();
   end;
   endblock(); 
-                                              //globals
+                                                           //globals
   pga5:= globals.datapo;
   pgae:= pga5 + globals.count;
   while pga5 < pgae do begin
@@ -637,7 +635,7 @@ begin
    end;
    endblock();
   end;
-                                                //consts
+                                                             //consts
   if consts.count > 0 then begin
    beginblock(CONSTANTS_BLOCK_ID,3);
    id1:= -1;
@@ -712,7 +710,7 @@ begin
    endblock(); 
   end;
  end;
- if metadata.count > 0 then begin         //metadata
+ if metadata.count > 0 then begin                          //metadata
   metanullstring:= metadata.addstring(emptylstring);
   metanullnode:= metadata.addnode([]);
   beginblock(METADATA_BLOCK_ID,3);

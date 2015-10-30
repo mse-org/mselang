@@ -161,6 +161,7 @@ type
 
   /// PARAMATTR blocks have code for defining a parameter attribute set.
   AttributeCodes = (
+    PARAMATTR_CODE_ENTRY_0,
     // FIXME: Remove `PARAMATTR_CODE_ENTRY_OLD' in 4.0
     PARAMATTR_CODE_ENTRY_OLD  = 1, // ENTRY: [paramidx0, attr0,
                                    //         paramidx1, attr1...]
