@@ -70,7 +70,7 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
- msestrings,typehandler,exceptionhandler,identutils;
+ msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes;
 
 type
  equalparaminfoty = record
@@ -959,9 +959,9 @@ begin
    {$endif}
     with info.s.unitinfo^ do begin
      s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
-           filepathmeta,s.currentscopemeta,lstr1,
+           filepathmeta,debugfilemeta,lstr1,
            info.contextstack[info.s.stackindex].start.line+1,dummymeta,
-           llvmlists.metadatalist.adddisubroutinetype(@po1^.data));
+           dummymeta,[flagprototyped]);
     end;
 (*
     lstr1:= stringtolstring('main');
@@ -1237,9 +1237,11 @@ begin
    m1.value.listid:= po1^.globid;
    m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
                                            gettype(m1.value.listid);
-   with pdisubprogramty(s.unitinfo^.llvmlists.metadatalist.getdata(
+   with info.s.unitinfo^,pdisubprogramty(llvmlists.metadatalist.getdata(
                                                s.currentscopemeta))^ do begin
     functionid:= m1;
+    typeid:= llvmlists.metadatalist.adddisubroutinetype(
+                                  po1,filepathmeta,debugfilemeta);
    end;
    s.currentscopemeta:= d.subdef.scopemetabefore;
   end;

@@ -769,6 +769,27 @@ type
   tag: card32;
   name: string;
  end;
+
+ dwsubflagty = (
+    FlagPrivate,
+    FlagProtected,
+    FlagFwdDecl,
+    FlagAppleBlock,
+    FlagBlockByrefStruct,
+    FlagVirtual,
+    FlagArtificial,
+    FlagExplicit,
+    FlagPrototyped,
+    FlagObjcClassComplete,
+    FlagObjectPointer,
+    FlagVector,
+    FlagStaticMember,
+    FlagIndirectVariable,
+    FlagLValueReference,
+    FlagRValueReference
+   );
+ dwsubflagsty = set of dwsubflagty;
+
 const
 
  debugmetanodetags: array [0..62] of nodetaginfoty = (
@@ -1015,7 +1036,7 @@ DICompositeType DIBuilder::createSubroutineType(DIFile File,
   DITypeRef getContainingType() const { return getFieldAs<DITypeRef>(12); }
 
   unsigned getFlags() const { return getUnsignedField(13); }            //13
-
+                                          //dwsubflagsty
   unsigned isArtificial() const {
     return (getUnsignedField(13) & FlagArtificial) != 0;
   }

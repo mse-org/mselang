@@ -435,7 +435,8 @@ begin
   metanullint.value.typeid:= ord(das_8);
   metanullint.value.listid:= ord(nc_i8);
   metanullint.flags:= [];
-  metatrue.value:= consts.addi1(true);
+//  metatrue.value:= consts.addi1(true);
+  metatrue.value:= consts.addi32(-1);
   metatrue.flags:= [];
 
   metaDW_TAG_base_type.value:= consts.addi32(
@@ -780,7 +781,7 @@ begin
       //localtounit,definition,virtuality, virtualindex,containingtype,
         metanullint,metatrue,  metanullint,metanullint, metanull,
       //flags,      optimized,  function,  templateparams,functiondeclaration,
-        metanullint,metanullint,functionid,metanull,      metanull,
+        flags,metanullint,functionid,metanull,      metanull,
       //variablesnodes,scopelinenumber
         metanullnode,  linenumber]);
      end;
@@ -788,8 +789,8 @@ begin
     mdk_disubroutinetype: begin
      with pdisubroutinetypety(@pm1^.data)^ do begin
       emitmetadatanode([metaDW_TAG_subroutine_type,
-    //scope,   context, name,          linenumber,
-      metanull,metanull,metanullstring,metanullint,
+    //scope, context, name,          linenumber,
+      difile,context,metanullstring,metanullint,
     //sizeinbits, aligninbits,offsetinbits,
       metanullint,metanullint,metanullint,
     //flags,      typederivedfrom,typearray,runtimelang,contyainingtype,

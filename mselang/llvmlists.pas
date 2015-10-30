@@ -484,10 +484,13 @@ type
   functionid: metavaluety;
   typeid: metavaluety;
   name: metavaluety;
+  flags: metavaluety;
  end;
  pdisubprogramty = ^disubprogramty;
 
  disubroutinetypety = record
+  difile: metavaluety;
+  context: metavaluety;
   params: metavaluety;
  end;
  pdisubroutinetypety = ^disubroutinetypety;
@@ -580,11 +583,13 @@ type
               const asourcelanguage: int32; const aproducer: string;
               const asubprograms: metavaluety;
               const aemissionkind: DebugEmissionKind): metavaluety;
-   function adddisubroutinetype(const asub: psubdataty): metavaluety;
+   function adddisubroutinetype(const asub: psubdataty; 
+                     const afile: metavaluety;
+                                 const acontext: metavaluety): metavaluety;
    function adddisubprogram(const afile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety;
-           const atype: metavaluety): metavaluety;
+           const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
    
   {
    function adddicompositetype(const atag: int32; 
@@ -1986,7 +1991,7 @@ end;
 function tmetadatalist.adddisubprogram(const afile: metavaluety;
           const acontext: metavaluety; const aname: lstringty;
           const alinenumber: int32; const afunction: metavaluety;
-          const atype: metavaluety): metavaluety;
+          const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
 var
  m1: metavaluety;
 begin
@@ -1999,12 +2004,14 @@ begin
   functionid:= afunction;
   name:= m1;
   typeid:= atype;
+  flags:= i32const(int32(aflags));
  end;
  metavaluety(additempo(fsubprograms,
                typeinfo(fsubprograms),fsubprogramcount)^):= result;
 end;
 
-function tmetadatalist.adddisubroutinetype(const asub: psubdataty): metavaluety;
+function tmetadatalist.adddisubroutinetype(const asub: psubdataty; 
+            const afile: metavaluety; const acontext: metavaluety): metavaluety;
 var
  m1: metavaluety;
  params1: array[0..maxparamcount] of metavaluety;
@@ -2046,6 +2053,8 @@ begin
  end;
  with pdisubroutinetypety(adddata(mdk_disubroutinetype,
                     sizeof(disubroutinetypety),result))^ do begin
+  difile:= afile;
+  context:= acontext;
   params:= m1;
  end;
 end;
