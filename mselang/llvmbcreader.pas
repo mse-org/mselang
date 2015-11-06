@@ -1326,7 +1326,9 @@ begin
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
      METADATA_FN_NODE: begin //todo
-      outmetarecord(inttostr(rec1[1]));
+//      fmetalist.add();
+      checkdatalen(rec1,3);
+      outrecord('MFN',[rec1[1],rec1[2]]);
      end;
      METADATA_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
@@ -1418,9 +1420,12 @@ var
   end
   else begin
    if avalue >= ssaindex then begin
-    error('Invalid ssa index');
+    result:= maxint;
+//    error('Invalid ssa index');
+   end
+   else begin
+    result:= ssatypes[avalue];
    end;
-   result:= ssatypes[avalue];
   end;
  end; //typeid
 
@@ -1465,14 +1470,18 @@ var
    end;
   end
   else begin
-   if avalue >= ssaindex then begin
-    error('Invalid ssa index');
-   end;
    if avalue < paramcount then begin
     result:= 'P'+inttostr(avalue);
    end
    else begin
-    result:= 'S'+inttostr(avalue-paramcount);
+    if avalue >= ssaindex then begin
+     result:= 'S+';
+//     error('Invalid ssa index');
+    end
+    else begin
+     result:= 'S';
+    end;
+    result:= result + inttostr(avalue-paramcount);
    end;
   end;
  end; //opname
@@ -1487,7 +1496,8 @@ var
 
  function checktypeids(const a: int32; const b: int32): boolean;
  begin
-  result:= a = b;
+  result:= (a = b) or 
+                     (a = maxint) or (b = maxint); //unknown because of forward
   if not result then begin
    if a < 0 then begin
     if b >= 0 then begin
@@ -2168,10 +2178,13 @@ procedure tllvmbcreader.dump(const aoutput: tstream);
 var
  ca1: card32;
  startoffset: int32;
+ iswrapped: boolean;
 begin
  exitcode:= 1;
+ iswrapped:= false;
  ca1:= read32();
  if ca1 = $0B17C0DE then begin
+  iswrapped:= true;
   ca1:= read32();
   if ca1 <> 0 then begin
    wrappererror();
@@ -2192,7 +2205,8 @@ begin
  while not finished do begin
   readitem();
  end;
- if position <> fwrapsize + startoffset + sizeof(bc_header) then begin
+ if iswrapped and (position <> 
+                       fwrapsize + startoffset + sizeof(bc_header)) then begin
   wrappererror();
  end;
  exitcode:= 0;
