@@ -1256,13 +1256,24 @@ var
        case kind of 
         gk_const: begin
          if tryname and (constkind = CST_CODE_INTEGER) and 
-          (intconst >= llvmdebugversion) and 
-              (intconst <= llvmdebugversion+high(debugmetanodetags)) then begin
+          (intconst >= llvmdebugversion) then begin
           i2:= intconst - llvmdebugversion;
-          for i1:= 0 to high(debugmetanodetags) do begin
-           if i2 = debugmetanodetags[i1].tag then begin
-            result:= result +'<'+debugmetanodetags[i1].name+'>';
-            break;
+          if i2 <= debugmetanodetags[high(debugmetanodetags)].tag then begin
+           for i1:= 0 to high(debugmetanodetags) do begin
+            if i2 = debugmetanodetags[i1].tag then begin
+             result:= result +'<'+debugmetanodetags[i1].name+'>';
+             break;
+            end;
+           end;
+          end
+          else begin
+           if i2 <= llvmmetanodetags[high(llvmmetanodetags)].tag then begin
+            for i1:= 0 to high(llvmmetanodetags) do begin
+             if i2 = llvmmetanodetags[i1].tag then begin
+              result:= result +'<'+llvmmetanodetags[i1].name+'>';
+              break;
+             end;
+            end;
            end;
           end;
          end;
@@ -1326,9 +1337,10 @@ begin
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
      METADATA_FN_NODE: begin //todo
-//      fmetalist.add();
+      fmetalist.add();
       checkdatalen(rec1,3);
-      outrecord('MFN',[rec1[1],rec1[2]]);
+      outmetarecord(inttostr(rec1[2])+','+inttostr(rec1[3]));
+//      outrecord('MFN',[rec1[1],rec1[2]]);
      end;
      METADATA_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
@@ -1429,59 +1441,65 @@ var
   end;
  end; //typeid
 
- function opname(avalue: int32): string;
+ function opname(avalue: int32; const typeindex: int32 = -1): string;
  var
   list1: tgloblist;
   constname: string[2];
  begin
   avalue:= ssaindex-avalue;
-  if avalue < 0 then begin
-   avalue:= avalue+ssastart;
-   if avalue >= conststart then begin
-    avalue:= avalue-conststart;
-    list1:= currentconstlist;
-    constname:= 'CL';
-   end
-   else begin
-    list1:= fgloblist;
-    constname:= 'C';
-   end;
-   if (avalue < 0) or (avalue >= list1.count) then begin
-    error('Invalid global index');
-   end;
-   with pglobinfoty(list1.fdata)[avalue] do begin
-    if kind = gk_const then begin
-     result:= constname+inttostr(avalue)+'=';
-     case constkind of
-      CST_CODE_INTEGER: begin
-       result:= result+inttostr(intconst);
-      end;
-      CST_CODE_NULL: begin
-       result:= result+'NULL';
-      end;
-      else begin
-       result:= result+constantscodesnames[constkind];
-      end;
-     end;
-    end
-    else begin
-     result:= 'G'+inttostr(avalue);
-    end;
-   end;
+  if (typeindex >= 0) and 
+             (ftypelist.item(typeindex)^.kind = TYPE_CODE_METADATA) then begin
+   result:= '!'+inttostr(avalue+ssastart);
   end
   else begin
-   if avalue < paramcount then begin
-    result:= 'P'+inttostr(avalue);
-   end
-   else begin
-    if avalue >= ssaindex then begin
-     result:= 'S+';
-//     error('Invalid ssa index');
+   if avalue < 0 then begin
+    avalue:= avalue+ssastart;
+    if avalue >= conststart then begin
+     avalue:= avalue-conststart;
+     list1:= currentconstlist;
+     constname:= 'CL';
     end
     else begin
-     result:= 'S';
+     list1:= fgloblist;
+     constname:= 'C';
     end;
-    result:= result + inttostr(avalue-paramcount);
+    if (avalue < 0) or (avalue >= list1.count) then begin
+     error('Invalid global index');
+    end;
+    with pglobinfoty(list1.fdata)[avalue] do begin
+     if kind = gk_const then begin
+      result:= constname+inttostr(avalue)+'=';
+      case constkind of
+       CST_CODE_INTEGER: begin
+        result:= result+inttostr(intconst);
+       end;
+       CST_CODE_NULL: begin
+        result:= result+'NULL';
+       end;
+       else begin
+        result:= result+constantscodesnames[constkind];
+       end;
+      end;
+     end
+     else begin
+      result:= 'G'+inttostr(avalue);
+     end;
+    end;
+   end
+   else begin
+    if avalue < paramcount then begin
+     result:= 'P'+inttostr(avalue);
+    end
+    else begin
+     if avalue >= ssaindex then begin
+      result:= 'S+';
+ //     error('Invalid ssa index');
+     end
+     else begin
+      result:= 'S';
+     end;
+     result:= result + inttostr(avalue-paramcount);
+    end;
    end;
   end;
  end; //opname
@@ -1719,19 +1737,23 @@ begin
          str1:= str1+inttostr(subheaderindex);
         end;
        end;
-       str1:= str1+'(';
-       for i1:= i4+1 to high(rec1) do begin
-        str1:= str1+opname(rec1[i1])+',';
-       end;
-       if high(rec1) >= i4+1 then begin
-        setlength(str1,length(str1)-1);
-       end;
-       str1:= str1+')';
        with po1^ do begin
         i2:= subparamindex;    //result type
         i3:= subparamcount;
         vararg1:= subvararg;
        end;
+       if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
+                                                 not vararg1 then begin
+        error('Invalid param count');
+       end;
+       str1:= str1+'(';
+       for i1:= i4+1 to high(rec1) do begin
+        str1:= str1+opname(rec1[i1],ftypelist.fsubparams[i1-i4+i2])+',';
+       end;
+       if high(rec1) >= i4+1 then begin
+        setlength(str1,length(str1)-1);
+       end;
+       str1:= str1+')';
        i1:= ftypelist.fsubparams[i2];
        bo1:= ftypelist.item(i1)^.kind <> TYPE_CODE_VOID;
        if bo1 then begin
@@ -1740,10 +1762,6 @@ begin
        end
        else begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
-       end;
-       if (high(rec1)-i4+1 < i3) or (high(rec1)-i4+1 > i3) and 
-                                                 not vararg1 then begin
-        error('Invalid param count');
        end;
        inc(i2); //first param
        for i1:= i4+1 to i3+3 do begin

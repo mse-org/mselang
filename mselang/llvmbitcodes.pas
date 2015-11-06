@@ -858,6 +858,11 @@ const
   (tag: DW_TAG_dynamic_type; name: 'dynamic_type';)
  );
  
+ llvmmetanodetags: array [$100..$101] of nodetaginfoty = (
+  (tag: DW_TAG_auto_variable; name: 'auto_variable';),
+  (tag: DW_TAG_arg_variable; name: 'arg_variable';)
+ );
+
 {DI* metadata nodes from llvm/IR/DebugInfo.h, llvm/lib/IR/DebugInfo.cpp}
 
 //first field is (LLVMDebugVersion or DW_TAG_*)                         //0
