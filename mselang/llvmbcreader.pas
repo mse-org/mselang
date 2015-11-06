@@ -195,7 +195,8 @@ type
    procedure output(const kind: outputkindty; const text: string);
    procedure outrecord(const aname: string; const values: array of const);
    procedure unknownrec(const arec: valuearty);
-	
+   function subopname(const aop: int32): string;
+
    procedure beginblock(const aid: int32; const newidsize: int32);
    procedure endblock();
    procedure readblock();
@@ -1221,6 +1222,26 @@ begin
  end;
 end;
 
+function tllvmbcreader.subopname(const aop: int32): string;
+var
+ i1: int32;
+begin
+ i1:= aop-fssastart-fparamcount;
+ if i1 < 0 then begin
+  result:= 'P';
+  i1:= i1 + fparamcount;
+ end
+ else begin
+  if i1 >= fssaindex-fparamcount then begin
+   result:= 'S+';
+  end
+  else begin
+   result:= 'S';
+  end;
+ end;
+ result:= result + inttostr(i1);
+end;
+
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1347,20 +1368,7 @@ begin
        error('Invalid functionlevel');
       end;
       inc(fncount);
-      i1:= rec1[3]-fssastart-fparamcount;
-      if i1 < 0 then begin
-       str1:= 'P';
-       i1:= i1 + fparamcount;
-      end
-      else begin
-       if i1 >= fssaindex-fparamcount then begin
-        str1:= 'S+';
-       end
-       else begin
-        str1:= 'S';
-       end;
-      end;
-      outmetarecord(str1+inttostr(i1)+':'+ftypelist.typename(rec1[2]),fncount);
+      outmetarecord(subopname(rec1[3])+':'+ftypelist.typename(rec1[2]),fncount);
      end;
      METADATA_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
@@ -1380,6 +1388,7 @@ procedure tllvmbcreader.readvaluesymtabblock();
 var
  blocklevelbefore: int32;
  rec1: valuearty;
+ str1: string;
 begin
  output(ok_begin,blockidnames[VALUE_SYMTAB_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
@@ -1394,8 +1403,14 @@ begin
     case valuesymtabcodes(rec1[1]) of
      VST_CODE_ENTRY,VST_CODE_BBENTRY: begin
       checkmindatalen(rec1,3);
+      if ffunctionlevel > 0 then begin
+       str1:= subopname(rec1[2]);
+      end
+      else begin
+       str1:= inttostr(rec1[2]);
+      end;
       outrecord(valuesymtabcodesnames[valuesymtabcodes(rec1[1])],
-                              [rec1[2],valueartostring(rec1,3)]);
+                              [str1,valueartostring(rec1,3)]);
      end;
      else begin
       unknownrec(rec1);
