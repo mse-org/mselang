@@ -157,6 +157,7 @@ type
    fidsize: int32;
    findent: int32;
    fblocklevel: int32;
+   ffunctionlevel: int32;
    fblockstack: blockinfoarty;
    farraytypes: array of abbrevitemty;
    fblockinfoid: int32;
@@ -171,6 +172,7 @@ type
    fbb,fbbbefore: int32;
    fwrapsize: card32;
    fwrapcpu: card32;
+   fssastart,fssaindex,fparamcount: int32;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -1224,10 +1226,10 @@ procedure tllvmbcreader.readmetadatablock();
 var
  rec1: valuearty;
  
- procedure outmetarecord(const atext: string);
+ procedure outmetarecord(const atext: string; const offset: int32 = 0);
  begin
   output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': M'+
-                          inttostr(fmetalist.count-1)+':= '+
+                          inttostr(fmetalist.count-1+offset)+':= '+
                           atext);
  end; //outmetarecord
 
@@ -1307,9 +1309,12 @@ var
  blocklevelbefore: int32;
  name1: string;
  str1: string;
+ fncount: int32;
+ i1: int32;
 begin
  output(ok_begin,blockidnames[METADATA_BLOCK_ID]);
  blocklevelbefore:= fblocklevel;
+ fncount:= 0;
  while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
@@ -1336,11 +1341,26 @@ begin
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
-     METADATA_FN_NODE: begin //todo
-      fmetalist.add();
+     METADATA_FN_NODE: begin
       checkdatalen(rec1,3);
-      outmetarecord(inttostr(rec1[2])+','+inttostr(rec1[3]));
-//      outrecord('MFN',[rec1[1],rec1[2]]);
+      if ffunctionlevel = 0 then begin
+       error('Invalid functionlevel');
+      end;
+      inc(fncount);
+      i1:= rec1[3]-fssastart-fparamcount;
+      if i1 < 0 then begin
+       str1:= 'P';
+       i1:= i1 + fparamcount;
+      end
+      else begin
+       if i1 >= fssaindex-fparamcount then begin
+        str1:= 'S+';
+       end
+       else begin
+        str1:= 'S';
+       end;
+      end;
+      outmetarecord(str1+inttostr(i1)+':'+ftypelist.typename(rec1[2]),fncount);
      end;
      METADATA_NODE,METADATA_ATTACHMENT: begin
       fmetalist.add();
@@ -1389,7 +1409,7 @@ end;
 procedure tllvmbcreader.readfunctionblock();
 var
  rec1: valuearty;
- paramcount,ssastart,conststart,ssaindex: int32;
+ conststart: int32;
  ssatypes: integerarty;
  currentconstlist: tgloblist;
  bbcount: int32;
@@ -1408,21 +1428,21 @@ var
    fbb:= 0;
   end;
   output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+': S'+
-                          inttostr(ssaindex-paramcount)+':= '+
+                          inttostr(fssaindex-fparamcount)+':= '+
                                        avalue+': '+ftypelist.typename(atype));
-  additem(ssatypes,atype,ssaindex);
+  additem(ssatypes,atype,fssaindex);
  end; //outfuncrecord
 
  function absvalue(const avalue: int32): int32;
  begin
-  result:= ssaindex+ssastart-avalue;
+  result:= fssaindex+fssastart-avalue;
  end; //absvalue
  
  function typeid(avalue: int32): int32;
  begin
-  avalue:= ssaindex-avalue;
+  avalue:= fssaindex-avalue;
   if avalue < 0 then begin
-   avalue:= avalue+ssastart;
+   avalue:= avalue+fssastart;
    if avalue >= conststart then begin
     result:= currentconstlist.typeid(avalue-conststart);
    end
@@ -1431,7 +1451,7 @@ var
    end;
   end
   else begin
-   if avalue >= ssaindex then begin
+   if avalue >= fssaindex then begin
     result:= maxint;
 //    error('Invalid ssa index');
    end
@@ -1446,14 +1466,14 @@ var
   list1: tgloblist;
   constname: string[2];
  begin
-  avalue:= ssaindex-avalue;
+  avalue:= fssaindex-avalue;
   if (typeindex >= 0) and 
              (ftypelist.item(typeindex)^.kind = TYPE_CODE_METADATA) then begin
-   result:= '!'+inttostr(avalue+ssastart);
+   result:= '!'+inttostr(avalue+fssastart);
   end
   else begin
    if avalue < 0 then begin
-    avalue:= avalue+ssastart;
+    avalue:= avalue+fssastart;
     if avalue >= conststart then begin
      avalue:= avalue-conststart;
      list1:= currentconstlist;
@@ -1487,18 +1507,18 @@ var
     end;
    end
    else begin
-    if avalue < paramcount then begin
+    if avalue < fparamcount then begin
      result:= 'P'+inttostr(avalue);
     end
     else begin
-     if avalue >= ssaindex then begin
+     if avalue >= fssaindex then begin
       result:= 'S+';
  //     error('Invalid ssa index');
      end
      else begin
       result:= 'S';
      end;
-     result:= result + inttostr(avalue-paramcount);
+     result:= result + inttostr(avalue-fparamcount);
     end;
    end;
   end;
@@ -1529,6 +1549,8 @@ var
      end;
     end;
    end;
+   result:= result or (b >= 0) and (b < ftypelist.count) and 
+                         (ftypelist.item(b)^.kind = TYPE_CODE_METADATA);
   end;
  end; //checktypeids
 
@@ -1559,7 +1581,7 @@ var
 begin
  with fblockstack[fblocklevel-1] do begin
   list:= tgloblist.create(ftypelist);
-  ssapo:= @ssastart;
+  ssapo:= @fssastart;
   currentconstlist:= list;
  end;
  if fsubimplementationcount >= fsubheadercount then begin
@@ -1572,15 +1594,15 @@ begin
                                             ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
  conststart:= fgloblist.count;
- ssastart:= conststart;
+ fssastart:= conststart;
  fbbbefore:= -1;
  fbb:= -1;
  with ftypelist.parenttype(subtyp1)^ do begin
 // ssaindex:= ptypeinfoty(ftypelist.fdata)[
 //                 ptypeinfoty(ftypelist.fdata)[subtyp1].base].subparamcount-1;
-  ssaindex:= subparamcount-1;
-  paramcount:= ssaindex;
-  setlength(ssatypes,ssaindex);
+  fssaindex:= subparamcount-1;
+  fparamcount:= fssaindex;
+  setlength(ssatypes,fssaindex);
   i2:= subparamindex+1; //skip result type
   for i1:= 0 to high(ssatypes) do begin
    ssatypes[i1]:= ftypelist.fsubparams[i2];
@@ -1589,6 +1611,10 @@ begin
  end;
  blocklevelbefore:= fblocklevel;
  bbcount:= 0;
+ if ffunctionlevel <> 0 then begin
+  error('Nested function');
+ end;
+ inc(ffunctionlevel);
  while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
@@ -1645,7 +1671,7 @@ begin
         if typeid(rec1[i2]) <> i1 then begin
          error('Incompatible phi types');
         end;
-        str1:= str1+inttostr(ssaindex-rec1[i2])+':'+inttostr(rec1[i2+1])+',';
+        str1:= str1+inttostr(fssaindex-rec1[i2])+':'+inttostr(rec1[i2+1])+',';
         inc(i2,2);
        end;
        str1[length(str1)]:= ']';
@@ -1758,7 +1784,7 @@ begin
        bo1:= ftypelist.item(i1)^.kind <> TYPE_CODE_VOID;
        if bo1 then begin
         outssarecord(i1,str1);
-        dec(ssaindex); //for parameter check
+        dec(fssaindex); //for parameter check
        end
        else begin
         outoprecord(functioncodesnames[functioncodes(rec1[1])],[' '+str1]);
@@ -1772,7 +1798,7 @@ begin
         inc(i2);
        end;
        if bo1 then begin
-        inc(ssaindex); //restore
+        inc(fssaindex); //restore
        end;
        if functioncodes(rec1[1]) = FUNC_CODE_INST_INVOKE then begin
         incbb();
@@ -1827,6 +1853,7 @@ begin
  end;
  fbb:= 0;
  fbbbefore:= 0;
+ dec(ffunctionlevel);
 end;
 
 procedure tllvmbcreader.readparamattr(const akind: blockids);
