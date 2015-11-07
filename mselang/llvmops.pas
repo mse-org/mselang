@@ -2837,7 +2837,7 @@ end;
 
 procedure subbeginop();
 var
- po1: plocallocinfoty;
+ po1,ps,pe: plocallocinfoty;
  po2: pnestedallocinfoty;
  i1,i2: int32;
  poend: pointer;
@@ -2886,9 +2886,20 @@ begin
  end;
  with pc^.par.subbegin do begin
   bcstream.beginsub(sub.flags,sub.allocs,sub.blockcount);
-  po1:= getsegmentpo(seg_localloc,sub.allocs.allocs);
-  poend:= po1 + sub.allocs.alloccount;
-  while po1 < poend do begin
+  ps:= getsegmentpo(seg_localloc,sub.allocs.allocs);
+  pe:= ps + sub.allocs.alloccount;
+  po1:= ps;
+  if info.debugoptions <> [] then begin
+   bcstream.beginblock(METADATA_BLOCK_ID,3);
+   i1:= bcstream.allocval(0);
+   while po1 < pe do begin
+    inc(po1);
+    inc(i1);
+   end;
+   bcstream.endblock();
+   po1:= ps;
+  end;
+  while po1 < pe do begin
    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
    inc(po1);
   end;

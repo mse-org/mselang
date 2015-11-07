@@ -225,6 +225,7 @@ type
    procedure emitmetadatanode(const values: array of metavaluety);
    procedure emitnamedmetadatanode(const namelen: int32; const name: pcard8;
                                  const len: int32; const values: pint32);
+   procedure emitmetadatafnnonde(const avalue,atype: int32);
    function valindex(const aadress: segaddressty): integer;
    property landingpad: int32 read flandingpad write flandingpad;
    property constseg: int32 read fconstseg write fconstseg;
