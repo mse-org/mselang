@@ -39,6 +39,7 @@ type
   flags: addressflagsty;
   address: dataoffsty;
   size: typeallocinfoty;
+  debuginfo: metavaluety;
  end;
  plocallocinfoty = ^locallocinfoty;
  
@@ -569,29 +570,25 @@ type
  destroyclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
  end;
-  llvmconstty = record
-   typeid: int32;        //order fix because of metadata bcwriter
-   listid: int32;        //
-  end;
-  immty = record
+ immty = record
 //   ssaindex: integer;
-   datasize: integer;            //todo: remove, not necessary for bitcode
-   case integer of               //todo: use target size
-    0: (llvm: llvmconstty);
-    1: (vboolean: boolean);
-    2: (vcard8: card8);
-    3: (vcard16: card16);
-    4: (vcard32: card32);
-    5: (vcard64: card64);
-    6: (vint8: int8);
-    7: (vint16: int16);
-    8: (vint32: int32);
-    9: (vint64: int64);
-   10: (vfloat64: float64);
-   11: (vsize: datasizety);
-   12: (vpointer: dataaddressty);
-   13: (voffset: dataoffsty);
-   14: (vdatakind: datakindty);
+  datasize: integer;            //todo: remove, not necessary for bitcode
+  case integer of               //todo: use target size
+   0: (llvm: llvmconstty);
+   1: (vboolean: boolean);
+   2: (vcard8: card8);
+   3: (vcard16: card16);
+   4: (vcard32: card32);
+   5: (vcard64: card64);
+   6: (vint8: int8);
+   7: (vint16: int16);
+   8: (vint32: int32);
+   9: (vint64: int64);
+  10: (vfloat64: float64);
+  11: (vsize: datasizety);
+  12: (vpointer: dataaddressty);
+  13: (voffset: dataoffsty);
+  14: (vdatakind: datakindty);
  end;  
 
  ordimmty = record

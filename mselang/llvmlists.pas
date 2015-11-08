@@ -182,16 +182,6 @@ const
   count: 0;
   items: nil;
  );
- voidtype = ord(das_none);
- pointertype = ord(das_pointer);
- bytetype = ord(das_8);
- inttype = ord(das_32);
-{$if pointersize = 64}
- sizetype = ord(das_64);
-{$else}
- sizetype = ord(das_32);
-{$endif}
- bittypemax = ord(lastdatakind);
  
 type
  ttypehashdatalist = class(tbufferhashdatalist)
@@ -252,23 +242,7 @@ type
 
 //const
 // nullconst = 256;
-const
- maxpointeroffset = 32; //preallocated pointeroffset values
- nullpointeroffset = high(card8)+1; //constlist index
  
-type 
- nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64,
-                nc_pointer);
- maxconstty = (mc_i1 = ord(high(nullconstty))+1, mc_i8=255,
-                              mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
- oneconstty = (oc_i1 = ord(mc_i1), oc_i8=1,
-                              oc_i16=ord(high(maxconstty))+1,oc_i32, oc_i64);
-const
- nullpointer = ord(nc_pointer);
- nullconst: llvmconstty = (
-             typeid: pointertype;
-             listid: nullpointer;
-            ); 
 type
  aggregateconstheaderty = record
   typeid: int32;
@@ -425,16 +399,6 @@ type
    property linklist: tlinklist read flinklist;
  end;
 
- metavalueflagty = (mvf_globval,mvf_sub,mvf_meta,mvf_dummy);
- metavalueflagsty = set of metavalueflagty;
- 
- metavaluety = record
-  value: llvmconstty;
-  flags: metavalueflagsty;
- end;
- pmetavaluety = ^metavaluety;
- metavaluearty = array of metavaluety;
-
 const
  dummymeta: metavaluety = (value: (typeid: 0; listid: 0);
                                                  flags: [mvf_dummy]);
@@ -461,6 +425,9 @@ type
  end;
  pstringmetaty = ^stringmetaty;
 
+//
+// todo: remove not used di* record fields
+//
  difilety = record
   filename: metavaluety;
   dirname: metavaluety;
@@ -510,7 +477,22 @@ type
   encoding: metavaluety;
  end;
  pdibasictypety = ^dibasictypety;
+
+ divariablekindty = (divk_variable,divk_argvariable);
  
+ divariablety = record
+  kind: divariablekindty;
+  context: metavaluety;          //1
+  name: metavaluety;             //2
+  difile: metavaluety;           //3
+  lineandargnumber: metavaluety; //4
+  ditype: metavaluety;           //5
+  flags: metavaluety;            //6
+                                 //7 ???
+                                 //8+ complex address
+ end;
+ pdivariablety = ^divariablety;
+  
  metaiddataty = record
   id: int32;
  end;
@@ -523,7 +505,8 @@ type
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
-                   mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype);
+                   mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
+                   mdk_divariable);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -553,6 +536,7 @@ type
    fcompileunit: metavaluety;
    fcompilefile: metavaluety;
    fdbgdeclare: int32;
+   fnullintconst: metavaluety;
    function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
@@ -597,16 +581,21 @@ type
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety;
            const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
+   function adddivariable(const akind: divariablekindty; const aname: lstringty;
+           const alinenumber: int32; const argnumber: int32;
+                                 const avariable: pvardataty): metavaluety;
    
   {
    function adddicompositetype(const atag: int32; 
                        const aitems: array of metavaluety): metavaluety;
   }
-   function getdata(const avalue: metavaluety): pmetadataty;
+   function getdata(const avalue: metavaluety): pointer;
+   function getstringvalue(const avalue: metavaluety): lstringty;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
    property subprograms: metavaluearty read getsubprograms;
    property voidconst: metavaluety read fvoidconst;
+   property nullintconst: metavaluety read fnullintconst;
  end;
 
  tllvmlists = class
@@ -1863,6 +1852,10 @@ begin
   fvoidconst.value.typeid:= ftypelist.void;
   fvoidconst.value.listid:= 0;
   fvoidconst.flags:= [];
+  fnullintconst.value.typeid:= ord(das_8);
+  fnullintconst.value.listid:= ord(nc_i8);
+  fnullintconst.flags:= [];
+
   femptynode:= addnode([]);
   fsubprogramcount:= 0;
   ftypemetalist.clear();
@@ -1882,11 +1875,6 @@ end;
 procedure tmetadatalist.beginunit;
 begin
  fsubprogramcount:= 0;
-end;
-
-function tmetadatalist.getdata(const avalue: metavaluety): pmetadataty;
-begin
- result:= items[avalue.value.listid];
 end;
 
 function tmetadatalist.first: pmetadataty;
@@ -1910,6 +1898,28 @@ begin
   kind:= akind;
  end;
  inc(result,sizeof(metadataheaderty));
+end;
+
+function tmetadatalist.getdata(const avalue: metavaluety): pointer;
+begin
+ result:= items[avalue.value.listid]+sizeof(metadataheaderty);
+end;
+
+function tmetadatalist.getstringvalue(const avalue: metavaluety): lstringty;
+var
+ po1: pstringmetaty;
+begin
+ po1:= getdata(avalue);
+{$ifdef mse_checkinternalerror}
+ if pmetadataty(pointer(po1)-sizeof(metadataheaderty))^.header.kind <> 
+                                                    mdk_string then begin
+  internalerror(ie_llvmmeta,'20151108A');
+ end;
+{$endif}
+ with po1^ do begin
+  result.len:= len;
+  result.po:= @data;
+ end;
 end;
 
 function tmetadatalist.i8const(const avalue: int8): metavaluety;
@@ -2035,7 +2045,7 @@ begin
                     sizeof(disubprogramty),result))^ do begin
   difile:= afile;
   context:= acontext;
-  linenumber:= i32const(alinenumber);
+  linenumber:= i32const(alinenumber+1);
   functionid:= afunction;
   name:= m1;
   typeid:= atype;
@@ -2045,8 +2055,28 @@ begin
                typeinfo(fsubprograms),fsubprogramcount)^):= result;
 end;
 
+function tmetadatalist.adddivariable(const akind: divariablekindty; 
+      const aname: lstringty; const alinenumber: int32; const argnumber: int32;
+                                      const avariable: pvardataty): metavaluety;
+var
+ m1,m2: metavaluety;
+begin
+ m1:= addstring(aname);
+ m2:= addtype(avariable^.vf.typ);
+ with pdivariablety(adddata(mdk_divariable,
+                    sizeof(divariablety),result))^ do begin
+  kind:= akind;
+  context:= info.s.currentscopemeta;
+  name:= m1;
+  difile:= info.s.currentfilemeta;
+  ditype:= m2;
+  lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+  flags:= nullintconst;
+ end;
+end;
+
 function tmetadatalist.adddisubroutinetype(const asub: psubdataty{;
-            const afile: metavaluety; const acontext: metavaluety}): metavaluety;
+          const afile: metavaluety; const acontext: metavaluety}): metavaluety;
 var
  m1: metavaluety;
  params1: array[0..maxparamcount] of metavaluety;
@@ -2136,8 +2166,6 @@ begin
    if defunit = nil then begin
     file1:= fvoidconst; //internal type
     context1:= fvoidconst;
-//    file1:= fcompilefile; //internal type
-//    context1:= fcompileunit;
    end
    else begin
     file1:= defunit^.filepathmeta;
@@ -2156,7 +2184,7 @@ begin
     internalerror1(ie_llvmmeta,'20151026A');
    end;
   end;
-  po1:= ftypemetalist.getdatapo(offs1);
+  po1:= ftypemetalist.getdatapo(offs1); //possibly moved
   po1^.id:= m1.value.listid;
  end;
  result.value.typeid:= ftypelist.metadata;

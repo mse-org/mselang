@@ -2959,8 +2959,33 @@ begin
 end;
 
 procedure subendop();
+var
+ po1,pe: plocallocinfoty;
+ metalist: tmetadatalist;
+ i1: int32;
+ po2: pdivariablety;
 begin
  with pc^.par.subend do begin
+  if info.debugoptions <> [] then begin
+   po1:= getsegmentpo(seg_localloc,allocs.allocs);
+   pe:= po1 + allocs.alloccount;
+   bcstream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
+   i1:= bcstream.allocval(0);
+   metalist:= info.s.unitinfo^.llvmlists.metadatalist;
+   while po1 < pe do begin
+    po2:= metalist.getdata(po1^.debuginfo);
+   {$ifdef mse_checkinternalerror}
+    if pmetadataty(pointer(po2)-sizeof(metadataheaderty))^.header.kind <> 
+                                                    mdk_divariable then begin
+     internalerror(ie_llvmmeta,'20151108B');
+    end;
+   {$endif}
+    bcstream.emitvstentry(i1,metalist.getstringvalue(po2^.name));    
+    inc(po1);
+    inc(i1);
+   end;
+   bcstream.endblock();
+  end;
   bcstream.endsub();
  end;
 end;

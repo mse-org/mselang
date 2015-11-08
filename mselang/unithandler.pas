@@ -1606,7 +1606,7 @@ begin
   if (s.debugoptions <> []) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
     m1:= addnode(subprograms);
-    pdicompileunitty(items[aunit^.compileunitmeta.value.listid])^.
+    pdicompileunitty(getdata(aunit^.compileunitmeta))^.
                                                          subprograms:= m1;
 {
      m1:= llvmlists.metadatalist.addnode([mainsubmeta]);

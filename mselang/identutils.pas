@@ -46,6 +46,7 @@ function getident(const aname: string): identty; overload;
 function getidentname(const aident: identty; out name: lstringty): boolean;
                              //true if found
 function getidentname(const aident: identty): string;
+function getidentnamel(const aident: identty): lstringty;
 
 procedure clear();
 procedure init();
@@ -164,6 +165,11 @@ begin
  else begin
   result:= '°';
  end;
+end;
+
+function getidentnamel(const aident: identty): lstringty;
+begin
+ getidentname(aident,result);
 end;
 
 const

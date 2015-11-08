@@ -335,6 +335,51 @@ type
   next: pcontextty;
   caption: string;
  end;
+                         //llvm lists
+const
+ maxpointeroffset = 32; //preallocated pointeroffset values
+ nullpointeroffset = high(card8)+1; //constlist index
+
+type 
+ nullconstty = (nc_i1 = 256+maxpointeroffset+1, nc_i8, nc_i16, nc_i32, nc_i64,
+                nc_pointer);
+ maxconstty = (mc_i1 = ord(high(nullconstty))+1, mc_i8=255,
+                              mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
+ oneconstty = (oc_i1 = ord(mc_i1), oc_i8=1,
+                              oc_i16=ord(high(maxconstty))+1,oc_i32, oc_i64);
+  llvmconstty = record
+   typeid: int32;        //order fix because of metadata bcwriter
+   listid: int32;        //
+  end;
+
+const
+ voidtype = ord(das_none);
+ pointertype = ord(das_pointer);
+ bytetype = ord(das_8);
+ inttype = ord(das_32);
+{$if pointersize = 64}
+ sizetype = ord(das_64);
+{$else}
+ sizetype = ord(das_32);
+{$endif}
+ bittypemax = ord(lastdatakind);
+
+ nullpointer = ord(nc_pointer);
+ nullconst: llvmconstty = (
+             typeid: pointertype;
+             listid: nullpointer;
+            ); 
+type
+ metavalueflagty = (mvf_globval,mvf_sub,mvf_meta,mvf_dummy);
+ metavalueflagsty = set of metavalueflagty;
+ 
+ metavaluety = record
+  value: llvmconstty;
+  flags: metavalueflagsty;
+ end;
+ pmetavaluety = ^metavaluety;
+ metavaluearty = array of metavaluety;
+
 
 implementation
 end.

@@ -960,30 +960,9 @@ begin
     with info.s.unitinfo^ do begin
      s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
            filepathmeta,debugfilemeta,lstr1,
-           info.contextstack[info.s.stackindex].start.line+1,dummymeta,
+           info.contextstack[info.s.stackindex].start.line,dummymeta,
            dummymeta,[flagprototyped]);
     end;
-(*
-    lstr1:= stringtolstring('main');
-    m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
-                                                                   nil,lstr1);
-    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
-                                           gettype(m1.value.listid);
-    m1.flags:= [mvf_globval,mvf_sub];
-    with info.s.unitinfo^ do begin
-     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
-           debugfilemeta,lstr1,
-           info.contextstack[info.s.stackindex].start.line+1,m1,
-           llvmlists.metadatalist.adddisubroutinetype(
-                                      llvmlists.metadatalist.nullnode));
-{
-     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
-     pdicompileunitty(llvmlists.metadatalist.items[
-                            compileunitmeta.value.listid])^.subprograms:= m1;
-}
-     info.s.currentscopemeta:= mainsubmeta.value.listid;
-    m1:= 
-*)
    end;
   end;
  end;
@@ -999,17 +978,19 @@ var
  int1{,int2}: integer;
  alloc1: dataoffsty;
  ad1: opaddressty;
+ lnr1: int32;
+ vk1: divariablekindty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
 {$endif}
  checkforwardtypeerrors();
- with info,contextstack[s.stackindex-2].d do begin
-  subdef.varsize:= locdatapo - subdef.parambase - subdef.paramsize;
-  po1:= ele.eledataabs(subdef.ref);
+ with info,contextstack[s.stackindex-2] do begin
+  d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
+  po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;
-  if subdef.match <> 0 then begin
-   po2:= ele.eledataabs(subdef.match);    
+  if d.subdef.match <> 0 then begin
+   po2:= ele.eledataabs(d.subdef.match);    
    if co_llvm in compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
           //body order must be in header order-> nested subs first -> 
@@ -1020,7 +1001,7 @@ begin
     po2^.trampolineaddress:= opcount;
     linkresolveopad(po2^.trampolinelinks,po2^.trampolineaddress);
     with additem(oc_virttrampoline)^ do begin 
-     par.subbegin.trampoline.selfinstance:= -subdef.paramsize;
+     par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
      if co_llvm in compileoptions then begin
@@ -1107,6 +1088,7 @@ begin
    ele1:= po1^.varchain;
    alloc1:= getsegmenttopoffs(seg_localloc);
    int1:= 0;
+   lnr1:= start.line;
    while ele1 <> 0 do begin      //number params and vars
     po4:= ele.eledataabs(ele1);
     with plocallocinfoty(
@@ -1114,6 +1096,14 @@ begin
      address:= po4^.address.locaddress.address;
      flags:= po4^.address.flags;
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
+     if info.debugoptions <> [] then begin
+      vk1:= divk_variable;
+      if int1 < po1^.paramcount then begin
+       vk1:= divk_argvariable;
+      end;
+      debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(vk1,
+                    getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4);
+     end;
     end;
     ele1:= po4^.vf.next;
     inc(int1);
@@ -1141,9 +1131,9 @@ begin
   end;
   resetssa();
   addsubbegin(oc_subbegin,po1);
-  if subdef.varsize <> 0 then begin //alloc local variables
+  if d.subdef.varsize <> 0 then begin //alloc local variables
    with additem(oc_locvarpush)^ do begin
-    par.stacksize:= subdef.varsize;
+    par.stacksize:= d.subdef.varsize;
    end;
   end;
   if stf_hasmanaged in s.currentstatementflags then begin
@@ -1156,7 +1146,7 @@ procedure handlesubbody6();
 var
  po1: psubdataty;
  po2: popinfoty;
- m1: metavaluety;
+ m1,m2: metavaluety;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -1201,26 +1191,6 @@ begin
   end;
   ele.elementparent:= b.eleparent;
   s.currentstatementflags:= b.flags;
-{
-  if d.subdef.match <> 0 then begin
-   po1:= ele.eledataabs(d.subdef.match);
-   if (po1^.flags * [sf_virtual,sf_override] <> []) and 
-                    (sf_intfcall in po1^.flags) then begin
-    po1^.trampolineaddress:= opcount;
-    linkresolve(po1^.trampolinelinks,po1^.trampolineaddress);
-    with additem(oc_virttrampoline)^ do begin 
-      //todo: possibly better in front of sub because of cache line
-     par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
-     par.subbegin.trampoline.virtoffset:= po1^.tableindex*sizeof(opaddressty)+
-                                                            virtualtableoffset;
-     if backend = bke_llvm then begin
-      par.subbegin.trampoline.virtoffset:= constlist.adddataoffs(
-                                par.subbegin.trampoline.virtoffset).listid;
-     end;
-    end;
-   end;
-  end;
-}
   addsubend(po1);
   locallocid:= d.subdef.locallocidbefore;
   po2:= getitem(po1^.address);
@@ -1237,11 +1207,14 @@ begin
    m1.value.listid:= po1^.globid;
    m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
                                            gettype(m1.value.listid);
-   with info.s.unitinfo^,pdisubprogramty(llvmlists.metadatalist.getdata(
-                                               s.currentscopemeta))^ do begin
-    functionid:= m1;
-    typeid:= llvmlists.metadatalist.adddisubroutinetype(
-                                  po1{,filepathmeta,debugfilemeta});
+   with info.s.unitinfo^ do begin
+    m2:= llvmlists.metadatalist.adddisubroutinetype(
+                                   po1{,filepathmeta,debugfilemeta});
+    with pdisubprogramty(llvmlists.metadatalist.getdata(
+                                                s.currentscopemeta))^ do begin
+     functionid:= m1;
+     typeid:= m2;
+    end;
    end;
    s.currentscopemeta:= d.subdef.scopemetabefore;
   end;

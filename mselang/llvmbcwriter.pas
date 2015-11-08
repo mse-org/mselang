@@ -389,6 +389,7 @@ var
  metatrue,
  metaDW_TAG_base_type,metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type: metavaluety;
+ metavartags: array[divariablekindty] of metavaluety;
  m1: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
@@ -452,6 +453,15 @@ begin
   metaDW_TAG_subroutine_type.value:= consts.addi32(
                DW_TAG_subroutine_type or LLVMDebugVersion);
   metaDW_TAG_subroutine_type.flags:= [];
+
+  with metavartags[divk_variable] do begin
+   value:= consts.addi32(DW_TAG_variable or LLVMDebugVersion);
+   flags:= [];
+  end;
+  with metavartags[divk_argvariable] do begin
+   value:= consts.addi32(DW_TAG_arg_variable or LLVMDebugVersion);
+   flags:= [];
+  end;
 
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
@@ -798,6 +808,12 @@ begin
       metanullint,metanull,       params,   metanullint,metanull,
     //templateparams,identifier
       metanull,      metanull]);
+     end;
+    end;
+    mdk_divariable: begin
+     with pdivariablety(@pm1^.data)^ do begin
+      emitmetadatanode([metavartags[kind],context,name,difile,ditype,
+                                                lineandargnumber,flags]);
      end;
     end;
     else begin
