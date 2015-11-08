@@ -410,6 +410,10 @@ type
    function addexternalsubvalue(const aflags: subflagsty; 
                        const aparams: paramsty;
                            const aname: lstringty): int32;  //returns listid
+   function addexternalsubvalue(const aparamtypes: array of int32;
+                                              //param flags = []
+                           const aname: lstringty): int32;  
+               //returns listid, for llvm functions like llvm.dbg.declare()
 
    procedure updatesubtype(const avalue: psubdataty); 
    function addinitvalue(const akind: globallockindty;
@@ -539,6 +543,7 @@ type
    femptynode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
+   fgloblist: tgloballocdatalist;
    fsubprograms: metavaluearty;
    fsubprogramcount: int32;
    ftypemetalist: ttypemetahashdatalist;
@@ -547,6 +552,7 @@ type
    fsysname: metavaluety;
    fcompileunit: metavaluety;
    fcompilefile: metavaluety;
+   fdbgdeclare: int32;
    function getsubprograms: metavaluearty;
   protected
 //   fid: int32;
@@ -555,7 +561,8 @@ type
    function dwarftag(const atag: int32): metavaluety;
   public
    constructor create(const atypelist: ttypehashdatalist;
-                          const aconstlist: tconsthashdatalist);
+                          const aconstlist: tconsthashdatalist;
+                          const agloblist: tgloballocdatalist);
    destructor destroy(); override;
    procedure clear(); override;
    procedure beginunit();
@@ -1788,6 +1795,27 @@ begin
  fnamelist.addname(aname,result);
 end;
 
+function tgloballocdatalist.addexternalsubvalue(
+              const aparamtypes: array of int32; const aname: lstringty): int32;
+var
+ params1: paramsty;
+ parar1: array[0..15] of paramitemty;
+ i1: int32;
+begin
+{$ifdef mse_checkinternalerror}
+ if high(aparamtypes) > high(parar1) then begin
+  internalerror(ie_llvm,'20151108');
+ end;
+{$endif}
+ params1.count:= length(aparamtypes);
+ params1.items:= @parar1;
+ for i1:= 0 to high(aparamtypes) do begin
+  parar1[i1].flags:= [];
+  parar1[i1].typelistindex:= aparamtypes[i1];
+ end;
+ result:= addexternalsubvalue([sf_proto],params1,aname);
+end;
+
 function tgloballocdatalist.gettype(const alistid: int32): int32;
 begin
  result:= (pgloballocdataty(fdata) + alistid)^.typeindex;
@@ -1810,10 +1838,12 @@ end;
 { tmetadatalist }
 
 constructor tmetadatalist.create(const atypelist: ttypehashdatalist;
-               const aconstlist: tconsthashdatalist);
+               const aconstlist: tconsthashdatalist;
+                          const agloblist: tgloballocdatalist);
 begin
  ftypelist:= atypelist;
  fconstlist:= aconstlist;
+ fgloblist:= agloblist;
  ftypemetalist:= ttypemetahashdatalist.create();
  inherited create();
 end;
@@ -1839,6 +1869,11 @@ begin
   fsysfile:= adddifile(addfile('system'));
   fsyscontext:= fsysfile;
   fsysname:= addstring('system');
+  if info.debugoptions <> [] then begin
+   fdbgdeclare:= fgloblist.addexternalsubvalue(
+            [ftypelist.metadata,ftypelist.metadata],
+                                         stringtolstring('llvm.dgb.declare'));
+  end;
 //  fsyscontext:= adddicompileunit(addfile('system'),
 //            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
  end;
@@ -2144,7 +2179,7 @@ begin
  ftypelist:= ttypehashdatalist.create();
  fconstlist:= tconsthashdatalist.create(ftypelist);
  fgloblist:= tgloballocdatalist.create(ftypelist,fconstlist);
- fmetadatalist:= tmetadatalist.create(ftypelist,fconstlist);
+ fmetadatalist:= tmetadatalist.create(ftypelist,fconstlist,fgloblist);
 end;
 
 destructor tllvmlists.destroy;

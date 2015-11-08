@@ -117,9 +117,9 @@ type
    procedure flushbuffer(); override;
    function bitpos(): int32;
 
-   function typeval(const typeid: databitsizety): integer; inline;
-   function ptypeval(const typeid: databitsizety): integer; inline;
-   function pptypeval(const typeid: databitsizety): integer; inline;
+   function typeval(const typeid: databitsizety): int32; inline;
+   function ptypeval(const typeid: databitsizety): int32; inline;
+   function pptypeval(const typeid: databitsizety): int32; inline;
    function typeval(const typeid: int32): int32; inline;
    function ptypeval(const typeid: int32): int32; inline;
    function pptypeval(const typeid: int32): int32; inline;
@@ -1904,6 +1904,12 @@ procedure tllvmbcwriter.emitnamedmetadatanode(
 begin
  emitrec(ord(METADATA_NAME),namelen,name);
  emitrec(ord(METADATA_NAMED_NODE),len,pint32(values));
+end;
+
+procedure tllvmbcwriter.emitmetadatafnnonde(const avalue: int32;
+               const atype: int32);
+begin
+ emitrec(ord(METADATA_FN_NODE),[avalue,atype]);
 end;
 
 end.

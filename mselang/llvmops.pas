@@ -2893,6 +2893,7 @@ begin
    bcstream.beginblock(METADATA_BLOCK_ID,3);
    i1:= bcstream.allocval(0);
    while po1 < pe do begin
+    bcstream.emitmetadatafnnonde(bcstream.ptypeval(po1^.size.listindex),i1);
     inc(po1);
     inc(i1);
    end;

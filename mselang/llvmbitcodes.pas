@@ -233,6 +233,7 @@ type
     METADATA_7,    // 7 is unused.
     METADATA_NODE,//        = 8,   // NODE:          [n x (type num, value num)]
     METADATA_FN_NODE,//     = 9,   // FN_NODE:       [n x (type num, value num)]
+                            //mse FN_NODE: [type num, absolute value num]
     METADATA_NAMED_NODE,//    = 10,  // NAMED_NODE:    [n x mdnodes]
     METADATA_ATTACHMENT //    = 11   // [m x [value, [n x [id, mdnode]]]
   );
