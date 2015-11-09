@@ -2956,7 +2956,8 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
-  bcstream.nodebugloc:= false;
+  bcstream.nodebugloc:= false; //there is an assembler error because of missing 
+                               //file ref in *.s without ???
   if info.debugoptions <> [] then begin
    idar.count:= 2;
    idar.ids:= @ids;

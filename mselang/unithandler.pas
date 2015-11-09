@@ -250,7 +250,7 @@ end;
 procedure markinterfaceend();
 begin
  with info.s,unitinfo^ do begin
-  globlinkage:= li_private;
+  globlinkage:= li_internal;
   ele.markelement(interfaceend);
   reloc.interfaceelesize:= interfaceend.bufferref- interfacestart.bufferref;
   reloc.interfaceglobsize:= info.globdatapo - reloc.interfaceglobstart;
