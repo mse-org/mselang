@@ -2908,6 +2908,7 @@ begin
   if isfunction then begin
    i2:= 1; //skip result param
   end;
+  bcstream.nodebugloc:= true;
   for i1:= i2 to sub.allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
@@ -2955,6 +2956,24 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
+  bcstream.nodebugloc:= false;
+  if info.debugoptions <> [] then begin
+   idar.count:= 2;
+   idar.ids:= @ids;
+   with info.s.unitinfo^.llvmlists.metadatalist do begin
+    i1:= count;
+    i2:= dbgdeclare;
+   end;
+   po1:= ps;
+   while po1 < pe do begin
+//    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
+    ids[0]:= i1;
+    ids[1]:= po1^.debuginfo.value.listid;
+    bcstream.emitcallop(false,bcstream.globval(i2),idar);
+    inc(i1);
+    inc(po1);
+   end;
+  end;
  end;
 end;
 
@@ -2970,7 +2989,7 @@ begin
    po1:= getsegmentpo(seg_localloc,allocs.allocs);
    pe:= po1 + allocs.alloccount;
    bcstream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);
-   i1:= bcstream.allocval(0);
+   i1:= bcstream.paramval(0);
    metalist:= info.s.unitinfo^.llvmlists.metadatalist;
    while po1 < pe do begin
     po2:= metalist.getdata(po1^.debuginfo);

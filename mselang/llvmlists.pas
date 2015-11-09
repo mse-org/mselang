@@ -596,6 +596,7 @@ type
    property subprograms: metavaluearty read getsubprograms;
    property voidconst: metavaluety read fvoidconst;
    property nullintconst: metavaluety read fnullintconst;
+   property dbgdeclare: int32 read fdbgdeclare; //globvalue id
  end;
 
  tllvmlists = class
@@ -1865,7 +1866,7 @@ begin
   if info.debugoptions <> [] then begin
    fdbgdeclare:= fgloblist.addexternalsubvalue(
             [ftypelist.metadata,ftypelist.metadata],
-                                         stringtolstring('llvm.dgb.declare'));
+                                         stringtolstring('llvm.dbg.declare'));
   end;
 //  fsyscontext:= adddicompileunit(addfile('system'),
 //            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
@@ -2069,8 +2070,8 @@ begin
   context:= info.s.currentscopemeta;
   name:= m1;
   difile:= info.s.currentfilemeta;
-  ditype:= m2;
   lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+  ditype:= m2;
   flags:= nullintconst;
  end;
 end;

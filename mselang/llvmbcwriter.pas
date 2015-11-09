@@ -59,6 +59,7 @@ type
    fbitpos: integer;
    fbitbuf: card16;
    fdebugloc: debuglocty;
+   fnodebugloc: boolean;
    ftrampolineop: popinfoty;
    fstartpos: int32;
   protected
@@ -231,6 +232,7 @@ type
    property constseg: int32 read fconstseg write fconstseg;
    property ssaindex: int32 read fsubopindex;
    property debugloc: debuglocty read fdebugloc write fdebugloc;
+   property nodebugloc: boolean read fnodebugloc write fnodebugloc;
  end;
  
 implementation
@@ -812,8 +814,8 @@ begin
     end;
     mdk_divariable: begin
      with pdivariablety(@pm1^.data)^ do begin
-      emitmetadatanode([metavartags[kind],context,name,difile,ditype,
-                                                lineandargnumber,flags]);
+      emitmetadatanode([metavartags[kind],context,name,difile,lineandargnumber,
+                                             ditype,flags,metanullint]);
      end;
     end;
     else begin
@@ -1846,13 +1848,15 @@ end;
 
 procedure tllvmbcwriter.checkdebugloc();
 begin
- if fdebugloc.line <> flastdebugloc.line then begin
-  emitdebugloc(fdebugloc);
-  flastdebugloc:= debugloc;
- end
- else begin
-  if fdebugloc.line >= 0 then begin
-   emitdebuglocagain();
+ if not fnodebugloc then begin
+  if fdebugloc.line <> flastdebugloc.line then begin
+   emitdebugloc(fdebugloc);
+   flastdebugloc:= debugloc;
+  end
+  else begin
+   if fdebugloc.line >= 0 then begin
+    emitdebuglocagain();
+   end;
   end;
  end;
 end;
