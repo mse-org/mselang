@@ -370,7 +370,7 @@ const
              listid: nullpointer;
             ); 
 type
- metavalueflagty = (mvf_globval,mvf_sub,mvf_meta,mvf_dummy);
+ metavalueflagty = (mvf_globval,mvf_pointer,mvf_meta,mvf_dummy);
  metavalueflagsty = set of metavalueflagty;
  
  metavaluety = record
@@ -379,7 +379,11 @@ type
  end;
  pmetavaluety = ^metavaluety;
  metavaluearty = array of metavaluety;
-
+ 
+ metavaluesty = record
+  count: int32;
+  data: pmetavaluety;
+ end;
 
 implementation
 end.

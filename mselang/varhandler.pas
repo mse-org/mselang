@@ -30,7 +30,8 @@ procedure handlepointervar();
 
 implementation
 uses
- handlerutils,elements,errorhandler,handlerglob,opcode,grammar;
+ handlerutils,elements,errorhandler,handlerglob,opcode,grammar,llvmlists,
+ identutils,msestrings;
  
 procedure handlevardefstart();
 begin
@@ -55,6 +56,7 @@ var
  ele1: elementoffsetty;
  bo1: boolean;
  i1: int32;
+ lstr1: lstringty;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -87,7 +89,6 @@ begin
      po3:= @s.unitinfo^.varchain;
     end;
     bo1:= addvar(ident1,allvisi,po3^,po1);
- //   po1:= ele.addelement(ident1,allvisi,ek_var);
    end;
    if not bo1 then begin //duplicate
     identerror(i1-s.stackindex,err_duplicateidentifier);
@@ -99,7 +100,6 @@ begin
      po2:= ele.eleinfoabs(vf.typ);
      address.indirectlevel:= contextstack[s.stacktop].d.typ.indirectlevel;
      with ptypedataty(@po2^.data)^ do begin
- //     address.indirectlevel:= address.indirectlevel+indirectlevel;
       datasize1:= h.datasize;
       if h.kind in pointervarkinds then begin
        inc(address.indirectlevel);
@@ -123,6 +123,15 @@ begin
        address.segaddress:= getglobvaraddress(datasize1,size1,address.flags);
        if not (us_implementation in s.unitinfo^.state) then begin
         nameid:= s.unitinfo^.nameid; //for llvm
+       end;
+       if (info.debugoptions <> []) and 
+                          (co_llvm in info.compileoptions) then begin
+        lstr1:= getidentnamel(ident1);
+        s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                            lstr1,address.segaddress.address);
+        s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+                  s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                       lstr1,contextstack[i1].start.line,0,po1);
        end;
       end
       else begin

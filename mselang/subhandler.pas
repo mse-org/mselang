@@ -979,7 +979,6 @@ var
  alloc1: dataoffsty;
  ad1: opaddressty;
  lnr1: int32;
- vk1: divariablekindty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB5A');
@@ -1097,11 +1096,7 @@ begin
      flags:= po4^.address.flags;
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
      if info.debugoptions <> [] then begin
-      vk1:= divk_variable;
-      if int1 < po1^.paramcount then begin
-       vk1:= divk_argvariable;
-      end;
-      debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(vk1,
+      debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
                     getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4);
      end;
     end;
@@ -1203,7 +1198,7 @@ begin
   end;
   s.ssa:= d.subdef.ssabefore;
   if s.debugoptions <> [] then begin
-   m1.flags:= [mvf_globval,mvf_sub];
+   m1.flags:= [mvf_globval,mvf_pointer];
    m1.value.listid:= po1^.globid;
    m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
                                            gettype(m1.value.listid);

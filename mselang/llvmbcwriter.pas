@@ -387,12 +387,12 @@ var
  po9: paggregateconstty;
  pm1: pmetadataty;
  metadatatype: int32;
- metanull,metanullint,metanullstring,metanullnode,
+ metanull,metanullint,metaoneint,metanullstring,metanullnode,
  metatrue,
  metaDW_TAG_base_type,metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
- metaDW_TAG_subroutine_type: metavaluety;
+ metaDW_TAG_subroutine_type,metaDW_TAG_variable: metavaluety;
  metavartags: array[divariablekindty] of metavaluety;
- m1: metavaluety;
+ m1,m2: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
  separator1: char;
@@ -439,6 +439,9 @@ begin
   metanullint.value.typeid:= ord(das_8);
   metanullint.value.listid:= ord(nc_i8);
   metanullint.flags:= [];
+  metaoneint.value.typeid:= ord(das_32);
+  metaoneint.value.listid:= ord(oc_i32);
+  metaoneint.flags:= [];
 //  metatrue.value:= consts.addi1(true);
   metatrue.value:= consts.addi32(-1);
   metatrue.flags:= [];
@@ -455,6 +458,9 @@ begin
   metaDW_TAG_subroutine_type.value:= consts.addi32(
                DW_TAG_subroutine_type or LLVMDebugVersion);
   metaDW_TAG_subroutine_type.flags:= [];
+  metaDW_TAG_variable.value:= consts.addi32(
+               DW_TAG_variable or LLVMDebugVersion);
+  metaDW_TAG_variable.flags:= [];
 
   with metavartags[divk_variable] do begin
    value:= consts.addi32(DW_TAG_variable or LLVMDebugVersion);
@@ -725,8 +731,8 @@ begin
   end;
  end;
  if metadata.count > 0 then begin                          //metadata
-  metanullstring:= metadata.addstring(emptylstring);
-  metanullnode:= metadata.addnode([]);
+  metanullstring:= metadata.emptystringconst;
+  metanullnode:= metadata.emptynode;
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
   while pm1 <> nil do begin
@@ -777,11 +783,15 @@ begin
       if mvf_dummy in m1.flags then begin
        m1:= metanullnode;
       end;
+      m2:= globalvariables;
+      if mvf_dummy in m2.flags then begin
+       m2:= metanullnode;
+      end;
       emitmetadatanode([metaDW_TAG_compile_unit,
       //difile,sourcelanguage,producer,isoptimized flags,         runtimeversion,
         difile,sourcelanguage,producer,metanullint,metanullstring,metanullint,
       //enumtypes,   retainedtypes,subprograms,globalvariables,importedentities,
-        metanullnode,metanullnode, m1,metanullnode,  metanullnode,
+        metanullnode,metanullnode, m1,         m2,             metanullnode,
       //splitdebugfilename,emissionkind
         metanullstring,    emissionkind]);
      end;     
@@ -810,6 +820,16 @@ begin
       metanullint,metanull,       params,   metanullint,metanull,
     //templateparams,identifier
       metanull,      metanull]);
+     end;
+    end;
+    mdk_diglobvariable: begin
+     with pdiglobvariablety(@pm1^.data)^ do begin
+      m1.flags:= [mvf_globval,mvf_pointer];
+      m1.value.listid:= global;
+      m1.value.typeid:= globals.gettype(global);
+      emitmetadatanode([metaDW_TAG_variable,metanullint,metanull,name,name,
+                               metanullstring,difile,linenumber,
+              ditype,metanullint,metaoneint,m1,metanull]);
      end;
     end;
     mdk_divariable: begin
@@ -1903,7 +1923,7 @@ begin
     inc(i2,fconststart);
    end;
    i1:= value.typeid * typeindexstep;
-   if mvf_sub in flags then begin
+   if mvf_pointer in flags then begin
     inc(i1); //pointer
    end;
    emitvbr6(i1);

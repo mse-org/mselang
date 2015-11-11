@@ -530,9 +530,9 @@ begin
      if llvmlists <> nil then begin
       filepathmeta:= llvmlists.metadatalist.addfile(filepath);
       debugfilemeta:= llvmlists.metadatalist.adddifile(filepathmeta);
- //     debugfilemeta:= metadatalist.add
       compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
-            filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
+         filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
+                                                                  FullDebug);
       llvmlists.metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
                                             [compileunitmeta.value.listid]);
      end;

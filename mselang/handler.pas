@@ -251,7 +251,7 @@ begin
                                                                   nil,lstr1);
    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
                                           gettype(m1.value.listid);
-   m1.flags:= [mvf_globval,mvf_sub];
+   m1.flags:= [mvf_globval,mvf_pointer];
    if info.s.debugoptions <> [] then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
@@ -259,11 +259,6 @@ begin
            info.contextstack[info.s.stackindex].start.line+1,m1,
            llvmlists.metadatalist.adddisubroutinetype(nil{,
                       filepathmeta,s.currentscopemeta}),[flagprototyped]);
-{
-     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
-     pdicompileunitty(llvmlists.metadatalist.items[
-                            compileunitmeta.value.listid])^.subprograms:= m1;
-}
      info.s.currentscopemeta:= mainsubmeta;
     end;
    end;

@@ -1039,9 +1039,8 @@ begin
        else begin
         str1:= fgloblist.constname(rec1[4]-1);
        end;
-       outglobalvalue(ftypelist.typename(valuetype)+','+inttostr(rec1[3])+','+
-                    str1,
-                                     dynarraytovararray(copy(rec1,5,bigint)),0);
+       outglobalvalue(ftypelist.typename(valuetype)+','+
+         inttostr(rec1[3])+','+str1,dynarraytovararray(copy(rec1,5,bigint)),0);
       end;
      end;
      MODULE_CODE_FUNCTION: begin
@@ -1241,7 +1240,7 @@ begin
  end;
  result:= result + inttostr(i1);
 end;
-
+var testvar: pglobinfoty;
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1272,6 +1271,7 @@ var
       result:= result+'NULL';
      end;
      else begin
+testvar:= fgloblist.item((po1+1)^);
       with fgloblist.item((po1+1)^)^ do begin
        if valuetype <> po1^ then begin
         error('Value types do not match');

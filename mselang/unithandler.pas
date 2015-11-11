@@ -1600,19 +1600,16 @@ end;
 function endunit(const aunit: punitinfoty): boolean;
 var
  m1: metavaluety;
+ po1: pdicompileunitty;
 begin
  result:= true;
  with info do begin
   if (s.debugoptions <> []) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
-    m1:= addnode(subprograms);
-    pdicompileunitty(getdata(aunit^.compileunitmeta))^.
-                                                         subprograms:= m1;
-{
-     m1:= llvmlists.metadatalist.addnode([mainsubmeta]);
-     pdicompileunitty(llvmlists.metadatalist.items[
-                            compileunitmeta.value.listid])^.subprograms:= m1;
-}  end;
+    po1:= getdata(aunit^.compileunitmeta);
+    po1^.subprograms:= addnode(subprograms);
+    po1^.globalvariables:= addnode(globalvariables);
+   end;
   end;
   if co_writeunits in compileoptions then begin
    result:= writeunitfile(aunit);

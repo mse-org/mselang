@@ -341,6 +341,7 @@ type
   typeindex: int32;
   initconstindex: int32;
   linkage: linkagety;
+  debuginfo: metavaluety;
   case kind: globallockindty of
    gak_sub: (flags: subflagsty;)
  end;
@@ -352,7 +353,9 @@ type
    fconstlist: tconsthashdatalist;
    fnamelist: tglobnamelist;
    flinklist: tlinklist;
+   flastitem: pgloballocdataty;
   protected
+   procedure inccount();
    function addnoinit(const atyp: int32; const alinkage: linkagety;
                       const externunit: boolean): int32;
   public
@@ -360,7 +363,6 @@ type
                           const aconstlist: tconsthashdatalist);
    destructor destroy(); override;
    procedure clear(); override;
-//   function addvalue(var avalue: typeallocinfoty): int32;
    function addvalue(const avalue: pvardataty; const alinkage: linkagety; 
                                     const externunit: boolean = false): int32;
                                                             //returns listid
@@ -397,6 +399,7 @@ type
    function gettype(const alistid: int32): int32; //returns type listid
    property namelist: tglobnamelist read fnamelist;
    property linklist: tlinklist read flinklist;
+   property lastitem: pgloballocdataty read flastitem;
  end;
 
 const
@@ -444,6 +447,7 @@ type
   sourcelanguage: metavaluety;
   producer: metavaluety;
   subprograms: metavaluety;
+  globalvariables: metavaluety;
   emissionkind: metavaluety;
  end;
  pdicompileunitty = ^dicompileunitty;
@@ -492,6 +496,16 @@ type
                                  //8+ complex address
  end;
  pdivariablety = ^divariablety;
+
+ diglobvariablety = record
+  name: metavaluety;             //4,9
+  difile: metavaluety;           //6
+  linenumber: metavaluety;       //7
+  ditype: metavaluety;           //8
+  global: int32;                 //11 global id
+         //todo: declaration-defintion, localtounit... flags
+ end;
+ pdiglobvariablety = ^diglobvariablety;
   
  metaiddataty = record
   id: int32;
@@ -506,7 +520,7 @@ type
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
-                   mdk_divariable);
+                   mdk_divariable,mdk_diglobvariable);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -529,6 +543,8 @@ type
    fgloblist: tgloballocdatalist;
    fsubprograms: metavaluearty;
    fsubprogramcount: int32;
+   fglobalvariables: metavaluearty;
+   fglobalvariablecount: int32;
    ftypemetalist: ttypemetahashdatalist;
    fsyscontext: metavaluety;
    fsysfile: metavaluety;
@@ -537,9 +553,10 @@ type
    fcompilefile: metavaluety;
    fdbgdeclare: int32;
    fnullintconst: metavaluety;
-   function getsubprograms: metavaluearty;
+   femptystringconst: metavaluety;
+   function getsubprograms: metavaluesty;
+   function getglobalvariables: metavaluesty;
   protected
-//   fid: int32;
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
    function dwarftag(const atag: int32): metavaluety;
@@ -557,6 +574,7 @@ type
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
    function addnode(const avalues: array of metavaluety): metavaluety;
+   function addnode(const avalues: metavaluesty): metavaluety;
    procedure addnamednode(const aname: lstringty;
                                 const avalues: array of int32);
    function addstring(const avalue: lstringty): metavaluety;
@@ -571,9 +589,9 @@ type
    function addtype(const atype: elementoffsetty): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
-              const asourcelanguage: int32; const aproducer: string;
-              const asubprograms: metavaluety;
-              const aemissionkind: DebugEmissionKind): metavaluety;
+          const asourcelanguage: int32; const aproducer: string;
+          const asubprograms: metavaluety; const aglobalvariables: metavaluety;
+                           const aemissionkind: DebugEmissionKind): metavaluety;
    function adddisubroutinetype(const asub: psubdataty{;
                      const afile: metavaluety;
                                  const acontext: metavaluety}): metavaluety;
@@ -581,7 +599,7 @@ type
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32; const afunction: metavaluety;
            const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
-   function adddivariable(const akind: divariablekindty; const aname: lstringty;
+   function adddivariable(const aname: lstringty;
            const alinenumber: int32; const argnumber: int32;
                                  const avariable: pvardataty): metavaluety;
    
@@ -593,9 +611,11 @@ type
    function getstringvalue(const avalue: metavaluety): lstringty;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
-   property subprograms: metavaluearty read getsubprograms;
+   property subprograms: metavaluesty read getsubprograms;
+   property globalvariables: metavaluesty read getglobalvariables;
    property voidconst: metavaluety read fvoidconst;
    property nullintconst: metavaluety read fnullintconst;
+   property emptystringconst: metavaluety read femptystringconst;
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
  end;
 
@@ -1574,20 +1594,12 @@ begin
  fnamelist.clear();
 end;
 
-{
-function tgloballocdatalist.addvalue(var avalue: typeallocinfoty): int32;
-var
- dat1: globallocdataty;
+procedure tgloballocdatalist.inccount();
 begin
- ftypelist.addvalue(avalue);
- dat1.typeindex:= avalue.listindex;
- dat1.kind:= gak_var;
- dat1.initconstindex:= -1;
- avalue.listindex:= fcount;
- inccount();
- (pgloballocdataty(fdata) + avalue.listindex)^:= dat1;
+ count:= fcount+1;
+ flastitem:= pgloballocdataty(fdata)+count-1;
 end;
-}
+
 function tgloballocdatalist.addnoinit(const atyp: int32;
                 const alinkage: linkagety;
                 const externunit: boolean): int32;
@@ -1610,7 +1622,7 @@ begin
   end;
  end;
  inccount();
- (pgloballocdataty(fdata) + result)^:= dat1;
+ flastitem^:= dat1;
 end;
 
 function tgloballocdatalist.addvalue(const avalue: pvardataty;
@@ -1675,22 +1687,17 @@ begin
  dat1.linkage:= alinkage;
  result:= fcount;
  inccount();
- (pgloballocdataty(fdata) + result)^:= dat1;
+ flastitem^:= dat1;
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
                                   const externunit: boolean = false): int32;
 var
  dat1: globallocdataty;
-// i1: int32;
 begin
  result:= fcount;
  if avalue <> nil then begin
   with avalue^ do begin
-//   i1:= globid;
-//   if i1 < 0 then begin
-//    i1:= result;
-//   end;
    if externunit then begin
     dat1.flags:= flags+[sf_proto];
     dat1.linkage:= li_external;
@@ -1714,18 +1721,10 @@ begin
   dat1.flags:= [sf_external];
   dat1.linkage:= li_external;
  end;
-// if {(avalue = nil) or} (sf_external in dat1.flags) then begin //nil -> main
-//  dat1.linkage:= li_external;
-// end
-// else begin
-//  dat1.linkage:= li_internal;
-// end;
  dat1.kind:= gak_sub;
-// dat1.typeindex:= ftypelist.addsubvalue(avalue);
-// dat1.typeindex:= ftypelist.addsubvalue(avalue);
  dat1.initconstindex:= -1;
  inccount();
- (pgloballocdataty(fdata) + result)^:= dat1;
+ flastitem^:= dat1;
 end;
 
 procedure tgloballocdatalist.updatesubtype(const avalue: psubdataty);
@@ -1769,7 +1768,7 @@ begin
  dat1.initconstindex:= -1;
  result:= fcount;
  inccount();
- (pgloballocdataty(fdata) + result)^:= dat1;
+ flastitem^:= dat1;
 end;
 
 function tgloballocdatalist.addinternalsubvalue(const aflags: subflagsty; 
@@ -1815,7 +1814,7 @@ function tgloballocdatalist.addtypecopy(const alistid: int32): int32;
 begin
  result:= fcount;
  inccount();
- (pgloballocdataty(fdata) + result)^:= (pgloballocdataty(fdata) + alistid)^; 
+ flastitem^:= (pgloballocdataty(fdata) + alistid)^; 
 end;
 
 { ttypemetahashdatalist }
@@ -1856,6 +1855,7 @@ begin
   fnullintconst.value.typeid:= ord(das_8);
   fnullintconst.value.listid:= ord(nc_i8);
   fnullintconst.flags:= [];
+  femptystringconst:= addstring(emptylstring);
 
   femptynode:= addnode([]);
   fsubprogramcount:= 0;
@@ -1953,6 +1953,11 @@ begin
  result:= addnode(@avalues,length(avalues));
 end;
 
+function tmetadatalist.addnode(const avalues: metavaluesty): metavaluety;
+begin
+ result:= addnode(avalues.data,avalues.count);
+end;
+
 procedure tmetadatalist.addnamednode(const aname: lstringty;
                const avalues: array of int32);
 var
@@ -2019,7 +2024,7 @@ end;
 }
 function tmetadatalist.adddicompileunit(const afile: metavaluety; 
               const asourcelanguage: int32; const aproducer: string; 
-              const asubprograms: metavaluety;
+          const asubprograms: metavaluety; const aglobalvariables: metavaluety;
                           const aemissionkind: DebugEmissionKind): metavaluety;
 begin
  with pdicompileunitty(adddata(mdk_dicompileunit,
@@ -2028,6 +2033,7 @@ begin
   sourcelanguage:= i32const(asourcelanguage);
   producer:= addstring(stringtolstring(aproducer));
   subprograms:= asubprograms;
+  globalvariables:= aglobalvariables;
   emissionkind:= i32const(ord(aemissionkind));
   fcompileunit:= result;
   fcompilefile:= afile;
@@ -2056,23 +2062,40 @@ begin
                typeinfo(fsubprograms),fsubprogramcount)^):= result;
 end;
 
-function tmetadatalist.adddivariable(const akind: divariablekindty; 
-      const aname: lstringty; const alinenumber: int32; const argnumber: int32;
+function tmetadatalist.adddivariable(const aname: lstringty;
+                       const alinenumber: int32; const argnumber: int32;
                                       const avariable: pvardataty): metavaluety;
 var
  m1,m2: metavaluety;
 begin
  m1:= addstring(aname);
  m2:= addtype(avariable^.vf.typ);
- with pdivariablety(adddata(mdk_divariable,
-                    sizeof(divariablety),result))^ do begin
-  kind:= akind;
-  context:= info.s.currentscopemeta;
-  name:= m1;
-  difile:= info.s.currentfilemeta;
-  lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
-  ditype:= m2;
-  flags:= nullintconst;
+ if af_segment in avariable^.address.flags then begin
+  with pdiglobvariablety(adddata(mdk_diglobvariable,
+                     sizeof(diglobvariablety),result))^ do begin
+   name:= m1;
+   difile:= info.s.currentfilemeta;
+   linenumber:= i32const(alinenumber+1);
+   ditype:= m2;
+   global:= avariable^.address.segaddress.address;
+  end;
+  metavaluety(additempo(fglobalvariables,
+               typeinfo(fglobalvariables),fglobalvariablecount)^):= result;
+ end
+ else begin
+  with pdivariablety(adddata(mdk_divariable,
+                     sizeof(divariablety),result))^ do begin
+   kind:= divk_variable;
+   if af_param in avariable^.address.flags then begin
+    kind:= divk_argvariable;
+   end;
+   context:= info.s.currentscopemeta;
+   name:= m1;
+   difile:= info.s.currentfilemeta;
+   lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+   ditype:= m2;
+   flags:= nullintconst;
+  end;
  end;
 end;
 
@@ -2125,9 +2148,16 @@ begin
  end;
 end;
 
-function tmetadatalist.getsubprograms: metavaluearty;
+function tmetadatalist.getsubprograms: metavaluesty;
 begin
- result:= copy(fsubprograms,0,fsubprogramcount);
+ result.count:= fsubprogramcount;
+ result.data:= pointer(fsubprograms);
+end;
+
+function tmetadatalist.getglobalvariables: metavaluesty;
+begin
+ result.count:= fglobalvariablecount;
+ result.data:= pointer(fglobalvariables);
 end;
 
 function tmetadatalist.adddibasictype(const adifile: metavaluety;

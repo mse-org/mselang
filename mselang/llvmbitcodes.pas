@@ -1093,7 +1093,7 @@ DICompositeType DIBuilder::createSubroutineType(DIFile File,
 
 (*
 /// DIVariable - This is a wrapper for a variable (e.g. parameter, local,
-/// global etc).
+/// global etc). //mse: probably no global variable
 class DIVariable : public DIDescriptor {
   friend class DIDescriptor;
   void printInternal(raw_ostream &OS) const;
@@ -1156,6 +1156,41 @@ public:
   bool isInlinedFnArgument(const Function *CurFn);
 
   void printExtendedName(raw_ostream &OS) const;
+
+/// DIGlobalVariable - This is a wrapper for a global variable.
+class DIGlobalVariable : public DIDescriptor {
+  friend class DIDescriptor;
+  void printInternal(raw_ostream &OS) const;
+
+public:
+  explicit DIGlobalVariable(const MDNode *N = nullptr) : DIDescriptor(N) {}
+                                                           //vmcontext //1
+  DIScope getContext() const { return getFieldAs<DIScope>(2); }        //2
+  StringRef getName() const { return getStringField(3); }              //3
+  StringRef getDisplayName() const { return getStringField(4); }       //4
+  StringRef getLinkageName() const { return getStringField(5); }       //5
+  StringRef getFilename() const { 
+                       return getFieldAs<DIFile>(6).getFilename(); }   //6
+  StringRef getDirectory() const {
+    return getFieldAs<DIFile>(6).getDirectory();
+  }
+
+  unsigned getLineNumber() const { return getUnsignedField(7); }      //7
+  DITypeRef getType() const { return getFieldAs<DITypeRef>(8); }      //8
+  unsigned isLocalToUnit() const { return getUnsignedField(9); }      //9
+  unsigned isDefinition() const { return getUnsignedField(10); }      //10
+
+  GlobalVariable *getGlobal() const { 
+                          return getGlobalVariableField(11); }        //11
+  Constant *getConstant() const { return getConstantField(11); }
+  DIDerivedType getStaticDataMemberDeclaration() const {
+    return getFieldAs<DIDerivedType>(12);                             //12
+  }
+
+  /// Verify - Verify that a global variable descriptor is well formed.
+  bool Verify() const;
+};
+
 *)
 
 type
