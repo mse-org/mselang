@@ -765,6 +765,176 @@ const
   DW_ATE_lo_user = $80;
   DW_ATE_hi_user = $ff;
 
+  // Attributes
+  DW_AT_sibling = $01;
+  DW_AT_location = $02;
+  DW_AT_name = $03;
+  DW_AT_ordering = $09;
+  DW_AT_byte_size = $0b;
+  DW_AT_bit_offset = $0c;
+  DW_AT_bit_size = $0d;
+  DW_AT_stmt_list = $10;
+  DW_AT_low_pc = $11;
+  DW_AT_high_pc = $12;
+  DW_AT_language = $13;
+  DW_AT_discr = $15;
+  DW_AT_discr_value = $16;
+  DW_AT_visibility = $17;
+  DW_AT_import = $18;
+  DW_AT_string_length = $19;
+  DW_AT_common_reference = $1a;
+  DW_AT_comp_dir = $1b;
+  DW_AT_const_value = $1c;
+  DW_AT_containing_type = $1d;
+  DW_AT_default_value = $1e;
+  DW_AT_inline = $20;
+  DW_AT_is_optional = $21;
+  DW_AT_lower_bound = $22;
+  DW_AT_producer = $25;
+  DW_AT_prototyped = $27;
+  DW_AT_return_addr = $2a;
+  DW_AT_start_scope = $2c;
+  DW_AT_bit_stride = $2e;
+  DW_AT_upper_bound = $2f;
+  DW_AT_abstract_origin = $31;
+  DW_AT_accessibility = $32;
+  DW_AT_address_class = $33;
+  DW_AT_artificial = $34;
+  DW_AT_base_types = $35;
+  DW_AT_calling_convention = $36;
+  DW_AT_count = $37;
+  DW_AT_data_member_location = $38;
+  DW_AT_decl_column = $39;
+  DW_AT_decl_file = $3a;
+  DW_AT_decl_line = $3b;
+  DW_AT_declaration = $3c;
+  DW_AT_discr_list = $3d;
+  DW_AT_encoding = $3e;
+  DW_AT_external = $3f;
+  DW_AT_frame_base = $40;
+  DW_AT_friend = $41;
+  DW_AT_identifier_case = $42;
+  DW_AT_macro_info = $43;
+  DW_AT_namelist_item = $44;
+  DW_AT_priority = $45;
+  DW_AT_segment = $46;
+  DW_AT_specification = $47;
+  DW_AT_static_link = $48;
+  DW_AT_type = $49;
+  DW_AT_use_location = $4a;
+  DW_AT_variable_parameter = $4b;
+  DW_AT_virtuality = $4c;
+  DW_AT_vtable_elem_location = $4d;
+  DW_AT_allocated = $4e;
+  DW_AT_associated = $4f;
+  DW_AT_data_location = $50;
+  DW_AT_byte_stride = $51;
+  DW_AT_entry_pc = $52;
+  DW_AT_use_UTF8 = $53;
+  DW_AT_extension = $54;
+  DW_AT_ranges = $55;
+  DW_AT_trampoline = $56;
+  DW_AT_call_column = $57;
+  DW_AT_call_file = $58;
+  DW_AT_call_line = $59;
+  DW_AT_description = $5a;
+  DW_AT_binary_scale = $5b;
+  DW_AT_decimal_scale = $5c;
+  DW_AT_small = $5d;
+  DW_AT_decimal_sign = $5e;
+  DW_AT_digit_count = $5f;
+  DW_AT_picture_string = $60;
+  DW_AT_mutable = $61;
+  DW_AT_threads_scaled = $62;
+  DW_AT_explicit = $63;
+  DW_AT_object_pointer = $64;
+  DW_AT_endianity = $65;
+  DW_AT_elemental = $66;
+  DW_AT_pure = $67;
+  DW_AT_recursive = $68;
+  DW_AT_signature = $69;
+  DW_AT_main_subprogram = $6a;
+  DW_AT_data_bit_offset = $6b;
+  DW_AT_const_expr = $6c;
+  DW_AT_enum_class = $6d;
+  DW_AT_linkage_name = $6e;
+
+  // New in DWARF 5:
+  DW_AT_string_length_bit_size = $6f;
+  DW_AT_string_length_byte_size = $70;
+  DW_AT_rank = $71;
+  DW_AT_str_offsets_base = $72;
+  DW_AT_addr_base = $73;
+  DW_AT_ranges_base = $74;
+  DW_AT_dwo_id = $75;
+  DW_AT_dwo_name = $76;
+  DW_AT_reference = $77;
+  DW_AT_rvalue_reference = $78;
+
+  DW_AT_lo_user = $2000;
+  DW_AT_hi_user = $3fff;
+
+  DW_AT_MIPS_loop_begin = $2002;
+  DW_AT_MIPS_tail_loop_begin = $2003;
+  DW_AT_MIPS_epilog_begin = $2004;
+  DW_AT_MIPS_loop_unroll_factor = $2005;
+  DW_AT_MIPS_software_pipeline_depth = $2006;
+  DW_AT_MIPS_linkage_name = $2007;
+  DW_AT_MIPS_stride = $2008;
+  DW_AT_MIPS_abstract_name = $2009;
+  DW_AT_MIPS_clone_origin = $200a;
+  DW_AT_MIPS_has_inlines = $200b;
+  DW_AT_MIPS_stride_byte = $200c;
+  DW_AT_MIPS_stride_elem = $200d;
+  DW_AT_MIPS_ptr_dopetype = $200e;
+  DW_AT_MIPS_allocatable_dopetype = $200f;
+  DW_AT_MIPS_assumed_shape_dopetype = $2010;
+
+  // This one appears to have only been implemented by Open64 for
+  // fortran and may conflict with other extensions.
+  DW_AT_MIPS_assumed_size = $2011;
+
+  // GNU extensions
+  DW_AT_sf_names = $2101;
+  DW_AT_src_info = $2102;
+  DW_AT_mac_info = $2103;
+  DW_AT_src_coords = $2104;
+  DW_AT_body_begin = $2105;
+  DW_AT_body_end = $2106;
+  DW_AT_GNU_vector = $2107;
+  DW_AT_GNU_template_name = $2110;
+
+  DW_AT_GNU_odr_signature = $210f;
+
+  // Extensions for Fission proposal.
+  DW_AT_GNU_dwo_name = $2130;
+  DW_AT_GNU_dwo_id = $2131;
+  DW_AT_GNU_ranges_base = $2132;
+  DW_AT_GNU_addr_base = $2133;
+  DW_AT_GNU_pubnames = $2134;
+  DW_AT_GNU_pubtypes = $2135;
+
+  // Apple extensions.
+  DW_AT_APPLE_optimized = $3fe1;
+  DW_AT_APPLE_flags = $3fe2;
+  DW_AT_APPLE_isa = $3fe3;
+  DW_AT_APPLE_block = $3fe4;
+  DW_AT_APPLE_major_runtime_vers = $3fe5;
+  DW_AT_APPLE_runtime_class = $3fe6;
+  DW_AT_APPLE_omit_frame_ptr = $3fe7;
+  DW_AT_APPLE_property_name = $3fe8;
+  DW_AT_APPLE_property_getter = $3fe9;
+  DW_AT_APPLE_property_setter = $3fea;
+  DW_AT_APPLE_property_attribute = $3feb;
+  DW_AT_APPLE_objc_complete_type = $3fec;
+  DW_AT_APPLE_property = $3fed;
+
+  // Identifier case codes
+  DW_ID_case_sensitive = $00;
+  DW_ID_up_case = $01;
+  DW_ID_down_case = $02;
+  DW_ID_case_insensitive = $03;
+
 type
  nodetaginfoty = record
   tag: card32;
