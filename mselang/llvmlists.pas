@@ -542,10 +542,10 @@ type
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
    fgloblist: tgloballocdatalist;
-   fsubprograms: metavaluearty;
-   fsubprogramcount: int32;
-   fglobalvariables: metavaluearty;
-   fglobalvariablecount: int32;
+ //  fsubprograms: metavaluearty;
+ //  fsubprogramcount: int32;
+ //  fglobalvariables: metavaluearty;
+ //  fglobalvariablecount: int32;
    ftypemetalist: ttypemetahashdatalist;
    fsyscontext: metavaluety;
    fsysfile: metavaluety;
@@ -555,8 +555,8 @@ type
    fdbgdeclare: int32;
    fnullintconst: metavaluety;
    femptystringconst: metavaluety;
-   function getsubprograms: metavaluesty;
-   function getglobalvariables: metavaluesty;
+//   function getsubprograms: metavaluesty;
+//   function getglobalvariables: metavaluesty;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -612,8 +612,8 @@ type
    function getstringvalue(const avalue: metavaluety): lstringty;
    function first: pmetadataty; //nil if none
    function next: pmetadataty;  //nil if none
-   property subprograms: metavaluesty read getsubprograms;
-   property globalvariables: metavaluesty read getglobalvariables;
+//   property subprograms: metavaluesty read getsubprograms;
+//   property globalvariables: metavaluesty read getglobalvariables;
    property voidconst: metavaluety read fvoidconst;
    property nullintconst: metavaluety read fnullintconst;
    property emptystringconst: metavaluety read femptystringconst;
@@ -636,11 +636,19 @@ type
    property metadatalist: tmetadatalist read fmetadatalist;
  end; 
 
+procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
+
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
  opcode,handlerutils,identutils;
   
+procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
+begin
+ metavaluety(additempo(alist.data,
+               typeinfo(alist.data),alist.count)^):= aitem;
+end;
+
 { tbufferhashdatalist }
 
 constructor tbufferhashdatalist.create(const datasize: integer);
@@ -1859,7 +1867,7 @@ begin
   femptystringconst:= addstring(emptylstring);
 
   femptynode:= addnode([]);
-  fsubprogramcount:= 0;
+//  fsubprogramcount:= 0;
   ftypemetalist.clear();
   fsysfile:= adddifile(addfile('system'));
   fsyscontext:= fsysfile;
@@ -1876,7 +1884,7 @@ end;
 
 procedure tmetadatalist.beginunit;
 begin
- fsubprogramcount:= 0;
+// fsubprogramcount:= 0;
 end;
 
 function tmetadatalist.first: pmetadataty;
@@ -2059,8 +2067,7 @@ begin
   typeid:= atype;
   flags:= i32const(int32(aflags));
  end;
- metavaluety(additempo(fsubprograms,
-               typeinfo(fsubprograms),fsubprogramcount)^):= result;
+ addmetaitem(info.s.unitinfo^.subprograms,result);
 end;
 
 function tmetadatalist.adddivariable(const aname: lstringty;
@@ -2080,8 +2087,7 @@ begin
    ditype:= m2;
    global:= avariable^.address.segaddress.address;
   end;
-  metavaluety(additempo(fglobalvariables,
-               typeinfo(fglobalvariables),fglobalvariablecount)^):= result;
+  addmetaitem(info.s.unitinfo^.globalvariables,result);
  end
  else begin
   with pdivariablety(adddata(mdk_divariable,
@@ -2148,7 +2154,7 @@ begin
   params:= m1;
  end;
 end;
-
+{
 function tmetadatalist.getsubprograms: metavaluesty;
 begin
  result.count:= fsubprogramcount;
@@ -2160,7 +2166,7 @@ begin
  result.count:= fglobalvariablecount;
  result.data:= pointer(fglobalvariables);
 end;
-
+}
 function tmetadatalist.adddibasictype(const adifile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32;

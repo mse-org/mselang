@@ -528,6 +528,8 @@ type
   debugfilemeta: metavaluety;
   compileunitmeta: metavaluety;
   mainsubmeta: metavaluety;
+  subprograms: metavaluesty;
+  globalvariables: metavaluesty;
 
   opseg: subsegmentty;
   mainad: int32;
