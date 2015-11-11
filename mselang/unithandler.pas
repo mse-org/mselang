@@ -1604,7 +1604,7 @@ var
 begin
  result:= true;
  with info do begin
-  if (s.debugoptions <> []) and (aunit^.llvmlists <> nil) then begin
+  if (do_proginfo in s.debugoptions) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
     po1:= getdata(aunit^.compileunitmeta);
     po1^.subprograms:= addnode(subprograms);

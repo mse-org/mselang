@@ -939,7 +939,7 @@ begin
  outhandle('SUBBODY4ENTRY');
 {$endif}
  with info do begin
-  if s.debugoptions <> [] then begin
+  if s.debugoptions * [do_proginfo,do_name] <> [] then begin
    with contextstack[s.stackindex-2] do begin
    {$ifdef mse_checkinternalerror}
     if (s.stackindex < 2) or (d.kind <> ck_subdef) then begin
@@ -958,10 +958,16 @@ begin
     end;
    {$endif}
     with info.s.unitinfo^ do begin
-     s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
+     if do_proginfo in s.debugoptions then begin
+      s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
            filepathmeta,debugfilemeta,lstr1,
            info.contextstack[info.s.stackindex].start.line,dummymeta,
            dummymeta,[flagprototyped]);
+     end;
+     if do_name in s.debugoptions then begin
+      llvmlists.globlist.namelist.addname(lstr1,
+                                psubdataty(eletodata(po1))^.globid);
+     end;
     end;
    end;
   end;
@@ -1095,7 +1101,7 @@ begin
      address:= po4^.address.locaddress.address;
      flags:= po4^.address.flags;
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
-     if info.debugoptions <> [] then begin
+     if do_proginfo in info.debugoptions then begin
       debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
                     getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4);
      end;
@@ -1197,7 +1203,7 @@ begin
    par.subbegin.sub.blockcount:= s.ssa.bbindex + 1;
   end;
   s.ssa:= d.subdef.ssabefore;
-  if s.debugoptions <> [] then begin
+  if do_proginfo in s.debugoptions then begin
    m1.flags:= [mvf_globval,mvf_pointer];
    m1.value.listid:= po1^.globid;
    m1.value.typeid:= s.unitinfo^.llvmlists.globlist.

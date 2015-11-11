@@ -114,7 +114,8 @@ end;
 procedure tmainmo.sysenvexe(sender: tsysenvmanager);
 begin
  if sender.defined[ord(pa_debug)] then begin
-  include(info.debugoptions,do_lineinfo);
+  info.debugoptions:= info.debugoptions + 
+                 [do_lineinfo,do_proginfo];
  end;
 end;
 

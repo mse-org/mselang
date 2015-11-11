@@ -140,7 +140,8 @@ const
  llvmcompileoptions = [co_llvm,co_hasfunction];
  
 type
- debugoptionty = (do_lineinfo);
+ debugoptionty = (do_lineinfo,do_proginfo,
+                  do_name);  //use source names
  debugoptionsty = set of debugoptionty;
 const
  defaultdebugoptions = [];

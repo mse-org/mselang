@@ -2889,7 +2889,7 @@ begin
   ps:= getsegmentpo(seg_localloc,sub.allocs.allocs);
   pe:= ps + sub.allocs.alloccount;
   po1:= ps;
-  if info.debugoptions <> [] then begin
+  if do_proginfo in info.debugoptions then begin
    bcstream.beginblock(METADATA_BLOCK_ID,3);
    i1:= bcstream.allocval(0);
    while po1 < pe do begin
@@ -2958,7 +2958,7 @@ begin
   end;
   bcstream.nodebugloc:= false; //there is an assembler error because of missing 
                                //file ref in *.s without ???
-  if info.debugoptions <> [] then begin
+  if do_proginfo in info.debugoptions then begin
    idar.count:= 2;
    idar.ids:= @ids;
    with info.s.unitinfo^.llvmlists.metadatalist do begin
@@ -2986,7 +2986,8 @@ var
  po2: pdivariablety;
 begin
  with pc^.par.subend do begin
-  if info.debugoptions <> [] then begin
+  if info.debugoptions * [do_name,do_proginfo] = 
+                                     [do_name,do_proginfo] then begin
    po1:= getsegmentpo(seg_localloc,allocs.allocs);
    pe:= po1 + allocs.alloccount;
    bcstream.beginblock(VALUE_SYMTAB_BLOCK_ID,3);

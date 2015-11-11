@@ -429,7 +429,8 @@ type
  pstringmetaty = ^stringmetaty;
 
 //
-// todo: remove not used di* record fields
+// todo: remove not used di* record fields, use smaller types instead of 
+//       metavaluety
 //
  difilety = record
   filename: metavaluety;

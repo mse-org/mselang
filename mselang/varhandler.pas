@@ -124,17 +124,22 @@ begin
        if not (us_implementation in s.unitinfo^.state) then begin
         nameid:= s.unitinfo^.nameid; //for llvm
        end;
-       if (info.debugoptions <> []) and 
+       if (info.debugoptions*[do_proginfo,do_name] <> []) and 
                           (co_llvm in info.compileoptions) then begin
         lstr1:= getidentnamel(ident1);
-        s.unitinfo^.llvmlists.globlist.namelist.addname(
+        if do_name in info.debugoptions then begin
+
+         s.unitinfo^.llvmlists.globlist.namelist.addname(
                                             lstr1,address.segaddress.address);
-        s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
+        end;
+        if do_proginfo in info.debugoptions then begin
+         s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
                   s.unitinfo^.llvmlists.metadatalist.adddivariable(
                        lstr1,contextstack[i1].start.line,0,po1);
+        end;
        end;
       end
-      else begin
+      else begin                //local variable
        address.locaddress:= getlocvaraddress(datasize1,size1,address.flags,
                                                                   -frameoffset);
       end;

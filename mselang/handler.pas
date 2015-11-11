@@ -252,7 +252,7 @@ begin
    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
                                           gettype(m1.value.listid);
    m1.flags:= [mvf_globval,mvf_pointer];
-   if info.s.debugoptions <> [] then begin
+   if do_proginfo in info.s.debugoptions then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
            debugfilemeta,lstr1,

@@ -25,7 +25,7 @@ uses
  mclasses,elements,msegraphedits,msesplitter,msewidgetgrid,mseeditglob,
  msesyntaxedit,msetextedit,msepipestream,mseprocess,parserglob,msebitmap,
  msedatanodes,msefiledialog,mseificomp,mseificompglob,mselistbrowser,msesys,
- msescrollbar,msesyntaxpainter,msesercomm;
+ msescrollbar,msesyntaxpainter,msesercomm,msestream;
 
 const
  llvmbindir = 
@@ -48,11 +48,14 @@ type
    filena: tfilenameedit;
    llvm: tbooleanedit;
    tsyntaxpainter1: tsyntaxpainter;
-   debuged: tbooleanedit;
+   lineinfoed: tbooleanedit;
    norun: tbooleanedit;
    wrtued: tbooleanedit;
    rrtued: tbooleanedit;
    builded: tbooleanedit;
+   proginfoed: tbooleanedit;
+   nameed: tbooleanedit;
+   opted: tstringedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -61,7 +64,11 @@ type
    procedure aftreadexe(const sender: TObject);
    procedure befwriteexe(const sender: TObject);
 //   procedure tbutton2();
-   procedure debuset(const sender: TObject; var avalue: Boolean;
+   procedure lineinfoset(const sender: TObject; var avalue: Boolean;
+                   var accept: Boolean);
+   procedure nameset(const sender: TObject; var avalue: Boolean;
+                   var accept: Boolean);
+   procedure proginfoset(const sender: TObject; var avalue: Boolean;
                    var accept: Boolean);
   protected
 //   function test: integer; override;
@@ -73,7 +80,7 @@ var
   
 implementation
 uses
- errorhandler,main_mfm,msestream,stackops,parser,llvmops,msedatalist,
+ errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,
  msefileutils,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
@@ -129,7 +136,8 @@ begin
        else begin
         llvmops.run(targetstream,true);
         targetstream.destroy();
-        int1:= getprocessoutput(llvmbindir+'llc '+filename1,'',str1);
+        int1:= getprocessoutput(llvmbindir+'llc '+opted.value+' '+
+                                                        filename1,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if int1 = 0 then begin
          int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
@@ -227,7 +235,7 @@ begin
  saveexe(nil);
 end;
 
-procedure tmainfo.debuset(const sender: TObject; var avalue: Boolean;
+procedure tmainfo.lineinfoset(const sender: TObject; var avalue: Boolean;
                var accept: Boolean);
 begin
  if avalue then begin
@@ -235,6 +243,28 @@ begin
  end
  else begin
   exclude(info.debugoptions,do_lineinfo);
+ end;
+end;
+
+procedure tmainfo.nameset(const sender: TObject; var avalue: Boolean;
+               var accept: Boolean);
+begin
+ if avalue then begin
+  include(info.debugoptions,do_name);
+ end
+ else begin
+  exclude(info.debugoptions,do_name);
+ end;
+end;
+
+procedure tmainfo.proginfoset(const sender: TObject; var avalue: Boolean;
+               var accept: Boolean);
+begin
+ if avalue then begin
+  include(info.debugoptions,do_proginfo);
+ end
+ else begin
+  exclude(info.debugoptions,do_proginfo);
  end;
 end;
 
