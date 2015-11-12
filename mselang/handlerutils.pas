@@ -2455,7 +2455,7 @@ end;
 procedure setcurrentscope(const ascope: metavaluety);
 begin
  info.s.currentscopemeta:= ascope;
- exclude(info.s.currentstatementflags,stf_newlineposted);
+ postlineinfo();
 end;
 
 {$ifdef mse_debugparser}

@@ -48,6 +48,7 @@ procedure saveparsercontext(var acontext: pparsercontextty;
                                                const astackcount: int32);
 procedure restoreparsercontext(const acontext: pparsercontextty);
 procedure freeparsercontext(var acontext: pparsercontextty);
+procedure postlineinfo();
 
 //procedure init;
 //procedure deinit;
@@ -376,6 +377,19 @@ begin
  result:= po1-astr;
 end;
 
+procedure postlineinfo();
+begin
+ if (do_lineinfo in info.s.debugoptions) and 
+             (co_llvm in info.compileoptions) then begin        //todo: columns
+  include(info.s.currentstatementflags,stf_newlineposted);
+  with additem(oc_lineinfo)^.par.lineinfo do begin
+   loc.line:= info.s.source.line;
+   loc.col:= 0;
+   loc.scope:= info.s.currentscopemeta.value.listid;
+  end;
+ end;
+end;
+
 procedure checklinebreak(var achar: pchar; var linebreaks: integer) 
                           {$ifndef mse_debugparser} inline{$endif};
 begin
@@ -384,8 +398,6 @@ begin
    include(info.s.currentstatementflags,stf_newlineposted);
    if (co_llvm in info.compileoptions) then begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
-//     par.lineinfo.line.po:= achar;
-//     par.lineinfo.line.len:= linelen(achar);
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
      loc.scope:= info.s.currentscopemeta.value.listid;
