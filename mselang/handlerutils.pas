@@ -228,6 +228,7 @@ procedure sethandlererror();
 
 procedure setenumconst(const aenumitem: infoenumitemty; 
                                    var acontextitem: contextitemty);
+procedure setcurrentscope(const ascope: metavaluety);
 
 procedure init();
 procedure deinit();
@@ -2449,6 +2450,12 @@ begin
   d.dat.constval.kind:= dk_enum;
   d.dat.constval.vinteger:= aenumitem.value;
  end;
+end;
+
+procedure setcurrentscope(const ascope: metavaluety);
+begin
+ info.s.currentscopemeta:= ascope;
+ exclude(info.s.currentstatementflags,stf_newlineposted);
 end;
 
 {$ifdef mse_debugparser}

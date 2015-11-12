@@ -573,7 +573,7 @@ begin
 
   with s.unitinfo^ do begin
    s.currentfilemeta:= debugfilemeta;
-   s.currentscopemeta:= s.currentfilemeta;
+   setcurrentscope(s.currentfilemeta);
    s.currentcompileunitmeta:= compileunitmeta;
   end;
 

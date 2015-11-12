@@ -949,10 +949,10 @@ begin
     po1:= ele.eleinfoabs(d.subdef.ref);
     with info.s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
-      s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
+      setcurrentscope(llvmlists.metadatalist.adddisubprogram(
            filepathmeta,debugfilemeta,getidentname2(po1^.header.name),
            info.contextstack[info.s.stackindex].start.line,dummymeta,
-           dummymeta,[flagprototyped]);
+           dummymeta,[flagprototyped]));
      end;
     end;
    end;
@@ -1207,7 +1207,7 @@ begin
      typeid:= m2;
     end;
    end;
-   s.currentscopemeta:= d.subdef.scopemetabefore;
+   setcurrentscope(d.subdef.scopemetabefore);
   end;
  end;
 end;

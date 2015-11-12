@@ -2908,7 +2908,7 @@ begin
   if isfunction then begin
    i2:= 1; //skip result param
   end;
-  bcstream.nodebugloc:= true;
+/////////////  bcstream.nodebugloc:= true;
   for i1:= i2 to sub.allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
@@ -2956,7 +2956,7 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
-  bcstream.nodebugloc:= false; //there is an assembler error because of missing 
+/////////  bcstream.nodebugloc:= false; //there is an assembler error because of missing 
                                //file ref in *.s without ???
   if do_proginfo in info.debugoptions then begin
    idar.count:= 2;

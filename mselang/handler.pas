@@ -258,7 +258,7 @@ begin
            info.contextstack[info.s.stackindex].start.line+1,m1,
            llvmlists.metadatalist.adddisubroutinetype(nil{,
                       filepathmeta,s.currentscopemeta}),[flagprototyped]);
-     info.s.currentscopemeta:= mainsubmeta;
+     setcurrentscope(mainsubmeta);
     end;
    end;
   end;
