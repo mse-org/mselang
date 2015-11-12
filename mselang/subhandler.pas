@@ -930,7 +930,6 @@ end;
 procedure subbody4entry();
 var
  po1: pelementinfoty;
- n1: identnamety;
 {$ifdef mse_checkinternalerror}
  bo1: boolean;
 {$endif}
@@ -948,25 +947,12 @@ begin
    {$endif}
     d.subdef.scopemetabefore:= s.currentscopemeta;
     po1:= ele.eleinfoabs(d.subdef.ref);
-   {$ifdef mse_checkinternalerror}
-    bo1:= 
-   {$endif}
-    getidentname(po1^.header.name,n1);
-   {$ifdef mse_checkinternalerror}
-    if not bo1 then begin
-     internalerror(ie_parser,'20151023B');
-    end;
-   {$endif}
     with info.s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
       s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
-           filepathmeta,debugfilemeta,n1,
+           filepathmeta,debugfilemeta,getidentname2(po1^.header.name),
            info.contextstack[info.s.stackindex].start.line,dummymeta,
            dummymeta,[flagprototyped]);
-     end;
-     if do_name in s.debugoptions then begin
-      llvmlists.globlist.namelist.addname(n1,
-                                   psubdataty(eletodata(po1))^.globid);
      end;
     end;
    end;
@@ -1090,6 +1076,10 @@ begin
   end;
 
   if co_llvm in compileoptions then begin
+   if do_name in s.debugoptions then begin
+    s.unitinfo^.llvmlists.globlist.namelist.addname(
+                                        getidentname2(po1),po1^.globid);
+   end;
    ele1:= po1^.varchain;
    alloc1:= getsegmenttopoffs(seg_localloc);
    int1:= 0;

@@ -55,6 +55,7 @@ function getidentname(const aname: string): identnamety;
 function getidentname(const aident: identty): string;
 function getidentnamel(const aident: identty): lstringty;
 function getidentname2(const aident: identty): identnamety;
+function getidentname2(const aeledata: pointer): identnamety;
 
 function nametolstring(const aname: identnamety): lstringty; inline;
 
@@ -63,7 +64,7 @@ procedure init();
       
 implementation
 uses
- mselfsr,parserglob,errorhandler;
+ mselfsr,parserglob,errorhandler,elements;
 type
  identoffsetty = int32;
  
@@ -211,12 +212,44 @@ end;
 
 function getidentnamel(const aident: identty): lstringty;
 begin
- getidentname(aident,result);
+{$ifdef mse_checkinternalerror}
+ if not 
+{$endif}
+ getidentname(aident,result)
+{$ifdef mse_checkinternalerror} then begin
+  internalerror(ie_parser,'20151111A');
+ end;
+{$else}
+ ;
+{$endif}
 end;
 
 function getidentname2(const aident: identty): identnamety;
 begin
- getidentname(aident,result);
+{$ifdef mse_checkinternalerror}
+ if not 
+{$endif}
+ getidentname(aident,result)
+{$ifdef mse_checkinternalerror} then begin
+  internalerror(ie_parser,'20151111B');
+ end;
+{$else}
+ ;
+{$endif}
+end;
+
+function getidentname2(const aeledata: pointer): identnamety;
+begin
+{$ifdef mse_checkinternalerror}
+ if not 
+{$endif}
+ getidentname(datatoele(aeledata)^.header.name,result)
+{$ifdef mse_checkinternalerror} then begin
+  internalerror(ie_parser,'20151111C');
+ end;
+{$else}
+ ;
+{$endif}
 end;
 
 const
