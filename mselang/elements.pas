@@ -490,17 +490,17 @@ begin
  end;
 end;
 
-procedure clear;
+procedure clear1();
 begin
- identutils.clear();
-
  ele.clear;
- 
  stringbuf.clear;
  globllvmlists.clear();
-// typelist.clear();
-// constlist.clear();
-// globlist.clear();
+end;
+
+procedure clear;
+begin
+ clear1();
+ identutils.clear();
 end;
 
 procedure init;
@@ -508,12 +508,13 @@ var
  int1: integer;
  tk1: integer;
 begin
- clear;
- ele.pushelement(idstart,ek_none,[]); //root
- identutils.init();
+ identutils.clear();
+ identutils.init(); //first because of id init
  for tk1:= 1 to high(tokens) do begin
   getident(tokens[tk1]);
  end;
+ clear1();
+ ele.pushelement(idstart,ek_none,[]); //root
 end;
 
 function alignsize(const asize: int32): int32; inline;

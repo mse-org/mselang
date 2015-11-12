@@ -19,7 +19,7 @@ unit llvmlists;
 interface
 uses
  msetypes,msehash,globtypes,handlerglob,mselist,msestrings,llvmbitcodes,
- opglob,__mla__internaltypes{,interfacehandler};
+ opglob,__mla__internaltypes,identutils;
 
 const
  maxparamcount = 512;
@@ -305,22 +305,22 @@ type
    function gettype(const aindex: int32): int32;
  end;
 
- unitnamety = record //same layout as lstringty, used in tglobnamelist
-  unitpo: pointer;   //punitinfoty;
-  dummy: int32;      //= 0
+ unitnamety = record //same layout as identnamety, used in tglobnamelist
+  destindex: int32;
+  po: pointer;   //punitinfoty;
  end;
   
  globnamedataty = record
   listindex: integer;
   case int32 of
-   0: (name: lstringty);
-   1: (unitname: unitnamety);
+   0: (name: identnamety);
+   1: (nameunit: unitnamety);
  end;
  pglobnamedataty = ^globnamedataty;
  tglobnamelist = class(trecordlist)
   public
    constructor create;
-   procedure addname(const aname: lstringty; const alistindex: integer);
+   procedure addname(const aname: identnamety; const alistindex: integer);
    procedure addname(const aunit: pointer; //punitinfoty
                        const adestindex: integer; const alistindex: int32);
  end;
@@ -376,7 +376,7 @@ type
                               const externunit: boolean = false): int32; 
                                                             //returns listid
    function addsubvalue(const avalue: psubdataty;
-                           const aname: lstringty): int32;  //returns listid
+                           const aname: identnamety): int32;  //returns listid
                                //nil -> main sub
    function addsubvalue(const aflags: subflagsty; const alinkage: linkagety; 
                              const aparams: paramsty): int32; 
@@ -385,10 +385,10 @@ type
                  const aparams: paramsty): int32; //returns listid
    function addexternalsubvalue(const aflags: subflagsty; 
                        const aparams: paramsty;
-                           const aname: lstringty): int32;  //returns listid
+                           const aname: identnamety): int32;  //returns listid
    function addexternalsubvalue(const aparamtypes: array of int32;
                                               //param flags = []
-                           const aname: lstringty): int32;  
+                           const aname: identnamety): int32;  
                //returns listid, for llvm functions like llvm.dbg.declare()
 
    procedure updatesubtype(const avalue: psubdataty); 
@@ -427,6 +427,11 @@ type
   end;
  end;
  pstringmetaty = ^stringmetaty;
+
+ identmetaty = record
+  name: identnamety;
+ end;
+ pidentmetaty = ^identmetaty;
 
 //
 // todo: remove not used di* record fields, use smaller types instead of 
@@ -519,7 +524,7 @@ type
  end;
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
-                   mdk_string,mdk_difile,mdk_dibasictype,{mdk_discope,}
+                   mdk_string,mdk_ident,mdk_difile,mdk_dibasictype,{mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
                    mdk_divariable,mdk_diglobvariable);
  
@@ -578,6 +583,7 @@ type
    function addnode(const avalues: metavaluesty): metavaluety;
    procedure addnamednode(const aname: lstringty;
                                 const avalues: array of int32);
+   function addident(const aident: identnamety): metavaluety;
    function addstring(const avalue: lstringty): metavaluety;
    function addstring(const avalue: string): metavaluety;
    function addfile(const afilename: filenamety): metavaluety;
@@ -597,7 +603,7 @@ type
                      const afile: metavaluety;
                                  const acontext: metavaluety}): metavaluety;
    function adddisubprogram(const afile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
+           const acontext: metavaluety; const aname: identnamety;
            const alinenumber: int32; const afunction: metavaluety;
            const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
    function adddivariable(const aname: lstringty;
@@ -641,7 +647,7 @@ procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 implementation
 uses
  parserglob,errorhandler,elements,segmentutils,msefileutils,msearrayutils,
- opcode,handlerutils,identutils;
+ opcode,handlerutils;
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
@@ -1562,7 +1568,7 @@ begin
  inherited create(sizeof(globnamedataty));
 end;
 
-procedure tglobnamelist.addname(const aname: lstringty;
+procedure tglobnamelist.addname(const aname: identnamety;
                const alistindex: integer);
 begin
  inccount();
@@ -1577,8 +1583,8 @@ procedure tglobnamelist.addname(const aunit: pointer; //punitinfoty
 begin
  inccount();
  with (pglobnamedataty(fdata)+fcount-1)^ do begin
-  unitname.unitpo:= aunit;
-  unitname.dummy:= -adestindex;
+  nameunit.po:= aunit;
+  nameunit.destindex:= -adestindex;
   listindex:= alistindex;
  end;
 end;
@@ -1762,7 +1768,7 @@ begin
 end;
 
 function tgloballocdatalist.addsubvalue(const avalue: psubdataty;
-                                             const aname: lstringty): int32;
+                                             const aname: identnamety): int32;
 begin
  result:= addsubvalue(avalue);
  fnamelist.addname(aname,result);
@@ -1792,14 +1798,14 @@ begin
 end;
 
 function tgloballocdatalist.addexternalsubvalue(const aflags: subflagsty; 
-                      const aparams: paramsty; const aname: lstringty): int32;
+                      const aparams: paramsty; const aname: identnamety): int32;
 begin
  result:= addsubvalue(aflags,li_external,aparams);
  fnamelist.addname(aname,result);
 end;
 
 function tgloballocdatalist.addexternalsubvalue(
-              const aparamtypes: array of int32; const aname: lstringty): int32;
+           const aparamtypes: array of int32; const aname: identnamety): int32;
 var
  params1: paramsty;
  parar1: array[0..15] of paramitemty;
@@ -1880,7 +1886,7 @@ begin
   if info.debugoptions <> [] then begin
    fdbgdeclare:= fgloblist.addexternalsubvalue(
             [ftypelist.metadata,ftypelist.metadata],
-                                         stringtolstring('llvm.dbg.declare'));
+                                            getidentname('llvm.dbg.declare'));
   end;
 //  fsyscontext:= adddicompileunit(addfile('system'),
 //            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
@@ -1989,6 +1995,13 @@ begin
  dec(fcount); //has no index
 end;
 
+function tmetadatalist.addident(const aident: identnamety): metavaluety;
+begin
+ with pidentmetaty(adddata(mdk_ident,sizeof(identmetaty),result))^ do begin
+  name:= aident;
+ end;
+end;
+
 function tmetadatalist.addstring(const avalue: lstringty): metavaluety;
 begin
  with pstringmetaty(
@@ -2055,13 +2068,13 @@ begin
 end;
 
 function tmetadatalist.adddisubprogram(const afile: metavaluety;
-          const acontext: metavaluety; const aname: lstringty;
+          const acontext: metavaluety; const aname: identnamety;
           const alinenumber: int32; const afunction: metavaluety;
           const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
 var
  m1: metavaluety;
 begin
- m1:= addstring(aname);
+ m1:= addident(aname);
  with pdisubprogramty(adddata(mdk_disubprogram,
                     sizeof(disubprogramty),result))^ do begin
   difile:= afile;

@@ -32,7 +32,7 @@ procedure run(const atarget: tllvmbcwriter; const amain: boolean);
 implementation
 uses
  globtypes,sysutils,msesys,segmentutils,handlerglob,elements,msestrings,
- compilerunit,bcunitglob,
+ compilerunit,bcunitglob,identutils,
  handlerutils,llvmlists,errorhandler,__mla__internaltypes,opcode,msearrayutils,
  interfacehandler;
 
@@ -384,7 +384,7 @@ begin
                                              //llvm utility functions
   with internalfuncconsts[funcs1] do begin
    internalfuncs[funcs1]:= info.s.unitinfo^.llvmlists.globlist.
-                      addexternalsubvalue(flags,params^,stringtolstring(name));
+                      addexternalsubvalue(flags,params^,getidentname(name));
   end;
  end;
  for strings1:= low(internalstringconsts) to high(internalstringconsts) do begin

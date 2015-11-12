@@ -56,7 +56,7 @@ var
  ele1: elementoffsetty;
  bo1: boolean;
  i1: int32;
- lstr1: lstringty;
+ n1: identnamety;
 begin
 {$ifdef mse_debugparser}
  outhandle('VAR3');
@@ -126,16 +126,16 @@ begin
        end;
        if (info.debugoptions*[do_proginfo,do_name] <> []) and 
                           (co_llvm in info.compileoptions) then begin
-        lstr1:= getidentnamel(ident1);
+        getidentname(ident1,n1);
         if do_name in info.debugoptions then begin
 
          s.unitinfo^.llvmlists.globlist.namelist.addname(
-                                            lstr1,address.segaddress.address);
+                                              n1,address.segaddress.address);
         end;
         if do_proginfo in info.debugoptions then begin
          s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
                   s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                       lstr1,contextstack[i1].start.line,0,po1);
+                       nametolstring(n1),contextstack[i1].start.line,0,po1);
         end;
        end;
       end

@@ -202,8 +202,8 @@ procedure handleprogbegin();
 var
  ad1: listadty;
  ad2: opaddressty;
- lstr1: lstringty;
  m1: metavaluety;
+ n1: identnamety;
 begin
 {$ifdef mse_debugparser}
  outhandle('PROGBEGIN');
@@ -246,16 +246,15 @@ begin
    end;
   end;
   if co_llvm in compileoptions then begin
-   lstr1:= stringtolstring('main');
-   m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(
-                                                                  nil,lstr1);
+   n1:= getidentname2(getident('main'));
+   m1.value.listid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
    m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
                                           gettype(m1.value.listid);
    m1.flags:= [mvf_globval,mvf_pointer];
    if do_proginfo in info.s.debugoptions then begin
     with info.s.unitinfo^ do begin
      mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
-           debugfilemeta,lstr1,
+           debugfilemeta,n1,
            info.contextstack[info.s.stackindex].start.line+1,m1,
            llvmlists.metadatalist.adddisubroutinetype(nil{,
                       filepathmeta,s.currentscopemeta}),[flagprototyped]);

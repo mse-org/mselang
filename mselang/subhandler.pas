@@ -816,8 +816,8 @@ begin
      end;
 }
      if co_llvm in compileoptions then begin
-      getidentname(pelementinfoty(pointer(po1)-eledatashift)^.header.name,lstr1);
-      po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1,lstr1);
+      po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1,
+       getidentname2(pelementinfoty(pointer(po1)-eledatashift)^.header.name));
      end;
      addsubbegin(oc_externalsub,po1);
     end
@@ -930,7 +930,7 @@ end;
 procedure subbody4entry();
 var
  po1: pelementinfoty;
- lstr1: lstringty;
+ n1: identnamety;
 {$ifdef mse_checkinternalerror}
  bo1: boolean;
 {$endif}
@@ -951,7 +951,7 @@ begin
    {$ifdef mse_checkinternalerror}
     bo1:= 
    {$endif}
-    getidentname(po1^.header.name,lstr1);
+    getidentname(po1^.header.name,n1);
    {$ifdef mse_checkinternalerror}
     if not bo1 then begin
      internalerror(ie_parser,'20151023B');
@@ -960,13 +960,13 @@ begin
     with info.s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
       s.currentscopemeta:= llvmlists.metadatalist.adddisubprogram(
-           filepathmeta,debugfilemeta,lstr1,
+           filepathmeta,debugfilemeta,n1,
            info.contextstack[info.s.stackindex].start.line,dummymeta,
            dummymeta,[flagprototyped]);
      end;
      if do_name in s.debugoptions then begin
-      llvmlists.globlist.namelist.addname(lstr1,
-                                psubdataty(eletodata(po1))^.globid);
+      llvmlists.globlist.namelist.addname(n1,
+                                   psubdataty(eletodata(po1))^.globid);
      end;
     end;
    end;

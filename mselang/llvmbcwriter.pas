@@ -237,7 +237,7 @@ type
  
 implementation
 uses
- errorhandler,msesys,sysutils,msebits,mseformatstr;
+ errorhandler,msesys,sysutils,msebits,mseformatstr,identutils;
 
  //abreviations, made by createabbrev tool todo: use more abbrevs
  
@@ -633,9 +633,10 @@ begin
    pgn7:= globals.namelist.datapo;
    pgne:= pgn7 + globals.namelist.count;
    while pgn7 < pgne do begin
-    if pgn7^.name.len <= 0 then begin 
+    if pgn7^.name.offset <= 0 then begin 
               //concat unitname and destindex
-     i1:= -pgn7^.name.len - punitinfoty(pgn7^.name.po)^.globallocstart;
+     i1:= -pgn7^.nameunit.destindex - 
+                       punitinfoty(pgn7^.nameunit.po)^.globallocstart;
      for i2:= 0 to high(namebufferdata1) do begin
       i3:= i1 and $f;
       namebufferdata1[i2]:= charhexlower[i3];
@@ -646,10 +647,10 @@ begin
       end;
      end;
      emitvstentry(pgn7^.listindex,
-              [punitinfoty(pgn7^.name.po)^.name,separatorbuffer1,namebuffer1]);
+         [punitinfoty(pgn7^.nameunit.po)^.name,separatorbuffer1,namebuffer1]);
     end
     else begin
-     emitvstentry(pgn7^.listindex,pgn7^.name);
+     emitvstentry(pgn7^.listindex,nametolstring(pgn7^.name));
     end;
     inc(pgn7);
    end;
@@ -745,6 +746,11 @@ begin
     mdk_string: begin
      with pstringmetaty(@pm1^.data)^ do begin
       emitrec(ord(METADATA_STRING),len,pcard8(@data));
+     end;
+    end;
+    mdk_ident: begin
+     with nametolstring(pidentmetaty(@pm1^.data)^.name) do begin
+      emitrec(ord(METADATA_STRING),len,pcard8(po));
      end;
     end;
     mdk_node: begin

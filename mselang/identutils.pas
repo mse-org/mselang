@@ -21,6 +21,10 @@ uses
  globtypes,msehash,msestrings;
  
 type
+ identnamety = record
+  offset: int32; //relative to data block
+ end;
+ 
  identheaderty = record
   ident: identty;
  end;
@@ -43,10 +47,16 @@ function getident(const aname: lstringty): identty; overload;
 function getident(const aname: pchar; const alen: integer): identty; overload;
 function getident(const aname: string): identty; overload;
 
+function getidentname(const aident: identty; out name: identnamety): boolean;
+                             //true if found
 function getidentname(const aident: identty; out name: lstringty): boolean;
                              //true if found
+function getidentname(const aname: string): identnamety;
 function getidentname(const aident: identty): string;
 function getidentnamel(const aident: identty): lstringty;
+function getidentname2(const aident: identty): identnamety;
+
+function nametolstring(const aname: identnamety): lstringty; inline;
 
 procedure clear();
 procedure init();
@@ -58,7 +68,7 @@ type
  identoffsetty = int32;
  
  indexidentdataty = record
-  key: identoffsetty; //index of null terminated string
+  key: identnamety; //index of null terminated string
   data: identty;
  end;
  pindexidentdataty = ^indexidentdataty;
@@ -70,8 +80,8 @@ type
 
  identdataty = record
   header:identheaderty;
-  keyname: identoffsetty;
-  keylen: integer;
+  keyname: identoffsetty; //
+//  keylen: integer;
  end;
  identhashdataty = record
   header: hashheaderty;
@@ -92,18 +102,30 @@ type
    destructor destroy; override;
    procedure clear; override;
    function identname(const aident: identty; out aname: lstringty): boolean;
-   function getident(const aname: lstringty): identty;
+   function identname(const aident: identty; out aname: identnamety): boolean;
+   function getident(const aname: lstringty): pindexidenthashdataty;
  end;
 
 var
  stringident: identty;
  identlist: tindexidenthashdatalist;
  stringindex,stringlen: identoffsetty;
- stringdata: string;
+ stringdata: pointer;
 
 const
  mindatasize = 1024; 
 
+type
+ identbufferheaderty = record
+  len: int32;
+ end;
+ identbufferty = record
+  header: identbufferheaderty;
+  data: record //null terminated array of char
+  end;
+ end;
+ pidentbufferty = ^identbufferty;
+ 
 procedure nextident;
 begin
  repeat
@@ -119,7 +141,7 @@ end;
  
 function getident(const aname: lstringty): identty;
 begin
- result:= identlist.getident(aname);
+ result:= identlist.getident(aname)^.data.data;
 end;
 
 function getident(const aname: pchar; const alen: integer): identty;
@@ -128,7 +150,7 @@ var
 begin
  lstr1.po:= aname;
  lstr1.len:= alen;
- result:= identlist.getident(lstr1);
+ result:= identlist.getident(lstr1)^.data.data;
 end;
 
 function getident(const astart,astop: pchar): identty;
@@ -137,7 +159,7 @@ var
 begin
  lstr1.po:= astart;
  lstr1.len:= astop-astart;
- result:= identlist.getident(lstr1);
+ result:= identlist.getident(lstr1)^.data.data;
 end;
 
 function getident(const aname: string): identty;
@@ -146,10 +168,30 @@ var
 begin
  lstr1.po:= pointer(aname);
  lstr1.len:= length(aname);
- result:= identlist.getident(lstr1);
+ result:= identlist.getident(lstr1)^.data.data;
+end;
+
+function nametolstring(const aname: identnamety): lstringty;
+var
+ po1: pidentbufferty;
+begin
+ po1:= pointer(stringdata) + aname.offset;
+ result.len:= po1^.header.len;
+ result.po:=  @po1^.data;
 end;
 
 function getidentname(const aident: identty; out name: lstringty): boolean;
+                             //true if found
+begin
+ result:= identlist.identname(aident,name);
+end;
+
+function getidentname(const aname: string): identnamety;
+begin
+ result:= identlist.getident(stringtolstring(aname))^.data.key;
+end;
+
+function getidentname(const aident: identty; out name: identnamety): boolean;
                              //true if found
 begin
  result:= identlist.identname(aident,name);
@@ -168,6 +210,11 @@ begin
 end;
 
 function getidentnamel(const aident: identty): lstringty;
+begin
+ getidentname(aident,result);
+end;
+
+function getidentname2(const aident: identty): identnamety;
 begin
  getidentname(aident,result);
 end;
@@ -201,27 +248,35 @@ begin
  result:= (wo1 or (longword(wo1) shl 16)) xor hashmask[akey.len and $7];
 end;
 
-function storestring(const astr: lstringty): integer; //offset from stringdata
+function storestring(const astr: lstringty): identnamety; 
+                                                   //offset from stringdata
 var
  int1,int2: integer;
+ po1: pidentbufferty;
 begin
  int1:= stringindex;
  int2:= astr.len;
- stringindex:= stringindex+int2+1;
+ stringindex:= (stringindex + int2 + 1 + sizeof(identbufferheaderty) + 3) 
+                                                    and not 3;        //align 4
  if stringindex >= stringlen then begin
   stringlen:= stringindex*2+mindatasize;
-  setlength(stringdata,stringlen);
+  reallocmem(stringdata,stringlen);
   fillchar((pchar(pointer(stringdata))+int1)^,stringlen-int1,0);
  end;
- move(astr.po^,(pchar(pointer(stringdata))+int1)^,int2);
- result:= int1;
- nextident;
+ po1:= stringdata + int1;
+ po1^.header.len:= int2;
+ move(astr.po^,po1^.data,int2);
+ result.offset:= int1;
+ nextident();
 end;
 
 procedure clear();
 begin
  identlist.clear;
- stringdata:= '';
+ if stringdata <> nil then begin
+  freemem(stringdata);
+  stringdata:= nil;
+ end;
  stringindex:= 0;
  stringlen:= 0;
  stringident:= 0;
@@ -288,12 +343,14 @@ function tindexidenthashdatalist.identname(const aident: identty;
                    out aname: lstringty): boolean;
 var
  po1: pidenthashdataty;
+ po2: pidentbufferty;
 begin
  po1:= pidenthashdataty(fidents.internalfind(aident,aident));
  if po1 <> nil then begin
   result:= true;
-  aname.po:= pchar(stringdata)+po1^.data.keyname;
-  aname.len:= po1^.data.keylen;
+  po2:= pointer(stringdata)+po1^.data.keyname;
+  aname.len:= po2^.header.len;
+  aname.po:= @po2^.data;
  end
  else begin
   result:= false;
@@ -302,14 +359,31 @@ begin
  end;
 end;
 
-function tindexidenthashdatalist.getident(const aname: lstringty): identty;
+function tindexidenthashdatalist.identname(const aident: identty;
+               out aname: identnamety): boolean;
+var
+ po1: pidenthashdataty;
+begin
+ po1:= pidenthashdataty(fidents.internalfind(aident,aident));
+ if po1 <> nil then begin
+  result:= true;
+  aname.offset:= po1^.data.keyname;
+ end
+ else begin
+  result:= false;
+  aname.offset:= -1;
+ end;
+end;
+
+function tindexidenthashdatalist.getident(const aname: lstringty): 
+                                                     pindexidenthashdataty;
 var
  po1: pindexidenthashdataty;
  ha1: hashvaluety;
 begin
  if aname.len > maxidentlen then begin
   errormessage(err_identtoolong,[lstringtostring(aname)]);
-  result:= 0;
+  result:= nil;
   exit;
  end;
  ha1:= hashkey1(aname);
@@ -321,12 +395,12 @@ begin
    key:= storestring(aname);
    with pidenthashdataty(fidents.internaladdhash(data))^.data do begin
     header.ident:= data;
-    keyname:= key;
-    keylen:= aname.len;
+    keyname:= key.offset;
    end;
   end;
  end;  
- result:= po1^.data.data;
+ result:= po1;
+// result:= po1^.data.data;
 end;
 
 function tindexidenthashdatalist.hashkey(const akey): hashvaluety;
@@ -336,7 +410,7 @@ var
  by1: byte;
 begin
  with indexidentdataty(akey) do begin
-  po1:= pchar(pointer(stringdata))+key;
+  po1:= stringdata + key.offset + sizeof(identbufferheaderty);
   po2:= po1;
   wo1:= hashmask[0];
   while true do begin
@@ -359,7 +433,8 @@ begin
  result:= false;
  with lstringty(akey) do begin
   po1:= po;
-  po2:= pchar(pointer(stringdata)) + indexidentdataty(aitemdata).key;
+  po2:= stringdata + indexidentdataty(aitemdata).key.offset + 
+                                                  sizeof(identbufferty);
   for int1:= 0 to len-1 do begin
    if po1[int1] <> po2[int1] then begin
     exit;
@@ -372,5 +447,6 @@ end;
 initialization
  identlist:= tindexidenthashdatalist.create;
 finalization
+ clear();
  identlist.free();
 end.
