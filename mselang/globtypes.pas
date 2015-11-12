@@ -382,7 +382,7 @@ type
  
  metavaluesty = record
   count: int32;
-  data: pmetavaluety;
+  data: metavaluearty;
  end;
 
 implementation

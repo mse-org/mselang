@@ -10,7 +10,6 @@
 unit __mla__system;
 interface
 var
-// exitcode: int32;
- EXITCODE: int32;
+ exitcode: int32;
 implementation
 end.

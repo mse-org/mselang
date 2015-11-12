@@ -645,8 +645,13 @@ uses
   
 procedure addmetaitem(var alist: metavaluesty; const aitem: metavaluety);
 begin
- metavaluety(additempo(alist.data,
-               typeinfo(alist.data),alist.count)^):= aitem;
+ with alist do begin
+  if count >= high(data) then begin
+   reallocuninitedarray(count*2+32,sizeof(metavaluety),data);
+  end;
+  data[count]:= aitem;
+  inc(count);
+ end;
 end;
 
 { tbufferhashdatalist }
@@ -1964,7 +1969,7 @@ end;
 
 function tmetadatalist.addnode(const avalues: metavaluesty): metavaluety;
 begin
- result:= addnode(avalues.data,avalues.count);
+ result:= addnode(pointer(avalues.data),avalues.count);
 end;
 
 procedure tmetadatalist.addnamednode(const aname: lstringty;
