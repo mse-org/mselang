@@ -635,6 +635,7 @@ begin
          keywordindex:= idstart; //invalid
         end;
         po1:= s.source.po;
+        checklinebreak(po1,linebreaks);
        end;
        bo1:= keywordindex = pb^.keyword;
        if bo1 then begin
