@@ -1149,7 +1149,7 @@ public:
 
   Constant *getConstant() const {
     assert((getTag() == dwarf::DW_TAG_member) && isStaticMember());
-    return getConstantField(10);
+    return getConstantField(10);                                      //10
   }
 
   /// Verify - Verify that a derived type descriptor is well formed.

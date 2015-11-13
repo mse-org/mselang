@@ -389,7 +389,8 @@ var
  metadatatype: int32;
  metanull,metanullint,metaoneint,metanullstring,metanullnode,
  metatrue,
- metaDW_TAG_base_type,metaDW_TAG_compile_unit,metaDW_TAG_subprogram,
+ metaDW_TAG_base_type,metaDW_TAG_compile_unit,
+ metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type,metaDW_TAG_variable: metavaluety;
  metavartags: array[divariablekindty] of metavaluety;
  m1,m2: metavaluety;
@@ -766,6 +767,15 @@ begin
     mdk_difile: begin
      with pdifilety(@pm1^.data)^ do begin
       emitmetadatanode([filename,dirname]);
+     end;
+    end;
+    mdk_diderivedtype: begin
+     with pdibasictypety(@pm1^.data)^ do begin
+      emitmetadatanode([metaDW_TAG_base_type,
+      //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
+        difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
+      //flags,encoding
+        flags,typederivedfrom]);
      end;
     end;
     mdk_dibasictype: begin

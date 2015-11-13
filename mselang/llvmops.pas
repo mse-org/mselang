@@ -2846,6 +2846,7 @@ var
  ids: idsarty;
  isfunction: boolean;
 begin
+ bcstream.nodebugloc:= true;
  isfunction:= sf_function in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
  if trampop <> nil then begin //todo: force tailcall
@@ -2908,7 +2909,6 @@ begin
   if isfunction then begin
    i2:= 1; //skip result param
   end;
-/////////////  bcstream.nodebugloc:= true;
   for i1:= i2 to sub.allocs.paramcount-1 do begin
    bcstream.emitstoreop(bcstream.paramval(i1),bcstream.allocval(i1));
   end;
@@ -2956,8 +2956,6 @@ begin
                                  //pointer to nestedallocs
    bcstream.resetssa();
   end;
-/////////  bcstream.nodebugloc:= false; //there is an assembler error because of missing 
-                               //file ref in *.s without ???
   if do_proginfo in info.debugoptions then begin
    idar.count:= 2;
    idar.ids:= @ids;
@@ -2976,6 +2974,7 @@ begin
    end;
   end;
  end;
+ bcstream.nodebugloc:= false;
 end;
 
 procedure subendop();

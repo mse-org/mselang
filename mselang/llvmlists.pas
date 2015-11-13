@@ -484,7 +484,9 @@ type
   sizeinbits: metavaluety;
   aligninbits: metavaluety;
   flags: metavaluety;
-  encoding: metavaluety;
+  case int32 of
+   0: (encoding: metavaluety);           //basictype
+   1: (typederivedfrom: metavaluety);    //derivedtype
  end;
  pdibasictypety = ^dibasictypety;
 
@@ -524,7 +526,9 @@ type
  end;
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
-                   mdk_string,mdk_ident,mdk_difile,mdk_dibasictype,{mdk_discope,}
+                   mdk_string,mdk_ident,mdk_difile,mdk_dibasictype,
+                   mdk_diderivedtype,
+                   {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
                    mdk_divariable,mdk_diglobvariable);
  
