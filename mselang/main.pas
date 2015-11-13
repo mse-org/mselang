@@ -93,7 +93,7 @@ var
  compoptions: compileoptionsty;
  str1: string;
  int1: integer;
- filename1,filename2: filenamety;
+ filename1,filename2,optname: filenamety;
  dirbefore: msestring;
  ar1: filenamearty;
 begin
@@ -136,18 +136,31 @@ begin
        else begin
         llvmops.run(targetstream,true);
         targetstream.destroy();
-        int1:= getprocessoutput(llvmbindir+'llc '+opted.value+' '+
-                                                        filename1,'',str1);
-        grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        optname:= filenamebase(filename1);
+        if opted.value <> '' then begin
+         optname:= optname+'_opt';
+         int1:= getprocessoutput(llvmbindir+'opt '+opted.value+
+                                   ' -o '+optname+'.bc '+filename1,'',str1);
+         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+        end
+        else begin
+         int1:= 0;
+        end;
         if int1 = 0 then begin
-         int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
-                           filenamebase(filename1)+'.s','',str1);
+         int1:= getprocessoutput(llvmbindir+'llc -o '+
+                                      filenamebase(filename1)+'.s '+
+                                                   optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if int1 = 0 then begin
-          if not norun.value then begin
-           int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
-           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
-           grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+          int1:= getprocessoutput('gcc -o '+filenamebase(filename1)+'.bin '+
+                            filenamebase(filename1)+'.s','',str1);
+          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+          if int1 = 0 then begin
+           if not norun.value then begin
+            int1:= getprocessoutput('./'+filenamebase(filename1)+'.bin','',str1);
+            grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
+            grid.appendrow(['EXITCODE: '+inttostrmse(int1)]);
+           end;
           end;
          end;
         end;
