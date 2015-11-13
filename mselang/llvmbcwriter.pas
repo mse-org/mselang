@@ -463,7 +463,7 @@ begin
   metaDW_TAG_variable.flags:= [];
 
   with metavartags[divk_variable] do begin
-   value:= consts.addi32(DW_TAG_variable or LLVMDebugVersion);
+   value:= consts.addi32(DW_TAG_auto_variable or LLVMDebugVersion);
    flags:= [];
   end;
   with metavartags[divk_argvariable] do begin
