@@ -597,6 +597,12 @@ type
            const alinenumber: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
+   function adddiderivedtype(const adifile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const alinenumber: int32;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aflags: int32; 
+                         const atypederivedfrom: metavaluety): metavaluety;
    function addtype(const atype: elementoffsetty): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
@@ -2207,6 +2213,25 @@ begin
   aligninbits:= i32const(aaligninbits);
   flags:= i32const(aflags);
   encoding:= i32const(aencoding);
+ end;
+end;
+
+function tmetadatalist.adddiderivedtype(const adifile: metavaluety;
+               const acontext: metavaluety; const aname: lstringty;
+               const alinenumber: int32; const asizeinbits: int32;
+               const aaligninbits: int32; const aflags: int32;
+               const atypederivedfrom: metavaluety): metavaluety;
+begin
+ with pdibasictypety(adddata(mdk_dibasictype,
+                    sizeof(dibasictypety),result))^ do begin
+  difile:= adifile;
+  context:= acontext;
+  name:= addstring(aname);
+  linenumber:= i32const(alinenumber);
+  sizeinbits:= i32const(asizeinbits);
+  aligninbits:= i32const(aaligninbits);
+  flags:= i32const(aflags);
+  typederivedfrom:= atypederivedfrom;
  end;
 end;
 
