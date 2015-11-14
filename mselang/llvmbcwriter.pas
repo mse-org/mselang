@@ -393,6 +393,7 @@ var
  metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type,metaDW_TAG_variable: metavaluety;
  metavartags: array[divariablekindty] of metavaluety;
+ metatypetags: array[diderivedtypekindty] of metavaluety;
  m1,m2: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
@@ -463,7 +464,12 @@ begin
                DW_TAG_variable or LLVMDebugVersion);
   metaDW_TAG_variable.flags:= [];
 
-  with metavartags[divk_variable] do begin
+  with metatypetags[ditk_pointertype] do begin
+   value:= consts.addi32(DW_TAG_pointer_type or LLVMDebugVersion);
+   flags:= [];
+  end;
+
+  with metavartags[divk_autovariable] do begin
    value:= consts.addi32(DW_TAG_auto_variable or LLVMDebugVersion);
    flags:= [];
   end;
@@ -770,8 +776,8 @@ begin
      end;
     end;
     mdk_diderivedtype: begin
-     with pdibasictypety(@pm1^.data)^ do begin
-      emitmetadatanode([metaDW_TAG_base_type,
+     with pdiderivedtypety(@pm1^.data)^ do begin
+      emitmetadatanode([metatypetags[kind],
       //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
         difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
       //flags,encoding

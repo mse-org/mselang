@@ -484,13 +484,26 @@ type
   sizeinbits: metavaluety;
   aligninbits: metavaluety;
   flags: metavaluety;
-  case int32 of
-   0: (encoding: metavaluety);           //basictype
-   1: (typederivedfrom: metavaluety);    //derivedtype
+  encoding: metavaluety;
  end;
  pdibasictypety = ^dibasictypety;
+ 
+ diderivedtypekindty = (ditk_pointertype);
+ 
+ diderivedtypety = record
+  kind: diderivedtypekindty;
+  difile: metavaluety;
+  context: metavaluety;
+  name: metavaluety;
+  linenumber: metavaluety;
+  sizeinbits: metavaluety;
+  aligninbits: metavaluety;
+  flags: metavaluety;
+  typederivedfrom: metavaluety;
+ end;
+ pdiderivedtypety = ^diderivedtypety;
 
- divariablekindty = (divk_variable,divk_argvariable);
+ divariablekindty = (divk_autovariable,divk_argvariable);
  
  divariablety = record
   kind: divariablekindty;
@@ -520,7 +533,7 @@ type
  end;
  pmetaiddataty = ^metaiddataty;
  
- ttypemetahashdatalist = class(tintegerhashdatalist)
+ ttypemetahashdatalist = class(tdoubleintegerhashdatalist)
   public
    constructor create();
  end;
@@ -597,13 +610,16 @@ type
            const alinenumber: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
-   function adddiderivedtype(const adifile: metavaluety;
+   function adddiderivedtype(const akind: diderivedtypekindty; 
+           const adifile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; 
                          const atypederivedfrom: metavaluety): metavaluety;
-   function addtype(const atype: elementoffsetty): metavaluety;
+   function addtype(const atype: elementoffsetty;
+                              const aindirection: int32): metavaluety;
+   function addtype(const avariable: pvardataty): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
           const asourcelanguage: int32; const aproducer: string;
@@ -2105,7 +2121,7 @@ var
  m1,m2: metavaluety;
 begin
  m1:= addstring(aname);
- m2:= addtype(avariable^.vf.typ);
+ m2:= addtype(avariable);
  if af_segment in avariable^.address.flags then begin
   with pdiglobvariablety(adddata(mdk_diglobvariable,
                      sizeof(diglobvariablety),result))^ do begin
@@ -2120,7 +2136,7 @@ begin
  else begin
   with pdivariablety(adddata(mdk_divariable,
                      sizeof(divariablety),result))^ do begin
-   kind:= divk_variable;
+   kind:= divk_autovariable;
    if af_param in avariable^.address.flags then begin
     kind:= divk_argvariable;
    end;
@@ -2147,7 +2163,7 @@ var
 begin
  if asub = nil then begin //main
   parcount1:= 1;
-  params1[0]:= addtype(sysdatatypes[st_int32].typedata);
+  params1[0]:= addtype(sysdatatypes[st_int32].typedata,0);
  end
  else begin
   if (asub^.paramcount > maxparamcount) then begin
@@ -2165,7 +2181,7 @@ begin
    pe:= po2 + parcount1;
    while po2 < pe do begin
     po3:= ele.eledataabs(po1^);
-    po2^:= addtype(po3^.vf.typ);
+    po2^:= addtype(po3);
     inc(po1);
     inc(po2);
    end;
@@ -2201,7 +2217,7 @@ function tmetadatalist.adddibasictype(const adifile: metavaluety;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
 var
- m1: metavaluety;
+ m1,m2: metavaluety;
 begin
  with pdibasictypety(adddata(mdk_dibasictype,
                     sizeof(dibasictypety),result))^ do begin
@@ -2216,14 +2232,16 @@ begin
  end;
 end;
 
-function tmetadatalist.adddiderivedtype(const adifile: metavaluety;
+function tmetadatalist.adddiderivedtype(const akind: diderivedtypekindty;
+               const adifile: metavaluety;
                const acontext: metavaluety; const aname: lstringty;
                const alinenumber: int32; const asizeinbits: int32;
                const aaligninbits: int32; const aflags: int32;
                const atypederivedfrom: metavaluety): metavaluety;
 begin
- with pdibasictypety(adddata(mdk_dibasictype,
-                    sizeof(dibasictypety),result))^ do begin
+ with pdiderivedtypety(adddata(mdk_diderivedtype,
+                    sizeof(diderivedtypety),result))^ do begin
+  kind:= akind;
   difile:= adifile;
   context:= acontext;
   name:= addstring(aname);
@@ -2235,17 +2253,18 @@ begin
  end;
 end;
 
-function tmetadatalist.addtype(const atype: elementoffsetty): metavaluety;
+function tmetadatalist.addtype(const atype: elementoffsetty;
+                                    const aindirection: int32): metavaluety;
 var
  po1: pmetaiddataty;
  po2: ptypedataty;
  offs1: card32;
  lstr1: lstringty;
  file1: metavaluety;
- m1,context1: metavaluety;
+ m1,m2,context1: metavaluety;
 begin
- if ftypemetalist.addunique(atype,po1) then begin
-  offs1:= ftypemetalist.getdataoffset(po1);
+ if ftypemetalist.addunique(atype,aindirection,po1) then begin
+  offs1:= ftypemetalist.getdataoffset(po1); //relative backup
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
@@ -2259,14 +2278,30 @@ begin
    end;
   end;
   getidentname(datatoele(po2)^.header.name,lstr1);
-  case po2^.h.kind of
-   dk_integer: begin                                            //context??
-    m1:= adddibasictype(file1,context1,
-                        //linenumber       alignment??    flags
-                    lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
-   end;
+  if aindirection > 0 then begin
+   m2:= addtype(atype,aindirection-1); //next base type
+   m1:= adddiderivedtype(ditk_pointertype,file1,context1,
+                         //linenumber       alignment??    flags
+                     lstr1,0,pointerbitsize,pointerbitsize,0,m2);
+  end
+  else begin
+   if po2^.h.indirectlevel > 0 then begin
+    m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1);
+    m1:= adddiderivedtype(ditk_pointertype,file1,context1,
+                          //linenumber       alignment??    flags
+                      lstr1,0,pointerbitsize,pointerbitsize,0,m2);
+   end
    else begin
-    internalerror1(ie_llvmmeta,'20151026A');
+    case po2^.h.kind of
+     dk_integer: begin                                            //context??
+      m1:= adddibasictype(file1,context1,
+                          //linenumber       alignment??    flags
+                      lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
+     end;
+     else begin
+      internalerror1(ie_llvmmeta,'20151026A');
+     end;
+    end;
    end;
   end;
   po1:= ftypemetalist.getdatapo(offs1); //possibly moved
@@ -2275,6 +2310,12 @@ begin
  result.value.typeid:= ftypelist.metadata;
  result.value.listid:= po1^.id;
  result.flags:= [mvf_meta];
+end;
+
+function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;
+begin
+ result:= addtype(avariable^.vf.typ,avariable^.address.indirectlevel-
+            ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel);
 end;
 
 {
