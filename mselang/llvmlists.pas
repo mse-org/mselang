@@ -488,7 +488,7 @@ type
  end;
  pdibasictypety = ^dibasictypety;
  
- diderivedtypekindty = (ditk_pointertype);
+ diderivedtypekindty = (ditk_pointertype,ditk_referencetype);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
@@ -615,10 +615,11 @@ type
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32;
            const asizeinbits: int32; const aaligninbits: int32;
-           const aflags: int32; 
+           const aflags: int32;
                          const atypederivedfrom: metavaluety): metavaluety;
    function addtype(const atype: elementoffsetty;
-                              const aindirection: int32): metavaluety;
+                              const aindirection: int32{;
+                               const aisreference: boolean}): metavaluety;
    function addtype(const avariable: pvardataty): metavaluety;
    function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
@@ -2123,42 +2124,6 @@ begin
  addmetaitem(info.s.unitinfo^.subprograms,result);
 end;
 
-function tmetadatalist.adddivariable(const aname: lstringty;
-                       const alinenumber: int32; const argnumber: int32;
-                                      const avariable: pvardataty): metavaluety;
-var
- m1,m2: metavaluety;
-begin
- m1:= addstring(aname);
- m2:= addtype(avariable);
- if af_segment in avariable^.address.flags then begin
-  with pdiglobvariablety(adddata(mdk_diglobvariable,
-                     sizeof(diglobvariablety),result))^ do begin
-   name:= m1;
-   difile:= info.s.currentfilemeta;
-   linenumber:= i32const(alinenumber+1);
-   ditype:= m2;
-   global:= avariable^.address.segaddress.address;
-  end;
-  addmetaitem(info.s.unitinfo^.globalvariables,result);
- end
- else begin
-  with pdivariablety(adddata(mdk_divariable,
-                     sizeof(divariablety),result))^ do begin
-   kind:= divk_autovariable;
-   if af_param in avariable^.address.flags then begin
-    kind:= divk_argvariable;
-   end;
-   context:= info.s.currentscopemeta;
-   name:= m1;
-   difile:= info.s.currentfilemeta;
-   lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
-   ditype:= m2;
-   flags:= nullintconst;
-  end;
- end;
-end;
-
 function tmetadatalist.adddisubroutinetype(const asub: psubdataty{;
           const afile: metavaluety; const acontext: metavaluety}): metavaluety;
 var
@@ -2172,7 +2137,7 @@ var
 begin
  if asub = nil then begin //main
   parcount1:= 1;
-  params1[0]:= addtype(sysdatatypes[st_int32].typedata,0);
+  params1[0]:= addtype(sysdatatypes[st_int32].typedata,0{,false});
  end
  else begin
   if (asub^.paramcount > maxparamcount) then begin
@@ -2263,7 +2228,8 @@ begin
 end;
 
 function tmetadatalist.addtype(const atype: elementoffsetty;
-                                    const aindirection: int32): metavaluety;
+                               const aindirection: int32{;
+                               const aisreference: boolean}): metavaluety;
 var
  po1: pmetaiddataty;
  po2: ptypedataty;
@@ -2271,8 +2237,14 @@ var
  lstr1: lstringty;
  file1: metavaluety;
  m1,m2,context1: metavaluety;
+ i1: int32;
+ typekind1: diderivedtypekindty;
 begin
- if ftypemetalist.addunique(atype,aindirection,po1) then begin
+ i1:= aindirection;
+// if aisreference then begin
+//  i1:= -i1;
+// end;
+ if ftypemetalist.addunique(atype,i1,po1) then begin
   offs1:= ftypemetalist.getdataoffset(po1); //relative backup
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
@@ -2287,15 +2259,19 @@ begin
    end;
   end;
   if aindirection > 0 then begin
-   m2:= addtype(atype,aindirection-1); //next base type
-   m1:= adddiderivedtype(ditk_pointertype,file1,context1,
+   typekind1:= ditk_pointertype;
+//   if aisreference then begin
+//    typekind1:= ditk_referencetype;
+//   end;
+   m2:= addtype(atype,aindirection-1{,false}); //next base type
+   m1:= adddiderivedtype(typekind1,file1,context1,
                          //linenumber       alignment??    flags
                      emptylstring,0,pointerbitsize,pointerbitsize,0,m2);
   end
   else begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
-    m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1);
+    m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1{,false});
     m1:= adddiderivedtype(ditk_pointertype,file1,context1,
                           //linenumber       alignment??    flags
                       lstr1,0,pointerbitsize,pointerbitsize,0,m2);
@@ -2324,7 +2300,49 @@ end;
 function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;
 begin
  result:= addtype(avariable^.vf.typ,avariable^.address.indirectlevel-
-            ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel);
+            ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel{,
+                                 af_paramindirect in avariable^.address.flags});
+end;
+
+function tmetadatalist.adddivariable(const aname: lstringty;
+                       const alinenumber: int32; const argnumber: int32;
+                                      const avariable: pvardataty): metavaluety;
+var
+ m1,m2: metavaluety;
+begin
+ m1:= addstring(aname);
+ m2:= addtype(avariable);
+ if af_segment in avariable^.address.flags then begin
+  with pdiglobvariablety(adddata(mdk_diglobvariable,
+                     sizeof(diglobvariablety),result))^ do begin
+   name:= m1;
+   difile:= info.s.currentfilemeta;
+   linenumber:= i32const(alinenumber+1);
+   ditype:= m2;
+   global:= avariable^.address.segaddress.address;
+  end;
+  addmetaitem(info.s.unitinfo^.globalvariables,result);
+ end
+ else begin
+  with pdivariablety(adddata(mdk_divariable,
+                     sizeof(divariablety),result))^ do begin
+   kind:= divk_autovariable;
+   if af_param in avariable^.address.flags then begin
+    kind:= divk_argvariable;
+   end;
+   context:= info.s.currentscopemeta;
+   name:= m1;
+   difile:= info.s.currentfilemeta;
+   lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+   ditype:= m2;
+   if af_paramindirect in avariable^.address.flags then begin
+    flags:= i32const(int32([flagindirectvariable]));
+   end
+   else begin
+    flags:= nullintconst;
+   end;
+  end;
+ end;
 end;
 
 {

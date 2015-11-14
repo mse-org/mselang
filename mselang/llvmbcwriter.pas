@@ -468,6 +468,10 @@ begin
    value:= consts.addi32(DW_TAG_pointer_type or LLVMDebugVersion);
    flags:= [];
   end;
+  with metatypetags[ditk_referencetype] do begin
+   value:= consts.addi32(DW_TAG_reference_type or LLVMDebugVersion);
+   flags:= [];
+  end;
 
   with metavartags[divk_autovariable] do begin
    value:= consts.addi32(DW_TAG_auto_variable or LLVMDebugVersion);

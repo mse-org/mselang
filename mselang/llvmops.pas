@@ -2846,7 +2846,8 @@ var
  ids: idsarty;
  isfunction: boolean;
 begin
-///////////// bcstream.nodebugloc:= true;
+///////////// bcstream.nodebugloc:= true; 
+            //debugloc necessary because of param debuginfo
  isfunction:= sf_function in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
  if trampop <> nil then begin //todo: force tailcall
