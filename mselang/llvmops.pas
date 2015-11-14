@@ -2846,7 +2846,7 @@ var
  ids: idsarty;
  isfunction: boolean;
 begin
- bcstream.nodebugloc:= true;
+///////////// bcstream.nodebugloc:= true;
  isfunction:= sf_function in pc^.par.subbegin.sub.flags;
  bcstream.releasetrampoline(trampop);
  if trampop <> nil then begin //todo: force tailcall
@@ -2974,7 +2974,7 @@ begin
    end;
   end;
  end;
- bcstream.nodebugloc:= false;
+//////////////// bcstream.nodebugloc:= false;
 end;
 
 procedure subendop();
