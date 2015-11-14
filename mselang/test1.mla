@@ -1,14 +1,11 @@
-program andorxor1;
+program classinterfacevirt;
 
 type
- r = record
-  a: int32;
-  b: int32;
- end;
- pr = ^r;
+ ppint32 = ^^int32;
 var
- po1: pr;
- bo1: bool1;
+// po1: ^^int32;
+ po1: ppint32;
 begin
- bo1:= (po1 <> nil) and (po1^.a = 0);
+ po1:= @po1;
+ exitcode:= int32(po1);
 end.

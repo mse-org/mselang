@@ -1901,7 +1901,11 @@ begin
   fnullintconst.value.typeid:= ord(das_8);
   fnullintconst.value.listid:= ord(nc_i8);
   fnullintconst.flags:= [];
-  femptystringconst:= addstring(emptylstring);
+  with pstringmetaty(
+           adddata(mdk_string,sizeof(stringmetaty)+0,
+                                            femptystringconst))^ do begin
+   len:= 0;
+  end;
 
   femptynode:= addnode([]);
 //  fsubprogramcount:= 0;
@@ -2030,10 +2034,15 @@ end;
 
 function tmetadatalist.addstring(const avalue: lstringty): metavaluety;
 begin
- with pstringmetaty(
-          adddata(mdk_string,sizeof(stringmetaty)+avalue.len,result))^ do begin
-  len:= avalue.len;
-  move(avalue.po^,data,len);
+ if avalue.len = 0 then begin
+  result:= emptystringconst;
+ end
+ else begin
+  with pstringmetaty(
+           adddata(mdk_string,sizeof(stringmetaty)+avalue.len,result))^ do begin
+   len:= avalue.len;
+   move(avalue.po^,data,len);
+  end;
  end;
 end;
 
@@ -2277,14 +2286,14 @@ begin
                         //todo: use correct context for local defines
    end;
   end;
-  getidentname(datatoele(po2)^.header.name,lstr1);
   if aindirection > 0 then begin
    m2:= addtype(atype,aindirection-1); //next base type
    m1:= adddiderivedtype(ditk_pointertype,file1,context1,
                          //linenumber       alignment??    flags
-                     lstr1,0,pointerbitsize,pointerbitsize,0,m2);
+                     emptylstring,0,pointerbitsize,pointerbitsize,0,m2);
   end
   else begin
+   getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
     m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1);
     m1:= adddiderivedtype(ditk_pointertype,file1,context1,
