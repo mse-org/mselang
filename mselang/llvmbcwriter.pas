@@ -420,20 +420,24 @@ begin
                                                              uint32('B')));
                                 //llvm ir signature
 
- beginblock(BLOCKINFO_BLOCK_ID,3); //abbreviations
+ beginblock(MODULE_BLOCK_ID,3);
+
+ beginblock(BLOCKINFO_BLOCK_ID,3); //abbreviations, must be in module block for
+                                   //llvm 3.7
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(CONSTANTS_BLOCK_ID)]);
  emitdata(mabconsts);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
  emitdata(mabtypes);
- emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(MODULE_BLOCK_ID)]);
- emitdata(mabmods);
+// emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(MODULE_BLOCK_ID)]);
+// emitdata(mabmods);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(VALUE_SYMTAB_BLOCK_ID)]);
  emitdata(mabsyms);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(FUNCTION_BLOCK_ID)]);
  emitdata(mabfuncs);
  endblock();
+ emitdata(mabmods);
 
- beginblock(MODULE_BLOCK_ID,3);
+// beginblock(MODULE_BLOCK_ID,3);             
  emitrec(ord(MODULE_CODE_VERSION),[1]);
  
  if metadata.count > 0 then begin
@@ -493,7 +497,7 @@ begin
                                i8const(DEBUG_METADATA_VERSION)]).value.listid
     ]);
   end;
- end;
+ end; //has metadata
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
                                                       //types
