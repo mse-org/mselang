@@ -272,36 +272,36 @@ type
   public
    constructor create(const atypelist: ttypehashdatalist);
    procedure clear(); override; //init first entries with 0..255
-   function addi1(const avalue: boolean): llvmconstty;
-   function addi8(const avalue: int8): llvmconstty;
-   function addi16(const avalue: int16): llvmconstty;
-   function addi32(const avalue: int32): llvmconstty;
-   function addi64(const avalue: int64): llvmconstty;
-   function adddataoffs(const avalue: dataoffsty): llvmconstty;
-   function addvalue(const avalue; const asize: int32): llvmconstty;
+   function addi1(const avalue: boolean): llvmvaluety;
+   function addi8(const avalue: int8): llvmvaluety;
+   function addi16(const avalue: int16): llvmvaluety;
+   function addi32(const avalue: int32): llvmvaluety;
+   function addi64(const avalue: int64): llvmvaluety;
+   function adddataoffs(const avalue: dataoffsty): llvmvaluety;
+   function addvalue(const avalue; const asize: int32): llvmvaluety;
    function addpointerarray(const asize: int32;
-                                     const ids: pint32): llvmconstty;
+                                     const ids: pint32): llvmvaluety;
                //ids[asize] used for type id, restored
    function addaggregatearray(const asize: int32; const atype: int32; 
-                                              const ids: pint32): llvmconstty;
+                                              const ids: pint32): llvmvaluety;
                //ids[asize] used for type id not restored
-   function addpointercast(const aid: int32): llvmconstty;
-   function addaggregate(const avalue: paggregateconstty): llvmconstty;
+   function addpointercast(const aid: int32): llvmvaluety;
+   function addaggregate(const avalue: paggregateconstty): llvmvaluety;
    function addclassdef(const aclassdef: classdefinfopoty; 
                                 const aintfcount: int32
                         {const virtualcount: int32; const virtualsubs: pint32;
-                                  const virtualsubconsts: pint32}): llvmconstty;
+                                  const virtualsubconsts: pint32}): llvmvaluety;
                         //virtualsubconsts[virtualcount] used fot typeid
    function addintfdef(const aintf: pintfdefinfoty;
-                                       const acount: int32): llvmconstty;
+                                       const acount: int32): llvmvaluety;
                                                    //overwrites aintf data
-   function addnullvalue(const atypeid: int32): llvmconstty;
+   function addnullvalue(const atypeid: int32): llvmvaluety;
    property typelist: ttypehashdatalist read ftypelist;
    function first(): pconstlistdataty;
    function next(): pconstlistdataty;
    function pointeroffset(const aindex: int32): int32; //offset in pointer array
    function i8(const avalue: int8): int32; //returns id
-   function i8const(const avalue: int8): llvmconstty;
+   function i8const(const avalue: int8): llvmvaluety;
    function gettype(const aindex: int32): int32;
  end;
 
@@ -428,6 +428,11 @@ type
  end;
  pstringmetaty = ^stringmetaty;
 
+ valuemetaty = record
+  value: llvmvaluety
+ end;
+ pvaluemetaty = ^valuemetaty;
+ 
  identmetaty = record
   name: identnamety;
  end;
@@ -537,9 +542,16 @@ type
   public
    constructor create();
  end;
+
+ tconstmetahashdatalist = class(tintegerhashdatalist)
+  public
+   constructor create();
+ end;
+ 
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
-                   mdk_string,mdk_ident,mdk_difile,mdk_dibasictype,
+                   mdk_string,mdk_ident,mdk_constvalue,
+                   mdk_difile,mdk_dibasictype,
                    mdk_diderivedtype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
@@ -569,6 +581,7 @@ type
  //  fglobalvariables: metavaluearty;
  //  fglobalvariablecount: int32;
    ftypemetalist: ttypemetahashdatalist;
+   fconstmetalist: tconstmetahashdatalist;
    fsyscontext: metavaluety;
    fsysfile: metavaluety;
    fsysname: metavaluety;
@@ -594,6 +607,8 @@ type
    function i32const(const avalue: int32): metavaluety;
    property emptynode: metavaluety read femptynode;
 
+   function addconst(const constid: int32): metavaluety;
+   
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
    function addnode(const avalues: array of metavaluety): metavaluety;
@@ -1199,7 +1214,7 @@ begin
  result:= card8(avalue);
 end;
 
-function tconsthashdatalist.i8const(const avalue: int8): llvmconstty;
+function tconsthashdatalist.i8const(const avalue: int8): llvmvaluety;
 begin
  result.listid:= card8(avalue);
  result.typeid:= ord(das_8);
@@ -1217,7 +1232,7 @@ begin
                                     inherited checkkey(akey,aitemdata);
 end;
 
-function tconsthashdatalist.addi1(const avalue: boolean): llvmconstty;
+function tconsthashdatalist.addi1(const avalue: boolean): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1237,7 +1252,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi8(const avalue: int8): llvmconstty;
+function tconsthashdatalist.addi8(const avalue: int8): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1252,7 +1267,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi16(const avalue: int16): llvmconstty;
+function tconsthashdatalist.addi16(const avalue: int16): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1267,7 +1282,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi32(const avalue: int32): llvmconstty;
+function tconsthashdatalist.addi32(const avalue: int32): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1282,7 +1297,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addi64(const avalue: int64): llvmconstty;
+function tconsthashdatalist.addi64(const avalue: int64): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1307,7 +1322,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmconstty;
+function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmvaluety;
 begin
 {$if sizeof(dataoffsty) = 4}
  result:= addi32(avalue);
@@ -1317,7 +1332,7 @@ begin
 end;
 
 function tconsthashdatalist.addvalue(const avalue;
-                                            const asize: int32): llvmconstty;
+                                            const asize: int32): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1332,7 +1347,7 @@ begin
  result.typeid:= po1^.data.typeid;
 end;
 
-function tconsthashdatalist.addnullvalue(const atypeid: int32): llvmconstty;
+function tconsthashdatalist.addnullvalue(const atypeid: int32): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1347,7 +1362,7 @@ begin
  result.typeid:= po1^.data.header.buffer;
 end;
 
-function tconsthashdatalist.addpointercast(const aid: int32): llvmconstty;
+function tconsthashdatalist.addpointercast(const aid: int32): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1363,7 +1378,7 @@ begin
 end;
 
 function tconsthashdatalist.addpointerarray(const asize: int32;
-                                              const ids: pint32): llvmconstty;
+                                              const ids: pint32): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1383,7 +1398,7 @@ begin
 end;
 
 function tconsthashdatalist.addaggregatearray(const asize: int32;
-                           const atype: int32; const ids: pint32): llvmconstty;
+                           const atype: int32; const ids: pint32): llvmvaluety;
                                      //ids[asize] used for type id
 var
  alloc1: constallocdataty;
@@ -1401,7 +1416,7 @@ begin
 end;
 
 function tconsthashdatalist.addaggregate(
-                               const avalue: paggregateconstty): llvmconstty;
+                               const avalue: paggregateconstty): llvmvaluety;
 var
  alloc1: constallocdataty;
  po1: pconstlisthashdataty;
@@ -1417,7 +1432,7 @@ begin
 end;
 
 function tconsthashdatalist.addclassdef(const aclassdef: classdefinfopoty;
-                                          const aintfcount: int32): llvmconstty;
+                                          const aintfcount: int32): llvmvaluety;
  function getclassid(const asegoffset: int32): int32;
  begin
   result:= pint32(getsegmentpo(seg_classdef,asegoffset))^;
@@ -1432,7 +1447,7 @@ type
  end;
 var
  pd: pint32;
- co1: llvmconstty;
+ co1: llvmvaluety;
  
  classdef1: classdefty;
  types1: array[0..high(classdefty.items)] of int32;
@@ -1536,7 +1551,7 @@ begin
 end;
 }
 function tconsthashdatalist.addintfdef(const aintf: pintfdefinfoty;
-               const acount: int32): llvmconstty;
+               const acount: int32): llvmvaluety;
                 //overwrites aintf data
 var
  intfpo,intfe: popaddressty;
@@ -1547,7 +1562,7 @@ var
   offs: int32;
   items: int32;
  end;
- co1,offs1: llvmconstty;
+ co1,offs1: llvmvaluety;
 begin
  offs1:= addi32(aintf^.header.instanceoffset);
  intfpo:= @aintf^.items;
@@ -1871,6 +1886,13 @@ begin
  inherited create(sizeof(metaiddataty));
 end;
 
+{ tconstmetahashdatalist }
+
+constructor tconstmetahashdatalist.create();
+begin
+ inherited create(sizeof(metaiddataty));
+end;
+
 { tmetadatalist }
 
 constructor tmetadatalist.create(const atypelist: ttypehashdatalist;
@@ -1881,6 +1903,7 @@ begin
  fconstlist:= aconstlist;
  fgloblist:= agloblist;
  ftypemetalist:= ttypemetahashdatalist.create();
+ fconstmetalist:= tconstmetahashdatalist.create();
  inherited create();
 end;
 
@@ -1888,6 +1911,7 @@ destructor tmetadatalist.destroy();
 begin
  inherited;
  ftypemetalist.free();
+ fconstmetalist.free();
 end;
 
 procedure tmetadatalist.clear;
@@ -1911,6 +1935,7 @@ begin
   femptynode:= addnode([]);
 //  fsubprogramcount:= 0;
   ftypemetalist.clear();
+  fconstmetalist.clear();
   fsysfile:= adddifile(addfile('system'));
   fsyscontext:= fsysfile;
   fsysname:= addstring('system');
@@ -1976,14 +2001,30 @@ end;
 
 function tmetadatalist.i8const(const avalue: int8): metavaluety;
 begin
- result.value:= fconstlist.i8const(avalue);
- result.flags:= [];
+ result:= addconst(fconstlist.i8(avalue));
 end;
 
 function tmetadatalist.i32const(const avalue: int32): metavaluety;
 begin
- result.value:= fconstlist.addi32(avalue);
- result.flags:= [];
+ result:= addconst(fconstlist.addi32(avalue).listid);
+end;
+
+function tmetadatalist.addconst(const constid: int32): metavaluety;
+var
+ po1: pmetaiddataty;
+ m1: metavaluety;
+begin
+ if fconstmetalist.addunique(constid,po1) then begin
+  with pvaluemetaty(adddata(mdk_constvalue,
+                            sizeof(valuemetaty),m1))^ do begin
+   value.listid:= constid;
+   value.typeid:= fconstlist.gettype(constid);;
+  end;
+  po1^.id:= m1.value.listid;
+ end;
+ result.value.typeid:= ftypelist.metadata;
+ result.value.listid:= po1^.id;
+ result.flags:= [mvf_meta];
 end;
 
 function tmetadatalist.addnode(const avalues: pmetavaluety;
@@ -2419,3 +2460,11 @@ begin
 end;
 
 end.
+
+{ tconstcache }
+
+constructor tconstcache.create();
+begin
+ inherited create(sizeof(constcachedataty);
+end;
+

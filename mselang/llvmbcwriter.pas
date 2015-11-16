@@ -207,7 +207,7 @@ type
    procedure emitloadop(const asource: int32);
    procedure emitstoreop(const asource: int32; const adest: int32);
 
-   procedure emitpushconst(const aconst: llvmconstty);
+   procedure emitpushconst(const aconst: llvmvaluety);
    procedure emitpushconstsegad(const aoffset: int32); //2ssa
    
    procedure emitbinop(const aop: BinaryOpcodes; 
@@ -221,9 +221,12 @@ type
 
    procedure marktrampoline(const apc: popinfoty);
    procedure releasetrampoline(out apc: popinfoty); //nil if none
-  
-   procedure emitmetadatanode(const len: int32; const values: pmetavaluety);
-   procedure emitmetadatanode(const values: array of metavaluety);
+
+   procedure emitmetadatavalue(const atyp,avalue: int32);  
+   procedure emitmetadatanode(const len: int32; const values: pmetavaluety;
+                                                              const aid: int32);
+   procedure emitmetadatanode(const values: array of metavaluety;
+                                                              const aid: int32);
    procedure emitnamedmetadatanode(const namelen: int32; const name: pcard8;
                                  const len: int32; const values: pint32);
 //   procedure emitmetadatafnnonde(const avalue,atype: int32);
@@ -395,6 +398,7 @@ var
  metavartags: array[divariablekindty] of metavaluety;
  metatypetags: array[diderivedtypekindty] of metavaluety;
  m1,m2: metavaluety;
+ mdid1: int32;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
  separator1: char;
@@ -489,11 +493,9 @@ begin
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
     [
-     addnode([i8const(ord(mfb_warning)),
-                addstring(stringtolstring('Dwarf Version')),
+     addnode([addstring(stringtolstring('Dwarf Version')),
                                        i8const(DWARF_VERSION)]).value.listid,
-     addnode([i8const(ord(mfb_warning)),
-                addstring(stringtolstring('Debug Info Version')),
+     addnode([addstring(stringtolstring('Debug Info Version')),
                                i8const(DEBUG_METADATA_VERSION)]).value.listid
     ]);
   end;
@@ -751,6 +753,7 @@ begin
   metanullnode:= metadata.emptynode;
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
+  mdid1:= 0;
   while pm1 <> nil do begin
    case pm1^.header.kind of
 {
@@ -770,17 +773,18 @@ begin
     end;
     mdk_node: begin
      with pnodemetaty(@pm1^.data)^ do begin
-      emitmetadatanode(len,@data);
+      emitmetadatanode(len,@data,mdid1);
      end;
     end;
     mdk_namednode: begin
      with pnamednodemetaty(@pm1^.data)^ do begin
       emitnamedmetadatanode(namelen,@data+len*sizeof(int32),len,@data);
+      dec(mdid1); //has no index
      end;
     end;
     mdk_difile: begin
      with pdifilety(@pm1^.data)^ do begin
-      emitmetadatanode([filename,dirname]);
+      emitmetadatanode([filename,dirname],mdid1);
      end;
     end;
     mdk_diderivedtype: begin
@@ -789,7 +793,7 @@ begin
       //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
         difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
       //flags,encoding
-        flags,typederivedfrom]);
+        flags,typederivedfrom],mdid1);
      end;
     end;
     mdk_dibasictype: begin
@@ -798,7 +802,7 @@ begin
       //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
         difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
       //flags,encoding
-        flags,encoding]);
+        flags,encoding],mdid1);
      end;
     end;
 {
@@ -823,7 +827,7 @@ begin
       //enumtypes,   retainedtypes,subprograms,globalvariables,importedentities,
         metanullnode,metanullnode, m1,         m2,             metanullnode,
       //splitdebugfilename,emissionkind
-        metanullstring,    emissionkind]);
+        metanullstring,    emissionkind],mdid1);
      end;     
     end;
     mdk_disubprogram: begin
@@ -836,7 +840,7 @@ begin
       //flags,      optimized,  function,  templateparams,functiondeclaration,
         flags,metanullint,functionid,metanull,      metanull,
       //variablesnodes,scopelinenumber
-        metanullnode,  linenumber]);
+        metanullnode,  linenumber],mdid1);
      end;
     end;
     mdk_disubroutinetype: begin
@@ -849,7 +853,7 @@ begin
     //flags,      typederivedfrom,typearray,runtimelang,contyainingtype,
       metanullint,metanull,       params,   metanullint,metanull,
     //templateparams,identifier
-      metanull,      metanull]);
+      metanull,      metanull],mdid1);
      end;
     end;
     mdk_diglobvariable: begin
@@ -859,13 +863,18 @@ begin
       m1.value.typeid:= globals.gettype(global);
       emitmetadatanode([metaDW_TAG_variable,metanullint,metanull,name,name,
                                metanullstring,difile,linenumber,
-              ditype,metanullint,metaoneint,m1,metanull]);
+              ditype,metanullint,metaoneint,m1,metanull],mdid1);
      end;
     end;
     mdk_divariable: begin
      with pdivariablety(@pm1^.data)^ do begin
       emitmetadatanode([metavartags[kind],context,name,difile,lineandargnumber,
-                                             ditype,flags,metanullint]);
+                                             ditype,flags,metanullint],mdid1);
+     end;
+    end;
+    mdk_constvalue: begin
+     with pvaluemetaty(@pm1^.data)^ do begin
+      emitmetadatavalue(typeval(value.typeid),constval(value.listid));
      end;
     end;
     else begin
@@ -873,6 +882,7 @@ begin
     end;
    end;
    pm1:= metadata.next();
+   inc(mdid1);
   end;
   endblock();  
  end;
@@ -1870,7 +1880,7 @@ begin
  }
 end;
 
-procedure tllvmbcwriter.emitpushconst(const aconst: llvmconstty);
+procedure tllvmbcwriter.emitpushconst(const aconst: llvmvaluety);
 begin
  emitrec(ord(FUNC_CODE_INST_CAST),
        [fsubopindex-constval(aconst.listid),typeval(aconst.typeid),
@@ -1922,6 +1932,12 @@ begin
  ftrampolineop:= nil;
 end;
 
+procedure tllvmbcwriter.emitmetadatavalue(const atyp: int32;
+               const avalue: int32);
+begin
+ emitrec(ord(METADATA_VALUE),[atyp,avalue]);
+end;
+
 procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
                                                    const apersonality: int32);
 begin
@@ -1931,13 +1947,28 @@ begin
 end;
 
 procedure tllvmbcwriter.emitmetadatanode(const len: int32;
-               const values: pmetavaluety);
+               const values: pmetavaluety; const aid: int32);
 var
  po1,pe: pmetavaluety;
- i1,i2: int32;
 begin
  emitcode(ord(UNABBREV_RECORD));
  emitvbr6(ord(METADATA_NODE));
+ emitvbr6(len+1);
+ po1:= values;
+ pe:= po1+len;
+ while po1 < pe do begin
+  with po1^ do begin
+  {$ifdef mse_checkinternalerror}
+   if mvf_dummy in flags then begin
+    internalerror(ie_llvm,'20150520A');
+   end;
+  {$endif}
+   emitvbr6(value.listid);
+  end;
+  inc(po1);
+ end;
+ emitvbr6(aid);
+(*
  emitvbr6(len*2);
  po1:= values;
  pe:= po1+len;
@@ -1961,11 +1992,13 @@ begin
   end;
   inc(po1);
  end;
+*)
 end;
 
-procedure tllvmbcwriter.emitmetadatanode(const values: array of metavaluety);
+procedure tllvmbcwriter.emitmetadatanode(const values: array of metavaluety;
+                                                              const aid: int32);
 begin
- emitmetadatanode(length(values),@values[0]);
+ emitmetadatanode(length(values),@values[0],aid);
 end;
 
 procedure tllvmbcwriter.emitnamedmetadatanode(

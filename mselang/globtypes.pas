@@ -347,7 +347,7 @@ type
                               mc_i16=ord(mc_i1)+1,mc_i32, mc_i64);
  oneconstty = (oc_i1 = ord(mc_i1), oc_i8=1,
                               oc_i16=ord(high(maxconstty))+1,oc_i32, oc_i64);
-  llvmconstty = record
+  llvmvaluety = record
    typeid: int32;        //order fix because of metadata bcwriter
    listid: int32;        //
   end;
@@ -365,7 +365,7 @@ const
  bittypemax = ord(lastdatakind);
 
  nullpointer = ord(nc_pointer);
- nullconst: llvmconstty = (
+ nullconst: llvmvaluety = (
              typeid: pointertype;
              listid: nullpointer;
             ); 
@@ -374,7 +374,7 @@ type
  metavalueflagsty = set of metavalueflagty;
  
  metavaluety = record
-  value: llvmconstty;
+  value: llvmvaluety;
   flags: metavalueflagsty;
  end;
  pmetavaluety = ^metavaluety;

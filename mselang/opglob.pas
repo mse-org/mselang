@@ -574,7 +574,7 @@ type
 //   ssaindex: integer;
   datasize: integer;            //todo: remove, not necessary for bitcode
   case integer of               //todo: use target size
-   0: (llvm: llvmconstty);
+   0: (llvm: llvmvaluety);
    1: (vboolean: boolean);
    2: (vcard8: card8);
    3: (vcard16: card16);
@@ -593,7 +593,7 @@ type
 
  ordimmty = record
   case integer of
-   0: (llvm: llvmconstty);
+   0: (llvm: llvmvaluety);
    1: (vboolean: boolean);
    2: (vcard32: card32);
    3: (vint32: int32);
@@ -722,7 +722,7 @@ type
   mem: memopty;
   case opcodety of
    oc_none:(
-    llvm: llvmconstty;
+    llvm: llvmvaluety;
    );
    oc_incdecsegimmint32,oc_incdecsegimmpo32,
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
