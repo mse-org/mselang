@@ -77,8 +77,10 @@ type
    function item(const aindex: int32): ptypeinfoty;
    function typename(const aindex: int32): string;
    function iskind(const aindex: int32; const akind: typecodes): boolean;
+   function ispointer(const aindex: int32): boolean;
    function parentiskind(const aindex: int32; const akind: typecodes): boolean;
    function parenttype(const aindex: int32): ptypeinfoty;
+   function parenttype(const atype: ptypeinfoty): ptypeinfoty;
    function parenttypeindex(const aindex: int32): int32;
    function itemtypeindex(const aindex: integer): int32;
 //   function item(const aindex: int32): ptypeinfoty;
@@ -616,6 +618,16 @@ begin
  result:= validindex(aindex) and (ptypeinfoty(fdata)[aindex].kind = akind);
 end;
 
+function ttypelist.ispointer(const aindex: int32): boolean;
+begin
+ result:= validindex(aindex);
+ if result then begin
+  with ptypeinfoty(fdata)[aindex] do begin
+   result:= (kind = TYPE_CODE_POINTER);
+  end;
+ end;
+end;
+
 function ttypelist.parentiskind(const aindex: int32;
                const akind: typecodes): boolean;
 begin
@@ -628,15 +640,20 @@ begin
  end;
 end;
 
-function ttypelist.parenttype(const aindex: int32): ptypeinfoty;
+function ttypelist.parenttype(const atype: ptypeinfoty): ptypeinfoty;
 begin
- checkvalidindex(aindex);
- with ptypeinfoty(fdata)[aindex] do begin
+ with atype^ do begin
   if (kind <> TYPE_CODE_POINTER) or invalidindex(base) then begin
    error('Invalid pointer type');
   end;
   result:= @ptypeinfoty(fdata)[base];
  end;
+end;
+
+function ttypelist.parenttype(const aindex: int32): ptypeinfoty;
+begin
+ checkvalidindex(aindex);
+ result:= parenttype(@ptypeinfoty(fdata)[aindex]);
 end;
 
 function ttypelist.parenttypeindex(const aindex: int32): int32;
@@ -1078,7 +1095,8 @@ begin
        end;
        kind:= gk_sub;
        valuetype:= rec1[2];
-       if not ftypelist.parentiskind(valuetype,TYPE_CODE_FUNCTION) then begin
+       if not (ftypelist.iskind(valuetype,TYPE_CODE_FUNCTION) or
+               ftypelist.parentiskind(valuetype,TYPE_CODE_FUNCTION)) then begin
         error('Invalid function type');
        end;
        if subheaderindex >= 0 then begin
@@ -1266,7 +1284,20 @@ procedure tllvmbcreader.readmetadatablock();
 
 var
  rec1: valuearty;
- 
+
+ function valuestring(const avalues: valuearty): string;
+ var
+  i1: int32;
+ begin
+  result:= '';
+  if avalues <> nil then begin
+   for i1:= 0 to high(avalues) do begin
+    result:= result+inttostr(avalues[i1])+',';
+   end;
+   setlength(result,length(result)-1);
+  end;
+ end;
+  
  procedure outmetarecord(const atext: string; const offset: int32 = 0);
  begin
   output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': M'+
@@ -1383,6 +1414,7 @@ begin
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
      end;
+     {
      METADATA_FN_NODE: begin
       checkdatalen(rec1,3);
       if ffunctionlevel = 0 then begin
@@ -1395,9 +1427,11 @@ begin
       fmetalist.add();
       outmetarecord(typevaluepair(2,rec1[1]=ord(METADATA_NODE)));
      end;
+}
      else begin
       fmetalist.add();
-      outmetarecord(typevaluepair(2,false));
+      outmetarecord(valuestring(copy(rec1,2,bigint)));
+ //     outmetarecord(typevaluepair(2,false));
      end;
     end;
    end;
@@ -1633,7 +1667,13 @@ begin
  fssastart:= conststart;
  fbbbefore:= -1;
  fbb:= -1;
- with ftypelist.parenttype(subtyp1)^ do begin
+ if ftypelist.ispointer(subtyp1) then begin
+  po1:= ftypelist.parenttype(subtyp1);
+ end
+ else begin
+  po1:= ftypelist.item(subtyp1);
+ end;
+ with po1^ do begin
 // ssaindex:= ptypeinfoty(ftypelist.fdata)[
 //                 ptypeinfoty(ftypelist.fdata)[subtyp1].base].subparamcount-1;
   fssaindex:= subparamcount-1;
