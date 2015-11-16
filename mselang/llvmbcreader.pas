@@ -1279,7 +1279,7 @@ begin
  end;
  result:= result + inttostr(i1);
 end;
-var testvar: pglobinfoty;
+
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1323,10 +1323,12 @@ var
       result:= result+'NULL';
      end;
      else begin
-testvar:= fgloblist.item((po1+1)^);
       with fgloblist.item((po1+1)^)^ do begin
        if valuetype <> po1^ then begin
-        error('Value types do not match');
+        if not (ftypelist.ispointer(po1^) and 
+                     (valuetype = ftypelist.parenttypeindex(po1^))) then begin
+         error('Value types do not match');
+        end;
        end;
        case kind of 
         gk_const: begin
@@ -1376,8 +1378,39 @@ testvar:= fgloblist.item((po1+1)^);
   if result <> '' then begin
    setlength(result,length(result)-1);
   end;
+ end; //typevaluepair
+
+ function distinct(): string;
+ begin
+  if rec1[2] <> 0 then begin
+   result:= 'distinct ';
+  end
+  else begin
+   result:= '';
+  end;
+ end; //distinct
+ 
+ function metaornull(const aname: string; const aindex: int32): string;
+ begin
+  result:= aname+':M'+inttostr(rec1[aindex]-1);
  end;
 
+ function tag(const aname: string; const aindex: int32): string;
+ var
+  i1: int32;
+ begin
+  i1:= (highestbit(rec1[aindex])+3) div 4;
+  if i1 = 0 then begin
+   i1:= 1;
+  end;
+  result:= aname+':$'+hextostr(card32(rec1[aindex]),i1);
+ end;
+
+ function int(const aname: string; const aindex: int32): string;
+ begin
+  result:= aname+':'+inttostr(rec1[aindex]);
+ end;
+   
 var
  blocklevelbefore: int32;
  name1: string;
@@ -1413,6 +1446,22 @@ begin
       checkmindatalen(rec1,3);
       output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+':'+
                              inttostr(rec1[2])+':'+valueartostring(rec1,3));
+     end;
+     METADATA_VALUE: begin
+      fmetalist.add();
+      outmetarecord(typevaluepair(2,false));
+     end;
+     METADATA_FILE: begin
+      fmetalist.add();
+      checkdatalen(rec1,4);
+      outmetarecord(distinct()+metaornull('filename',rec1[3])+','+
+                               metaornull('directory',rec1[4]));
+     end;
+     METADATA_BASIC_TYPE: begin
+      fmetalist.add();
+      checkdatalen(rec1,7);
+      outmetarecord(distinct()+tag('tag',3)+','+metaornull('name',4)+','+
+                   int('size',5)+','+int('align',6)+','+tag('encoding',7));
      end;
      {
      METADATA_FN_NODE: begin
