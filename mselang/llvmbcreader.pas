@@ -1454,14 +1454,30 @@ begin
      METADATA_FILE: begin
       fmetalist.add();
       checkdatalen(rec1,4);
-      outmetarecord(distinct()+metaornull('filename',rec1[3])+','+
-                               metaornull('directory',rec1[4]));
+      outmetarecord(distinct()+metaornull('filename',3)+','+
+                               metaornull('directory',4));
      end;
      METADATA_BASIC_TYPE: begin
       fmetalist.add();
       checkdatalen(rec1,7);
       outmetarecord(distinct()+tag('tag',3)+','+metaornull('name',4)+','+
                    int('size',5)+','+int('align',6)+','+tag('encoding',7));
+     end;
+     METADATA_NODE: begin
+      fmetalist.add();
+      if high(rec1) = 1 then begin //empty without number
+       outmetarecord('');
+      end
+      else begin
+       checkmindatalen(rec1,2);
+       if rec1[high(rec1)] <> fmetalist.count-1 then begin
+        str1:= ' *Invalid node number:'+inttostr(rec1[high(rec1)]);
+       end
+       else begin
+        str1:= '';
+       end;
+       outmetarecord(valuestring(copy(rec1,2,high(rec1)-2))+str1);
+      end;
      end;
      {
      METADATA_FN_NODE: begin
