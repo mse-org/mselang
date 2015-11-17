@@ -539,8 +539,9 @@ begin
    if (s.debugoptions <> []) then begin
     with s.unitinfo^ do begin
      if llvmlists <> nil then begin
-      filepathmeta:= llvmlists.metadatalist.addfile(filepath);
-      debugfilemeta:= llvmlists.metadatalist.adddifile(filepathmeta);
+      filepathmeta:= llvmlists.metadatalist.adddifile(filepath);
+      debugfilemeta:= filepathmeta;
+      {llvmlists.metadatalist.adddifile(filepathmeta);}
       compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
          filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);

@@ -618,7 +618,7 @@ type
    function addident(const aident: identnamety): metavaluety;
    function addstring(const avalue: lstringty): metavaluety;
    function addstring(const avalue: string): metavaluety;
-   function addfile(const afilename: filenamety): metavaluety;
+   function adddifile(const afilename: filenamety): metavaluety;
 
    function adddibasictype(const adifile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
@@ -636,7 +636,7 @@ type
                               const aindirection: int32{;
                                const aisreference: boolean}): metavaluety;
    function addtype(const avariable: pvardataty): metavaluety;
-   function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
+//   function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
           const asourcelanguage: int32; const aproducer: string;
           const asubprograms: metavaluety; const aglobalvariables: metavaluety;
@@ -1600,7 +1600,12 @@ end;
 
 function tconsthashdatalist.gettype(const aindex: int32): int32;
 begin
- result:= pconstlisthashdataty(fdata)[aindex].data.typeid;
+{$ifdef mse_checkintrnalerror}
+ if (aindex < 0) or (aindex >= fcount - 2) then begin
+  internalerror(ie_llvmlist,'20151117A');
+ end;
+{$endif}
+ result:= pconstlisthashdataty(fdata)[aindex+1].data.typeid;
 end;
 
 { tglobnamelist }
@@ -1936,7 +1941,7 @@ begin
 //  fsubprogramcount:= 0;
   ftypemetalist.clear();
   fconstmetalist.clear();
-  fsysfile:= adddifile(addfile('system'));
+  fsysfile:= adddifile('system');
   fsyscontext:= fsysfile;
   fsysname:= addstring('system');
   if info.debugoptions <> [] then begin
@@ -2093,7 +2098,7 @@ begin
  result:= addstring(stringtolstring(avalue));
 end;
 
-function tmetadatalist.addfile(const afilename: filenamety): metavaluety;
+function tmetadatalist.adddifile(const afilename: filenamety): metavaluety;
 var
  m1,m2: metavaluety;
  dir,na: filenamety;
@@ -2112,11 +2117,12 @@ begin
  result.value:= fconstlist.addi32(atag or LLVMDebugVersion);
  result.flags:= [];
 end;
-
+{
 function tmetadatalist.adddifile(const afile: metavaluety): metavaluety;
 begin
  result:= addnode([dwarftag(DW_TAG_FILE_TYPE),afile]);
 end;
+}
 {
 function tmetadatalist.adddiscope(const afile: metavaluety): metavaluety;
 begin

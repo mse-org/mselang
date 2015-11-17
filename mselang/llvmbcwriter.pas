@@ -223,6 +223,7 @@ type
    procedure releasetrampoline(out apc: popinfoty); //nil if none
 
    procedure emitmetadatavalue(const atyp,avalue: int32);  
+   procedure emitmetadatafile(const afile,adirectory: int32); 
    procedure emitmetadatanode(const len: int32; const values: pmetavaluety;
                                                               const aid: int32);
    procedure emitmetadatanode(const values: array of metavaluety;
@@ -784,7 +785,7 @@ begin
     end;
     mdk_difile: begin
      with pdifilety(@pm1^.data)^ do begin
-      emitmetadatanode([filename,dirname],mdid1);
+      emitmetadatafile(filename.value.listid,dirname.value.listid);
      end;
     end;
     mdk_diderivedtype: begin
@@ -1936,6 +1937,12 @@ procedure tllvmbcwriter.emitmetadatavalue(const atyp: int32;
                const avalue: int32);
 begin
  emitrec(ord(METADATA_VALUE),[atyp,avalue]);
+end;
+
+procedure tllvmbcwriter.emitmetadatafile(const afile,adirectory: int32);
+begin
+ emitrec(ord(METADATA_FILE),[0,afile+1,adirectory+1]);
+                             //no distinct
 end;
 
 procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;

@@ -1297,6 +1297,19 @@ var
    setlength(result,length(result)-1);
   end;
  end;
+
+ function metastring(const avalues: valuearty): string;
+ var
+  i1: int32;
+ begin
+  result:= '';
+  if avalues <> nil then begin
+   for i1:= 0 to high(avalues) do begin
+    result:= result+'M'+inttostr(avalues[i1])+',';
+   end;
+   setlength(result,length(result)-1);
+  end;
+ end;
   
  procedure outmetarecord(const atext: string; const offset: int32 = 0);
  begin
@@ -1476,7 +1489,7 @@ begin
        else begin
         str1:= '';
        end;
-       outmetarecord(valuestring(copy(rec1,2,high(rec1)-2))+str1);
+       outmetarecord(metastring(copy(rec1,2,high(rec1)-2))+str1);
       end;
      end;
      {
