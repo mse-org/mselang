@@ -1432,7 +1432,7 @@ begin
     case metadatacodes(rec1[1]) of
      METADATA_STRING: begin
       fmetalist.add();
-      outmetarecord(valueartostring(rec1,2));
+      outmetarecord(quotestring(valueartostring(rec1,2),'"'));
      end;
      METADATA_NAME: begin
       name1:= valueartostring(rec1,2);
