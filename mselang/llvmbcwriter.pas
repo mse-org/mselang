@@ -229,10 +229,8 @@ type
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
-   procedure emitmetanode(const len: int32; const values: pmetavaluety;
-                                                              const aid: int32);
-   procedure emitmetanode(const values: array of metavaluety;
-                                                              const aid: int32);
+   procedure emitmetanode(const len: int32; const values: pmetavaluety);
+   procedure emitmetanode(const values: array of metavaluety);
    procedure emitnamedmetanode(const namelen: int32; const name: pcard8;
                                  const len: int32; const values: pint32);
 //   procedure emitmetadatafnnonde(const avalue,atype: int32);
@@ -414,7 +412,6 @@ var
  metavartags: array[divariablekindty] of metavaluety;
  metatypetags: array[diderivedtypekindty] of metavaluety;
  m1,m2: metavaluety;
- mdid1: int32;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
  separator1: char;
@@ -505,7 +502,7 @@ begin
    value:= consts.addi32(DW_TAG_arg_variable or LLVMDebugVersion);
    flags:= [];
   end;
-
+{
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
     [
@@ -515,6 +512,7 @@ begin
                                i8const(DEBUG_METADATA_VERSION)]).value.listid
     ]);
   end;
+}
  end; //has metadata
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
@@ -769,7 +767,6 @@ begin
   metanullnode:= metadata.emptynode;
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
-  mdid1:= 0;
   while pm1 <> nil do begin
    case pm1^.header.kind of
     mdk_string: begin
@@ -784,13 +781,12 @@ begin
     end;
     mdk_node: begin
      with pnodemetaty(@pm1^.data)^ do begin
-      emitmetanode(len,@data,mdid1);
+      emitmetanode(len,@data);
      end;
     end;
     mdk_namednode: begin
      with pnamednodemetaty(@pm1^.data)^ do begin
       emitnamedmetanode(namelen,@data+len*sizeof(int32),len,@data);
-      dec(mdid1); //has no index
      end;
     end;
     mdk_difile: begin
@@ -804,7 +800,7 @@ begin
       //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
         difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
       //flags,encoding
-        flags,typederivedfrom],mdid1);
+        flags,typederivedfrom]);
      end;
     end;
     mdk_dibasictype: begin
@@ -862,7 +858,7 @@ testvar:= pdisubprogramty(@pm1^.data);
     mdk_divariable: begin
      with pdivariablety(@pm1^.data)^ do begin
       emitmetanode([metavartags[kind],context,name,difile,lineandargnumber,
-                                             ditype,flags,metanullint],mdid1);
+                                             ditype,flags,metanullint]);
      end;
     end;
     mdk_constvalue: begin
@@ -875,7 +871,6 @@ testvar:= pdisubprogramty(@pm1^.data);
     end;
    end;
    pm1:= metadata.next();
-   inc(mdid1);
   end;
   endblock();  
  end;
@@ -2034,14 +2029,14 @@ begin
  inc(fsubopindex);
 end;
 
-procedure tllvmbcwriter.emitmetanode(const len: int32;
-               const values: pmetavaluety; const aid: int32);
+procedure tllvmbcwriter.emitmetanode(const len: int32; 
+                                              const values: pmetavaluety);
 var
  po1,pe: pmetavaluety;
 begin
  emitcode(ord(UNABBREV_RECORD));
  emitvbr6(ord(METADATA_NODE));
- emitvbr6(len+1);
+ emitvbr6(len);
  po1:= values;
  pe:= po1+len;
  while po1 < pe do begin
@@ -2051,11 +2046,10 @@ begin
     internalerror(ie_llvm,'20150520A');
    end;
   {$endif}
-   emitvbr6(value.listid);
+   emitvbr6(value.listid+1);
   end;
   inc(po1);
  end;
- emitvbr6(aid);
 (*
  emitvbr6(len*2);
  po1:= values;
@@ -2083,10 +2077,9 @@ begin
 *)
 end;
 
-procedure tllvmbcwriter.emitmetanode(const values: array of metavaluety;
-                                                              const aid: int32);
+procedure tllvmbcwriter.emitmetanode(const values: array of metavaluety);
 begin
- emitmetanode(length(values),@values[0],aid);
+ emitmetanode(length(values),@values[0]);
 end;
 
 procedure tllvmbcwriter.emitnamedmetanode(

@@ -1320,6 +1320,19 @@ var
    setlength(result,length(result)-1);
   end;
  end;
+
+ function metaornullstring(const avalues: valuearty): string;
+ var
+  i1: int32;
+ begin
+  result:= '';
+  if avalues <> nil then begin
+   for i1:= 0 to high(avalues) do begin
+    result:= result+'M'+inttostr(avalues[i1]-1)+',';
+   end;
+   setlength(result,length(result)-1);
+  end;
+ end;
   
  procedure outmetarecord(atext: string; const last: int32);
  begin
@@ -1570,6 +1583,7 @@ begin
      end;
      METADATA_NODE: begin
       fmetalist.add();
+     { 
       if high(rec1) = 1 then begin //empty without number
        outmetarecord('',1);
       end
@@ -1581,8 +1595,9 @@ begin
        else begin
         str1:= '';
        end;
-       outmetarecord(metastring(copy(rec1,2,high(rec1)-2))+str1,bigint);
       end;
+      }
+      outmetarecord(metaornullstring(copy(rec1,2,bigint)),bigint);
      end;
      {
      METADATA_FN_NODE: begin

@@ -467,6 +467,7 @@ var
  statebefore: savedparseinfoty;  
  eleparentbefore: elementoffsetty;
  i1: int32;
+ m1,m2,m3: metavaluety;
  
 label
  handlelab{,stophandlelab},parseend;
@@ -539,14 +540,28 @@ begin
    if (s.debugoptions <> []) then begin
     with s.unitinfo^ do begin
      if llvmlists <> nil then begin
-      filepathmeta:= llvmlists.metadatalist.adddifile(filepath);
-      debugfilemeta:= filepathmeta;
-      {llvmlists.metadatalist.adddifile(filepathmeta);}
-      compileunitmeta:= llvmlists.metadatalist.adddicompileunit(
-         filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
+      with llvmlists.metadatalist do begin
+       filepathmeta:= adddifile(filepath);
+       debugfilemeta:= filepathmeta;
+       {llvmlists.metadatalist.adddifile(filepathmeta);}
+       compileunitmeta:= adddicompileunit(
+          filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);
-      llvmlists.metadatalist.addnamednode(stringtolstring('llvm.dbg.cu'),
+       addnamednode(stringtolstring('llvm.dbg.cu'),
                                             [compileunitmeta.value.listid]);
+       if not hasmoduleflags then begin
+        hasmoduleflags:= true;
+        m1:= i32const(ord(mfb_warning));
+        m2:= addnode([m1,addstring(stringtolstring('Dwarf Version')),
+                                      i8const(DWARF_VERSION)]);
+                                      
+        m3:= addnode([m1,addstring(stringtolstring('Debug Info Version')),
+                             i8const(DEBUG_METADATA_VERSION)]);
+
+        addnamednode(stringtolstring('llvm.module.flags'),[m2.value.listid,
+                                                    m3.value.listid]);
+       end;
+      end;
      end;
     end;
    end;

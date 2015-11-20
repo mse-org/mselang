@@ -403,7 +403,7 @@ type
  end;
 
 const
- dummymeta: metavaluety = (value: (typeid: 0; listid: 0);
+ dummymeta: metavaluety = (value: (typeid: -1; listid: -1);
                                                  flags: [mvf_dummy]);
 type
  nodemetaty = record
@@ -416,7 +416,7 @@ type
  namednodemetaty = record
   len: int32;
   namelen: int32;
-  data: record  //array of metavaluety,name
+  data: record  //array of int32 metavalue index,name
   end;
  end;
  pnamednodemetaty = ^namednodemetaty;
@@ -576,10 +576,6 @@ type
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
    fgloblist: tgloballocdatalist;
- //  fsubprograms: metavaluearty;
- //  fsubprogramcount: int32;
- //  fglobalvariables: metavaluearty;
- //  fglobalvariablecount: int32;
    ftypemetalist: ttypemetahashdatalist;
    fconstmetalist: tconstmetahashdatalist;
    fsyscontext: metavaluety;
@@ -590,8 +586,8 @@ type
    fdbgdeclare: int32;
    fnullintconst: metavaluety;
    femptystringconst: metavaluety;
-//   function getsubprograms: metavaluesty;
-//   function getglobalvariables: metavaluesty;
+//   fwdstringconst: metavaluety;
+   fhasmoduleflags: boolean;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -665,7 +661,9 @@ type
    property voidconst: metavaluety read fvoidconst;
    property nullintconst: metavaluety read fnullintconst;
    property emptystringconst: metavaluety read femptystringconst;
+//   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
+   property hasmoduleflags: boolean read fhasmoduleflags write fhasmoduleflags;
  end;
 
  tllvmlists = class
@@ -1923,22 +1921,23 @@ procedure tmetadatalist.clear;
 begin
  inherited;
  if not (bdls_destroying in fstate) then begin
-//  adddata(mdk_void,0,fnullvalue);
-//  fvoidconst.value:= nullconst;
+  fhasmoduleflags:= false;
   fvoidconst.value.typeid:= ftypelist.void;
   fvoidconst.value.listid:= 0;
   fvoidconst.flags:= [];
   fnullintconst.value.typeid:= ord(das_8);
   fnullintconst.value.listid:= ord(nc_i8);
   fnullintconst.flags:= [];
+  femptystringconst:= addstring('');
+//  fwdstringconst:= addstring('./');
+ {
   with pstringmetaty(
            adddata(mdk_string,sizeof(stringmetaty)+0,
                                             femptystringconst))^ do begin
    len:= 0;
   end;
-
+ }
   femptynode:= addnode([]);
-//  fsubprogramcount:= 0;
   ftypemetalist.clear();
   fconstmetalist.clear();
   fsysfile:= adddifile('system');
@@ -1949,8 +1948,6 @@ begin
             [ftypelist.metadata,ftypelist.metadata],
                                             getidentname('llvm.dbg.declare'));
   end;
-//  fsyscontext:= adddicompileunit(addfile('system'),
-//            DW_LANG_Pascal83,'MSElang 0.0',dummymeta,FullDebug);
  end;
 end;
 
@@ -2056,7 +2053,7 @@ begin
 end;
 
 procedure tmetadatalist.addnamednode(const aname: lstringty;
-               const avalues: array of int32);
+                                         const avalues: array of int32);
 var
  i1: int32;
  m1: metavaluety;
@@ -2104,7 +2101,12 @@ var
  dir,na: filenamety;
 begin
  splitfilepath(afilename,dir,na);
- m1:= addstring(stringtolstring(string(dir)));
+ if dir = '' then begin
+  m1:= dummymeta; //fwdstringconst;
+ end
+ else begin
+  m1:= addstring(stringtolstring(string(dir)));
+ end;
  m2:= addstring(stringtolstring(string(na)));
  with pdifilety(adddata(mdk_difile,sizeof(difilety),result))^ do begin
   dirname:= m1;
@@ -2136,12 +2138,15 @@ function tmetadatalist.adddicompileunit(const afile: metavaluety;
               const asourcelanguage: int32; const aproducer: string; 
           const asubprograms: metavaluety; const aglobalvariables: metavaluety;
                           const aemissionkind: DebugEmissionKind): metavaluety;
+var
+ m1: metavaluety;
 begin
+ m1:= addstring(stringtolstring(aproducer));
  with pdicompileunitty(adddata(mdk_dicompileunit,
                     sizeof(dicompileunitty),result))^ do begin
   difile:= afile;
   sourcelanguage:= asourcelanguage;
-  producer:= addstring(stringtolstring(aproducer));
+  producer:= m1;
   subprograms:= asubprograms;
   globalvariables:= aglobalvariables;
   emissionkind:= aemissionkind;
