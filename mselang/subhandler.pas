@@ -952,7 +952,7 @@ begin
       setcurrentscope(llvmlists.metadatalist.adddisubprogram(
            s.currentscopemeta,getidentname2(po1^.header.name),
            s.currentfilemeta,
-           info.contextstack[info.s.stackindex].start.line,dummymeta,
+           info.contextstack[info.s.stackindex].start.line,-1,
            dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
      end;
     end;

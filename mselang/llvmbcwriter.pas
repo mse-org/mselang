@@ -377,7 +377,7 @@ destructor tllvmbcwriter.destroy();
 begin
  inherited;
 end;
-var testvar: pdisubprogramty;
+
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                               const globals: tgloballocdatalist;
                               const metadata: tmetadatalist;
@@ -810,50 +810,13 @@ begin
      emitmetacompileunit(pdicompileunitty(@pm1^.data)^);
     end;
     mdk_disubprogram: begin
-testvar:= pdisubprogramty(@pm1^.data);
      emitmetasubprogram(pdisubprogramty(@pm1^.data)^);
- {
-     with pdisubprogramty(@pm1^.data)^ do begin
-      emitmetanode([metaDW_TAG_subprogram(*,
-      //       context,name,displayname,linkagename,   linenumber,type,
-        difile,context,name,name,       metanullstring,{linenumber,}typeid,
-      //localtounit,definition,virtuality, virtualindex,containingtype,
-        metanullint,metatrue,  metanullint,metanullint, metanull,
-      //flags,      optimized,  function,  templateparams,functiondeclaration,
-        {flags,}metanullint,{functionid,}metanull,      metanull,
-      //variablesnodes,scopelinenumber
-        metanullnode,  linenumber*)],mdid1);
-     end;
-}
     end;
     mdk_disubroutinetype: begin
      emitmetasubroutinetype(pdisubroutinetypety(@pm1^.data)^);
-{
-     with pdisubroutinetypety(@pm1^.data)^ do begin
-      emitmetadatanode([metaDW_TAG_subroutine_type,
-    //scope, context,   name,          linenumber,
-      metanull,metanull,metanullstring,metanullint,
-    //sizeinbits, aligninbits,offsetinbits,
-      metanullint,metanullint,metanullint,
-    //flags,      typederivedfrom,typearray,runtimelang,contyainingtype,
-      metanullint,metanull,       params,   metanullint,metanull,
-    //templateparams,identifier
-      metanull,      metanull],mdid1);
-     end;
-}
     end;
     mdk_diglobvariable: begin
      emitmetaglobalvar(pdiglobvariablety(@pm1^.data)^);
-    {
-     with pdiglobvariablety(@pm1^.data)^ do begin
-      m1.flags:= [mvf_globval,mvf_pointer];
-      m1.value.listid:= global;
-      m1.value.typeid:= globals.gettype(global);
-      emitmetadatanode([metaDW_TAG_variable,metanullint,metanull,name,name,
-                               metanullstring,difile,linenumber,
-              ditype,metanullint,metaoneint,m1,metanull],mdid1);
-     end;
-    }
     end;
     mdk_divariable: begin
      with pdivariablety(@pm1^.data)^ do begin
@@ -864,6 +827,11 @@ testvar:= pdisubprogramty(@pm1^.data);
     mdk_constvalue: begin
      with pvaluemetaty(@pm1^.data)^ do begin
       emitmetavalue(typeval(value.typeid),constval(value.listid));
+     end;
+    end;
+    mdk_globvalue: begin
+     with pvaluemetaty(@pm1^.data)^ do begin
+      emitmetavalue(ptypeval(value.typeid),globval(value.listid));
      end;
     end;
     else begin

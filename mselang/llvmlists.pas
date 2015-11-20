@@ -550,7 +550,7 @@ type
  
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
-                   mdk_string,mdk_ident,mdk_constvalue,
+                   mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
                    mdk_difile,mdk_dibasictype,
                    mdk_diderivedtype,
                    {mdk_discope,}
@@ -604,6 +604,7 @@ type
    property emptynode: metavaluety read femptynode;
 
    function addconst(const constid: int32): metavaluety;
+   function addglobvalue(const globid: int32): metavaluety;
    
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
@@ -641,7 +642,7 @@ type
    function adddisubprogram(
           const ascope: metavaluety; const aname: identnamety;
           const afile: metavaluety; const aline: int32;
-          const afunction: metavaluety;
+          const afunction: int32; //global id
           const atype: metavaluety; const aflags: dwsubflagsty;
           const alocaltounit: boolean): metavaluety;
    function adddivariable(const aname: lstringty;
@@ -2029,6 +2030,15 @@ begin
  result.flags:= [mvf_meta];
 end;
 
+function tmetadatalist.addglobvalue(const globid: int32): metavaluety;
+begin
+ with pvaluemetaty(adddata(mdk_globvalue,
+                           sizeof(valuemetaty),result))^ do begin
+  value.listid:= globid;
+  value.typeid:= fgloblist.gettype(globid);;
+ end;
+end;
+
 function tmetadatalist.addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
 var
@@ -2158,13 +2168,20 @@ var testvar1: pdisubprogramty;
 function tmetadatalist.adddisubprogram(const ascope: metavaluety;
           const aname: identnamety;
           const afile: metavaluety; const aline: int32;
-          const afunction: metavaluety;
+          const afunction: int32;
           const atype: metavaluety; const aflags: dwsubflagsty;
           const alocaltounit: boolean): metavaluety;
 var
  m1: metavaluety;
+ m2: metavaluety;
 begin
  m1:= addident(aname);
+ if afunction >= 0 then begin
+  m2:= addglobvalue(afunction);
+ end
+ else begin
+  m2:= dummymeta;
+ end;
 // with pdisubprogramty(adddata(mdk_disubprogram,
 //                    sizeof(disubprogramty),result))^ do begin
 testvar1:= pdisubprogramty(adddata(mdk_disubprogram,
@@ -2173,7 +2190,7 @@ with testvar1^ do begin
   scope:= ascope;
   _file:= afile;
   line:= aline;
-  _function:= afunction;
+  _function:= m2;
   name:= m1;
   _type:= atype;
   flags:= aflags;
