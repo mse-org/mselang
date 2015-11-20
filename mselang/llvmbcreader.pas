@@ -178,6 +178,7 @@ type
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
+   procedure checkmaxdatalen(const arec: valuearty; const alen: integer);
 
    function finished: boolean;
    function tryfillbuffer(): boolean;
@@ -922,6 +923,15 @@ begin
  end;
 end;
 
+procedure tllvmbcreader.checkmaxdatalen(const arec: valuearty;
+               const alen: integer);
+begin
+ if high(arec) > alen then begin
+  error('Invalid record length '+inttostr(high(arec))+
+                                ', should be at most '+inttostr(alen));
+ end;
+end;
+
 procedure tllvmbcreader.output(const kind: outputkindty; const text: string);
 var
  str1: string;
@@ -1311,11 +1321,13 @@ var
   end;
  end;
   
- procedure outmetarecord(const atext: string; const offset: int32 = 0);
+ procedure outmetarecord(atext: string; const last: int32);
  begin
+  if last < high(rec1) then begin
+   atext:= atext+','+valuestring(copy(rec1,last+1,bigint));
+  end;
   output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': M'+
-                          inttostr(fmetalist.count-1+offset)+':= '+
-                          atext);
+                                     inttostr(fmetalist.count-1)+':= '+ atext);
  end; //outmetarecord
 
  function typevaluepair(const start: int32; const tryname: boolean): string;
@@ -1403,9 +1415,19 @@ var
   end;
  end; //distinct
  
+ function meta(const aname: string; const aindex: int32): string;
+ begin
+  result:= aname+':M'+inttostr(rec1[aindex]);
+ end;
+
  function metaornull(const aname: string; const aindex: int32): string;
  begin
-  result:= aname+':M'+inttostr(rec1[aindex]-1);
+  result:= aname+':M'+inttostr(int32(rec1[aindex])-1);
+ end;
+
+ function int(const aname: string; const aindex: int32): string;
+ begin
+  result:= aname+':'+inttostr(int32(rec1[aindex]));
  end;
 
  function tag(const aname: string; const aindex: int32): string;
@@ -1417,11 +1439,6 @@ var
    i1:= 1;
   end;
   result:= aname+':$'+hextostr(card32(rec1[aindex]),i1);
- end;
-
- function int(const aname: string; const aindex: int32): string;
- begin
-  result:= aname+':'+inttostr(rec1[aindex]);
  end;
    
 var
@@ -1445,7 +1462,7 @@ begin
     case metadatacodes(rec1[1]) of
      METADATA_STRING: begin
       fmetalist.add();
-      outmetarecord(quotestring(valueartostring(rec1,2),'"'));
+      outmetarecord(quotestring(valueartostring(rec1,2),'"'),bigint);
      end;
      METADATA_NAME: begin
       name1:= valueartostring(rec1,2);
@@ -1462,24 +1479,79 @@ begin
      end;
      METADATA_VALUE: begin
       fmetalist.add();
-      outmetarecord(typevaluepair(2,false));
+      outmetarecord(typevaluepair(2,false),3);
      end;
      METADATA_FILE: begin
       fmetalist.add();
       checkdatalen(rec1,4);
-      outmetarecord(distinct()+metaornull('filename',3)+','+
-                               metaornull('directory',4));
+      outmetarecord(distinct()+
+       metaornull('filename',3)+','+
+       metaornull('directory',4),4);
      end;
      METADATA_BASIC_TYPE: begin
       fmetalist.add();
       checkdatalen(rec1,7);
-      outmetarecord(distinct()+tag('tag',3)+','+metaornull('name',4)+','+
-                   int('size',5)+','+int('align',6)+','+tag('encoding',7));
+      outmetarecord(distinct()+
+        tag('tag',3)+','+
+        metaornull('name',4)+','+
+        int('size',5)+','+
+        int('align',6)+','+
+        tag('encoding',7),7);
+     end;
+     METADATA_SUBROUTINE_TYPE: begin
+      fmetalist.add();
+      checkdatalen(rec1,4);
+      outmetarecord(distinct()+
+        tag('flags',3)+','+
+        metaornull('typearray',4),4);
+     end;
+     METADATA_COMPILE_UNIT: begin
+      fmetalist.add();
+      checkmindatalen(rec1,14);
+//      checkmaxdatalen(rec1,15);
+      checkmaxdatalen(rec1,16);
+      str1:= distinct()+
+        tag('sourcelanguage',3)+','+
+        metaornull('file',4)+','+
+        metaornull('producer',5)+','+
+        int('isoptimized',6)+','+
+        metaornull('flags',7)+','+
+        int('runtimeversion',8)+','+
+        metaornull('splitdebugfilename',9)+','+
+        int('emissionkind',10)+','+
+        metaornull('enumtypes',11)+','+
+        metaornull('retainedtypes',12)+','+
+        metaornull('subprograms',13)+','+
+        metaornull('globalvariables',14)+','+
+        metaornull('importedidentities',15);
+      if high(rec1) = 16 then begin
+       str1:= str1+','+int('dwoid',16);
+       outmetarecord(str1,16);
+      end
+      else begin
+       outmetarecord(str1,15);
+      end;
+     end;
+     METADATA_GLOBAL_VAR: begin
+      fmetalist.add();
+      checkmindatalen(rec1,11);
+      str1:= distinct()+
+        metaornull('scope',3)+','+
+        metaornull('name',4)+','+
+        metaornull('linkagename',5)+','+
+        metaornull('file',6)+','+
+        int('line',7)+','+
+        metaornull('type',8)+','+
+        int('islocaltounit',9)+','+
+        int('isdefinition',10)+','+
+        metaornull('variable',11)+','+
+        metaornull('staticmemberdeclaration',12);
+      outmetarecord(str1,12);
      end;
      METADATA_NODE: begin
       fmetalist.add();
       if high(rec1) = 1 then begin //empty without number
-       outmetarecord('');
+       outmetarecord('',1);
       end
       else begin
        checkmindatalen(rec1,2);
@@ -1489,7 +1561,7 @@ begin
        else begin
         str1:= '';
        end;
-       outmetarecord(metastring(copy(rec1,2,high(rec1)-2))+str1);
+       outmetarecord(metastring(copy(rec1,2,high(rec1)-2))+str1,bigint);
       end;
      end;
      {
@@ -1508,7 +1580,7 @@ begin
 }
      else begin
       fmetalist.add();
-      outmetarecord(valuestring(copy(rec1,2,bigint)));
+      outmetarecord(valuestring(copy(rec1,2,bigint)),bigint);
  //     outmetarecord(typevaluepair(2,false));
      end;
     end;

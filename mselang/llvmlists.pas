@@ -455,11 +455,11 @@ type
 } 
  dicompileunitty = record
   difile: metavaluety;
-  sourcelanguage: metavaluety;
+  sourcelanguage: int32;
   producer: metavaluety;
   subprograms: metavaluety;
   globalvariables: metavaluety;
-  emissionkind: metavaluety;
+  emissionkind: debugemissionkind;
  end;
  pdicompileunitty = ^dicompileunitty;
  
@@ -470,26 +470,22 @@ type
   functionid: metavaluety;
   typeid: metavaluety;
   name: metavaluety;
-  flags: metavaluety;
+  flags: dwsubflagsty;
  end;
  pdisubprogramty = ^disubprogramty;
 
  disubroutinetypety = record
-//  difile: metavaluety;
-//  context: metavaluety;
   params: metavaluety;
  end;
  pdisubroutinetypety = ^disubroutinetypety;
 
  dibasictypety = record
-  difile: metavaluety;
-  context: metavaluety;
+  tag: int32;
   name: metavaluety;
-  linenumber: metavaluety;
-  sizeinbits: metavaluety;
-  aligninbits: metavaluety;
-  flags: metavaluety;
-  encoding: metavaluety;
+  sizeinbits: int32;
+  aligninbits: int32;
+  flags: int32;
+  encoding: int32;
  end;
  pdibasictypety = ^dibasictypety;
  
@@ -524,12 +520,14 @@ type
  pdivariablety = ^divariablety;
 
  diglobvariablety = record
-  name: metavaluety;             //4,9
-  difile: metavaluety;           //6
-  linenumber: metavaluety;       //7
-  ditype: metavaluety;           //8
-  global: int32;                 //11 global id
-         //todo: declaration-defintion, localtounit... flags
+  scope: metavaluety;
+  name: metavaluety;        
+  _file: metavaluety;       
+  line: int32;       
+  _type: metavaluety;
+  variable: metavaluety;
+  islocaltounit: boolean;
+         //todo: declaration-defintion... flags
  end;
  pdiglobvariablety = ^diglobvariablety;
   
@@ -620,9 +618,7 @@ type
    function addstring(const avalue: string): metavaluety;
    function adddifile(const afilename: filenamety): metavaluety;
 
-   function adddibasictype(const adifile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
-           const alinenumber: int32;
+   function adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
    function adddiderivedtype(const akind: diderivedtypekindty; 
@@ -2140,16 +2136,16 @@ begin
  with pdicompileunitty(adddata(mdk_dicompileunit,
                     sizeof(dicompileunitty),result))^ do begin
   difile:= afile;
-  sourcelanguage:= i32const(asourcelanguage);
+  sourcelanguage:= asourcelanguage;
   producer:= addstring(stringtolstring(aproducer));
   subprograms:= asubprograms;
   globalvariables:= aglobalvariables;
-  emissionkind:= i32const(ord(aemissionkind));
+  emissionkind:= aemissionkind;
   fcompileunit:= result;
   fcompilefile:= afile;
  end;
 end;
-
+var testvar1: pdisubprogramty;
 function tmetadatalist.adddisubprogram(const afile: metavaluety;
           const acontext: metavaluety; const aname: identnamety;
           const alinenumber: int32; const afunction: metavaluety;
@@ -2158,15 +2154,18 @@ var
  m1: metavaluety;
 begin
  m1:= addident(aname);
- with pdisubprogramty(adddata(mdk_disubprogram,
-                    sizeof(disubprogramty),result))^ do begin
+// with pdisubprogramty(adddata(mdk_disubprogram,
+//                    sizeof(disubprogramty),result))^ do begin
+testvar1:= pdisubprogramty(adddata(mdk_disubprogram,
+                    sizeof(disubprogramty),result));
+with testvar1^ do begin
   difile:= afile;
   context:= acontext;
   linenumber:= i32const(alinenumber+1);
   functionid:= afunction;
   name:= m1;
   typeid:= atype;
-  flags:= i32const(int32(aflags));
+  flags:= aflags;
  end;
  addmetaitem(info.s.unitinfo^.subprograms,result);
 end;
@@ -2232,24 +2231,20 @@ begin
  result.data:= pointer(fglobalvariables);
 end;
 }
-function tmetadatalist.adddibasictype(const adifile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
-           const alinenumber: int32;
+function tmetadatalist.adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
 var
  m1,m2: metavaluety;
 begin
+ m1:= addstring(aname);
  with pdibasictypety(adddata(mdk_dibasictype,
                     sizeof(dibasictypety),result))^ do begin
-  difile:= adifile;
-  context:= acontext;
-  name:= addstring(aname);
-  linenumber:= i32const(alinenumber);
-  sizeinbits:= i32const(asizeinbits);
-  aligninbits:= i32const(aaligninbits);
-  flags:= i32const(aflags);
-  encoding:= i32const(aencoding);
+  name:= m1;
+  sizeinbits:= asizeinbits;
+  aligninbits:= aaligninbits;
+  flags:= aflags;
+  encoding:= aencoding;
  end;
 end;
 
@@ -2325,10 +2320,8 @@ begin
    end
    else begin
     case po2^.h.kind of
-     dk_integer: begin                                            //context??
-      m1:= adddibasictype(file1,context1,
-                          //linenumber       alignment??    flags
-                      lstr1,0,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
+     dk_integer: begin
+      m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
      end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');
@@ -2353,7 +2346,7 @@ end;
 
 function tmetadatalist.adddivariable(const aname: lstringty;
                        const alinenumber: int32; const argnumber: int32;
-                                      const avariable: pvardataty): metavaluety;
+          const avariable: pvardataty): metavaluety;
 var
  m1,m2: metavaluety;
 begin
@@ -2362,11 +2355,13 @@ begin
  if af_segment in avariable^.address.flags then begin
   with pdiglobvariablety(adddata(mdk_diglobvariable,
                      sizeof(diglobvariablety),result))^ do begin
+   scope:= info.s.currentcompileunitmeta;
    name:= m1;
-   difile:= info.s.currentfilemeta;
-   linenumber:= i32const(alinenumber+1);
-   ditype:= m2;
-   global:= avariable^.address.segaddress.address;
+   _file:= info.s.currentfilemeta;
+   line:= alinenumber;
+   _type:= m2;
+   variable:= i32const(avariable^.address.segaddress.address);
+   islocaltounit:= us_implementation in info.s.unitinfo^.state;
   end;
   addmetaitem(info.s.unitinfo^.globalvariables,result);
  end

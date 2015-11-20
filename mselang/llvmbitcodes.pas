@@ -612,7 +612,29 @@ type
     METADATA_DERIVED_TYPE,//  = 17,  // [distinct, ...]
     METADATA_COMPOSITE_TYPE,//= 18,  // [distinct, ...]
     METADATA_SUBROUTINE_TYPE,//=19,  // [distinct, flags, types]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getFlags());
+  Record.push_back(VE.getMetadataOrNullID(N->getTypeArray().get()));
+}
     METADATA_COMPILE_UNIT,//  = 20,  // [distinct, ...]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getSourceLanguage());
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawProducer()));
+  Record.push_back(N->isOptimized());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawFlags()));
+  Record.push_back(N->getRuntimeVersion());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawSplitDebugFilename()));
+  Record.push_back(N->getEmissionKind());
+  Record.push_back(VE.getMetadataOrNullID(N->getEnumTypes().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRetainedTypes().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getSubprograms().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getGlobalVariables().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getImportedEntities().get()));
+  Record.push_back(N->getDWOId());
+  }
     METADATA_SUBPROGRAM,//    = 21,  // [distinct, ...]
     METADATA_LEXICAL_BLOCK,// = 22,  // [distinct, scope, file, line, column]
     METADATA_LEXICAL_BLOCK_FILE,//=23,//[distinct, scope, file, discriminator]
@@ -620,6 +642,19 @@ type
     METADATA_TEMPLATE_TYPE,// = 25,  // [distinct, scope, name, type, ...]
     METADATA_TEMPLATE_VALUE,//= 26,  // [distinct, scope, name, type, value, ...]
     METADATA_GLOBAL_VAR,//    = 27,  // [distinct, ...]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(VE.getMetadataOrNullID(N->getScope()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawLinkageName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(N->getLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getType()));
+  Record.push_back(N->isLocalToUnit());
+  Record.push_back(N->isDefinition());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawVariable()));
+  Record.push_back(VE.getMetadataOrNullID(N->getStaticDataMemberDeclaration()));
+}
     METADATA_LOCAL_VAR,//     = 28,  // [distinct, ...]
     METADATA_EXPRESSION,//    = 29,  // [distinct, n x element]
     METADATA_OBJC_PROPERTY,// = 30,  // [distinct, name, file, line, ...]
