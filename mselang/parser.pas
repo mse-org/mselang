@@ -602,7 +602,8 @@ begin
   with s.unitinfo^ do begin
    s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
-   setcurrentscope(compileunitmeta);
+//   setcurrentscope(filepathmeta);
+   setcurrentscope(dummymeta);
   end;
 
   s.pc:= contextstack[s.stackindex].context;
