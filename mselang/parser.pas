@@ -585,9 +585,9 @@ begin
   end;
 
   with s.unitinfo^ do begin
-   s.currentfilemeta:= debugfilemeta;
-   setcurrentscope(s.currentfilemeta);
+   s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
+   setcurrentscope(compileunitmeta);
   end;
 
   s.pc:= contextstack[s.stackindex].context;

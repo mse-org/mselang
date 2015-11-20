@@ -227,6 +227,7 @@ type
    procedure emitmetacompileunit(const avalue: dicompileunitty);
    procedure emitmetabasictype(const avalue: dibasictypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
+   procedure emitmetasubprogram(const avalue: disubprogramty);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
    procedure emitmetanode(const len: int32; const values: pmetavaluety;
                                                               const aid: int32);
@@ -814,6 +815,8 @@ begin
     end;
     mdk_disubprogram: begin
 testvar:= pdisubprogramty(@pm1^.data);
+     emitmetasubprogram(pdisubprogramty(@pm1^.data)^);
+ {
      with pdisubprogramty(@pm1^.data)^ do begin
       emitmetanode([metaDW_TAG_subprogram(*,
       //       context,name,displayname,linkagename,   linenumber,type,
@@ -825,6 +828,7 @@ testvar:= pdisubprogramty(@pm1^.data);
       //variablesnodes,scopelinenumber
         metanullnode,  linenumber*)],mdid1);
      end;
+}
     end;
     mdk_disubroutinetype: begin
      emitmetasubroutinetype(pdisubroutinetypety(@pm1^.data)^);
@@ -1975,6 +1979,32 @@ begin
    0,                                       //flags
    params.value.listid+1                    //typearray  
   ]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetasubprogram(const avalue: disubprogramty);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_SUBPROGRAM),[1, //distinct
+  scope.value.listid+1, //scope
+  name.value.listid+1,  //name
+  0, //linkagename
+  _file.value.listid+1, //file
+  line, //line
+  _type.value.listid+1, //type
+  ord(localtounit), //islocaltounit
+  1, //isdefinition
+  line, //scopeline
+  0, //containingtype
+  0, //virtuality
+  1, //virtualindex
+  int32(flags), //flags
+  0, //isoptimized
+  _function.value.listid+1, //function
+  0, //templateparams
+  0, //declaration
+  variables.value.listid+1
+ ]);
  end;
 end;
 

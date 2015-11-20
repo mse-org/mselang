@@ -253,11 +253,12 @@ begin
    m1.flags:= [mvf_globval,mvf_pointer];
    if do_proginfo in info.s.debugoptions then begin
     with info.s.unitinfo^ do begin
-     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(filepathmeta,
-           debugfilemeta,n1,
+     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
+           info.s.currentscopemeta,
+           n1,info.s.currentfilemeta,
            info.contextstack[info.s.stackindex].start.line+1,m1,
            llvmlists.metadatalist.adddisubroutinetype(nil{,
-                      filepathmeta,s.currentscopemeta}),[flagprototyped]);
+                      filepathmeta,s.currentscopemeta}),[flagprototyped],false);
      setcurrentscope(mainsubmeta);
     end;
    end;

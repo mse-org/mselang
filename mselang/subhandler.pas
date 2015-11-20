@@ -950,9 +950,10 @@ begin
     with info.s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
       setcurrentscope(llvmlists.metadatalist.adddisubprogram(
-           filepathmeta,debugfilemeta,getidentname2(po1^.header.name),
+           s.currentscopemeta,getidentname2(po1^.header.name),
+           s.currentfilemeta,
            info.contextstack[info.s.stackindex].start.line,dummymeta,
-           dummymeta,[flagprototyped]));
+           dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
      end;
     end;
    end;
@@ -1203,8 +1204,8 @@ begin
                                    po1{,filepathmeta,debugfilemeta});
     with pdisubprogramty(llvmlists.metadatalist.getdata(
                                                 s.currentscopemeta))^ do begin
-     functionid:= m1;
-     typeid:= m2;
+     _function:= m1;
+     _type:= m2;
     end;
    end;
    setcurrentscope(d.subdef.scopemetabefore);

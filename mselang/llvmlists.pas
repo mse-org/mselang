@@ -464,13 +464,15 @@ type
  pdicompileunitty = ^dicompileunitty;
  
  disubprogramty = record
-  difile: metavaluety;
-  context: metavaluety;
-  linenumber: metavaluety;
-  functionid: metavaluety;
-  typeid: metavaluety;
+  scope: metavaluety;
+  _file: metavaluety;
+  line: int32;
+  _function: metavaluety;
+  _type: metavaluety;
+  localtounit: boolean;
   name: metavaluety;
   flags: dwsubflagsty;
+  variables: metavaluety;
  end;
  pdisubprogramty = ^disubprogramty;
 
@@ -640,10 +642,12 @@ type
    function adddisubroutinetype(const asub: psubdataty{;
                      const afile: metavaluety;
                                  const acontext: metavaluety}): metavaluety;
-   function adddisubprogram(const afile: metavaluety;
-           const acontext: metavaluety; const aname: identnamety;
-           const alinenumber: int32; const afunction: metavaluety;
-           const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
+   function adddisubprogram(
+          const ascope: metavaluety; const aname: identnamety;
+          const afile: metavaluety; const aline: int32;
+          const afunction: metavaluety;
+          const atype: metavaluety; const aflags: dwsubflagsty;
+          const alocaltounit: boolean): metavaluety;
    function adddivariable(const aname: lstringty;
            const alinenumber: int32; const argnumber: int32;
                                  const avariable: pvardataty): metavaluety;
@@ -2146,10 +2150,12 @@ begin
  end;
 end;
 var testvar1: pdisubprogramty;
-function tmetadatalist.adddisubprogram(const afile: metavaluety;
-          const acontext: metavaluety; const aname: identnamety;
-          const alinenumber: int32; const afunction: metavaluety;
-          const atype: metavaluety; const aflags: dwsubflagsty): metavaluety;
+function tmetadatalist.adddisubprogram(const ascope: metavaluety;
+          const aname: identnamety;
+          const afile: metavaluety; const aline: int32;
+          const afunction: metavaluety;
+          const atype: metavaluety; const aflags: dwsubflagsty;
+          const alocaltounit: boolean): metavaluety;
 var
  m1: metavaluety;
 begin
@@ -2159,13 +2165,14 @@ begin
 testvar1:= pdisubprogramty(adddata(mdk_disubprogram,
                     sizeof(disubprogramty),result));
 with testvar1^ do begin
-  difile:= afile;
-  context:= acontext;
-  linenumber:= i32const(alinenumber+1);
-  functionid:= afunction;
+  scope:= ascope;
+  _file:= afile;
+  line:= aline;
+  _function:= afunction;
   name:= m1;
-  typeid:= atype;
+  _type:= atype;
   flags:= aflags;
+  localtounit:= alocaltounit;
  end;
  addmetaitem(info.s.unitinfo^.subprograms,result);
 end;

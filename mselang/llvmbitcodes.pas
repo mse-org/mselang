@@ -636,7 +636,28 @@ type
   Record.push_back(N->getDWOId());
   }
     METADATA_SUBPROGRAM,//    = 21,  // [distinct, ...]
-    METADATA_LEXICAL_BLOCK,// = 22,  // [distinct, scope, file, line, column]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(VE.getMetadataOrNullID(N->getScope()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawLinkageName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(N->getLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getType()));
+  Record.push_back(N->isLocalToUnit());
+  Record.push_back(N->isDefinition());
+  Record.push_back(N->getScopeLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getContainingType()));
+  Record.push_back(N->getVirtuality());
+  Record.push_back(N->getVirtualIndex());
+  Record.push_back(N->getFlags());
+  Record.push_back(N->isOptimized());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawFunction()));
+  Record.push_back(VE.getMetadataOrNullID(N->getTemplateParams().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getDeclaration()));
+  Record.push_back(VE.getMetadataOrNullID(N->getVariables().get()));
+}
+   METADATA_LEXICAL_BLOCK,// = 22,  // [distinct, scope, file, line, column]
     METADATA_LEXICAL_BLOCK_FILE,//=23,//[distinct, scope, file, discriminator]
     METADATA_NAMESPACE,//     = 24,  // [distinct, scope, file, name, line]
     METADATA_TEMPLATE_TYPE,// = 25,  // [distinct, scope, name, type, ...]

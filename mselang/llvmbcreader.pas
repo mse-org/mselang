@@ -1434,10 +1434,7 @@ var
  var
   i1: int32;
  begin
-  i1:= (highestbit(rec1[aindex])+3) div 4;
-  if i1 = 0 then begin
-   i1:= 1;
-  end;
+  i1:= (highestbit(rec1[aindex])+4) div 4;
   result:= aname+':$'+hextostr(card32(rec1[aindex]),i1);
  end;
    
@@ -1504,6 +1501,29 @@ begin
       outmetarecord(distinct()+
         tag('flags',3)+','+
         metaornull('typearray',4),4);
+     end;
+     METADATA_SUBPROGRAM: begin
+      fmetalist.add();
+      checkdatalen(rec1,20);
+      outmetarecord(distinct()+
+        metaornull('scope',3)+','+
+        metaornull('name',4)+','+
+        metaornull('linkagename',5)+','+
+        metaornull('file',6)+','+
+        int('line',7)+','+
+        metaornull('type',8)+','+
+        int('islocaltounit',9)+','+
+        int('isdefinition',10)+','+
+        int('scopeline',11)+','+
+        metaornull('containingtype',12)+','+
+        tag('virtuality',13)+','+
+        int('virtualindex',14)+','+
+        tag('flags',15)+','+
+        int('isoptimized',16)+','+
+        metaornull('function',17)+','+
+        metaornull('templateparams',18)+','+
+        metaornull('declaration',19)+','+
+        metaornull('variables',20)+',',20);
      end;
      METADATA_COMPILE_UNIT: begin
       fmetalist.add();
