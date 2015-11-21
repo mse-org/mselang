@@ -1929,22 +1929,22 @@ begin
   fnullintconst.value.typeid:= ord(das_8);
   fnullintconst.value.listid:= ord(nc_i8);
   fnullintconst.flags:= [];
-  femptystringconst:= addstring('');
-//  fwdstringconst:= addstring('./');
- {
-  with pstringmetaty(
-           adddata(mdk_string,sizeof(stringmetaty)+0,
-                                            femptystringconst))^ do begin
-   len:= 0;
-  end;
- }
-  femptynode:= addnode([]);
-  ftypemetalist.clear();
-  fconstmetalist.clear();
-  fsysfile:= adddifile('system');
-  fsyscontext:= fsysfile;
-  fsysname:= addstring('system');
   if info.debugoptions <> [] then begin
+   femptystringconst:= addstring('');
+ //  fwdstringconst:= addstring('./');
+  {
+   with pstringmetaty(
+            adddata(mdk_string,sizeof(stringmetaty)+0,
+                                             femptystringconst))^ do begin
+    len:= 0;
+   end;
+  }
+   femptynode:= addnode([]);
+   ftypemetalist.clear();
+   fconstmetalist.clear();
+   fsysfile:= adddifile('system');
+   fsyscontext:= fsysfile;
+   fsysname:= addstring('system');
    fdbgdeclare:= fgloblist.addexternalsubvalue(
             [ftypelist.metadata,ftypelist.metadata],
                                             getidentname('llvm.dbg.declare'));

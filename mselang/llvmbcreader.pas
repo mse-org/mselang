@@ -99,6 +99,7 @@ type
      );
    );
    gk_var: (
+    explicittype: boolean;
    );
    gk_sub: (
     subheaderindex: int32;    
@@ -118,6 +119,7 @@ type
    procedure checkvalidindex(const aindex: int32);
    function constname(const aid: int32): string;
    function typeid(const aindex: int32): int32;
+   function typeid(const aindex: int32; out aexplicittype: boolean): int32;
    function item(const aindex: int32): pglobinfoty;
  end;
 {
@@ -782,12 +784,24 @@ begin
  end;
 end;
 
-function tgloblist.typeid(const aindex: int32): int32;
+function tgloblist.typeid(const aindex: int32;
+               out aexplicittype: boolean): int32;
 begin
  checkvalidindex(aindex);
+ aexplicittype:= false;
  with pglobinfoty(fdata)[aindex] do begin
   result:= valuetype;
+  if kind = gk_var then begin
+   aexplicittype:= explicittype;
+  end;
  end;
+end;
+
+function tgloblist.typeid(const aindex: int32): int32;
+var
+ bo1: boolean;
+begin
+ result:= typeid(aindex,bo1);
 end;
 
 procedure tgloblist.checkvalidindex(const aindex: int32);
@@ -1086,10 +1100,15 @@ begin
    else begin
     case modulecodes(rec1[1]) of
      MODULE_CODE_GLOBALVAR: begin
+     //    2            3         4
+     //[pointer type, isconst, initid,
+     //   5         6         7         8              9
+     //linkage, alignment, section, visibility, threadlocal]
       checkmindatalen(rec1,5);
       with pglobinfoty(fgloblist.add())^ do begin
        kind:= gk_var;
        valuetype:= rec1[2];
+       explicittype:= rec1[3] and $2 <> 0;
        if rec1[4] = 0 then begin
         str1:= 'ext';
        end
@@ -1674,7 +1693,7 @@ procedure tllvmbcreader.readfunctionblock();
 var
  rec1: valuearty;
  conststart: int32;
- ssatypes: integerarty;
+ ssatypes: integerarty; //negative values -> pointer
  currentconstlist: tgloblist;
  bbcount: int32;
 
@@ -1702,8 +1721,9 @@ var
   result:= fssaindex+fssastart-avalue;
  end; //absvalue
  
- function typeid(avalue: int32): int32;
+ function typeid(avalue: int32; out explicittype: boolean): int32;
  begin
+  explicittype:= false;
   avalue:= fssaindex-avalue;
   if avalue < 0 then begin
    avalue:= avalue+fssastart;
@@ -1711,7 +1731,7 @@ var
     result:= currentconstlist.typeid(avalue-conststart);
    end
    else begin
-    result:= fgloblist.typeid(avalue);
+    result:= fgloblist.typeid(avalue,explicittype);
    end;
   end
   else begin
@@ -1725,6 +1745,28 @@ var
   end;
  end; //typeid
 
+ function typeid(avalue: int32): int32;
+ var
+  bo1: boolean;
+ begin
+  result:= typeid(avalue,bo1);
+ end;
+
+ function pointerbasetypeid(const avalue: int32): int32;
+ var
+  bo1: boolean;
+ begin
+  result:= typeid(avalue,bo1);
+  if not bo1 then begin
+   if result < 0 then begin
+    result:= -result;
+   end
+   else begin
+    result:= ftypelist.parenttypeindex(result);
+   end;
+  end;
+ end;
+ 
  function opname(avalue: int32; const typeindex: int32 = -1): string;
  var
   list1: tgloblist;
@@ -1797,6 +1839,7 @@ var
  end; //destname
 
  function checktypeids(const a: int32; const b: int32): boolean;
+                //negative values -> pointer
  begin
   result:= (a = b) or 
                      (a = maxint) or (b = maxint); //unknown because of forward
@@ -1994,7 +2037,7 @@ begin
       end;
       FUNC_CODE_INST_STORE: begin  //  2  3     4      5
        checkdatalen(rec1,5);       //[ptr,val, align, vol]
-       i1:= typeid(rec1[2]); //dest
+       i1:= pointerbasetypeid(rec1[2]); //dest
        i2:= typeid(rec1[3]); //source
        str1:= functioncodesnames[functioncodes(rec1[1])]+
                ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
@@ -2017,8 +2060,8 @@ begin
       end;
       FUNC_CODE_INST_LOAD: begin
        checkmindatalen(rec1,2);
-       outssarecord(ftypelist.parenttypeindex(typeid(rec1[2])),
-                            opname(rec1[2])+'^');
+//       outssarecord(ftypelist.parenttypeindex(typeid(rec1[2])),
+       outssarecord(pointerbasetypeid(rec1[2]),opname(rec1[2])+'^');
       end;
       FUNC_CODE_INST_ALLOCA: begin
        outssarecord(rec1[2],'@');
