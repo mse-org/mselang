@@ -1195,11 +1195,12 @@ begin
   end;
   s.ssa:= d.subdef.ssabefore;
   if do_proginfo in s.debugoptions then begin
-   m1.flags:= [mvf_globval,mvf_pointer];
-   m1.value.listid:= po1^.globid;
-   m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
-                                           gettype(m1.value.listid);
+//   m1.flags:= [mvf_globval,mvf_pointer];
+//   m1.value.listid:= po1^.globid;
+//   m1.value.typeid:= s.unitinfo^.llvmlists.globlist.
+//                                           gettype(m1.value.listid);
    with info.s.unitinfo^ do begin
+    m1:= llvmlists.metadatalist.addglobvalue(po1^.globid);
     m2:= llvmlists.metadatalist.adddisubroutinetype(
                                    po1{,filepathmeta,debugfilemeta});
     with pdisubprogramty(llvmlists.metadatalist.getdata(

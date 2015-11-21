@@ -1476,6 +1476,9 @@ var
   i1: int32;
  begin
   i1:= (highestbit(rec1[aindex])+4) div 4;
+  if i1 = 0 then begin
+   i1:= 1;
+  end;
   result:= aname+':$'+hextostr(card32(rec1[aindex]),i1);
  end;
    
@@ -2043,17 +2046,6 @@ begin
                ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
                                                  ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
-       { todo
-       if i2 < 0 then begin
-        bo1:= ftypelist.parenttypeindex(ftypelist.parenttypeindex(i1)) <> -i2;
-       end
-       else begin
-        bo1:= ftypelist.parenttypeindex(i1) <> i2;
-       end;
-       if bo1 then begin
-        error('Invalid pointer type');
-       end;
-       }
        if (i1 <> i2) then begin
         error('Invalid type');
        end;

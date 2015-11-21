@@ -1380,22 +1380,35 @@ begin
 // inc(fsubopstart);
 end;
 
+{$define explicitvartype}
+
+const
+{$ifdef explicitvartype}
+ explicitvartype = 2;
+{$else}
+ explicitvartype = 0;
+{$endif}
+
 procedure tllvmbcwriter.emitvar(const atype: int32; const alinkage: linkagety);
 begin           //no init -> external
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,0,ord(alinkage),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[
+ {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
+                                    explicitvartype,0,ord(alinkage),0,0]);
 end;
 
 procedure tllvmbcwriter.emitvar(const atype: int32; const ainitconst: int32;
                                                     const alinkage: linkagety);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),0,
-                     ainitconst+1+fconststart,ord(alinkage),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[
+ {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
+             explicitvartype,ainitconst+1+fconststart,ord(alinkage),0,0]);
 end;
 
 procedure tllvmbcwriter.emitconst(const atype: int32; const ainitconst: int32);
 begin
- emitrec(ord(MODULE_CODE_GLOBALVAR),[ptypeindex(atype),1,
-                        ainitconst+1+fconststart,ord(li_internal),0,0]);
+ emitrec(ord(MODULE_CODE_GLOBALVAR),[
+ {$ifdef explicitvartype}typeindex{$else}ptypeindex{$endif}(atype),
+          1 or explicitvartype,ainitconst+1+fconststart,ord(li_internal),0,0]);
 end;
 
 procedure tllvmbcwriter.emitalloca(const atype: int32);

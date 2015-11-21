@@ -144,7 +144,8 @@ type
     // GLOBALVAR: [pointer type, isconst, initid,
     //             linkage, alignment, section, visibility, threadlocal]
     MODULE_CODE_GLOBALVAR,//   = 7,
-
+                   //mse: bit 2 of isconst is explicitType flag -> 
+                   //      type is base type
     // FUNCTION:  [type, callingconv, isproto, linkage, paramattrs, alignment,
     //             section, visibility, gc, unnamed_addr]
                                       //mse: there are more items

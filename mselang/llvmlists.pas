@@ -2164,7 +2164,7 @@ begin
   fcompilefile:= afile;
  end;
 end;
-var testvar1: pdisubprogramty;
+
 function tmetadatalist.adddisubprogram(const ascope: metavaluety;
           const aname: identnamety;
           const afile: metavaluety; const aline: int32;
@@ -2182,11 +2182,8 @@ begin
  else begin
   m2:= dummymeta;
  end;
-// with pdisubprogramty(adddata(mdk_disubprogram,
-//                    sizeof(disubprogramty),result))^ do begin
-testvar1:= pdisubprogramty(adddata(mdk_disubprogram,
-                    sizeof(disubprogramty),result));
-with testvar1^ do begin
+ with pdisubprogramty(adddata(mdk_disubprogram,
+                    sizeof(disubprogramty),result))^ do begin
   scope:= ascope;
   _file:= afile;
   line:= aline;
@@ -2377,11 +2374,12 @@ function tmetadatalist.adddivariable(const aname: lstringty;
                        const alinenumber: int32; const argnumber: int32;
           const avariable: pvardataty): metavaluety;
 var
- m1,m2: metavaluety;
+ m1,m2,m3,m4: metavaluety;
 begin
  m1:= addstring(aname);
  m2:= addtype(avariable);
  if af_segment in avariable^.address.flags then begin
+  m3:= addglobvalue(avariable^.address.segaddress.address);
   with pdiglobvariablety(adddata(mdk_diglobvariable,
                      sizeof(diglobvariablety),result))^ do begin
    scope:= info.s.currentcompileunitmeta;
@@ -2389,12 +2387,19 @@ begin
    _file:= info.s.currentfilemeta;
    line:= alinenumber;
    _type:= m2;
-   variable:= i32const(avariable^.address.segaddress.address);
+   variable:= m3;
    islocaltounit:= us_implementation in info.s.unitinfo^.state;
   end;
   addmetaitem(info.s.unitinfo^.globalvariables,result);
  end
  else begin
+  m3:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+  if af_paramindirect in avariable^.address.flags then begin
+   m4:= i32const(int32([flagindirectvariable]));
+  end
+  else begin
+   m4:= nullintconst;
+  end;
   with pdivariablety(adddata(mdk_divariable,
                      sizeof(divariablety),result))^ do begin
    kind:= divk_autovariable;
@@ -2404,14 +2409,9 @@ begin
    context:= info.s.currentscopemeta;
    name:= m1;
    difile:= info.s.currentfilemeta;
-   lineandargnumber:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
+   lineandargnumber:= m3;
    ditype:= m2;
-   if af_paramindirect in avariable^.address.flags then begin
-    flags:= i32const(int32([flagindirectvariable]));
-   end
-   else begin
-    flags:= nullintconst;
-   end;
+   flags:= m4;
   end;
  end;
 end;
