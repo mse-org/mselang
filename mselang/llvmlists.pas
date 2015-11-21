@@ -2221,7 +2221,7 @@ begin
    po1:= @asub^.paramsrel;
    po2:= @params1;
    if not (sf_function in asub^.flags) then begin //todo: handle result deref
-    po2^:= fvoidconst;
+    po2^:= dummymeta;
     inc(po2);
    end;
    pe:= po2 + parcount1;

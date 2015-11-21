@@ -2022,11 +2022,11 @@ begin
  pe:= po1+len;
  while po1 < pe do begin
   with po1^ do begin
-  {$ifdef mse_checkinternalerror}
-   if mvf_dummy in flags then begin
-    internalerror(ie_llvm,'20150520A');
-   end;
-  {$endif}
+//  {$ifdef mse_checkinternalerror}
+//   if mvf_dummy in flags then begin
+//    internalerror(ie_llvm,'20150520A');
+//   end;
+//  {$endif}
    emitvbr6(value.listid+1);
   end;
   inc(po1);
