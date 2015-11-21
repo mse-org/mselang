@@ -147,6 +147,7 @@ type
 
     // FUNCTION:  [type, callingconv, isproto, linkage, paramattrs, alignment,
     //             section, visibility, gc, unnamed_addr]
+                                      //mse: there are more items
     MODULE_CODE_FUNCTION,//    = 8,
 
     // ALIAS: [alias type, aliasee val#, linkage, visibility]
@@ -348,7 +349,7 @@ type
                                  //mse: BINOP:      [opval, opval, opcode]
     FUNC_CODE_INST_CAST,//        =  3, // CAST:       [opcode, ty, opty, opval]
                                  //mse: CAST:       [opval, destty, castopcode]
-    FUNC_CODE_INST_GEP,//         =  4, // GEP:        [n x operands]
+    FUNC_CODE_INST_GEP_OLD,//         =  4, // GEP:        [n x operands]
     FUNC_CODE_INST_SELECT,//      =  5, // SELECT:     [ty, opval, opval, opval]
     FUNC_CODE_INST_EXTRACTELT,//  =  6, // EXTRACTELT: [opty, opval, opval]
     FUNC_CODE_INST_INSERTELT,//   =  7, // INSERTELT:  [ty, opval, opval, opval]
@@ -386,7 +387,7 @@ type
     // This store code encodes the pointer type, rather than the value type
     // this is so information only available in the pointer type (e.g. address
     // spaces) is retained.
-    FUNC_CODE_INST_STORE,//       = 24, // STORE:      [ptrty,ptr,val, align, vol]
+    FUNC_CODE_INST_STORE_OLD,//   = 24, // STORE:      [ptrty,ptr,val, align, vol]
                                  //mse: STORE:      [ptr,val, align, vol]
     FUNC_CODE_25,
     // 25 is unused.
@@ -398,7 +399,7 @@ type
                                  //mse: CMP2:       [opval, opval, pred]
     // new select on i1 or [N x i1]
     FUNC_CODE_INST_VSELECT,//     = 29, // VSELECT:    [ty,opval,opval,predty,pred]
-    FUNC_CODE_INST_INBOUNDS_GEP,//= 30, // INBOUNDS_GEP: [n x operands]
+    FUNC_CODE_INST_INBOUNDS_GEP_OLD,//= 30, // INBOUNDS_GEP: [n x operands]
     FUNC_CODE_INST_INDIRECTBR,//  = 31, // INDIRECTBR: [opty, op0, op1, ...]
     FUNC_CODE_32,
     // 32 is unused.
@@ -409,26 +410,37 @@ type
     FUNC_CODE_DEBUG_LOC,//        = 35, // DEBUG_LOC:  [Line,Col,ScopeVal, IAVal]
         //mse: [Line,Col,Scope metadata id+1, inline metadata id+1]
     FUNC_CODE_INST_FENCE,//       = 36, // FENCE: [ordering, synchscope]
-    FUNC_CODE_INST_CMPXCHG,//     = 37, 
+    FUNC_CODE_INST_CMPXCHG_OLD,//     = 37, 
                            // CMPXCHG: [ptrty,ptr,cmp,new, align, vol,
                                      //           ordering, synchscope]
     FUNC_CODE_INST_ATOMICRMW,//   = 38, // ATOMICRMW: [ptrty,ptr,val, operation,
                                      //             align, vol,
                                      //             ordering, synchscope]
     FUNC_CODE_INST_RESUME,//      = 39, // RESUME:     [opval]
-    FUNC_CODE_INST_LANDINGPAD,//  = 40, 
+    FUNC_CODE_INST_LANDINGPAD_OLD,//  = 40, 
      // LANDINGPAD: [ty,val,val,num,id0,val0...]
      //mse: LANDINGPAD: 
      //         [resultty,PersFn,IsCleanup,NumClauses,
      //                   {lpc_catch,GlobVal|lpc_filter,GlobArray}]
     FUNC_CODE_INST_LOADATOMIC,//  = 41, // LOAD: [opty, op, align, vol,
                                      //        ordering, synchscope]
-    FUNC_CODE_INST_STOREATOMIC// = 42  // STORE: [ptrty,ptr,val, align, vol
+    FUNC_CODE_INST_STOREATOMIC_OLD,// = 42  // STORE: [ptrty,ptr,val, align, vol
                                      //         ordering, synchscope]
+    FUNC_CODE_INST_GEP,//         = 43, // GEP:  [inbounds, n x operands]
+    FUNC_CODE_INST_STORE,//       = 44, 
+                            // STORE: [ptrty,ptr,valty,val, align, vol]
+                       //mse:  STORE: [ptr,val, align, vol]
+    FUNC_CODE_INST_STOREATOMIC,// = 45, // STORE: [ptrty,ptr,val, align, vol
+    FUNC_CODE_INST_CMPXCHG,//     = 46, 
+                            // CMPXCHG: [ptrty,ptr,valty,cmp,new, align,
+                                     //           vol,ordering,synchscope]
+    FUNC_CODE_INST_LANDINGPAD  = 47 // LANDINGPAD: [ty,val,num,id0,val0...]
   );
 
   UseListCodes = (
-    USELIST_CODE_ENTRY = 1   // USELIST_CODE_ENTRY: TBD.
+    USELIST_CODE_0,
+    USELIST_CODE_DEFAULT,// = 1, // DEFAULT: [index..., value-id]
+    USELIST_CODE_BB//      = 2  // BB: [index..., bb-id]
   );
 
 

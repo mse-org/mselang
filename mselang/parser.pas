@@ -602,8 +602,12 @@ begin
   with s.unitinfo^ do begin
    s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
-   setcurrentscope(filepathmeta);
-//   setcurrentscope(dummymeta);
+   if do_proginfo in info.debugoptions then begin
+    setcurrentscope(filepathmeta);
+   end
+   else begin
+    setcurrentscope(dummymeta);
+   end;
   end;
 
   s.pc:= contextstack[s.stackindex].context;

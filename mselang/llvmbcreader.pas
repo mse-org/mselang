@@ -213,6 +213,7 @@ type
    procedure readparamattr(const akind: blockids);
    procedure readparamattrblock();
    procedure readparamattrgroupblock();
+   procedure readuselistblock();
    procedure skip(const words: int32);
   public
    constructor create(ahandle: integer); override;
@@ -322,6 +323,12 @@ const
   'PARAMATTR_GRP_CODE_ENTRY'
  );
 
+ uselistcodesnames: array[uselistcodes] of string = (
+  '', 
+  'USELIST_CODE_DEFAULT',
+  'USELIST_CODE_BB'
+ );
+
  metadatacodesnames: array[metadatacodes] of string = (
   '',
     'METADATA_STRING',
@@ -359,49 +366,54 @@ const
    );
   
  functioncodesnames: array[functioncodes] of string = (
-  '',
-  'DECLAREBLOCKS',
-  'BINOP',
-  'CAST',
-  'GEP',
-  'SELECT',
-  'EXTRACTELT',
-  'INSERTELT',
-  'SHUFFLEVEC',
-  'CMP',
-  'RET',
-  'BR',
-  'SWITCH',
-  'INVOKE',
-  '',
-  'UNREACHABLE',
-  'PHI',
-  '',
-  '',
-  'ALLOCA',
-  'LOAD',
-  '',
-  '',
-  'VAARG',
-  'STORE',
-  '',
-  'EXTRACTVAL',
-  'INSERTVAL',
-  'CMP2',
-  'VSELECT',
-  'INBOUNDS_GEP',
-  'INDIRECTBR',
-  '',
-  'DEBUG_LOC_AGAIN',
-  'CALL',
-  'DEBUG_LOC',
-  'FENCE',
-  'CMPXCHG',
-  'ATOMICRMW',
-  'RESUME',
-  'LANDINGPAD',
-  'LOADATOMIC',
-  'STOREATOMIC'
+  '',                            //0
+  'DECLAREBLOCKS',               //1
+  'BINOP',                       //2
+  'CAST',                        //3
+  'GEP_OLD',                         //4
+  'SELECT',                      //5
+  'EXTRACTELT',                  //6
+  'INSERTELT',                   //7
+  'SHUFFLEVEC',                  //8
+  'CMP',                         //9
+  'RET',                         //10
+  'BR',                          //11
+  'SWITCH',                      //12
+  'INVOKE',                      //13
+  '',                            //14
+  'UNREACHABLE',                 //15
+  'PHI',                         //16
+  '',                            //17
+  '',                            //18
+  'ALLOCA',                      //19
+  'LOAD',                        //20
+  '',                            //21
+  '',                            //22
+  'VAARG',                       //23
+  'STORE_OLD',                       //24
+  '',                            //25
+  'EXTRACTVAL',                  //26
+  'INSERTVAL',                   //27
+  'CMP2',                        //28
+  'VSELECT',                     //29
+  'INBOUNDS_GEP_OLD',                //30
+  'INDIRECTBR',                  //31
+  '',                            //32
+  'DEBUG_LOC_AGAIN',             //33
+  'CALL',                        //34
+  'DEBUG_LOC',                   //35
+  'FENCE',                       //36
+  'CMPXCHG_OLD',                     //37
+  'ATOMICRMW',                   //38
+  'RESUME',                      //39
+  'LANDINGPAD_OLD',                  //40
+  'LOADATOMIC',                  //41
+  'STOREATOMIC_OLD',                 //42
+  'GEP',                         //43
+  'STORE',                       //44
+  'STOREATOMIC',                 //45,
+  'INST_CMPXCHG,',               //46
+  'LANDINGPAD'                   //47
  );
 
  binaryopcodesnames: array[binaryopcodes] of string = (
@@ -464,9 +476,6 @@ const
   'ICMP_SLT',
   'ICMP_SLE'
  );
-
-
-
 
  castopcodesnames: array[castopcodes] of string = (
   'TRUNC',
@@ -1960,7 +1969,7 @@ begin
        str1:= str1+']';
        outssarecord(i2,str1);
       end;
-      FUNC_CODE_INST_STORE: begin
+      FUNC_CODE_INST_STORE_OLD: begin
        checkmindatalen(rec1,3);
        i1:= typeid(rec1[2]); //dest
        i2:= typeid(rec1[3]); //source
@@ -1981,6 +1990,29 @@ begin
        end;
        if bo1 then begin
         error('Invalid pointer type');
+       end;
+      end;
+      FUNC_CODE_INST_STORE: begin  //  2  3     4      5
+       checkdatalen(rec1,5);       //[ptr,val, align, vol]
+       i1:= typeid(rec1[2]); //dest
+       i2:= typeid(rec1[3]); //source
+       str1:= functioncodesnames[functioncodes(rec1[1])]+
+               ': '+opname(rec1[2])+'^:= '+opname(rec1[3])+': '+
+                                                 ftypelist.typename(i2);
+       outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
+       { todo
+       if i2 < 0 then begin
+        bo1:= ftypelist.parenttypeindex(ftypelist.parenttypeindex(i1)) <> -i2;
+       end
+       else begin
+        bo1:= ftypelist.parenttypeindex(i1) <> i2;
+       end;
+       if bo1 then begin
+        error('Invalid pointer type');
+       end;
+       }
+       if (i1 <> i2) then begin
+        error('Invalid type');
        end;
       end;
       FUNC_CODE_INST_LOAD: begin
@@ -2159,6 +2191,35 @@ begin
  readparamattr(PARAMATTR_GROUP_BLOCK_ID);
 end;
 
+procedure tllvmbcreader.readuselistblock();
+var
+ blocklevelbefore: int32;
+ rec1: valuearty;
+begin
+ output(ok_begin,blockidnames[USELIST_BLOCK_ID]);
+ blocklevelbefore:= fblocklevel;
+ while not finished and (fblocklevel >= blocklevelbefore) do begin
+  rec1:= readitem();
+  if rec1 <> nil then begin
+   if (rec1[1] > ord(high(uselistcodesnames))) or 
+    (uselistcodesnames[uselistcodes(rec1[1])] = '') then begin
+    unknownrec(rec1);
+   end
+   else begin
+    case uselistcodes(rec1[1]) of
+     USELIST_CODE_DEFAULT,USELIST_CODE_BB: begin
+      outrecord(uselistcodesnames[uselistcodes(rec1[1])],
+                            dynarraytovararray(copy(rec1,2,bigint)));
+     end
+     else begin
+      unknownrec(rec1);
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure tllvmbcreader.readblockinfoblock();
 var
  blocklevelbefore: int32;
@@ -2245,6 +2306,9 @@ begin
    end;   
    PARAMATTR_GROUP_BLOCK_ID: begin
     readparamattrgroupblock();
+   end;
+   USELIST_BLOCK_ID: begin
+    readuselistblock();
    end;
    else begin
     unknownblock();
