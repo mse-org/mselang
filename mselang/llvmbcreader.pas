@@ -571,6 +571,21 @@ begin
  end;
 end;
 
+function metaornullartostring(const avalues: valuearty;
+                                                const start: int32): string;
+var
+ i1: int32;
+begin
+ result:= '';
+ if start <= high(avalues) then begin
+  for i1:= start to high(avalues) do begin
+   result:= result+'M'+inttostr(avalues[i1]-1)+',';
+  end;
+  setlength(result,length(result)-1);
+ end;
+end;
+  
+
 procedure decodesigned1(var value: valuety);
 begin
  if odd(value) then begin
@@ -1327,26 +1342,13 @@ begin
  end;
  result:= result + inttostr(i1);
 end;
-var testvar: ptypeinfoty;
+
 procedure tllvmbcreader.readmetadatablock();
 
 var
  rec1: valuearty;
 
- function valuestring(const avalues: valuearty): string;
- var
-  i1: int32;
- begin
-  result:= '';
-  if avalues <> nil then begin
-   for i1:= 0 to high(avalues) do begin
-    result:= result+inttostr(avalues[i1])+',';
-   end;
-   setlength(result,length(result)-1);
-  end;
- end;
-
- function metastring(const avalues: valuearty): string;
+function metastring(const avalues: valuearty): string;
  var
   i1: int32;
  begin
@@ -1359,23 +1361,10 @@ var
   end;
  end;
 
- function metaornullstring(const avalues: valuearty): string;
- var
-  i1: int32;
- begin
-  result:= '';
-  if avalues <> nil then begin
-   for i1:= 0 to high(avalues) do begin
-    result:= result+'M'+inttostr(avalues[i1]-1)+',';
-   end;
-   setlength(result,length(result)-1);
-  end;
- end;
-  
  procedure outmetarecord(atext: string; const last: int32);
  begin
   if last < high(rec1) then begin
-   atext:= atext+','+valuestring(copy(rec1,last+1,bigint));
+   atext:= atext+','+intvalueartostring(copy(rec1,last+1,bigint),0);
   end;
   output(ok_beginend,metadatacodesnames[metadatacodes(rec1[1])]+': M'+
                                      inttostr(fmetalist.count-1)+':= '+ atext);
@@ -1390,7 +1379,6 @@ var
   po1:= @rec1[start];
   pe:= @rec1[high(rec1)];
   while po1 < pe do begin
-testvar:=ftypelist.item(po1^);
    with ftypelist.item(po1^)^ do begin
     case kind of 
      TYPE_CODE_METADATA: begin
@@ -1401,49 +1389,6 @@ testvar:=ftypelist.item(po1^);
      end;
      else begin
       result:= result + getopname((po1+1)^);
-     { 
-      i1:= (po1+1)^;
-      if ffunctionlevel > 0 then begin
-       i1:= i1 - fssastart;
-       if i1 >= 0 then begin
-        if i1 > high(fssatypes) then begin
-         error('Invalid value index');
-        end;
-        if i1 <
-        result:= 
-        i1:= -1;
-       end
-       else begin
-        i1:= i1 + fssastart;
-       end;
-      end;
-      if i1 >= 0 then begin
-       with fgloblist.item(i1)^ do begin
-        if valuetype <> po1^ then begin
-         if not (ftypelist.ispointer(po1^) and 
-                      (valuetype = ftypelist.parenttypeindex(po1^))) then begin
-          error('Value types do not match');
-         end;
-        end;
-        case kind of 
-         gk_const: begin
-          result:= result+'C'+inttostr((po1+1)^)+'=';
-          case constkind of
-           CST_CODE_INTEGER: begin
-            result:= result+inttostr(intconst);
-           end;
-           CST_CODE_NULL: begin
-            result:= result+'NULL';
-           end;
-          end;
-         end;
-         else begin
-          result:= result+'G'+inttostr((po1+1)^);
-         end;
-        end;
-       end;
-      end;
-      }
      end;
     end;
    end;
@@ -1581,7 +1526,6 @@ begin
      METADATA_COMPILE_UNIT: begin
       fmetalist.add();
       checkmindatalen(rec1,14);
-//      checkmaxdatalen(rec1,15);
       checkmaxdatalen(rec1,16);
       str1:= distinct()+
         tag('sourcelanguage',3)+','+
@@ -1607,7 +1551,7 @@ begin
      end;
      METADATA_GLOBAL_VAR: begin
       fmetalist.add();
-      checkmindatalen(rec1,11);
+      checkmindatalen(rec1,12);
       str1:= distinct()+
         metaornull('scope',3)+','+
         metaornull('name',4)+','+
@@ -1621,42 +1565,27 @@ begin
         metaornull('staticmemberdeclaration',12);
       outmetarecord(str1,12);
      end;
+     METADATA_LOCAL_VAR: begin
+      fmetalist.add();
+      checkmindatalen(rec1,10);
+      str1:= distinct()+
+        tag('tag',3)+','+
+        metaornull('scope',4)+','+
+        metaornull('name',5)+','+
+        metaornull('file',6)+','+
+        int('line',7)+','+
+        metaornull('type',8)+','+
+        int('arg',9)+','+
+        tag('flags',10);
+      outmetarecord(str1,10);
+     end;
      METADATA_NODE: begin
       fmetalist.add();
-     { 
-      if high(rec1) = 1 then begin //empty without number
-       outmetarecord('',1);
-      end
-      else begin
-       checkmindatalen(rec1,2);
-       if rec1[high(rec1)] <> fmetalist.count-1 then begin
-        str1:= ' *Invalid node number:'+inttostr(rec1[high(rec1)]);
-       end
-       else begin
-        str1:= '';
-       end;
-      end;
-      }
-      outmetarecord(metaornullstring(copy(rec1,2,bigint)),bigint);
+      outmetarecord(metaornullartostring(rec1,2),bigint);
      end;
-     {
-     METADATA_FN_NODE: begin
-      checkdatalen(rec1,3);
-      if ffunctionlevel = 0 then begin
-       error('Invalid functionlevel');
-      end;
-      inc(fncount);
-      outmetarecord(subopname(rec1[3])+':'+ftypelist.typename(rec1[2]),fncount);
-     end;
-     METADATA_NODE,METADATA_ATTACHMENT: begin
-      fmetalist.add();
-      outmetarecord(typevaluepair(2,rec1[1]=ord(METADATA_NODE)));
-     end;
-}
      else begin
       fmetalist.add();
-      outmetarecord(valuestring(copy(rec1,2,bigint)),bigint);
- //     outmetarecord(typevaluepair(2,false));
+      outmetarecord(intvalueartostring(rec1,2),bigint);
      end;
     end;
    end;
@@ -1737,33 +1666,27 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
 
 begin
  if (ffunctionlevel = 0) then begin
-  if (avalue >= fgloblist.count) then begin
-   error('Invalid global index');
-  end;
+  returnglob(fgloblist,avalue,'C');
  end
  else begin
   if (avalue > fconststart) and 
            (avalue < fconststart+fcurrentconstlist.count) then begin
    returnglob(fcurrentconstlist,avalue-fconststart,'CL');
-   exit;
-  end;
- end;
- if avalue < fssastart then begin
-  returnglob(fgloblist,avalue,'C');
- end
- else begin
-  avalue:= avalue - fssastart;
-  if avalue < fparamcount then begin
-   result:= 'P'+inttostr(avalue);
   end
   else begin
-   if avalue >= fssaindex then begin
-    result:= 'S+';
+   avalue:= avalue - fssastart;
+   if avalue < fparamcount then begin
+    result:= 'P'+inttostr(avalue);
    end
    else begin
-    result:= 'S';
+    if avalue >= fssaindex then begin
+     result:= 'S+';
+    end
+    else begin
+     result:= 'S';
+    end;
+    result:= result + inttostr(avalue-fparamcount);
    end;
-   result:= result + inttostr(avalue-fparamcount);
   end;
  end;
 end;

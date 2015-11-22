@@ -694,6 +694,17 @@ type
   Record.push_back(VE.getMetadataOrNullID(N->getStaticDataMemberDeclaration()));
 }
     METADATA_LOCAL_VAR,//     = 28,  // [distinct, ...]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getTag());
+  Record.push_back(VE.getMetadataOrNullID(N->getScope()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(N->getLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getType()));
+  Record.push_back(N->getArg());
+  Record.push_back(N->getFlags());
+}
     METADATA_EXPRESSION,//    = 29,  // [distinct, n x element]
     METADATA_OBJC_PROPERTY,// = 30,  // [distinct, name, file, line, ...]
     METADATA_IMPORTED_ENTITY,//=31,  // [distinct, tag, scope, entity, line, name]

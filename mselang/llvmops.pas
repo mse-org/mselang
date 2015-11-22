@@ -2984,7 +2984,7 @@ var
  po1,pe: plocallocinfoty;
  metalist: tmetadatalist;
  i1: int32;
- po2: pdivariablety;
+ po2: pdilocvariablety;
 begin
  with pc^.par.subend do begin
   if info.debugoptions * [do_name,do_proginfo] = 
@@ -2998,7 +2998,7 @@ begin
     po2:= metalist.getdata(po1^.debuginfo);
    {$ifdef mse_checkinternalerror}
     if pmetadataty(pointer(po2)-sizeof(metadataheaderty))^.header.kind <> 
-                                                    mdk_divariable then begin
+                                                    mdk_dilocvariable then begin
      internalerror(ie_llvmmeta,'20151108B');
     end;
    {$endif}

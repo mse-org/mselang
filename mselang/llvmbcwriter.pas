@@ -228,6 +228,7 @@ type
    procedure emitmetabasictype(const avalue: dibasictypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
+   procedure emitmetalocalvar(const avalue: dilocvariablety);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
    procedure emitmetanode(const len: int32; const values: pmetavaluety);
    procedure emitmetanode(const values: array of metavaluety);
@@ -409,7 +410,7 @@ var
  metaDW_TAG_base_type,metaDW_TAG_compile_unit,
  metaDW_TAG_subprogram,
  metaDW_TAG_subroutine_type,metaDW_TAG_variable: metavaluety;
- metavartags: array[divariablekindty] of metavaluety;
+ metavartags: array[dilocvariablekindty] of metavaluety;
  metatypetags: array[diderivedtypekindty] of metavaluety;
  m1,m2: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
@@ -818,11 +819,8 @@ begin
     mdk_diglobvariable: begin
      emitmetaglobalvar(pdiglobvariablety(@pm1^.data)^);
     end;
-    mdk_divariable: begin
-     with pdivariablety(@pm1^.data)^ do begin
-      emitmetanode([metavartags[kind],context,name,difile,lineandargnumber,
-                                             ditype,flags,metanullint]);
-     end;
+    mdk_dilocvariable: begin
+     emitmetalocalvar(pdilocvariablety(@pm1^.data)^)
     end;
     mdk_constvalue: begin
      with pvaluemetaty(@pm1^.data)^ do begin
@@ -1962,25 +1960,43 @@ procedure tllvmbcwriter.emitmetasubprogram(const avalue: disubprogramty);
 begin
  with avalue do begin
   emitrec(ord(METADATA_SUBPROGRAM),[1, //distinct
-  scope.value.listid+1, //scope
-  name.value.listid+1,  //name
-  0, //linkagename
-  _file.value.listid+1, //file
-  line, //line
-  _type.value.listid+1, //type
-  ord(localtounit), //islocaltounit
-  1, //isdefinition
-  line, //scopeline
-  0, //containingtype
-  0, //virtuality
-  1, //virtualindex
-  int32(flags), //flags
-  0, //isoptimized
-  _function.value.listid+1, //function
-  0, //templateparams
-  0, //declaration
-  variables.value.listid+1
- ]);
+   scope.value.listid+1,     //scope
+   name.value.listid+1,      //name
+   0,                        //linkagename
+   _file.value.listid+1,     //file
+   line,                     //line
+   _type.value.listid+1,     //type
+   ord(localtounit),         //islocaltounit
+   1,                        //isdefinition
+   line,                     //scopeline
+   0,                        //containingtype
+   0,                        //virtuality
+   1,                        //virtualindex
+   int32(flags),             //flags
+   0,                        //isoptimized
+   _function.value.listid+1, //function
+   0,                        //templateparams
+   0,                        //declaration
+   variables.value.listid+1  //variables
+  ]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetalocalvar(const avalue: dilocvariablety);
+const
+ vartags: array[dilocvariablekindty] of int32 = 
+                                    (DW_TAG_auto_variable,DW_TAG_arg_variable);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_local_VAR),[0, //distinct
+   vartags[kind],         //tag
+   scope.value.listid+1,  //scope
+   name.value.listid+1,   //name
+   _file.value.listid+1,  //file
+   linenumber,            //line
+   _type.value.listid+1,  //type
+   arg,                   //arg
+   flags]);               //flags
  end;
 end;
 

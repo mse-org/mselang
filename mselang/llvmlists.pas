@@ -506,20 +506,19 @@ type
  end;
  pdiderivedtypety = ^diderivedtypety;
 
- divariablekindty = (divk_autovariable,divk_argvariable);
+ dilocvariablekindty = (divk_autovariable,divk_argvariable);
  
- divariablety = record
-  kind: divariablekindty;
-  context: metavaluety;          //1
-  name: metavaluety;             //2
-  difile: metavaluety;           //3
-  lineandargnumber: metavaluety; //4
-  ditype: metavaluety;           //5
-  flags: metavaluety;            //6
-                                 //7 ???
-                                 //8+ complex address
+ dilocvariablety = record
+  kind: dilocvariablekindty;
+  scope: metavaluety;
+  name: metavaluety;
+  _file: metavaluety;
+  linenumber: int32;
+  _type: metavaluety;
+  arg: int32;
+  flags: int32;
  end;
- pdivariablety = ^divariablety;
+ pdilocvariablety = ^dilocvariablety;
 
  diglobvariablety = record
   scope: metavaluety;
@@ -555,7 +554,7 @@ type
                    mdk_diderivedtype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
-                   mdk_divariable,mdk_diglobvariable);
+                   mdk_dilocvariable,mdk_diglobvariable);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -2393,25 +2392,22 @@ begin
   addmetaitem(info.s.unitinfo^.globalvariables,result);
  end
  else begin
-  m3:= i32const(((argnumber+1) shl 24) or (alinenumber+1));
-  if af_paramindirect in avariable^.address.flags then begin
-   m4:= i32const(int32([flagindirectvariable]));
-  end
-  else begin
-   m4:= nullintconst;
-  end;
-  with pdivariablety(adddata(mdk_divariable,
-                     sizeof(divariablety),result))^ do begin
-   kind:= divk_autovariable;
+  with pdilocvariablety(adddata(mdk_dilocvariable,
+                     sizeof(dilocvariablety),result))^ do begin
    if af_param in avariable^.address.flags then begin
     kind:= divk_argvariable;
+    arg:= argnumber+1;
+   end
+   else begin
+    kind:= divk_autovariable;
+    arg:= 0;
    end;
-   context:= info.s.currentscopemeta;
+   scope:= info.s.currentscopemeta;
    name:= m1;
-   difile:= info.s.currentfilemeta;
-   lineandargnumber:= m3;
-   ditype:= m2;
-   flags:= m4;
+   _file:= info.s.currentfilemeta;
+   linenumber:= alinenumber;
+   _type:= m2;
+   flags:= 0;
   end;
  end;
 end;
