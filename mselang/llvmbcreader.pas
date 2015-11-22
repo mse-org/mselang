@@ -1727,7 +1727,7 @@ var
   result:= fssaindex+fssastart-avalue;
  end; //absvalue
  
- function typeid(avalue: int32; out explicittype: boolean): int32;
+ function typeid1(avalue: int32; out explicittype: boolean): int32;
  begin
   explicittype:= false;
   avalue:= fssaindex-avalue;
@@ -1748,17 +1748,28 @@ var
     result:= fssatypes[avalue];
     if result and pointermask <> 0 then begin
      explicittype:= true;
-     result:= result and not pointermask;
     end;
    end;
   end;
  end; //typeid
 
+ function typeid(avalue: int32; out explicittype: boolean): int32;
+ begin
+  result:= typeid1(avalue,explicittype) and not pointermask;
+ end;
+
+ function pointertypeid(avalue: int32): int32;
+ var
+  bo1: boolean;
+ begin
+  result:= typeid1(avalue,bo1);
+ end;
+
  function typeid(avalue: int32): int32;
  var
   bo1: boolean;
  begin
-  result:= typeid(avalue,bo1);
+  result:= typeid1(avalue,bo1) and not pointermask;
  end;
 
  function pointerbasetypeid(const avalue: int32): int32;
@@ -1796,19 +1807,19 @@ var
   result:= (a = b) or 
                      (a = maxint) or (b = maxint); //unknown because of forward
   if not result then begin
-   if a < 0 then begin
-    if b >= 0 then begin
-     result:= -a = ftypelist.parenttypeindex(b);
+   if a and pointermask <> 0 then begin
+    if b and pointermask = 0 then begin
+     result:= a and not pointermask = ftypelist.parenttypeindex(b);
     end;
    end
    else begin
-    if b < 0 then begin
-     if a >= 0 then begin
-      result:= -b = ftypelist.parenttypeindex(a);
+    if b and pointermask <> 0 then begin
+     if a and pointermask = 0 then begin
+      result:= b and not pointermask = ftypelist.parenttypeindex(a);
      end;
     end;
    end;
-   result:= result or (b >= 0) and (b < ftypelist.count) and 
+   result:= result or (b and pointermask = 0) and (b < ftypelist.count) and 
                          (ftypelist.item(b)^.kind = TYPE_CODE_METADATA);
   end;
  end; //checktypeids
@@ -1957,14 +1968,20 @@ begin
        outssarecord(i1,str1);
       end;
       FUNC_CODE_INST_GEP: begin
-       checkmindatalen(rec1,2);
-       str1:= opname(rec1[2])+'[';
-       i2:= typeid(rec1[2]);
-       for i1:= 3 to high(rec1) do begin
+       checkmindatalen(rec1,3);
+       if rec1[2] <> 0 then begin
+        str1:= 'inbounds ';
+       end
+       else begin
+        str1:= '';
+       end;
+       str1:= str1+opname(rec1[3])+'[';
+       i2:= typeid(rec1[3]);
+       for i1:= 4 to high(rec1) do begin
         str1:= str1+opname(rec1[i1])+',';
         i2:= ftypelist.itemtypeindex(i2);
        end;
-       if high(rec1) >= 3 then begin
+       if high(rec1) >= 4 then begin
         setlength(str1,length(str1)-1);
         i2:= i2 or pointermask; //pointer
        end;
@@ -2086,7 +2103,7 @@ begin
        end;
        inc(i2); //first param
        for i1:= i4+1 to i3+3 do begin
-        if not checktypeids(typeid(rec1[i1]),
+        if not checktypeids(pointertypeid(rec1[i1]),
                                     ftypelist.fsubparams[i2]) then begin
          error('Invalid param');
         end;
