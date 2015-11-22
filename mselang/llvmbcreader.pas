@@ -1665,7 +1665,8 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
  //ssa's         fssastart + fssaindex
 
 begin
- if (ffunctionlevel = 0) then begin
+ if (ffunctionlevel = 0) or (ffunctionlevel > 0) and 
+                                       (avalue < fconststart) then begin
   returnglob(fgloblist,avalue,'C');
  end
  else begin
