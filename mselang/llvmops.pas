@@ -2839,7 +2839,7 @@ procedure subbeginop();
 var
  po1,ps,pe: plocallocinfoty;
  po2: pnestedallocinfoty;
- i1,i2: int32;
+ i1,i2,i3: int32;
  poend: pointer;
  trampop: popinfoty;
  idar: idarty;
@@ -2895,8 +2895,7 @@ begin
    bcstream.beginblock(METADATA_BLOCK_ID,3);
    i1:= bcstream.allocval(0);
    while po1 < pe do begin
-//    bcstream.emitmetadatafnnonde(bcstream.ptypeval(po1^.size.listindex),i1);
-//////////////////////////testvar    bcstream.emitmetadatanode([i1]);
+    bcstream.emitmetavalue(bcstream.ptypeval(po1^.size.listindex),i1);
     inc(po1);
     inc(i1);
    end;
@@ -2959,18 +2958,20 @@ begin
    bcstream.resetssa();
   end;
   if do_proginfo in info.debugoptions then begin
-   idar.count:= 2;
+   idar.count:= 3;
    idar.ids:= @ids;
    with info.s.unitinfo^.llvmlists.metadatalist do begin
     i1:= count;
-    i2:= dbgdeclare;
+    i2:= bcstream.globval(dbgdeclare);
+    i3:= dummyaddrexp.value.listid;
    end;
    po1:= ps;
    while po1 < pe do begin
 //    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
     ids[0]:= i1;
     ids[1]:= po1^.debuginfo.value.listid;
-    bcstream.emitcallop(false,bcstream.globval(i2),idar);
+    ids[2]:= i3; //todo: indirect par
+    bcstream.emitcallop(false,i2,idar);
     inc(i1);
     inc(po1);
    end;

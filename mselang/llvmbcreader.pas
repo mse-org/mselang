@@ -1583,6 +1583,10 @@ begin
       fmetalist.add();
       outmetarecord(metaornullartostring(rec1,2),bigint);
      end;
+     METADATA_EXPRESSION: begin
+      fmetalist.add();
+      outmetarecord(distinct()+metaornullartostring(rec1,3),bigint);
+     end;
      else begin
       fmetalist.add();
       outmetarecord(intvalueartostring(rec1,2),bigint);

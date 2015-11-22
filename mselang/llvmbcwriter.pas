@@ -144,6 +144,8 @@ type
    procedure emitrec(const id: int32; const data: array of int32;
                                                  const adddata: idarty);
    procedure emitrec(const id: int32; const data: array of int32;
+                                   const addlen: int32; const adddata: pint32);
+   procedure emitrec(const id: int32; const data: array of int32;
                                                 const adddata: array of int32);
    procedure emitrec(const id: int32; const len: int32; const data: pcard8);
    procedure emitrec(const id: int32; const len: int32; const data: pint32);
@@ -228,8 +230,9 @@ type
    procedure emitmetabasictype(const avalue: dibasictypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
-   procedure emitmetalocalvar(const avalue: dilocvariablety);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
+   procedure emitmetalocalvar(const avalue: dilocvariablety);
+   procedure emitmetaexpression(const avalue: diexpressionty);
    procedure emitmetanode(const len: int32; const values: pmetavaluety);
    procedure emitmetanode(const values: array of metavaluety);
    procedure emitnamedmetanode(const namelen: int32; const name: pcard8;
@@ -822,6 +825,9 @@ begin
     mdk_dilocvariable: begin
      emitmetalocalvar(pdilocvariablety(@pm1^.data)^)
     end;
+    mdk_diexpression: begin
+     emitmetaexpression(pdiexpressionty(@pm1^.data)^)
+    end;
     mdk_constvalue: begin
      with pvaluemetaty(@pm1^.data)^ do begin
       emitmetavalue(typeval(value.typeid),constval(value.listid));
@@ -1111,6 +1117,26 @@ begin
  end;
  po1:= adddata.ids;
  pe:= po1 + adddata.count;
+ while po1 < pe do begin
+  emitvbr6(po1^);
+  inc(po1);
+ end;
+end;
+
+procedure tllvmbcwriter.emitrec(const id: int32; const data: array of int32;
+               const addlen: int32; const adddata: pint32);
+var
+ i1: int32;
+ po1,pe: pint32;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(id);
+ emitvbr6(length(data) + addlen);
+ for i1:= 0 to high(data) do begin
+  emitvbr6(data[i1]);
+ end;
+ po1:= adddata;
+ pe:= po1 + addlen;
  while po1 < pe do begin
   emitvbr6(po1^);
   inc(po1);
@@ -1988,7 +2014,7 @@ const
                                     (DW_TAG_auto_variable,DW_TAG_arg_variable);
 begin
  with avalue do begin
-  emitrec(ord(METADATA_local_VAR),[0, //distinct
+  emitrec(ord(METADATA_LOCAL_VAR),[0, //distinct
    vartags[kind],         //tag
    scope.value.listid+1,  //scope
    name.value.listid+1,   //name
@@ -1997,6 +2023,19 @@ begin
    _type.value.listid+1,  //type
    arg,                   //arg
    flags]);               //flags
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetaexpression(const avalue: diexpressionty);
+var
+ idar1: array[0..high(expitemarty)] of int32;
+ i1: int32;
+begin
+ with avalue do begin
+  for i1:= 0 to count-1 do begin
+   idar1[i1]:= items[i1].value.listid+1;
+  end;
+  emitrec(ord(METADATA_EXPRESSION),[0],count,@idar1[0]); //distinct
  end;
 end;
 

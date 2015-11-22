@@ -531,7 +531,14 @@ type
          //todo: declaration-defintion... flags
  end;
  pdiglobvariablety = ^diglobvariablety;
-  
+
+ expitemarty = array[0..3] of metavaluety;
+ diexpressionty = record
+  count: int32;
+  items: expitemarty;
+ end;
+ pdiexpressionty = ^diexpressionty;
+   
  metaiddataty = record
   id: int32;
  end;
@@ -554,7 +561,7 @@ type
                    mdk_diderivedtype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
-                   mdk_dilocvariable,mdk_diglobvariable);
+                   mdk_dilocvariable,mdk_diglobvariable,mdk_diexpression);
  
  metadataheaderty = record
   kind: metadatakindty;
@@ -587,6 +594,7 @@ type
    femptystringconst: metavaluety;
 //   fwdstringconst: metavaluety;
    fhasmoduleflags: boolean;
+   fdummyaddrexp: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -647,7 +655,8 @@ type
    function adddivariable(const aname: lstringty;
            const alinenumber: int32; const argnumber: int32;
                                  const avariable: pvardataty): metavaluety;
-   
+   function adddiexpression(
+                        const aexpression: array of metavaluety): metavaluety;   
   {
    function adddicompositetype(const atag: int32; 
                        const aitems: array of metavaluety): metavaluety;
@@ -663,6 +672,7 @@ type
    property emptystringconst: metavaluety read femptystringconst;
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
+   property dummyaddrexp: metavaluety read fdummyaddrexp;
    property hasmoduleflags: boolean read fhasmoduleflags write fhasmoduleflags;
  end;
 
@@ -1930,14 +1940,6 @@ begin
   fnullintconst.flags:= [];
   if info.debugoptions <> [] then begin
    femptystringconst:= addstring('');
- //  fwdstringconst:= addstring('./');
-  {
-   with pstringmetaty(
-            adddata(mdk_string,sizeof(stringmetaty)+0,
-                                             femptystringconst))^ do begin
-    len:= 0;
-   end;
-  }
    femptynode:= addnode([]);
    ftypemetalist.clear();
    fconstmetalist.clear();
@@ -1945,8 +1947,9 @@ begin
    fsyscontext:= fsysfile;
    fsysname:= addstring('system');
    fdbgdeclare:= fgloblist.addexternalsubvalue(
-            [ftypelist.metadata,ftypelist.metadata],
+            [ftypelist.metadata,ftypelist.metadata,ftypelist.metadata],
                                             getidentname('llvm.dbg.declare'));
+   fdummyaddrexp:= adddiexpression([]);
   end;
  end;
 end;
@@ -2408,6 +2411,25 @@ begin
    linenumber:= alinenumber;
    _type:= m2;
    flags:= 0;
+  end;
+ end;
+end;
+
+function tmetadatalist.adddiexpression(
+              const aexpression: array of metavaluety): metavaluety;
+var
+ i1: int32;
+begin
+{$ifdef mse_checkinternalerror}
+ if high(aexpression) > high(diexpressionty.items) then begin
+  internalerror(ie_llvmlist,'20151122A');
+ end;
+{$endif}
+ with pdiexpressionty(adddata(mdk_diexpression,
+                     sizeof(diexpressionty),result))^ do begin
+  count:= length(aexpression);
+  for i1:= 0 to high(aexpression) do begin
+   items[i1]:= aexpression[i1];
   end;
  end;
 end;
