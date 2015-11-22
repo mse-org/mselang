@@ -177,6 +177,9 @@ type
    fwrapsize: card32;
    fwrapcpu: card32;
    fssastart,fssaindex,fparamcount: int32;
+   fssatypes: integerarty; //negative values -> pointer
+   fconststart: int32;
+   fcurrentconstlist: tgloblist;
   protected
    procedure checkdatalen(const arec: valuearty; const alen: integer);
    procedure checkmindatalen(const arec: valuearty; const alen: integer);
@@ -196,6 +199,7 @@ type
           //nil if internal read, first array item = abbrev, second = code
    procedure readblockheader(out blockid: int32; 
                                out newabbrevlen: int32; out blocklen: int32);
+   function getopname(avalue: int32): string; //absvalue
 
    procedure output(const kind: outputkindty; const text: string);
    procedure outrecord(const aname: string; const values: array of const);
@@ -228,6 +232,7 @@ uses
  mseformatstr,msearrayutils,msebits,sysutils,llvmlists,typinfo,bcunitglob,
  msesystypes;
 const
+ pointermask = 1 shl 31;
  blockidnames: array[blockids] of string = (
   'BLOCKINFO_BLOCK',
   '','','','','','','',
@@ -587,8 +592,8 @@ function ttypelist.typename(const aindex: int32): string;
 var
  i1: int32;
 begin
- if aindex < 0 then begin
-  result:= '^'+typename(-aindex);
+ if aindex and pointermask <> 0 then begin
+  result:= '^'+typename(aindex and not pointermask);
  end
  else begin
   if invalidindex(aindex) then begin
@@ -655,10 +660,15 @@ end;
 function ttypelist.parenttype(const atype: ptypeinfoty): ptypeinfoty;
 begin
  with atype^ do begin
-  if (kind <> TYPE_CODE_POINTER) or invalidindex(base) then begin
-   error('Invalid pointer type');
+  if kind = TYPE_CODE_FUNCTION then begin
+   result:= atype;
+  end
+  else begin
+   if (kind <> TYPE_CODE_POINTER) or invalidindex(base) then begin
+    error('Invalid pointer type');
+   end;
+   result:= @ptypeinfoty(fdata)[base];
   end;
-  result:= @ptypeinfoty(fdata)[base];
  end;
 end;
 
@@ -670,8 +680,8 @@ end;
 
 function ttypelist.parenttypeindex(const aindex: int32): int32;
 begin
- if aindex < 0 then begin
-  result:= -aindex;
+ if aindex and pointermask <> 0 then begin
+  result:= aindex and not pointermask;
   checkvalidindex(result);
  end
  else begin
@@ -1317,7 +1327,7 @@ begin
  end;
  result:= result + inttostr(i1);
 end;
-
+var testvar: ptypeinfoty;
 procedure tllvmbcreader.readmetadatablock();
 
 var
@@ -1371,7 +1381,7 @@ var
                                      inttostr(fmetalist.count-1)+':= '+ atext);
  end; //outmetarecord
 
- function typevaluepair(const start: int32; const tryname: boolean): string;
+ function typevaluepair(const start: int32): string;
  var
   po1,pe: pvaluety;
   i1,i2: int32;
@@ -1380,6 +1390,7 @@ var
   po1:= @rec1[start];
   pe:= @rec1[high(rec1)];
   while po1 < pe do begin
+testvar:=ftypelist.item(po1^);
    with ftypelist.item(po1^)^ do begin
     case kind of 
      TYPE_CODE_METADATA: begin
@@ -1389,52 +1400,50 @@ var
       result:= result+'NULL';
      end;
      else begin
-      with fgloblist.item((po1+1)^)^ do begin
-       if valuetype <> po1^ then begin
-        if not (ftypelist.ispointer(po1^) and 
-                     (valuetype = ftypelist.parenttypeindex(po1^))) then begin
-         error('Value types do not match');
+      result:= result + getopname((po1+1)^);
+     { 
+      i1:= (po1+1)^;
+      if ffunctionlevel > 0 then begin
+       i1:= i1 - fssastart;
+       if i1 >= 0 then begin
+        if i1 > high(fssatypes) then begin
+         error('Invalid value index');
         end;
+        if i1 <
+        result:= 
+        i1:= -1;
+       end
+       else begin
+        i1:= i1 + fssastart;
        end;
-       case kind of 
-        gk_const: begin
-         if tryname and (constkind = CST_CODE_INTEGER) and 
-          (intconst >= llvmdebugversion) then begin
-          i2:= intconst - llvmdebugversion;
-          if i2 <= debugmetanodetags[high(debugmetanodetags)].tag then begin
-           for i1:= 0 to high(debugmetanodetags) do begin
-            if i2 = debugmetanodetags[i1].tag then begin
-             result:= result +'<'+debugmetanodetags[i1].name+'>';
-             break;
-            end;
-           end;
-          end
-          else begin
-           if i2 <= llvmmetanodetags[high(llvmmetanodetags)].tag then begin
-            for i1:= 0 to high(llvmmetanodetags) do begin
-             if i2 = llvmmetanodetags[i1].tag then begin
-              result:= result +'<'+llvmmetanodetags[i1].name+'>';
-              break;
-             end;
-            end;
-           end;
-          end;
-         end;
-         result:= result+'C'+inttostr((po1+1)^)+'=';
-         case constkind of
-          CST_CODE_INTEGER: begin
-           result:= result+inttostr(intconst);
-          end;
-          CST_CODE_NULL: begin
-           result:= result+'NULL';
-          end;
+      end;
+      if i1 >= 0 then begin
+       with fgloblist.item(i1)^ do begin
+        if valuetype <> po1^ then begin
+         if not (ftypelist.ispointer(po1^) and 
+                      (valuetype = ftypelist.parenttypeindex(po1^))) then begin
+          error('Value types do not match');
          end;
         end;
-        else begin
-         result:= result+'G'+inttostr((po1+1)^);
+        case kind of 
+         gk_const: begin
+          result:= result+'C'+inttostr((po1+1)^)+'=';
+          case constkind of
+           CST_CODE_INTEGER: begin
+            result:= result+inttostr(intconst);
+           end;
+           CST_CODE_NULL: begin
+            result:= result+'NULL';
+           end;
+          end;
+         end;
+         else begin
+          result:= result+'G'+inttostr((po1+1)^);
+         end;
         end;
        end;
       end;
+      }
      end;
     end;
    end;
@@ -1520,7 +1529,7 @@ begin
      end;
      METADATA_VALUE: begin
       fmetalist.add();
-      outmetarecord(typevaluepair(2,false),3);
+      outmetarecord(typevaluepair(2),3);
      end;
      METADATA_FILE: begin
       fmetalist.add();
@@ -1692,12 +1701,78 @@ begin
  end;
 end;
 
+function tllvmbcreader.getopname(avalue: int32): string; //absvalue
+
+ procedure returnglob(const alist: tgloblist; const aindex: int32;
+                                               const constname: string);
+ begin
+  alist.checkvalidindex(aindex);
+  with pglobinfoty(alist.fdata)[aindex] do begin
+   if kind = gk_const then begin
+    result:= constname+inttostr(aindex)+'=';
+    case constkind of
+     CST_CODE_INTEGER: begin
+      result:= result+inttostr(intconst);
+     end;
+     CST_CODE_NULL: begin
+      result:= result+'NULL';
+     end;
+     else begin
+      result:= result+constantscodesnames[constkind];
+     end;
+    end;
+   end
+   else begin
+    result:= 'G'+inttostr(avalue);
+   end;
+  end;
+ end; //returnglob
+
+ //valueids:
+ //              0
+ //globals       fconststart
+ //local consts  fssastart
+ //params        fssastart + fparamcount
+ //ssa's         fssastart + fssaindex
+
+begin
+ if (ffunctionlevel = 0) then begin
+  if (avalue >= fgloblist.count) then begin
+   error('Invalid global index');
+  end;
+ end
+ else begin
+  if (avalue > fconststart) and 
+           (avalue < fconststart+fcurrentconstlist.count) then begin
+   returnglob(fcurrentconstlist,avalue-fconststart,'CL');
+   exit;
+  end;
+ end;
+ if avalue < fssastart then begin
+  returnglob(fgloblist,avalue,'C');
+ end
+ else begin
+  avalue:= avalue - fssastart;
+  if avalue < fparamcount then begin
+   result:= 'P'+inttostr(avalue);
+  end
+  else begin
+   if avalue >= fssaindex then begin
+    result:= 'S+';
+   end
+   else begin
+    result:= 'S';
+   end;
+   result:= result + inttostr(avalue-fparamcount);
+  end;
+ end;
+end;
+
 procedure tllvmbcreader.readfunctionblock();
 var
  rec1: valuearty;
- conststart: int32;
- ssatypes: integerarty; //negative values -> pointer
- currentconstlist: tgloblist;
+// conststart: int32;
+// currentconstlist: tgloblist;
  bbcount: int32;
 
  procedure outoprecord(const aname: string; const values: array of const);
@@ -1716,7 +1791,7 @@ var
   output(ok_beginend,functioncodesnames[functioncodes(rec1[1])]+': S'+
                           inttostr(fssaindex-fparamcount)+':= '+
                                        avalue+': '+ftypelist.typename(atype));
-  additem(ssatypes,atype,fssaindex);
+  additem(fssatypes,atype,fssaindex);
  end; //outfuncrecord
 
  function absvalue(const avalue: int32): int32;
@@ -1730,8 +1805,8 @@ var
   avalue:= fssaindex-avalue;
   if avalue < 0 then begin
    avalue:= avalue+fssastart;
-   if avalue >= conststart then begin
-    result:= currentconstlist.typeid(avalue-conststart);
+   if avalue >= fconststart then begin
+    result:= fcurrentconstlist.typeid(avalue-fconststart);
    end
    else begin
     result:= fgloblist.typeid(avalue,explicittype);
@@ -1740,10 +1815,13 @@ var
   else begin
    if avalue >= fssaindex then begin
     result:= maxint;
-//    error('Invalid ssa index');
    end
    else begin
-    result:= ssatypes[avalue];
+    result:= fssatypes[avalue];
+    if result and pointermask <> 0 then begin
+     explicittype:= true;
+     result:= result and not pointermask;
+    end;
    end;
   end;
  end; //typeid
@@ -1761,75 +1839,18 @@ var
  begin
   result:= typeid(avalue,bo1);
   if not bo1 then begin
-   if result < 0 then begin
-    result:= -result;
-   end
-   else begin
-    result:= ftypelist.parenttypeindex(result);
-   end;
+   result:= ftypelist.parenttypeindex(result);
   end;
  end;
  
  function opname(avalue: int32; const typeindex: int32 = -1): string;
- var
-  list1: tgloblist;
-  constname: string[2];
  begin
-  avalue:= fssaindex-avalue;
   if (typeindex >= 0) and 
              (ftypelist.item(typeindex)^.kind = TYPE_CODE_METADATA) then begin
-   result:= '!'+inttostr(avalue+fssastart);
+   result:= '!'+inttostr(fssaindex-avalue+fssastart);
   end
   else begin
-   if avalue < 0 then begin
-    avalue:= avalue+fssastart;
-    if avalue >= conststart then begin
-     avalue:= avalue-conststart;
-     list1:= currentconstlist;
-     constname:= 'CL';
-    end
-    else begin
-     list1:= fgloblist;
-     constname:= 'C';
-    end;
-    if (avalue < 0) or (avalue >= list1.count) then begin
-     error('Invalid global index');
-    end;
-    with pglobinfoty(list1.fdata)[avalue] do begin
-     if kind = gk_const then begin
-      result:= constname+inttostr(avalue)+'=';
-      case constkind of
-       CST_CODE_INTEGER: begin
-        result:= result+inttostr(intconst);
-       end;
-       CST_CODE_NULL: begin
-        result:= result+'NULL';
-       end;
-       else begin
-        result:= result+constantscodesnames[constkind];
-       end;
-      end;
-     end
-     else begin
-      result:= 'G'+inttostr(avalue);
-     end;
-    end;
-   end
-   else begin
-    if avalue < fparamcount then begin
-     result:= 'P'+inttostr(avalue);
-    end
-    else begin
-     if avalue >= fssaindex then begin
-      result:= 'S+';
- //     error('Invalid ssa index');
-     end
-     else begin
-      result:= 'S';
-     end;
-     result:= result + inttostr(avalue-fparamcount);
-    end;
-   end;
+   result:= getopname(absvalue(avalue));
   end;
  end; //opname
  
@@ -1887,12 +1908,19 @@ var
  vararg1: boolean;
  po1: ptypeinfoty;
  fuco: functioncodes;
+
+ //valueids:
+ //              0
+ //globals       fconststart
+ //local consts  fssastart
+ //params        fssastart + fparamcount
+ //ssa's         fssastart + fssaindex
  
 begin
  with fblockstack[fblocklevel-1] do begin
   list:= tgloblist.create(ftypelist);
   ssapo:= @fssastart;
-  currentconstlist:= list;
+  fcurrentconstlist:= list;
  end;
  if fsubimplementationcount >= fsubheadercount then begin
   error('Function without header');
@@ -1903,8 +1931,8 @@ begin
             inttostr(i1)+':'+inttostr(fsubimplementationcount)+':'+
                                             ftypelist.typename(subtyp1));
  inc(fsubimplementationcount);
- conststart:= fgloblist.count;
- fssastart:= conststart;
+ fconststart:= fgloblist.count;
+ fssastart:= fconststart;
  fbbbefore:= -1;
  fbb:= -1;
  if ftypelist.ispointer(subtyp1) then begin
@@ -1918,10 +1946,10 @@ begin
 //                 ptypeinfoty(ftypelist.fdata)[subtyp1].base].subparamcount-1;
   fssaindex:= subparamcount-1;
   fparamcount:= fssaindex;
-  setlength(ssatypes,fssaindex);
+  setlength(fssatypes,fssaindex);
   i2:= subparamindex+1; //skip result type
-  for i1:= 0 to high(ssatypes) do begin
-   ssatypes[i1]:= ftypelist.fsubparams[i2];
+  for i1:= 0 to high(fssatypes) do begin
+   fssatypes[i1]:= ftypelist.fsubparams[i2];
    inc(i2);
   end;
  end;
@@ -2010,7 +2038,7 @@ begin
        end;
        if high(rec1) >= 3 then begin
         setlength(str1,length(str1)-1);
-        i2:= -i2; //pointer
+        i2:= i2 or pointermask; //pointer
        end;
        str1:= str1+']';
        outssarecord(i2,str1);
@@ -2056,6 +2084,13 @@ begin
        outssarecord(pointerbasetypeid(rec1[2]),opname(rec1[2])+'^');
       end;
       FUNC_CODE_INST_ALLOCA: begin
+       checkdatalen(rec1,5);
+       if rec1[5] and (1 shl 6) = 0 then begin //no explicittype
+        ftypelist.parenttypeindex(rec1[2]); //check pointer type
+       end
+       else begin
+        rec1[2]:= rec1[2] or pointermask; //explicit type
+       end;
        outssarecord(rec1[2],'@');
       end;
       FUNC_CODE_INST_RET: begin
@@ -2078,6 +2113,10 @@ begin
        else begin
         checkmindatalen(rec1,4);
         i4:= 4;
+        if (rec1[3] and (1 shl 15)) <> 0 then begin
+         checkmindatalen(rec1,4);
+         i4:= 5;
+        end;
         str1:= '';
        end;
        po1:= ftypelist.parenttype(typeid(rec1[i4]));

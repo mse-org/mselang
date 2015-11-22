@@ -163,13 +163,13 @@ type
    procedure emitvar(const atype: int32; const ainitconst: int32;
                                                    const alinkage: linkagety);
    procedure emitconst(const atype: int32; const ainitconst: int32);
-   procedure emitalloca(const atype: int32); //1 ssa
+   procedure emitalloca(const atype: int32); //1 ssa //todo: use explicittype
    procedure resetssa(); //sets ssastart to current ssa
    
    procedure beginsub(const aflags: subflagsty; const allocs: suballocinfoty;
                                                          const bbcount: int32);
    procedure endsub();
-   
+                                        //todo: add explicit typeid to call ops
    procedure emitcallop(const afunc: boolean;
              const valueid: int32; const aparams: idarty);
                                           //changes aparams

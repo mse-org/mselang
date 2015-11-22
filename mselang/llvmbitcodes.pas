@@ -377,7 +377,9 @@ type
     FUNC_CODE_18,
     // 18 is unused.
     FUNC_CODE_INST_ALLOCA,//      = 19, // ALLOCA:     [instty, op, align]
-                          //mse: ALLOCA ^type,memtype,memcount,align/inalloca
+                          //mse: ALLOCA: ^type,memtype,memcount,align/inalloca
+                          //if bit 6 in align/alloca set:
+                          //     ALLOCA: type,memtype,memcount,align/inalloca
     FUNC_CODE_INST_LOAD,//        = 20, // LOAD:       [opty, op, align, vol]
                                  //mse: LOAD:       [op, align, vol]
     FUNC_CODE_21,
@@ -408,6 +410,8 @@ type
 
     FUNC_CODE_INST_CALL,//        = 34, // CALL:       [attr, fnty, fnid, args...]
                              //mse: CALL: [paramattrs, cc, fnid, arg0, arg1...]
+                             //if bit 15 of cc set:
+                             //CALL: [paramattrs, cc, fnty, fnid, arg0, arg1...]
     FUNC_CODE_DEBUG_LOC,//        = 35, // DEBUG_LOC:  [Line,Col,ScopeVal, IAVal]
         //mse: [Line,Col,Scope metadata id+1, inline metadata id+1]
     FUNC_CODE_INST_FENCE,//       = 36, // FENCE: [ordering, synchscope]
