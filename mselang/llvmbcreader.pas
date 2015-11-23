@@ -286,7 +286,7 @@ const
   'X86_MMX',
   'STRUCT_ANON',
   'STRUCT_NAME',
-  'TRUCT_NAMED',
+  'STRUCT_NAMED',
   'FUNCTION'
  );
   
@@ -1200,7 +1200,7 @@ begin
     unknownrec(rec1);
    end
    else begin
-    if typecodes(rec1[1]) <> TYPE_CODE_NUMENTRY then begin
+    if not (typecodes(rec1[1]) in [TYPE_CODE_NUMENTRY,TYPE_CODE_STRUCT_NAME]) then begin
      po1:= ftypelist.add();
      po1^.kind:= typecodes(rec1[1]);
     end;
@@ -1244,6 +1244,11 @@ begin
         end;
        end;
        output(ok_beginend,ftypelist.typename(ftypelist.count-1));
+      end;
+      TYPE_CODE_STRUCT_NAME: begin
+       output(ok_beginend,valueartostring(rec1,2));
+//       outrecord(typecodesnames[typecodes(rec1[1])],
+//                               [valueartostring(rec1,2)]);
       end;
       else begin
        outrecord(inttostr(ftypelist.count-1)+'.'+
