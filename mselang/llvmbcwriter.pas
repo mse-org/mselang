@@ -229,6 +229,7 @@ type
    procedure emitmetafile(const afile,adirectory: int32);
    procedure emitmetacompileunit(const avalue: dicompileunitty);
    procedure emitmetabasictype(const avalue: dibasictypety);
+   procedure emitmetaderivedtype(const avalue: diderivedtypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
@@ -800,13 +801,7 @@ begin
      end;
     end;
     mdk_diderivedtype: begin
-     with pdiderivedtypety(@pm1^.data)^ do begin
-      emitmetanode([metatypetags[kind],
-      //difile,context,name,linenumber,sizeinbits,aligninbits,offsetinbits,
-        difile,context,name,linenumber,sizeinbits,aligninbits,metanullint,
-      //flags,encoding
-        flags,typederivedfrom]);
-     end;
+     emitmetaderivedtype(pdiderivedtypety(@pm1^.data)^);
     end;
     mdk_dibasictype: begin
      emitmetabasictype(pdibasictypety(@pm1^.data)^);
@@ -1970,6 +1965,28 @@ begin
    sizeinbits,                         //sizenbits
    aligninbits,                        //aligninbits
    encoding                            //encoding
+  ]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetaderivedtype(const avalue: diderivedtypety);
+const
+ derivedtags: array[diderivedtypekindty] of int32 = (DW_TAG_pointer_type,
+                                                       DW_TAG_reference_type);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_DERIVED_TYPE),[0, //distinct
+   derivedtags[kind],                    //tag
+   name.value.listid+1,                  //name
+   _file.value.listid+1,                 //file
+   line,                                 //line
+   scope.value.listid+1,                 //scope
+   basetype.value.listid+1,              //basetype
+   sizeinbits,                           //sizeinbits
+   aligninbits,                          //aligninbits
+   offsetinbits,                         //offsetinbits
+   flags,                                //flags
+   0                                     //extradata
   ]);
  end;
 end;

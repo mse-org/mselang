@@ -490,19 +490,20 @@ type
   encoding: int32;
  end;
  pdibasictypety = ^dibasictypety;
- 
+
  diderivedtypekindty = (ditk_pointertype,ditk_referencetype);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
-  difile: metavaluety;
-  context: metavaluety;
   name: metavaluety;
-  linenumber: metavaluety;
-  sizeinbits: metavaluety;
-  aligninbits: metavaluety;
-  flags: metavaluety;
-  typederivedfrom: metavaluety;
+  _file: metavaluety;
+  line: int32;
+  scope: metavaluety;
+  basetype: metavaluety;
+  sizeinbits: int32;
+  aligninbits: int32;
+  offsetinbits: int32;
+  flags: int32;
  end;
  pdiderivedtypety = ^diderivedtypety;
 
@@ -622,6 +623,7 @@ type
    function addident(const aident: identnamety): metavaluety;
    function addstring(const avalue: lstringty): metavaluety;
    function addstring(const avalue: string): metavaluety;
+   function addstringornull(const avalue: lstringty): metavaluety;
    function adddifile(const afilename: filenamety): metavaluety;
 
    function adddibasictype(const aname: lstringty;
@@ -2107,6 +2109,16 @@ begin
  result:= addstring(stringtolstring(avalue));
 end;
 
+function tmetadatalist.addstringornull(const avalue: lstringty): metavaluety;
+begin
+ if avalue.len = 0 then begin
+  result:= dummymeta;
+ end
+ else begin
+  result:= addstring(avalue);
+ end;
+end;
+
 function tmetadatalist.adddifile(const afilename: filenamety): metavaluety;
 var
  m1,m2: metavaluety;
@@ -2282,18 +2294,22 @@ function tmetadatalist.adddiderivedtype(const akind: diderivedtypekindty;
                const alinenumber: int32; const asizeinbits: int32;
                const aaligninbits: int32; const aflags: int32;
                const atypederivedfrom: metavaluety): metavaluety;
+var
+ m1: metavaluety;
 begin
+ m1:= addstringornull(aname);
  with pdiderivedtypety(adddata(mdk_diderivedtype,
                     sizeof(diderivedtypety),result))^ do begin
   kind:= akind;
-  difile:= adifile;
-  context:= acontext;
-  name:= addstring(aname);
-  linenumber:= i32const(alinenumber);
-  sizeinbits:= i32const(asizeinbits);
-  aligninbits:= i32const(aaligninbits);
-  flags:= i32const(aflags);
-  typederivedfrom:= atypederivedfrom;
+  name:= m1;
+  _file:= adifile;
+  line:= alinenumber;
+  scope:= acontext;
+  basetype:= atypederivedfrom;
+  sizeinbits:= asizeinbits;
+  aligninbits:= aaligninbits;
+  offsetinbits:= 0;
+  flags:= aflags;
  end;
 end;
 
@@ -2311,16 +2327,13 @@ var
  typekind1: diderivedtypekindty;
 begin
  i1:= aindirection;
-// if aisreference then begin
-//  i1:= -i1;
-// end;
  if ftypemetalist.addunique(atype,i1,po1) then begin
   offs1:= ftypemetalist.getdataoffset(po1); //relative backup
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
-    file1:= fvoidconst; //internal type
-    context1:= fvoidconst;
+    file1:= dummymeta; //internal type
+    context1:= dummymeta;
    end
    else begin
     file1:= defunit^.filepathmeta;
@@ -2335,7 +2348,6 @@ begin
 //   end;
    m2:= addtype(atype,aindirection-1{,false}); //next base type
    m1:= adddiderivedtype(typekind1,file1,context1,
-                         //linenumber       alignment??    flags
                      emptylstring,0,pointerbitsize,pointerbitsize,0,m2);
   end
   else begin
@@ -2343,7 +2355,6 @@ begin
    if po2^.h.indirectlevel > 0 then begin
     m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1{,false});
     m1:= adddiderivedtype(ditk_pointertype,file1,context1,
-                          //linenumber       alignment??    flags
                       lstr1,0,pointerbitsize,pointerbitsize,0,m2);
    end
    else begin

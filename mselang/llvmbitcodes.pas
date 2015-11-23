@@ -628,6 +628,20 @@ type
     METADATA_BASIC_TYPE,//    = 15,  // [distinct, tag, name, size, align, enc]
     METADATA_FILE,//          = 16,  // [distinct, filename, directory]
     METADATA_DERIVED_TYPE,//  = 17,  // [distinct, ...]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getTag());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(N->getLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getScope()));
+  Record.push_back(VE.getMetadataOrNullID(N->getBaseType()));
+  Record.push_back(N->getSizeInBits());
+  Record.push_back(N->getAlignInBits());
+  Record.push_back(N->getOffsetInBits());
+  Record.push_back(N->getFlags());
+  Record.push_back(VE.getMetadataOrNullID(N->getExtraData()));
+}
     METADATA_COMPOSITE_TYPE,//= 18,  // [distinct, ...]
     METADATA_SUBROUTINE_TYPE,//=19,  // [distinct, flags, types]
 {

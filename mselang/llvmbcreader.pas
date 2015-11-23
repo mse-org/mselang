@@ -1492,11 +1492,27 @@ begin
       fmetalist.add();
       checkdatalen(rec1,7);
       outmetarecord(distinct()+
-        tag('tag',3)+','+
-        metaornull('name',4)+','+
-        int('size',5)+','+
-        int('align',6)+','+
-        tag('encoding',7),7);
+       tag('tag',3)+','+
+       metaornull('name',4)+','+
+       int('size',5)+','+
+       int('align',6)+','+
+       tag('encoding',7),7);
+     end;
+     METADATA_DERIVED_TYPE: begin
+      fmetalist.add();
+      checkdatalen(rec1,13);
+      outmetarecord(distinct()+
+       tag('tag',3)+','+
+       metaornull('name',4)+','+
+       metaornull('file',5)+','+
+       int('line',6)+','+
+       metaornull('scope',7)+','+
+       metaornull('basetype',8)+','+
+       int('sizeinbits',9)+','+
+       int('aligninbits',10)+','+
+       int('offsetinbits',11)+','+
+       tag('flags',12)+','+
+       metaornull('extradata',13),13);
      end;
      METADATA_SUBROUTINE_TYPE: begin
       fmetalist.add();
