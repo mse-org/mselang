@@ -432,6 +432,7 @@ type
     FUNC_CODE_INST_STOREATOMIC_OLD,// = 42  // STORE: [ptrty,ptr,val, align, vol
                                      //         ordering, synchscope]
     FUNC_CODE_INST_GEP,//         = 43, // GEP:  [inbounds, n x operands]
+                                  //mse:   GEP:  [inbounds, type, n x operands] 
     FUNC_CODE_INST_STORE,//       = 44, 
                             // STORE: [ptrty,ptr,valty,val, align, vol]
                        //mse:  STORE: [ptr,val, align, vol]

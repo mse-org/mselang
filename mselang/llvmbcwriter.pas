@@ -1572,7 +1572,7 @@ end;
 procedure tllvmbcwriter.emitptroffset(const avalue: int32;
                                                    const aoffset: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_pointer),
+ emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_8),
                                   fsubopindex-avalue,fsubopindex-aoffset]);
  checkdebugloc();
  inc(fsubopindex);
@@ -1585,7 +1585,7 @@ begin
                                                    ord(CAST_BITCAST)]);
  checkdebugloc();
  inc(fsubopindex);
- emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_pointer),
+ emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_8),
                                                 1,fsubopindex-aoffset]);
  checkdebugloc();
  inc(fsubopindex);

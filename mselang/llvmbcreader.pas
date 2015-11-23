@@ -1992,6 +1992,9 @@ begin
         str1:= str1+opname(rec1[i1])+',';
         i2:= ftypelist.itemtypeindex(i2);
        end;
+       if i2 <> rec1[3] then begin
+        error('Invalid explicit type');
+       end;
        if high(rec1) >= 5 then begin
         setlength(str1,length(str1)-1);
         i2:= i2 or pointermask; //pointer
