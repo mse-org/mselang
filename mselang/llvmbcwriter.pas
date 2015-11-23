@@ -200,7 +200,8 @@ type
                                //for load/store, 3 ssa
 
    procedure emitptroffset(const avalue: int32; const aoffset: int32);
-   procedure emitgetelementptr(const avalue: int32; const aoffset: int32);
+   procedure emitgetelementptr(const avalue: int32;
+                                              const aoffset: int32);
                                          //aoffset = byteoffset, 2 ssa
    procedure emitbitcast(const asource: int32; const adesttype: int32); //1 ssa
    procedure emitcastop(const asource: int32; const adesttype: int32;
@@ -1404,7 +1405,7 @@ begin
 // inc(fsubopstart);
 end;
 
-{$define explicitvartype}
+//{$define explicitvartype}
 
 const
 {$ifdef explicitvartype}
@@ -1571,7 +1572,8 @@ end;
 procedure tllvmbcwriter.emitptroffset(const avalue: int32;
                                                    const aoffset: int32);
 begin
- emitrec(ord(FUNC_CODE_INST_GEP),[0,fsubopindex-avalue,fsubopindex-aoffset]);
+ emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_pointer),
+                                  fsubopindex-avalue,fsubopindex-aoffset]);
  checkdebugloc();
  inc(fsubopindex);
 end;
@@ -1583,7 +1585,8 @@ begin
                                                    ord(CAST_BITCAST)]);
  checkdebugloc();
  inc(fsubopindex);
- emitrec(ord(FUNC_CODE_INST_GEP),[0,1,fsubopindex-aoffset]);
+ emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_pointer),
+                                                1,fsubopindex-aoffset]);
  checkdebugloc();
  inc(fsubopindex);
 end;

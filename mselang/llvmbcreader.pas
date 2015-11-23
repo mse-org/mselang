@@ -1656,7 +1656,13 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
     end;
    end
    else begin
-    result:= 'G'+inttostr(avalue);
+    if (kind = gk_var) and explicittype then begin
+     result:= '^';
+    end
+    else begin
+     result:= '';
+    end;
+    result:= result+'G'+inttostr(avalue);
    end;
   end;
  end; //returnglob
@@ -1858,7 +1864,7 @@ var
 begin
  with fblockstack[fblocklevel-1] do begin
   list:= tgloblist.create(ftypelist);
-  ssapo:= @fssastart;
+  ssapo:= @fssaindex;
   fcurrentconstlist:= list;
  end;
  if fsubimplementationcount >= fsubheadercount then begin
@@ -1968,20 +1974,20 @@ begin
        outssarecord(i1,str1);
       end;
       FUNC_CODE_INST_GEP: begin
-       checkmindatalen(rec1,3);
+       checkmindatalen(rec1,4);
        if rec1[2] <> 0 then begin
         str1:= 'inbounds ';
        end
        else begin
         str1:= '';
        end;
-       str1:= str1+opname(rec1[3])+'[';
-       i2:= typeid(rec1[3]);
-       for i1:= 4 to high(rec1) do begin
+       str1:= str1+opname(rec1[4])+'[';
+       i2:= typeid(rec1[4]);
+       for i1:= 5 to high(rec1) do begin
         str1:= str1+opname(rec1[i1])+',';
         i2:= ftypelist.itemtypeindex(i2);
        end;
-       if high(rec1) >= 4 then begin
+       if high(rec1) >= 5 then begin
         setlength(str1,length(str1)-1);
         i2:= i2 or pointermask; //pointer
        end;

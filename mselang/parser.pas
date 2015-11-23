@@ -971,6 +971,9 @@ begin
   try
    try
     compileoptions:= aoptions;
+    if not (co_llvm in aoptions) then begin
+     debugoptions:= [];
+    end;
     s.debugoptions:= debugoptions;
     s.compilerswitches:= compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
