@@ -374,8 +374,9 @@ type
  metavalueflagsty = set of metavalueflagty;
  
  metavaluety = record
-  value: llvmvaluety;
-  flags: metavalueflagsty;
+  id: int32;             //-1 -> none
+//  value: llvmvaluety;
+ // flags: metavalueflagsty;
  end;
  pmetavaluety = ^metavaluety;
  metavaluearty = array of metavaluety;

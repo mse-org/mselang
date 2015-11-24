@@ -403,8 +403,7 @@ type
  end;
 
 const
- dummymeta: metavaluety = (value: (typeid: -1; listid: -1);
-                                                 flags: [mvf_dummy]);
+ dummymeta: metavaluety = (id: -1);
 type
  nodemetaty = record
   len: int32;
@@ -578,7 +577,7 @@ type
 
  tmetadatalist = class(tindexbufferdatalist)
   private
-   fvoidconst: metavaluety;
+//   fvoidconst: metavaluety;
    femptynode: metavaluety;
    ftypelist: ttypehashdatalist;
    fconstlist: tconsthashdatalist;
@@ -591,7 +590,7 @@ type
    fcompileunit: metavaluety;
    fcompilefile: metavaluety;
    fdbgdeclare: int32;
-   fnullintconst: metavaluety;
+//   fnullintconst: metavaluety;
    femptystringconst: metavaluety;
 //   fwdstringconst: metavaluety;
    fhasmoduleflags: boolean;
@@ -600,7 +599,7 @@ type
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
-   function dwarftag(const atag: int32): metavaluety;
+//   function dwarftag(const atag: int32): metavaluety;
   public
    constructor create(const atypelist: ttypehashdatalist;
                           const aconstlist: tconsthashdatalist;
@@ -669,8 +668,8 @@ type
    function next: pmetadataty;  //nil if none
 //   property subprograms: metavaluesty read getsubprograms;
 //   property globalvariables: metavaluesty read getglobalvariables;
-   property voidconst: metavaluety read fvoidconst;
-   property nullintconst: metavaluety read fnullintconst;
+//   property voidconst: metavaluety read fvoidconst;
+//   property nullintconst: metavaluety read fnullintconst;
    property emptystringconst: metavaluety read femptystringconst;
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
@@ -1935,12 +1934,14 @@ begin
  inherited;
  if not (bdls_destroying in fstate) then begin
   fhasmoduleflags:= false;
-  fvoidconst.value.typeid:= ftypelist.void;
-  fvoidconst.value.listid:= 0;
-  fvoidconst.flags:= [];
-  fnullintconst.value.typeid:= ord(das_8);
-  fnullintconst.value.listid:= ord(nc_i8);
-  fnullintconst.flags:= [];
+ {
+//  fvoidconst.value.typeid:= ftypelist.void;
+  fvoidconst.id:= 0;
+//  fvoidconst.flags:= [];
+//  fnullintconst.value.typeid:= ord(das_8);
+  fnullintconst.id:= ord(nc_i8);
+//  fnullintconst.flags:= [];
+ }
   if info.debugoptions <> [] then begin
    femptystringconst:= addstring('');
    femptynode:= addnode([]);
@@ -1976,9 +1977,9 @@ end;
 function tmetadatalist.adddata(const akind: metadatakindty; 
                const adatasize: int32; out avalue: metavaluety): pointer;
 begin
- avalue.value.typeid:= ftypelist.metadata;
- avalue.value.listid:= fcount;
- avalue.flags:= [mvf_meta];
+// avalue.value.typeid:= ftypelist.metadata;
+ avalue.id:= fcount;
+// avalue.flags:= [mvf_meta];
  result:= inherited adddata(adatasize+sizeof(metadataheaderty));
  with pmetadataheaderty(result)^ do begin
   kind:= akind;
@@ -1988,7 +1989,7 @@ end;
 
 function tmetadatalist.getdata(const avalue: metavaluety): pointer;
 begin
- result:= items[avalue.value.listid]+sizeof(metadataheaderty);
+ result:= items[avalue.id]+sizeof(metadataheaderty);
 end;
 
 function tmetadatalist.getstringvalue(const avalue: metavaluety): lstringty;
@@ -2029,11 +2030,11 @@ begin
    value.listid:= constid;
    value.typeid:= fconstlist.gettype(constid);;
   end;
-  po1^.id:= m1.value.listid;
+  po1^.id:= m1.id;
  end;
- result.value.typeid:= ftypelist.metadata;
- result.value.listid:= po1^.id;
- result.flags:= [mvf_meta];
+// result.value.typeid:= ftypelist.metadata;
+ result.id:= po1^.id;
+// result.flags:= [mvf_meta];
 end;
 
 function tmetadatalist.addglobvalue(const globid: int32): metavaluety;
@@ -2139,12 +2140,13 @@ begin
   filename:= m2;
  end;
 end;
-
+{
 function tmetadatalist.dwarftag(const atag: int32): metavaluety;
 begin
  result.value:= fconstlist.addi32(atag or LLVMDebugVersion);
  result.flags:= [];
 end;
+}
 {
 function tmetadatalist.adddifile(const afile: metavaluety): metavaluety;
 begin
@@ -2371,11 +2373,11 @@ begin
    end;
   end;
   po1:= ftypemetalist.getdatapo(offs1); //possibly moved
-  po1^.id:= m1.value.listid;
+  po1^.id:= m1.id;
  end;
- result.value.typeid:= ftypelist.metadata;
- result.value.listid:= po1^.id;
- result.flags:= [mvf_meta];
+// result.value.typeid:= ftypelist.metadata;
+ result.id:= po1^.id;
+// result.flags:= [mvf_meta];
 end;
 
 function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;

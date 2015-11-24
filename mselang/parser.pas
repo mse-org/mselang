@@ -385,7 +385,7 @@ begin
   with additem(oc_lineinfo)^.par.lineinfo do begin
    loc.line:= info.s.source.line;
    loc.col:= 0;
-   loc.scope:= info.s.currentscopemeta.value.listid;
+   loc.scope:= info.s.currentscopemeta.id;
   end;
  end;
 end;
@@ -400,7 +400,7 @@ begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
-     loc.scope:= info.s.currentscopemeta.value.listid;
+     loc.scope:= info.s.currentscopemeta.id;
     end;
    end;
   end;
@@ -548,7 +548,7 @@ begin
           filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);
        addnamednode(stringtolstring('llvm.dbg.cu'),
-                                            [compileunitmeta.value.listid]);
+                                            [compileunitmeta.id]);
        if not hasmoduleflags then begin
         hasmoduleflags:= true;
         m1:= i32const(ord(mfb_warning));
@@ -558,8 +558,8 @@ begin
         m3:= addnode([m1,addstring(stringtolstring('Debug Info Version')),
                              i8const(DEBUG_METADATA_VERSION)]);
 
-        addnamednode(stringtolstring('llvm.module.flags'),[m2.value.listid,
-                                                    m3.value.listid]);
+        addnamednode(stringtolstring('llvm.module.flags'),[m2.id,
+                                                    m3.id]);
        end;
       end;
      end;

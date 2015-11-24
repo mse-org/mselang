@@ -359,12 +359,15 @@ end;
 
 function metaornull(const ameta: metavaluety): int32;
 begin
- if mvf_dummy in ameta.flags then begin
+ result:= ameta.id + 1;
+{
+ if idmvf_dummy in ameta.flags then begin
   result:= 0;
  end
  else begin
   result:= ameta.value.listid+1;
  end;
+}
 end; 
 
 { tllvmbcwriter }
@@ -410,13 +413,8 @@ var
  po9: paggregateconstty;
  pm1: pmetadataty;
  metadatatype: int32;
- metanull,metanullint,metaoneint,metanullstring,metanullnode,
- metatrue,
- metaDW_TAG_base_type,metaDW_TAG_compile_unit,
- metaDW_TAG_subprogram,
- metaDW_TAG_subroutine_type,metaDW_TAG_variable: metavaluety;
- metavartags: array[dilocvariablekindty] of metavaluety;
- metatypetags: array[diderivedtypekindty] of metavaluety;
+// metanull,metanullint,metaoneint,metanullstring,metanullnode,
+// metatrue,
  m1,m2: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
@@ -464,50 +462,18 @@ begin
  emitrec(ord(MODULE_CODE_VERSION),[1]);
  
  if metadata.count > 0 then begin
+{
   metanull:= metadata.voidconst;
-  metanullint.value.typeid:= ord(das_8);
-  metanullint.value.listid:= ord(nc_i8);
-  metanullint.flags:= [];
-  metaoneint.value.typeid:= ord(das_32);
-  metaoneint.value.listid:= ord(oc_i32);
-  metaoneint.flags:= [];
+  metanullint.id:= ord(das_8);
+  metanullint.id:= ord(nc_i8);
+//  metanullint.flags:= [];
+  metaoneint.id:= ord(das_32);
+  metaoneint.id:= ord(oc_i32);
+//  metaoneint.flags:= [];
 //  metatrue.value:= consts.addi1(true);
-  metatrue.value:= consts.addi32(-1);
-  metatrue.flags:= [];
-
-  metaDW_TAG_base_type.value:= consts.addi32(
-               DW_TAG_base_type or LLVMDebugVersion);
-  metaDW_TAG_base_type.flags:= [];
-  metaDW_TAG_compile_unit.value:= consts.addi32(
-               DW_TAG_compile_unit or LLVMDebugVersion);
-  metaDW_TAG_compile_unit.flags:= [];
-  metaDW_TAG_subprogram.value:= consts.addi32(
-               DW_TAG_subprogram or LLVMDebugVersion);
-  metaDW_TAG_subprogram.flags:= [];
-  metaDW_TAG_subroutine_type.value:= consts.addi32(
-               DW_TAG_subroutine_type or LLVMDebugVersion);
-  metaDW_TAG_subroutine_type.flags:= [];
-  metaDW_TAG_variable.value:= consts.addi32(
-               DW_TAG_variable or LLVMDebugVersion);
-  metaDW_TAG_variable.flags:= [];
-
-  with metatypetags[ditk_pointertype] do begin
-   value:= consts.addi32(DW_TAG_pointer_type or LLVMDebugVersion);
-   flags:= [];
-  end;
-  with metatypetags[ditk_referencetype] do begin
-   value:= consts.addi32(DW_TAG_reference_type or LLVMDebugVersion);
-   flags:= [];
-  end;
-
-  with metavartags[divk_autovariable] do begin
-   value:= consts.addi32(DW_TAG_auto_variable or LLVMDebugVersion);
-   flags:= [];
-  end;
-  with metavartags[divk_argvariable] do begin
-   value:= consts.addi32(DW_TAG_arg_variable or LLVMDebugVersion);
-   flags:= [];
-  end;
+  metatrue.id:= consts.addi32(-1).listid;
+//  metatrue.flags:= [];
+}
 {
   with metadata do begin
    addnamednode(stringtolstring('llvm.module.flags'),
@@ -769,8 +735,8 @@ begin
   end;
  end;
  if metadata.count > 0 then begin                          //metadata
-  metanullstring:= metadata.emptystringconst;
-  metanullnode:= metadata.emptynode;
+//  metanullstring:= metadata.emptystringconst;
+//  metanullnode:= metadata.emptynode;
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
   while pm1 <> nil do begin
@@ -797,7 +763,7 @@ begin
     end;
     mdk_difile: begin
      with pdifilety(@pm1^.data)^ do begin
-      emitmetafile(filename.value.listid,dirname.value.listid);
+      emitmetafile(filename.id,dirname.id);
      end;
     end;
     mdk_diderivedtype: begin
@@ -1940,8 +1906,8 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_COMPILE_UNIT),[0, //distinct
    sourcelanguage,                       //sourcelanguage,
-   difile.value.listid+1,                //file,
-   producer.value.listid+1,              //producer,
+   difile.id+1,                          //file,
+   producer.id+1,                        //producer,
    0,                                    //isoptimized,
    0,                                    //flags
    0,                                    //runtimeversion
@@ -1961,7 +1927,7 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_BASIC_TYPE),[0, //distinct
    DW_TAG_base_type,                   //tag
-   name.value.listid+1,                //name
+   name.id+1,                          //name
    sizeinbits,                         //sizenbits
    aligninbits,                        //aligninbits
    encoding                            //encoding
@@ -1977,11 +1943,11 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_DERIVED_TYPE),[0, //distinct
    derivedtags[kind],                    //tag
-   name.value.listid+1,                  //name
-   _file.value.listid+1,                 //file
+   name.id+1,                            //name
+   _file.id+1,                           //file
    line,                                 //line
-   scope.value.listid+1,                 //scope
-   basetype.value.listid+1,              //basetype
+   scope.id+1,                           //scope
+   basetype.id+1,                        //basetype
    sizeinbits,                           //sizeinbits
    aligninbits,                          //aligninbits
    offsetinbits,                         //offsetinbits
@@ -1997,7 +1963,7 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_SUBROUTINE_TYPE),[0, //distinct
    0,                                       //flags
-   params.value.listid+1                    //typearray  
+   params.id+1                              //typearray  
   ]);
  end;
 end;
@@ -2006,12 +1972,12 @@ procedure tllvmbcwriter.emitmetasubprogram(const avalue: disubprogramty);
 begin
  with avalue do begin
   emitrec(ord(METADATA_SUBPROGRAM),[1, //distinct
-   scope.value.listid+1,     //scope
-   name.value.listid+1,      //name
+   scope.id+1,               //scope
+   name.id+1,                //name
    0,                        //linkagename
-   _file.value.listid+1,     //file
+   _file.id+1,               //file
    line,                     //line
-   _type.value.listid+1,     //type
+   _type.id+1,               //type
    ord(localtounit),         //islocaltounit
    1,                        //isdefinition
    line,                     //scopeline
@@ -2020,10 +1986,10 @@ begin
    1,                        //virtualindex
    int32(flags),             //flags
    0,                        //isoptimized
-   _function.value.listid+1, //function
+   _function.id+1,           //function
    0,                        //templateparams
    0,                        //declaration
-   variables.value.listid+1  //variables
+   variables.id+1            //variables
   ]);
  end;
 end;
@@ -2036,11 +2002,11 @@ begin
  with avalue do begin
   emitrec(ord(METADATA_LOCAL_VAR),[0, //distinct
    vartags[kind],         //tag
-   scope.value.listid+1,  //scope
-   name.value.listid+1,   //name
-   _file.value.listid+1,  //file
+   scope.id+1,            //scope
+   name.id+1,             //name
+   _file.id+1,           //file
    linenumber,            //line
-   _type.value.listid+1,  //type
+   _type.id+1,            //type
    arg,                   //arg
    flags]);               //flags
  end;
@@ -2063,15 +2029,15 @@ procedure tllvmbcwriter.emitmetaglobalvar(const avalue: diglobvariablety);
 begin
  with avalue do begin
   emitrec(ord(METADATA_GLOBAL_VAR),[0, //distinct
-   scope.value.listid+1,               //scope
-   name.value.listid+1,                //name
+   scope.id+1,                         //scope
+   name.id+1,                          //name
    0,                                  //linkagename
-   _file.value.listid+1,               //file
+   _file.id+1,                         //file
    line,                               //line
-   _type.value.listid+1,               //type
+   _type.id+1,                         //type
    ord(islocaltounit),                 //islocaltounit
    1,                                  //isdefinition
-   variable.value.listid+1,            //variable
+   variable.id+1,                      //variable
    0                                   //staticdatamemberdeclaration
   ]);
  end;
@@ -2097,40 +2063,10 @@ begin
  pe:= po1+len;
  while po1 < pe do begin
   with po1^ do begin
-//  {$ifdef mse_checkinternalerror}
-//   if mvf_dummy in flags then begin
-//    internalerror(ie_llvm,'20150520A');
-//   end;
-//  {$endif}
-   emitvbr6(value.listid+1);
+   emitvbr6(id+1);
   end;
   inc(po1);
  end;
-(*
- emitvbr6(len*2);
- po1:= values;
- pe:= po1+len;
- while po1 < pe do begin
-  with po1^ do begin
-  {$ifdef mse_checkinternalerror}
-   if mvf_dummy in flags then begin
-    internalerror(ie_llvm,'20150520A');
-   end;
-  {$endif}
-   i2:= value.listid;
-   if flags * [mvf_globval,mvf_meta] = [] then begin
-    inc(i2,fconststart);
-   end;
-   i1:= value.typeid * typeindexstep;
-   if mvf_pointer in flags then begin
-    inc(i1); //pointer
-   end;
-   emitvbr6(i1);
-   emitvbr6(i2);
-  end;
-  inc(po1);
- end;
-*)
 end;
 
 procedure tllvmbcwriter.emitmetanode(const values: array of metavaluety);
@@ -2146,11 +2082,4 @@ begin
  emitrec(ord(METADATA_NAMED_NODE),len,pint32(values));
 end;
 
-{
-procedure tllvmbcwriter.emitmetadatafnnonde(const avalue: int32;
-               const atype: int32);
-begin
- emitrec(ord(METADATA_FN_NODE),[avalue,atype]);
-end;
-}
 end.

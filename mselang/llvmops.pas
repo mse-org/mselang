@@ -2964,14 +2964,14 @@ begin
    with info.s.unitinfo^.llvmlists.metadatalist do begin
     i1:= count;
     i2:= bcstream.globval(dbgdeclare);
-    dummyexp:= dummyaddrexp.value.listid;
-    derefexp:= derefaddrexp.value.listid;
+    dummyexp:= dummyaddrexp.id;
+    derefexp:= derefaddrexp.id;
    end;
    po1:= ps;
    while po1 < pe do begin
 //    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
     ids[0]:= i1;
-    ids[1]:= po1^.debuginfo.value.listid;
+    ids[1]:= po1^.debuginfo.id;
     if af_paramindirect in po1^.flags then begin
      ids[2]:= derefexp;
     end
