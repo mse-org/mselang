@@ -54,6 +54,7 @@ function getidentname(const aident: identty; out name: lstringty): boolean;
 function getidentname(const aname: string): identnamety;
 function getidentname(const aident: identty): string;
 function getidentnamel(const aident: identty): lstringty;
+function getidentnamel(const aeledata: pointer): lstringty;
 function getidentname2(const aident: identty): identnamety;
 function getidentname2(const aeledata: pointer): identnamety;
 
@@ -218,6 +219,20 @@ begin
  getidentname(aident,result)
 {$ifdef mse_checkinternalerror} then begin
   internalerror(ie_parser,'20151111A');
+ end;
+{$else}
+ ;
+{$endif}
+end;
+
+function getidentnamel(const aeledata: pointer): lstringty;
+begin
+{$ifdef mse_checkinternalerror}
+ if not 
+{$endif}
+ getidentname(datatoele(aeledata)^.header.name,result)
+{$ifdef mse_checkinternalerror} then begin
+  internalerror(ie_parser,'20151124A');
  end;
 {$else}
  ;

@@ -441,6 +441,9 @@ type
                             // CMPXCHG: [ptrty,ptr,valty,cmp,new, align,
                                      //           vol,ordering,synchscope]
     FUNC_CODE_INST_LANDINGPAD  = 47 // LANDINGPAD: [ty,val,num,id0,val0...]
+     //mse: LANDINGPAD: 
+     //         [resultty,IsCleanup,NumClauses,
+     //                   {lpc_catch,GlobVal|lpc_filter,GlobArray}]
   );
 
   UseListCodes = (

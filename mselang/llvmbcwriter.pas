@@ -1937,8 +1937,8 @@ end;
 
 procedure tllvmbcwriter.emitmetaderivedtype(const avalue: diderivedtypety);
 const
- derivedtags: array[diderivedtypekindty] of int32 = (DW_TAG_pointer_type,
-                                                       DW_TAG_reference_type);
+ derivedtags: array[diderivedtypekindty] of int32 = (
+   DW_TAG_pointer_type,DW_TAG_reference_type,DW_TAG_member);
 begin
  with avalue do begin
   emitrec(ord(METADATA_DERIVED_TYPE),[0, //distinct
@@ -2045,7 +2045,8 @@ end;
 
 procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
                                                    const apersonality: int32);
-begin                        //todo: use FUNC_CODE_INST_LANDINGPAD
+begin                        //todo: use FUNC_CODE_INST_LANDINGPAD,
+                             //set personality in function definitions
  emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
                                    [aresulttype,fsubopindex-apersonality,1,0]);
  inc(fsubopindex);

@@ -490,7 +490,7 @@ type
  end;
  pdibasictypety = ^dibasictypety;
 
- diderivedtypekindty = (ditk_pointertype,ditk_referencetype);
+ diderivedtypekindty = (ditk_pointertype,ditk_referencetype,ditk_member);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
@@ -538,12 +538,12 @@ type
   items: expitemarty;
  end;
  pdiexpressionty = ^diexpressionty;
-   
+{   
  metaiddataty = record
   id: int32;
  end;
  pmetaiddataty = ^metaiddataty;
- 
+} 
  ttypemetahashdatalist = class(tdoubleintegerhashdatalist)
   public
    constructor create();
@@ -1898,14 +1898,14 @@ end;
 
 constructor ttypemetahashdatalist.create();
 begin
- inherited create(sizeof(metaiddataty));
+ inherited create(sizeof(metavaluety));
 end;
 
 { tconstmetahashdatalist }
 
 constructor tconstmetahashdatalist.create();
 begin
- inherited create(sizeof(metaiddataty));
+ inherited create(sizeof(metavaluety));
 end;
 
 { tmetadatalist }
@@ -2021,7 +2021,7 @@ end;
 
 function tmetadatalist.addconst(const constid: int32): metavaluety;
 var
- po1: pmetaiddataty;
+ po1: pmetavaluety;
  m1: metavaluety;
 begin
  if fconstmetalist.addunique(constid,po1) then begin
@@ -2320,15 +2320,22 @@ end;
 function tmetadatalist.addtype(const atype: elementoffsetty;
                                const aindirection: int32{;
                                const aisreference: boolean}): metavaluety;
+const
+ metabuffersize = 1;
+ 
 var
- po1: pmetaiddataty;
+ po1: pmetavaluety;
  po2: ptypedataty;
+ po3: pfielddataty;
  offs1: card32;
  lstr1: lstringty;
  file1: metavaluety;
  m1,m2,context1: metavaluety;
  i1: int32;
  typekind1: diderivedtypekindty;
+ ele1: elementoffsetty;
+ metabuffer: array[0..metabuffersize-1] of metavaluety;
+ metabufferpo,pb,pe: pmetavaluety;
 begin
  i1:= aindirection;
  if ftypemetalist.addunique(atype,i1,po1) then begin
@@ -2366,6 +2373,38 @@ begin
      dk_integer: begin
       m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
      end;
+     dk_record: begin
+      pb:= @metabuffer;
+      metabufferpo:= pb;
+      pe:= metabufferpo+metabuffersize;
+      ele1:= po2^.fieldchain;
+      while ele1 <> 0 do begin
+       po3:= ele.eledataabs(ele1);
+       metabufferpo^:= adddiderivedtype(ditk_member,file1,context1,
+           getidentnamel(pointer(po3)),0,0,0,0,addtype(po3^.vf.typ,
+                   po3^.indirectlevel-
+                   ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel));
+       inc(metabufferpo);
+       if metabufferpo = pe then begin
+        if pb = @metabuffer then begin
+         i1:= 2*metabuffersize*sizeof(metavaluety);
+         getmem(pb,i1);
+         metabufferpo:= pb;
+         pe:= pointer(pb)+i1;
+        end
+        else begin
+         i1:= 2*(pointer(pe)-pointer(pb));
+         reallocmem(pb,i1);
+         pe:= pointer(pb)+i1;
+         metabufferpo:= pointer(pb) + i1 div 2;
+        end;
+       end;
+       ele1:= po3^.vf.next;
+      end;
+      if pb <> @metabuffer then begin
+       freemem(pb);
+      end;
+     end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');
      end;
@@ -2375,9 +2414,7 @@ begin
   po1:= ftypemetalist.getdatapo(offs1); //possibly moved
   po1^.id:= m1.id;
  end;
-// result.value.typeid:= ftypelist.metadata;
  result.id:= po1^.id;
-// result.flags:= [mvf_meta];
 end;
 
 function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;
