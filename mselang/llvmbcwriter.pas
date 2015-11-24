@@ -2053,7 +2053,7 @@ var
 begin
  with avalue do begin
   for i1:= 0 to count-1 do begin
-   idar1[i1]:= items[i1].value.listid+1;
+   idar1[i1]:= items[i1];
   end;
   emitrec(ord(METADATA_EXPRESSION),[0],count,@idar1[0]); //distinct
  end;

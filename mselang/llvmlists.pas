@@ -533,7 +533,7 @@ type
  end;
  pdiglobvariablety = ^diglobvariablety;
 
- expitemarty = array[0..3] of metavaluety;
+ expitemarty = array[0..3] of int32;
  diexpressionty = record
   count: int32;
   items: expitemarty;
@@ -596,6 +596,7 @@ type
 //   fwdstringconst: metavaluety;
    fhasmoduleflags: boolean;
    fdummyaddrexp: metavaluety;
+   fderefaddrexp: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -640,7 +641,6 @@ type
                               const aindirection: int32{;
                                const aisreference: boolean}): metavaluety;
    function addtype(const avariable: pvardataty): metavaluety;
-//   function adddifile(const afile: metavaluety): metavaluety; //name-dir-pair
    function adddicompileunit(const afile: metavaluety; 
           const asourcelanguage: int32; const aproducer: string;
           const asubprograms: metavaluety; const aglobalvariables: metavaluety;
@@ -658,7 +658,7 @@ type
            const alinenumber: int32; const argnumber: int32;
                                  const avariable: pvardataty): metavaluety;
    function adddiexpression(
-                        const aexpression: array of metavaluety): metavaluety;   
+                        const aexpression: array of int32): metavaluety;   
   {
    function adddicompositetype(const atag: int32; 
                        const aitems: array of metavaluety): metavaluety;
@@ -675,6 +675,7 @@ type
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
    property dummyaddrexp: metavaluety read fdummyaddrexp;
+   property derefaddrexp: metavaluety read fderefaddrexp;
    property hasmoduleflags: boolean read fhasmoduleflags write fhasmoduleflags;
  end;
 
@@ -1952,7 +1953,8 @@ begin
             [ftypelist.metadata,ftypelist.metadata,ftypelist.metadata],
                                             getidentname('llvm.dbg.declare'));
    fdummyaddrexp:= adddiexpression([]);
-  end;
+   fderefaddrexp:= adddiexpression([DW_OP_deref]);
+ end;
  end;
 end;
 
@@ -2341,7 +2343,7 @@ begin
                         //todo: use correct context for local defines
    end;
   end;
-  if aindirection > 0 then begin
+  if aindirection > 0 then begin         //todo: set identname
    typekind1:= ditk_pointertype;
 //   if aisreference then begin
 //    typekind1:= ditk_referencetype;
@@ -2377,10 +2379,15 @@ begin
 end;
 
 function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;
+var
+ i1: int32;
 begin
+ i1:= 0;
+ if af_paramindirect in avariable^.address.flags then begin
+  i1:= -1;
+ end;
  result:= addtype(avariable^.vf.typ,avariable^.address.indirectlevel-
-            ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel{,
-                                 af_paramindirect in avariable^.address.flags});
+         ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel + i1);
 end;
 
 function tmetadatalist.adddivariable(const aname: lstringty;
@@ -2427,7 +2434,7 @@ begin
 end;
 
 function tmetadatalist.adddiexpression(
-              const aexpression: array of metavaluety): metavaluety;
+              const aexpression: array of int32): metavaluety;
 var
  i1: int32;
 begin

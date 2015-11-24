@@ -571,6 +571,19 @@ begin
  end;
 end;
 
+function tagvalueartostring(const avalue: valuearty; const start: int32): string;
+var
+ i1: int32;
+begin
+ result:= '';
+ if start <= high(avalue) then begin
+  for i1:= start to high(avalue) do begin
+   result:= result + '$'+hextostr(card32(avalue[i1]),-1)+',';
+  end;
+  setlength(result,length(result)-1);
+ end;
+end;
+
 function metaornullartostring(const avalues: valuearty;
                                                 const start: int32): string;
 var
@@ -1431,14 +1444,8 @@ function metastring(const avalues: valuearty): string;
  end;
 
  function tag(const aname: string; const aindex: int32): string;
- var
-  i1: int32;
  begin
-  i1:= (highestbit(rec1[aindex])+4) div 4;
-  if i1 = 0 then begin
-   i1:= 1;
-  end;
-  result:= aname+':$'+hextostr(card32(rec1[aindex]),i1);
+  result:= aname+':$'+hextostr(card32(rec1[aindex]),-1);
  end;
    
 var
@@ -1606,7 +1613,7 @@ begin
      end;
      METADATA_EXPRESSION: begin
       fmetalist.add();
-      outmetarecord(distinct()+metaornullartostring(rec1,3),bigint);
+      outmetarecord(distinct()+tagvalueartostring(rec1,3),bigint);
      end;
      else begin
       fmetalist.add();

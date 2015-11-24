@@ -2845,6 +2845,7 @@ var
  idar: idarty;
  ids: idsarty;
  isfunction: boolean;
+ dummyexp,derefexp: int32;
 begin
 ///////////// bcstream.nodebugloc:= true; 
             //debugloc necessary because of param debuginfo
@@ -2963,14 +2964,20 @@ begin
    with info.s.unitinfo^.llvmlists.metadatalist do begin
     i1:= count;
     i2:= bcstream.globval(dbgdeclare);
-    i3:= dummyaddrexp.value.listid;
+    dummyexp:= dummyaddrexp.value.listid;
+    derefexp:= derefaddrexp.value.listid;
    end;
    po1:= ps;
    while po1 < pe do begin
 //    bcstream.emitalloca(bcstream.ptypeval(po1^.size));
     ids[0]:= i1;
     ids[1]:= po1^.debuginfo.value.listid;
-    ids[2]:= i3; //todo: indirect par
+    if af_paramindirect in po1^.flags then begin
+     ids[2]:= derefexp;
+    end
+    else begin
+     ids[2]:= dummyexp;
+    end;
     bcstream.emitcallop(false,i2,idar);
     inc(i1);
     inc(po1);

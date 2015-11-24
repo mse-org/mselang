@@ -745,7 +745,10 @@ type
 *)
 
 const
-//from llvm/Support/Dwarf.h
+//from include/llvm/Support/Dwarf.def
+ DW_OP_deref = $06; //HANDLE_DW_OP(0x06, deref)
+ 
+//from include/llvm/Support/Dwarf.h
 
  //LLVMConstants
   // llvm mock tags
