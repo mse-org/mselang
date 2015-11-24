@@ -423,8 +423,8 @@ type
                                      //             ordering, synchscope]
     FUNC_CODE_INST_RESUME,//      = 39, // RESUME:     [opval]
     FUNC_CODE_INST_LANDINGPAD_OLD,//  = 40, 
-     // LANDINGPAD: [ty,val,val,num,id0,val0...]
-     //mse: LANDINGPAD: 
+     // LANDINGPAD_OLD: [ty,val,val,num,id0,val0...]
+     //mse: LANDINGPAD_OLD: 
      //         [resultty,PersFn,IsCleanup,NumClauses,
      //                   {lpc_catch,GlobVal|lpc_filter,GlobArray}]
     FUNC_CODE_INST_LOADATOMIC,//  = 41, // LOAD: [opty, op, align, vol,

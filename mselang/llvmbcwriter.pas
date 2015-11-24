@@ -2045,8 +2045,8 @@ end;
 
 procedure tllvmbcwriter.emitlandingpad(const aresulttype: int32;
                                                    const apersonality: int32);
-begin
- emitrec(ord(FUNC_CODE_INST_LANDINGPAD),
+begin                        //todo: use FUNC_CODE_INST_LANDINGPAD
+ emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
                                    [aresulttype,fsubopindex-apersonality,1,0]);
  inc(fsubopindex);
 end;
