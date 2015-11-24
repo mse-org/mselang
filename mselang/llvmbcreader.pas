@@ -578,7 +578,7 @@ begin
  result:= '';
  if start <= high(avalue) then begin
   for i1:= start to high(avalue) do begin
-   result:= result + '$'+hextostr(card32(avalue[i1]),-1)+',';
+   result:= result + '$'+hextostr(card32(avalue[i1]),0)+',';
   end;
   setlength(result,length(result)-1);
  end;
@@ -1445,7 +1445,7 @@ function metastring(const avalues: valuearty): string;
 
  function tag(const aname: string; const aindex: int32): string;
  begin
-  result:= aname+':$'+hextostr(card32(rec1[aindex]),-1);
+  result:= aname+':$'+hextostr(card32(rec1[aindex]),0);
  end;
    
 var
