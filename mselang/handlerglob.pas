@@ -512,12 +512,12 @@ procedure inittypedatabyte(var atype: typedataty; akind: datakindty;
 begin
  inittypedata(atype,akind,aindirectlevel,aflags,artti,aancestor);
  atype.h.bytesize:= abytesize;
+ atype.h.bitsize:= abytesize*8;
  if abytesize >= pointersize then begin
   atype.h.datasize:= das_none;
-  atype.h.bitsize:= 0;
+//  atype.h.bitsize:= 0;
  end
  else begin
-  atype.h.bitsize:= abytesize*8;
   atype.h.datasize:= datasizes[atype.h.bitsize];
  end;  
 end;

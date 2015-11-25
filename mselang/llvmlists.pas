@@ -2482,8 +2482,9 @@ begin
       while ele1 <> 0 do begin
        po3:= ele.eledataabs(ele1);
        metabufferpo^:= adddiderivedtype(ditk_member,file1,context1,
-           getidentnamel(pointer(po3)),0,0,0,po3^.offset*8,0,
-              addtype(po3^.vf.typ,
+           getidentnamel(pointer(po3)),0,
+           ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.bitsize,0,po3^.offset*8,
+           0,addtype(po3^.vf.typ,
                   po3^.indirectlevel-
                    ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel));
        inc(metabufferpo);
@@ -2511,7 +2512,7 @@ begin
        m2:= addnodereverse(@metabuffer,metabuffersize);
       end;
       m1:= adddicompositetype(dick_structuretype,file1,context1,
-                                   lstr1,0,po2^.h.bytesize*8,32,0,0,m2);
+                                   lstr1,0,po2^.h.bytesize*8,0,0,0,m2);
                                         //todo: use correct alignment
      end;
      else begin

@@ -232,17 +232,6 @@ begin
     inittypedatasize(po1^,dk_integer,d.typ.indirectlevel,das_32);
     with po1^.infoint32 do begin
      //todo: check datasize
-    {
-//     flags:= [];
-//     rtti:= 0;
-     indirectlevel:= d.typ.indirectlevel;
-     d.typ.indirectlevel:= 0;
-     bitsize:= 32;
-     bytesize:= 4;
-     datasize:= das_32;
-     parent:= 0;
-     kind:= dk_integer;
-    }
      min:= contextstack[s.stackindex+2].d.dat.constval.vinteger;
      max:= contextstack[s.stackindex+3].d.dat.constval.vinteger;
     end;
@@ -411,14 +400,6 @@ begin
    inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
                      contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
    resolveforwardtype(po1);
-{   
-   kind:= dk_record; //fieldchain set in handlerecorddefstart()
-   datasize:= das_none;
-   bytesize:= contextstack[s.stackindex].d.rec.fieldoffset;
-   bitsize:= bytesize*8;
-   indirectlevel:= d.typ.indirectlevel;
-   flags:= d.typ.flags;
-}
   end;
  end;
 end;
@@ -594,7 +575,7 @@ begin
       end;
       with arty^ do begin
        h.indirectlevel:= 0;
-       h.bitsize:= 0;
+       h.bitsize:= totsize*8;
        h.bytesize:= totsize;
        h.datasize:= das_none;
        h.kind:= dk_array;
@@ -865,13 +846,6 @@ begin
    po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
    inittypedatasize(po1^,dk_enum,d.typ.indirectlevel,das_32);
    with po1^.infoenum do begin
-   {
-    kind:= dk_enum;
-    datasize:= das_32;
-    bytesize:= 4;
-    bitsize:= 32;
-    indirectlevel:= d.typ.indirectlevel;
-   }
     with contextstack[s.stackindex] do begin
      flags:= d.enu.flags;
      last:= d.enu.first;
@@ -897,13 +871,6 @@ begin
   if ele.addelementdata(ident1,ek_type,allvisi,po1) then begin
    inittypedatasize(po1^,dk_enumitem,0,das_32);
    with po1^ do begin
-   {
-    indirectlevel:= 0;
-    bitsize:= 32;
-    bytesize:= 4;
-    datasize:= das_32;
-    kind:= dk_enumitem;
-   }
     infoenumitem.value:= avalue;
     with contextstack[parent] do begin
      infoenumitem.enum:= d.enu.enum;
