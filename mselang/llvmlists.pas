@@ -437,10 +437,6 @@ type
  end;
  pidentmetaty = ^identmetaty;
 
-//
-// todo: remove not used di* record fields, use smaller types instead of 
-//       metavaluety
-//
  difilety = record
   filename: metavaluety;
   dirname: metavaluety;
@@ -489,8 +485,13 @@ type
   encoding: int32;
  end;
  pdibasictypety = ^dibasictypety;
+ 
+ disubrangety = record
+  range: ordrangety;
+ end;
+ pdisubrangety = ^disubrangety;
 
- diderivedtypekindty = (ditk_pointertype,ditk_referencetype,ditk_member);
+ diderivedtypekindty = (didk_pointertype,didk_referencetype,didk_member);
  
  diderivedtypety = record
   kind: diderivedtypekindty;
@@ -506,7 +507,7 @@ type
  end;
  pdiderivedtypety = ^diderivedtypety;
  
- dicompositetypekindty = (dick_structuretype);
+ dicompositetypekindty = (dick_structuretype,dick_arraytype);
 
  dicompositetypety = record
   kind: dicompositetypekindty;
@@ -514,6 +515,7 @@ type
   _file: metavaluety;
   line: int32;
   scope: metavaluety;
+  basetype: metavaluety;
   sizeinbits: int32;
   aligninbits: int32;
   offsetinbits: int32;
@@ -573,7 +575,7 @@ type
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
-                   mdk_difile,mdk_dibasictype,
+                   mdk_difile,mdk_dibasictype,mdk_disubrange,
                    mdk_diderivedtype,mdk_dicompositetype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
@@ -650,25 +652,27 @@ type
    function adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
+   function adddisubrange(const arange: ordrangety): metavaluety;
    function adddiderivedtype(const akind: diderivedtypekindty;
            const adifile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
-           const alinenumber: int32;
+           const aline: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aoffsetinbits: int32;
-           const aflags: int32;
-                         const atypederivedfrom: metavaluety): metavaluety;
+           const aflags: int32; const abasetype: metavaluety): metavaluety;
    function adddicompositetype(const akind: dicompositetypekindty; 
+           const aname: lstringty;
            const adifile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
-           const alinenumber: int32;
+           const aline: int32;
+           const ascope: metavaluety;
+           const abasetype: metavaluety;
            const asizeinbits: int32; const aaligninbits: int32;
            const aoffsetinbits: int32;
            const aflags: int32;
-                         const aelements: metavaluety): metavaluety;
+           const aelements: metavaluety): metavaluety;
    function addtype(const atype: elementoffsetty;
-                              const aindirection: int32{;
-                               const aisreference: boolean}): metavaluety;
+                         const aindirection: int32;
+                              const subrange: boolean = false): metavaluety;
    function addtype(const avariable: pvardataty): metavaluety;
    function adddicompileunit(const afile: metavaluety; 
           const asourcelanguage: int32; const aproducer: string;
@@ -2356,7 +2360,7 @@ function tmetadatalist.adddibasictype(const aname: lstringty;
 var
  m1,m2: metavaluety;
 begin
- m1:= addstring(aname);
+ m1:= addstringornull(aname);
  with pdibasictypety(adddata(mdk_dibasictype,
                     sizeof(dibasictypety),result))^ do begin
   name:= m1;
@@ -2367,13 +2371,21 @@ begin
  end;
 end;
 
+function tmetadatalist.adddisubrange(const arange: ordrangety): metavaluety;
+begin
+ with pdisubrangety(adddata(mdk_disubrange,
+                    sizeof(disubrangety),result))^ do begin
+  range:= arange;
+ end;
+end;
+
 function tmetadatalist.adddiderivedtype(const akind: diderivedtypekindty;
-               const adifile: metavaluety;
-               const acontext: metavaluety; const aname: lstringty;
-               const alinenumber: int32; const asizeinbits: int32;
-               const aaligninbits: int32; const aoffsetinbits: int32;
-               const aflags: int32;
-               const atypederivedfrom: metavaluety): metavaluety;
+           const adifile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const aline: int32;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aoffsetinbits: int32;
+           const aflags: int32; const abasetype: metavaluety): metavaluety;
 var
  m1: metavaluety;
 begin
@@ -2383,9 +2395,9 @@ begin
   kind:= akind;
   name:= m1;
   _file:= adifile;
-  line:= alinenumber;
+  line:= aline;
   scope:= acontext;
-  basetype:= atypederivedfrom;
+  basetype:= abasetype;
   sizeinbits:= asizeinbits;
   aligninbits:= aaligninbits;
   offsetinbits:= aoffsetinbits;
@@ -2393,12 +2405,16 @@ begin
  end;
 end;
 
-function tmetadatalist.adddicompositetype(const akind: dicompositetypekindty;
-               const adifile: metavaluety; const acontext: metavaluety;
-               const aname: lstringty; const alinenumber: int32;
-               const asizeinbits: int32; const aaligninbits: int32;
-               const aoffsetinbits: int32; const aflags: int32;
-               const aelements: metavaluety): metavaluety;
+function tmetadatalist.adddicompositetype(const akind: dicompositetypekindty; 
+           const aname: lstringty;
+           const adifile: metavaluety;
+           const aline: int32;
+           const ascope: metavaluety;
+           const abasetype: metavaluety;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aoffsetinbits: int32;
+           const aflags: int32;
+           const aelements: metavaluety): metavaluety;
 var
  m1: metavaluety;
 begin
@@ -2408,8 +2424,9 @@ begin
   kind:= akind;
   name:= m1;
   _file:= adifile;
-  line:= alinenumber;
-  scope:= acontext;
+  line:= aline;
+  scope:= ascope;
+  basetype:= abasetype;
   sizeinbits:= asizeinbits;
   aligninbits:= aaligninbits;
   offsetinbits:= aoffsetinbits;
@@ -2419,7 +2436,8 @@ begin
 end;
 
 function tmetadatalist.addtype(const atype: elementoffsetty;
-                               const aindirection: int32): metavaluety;
+                      const aindirection: int32;
+                                const subrange: boolean = false): metavaluety;
           //todo: use correct alignment
 const
  metabuffersize = 1;
@@ -2431,7 +2449,7 @@ var
  offs1: card32;
  lstr1: lstringty;
  file1: metavaluety;
- m1,m2,context1: metavaluety;
+ m1,m2,m3,context1: metavaluety;
  i1: int32;
  typekind1: diderivedtypekindty;
  ele1: elementoffsetty;
@@ -2439,6 +2457,9 @@ var
  metabufferpo,pb,pe: pmetavaluety;
 begin
  i1:= aindirection;
+ if subrange then begin
+  i1:= i1 or $80000000;
+ end;
  if ftypemetalist.addunique(atype,i1,po1) then begin
   offs1:= ftypemetalist.getdataoffset(po1); //relative backup
   po2:= ele.eledataabs(atype);
@@ -2454,7 +2475,7 @@ begin
    end;
   end;
   if aindirection > 0 then begin         //todo: set identname
-   typekind1:= ditk_pointertype;
+   typekind1:= didk_pointertype;
 //   if aisreference then begin
 //    typekind1:= ditk_referencetype;
 //   end;
@@ -2466,13 +2487,26 @@ begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
     m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1{,false});
-    m1:= adddiderivedtype(ditk_pointertype,file1,context1,
+    m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
    end
    else begin
     case po2^.h.kind of
      dk_integer: begin
-      m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
+      if subrange and (tf_subrange in po2^.h.flags) then begin
+       m1:= adddisubrange(getordrange(po2));
+      end
+      else begin
+       m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
+      end;
+     end;
+     dk_array: begin
+      m2:= addtype(po2^.infoarray.i.itemtypedata,
+                                   po2^.infoarray.i.itemindirectlevel);
+      m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);
+      m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
+                                   m2,po2^.h.bitsize,0,0,0,m3);
+                                        //todo: use correct alignment
      end;
      dk_record: begin
       pb:= @metabuffer;
@@ -2481,7 +2515,7 @@ begin
       ele1:= po2^.fieldchain;
       while ele1 <> 0 do begin
        po3:= ele.eledataabs(ele1);
-       metabufferpo^:= adddiderivedtype(ditk_member,file1,context1,
+       metabufferpo^:= adddiderivedtype(didk_member,file1,context1,
            getidentnamel(pointer(po3)),0,
            ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.bitsize,0,po3^.offset*8,
            0,addtype(po3^.vf.typ,
@@ -2511,8 +2545,8 @@ begin
       else begin
        m2:= addnodereverse(@metabuffer,metabuffersize);
       end;
-      m1:= adddicompositetype(dick_structuretype,file1,context1,
-                                   lstr1,0,po2^.h.bytesize*8,0,0,0,m2);
+      m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
+                                   dummymeta,po2^.h.bitsize,0,0,0,m2);
                                         //todo: use correct alignment
      end;
      else begin

@@ -184,6 +184,7 @@ procedure setlocbefore(const destindexoffset,sourceindexoffset: integer);
 //procedure setloc(const destindexoffset,sourceindexoffset: integer);
 
 procedure getordrange(const typedata: ptypedataty; out range: ordrangety);
+function getordrange(const typedata: ptypedataty): ordrangety; inline;
 function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
@@ -2352,6 +2353,11 @@ begin
   {$endif}
   end;
  end;
+end;
+
+function getordrange(const typedata: ptypedataty): ordrangety; inline;
+begin
+ getordrange(typedata,result);
 end;
 
 function getordcount(const typedata: ptypedataty): int64;

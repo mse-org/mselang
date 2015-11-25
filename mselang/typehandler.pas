@@ -230,7 +230,8 @@ begin
     end;
     d.typ.typedata:= ele.eledatarel(po1);
     inittypedatasize(po1^,dk_integer,d.typ.indirectlevel,das_32);
-    with po1^.infoint32 do begin
+    include(po1^.h.flags,tf_subrange);
+    with po1^.infoint32 do begin     //todo: other datasizes
      //todo: check datasize
      min:= contextstack[s.stackindex+2].d.dat.constval.vinteger;
      max:= contextstack[s.stackindex+3].d.dat.constval.vinteger;

@@ -627,6 +627,11 @@ type
     METADATA_ATTACHMENT,//    = 11,  // [m x [value, [n x [id, mdnode]]]
     METADATA_GENERIC_DEBUG,// = 12,  // [distinct, tag, vers, header, n x md num]
     METADATA_SUBRANGE,//      = 13,  // [distinct, count, lo]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getCount());
+  Record.push_back(rotateSign(N->getLowerBound()));
+}
     METADATA_ENUMERATOR,//    = 14,  // [distinct, value, name]
     METADATA_BASIC_TYPE,//    = 15,  // [distinct, tag, name, size, align, enc]
     METADATA_FILE,//          = 16,  // [distinct, filename, directory]

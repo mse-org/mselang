@@ -229,6 +229,7 @@ type
    procedure emitmetafile(const afile,adirectory: int32);
    procedure emitmetacompileunit(const avalue: dicompileunitty);
    procedure emitmetabasictype(const avalue: dibasictypety);
+   procedure emitmetasubrange(const avalue: disubrangety);
    procedure emitmetaderivedtype(const avalue: diderivedtypety);
    procedure emitmetacompositetype(const avalue: dicompositetypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
@@ -769,6 +770,9 @@ begin
     end;
     mdk_dibasictype: begin
      emitmetabasictype(pdibasictypety(@pm1^.data)^);
+    end;
+    mdk_disubrange: begin
+     emitmetasubrange(pdisubrangety(@pm1^.data)^);
     end;
     mdk_diderivedtype: begin
      emitmetaderivedtype(pdiderivedtypety(@pm1^.data)^);
@@ -1939,6 +1943,16 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitmetasubrange(const avalue: disubrangety);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_SUBRANGE),[0,   //distinct
+   range.max-range.min+1,              //count
+   signedvbr(range.min)                //lowerbound
+  ]);
+ end;
+end;
+
 procedure tllvmbcwriter.emitmetaderivedtype(const avalue: diderivedtypety);
 const
  derivedtags: array[diderivedtypekindty] of int32 = (
@@ -1964,7 +1978,7 @@ end;
 procedure tllvmbcwriter.emitmetacompositetype(const avalue: dicompositetypety);
 const
  compositetags: array[dicompositetypekindty] of int32 = (
-                                           DW_TAG_structure_type);
+                                DW_TAG_structure_type,DW_TAG_array_type);
 begin
  with avalue do begin
   emitrec(ord(METADATA_COMPOSITE_TYPE),[0, //distinct
@@ -1973,7 +1987,7 @@ begin
    _file.id+1,                           //file
    line,                                 //line
    scope.id+1,                           //scope
-   0,                                    //basetype
+   basetype.id+1,                        //basetype
    sizeinbits,                           //sizeinbits
    aligninbits,                          //aligninbits
    offsetinbits,                         //offsetinbits

@@ -213,7 +213,8 @@ type
                tf_hasmanaged,  //has nested tf_managed
                tf_lower,       //in range expression
                tf_upper,       //in range expression
-               tf_subad        //sub address
+               tf_subad,       //sub address
+               tf_subrange
                ); 
  typeflagsty = set of typeflagty;   
  
