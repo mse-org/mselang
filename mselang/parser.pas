@@ -545,7 +545,7 @@ begin
        debugfilemeta:= filepathmeta;
        {llvmlists.metadatalist.adddifile(filepathmeta);}
        compileunitmeta:= adddicompileunit(
-          filepathmeta,DW_LANG_Pascal83,'MSElang 0.0',dummymeta,dummymeta,
+          filepathmeta,dwarflangid,'MSElang 0.0',dummymeta,dummymeta,
                                                                   FullDebug);
        addnamednode(stringtolstring('llvm.dbg.cu'),
                                             [compileunitmeta.id]);

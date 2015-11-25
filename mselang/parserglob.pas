@@ -524,6 +524,7 @@ type
   bcfilepath: filenamety; //llvm bitcode
   bcfilename: filenamety;
   
+  dwarflangid: int32;
   filepathmeta: metavaluety;
   debugfilemeta: metavaluety;
   compileunitmeta: metavaluety;

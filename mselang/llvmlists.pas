@@ -505,6 +505,22 @@ type
   flags: int32;
  end;
  pdiderivedtypety = ^diderivedtypety;
+ 
+ dicompositetypekindty = (dick_structuretype);
+
+ dicompositetypety = record
+  kind: dicompositetypekindty;
+  name: metavaluety;
+  _file: metavaluety;
+  line: int32;
+  scope: metavaluety;
+  sizeinbits: int32;
+  aligninbits: int32;
+  offsetinbits: int32;
+  flags: int32;
+  elements: metavaluety;
+ end;
+ pdicompositetypety = ^dicompositetypety;
 
  dilocvariablekindty = (divk_autovariable,divk_argvariable);
  
@@ -558,7 +574,7 @@ type
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
                    mdk_difile,mdk_dibasictype,
-                   mdk_diderivedtype,
+                   mdk_diderivedtype,mdk_dicompositetype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
                    mdk_dilocvariable,mdk_diglobvariable,mdk_diexpression);
@@ -618,6 +634,11 @@ type
                                      const acount: int32): metavaluety;
    function addnode(const avalues: array of metavaluety): metavaluety;
    function addnode(const avalues: metavaluesty): metavaluety;
+   function addnodereverse(const avalues: pmetavaluety;
+                                        const acount: int32): metavaluety;
+   function addnodereverse(const valuesa: pmetavaluety; const counta: int32;
+                const valuesb: pmetavaluety; const countb: int32): metavaluety;
+
    procedure addnamednode(const aname: lstringty;
                                 const avalues: array of int32);
    function addident(const aident: identnamety): metavaluety;
@@ -629,13 +650,22 @@ type
    function adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
-   function adddiderivedtype(const akind: diderivedtypekindty; 
+   function adddiderivedtype(const akind: diderivedtypekindty;
            const adifile: metavaluety;
            const acontext: metavaluety; const aname: lstringty;
            const alinenumber: int32;
            const asizeinbits: int32; const aaligninbits: int32;
+           const aoffsetinbits: int32;
            const aflags: int32;
                          const atypederivedfrom: metavaluety): metavaluety;
+   function adddicompositetype(const akind: dicompositetypekindty; 
+           const adifile: metavaluety;
+           const acontext: metavaluety; const aname: lstringty;
+           const alinenumber: int32;
+           const asizeinbits: int32; const aaligninbits: int32;
+           const aoffsetinbits: int32;
+           const aflags: int32;
+                         const aelements: metavaluety): metavaluety;
    function addtype(const atype: elementoffsetty;
                               const aindirection: int32{;
                                const aisreference: boolean}): metavaluety;
@@ -2069,6 +2099,51 @@ begin
  result:= addnode(pointer(avalues.data),avalues.count);
 end;
 
+function tmetadatalist.addnodereverse(const avalues: pmetavaluety;
+               const acount: int32): metavaluety;
+var
+ ps,pd: pmetavaluety;
+begin
+ with pnodemetaty(adddata(
+         mdk_node,sizeof(nodemetaty)+acount*sizeof(avalues^),result))^ do begin
+  len:= acount;
+  pd:= @data;
+  ps:= avalues+acount;
+  while ps > avalues do begin
+   dec(ps);
+   pd^:= ps^;
+   inc(pd);
+  end;
+ end;
+end;
+
+function tmetadatalist.addnodereverse(const valuesa: pmetavaluety;
+               const counta: int32; const valuesb: pmetavaluety;
+               const countb: int32): metavaluety;
+var
+ i1: int32;
+ ps,pd: pmetavaluety;
+begin
+ i1:= counta + countb;
+ with pnodemetaty(adddata(
+              mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
+  len:= i1;
+  pd:= @data;
+  ps:= valuesb+countb;
+  while ps > valuesb do begin
+   dec(ps);
+   pd^:= ps^;
+   inc(pd);
+  end;
+  ps:= valuesa+counta;
+  while ps > valuesa do begin
+   dec(ps);
+   pd^:= ps^;
+   inc(pd);
+  end;
+ end;
+end;
+
 procedure tmetadatalist.addnamednode(const aname: lstringty;
                                          const avalues: array of int32);
 var
@@ -2296,7 +2371,8 @@ function tmetadatalist.adddiderivedtype(const akind: diderivedtypekindty;
                const adifile: metavaluety;
                const acontext: metavaluety; const aname: lstringty;
                const alinenumber: int32; const asizeinbits: int32;
-               const aaligninbits: int32; const aflags: int32;
+               const aaligninbits: int32; const aoffsetinbits: int32;
+               const aflags: int32;
                const atypederivedfrom: metavaluety): metavaluety;
 var
  m1: metavaluety;
@@ -2312,14 +2388,39 @@ begin
   basetype:= atypederivedfrom;
   sizeinbits:= asizeinbits;
   aligninbits:= aaligninbits;
-  offsetinbits:= 0;
+  offsetinbits:= aoffsetinbits;
   flags:= aflags;
  end;
 end;
 
+function tmetadatalist.adddicompositetype(const akind: dicompositetypekindty;
+               const adifile: metavaluety; const acontext: metavaluety;
+               const aname: lstringty; const alinenumber: int32;
+               const asizeinbits: int32; const aaligninbits: int32;
+               const aoffsetinbits: int32; const aflags: int32;
+               const aelements: metavaluety): metavaluety;
+var
+ m1: metavaluety;
+begin
+ m1:= addstringornull(aname);
+ with pdicompositetypety(adddata(mdk_dicompositetype,
+                    sizeof(dicompositetypety),result))^ do begin
+  kind:= akind;
+  name:= m1;
+  _file:= adifile;
+  line:= alinenumber;
+  scope:= acontext;
+  sizeinbits:= asizeinbits;
+  aligninbits:= aaligninbits;
+  offsetinbits:= aoffsetinbits;
+  flags:= aflags;
+  elements:= aelements;
+ end;
+end;
+
 function tmetadatalist.addtype(const atype: elementoffsetty;
-                               const aindirection: int32{;
-                               const aisreference: boolean}): metavaluety;
+                               const aindirection: int32): metavaluety;
+          //todo: use correct alignment
 const
  metabuffersize = 1;
  
@@ -2359,14 +2460,14 @@ begin
 //   end;
    m2:= addtype(atype,aindirection-1{,false}); //next base type
    m1:= adddiderivedtype(typekind1,file1,context1,
-                     emptylstring,0,pointerbitsize,pointerbitsize,0,m2);
+                     emptylstring,0,pointerbitsize,pointerbitsize,0,0,m2);
   end
   else begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
     m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1{,false});
     m1:= adddiderivedtype(ditk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,m2);
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
    end
    else begin
     case po2^.h.kind of
@@ -2381,8 +2482,9 @@ begin
       while ele1 <> 0 do begin
        po3:= ele.eledataabs(ele1);
        metabufferpo^:= adddiderivedtype(ditk_member,file1,context1,
-           getidentnamel(pointer(po3)),0,0,0,0,addtype(po3^.vf.typ,
-                   po3^.indirectlevel-
+           getidentnamel(pointer(po3)),0,0,0,po3^.offset*8,0,
+              addtype(po3^.vf.typ,
+                  po3^.indirectlevel-
                    ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel));
        inc(metabufferpo);
        if metabufferpo = pe then begin
@@ -2402,8 +2504,15 @@ begin
        ele1:= po3^.vf.next;
       end;
       if pb <> @metabuffer then begin
+       m2:= addnodereverse(@metabuffer,metabuffersize,pb,metabufferpo-pb);
        freemem(pb);
+      end
+      else begin
+       m2:= addnodereverse(@metabuffer,metabuffersize);
       end;
+      m1:= adddicompositetype(dick_structuretype,file1,context1,
+                                   lstr1,0,po2^.h.bytesize*8,32,0,0,m2);
+                                        //todo: use correct alignment
      end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');

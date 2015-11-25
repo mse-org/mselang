@@ -230,6 +230,7 @@ type
    procedure emitmetacompileunit(const avalue: dicompileunitty);
    procedure emitmetabasictype(const avalue: dibasictypety);
    procedure emitmetaderivedtype(const avalue: diderivedtypety);
+   procedure emitmetacompositetype(const avalue: dicompositetypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
@@ -766,11 +767,14 @@ begin
       emitmetafile(filename.id,dirname.id);
      end;
     end;
+    mdk_dibasictype: begin
+     emitmetabasictype(pdibasictypety(@pm1^.data)^);
+    end;
     mdk_diderivedtype: begin
      emitmetaderivedtype(pdiderivedtypety(@pm1^.data)^);
     end;
-    mdk_dibasictype: begin
-     emitmetabasictype(pdibasictypety(@pm1^.data)^);
+    mdk_dicompositetype: begin
+     emitmetacompositetype(pdicompositetypety(@pm1^.data)^);
     end;
     mdk_dicompileunit: begin
      emitmetacompileunit(pdicompileunitty(@pm1^.data)^);
@@ -1953,6 +1957,32 @@ begin
    offsetinbits,                         //offsetinbits
    flags,                                //flags
    0                                     //extradata
+  ]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetacompositetype(const avalue: dicompositetypety);
+const
+ compositetags: array[dicompositetypekindty] of int32 = (
+                                           DW_TAG_structure_type);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_COMPOSITE_TYPE),[0, //distinct
+   compositetags[kind],                  //tag
+   name.id+1,                            //name
+   _file.id+1,                           //file
+   line,                                 //line
+   scope.id+1,                           //scope
+   0,                                    //basetype
+   sizeinbits,                           //sizeinbits
+   aligninbits,                          //aligninbits
+   offsetinbits,                         //offsetinbits
+   flags,                                //flags
+   elements.id+1,                        //elements
+   info.s.unitinfo^.dwarflangid,         //runtimelang
+   0,                                    //vtableholder
+   0,                                    //templateparams
+   0                                     //identifier
   ]);
  end;
 end;

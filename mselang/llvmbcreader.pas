@@ -1521,6 +1521,26 @@ begin
        tag('flags',12)+','+
        metaornull('extradata',13),13);
      end;
+     METADATA_COMPOSITE_TYPE: begin
+      fmetalist.add();
+      checkdatalen(rec1,17);
+      outmetarecord(distinct()+
+       tag('tag',3)+','+
+       metaornull('name',4)+','+
+       metaornull('file',5)+','+
+       int('line',6)+','+
+       metaornull('scope',7)+','+
+       metaornull('basetype',8)+','+
+       int('sizeinbits',9)+','+
+       int('aligninbits',10)+','+
+       int('offsetinbits',11)+','+
+       tag('flags',12)+','+
+       metaornull('elements',13)+','+
+       tag('runtimelang',14)+','+
+       metaornull('vtableholder',15)+','+
+       metaornull('templateparams',16)+','+
+       metaornull('identifier',17),17);
+     end;
      METADATA_SUBROUTINE_TYPE: begin
       fmetalist.add();
       checkdatalen(rec1,4);

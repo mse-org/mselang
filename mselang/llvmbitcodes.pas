@@ -646,6 +646,24 @@ type
   Record.push_back(VE.getMetadataOrNullID(N->getExtraData()));
 }
     METADATA_COMPOSITE_TYPE,//= 18,  // [distinct, ...]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getTag());
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+  Record.push_back(VE.getMetadataOrNullID(N->getFile()));
+  Record.push_back(N->getLine());
+  Record.push_back(VE.getMetadataOrNullID(N->getScope()));
+  Record.push_back(VE.getMetadataOrNullID(N->getBaseType()));
+  Record.push_back(N->getSizeInBits());
+  Record.push_back(N->getAlignInBits());
+  Record.push_back(N->getOffsetInBits());
+  Record.push_back(N->getFlags());
+  Record.push_back(VE.getMetadataOrNullID(N->getElements().get()));
+  Record.push_back(N->getRuntimeLang());
+  Record.push_back(VE.getMetadataOrNullID(N->getVTableHolder()));
+  Record.push_back(VE.getMetadataOrNullID(N->getTemplateParams().get()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawIdentifier()));
+}
     METADATA_SUBROUTINE_TYPE,//=19,  // [distinct, flags, types]
 {
   Record.push_back(N->isDistinct());
@@ -692,7 +710,7 @@ type
   Record.push_back(VE.getMetadataOrNullID(N->getDeclaration()));
   Record.push_back(VE.getMetadataOrNullID(N->getVariables().get()));
 }
-   METADATA_LEXICAL_BLOCK,// = 22,  // [distinct, scope, file, line, column]
+    METADATA_LEXICAL_BLOCK,// = 22,  // [distinct, scope, file, line, column]
     METADATA_LEXICAL_BLOCK_FILE,//=23,//[distinct, scope, file, discriminator]
     METADATA_NAMESPACE,//     = 24,  // [distinct, scope, file, name, line]
     METADATA_TEMPLATE_TYPE,// = 25,  // [distinct, scope, name, type, ...]

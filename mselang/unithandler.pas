@@ -656,6 +656,7 @@ begin
   result:= unitlist.newunit(id);
   result^.namestring:= aname;
   result^.name:= stringtolstring(result^.namestring);
+  result^.dwarflangid:= DW_LANG_Pascal83;
  end;
 end;
 
