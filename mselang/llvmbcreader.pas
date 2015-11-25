@@ -1283,6 +1283,11 @@ var
  begin
   outrecord(inttostr(alist.count-1)+'.'+
                     constantscodesnames[constantscodes(rec1[1])],avalues);
+  with fblockstack[fblocklevel-1] do begin
+   if ssapo <> nil then begin
+    additem(fssatypes,alist.fsettype,ssapo^);
+   end;
+  end;
  end; //outconst
 
 var
@@ -1334,11 +1339,13 @@ begin
    end;
   end;
  end;
+{
  with fblockstack[fblocklevel-1] do begin
   if ssapo <> nil then begin
    ssapo^:= ssapo^ + alist.count - countbefore;
   end;
  end;
+}
 end;
 
 function tllvmbcreader.subopname(const aop: int32): string;
@@ -1728,7 +1735,7 @@ begin
   returnglob(fgloblist,avalue,'C');
  end
  else begin
-  if (avalue > fconststart) and 
+  if (avalue >= fconststart) and 
            (avalue < fconststart+fcurrentconstlist.count) then begin
    returnglob(fcurrentconstlist,avalue-fconststart,'CL');
   end
@@ -2077,7 +2084,7 @@ begin
                                                  ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
        if (i1 <> i2) then begin
-/////////////////        error('Invalid type');
+        error('Invalid type');
        end;
       end;
       FUNC_CODE_INST_LOAD: begin
