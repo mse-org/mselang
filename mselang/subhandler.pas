@@ -1017,6 +1017,11 @@ begin
 {$endif}
  checkforwardtypeerrors();
  with info,contextstack[s.stackindex-2] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_subdef then begin
+   internalerror(ie_handler,'20151126A');
+  end;
+ {$endif}
   d.subdef.varsize:= locdatapo - d.subdef.parambase - d.subdef.paramsize;
   po1:= ele.eledataabs(d.subdef.ref);
   po1^.address:= opcount;

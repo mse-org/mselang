@@ -11,7 +11,7 @@ program __mla__compilerunit;
 interface 
 uses
  __mla__internaltypes;
-
+{
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
@@ -35,11 +35,11 @@ procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint;
                                                 new_value: ptrint); external;                                                                    
 
 function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
-
+}
 implementation
 type
  pcard8 = ^card8;
- 
+{ 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 begin
  if ref <> nil then begin
@@ -69,12 +69,13 @@ begin
   ref^:= nil;
  end;
 end;
-
+}
 //todo: use simplified version if there are no interfaces
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 var
  ps,pd,pe: ppointer;
  po1: pclassdefinfoty;
+{$dumpelements}
 begin
  getzeromem(result,classinfo.header.allocs.size);
  po1:= @classinfo;
@@ -101,7 +102,7 @@ writeln('* ',po1,' ',po1^.header.parentclass,' ',
   po1:= po1^.header.interfaceparent;
  until po1 = nil;
 end;
-
+(*
 procedure exceptioncleanup(reason: _Unwind_Reason_Code;
                                                       exc: p_Unwind_Exception);
 begin
@@ -279,7 +280,7 @@ begin
 //  end;
 // end;
 end;
-
+*)
 begin
  exitcode:= 123;
 end.
