@@ -451,6 +451,9 @@ begin
  outhandle('EXTERNAL');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
+  if sublevel > 0 then begin
+   errormessage(err_cannotdeclarelocalexternal,[]);
+  end;
   if (stf_classdef in s.currentstatementflags) then begin
    errormessage(err_invaliddirective,['external']);
   end

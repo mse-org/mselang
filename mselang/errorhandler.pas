@@ -62,7 +62,8 @@ type
             err_wrongsignature,err_wrongkind,err_toomanynestinglevels,
             err_invalidunitfile,err_labelalreadydef,err_labelnotfound,
             err_invalidgototarget,err_enumnotcontiguous,
-            err_duplicatesetelement,err_illegaldirective);
+            err_duplicatesetelement,err_illegaldirective,
+            err_cannotdeclarelocalexternal);
             
  errorinfoty = record
   level: errorlevelty;
@@ -231,7 +232,8 @@ const
   (level: erl_error; message: 'Invalid goto target'),
   (level: erl_error; message: 'Enum type must be contiguous'),
   (level: erl_error; message: 'Duplicate set element'),
-  (level: erl_warning; message: 'Illegal compiler directive "%s"')
+  (level: erl_warning; message: 'Illegal compiler directive "%s"'),
+  (level: erl_error; message: 'Cannot declare local sub as EXTERNAL')
  );
 
 procedure message1(const atext: string; const values: array of const); 
