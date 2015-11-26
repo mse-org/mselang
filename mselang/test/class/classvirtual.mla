@@ -29,13 +29,12 @@ procedure tc2.test();
 begin
  inherited test();
  exitcode:= exitcode+11;
- exitcode:= 123;
 end;
 
 type
  ppointer = ^pointer;
 var
- c1: tc2;
+ c1: tc1;
  po1: ppointer;
 
 begin

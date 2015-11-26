@@ -414,9 +414,6 @@ var
  i1,i2,i3: int32;
  po9: paggregateconstty;
  pm1: pmetadataty;
- metadatatype: int32;
-// metanull,metanullint,metaoneint,metanullstring,metanullnode,
-// metatrue,
  m1,m2: metavaluety;
  namebuffer1,separatorbuffer1: lstringty;
  namebufferdata1: array[0..2*sizeof(int32)-1] of char;
@@ -451,8 +448,6 @@ begin
  emitdata(mabconsts);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(TYPE_BLOCK_ID_NEW)]);
  emitdata(mabtypes);
-// emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(MODULE_BLOCK_ID)]);
-// emitdata(mabmods);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(VALUE_SYMTAB_BLOCK_ID)]);
  emitdata(mabsyms);
  emitrec(ord(BLOCKINFO_CODE_SETBID),[ord(FUNCTION_BLOCK_ID)]);
@@ -460,34 +455,8 @@ begin
  endblock();
  emitdata(mabmods);
 
-// beginblock(MODULE_BLOCK_ID,3);             
  emitrec(ord(MODULE_CODE_VERSION),[1]);
  
- if metadata.count > 0 then begin
-{
-  metanull:= metadata.voidconst;
-  metanullint.id:= ord(das_8);
-  metanullint.id:= ord(nc_i8);
-//  metanullint.flags:= [];
-  metaoneint.id:= ord(das_32);
-  metaoneint.id:= ord(oc_i32);
-//  metaoneint.flags:= [];
-//  metatrue.value:= consts.addi1(true);
-  metatrue.id:= consts.addi32(-1).listid;
-//  metatrue.flags:= [];
-}
-{
-  with metadata do begin
-   addnamednode(stringtolstring('llvm.module.flags'),
-    [
-     addnode([addstring(stringtolstring('Dwarf Version')),
-                                       i8const(DWARF_VERSION)]).value.listid,
-     addnode([addstring(stringtolstring('Debug Info Version')),
-                               i8const(DEBUG_METADATA_VERSION)]).value.listid
-    ]);
-  end;
-}
- end; //has metadata
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
                                                       //types
@@ -737,8 +706,6 @@ begin
   end;
  end;
  if metadata.count > 0 then begin                          //metadata
-//  metanullstring:= metadata.emptystringconst;
-//  metanullnode:= metadata.emptynode;
   beginblock(METADATA_BLOCK_ID,3);
   pm1:= metadata.first();
   while pm1 <> nil do begin
