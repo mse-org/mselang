@@ -277,16 +277,24 @@ subtypedef,,,*
 subtypedef0,subheader1,handlesubtypedef0entry, //push dummy ident
 
 subheader,,,*
- '',subheader0*
+// '',subheader0*
+ '',callsubheader*
 function,sub,handlefunctionentry,
 procedure,sub,handleprocedureentry,
 constructor,sub,handleconstructorentry,
 destructor,sub,handledestructorentry,
 
-sub,suba,,
+//sub,suba,,
+// '',subheader0*
+sub,,,
+ '',callsubheader*
+ 
+callsubheader,suba,,          //suba can be canceled by dec(stackindex)
  '',subheader0*
+
 suba,,,
  '',subbody4*
+
 subheader0,subheader1,,
  ${whitespace}
  @identstart,identpath^*
@@ -297,23 +305,26 @@ subheader2,subheader3,,
  ':',functiontype-^*
 subheader3,,,
  ${whitespace}
- 'virtual'.,!handlevirtual-
- 'override'.,!handleoverride-
- 'overload'.,!handleoverload-
+// 'virtual'.,!handlevirtual-
+// 'override'.,!handleoverride-
+// 'overload'.,!handleoverload-
  'external'.,!handleexternal-
+ 'forward'.,!handleforward-
  ';',subheader4-
  '',semicolonexpected
 subheader4,,,
  ${whitespace}
- 'virtual'.,virtual-
- 'override'.,override-
- 'overload'.,overload-
+// 'virtual'.,virtual-
+// 'override'.,override-
+// 'overload'.,overload-
  'external'.,external-
+ 'forward'.,forward-
  '',!handlesubheader*
-virtual,subheader3,handlevirtual,
-override,subheader3,handleoverride,
-overload,subheader3,handleoverload, 
+//virtual,subheader3,handlevirtual,
+//override,subheader3,handleoverride,
+//overload,subheader3,handleoverload, 
 external,subheader3,handleexternal, 
+forward,subheader3,handleforward, 
 
 functiontype,,,
  '',resultident*

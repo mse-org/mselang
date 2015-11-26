@@ -50,6 +50,7 @@ procedure handlevirtual();
 procedure handleoverride();
 procedure handleoverload();
 procedure handleexternal();
+procedure handleforward();
 procedure handlesubheader();
 procedure subbody4entry();
 procedure handlesubbody5a();
@@ -455,6 +456,21 @@ begin
   end
   else begin
    d.subdef.flags:= d.subdef.flags + [sf_external,sf_header];
+  end;
+ end;
+end;
+
+procedure handleforward();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FORWARD');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if (stf_classdef in s.currentstatementflags) then begin
+   errormessage(err_invaliddirective,['external']);
+  end
+  else begin
+   d.subdef.flags:= d.subdef.flags + [sf_forward,sf_header];
   end;
  end;
 end;
@@ -887,18 +903,23 @@ begin
     end;
     if bo1 then begin
      with paramdata.match^ do begin
-      forwardresolve(mark);
-      impl:= ele.eledatarel(po1);
-      pointer(parref):= @paramsrel;
-      pointer(par1):= @po1^.paramsrel;
-      for int1:= 0 to paramco-1 do begin
-       if ele.eleinfoabs(parref^[int1])^.header.name <> 
-                 ele.eleinfoabs(par1^[int1])^.header.name then begin
-        errormessage(
-             err_functionheadernotmatch,
-                [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
-                     getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
-                                      s.stacktop-s.stackindex-3*(paramco-int1-1)-1);
+      if sf_external in flags then begin
+       errormessage(err_sameparamlist,[]);
+      end
+      else begin
+       forwardresolve(mark);
+       impl:= ele.eledatarel(po1);
+       pointer(parref):= @paramsrel;
+       pointer(par1):= @po1^.paramsrel;
+       for int1:= 0 to paramco-1 do begin
+        if ele.eleinfoabs(parref^[int1])^.header.name <> 
+                  ele.eleinfoabs(par1^[int1])^.header.name then begin
+         errormessage(
+              err_functionheadernotmatch,
+                 [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
+                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
+                            s.stacktop-s.stackindex-3*(paramco-int1-1)-1);
+        end;
        end;
       end;
      end;
@@ -921,7 +942,7 @@ begin
    s.stacktop:= s.stackindex;
   end
   else begin
-   dec(s.stackindex);
+   dec(s.stackindex,2);
    s.stacktop:= s.stackindex;
   end;
  end;
