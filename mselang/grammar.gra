@@ -126,7 +126,12 @@ finalization,finalization1,handlefinalizationstart,
  '',statementblock-^*
 finalization1,,handlefinalization,handleendexpected
  'end'.,implementationend-
-implementationend,,,handleimplementation*
+implementationend,implementationend1,,handleimplementation*
+implementationend1,,,
+ ${whitespace}
+ '.',-*
+ '',!handledotexpected*
+//implementationend2,,handledotexpected,
 
 main,main1,,handleafterimpluses
  ${whitespace}
@@ -145,7 +150,6 @@ main1,,,handlemain
  'constructor'.,constructor-^*>
  'destructor'.,destructor-^*>
  'begin'.,progbegin-
-
 curlycomment0,,,handlecommentend^>
  '}',-*
  '',-

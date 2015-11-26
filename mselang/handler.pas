@@ -97,6 +97,7 @@ procedure handleinsimpexp();
 procedure handlecommaseprange();
 
 procedure handlemain();
+procedure handledotexpected();
 procedure handlekeyword();
 
 procedure handlefactentry();
@@ -2046,6 +2047,15 @@ begin
   dec(s.stackindex);
  end;
 end;
+
+procedure handledotexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DOTEXPECTED');
+{$endif}
+ errormessage(err_syntax,['.']);
+end;
+
 {
 const
  mainkeywords: array[keywordty] of pcontextty = (

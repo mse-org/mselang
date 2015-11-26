@@ -191,7 +191,7 @@ var
 begin
  result:= '[';
  last:= -1;
- for ch1:= #1 to #255 do begin
+ for ch1:= #0 to #255 do begin
   if ch1 in aset then begin
    if last < 0 then begin
     result:= result+getcharstr(ch1);
@@ -944,7 +944,8 @@ lineend+
            include(chars1,tokens[int3][1]);
           end
           else begin
-           chars1:= [#1..#255];
+//           chars1:= [#1..#255];
+           chars1:= [#0..#255];
            break;
           end;
          end;

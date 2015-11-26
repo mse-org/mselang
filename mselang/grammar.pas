@@ -289,6 +289,11 @@ var
                continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'implementationend');
+ implementationend1co: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'implementationend1');
  mainco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -2089,7 +2094,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2141,7 +2146,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2193,7 +2198,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2244,7 +2249,7 @@ const
  buses0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @commaidentsco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2323,7 +2328,7 @@ const
  bimplementation: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @mainco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2380,7 +2385,7 @@ const
  binitialization: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2434,7 +2439,7 @@ const
  bfinalization: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2445,6 +2450,58 @@ const
    (flags: [bf_nt,bf_keyword,bf_eat];
      dest: (context: @implementationendco); stack: nil; 
      keyword: $CDDBADCE{'end'}),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
+ bimplementationend1: array[0..7] of branchty = (
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @directiveco); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['{']),
+    (kind: bkk_char; chars: ['$']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @bracecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['(']),
+    (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @linecomment0co); stack: nil; keys: (
+    (kind: bkk_charcontinued; chars: ['/']),
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: [#10,#13,' ']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_setparentbeforepush];
+     dest: (context: @curlycomment0co); stack: nil; keys: (
+    (kind: bkk_char; chars: ['{']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push];
+     dest: (context: nil); stack: nil; keys: (
+    (kind: bkk_char; chars: ['.']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
+     dest: (handler: @handledotexpected); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  bmain: array[0..6] of branchty = (
@@ -2491,7 +2548,7 @@ const
  bimpluses: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push];
      dest: (context: @uses0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2573,7 +2630,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2590,7 +2647,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2640,14 +2697,14 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @compilerswitchco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2664,7 +2721,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2688,7 +2745,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @tokenco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2705,7 +2762,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2715,7 +2772,7 @@ const
  bdefine: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2725,7 +2782,7 @@ const
  bundef: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2735,7 +2792,7 @@ const
  bifdef: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2752,7 +2809,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2769,7 +2826,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2795,7 +2852,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2812,7 +2869,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2828,7 +2885,7 @@ const
  bcompilerswitch: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2852,7 +2909,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @compilerswitch2co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2930,7 +2987,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2947,7 +3004,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -2957,7 +3014,7 @@ const
  bprogblock: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3012,7 +3069,7 @@ const
  bparamsdef1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @paramdef0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3173,7 +3230,7 @@ const
  bparamdef2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3183,7 +3240,7 @@ const
  bclasubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @callclasubheaderco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3193,7 +3250,7 @@ const
  bcallclasubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @clasubheader0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3248,7 +3305,7 @@ const
  bclasubheader1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @paramsdef0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3354,7 +3411,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3408,7 +3465,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handlesubheader); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3418,7 +3475,7 @@ const
  bsubtypedef: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @subtypedef0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3428,7 +3485,7 @@ const
  bsubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @callsubheaderco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3438,7 +3495,7 @@ const
  bsub: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @callsubheaderco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3448,7 +3505,7 @@ const
  bcallsubheader: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @subheader0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3458,7 +3515,7 @@ const
  bsuba: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @subbody4co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3513,7 +3570,7 @@ const
  bsubheader1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @paramsdef0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3616,7 +3673,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3667,7 +3724,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handlesubheader); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3677,7 +3734,7 @@ const
  bfunctiontype: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @resultidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3687,7 +3744,7 @@ const
  bresultident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3801,7 +3858,7 @@ const
  bsubbody5: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3907,7 +3964,7 @@ const
  bcompoundstatement: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_eat,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3917,7 +3974,7 @@ const
  btry: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3936,7 +3993,7 @@ const
  bfinally: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3946,7 +4003,7 @@ const
  bfinally1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @checkendco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3956,7 +4013,7 @@ const
  bexcept: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3966,7 +4023,7 @@ const
  bexcept1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @checkendco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3976,7 +4033,7 @@ const
  braise: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -3986,7 +4043,7 @@ const
  bgoto: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4034,7 +4091,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handleendexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4044,7 +4101,7 @@ const
  bwith1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @addressfactco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4102,7 +4159,7 @@ const
  bwith3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @statementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4112,7 +4169,7 @@ const
  bsimplestatement: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @statement0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4122,7 +4179,7 @@ const
  bstatement0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4184,7 +4241,7 @@ const
  bassignment: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4284,7 +4341,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @simplestatementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4294,7 +4351,7 @@ const
  bstatementblock: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4367,7 +4424,7 @@ const
  bstatementstack: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @statementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4377,7 +4434,7 @@ const
  bif0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4428,7 +4485,7 @@ const
  bthen0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4479,7 +4536,7 @@ const
  belse: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4489,7 +4546,7 @@ const
  bwhile: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4540,7 +4597,7 @@ const
  bwhiledo0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4588,7 +4645,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_continue];
      dest: (context: @statementco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4598,7 +4655,7 @@ const
  brepeatuntil0: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4608,7 +4665,7 @@ const
  bfor: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4628,7 +4685,7 @@ const
  bforstart: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4647,7 +4704,7 @@ const
  bforstop: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4663,7 +4720,7 @@ const
  bforbody: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4673,7 +4730,7 @@ const
  bcase: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4686,7 +4743,7 @@ const
      keyword: $22397D07{'of'}),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handleofexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4737,7 +4794,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @commasepexpco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4792,7 +4849,7 @@ const
  bcasebranch2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementstackco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4856,7 +4913,7 @@ const
      keyword: $CDDBADCE{'end'}),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @statementblockco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4908,7 +4965,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @checkendco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4918,7 +4975,7 @@ const
  bcommasepexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4945,7 +5002,7 @@ const
  bcommasepexp2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4975,7 +5032,7 @@ const
  btypeident: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -4985,7 +5042,7 @@ const
  brangetype: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getrangeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5036,7 +5093,7 @@ const
  bsetdef1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5094,7 +5151,7 @@ const
  brecordfield: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @vardefco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5142,7 +5199,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @arrayindexco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5193,7 +5250,7 @@ const
  barraydef2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5203,7 +5260,7 @@ const
  benumdef: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getenumitemco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5230,7 +5287,7 @@ const
  benumdef2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getenumitemco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5240,7 +5297,7 @@ const
  bgetenumitem: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getidentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5295,7 +5352,7 @@ const
  bgetenumitem2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5315,7 +5372,7 @@ const
  barrayindex1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5339,7 +5396,7 @@ const
     )),
    (flags: [bf_nt,bf_handler,bf_push];
      dest: (handler: @handlearrayindexerror2); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5416,7 +5473,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @simpletypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5491,7 +5548,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush];
      dest: (context: @type0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5556,7 +5613,7 @@ const
  btype2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @gettypetypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5608,7 +5665,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5683,7 +5740,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @labeldef0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5700,7 +5757,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @identexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5752,7 +5809,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @semicolonexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5827,7 +5884,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @const0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5879,7 +5936,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handleidentexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5934,7 +5991,7 @@ const
  bconst2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -5944,7 +6001,7 @@ const
  bconst3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @checksemicolon1co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6019,7 +6076,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentafterpush];
      dest: (context: @var0co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6084,7 +6141,7 @@ const
  bvar2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6094,7 +6151,7 @@ const
  bvardef: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @commaidentsco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6149,7 +6206,7 @@ const
  bvardef1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @getfieldtypeco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6159,7 +6216,7 @@ const
  bgetrange: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6214,7 +6271,7 @@ const
  bgetrange3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6390,7 +6447,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6400,7 +6457,7 @@ const
  bclassdefparam1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6459,7 +6516,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6469,7 +6526,7 @@ const
  bclassdefparam3: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6479,7 +6536,7 @@ const
  bclassfield: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @vardefco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6630,7 +6687,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6640,7 +6697,7 @@ const
  binterfaceparam1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6699,7 +6756,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handlecloseroundbracketexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6754,7 +6811,7 @@ const
  bexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @callexpco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6764,7 +6821,7 @@ const
  bcallexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6900,7 +6957,7 @@ const
  bmulfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6910,7 +6967,7 @@ const
  bandfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6920,7 +6977,7 @@ const
  bshlfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6930,7 +6987,7 @@ const
  bshrfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -6940,7 +6997,7 @@ const
  baddterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7004,7 +7061,7 @@ const
  bsubterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7068,7 +7125,7 @@ const
  borterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7132,7 +7189,7 @@ const
  bxorterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7196,7 +7253,7 @@ const
  bxorsetterm: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7260,7 +7317,7 @@ const
  beqsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7351,7 +7408,7 @@ const
  bnesimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7442,7 +7499,7 @@ const
  bgtsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7533,7 +7590,7 @@ const
  bltsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7624,7 +7681,7 @@ const
  bgesimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7715,7 +7772,7 @@ const
  blesimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7806,7 +7863,7 @@ const
  binsimpexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8043,7 +8100,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @illegalexpressionco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8119,7 +8176,7 @@ const
  bfact2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @valueidentifierwhiteco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8129,7 +8186,7 @@ const
  bnegfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8139,7 +8196,7 @@ const
  bnotfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8194,7 +8251,7 @@ const
  bsetfact1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8256,7 +8313,7 @@ const
  bbracketstart: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @callexpco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8304,7 +8361,7 @@ const
  bvalueidentifier: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @valuepathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8349,7 +8406,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @valuepathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8494,7 +8551,7 @@ const
  bparams1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8556,7 +8613,7 @@ const
  bgetindex: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8615,7 +8672,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler];
      dest: (handler: @handleclosesquarebracketexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8625,7 +8682,7 @@ const
  bgetindex2: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @expco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8659,7 +8716,7 @@ const
  bfracexp: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @exponentco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8696,7 +8753,7 @@ const
  bexponent: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @numberco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8727,7 +8784,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @numberexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8805,7 +8862,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @numberexpectedco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8829,7 +8886,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8863,7 +8920,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @stringco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8880,7 +8937,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_eat];
      dest: (context: nil); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8890,7 +8947,7 @@ const
  bchar: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @ordnumco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8914,7 +8971,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken];
      dest: (context: @char2co); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -9027,7 +9084,7 @@ const
     )),
    (flags: [bf_nt,bf_emptytoken,bf_handler,bf_push];
      dest: (handler: @handleidentexpected); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -9082,7 +9139,7 @@ const
  bcommaidents1: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -9102,7 +9159,7 @@ const
  bidentpathcontinue: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @identpathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -9219,7 +9276,7 @@ const
  bvaluepathcontinue: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
      dest: (context: @valuepathco); stack: nil; keys: (
-    (kind: bkk_char; chars: [#1..#255]),
+    (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -9431,7 +9488,9 @@ begin
  finalization1co.handleentry:= @handlefinalization;
  finalization1co.handleexit:= @handleendexpected;
  implementationendco.branch:= nil;
+ implementationendco.next:= @implementationend1co;
  implementationendco.handleexit:= @handleimplementation;
+ implementationend1co.branch:= @bimplementationend1;
  mainco.branch:= @bmain;
  mainco.next:= @main1co;
  mainco.handleexit:= @handleafterimpluses;

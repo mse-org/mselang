@@ -481,7 +481,7 @@ begin
    freeparsercontext(implstart);
    include(state,us_implementationparsed);
   end;
-  dec(s.stackindex);
+//  dec(s.stackindex);
  end;
 end;
 
