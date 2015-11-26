@@ -266,11 +266,41 @@ paramdef2,,,handleparamdef2^
 
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
-methfunctionheader,subheader,handlemethfunctionentry,
-methprocedureheader,subheader,handlemethprocedureentry,
-methconstructorheader,subheader,handlemethconstructorentry,
-methdestructorheader,subheader,handlemethdestructorentry,
+methfunctionheader,clasubheader,handlemethfunctionentry,
+methprocedureheader,clasubheader,handlemethprocedureentry,
+methconstructorheader,clasubheader,handlemethconstructorentry,
+methdestructorheader,clasubheader,handlemethdestructorentry,
 proceduretypedef,subtypedef,handleproceduretypedefentry,
+
+clasubheader,,,*
+ '',callclasubheader*
+callclasubheader,suba,,          //suba can be canceled by dec(stackindex)
+ '',clasubheader0*
+
+clasubheader0,clasubheader1,,
+ ${whitespace}
+ @identstart,identpath^*
+clasubheader1,clasubheader2,handlesub1entry,
+ '',paramsdef0^*
+clasubheader2,clasubheader3,,
+ ${whitespace}
+ ':',functiontype-^*
+clasubheader3,,,
+ ${whitespace}
+ 'virtual'.,!handlevirtual-
+ 'override'.,!handleoverride-
+ 'overload'.,!handleoverload-
+ ';',clasubheader4-
+ '',semicolonexpected
+clasubheader4,,,
+ ${whitespace}
+ 'virtual'.,virtual-
+ 'override'.,override-
+ 'overload'.,overload-
+ '',!handlesubheader*
+virtual,clasubheader3,handlevirtual,
+override,clasubheader3,handleoverride,
+overload,clasubheader3,handleoverload, 
 
 subtypedef,,,*
  '',subtypedef0*
