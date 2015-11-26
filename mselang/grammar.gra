@@ -266,6 +266,7 @@ paramdef2,,,handleparamdef2^
 
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
+
 methfunctionheader,clasubheader,handlemethfunctionentry,
 methprocedureheader,clasubheader,handlemethprocedureentry,
 methconstructorheader,clasubheader,handlemethconstructorentry,
@@ -274,7 +275,8 @@ proceduretypedef,subtypedef,handleproceduretypedefentry,
 
 clasubheader,,,*
  '',callclasubheader*
-callclasubheader,suba,,          //suba can be canceled by dec(stackindex)
+callclasubheader,suba,callsubheaderentry,
+//suba can be canceled by dec(stackindex)
  '',clasubheader0*
 
 clasubheader0,clasubheader1,,
@@ -319,7 +321,8 @@ destructor,sub,handledestructorentry,
 sub,,,
  '',callsubheader*
  
-callsubheader,suba,,          //suba can be canceled by dec(stackindex)
+callsubheader,suba,callsubheaderentry, 
+//suba can be canceled by dec(stackindex)
  '',subheader0*
 
 suba,,,

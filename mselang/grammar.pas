@@ -9547,6 +9547,7 @@ begin
  clasubheaderco.branch:= @bclasubheader;
  callclasubheaderco.branch:= @bcallclasubheader;
  callclasubheaderco.next:= @subaco;
+ callclasubheaderco.handleentry:= @callsubheaderentry;
  clasubheader0co.branch:= @bclasubheader0;
  clasubheader0co.next:= @clasubheader1co;
  clasubheader1co.branch:= @bclasubheader1;
@@ -9585,6 +9586,7 @@ begin
  subco.branch:= @bsub;
  callsubheaderco.branch:= @bcallsubheader;
  callsubheaderco.next:= @subaco;
+ callsubheaderco.handleentry:= @callsubheaderentry;
  subaco.branch:= @bsuba;
  subheader0co.branch:= @bsubheader0;
  subheader0co.next:= @subheader1co;

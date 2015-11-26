@@ -44,6 +44,8 @@ procedure handleprocedureentry();
 procedure handleproceduretypedefentry();
 procedure handlesubtypedef0entry();
 
+procedure callsubheaderentry();
+
 procedure checkfunctiontype();
 procedure handlesub1entry();
 procedure handlevirtual();
@@ -310,6 +312,17 @@ begin
  with info,contextstack[s.stackindex].d do begin
   kind:= ck_subdef;
   subdef.flags:= [sf_function];
+ end;
+end;
+
+procedure callsubheaderentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CALLSUBHEADERENTRY');
+{$endif}
+ with info,contextstack[s.stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= contextstack[s.stackindex-1].d.subdef.flags;
  end;
 end;
 
@@ -656,8 +669,10 @@ begin
  outhandle('SUBHEADER');
 {$endif}
 //|gettype
-//|-2        |-1  0     1     2           3           4        5    
-//|classdef0,|sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+//|-3        |-2   
+//|classdef0,|*headercall*|
+//            -1  0     1     2           3           4        5    
+//            sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
 // interfacedef0
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
