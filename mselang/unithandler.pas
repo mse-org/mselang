@@ -182,6 +182,7 @@ begin
  outhandle('PROGRAMENTRY');
 {$endif}
  with info,s.unitinfo^ do begin
+  include(state,us_program);
   if prev <> nil then begin
    tokenexpectederror(tk_unit);
   end;  

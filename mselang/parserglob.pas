@@ -491,7 +491,7 @@ type
  end;
  pparsercontextty = ^parsercontextty;
  
- unitstatety = ({us_interface,}us_interfaceparsed,
+ unitstatety = ({us_interface,}us_program,us_interfaceparsed,
                      us_implementation,us_implementationparsed,
                      us_end, //pendings resolved
                      us_invalidunitfile

@@ -2039,10 +2039,10 @@ begin
 {$endif}
  handleunitend();
 // checkforwarderrors(info.unitinfo^.forwardlist);
- with info do begin
-//  if unitlevel = 1 then begin
-//   errormessage(err_syntax,['begin']);
-//  end;
+ with info,s.unitinfo^ do begin
+  if (unitlevel = 1) and (us_program in state) and (mainad = 0) then begin
+   errormessage(err_syntax,['begin']);
+  end;
   dec(s.stackindex);
  end;
 end;
