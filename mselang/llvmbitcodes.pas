@@ -633,6 +633,11 @@ type
   Record.push_back(rotateSign(N->getLowerBound()));
 }
     METADATA_ENUMERATOR,//    = 14,  // [distinct, value, name]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(rotateSign(N->getValue()));
+  Record.push_back(VE.getMetadataOrNullID(N->getRawName()));
+}
     METADATA_BASIC_TYPE,//    = 15,  // [distinct, tag, name, size, align, enc]
     METADATA_FILE,//          = 16,  // [distinct, filename, directory]
     METADATA_DERIVED_TYPE,//  = 17,  // [distinct, ...]

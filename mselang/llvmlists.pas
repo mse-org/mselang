@@ -485,7 +485,13 @@ type
   encoding: int32;
  end;
  pdibasictypety = ^dibasictypety;
- 
+
+ dienumeratorty = record
+  name: metavaluety;
+  value: int32;
+ end;
+ pdienumeratorty = ^dienumeratorty;
+  
  disubrangety = record
   range: ordrangety;
  end;
@@ -507,7 +513,7 @@ type
  end;
  pdiderivedtypety = ^diderivedtypety;
  
- dicompositetypekindty = (dick_structuretype,dick_arraytype);
+ dicompositetypekindty = (dick_structuretype,dick_arraytype,dick_enumtype);
 
  dicompositetypety = record
   kind: dicompositetypekindty;
@@ -575,7 +581,7 @@ type
  
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
-                   mdk_difile,mdk_dibasictype,mdk_disubrange,
+                   mdk_difile,mdk_dibasictype,mdk_disubrange,mdk_dienumerator,
                    mdk_diderivedtype,mdk_dicompositetype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
@@ -634,6 +640,8 @@ type
    
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
+   function addnode(const valuesa: pmetavaluety; const counta: int32;
+                const valuesb: pmetavaluety; const countb: int32): metavaluety;
    function addnode(const avalues: array of metavaluety): metavaluety;
    function addnode(const avalues: metavaluesty): metavaluety;
    function addnodereverse(const avalues: pmetavaluety;
@@ -652,6 +660,8 @@ type
    function adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
+   function adddienumerator(const aname: lstringty;
+                                  const avalue: int32): metavaluety;
    function adddisubrange(const arange: ordrangety): metavaluety;
    function adddiderivedtype(const akind: diderivedtypekindty;
            const adifile: metavaluety;
@@ -670,7 +680,7 @@ type
            const aoffsetinbits: int32;
            const aflags: int32;
            const aelements: metavaluety): metavaluety;
-   function addtype(const atype: elementoffsetty;
+   function addtype(atype: elementoffsetty;
                          const aindirection: int32;
                               const subrange: boolean = false): metavaluety;
    function addtype(const avariable: pvardataty): metavaluety;
@@ -2121,6 +2131,34 @@ begin
  end;
 end;
 
+function tmetadatalist.addnode(const valuesa: pmetavaluety; const counta: int32;
+               const valuesb: pmetavaluety; const countb: int32): metavaluety;
+var
+ i1: int32;
+ ps,pd,pe: pmetavaluety;
+begin
+ i1:= counta + countb;
+ with pnodemetaty(adddata(
+              mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
+  len:= i1;
+  pd:= @data;
+  ps:= valuesa;
+  pe:= ps+counta;
+  while ps < pe do begin
+   pd^:= ps^;
+   inc(pd);
+   inc(ps);
+  end;
+  ps:= valuesb;
+  pe:= ps+countb;
+  while ps < pe do begin
+   pd^:= ps^;
+   inc(pd);
+   inc(ps);
+  end;
+ end;
+end;
+
 function tmetadatalist.addnodereverse(const valuesa: pmetavaluety;
                const counta: int32; const valuesb: pmetavaluety;
                const countb: int32): metavaluety;
@@ -2371,6 +2409,19 @@ begin
  end;
 end;
 
+function tmetadatalist.adddienumerator(const aname: lstringty;
+               const avalue: int32): metavaluety;
+var
+ m1: metavaluety;
+begin
+ m1:= addstringornull(aname);
+ with pdienumeratorty(adddata(mdk_dienumerator,
+                    sizeof(dienumeratorty),result))^ do begin
+  name:= m1;
+  value:= avalue;
+ end;
+end;
+
 function tmetadatalist.adddisubrange(const arange: ordrangety): metavaluety;
 begin
  with pdisubrangety(adddata(mdk_disubrange,
@@ -2435,7 +2486,7 @@ begin
  end;
 end;
 
-function tmetadatalist.addtype(const atype: elementoffsetty;
+function tmetadatalist.addtype(atype: elementoffsetty;
                       const aindirection: int32;
                                 const subrange: boolean = false): metavaluety;
           //todo: use correct alignment
@@ -2446,6 +2497,7 @@ var
  po1: pmetavaluety;
  po2: ptypedataty;
  po3: pfielddataty;
+ po4: ptypedataty;
  offs1: card32;
  lstr1: lstringty;
  file1: metavaluety;
@@ -2455,7 +2507,60 @@ var
  ele1: elementoffsetty;
  metabuffer: array[0..metabuffersize-1] of metavaluety;
  metabufferpo,pb,pe: pmetavaluety;
+
+ procedure initmetabuffer();
+ begin
+  pb:= @metabuffer;
+  metabufferpo:= pb;
+  pe:= metabufferpo+metabuffersize;
+ end; //initmetabuffer
+
+ procedure addbufferitem(const aitem: metavaluety);
+ begin
+  metabufferpo^:= aitem;
+  inc(metabufferpo);
+  if metabufferpo = pe then begin
+   if pb = @metabuffer then begin
+    i1:= 2*metabuffersize*sizeof(metavaluety);
+    getmem(pb,i1);
+    metabufferpo:= pb;
+    pe:= pointer(pb)+i1;
+   end
+   else begin
+    i1:= 2*(pointer(pe)-pointer(pb));
+    reallocmem(pb,i1);
+    pe:= pointer(pb)+i1;
+    metabufferpo:= pointer(pb) + i1 div 2;
+   end;
+  end;
+ end; //addmetabufferitem
+
+ function addbuffer(): metavaluety;
+ begin
+  if pb <> @metabuffer then begin
+   result:= addnode(@metabuffer,metabuffersize,pb,metabufferpo-pb);
+   freemem(pb);
+  end
+  else begin
+   result:= addnode(@metabuffer,metabuffersize);
+  end;
+ end; //addbufferreverse
+
+ function addbufferreverse(): metavaluety;
+ begin
+  if pb <> @metabuffer then begin
+   result:= addnodereverse(@metabuffer,metabuffersize,pb,metabufferpo-pb);
+   freemem(pb);
+  end
+  else begin
+   result:= addnodereverse(@metabuffer,metabuffersize);
+  end;
+ end; //addbufferreverse
+ 
 begin
+ if atype = 0 then begin //untyped pointer
+  atype:= getbasetypeele(das_8);
+ end;
  i1:= aindirection;
  if subrange then begin
   i1:= i1 or $80000000;
@@ -2500,6 +2605,20 @@ begin
        m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_signed);
       end;
      end;
+     dk_enum: begin
+      ele1:= po2^.infoenum.first;
+      initmetabuffer();
+      while ele1 <> 0 do begin
+       po4:= ele.eledataabs(ele1);
+       addbufferitem(adddienumerator(
+              getidentnamel(datatoele(po4)^.header.name),
+                                               po4^.infoenumitem.value));
+       ele1:= po4^.infoenumitem.next;
+      end;
+      m2:= addbuffer();
+      m1:= adddicompositetype(dick_enumtype,lstr1,file1,0,context1,
+                                   dummymeta,po2^.h.bitsize,0,0,0,m2);      
+     end;
      dk_array: begin
       m2:= addtype(po2^.infoarray.i.itemtypedata,
                                    po2^.infoarray.i.itemindirectlevel);
@@ -2509,42 +2628,19 @@ begin
                                         //todo: use correct alignment
      end;
      dk_record: begin
-      pb:= @metabuffer;
-      metabufferpo:= pb;
-      pe:= metabufferpo+metabuffersize;
+      initmetabuffer();
       ele1:= po2^.fieldchain;
       while ele1 <> 0 do begin
        po3:= ele.eledataabs(ele1);
-       metabufferpo^:= adddiderivedtype(didk_member,file1,context1,
+       addbufferitem(adddiderivedtype(didk_member,file1,context1,
            getidentnamel(pointer(po3)),0,
            ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.bitsize,0,po3^.offset*8,
            0,addtype(po3^.vf.typ,
                   po3^.indirectlevel-
-                   ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel));
-       inc(metabufferpo);
-       if metabufferpo = pe then begin
-        if pb = @metabuffer then begin
-         i1:= 2*metabuffersize*sizeof(metavaluety);
-         getmem(pb,i1);
-         metabufferpo:= pb;
-         pe:= pointer(pb)+i1;
-        end
-        else begin
-         i1:= 2*(pointer(pe)-pointer(pb));
-         reallocmem(pb,i1);
-         pe:= pointer(pb)+i1;
-         metabufferpo:= pointer(pb) + i1 div 2;
-        end;
-       end;
+                   ptypedataty(ele.eledataabs(po3^.vf.typ))^.h.indirectlevel)));
        ele1:= po3^.vf.next;
       end;
-      if pb <> @metabuffer then begin
-       m2:= addnodereverse(@metabuffer,metabuffersize,pb,metabufferpo-pb);
-       freemem(pb);
-      end
-      else begin
-       m2:= addnodereverse(@metabuffer,metabuffersize);
-      end;
+      m2:= addbufferreverse();
       m1:= adddicompositetype(dick_structuretype,lstr1,file1,0,context1,
                                    dummymeta,po2^.h.bitsize,0,0,0,m2);
                                         //todo: use correct alignment

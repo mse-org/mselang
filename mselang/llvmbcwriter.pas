@@ -230,6 +230,7 @@ type
    procedure emitmetacompileunit(const avalue: dicompileunitty);
    procedure emitmetabasictype(const avalue: dibasictypety);
    procedure emitmetasubrange(const avalue: disubrangety);
+   procedure emitmetadataenumerator(const avalue: dienumeratorty);
    procedure emitmetaderivedtype(const avalue: diderivedtypety);
    procedure emitmetacompositetype(const avalue: dicompositetypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
@@ -249,6 +250,8 @@ type
    property debugloc: debuglocty read fdebugloc write fdebugloc;
    property nodebugloc: boolean read fnodebugloc write fnodebugloc;
  end;
+
+function signedvbr(const avalue: integer): integer; inline;
  
 implementation
 uses
@@ -740,6 +743,9 @@ begin
     end;
     mdk_disubrange: begin
      emitmetasubrange(pdisubrangety(@pm1^.data)^);
+    end;
+    mdk_dienumerator: begin
+     emitmetadataenumerator(pdienumeratorty(@pm1^.data)^);
     end;
     mdk_diderivedtype: begin
      emitmetaderivedtype(pdiderivedtypety(@pm1^.data)^);
@@ -1920,6 +1926,16 @@ begin
  end;
 end;
 
+procedure tllvmbcwriter.emitmetadataenumerator(const avalue: dienumeratorty);
+begin
+ with avalue do begin
+  emitrec(ord(METADATA_ENUMERATOR),[0, //distinct
+   signedvbr(value),                   //value
+   name.id+1                           //name
+  ]);
+ end;
+end;
+
 procedure tllvmbcwriter.emitmetaderivedtype(const avalue: diderivedtypety);
 const
  derivedtags: array[diderivedtypekindty] of int32 = (
@@ -1945,7 +1961,7 @@ end;
 procedure tllvmbcwriter.emitmetacompositetype(const avalue: dicompositetypety);
 const
  compositetags: array[dicompositetypekindty] of int32 = (
-                                DW_TAG_structure_type,DW_TAG_array_type);
+             DW_TAG_structure_type,DW_TAG_array_type,DW_TAG_enumeration_type);
 begin
  with avalue do begin
   emitrec(ord(METADATA_COMPOSITE_TYPE),[0, //distinct

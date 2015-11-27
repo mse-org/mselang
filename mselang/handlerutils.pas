@@ -217,6 +217,7 @@ function getopdatatype(const atypedata: ptypedataty;
 function getopdatatype(const adest: vardestinfoty): typeallocinfoty;
 function getbytesize(const aopdatatype: typeallocinfoty): integer;
 function getbasetypedata(const abitsize: databitsizety): ptypedataty;
+function getbasetypeele(const abitsize: databitsizety): elementoffsetty;
 function issametype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
 

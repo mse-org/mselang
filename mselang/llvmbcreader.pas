@@ -537,6 +537,17 @@ const
 // $f0
   #0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0,#0);
 
+function vbrsigned(const avalue: integer): integer; inline;
+begin
+ result:= card32(avalue) shr 1;
+ if odd(avalue) then begin
+  result:= -1;
+ end;
+ if avalue < 0 then begin
+  result:= (-avalue shl 1) or 1;
+ end;
+end;
+
 procedure error(const message: string);
 begin
  raise exception.create(message+'.');
@@ -1445,9 +1456,14 @@ function metastring(const avalues: valuearty): string;
   result:= aname+':M'+inttostr(int32(rec1[aindex])-1);
  end;
 
- function int(const aname: string; const aindex: int32): string;
+ function card(const aname: string; const aindex: int32): string;
  begin
   result:= aname+':'+inttostr(int32(rec1[aindex]));
+ end;
+
+ function int(const aname: string; const aindex: int32): string;
+ begin
+  result:= aname+':'+inttostr(vbrsigned(rec1[aindex]));
  end;
 
  function tag(const aname: string; const aindex: int32): string;
@@ -1508,9 +1524,16 @@ begin
       outmetarecord(distinct()+
        tag('tag',3)+','+
        metaornull('name',4)+','+
-       int('size',5)+','+
-       int('align',6)+','+
+       card('size',5)+','+
+       card('align',6)+','+
        tag('encoding',7),7);
+     end;
+     METADATA_ENUMERATOR: begin
+      fmetalist.add();
+      checkdatalen(rec1,4);
+      outmetarecord(distinct()+
+       int('value',3)+','+
+       metaornull('name',4),4);
      end;
      METADATA_DERIVED_TYPE: begin
       fmetalist.add();
@@ -1519,12 +1542,12 @@ begin
        tag('tag',3)+','+
        metaornull('name',4)+','+
        metaornull('file',5)+','+
-       int('line',6)+','+
+       card('line',6)+','+
        metaornull('scope',7)+','+
        metaornull('basetype',8)+','+
-       int('sizeinbits',9)+','+
-       int('aligninbits',10)+','+
-       int('offsetinbits',11)+','+
+       card('sizeinbits',9)+','+
+       card('aligninbits',10)+','+
+       card('offsetinbits',11)+','+
        tag('flags',12)+','+
        metaornull('extradata',13),13);
      end;
@@ -1535,12 +1558,12 @@ begin
        tag('tag',3)+','+
        metaornull('name',4)+','+
        metaornull('file',5)+','+
-       int('line',6)+','+
+       card('line',6)+','+
        metaornull('scope',7)+','+
        metaornull('basetype',8)+','+
-       int('sizeinbits',9)+','+
-       int('aligninbits',10)+','+
-       int('offsetinbits',11)+','+
+       card('sizeinbits',9)+','+
+       card('aligninbits',10)+','+
+       card('offsetinbits',11)+','+
        tag('flags',12)+','+
        metaornull('elements',13)+','+
        tag('runtimelang',14)+','+
@@ -1563,16 +1586,16 @@ begin
         metaornull('name',4)+','+
         metaornull('linkagename',5)+','+
         metaornull('file',6)+','+
-        int('line',7)+','+
+        card('line',7)+','+
         metaornull('type',8)+','+
-        int('islocaltounit',9)+','+
-        int('isdefinition',10)+','+
-        int('scopeline',11)+','+
+        card('islocaltounit',9)+','+
+        card('isdefinition',10)+','+
+        card('scopeline',11)+','+
         metaornull('containingtype',12)+','+
         tag('virtuality',13)+','+
-        int('virtualindex',14)+','+
+        card('virtualindex',14)+','+
         tag('flags',15)+','+
-        int('isoptimized',16)+','+
+        card('isoptimized',16)+','+
         metaornull('function',17)+','+
         metaornull('templateparams',18)+','+
         metaornull('declaration',19)+','+
@@ -1586,18 +1609,18 @@ begin
         tag('sourcelanguage',3)+','+
         metaornull('file',4)+','+
         metaornull('producer',5)+','+
-        int('isoptimized',6)+','+
+        card('isoptimized',6)+','+
         metaornull('flags',7)+','+
-        int('runtimeversion',8)+','+
+        card('runtimeversion',8)+','+
         metaornull('splitdebugfilename',9)+','+
-        int('emissionkind',10)+','+
+        card('emissionkind',10)+','+
         metaornull('enumtypes',11)+','+
         metaornull('retainedtypes',12)+','+
         metaornull('subprograms',13)+','+
         metaornull('globalvariables',14)+','+
         metaornull('importedidentities',15);
       if high(rec1) = 16 then begin
-       str1:= str1+','+int('dwoid',16);
+       str1:= str1+','+card('dwoid',16);
        outmetarecord(str1,16);
       end
       else begin
@@ -1612,10 +1635,10 @@ begin
         metaornull('name',4)+','+
         metaornull('linkagename',5)+','+
         metaornull('file',6)+','+
-        int('line',7)+','+
+        card('line',7)+','+
         metaornull('type',8)+','+
-        int('islocaltounit',9)+','+
-        int('isdefinition',10)+','+
+        card('islocaltounit',9)+','+
+        card('isdefinition',10)+','+
         metaornull('variable',11)+','+
         metaornull('staticmemberdeclaration',12);
       outmetarecord(str1,12);
@@ -1628,9 +1651,9 @@ begin
         metaornull('scope',4)+','+
         metaornull('name',5)+','+
         metaornull('file',6)+','+
-        int('line',7)+','+
+        card('line',7)+','+
         metaornull('type',8)+','+
-        int('arg',9)+','+
+        card('arg',9)+','+
         tag('flags',10);
       outmetarecord(str1,10);
      end;
