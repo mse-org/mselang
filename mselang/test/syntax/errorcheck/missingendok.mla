@@ -2,6 +2,4 @@ program missingend;
 begin
  if exitcode = 1 then begin
  end;
-end;
-
 end.

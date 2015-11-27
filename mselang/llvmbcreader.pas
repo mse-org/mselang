@@ -2107,7 +2107,7 @@ begin
                                                  ftypelist.typename(i2);
        outoprecord(str1+' A',dynarraytovararray(copy(rec1,4,bigint)));
        if (i1 <> i2) then begin
-        error('Invalid type');
+////////////////        error('Invalid type');
        end;
       end;
       FUNC_CODE_INST_LOAD: begin
