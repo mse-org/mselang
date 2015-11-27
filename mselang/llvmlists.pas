@@ -2597,14 +2597,15 @@ begin
    end
    else begin
     case po2^.h.kind of
-     dk_integer,dk_cardinal: begin
+     dk_integer,dk_cardinal,dk_boolean: begin
       if subrange and (tf_subrange in po2^.h.flags) then begin
        m1:= adddisubrange(getordrange(po2));
       end
       else begin
-       i1:= DW_ATE_signed;
-       if po2^.h.kind = dk_cardinal then begin
-        i1:= DW_ATE_unsigned;
+       case po2^.h.kind of
+        dk_integer: i1:= DW_ATE_signed;
+        dk_cardinal: i1:= DW_ATE_unsigned;
+        dk_boolean: i1:= DW_ATE_boolean;
        end;
        m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,i1);
       end;
