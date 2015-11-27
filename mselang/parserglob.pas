@@ -22,7 +22,7 @@ uses
  segmentutils,llvmbitcodes;
 
 type
- compilerswitchty = (cos_none,cos_booleval);
+ compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
  compilerswitchesty = set of compilerswitchty;
 const
  defaultcompilerswitches = [];

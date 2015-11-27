@@ -380,7 +380,7 @@ end;
 // fields
 // interface table  <- fieldsize
 //                  <- allocsize
-
+var testvar: classdefinfopoty;
 procedure handleclassdefreturn();
 var
  ele1: elementoffsetty;
@@ -431,6 +431,7 @@ begin
    classdefs1:= getclassinfoaddress(
                                  int1+interfacealloc,infoclass.interfacecount);
    infoclass.defs:= classdefs1;
+testvar:= classdefinfopoty(getsegmentpo(classdefs1));
    with classdefinfopoty(getsegmentpo(classdefs1))^ do begin
     header.allocs.size:= infoclass.allocsize;
     header.allocs.instanceinterfacestart:= classinfo1^.fieldoffset;

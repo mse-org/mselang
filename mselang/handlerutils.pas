@@ -2545,6 +2545,9 @@ var
  int1: integer;
 begin
  with info do begin
+  if not (cos_internaldebug in s.compilerswitches) then begin
+   exit;
+  end;
   if indent then begin
    write('  ');
   end;

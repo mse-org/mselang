@@ -2189,7 +2189,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7352EF4
+    ao=An unhandled exception occured at $B7322EF4
     +
     ae=
     aec=123
@@ -4635,7 +4635,7 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  5717 Segmentation fault      $2
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  3947 Segmentation fault      $2
    +
    aec=139
    ie=0
@@ -4681,7 +4681,7 @@ c=3
    eec=123
    cr=0
    ao=
-   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  5572 Segmentation fault      $2
+   ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  3963 Segmentation fault      $2
    +
    aec=139
    ie=0
@@ -5073,11 +5073,11 @@ c=3
   )
   (
   kind=1
-  a=0,664,5,syntax
+  a=0,665,4,syntax
   c=1
    (
    kind=1
-   a=0,664,5,error check
+   a=0,665,4,error check
    c=2
     (
     kind=2
@@ -5107,7 +5107,7 @@ c=3
     (
     kind=2
     a=0,648,1,missingendok
-    teststate=2
+    teststate=1
     path=missingendok.mla
     comment=
     cc=
@@ -5124,12 +5124,11 @@ c=3
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
     +
-    ae=missingendok.mla(5,4) Fatal: Syntax error, "." expected
-    +
-    aec=1
+    ae=
+    aec=0
     ie=0
     )
-   teststate=2
+   teststate=1
    path=errorcheck/
    comment=
    cc=
@@ -5145,7 +5144,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=2
+  teststate=1
   path=syntax/
   comment=
   cc=
@@ -5342,7 +5341,10 @@ sortdescend2=0
 width3=225
 sortdescend3=0
 sortdescend4=0
-rowstate=163
+rowstate=166
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

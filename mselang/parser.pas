@@ -235,6 +235,9 @@ end;
 procedure writetransitioninfo(const text: string);
 begin
  with info do begin
+  if not (cos_internaldebug in s.compilerswitches) then begin
+   exit;
+  end;
   write(text+' I:'+inttostr(s.stackindex)+' T:'+inttostr(s.stacktop));
   if s.stackindex >= 0 then begin
    write(' P:'+
@@ -736,8 +739,10 @@ begin
    end;
 handlelab:
 {$ifdef mse_debugparser}
-   writeln('*** terminate context');
+   if (cos_internaldebug in s.compilerswitches) then begin
+    writeln('*** terminate context');
           //context terminated, pop stack
+   end;
 {$endif}
    repeat
     popped:= false;
@@ -930,7 +935,9 @@ parseend:
  end;
 } 
 {$ifdef mse_debugparser}
- write('**** end **** ');
+ if (cos_internaldebug in info.s.compilerswitches) then begin
+  write('**** end **** ');
+ end;
  if aunit <> nil then begin
   writeinfoline(ansistring(aunit^.filepath));
  end

@@ -2632,6 +2632,9 @@ begin
                                    m2,po2^.h.bitsize,0,0,0,m3);
                                         //todo: use correct alignment
      end;
+     dk_class: begin //todo
+      m1:= dummymeta;
+     end;
      dk_record: begin
       initmetabuffer();
       ele1:= po2^.fieldchain;

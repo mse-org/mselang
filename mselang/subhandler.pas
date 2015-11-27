@@ -999,7 +999,7 @@ begin
   end;
  end;
 end;
-
+var testvar1: ptypedataty; testvar2: classdefinfopoty;
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -1077,6 +1077,7 @@ begin
      internalerror(ie_sub,'20140502A');
     end;
    {$endif}
+testvar1:= ptypedataty(ele.eledataabs(currentcontainer));
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      if co_llvm in compileoptions then begin
       ad1:= po1^.globid;
@@ -1084,6 +1085,7 @@ begin
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
+testvar2:= getsegmentpo(infoclass.defs);
      popaddressty(@classdefinfoty(getsegmentpo(infoclass.defs)^).
                       virtualmethods)[po2^.tableindex]:= ad1;
               //resolve virtual table entry

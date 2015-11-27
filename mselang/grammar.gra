@@ -54,7 +54,7 @@
  '.units','.ancestors','.nestedvarref','.defines'
 @.tokens
  'result','exitcode','sizeof','break','continue'
- 'b','booleval'
+ 'b','booleval','internaldebug'
 start,nounit,,
  ${whitespace}
  'unit'.,unit0-

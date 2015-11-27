@@ -417,7 +417,7 @@ begin
  virtualsubs:= nil; 
  virtualsubconsts:= nil;
  countpo:= getsegmentbase(seg_classintfcount);
- try
+// try
   while poclassdef < peclassdef do begin   //classes
    pint32(poclassdef)^:= info.s.unitinfo^.llvmlists.globlist.
             addinitvalue(gak_const,info.s.unitinfo^.llvmlists.constlist.
@@ -427,12 +427,12 @@ begin
                                                          countpo^*pointersize;
    inc(countpo);
   end;
- finally
+// finally
   if virtualsubs <> nil then begin
    freemem(virtualsubs);
    freemem(virtualsubconsts);
   end;
- end;
+// end;
  with info.s.unitinfo^ do begin
   unitheader1.guid:= filematch.guid;
   with llvmlists do begin
