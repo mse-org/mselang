@@ -20,6 +20,7 @@
  'function'.,*
  'constructor'.,*
  'destructor'.,*
+ 'end'.,*
 "
 {blockends}
 " 'end'.,blockend
