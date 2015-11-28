@@ -1004,9 +1004,9 @@ begin
     else begin
      beginparser(stackops.getoptable());
     end;
-    result:= parsecompilerunit(systemunitname,po1);
+    result:= parsecompilerunit(systemunitname,info.systemunit);
     if result then begin
-     info.systemunit:= po1;
+     po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= po1;
     {$ifndef mse_nocompilerunit}

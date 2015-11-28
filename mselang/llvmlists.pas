@@ -665,7 +665,7 @@ type
    function adddisubrange(const arange: ordrangety): metavaluety;
    function adddiderivedtype(const akind: diderivedtypekindty;
            const adifile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
+           const ascope: metavaluety; const aname: lstringty;
            const aline: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aoffsetinbits: int32;
@@ -2454,7 +2454,7 @@ end;
 
 function tmetadatalist.adddiderivedtype(const akind: diderivedtypekindty;
            const adifile: metavaluety;
-           const acontext: metavaluety; const aname: lstringty;
+           const ascope: metavaluety; const aname: lstringty;
            const aline: int32;
            const asizeinbits: int32; const aaligninbits: int32;
            const aoffsetinbits: int32;
@@ -2469,7 +2469,7 @@ begin
   name:= m1;
   _file:= adifile;
   line:= aline;
-  scope:= acontext;
+  scope:= ascope;
   basetype:= abasetype;
   sizeinbits:= asizeinbits;
   aligninbits:= aaligninbits;
@@ -2592,13 +2592,17 @@ begin
   po2:= ele.eledataabs(atype);
   with datatoele(po2)^.header do begin
    if defunit = nil then begin
-    file1:= dummymeta; //internal type
-    context1:= dummymeta;
+//    file1:= dummymeta; //internal type
+//    context1:= dummymeta;
+    file1:= info.systemunit^.filepathmeta; //internal type
+//    context1:= info.systemunit^.compileunitmeta; 
+    context1:= file1;
    end
    else begin
     file1:= defunit^.filepathmeta;
-    context1:= defunit^.compileunitmeta; 
+//    context1:= defunit^.compileunitmeta; 
                         //todo: use correct context for local defines
+    context1:= file1;
    end;
   end;
   if aindirection > 0 then begin         //todo: set identname
@@ -2613,7 +2617,7 @@ begin
   else begin
    getidentname(datatoele(po2)^.header.name,lstr1);
    if po2^.h.indirectlevel > 0 then begin
-    m2:= addtype(po2^.h.base,po2^.h.indirectlevel-1{,false});
+    m2:= addtype(po2^.h.base,0{po2^.h.indirectlevel-1}{,false});
     m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
    end
