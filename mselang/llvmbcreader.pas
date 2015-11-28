@@ -2000,7 +2000,7 @@ begin
       end;
       FUNC_CODE_INST_BINOP,FUNC_CODE_INST_CMP: begin
        checkdatalen(rec1,4);
-       if functioncodes(rec1[1]) = FUNC_CODE_INST_BINOP then begin
+       if fuco = FUNC_CODE_INST_BINOP then begin
         if rec1[4] > ord(high(binaryopcodesnames)) then begin
          error('Invalid binary opcode');
         end;
@@ -2136,7 +2136,7 @@ begin
        incbb();
       end;
       FUNC_CODE_INST_CALL,FUNC_CODE_INST_INVOKE: begin
-       if functioncodes(rec1[1]) = FUNC_CODE_INST_INVOKE then begin
+       if fuco = FUNC_CODE_INST_INVOKE then begin
         checkmindatalen(rec1,6);
         i4:= 6;
         str1:= '->'+inttostr(rec1[4])+'->'+inttostr(rec1[5])+' ';
@@ -2145,7 +2145,7 @@ begin
         checkmindatalen(rec1,4);
         i4:= 4;
         if (rec1[3] and (1 shl 15)) <> 0 then begin
-         checkmindatalen(rec1,4);
+         checkmindatalen(rec1,5);
          i4:= 5;
         end;
         str1:= '';

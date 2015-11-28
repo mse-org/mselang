@@ -758,7 +758,12 @@ begin
   po1^.allocs.nestedalloccount:= 0;
   if (stf_classdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
-   with contextstack[s.stackindex-2] do begin
+   with contextstack[s.stackindex-3] do begin
+   {$ifdef mse_checkinternalerror}
+    if d.kind <> ck_classdef then begin
+     internalerror(ie_handler,'20151128A');
+    end;
+   {$endif}
     po1^.tableindex:= d.cla.virtualindex;
     inc(d.cla.virtualindex);
    end;
@@ -885,7 +890,12 @@ begin
    end
    else begin
     po1^.tableindex:= paramdata.match^.tableindex;
-    with contextstack[s.stackindex-2] do begin
+    with contextstack[s.stackindex-3] do begin
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_classdef then begin
+      internalerror(ie_handler,'20151128A');
+     end;
+    {$endif}
      dec(d.cla.virtualindex);
     end;
    end;
@@ -999,7 +1009,7 @@ begin
   end;
  end;
 end;
-var testvar1: ptypedataty; testvar2: classdefinfopoty;
+
 procedure handlesubbody5a();
 var
  po1,po2: psubdataty;
@@ -1077,7 +1087,6 @@ begin
      internalerror(ie_sub,'20140502A');
     end;
    {$endif}
-testvar1:= ptypedataty(ele.eledataabs(currentcontainer));
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
      if co_llvm in compileoptions then begin
       ad1:= po1^.globid;
@@ -1085,7 +1094,6 @@ testvar1:= ptypedataty(ele.eledataabs(currentcontainer));
      else begin
       ad1:= po1^.address-1; //compensate oppo inc
      end;
-testvar2:= getsegmentpo(infoclass.defs);
      popaddressty(@classdefinfoty(getsegmentpo(infoclass.defs)^).
                       virtualmethods)[po2^.tableindex]:= ad1;
               //resolve virtual table entry
