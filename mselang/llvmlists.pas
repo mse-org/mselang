@@ -1988,7 +1988,9 @@ begin
  }
   if info.debugoptions <> [] then begin
    femptystringconst:= addstring('');
-   femptynode:= addnode([]);
+   with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty),femptynode))^ do begin
+    len:= 0;
+   end;
    ftypemetalist.clear();
    fconstmetalist.clear();
    fsysfile:= adddifile('system');
@@ -2095,10 +2097,15 @@ function tmetadatalist.addnode(const avalues: pmetavaluety;
 var
  i1: int32;
 begin
- i1:= acount*sizeof(avalues^);
- with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty)+i1,result))^ do begin
-  len:= acount;
-  move(avalues^,data,i1);
+ if acount = 0 then begin
+  result:= femptynode;
+ end
+ else begin
+  i1:= acount*sizeof(avalues^);
+  with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty)+i1,result))^ do begin
+   len:= acount;
+   move(avalues^,data,i1);
+  end;
  end;
 end;
 
@@ -2118,15 +2125,20 @@ function tmetadatalist.addnodereverse(const avalues: pmetavaluety;
 var
  ps,pd: pmetavaluety;
 begin
- with pnodemetaty(adddata(
-         mdk_node,sizeof(nodemetaty)+acount*sizeof(avalues^),result))^ do begin
-  len:= acount;
-  pd:= @data;
-  ps:= avalues+acount;
-  while ps > avalues do begin
-   dec(ps);
-   pd^:= ps^;
-   inc(pd);
+ if acount = 0 then begin
+  result:= femptynode;
+ end
+ else begin
+  with pnodemetaty(adddata(
+          mdk_node,sizeof(nodemetaty)+acount*sizeof(avalues^),result))^ do begin
+   len:= acount;
+   pd:= @data;
+   ps:= avalues+acount;
+   while ps > avalues do begin
+    dec(ps);
+    pd^:= ps^;
+    inc(pd);
+   end;
   end;
  end;
 end;
@@ -2138,23 +2150,28 @@ var
  ps,pd,pe: pmetavaluety;
 begin
  i1:= counta + countb;
- with pnodemetaty(adddata(
-              mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
-  len:= i1;
-  pd:= @data;
-  ps:= valuesa;
-  pe:= ps+counta;
-  while ps < pe do begin
-   pd^:= ps^;
-   inc(pd);
-   inc(ps);
-  end;
-  ps:= valuesb;
-  pe:= ps+countb;
-  while ps < pe do begin
-   pd^:= ps^;
-   inc(pd);
-   inc(ps);
+ if i1 = 0 then begin
+  result:= femptynode;
+ end
+ else begin
+  with pnodemetaty(adddata(
+               mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
+   len:= i1;
+   pd:= @data;
+   ps:= valuesa;
+   pe:= ps+counta;
+   while ps < pe do begin
+    pd^:= ps^;
+    inc(pd);
+    inc(ps);
+   end;
+   ps:= valuesb;
+   pe:= ps+countb;
+   while ps < pe do begin
+    pd^:= ps^;
+    inc(pd);
+    inc(ps);
+   end;
   end;
  end;
 end;
@@ -2167,21 +2184,26 @@ var
  ps,pd: pmetavaluety;
 begin
  i1:= counta + countb;
- with pnodemetaty(adddata(
-              mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
-  len:= i1;
-  pd:= @data;
-  ps:= valuesb+countb;
-  while ps > valuesb do begin
-   dec(ps);
-   pd^:= ps^;
-   inc(pd);
-  end;
-  ps:= valuesa+counta;
-  while ps > valuesa do begin
-   dec(ps);
-   pd^:= ps^;
-   inc(pd);
+ if i1 = 0 then begin
+  result:= femptynode;
+ end
+ else begin
+  with pnodemetaty(adddata(
+               mdk_node,sizeof(nodemetaty)+i1*sizeof(valuesa^),result))^ do begin
+   len:= i1;
+   pd:= @data;
+   ps:= valuesb+countb;
+   while ps > valuesb do begin
+    dec(ps);
+    pd^:= ps^;
+    inc(pd);
+   end;
+   ps:= valuesa+counta;
+   while ps > valuesa do begin
+    dec(ps);
+    pd^:= ps^;
+    inc(pd);
+   end;
   end;
  end;
 end;
@@ -2542,7 +2564,7 @@ var
    freemem(pb);
   end
   else begin
-   result:= addnode(@metabuffer,metabuffersize);
+   result:= addnode(@metabuffer,pb-pmetavaluety(@metabuffer));
   end;
  end; //addbufferreverse
 
@@ -2553,7 +2575,7 @@ var
    freemem(pb);
   end
   else begin
-   result:= addnodereverse(@metabuffer,metabuffersize);
+   result:= addnodereverse(@metabuffer,pb-pmetavaluety(@metabuffer));
   end;
  end; //addbufferreverse
  
@@ -2632,10 +2654,7 @@ begin
                                    m2,po2^.h.bitsize,0,0,0,m3);
                                         //todo: use correct alignment
      end;
-     dk_class: begin //todo
-      m1:= dummymeta;
-     end;
-     dk_record: begin
+     dk_record,dk_class: begin
       initmetabuffer();
       ele1:= po2^.fieldchain;
       while ele1 <> 0 do begin
