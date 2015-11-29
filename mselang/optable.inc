@@ -1703,6 +1703,10 @@
   (ssa: freememssa; proc: @freememop; flags: []), 
 //oc_setmem
   (ssa: setmemssa; proc: @setmemop; flags: []), 
+  
+//oc_sin64
+  (ssa: sin64ssa; proc: @sin64op; flags: []), 
+  
 //oc_lineinfo
   (ssa: lineinfossa; proc: @lineinfoop; flags: []), 
 

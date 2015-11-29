@@ -489,6 +489,8 @@ type
   oc_getzeromem,
   oc_freemem,
   oc_setmem,
+  
+  oc_sin,
 
   oc_lineinfo,
     

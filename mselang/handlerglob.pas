@@ -340,7 +340,7 @@ type
 
  sysfuncty = (sf_write,sf_writeln,sf_setlength,sf_sizeof,sf_inc,sf_dec,
               sf_getmem,sf_getzeromem,sf_freemem,sf_setmem,sf_halt,
-              sf_low,sf_high);
+              sf_low,sf_high,sf_sin);
 
  sysfuncdataty = record
   func: sysfuncty;

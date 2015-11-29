@@ -54,8 +54,8 @@ type
   params: pparamsty;
  end;
  internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset,
-                   if__exit{,
-                   if__Unwind_RaiseException});
+                   if__exit,
+                   if_sin64);
 const
  printfpar: array[0..0] of paramitemty = (
               (typelistindex: pointertype; flags: [])
@@ -94,15 +94,21 @@ const
  );
  _Unwind_RaiseExceptionparams: paramsty = 
                       (count: 1; items: @_Unwind_RaiseExceptionpar);
- 
+
+ ffunc64par: array[0..0] of paramitemty = (
+              (typelistindex: floattype; flags: [])
+ );
+ ffunc64params: paramsty = (count: 1; items: @ffunc64par);
+
+//todo: use llvm intinsics where possible 
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
   (name: 'printf'; flags: [sf_proto,sf_vararg]; params: @printfparams),
   (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
-  (name: '_exit'; flags: [sf_proto]; params: @_exitparams)
-//  (name: 'exit'; flags: [sf_proto]; params: @_exitparams)
+  (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
+  (name: 'llvm.sin.f64'; flags: [sf_proto]; params: @ffunc64params)
  );
 
 type
@@ -3151,6 +3157,14 @@ begin
  end;
 end;
 
+procedure sin64op();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_sin64]),
+                                                  [bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure lineinfoop();
 begin
  with pc^.par.lineinfo do begin
@@ -3613,6 +3627,8 @@ const
   getzeromemssa = 2;
   freememssa = 0;
   setmemssa = 1;
+  
+  sin64ssa = 1;
   
   lineinfossa = 0;
 

@@ -665,7 +665,7 @@ end;
 
 procedure pushimm64op();
 begin
- pint32(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
+ pint64(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
 end;
 
 procedure pushimmdatakindop();
@@ -3573,6 +3573,14 @@ begin
  fillchar(po1^,i1,b1);
 end;
 
+procedure sin64op();
+var
+ po1: pflo64;
+begin
+ po1:= cpu.stack - 64 div 8;
+ po1^:= sin(po1^);
+end;
+
 procedure lineinfoop();
 begin
  //dummy
@@ -4050,6 +4058,8 @@ const
   getzeromemssa = 0;
   freememssa = 0;
   setmemssa = 0;
+  
+  sin64ssa = 0;
   
   lineinfossa = 0;
 

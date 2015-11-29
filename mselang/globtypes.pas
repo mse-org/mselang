@@ -363,6 +363,7 @@ const
 {$else}
  sizetype = ord(das_32);
 {$endif}
+ floattype = ord(das_f64);
  bittypemax = ord(lastdatakind);
 
  nullpointer = ord(nc_pointer);

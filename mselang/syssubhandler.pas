@@ -34,6 +34,7 @@ procedure handlesetmem(const paramco: integer);
 procedure handlehalt(const paramco: integer);
 procedure handlelow(const paramco: integer);
 procedure handlehigh(const paramco: integer);
+procedure handlesin(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
@@ -42,7 +43,7 @@ const
   //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
   //sf_setmem,  sf_halt
-  @handlesetmem,@handlehalt,@handlelow,@handlehigh);
+  @handlesetmem,@handlehalt,@handlelow,@handlehigh,@handlesin);
   
 procedure init();
 procedure deinit();
@@ -758,6 +759,30 @@ begin
  handlelowhigh(paramco,true);
 end;
 
+procedure floatsysfunc(const paramco: integer; const aop: opcodety);
+begin
+ with info do begin
+  if checkparamco(1,paramco) and 
+          getbasevalue(s.stacktop-s.stackindex,das_f64) then begin
+   with contextstack[s.stacktop] do begin
+    with additem(aop)^ do begin
+     par.ssas1:= info.s.ssa.index-1;
+    end;
+   end;
+   initfactcontext(0);
+   with contextstack[s.stackindex] do begin
+    d.kind:= ck_subres;
+    d.dat.datatyp:= sysdatatypes[st_float64];
+   end;
+  end;
+ end;
+end;
+
+procedure handlesin(const paramco: integer);
+begin
+ floatsysfunc(paramco,oc_sin);
+end;
+
 type
  sysfuncinfoty = record
   name: string;
@@ -777,7 +802,8 @@ const
    (name: 'setmem'; data: (func: sf_setmem)),
    (name: 'halt'; data: (func: sf_halt)),
    (name: 'low'; data: (func: sf_low)),
-   (name: 'high'; data: (func: sf_high))
+   (name: 'high'; data: (func: sf_high)),
+   (name: 'sin'; data: (func: sf_sin))
   );
 
 procedure init();
