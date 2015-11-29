@@ -2676,6 +2676,11 @@ begin
                                    dummymeta,po2^.h.bitsize,0,0,0,m2);
                                         //todo: use correct alignment
      end;
+     dk_interface: begin
+      m2:= addtype(0,0);        //todo
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+     end;
      else begin
       internalerror1(ie_llvmmeta,'20151026A');
      end;
