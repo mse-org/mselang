@@ -1011,7 +1011,7 @@ begin
      end;
      sdk_flo64: begin
       if issub then begin
-       d.dat.constval.vfloat:= d.dat.constval.vfloat + 
+       d.dat.constval.vfloat:= d.dat.constval.vfloat -
                              pob^.d.dat.constval.vfloat;
       end
       else begin
