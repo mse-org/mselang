@@ -1307,45 +1307,43 @@ end;
 
 function convertconsts(): stackdatakindty;
                 //convert s.stacktop, s.stacktop-2
+var
+ poa,pob: pdatacontextty;
 begin
  with info,contextstack[s.stacktop-2] do begin
-  result:= stackdatakinds[d.dat.constval.kind];  
-  if contextstack[s.stacktop].d.dat.constval.kind <> 
-                                              d.dat.constval.kind then begin
-   case contextstack[s.stacktop].d.dat.constval.kind of
+ {$ifdef checkinternalerror}
+  if contextstack[s.stacktop-2].d.kind <> ck_const) or 
+     contextstack[s.stacktop].d.kind <> ck_const then begin
+   internalerror(ie_handler,'200151130A');
+  end;
+ {$endif}
+  poa:= @contextstack[s.stacktop-2].d.dat;
+  pob:= @contextstack[s.stacktop].d.dat;
+  result:= stackdatakinds[poa^.constval.kind];
+  if poa^.constval.kind <> pob^.constval.kind then begin
+   case pob^.constval.kind of
     dk_float: begin
      result:= sdk_flo64;
-     with d,dat.constval do begin
-      case kind of
-       dk_float: begin
-        vfloat:= vfloat + contextstack[s.stacktop].d.dat.constval.vfloat;
-       end;
-       dk_integer: begin
-        vfloat:= vinteger + contextstack[s.stacktop].d.dat.constval.vfloat;
-        kind:= dk_float;
-        dat.datatyp:= contextstack[s.stacktop].d.dat.datatyp;
-       end;
-       else begin
-        result:= sdk_none;
-       end;
+     case poa^.constval.kind of
+      dk_integer: begin
+       poa^.constval.vfloat:= poa^.constval.vinteger;
+       poa^.constval.kind:= dk_float;
+       poa^.datatyp:= pob^.datatyp;
+      end;
+      else begin
+       result:= sdk_none;
       end;
      end;
     end;
     dk_integer: begin
-     with d,dat.constval do begin
-      case kind of
-       dk_integer: begin
-        vinteger:= vinteger + contextstack[s.stacktop].d.dat.constval.vinteger;
-       end;
-       dk_float: begin
-        result:= sdk_flo64;
-        vfloat:= vfloat + contextstack[s.stacktop].d.dat.constval.vfloat;
-        kind:= dk_float;
-        dat.datatyp:= contextstack[s.stacktop].d.dat.datatyp;
-       end;
-       else begin
-        result:= sdk_none;
-       end;
+     case poa^.constval.kind of
+      dk_float: begin
+       pob^.constval.vfloat:= pob^.constval.vinteger;
+       pob^.constval.kind:= dk_float;
+       pob^.datatyp:= poa^.datatyp;
+      end;
+      else begin
+       result:= sdk_none;
       end;
      end;
     end;
@@ -1355,18 +1353,16 @@ begin
    end;
   end
   else begin
-   case d.dat.constval.kind of
+   case poa^.constval.kind of
     dk_enum: begin
-     if d.dat.datatyp.typedata = 
-             contextstack[s.stacktop].d.dat.datatyp.typedata then begin
+     if poa^.datatyp.typedata = pob^.datatyp.typedata then begin
       result:= sdk_int32; //todo: different sizes
      end;
     end;
     dk_set: begin                          //todo: basetype?
-     if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.infoset.itemtype = 
+     if ptypedataty(ele.eledataabs(poa^.datatyp.typedata))^.infoset.itemtype = 
             ptypedataty(ele.eledataabs(
-                contextstack[s.stacktop].d.dat.datatyp.typedata))^.
-                                                 infoset.itemtype then begin
+                      pob^.datatyp.typedata))^.infoset.itemtype then begin
       result:= sdk_set32; //todo: different sizes
      end;
     end;

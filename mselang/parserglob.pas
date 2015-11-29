@@ -354,6 +354,7 @@ type
     lab: elementoffsetty;
    );
  end;
+ pdatacontextty = ^datacontextty;
 
  contextdataty = record
 //  elemark: elementoffsetty;
