@@ -5,7 +5,7 @@ var
 begin
  f1:= 1+0.5;
  f2:= 0.5+1;
- if f1+f2+120 = 123 then begin
+ if (f1+f2+120 = 123) and (f1+f2+120 <> 124) then begin
   exitcode:= 123;
  end;
 end.

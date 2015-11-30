@@ -519,7 +519,7 @@ begin
  write(int64((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
-procedure writefloatop();
+procedure writefloat64op();
 begin
  write(vfloatty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
@@ -3652,7 +3652,7 @@ const
   writeinteger16ssa = 0;
   writeinteger32ssa = 0;
   writeinteger64ssa = 0;
-  writefloatssa = 0;
+  writefloat64ssa = 0;
   writestring8ssa = 0;
   writepointerssa = 0;
   writeclassssa = 0;

@@ -116,7 +116,7 @@ type
   text: string;
  end;
  internalstringty = (is_ret,is_card32,is_int8,is_int16,is_int32,is_int64,
-                     is_string8,is_pointer);
+                     is_string8,is_pointer,is_flo64);
 const
  internalstringconsts: array[internalstringty] of internalstringinfoty = (
   (text: #$a#0),        //is_ret,
@@ -126,7 +126,8 @@ const
   (text: '%d'#0),       //is_int32,
   (text: '%lld'#0),     //is_int64,
   (text: '%s'#0),       //is_string8,
-  (text: '%p'#0)        //is_pointer
+  (text: '%p'#0),       //is_pointer
+  (text: '%e'#0)        //is_flo64
  );  
 
 var
@@ -695,9 +696,14 @@ begin
  writeintegerop(is_int64);
 end;
 
-procedure writefloatop();
+procedure writefloat64op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_flo64]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure writestring8op();
@@ -1693,7 +1699,7 @@ end;
 
 procedure cmpneflo64op();
 begin
- notimplemented();
+ comparessa(fcmp_one);
 end;
 
 procedure cmpgtpoop();
@@ -3223,7 +3229,7 @@ const
   writeinteger16ssa = 1;
   writeinteger32ssa = 1;
   writeinteger64ssa = 1;
-  writefloatssa = 1;
+  writefloat64ssa = 1;
   writestring8ssa = 1;
   writepointerssa = 1;
   writeclassssa = 1;

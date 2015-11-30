@@ -448,7 +448,7 @@ begin
        end;
       end;
       dk_float: begin
-       po1:=  additem(oc_writefloat);
+       po1:=  additem(oc_writefloat64);
        po1^.par.voffset:= alignsize(sizeof(float64));
       end;
       dk_string8: begin
