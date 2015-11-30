@@ -2732,7 +2732,7 @@ begin
  mask:= bitmask[masksize];
  repeat
   readbits(bitsize,ca1);
-  result:= result or ((ca1 and mask) shl valuety(i1));
+  result:= result or (valuety(ca1 and mask) shl valuety(i1));
   i1:= i1 + masksize;
  until ca1 and bits[masksize] = 0;
 end;
