@@ -95,10 +95,11 @@ const
  _Unwind_RaiseExceptionparams: paramsty = 
                       (count: 1; items: @_Unwind_RaiseExceptionpar);
 
- ffunc64par: array[0..0] of paramitemty = (
+ ffunc64par: array[0..1] of paramitemty = (
+              (typelistindex: floattype; flags: []),
               (typelistindex: floattype; flags: [])
  );
- ffunc64params: paramsty = (count: 1; items: @ffunc64par);
+ ffunc64params: paramsty = (count: 2; items: @ffunc64par);
 
 //todo: use llvm intinsics where possible 
  internalfuncconsts: array[internalfuncty] of internalfuncinfoty = (
@@ -108,7 +109,7 @@ const
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
-  (name: 'llvm.sin.f64'; flags: [sf_proto]; params: @ffunc64params)
+  (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
  );
 
 type

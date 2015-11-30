@@ -1,0 +1,11 @@
+program sin;
+
+var
+ f1: flo64;
+begin
+ f1:= 1.570796326794896619;
+ f1:= sin(f1);
+ if f1 = 1 then begin
+  exitcode:= 123;
+ end;
+end.

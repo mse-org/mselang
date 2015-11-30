@@ -112,7 +112,7 @@ procedure __mla__raise(const data: pointer);
 var
  po1: pexceptinfoty;
 begin  //todo: handle out of memory situation
- getmem(po1,sizeof(exceptinfoty);
+ getmem(po1,sizeof(exceptinfoty));
  with po1^.header do begin
   exception_class:= mlaexceptionid;
   exception_cleanup:= @exceptioncleanup;

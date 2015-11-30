@@ -764,14 +764,13 @@ begin
  with info do begin
   if checkparamco(1,paramco) and 
           getbasevalue(s.stacktop-s.stackindex,das_f64) then begin
-   with contextstack[s.stacktop] do begin
-    with additem(aop)^ do begin
-     par.ssas1:= info.s.ssa.index-1;
-    end;
+   with additem(aop)^ do begin
+    par.ssas1:= info.s.ssa.index-1;
    end;
-   initfactcontext(0);
    with contextstack[s.stackindex] do begin
     d.kind:= ck_subres;
+    d.dat.fact.ssaindex:= info.s.ssa.index;
+    d.dat.indirection:= 0;
     d.dat.datatyp:= sysdatatypes[st_float64];
    end;
   end;

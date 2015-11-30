@@ -1732,6 +1732,9 @@ function tllvmbcreader.getopname(avalue: int32): string; //absvalue
      CST_CODE_INTEGER: begin
       result:= result+inttostr(intconst);
      end;
+     CST_CODE_FLOAT: begin              //todo: size
+      result:= result+ansistring(realtostrmse(floatconst));
+     end;
      CST_CODE_NULL: begin
       result:= result+'NULL';
      end;

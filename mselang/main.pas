@@ -152,7 +152,7 @@ begin
                                                    optname+'.bc','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if int1 = 0 then begin
-          int1:= getprocessoutput('gcc -o '+filenamebase(filename1)+'.bin '+
+          int1:= getprocessoutput('gcc -lm -o '+filenamebase(filename1)+'.bin '+
                             filenamebase(filename1)+'.s','',str1);
           grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
           if int1 = 0 then begin
@@ -176,7 +176,7 @@ begin
         int1:= getprocessoutput(llvmbindir+'llc '+filename2,'',str1);
         grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
         if int1 = 0 then begin
-         int1:= getprocessoutput('gcc -o'+filenamebase(filename1)+'.bin '+
+         int1:= getprocessoutput('gcc -lm -o'+filenamebase(filename1)+'.bin '+
                            filenamebase(filename2)+'.s','',str1);
          grid[0].readpipe(str1,[aco_stripescsequence,aco_multilinepara],120);
          if int1 = 0 then begin
