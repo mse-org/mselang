@@ -268,6 +268,9 @@ begin
       result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
      end;
     end;
+    if not result then begin
+     exit; //no conversion possible
+    end;
    end;
    if not result then begin
     if destindirectlevel = 0 then begin

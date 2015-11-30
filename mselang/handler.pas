@@ -2600,8 +2600,11 @@ begin
      else begin
       si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.h.datasize;
      end;
-     if isconst and not tryconvert(2,destvar.typ,indilev1,[]) or
-                                             not getvalue(2,si1) then begin
+     if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
+      assignmenterror(contextstack[s.stacktop].d,destvar);
+      goto endlab;
+     end;
+     if not getvalue(2,si1) then begin
       goto endlab;
      end;
     end
