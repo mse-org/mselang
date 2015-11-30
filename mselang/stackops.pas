@@ -668,6 +668,11 @@ begin
  pint64(stackpush(8))^:= cpu.pc^.par.imm.vint64; 
 end;
 
+procedure pushimmf64op();
+begin
+ pflo64(stackpush(8))^:= cpu.pc^.par.imm.vfloat64; 
+end;
+
 procedure pushimmdatakindop();
 begin
  vdatakindty(stackpushnoalign(sizeof(vdatakindty))^):= 
@@ -3661,6 +3666,7 @@ const
   pushimm16ssa = 0;
   pushimm32ssa = 0;
   pushimm64ssa = 0;
+  pushimmf64ssa = 0;
   pushimmdatakindssa = 0;
   
   int32toflo64ssa = 0;

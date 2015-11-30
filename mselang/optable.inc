@@ -1004,6 +1004,8 @@
   (ssa: pushimm32ssa; proc: @pushimm32op; flags: []), 
 //oc_pushimm64
   (ssa: pushimm64ssa; proc: @pushimm64op; flags: []), 
+//oc_pushimmf64
+  (ssa: pushimmf64ssa; proc: @pushimmf64op; flags: []), 
 //oc_pushimmdatakind
   (ssa: pushimmdatakindssa; proc: @pushimmdatakindop; flags: []), 
   

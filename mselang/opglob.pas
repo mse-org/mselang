@@ -147,6 +147,7 @@ type
   oc_pushimm16,
   oc_pushimm32,
   oc_pushimm64,
+  oc_pushimmf64,
   oc_pushimmdatakind,
   
   oc_int32toflo64,

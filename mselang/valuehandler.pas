@@ -253,6 +253,7 @@ var
  pointerconv: boolean;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
+  pointerconv:= false;
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
   if result then begin

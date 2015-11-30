@@ -777,6 +777,13 @@ begin
  end;
 end;
 
+procedure pushimmf64op();
+begin
+ with pc^.par do begin
+  bcstream.emitpushconst(imm.llvm);
+ end;
+end;
+
 procedure pushimmdatakindop();
 begin
  notimplemented();
@@ -3230,6 +3237,7 @@ const
   pushimm16ssa = 1;
   pushimm32ssa = 1;
   pushimm64ssa = 1;
+  pushimmf64ssa = 1;
   pushimmdatakindssa = 1;
   
   int32toflo64ssa = 1;
