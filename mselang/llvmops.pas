@@ -875,7 +875,7 @@ end;
 
 procedure mulflo64op();
 begin
- notimplemented();
+ outbinop(BINOP_MUL);
 end;
 
 procedure addint32op();
@@ -913,12 +913,12 @@ end;
 
 procedure addflo64op();
 begin
- notimplemented();
+ outbinop(BINOP_ADD);
 end;
 
 procedure subflo64op();
 begin
- notimplemented();
+ outbinop(BINOP_SUB);
 end;
 
 procedure diffsetop(); //todo: arbitrary size
@@ -1672,7 +1672,7 @@ end;
 
 procedure cmpeqflo64op();
 begin
- notimplemented();
+ comparessa(fcmp_oeq);
 end;
 
 procedure cmpnepoop();

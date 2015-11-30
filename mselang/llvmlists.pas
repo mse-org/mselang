@@ -277,6 +277,7 @@ type
    function addi16(const avalue: int16): llvmvaluety;
    function addi32(const avalue: int32): llvmvaluety;
    function addi64(const avalue: int64): llvmvaluety;
+   function addf64(const avalue: flo64): llvmvaluety;
    function adddataoffs(const avalue: dataoffsty): llvmvaluety;
    function addvalue(const avalue; const asize: int32): llvmvaluety;
    function addpointerarray(const asize: int32;
@@ -1367,6 +1368,31 @@ begin
  alloc1.header.size:= 8;
  alloc1.header.data:= @avalue;
  alloc1.typeid:= ord(das_64);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+// result:= addvalue(avalue,8);
+{$endif}
+ result.listid:= po1^.data.header.listindex;
+ result.typeid:= po1^.data.typeid;
+end;
+
+function tconsthashdatalist.addf64(const avalue: flo64): llvmvaluety;
+var
+ alloc1: constallocdataty;
+ po1: pconstlisthashdataty;
+begin
+{$ifdef cpu64}
+ alloc1.header.size:= -1;
+ alloc1.header.data:= ppointer(@avalue)^;
+ alloc1.typeid:= ord(das_f64);
+ if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
+  po1^.data.typeid:= alloc1.typeid;
+ end;
+{$else}
+ alloc1.header.size:= 8;
+ alloc1.header.data:= @avalue;
+ alloc1.typeid:= ord(das_f64);
  if addunique(bufferallocdataty((@alloc1)^),pointer(po1)) then begin
   po1^.data.typeid:= alloc1.typeid;
  end;

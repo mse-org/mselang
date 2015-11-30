@@ -692,6 +692,13 @@ begin
        emitdataconst(consts.absdata(pc2^.header.buffer)^,8);
      {$endif}
       end;
+      das_f64: begin
+     {$ifdef cpu64}
+       emitdataconst(pflo64(@(pc2^.header.buffer)^),8);
+     {$else}
+       emitdataconst(consts.absdata(pc2^.header.buffer)^,8);
+     {$endif}
+      end;
       else begin
       {$ifdef mse_checkinternalerror}
        if databitsizety(pc2^.typeid) <= lastdatakind then begin

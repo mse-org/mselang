@@ -543,7 +543,7 @@ procedure setimmfloat64(const value: float64; var par: opparamty);
 begin
  par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  notimplementederror('20150109A');
+  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
  end
  else begin
   par.imm.vfloat64:= value;
