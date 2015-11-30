@@ -97,6 +97,9 @@ type
      CST_CODE_INTEGER: (
       intconst: valuety;
      );
+     CST_CODE_FLOAT: (
+      floatconst: flo64;
+     );
    );
    gk_var: (
     explicittype: boolean;
@@ -1339,6 +1342,10 @@ begin
           intconst:= -intconst;
          end;
          outconst([inttostr(intconst)]);
+        end;
+        CST_CODE_FLOAT: begin
+         floatconst:= pflo64(@rec1[2])^;
+         outconst([realtostrmse(floatconst)]);
         end
         else begin
          outconst(dynarraytovararray(copy(rec1,2,bigint)));

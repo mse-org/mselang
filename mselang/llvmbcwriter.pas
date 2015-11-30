@@ -93,6 +93,7 @@ type
    procedure emitvbr4(avalue: int32);
    procedure emitvbr5(avalue: int32);
    procedure emitvbr6(avalue: int32);
+   procedure emitvbr6(avalue: int64);
    procedure emitvbr8(avalue: int32);
    procedure emitcode(const avalue: int32);
    procedure emitdata(const avalue: bcdataty);
@@ -104,6 +105,8 @@ type
    procedure pad32();
    procedure emittypeid(const avalue: int32);
    procedure emitintconst(const avalue: int32);
+   procedure emitintconst(const avalue: int64);
+   procedure emitfloatconst(const avalue: flo64);
    procedure emitdataconst(const avalue; const asize: int32);
    procedure emitpointercastconst(const avalue: int32; const atype: int32);
    procedure checkdebugloc();
@@ -252,6 +255,7 @@ type
  end;
 
 function signedvbr(const avalue: integer): integer; inline;
+function signedvbr(const avalue: int64): int64; inline;
  
 implementation
 uses
@@ -333,6 +337,16 @@ const
  );
  
 function signedvbr(const avalue: integer): integer; inline;
+begin
+ if avalue < 0 then begin
+  result:= (-avalue shl 1) or 1;
+ end
+ else begin
+  result:= avalue shl 1;
+ end;
+end;
+
+function signedvbr(const avalue: int64): int64; inline;
 begin
  if avalue < 0 then begin
   result:= (-avalue shl 1) or 1;
@@ -687,16 +701,16 @@ begin
       end;
       das_64: begin
      {$ifdef cpu64}
-       emitdataconst(int64(pc2^.header.buffer),8);
+       emitintconst(int64(pc2^.header.buffer));
      {$else}
-       emitdataconst(consts.absdata(pc2^.header.buffer)^,8);
+       emitintconst(pint64(consts.absdata(pc2^.header.buffer))^);
      {$endif}
       end;
       das_f64: begin
      {$ifdef cpu64}
-       emitdataconst(pflo64(@(pc2^.header.buffer)^),8);
+       emitfloatconst(pflo64(@(pc2^.header.buffer)^));
      {$else}
-       emitdataconst(consts.absdata(pc2^.header.buffer)^,8);
+       emitfloatconst(pflo64(consts.absdata(pc2^.header.buffer))^);
      {$endif}
       end;
       else begin
@@ -978,6 +992,20 @@ begin
   end;
   emit6(i1);
   avalue:= card32(avalue) shr 5;
+ until avalue = 0;
+end;
+
+procedure tllvmbcwriter.emitvbr6(avalue: int64);
+var
+ i1: int64;
+begin
+ repeat
+  i1:= avalue and $1f;
+  if card64(avalue) - i1 <> 0 then begin
+   i1:= i1 or $20;
+  end;
+  emit6(i1);
+  avalue:= card64(avalue) shr 5;
  until avalue = 0;
 end;
 
@@ -1282,6 +1310,20 @@ begin
  emitcode(ord(mabconst_int));
  emitvbr6(ord(CST_CODE_INTEGER));
  emitvbr6(signedvbr(avalue));
+end;
+
+procedure tllvmbcwriter.emitintconst(const avalue: int64);
+begin
+ emitcode(ord(mabconst_int));
+ emitvbr6(ord(CST_CODE_INTEGER));
+ emitvbr6(signedvbr(avalue));
+end;
+
+procedure tllvmbcwriter.emitfloatconst(const avalue: flo64);
+begin
+ emitcode(ord(mabconst_int));
+ emitvbr6(ord(CST_CODE_FLOAT));
+ emitvbr6(pint64(@avalue)^);
 end;
 
 procedure tllvmbcwriter.emittypeid(const avalue: int32);
