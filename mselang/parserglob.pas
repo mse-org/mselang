@@ -107,7 +107,8 @@ type
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,ck_shortcutexp,
-                  ck_recorddef,ck_classdef,ck_interfacedef,ck_enumdef,
+                  ck_recorddef,ck_classdef,ck_classprop,
+                  ck_interfacedef,ck_enumdef,
                   ck_paramsdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
@@ -279,6 +280,14 @@ type
 //  parentclass: elementoffsetty;
  end;
  pclassinfoty = ^classinfoty;
+ 
+ classpropinfoty = record
+  errorref: int32;
+  flags: propflagsty;
+  readele: elementoffsetty;
+  writeele: elementoffsetty;
+ end;
+ pclasspropinfoty = ^classpropinfoty;
 
  interfaceinfoty = record
 //  intfindex: integer;
@@ -406,6 +415,9 @@ type
    );
    ck_classdef:(
     cla: classinfoty;
+   );
+   ck_classprop:(
+    classprop: classpropinfoty;
    );
    ck_interfacedef:(
     intf: interfaceinfoty;

@@ -39,7 +39,7 @@ function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 implementation
 type
  pcard8 = ^card8;
- 
+
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 begin
  if ref <> nil then begin

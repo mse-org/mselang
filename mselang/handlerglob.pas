@@ -283,6 +283,14 @@ type
  end;
  pfielddataty = ^fielddataty;
 
+ propertydataty = record
+  flags: propflagsty;
+  readele: elementoffsetty;
+  writeele: elementoffsetty;
+  defaultconst: datainfoty;
+ end;
+ ppropertydataty = ^propertydataty;
+ 
  labeldefdataty = record
   adlinks: linkindexty;    //calls which need to be resolved
                            //by linkresolvegoto()

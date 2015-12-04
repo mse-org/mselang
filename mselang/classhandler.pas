@@ -58,12 +58,18 @@ procedure handlemethconstructorentry();
 procedure handlemethdestructorentry();
 procedure handleconstructorentry();
 procedure handledestructorentry();
+procedure classpropertyentry();
+//procedure handleclasspropertytype();
+procedure handlereadprop();
+procedure handlewriteprop();
+procedure handledefaultprop();
+procedure handleclassproperty();
 
 implementation
 uses
  parserglob,elements,handler,errorhandler,unithandler,grammar,handlerutils,
  parser,typehandler,opcode,subhandler,segmentutils,interfacehandler,
- identutils;
+ identutils,valuehandler;
 {
 const
  vic_private = vis_3;
@@ -609,6 +615,201 @@ begin
   kind:= ck_subdef;
   subdef.flags:= [sf_method,sf_destructor];
  end;
+end;
+
+procedure classpropertyentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROPERTYENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_classprop;
+  d.classprop.flags:= [];
+  d.classprop.errorref:= errors[erl_error];
+ end;
+end;
+(*
+procedure handleclasspropertytype();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROPERTYTYPE');
+{$endif}
+ with info do begin
+  if s.stacktop > s.stackindex+1 then begin
+  end;
+  s.stacktop:= s.stackindex+2;
+ end;
+end;
+*)
+procedure handleclassproperty();
+var
+ po1: ppropertydataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('CLASSPROPERTY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_classprop then begin
+   internalerror(ie_handler,'20151202B');
+  end;
+  if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20151202C');
+  end;
+ {$endif}
+  if d.classprop.errorref = errors[erl_error] then begin
+   if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
+                           ek_property,[vik_ancestor],po1) then begin
+    identerror(1,err_duplicateidentifier);
+   end
+   else begin
+    with po1^ do begin
+     flags:= d.classprop.flags;
+     if po1^.flags * canreadprop <> [] then begin
+      readele:= d.classprop.readele;
+     end
+     else begin
+      readele:= 0;
+     end;
+     if flags * canwriteprop <> [] then begin
+      writeele:= d.classprop.writeele;
+     end
+     else begin
+      writeele:= 0;
+     end;
+     if pof_default in flags then begin
+     {$ifdef mse_checkinternalerror}
+      if contextstack[s.stacktop].d.kind <> ck_const then begin
+       internalerror(ie_handler,'20151202D');
+      end;
+     {$endif}
+      with contextstack[s.stacktop] do begin
+       defaultconst.typ:= d.dat.datatyp;
+       defaultconst.d:= d.dat.constval;
+      end;
+     end;
+    end;     
+   end;
+  end;
+  dec(s.stackindex);
+ end;
+end;
+
+function checkpropaccessor(const awrite: boolean): boolean;
+var
+ po1: pointer;
+ elekind1: elementkindty;
+ typeele1: elementoffsetty;
+begin
+ result:= false;
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stacktop].d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20151201A');
+  end;
+  if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+   internalerror(ie_handler,'20151201B');
+  end;
+  if d.kind <> ck_classprop then begin
+   internalerror(ie_handler,'20151201C');
+  end;
+ {$endif}
+  typeele1:= contextstack[s.stacktop-1].d.typeref;
+  elekind1:= ele.findcurrent(contextstack[s.stacktop].d.ident.ident,[],
+                                                           [vik_ancestor],po1);
+  case elekind1 of
+   ek_none: begin
+    identerror(s.stacktop-s.stackindex,err_identifiernotfound);
+   end;
+   ek_field: begin
+    with pfielddataty(po1)^ do begin
+     if vf.typ = typeele1 then begin
+      if awrite then begin
+       d.classprop.writeele:= ele.eledatarel(po1);
+       include(d.classprop.flags,pof_writefield);
+      end
+      else begin
+       d.classprop.readele:= ele.eledatarel(po1);
+       include(d.classprop.flags,pof_readfield);
+      end;
+      result:= true;
+     end
+     else begin
+      incompatibletypeserror(typeele1,vf.typ);
+     end;
+    end;
+   end;
+   ek_sub: begin
+    result:= true;
+   end;
+   else begin
+    identerror(s.stacktop-s.stackindex,err_unknownfieldormethod);
+   end;
+  end;
+  dec(s.stacktop);
+ end;
+end;
+
+procedure handlereadprop();
+begin
+{$ifdef mse_debugparser}
+ outhandle('READPROP');
+{$endif}
+ with info,contextstack[s.stackindex] do begin  
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_classprop then begin
+   internalerror(ie_handler,'20151201A');
+  end;
+ {$endif}
+  if checkpropaccessor(false) then begin
+  end;
+ end;
+end;
+
+procedure handlewriteprop();
+begin
+{$ifdef mse_debugparser}
+ outhandle('WRITEPROP');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_classprop then begin
+   internalerror(ie_handler,'20151201A');
+  end;
+ {$endif}
+  if checkpropaccessor(true) then begin
+  end;
+ end;
+end;
+
+procedure handledefaultprop();
+var
+ po1: ptypedataty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('DEFAULTPROP');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+   internalerror(ie_handler,'20151202C');
+  end;
+ {$endif}
+  if d.kind <> ck_const then begin
+   errormessage(err_constexpressionexpected,[]);
+  end
+  else begin
+   po1:= ele.eledataabs(contextstack[s.stacktop-1].d.typeref);
+   if not tryconvert(s.stacktop-s.stackindex,po1,
+                               po1^.h.indirectlevel,[]) then begin
+    incompatibletypeserror(contextstack[s.stacktop-1].d.typeref,
+                                                        d.dat.datatyp.typedata);
+   end
+   else begin
+    include(contextstack[s.stackindex].d.classprop.flags,pof_default);
+   end;
+  end;
+ end; 
 end;
 
 end.

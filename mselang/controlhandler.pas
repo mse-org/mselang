@@ -47,7 +47,6 @@ procedure handleforend();
 procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
-procedure handlecolonexpected();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
@@ -603,14 +602,6 @@ begin
  outhandle('OFEXPECTED');
 {$endif}
  tokenexpectederror(tk_of);
-end;
-
-procedure handlecolonexpected();
-begin
-{$ifdef mse_debugparser}
- outhandle('COLONEXPECTED');
-{$endif}
- tokenexpectederror(':');
 end;
 
 procedure handlecasebranchentry();

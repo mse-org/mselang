@@ -26,6 +26,7 @@ procedure handlegetfieldtypestart();
 procedure handlepointertype();
 procedure handlechecktypeident();
 procedure handlecheckrangetype();
+procedure handlenamedtype();
  
 procedure handlerecorddefstart();
 procedure handlerecorddeferror();
@@ -174,6 +175,25 @@ begin
   end;
   s.stacktop:= s.stackindex-1;
   s.stackindex:= contextstack[s.stackindex].parent;
+ end;
+end;
+
+procedure handlenamedtype();
+var
+ po1: pelementinfoty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('NAMEDTYPE');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_typeref;
+  if not findkindelements(1,[ek_type],allvisi,po1,true) then begin
+   errormessage(err_typeidentexpected,[]);
+   d.typeref:= 0;
+  end
+  else begin
+   d.typeref:= ele.eleinforel(po1);
+  end;
  end;
 end;
 

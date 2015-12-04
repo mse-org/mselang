@@ -39,7 +39,8 @@ type
  pelementoffsetaty = ^elementoffsetaty;
  
  elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
-                  ek_field,ek_labeldef,ek_classintfname,ek_classintftype,
+                  ek_field,ek_property,ek_labeldef,ek_classintfname,
+                  ek_classintftype,
                   ek_ancestorchain,
                   ek_sysfunc,ek_sub,
                   ek_nestedvar,
@@ -87,6 +88,8 @@ const
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,                
   sizeof(vardataty)+elesize,sizeof(fielddataty)+elesize,
+//ek_property,
+  sizeof(propertydataty)+elesize,
 //ek_labeldef
   sizeof(labeldefdataty)+elesize,
 //ek_classintfname,                   ek_classintftype,
@@ -1321,7 +1324,38 @@ function telementhashdatalist.dumpelements: msestringarty;
    end;
   end;
  end; //dumptyp
- 
+
+ function dumpconst(const avalue: datainfoty): msestring;
+ begin
+  with avalue do begin
+   result:= msestring(getenumname(typeinfo(d.kind),ord(d.kind)))+' ';
+   case d.kind of
+       dk_boolean: begin
+        result:= result + msestring(booltostr(d.vboolean));
+       end;
+       dk_integer: begin
+        result:= result + inttostrmse(d.vinteger);
+       end;
+       dk_cardinal: begin
+        result:= result + inttostrmse(d.vcardinal);
+       end;
+       dk_float: begin
+        result:= result + realtostrmse(d.vfloat);
+       end;
+       dk_address: begin
+        result:= result + inttostrmse(d.vaddress.poaddress);
+       end;
+       dk_enum: begin
+        result:= result + inttostrmse(d.venum.value);
+       end;
+       dk_set: begin
+        result:= result + hextostrmse(card32(d.vset.value)); 
+                  //todo: arbitrary size, set format
+       end;
+      end;
+  end; 
+ end; //dumpconst
+  
 var
  int1,int2,int3,int4,int5,int6: integer;
  po1,po2,po3: pelementinfoty;
@@ -1410,6 +1444,22 @@ begin
     }
     end;
    end;
+   ek_property: begin
+    with ppropertydataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' '+
+                     msestring(settostring(ptypeinfo(typeinfo(flags)),
+                                         integer(flags),false));
+     if flags * canreadprop <> [] then begin
+      mstr1:= mstr1 + ' R:' + inttostrmse(readele);
+     end;
+     if flags * canwriteprop <> [] then begin
+      mstr1:= mstr1 + ' W:' + inttostrmse(writeele);
+     end;
+     if pof_default in flags then begin
+      mstr1:= mstr1 + ' default:' + dumpconst(defaultconst);
+     end;
+    end;
+   end;
    ek_type: begin
     with ptypedataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+dumptyp(off1);
@@ -1438,6 +1488,11 @@ begin
       end;
      end;
      po3:= po1;
+    end;
+   end;
+   ek_const: begin
+    with pconstdataty(@po1^.data)^ do begin
+     dumpconst(val);
     end;
    end;
    {

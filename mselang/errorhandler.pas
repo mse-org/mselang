@@ -63,7 +63,8 @@ type
             err_invalidunitfile,err_labelalreadydef,err_labelnotfound,
             err_invalidgototarget,err_enumnotcontiguous,
             err_duplicatesetelement,err_illegaldirective,
-            err_cannotdeclarelocalexternal);
+            err_cannotdeclarelocalexternal,err_unknownfieldormethod,
+            err_nomemberaccessproperty);
             
  errorinfoty = record
   level: errorlevelty;
@@ -147,8 +148,7 @@ const
                        'Overloaded functions have the same parameter list'),
   (level: erl_error; message: 
                'Function header doesn''t match: param name changes "%s"=>"%s"'),
-  (level: erl_error; message: 
-               'Forward declaration not solved "%s"'),
+  (level: erl_error; message: 'Forward declaration not solved "%s"'),
   (level: erl_fatal; message: 'File "%s" truncated'),
   (level: erl_fatal; message: 'Circular unit reference %s'),
   (level: erl_error; message: 'Variable identifier expected'),
@@ -233,7 +233,9 @@ const
   (level: erl_error; message: 'Enum type must be contiguous'),
   (level: erl_error; message: 'Duplicate set element'),
   (level: erl_warning; message: 'Illegal compiler directive "%s"'),
-  (level: erl_error; message: 'Cannot declare local sub as EXTERNAL')
+  (level: erl_error; message: 'Cannot declare local sub as EXTERNAL'),
+  (level: erl_error; message: 'Unknown class field or method identifier "%s"'),
+  (level: erl_error; message: 'No member is provided to access property')
  );
 
 procedure message1(const atext: string; const values: array of const); 
@@ -276,6 +278,8 @@ procedure illegalconversionerror(const source: contextdataty;
                  const dest: ptypedataty; const destindirectlevel: integer);
 procedure incompatibletypeserror(const expected,got: contextdataty);
 procedure incompatibletypeserror(const expected,got: ptypedataty; 
+                                          const astackoffset: int32 = minint);
+procedure incompatibletypeserror(const expected,got: elementoffsetty;
                                           const astackoffset: int32 = minint);
 procedure incompatibletypeserror(const expected: string;
                                                 const got: contextdataty);
@@ -673,6 +677,22 @@ procedure incompatibletypeserror(const expected,got: ptypedataty;
 begin
  errormessage(err_incompatibletypes,[typeinfoname(got),typeinfoname(expected)],
                                                                   astackoffset);
+end;
+
+procedure incompatibletypeserror(const expected,got: elementoffsetty;
+                                          const astackoffset: int32 = minint);
+var
+ po1,po2: ptypedataty;
+begin
+ po1:= ele.eledataabs(expected);
+ po2:= ele.eledataabs(got);
+{$ifdef mse_checkinternalerror}
+ if (datatoele(po1)^.header.kind <> ek_type) or 
+             (datatoele(po2)^.header.kind <> ek_type) then begin
+  internalerror(ie_handler,'20151202A');
+ end;
+{$endif}
+ incompatibletypeserror(po1,po2,astackoffset);
 end;
 
 procedure incompatibletypeserror(const expected: string;

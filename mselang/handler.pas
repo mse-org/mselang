@@ -36,6 +36,7 @@ procedure checkstart();
 procedure handlenouniterror();
 procedure handlenounitnameerror();
 procedure handlesemicolonexpected();
+procedure handlecolonexpected();
 procedure handlecloseroundbracketexpected();
 procedure handleclosesquarebracketexpected();
 procedure handleequalityexpected();
@@ -1875,9 +1876,20 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SEMICOLONEXPECTED');
 {$endif}
+ tokenexpectederror(';');
+{
  with info do begin
   errormessage(err_syntax,[';']);
  end;
+}
+end;
+
+procedure handlecolonexpected();
+begin
+{$ifdef mse_debugparser}
+ outhandle('COLONEXPECTED');
+{$endif}
+ tokenexpectederror(':');
 end;
 
 procedure handleclosesquarebracketexpected();

@@ -2649,6 +2649,9 @@ begin
        dk_integer: begin
         write(dat.constval.vinteger,' ');
        end;
+       dk_cardinal: begin
+        write(dat.constval.vcardinal,' ');
+       end;
        dk_float: begin
         write(dat.constval.vfloat,' ');
        end;
@@ -2680,6 +2683,16 @@ begin
      end;
      ck_classdef: begin
       write('foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
+     end;
+     ck_classprop: begin
+      write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
+                                           integer(d.classprop.flags),true));
+      if d.classprop.flags * canreadprop <> [] then begin
+       write(' read:',inttostrmse(d.classprop.readele));
+      end;
+      if d.classprop.flags * canwriteprop <> [] then begin
+       write(' write:',inttostrmse(d.classprop.writeele));
+      end;
      end;
      ck_index: begin
       write('opshiftmark:'+inttostr(opshiftmark));

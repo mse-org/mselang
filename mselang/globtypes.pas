@@ -106,6 +106,14 @@ const
  addresskindflags = [af_stack,af_local,af_segment,af_aggregate];
  addresscompflags = addresskindflags + [af_nil];
 
+type 
+ propflagty = (pof_readfield,pof_readsub,pof_writefield,pof_writesub,
+                       pof_default);
+ propflagsty = set of propflagty;
+const
+ canreadprop = [pof_readfield,pof_readsub];
+ canwriteprop = [pof_writefield,pof_writesub];
+
 type
  segaddressty = record
   address: dataoffsty; //first, must map poaddress
@@ -223,6 +231,7 @@ type
   typedata: elementoffsetty;
   indirectlevel: indirectlevelty; //total
  end;
+ ptypeinfoty = ^typeinfoty;
 
  stringvaluety = record
   offset: ptruint; //offset in string buffer

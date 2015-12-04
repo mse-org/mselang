@@ -82,11 +82,16 @@ checksemicolon1,,,^*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
+checksemicolon1a,,,^*
+ ${whitespace}
+ ';',-*
+ '',semicolonexpected
 checksemicolon2,,,*>
  ${whitespace}
  ';',-*
  '',semicolonexpected
 semicolonexpected,,,handlesemicolonexpected
+colonexpected,,,handlecolonexpected
 identexpected,,,handleidentexpected
 start1,start2,,
  ${whitespace}
@@ -626,6 +631,9 @@ arrayindex2,,,
  ']',-*
   '',!handlearrayindexerror2*
 
+getnamedtype,,,handlenamedtype*^
+ '',getidentpath^*
+
 getfieldtype,gettype,handlegetfieldtypestart,
 gettypetype,gettype,handlegettypetypestart,
 gettype,,,*^
@@ -715,7 +723,9 @@ getrange1,,,handlerange1
  '..',getrange3-
 getrange3,,,handlerange3^
  '',exp^*
-
+//
+// class
+//
 classdef,classdef0,handleclassdefstart,
  ${whitespace}
  '(',classdefparam-*
@@ -729,6 +739,7 @@ classdef0,classdeferror,,
  'function'.,methfunctionheader-*^>
  'constructor'.,methconstructorheader-*^>
  'destructor'.,methdestructorheader-*^>
+ 'property'.,classproperty-*^>
  @identstart,classfield^*>
  'end'.,classdefreturn-
 classdeferror,,handleclassdeferror,^
@@ -752,7 +763,38 @@ classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 
 classfield,,,handleclassfield^*
  '',vardef^*
-
+classproperty,classproperty1,classpropertyentry,
+ '',getident^*
+classproperty1,,,handlecolonexpected
+ ${whitespace}
+ ':',classproperty2-
+classproperty2,classproperty3,,
+ '',getnamedtype^*
+classproperty3,classproperty4,,
+ ${whitespace}
+ 'read'.,readprop-
+ 'write'.,writeprop-
+ 'default'.,defaultprop-
+readprop,readpropa,,handlereadprop
+ '',getident^*
+readpropa,classproperty4,,
+ ${whitespace}
+ 'write'.,getident-*,writeprop^
+ 'default'.,exp-^*,defaultprop^
+writeprop,writepropa,,handlewriteprop
+ '',getident^*
+writepropa,classproperty4,,
+ ${whitespace}
+ 'default'.,exp-^*,defaultprop^
+defaultprop,classproperty4,,handledefaultprop*^
+ '',exp^*
+classproperty4,,,handleclassproperty
+ ${whitespace}
+ ';',-*
+ '',!handlesemicolonexpected
+//
+// interface
+//
 interfacedef,interfacedef0,handleinterfacedefstart,
  ${whitespace}
  '(',interfacedefparam-^*
@@ -1065,6 +1107,11 @@ ident0,,handleidentstart,handleident^
 getident,,,^
  ${whitespace}
  @identstart,ident
+ '',!handleidentexpected*
+
+getidentpath,,,^
+ ${whitespace}
+ @identstart,identpath
  '',!handleidentexpected*
 
 commaidents,commaidentsnoidenterror,, //comma separated idents on stack
