@@ -763,6 +763,7 @@ classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 
 classfield,,,handleclassfield^*
  '',vardef^*
+ 
 classproperty,classproperty1,classpropertyentry,
  '',getident^*
 classproperty1,,,handlecolonexpected

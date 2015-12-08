@@ -1730,7 +1730,7 @@ begin
  result:= true;
  with info,contextstack[s.stackindex+stackoffset] do begin;
  {$ifdef mse_checkinternalerror}
-  if d.kind <> ck_ref then begin
+  if not (d.kind in [ck_ref,ck_prop]) then begin
    internalerror(ie_handler,'20150413A');
   end;
  {$endif}
@@ -1830,13 +1830,34 @@ var
     d.dat.fact.opdatatype:= opdata1;
    end;
   end;
- end;
+ end; //doindirect
+
+ procedure doref();
+ begin
+  with info,contextstack[s.stackindex+stackoffset] do begin
+   if d.dat.indirection < 0 then begin //dereference
+    inc(d.dat.indirection); //correct addr handling
+    if not pushindirection(stackoffset,false) then begin
+     exit;
+    end;
+//      dec(d.dat.datatyp.indirectlevel); //correct addr handling
+    doindirect;
+   end
+   else begin
+    opdata1:= getopdatatype(d.dat.datatyp.typedata,
+                                           d.dat.datatyp.indirectlevel);
+    pushinsertdata(stackoffset,false,d.dat.ref.c.address,
+                             d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
+   end;
+  end;
+ end; //doref
 
 var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
 label errlab; 
+
 begin                    //todo: optimize
  result:= false;
  with info,contextstack[s.stackindex+stackoffset] do begin
@@ -1867,24 +1888,30 @@ begin                    //todo: optimize
      end;
     end
     else begin
-     if d.dat.indirection < 0 then begin //dereference
-      inc(d.dat.indirection); //correct addr handling
-      if not pushindirection(stackoffset,false) then begin
-       exit;
-      end;
-//      dec(d.dat.datatyp.indirectlevel); //correct addr handling
-      doindirect;
-     end
-     else begin
-      opdata1:= getopdatatype(d.dat.datatyp.typedata,
-                                             d.dat.datatyp.indirectlevel);
-      pushinsertdata(stackoffset,false,d.dat.ref.c.address,
-                               d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
-     end;
+     doref();
     end;
    end;
    ck_reffact: begin
     doindirect();
+   end;
+   ck_prop: begin
+    if d.dat.datatyp.indirectlevel < 0 then begin
+     errormessage(err_invalidderef,[],stackoffset);
+     exit;
+    end;
+    if d.dat.indirection > 0 then begin //@ operator
+     errormessage(err_variableexpected,[],stackoffset);
+     exit;
+    end;
+    with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
+     if pof_readfield in flags then begin
+      doref();
+     end
+     else begin
+      errormessage(err_nomemberaccessproperty,[],stackoffset);
+      exit;
+     end;
+    end;
    end;
    ck_const: begin
     if retainconst then begin
@@ -2479,10 +2506,10 @@ procedure outinfo(const text: string; const indent: boolean = true);
           getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
    if po1^.h.kind <> dk_none then begin
     write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
-                  integer(po1^.h.flags),false),
+                  integer(po1^.h.flags),true),
           ' I:',indirectlevel,':',ainfo.dat.indirection,
           ' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
-                                            integer(flags),false),' ');
+                                            integer(flags),true),' ');
    end;
   end;
  end;//writetype
@@ -2501,7 +2528,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
            getenumname(typeinfo(datakindty),ord(po1^.h.kind)));
     if po1^.h.kind <> dk_none then begin
      write(' F:',settostring(ptypeinfo(typeinfo(typeflagsty)),
-                  integer(po1^.h.flags),false),
+                  integer(po1^.h.flags),true),
            ' I:',indirectlevel);
     end;
    end;
@@ -2636,6 +2663,12 @@ begin
       writeref(d);
       writetype(d);
      end;
+     ck_prop: begin
+      writeref(d);
+      writetype(d);
+      writeln();
+      write(' E:',d.dat.prop.propele);
+     end;
      ck_reffact: begin
       writetype(d);
      end;
@@ -2701,6 +2734,7 @@ begin
       writetypedata(d.typedata);
      end;
      ck_typeref: begin
+      write(' T:'+inttostrmse(d.typeref)+' ');
       writetypedata(ele.eledataabs(d.typeref));
      end;
      ck_typetype,ck_fieldtype: begin

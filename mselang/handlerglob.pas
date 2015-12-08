@@ -285,6 +285,7 @@ type
 
  propertydataty = record
   flags: propflagsty;
+  typ: elementoffsetty;
   readele: elementoffsetty;
   writeele: elementoffsetty;
   defaultconst: datainfoty;

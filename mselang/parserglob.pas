@@ -82,7 +82,8 @@ const
 // vis_max = vis_0;
 // vis_min = vis_9;
  nonevisi = [];
- allvisi = [vik_global{,vik_sameunit},vik_ancestor];
+ //allvisi = [vik_global{,vik_sameunit},vik_ancestor];
+ allvisi = [vik_global,vik_sameunit,vik_ancestor];
  globalvisi = [vik_global,vik_sameunit,vik_ancestor];
  implementationvisi = [vik_sameunit];
  classprivatevisi = [vik_sameunit];
@@ -101,8 +102,8 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_end,
-                  ck_ident,ck_number,ck_str,{ck_opmark,}ck_subdef,
-                  ck_const,ck_range,{ck_refconst,}ck_ref,ck_fact,ck_reffact,
+                  ck_ident,ck_number,ck_str,ck_subdef,
+                  ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
                   ck_subres,ck_subcall,ck_controltoken,ck_getfact,ck_label,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
@@ -176,7 +177,7 @@ type
  refvaluety = record
   c: refconstvaluety;
   case contextkindty of
-   ck_ref:(
+   ck_ref,ck_prop:(
     offset: dataoffsty;
    );
  end;
@@ -202,6 +203,10 @@ type
  }
  end;
 
+ propinfoty = record
+  propele: elementoffsetty;
+ end;
+ 
  numflagty = (nuf_pos,nuf_neg);
  numflagsty = set of numflagty;
  
@@ -356,8 +361,11 @@ type
    ck_fact,ck_subres:(
     fact: factinfoty;
    );
-   {ck_refconst,}ck_ref:(
+   ck_ref,ck_prop:(
     ref: refvaluety;
+    case contextkindty of ck_prop:(
+     prop: propinfoty;
+    );
    );
    ck_label:(
     lab: elementoffsetty;
@@ -383,7 +391,7 @@ type
    ck_getfact:(
     getfact: getfactinfoty;
    );
-   ck_const,ck_fact,ck_subres,ck_ref,ck_reffact:( //datacontexts
+   ck_const,ck_fact,ck_subres,ck_prop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
    );
    ck_index:(

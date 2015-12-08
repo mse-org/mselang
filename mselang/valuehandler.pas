@@ -971,33 +971,6 @@ var
   offs1: dataoffsty;
   ele1: elementoffsetty;
 
-  procedure dofield(const afield: pfielddataty);
-  begin
-   with info,contextstack[s.stackindex],afield^ do begin
-    ele1:= afield^.vf.typ;
-    case d.kind of
-     ck_ref: begin
-      if af_classfield in flags then begin
-       dec(d.dat.indirection);
-       dec(d.dat.datatyp.indirectlevel);
-      end; //todo: handle indirection with existing offset
-      d.dat.ref.offset:= d.dat.ref.offset + offset;
-     end;
-     ck_fact: begin     //todo: check indirection
-      offs1:= offs1 + offset;
-     end;
-    {$ifdef mse_checkinternalerror}
-     else begin
-      internalerror(ie_value,'20140427A');
-     end;
-    {$endif}
-    end;
-    d.dat.datatyp.typedata:= ele1; //todo: adress operator
-    d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
-                   ptypedataty(ele.eledataabs(ele1))^.h.indirectlevel;
-   end;
-  end; //dofield
-
  var
   int1: integer;
   po4: pointer;
@@ -1013,17 +986,48 @@ var
        exit;
       end;
       ek_field: begin
-       dofield(pfielddataty(po4));
+       with contextstack[s.stackindex],pfielddataty(po4)^ do begin
+        ele1:= vf.typ;
+        case d.kind of
+         ck_ref: begin
+          if af_classfield in flags then begin
+           dec(d.dat.indirection);
+           dec(d.dat.datatyp.indirectlevel);
+          end; //todo: handle indirection with existing offset
+          d.dat.ref.offset:= d.dat.ref.offset + offset;
+         end;
+         ck_fact: begin     //todo: check indirection
+          offs1:= offs1 + offset;
+         end;
+        {$ifdef mse_checkinternalerror}
+         else begin
+          internalerror(ie_value,'20140427A');
+         end;
+        {$endif}
+        end;
+        d.dat.datatyp.typedata:= ele1; //todo: adress operator
+        d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                       ptypedataty(ele.eledataabs(ele1))^.h.indirectlevel;
+       end;
       end;
       ek_property: begin
-       with ppropertydataty(po4)^ do begin
-        if isgetfact and (pof_writefield in flags) or 
-                        not isgetfact and (pof_readfield in flags) then begin
-         dofield(ele.eledataabs(readele));
-        end
-        else begin
-         errormessage(err_nomemberaccessproperty,[],0);
-        end
+       with contextstack[s.stackindex],ppropertydataty(po4)^ do begin
+        case d.kind of
+         ck_ref: begin
+          d.kind:= ck_prop;
+          dec(d.dat.indirection);
+          dec(d.dat.datatyp.indirectlevel);
+          d.dat.datatyp.typedata:= typ;
+          d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                        ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
+          d.dat.prop.propele:= ele.eledatarel(po4);
+         end;
+        {$ifdef mse_checkinternalerror}
+         else begin
+          internalerror(ie_value,'20151207B');
+         end;
+        {$endif}
+        end;
        end;       
       end;
       ek_sub: begin

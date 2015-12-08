@@ -1250,7 +1250,7 @@ function telementhashdatalist.dumpelements: msestringarty;
     if h.kind <> dk_none then begin
      result:= result+
      ' F:'+msestring(
-           settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),false))+
+           settostring(ptypeinfo(typeinfo(h.flags)),integer(h.flags),true))+
      ' D:'+msestring(getenumname(typeinfo(h.datasize),ord(h.datasize)))+
      ' S:'+inttostrmse(h.bytesize)+' I:'+inttostrmse(h.indirectlevel);
      case h.kind of
@@ -1302,7 +1302,7 @@ function telementhashdatalist.dumpelements: msestringarty;
                        ' itemcount:'+inttostrmse(infoenum.itemcount)+
                      ' flags:'+msestring(settostring(
                                         ptypeinfo(typeinfo(infoenum.flags)),
-                                                integer(infoenum.flags),false));
+                                                integer(infoenum.flags),true));
                        
       end;
       dk_enumitem: begin
@@ -1394,7 +1394,7 @@ begin
                  getenumname(typeinfo(po1^.header.kind),ord(po1^.header.kind)))+
              ' V:'+msestring(
              settostring(ptypeinfo(typeinfo(po1^.header.visibility)),
-                                 integer(po1^.header.visibility),false));
+                                 integer(po1^.header.visibility),true));
   case po1^.header.kind of
    ek_labeldef: begin
     with plabeldefdataty(@po1^.data)^ do begin
@@ -1407,7 +1407,7 @@ begin
      mstr1:= mstr1+lineend+' A:'+inttostrmse(address.poaddress)+' I:'+
                inttostrmse(address.indirectlevel)+ ' ' +
            msestring(settostring(ptypeinfo(typeinfo(address.flags)),
-                                         integer(address.flags),false));
+                                         integer(address.flags),true));
      if af_segment in address.flags then begin
       mstr1:= mstr1+' S:'+msestring(getenumname(typeinfo(segmentty),
                                     ord(address.segaddress.segment)));
@@ -1432,7 +1432,7 @@ begin
      mstr1:= mstr1+lineend+' O:'+inttostrmse(offset)+
           ' I:'+inttostrmse(indirectlevel)+' '+
            msestring(settostring(ptypeinfo(typeinfo(flags)),
-                                         integer(flags),false));
+                                         integer(flags),true));
      mstr1:= mstr1+dumptyp(vf.typ);
     {
      po2:= eleinfoabs(vf.typ);
@@ -1446,9 +1446,9 @@ begin
    end;
    ek_property: begin
     with ppropertydataty(@po1^.data)^ do begin
-     mstr1:= mstr1 + ' '+
+     mstr1:= mstr1 + ' T:'+ inttostrmse(typ) + ' F:' +
                      msestring(settostring(ptypeinfo(typeinfo(flags)),
-                                         integer(flags),false));
+                                         integer(flags),true));
      if flags * canreadprop <> [] then begin
       mstr1:= mstr1 + ' R:' + inttostrmse(readele);
      end;
@@ -1506,7 +1506,7 @@ begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
      ' F:'+msestring(
-            settostring(ptypeinfo(typeinfo(flags)),integer(flags),false))+
+            settostring(ptypeinfo(typeinfo(flags)),integer(flags),true))+
      ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
      ' op:'+inttostrmse(address);
      if flags * [sf_functiontype,sf_constructor] <> [] then begin
