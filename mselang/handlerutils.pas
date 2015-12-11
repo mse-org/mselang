@@ -1905,6 +1905,7 @@ begin                    //todo: optimize
     end;
     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
      if pof_readfield in flags then begin
+      d.dat.ref.offset:= d.dat.ref.offset + readoffset;
       doref();
      end
      else begin

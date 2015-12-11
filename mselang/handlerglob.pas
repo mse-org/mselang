@@ -287,7 +287,9 @@ type
   flags: propflagsty;
   typ: elementoffsetty;
   readele: elementoffsetty;
+  readoffset: int32;
   writeele: elementoffsetty;
+  writeoffset: int32;
   defaultconst: datainfoty;
  end;
  ppropertydataty = ^propertydataty;

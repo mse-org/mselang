@@ -290,7 +290,9 @@ type
   errorref: int32;
   flags: propflagsty;
   readele: elementoffsetty;
+  readoffset: int32;
   writeele: elementoffsetty;
+  writeoffset: int32;
  end;
  pclasspropinfoty = ^classpropinfoty;
 

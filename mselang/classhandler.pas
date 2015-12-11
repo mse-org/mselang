@@ -672,10 +672,12 @@ begin
      if vf.typ = typeele1 then begin
       if awrite then begin
        d.classprop.writeele:= ele.eledatarel(po1);
+       d.classprop.writeoffset:= offset;
        include(d.classprop.flags,pof_writefield);
       end
       else begin
        d.classprop.readele:= ele.eledatarel(po1);
+       d.classprop.readoffset:= offset;
        include(d.classprop.flags,pof_readfield);
       end;
       result:= true;
@@ -789,17 +791,21 @@ begin
     with po1^ do begin
      typ:= contextstack[s.stackindex+2].d.typeref;
      flags:= d.classprop.flags;
-     if po1^.flags * canreadprop <> [] then begin
+     if flags * canreadprop <> [] then begin
       readele:= d.classprop.readele;
+      readoffset:= d.classprop.readoffset;
      end
      else begin
       readele:= 0;
+      readoffset:= 0;
      end;
      if flags * canwriteprop <> [] then begin
       writeele:= d.classprop.writeele;
+      writeoffset:= d.classprop.writeoffset;
      end
      else begin
       writeele:= 0;
+      writeoffset:= 0;
      end;
      if pof_default in flags then begin
      {$ifdef mse_checkinternalerror}
