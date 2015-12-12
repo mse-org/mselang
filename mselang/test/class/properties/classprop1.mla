@@ -1,0 +1,34 @@
+program classprop1;
+
+type
+ tcla1 = class
+  private
+   fb: int32;
+   fa: int32;
+  public
+   constructor create();
+   destructor destroy();
+ end;
+
+ tcla = class(tcla1)
+  private
+  public
+   property a: int32 read fa default 1+3;
+ end;
+
+constructor tcla1.create();
+begin
+ fa:= 123;
+end;
+
+destructor tcla1.destroy();
+begin
+end;
+
+var
+ cla: tcla;
+begin
+ cla:= tcla1.create();
+ exitcode:= cla.a;
+ cla.destroy();
+end.

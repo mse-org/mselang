@@ -68,8 +68,8 @@ a=0,665,0,
 c=3
  (
  kind=2
- a=0,648,1,mlc
- teststate=1
+ a=0,640,0,mlc
+ teststate=0
  path=${mselangdir}compiler/mlc.pas
  comment=
  cc=${fpc} -dmse_compiler -B -dmse_checkinternalerror ${file}
@@ -83,15 +83,15 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=
- ae=
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
  (
  kind=2
- a=0,648,1,mli
- teststate=1
+ a=0,648,2,mli
+ teststate=2
  path=${mselangdir}interpreter/mli.pas
  comment=
  cc=${fpc} -dmse_compiler -B ${file}
@@ -104,9 +104,9 @@ c=3
  ee=
  ae=0
  eec=0
- cr=0
- ao=
- ae=
+ cr=1
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
@@ -116,16 +116,16 @@ c=3
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,656,3,base
   c=19
    (
    kind=1
-   a=0,665,4,address
+   a=0,665,3,address
    c=2
     (
     kind=2
-    a=0,648,1,address
-    teststate=1
+    a=0,648,0,address
+    teststate=0
     path=address.mla
     comment=
     cc=${mlc}
@@ -139,15 +139,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,address llvm
-    teststate=1
+    a=0,648,0,address llvm
+    teststate=0
     path=address.mla
     comment=
     cc=${mlc_llvm}
@@ -161,12 +161,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=address/
    comment=
    cc=
@@ -184,16 +184,16 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,665,3,arith
    c=28
     (
     kind=1
-    a=0,664,4,bool
+    a=0,664,3,bool
     c=8
      (
      kind=2
-     a=0,648,1,and1
-     teststate=1
+     a=0,648,0,and1
+     teststate=0
      path=and1.mla
      comment=
      cc=${mlc}
@@ -207,15 +207,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,and1 llvm
-     teststate=1
+     a=0,648,0,and1 llvm
+     teststate=0
      path=and1.mla
      comment=
      cc=${mlc_llvm}
@@ -229,15 +229,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,or1
-     teststate=1
+     a=0,648,0,or1
+     teststate=0
      path=or1.mla
      comment=
      cc=${mlc}
@@ -251,15 +251,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,or1 llvm
-     teststate=1
+     a=0,648,0,or1 llvm
+     teststate=0
      path=or1.mla
      comment=
      cc=${mlc_llvm}
@@ -273,15 +273,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,not1
-     teststate=1
+     a=0,648,0,not1
+     teststate=0
      path=not1.mla
      comment=
      cc=${mlc}
@@ -295,15 +295,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,not1 llvm
-     teststate=1
+     a=0,648,0,not1 llvm
+     teststate=0
      path=not1.mla
      comment=
      cc=${mlc_llvm}
@@ -317,15 +317,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,booleval1
-     teststate=1
+     a=0,648,0,booleval1
+     teststate=0
      path=booleval1.mla
      comment=
      cc=${mlc}
@@ -339,15 +339,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,booleaval1 llvm
-     teststate=1
+     a=0,648,0,booleaval1 llvm
+     teststate=0
      path=booleval1.mla
      comment=
      cc=${mlc_llvm}
@@ -361,12 +361,12 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=0
     path=bool/
     comment=
     cc=
@@ -384,12 +384,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,664,3,cmp
     c=4
      (
      kind=2
-     a=0,648,1,cmppointer
-     teststate=1
+     a=0,648,0,cmppointer
+     teststate=0
      path=cmppointer.mla
      comment=
      cc=${mlc}
@@ -403,15 +403,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,cmppointer llvm
-     teststate=1
+     a=0,648,0,cmppointer llvm
+     teststate=0
      path=cmppointer.mla
      comment=
      cc=${mlc_llvm}
@@ -425,15 +425,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,cmpenum
-     teststate=1
+     a=0,648,0,cmpenum
+     teststate=0
      path=cmpenum.mla
      comment=
      cc=${mlc}
@@ -447,15 +447,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,cmpenum llvm
-     teststate=1
+     a=0,648,0,cmpenum llvm
+     teststate=0
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -469,12 +469,12 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=0
     path=cmp/
     comment=
     cc=
@@ -492,12 +492,12 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,float
+    a=0,665,3,float
     c=4
      (
      kind=2
-     a=0,648,1,floatassign
-     teststate=1
+     a=0,648,0,floatassign
+     teststate=0
      path=floatassign.mla
      comment=
      cc=${mlc}
@@ -511,15 +511,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,floatassign llvm
-     teststate=1
+     a=0,648,0,floatassign llvm
+     teststate=0
      path=floatassign.mla
      comment=
      cc=${mlc_llvm}
@@ -533,15 +533,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,sin
-     teststate=1
+     a=0,648,0,sin
+     teststate=0
      path=sin.mla
      comment=
      cc=${mlc}
@@ -555,15 +555,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,sin llvm
-     teststate=1
+     a=0,648,0,sin llvm
+     teststate=0
      path=sin.mla
      comment=
      cc=${mlc_llvm}
@@ -577,12 +577,12 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=0
     path=float/
     comment=
     cc=
@@ -600,12 +600,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,664,3,pointer
     c=6
      (
      kind=2
-     a=0,648,1,pointeradd
-     teststate=1
+     a=0,648,0,pointeradd
+     teststate=0
      path=pointeradd.mla
      comment=
      cc=${mlc}
@@ -619,15 +619,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointeradd llvm
-     teststate=1
+     a=0,648,0,pointeradd llvm
+     teststate=0
      path=pointeradd.mla
      comment=
      cc=${mlc_llvm}
@@ -641,15 +641,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointerrecadd
-     teststate=1
+     a=0,648,0,pointerrecadd
+     teststate=0
      path=pointerrecadd.mla
      comment=
      cc=${mlc}
@@ -663,15 +663,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointerecadd llvm
-     teststate=1
+     a=0,648,0,pointerecadd llvm
+     teststate=0
      path=pointerrecadd.mla
      comment=
      cc=${mlc_llvm}
@@ -685,15 +685,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointerdiff
-     teststate=1
+     a=0,648,0,pointerdiff
+     teststate=0
      path=pointerdiff.mla
      comment=
      cc=${mlc}
@@ -707,15 +707,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
      (
      kind=2
-     a=0,648,1,pointerdiff llvm
-     teststate=1
+     a=0,648,0,pointerdiff llvm
+     teststate=0
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -729,12 +729,12 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=
-     ae=
+     ao=0
+     ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=0
     path=pointer/
     comment=
     cc=
@@ -752,8 +752,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint
-    teststate=1
+    a=0,648,0,addsubint
+    teststate=0
     path=addsubint.mla
     comment=
     cc=${mlc}
@@ -767,15 +767,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,addsubint llvm
-    teststate=1
+    a=0,648,0,addsubint llvm
+    teststate=0
     path=addsubint.mla
     comment=
     cc=${mlc_llvm}
@@ -789,15 +789,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,bitexp1
-    teststate=1
+    a=0,648,0,bitexp1
+    teststate=0
     path=bitexp1.mla
     comment=
     cc=${mlc}
@@ -811,15 +811,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
-    teststate=1
+    a=0,648,0,bitexp1 llvm
+    teststate=0
     path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
@@ -833,15 +833,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdec
-    teststate=1
+    a=0,648,0,incdec
+    teststate=0
     path=incdec.mla
     comment=
     cc=${mlc}
@@ -855,15 +855,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdec llvm
-    teststate=1
+    a=0,648,0,incdec llvm
+    teststate=0
     path=incdec.mla
     comment=
     cc=${mlc_llvm}
@@ -877,15 +877,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incval1
-    teststate=1
+    a=0,648,0,incval1
+    teststate=0
     path=incval1.mla
     comment=
     cc=${mlc}
@@ -899,15 +899,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incval1 llvm
-    teststate=1
+    a=0,648,0,incval1 llvm
+    teststate=0
     path=incval1.mla
     comment=
     cc=${mlc_llvm}
@@ -921,15 +921,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incvalpo1
-    teststate=1
+    a=0,648,0,incvalpo1
+    teststate=0
     path=incvalpo1.mla
     comment=
     cc=${mlc}
@@ -943,15 +943,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incvalpo1 llvm
-    teststate=1
+    a=0,648,0,incvalpo1 llvm
+    teststate=0
     path=incvalpo1.mla
     comment=
     cc=${mlc_llvm}
@@ -965,15 +965,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecind
-    teststate=1
+    a=0,648,0,incdecind
+    teststate=0
     path=incdecind.mla
     comment=
     cc=${mlc}
@@ -987,15 +987,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
-    teststate=1
+    a=0,648,0,incdecind llvm
+    teststate=0
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -1009,15 +1009,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shl1
-    teststate=1
+    a=0,648,0,shl1
+    teststate=0
     path=shl1.mla
     comment=
     cc=${mlc}
@@ -1031,15 +1031,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shl1 llvm
-    teststate=1
+    a=0,648,0,shl1 llvm
+    teststate=0
     path=shl1.mla
     comment=
     cc=${mlc_llvm}
@@ -1053,15 +1053,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shr1
-    teststate=1
+    a=0,648,0,shr1
+    teststate=0
     path=shr1.mla
     comment=
     cc=${mlc}
@@ -1075,15 +1075,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
-    teststate=1
+    a=0,648,0,shr1 llvm
+    teststate=0
     path=shr1.mla
     comment=
     cc=${mlc_llvm}
@@ -1097,15 +1097,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecindpo
-    teststate=1
+    a=0,648,0,incdecindpo
+    teststate=0
     path=incdecindpo.mla
     comment=
     cc=${mlc}
@@ -1119,15 +1119,15 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecindpo llvm
-    teststate=1
+    a=0,648,0,incdecindpo llvm
+    teststate=0
     path=incdecindpo.mla
     comment=
     cc=${mlc_llvm}
@@ -1141,15 +1141,15 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,not1
-    teststate=1
+    a=0,648,0,not1
+    teststate=0
     path=not1.mla
     comment=
     cc=${mlc}
@@ -1163,15 +1163,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,not1 llvm
-    teststate=1
+    a=0,648,0,not1 llvm
+    teststate=0
     path=not1.mla
     comment=
     cc=${mlc_llvm}
@@ -1185,15 +1185,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,neg1
-    teststate=1
+    a=0,648,0,neg1
+    teststate=0
     path=neg1.mla
     comment=
     cc=${mlc}
@@ -1207,15 +1207,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,neg1 llvm
-    teststate=1
+    a=0,648,0,neg1 llvm
+    teststate=0
     path=neg1.mla
     comment=
     cc=${mlc_llvm}
@@ -1229,15 +1229,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,andorxor1
-    teststate=1
+    a=0,648,0,andorxor1
+    teststate=0
     path=andorxor1.mla
     comment=
     cc=${mlc}
@@ -1251,15 +1251,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
-    teststate=1
+    a=0,648,0,andorxor1 llvm
+    teststate=0
     path=andorxor1.mla
     comment=
     cc=${mlc_llvm}
@@ -1273,12 +1273,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=arith/
    comment=
    cc=
@@ -1296,8 +1296,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,compilerunit
-   teststate=1
+   a=0,648,0,compilerunit
+   teststate=0
    path=/home/mse/packs/standard/git/mselang/mselang/compiler/__mla__compilerunit.mla
    comment=
    cc=${mlc}
@@ -1311,19 +1311,19 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=0
    ie=0
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,665,3,control
    c=30
     (
     kind=2
-    a=0,648,1,breakrepeat
-    teststate=1
+    a=0,648,0,breakrepeat
+    teststate=0
     path=breakrepeat.mla
     comment=
     cc=${mlc}
@@ -1337,15 +1337,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,breakrepat llvm
-    teststate=1
+    a=0,648,0,breakrepat llvm
+    teststate=0
     path=breakrepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1359,15 +1359,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,breakwhile
-    teststate=1
+    a=0,648,0,breakwhile
+    teststate=0
     path=breakwhile.mla
     comment=
     cc=${mlc}
@@ -1381,15 +1381,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,breakwhile llvm
-    teststate=1
+    a=0,648,0,breakwhile llvm
+    teststate=0
     path=breakwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1403,15 +1403,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuerepeat
-    teststate=1
+    a=0,648,0,continuerepeat
+    teststate=0
     path=continuerepeat.mla
     comment=
     cc=${mlc}
@@ -1425,15 +1425,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuerepat llvm
-    teststate=1
+    a=0,648,0,continuerepat llvm
+    teststate=0
     path=continuerepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1447,15 +1447,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuewhile
-    teststate=1
+    a=0,648,0,continuewhile
+    teststate=0
     path=continuewhile.mla
     comment=
     cc=${mlc}
@@ -1469,15 +1469,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuewhile llvm
-    teststate=1
+    a=0,648,0,continuewhile llvm
+    teststate=0
     path=continuewhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1491,15 +1491,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,iftest
-    teststate=1
+    a=0,648,0,iftest
+    teststate=0
     path=iftest.mla
     comment=
     cc=${mlc}
@@ -1513,15 +1513,15 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
     (
     kind=2
-    a=0,648,1,iftest llvm
-    teststate=1
+    a=0,648,0,iftest llvm
+    teststate=0
     path=iftest.mla
     comment=
     cc=${mlc_llvm}
@@ -1535,15 +1535,15 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recifindi
-    teststate=1
+    a=0,648,0,recifindi
+    teststate=0
     path=recifindi.mla
     comment=
     cc=${mlc}
@@ -1557,15 +1557,15 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recifindi llvm
-    teststate=1
+    a=0,648,0,recifindi llvm
+    teststate=0
     path=recifindi.mla
     comment=
     cc=${mlc_llvm}
@@ -1579,15 +1579,15 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=99
     ie=0
     )
     (
     kind=2
-    a=0,648,1,case1
-    teststate=1
+    a=0,648,0,case1
+    teststate=0
     path=case1.mla
     comment=
     cc=${mlc}
@@ -1601,15 +1601,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,case1 llvm
-    teststate=1
+    a=0,648,0,case1 llvm
+    teststate=0
     path=case1.mla
     comment=
     cc=${mlc_llvm}
@@ -1623,15 +1623,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,while1
-    teststate=1
+    a=0,648,0,while1
+    teststate=0
     path=while1.mla
     comment=
     cc=${mlc}
@@ -1645,15 +1645,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,while1 llvm
-    teststate=1
+    a=0,648,0,while1 llvm
+    teststate=0
     path=while1.mla
     comment=
     cc=${mlc_llvm}
@@ -1667,15 +1667,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,forto
-    teststate=1
+    a=0,648,0,forto
+    teststate=0
     path=forto.mla
     comment=
     cc=${mlc}
@@ -1689,15 +1689,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,forto llvm
-    teststate=1
+    a=0,648,0,forto llvm
+    teststate=0
     path=forto.mla
     comment=
     cc=${mlc_llvm}
@@ -1711,15 +1711,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,fordownto
-    teststate=1
+    a=0,648,0,fordownto
+    teststate=0
     path=fordownto.mla
     comment=
     cc=${mlc}
@@ -1733,15 +1733,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,fordownto llvm
-    teststate=1
+    a=0,648,0,fordownto llvm
+    teststate=0
     path=fordownto.mla
     comment=
     cc=${mlc_llvm}
@@ -1755,15 +1755,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,forto2
-    teststate=1
+    a=0,648,0,forto2
+    teststate=0
     path=forto2.mla
     comment=
     cc=${mlc}
@@ -1777,15 +1777,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,forto2 llvm
-    teststate=1
+    a=0,648,0,forto2 llvm
+    teststate=0
     path=forto2.mla
     comment=
     cc=${mlc_llvm}
@@ -1799,15 +1799,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,nestedwhile
-    teststate=1
+    a=0,648,0,nestedwhile
+    teststate=0
     path=nestedwhile.mla
     comment=
     cc=${mlc}
@@ -1821,15 +1821,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,nestedwhile llvm
-    teststate=1
+    a=0,648,0,nestedwhile llvm
+    teststate=0
     path=nestedwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1843,15 +1843,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,halt1
-    teststate=1
+    a=0,648,0,halt1
+    teststate=0
     path=halt1.mla
     comment=
     cc=${mlc}
@@ -1865,15 +1865,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,halt1 llvm
-    teststate=1
+    a=0,648,0,halt1 llvm
+    teststate=0
     path=halt1.mla
     comment=
     cc=${mlc_llvm}
@@ -1887,15 +1887,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,halt2
-    teststate=1
+    a=0,648,0,halt2
+    teststate=0
     path=halt2.mla
     comment=
     cc=${mlc}
@@ -1909,15 +1909,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,halt2 llvm
-    teststate=1
+    a=0,648,0,halt2 llvm
+    teststate=0
     path=halt2.mla
     comment=
     cc=${mlc_llvm}
@@ -1931,15 +1931,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,goto1
-    teststate=1
+    a=0,648,0,goto1
+    teststate=0
     path=goto1.mla
     comment=
     cc=${mlc}
@@ -1953,15 +1953,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,goto1 llvm
-    teststate=1
+    a=0,648,0,goto1 llvm
+    teststate=0
     path=goto1.mla
     comment=
     cc=${mlc_llvm}
@@ -1975,12 +1975,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=control/
    comment=
    cc=
@@ -1998,12 +1998,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,665,3,conversions
    c=6
     (
     kind=2
-    a=0,648,1,potoint32
-    teststate=1
+    a=0,648,0,potoint32
+    teststate=0
     path=potoint32.mla
     comment=
     cc=${mlc}
@@ -2017,15 +2017,15 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,potoint32 llvm
-    teststate=1
+    a=0,648,0,potoint32 llvm
+    teststate=0
     path=potoint32.mla
     comment=
     cc=${mlc_llvm}
@@ -2039,15 +2039,15 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,anytopo
-    teststate=1
+    a=0,648,0,anytopo
+    teststate=0
     path=anytopo.mla
     comment=
     cc=${mlc}
@@ -2061,15 +2061,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,anytopo llvm
-    teststate=1
+    a=0,648,0,anytopo llvm
+    teststate=0
     path=anytopo.mla
     comment=
     cc=${mlc_llvm}
@@ -2083,15 +2083,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,sizeconvert1
-    teststate=1
+    a=0,648,0,sizeconvert1
+    teststate=0
     path=sizeconvert1.mla
     comment=
     cc=${mlc}
@@ -2105,15 +2105,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,sizeconvert1 llvm
-    teststate=1
+    a=0,648,0,sizeconvert1 llvm
+    teststate=0
     path=sizeconvert1.mla
     comment=
     cc=${mlc_llvm}
@@ -2127,12 +2127,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=conversions/
    comment=
    cc=
@@ -2150,12 +2150,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,enum
+   a=0,665,3,enum
    c=2
     (
     kind=2
-    a=0,648,1,enum1
-    teststate=1
+    a=0,648,0,enum1
+    teststate=0
     path=enum1.mla
     comment=
     cc=${mlc}
@@ -2169,15 +2169,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,enum1 llvm
-    teststate=1
+    a=0,648,0,enum1 llvm
+    teststate=0
     path=enum1.mla
     comment=
     cc=${mlc_llvm}
@@ -2191,12 +2191,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=enum/
    comment=
    cc=
@@ -2214,12 +2214,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,empty
+   a=0,665,3,empty
    c=2
     (
     kind=2
-    a=0,648,1,unit
-    teststate=1
+    a=0,648,0,unit
+    teststate=0
     path=test_unit.mla
     comment=
     cc=${mlc}
@@ -2233,15 +2233,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,program
-    teststate=1
+    a=0,648,0,program
+    teststate=0
     path=program.mla
     comment=
     cc=${mlc}
@@ -2255,12 +2255,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=0
    path=
    comment=
    cc=
@@ -2278,12 +2278,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,exception
+   a=0,665,3,exception
    c=6
     (
     kind=2
-    a=0,648,1,raise1
-    teststate=1
+    a=0,648,0,raise1
+    teststate=0
     path=raise1.mla
     comment=
     cc=${mlc}
@@ -2297,16 +2297,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7303EF4
-    +
-    ae=
+    ao=1
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise1 llvm
-    teststate=1
+    a=0,648,0,raise1 llvm
+    teststate=0
     path=raise1.mla
     comment=
     cc=${mlc_llvm}
@@ -2320,15 +2319,15 @@ c=3
     ae=0
     eec=217
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=217
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise2
-    teststate=1
+    a=0,648,0,raise2
+    teststate=0
     path=raise2.mla
     comment=
     cc=${mlc}
@@ -2342,15 +2341,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise2 llvm
-    teststate=1
+    a=0,648,0,raise2 llvm
+    teststate=0
     path=raise2.mla
     comment=
     cc=${mlc_llvm}
@@ -2364,15 +2363,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise3
-    teststate=1
+    a=0,648,0,raise3
+    teststate=0
     path=raise3.mla
     comment=
     cc=${mlc}
@@ -2386,15 +2385,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,raise3 llvm
-    teststate=1
+    a=0,648,0,raise3 llvm
+    teststate=0
     path=raise3.mla
     comment=
     cc=${mlc_llvm}
@@ -2408,12 +2407,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=exception/
    comment=
    cc=
@@ -2431,12 +2430,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,indirect
+   a=0,665,3,indirect
    c=22
     (
     kind=2
-    a=0,648,1,indirectloc
-    teststate=1
+    a=0,648,0,indirectloc
+    teststate=0
     path=indirectloc.mla
     comment=
     cc=${mlc}
@@ -2450,15 +2449,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,indirectloc llvm
-    teststate=1
+    a=0,648,0,indirectloc llvm
+    teststate=0
     path=indirectloc.mla
     comment=
     cc=${mlc_llvm}
@@ -2472,15 +2471,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,indirectpar
-    teststate=1
+    a=0,648,0,indirectpar
+    teststate=0
     path=indirectpar.mla
     comment=
     cc=${mlc}
@@ -2494,15 +2493,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,indirectpar llvm
-    teststate=1
+    a=0,648,0,indirectpar llvm
+    teststate=0
     path=indirectpar.mla
     comment=
     cc=${mlc_llvm}
@@ -2516,15 +2515,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varpar
-    teststate=1
+    a=0,648,0,varpar
+    teststate=0
     path=varpar.mla
     comment=
     cc=${mlc}
@@ -2538,15 +2537,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varpar llvm
-    teststate=1
+    a=0,648,0,varpar llvm
+    teststate=0
     path=varpar.mla
     comment=
     cc=${mlc_llvm}
@@ -2560,15 +2559,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparrec
-    teststate=1
+    a=0,648,0,varparrec
+    teststate=0
     path=varparrec.mla
     comment=
     cc=${mlc}
@@ -2582,15 +2581,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparrec llvm
-    teststate=1
+    a=0,648,0,varparrec llvm
+    teststate=0
     path=varparrec.mla
     comment=
     cc=${mlc_llvm}
@@ -2604,15 +2603,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparload
-    teststate=1
+    a=0,648,0,varparload
+    teststate=0
     path=varparload.mla
     comment=
     cc=${mlc}
@@ -2626,15 +2625,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparload llvm
-    teststate=1
+    a=0,648,0,varparload llvm
+    teststate=0
     path=varparload.mla
     comment=
     cc=${mlc_llvm}
@@ -2648,15 +2647,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparrecload
-    teststate=1
+    a=0,648,0,varparrecload
+    teststate=0
     path=varparrecload.mla
     comment=
     cc=${mlc}
@@ -2670,15 +2669,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,varparrecload llvm
-    teststate=1
+    a=0,648,0,varparrecload llvm
+    teststate=0
     path=varparrecload.mla
     comment=
     cc=${mlc_llvm}
@@ -2692,15 +2691,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recindi
-    teststate=1
+    a=0,648,0,recindi
+    teststate=0
     path=recindi.mla
     comment=
     cc=${mlc}
@@ -2714,15 +2713,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recindi llvm
-    teststate=1
+    a=0,648,0,recindi llvm
+    teststate=0
     path=recindi.mla
     comment=
     cc=${mlc_llvm}
@@ -2736,15 +2735,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,parrecindi
-    teststate=1
+    a=0,648,0,parrecindi
+    teststate=0
     path=parrecindi.mla
     comment=
     cc=${mlc}
@@ -2758,15 +2757,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,parrecindi llvm
-    teststate=1
+    a=0,648,0,parrecindi llvm
+    teststate=0
     path=parrecindi.mla
     comment=
     cc=${mlc_llvm}
@@ -2780,15 +2779,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recderef
-    teststate=1
+    a=0,648,0,recderef
+    teststate=0
     path=recderef.mla
     comment=
     cc=${mlc}
@@ -2802,15 +2801,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recderef llvm
-    teststate=1
+    a=0,648,0,recderef llvm
+    teststate=0
     path=recderef.mla
     comment=
     cc=${mlc_llvm}
@@ -2824,15 +2823,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerrec
-    teststate=1
+    a=0,648,0,pointerrec
+    teststate=0
     path=pointerrec.mla
     comment=
     cc=${mlc}
@@ -2846,15 +2845,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerrec llvm
-    teststate=1
+    a=0,648,0,pointerrec llvm
+    teststate=0
     path=pointerrec.mla
     comment=
     cc=${mlc_llvm}
@@ -2868,15 +2867,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerrec1
-    teststate=1
+    a=0,648,0,pointerrec1
+    teststate=0
     path=pointerrec1.mla
     comment=
     cc=${mlc}
@@ -2890,15 +2889,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerrec1 llvm
-    teststate=1
+    a=0,648,0,pointerrec1 llvm
+    teststate=0
     path=pointerrec1.mla
     comment=
     cc=${mlc_llvm}
@@ -2912,12 +2911,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=indirect/
    comment=
    cc=
@@ -2935,12 +2934,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,IO
+   a=0,664,3,IO
    c=4
     (
     kind=2
-    a=0,648,1,writeln int
-    teststate=1
+    a=0,648,0,writeln int
+    teststate=0
     path=writelnint.mla
     comment=
     cc=${mlc}
@@ -2954,16 +2953,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,writeln int llvm
-    teststate=1
+    a=0,648,0,writeln int llvm
+    teststate=0
     path=writelnint.mla
     comment=
     cc=${mlc_llvm}
@@ -2977,16 +2975,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=123
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,writeln string
-    teststate=1
+    a=0,648,0,writeln string
+    teststate=0
     path=writelnstr.mla
     comment=
     cc=${mlc}
@@ -3000,16 +2997,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,writeln string lc
-    teststate=1
+    a=0,648,0,writeln string lc
+    teststate=0
     path=writelnstr.mla
     comment=
     cc=${mlc_llvm}
@@ -3023,13 +3019,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=abc
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=0
    path=io/
    comment=
    cc=${COMP}
@@ -3047,12 +3042,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,mem
+   a=0,664,3,mem
    c=4
     (
     kind=2
-    a=0,648,1,getmem
-    teststate=1
+    a=0,648,0,getmem
+    teststate=0
     path=getmem.mla
     comment=
     cc=${mlc}
@@ -3066,15 +3061,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,getmem llvm
-    teststate=1
+    a=0,648,0,getmem llvm
+    teststate=0
     path=getmem.mla
     comment=
     cc=${mlc_llvm}
@@ -3088,15 +3083,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setmem
-    teststate=1
+    a=0,648,0,setmem
+    teststate=0
     path=setmem.mla
     comment=
     cc=${mlc}
@@ -3110,16 +3105,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=-1
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setmem llvm
-    teststate=1
+    a=0,648,0,setmem llvm
+    teststate=0
     path=setmem.mla
     comment=
     cc=${mlc_llvm}
@@ -3133,13 +3127,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=-1
-    +
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=0
    path=mem/
    comment=
    cc=
@@ -3157,12 +3150,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,minimal
+   a=0,665,3,minimal
    c=2
     (
     kind=2
-    a=0,648,1,program
-    teststate=1
+    a=0,648,0,program
+    teststate=0
     path=minprog.mla
     comment=
     cc=${mlc}
@@ -3176,15 +3169,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,program llvm
-    teststate=1
+    a=0,648,0,program llvm
+    teststate=0
     path=minprog.mla
     comment=
     cc=${mlc_llvm}
@@ -3198,12 +3191,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=
    comment=
    cc=
@@ -3221,12 +3214,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,record
+   a=0,664,3,record
    c=8
     (
     kind=2
-    a=0,648,1,recordfield
-    teststate=1
+    a=0,648,0,recordfield
+    teststate=0
     path=recordfield.mla
     comment=
     cc=${mlc}
@@ -3240,15 +3233,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recordfield llvm
-    teststate=1
+    a=0,648,0,recordfield llvm
+    teststate=0
     path=recordfield.mla
     comment=
     cc=${mlc_llvm}
@@ -3262,15 +3255,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recordfieldind
-    teststate=1
+    a=0,648,0,recordfieldind
+    teststate=0
     path=recordfieldind.mla
     comment=
     cc=${mlc}
@@ -3284,15 +3277,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recordfieldind llvm
-    teststate=1
+    a=0,648,0,recordfieldind llvm
+    teststate=0
     path=recordfieldind.mla
     comment=
     cc=${mlc_llvm}
@@ -3306,15 +3299,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2
-    teststate=1
+    a=0,648,0,recordfieldind2
+    teststate=0
     path=recordfieldind2.mla
     comment=
     cc=${mlc}
@@ -3328,15 +3321,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recordfieldind2 llvm
-    teststate=1
+    a=0,648,0,recordfieldind2 llvm
+    teststate=0
     path=recordfieldind2.mla
     comment=
     cc=${mlc_llvm}
@@ -3350,15 +3343,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerinrec
-    teststate=1
+    a=0,648,0,pointerinrec
+    teststate=0
     path=pointerinrec.mla
     comment=
     cc=${mlc}
@@ -3372,15 +3365,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pointerinrec llvm
-    teststate=1
+    a=0,648,0,pointerinrec llvm
+    teststate=0
     path=pointerinrec.mla
     comment=
     cc=${mlc_llvm}
@@ -3394,12 +3387,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=record/
    comment=
    cc=
@@ -3417,12 +3410,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,set
+   a=0,664,3,set
    c=10
     (
     kind=2
-    a=0,648,1,setconstructor1
-    teststate=1
+    a=0,648,0,setconstructor1
+    teststate=0
     path=setconstructor1.mla
     comment=
     cc=${mlc}
@@ -3436,15 +3429,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setconstructro1 llvm
-    teststate=1
+    a=0,648,0,setconstructro1 llvm
+    teststate=0
     path=setconstructor1.mla
     comment=
     cc=${mlc_llvm}
@@ -3458,15 +3451,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setop1
-    teststate=1
+    a=0,648,0,setop1
+    teststate=0
     path=setops1.mla
     comment=
     cc=${mlc}
@@ -3480,15 +3473,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setop1 llvm
-    teststate=1
+    a=0,648,0,setop1 llvm
+    teststate=0
     path=setops1.mla
     comment=
     cc=${mlc_llvm}
@@ -3502,15 +3495,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,xorset1
-    teststate=1
+    a=0,648,0,xorset1
+    teststate=0
     path=xorset1.mla
     comment=
     cc=${mlc}
@@ -3524,15 +3517,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,xorset1 llvm
-    teststate=1
+    a=0,648,0,xorset1 llvm
+    teststate=0
     path=xorset1.mla
     comment=
     cc=${mlc_llvm}
@@ -3546,15 +3539,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setcomp1
-    teststate=1
+    a=0,648,0,setcomp1
+    teststate=0
     path=setcomp1.mla
     comment=
     cc=${mlc}
@@ -3568,15 +3561,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,setcomp1 llvm
-    teststate=1
+    a=0,648,0,setcomp1 llvm
+    teststate=0
     path=setcomp1.mla
     comment=
     cc=${mlc_llvm}
@@ -3590,15 +3583,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,inset1
-    teststate=1
+    a=0,648,0,inset1
+    teststate=0
     path=inset1.mla
     comment=
     cc=${mlc}
@@ -3612,15 +3605,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,inset1 llvm
-    teststate=1
+    a=0,648,0,inset1 llvm
+    teststate=0
     path=inset1.mla
     comment=
     cc=${mlc_llvm}
@@ -3634,12 +3627,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=set/
    comment=
    cc=
@@ -3657,12 +3650,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,string
+   a=0,664,3,string
    c=2
     (
     kind=2
-    a=0,648,1,stringtest
-    teststate=1
+    a=0,648,0,stringtest
+    teststate=0
     path=stringtest.mla
     comment=
     cc=${mlc}
@@ -3676,15 +3669,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,stringtest llvm
-    teststate=1
+    a=0,648,0,stringtest llvm
+    teststate=0
     path=stringtest.mla
     comment=
     cc=${mlc_llvm}
@@ -3698,12 +3691,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=0
    path=string/
    comment=
    cc=
@@ -3721,12 +3714,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,665,3,sub
    c=15
     (
     kind=2
-    a=0,648,1,pppar
-    teststate=1
+    a=0,648,0,pppar
+    teststate=0
     path=pppar.mla
     comment=
     cc=${mlc}
@@ -3740,15 +3733,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pppar llvm
-    teststate=1
+    a=0,648,0,pppar llvm
+    teststate=0
     path=pppar.mla
     comment=
     cc=${mlc_llvm}
@@ -3762,15 +3755,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,function1
-    teststate=1
+    a=0,648,0,function1
+    teststate=0
     path=function1.mla
     comment=
     cc=${mlc}
@@ -3784,15 +3777,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,function1 llvm
-    teststate=1
+    a=0,648,0,function1 llvm
+    teststate=0
     path=function1.mla
     comment=
     cc=${mlc_llvm}
@@ -3806,15 +3799,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,external llvm
-    teststate=1
+    a=0,648,0,external llvm
+    teststate=0
     path=external.mla
     comment=
     cc=${mlc_llvm}
@@ -3828,15 +3821,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,subvar
-    teststate=1
+    a=0,648,0,subvar
+    teststate=0
     path=subvar.mla
     comment=
     cc=${mlc}
@@ -3850,15 +3843,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,subvar llvm
-    teststate=1
+    a=0,648,0,subvar llvm
+    teststate=0
     path=subvar.mla
     comment=
     cc=${mlc_llvm}
@@ -3872,15 +3865,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,subvar1
-    teststate=1
+    a=0,648,0,subvar1
+    teststate=0
     path=subvar1.mla
     comment=
     cc=${mlc}
@@ -3894,15 +3887,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,subvar1 llvm
-    teststate=1
+    a=0,648,0,subvar1 llvm
+    teststate=0
     path=subvar1.mla
     comment=
     cc=${mlc_llvm}
@@ -3916,15 +3909,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recparpo
-    teststate=1
+    a=0,648,0,recparpo
+    teststate=0
     path=recparpo.mla
     comment=
     cc=${mlc}
@@ -3938,15 +3931,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,recparpo llvm
-    teststate=1
+    a=0,648,0,recparpo llvm
+    teststate=0
     path=recparpo.mla
     comment=
     cc=${mlc_llvm}
@@ -3960,15 +3953,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pofunc
-    teststate=1
+    a=0,648,0,pofunc
+    teststate=0
     path=pofunc.mla
     comment=
     cc=${mlc}
@@ -3982,15 +3975,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,pofunc llvm
-    teststate=1
+    a=0,648,0,pofunc llvm
+    teststate=0
     path=pofunc.mla
     comment=
     cc=${mlc_llvm}
@@ -4004,15 +3997,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,nestedsub1
-    teststate=1
+    a=0,648,0,nestedsub1
+    teststate=0
     path=nestedsub1.mla
     comment=
     cc=${mlc}
@@ -4026,15 +4019,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,nsetedsub1 llvm
-    teststate=1
+    a=0,648,0,nsetedsub1 llvm
+    teststate=0
     path=nestedsub1.mla
     comment=
     cc=${mlc_llvm}
@@ -4048,12 +4041,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=sub/
    comment=
    cc=
@@ -4071,12 +4064,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,types
+   a=0,664,3,types
    c=7
     (
     kind=2
-    a=0,648,1,forwardpointer
-    teststate=1
+    a=0,648,0,forwardpointer
+    teststate=0
     path=forwardpointer.mla
     comment=
     cc=${mlc}
@@ -4090,15 +4083,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,forwardpointer llvm
-    teststate=1
+    a=0,648,0,forwardpointer llvm
+    teststate=0
     path=forwardpointer.mla
     comment=
     cc=${mlc_llvm}
@@ -4112,15 +4105,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,typeequ1
-    teststate=1
+    a=0,648,0,typeequ1
+    teststate=0
     path=typeequ1.mla
     comment=
     cc=${mlc}
@@ -4134,15 +4127,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,typeequ1 llvm
-    teststate=1
+    a=0,648,0,typeequ1 llvm
+    teststate=0
     path=typeequ1.mla
     comment=
     cc=${mlc_llvm}
@@ -4156,15 +4149,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,typeequ2
-    teststate=1
+    a=0,648,0,typeequ2
+    teststate=0
     path=typeequ2.mla
     comment=
     cc=
@@ -4178,18 +4171,15 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,lowhigh1
-    teststate=1
+    a=0,648,0,lowhigh1
+    teststate=0
     path=lowhigh1.mla
     comment=
     cc=${mlc}
@@ -4203,15 +4193,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,lowhigh1 llvm
-    teststate=1
+    a=0,648,0,lowhigh1 llvm
+    teststate=0
     path=lowhigh1.mla
     comment=
     cc=${mlc_llvm}
@@ -4225,12 +4215,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=types/
    comment=
    cc=
@@ -4248,12 +4238,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,var
+   a=0,664,3,var
    c=2
     (
     kind=2
-    a=0,648,1,commasep
-    teststate=1
+    a=0,648,0,commasep
+    teststate=0
     path=commasep.mla
     comment=
     cc=${mlc}
@@ -4267,15 +4257,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,commasep llvm
-    teststate=1
+    a=0,648,0,commasep llvm
+    teststate=0
     path=commasep.mla
     comment=
     cc=${mlc_llvm}
@@ -4289,12 +4279,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=var/
    comment=
    cc=
@@ -4312,12 +4302,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,with
+   a=0,664,3,with
    c=12
     (
     kind=2
-    a=0,648,1,with1
-    teststate=1
+    a=0,648,0,with1
+    teststate=0
     path=with1.mla
     comment=
     cc=${mlc}
@@ -4331,15 +4321,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,with1 llvm
-    teststate=1
+    a=0,648,0,with1 llvm
+    teststate=0
     path=with1.mla
     comment=
     cc=${mlc_llvm}
@@ -4353,15 +4343,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,with2
-    teststate=1
+    a=0,648,0,with2
+    teststate=0
     path=with2.mla
     comment=
     cc=${mlc}
@@ -4375,15 +4365,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,with2 llvm
-    teststate=1
+    a=0,648,0,with2 llvm
+    teststate=0
     path=with2.mla
     comment=
     cc=${mlc_llvm}
@@ -4397,15 +4387,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,with3
-    teststate=1
+    a=0,648,0,with3
+    teststate=0
     path=with3.mla
     comment=
     cc=${mlc}
@@ -4419,15 +4409,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,with3 llvm
-    teststate=1
+    a=0,648,0,with3 llvm
+    teststate=0
     path=with3.mla
     comment=
     cc=${mlc_llvm}
@@ -4441,15 +4431,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo
-    teststate=1
+    a=0,648,0,withpo
+    teststate=0
     path=withpo.mla
     comment=
     cc=${mlc}
@@ -4463,15 +4453,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo llvm
-    teststate=1
+    a=0,648,0,withpo llvm
+    teststate=0
     path=withpo.mla
     comment=
     cc=${mlc_llvm}
@@ -4485,15 +4475,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo1
-    teststate=1
+    a=0,648,0,withpo1
+    teststate=0
     path=withpo1.mla
     comment=
     cc=${mlc}
@@ -4507,15 +4497,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo1 llvm
-    teststate=1
+    a=0,648,0,withpo1 llvm
+    teststate=0
     path=withpo1.mla
     comment=
     cc=${mlc_llvm}
@@ -4529,15 +4519,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo2
-    teststate=1
+    a=0,648,0,withpo2
+    teststate=0
     path=withpo2.mla
     comment=
     cc=${mlc}
@@ -4551,15 +4541,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,withpo2 llvm
-    teststate=1
+    a=0,648,0,withpo2 llvm
+    teststate=0
     path=withpo2.mla
     comment=
     cc=${mlc_llvm}
@@ -4573,12 +4563,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=with/
    comment=
    cc=
@@ -4594,7 +4584,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=0
   path=base/
   comment=
   cc=
@@ -4612,12 +4602,76 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
-  c=16
+  a=0,656,3,class
+  c=17
+   (
+   kind=1
+   a=0,665,3,properties
+   c=2
+    (
+    kind=2
+    a=0,648,0,classprop1
+    teststate=0
+    path=classprop1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,0,classprop1 llvm
+    teststate=0
+    path=classprop1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=0
+    ae=0
+    aec=123
+    ie=0
+    )
+   teststate=0
+   path=properties/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
    (
    kind=2
-   a=0,648,1,classminimal
-   teststate=1
+   a=0,648,0,classminimal
+   teststate=0
    path=classminimal.mla
    comment=
    cc=${mlc}
@@ -4631,15 +4685,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classminimal llvm
-   teststate=1
+   a=0,648,0,classminimal llvm
+   teststate=0
    path=classminimal.mla
    comment=
    cc=${mlc_llvm}
@@ -4653,15 +4707,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classfield
-   teststate=1
+   a=0,648,0,classfield
+   teststate=0
    path=classfield.mla
    comment=
    cc=${mlc}
@@ -4675,15 +4729,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classfield llvm
-   teststate=1
+   a=0,648,0,classfield llvm
+   teststate=0
    path=classfield.mla
    comment=
    cc=${mlc_llvm}
@@ -4697,15 +4751,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classvirtual
-   teststate=1
+   a=0,648,0,classvirtual
+   teststate=0
    path=classvirtual.mla
    comment=
    cc=${mlc}
@@ -4719,15 +4773,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classvirtual llvm
-   teststate=1
+   a=0,648,0,classvirtual llvm
+   teststate=0
    path=classvirtual.mla
    comment=
    cc=${mlc_llvm}
@@ -4741,15 +4795,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,callinherited
-   teststate=1
+   a=0,648,0,callinherited
+   teststate=0
    path=callinherited.mla
    comment=
    cc=${mlc}
@@ -4763,15 +4817,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,callinherited llvm
-   teststate=1
+   a=0,648,0,callinherited llvm
+   teststate=0
    path=callinherited.mla
    comment=
    cc=${mlc_llvm}
@@ -4785,15 +4839,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinterface
-   teststate=1
+   a=0,648,0,classinterface
+   teststate=0
    path=classinterface.mla
    comment=
    cc=${mlc}
@@ -4807,15 +4861,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinterface llvm
-   teststate=1
+   a=0,648,0,classinterface llvm
+   teststate=0
    path=classinterface.mla
    comment=
    cc=${mlc_llvm}
@@ -4829,15 +4883,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinhinterface
-   teststate=1
+   a=0,648,0,classinhinterface
+   teststate=0
    path=classinhinterface.mla
    comment=
    cc=${mlc}
@@ -4851,15 +4905,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinhinterface llvm
-   teststate=1
+   a=0,648,0,classinhinterface llvm
+   teststate=0
    path=classinhinterface.mla
    comment=
    cc=${mlc_llvm}
@@ -4873,15 +4927,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinhinterface1
-   teststate=1
+   a=0,648,0,classinhinterface1
+   teststate=0
    path=classinhinterface1.mla
    comment=
    cc=${mlc}
@@ -4895,15 +4949,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinhinterface1 llvm
-   teststate=1
+   a=0,648,0,classinhinterface1 llvm
+   teststate=0
    path=classinhinterface1.mla
    comment=
    cc=${mlc_llvm}
@@ -4917,15 +4971,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinterfacevirt
-   teststate=1
+   a=0,648,0,classinterfacevirt
+   teststate=0
    path=classinterfacevirt.mla
    comment=
    cc=${mlc}
@@ -4939,15 +4993,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,classinterfacevirt llvm
-   teststate=1
+   a=0,648,0,classinterfacevirt llvm
+   teststate=0
    path=classinterfacevirt.mla
    comment=
    cc=${mlc_llvm}
@@ -4961,12 +5015,12 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=0
   path=class/
   comment=
   cc=
@@ -4984,16 +5038,16 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syssubs
+  a=0,656,3,syssubs
   c=1
    (
    kind=1
-   a=0,665,4,writeln
+   a=0,665,3,writeln
    c=2
     (
     kind=2
-    a=0,648,1,writeinsub
-    teststate=1
+    a=0,648,0,writeinsub
+    teststate=0
     path=writeinsub.mla
     comment=
     cc=${mlc}
@@ -5007,15 +5061,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,writeinsub llvm
-    teststate=1
+    a=0,648,0,writeinsub llvm
+    teststate=0
     path=writeinsub.mla
     comment=
     cc=${mlc_llvm}
@@ -5029,12 +5083,12 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=123 123
-    ae=
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=0
    path=writeln/
    comment=
    cc=
@@ -5050,7 +5104,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=0
   path=syssubs/
   comment=
   cc=
@@ -5068,12 +5122,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,units
+  a=0,656,3,units
   c=4
    (
    kind=2
-   a=0,648,1,unituses1
-   teststate=1
+   a=0,648,0,unituses1
+   teststate=0
    path=unituses1.mla
    comment=
    cc=${mlc}
@@ -5087,15 +5141,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,unituses1 llvm
-   teststate=1
+   a=0,648,0,unituses1 llvm
+   teststate=0
    path=unituses1.mla
    comment=
    cc=${mlc_llvm}
@@ -5109,15 +5163,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,unituses2
-   teststate=1
+   a=0,648,0,unituses2
+   teststate=0
    path=unituses2.mla
    comment=
    cc=${mlc}
@@ -5131,15 +5185,15 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,1,unituses2 llvm
-   teststate=1
+   a=0,648,0,unituses2 llvm
+   teststate=0
    path=unituses2.mla
    comment=
    cc=${mlc_llvm}
@@ -5153,12 +5207,12 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=
-   ae=
+   ao=0
+   ae=0
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=0
   path=units/
   comment=
   cc=
@@ -5176,16 +5230,16 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,syntax
+  a=0,656,3,syntax
   c=1
    (
    kind=1
-   a=0,665,4,error check
+   a=0,665,3,error check
    c=2
     (
     kind=2
-    a=0,648,1,missingend
-    teststate=1
+    a=0,648,0,missingend
+    teststate=0
     path=missingend.mla
     comment=
     cc=
@@ -5199,18 +5253,15 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
-    +
+    ao=1
+    ae=1
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,missingendok
-    teststate=1
+    a=0,648,0,missingendok
+    teststate=0
     path=missingendok.mla
     comment=
     cc=
@@ -5224,14 +5275,12 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
-    +
-    ae=
+    ao=1
+    ae=0
     aec=0
     ie=0
     )
-   teststate=1
+   teststate=0
    path=errorcheck/
    comment=
    cc=
@@ -5247,7 +5296,7 @@ c=3
    cdef=
    pdef=
    )
-  teststate=1
+  teststate=0
   path=syntax/
   comment=
   cc=
@@ -5426,185 +5475,25 @@ groupcomment=6
  
 [mainfo]
 stackedunder=
-x=650
+x=633
 y=122
-cx=717
+cx=734
 cy=519
 wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=611
+propcolwidthref=643
 width0=50
 sortdescend0=0
-width1=219
+width1=230
 sortdescend1=0
-width2=167
+width2=176
 sortdescend2=0
-width3=225
+width3=237
 sortdescend3=0
 sortdescend4=0
-rowstate=171
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=11
  0 0
  0 0
  0 0
