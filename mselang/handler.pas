@@ -2560,6 +2560,20 @@ begin
    dest:= @contextstack[s.stackindex+1].d.dat;
    source:= @contextstack[s.stackindex+2].d.dat;
    isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
+   with contextstack[s.stackindex+1] do begin
+    if d.kind = ck_prop then begin
+     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
+      if pof_writefield in flags then begin
+       d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
+       d.kind:= ck_ref;
+      end
+      else begin
+       errormessage(err_nomemberaccessproperty,[],1);
+       exit;
+      end;
+     end;
+    end;
+   end;
    with dest^ do begin
     if getassignaddress(1,false) then begin
      destkind:= contextstack[s.stackindex+1].d.kind;

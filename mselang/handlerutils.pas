@@ -1994,12 +1994,6 @@ begin
                                  getopdatatype(d.dat.datatyp.typedata,
                                       d.dat.ref.c.address.indirectlevel));
       end;
-      {
-      d.kind:= ck_refconst;
-      d.dat.ref.c.address.poaddress:=
-                       d.dat.ref.c.address.poaddress + d.dat.ref.offset;
-      d.dat.ref.offset:= 0;
-      }
      end;
     end
     else begin
@@ -2033,12 +2027,12 @@ end;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 begin
+ result:= false;
  with info,contextstack[s.stackindex+stackoffset] do begin
   if (d.kind in datacontexts) then begin
    result:= getaddress(stackoffset,endaddress);
   end
   else begin
-   result:= false;
    errormessage(err_argnotassign,[],stackoffset);
   end;
  end;
