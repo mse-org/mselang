@@ -777,10 +777,10 @@ classproperty3,classproperty4,,
  'write'.,writeprop-
  'default'.,defaultprop-
 readprop,readpropa,,handlereadprop
- '',getident^*
+ '',getidentpath^*
 readpropa,classproperty4,,
  ${whitespace}
- 'write'.,getident-*,writeprop^
+ 'write'.,getidentpath-*,writeprop^
  'default'.,exp-^*,defaultprop^
 writeprop,writepropa,,handlewriteprop
  '',getident^*
@@ -789,7 +789,7 @@ writepropa,classproperty4,,
  'default'.,exp-^*,defaultprop^
 defaultprop,classproperty4,,handledefaultprop*^
  '',exp^*
-classproperty4,,,handleclassproperty
+classproperty4,,,handleclassproperty*
  ${whitespace}
  ';',-*
  '',!handlesemicolonexpected

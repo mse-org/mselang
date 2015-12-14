@@ -1831,7 +1831,7 @@ var
 begin
  scopebefore:= fscopespo;
  fscopespo:= nil;
- result:= not findcurrent(aname,[],allvisi{ffindvislevel},ele1);
+ result:= not findcurrent(aname,[],{avislevel}allvisi{ffindvislevel},ele1);
  if result then begin
   aelementdata:= eledataabs(addelementduplicate1(aname,akind,avislevel));
  end

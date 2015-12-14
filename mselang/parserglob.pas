@@ -123,7 +123,8 @@ type
 const
  dataaddresssize = sizeof(dataaddressty);
  opaddresssize = sizeof(opaddressty);
- datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact{,ck_prop}];
+ datacontexts = [ck_const,ck_fact,ck_subres,ck_ref,ck_reffact];
+ alldatacontexts = datacontexts + [ck_prop];
  typecontexts = [ck_typetype,ck_fieldtype,ck_typearg];
  factcontexts = [ck_fact,ck_reffact,ck_subres];
 

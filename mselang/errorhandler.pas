@@ -64,7 +64,7 @@ type
             err_invalidgototarget,err_enumnotcontiguous,
             err_duplicatesetelement,err_illegaldirective,
             err_cannotdeclarelocalexternal,err_unknownfieldormethod,
-            err_nomemberaccessproperty);
+            err_nomemberaccessproperty,err_unknownrecordfield);
             
  errorinfoty = record
   level: errorlevelty;
@@ -235,7 +235,8 @@ const
   (level: erl_warning; message: 'Illegal compiler directive "%s"'),
   (level: erl_error; message: 'Cannot declare local sub as EXTERNAL'),
   (level: erl_error; message: 'Unknown class field or method identifier "%s"'),
-  (level: erl_error; message: 'No member is provided to access property')
+  (level: erl_error; message: 'No member is provided to access property'),
+  (level: erl_error; message: 'Unknown record field identifier "%s"')
  );
 
 procedure message1(const atext: string; const values: array of const); 

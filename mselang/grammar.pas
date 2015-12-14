@@ -1395,7 +1395,7 @@ var
                caption: 'defaultprop');
  classproperty4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classproperty4');
  interfacedefco: contextty = (branch: nil; 
@@ -6808,7 +6808,7 @@ const
    );
  breadprop: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push,bf_setparentbeforepush];
-     dest: (context: @getidentco); stack: nil; keys: (
+     dest: (context: @getidentpathco); stack: nil; keys: (
     (kind: bkk_char; chars: [#0..#255]),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
@@ -6818,7 +6818,7 @@ const
    );
  breadpropa: array[0..7] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_changeparentcontext];
-     dest: (context: @getidentco); stack: @writepropco; 
+     dest: (context: @getidentpathco); stack: @writepropco; 
      keyword: $97D07383{'write'}),
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_setparentbeforepush,bf_changeparentcontext];
      dest: (context: @expco); stack: @defaultpropco; 

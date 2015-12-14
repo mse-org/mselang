@@ -1029,8 +1029,8 @@ begin
    end
    else begin
    {$ifdef mse_checkinternalerror}
-    if not (d.kind in datacontexts) or 
-              not (pob^.d.kind in datacontexts)then begin
+    if not (d.kind in alldatacontexts) or 
+              not (pob^.d.kind in alldatacontexts)then begin
      internalerror(ie_handler,'20150320B');
     end;
    {$endif}

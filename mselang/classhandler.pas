@@ -15,7 +15,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 unit classhandler;
-{$ifdef FPC}{$mode objfpc}{$h+}{$endif}
+{$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
  globtypes,handlerglob,__mla__internaltypes;
@@ -646,38 +646,62 @@ var
  po1: pointer;
  elekind1: elementkindty;
  typeele1: elementoffsetty;
+ ele1: elementoffsetty;
+ i1: int32;
+ offs1: int32;
+ idstart1: int32;
+label
+ endlab;
 begin
  result:= false;
  with info,contextstack[s.stackindex] do begin
  {$ifdef mse_checkinternalerror}
-  if contextstack[s.stacktop].d.kind <> ck_ident then begin
+  if contextstack[s.stackindex].d.kind <> ck_classprop then begin
+   internalerror(ie_handler,'20151214A');
+  end;
+  if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
    internalerror(ie_handler,'20151201A');
   end;
-  if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+  if contextstack[s.stackindex+2].d.kind <> ck_typeref then begin
    internalerror(ie_handler,'20151201B');
   end;
-  if d.kind <> ck_classprop then begin
-   internalerror(ie_handler,'20151201C');
+  if contextstack[s.stacktop].d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20151214B');
   end;
  {$endif}
-  typeele1:= contextstack[s.stacktop-1].d.typeref;
-  elekind1:= ele.findcurrent(contextstack[s.stacktop].d.ident.ident,[],
+  typeele1:= contextstack[s.stackindex+2].d.typeref;
+  idstart1:= s.stacktop;
+  while contextstack[idstart1].d.kind = ck_ident do begin
+   dec(idstart1);
+  end;
+  inc(idstart1);
+  elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
                                                            [vik_ancestor],po1);
   case elekind1 of
    ek_none: begin
     identerror(s.stacktop-s.stackindex,err_identifiernotfound);
    end;
    ek_field: begin
+    offs1:= pfielddataty(po1)^.offset;
+    ele1:= ele.eledatarel(po1);
+    for i1:= idstart1+1 to s.stacktop do begin
+     if ele.findchild(pfielddataty(po1)^.vf.typ,contextstack[i1].d.ident.ident,
+                            [ek_field],allvisi,ele1,po1) <> ek_field then begin
+      identerror(i1-s.stackindex,err_unknownrecordfield);
+      goto endlab;
+     end;
+     offs1:= offs1 + pfielddataty(po1)^.offset;
+    end;
     with pfielddataty(po1)^ do begin
      if vf.typ = typeele1 then begin
       if awrite then begin
-       d.classprop.writeele:= ele.eledatarel(po1);
-       d.classprop.writeoffset:= offset;
+       d.classprop.writeele:= ele1;
+       d.classprop.writeoffset:= offset+offs1;
        include(d.classprop.flags,pof_writefield);
       end
       else begin
-       d.classprop.readele:= ele.eledatarel(po1);
-       d.classprop.readoffset:= offset;
+       d.classprop.readele:= ele1;
+       d.classprop.readoffset:= offs1;
        include(d.classprop.flags,pof_readfield);
       end;
       result:= true;
@@ -694,7 +718,8 @@ begin
     identerror(s.stacktop-s.stackindex,err_unknownfieldormethod);
    end;
   end;
-  dec(s.stacktop);
+endlab:
+  s.stacktop:= idstart1-1;
  end;
 end;
 
