@@ -1177,8 +1177,32 @@ begin
   with contextstack[s.stackindex] do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
+    ek_property: begin                      //todo: indirection
+     if isgetfact then begin
+      if not ele.findcurrent(tks_self,[],allvisi,ele2) then begin
+       errormessage(err_noclass,[],0);
+       goto endlab;
+      end;
+      d.kind:= ck_prop;
+      d.dat.prop.propele:= ele.eleinforel(po1);
+      with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
+       d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
+       d.dat.datatyp.flags:= h.flags;
+       d.dat.datatyp.indirectlevel:= h.indirectlevel;
+       d.dat.indirection:= -1;
+       d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
+       d.dat.ref.offset:= 0;
+       d.dat.ref.c.varele:= 0;
+      end;
+     end
+     else begin
+    {$ifdef mse_checkinternalerror}
+      internalerror(ie_handler,'20151214B');
+    {$endif}
+     end;
+    end;
     ek_var,ek_field: begin
-     if po1^.header.kind = ek_field then begin
+     if po1^.header.kind in [ek_field] then begin
       if not isgetfact and 
                (contextstack[s.stackindex-1].d.dat.indirection < 0) then begin
        if not getaddress(-1,true) then begin
@@ -1196,7 +1220,6 @@ begin
         end
         else begin
          internalerror(ie_value,'201400427B');
-         goto endlab;
        {$endif}
         end;
 //        initfactcontext(0);

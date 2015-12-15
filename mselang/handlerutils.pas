@@ -2716,10 +2716,12 @@ begin
       write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
                                            integer(d.classprop.flags),true));
       if d.classprop.flags * canreadprop <> [] then begin
-       write(' read:',inttostrmse(d.classprop.readele));
+       write(' read:',inttostrmse(d.classprop.readele),
+                   ':',inttostrmse(d.classprop.readoffset));
       end;
       if d.classprop.flags * canwriteprop <> [] then begin
-       write(' write:',inttostrmse(d.classprop.writeele));
+       write(' write:',inttostrmse(d.classprop.writeele),
+                   ':',inttostrmse(d.classprop.writeoffset));
       end;
      end;
      ck_index: begin

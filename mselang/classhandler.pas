@@ -696,7 +696,7 @@ begin
      if vf.typ = typeele1 then begin
       if awrite then begin
        d.classprop.writeele:= ele1;
-       d.classprop.writeoffset:= offset+offs1;
+       d.classprop.writeoffset:= offs1;
        include(d.classprop.flags,pof_writefield);
       end
       else begin
@@ -807,7 +807,7 @@ begin
    internalerror(ie_handler,'20151207A');
   end;
  {$endif}
-  if d.classprop.errorref = errors[erl_error] then begin
+  if d.classprop.errorref = errors[erl_error] then begin //no error
    if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
                            ek_property,[vik_ancestor],po1) then begin
     identerror(1,err_duplicateidentifier);

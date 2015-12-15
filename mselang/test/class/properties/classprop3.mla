@@ -1,0 +1,40 @@
+program classprop3;
+
+type
+
+ recty = record
+  a,b: int32;
+ end;
+ tcla1 = class
+  private
+   fb: int32;
+   fa: recty;
+  public
+ end;
+
+ tcla = class(tcla1)
+  private
+  public
+   constructor create();
+   destructor destroy();
+   property a: int32 read fa.b write fa.b default 1+3;
+   property b: int32 read fb write fb;
+ end;
+
+constructor tcla.create();
+begin
+ b:= 100;
+ a:= 23;
+end;
+
+destructor tcla.destroy();
+begin
+ exitcode:= b+a;
+end;
+
+var
+ cla: tcla;
+begin
+ cla:= tcla.create();
+ cla.destroy();
+end.
