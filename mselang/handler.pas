@@ -2678,7 +2678,12 @@ begin
         ad1.base:= ab_frame;
        end;
       end;
-      writemanagedtypeop(mo_decref,destvar.typ,ad1,0);
+     {$ifdef mse_checkinternalerror}
+      if not (destkind in factcontexts) then begin
+       internalerror(ie_handler,'20160108A');
+      end;
+     {$endif}
+      writemanagedtypeop(mo_decref,destvar.typ,ad1,dest^.fact.ssaindex);
      end;
 
      if indi then begin

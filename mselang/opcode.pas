@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -227,6 +227,7 @@ procedure addmanagedop(const opsar: aropadsty;
 begin
  if count > 1 then begin
   with additem(opsar[true][aaddress.base])^ do begin
+   par.ssas1:= ssaindex;
    par.memop.t.size:= count;
    if aaddress.base = ab_segment then begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
@@ -241,6 +242,7 @@ begin
  end
  else begin
   with additem(opsar[false][aaddress.base])^ do begin
+   par.ssas1:= ssaindex;
    if aaddress.base = ab_segment then begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
     par.memop.segdataaddress.a.segment:= aaddress.segment;
