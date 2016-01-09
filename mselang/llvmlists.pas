@@ -2685,6 +2685,10 @@ begin
        m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,i1);
       end;
      end;
+     dk_character: begin
+       m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,
+                                                  DW_ATE_unsigned_char);
+     end;
      dk_float: begin
       m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_FLOAT);      
      end;
@@ -2711,8 +2715,8 @@ begin
                                         //todo: use correct alignment
      end;
      dk_string8: begin
-     //todo: use refstringtype
-      m2:= addtype(po2^.h.base,0{po2^.h.indirectlevel-1}{,false});
+                                        //todo: use refstringtype
+      m2:= addtype(sysdatatypes[st_char8].typedata,0);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
 //      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
