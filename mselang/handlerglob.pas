@@ -66,6 +66,18 @@ type
   min: double;
   max: double;
  end;
+ char8infoty = record
+  min: card8;
+  max: card8;
+ end;
+ char16infoty = record
+  min: card16;
+  max: card16;
+ end;
+ char32infoty = record
+  min: card32;
+  max: card32;
+ end;
 
  arrayiteminfoty = record
   itemtypedata: elementoffsetty;
@@ -198,6 +210,12 @@ type
     case databitsizety of
      das_32:(infofloat32: float32infoty);
      das_64:(infofloat64: float64infoty);
+   );
+   dk_character:(
+    case databitsizety of
+     das_8: (infochar8: char8infoty);
+     das_16: (infochar16: char16infoty);
+     das_32: (infochar32: char32infoty);
    );
    dk_string8,dk_dynarray:(
     manageproc: managedtypeprocty;

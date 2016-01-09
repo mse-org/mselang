@@ -58,8 +58,8 @@ const
     sdk_pointer,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
   //dk_sub
     sdk_pointer,
-  //dk_enum,dk_enumitem, dk_set
-    sdk_none,   sdk_none, sdk_none);
+  //dk_enum,dk_enumitem, dk_set,   dk_character
+    sdk_none,   sdk_none, sdk_none,sdk_card32);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
@@ -301,6 +301,18 @@ const
        base: 0;  rtti: 0; flags: []; indirectlevel: 0;
        bitsize: 64; bytesize: 8; datasize: das_f64);
        infofloat64:(min: mindouble; max: maxdouble))),
+   (name: 'char8'; data: (h: (ancestor: 0; kind: dk_character;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 8; bytesize: 1; datasize: das_8);
+       infochar8:(min: int8($00000000); max: $ff))),
+   (name: 'char16'; data: (h: (ancestor: 0; kind: dk_character;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 16; bytesize: 2; datasize: das_16);
+       infochar16:(min: int16($00000000); max: $ffff))),
+   (name: 'char32'; data: (h: (ancestor: 0; kind: dk_character;
+       base: 0;  rtti: 0; flags: []; indirectlevel: 0;
+       bitsize: 32; bytesize: 4; datasize: das_32);
+       infochar32:(min: int32($00000000); max: $ffffffff))),
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string8;
        base: 0;  rtti: 0; flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);

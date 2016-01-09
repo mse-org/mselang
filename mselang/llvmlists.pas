@@ -531,6 +531,14 @@ type
  end;
  pdicompositetypety = ^dicompositetypety;
 
+ dicharkindty = (dichk_char8,dichk_char16,dichk_char32);
+ 
+ direfstringtypety = record
+  name: metavaluety;
+  chartype: dicharkindty;
+ end;
+ pdirefstringtypety = ^direfstringtypety;
+
  dilocvariablekindty = (divk_autovariable,divk_argvariable);
  
  dilocvariablety = record
@@ -583,7 +591,7 @@ type
  metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
                    mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
                    mdk_difile,mdk_dibasictype,mdk_disubrange,mdk_dienumerator,
-                   mdk_diderivedtype,mdk_dicompositetype,
+                   mdk_diderivedtype,mdk_dicompositetype,mdk_direfstringtype,
                    {mdk_discope,}
                    mdk_dicompileunit,mdk_disubprogram,mdk_disubroutinetype,
                    mdk_dilocvariable,mdk_diglobvariable,mdk_diexpression);
@@ -681,6 +689,8 @@ type
            const aoffsetinbits: int32;
            const aflags: int32;
            const aelements: metavaluety): metavaluety;
+   function adddirefstringtype(const aname: lstringty;
+                                const akind: dicharkindty): metavaluety;
    function addtype(atype: elementoffsetty;
                          const aindirection: int32;
                               const subrange: boolean = false): metavaluety;
@@ -2444,7 +2454,7 @@ function tmetadatalist.adddibasictype(const aname: lstringty;
            const asizeinbits: int32; const aaligninbits: int32;
            const aflags: int32; const aencoding: int32): metavaluety;
 var
- m1,m2: metavaluety;
+ m1{,m2}: metavaluety;
 begin
  m1:= addstringornull(aname);
  with pdibasictypety(adddata(mdk_dibasictype,
@@ -2454,6 +2464,19 @@ begin
   aligninbits:= aaligninbits;
   flags:= aflags;
   encoding:= aencoding;
+ end;
+end;
+
+function tmetadatalist.adddirefstringtype(const aname: lstringty;
+                                const akind: dicharkindty): metavaluety;
+var
+ m1: metavaluety;
+begin
+ m1:= addstringornull(aname);
+ with pdirefstringtypety(adddata(mdk_direfstringtype,
+                    sizeof(direfstringtypety),result))^ do begin
+  name:= m1;
+  chartype:= akind;
  end;
 end;
 
@@ -2686,6 +2709,13 @@ begin
       m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
                                    m2,po2^.h.bitsize,0,0,0,m3);
                                         //todo: use correct alignment
+     end;
+     dk_string8: begin
+     //todo: use refstringtype
+      m2:= addtype(po2^.h.base,0{po2^.h.indirectlevel-1}{,false});
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+//      m1:= adddirefstringtype(lstr1,dichk_char8); //todo
      end;
      dk_record,dk_class: begin
       initmetabuffer();

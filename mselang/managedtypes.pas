@@ -46,8 +46,8 @@ const
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,
   //dk_array,dk_class,dk_interface,dk_sub,
     oc_none, oc_none, oc_none,     oc_none,
-  //dk_enum,dk_enumitem,dk_set
-    oc_none,oc_none,    oc_none
+  //dk_enum,dk_enumitem,dk_set, dk_character
+    oc_none,oc_none,    oc_none,oc_none
  );
 
 procedure managestring8(const op: managedopty; const aaddress: addressrefty;

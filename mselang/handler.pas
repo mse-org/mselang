@@ -1266,8 +1266,8 @@ const
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
- //dk_enum,dk_enumitem,dk_set
-   oc_none,oc_none,    oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_character
+   oc_none,oc_none,    oc_none,oc_none
  );
 
  notops: array[datakindty] of opcodety = (
@@ -1277,8 +1277,8 @@ const
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
- //dk_enum,dk_enumitem,dk_set
-   oc_none,oc_none,    oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_character
+   oc_none,oc_none,    oc_none,oc_none
  );
 
 procedure handlefact1();
@@ -2540,7 +2540,7 @@ var
  typematch,indi,isconst: boolean;
  datasi1: databitsizety;
  indilev1: int32;
- int1: int32;
+ i1: int32;
  offs1: dataoffsty;
  ad1: addressrefty;
  ssa1: integer;
@@ -2678,12 +2678,11 @@ begin
         ad1.base:= ab_frame;
        end;
       end;
-     {$ifdef mse_checkinternalerror}
-      if not (destkind in factcontexts) then begin
-       internalerror(ie_handler,'20160108A');
+      i1:= 0;
+      if destkind in factcontexts then begin
+       i1:= dest^.fact.ssaindex;
       end;
-     {$endif}
-      writemanagedtypeop(mo_decref,destvar.typ,ad1,dest^.fact.ssaindex);
+      writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
      end;
 
      if indi then begin
@@ -2697,8 +2696,8 @@ begin
        ssaextension1:= 0;
       end;
       if not (af_segment in destvar.address.flags) then begin
-       int1:= sublevel - destvar.address.locaddress.framelevel-1;
-       if int1 >= 0 then begin
+       i1:= sublevel - destvar.address.locaddress.framelevel-1;
+       if i1 >= 0 then begin
         ssaextension1:= ssaextension1 + getssa(ocssa_popnestedvar);
        end;
       end;
@@ -2712,7 +2711,7 @@ begin
       end
       else begin
        po1^.par.memop.locdataaddress.a:= destvar.address.locaddress;
-       po1^.par.memop.locdataaddress.a.framelevel:= int1;
+       po1^.par.memop.locdataaddress.a.framelevel:= i1;
        po1^.par.memop.locdataaddress.offset:= destvar.offset;
       end;
      end;

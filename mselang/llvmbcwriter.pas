@@ -236,6 +236,7 @@ type
    procedure emitmetadataenumerator(const avalue: dienumeratorty);
    procedure emitmetaderivedtype(const avalue: diderivedtypety);
    procedure emitmetacompositetype(const avalue: dicompositetypety);
+   procedure emitmetarefstringtype(const avalue: direfstringtypety);
    procedure emitmetasubroutinetype(const avalue: disubroutinetypety);
    procedure emitmetasubprogram(const avalue: disubprogramty);
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
@@ -773,6 +774,9 @@ begin
     end;
     mdk_dicompositetype: begin
      emitmetacompositetype(pdicompositetypety(@pm1^.data)^);
+    end;
+    mdk_direfstringtype: begin
+     emitmetarefstringtype(pdirefstringtypety(@pm1^.data)^);
     end;
     mdk_dicompileunit: begin
      emitmetacompileunit(pdicompileunitty(@pm1^.data)^);
@@ -2030,6 +2034,13 @@ begin
    0,                                    //templateparams
    0                                     //identifier
   ]);
+ end;
+end;
+
+procedure tllvmbcwriter.emitmetarefstringtype(const avalue: direfstringtypety);
+begin
+ with avalue do begin
+  notimplementederror('20160109A');
  end;
 end;
 
