@@ -1,0 +1,58 @@
+program classinterfacevirt;
+type
+ itest = interface
+  procedure test();
+ end;
+
+ tc1 = class
+  private
+   f1: int32;
+  public
+   constructor create();
+   destructor destroy();
+ end;
+
+ tc2 = class(tc1,itest)
+  private
+  public
+   f2: int32;
+   procedure test(); virtual;
+ end;
+
+ tc3 = class(tc2)
+  public
+   procedure test(); override;
+ end;
+
+constructor tc1.create();
+begin
+ f1:= 1;
+end;
+
+destructor tc1.destroy();
+begin
+ exitcode:= exitcode+f1;
+end;
+
+procedure tc2.test();
+begin
+ f1:= 10;
+end;
+
+procedure tc3.test();
+begin
+ f2:= 122;
+ exitcode:= f2;
+end;
+
+var
+ i1: itest;
+ c1: tc2;
+
+begin
+ c1:= tc3.create();
+ i1:= itest(c1);
+ i1.test();
+ exitcode:= c1.f2;
+ c1.destroy();
+end.

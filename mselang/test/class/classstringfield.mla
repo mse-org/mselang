@@ -1,0 +1,27 @@
+program test;
+type
+ ttest = class
+  public
+   field: string8;
+   constructor create();
+   destructor destroy();
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+ field:= 'abc';
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+var
+ t1: ttest;
+begin
+ t1:= ttest.create();
+ writeln(t1.field);
+ t1.destroy();
+end.
