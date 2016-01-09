@@ -2690,7 +2690,7 @@ begin
                                                   DW_ATE_unsigned_char);
      end;
      dk_float: begin
-      m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_FLOAT);      
+      m1:= adddibasictype(lstr1,po2^.h.bitsize,po2^.h.bitsize,0,DW_ATE_float);      
      end;
      dk_enum: begin
       ele1:= po2^.infoenum.first;

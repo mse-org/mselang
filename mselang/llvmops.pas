@@ -1996,7 +1996,7 @@ end;
 procedure decrefsizestackrefop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(ssas1,bcstream.ptypeval(pointertype));
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
   callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
  end;
