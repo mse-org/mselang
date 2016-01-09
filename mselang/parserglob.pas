@@ -134,7 +134,8 @@ type
                     co_llvm,co_hasfunction,
                     co_writeunits,     //write unitfiles
                     co_readunits,      //read unitfiles
-                    co_build           //compile all unit files
+                    co_build,          //compile all unit files
+                    co_lineinfo,co_proginfo //debug
                     );
  compileoptionsty = set of compileoptionty;
 const

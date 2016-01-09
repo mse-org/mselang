@@ -978,8 +978,14 @@ begin
   try
    try
     compileoptions:= aoptions;
-    if not (co_llvm in aoptions) then begin
-     debugoptions:= [];
+    debugoptions:= [];
+    if co_llvm in aoptions then begin
+     if co_lineinfo in aoptions then begin
+      include(info.debugoptions,do_lineinfo);
+     end;
+     if co_proginfo in aoptions then begin
+      include(info.debugoptions,do_proginfo);
+     end;    
     end;
     s.debugoptions:= debugoptions;
     s.compilerswitches:= compilerswitches;

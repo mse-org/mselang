@@ -105,6 +105,12 @@ begin
  initio(outstream,errstream);
  if llvm.value then begin
   compoptions:= llvmcompileoptions;
+  if lineinfoed.value then begin
+   include(compoptions,co_lineinfo);
+  end;
+  if proginfoed.value then begin
+   include(compoptions,co_proginfo);
+  end;
  end
  else begin
   compoptions:= mlaruntimecompileoptions;
@@ -251,12 +257,14 @@ end;
 procedure tmainfo.lineinfoset(const sender: TObject; var avalue: Boolean;
                var accept: Boolean);
 begin
+{
  if avalue then begin
   include(info.debugoptions,do_lineinfo);
  end
  else begin
   exclude(info.debugoptions,do_lineinfo);
  end;
+}
 end;
 
 procedure tmainfo.nameset(const sender: TObject; var avalue: Boolean;
@@ -273,12 +281,14 @@ end;
 procedure tmainfo.proginfoset(const sender: TObject; var avalue: Boolean;
                var accept: Boolean);
 begin
+{
  if avalue then begin
   include(info.debugoptions,do_proginfo);
  end
  else begin
   exclude(info.debugoptions,do_proginfo);
  end;
+ }
 end;
 
 end.

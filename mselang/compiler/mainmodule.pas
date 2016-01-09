@@ -65,6 +65,9 @@ begin
    compoptions:= mlaruntimecompileoptions;
    if sysenv.defined[ord(pa_llvm)] then begin
     compoptions:= llvmcompileoptions;
+    if sysenv.defined[ord(pa_debug)] then begin
+     compoptions:= compoptions + [co_lineinfo,co_proginfo];
+    end;
    end;
    if parse(str1,filename1,compoptions) then begin
     if co_llvm in compoptions then begin
