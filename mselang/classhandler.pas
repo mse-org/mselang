@@ -685,13 +685,13 @@ begin
   inc(idstart1);
   elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
                                                            [vik_ancestor],po1);
+  ele1:= ele.eledatarel(po1);
   case elekind1 of
    ek_none: begin
     identerror(s.stacktop-s.stackindex,err_identifiernotfound);
    end;
    ek_field: begin
     offs1:= pfielddataty(po1)^.offset;
-    ele1:= ele.eledatarel(po1);
     for i1:= idstart1+1 to s.stacktop do begin
      if ele.findchild(pfielddataty(po1)^.vf.typ,contextstack[i1].d.ident.ident,
                             [ek_field],allvisi,ele1,po1) <> ek_field then begin
