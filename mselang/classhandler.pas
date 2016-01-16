@@ -642,10 +642,17 @@ begin
 end;
 *)
 function checkpropaccessor(const awrite: boolean): boolean;
+
+ procedure illegalsymbol();
+ begin
+  errormessage(err_illegalpropsymbol,[]);
+ end;//illegalsymbol
+ 
 var
  po1: pointer;
  elekind1: elementkindty;
  typeele1: elementoffsetty;
+ indi1: int32;
  ele1: elementoffsetty;
  i1: int32;
  offs1: int32;
@@ -670,6 +677,7 @@ begin
   end;
  {$endif}
   typeele1:= contextstack[s.stackindex+2].d.typeref;
+  indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
   idstart1:= s.stacktop;
   while contextstack[idstart1].d.kind = ck_ident do begin
    dec(idstart1);
@@ -693,7 +701,7 @@ begin
      offs1:= offs1 + pfielddataty(po1)^.offset;
     end;
     with pfielddataty(po1)^ do begin
-     if vf.typ = typeele1 then begin
+     if (vf.typ = typeele1) and (indirectlevel = indi1) then begin
       if awrite then begin
        d.classprop.writeele:= ele1;
        d.classprop.writeoffset:= offs1;
@@ -711,8 +719,32 @@ begin
      end;
     end;
    end;
-   ek_sub: begin
-    result:= true;
+   ek_sub: begin   //todo: index
+    with psubdataty(po1)^ do begin
+     if (sf_method in flags) then begin
+      if awrite then begin
+       if not (sf_function in flags) then begin
+       end;
+       illegalsymbol();
+      end
+      else begin
+       if (sf_function in flags) and (paramcount = 2) and 
+            (resulttype.typeele = typeele1) and 
+                            (resulttype.indirectlevel = indi1) then begin
+        d.classprop.readele:= ele1;
+        d.classprop.readoffset:= 0;
+        include(d.classprop.flags,pof_readsub);
+        result:= true;
+       end
+       else begin
+        illegalsymbol();
+       end;
+      end;
+     end
+     else begin
+      illegalsymbol();
+     end;
+    end;
    end;
    else begin
     identerror(s.stacktop-s.stackindex,err_unknownfieldormethod);

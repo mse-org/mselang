@@ -1819,7 +1819,7 @@ const
    oc_indirect64,oc_indirect64,oc_indirectpo,
  //das_f16,       das_f32,       das_f64        das_sub,      das_meta
    oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo,oc_none);
-
+var testvar: ppropertydataty;
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                   const retainconst: boolean = false): boolean;
 
@@ -1915,14 +1915,20 @@ begin                    //todo: optimize
      errormessage(err_variableexpected,[],stackoffset);
      exit;
     end;
+testvar:= ppropertydataty(ele.eledataabs(d.dat.prop.propele));
     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
      if pof_readfield in flags then begin
       d.dat.ref.offset:= d.dat.ref.offset + readoffset;
       doref();
      end
      else begin
-      errormessage(err_nomemberaccessproperty,[],stackoffset);
-      exit;
+      if pof_readsub in flags then begin
+       notimplementederror('');
+      end
+      else begin
+       errormessage(err_nomemberaccessproperty,[],stackoffset);
+       exit;
+      end;
      end;
     end;
    end;
