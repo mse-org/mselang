@@ -8,6 +8,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit __mla__system;
+//{$internaldebug on}
 interface
 var
  exitcode: int32;

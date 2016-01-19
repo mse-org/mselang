@@ -8,6 +8,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit __mla__internaltypes;
+//{$internaldebug on}
 interface
 type
  ppointer = ^pointer;

@@ -1,28 +1,36 @@
 program test;
+
 type
  ttest = class
+  private
+   ffield: int32;
+   function getfield: int32;
   public
-   field: string8;
    constructor create();
    destructor destroy();
+   property field: int32 read ffield{getfield} write ffield;
  end;
 
 { ttest }
 
 constructor ttest.create();
 begin
-{$internaldebug on}
- field:= 'abc';
+// field:= 122;
 end;
 
 destructor ttest.destroy();
 begin
 end;
 
+function ttest.getfield(): int32;
+begin
+// result:= ffield+1;
+end;
+
 var
  t1: ttest;
 begin
  t1:= ttest.create();
- writeln(t1.field);
+// exitcode:= t1.field;
  t1.destroy();
 end.

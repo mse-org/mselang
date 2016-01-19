@@ -9,6 +9,7 @@
 }
 unit __mla__compilerunit;
 interface 
+//{$internaldebug on}
 uses
  __mla__internaltypes;
 

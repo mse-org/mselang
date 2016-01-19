@@ -648,7 +648,7 @@ var
  var
   po1: popinfoty;
   po3: ptypedataty;
-  po5: pelementoffsetty;
+  subparams1: pelementoffsetty;
   po6: pvardataty;
   po7: pelementinfoty;
   paramco1: integer;
@@ -680,7 +680,7 @@ var
     if aindirect then begin
      callssa:= d.dat.fact.ssaindex;
     end;
-    po5:= @asub^.paramsrel;
+    subparams1:= @asub^.paramsrel;
     paramco1:= paramco;
     if [sf_function{,sf_constructor}] * asub^.flags <> [] then begin
      inc(paramco1); //result parameter
@@ -731,38 +731,39 @@ var
 //       inc(d.dat.datatyp.indirectlevel);
 //      end;
       d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
+      inc(subparams1);
      end;
  
      checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
      parallocstart:= getsegmenttopoffs(seg_localloc);    
+
+     if sf_function in asub^.flags then begin
+      with pparallocinfoty(
+               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+       ssaindex:= 0; //not used
+       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
+      end;
+     end;
+
      if sf_method in asub^.flags then begin
       selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
       with selfpo^ do begin
        ssaindex:= d.dat.fact.ssaindex;
        size:= bitoptypes[das_pointer];
       end;
-      inc(po5); //instance pointer
+      inc(subparams1); //instance pointer
      end;
-     
+{     
      if sf_function in asub^.flags then begin
       with pparallocinfoty(
                allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
        ssaindex:= 0; //not used
- //      po3:= ele.eledataabs(asub^.resulttype);
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
-       {
-       if po3^.indirectlevel > 0 then begin
-        bitsize:= pointerbitsize;
-       end
-       else begin
-        bitsize:= po3^.bitsize;
-       end;
-       }
       end;
      end;
- 
+} 
      for int1:= s.stackindex+3+idents.high to s.stacktop do begin
-      po6:= ele.eledataabs(po5^);
+      po6:= ele.eledataabs(subparams1^);
       with contextstack[int1] do begin
        if af_paramindirect in po6^.address.flags then begin
         case d.kind of
@@ -819,7 +820,7 @@ var
        }
        end;
       end;
-      inc(po5);
+      inc(subparams1);
      end;
                //todo: exeenv flag for constructor and destructor
      if hasresult then begin

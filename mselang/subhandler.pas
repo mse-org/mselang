@@ -577,7 +577,10 @@ var                       //todo: move after doparam
  po2: pvardataty;
  po3: ptypedataty;
  po4: pelementoffsetaty;
- int1,int2,int3: integer;
+// {int1,}int2{,int3}: integer;
+ lastparamindex: int32;
+ curstackindex: int32;
+ curparamindex: int32;
  paramco,paramhigh: integer;
  err1: boolean;
  impl1: boolean;
@@ -598,16 +601,16 @@ var                       //todo: move after doparam
  procedure doparam();
  begin
   with info do begin
-   paramkind1:= contextstack[int1+s.stackindex-1].d.paramsdef.kind;
-   with contextstack[int1+s.stackindex] do begin
+   paramkind1:= contextstack[curstackindex+s.stackindex-1].d.paramsdef.kind;
+   with contextstack[curstackindex+s.stackindex] do begin
     if (isclass and
         ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
             addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
-     identerror(int1,err_duplicateidentifier);
+     identerror(curstackindex,err_duplicateidentifier);
      err1:= true;
     end;
-    po4^[int2]:= elementoffsetty(po2); //absoluteaddress
-    with contextstack[int1+s.stackindex+1] do begin
+    po4^[curparamindex]:= elementoffsetty(po2); //absoluteaddress
+    with contextstack[curstackindex+s.stackindex+1] do begin
      if d.kind = ck_fieldtype then begin
       po3:= ele.eledataabs(d.typ.typedata);
       with po2^ do begin
@@ -658,12 +661,13 @@ var                       //todo: move after doparam
      inc(paramsize1,si1);
     end;
    end;
-   int1:= int1+3;
+   curstackindex:= curstackindex+3;
   end;
  end; //doparam
 
 var
  lstr1: lstringty;  
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -705,9 +709,9 @@ begin
   if ismethod then begin
    inc(paramco); //self pointer
   end;
-  int2:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + 
+  i1:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + 
                  elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type];
-  ele.checkcapacity(int2); //ensure that absolute addresses can be used
+  ele.checkcapacity(i1); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
@@ -772,6 +776,16 @@ begin
   err1:= false;
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
+  lastparamindex:= paramhigh;
+  if (sf_function in subflags) and (co_hasfunction in compileoptions) then begin
+   curstackindex:= 4 + paramhigh * 3;          //allocate result var first
+//   curparamindex:= paramhigh;
+   curparamindex:= 0;
+   doparam();
+   dec(lastparamindex);
+   inc(po4);
+  end;
+  
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
    if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
@@ -795,6 +809,7 @@ begin
     vf.typ:= currentcontainer;
    end;
   end;
+ {
   int3:= paramhigh;
   if (sf_function in subflags) and (co_hasfunction in compileoptions) then begin
    int1:= 4 + paramhigh * 3;          //allocate result var first
@@ -802,13 +817,15 @@ begin
    doparam();
    int3:= paramhigh - 1;
   end;
-  int1:= 4;
-  for int2:= 0 to int3 do begin
+ }
+  curstackindex:= 4;
+  for curparamindex:= 0 to lastparamindex do begin
    doparam();
   end;
-  if ismethod then begin
-   dec(po4);
-  end;
+//  if ismethod then begin
+//   dec(po4);
+//  end;
+  po4:= @po1^.paramsrel;
   inc(paramsize1,stacklinksize);
   po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
@@ -828,10 +845,10 @@ begin
     d.subdef.paramsize:= paramsize1;
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(po1);
-    for int2:= 0 to paramco-1 do begin
-     po2:= pointer(po4^[int2]);
+    for i1:= 0 to paramco-1 do begin
+     po2:= pointer(po4^[i1]);
      dec(po2^.address.locaddress.address,frameoffset);
-     po4^[int2]:= ptruint(po2)-eledatabase;
+     po4^[i1]:= ptruint(po2)-eledatabase;
      if tf_hasmanaged in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
                                                         po2^.address,0);
@@ -842,8 +859,8 @@ begin
    end;
   end
   else begin //interface
-   for int2:= 0 to paramco-1 do begin
-    dec(po4^[int2],eledatabase); //relative address
+   for i1:= 0 to paramco-1 do begin
+    dec(po4^[i1],eledatabase); //relative address
    end;
    if not isinterface then begin
     if sf_external in subflags then begin
@@ -939,14 +956,14 @@ begin
        impl:= ele.eledatarel(po1);
        pointer(parref):= @paramsrel;
        pointer(par1):= @po1^.paramsrel;
-       for int1:= 0 to paramco-1 do begin
-        if ele.eleinfoabs(parref^[int1])^.header.name <> 
-                  ele.eleinfoabs(par1^[int1])^.header.name then begin
+       for i1:= 0 to paramco-1 do begin
+        if ele.eleinfoabs(parref^[i1])^.header.name <> 
+                  ele.eleinfoabs(par1^[i1])^.header.name then begin
          errormessage(
               err_functionheadernotmatch,
-                 [getidentname(ele.eleinfoabs(parref^[int1])^.header.name),
-                      getidentname(ele.eleinfoabs(par1^[int1])^.header.name)],
-                            s.stacktop-s.stackindex-3*(paramco-int1-1)-1);
+                 [getidentname(ele.eleinfoabs(parref^[i1])^.header.name),
+                      getidentname(ele.eleinfoabs(par1^[i1])^.header.name)],
+                            s.stacktop-s.stackindex-3*(paramco-i1-1)-1);
         end;
        end;
       end;

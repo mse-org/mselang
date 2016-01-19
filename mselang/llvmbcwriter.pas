@@ -557,7 +557,9 @@ begin
          end;
          if sf_function in header.flags then begin
           dec(i2);
-          emitvbr6(typeindex(pp3[i2].typelistindex)); //retval
+          emitvbr6(typeindex(pp3[0].typelistindex)); //retval
+          inc(pp3);
+//          emitvbr6(typeindex(pp3[i2].typelistindex)); //retval
          end
          else begin
           emitvbr6(typeindex(das_none)); //void retval
