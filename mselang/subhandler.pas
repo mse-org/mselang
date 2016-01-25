@@ -681,6 +681,15 @@ begin
 //  6           7             8    result
 //[ck_paramsdef,ck_ident,ck_type] 
               //todo: multi level type
+
+//runtime call stack:
+//                                   |cpu.frame |cpu.stack
+//[^result] [self] {param} frameinfo {locvar}
+//|-------- subdataty.paramsize -----|
+//
+//llvm call stack:
+//[self] {params}
+
  with info do begin
   with contextstack[s.stackindex-1] do begin
    subflags:= d.subdef.flags;
@@ -777,7 +786,7 @@ begin
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
   lastparamindex:= paramhigh;
-  if (sf_function in subflags) and (co_hasfunction in compileoptions) then begin
+  if (sf_function in subflags){ and (co_hasfunction in compileoptions)} then begin
    curstackindex:= 4 + paramhigh * 3;          //allocate result var first
 //   curparamindex:= paramhigh;
    curparamindex:= 0;

@@ -38,6 +38,9 @@ type
  pvpointerty = ^vpointerty;
  vsizety = ptrint;
  voffsty = ptrint;
+const
+ vpointersize = sizeof(vpointerty);
+type
 {
  stringheaderty = record
   len: integer;

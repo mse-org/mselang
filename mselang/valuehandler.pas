@@ -649,7 +649,7 @@ var
   po1: popinfoty;
   po3: ptypedataty;
   subparams1: pelementoffsetty;
-  po6: pvardataty;
+  vardata1: pvardataty;
   po7: pelementinfoty;
   paramco1: integer;
   int1: integer;
@@ -762,13 +762,27 @@ var
       end;
      end;
 } 
+     if hasresult and not (co_hasfunction in compileoptions) then begin
+      int1:= 0;
+      if sf_constructor in asub^.flags then begin
+       int1:= parent-s.stackindex;           //??? verfy!
+      end;
+      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3); 
+                                   //alloc space for return value
+      if not (sf_constructor in asub^.flags) then begin
+       with insertitem(oc_pushstackaddr,0,false)^ do begin //result var param
+        par.voffset:= -int1-vpointersize;
+       end;
+      end;
+     end;
+
      for int1:= s.stackindex+3+idents.high to s.stacktop do begin
-      po6:= ele.eledataabs(subparams1^);
+      vardata1:= ele.eledataabs(subparams1^);
       with contextstack[int1] do begin
-       if af_paramindirect in po6^.address.flags then begin
+       if af_paramindirect in vardata1^.address.flags then begin
         case d.kind of
          ck_const: begin
-          if not (af_const in po6^.address.flags) then begin
+          if not (af_const in vardata1^.address.flags) then begin
            errormessage(err_variableexpected,[],int1-s.stackindex);
           end
           else begin
@@ -781,7 +795,7 @@ var
         end;
        end
        else begin
-         with ptypedataty(ele.eledataabs(po6^.vf.typ))^ do begin
+         with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
           if h.indirectlevel > 0 then begin
            si1:= das_pointer;
           end
@@ -800,16 +814,16 @@ var
        end;
  //      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
        if not checkcompatiblefacttype(int1-s.stackindex,
-                                      po6^.vf.typ,po6^.address) then begin
+                                 vardata1^.vf.typ,vardata1^.address) then begin
         errormessage(err_incompatibletypeforarg,
                     [int1-s.stackindex-3,typename(d),
-                    typename(ptypedataty(ele.eledataabs(po6^.vf.typ))^,
-                               po6^.address.indirectlevel)],int1-s.stackindex);
+                    typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                          vardata1^.address.indirectlevel)],int1-s.stackindex);
        end;
        with pparallocinfoty(
                  allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
         ssaindex:= d.dat.fact.ssaindex;
-        size:= getopdatatype(po6^.vf.typ,po6^.address.indirectlevel);
+        size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
        {
         if po6^.address.indirectlevel > 0 then begin
          bitsize:= pointerbitsize;
@@ -824,6 +838,7 @@ var
      end;
                //todo: exeenv flag for constructor and destructor
      if hasresult then begin
+     {
       if not (co_hasfunction in compileoptions) then begin
        int1:= 0;
        if sf_constructor in asub^.flags then begin
@@ -832,27 +847,28 @@ var
        int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3); 
                                     //alloc space for return value
        if not (sf_constructor in asub^.flags) then begin
-         with additem(oc_pushstackaddr)^ do begin //result var param
-          par.voffset:= -asub^.paramsize+stacklinksize-int1;
-         end;
+        with additem(oc_pushstackaddr)^ do begin //result var param
+         par.voffset:= -asub^.paramsize+stacklinksize-int1;
+        end;
        end;
       end;
+     }
      end
      else begin
       d.kind:= ck_subcall;
       if (sf_method in asub^.flags) and (idents.high = 0) then begin
                  //owned method
       {$ifdef mse_checkinternalerror}
-       if ele.findcurrent(tks_self,[],allvisi,po6) <> ek_var then begin
+       if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
         internalerror(ie_value,'20140505A');
        end;
       {$else}
-       ele.findcurrent(tks_self,[],allvisi,po6);
+       ele.findcurrent(tks_self,[],allvisi,vardata1);
       {$endif}
        with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
         par.memop.t:= bitoptypes[das_pointer];
         par.memop.locdataaddress.a.framelevel:= -1;
-        par.memop.locdataaddress.a.address:= po6^.address.poaddress;
+        par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
         par.memop.locdataaddress.offset:= 0;
         selfpo^.ssaindex:= par.ssad;
        end;

@@ -8,29 +8,31 @@ type
   public
    constructor create();
    destructor destroy();
-   property field: int32 read ffield{getfield} write ffield;
+   property field: int32 read getfield write ffield;
  end;
 
 { ttest }
 
 constructor ttest.create();
 begin
-// field:= 122;
+ ffield:= 122;
 end;
 
 destructor ttest.destroy();
 begin
 end;
 
+
 function ttest.getfield(): int32;
 begin
-// result:= ffield+1;
+ result:= ffield+1;
 end;
 
 var
  t1: ttest;
+
 begin
  t1:= ttest.create();
-// exitcode:= t1.field;
+ exitcode:= t1.field;
  t1.destroy();
 end.
