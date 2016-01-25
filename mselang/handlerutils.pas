@@ -1922,7 +1922,12 @@ testvar:= ppropertydataty(ele.eledataabs(d.dat.prop.propele));
       doref();
      end
      else begin
-      errormessage(err_nomemberaccessproperty,[],stackoffset);
+      if pof_readsub in flags then begin
+       notimplementederror('20160125A');
+      end
+      else begin
+       errormessage(err_nomemberaccessproperty,[],stackoffset);
+      end;
       exit;
      end;
     end;

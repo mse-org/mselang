@@ -1,11 +1,42 @@
 program test;
 
+type
+ tcla = class
+  protected
+   f1: int32;
+   function getf(): int32;
+  public
+   constructor create();
+   destructor destroy();
+   property f: int32 read f1 {write f1};
+  end;
+
 function test(p1: int32): int32;
 begin
- result:= p1{ * 2};
+ result:= p1 * 2;
 end;
+
+constructor tcla.create();
+begin
+ f1:= 123-22;
+end;
+
+destructor tcla.destroy();
+begin
+ exitcode:= exitcode+f;
+end;
+
+function tcla.getf(): int32;
+begin
+ result:= f1;
+end;
+
+var
+ c1: tcla;
 
 begin
 {$internaldebug on}
  exitcode:= test(11);
+ c1:= tcla.create();
+ c1.destroy();
 end.
