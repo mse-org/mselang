@@ -15,7 +15,7 @@ type
 
 constructor ttest.create();
 begin
- ffield:= 122;
+// ffield:= 122;
 end;
 
 destructor ttest.destroy();
@@ -25,14 +25,17 @@ end;
 
 function ttest.getfield(): int32;
 begin
- result:= ffield+1;
+ result:= 123;
+// result:= ffield{+1};
 end;
 
 var
  t1: ttest;
 
 begin
+{$internaldebug on}
  t1:= ttest.create();
- exitcode:= t1.field;
+// exitcode:= t1.field;
+ exitcode:= t1.getfield();
  t1.destroy();
 end.
