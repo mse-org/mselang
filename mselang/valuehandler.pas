@@ -687,12 +687,15 @@ var
     end;
     if sf_method in asub^.flags then begin
      inc(paramco1); //self parameter
-     if (sf_destructor in asub^.flags) and 
+    {
+     if (sf_destructor in asub^.flags) and
                          (co_mlaruntime in compileoptions) then begin
       with insertitem(oc_pushduppo,0,false)^ do begin 
                                        //needed for oc_destroyclass
+       par.imm.vint32:= -pointersize; //includint push address
       end;
      end;
+    }
     end;
     if paramco1 <> asub^.paramcount then begin
      identerror(idents.high+1,err_wrongnumberofparameters);
@@ -761,17 +764,29 @@ var
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       end;
      end;
-} 
-     if hasresult and not (co_hasfunction in compileoptions) then begin
+}  
+     if co_mlaruntime in compileoptions then begin
       int1:= 0;
-      if sf_constructor in asub^.flags then begin
-       int1:= parent-s.stackindex;           //??? verfy!
+      if hasresult then begin
+       if sf_constructor in asub^.flags then begin
+        int1:= parent-s.stackindex;           //??? verfy!
+       end;
+       int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3) + 
+                                                                  vpointersize; 
+                                    //alloc space for return value
+       if sf_constructor in asub^.flags then begin
+        int1:= int1-vpointersize;  //class info pointer
+       end
+       else begin
+        with insertitem(oc_pushstackaddr,0,false)^ do begin //result var param
+         par.voffset:= -int1;
+        end;
+       end;
       end;
-      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3); 
-                                   //alloc space for return value
-      if not (sf_constructor in asub^.flags) then begin
-       with insertitem(oc_pushstackaddr,0,false)^ do begin //result var param
-        par.voffset:= -int1-vpointersize;
+      if (sf_method in asub^.flags) then begin
+           //param order is [returnvalue pointer],instancepo,{params}
+       with insertitem(oc_pushduppo,0,false)^ do begin 
+        par.voffset:= -int1-vpointersize; //including push address
        end;
       end;
      end;

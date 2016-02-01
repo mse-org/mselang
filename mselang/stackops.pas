@@ -2653,10 +2653,10 @@ end;
 }
 procedure pushduppoop();
 var
- po1: ppointer;
+ po1: pointer;
 begin
- po1:= ppointer(stackpush(sizeof(pointer)));
- po1^:= (po1-1)^
+ po1:= stackpush(sizeof(pointer));
+ ppointer(po1)^:= ppointer((po1+cpu.pc^.par.voffset))^
 end;
 
 procedure indirect8op();

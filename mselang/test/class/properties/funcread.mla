@@ -1,4 +1,4 @@
-program test;
+program funcread;
 
 type
  ttest = class
@@ -20,7 +20,7 @@ end;
 
 destructor ttest.destroy();
 begin
- exitcode:= exitcode+ffield-122;
+ exitcode:= exitcode + ffield - 122;
 end;
 
 
@@ -34,6 +34,6 @@ var
 
 begin
  t1:= ttest.create();
- exitcode:= t1.field();
+ exitcode:= t1.field;
  t1.destroy();
 end.
