@@ -677,46 +677,6 @@ begin
  result^.par.opaddress.bbindex:= info.s.ssa.bbindex;
 end;
 
-(* problematic because of existing later controlops
-
-function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
-                          const before: boolean;
-                          const ssaextension: integer = 0): popinfoty;
-begin
-{$ifdef mse_checkinternalerror}
- if not (aopcode in controlops) then begin
-  internalerror(ie_parser,'20151016E');
- end;
-{$endif}
- result:= insertitem(aopcode,stackoffset,before,ssaextension);
- inc(info.s.ssa.blockindex);
- result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
-end;
-*)
-{
-function addcallitem(const aopcode: opcodety;
-                               const ssaextension: integer = 0): popinfoty;
-begin
- result:= additem(aopcode,ssaextension);
- if info.s.trystacklevel > 0 then begin
-  inc(info.s.ssa.blockindex);
- end;
-end;
-}
-function getitem(const index: integer): popinfoty;
-begin
- result:= getsegmentbase(seg_op);
- inc(result,index);
-end;
-
-procedure addlabel();
-begin
- with addcontrolitem(oc_label)^ do begin
-  par.opaddress.opaddress:= info.opcount-1;
-  par.opaddress.bbindex:= info.s.ssa.bbindex;
- end;
-end;
-
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                     const before: boolean;
                     const ssaextension: integer = 0): popinfoty;
@@ -790,6 +750,47 @@ begin
   end;   
  end;
 end;
+
+(* problematic because of existing later controlops
+
+function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
+                          const before: boolean;
+                          const ssaextension: integer = 0): popinfoty;
+begin
+{$ifdef mse_checkinternalerror}
+ if not (aopcode in controlops) then begin
+  internalerror(ie_parser,'20151016E');
+ end;
+{$endif}
+ result:= insertitem(aopcode,stackoffset,before,ssaextension);
+ inc(info.s.ssa.blockindex);
+ result^.par.opaddress.bbindex:= info.s.ssa.blockindex;
+end;
+*)
+{
+function addcallitem(const aopcode: opcodety;
+                               const ssaextension: integer = 0): popinfoty;
+begin
+ result:= additem(aopcode,ssaextension);
+ if info.s.trystacklevel > 0 then begin
+  inc(info.s.ssa.blockindex);
+ end;
+end;
+}
+function getitem(const index: integer): popinfoty;
+begin
+ result:= getsegmentbase(seg_op);
+ inc(result,index);
+end;
+
+procedure addlabel();
+begin
+ with addcontrolitem(oc_label)^ do begin
+  par.opaddress.opaddress:= info.opcount-1;
+  par.opaddress.bbindex:= info.s.ssa.bbindex;
+ end;
+end;
+
 {
 function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;

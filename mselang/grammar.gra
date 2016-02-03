@@ -51,10 +51,10 @@
  'valuehandler','interfacehandler','directivehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
- '.classintfname','.classintftype','.classimp','.self'
+ '.classintfname','.classintftype','.classimp'
  '.units','.ancestors','.nestedvarref','.defines'
 @.tokens
- 'result','exitcode','sizeof','break','continue'
+ 'result','exitcode','sizeof','break','continue','self'
  'b','booleval','internaldebug'
 start,nounit,,
  ${whitespace}

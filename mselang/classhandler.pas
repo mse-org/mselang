@@ -719,18 +719,27 @@ begin
      end;
     end;
    end;
-   ek_sub: begin   //todo: index
+   ek_sub: begin   //todo: index option
     with psubdataty(po1)^ do begin
      if (sf_method in flags) then begin
       if awrite then begin
-       if not (sf_function in flags) then begin
+       if not (sf_function in flags) and (paramcount = 2) and
+         (pvardataty(ele.eledataabs(
+                 pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele1) then begin
+        d.classprop.writeele:= ele1;
+        d.classprop.writeoffset:= 0;
+        include(d.classprop.flags,pof_writesub);
+        result:= true;
+       end
+       else begin
+        illegalsymbol();
        end;
-       illegalsymbol();
       end
       else begin
        if (sf_function in flags) and (paramcount = 2) and 
             (resulttype.typeele = typeele1) and 
                             (resulttype.indirectlevel = indi1) then begin
+                            //necessary?
         d.classprop.readele:= ele1;
         d.classprop.readoffset:= 0;
         include(d.classprop.flags,pof_readsub);

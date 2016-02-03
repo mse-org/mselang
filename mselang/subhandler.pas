@@ -797,11 +797,11 @@ begin
   
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
-   if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
+   if not addvar(tk_self,allvisi,po1^.varchain,po2) then begin
     internalerror(ie_sub,'20140415A');
    end;
   {$else}
-    addvar(tks_self,allvisi,po1^.varchain,po2);
+    addvar(tk_self,allvisi,po1^.varchain,po2);
   {$endif}
    po4^[0]:= elementoffsetty(po2); //absoluteaddress
    inc(po4);          //todo: class proc

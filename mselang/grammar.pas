@@ -32,16 +32,16 @@ const
  tks_classintfname = $8D159E33;
  tks_classintftype = $1A2B3C66;
  tks_classimp = $345678CD;
- tks_self = $68ACF19B;
- tks_units = $D159E337;
- tks_ancestors = $A2B3C66E;
- tks_nestedvarref = $45678CDD;
- tks_defines = $8ACF19BB;
- tk_result = $159E3376;
- tk_exitcode = $2B3C66ED;
- tk_sizeof = $5678CDDB;
- tk_break = $ACF19BB7;
- tk_continue = $59E3376E;
+ tks_units = $68ACF19B;
+ tks_ancestors = $D159E337;
+ tks_nestedvarref = $A2B3C66E;
+ tks_defines = $45678CDD;
+ tk_result = $8ACF19BB;
+ tk_exitcode = $159E3376;
+ tk_sizeof = $2B3C66ED;
+ tk_break = $5678CDDB;
+ tk_continue = $ACF19BB7;
+ tk_self = $59E3376E;
  tk_b = $B3C66EDD;
  tk_booleval = $678CDDBA;
  tk_internaldebug = $CF19BB75;
@@ -123,9 +123,8 @@ const
 
  tokens: array[0..96] of string = ('',
   '.classes','.private','.protected','.public','.published','.classintfname',
-  '.classintftype','.classimp','.self','.units','.ancestors','.nestedvarref',
-  '.defines',
-  'result','exitcode','sizeof','break','continue','b','booleval',
+  '.classintftype','.classimp','.units','.ancestors','.nestedvarref','.defines',
+  'result','exitcode','sizeof','break','continue','self','b','booleval',
   'internaldebug','unit','program','interface','implementation','uses','type',
   'const','var','label','procedure','function','end','initialization',
   'finalization','constructor','destructor','begin','dumpelements','dumpopcode',
