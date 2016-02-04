@@ -2532,28 +2532,6 @@ begin
  end;
 end;
 
-procedure getclassvalue(const stackoffset: int32);
-begin
- with info,contextstack[s.stackindex+stackoffset] do begin
- {$ifdef mse_debugparser}
-  if d.kind <> ck_prop then begin
-   internalerror(ie_handler,'20160202A');
-  end;
-  if ptypedataty(ele.eledataabs(
-          ele.eleinfoabs(d.dat.prop.propele)^.header.parent))^.h.kind <> 
-                                                       dk_class then begin
-   internalerror(ie_handler,'20160202A');
-  end;
- {$endif} 
-  d.kind:= ck_ref;
-  d.dat.datatyp.flags:= [];
-  d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.prop.propele)^.header.parent;
-  d.dat.datatyp.indirectlevel:= 1;
-  inc(d.dat.indirection);
-  getvalue(stackoffset,das_none);
- end;
-end;
-
 var testvar: ptypedataty;
 
 //todo: indirection needs rewrite, simplify and make universal

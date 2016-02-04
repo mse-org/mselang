@@ -41,6 +41,7 @@ procedure handlevalueinherited();
 procedure dosub(const asub: psubdataty;
                    const aindirect: boolean; const isinherited: boolean;
                      const paramco: int32; const ownedmethod: boolean);
+function getselfvar(out aele: elementoffsetty): boolean;
 
 implementation
 uses
@@ -980,6 +981,12 @@ begin
  end;
 end;
 
+function getselfvar(out aele: elementoffsetty): boolean;
+begin
+ result:= ele.findcurrent(tk_self,[],allvisi,aele);
+                       //todo: what about variables with name "self"?
+end;
+
 //todo: simplify, use unified indirection handling
  
 procedure handlevalueidentifier();
@@ -1226,7 +1233,7 @@ begin
    case po1^.header.kind of
     ek_property: begin                      //todo: indirection
      if isgetfact then begin
-      if not ele.findcurrent(tk_self,[],allvisi,ele2) then begin
+      if not getselfvar(ele2) then begin
        errormessage(err_noclass,[],0);
        goto endlab;
       end;
@@ -1259,7 +1266,7 @@ begin
       with pfielddataty(po2)^ do begin
        if isgetfact then begin
         if af_classfield in flags then begin
-         if not ele.findcurrent(tk_self,[],allvisi,ele2) then begin
+         if not getselfvar(ele2) then begin
           errormessage(err_noclass,[],0);
           goto endlab;
          end;

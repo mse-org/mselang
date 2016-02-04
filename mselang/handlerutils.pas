@@ -128,6 +128,7 @@ function getaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
+procedure getclassvalue(const stackoffset: int32);
 
 function pushtemp(const address: addressvaluety;
                                       const alloc: typeallocinfoty): int32;
@@ -1819,7 +1820,7 @@ const
    oc_indirect64,oc_indirect64,oc_indirectpo,
  //das_f16,       das_f32,       das_f64        das_sub,      das_meta
    oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo,oc_none);
-var testvar: ppropertydataty;
+
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                   const retainconst: boolean = false): boolean;
 
@@ -1868,7 +1869,8 @@ var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
-label errlab; 
+label
+ errlab; 
 
 begin                    //todo: optimize
  result:= false;
@@ -1915,7 +1917,6 @@ begin                    //todo: optimize
      errormessage(err_variableexpected,[],stackoffset);
      exit;
     end;
-testvar:= ppropertydataty(ele.eledataabs(d.dat.prop.propele));
     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
      if pof_readfield in flags then begin
       d.dat.ref.offset:= d.dat.ref.offset + readoffset;
@@ -1923,7 +1924,13 @@ testvar:= ppropertydataty(ele.eledataabs(d.dat.prop.propele));
      end
      else begin
       if pof_readsub in flags then begin
-       notimplementederror('20160125A');
+       getclassvalue(stackoffset);
+       ele.pushelementparent(readele);
+       inc(s.stackindex,stackoffset); //class instance
+       dosub(psubdataty(ele.eledataabs(readele)),false,false,0,false);
+       dec(s.stackindex,stackoffset);
+       ele.popelementparent();
+       result:= true;
       end
       else begin
        errormessage(err_nomemberaccessproperty,[],stackoffset);
@@ -2053,6 +2060,28 @@ begin
   else begin
    errormessage(err_argnotassign,[],stackoffset);
   end;
+ end;
+end;
+
+procedure getclassvalue(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+ {$ifdef mse_debugparser}
+  if d.kind <> ck_prop then begin
+   internalerror(ie_handler,'20160202A');
+  end;
+  if ptypedataty(ele.eledataabs(
+          ele.eleinfoabs(d.dat.prop.propele)^.header.parent))^.h.kind <> 
+                                                       dk_class then begin
+   internalerror(ie_handler,'20160202A');
+  end;
+ {$endif} 
+  d.kind:= ck_ref;
+  d.dat.datatyp.flags:= [];
+  d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.prop.propele)^.header.parent;
+  d.dat.datatyp.indirectlevel:= 1;
+  inc(d.dat.indirection);
+  getvalue(stackoffset,das_none);
  end;
 end;
 
