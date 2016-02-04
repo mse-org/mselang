@@ -1,0 +1,38 @@
+program procwrite;
+
+type
+ ttest = class
+  private
+   ffield: int32;
+   procedure setfield(avalue: int32);
+  public
+   constructor create();
+   destructor destroy();
+   property field: int32 read ffield write setfield;
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+ ffield:= 11;
+end;
+
+destructor ttest.destroy();
+begin
+ exitcode:= ffield;
+end;
+
+procedure ttest.setfield(avalue: int32);
+begin
+ ffield:= avalue+field;
+end;
+
+var
+ t1: ttest;
+
+begin
+ t1:= ttest.create();
+ t1.field:= 112;
+ t1.destroy();
+end.

@@ -2297,7 +2297,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7394F30
+    ao=An unhandled exception occured at $B7399F30
     +
     ae=
     aec=123
@@ -4617,7 +4617,7 @@ c=3
    (
    kind=1
    a=0,665,4,properties
-   c=10
+   c=14
     (
     kind=2
     a=0,648,1,classprop1
@@ -4752,6 +4752,50 @@ c=3
     )
     (
     kind=2
+    a=0,648,1,classprop4
+    teststate=1
+    path=classprop4.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,classprop4 llvm
+    teststate=1
+    path=classprop4.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
     a=0,648,1,funcread
     teststate=1
     path=funcread.mla
@@ -4777,6 +4821,50 @@ c=3
     a=0,648,1,funcread llvm
     teststate=1
     path=funcread.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,funcread2
+    teststate=1
+    path=funcread2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,funcread2 llvm
+    teststate=1
+    path=funcread2.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -5730,7 +5818,11 @@ sortdescend2=0
 width3=231
 sortdescend3=0
 sortdescend4=0
-rowstate=40
+rowstate=44
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
