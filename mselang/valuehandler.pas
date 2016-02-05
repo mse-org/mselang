@@ -1061,12 +1061,12 @@ var
        with contextstack[s.stackindex],ppropertydataty(po4)^ do begin
         case d.kind of
          ck_ref: begin
-          if pof_readsub in flags then begin
-           getvalue(0,das_none);
-           dosub(ele.eledataabs(readele),false,isinherited,paramco,
-                                                           idents.high=0);
-          end
-          else begin
+//          if pof_readsub in flags then begin
+//           getvalue(0,das_none);
+//           dosub(ele.eledataabs(readele),false,isinherited,paramco,
+//                                                           idents.high=0);
+//          end
+//          else begin
            d.kind:= ck_prop;
            dec(d.dat.indirection);
            dec(d.dat.datatyp.indirectlevel);
@@ -1074,7 +1074,7 @@ var
            d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
                          ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
            d.dat.prop.propele:= ele.eledatarel(po4);
-          end;
+//          end;
          end;
         {$ifdef mse_checkinternalerror}
          else begin
