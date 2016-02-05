@@ -51,7 +51,7 @@
  'valuehandler','interfacehandler','directivehandler'
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
- '.classintfname','.classintftype','.classimp'
+ '.classintfname','.classintftype','.classimp','.self'
  '.units','.ancestors','.nestedvarref','.defines'
 @.tokens
  'result','exitcode','sizeof','break','continue','self'

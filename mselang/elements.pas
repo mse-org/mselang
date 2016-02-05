@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,12 @@ type
  elementoffsetaty = array[0..0] of elementoffsetty;
  pelementoffsetaty = ^elementoffsetaty;
  
- elementkindty = (ek_none,ek_ref,ek_type,ek_const,ek_var,
+ aliasdataty = record
+  base: elementoffsetty;
+ end;
+ paliasdataty = ^aliasdataty;
+ 
+ elementkindty = (ek_none,ek_alias,ek_ref,ek_type,ek_const,ek_var,
                   ek_field,ek_property,ek_labeldef,ek_classintfname,
                   ek_classintftype,
                   ek_ancestorchain,
@@ -82,8 +87,8 @@ const
  maxparents = 255;
 
  elesizes: array[elementkindty] of integer = (
-//ek_none,ek_ref,                   
-  elesize,sizeof(refdataty)+elesize,
+//ek_none,ek_alias,                   ek_ref,                   
+  elesize,sizeof(aliasdataty)+elesize,sizeof(refdataty)+elesize,
 //ek_type,                   ek_const,         
   sizeof(typedataty)+elesize,sizeof(constdataty)+elesize,
 //ek_var,                   ek_field,                
@@ -287,7 +292,9 @@ type
                            const achild: array of identty;
                            const akind: elementkindty;
                            const avislevel: visikindsty): pointer;
-                     
+   function addalias(const aname: identty; const abase: elementoffsetty;
+                                     const avislevel: visikindsty): boolean;
+                                 //false if duplicate
                            
    procedure pushscopelevel();
    procedure popscopelevel();
@@ -684,6 +691,7 @@ function telementhashdatalist.findcurrent(const aident: identty;
 var
  uint1: ptruint;
  po1: pelementhashdataty;
+ po2: pelementinfoty;
  id1: identty;
  int1,int2: integer;
  parentele: elementoffsetty;
@@ -705,13 +713,19 @@ begin
     po1:= pelementhashdataty(pchar(fdata) + uint1);
     while true do begin
      if (po1^.data.key = id1) then begin
-      with pelementinfoty(pointer(felementdata)+po1^.data.data)^.header do begin
-       if (name = aident) and (parent = parentele) and 
-                                    ((visibility * avislevel <> []) or 
-           (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
-                            ((akinds = []) or (kind in akinds)) then begin
-        element:= po1^.data.data;
-        goto endlab;
+      po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+      if (po2^.header.name = aident) and 
+                 (po2^.header.parent = parentele) then begin
+       if po2^.header.kind = ek_alias then begin
+        po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
+       end;
+       with po2^.header do begin
+        if ((visibility * avislevel <> []) or 
+          (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
+                           ((akinds = []) or (kind in akinds)) then begin
+         element:= pointer(po2) - pointer(felementdata);
+         goto endlab;
+        end;
        end;
       end;
      end;
@@ -1041,6 +1055,9 @@ begin
     while true do begin
      if po1^.data.key = id1 then begin
       po2:= pelementinfoty(pointer(felementdata)+po1^.data.data);
+      if po2^.header.kind = ek_alias then begin
+       po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
+      end;
       po3:= po2; //searched child
       for int1:= high(achildtree) downto 0 do begin
        if (po2^.header.name <> achildtree[int1]) or 
@@ -1110,7 +1127,13 @@ begin
                            (po2^.header.parent <> aparent) then begin
       goto next;
      end;
-     element:= po1^.data.data;
+     if po2^.header.kind = ek_alias then begin
+      element:= paliasdataty(@po2^.data)^.base;
+      po2:= pointer(felementdata) + element;
+     end
+     else begin
+      element:= po1^.data.data;
+     end;
      result:= (po2^.header.visibility*avislevel <> []) and
                  ((akinds = []) or (po2^.header.kind in akinds));
      exit;
@@ -1180,16 +1203,17 @@ function telementhashdatalist.findparentscope(const aident: identty;
 var
  uint1: ptruint;
  po1: pelementhashdataty;
- po2: pscopeinfoty;
+ po2: pelementinfoty;
+ po3: pscopeinfoty;
  id1: identty;
 label
  endloop;
 begin
  result:= false;
  if (fscopespo <> nil) and (count > 0) then begin // check "with" and the like 
-  po2:= fscopespo;
+  po3:= fscopespo;
   while true do begin
-   with pelementinfoty(pointer(felementdata)+po2^.childparent)^ do begin
+   with pelementinfoty(pointer(felementdata)+po3^.childparent)^ do begin
     id1:= header.path+header.name+aident;
     uint1:= fhashtable[id1 and fmask];
     if uint1 <> 0 then begin
@@ -1197,14 +1221,17 @@ begin
      while true do begin
       if (po1^.data.key = id1) then begin
        with pelementinfoty(
-              pointer(felementdata)+po1^.data.data)^.header do begin //child
-        if (name = aident) and (parent = po2^.childparent) then begin
-          with pelementinfoty(pointer(felementdata) +
-                                po2^.childparent)^.header do begin //parent
+              pointer(felementdata)+po1^.data.data)^.header do begin    //child
+        if (name = aident) and (parent = po3^.childparent) then begin
+         po2:= pelementinfoty(pointer(felementdata) + po3^.childparent);//parent
+         if po2^.header.kind = ek_alias then begin
+          po2:= pointer(felementdata) + paliasdataty(@po2^.data)^.base;
+         end;
+         with po2^.header do begin 
           if ((visibility * avislevel <> [])  or 
           (vik_sameunit in visibility) and (defunit = info.s.unitinfo)) and 
                              ((akinds = []) or (kind in akinds)) then begin
-           aparent:= po2^.element;
+           aparent:= po3^.element;
            result:= true;
            exit;
           end;
@@ -1220,10 +1247,10 @@ begin
     end;
    end;
 endloop:
-   if po2 = fscopes then begin
+   if po3 = fscopes then begin
     break;
    end;
-   dec(po2);
+   dec(po3);
   end; 
  end;
 end;
@@ -1906,6 +1933,25 @@ begin
  elementparent:= ele1;
  result:= addelementduplicatedata1(achild[high(achild)],akind,avislevel);
  elementparent:= parentbefore;
+end;
+
+function telementhashdatalist.addalias(const aname: identty;
+                                  const abase: elementoffsetty;
+                                     const avislevel: visikindsty): boolean;
+var
+ parent1: elementoffsetty;
+ ele1: elementoffsetty;
+ po1: paliasdataty;
+begin
+ parent1:= pelementinfoty(pointer(felementdata)+abase)^.header.parent;
+ result:= not findchild(parent1,aname,[],avislevel,ele1);
+ if result then begin
+  ele1:= felementparent;
+  setelementparent(parent1);
+  po1:= addelementduplicatedata1(aname,ek_alias,avislevel);
+  po1^.base:= abase;
+  setelementparent(ele1);
+ end;
 end;
 
 function telementhashdatalist.popelement: pelementinfoty;

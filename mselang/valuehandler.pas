@@ -858,7 +858,7 @@ begin
      if (sf_method in asub^.flags) and ownedmethod then begin
                 //owned method
      {$ifdef mse_checkinternalerror}
-      if ele.findcurrent(tk_self,[],allvisi,vardata1) <> ek_var then begin
+      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
        internalerror(ie_value,'20140505A');
       end;
      {$else}
@@ -983,7 +983,7 @@ end;
 
 function getselfvar(out aele: elementoffsetty): boolean;
 begin
- result:= ele.findcurrent(tk_self,[],allvisi,aele);
+ result:= ele.findcurrent(tks_self,[],allvisi,aele);
                        //todo: what about variables with name "self"?
 end;
 
