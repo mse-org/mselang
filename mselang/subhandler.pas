@@ -625,6 +625,7 @@ var                       //todo: move after doparam
        if po3^.h.datasize = das_none then begin
         include(address.flags,af_aggregate);
        end;
+       address.flags:= address.flags + paramkinds[paramkind1];
        if paramkind1 = pk_const then begin
         if si1 > pointersize then begin
          inc(address.indirectlevel);
@@ -718,7 +719,7 @@ begin
   if ismethod then begin
    inc(paramco); //self pointer
   end;
-  i1:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + 
+  i1:= paramco* (sizeof(pvardataty)+elesizes[ek_var]) + elesizes[ek_alias] +
                  elesizes[ek_sub] + elesizes[ek_none] + elesizes[ek_type];
   ele.checkcapacity(i1); //ensure that absolute addresses can be used
   eledatabase:= ele.eledataoffset();

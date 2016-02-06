@@ -641,12 +641,47 @@ begin
  end;
 end;
 *)
+var testvar: pvardataty;
 function checkpropaccessor(const awrite: boolean): boolean;
 
  procedure illegalsymbol();
  begin
   errormessage(err_illegalpropsymbol,[]);
- end;//illegalsymbol
+  result:= false;
+ end; //illegalsymbol
+
+ function checkindex(const indexcount: int32; const sub: psubdataty): boolean;
+ var
+  popar,pe: pelementoffsetty;
+  pocontext: pcontextitemty;
+ begin
+  result:= true;
+  if indexcount > 0 then begin
+   pocontext:= @info.contextstack[info.s.stackindex+3];
+   popar:= pelementoffsetty(@sub^.paramsrel)+2; //first index param
+   pe:= popar + indexcount;
+   while popar < pe do begin
+   {$ifdef checkinternalerror}
+    if (pocontext^.d.kind <> ck_paramsdef) or 
+                        ((pocontext+2)^.d.kind <> ck_fieldtype) then begin
+     internalerror(ie_parser,'20160106A');
+    end;
+   {$endif}
+testvar:= pvardataty(ele.eledataabs(popar^));
+    with pvardataty(ele.eledataabs(popar^))^ do begin
+     if ((pocontext+2)^.d.typ.typedata <> vf.typ) or 
+       ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 
+                                               paramflagsmask <> []) then begin
+      illegalsymbol();
+      result:= false;
+      exit;
+     end;
+    end;
+    inc(popar);
+    inc(pocontext,3);
+   end;
+  end;
+ end;  //checkindex
  
 var
  po1: pointer;
@@ -657,6 +692,7 @@ var
  i1: int32;
  offs1: int32;
  idstart1: int32;
+ indexcount1: int32;
 label
  endlab;
 begin
@@ -684,6 +720,11 @@ begin
  {$endif}
   typeele1:= contextstack[idstart1].d.typeref;
   indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
+  indexcount1:= 0;
+  i1:= idstart1 - s.stackindex;
+  if i1 > 1 then begin
+   indexcount1:= (i1 - 3) div 3;
+  end;
   inc(idstart1);
   elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
                                                            [vik_ancestor],po1);
@@ -693,6 +734,10 @@ begin
     identerror(s.stacktop-s.stackindex,err_identifiernotfound);
    end;
    ek_field: begin
+    if indexcount1 > 0 then begin
+     illegalsymbol();
+     goto endlab;
+    end;
     offs1:= pfielddataty(po1)^.offset;
     for i1:= idstart1+1 to s.stacktop do begin
      if ele.findchild(pfielddataty(po1)^.vf.typ,contextstack[i1].d.ident.ident,
@@ -725,27 +770,27 @@ begin
     with psubdataty(po1)^ do begin
      if (sf_method in flags) then begin
       if awrite then begin
-       if not (sf_function in flags) and (paramcount = 2) and
+       if not (sf_function in flags) and (paramcount = 2 + indexcount1) and
          (pvardataty(ele.eledataabs(
                  pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele1) then begin
         d.classprop.writeele:= ele1;
         d.classprop.writeoffset:= 0;
         include(d.classprop.flags,pof_writesub);
-        result:= true;
+        result:= checkindex(indexcount1,po1);
        end
        else begin
         illegalsymbol();
        end;
       end
       else begin
-       if (sf_function in flags) and (paramcount = 2) and 
+       if (sf_function in flags) and (paramcount = 2 + indexcount1) and 
             (resulttype.typeele = typeele1) and 
                             (resulttype.indirectlevel = indi1) then begin
                             //necessary?
         d.classprop.readele:= ele1;
         d.classprop.readoffset:= 0;
         include(d.classprop.flags,pof_readsub);
-        result:= true;
+        result:= checkindex(indexcount1,po1);
        end
        else begin
         illegalsymbol();

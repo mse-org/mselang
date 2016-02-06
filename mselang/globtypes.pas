@@ -95,7 +95,10 @@ const
                    seg_classintfcount,seg_intfitemcount];
 type
  addressflagty = (af_nil,af_segment,af_local,af_temp,af_param,
-                  af_paramindirect,af_const,af_withindirect,
+                  af_paramindirect,af_const,
+                  af_paramconst,af_paramvar,af_paramout, 
+                                              //for paramkindty match test
+                  af_withindirect,
                   af_classfield,af_stack,af_segmentpo,af_aggregate,
                   af_startoffset{, //for indirection
                   af_getaddress}
