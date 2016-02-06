@@ -669,19 +669,21 @@ begin
   if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
    internalerror(ie_handler,'20151201A');
   end;
-  if contextstack[s.stackindex+2].d.kind <> ck_typeref then begin
-   internalerror(ie_handler,'20151201B');
-  end;
   if contextstack[s.stacktop].d.kind <> ck_ident then begin
    internalerror(ie_handler,'20151214B');
   end;
  {$endif}
-  typeele1:= contextstack[s.stackindex+2].d.typeref;
-  indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
   idstart1:= s.stacktop;
   while contextstack[idstart1].d.kind = ck_ident do begin
    dec(idstart1);
   end;
+ {$ifdef mse_checkinternalerror}
+  if contextstack[idstart1].d.kind <> ck_typeref then begin
+   internalerror(ie_handler,'20151201B');
+  end;
+ {$endif}
+  typeele1:= contextstack[idstart1].d.typeref;
+  indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
   inc(idstart1);
   elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
                                                            [vik_ancestor],po1);
@@ -829,34 +831,54 @@ end;
 procedure handleclassproperty();
 var
  po1: ppropertydataty;
+ typeeleid1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROPERTY');
 {$endif}
  with info,contextstack[s.stackindex] do begin
- {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex < 2 then begin
-   internalerror(ie_handler,'20151207B');
-  end;
-  if d.kind <> ck_classprop then begin
-   internalerror(ie_handler,'20151202B');
-  end;
-  if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
-   internalerror(ie_handler,'20151202C');
-  end;
-  if contextstack[s.stackindex+2].d.kind <> ck_typeref then begin
-   internalerror(ie_handler,'20151207A');
-  end;
- {$endif}
   if d.classprop.errorref = errors[erl_error] then begin //no error
+  {$ifdef mse_checkinternalerror}
+   if s.stacktop-s.stackindex < 2 then begin
+    internalerror(ie_handler,'20151207B');
+   end;
+   if d.kind <> ck_classprop then begin
+    internalerror(ie_handler,'20151202B');
+   end;
+   if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
+    internalerror(ie_handler,'20151202C');
+   end;
+  {$endif}
    if not ele.addelementdata(contextstack[s.stackindex+1].d.ident.ident,
                            ek_property,[vik_ancestor],po1) then begin
     identerror(1,err_duplicateidentifier);
    end
    else begin
     with po1^ do begin
-     typ:= contextstack[s.stackindex+2].d.typeref;
      flags:= d.classprop.flags;
+     if pof_default in flags then begin
+     {$ifdef mse_checkinternalerror}
+      if contextstack[s.stacktop].d.kind <> ck_const then begin
+       internalerror(ie_handler,'20151202D');
+      end;
+      if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+       internalerror(ie_handler,'20151207A');
+      end;
+     {$endif}
+      with contextstack[s.stacktop] do begin
+       defaultconst.typ:= d.dat.datatyp;
+       defaultconst.d:= d.dat.constval;
+      end;
+      typ:= contextstack[s.stacktop-1].d.typeref;
+     end
+     else begin
+     {$ifdef mse_checkinternalerror}
+      if contextstack[s.stacktop].d.kind <> ck_typeref then begin
+       internalerror(ie_handler,'20151207A');
+      end;
+     {$endif}
+      typ:= contextstack[s.stacktop].d.typeref;
+     end;
      if flags * canreadprop <> [] then begin
       readele:= d.classprop.readele;
       readoffset:= d.classprop.readoffset;
@@ -872,17 +894,6 @@ begin
      else begin
       writeele:= 0;
       writeoffset:= 0;
-     end;
-     if pof_default in flags then begin
-     {$ifdef mse_checkinternalerror}
-      if contextstack[s.stacktop].d.kind <> ck_const then begin
-       internalerror(ie_handler,'20151202D');
-      end;
-     {$endif}
-      with contextstack[s.stacktop] do begin
-       defaultconst.typ:= d.dat.datatyp;
-       defaultconst.d:= d.dat.constval;
-      end;
      end;
     end;     
    end;

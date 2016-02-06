@@ -763,12 +763,38 @@ classdefparam3a,classdefparam2a,,handleclassdefparam3a*
 
 classfield,,,handleclassfield^*
  '',vardef^*
+//
+// properties
+//
+propinddef1,propinddef2,,
+ '',propind0^*
+propinddef2,,,
+ ${whitespace}
+ ';',propinddef1-
+ ']',propinddef3-
+propinddef3,,,^      //return
+propind0,propind1,handleparamsdef0entry,
+ ${whitespace}
+ 'const'.,!setconstparam->
+ @identstart,ident^*
+propind1,,,*
+ ${whitespace}
+ ':',propind2-
+propind2,,,handleparamdef2^
+ '',getfieldtype*
  
 classproperty,classproperty1,classpropertyentry,
  '',getident^*
 classproperty1,,,handlecolonexpected
  ${whitespace}
  ':',classproperty2-
+ '[',classproperty2a-
+classproperty2a,classproperty2b,,
+ '',propinddef1-^*
+classproperty2b,,,handlecolonexpected
+ ${whitespace}
+ ':',classproperty2-
+ 
 classproperty2,classproperty3,,
  '',getnamedtype^*
 classproperty3,classproperty4,,
