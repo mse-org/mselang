@@ -1,39 +1,11 @@
 program test;
 
-type
- ttest = class
-  private
-   ffield: int32;
-   function getfield: int32;
-  public
-   constructor create();
-   destructor destroy();
-   property field: int32 read getfield write ffield;
- end;
-
-{ ttest }
-
-constructor ttest.create();
+procedure tt(a,b: int32);
 begin
- ffield:= 122;
-end;
-
-destructor ttest.destroy();
-begin
- exitcode:= exitcode+ffield-122;
-end;
-
-
-function ttest.getfield(): int32;
-begin
- result:= ffield+1;
 end;
 
 var
- t1: ttest;
+ a,b: int32;
 
 begin
- t1:= ttest.create();
- exitcode:= t1.field();
- t1.destroy();
 end.

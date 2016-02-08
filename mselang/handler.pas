@@ -1285,14 +1285,18 @@ procedure handlefact1();
 var
  i1: integer;
  c1: card64;
+ pind,ptop: pcontextitemty;
 // fl1: factflagsty;
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('FACT1');
 {$endif}
  with info do begin
   if s.stackindex < s.stacktop then begin
-   with contextstack[s.stacktop] do begin
+   ptop:= @contextstack[s.stacktop];
+   with ptop^ do begin
     case d.kind of
      ck_str: begin
       d.kind:= ck_const;
@@ -1317,62 +1321,70 @@ begin
      end;
     end;
    end;
-   with contextstack[s.stackindex] do begin
-   {
-    fl1:= [];
-    if d.kind = ck_getfact then begin
-     fl1:= d.getfact.flags;
+   pind:= @contextstack[s.stackindex];
+   if stf_propindex in ptop^.b.flags then begin //
+    if stf_getaddress in s.currentstatementflags then begin
+     errormessage(err_varidentexpected,[],1);
+    end
+    else begin
+     getvalue(1,das_none);
+     pind^.d:= (pind+1)^.d;
     end;
-   }
-    d:= contextstack[s.stacktop].d;
-    if stf_getaddress in s.currentstatementflags
-               {fl1 * [ff_address,ff_addressfact] <> []} then begin
-     case d.kind of
-      ck_const: begin
-       errormessage(err_cannotaddressconst,[],1);
-      end;
-      ck_ref: begin
-       if af_paramindirect in d.dat.ref.c.address.flags then begin
-        exclude(d.dat.ref.c.address.flags,af_paramindirect);
-       end
+    goto endlab;
+   end
+   else begin
+    with pind^ do begin
+     d:= ptop^.d;
+     if stf_getaddress in s.currentstatementflags
+                {fl1 * [ff_address,ff_addressfact] <> []} then begin
+      case d.kind of
+       ck_const: begin
+        errormessage(err_cannotaddressconst,[],1);
+       end;
+       ck_ref: begin
+        if af_paramindirect in d.dat.ref.c.address.flags then begin
+         exclude(d.dat.ref.c.address.flags,af_paramindirect);
+        end
+        else begin
+         inc(d.dat.indirection);
+         inc(d.dat.datatyp.indirectlevel);
+        end;
+        if (stf_addressop in s.currentstatementflags)
+                    {not (ff_addressfact in fl1)} and
+                    not (tf_subad in d.dat.datatyp.flags) then begin
+         d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
+        end;
+       end;
+       ck_fact: begin
+        if d.dat.indirection = -1 then begin
+         d.dat.indirection:= 0;
+         inc(d.dat.datatyp.indirectlevel);
+        end
+        else begin
+         errormessage(err_cannotaddressexp,[],1);
+        end;
+       end;
+       ck_typearg: begin
+        errormessage(err_cannotaddresstype,[],1);
+       end;
+       ck_controltoken: begin
+        errormessage(err_invalidcontroltoken,[],1);
+       end;
+      {$ifdef mse_checkinternalerror}
        else begin
-        inc(d.dat.indirection);
-        inc(d.dat.datatyp.indirectlevel);
+        internalerror(ie_handler,'20140403C');
        end;
-       if (stf_addressop in s.currentstatementflags)
-                   {not (ff_addressfact in fl1)} and
-                   not (tf_subad in d.dat.datatyp.flags) then begin
-        d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
-       end;
+      {$endif}
       end;
-      ck_fact: begin
-       if d.dat.indirection = -1 then begin
-        d.dat.indirection:= 0;
-        inc(d.dat.datatyp.indirectlevel);
-       end
-       else begin
-        errormessage(err_cannotaddressexp,[],1);
-       end;
-      end;
-      ck_typearg: begin
-       errormessage(err_cannotaddresstype,[],1);
-      end;
-      ck_controltoken: begin
-       errormessage(err_invalidcontroltoken,[],1);
-      end;
-     {$ifdef mse_checkinternalerror}
-      else begin
-       internalerror(ie_handler,'20140403C');
-      end;
-     {$endif}
      end;
+     s.currentstatementflags:= b.flags;
     end;
-    s.currentstatementflags:= b.flags;
    end;
   end
   else begin
    errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
   end;
+endlab:
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
  end;
@@ -2531,8 +2543,6 @@ begin
   end;
  end;
 end;
-
-var testvar: ptypedataty;
 
 //todo: indirection needs rewrite, simplify and make universal
 

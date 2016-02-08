@@ -1869,6 +1869,7 @@ var
  po1: ptypedataty;
  op1: popinfoty;
  int1: integer;
+ pocont1,pocont2: pcontextitemty;
 label
  errlab; 
 
@@ -1927,7 +1928,18 @@ begin                    //todo: optimize
        getclassvalue(stackoffset);
        ele.pushelementparent(readele);
        inc(s.stackindex,stackoffset); //class instance
-       dosub(psubdataty(ele.eledataabs(readele)),false,false,0,false);
+       pocont1:= @contextstack[s.stacktop];
+       pocont2:= pocont1;
+       while pocont2^.d.kind <> ck_index do begin
+        dec(pocont2);
+       {$ifdef checkinternalerror}
+        if pocont2 < @contextstack[s.stackindex] then begin
+         internalerror(ie_handler,'20160207B');
+        end;
+       {$endif}
+       end;
+       dosub(psubdataty(ele.eledataabs(readele)),false,
+                                             false,pocont1-pocont2,false);
        dec(s.stackindex,stackoffset);
        ele.popelementparent();
        result:= true;
@@ -2683,7 +2695,9 @@ begin
      write(fitstring(inttostrmse(opmark.address),3,sp_right));
      write('<NIL> ');
     end;
-    write(getenumname(typeinfo(kind),ord(kind)),' ');
+    write(getenumname(typeinfo(kind),ord(kind)));
+    write(settostring(ptypeinfo(typeinfo(statementflagsty)),
+                                              int32(b.flags),true),' ');
     case kind of
      ck_block: begin
       write('idbefore:'+inttostrmse(block.blockidbefore));

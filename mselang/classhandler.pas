@@ -641,7 +641,7 @@ begin
  end;
 end;
 *)
-var testvar: pvardataty;
+
 function checkpropaccessor(const awrite: boolean): boolean;
 
  procedure illegalsymbol();
@@ -667,7 +667,6 @@ function checkpropaccessor(const awrite: boolean): boolean;
      internalerror(ie_parser,'20160106A');
     end;
    {$endif}
-testvar:= pvardataty(ele.eledataabs(popar^));
     with pvardataty(ele.eledataabs(popar^))^ do begin
      if ((pocontext+2)^.d.typ.typedata <> vf.typ) or 
        ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 

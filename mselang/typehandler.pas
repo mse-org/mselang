@@ -697,7 +697,7 @@ var
  fullconst: boolean;
  isdynarray: boolean;
 label
- errlab;
+ errlab,endlab1;
                               //todo: nested dynarray
 begin
 {$ifdef mse_debugparser}
@@ -787,6 +787,10 @@ begin
       d.dat.fact.ssaindex:= contextstack[int1].d.dat.fact.ssaindex;
      end;
     end;
+    ck_prop: begin
+     include(contextstack[s.stacktop].b.flags,stf_propindex);
+     goto endlab1;
+    end;
    {$ifdef mse_checkinternalerror}
     else begin
      internalerror(ie_type,'20140328A');
@@ -799,6 +803,7 @@ errlab:
    d.kind:= ck_none;
   end;
   s.stacktop:= s.stackindex-1;
+endlab1:
   s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
