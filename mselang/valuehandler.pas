@@ -636,24 +636,85 @@ end;
 //                   const paramco: int32; const ownedmethod: boolean);
 procedure dosub(const asub: psubdataty; const paramco: int32; 
                                               const aflags: dosubflagsty);
+     
+var
+ paramsize1: int32;
+ 
+ procedure doparam(const int1: int32; const subparams1: pelementoffsetty;
+                   const parallocpo: pparallocinfoty);
+ var
+  vardata1: pvardataty;
+  si1: databitsizety;
+ begin
+  with info do begin
+   vardata1:= ele.eledataabs(subparams1^);
+   with contextstack[int1] do begin
+    if af_paramindirect in vardata1^.address.flags then begin
+     case d.kind of
+      ck_const: begin
+       if not (af_const in vardata1^.address.flags) then begin
+        errormessage(err_variableexpected,[],int1-s.stackindex);
+       end
+       else begin
+        internalerror1(ie_notimplemented,'20140405B'); //todo
+       end;
+      end;
+      ck_ref: begin
+       pushinsertaddress(int1-s.stackindex,false);
+      end;
+     end;
+    end
+    else begin
+      with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
+       if h.indirectlevel > 0 then begin
+        si1:= das_pointer;
+       end
+       else begin
+        si1:= h.datasize;
+       end;
+      end;
+     case d.kind of
+      ck_const: begin
+       pushinsertconst(int1-s.stackindex,false,si1);
+      end;
+      ck_ref: begin
+       getvalue(int1-s.stackindex,si1);
+      end;
+     end;
+    end;
+    if not checkcompatiblefacttype(int1-s.stackindex,
+                              vardata1^.vf.typ,vardata1^.address) then begin
+     errormessage(err_incompatibletypeforarg,
+                 [int1-s.stackindex-3,typename(d),
+                 typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                       vardata1^.address.indirectlevel)],int1-s.stackindex);
+    end;
+    with parallocpo^ do begin
+     ssaindex:= d.dat.fact.ssaindex;
+     size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
+     inc(paramsize1,alignsize(getbytesize(size)));
+    end;
+   end;
+  end;
+ end;
+
 var
  po1: popinfoty;
  po3: ptypedataty;
  subparams1: pelementoffsetty;
- vardata1: pvardataty;
  po7: pelementinfoty;
  paramco1: integer;
  int1: integer;
  bo1: boolean;
  parallocstart: dataoffsty;
                     //todo: paralloc info for hidden params
- selfpo: pparallocinfoty;
+ selfpo,parallocpo: pparallocinfoty;
  hasresult: boolean;
  idents1: identvecty;
  firstnotfound1: integer;
  callssa: int32;
- si1: databitsizety;
- paramsize1,lastparamsize1: int32;
+ vardata1: pvardataty;
+ lastparamsize1: int32;
 begin
  with info,contextstack[s.stackindex] do begin //classinstance, result
   if stf_getaddress in s.currentstatementflags then begin
@@ -754,58 +815,27 @@ begin
      end;
     end;
     paramsize1:= 0;
-    for int1:= s.stacktop-paramco+1 to s.stacktop do begin    
-     vardata1:= ele.eledataabs(subparams1^);
-     with contextstack[int1] do begin
-      if af_paramindirect in vardata1^.address.flags then begin
-       case d.kind of
-        ck_const: begin
-         if not (af_const in vardata1^.address.flags) then begin
-          errormessage(err_variableexpected,[],int1-s.stackindex);
-         end
-         else begin
-          internalerror1(ie_notimplemented,'20140405B'); //todo
-         end;
-        end;
-        ck_ref: begin
-         pushinsertaddress(int1-s.stackindex,false);
-        end;
-       end;
-      end
-      else begin
-        with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
-         if h.indirectlevel > 0 then begin
-          si1:= das_pointer;
-         end
-         else begin
-          si1:= h.datasize;
-         end;
-        end;
-       case d.kind of
-        ck_const: begin
-         pushinsertconst(int1-s.stackindex,false,si1);
-        end;
-        ck_ref: begin
-         getvalue(int1-s.stackindex,si1);
-        end;
-       end;
-      end;
-      if not checkcompatiblefacttype(int1-s.stackindex,
-                                vardata1^.vf.typ,vardata1^.address) then begin
-       errormessage(err_incompatibletypeforarg,
-                   [int1-s.stackindex-3,typename(d),
-                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                         vardata1^.address.indirectlevel)],int1-s.stackindex);
-      end;
-      with pparallocinfoty(
-                allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-       ssaindex:= d.dat.fact.ssaindex;
-       size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
-       lastparamsize1:= alignsize(getbytesize(size));
-       inc(paramsize1,lastparamsize1);
-      end;
-     end;
+    parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*paramco);
+    if dsf_indexedsetter in aflags then begin
+     inc(parallocpo); //second, first index
      inc(subparams1);
+     for int1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
+      doparam(int1,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+     end;
+     lastparamsize1:= paramsize1;
+     dec(parallocpo,paramco); //first, value
+     dec(subparams1,paramco);
+     doparam(s.stacktop,subparams1,parallocpo);
+     lastparamsize1:= paramsize1-lastparamsize1;
+    end
+    else begin
+     for int1:= s.stacktop-paramco+1 to s.stacktop do begin
+      doparam(int1,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+     end;
     end;
               //todo: exeenv flag for constructor and destructor
     if not hasresult then begin
