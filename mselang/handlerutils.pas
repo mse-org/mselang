@@ -1938,8 +1938,7 @@ begin                    //todo: optimize
         end;
        {$endif}
        end;
-       dosub(psubdataty(ele.eledataabs(readele)),false,
-                                             false,pocont1-pocont2,false);
+       dosub(psubdataty(ele.eledataabs(readele)),pocont1-pocont2,[]);
        dec(s.stackindex,stackoffset);
        ele.popelementparent();
        result:= true;

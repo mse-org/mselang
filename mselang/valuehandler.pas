@@ -38,9 +38,16 @@ procedure handlevaluepath2a();
 procedure handlevaluepath2();
 procedure handlevalueinherited();
 
-procedure dosub(const asub: psubdataty;
-                   const aindirect: boolean; const isinherited: boolean;
-                     const paramco: int32; const ownedmethod: boolean);
+type
+ dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod);
+ dosubflagsty = set of dosubflagty;
+
+procedure dosub(const asub: psubdataty; const paramco: int32; 
+                                              const aflags: dosubflagsty);
+
+//procedure dosub(const asub: psubdataty;
+//                   const aindirect: boolean; const isinherited: boolean;
+//                     const paramco: int32; const ownedmethod: boolean);
 function getselfvar(out aele: elementoffsetty): boolean;
 
 implementation
@@ -624,9 +631,11 @@ begin
  end;
 end;
 
-procedure dosub(const asub: psubdataty;
-                   const aindirect: boolean; const isinherited: boolean;
-                   const paramco: int32; const ownedmethod: boolean);
+//procedure dosub(const asub: psubdataty;
+//                   const aindirect: boolean; const isinherited: boolean;
+//                   const paramco: int32; const ownedmethod: boolean);
+procedure dosub(const asub: psubdataty; const paramco: int32; 
+                                              const aflags: dosubflagsty);
 var
  po1: popinfoty;
  po3: ptypedataty;
@@ -659,7 +668,7 @@ begin
    d.dat.ref.c.varele:= 0;
   end
   else begin
-   if aindirect then begin
+   if dsf_indirect in aflags then begin
     callssa:= d.dat.fact.ssaindex;
    end;
    subparams1:= @asub^.paramsrel;
@@ -855,7 +864,7 @@ begin
     end
     else begin
      d.kind:= ck_subcall;
-     if (sf_method in asub^.flags) and ownedmethod then begin
+     if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
                 //owned method
      {$ifdef mse_checkinternalerror}
       if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
@@ -874,7 +883,7 @@ begin
      end;
     end;
    end;
-   if not isinherited and 
+   if not (dsf_isinherited in aflags) and 
         (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
     if sf_interface in asub^.flags then begin
      po1:= additem(oc_callintf);
@@ -899,7 +908,7 @@ begin
    else begin
     if (asub^.nestinglevel = 0) or 
                      (asub^.nestinglevel = sublevel) then begin
-     if aindirect then begin
+     if dsf_indirect in aflags then begin
       if sf_function in asub^.flags then begin
        po1:= additem(oc_callfuncindi);
       end
@@ -954,7 +963,7 @@ begin
    end;
    with po1^ do begin
     par.callinfo.flags:= asub^.flags;
-    if isinherited then begin
+    if dsf_isinherited in aflags then begin
      exclude(par.callinfo.flags,sf_virtual);
     end;
     par.callinfo.params:= parallocstart;
@@ -972,7 +981,7 @@ begin
 //     selfinstance:= -d.subdef.paramsize;
     end;
    end;
-   if aindirect then begin
+   if dsf_indirect in aflags then begin
     with additem(oc_pop)^ do begin          //insertitem???
      setimmsize(pointersize,par); //remove call address
     end;
@@ -1011,6 +1020,7 @@ var
 // getfactflags: factflagsty;
  isinherited: boolean;
  isgetfact: boolean;
+ subflags: dosubflagsty;
   
  procedure donotfound(const typeele: elementoffsetty);
 
@@ -1107,7 +1117,7 @@ var
          internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
-       dosub(psubdataty(po4),false,isinherited,paramco,idents.high=0);
+       dosub(psubdataty(po4),paramco,subflags);
        exit;
       end;
       else begin
@@ -1222,6 +1232,13 @@ begin
     identerror(1,err_identifiernotfound);
    end;
    goto endlab;
+  end;
+  subflags:= [];
+  if isinherited then begin
+   include(subflags,dsf_isinherited);
+  end;
+  if idents.high = 0 then begin
+   include(subflags,dsf_ownedmethod);
   end;
   po2:= @po1^.data;
   if po1^.header.kind = ek_ref then begin
@@ -1355,8 +1372,8 @@ begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
         if (d.dat.datatyp.indirectlevel = 1) and 
                               (po3^.h.kind = dk_sub) then begin
-         dosub(ele.eledataabs(po3^.infosub.sub),true,isinherited,paramco,
-                                                                idents.high=0);
+         dosub(ele.eledataabs(po3^.infosub.sub),paramco,
+                                                subflags+[dsf_indirect]);
         end;
        end;     
       end;
@@ -1371,7 +1388,7 @@ begin
      end;
     end;
     ek_sub: begin
-     dosub(psubdataty(po2),false,isinherited,paramco,idents.high=0);
+     dosub(psubdataty(po2),paramco,subflags);
     end;
     ek_sysfunc: begin //todo: handle ff_address
      with contextstack[s.stackindex] do begin

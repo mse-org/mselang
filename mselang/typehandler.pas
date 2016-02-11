@@ -788,8 +788,15 @@ begin
      end;
     end;
     ck_prop: begin
-     include(contextstack[s.stacktop].b.flags,stf_propindex);
-     goto endlab1;
+     if ppropertydataty(ele.eledataabs(d.dat.prop.propele))^.flags * 
+                       [pof_readsub,pof_writesub] = [] then begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errlab;
+     end
+     else begin
+      include(contextstack[s.stacktop].b.flags,stf_propindex);
+      goto endlab1;
+     end;
     end;
    {$ifdef mse_checkinternalerror}
     else begin

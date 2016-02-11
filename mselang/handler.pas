@@ -1288,7 +1288,7 @@ var
  pind,ptop: pcontextitemty;
 // fl1: factflagsty;
 label
- endlab;
+ endlab,endlab1;
 begin
 {$ifdef mse_debugparser}
  outhandle('FACT1');
@@ -1327,8 +1327,13 @@ begin
      errormessage(err_varidentexpected,[],1);
     end
     else begin
-     getvalue(1,das_none);
-     pind^.d:= (pind+1)^.d;
+     if stf_rightside in s.currentstatementflags then begin
+      getvalue(1,das_none);
+      pind^.d:= (pind+1)^.d;
+     end
+     else begin
+      goto endlab1;
+     end;
     end;
     goto endlab;
    end
@@ -1386,6 +1391,7 @@ begin
   end;
 endlab:
   s.stacktop:= s.stackindex;
+endlab1: //for property setter with index
   dec(s.stackindex);
  end;
 end;
@@ -2038,9 +2044,11 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXP');
 {$endif}
- with info do begin
-  contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
-  dec(s.stacktop);
+ with info,contextstack[s.stacktop] do begin
+  if not (stf_propindex in b.flags) then begin
+   contextstack[s.stacktop-1].d:= d;
+   dec(s.stacktop);
+  end;
  end;
 end;
 
@@ -2049,10 +2057,12 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXP1');
 {$endif}
- resolveshortcuts(0,1);
- with info do begin
-  contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
-  s.stacktop:= s.stackindex;
+ with info,contextstack[s.stacktop] do begin
+  if not (stf_propindex in b.flags) then begin
+   resolveshortcuts(0,1);
+   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
+   s.stacktop:= s.stackindex;
+  end;
   dec(s.stackindex);
  end;
 end;
@@ -2568,185 +2578,212 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
  with info do begin       //todo: use direct move if possible
-  if (s.stacktop-s.stackindex = 2) and not errorfla then begin
-   dest:= @contextstack[s.stackindex+1].d.dat;
-   source:= @contextstack[s.stackindex+2].d.dat;
-   isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
-   with contextstack[s.stackindex+1] do begin
-    if d.kind = ck_prop then begin
-     with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
-      if pof_writefield in flags then begin
-       d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
-       d.kind:= ck_ref;
-      end
-      else begin
-       if pof_writesub in flags then begin
-        getclassvalue(1);
-        ele.pushelementparent(writeele);
-//        ele.pushelementparent(d.dat.datatyp.typedata);
-        inc(s.stackindex); //class instance
-        dosub(psubdataty(ele.eledataabs(writeele)),false,false,1,false);
-        dec(s.stackindex);
-        ele.popelementparent();
+  if not errorfla then begin
+   if (s.stacktop-s.stackindex = 2) then begin
+    dest:= @contextstack[s.stackindex+1].d.dat;
+    source:= @contextstack[s.stackindex+2].d.dat;
+    isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
+    with contextstack[s.stackindex+1] do begin
+     if d.kind = ck_prop then begin
+      with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
+       if pof_writefield in flags then begin
+        d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
+        d.kind:= ck_ref;
        end
        else begin
-        errormessage(err_nomemberaccessproperty,[],1);
+        if pof_writesub in flags then begin
+         getclassvalue(1);
+         ele.pushelementparent(writeele);
+         inc(s.stackindex); //class instance
+         dosub(psubdataty(ele.eledataabs(writeele)),1,[]);
+         dec(s.stackindex);
+         ele.popelementparent();
+        end
+        else begin
+         errormessage(err_nomemberaccessproperty,[],1);
+        end;
+        goto endlab;
        end;
-       goto endlab;
       end;
      end;
     end;
-   end;
-   with dest^ do begin
-    if getassignaddress(1,false) then begin
-     destkind:= contextstack[s.stackindex+1].d.kind;
-     typematch:= false;
-     indi:= false;
-     dec(datatyp.indirectlevel);
-    {$ifdef mse_checkinternalerror}
-     if datatyp.indirectlevel < 0 then begin
-      internalerror(ie_handler,'20131126B');
-     end;
-    {$endif}
-     destvar.offset:= 0;
-     destvar.typ:= ele.eledataabs(datatyp.typedata);
-     case destkind of
-      ck_const: begin
-       if constval.kind <> dk_address then begin
-        errormessage(err_argnotassign,[],0);
-       end
-       else begin
-        destvar.address:= constval.vaddress;
-        typematch:= true;
-       end;
-      end;
-      ck_ref{const}: begin
-       destvar.address:= ref.c.address;
-       destvar.offset:= ref.offset;
-       typematch:= true;
-      end;
-      ck_fact,ck_subres: begin
-       destvar.address.flags:= [];
-       typematch:= true;
-       indi:= true;
-      end;
+    with dest^ do begin
+     if getassignaddress(1,false) then begin
+      destkind:= contextstack[s.stackindex+1].d.kind;
+      typematch:= false;
+      indi:= false;
+      dec(datatyp.indirectlevel);
      {$ifdef mse_checkinternalerror}
-      else begin
-       internalerror(ie_handler,'20131117A');
+      if datatyp.indirectlevel < 0 then begin
+       internalerror(ie_handler,'20131126B');
       end;
      {$endif}
-     end;
-
-     destvar.address.indirectlevel:= datatyp.indirectlevel;
-     indilev1:= destvar.address.indirectlevel;
-     if af_paramindirect in destvar.address.flags then begin
-      dec(indilev1);
-     end;
-
-     if datatyp.indirectlevel > 1 then begin
-      si1:= das_pointer;
+      destvar.offset:= 0;
+      destvar.typ:= ele.eledataabs(datatyp.typedata);
+      case destkind of
+       ck_const: begin
+        if constval.kind <> dk_address then begin
+         errormessage(err_argnotassign,[],0);
+        end
+        else begin
+         destvar.address:= constval.vaddress;
+         typematch:= true;
+        end;
+       end;
+       ck_ref{const}: begin
+        destvar.address:= ref.c.address;
+        destvar.offset:= ref.offset;
+        typematch:= true;
+       end;
+       ck_fact,ck_subres: begin
+        destvar.address.flags:= [];
+        typematch:= true;
+        indi:= true;
+       end;
+      {$ifdef mse_checkinternalerror}
+       else begin
+        internalerror(ie_handler,'20131117A');
+       end;
+      {$endif}
+      end;
+ 
+      destvar.address.indirectlevel:= datatyp.indirectlevel;
+      indilev1:= destvar.address.indirectlevel;
+      if af_paramindirect in destvar.address.flags then begin
+       dec(indilev1);
+      end;
+ 
+      if datatyp.indirectlevel > 1 then begin
+       si1:= das_pointer;
+      end
+      else begin
+       si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.h.datasize;
+      end;
+      if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
+       assignmenterror(contextstack[s.stacktop].d,destvar);
+       goto endlab;
+      end;
+      if not getvalue(2,si1) then begin
+       goto endlab;
+      end;
      end
      else begin
-      si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.h.datasize;
+      goto endlab;
      end;
-     if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
+     datasi1:= destvar.typ^.h.datasize;
+     if datatyp.indirectlevel >= 1 then begin
+      datasi1:= das_pointer;
+     end;
+    end;
+    if typematch and not errorfla then begin
+                          //todo: use destinationaddress directly
+     typematch:= isconst or 
+                    tryconvert(s.stacktop-s.stackindex,destvar.typ,indilev1,[]);
+     if not typematch then begin
       assignmenterror(contextstack[s.stacktop].d,destvar);
-      goto endlab;
-     end;
-     if not getvalue(2,si1) then begin
-      goto endlab;
-     end;
-    end
-    else begin
-     goto endlab;
-    end;
-    datasi1:= destvar.typ^.h.datasize;
-    if datatyp.indirectlevel >= 1 then begin
-     datasi1:= das_pointer;
-    end;
-   end;
-   if typematch and not errorfla then begin
-                         //todo: use destinationaddress directly
-    typematch:= isconst or 
-                   tryconvert(s.stacktop-s.stackindex,destvar.typ,indilev1,[]);
-    if not typematch then begin
-     assignmenterror(contextstack[s.stacktop].d,destvar);
-    end
-    else begin
-     ssa1:= source^.fact.ssaindex; //source
-     if (indilev1 = 0) and (tf_hasmanaged in destvar.typ^.h.flags) then begin
-      ad1.base:= ab_stack;
-      if datasi1 = das_pointer then begin
-       ad1.offset:= -pointersize;
-      end
-      else begin
-       ad1.offset:= -destvar.typ^.h.bytesize;
-      end;
-//      ad1.offset:= -((si1+7) div 8); //bytes
-      if not isconst then begin
-       writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
-      end;
-      if indi then begin
-//       dec(ad1.offset,si1);
-       ad1.offset:= 0;
-       ad1.base:= ab_stackref;
-      end
-      else begin
-       ad1.offset:= destvar.address.poaddress;
-       if af_segment in destvar.address.flags then begin
-        ad1.base:= ab_segment;
-        ad1.segment:= destvar.address.segaddress.segment;
+     end
+     else begin
+      ssa1:= source^.fact.ssaindex; //source
+      if (indilev1 = 0) and (tf_hasmanaged in destvar.typ^.h.flags) then begin
+       ad1.base:= ab_stack;
+       if datasi1 = das_pointer then begin
+        ad1.offset:= -pointersize;
        end
        else begin
-        ad1.base:= ab_frame;
+        ad1.offset:= -destvar.typ^.h.bytesize;
        end;
+ //      ad1.offset:= -((si1+7) div 8); //bytes
+       if not isconst then begin
+        writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
+       end;
+       if indi then begin
+ //       dec(ad1.offset,si1);
+        ad1.offset:= 0;
+        ad1.base:= ab_stackref;
+       end
+       else begin
+        ad1.offset:= destvar.address.poaddress;
+        if af_segment in destvar.address.flags then begin
+         ad1.base:= ab_segment;
+         ad1.segment:= destvar.address.segaddress.segment;
+        end
+        else begin
+         ad1.base:= ab_frame;
+        end;
+       end;
+       i1:= 0;
+       if destkind in factcontexts then begin
+        i1:= dest^.fact.ssaindex;
+       end;
+       writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
       end;
-      i1:= 0;
-      if destkind in factcontexts then begin
-       i1:= dest^.fact.ssaindex;
-      end;
-      writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
-     end;
-
-     if indi then begin
-      po1:= additem(popindioptable[datasi1]);
-     end
-     else begin
-      if af_aggregate in destvar.address.flags then begin
-       ssaextension1:= getssa(ocssa_aggregate);
+ 
+      if indi then begin
+       po1:= additem(popindioptable[datasi1]);
       end
       else begin
-       ssaextension1:= 0;
-      end;
-      if not (af_segment in destvar.address.flags) then begin
-       i1:= sublevel - destvar.address.locaddress.framelevel-1;
-       if i1 >= 0 then begin
-        ssaextension1:= ssaextension1 + getssa(ocssa_popnestedvar);
+       if af_aggregate in destvar.address.flags then begin
+        ssaextension1:= getssa(ocssa_aggregate);
+       end
+       else begin
+        ssaextension1:= 0;
+       end;
+       if not (af_segment in destvar.address.flags) then begin
+        i1:= sublevel - destvar.address.locaddress.framelevel-1;
+        if i1 >= 0 then begin
+         ssaextension1:= ssaextension1 + getssa(ocssa_popnestedvar);
+        end;
+       end;
+       po1:= additem(popoptable[
+                      getmovedest(destvar.address.flags)][datasi1],
+                      ssaextension1);
+       if af_segment in destvar.address.flags then begin
+        po1^.par.memop.segdataaddress.a:= destvar.address.segaddress;
+        po1^.par.memop.segdataaddress.offset:= destvar.offset;
+ //       po1^.par.memop.segdataaddress.datasize:= 0;
+       end
+       else begin
+        po1^.par.memop.locdataaddress.a:= destvar.address.locaddress;
+        po1^.par.memop.locdataaddress.a.framelevel:= i1;
+        po1^.par.memop.locdataaddress.offset:= destvar.offset;
        end;
       end;
-      po1:= additem(popoptable[
-                     getmovedest(destvar.address.flags)][datasi1],
-                     ssaextension1);
-      if af_segment in destvar.address.flags then begin
-       po1^.par.memop.segdataaddress.a:= destvar.address.segaddress;
-       po1^.par.memop.segdataaddress.offset:= destvar.offset;
-//       po1^.par.memop.segdataaddress.datasize:= 0;
+      po1^.par.memop.t:= getopdatatype(destvar);
+      po1^.par.ssas1:= ssa1;                //source
+      po1^.par.ssas2:= dest^.fact.ssaindex; //dest
+     end;
+    end;
+   end
+   else begin
+    if stf_propindex in contextstack[s.stacktop-1].b.flags then begin
+    {$ifdef mse_checkinternalerror}
+     if contextstack[s.stackindex+4].d.kind <> ck_prop then begin
+      internalerror(ie_handler,'20160211A');
+     end;
+     if contextstack[s.stackindex+5].d.kind <> ck_index then begin
+      internalerror(ie_handler,'20160211B');
+     end;
+    {$endif}
+     getclassvalue(4);
+     with ppropertydataty(ele.eledataabs(
+               contextstack[s.stackindex+4].d.dat.prop.propele))^ do begin
+      if not (pof_writesub in flags) then begin
+       errormessage(err_nomemberaccessproperty,[],5);
       end
       else begin
-       po1^.par.memop.locdataaddress.a:= destvar.address.locaddress;
-       po1^.par.memop.locdataaddress.a.framelevel:= i1;
-       po1^.par.memop.locdataaddress.offset:= destvar.offset;
+       ele.pushelementparent(writeele);
+       inc(s.stackindex,4);
+       dosub(psubdataty(ele.eledataabs(writeele)),s.stacktop-s.stackindex-1,[]);
+       dec(s.stackindex,4);
+       ele.popelementparent();
       end;
      end;
-     po1^.par.memop.t:= getopdatatype(destvar);
-     po1^.par.ssas1:= ssa1;                //source
-     po1^.par.ssas2:= dest^.fact.ssaindex; //dest
+    end
+    else begin
+     errormessage(err_illegalexpression,[]);
     end;
    end;
-  end
-  else begin
-   errormessage(err_illegalexpression,[]);
-  end;
+  end; //errorfla
 endlab:
   dec(s.stackindex);
   s.stacktop:= s.stackindex;
