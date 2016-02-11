@@ -992,7 +992,9 @@
 //oc_push
   (ssa: pushssa; proc: @pushop; flags: []), 
 //oc_pop
-  (ssa: popssa; proc: @popop; flags: []), 
+  (ssa: popssa; proc: @popop; flags: []),
+//oc_swapstack
+  (ssa: swapstackssa; proc: @swapstackop; flags: []),
 
 //oc_pushimm1
   (ssa: pushimm1ssa; proc: @pushimm1op; flags: []), 

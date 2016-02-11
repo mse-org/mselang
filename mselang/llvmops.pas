@@ -740,13 +740,16 @@ end;
 procedure pushop();
 begin
  //dummy
-// notimplemented();
 end;
 
 procedure popop();
 begin
  //dummy
-// notimplemented();
+end;
+
+procedure swapstackop();
+begin
+ //dummy
 end;
 
 procedure pushimm1op();
@@ -3244,6 +3247,7 @@ const
 
   pushssa = 0; //dummy
   popssa = 0;  //dummy
+  swapstackssa = 0;  //dummy
 
   pushimm1ssa = 1;
   pushimm8ssa = 1;

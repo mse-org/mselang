@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ procedure handlevaluepath2();
 procedure handlevalueinherited();
 
 type
- dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod);
+ dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter);
  dosubflagsty = set of dosubflagty;
 
 procedure dosub(const asub: psubdataty; const paramco: int32; 
@@ -653,10 +653,10 @@ var
  firstnotfound1: integer;
  callssa: int32;
  si1: databitsizety;
+ paramsize1,lastparamsize1: int32;
 begin
  with info,contextstack[s.stackindex] do begin //classinstance, result
-  if stf_getaddress in s.currentstatementflags
-                           {ff_address in getfactflags} then begin
+  if stf_getaddress in s.currentstatementflags then begin
    d.kind:= ck_ref;
    d.dat.datatyp.typedata:= asub^.typ;
    d.dat.datatyp.indirectlevel:= 1;
@@ -673,24 +673,14 @@ begin
    end;
    subparams1:= @asub^.paramsrel;
    paramco1:= paramco;
-   if [sf_function{,sf_constructor}] * asub^.flags <> [] then begin
+   if [sf_function] * asub^.flags <> [] then begin
     inc(paramco1); //result parameter
    end;
    if sf_method in asub^.flags then begin
     inc(paramco1); //self parameter
-   {
-    if (sf_destructor in asub^.flags) and
-                        (co_mlaruntime in compileoptions) then begin
-     with insertitem(oc_pushduppo,0,false)^ do begin 
-                                      //needed for oc_destroyclass
-      par.imm.vint32:= -pointersize; //includint push address
-     end;
-    end;
-   }
    end;
    if paramco1 <> asub^.paramcount then begin //todo: use correct source pos
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
-//    identerror(idents.high+1,err_wrongnumberofparameters);
    end
    else begin
     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
@@ -705,26 +695,16 @@ begin
        internalerror(ie_handler,'20150325A'); 
       end;
      {$endif}     
-//      dec(d.dat.fact.ssaindex);
       with insertitem(oc_initclass,0,false)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
-       {
-       if backend = bke_llvm then begin
-        classdef:= constlist.adddataoffs(classdef).listid;
-       end;
-       }
       end;
      end
      else begin
       po3:= ele.eledataabs(asub^.resulttype.typeele);
      end;
      d.kind:= ck_subres;
-//      d.dat.datatyp.indirectlevel:= po3^.h.indirectlevel;
      d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
      d.dat.datatyp.typedata:= ele.eledatarel(po3);        
-//      if sf_constructor in asub^.flags then begin
-//       inc(d.dat.datatyp.indirectlevel);
-//      end;
      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
      inc(subparams1);
     end;
@@ -748,15 +728,6 @@ begin
      end;
      inc(subparams1); //instance pointer
     end;
-{     
-    if sf_function in asub^.flags then begin
-     with pparallocinfoty(
-              allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-      ssaindex:= 0; //not used
-      size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
-     end;
-    end;
-}  
     if co_mlaruntime in compileoptions then begin
      int1:= 0;
      if hasresult then begin
@@ -782,8 +753,7 @@ begin
       end;
      end;
     end;
-
-//    for int1:= s.stackindex+3+idents.high to s.stacktop do begin
+    paramsize1:= 0;
     for int1:= s.stacktop-paramco+1 to s.stacktop do begin    
      vardata1:= ele.eledataabs(subparams1^);
      with contextstack[int1] do begin
@@ -820,7 +790,6 @@ begin
         end;
        end;
       end;
-//      if d.dat.datatyp.typedata <> po6^.vf.typ then begin
       if not checkcompatiblefacttype(int1-s.stackindex,
                                 vardata1^.vf.typ,vardata1^.address) then begin
        errormessage(err_incompatibletypeforarg,
@@ -832,37 +801,14 @@ begin
                 allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
        ssaindex:= d.dat.fact.ssaindex;
        size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
-      {
-       if po6^.address.indirectlevel > 0 then begin
-        bitsize:= pointerbitsize;
-       end
-       else begin
-        bitsize:= ptypedataty(ele.eledataabs(po6^.vf.typ))^.bitsize;
-       end;
-      }
+       lastparamsize1:= alignsize(getbytesize(size));
+       inc(paramsize1,lastparamsize1);
       end;
      end;
      inc(subparams1);
     end;
               //todo: exeenv flag for constructor and destructor
-    if hasresult then begin
-    {
-     if not (co_hasfunction in compileoptions) then begin
-      int1:= 0;
-      if sf_constructor in asub^.flags then begin
-       int1:= parent-s.stackindex;           //??? verfy!
-      end;
-      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3); 
-                                   //alloc space for return value
-      if not (sf_constructor in asub^.flags) then begin
-       with additem(oc_pushstackaddr)^ do begin //result var param
-        par.voffset:= -asub^.paramsize+stacklinksize-int1;
-       end;
-      end;
-     end;
-    }
-    end
-    else begin
+    if not hasresult then begin
      d.kind:= ck_subcall;
      if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
                 //owned method
@@ -879,6 +825,13 @@ begin
        par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
        par.memop.locdataaddress.offset:= 0;
        selfpo^.ssaindex:= par.ssad;
+      end;
+     end;
+     if (dsf_indexedsetter in aflags) and 
+                             (co_mlaruntime in compileoptions) then begin
+      with additem(oc_swapstack)^.par.swapstack do begin
+       offset:= -paramsize1;
+       size:= lastparamsize1;
       end;
      end;
     end;
@@ -978,7 +931,6 @@ begin
         //todo: call freemem direcly if there is no finalization
     with additem(oc_destroyclass)^ do begin //insertitem???
      par.ssas1:= d.dat.fact.ssaindex;
-//     selfinstance:= -d.subdef.paramsize;
     end;
    end;
    if dsf_indirect in aflags then begin

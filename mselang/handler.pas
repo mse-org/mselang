@@ -2773,7 +2773,8 @@ begin
       else begin
        ele.pushelementparent(writeele);
        inc(s.stackindex,4);
-       dosub(psubdataty(ele.eledataabs(writeele)),s.stacktop-s.stackindex-1,[]);
+       dosub(psubdataty(ele.eledataabs(writeele)),s.stacktop-s.stackindex-1,
+                               [dsf_indexedsetter]); //swap first/last param
        dec(s.stackindex,4);
        ele.popelementparent();
       end;

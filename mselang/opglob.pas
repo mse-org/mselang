@@ -141,6 +141,7 @@ type
 
   oc_push,
   oc_pop,
+  oc_swapstack,
 
   oc_pushimm1,
   oc_pushimm8,
@@ -593,6 +594,10 @@ type
   13: (voffset: dataoffsty);
   14: (vdatakind: datakindty);
  end;  
+ 
+ swapstackty = record
+  offset,size: int32;
+ end;
 
  ordimmty = record
   case integer of
@@ -892,6 +897,9 @@ type
    );
    oc_progend,oc_halt: (
     progend: progendty;
+   );
+   oc_swapstack: (
+    swapstack: swapstackty;
    );
    oc_push,
    oc_pushimm1,oc_pushimm8,oc_pushimm16,oc_pushimm32,oc_pushimm64,
