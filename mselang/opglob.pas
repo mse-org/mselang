@@ -198,6 +198,7 @@ type
   oc_divcard32,
   oc_divint32,
   oc_mulflo64,
+  oc_divflo64,
   oc_addint32,
   oc_subint32,
   oc_addpoint32,
@@ -590,7 +591,7 @@ type
    7: (vint16: int16);
    8: (vint32: int32);
    9: (vint64: int64);
-  10: (vfloat64: float64);
+  10: (vflo64: flo64);
   11: (vsize: datasizety);
   12: (vpointer: dataaddressty);
   13: (voffset: dataoffsty);
@@ -966,7 +967,9 @@ type
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
    
    oc_negcard32,oc_negint32,oc_negflo64,
-   oc_mulint32,oc_mulflo64,oc_addint32,oc_addflo64,
+   oc_mulcard32,oc_mulint32,oc_mulflo64,
+   oc_divcard32,oc_divint32,oc_divflo64,
+   oc_addint32,oc_addflo64,
    oc_subint32,oc_subflo64,oc_diffset,oc_xorset,
    oc_addpoint32,
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,

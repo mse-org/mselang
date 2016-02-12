@@ -548,7 +548,7 @@ begin
   par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
  end
  else begin
-  par.imm.vfloat64:= value;
+  par.imm.vflo64:= value;
  end;
 end;
 

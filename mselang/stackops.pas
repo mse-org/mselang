@@ -32,7 +32,7 @@ type
  pvcardinalty = ^vcardinalty;
  vintegerty = int32;
  pvintegerty = ^vintegerty;
- vfloatty = float64;
+ vfloatty = flo64;
  pvfloatty = ^vfloatty;
  vpointerty = pointer;
  pvpointerty = ^vpointerty;
@@ -689,7 +689,7 @@ end;
 
 procedure pushimmf64op();
 begin
- pflo64(stackpush(8))^:= cpu.pc^.par.imm.vfloat64; 
+ pflo64(stackpush(8))^:= cpu.pc^.par.imm.vflo64; 
 end;
 
 procedure pushimmdatakindop();
@@ -808,7 +808,7 @@ var
 begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vcardinalty(po2^)*vcardinalty(po1^);
+ vintegerty(po2^):= vcardinalty(po2^) * vcardinalty(po1^);
 end;
 
 procedure mulint32op();
@@ -817,7 +817,7 @@ var
 begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= po1-alignsize(sizeof(vintegerty));
- vintegerty(po2^):= vintegerty(po2^)*vintegerty(po1^);
+ vintegerty(po2^):= vintegerty(po2^) * vintegerty(po1^);
 end;
 
 procedure divcard32op();
@@ -849,7 +849,7 @@ var
  po1: pointer;
 begin
  po1:= cpu.stack - alignsize(sizeof(vintegerty));
- vintegerty(po1^):= vintegerty(po1^)*cpu.pc^.par.imm.vint32;
+ vintegerty(po1^):= vintegerty(po1^) * cpu.pc^.par.imm.vint32;
 end;
 
 procedure mulflo64op();
@@ -858,7 +858,19 @@ var
 begin
  po1:= stackpop(sizeof(vfloatty));
  po2:= po1-alignsize(sizeof(vfloatty));
- vfloatty(po2^):= vfloatty(po2^)*vfloatty(po1^);
+ vfloatty(po2^):= vfloatty(po2^) * vfloatty(po1^);
+end;
+
+procedure divflo64op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vfloatty));
+ po2:= po1-alignsize(sizeof(vfloatty));
+ if vfloatty(po1^) = 0 then begin
+  raise exception.create('Interpreter division by 0');
+ end;
+ vfloatty(po2^):= vfloatty(po2^) / vfloatty(po1^);
 end;
 
 procedure addint32op();
@@ -3800,6 +3812,7 @@ const
   divcard32ssa = 0;
   divint32ssa = 0;
   mulflo64ssa = 0;
+  divflo64ssa = 0;
   addint32ssa = 0;
   subint32ssa = 0;
   addpoint32ssa = 0;

@@ -27,18 +27,18 @@ memodialog.sta=8
  [msememodialogfo]
  x=507
  y=359
- cx=386
- cy=291
+ cx=432
+ cy=295
  wsize=0
  active=1
  visible=1
 testedit.sta=9
  [testeditfo]
  stackedunder=
- x=402
- y=201
- cx=881
- cy=637
+ x=606
+ y=331
+ cx=628
+ cy=595
  wsize=0
  active=1
  visible=1
@@ -73,7 +73,7 @@ c=3
  path=${mselangdir}compiler/mlc.pas
  comment=
  cc=${fpc} -dmse_compiler -B -dmse_checkinternalerror ${file}
- cd=
+ cd=${mselangdir}compiler
  rc=
  rd=
  in=
@@ -95,7 +95,7 @@ c=3
  path=${mselangdir}interpreter/mli.pas
  comment=
  cc=${fpc} -dmse_compiler -B ${file}
- cd=
+ cd=${mselangdir}interpreter
  rc=
  rd=
  in=
@@ -185,7 +185,7 @@ c=3
    (
    kind=1
    a=0,665,4,arith
-   c=30
+   c=32
     (
     kind=1
     a=0,664,4,bool
@@ -792,6 +792,50 @@ c=3
     ao=
     ae=
     aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,divisionop
+    teststate=1
+    path=divisionop.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo= 1.2300000000000000E+002
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao= 1.2300000000000000E+002
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,divisionop llvm
+    teststate=1
+    path=divisionop.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=1.230000e+02
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=1.230000e+02
+    ae=
+    aec=0
     ie=0
     )
     (
@@ -2341,8 +2385,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B736FF30
-    +
+    ao=An unhandled exception occured at $B7BE3F30
     ae=
     aec=123
     ie=0
@@ -2999,7 +3042,6 @@ c=3
     eec=0
     cr=0
     ao=123
-    +
     ae=
     aec=0
     ie=0
@@ -3022,7 +3064,6 @@ c=3
     eec=0
     cr=0
     ao=123
-    +
     ae=
     aec=0
     ie=0
@@ -3045,7 +3086,6 @@ c=3
     eec=0
     cr=0
     ao=abc
-    +
     ae=
     aec=0
     ie=0
@@ -3068,7 +3108,6 @@ c=3
     eec=0
     cr=0
     ao=abc
-    +
     ae=
     aec=0
     ie=0
@@ -3155,7 +3194,6 @@ c=3
     eec=0
     cr=0
     ao=-1
-    +
     ae=
     aec=0
     ie=0
@@ -3178,7 +3216,6 @@ c=3
     eec=0
     cr=0
     ao=-1
-    +
     ae=
     aec=0
     ie=0
@@ -4224,9 +4261,7 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
-    +
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
-    +
     aec=1
     ie=0
     )
@@ -5576,7 +5611,6 @@ c=3
    eec=0
    cr=0
    ao=abc
-   +
    ae=
    aec=0
    ie=0
@@ -5599,7 +5633,6 @@ c=3
    eec=0
    cr=0
    ao=abc
-   +
    ae=
    aec=0
    ie=0
@@ -5839,9 +5872,7 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
-    +
     ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
-    +
     aec=1
     ie=0
     )
@@ -5864,7 +5895,6 @@ c=3
     cr=0
     ao=MSElang Compiler version 0.0
     +Copyright (c) 2013-2015 by Martin Schreiber
-    +
     ae=
     aec=0
     ie=0
@@ -6075,14 +6105,16 @@ visible=1
 propcolwidthref=628
 width0=50
 sortdescend0=0
-width1=222
+width1=189
 sortdescend1=0
-width2=172
+width2=222
 sortdescend2=0
 width3=231
 sortdescend3=0
 sortdescend4=0
-rowstate=147
+rowstate=149
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

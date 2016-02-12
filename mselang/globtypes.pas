@@ -28,8 +28,8 @@ type
  int8 = shortint; 
  int16 = smallint;
  int32 = integer;
- float32 = single;
- float64 = double;
+ flo32 = single;
+ flo64 = double;
 
  pcard8 = ^card8; 
  ppcard8 = ^pcard8;
@@ -151,7 +151,7 @@ type
  systypety = (st_none,st_pointer,st_bool1,
               st_int8,st_int16,st_int32,st_int64,
               st_card8,st_card16,st_card32,st_card64,
-              st_float64,
+              st_flo64,
               st_char8,st_char16,st_char32,
               st_string8);
 const
@@ -266,7 +266,7 @@ type
     vcardinal: card64;
    );
    dk_float:(
-    vfloat: float64;
+    vfloat: flo64;
    );
    dk_address:(
     vaddress: addressvaluety;

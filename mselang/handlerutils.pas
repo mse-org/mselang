@@ -35,6 +35,7 @@ type
   
  opsinfoty = record
   ops: array[stackdatakindty] of opcodety;
+  wantedtype: systypety;
   opname: string;
  end;
 
@@ -48,7 +49,7 @@ const
  //das_none,das_1,   das_2_7,das_8,  das_9_15,das_16,  das_17_31,das_32,
   st_none,  st_bool1,st_none,st_int8,st_int16,st_int16,st_int32, st_int32,
 //das_33_63,das_64,  das_pointer,das_f16,das_f32,das_f64,   das_sub,das_meta
-  st_int64, st_int64,st_pointer, st_none,st_none,st_float64,st_none,st_none
+  st_int64, st_int64,st_pointer, st_none,st_none,st_flo64,st_none,st_none
  );
 
  stackdatakinds: array[datakindty] of stackdatakindty = (
@@ -68,7 +69,7 @@ const
             dk_set);
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
-           (st_none, st_pointer, st_bool1, st_card32, st_int32, st_float64,
+           (st_none, st_pointer, st_bool1, st_card32, st_int32, st_flo64,
           //sdk_set32
             st_card32);
 
@@ -117,8 +118,7 @@ function addvar(const aname: identty; const avislevel: visikindsty;
 
 procedure addfactbinop(const aopcode: opcodety);
 procedure resolveshortcuts(const stackoffset,destoffset: int32);
-procedure updateop(const opsinfo: opsinfoty{; 
-                                 const ashortcutop: shortcutopty = sco_none});
+procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
@@ -2221,8 +2221,7 @@ begin
  end;
 end;
 
-procedure updateop(const opsinfo: opsinfoty{; 
-                              const ashortcutop: shortcutopty = sco_none});
+procedure updateop(const opsinfo: opsinfoty);
  procedure div0error();
  begin
   with info do begin
@@ -2257,20 +2256,33 @@ begin
    if not bo2 then begin
     goto endlab;
    end;
-   
-   po1:= ele.eledataabs(d.dat.datatyp.typedata);
-   int1:= d.dat.datatyp.indirectlevel;
-   if not tryconvert(s.stacktop-s.stackindex,po1,int1,[]) then begin
-    with contextstack[s.stacktop] do begin
-     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-     int1:= d.dat.datatyp.indirectlevel;
+   if opsinfo.wantedtype <> st_none then begin
+    if not tryconvert(s.stacktop-s.stackindex,opsinfo.wantedtype) then begin
+     operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
+     goto endlab;
     end;
-    if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[]) then begin
+    if not tryconvert(s.stacktop-s.stackindex-2,opsinfo.wantedtype) then begin
+     operationnotsupportederror(d,contextstack[s.stacktop-2].d,opsinfo.opname);
+     goto endlab;
+    end;
+    bo1:= true;
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+   end
+   else begin   
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+    int1:= d.dat.datatyp.indirectlevel;
+    if not tryconvert(s.stacktop-s.stackindex,po1,int1,[]) then begin
+     with contextstack[s.stacktop] do begin
+      po1:= ele.eledataabs(d.dat.datatyp.typedata);
+      int1:= d.dat.datatyp.indirectlevel;
+     end;
+     if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[]) then begin
+      bo1:= true;
+     end;
+    end
+    else begin
      bo1:= true;
     end;
-   end
-   else begin
-    bo1:= true;
    end;
    if not bo1 then begin
     incompatibletypeserror(contextstack[s.stacktop-2].d,
@@ -2306,12 +2318,23 @@ begin
       bo2:= true;
       po2:= @contextstack[s.stacktop].d.dat.constval.vinteger;
       case op1 of //add and sub handled in addsubterm()
+       oc_mulcard32: begin       
+        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
+                                                       card32(pcard64(po2)^);
+       end;
        oc_mulint32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) *
                                                          int32(pint64(po2)^);
        end;
-       oc_mulcard32: begin       
-        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
+       oc_mulflo64: begin
+        d.dat.constval.vfloat:= d.dat.constval.vfloat * (pflo64(po2)^);
+       end;
+       oc_divcard32: begin
+        if pcard64(po2)^ = 0 then begin
+         div0error();
+         goto endlab;
+        end;
+        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) div
                                                        card32(pcard64(po2)^);
        end;
        oc_divint32: begin
@@ -2322,13 +2345,12 @@ begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) div
                                                          int32(pint64(po2)^);
        end;
-       oc_divcard32: begin
-        if pcard64(po2)^ = 0 then begin
+       oc_divflo64: begin
+        if pflo64(po2)^ = 0 then begin
          div0error();
          goto endlab;
         end;
-        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) div
-                                                       card32(pcard64(po2)^);
+        d.dat.constval.vfloat:= d.dat.constval.vfloat / pflo64(po2)^;
        end;
        oc_and32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) and

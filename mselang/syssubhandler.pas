@@ -771,7 +771,7 @@ begin
     d.kind:= ck_subres;
     d.dat.fact.ssaindex:= info.s.ssa.index;
     d.dat.indirection:= 0;
-    d.dat.datatyp:= sysdatatypes[st_float64];
+    d.dat.datatyp:= sysdatatypes[st_flo64];
    end;
   end;
  end;

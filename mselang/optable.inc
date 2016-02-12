@@ -1175,6 +1175,8 @@
   (ssa: divint32ssa; proc: @divint32op; flags: []), 
 //oc_mulflo64
   (ssa: mulflo64ssa; proc: @mulflo64op; flags: []), 
+//oc_divflo64
+  (ssa: divflo64ssa; proc: @divflo64op; flags: []), 
 //oc_addint32
   (ssa: addint32ssa; proc: @addint32op; flags: []), 
 //oc_subint32

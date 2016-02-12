@@ -801,7 +801,10 @@ end;
 
 procedure int32toflo64op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f64),
+                                                               CAST_SITOFP);
+ end;
 end;
 
 procedure potoint32op();
@@ -896,6 +899,11 @@ end;
 procedure mulflo64op();
 begin
  outbinop(BINOP_MUL);
+end;
+
+procedure divflo64op();
+begin
+ outbinop(BINOP_SDIV);
 end;
 
 procedure addint32op();
@@ -3354,6 +3362,7 @@ const
   divcard32ssa = 1;
   divint32ssa = 1;
   mulflo64ssa = 1;
+  divflo64ssa = 1;
   addint32ssa = 1;
   subint32ssa = 1;
   addpoint32ssa = 2;

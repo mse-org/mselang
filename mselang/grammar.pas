@@ -1511,6 +1511,11 @@ var
                continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'divfact');
+ divisionfactco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'divisionfact');
  andfactco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: false; 
@@ -7533,7 +7538,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bexp1: array[0..22] of branchty = (
+ bexp1: array[0..23] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -7626,6 +7631,13 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @addtermco); stack: nil; keys: (
     (kind: bkk_char; chars: ['+']),
     (kind: bkk_none; chars: []),
@@ -7682,6 +7694,16 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
+ bdivisionfact: array[0..1] of branchty = (
+   (flags: [bf_nt,bf_emptytoken,bf_push];
+     dest: (context: @factco); stack: nil; keys: (
+    (kind: bkk_char; chars: [#0..#255]),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: []; dest: (context: nil); stack: nil; keyword: 0)
+   );
  bandfact: array[0..1] of branchty = (
    (flags: [bf_nt,bf_emptytoken,bf_push];
      dest: (context: @factco); stack: nil; keys: (
@@ -7722,7 +7744,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- baddterm1: array[0..10] of branchty = (
+ baddterm1: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -7773,6 +7795,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7789,7 +7818,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bsubterm1: array[0..10] of branchty = (
+ bsubterm1: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -7840,6 +7869,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7856,7 +7892,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- borterm1: array[0..10] of branchty = (
+ borterm1: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -7907,6 +7943,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7923,7 +7966,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bxorterm1: array[0..10] of branchty = (
+ bxorterm1: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -7974,6 +8017,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -7990,7 +8040,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bxorsetterm1: array[0..10] of branchty = (
+ bxorsetterm1: array[0..11] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8045,6 +8095,13 @@ const
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
     )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
  beqsimpexp: array[0..1] of branchty = (
@@ -8057,7 +8114,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- beqsimpexp1: array[0..15] of branchty = (
+ beqsimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8121,6 +8178,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8151,7 +8215,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bnesimpexp1: array[0..15] of branchty = (
+ bnesimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8215,6 +8279,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8245,7 +8316,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgtsimpexp1: array[0..15] of branchty = (
+ bgtsimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8309,6 +8380,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8339,7 +8417,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bltsimpexp1: array[0..15] of branchty = (
+ bltsimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8403,6 +8481,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8433,7 +8518,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- bgesimpexp1: array[0..15] of branchty = (
+ bgesimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8497,6 +8582,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8527,7 +8619,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- blesimpexp1: array[0..15] of branchty = (
+ blesimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8591,6 +8683,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -8621,7 +8720,7 @@ const
     )),
    (flags: []; dest: (context: nil); stack: nil; keyword: 0)
    );
- binsimpexp1: array[0..15] of branchty = (
+ binsimpexp1: array[0..16] of branchty = (
    (flags: [bf_nt,bf_keyword,bf_eat,bf_push,bf_continue];
      dest: (context: @divfactco); stack: nil; 
      keyword: $5F41CE0F{'div'}),
@@ -8685,6 +8784,13 @@ const
    (flags: [bf_nt,bf_eat,bf_push,bf_continue];
      dest: (context: @mulfactco); stack: nil; keys: (
     (kind: bkk_char; chars: ['*']),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: []),
+    (kind: bkk_none; chars: [])
+    )),
+   (flags: [bf_nt,bf_eat,bf_push,bf_continue];
+     dest: (context: @divisionfactco); stack: nil; keys: (
+    (kind: bkk_char; chars: ['/']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: [])
@@ -10818,6 +10924,8 @@ begin
  mulfactco.handleexit:= @handlemulfact;
  divfactco.branch:= @bdivfact;
  divfactco.handleexit:= @handledivfact;
+ divisionfactco.branch:= @bdivisionfact;
+ divisionfactco.handleexit:= @handledivisionfact;
  andfactco.branch:= @bandfact;
  andfactco.handleentry:= @andopentry;
  andfactco.handleexit:= @handleandfact;

@@ -237,7 +237,6 @@ function tryconvert(const stackoffset: integer;{var context: contextitemty;}
                        const aoptions: convertoptionsty): boolean;
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
- int1,i2: integer;
 
  procedure convertsize(const atable: converttablety);
  var
@@ -263,6 +262,7 @@ var                     //todo: optimize, use tables, complete
  
 var
  pointerconv: boolean;
+ i1,i2,i3: integer;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   pointerconv:= false;
@@ -360,8 +360,9 @@ begin
         dk_float: begin
          case source1^.h.kind of
           dk_integer: begin //todo: data size
+           i1:= d.dat.fact.ssaindex;
            with insertitem(oc_int32toflo64,stackoffset,false)^ do begin
-            par.ssas1:= d.dat.fact.ssaindex;
+            par.ssas1:= i1;
            end;
            result:= true;
           end;
@@ -427,9 +428,9 @@ begin
             (d.dat.datatyp.indirectlevel > 0) and 
                                          (coo_type in aoptions) then begin
     if getvalue(stackoffset,das_pointer) then begin //pointer to int
-     int1:= d.dat.fact.ssaindex;        //todo: operand size
+     i1:= d.dat.fact.ssaindex;        //todo: operand size
      with insertitem(oc_potoint32,stackoffset,false)^ do begin
-      par.ssas1:= int1;
+      par.ssas1:= i1;
      end;
      d.dat.datatyp.typedata:= ele.eledatarel(dest);
      d.dat.datatyp.indirectlevel:= 0;
@@ -441,14 +442,14 @@ begin
           (d.dat.datatyp.indirectlevel = 1) and 
              (source1^.h.kind = dk_class) and 
                      (dest^.h.kind = dk_interface) then begin
-     int1:= ele.elementparent;
+     i1:= ele.elementparent;
      po1:= source1;
      repeat
-      if getclassinterfaceoffset(po1,dest,int1) then begin
+      if getclassinterfaceoffset(po1,dest,i3) then begin
        if getvalue(stackoffset,das_pointer) then begin
         i2:= d.dat.fact.ssaindex;
         with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
-         setimmint32(int1,par);
+         setimmint32(i3,par);
          par.ssas1:= i2;
         end;
         result:= true;
@@ -464,16 +465,16 @@ begin
        po1:= nil;
       end;
      until po1 = nil;
-     ele.elementparent:= int1;
+     ele.elementparent:= i1;
     end
     else begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
               (source1^.h.bitsize = pointerbitsize) or 
                        (source1^.h.kind in [dk_integer,dk_cardinal])then begin
       if getvalue(stackoffset,pointerintsize) then begin //any to pointer
-       int1:= d.dat.fact.ssaindex; //todo: no int source
+       i1:= d.dat.fact.ssaindex; //todo: no int source
        with insertitem(oc_inttopo,stackoffset,false)^ do begin
-        par.ssas1:= int1;
+        par.ssas1:= i1;
        end;
        d.dat.datatyp.typedata:= ele.eledatarel(dest);
        d.dat.datatyp.indirectlevel:= destindirectlevel;
