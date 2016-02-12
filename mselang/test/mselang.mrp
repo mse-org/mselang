@@ -112,7 +112,7 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
@@ -139,8 +139,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -161,8 +161,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -207,8 +207,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -229,8 +229,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -251,8 +251,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -273,8 +273,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -295,8 +295,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -317,8 +317,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -339,8 +339,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -361,8 +361,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -403,8 +403,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -425,8 +425,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -447,8 +447,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -469,8 +469,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -511,8 +511,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -533,8 +533,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -555,8 +555,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -577,8 +577,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -619,8 +619,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -641,8 +641,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -663,8 +663,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -685,8 +685,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -707,8 +707,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -729,8 +729,8 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=
      aec=123
      ie=0
      )
@@ -767,8 +767,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -789,8 +789,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -811,8 +811,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -833,8 +833,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -855,8 +855,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -877,8 +877,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -899,8 +899,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -921,8 +921,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -943,8 +943,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -965,8 +965,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -987,8 +987,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1009,8 +1009,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1031,8 +1031,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1053,8 +1053,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1075,8 +1075,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1097,8 +1097,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1119,8 +1119,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -1141,8 +1141,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -1163,8 +1163,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1185,8 +1185,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1207,8 +1207,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1229,8 +1229,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1251,8 +1251,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1273,8 +1273,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1311,8 +1311,8 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=0
    ie=0
    )
@@ -1337,8 +1337,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1359,8 +1359,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1381,8 +1381,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1403,8 +1403,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1425,8 +1425,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1447,8 +1447,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1469,8 +1469,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1491,8 +1491,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1513,8 +1513,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1535,8 +1535,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1557,8 +1557,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1579,8 +1579,8 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=99
     ie=0
     )
@@ -1601,8 +1601,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1623,8 +1623,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1645,8 +1645,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1667,8 +1667,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1689,8 +1689,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1711,8 +1711,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1733,8 +1733,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1755,8 +1755,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1777,8 +1777,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1799,8 +1799,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1821,8 +1821,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1843,8 +1843,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1865,8 +1865,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1887,8 +1887,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1909,8 +1909,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1931,8 +1931,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1953,8 +1953,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -1975,8 +1975,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2017,8 +2017,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -2039,8 +2039,8 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=1
     ie=0
     )
@@ -2061,8 +2061,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2083,8 +2083,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2105,8 +2105,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2127,8 +2127,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2169,8 +2169,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2191,8 +2191,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2233,8 +2233,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -2255,8 +2255,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -2297,8 +2297,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=1
-    ae=0
+    ao=An unhandled exception occured at $B73D4F30
+    +
+    ae=
     aec=123
     ie=0
     )
@@ -2319,8 +2320,8 @@ c=3
     ae=0
     eec=217
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=217
     ie=0
     )
@@ -2341,8 +2342,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2363,8 +2364,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2385,8 +2386,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2407,8 +2408,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2449,8 +2450,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2471,8 +2472,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2493,8 +2494,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2515,8 +2516,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2537,8 +2538,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2559,8 +2560,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2581,8 +2582,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2603,8 +2604,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2625,8 +2626,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2647,8 +2648,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2669,8 +2670,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2691,8 +2692,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2713,8 +2714,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2735,8 +2736,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2757,8 +2758,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2779,8 +2780,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2801,8 +2802,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2823,8 +2824,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2845,8 +2846,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2867,8 +2868,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2889,8 +2890,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2911,8 +2912,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2953,8 +2954,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -2975,8 +2977,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=123
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -2997,8 +3000,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -3019,8 +3023,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=abc
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -3061,8 +3066,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3083,8 +3088,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3105,8 +3110,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=-1
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -3127,8 +3133,9 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=-1
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -3169,8 +3176,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3191,8 +3198,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3233,8 +3240,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3255,8 +3262,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3277,8 +3284,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3299,8 +3306,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3321,8 +3328,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3343,8 +3350,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3365,8 +3372,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3387,8 +3394,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3429,8 +3436,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3451,8 +3458,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3473,8 +3480,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3495,8 +3502,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3517,8 +3524,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3539,8 +3546,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3561,8 +3568,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3583,8 +3590,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3605,8 +3612,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3627,8 +3634,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3669,8 +3676,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -3691,8 +3698,8 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=0
     ie=0
     )
@@ -3733,8 +3740,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3755,8 +3762,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3777,8 +3784,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3799,8 +3806,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3821,8 +3828,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3843,8 +3850,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3865,8 +3872,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3887,8 +3894,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3909,8 +3916,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3931,8 +3938,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3953,8 +3960,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3975,8 +3982,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -3997,8 +4004,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4019,8 +4026,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4041,8 +4048,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4083,8 +4090,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4105,8 +4112,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4127,8 +4134,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4149,8 +4156,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4171,8 +4178,11 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=1
-    ae=1
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2015 by Martin Schreiber
+    +
+    ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
+    +
     aec=1
     ie=0
     )
@@ -4193,8 +4203,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4215,8 +4225,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4257,8 +4267,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4279,8 +4289,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4321,8 +4331,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4343,8 +4353,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4365,8 +4375,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4387,8 +4397,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4409,8 +4419,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4431,8 +4441,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4453,8 +4463,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4475,8 +4485,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4497,8 +4507,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4519,8 +4529,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4541,8 +4551,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4563,8 +4573,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -4602,11 +4612,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=19
    (
    kind=1
-   a=0,665,5,properties
+   a=0,665,4,properties
    c=24
     (
     kind=2
@@ -4742,8 +4752,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,classprop4
-    teststate=2
+    a=0,648,1,classprop4
+    teststate=1
     path=classprop4.mla
     comment=
     cc=${mlc}
@@ -4757,10 +4767,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Interpreter AV
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -4787,8 +4796,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,funcread
-    teststate=2
+    a=0,648,1,funcread
+    teststate=1
     path=funcread.mla
     comment=
     cc=${mlc}
@@ -4802,10 +4811,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Interpreter AV
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -4832,8 +4840,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,funcread2
-    teststate=2
+    a=0,648,1,funcread2
+    teststate=1
     path=funcread2.mla
     comment=
     cc=${mlc}
@@ -4847,10 +4855,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Interpreter AV
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -5097,8 +5104,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,selftest
-    teststate=2
+    a=0,648,1,selftest
+    teststate=1
     path=selftest.mla
     comment=
     cc=${mlc}
@@ -5112,10 +5119,9 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Interpreter AV
-    +
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
@@ -5140,7 +5146,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=properties/
    comment=
    cc=
@@ -5173,8 +5179,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5195,8 +5201,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5217,8 +5223,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5239,8 +5245,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5261,8 +5267,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5283,8 +5289,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5305,8 +5311,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5327,8 +5333,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5349,8 +5355,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5371,8 +5377,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5393,8 +5399,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5415,8 +5421,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5437,8 +5443,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5459,8 +5465,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5481,8 +5487,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5503,8 +5509,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5525,8 +5531,9 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=abc
+   +
+   ae=
    aec=0
    ie=0
    )
@@ -5547,12 +5554,13 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=0
-   ae=0
+   ao=abc
+   +
+   ae=
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -5593,8 +5601,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=123 123
+    ae=
     aec=123
     ie=0
     )
@@ -5615,8 +5623,8 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=123 123
+    ae=
     aec=123
     ie=0
     )
@@ -5673,8 +5681,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5695,8 +5703,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5717,8 +5725,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5739,8 +5747,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5785,8 +5793,11 @@ c=3
     ae=1
     eec=1
     cr=0
-    ao=1
-    ae=1
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2015 by Martin Schreiber
+    +
+    ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
+    +
     aec=1
     ie=0
     )
@@ -5807,8 +5818,10 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=1
-    ae=0
+    ao=MSElang Compiler version 0.0
+    +Copyright (c) 2013-2015 by Martin Schreiber
+    +
+    ae=
     aec=0
     ie=0
     )
@@ -5865,8 +5878,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5887,8 +5900,8 @@ c=3
    ae=0
    eec=123
    cr=0
-   ao=0
-   ae=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -5908,7 +5921,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

@@ -1,0 +1,37 @@
+program arrayparasetind1;
+
+type
+ ttest = class
+  private
+   ffield: int32;
+   procedure setfield(avalue: int32;i2: int32;i3:int32);
+  public
+   constructor create();
+   destructor destroy();
+   property field[i2: int32;i3:int32]: int32 write setfield;
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+procedure ttest.setfield(avalue: int32; i2: int32;i3:int32);
+begin
+ self.ffield:= avalue*i2+i3;
+end;
+
+var
+ t1: ttest;
+
+begin
+ t1:= ttest.create();
+ t1.field[10,3]:= 12;
+ exitcode:= t1.ffield;
+ t1.destroy();
+end.
