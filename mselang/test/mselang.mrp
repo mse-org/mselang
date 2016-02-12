@@ -116,7 +116,7 @@ c=3
  c=6
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=19
    (
    kind=1
@@ -185,7 +185,7 @@ c=3
    (
    kind=1
    a=0,665,4,arith
-   c=28
+   c=30
     (
     kind=1
     a=0,664,4,bool
@@ -492,7 +492,7 @@ c=3
     )
     (
     kind=1
-    a=0,665,4,float
+    a=0,664,4,float
     c=4
      (
      kind=2
@@ -749,6 +749,50 @@ c=3
     eec=
     cdef=
     pdef=
+    )
+    (
+    kind=2
+    a=0,648,1,divop
+    teststate=1
+    path=divop.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,divop llvm
+    teststate=1
+    path=divop.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
     )
     (
     kind=2
@@ -2297,7 +2341,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73D4F30
+    ao=An unhandled exception occured at $B736FF30
     +
     ae=
     aec=123
@@ -4612,11 +4656,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=19
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=24
     (
     kind=2
@@ -6038,7 +6082,100 @@ sortdescend2=0
 width3=231
 sortdescend3=0
 sortdescend4=0
-rowstate=54
+rowstate=147
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

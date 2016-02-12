@@ -875,6 +875,16 @@ begin
  outbinop(BINOP_MUL);
 end;
 
+procedure divcard32op();
+begin
+ outbinop(BINOP_UDIV);
+end;
+
+procedure divint32op();
+begin
+ outbinop(BINOP_SDIV);
+end;
+
 procedure mulimmint32op();
 begin
  with pc^.par do begin
@@ -3341,6 +3351,8 @@ const
 
   mulcard32ssa = 1;
   mulint32ssa = 1;
+  divcard32ssa = 1;
+  divint32ssa = 1;
   mulflo64ssa = 1;
   addint32ssa = 1;
   subint32ssa = 1;

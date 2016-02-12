@@ -195,6 +195,8 @@ type
 
   oc_mulcard32,
   oc_mulint32,
+  oc_divcard32,
+  oc_divint32,
   oc_mulflo64,
   oc_addint32,
   oc_subint32,

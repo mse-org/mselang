@@ -856,6 +856,7 @@ statementend,,,handlestatementend!
 //
 {facts}
 " '*',mulfact-*>
+ 'div'.,divfact-*>
  'and'.,andfact-*>
  'shl'.,shlfact-*>
  'shr'.,shrfact-*>
@@ -898,6 +899,8 @@ exp1,,,handleexp1
 ${simpexpswitch} 
 
 mulfact,,,handlemulfact
+ '',fact*
+divfact,,,handledivfact
  '',fact*
 andfact,,andopentry,handleandfact
  '',fact*

@@ -1169,6 +1169,10 @@
   (ssa: mulcard32ssa; proc: @mulcard32op; flags: []), 
 //oc_mulint32
   (ssa: mulint32ssa; proc: @mulint32op; flags: []), 
+//oc_divcard32
+  (ssa: divcard32ssa; proc: @divcard32op; flags: []), 
+//oc_divint32
+  (ssa: divint32ssa; proc: @divint32op; flags: []), 
 //oc_mulflo64
   (ssa: mulflo64ssa; proc: @mulflo64op; flags: []), 
 //oc_addint32

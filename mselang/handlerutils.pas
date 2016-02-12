@@ -2223,6 +2223,13 @@ end;
 
 procedure updateop(const opsinfo: opsinfoty{; 
                               const ashortcutop: shortcutopty = sco_none});
+ procedure div0error();
+ begin
+  with info do begin
+   errormessage(err_div0,[],s.stacktop-s.stackindex);
+  end;
+ end;
+ 
 var
  kinda,kindb: datakindty;
  int1: integer;
@@ -2231,6 +2238,7 @@ var
  po1: ptypedataty;
  bo1,bo2: boolean;
  si1: databitsizety;
+ po2: pointer;
 label
  endlab;
 begin
@@ -2296,34 +2304,51 @@ begin
      if (d.kind = ck_const) and 
                       (contextstack[s.stacktop].d.kind = ck_const) then begin
       bo2:= true;
+      po2:= @contextstack[s.stacktop].d.dat.constval.vinteger;
       case op1 of //add and sub handled in addsubterm()
        oc_mulint32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) *
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+                                                         int32(pint64(po2)^);
        end;
-       oc_mulcard32: begin
+       oc_mulcard32: begin       
         d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
-                 card32(contextstack[s.stacktop].d.dat.constval.vcardinal);
+                                                       card32(pcard64(po2)^);
+       end;
+       oc_divint32: begin
+        if pint64(po2)^ = 0 then begin
+         div0error();
+         goto endlab;
+        end;
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) div
+                                                         int32(pint64(po2)^);
+       end;
+       oc_divcard32: begin
+        if pcard64(po2)^ = 0 then begin
+         div0error();
+         goto endlab;
+        end;
+        d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) div
+                                                       card32(pcard64(po2)^);
        end;
        oc_and32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) and
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+                                                         int32(pint64(po2)^);
        end;
        oc_or32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+                                                         int32(pint64(po2)^);
        end;
        oc_xor32: begin
-        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) or
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+        d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) xor
+                                                         int32(pint64(po2)^);
        end;
        oc_shl32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shl
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+                                                         int32(pint64(po2)^);
        end;
        oc_shr32: begin
         d.dat.constval.vinteger:= int32(d.dat.constval.vinteger) shr
-                 int32(contextstack[s.stacktop].d.dat.constval.vinteger);
+                                                         int32(pint64(po2)^);
        end; //todo: handle all ops
        else begin
         bo2:= false;

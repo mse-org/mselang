@@ -820,6 +820,30 @@ begin
  vintegerty(po2^):= vintegerty(po2^)*vintegerty(po1^);
 end;
 
+procedure divcard32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ if vcardinalty(po1^) = 0 then begin
+  raise exception.create('Interpreter division by 0');
+ end;
+ vintegerty(po2^):= vcardinalty(po2^) div vcardinalty(po1^);
+end;
+
+procedure divint32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ if vintegerty(po1^) = 0 then begin
+  raise exception.create('Interpreter division by 0');
+ end;
+ vintegerty(po2^):= vintegerty(po2^) div vintegerty(po1^);
+end;
+
 procedure mulimmint32op();
 var
  po1: pointer;
@@ -3773,6 +3797,8 @@ const
 
   mulcard32ssa = 0;
   mulint32ssa = 0;
+  divcard32ssa = 0;
+  divint32ssa = 0;
   mulflo64ssa = 0;
   addint32ssa = 0;
   subint32ssa = 0;

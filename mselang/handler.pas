@@ -119,6 +119,7 @@ procedure handleshrfact();
 procedure handlenegfact();
 procedure handlenotfact();
 procedure handlemulfact();
+procedure handledivfact();
 procedure handlesetfact();
 
 procedure handlefact2entry();
@@ -797,8 +798,6 @@ begin
 end;
 *)
 
-//todo: boolean expression shortcut
-
 const                     
  mulops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
@@ -806,6 +805,13 @@ const
        //sdk_set32
          oc_and32);
                      opname: '*');
+
+ divops: opsinfoty = 
+       //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,  sdk_flo64)
+  (ops: (oc_none, oc_none,    oc_none,  oc_divcard32,oc_divint32,oc_none,
+       //sdk_set32
+         oc_none);
+                     opname: 'div');
 
  andops: opsinfoty = 
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64)
@@ -831,7 +837,15 @@ begin
 {$ifdef mse_debugparser}
  outhandle('MULFACT');
 {$endif}
- updateop(mulops);  //todo: optimize constants
+ updateop(mulops);
+end;
+
+procedure handledivfact();
+begin
+{$ifdef mse_debugparser}
+ outhandle('DIVFACT');
+{$endif}
+ updateop(divops);
 end;
 
 const 
