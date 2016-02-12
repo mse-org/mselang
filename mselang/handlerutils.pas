@@ -1930,13 +1930,15 @@ begin                    //todo: optimize
        inc(s.stackindex,stackoffset); //class instance
        pocont1:= @contextstack[s.stacktop];
        pocont2:= pocont1;
-       while pocont2^.d.kind <> ck_index do begin
-        dec(pocont2);
-       {$ifdef checkinternalerror}
-        if pocont2 < @contextstack[s.stackindex] then begin
-         internalerror(ie_handler,'20160207B');
+       if s.stacktop > s.stackindex then begin
+        while pocont2^.d.kind <> ck_index do begin
+         dec(pocont2);
+        {$ifdef mse_checkinternalerror}
+         if pocont2 < @contextstack[s.stackindex] then begin
+          internalerror(ie_handler,'20160207B');
+         end;
+        {$endif}
         end;
-       {$endif}
        end;
        dosub(psubdataty(ele.eledataabs(readele)),pocont1-pocont2,[]);
        dec(s.stackindex,stackoffset);
