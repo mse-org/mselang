@@ -20,6 +20,8 @@ interface
 uses
  globtypes,msehash,msestrings;
  
+{$define caseinsensitive} 
+
 type
  identnamety = record
   offset: int32; //relative to data block
@@ -289,7 +291,11 @@ begin
  wo1:= hashmask[0];
  po1:= akey.po;
  for int1:= 0 to akey.len-1 do begin
+ {$ifdef caseinsensitive}
+  by1:= byte(lowerchars[po1[int1]]);
+ {$else}
   by1:= byte(po1[int1]);
+ {$endif}
   wo1:= ((wo1 + by1) xor by1);
  end;
  wo1:= (wo1 xor wo1 shl 7);
@@ -462,7 +468,11 @@ begin
   po2:= po1;
   wo1:= hashmask[0];
   while true do begin
+  {$ifdef caseinsensitive}
+   by1:= byte(lowerchars[po1^]);
+  {$else}
    by1:= byte(po1^);
+  {$endif}
    if by1 = 0 then begin
     break;
    end;
@@ -484,7 +494,11 @@ begin
   po2:= stringdata + indexidentdataty(aitemdata).key.offset + 
                                                   sizeof(identbufferty);
   for int1:= 0 to len-1 do begin
+  {$ifdef caseinsensitive}
+   if lowerchars[po1[int1]] <> lowerchars[po2[int1]] then begin
+  {$else}
    if po1[int1] <> po2[int1] then begin
+  {$endif}
     exit;
    end;
   end;
