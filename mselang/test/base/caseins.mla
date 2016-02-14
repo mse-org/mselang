@@ -1,0 +1,9 @@
+program test;
+
+var
+ i1: iNt32;
+begin
+ I1:= 122;
+ InC(I1);
+ ExitCode:= I1;
+end.
