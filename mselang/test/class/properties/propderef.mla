@@ -1,0 +1,73 @@
+program propderef;
+
+type
+ pint32 = ^int32;
+
+ ttest = class
+  private
+   ffield: pint32;
+   function getfield(): pint32;
+   procedure setfield(avalue: pint32);
+   function getfield2(a: int32; b: int32): pint32;
+   procedure setfield2(avalue: pint32; a: int32; b: int32);
+  public
+   constructor create();
+   destructor destroy();
+   property field: pint32 read getfield write setfield;
+   property field1: pint32 read ffield write ffield;
+   property field2[a: int32; b: int32]: pint32 read getfield2 write setfield2;
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+function ttest.getfield(): pint32;
+begin
+ result:= ffield;
+end;
+
+procedure ttest.setfield(avalue: pint32);
+begin
+ ffield:= avalue;
+end;
+
+function ttest.getfield2(a: int32; b: int32): pint32;
+begin
+ result:= ffield-a-b;
+end;
+
+procedure ttest.setfield2(avalue: pint32; a: int32; b: int32);
+begin
+ ffield:= avalue+a+b;
+end;
+
+var
+ i1: int32;
+ t1: ttest;
+ po1: pint32;
+begin
+ t1:= ttest.create();
+ t1.field:= @i1;
+ t1.field^:= 123;
+ if i1 = 123 then begin
+  i1:= 0;
+  t1.ffield:= nil;
+  t1.field1:= @i1;
+  t1.field1^:= 123;
+  if i1 = 123 then begin
+   i1:= 0;
+   t1.ffield:= nil;
+   t1.field2[1,2]:= @i1;
+   t1.field2[1,2]^:= 123;
+   exitcode:= i1;
+  end;
+ end;
+ t1.destroy();
+end.

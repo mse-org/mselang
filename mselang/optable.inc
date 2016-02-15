@@ -1183,6 +1183,8 @@
   (ssa: subint32ssa; proc: @subint32op; flags: []), 
 //oc_addpoint32
   (ssa: addpoint32ssa; proc: @addpoint32op; flags: []), 
+//oc_subpoint32
+  (ssa: subpoint32ssa; proc: @subpoint32op; flags: []), 
 //oc_subpo
   (ssa: subpossa; proc: @subpoop; flags: []), 
 //oc_addflo64

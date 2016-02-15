@@ -900,6 +900,15 @@ begin
  inc(pvpointerty(po2)^,vintegerty(po1^));
 end;
 
+procedure subpoint32op();
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vpointerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ dec(pvpointerty(po2)^,vintegerty(po1^));
+end;
+
 procedure subpoop();
 var
  po1,po2: pointer;
@@ -3816,6 +3825,7 @@ const
   addint32ssa = 0;
   subint32ssa = 0;
   addpoint32ssa = 0;
+  subpoint32ssa = 0;
   subpossa = 0;
   addflo64ssa = 0;
   subflo64ssa = 0;

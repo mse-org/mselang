@@ -923,6 +923,15 @@ begin
  end;
 end;
 
+procedure subpoint32op();
+begin
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SUB,bcstream.constval(ord(nc_i32)),
+                                              bcstream.ssaval(ssas2));
+  bcstream.emitgetelementptr(bcstream.ssaval(ssas1),bcstream.relval(0));
+ end;
+end;
+
 procedure subpoop();
 begin
  with pc^.par do begin
@@ -3366,6 +3375,7 @@ const
   addint32ssa = 1;
   subint32ssa = 1;
   addpoint32ssa = 2;
+  subpoint32ssa = 3;
   subpossa = 3;
   addflo64ssa = 1;
   subflo64ssa = 1;
