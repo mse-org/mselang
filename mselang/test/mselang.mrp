@@ -2363,7 +2363,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72F8F30
+    ao=An unhandled exception occured at $B73B0F30
     ae=
     aec=123
     ie=0
@@ -4713,12 +4713,12 @@ c=3
   )
   (
   kind=1
-  a=0,664,4,class
+  a=0,665,4,class
   c=19
    (
    kind=1
-   a=0,664,4,properties
-   c=24
+   a=0,665,4,properties
+   c=26
     (
     kind=2
     a=0,648,1,classprop1
@@ -5230,6 +5230,50 @@ c=3
     a=0,648,1,selftest llvm
     teststate=1
     path=selftest.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,propderef
+    teststate=1
+    path=propderef.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,propderef llvm
+    teststate=1
+    path=propderef.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -6124,17 +6168,62 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=643
+propcolwidthref=628
 width0=50
 sortdescend0=0
-width1=194
+width1=189
 sortdescend1=0
-width2=227
+width2=222
 sortdescend2=0
-width3=167
+width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=9
+rowstate=54
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

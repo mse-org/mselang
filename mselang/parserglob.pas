@@ -160,7 +160,7 @@ type
 
 
  statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
-                    stf_loop,stf_propindex,
+                    stf_loop,{stf_propindex,}
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
@@ -481,7 +481,8 @@ type
  end;
 
  handlerflagty = (hf_error,hf_down,hf_default,
-                  hf_set,hf_clear,hf_long,hf_longset,hf_longclear);
+                  hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
+                  hf_propindex);
  handlerflagsty = set of handlerflagty;
    
  pcontextdataty = ^contextdataty;

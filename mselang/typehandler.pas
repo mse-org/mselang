@@ -794,7 +794,7 @@ begin
       goto errlab;
      end
      else begin
-      include(contextstack[s.stacktop].b.flags,stf_propindex);
+      include(contextstack[s.stacktop].handlerflags,hf_propindex);
       goto endlab1;
      end;
     end;

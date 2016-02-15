@@ -1019,6 +1019,7 @@ var
  i1,i2: int32;
  poa,pob: pcontextitemty;
  india,indib: int32;
+ op1: opcodety;
 label
  errlab,endlab;
 begin
@@ -1148,7 +1149,13 @@ begin
            end;
            i1:= s.ssa.nextindex-1;
           end;
-          with additem(oc_addpoint32)^ do begin
+          if issub then begin
+           op1:= oc_subpoint32;
+          end
+          else begin
+           op1:= oc_addpoint32;
+          end;
+          with additem(op1)^ do begin
            par.ssas1:= d.dat.fact.ssaindex;
            par.ssas2:= i1;
           end;
@@ -1244,6 +1251,29 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
 {$endif}
+// if hf_propindex in info.contextstack[info.s.stacktop].handlerflags then begin
+//  getpropvalue(info.s.stacktop-info.s.stackindex,das_none);
+// end;
+ with info,contextstack[s.stacktop] do begin
+  if (d.kind = ck_prop) then begin
+   getvalue(s.stacktop-s.stackindex,das_none);
+  end
+  else begin
+   if hf_propindex in handlerflags then begin
+   {$ifdef mse_checkinternalerror}
+    if contextstack[s.stackindex+1].d.kind <> ck_prop then begin
+     internalerror(ie_handler,'20160214A');
+    end;
+   {$endif}
+    if getvalue(1,das_none) then begin
+     s.stacktop:= s.stackindex+1;
+    end
+    else begin
+     exit;
+    end;
+   end;
+  end;
+ end;
  with info,contextstack[s.stacktop] do begin
   if d.dat.datatyp.indirectlevel <= 0 then begin
    errormessage(err_illegalqualifier,[]);
@@ -1352,7 +1382,7 @@ begin
     end;
    end;
    pind:= @contextstack[s.stackindex];
-   if stf_propindex in ptop^.b.flags then begin //
+   if hf_propindex in ptop^.handlerflags then begin //
     if stf_getaddress in s.currentstatementflags then begin
      errormessage(err_varidentexpected,[],1);
     end
@@ -2075,7 +2105,7 @@ begin
  outhandle('EXP');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  if not (stf_propindex in b.flags) then begin
+  if not (hf_propindex in handlerflags) then begin
    contextstack[s.stacktop-1].d:= d;
    dec(s.stacktop);
   end;
@@ -2088,7 +2118,7 @@ begin
  outhandle('EXP1');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  if not (stf_propindex in b.flags) then begin
+  if not (hf_propindex in handlerflags) then begin
    resolveshortcuts(0,1);
    contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
    s.stacktop:= s.stackindex;
@@ -2785,7 +2815,7 @@ begin
     end;
    end
    else begin
-    if stf_propindex in contextstack[s.stacktop-1].b.flags then begin
+    if hf_propindex in contextstack[s.stacktop-1].handlerflags then begin
     {$ifdef mse_checkinternalerror}
      if contextstack[s.stackindex+4].d.kind <> ck_prop then begin
       internalerror(ie_handler,'20160211A');

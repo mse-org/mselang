@@ -2744,8 +2744,8 @@ begin
      write('<NIL> ');
     end;
     write(getenumname(typeinfo(kind),ord(kind)));
-    write(settostring(ptypeinfo(typeinfo(statementflagsty)),
-                                              int32(b.flags),true),' ');
+    write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
+                                              int32(handlerflags),true),' ');
     case kind of
      ck_block: begin
       write('idbefore:'+inttostrmse(block.blockidbefore));
