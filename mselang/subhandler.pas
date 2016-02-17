@@ -576,12 +576,13 @@ var                       //todo: move after doparam
  po1: psubdataty;
  po2: pvardataty;
  po3: ptypedataty;
- po4: pelementoffsetaty;
+// po4: pelementoffsetaty;
+ curparam,curparamend,paramend: pelementoffsetty;
 // {int1,}int2{,int3}: integer;
- lastparamindex: int32;
+// lastparamindex: int32;
  curstackindex: int32;
- curparamindex: int32;
- paramco,paramhigh: integer;
+// curparamindex: int32;
+ paramco{,paramhigh}: integer;
  err1: boolean;
  impl1: boolean;
  parent1: elementoffsetty;
@@ -603,7 +604,7 @@ var                       //todo: move after doparam
   i1,i2: int32;
  begin
   with info do begin
-   while curparamindex <= lastparamindex do begin
+   while curparam < curparamend do begin
     i1:= curstackindex+2; //first ck_ident
     if resultvar then begin
      dec(i1); //curstackindex+1
@@ -631,7 +632,7 @@ var                       //todo: move after doparam
        identerror(curstackindex,err_duplicateidentifier);
        err1:= true;
       end;
-      po4^[curparamindex]:= elementoffsetty(po2); //absoluteaddress
+      curparam^:= elementoffsetty(po2); //absoluteaddress
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
         po3:= ele.eledataabs(d.typ.typedata);
@@ -682,7 +683,7 @@ var                       //todo: move after doparam
         internalerror1(ie_parser,'20150212A');
        end;
        inc(paramsize1,si1);
-       inc(curparamindex);
+       inc(curparam);
       end;
      end;
     end;
@@ -717,6 +718,9 @@ begin
 //
 //llvm call stack:
 //[self] {params}
+
+//todo: do not use absolute pointers in paramsarray because of 64bit host,
+//elementoffsetty is 32 bit
 
  with info do begin
   with contextstack[s.stackindex-1] do begin
@@ -754,7 +758,7 @@ begin
    end;
   end;
 //  paramco:= (s.stacktop-s.stackindex-2) div 3;
-  paramhigh:= paramco-1;
+//  paramhigh:= paramco-1;
   if ismethod then begin
    inc(paramco); //self pointer
   end;
@@ -821,18 +825,17 @@ begin
     inc(d.cla.virtualindex);
    end;
   end;
-  po4:= @po1^.paramsrel;
   err1:= false;
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
-  curparamindex:= 0;
+  curparam:= @po1^.paramsrel;
   if sf_function in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
-   lastparamindex:= 0;
-   doparams(true);
+   curparamend:= curparam + 1;
+   doparams(true); //increments curparam
 //   inc(po4);
   end;
-  lastparamindex:= paramhigh;
+  curparamend:= pelementoffsetty(@po1^.paramsrel) + paramco;
   
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
@@ -843,8 +846,8 @@ begin
     addvar(tks_self,allvisi,po1^.varchain,po2);
   {$endif}
    ele.addalias(tk_self,ele.eledatarel(po2),allvisi);
-   po4^[0]:= elementoffsetty(po2); //absoluteaddress //??? 64 bit ???
-   inc(po4);          //todo: class proc
+   curparam^:= elementoffsetty(po2); //absoluteaddress //??? 64 bit ???
+   inc(curparam);          //todo: class proc
    with po2^ do begin //self variable
     inc(paramsize1,pointersize);
     address.indirectlevel:= 1;
@@ -868,7 +871,7 @@ begin
 //  if ismethod then begin
 //   dec(po4);
 //  end;
-  po4:= @po1^.paramsrel;
+  curparam:= @po1^.paramsrel;
   inc(paramsize1,stacklinksize);
   po1^.paramsize:= paramsize1;
   po1^.address:= 0; //init
@@ -888,22 +891,24 @@ begin
     d.subdef.paramsize:= paramsize1;
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(po1);
-    for i1:= 0 to paramco-1 do begin
-     po2:= pointer(po4^[i1]);
+    while curparam < curparamend do begin
+     po2:= pointer(curparam^);
      dec(po2^.address.locaddress.address,frameoffset);
-     po4^[i1]:= ptruint(po2)-eledatabase;
+     curparam^:= ptruint(po2)-eledatabase;
      if tf_hasmanaged in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
                                                         po2^.address,0);
       po2^.vf.next:= po1^.paramfinichain;
       po1^.paramfinichain:= ele.eledatarel(po2);
      end;
+     inc(curparam);
     end;
    end;
   end
   else begin //interface
-   for i1:= 0 to paramco-1 do begin
-    dec(po4^[i1],eledatabase); //relative address
+   while curparam < curparamend do begin
+    dec(curparam^,eledatabase); //relative address
+    inc(curparam);
    end;
    if not isinterface then begin
     if sf_external in subflags then begin
