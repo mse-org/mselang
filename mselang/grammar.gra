@@ -267,7 +267,8 @@ paramdef0,paramdef1,handleparamsdef0entry,
  'const'.,!setconstparam->
  'var'.,!setvarparam->
  'out'.,!setoutparam->
- @identstart,ident^*
+ @identstart,commaidents^*
+// @identstart,ident^*
 paramdef1,,,*
  ${whitespace}
  ':',paramdef2-

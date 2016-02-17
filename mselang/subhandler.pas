@@ -598,72 +598,97 @@ var                       //todo: move after doparam
  ident1: identty;
  resulttype1: resulttypety;
 
- procedure doparam();
+ procedure doparams(const resultvar: boolean);
+ var
+  i1,i2: int32;
  begin
   with info do begin
-   paramkind1:= contextstack[curstackindex+s.stackindex-1].d.paramsdef.kind;
-   with contextstack[curstackindex+s.stackindex] do begin
-    if (isclass and
-        ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
-            addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
-     identerror(curstackindex,err_duplicateidentifier);
-     err1:= true;
+   while curparamindex <= lastparamindex do begin
+    i1:= curstackindex+2; //first ck_ident
+    if resultvar then begin
+     dec(i1); //curstackindex+1
     end;
-    po4^[curparamindex]:= elementoffsetty(po2); //absoluteaddress
-    with contextstack[curstackindex+s.stackindex+1] do begin
-     if d.kind = ck_fieldtype then begin
-      po3:= ele.eledataabs(d.typ.typedata);
-      with po2^ do begin
-       address.indirectlevel:= d.typ.indirectlevel;
-       if (address.indirectlevel > 0) then begin
-        si1:= pointersize;
-       end
-       else begin
-        si1:= po3^.h.bytesize;
-       end;
-       address.flags:= [af_param];
-       if po3^.h.datasize = das_none then begin
-        include(address.flags,af_aggregate);
-       end;
-       address.flags:= address.flags + paramkinds[paramkind1];
-       if paramkind1 = pk_const then begin
-        if si1 > pointersize then begin
-         inc(address.indirectlevel);
-         include(address.flags,af_paramindirect);
-         si1:= pointersize;
-        end;
-        include(address.flags,af_const);
-       end
-       else begin
-        if paramkind1 in [pk_var,pk_out] then begin
-         inc(address.indirectlevel);
-         include(address.flags,af_paramindirect);
-         si1:= pointersize;
-        end
-        else begin
-         if impl1 and (d.typ.indirectlevel = 0) and 
-                   (tf_hasmanaged in po3^.h.flags) then begin
-          include(vf.flags,tf_hasmanaged);
-         end;                     
-        end;
-       end;
-       if impl1 then begin
-        address.locaddress:= 
-                          getlocvaraddress(po3^.h.datasize,si1,address.flags);
-       end;
-       address.locaddress.framelevel:= sublevel+1;
-       vf.typ:= d.typ.typedata;
-      end;
-     end
-     else begin
-      err1:= true;
-      internalerror1(ie_parser,'20150212A');
+    i2:= i1;
+    while contextstack[i1].d.kind = ck_ident do begin
+     inc(i1);
+    {$ifdef mse_checkinternalerror}
+     if i1 > s.stacktop then begin
+      internalerror(ie_handler,'20160216A');
      end;
-     inc(paramsize1,si1);
+    {$endif}
     end;
+    paramkind1:= contextstack[curstackindex].d.paramsdef.kind;
+    for i2:= i2 to i1 - 1 do begin
+     with contextstack[i2] do begin //ck_ident
+     {$ifdef mse_checkinternalerror}
+      if d.kind <> ck_ident then begin
+       internalerror(ie_handler,'20160216B');
+      end;
+     {$endif}
+      if (isclass and
+          ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
+              addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
+       identerror(curstackindex,err_duplicateidentifier);
+       err1:= true;
+      end;
+      po4^[curparamindex]:= elementoffsetty(po2); //absoluteaddress
+      with contextstack[i1] do begin //ck_fieldtype
+       if d.kind = ck_fieldtype then begin
+        po3:= ele.eledataabs(d.typ.typedata);
+        with po2^ do begin
+         address.indirectlevel:= d.typ.indirectlevel;
+         if (address.indirectlevel > 0) then begin
+          si1:= pointersize;
+         end
+         else begin
+          si1:= po3^.h.bytesize;
+         end;
+         address.flags:= [af_param];
+         if po3^.h.datasize = das_none then begin
+          include(address.flags,af_aggregate);
+         end;
+         address.flags:= address.flags + paramkinds[paramkind1];
+         if paramkind1 = pk_const then begin
+          if si1 > pointersize then begin
+           inc(address.indirectlevel);
+           include(address.flags,af_paramindirect);
+           si1:= pointersize;
+          end;
+          include(address.flags,af_const);
+         end
+         else begin
+          if paramkind1 in [pk_var,pk_out] then begin
+           inc(address.indirectlevel);
+           include(address.flags,af_paramindirect);
+           si1:= pointersize;
+          end
+          else begin
+           if impl1 and (d.typ.indirectlevel = 0) and 
+                     (tf_hasmanaged in po3^.h.flags) then begin
+            include(vf.flags,tf_hasmanaged);
+           end;                     
+          end;
+         end;
+         if impl1 then begin
+          address.locaddress:= 
+                            getlocvaraddress(po3^.h.datasize,si1,address.flags);
+         end;
+         address.locaddress.framelevel:= sublevel+1;
+         vf.typ:= d.typ.typedata;
+        end;
+       end
+       else begin
+        err1:= true;
+        internalerror1(ie_parser,'20150212A');
+       end;
+       inc(paramsize1,si1);
+       inc(curparamindex);
+      end;
+     end;
+    end;
+    curstackindex:= i1+1; //next ck_paramsdef
    end;
-   curstackindex:= curstackindex+3;
-  end;
+  end; //lastparamindex
  end; //doparam
 
 var
@@ -676,11 +701,13 @@ begin
 //|gettype
 //|-3        |-2   
 //|classdef0,|*headercall*|
-//            -1  0     1     2           3           4        5    
-//            sub,sub2,ident,paramsdef3{,ck_paramsdef,ck_ident,ck_type}
+//            -1  0     1     2
+//            sub,sub2,ident,paramsdef3
+//            3            4            5        6
+//          {,ck_paramsdef,commaidents2,ck_ident,{ck_ident,}ck_type}
 // interfacedef0
-//  6           7             8    result
-//[ck_paramsdef,ck_ident,ck_type] 
+//  6           7             8       9                   result
+//[ck_paramsdef,commaidents2,ck_ident,{ck_ident,}ck_type] 
               //todo: multi level type
 
 //runtime call stack:
@@ -714,7 +741,19 @@ begin
     resulttype1.indirectlevel:= indirectlevel;
    end;
   end;
-  paramco:= (s.stacktop-s.stackindex-2) div 3;
+  if isinterface then begin
+   i1:= s.stackindex + 8;
+  end
+  else begin
+   i1:= s.stackindex + 5;
+  end;
+  paramco:= 0;
+  for i1:= i1 to s.stacktop-1 do begin
+   if contextstack[i1].d.kind = ck_ident then begin
+    inc(paramco);
+   end;
+  end;
+//  paramco:= (s.stacktop-s.stackindex-2) div 3;
   paramhigh:= paramco-1;
   if ismethod then begin
    inc(paramco); //self pointer
@@ -786,15 +825,14 @@ begin
   err1:= false;
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
-  lastparamindex:= paramhigh;
-  if (sf_function in subflags){ and (co_hasfunction in compileoptions)} then begin
-   curstackindex:= 4 + paramhigh * 3;          //allocate result var first
-//   curparamindex:= paramhigh;
-   curparamindex:= 0;
-   doparam();
-   dec(lastparamindex);
-   inc(po4);
+  curparamindex:= 0;
+  if sf_function in subflags then begin  //allocate result var first
+   curstackindex:= s.stacktop-2;  //-> paramsdef     
+   lastparamindex:= 0;
+   doparams(true);
+//   inc(po4);
   end;
+  lastparamindex:= paramhigh;
   
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
@@ -820,19 +858,13 @@ begin
     vf.typ:= currentcontainer;
    end;
   end;
+  curstackindex:= s.stackindex + 3; //->paramsdef
+  doparams(false);
  {
-  int3:= paramhigh;
-  if (sf_function in subflags) and (co_hasfunction in compileoptions) then begin
-   int1:= 4 + paramhigh * 3;          //allocate result var first
-   int2:= paramhigh;
-   doparam();
-   int3:= paramhigh - 1;
-  end;
- }
-  curstackindex:= 4;
   for curparamindex:= 0 to lastparamindex do begin
    doparam();
   end;
+}
 //  if ismethod then begin
 //   dec(po4);
 //  end;

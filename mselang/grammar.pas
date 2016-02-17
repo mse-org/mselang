@@ -3353,7 +3353,7 @@ const
     (kind: bkk_none; chars: [])
     )),
    (flags: [bf_nt,bf_push,bf_setparentbeforepush];
-     dest: (context: @identco); stack: nil; keys: (
+     dest: (context: @commaidentsco); stack: nil; keys: (
     (kind: bkk_char; chars: ['A'..'Z','_','a'..'z']),
     (kind: bkk_none; chars: []),
     (kind: bkk_none; chars: []),
