@@ -305,7 +305,7 @@ clasubheader3,,,
  'overload'.,!handleoverload-
  ';',clasubheader4-
  '',semicolonexpected
-clasubheader4,,,
+clasubheader4,,,*
  ${whitespace}
  'virtual'.,virtual-
  'override'.,override-

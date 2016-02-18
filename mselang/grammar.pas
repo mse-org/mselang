@@ -583,7 +583,7 @@ var
                caption: 'clasubheader3');
  clasubheader4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'clasubheader4');
  virtualco: contextty = (branch: nil; 

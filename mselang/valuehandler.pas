@@ -886,7 +886,12 @@ begin
      po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
                                                            addsubvalue(asub);
     end;
-    po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
+    if sf_function in asub^.flags then begin
+     po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
+    end
+    else begin
+     po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
+    end;
     po1^.par.callinfo.linkcount:= -1;
    end
    else begin

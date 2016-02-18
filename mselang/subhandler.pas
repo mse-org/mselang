@@ -109,15 +109,63 @@ function checkparams(const po1,ref: psubdataty): boolean;
 //                                  {$ifndef mse_debugparser} inline;{$endif}
 var
  par1,parref: pelementoffsetaty;
- offs1: elementoffsetty;
+ offs1: ptruint;
  var1,varref: pvardataty;
  int1: integer;
- start,stop: integer;
+// start,stop: integer;
 begin
  result:= true;
  offs1:= ele.eledataoffset;
  pointer(par1):= @po1^.paramsrel;
  pointer(parref):= @ref^.paramsrel;
+ int1:= 0;
+ if sf_constructor in ref^.flags then begin
+  int1:= 2; //skip result and self
+ end
+ else begin
+  if sf_method in ref^.flags then begin
+   if sf_function in ref^.flags then begin
+    if pvardataty(par1^[0]+offs1)^.vf.typ <> 
+                  pvardataty(parref^[0]+offs1)^.vf.typ then begin
+     result:= false;
+     exit;
+    end;
+    int1:= 2; //skip result and self
+   end
+   else begin
+    int1:= 1; //skip self;
+   end;
+  end;
+ end;
+ for int1:= int1 to ref^.paramcount-1 do begin
+  if pvardataty(par1^[int1]+offs1)^.vf.typ <> 
+                  pvardataty(parref^[int1]+offs1)^.vf.typ then begin
+   result:= false;
+   exit;
+  end;
+ end;
+{ 
+ if (sf_function in ref^.flags) then begin
+  if check(0) then begin
+   result:= false;
+   exit;
+  end;
+  inc(int1);
+ end;
+ if (sf_method in ref^.flags) then begin
+  inc(int1); //do not 
+ end;
+ for int1:= 0 to ref^.paramcount-1 do begin
+  var1:= pointer(par1^[int1]+offs1);
+  varref:= pointer(parref^[int1]+offs1);
+  if (var1^.vf.typ <> varref^.vf.typ) and 
+           ((int1 <> 1) or not(sf_method in ref^.flags)) then begin
+   result:= false;
+   exit;
+  end;
+ end;
+ }
+ {
  start:= 0;
  stop:= ref^.paramcount-1;
  if sf_method in ref^.flags then begin
@@ -134,6 +182,7 @@ begin
    exit;
   end;
  end;
+ }
 end;
 
 procedure checkequalheader(const aelement: pelementinfoty; var adata;
@@ -746,7 +795,7 @@ begin
    end;
   end;
   if isinterface then begin
-   i1:= s.stackindex + 8;
+   i1:= s.stackindex + 3;
   end
   else begin
    i1:= s.stackindex + 5;
@@ -1111,8 +1160,13 @@ begin
                     (sf_intfcall in po2^.flags) then begin
     po2^.trampolineaddress:= opcount;
     linkresolveopad(po2^.trampolinelinks,po2^.trampolineaddress);
-    with additem(oc_virttrampoline)^ do begin 
-     par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
+    with additem(oc_virttrampoline)^ do begin
+     if sf_function in po2^.flags then begin
+      par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize + vpointersize;
+     end
+     else begin
+      par.subbegin.trampoline.selfinstance:= -d.subdef.paramsize;
+     end;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
      if co_llvm in compileoptions then begin

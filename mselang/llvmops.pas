@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2912,7 +2912,11 @@ begin
    idar.count:= pc^.par.subbegin.sub.allocs.paramcount;
    trampolinealloc.paramcount:= idar.count;
    bcstream.beginsub([],trampolinealloc,1);
-   bcstream.emitbitcast(bcstream.subval(0), //first param, class instance
+   i1:= 0; //first param, class instance
+   if isfunction then begin
+    i1:= 1;//second param, class instance
+   end;
+   bcstream.emitbitcast(bcstream.subval(i1),
                                  bcstream.ptypeval(pointertype)); //1ssa **i8
    bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
                 //class def
@@ -2925,12 +2929,14 @@ begin
                //sub address
    bcstream.emitbitcast(bcstream.relval(0),
                           bcstream.ptypeval(pc^.par.subbegin.typeid)); //1ssa
-                                          
+   i1:= 0;                                          
    if isfunction then begin
     dec(idar.count);
+    i1:= 1;
    end;
-   for i1:= 0 to idar.count-1 do begin
-    ids[i1]:= bcstream.subval(i1);
+   for i2:= 0 to idar.count-1 do begin
+    ids[i2]:= bcstream.subval(i1);
+    inc(i1);
    end;
    idar.ids:= @ids;
    bcstream.emitcallop(isfunction,bcstream.relval(0),idar);
