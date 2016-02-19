@@ -716,7 +716,11 @@ var
  callssa: int32;
  vardata1: pvardataty;
  lastparamsize1: int32;
+ instancessa: int32;
 begin
+{$ifdef mse_debugparser}
+ outhandle('dosub');
+{$endif}
  with info,contextstack[s.stackindex] do begin //classinstance, result
   if stf_getaddress in s.currentstatementflags then begin
    d.kind:= ck_ref;
@@ -745,6 +749,12 @@ begin
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
    end
    else begin
+   {$ifdef mse_checkinternalerror}
+    if (sf_method in asub^.flags) and (d.kind <> ck_fact) then begin
+     internalerror(ie_handler,'20160219A');
+    end;
+   {$endif}
+    instancessa:= d.dat.fact.ssaindex; //for sf_method
     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
     if hasresult then begin
      initfactcontext(0); //set ssaindex
@@ -785,7 +795,7 @@ begin
     if sf_method in asub^.flags then begin
      selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
      with selfpo^ do begin
-      ssaindex:= d.dat.fact.ssaindex;
+      ssaindex:= instancessa;
       size:= bitoptypes[das_pointer];
      end;
      inc(subparams1); //instance pointer
@@ -875,7 +885,12 @@ begin
                                                        sizeof(intfdefheaderty);
     end
     else begin
-     po1:= additem(oc_callvirt);
+     if sf_function in asub^.flags then begin
+      po1:= additem(oc_callvirtfunc);
+     end
+     else begin
+      po1:= additem(oc_callvirt);
+     end;
      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
     end;

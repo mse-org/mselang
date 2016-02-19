@@ -2844,6 +2844,11 @@ begin
  end;
 end;
 
+procedure callvirtfuncop();
+begin
+ callvirtop();
+end;
+
 procedure callintfop();
 var
  ids: idsarty;
@@ -2874,6 +2879,11 @@ begin
                          bcstream.ptypeval(callinfo.virt.typeid));
   bcstream.emitcallop(sf_function in callinfo.flags,bcstream.relval(0),idar);
  end;
+end;
+
+procedure callintffuncop();
+begin
+ callintfop();
 end;
 
 procedure virttrampolineop();
@@ -3659,7 +3669,9 @@ const
   calloutssa = 0;
   callfuncoutssa = 1;
   callvirtssa = 7;
+  callvirtfuncssa = 8;
   callintfssa = 11;
+  callintffuncssa = 12;
   virttrampolinessa = 1;
 
   callindissa = 1;

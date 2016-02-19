@@ -89,7 +89,9 @@ type
   oc_callout,
   oc_callfuncout,
   oc_callvirt,
+  oc_callvirtfunc,
   oc_callintf,
+  oc_callintffunc,
   oc_virttrampoline,
 
   oc_callindi,
@@ -555,7 +557,7 @@ type
   params: dataoffsty;
   paramcount: integer;
   case opcodety of
-   oc_callvirt,oc_callintf:(
+   oc_callvirt,oc_callvirtfunc,oc_callintf,oc_callintffunc:(
     virt: virtcallinfoty;
    );
    oc_callindi,oc_callfuncindi:(

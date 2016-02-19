@@ -2985,6 +2985,11 @@ begin
  end;
 end;
 
+procedure callvirtfuncop();
+begin
+ callvirtop();
+end;
+
 procedure callintfop();
 var
  po1: ppointer;
@@ -3010,6 +3015,12 @@ begin
 }
  end;
 end;
+
+procedure callintffuncop();
+begin
+ callintfop();
+end;
+
 
 procedure virttrampolineop();
 begin
@@ -4102,8 +4113,10 @@ const
   callfuncssa = 0;
   calloutssa = 0;
   callfuncoutssa = 0;
+  callvirtfuncssa = 0;
   callvirtssa = 0;
   callintfssa = 0;
+  callintffuncssa = 0;
   virttrampolinessa = 0;
 
   callindissa = 0;

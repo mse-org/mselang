@@ -899,8 +899,12 @@
   (ssa: callfuncoutssa; proc: @callfuncoutop; flags: []), 
 //oc_callvirt
   (ssa: callvirtssa; proc: @callvirtop; flags: []), 
+//oc_callvirtfunc
+  (ssa: callvirtfuncssa; proc: @callvirtfuncop; flags: []), 
 //oc_callintf
   (ssa: callintfssa; proc: @callintfop; flags: []), 
+//oc_callintffunc
+  (ssa: callintffuncssa; proc: @callintffuncop; flags: []), 
 //oc_virttrampoline
   (ssa: virttrampolinessa; proc: @virttrampolineop; flags: []), 
 
