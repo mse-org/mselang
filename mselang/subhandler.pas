@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -805,6 +805,9 @@ begin
    if contextstack[i1].d.kind = ck_ident then begin
     inc(paramco);
    end;
+  end;
+  if (paramco = 0) and (sf_function in subflags) then begin
+   paramco:= 1;  //no getidents context
   end;
 //  paramco:= (s.stacktop-s.stackindex-2) div 3;
 //  paramhigh:= paramco-1;

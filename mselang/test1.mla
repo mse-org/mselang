@@ -1,11 +1,45 @@
-program test;
+program classvirtual;
+type
+ tc1 = class
+  public
+   constructor create();
+   destructor destroy();
+   procedure test(a: int32); virtual;
+ end;
 
-procedure tt(a,b: int32);
+ tc2 = class(tc1)
+  public
+   procedure test(a: int32); override;
+ end;
+
+constructor tc1.create();
 begin
 end;
 
+destructor tc1.destroy();
+begin
+end;
+
+procedure tc1.test(a: int32);
+begin
+ exitcode:= 112;
+end;
+
+procedure tc2.test(a: int32);
+begin
+ inherited test(a);
+ exitcode:= exitcode+11;
+end;
+
+type
+ ppointer = ^pointer;
 var
- a,b: int32;
+ c1: tc1;
+ po1: ppointer;
 
 begin
+ c1:= tc2.create();
+{$internaldebug on}
+ c1.test(1);
+ c1.destroy();
 end.
