@@ -1,0 +1,99 @@
+program params;
+
+type
+ itest = interface
+  procedure test1(a,b: int32);
+  function test2(a,b: int32): int32;
+ end;
+
+ tobject = class
+  procedure test1(a,b: int32); virtual;
+  function test2(a,b: int32): int32; virtual;
+ end;
+
+ ttestcla = class(tobject,itest)
+  private
+   f1: int32;
+  public
+   constructor create();
+   destructor destroy();
+   procedure test1(a,b: int32); override;
+   function test2(a,b: int32): int32; override;
+   procedure test3(a,b: int32);
+   function test4(a,b: int32): int32;
+ end;
+
+procedure tobject.test1(a,b: int32);
+begin
+end;
+
+function tobject.test2(a,b: int32): int32;
+begin
+ result:= 0;
+end;
+
+constructor ttestcla.create();
+begin
+ f1:= 10;
+end;
+
+destructor ttestcla.destroy();
+begin
+end;
+
+procedure ttestcla.test1(a,b: int32);
+begin
+ exitcode:= a + b + f1;
+end;
+
+function ttestcla.test2(a,b: int32): int32;
+begin
+ result:= a + b + f1;
+end;
+
+procedure ttestcla.test3(a,b: int32);
+begin
+ exitcode:= a + b + f1;
+end;
+
+function ttestcla.test4(a,b: int32): int32;
+begin
+ result:= a + b + f1;
+end;
+
+function test1(a,b: int32): int32;
+begin
+ result:= a + b;
+end;
+
+procedure test(a,b: int32);
+begin
+ exitcode:= a + b;
+end;
+
+var
+ t1: ttestcla;
+ i1: itest;
+begin
+ if test1(10,23) = 33 then begin
+  test(1,2);
+  if exitcode = 3 then begin
+   t1:= ttestcla.create();
+   t1.test1(5,9);
+   if exitcode = 24 then begin
+    exitcode:= t1.test2(13,3);
+    if exitcode = 26 then begin
+     i1:= itest(t1);
+     i1.test1(13,17);
+     if exitcode = 40 then begin
+      t1.test3(5,9);
+      if exitcode = 24 then begin
+       exitcode:= t1.test4(100,13);
+      end;
+     end;
+    end;
+   end;
+   t1.destroy;
+  end;
+ end;
+end.
