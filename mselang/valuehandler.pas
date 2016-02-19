@@ -466,6 +466,9 @@ begin
       end;
      until po1 = nil;
      ele.elementparent:= i1;
+     if po1 = nil then begin
+      exit;      //interface not found
+     end;
     end
     else begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
