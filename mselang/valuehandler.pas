@@ -21,7 +21,7 @@ uses
  globtypes,parserglob,handlerglob;
 
 type
- convertoptionty = (coo_type,coo_enum,coo_set);
+ convertoptionty = (coo_type,coo_enum,coo_set,coo_notrunk);
  convertoptionsty = set of convertoptionty;
  
 function tryconvert(const stackoffset: integer;
@@ -243,18 +243,24 @@ var                     //todo: optimize, use tables, complete
   op1: opcodety;
   i1: int32;
  begin
-  result:= true;
-  if source1^.h.datasize <> dest^.h.datasize then begin
-   op1:= atable[intbits[source1^.h.datasize]][dest^.h.datasize];
-   if op1 = oc_none then begin
-    result:= false;
-   end
-   else begin
-    with info do begin
-     i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
-    end;
-    with insertitem(op1,stackoffset,false)^ do begin
-     par.ssas1:= i1;
+  if (coo_notrunk in aoptions) and (intbits[source1^.h.datasize] >
+                                           intbits[dest^.h.datasize]) then begin
+   result:= false;
+  end
+  else begin
+   result:= true;
+   if source1^.h.datasize <> dest^.h.datasize then begin
+    op1:= atable[intbits[source1^.h.datasize]][dest^.h.datasize];
+    if op1 = oc_none then begin
+     result:= false;
+    end
+    else begin
+     with info do begin
+      i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+     end;
+     with insertitem(op1,stackoffset,false)^ do begin
+      par.ssas1:= i1;
+     end;
     end;
    end;
   end;
@@ -885,7 +891,12 @@ begin
    if not (dsf_isinherited in aflags) and 
         (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
     if sf_interface in asub^.flags then begin
-     po1:= additem(oc_callintf);
+     if sf_function in asub^.flags then begin
+      po1:= additem(oc_callintffunc);
+     end
+     else begin
+      po1:= additem(oc_callintf);
+     end;
      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
                                                        sizeof(intfdefheaderty);
     end

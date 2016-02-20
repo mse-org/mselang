@@ -3687,7 +3687,7 @@ const
   returnfuncssa = 1;
 
   initclassssa = 3;
-  destroyclassssa = 1;
+  destroyclassssa = 0;
 
   setlengthstr8ssa = 1;
   setlengthdynarrayssa = 1;

@@ -2385,6 +2385,7 @@ begin
   _type:= atype;
   flags:= aflags;
   localtounit:= alocaltounit;
+  variables:= dummymeta;
  end;
  addmetaitem(info.s.unitinfo^.subprograms,result);
 end;

@@ -9,7 +9,7 @@ const
  mliextension = 'mli';
  llvmbcextension = 'bc'; 
 type
- paramty = (pa_source,pa_llvm,pa_debug); //item number in sysenv
+ paramty = (pa_source,pa_llvm,pa_debug,pa_debugline); //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -68,6 +68,9 @@ begin
     if sysenv.defined[ord(pa_debug)] then begin
      compoptions:= compoptions + [co_lineinfo,co_proginfo];
     end;
+    if sysenv.defined[ord(pa_debugline)] then begin
+     compoptions:= compoptions + [co_lineinfo];
+    end;
    end;
    if parse(str1,filename1,compoptions) then begin
     if co_llvm in compoptions then begin
@@ -119,6 +122,10 @@ begin
  if sender.defined[ord(pa_debug)] then begin
   info.debugoptions:= info.debugoptions + 
                  [do_lineinfo,do_proginfo];
+ end;
+ if sender.defined[ord(pa_debugline)] then begin
+  info.debugoptions:= info.debugoptions + 
+                 [do_lineinfo];
  end;
 end;
 

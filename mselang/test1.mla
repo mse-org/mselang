@@ -1,45 +1,279 @@
-program classvirtual;
+program classsubcalls;
+uses
+ __mla__internaltypes;
+(*
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
+procedure __mla__raise(const data: pointer);
+function __mla__personality(version: cint;
+             actions: _Unwind_Action;
+             exceptionclass: _Unwind_Exception_Class;
+             exceptionobject: p_Unwind_Exception;
+             context: p_Unwind_Context): _Unwind_Reason_Code;
+
+function _Unwind_RaiseException(
+           exception_object: p_Unwind_Exception): _Unwind_Reason_Code; external;
+function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
+                                                                       external;
+function _Unwind_GetIP(context: p_Unwind_Context): pointer; external;
+procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer); 
+                                                                  external;
+function _Unwind_GetGR(context: p_Unwind_Context; index: cint): ptrint;
+                                                                   external;
+procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint; 
+                                                new_value: ptrint); external;                                                                    
+
+function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
+
+implementation
+*)
 type
- tc1 = class
-  public
-   constructor create();
-   destructor destroy();
-   procedure test(a: int32); virtual;
+ pcard8 = ^card8;
+
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+begin
+ if ref <> nil then begin
+  dec(ref);
+  if ref^.ref.count > 0 then begin
+   dec(ref^.ref.count);
+   if ref^.ref.count = 0 then begin
+    freemem(ref);
+   end;
+  end;
  end;
-
- tc2 = class(tc1)
-  public
-   procedure test(a: int32); override;
- end;
-
-constructor tc1.create();
-begin
 end;
-
-destructor tc1.destroy();
-begin
-end;
-
-procedure tc1.test(a: int32);
-begin
- exitcode:= 112;
-end;
-
-procedure tc2.test(a: int32);
-begin
- inherited test(a);
- exitcode:= exitcode+11;
-end;
-
-type
- ppointer = ^pointer;
+procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 var
- c1: tc1;
- po1: ppointer;
-
+ d: prefsizeinfoty;
 begin
- c1:= tc2.create();
-{$internaldebug on}
- c1.test(1);
- c1.destroy();
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+  end;
+  ref^:= nil;
+ end;
+end;
+
+//todo: use simplified version if there are no interfaces
+function __mla__initclass(const classinfo: classdefinfoty): pointer;
+var
+ ps,pd,pe: ppointer;
+ po1: pclassdefinfoty;
+begin
+//(*
+ getzeromem(result,classinfo.header.allocs.size);
+ po1:= @classinfo;
+ ppointer(result)^:= @classinfo;
+//writeln('******* ',result);
+ repeat
+  pd:= result + po1^.header.allocs.instanceinterfacestart;
+                                            //copy interface table
+  pe:= result + po1^.header.allocs.size;
+  ps:= pointer(po1) + po1^.header.allocs.classdefinterfacestart;
+{
+writeln('* ',po1,' ',po1^.header.parentclass,' ',
+             po1^.header.interfaceparent,' ',
+             po1^.header.allocs.size,' ',
+             po1^.header.allocs.instanceinterfacestart,' ',
+             po1^.header.allocs.classdefinterfacestart);
+}
+  while pd < pe do begin
+   pd^:= ps^;
+//writeln(int32(pointer(pd)-result),' ',pd,':',pd^);
+   inc(pd);
+   inc(ps);
+  end;
+  po1:= po1^.header.interfaceparent;
+ until po1 = nil;
+//*)
+end;
+
+(*
+procedure exceptioncleanup(reason: _Unwind_Reason_Code;
+                                                      exc: p_Unwind_Exception);
+begin
+ freemem(exc);
+end;
+*)
+(*
+
+procedure __mla__raise(const data: pointer);
+var
+ po1: pexceptinfoty;
+begin  //todo: handle out of memory situation
+ getmem(po1,sizeof(exceptinfoty));
+ with po1^.header do begin
+  exception_class:= mlaexceptionid;
+  exception_cleanup:= @exceptioncleanup;
+ end;
+ po1^.data:= data;
+ _Unwind_RaiseException(@po1^.header);
+ freemem(po1);
+ exitcode:= exco_unhandledexception; //no handler found
+ halt();
+end;
+
+function readusleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do begin       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ adata:= po1+1;
+end;
+
+function readssleb128(var adata: pointer): ptrint;
+var
+ po1: pcard8;
+ shift,i1: int32;
+begin
+ po1:= adata;
+ result:= po1^ and $7f;
+ shift:= 7;
+ while po1^ and $80 <> 0 do begin       //todo: overflow check
+  inc(po1);
+  result:= result or ptrint(po1^ and $7f) shl shift;
+  shift:= shift + 7;
+ end;
+ if po1^ and $40 <> 0 then begin   //sign
+  result:= result or ptrint(-1) shl shift; //negative
+ end;
+ adata:= po1+1;
+end;
+
+procedure fatalerror();
+begin
+ writeln('Fatal error');
+ halt();
+end;
+
+const
+{$ifdef target_x86_64}
+ exceptionregno = 0;
+ selectorregno = 1;
+{$else}
+ exceptionregno = 0;
+ selectorregno = 2;
+{$endif}
+
+function installfinallycontext(const actions: _Unwind_Action;
+             const exceptiondata: p_Unwind_Exception;
+             const context: p_Unwind_Context;
+             const landingpad: pointer): _Unwind_Reason_Code;
+begin
+ if actions and _UA_SEARCH_PHASE <> 0 then begin
+  result:= _URC_HANDLER_FOUND;
+ end
+ else begin
+  if actions and _UA_HANDLER_FRAME <> 0 then begin
+   _Unwind_SetGR(context,exceptionregno,ptrint(exceptiondata));
+   _Unwind_SetGR(context,selectorregno,0);
+   _Unwind_SetIP(context,landingpad);
+   result:= _URC_INSTALL_CONTEXT;
+  end
+  else begin
+   result:= _URC_CONTINUE_UNWIND;
+  end;
+ end;
+end;
+
+function __mla__personality(version: cint;
+             actions: _Unwind_Action;
+             exceptionclass: _Unwind_Exception_Class;
+             exceptionobject: p_Unwind_Exception;
+             context: p_Unwind_Context): _Unwind_Reason_Code;
+var
+ po1: pointer;
+ c1: ptrcard;
+ typebaseoffset: ptrcard;
+ tablelength: ptrcard;
+ actionoffset: ptrcard;
+ bo1: bool1;
+ typestable: pointer;
+ callsitetable: pointer;
+ actiontable: pointer;
+ ip,regionstart: pointer;
+begin
+ result:= _URC_CONTINUE_UNWIND;
+// if actions and _UA_SEARCH_PHASE <> 0 then begin
+ po1:= _Unwind_GetLanguageSpecificData(context);
+ if po1 <> nil then begin
+  result:= _URC_CONTINUE_UNWIND;
+  bo1:= false;
+  if pcard8(po1)^ = $ff then begin
+   inc(po1);
+   if pcard8(po1)^ = 0 then begin
+    inc(po1);
+    c1:= readusleb128(po1);
+    typestable:= po1 + c1;
+//writeln(c1);
+    if pcard8(po1)^ = 3 then begin
+     inc(po1);
+     c1:= readusleb128(po1);
+//writeln(c1);
+     callsitetable:= po1;
+     actiontable:= po1 + c1;
+     ip:= _Unwind_GetIP(context){-1};
+     regionstart:= _Unwind_GetRegionStart(context);
+//writeln('IP            ',ip);
+//writeln('regionstart   ',regionstart);
+//writeln('typestable    ',typestable);
+//writeln('callsitetable ',callsitetable);
+//writeln('actiontable   ',actiontable);
+//writeln('----');
+     while callsitetable < actiontable do begin
+      po1:= regionstart + pptrint(callsitetable)^;    //blockstart
+//writeln(' blockstart   ',po1);
+      if po1 > ip then begin
+       break;                //no region found
+      end;
+      po1:= po1 + (pptrint(callsitetable)+1)^;          //blockend
+//writeln(' blockend   ',po1);
+      if po1 >= ip then begin //region found
+       po1:= regionstart + (pptrint(callsitetable)+2)^; //landing pad
+//writeln(' landingpad   ',po1);
+       inc(callsitetable,3*sizeof(ptrint));
+       actionoffset:= readusleb128(callsitetable);
+       if actionoffset = 0 then begin
+        result:= installfinallycontext(actions,exceptionobject,context,po1);
+       end;
+       break;
+      end
+      else begin
+       inc(callsitetable,3*sizeof(ptrint));
+       readusleb128(callsitetable);
+      end;
+     end;
+     bo1:= true;
+    end;
+   end;
+  end;
+  if not bo1 then begin
+   fatalerror();
+  end;
+ end
+ else begin
+ end;
+// end
+// else begin
+//  if actions and _UA_HANDLER_FRAME <> 0 then begin
+//   result:= _URC_INSTALL_CONTEXT;
+//  end;
+// end;
+end;
+*)
+begin
 end.

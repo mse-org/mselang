@@ -2227,7 +2227,7 @@ procedure updateop(const opsinfo: opsinfoty);
   with info do begin
    errormessage(err_div0,[],s.stacktop-s.stackindex);
   end;
- end;
+ end; //div0error
  
 var
  kinda,kindb: datakindty;
@@ -2244,6 +2244,12 @@ begin
  with info do begin
   bo1:= false;
   with contextstack[s.stacktop-2] do begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in datacontexts) or 
+              not (contextstack[s.stacktop].d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20160219B');
+   end;
+  {$endif}
    bo2:= true;
    if d.kind <> ck_const then begin
     bo2:= getvalue(s.stacktop-s.stackindex-2,das_none);
@@ -2271,12 +2277,12 @@ begin
    else begin   
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     int1:= d.dat.datatyp.indirectlevel;
-    if not tryconvert(s.stacktop-s.stackindex,po1,int1,[]) then begin
+    if not tryconvert(s.stacktop-s.stackindex,po1,int1,[coo_notrunk]) then begin
      with contextstack[s.stacktop] do begin
       po1:= ele.eledataabs(d.dat.datatyp.typedata);
       int1:= d.dat.datatyp.indirectlevel;
      end;
-     if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[]) then begin
+     if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[coo_notrunk]) then begin
       bo1:= true;
      end;
     end

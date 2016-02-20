@@ -1609,8 +1609,12 @@ begin
   if (do_proginfo in s.debugoptions) and (aunit^.llvmlists <> nil) then begin
    with aunit^.llvmlists.metadatalist do begin
     po1:= getdata(aunit^.compileunitmeta);
-    po1^.subprograms:= addnode(aunit^.subprograms);
-    po1^.globalvariables:= addnode(aunit^.globalvariables);
+    if aunit^.subprograms.count > 0 then begin
+     po1^.subprograms:= addnode(aunit^.subprograms);
+    end;
+    if aunit^.globalvariables.count > 0 then begin
+     po1^.globalvariables:= addnode(aunit^.globalvariables);
+    end;
    end;
   end;
   if co_writeunits in compileoptions then begin
