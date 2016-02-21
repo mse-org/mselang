@@ -2919,14 +2919,15 @@ begin
  bcstream.releasetrampoline(trampop);
  if trampop <> nil then begin //todo: force tailcall
   with trampop^.par.subbegin do begin
-   idar.count:= pc^.par.subbegin.sub.allocs.paramcount;
-   trampolinealloc.paramcount:= idar.count;
-   bcstream.beginsub([],trampolinealloc,1);
    i1:= 0; //first param, class instance
    if isfunction then begin
     i1:= 1;//second param, class instance
    end;
-   bcstream.emitbitcast(bcstream.subval(i1),
+   idar.count:= pc^.par.subbegin.sub.allocs.paramcount - i1;
+   trampolinealloc.paramcount:= idar.count;
+
+   bcstream.beginsub([],trampolinealloc,1);
+   bcstream.emitbitcast(bcstream.subval(0), //first param, class instance
                                  bcstream.ptypeval(pointertype)); //1ssa **i8
    bcstream.emitloadop(bcstream.relval(0));                     //1ssa *i8
                 //class def
@@ -2939,14 +2940,8 @@ begin
                //sub address
    bcstream.emitbitcast(bcstream.relval(0),
                           bcstream.ptypeval(pc^.par.subbegin.typeid)); //1ssa
-   i1:= 0;                                          
-   if isfunction then begin
-    dec(idar.count);
-    i1:= 1;
-   end;
    for i2:= 0 to idar.count-1 do begin
-    ids[i2]:= bcstream.subval(i1);
-    inc(i1);
+    ids[i2]:= bcstream.subval(i2);
    end;
    idar.ids:= @ids;
    bcstream.emitcallop(isfunction,bcstream.relval(0),idar);

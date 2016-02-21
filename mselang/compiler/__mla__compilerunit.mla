@@ -102,7 +102,7 @@ begin
    pd^:= ps^;
   {$ifdef mse_debugclass}
    writeln('  intf:',int32(pointer(pd)-result),' ',pd,'^:',pd^,
-                 ' instanceoffset:',pintfdefinfoty(pd^)^.instanceoffset);
+                 ' instanceoffset:',pintfdefinfoty(pd^)^.header.instanceoffset);
   {$endif}
    inc(pd);
    inc(ps);
