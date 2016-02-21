@@ -18,6 +18,5 @@ begin
  r1.b:= 123;
  po1:= @r1;
  po2:= @po1;
- writeln(po1,' ',po2);
  exitcode:= precty(po2^)^.b;
 end.

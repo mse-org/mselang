@@ -759,8 +759,8 @@ begin
    end
    else begin
    {$ifdef mse_checkinternalerror}
-    if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and 
-                                                 (d.kind <> ck_fact) then begin
+    if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and
+        not(dsf_isinherited in aflags) and (d.kind <> ck_fact) then begin
      internalerror(ie_handler,'20160219A');
     end;
    {$endif}
