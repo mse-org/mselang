@@ -1,0 +1,12 @@
+program sizeconvert1;
+type
+ pcard8 = ^card8;
+
+var
+ i1: int32;
+ po1: pcard8;
+begin
+ i1:= 123;
+ po1:= @i1;
+ exitcode:= po1^;
+end.

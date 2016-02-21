@@ -1,0 +1,23 @@
+program pointercast;
+
+type
+ pint32 = ^int32;
+ ppint32 = ^pint32;
+ ppointer = ^pointer;
+ recty = record
+  a,b: int32;
+ end;
+ precty = ^recty;
+ pprecty = ^precty;
+var
+ r1: recty;
+ po1: pointer;
+ po2: ppointer;
+ i2: int32;
+begin
+ r1.b:= 123;
+ po1:= @r1;
+ po2:= @po1;
+ writeln(po1,' ',po2);
+ exitcode:= precty(po2^)^.b;
+end.

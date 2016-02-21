@@ -1181,7 +1181,7 @@ begin
     ck_getfact: begin
      isgetfact:= true;
     end;
-    ck_ref: begin
+    ck_ref,ck_fact,ck_subres: begin
      po3:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                                 (po3^.h.kind <> dk_record) then begin
