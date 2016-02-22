@@ -650,36 +650,86 @@ function checkpropaccessor(const awrite: boolean): boolean;
   result:= false;
  end; //illegalsymbol
 
- function checkindex(const indexcount: int32; const sub: psubdataty): boolean;
+ function checkindex({const indexcount: int32;} const sub: psubdataty): boolean;
  var
   popar,pe: pelementoffsetty;
   pocontext: pcontextitemty;
+  po1,po2: pcontextitemty;
  begin
-  result:= true;
-  if indexcount > 0 then begin
-   pocontext:= @info.contextstack[info.s.stackindex+3];
-   popar:= pelementoffsetty(@sub^.paramsrel)+2; //first index param
-   pe:= popar + indexcount;
-   while popar < pe do begin
-   {$ifdef checkinternalerror}
-    if (pocontext^.d.kind <> ck_paramsdef) or 
-                        ((pocontext+2)^.d.kind <> ck_fieldtype) then begin
-     internalerror(ie_parser,'20160106A');
+  result:= false;
+//  if indexcount > 0 then begin
+  pocontext:= @info.contextstack[info.s.stackindex+3];
+  po1:= pocontext + 2; //first ident
+  popar:= pelementoffsetty(@sub^.paramsrel);
+  pe:= popar + sub^.paramcount;
+  inc(popar,2); //first index param
+  while true do begin
+  {$ifdef checkinternalerror}
+   if pocontext^.d.kind <> ck_paramsdef then begin
+    internalerror(ie_parser,'20160222B');
+   end;
+   if po1^.d.kind <> ck_ident then begin
+    internalerror(ie_parser,'20160106A');
+   end;
+  {$endif}
+   po2:= po1;
+   while po1^.d.kind = ck_ident do begin
+    inc(po1);
+   end;
+  {$ifdef checkinternalerror}
+   if (po1^.d.kind <> ck_fieldtype) then begin
+    internalerror(ie_parser,'20160222A');
+   end;
+  {$endif}
+   while po2 < po1 do begin
+    if (popar >= pe) then begin //not enough index parameters
+     illegalsymbol();
+     exit;
     end;
-   {$endif}
     with pvardataty(ele.eledataabs(popar^))^ do begin
-     if ((pocontext+2)^.d.typ.typedata <> vf.typ) or 
+     if ((po1)^.d.typ.typedata <> vf.typ) or 
        ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 
                                                paramflagsmask <> []) then begin
       illegalsymbol();
-      result:= false;
       exit;
      end;
     end;
+    inc(po2);
     inc(popar);
-    inc(pocontext,3);
    end;
+   pocontext:= po1+1;
+   if pocontext^.d.kind <> ck_paramsdef then begin
+    break;
+   end;
+   po1:= pocontext + 2; //first ident
   end;
+  result:= popar = pe; //correct param count
+  if not result then begin
+   illegalsymbol();
+  end;
+ (*
+  while popar < pe do begin
+  {$ifdef checkinternalerror}
+   if (pocontext^.d.kind <> ck_paramsdef) or 
+                       ((pocontext+2)^.d.kind <> ck_fieldtype) then begin
+    internalerror(ie_parser,'20160106A');
+   end;
+   if (
+  {$endif}
+   with pvardataty(ele.eledataabs(popar^))^ do begin
+    if ((pocontext+2)^.d.typ.typedata <> vf.typ) or 
+      ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 
+                                              paramflagsmask <> []) then begin
+     illegalsymbol();
+     result:= false;
+     exit;
+    end;
+   end;
+   inc(popar);
+   inc(pocontext,3);
+  end;
+ *)
+// end;
  end;  //checkindex
  
 var
@@ -691,7 +741,8 @@ var
  i1: int32;
  offs1: int32;
  idstart1: int32;
- indexcount1: int32;
+ hasindex: boolean;
+// indexcount1: int32;
 label
  endlab;
 begin
@@ -719,11 +770,19 @@ begin
  {$endif}
   typeele1:= contextstack[idstart1].d.typeref;
   indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
+  i1:= s.stackindex + 3;
+  hasindex:= (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramsdef);
+{  
   indexcount1:= 0;
-  i1:= idstart1 - s.stackindex;
-  if i1 > 1 then begin
-   indexcount1:= (i1 - 3) div 3;
+  if idstart1 - s.stackindex >= 5 then begin
+   for i1:= s.stackindex + 5 to idstart1-2 do begin
+    if contextstack[i1].d.kind = ck_ident then begin
+     inc(indexcount1);
+    end;
+//   indexcount1:= (i1 - 3) div 3;
+   end;
   end;
+}
   inc(idstart1);
   elekind1:= ele.findcurrent(contextstack[idstart1].d.ident.ident,[],
                                                            [vik_ancestor],po1);
@@ -733,7 +792,7 @@ begin
     identerror(s.stacktop-s.stackindex,err_identifiernotfound);
    end;
    ek_field: begin
-    if indexcount1 > 0 then begin
+    if hasindex then begin
      illegalsymbol();
      goto endlab;
     end;
@@ -769,27 +828,29 @@ begin
     with psubdataty(po1)^ do begin
      if (sf_method in flags) then begin
       if awrite then begin
-       if not (sf_function in flags) and (paramcount = 2 + indexcount1) and
+       if not (sf_function in flags) and ((paramcount = 2) or 
+                                       (paramcount > 2) and hasindex) and
          (pvardataty(ele.eledataabs(
                  pelementoffsetty(@paramsrel)[1]))^.vf.typ = typeele1) then begin
         d.classprop.writeele:= ele1;
         d.classprop.writeoffset:= 0;
         include(d.classprop.flags,pof_writesub);
-        result:= checkindex(indexcount1,po1);
+        result:= not hasindex or checkindex(po1);
        end
        else begin
         illegalsymbol();
        end;
       end
       else begin
-       if (sf_function in flags) and (paramcount = 2 + indexcount1) and 
+       if (sf_function in flags) and ((paramcount = 2) or 
+                                     (paramcount > 2) and hasindex) and 
             (resulttype.typeele = typeele1) and 
                             (resulttype.indirectlevel = indi1) then begin
                             //necessary?
         d.classprop.readele:= ele1;
         d.classprop.readoffset:= 0;
         include(d.classprop.flags,pof_readsub);
-        result:= checkindex(indexcount1,po1);
+        result:= checkindex({indexcount1,}po1);
        end
        else begin
         illegalsymbol();

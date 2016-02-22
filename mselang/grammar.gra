@@ -767,7 +767,7 @@ classfield,,,handleclassfield^*
 //
 // properties
 //
-propinddef1,propinddef2,,
+propinddef1,propinddef2,, //index
  '',propind0^*
 propinddef2,,,
  ${whitespace}
@@ -777,7 +777,7 @@ propinddef3,,,^      //return
 propind0,propind1,handleparamsdef0entry,
  ${whitespace}
  'const'.,!setconstparam->
- @identstart,ident^*
+ @identstart,commaidents^*
 propind1,,,*
  ${whitespace}
  ':',propind2-

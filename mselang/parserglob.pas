@@ -265,7 +265,7 @@ type
 
 const
  paramkinds: array[paramkindty] of addressflagsty = (
-   //pk_value,pk_const,pk_var,pk_out
+   //pk_value, pk_const,       pk_var,       pk_out
    [],        [af_paramconst],[af_paramvar],[af_paramout]
  );
  paramflagsmask = [af_paramconst,af_paramvar,af_paramout];
