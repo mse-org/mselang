@@ -3496,7 +3496,7 @@ begin
   itemsize1:= cpu.pc^.par.setlength.itemsize;
   sil1:= si1*itemsize1;
   if ds = nil then begin
-   getmem(ds,sil1+dynarrayallocsize);
+   ds:= intgetzeromem(sil1+dynarrayallocsize);
   end
   else begin
    if ds^.ref.count = 1 then begin
@@ -3518,8 +3518,8 @@ begin
   end;
   ds^.len:= si1;
   ds^.ref.count:= 1;
-  inc(ds);    //data
-  ad^:= ds;
+//  inc(ds);    //data
+  ad^:= @ds^.data;
  end;
  stackpop(pointersize+sizeof(dynarraysizety));
 end;

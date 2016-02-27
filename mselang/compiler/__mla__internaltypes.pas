@@ -46,13 +46,17 @@ type
  string8headerty = record
   ref: refinfoty;
   len: stringsizety;
- end; //following stringdata + terminating #0
+  data: record
+  end; //stringdata + terminating #0
+ end; 
  pstring8headerty = ^string8headerty;
 
  dynarrayheaderty = record
   ref: refinfoty;
   len: dynarraysizety;
- end; //following array data
+  data: record //data array
+  end;
+ end;
  pdynarrayheaderty = ^dynarrayheaderty;
 
 const
