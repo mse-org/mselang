@@ -1050,12 +1050,12 @@ paramsend,,handleparamsend,^
 
 getindex,getindex1,handleindexstart,
  '',exp^*
-getindex1,,,handleindex
+getindex1,,handleindexitem,handleindex
  ${whitespace}
  ']',-*
  ',',getindex2-
  '',!handleclosesquarebracketexpected
-getindex2,getindex1,,
+getindex2,getindex1,handleindexitemstart,
  '',exp^*
 
 illegalexpression,,,handleillegalexpression*

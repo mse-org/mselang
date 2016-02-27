@@ -11033,9 +11033,11 @@ begin
  getindexco.next:= @getindex1co;
  getindexco.handleentry:= @handleindexstart;
  getindex1co.branch:= @bgetindex1;
+ getindex1co.handleentry:= @handleindexitem;
  getindex1co.handleexit:= @handleindex;
  getindex2co.branch:= @bgetindex2;
  getindex2co.next:= @getindex1co;
+ getindex2co.handleentry:= @handleindexitemstart;
  illegalexpressionco.branch:= nil;
  illegalexpressionco.handleexit:= @handleillegalexpression;
  numco.branch:= @bnum;

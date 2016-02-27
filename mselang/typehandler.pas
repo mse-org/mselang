@@ -39,6 +39,8 @@ procedure handlearrayindexerror1();
 procedure handlearrayindexerror2();
 
 procedure handleindexstart();
+procedure handleindexitemstart();
+procedure handleindexitem();
 procedure handleindex();
 
 procedure handleenumdefentry();
@@ -57,7 +59,7 @@ procedure setsubtype(atypetypecontext: int32;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob,managedtypes,unithandler,identutils;
+ grammar,opglob,managedtypes,unithandler,identutils,valuehandler;
 
 procedure handletype();
 begin
@@ -682,11 +684,145 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
 {$endif}
- with info,contextstack[s.stackindex] do begin
-  d.kind:= ck_index;
+ with info do begin
+  if contextstack[s.stackindex-1].d.kind = ck_prop then begin
+   with contextstack[s.stackindex] do begin
+    d.kind:= ck_index;
+   end;
+  end
+  else begin
+   getaddress(-1,true);
+   handleindexitemstart();
+  end;
  end;
 end;
 
+procedure handleindexitemstart();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INDEXITEMSTART');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if d.kind <> ck_prop then begin
+ {$ifdef msecheckinternalerror}
+   if d.kind <> ck_fact then begin
+    internalerror(ie_handler,'20160227D');
+   end;
+ {$endif}
+   if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
+                                                      dk_dynarray then begin
+    dec(d.dat.indirection);
+    dec(d.dat.datatyp.indirectlevel);
+    getvalue(-1,das_none);
+   end;
+  end;
+ end;
+end;
+
+procedure handleindexitem();
+var
+ lastssa: int32;
+ itemtype,indextype: ptypedataty;
+ isdynarray: boolean;
+ range: ordrangety;
+ li1: int64;
+label
+ errorlab;
+begin
+{$ifdef mse_debugparser}
+ outhandle('INDEXITEM');
+{$endif}
+ with info,contextstack[s.stackindex-1] do begin
+  if d.kind <> ck_prop then begin //no array property
+   itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
+   isdynarray:= itemtype^.h.kind = dk_dynarray;
+   if not ((itemtype^.h.kind = dk_array) and 
+                             (d.dat.datatyp.indirectlevel = 1) or
+                  (isdynarray and (d.dat.datatyp.indirectlevel = 0))) then begin
+    errormessage(err_illegalqualifier,[],1);
+    goto errorlab;
+   end;
+   if isdynarray then begin
+    itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
+    if not tryconvert(1,st_int32) then begin
+     errormessage(err_illegalqualifier,[],1);
+     goto errorlab;
+    end;
+    range.min:= 0;
+   end
+   else begin
+    indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
+    getordrange(ele.eledataabs(itemtype^.infoarray.indextypedata),range);
+    itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata); 
+    if not tryconvert(1,indextype,0,[]) then begin
+     errormessage(err_illegalqualifier,[],1);
+     goto errorlab;
+    end;
+   end;
+   with contextstack[s.stacktop] do begin
+    if d.kind = ck_const then begin
+     li1:= getordconst(d.dat.constval);
+     if (li1 < range.min) or 
+                       not isdynarray and (li1 > range.max) then begin
+      rangeerror(range,1);
+      goto errorlab;
+     end;
+     
+    end;
+    getvalue(1,das_32);
+    if not tryconvert(1,st_int32) then begin
+     errormessage(err_illegalqualifier,[],1);
+     goto errorlab;
+    end;
+    if range.min <> 0 then begin
+     lastssa:= d.dat.fact.ssaindex;
+     with insertitem(oc_addimmint32,1,false)^ do begin
+      par.ssas1:= lastssa;
+      setimmint32(-range.min,par);
+     end;
+    end;
+    lastssa:= d.dat.fact.ssaindex;
+    with insertitem(oc_mulimmint32,1,false)^ do begin
+     par.ssas1:= lastssa;
+     setimmint32(itemtype^.h.bytesize,par);
+    end;
+   end;
+                                                        //next dimension
+   with additem(oc_addpoint32)^ do begin
+    par.ssas1:= d.dat.fact.ssaindex;
+    par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+    d.dat.fact.ssaindex:= par.ssad; //new pointer
+   end;
+   d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
+   d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel+1; //pointer
+           //opdatatype is already pointer
+errorlab:
+   dec(s.stacktop);
+  end;
+ end;
+end;
+
+procedure handleindex();
+begin
+{$ifdef mse_debugparser}
+ outhandle('INDEX');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  if d.kind = ck_index then begin //for indexed property
+   include(contextstack[s.stacktop].handlerflags,hf_propindex);
+  end
+  else begin
+   s.stacktop:= s.stackindex-1;
+   with contextstack[s.stacktop] do begin
+    dec(d.dat.indirection);
+    dec(d.dat.datatyp.indirectlevel);
+   end;
+  end;
+  s.stackindex:= parent;
+ end;
+end;
+
+(*
 procedure handleindex();
 var
  itemtype,indextype: ptypedataty;
@@ -712,11 +848,30 @@ begin
      fullconst:= true;
      for int1:= s.stackindex+1 to s.stacktop do begin
       isdynarray:= itemtype^.h.kind = dk_dynarray;
-      if not (isdynarray or (itemtype^.h.kind = dk_array)) then begin
+      if not (isdynarray or (itemtype^.h.kind = dk_array)) or 
+              (itemtype^.h.indirectlevel <> 0) then begin
        errormessage(err_illegalqualifier,[],0);
        goto errlab;
       end;
       if isdynarray then begin
+       if d.kind = ck_ref then begin
+        if fullconst then begin
+         d.dat.ref.offset:= d.dat.ref.offset + offs;
+         d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
+         d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel;
+         if not getvalue(-1,das_none) then begin
+          goto errlab;
+         end;
+        end
+        else begin
+         notimplementederror('20160227A');
+        end;
+       end
+       else begin
+        notimplementederror('20160227B');
+       end;
+       offs:= 0;
+       fullconst:= true;
        itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
        range.min:= 0;
       end
@@ -752,6 +907,7 @@ begin
          end;
          if not fullconst then begin
           with insertitem(oc_addint32,int1-s.stackindex,false)^ do begin
+           notimplementederror('20160226A');
            //todo
           end;         
          end
@@ -768,23 +924,36 @@ begin
       end;
       offs:= offs + li1*gettypesize(itemtype^);
      end;
-     d.dat.ref.offset:= d.dat.ref.offset + offs;
      d.dat.datatyp.typedata:= ele.eledatarel(itemtype);
      d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel;
-     if not fullconst then begin
-      if isdynarray then begin //todo: nested, move to index loop
-       getvalue(-1,das_32);
-      end
-      else begin
-       pushinsertaddress(-1,true);
+     case d.kind of 
+      ck_ref: begin
+       d.dat.ref.offset:= d.dat.ref.offset + offs;
+       if not fullconst then begin
+        pushinsertaddress(-1,true);
+        lastssa:= contextstack[int1].d.dat.fact.ssaindex;
+        with insertitem(oc_addpoint32,int1-s.stackindex,false)^ do begin
+         par.ssas1:= d.dat.fact.ssaindex;
+         par.ssas2:= lastssa;
+        end;         
+        d.kind:= ck_reffact;
+        d.dat.fact.ssaindex:= contextstack[int1].d.dat.fact.ssaindex;
+       end;
       end;
-      lastssa:= contextstack[int1].d.dat.fact.ssaindex;
-      with insertitem(oc_addpoint32,int1-s.stackindex,false)^ do begin
-       par.ssas1:= d.dat.fact.ssaindex;
-       par.ssas2:= lastssa;
-      end;         
-      d.kind:= ck_reffact;
-      d.dat.fact.ssaindex:= contextstack[int1].d.dat.fact.ssaindex;
+      ck_fact: begin
+       if not fullconst then begin
+        notimplementederror('20160227C');
+       end
+       else begin
+        if offs <> 0 then begin
+        end;
+       end;
+      end;
+     {$ifdef mse_checkinternalerror}
+      else begin
+       internalerror(ie_type,'20160227B');
+      end;
+     {$endif}
      end;
     end;
     ck_prop: begin
@@ -814,6 +983,7 @@ endlab1:
   s.stackindex:= contextstack[s.stackindex].parent;
  end;
 end;
+*)
 
 procedure handleenumdefentry();
 var
