@@ -228,16 +228,19 @@ begin
  if count > 1 then begin
   with additem(opsar[true][aaddress.base])^ do begin
    par.ssas1:= ssaindex;
-   par.memop.t.size:= count;
+//   par.memop.t.size:= count;
    if aaddress.base = ab_segment then begin
     par.memop.segdataaddress.a.address:= aaddress.offset;
     par.memop.segdataaddress.a.segment:= aaddress.segment;
     par.memop.segdataaddress.offset:= 0;
-    par.memop.t:= bitoptypes[das_pointer];
+//    par.memop.t:= bitoptypes[das_pointer];
    end
    else begin
     par.memop.podataaddress:= aaddress.offset;
    end;
+   par.memop.t.size:= count;
+   par.memop.t.kind:= das_none;
+   par.memop.t.flags:= [];
   end;
  end
  else begin
