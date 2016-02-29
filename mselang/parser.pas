@@ -388,7 +388,7 @@ begin
   with additem(oc_lineinfo)^.par.lineinfo do begin
    loc.line:= info.s.source.line;
    loc.col:= 0;
-   loc.scope:= info.s.currentscopemeta.id;
+   loc.scope:= info.{s.}currentscopemeta.id;
   end;
  end;
 end;
@@ -403,7 +403,7 @@ begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
-     loc.scope:= info.s.currentscopemeta.id;
+     loc.scope:= info.{s.}currentscopemeta.id;
     end;
    end;
   end;
@@ -606,10 +606,12 @@ begin
    s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
    if do_proginfo in info.debugoptions then begin
-    setcurrentscope(filepathmeta);
+    pushcurrentscope(filepathmeta);
+//    setcurrentscope(filepathmeta);
    end
    else begin
-    setcurrentscope(dummymeta);
+    pushcurrentscope(dummymeta);
+//    setcurrentscope(dummymeta);
    end;
   end;
 
@@ -922,6 +924,7 @@ parseend:
     result:= endunit(aunit);
    end;
   end;
+  popcurrentscope();
   if (result = false) or (us_implementationparsed in aunit^.state) then begin
    finalizeunit(aunit);
   end;
@@ -997,6 +1000,7 @@ begin
     end;
 //    getunitfile(unit1,afilename);
     s.unitinfo:= unit1;
+    scopemetaindex:= 0;
     stringbuffer:= '';
     stackdepth:= defaultstackdepth;
     setlength(contextstack,stackdepth);

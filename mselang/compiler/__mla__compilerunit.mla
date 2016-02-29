@@ -17,6 +17,8 @@ uses
 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
+                                      count: int32; itemsize: int32);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
 function __mla__personality(version: cint;
@@ -71,6 +73,11 @@ begin
   end;
   ref^:= nil;
  end;
+end;
+
+procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
+                                      count: int32; itemsize: int32);
+begin
 end;
 
 //todo: use simplified version if there are no interfaces

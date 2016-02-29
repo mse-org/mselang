@@ -1885,10 +1885,12 @@ procedure storestackrefnilop();
 begin
  notimplemented();
 end;
+
 procedure storesegnilarop();
 begin
  notimplemented();
 end;
+
 procedure storeframenilarop();
 begin
  notimplemented();
@@ -2956,6 +2958,9 @@ begin
  end;
  with pc^.par.subbegin do begin
   bcstream.beginsub(sub.flags,sub.allocs,sub.blockcount);
+  if sf_nolineinfo in sub.flags then begin
+   bcstream.nodebugloc:= true;
+  end;
   ps:= getsegmentpo(seg_localloc,sub.allocs.allocs);
   pe:= ps + sub.allocs.alloccount;
   po1:= ps;
@@ -3085,6 +3090,7 @@ begin
   end;
   bcstream.endsub();
  end;
+ bcstream.nodebugloc:= false;
 end;
 
 procedure externalsubop();
@@ -3143,8 +3149,12 @@ begin
 end;
 
 procedure setlengthdynarrayop();
-begin
- notimplemented();
+begin                                         //dest
+ with pc^.par do begin
+  callcompilersub(cs_setlengthdynarray,false,[bcstream.ssaval(ssas1),
+           //count                 //itemsize
+       bcstream.ssaval(ssas2),bcstream.constval(setlength.itemsize)]);
+ end;
 end;
 
 procedure raiseop();

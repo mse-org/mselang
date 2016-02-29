@@ -2234,7 +2234,8 @@ begin
        checkdatalen(rec1,5);
        dec(rec1[4]);
        dec(rec1[5]);
-       outrecord(' *',dynarraytovararray(copy(rec1,2,bigint)));
+       outrecord(' *',[rec1[2],rec1[3],'M'+inttostr(rec1[4]),rec1[5]]);
+//       outrecord(' *',dynarraytovararray(copy(rec1,2,bigint)));
       end;
       FUNC_CODE_DEBUG_LOC_AGAIN: begin
        checkdatalen(rec1,1); //error

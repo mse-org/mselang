@@ -240,7 +240,7 @@ begin
    end;
    par.memop.t.size:= count;
    par.memop.t.kind:= das_none;
-   par.memop.t.flags:= [];
+   par.memop.t.flags:= [af_arrayop];
   end;
  end
  else begin

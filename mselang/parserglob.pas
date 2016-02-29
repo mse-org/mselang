@@ -258,7 +258,7 @@ type
   match: elementoffsetty;
   error: boolean;
   flags: subflagsty;
-  scopemetabefore: metavaluety;
+//  scopemetabefore: metavaluety;
  end;
 
  paramkindty = (pk_value,pk_const,pk_var,pk_out);
@@ -630,7 +630,7 @@ type
   compilerswitches: compilerswitchesty;
   currentcompileunitmeta: metavaluety;
   currentfilemeta: metavaluety;
-  currentscopemeta: metavaluety;
+ // currentscopemeta: metavaluety;
   globlinkage: linkagety;
   blockid: int32;
  end;
@@ -639,6 +639,9 @@ type
   s: savedparseinfoty;
   compileoptions: compileoptionsty;
   debugoptions: debugoptionsty;
+  currentscopemeta: metavaluety;
+  scopemetastack: metavaluearty;
+  scopemetaindex: int32;
   compilerswitches: compilerswitchesty;
   modularllvm: boolean;
 

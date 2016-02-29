@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -191,6 +191,7 @@ type
    flandingpad: int32;
    fmetadata: int32;
    fvoid: int32;
+//   fsimplesub: int32;
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
    function addvalue(var avalue: typeallocdataty): ptypelisthashdataty; inline;
@@ -217,6 +218,8 @@ type
    property landingpad: int32 read flandingpad;
    property metadata: int32 read fmetadata;
    property void: int32 read fvoid;
+//   property simplesub: int32 read fsimplesub; //no params, 
+//                                         //for initialization, finalizition
  end;
 
  consttypety = (ct_none,ct_null,ct_pointercast,
@@ -383,7 +386,8 @@ type
                              const aparams: paramsty): int32; 
                                                              //returns listid
    function addinternalsubvalue(const aflags: subflagsty; 
-                 const aparams: paramsty): int32; //returns listid
+                                   const aparams: paramsty): int32; 
+                                                             //returns listid
    function addexternalsubvalue(const aflags: subflagsty; 
                        const aparams: paramsty;
                            const aname: identnamety): int32;  //returns listid
@@ -398,6 +402,7 @@ type
                                                             //returns listid
    function addtypecopy(const alistid: int32): int32;
    function gettype(const alistid: int32): int32; //returns type listid
+   function gettype1(const alistid: int32): metavaluety;
    property namelist: tglobnamelist read fnamelist;
    property linklist: tlinklist read flinklist;
    property lastitem: pgloballocdataty read flastitem;
@@ -629,6 +634,7 @@ type
    fhasmoduleflags: boolean;
    fdummyaddrexp: metavaluety;
    fderefaddrexp: metavaluety;
+   fnoparams: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -726,6 +732,7 @@ type
 //   property voidconst: metavaluety read fvoidconst;
 //   property nullintconst: metavaluety read fnullintconst;
    property emptystringconst: metavaluety read femptystringconst;
+   property noparams: metavaluety read fnoparams; //[dummymeta]
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
    property dummyaddrexp: metavaluety read fdummyaddrexp;
@@ -973,6 +980,7 @@ procedure ttypehashdatalist.clear;
 var
  k1: databitsizety;
  t1: typeallocdataty;
+// params1: paramsty;
 begin
  inherited;
  if not (hls_destroying in fstate) then begin
@@ -987,6 +995,11 @@ begin
   t1.header.data:= nil;
   t1.kind:= das_none;
   fvoid:= addvalue(t1)^.data.header.listindex;
+{
+  params1.count:= 0;
+  params1.items:= nil;
+  fsimplesub:= addsubvalue([],params1);
+}
  end;
  {
  t1.header.size:= -1;
@@ -1967,6 +1980,11 @@ begin
  result:= (pgloballocdataty(fdata) + alistid)^.typeindex;
 end;
 
+function tgloballocdatalist.gettype1(const alistid: int32): metavaluety;
+begin
+ result:= metavaluety((pgloballocdataty(fdata) + alistid)^.typeindex);
+end;
+
 function tgloballocdatalist.addtypecopy(const alistid: int32): int32;
 begin
  result:= fcount;
@@ -2037,6 +2055,7 @@ begin
                                             getidentname('llvm.dbg.declare'));
    fdummyaddrexp:= adddiexpression([]);
    fderefaddrexp:= adddiexpression([DW_OP_deref]);
+   fnoparams:= addnode([dummymeta]);
  end;
  end;
 end;
@@ -2415,8 +2434,13 @@ begin
    po1:= @asub^.paramsrel;
    po2:= @params1;
    if not (sf_function in asub^.flags) then begin //todo: handle result deref
-    po2^:= dummymeta;
-    inc(po2);
+    if parcount1 = 0 then begin
+     m1:= fnoparams;
+    end
+    else begin
+     po2^:= dummymeta;
+     inc(po2);
+    end;
    end;
    pe:= po2 + parcount1;
    while po2 < pe do begin
@@ -2715,6 +2739,18 @@ begin
                                    m2,po2^.h.bitsize,0,0,0,m3);
                                         //todo: use correct alignment
      end;
+     dk_dynarray: begin
+      m2:= addtype(po2^.infodynarray.i.itemtypedata,
+                                   po2^.infodynarray.i.itemindirectlevel);
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                       //todo
+     {                 
+      m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);
+      m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
+                                   m2,po2^.h.bitsize,0,0,0,m3);
+     }                                  
+     end;
      dk_string8: begin
                                         //todo: use refstringtype
       m2:= addtype(sysdatatypes[st_char8].typedata,0);
@@ -2802,7 +2838,7 @@ begin
     kind:= divk_autovariable;
     arg:= 0;
    end;
-   scope:= info.s.currentscopemeta;
+   scope:= info.{s.}currentscopemeta;
    name:= m1;
    _file:= info.s.currentfilemeta;
    linenumber:= alinenumber;

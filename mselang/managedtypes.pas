@@ -36,7 +36,7 @@ procedure managedynarray(const op: managedopty; const aaddress: addressrefty;
                              const count: datasizety; const ssaindex: integer);
 implementation
 uses
- elements,grammar,errorhandler,handlerutils,
+ elements,grammar,errorhandler,handlerutils,llvmlists,
  stackops;
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -117,14 +117,30 @@ begin
     end
     else begin
      if getaddress(s.stacktop-s.stackindex-1,true) then begin
-      with ptypedataty(ele.eledataabs(
-                 contextstack[s.stacktop-1].d.dat.datatyp.typedata))^ do begin
-       with additem(setlengthops[h.kind])^ do begin
-        if op.op = oc_none then begin
-         errormessage(err_typemismatch,[]);
-        end
-        else begin
-         par.setlength.itemsize:= itemsize;
+     {$ifdef mse_checkinternalerror}
+      if (contextstack[s.stacktop].d.kind <> ck_fact) or 
+                     (contextstack[s.stacktop-1].d.kind <> ck_fact) then begin
+       internalerror(ie_handler,'20160228A');
+      end;
+     {$endif}
+      with contextstack[s.stacktop-1] do begin
+       with ptypedataty(ele.eledataabs(
+                  d.dat.datatyp.typedata))^ do begin
+        with additem(setlengthops[h.kind])^ do begin
+         if op.op = oc_none then begin
+          errormessage(err_typemismatch,[]);
+         end
+         else begin
+          if co_llvm in compileoptions then begin
+           par.ssas1:= d.dat.fact.ssaindex; //result
+           par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+           par.setlength.itemsize:= 
+                  info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+          end
+          else begin
+           par.setlength.itemsize:= itemsize;
+          end;
+         end;
         end;
        end;
       end;

@@ -1,9 +1,20 @@
 unit unit1;
 interface
-const
- c2 = 'def';
-var
- v1: int32;
+procedure test1();
 implementation
 
+procedure test1();
+begin
+ exitcode:= 222;
+end;
+
+//{$internaldebug on}
+{
+initialization
+
+ exitcode:= 33;
+
+finalization
+ exitcode:= 33;
+} 
 end.

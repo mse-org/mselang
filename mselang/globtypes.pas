@@ -100,8 +100,9 @@ type
                                               //for paramkindty match test
                   af_withindirect,
                   af_classfield,af_stack,af_segmentpo,af_aggregate,
-                  af_startoffset{, //for indirection
-                  af_getaddress}
+                  af_startoffset, //for indirection
+                  af_arrayop //typeallocinfoty.size = count
+                  {af_getaddress}
                   );
  addressflagsty = set of addressflagty;
 
@@ -192,7 +193,7 @@ const
 type
  typeallocinfoty = record
   kind: databitsizety;
-  size: integer;        //bits or bytes
+  size: integer;        //bits or bytes, count for array managed ops
   listindex: integer;
   flags: addressflagsty;
  end; 
@@ -202,6 +203,7 @@ type
               sf_functiontype,sf_hasnestedaccess,sf_hasnestedref,sf_hascallout,
               sf_header,sf_forward,sf_external,sf_typedef,
               sf_named, //has llvm name
+              sf_nolineinfo, //for llvm
               sf_vararg,sf_proto, //for llvm
               sf_virtual,sf_override,sf_interface,
               sf_intfcall); //called by interface

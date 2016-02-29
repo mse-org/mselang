@@ -231,7 +231,9 @@ procedure sethandlererror();
 
 procedure setenumconst(const aenumitem: infoenumitemty; 
                                    var acontextitem: contextitemty);
-procedure setcurrentscope(const ascope: metavaluety);
+//procedure setcurrentscope(const ascope: metavaluety);
+procedure pushcurrentscope(const ascope: metavaluety);
+procedure popcurrentscope();
 
 procedure init();
 procedure deinit();
@@ -2590,12 +2592,38 @@ begin
  end;
 end;
 
+procedure pushcurrentscope(const ascope: metavaluety);
+begin
+ with info do begin
+  if high(scopemetastack) < scopemetaindex then begin
+   setlength(scopemetastack,scopemetaindex*2+256);
+  end;
+  scopemetastack[scopemetaindex]:= ascope;
+  currentscopemeta:= ascope;
+  inc(scopemetaindex);
+ end;
+ postlineinfo();
+end;
+
+procedure popcurrentscope();
+begin
+ with info do begin
+  dec(scopemetaindex);
+  if scopemetaindex < 0 then begin
+   internalerror1(ie_unit,'20160229A');
+  end;
+  currentscopemeta:= scopemetastack[scopemetaindex];
+ end;
+// postlineinfo();
+end;
+
+{
 procedure setcurrentscope(const ascope: metavaluety);
 begin
  info.s.currentscopemeta:= ascope;
  postlineinfo();
 end;
-
+}
 {$ifdef mse_debugparser}
 procedure outhandle(const text: string);
 begin

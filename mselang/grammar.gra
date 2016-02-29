@@ -52,7 +52,7 @@
 @.internaltokens
  '.classes','.private','.protected','.public','.published'
  '.classintfname','.classintftype','.classimp','.self'
- '.units','.ancestors','.nestedvarref','.defines'
+ '.units','.ancestors','.nestedvarref','.defines','.ini','.fini'
 @.tokens
  'result','exitcode','sizeof','break','continue','self'
  'b','booleval','internaldebug'

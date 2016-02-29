@@ -66,7 +66,7 @@ function checkparams(const po1,ref: psubdataty): boolean;
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
 procedure callinternalsub(const asub: opaddressty); //ignores op address 0
-function startsimplesub: opaddressty;
+function startsimplesub(const aname: identty): opaddressty;
 procedure endsimplesub();
 
 implementation
@@ -76,19 +76,27 @@ uses
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes;
 
 type
+ tmetadatalist1 = class(tmetadatalist);
  equalparaminfoty = record
   ref: psubdataty;
   match: psubdataty;
  end;
 
+const
+ internalsubidents: array[internalsubty] of identty  =
+                        //isub_ini,isub_fini
+                         (tks_ini, tks_fini);
+ 
 function getinternalsub(const asub: internalsubty;
                                    out aaddress: opaddressty): boolean;
+var
+ scope1: metadataty;
 begin
- with info.s.unitinfo^ do begin
+ with info,s.unitinfo^ do begin
   aaddress:=  internalsubs[asub];
   result:= aaddress = 0;
   if result then begin
-   aaddress:= startsimplesub();
+   aaddress:= startsimplesub(internalsubidents[asub]);
    internalsubs[asub]:= aaddress;
   end;
  end;
@@ -577,19 +585,33 @@ begin
  end;
 end;
 
-function startsimplesub: opaddressty;
+function startsimplesub(const aname: identty): opaddressty;
+var
+ m1: metavaluety;
 begin
  result:= info.opcount;
  resetssa();
- with additem(oc_subbegin)^.par.subbegin do begin
-  subname:= result;
+ with additem(oc_subbegin)^.par do begin
+  subbegin.subname:= result;
   if co_llvm in info.compileoptions then begin
-   globid:= info.s.unitinfo^.llvmlists.globlist.
-                               addinternalsubvalue([],noparams);
+   with info,s.unitinfo^ do begin
+    subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+    if do_proginfo in s.debugoptions then begin
+     with pdisubroutinetypety(
+      tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
+                    sizeof(disubroutinetypety),m1))^ do begin
+      params:= llvmlists.metadatalist.noparams;
+     end;
+     pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
+          {s.}currentscopemeta,getidentname2(aname),
+                  s.currentfilemeta,info.s.source.line,subbegin.globid,m1,[],true));
+    end;
+   end;
   end;
-  sub.flags:= [];
-  sub.allocs:= nullallocs;
-  sub.blockcount:= 1;
+  subbegin.sub.flags:= [];
+//  sub.flags:= [sf_nolineinfo];
+  subbegin.sub.allocs:= nullallocs;
+  subbegin.sub.blockcount:= 1;
  end;
 (*
  with info do begin
@@ -611,6 +633,9 @@ begin
  with additem(oc_subend)^ do begin
   par.subend.allocs.alloccount:= 0;
   par.subend.allocs.nestedalloccount:= 0;
+ end;
+ if do_proginfo in info.s.debugoptions then begin
+  popcurrentscope();
  end;
 (*
  with info do begin
@@ -1111,12 +1136,12 @@ begin
      internalerror(ie_parser,'20151023A');
     end;
    {$endif}
-    d.subdef.scopemetabefore:= s.currentscopemeta;
+//    d.subdef.scopemetabefore:= s.currentscopemeta;
     po1:= ele.eleinfoabs(d.subdef.ref);
-    with info.s.unitinfo^ do begin
+    with s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
-      setcurrentscope(llvmlists.metadatalist.adddisubprogram(
-           s.currentscopemeta,getidentname2(po1^.header.name),
+      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
+           {s.}currentscopemeta,getidentname2(po1^.header.name),
            s.currentfilemeta,
            info.contextstack[info.s.stackindex].start.line,-1,
            dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
@@ -1380,12 +1405,15 @@ begin
     m2:= llvmlists.metadatalist.adddisubroutinetype(
                                    po1{,filepathmeta,debugfilemeta});
     with pdisubprogramty(llvmlists.metadatalist.getdata(
-                                                s.currentscopemeta))^ do begin
+                                                {s.}currentscopemeta))^ do begin
      _function:= m1;
      _type:= m2;
     end;
    end;
-   setcurrentscope(d.subdef.scopemetabefore);
+//   setcurrentscope(d.subdef.scopemetabefore);
+   if do_proginfo in s.debugoptions then begin
+    popcurrentscope();
+   end;
   end;
  end;
 end;

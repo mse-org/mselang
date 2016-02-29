@@ -236,6 +236,25 @@ begin
    //blockcount set in handleprogblock() 
    par.main.exitcodeaddress:= getexitcodeaddress();
   end;
+  if co_llvm in compileoptions then begin
+   n1:= getidentname2(getident('main'));
+   i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
+//   m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
+//                                          gettype(m1.value.listid);
+//   m1.flags:= [mvf_globval,mvf_pointer];
+   if do_proginfo in info.s.debugoptions then begin
+    with info.s.unitinfo^ do begin
+     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
+           info.{s.}currentscopemeta,
+           n1,info.s.currentfilemeta,
+           info.contextstack[info.s.stackindex].start.line+1,i1,
+           llvmlists.metadatalist.adddisubroutinetype(nil{,
+                      filepathmeta,s.currentscopemeta}),[flagprototyped],false);
+     pushcurrentscope(mainsubmeta);
+//     setcurrentscope(mainsubmeta);
+    end;
+   end;
+  end;
   with unitlinklist do begin
    ad1:= unitchain;
    while ad1 <> 0 do begin         //insert ini calls
@@ -246,24 +265,6 @@ begin
       end;
      end;
      ad1:= header.next;
-    end;
-   end;
-  end;
-  if co_llvm in compileoptions then begin
-   n1:= getidentname2(getident('main'));
-   i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
-//   m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
-//                                          gettype(m1.value.listid);
-//   m1.flags:= [mvf_globval,mvf_pointer];
-   if do_proginfo in info.s.debugoptions then begin
-    with info.s.unitinfo^ do begin
-     mainsubmeta:= llvmlists.metadatalist.adddisubprogram(
-           info.s.currentscopemeta,
-           n1,info.s.currentfilemeta,
-           info.contextstack[info.s.stackindex].start.line+1,i1,
-           llvmlists.metadatalist.adddisubroutinetype(nil{,
-                      filepathmeta,s.currentscopemeta}),[flagprototyped],false);
-     setcurrentscope(mainsubmeta);
     end;
    end;
   end;
@@ -308,6 +309,9 @@ begin
   end;
  end;
  updateprogend(additem(oc_progend));
+ if do_proginfo in info.s.debugoptions then begin
+  popcurrentscope();
+ end;
  with info.contextstack[info.s.stackindex] do begin
   with getoppo(d.prog.blockcountad)^ do begin
    par.main.blockcount:= info.s.ssa.bbindex+1;
@@ -318,7 +322,7 @@ begin
   with getoppo(startupoffset)^ do begin
    par.beginparse.finisub:= info.opcount;
   end;
-  i1:= startsimplesub();
+  i1:= startsimplesub(tks_fini);
   with getoppo(finicall)^.par.callinfo do begin
    ad.globid:= getoppo(i1)^.par.subbegin.globid;
    ad.ad:= i1-1;
