@@ -115,6 +115,12 @@ begin
    end;
   end
   else begin
+   if i1 = 0 then begin
+    freemem(d);
+    ref^:= nil;
+   end
+   else begin
+   end;
   end;
  end
  else begin

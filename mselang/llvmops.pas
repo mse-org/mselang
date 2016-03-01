@@ -3531,7 +3531,7 @@ const
   increfsizesegssa = 1;
   increfsizeframessa = 1;
   increfsizereg0ssa = 1;
-  increfsizestackssa = 1;
+  increfsizestackssa = 0;
   increfsizestackrefssa = 1;
   increfsizeframearssa = 1;
   increfsizesegarssa = 1;
@@ -3542,7 +3542,7 @@ const
   decrefsizesegssa = 1;
   decrefsizeframessa = 1;
   decrefsizereg0ssa = 1;
-  decrefsizestackssa = 1;
+  decrefsizestackssa = 0;
   decrefsizestackrefssa = 2;
   decrefsizeframearssa = 1;
   decrefsizesegarssa = 1;
