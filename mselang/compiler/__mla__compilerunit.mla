@@ -8,7 +8,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit __mla__compilerunit;
-interface 
+interface
 //{$internaldebug on}
 //{$define mse_debugclass}
 
@@ -33,19 +33,19 @@ function _Unwind_RaiseException(
 function _Unwind_GetLanguageSpecificData(context: p_Unwind_Context): pointer;
                                                                        external;
 function _Unwind_GetIP(context: p_Unwind_Context): pointer; external;
-procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer); 
+procedure _Unwind_SetIP(context: p_Unwind_Context; new_value: pointer);
                                                                   external;
 function _Unwind_GetGR(context: p_Unwind_Context; index: cint): ptrint;
                                                                    external;
-procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint; 
-                                                new_value: ptrint); external;                                                                    
+procedure _Unwind_SetGR(context: p_Unwind_Context; index: cint;
+                                                new_value: ptrint); external;
 
 function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 
 implementation
 type
  pcard8 = ^card8;
- 
+
 //todo: thread safe managed types
 
 procedure __mla__increfsize(ref: prefsizeinfoty);
@@ -122,7 +122,7 @@ begin
    getzeromem(d,i1+dynarrayallocsize);
    d^.ref.count:= 1;
    d^.high:= count-1;
-   ref:= @d.data;
+   ref^:= @d^.data;
   end;
  end;
 end;
