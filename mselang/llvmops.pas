@@ -3712,8 +3712,8 @@ const
   initclassssa = 3;
   destroyclassssa = 0;
 
-  setlengthstr8ssa = 1;
-  setlengthdynarrayssa = 1;
+  setlengthstr8ssa = 0;
+  setlengthdynarrayssa = 0;
 
   raisessa = 0;
   pushcpucontextssa = 0;
