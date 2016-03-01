@@ -30,6 +30,7 @@ procedure handledec(const paramco: integer);
 procedure handlegetmem(const paramco: integer);
 procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
+procedure handlereallocmem(const paramco: integer);
 procedure handlesetmem(const paramco: integer);
 procedure handlehalt(const paramco: integer);
 procedure handlelow(const paramco: integer);
@@ -42,6 +43,8 @@ const
   @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
   //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
+  //sf_reallocmem
+  @handlereallocmem,
   //sf_setmem,  sf_halt
   @handlesetmem,@handlehalt,@handlelow,@handlehigh,@handlesin);
   
@@ -534,6 +537,7 @@ begin
 end;
 
 procedure call2param(const paramco: integer; const op: opcodety);
+     //(var [stacktop-1]: pointer; [stacktop]: i32)
 var
  po1,po2: pcontextitemty;
 begin
@@ -548,7 +552,7 @@ begin
       errormessage(err_pointertypeexpected,[]);
       exit;
      end;
-     if not (contextstack[s.stacktop].d.dat.fact.opdatatype.kind in
+     if not (po2^.d.dat.fact.opdatatype.kind in
                                              ordinalopdatakinds) then begin
       errormessage(err_ordinalexpexpected,[],s.stacktop-s.stackindex);
       exit;
@@ -579,13 +583,18 @@ begin
  with info do begin
   if checkparamco(1,paramco) and 
           getbasevalue(s.stacktop-s.stackindex,das_pointer) then begin
-   with contextstack[s.stacktop] do begin
+//   with contextstack[s.stacktop] do begin
     with additem(oc_freemem)^ do begin
      par.ssas1:= info.s.ssa.index-1;
     end;
-   end;
+//   end;
   end;
  end;
+end;
+
+procedure handlereallocmem(const paramco: integer);
+begin
+ call2param(paramco,oc_reallocmem);
 end;
  
 procedure handlesetmem(const paramco: integer);
@@ -798,6 +807,7 @@ const
    (name: 'getmem'; data: (func: sf_getmem)),
    (name: 'getzeromem'; data: (func: sf_getzeromem)),
    (name: 'freemem'; data: (func: sf_freemem)),
+   (name: 'reallocmem'; data: (func: sf_reallocmem)),
    (name: 'setmem'; data: (func: sf_setmem)),
    (name: 'halt'; data: (func: sf_halt)),
    (name: 'low'; data: (func: sf_low)),

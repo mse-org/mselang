@@ -22,6 +22,7 @@ uses
  
 type
  compilersubty = (
+  cs_increfsize,
   cs_decrefsize,
   cs_finifrefsize,
   cs_setlengthdynarray,
@@ -31,6 +32,7 @@ type
  );
 const
  compilersubnames: array[compilersubty] of string = (
+  '__mla__increfsize',
   '__mla__decrefsize',
   '__mla__finirefsize',
   '__mla__setlengthdynarray',

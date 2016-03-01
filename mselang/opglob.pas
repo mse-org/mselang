@@ -496,6 +496,7 @@ type
   oc_getmem,
   oc_getzeromem,
   oc_freemem,
+  oc_reallocmem,
   oc_setmem,
   
   oc_sin,

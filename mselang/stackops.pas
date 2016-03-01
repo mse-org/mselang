@@ -3500,13 +3500,13 @@ begin
   end
   else begin
    if ds^.ref.count = 1 then begin
-    intreallocnulledmem(ds,ds^.len*itemsize1+dynarrayallocsize,
+    intreallocnulledmem(ds,(ds^.high+1)*itemsize1+dynarrayallocsize,
                                                     sil1+dynarrayallocsize);
    end
    else begin //needs copy
     ss:= ds;
     getmem(ds,sil1+dynarrayallocsize);
-    sil2:= ss^.len*itemsize1;
+    sil2:= (ss^.high+1)*itemsize1;
     if sil1 < sil2 then begin
      sil2:= sil1;
     end
@@ -3516,7 +3516,7 @@ begin
     move((ss+1)^,(ds+1)^,sil2); //get data copy
    end;
   end;
-  ds^.len:= si1;
+  ds^.high:= si1-1;
   ds^.ref.count:= 1;
 //  inc(ds);    //data
   ad^:= @ds^.data;
@@ -3639,6 +3639,16 @@ var
 begin
  po1:= ppointer(stackpop(pointersize))^;
  freemem(po1);
+end;
+
+procedure reallocmemop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ i1:= pinteger(stackpop(sizeof(int32)))^;
+ po1:= ppointer(stackpop(pointersize))^;
+ reallocmem(po1,i1);
 end;
 
 procedure setmemop();
@@ -4145,6 +4155,7 @@ const
   getmemssa = 0;
   getzeromemssa = 0;
   freememssa = 0;
+  reallocmemssa = 0;
   setmemssa = 0;
   
   sin64ssa = 0;

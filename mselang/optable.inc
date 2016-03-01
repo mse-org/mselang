@@ -1717,6 +1717,8 @@
   (ssa: getzeromemssa; proc: @getzeromemop; flags: []), 
 //oc_freemem
   (ssa: freememssa; proc: @freememop; flags: []), 
+//oc_reallocmem
+  (ssa: reallocmemssa; proc: @reallocmemop; flags: []), 
 //oc_setmem
   (ssa: setmemssa; proc: @setmemop; flags: []), 
   

@@ -1,4 +1,4 @@
-{ MSEgui Copyright (c) 2014-2015 by Martin Schreiber
+{ MSEgui Copyright (c) 2014-2016 by Martin Schreiber
 
     See the file COPYING.MSE, included in this distribution,
     for details about the copyright.
@@ -16,6 +16,7 @@ uses
  __mla__internaltypes;
 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__increfsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
                                       count: int32; itemsize: int32);
@@ -44,6 +45,16 @@ function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 implementation
 type
  pcard8 = ^card8;
+ 
+//todo: thread safe managed types
+
+procedure __mla__increfsize(ref: prefsizeinfoty);
+begin
+ if ref <> nil then begin
+  dec(ref);
+  inc(ref^.ref.count);
+ end;
+end;
 
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 begin
@@ -77,7 +88,43 @@ end;
 
 procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
                                       count: int32; itemsize: int32);
+var
+ d: pdynarrayheaderty;
+ i1,i2: int32;
 begin
+ i1:= count*itemsize;
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count = 1 then begin
+   if i1 = 0 then begin
+    freemem(d);
+    ref^:= nil;
+   end
+   else begin
+    if count >= d^.high then begin
+     i2:= (d^.high+1) * count;
+     reallocmem(d,i1+dynarrayallocsize); //bigger
+     setmem(@d^.data+i2,i1-i2,0);
+    end
+    else begin
+     reallocmem(d,i1+dynarrayallocsize); //smaller
+    end;
+    d^.ref.count:= 1;
+    d^.high:= count-1;
+   end;
+  end
+  else begin
+  end;
+ end
+ else begin
+  if count > 0 then begin
+   getzeromem(d,i1+dynarrayallocsize);
+   d^.ref.count:= 1;
+   d^.high:= count-1;
+   ref:= @d.data;
+  end;
+ end;
 end;
 
 //todo: use simplified version if there are no interfaces

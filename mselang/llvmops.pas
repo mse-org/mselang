@@ -53,7 +53,7 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_memset,
+ internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_realloc,if_memset,
                    if__exit,
                    if_sin64);
 const
@@ -76,6 +76,11 @@ const
               (typelistindex: sizetype; flags: [])     //elsize
  );
  callocparams: paramsty = (count: 3; items: @callocpar);
+ reallocpar: array[0..1] of paramitemty = (
+              (typelistindex: pointertype; flags: []), //**memory
+              (typelistindex: sizetype; flags: [])     //size
+ );
+ reallocparams: paramsty = (count: 2; items: @reallocpar);
  memsetpar: array[0..3] of paramitemty = (
               (typelistindex: pointertype; flags: []), //result
               (typelistindex: pointertype; flags: []), //s data
@@ -107,6 +112,7 @@ const
   (name: 'malloc'; flags: [sf_proto,sf_function]; params: @mallocparams),
   (name: 'free'; flags: [sf_proto]; params: @freeparams),
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
+  (name: 'realloc'; flags: [sf_proto]; params: @reallocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
@@ -1971,10 +1977,14 @@ procedure increfsizereg0op();
 begin
  notimplemented();
 end;
+
 procedure increfsizestackop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_increfsize,false,[bcstream.ssaval(ssas1)]);
+ end;
 end;
+
 procedure increfsizestackrefop();
 begin
  notimplemented();
@@ -3219,6 +3229,14 @@ begin
  end;
 end;
 
+procedure reallocmemop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_realloc]),
+               [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
+ end;
+end;
+
 procedure setmemop();
 begin
  with pc^.par do begin
@@ -3705,6 +3723,7 @@ const
   getmemssa = 2;
   getzeromemssa = 2;
   freememssa = 0;
+  reallocmemssa = 0;
   setmemssa = 1;
   
   sin64ssa = 1;

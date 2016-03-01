@@ -42,7 +42,7 @@ type
  end;
  prefsizeinfoty = ^refsizeinfoty;
  pprefsizeinfoty = ^prefsizeinfoty;
- 
+
  string8headerty = record
   ref: refinfoty;
   len: stringsizety;
@@ -53,11 +53,12 @@ type
 
  dynarrayheaderty = record
   ref: refinfoty;
-  len: dynarraysizety;
+  high: dynarraysizety;
   data: record //data array
   end;
  end;
  pdynarrayheaderty = ^dynarrayheaderty;
+ ppdynarrayheaderty = ^pdynarrayheaderty;
 
 const
  string8headersize = sizeof(string8headerty);

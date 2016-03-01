@@ -604,7 +604,7 @@ begin
      end;
      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
           {s.}currentscopemeta,getidentname2(aname),
-                  s.currentfilemeta,info.s.source.line,subbegin.globid,m1,[],true));
+             s.currentfilemeta,info.s.source.line,subbegin.globid,m1,[],true));
     end;
    end;
   end;
