@@ -1904,7 +1904,12 @@ end;
 
 procedure storesegnilarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
+                                                bcstream.typeval(pointertype));
+  callcompilersub(cs_zeropointerar,false,[bcstream.relval(0),
+                                          bcstream.constval(memop.t.size)]);
+ end;
 end;
 
 procedure storeframenilarop();
@@ -1958,10 +1963,17 @@ procedure finirefsizeframearop();
 begin
  notimplemented();
 end;
+
 procedure finirefsizesegarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
+                                                bcstream.typeval(pointertype));
+  callcompilersub(cs_finirefsizear,false,[bcstream.relval(0),
+                                             bcstream.constval(memop.t.size)]);
+ end;
 end;
+
 procedure finirefsizereg0arop();
 begin
  notimplemented();

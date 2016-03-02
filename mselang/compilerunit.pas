@@ -22,9 +22,11 @@ uses
  
 type
  compilersubty = (
+  cs_zeropointerar,
   cs_increfsize,
   cs_decrefsize,
   cs_finifrefsize,
+  cs_finirefsizear,
   cs_setlengthdynarray,
   cs_initclass,
   cs_raise,
@@ -32,9 +34,11 @@ type
  );
 const
  compilersubnames: array[compilersubty] of string = (
+  '__mla__zeropointerar',
   '__mla__increfsize',
   '__mla__decrefsize',
   '__mla__finirefsize',
+  '__mla__finirefsizear',
   '__mla__setlengthdynarray',
   '__mla__initclass',
   '__mla__raise',

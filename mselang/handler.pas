@@ -215,11 +215,11 @@ begin
  with info do begin
   if stf_hasmanaged in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,-1);
     endsimplesub();
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,-1);
     endsimplesub();
    end;
   end;

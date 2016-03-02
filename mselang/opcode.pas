@@ -238,7 +238,13 @@ begin
    else begin
     par.memop.podataaddress:= aaddress.offset;
    end;
-   par.memop.t.size:= count;
+   if (co_llvm in info.compileoptions) then begin
+    par.memop.t.size:= 
+                 info.s.unitinfo^.llvmlists.constlist.adddataoffs(count).listid;
+   end
+   else begin
+    par.memop.t.size:= count;
+   end;
    par.memop.t.kind:= das_none;
    par.memop.t.flags:= [af_arrayop];
   end;

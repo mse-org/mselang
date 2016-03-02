@@ -116,8 +116,8 @@ c=3
  c=6
   (
   kind=1
-  a=0,664,4,base
-  c=20
+  a=0,665,4,base
+  c=21
    (
    kind=1
    a=0,664,4,address
@@ -2108,7 +2108,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,conversions
+   a=0,665,4,conversions
    c=8
     (
     kind=2
@@ -2304,6 +2304,70 @@ c=3
    )
    (
    kind=1
+   a=0,665,4,dynarray
+   c=2
+    (
+    kind=2
+    a=0,648,1,setlength
+    teststate=1
+    path=setlength.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,setlength llvm
+    teststate=1
+    path=setlength.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=dynarray/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
+   kind=1
    a=0,664,4,enum
    c=2
     (
@@ -2451,7 +2515,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73B2F30
+    ao=An unhandled exception occured at $B73388E8
     ae=
     aec=123
     ie=0
@@ -4801,7 +4865,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=21
    (
    kind=1
@@ -6310,7 +6374,17 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=30
+rowstate=40
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

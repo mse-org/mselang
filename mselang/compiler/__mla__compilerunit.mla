@@ -15,9 +15,11 @@ interface
 uses
  __mla__internaltypes;
 
+procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__increfsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
+procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
@@ -45,6 +47,17 @@ function _Unwind_GetRegionStart(context: p_Unwind_Context): pointer; external;
 implementation
 type
  pcard8 = ^card8;
+
+procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
+var
+ pe: ppointer;
+begin
+ pe:= dest+count;
+ while dest < pe do begin
+  dest^:= nil;
+  inc(dest);
+ end;
+end;
 
 //todo: thread safe managed types
 
@@ -83,6 +96,17 @@ begin
    end;
   end;
   ref^:= nil;
+ end;
+end;
+
+procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+var
+ pe: ppointer;
+begin
+ pe:= ref+count;
+ while ref < pe do begin
+  __mla__finirefsize(pointer(ref));
+  inc(ref);
  end;
 end;
 

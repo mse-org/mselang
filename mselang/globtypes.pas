@@ -162,12 +162,20 @@ const
  ptrcardsystype = st_card64;
  ptrintsystype = st_int64;
  pointerintsize = das_64;
+ target64 = true;
+ target32 = false;
+type
+ targetptrint = int64;
 {$else}
  pointerintsize = das_32;
  ptrcardsystype = st_card32;
  ptrintsystype = st_int32;
+ target64 = false;
+ target32 = true;
+type
+ targetptrint = int32;
 {$endif} 
- 
+const
  lastdatakind = das_f64;
  alldatakinds = [das_none,das_1,das_2_7,das_8,das_9_15,das_16,das_17_31,das_32,
                   das_33_63,das_64,das_pointer,das_f16,das_f32,das_f64];

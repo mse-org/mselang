@@ -268,6 +268,7 @@ type
  tconsthashdatalist = class(tbufferhashdatalist)
   private
    ftypelist: ttypehashdatalist;
+   fpointersize: int32;
   protected
    function hashkey(const akey): hashvaluety override;
    function checkkey(const akey; const aitemdata): boolean override;
@@ -307,6 +308,7 @@ type
    function i8(const avalue: int8): int32; //returns id
    function i8const(const avalue: int8): llvmvaluety;
    function gettype(const aindex: int32): int32;
+   property pointersize: int32 read fpointersize; //type = pointerint
  end;
 
  unitnamety = record //same layout as identnamety, used in tglobnamelist
@@ -1271,6 +1273,12 @@ begin
   addi16(1);
   addi32(1);
   addi64(1);
+  if target64 then begin
+   fpointersize:= addi64(globtypes.pointersize).listid;
+  end
+  else begin
+   fpointersize:= addi32(globtypes.pointersize).listid;
+  end;
  end;
 end;
 
@@ -1427,10 +1435,10 @@ end;
 
 function tconsthashdatalist.adddataoffs(const avalue: dataoffsty): llvmvaluety;
 begin
-{$if sizeof(dataoffsty) = 4}
- result:= addi32(avalue);
-{$else}
+{$ifdef target64}
  result:= addi64(avalue);
+{$else}
+ result:= addi32(avalue);
 {$ifend}
 end;
 
