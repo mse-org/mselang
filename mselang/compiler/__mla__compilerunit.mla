@@ -18,8 +18,8 @@ uses
 procedure __mla__decrefsize(ref: prefsizeinfoty);
 procedure __mla__increfsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
-procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
-                                      count: int32; itemsize: int32);
+procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
+                                    const count: int32; const itemsize: int32);
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
 function __mla__personality(version: cint;
@@ -86,10 +86,10 @@ begin
  end;
 end;
 
-procedure __mla__setlengthdynarray(ref: pprefsizeinfoty;
-                                      count: int32; itemsize: int32);
+procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
+                                    const count: int32; const itemsize: int32);
 var
- d: pdynarrayheaderty;
+ d,d1: pdynarrayheaderty;
  i1,i2: int32;
 begin
  i1:= count*itemsize;
@@ -102,16 +102,18 @@ begin
     ref^:= nil;
    end
    else begin
-    if count >= d^.high then begin
-     i2:= (d^.high+1) * count;
-     reallocmem(d,i1+dynarrayallocsize); //bigger
-     setmem(@d^.data+i2,i1-i2,0);
+    i2:= d^.high+1;
+    if count <= i2 then begin
+     reallocmem(d,i1+dynarrayallocsize); //new size smaller or same
     end
     else begin
-     reallocmem(d,i1+dynarrayallocsize); //smaller
+     i2:= i2 * itemsize;
+     reallocmem(d,i1+dynarrayallocsize); //bigger
+     setmem(@d^.data+i2,i1-i2,0);
     end;
     d^.ref.count:= 1;
     d^.high:= count-1;
+    ref^:= @d^.data;
    end;
   end
   else begin
@@ -120,7 +122,17 @@ begin
     ref^:= nil;
    end
    else begin
+    getmem(d1,i1+dynarrayallocsize);    
+    memcpy(@d.data,@d1.data,i1);
+    i2:= (d^.high+1) * count;
+    if i1 > i2 then begin  //new bigger
+     setmem(@d1^.data+i1,i2-i1,0);
+    end;
    end;
+   dec(d^.ref.count);
+   d1^.ref.count:= 1;
+   d1^.high:= count -1;
+   ref^:= @d1^.data;
   end;
  end
  else begin

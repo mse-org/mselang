@@ -53,7 +53,8 @@ type
   flags: subflagsty;
   params: pparamsty;
  end;
- internalfuncty = (if_printf,if_malloc,if_free,if_calloc,if_realloc,if_memset,
+ internalfuncty = (if_printf,
+                   if_malloc,if_free,if_calloc,if_realloc,if_memset,if_memcpy,
                    if__exit,
                    if_sin64);
 const
@@ -88,6 +89,13 @@ const
               (typelistindex: sizetype; flags: [])     //n count
  );
  memsetparams: paramsty = (count: 4; items: @memsetpar);
+ memcpypar: array[0..3] of paramitemty = (
+              (typelistindex: pointertype; flags: []), //result
+              (typelistindex: pointertype; flags: []), //dest
+              (typelistindex: pointertype; flags: []),     //source
+              (typelistindex: sizetype; flags: [])     //count
+ );
+ memcpyparams: paramsty = (count: 4; items: @memcpypar);
 
  _exitpar: array[0..0] of paramitemty = (
               (typelistindex: inttype; flags: [])      //status
@@ -114,6 +122,7 @@ const
   (name: 'calloc'; flags: [sf_proto,sf_function]; params: @callocparams),
   (name: 'realloc'; flags: [sf_proto]; params: @reallocparams),
   (name: 'memset'; flags: [sf_proto,sf_function]; params: @memsetparams),
+  (name: 'memcpy'; flags: [sf_proto,sf_function]; params: @memcpyparams),
   (name: '_exit'; flags: [sf_proto]; params: @_exitparams),
   (name: 'llvm.sin.f64'; flags: [sf_proto,sf_function]; params: @ffunc64params)
  );
@@ -3232,7 +3241,7 @@ end;
 procedure reallocmemop();
 begin
  with pc^.par do begin
-  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_realloc]),
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_realloc]),
                [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2)]);
  end;
 end;
@@ -3243,6 +3252,15 @@ begin
   bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memset]),
             [bcstream.ssaval(ssas1),bcstream.ssaval(ssas3),
                                                     bcstream.ssaval(ssas2)]);
+ end;
+end;
+
+procedure memcpyop();
+begin
+ with pc^.par do begin
+  bcstream.emitcallop(true,bcstream.globval(internalfuncs[if_memcpy]),
+            [bcstream.ssaval(ssas1),bcstream.ssaval(ssas2),
+                                                    bcstream.ssaval(ssas3)]);
  end;
 end;
 
@@ -3723,8 +3741,9 @@ const
   getmemssa = 2;
   getzeromemssa = 2;
   freememssa = 0;
-  reallocmemssa = 0;
+  reallocmemssa = 1;
   setmemssa = 1;
+  memcpyssa = 1;
   
   sin64ssa = 1;
   

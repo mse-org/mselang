@@ -369,6 +369,7 @@ type
 
  sysfuncty = (sf_write,sf_writeln,sf_setlength,sf_sizeof,sf_inc,sf_dec,
               sf_getmem,sf_getzeromem,sf_freemem,sf_reallocmem,sf_setmem,
+              sf_memcpy,
               sf_halt,
               sf_low,sf_high,sf_sin);
 

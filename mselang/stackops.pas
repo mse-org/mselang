@@ -3663,6 +3663,17 @@ begin
  fillchar(po1^,i1,b1);
 end;
 
+procedure memcpyop();
+var
+ ps,pd: pointer;
+ count: int32;
+begin
+ count:= pinteger(stackpop(sizeof(int32)))^;
+ ps:= ppointer(stackpop(pointersize))^;
+ pd:= ppointer(stackpop(pointersize))^;
+ move(ps^,pd^,count);
+end;
+
 procedure sin64op();
 var
  po1: pflo64;
@@ -4157,6 +4168,7 @@ const
   freememssa = 0;
   reallocmemssa = 0;
   setmemssa = 0;
+  memcpyssa = 0;
   
   sin64ssa = 0;
   

@@ -498,6 +498,7 @@ type
   oc_freemem,
   oc_reallocmem,
   oc_setmem,
+  oc_memcpy,
   
   oc_sin,
 
@@ -886,7 +887,7 @@ type
    oc_phi:(
     phi: phity;
    );
-   oc_setmem: (
+   oc_setmem,oc_memcpy: (
     ssas3: int32;
    );
    oc_beginparse: (

@@ -1721,6 +1721,8 @@
   (ssa: reallocmemssa; proc: @reallocmemop; flags: []), 
 //oc_setmem
   (ssa: setmemssa; proc: @setmemop; flags: []), 
+//oc_memcpy
+  (ssa: memcpyssa; proc: @memcpyop; flags: []), 
   
 //oc_sin64
   (ssa: sin64ssa; proc: @sin64op; flags: []), 

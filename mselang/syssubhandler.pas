@@ -32,6 +32,7 @@ procedure handlegetzeromem(const paramco: integer);
 procedure handlefreemem(const paramco: integer);
 procedure handlereallocmem(const paramco: integer);
 procedure handlesetmem(const paramco: integer);
+procedure handlememcpy(const paramco: integer);
 procedure handlehalt(const paramco: integer);
 procedure handlelow(const paramco: integer);
 procedure handlehigh(const paramco: integer);
@@ -45,8 +46,10 @@ const
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
   //sf_reallocmem
   @handlereallocmem,
-  //sf_setmem,  sf_halt
-  @handlesetmem,@handlehalt,@handlelow,@handlehigh,@handlesin);
+  //sf_setmem,  sf_memcpy,
+  @handlesetmem,@handlememcpy,
+  //sf_halt
+  @handlehalt,@handlelow,@handlehigh,@handlesin);
   
 procedure init();
 procedure deinit();
@@ -618,6 +621,27 @@ begin
  end;
 end;
 
+procedure handlememcpy(const paramco: integer);
+var
+ po1: pcontextitemty;
+ i1: int32;
+begin
+ with info do begin
+  i1:= s.stacktop-s.stackindex;            
+  if checkparamco(3,paramco) and getbasevalue(i1-2,das_pointer) and 
+           getbasevalue(i1-1,das_pointer) and getbasevalue(i1,das_32) then begin
+   with additem(oc_memcpy)^ do begin
+    po1:= @contextstack[s.stackindex+3];
+    par.ssas1:= po1^.d.dat.fact.ssaindex; //dest
+    inc(po1);
+    par.ssas2:= po1^.d.dat.fact.ssaindex; //source
+    inc(po1);
+    par.ssas3:= po1^.d.dat.fact.ssaindex; //count
+   end;
+  end;
+ end;
+end;
+
 procedure handlehalt(const paramco: integer);
 begin
  with info do begin
@@ -809,6 +833,7 @@ const
    (name: 'freemem'; data: (func: sf_freemem)),
    (name: 'reallocmem'; data: (func: sf_reallocmem)),
    (name: 'setmem'; data: (func: sf_setmem)),
+   (name: 'memcpy'; data: (func: sf_memcpy)),
    (name: 'halt'; data: (func: sf_halt)),
    (name: 'low'; data: (func: sf_low)),
    (name: 'high'; data: (func: sf_high)),
