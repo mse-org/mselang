@@ -1,0 +1,13 @@
+program setlength1;
+type
+ intarty = array of int32;
+var
+ ar1,ar2: intarty;
+begin
+ setlength(ar1,5);
+ ar1[1]:= 123-11;
+ ar2:= ar1;
+ setlength(ar1,1);
+ ar1[1]:= 11;
+ exitcode:= ar1[1]+ar2[1];
+end.
