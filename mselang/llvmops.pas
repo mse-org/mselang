@@ -2046,7 +2046,7 @@ end;
 procedure decrefsizeframeop();
 begin
  with pc^.par do begin
-  bcstream.emitloadop(bcstream.allocval(vaddress));
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
   callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
  end;
 end;
@@ -2055,9 +2055,10 @@ procedure decrefsizereg0op();
 begin
  notimplemented();
 end;
+
 procedure decrefsizestackop();
 begin
- notimplemented();
+ decrefsizeframeop();
 end;
 
 procedure decrefsizestackrefop();
@@ -3579,7 +3580,7 @@ const
   decrefsizesegssa = 1;
   decrefsizeframessa = 1;
   decrefsizereg0ssa = 1;
-  decrefsizestackssa = 0;
+  decrefsizestackssa = 1;
   decrefsizestackrefssa = 2;
   decrefsizeframearssa = 1;
   decrefsizesegarssa = 1;

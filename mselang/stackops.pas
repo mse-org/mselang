@@ -3217,11 +3217,11 @@ begin
  end;
 end;
 
-procedure decrefsize(const ref: ppointer); {$ifdef mse_inline}inline;{$endif}
+procedure decrefsize(const ref: pppointer); {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
 begin
- d:= ref^;
+ d:= ref^^;
  if d <> nil then begin
   dec(d);
   if d^.ref.count > 0 then begin
@@ -3373,22 +3373,22 @@ end;
 
 procedure decrefsizeframeop();
 begin
- decrefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
+ decrefsize(pppointer(cpu.frame+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizereg0op();
 begin
- decrefsize(ppointer(reg0+cpu.pc^.par.vaddress));
+ decrefsize(pppointer(reg0+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizestackop();
 begin
- decrefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
+ decrefsize(pppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizestackrefop();
 begin
- decrefsize(pppointer(mainstack+cpu.pc^.par.vaddress)^);
+ decrefsize(pppointer(mainstack+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizesegarop();

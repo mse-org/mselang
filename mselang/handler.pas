@@ -2762,8 +2762,7 @@ begin
        end;
        if indi then begin
  //       dec(ad1.offset,si1);
-        ad1.offset:= 0;
-        ad1.base:= ab_stackref;
+        ad1.offset:= ad1.offset-pointersize;
        end
        else begin
         ad1.offset:= destvar.address.poaddress;
@@ -2775,7 +2774,7 @@ begin
          ad1.base:= ab_frame;
         end;
        end;
-       i1:= 0;
+       i1:= -1;
        if destkind in factcontexts then begin
         i1:= dest^.fact.ssaindex;
        end;
