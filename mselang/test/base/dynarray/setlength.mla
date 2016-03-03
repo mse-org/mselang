@@ -7,7 +7,7 @@ begin
  setlength(ar1,5);
  ar1[1]:= 123-11;
  ar2:= ar1;
- setlength(ar1,1);
+ setlength(ar1,2);
  ar1[1]:= 11;
  exitcode:= ar1[1]+ar2[1];
 end.

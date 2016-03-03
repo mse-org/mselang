@@ -16,7 +16,8 @@ uses
  __mla__internaltypes;
 
 procedure __mla__zeropointerar(dest: ppointer; const count: ptrint);
-procedure __mla__decrefsize(ref: pprefsizeinfoty);
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
 procedure __mla__increfsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
@@ -69,7 +70,20 @@ begin
  end;
 end;
 
-procedure __mla__decrefsize(ref: pprefsizeinfoty);
+procedure __mla__decrefsize(ref: prefsizeinfoty);
+begin
+ if ref <> nil then begin
+  dec(ref);
+  if ref^.ref.count > 0 then begin
+   dec(ref^.ref.count);
+   if ref^.ref.count = 0 then begin
+    freemem(ref);
+   end;
+  end;
+ end;
+end;
+
+procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
 var
  d: prefsizeinfoty;
 begin
@@ -151,7 +165,7 @@ begin
    end
    else begin
     getmem(d1,i1+dynarrayallocsize);    
-    memcpy(@d.data,@d1.data,i1);
+    memcpy(@d1^.data,@d^.data,i1);
     i2:= (d^.high+1) * count;
     if i1 > i2 then begin  //new bigger
      setmem(@d1^.data+i1,i2-i1,0);

@@ -2762,6 +2762,7 @@ begin
        end;
        if indi then begin
  //       dec(ad1.offset,si1);
+        ad1.base:= ab_stackref;
         ad1.offset:= ad1.offset-pointersize;
        end
        else begin

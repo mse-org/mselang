@@ -3217,7 +3217,24 @@ begin
  end;
 end;
 
-procedure decrefsize(const ref: pppointer); {$ifdef mse_inline}inline;{$endif}
+procedure decrefsize(const ref: ppointer); {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count > 0 then begin
+   dec(d^.ref.count);
+   if d^.ref.count = 0 then begin
+    freemem(d);
+   end;
+//   ref^:= nil;
+  end;
+ end;
+end;
+
+procedure decrefsizeindi(const ref: pppointer); {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
 begin
@@ -3229,7 +3246,7 @@ begin
    if d^.ref.count = 0 then begin
     freemem(d);
    end;
-   ref^:= nil;
+//   ref^:= nil;
   end;
  end;
 end;
@@ -3373,22 +3390,22 @@ end;
 
 procedure decrefsizeframeop();
 begin
- decrefsize(pppointer(cpu.frame+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizereg0op();
 begin
- decrefsize(pppointer(reg0+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(reg0+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizestackop();
 begin
- decrefsize(pppointer(cpu.stack+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizestackrefop();
 begin
- decrefsize(pppointer(mainstack+cpu.pc^.par.vaddress));
+ decrefsizeindi(pppointer(cpu.stack+cpu.pc^.par.vaddress));
 end;
 
 procedure decrefsizesegarop();
@@ -3514,6 +3531,7 @@ begin
      fillchar((pointer(ds+1)+sil2)^,sil1-sil2,0);
     end;    
     move((ss+1)^,(ds+1)^,sil2); //get data copy
+    dec(ss^.ref.count);
    end;
   end;
   ds^.high:= si1-1;
