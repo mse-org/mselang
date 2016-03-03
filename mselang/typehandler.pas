@@ -1011,6 +1011,8 @@ begin
    d.typ.typedata:= ele1;
   end;
   with contextstack[s.stackindex] do begin
+   d.kind:= ck_enumdef;
+   d.enu.value:= 0;
    d.enu.enum:= ele1;
    d.enu.first:= 0;
    d.enu.flags:= [enf_contiguous];
