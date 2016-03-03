@@ -961,7 +961,10 @@ end;
 
 procedure addimmint32op();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbinop(binop_add,bcstream.ssaval(ssas1),
+                                           bcstream.constval(imm.llvm.listid));
+ end;
 end;
 
 procedure addflo64op();
