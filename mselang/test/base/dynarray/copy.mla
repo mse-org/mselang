@@ -1,0 +1,12 @@
+program copy;
+type
+ intarty = array of int32;
+var
+ ar3: array[2..5] of intarty;
+begin
+ setlength(ar3[3],4);
+ ar3[3,1]:= 11;
+ ar3[3,2]:= 123-22;
+ ar3[2]:= ar3[3];
+ exitcode:= ar3[2,1] + ar3[3,1] + ar3[3,2];
+end.
