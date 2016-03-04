@@ -6,11 +6,11 @@ var
  i1: int32;
  procedure test1();
  begin
-  i1:= 123;
+  i1:= i1+23;
  end;
 
 begin
- i1:= 123;
+ i1:= 100;
  test1();
  exitcode:= i1;
 end;
