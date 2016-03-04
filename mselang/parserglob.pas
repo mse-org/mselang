@@ -260,6 +260,7 @@ type
   flags: subflagsty;
 //  scopemetabefore: metavaluety;
  end;
+ psubinfoty = ^subinfoty;
 
  paramkindty = (pk_value,pk_const,pk_var,pk_out);
 

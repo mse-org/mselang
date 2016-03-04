@@ -330,10 +330,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROCEDUREENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [];
- end;
+ initsubdef([]);
 end;
 
 procedure handleproceduretypedefentry();
@@ -341,10 +338,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('PROCEDURETYPEENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_typedef,sf_header];
- end;
+ initsubdef([sf_typedef,sf_header]);
 end;
 
 procedure handlesubtypedef0entry();
@@ -366,20 +360,20 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FUNCTIONENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_function];
- end;
+ initsubdef([sf_function]);
 end;
 
 procedure callsubheaderentry();
+var
+ po1: psubinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CALLSUBHEADERENTRY');
 {$endif}
  with info,contextstack[s.stackindex].d do begin
+  po1:= @contextstack[s.stackindex-1].d.subdef;
   kind:= ck_subdef;
-  subdef.flags:= contextstack[s.stackindex-1].d.subdef.flags;
+  subdef.flags:= po1^.flags;
  end;
 end;
 
@@ -769,6 +763,7 @@ var                       //todo: move after doparam
 var
  lstr1: lstringty;  
  i1: int32;
+ po4: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -798,6 +793,7 @@ begin
 
  with info do begin
   with contextstack[s.stackindex-1] do begin
+   d.subdef.match:= 0;              //todo: nested forward subs
    subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
    d.subdef.locallocidbefore:= locallocid;
@@ -1049,7 +1045,7 @@ begin
     errormessage(err_sameparamlist,[]);
    end;
   end;
-  
+
   if impl1 then begin
    if sublevel = 1 then begin
     paramdata.match:= nil;
@@ -1097,9 +1093,9 @@ begin
     with contextstack[s.stackindex-1] do begin
      if paramdata.match <> nil then begin
       d.subdef.match:= ele.eledatarel(paramdata.match);
-     end
-     else begin
-      d.subdef.match:= 0;
+//     end
+//     else begin
+//      d.subdef.match:= 0;
      end;
     end;
    end;
@@ -1108,6 +1104,25 @@ begin
     po1^.globid:= globlist.addsubvalue(po1);
    end;
    }
+   if s.debugoptions * [do_proginfo,do_name] <> [] then begin
+    with contextstack[s.stackindex-1] do begin
+    {$ifdef mse_checkinternalerror}
+     if (s.stackindex < 1) or (d.kind <> ck_subdef) then begin
+      internalerror(ie_parser,'20151023A');
+     end;
+    {$endif}
+     po4:= ele.eleinfoabs(d.subdef.ref);
+     with s.unitinfo^ do begin
+      if do_proginfo in s.debugoptions then begin
+       pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
+            {s.}currentscopemeta,getidentname2(po4^.header.name),
+            s.currentfilemeta,
+            info.contextstack[info.s.stackindex].start.line,-1,
+            dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
+      end;
+     end;
+    end;
+   end;
    ele.elementparent:= parent1; //restore in sub
    s.stacktop:= s.stackindex;
   end
@@ -1128,6 +1143,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SUBBODY4ENTRY');
 {$endif}
+(*
  with info do begin
   if s.debugoptions * [do_proginfo,do_name] <> [] then begin
    with contextstack[s.stackindex-2] do begin
@@ -1136,7 +1152,6 @@ begin
      internalerror(ie_parser,'20151023A');
     end;
    {$endif}
-//    d.subdef.scopemetabefore:= s.currentscopemeta;
     po1:= ele.eleinfoabs(d.subdef.ref);
     with s.unitinfo^ do begin
      if do_proginfo in s.debugoptions then begin
@@ -1150,6 +1165,7 @@ begin
    end;
   end;
  end;
+*)
 end;
 
 procedure handlesubbody5a();
@@ -1410,10 +1426,8 @@ begin
      _type:= m2;
     end;
    end;
+   popcurrentscope();
 //   setcurrentscope(d.subdef.scopemetabefore);
-   if do_proginfo in s.debugoptions then begin
-    popcurrentscope();
-   end;
   end;
  end;
 end;

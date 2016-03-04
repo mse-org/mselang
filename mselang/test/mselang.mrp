@@ -2108,7 +2108,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,conversions
+   a=0,664,4,conversions
    c=8
     (
     kind=2
@@ -2304,12 +2304,12 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,dynarray
+   a=0,664,4,dynarray
    c=4
     (
     kind=2
-    a=0,648,2,setlength
-    teststate=2
+    a=0,648,1,setlength
+    teststate=1
     path=setlength.mla
     comment=
     cc=${mlc}
@@ -2323,15 +2323,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=Access violation
+    ao=
     ae=
-    aec=1
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,setlength llvm
-    teststate=2
+    a=0,648,1,setlength llvm
+    teststate=1
     path=setlength.mla
     comment=
     cc=${mlc_llvm}
@@ -2346,8 +2346,8 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  6712 Segmentation fault      $2
-    aec=139
+    ae=
+    aec=123
     ie=0
     )
     (
@@ -2394,7 +2394,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=dynarray/
    comment=
    cc=
@@ -2559,7 +2559,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B732B3B0
+    ao=An unhandled exception occured at $B7324A04
     ae=
     aec=123
     ie=0
@@ -3672,7 +3672,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,set
+   a=0,665,4,set
    c=10
     (
     kind=2
@@ -3976,7 +3976,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,5,sub
+   a=0,665,5,sub
    c=15
     (
     kind=2
@@ -4288,7 +4288,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,nsetedsub1 llvm
+    a=0,648,2,nestedsub1 llvm
     teststate=2
     path=nestedsub1.mla
     comment=
@@ -4304,7 +4304,7 @@ c=3
     eec=123
     cr=0
     ao=
-    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  7320 Segmentation fault      $2
+    ae=/home/mse/packs/standard/git/mselang/mselang/run: line 5:  6036 Segmentation fault      $2
     aec=139
     ie=0
     )
@@ -6418,7 +6418,20 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=42
+rowstate=55
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

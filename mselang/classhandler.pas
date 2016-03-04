@@ -556,10 +556,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHPROCEDUREENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_header,sf_method];
- end;
+ initsubdef([sf_header,sf_method]);
 end;
 
 procedure handlemethfunctionentry();
@@ -567,10 +564,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHFUNCTIONENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_function,sf_header,sf_method];
- end;
+ initsubdef([sf_function,sf_header,sf_method]);
 end;
 
 procedure handlemethconstructorentry();
@@ -578,10 +572,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHCONSTRUCTORENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_header,sf_method,sf_constructor];
- end;
+ initsubdef([sf_header,sf_method,sf_constructor]);
 end;
 
 procedure handlemethdestructorentry();
@@ -589,10 +580,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('METHDESTRUCTORENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_header,sf_method,sf_destructor];
- end;
+ initsubdef([sf_header,sf_method,sf_destructor]);
 end;
 
 procedure handleconstructorentry();
@@ -600,10 +588,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('CONSTRUCTORENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_method,sf_constructor];
- end;
+ initsubdef([sf_method,sf_constructor]);
 end;
 
 procedure handledestructorentry();
@@ -611,10 +596,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('DESTRUCTORENTRY');
 {$endif}
- with info,contextstack[s.stackindex].d do begin
-  kind:= ck_subdef;
-  subdef.flags:= [sf_method,sf_destructor];
- end;
+ initsubdef([sf_method,sf_destructor]);
 end;
 
 procedure classpropertyentry();

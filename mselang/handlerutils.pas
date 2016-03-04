@@ -235,6 +235,8 @@ procedure setenumconst(const aenumitem: infoenumitemty;
 procedure pushcurrentscope(const ascope: metavaluety);
 procedure popcurrentscope();
 
+procedure initsubdef(const aflags: subflagsty);
+
 procedure init();
 procedure deinit();
 
@@ -336,6 +338,14 @@ begin
  outcommand([],'*ERROR* '+errormessages[error]);
 end;
 }
+procedure initsubdef(const aflags: subflagsty);
+begin
+ with info,contextstack[s.stackindex].d do begin
+  kind:= ck_subdef;
+  subdef.flags:= aflags;
+ end;
+end;
+
 function findkindelementdata(const aident: contextdataty;
               const akinds: elementkindsty;
               const visibility: visikindsty; out ainfo: pointer): boolean;
@@ -2595,12 +2605,12 @@ end;
 procedure pushcurrentscope(const ascope: metavaluety);
 begin
  with info do begin
+  inc(scopemetaindex);  //dummy 0 on scopemetastack[0]
   if high(scopemetastack) < scopemetaindex then begin
    setlength(scopemetastack,scopemetaindex*2+256);
   end;
   scopemetastack[scopemetaindex]:= ascope;
   currentscopemeta:= ascope;
-  inc(scopemetaindex);
  end;
  postlineinfo();
 end;
@@ -2608,10 +2618,10 @@ end;
 procedure popcurrentscope();
 begin
  with info do begin
-  dec(scopemetaindex);
-  if scopemetaindex < 0 then begin
+  dec(scopemetaindex); //dummy 0 on scopemetastack[0]
+  if scopemetaindex < 0 then begin 
    internalerror1(ie_unit,'20160229A');
-  end;
+  end;               
   currentscopemeta:= scopemetastack[scopemetaindex];
  end;
 // postlineinfo();

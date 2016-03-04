@@ -707,7 +707,7 @@ begin
         s.source.po:= po1;
        end;
        if (pb^.dest.context = nil) and (bf_push in pb^.flags) then begin
-        break; //terminate current context
+        break;                                  //terminate current context
        end;
        if (pb^.dest.context <> nil) then begin
         if bf_handler in pb^.flags then begin
@@ -716,13 +716,12 @@ begin
           goto parseend;
          end;
          if bf_push in pb^.flags then begin
-          break; //terminate current context
+          break;                                //terminate current context
          end
         end
-        else begin //switch branch context
+        else begin                              //switch branch context
          repeat
-          if not pushcont() then begin 
-                //can not continue
+          if not pushcont() then begin          //can not continue
            if s.stopparser then begin
             goto parseend;
            end;
@@ -731,12 +730,12 @@ begin
          until not (bf_emptytoken in pb^.flags); //no start default branch
         end;
        end;
-       pb:= s.pc^.branch; //restart branch evaluation
+       pb:= s.pc^.branch;                        //restart branch evaluation
        continue;
       end;
-      inc(pb); //next branch
+      inc(pb);                                   //next branch
      end;  
-     break; //no match, next context
+     break;                                      //no match, next context
     end;
    end;
 handlelab:
