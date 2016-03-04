@@ -1399,7 +1399,7 @@ begin
   end;
  end;
 end;
-
+var testvar: psubdataty;
 procedure tracklocalaccess(var aaddress: locaddressty; 
                                  const avarele: elementoffsetty;
                                  const aopdatatype: typeallocinfoty);
@@ -1428,6 +1428,7 @@ begin
      internalerror(ie_elements,'20140811A');
     end;
    {$endif}
+testvar:= psubdataty(ele.parentdata());
     with psubdataty(ele.parentdata())^ do begin //parent sub
      bo1:= ele.adduniquechilddata(nestedvarele,[avarele],ek_nestedvar,
                                                        allvisi,po1);

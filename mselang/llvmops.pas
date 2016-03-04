@@ -3031,9 +3031,10 @@ begin
    bcstream.emitalloca(bcstream.ptypeval(sub.allocs.nestedallocstypeindex));
    if sf_hascallout in sub.flags then begin
     bcstream.emitgetelementptr(bcstream.subval(0),
-                          info.s.unitinfo^.llvmlists.constlist.i8(0)); 
+                                      bcstream.constval(ord(nc_i8))); 
                                         //param parent nested var,source
-    bcstream.emitgetelementptr(bcstream.ssaval(0),nullpointeroffset);
+    bcstream.emitgetelementptr(bcstream.ssaval(0),
+                                      bcstream.constval(nullpointeroffset));
                                                   //nested var array,dest
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));
@@ -3043,7 +3044,8 @@ begin
    i1:= 1;
    while po2 < poend do begin
     if po2^.address.nested then begin
-     bcstream.emitgetelementptr(bcstream.subval(0),po2^.address.arrayoffset);
+     bcstream.emitgetelementptr(bcstream.subval(0),
+                 bcstream.constval(po2^.address.arrayoffset));
                               //pointer to parent nestedvars, 2 ssa
      bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
      bcstream.emitloadop(bcstream.relval(0));                       //source
@@ -3053,8 +3055,8 @@ begin
                                     bcstream.typeval(das_pointer)); //source
     end;
     bcstream.emitgetelementptr(bcstream.ssaval(0),
-                  bcstream.constval(
-               info.s.unitinfo^.llvmlists.constlist.pointeroffset(i1))); //dest
+                  bcstream.constval(po2^.address.arrayoffset));
+//               info.s.unitinfo^.llvmlists.constlist.pointeroffset(i1))); //dest
                         //pointer to nestedallocs
     bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
     bcstream.emitstoreop(bcstream.relval(3),bcstream.relval(0));

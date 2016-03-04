@@ -53,7 +53,7 @@ type
   arrayoffset: dataoffsty;
   origin: dataoffsty;
   datatype: typeallocinfoty;
-  nested: boolean;     //ref to neseted frame
+  nested: boolean;     //ref to nested frame
  end;
  
  nestedallocinfoty = record
