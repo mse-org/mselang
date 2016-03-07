@@ -1346,6 +1346,14 @@ function telementhashdatalist.dumpelements: msestringarty;
       dk_sub: begin
        result:= result+' sub:'+inttostrmse(infosub.sub);
       end;
+      dk_array: begin
+       with infoarray do begin
+        result:= result+' index:'+inttostrmse(indextypedata)+
+                    ' itemtype:'+inttostrmse(i.itemtypedata)+
+                           ' I:'+inttostrmse(i.itemindirectlevel);
+                        
+       end;
+      end;
      end;
     end;
    end;

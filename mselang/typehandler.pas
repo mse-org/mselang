@@ -603,7 +603,8 @@ begin
        h.datasize:= das_none;
        h.kind:= dk_array;
       end;
-//      itemtyoffs:= ele.eledatarel(arty);
+      itemtyoffs:= ele.eledatarel(arty);
+      indilev:= 0;
      end;
     end;
    end
