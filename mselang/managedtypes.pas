@@ -164,13 +164,20 @@ var
  ele1: elementoffsetty;
 begin
  if tf_managed in atype^.h.flags then begin
-  if atype^.h.kind = dk_array then begin
-   ptypedataty(ele.eledataabs(atype^.infoarray.i.itemtypedata))^.manageproc(
-         op,aaddress,
-         getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),ssaindex);
-  end
-  else begin
-   atype^.manageproc(op,aaddress,1,ssaindex);
+  case atype^.h.kind of
+   dk_array: begin
+    ptypedataty(ele.eledataabs(atype^.infoarray.i.itemtypedata))^.
+      manageproc(op,aaddress,
+           getordcount(ele.eledataabs(atype^.infoarray.indextypedata)),
+                                                                     ssaindex);
+   end;
+   dk_dynarray: begin
+    ptypedataty(ele.eledataabs(atype^.infodynarray.i.itemtypedata))^.
+                             manageproc(op,aaddress,datasizety(0),ssaindex);
+   end;
+   else begin
+    atype^.manageproc(op,aaddress,1,ssaindex);
+   end;
   end;
  end
  else begin

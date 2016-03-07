@@ -14,857 +14,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-{
- ssatable: ssatablety = (
-  nonessa,
-  nopssa,
-
-  labelssa,          //controlops
-  ifssa,
-  whilessa,
-  untilssa,
-  decloop32ssa,
-  decloop64ssa,
-
-  raisessa,         //callops
-
-  callssa,
-  callfuncssa,
-  calloutssa,
-  callfuncoutssa,
-  callvirtssa,
-  callintfssa,
-  virttrampolinessa,
-
-  callindissa,
-  callfuncindissa,
-
-  initclassssa,
-  destroyclassssa,
-
-  beginparsessa,
-  mainssa,
-  progendssa,  
-  endparsessa,
-  haltssa,
-
-  movesegreg0ssa,
-  moveframereg0ssa,
-  popreg0ssa,
-  increg0ssa,
-
-  gotossa,
-  cmpjmpneimm4ssa,
-  cmpjmpeqimm4ssa,
-  cmpjmploimm4ssa,
-  cmpjmpgtimm4ssa,
-  cmpjmploeqimm4ssa,
-
-  writelnssa,
-  writebooleanssa,
-  writecardinalssa,
-  writeintegerssa,
-  writefloatssa,
-  writestring8ssa,
-  writepointerssa,
-  writeclassssa,
-  writeenumssa,
-
-  pushssa,
-  popssa,
-
-  pushimm1ssa,
-  pushimm8ssa,
-  pushimm16ssa,
-  pushimm32ssa,
-  pushimm64ssa,
-  pushimmdatakindssa,
-  
-  int32toflo64ssa,
-  potoint32ssa,
-  inttopossa,
-
-  and1ssa,
-  and32ssa,
-  or1ssa,
-  or32ssa,
-
-  shl32ssa,
-  shr32ssa,
-//  shrint32ssa,
-  
-  card8tocard16ssa,card8tocard32ssa,card8tocard64ssa,
-  card16tocard8ssa,card16tocard32ssa,card16tocard64ssa,
-  card32tocard8ssa,card32tocard16ssa,card32tocard64ssa,
-  card64tocard8ssa,card64tocard16ssa,card64tocard32ssa,
-
-  int8toint16ssa,int8toint32ssa,int8toint64ssa,
-  int16toint8ssa,int16toint32ssa,int16toint64ssa,
-  int32toint8ssa,int32toint16ssa,int32toint64ssa,
-  int64toint8ssa,int64toint16ssa,int64toint32ssa,
-
-  card8toint8ssa,card8toint16ssa,card8toint32ssa,card8toint64ssa,
-  card16toint8ssa,card16toint16ssa,card16toint32ssa,card16toint64ssa,
-  card32toint8ssa,card32toint16ssa,card32toint32ssa,card32toint64ssa,
-  card64toint8ssa,card64toint16ssa,card64toint32ssa,card64toint64ssa,
-
-  int8tocard8ssa,int8tocard16ssa,int8tocard32ssa,int8tocard64ssa,
-  int16tocard8ssa,int16tocard16ssa,int16tocard32ssa,int16tocard64ssa,
-  int32tocard8ssa,int32tocard16ssa,int32tocard32ssa,int32tocard64ssa,
-  int64tocard8ssa,int64tocard16ssa,int64tocard32ssa,int64tocard64ssa,
-
-  not1ssa,
-  not32ssa,
-  
-  negcard32ssa,
-  negint32ssa,
-  negflo64ssa,
-
-  mulcard32ssa,
-  mulint32ssa,
-  mulflo64ssa,
-  addint32ssa,
-  subint32ssa,
-  addpoint32ssa,
-  subpossa,
-  addflo64ssa,
-  subflo64ssa,
-
-  addimmint32ssa,
-  mulimmint32ssa,
-  offsetpoimm32ssa,
-
-  incdecsegimmint32ssa,
-  incdecsegimmpo32ssa,
-
-  incdeclocimmint32ssa,
-  incdeclocimmpo32ssa,
-
-  incdecparimmint32ssa,
-  incdecparimmpo32ssa,
-
-  incdecparindiimmint32ssa,
-  incdecparindiimmpo32ssa,
-
-  incdecindiimmint32ssa,
-  incdecindiimmpo32ssa,
-
-  incsegint32ssa,
-  incsegpo32ssa,
-
-  inclocint32ssa,
-  inclocpo32ssa,
-
-  incparint32ssa,
-  incparpo32ssa,
-
-  incparindiint32ssa,
-  incparindipo32ssa,
-
-  incindiint32ssa,
-  incindipo32ssa,
-
-  decsegint32ssa,
-  decsegpo32ssa,
-
-  declocint32ssa,
-  declocpo32ssa,
-
-  decparint32ssa,
-  decparpo32ssa,
-
-  decparindiint32ssa,
-  decparindipo32ssa,
-
-  decindiint32ssa,
-  decindipo32ssa,
-
-  cmpeqpossa,
-  cmpeqboolssa,
-  cmpeqint32ssa,
-  cmpeqflo64ssa,
-
-  cmpnepossa,
-  cmpneboolssa,
-  cmpneint32ssa,
-  cmpneflo64ssa,
-
-  cmpgtpossa,
-  cmpgtboolssa,
-  cmpgtcard32ssa,
-  cmpgtint32ssa,
-  cmpgtflo64ssa,
-
-  cmpltpossa,
-  cmpltboolssa,
-  cmpltcard32ssa,
-  cmpltint32ssa,
-  cmpltflo64ssa,
-
-  cmpgepossa,
-  cmpgeboolssa,
-  cmpgecard32ssa,
-  cmpgeint32ssa,
-  cmpgeflo64ssa,
-
-  cmplepossa,
-  cmpleboolssa,
-  cmplecard32ssa,
-  cmpleint32ssa,
-  cmpleflo64ssa,
-
-  storesegnilssa,
-  storereg0nilssa,
-  storeframenilssa,
-  storestacknilssa,
-  storestackrefnilssa,
-  storesegnilarssa,
-  storeframenilarssa,
-  storereg0nilarssa,
-  storestacknilarssa,
-  storestackrefnilarssa,
-
-  finirefsizesegssa,
-  finirefsizeframessa,
-  finirefsizereg0ssa,
-  finirefsizestackssa,
-  finirefsizestackrefssa,
-  finirefsizeframearssa,
-  finirefsizesegarssa,
-  finirefsizereg0arssa,
-  finirefsizestackarssa,
-  finirefsizestackrefarssa,
-
-  increfsizesegssa,
-  increfsizeframessa,
-  increfsizereg0ssa,
-  increfsizestackssa,
-  increfsizestackrefssa,
-  increfsizeframearssa,
-  increfsizesegarssa,
-  increfsizereg0arssa,
-  increfsizestackarssa,
-  increfsizestackrefarssa,
-
-  decrefsizesegssa,
-  decrefsizeframessa,
-  decrefsizereg0ssa,
-  decrefsizestackssa,
-  decrefsizestackrefssa,
-  decrefsizeframearssa,
-  decrefsizesegarssa,
-  decrefsizereg0arssa,
-  decrefsizestackarssa,
-  decrefsizestackrefarssa,
-
-  popseg8ssa,
-  popseg16ssa,
-  popseg32ssa,
-  popseg64ssa,
-  popsegpossa,
-  popsegf16ssa,
-  popsegf32ssa,
-  popsegf64ssa,
-  popsegssa,
-
-  poploc8ssa,
-  poploc16ssa,
-  poploc32ssa,
-  poploc64ssa,
-  poplocpossa,
-  poplocf16ssa,
-  poplocf32ssa,
-  poplocf64ssa,
-  poplocssa,
-
-  poplocindi8ssa,
-  poplocindi16ssa,
-  poplocindi32ssa,
-  poplocindi64ssa,
-  poplocindipossa,
-  poplocindif16ssa,
-  poplocindif32ssa,
-  poplocindif64ssa,
-  poplocindissa,
-
-  poppar8ssa,
-  poppar16ssa,
-  poppar32ssa,
-  poppar64ssa,
-  popparpossa,
-  popparf16ssa,
-  popparf32ssa,
-  popparf64ssa,
-  popparssa,
-
-  popparindi8ssa,
-  popparindi16ssa,
-  popparindi32ssa,
-  popparindi64ssa,
-  popparindipossa,
-  popparindif16ssa,
-  popparindif32ssa,
-  popparindif64ssa,
-  popparindissa,
-
-  pushnilssa,
-//  pushsegaddressssa,
-
-  pushseg8ssa,
-  pushseg16ssa,
-  pushseg32ssa,
-  pushseg64ssa,
-  pushsegpossa,
-  pushsegf16ssa,
-  pushsegf32ssa,
-  pushsegf64ssa,
-  pushsegssa,
-
-  pushloc8ssa,
-  pushloc16ssa,
-  pushloc32ssa,
-  pushloc64ssa,
-  pushlocpossa,
-  pushlocf16ssa,
-  pushlocf32ssa,
-  pushlocf64ssa,
-  pushlocssa,
-
-  pushlocindi8ssa,
-  pushlocindi16ssa,
-  pushlocindi32ssa,
-  pushlocindi64ssa,
-  pushlocindipossa,
-  pushlocindi16ssa,
-  pushlocindi32ssa,
-  pushlocindi64ssa,
-  pushlocindissa,
-
-  pushpar8ssa,
-  pushpar16ssa,
-  pushpar32ssa,
-  pushpar64ssa,
-  pushparpossa,
-  pushparf16ssa,
-  pushparf32ssa,
-  pushparf64ssa,
-  pushparssa,
-
-  pushaddrssa,
-  pushlocaddrssa,
-//  pushlocaddrindissa,
-  pushsegaddrssa,
-//  pushsegaddrindissa,
-  pushstackaddrssa,
-//  pushstackaddrindissa,
-  
-  pushduppossa,
-
-  indirect8ssa,
-  indirect16ssa,
-  indirect32ssa,
-  indirect64ssa,
-  indirectpossa,
-  indirectf16ssa,
-  indirectf32ssa,
-  indirectf64ssa,
-  indirectpooffsssa,
-  indirectoffspossa,
-  indirectssa,
-
-  popindirect8ssa,
-  popindirect16ssa,
-  popindirect32ssa,
-  popindirect64ssa,
-  popindirectpossa,
-  popindirectf16ssa,
-  popindirectf32ssa,
-  popindirectf64ssa,
-  popindirectssa,
-
-  locvarpushssa,
-  locvarpopssa,
-
-  subbeginssa,
-  subendssa,
-  externalsubssa,
-  returnssa,
-  returnfuncssa,
-
-  setlengthstr8ssa,
-  setlengthdynarrayssa,
-
-  pushcpucontextssa,
-  popcpucontextssa,
-  finiexceptionssa,
-  continueexceptionssa,
-  getmemssa,
-  getzeromemssa,
-  freememssa,
-  setmemssa,
-  lineinfossa,
-
-//ssaonly
-  nestedvarssa,
-  popnestedvarssa,
-//  popsegaggregatessa,
-  pushnestedvarssa,
-  aggregatessa,
-  allocssa,
-  nestedcalloutssa,
-  hascalloutssa,
-  pushsegaddrnilssa,
-  pushsegaddrglobvarssa,
-  pushsegaddrglobconstssa,
-  pushsegaddrclassdefssa
- );
-
- optable: optablety = ( //order as opcodety
-  nil,  //oc_none
-  @nopop,
-
-  @labelop,       //controlops
-  @ifop,
-  @whileop,
-  @untilop,
-  @decloop32op,
-  @decloop64op,
-
-  @raiseop,      //callops
-
-  @callop,
-  @callfuncop,
-  @calloutop,
-  @callfuncoutop,
-  @callvirtop,
-  @callintfop,
-  @virttrampolineop,
-
-  @callindiop,
-  @callfuncindiop,
-
-  @initclassop,
-  @destroyclassop,
-
-  @beginparseop,
-  @mainop,
-  @progendop,  
-  @endparseop,
-  @haltop,
-
-  @movesegreg0op,
-  @moveframereg0op,
-  @popreg0op,
-  @increg0op,
-
-  @gotoop,
-  @cmpjmpneimm4op,
-  @cmpjmpeqimm4op,
-  @cmpjmploimm4op,
-  @cmpjmpgtimm4op,
-  @cmpjmploeqimm4op,
-
-  @writelnop,
-  @writebooleanop,
-  @writecardinalop,
-  @writeintegerop,
-  @writefloatop,
-  @writestring8op,
-  @writepointerop,
-  @writeclassop,
-  @writeenumop,
-
-  @pushop,
-  @popop,
-
-  @pushimm1op,
-  @pushimm8op,
-  @pushimm16op,
-  @pushimm32op,
-  @pushimm64op,
-  @pushimmdatakindop,
-  
-  @int32toflo64op,
-  @potoint32op,
-  @inttopoop,
-  
-  @and1op,
-  @and32op,
-  @or1op,
-  @or32op,
-  
-  @shl32op,
-  @shr32op,
-//  @shrint32op,
-
-  @card8tocard16op,
-  @card8tocard32op,
-  @card8tocard64op,
-  @card16tocard8op,
-  @card16tocard32op,
-  @card16tocard64op,
-  @card32tocard8op,
-  @card32tocard16op,
-  @card32tocard64op,
-  @card64tocard8op,
-  @card64tocard16op,
-  @card64tocard32op,
-
-  @int8toint16op,
-  @int8toint32op,
-  @int8toint64op,
-  @int16toint8op,
-  @int16toint32op,
-  @int16toint64op,
-  @int32toint8op,
-  @int32toint16op,
-  @int32toint64op,
-  @int64toint8op,
-  @int64toint16op,
-  @int64toint32op,
-
-  @card8toint8op,
-  @card8toint16op,
-  @card8toint32op,
-  @card8toint64op,
-  @card16toint8op,
-  @card16toint16op,
-  @card16toint32op,
-  @card16toint64op,
-  @card32toint8op,
-  @card32toint16op,
-  @card32toint32op,
-  @card32toint64op,
-  @card64toint8op,
-  @card64toint16op,
-  @card64toint32op,
-  @card64toint64op,
-
-  @int8tocard8op,
-  @int8tocard16op,
-  @int8tocard32op,
-  @int8tocard64op,
-  @int16tocard8op,
-  @int16tocard16op,
-  @int16tocard32op,
-  @int16tocard64op,
-  @int32tocard8op,
-  @int32tocard16op,
-  @int32tocard32op,
-  @int32tocard64op,
-  @int64tocard8op,
-  @int64tocard16op,
-  @int64tocard32op,
-  @int64tocard64op,
-  
-  @not1op,
-  @not32op,
-  
-  @negcard32op,
-  @negint32op,
-  @negflo64op,
-
-  @mulcard32op,
-  @mulint32op,
-  @mulflo64op,
-  @addint32op,
-  @subint32op,
-  @addpoint32op,
-  @subpoop,
-  @addflo64op,
-  @subflo64op,
-
-  @addimmint32op,
-  @mulimmint32op,
-  @offsetpoimm32op,
-
-  @incdecsegimmint32op,
-  @incdecsegimmpo32op,
-
-  @incdeclocimmint32op,
-  @incdeclocimmpo32op,
-
-  @incdecparimmint32op,
-  @incdecparimmpo32op,
-
-  @incdecparindiimmint32op,
-  @incdecparindiimmpo32op,
-
-  @incdecindiimmint32op,
-  @incdecindiimmpo32op,
-
-  @incsegint32op,
-  @incsegpo32op,
-
-  @inclocint32op,
-  @inclocpo32op,
-
-  @incparint32op,
-  @incparpo32op,
-
-  @incparindiint32op,
-  @incparindipo32op,
-
-  @incindiint32op,
-  @incindipo32op,
-
-  @decsegint32op,
-  @decsegpo32op,
-
-  @declocint32op,
-  @declocpo32op,
-
-  @decparint32op,
-  @decparpo32op,
-
-  @decparindiint32op,
-  @decparindipo32op,
-
-  @decindiint32op,
-  @decindipo32op,
-
-  @cmpeqpoop,
-  @cmpeqboolop,
-  @cmpeqint32op,
-  @cmpeqflo64op,
-
-  @cmpnepoop,
-  @cmpneboolop,
-  @cmpneint32op,
-  @cmpneflo64op,
-
-  @cmpgtpoop,
-  @cmpgtboolop,
-  @cmpgtcard32op,
-  @cmpgtint32op,
-  @cmpgtflo64op,
-
-  @cmpltpoop,
-  @cmpltboolop,
-  @cmpltcard32op,
-  @cmpltint32op,
-  @cmpltflo64op,
-
-  @cmpgepoop,
-  @cmpgeboolop,
-  @cmpgecard32op,
-  @cmpgeint32op,
-  @cmpgeflo64op,
-
-  @cmplepoop,
-  @cmpleboolop,
-  @cmplecard32op,
-  @cmpleint32op,
-  @cmpleflo64op,
-
-  @storesegnilop,
-  @storereg0nilop,
-  @storeframenilop,
-  @storestacknilop,
-  @storestackrefnilop,
-  @storesegnilarop,
-  @storeframenilarop,
-  @storereg0nilarop,
-  @storestacknilarop,
-  @storestackrefnilarop,
-
-  @finirefsizesegop,
-  @finirefsizeframeop,
-  @finirefsizereg0op,
-  @finirefsizestackop,
-  @finirefsizestackrefop,
-  @finirefsizeframearop,
-  @finirefsizesegarop,
-  @finirefsizereg0arop,
-  @finirefsizestackarop,
-  @finirefsizestackrefarop,
-
-  @increfsizesegop,
-  @increfsizeframeop,
-  @increfsizereg0op,
-  @increfsizestackop,
-  @increfsizestackrefop,
-  @increfsizeframearop,
-  @increfsizesegarop,
-  @increfsizereg0arop,
-  @increfsizestackarop,
-  @increfsizestackrefarop,
-
-  @decrefsizesegop,
-  @decrefsizeframeop,
-  @decrefsizereg0op,
-  @decrefsizestackop,
-  @decrefsizestackrefop,
-  @decrefsizeframearop,
-  @decrefsizesegarop,
-  @decrefsizereg0arop,
-  @decrefsizestackarop,
-  @decrefsizestackrefarop,
-
-  @popseg8op,
-  @popseg16op,
-  @popseg32op,
-  @popseg64op,
-  @popsegpoop,
-  @popsegf16op,
-  @popsegf32op,
-  @popsegf64op,
-  @popsegop,
-
-  @poploc8op,
-  @poploc16op,
-  @poploc32op,
-  @poploc64op,
-  @poplocpoop,
-  @poplocf16op,
-  @poplocf32op,
-  @poplocf64op,
-  @poplocop,
-
-  @poplocindi8op,
-  @poplocindi16op,
-  @poplocindi32op,
-  @poplocindi64op,
-  @poplocindipoop,
-  @poplocindif16op,
-  @poplocindif32op,
-  @poplocindif64op,
-  @poplocindiop,
-
-  @poppar8op,
-  @poppar16op,
-  @poppar32op,
-  @poppar64op,
-  @popparpoop,
-  @popparf16op,
-  @popparf32op,
-  @popparf64op,
-  @popparop,
-
-  @popparindi8op,
-  @popparindi16op,
-  @popparindi32op,
-  @popparindi64op,
-  @popparindipoop,
-  @popparindif16op,
-  @popparindif32op,
-  @popparindif64op,
-  @popparindiop,
-
-  @pushnilop,
-//  @pushsegaddressop,
-
-  @pushseg8op,
-  @pushseg16op,
-  @pushseg32op,
-  @pushseg64op,
-  @pushsegpoop,
-  @pushsegf16op,
-  @pushsegf32op,
-  @pushsegf64op,
-  @pushsegop,
-
-  @pushloc8op,
-  @pushloc16op,
-  @pushloc32op,
-  @pushloc64op,
-  @pushlocpoop,
-  @pushlocf16op,
-  @pushlocf32op,
-  @pushlocf64op,
-  @pushlocop,
-
-  @pushlocindi8op,
-  @pushlocindi16op,
-  @pushlocindi32op,
-  @pushlocindi64op,
-  @pushlocindipoop,
-  @pushlocindif16op,
-  @pushlocindif32op,
-  @pushlocindif64op,
-  @pushlocindiop,
-
-  @pushpar8op,
-  @pushpar16op,
-  @pushpar32op,
-  @pushpar64op,
-  @pushparpoop,
-  @pushparf16op,
-  @pushparf32op,
-  @pushparf64op,
-  @pushparop,
-
-  @pushaddrop,
-  @pushlocaddrop,
-//  @pushlocaddrindiop,
-  @pushsegaddrop,
-//  @pushsegaddrindiop,
-  @pushstackaddrop,
-//  @pushstackaddrindiop,
-  
-  @pushduppoop,
-
-  @indirect8op,
-  @indirect16op,
-  @indirect32op,
-  @indirect64op,
-  @indirectpoop,
-  @indirectf16op,
-  @indirectf32op,
-  @indirectf64op,
-  @indirectpooffsop, //offset after indirect
-  @indirectoffspoop, //offset before indirect
-  @indirectop,
-
-  @popindirect8op,
-  @popindirect16op,
-  @popindirect32op,
-  @popindirect64op,
-  @popindirectpoop,
-  @popindirectf16op,
-  @popindirectf32op,
-  @popindirectf64op,
-  @popindirectop,
-
-  @locvarpushop,
-  @locvarpopop,
-
-  @subbeginop,
-  @subendop,
-  @externalsubop,
-  @returnop,
-  @returnfuncop,
-
-  @setlengthstr8op,
-  @setlengthdynarrayop,
-
-  @pushcpucontextop,
-  @popcpucontextop,
-  @finiexceptionop,
-  @continueexceptionop,
-
-  @getmemop,
-  @getzeromemop,
-  @freememop,
-  @setmemop,
- 
-  @lineinfoop,
-   
-   //ssa only
-  nil,
-  nil,
-  nil,
-  nil,
-  nil,
-  nil,
-  nil,
-  
-  nil,
-  nil,
-  nil,
-  nil
- );
-}
 
  optable: optablety = (
 //oc_none
@@ -1350,14 +499,15 @@
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 
-//oc_storereg0nil
-  (ssa: storereg0nilssa; proc: @storereg0nilop; flags: []), 
 //oc_storeframenil
   (ssa: storeframenilssa; proc: @storeframenilop; flags: []), 
+//oc_storereg0nil
+  (ssa: storereg0nilssa; proc: @storereg0nilop; flags: []), 
 //oc_storestacknil
   (ssa: storestacknilssa; proc: @storestacknilop; flags: []), 
 //oc_storestackrefnil
   (ssa: storestackrefnilssa; proc: @storestackrefnilop; flags: []), 
+
 //oc_storesegnilar
   (ssa: storesegnilarssa; proc: @storesegnilarop; flags: [of_relocseg]), 
 //oc_storeframenilar
@@ -1369,6 +519,18 @@
 //oc_storestackrefnilar
   (ssa: storestackrefnilarssa; proc: @storestackrefnilarop; flags: []), 
 
+//oc_storesegnildynar
+  (ssa: storesegnildynarssa; proc: @storesegnildynarop; flags: [of_relocseg]), 
+//oc_storeframenilar
+  (ssa: storeframenildynarssa; proc: @storeframenildynarop; flags: []), 
+//oc_storereg0nilar
+  (ssa: storereg0nildynarssa; proc: @storereg0nildynarop; flags: []), 
+//oc_storestacknilar
+  (ssa: storestacknildynarssa; proc: @storestacknildynarop; flags: []), 
+//oc_storestackrefnilar
+  (ssa: storestackrefnildynarssa; proc: @storestackrefnildynarop; flags: []), 
+
+
 //oc_finirefsizeseg
   (ssa: finirefsizesegssa; proc: @finirefsizesegop; flags: [of_relocseg]), 
 //oc_finirefsizeframe
@@ -1379,16 +541,28 @@
   (ssa: finirefsizestackssa; proc: @finirefsizestackop; flags: []), 
 //oc_finirefsizestackref
   (ssa: finirefsizestackrefssa; proc: @finirefsizestackrefop; flags: []), 
-//oc_finirefsizeframear
-  (ssa: finirefsizeframearssa; proc: @finirefsizeframearop; flags: []), 
+
 //oc_finirefsizesegar
   (ssa: finirefsizesegarssa; proc: @finirefsizesegarop; flags: [of_relocseg]), 
+//oc_finirefsizeframear
+  (ssa: finirefsizeframearssa; proc: @finirefsizeframearop; flags: []), 
 //oc_finirefsizereg0ar
   (ssa: finirefsizereg0arssa; proc: @finirefsizereg0arop; flags: []), 
 //oc_finirefsizestackar
   (ssa: finirefsizestackarssa; proc: @finirefsizestackarop; flags: []), 
 //oc_finirefsizestackrefar
   (ssa: finirefsizestackrefarssa; proc: @finirefsizestackrefarop; flags: []), 
+
+//oc_finirefsizesegdynar
+  (ssa: finirefsizesegdynarssa; proc: @finirefsizesegdynarop; flags: [of_relocseg]), 
+//oc_finirefsizeframedynar
+  (ssa: finirefsizeframedynarssa; proc: @finirefsizeframedynarop; flags: []), 
+//oc_finirefsizereg0ar
+  (ssa: finirefsizereg0dynarssa; proc: @finirefsizereg0dynarop; flags: []), 
+//oc_finirefsizestackar
+  (ssa: finirefsizestackdynarssa; proc: @finirefsizestackdynarop; flags: []), 
+//oc_finirefsizestackrefar
+  (ssa: finirefsizestackrefdynarssa; proc: @finirefsizestackrefdynarop; flags: []), 
 
 //oc_increfsizeseg
   (ssa: increfsizesegssa; proc: @increfsizesegop; flags: [of_relocseg]),
@@ -1400,16 +574,28 @@
   (ssa: increfsizestackssa; proc: @increfsizestackop; flags: []), 
 //oc_increfsizestackref
   (ssa: increfsizestackrefssa; proc: @increfsizestackrefop; flags: []), 
-//oc_increfsizeframear
-  (ssa: increfsizeframearssa; proc: @increfsizeframearop; flags: []), 
+
 //oc_increfsizesegar
   (ssa: increfsizesegarssa; proc: @increfsizesegarop; flags: [of_relocseg]),
+//oc_increfsizeframear
+  (ssa: increfsizeframearssa; proc: @increfsizeframearop; flags: []), 
 //oc_increfsizereg0ar
   (ssa: increfsizereg0arssa; proc: @increfsizereg0arop; flags: []), 
 //oc_increfsizestackar
   (ssa: increfsizestackarssa; proc: @increfsizestackarop; flags: []), 
 //oc_increfsizestackrefar
   (ssa: increfsizestackrefarssa; proc: @increfsizestackrefarop; flags: []), 
+
+//oc_increfsizesegar
+  (ssa: increfsizesegdynarssa; proc: @increfsizesegdynarop; flags: [of_relocseg]),
+//oc_increfsizeframear
+  (ssa: increfsizeframedynarssa; proc: @increfsizeframedynarop; flags: []), 
+//oc_increfsizereg0ar
+  (ssa: increfsizereg0dynarssa; proc: @increfsizereg0dynarop; flags: []), 
+//oc_increfsizestackar
+  (ssa: increfsizestackdynarssa; proc: @increfsizestackdynarop; flags: []), 
+//oc_increfsizestackrefar
+  (ssa: increfsizestackrefdynarssa; proc: @increfsizestackrefdynarop; flags: []), 
 
 //oc_decrefsizeseg
   (ssa: decrefsizesegssa; proc: @decrefsizesegop; flags: [of_relocseg]),
@@ -1421,16 +607,28 @@
   (ssa: decrefsizestackssa; proc: @decrefsizestackop; flags: []), 
 //oc_decrefsizestackref
   (ssa: decrefsizestackrefssa; proc: @decrefsizestackrefop; flags: []), 
-//oc_decrefsizeframear
-  (ssa: decrefsizeframearssa; proc: @decrefsizeframearop; flags: []), 
+
 //oc_decrefsizesegar
   (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; flags: [of_relocseg]),
+//oc_decrefsizeframear
+  (ssa: decrefsizeframearssa; proc: @decrefsizeframearop; flags: []), 
 //oc_decrefsizereg0ar
   (ssa: decrefsizereg0arssa; proc: @decrefsizereg0arop; flags: []), 
 //oc_decrefsizestackar
   (ssa: decrefsizestackarssa; proc: @decrefsizestackarop; flags: []), 
 //oc_decrefsizestackrefar
   (ssa: decrefsizestackrefarssa; proc: @decrefsizestackrefarop; flags: []), 
+
+//oc_decrefsizesegdynar
+  (ssa: decrefsizesegdynarssa; proc: @decrefsizesegdynarop; flags: [of_relocseg]),
+//oc_decrefsizeframedynar
+  (ssa: decrefsizeframedynarssa; proc: @decrefsizeframedynarop; flags: []), 
+//oc_decrefsizereg0dynar
+  (ssa: decrefsizereg0dynarssa; proc: @decrefsizereg0dynarop; flags: []), 
+//oc_decrefsizestackar
+  (ssa: decrefsizestackdynarssa; proc: @decrefsizestackdynarop; flags: []), 
+//oc_decrefsizestackrefar
+  (ssa: decrefsizestackrefdynarssa; proc: @decrefsizestackrefdynarop; flags: []), 
 
 //oc_popseg8
   (ssa: popseg8ssa; proc: @popseg8op; flags: [of_relocseg]), 

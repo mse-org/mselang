@@ -121,7 +121,8 @@ uses
  
 type
  opadsty = array[addressbasety] of opcodety;
- aropadsty = array[boolean] of opadsty;
+ aropty = (aro_none,aro_static,aro_dynamic);
+ aropadsty = array[aropty] of opadsty;
 //var
 // classdefinterfacecount: integerarty;
 // classdefcount: int32;
@@ -170,97 +171,116 @@ end;
  
 const
  storenilops: aropadsty = (
-  (
+  (    //aro_none
   //ab_segment,   ab_frame,      ab_reg0,
    oc_storesegnil,oc_storeframenil,oc_storereg0nil,
   //ab_stack,      ab_stackref
    oc_storestacknil,oc_storestackrefnil),
-  (
+  (    //aro_static
   //ab_segment,     ab_frame,        ab_reg0,
    oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,
   //ab_stack,       ab_stackref
-   oc_storestacknilar,oc_storestackrefnilar)
+   oc_storestacknilar,oc_storestackrefnilar),
+  (    //aro_dynamic
+  //ab_segment,     ab_frame,        ab_reg0,
+   oc_storesegnildynar,oc_storeframenildynar,oc_storereg0nildynar,
+  //ab_stack,       ab_stackref
+   oc_storestacknildynar,oc_storestackrefnildynar)
  );
 
  finirefsizeops: aropadsty = (
-  (
+  (     //aro_none
   //ab_segment,         ab_frame,            ab_reg0,
    oc_finirefsizeseg,oc_finirefsizeframe,oc_finirefsizereg0,
   //ab_stack,           ab_stackref
    oc_finirefsizestack,oc_finirefsizestackref),
-  (
+  (     //aro_static
   //ab_segment,           ab_frame,              ab_reg0,
    oc_finirefsizesegar,oc_finirefsizeframear,oc_finirefsizereg0ar,
   //ab_stack,             ab_stackref
-   oc_finirefsizestackar,oc_finirefsizestackrefar)
+   oc_finirefsizestackar,oc_finirefsizestackrefar),
+  (     //aro_dynamic
+  //ab_segment,           ab_frame,              ab_reg0,
+   oc_finirefsizesegdynar,oc_finirefsizeframedynar,oc_finirefsizereg0dynar,
+  //ab_stack,             ab_stackref
+   oc_finirefsizestackdynar,oc_finirefsizestackrefdynar)
  );
 
  increfsizeops: aropadsty = (
-  (
+  (     //aro_none
   //ab_segment,         ab_frame,            ab_reg0,
    oc_increfsizeseg,oc_increfsizeframe,oc_increfsizereg0,
   //ab_stack,           ab_stackref
    oc_increfsizestack,oc_increfsizestackref),
-  (
+  (     //aro_static
   //ab_segment,           ab_frame,              ab_reg0,
    oc_increfsizesegar,oc_increfsizeframear,oc_increfsizereg0ar,
   //ab_stack,             ab_stackref
-   oc_increfsizestackar,oc_increfsizestackrefar)
+   oc_increfsizestackar,oc_increfsizestackrefar),
+  (     //aro_dynamic
+  //ab_segment,           ab_frame,              ab_reg0,
+   oc_increfsizesegdynar,oc_increfsizeframedynar,oc_increfsizereg0dynar,
+  //ab_stack,             ab_stackref
+   oc_increfsizestackdynar,oc_increfsizestackrefdynar)
  );
 
  decrefsizeops: aropadsty = (
-  (
+  (     //aro_none
   //ab_segment,         ab_frame,            ab_reg0,
    oc_decrefsizeseg,oc_decrefsizeframe,oc_decrefsizereg0,
   //ab_stack,           ab_stackref
    oc_decrefsizestack,oc_decrefsizestackref),
-  (
+  (     //aro_static
   //ab_global,           ab_frame,              ab_reg0,
    oc_decrefsizesegar,oc_decrefsizeframear,oc_decrefsizereg0ar,
   //ab_stack,             ab_stackref
-   oc_decrefsizestackar,oc_decrefsizestackrefar)
+   oc_decrefsizestackar,oc_decrefsizestackrefar),
+  (     //aro_dynamic
+  //ab_global,           ab_frame,              ab_reg0,
+   oc_decrefsizesegdynar,oc_decrefsizeframedynar,oc_decrefsizereg0dynar,
+  //ab_stack,             ab_stackref
+   oc_decrefsizestackdynar,oc_decrefsizestackrefdynar)
  );
 
 procedure addmanagedop(const opsar: aropadsty; 
-               const aaddress: addressrefty; const count: datasizety;
+               const aaddress: addressrefty; const count: datasizety; 
+                                                             //0-> dynarray
                const ssaindex: integer);
+var
+ arop1: aropty;
 begin
- if count > 1 then begin
-  with additem(opsar[true][aaddress.base])^ do begin
-   par.ssas1:= ssaindex;
-//   par.memop.t.size:= count;
-   if aaddress.base = ab_segment then begin
-    par.memop.segdataaddress.a.address:= aaddress.offset;
-    par.memop.segdataaddress.a.segment:= aaddress.segment;
-    par.memop.segdataaddress.offset:= 0;
-//    par.memop.t:= bitoptypes[das_pointer];
-   end
-   else begin
-    par.memop.podataaddress:= aaddress.offset;
-   end;
+ if count = 1 then begin
+  arop1:= aro_none;
+ end
+ else begin
+  if count > 0 then begin
+   arop1:= aro_static;
+  end
+  else begin
+   arop1:= aro_dynamic;
+  end;
+ end;
+ with additem(opsar[arop1][aaddress.base])^ do begin
+  par.ssas1:= ssaindex;
+  if aaddress.base = ab_segment then begin
+   par.memop.segdataaddress.a.address:= aaddress.offset;
+   par.memop.segdataaddress.a.segment:= aaddress.segment;
+   par.memop.segdataaddress.offset:= 0;
+   par.memop.t:= bitoptypes[das_pointer];
+  end
+  else begin
+   par.vaddress:= aaddress.offset;
+  end;
+  if arop1 = aro_static then begin
    if (co_llvm in info.compileoptions) then begin
     par.memop.t.size:= 
-                 info.s.unitinfo^.llvmlists.constlist.adddataoffs(count).listid;
+              info.s.unitinfo^.llvmlists.constlist.adddataoffs(count).listid;
    end
    else begin
     par.memop.t.size:= count;
    end;
    par.memop.t.kind:= das_none;
-   par.memop.t.flags:= [af_arrayop];
-  end;
- end
- else begin
-  with additem(opsar[false][aaddress.base])^ do begin
-   par.ssas1:= ssaindex;
-   if aaddress.base = ab_segment then begin
-    par.memop.segdataaddress.a.address:= aaddress.offset;
-    par.memop.segdataaddress.a.segment:= aaddress.segment;
-    par.memop.segdataaddress.offset:= 0;
-    par.memop.t:= bitoptypes[das_pointer];
-   end
-   else begin
-    par.vaddress:= aaddress.offset;
-   end;
+   par.memop.t.flags:= [af_arrayop]; //size = count
   end;
  end;
 end;

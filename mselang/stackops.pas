@@ -2229,6 +2229,96 @@ begin
  end;
 end;
 
+procedure storesegnildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ with cpu.pc^ do begin
+  po1:= ppointer(getsegaddress(par.memop.segdataaddress))^;
+  if po1 <> nil then begin
+   i1:= (pdynarraysizety(po1)-1)^;
+ {$ifdef cpu64}
+   fillqword(po1^,i1,0);
+ {$else}
+   filldword(po1^,i1,0);
+ {$endif}
+  end;
+ end;
+end;
+
+procedure storeframenildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ with cpu.pc^ do begin
+  po1:= ppointer(cpu.frame+par.memop.podataaddress)^;
+  if po1 <> nil then begin
+   i1:= (pdynarraysizety(po1)-1)^;
+ {$ifdef cpu64}
+   fillqword(po1^,i1,0);
+ {$else}
+   filldword(po1^,i1,0);
+ {$endif}
+  end;
+ end;
+end;
+
+procedure storereg0nildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ with cpu.pc^ do begin
+  po1:= ppointer(reg0+par.memop.podataaddress)^;
+  if po1 <> nil then begin
+   i1:= (pdynarraysizety(po1)-1)^;
+ {$ifdef cpu64}
+   fillqword(po1^,i1,0);
+ {$else}
+   filldword(po1^,i1,0);
+ {$endif}
+  end;
+ end;
+end;
+
+procedure storestacknildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ with cpu.pc^ do begin
+  po1:= ppointer(cpu.stack+par.memop.podataaddress)^;
+  if po1 <> nil then begin
+   i1:= (pdynarraysizety(po1)-1)^;
+ {$ifdef cpu64}
+   fillqword(po1^,i1,0);
+ {$else}
+   filldword(po1^,i1,0);
+ {$endif}
+  end;
+ end;
+end;
+
+procedure storestackrefnildynarop();
+var
+ po1: pointer;
+ i1: int32;
+begin
+ with cpu.pc^ do begin
+  po1:= pppointer(cpu.stack+par.memop.podataaddress)^^;
+  if po1 <> nil then begin
+   i1:= (pdynarraysizety(po1)-1)^;
+ {$ifdef cpu64}
+   fillqword(po1,i1,0);
+ {$else}
+   filldword(po1,i1,0);
+ {$endif}
+  end;
+ end;
+end;
+
 procedure popseg8op();
 begin
  puint8(getsegaddress(cpu.pc^.par.memop.segdataaddress))^:= 
@@ -3186,6 +3276,31 @@ begin
  end;
 end;
 
+procedure finirefsizedynar(ref: ppointer); 
+                                    {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ ref:= ref^;
+ if ref <> nil then begin
+  for si1:= (pdynarraysizety(ref)-1)^ downto 0 do begin
+   d:= ref^;
+   if d <> nil then begin
+    dec(d);
+    if d^.ref.count > 0 then begin
+     dec(d^.ref.count);
+     if d^.ref.count = 0 then begin
+      freemem(d);
+     end;
+     ref^:= nil;
+    end;
+   end;
+   inc(ref);
+  end;
+ end;
+end;
+
 procedure increfsize(const ref: ppointer); {$ifdef mse_inline}inline;{$endif}
 var
  d: prefsizeinfoty;
@@ -3214,6 +3329,26 @@ begin
    end;
   end;
   inc(ref);
+ end;
+end;
+
+procedure increfsizedynar(ref: ppointer); 
+                                           {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ if ref <> nil then begin
+  for si1:= (pdynarraysizety(ref)-1)^ downto 0 do begin //high
+   d:= ref^;
+   if d <> nil then begin
+    dec(d);
+    if d^.ref.count > 0 then begin
+     inc(d^.ref.count);
+    end;
+   end;
+   inc(ref);
+  end;
  end;
 end;
 
@@ -3273,6 +3408,30 @@ begin
  end;
 end;
 
+procedure decrefsizedynar(ref: ppointer); 
+                                           {$ifdef mse_inline}inline;{$endif}
+var
+ d: prefsizeinfoty;
+ si1: datasizety;
+begin
+ if ref <> nil then begin
+  for si1:= (pdynarraysizety(ref)-1)^ downto 0 do begin //high
+   d:= ref^;
+   if d <> nil then begin
+    dec(d);
+    if d^.ref.count > 0 then begin
+     dec(d^.ref.count);
+     if d^.ref.count = 0 then begin
+      freemem(d);
+     end;
+     ref^:= nil;
+    end;
+   end;
+   inc(ref);
+  end;
+ end;
+end;
+
 procedure finirefsizesegop();
 begin
  finirefsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -3326,6 +3485,31 @@ procedure finirefsizestackrefarop();
 begin
  finirefsizear(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^,
                                                  cpu.pc^.par.memop.t.size);
+end;
+
+procedure finirefsizesegdynarop();
+begin
+ finirefsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
+end;
+
+procedure finirefsizeframedynarop();
+begin
+ finirefsizedynar(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure finirefsizereg0dynarop();
+begin
+ finirefsizedynar(ppointer(reg0+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure finirefsizestackdynarop();
+begin
+ finirefsizedynar(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure finirefsizestackrefdynarop();
+begin
+ finirefsizedynar(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^);
 end;
 
 procedure increfsizesegop();
@@ -3383,6 +3567,31 @@ begin
                                              cpu.pc^.par.memop.t.size);
 end;
 
+procedure increfsizesegdynarop();
+begin
+ increfsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
+end;
+
+procedure increfsizeframedynarop();
+begin
+ increfsizedynar(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure increfsizereg0dynarop();
+begin
+ increfsizedynar(ppointer(reg0+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure increfsizestackdynarop();
+begin
+ increfsizedynar(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure increfsizestackrefdynarop();
+begin
+ increfsizedynar(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^);
+end;
+
 procedure decrefsizesegop();
 begin
  decrefsize(getsegaddress(cpu.pc^.par.memop.segdataaddress));
@@ -3437,6 +3646,32 @@ begin
  decrefsizear(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^,
                                                 cpu.pc^.par.memop.t.size);
 end;
+
+procedure decrefsizesegdynarop();
+begin
+ decrefsizedynar(getsegaddress(cpu.pc^.par.memop.segdataaddress));
+end;
+
+procedure decrefsizeframedynarop();
+begin
+ decrefsizedynar(ppointer(cpu.frame+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure decrefsizereg0dynarop();
+begin
+ decrefsizedynar(ppointer(reg0+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure decrefsizestackdynarop();
+begin
+ decrefsizedynar(ppointer(cpu.stack+cpu.pc^.par.memop.podataaddress));
+end;
+
+procedure decrefsizestackrefdynarop();
+begin
+ decrefsizedynar(pppointer(cpu.stack+cpu.pc^.par.memop.podataaddress)^);
+end;
+
 
 procedure setlengthstr8op(); //address, length
 var
@@ -3972,44 +4207,72 @@ const
   storeframenilssa = 0;
   storestacknilssa = 0;
   storestackrefnilssa = 0;
+
   storesegnilarssa = 0;
   storeframenilarssa = 0;
   storereg0nilarssa = 0;
   storestacknilarssa = 0;
   storestackrefnilarssa = 0;
 
+  storesegnildynarssa = 0;
+  storeframenildynarssa = 0;
+  storereg0nildynarssa = 0;
+  storestacknildynarssa = 0;
+  storestackrefnildynarssa = 0;
+
   finirefsizesegssa = 0;
   finirefsizeframessa = 0;
   finirefsizereg0ssa = 0;
   finirefsizestackssa = 0;
   finirefsizestackrefssa = 0;
-  finirefsizeframearssa = 0;
+
   finirefsizesegarssa = 0;
+  finirefsizeframearssa = 0;
   finirefsizereg0arssa = 0;
   finirefsizestackarssa = 0;
   finirefsizestackrefarssa = 0;
+
+  finirefsizesegdynarssa = 0;
+  finirefsizeframedynarssa = 0;
+  finirefsizereg0dynarssa = 0;
+  finirefsizestackdynarssa = 0;
+  finirefsizestackrefdynarssa = 0;
 
   increfsizesegssa = 0;
   increfsizeframessa = 0;
   increfsizereg0ssa = 0;
   increfsizestackssa = 0;
   increfsizestackrefssa = 0;
-  increfsizeframearssa = 0;
+
   increfsizesegarssa = 0;
+  increfsizeframearssa = 0;
   increfsizereg0arssa = 0;
   increfsizestackarssa = 0;
   increfsizestackrefarssa = 0;
+
+  increfsizesegdynarssa = 0;
+  increfsizeframedynarssa = 0;
+  increfsizereg0dynarssa = 0;
+  increfsizestackdynarssa = 0;
+  increfsizestackrefdynarssa = 0;
 
   decrefsizesegssa = 0;
   decrefsizeframessa = 0;
   decrefsizereg0ssa = 0;
   decrefsizestackssa = 0;
   decrefsizestackrefssa = 0;
-  decrefsizeframearssa = 0;
+
   decrefsizesegarssa = 0;
+  decrefsizeframearssa = 0;
   decrefsizereg0arssa = 0;
   decrefsizestackarssa = 0;
   decrefsizestackrefarssa = 0;
+
+  decrefsizesegdynarssa = 0;
+  decrefsizeframedynarssa = 0;
+  decrefsizereg0dynarssa = 0;
+  decrefsizestackdynarssa = 0;
+  decrefsizestackrefdynarssa = 0;
 
   popseg8ssa = 0;
   popseg16ssa = 0;

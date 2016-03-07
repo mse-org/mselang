@@ -1932,6 +1932,27 @@ begin
  notimplemented();
 end;
 
+procedure storesegnildynarop();
+begin
+ notimplemented();
+end;
+procedure storeframenildynarop();
+begin
+ notimplemented();
+end;
+procedure storereg0nildynarop();
+begin
+ notimplemented();
+end;
+procedure storestacknildynarop();
+begin
+ notimplemented();
+end;
+procedure storestackrefnildynarop();
+begin
+ notimplemented();
+end;
+
 procedure finirefsizesegop();
 begin
  with pc^.par do begin
@@ -1962,10 +1983,6 @@ procedure finirefsizestackrefop();
 begin
  notimplemented();
 end;
-procedure finirefsizeframearop();
-begin
- notimplemented();
-end;
 
 procedure finirefsizesegarop();
 begin
@@ -1977,6 +1994,10 @@ begin
  end;
 end;
 
+procedure finirefsizeframearop();
+begin
+ notimplemented();
+end;
 procedure finirefsizereg0arop();
 begin
  notimplemented();
@@ -1986,6 +2007,27 @@ begin
  notimplemented();
 end;
 procedure finirefsizestackrefarop();
+begin
+ notimplemented();
+end;
+
+procedure finirefsizesegdynarop();
+begin
+ notimplemented();
+end;
+procedure finirefsizeframedynarop();
+begin
+ notimplemented();
+end;
+procedure finirefsizereg0dynarop();
+begin
+ notimplemented();
+end;
+procedure finirefsizestackdynarop();
+begin
+ notimplemented();
+end;
+procedure finirefsizestackrefdynarop();
 begin
  notimplemented();
 end;
@@ -2014,11 +2056,12 @@ procedure increfsizestackrefop();
 begin
  notimplemented();
 end;
-procedure increfsizeframearop();
+
+procedure increfsizesegarop();
 begin
  notimplemented();
 end;
-procedure increfsizesegarop();
+procedure increfsizeframearop();
 begin
  notimplemented();
 end;
@@ -2031,6 +2074,27 @@ begin
  notimplemented();
 end;
 procedure increfsizestackrefarop();
+begin
+ notimplemented();
+end;
+
+procedure increfsizesegdynarop();
+begin
+ notimplemented();
+end;
+procedure increfsizeframedynarop();
+begin
+ notimplemented();
+end;
+procedure increfsizereg0dynarop();
+begin
+ notimplemented();
+end;
+procedure increfsizestackdynarop();
+begin
+ notimplemented();
+end;
+procedure increfsizestackrefdynarop();
 begin
  notimplemented();
 end;
@@ -2070,11 +2134,11 @@ begin
  end;
 end;
 
-procedure decrefsizeframearop();
+procedure decrefsizesegarop();
 begin
  notimplemented();
 end;
-procedure decrefsizesegarop();
+procedure decrefsizeframearop();
 begin
  notimplemented();
 end;
@@ -2087,6 +2151,27 @@ begin
  notimplemented();
 end;
 procedure decrefsizestackrefarop();
+begin
+ notimplemented();
+end;
+
+procedure decrefsizesegdynarop();
+begin
+ notimplemented();
+end;
+procedure decrefsizeframedynarop();
+begin
+ notimplemented();
+end;
+procedure decrefsizereg0dynarop();
+begin
+ notimplemented();
+end;
+procedure decrefsizestackdynarop();
+begin
+ notimplemented();
+end;
+procedure decrefsizestackrefdynarop();
 begin
  notimplemented();
 end;
@@ -3551,44 +3636,72 @@ const
   storeframenilssa = 0;
   storestacknilssa = 1;
   storestackrefnilssa = 1;
+
   storesegnilarssa = 1;
   storeframenilarssa = 1;
   storereg0nilarssa = 1;
   storestacknilarssa = 1;
   storestackrefnilarssa = 1;
 
+  storesegnildynarssa = 1;
+  storeframenildynarssa = 1;
+  storereg0nildynarssa = 1;
+  storestacknildynarssa = 1;
+  storestackrefnildynarssa = 1;
+
   finirefsizesegssa = 2;
   finirefsizeframessa = 1;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
   finirefsizestackrefssa = 1;
-  finirefsizeframearssa = 1;
+
   finirefsizesegarssa = 1;
+  finirefsizeframearssa = 1;
   finirefsizereg0arssa = 1;
   finirefsizestackarssa = 1;
   finirefsizestackrefarssa = 1;
+
+  finirefsizesegdynarssa = 1;
+  finirefsizeframedynarssa = 1;
+  finirefsizereg0dynarssa = 1;
+  finirefsizestackdynarssa = 1;
+  finirefsizestackrefdynarssa = 1;
 
   increfsizesegssa = 1;
   increfsizeframessa = 1;
   increfsizereg0ssa = 1;
   increfsizestackssa = 0;
   increfsizestackrefssa = 1;
-  increfsizeframearssa = 1;
+
   increfsizesegarssa = 1;
+  increfsizeframearssa = 1;
   increfsizereg0arssa = 1;
   increfsizestackarssa = 1;
   increfsizestackrefarssa = 1;
+
+  increfsizesegdynarssa = 1;
+  increfsizeframedynarssa = 1;
+  increfsizereg0dynarssa = 1;
+  increfsizestackdynarssa = 1;
+  increfsizestackrefdynarssa = 1;
 
   decrefsizesegssa = 1;
   decrefsizeframessa = 1;
   decrefsizereg0ssa = 1;
   decrefsizestackssa = 1;
   decrefsizestackrefssa = 2;
-  decrefsizeframearssa = 1;
+
   decrefsizesegarssa = 1;
+  decrefsizeframearssa = 1;
   decrefsizereg0arssa = 1;
   decrefsizestackarssa = 1;
   decrefsizestackrefarssa = 1;
+
+  decrefsizesegdynarssa = 1;
+  decrefsizeframedynarssa = 1;
+  decrefsizereg0dynarssa = 1;
+  decrefsizestackdynarssa = 1;
+  decrefsizestackrefdynarssa = 1;
 
   popseg8ssa = 0;
   popseg16ssa = 0;
