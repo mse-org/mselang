@@ -234,7 +234,7 @@ type
  enumflagsty = set of enumflagty;
 
  typeflagty = (tf_managed,     //field iniproc/finiproc valid in typedataty
-               tf_hasmanaged,  //has nested tf_managed
+               tf_needsmanage, //has nested tf_managed or tf_managed set
                tf_lower,       //in range expression
                tf_upper,       //in range expression
                tf_subad,       //sub address

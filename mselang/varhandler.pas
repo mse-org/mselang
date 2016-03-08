@@ -106,9 +106,9 @@ begin
       end;
       if address.indirectlevel = 0 then begin
        size1:= h.bytesize;
-       if tf_hasmanaged in h.flags then begin
-        include(s.currentstatementflags,stf_hasmanaged);
-        include(vf.flags,tf_hasmanaged);
+       if tf_needsmanage in h.flags then begin
+        include(s.currentstatementflags,stf_needsmanage);
+        include(vf.flags,tf_needsmanage);
        end;
       end
       else begin

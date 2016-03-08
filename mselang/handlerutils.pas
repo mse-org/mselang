@@ -319,7 +319,7 @@ const
        bitsize: 32; bytesize: 4; datasize: das_32);
        infochar32:(min: int32($00000000); max: $ffffffff))),
    (name: 'string8'; data: (h: (ancestor: 0; kind: dk_string8;
-       base: 0;  rtti: 0; flags: [tf_hasmanaged,tf_managed]; indirectlevel: 0;
+       base: 0;  rtti: 0; flags: [tf_needsmanage,tf_managed]; indirectlevel: 0;
        bitsize: pointerbitsize; bytesize: pointersize; datasize: das_pointer);
        manageproc: @managestring8; itemsize: 1;
                  dummy2: 0))

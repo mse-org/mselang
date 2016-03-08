@@ -213,7 +213,7 @@ begin
  outhandle('PROGBEGIN');
 {$endif}
  with info do begin
-  if stf_hasmanaged in s.currentstatementflags then begin
+  if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,-1);
     endsimplesub();
@@ -2748,7 +2748,7 @@ begin
      end
      else begin
       ssa1:= source^.fact.ssaindex; //source
-      if (indilev1 = 0) and (tf_hasmanaged in destvar.typ^.h.flags) then begin
+      if (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags) then begin
        ad1.base:= ab_stack;
        if datasi1 = das_pointer then begin
         ad1.offset:= -pointersize;

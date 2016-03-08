@@ -416,7 +416,7 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   b.flags:= s.currentstatementflags;
   b.eleparent:= ele.elementparent;
-  exclude(s.currentstatementflags,stf_hasmanaged);
+  exclude(s.currentstatementflags,stf_needsmanage);
   int1:= s.stacktop-s.stackindex; 
   if int1 > 1 then begin //todo: check procedure level and the like
    if not ele.findupward(contextstack[s.stackindex+1].d.ident.ident,[],
@@ -733,8 +733,8 @@ var                       //todo: move after doparam
           end
           else begin
            if impl1 and (d.typ.indirectlevel = 0) and 
-                     (tf_hasmanaged in po3^.h.flags) then begin
-            include(vf.flags,tf_hasmanaged);
+                     (tf_needsmanage in po3^.h.flags) then begin
+            include(vf.flags,tf_needsmanage);
            end;                     
           end;
          end;
@@ -968,7 +968,7 @@ begin
      po2:= pointer(curparam^);
      dec(po2^.address.locaddress.address,frameoffset);
      curparam^:= ptruint(po2)-eledatabase;
-     if tf_hasmanaged in po2^.vf.flags then begin
+     if tf_needsmanage in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
                                                         po2^.address,0);
       po2^.vf.next:= po1^.paramfinichain;
@@ -1345,7 +1345,7 @@ begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
-  if stf_hasmanaged in s.currentstatementflags then begin
+  if stf_needsmanage in s.currentstatementflags then begin
    writemanagedvarop(mo_ini,po1^.varchain,false,0);
   end;           //todo: implicit try-finally
  end;
@@ -1369,7 +1369,7 @@ begin
     info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
 //   end;
   end;
-  if stf_hasmanaged in s.currentstatementflags then begin
+  if stf_needsmanage in s.currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain,false,0);
   end;
   if po1^.paramfinichain <> 0 then begin

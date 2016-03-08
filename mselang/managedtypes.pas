@@ -210,7 +210,8 @@ begin
   repeat
    po3:= ele.eledataabs(ele1);
    po4:= ele.eledataabs(po3^.vf.typ);
-   if po4^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+//   if po4^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+   if tf_needsmanage in po4^.h.flags then begin
     ad1.offset:= aaddress.offset + po3^.offset;
     writemanagedtypeop(op,po4,ad1,ssaindex);
    end;
@@ -247,7 +248,7 @@ begin
   ele1:= chain;
   repeat
    po1:= ele.eledataabs(ele1);
-   if tf_hasmanaged in po1^.vf.flags then begin
+   if tf_needsmanage in po1^.vf.flags then begin
     ad1.offset:= po1^.address.poaddress;
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
    end;

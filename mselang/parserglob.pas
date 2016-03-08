@@ -164,7 +164,7 @@ type
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,
                     stf_getaddress,stf_addressop,
-                    stf_hasmanaged,stf_newlineposted);
+                    stf_needsmanage,stf_newlineposted);
  statementflagsty = set of statementflagty;
 
  varinfoty = record

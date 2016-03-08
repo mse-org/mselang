@@ -154,7 +154,7 @@ begin
      end;
      po4^.h.indirectlevel:= d.typ.indirectlevel;
      if po4^.h.indirectlevel > 0 then begin
-      po4^.h.flags-= [tf_managed,tf_hasmanaged];
+      po4^.h.flags-= [tf_managed,tf_needsmanage];
      end;
      if forward1 then begin
       markforwardtype(po4,contextstack[s.stacktop].d.ident.ident);
@@ -367,9 +367,10 @@ begin
     po1^.indirectlevel:= d.typ.indirectlevel;
     po2:= ptypedataty(ele.eledataabs(po1^.vf.typ));
     if po1^.indirectlevel = 0 then begin      //todo: alignment
-     if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
-      include(atypeflags,tf_hasmanaged);
-      include(po1^.vf.flags,tf_hasmanaged);
+//     if po2^.h.flags * [tf_managed,tf_hasmanaged] <> [] then begin
+     if tf_needsmanage in po2^.h.flags then begin
+      include(atypeflags,tf_needsmanage);
+      include(po1^.vf.flags,tf_needsmanage);
       {
       with pmanageddataty(
               pointer(ele.addelementduplicate(tks_managed,[vik_managed],
@@ -524,7 +525,7 @@ begin
      indilev:= d.typ.indirectlevel;
      if indilev + h.indirectlevel > 0 then begin
       totsize:= pointersize;
-      flags1-= [tf_managed,tf_hasmanaged];
+      flags1:= flags1 - [tf_managed,tf_needsmanage];
      end
      else begin
       totsize:= h.bytesize;
@@ -572,7 +573,7 @@ begin
       end;
       arty^.h.flags:= flags1;
       if indilev > 0 then begin
-       flags1-= [tf_managed,tf_hasmanaged];
+       flags1:= flags1 - [tf_managed,tf_needsmanage];
       end;
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs;
@@ -624,7 +625,7 @@ begin
       goto endlab;
      end;
      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
-                                     [tf_managed,tf_hasmanaged]);
+                                     [tf_managed,tf_needsmanage]);
      with arty^ do begin
       manageproc:= @managedynarray;
       itemsize:= totsize;

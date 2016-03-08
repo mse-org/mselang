@@ -887,7 +887,7 @@ parseend:
    freelist(externallinklist);
   end;
 }
-  if stf_hasmanaged in s.currentstatementflags then begin
+  if stf_needsmanage in s.currentstatementflags then begin
    with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
      writemanagedvarop(mo_ini,varchain,true,0);
