@@ -518,12 +518,13 @@ begin
   int1:= s.stacktop-s.stackindex-2;
   if (contextstack[s.stacktop].d.kind = ck_fieldtype) then begin
    arty:= nil;
-   with contextstack[s.stacktop] do begin
+   with contextstack[s.stacktop] do begin //item type
     itemtyoffs:= d.typ.typedata;
     with ptypedataty(ele.eledataabs(itemtyoffs))^ do begin
      flags1:= h.flags;
      indilev:= d.typ.indirectlevel;
-     if indilev + h.indirectlevel > 0 then begin
+//     if indilev + h.indirectlevel > 0 then begin //??? why addition?
+     if indilev > 0 then begin
       totsize:= pointersize;
       flags1:= flags1 - [tf_managed,tf_needsmanage];
      end
@@ -571,10 +572,11 @@ begin
        identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
        goto endlab;
       end;
+      exclude(flags1,tf_managed); //only item type can be managed
+//      if indilev > 0 then begin
+//       flags1:= flags1 - [tf_managed,tf_needsmanage];
+//      end;
       arty^.h.flags:= flags1;
-      if indilev > 0 then begin
-       flags1:= flags1 - [tf_managed,tf_needsmanage];
-      end;
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs;
        i.itemindirectlevel:= indilev;
@@ -605,7 +607,7 @@ begin
        h.kind:= dk_array;
       end;
       itemtyoffs:= ele.eledatarel(arty);
-      indilev:= 0;
+//      indilev:= 0;
      end;
     end;
    end

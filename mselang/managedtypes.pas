@@ -162,7 +162,25 @@ var
  bo1: boolean;
  ad1: addressrefty;
  ele1: elementoffsetty;
+ i1: int32;
 begin
+ case atype^.h.kind of
+  dk_array: begin
+   i1:= 1;
+   po2:= atype;
+   while po2^.h.kind = dk_array do begin
+    i1:= i1 * getordcount(ele.eledataabs(po2^.infoarray.indextypedata));
+    po2:= ele.eledataabs(po2^.infoarray.i.itemtypedata);
+   end;
+   if tf_managed in po2^.h.flags then begin
+    po2^.manageproc(op,aaddress,i1,ssaindex);
+   end;
+  end;
+  else begin
+   internalerror1(ie_managed,'20160308A');
+  end;
+ end;
+(*
  if tf_managed in atype^.h.flags then begin
   case atype^.h.kind of
    dk_array: begin
@@ -227,6 +245,7 @@ begin
    end;
   end;
  end;
+*)
 end;
 
 procedure writemanagedvarop(const op: managedopty;
