@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
-procedure managestring8(const op: managedopty; const aaddress: addressrefty;
-                             const count: datasizety; const ssaindex: integer);
-procedure managedynarray(const op: managedopty; const aaddress: addressrefty;
-                             const count: datasizety; const ssaindex: integer);
+procedure managestring8(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
+procedure managedynarray(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,llvmlists,
@@ -50,21 +50,21 @@ const
     oc_none,oc_none,    oc_none,oc_none
  );
 
-procedure managestring8(const op: managedopty; const aaddress: addressrefty;
-                             const count: datasizety; const ssaindex: integer);
+procedure managestring8(const op: managedopty; const atype: ptypedataty;
+                       const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aaddress,count,ssaindex);
+   inipointer(aro_none,atype,aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aaddress,count,ssaindex);
+   finirefsize(aro_none,atype,aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aaddress,count,ssaindex);
+   increfsize(aro_none,atype,aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aaddress,count,ssaindex);
+   decrefsize(aro_none,atype,aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -74,21 +74,21 @@ begin
  end;
 end;
 
-procedure managedynarray(const op: managedopty; const aaddress: addressrefty;
-                             const count: datasizety; const ssaindex: integer);
+procedure managedynarray(const op: managedopty; const atype: ptypedataty;
+                       const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aaddress,count,ssaindex);
+   inipointer(aro_none,atype,aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aaddress,count,ssaindex);
+   finirefsize(aro_none,atype,aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aaddress,count,ssaindex);
+   increfsize(aro_none,atype,aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aaddress,count,ssaindex);
+   decrefsize(aro_none,atype,aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -164,6 +164,8 @@ var
  ele1: elementoffsetty;
  i1: int32;
 begin
+ atype^.h.manageproc(op,atype,aaddress,ssaindex);
+(*
  case atype^.h.kind of
   dk_array: begin
    i1:= 1;
@@ -173,13 +175,36 @@ begin
     po2:= ele.eledataabs(po2^.infoarray.i.itemtypedata);
    end;
    if tf_managed in po2^.h.flags then begin
-    po2^.manageproc(op,aaddress,i1,ssaindex);
+    case po2^.h.kind of
+     dk_dynarray: begin
+      po4:= ele.eledataabs(po2^.infodynarray.i.itemtypedata);
+      if not (tf_needsmanage in po4^.h.flags) then begin
+       po2^.manageproc(op,aaddress,i1,ssaindex);
+      end
+      else begin
+       notimplementederror('20160309A');
+      end;
+     end;
+     dk_string8: begin
+      po2^.manageproc(op,aaddress,i1,ssaindex);
+     end;
+     else begin
+      notimplementederror('20160309B');
+     end;
+    end;
+   end
+   else begin
+    notimplementederror('20160309C');
    end;
+  end;
+  dk_dynarray: begin
+   po4:= ele.eledataabs(atype^.infodynarray.i.itemtypedata);
   end;
   else begin
    internalerror1(ie_managed,'20160308A');
   end;
  end;
+*)
 (*
  if tf_managed in atype^.h.flags then begin
   case atype^.h.kind of

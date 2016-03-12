@@ -18,14 +18,15 @@ unit opcode;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- msetypes,parserglob,globtypes,opglob;
+ msetypes,parserglob,globtypes,opglob,handlerglob;
  
 type
  loopinfoty = record
   start: opaddressty;
   size: databitsizety;
  end;
-
+ aropty = (aro_none,aro_static,aro_dynamic); //for refcount helpers
+ 
 var
  optable: poptablety;
 // ssatable: pssatablety;
@@ -94,14 +95,15 @@ function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
 procedure addlabel();
 
           //refcount helpers
-procedure inipointer(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
-procedure finirefsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
-procedure increfsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
-procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+procedure inipointer(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
+procedure finirefsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
+procedure increfsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
+procedure decrefsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
+                     
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
 
@@ -116,12 +118,10 @@ procedure dumpops();
 {$endif}
 implementation
 uses
- stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils,
- handlerglob;
+ stackops,handlerutils,errorhandler,segmentutils,typinfo,elements,msearrayutils;
  
 type
  opadsty = array[addressbasety] of opcodety;
- aropty = (aro_none,aro_static,aro_dynamic);
  aropadsty = array[aropty] of opadsty;
 //var
 // classdefinterfacecount: integerarty;
@@ -242,25 +242,25 @@ const
    oc_decrefsizestackdynar,oc_decrefsizestackrefdynar)
  );
 
-procedure addmanagedop(const opsar: aropadsty; 
-               const aaddress: addressrefty; const count: datasizety; 
-                                                             //0-> dynarray
-               const ssaindex: integer);
+procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
+                                                    const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
 var
- arop1: aropty;
+// arop1: aropty;
+ i1: int32;
 begin
- if count = 1 then begin
-  arop1:= aro_none;
- end
- else begin
-  if count > 0 then begin
+{
+ arop1:= aro_none;
+ case atype^.h.kind of
+  dk_array: begin
    arop1:= aro_static;
-  end
-  else begin
+  end;
+  dk_dynarray: begin
    arop1:= aro_dynamic;
   end;
  end;
- with additem(opsar[arop1][aaddress.base])^ do begin
+}
+ with additem(opsar[arop][aaddress.base])^ do begin
   par.ssas1:= ssaindex;
   if aaddress.base = ab_segment then begin
    par.memop.segdataaddress.a.address:= aaddress.offset;
@@ -271,13 +271,14 @@ begin
   else begin
    par.vaddress:= aaddress.offset;
   end;
-  if arop1 = aro_static then begin
+  if arop = aro_static then begin
+   i1:= atype^.infoarray.i.totitemcount;
    if (co_llvm in info.compileoptions) then begin
     par.memop.t.size:= 
-              info.s.unitinfo^.llvmlists.constlist.adddataoffs(count).listid;
+              info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
    end
    else begin
-    par.memop.t.size:= count;
+    par.memop.t.size:= i1;
    end;
    par.memop.t.kind:= das_none;
    par.memop.t.flags:= [af_arrayop]; //size = count
@@ -285,28 +286,28 @@ begin
  end;
 end;
 
-procedure inipointer(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+procedure inipointer(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(storenilops,aaddress,count,ssaindex);
+ addmanagedop(storenilops,arop,atype,aaddress,ssaindex);
 end;
 
-procedure finirefsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+procedure finirefsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(finirefsizeops,aaddress,count,ssaindex);
+ addmanagedop(finirefsizeops,arop,atype,aaddress,ssaindex);
 end;
 
-procedure increfsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+procedure increfsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(increfsizeops,aaddress,count,ssaindex);
+ addmanagedop(increfsizeops,arop,atype,aaddress,ssaindex);
 end;
 
-procedure decrefsize(const aaddress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+procedure decrefsize(const arop: aropty; const atype: ptypedataty;
+                     const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(decrefsizeops,aaddress,count,ssaindex);
+ addmanagedop(decrefsizeops,arop,atype,aaddress,ssaindex);
 end;
 
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;

@@ -507,6 +507,7 @@ var
 var
  range: ordrangety;
  flags1: typeflagsty;
+ itemcount1: int32;
                               //todo: indirection? 
 label
  endlab;
@@ -516,6 +517,7 @@ begin
 {$endif}
  with info do begin
   int1:= s.stacktop-s.stackindex-2;
+  itemcount1:= 1;
   if (contextstack[s.stacktop].d.kind = ck_fieldtype) then begin
    arty:= nil;
    with contextstack[s.stacktop] do begin //item type
@@ -530,11 +532,15 @@ begin
      end
      else begin
       totsize:= h.bytesize;
+      if h.kind = dk_array then begin
+       itemcount1:= infoarray.i.totitemcount;
+      end;
      end;
     end;
    end;  //todo: alignment
    if (int1 > 0) then begin  //static array
     int2:= s.stackindex + 2;
+    
     for int1:= s.stacktop-1 downto int2 do begin
      with contextstack[int1] do begin
      {$ifdef mse_checkinternalerror}
@@ -595,6 +601,7 @@ begin
        goto endlab;     
       end;
       totsize:= si1*totsize;
+      itemcount1:= itemcount1*si1;
       if totsize > maxint then begin
        err(err_dataeletoolarge);
        goto endlab;
@@ -603,6 +610,7 @@ begin
        h.indirectlevel:= 0;
        h.bitsize:= totsize*8;
        h.bytesize:= totsize;
+       infoarray.i.totitemcount:= itemcount1;
        h.datasize:= das_none;
        h.kind:= dk_array;
       end;
@@ -629,7 +637,7 @@ begin
      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
                                      [tf_managed,tf_needsmanage]);
      with arty^ do begin
-      manageproc:= @managedynarray;
+      h.manageproc:= @managedynarray;
       itemsize:= totsize;
       infodynarray.i.itemtypedata:= itemtyoffs;
       infodynarray.i.itemindirectlevel:= indilev;

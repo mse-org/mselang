@@ -82,6 +82,7 @@ type
  arrayiteminfoty = record
   itemtypedata: elementoffsetty;
   itemindirectlevel: integer;
+  totitemcount: int32; //includes itemcount of nseted arrays
  end;
  infoarrayty = record
   i: arrayiteminfoty;
@@ -157,10 +158,10 @@ type
  addresskindty = boolean;{(adk_local,adk_global)}
 
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
- 
- managedtypeprocty = procedure(const op: managedopty;
-                       const aadress: addressrefty; const count: datasizety;
-                                                     const ssaindex: integer);
+
+ ptypedataty = ^typedataty; 
+ managedtypeprocty = procedure(const op: managedopty; const atype: ptypedataty;
+                          const aadress: addressrefty; const ssaindex: integer);
 
  manageddataty = record
   managedele: elementoffsetty;
@@ -179,6 +180,7 @@ type
   base: elementoffsetty; //base type, ex: precordty = ^recordty -> recordty type
                          //used for addressing record fields or typex = typey
   rtti: dataaddressty; //0 -> none
+  manageproc: managedtypeprocty; //nil -> none
   flags: typeflagsty;
   indirectlevel: indirectlevelty; //total indirection count
   bitsize: integer;
@@ -218,7 +220,7 @@ type
      das_32: (infochar32: char32infoty);
    );
    dk_string8,dk_dynarray:(
-    manageproc: managedtypeprocty;
+//    manageproc: managedtypeprocty;
     itemsize: integer; //bytes
     case datakindty of
      dk_string8:(
@@ -261,7 +263,7 @@ type
     infoset: infosetty;
    );
  end;
- ptypedataty = ^typedataty;
+// ptypedataty = ^typedataty;
  
  vardestinfoty = record
   address: addressvaluety;
@@ -518,6 +520,7 @@ begin
  atype.h.indirectlevel:= aindirectlevel;
  atype.h.ancestor:= aancestor;
  atype.h.kind:= akind;
+ atype.h.manageproc:= nil;
 end;
 
 procedure inittypedatabit(var atype: typedataty; akind: datakindty;
