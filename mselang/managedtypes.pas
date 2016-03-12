@@ -38,6 +38,10 @@ procedure managedynarraydynar(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
 procedure managedynarraystring8(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
+procedure managearraydynar(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
+procedure managearraystring8(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,llvmlists,
@@ -149,6 +153,54 @@ begin
   mo_decref: begin
    decrefsize(aro_dynamic,atype,aaddress,ssaindex);
    decrefsize(aro_none,atype,aaddress,ssaindex);
+  end;
+ {$ifdef mse_checkinternalerror}                             
+  else begin
+   internalerror(ie_managed,'20140416A');
+  end;
+ {$endif}
+ end;
+end;
+
+procedure managearraydynar(const op: managedopty; const atype: ptypedataty;
+                       const aaddress: addressrefty; const ssaindex: integer);
+begin
+ case op of 
+  mo_ini: begin
+   inipointer(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_fini: begin
+   finirefsize(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_incref: begin
+   increfsize(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_decref: begin
+   decrefsize(aro_static,atype,aaddress,ssaindex);
+  end;
+ {$ifdef mse_checkinternalerror}                             
+  else begin
+   internalerror(ie_managed,'20140416A');
+  end;
+ {$endif}
+ end;
+end;
+
+procedure managearraystring8(const op: managedopty; const atype: ptypedataty;
+                       const aaddress: addressrefty; const ssaindex: integer);
+begin
+ case op of 
+  mo_ini: begin
+   inipointer(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_fini: begin
+   finirefsize(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_incref: begin
+   increfsize(aro_static,atype,aaddress,ssaindex);
+  end;
+  mo_decref: begin
+   decrefsize(aro_static,atype,aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
