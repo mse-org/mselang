@@ -508,9 +508,11 @@ var
  range: ordrangety;
  flags1: typeflagsty;
  itemcount1: int32;
-                              //todo: indirection? 
+ itemtype1: ptypedataty;
+ 
 label
  endlab;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('ARRAYTYPE');
@@ -636,8 +638,30 @@ begin
      end;
      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
                                      [tf_managed,tf_needsmanage]);
+     itemtype1:= ele.eledataabs(itemtyoffs);
      with arty^ do begin
-      h.manageproc:= @managedynarray;
+      if tf_needsmanage in itemtype1^.h.flags then begin
+       case itemtype1^.h.kind of  //optimized versions for single level nesting
+        dk_dynarray: begin
+         if tf_needsmanage in ptypedataty(ele.eledataabs(
+                itemtype1^.infodynarray.i.itemtypedata))^.h.flags then begin
+          notimplementederror('20160312A');
+         end
+         else begin
+          h.manageproc:= @managedynarraydynar;
+         end;
+        end;
+        dk_string8: begin
+         h.manageproc:= @managedynarraystring8;
+        end;
+        else begin
+         notimplementederror('20160312A');
+        end;
+       end;
+      end
+      else begin
+       h.manageproc:= @managedynarray;
+      end;
       itemsize:= totsize;
       infodynarray.i.itemtypedata:= itemtyoffs;
       infodynarray.i.itemindirectlevel:= indilev;
