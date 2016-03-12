@@ -508,7 +508,8 @@ var
  range: ordrangety;
  flags1: typeflagsty;
  itemcount1: int32;
- itemtype1: ptypedataty;
+// itemtype1: ptypedataty;
+ manageproc1: managedtypeprocty;
  
 label
  endlab;
@@ -541,6 +542,31 @@ begin
     end;
    end;  //todo: alignment
    if (int1 > 0) then begin  //static array
+    manageproc1:= nil;
+    po1:= ele.eledataabs(itemtyoffs1);
+    if tf_needsmanage in po1^.h.flags then begin
+     while po1^.h.kind = dk_array do begin
+      po1:= ele.eledataabs(po1^.infoarray.i.itemtypedata);
+     end;
+     case po1^.h.kind of  
+                //optimized versions for single level nesting
+      dk_dynarray: begin
+       if tf_needsmanage in ptypedataty(ele.eledataabs(
+              po1^.infodynarray.i.itemtypedata))^.h.flags then begin
+        notimplementederror('20160312C');
+       end
+       else begin
+        manageproc1:= @managearraydynar;
+       end;
+      end;
+      dk_string8: begin
+       manageproc1:= @managearraystring8;
+      end;
+      else begin
+       notimplementederror('20160312D');
+      end;
+     end;
+    end;
     int2:= s.stackindex + 2;
     
     for int1:= s.stacktop-1 downto int2 do begin
@@ -585,6 +611,7 @@ begin
 //       flags1:= flags1 - [tf_managed,tf_needsmanage];
 //      end;
       arty^.h.flags:= flags1;
+      arty^.h.manageproc:= manageproc1;
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs1;
        i.itemindirectlevel:= indilev;
@@ -615,27 +642,7 @@ begin
        infoarray.i.totitemcount:= itemcount1;
        h.datasize:= das_none;
        h.kind:= dk_array;
-       itemtype1:= ele.eledataabs(itemtyoffs1);
-       if tf_needsmanage in itemtype1^.h.flags then begin
-        case itemtype1^.h.kind of  
-                   //optimized versions for single level nesting
-         dk_dynarray: begin
-          if tf_needsmanage in ptypedataty(ele.eledataabs(
-                 itemtype1^.infodynarray.i.itemtypedata))^.h.flags then begin
-           notimplementederror('20160312C');
-          end
-          else begin
-           h.manageproc:= @managearraydynar;
-          end;
-         end;
-         dk_string8: begin
-          h.manageproc:= @managearraystring8;
-         end;
-         else begin
-          notimplementederror('20160312D');
-         end;
-        end;
-       end;
+       h.manageproc:= manageproc1;
       end;
       itemtyoffs1:= ele.eledatarel(arty);
 //      indilev:= 0;
@@ -660,12 +667,12 @@ begin
      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
                                      [tf_managed,tf_needsmanage]);
      with arty^ do begin
-      itemtype1:= ele.eledataabs(itemtyoffs1);
-      if tf_needsmanage in itemtype1^.h.flags then begin
-       case itemtype1^.h.kind of  //optimized versions for single level nesting
+      po1:= ele.eledataabs(itemtyoffs1);
+      if tf_needsmanage in po1^.h.flags then begin
+       case po1^.h.kind of  //optimized versions for single level nesting
         dk_dynarray: begin
          if tf_needsmanage in ptypedataty(ele.eledataabs(
-                itemtype1^.infodynarray.i.itemtypedata))^.h.flags then begin
+                po1^.infodynarray.i.itemtypedata))^.h.flags then begin
           notimplementederror('20160312A');
          end
          else begin
