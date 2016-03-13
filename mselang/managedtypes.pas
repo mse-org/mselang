@@ -42,6 +42,9 @@ procedure managearraydynar(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
 procedure managearraystring8(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
+procedure managerecord(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
+
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,llvmlists,
@@ -208,6 +211,12 @@ begin
   end;
  {$endif}
  end;
+end;
+
+procedure managerecord(const op: managedopty; const atype: ptypedataty;
+                        const aaddress: addressrefty; const ssaindex: integer);
+begin
+ notimplementederror('20160313B');
 end;
  
 procedure handlesetlength(const paramco: integer);

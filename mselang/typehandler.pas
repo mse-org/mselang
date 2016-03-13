@@ -407,6 +407,39 @@ begin
  end;
 end;
 
+procedure createrecordmanagehandlers(const adata: ptypedataty);
+var
+ ele1: elementoffsetty;
+ field1: pfielddataty;
+ type1: ptypedataty;
+ sub1: psubdataty;
+ op1: managedopty;
+ ad1: addressrefty;
+begin
+ with info do begin
+  adata^.h.manageproc:= @managerecord;
+  if (sublevel = 0) and
+            (stf_implementation in s.currentstatementflags) then begin
+   for op1:= low(op1) to high(op1) do begin
+    sub1:= ele.addelementdata(getident(),ek_sub,allvisi);
+    adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
+    ele1:= adata^.fieldchain;
+    while ele1 <> 0 do begin
+     field1:= ele.eledataabs(ele1);
+     type1:= ele.eledataabs(field1^.vf.typ);
+     if type1^.h.manageproc <> nil then begin
+      type1^.h.manageproc(op1,type1,ad1,123);
+     end;
+     ele1:= field1^.vf.next;
+    end;
+   end;
+  end
+  else begin
+   notimplementederror('20160313A'); //add to pending list
+  end;
+ end;
+end;
+
 procedure handlerecordtype();
 var
  int1: integer;
@@ -424,6 +457,11 @@ begin
    inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
                      contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
    resolveforwardtype(po1);
+   with po1^ do begin
+    if tf_needsmanage in h.flags then begin
+     createrecordmanagehandlers(po1);
+    end;
+   end;
   end;
  end;
 end;
