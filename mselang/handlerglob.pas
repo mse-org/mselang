@@ -341,7 +341,7 @@ type
  subdataty = record
   next: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
-  typ: elementoffsetty;  //typedataty dk_address
+  typ: elementoffsetty;  //typedataty dk_address for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 
                            //by linkresolvecall()
   adlinks: linkindexty;    //calls which need to be resolved

@@ -59,7 +59,7 @@ procedure setsubtype(atypetypecontext: int32;
 implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
- grammar,opglob,managedtypes,unithandler,identutils,valuehandler;
+ grammar,opglob,managedtypes,unithandler,identutils,valuehandler,subhandler;
 
 procedure handletype();
 begin
@@ -420,9 +420,13 @@ begin
   adata^.h.manageproc:= @managerecord;
   if (sublevel = 0) and
             (stf_implementation in s.currentstatementflags) then begin
-   for op1:= low(op1) to high(op1) do begin
+   ad1.base:= ab_frame;
+   ad1.offset:= 0; //todo
+   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
     sub1:= ele.addelementdata(getident(),ek_sub,allvisi);
+    sub1^.calllinks:= 0;
     adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
+    sub1^.address:= startsimplesub(getident());
     ele1:= adata^.fieldchain;
     while ele1 <> 0 do begin
      field1:= ele.eledataabs(ele1);
@@ -432,6 +436,7 @@ begin
      end;
      ele1:= field1^.vf.next;
     end;
+    endsimplesub();
    end;
   end
   else begin

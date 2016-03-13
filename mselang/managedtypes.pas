@@ -47,7 +47,7 @@ procedure managerecord(const op: managedopty; const atype: ptypedataty;
 
 implementation
 uses
- elements,grammar,errorhandler,handlerutils,llvmlists,
+ elements,grammar,errorhandler,handlerutils,llvmlists,subhandler,
  stackops;
 const
  setlengthops: array[datakindty] of opcodety = (
@@ -215,8 +215,16 @@ end;
 
 procedure managerecord(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
+var
+ sub1: psubdataty;
 begin
- notimplementederror('20160313B');
+ sub1:= ele.eledataabs(atype^.recordmanagehandlers[op]);
+ if sub1^.address = 0 then begin
+  notimplementederror('20160313B');
+ end
+ else begin
+  callinternalsub(sub1^.address);
+ end;
 end;
  
 procedure handlesetlength(const paramco: integer);
