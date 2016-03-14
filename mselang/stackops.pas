@@ -3242,8 +3242,8 @@ begin
    if d^.ref.count = 0 then begin
     freemem(d);
    end;
-   ref^:= nil;
   end;
+  ref^:= nil;
  end;
 end;
 
