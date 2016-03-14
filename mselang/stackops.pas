@@ -2150,22 +2150,22 @@ end;
 
 procedure storeframenilop();
 begin
- ppointer(cpu.frame+cpu.pc^.par.vaddress)^:= nil;
+ ppointer(cpu.frame+cpu.pc^.par.voffset)^:= nil;
 end;
 
 procedure storereg0nilop();
 begin
- ppointer(reg0+cpu.pc^.par.vaddress)^:= nil;
+ ppointer(reg0+cpu.pc^.par.voffset)^:= nil;
 end;
 
 procedure storestacknilop();
 begin
- ppointer(cpu.stack+cpu.pc^.par.vaddress)^:= nil;
+ ppointer(cpu.stack+cpu.pc^.par.voffset)^:= nil;
 end;
 
 procedure storestackrefnilop();
 begin
- pppointer(cpu.stack+cpu.pc^.par.vaddress)^^:= nil;
+ pppointer(cpu.stack+cpu.pc^.par.voffset)^^:= nil;
 end;
 
 procedure storesegnilarop();
@@ -3439,22 +3439,22 @@ end;
 
 procedure finirefsizeframeop();
 begin
- finirefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
+ finirefsize(ppointer(cpu.frame+cpu.pc^.par.voffset));
 end;
 
 procedure finirefsizereg0op();
 begin
- finirefsize(ppointer(reg0+cpu.pc^.par.vaddress));
+ finirefsize(ppointer(reg0+cpu.pc^.par.voffset));
 end;
 
 procedure finirefsizestackop();
 begin
- finirefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
+ finirefsize(ppointer(cpu.stack+cpu.pc^.par.voffset));
 end;
 
 procedure finirefsizestackrefop();
 begin
- finirefsize(pppointer(cpu.stack+cpu.pc^.par.vaddress)^);
+ finirefsize(pppointer(cpu.stack+cpu.pc^.par.voffset)^);
 end;
 
 procedure finirefsizesegarop();
@@ -3519,22 +3519,22 @@ end;
 
 procedure increfsizeframeop();
 begin
- increfsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
+ increfsize(ppointer(cpu.frame+cpu.pc^.par.voffset));
 end;
 
 procedure increfsizereg0op();
 begin
- increfsize(ppointer(reg0+cpu.pc^.par.vaddress));
+ increfsize(ppointer(reg0+cpu.pc^.par.voffset));
 end;
 
 procedure increfsizestackop();
 begin
- increfsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
+ increfsize(ppointer(cpu.stack+cpu.pc^.par.voffset));
 end;
 
 procedure increfsizestackrefop();
 begin
- increfsize(pppointer(cpu.stack+cpu.pc^.par.vaddress)^);
+ increfsize(pppointer(cpu.stack+cpu.pc^.par.voffset)^);
 end;
 
 procedure increfsizesegarop();
@@ -3599,22 +3599,22 @@ end;
 
 procedure decrefsizeframeop();
 begin
- decrefsize(ppointer(cpu.frame+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(cpu.frame+cpu.pc^.par.voffset));
 end;
 
 procedure decrefsizereg0op();
 begin
- decrefsize(ppointer(reg0+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(reg0+cpu.pc^.par.voffset));
 end;
 
 procedure decrefsizestackop();
 begin
- decrefsize(ppointer(cpu.stack+cpu.pc^.par.vaddress));
+ decrefsize(ppointer(cpu.stack+cpu.pc^.par.voffset));
 end;
 
 procedure decrefsizestackrefop();
 begin
- decrefsizeindi(pppointer(cpu.stack+cpu.pc^.par.vaddress));
+ decrefsizeindi(pppointer(cpu.stack+cpu.pc^.par.voffset));
 end;
 
 procedure decrefsizesegarop();

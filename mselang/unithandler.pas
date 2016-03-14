@@ -1416,7 +1416,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INITIALIZATION');
 {$endif}
- endsimplesub();
+ endsimplesub(false);
 {
  with info,unitinfo^ do begin
    initializationstop:= opcount;
@@ -1452,7 +1452,7 @@ begin
  outhandle('FINALIZATION');
 {$endif}
  writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
- endsimplesub();
+ endsimplesub(false);
 {
  with info,unitinfo^ do begin
   if opcount <> finalizationstart then begin

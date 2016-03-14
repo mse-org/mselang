@@ -269,7 +269,7 @@ begin
    par.memop.t:= bitoptypes[das_pointer];
   end
   else begin
-   par.vaddress:= aaddress.offset;
+   par.voffset:= aaddress.offset;
   end;
   if arop = aro_static then begin
    i1:= atype^.infoarray.i.totitemcount;

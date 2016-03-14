@@ -415,28 +415,49 @@ var
  sub1: psubdataty;
  op1: managedopty;
  ad1: addressrefty;
+ locad1: addressvaluety;
+ i1: int32;
 begin
  with info do begin
   adata^.h.manageproc:= @managerecord;
   if (sublevel = 0) and
             (stf_implementation in s.currentstatementflags) then begin
-   ad1.base:= ab_frame;
-   ad1.offset:= 0; //todo
+   with locad1 do begin
+    flags:= [af_temp];
+    indirectlevel:= 0;
+    with locaddress do begin
+     address:= -pointersize-stacklinksize; //single pointer param
+     framelevel:= 0;
+    end;
+   end;
+   ad1.base:= ab_stackref;
+   ad1.offset:= -pointersize; //pointer to var
    for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
     sub1:= ele.addelementdata(getident(),ek_sub,allvisi);
     sub1^.calllinks:= 0;
     adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
-    sub1^.address:= startsimplesub(getident());
+    sub1^.address:= startsimplesub(getident(),true);
     ele1:= adata^.fieldchain;
+    pushtemppo(locad1);
+    i1:= 0; //field offset
     while ele1 <> 0 do begin
      field1:= ele.eledataabs(ele1);
      type1:= ele.eledataabs(field1^.vf.typ);
      if type1^.h.manageproc <> nil then begin
+      i1:= field1^.offset - i1;
+      if i1 > 0 then begin
+       with additem(oc_offsetpoimm32)^ do begin
+        setimmint32(i1,par);
+        par.ssas1:= 123; //todo
+       end;
+      end;
       type1^.h.manageproc(op1,type1,ad1,123);
      end;
+     i1:= field1^.offset; 
      ele1:= field1^.vf.next;
     end;
-    endsimplesub();
+    poptemp(pointersize);
+    endsimplesub(true);
    end;
   end
   else begin
@@ -449,8 +470,8 @@ procedure handlerecordtype();
 var
  int1: integer;
  int2: dataoffsty;
- po1: ptypedataty;
- size1: integer;
+ ty1: ptypedataty;
+ offs1,offs2,offs3: elementoffsetty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RECORDTYPE');
@@ -458,13 +479,24 @@ begin
  with info do begin
   ele.elementparent:= contextstack[s.stackindex].b.eleparent; //restore
   with contextstack[s.stackindex-1] do begin
-   po1:= ptypedataty(ele.eledataabs(d.typ.typedata));
-   inittypedatabyte(po1^,dk_record,d.typ.indirectlevel,
+   ty1:= ptypedataty(ele.eledataabs(d.typ.typedata));
+   inittypedatabyte(ty1^,dk_record,d.typ.indirectlevel,
                      contextstack[s.stackindex].d.rec.fieldoffset,d.typ.flags);
-   resolveforwardtype(po1);
-   with po1^ do begin
+   resolveforwardtype(ty1);
+   offs1:= ty1^.fieldchain;
+   offs3:= 0;
+   while offs1 <> 0 do begin      //reverse order
+    with pfielddataty(ele.eledataabs(offs1))^ do begin
+     offs2:= vf.next;
+     vf.next:= offs3;
+    end;
+    offs3:= offs1;
+    offs1:= offs2;
+   end;
+   ty1^.fieldchain:= offs3;
+   with ty1^ do begin
     if tf_needsmanage in h.flags then begin
-     createrecordmanagehandlers(po1);
+     createrecordmanagehandlers(ty1);
     end;
    end;
   end;

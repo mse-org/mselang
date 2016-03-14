@@ -65,9 +65,11 @@ procedure handleimplementationexpected();
 function checkparams(const po1,ref: psubdataty): boolean; 
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
-procedure callinternalsub(const asub: opaddressty); //ignores op address 0
-function startsimplesub(const aname: identty): opaddressty;
-procedure endsimplesub();
+procedure callinternalsub(const asub: opaddressty;
+                           const pointerparam: boolean); //ignores op address 0
+function startsimplesub(const aname: identty;
+                                  const pointerparam: boolean): opaddressty;
+procedure endsimplesub(const pointerparam: boolean);
 
 implementation
 uses
@@ -96,20 +98,26 @@ begin
   aaddress:=  internalsubs[asub];
   result:= aaddress = 0;
   if result then begin
-   aaddress:= startsimplesub(internalsubidents[asub]);
+   aaddress:= startsimplesub(internalsubidents[asub],false);
    internalsubs[asub]:= aaddress;
   end;
  end;
 end;
 
-procedure callinternalsub(const asub: opaddressty);
+procedure callinternalsub(const asub: opaddressty;
+                                  const pointerparam: boolean);
 begin
  with additem(oc_call)^.par.callinfo do begin
   ad.ad:= asub-1;
   ad.globid:= getoppo(asub)^.par.subbegin.globid;
   flags:= [];
   linkcount:= 0;
-  paramcount:= 0;
+  if pointerparam then begin
+   paramcount:= 1; //todo
+  end
+  else begin
+   paramcount:= 0;
+  end;
  end;
 end;
 
@@ -579,7 +587,8 @@ begin
  end;
 end;
 
-function startsimplesub(const aname: identty): opaddressty;
+function startsimplesub(const aname: identty; 
+                                     const pointerparam: boolean): opaddressty;
 var
  m1: metavaluety;
 begin
@@ -595,6 +604,7 @@ begin
       tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
                     sizeof(disubroutinetypety),m1))^ do begin
       params:= llvmlists.metadatalist.noparams;
+                       //todo: if pointerparam
      end;
      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
           {s.}currentscopemeta,getidentname2(aname),
@@ -604,7 +614,12 @@ begin
   end;
   subbegin.sub.flags:= [];
 //  sub.flags:= [sf_nolineinfo];
-  subbegin.sub.allocs:= nullallocs;
+  if pointerparam then begin
+   subbegin.sub.allocs:= parampointer1allocs;
+  end
+  else begin
+   subbegin.sub.allocs:= nullallocs;
+  end;
   subbegin.sub.blockcount:= 1;
  end;
 (*
@@ -619,10 +634,15 @@ begin
 *)
 end;
 
-procedure endsimplesub();
+procedure endsimplesub(const pointerparam: boolean);
 begin
  with additem(oc_return)^ do begin
-  par.stacksize:= 0;
+  if pointerparam then begin
+   par.stacksize:= pointersize;
+  end
+  else begin
+   par.stacksize:= 0;
+  end;
  end;
  with additem(oc_subend)^ do begin
   par.subend.allocs.alloccount:= 0;

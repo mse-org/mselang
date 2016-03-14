@@ -1892,7 +1892,7 @@ procedure storeframenilop();
 begin
  with pc^.par do begin
   bcstream.emitstoreop(bcstream.constval(nullpointer),
-                                         bcstream.allocval(vaddress));
+                                         bcstream.allocval(voffset));
  end;
 end;
 
@@ -1965,7 +1965,7 @@ end;
 procedure finirefsizeframeop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.allocval(vaddress),
+  bcstream.emitbitcast(bcstream.allocval(voffset),
                                                 bcstream.typeval(pointertype));
   callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
  end;

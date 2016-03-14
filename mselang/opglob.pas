@@ -803,7 +803,16 @@ const
   nestedallocs: 0;
   nestedalloccount: 0;
   nestedallocstypeindex: -1;
-);
+ );
+
+ parampointer1allocs: suballocinfoty = (
+  allocs: 0;
+  alloccount: 0;
+  paramcount: 0;
+  nestedallocs: 0;
+  nestedalloccount: 0;
+  nestedallocstypeindex: -1;
+ );
  
 type
  virttrampolineinfoty = record
@@ -965,9 +974,10 @@ type
    oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,
    oc_finirefsizestackref,oc_increfsizeframe,oc_increfsizereg0,
    oc_increfsizestack,oc_increfsizestackref,oc_decrefsizeframe,
-   oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref:(
+   oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref,
+   {:(
     vaddress: dataaddressty;
-   );
+   );}
    oc_increg0,oc_writeboolean,oc_writeinteger8,oc_writeinteger16,
    oc_writeinteger32,oc_writeinteger64,oc_writefloat64,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,

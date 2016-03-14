@@ -138,6 +138,7 @@ function pushtempindi(const address: addressvaluety;
                                                               //returns ssad
 function pushtemppo(const address: addressvaluety): int32;
                                                               //returns ssad
+procedure poptemp(const asize: int32);
 
 procedure push(const avalue: boolean); overload;
 procedure push(const avalue: integer); overload;
@@ -150,6 +151,7 @@ procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
+function pushaddr(const avalue: addressrefty): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
                const before: boolean; const sourceoffset: int32{;
@@ -1019,8 +1021,8 @@ begin
  end;
 end;
 
-const
- pushtempops: array[databitsizety] of opcodety = (
+const                                         //getlocaddress() checks af_temp
+ pushtempops: array[databitsizety] of opcodety = ( 
  //das_none,das_1,    das_2_7,    das_8,
   oc_none,oc_pushloc8,oc_pushloc8,oc_pushloc8,
  //das_9_15,   das_16,      das_17_31,   das_32,
@@ -1036,7 +1038,10 @@ begin
  with additem(pushtempops[alloc.kind])^ do begin
  {$ifdef mse_checkinternalerror}
   if op.op = oc_none then begin
-   internalerror(ie_handler,'2050914A');
+   internalerror(ie_handler,'20150914A');
+  end;
+  if not (af_temp in address.flags) then begin
+   internalerror(ie_handler,'20160314B');
   end;
  {$endif}
   par.memop.t:= alloc;
@@ -1048,6 +1053,11 @@ end;
 
 function pushtemppo(const address: addressvaluety): int32;
 begin
+ {$ifdef mse_checkinternalerror}
+  if not (af_temp in address.flags) then begin
+   internalerror(ie_handler,'20160314C');
+  end;
+ {$endif}
  with additem(oc_pushlocpo)^ do begin
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= address.flags;
@@ -1056,7 +1066,14 @@ begin
  end;
 end;
 
-const
+procedure poptemp(const asize: int32);
+begin
+ with additem(oc_pop)^ do begin
+  par.imm.vsize:= asize;
+ end;
+end;
+
+const                                //getlocaddress() checks af_temp
  pushtempindiops: array[databitsizety] of opcodety = (
  //das_none,das_1,        das_2_7,        das_8,
   oc_none,oc_pushlocindi8,oc_pushlocindi8,oc_pushlocindi8,
@@ -1074,6 +1091,9 @@ begin
  {$ifdef mse_checkinternalerror}
   if op.op = oc_none then begin
    internalerror(ie_handler,'2050914B');
+  end;
+  if not (af_temp in address.flags) then begin
+   internalerror(ie_handler,'20160314D');
   end;
  {$endif}
   par.memop.t:= alloc;
@@ -1108,6 +1128,28 @@ procedure push(const avalue: real);
 begin
  with addpushimm(oc_pushimm64)^ do begin
   setimmfloat64(avalue,par);
+ end;
+end;
+
+function pushaddr(const avalue: addressrefty): int32;
+var
+ op1: popinfoty;
+begin
+ case avalue.base of
+  ab_segment: begin
+   op1:= additem(oc_pushsegaddr,
+                 pushsegaddrssaar[avalue.segment]);
+   with op1^ do begin
+    par.memop.segdataaddress.a.address:= avalue.offset;
+    par.memop.segdataaddress.a.segment:= avalue.segment;
+    par.memop.segdataaddress.a.element:= 0;
+    par.memop.segdataaddress.offset:= 0;
+    par.memop.t:= bitoptypes[das_pointer];
+   end;
+  end;
+  else begin
+   notimplementederror('20160314A');
+  end;
  end;
 end;
 
@@ -1399,7 +1441,7 @@ begin
   end;
  end;
 end;
-var testvar: psubdataty;
+
 procedure tracklocalaccess(var aaddress: locaddressty; 
                                  const avarele: elementoffsetty;
                                  const aopdatatype: typeallocinfoty);
@@ -1428,7 +1470,6 @@ begin
      internalerror(ie_elements,'20140811A');
     end;
    {$endif}
-testvar:= psubdataty(ele.parentdata());
     with psubdataty(ele.parentdata())^ do begin //parent sub
      bo1:= ele.adduniquechilddata(nestedvarele,[avarele],ek_nestedvar,
                                                        allvisi,po1);

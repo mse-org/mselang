@@ -216,11 +216,11 @@ begin
   if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
     writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,-1);
-    endsimplesub();
+    endsimplesub(false);
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
     writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,-1);
-    endsimplesub();
+    endsimplesub(false);
    end;
   end;
   s.unitinfo^.mainad:= opcount;
@@ -261,7 +261,7 @@ begin
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
       if internalsubs[isub_ini] <> 0 then begin
-       callinternalsub(internalsubs[isub_ini]);
+       callinternalsub(internalsubs[isub_ini],false);
       end;
      end;
      ad1:= header.next;
@@ -322,7 +322,7 @@ begin
   with getoppo(startupoffset)^ do begin
    par.beginparse.finisub:= info.opcount;
   end;
-  i1:= startsimplesub(tks_fini);
+  i1:= startsimplesub(tks_fini,false);
   with getoppo(finicall)^.par.callinfo do begin
    ad.globid:= getoppo(i1)^.par.subbegin.globid;
    ad.ad:= i1-1;
@@ -333,14 +333,14 @@ begin
     with punitlinkinfoty(list+ad1)^ do begin
      with ref^ do begin
       if internalsubs[isub_fini] <> 0 then begin
-       callinternalsub(internalsubs[isub_fini]);
+       callinternalsub(internalsubs[isub_fini],false);
       end;
      end;
      ad1:= header.next;
     end;
    end;
   end;
-  endsimplesub();
+  endsimplesub(false);
  end;
  with info do begin
   dec(s.stackindex);

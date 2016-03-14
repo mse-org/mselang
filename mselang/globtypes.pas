@@ -142,7 +142,7 @@ type
    0: (poaddress: dataoffsty);
    1: (segaddress: segaddressty);
    2: (locaddress: locaddressty);
-   2: (tempaddress: tempaddressty);
+   3: (tempaddress: tempaddressty);
  end;
  paddressvaluety = ^addressvaluety;
  
