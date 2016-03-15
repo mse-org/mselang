@@ -425,7 +425,7 @@ begin
    indirectlevel:= 0;
    with locaddress do begin
     address:= -pointersize-stacklinksize; //single pointer param
-    framelevel:= 0;
+    framelevel:= -1;
    end;
   end;
   ad1.base:= ab_stackref;

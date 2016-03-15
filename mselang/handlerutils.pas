@@ -1150,15 +1150,16 @@ begin
    op1:= additem(oc_pushlocaddr);
    with op1^.par.memop.locdataaddress do begin
     a.address:= avalue.offset;
-    a.framelevel:= 0;
+    a.framelevel:= -1;
     offset:= 0;
    end;
   end;
   else begin
    notimplementederror('20160314A');
   end;
-  op1^.par.memop.t:= bitoptypes[das_pointer];
  end;
+ op1^.par.memop.t:= bitoptypes[das_pointer];
+ result:= op1^.par.ssad;
 end;
 
 procedure pushins(const ains: boolean; const stackoffset: integer;
