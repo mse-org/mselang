@@ -452,8 +452,8 @@ begin
       end;
      end;
      type1^.h.manageproc(op1,type1,ad1,123);
+     i1:= field1^.offset; 
     end;
-    i1:= field1^.offset; 
     ele1:= field1^.vf.next;
    end;
    poptemp(pointersize);
