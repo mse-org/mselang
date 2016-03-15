@@ -55,6 +55,7 @@ procedure checkrecordfield(const avisibility: visikindsty;
                                                   var atypeflags: typeflagsty);
 procedure setsubtype(atypetypecontext: int32;
                                            const asub: elementoffsetty);
+procedure checkpendingmanagehandlers();
 
 implementation
 uses
@@ -407,62 +408,116 @@ begin
  end;
 end;
 
-procedure createrecordmanagehandlers(const adata: ptypedataty);
+procedure createrecordmanagehandlersubs(const adata: ptypedataty);
 var
  ele1: elementoffsetty;
  field1: pfielddataty;
  type1: ptypedataty;
- sub1: psubdataty;
+ sub1: pinternalsubdataty;
  op1: managedopty;
  ad1: addressrefty;
  locad1: addressvaluety;
  i1: int32;
 begin
  with info do begin
+  with locad1 do begin
+   flags:= [af_temp];
+   indirectlevel:= 0;
+   with locaddress do begin
+    address:= -pointersize-stacklinksize; //single pointer param
+    framelevel:= 0;
+   end;
+  end;
+  ad1.base:= ab_stackref;
+  ad1.offset:= -pointersize; //pointer to var
+  for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
+   sub1:= ele.eledataabs(adata^.recordmanagehandlers[op1]);
+   sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
+   if sub1^.calllinks <> 0 then begin
+    linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
+                                //fetch globid from subbegin op
+   end;
+   ele1:= adata^.fieldchain;
+   pushtemppo(locad1);
+   i1:= 0; //field offset
+   while ele1 <> 0 do begin
+    field1:= ele.eledataabs(ele1);
+    type1:= ele.eledataabs(field1^.vf.typ);
+    if type1^.h.manageproc <> nil then begin
+     i1:= field1^.offset - i1;
+     if i1 > 0 then begin
+      with additem(oc_offsetpoimm32)^ do begin
+       setimmint32(i1,par);
+       par.ssas1:= 123; //todo
+      end;
+     end;
+     type1^.h.manageproc(op1,type1,ad1,123);
+    end;
+    i1:= field1^.offset; 
+    ele1:= field1^.vf.next;
+   end;
+   poptemp(pointersize);
+   endsimplesub(true);
+  end;
+ end;
+end;
+
+procedure createrecordmanagehandler(const adata: ptypedataty);
+var
+ op1: managedopty;
+ ele1: elementoffsetty;
+ sub1: pinternalsubdataty;
+begin
+ with info do begin
   adata^.h.manageproc:= @managerecord;
+  ele1:= ele.elementparent;
+  with s.unitinfo^ do begin
+   if us_implementation in state then begin
+    ele.elementparent:= implementationelement;
+   end
+   else begin
+    ele.elementparent:= interfaceelement;
+   end;
+  end;
+  for op1:= low(op1) to high(op1) do begin
+   sub1:= ele.addelementdata(getident(),ek_internalsub,allvisi);
+   sub1^.address:= 0;
+   sub1^.calllinks:= 0;
+   adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
+  end;
+  ele.elementparent:= ele1;
   if (sublevel = 0) and
             (stf_implementation in s.currentstatementflags) then begin
-   with locad1 do begin
-    flags:= [af_temp];
-    indirectlevel:= 0;
-    with locaddress do begin
-     address:= -pointersize-stacklinksize; //single pointer param
-     framelevel:= 0;
-    end;
-   end;
-   ad1.base:= ab_stackref;
-   ad1.offset:= -pointersize; //pointer to var
-   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
-    sub1:= ele.addelementdata(getident(),ek_sub,allvisi);
-    sub1^.calllinks:= 0;
-    adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
-    sub1^.address:= startsimplesub(getident(),true);
-    ele1:= adata^.fieldchain;
-    pushtemppo(locad1);
-    i1:= 0; //field offset
-    while ele1 <> 0 do begin
-     field1:= ele.eledataabs(ele1);
-     type1:= ele.eledataabs(field1^.vf.typ);
-     if type1^.h.manageproc <> nil then begin
-      i1:= field1^.offset - i1;
-      if i1 > 0 then begin
-       with additem(oc_offsetpoimm32)^ do begin
-        setimmint32(i1,par);
-        par.ssas1:= 123; //todo
-       end;
-      end;
-      type1^.h.manageproc(op1,type1,ad1,123);
-     end;
-     i1:= field1^.offset; 
-     ele1:= field1^.vf.next;
-    end;
-    poptemp(pointersize);
-    endsimplesub(true);
-   end;
+   createrecordmanagehandlersubs(adata);
   end
   else begin
-   notimplementederror('20160313A'); //add to pending list
+   adata^.h.next:= s.unitinfo^.pendingmanagechain;
+   s.unitinfo^.pendingmanagechain:= ele.eledatarel(adata);
+                           //add to pending list
   end;
+ end;
+end;
+
+procedure checkpendingmanagehandlers();
+var
+ ele1: elementoffsetty;
+ typ1: ptypedataty;
+begin
+ with info do begin
+  ele1:= s.unitinfo^.pendingmanagechain;
+  while ele1 <> 0 do begin
+   typ1:= ele.eledataabs(ele1);
+   ele1:= typ1^.h.next;
+   case typ1^.h.kind of
+    dk_record: begin
+     createrecordmanagehandlersubs(typ1);
+    end;
+    else begin
+     notimplementederror('20160314D');
+    end;
+   end;
+  end;
+  s.unitinfo^.pendingmanagechain:= 0;
  end;
 end;
 
@@ -496,7 +551,7 @@ begin
    ty1^.fieldchain:= offs3;
    with ty1^ do begin
     if tf_needsmanage in h.flags then begin
-     createrecordmanagehandlers(ty1);
+     createrecordmanagehandler(ty1);
     end;
    end;
   end;

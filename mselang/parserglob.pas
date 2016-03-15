@@ -592,6 +592,7 @@ type
   pendingcapacity: integer;
   pendings: pendinginfoarty;
   varchain: elementoffsetty;
+  pendingmanagechain: elementoffsetty;
   implstart: pparsercontextty; //start of implementation parsing
   internalsubs: internalsubarty;
   codestop: opaddressty;

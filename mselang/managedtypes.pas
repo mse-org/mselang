@@ -48,7 +48,8 @@ procedure managerecord(const op: managedopty; const atype: ptypedataty;
 implementation
 uses
  elements,grammar,errorhandler,handlerutils,llvmlists,subhandler,
- stackops;
+ stackops,unithandler,segmentutils;
+ 
 const
  setlengthops: array[datakindty] of opcodety = (
   //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
@@ -216,15 +217,19 @@ end;
 procedure managerecord(const op: managedopty; const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
 var
- sub1: psubdataty;
+ sub1: pinternalsubdataty;
+ op1: popinfoty;
 begin
- sub1:= ele.eledataabs(atype^.recordmanagehandlers[op]);
- if sub1^.address = 0 then begin
-  notimplementederror('20160313B');
- end
- else begin
+ with info do begin
+  sub1:= ele.eledataabs(atype^.recordmanagehandlers[op]);
   pushaddr(aaddress);
-  callinternalsub(sub1^.address,true);
+  op1:= callinternalsub(sub1^.address,true);
+  if (sub1^.address = 0) and 
+                (not modularllvm or 
+                 (s.unitinfo = datatoele(sub1)^.header.defunit)) then begin 
+                                          //unresolved
+   linkmark(sub1^.calllinks,getsegaddress(seg_op,@op1^.par.callinfo.ad));
+  end;
  end;
 end;
  

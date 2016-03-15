@@ -186,6 +186,7 @@ type
   bitsize: integer;
   bytesize: integer;
   datasize: databitsizety;
+  next: elementoffsetty; //for pending manageproc chain
  end;
   
  typedataty = record
@@ -372,6 +373,12 @@ type
   end;
  end;
  psubdataty = ^subdataty;
+ 
+ internalsubdataty = record
+  address: opaddressty;
+  calllinks: linkindexty;
+ end;
+ pinternalsubdataty = ^internalsubdataty;
 
  sysfuncty = (sf_write,sf_writeln,sf_setlength,sf_sizeof,sf_inc,sf_dec,
               sf_getmem,sf_getzeromem,sf_freemem,sf_reallocmem,sf_setmem,

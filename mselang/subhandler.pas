@@ -18,7 +18,7 @@ unit subhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,stackops,parserglob,handlerglob,listutils;
+ globtypes,stackops,parserglob,handlerglob,listutils,opglob;
  
 const
  stacklinksize = sizeof(frameinfoty);
@@ -65,8 +65,9 @@ procedure handleimplementationexpected();
 function checkparams(const po1,ref: psubdataty): boolean; 
 function getinternalsub(const asub: internalsubty;
                          out aaddress: opaddressty): boolean; //true if new
-procedure callinternalsub(const asub: opaddressty;
-                           const pointerparam: boolean); //ignores op address 0
+function callinternalsub(const asub: opaddressty;
+                              const pointerparam: boolean): popinfoty;
+                                                        //ignores op address 0
 function startsimplesub(const aname: identty;
                                   const pointerparam: boolean): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
@@ -74,7 +75,7 @@ procedure endsimplesub(const pointerparam: boolean);
 implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
- managedtypes,segmentutils,classhandler,opglob,llvmlists,__mla__internaltypes,
+ managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
  msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes;
 
 type
@@ -104,12 +105,15 @@ begin
  end;
 end;
 
-procedure callinternalsub(const asub: opaddressty;
-                                  const pointerparam: boolean);
+function callinternalsub(const asub: opaddressty;
+                                  const pointerparam: boolean): popinfoty;
 begin
- with additem(oc_call)^.par.callinfo do begin
-  ad.ad:= asub-1;
-  ad.globid:= getoppo(asub)^.par.subbegin.globid;
+ result:= additem(oc_call);
+ with result^.par.callinfo do begin
+  if asub <> 0 then begin
+   ad.ad:= asub-1;
+   ad.globid:= getoppo(asub)^.par.subbegin.globid;
+  end;
   flags:= [];
   linkcount:= 0;
   if pointerparam then begin
@@ -1416,6 +1420,7 @@ begin
   frameoffset:= d.subdef.frameoffsetbefore;
   dec(sublevel);
   if sublevel = 0 then begin
+   checkpendingmanagehandlers(); //needs local definitions
    ele.releaseelement(b.elemark); //remove local definitions
   end;
   ele.elementparent:= b.eleparent;

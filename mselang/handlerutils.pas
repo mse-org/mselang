@@ -1139,17 +1139,25 @@ begin
   ab_segment: begin
    op1:= additem(oc_pushsegaddr,
                  pushsegaddrssaar[avalue.segment]);
-   with op1^ do begin
-    par.memop.segdataaddress.a.address:= avalue.offset;
-    par.memop.segdataaddress.a.segment:= avalue.segment;
-    par.memop.segdataaddress.a.element:= 0;
-    par.memop.segdataaddress.offset:= 0;
-    par.memop.t:= bitoptypes[das_pointer];
+   with op1^.par.memop.segdataaddress do begin
+    a.address:= avalue.offset;
+    a.segment:= avalue.segment;
+    a.element:= 0;
+    offset:= 0;
+   end;
+  end;
+  ab_frame: begin
+   op1:= additem(oc_pushlocaddr);
+   with op1^.par.memop.locdataaddress do begin
+    a.address:= avalue.offset;
+    a.framelevel:= 0;
+    offset:= 0;
    end;
   end;
   else begin
    notimplementederror('20160314A');
   end;
+  op1^.par.memop.t:= bitoptypes[das_pointer];
  end;
 end;
 

@@ -107,6 +107,7 @@ procedure linkresolvegoto(const alinks: linkindexty;
                  const aaddress: opaddressty; const ablockid: int32);
 procedure linkresolvecall(const alinks: linkindexty; 
                             const aaddress: opaddressty; const aglobid: int32);
+                                //aglobid < 0 -> fetch from subbegin op
 procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
 procedure linkresolvephi(const alinks: linkindexty; 
                       const aaddress: opaddressty; const lastssa: int32;
@@ -149,7 +150,7 @@ uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes,llvmbitcodes,
- unitwriter,identutils,mseformatstr,sysutils;
+ unitwriter,identutils,mseformatstr,sysutils,typehandler;
  
 type
  unithashdataty = record
@@ -438,6 +439,7 @@ begin
    d.kind:= ck_implementation;
 //   ele.markelement(d.impl.elemark);
   end;
+  checkpendingmanagehandlers();
  end;
 end;
 
@@ -1097,7 +1099,12 @@ var
 begin
  if alinks <> 0 then begin
   ad1.ad:= aaddress-1;
-  ad1.globid:= aglobid;
+  if aglobid < 0 then begin
+   ad1.globid:= getoppo(aaddress)^.par.subbegin.globid;
+  end
+  else begin
+   ad1.globid:= aglobid;
+  end;
   li1:= alinks;
   while true do begin
    with links[li1] do begin
@@ -1380,6 +1387,7 @@ var
  ad1: listadty;
 begin
  with info,s.unitinfo^ do begin
+  checkpendingmanagehandlers();
   codestop:= opcount;
   checkforwarderrors(forwardlist);
   for int1:= 0 to pendingcount-1 do begin
