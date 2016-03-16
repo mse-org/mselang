@@ -602,7 +602,12 @@ begin
   subbegin.subname:= result;
   if co_llvm in info.compileoptions then begin
    with info,s.unitinfo^ do begin
-    subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+    if pointerparam then begin
+     subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
+    end
+    else begin
+     subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+    end;
     if do_proginfo in s.debugoptions then begin
      with pdisubroutinetypety(
       tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
@@ -620,6 +625,21 @@ begin
 //  sub.flags:= [sf_nolineinfo];
   if pointerparam then begin
    subbegin.sub.allocs:= parampointer1allocs;
+   {
+   with subbegin.sub.allocs do begin 
+    subbegin.sub.allocs:= pointer1nullallocs;
+    allocs:= getsegmenttopoffs(seg_localloc);
+    alloccount:= 1;
+    paramcount:= 1;
+    with plocallocinfoty(allocsegmentpo(seg_localloc,
+                                       sizeof(locallocinfoty)))^ do begin
+     address:= 0;
+     flags:= [];
+     size:= bitoptypes[das_pointer];
+     debuginfo:= dummymeta;
+    end;
+   end;
+   }
   end
   else begin
    subbegin.sub.allocs:= nullallocs;

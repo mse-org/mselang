@@ -1898,11 +1898,21 @@ end;
 
 procedure storestacknilop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_pointer));
+  bcstream.emitstoreop(bcstream.constval(nullpointer),
+                                         bcstream.relval(0));
+ end;
 end;
+
 procedure storestackrefnilop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.pptypeval(das_pointer));
+  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitstoreop(bcstream.constval(nullpointer),
+                                         bcstream.relval(0));
+ end;
 end;
 
 procedure storesegnilarop();
@@ -1979,9 +1989,14 @@ procedure finirefsizestackop();
 begin
  notimplemented();
 end;
+
 procedure finirefsizestackrefop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure finirefsizesegarop();
@@ -2054,7 +2069,11 @@ end;
 
 procedure increfsizestackrefop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
+  bcstream.emitloadop(bcstream.relval(0));
+  callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
+ end;
 end;
 
 procedure increfsizesegarop();
@@ -3635,43 +3654,43 @@ const
   storereg0nilssa = 1;
   storeframenilssa = 0;
   storestacknilssa = 1;
-  storestackrefnilssa = 1;
+  storestackrefnilssa = 2;
 
   storesegnilarssa = 1;
   storeframenilarssa = 1;
   storereg0nilarssa = 1;
   storestacknilarssa = 1;
-  storestackrefnilarssa = 1;
+  storestackrefnilarssa = 2;
 
   storesegnildynarssa = 1;
   storeframenildynarssa = 1;
   storereg0nildynarssa = 1;
   storestacknildynarssa = 1;
-  storestackrefnildynarssa = 1;
+  storestackrefnildynarssa = 2;
 
   finirefsizesegssa = 2;
   finirefsizeframessa = 1;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
-  finirefsizestackrefssa = 1;
+  finirefsizestackrefssa = 2;
 
   finirefsizesegarssa = 1;
   finirefsizeframearssa = 1;
   finirefsizereg0arssa = 1;
   finirefsizestackarssa = 1;
-  finirefsizestackrefarssa = 1;
+  finirefsizestackrefarssa = 2;
 
   finirefsizesegdynarssa = 1;
   finirefsizeframedynarssa = 1;
   finirefsizereg0dynarssa = 1;
   finirefsizestackdynarssa = 1;
-  finirefsizestackrefdynarssa = 1;
+  finirefsizestackrefdynarssa = 2;
 
   increfsizesegssa = 1;
   increfsizeframessa = 1;
   increfsizereg0ssa = 1;
   increfsizestackssa = 0;
-  increfsizestackrefssa = 1;
+  increfsizestackrefssa = 2;
 
   increfsizesegarssa = 1;
   increfsizeframearssa = 1;

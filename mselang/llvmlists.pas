@@ -182,6 +182,15 @@ const
   count: 0;
   items: nil;
  );
+ parampo: paramitemty = (
+  typelistindex: ord(das_pointer);
+  flags: [];
+ );
+  
+ params1po: paramsty = (
+  count: 1;
+  items: @parampo;
+ );
  
 type
  ttypehashdatalist = class(tbufferhashdatalist)

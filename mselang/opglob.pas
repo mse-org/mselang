@@ -806,10 +806,12 @@ const
   nestedallocstypeindex: -1;
  );
 
+ parampointer1alloc = 0; //first item, inited by segmentutils.init()
+ 
  parampointer1allocs: suballocinfoty = (
-  allocs: 0;
-  alloccount: 0;
-  paramcount: 0;
+  allocs: parampointer1alloc;
+  alloccount: 1;
+  paramcount: 1;
   nestedallocs: 0;
   nestedalloccount: 0;
   nestedallocstypeindex: -1;

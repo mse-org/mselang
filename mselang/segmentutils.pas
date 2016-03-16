@@ -129,7 +129,8 @@ procedure restoreunitsegments(const state: unitsegmentsstatety);
 
 implementation
 uses
- errorhandler,stackops,mseformatstr,msesystypes,msestream,msestrings,parserglob;
+ errorhandler,stackops,mseformatstr,msesystypes,msestream,msestrings,parserglob,
+ llvmlists;
  
 const
  minsize: array[segmentty] of integer = (
@@ -700,6 +701,13 @@ procedure init();
 begin
  dofinalize();
  fillchar(segments,sizeof(segments),0);
+ with plocallocinfoty(allocsegmentpo(seg_localloc,
+                                   sizeof(locallocinfoty)))^ do begin
+  address:= 0;
+  flags:= [];
+  size:= bitoptypes[das_pointer];
+  debuginfo:= dummymeta;
+ end;
 end;
 
 procedure deinit();

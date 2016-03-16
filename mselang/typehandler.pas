@@ -416,16 +416,21 @@ var
  sub1: pinternalsubdataty;
  op1: managedopty;
  ad1: addressrefty;
- locad1: addressvaluety;
- i1: int32;
+ locad1: memopty;
+ i1,i2: int32;
 begin
  with info do begin
   with locad1 do begin
-   flags:= [af_temp];
-   indirectlevel:= 0;
-   with locaddress do begin
-    address:= -pointersize-stacklinksize; //single pointer param
-    framelevel:= -1;
+   t:= bitoptypes[das_pointer];
+   with locdataaddress do begin
+    if co_llvm in compileoptions then begin
+     a.address:= 0; //first param
+    end
+    else begin
+     a.address:= -pointersize-stacklinksize; //single pointer param
+    end;
+    a.framelevel:= -1;    
+    offset:= 0;
    end;
   end;
   ad1.base:= ab_stackref;
@@ -438,7 +443,10 @@ begin
                                 //fetch globid from subbegin op
    end;
    ele1:= adata^.fieldchain;
-   pushtemppo(locad1);
+   with additem(oc_pushlocpo)^.par do begin
+    memop:= locad1; 
+   end;
+//   pushtemppo(locad1);
    i1:= 0; //field offset
    while ele1 <> 0 do begin
     field1:= ele.eledataabs(ele1);
@@ -446,12 +454,13 @@ begin
     if type1^.h.manageproc <> nil then begin
      i1:= field1^.offset - i1;
      if i1 > 0 then begin
+      i2:= s.ssa.nextindex-1;
       with additem(oc_offsetpoimm32)^ do begin
        setimmint32(i1,par);
-       par.ssas1:= 123; //todo
+       par.ssas1:= i2;
       end;
      end;
-     type1^.h.manageproc(op1,type1,ad1,123);
+     type1^.h.manageproc(op1,type1,ad1,s.ssa.nextindex-1);
      i1:= field1^.offset; 
     end;
     ele1:= field1^.vf.next;
@@ -480,7 +489,7 @@ begin
    end;
   end;
   for op1:= low(op1) to high(op1) do begin
-   sub1:= ele.addelementdata(getident(),ek_internalsub,allvisi);
+   sub1:= ele.addelementdata(managedopids[op1],ek_internalsub,allvisi);
    sub1^.address:= 0;
    sub1^.calllinks:= 0;
    adata^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);

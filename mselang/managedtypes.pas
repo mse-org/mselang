@@ -18,7 +18,13 @@ unit managedtypes;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,handlerglob,opglob,opcode;
+ globtypes,parserglob,handlerglob,opglob,opcode,grammar;
+ 
+const
+ managedopids: array[managedopty] of identty = (
+               //mo_ini, mo_fini, mo_incref, mo_decref, mo_decrefindi
+                tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
+               );
               //todo: check ssaindex
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
                                const global: boolean; const ssaindex: integer);
@@ -47,7 +53,7 @@ procedure managerecord(const op: managedopty; const atype: ptypedataty;
 
 implementation
 uses
- elements,grammar,errorhandler,handlerutils,llvmlists,subhandler,
+ elements,errorhandler,handlerutils,llvmlists,subhandler,
  stackops,unithandler,segmentutils;
  
 const
