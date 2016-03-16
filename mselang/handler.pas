@@ -2766,7 +2766,7 @@ begin
         ad1.offset:= ad1.offset-pointersize;
        end
        else begin
-        ad1.offset:= destvar.address.poaddress;
+        ad1.offset:= destvar.address.poaddress + destvar.offset;
         if af_segment in destvar.address.flags then begin
          ad1.base:= ab_segment;
          ad1.segment:= destvar.address.segaddress.segment;
