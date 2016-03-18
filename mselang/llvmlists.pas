@@ -648,8 +648,11 @@ type
    fnoparams: metavaluety;
    fpointertyp: metavaluety;
    fparams1po: metavaluety;
+   fparams1posubtyp: metavaluety;
+   fnoparamssubtyp: metavaluety;
    function getparams1po: metavaluety;
    function getpointertyp: metavaluety;
+   function getparams1posubtyp: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -751,6 +754,8 @@ type
    property noparams: metavaluety read fnoparams; //[dummymeta]
    property params1po: metavaluety read getparams1po; 
                                              //[dummymeta,pointertype]
+   property noparamssubtyp: metavaluety read fnoparamssubtyp;
+   property params1posubtyp: metavaluety read getparams1posubtyp;
 
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
@@ -2081,7 +2086,14 @@ begin
    fdummyaddrexp:= adddiexpression([]);
    fderefaddrexp:= adddiexpression([DW_OP_deref]);
    fnoparams:= addnode([dummymeta]);
-   fparams1po.id:= 0; //initialized in getter func
+   with pdisubroutinetypety(
+    adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
+                                             fnoparamssubtyp))^ do begin
+    params:= noparams;
+   end;
+   fpointertyp.id:= 0;     //initialized in getter func
+   fparams1po.id:= 0;      //initialized in getter func
+   fparams1posubtyp.id:= 0; //initialized in getter func
   end;
  end;
 end;
@@ -2100,6 +2112,18 @@ begin
   fpointertyp:= addtype(0,1); //untyped pointer
  end;
  result:= fpointertyp;
+end;
+
+function tmetadatalist.getparams1posubtyp: metavaluety;
+begin
+ if fparams1posubtyp.id = 0 then begin
+  with pdisubroutinetypety(
+   adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
+                                            fparams1posubtyp))^ do begin
+   params:= params1po;
+  end;
+ end;
+ result:= fparams1posubtyp;
 end;
 
 procedure tmetadatalist.beginunit;

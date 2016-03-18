@@ -594,11 +594,22 @@ end;
 function startsimplesub(const aname: identty; 
                                      const pointerparam: boolean): opaddressty;
 var
- m1,m2: metavaluety;
+ m1: metavaluety;
  var1: vardataty;
 begin
  with info do begin
   result:= opcount;
+  if do_proginfo in s.debugoptions then begin
+   if pointerparam then begin
+    m1:= s.unitinfo^.llvmlists.metadatalist.params1posubtyp;
+   end
+   else begin
+    m1:= s.unitinfo^.llvmlists.metadatalist.noparamssubtyp;
+   end;
+   pushcurrentscope(s.unitinfo^.llvmlists.metadatalist.adddisubprogram(
+           currentscopemeta,getidentname2(aname),
+              s.currentfilemeta,s.source.line,-1,m1,[],true));
+  end;
   resetssa();
   with additem(oc_subbegin)^.par do begin
    subbegin.subname:= result;
@@ -611,21 +622,10 @@ begin
       subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
      end;
      if do_proginfo in s.debugoptions then begin
-      if pointerparam then begin
-       m2:= llvmlists.metadatalist.params1po;
-      end
-      else begin
-       m2:= llvmlists.metadatalist.noparams;
+      with pdisubprogramty(llvmlists.metadatalist.getdata(
+                                      currentscopemeta))^ do begin
+       _function:= llvmlists.metadatalist.addglobvalue(subbegin.globid);
       end;
-      with pdisubroutinetypety(
-       tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
-                     sizeof(disubroutinetypety),m1))^ do begin
-       params:= m2;
-      end;
-      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-           {s.}currentscopemeta,getidentname2(aname),
-              s.currentfilemeta,s.source.line,subbegin.globid,m1,[],true));
-//      postlineinfo();
      end;
     end;
    end;
@@ -688,7 +688,6 @@ begin
  if do_proginfo in info.s.debugoptions then begin
   popcurrentscope();
  end;
-// postlineinfo();
 (*
  with info do begin
   deletelistchain(trystacklist,s.trystack); //normally already empty
@@ -700,8 +699,8 @@ end;
 procedure handlesubheader();
 var                       //todo: move after doparam
  sub1: psubdataty;
- po2: pvardataty;
- po3: ptypedataty;
+ var1: pvardataty;
+ typ1: ptypedataty;
 // po4: pelementoffsetaty;
  curparam,curparamend,paramend: pelementoffsetty;
 // {int1,}int2{,int3}: integer;
@@ -754,24 +753,24 @@ var                       //todo: move after doparam
      {$endif}
       if (isclass and
           ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
-              addvar(d.ident.ident,allvisi,sub1^.varchain,po2) then begin
+              addvar(d.ident.ident,allvisi,sub1^.varchain,var1) then begin
        identerror(curstackindex,err_duplicateidentifier);
        err1:= true;
       end;
-      curparam^:= elementoffsetty(po2); //absoluteaddress
+      curparam^:= elementoffsetty(var1); //absoluteaddress
       with contextstack[i1] do begin //ck_fieldtype
        if d.kind = ck_fieldtype then begin
-        po3:= ele.eledataabs(d.typ.typedata);
-        with po2^ do begin
+        typ1:= ele.eledataabs(d.typ.typedata);
+        with var1^ do begin
          address.indirectlevel:= d.typ.indirectlevel;
          if (address.indirectlevel > 0) then begin
           si1:= pointersize;
          end
          else begin
-          si1:= po3^.h.bytesize;
+          si1:= typ1^.h.bytesize;
          end;
          address.flags:= [af_param];
-         if po3^.h.datasize = das_none then begin
+         if typ1^.h.datasize = das_none then begin
           include(address.flags,af_aggregate);
          end;
          address.flags:= address.flags + paramkinds[paramkind1];
@@ -791,14 +790,14 @@ var                       //todo: move after doparam
           end
           else begin
            if impl1 and (d.typ.indirectlevel = 0) and 
-                     (tf_needsmanage in po3^.h.flags) then begin
+                     (tf_needsmanage in typ1^.h.flags) then begin
             include(vf.flags,tf_needsmanage);
            end;                     
           end;
          end;
          if impl1 then begin
           address.locaddress:= 
-                            getlocvaraddress(po3^.h.datasize,si1,address.flags);
+                            getlocvaraddress(typ1^.h.datasize,si1,address.flags);
          end;
          address.locaddress.framelevel:= sublevel+1;
          vf.typ:= d.typ.typedata;
@@ -907,10 +906,10 @@ begin
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
 
-  po3:= ele.addelementdata(getident(),ek_type,allvisi);
-  sub1^.typ:= ele.eledatarel(po3);
-  inittypedatasize(po3^,dk_address,0,das_pointer);
-  with po3^ do begin
+  typ1:= ele.addelementdata(getident(),ek_type,allvisi);
+  sub1^.typ:= ele.eledatarel(typ1);
+  inittypedatasize(typ1^,dk_address,0,das_pointer);
+  with typ1^ do begin
    infoaddress.sub:= currentsubchain;
   end;
   if not (us_implementation in s.unitinfo^.state) then begin 
@@ -970,16 +969,16 @@ begin
   
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
-   if not addvar(tks_self,allvisi,sub1^.varchain,po2) then begin
+   if not addvar(tks_self,allvisi,sub1^.varchain,var1) then begin
     internalerror(ie_sub,'20140415A');
    end;
   {$else}
-    addvar(tks_self,allvisi,sub1^.varchain,po2);
+    addvar(tks_self,allvisi,sub1^.varchain,var1);
   {$endif}
-   ele.addalias(tk_self,ele.eledatarel(po2),allvisi);
-   curparam^:= elementoffsetty(po2); //absoluteaddress //??? 64 bit ???
+   ele.addalias(tk_self,ele.eledatarel(var1),allvisi);
+   curparam^:= elementoffsetty(var1); //absoluteaddress //??? 64 bit ???
    inc(curparam);          //todo: class proc
-   with po2^ do begin //self variable
+   with var1^ do begin //self variable
     inc(paramsize1,pointersize);
     address.indirectlevel:= 1;
     if impl1 then begin
@@ -1023,14 +1022,14 @@ begin
     d.subdef.error:= err1;
     d.subdef.ref:= ele.eledatarel(sub1);
     while curparam < curparamend do begin
-     po2:= pointer(curparam^);
-     dec(po2^.address.locaddress.address,frameoffset);
-     curparam^:= ptruint(po2)-eledatabase;
-     if tf_needsmanage in po2^.vf.flags then begin
-      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
-                                                        po2^.address,0);
-      po2^.vf.next:= sub1^.paramfinichain;
-      sub1^.paramfinichain:= ele.eledatarel(po2);
+     var1:= pointer(curparam^);
+     dec(var1^.address.locaddress.address,frameoffset);
+     curparam^:= ptruint(var1)-eledatabase;
+     if tf_needsmanage in var1^.vf.flags then begin
+      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
+                                                        var1^.address,0);
+      var1^.vf.next:= sub1^.paramfinichain;
+      sub1^.paramfinichain:= ele.eledatarel(var1);
      end;
      inc(curparam);
     end;
