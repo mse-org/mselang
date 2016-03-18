@@ -646,6 +646,10 @@ type
    fdummyaddrexp: metavaluety;
    fderefaddrexp: metavaluety;
    fnoparams: metavaluety;
+   fpointertyp: metavaluety;
+   fparams1po: metavaluety;
+   function getparams1po: metavaluety;
+   function getpointertyp: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -708,10 +712,10 @@ type
            const aelements: metavaluety): metavaluety;
    function adddirefstringtype(const aname: lstringty;
                                 const akind: dicharkindty): metavaluety;
-   function addtype(atype: elementoffsetty;
+   function addtype(atype: elementoffsetty; //0 -> untyped pointer
                          const aindirection: int32;
                               const subrange: boolean = false): metavaluety;
-   function addtype(const avariable: pvardataty): metavaluety;
+   function addtype(const avariable: vardataty): metavaluety;
    function adddicompileunit(const afile: metavaluety; 
           const asourcelanguage: int32; const aproducer: string;
           const asubprograms: metavaluety; const aglobalvariables: metavaluety;
@@ -727,7 +731,7 @@ type
           const alocaltounit: boolean): metavaluety;
    function adddivariable(const aname: lstringty;
            const alinenumber: int32; const argnumber: int32;
-                                 const avariable: pvardataty): metavaluety;
+                                 const avariable: vardataty): metavaluety;
    function adddiexpression(
                         const aexpression: array of int32): metavaluety;   
   {
@@ -743,7 +747,11 @@ type
 //   property voidconst: metavaluety read fvoidconst;
 //   property nullintconst: metavaluety read fnullintconst;
    property emptystringconst: metavaluety read femptystringconst;
+   property pointertyp: metavaluety read getpointertyp;
    property noparams: metavaluety read fnoparams; //[dummymeta]
+   property params1po: metavaluety read getparams1po; 
+                                             //[dummymeta,pointertype]
+
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
    property dummyaddrexp: metavaluety read fdummyaddrexp;
@@ -2073,8 +2081,25 @@ begin
    fdummyaddrexp:= adddiexpression([]);
    fderefaddrexp:= adddiexpression([DW_OP_deref]);
    fnoparams:= addnode([dummymeta]);
+   fparams1po.id:= 0; //initialized in getter func
+  end;
  end;
+end;
+
+function tmetadatalist.getparams1po: metavaluety;
+begin
+ if fparams1po.id = 0 then begin
+  fparams1po:= addnode([dummymeta,pointertyp]);
  end;
+ result:= fparams1po;
+end;
+
+function tmetadatalist.getpointertyp: metavaluety;
+begin
+ if fpointertyp.id = 0 then begin
+  fpointertyp:= addtype(0,1); //untyped pointer
+ end;
+ result:= fpointertyp;
 end;
 
 procedure tmetadatalist.beginunit;
@@ -2462,7 +2487,7 @@ begin
    pe:= po2 + parcount1;
    while po2 < pe do begin
     po3:= ele.eledataabs(po1^);
-    po2^:= addtype(po3);
+    po2^:= addtype(po3^);
     inc(po1);
     inc(po2);
    end;
@@ -2810,28 +2835,28 @@ begin
  result.id:= po1^.id;
 end;
 
-function tmetadatalist.addtype(const avariable: pvardataty): metavaluety;
+function tmetadatalist.addtype(const avariable: vardataty): metavaluety;
 var
  i1: int32;
 begin
  i1:= 0;
- if af_paramindirect in avariable^.address.flags then begin
+ if af_paramindirect in avariable.address.flags then begin
   i1:= -1;
  end;
- result:= addtype(avariable^.vf.typ,avariable^.address.indirectlevel-
-         ptypedataty(ele.eledataabs(avariable^.vf.typ))^.h.indirectlevel + i1);
+ result:= addtype(avariable.vf.typ,avariable.address.indirectlevel-
+         ptypedataty(ele.eledataabs(avariable.vf.typ))^.h.indirectlevel + i1);
 end;
 
 function tmetadatalist.adddivariable(const aname: lstringty;
                        const alinenumber: int32; const argnumber: int32;
-          const avariable: pvardataty): metavaluety;
+          const avariable: vardataty): metavaluety;
 var
  m1,m2,m3,m4: metavaluety;
 begin
  m1:= addstring(aname);
  m2:= addtype(avariable);
- if af_segment in avariable^.address.flags then begin
-  m3:= addglobvalue(avariable^.address.segaddress.address);
+ if af_segment in avariable.address.flags then begin
+  m3:= addglobvalue(avariable.address.segaddress.address);
   with pdiglobvariablety(adddata(mdk_diglobvariable,
                      sizeof(diglobvariablety),result))^ do begin
    scope:= info.s.currentcompileunitmeta;
@@ -2847,7 +2872,7 @@ begin
  else begin
   with pdilocvariablety(adddata(mdk_dilocvariable,
                      sizeof(dilocvariablety),result))^ do begin
-   if af_param in avariable^.address.flags then begin
+   if af_param in avariable.address.flags then begin
     kind:= divk_argvariable;
     arg:= argnumber+1;
    end

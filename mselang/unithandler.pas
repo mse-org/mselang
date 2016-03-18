@@ -882,6 +882,7 @@ begin
   result^.interfaceuses[0]:= info.systemunit;
  end;
  po1^.data:= result;
+
 {
  if co_llvm in info.compileoptions then begin
   if co_writeunits in info.compileoptions then begin
@@ -1605,6 +1606,29 @@ begin
  if aunit^.llvmlists <> nil then begin
   aunit^.llvmlists.metadatalist.beginunit();
  end;
+{
+ aunit^.param1poallocs:= nullallocs;          //init
+ with aunit^,param1poallocs do begin
+  allocs:= getsegmenttopoffs(seg_localloc);
+  with plocallocinfoty(allocsegmentpo(seg_localloc,
+                                    sizeof(locallocinfoty)))^ do begin
+   address:= 0;
+   flags:= [];
+   size:= bitoptypes[das_pointer];
+   if (info.debugoptions <> []) and (co_llvm in info.compileoptions) then begin
+    debuginfo:= llvmlists.metadatalist.pointertyp;
+   end
+   else begin
+    debuginfo:= dummymeta;
+   end;
+  end;
+  alloccount:= 1;
+  paramcount:= 1;
+  nestedallocs:= 0;
+  nestedalloccount:= 0;
+  nestedallocstypeindex:= -1;
+ end;
+}
 end;
 
 function endunit(const aunit: punitinfoty): boolean;

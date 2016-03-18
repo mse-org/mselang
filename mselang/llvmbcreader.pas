@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2015 by Martin Schreiber
+{ MSElang Copyright (c) 2015-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1880,7 +1880,7 @@ var
  begin
   if (typeindex >= 0) and 
              (ftypelist.item(typeindex)^.kind = TYPE_CODE_METADATA) then begin
-   result:= '!'+inttostr(fssaindex-avalue+fssastart);
+   result:= 'M'+inttostr(fssaindex-avalue+fssastart);
   end
   else begin
    result:= getopname(absvalue(avalue));
@@ -1941,6 +1941,7 @@ var
  vararg1: boolean;
  po1: ptypeinfoty;
  fuco: functioncodes;
+ metacountbefore: int32;
 
  //valueids:
  //              0
@@ -1992,6 +1993,7 @@ begin
   error('Nested function');
  end;
  inc(ffunctionlevel);
+ metacountbefore:= fmetalist.count;
  while not finished and (fblocklevel >= blocklevelbefore) do begin
   rec1:= readitem();
   if rec1 <> nil then begin
@@ -2260,6 +2262,7 @@ begin
    end;
   end;
  end;
+ fmetalist.count:= metacountbefore;
  fbb:= 0;
  fbbbefore:= 0;
  dec(ffunctionlevel);

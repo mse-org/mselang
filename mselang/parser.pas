@@ -975,7 +975,7 @@ var
  int1: integer;
 begin
  result:= false;
- init();
+// init();
  with info do begin
   try
    try
@@ -992,6 +992,7 @@ begin
     s.debugoptions:= debugoptions;
     s.compilerswitches:= compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
+    init();
     unit1:= newunit('program');
     unit1^.filepath:= afilename; //todo: file reading
     if not initunitfileinfo(unit1) then begin

@@ -19,7 +19,7 @@ unit parserglob;
 interface
 uses
  globtypes,msestream,msestrings,msetypes,msertti,listutils,llvmlists,
- segmentutils,llvmbitcodes;
+ segmentutils,llvmbitcodes,opglob;
 
 type
  compilerswitchty = (cos_none,cos_booleval,cos_internaldebug);
@@ -566,7 +566,8 @@ type
   mainsubmeta: metavaluety;
   subprograms: metavaluesty;
   globalvariables: metavaluesty;
-
+//  param1poallocs: suballocinfoty;
+  
   opseg: subsegmentty;
   mainad: int32;
     

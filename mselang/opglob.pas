@@ -805,18 +805,19 @@ const
   nestedalloccount: 0;
   nestedallocstypeindex: -1;
  );
-
- parampointer1alloc = 0; //first item, inited by segmentutils.init()
- 
- parampointer1allocs: suballocinfoty = (
-  allocs: parampointer1alloc;
+ param1poallocs: suballocinfoty = (
+  allocs: -1;       //must be set individually
   alloccount: 1;
   paramcount: 1;
   nestedallocs: 0;
   nestedalloccount: 0;
   nestedallocstypeindex: -1;
  );
- 
+ par0name: lstringty = (
+  po: '.par0';
+  len: 5;
+ );
+  
 type
  virttrampolineinfoty = record
   selfinstance: dataoffsty; //frameoffset

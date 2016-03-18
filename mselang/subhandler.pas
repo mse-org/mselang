@@ -76,7 +76,7 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
- msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes;
+ msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser;
 
 type
  tmetadatalist1 = class(tmetadatalist);
@@ -594,68 +594,81 @@ end;
 function startsimplesub(const aname: identty; 
                                      const pointerparam: boolean): opaddressty;
 var
- m1: metavaluety;
+ m1,m2: metavaluety;
+ var1: vardataty;
 begin
- result:= info.opcount;
- resetssa();
- with additem(oc_subbegin)^.par do begin
-  subbegin.subname:= result;
-  if co_llvm in info.compileoptions then begin
-   with info,s.unitinfo^ do begin
-    if pointerparam then begin
-     subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
-    end
-    else begin
-     subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
-    end;
-    if do_proginfo in s.debugoptions then begin
-     with pdisubroutinetypety(
-      tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
-                    sizeof(disubroutinetypety),m1))^ do begin
-      params:= llvmlists.metadatalist.noparams;
-                       //todo: if pointerparam
-     end;
-     pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-          {s.}currentscopemeta,getidentname2(aname),
-             s.currentfilemeta,info.s.source.line,subbegin.globid,m1,[],true));
-    end;
-   end;
-  end;
-  subbegin.sub.flags:= [];
-//  sub.flags:= [sf_nolineinfo];
-  if pointerparam then begin
-   subbegin.sub.allocs:= parampointer1allocs;
-   {
-   with subbegin.sub.allocs do begin 
-    subbegin.sub.allocs:= pointer1nullallocs;
-    allocs:= getsegmenttopoffs(seg_localloc);
-    alloccount:= 1;
-    paramcount:= 1;
-    with plocallocinfoty(allocsegmentpo(seg_localloc,
-                                       sizeof(locallocinfoty)))^ do begin
-     address:= 0;
-     flags:= [];
-     size:= bitoptypes[das_pointer];
-     debuginfo:= dummymeta;
-    end;
-   end;
-   }
-  end
-  else begin
-   subbegin.sub.allocs:= nullallocs;
-  end;
-  subbegin.sub.blockcount:= 1;
- end;
-(*
  with info do begin
- {$ifdef mse_checkinternalerror}
-  if s.trystack <> 0 then begin
-   internalerror(ie_handler,'20150507A');
+  result:= opcount;
+  resetssa();
+  with additem(oc_subbegin)^.par do begin
+   subbegin.subname:= result;
+   if co_llvm in compileoptions then begin
+    with s.unitinfo^ do begin
+     if pointerparam then begin
+      subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
+     end
+     else begin
+      subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],noparams);
+     end;
+     if do_proginfo in s.debugoptions then begin
+      if pointerparam then begin
+       m2:= llvmlists.metadatalist.params1po;
+      end
+      else begin
+       m2:= llvmlists.metadatalist.noparams;
+      end;
+      with pdisubroutinetypety(
+       tmetadatalist1(llvmlists.metadatalist).adddata(mdk_disubroutinetype,
+                     sizeof(disubroutinetypety),m1))^ do begin
+       params:= m2;
+      end;
+      pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
+           {s.}currentscopemeta,getidentname2(aname),
+              s.currentfilemeta,s.source.line,subbegin.globid,m1,[],true));
+//      postlineinfo();
+     end;
+    end;
+   end;
+   subbegin.sub.flags:= [];
+ //  sub.flags:= [sf_nolineinfo];
+   if pointerparam then begin
+    subbegin.sub.allocs:= param1poallocs;
+    with subbegin.sub.allocs do begin 
+     allocs:= getsegmenttopoffs(seg_localloc);
+     with plocallocinfoty(allocsegmentpo(seg_localloc,
+                                        sizeof(locallocinfoty)))^ do begin
+      address:= 0;
+      flags:= [];
+      size:= bitoptypes[das_pointer];
+      if do_proginfo in info.debugoptions then begin
+       var1.address.flags:= [af_param];
+       var1.address.indirectlevel:= 1;
+       var1.vf.typ:= sysdatatypes[st_pointer].typedata;
+       debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
+                  par0name,s.source.line,0,var1);
+      end
+      else begin
+       debuginfo:= dummymeta;
+      end;
+     end;
+    end;
+   end
+   else begin
+    subbegin.sub.allocs:= nullallocs;
+   end;
+   subbegin.sub.blockcount:= 1;
   end;
- {$endif}
-  s.trystacklevel:= 0;
  end;
-*)
+ (*
+  with info do begin
+  {$ifdef mse_checkinternalerror}
+   if s.trystack <> 0 then begin
+    internalerror(ie_handler,'20150507A');
+   end;
+  {$endif}
+   s.trystacklevel:= 0;
+  end;
+ *)
 end;
 
 procedure endsimplesub(const pointerparam: boolean);
@@ -675,6 +688,7 @@ begin
  if do_proginfo in info.s.debugoptions then begin
   popcurrentscope();
  end;
+// postlineinfo();
 (*
  with info do begin
   deletelistchain(trystacklist,s.trystack); //normally already empty
@@ -685,7 +699,7 @@ end;
 
 procedure handlesubheader();
 var                       //todo: move after doparam
- po1: psubdataty;
+ sub1: psubdataty;
  po2: pvardataty;
  po3: ptypedataty;
 // po4: pelementoffsetaty;
@@ -740,7 +754,7 @@ var                       //todo: move after doparam
      {$endif}
       if (isclass and
           ele.findchild(currentcontainer,d.ident.ident,[],allvisi,ele1)) or not
-              addvar(d.ident.ident,allvisi,po1^.varchain,po2) then begin
+              addvar(d.ident.ident,allvisi,sub1^.varchain,po2) then begin
        identerror(curstackindex,err_duplicateidentifier);
        err1:= true;
       end;
@@ -888,13 +902,13 @@ begin
        (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
   end;
-  po1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
+  sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
                                      paramco*sizeof(pvardataty))^.data);
-  po1^.next:= currentsubchain;
-  currentsubchain:= ele.eledatarel(po1);
+  sub1^.next:= currentsubchain;
+  currentsubchain:= ele.eledatarel(sub1);
 
   po3:= ele.addelementdata(getident(),ek_type,allvisi);
-  po1^.typ:= ele.eledatarel(po3);
+  sub1^.typ:= ele.eledatarel(po3);
   inittypedatasize(po3^,dk_address,0,das_pointer);
   with po3^ do begin
    infoaddress.sub:= currentsubchain;
@@ -905,31 +919,31 @@ begin
   end;
   if isinterface then begin
    include(subflags,sf_interface); 
-   po1^.tableindex:= currentsubcount;
+   sub1^.tableindex:= currentsubcount;
   end
   else begin
-   po1^.tableindex:= -1; //none
+   sub1^.tableindex:= -1; //none
   end;
   inc(currentsubcount);
   if isclass and (sf_constructor in subflags) then begin
    resulttype1.typeele:= currentcontainer;
    resulttype1.indirectlevel:= 1;
   end;
-  po1^.paramcount:= paramco;
-  po1^.calllinks:= 0;
-  po1^.adlinks:= 0;
-  po1^.trampolinelinks:= 0;   //for virtual interface items
-  po1^.trampolineaddress:= 0;
-  po1^.trampolineid:= -1;
-  po1^.nestinglevel:= sublevel;
-  po1^.flags:= subflags;
-  po1^.linkage:= s.globlinkage;
+  sub1^.paramcount:= paramco;
+  sub1^.calllinks:= 0;
+  sub1^.adlinks:= 0;
+  sub1^.trampolinelinks:= 0;   //for virtual interface items
+  sub1^.trampolineaddress:= 0;
+  sub1^.trampolineid:= -1;
+  sub1^.nestinglevel:= sublevel;
+  sub1^.flags:= subflags;
+  sub1^.linkage:= s.globlinkage;
   inc(s.unitinfo^.nameid);
-  po1^.nameid:= s.unitinfo^.nameid;
-  po1^.resulttype:= resulttype1;
-  po1^.varchain:= 0;
-  po1^.paramfinichain:= 0;
-  po1^.allocs.nestedalloccount:= 0;
+  sub1^.nameid:= s.unitinfo^.nameid;
+  sub1^.resulttype:= resulttype1;
+  sub1^.varchain:= 0;
+  sub1^.paramfinichain:= 0;
+  sub1^.allocs.nestedalloccount:= 0;
   if (stf_classdef in s.currentstatementflags) and 
                         (subflags*[sf_virtual,sf_override]<>[]) then begin
    with contextstack[s.stackindex-3] do begin
@@ -938,29 +952,29 @@ begin
      internalerror(ie_handler,'20151128A');
     end;
    {$endif}
-    po1^.tableindex:= d.cla.virtualindex;
+    sub1^.tableindex:= d.cla.virtualindex;
     inc(d.cla.virtualindex);
    end;
   end;
   err1:= false;
   impl1:= (us_implementation in s.unitinfo^.state) and 
                                                  not (sf_header in subflags);
-  curparam:= @po1^.paramsrel;
+  curparam:= @sub1^.paramsrel;
   if sf_function in subflags then begin  //allocate result var first
    curstackindex:= s.stacktop-2;  //-> paramsdef     
    curparamend:= curparam + 1;
    doparams(true); //increments curparam
 //   inc(po4);
   end;
-  curparamend:= pelementoffsetty(@po1^.paramsrel) + paramco;
+  curparamend:= pelementoffsetty(@sub1^.paramsrel) + paramco;
   
   if ismethod then begin
   {$ifdef mse_checkinternalerror}
-   if not addvar(tks_self,allvisi,po1^.varchain,po2) then begin
+   if not addvar(tks_self,allvisi,sub1^.varchain,po2) then begin
     internalerror(ie_sub,'20140415A');
    end;
   {$else}
-    addvar(tks_self,allvisi,po1^.varchain,po2);
+    addvar(tks_self,allvisi,sub1^.varchain,po2);
   {$endif}
    ele.addalias(tk_self,ele.eledatarel(po2),allvisi);
    curparam^:= elementoffsetty(po2); //absoluteaddress //??? 64 bit ???
@@ -988,26 +1002,26 @@ begin
 //  if ismethod then begin
 //   dec(po4);
 //  end;
-  curparam:= @po1^.paramsrel;
+  curparam:= @sub1^.paramsrel;
   inc(paramsize1,stacklinksize);
-  po1^.paramsize:= paramsize1;
-  po1^.address:= 0; //init
+  sub1^.paramsize:= paramsize1;
+  sub1^.address:= 0; //init
   if impl1 then begin //implementation
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
    with contextstack[s.stackindex-1] do begin
     ele.markelement(b.elemark); 
-    po1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
+    sub1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                             ek_none,allvisi);
-    po1^.nestedvarchain:= 0;
-    po1^.nestedvarcount:= 1; //for callout frame ref
+    sub1^.nestedvarchain:= 0;
+    sub1^.nestedvarcount:= 1; //for callout frame ref
     d.subdef.ssabefore:= s.ssa;
     resetssa();
     d.subdef.frameoffsetbefore:= frameoffset;
     frameoffset:= locdatapo; //todo: nested procedures
     d.subdef.paramsize:= paramsize1;
     d.subdef.error:= err1;
-    d.subdef.ref:= ele.eledatarel(po1);
+    d.subdef.ref:= ele.eledatarel(sub1);
     while curparam < curparamend do begin
      po2:= pointer(curparam^);
      dec(po2^.address.locaddress.address,frameoffset);
@@ -1015,8 +1029,8 @@ begin
      if tf_needsmanage in po2^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(po2^.vf.typ)),
                                                         po2^.address,0);
-      po2^.vf.next:= po1^.paramfinichain;
-      po1^.paramfinichain:= ele.eledatarel(po2);
+      po2^.vf.next:= sub1^.paramfinichain;
+      sub1^.paramfinichain:= ele.eledatarel(po2);
      end;
      inc(curparam);
     end;
@@ -1029,39 +1043,39 @@ begin
    end;
    if not isinterface then begin
     if sf_external in subflags then begin
-     include(po1^.flags,sf_proto);
+     include(sub1^.flags,sf_proto);
 {
      with pexternallinkinfoty(addlistitem(
              s.unitinfo^.externallinklist,s.unitinfo^.externalchain))^ do begin
-      sub:= ele.eledatarel(po1);
+      sub:= ele.eledatarel(sub1);
      end;
 }
      if co_llvm in compileoptions then begin
-      po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1,
-       getidentname2(pelementinfoty(pointer(po1)-eledatashift)^.header.name));
+      sub1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(sub1,
+       getidentname2(pelementinfoty(pointer(sub1)-eledatashift)^.header.name));
      end;
-     addsubbegin(oc_externalsub,po1);
+     addsubbegin(oc_externalsub,sub1);
     end
     else begin
      if sf_typedef in subflags then begin
       ele.decelementparent();
-      setsubtype(-2,ele.eledatarel(po1));
+      setsubtype(-2,ele.eledatarel(sub1));
       dec(info.s.stackindex);
       exit;
      end
      else begin
-      forwardmark(po1^.mark,s.source);
+      forwardmark(sub1^.mark,s.source);
      end;
     end;
    end
    else begin
-    po1^.mark:= -1;
+    sub1^.mark:= -1;
    end;   
   end;
 
   parent1:= ele.decelementparent;
   with paramdata do begin  //check params duplicate
-   ref:= po1;
+   ref:= sub1;
    match:= nil;
   end;                                    
   if sf_override in subflags then begin
@@ -1071,7 +1085,7 @@ begin
     errormessage(err_noancestormethod,[]);
    end
    else begin
-    po1^.tableindex:= paramdata.match^.tableindex;
+    sub1^.tableindex:= paramdata.match^.tableindex;
     with contextstack[s.stackindex-3] do begin
     {$ifdef mse_checkinternalerror}
      if d.kind <> ck_classdef then begin
@@ -1118,9 +1132,9 @@ begin
       end
       else begin
        forwardresolve(mark);
-       impl:= ele.eledatarel(po1);
+       impl:= ele.eledatarel(sub1);
        pointer(parref):= @paramsrel;
-       pointer(par1):= @po1^.paramsrel;
+       pointer(par1):= @sub1^.paramsrel;
        for i1:= 0 to paramco-1 do begin
         if ele.eleinfoabs(parref^[i1])^.header.name <> 
                   ele.eleinfoabs(par1^[i1])^.header.name then begin
@@ -1145,7 +1159,7 @@ begin
    end;
    {
    if backend = bke_llvm then begin
-    po1^.globid:= globlist.addsubvalue(po1);
+    sub1^.globid:= globlist.addsubvalue(sub1);
    end;
    }
    if s.debugoptions * [do_proginfo,do_name] <> [] then begin
@@ -1355,7 +1369,7 @@ begin
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
      if do_proginfo in info.debugoptions then begin
       debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                    getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4);
+                    getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4^);
      end;
     end;
     ele1:= po4^.vf.next;

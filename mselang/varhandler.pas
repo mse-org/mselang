@@ -135,7 +135,7 @@ begin
         if do_proginfo in info.debugoptions then begin
          s.unitinfo^.llvmlists.globlist.lastitem^.debuginfo:= 
                   s.unitinfo^.llvmlists.metadatalist.adddivariable(
-                       nametolstring(n1),contextstack[i1].start.line,0,po1);
+                       nametolstring(n1),contextstack[i1].start.line,0,po1^);
         end;
        end;
       end

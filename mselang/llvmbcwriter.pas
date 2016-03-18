@@ -1902,7 +1902,9 @@ end;
 procedure tllvmbcwriter.checkdebugloc();
 begin
  if not fnodebugloc then begin
-  if fdebugloc.line <> flastdebugloc.line then begin
+  if (fdebugloc.line <> flastdebugloc.line) or 
+               (fdebugloc.col <> flastdebugloc.col) or 
+                           (fdebugloc.scope <> flastdebugloc.scope)then begin
    emitdebugloc(fdebugloc);
    flastdebugloc:= debugloc;
   end

@@ -701,13 +701,20 @@ procedure init();
 begin
  dofinalize();
  fillchar(segments,sizeof(segments),0);
+{
  with plocallocinfoty(allocsegmentpo(seg_localloc,
                                    sizeof(locallocinfoty)))^ do begin
   address:= 0;
   flags:= [];
   size:= bitoptypes[das_pointer];
-  debuginfo:= dummymeta;
+  if (info.debugoptions <> []) and (co_llvm in compileoptions) then begin
+   debuginfo:= 
+  end
+  else begin
+   debuginfo:= dummymeta;
+  end;
  end;
+}
 end;
 
 procedure deinit();
