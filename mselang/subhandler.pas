@@ -117,7 +117,13 @@ begin
   flags:= [];
   linkcount:= 0;
   if pointerparam then begin
-   paramcount:= 1; //todo
+   paramcount:= 1;
+   params:= getsegmenttopoffs(seg_localloc);
+   with pparallocinfoty(allocsegmentpo(seg_localloc,
+                                        sizeof(parallocinfoty)))^ do begin
+    ssaindex:= info.s.ssa.nextindex-1;
+    //size not used? 
+   end;
   end
   else begin
    paramcount:= 0;
