@@ -122,7 +122,7 @@ begin
    with pparallocinfoty(allocsegmentpo(seg_localloc,
                                         sizeof(parallocinfoty)))^ do begin
     ssaindex:= info.s.ssa.nextindex-1;
-    //size not used? 
+    size:= bitoptypes[das_pointer] //not used? 
    end;
   end
   else begin
@@ -596,7 +596,7 @@ begin
   s.trystacklevel:= 0;
  end;
 end;
-
+var testvar: ^subbeginty;
 function startsimplesub(const aname: identty; 
                                      const pointerparam: boolean): opaddressty;
 var
@@ -618,6 +618,7 @@ begin
   end;
   resetssa();
   with additem(oc_subbegin)^.par do begin
+testvar:= @subbegin;
    subbegin.subname:= result;
    if co_llvm in compileoptions then begin
     with s.unitinfo^ do begin
