@@ -69,7 +69,7 @@ function callinternalsub(const asub: opaddressty;
                               const pointerparam: boolean): popinfoty;
                                                         //ignores op address 0
 function startsimplesub(const aname: identty;
-                                  const pointerparam: boolean): opaddressty;
+                        const pointerparam: boolean): opaddressty;
 procedure endsimplesub(const pointerparam: boolean);
 
 implementation
@@ -111,8 +111,8 @@ begin
  result:= additem(oc_call);
  with result^.par.callinfo do begin
   if asub <> 0 then begin
-   ad.ad:= asub-1;
    ad.globid:= getoppo(asub)^.par.subbegin.globid;
+   ad.ad:= asub-1; //compensate inc(pc)
   end;
   flags:= [];
   linkcount:= 0;
@@ -597,14 +597,13 @@ begin
  end;
 end;
 var testvar: ^subbeginty;
-function startsimplesub(const aname: identty; 
-                                     const pointerparam: boolean): opaddressty;
+function startsimplesub(const aname: identty;
+                             const pointerparam: boolean): opaddressty;
 var
  m1: metavaluety;
  var1: vardataty;
 begin
  with info do begin
-  result:= opcount;
   if do_proginfo in s.debugoptions then begin
    if pointerparam then begin
     m1:= s.unitinfo^.llvmlists.metadatalist.params1posubtyp;
@@ -617,6 +616,7 @@ begin
               s.currentfilemeta,s.source.line,-1,m1,[],true));
   end;
   resetssa();
+  result:= opcount;
   with additem(oc_subbegin)^.par do begin
 testvar:= @subbegin;
    subbegin.subname:= result;
