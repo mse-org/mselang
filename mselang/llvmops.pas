@@ -1896,22 +1896,25 @@ begin
  end;
 end;
 
-procedure storestacknilop();
+procedure storestacknilop(); 
 begin
  with pc^.par do begin
+ {//??? probably wrong indirection
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_pointer));
   bcstream.emitstoreop(bcstream.constval(nullpointer),
                                          bcstream.relval(0));
+ }
+  bcstream.emitbitcast(bcstream.constval(nullpointer),
+                                          bcstream.typeval(das_pointer));
  end;
 end;
 
 procedure storestackrefnilop();
 begin
  with pc^.par do begin
-  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.pptypeval(das_pointer));
-  bcstream.emitloadop(bcstream.relval(0));
-  bcstream.emitstoreop(bcstream.constval(nullpointer),
-                                         bcstream.relval(0));
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(das_pointer));
+//  bcstream.emitloadop(bcstream.relval(0));
+  bcstream.emitstoreop(bcstream.constval(nullpointer),bcstream.relval(0));
  end;
 end;
 
@@ -1993,9 +1996,12 @@ end;
 procedure finirefsizestackrefop();
 begin
  with pc^.par do begin
+  callcompilersub(cs_finifrefsize,false,[bcstream.ssaval(ssas1)]);
+{ 
   bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.ptypeval(pointertype));
   bcstream.emitloadop(bcstream.relval(0));
   callcompilersub(cs_finifrefsize,false,[bcstream.relval(0)]);
+}
  end;
 end;
 
@@ -3654,7 +3660,7 @@ const
   storereg0nilssa = 1;
   storeframenilssa = 0;
   storestacknilssa = 1;
-  storestackrefnilssa = 2;
+  storestackrefnilssa = 1;
 
   storesegnilarssa = 1;
   storeframenilarssa = 1;
@@ -3672,7 +3678,7 @@ const
   finirefsizeframessa = 1;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
-  finirefsizestackrefssa = 2;
+  finirefsizestackrefssa = 0;
 
   finirefsizesegarssa = 1;
   finirefsizeframearssa = 1;
