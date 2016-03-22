@@ -727,8 +727,8 @@ type
  end;
 }
  podataaddressty = record
-  address: dataaddressty;
-  offset: int32;
+  address: dataoffsty;
+  offset: dataoffsty;
  end;
  
  memopty = record

@@ -2758,6 +2758,7 @@ begin
        else begin
         ad1.address:= -destvar.typ^.h.bytesize;
        end;
+       ad1.offse:= 0;
  //      ad1.offset:= -((si1+7) div 8); //bytes
        if not isconst then begin
         writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
