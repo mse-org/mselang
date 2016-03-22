@@ -23,7 +23,9 @@ uses
 type
  addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
  addressrefty = record
-  offset: dataoffsty;
+  address: dataoffsty;
+  flags: addressflagsty;
+  offse: dataoffsty;
   case base: addressbasety of
    ab_segment: (segment: segmentty);
  end;
@@ -724,6 +726,11 @@ type
    );
  end;
 }
+ podataaddressty = record
+  address: dataaddressty;
+  offset: int32;
+ end;
+ 
  memopty = record
   t: typeallocinfoty;
 //  ssaindex: integer;
@@ -760,7 +767,7 @@ type
    oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
    oc_decrefsizeframear,oc_decrefsizereg0ar,oc_decrefsizestackar,
    oc_decrefsizestackrefar:(
-    podataaddress: dataaddressty;
+    podataaddress: podataaddressty;
    );
  end;
 

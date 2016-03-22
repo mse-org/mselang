@@ -434,7 +434,9 @@ begin
   repeat
    po1:= ele.eledataabs(ele1);
    if tf_needsmanage in po1^.vf.flags then begin
-    ad1.offset:= po1^.address.poaddress;
+    ad1.flags:= po1^.address.flags - [af_aggregate];
+    ad1.address:= po1^.address.poaddress;
+    ad1.offse:= 0;
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
    end;
    ele1:= po1^.vf.next;
@@ -447,6 +449,14 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 var
  ad1: addressrefty;
 begin
+ {$ifdef mse_checkinternalerror}
+  if af_aggregate in aaddress.flags then begin
+   internalerror(ie_handler,'20160322B');
+  end;
+ {$endif}
+ ad1.flags:= aaddress.flags;
+ ad1.offse:= 0;
+ ad1.address:= aaddress.poaddress; //matches all address types
  if af_segment in aaddress.flags then begin
   ad1.base:= ab_segment;
   ad1.segment:= aaddress.segaddress.segment;
@@ -459,7 +469,6 @@ begin
    ad1.base:= ab_frame;
   end;
  end;
- ad1.offset:= aaddress.poaddress;
  writemanagedtypeop(op,atype,ad1,ssaindex);
 end;
 

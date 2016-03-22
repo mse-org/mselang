@@ -2739,6 +2739,7 @@ begin
       datasi1:= das_pointer;
      end;
     end;
+    
     if typematch and not errorfla then begin
                           //todo: use destinationaddress directly
      typematch:= isconst or 
@@ -2748,13 +2749,14 @@ begin
      end
      else begin
       ssa1:= source^.fact.ssaindex; //source
+      ad1.flags:= destvar.address.flags;
       if (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags) then begin
        ad1.base:= ab_stack;
        if datasi1 = das_pointer then begin
-        ad1.offset:= -pointersize;
+        ad1.address:= -pointersize;
        end
        else begin
-        ad1.offset:= -destvar.typ^.h.bytesize;
+        ad1.address:= -destvar.typ^.h.bytesize;
        end;
  //      ad1.offset:= -((si1+7) div 8); //bytes
        if not isconst then begin
@@ -2763,10 +2765,11 @@ begin
        if indi then begin
  //       dec(ad1.offset,si1);
         ad1.base:= ab_stackref;
-        ad1.offset:= ad1.offset-pointersize;
+        ad1.address:= ad1.address-pointersize;
        end
        else begin
-        ad1.offset:= destvar.address.poaddress + destvar.offset;
+        ad1.address:= destvar.address.poaddress;
+        ad1.offse:= destvar.offset;
         if af_segment in destvar.address.flags then begin
          ad1.base:= ab_segment;
          ad1.segment:= destvar.address.segaddress.segment;

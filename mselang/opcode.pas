@@ -260,16 +260,23 @@ begin
   end;
  end;
 }
- with additem(opsar[arop][aaddress.base])^ do begin
+ i1:= 0;
+ if af_aggregate in aaddress.flags then begin
+  i1:= getssa(ocssa_aggregate);
+ end;
+ with additem(opsar[arop][aaddress.base],i1)^ do begin
   par.ssas1:= ssaindex;
+  par.memop.t:= bitoptypes[das_pointer];
+  par.memop.t.flags:= aaddress.flags;
   if aaddress.base = ab_segment then begin
-   par.memop.segdataaddress.a.address:= aaddress.offset;
+   par.memop.segdataaddress.a.address:= aaddress.address;
    par.memop.segdataaddress.a.segment:= aaddress.segment;
-   par.memop.segdataaddress.offset:= 0;
-   par.memop.t:= bitoptypes[das_pointer];
+   par.memop.segdataaddress.offset:= aaddress.offse;
   end
   else begin
-   par.voffset:= aaddress.offset;
+   par.memop.podataaddress.address:= aaddress.address;
+   par.memop.podataaddress.offset:= aaddress.offse;
+//   par.voffset:= aaddress.address;
   end;
   if arop = aro_static then begin
    i1:= atype^.infoarray.i.totitemcount;

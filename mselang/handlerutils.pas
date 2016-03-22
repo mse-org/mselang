@@ -1140,18 +1140,18 @@ begin
    op1:= additem(oc_pushsegaddr,
                  pushsegaddrssaar[avalue.segment]);
    with op1^.par.memop.segdataaddress do begin
-    a.address:= avalue.offset;
+    a.address:= avalue.address;
+    offset:= avalue.offse;
     a.segment:= avalue.segment;
     a.element:= 0;
-    offset:= 0;
    end;
   end;
   ab_frame: begin
    op1:= additem(oc_pushlocaddr);
    with op1^.par.memop.locdataaddress do begin
-    a.address:= avalue.offset;
+    a.address:= avalue.address;
+    offset:= avalue.offse;
     a.framelevel:= -1;
-    offset:= 0;
    end;
   end;
   else begin
