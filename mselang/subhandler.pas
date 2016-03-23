@@ -682,10 +682,10 @@ procedure endsimplesub(const pointerparam: boolean);
 begin
  with additem(oc_return)^ do begin
   if pointerparam then begin
-   par.stacksize:= pointersize;
+   par.stacksize:= pointersize + sizeof(frameinfoty);
   end
   else begin
-   par.stacksize:= 0;
+   par.stacksize:= 0 + sizeof(frameinfoty);
   end;
  end;
  with additem(oc_subend)^ do begin

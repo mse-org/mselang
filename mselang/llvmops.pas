@@ -293,7 +293,7 @@ begin
     i1:= bcstream.typeval(t.listindex);
    end;
    if af_temp in t.flags then begin
-    bcstream.emitbitcast(bcstream.ssaval(tempaddress.ssaindex),i1);
+    bcstream.emitbitcast(bcstream.ssaval(tempdataaddress.a.ssaindex),i1);
    end
    else begin
     if locdataaddress.a.framelevel >= 0 then begin

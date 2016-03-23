@@ -54,6 +54,7 @@ type
   frame: vpointerty;
   link: vpointerty;     //todo: remove link field
  end;
+ pframeinfoty = ^frameinfoty;
  infoopty = procedure(const opinfo: popinfoty);
 
  segmentbufferty = record
@@ -175,7 +176,7 @@ var
  po1: pointer;
 begin
  if af_temp in aaddress.t.flags then begin
-  result:= cpu.frame + aaddress.tempaddress.address;
+  result:= cpu.frame + aaddress.tempdataaddress.a.address; //offset?
  end
  else begin
   with aaddress.locdataaddress do begin
@@ -200,7 +201,7 @@ var
  po1: pointer;
 begin
  if af_temp in aaddress.t.flags then begin
-  result:= ppointer(cpu.frame + aaddress.tempaddress.address)^;
+  result:= ppointer(cpu.frame + aaddress.tempdataaddress.a.address)^; //offset?
  end
  else begin
   with aaddress.locdataaddress do begin
@@ -216,6 +217,11 @@ begin
    end;
   end;
  end;
+end;
+
+function getstackaddress(const aaddress: tempdataaddressty): pointer;
+begin
+ result:= cpu.stack + aaddress.a.address + aaddress.offset;
 end;
 
 function alignsize(const size: ptruint): ptruint; 
@@ -2785,8 +2791,11 @@ begin
 end;
 }
 procedure pushstackaddrop();
+var
+ po1: pointer;
 begin
- ppointer(stackpush(sizeof(pointer)))^:= cpu.stack+cpu.pc^.par.voffset;
+ po1:= getstackaddress(cpu.pc^.par.memop.tempdataaddress);
+ ppointer(stackpush(sizeof(pointer)))^:= po1;
 end;
 {
 procedure pushstackaddrindiop();
@@ -3139,15 +3148,18 @@ end;
 
 procedure returnop();
 var
- int1: integer;
+ i1: integer;
+ po1: pframeinfoty;
 begin
- int1:= cpu.pc^.par.stacksize;
- with frameinfoty((cpu.frame-sizeof(frameinfoty))^) do begin
+ i1:= cpu.pc^.par.stacksize;
+ po1:= (cpu.frame-sizeof(frameinfoty));
+ with po1^ do begin
   cpu.pc:= pc;
   cpu.frame:= frame;
   cpu.stacklink:= link;
  end;
- cpu.stack:= cpu.stack-int1;
+// cpu.stack:= po1 - i1;
+ cpu.stack:= cpu.stack-i1;
 end;
 
 procedure returnfuncop();

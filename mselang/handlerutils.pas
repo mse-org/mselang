@@ -1046,7 +1046,8 @@ begin
  {$endif}
   par.memop.t:= alloc;
   par.memop.t.flags:= address.flags;
-  par.memop.tempaddress:= address.tempaddress;
+  par.memop.tempdataaddress.a:= address.tempaddress;
+  par.memop.tempdataaddress.offset:= 0; //???
   result:= par.ssad;
  end;
 end;
@@ -1061,7 +1062,8 @@ begin
  with additem(oc_pushlocpo)^ do begin
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= address.flags;
-  par.memop.tempaddress:= address.tempaddress;
+  par.memop.tempdataaddress.a:= address.tempaddress;
+  par.memop.tempdataaddress.offset:= 0; //???
   result:= par.ssad;
  end;
 end;
@@ -1098,7 +1100,8 @@ begin
  {$endif}
   par.memop.t:= alloc;
   par.memop.t.flags:= address.flags;
-  par.memop.tempaddress:= address.tempaddress;
+  par.memop.tempdataaddress.a:= address.tempaddress;
+  par.memop.tempdataaddress.offset:= 0; //???
   result:= par.ssad;
  end;
 end;
@@ -1152,6 +1155,13 @@ begin
     a.address:= avalue.address;
     offset:= avalue.offse;
     a.framelevel:= -1;
+   end;
+  end;
+  ab_stack: begin
+   op1:= additem(oc_pushstackaddr);
+   with op1^.par.memop.tempdataaddress do begin
+    a.address:= avalue.address;
+    offset:= avalue.offse;
    end;
   end;
   else begin
@@ -1679,7 +1689,8 @@ begin
    if af_temp in opflags1 then begin
     po1:= getop(pushloc[opsize1]);
     with po1^ do begin
-     par.memop.tempaddress:= tempaddress;
+     par.memop.tempdataaddress.a:= tempaddress;
+     par.memop.tempdataaddress.offset:= 0; //???
     end;
    end
    else begin

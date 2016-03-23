@@ -677,6 +677,11 @@ type
   a: locaddressty;
   offset: dataoffsty;
  end;
+
+ tempdataaddressty = record
+  a: tempaddressty;
+  offset: dataoffsty;
+ end;
 { 
  vpushty = record
   ssaindex: integer;
@@ -744,7 +749,7 @@ type
    oc_incdeclocimmint32,oc_incdeclocimmpo32:(
     case integer of
      0:(locdataaddress: locdataaddressty;);
-     1:(tempaddress: tempaddressty);
+     1:(tempdataaddress: tempdataaddressty);
    );
    oc_storesegnil,oc_storesegnilar,oc_storesegnildynar,
    oc_popseg8,oc_popseg16,oc_popseg32,oc_popseg,
