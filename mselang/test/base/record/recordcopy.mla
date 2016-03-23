@@ -1,0 +1,25 @@
+program recordcopy;
+
+type
+ recty = record
+  a,b: int32;
+ end;
+var
+ rec1,rec2: recty;
+
+procedure test();
+var
+ r1,r2: recty;
+begin
+ r1.a:= 20;
+ r1.b:= 3;
+ r2:= r1;
+ exitcode:= rec2.b + rec2.a + r2.a + r2.b;
+end;
+
+begin
+ rec1.a:= 40;
+ rec1.b:= 60;
+ rec2:= rec1;
+ test();
+end.

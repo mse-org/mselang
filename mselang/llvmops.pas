@@ -2297,7 +2297,7 @@ end;
 
 procedure poplocop();
 begin
- notimplemented();
+ storeloc();
 end;
 
 procedure poplocindi8op();
