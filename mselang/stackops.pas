@@ -2362,10 +2362,10 @@ end;
 
 procedure popsegop();
 var
- int1: integer;
+ i1: integer;
 begin
- int1:= -cpu.pc^.par.memop.t.size;
- move(stackpop(int1)^,getsegaddress(cpu.pc^.par.memop.segdataaddress)^,int1);
+ i1:= cpu.pc^.par.memop.t.size;
+ move(stackpop(i1)^,getsegaddress(cpu.pc^.par.memop.segdataaddress)^,i1);
 end;
 
 procedure pushseg8op();
@@ -2418,11 +2418,11 @@ end;
 
 procedure pushsegop();
 var
- int1: integer;       
+ i1: integer;
 begin
- int1:= cpu.pc^.par.memop.t.size;
+ i1:= cpu.pc^.par.memop.t.size;
  move(getsegaddress(cpu.pc^.par.memop.segdataaddress)^,
-                  stackpush(int1)^,int1);
+                  stackpush(i1)^,i1);
 end;
 
 procedure poploc8op();
@@ -2468,10 +2468,10 @@ end;
 
 procedure poplocop();
 var
- int1: integer;
+ i1: int32;
 begin
- int1:= -cpu.pc^.par.memop.t.size;
- move(stackpop(int1)^,getlocaddress(cpu.pc^.par.memop)^,int1);
+ i1:= cpu.pc^.par.memop.t.size;
+ move(stackpop(i1)^,getlocaddress(cpu.pc^.par.memop)^,i1);
 end;
 
 procedure poplocindi8op();

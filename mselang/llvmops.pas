@@ -2252,7 +2252,7 @@ end;
 
 procedure popsegop();
 begin
- notimplemented();
+ storeseg();
 end;
 
 procedure poploc8op();
