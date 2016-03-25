@@ -745,7 +745,7 @@ type
    oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,
    oc_pushloc8,oc_pushloc16,oc_pushloc32,oc_pushlocpo,oc_pushloc,
-   oc_pushlocaddr,
+   oc_pushlocaddr,oc_pushstackaddr,
    oc_pushlocindi8,oc_pushlocindi16,oc_pushlocindi32,oc_pushlocindi,
    oc_incdeclocimmint32,oc_incdeclocimmpo32:(
     case integer of
@@ -998,7 +998,7 @@ type
    oc_increg0,oc_writeboolean,oc_writeinteger8,oc_writeinteger16,
    oc_writeinteger32,oc_writeinteger64,oc_writefloat64,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
-   oc_pushstackaddr,{oc_pushstackaddrindi,}oc_pushduppo,
+   {oc_pushstackaddrindi,}oc_pushduppo,
    oc_indirectpooffs,oc_indirectoffspo:(
     voffset: dataoffsty;
     case opcodety of
