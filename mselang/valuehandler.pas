@@ -824,8 +824,11 @@ begin
        int1:= int1-vpointersize;  //class info pointer
       end
       else begin
-       with insertitem(oc_pushstackaddr,0,false)^ do begin //result var param
-        par.voffset:= -int1;
+       with insertitem(oc_pushstackaddr,0,false)^.
+                                      par.memop.tempdataaddress do begin
+                                               //result var param
+        a.address:= -int1+vpointersize;
+        offset:= 0;
        end;
       end;
      end;
