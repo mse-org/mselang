@@ -132,7 +132,7 @@ type
  
  tempaddressty = record
   address: dataoffsty; //first, must map poaddress
-  ssaindex: integer; //for llvm temp var
+  ssaindex: int32; //for llvm temp var
  end;
   
  addressvaluety = record

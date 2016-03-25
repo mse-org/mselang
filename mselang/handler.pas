@@ -2759,8 +2759,9 @@ begin
         ad1.address:= -destvar.typ^.h.bytesize;
        end;
        ad1.offse:= 0;
- //      ad1.offset:= -((si1+7) div 8); //bytes
+       ad1.indirectlevel:= indilev1;
        if not isconst then begin
+                         //todo: use direct source address if possible
         writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
        end;
        if indi then begin

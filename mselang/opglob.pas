@@ -22,10 +22,11 @@ uses
  
 type
  addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
- addressrefty = record
+ addressrefty = record       //todo_ use common record type with tempaddressty
   address: dataoffsty;
   flags: addressflagsty;
   offse: dataoffsty;
+  indirectlevel: int32;
   case base: addressbasety of
    ab_segment: (segment: segmentty);
  end;

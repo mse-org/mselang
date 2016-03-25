@@ -151,7 +151,8 @@ procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
-function pushaddr(const avalue: addressrefty): int32; //returns ssad
+function pushaddr(const avalue: addressrefty; const atype: ptypedataty;
+                            const assaindex: int32): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
                const before: boolean; const sourceoffset: int32{;
@@ -1134,7 +1135,8 @@ begin
  end;
 end;
 
-function pushaddr(const avalue: addressrefty): int32;
+function pushaddr(const avalue: addressrefty; const atype: ptypedataty;
+                                                const assaindex: int32): int32;
 var
  op1: popinfoty;
 begin
@@ -1159,16 +1161,26 @@ begin
   end;
   ab_stack: begin
    op1:= additem(oc_pushstackaddr);
-   with op1^.par.memop.tempdataaddress do begin
-    a.address:= avalue.address;
-    offset:= avalue.offse;
+   with op1^.par.memop do begin
+    tempdataaddress.a.address:= avalue.address; 
+                                  //todo: use common record type in
+                                  //addressrefty and tempdataaddressty
+    if co_llvm in info.compileoptions then begin
+     tempdataaddress.a.ssaindex:= assaindex;
+     t:= getopdatatype(atype,avalue.indirectlevel);
+     tempdataaddress.offset:= info.s.unitinfo^.llvmlists.constlist.adddataoffs(
+                                                           avalue.offse).listid;
+    end
+    else begin
+     tempdataaddress.offset:= avalue.offse;
+    end;
    end;
   end;
   else begin
    notimplementederror('20160314A');
   end;
  end;
- op1^.par.memop.t:= bitoptypes[das_pointer];
+// op1^.par.memop.t:= bitoptypes[das_pointer];
  result:= op1^.par.ssad;
 end;
 

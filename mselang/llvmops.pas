@@ -2722,7 +2722,14 @@ end;
 }
 procedure pushstackaddrop();
 begin
- notimplemented();
+ with pc^.par.memop do begin
+  bcstream.emitalloca(bcstream.ptypeval(t.listindex));
+  bcstream.emitstoreop(bcstream.ssaval(tempdataaddress.a.ssaindex),
+                                                        bcstream.relval(0));
+  bcstream.emitgetelementptr(bcstream.relval(0),
+                           bcstream.constval(tempdataaddress.offset))
+ end;
+// bcstream.emitsegdataaddress(memop);
 end;
 {
 procedure pushstackaddrindiop();
@@ -3199,7 +3206,7 @@ begin
     else begin
      ids[2]:= dummyexp;
     end;
-    bcstream.emitcallop(false,i2,idar);
+    bcstream.emitcallop(false,i2,idar); //dbgdeclare
     inc(i1);
     inc(po1);
    end;
@@ -3839,7 +3846,7 @@ const
 //  pushlocaddrindissa = 3;
   pushsegaddrssa = 1;
 //  pushsegaddrindissa = 3;
-  pushstackaddrssa = 1;
+  pushstackaddrssa = 3;
 //  pushstackaddrindissa = 1;
   
   pushduppossa = 1;

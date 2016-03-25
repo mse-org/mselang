@@ -228,7 +228,7 @@ var
 begin
  with info do begin
   sub1:= ele.eledataabs(atype^.recordmanagehandlers[op]);
-  pushaddr(aaddress);
+  pushaddr(aaddress,atype,ssaindex);
   op1:= callinternalsub(sub1^.address,true);
   if (sub1^.address = 0) and 
                 (not modularllvm or 
