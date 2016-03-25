@@ -817,19 +817,21 @@ begin
       if sf_constructor in asub^.flags then begin
        int1:= parent-s.stackindex;           //??? verfy!
       end;
-      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3) + 
-                                                                 vpointersize; 
+      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3){ + 
+                                                                 vpointersize}; 
                                    //alloc space for return value
-      if sf_constructor in asub^.flags then begin
-       int1:= int1-vpointersize;  //class info pointer
-      end
-      else begin
+//      if sf_constructor in asub^.flags then begin
+//       int1:= int1-vpointersize;  //class info pointer
+//      end
+//      else begin
+      if not (sf_constructor in asub^.flags) then begin
        with insertitem(oc_pushstackaddr,0,false)^.
                                       par.memop.tempdataaddress do begin
                                                //result var param
-        a.address:= -int1+vpointersize;
+        a.address:= -int1{+vpointersize};
         offset:= 0;
        end;
+       int1:= int1 + vpointersize;
       end;
      end;
      if (sf_method in asub^.flags) then begin
