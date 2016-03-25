@@ -271,11 +271,11 @@ begin
   if aaddress.base = ab_segment then begin
    par.memop.segdataaddress.a.address:= aaddress.address;
    par.memop.segdataaddress.a.segment:= aaddress.segment;
-   par.memop.segdataaddress.offset:= aaddress.offse;
+   par.memop.segdataaddress.offset:= aaddress.offset;
   end
   else begin
    par.memop.podataaddress.address:= aaddress.address;
-   par.memop.podataaddress.offset:= aaddress.offse;
+   par.memop.podataaddress.offset:= aaddress.offset;
 //   par.voffset:= aaddress.address;
   end;
   if arop = aro_static then begin

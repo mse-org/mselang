@@ -25,7 +25,7 @@ type
  addressrefty = record       //todo_ use common record type with tempaddressty
   address: dataoffsty;
   flags: addressflagsty;
-  offse: dataoffsty;
+  offset: dataoffsty;
   indirectlevel: int32;
   case base: addressbasety of
    ab_segment: (segment: segmentty);

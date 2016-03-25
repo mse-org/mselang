@@ -436,7 +436,7 @@ begin
    if tf_needsmanage in po1^.vf.flags then begin
     ad1.flags:= po1^.address.flags - [af_aggregate];
     ad1.address:= po1^.address.poaddress;
-    ad1.offse:= 0;
+    ad1.offset:= 0;
     writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
    end;
    ele1:= po1^.vf.next;
@@ -455,7 +455,7 @@ begin
   end;
  {$endif}
  ad1.flags:= aaddress.flags;
- ad1.offse:= 0;
+ ad1.offset:= 0;
  ad1.address:= aaddress.poaddress; //matches all address types
  if af_segment in aaddress.flags then begin
   ad1.base:= ab_segment;

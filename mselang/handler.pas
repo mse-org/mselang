@@ -2758,7 +2758,7 @@ begin
        else begin
         ad1.address:= -destvar.typ^.h.bytesize;
        end;
-       ad1.offse:= 0;
+       ad1.offset:= 0;
        ad1.indirectlevel:= indilev1;
        if not isconst then begin
                          //todo: use direct source address if possible
@@ -2771,7 +2771,7 @@ begin
        end
        else begin
         ad1.address:= destvar.address.poaddress;
-        ad1.offse:= destvar.offset;
+        ad1.offset:= destvar.offset;
         if af_segment in destvar.address.flags then begin
          ad1.base:= ab_segment;
          ad1.segment:= destvar.address.segaddress.segment;

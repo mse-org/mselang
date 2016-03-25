@@ -1146,7 +1146,7 @@ begin
                  pushsegaddrssaar[avalue.segment]);
    with op1^.par.memop.segdataaddress do begin
     a.address:= avalue.address;
-    offset:= avalue.offse;
+    offset:= avalue.offset;
     a.segment:= avalue.segment;
     a.element:= 0;
    end;
@@ -1155,7 +1155,7 @@ begin
    op1:= additem(oc_pushlocaddr);
    with op1^.par.memop.locdataaddress do begin
     a.address:= avalue.address;
-    offset:= avalue.offse;
+    offset:= avalue.offset;
     a.framelevel:= -1;
    end;
   end;
@@ -1168,11 +1168,11 @@ begin
     if co_llvm in info.compileoptions then begin
      tempdataaddress.a.ssaindex:= assaindex;
      t:= getopdatatype(atype,avalue.indirectlevel);
-     tempdataaddress.offset:= info.s.unitinfo^.llvmlists.constlist.adddataoffs(
-                                                           avalue.offse).listid;
+     tempdataaddress.offset:= 
+        info.s.unitinfo^.llvmlists.constlist.adddataoffs(avalue.offset).listid;
     end
     else begin
-     tempdataaddress.offset:= avalue.offse;
+     tempdataaddress.offset:= avalue.offset;
     end;
    end;
   end;

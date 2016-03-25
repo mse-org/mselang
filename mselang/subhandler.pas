@@ -596,7 +596,7 @@ begin
   s.trystacklevel:= 0;
  end;
 end;
-var testvar: ^subbeginty;
+
 function startsimplesub(const aname: identty;
                              const pointerparam: boolean): opaddressty;
 var
@@ -618,7 +618,6 @@ begin
   resetssa();
   result:= opcount;
   with additem(oc_subbegin)^.par do begin
-testvar:= @subbegin;
    subbegin.subname:= result;
    if co_llvm in compileoptions then begin
     with s.unitinfo^ do begin

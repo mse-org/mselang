@@ -436,7 +436,7 @@ begin
   end;
   ad1.base:= ab_stackref;
   ad1.address:= -pointersize; //pointer to var
-  ad1.offse:= 0;
+  ad1.offset:= 0;
   ad1.flags:= [];
 //  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
   typ1:= ele.eledataabs(atyp);

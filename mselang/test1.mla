@@ -1,45 +1,10 @@
-program classsubcalls;
+program function1;
 
-type
-
- itest = interface
-//  procedure test1(a,b: int32);
-//  function test2(a,b: int32): int32;
-//  procedure test0();
-  function test00(): int32;
- end;
-
- tobject = class
- end;
- tc = class(tobject,itest)
-  f1: int32;
- private
-  constructor create();
-  destructor destroy();
-  function test00(): int32; virtual;
- end;
-
-constructor tc.create();
+function test(const p1: int32; p2: int32): int32;
 begin
- f1:= 20;
+ result:= p1+p2;
 end;
 
-destructor tc.destroy();
 begin
-end;
-
-function tc.test00(): int32;
-begin
- writeln('***');
- exitcode:= 100+f1;
-end;
-var
- t0: tc;
- intf1: itest;
-
-begin
- t0:= tc.create();
- intf1:= itest(t0);
- intf1.test00();
- t0.destroy();
+ exitcode:= test(10,113);
 end.
