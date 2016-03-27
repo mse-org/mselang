@@ -2055,8 +2055,14 @@ end;
 
 procedure increfsizesegop();
 begin
- notimplemented();
+// with pc^.par do begin
+//  bcstream.emitbitcast(bcstream.globval(memop.segdataaddress.a.address),
+//                                                bcstream.typeval(pointertype));
+ loadseg();
+ callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
+// end;
 end;
+
 procedure increfsizeframeop();
 begin
  notimplemented();

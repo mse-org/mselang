@@ -83,6 +83,17 @@ begin
  end;
 end;
 
+procedure __mla__increfsizeref(ref: pprefsizeinfoty);
+var
+ d: prefsizeinfoty;
+begin
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  inc(d^.ref.count);
+ end;
+end;
+
 procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
 var
  d: prefsizeinfoty;
@@ -164,7 +175,7 @@ begin
     ref^:= nil;
    end
    else begin
-    getmem(d1,i1+dynarrayallocsize);    
+    getmem(d1,i1+dynarrayallocsize);
     memcpy(@d1^.data,@d^.data,i1);
     i2:= (d^.high+1) * count;
     if i1 > i2 then begin  //new bigger

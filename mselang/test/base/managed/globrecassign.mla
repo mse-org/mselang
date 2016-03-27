@@ -1,0 +1,18 @@
+program globrecassign;
+
+type
+ intarty = array of int32;
+ recty = record
+  a,b: int32;
+  c: intarty;
+ end;
+var
+ r1,r2: recty;
+begin
+ r1.b:= 100;
+ setlength(r1.c,5);
+ r1.c[2]:= 23;
+ r2:= r1;
+ exitcode:= r2.c[2];
+ exitcode:= r2.b+r2.c[2];
+end.

@@ -112,12 +112,12 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
-  c=21
+  a=0,665,5,base
+  c=22
    (
    kind=1
    a=0,664,4,address
@@ -1428,7 +1428,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,control
+   a=0,664,4,control
    c=30
     (
     kind=2
@@ -2304,7 +2304,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,5,dynarray
    c=4
     (
     kind=2
@@ -2330,8 +2330,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,setlength llvm
-    teststate=1
+    a=0,648,2,setlength llvm
+    teststate=2
     path=setlength.mla
     comment=
     cc=${mlc_llvm}
@@ -2344,9 +2344,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=1
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -2394,7 +2394,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=dynarray/
    comment=
    cc=
@@ -2559,7 +2559,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7334A04
+    ao=An unhandled exception occured at $B72FCA04
     ae=
     aec=123
     ie=0
@@ -3476,7 +3476,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,record
+   a=0,664,4,record
    c=10
     (
     kind=2
@@ -3716,7 +3716,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,set
+   a=0,664,4,set
    c=10
     (
     kind=2
@@ -4020,7 +4020,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
+   a=0,664,4,sub
    c=15
     (
     kind=2
@@ -4892,6 +4892,70 @@ c=3
    pdef=
    )
    (
+   kind=1
+   a=0,665,4,managed
+   c=2
+    (
+    kind=2
+    a=0,648,1,globrecassign
+    teststate=1
+    path=globrecassign.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,globrecassign llvm
+    teststate=1
+    path=globrecassign.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+   teststate=1
+   path=managed/
+   comment=
+   cc=
+   cd=
+   rc=
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=
+   cdef=
+   pdef=
+   )
+   (
    kind=2
    a=0,648,1,caseins
    teststate=1
@@ -4935,7 +4999,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -4953,11 +5017,11 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,665,5,class
   c=21
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=26
     (
     kind=2
@@ -5901,8 +5965,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,1,classstringfield
-   teststate=1
+   a=0,648,2,classstringfield
+   teststate=2
    path=classstringfield.mla
    comment=
    cc=${mlc}
@@ -5916,9 +5980,9 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=abc
+   ao=Access violation
    ae=
-   aec=0
+   aec=1
    ie=0
    )
    (
@@ -5987,7 +6051,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=1
+  teststate=2
   path=class/
   comment=
   cc=
@@ -6345,7 +6409,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -6462,91 +6526,7 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=142
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=58
  0 0
  0 0
  0 0

@@ -2632,16 +2632,17 @@ var
  ssa1: integer;
  po1: popinfoty;
  ssaextension1: integer;
- si1: databitsizety;
+// si1: databitsizety;
  dest,source: pcontextitemty;
  destkind: contextkindty;
- needsmanage,needsincref: boolean;
+ needsmanage,needsincref,needsdecref: boolean;
 
  procedure decref();
  begin
   if indi then begin
    ad1.base:= ab_stackref;
    ad1.address:= ad1.address-pointersize;
+   ad1.offset:= 0;
   end
   else begin
    ad1.address:= destvar.address.poaddress;
@@ -2743,12 +2744,18 @@ begin
        dec(indilev1);
       end;
  
+      datasi1:= destvar.typ^.h.datasize;
+      if d.dat.datatyp.indirectlevel >= 1 then begin
+       datasi1:= das_pointer;
+      end;
+{
       if d.dat.datatyp.indirectlevel > 1 then begin
        si1:= das_pointer;
       end
       else begin
        si1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize;
       end;
+}
       if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
        assignmenterror(contextstack[s.stacktop].d,destvar);
        goto endlab;
@@ -2759,6 +2766,7 @@ begin
        ad1.flags:= destvar.address.flags;
        ad1.indirectlevel:= indilev1;
        needsincref:= not isconst;
+       needsdecref:= true;
        if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
                       ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin
         if source^.d.kind = ck_ref then begin
@@ -2779,23 +2787,35 @@ begin
          needsincref:= false;
         end
         else begin
-         notimplementederror('20160327A');
+         if (source^.d.kind in [ck_fact,ck_subres]) and 
+                             (source^.d.dat.indirection = -1) then begin
+                                    //address on stack
+          ad1.base:= ab_stack;
+          if datasi1 = das_pointer then begin
+           ad1.address:= -pointersize;
+          end
+          else begin
+           ad1.address:= -destvar.typ^.h.bytesize;
+          end;
+          ad1.offset:= 0;
+          writemanagedtypeop(mo_incref,destvar.typ,ad1,
+                                                source^.d.dat.fact.ssaindex);
+          needsincref:= false;
+         end;
         end;
        end;
        if not needsincref then begin
-        decref(); //before loading source for source = dest case        
+        ad1.address:= 0; //no source on stack for indi
+        decref(); //before loading source for source = dest case
+        needsdecref:= false;
        end;
       end;
-      if not getvalue(2,si1) then begin
+      if not getvalue(2,datasi1) then begin
        goto endlab;
       end;
      end
      else begin
       goto endlab;
-     end;
-     datasi1:= destvar.typ^.h.datasize;
-     if d.dat.datatyp.indirectlevel >= 1 then begin
-      datasi1:= das_pointer;
      end;
     end;
     
@@ -2808,17 +2828,20 @@ begin
      end
      else begin
       ssa1:= source^.d.dat.fact.ssaindex; //source
+
       if needsmanage then begin
-       ad1.base:= ab_stack;
-       if datasi1 = das_pointer then begin
-        ad1.address:= -pointersize;
-       end
-       else begin
-        ad1.address:= -destvar.typ^.h.bytesize;
-       end;
-       ad1.offset:= 0;
        if needsincref then begin
+        ad1.base:= ab_stack;
+        if datasi1 = das_pointer then begin
+         ad1.address:= -pointersize;
+        end
+        else begin
+         ad1.address:= -destvar.typ^.h.bytesize;
+        end;
+        ad1.offset:= 0;
         writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
+       end;
+       if needsdecref then begin
         decref();
        end;
       end;
