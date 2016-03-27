@@ -2633,8 +2633,34 @@ var
  po1: popinfoty;
  ssaextension1: integer;
  si1: databitsizety;
- dest,source: pdatacontextty;
+ dest,source: pcontextitemty;
  destkind: contextkindty;
+ needsmanage,needsincref: boolean;
+
+ procedure decref();
+ begin
+  if indi then begin
+   ad1.base:= ab_stackref;
+   ad1.address:= ad1.address-pointersize;
+  end
+  else begin
+   ad1.address:= destvar.address.poaddress;
+   ad1.offset:= destvar.offset;
+   if af_segment in destvar.address.flags then begin
+    ad1.base:= ab_segment;
+    ad1.segment:= destvar.address.segaddress.segment;
+   end
+   else begin
+    ad1.base:= ab_frame;
+   end;
+  end;
+  i1:= -1;
+  if destkind in factcontexts then begin
+   i1:= dest^.d.dat.fact.ssaindex;
+  end;
+  writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
+ end; //decref
+
 label
  endlab;
 begin
@@ -2644,10 +2670,10 @@ begin
  with info do begin       //todo: use direct move if possible
   if not errorfla then begin
    if (s.stacktop-s.stackindex = 2) then begin
-    dest:= @contextstack[s.stackindex+1].d.dat;
-    source:= @contextstack[s.stackindex+2].d.dat;
-    isconst:= contextstack[s.stackindex+2].d.kind = ck_const;
-    with contextstack[s.stackindex+1] do begin
+    dest:= @contextstack[s.stackindex+1];
+    source:= @contextstack[s.stackindex+2];
+    isconst:= source^.d.kind = ck_const;
+    with dest^ do begin
      if d.kind = ck_prop then begin
       with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
        if pof_writefield in flags then begin
@@ -2676,27 +2702,27 @@ begin
       destkind:= contextstack[s.stackindex+1].d.kind;
       typematch:= false;
       indi:= false;
-      dec(datatyp.indirectlevel);
+      dec(d.dat.datatyp.indirectlevel);
      {$ifdef mse_checkinternalerror}
-      if datatyp.indirectlevel < 0 then begin
+      if d.dat.datatyp.indirectlevel < 0 then begin
        internalerror(ie_handler,'20131126B');
       end;
      {$endif}
       destvar.offset:= 0;
-      destvar.typ:= ele.eledataabs(datatyp.typedata);
+      destvar.typ:= ele.eledataabs(d.dat.datatyp.typedata);
       case destkind of
        ck_const: begin
-        if constval.kind <> dk_address then begin
+        if d.dat.constval.kind <> dk_address then begin
          errormessage(err_argnotassign,[],0);
         end
         else begin
-         destvar.address:= constval.vaddress;
+         destvar.address:= d.dat.constval.vaddress;
          typematch:= true;
         end;
        end;
        ck_ref{const}: begin
-        destvar.address:= ref.c.address;
-        destvar.offset:= ref.offset;
+        destvar.address:= d.dat.ref.c.address;
+        destvar.offset:= d.dat.ref.offset;
         typematch:= true;
        end;
        ck_fact,ck_subres: begin
@@ -2711,21 +2737,54 @@ begin
       {$endif}
       end;
  
-      destvar.address.indirectlevel:= datatyp.indirectlevel;
+      destvar.address.indirectlevel:= d.dat.datatyp.indirectlevel;
       indilev1:= destvar.address.indirectlevel;
       if af_paramindirect in destvar.address.flags then begin
        dec(indilev1);
       end;
  
-      if datatyp.indirectlevel > 1 then begin
+      if d.dat.datatyp.indirectlevel > 1 then begin
        si1:= das_pointer;
       end
       else begin
-       si1:= ptypedataty(ele.eledataabs(datatyp.typedata))^.h.datasize;
+       si1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize;
       end;
       if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
        assignmenterror(contextstack[s.stacktop].d,destvar);
        goto endlab;
+      end;
+      
+      needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
+      if needsmanage then begin
+       ad1.flags:= destvar.address.flags;
+       ad1.indirectlevel:= indilev1;
+       needsincref:= not isconst;
+       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
+                      ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin
+        if source^.d.kind = ck_ref then begin
+         if af_segment in source^.d.dat.ref.c.address.flags then begin
+          ad1.base:= ab_segment;
+          with source^.d.dat.ref do begin
+           ad1.offset:= offset;
+           with c.address.segaddress do begin
+            ad1.address:= address;
+            ad1.segment:= segment;
+           end;
+          end;
+          writemanagedtypeop(mo_incref,destvar.typ,ad1,-1);
+         end
+         else begin
+          notimplementederror('20160327B');
+         end;
+         needsincref:= false;
+        end
+        else begin
+         notimplementederror('20160327A');
+        end;
+       end;
+       if not needsincref then begin
+        decref(); //before loading source for source = dest case        
+       end;
       end;
       if not getvalue(2,si1) then begin
        goto endlab;
@@ -2735,7 +2794,7 @@ begin
       goto endlab;
      end;
      datasi1:= destvar.typ^.h.datasize;
-     if datatyp.indirectlevel >= 1 then begin
+     if d.dat.datatyp.indirectlevel >= 1 then begin
       datasi1:= das_pointer;
      end;
     end;
@@ -2748,9 +2807,8 @@ begin
       assignmenterror(contextstack[s.stacktop].d,destvar);
      end
      else begin
-      ssa1:= source^.fact.ssaindex; //source
-      ad1.flags:= destvar.address.flags;
-      if (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags) then begin
+      ssa1:= source^.d.dat.fact.ssaindex; //source
+      if needsmanage then begin
        ad1.base:= ab_stack;
        if datasi1 = das_pointer then begin
         ad1.address:= -pointersize;
@@ -2759,32 +2817,10 @@ begin
         ad1.address:= -destvar.typ^.h.bytesize;
        end;
        ad1.offset:= 0;
-       ad1.indirectlevel:= indilev1;
-       if not isconst then begin
-                         //todo: use direct source address if possible
+       if needsincref then begin
         writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
+        decref();
        end;
-       if indi then begin
- //       dec(ad1.offset,si1);
-        ad1.base:= ab_stackref;
-        ad1.address:= ad1.address-pointersize;
-       end
-       else begin
-        ad1.address:= destvar.address.poaddress;
-        ad1.offset:= destvar.offset;
-        if af_segment in destvar.address.flags then begin
-         ad1.base:= ab_segment;
-         ad1.segment:= destvar.address.segaddress.segment;
-        end
-        else begin
-         ad1.base:= ab_frame;
-        end;
-       end;
-       i1:= -1;
-       if destkind in factcontexts then begin
-        i1:= dest^.fact.ssaindex;
-       end;
-       writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
       end;
  
       if indi then begin
@@ -2819,7 +2855,7 @@ begin
       end;
       po1^.par.memop.t:= getopdatatype(destvar);
       po1^.par.ssas1:= ssa1;                //source
-      po1^.par.ssas2:= dest^.fact.ssaindex; //dest
+      po1^.par.ssas2:= dest^.d.dat.fact.ssaindex; //dest
      end;
     end;
    end
