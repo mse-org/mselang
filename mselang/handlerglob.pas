@@ -153,17 +153,29 @@ type
    0: (sub: elementoffsetty);
  end;
 
+ ptypedataty = ^typedataty; 
+
 // writeiniprocty = procedure (const address: dataoffsty);
 // writefiniprocty = procedure (const address: dataoffsty);
  addresskindty = boolean;{(adk_local,adk_global)}
 
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
- addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_datacontext);
+ 
+ addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_datacontext,
+                     ark_stack,ark_stackref);
  addressrefty = record //todo: resolve circular dependency, use real types
   offset: dataoffsty;
   case kind: addressrefkindty of
-   ark_vardata,ark_vardatanoaggregate: (vardata: pointer);         //pvardataty
-   ark_datacontext: (datacontext: pointer); //pdatacontextty
+   ark_vardata,ark_vardatanoaggregate: (
+    vardata: pointer; //pvardataty
+   );         
+   ark_datacontext: (
+    datacontext: pointer; //pdatacontextty
+   ); 
+   ark_stack,ark_stackref: (
+    address: dataoffsty;
+    typ: ptypedataty;
+   );
 {
   address: dataoffsty;
   flags: addressflagsty;
@@ -174,8 +186,7 @@ type
 }
  end;
 
- ptypedataty = ^typedataty; 
- managedtypeprocty = procedure(const op: managedopty; const atype: ptypedataty;
+ managedtypeprocty = procedure(const op: managedopty;{ const atype: ptypedataty;}
                           const aadress: addressrefty; const ssaindex: integer);
 
  manageddataty = record

@@ -36,19 +36,19 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
-procedure managestring8(const op: managedopty; const atype: ptypedataty;
+procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managedynarray(const op: managedopty; const atype: ptypedataty;
+procedure managedynarray(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managedynarraydynar(const op: managedopty; const atype: ptypedataty;
+procedure managedynarraydynar(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managedynarraystring8(const op: managedopty; const atype: ptypedataty;
+procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managearraydynar(const op: managedopty; const atype: ptypedataty;
+procedure managearraydynar(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managearraystring8(const op: managedopty; const atype: ptypedataty;
+procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
-procedure managerecord(const op: managedopty; const atype: ptypedataty;
+procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
 
 implementation
@@ -68,21 +68,21 @@ const
     oc_none,oc_none,    oc_none,oc_none
  );
 
-procedure managestring8(const op: managedopty; const atype: ptypedataty;
+procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_none,atype,aaddress,ssaindex);
+   inipointer(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_none,atype,aaddress,ssaindex);
+   finirefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_none,atype,aaddress,ssaindex);
+   increfsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_none,atype,aaddress,ssaindex);
+   decrefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -92,21 +92,21 @@ begin
  end;
 end;
 
-procedure managedynarray(const op: managedopty; const atype: ptypedataty;
+procedure managedynarray(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_none,atype,aaddress,ssaindex);
+   inipointer(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_none,atype,aaddress,ssaindex);
+   finirefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_none,atype,aaddress,ssaindex);
+   increfsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_none,atype,aaddress,ssaindex);
+   decrefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -116,25 +116,25 @@ begin
  end;
 end;
 
-procedure managedynarraydynar(const op: managedopty; const atype: ptypedataty;
+procedure managedynarraydynar(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_dynamic,atype,aaddress,ssaindex);
-   inipointer(aro_none,atype,aaddress,ssaindex);
+   inipointer(aro_dynamic,{atype,}aaddress,ssaindex);
+   inipointer(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_dynamic,atype,aaddress,ssaindex);
-   finirefsize(aro_none,atype,aaddress,ssaindex);
+   finirefsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   finirefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_dynamic,atype,aaddress,ssaindex);
-   increfsize(aro_none,atype,aaddress,ssaindex);
+   increfsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   increfsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_dynamic,atype,aaddress,ssaindex);
-   decrefsize(aro_none,atype,aaddress,ssaindex);
+   decrefsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   decrefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -144,25 +144,25 @@ begin
  end;
 end;
 
-procedure managedynarraystring8(const op: managedopty; const atype: ptypedataty;
+procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_dynamic,atype,aaddress,ssaindex);
-   inipointer(aro_none,atype,aaddress,ssaindex);
+   inipointer(aro_dynamic,{atype,}aaddress,ssaindex);
+   inipointer(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_dynamic,atype,aaddress,ssaindex);
-   finirefsize(aro_none,atype,aaddress,ssaindex);
+   finirefsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   finirefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_dynamic,atype,aaddress,ssaindex);
-   increfsize(aro_none,atype,aaddress,ssaindex);
+   increfsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   increfsize(aro_none,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_dynamic,atype,aaddress,ssaindex);
-   decrefsize(aro_none,atype,aaddress,ssaindex);
+   decrefsize(aro_dynamic,{atype,}aaddress,ssaindex);
+   decrefsize(aro_none,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -172,21 +172,21 @@ begin
  end;
 end;
 
-procedure managearraydynar(const op: managedopty; const atype: ptypedataty;
+procedure managearraydynar(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_static,atype,aaddress,ssaindex);
+   inipointer(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_static,atype,aaddress,ssaindex);
+   finirefsize(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_static,atype,aaddress,ssaindex);
+   increfsize(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_static,atype,aaddress,ssaindex);
+   decrefsize(aro_static,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -196,21 +196,21 @@ begin
  end;
 end;
 
-procedure managearraystring8(const op: managedopty; const atype: ptypedataty;
+procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
                        const aaddress: addressrefty; const ssaindex: integer);
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_static,atype,aaddress,ssaindex);
+   inipointer(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_fini: begin
-   finirefsize(aro_static,atype,aaddress,ssaindex);
+   finirefsize(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_incref: begin
-   increfsize(aro_static,atype,aaddress,ssaindex);
+   increfsize(aro_static,{atype,}aaddress,ssaindex);
   end;
   mo_decref: begin
-   decrefsize(aro_static,atype,aaddress,ssaindex);
+   decrefsize(aro_static,{atype,}aaddress,ssaindex);
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -220,15 +220,15 @@ begin
  end;
 end;
 
-procedure managerecord(const op: managedopty; const atype: ptypedataty;
+procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
 var
  sub1: pinternalsubdataty;
  op1: popinfoty;
 begin
  with info do begin
-  sub1:= ele.eledataabs(atype^.recordmanagehandlers[op]);
-  pushaddr(aaddress,atype,ssaindex);
+  sub1:= ele.eledataabs(getaddreftype(aaddress)^.recordmanagehandlers[op]);
+  pushaddr(aaddress,{atype,}ssaindex);
   op1:= callinternalsub(sub1^.address,true);
   if (sub1^.address = 0) and 
                 (not modularllvm or 
@@ -305,7 +305,7 @@ var
  ele1: elementoffsetty;
  i1: int32;
 begin
- atype^.h.manageproc(op,atype,aaddress,ssaindex);
+ atype^.h.manageproc(op,{atype,}aaddress,ssaindex);
 (*
  case atype^.h.kind of
   dk_array: begin

@@ -420,7 +420,61 @@ var
  locad1: memopty;
  i1,i2: int32;
 begin
-notimplementederror('');
+ with info do begin
+  with locad1 do begin
+   t:= bitoptypes[das_pointer];
+   with locdataaddress do begin
+    if co_llvm in compileoptions then begin
+     a.address:= 0; //first param
+    end
+    else begin
+     a.address:= -pointersize-stacklinksize; //single pointer param
+    end;
+    a.framelevel:= -1;    
+    offset:= 0;
+   end;
+  end;
+  ad1.kind:= ark_stackref;
+  ad1.address:= -pointersize; //pointer to var
+  ad1.offset:= 0;
+//  ele.checkcapacity(ek_internalsub,ord(high(op1))+1); //used in startsimplesub()
+  typ1:= ele.eledataabs(atyp);
+  for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
+   sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
+testvar1:= ele.eledatarel(sub1);
+   sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
+   if sub1^.calllinks <> 0 then begin
+    linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
+                                //fetch globid from subbegin op
+   end;
+   ele1:= ptypedataty(ele.eledataabs(atyp))^.fieldchain;
+   with additem(oc_pushlocpo)^.par do begin
+    memop:= locad1; 
+   end;
+//   pushtemppo(locad1);
+   i1:= 0; //field offset
+   while ele1 <> 0 do begin
+    field1:= ele.eledataabs(ele1);
+    typ2:= ele.eledataabs(field1^.vf.typ);
+    if typ2^.h.manageproc <> nil then begin
+     i1:= field1^.offset - i1;
+     if i1 > 0 then begin
+      i2:= s.ssa.nextindex-1;
+      with additem(oc_offsetpoimm32)^ do begin
+       setimmint32(i1,par);
+       par.ssas1:= i2;
+      end;
+     end;
+     ad1.typ:= typ2;
+     typ2^.h.manageproc(op1,{typ2,}ad1,s.ssa.nextindex-1);
+     i1:= field1^.offset; 
+    end;
+    ele1:= field1^.vf.next;
+   end;
+   poptemp(pointersize);
+   endsimplesub(true);
+  end;
+ end;
 (*
  with info do begin
   with locad1 do begin

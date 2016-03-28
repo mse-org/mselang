@@ -95,13 +95,13 @@ function insertcontrolitem(const aopcode: opcodety; const stackoffset: integer;
 procedure addlabel();
 
           //refcount helpers
-procedure inipointer(const arop: aropty; const atype: ptypedataty;
+procedure inipointer(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
-procedure finirefsize(const arop: aropty; const atype: ptypedataty;
+procedure finirefsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
-procedure increfsize(const arop: aropty; const atype: ptypedataty;
+procedure increfsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
-procedure decrefsize(const arop: aropty; const atype: ptypedataty;
+procedure decrefsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
                      
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
@@ -243,7 +243,7 @@ const
  );
 
 procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
-                                                    const atype: ptypedataty;
+                                                    {const atype: ptypedataty;}
                         const aaddress: addressrefty; const ssaindex: integer);
 var
  i1: int32;
@@ -270,6 +270,16 @@ begin
      notimplementederror('');
     end;
    end;
+  end;
+  ark_stack: begin
+   ab1:= ab_stack;
+   ad1:= aaddress.address;
+   typ1:= aaddress.typ;
+  end;
+  ark_stackref: begin
+   ab1:= ab_stackref;
+   ad1:= aaddress.address;
+   typ1:= aaddress.typ;
   end;
   else begin
    notimplementederror('');
@@ -341,28 +351,28 @@ begin
  *)
 end;
 
-procedure inipointer(const arop: aropty; const atype: ptypedataty;
+procedure inipointer(const arop: aropty; {const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(storenilops,arop,atype,aaddress,ssaindex);
+ addmanagedop(storenilops,arop,{atype,}aaddress,ssaindex);
 end;
 
-procedure finirefsize(const arop: aropty; const atype: ptypedataty;
+procedure finirefsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(finirefsizeops,arop,atype,aaddress,ssaindex);
+ addmanagedop(finirefsizeops,arop,{atype,}aaddress,ssaindex);
 end;
 
-procedure increfsize(const arop: aropty; const atype: ptypedataty;
+procedure increfsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(increfsizeops,arop,atype,aaddress,ssaindex);
+ addmanagedop(increfsizeops,arop,{atype,}aaddress,ssaindex);
 end;
 
-procedure decrefsize(const arop: aropty; const atype: ptypedataty;
+procedure decrefsize(const arop: aropty;{ const atype: ptypedataty;}
                      const aaddress: addressrefty; const ssaindex: integer);
 begin
- addmanagedop(decrefsizeops,arop,atype,aaddress,ssaindex);
+ addmanagedop(decrefsizeops,arop,{atype,}aaddress,ssaindex);
 end;
 
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;
