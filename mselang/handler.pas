@@ -2777,6 +2777,7 @@ begin
                       ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin
         ad1.kind:= ark_contextdata;
         ad1.contextdata:= @source^.d;
+        ad1.offset:= 0;
         if source^.d.kind = ck_ref then begin
          writemanagedtypeop(mo_incref,destvar.typ,ad1,-1);
          needsincref:= false;
@@ -2798,12 +2799,13 @@ begin
         end;
        end;
        if not needsincref then begin
-        if source^.d.kind = ck_ref then begin
+        if source^.d.kind in [ck_ref,ck_const] then begin
          ad1.address:= 0; //no source on stack for indi
         end
         else begin
          ad1.address:= ad1.offset;
         end;
+        ad1.offset:= 0;
         decref(); //before loading source for source = dest case
         needsdecref:= false;
        end;

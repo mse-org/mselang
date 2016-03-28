@@ -1164,10 +1164,30 @@ function pushaddr(const aref: addressrefty;{ const atype: ptypedataty;}
                                                 const assaindex: int32): int32;
 var
  op1: popinfoty;
+
+ procedure pushad(const ad: addressvaluety);
+ begin
+  if af_segment in ad.flags then begin
+   op1:= additem(oc_pushsegaddr,
+                 pushsegaddrssaar[ad.segaddress.segment]);
+   with op1^.par.memop.segdataaddress do begin
+    a.address:= ad.segaddress.address;
+    a.segment:= ad.segaddress.segment;
+    offset:= aref.offset;
+    a.element:= 0;
+   end;
+  end
+  else begin
+   notimplementederror('');
+  end;
+ end;
+
 begin
  case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aref.vardata)^ do begin
+    pushad(address);
+{
     if af_segment in address.flags then begin
      op1:= additem(oc_pushsegaddr,
                    pushsegaddrssaar[address.segaddress.segment]);
@@ -1181,12 +1201,18 @@ begin
     else begin
      notimplementederror('');
     end;
+}
    end;
   end;
   ark_contextdata: begin
-//   with pcontextdataty(avalue.contextdata)^ do begin
-//    if kind = ck_
-//   end;
+   with pcontextdataty(aref.contextdata)^ do begin
+    if kind = ck_ref then begin
+     pushad(dat.ref.c.address);
+    end
+    else begin
+     notimplementederror('');
+    end;
+   end;
   end;
   else begin
    notimplementederror('');
