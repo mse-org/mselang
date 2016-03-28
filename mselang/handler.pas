@@ -2639,7 +2639,20 @@ var
 
  procedure decref();
  begin
-notimplementederror('');
+  if indi then begin
+   ad1.kind:= ark_stackref;
+   ad1.address:= ad1.address-pointersize;
+   ad1.offset:= 0;
+  end
+  else begin
+   ad1.kind:= ark_contextdata;
+   ad1.contextdata:= @dest^.d;
+  end;
+  i1:= -1;
+  if destkind in factcontexts then begin
+   i1:= dest^.d.dat.fact.ssaindex;
+  end;
+  writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
 (*
   if indi then begin
    ad1.base:= ab_stackref;
@@ -2758,7 +2771,37 @@ begin
       
       needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
       if needsmanage then begin
-notimplementederror('');
+       needsincref:= not isconst;
+       needsdecref:= true;
+       if needsincref and issametype(ele.eledataabs(d.dat.datatyp.typedata),
+                      ele.eledataabs(source^.d.dat.datatyp.typedata)) then begin
+        ad1.kind:= ark_contextdata;
+        ad1.contextdata:= @source^.d;
+        if source^.d.kind = ck_ref then begin
+         writemanagedtypeop(mo_incref,destvar.typ,ad1,-1);
+         needsincref:= false;
+        end
+        else begin
+         if (source^.d.kind in [ck_fact,ck_subres]) and 
+                             (source^.d.dat.indirection = -1) then begin
+                                    //address on stack
+          if datasi1 = das_pointer then begin
+           ad1.offset:= -pointersize;
+          end
+          else begin
+           ad1.offset:= -destvar.typ^.h.bytesize;
+          end;
+          writemanagedtypeop(mo_incref,destvar.typ,ad1,
+                                           source^.d.dat.fact.ssaindex);
+          needsincref:= false;
+         end;
+        end;
+       end;
+       if not needsincref then begin
+        ad1.address:= 0; //no source on stack for indi
+        decref(); //before loading source for source = dest case
+        needsdecref:= false;
+       end;
 (*
        ad1.flags:= destvar.address.flags;
        ad1.indirectlevel:= indilev1;
@@ -2828,7 +2871,20 @@ notimplementederror('');
       ssa1:= source^.d.dat.fact.ssaindex; //source
 
       if needsmanage then begin
-notimplementederror('');
+       ad1.kind:= ark_stack;
+       if datasi1 = das_pointer then begin
+        ad1.address:= -pointersize;
+       end
+       else begin
+        ad1.address:= -destvar.typ^.h.bytesize;
+       end;
+       ad1.offset:= 0;
+       if needsincref then begin
+        writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
+       end;
+       if needsdecref then begin
+        decref();
+       end;
 (*
        if needsincref then begin
         ad1.base:= ab_stack;

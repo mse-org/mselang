@@ -250,6 +250,7 @@ var
  ab1: addressbasety;
  seg1: segmentty;
  ad1: dataoffsty;
+ offs1: dataoffsty;
  af1: addressflagsty;
  typ1: ptypedataty;
 begin
@@ -257,6 +258,7 @@ begin
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aaddress.vardata)^ do begin 
     af1:= address.flags;
+    offs1:= aaddress.offset;
     if (aaddress.kind = ark_vardatanoaggregate) then begin
      exclude(af1,af_aggregate);
     end;
@@ -272,17 +274,41 @@ begin
    end;
   end;
   ark_stack: begin
+   af1:= [];
    ab1:= ab_stack;
    ad1:= aaddress.address;
+   offs1:= aaddress.offset;
    typ1:= aaddress.typ;
   end;
   ark_stackref: begin
+   af1:= [];
    ab1:= ab_stackref;
    ad1:= aaddress.address;
+   offs1:= aaddress.offset;
    typ1:= aaddress.typ;
   end;
+  ark_contextdata: begin
+   with pcontextdataty(aaddress.contextdata)^ do begin
+    if kind = ck_ref then begin
+     if af_segment in dat.ref.c.address.flags then begin
+      ab1:= ab_segment;
+      ad1:= dat.ref.c.address.segaddress.address;
+      af1:= dat.ref.c.address.flags;
+      offs1:= dat.ref.offset;
+      seg1:= dat.ref.c.address.segaddress.segment;
+      typ1:= ele.eledataabs(dat.datatyp.typedata);
+     end
+     else begin
+      notimplementederror('');
+     end;
+    end
+    else begin
+     notimplementederror('');
+    end;
+   end;
+  end;
   else begin
-   notimplementederror('');
+   notimplementederror('20160328A');
   end;
  end;
  i1:= 0;
@@ -296,11 +322,11 @@ begin
   if ab1 = ab_segment then begin
    par.memop.segdataaddress.a.address:= ad1;
    par.memop.segdataaddress.a.segment:= seg1;
-   par.memop.segdataaddress.offset:= aaddress.offset;
+   par.memop.segdataaddress.offset:= offs1;
   end
   else begin
    par.memop.podataaddress.address:= ad1;
-   par.memop.podataaddress.offset:= aaddress.offset;
+   par.memop.podataaddress.offset:= offs1;
 //   par.voffset:= aaddress.address;
   end;
   if arop = aro_static then begin
