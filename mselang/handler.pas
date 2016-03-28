@@ -2798,7 +2798,12 @@ begin
         end;
        end;
        if not needsincref then begin
-        ad1.address:= 0; //no source on stack for indi
+        if source^.d.kind = ck_ref then begin
+         ad1.address:= 0; //no source on stack for indi
+        end
+        else begin
+         ad1.address:= ad1.offset;
+        end;
         decref(); //before loading source for source = dest case
         needsdecref:= false;
        end;

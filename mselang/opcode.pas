@@ -289,21 +289,31 @@ begin
   end;
   ark_contextdata: begin
    with pcontextdataty(aaddress.contextdata)^ do begin
-    if kind = ck_ref then begin
-     if af_segment in dat.ref.c.address.flags then begin
-      ab1:= ab_segment;
-      ad1:= dat.ref.c.address.segaddress.address;
-      af1:= dat.ref.c.address.flags;
-      offs1:= dat.ref.offset;
-      seg1:= dat.ref.c.address.segaddress.segment;
+    case kind of
+     ck_ref: begin
+      if af_segment in dat.ref.c.address.flags then begin
+       ab1:= ab_segment;
+       ad1:= dat.ref.c.address.segaddress.address;
+       af1:= dat.ref.c.address.flags;
+       offs1:= dat.ref.offset;
+       seg1:= dat.ref.c.address.segaddress.segment;
+       typ1:= ele.eledataabs(dat.datatyp.typedata);
+      end
+      else begin
+       notimplementederror('');
+      end;
+     end;
+     ck_fact: begin
+      af1:= [];
+      ab1:= ab_stack;
+      ad1:= aaddress.offset;
+      offs1:= 0;
+//       typ1:= aaddress.typ;
       typ1:= ele.eledataabs(dat.datatyp.typedata);
-     end
+     end;
      else begin
       notimplementederror('');
      end;
-    end
-    else begin
-     notimplementederror('');
     end;
    end;
   end;
