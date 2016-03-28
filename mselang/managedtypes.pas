@@ -26,30 +26,30 @@ const
                 tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
                );
               //todo: check ssaindex
-procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty;
-                              {const global: boolean;} const ssaindex: integer);
+procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty{;
+                              const global: boolean; const ssaindex: integer});
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                      const aaddress: addressvaluety; const ssaindex: integer);
+                      const aaddress: addressvaluety{; const ssaindex: integer});
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
 
 procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managedynarray(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managedynarraydynar(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managearraydynar(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 
 implementation
 uses
@@ -69,20 +69,20 @@ const
  );
 
 procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_none,{atype,}aref,ssaindex);
+   inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_none,{atype,}aref,ssaindex);
+   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_none,{atype,}aref,ssaindex);
+   increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_none,{atype,}aref,ssaindex);
+   decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -93,20 +93,20 @@ begin
 end;
 
 procedure managedynarray(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_none,{atype,}aref,ssaindex);
+   inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_none,{atype,}aref,ssaindex);
+   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_none,{atype,}aref,ssaindex);
+   increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_none,{atype,}aref,ssaindex);
+   decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -117,24 +117,24 @@ begin
 end;
 
 procedure managedynarraydynar(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_dynamic,{atype,}aref,ssaindex);
-   inipointer(aro_none,{atype,}aref,ssaindex);
+   inipointer(aro_dynamic,{atype,}aref{,ssaindex});
+   inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_dynamic,{atype,}aref,ssaindex);
-   finirefsize(aro_none,{atype,}aref,ssaindex);
+   finirefsize(aro_dynamic,{atype,}aref{,ssaindex});
+   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_dynamic,{atype,}aref,ssaindex);
-   increfsize(aro_none,{atype,}aref,ssaindex);
+   increfsize(aro_dynamic,{atype,}aref{,ssaindex});
+   increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_dynamic,{atype,}aref,ssaindex);
-   decrefsize(aro_none,{atype,}aref,ssaindex);
+   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
+   decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -145,24 +145,24 @@ begin
 end;
 
 procedure managedynarraystring8(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_dynamic,{atype,}aref,ssaindex);
-   inipointer(aro_none,{atype,}aref,ssaindex);
+   inipointer(aro_dynamic,{atype,}aref{,ssaindex});
+   inipointer(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_dynamic,{atype,}aref,ssaindex);
-   finirefsize(aro_none,{atype,}aref,ssaindex);
+   finirefsize(aro_dynamic,{atype,}aref{,ssaindex});
+   finirefsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_dynamic,{atype,}aref,ssaindex);
-   increfsize(aro_none,{atype,}aref,ssaindex);
+   increfsize(aro_dynamic,{atype,}aref{,ssaindex});
+   increfsize(aro_none,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_dynamic,{atype,}aref,ssaindex);
-   decrefsize(aro_none,{atype,}aref,ssaindex);
+   decrefsize(aro_dynamic,{atype,}aref{,ssaindex});
+   decrefsize(aro_none,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -173,20 +173,20 @@ begin
 end;
 
 procedure managearraydynar(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_static,{atype,}aref,ssaindex);
+   inipointer(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_static,{atype,}aref,ssaindex);
+   finirefsize(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_static,{atype,}aref,ssaindex);
+   increfsize(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_static,{atype,}aref,ssaindex);
+   decrefsize(aro_static,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -197,20 +197,20 @@ begin
 end;
 
 procedure managearraystring8(const op: managedopty;{ const atype: ptypedataty;}
-                       const aref: addressrefty; const ssaindex: integer);
+                       const aref: addressrefty{; const ssaindex: integer});
 begin
  case op of 
   mo_ini: begin
-   inipointer(aro_static,{atype,}aref,ssaindex);
+   inipointer(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_fini: begin
-   finirefsize(aro_static,{atype,}aref,ssaindex);
+   finirefsize(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_incref: begin
-   increfsize(aro_static,{atype,}aref,ssaindex);
+   increfsize(aro_static,{atype,}aref{,ssaindex});
   end;
   mo_decref: begin
-   decrefsize(aro_static,{atype,}aref,ssaindex);
+   decrefsize(aro_static,{atype,}aref{,ssaindex});
   end;
  {$ifdef mse_checkinternalerror}                             
   else begin
@@ -221,14 +221,14 @@ begin
 end;
 
 procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
-                        const aref: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 var
  sub1: pinternalsubdataty;
  op1: popinfoty;
 begin
  with info do begin
   sub1:= ele.eledataabs(getaddreftype(aref)^.recordmanagehandlers[op]);
-  pushaddr(aref,{atype,}ssaindex);
+  pushaddr(aref{,atype,ssaindex});
   op1:= callinternalsub(sub1^.address,true);
   if (sub1^.address = 0) and 
                 (not modularllvm or 
@@ -293,8 +293,8 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty;
-                const atype: ptypedataty; const aref: addressrefty;
-                                                   const ssaindex: integer);
+                const atype: ptypedataty; const aref: addressrefty{;
+                                                   const ssaindex: integer});
 var
  po2,po4: ptypedataty;
  po3: pfielddataty;
@@ -305,7 +305,7 @@ var
  ele1: elementoffsetty;
  i1: int32;
 begin
- atype^.h.manageproc(op,{atype,}aref,ssaindex);
+ atype^.h.manageproc(op,{atype,}aref{,ssaindex});
 (*
  case atype^.h.kind of
   dk_array: begin
@@ -415,8 +415,8 @@ begin
 end;
 
 procedure writemanagedvarop(const op: managedopty;
-             const chain: elementoffsetty;{ const global: boolean;}
-                                               const ssaindex: integer);
+             const chain: elementoffsetty{; const global: boolean;
+                                               const ssaindex: integer});
 var
  ad1: addressrefty;
  ele1: elementoffsetty;
@@ -430,7 +430,7 @@ begin
    po1:= ele.eledataabs(ele1);
    if tf_needsmanage in po1^.vf.flags then begin
     ad1.vardata:= po1;
-    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
+    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1{,ssaindex});
    end;
    ele1:= po1^.vf.next;
   until ele1 = 0;
@@ -460,7 +460,7 @@ begin
 end;
 
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
-                      const aaddress: addressvaluety; const ssaindex: integer);
+                      const aaddress: addressvaluety{; const ssaindex: integer});
 var
  ad1: addressrefty;
 begin

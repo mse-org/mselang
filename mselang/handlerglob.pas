@@ -165,6 +165,7 @@ type
                      ark_stack,ark_stackref);
  addressrefty = record //todo: resolve circular dependency, use real types
   offset: dataoffsty;
+  ssaindex: int32;
   case kind: addressrefkindty of
    ark_vardata,ark_vardatanoaggregate: (
     vardata: pointer;     //pvardataty
@@ -187,7 +188,7 @@ type
  end;
 
  managedtypeprocty = procedure(const op: managedopty;{ const atype: ptypedataty;}
-                          const aadress: addressrefty; const ssaindex: integer);
+                          const aadress: addressrefty{; const ssaindex: integer});
 
  manageddataty = record
   managedele: elementoffsetty;

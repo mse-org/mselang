@@ -1033,7 +1033,7 @@ begin
      curparam^:= ptruint(var1)-eledatabase;
      if tf_needsmanage in var1^.vf.flags then begin
       writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
-                                                        var1^.address,0);
+                                                        var1^.address);
       var1^.vf.next:= sub1^.paramfinichain;
       sub1^.paramfinichain:= ele.eledatarel(var1);
      end;
@@ -1409,7 +1409,7 @@ begin
    end;
   end;
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_ini,po1^.varchain,{false,}0);
+   writemanagedvarop(mo_ini,po1^.varchain);
   end;           //todo: implicit try-finally
  end;
 end;
@@ -1433,10 +1433,10 @@ begin
 //   end;
   end;
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_fini,po1^.varchain,{false,}0);
+   writemanagedvarop(mo_fini,po1^.varchain);
   end;
   if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_fini,po1^.paramfinichain,{false,}0);
+   writemanagedvarop(mo_fini,po1^.paramfinichain);
   end;          
   if d.subdef.varsize <> 0 then begin
    with additem(oc_locvarpop)^ do begin

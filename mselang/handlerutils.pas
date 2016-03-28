@@ -152,8 +152,8 @@ procedure pushdata(const address: addressvaluety;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
 function getaddreftype(const aref: addressrefty): ptypedataty;
-function pushaddr(const aref: addressrefty;{ const atype: ptypedataty;}
-                            const assaindex: int32): int32; //returns ssad
+function pushaddr(const aref: addressrefty{; const atype: ptypedataty;}
+                            {const assaindex: int32}): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
                const before: boolean; const sourceoffset: int32{;
@@ -1160,8 +1160,8 @@ begin
  end;
 end;
 
-function pushaddr(const aref: addressrefty;{ const atype: ptypedataty;}
-                                                const assaindex: int32): int32;
+function pushaddr(const aref: addressrefty{ const atype: ptypedataty;
+                                             const assaindex: int32}): int32;
 var
  op1: popinfoty;
 

@@ -96,13 +96,13 @@ procedure addlabel();
 
           //refcount helpers
 procedure inipointer(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 procedure finirefsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 procedure increfsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 procedure decrefsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
                      
 procedure beginforloop(out ainfo: loopinfoty; const count: loopcountty);
 procedure endforloop(const ainfo: loopinfoty);
@@ -244,7 +244,7 @@ const
 
 procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
                                                     {const atype: ptypedataty;}
-                        const aaddress: addressrefty; const ssaindex: integer);
+                        const aref: addressrefty{; const ssaindex: integer});
 var
  i1: int32;
  ab1: addressbasety;
@@ -254,12 +254,12 @@ var
  af1: addressflagsty;
  typ1: ptypedataty;
 begin
- case aaddress.kind of
+ case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
-   with pvardataty(aaddress.vardata)^ do begin 
+   with pvardataty(aref.vardata)^ do begin 
     af1:= address.flags;
-    offs1:= aaddress.offset;
-    if (aaddress.kind = ark_vardatanoaggregate) then begin
+    offs1:= aref.offset;
+    if (aref.kind = ark_vardatanoaggregate) then begin
      exclude(af1,af_aggregate);
     end;
     if af_segment in address.flags then begin
@@ -276,19 +276,19 @@ begin
   ark_stack: begin
    af1:= [];
    ab1:= ab_stack;
-   ad1:= aaddress.address;
-   offs1:= aaddress.offset;
-   typ1:= aaddress.typ;
+   ad1:= aref.address;
+   offs1:= aref.offset;
+   typ1:= aref.typ;
   end;
   ark_stackref: begin
    af1:= [];
    ab1:= ab_stackref;
-   ad1:= aaddress.address;
-   offs1:= aaddress.offset;
-   typ1:= aaddress.typ;
+   ad1:= aref.address;
+   offs1:= aref.offset;
+   typ1:= aref.typ;
   end;
   ark_contextdata: begin
-   with pcontextdataty(aaddress.contextdata)^ do begin
+   with pcontextdataty(aref.contextdata)^ do begin
     case kind of
      ck_ref: begin
       if af_segment in dat.ref.c.address.flags then begin
@@ -306,7 +306,7 @@ begin
      ck_fact: begin
       af1:= [];
       ab1:= ab_stack;
-      ad1:= aaddress.offset;
+      ad1:= aref.offset;
       offs1:= 0;
 //       typ1:= aaddress.typ;
       typ1:= ele.eledataabs(dat.datatyp.typedata);
@@ -326,7 +326,7 @@ begin
   i1:= getssa(ocssa_aggregate);
  end;
  with additem(opsar[arop][ab1],i1)^ do begin
-  par.ssas1:= ssaindex;
+  par.ssas1:= aref.ssaindex;
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= af1;
   if ab1 = ab_segment then begin
@@ -388,27 +388,27 @@ begin
 end;
 
 procedure inipointer(const arop: aropty; {const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 begin
- addmanagedop(storenilops,arop,{atype,}aaddress,ssaindex);
+ addmanagedop(storenilops,arop,{atype,}aref{,ssaindex});
 end;
 
 procedure finirefsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 begin
- addmanagedop(finirefsizeops,arop,{atype,}aaddress,ssaindex);
+ addmanagedop(finirefsizeops,arop,{atype,}aref{,ssaindex});
 end;
 
 procedure increfsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 begin
- addmanagedop(increfsizeops,arop,{atype,}aaddress,ssaindex);
+ addmanagedop(increfsizeops,arop,{atype,}aref{,ssaindex});
 end;
 
 procedure decrefsize(const arop: aropty;{ const atype: ptypedataty;}
-                     const aaddress: addressrefty; const ssaindex: integer);
+                     const aref: addressrefty{; const ssaindex: integer});
 begin
- addmanagedop(decrefsizeops,arop,{atype,}aaddress,ssaindex);
+ addmanagedop(decrefsizeops,arop,{atype,}aref{,ssaindex});
 end;
 
 function getglobvaraddress(const adatasize: databitsizety; const asize: integer;

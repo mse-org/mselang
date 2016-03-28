@@ -215,11 +215,11 @@ begin
  with info do begin
   if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,{true,}-1);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain);
     endsimplesub(false);
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,{true,}-1);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain);
     endsimplesub(false);
    end;
   end;
@@ -2652,7 +2652,8 @@ var
   if destkind in factcontexts then begin
    i1:= dest^.d.dat.fact.ssaindex;
   end;
-  writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
+  ad1.ssaindex:= i1;
+  writemanagedtypeop(mo_decref,destvar.typ,ad1);
 (*
   if indi then begin
    ad1.base:= ab_stackref;
@@ -2779,7 +2780,7 @@ begin
         ad1.contextdata:= @source^.d;
         ad1.offset:= 0;
         if source^.d.kind = ck_ref then begin
-         writemanagedtypeop(mo_incref,destvar.typ,ad1,-1);
+         writemanagedtypeop(mo_incref,destvar.typ,ad1);
          needsincref:= false;
         end
         else begin
@@ -2792,8 +2793,8 @@ begin
           else begin
            ad1.offset:= -destvar.typ^.h.bytesize;
           end;
-          writemanagedtypeop(mo_incref,destvar.typ,ad1,
-                                           source^.d.dat.fact.ssaindex);
+          ad1.ssaindex:= source^.d.dat.fact.ssaindex;
+          writemanagedtypeop(mo_incref,destvar.typ,ad1);
           needsincref:= false;
          end;
         end;
@@ -2886,8 +2887,9 @@ begin
         ad1.address:= -destvar.typ^.h.bytesize;
        end;
        ad1.offset:= 0;
+       ad1.ssaindex:= ssa1;
        if needsincref then begin
-        writemanagedtypeop(mo_incref,destvar.typ,ad1,ssa1);
+        writemanagedtypeop(mo_incref,destvar.typ,ad1);
        end;
        if needsdecref then begin
         decref();
