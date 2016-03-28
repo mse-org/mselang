@@ -251,6 +251,7 @@ var
  seg1: segmentty;
  ad1: dataoffsty;
  af1: addressflagsty;
+ typ1: ptypedataty;
 begin
  case aaddress.kind of
   ark_vardata,ark_vardatanoaggregate: begin
@@ -263,6 +264,7 @@ begin
      ab1:= ab_segment;
      ad1:= address.segaddress.address;
      seg1:= address.segaddress.segment;
+     typ1:= ele.eledataabs(vf.typ);
     end
     else begin
      notimplementederror('');
@@ -292,7 +294,7 @@ begin
 //   par.voffset:= aaddress.address;
   end;
   if arop = aro_static then begin
-   i1:= atype^.infoarray.i.totitemcount;
+   i1:= typ1^.infoarray.i.totitemcount;
    if (co_llvm in info.compileoptions) then begin
     par.memop.t.size:= 
               info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
