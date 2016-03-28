@@ -1409,7 +1409,7 @@ begin
    end;
   end;
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_ini,po1^.varchain,false,0);
+   writemanagedvarop(mo_ini,po1^.varchain,{false,}0);
   end;           //todo: implicit try-finally
  end;
 end;
@@ -1433,10 +1433,10 @@ begin
 //   end;
   end;
   if stf_needsmanage in s.currentstatementflags then begin
-   writemanagedvarop(mo_fini,po1^.varchain,false,0);
+   writemanagedvarop(mo_fini,po1^.varchain,{false,}0);
   end;
   if po1^.paramfinichain <> 0 then begin
-   writemanagedvarop(mo_fini,po1^.paramfinichain,false,0);
+   writemanagedvarop(mo_fini,po1^.paramfinichain,{false,}0);
   end;          
   if d.subdef.varsize <> 0 then begin
    with additem(oc_locvarpop)^ do begin

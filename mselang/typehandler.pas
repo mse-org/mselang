@@ -420,6 +420,8 @@ var
  locad1: memopty;
  i1,i2: int32;
 begin
+notimplementederror('');
+(*
  with info do begin
   with locad1 do begin
    t:= bitoptypes[das_pointer];
@@ -475,6 +477,7 @@ testvar1:= ele.eledatarel(sub1);
    endsimplesub(true);
   end;
  end;
+*)
 end;
 var testvar3: popinfoty;
 procedure createrecordmanagehandler(const atyp: elementoffsetty);

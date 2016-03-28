@@ -890,11 +890,11 @@ parseend:
   if stf_needsmanage in s.currentstatementflags then begin
    with s.unitinfo^ do begin
     if getinternalsub(isub_ini,inifinisub) then begin //no initialization section                                               
-     writemanagedvarop(mo_ini,varchain,true,0);
+     writemanagedvarop(mo_ini,varchain,{true,}0);
      endsimplesub(false);
     end;
     if getinternalsub(isub_fini,inifinisub) then begin //no finalization section
-     writemanagedvarop(mo_fini,varchain,true,0);
+     writemanagedvarop(mo_fini,varchain,{true,}0);
      endsimplesub(false);
     end;
    end;

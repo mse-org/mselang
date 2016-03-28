@@ -215,11 +215,11 @@ begin
  with info do begin
   if stf_needsmanage in s.currentstatementflags then begin
    if getinternalsub(isub_ini,ad2) then begin //no initialization
-    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,-1);
+    writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,{true,}-1);
     endsimplesub(false);
    end;
    if getinternalsub(isub_fini,ad2) then begin  //no finalization
-    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,-1);
+    writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,{true,}-1);
     endsimplesub(false);
    end;
   end;
@@ -2639,6 +2639,8 @@ var
 
  procedure decref();
  begin
+notimplementederror('');
+(*
   if indi then begin
    ad1.base:= ab_stackref;
    ad1.address:= ad1.address-pointersize;
@@ -2660,6 +2662,7 @@ var
    i1:= dest^.d.dat.fact.ssaindex;
   end;
   writemanagedtypeop(mo_decref,destvar.typ,ad1,i1);
+*)
  end; //decref
 
 label
@@ -2748,14 +2751,6 @@ begin
       if d.dat.datatyp.indirectlevel >= 1 then begin
        datasi1:= das_pointer;
       end;
-{
-      if d.dat.datatyp.indirectlevel > 1 then begin
-       si1:= das_pointer;
-      end
-      else begin
-       si1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.datasize;
-      end;
-}
       if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
        assignmenterror(contextstack[s.stacktop].d,destvar);
        goto endlab;
@@ -2763,6 +2758,8 @@ begin
       
       needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
       if needsmanage then begin
+notimplementederror('');
+(*
        ad1.flags:= destvar.address.flags;
        ad1.indirectlevel:= indilev1;
        needsincref:= not isconst;
@@ -2809,6 +2806,7 @@ begin
         decref(); //before loading source for source = dest case
         needsdecref:= false;
        end;
+*)
       end;
       if not getvalue(2,datasi1) then begin
        goto endlab;
@@ -2830,6 +2828,8 @@ begin
       ssa1:= source^.d.dat.fact.ssaindex; //source
 
       if needsmanage then begin
+notimplementederror('');
+(*
        if needsincref then begin
         ad1.base:= ab_stack;
         if datasi1 = das_pointer then begin
@@ -2844,6 +2844,7 @@ begin
        if needsdecref then begin
         decref();
        end;
+*)
       end;
  
       if indi then begin

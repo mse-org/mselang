@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
-  a=0,665,5,base
+  a=0,665,4,base
   c=22
    (
    kind=1
@@ -2304,7 +2304,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,5,dynarray
+   a=0,665,4,dynarray
    c=4
     (
     kind=2
@@ -2330,8 +2330,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,setlength llvm
-    teststate=2
+    a=0,648,1,setlength llvm
+    teststate=1
     path=setlength.mla
     comment=
     cc=${mlc_llvm}
@@ -2344,9 +2344,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -2394,7 +2394,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=dynarray/
    comment=
    cc=
@@ -2559,7 +2559,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B72FCA04
+    ao=An unhandled exception occured at $B736BDC4
     ae=
     aec=123
     ie=0
@@ -4999,7 +4999,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=2
+  teststate=1
   path=base/
   comment=
   cc=
@@ -5017,7 +5017,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=21
    (
    kind=1
@@ -5965,8 +5965,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classstringfield
-   teststate=2
+   a=0,648,1,classstringfield
+   teststate=1
    path=classstringfield.mla
    comment=
    cc=${mlc}
@@ -5980,9 +5980,9 @@ c=3
    ae=0
    eec=0
    cr=0
-   ao=Access violation
+   ao=abc
    ae=
-   aec=1
+   aec=0
    ie=0
    )
    (
@@ -6051,7 +6051,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -6409,7 +6409,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=

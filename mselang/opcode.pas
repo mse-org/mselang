@@ -246,20 +246,65 @@ procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
                                                     const atype: ptypedataty;
                         const aaddress: addressrefty; const ssaindex: integer);
 var
-// arop1: aropty;
  i1: int32;
+ ab1: addressbasety;
+ seg1: segmentty;
+ ad1: dataoffsty;
+ af1: addressflagsty;
 begin
-{
- arop1:= aro_none;
- case atype^.h.kind of
-  dk_array: begin
-   arop1:= aro_static;
+ case aaddress.kind of
+  ark_vardata,ark_vardatanoaggregate: begin
+   with pvardataty(aaddress.vardata)^ do begin 
+    af1:= address.flags;
+    if (aaddress.kind = ark_vardatanoaggregate) then begin
+     exclude(af1,af_aggregate);
+    end;
+    if af_segment in address.flags then begin
+     ab1:= ab_segment;
+     ad1:= address.segaddress.address;
+     seg1:= address.segaddress.segment;
+    end
+    else begin
+     notimplementederror('');
+    end;
+   end;
   end;
-  dk_dynarray: begin
-   arop1:= aro_dynamic;
+  else begin
+   notimplementederror('');
   end;
  end;
-}
+ i1:= 0;
+ if af_aggregate in af1 then begin
+  i1:= getssa(ocssa_aggregate);
+ end;
+ with additem(opsar[arop][ab1],i1)^ do begin
+  par.ssas1:= ssaindex;
+  par.memop.t:= bitoptypes[das_pointer];
+  par.memop.t.flags:= af1;
+  if ab1 = ab_segment then begin
+   par.memop.segdataaddress.a.address:= ad1;
+   par.memop.segdataaddress.a.segment:= seg1;
+   par.memop.segdataaddress.offset:= aaddress.offset;
+  end
+  else begin
+   par.memop.podataaddress.address:= ad1;
+   par.memop.podataaddress.offset:= aaddress.offset;
+//   par.voffset:= aaddress.address;
+  end;
+  if arop = aro_static then begin
+   i1:= atype^.infoarray.i.totitemcount;
+   if (co_llvm in info.compileoptions) then begin
+    par.memop.t.size:= 
+              info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
+   end
+   else begin
+    par.memop.t.size:= i1;
+   end;
+   par.memop.t.kind:= das_none;
+   par.memop.t.flags:= [af_arrayop]; //size = count
+  end;
+ end;
+(*
  i1:= 0;
  if af_aggregate in aaddress.flags then begin
   i1:= getssa(ocssa_aggregate);
@@ -291,6 +336,7 @@ begin
    par.memop.t.flags:= [af_arrayop]; //size = count
   end;
  end;
+ *)
 end;
 
 procedure inipointer(const arop: aropty; const atype: ptypedataty;

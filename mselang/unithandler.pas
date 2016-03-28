@@ -1412,7 +1412,7 @@ begin
 {$endif}
  checkforwardtypeerrors();
  getinternalsub(isub_ini,ad1);
- writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,true,0);
+ writemanagedvarop(mo_ini,info.s.unitinfo^.varchain,{true,}0);
 {
  with info,unitinfo^ do begin
   initializationstart:= opcount;
@@ -1460,7 +1460,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('FINALIZATION');
 {$endif}
- writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,true,0);
+ writemanagedvarop(mo_fini,info.s.unitinfo^.varchain,{true,}0);
  endsimplesub(false);
 {
  with info,unitinfo^ do begin

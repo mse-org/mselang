@@ -158,6 +158,21 @@ type
  addresskindty = boolean;{(adk_local,adk_global)}
 
  managedopty = (mo_ini,mo_fini,mo_incref,mo_decref,mo_decrefindi);
+ addressrefkindty = (ark_vardata,ark_vardatanoaggregate,ark_datacontext);
+ addressrefty = record //todo: resolve circular dependency, use real types
+  offset: dataoffsty;
+  case kind: addressrefkindty of
+   ark_vardata,ark_vardatanoaggregate: (vardata: pointer);         //pvardataty
+   ark_datacontext: (datacontext: pointer); //pdatacontextty
+{
+  address: dataoffsty;
+  flags: addressflagsty;
+  offset: dataoffsty;
+  indirectlevel: int32;
+  case base: addressbasety of
+   ab_segment: (segment: segmentty);
+}
+ end;
 
  ptypedataty = ^typedataty; 
  managedtypeprocty = procedure(const op: managedopty; const atype: ptypedataty;

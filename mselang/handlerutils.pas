@@ -1140,6 +1140,8 @@ function pushaddr(const avalue: addressrefty; const atype: ptypedataty;
 var
  op1: popinfoty;
 begin
+notimplementederror('');
+(*
  case avalue.base of
   ab_segment: begin
    op1:= additem(oc_pushsegaddr,
@@ -1182,6 +1184,7 @@ begin
  end;
 // op1^.par.memop.t:= bitoptypes[das_pointer];
  result:= op1^.par.ssad;
+*)
 end;
 
 procedure pushins(const ains: boolean; const stackoffset: integer;

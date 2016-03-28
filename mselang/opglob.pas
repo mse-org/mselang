@@ -22,7 +22,8 @@ uses
  
 type
  addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
- addressrefty = record       //todo_ use common record type with tempaddressty
+{
+ addressrefty = record
   address: dataoffsty;
   flags: addressflagsty;
   offset: dataoffsty;
@@ -30,7 +31,7 @@ type
   case base: addressbasety of
    ab_segment: (segment: segmentty);
  end;
-
+}
  globallocinfoty = record
   a: segaddressty;
   size: typeallocinfoty;
