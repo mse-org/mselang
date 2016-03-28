@@ -151,8 +151,8 @@ procedure pushdata(const address: addressvaluety;
                    const varele: elementoffsetty;
                    const offset: dataoffsty;
                    const opdatatype: typeallocinfoty);
-function getaddreftype(aaddress: addressrefty): ptypedataty;
-function pushaddr(const avalue: addressrefty;{ const atype: ptypedataty;}
+function getaddreftype(const aref: addressrefty): ptypedataty;
+function pushaddr(const aref: addressrefty;{ const atype: ptypedataty;}
                             const assaindex: int32): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
@@ -1136,11 +1136,11 @@ begin
  end;
 end;
 
-function getaddreftype(aaddress: addressrefty): ptypedataty;
+function getaddreftype(const aref: addressrefty): ptypedataty;
 begin
- case aaddress.kind of
+ case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
-   with pvardataty(aaddress.vardata)^ do begin 
+   with pvardataty(aref.vardata)^ do begin 
     if af_segment in address.flags then begin
      result:= ele.eledataabs(vf.typ);
     end
@@ -1149,27 +1149,32 @@ begin
     end;
    end;
   end;
+  ark_contextdata: begin
+   with pcontextdataty(aref.contextdata)^ do begin
+    result:= ele.eledataabs(dat.datatyp.typedata);
+   end;
+  end
   else begin
    notimplementederror('');
   end;
  end;
 end;
 
-function pushaddr(const avalue: addressrefty;{ const atype: ptypedataty;}
+function pushaddr(const aref: addressrefty;{ const atype: ptypedataty;}
                                                 const assaindex: int32): int32;
 var
  op1: popinfoty;
 begin
- case avalue.kind of
+ case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
-   with pvardataty(avalue.vardata)^ do begin
+   with pvardataty(aref.vardata)^ do begin
     if af_segment in address.flags then begin
      op1:= additem(oc_pushsegaddr,
                    pushsegaddrssaar[address.segaddress.segment]);
      with op1^.par.memop.segdataaddress do begin
       a.address:= address.segaddress.address;
       a.segment:= address.segaddress.segment;
-      offset:= avalue.offset;
+      offset:= aref.offset;
       a.element:= 0;
      end;
     end
@@ -1177,6 +1182,11 @@ begin
      notimplementederror('');
     end;
    end;
+  end;
+  ark_contextdata: begin
+//   with pcontextdataty(avalue.contextdata)^ do begin
+//    if kind = ck_
+//   end;
   end;
   else begin
    notimplementederror('');
