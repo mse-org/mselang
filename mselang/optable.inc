@@ -931,6 +931,8 @@
 //ssaonly
 //oc_nestedvar
   (ssa: nestedvarssa; proc: nil; flags: []), 
+//oc_nestedvarad
+  (ssa: nestedvaradssa; proc: nil; flags: []), 
 //oc_popnestedvar
   (ssa: popnestedvarssa; proc: nil; flags: []), 
 //oc_pushnestedvar

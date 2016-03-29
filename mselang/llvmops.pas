@@ -2703,6 +2703,9 @@ procedure pushlocaddrop();
 begin
  with pc^.par do begin
   bcstream.emitlocdataaddress(memop);
+  if memop.locdataaddress.a.framelevel >= 0 then begin
+   notimplementederror('');
+  end;
  end;
 end;
 {
@@ -3935,6 +3938,7 @@ const
 
 //ssa only
   nestedvarssa = 5;
+  nestedvaradssa = 5;
   popnestedvarssa = 5;
 //  popsegaggregatessa = 3;
   pushnestedvarssa = 5;

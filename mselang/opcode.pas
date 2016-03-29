@@ -272,6 +272,8 @@ begin
     end
     else begin
      if af_local in af1 then begin
+      tracklocalaccess(address.locaddress,ele.eledatarel(aref.vardata),
+                                                      bitoptypes[das_pointer]);
       lev1:= info.sublevel - address.locaddress.framelevel - 1;
       ab1:= ab_local;
       ad1:= address.locaddress.address;
@@ -310,6 +312,8 @@ begin
       end
       else begin
        if af_local in af1 then begin
+        tracklocalaccess(dat.ref.c.address.locaddress,dat.ref.c.varele,
+                                                      bitoptypes[das_pointer]);
         lev1:= info.sublevel - dat.ref.c.address.locaddress.framelevel - 1;
         ab1:= ab_local;
         ad1:= dat.ref.c.address.locaddress.address;
@@ -339,6 +343,9 @@ begin
  end;
  if af_aggregate in af1 then begin
   ssaext1:= ssaext1 + getssa(ocssa_aggregate);
+ end;
+ if (ab1 = ab_local) and (lev1 >= 0) then begin
+  ssaext1:= ssaext1 + getssa(ocssa_nestedvar);
  end;
  with additem(opsar[arop][ab1],ssaext1)^ do begin
   par.ssas1:= aref.ssaindex;

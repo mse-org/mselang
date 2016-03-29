@@ -4417,6 +4417,7 @@ const
 
 //ssa only
   nestedvarssa = 0;
+  nestedvaradssa = 0;
   popnestedvarssa = 0;
 //  popsegaggregatessa = 0;
   pushnestedvarssa = 0;

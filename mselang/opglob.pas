@@ -538,6 +538,7 @@ type
     
 //ssaonly
   ocssa_nestedvar,
+  ocssa_nestedvarad,
   ocssa_popnestedvar,
 //  ocssa_popsegaggregate,
   ocssa_pushnestedvar,  //per item

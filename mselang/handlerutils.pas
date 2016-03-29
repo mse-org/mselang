@@ -705,7 +705,7 @@ end;
 
 procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
 var
- int1: integer;
+ i1,i2: integer;
  po1: psubdataty;
 begin
  with info,contextstack[s.stackindex+stackoffset].d.dat do begin
@@ -733,10 +733,14 @@ begin
    end;
   end
   else begin
-   with insertitem(oc_pushlocaddr,stackoffset,before)^ do begin
+   i1:= info.sublevel-ref.c.address.locaddress.framelevel-1;
+   i2:= 0;
+   if i1 >= 0 then begin
+    i2:= getssa(ocssa_nestedvarad);
+   end;
+   with insertitem(oc_pushlocaddr,stackoffset,before,i2)^ do begin
     par.memop.locdataaddress.a:= ref.c.address.locaddress;
-    par.memop.locdataaddress.a.framelevel:= info.sublevel-
-                          ref.c.address.locaddress.framelevel-1;
+    par.memop.locdataaddress.a.framelevel:= i1;
     par.memop.locdataaddress.offset:= ref.offset;
     par.memop.t:= getopdatatype(datatyp);
    end;
