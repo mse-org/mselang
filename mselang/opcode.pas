@@ -272,14 +272,9 @@ begin
     end
     else begin
      if af_local in af1 then begin
-      lev1:= address.locaddress.framelevel - info.sublevel - 1;
-      if lev1 < 0 then begin
-       ab1:= ab_local;
-       ad1:= address.locaddress.address;
-      end
-      else begin
-       notimplementederror('');
-      end;
+      lev1:= info.sublevel - address.locaddress.framelevel - 1;
+      ab1:= ab_local;
+      ad1:= address.locaddress.address;
      end
      else begin
       notimplementederror('');
@@ -315,14 +310,9 @@ begin
       end
       else begin
        if af_local in af1 then begin
-        lev1:= dat.ref.c.address.locaddress.framelevel - info.sublevel - 1;
-        if lev1 < 0 then begin
-         ab1:= ab_local;
-         ad1:= dat.ref.c.address.locaddress.address;
-        end
-        else begin
-         notimplementederror('');
-        end;
+        lev1:= info.sublevel - dat.ref.c.address.locaddress.framelevel - 1;
+        ab1:= ab_local;
+        ad1:= dat.ref.c.address.locaddress.address;
        end
        else begin
         notimplementederror('');
