@@ -2069,8 +2069,10 @@ end;
 
 procedure increfsizelocop();
 begin
- notimplemented();
+ loadloc(false);
+ callcompilersub(cs_increfsize,false,[bcstream.relval(0)]);
 end;
+
 procedure increfsizereg0op();
 begin
  notimplemented();
@@ -2146,7 +2148,7 @@ end;
 procedure decrefsizelocop();
 begin
  with pc^.par do begin
-  bcstream.emitlocdataaddress(memop);
+  loadloc(false);
 //  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(pointertype));
   callcompilersub(cs_decrefsize,false,[bcstream.relval(0)]);
  end;
