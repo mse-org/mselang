@@ -172,72 +172,72 @@ end;
 const
  storenilops: aropadsty = (
   (    //aro_none
-  //ab_segment,   ab_frame,      ab_reg0,
-   oc_storesegnil,oc_storeframenil,oc_storereg0nil,
+  //ab_segment,   ab_local,      ab_reg0,
+   oc_storesegnil,oc_storelocnil,oc_storereg0nil,
   //ab_stack,      ab_stackref
    oc_storestacknil,oc_storestackrefnil),
   (    //aro_static
-  //ab_segment,     ab_frame,        ab_reg0,
-   oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,
+  //ab_segment,     ab_local,        ab_reg0,
+   oc_storesegnilar,oc_storelocnilar,oc_storereg0nilar,
   //ab_stack,       ab_stackref
    oc_storestacknilar,oc_storestackrefnilar),
   (    //aro_dynamic
-  //ab_segment,     ab_frame,        ab_reg0,
-   oc_storesegnildynar,oc_storeframenildynar,oc_storereg0nildynar,
+  //ab_segment,     ab_local,        ab_reg0,
+   oc_storesegnildynar,oc_storelocnildynar,oc_storereg0nildynar,
   //ab_stack,       ab_stackref
    oc_storestacknildynar,oc_storestackrefnildynar)
  );
 
  finirefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_frame,            ab_reg0,
-   oc_finirefsizeseg,oc_finirefsizeframe,oc_finirefsizereg0,
+  //ab_segment,         ab_local,            ab_reg0,
+   oc_finirefsizeseg,oc_finirefsizeloc,oc_finirefsizereg0,
   //ab_stack,           ab_stackref
    oc_finirefsizestack,oc_finirefsizestackref),
   (     //aro_static
-  //ab_segment,           ab_frame,              ab_reg0,
-   oc_finirefsizesegar,oc_finirefsizeframear,oc_finirefsizereg0ar,
+  //ab_segment,           ab_local,              ab_reg0,
+   oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizereg0ar,
   //ab_stack,             ab_stackref
    oc_finirefsizestackar,oc_finirefsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_frame,              ab_reg0,
-   oc_finirefsizesegdynar,oc_finirefsizeframedynar,oc_finirefsizereg0dynar,
+  //ab_segment,           ab_local,              ab_reg0,
+   oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizereg0dynar,
   //ab_stack,             ab_stackref
    oc_finirefsizestackdynar,oc_finirefsizestackrefdynar)
  );
 
  increfsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_frame,            ab_reg0,
-   oc_increfsizeseg,oc_increfsizeframe,oc_increfsizereg0,
+  //ab_segment,         ab_local,            ab_reg0,
+   oc_increfsizeseg,oc_increfsizeloc,oc_increfsizereg0,
   //ab_stack,           ab_stackref
    oc_increfsizestack,oc_increfsizestackref),
   (     //aro_static
-  //ab_segment,           ab_frame,              ab_reg0,
-   oc_increfsizesegar,oc_increfsizeframear,oc_increfsizereg0ar,
+  //ab_segment,           ab_local,              ab_reg0,
+   oc_increfsizesegar,oc_increfsizelocar,oc_increfsizereg0ar,
   //ab_stack,             ab_stackref
    oc_increfsizestackar,oc_increfsizestackrefar),
   (     //aro_dynamic
-  //ab_segment,           ab_frame,              ab_reg0,
-   oc_increfsizesegdynar,oc_increfsizeframedynar,oc_increfsizereg0dynar,
+  //ab_segment,           ab_local,              ab_reg0,
+   oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizereg0dynar,
   //ab_stack,             ab_stackref
    oc_increfsizestackdynar,oc_increfsizestackrefdynar)
  );
 
  decrefsizeops: aropadsty = (
   (     //aro_none
-  //ab_segment,         ab_frame,            ab_reg0,
-   oc_decrefsizeseg,oc_decrefsizeframe,oc_decrefsizereg0,
+  //ab_segment,         ab_local,            ab_reg0,
+   oc_decrefsizeseg,oc_decrefsizeloc,oc_decrefsizereg0,
   //ab_stack,           ab_stackref
    oc_decrefsizestack,oc_decrefsizestackref),
   (     //aro_static
-  //ab_global,           ab_frame,              ab_reg0,
-   oc_decrefsizesegar,oc_decrefsizeframear,oc_decrefsizereg0ar,
+  //ab_global,           ab_local,              ab_reg0,
+   oc_decrefsizesegar,oc_decrefsizelocar,oc_decrefsizereg0ar,
   //ab_stack,             ab_stackref
    oc_decrefsizestackar,oc_decrefsizestackrefar),
   (     //aro_dynamic
-  //ab_global,           ab_frame,              ab_reg0,
-   oc_decrefsizesegdynar,oc_decrefsizeframedynar,oc_decrefsizereg0dynar,
+  //ab_global,           ab_local,              ab_reg0,
+   oc_decrefsizesegdynar,oc_decrefsizelocdynar,oc_decrefsizereg0dynar,
   //ab_stack,             ab_stackref
    oc_decrefsizestackdynar,oc_decrefsizestackrefdynar)
  );
@@ -264,17 +264,17 @@ begin
     if (aref.kind = ark_vardatanoaggregate) then begin
      exclude(af1,af_aggregate);
     end;
-    if af_segment in address.flags then begin
+    if af_segment in af1 then begin
      ab1:= ab_segment;
      ad1:= address.segaddress.address;
      seg1:= address.segaddress.segment;
      typ1:= ele.eledataabs(vf.typ);
     end
     else begin
-     if af_local in address.flags then begin
+     if af_local in af1 then begin
       lev1:= address.locaddress.framelevel - info.sublevel - 1;
       if lev1 < 0 then begin
-       ab1:= ab_frame;
+       ab1:= ab_local;
        ad1:= address.locaddress.address;
       end
       else begin
@@ -307,17 +307,17 @@ begin
      ck_ref: begin
       typ1:= ele.eledataabs(dat.datatyp.typedata);
       offs1:= dat.ref.offset;
-      if af_segment in dat.ref.c.address.flags then begin
+      af1:= dat.ref.c.address.flags;
+      if af_segment in af1 then begin
        ab1:= ab_segment;
        ad1:= dat.ref.c.address.segaddress.address;
-       af1:= dat.ref.c.address.flags;
        seg1:= dat.ref.c.address.segaddress.segment;
       end
       else begin
-       if af_local in dat.ref.c.address.flags then begin
+       if af_local in af1 then begin
         lev1:= dat.ref.c.address.locaddress.framelevel - info.sublevel - 1;
         if lev1 < 0 then begin
-         ab1:= ab_frame;
+         ab1:= ab_local;
          ad1:= dat.ref.c.address.locaddress.address;
         end
         else begin
@@ -356,14 +356,24 @@ begin
   par.memop.t.flags:= af1;
   case ab1 of
    ab_segment: begin
-    par.memop.segdataaddress.a.address:= ad1;
-    par.memop.segdataaddress.a.segment:= seg1;
-    par.memop.segdataaddress.offset:= offs1;
+    with par.memop.segdataaddress do begin
+     a.address:= ad1;
+     a.segment:= seg1;
+     offset:= offs1;
+    end;
+   end;
+   ab_local: begin
+    with par.memop.locdataaddress do begin
+     a.address:= ad1;
+     a.framelevel:= lev1;
+     offset:= offs1;
+    end;
    end;
    else begin
-    par.memop.podataaddress.address:= ad1;
-    par.memop.podataaddress.offset:= offs1;
- //   par.voffset:= aaddress.address;
+    with par.memop.podataaddress do begin
+     address:= ad1;
+     offset:= offs1;
+    end;
    end;
   end;
   if arop = aro_static then begin

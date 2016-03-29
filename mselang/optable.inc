@@ -499,8 +499,8 @@
 
 //oc_storesegnil
   (ssa: storesegnilssa; proc: @storesegnilop; flags: [of_relocseg]), 
-//oc_storeframenil
-  (ssa: storeframenilssa; proc: @storeframenilop; flags: []), 
+//oc_storelocnil
+  (ssa: storelocnilssa; proc: @storelocnilop; flags: []), 
 //oc_storereg0nil
   (ssa: storereg0nilssa; proc: @storereg0nilop; flags: []), 
 //oc_storestacknil
@@ -510,8 +510,8 @@
 
 //oc_storesegnilar
   (ssa: storesegnilarssa; proc: @storesegnilarop; flags: [of_relocseg]), 
-//oc_storeframenilar
-  (ssa: storeframenilarssa; proc: @storeframenilarop; flags: []), 
+//oc_storelocnilar
+  (ssa: storelocnilarssa; proc: @storelocnilarop; flags: []), 
 //oc_storereg0nilar
   (ssa: storereg0nilarssa; proc: @storereg0nilarop; flags: []), 
 //oc_storestacknilar
@@ -521,8 +521,8 @@
 
 //oc_storesegnildynar
   (ssa: storesegnildynarssa; proc: @storesegnildynarop; flags: [of_relocseg]), 
-//oc_storeframenilar
-  (ssa: storeframenildynarssa; proc: @storeframenildynarop; flags: []), 
+//oc_storelocnilar
+  (ssa: storelocnildynarssa; proc: @storelocnildynarop; flags: []), 
 //oc_storereg0nilar
   (ssa: storereg0nildynarssa; proc: @storereg0nildynarop; flags: []), 
 //oc_storestacknilar
@@ -533,8 +533,8 @@
 
 //oc_finirefsizeseg
   (ssa: finirefsizesegssa; proc: @finirefsizesegop; flags: [of_relocseg]), 
-//oc_finirefsizeframe
-  (ssa: finirefsizeframessa; proc: @finirefsizeframeop; flags: []), 
+//oc_finirefsizeloc
+  (ssa: finirefsizelocssa; proc: @finirefsizelocop; flags: []), 
 //oc_finirefsizereg0
   (ssa: finirefsizereg0ssa; proc: @finirefsizereg0op; flags: []), 
 //oc_finirefsizestack
@@ -544,8 +544,8 @@
 
 //oc_finirefsizesegar
   (ssa: finirefsizesegarssa; proc: @finirefsizesegarop; flags: [of_relocseg]), 
-//oc_finirefsizeframear
-  (ssa: finirefsizeframearssa; proc: @finirefsizeframearop; flags: []), 
+//oc_finirefsizelocar
+  (ssa: finirefsizelocarssa; proc: @finirefsizelocarop; flags: []), 
 //oc_finirefsizereg0ar
   (ssa: finirefsizereg0arssa; proc: @finirefsizereg0arop; flags: []), 
 //oc_finirefsizestackar
@@ -555,8 +555,8 @@
 
 //oc_finirefsizesegdynar
   (ssa: finirefsizesegdynarssa; proc: @finirefsizesegdynarop; flags: [of_relocseg]), 
-//oc_finirefsizeframedynar
-  (ssa: finirefsizeframedynarssa; proc: @finirefsizeframedynarop; flags: []), 
+//oc_finirefsizelocdynar
+  (ssa: finirefsizelocdynarssa; proc: @finirefsizelocdynarop; flags: []), 
 //oc_finirefsizereg0ar
   (ssa: finirefsizereg0dynarssa; proc: @finirefsizereg0dynarop; flags: []), 
 //oc_finirefsizestackar
@@ -566,8 +566,8 @@
 
 //oc_increfsizeseg
   (ssa: increfsizesegssa; proc: @increfsizesegop; flags: [of_relocseg]),
-//oc_increfsizeframe
-  (ssa: increfsizeframessa; proc: @increfsizeframeop; flags: []), 
+//oc_increfsizeloc
+  (ssa: increfsizelocssa; proc: @increfsizelocop; flags: []), 
 //oc_increfsizereg0
   (ssa: increfsizereg0ssa; proc: @increfsizereg0op; flags: []), 
 //oc_increfsizestack
@@ -577,8 +577,8 @@
 
 //oc_increfsizesegar
   (ssa: increfsizesegarssa; proc: @increfsizesegarop; flags: [of_relocseg]),
-//oc_increfsizeframear
-  (ssa: increfsizeframearssa; proc: @increfsizeframearop; flags: []), 
+//oc_increfsizelocar
+  (ssa: increfsizelocarssa; proc: @increfsizelocarop; flags: []), 
 //oc_increfsizereg0ar
   (ssa: increfsizereg0arssa; proc: @increfsizereg0arop; flags: []), 
 //oc_increfsizestackar
@@ -588,8 +588,8 @@
 
 //oc_increfsizesegar
   (ssa: increfsizesegdynarssa; proc: @increfsizesegdynarop; flags: [of_relocseg]),
-//oc_increfsizeframear
-  (ssa: increfsizeframedynarssa; proc: @increfsizeframedynarop; flags: []), 
+//oc_increfsizelocar
+  (ssa: increfsizelocdynarssa; proc: @increfsizelocdynarop; flags: []), 
 //oc_increfsizereg0ar
   (ssa: increfsizereg0dynarssa; proc: @increfsizereg0dynarop; flags: []), 
 //oc_increfsizestackar
@@ -599,8 +599,8 @@
 
 //oc_decrefsizeseg
   (ssa: decrefsizesegssa; proc: @decrefsizesegop; flags: [of_relocseg]),
-//oc_decrefsizeframe
-  (ssa: decrefsizeframessa; proc: @decrefsizeframeop; flags: []), 
+//oc_decrefsizeloc
+  (ssa: decrefsizelocssa; proc: @decrefsizelocop; flags: []), 
 //oc_decrefsizereg0
   (ssa: decrefsizereg0ssa; proc: @decrefsizereg0op; flags: []), 
 //oc_decrefsizestack
@@ -610,8 +610,8 @@
 
 //oc_decrefsizesegar
   (ssa: decrefsizesegarssa; proc: @decrefsizesegarop; flags: [of_relocseg]),
-//oc_decrefsizeframear
-  (ssa: decrefsizeframearssa; proc: @decrefsizeframearop; flags: []), 
+//oc_decrefsizelocar
+  (ssa: decrefsizelocarssa; proc: @decrefsizelocarop; flags: []), 
 //oc_decrefsizereg0ar
   (ssa: decrefsizereg0arssa; proc: @decrefsizereg0arop; flags: []), 
 //oc_decrefsizestackar
@@ -621,8 +621,8 @@
 
 //oc_decrefsizesegdynar
   (ssa: decrefsizesegdynarssa; proc: @decrefsizesegdynarop; flags: [of_relocseg]),
-//oc_decrefsizeframedynar
-  (ssa: decrefsizeframedynarssa; proc: @decrefsizeframedynarop; flags: []), 
+//oc_decrefsizelocdynar
+  (ssa: decrefsizelocdynarssa; proc: @decrefsizelocdynarop; flags: []), 
 //oc_decrefsizereg0dynar
   (ssa: decrefsizereg0dynarssa; proc: @decrefsizereg0dynarop; flags: []), 
 //oc_decrefsizestackar

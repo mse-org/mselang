@@ -21,7 +21,7 @@ uses
  globtypes,msestrings;
  
 type
- addressbasety = (ab_segment,ab_frame,ab_reg0,ab_stack,ab_stackref);
+ addressbasety = (ab_segment,ab_local{ab_frame},ab_reg0,ab_stack,ab_stackref);
 {
  addressrefty = record
   address: dataoffsty;
@@ -301,73 +301,73 @@ type
   oc_setin,
 
   oc_storesegnil,
-  oc_storeframenil,
+  oc_storelocnil,
   oc_storereg0nil,
   oc_storestacknil,
   oc_storestackrefnil,
 
   oc_storesegnilar,
-  oc_storeframenilar,
+  oc_storelocnilar,
   oc_storereg0nilar,
   oc_storestacknilar,
   oc_storestackrefnilar,
 
   oc_storesegnildynar,
-  oc_storeframenildynar,
+  oc_storelocnildynar,
   oc_storereg0nildynar,
   oc_storestacknildynar,
   oc_storestackrefnildynar,
 
   oc_finirefsizeseg,
-  oc_finirefsizeframe,
+  oc_finirefsizeloc,
   oc_finirefsizereg0,
   oc_finirefsizestack,
   oc_finirefsizestackref,
 
   oc_finirefsizesegar,
-  oc_finirefsizeframear,
+  oc_finirefsizelocar,
   oc_finirefsizereg0ar,
   oc_finirefsizestackar,
   oc_finirefsizestackrefar,
 
   oc_finirefsizesegdynar,
-  oc_finirefsizeframedynar,
+  oc_finirefsizelocdynar,
   oc_finirefsizereg0dynar,
   oc_finirefsizestackdynar,
   oc_finirefsizestackrefdynar,
 
   oc_increfsizeseg,
-  oc_increfsizeframe,
+  oc_increfsizeloc,
   oc_increfsizereg0,
   oc_increfsizestack,
   oc_increfsizestackref,
 
   oc_increfsizesegar,
-  oc_increfsizeframear,
+  oc_increfsizelocar,
   oc_increfsizereg0ar,
   oc_increfsizestackar,
   oc_increfsizestackrefar,
 
   oc_increfsizesegdynar,
-  oc_increfsizeframedynar,
+  oc_increfsizelocdynar,
   oc_increfsizereg0dynar,
   oc_increfsizestackdynar,
   oc_increfsizestackrefdynar,
 
   oc_decrefsizeseg,
-  oc_decrefsizeframe,
+  oc_decrefsizeloc,
   oc_decrefsizereg0,
   oc_decrefsizestack,
   oc_decrefsizestackref,
 
   oc_decrefsizesegar,
-  oc_decrefsizeframear,
+  oc_decrefsizelocar,
   oc_decrefsizereg0ar,
   oc_decrefsizestackar,
   oc_decrefsizestackrefar,
 
   oc_decrefsizesegdynar,
-  oc_decrefsizeframedynar,
+  oc_decrefsizelocdynar,
   oc_decrefsizereg0dynar,
   oc_decrefsizestackdynar,
   oc_decrefsizestackrefdynar,
@@ -768,11 +768,11 @@ type
     stackaddress: stackaddressty;
    );
 }
-   oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
-   oc_storestackrefnilar,oc_finirefsizeframear,oc_finirefsizereg0ar,
-   oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizeframear,
+   oc_storelocnilar,oc_storereg0nilar,oc_storestacknilar,
+   oc_storestackrefnilar,oc_finirefsizelocar,oc_finirefsizereg0ar,
+   oc_finirefsizestackar,oc_finirefsizestackrefar,oc_increfsizelocar,
    oc_increfsizereg0ar,oc_increfsizestackar,oc_increfsizestackrefar,
-   oc_decrefsizeframear,oc_decrefsizereg0ar,oc_decrefsizestackar,
+   oc_decrefsizelocar,oc_decrefsizereg0ar,oc_decrefsizestackar,
    oc_decrefsizestackrefar:(
     podataaddress: podataaddressty;
    );
@@ -988,10 +988,10 @@ type
    oc_movesegreg0:(
     vsegment: segmentty;
    );
-   oc_storeframenil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
-   oc_finirefsizeframe,oc_finirefsizereg0,oc_finirefsizestack,
-   oc_finirefsizestackref,oc_increfsizeframe,oc_increfsizereg0,
-   oc_increfsizestack,oc_increfsizestackref,oc_decrefsizeframe,
+   oc_storelocnil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
+   oc_finirefsizeloc,oc_finirefsizereg0,oc_finirefsizestack,
+   oc_finirefsizestackref,oc_increfsizeloc,oc_increfsizereg0,
+   oc_increfsizestack,oc_increfsizestackref,oc_decrefsizeloc,
    oc_decrefsizereg0,oc_decrefsizestack,oc_decrefsizestackref,
    {:(
     vaddress: dataaddressty;
@@ -1047,9 +1047,9 @@ type
    oc_pushsegaddr,{oc_pushsegaddrindi,}
    oc_storesegnil,oc_finirefsizeseg,oc_increfsizeseg,oc_decrefsizeseg,
    oc_pushlocaddr,{oc_pushlocaddrindi,}
-   oc_storesegnilar,oc_storeframenilar,oc_storereg0nilar,oc_storestacknilar,
+   oc_storesegnilar,oc_storelocnilar,oc_storereg0nilar,oc_storestacknilar,
    oc_storestackrefnilar,
-   oc_storesegnildynar,oc_storeframenildynar,oc_storereg0nildynar,
+   oc_storesegnildynar,oc_storelocnildynar,oc_storereg0nildynar,
    oc_storestacknildynar,oc_storestackrefnildynar,
    oc_popseg,oc_pushseg,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
@@ -1058,17 +1058,17 @@ type
    oc_pushpar8,oc_pushpar16,oc_pushpar32,oc_pushpar,
    oc_pushloc,oc_pushlocindi,
    oc_indirect,oc_popindirect8,oc_popindirect16,oc_popindirect32,oc_popindirect,
-   oc_finirefsizesegar,oc_finirefsizeframear,oc_finirefsizereg0ar,
+   oc_finirefsizesegar,oc_finirefsizelocar,oc_finirefsizereg0ar,
    oc_finirefsizestackar,oc_finirefsizestackrefar,
-   oc_finirefsizesegdynar,oc_finirefsizeframedynar,oc_finirefsizereg0ar,
+   oc_finirefsizesegdynar,oc_finirefsizelocdynar,oc_finirefsizereg0ar,
    oc_finirefsizestackdynar,oc_finirefsizestackrefdynar,
-   oc_increfsizesegar,oc_increfsizeframear,oc_increfsizereg0ar,
+   oc_increfsizesegar,oc_increfsizelocar,oc_increfsizereg0ar,
    oc_increfsizestackar,oc_increfsizestackrefar,
-   oc_increfsizesegdynar,oc_increfsizeframedynar,oc_increfsizereg0dynar,
+   oc_increfsizesegdynar,oc_increfsizelocdynar,oc_increfsizereg0dynar,
    oc_increfsizestackdynar,oc_increfsizestackrefdynar,
-   oc_decrefsizesegar,oc_decrefsizeframear,
+   oc_decrefsizesegar,oc_decrefsizelocar,
    oc_decrefsizereg0ar,oc_decrefsizestackar,oc_decrefsizestackrefar,
-   oc_decrefsizesegdynar,oc_decrefsizeframedynar,
+   oc_decrefsizesegdynar,oc_decrefsizelocdynar,
    oc_decrefsizereg0dynar,oc_decrefsizestackdynar,oc_decrefsizestackrefdynar,
    oc_getmem,
    oc_incsegint32,oc_incsegpo32,
