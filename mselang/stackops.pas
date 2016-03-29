@@ -1030,26 +1030,6 @@ begin
  end; 
 end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 procedure incsegint32op();
 var
  po1: pinteger;
@@ -1151,34 +1131,6 @@ begin
   inc(po1^^,pint32(stackpop(sizeof(int32)))^);
  end; 
 end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 procedure decsegint32op();
 var

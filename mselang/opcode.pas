@@ -246,14 +246,16 @@ procedure addmanagedop(const opsar: aropadsty; const arop: aropty;
                                                     {const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
 var
- i1: int32;
+ i1,ssaext1: int32;
  ab1: addressbasety;
  seg1: segmentty;
  ad1: dataoffsty;
  offs1: dataoffsty;
  af1: addressflagsty;
  typ1: ptypedataty;
+ lev1: int32;
 begin
+ ssaext1:= 0;
  case aref.kind of
   ark_vardata,ark_vardatanoaggregate: begin
    with pvardataty(aref.vardata)^ do begin 
@@ -269,7 +271,19 @@ begin
      typ1:= ele.eledataabs(vf.typ);
     end
     else begin
-     notimplementederror('');
+     if af_local in address.flags then begin
+      lev1:= address.locaddress.framelevel - info.sublevel - 1;
+      if lev1 < 0 then begin
+       ab1:= ab_frame;
+       ad1:= address.locaddress.address;
+      end
+      else begin
+       notimplementederror('');
+      end;
+     end
+     else begin
+      notimplementederror('');
+     end;
     end;
    end;
   end;
@@ -291,16 +305,28 @@ begin
    with pcontextdataty(aref.contextdata)^ do begin
     case kind of
      ck_ref: begin
+      typ1:= ele.eledataabs(dat.datatyp.typedata);
+      offs1:= dat.ref.offset;
       if af_segment in dat.ref.c.address.flags then begin
        ab1:= ab_segment;
        ad1:= dat.ref.c.address.segaddress.address;
        af1:= dat.ref.c.address.flags;
-       offs1:= dat.ref.offset;
        seg1:= dat.ref.c.address.segaddress.segment;
-       typ1:= ele.eledataabs(dat.datatyp.typedata);
       end
       else begin
-       notimplementederror('');
+       if af_local in dat.ref.c.address.flags then begin
+        lev1:= dat.ref.c.address.locaddress.framelevel - info.sublevel - 1;
+        if lev1 < 0 then begin
+         ab1:= ab_frame;
+         ad1:= dat.ref.c.address.locaddress.address;
+        end
+        else begin
+         notimplementederror('');
+        end;
+       end
+       else begin
+        notimplementederror('');
+       end;
       end;
      end;
      ck_fact: begin
@@ -321,23 +347,24 @@ begin
    notimplementederror('20160328A');
   end;
  end;
- i1:= 0;
  if af_aggregate in af1 then begin
-  i1:= getssa(ocssa_aggregate);
+  ssaext1:= ssaext1 + getssa(ocssa_aggregate);
  end;
- with additem(opsar[arop][ab1],i1)^ do begin
+ with additem(opsar[arop][ab1],ssaext1)^ do begin
   par.ssas1:= aref.ssaindex;
   par.memop.t:= bitoptypes[das_pointer];
   par.memop.t.flags:= af1;
-  if ab1 = ab_segment then begin
-   par.memop.segdataaddress.a.address:= ad1;
-   par.memop.segdataaddress.a.segment:= seg1;
-   par.memop.segdataaddress.offset:= offs1;
-  end
-  else begin
-   par.memop.podataaddress.address:= ad1;
-   par.memop.podataaddress.offset:= offs1;
-//   par.voffset:= aaddress.address;
+  case ab1 of
+   ab_segment: begin
+    par.memop.segdataaddress.a.address:= ad1;
+    par.memop.segdataaddress.a.segment:= seg1;
+    par.memop.segdataaddress.offset:= offs1;
+   end;
+   else begin
+    par.memop.podataaddress.address:= ad1;
+    par.memop.podataaddress.offset:= offs1;
+ //   par.voffset:= aaddress.address;
+   end;
   end;
   if arop = aro_static then begin
    i1:= typ1^.infoarray.i.totitemcount;
