@@ -2702,9 +2702,22 @@ end;
 procedure pushlocaddrop();
 begin
  with pc^.par do begin
-  bcstream.emitlocdataaddress(memop);
   if memop.locdataaddress.a.framelevel >= 0 then begin
-   notimplementederror('');
+   bcstream.emitgetelementptr(bcstream.subval(0),
+           //pointer to array of pointer to local alloc
+                           bcstream.constval(memop.locdataaddress.a.address));
+           //byte offset in array
+   bcstream.emitbitcast(bcstream.relval(0),bcstream.ptypeval(das_pointer));
+   bcstream.emitloadop(bcstream.relval(0));
+           //pointer to variable
+   if af_aggregate in memop.t.flags then begin
+    bcstream.emitnopssaop();          //agregatessa = 3
+    bcstream.emitgetelementptr(bcstream.relval(1),
+                      bcstream.constval(memop.locdataaddress.offset));
+   end;
+  end
+  else begin
+   bcstream.emitlocdataaddress(memop); //2 ssa
   end;
  end;
 end;
@@ -3938,7 +3951,7 @@ const
 
 //ssa only
   nestedvarssa = 5;
-  nestedvaradssa = 5;
+  nestedvaradssa = 2;
   popnestedvarssa = 5;
 //  popsegaggregatessa = 3;
   pushnestedvarssa = 5;
