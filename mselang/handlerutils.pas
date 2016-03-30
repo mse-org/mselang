@@ -214,6 +214,8 @@ function trackaccess(const asub: psubdataty): int32;
 procedure resetssa();
 function getssa(const aopcode: opcodety): integer;
 function getssa(const aopcode: opcodety; const count: integer): integer;
+//function getssaext(const aopcode: opcodety; const hasext: boolean): integer;
+                                               //false -> 0
 function getopdatatype(const atypeinfo: typeinfoty): typeallocinfoty;
 function getopdatatype(const atypedata: elementoffsetty;
                            const aindirectlevel: integer): typeallocinfoty;
@@ -742,7 +744,7 @@ begin
    end;
    with insertitem(oc_pushlocaddr,stackoffset,before,i2)^ do begin
     tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
-                 getopdatatype(datatyp.typedata, ref.c.address.indirectlevel));
+                 getopdatatype(datatyp.typedata, datatyp.indirectlevel));
     par.memop.locdataaddress.a:= ref.c.address.locaddress;
     par.memop.locdataaddress.a.framelevel:= i1;
     par.memop.locdataaddress.offset:= ref.offset;
@@ -1293,7 +1295,7 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
 
 var
  po1: popinfoty;
-  
+ i1,i2: int32;
 begin
  if af_nil in avalue.flags then begin
   with getop(oc_pushaddr)^ do begin
@@ -1311,11 +1313,15 @@ begin
    end;
   end
   else begin
-   po1:= getop(oc_pushlocaddr);
+   i1:= info.sublevel-avalue.locaddress.framelevel-1;
+   i2:= 0;
+   if i1 >= 0 then begin
+    i2:= getssa(ocssa_nestedvarad);
+   end;
+   po1:= getop(oc_pushlocaddr,i2);
    with po1^ do begin
     par.memop.locdataaddress.a:= avalue.locaddress;
-    par.memop.locdataaddress.a.framelevel:= 
-                               info.sublevel-avalue.locaddress.framelevel-1;
+    par.memop.locdataaddress.a.framelevel:= i1;
     par.memop.locdataaddress.offset:= offset;
     par.memop.t:= getopdatatype(atype);
    end;
@@ -2192,6 +2198,11 @@ begin
   end;
   case d.kind of
    ck_ref: begin
+    if not (af_segment in d.dat.ref.c.address.flags) then begin
+     tracklocalaccess(d.dat.ref.c.address.locaddress,d.dat.ref.c.varele,
+                           getopdatatype(d.dat.datatyp.typedata,
+                                                d.dat.datatyp.indirectlevel));
+    end;
     if d.dat.indirection = 1 then begin
      if endaddress then begin
       pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
@@ -2203,11 +2214,6 @@ begin
      else begin
       inc(d.dat.ref.c.address.indirectlevel,d.dat.indirection);
       d.dat.indirection:= 0;
-      if not (af_segment in d.dat.ref.c.address.flags) then begin
-       tracklocalaccess(d.dat.ref.c.address.locaddress,d.dat.ref.c.varele,
-                                 getopdatatype(d.dat.datatyp.typedata,
-                                      d.dat.ref.c.address.indirectlevel));
-      end;
      end;
     end
     else begin
@@ -2351,7 +2357,19 @@ begin
   result:= optable^[aopcode].ssa;
  end;
 end;
-
+{
+function getssaext(const aopcode: opcodety; const hasext: boolean): integer;
+begin
+ if hasext then begin
+  with info do begin
+   result:= optable^[aopcode].ssa;
+  end;
+ end
+ else begin
+  result:= 0;
+ end;
+end;
+}
 procedure addfactbinop(const aopcode: opcodety);
 begin
  with info,contextstack[s.stacktop-2] do begin
