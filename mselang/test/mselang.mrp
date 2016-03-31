@@ -2305,7 +2305,7 @@ c=3
    (
    kind=1
    a=0,665,4,dynarray
-   c=4
+   c=6
     (
     kind=2
     a=0,648,1,setlength
@@ -2377,6 +2377,50 @@ c=3
     a=0,648,1,copy llvm
     teststate=1
     path=copy.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedloc
+    teststate=1
+    path=nestedloc.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,nestedloc llvm
+    teststate=1
+    path=nestedloc.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2559,7 +2603,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B736BDC4
+    ao=An unhandled exception occured at $B731BDC4
     ae=
     aec=123
     ie=0
@@ -6526,7 +6570,9 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=58
+rowstate=60
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

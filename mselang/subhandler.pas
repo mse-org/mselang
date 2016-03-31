@@ -1032,8 +1032,9 @@ begin
      dec(var1^.address.locaddress.address,frameoffset);
      curparam^:= ptruint(var1)-eledatabase;
      if tf_needsmanage in var1^.vf.flags then begin
-      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
-                                                        var1^.address);
+      writemanagedvarop(mo_incref,var1);
+//      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
+//                                                        var1^.address);
       var1^.vf.next:= sub1^.paramfinichain;
       sub1^.paramfinichain:= ele.eledatarel(var1);
      end;

@@ -26,6 +26,7 @@ const
                 tks_ini,tks_fini,tks_incref,tks_decref,tks_decrefindi
                );
               //todo: check ssaindex
+procedure writemanagedvarop(const op: managedopty; const avar: pvardataty);
 procedure writemanagedvarop(const op: managedopty; const chain: elementoffsetty{;
                               const global: boolean; const ssaindex: integer});
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
@@ -414,6 +415,16 @@ begin
 *)
 end;
 
+procedure writemanagedvarop(const op: managedopty; const avar: pvardataty);
+var
+ ad1: addressrefty;
+begin
+ ad1.kind:= ark_vardatanoaggregate;
+ ad1.offset:= 0;
+ ad1.vardata:= avar;
+ writemanagedtypeop(op,ele.eledataabs(avar^.vf.typ),ad1);
+end;
+
 procedure writemanagedvarop(const op: managedopty;
              const chain: elementoffsetty{; const global: boolean;
                                                const ssaindex: integer});
@@ -435,28 +446,6 @@ begin
    ele1:= po1^.vf.next;
   until ele1 = 0;
  end;
-(*
- if chain <> 0 then begin
-  if global then begin
-   ad1.base:= ab_segment;
-   ad1.segment:= seg_globvar;
-  end
-  else begin
-   ad1.base:= ab_frame;
-  end;
-  ele1:= chain;
-  repeat
-   po1:= ele.eledataabs(ele1);
-   if tf_needsmanage in po1^.vf.flags then begin
-    ad1.flags:= po1^.address.flags - [af_aggregate];
-    ad1.address:= po1^.address.poaddress;
-    ad1.offset:= 0;
-    writemanagedtypeop(op,ele.eledataabs(po1^.vf.typ),ad1,ssaindex);
-   end;
-   ele1:= po1^.vf.next;
-  until ele1 = 0;
- end;
-*)
 end;
 
 procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;

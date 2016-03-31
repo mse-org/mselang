@@ -1,0 +1,17 @@
+program managedparam;
+type
+ intarty = array of int32;
+
+procedure test(par1: intarty);
+begin
+ exitcode:= par1[2];
+end;
+
+var
+ ar1: intarty;
+
+begin
+ setlength(ar1,5);
+ ar1[2]:= 123;
+ test(ar1);
+end.
