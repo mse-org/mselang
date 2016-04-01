@@ -2740,9 +2740,12 @@ begin
 
       needsmanage:= (indilev1 = 0) and (tf_needsmanage in destvar.typ^.h.flags);
       if needsmanage and isconst and 
-                          (destvar.typ^.h.kind = dk_dynarray) and
-                              (source^.d.dat.constval.kind = dk_pointer) and 
-                   (af_nil in source^.d.dat.constval.vaddress.flags) then begin
+        ((destvar.typ^.h.kind = dk_dynarray) and
+               (source^.d.dat.constval.kind = dk_pointer) and 
+               (af_nil in source^.d.dat.constval.vaddress.flags) or
+         (destvar.typ^.h.kind in stringdatakinds) and
+               (source^.d.dat.constval.kind in stringdatakinds) and 
+               (strf_empty in source^.d.dat.constval.vstring.flags)) then begin
        ad1.offset:= 0;
        decref(mo_fini);
        goto endlab;

@@ -229,6 +229,7 @@ const
  pointerdatakinds = [dk_pointer,dk_dynarray,dk_interface,dk_class,dk_string8];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
+ stringdatakinds = [dk_string8];
 type
  enumflagty = (enf_contiguous);
  enumflagsty = set of enumflagty;
@@ -249,8 +250,12 @@ type
  end;
  ptypeinfoty = ^typeinfoty;
 
+ stringflagty = (strf_empty);
+ stringflagsty = set of stringflagty;
+ 
  stringvaluety = record
   offset: ptruint; //offset in string buffer
+  flags: stringflagsty;
  // len: databytesizety;
  end;
 

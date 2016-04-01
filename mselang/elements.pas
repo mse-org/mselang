@@ -2260,6 +2260,12 @@ begin
   move(pointer(avalue)^,(fbuffer+po1^.data.offset)^,len1);
  end;
  result.offset:= @po1^.data-fdata;
+ if avalue = '' then begin
+  result.flags:= [strf_empty];
+ end
+ else begin
+  result.flags:= [];
+ end;
 end;
 
 procedure tstringbuffer.clear;
