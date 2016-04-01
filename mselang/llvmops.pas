@@ -3714,7 +3714,7 @@ const
   storestacknildynarssa = 1;
   storestackrefnildynarssa = 2;
 
-  finirefsizesegssa = 2;
+  finirefsizesegssa = 1;
   finirefsizelocssa = 1;
   finirefsizereg0ssa = 1;
   finirefsizestackssa = 1;
