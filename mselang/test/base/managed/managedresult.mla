@@ -1,0 +1,17 @@
+program managedresult;
+type
+ intarty = array of int32;
+
+function test(): intarty;
+begin
+ setlength(result,5);
+ result[2]:= 123;
+end;
+
+var
+ ar1: intarty;
+
+begin
+ ar1:= test();
+ exitcode:= ar1[2];
+end.

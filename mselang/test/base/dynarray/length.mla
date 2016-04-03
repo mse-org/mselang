@@ -1,0 +1,13 @@
+program length;
+type
+ intarty = array of int32;
+ arty = array[4..6] of int32;
+var
+ str1: string8;
+ ar1: intarty;
+
+begin
+ str1:= 'abcdefg';
+ setlength(ar1,20);
+ exitcode:= length(ar1)+length(str1)+length(arty)+length('abc')+90;
+end.
