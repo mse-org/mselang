@@ -3361,7 +3361,11 @@ end;
 
 procedure setlengthstr8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_setlengthstring8,false,[bcstream.ssaval(ssas1),
+                                                     bcstream.ssaval(ssas2)]);
+                                                            //count
+ end;
 end;
 
 procedure setlengthdynarrayop();

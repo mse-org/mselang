@@ -23,6 +23,8 @@ procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
+procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
+                                                    const count: int32);
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 function __mla__highdynarray(ref: prefsizeinfoty): int32;
@@ -182,7 +184,7 @@ begin
    else begin
     getmem(d1,i1+dynarrayallocsize);
     memcpy(@d1^.data,@d^.data,i1);
-    i2:= (d^.high+1) * count;
+    i2:= (d^.high+1) * itemsize;
     if i1 > i2 then begin  //new bigger
      setmem(@d1^.data+i1,i2-i1,0);
     end;
@@ -199,6 +201,62 @@ begin
    d^.ref.count:= 1;
    d^.high:= count-1;
    ref^:= @d^.data;
+  end;
+ end;
+end;
+
+procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
+                                                    const count: int32);
+var
+ d,d1: pstring8headerty;
+ i1,i2: int32;
+begin
+ i1:= count * 1; //bytesize
+ d:= ref^;
+ if d <> nil then begin
+  dec(d);
+  if d^.ref.count = 1 then begin
+   if i1 = 0 then begin
+    freemem(d);
+    ref^:= nil;
+   end
+   else begin
+    reallocmem(d,i1+string8allocsize);
+    d^.ref.count:= 1;
+    d^.len:= count;
+    ref^:= @d^.data;
+    (pcard8(pointer(d+1))+count)^:= 0; //terminator
+   end;
+  end
+  else begin
+   if i1 = 0 then begin
+    freemem(d);
+    ref^:= nil;
+   end
+   else begin
+    getmem(d1,i1+string8allocsize);
+    i2:= d^.len * 1; //old bytesize
+    if i2 <= i1 then begin
+     memcpy(@d1^.data,@d^.data,i2);
+    end
+    else begin
+     memcpy(@d1^.data,@d^.data,i1);
+    end;
+    (pcard8(pointer(d+1))+count)^:= 0; //terminator
+   end;
+   dec(d^.ref.count);
+   d1^.ref.count:= 1;
+   d1^.len:= count;
+   ref^:= @d1^.data;
+  end;
+ end
+ else begin
+  if count > 0 then begin
+   getmem(d,i1+string8allocsize);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
+   (pcard8(pointer(d+1))+count)^:= 0; //terminator
   end;
  end;
 end;
@@ -236,7 +294,7 @@ end;
 function __mla__highstring(ref: prefsizeinfoty): int32;
 begin
  if ref <> nil then begin
-  result:= pstring8headerty(ref-1)^.len - 1;
+  result:= pstring8headerty(ref-1)^.len;
  end
  else begin
   result:= 0;

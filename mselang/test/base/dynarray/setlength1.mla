@@ -1,0 +1,15 @@
+program setlength;
+type
+ intarty = array of int32;
+var
+ ar1: intarty;
+ i1,i2: int32;
+ str1: string8;
+begin
+ setlength(str1,13);
+ setlength(ar1,20);
+ i1:= high(ar1);
+ i2:= high(str1);
+ ar1:= nil;
+ exitcode:= length(ar1) + i1 + 123 - 19 + i2 - 12 - low(str1) - low(ar1);
+end.

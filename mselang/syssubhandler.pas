@@ -669,7 +669,6 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
  begin
   with info,contextstack[s.stackindex] do begin
    po1:= ele.eledataabs(atype);
-   d.kind:= ck_const;
    case po1^.h.kind of
     dk_integer: begin
      getordrange(po1,range);
@@ -682,7 +681,7 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
        d.dat.datatyp:= sysdatatypes[st_int16];
       end;
       das_17_31,das_32: begin
-       d.dat.datatyp:= sysdatatypes[st_int32];
+//       d.dat.datatyp:= sysdatatypes[st_int32]; //default
       end;
       das_33_63,das_64: begin
        d.dat.datatyp:= sysdatatypes[st_int64];
@@ -742,14 +741,42 @@ procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
     end;
    end;
   end;
- end;
+ end; //checktype
  
 var
  po1: ptypedataty;
-  
+ dest1: pcontextitemty;
+ 
+ procedure checkfact();
+ var
+  op1: opcodety;
+ begin
+  case po1^.h.kind of
+   dk_string8: begin
+    op1:= oc_highstring;
+   end;
+   dk_dynarray: begin
+    op1:= oc_highdynar;
+   end;
+   else begin
+    typeerror();
+    exit;
+   end;
+  end;
+  with additem(op1)^ do begin
+   par.ssas1:= info.s.ssa.index-1;
+  end;
+  dest1^.d.kind:= ck_subres;
+  dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
+ end; //checkfact
+ 
 begin
  with info do begin
   if checkparamco(1,paramco) then begin
+   dest1:= @contextstack[s.stackindex];
+   dest1^.d.kind:= ck_const;
+   dest1^.d.dat.indirection:= 0;
+   dest1^.d.dat.datatyp:= sysdatatypes[st_int32]; //default
    with contextstack[s.stacktop] do begin
     case d.kind of
      ck_ref: begin
@@ -762,17 +789,51 @@ begin
         dk_array: begin
          checktype(po1^.infoarray.indextypedata);
         end;
+        dk_string8,dk_dynarray: begin
+         if ahigh then begin
+          if getvalue(s.stacktop-s.stackindex,das_none) then begin
+           checkfact();
+          end;
+         end
+         else begin
+          dest1^.d.dat.constval.kind:= dk_integer;
+          if po1^.h.kind = dk_dynarray then begin
+           dest1^.d.dat.constval.vinteger:= 0;
+          end
+          else begin
+           dest1^.d.dat.constval.vinteger:= 1;
+          end;
+         end;
+        end;
         else begin
          checktype(d.dat.datatyp.typedata);
         end;
        end;
       end;
      end;
+     ck_fact,ck_subres: begin
+      checkfact();
+     end;
      ck_typearg: begin
       checktype(d.typ.typedata);
      end;
      ck_const: begin
-      checktype(d.dat.datatyp.typedata);
+      case d.dat.constval.kind of
+       dk_string8: begin
+//        dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
+        dest1^.d.dat.constval.kind:= dk_integer;
+        if ahigh then begin
+         dest1^.d.dat.constval.vinteger:= 
+                             stringconstlen(d.dat.constval.vstring);
+        end
+        else begin
+         dest1^.d.dat.constval.vinteger:= 1;
+        end;
+       end;
+       else begin
+        checktype(d.dat.datatyp.typedata);
+       end;
+      end;
      end;
      else begin
       typeerror();
