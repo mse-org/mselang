@@ -28,6 +28,10 @@ type
   cs_finifrefsize,
   cs_finirefsizear,
   cs_setlengthdynarray,
+  cs_lengthdynarray,
+  cs_lengthstring,
+  cs_highdynarray,
+  cs_highstring,
   cs_initclass,
   cs_raise,
   cs_personality
@@ -40,6 +44,10 @@ const
   '__mla__finirefsize',
   '__mla__finirefsizear',
   '__mla__setlengthdynarray',
+  '__mla__lengthdynarray',
+  '__mla__lengthstring',
+  '__mla__highdynarray',
+  '__mla__highstring',
   '__mla__initclass',
   '__mla__raise',
   '__mla__personality'

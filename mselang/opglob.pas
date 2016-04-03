@@ -372,6 +372,11 @@ type
   oc_decrefsizestackdynar,
   oc_decrefsizestackrefdynar,
 
+  oc_highstring,
+  oc_highdynar,
+  oc_lengthstring,
+  oc_lengthdynar,
+  
   oc_popseg8,
   oc_popseg16,
   oc_popseg32,

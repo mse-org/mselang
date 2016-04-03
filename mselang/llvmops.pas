@@ -2218,6 +2218,34 @@ begin
  notimplemented();
 end;
 
+procedure highstringop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_highstring,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure highdynarop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_highdynarray,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure lengthstringop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_lengthstring,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure lengthdynarop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_lengthdynarray,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure popseg8op();
 begin
  storeseg();
@@ -3768,6 +3796,11 @@ const
   decrefsizestackdynarssa = 1;
   decrefsizestackrefdynarssa = 1;
 
+  highstringssa = 1;
+  highdynarssa = 1;
+  lengthstringssa = 1;
+  lengthdynarssa = 1;
+  
   popseg8ssa = 0;
   popseg16ssa = 0;
   popseg32ssa = 0;

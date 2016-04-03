@@ -411,7 +411,7 @@ type
               sf_getmem,sf_getzeromem,sf_freemem,sf_reallocmem,sf_setmem,
               sf_memcpy,
               sf_halt,
-              sf_low,sf_high,sf_sin);
+              sf_low,sf_high,sf_length,sf_sin);
 
  sysfuncdataty = record
   func: sysfuncty;

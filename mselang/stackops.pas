@@ -3632,6 +3632,37 @@ begin
  decrefsizedynar(pppointer(cpu.stack+getmanagedaddressoffset())^);
 end;
 
+procedure highstringop();
+var
+ i1: int32;
+begin
+ i1:= high(pstring(stackpop(sizeof(pointer)))^);
+ pint32(stackpush(sizeof(i1)))^:= i1;
+end;
+
+procedure highdynarop();
+var
+ i1: int32;
+begin
+ i1:= high(pbytearty(stackpop(sizeof(pointer)))^);
+ pint32(stackpush(sizeof(i1)))^:= i1;
+end;
+
+procedure lengthstringop();
+var
+ i1: int32;
+begin
+ i1:= length(pstring(stackpop(sizeof(pointer)))^);
+ pint32(stackpush(sizeof(i1)))^:= i1;
+end;
+
+procedure lengthdynarop();
+var
+ i1: int32;
+begin
+ i1:= length(pbytearty(stackpop(sizeof(pointer)))^);
+ pint32(stackpush(sizeof(i1)))^:= i1;
+end;
 
 procedure setlengthstr8op(); //address, length
 var
@@ -4233,7 +4264,12 @@ const
   decrefsizereg0dynarssa = 0;
   decrefsizestackdynarssa = 0;
   decrefsizestackrefdynarssa = 0;
-
+  
+  highstringssa = 0;
+  highdynarssa = 0;
+  lengthstringssa = 0;
+  lengthdynarssa = 0;
+  
   popseg8ssa = 0;
   popseg16ssa = 0;
   popseg32ssa = 0;

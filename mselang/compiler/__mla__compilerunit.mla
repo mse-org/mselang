@@ -23,6 +23,11 @@ procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
 procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
+function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
+function __mla__lengthstring(ref: prefsizeinfoty): int32;
+function __mla__highdynarray(ref: prefsizeinfoty): int32;
+function __mla__highstring(ref: prefsizeinfoty): int32;
+
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
 procedure __mla__raise(const data: pointer);
 function __mla__personality(version: cint;
@@ -195,6 +200,46 @@ begin
    d^.high:= count-1;
    ref^:= @d^.data;
   end;
+ end;
+end;
+
+function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
+begin
+ if ref <> nil then begin
+  result:= pdynarrayheaderty(ref-1)^.high + 1;
+ end
+ else begin
+  result:= 0;
+ end;
+end;
+
+function __mla__lengthstring(ref: prefsizeinfoty): int32;
+begin
+ if ref <> nil then begin
+  result:= pstring8headerty(ref-1)^.len;
+ end
+ else begin
+  result:= 0;
+ end;
+end;
+
+function __mla__highdynarray(ref: prefsizeinfoty): int32;
+begin
+ if ref <> nil then begin
+  result:= pdynarrayheaderty(ref-1)^.high;
+ end
+ else begin
+  result:= -1;
+ end;
+end;
+
+function __mla__highstring(ref: prefsizeinfoty): int32;
+begin
+ if ref <> nil then begin
+  result:= pstring8headerty(ref-1)^.len - 1;
+ end
+ else begin
+  result:= 0;
  end;
 end;
 

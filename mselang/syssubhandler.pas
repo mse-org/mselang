@@ -36,6 +36,7 @@ procedure handlememcpy(const paramco: integer);
 procedure handlehalt(const paramco: integer);
 procedure handlelow(const paramco: integer);
 procedure handlehigh(const paramco: integer);
+procedure handlelength(const paramco: integer);
 procedure handlesin(const paramco: integer);
 
 const
@@ -48,8 +49,8 @@ const
   @handlereallocmem,
   //sf_setmem,  sf_memcpy,
   @handlesetmem,@handlememcpy,
-  //sf_halt
-  @handlehalt,@handlelow,@handlehigh,@handlesin);
+  //sf_halt,  //sf_low,  //sf_high,  //sf_length,  //sf_sin
+  @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin);
   
 procedure init();
 procedure deinit();
@@ -651,15 +652,15 @@ begin
  end;
 end;
 
-procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
-
- procedure typeerror();
- begin
-  with info do begin
-   contextstack[s.stacktop].d.kind:= ck_error;
-   errormessage(err_typemismatch,[],s.stacktop-s.stackindex);
-  end;
+procedure typeerror();
+begin
+ with info do begin
+  contextstack[s.stacktop].d.kind:= ck_error;
+  errormessage(err_typemismatch,[],s.stacktop-s.stackindex);
  end;
+end;
+
+procedure handlelowhigh(const paramco: integer; const ahigh: boolean);
 
  procedure checktype(const atype: elementoffsetty);
  var
@@ -792,6 +793,109 @@ begin
  handlelowhigh(paramco,true);
 end;
 
+procedure handlelength(const paramco: int32);
+var
+ typ1: ptypedataty;
+ 
+ function arraylength(): int32;
+ begin
+  with getordrange(
+         ptypedataty(ele.eledataabs(typ1^.infoarray.indextypedata))) do begin
+   result:= max - min + 1;
+  end;
+ end; //arraylength
+ 
+var
+ dest1: pcontextitemty;
+ 
+begin
+ with info do begin
+  if checkparamco(1,paramco) then begin
+   with contextstack[s.stacktop] do begin
+    if d.kind = ck_ref then begin
+     if not getvalue(s.stacktop-s.stackindex,das_none,true) then begin
+      exit;
+     end;
+    end;
+    dest1:= @contextstack[s.stackindex];
+    dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
+    dest1^.d.dat.indirection:= 0;
+    case d.kind of
+     ck_const,ck_ref,ck_fact,ck_subres: begin
+      if d.dat.datatyp.indirectlevel <> 0 then begin
+       typeerror();
+       exit;
+      end;
+      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+      if d.kind = ck_const then begin
+       dest1^.d.kind:= ck_const;
+       dest1^.d.dat.constval.kind:= dk_integer;
+       case d.dat.constval.kind of
+        dk_array: begin
+         dest1^.d.dat.constval.vinteger:= arraylength();
+        end;
+        dk_string8: begin
+         dest1^.d.dat.constval.vinteger:= 
+                                      stringconstlen(d.dat.constval.vstring);
+        end;
+        dk_dynarray: begin
+         notimplementederror('20160104B');
+        end;
+        else begin
+         typeerror;
+         exit;
+        end;
+       end;
+      end
+      else begin
+       if getvalue(s.stacktop-s.stackindex,das_none) then begin
+        case typ1^.h.kind of
+         dk_string8: begin
+          with additem(oc_lengthstring)^ do begin
+           par.ssas1:= info.s.ssa.index-1;
+          end;
+         end;
+         dk_dynarray: begin
+          with additem(oc_lengthdynar)^ do begin
+           par.ssas1:= info.s.ssa.index-1;
+          end;
+         end;
+         else begin
+          typeerror();
+          exit;
+         end;
+        end;
+        dest1^.d.kind:= ck_subres;
+        dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
+       end;
+      end;
+     end;
+     ck_typearg: begin
+      typ1:= ele.eledataabs(d.typ.typedata);
+      if typ1^.h.indirectlevel <> 0 then begin
+       typeerror();
+       exit;
+      end;
+      dest1^.d.kind:= ck_const;
+      dest1^.d.dat.constval.kind:= dk_integer;
+      case typ1^.h.kind of
+       dk_array: begin
+        dest1^.d.dat.constval.vinteger:= arraylength();
+       end;
+       else begin
+        typeerror();
+       end;
+      end;
+     end;
+     else begin
+      notimplementederror('');
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure floatsysfunc(const paramco: integer; const aop: opcodety);
 begin
  with info do begin
@@ -837,6 +941,7 @@ const
    (name: 'halt'; data: (func: sf_halt)),
    (name: 'low'; data: (func: sf_low)),
    (name: 'high'; data: (func: sf_high)),
+   (name: 'length'; data: (func: sf_length)),
    (name: 'sin'; data: (func: sf_sin))
   );
 

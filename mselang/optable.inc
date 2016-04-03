@@ -630,6 +630,15 @@
 //oc_decrefsizestackrefar
   (ssa: decrefsizestackrefdynarssa; proc: @decrefsizestackrefdynarop; flags: []), 
 
+//oc_highstring,
+  (ssa: highstringssa; proc: @highstringop; flags: []), 
+//oc_highdynar,
+  (ssa: highdynarssa; proc: @highdynarop; flags: []), 
+//oc_lengthstring,
+  (ssa: lengthstringssa; proc: @lengthstringop; flags: []), 
+//oc_lengthdynar,
+  (ssa: lengthdynarssa; proc: @lengthdynarop; flags: []), 
+
 //oc_popseg8
   (ssa: popseg8ssa; proc: @popseg8op; flags: [of_relocseg]), 
 //oc_popseg16

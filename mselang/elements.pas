@@ -325,6 +325,7 @@ function datatoele(const adata: pointer): pelementinfoty; inline;
 
 function newstring(): stringvaluety; //save info.stringbuffer
 function stringconst(const astring: stringvaluety): segaddressty;
+function stringconstlen(const astring: stringvaluety): int32;
 
 var
  ele: telementhashdatalist;
@@ -381,6 +382,7 @@ type
    procedure clear; override;
    function add(const avalue: string): stringvaluety;
    function allocconst(const astring: stringvaluety): segaddressty;
+   function getlength(const astring: stringvaluety): int32;
  end;
 
  elementhashdataty = record
@@ -400,6 +402,11 @@ end;
 function stringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
+end;
+
+function stringconstlen(const astring: stringvaluety): int32;
+begin
+ result:= stringbuf.getlength(astring);
 end;
 
 {
@@ -2313,6 +2320,13 @@ begin
                                   adddataoffs(result.address).listid;
    end;
   end;
+ end;
+end;
+
+function tstringbuffer.getlength(const astring: stringvaluety): int32;
+begin
+ with pstringbufdataty(fdata+astring.offset)^ do begin
+  result:= len;
  end;
 end;
 
