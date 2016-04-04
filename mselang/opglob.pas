@@ -525,6 +525,9 @@ type
   oc_setlengthstr8,
   oc_setlengthdynarray,
 
+  oc_uniquestr8,
+  oc_uniquedynarray,
+
   oc_pushcpucontext,
   oc_popcpucontext,
   oc_finiexception,

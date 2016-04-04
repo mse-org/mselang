@@ -3363,17 +3363,37 @@ procedure setlengthstr8op();
 begin
  with pc^.par do begin
   callcompilersub(cs_setlengthstring8,false,[bcstream.ssaval(ssas1),
+                                                         //dest
                                                      bcstream.ssaval(ssas2)]);
                                                             //count
  end;
 end;
 
 procedure setlengthdynarrayop();
-begin                                         //dest
- with pc^.par do begin
+begin                           
+ with pc^.par do begin                            
   callcompilersub(cs_setlengthdynarray,false,[bcstream.ssaval(ssas1),
-           //count                 //itemsize
+                                                     //dest
        bcstream.ssaval(ssas2),bcstream.constval(setlength.itemsize)]);
+           //count                 //itemsize
+ end;
+end;
+
+procedure uniquestr8op();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_uniquestring8,false,[bcstream.ssaval(ssas1)]);
+                                                   //dest
+ end;
+end;
+
+procedure uniquedynarrayop();
+begin                                         
+ with pc^.par do begin
+  callcompilersub(cs_uniquedynarray,false,[bcstream.ssaval(ssas1),
+                                                    //dest                                                      
+                                       bcstream.constval(setlength.itemsize)]);
+                                                    //itemsize
  end;
 end;
 
@@ -3969,6 +3989,9 @@ const
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;
+
+  uniquestr8ssa = 0;
+  uniquedynarrayssa = 0;
 
   raisessa = 0;
   pushcpucontextssa = 0;
