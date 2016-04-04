@@ -21,10 +21,15 @@ procedure __mla__decrefsizeref(const ref: pprefsizeinfoty);
 procedure __mla__increfsize(ref: prefsizeinfoty);
 procedure __mla__finirefsize(const ref: pprefsizeinfoty);
 procedure __mla__finirefsizear(ref: ppointer; const count: ptrint);
+
 procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
 procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
                                                     const count: int32);
+procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
+                                                    const itemsize: int32);
+procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
+
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 function __mla__highdynarray(ref: prefsizeinfoty): int32;
@@ -149,58 +154,58 @@ end;
 procedure __mla__setlengthdynarray(const ref: pprefsizeinfoty;
                                     const count: int32; const itemsize: int32);
 var
- d,d1: pdynarrayheaderty;
+ s,d: pdynarrayheaderty;
  i1,i2: int32;
 begin
  i1:= count*itemsize;
- d:= ref^;
- if d <> nil then begin
-  dec(d);
-  if d^.ref.count = 1 then begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count = 1 then begin
    if i1 = 0 then begin
-    freemem(d);
+    freemem(s);
     ref^:= nil;
    end
    else begin
-    i2:= d^.high+1;
+    i2:= s^.high+1;
     if count <= i2 then begin
-     reallocmem(d,i1+dynarrayallocsize); //new size smaller or same
+     reallocmem(s,i1+dynarrayallocsize); //new size smaller or same
     end
     else begin
      i2:= i2 * itemsize;
-     reallocmem(d,i1+dynarrayallocsize); //bigger
-     setmem(@d^.data+i2,i1-i2,0);
+     reallocmem(s,i1+dynarrayallocsize); //bigger
+     setmem(@s^.data+i2,i1-i2,0);
     end;
-    d^.ref.count:= 1;
-    d^.high:= count-1;
-    ref^:= @d^.data;
+    s^.ref.count:= 1;
+    s^.high:= count-1;
+    ref^:= @s^.data;
    end;
   end
   else begin
    if i1 = 0 then begin
-    freemem(d);
+    freemem(s);
     ref^:= nil;
    end
    else begin
-    getmem(d1,i1+dynarrayallocsize);
-    memcpy(@d1^.data,@d^.data,i1);
-    i2:= (d^.high+1) * itemsize;
+    getmem(d,i1+dynarrayallocsize);
+    memcpy(@d^.data,@s^.data,i1);
+    i2:= (s^.high+1) * itemsize;
     if i1 > i2 then begin  //new bigger
-     setmem(@d1^.data+i1,i2-i1,0);
+     setmem(@d^.data+i1,i2-i1,0);
     end;
    end;
-   dec(d^.ref.count);
-   d1^.ref.count:= 1;
-   d1^.high:= count -1;
-   ref^:= @d1^.data;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.high:= count -1;
+   ref^:= @d^.data;
   end;
  end
  else begin
   if count > 0 then begin
-   getzeromem(d,i1+dynarrayallocsize);
-   d^.ref.count:= 1;
-   d^.high:= count-1;
-   ref^:= @d^.data;
+   getzeromem(s,i1+dynarrayallocsize);
+   s^.ref.count:= 1;
+   s^.high:= count-1;
+   ref^:= @s^.data;
   end;
  end;
 end;
@@ -208,55 +213,92 @@ end;
 procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
                                                     const count: int32);
 var
- d,d1: pstring8headerty;
+ s,d: pstring8headerty;
  i1,i2: int32;
 begin
  i1:= count * 1; //bytesize
- d:= ref^;
- if d <> nil then begin
-  dec(d);
-  if d^.ref.count = 1 then begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count = 1 then begin
    if i1 = 0 then begin
-    freemem(d);
+    freemem(s);
     ref^:= nil;
    end
    else begin
-    reallocmem(d,i1+string8allocsize);
-    d^.ref.count:= 1;
-    d^.len:= count;
-    ref^:= @d^.data;
-    (pcard8(pointer(d+1))+count)^:= 0; //terminator
+    reallocmem(s,i1+string8allocsize);
+    s^.ref.count:= 1;
+    s^.len:= count;
+    ref^:= @s^.data;
+    (pcard8(pointer(s+1))+count)^:= 0; //terminator
    end;
   end
   else begin
    if i1 = 0 then begin
-    freemem(d);
+    freemem(s);
     ref^:= nil;
    end
    else begin
-    getmem(d1,i1+string8allocsize);
-    i2:= d^.len * 1; //old bytesize
+    getmem(d,i1+string8allocsize);
+    i2:= s^.len * 1; //old bytesize
     if i2 <= i1 then begin
-     memcpy(@d1^.data,@d^.data,i2);
+     memcpy(@d^.data,@s^.data,i2);
     end
     else begin
-     memcpy(@d1^.data,@d^.data,i1);
+     memcpy(@d^.data,@s^.data,i1);
     end;
-    (pcard8(pointer(d+1))+count)^:= 0; //terminator
+    (pcard8(pointer(s+1))+count)^:= 0; //terminator
    end;
-   dec(d^.ref.count);
-   d1^.ref.count:= 1;
-   d1^.len:= count;
-   ref^:= @d1^.data;
+   dec(s^.ref.count);
+   d^.ref.count:= 1;
+   d^.len:= count;
+   ref^:= @d^.data;
   end;
  end
  else begin
   if count > 0 then begin
-   getmem(d,i1+string8allocsize);
+   getmem(s,i1+string8allocsize);
+   s^.ref.count:= 1;
+   s^.len:= count;
+   ref^:= @s^.data;
+   (pcard8(pointer(s+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
+                                                    const itemsize: int32);
+var
+ s,d: pdynarrayheaderty;
+ i1: int32;
+begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count > 1 then begin
+   i1:= (s^.high+1)*itemsize + dynarrayallocsize;
+   getmem(d,i1+dynarrayallocsize);
+   memcpy(d,s,i1);
    d^.ref.count:= 1;
-   d^.len:= count;
    ref^:= @d^.data;
-   (pcard8(pointer(d+1))+count)^:= 0; //terminator
+  end;
+ end;
+end;
+
+procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
+var
+ s,d: pstring8headerty;
+ i1: int32;
+begin
+ s:= ref^;
+ if s <> nil then begin
+  dec(s);
+  if s^.ref.count > 1 then begin
+   i1:= (s^.len)*1 + dynarrayallocsize;
+   getmem(d,i1+string8allocsize);
+   memcpy(d,s,i1);
+   d^.ref.count:= 1;
+   ref^:= @d^.data;
   end;
  end;
 end;

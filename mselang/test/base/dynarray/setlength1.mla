@@ -1,4 +1,4 @@
-program setlength;
+program setlength1;
 type
  intarty = array of int32;
 var
@@ -11,5 +11,6 @@ begin
  i1:= high(ar1);
  i2:= high(str1);
  ar1:= nil;
- exitcode:= length(ar1) + i1 + 123 - 19 + i2 - 12 - low(str1) - low(ar1);
+ str1:= '';
+ exitcode:= length(ar1) + i1 + 123 - 19 + i2 - 12 - low(str1) - low(ar1) + length(str1);
 end.

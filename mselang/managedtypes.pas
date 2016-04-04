@@ -36,6 +36,7 @@ procedure writemanagedtypeop(const op: managedopty; const atype: ptypedataty;
 
 //procedure writemanagedfini(global: boolean);
 procedure handlesetlength(const paramco: integer);
+procedure handleunique(const paramco: integer);
 
 procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
                         const aref: addressrefty{; const ssaindex: integer});
@@ -54,7 +55,7 @@ procedure managerecord(const op: managedopty;{ const atype: ptypedataty;}
 
 implementation
 uses
- elements,errorhandler,handlerutils,llvmlists,subhandler,
+ elements,errorhandler,handlerutils,llvmlists,subhandler,syssubhandler,
  stackops,unithandler,segmentutils;
  
 const
@@ -63,6 +64,17 @@ const
     oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
   //dk_address,dk_record,dk_string8,      dk_dynarray,         
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,
+  //dk_array,dk_class,dk_interface,dk_sub,
+    oc_none, oc_none, oc_none,     oc_none,
+  //dk_enum,dk_enumitem,dk_set, dk_character
+    oc_none,oc_none,    oc_none,oc_none
+ );
+
+ uniqueops: array[datakindty] of opcodety = (
+  //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
+    oc_none,oc_none,   oc_none,   oc_none,    oc_none,   oc_none, oc_none,
+  //dk_address,dk_record,dk_string8,      dk_dynarray,         
+    oc_none,   oc_none,  oc_uniquestr8,oc_uniquedynarray,
   //dk_array,dk_class,dk_interface,dk_sub,
     oc_none, oc_none, oc_none,     oc_none,
   //dk_enum,dk_enumitem,dk_set, dk_character
@@ -243,55 +255,81 @@ end;
 procedure handlesetlength(const paramco: integer);
 var
  len: integer;
- po1: ptypedataty;
+ typ1: ptypedataty;
 begin
  with info do begin
-  if paramco <> 2 then begin
-   errormessage(err_wrongnumberofparameters,['setlength'],
-                                     s.stacktop-paramcount-s.stackindex);
-  end;
-  if getvalue(s.stacktop-s.stackindex,das_32) then begin
-   with contextstack[s.stacktop] do begin
-    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if (d.dat.datatyp.indirectlevel <> 0) or 
-                                    (po1^.h.kind <> dk_integer) then begin
-     incompatibletypeserror(2,'dk_integer',d);
-    end
-    else begin
-     if getaddress(s.stacktop-s.stackindex-1,true) then begin
-     {$ifdef mse_checkinternalerror}
-      if (contextstack[s.stacktop].d.kind <> ck_fact) or 
-                     (contextstack[s.stacktop-1].d.kind <> ck_fact) then begin
-       internalerror(ie_handler,'20160228A');
-      end;
-     {$endif}
-      with contextstack[s.stacktop-1] do begin
-       with ptypedataty(ele.eledataabs(
-                  d.dat.datatyp.typedata))^ do begin
-        with additem(setlengthops[h.kind])^ do begin
-         if op.op = oc_none then begin
-          errormessage(err_typemismatch,[]);
-         end
-         else begin
-          if co_llvm in compileoptions then begin
-           par.ssas1:= d.dat.fact.ssaindex; //result
-           par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
-           par.setlength.itemsize:= 
-                  info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+  if checkparamco(2,paramco) then begin
+   if getvalue(s.stacktop-s.stackindex,das_32) then begin
+    with contextstack[s.stacktop] do begin
+     typ1:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (d.dat.datatyp.indirectlevel <> 0) or 
+                                     (typ1^.h.kind <> dk_integer) then begin
+      incompatibletypeserror(2,'dk_integer',d);
+     end
+     else begin
+      if getaddress(s.stacktop-s.stackindex-1,true) then begin
+      {$ifdef mse_checkinternalerror}
+       if not (contextstack[s.stacktop].d.kind in [ck_fact,ck_subres]) or 
+                     not (contextstack[s.stacktop-1].d.kind in 
+                                               [ck_fact,ck_subres]) then begin
+        internalerror(ie_handler,'20160228A');
+       end;
+      {$endif}
+       with contextstack[s.stacktop-1] do begin
+        with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+         with additem(setlengthops[h.kind])^ do begin
+          if op.op = oc_none then begin
+           errormessage(err_typemismatch,[]);
           end
           else begin
-           par.setlength.itemsize:= itemsize;
+           if co_llvm in compileoptions then begin
+            par.ssas1:= d.dat.fact.ssaindex; //result
+            par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+            par.setlength.itemsize:= 
+                   info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+           end
+           else begin
+            par.setlength.itemsize:= itemsize;
+           end;
           end;
          end;
         end;
        end;
       end;
      end;
-    end;     
-   end;   
+    end;  
+   end;
   end;
  end;
 end;
+
+procedure handleunique(const paramco: integer);
+begin
+ with info do begin
+  if checkparamco(1,paramco) and 
+                       getaddress(s.stacktop-s.stackindex,true) then begin
+   with contextstack[s.stacktop] do begin
+    with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
+     with additem(uniqueops[h.kind])^ do begin
+      if op.op = oc_none then begin
+       errormessage(err_typemismatch,[]);
+      end
+      else begin
+       if co_llvm in compileoptions then begin
+        par.ssas1:= d.dat.fact.ssaindex; //result
+        par.setlength.itemsize:= 
+               info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
+       end
+       else begin
+        par.setlength.itemsize:= itemsize;
+       end;
+      end;
+     end;
+    end;
+   end;
+  end;
+ end;
+end;  
 
 procedure writemanagedtypeop(const op: managedopty;
                 const atype: ptypedataty; const aref: addressrefty{;

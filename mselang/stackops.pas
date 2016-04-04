@@ -3712,7 +3712,7 @@ begin
  stackpop(pointersize+sizeof(stringsizety));
 end;
 
-procedure setlengthdynarrayop();
+procedure setlengthdynarrayop(); //address, length
 var
  si1: dynarraysizety;
  sil1,sil2: dynarraysizety;
@@ -3762,10 +3762,55 @@ begin
   end;
   ds^.high:= si1-1;
   ds^.ref.count:= 1;
-//  inc(ds);    //data
   ad^:= @ds^.data;
  end;
  stackpop(pointersize+sizeof(dynarraysizety));
+end;
+
+procedure uniquestr8op(); //address
+var
+ si1: stringsizety;
+ ds,ss: pstring8headerty;
+ ad: ppointer;
+begin
+ ad:= ppointer(cpu.stack-sizeof(pointer))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+  if ds^.ref.count > 1 then begin
+   ss:= ds;
+   si1:= ds^.len*1 + string8allocsize;
+   getmem(ds,si1+string8allocsize);
+   move((ss+1)^,(ds+1)^,si1); //get data copy
+   dec(ss^.ref.count);
+   ds^.ref.count:= 1;
+   ad^:= ds;
+  end;
+ end;
+ stackpop(pointersize);
+end;
+
+procedure uniquedynarrayop();
+var
+ si1: dynarraysizety;
+ ds,ss: pdynarrayheaderty;
+ ad: ppointer;
+begin
+ ad:= ppointer(cpu.stack-sizeof(pointer))^;
+ ds:= ad^;   //data
+ if ds <> nil then begin
+  dec(ds);    //header
+  if ds^.ref.count > 1 then begin
+   si1:= (ds^.high+1)*cpu.pc^.par.setlength.itemsize + dynarrayallocsize;
+   ss:= ds;
+   getmem(ds,si1);
+   move(ss^,ds^,si1); //get data copy including terminator
+   dec(ss^.ref.count);
+   ds^.ref.count:= 1;
+   ad^:= @ds^.data;
+  end;
+ end;
+ stackpop(pointersize);
 end;
 {
 const
@@ -4434,6 +4479,9 @@ const
 
   setlengthstr8ssa = 0;
   setlengthdynarrayssa = 0;
+
+  uniquestr8ssa = 0;
+  uniquedynarrayssa = 0;
 
   raisessa = 0;
   pushcpucontextssa = 0;

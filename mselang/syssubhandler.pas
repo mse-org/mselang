@@ -41,8 +41,12 @@ procedure handlesin(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
-  //sf_write,   sf_writeln,    sf_setlength,   sf_sizeof,
-  @handlewrite,@handlewriteln,@handlesetlength,@handlesizeof,
+  //sf_write,   sf_writeln,
+  @handlewrite,@handlewriteln,
+  //sf_setlength,  sf_unique
+  @handlesetlength,@handleunique,
+  //sf_sizeof,
+  @handlesizeof,
   //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
   //sf_reallocmem
@@ -51,6 +55,8 @@ const
   @handlesetmem,@handlememcpy,
   //sf_halt,  //sf_low,  //sf_high,  //sf_length,  //sf_sin
   @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin);
+
+function checkparamco(const wanted, actual: integer): boolean;
   
 procedure init();
 procedure deinit();
@@ -990,6 +996,7 @@ const
    (name: 'write'; data: (func: sf_write)),
    (name: 'writeln'; data: (func: sf_writeln)),
    (name: 'setlength'; data: (func: sf_setlength)),
+   (name: 'unique'; data: (func: sf_unique)),
    (name: 'sizeof'; data: (func: sf_sizeof)),
    (name: 'inc'; data: (func: sf_inc)),
    (name: 'dec'; data: (func: sf_dec)),

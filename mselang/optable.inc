@@ -910,6 +910,11 @@
 //oc_setlengthdynarray
   (ssa: setlengthdynarrayssa; proc: @setlengthdynarrayop; flags: []), 
 
+//oc_uniquestr8
+  (ssa: uniquestr8ssa; proc: @uniquestr8op; flags: []), 
+//oc_uniquedynarray
+  (ssa: uniquedynarrayssa; proc: @uniquedynarrayop; flags: []), 
+
 //oc_pushcpucontext
   (ssa: pushcpucontextssa; proc: @pushcpucontextop; flags: []), 
 //oc_popcpucontext
