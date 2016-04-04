@@ -230,6 +230,7 @@ const
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
  stringdatakinds = [dk_string8];
+// dynardatakinds = [dk_string8,dk_dynarray];
 type
  enumflagty = (enf_contiguous);
  enumflagsty = set of enumflagty;

@@ -985,8 +985,8 @@ begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}
-   if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
-                                                      dk_dynarray then begin
+   if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in
+                                            [dk_dynarray,dk_string8] then begin
     dec(d.dat.indirection);
     dec(d.dat.datatyp.indirectlevel);
     getvalue(-1,das_none);
@@ -1011,20 +1011,48 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   if d.kind <> ck_prop then begin //no array property
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
-   isdynarray:= itemtype^.h.kind = dk_dynarray;
+   isdynarray:= true;
+   case itemtype^.h.kind of
+    dk_dynarray: begin
+     if d.dat.datatyp.indirectlevel <> 0 then begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errorlab;
+     end;
+     itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
+     range.min:= 0;
+    end;
+    dk_string8: begin
+     if d.dat.datatyp.indirectlevel <> 0 then begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errorlab;
+     end;
+     range.min:= 1;
+     itemtype:= ele.eledataabs(sysdatatypes[st_char8].typedata);
+    end;
+    dk_array: begin
+     if d.dat.datatyp.indirectlevel <> 1 then begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errorlab;
+     end;
+     isdynarray:= false;
+    end;
+    else begin
+     isdynarray:= false;
+    end;
+   end;
+  {
    if not ((itemtype^.h.kind = dk_array) and 
                              (d.dat.datatyp.indirectlevel = 1) or
                   (isdynarray and (d.dat.datatyp.indirectlevel = 0))) then begin
     errormessage(err_illegalqualifier,[],1);
     goto errorlab;
    end;
+  }
    if isdynarray then begin
-    itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
     if not tryconvert(1,st_int32) then begin
      errormessage(err_illegalqualifier,[],1);
      goto errorlab;
     end;
-    range.min:= 0;
    end
    else begin
     indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);

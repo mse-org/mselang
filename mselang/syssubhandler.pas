@@ -468,6 +468,17 @@ begin
        po1:= additem(oc_writestring8);
        po1^.par.voffset:= alignsize(pointersize);
       end;
+      dk_character: begin
+       case po2^.h.datasize of
+        das_8: begin
+         po1:= additem(oc_writechar8);
+         po1^.par.voffset:= alignsize(1);
+        end;
+        else begin
+         notimplementederror('20160404B');
+        end;
+       end;
+      end;
       dk_class: begin
        po1:= additem(oc_writeclass);
        po1^.par.voffset:= alignsize(pointersize);

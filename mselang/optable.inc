@@ -133,6 +133,8 @@
   (ssa: writeinteger64ssa; proc: @writeinteger64op; flags: []), 
 //oc_writefloat64
   (ssa: writefloat64ssa; proc: @writefloat64op; flags: []), 
+//oc_writechar8
+  (ssa: writechar8ssa; proc: @writechar8op; flags: []), 
 //oc_writestring8
   (ssa: writestring8ssa; proc: @writestring8op; flags: []), 
 //oc_writepointer

@@ -133,7 +133,7 @@ type
   text: string;
  end;
  internalstringty = (is_ret,is_card32,is_int8,is_int16,is_int32,is_int64,
-                     is_string8,is_pointer,is_flo64);
+                     is_char8,is_string8,is_pointer,is_flo64);
 const
  internalstringconsts: array[internalstringty] of internalstringinfoty = (
   (text: #$a#0),        //is_ret,
@@ -142,6 +142,7 @@ const
   (text: '%hd'#0),      //is_int16,
   (text: '%d'#0),       //is_int32,
   (text: '%lld'#0),     //is_int64,
+  (text: '%c'#0),       //is_char8,
   (text: '%s'#0),       //is_string8,
   (text: '%p'#0),       //is_pointer
   (text: '%e'#0)        //is_flo64
@@ -727,6 +728,16 @@ procedure writestring8op();
 begin
  with pc^.par do begin
   bcstream.emitbitcast(bcstream.globval(internalstrings[is_string8]),
+                                           bcstream.typeval(pointertype));
+  bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
+                               [bcstream.relval(0),bcstream.ssaval(ssas1)]);
+ end;
+end;
+
+procedure writechar8op();
+begin
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.globval(internalstrings[is_char8]),
                                            bcstream.typeval(pointertype));
   bcstream.emitcallop(false,bcstream.globval(internalfuncs[if_printf]),
                                [bcstream.relval(0),bcstream.ssaval(ssas1)]);
@@ -3548,6 +3559,7 @@ const
   writeinteger32ssa = 1;
   writeinteger64ssa = 1;
   writefloat64ssa = 1;
+  writechar8ssa = 1;
   writestring8ssa = 1;
   writepointerssa = 1;
   writeclassssa = 1;

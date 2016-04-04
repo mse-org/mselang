@@ -1,0 +1,7 @@
+program writechar;
+var
+ str1: string8;
+begin
+ str1:= 'abc';
+ writeln(str1[2]);
+end.

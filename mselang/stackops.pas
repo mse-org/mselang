@@ -533,6 +533,11 @@ begin
  write(vfloatty((cpu.stack+cpu.pc^.par.voffset)^));
 end;
 
+procedure writechar8op();
+begin
+ write(char8((cpu.stack+cpu.pc^.par.voffset)^));
+end;
+
 procedure writestring8op();
 var
  po1: pointer;
@@ -4038,6 +4043,7 @@ const
   writeinteger32ssa = 0;
   writeinteger64ssa = 0;
   writefloat64ssa = 0;
+  writechar8ssa = 0;
   writestring8ssa = 0;
   writepointerssa = 0;
   writeclassssa = 0;
