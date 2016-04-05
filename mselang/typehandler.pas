@@ -960,14 +960,19 @@ begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
 {$endif}
- with info do begin
-  if contextstack[s.stackindex-1].d.kind = ck_prop then begin
+ with info,contextstack[s.stackindex-1] do begin
+  if d.kind = ck_prop then begin
    with contextstack[s.stackindex] do begin
     d.kind:= ck_index;
    end;
   end
   else begin
    getaddress(-1,true);
+   if (d.dat.datatyp.indirectlevel = 1) and 
+     ((ptypedataty(ele.eledataabs(d.dat.datatyp.typedata)))^.h.kind in 
+                                                       [dk_string8]) then begin
+    include(d.handlerflags,hf_needsunique);
+   end;
    handleindexitemstart();
   end;
  end;
@@ -1113,7 +1118,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex] do begin
   if d.kind = ck_index then begin //for indexed property
-   include(contextstack[s.stacktop].handlerflags,hf_propindex);
+   include(contextstack[s.stacktop].d.handlerflags,hf_propindex);
   end
   else begin
    s.stacktop:= s.stackindex-1;

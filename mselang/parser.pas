@@ -170,7 +170,7 @@ begin
    setlength(contextstack,stackdepth+contextstackreserve);
   end;
   with contextstack[s.stacktop] do begin
-   handlerflags:= [];
+   d.handlerflags:= [];
   end;
  end;
 end;

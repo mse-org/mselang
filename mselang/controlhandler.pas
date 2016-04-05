@@ -442,7 +442,7 @@ begin
 {$endif}
  with info do begin
   if (s.stacktop-s.stackindex = 3) then begin
-   flags1:= contextstack[s.stackindex].handlerflags;
+   flags1:= contextstack[s.stackindex].d.handlerflags;
    if not (hf_error in flags1) then begin
     with info,contextstack[s.stackindex],d.control.forinfo do begin
      if getvalue(3,alloc.kind) then begin
@@ -534,8 +534,8 @@ begin
 {$endif}
  with info do begin
   with info,contextstack[s.stackindex] do begin
-   flags1:= handlerflags;
-   if not (hf_error in handlerflags) then begin
+   flags1:= d.handlerflags;
+   if not (hf_error in d.handlerflags) then begin
     if hf_down in flags1 then begin        //todo: different types
      op1:= oc_cmpleint32;
     end

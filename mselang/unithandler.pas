@@ -517,7 +517,7 @@ begin
  outhandle('COMPILERSWITCHENTRY');
 {$endif}
  with info,contextstack[s.stackindex] do begin
-  handlerflags:= handlerflags -
+  d.handlerflags:= d.handlerflags -
                     [hf_set,hf_clear,hf_long,hf_longset,hf_longclear];
  end;
 end;
@@ -528,7 +528,7 @@ begin
  outhandle('SETCOMPILERSWITCH');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_set);
+  include(d.handlerflags,hf_set);
  end;
 end;
 
@@ -538,7 +538,7 @@ begin
  outhandle('UNSETCOMPILERSWITCH');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_clear);
+  include(d.handlerflags,hf_clear);
  end;
 end;
 
@@ -549,7 +549,7 @@ begin
  outhandle('LONGCOMPILERSWITCHENTRY');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_long);
+  include(d.handlerflags,hf_long);
  end;
 end;
 
@@ -559,7 +559,7 @@ begin
  outhandle('UNSETCOMPILERSWITCH');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_longset);
+  include(d.handlerflags,hf_longset);
  end;
 end;
 
@@ -569,7 +569,7 @@ begin
  outhandle('SETDEFAULTCOMPILERSWITCH');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_default);
+  include(d.handlerflags,hf_default);
  end;
 end;
 
@@ -579,7 +579,7 @@ begin
  outhandle('UNSETLONGCOMPILERSWITCH');
 {$endif} 
  with info,contextstack[s.stackindex] do begin
-  include(handlerflags,hf_longclear);
+  include(d.handlerflags,hf_longclear);
  end;
 end;
 
@@ -621,15 +621,15 @@ begin
    end;
   {$endif}
    ident1:= contextstack[s.stackindex+1].d.ident.ident;
-   if hf_long in handlerflags then begin
+   if hf_long in d.handlerflags then begin
     s1:= check(ident1,longcompilerswitches);
-    if handlerflags * [hf_longclear,hf_longset,hf_default] = [] then begin
+    if d.handlerflags * [hf_longclear,hf_longset,hf_default] = [] then begin
      s1:= cos_none;
     end;
    end
    else begin
     s1:= check(ident1,shortcompilerswitches);
-    if handlerflags * [hf_clear,hf_set] = [] then begin
+    if d.handlerflags * [hf_clear,hf_set] = [] then begin
      s1:= cos_none;
     end;
    end;
@@ -637,8 +637,8 @@ begin
     identerror(1,err_illegaldirective);
    end
    else begin
-    if (handlerflags * [hf_set,hf_longset] <> []) or 
-           (hf_default in handlerflags) and (s1 in compilerswitches) then begin
+    if (d.handlerflags * [hf_set,hf_longset] <> []) or 
+           (hf_default in d.handlerflags) and (s1 in compilerswitches) then begin
      include(s.compilerswitches,s1);
     end
     else begin 

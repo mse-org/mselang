@@ -2289,7 +2289,7 @@ end;
 procedure sethandlerflag(const avalue: handlerflagty);
 begin
  with info do begin
-  include(contextstack[s.stackindex].handlerflags,avalue);
+  include(contextstack[s.stackindex].d.handlerflags,avalue);
  end;
 end;
 

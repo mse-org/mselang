@@ -386,8 +386,14 @@ type
  end;
  pdatacontextty = ^datacontextty;
 
+ handlerflagty = (hf_error,hf_down,hf_default,
+                  hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
+                  hf_propindex,hf_needsunique);
+ handlerflagsty = set of handlerflagty;
+   
  contextdataty = record
 //  elemark: elementoffsetty;
+  handlerflags: handlerflagsty;
   case kind: contextkindty of
    ck_block:(
     block: blockinfoty;
@@ -481,11 +487,6 @@ type
   line: integer;
  end;
 
- handlerflagty = (hf_error,hf_down,hf_default,
-                  hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
-                  hf_propindex);
- handlerflagsty = set of handlerflagty;
-   
  pcontextdataty = ^contextdataty;
  contextitemty = record
   parent: integer;
@@ -493,7 +494,7 @@ type
   returncontext: pcontextty;
   start: sourceinfoty;
   debugstart: pchar;
-  handlerflags: handlerflagsty;
+//  handlerflags: handlerflagsty;
   transitionflags: branchflagsty;
   opmark: opmarkty;
 //  bbindex: int32; //used in linkmarkphi
