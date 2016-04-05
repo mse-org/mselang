@@ -290,6 +290,9 @@ type
    dk_string8:(
     vstring: stringvaluety;
    );
+   dk_character:(
+    vcharacter: card32;
+   );
    dk_enum:(
     venum: enumvaluety;
    );

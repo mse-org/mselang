@@ -966,6 +966,12 @@ begin
      end;
     end;
    end;
+   dk_character: begin
+    si1:= das_8; //todo: size
+    with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+     setimmint8(po1^.d.dat.constval.vcharacter,par);
+    end;
+   end;
    dk_pointer: begin
     si1:= das_pointer;
     with po1^.d.dat.constval do begin

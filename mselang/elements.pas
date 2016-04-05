@@ -323,9 +323,11 @@ procedure init;
 function eletodata(const aele: pelementinfoty): pointer; inline;
 function datatoele(const adata: pointer): pelementinfoty; inline;
 
+//todo: code unit sizes
 function newstringconst(): stringvaluety; //save info.stringbuffer
-function allocstringconst(const astring: stringvaluety): segaddressty;
+function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
+function allocstringconst(const astring: stringvaluety): segaddressty;
 
 var
  ele: telementhashdatalist;
@@ -383,6 +385,7 @@ type
    function add(const avalue: string): stringvaluety;
    function allocconst(const astring: stringvaluety): segaddressty;
    function getlength(const astring: stringvaluety): int32;
+   function getstring(const astring: stringvaluety): lstringty;
  end;
 
  elementhashdataty = record
@@ -402,6 +405,11 @@ end;
 function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
+end;
+
+function getstringconst(const astring: stringvaluety): lstringty;
+begin
+ result:= stringbuf.getstring(astring);
 end;
 
 function stringconstlen(const astring: stringvaluety): int32;
@@ -2327,6 +2335,14 @@ function tstringbuffer.getlength(const astring: stringvaluety): int32;
 begin
  with pstringbufdataty(fdata+astring.offset)^ do begin
   result:= len;
+ end;
+end;
+
+function tstringbuffer.getstring(const astring: stringvaluety): lstringty;
+begin
+ with pstringbufdataty(fdata+astring.offset)^ do begin
+  result.len:= len;
+  result.po:= fbuffer + offset;
  end;
 end;
 

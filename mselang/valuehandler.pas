@@ -54,13 +54,13 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- controlhandler,identutils,
+ controlhandler,identutils,msestrings,
  __mla__internaltypes,exceptionhandler,listutils;
 type
- converttablety = array[intbitsizety,databitsizety] of opcodety;
+ convertsizetablety = array[intbitsizety,databitsizety] of opcodety;
 
 const 
- cardtocard: converttablety = (
+ cardtocard: convertsizetablety = (
   (//ibs_none
   //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
@@ -103,7 +103,7 @@ const
   )
  );
 
- inttoint: converttablety = (
+ inttoint: convertsizetablety = (
   (//ibs_none
   //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
@@ -146,7 +146,7 @@ const
   )
  );
 
- cardtoint: converttablety = (
+ cardtoint: convertsizetablety = (
   (//ibs_none
   //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
@@ -189,7 +189,7 @@ const
   )
  );
 
- inttocard: converttablety = (
+ inttocard: convertsizetablety = (
   (//ibs_none
   //das_none,das_1,  das_2_7,das_8,  das_9_15,das_16, das_17_31,
     oc_none, oc_none,oc_none,oc_none,oc_none, oc_none,oc_none,
@@ -238,7 +238,7 @@ function tryconvert(const stackoffset: integer;{var context: contextitemty;}
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
 
- procedure convertsize(const atable: converttablety);
+ procedure convertsize(const atable: convertsizetablety);
  var
   op1: opcodety;
   i1: int32;
@@ -269,6 +269,7 @@ var                     //todo: optimize, use tables, complete
 var
  pointerconv: boolean;
  i1,i2,i3: integer;
+ lstr1: lstringty;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   pointerconv:= false;
@@ -357,8 +358,12 @@ begin
          end;
          dk_character: begin
           case source1^.h.kind of
-           dk_string8: begin
-//            if strconstlen(vstring)
+           dk_string8: begin 
+            lstr1:= getstringconst(vstring);
+            if lstr1.len = 1 then begin
+             vcharacter:= ord(lstr1.po^); //todo: encoding
+             result:= true;
+            end;
            end;
           end;
          end;
@@ -415,6 +420,12 @@ begin
          if (source1^.h.kind = dk_set) and 
               (d.dat.datatyp.typedata = emptyset.typedata) then begin
           result:= true;
+         end;
+        end;
+        dk_string8: begin
+         case source1^.h.kind of
+          dk_character: begin
+          end;
          end;
         end;
        end;
