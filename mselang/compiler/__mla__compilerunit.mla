@@ -30,6 +30,8 @@ procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
                                                     const itemsize: int32);
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 
+function __mla__chartostring8(achar: card8): pointer;
+
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 function __mla__highdynarray(ref: prefsizeinfoty): int32;
@@ -301,6 +303,18 @@ begin
    ref^:= @d^.data;
   end;
  end;
+end;
+
+function __mla__chartostring8(achar: card8): pointer;
+var
+ po1: pstring8headerty;
+begin
+ getmem(po1,1*1+string8allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ result:= po1+1; //data
+ pcard8(result)^:= achar;
+ (pcard8(result)+1)^:= 0; //terminator
 end;
 
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;

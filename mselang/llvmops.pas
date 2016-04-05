@@ -1430,7 +1430,9 @@ end;
 
 procedure chartostring8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_chartostring8,true,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure not1op();
@@ -3657,7 +3659,7 @@ const
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
   
-  chartostring8ssa = 0; //todo
+  chartostring8ssa = 1;
 
   not1ssa = 1;
   not32ssa = 1;

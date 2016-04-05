@@ -1,0 +1,9 @@
+program chartostring;
+var
+ str1: string8;
+ ch1: char8;
+begin
+ ch1:= 'a';
+ str1:= ch1;
+ writeln(str1); 
+end.
