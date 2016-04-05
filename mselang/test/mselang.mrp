@@ -116,7 +116,7 @@ c=3
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=22
    (
    kind=1
@@ -2304,8 +2304,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,dynarray
-   c=10
+   a=0,664,4,dynarray
+   c=12
     (
     kind=2
     a=0,648,1,setlength
@@ -2377,6 +2377,50 @@ c=3
     a=0,648,1,setlength1 llvm
     teststate=1
     path=setlength1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,unique
+    teststate=1
+    path=unique.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,unique llvm
+    teststate=1
+    path=unique.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -2691,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B735B118
+    ao=An unhandled exception occured at $B73D8630
     ae=
     aec=123
     ie=0
@@ -5025,7 +5069,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,managed
+   a=0,664,4,managed
    c=4
     (
     kind=2
@@ -5193,7 +5237,7 @@ c=3
   )
   (
   kind=1
-  a=0,665,4,class
+  a=0,664,4,class
   c=21
    (
    kind=1
@@ -6250,7 +6294,7 @@ c=3
    (
    kind=1
    a=0,665,4,writeln
-   c=2
+   c=4
     (
     kind=2
     a=0,648,1,writeinsub
@@ -6293,6 +6337,50 @@ c=3
     ao=123 123
     ae=
     aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,writechar
+    teststate=1
+    path=writechar.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=b
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=b
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,writechar llvm
+    teststate=1
+    path=writechar.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=b
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=b
+    ae=
+    aec=0
     ie=0
     )
    teststate=1
@@ -6692,74 +6780,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=628
+propcolwidthref=643
 width0=50
 sortdescend0=0
-width1=192
+width1=197
 sortdescend1=0
-width2=222
+width2=227
 sortdescend2=0
-width3=163
+width3=167
 sortdescend3=0
 sortdescend4=0
-rowstate=66
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=9
  0 0
  0 0
  0 0

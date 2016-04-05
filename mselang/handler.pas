@@ -1367,7 +1367,7 @@ begin
       d.dat.indirection:= 0;
       d.dat.datatyp:= sysdatatypes[st_string8];
       d.dat.constval.kind:= dk_string8;
-      d.dat.constval.vstring:= newstring();
+      d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
       c1:= d.number.value;

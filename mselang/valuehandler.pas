@@ -355,6 +355,13 @@ begin
            end;
           end;
          end;
+         dk_character: begin
+          case source1^.h.kind of
+           dk_string8: begin
+//            if strconstlen(vstring)
+           end;
+          end;
+         end;
         end;
         if result then begin
          d.dat.datatyp.typedata:= ele.eledatarel(dest);

@@ -953,7 +953,7 @@ begin
    dk_string8: begin
     si1:= das_pointer;
     isimm:= false;
-    segad1:= stringconst(po1^.d.dat.constval.vstring);
+    segad1:= allocstringconst(po1^.d.dat.constval.vstring);
     if segad1.segment = seg_nil then begin
      insertitem(oc_pushnil,stackoffset,before);
     end

@@ -323,8 +323,8 @@ procedure init;
 function eletodata(const aele: pelementinfoty): pointer; inline;
 function datatoele(const adata: pointer): pelementinfoty; inline;
 
-function newstring(): stringvaluety; //save info.stringbuffer
-function stringconst(const astring: stringvaluety): segaddressty;
+function newstringconst(): stringvaluety; //save info.stringbuffer
+function allocstringconst(const astring: stringvaluety): segaddressty;
 function stringconstlen(const astring: stringvaluety): int32;
 
 var
@@ -394,12 +394,12 @@ type
 var
  stringbuf: tstringbuffer;
 
-function newstring({const info: pparseinfoty}): stringvaluety;
+function newstringconst({const info: pparseinfoty}): stringvaluety;
 begin
  result:= stringbuf.add(info.stringbuffer);
 end;
 
-function stringconst(const astring: stringvaluety): segaddressty;
+function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
  result:= stringbuf.allocconst({info,}astring);
 end;
