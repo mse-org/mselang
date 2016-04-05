@@ -277,10 +277,11 @@ begin
  s:= ref^;
  if s <> nil then begin
   dec(s);
-  if s^.ref.count > 1 then begin
+  if s^.ref.count <> 1 then begin
    i1:= (s^.high+1)*itemsize + dynarrayallocsize;
    getmem(d,i1+dynarrayallocsize);
    memcpy(d,s,i1);
+   dec(s^.ref.count);
    d^.ref.count:= 1;
    ref^:= @d^.data;
   end;
@@ -295,10 +296,13 @@ begin
  s:= ref^;
  if s <> nil then begin
   dec(s);
-  if s^.ref.count > 1 then begin
+  if s^.ref.count <> 1 then begin
    i1:= (s^.len)*1 + dynarrayallocsize;
    getmem(d,i1+string8allocsize);
    memcpy(d,s,i1);
+   if s^.ref.count > 0 then begin
+    dec(s^.ref.count);
+   end;
    d^.ref.count:= 1;
    ref^:= @d^.data;
   end;

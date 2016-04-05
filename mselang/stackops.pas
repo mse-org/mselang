@@ -3796,14 +3796,16 @@ begin
  ds:= ad^;   //data
  if ds <> nil then begin
   dec(ds);    //header
-  if ds^.ref.count > 1 then begin
+  if ds^.ref.count <> 1 then begin
    ss:= ds;
    si1:= ds^.len*1 + string8allocsize;
    getmem(ds,si1+string8allocsize);
-   move((ss+1)^,(ds+1)^,si1); //get data copy
-   dec(ss^.ref.count);
+   move(ss^,ds^,si1); //get copy including terminator
+   if ss^.ref.count > 0 then begin //no const
+    dec(ss^.ref.count);
+   end;
    ds^.ref.count:= 1;
-   ad^:= ds;
+   ad^:= @ds^.data;
   end;
  end;
  stackpop(pointersize);
@@ -3819,11 +3821,11 @@ begin
  ds:= ad^;   //data
  if ds <> nil then begin
   dec(ds);    //header
-  if ds^.ref.count > 1 then begin
+  if ds^.ref.count <> 1 then begin
    si1:= (ds^.high+1)*cpu.pc^.par.setlength.itemsize + dynarrayallocsize;
    ss:= ds;
    getmem(ds,si1);
-   move(ss^,ds^,si1); //get data copy including terminator
+   move(ss^,ds^,si1);
    dec(ss^.ref.count);
    ds^.ref.count:= 1;
    ad^:= @ds^.data;

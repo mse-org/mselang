@@ -2525,6 +2525,30 @@ begin
 
 end;
 }
+
+procedure checkneedsunique(const stackoffset: int32);
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  if hf_needsunique in d.handlerflags then begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in [ck_fact,ck_subres]) then begin
+    internalerror(ie_handler,'20160405B');
+   end;
+  {$endif}
+   case ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind of
+    dk_character: begin
+     with insertitem(oc_uniquestr8,stackoffset,d.dat.fact.opoffset)^ do begin
+      par.ssas1:= getoppo(opmark.address + d.dat.fact.opoffset)^.par.ssad;
+     end;
+    end
+    else begin
+     internalerror1(ie_handler,'20160405A');
+    end;
+   end;
+  end;
+ end;
+end;
+
 procedure handleassignmententry();
 begin
 {$ifdef mse_debugparser}
@@ -2533,6 +2557,7 @@ begin
  with info do begin
 //  opshift:= 0;
   include(s.currentstatementflags,stf_rightside);
+  checkneedsunique(s.stacktop-s.stackindex);
  end;
 end;
 

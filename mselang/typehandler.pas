@@ -968,18 +968,14 @@ begin
   end
   else begin
    getaddress(-1,true);
-   if (d.dat.datatyp.indirectlevel = 1) and 
-     ((ptypedataty(ele.eledataabs(d.dat.datatyp.typedata)))^.h.kind in 
-                                                       [dk_string8]) then begin
-    include(d.handlerflags,hf_needsunique);
-//    opmark:= contextstack[s.stackindex].opmark; iugguipghguio
-   end;
    handleindexitemstart();
   end;
  end;
 end;
 
 procedure handleindexitemstart();
+var
+ kind1: datakindty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXITEMSTART');
@@ -991,8 +987,13 @@ begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}
-   if ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in
-                                            [dk_dynarray,dk_string8] then begin
+   kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
+   exclude(d.handlerflags,hf_needsunique);
+   if kind1 in [dk_dynarray,dk_string8] then begin
+    if kind1 = dk_string8 then begin
+     include(d.handlerflags,hf_needsunique);
+     d.dat.fact.opoffset:= getcontextopoffset(-1);
+    end;
     dec(d.dat.indirection);
     dec(d.dat.datatyp.indirectlevel);
     getvalue(-1,das_none);

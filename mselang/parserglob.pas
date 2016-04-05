@@ -196,13 +196,10 @@ type
   ssaindex: int32;
 //  bbindex: int32;
   opdatatype: typeallocinfoty;
-//  databitsize: integer;
- {
-  case contextkindty of
-   ck_subres:(
-    datasize: integer;
+  case integer of
+   0: (
+    opoffset: int32; //for hf_needsunique
    );
- }
  end;
 
  propinfoty = record

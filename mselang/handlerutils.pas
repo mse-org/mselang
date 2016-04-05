@@ -122,6 +122,8 @@ procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
+function getcontextopoffset(const stackoffset: int32): int32;
+
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
@@ -1995,6 +1997,22 @@ begin
    errormessage(err_cannotassigntoaddr,[],stackoffset);
    result:= false;
   end;
+ end;
+end;
+
+function getcontextopoffset(const stackoffset: int32): int32;
+var
+ i1: int32;
+begin
+ with info do begin
+  i1:= s.stackindex + stackoffset;
+  if i1 >= s.stacktop then begin
+   result:= opcount;
+  end
+  else begin
+   result:= contextstack[i1+1].opmark.address;
+  end;
+  result:= result - contextstack[i1].opmark.address;
  end;
 end;
 
