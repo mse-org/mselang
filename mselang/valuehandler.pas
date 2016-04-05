@@ -265,7 +265,20 @@ var                     //todo: optimize, use tables, complete
    end;
   end;
  end; //convertsize
- 
+
+ procedure convert(const aop: opcodety);
+ var
+  i1: int32;
+ begin
+  result:= true;
+  with info do begin
+   i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+  end;
+  with insertitem(aop,stackoffset,false)^ do begin
+   par.ssas1:= i1;
+  end;
+ end; //convert
+  
 var
  pointerconv: boolean;
  i1,i2,i3: integer;
@@ -425,6 +438,7 @@ begin
         dk_string8: begin
          case source1^.h.kind of
           dk_character: begin
+           convert(oc_chartostring8);
           end;
          end;
         end;

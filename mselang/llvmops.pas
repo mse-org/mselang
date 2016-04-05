@@ -1428,6 +1428,11 @@ begin
  //dummy
 end;
 
+procedure chartostring8op();
+begin
+ notimplemented();
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -3651,6 +3656,8 @@ const
   int64tocard16ssa = 1;
   int64tocard32ssa = 1;
   int64tocard64ssa = 0;
+  
+  chartostring8ssa = 0; //todo
 
   not1ssa = 1;
   not32ssa = 1;

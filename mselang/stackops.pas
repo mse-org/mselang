@@ -1975,6 +1975,20 @@ begin
  //dummy
 end;
 
+procedure chartostring8op();
+var
+ char1: card8;
+ po1: pstring8headerty;
+begin
+ char1:= pcard8(stackpop(sizeof(card8)))^;
+ getmem(po1,1*1 + string8allocsize);
+ po1^.len:= 1;
+ po1^.ref.count:= 1;
+ pcard8(@po1^.data)^:= char1;
+ (pcard8(@po1^.data)+1)^:= 0;
+ ppointer(stackpush(sizeof(pointer)))^:= po1+1; //-> data
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -4135,6 +4149,8 @@ const
   int64tocard16ssa = 0;
   int64tocard32ssa = 0;
   int64tocard64ssa = 0;
+  
+  chartostring8ssa = 0;
 
   not1ssa = 0;
   not32ssa = 0;

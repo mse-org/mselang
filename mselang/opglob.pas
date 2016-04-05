@@ -193,6 +193,8 @@ type
   oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
 
+  oc_chartostring8,
+  
   oc_not1,
   oc_not32,
   
@@ -1039,6 +1041,8 @@ type
    oc_int16tocard8,oc_int16tocard16,oc_int16tocard32,oc_int16tocard64,
    oc_int32tocard8,oc_int32tocard16,oc_int32tocard32,oc_int32tocard64,
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
+   
+   oc_chartostring8,
    
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulcard32,oc_mulint32,oc_mulflo64,

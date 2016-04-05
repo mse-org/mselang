@@ -307,6 +307,9 @@
   (ssa: int64tocard32ssa; proc: @int64tocard32op; flags: []), 
 //oc_int64tocard64
   (ssa: int64tocard64ssa; proc: @int64tocard64op; flags: []), 
+  
+//oc_chartostring8
+  (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 
