@@ -156,30 +156,30 @@ function pushaddr(const aref: addressrefty{; const atype: ptypedataty;}
                             {const assaindex: int32}): int32; //returns ssad
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
-               const before: boolean; const sourceoffset: int32{;
+               const aopoffset: int32; const sourceoffset: int32{;
                                               const adatasize: databitsizety});
 procedure pushinsertstackindi(const stackoffset: int32; //context stack
-                          const before: boolean; const sourceoffset: int32{;
+                          const aopoffset: int32; const sourceoffset: int32{;
                                               const adatasize: databitsizety});
 
-procedure pushinsert(const stackoffset: integer; const before: boolean;
+procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
                   const avalue: datakindty); overload;
-procedure pushinsert(const stackoffset: integer; const before: boolean;
+procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
             const atype: typeinfoty;
             const avalue: addressvaluety; const offset: dataoffsty{;
                                             const indirect: boolean}); overload;
             //class field address
-function pushinsertvar(const stackoffset: int32; const before: boolean;
+function pushinsertvar(const stackoffset: int32; const aopoffset: int32;
               const indirectlevel: int32; const atype: ptypedataty): integer;
 procedure pushinsertsegaddresspo(const stackoffset: integer;
-                            const before: boolean; const address: segaddressty);
-procedure pushinsertdata(const stackoffset: integer; const before: boolean;
+                            const aopoffset: int32; const address: segaddressty);
+procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
                   const opdatatype: typeallocinfoty);
-procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
-procedure pushinsertconst(const stackoffset: integer; const before: boolean;
+procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
+procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                               const adatasize: databitsizety);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 
@@ -675,10 +675,10 @@ begin
  end;
 end;
 *)
-function pushinsertvar(const stackoffset: int32; const before: boolean;
+function pushinsertvar(const stackoffset: int32; const aopoffset: int32;
               const indirectlevel: int32; const atype: ptypedataty): integer;
 begin
- with insertitem(oc_push,stackoffset,before)^ do begin
+ with insertitem(oc_push,stackoffset,aopoffset)^ do begin
   if indirectlevel > 0 then begin
    result:= pointersize;
   end
@@ -690,14 +690,14 @@ begin
 end;
 
 procedure pushinsertsegaddresspo(const stackoffset: integer;
-                             const before: boolean;
+                             const aopoffset: int32;
                              const address: segaddressty);
 begin
  if address.segment = seg_nil then begin
-  insertitem(oc_pushnil,stackoffset,before);
+  insertitem(oc_pushnil,stackoffset,aopoffset);
  end
  else begin
-  with insertitem(oc_pushsegaddr,stackoffset,before,
+  with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                                  pushsegaddrssaar[address.segment])^ do begin
    par.memop.segdataaddress.a:= address;
    par.memop.segdataaddress.offset:= 0;
@@ -707,14 +707,14 @@ begin
  end;
 end;
 
-procedure pushinsertaddress(const stackoffset: integer; const before: boolean);
+procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
 var
  i1,i2: integer;
  po1: psubdataty;
 begin
  with info,contextstack[s.stackindex+stackoffset].d.dat do begin
   if af_segment in ref.c.address.flags then begin
-   with insertitem(oc_pushsegaddr,stackoffset,before,
+   with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                  pushsegaddrssaar[ref.c.address.segaddress.segment])^ do begin
     par.memop.segdataaddress.a:= ref.c.address.segaddress; //todo:typelistindex
     par.memop.segdataaddress.offset:= ref.offset;
@@ -742,7 +742,7 @@ begin
    if i1 >= 0 then begin
     i2:= getssa(ocssa_nestedvarad);
    end;
-   with insertitem(oc_pushlocaddr,stackoffset,before,i2)^ do begin
+   with insertitem(oc_pushlocaddr,stackoffset,aopoffset,i2)^ do begin
     tracklocalaccess(ref.c.address.locaddress,ref.c.varele,
                  getopdatatype(datatyp.typedata, datatyp.indirectlevel));
     par.memop.locdataaddress.a:= ref.c.address.locaddress;
@@ -871,7 +871,7 @@ begin
   );
 end;
 
-procedure pushinsertconst(const stackoffset: integer; const before: boolean;
+procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                                const adatasize: databitsizety);
 var
  po1: pcontextitemty;
@@ -885,7 +885,7 @@ begin
   case po1^.d.dat.constval.kind of
    dk_boolean: begin
     si1:= das_1;
-    with insertitem(oc_pushimm1,stackoffset,before)^ do begin
+    with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
      setimmboolean(po1^.d.dat.constval.vboolean,par);
     end;
    end;
@@ -909,27 +909,27 @@ begin
     end;
     case si1 of
      das_1: begin
-      with insertitem(oc_pushimm1,stackoffset,before)^ do begin
+      with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
        setimmint1(po1^.d.dat.constval.vinteger,par);
       end;
      end;
      das_8: begin
-      with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+      with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
        setimmint8(po1^.d.dat.constval.vinteger,par);
       end;
      end;
      das_16: begin
-      with insertitem(oc_pushimm16,stackoffset,before)^ do begin
+      with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
        setimmint16(po1^.d.dat.constval.vinteger,par);
       end;
      end;
      das_32: begin
-      with insertitem(oc_pushimm32,stackoffset,before)^ do begin
+      with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
        setimmint32(po1^.d.dat.constval.vinteger,par);
       end;
      end;
      das_64: begin
-      with insertitem(oc_pushimm64,stackoffset,before)^ do begin
+      with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
        setimmint64(po1^.d.dat.constval.vinteger,par);
       end;
      end;
@@ -940,13 +940,13 @@ begin
    end;
    dk_set: begin
     si1:= das_32;           //todo: arbitrary size
-    with insertitem(oc_pushimm32,stackoffset,before)^ do begin
+    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
      setimmint32(po1^.d.dat.constval.vset.value,par);
     end;
    end;
    dk_float: begin
     si1:= das_f64;
-    with insertitem(oc_pushimm64,stackoffset,before)^ do begin
+    with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
      setimmfloat64(po1^.d.dat.constval.vfloat,par);
     end;
    end;
@@ -955,10 +955,10 @@ begin
     isimm:= false;
     segad1:= allocstringconst(po1^.d.dat.constval.vstring);
     if segad1.segment = seg_nil then begin
-     insertitem(oc_pushnil,stackoffset,before);
+     insertitem(oc_pushnil,stackoffset,aopoffset);
     end
     else begin
-     with insertitem(oc_pushsegaddr,stackoffset,before,
+     with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                                pushsegaddrssaar[segad1.segment])^ do begin
       par.memop.segdataaddress.a:= segad1;
       par.memop.segdataaddress.offset:= 0;
@@ -968,7 +968,7 @@ begin
    end;
    dk_character: begin
     si1:= das_8; //todo: size
-    with insertitem(oc_pushimm8,stackoffset,before)^ do begin
+    with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
      setimmint8(po1^.d.dat.constval.vcharacter,par);
     end;
    end;
@@ -976,11 +976,11 @@ begin
     si1:= das_pointer;
     with po1^.d.dat.constval do begin
      if af_nil in vaddress.flags then begin
-      insertitem(oc_pushnil,stackoffset,before);
+      insertitem(oc_pushnil,stackoffset,aopoffset);
      end
      else begin
       if af_segment in vaddress.flags then begin
-       with insertitem(oc_pushsegaddr,stackoffset,before,
+       with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                   pushsegaddrssaar[vaddress.segaddress.segment])^ do begin
         par.memop.segdataaddress.a:= vaddress.segaddress;//todo:typelistindex
         par.memop.segdataaddress.offset:= 0;
@@ -988,7 +988,7 @@ begin
        end;
       end
       else begin
-       with insertitem(oc_pushlocaddr{ess},stackoffset,before)^ do begin
+       with insertitem(oc_pushlocaddr{ess},stackoffset,aopoffset)^ do begin
         par.memop.locdataaddress.a:= vaddress.locaddress;
         par.memop.locdataaddress.offset:= 0;
         par.memop.t:= bitoptypes[das_pointer];
@@ -1031,7 +1031,7 @@ begin
  if aoffset <> 0 then begin
   with info do begin
    ssabefore:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
-   with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+   with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
     setimmint32(aoffset,par);
     par.ssas1:= ssabefore;
    end;
@@ -1283,7 +1283,7 @@ begin
 end;
 
 procedure pushins(const ains: boolean; const stackoffset: integer;
-          const before: boolean; const atype: typeinfoty;
+          const aopoffset: int32; const atype: typeinfoty;
           const avalue: addressvaluety; const offset: dataoffsty{;
                                            const indirect: boolean});
                  //push address on stack
@@ -1292,7 +1292,7 @@ procedure pushins(const ains: boolean; const stackoffset: integer;
  function getop(const aop: opcodety; const ssaextension: int32 = 0): popinfoty;
  begin
   if ains then begin
-   result:= insertitem(aop,stackoffset,before,ssaextension);
+   result:= insertitem(aop,stackoffset,aopoffset,ssaextension);
   end
   else begin
    result:= additem(aop,ssaextension);
@@ -1336,7 +1336,7 @@ begin
 end;
 
 procedure pushinsertstack(const stackoffset: int32; //context stack
-                          const before: boolean; const sourceoffset: int32);
+                          const aopoffset: int32; const sourceoffset: int32);
 var
  i1: int32;
 begin
@@ -1348,7 +1348,7 @@ begin
 end;
 
 procedure pushinsertstackindi(const stackoffset: int32; //context stack
-                          const before: boolean; const sourceoffset: int32);
+                          const aopoffset: int32; const sourceoffset: int32);
 var                     //todo: optimize
  i1: int32;
  typ1: typeallocinfoty;
@@ -1372,15 +1372,15 @@ procedure push(const atype: typeinfoty; const avalue: addressvaluety;
             const offset: dataoffsty{;
             const indirect: boolean}); overload;
 begin
- pushins(false,0,false,atype,avalue,offset{,indirect});
+ pushins(false,0,-1,atype,avalue,offset{,indirect});
 end;
 
-procedure pushinsert(const stackoffset: integer; const before: boolean;
+procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
             const atype: typeinfoty;
             const avalue: addressvaluety; const offset: dataoffsty{;
             const indirect: boolean}); overload;
 begin
- pushins(true,stackoffset,before,atype,avalue,offset{,indirect});
+ pushins(true,stackoffset,aopoffset,atype,avalue,offset{,indirect});
 end;
 
 procedure push(const avalue: datakindty); overload;
@@ -1392,18 +1392,18 @@ begin
 end;
 
 function insertpushimm(const aop: opcodety; const stackoffset: integer;
-                       const before: boolean): popinfoty; 
+                       const aopoffset: int32): popinfoty; 
                                  {$ifndef mse_debugparser} inline; {$endif}
 begin
- result:= insertitem(aop,stackoffset,before);
+ result:= insertitem(aop,stackoffset,aopoffset);
 // result^.par.ssad:= info.ssaindex;
 end;
 
-procedure pushinsert(const stackoffset: integer; const before: boolean;
+procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
                                     const avalue: datakindty); overload;
       //no alignsize
 begin
- with insertpushimm(oc_pushimmdatakind,stackoffset,before)^ do begin
+ with insertpushimm(oc_pushimmdatakind,stackoffset,aopoffset)^ do begin
   setimmdatakind(avalue,par);
  end;
 end;
@@ -1732,7 +1732,7 @@ const
             oc_pushpar32,oc_pushpar64,oc_pushparpo);
  
 procedure pushd(const ains: boolean; const stackoffset: integer;
-          const before: boolean;
+          const aopoffset: int32;
           const aaddress: addressvaluety; const avarele: elementoffsetty;
           const offset: dataoffsty; const aopdatatype: typeallocinfoty);
 //todo: optimize
@@ -1743,7 +1743,7 @@ var
  function getop(const aop: opcodety): popinfoty;
  begin
   if ains then begin
-   result:= insertitem(aop,stackoffset,before,ssaextension1);
+   result:= insertitem(aop,stackoffset,aopoffset,ssaextension1);
   end
   else begin
    result:= additem(aop,ssaextension1);
@@ -1844,16 +1844,16 @@ procedure pushdata(const address: addressvaluety;
                    const offset: dataoffsty;
                          const opdatatype: typeallocinfoty);
 begin
- pushd(false,0,false,address,varele,offset,opdatatype);
+ pushd(false,0,-1,address,varele,offset,opdatatype);
 end;
 
-procedure pushinsertdata(const stackoffset: integer; const before: boolean;
+procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const address: addressvaluety;
                   const varele: elementoffsetty;
                   const offset: dataoffsty;
                   const opdatatype: typeallocinfoty);
 begin
- pushd(true,stackoffset,before,address,varele,offset,opdatatype);
+ pushd(true,stackoffset,aopoffset,address,varele,offset,opdatatype);
 end;
 
 function getcontextssa(const stackoffset: integer): int32;
@@ -1946,11 +1946,11 @@ begin
    if address and not bo1 then begin
     i2:= 0;
     if d.dat.indirection = 0 then begin
-     pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
+     pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
                 i3,bitoptypes[das_pointer]);
      if not isstartoffset and (d.dat.ref.offset <> 0) then begin
       ssabefore:= getcontextssa(stackoffset);
-      with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+      with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
        par.ssas1:= ssabefore;
        setimmint32(d.dat.ref.offset,par);
       end;
@@ -1959,17 +1959,17 @@ begin
      i2:= -1;
     end
     else begin
-     pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+     pushinsert(stackoffset,-1,d.dat.datatyp,d.dat.ref.c.address,
                                                         d.dat.ref.offset);
     end;
    end
    else begin
-    pushd(true,stackoffset,false,d.dat.ref.c.address,d.dat.ref.c.varele,
+    pushd(true,stackoffset,-1,d.dat.ref.c.address,d.dat.ref.c.varele,
                 i3,bitoptypes[das_pointer]);
     i2:= -1;
    end;
    for i1:= d.dat.indirection to i2 do begin
-    with insertitem(oc_indirectpo,stackoffset,false)^ do begin
+    with insertitem(oc_indirectpo,stackoffset,-1)^ do begin
      par.memop.t:= bitoptypes[das_pointer];
      par.ssas1:= par.ssad - getssa(oc_indirectpo);
     end;
@@ -2024,7 +2024,7 @@ var
   with info,contextstack[s.stackindex+stackoffset],d do begin
    opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
    ssabefore:= d.dat.fact.ssaindex;
-   with insertitem(indirect[opdata1.kind],stackoffset,false)^ do begin
+   with insertitem(indirect[opdata1.kind],stackoffset,-1)^ do begin
     par.ssas1:= ssabefore;
     par.memop.t:= opdata1;
     d.dat.fact.ssaindex:= par.ssad;
@@ -2047,7 +2047,7 @@ var
    else begin
     opdata1:= getopdatatype(d.dat.datatyp.typedata,
                                            d.dat.datatyp.indirectlevel);
-    pushinsertdata(stackoffset,false,d.dat.ref.c.address,
+    pushinsertdata(stackoffset,-1,d.dat.ref.c.address,
                              d.dat.ref.c.varele,d.dat.ref.offset,opdata1);
    end;
   end;
@@ -2082,7 +2082,7 @@ begin                    //todo: optimize
     end;
     if d.dat.indirection > 0 then begin //@ operator
      if d.dat.indirection = 1 then begin
-      pushinsertaddress(stackoffset,false);
+      pushinsertaddress(stackoffset,-1);
       d.dat.datatyp:= sysdatatypes[st_pointer]; //untyped pointer
      end
      else begin
@@ -2145,12 +2145,12 @@ begin                    //todo: optimize
      result:= true;
      exit;
     end;
-    pushinsertconst(stackoffset,false,adatasize);
+    pushinsertconst(stackoffset,-1,adatasize);
    end;
    ck_subres,ck_fact: begin
     if d.dat.indirection < 0 then begin
      for int1:= d.dat.indirection+2 to 0 do begin
-      insertitem(oc_indirectpo,stackoffset,false);
+      insertitem(oc_indirectpo,stackoffset,-1);
      end;
      d.dat.indirection:= 0;
      doindirect();
@@ -2211,7 +2211,7 @@ begin
     end;
     if d.dat.indirection = 1 then begin
      if endaddress then begin
-      pushinsert(stackoffset,false,d.dat.datatyp,d.dat.ref.c.address,
+      pushinsert(stackoffset,-1,d.dat.datatyp,d.dat.ref.c.address,
                                                        d.dat.ref.offset);
                   //address pointer on stack
       initfactcontext(stackoffset);
@@ -2594,11 +2594,11 @@ begin
       si1:= po1^.h.datasize;
      end;
      if d.kind = ck_const then begin
-      pushinsertconst(s.stacktop-s.stackindex-2,false,si1);
+      pushinsertconst(s.stacktop-s.stackindex-2,-1,si1);
      end;
      with contextstack[s.stacktop] do begin
       if d.kind = ck_const then begin
-       pushinsertconst(s.stacktop-s.stackindex,false,si1);
+       pushinsertconst(s.stacktop-s.stackindex,-1,si1);
       end;
      end;
      {

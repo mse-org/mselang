@@ -74,7 +74,7 @@ procedure checkopcapacity(const areserve: int32);
 function additem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
-                          const before: boolean;
+                          const aopoffset: int32; //-1 -> at end
                           const ssaextension: integer = 0): popinfoty;
 {
 function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
@@ -843,7 +843,7 @@ begin
 end;
 
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
-                    const before: boolean;
+                    const aopoffset: int32; //-1 -> at end
                     const ssaextension: integer = 0): popinfoty;
 var
  int1,int2: integer;
@@ -854,7 +854,7 @@ var
 begin
  with info do begin
   int1:= stackoffset+s.stackindex;
-  if (int1 > s.stacktop) or not before and (int1 = s.stacktop) then begin
+  if (int1 > s.stacktop) or (aopoffset < 0) and (int1 = s.stacktop) then begin
    result:= additem(aopcode,ssaextension);
    if int1 = s.stacktop then begin
     with contextstack[s.stacktop] do begin
@@ -867,8 +867,8 @@ begin
   else begin
    ssadelta:= optable^[aopcode].ssa+ssaextension;
    allocsegmentpo(seg_op,sizeof(opinfoty));
-   if before then begin
-    ad1:= contextstack[int1].opmark.address;
+   if aopoffset >= 0 then begin
+    ad1:= contextstack[int1].opmark.address+aopoffset;
    end
    else begin
     ad1:= contextstack[int1+1].opmark.address

@@ -1591,7 +1591,7 @@ begin
    if getvalue(1,das_none) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     i1:= d.dat.fact.ssaindex;
-    with insertitem(negops[po1^.h.kind],1,false)^ do begin
+    with insertitem(negops[po1^.h.kind],1,-1)^ do begin
      if op.op = oc_none then begin
       errormessage(err_negnotpossible,[],1);
      end;
@@ -1639,7 +1639,7 @@ begin
    if getvalue(1,das_none) then begin
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     i1:= d.dat.fact.ssaindex;
-    with insertitem(notops[po1^.h.kind],1,false)^ do begin
+    with insertitem(notops[po1^.h.kind],1,-1)^ do begin
      if op.op = oc_none then begin
       errormessage(err_notnotpossible,[],1);
      end;

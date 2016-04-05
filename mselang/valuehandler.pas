@@ -258,7 +258,7 @@ var                     //todo: optimize, use tables, complete
      with info do begin
       i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
      end;
-     with insertitem(op1,stackoffset,false)^ do begin
+     with insertitem(op1,stackoffset,-1)^ do begin
       par.ssas1:= i1;
      end;
     end;
@@ -274,7 +274,7 @@ var                     //todo: optimize, use tables, complete
   with info do begin
    i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
   end;
-  with insertitem(aop,stackoffset,false)^ do begin
+  with insertitem(aop,stackoffset,-1)^ do begin
    par.ssas1:= i1;
   end;
  end; //convert
@@ -392,7 +392,7 @@ begin
          case source1^.h.kind of
           dk_integer: begin //todo: data size
            i1:= d.dat.fact.ssaindex;
-           with insertitem(oc_int32toflo64,stackoffset,false)^ do begin
+           with insertitem(oc_int32toflo64,stackoffset,-1)^ do begin
             par.ssas1:= i1;
            end;
            result:= true;
@@ -467,7 +467,7 @@ begin
                                          (coo_type in aoptions) then begin
     if getvalue(stackoffset,das_pointer) then begin //pointer to int
      i1:= d.dat.fact.ssaindex;        //todo: operand size
-     with insertitem(oc_potoint32,stackoffset,false)^ do begin
+     with insertitem(oc_potoint32,stackoffset,-1)^ do begin
       par.ssas1:= i1;
      end;
      d.dat.datatyp.typedata:= ele.eledatarel(dest);
@@ -486,7 +486,7 @@ begin
       if getclassinterfaceoffset(po1,dest,i3) then begin
        if getvalue(stackoffset,das_pointer) then begin
         i2:= d.dat.fact.ssaindex;
-        with insertitem(oc_offsetpoimm32,stackoffset,false)^ do begin
+        with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
          setimmint32(i3,par);
          par.ssas1:= i2;
         end;
@@ -514,7 +514,7 @@ begin
                        (source1^.h.kind in [dk_integer,dk_cardinal])then begin
       if getvalue(stackoffset,pointerintsize) then begin //any to pointer
        i1:= d.dat.fact.ssaindex; //todo: no int source
-       with insertitem(oc_inttopo,stackoffset,false)^ do begin
+       with insertitem(oc_inttopo,stackoffset,-1)^ do begin
         par.ssas1:= i1;
        end;
        d.dat.datatyp.typedata:= ele.eledatarel(dest);
@@ -702,7 +702,7 @@ var
        end;
       end;
       ck_ref: begin
-       pushinsertaddress(int1-s.stackindex,false);
+       pushinsertaddress(int1-s.stackindex,-1);
       end;
      end;
     end
@@ -717,7 +717,7 @@ var
       end;
      case d.kind of
       ck_const: begin
-       pushinsertconst(int1-s.stackindex,false,si1);
+       pushinsertconst(int1-s.stackindex,-1,si1);
       end;
       ck_ref: begin
        getvalue(int1-s.stackindex,si1);
@@ -809,7 +809,7 @@ begin
        internalerror(ie_handler,'20150325A'); 
       end;
      {$endif}     
-      with insertitem(oc_initclass,0,false)^,par.initclass do begin
+      with insertitem(oc_initclass,0,-1)^,par.initclass do begin
        classdef:= po3^.infoclass.defs.address;
       end;
       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
@@ -849,7 +849,7 @@ begin
       if sf_constructor in asub^.flags then begin
        int1:= parent-s.stackindex;           //??? verfy!
       end;
-      int1:= pushinsertvar(int1,false,asub^.resulttype.indirectlevel,po3){ + 
+      int1:= pushinsertvar(int1,-1,asub^.resulttype.indirectlevel,po3){ + 
                                                                  vpointersize}; 
                                    //alloc space for return value
 //      if sf_constructor in asub^.flags then begin
@@ -857,7 +857,7 @@ begin
 //      end
 //      else begin
       if not (sf_constructor in asub^.flags) then begin
-       with insertitem(oc_pushstackaddr,0,false)^.
+       with insertitem(oc_pushstackaddr,0,-1)^.
                                       par.memop.tempdataaddress do begin
                                                //result var param
         a.address:= -int1{+vpointersize};
@@ -868,7 +868,7 @@ begin
      end;
      if (sf_method in asub^.flags) then begin
           //param order is [returnvalue pointer],instancepo,{params}
-      with insertitem(oc_pushduppo,0,false)^ do begin 
+      with insertitem(oc_pushduppo,0,-1)^ do begin 
        par.voffset:= -int1-vpointersize; //including push address
       end;
      end;
@@ -908,7 +908,7 @@ begin
      {$else}
       ele.findcurrent(tk_self,[],allvisi,vardata1);
      {$endif}
-      with insertitem(oc_pushlocpo,parent-s.stackindex,false)^ do begin
+      with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
        par.memop.t:= bitoptypes[das_pointer];
        par.memop.locdataaddress.a.framelevel:= -1;
        par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
@@ -1167,7 +1167,7 @@ var
           errormessage(err_classref,[],int1+1);
           exit;
          end;
-         pushinsert(0,false,sysdatatypes[st_pointer],nilad,0);
+         pushinsert(0,-1,sysdatatypes[st_pointer],nilad,0);
         end;
         else begin
          internalerror1(ie_notimplemented,'20140417A');
@@ -1371,7 +1371,7 @@ begin
           ck_fact: begin
            if offset <> 0 then begin
             ssabefore:= d.dat.fact.ssaindex;
-            with insertitem(oc_offsetpoimm32,-1,false)^ do begin
+            with insertitem(oc_offsetpoimm32,-1,-1)^ do begin
              par.ssas1:= ssabefore;
              setimmint32(offset,par);
             end;

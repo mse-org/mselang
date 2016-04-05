@@ -972,6 +972,7 @@ begin
      ((ptypedataty(ele.eledataabs(d.dat.datatyp.typedata)))^.h.kind in 
                                                        [dk_string8]) then begin
     include(d.handlerflags,hf_needsunique);
+//    opmark:= contextstack[s.stackindex].opmark; iugguipghguio
    end;
    handleindexitemstart();
   end;
@@ -1085,13 +1086,13 @@ begin
     end;
     if range.min <> 0 then begin
      lastssa:= d.dat.fact.ssaindex;
-     with insertitem(oc_addimmint32,1,false)^ do begin
+     with insertitem(oc_addimmint32,1,-1)^ do begin
       par.ssas1:= lastssa;
       setimmint32(-range.min,par);
      end;
     end;
     lastssa:= d.dat.fact.ssaindex;
-    with insertitem(oc_mulimmint32,1,false)^ do begin
+    with insertitem(oc_mulimmint32,1,-1)^ do begin
      par.ssas1:= lastssa;
      setimmint32(itemtype^.h.bytesize,par);
     end;

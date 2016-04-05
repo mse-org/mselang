@@ -273,7 +273,7 @@ var
      with contextstack[s.stacktop] do begin
       if i1 <> 1 then begin
        i2:= d.dat.fact.ssaindex;
-       with insertitem(oc_mulimmint32,s.stacktop-s.stackindex,false)^ do begin
+       with insertitem(oc_mulimmint32,s.stacktop-s.stackindex,-1)^ do begin
         par.ssas1:= i2;
         setimmint32(i1,par);
        end;
