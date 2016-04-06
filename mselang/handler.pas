@@ -2527,6 +2527,8 @@ end;
 }
 
 procedure checkneedsunique(const stackoffset: int32);
+var
+ i1: int32;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
   if hf_needsunique in d.handlerflags then begin
@@ -2537,8 +2539,14 @@ begin
   {$endif}
    case ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind of
     dk_character: begin
-     with insertitem(oc_uniquestr8,stackoffset,d.dat.fact.opoffset)^ do begin
-      par.ssas1:= getoppo(opmark.address + d.dat.fact.opoffset)^.par.ssad;
+     i1:= d.dat.fact.opoffset;
+     with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
+      par.voffset:= -pointersize;
+      par.ssas1:= getoppo(opmark.address + i1)^.par.ssad;
+     end;
+     inc(i1);
+     with insertitem(oc_uniquestr8,stackoffset,i1)^ do begin
+      par.ssas1:= getoppo(opmark.address + i1)^.par.ssad;
      end;
     end
     else begin
