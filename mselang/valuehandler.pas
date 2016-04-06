@@ -687,9 +687,11 @@ var
  var
   vardata1: pvardataty;
   si1: databitsizety;
+  i1: int32;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
+   i1:= int1-s.stackindex;
    with contextstack[int1] do begin
     if af_paramindirect in vardata1^.address.flags then begin
      case d.kind of
@@ -702,7 +704,7 @@ var
        end;
       end;
       ck_ref: begin
-       pushinsertaddress(int1-s.stackindex,-1);
+       pushinsertaddress(i1,-1);
       end;
      end;
     end
@@ -717,19 +719,23 @@ var
       end;
      case d.kind of
       ck_const: begin
-       pushinsertconst(int1-s.stackindex,-1,si1);
+       pushinsertconst(i1,-1,si1);
       end;
       ck_ref: begin
-       getvalue(int1-s.stackindex,si1);
+       getvalue(i1,si1);
       end;
      end;
     end;
-    if not checkcompatiblefacttype(int1-s.stackindex,
-                              vardata1^.vf.typ,vardata1^.address) then begin
+    if not checkcompatiblefacttype(i1,vardata1^.vf.typ,
+                                                 vardata1^.address) then begin
      errormessage(err_incompatibletypeforarg,
-                 [int1-s.stackindex-3,typename(d),
-                 typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                 [i1-3,typename(d),
+                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                        vardata1^.address.indirectlevel)],int1-s.stackindex);
+    end;
+    if (af_paramvar in vardata1^.address.flags) and 
+                                      (d.kind in factcontexts) then begin
+     checkneedsunique(i1);
     end;
     with parallocpo^ do begin
      ssaindex:= d.dat.fact.ssaindex;

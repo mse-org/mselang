@@ -1,0 +1,19 @@
+program checkunicstring;
+
+procedure test(var achar: char8);
+begin
+ achar:= 'Y';
+end;
+
+var
+ str1,str2,str3: string8;
+begin
+ str1:= 'abc';
+ str2:= str1;
+ str1[1]:= 'Z';
+ str3:= str2;
+ test(str3[2]);
+ write(str1);
+ write(str2);
+ writeln(str3);
+end.

@@ -883,7 +883,7 @@ begin
    po1:= result+1;
    poend:= po1+opcount-ad1;
    inc(opcount);
-   int2:= po1^.par.ssad;
+   int2:= (result-1)^.par.ssad; //original start ssa
    while po1 < poend do begin
     inc(po1^.par.ssad,ssadelta);
     if po1^.par.ssas1 >= int2 then begin

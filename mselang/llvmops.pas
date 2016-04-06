@@ -2817,7 +2817,9 @@ end;
 }
 procedure pushduppoop();
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbitcast(bcstream.ssaval(ssas1),bcstream.typeval(das_pointer));
+ end;
 end;
 
 procedure indirect8op();

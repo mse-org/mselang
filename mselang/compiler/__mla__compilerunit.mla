@@ -80,7 +80,9 @@ procedure __mla__increfsize(ref: prefsizeinfoty);
 begin
  if ref <> nil then begin
   dec(ref);
-  inc(ref^.ref.count);
+  if ref^.ref.count > 0 then begin
+   inc(ref^.ref.count);
+  end;
  end;
 end;
 

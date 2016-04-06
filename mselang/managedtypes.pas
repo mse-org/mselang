@@ -269,7 +269,7 @@ begin
      else begin
       if getaddress(s.stacktop-s.stackindex-1,true) then begin
       {$ifdef mse_checkinternalerror}
-       if not (contextstack[s.stacktop].d.kind in [ck_fact,ck_subres]) or 
+       if not (contextstack[s.stacktop].d.kind in factcontexts) or 
                      not (contextstack[s.stacktop-1].d.kind in 
                                                [ck_fact,ck_subres]) then begin
         internalerror(ie_handler,'20160228A');

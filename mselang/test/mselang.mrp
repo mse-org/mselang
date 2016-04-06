@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7380F18
+    ao=An unhandled exception occured at $B734F080
     ae=
     aec=123
     ie=0
@@ -4132,7 +4132,7 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,string
+   a=0,664,4,string
    c=4
     (
     kind=2
@@ -5113,8 +5113,8 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,managed
-   c=4
+   a=0,665,4,managed
+   c=6
     (
     kind=2
     a=0,648,1,globrecassign
@@ -5201,6 +5201,50 @@ c=3
     ao=
     ae=
     aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,checkuniquestring
+    teststate=1
+    path=checkuniquestring.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=ZbcabcaYc
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=ZbcabcaYc
+    ae=
+    aec=0
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,checkuniquestring llvm
+    teststate=1
+    path=checkuniquestring.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=ZbcabcaYc
+    ao=0
+    ee=
+    ae=0
+    eec=0
+    cr=0
+    ao=ZbcabcaYc
+    ae=
+    aec=0
     ie=0
     )
    teststate=1
@@ -6827,14 +6871,16 @@ visible=1
 propcolwidthref=628
 width0=50
 sortdescend0=0
-width1=192
+width1=215
 sortdescend1=0
 width2=222
 sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=35
+rowstate=37
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

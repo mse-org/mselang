@@ -2526,37 +2526,6 @@ begin
 end;
 }
 
-procedure checkneedsunique(const stackoffset: int32);
-var
- i1: int32;
-begin
- with info,contextstack[s.stackindex+stackoffset] do begin
-  if hf_needsunique in d.handlerflags then begin
-  {$ifdef mse_checkinternalerror}
-   if not (d.kind in [ck_fact,ck_subres]) then begin
-    internalerror(ie_handler,'20160405B');
-   end;
-  {$endif}
-   case ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind of
-    dk_character: begin
-     i1:= d.dat.fact.opoffset;
-     with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
-      par.voffset:= -pointersize;
-      par.ssas1:= getoppo(opmark.address + i1)^.par.ssad;
-     end;
-     inc(i1);
-     with insertitem(oc_uniquestr8,stackoffset,i1)^ do begin
-      par.ssas1:= getoppo(opmark.address + i1)^.par.ssad;
-     end;
-    end
-    else begin
-     internalerror1(ie_handler,'20160405A');
-    end;
-   end;
-  end;
- end;
-end;
-
 procedure handleassignmententry();
 begin
 {$ifdef mse_debugparser}
@@ -2806,7 +2775,7 @@ begin
          needsincref:= false;
         end
         else begin
-         if (source^.d.kind in [ck_fact,ck_subres]) and 
+         if (source^.d.kind in factcontexts) and 
                              (source^.d.dat.indirection = -1) then begin
                                     //address on stack
           if datasi1 = das_pointer then begin

@@ -184,6 +184,8 @@ procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                               const adatasize: databitsizety);
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
+procedure checkneedsunique(const stackoffset: int32);
+
 
 //procedure setcurrentloc(const indexoffset: integer);
 procedure setcurrentlocbefore(const indexoffset: integer);
@@ -1023,6 +1025,37 @@ begin
   end;
  }
 //  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
+ end;
+end;
+
+procedure checkneedsunique(const stackoffset: int32);
+var
+ i1: int32;
+begin
+ with info,contextstack[s.stackindex+stackoffset] do begin
+  if hf_needsunique in d.handlerflags then begin
+  {$ifdef mse_checkinternalerror}
+   if not (d.kind in factcontexts) then begin
+    internalerror(ie_handler,'20160405B');
+   end;
+  {$endif}
+   case ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind of
+    dk_character: begin
+     i1:= d.dat.fact.opoffset;
+     with insertitem(oc_pushduppo,stackoffset,i1)^ do begin
+      par.voffset:= -pointersize;
+      par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
+     end;
+     inc(i1);
+     with insertitem(oc_uniquestr8,stackoffset,i1)^ do begin
+      par.ssas1:= getoppo(opmark.address + i1-1)^.par.ssad;
+     end;
+    end
+    else begin
+     internalerror1(ie_handler,'20160405A');
+    end;
+   end;
+  end;
  end;
 end;
 
@@ -2195,7 +2228,7 @@ begin                    //todo: optimize
   end;
   result:= true;
 errlab:
-  if not (d.kind in [ck_fact,ck_subres]) then begin
+  if not (d.kind in factcontexts) then begin
    initfactcontext(stackoffset);
    d.dat.fact.opdatatype:= opdata1;
   end;
