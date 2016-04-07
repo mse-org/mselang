@@ -30,7 +30,10 @@ type
  end;
  pexternallinkinfoty = ^externallinkinfoty;
 }
+procedure handleparamsdefentry();
+procedure handleparamsdef();
 procedure handleparamdef0entry();
+
 procedure handleparams0entry();
 procedure setconstparam();
 procedure setvarparam();
@@ -247,6 +250,27 @@ begin
    terminate:= true;
    match:= po1;
   end;
+ end;
+end;
+
+procedure handleparamsdefentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMSDEFENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  b.flags:= s.currentstatementflags;
+  include(s.currentstatementflags,stf_paramsdef);
+ end;
+end;
+
+procedure handleparamsdef();
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMSDEF');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  s.currentstatementflags:= b.flags;
  end;
 end;
 

@@ -253,7 +253,7 @@ progbegin,progblock,handleprogbegin,
 progblock,,,handleprogblock*
  '',statementblock-^*
 
-paramsdef0,,,
+paramsdef0,,handleparamsdefentry,
  ${whitespace}
  '(',paramsdef1-
 paramsdef1,paramsdef2,,
@@ -262,7 +262,7 @@ paramsdef2,,,
  ${whitespace}
  ';',paramsdef1-
  ')',paramsdef3-
-paramsdef3,,,^
+paramsdef3,,,handleparamsdef^
 paramdef0,paramdef1,handleparamdef0entry,
  ${whitespace}
  'const'.,!setconstparam->

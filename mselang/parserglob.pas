@@ -159,7 +159,8 @@ type
  end;
 
 
- statementflagty = (stf_rightside,stf_params,stf_leftreference,stf_proccall,
+ statementflagty = (stf_rightside,stf_params,stf_paramsdef,
+                    stf_leftreference,stf_proccall,
                     stf_loop,{stf_propindex,}
                     stf_classdef,stf_classimp,stf_interfacedef,
                     stf_implementation,

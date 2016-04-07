@@ -10492,10 +10492,12 @@ begin
  progblockco.branch:= @bprogblock;
  progblockco.handleexit:= @handleprogblock;
  paramsdef0co.branch:= @bparamsdef0;
+ paramsdef0co.handleentry:= @handleparamsdefentry;
  paramsdef1co.branch:= @bparamsdef1;
  paramsdef1co.next:= @paramsdef2co;
  paramsdef2co.branch:= @bparamsdef2;
  paramsdef3co.branch:= nil;
+ paramsdef3co.handleexit:= @handleparamsdef;
  paramdef0co.branch:= @bparamdef0;
  paramdef0co.next:= @paramdef1co;
  paramdef0co.handleentry:= @handleparamdef0entry;
