@@ -263,7 +263,7 @@ paramsdef2,,,
  ';',paramsdef1-
  ')',paramsdef3-
 paramsdef3,,,^
-paramdef0,paramdef1,handleparamsdef0entry,
+paramdef0,paramdef1,handleparamdef0entry,
  ${whitespace}
  'const'.,!setconstparam->
  'var'.,!setvarparam->
@@ -775,7 +775,7 @@ propinddef2,,,
  ';',propinddef1-
  ']',propinddef3-
 propinddef3,,,^      //return
-propind0,propind1,handleparamsdef0entry,
+propind0,propind1,handleparamdef0entry,
  ${whitespace}
  'const'.,!setconstparam->
  @identstart,commaidents^*

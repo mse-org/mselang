@@ -30,7 +30,7 @@ type
  end;
  pexternallinkinfoty = ^externallinkinfoty;
 }
-procedure handleparamsdef0entry();
+procedure handleparamdef0entry();
 procedure handleparams0entry();
 procedure setconstparam();
 procedure setvarparam();
@@ -250,14 +250,14 @@ begin
  end;
 end;
 
-procedure handleparamsdef0entry();
+procedure handleparamdef0entry();
 begin
 {$ifdef mse_debugparser}
- outhandle('PARAMSDEF0ENTRY');
+ outhandle('PARAMDEF0ENTRY');
 {$endif}
  with info,contextstack[s.stackindex].d do begin
-  kind:= ck_paramsdef;
-  paramsdef.kind:= pk_value;
+  kind:= ck_paramdef;
+  paramdef.kind:= pk_value;
  end;
 end;
 
@@ -281,7 +281,7 @@ begin
  outhandle('CONSTPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[s.stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -295,7 +295,7 @@ begin
  outhandle('VARPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[s.stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -309,7 +309,7 @@ begin
  outhandle('OUTPARAM');
 {$endif}
 // with info,contextstack[contextstack[stackindex].parent].d.paramsdef do begin
- with info,contextstack[s.stackindex].d.paramsdef do begin
+ with info,contextstack[s.stackindex].d.paramdef do begin
   if kind <> pk_value then begin
    errormessage(err_identexpected,[],minint,0,erl_fatal);
   end;
@@ -401,12 +401,12 @@ begin
  outhandle('CHECKFUNCTIONTYPE');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
-  d.kind:= ck_paramsdef;
+  d.kind:= ck_paramdef;
   if co_hasfunction in compileoptions then begin
-   d.paramsdef.kind:= pk_value;
+   d.paramdef.kind:= pk_value;
   end
   else begin
-   d.paramsdef.kind:= pk_var;
+   d.paramdef.kind:= pk_var;
   end;
  end;
  with info,contextstack[s.stackindex] do begin
@@ -749,7 +749,7 @@ var                       //todo: move after doparam
      end;
     {$endif}
     end;
-    paramkind1:= contextstack[curstackindex].d.paramsdef.kind;
+    paramkind1:= contextstack[curstackindex].d.paramdef.kind;
     for i2:= i2 to i1 - 1 do begin
      with contextstack[i2] do begin //ck_ident
      {$ifdef mse_checkinternalerror}

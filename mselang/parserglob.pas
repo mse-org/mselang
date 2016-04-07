@@ -110,7 +110,7 @@ type
                   ck_statement,ck_control,ck_shortcutexp,
                   ck_recorddef,ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
-                  ck_paramsdef,ck_params,ck_index);
+                  ck_paramdef,ck_params,ck_index);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
                     sdk_bool1,
@@ -269,7 +269,7 @@ const
  paramflagsmask = [af_paramconst,af_paramvar,af_paramout];
 
 type 
- paramsdefinfoty = record
+ paramdefinfoty = record
   kind: paramkindty;
  end;
  
@@ -416,8 +416,8 @@ type
    ck_subdef:(
     subdef: subinfoty;
    );
-   ck_paramsdef:(
-    paramsdef: paramsdefinfoty;
+   ck_paramdef:(
+    paramdef: paramdefinfoty;
    );
    ck_params:(
     params: paramsinfoty;

@@ -10498,7 +10498,7 @@ begin
  paramsdef3co.branch:= nil;
  paramdef0co.branch:= @bparamdef0;
  paramdef0co.next:= @paramdef1co;
- paramdef0co.handleentry:= @handleparamsdef0entry;
+ paramdef0co.handleentry:= @handleparamdef0entry;
  paramdef1co.branch:= @bparamdef1;
  paramdef2co.branch:= @bparamdef2;
  paramdef2co.handleexit:= @handleparamdef2;
@@ -10868,7 +10868,7 @@ begin
  propinddef3co.branch:= nil;
  propind0co.branch:= @bpropind0;
  propind0co.next:= @propind1co;
- propind0co.handleentry:= @handleparamsdef0entry;
+ propind0co.handleentry:= @handleparamdef0entry;
  propind1co.branch:= @bpropind1;
  propind2co.branch:= @bpropind2;
  propind2co.handleexit:= @handleparamdef2;

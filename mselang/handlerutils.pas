@@ -3093,8 +3093,8 @@ begin
             ' ma:',subdef.match,
                             ' ps:',subdef.paramsize,' vs:',subdef.varsize);
      end;
-     ck_paramsdef: begin
-      with paramsdef do begin
+     ck_paramdef: begin
+      with paramdef do begin
        write('kind:',getenumname(typeinfo(kind),ord(kind)))
       end;
      end;

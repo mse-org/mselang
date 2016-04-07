@@ -670,7 +670,7 @@ function checkpropaccessor(const awrite: boolean): boolean;
     end;
     with pvardataty(ele.eledataabs(popar^))^ do begin
      if ((po1)^.d.typ.typedata <> vf.typ) or 
-       ((paramkinds[pocontext^.d.paramsdef.kind] >< address.flags) * 
+       ((paramkinds[pocontext^.d.paramdef.kind] >< address.flags) * 
                                                paramflagsmask <> []) then begin
       illegalsymbol();
       exit;
@@ -680,7 +680,7 @@ function checkpropaccessor(const awrite: boolean): boolean;
     inc(popar);
    end;
    pocontext:= po1+1;
-   if pocontext^.d.kind <> ck_paramsdef then begin
+   if pocontext^.d.kind <> ck_paramdef then begin
     break;
    end;
    po1:= pocontext + 2; //first ident
@@ -753,7 +753,7 @@ begin
   typeele1:= contextstack[idstart1].d.typeref;
   indi1:= ptypedataty(ele.eledataabs(typeele1))^.h.indirectlevel;
   i1:= s.stackindex + 3;
-  hasindex:= (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramsdef);
+  hasindex:= (i1 <= s.stacktop) and (contextstack[i1].d.kind = ck_paramdef);
 {  
   indexcount1:= 0;
   if idstart1 - s.stackindex >= 5 then begin
