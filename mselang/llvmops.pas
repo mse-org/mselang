@@ -1006,7 +1006,11 @@ end;
 
 procedure setbitop(); //todo: arbitrary size
 begin
- notimplemented();
+ with pc^.par do begin
+  bcstream.emitbinop(BINOP_SHL,bcstream.constval(ord(oc_i32)),
+                                             bcstream.ssaval(ssas2));
+  bcstream.emitbinop(BINOP_OR,bcstream.ssaval(ssas1),bcstream.relval(0));
+ end;
 end;
 
 procedure card8tocard16op();

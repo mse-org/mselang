@@ -1656,9 +1656,10 @@ end;
 procedure handlesetfact(); //not finished
 var
  allconst: boolean;
- i1: int32;
+ i1,i2: int32;
  po1,po2: ptypedataty;
  ca1,ca2: card32;
+ op1: popinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SETFACT');
@@ -1731,10 +1732,14 @@ begin
     else begin
      with insertitem(oc_pushimm32,1,0)^ do begin //first op
       setimmint32(ca1,par);
+      i2:= par.ssad;
      end;
      for i1:= s.stackindex+1 to s.stacktop do begin
       if contextstack[i1].d.kind <> ck_const then begin
-       with insertitem(oc_setbit,i1-s.stackindex,-1)^ do begin //last op
+       op1:= insertitem(oc_setbit,i1-s.stackindex,-1);
+       with op1^ do begin //last op
+        par.ssas1:= i2;
+        par.ssas2:= (op1-1)^.par.ssad;
        end;
       end;
      end;

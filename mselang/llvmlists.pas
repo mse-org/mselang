@@ -1274,27 +1274,27 @@ begin
  inherited;
  if not (hls_destroying in fstate) then begin
   for c1:= low(c1) to high(c1) do begin
-   addi8(int8(c1));
+   addi8(int8(c1));                   //0..127,-128..-1
   end;
   for i1:= 0 to maxpointeroffset do begin
    addi32(i1*pointersize);
   end;
-  addnullvalue(ord(das_1));
-  addnullvalue(ord(das_8));
-  addnullvalue(ord(das_16));
-  addnullvalue(ord(das_32));
-  addnullvalue(ord(das_64));
-  addnullvalue(ord(das_pointer));
-  addi1(true);
-  addi8(-1);
-  addi16(-1);
-  addi32(-1);
-  addi64(-1);
-  addi1(true);
-  addi8(1);
-  addi16(1);
-  addi32(1);
-  addi64(1);
+  addnullvalue(ord(das_1));       //nc_i1
+  addnullvalue(ord(das_8));       //nc_i8
+  addnullvalue(ord(das_16));      //nc_i16
+  addnullvalue(ord(das_32));      //nc_i32
+  addnullvalue(ord(das_64));      //nc_i64
+  addnullvalue(ord(das_pointer)); //nc_pointer
+  addi1(true); //mc_i1                   
+  addi8(-1);   //mc_i8
+  addi16(-1);  //mc_i16
+  addi32(-1);  //mc_i32
+  addi64(-1);  //mc_i64
+  addi1(true); //oc_i1
+  addi8(1);    //oc_i8
+  addi16(1);   //oc_i16
+  addi32(1);   //oc_i32
+  addi64(1);   //oc_i64
   if target64 then begin
    fpointersize:= addi64(globtypes.pointersize).listid;
   end
