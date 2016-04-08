@@ -1729,12 +1729,12 @@ begin
      d.dat.constval.vset.value:= ca1;
     end
     else begin
-     with insertitem(oc_pushimm32,s.stackindex+1,0)^ do begin //first op
+     with insertitem(oc_pushimm32,1,0)^ do begin //first op
       setimmint32(ca1,par);
      end;
      for i1:= s.stackindex+1 to s.stacktop do begin
       if contextstack[i1].d.kind <> ck_const then begin
-       with insertitem(oc_setbit,i1,-1)^ do begin //last op
+       with insertitem(oc_setbit,i1-s.stackindex,-1)^ do begin //last op
        end;
       end;
      end;
