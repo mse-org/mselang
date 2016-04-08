@@ -354,6 +354,9 @@
 //oc_xorset
   (ssa: xorsetssa; proc: @xorsetop; flags: []), 
 
+//oc_setbit
+  (ssa: setbitssa; proc: @setbitop; flags: []), 
+
 //oc_addimmint32
   (ssa: addimmint32ssa; proc: @addimmint32op; flags: []), 
 //oc_mulimmint32

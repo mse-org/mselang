@@ -219,14 +219,15 @@ type
  
  datakindty = (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
                dk_kind,
-               dk_address,dk_record,dk_string8,dk_dynarray,
+               dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
                dk_array,dk_class,dk_interface,dk_sub,
                dk_enum,dk_enumitem,dk_set,dk_character);
  pdatakindty = ^datakindty;
 
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
- pointerdatakinds = [dk_pointer,dk_dynarray,dk_interface,dk_class,dk_string8];
+ pointerdatakinds = [dk_pointer,dk_dynarray,dk_openarray,
+                     dk_interface,dk_class,dk_string8];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
  stringdatakinds = [dk_string8];

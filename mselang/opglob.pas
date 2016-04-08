@@ -218,6 +218,8 @@ type
   oc_diffset,
   oc_xorset,
 
+  oc_setbit,
+  
   oc_addimmint32,
   oc_mulimmint32,
   oc_offsetpoimm32,

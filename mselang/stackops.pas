@@ -1551,6 +1551,15 @@ begin
  vintegerty(po2^):= vintegerty(po2^) xor vintegerty(po1^);
 end;
 
+procedure setbitop(); //todo: arbitrary size
+var
+ po1,po2: pointer;
+begin
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vintegerty));
+ vintegerty(po2^):= vintegerty(po2^) or (1 shl vintegerty(po1^));
+end;
+
 procedure card8tocard16op();
 var
  po1: pointer;
@@ -4176,6 +4185,8 @@ const
   subflo64ssa = 0;
   diffsetssa = 0;
   xorsetssa = 0;
+  
+  setbitssa = 0;
 
   addimmint32ssa = 0;
   mulimmint32ssa = 0;

@@ -369,6 +369,15 @@ begin
            end;
           end;
          end;
+         dk_set: begin
+          case source1^.h.kind of
+           dk_set: begin
+            if vset.value = 0 then begin //empty set
+             result:= true; 
+            end;
+           end;
+          end;
+         end;
          dk_character: begin
           case source1^.h.kind of
            dk_string8: begin 
@@ -709,14 +718,14 @@ var
      end;
     end
     else begin
-      with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
-       if h.indirectlevel > 0 then begin
-        si1:= das_pointer;
-       end
-       else begin
-        si1:= h.datasize;
-       end;
+     with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
+      if h.indirectlevel > 0 then begin
+       si1:= das_pointer;
+      end
+      else begin
+       si1:= h.datasize;
       end;
+     end;
      case d.kind of
       ck_const: begin
        pushinsertconst(i1,-1,si1);

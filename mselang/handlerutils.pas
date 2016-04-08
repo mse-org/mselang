@@ -55,8 +55,10 @@ const
  stackdatakinds: array[datakindty] of stackdatakindty = (
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32, sdk_flo64,sdk_none,
-  //dk_address,dk_record,dk_string,dk_dynarray,dk_array,dk_class,dk_interface
-    sdk_pointer,  sdk_none, sdk_none, sdk_none,   sdk_none,sdk_none,sdk_none,
+  //dk_address,dk_record,dk_string,dk_dynarray,dk_openarray,dk_array,
+    sdk_pointer,  sdk_none, sdk_none, sdk_none,sdk_none,    sdk_none,
+  //dk_class,dk_interface
+    sdk_none,sdk_none,
   //dk_sub
     sdk_pointer,
   //dk_enum,dk_enumitem, dk_set,   dk_character
@@ -894,7 +896,7 @@ begin
     end;
    end;
    dk_integer,dk_cardinal,dk_enum: begin //todo: datasize warning
-    if adatasize = das_none then begin //todo das_1..das_16
+    if adatasize in [das_none,das_pointer] then begin //todo das_1..das_16
      si1:= das_32;
      if po1^.d.dat.constval.kind = dk_cardinal then begin
       if po1^.d.dat.constval.vcardinal > $ffffffff then begin

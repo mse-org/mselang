@@ -1326,8 +1326,8 @@ const
  negops: array[datakindty] of opcodety = (
  //dk_none, dk_pointer,dk_boolean,dk_cardinal, dk_integer, dk_float,
    oc_none, oc_none,   oc_none,   oc_negcard32,oc_negint32,oc_negflo64,
- //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,
-   oc_none, oc_none,   oc_none,  oc_none,   oc_none,
+ //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
+   oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
  //dk_enum,dk_enumitem,dk_set, dk_character
@@ -1337,8 +1337,8 @@ const
  notops: array[datakindty] of opcodety = (
  //dk_none, dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
    oc_none, oc_none,   oc_not1,   oc_not32,   oc_not32,  oc_none,
- //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,
-   oc_none, oc_none,   oc_none,  oc_none,   oc_none,
+ //dk_kind, dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
+   oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
  //dk_enum,dk_enumitem,dk_set, dk_character
@@ -1708,6 +1708,7 @@ begin
       end
       else begin
        allconst:= false;
+       getvalue(i1-s.stackindex,das_32);
       end;
      end; 
     end;
@@ -1728,7 +1729,17 @@ begin
      d.dat.constval.vset.value:= ca1;
     end
     else begin
-     notimplementederror('20151008A');
+     with insertitem(oc_pushimm32,s.stackindex+1,0)^ do begin //first op
+      setimmint32(ca1,par);
+     end;
+     for i1:= s.stackindex+1 to s.stacktop do begin
+      if contextstack[i1].d.kind <> ck_const then begin
+       with insertitem(oc_setbit,i1,-1)^ do begin //last op
+       end;
+      end;
+     end;
+     d.kind:= ck_fact;
+     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
    end;
   end;

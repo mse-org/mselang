@@ -1007,7 +1007,7 @@ negfact,,,handlenegfact
  '',fact*
 notfact,,,handlenotfact
  '',fact*
-setfact,setfact1,,
+setfact,setfact1,,        //or open array
  ${whitespace}
  ']',setfact3-     //empty set
 setfact1,setfact2,,

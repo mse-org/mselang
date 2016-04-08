@@ -1004,6 +1004,11 @@ begin
  end;
 end;
 
+procedure setbitop(); //todo: arbitrary size
+begin
+ notimplemented();
+end;
+
 procedure card8tocard16op();
 begin
  with pc^.par do begin
@@ -3685,6 +3690,8 @@ const
   subflo64ssa = 1;
   diffsetssa = 2;
   xorsetssa = 1;
+  
+  setbitssa = 2;
 
   addimmint32ssa = 1;
   mulimmint32ssa = 1;

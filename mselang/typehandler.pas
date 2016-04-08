@@ -876,35 +876,40 @@ begin
       identerror(s.stacktop-s.stackindex,err_duplicateidentifier);
       goto endlab;
      end;
-     inittypedatasize(arty^,dk_dynarray,0,das_pointer,
-                                     [tf_managed,tf_needsmanage]);
-     with arty^ do begin
-      po1:= ele.eledataabs(itemtyoffs1);
-      if tf_needsmanage in po1^.h.flags then begin
-       case po1^.h.kind of  //optimized versions for single level nesting
-        dk_dynarray: begin
-         if tf_needsmanage in ptypedataty(ele.eledataabs(
-                po1^.infodynarray.i.itemtypedata))^.h.flags then begin
-          notimplementederror('20160312A');
-         end
+     if stf_paramsdef in s.currentstatementflags then begin
+      inittypedatasize(arty^,dk_openarray,0,das_pointer,[]);
+     end
+     else begin
+      inittypedatasize(arty^,dk_dynarray,0,das_pointer,
+                                      [tf_managed,tf_needsmanage]);
+      with arty^ do begin
+       po1:= ele.eledataabs(itemtyoffs1);
+       if tf_needsmanage in po1^.h.flags then begin
+        case po1^.h.kind of  //optimized versions for single level nesting
+         dk_dynarray: begin
+          if tf_needsmanage in ptypedataty(ele.eledataabs(
+                 po1^.infodynarray.i.itemtypedata))^.h.flags then begin
+           notimplementederror('20160312A');
+          end
+          else begin
+           h.manageproc:= @managedynarraydynar;
+          end;
+         end;
+         dk_string8: begin
+          h.manageproc:= @managedynarraystring8;
+         end;
          else begin
-          h.manageproc:= @managedynarraydynar;
+          notimplementederror('20160312B');
          end;
         end;
-        dk_string8: begin
-         h.manageproc:= @managedynarraystring8;
-        end;
-        else begin
-         notimplementederror('20160312B');
-        end;
+       end
+       else begin
+        h.manageproc:= @managedynarray;
        end;
-      end
-      else begin
-       h.manageproc:= @managedynarray;
+       itemsize:= totsize;
+       infodynarray.i.itemtypedata:= itemtyoffs1;
+       infodynarray.i.itemindirectlevel:= indilev;
       end;
-      itemsize:= totsize;
-      infodynarray.i.itemtypedata:= itemtyoffs1;
-      infodynarray.i.itemindirectlevel:= indilev;
      end;
     end
     else begin
