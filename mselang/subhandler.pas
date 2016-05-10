@@ -1135,83 +1135,85 @@ begin
   end;
 
   if impl1 then begin
-   if sublevel = 1 then begin
-    paramdata.match:= nil;
-    if isclass then begin
-     ele.pushelementparent(currentcontainer);
-     bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
-                                 allvisi,@checkequalparam,paramdata);
-     ele.popelementparent();       
-     if not bo1 then begin
-      errormessage(err_methodexpected,[],1);
-     end;
-    end
-    else begin
-     bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
-                                 allvisi,@checkequalparam,paramdata);
-     if not bo1 then begin
-      ele.decelementparent; //interface
+   if err1 = false then begin
+    if sublevel = 1 then begin
+     paramdata.match:= nil;
+     if isclass then begin
+      ele.pushelementparent(currentcontainer);
       bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
-                                allvisi,@checkequalparam,paramdata);
+                                  allvisi,@checkequalparam,paramdata);
+      ele.popelementparent();       
+      if not bo1 then begin
+       errormessage(err_methodexpected,[],1);
+      end;
+     end
+     else begin
+      bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
+                                  allvisi,@checkequalparam,paramdata);
+      if not bo1 then begin
+       ele.decelementparent; //interface
+       bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
+                                 allvisi,@checkequalparam,paramdata);
+      end;
      end;
-    end;
-    if bo1 then begin
-     with paramdata.match^ do begin
-      if sf_external in flags then begin
-       errormessage(err_sameparamlist,[]);
-      end
-      else begin
-       forwardresolve(mark);
-       impl:= ele.eledatarel(sub1);
-       pointer(parref):= @paramsrel;
-       pointer(par1):= @sub1^.paramsrel;
-       for i1:= 0 to paramco-1 do begin
-        if ele.eleinfoabs(parref^[i1])^.header.name <> 
-                  ele.eleinfoabs(par1^[i1])^.header.name then begin
-         errormessage(
-              err_functionheadernotmatch,
-                 [getidentname(ele.eleinfoabs(parref^[i1])^.header.name),
-                      getidentname(ele.eleinfoabs(par1^[i1])^.header.name)],
-                            s.stacktop-s.stackindex-3*(paramco-i1-1)-1);
+     if bo1 then begin
+      with paramdata.match^ do begin
+       if sf_external in flags then begin
+        errormessage(err_sameparamlist,[]);
+       end
+       else begin
+        forwardresolve(mark);
+        impl:= ele.eledatarel(sub1);
+        pointer(parref):= @paramsrel;
+        pointer(par1):= @sub1^.paramsrel;
+        for i1:= 0 to paramco-1 do begin
+         if ele.eleinfoabs(parref^[i1])^.header.name <> 
+                   ele.eleinfoabs(par1^[i1])^.header.name then begin
+          errormessage(
+               err_functionheadernotmatch,
+                  [getidentname(ele.eleinfoabs(parref^[i1])^.header.name),
+                       getidentname(ele.eleinfoabs(par1^[i1])^.header.name)],
+                             s.stacktop-s.stackindex-3*(paramco-i1-1)-1);
+         end;
         end;
        end;
       end;
      end;
-    end;
-    with contextstack[s.stackindex-1] do begin
-     if paramdata.match <> nil then begin
-      d.subdef.match:= ele.eledatarel(paramdata.match);
-//     end
-//     else begin
-//      d.subdef.match:= 0;
-     end;
-    end;
-   end;
-   {
-   if backend = bke_llvm then begin
-    sub1^.globid:= globlist.addsubvalue(sub1);
-   end;
-   }
-   if s.debugoptions * [do_proginfo,do_name] <> [] then begin
-    with contextstack[s.stackindex-1] do begin
-    {$ifdef mse_checkinternalerror}
-     if (s.stackindex < 1) or (d.kind <> ck_subdef) then begin
-      internalerror(ie_parser,'20151023A');
-     end;
-    {$endif}
-     po4:= ele.eleinfoabs(d.subdef.ref);
-     with s.unitinfo^ do begin
-      if do_proginfo in s.debugoptions then begin
-       pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-            {s.}currentscopemeta,getidentname2(po4^.header.name),
-            s.currentfilemeta,
-            info.contextstack[info.s.stackindex].start.line,-1,
-            dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
+     with contextstack[s.stackindex-1] do begin
+      if paramdata.match <> nil then begin
+       d.subdef.match:= ele.eledatarel(paramdata.match);
+ //     end
+ //     else begin
+ //      d.subdef.match:= 0;
       end;
      end;
     end;
+    {
+    if backend = bke_llvm then begin
+     sub1^.globid:= globlist.addsubvalue(sub1);
+    end;
+    }
+    if s.debugoptions * [do_proginfo,do_name] <> [] then begin
+     with contextstack[s.stackindex-1] do begin
+     {$ifdef mse_checkinternalerror}
+      if (s.stackindex < 1) or (d.kind <> ck_subdef) then begin
+       internalerror(ie_parser,'20151023A');
+      end;
+     {$endif}
+      po4:= ele.eleinfoabs(d.subdef.ref);
+      with s.unitinfo^ do begin
+       if do_proginfo in s.debugoptions then begin
+        pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
+             {s.}currentscopemeta,getidentname2(po4^.header.name),
+             s.currentfilemeta,
+             info.contextstack[info.s.stackindex].start.line,-1,
+             dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
+       end;
+      end;
+     end;
+    end;
+    ele.elementparent:= parent1; //restore in sub
    end;
-   ele.elementparent:= parent1; //restore in sub
    s.stacktop:= s.stackindex;
   end
   else begin
