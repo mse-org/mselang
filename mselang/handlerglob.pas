@@ -367,7 +367,8 @@ type
   indirectlevel: int32; //total
  end;
  subdataty = record
-  next: elementoffsetty;
+  next: elementoffsetty; //for subchain
+  nextoverload: elementoffsetty;
   impl: elementoffsetty; //pfuncdataty
   typ: elementoffsetty;  //typedataty dk_address for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 

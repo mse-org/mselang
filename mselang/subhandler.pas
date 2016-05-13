@@ -931,10 +931,18 @@ begin
        (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
   end;
+  bo1:= ele.findcurrent(ident1,[],allvisi,ele1);
   sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
                                      paramco*sizeof(pvardataty))^.data);
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
+  sub1^.nextoverload:= 0;
+  if bo1 then begin
+   with psubdataty(ele.eledataabs(ele1))^ do begin
+    sub1^.nextoverload:= nextoverload;
+    nextoverload:= ele.eledatarel(sub1);
+   end;
+  end;
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
   sub1^.typ:= ele.eledatarel(typ1);

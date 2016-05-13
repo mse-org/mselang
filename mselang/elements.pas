@@ -1547,19 +1547,13 @@ begin
      dumpconst(val);
     end;
    end;
-   {
-   ek_managed: begin
-    with pmanageddataty(@po1^.data)^ do begin
-     mstr1:= mstr1+' E:'+inttostr(managedele);
-    end;
-   end;
-   }
    ek_sub: begin
     with psubdataty(@po1^.data)^ do begin
      mstr1:= mstr1+lineend+
      ' F:'+msestring(
             settostring(ptypeinfo(typeinfo(flags)),integer(flags),true))+
      ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
+     ' ovl:'+inttostrmse(nextoverload)+
      ' op:'+inttostrmse(address);
      if flags * [sf_functiontype,sf_constructor] <> [] then begin
       mstr1:= mstr1+lineend+' result:'+'I:'+
