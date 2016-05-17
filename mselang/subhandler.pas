@@ -928,21 +928,15 @@ begin
   eledatabase:= ele.eledataoffset();
   ident1:= contextstack[s.stackindex+1].d.ident.ident;
   if ele.findcurrent(ident1,[],allvisi,ele1) and 
-       (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
+                   (ele.eleinfoabs(ele1)^.header.kind <> ek_sub) then begin
    identerror(1,err_overloadnotfunc);
+   ele1:= -1;
   end;
-  bo1:= ele.findcurrent(ident1,[],allvisi,ele1);
   sub1:= addr(ele.pushelementduplicate(ident1,ek_sub,allvisi,
                                      paramco*sizeof(pvardataty))^.data);
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
-  sub1^.nextoverload:= 0;
-  if bo1 then begin
-   with psubdataty(ele.eledataabs(ele1))^ do begin
-    sub1^.nextoverload:= nextoverload;
-    nextoverload:= ele.eledatarel(sub1);
-   end;
-  end;
+  sub1^.nextoverload:= ele1;
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
   sub1^.typ:= ele.eledatarel(typ1);

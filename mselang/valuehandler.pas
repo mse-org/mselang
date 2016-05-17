@@ -18,7 +18,7 @@ unit valuehandler;
 {$ifdef FPC}{$mode objfpc}{$goto on}{$h+}{$endif}
 interface
 uses
- globtypes,parserglob,handlerglob;
+ globtypes,parserglob,handlerglob,msetypes;
 
 type
  convertoptionty = (coo_type,coo_enum,coo_set,coo_notrunk);
@@ -42,7 +42,7 @@ type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter);
  dosubflagsty = set of dosubflagty;
 
-procedure dosub(const asub: psubdataty; const paramco: int32; 
+procedure dosub(asub: psubdataty; const paramco: int32; 
                                               const aflags: dosubflagsty);
 
 //procedure dosub(const asub: psubdataty;
@@ -592,38 +592,65 @@ begin
  end;
 end;
 
-function checkcompatiblefacttype(const stackoffset: int32;
+function checkcompatibledatatype(const stackoffset: int32;
                                   const atypedata: elementoffsetty;
-                                    const aadress: addressvaluety): boolean;
+          const aadress: addressvaluety; out conversioncost: int32): boolean;
 var
- po1,po2: ptypedataty;
+ dest,source: ptypedataty;
  i1: int32;
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
  {$ifdef mse_checkinternalerror}
-  if not (d.kind in factcontexts) then begin
+  if not (d.kind in datacontexts) then begin
    internalerror(ie_parser,'141211A');
   end;
  {$endif}
-  po1:= ele.eledataabs(atypedata);
+  conversioncost:= 0;
+  dest:= ele.eledataabs(atypedata);
   i1:= aadress.indirectlevel{+po1^.h.indirectlevel};
   if af_paramindirect in aadress.flags then begin
    dec(i1);
   end;
-  po2:= ele.eledataabs(d.dat.datatyp.typedata);
+  source:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= i1 = d.dat.datatyp.indirectlevel;
   if result then begin
-   if po1^.h.base <> 0 then begin
-    po1:= ele.eledataabs(po1^.h.base);
+   if source^.h.base <> 0 then begin
+    source:= ele.eledataabs(source^.h.base);
    end;
-   if po2^.h.base <> 0 then begin
-    po2:= ele.eledataabs(po2^.h.base);
+   if dest^.h.base <> 0 then begin
+    dest:= ele.eledataabs(dest^.h.base);
    end;
-   result:= po1 = po2; //todo: try conversion
+   result:= (source = dest);
+   if not result then begin
+    inc(conversioncost);
+    result:= (source^.h.kind = dest^.h.kind) and 
+             (source^.h.kind in [dk_cardinal,dk_integer,dk_float,
+                                 dk_string8,dk_character]);
+    if result and (source^.h.datasize <> dest^.h.datasize) then begin
+     inc(conversioncost);
+    end;
+    if not result then begin
+     inc(conversioncost);
+     result:= (source^.h.kind = dk_cardinal) and 
+                                (dest^.h.kind = dk_cardinal) or
+              (source^.h.kind = dk_integer) and 
+                                (dest^.h.kind = dk_integer);
+     if not result then begin
+      inc(conversioncost);
+      result:= (source^.h.kind in [dk_cardinal,dk_integer]) and
+            (dest^.h.kind = dk_float);
+     end; //todo: finish
+    end;
+   end;
   end;
-  if not result then begin
-   result:= (d.dat.datatyp.indirectlevel = 1 ) and 
-                (po2^.h.kind = dk_pointer) and (i1 > 0); 
+  if not result then begin  //untyped pointer conversion
+   result:= (dest^.h.kind = dk_pointer) and (i1 = 1) and 
+                                     (d.dat.datatyp.indirectlevel > 0) or 
+            (d.dat.datatyp.indirectlevel = 1 ) and 
+                              (source^.h.kind = dk_pointer) and (i1 > 0);
+   if result then begin
+    conversioncost:= 1;
+   end;
   end;
  end;
 end;
@@ -685,7 +712,7 @@ end;
 //procedure dosub(const asub: psubdataty;
 //                   const aindirect: boolean; const isinherited: boolean;
 //                   const paramco: int32; const ownedmethod: boolean);
-procedure dosub(const asub: psubdataty; const paramco: int32; 
+procedure dosub(asub: psubdataty; const paramco: int32; 
                                               const aflags: dosubflagsty);
      
 var
@@ -695,13 +722,25 @@ var
                    const parallocpo: pparallocinfoty);
  var
   vardata1: pvardataty;
+  desttype: ptypedataty;
   si1: databitsizety;
   i1: int32;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
+   if vardata1^.vf.typ = 0 then begin
+    exit; //invalid param type
+   end;
+   desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
    i1:= int1-s.stackindex;
-   with contextstack[int1] do begin
+   with contextstack[int1] do begin    //todo: exact type check for var and out
+    if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
+                                      desttype^.h.indirectlevel,[]) then begin
+     errormessage(err_incompatibletypeforarg,
+                 [i1-3,typename(d),
+                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                       vardata1^.address.indirectlevel)],int1-s.stackindex);
+    end;
     if af_paramindirect in vardata1^.address.flags then begin
      case d.kind of
       ck_const: begin
@@ -718,7 +757,7 @@ var
      end;
     end
     else begin
-     with ptypedataty(ele.eledataabs(vardata1^.vf.typ))^ do begin
+     with desttype^ do begin
       if h.indirectlevel > 0 then begin
        si1:= das_pointer;
       end
@@ -734,13 +773,6 @@ var
        getvalue(i1,si1);
       end;
      end;
-    end;
-    if not checkcompatiblefacttype(i1,vardata1^.vf.typ,
-                                                 vardata1^.address) then begin
-     errormessage(err_incompatibletypeforarg,
-                 [i1-3,typename(d),
-                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                       vardata1^.address.indirectlevel)],int1-s.stackindex);
     end;
     if (af_paramvar in vardata1^.address.flags) and 
                                       (d.kind in factcontexts) then begin
@@ -758,10 +790,10 @@ var
 var
  po1: popinfoty;
  po3: ptypedataty;
- subparams1: pelementoffsetty;
+ subparams1,subparamse: pelementoffsetty;
  po7: pelementinfoty;
  paramco1: integer;
- int1: integer;
+ i1,i2,i3: integer;
  bo1: boolean;
  parallocstart: dataoffsty;
                     //todo: paralloc info for hidden params
@@ -773,11 +805,77 @@ var
  vardata1: pvardataty;
  lastparamsize1: int32;
  instancessa: int32;
+ subdata1: psubdataty;
+ cost1,matchcount1: int32;
+ 
+label
+ paramloopend;
+ 
 begin
 {$ifdef mse_debugparser}
  outhandle('dosub');
 {$endif}
  with info,contextstack[s.stackindex] do begin //classinstance, result
+
+  if asub^.nextoverload >= 0 then begin //check overloads
+   subdata1:= asub;
+   matchcount1:= 0;
+   cost1:= bigint;
+   while true do begin
+   {$ifdef mse_checkinternalerror}
+    if datatoele(subdata1)^.header.kind <> ek_sub then begin
+     internalerror(ie_handler,'20160517A');
+    end;
+   {$endif}
+    subparams1:= @subdata1^.paramsrel;
+    subparamse:= subparams1 + subdata1^.paramcount;
+    paramco1:= paramco;
+    if [sf_function] * subdata1^.flags <> [] then begin
+     inc(paramco1); //result parameter
+     inc(subparams1);
+    end;
+    if sf_method in subdata1^.flags then begin
+     inc(paramco1); //self parameter
+     inc(subparams1);
+    end;
+    i3:= 0;
+    if paramco1 = subdata1^.paramcount then begin //todo: default parameter
+     i1:= s.stacktop-paramco+1-s.stackindex;
+     while subparams1 < subparamse do begin
+      vardata1:= ele.eledataabs(subparams1^);
+      if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1,
+                            vardata1^.vf.typ,vardata1^.address,i2) then begin
+       goto paramloopend;
+      end;
+      if i3 < i2 then begin
+       i3:= i2;             //maximal cost
+      end;
+      inc(subparams1);
+      inc(i1);
+     end;
+     if i3 < cost1 then begin
+      cost1:= i3;
+      asub:= subdata1;
+      matchcount1:= 1;
+     end
+     else begin
+      if i3 = cost1 then begin
+       inc(matchcount1);
+      end;
+     end;
+    end;
+paramloopend:
+    if subdata1^.nextoverload < 0 then begin
+     break;
+    end;
+    subdata1:= ele.eledataabs(subdata1^.nextoverload);
+   end;
+   if matchcount1 > 1 then begin
+    errormessage(err_cantdetermine,[]);
+    exit;
+   end;
+  end;
+
   if stf_getaddress in s.currentstatementflags then begin
    d.kind:= ck_ref;
    d.dat.datatyp.typedata:= asub^.typ;
@@ -859,12 +957,12 @@ begin
      inc(subparams1); //instance pointer
     end;
     if co_mlaruntime in compileoptions then begin
-     int1:= 0;
+     i1:= 0;
      if hasresult then begin
       if sf_constructor in asub^.flags then begin
-       int1:= parent-s.stackindex;           //??? verfy!
+       i1:= parent-s.stackindex;           //??? verfy!
       end;
-      int1:= pushinsertvar(int1,-1,asub^.resulttype.indirectlevel,po3){ + 
+      i1:= pushinsertvar(i1,-1,asub^.resulttype.indirectlevel,po3){ + 
                                                                  vpointersize}; 
                                    //alloc space for return value
 //      if sf_constructor in asub^.flags then begin
@@ -875,16 +973,16 @@ begin
        with insertitem(oc_pushstackaddr,0,-1)^.
                                       par.memop.tempdataaddress do begin
                                                //result var param
-        a.address:= -int1{+vpointersize};
+        a.address:= -i1{+vpointersize};
         offset:= 0;
        end;
-       int1:= int1 + vpointersize;
+       i1:= i1 + vpointersize;
       end;
      end;
      if (sf_method in asub^.flags) then begin
           //param order is [returnvalue pointer],instancepo,{params}
       with insertitem(oc_pushduppo,0,-1)^ do begin 
-       par.voffset:= -int1-vpointersize; //including push address
+       par.voffset:= -i1-vpointersize; //including push address
       end;
      end;
     end;
@@ -893,8 +991,8 @@ begin
     if dsf_indexedsetter in aflags then begin
      inc(parallocpo); //second, first index
      inc(subparams1);
-     for int1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
-      doparam(int1,subparams1,parallocpo);
+     for i1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
+      doparam(i1,subparams1,parallocpo);
       inc(subparams1);
       inc(parallocpo);
      end;
@@ -905,8 +1003,8 @@ begin
      lastparamsize1:= paramsize1-lastparamsize1;
     end
     else begin
-     for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-      doparam(int1,subparams1,parallocpo);
+     for i1:= s.stacktop-paramco+1 to s.stacktop do begin
+      doparam(i1,subparams1,parallocpo);
       inc(subparams1);
       inc(parallocpo);
      end;
@@ -1007,20 +1105,20 @@ begin
      po1^.par.callinfo.linkcount:= -1;
     end
     else begin
-     int1:= sublevel-asub^.nestinglevel;
+     i1:= sublevel-asub^.nestinglevel;
      if sf_function in asub^.flags then begin
-      po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,int1));
+      po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,i1));
      end
      else begin
-      po1:= additem(oc_callout,getssa(ocssa_nestedcallout,int1));
+      po1:= additem(oc_callout,getssa(ocssa_nestedcallout,i1));
      end;
-     po1^.par.callinfo.linkcount:= int1-2;      //for downto 0
+     po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
      po7:= ele.parentelement;
      include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
-     for int1:= int1-1 downto 0 do begin
+     for i1:= i1-1 downto 0 do begin
       po7:= ele.eleinfoabs(po7^.header.parent);
       include(psubdataty(@po7^.data)^.flags,sf_hasnestedref);
-      if int1 <> 0 then begin
+      if i1 <> 0 then begin
        include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
        include(psubdataty(@po7^.data)^.flags,sf_hascallout);
       end;

@@ -99,7 +99,7 @@ function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
            out firstnotfound: integer; out idents: identvecty;
-            const rest: int32 = 0): boolean;
+            const remainder: int32 = 0): boolean;
 function findkindelements(
            const astackoffset: integer; const akinds: elementkindsty; 
            const visibility: visikindsty; out aelement: pelementinfoty;
@@ -428,7 +428,7 @@ function findkindelements(const astackoffset: integer;
             const visibility: visikindsty;
             out aelement: pelementinfoty;
             out firstnotfound: integer; out idents: identvecty;
-            const rest: int32 = 0): boolean;
+            const remainder: int32 = 0): boolean;
 var
  eleres,ele1,ele2: elementoffsetty;
  int1: integer;
@@ -436,7 +436,7 @@ begin
  result:= false;
  aelement:= nil;
  if getidents(astackoffset,idents) then begin
-  idents.high:= idents.high - rest;
+  idents.high:= idents.high - remainder;
   if idents.high < 0 then begin
    idents.high:= -1;
    exit;

@@ -368,7 +368,7 @@ type
  end;
  subdataty = record
   next: elementoffsetty; //for subchain
-  nextoverload: elementoffsetty;
+  nextoverload: elementoffsetty; //-1 = none
   impl: elementoffsetty; //pfuncdataty
   typ: elementoffsetty;  //typedataty dk_address for stf_getaddress
   calllinks: linkindexty;  //calls which need to be resolved 

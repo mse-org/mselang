@@ -65,7 +65,8 @@ type
             err_duplicatesetelement,err_illegaldirective,
             err_cannotdeclarelocalexternal,err_unknownfieldormethod,
             err_nomemberaccessproperty,err_unknownrecordfield,
-            err_illegalpropsymbol,err_div0);
+            err_illegalpropsymbol,err_div0,
+            err_cantdetermine);
             
  errorinfoty = record
   level: errorlevelty;
@@ -239,7 +240,9 @@ const
   (level: erl_error; message: 'No member is provided to access property'),
   (level: erl_error; message: 'Unknown record field identifier "%s"'),
   (level: erl_error; message: 'Illegal symbol for property access'),
-  (level: erl_error; message: 'Division by zero')
+  (level: erl_error; message: 'Division by zero'),
+  (level: erl_error; message: 
+                     'Can''t determine which overloaded subroutine to call')
  );
 
 procedure message1(const atext: string; const values: array of const); 
