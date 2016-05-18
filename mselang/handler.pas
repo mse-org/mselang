@@ -347,17 +347,47 @@ begin
  end;
 end;
 
+procedure setnumberconst(const aitem: pcontextitemty; const avalue: card64);
+begin
+ with aitem^ do begin
+  d.kind:= ck_const;
+  d.dat.indirection:= 0;
+  if (int64(avalue) <= high(int8)) and 
+                            (int64(avalue) >= low(int8)) then begin
+   d.dat.datatyp:= sysdatatypes[st_int8];
+  end
+  else begin
+   if (int64(avalue) <= high(int16)) and 
+                            (int64(avalue) >= low(int16)) then begin
+    d.dat.datatyp:= sysdatatypes[st_int16];
+   end
+   else begin
+    if (int64(avalue) <= high(int32)) and 
+                            (int64(avalue) >= low(int32)) then begin
+     d.dat.datatyp:= sysdatatypes[st_int32];
+    end
+    else begin
+     d.dat.datatyp:= sysdatatypes[st_int64];
+    end;
+   end;
+  end;
+  d.dat.constval.kind:= dk_integer;
+  d.dat.constval.vinteger:= int64(avalue);   
+ end;
+end;
 
 procedure handleint();
 var
  int1,c1: card64;
  po1: pchar;
+ poitem: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INT');
 {$endif}
  with info do begin
-  with contextstack[s.stacktop] do begin
+  poitem:= @contextstack[s.stacktop];
+  with poitem^ do begin
    consumed:= s.source.po;
    po1:= start.po;
    while (po1^ = '0') do begin
@@ -379,26 +409,7 @@ begin
     end;
    end;
    s.stackindex:= s.stacktop-1;
-   d.kind:= ck_const;
-   d.dat.indirection:= 0;
-   if (int64(c1) <= high(int8)) and (int64(c1) >= low(int8)) then begin
-    d.dat.datatyp:= sysdatatypes[st_int8];
-   end
-   else begin
-    if (int64(c1) <= high(int16)) and (int64(c1) >= low(int16)) then begin
-     d.dat.datatyp:= sysdatatypes[st_int16];
-    end
-    else begin
-     if (int64(c1) <= high(int32)) and (int64(c1) >= low(int32)) then begin
-      d.dat.datatyp:= sysdatatypes[st_int32];
-     end
-     else begin
-      d.dat.datatyp:= sysdatatypes[st_int64];
-     end;
-    end;
-   end;
-   d.dat.constval.kind:= dk_integer;
-   d.dat.constval.vinteger:= int64(c1);     //todo: handle cardinals and 64 bit
+   setnumberconst(poitem,c1);
   end;
  end;
 end;
@@ -1370,6 +1381,8 @@ begin
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
+      setnumberconst(ptop,d.number.value);
+     {
       c1:= d.number.value;
       d.kind:= ck_const;
       d.dat.indirection:= 0;
@@ -1382,6 +1395,7 @@ begin
       d.dat.constval.kind:= dk_integer;
       d.dat.constval.vinteger:= int64(c1); 
           //todo: handle cardinals and 64 bit
+     }
      end;
     end;
    end;
