@@ -850,7 +850,7 @@ var                       //todo: move after doparam
 var
  lstr1: lstringty;  
  i1: int32;
- po4: pelementinfoty;
+ element1: pelementinfoty;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -936,6 +936,12 @@ begin
                                      paramco*sizeof(pvardataty))^.data);
   sub1^.next:= currentsubchain;
   currentsubchain:= ele.eledatarel(sub1);
+  if (ele1 >= 0) and (sf_method in subflags) then begin
+   element1:= ele.eleinfoabs(ele1);
+   if element1^.header.parent <> ele.elementparent then begin
+    ele1:= -1;    //todo: use correct class overload handling
+   end;
+  end;
   sub1^.nextoverload:= ele1;
 
   typ1:= ele.addelementdata(getident(),ek_type,allvisi);
@@ -1202,14 +1208,14 @@ begin
        internalerror(ie_parser,'20151023A');
       end;
      {$endif}
-      po4:= ele.eleinfoabs(d.subdef.ref);
+      element1:= ele.eleinfoabs(d.subdef.ref);
       with s.unitinfo^ do begin
        if do_proginfo in s.debugoptions then begin
         pushcurrentscope(llvmlists.metadatalist.adddisubprogram(
-             {s.}currentscopemeta,getidentname2(po4^.header.name),
-             s.currentfilemeta,
-             info.contextstack[info.s.stackindex].start.line,-1,
-             dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
+            {s.}currentscopemeta,getidentname2(element1^.header.name),
+            s.currentfilemeta,
+            info.contextstack[info.s.stackindex].start.line,-1,
+            dummymeta,[flagprototyped],us_implementation in s.unitinfo^.state));
        end;
       end;
      end;

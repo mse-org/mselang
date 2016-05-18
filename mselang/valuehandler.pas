@@ -717,6 +717,7 @@ procedure dosub(asub: psubdataty; const paramco: int32;
      
 var
  paramsize1: int32;
+ paramschecked: boolean;
  
  procedure doparam(const int1: int32; const subparams1: pelementoffsetty;
                    const parallocpo: pparallocinfoty);
@@ -724,7 +725,7 @@ var
   vardata1: pvardataty;
   desttype: ptypedataty;
   si1: databitsizety;
-  i1: int32;
+  i1,i2: int32;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -734,13 +735,23 @@ var
    desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
    i1:= int1-s.stackindex;
    with contextstack[int1] do begin    //todo: exact type check for var and out
+
+   if not paramschecked and not checkcompatibledatatype(i1,vardata1^.vf.typ,
+                                              vardata1^.address,i2) then begin
+    errormessage(err_incompatibletypeforarg,
+                 [i1-3,typename(d),
+                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                       vardata1^.address.indirectlevel)],int1-s.stackindex);
+   end;
+{
     if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
-                                      desttype^.h.indirectlevel,[]) then begin
+                               vardata1^.address.indirectlevel,[]) then begin
      errormessage(err_incompatibletypeforarg,
                  [i1-3,typename(d),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                        vardata1^.address.indirectlevel)],int1-s.stackindex);
     end;
+}
     if af_paramindirect in vardata1^.address.flags then begin
      case d.kind of
       ck_const: begin
@@ -816,8 +827,9 @@ begin
  outhandle('dosub');
 {$endif}
  with info,contextstack[s.stackindex] do begin //classinstance, result
-
+  paramschecked:= false;
   if asub^.nextoverload >= 0 then begin //check overloads
+   paramschecked:= true;
    subdata1:= asub;
    matchcount1:= 0;
    cost1:= bigint;
