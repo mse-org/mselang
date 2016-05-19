@@ -651,21 +651,21 @@ begin
                   (aadress.flags * [af_paramvar,af_paramout] <> []) then begin
      exit;
     end;
-    inc(conversioncost);
+    inc(conversioncost);            //1
     result:= (source^.h.kind = dest^.h.kind) and 
              (source^.h.kind in [dk_cardinal,dk_integer,dk_float,
                                  dk_string8,dk_character]);
     if result and (source^.h.datasize <> dest^.h.datasize) then begin
-     inc(conversioncost);
+     inc(conversioncost);          //2
     end;
     if not result then begin
-     inc(conversioncost);
+     inc(conversioncost,2);        //3
      result:= (source^.h.kind = dk_cardinal) and 
-                                (dest^.h.kind = dk_cardinal) or
+                                (dest^.h.kind = dk_integer) or
               (source^.h.kind = dk_integer) and 
-                                (dest^.h.kind = dk_integer);
+                                (dest^.h.kind = dk_cardinal);
      if not result then begin
-      inc(conversioncost);
+      inc(conversioncost);        //4
       result:= (source^.h.kind in [dk_cardinal,dk_integer]) and
             (dest^.h.kind = dk_float);
      end; //todo: finish
@@ -756,6 +756,15 @@ var
   si1: databitsizety;
   i1,i2: int32;
   err1: errorty;
+  
+  procedure doconvert();
+  begin
+   if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
+                              vardata1^.address.indirectlevel,[]) then begin
+    internalerror1(ie_handler,'20160519A');
+   end;
+  end;
+  
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -805,16 +814,16 @@ var
      end;
      case d.kind of
       ck_const: begin
+       if i2 > 0 then begin
+        doconvert();
+       end;
        pushinsertconst(i1,-1,si1);
       end;
       ck_ref: begin
        getvalue(i1,si1);
-      end;
-     end;
-     if i2 > 0 then begin
-      if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
-                                 vardata1^.address.indirectlevel,[]) then begin
-       internalerror1(ie_handler,'20160519A');
+       if i2 > 0 then begin
+        doconvert();
+       end;
       end;
      end;
     end;
