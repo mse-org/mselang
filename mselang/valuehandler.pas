@@ -23,6 +23,8 @@ uses
 type
  convertoptionty = (coo_type,coo_enum,coo_set,coo_notrunk);
  convertoptionsty = set of convertoptionty;
+ compatibilitycheckoptionty = (cco_novarconversion);
+ compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
  
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer;
@@ -593,8 +595,9 @@ begin
 end;
 
 function checkcompatibledatatype(const stackoffset: int32;
-                                  const atypedata: elementoffsetty;
-          const aadress: addressvaluety; out conversioncost: int32): boolean;
+            const atypedata: elementoffsetty; const aadress: addressvaluety;
+                                   const options: compatibilitycheckoptionsty;
+                                            out conversioncost: int32): boolean;
 var
  dest,source: ptypedataty;
  i1: int32;
@@ -622,6 +625,10 @@ begin
    end;
    result:= (source = dest);
    if not result then begin
+    if (cco_novarconversion in options) and 
+                  (aadress.flags * [af_paramvar,af_paramout] <> []) then begin
+     exit;
+    end;
     inc(conversioncost);
     result:= (source^.h.kind = dest^.h.kind) and 
              (source^.h.kind in [dk_cardinal,dk_integer,dk_float,
@@ -726,6 +733,7 @@ var
   desttype: ptypedataty;
   si1: databitsizety;
   i1,i2: int32;
+  err1: errorty;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -733,16 +741,21 @@ var
     exit; //invalid param type
    end;
    desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
+   si1:= desttype^.h.datasize;
    i1:= int1-s.stackindex;
    with contextstack[int1] do begin    //todo: exact type check for var and out
 
-   if not paramschecked and not checkcompatibledatatype(i1,vardata1^.vf.typ,
-                                              vardata1^.address,i2) then begin
-    errormessage(err_incompatibletypeforarg,
-                 [i1-3,typename(d),
-                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                       vardata1^.address.indirectlevel)],int1-s.stackindex);
-   end;
+    if not paramschecked and not checkcompatibledatatype(i1,vardata1^.vf.typ,
+                         vardata1^.address,[cco_novarconversion],i2) then begin
+     err1:= err_incompatibletypeforarg;
+     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
+      err1:= err_callbyvarexact;
+     end;
+     errormessage(err1,
+                  [i1-2,typename(d),
+                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                        vardata1^.address.indirectlevel)],int1-s.stackindex);
+    end;
 {
     if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
                                vardata1^.address.indirectlevel,[]) then begin
@@ -818,6 +831,7 @@ var
  instancessa: int32;
  subdata1: psubdataty;
  cost1,matchcount1: int32;
+ needsvarcheck: boolean;
  
 label
  paramloopend;
@@ -829,7 +843,7 @@ begin
  with info,contextstack[s.stackindex] do begin //classinstance, result
   paramschecked:= false;
   if asub^.nextoverload >= 0 then begin //check overloads
-   paramschecked:= true;
+   needsvarcheck:= true;
    subdata1:= asub;
    matchcount1:= 0;
    cost1:= bigint;
@@ -851,12 +865,16 @@ begin
      inc(subparams1);
     end;
     i3:= 0;
+    bo1:= false;
     if paramco1 = subdata1^.paramcount then begin //todo: default parameter
      i1:= s.stacktop-paramco+1-s.stackindex;
      while subparams1 < subparamse do begin
       vardata1:= ele.eledataabs(subparams1^);
+      bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
       if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1,
-                            vardata1^.vf.typ,vardata1^.address,i2) then begin
+                       vardata1^.vf.typ,vardata1^.address,[],i2) then begin
+                                                          //report byvalue,
+                                                          //byaddress dup
        goto paramloopend;
       end;
       if i3 < i2 then begin
@@ -869,6 +887,7 @@ begin
       cost1:= i3;
       asub:= subdata1;
       matchcount1:= 1;
+      needsvarcheck:= bo1;
      end
      else begin
       if i3 = cost1 then begin
@@ -886,6 +905,7 @@ paramloopend:
     errormessage(err_cantdetermine,[]);
     exit;
    end;
+   paramschecked:= not needsvarcheck;
   end;
 
   if stf_getaddress in s.currentstatementflags then begin
