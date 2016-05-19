@@ -60,6 +60,8 @@ uses
  __mla__internaltypes,exceptionhandler,listutils;
 type
  convertsizetablety = array[intbitsizety,databitsizety] of opcodety;
+ convertnumtablety = array[boolean,databitsizety] of opcodety;
+                           //true -> signed
 
 const 
  cardtocard: convertsizetablety = (
@@ -234,6 +236,25 @@ const
   )
  );
 
+ convtoflo64: convertnumtablety = (
+  (//unsigned
+  //das_none,das_1,  das_2_7,das_8,          das_9_15,das_16,          das_17_31,
+    oc_none, oc_none,oc_none,oc_card8toflo64,oc_none, oc_card16toflo64,oc_none,
+  //das_32,          das_33_63,das_64,             
+    oc_card32toflo64,oc_none,  oc_card64toflo64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
+  ),
+  (//signed
+  //das_none,das_1,  das_2_7,das_8,         das_9_15,das_16,         das_17_31,
+    oc_none, oc_none,oc_none,oc_int8toflo64,oc_none, oc_int16toflo64,oc_none,
+  //das_32,         das_33_63,das_64,             
+    oc_int32toflo64,oc_none,  oc_int64toflo64,
+  //das_pointer,das_f16,das_f32,das_f64, das_sub,das_meta
+    oc_none,    oc_none,oc_none,oc_none, oc_none,oc_none
+  )
+ );
+
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer;
                        const aoptions: convertoptionsty): boolean;
@@ -401,9 +422,10 @@ begin
        case dest^.h.kind of //todo: use table
         dk_float: begin
          case source1^.h.kind of
-          dk_integer: begin //todo: data size
+          dk_integer,dk_cardinal: begin //todo: data size
            i1:= d.dat.fact.ssaindex;
-           with insertitem(oc_int32toflo64,stackoffset,-1)^ do begin
+           with insertitem(convtoflo64[source1^.h.kind = dk_integer,
+                             source1^.h.datasize],stackoffset,-1)^ do begin
             par.ssas1:= i1;
            end;
            result:= true;
@@ -745,6 +767,7 @@ var
    i1:= int1-s.stackindex;
    with contextstack[int1] do begin    //todo: exact type check for var and out
 
+    i2:= 1;
     if not paramschecked and not checkcompatibledatatype(i1,vardata1^.vf.typ,
                          vardata1^.address,[cco_novarconversion],i2) then begin
      err1:= err_incompatibletypeforarg;
@@ -756,15 +779,6 @@ var
                    typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                         vardata1^.address.indirectlevel)],int1-s.stackindex);
     end;
-{
-    if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
-                               vardata1^.address.indirectlevel,[]) then begin
-     errormessage(err_incompatibletypeforarg,
-                 [i1-3,typename(d),
-                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                       vardata1^.address.indirectlevel)],int1-s.stackindex);
-    end;
-}
     if af_paramindirect in vardata1^.address.flags then begin
      case d.kind of
       ck_const: begin
@@ -795,6 +809,12 @@ var
       end;
       ck_ref: begin
        getvalue(i1,si1);
+      end;
+     end;
+     if i2 > 0 then begin
+      if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
+                                 vardata1^.address.indirectlevel,[]) then begin
+       internalerror1(ie_handler,'20160519A');
       end;
      end;
     end;

@@ -158,7 +158,16 @@ type
   oc_pushimmf64,
   oc_pushimmdatakind,
   
+  oc_card8toflo64,
+  oc_card16toflo64,
+  oc_card32toflo64,
+  oc_card64toflo64,
+
+  oc_int8toflo64,
+  oc_int16toflo64,
   oc_int32toflo64,
+  oc_int64toflo64,
+
   oc_potoint32,
   oc_inttopo,
 

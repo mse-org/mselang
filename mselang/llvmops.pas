@@ -826,12 +826,46 @@ begin
  notimplemented();
 end;
 
-procedure int32toflo64op();
+procedure ordtoflo64();
 begin
  with pc^.par do begin
   bcstream.emitcastop(bcstream.ssaval(ssas1),bcstream.typeval(das_f64),
                                                                CAST_SITOFP);
  end;
+end;
+
+procedure card8toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure card16toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure card32toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure card64toflo64op();
+begin
+ ordtoflo64();
+end;
+
+procedure int8toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure int16toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure int32toflo64op();
+begin
+ ordtoflo64();
+end;
+procedure int64toflo64op();
+begin
+ ordtoflo64();
 end;
 
 procedure potoint32op();
@@ -3595,7 +3629,16 @@ const
   pushimmf64ssa = 1;
   pushimmdatakindssa = 1;
   
+  card8toflo64ssa = 1;
+  card16toflo64ssa = 1;
+  card32toflo64ssa = 1;
+  card64toflo64ssa = 1;
+
+  int8toflo64ssa = 1;
+  int16toflo64ssa = 1;
   int32toflo64ssa = 1;
+  int64toflo64ssa = 1;
+
   potoint32ssa = 1;
   inttopossa =1;
 

@@ -166,8 +166,24 @@
 //oc_pushimmdatakind
   (ssa: pushimmdatakindssa; proc: @pushimmdatakindop; flags: []), 
   
-//oc_int32toflo64
+//oc_card8toflo64,
+  (ssa: card8toflo64ssa; proc: @card8toflo64op; flags: []), 
+//oc_card16toflo64,
+  (ssa: card16toflo64ssa; proc: @card16toflo64op; flags: []), 
+//oc_card32toflo64,
+  (ssa: card32toflo64ssa; proc: @card32toflo64op; flags: []), 
+//oc_card64toflo64,
+  (ssa: card64toflo64ssa; proc: @card64toflo64op; flags: []), 
+
+//oc_int8toflo64,
+  (ssa: int8toflo64ssa; proc: @int8toflo64op; flags: []), 
+//oc_int16toflo64,
+  (ssa: int16toflo64ssa; proc: @int16toflo64op; flags: []), 
+//oc_int32toflo64,
   (ssa: int32toflo64ssa; proc: @int32toflo64op; flags: []), 
+//oc_int64toflo64,
+  (ssa: int64toflo64ssa; proc: @int64toflo64op; flags: []), 
+
 //oc_potoint32
   (ssa: potoint32ssa; proc: @potoint32op; flags: []), 
 //oc_inttopo

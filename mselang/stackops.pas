@@ -709,12 +709,68 @@ begin
                                        cpu.pc^.par.imm.vdatakind; 
 end;
 
+procedure card8toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card8));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card8(po1^);
+end;
+
+procedure card16toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card16));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card16(po1^);
+end;
+
+procedure card32toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card32));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card32(po1^);
+end;
+
+procedure card64toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(card64));
+ vfloatty(stackpush(sizeof(vfloatty))^):= card64(po1^);
+end;
+
+procedure int8toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int8));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int8(po1^);
+end;
+
+procedure int16toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int16));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int16(po1^);
+end;
+
 procedure int32toflo64op();
 var
  po1: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- vfloatty(stackpush(sizeof(vfloatty))^):= vintegerty(po1^);
+ po1:= stackpop(sizeof(int32));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int32(po1^);
+end;
+
+procedure int64toflo64op();
+var
+ po1: pointer;
+begin
+ po1:= stackpop(sizeof(int64));
+ vfloatty(stackpush(sizeof(vfloatty))^):= int64(po1^);
 end;
 
 procedure potoint32op();
@@ -4086,7 +4142,16 @@ const
   pushimmf64ssa = 0;
   pushimmdatakindssa = 0;
   
-  int32toflo64ssa = 0;
+  card8toflo64ssa = 0;
+  card16toflo64ssa = 0;
+  card32toflo64ssa = 0;
+  card64toflo64ssa = 0;
+
+  int8toflo64ssa = 1;
+  int16toflo64ssa = 1;
+  int32toflo64ssa = 1;
+  int64toflo64ssa = 1;
+
   potoint32ssa = 0;
   inttopossa = 0;
   
