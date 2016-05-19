@@ -1,0 +1,48 @@
+program overload1;
+
+var
+ testvar: int32;
+
+procedure testpro(a: int32);
+begin
+ testvar:= 1;
+end;
+procedure testpro(a: int8);
+begin
+ testvar:= 2;
+end;
+
+procedure testpro(a: card32);
+begin
+ testvar:= 3;
+end;
+
+procedure testpro(p: flo64);
+begin
+ testvar:= 4;
+end;
+
+procedure testpro(a: string8);
+begin
+ testvar:= 5;
+end;
+
+
+begin
+ testpro(int32(32));
+ if testvar = 1 then begin
+  testpro(8);
+  if testvar = 2 then begin
+   testpro(card32(33));
+   if testvar = 3 then begin
+    testpro(123.8);
+    if testvar = 4 then begin
+     testpro('abc');
+     if testvar = 5 then begin
+      exitcode:= 123;
+     end;
+    end;
+   end;
+  end;
+ end;
+end.
