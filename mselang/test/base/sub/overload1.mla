@@ -33,13 +33,16 @@ begin
  if testvar = 1 then begin
   testpro(8);
   if testvar = 2 then begin
-   testpro(card32(33));
+   testpro(card16(8);
    if testvar = 3 then begin
-    testpro(123.8);
-    if testvar = 4 then begin
-     testpro('abc');
-     if testvar = 5 then begin
-      exitcode:= 123;
+    testpro(card32(33));
+    if testvar = 3 then begin
+     testpro(123.8);
+     if testvar = 4 then begin
+      testpro('abc');
+      if testvar = 5 then begin
+       exitcode:= 123;
+      end;
      end;
     end;
    end;

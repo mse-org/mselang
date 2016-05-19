@@ -689,15 +689,18 @@ begin
                                  dk_string8,dk_character]);
     if result and (source^.h.datasize <> dest^.h.datasize) then begin
      inc(conversioncost);          //2
+     if source^.h.datasize > dest^.h.datasize then begin
+      inc(conversioncost);         //3
+     end;
     end;
     if not result then begin
-     inc(conversioncost,2);        //3
+     inc(conversioncost,2);        //4
      result:= (source^.h.kind = dk_cardinal) and 
                                 (dest^.h.kind = dk_integer) or
               (source^.h.kind = dk_integer) and 
                                 (dest^.h.kind = dk_cardinal);
      if not result then begin
-      inc(conversioncost);        //4
+      inc(conversioncost);        //5
       result:= (source^.h.kind in [dk_cardinal,dk_integer]) and
             (dest^.h.kind = dk_float);
      end; //todo: finish
