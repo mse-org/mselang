@@ -339,11 +339,43 @@ begin
             result:= true;
            end;
            dk_integer: begin
-            vfloat:= vinteger;
+            case intbits[source1^.h.datasize] of
+             ibs_8: begin
+              vfloat:= int8(vinteger);
+             end;
+             ibs_16: begin
+              vfloat:= int16(vinteger);
+             end;
+             ibs_32: begin
+              vfloat:= int32(vinteger);
+             end;
+             ibs_64: begin
+              vfloat:= int64(vinteger);
+             end;
+             else begin
+              internalerror1(ie_handler,'20160519B');
+             end;
+            end;
             result:= true;
            end;
            dk_cardinal: begin
-            vfloat:= vcardinal;
+            case intbits[source1^.h.datasize] of
+             ibs_8: begin
+              vfloat:= card8(vcardinal);
+             end;
+             ibs_16: begin
+              vfloat:= card16(vcardinal);
+             end;
+             ibs_32: begin
+              vfloat:= card32(vcardinal);
+             end;
+             ibs_64: begin
+              vfloat:= card64(vcardinal);
+             end;
+             else begin
+              internalerror1(ie_handler,'20160519C');
+             end;
+            end;
             result:= true;
            end;
           end;
