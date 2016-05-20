@@ -3097,7 +3097,8 @@ begin
      end;
      ck_paramdef: begin
       with paramdef do begin
-       write('kind:',getenumname(typeinfo(kind),ord(kind)))
+       write('kind:',getenumname(typeinfo(kind),ord(kind)),
+                      ' def:',defaultconst);
       end;
      end;
      ck_recorddef: begin

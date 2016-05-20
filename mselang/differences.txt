@@ -1,0 +1,8 @@
+MSEpas Differences to Free Pascal
+
+L = Limitation
+M = Modification
+E = Extension
+
+E 2016-05-20 Parameter defaults for multiple params. Ex:
+   procedure test(a,b,c: int32 = 123);

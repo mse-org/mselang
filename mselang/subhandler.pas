@@ -284,6 +284,7 @@ begin
  with info,contextstack[s.stackindex].d do begin
   kind:= ck_paramdef;
   paramdef.kind:= pk_value;
+  paramdef.defaultconst:= -1;
  end;
 end;
 
@@ -390,6 +391,18 @@ begin
                                       paramtype^.typedata,ad1,[],i1) then begin
       incompatibletypeserror(contextstack[s.stacktop-1].d,
                                     contextstack[s.stacktop].d);
+     end
+     else begin
+      if not ele.addelement(getident(),ek_const,
+                                  allvisi,d.paramdef.defaultconst) then begin
+       internalerror1(ie_parser,'20160520C'); //there is a duplicate
+      end;
+      with pconstdataty(ele.eledataabs(d.paramdef.defaultconst))^ do begin
+       with contextstack[s.stacktop].d do begin
+        val.typ:= dat.datatyp;
+        val.d:= dat.constval;
+       end;
+      end;
      end;
     end;
    end;
@@ -792,7 +805,6 @@ var                       //todo: move after doparam
 // parambase: ptruint;
  si1: integer;
  paramsize1: integer;
- paramkind1: paramkindty;
  bo1,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
@@ -801,6 +813,8 @@ var                       //todo: move after doparam
  procedure doparams(const resultvar: boolean);
  var
   i1,i2: int32;
+  paramkind1: paramkindty;
+  defaultconst1: elementoffsetty;
  begin
   with info do begin
    while curparam < curparamend do begin
@@ -817,7 +831,10 @@ var                       //todo: move after doparam
      end;
     {$endif}
     end;
-    paramkind1:= contextstack[curstackindex].d.paramdef.kind;
+    with contextstack[curstackindex] do begin
+     paramkind1:= d.paramdef.kind;
+     defaultconst1:= d.paramdef.defaultconst;
+    end;
     for i2:= i2 to i1 - 1 do begin
      with contextstack[i2] do begin //ck_ident
      {$ifdef mse_checkinternalerror}
@@ -836,6 +853,7 @@ var                       //todo: move after doparam
        if d.kind = ck_fieldtype then begin
         typ1:= ele.eledataabs(d.typ.typedata);
         with var1^ do begin
+         vf.defaultconst:= defaultconst1;
          address.indirectlevel:= d.typ.indirectlevel;
          if (address.indirectlevel > 0) then begin
           si1:= pointersize;

@@ -313,6 +313,7 @@ type
  vfinfoty = record
   typ: elementoffsetty;   //elementdata relative typedataty
   flags: typeflagsty;
+  defaultconst: elementoffsetty;
   next: elementoffsetty;  //chain in same scope, used for ini, fini
                           //root = typedataty.fieldchain
  end;

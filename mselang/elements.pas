@@ -1468,7 +1468,7 @@ begin
       mstr1:= mstr1+' L:'+inttostrmse(address.locaddress.framelevel);
      end;               
 
-     mstr1:= mstr1 + dumptyp(vf.typ);
+     mstr1:= mstr1 + ' def: '+inttostrmse(vf.defaultconst)+dumptyp(vf.typ);
      {
      po2:= eleinfoabs(vf.typ);
      mstr1:= mstr1+' T:'+inttostr(vf.typ)+':'+getidentname(po2^.header.name);
@@ -1544,7 +1544,7 @@ begin
    end;
    ek_const: begin
     with pconstdataty(@po1^.data)^ do begin
-     dumpconst(val);
+     mstr1:= mstr1+' '+dumpconst(val);
     end;
    end;
    ek_sub: begin

@@ -272,6 +272,7 @@ const
 type 
  paramdefinfoty = record
   kind: paramkindty;
+  defaultconst: elementoffsetty;
  end;
  
  paramsinfoty = record
