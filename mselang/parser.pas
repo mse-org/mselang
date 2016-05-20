@@ -426,6 +426,10 @@ var
   int1: integer;
  begin
   with info do begin
+{$ifdef mse_debugparser1}
+   writeinfoline('pop ->'+
+             contextstack[contextstack[s.stackindex].parent].context^.caption);
+{$endif}
    popped:= true;
    int1:= s.stackindex;
    s.stackindex:= contextstack[s.stackindex].parent;
@@ -770,7 +774,7 @@ handlelab:
       s.stacktop:= s.stackindex;
      end;
      if (s.pc^.next = nil) and s.pc^.pop then begin
-      popparent;
+      popparent();
      end;
     end
     else begin
