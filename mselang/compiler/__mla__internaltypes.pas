@@ -8,8 +8,12 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit __mla__internaltypes;
-//{$internaldebug on}
 interface
+ {$internaldebug on}
+//{$ifndef mse_compiler}
+// procedure test(a: int32);
+//{$endif}
+ 
 type
  ppointer = ^pointer;
 

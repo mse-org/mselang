@@ -273,8 +273,13 @@ paramdef0,paramdef1,handleparamdef0entry,
 paramdef1,,,*
  ${whitespace}
  ':',paramdef2-
-paramdef2,,,handleparamdef2^
- '',getfieldtype*
+paramdef2,paramdef3,,
+ '',getfieldtype^*
+paramdef3,,,handleparamdef3^
+ ${whitespace}
+ '=',paramdef4-
+paramdef4,,,handleparamdefault^
+ '',exp^*
 
 subfunctionheader,subheader,handlefunctionentry,
 subprocedureheader,subheader,handleprocedureentry,
@@ -578,7 +583,7 @@ simpletype,rangetype,,+
  @identstart,typeident*
 typeident,checktypeident,,
  '',identpath^*
-checktypeident,,,handlechecktypeident
+checktypeident,,,handlechecktypeident //pops parent
 rangetype,,,handlecheckrangetype*^
  '',getrange^*
 
@@ -782,7 +787,7 @@ propind0,propind1,handleparamdef0entry,
 propind1,,,*
  ${whitespace}
  ':',propind2-
-propind2,,,handleparamdef2^
+propind2,,,handleparamdef3^
  '',getfieldtype*
  
 classproperty,classproperty1,classpropertyentry,

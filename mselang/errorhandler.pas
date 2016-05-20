@@ -66,7 +66,7 @@ type
             err_cannotdeclarelocalexternal,err_unknownfieldormethod,
             err_nomemberaccessproperty,err_unknownrecordfield,
             err_illegalpropsymbol,err_div0,
-            err_cantdetermine,err_callbyvarexact);
+            err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly);
             
  errorinfoty = record
   level: errorlevelty;
@@ -244,7 +244,9 @@ const
   (level: erl_error; message: 
                      'Can''t determine which overloaded subroutine to call'),
   (level: erl_error; message: 
-    'Call by var for arg no. %d has to match exactly: Got "%s", expected "%s"')
+    'Call by var for arg no. %d has to match exactly: Got "%s", expected "%s"'),
+  (level: erl_error; message: 'Default values can only be specified for value,'+
+                                               ' const and constref parameters')
  );
 
 procedure message1(const atext: string; const values: array of const); 

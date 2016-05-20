@@ -38,7 +38,8 @@ procedure handleparams0entry();
 procedure setconstparam();
 procedure setvarparam();
 procedure setoutparam();
-procedure handleparamdef2();
+procedure handleparamdef3();
+procedure handleparamdefault();
 procedure handleparamsend();
 //procedure handlesubheader();
 
@@ -79,7 +80,8 @@ implementation
 uses
  errorhandler,msetypes,handlerutils,elements,grammar,opcode,unithandler,
  managedtypes,segmentutils,classhandler,llvmlists,__mla__internaltypes,
- msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser;
+ msestrings,typehandler,exceptionhandler,identutils,llvmbitcodes,parser,
+ valuehandler;
 
 type
  tmetadatalist1 = class(tmetadatalist);
@@ -341,14 +343,56 @@ begin
  end;
 end;
 
-procedure handleparamdef2();
+procedure handleparamdef3();
 begin
 {$ifdef mse_debugparser}
- outhandle('PARAMDEF2');
+ outhandle('PARAMDEF3');
 {$endif}
  with info do begin
-  if s.stacktop-s.stackindex <> 2 then begin
+  if contextstack[s.stacktop].d.kind <> ck_fieldtype then begin
+//  if s.stacktop-s.stackindex <> 2 then begin
    errormessage(err_typeidentexpected,[]);
+  end;
+ end;
+end;
+
+procedure handleparamdefault();
+var
+ paramtype: ptypeinfoty;
+ i1: int32;
+ ad1: addressvaluety;
+begin
+{$ifdef mse_debugparser}
+ outhandle('PARAMDEFAULT');
+{$endif}
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stackindex].d.kind <> ck_paramdef then begin
+   internalerror(ie_parser,'20160520A');
+  end;
+  if contextstack[s.stacktop-1].d.kind <> ck_fieldtype then begin
+   internalerror(ie_parser,'20160520B');
+  end;
+ {$endif}
+  paramtype:= @contextstack[s.stacktop-1].d.typ;
+  if contextstack[s.stacktop].d.kind <> ck_const then begin
+   errormessage(err_constexpressionexpected,[]);
+  end
+  else begin
+   with contextstack[s.stackindex] do begin
+    if d.paramdef.kind in [pk_var,pk_out] then begin
+     errormessage(err_defaultvaluescanonly,[]);
+    end
+    else begin
+     ad1.flags:= paramkinds[d.paramdef.kind];
+     ad1.indirectlevel:= paramtype^.indirectlevel;
+     if not checkcompatibledatatype(s.stacktop-s.stackindex,
+                                      paramtype^.typedata,ad1,[],i1) then begin
+      incompatibletypeserror(contextstack[s.stacktop-1].d,
+                                    contextstack[s.stacktop].d);
+     end;
+    end;
+   end;
   end;
  end;
 end;

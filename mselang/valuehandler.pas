@@ -31,6 +31,11 @@ function tryconvert(const stackoffset: integer;
           const aoptions: convertoptionsty): boolean;
 function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
+function checkcompatibledatatype(const sourcestackoffset: int32;
+                         const desttypedata: elementoffsetty;
+                         const destadress: addressvaluety;
+                                   const options: compatibilitycheckoptionsty;
+                                            out conversioncost: int32): boolean;
 function getbasevalue(const stackoffset: int32;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
@@ -648,24 +653,25 @@ begin
  end;
 end;
 
-function checkcompatibledatatype(const stackoffset: int32;
-            const atypedata: elementoffsetty; const aadress: addressvaluety;
+function checkcompatibledatatype(const sourcestackoffset: int32;
+                         const desttypedata: elementoffsetty;
+                         const destadress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
                                             out conversioncost: int32): boolean;
 var
  dest,source: ptypedataty;
  i1: int32;
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
+ with info,contextstack[s.stackindex+sourcestackoffset] do begin
  {$ifdef mse_checkinternalerror}
   if not (d.kind in datacontexts) then begin
    internalerror(ie_parser,'141211A');
   end;
  {$endif}
   conversioncost:= 0;
-  dest:= ele.eledataabs(atypedata);
-  i1:= aadress.indirectlevel{+po1^.h.indirectlevel};
-  if af_paramindirect in aadress.flags then begin
+  dest:= ele.eledataabs(desttypedata);
+  i1:= destadress.indirectlevel{+po1^.h.indirectlevel};
+  if af_paramindirect in destadress.flags then begin
    dec(i1);
   end;
   source:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -680,7 +686,7 @@ begin
    result:= (source = dest);
    if not result then begin
     if (cco_novarconversion in options) and 
-                  (aadress.flags * [af_paramvar,af_paramout] <> []) then begin
+             (destadress.flags * [af_paramvar,af_paramout] <> []) then begin
      exit;
     end;
     inc(conversioncost);            //1
