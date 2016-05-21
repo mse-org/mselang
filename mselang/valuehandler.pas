@@ -941,6 +941,7 @@ var
   i1: int32;  
   desttype: ptypedataty;
   vardata1: pvardataty;
+  si1: databitsizety;
  begin
   with info do begin
    i1:= asub^.paramcount - paramco1;
@@ -956,9 +957,17 @@ var
       internalerror(ie_handler,'20160521D');
      end;
     {$endif}
+     with desttype^ do begin
+      if h.indirectlevel > 0 then begin
+       si1:= das_pointer;
+      end
+      else begin
+       si1:= h.datasize;
+      end;
+     end;
      pushinsertconst(s.stacktop-s.stackindex,
           pconstdataty(ele.eledataabs(vardata1^.vf.defaultconst))^.val.d,
-                                                                 -1,das_none);
+                                                                 -1,si1);
      with parallocpo^ do begin
      {$ifdef mse_checkinternalerror}
       if contextstack[s.stacktop].d.kind <> ck_fact then begin
