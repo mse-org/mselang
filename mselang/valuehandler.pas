@@ -882,7 +882,7 @@ var
    end;
   end;
  end; //doparam
- 
+(* 
  procedure dodefaultparam(const stackoffset: int32; 
                           const subparams1: pelementoffsetty;
                                              const parallocpo: pparallocinfoty);
@@ -913,7 +913,7 @@ var
    end;
   end;
  end; //dodefaultparam
- 
+*)
 var
  po1: popinfoty;
  po3: ptypedataty;
@@ -938,7 +938,9 @@ var
 
  procedure dodefaultparams();
  var
-  i1,i2: int32;  
+  i1: int32;  
+  desttype: ptypedataty;
+  vardata1: pvardataty;
  begin
   with info do begin
    i1:= asub^.paramcount - paramco1;
@@ -946,9 +948,27 @@ var
     if paramco = 0 then begin //no data context at top
      inc(s.stacktop);
     end;
-    i2:= s.stacktop-s.stackindex;
     for i1:= i1-1 downto 0 do begin
-     dodefaultparam(i2,subparams1,parallocpo);
+     vardata1:= ele.eledataabs(subparams1^);
+     desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
+    {$ifdef mse_checkinternalerror}
+     if vardata1^.vf.defaultconst <= 0 then begin
+      internalerror(ie_handler,'20160521D');
+     end;
+    {$endif}
+     pushinsertconst(s.stacktop,
+          pconstdataty(ele.eledataabs(vardata1^.vf.defaultconst))^.val.d,
+                                                                 -1,das_none);
+     with parallocpo^ do begin
+     {$ifdef mse_checkinternalerror}
+      if contextstack[s.stacktop].d.kind <> ck_fact then begin
+       internalerror(ie_handler,'20160521E');
+      end;
+     {$endif}
+      ssaindex:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+      size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
+      inc(paramsize1,alignsize(getbytesize(size)));
+     end;
      inc(subparams1);
      inc(parallocpo);
     end;
