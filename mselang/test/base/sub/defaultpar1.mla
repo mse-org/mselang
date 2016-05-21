@@ -1,0 +1,24 @@
+program defaultpar1;
+
+function testpro(a,b,c: int32 = 42): int32;
+begin
+ result:= a+b-c;
+end;
+
+var
+ i1: int32;
+begin
+ i1:= testpro();
+ if i1 = 42 then begin
+  i1:= testpro(10,6,89);
+  if i1 = 10 + 6 - 89 then begin
+   i1:= testpro(32,67);
+   if i1 = 32 + 67 -42 then begin
+    i1:= testpro(33);
+    if i1 = 33 then begin
+     exitcode:= 123;
+    end;
+   end;
+  end;
+ end
+end.

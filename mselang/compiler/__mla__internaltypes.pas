@@ -9,7 +9,7 @@
 }
 unit __mla__internaltypes;
 interface
- {$internaldebug on}
+// {$internaldebug on}
 //{$ifndef mse_compiler}
 // procedure test(a: int32);
 //{$endif}

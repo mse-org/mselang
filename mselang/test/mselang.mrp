@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=22
    (
    kind=1
@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7348080
+    ao=An unhandled exception occured at $B7319080
     ae=
     aec=123
     ie=0
@@ -4240,8 +4240,8 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,sub
-   c=19
+   a=0,665,5,sub
+   c=21
     (
     kind=2
     a=0,648,1,pppar
@@ -4660,7 +4660,51 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+    (
+    kind=2
+    a=0,648,1,defaultpar1
+    teststate=1
+    path=defaultpar1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,2,defaultpar1 llvm
+    teststate=2
+    path=defaultpar1.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=error: Insufficient operands to call
+    aec=1
+    ie=0
+    )
+   teststate=2
    path=sub/
    comment=
    cc=
@@ -5395,7 +5439,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -6849,7 +6893,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -6966,7 +7010,9 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=58
+rowstate=60
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
