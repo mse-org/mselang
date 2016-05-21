@@ -1380,7 +1380,8 @@ function telementhashdatalist.dumpelements: msestringarty;
  function dumpconst(const avalue: datainfoty): msestring;
  begin
   with avalue do begin
-   result:= msestring(getenumname(typeinfo(d.kind),ord(d.kind)))+' ';
+   result:= 'T:'+inttostrmse(typ.typedata)+' '+
+                  msestring(getenumname(typeinfo(d.kind),ord(d.kind)))+' ';
    case d.kind of
        dk_boolean: begin
         result:= result + msestring(booltostr(d.vboolean));

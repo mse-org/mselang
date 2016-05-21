@@ -387,12 +387,21 @@ begin
     else begin
      ad1.flags:= paramkinds[d.paramdef.kind];
      ad1.indirectlevel:= paramtype^.indirectlevel;
-     if not checkcompatibledatatype(s.stacktop-s.stackindex,
-                                      paramtype^.typedata,ad1,[],i1) then begin
+//     if not checkcompatibledatatype(s.stacktop-s.stackindex,
+//                                  paramtype^.typedata,ad1,[],i1) then begin
+     if not tryconvert(s.stacktop-s.stackindex,
+                           ele.eledataabs(paramtype^.typedata),
+                                     paramtype^.indirectlevel,[]) then begin
+                                              //constref?
       incompatibletypeserror(contextstack[s.stacktop-1].d,
                                     contextstack[s.stacktop].d);
      end
      else begin
+     {$ifdef mse_checkinternalerror}
+      if contextstack[s.stacktop].d.kind <> ck_const then begin
+       internalerror(ie_parser,'20160521A');
+      end;
+     {$endif}
       if not ele.addelement(getident(),ek_const,
                                   allvisi,d.paramdef.defaultconst) then begin
        internalerror1(ie_parser,'20160520C'); //there is a duplicate
