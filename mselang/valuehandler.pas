@@ -956,7 +956,7 @@ var
       internalerror(ie_handler,'20160521D');
      end;
     {$endif}
-     pushinsertconst(s.stacktop,
+     pushinsertconst(s.stacktop-s.stackindex,
           pconstdataty(ele.eledataabs(vardata1^.vf.defaultconst))^.val.d,
                                                                  -1,das_none);
      with parallocpo^ do begin
@@ -1167,7 +1167,8 @@ paramloopend:
      end;
     end;
     paramsize1:= 0;
-    parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*paramco);
+    parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
+                                                           asub^.paramcount);
     if dsf_indexedsetter in aflags then begin
      inc(parallocpo); //second, first index
      inc(subparams1);
