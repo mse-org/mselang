@@ -1555,7 +1555,8 @@ begin
             settostring(ptypeinfo(typeinfo(flags)),integer(flags),true))+
      ' idx:'+inttostrmse(tableindex)+' impl:'+inttostrmse(impl)+
      ' ovl:'+inttostrmse(nextoverload)+
-     ' op:'+inttostrmse(address);
+     ' op:'+inttostrmse(address)+
+     ' def:'+inttostrmse(defaultparamcount);
      if flags * [sf_functiontype,sf_constructor] <> [] then begin
       mstr1:= mstr1+lineend+' result:'+'I:'+
                inttostrmse(resulttype.indirectlevel)+

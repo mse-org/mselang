@@ -789,23 +789,24 @@ var
  paramsize1: int32;
  paramschecked: boolean;
  
- procedure doparam(const int1: int32; const subparams1: pelementoffsetty;
-                   const parallocpo: pparallocinfoty);
+ procedure doparam(const stackind: int32;  const subparams1: pelementoffsetty;
+                                             const parallocpo: pparallocinfoty);
  var
   vardata1: pvardataty;
   desttype: ptypedataty;
   si1: databitsizety;
-  i1,i2: int32;
+  stackoffset,i2: int32;
   err1: errorty;
   
   procedure doconvert();
   begin
-   if not tryconvert(i1,ele.eledataabs(vardata1^.vf.typ),
+   if not tryconvert(stackoffset,ele.eledataabs(vardata1^.vf.typ),
                               vardata1^.address.indirectlevel,[]) then begin
     internalerror1(ie_handler,'20160519A');
    end;
   end;
-  
+ var
+  context1: pcontextitemty;  
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -814,73 +815,78 @@ var
    end;
    desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
    si1:= desttype^.h.datasize;
-   i1:= int1-s.stackindex;
-   with contextstack[int1] do begin    //todo: exact type check for var and out
-
-    i2:= 1;
-    if not paramschecked and not checkcompatibledatatype(i1,vardata1^.vf.typ,
-                         vardata1^.address,[cco_novarconversion],i2) then begin
-     err1:= err_incompatibletypeforarg;
-     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
-      err1:= err_callbyvarexact;
-     end;
-     errormessage(err1,
-                  [i1-2,typename(d),
-                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                        vardata1^.address.indirectlevel)],int1-s.stackindex);
+   stackoffset:= stackind-s.stackindex;
+   context1:= @contextstack[stackind];
+   i2:= 1;
+   if not paramschecked and 
+          not checkcompatibledatatype(stackoffset,vardata1^.vf.typ,
+                        vardata1^.address,[cco_novarconversion],i2) then begin
+    err1:= err_incompatibletypeforarg;
+    if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
+     err1:= err_callbyvarexact;
     end;
-    if af_paramindirect in vardata1^.address.flags then begin
-     case d.kind of
-      ck_const: begin
-       if not (af_const in vardata1^.address.flags) then begin
-        errormessage(err_variableexpected,[],int1-s.stackindex);
-       end
-       else begin
-        internalerror1(ie_notimplemented,'20140405B'); //todo
-       end;
-      end;
-      ck_ref: begin
-       pushinsertaddress(i1,-1);
-      end;
-     end;
-    end
-    else begin
-     with desttype^ do begin
-      if h.indirectlevel > 0 then begin
-       si1:= das_pointer;
+    errormessage(err1,
+                 [stackoffset-2,typename(context1^.d),
+                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                    vardata1^.address.indirectlevel)],stackind-s.stackindex);
+   end;
+   if af_paramindirect in vardata1^.address.flags then begin
+    case context1^.d.kind of
+     ck_const: begin
+      if not (af_const in vardata1^.address.flags) then begin
+       errormessage(err_variableexpected,[],stackind-s.stackindex);
       end
       else begin
-       si1:= h.datasize;
+       notimplementederror('20140405B'); //todo
       end;
      end;
-     case d.kind of
-      ck_const: begin
-       if i2 > 0 then begin
-        doconvert();
-       end;
-       pushinsertconst(i1,-1,si1);
-      end;
-      ck_ref: begin
-       getvalue(i1,si1);
-       if i2 > 0 then begin
-        doconvert();
-       end;
-      end;
+     ck_ref: begin
+      pushinsertaddress(stackoffset,-1);
      end;
     end;
-    if (af_paramvar in vardata1^.address.flags) and 
-                                      (d.kind in factcontexts) then begin
-     checkneedsunique(i1);
+   end
+   else begin
+    with desttype^ do begin
+     if h.indirectlevel > 0 then begin
+      si1:= das_pointer;
+     end
+     else begin
+      si1:= h.datasize;
+     end;
     end;
-    with parallocpo^ do begin
-     ssaindex:= d.dat.fact.ssaindex;
-     size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
-     inc(paramsize1,alignsize(getbytesize(size)));
+    case context1^.d.kind of
+     ck_const: begin
+      if i2 > 0 then begin
+       doconvert();
+      end;
+      pushinsertconst(stackoffset,-1,si1);
+     end;
+     ck_ref: begin
+      getvalue(stackoffset,si1);
+      if i2 > 0 then begin
+       doconvert();
+      end;
+     end;
     end;
    end;
+   if (af_paramvar in vardata1^.address.flags) and 
+                                  (context1^.d.kind in factcontexts) then begin
+    checkneedsunique(stackoffset);
+   end;
+   with parallocpo^ do begin
+    ssaindex:= context1^.d.dat.fact.ssaindex;
+    size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
+    inc(paramsize1,alignsize(getbytesize(size)));
+   end;
   end;
- end;
-
+ end; //doparam
+ 
+ procedure dodefaultparam(const stackind: int32; 
+                          const subparams1: pelementoffsetty;
+                                             const parallocpo: pparallocinfoty);
+ begin
+ end; //dodefaultparam
+ 
 var
  po1: popinfoty;
  po3: ptypedataty;
@@ -1001,7 +1007,9 @@ paramloopend:
    if sf_method in asub^.flags then begin
     inc(paramco1); //self parameter
    end;
-   if paramco1 <> asub^.paramcount then begin //todo: use correct source pos
+   if (paramco1 < asub^.paramcount - asub^.defaultparamcount) or 
+               (paramco1 < asub^.paramcount) then begin 
+                                        //todo: use correct source pos
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
    end
    else begin
@@ -1098,6 +1106,12 @@ paramloopend:
       inc(subparams1);
       inc(parallocpo);
      end;
+     i2:= s.stacktop-1;
+     for i1:= asub^.defaultparamcount-1 downto 0 do begin
+      dodefaultparam(i2,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+     end;
      lastparamsize1:= paramsize1;
      dec(parallocpo,paramco); //first, value
      dec(subparams1,paramco);
@@ -1107,6 +1121,12 @@ paramloopend:
     else begin
      for i1:= s.stacktop-paramco+1 to s.stacktop do begin
       doparam(i1,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+     end;
+     i2:= s.stacktop-1;
+     for i1:= asub^.defaultparamcount-1 downto 0 do begin
+      dodefaultparam(i2,subparams1,parallocpo);
       inc(subparams1);
       inc(parallocpo);
      end;

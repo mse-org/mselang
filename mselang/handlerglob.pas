@@ -394,6 +394,7 @@ type
   allocs: suballocinfoty;
   paramsize: integer;
   paramcount: integer;
+  defaultparamcount: int32;
   globid: int32; //for llvm
   nameid: int32; //for llvm
   trampolineid: int32; //for llvm

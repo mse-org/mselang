@@ -814,6 +814,7 @@ var                       //todo: move after doparam
 // parambase: ptruint;
  si1: integer;
  paramsize1: integer;
+ defaultparamcount1: int32;
  bo1,isclass,isinterface,ismethod: boolean;
  ele1: elementoffsetty;
  ident1: identty;
@@ -843,6 +844,9 @@ var                       //todo: move after doparam
     with contextstack[curstackindex] do begin
      paramkind1:= d.paramdef.kind;
      defaultconst1:= d.paramdef.defaultconst;
+     if defaultconst1 >= 0 then begin
+      inc(defaultparamcount1);
+     end;
     end;
     for i2:= i2 to i1 - 1 do begin
      with contextstack[i2] do begin //ck_ident
@@ -964,6 +968,7 @@ begin
   paramsize1:= 0;
   resulttype1.typeele:= 0;
   resulttype1.indirectlevel:= 0;
+  defaultparamcount1:= 0;
   isclass:= s.currentstatementflags * [stf_classdef,stf_classimp] <> [];
   isinterface:=  stf_interfacedef in s.currentstatementflags;
   ismethod:= isclass or isinterface;
@@ -1113,6 +1118,7 @@ begin
   curparam:= @sub1^.paramsrel;
   inc(paramsize1,stacklinksize);
   sub1^.paramsize:= paramsize1;
+  sub1^.defaultparamcount:= defaultparamcount1;
   sub1^.address:= 0; //init
   if impl1 then begin //implementation
    inc(sublevel);   
