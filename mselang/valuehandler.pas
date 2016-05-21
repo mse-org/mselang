@@ -804,9 +804,11 @@ var
                               vardata1^.address.indirectlevel,[]) then begin
     internalerror1(ie_handler,'20160519A');
    end;
-  end;
+  end; //doconvert
+  
  var
-  context1: pcontextitemty;  
+  context1: pcontextitemty;
+  
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -881,10 +883,35 @@ var
   end;
  end; //doparam
  
- procedure dodefaultparam(const stackind: int32; 
+ procedure dodefaultparam(const stackoffset: int32; 
                           const subparams1: pelementoffsetty;
                                              const parallocpo: pparallocinfoty);
+ var
+  desttype: ptypedataty;
+  vardata1: pvardataty;
  begin
+  with info do begin
+   vardata1:= ele.eledataabs(subparams1^);
+   desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
+  {$ifdef mse_checkinternalerror}
+   if vardata1^.vf.defaultconst <= 0 then begin
+    internalerror(ie_handler,'20160521D');
+   end;
+  {$endif}
+   pushinsertconst(stackoffset,
+        pconstdataty(ele.eledataabs(vardata1^.vf.defaultconst))^.val.d,
+                                                               -1,das_none);
+   with parallocpo^ do begin
+   {$ifdef mse_checkinternalerror}
+    if contextstack[stackoffset+s.stackindex].d.kind <> ck_fact then begin
+     internalerror(ie_handler,'20160521E');
+    end;
+   {$endif}
+    ssaindex:= contextstack[stackoffset+s.stackindex].d.dat.fact.ssaindex;
+    size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
+    inc(paramsize1,alignsize(getbytesize(size)));
+   end;
+  end;
  end; //dodefaultparam
  
 var
@@ -908,6 +935,29 @@ var
  subdata1: psubdataty;
  cost1,matchcount1: int32;
  needsvarcheck: boolean;
+
+ procedure dodefaultparams();
+ var
+  i1,i2: int32;  
+ begin
+  with info do begin
+   i1:= asub^.paramcount - paramco1;
+   if i1 > 0 then begin
+    if paramco = 0 then begin //no data context at top
+     inc(s.stacktop);
+    end;
+    i2:= s.stacktop-s.stackindex;
+    for i1:= i1-1 downto 0 do begin
+     dodefaultparam(i2,subparams1,parallocpo);
+     inc(subparams1);
+     inc(parallocpo);
+    end;
+    if paramco = 0 then begin //no data context at top
+     dec(s.stacktop);
+    end;
+   end;
+  end;
+ end;
  
 label
  paramloopend;
@@ -1008,7 +1058,7 @@ paramloopend:
     inc(paramco1); //self parameter
    end;
    if (paramco1 < asub^.paramcount - asub^.defaultparamcount) or 
-               (paramco1 < asub^.paramcount) then begin 
+               (paramco1 > asub^.paramcount) then begin 
                                         //todo: use correct source pos
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
    end
@@ -1047,7 +1097,7 @@ paramloopend:
      inc(subparams1);
     end;
 
-    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*paramco1);
+    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
     parallocstart:= getsegmenttopoffs(seg_localloc);    
 
     if sf_function in asub^.flags then begin
@@ -1106,12 +1156,7 @@ paramloopend:
       inc(subparams1);
       inc(parallocpo);
      end;
-     i2:= s.stacktop-1;
-     for i1:= asub^.defaultparamcount-1 downto 0 do begin
-      dodefaultparam(i2,subparams1,parallocpo);
-      inc(subparams1);
-      inc(parallocpo);
-     end;
+     dodefaultparams();
      lastparamsize1:= paramsize1;
      dec(parallocpo,paramco); //first, value
      dec(subparams1,paramco);
@@ -1124,12 +1169,7 @@ paramloopend:
       inc(subparams1);
       inc(parallocpo);
      end;
-     i2:= s.stacktop-1;
-     for i1:= asub^.defaultparamcount-1 downto 0 do begin
-      dodefaultparam(i2,subparams1,parallocpo);
-      inc(subparams1);
-      inc(parallocpo);
-     end;
+     dodefaultparams();
     end;
               //todo: exeenv flag for constructor and destructor
     if not hasresult then begin

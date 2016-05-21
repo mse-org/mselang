@@ -867,6 +867,9 @@ var                       //todo: move after doparam
         typ1:= ele.eledataabs(d.typ.typedata);
         with var1^ do begin
          vf.defaultconst:= defaultconst1;
+         if defaultconst1 >= 0 then begin
+          inc(defaultparamcount1);
+         end;
          address.indirectlevel:= d.typ.indirectlevel;
          if (address.indirectlevel > 0) then begin
           si1:= pointersize;

@@ -185,6 +185,9 @@ procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
 procedure pushinsertaddress(const stackoffset: integer; const aopoffset: int32);
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                               const adatasize: databitsizety);
+procedure pushinsertconst(const stackoffset: int32; const constval: dataty;
+                       const aopoffset: int32; const adatasize: databitsizety);
+
 procedure offsetad(const stackoffset: integer; const aoffset: dataoffsty);
 procedure checkneedsunique(const stackoffset: int32);
 
@@ -877,6 +880,167 @@ begin
   );
 end;
 
+procedure pushinsertconst(const stackoffset: int32;
+                          const constval: dataty;
+                          const aopoffset: int32;
+                                               const adatasize: databitsizety);
+var
+// po1: pcontextitemty;
+ isimm: boolean;
+ segad1: segaddressty;
+ si1: databitsizety;
+begin
+ with info do begin
+//  po1:= @contextstack[s.stackindex+stackoffset];
+  isimm:= true;
+  case constval.kind of
+   dk_boolean: begin
+    si1:= das_1;
+    with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
+     setimmboolean(constval.vboolean,par);
+    end;
+   end;
+   dk_integer,dk_cardinal,dk_enum: begin //todo: datasize warning
+    if adatasize in [das_none,das_pointer] then begin //todo das_1..das_16
+     si1:= das_32;
+     if constval.kind = dk_cardinal then begin
+      if constval.vcardinal > $ffffffff then begin
+       si1:= das_64;
+      end;
+     end
+     else begin
+      if (constval.vinteger > $7ffffff) or 
+               (constval.vinteger < -$80000000) then begin
+       si1:= das_64;
+      end;
+     end;
+    end
+    else begin
+     si1:= adatasize;
+    end;
+    case si1 of
+     das_1: begin
+      with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
+       setimmint1(constval.vinteger,par);
+      end;
+     end;
+     das_8: begin
+      with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
+       setimmint8(constval.vinteger,par);
+      end;
+     end;
+     das_16: begin
+      with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
+       setimmint16(constval.vinteger,par);
+      end;
+     end;
+     das_32: begin
+      with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
+       setimmint32(constval.vinteger,par);
+      end;
+     end;
+     das_64: begin
+      with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
+       setimmint64(constval.vinteger,par);
+      end;
+     end;
+     else begin
+      internalerror1(ie_handler,'20150501A');
+     end;
+    end;
+   end;
+   dk_set: begin
+    si1:= das_32;           //todo: arbitrary size
+    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
+     setimmint32(constval.vset.value,par);
+    end;
+   end;
+   dk_float: begin
+    si1:= das_f64;
+    with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
+     setimmfloat64(constval.vfloat,par);
+    end;
+   end;
+   dk_string8: begin
+    si1:= das_pointer;
+    isimm:= false;
+    segad1:= allocstringconst(constval.vstring);
+    if segad1.segment = seg_nil then begin
+     insertitem(oc_pushnil,stackoffset,aopoffset);
+    end
+    else begin
+     with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
+                               pushsegaddrssaar[segad1.segment])^ do begin
+      par.memop.segdataaddress.a:= segad1;
+      par.memop.segdataaddress.offset:= 0;
+      par.memop.t:= bitoptypes[das_pointer];
+     end;
+    end;
+   end;
+   dk_character: begin
+    si1:= das_8; //todo: size
+    with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
+     setimmint8(constval.vcharacter,par);
+    end;
+   end;
+   dk_pointer: begin
+    si1:= das_pointer;
+    with constval do begin
+     if af_nil in vaddress.flags then begin
+      insertitem(oc_pushnil,stackoffset,aopoffset);
+     end
+     else begin
+      if af_segment in vaddress.flags then begin
+       with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
+                  pushsegaddrssaar[vaddress.segaddress.segment])^ do begin
+        par.memop.segdataaddress.a:= vaddress.segaddress;//todo:typelistindex
+        par.memop.segdataaddress.offset:= 0;
+        par.memop.t:= bitoptypes[das_pointer];
+       end;
+      end
+      else begin
+       with insertitem(oc_pushlocaddr{ess},stackoffset,aopoffset)^ do begin
+        par.memop.locdataaddress.a:= vaddress.locaddress;
+        par.memop.locdataaddress.offset:= 0;
+        par.memop.t:= bitoptypes[das_pointer];
+       end;
+      end;
+     end;
+    end;
+   end;
+  {$ifdef mse_checkinternalerror}                             
+   else begin
+    internalerror(ie_handler,'20131121A');
+   end;
+  {$endif}
+  end;
+  with contextstack[stackoffset+s.stackindex] do begin
+   if not (constval.kind in [dk_enum,dk_set,dk_string8]) then begin
+    d.dat.datatyp.typedata:= getbasetypeele(si1);
+   end;
+   initfactcontext(stackoffset);
+   d.dat.fact.opdatatype:= getopdatatype(d.dat.datatyp.typedata,
+                                             d.dat.datatyp.indirectlevel);
+  end;
+ end;
+end;
+
+procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
+                                               const adatasize: databitsizety);
+begin
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if contextstack[s.stackindex+stackoffset].d.kind <> ck_const then begin
+   internalerror(ie_handler,'20160521C');
+  end;
+ {$endif}
+  with contextstack[s.stackindex+stackoffset] do begin
+   pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize);
+  end;
+ end;
+end;
+
+(*
 procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
                                                const adatasize: databitsizety);
 var
@@ -1029,7 +1193,7 @@ begin
 //  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
  end;
 end;
-
+*)
 procedure checkneedsunique(const stackoffset: int32);
 var
  i1: int32;
