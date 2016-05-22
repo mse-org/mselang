@@ -2383,6 +2383,10 @@ begin                    //todo: optimize
     errormessage(err_valueexpected,[],stackoffset);
     goto errlab;
    end;
+   ck_subcall: begin
+    errormessage(err_subnovalue,[],stackoffset);
+    exit;
+   end;
    ck_error: begin
     exit;
    end;

@@ -66,7 +66,8 @@ type
             err_cannotdeclarelocalexternal,err_unknownfieldormethod,
             err_nomemberaccessproperty,err_unknownrecordfield,
             err_illegalpropsymbol,err_div0,
-            err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly);
+            err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
+            err_subnovalue);
             
  errorinfoty = record
   level: errorlevelty;
@@ -235,7 +236,7 @@ const
   (level: erl_error; message: 'Enum type must be contiguous'),
   (level: erl_error; message: 'Duplicate set element'),
   (level: erl_warning; message: 'Illegal compiler directive "%s"'),
-  (level: erl_error; message: 'Cannot declare local sub as EXTERNAL'),
+  (level: erl_error; message: 'Cannot declare local subroutine as EXTERNAL'),
   (level: erl_error; message: 'Unknown class field or method identifier "%s"'),
   (level: erl_error; message: 'No member is provided to access property'),
   (level: erl_error; message: 'Unknown record field identifier "%s"'),
@@ -246,7 +247,9 @@ const
   (level: erl_error; message: 
     'Call by var for arg no. %d has to match exactly: Got "%s", expected "%s"'),
   (level: erl_error; message: 'Default values can only be specified for value,'+
-                                               ' const and constref parameters')
+                                              ' const and constref parameters'),
+  (level: erl_error; message: 
+                     'Subroutine returns no value')
  );
 
 procedure message1(const atext: string; const values: array of const); 

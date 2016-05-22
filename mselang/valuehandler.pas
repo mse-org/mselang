@@ -1091,6 +1091,7 @@ paramloopend:
                (totparamco > asub^.paramcount) then begin 
                                         //todo: use correct source pos
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
+//    exit;
    end
    else begin
    {$ifdef mse_checkinternalerror}
