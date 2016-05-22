@@ -3005,7 +3005,7 @@ procedure popindirectf64op();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(4);
+ po1:= stackpop(sizeof(float64));
  po2:= ppointer(stackpop(sizeof(pointer)))^;
  pv64ty(po2)^:= pv64ty(po1)^;
 end;

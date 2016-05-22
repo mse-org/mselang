@@ -957,7 +957,7 @@ begin
    end;
    dk_float: begin
     si1:= das_f64;
-    with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
+    with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
      setimmfloat64(constval.vfloat,par);
     end;
    end;
