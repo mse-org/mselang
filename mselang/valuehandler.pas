@@ -1022,22 +1022,32 @@ begin
     end;
     i3:= 0;
     bo1:= false;
-    if totparamco = subdata1^.paramcount then begin //todo: default parameter
-     i1:= s.stacktop-paramco+1-s.stackindex;
+//    if totparamco = subdata1^.paramcount then begin //todo: default parameter
+    if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
+               (totparamco <= subdata1^.paramcount) then begin 
+     i1:= s.stacktop-paramco+1;
      while subparams1 < subparamse do begin
+      if i1 > s.stacktop then begin
+       i1:= -1;
+       break;
+      end;
       vardata1:= ele.eledataabs(subparams1^);
       bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
-      if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1,
+      if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1-s.stackindex,
                        vardata1^.vf.typ,vardata1^.address,[],i2) then begin
                                                           //report byvalue,
                                                           //byaddress dup
        goto paramloopend;
       end;
+      i2:= i2*32; //room for default params cost
       if i3 < i2 then begin
        i3:= i2;             //maximal cost
       end;
       inc(subparams1);
       inc(i1);
+     end;
+     if i1 < 0 then begin
+      inc(i3);      //needs default params
      end;
      if i3 < cost1 then begin
       cost1:= i3;

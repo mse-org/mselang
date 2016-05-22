@@ -499,6 +499,7 @@ begin
   else begin
    d.paramdef.kind:= pk_var;
   end;
+  d.paramdef.defaultconst:= -1;
  end;
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_ident;
