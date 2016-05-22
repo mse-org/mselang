@@ -919,7 +919,7 @@ var
  po3: ptypedataty;
  subparams1,subparamse: pelementoffsetty;
  po7: pelementinfoty;
- paramco1: integer;
+ totparamco: integer; //including internal params
  i1,i2,i3: integer;
  bo1: boolean;
  parallocstart: dataoffsty;
@@ -944,7 +944,7 @@ var
   si1: databitsizety;
  begin
   with info do begin
-   i1:= asub^.paramcount - paramco1;
+   i1:= asub^.paramcount - totparamco; //defaultparamcount
    if i1 > 0 then begin
     if paramco = 0 then begin //no data context at top
      inc(s.stacktop);
@@ -987,10 +987,11 @@ var
    end;
   end;
  end;
- 
+
+var
+ realparamco: int32; //including defaults
 label
  paramloopend;
- 
 begin
 {$ifdef mse_debugparser}
  outhandle('dosub');
@@ -1010,18 +1011,18 @@ begin
    {$endif}
     subparams1:= @subdata1^.paramsrel;
     subparamse:= subparams1 + subdata1^.paramcount;
-    paramco1:= paramco;
+    totparamco:= paramco;
     if [sf_function] * subdata1^.flags <> [] then begin
-     inc(paramco1); //result parameter
+     inc(totparamco); //result parameter
      inc(subparams1);
     end;
     if sf_method in subdata1^.flags then begin
-     inc(paramco1); //self parameter
+     inc(totparamco); //self parameter
      inc(subparams1);
     end;
     i3:= 0;
     bo1:= false;
-    if paramco1 = subdata1^.paramcount then begin //todo: default parameter
+    if totparamco = subdata1^.paramcount then begin //todo: default parameter
      i1:= s.stacktop-paramco+1-s.stackindex;
      while subparams1 < subparamse do begin
       vardata1:= ele.eledataabs(subparams1^);
@@ -1079,15 +1080,15 @@ paramloopend:
     callssa:= d.dat.fact.ssaindex;
    end;
    subparams1:= @asub^.paramsrel;
-   paramco1:= paramco;
+   totparamco:= paramco;
    if [sf_function] * asub^.flags <> [] then begin
-    inc(paramco1); //result parameter
+    inc(totparamco); //result parameter
    end;
    if sf_method in asub^.flags then begin
-    inc(paramco1); //self parameter
+    inc(totparamco); //self parameter
    end;
-   if (paramco1 < asub^.paramcount - asub^.defaultparamcount) or 
-               (paramco1 > asub^.paramcount) then begin 
+   if (totparamco < asub^.paramcount - asub^.defaultparamcount) or 
+               (totparamco > asub^.paramcount) then begin 
                                         //todo: use correct source pos
     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
    end
@@ -1127,6 +1128,7 @@ paramloopend:
     end;
 
     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
+                                                             //max
     parallocstart:= getsegmenttopoffs(seg_localloc);    
 
     if sf_function in asub^.flags then begin
@@ -1176,8 +1178,10 @@ paramloopend:
      end;
     end;
     paramsize1:= 0;
+    realparamco:= asub^.paramcount-(totparamco-paramco);
     parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
-                                                           asub^.paramcount);
+                                 realparamco);
+                                 //including default params
     if dsf_indexedsetter in aflags then begin
      inc(parallocpo); //second, first index
      inc(subparams1);
@@ -1329,7 +1333,13 @@ paramloopend:
      exclude(par.callinfo.flags,sf_virtual);
     end;
     par.callinfo.params:= parallocstart;
-    par.callinfo.paramcount:= paramco1;    
+   {$ifdef mse_checkinternalerror}
+    if realparamco+totparamco-paramco <> asub^.paramcount then begin
+     internalerror(ie_handler,'20160522A');
+    end;
+   {$endif}
+    par.callinfo.paramcount:= asub^.paramcount;
+//    par.callinfo.paramcount:= realparamco+totparamco-paramco; //+internal params
     par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
     par.callinfo.ad.globid:= trackaccess(asub);
    end;
