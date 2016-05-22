@@ -505,10 +505,20 @@ begin
 //  d.ident.paramkind:= pk_var;
   d.ident.ident:= tk_result;
   with contextstack[parent-1] do begin
+  {$ifdef mselang}
    if sf_functiontype in d.subdef.flags then begin
+    errormessage(err_syntax,[';']);
+    dec(s.stackindex,2); //remove result type
+    s.stacktop:= s.stackindex;
+   end;
+   include(d.subdef.flags,sf_functiontype);
+  {$else} //msepas
+   if not (sf_function in d.subdef.flags) or 
+                           (sf_functiontype in d.subdef.flags) then begin
     errormessage(err_syntax,[';']);
    end;
    include(d.subdef.flags,sf_functiontype);
+  {$endif}
   end;
  end;
 end;
@@ -965,6 +975,7 @@ begin
   if (sf_function in subflags) and 
                       not (sf_functiontype in subflags) then begin
    tokenexpectederror(':');
+   exit; //fatal
   end;
   paramsize1:= 0;
   resulttype1.typeele:= 0;
