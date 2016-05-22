@@ -416,6 +416,7 @@ begin
     end;
    end;
   end;
+  dec(s.stacktop); //remove const
  end;
 end;
 
@@ -844,9 +845,6 @@ var                       //todo: move after doparam
     with contextstack[curstackindex] do begin
      paramkind1:= d.paramdef.kind;
      defaultconst1:= d.paramdef.defaultconst;
-     if defaultconst1 >= 0 then begin
-      inc(defaultparamcount1);
-     end;
     end;
     for i2:= i2 to i1 - 1 do begin
      with contextstack[i2] do begin //ck_ident
