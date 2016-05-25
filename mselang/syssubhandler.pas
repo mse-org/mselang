@@ -772,7 +772,7 @@ var
    dk_string8: begin
     op1:= oc_highstring;
    end;
-   dk_dynarray: begin
+   dk_dynarray,dk_openarray: begin
     op1:= oc_highdynar;
    end;
    else begin
@@ -806,7 +806,7 @@ begin
         dk_array: begin
          checktype(po1^.infoarray.indextypedata);
         end;
-        dk_string8,dk_dynarray: begin
+        dk_string8,dk_dynarray,dk_openarray: begin
          if ahigh then begin
           if getvalue(s.stacktop-s.stackindex,das_none) then begin
            checkfact();
@@ -814,7 +814,7 @@ begin
          end
          else begin
           dest1^.d.dat.constval.kind:= dk_integer;
-          if po1^.h.kind = dk_dynarray then begin
+          if po1^.h.kind in [dk_dynarray,dk_openarray] then begin
            dest1^.d.dat.constval.vinteger:= 0;
           end
           else begin

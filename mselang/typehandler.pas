@@ -1028,7 +1028,7 @@ begin
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
    isdynarray:= true;
    case itemtype^.h.kind of
-    dk_dynarray: begin
+    dk_dynarray,dk_openarray: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
       errormessage(err_illegalqualifier,[],1);
       goto errorlab;

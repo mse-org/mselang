@@ -2251,13 +2251,15 @@ var
   ssabefore: integer;
  begin
   with info,contextstack[s.stackindex+stackoffset],d do begin
-   opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
-   ssabefore:= d.dat.fact.ssaindex;
-   with insertitem(indirect[opdata1.kind],stackoffset,-1)^ do begin
-    par.ssas1:= ssabefore;
-    par.memop.t:= opdata1;
-    d.dat.fact.ssaindex:= par.ssad;
-    d.dat.fact.opdatatype:= opdata1;
+   if dat.datatyp.typedata > 0 then begin
+    opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
+    ssabefore:= d.dat.fact.ssaindex;
+    with insertitem(indirect[opdata1.kind],stackoffset,-1)^ do begin
+     par.ssas1:= ssabefore;
+     par.memop.t:= opdata1;
+     d.dat.fact.ssaindex:= par.ssad;
+     d.dat.fact.opdatatype:= opdata1;
+    end;
    end;
   end;
  end; //doindirect
