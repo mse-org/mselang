@@ -227,6 +227,7 @@ type
    function eledataabs(const aelement: elementoffsetty): pointer; inline;
    function eledatarel(const aelement: pointer): elementoffsetty; inline;
    property eletopoffset: elementoffsetty read fnextelement;
+   function basetype(const aelement: elementoffsetty): ptypedataty;
    
   {$ifdef mse_debugparser}
    function dumpelements: msestringarty;
@@ -457,6 +458,20 @@ function telementhashdatalist.eledatarel(
                     const aelement: pointer): elementoffsetty; inline;
 begin
  result:= aelement-pointer(felementdata)-eledatashift;
+end;
+
+function telementhashdatalist.basetype(
+              const aelement: elementoffsetty): ptypedataty;
+begin
+ result:= eledataabs(aelement);
+{$ifdef mse_checkinternalerror}
+ if datatoele(result)^.header.kind <> ek_type then begin
+  internalerror(ie_elements,'20160525A');
+ end;
+{$endif}
+ if result^.h.base <> 0 then begin
+  result:= ele.eledataabs(result^.h.base);
+ end;
 end;
 
 function telementhashdatalist.eledataabs(

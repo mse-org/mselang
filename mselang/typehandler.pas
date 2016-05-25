@@ -722,6 +722,7 @@ var
  itemcount1: int32;
 // itemtype1: ptypedataty;
  manageproc1: managedtypeprocty;
+ isopenarray: boolean;
  
 label
  endlab;
@@ -861,7 +862,7 @@ begin
      end;
     end;
    end
-   else begin //dynamic array
+   else begin //dynamic or open array
     if int1 = -1 then begin
      with contextstack[s.stackindex-2] do begin
       if (d.kind = ck_ident) and 
@@ -878,38 +879,40 @@ begin
      end;
      if stf_paramsdef in s.currentstatementflags then begin
       inittypedatasize(arty^,dk_openarray,0,das_pointer,[]);
+      isopenarray:= true;
      end
      else begin
       inittypedatasize(arty^,dk_dynarray,0,das_pointer,
                                       [tf_managed,tf_needsmanage]);
-      with arty^ do begin
-       po1:= ele.eledataabs(itemtyoffs1);
-       if tf_needsmanage in po1^.h.flags then begin
-        case po1^.h.kind of  //optimized versions for single level nesting
-         dk_dynarray: begin
-          if tf_needsmanage in ptypedataty(ele.eledataabs(
-                 po1^.infodynarray.i.itemtypedata))^.h.flags then begin
-           notimplementederror('20160312A');
-          end
-          else begin
-           h.manageproc:= @managedynarraydynar;
-          end;
-         end;
-         dk_string8: begin
-          h.manageproc:= @managedynarraystring8;
-         end;
+      isopenarray:= false;
+     end;
+     with arty^ do begin
+      po1:= ele.eledataabs(itemtyoffs1);
+      if tf_needsmanage in po1^.h.flags then begin
+       case po1^.h.kind of  //optimized versions for single level nesting
+        dk_dynarray: begin
+         if tf_needsmanage in ptypedataty(ele.eledataabs(
+                po1^.infodynarray.i.itemtypedata))^.h.flags then begin
+          notimplementederror('20160312A');
+         end
          else begin
-          notimplementederror('20160312B');
+          h.manageproc:= @managedynarraydynar;
          end;
         end;
-       end
-       else begin
-        h.manageproc:= @managedynarray;
+        dk_string8: begin
+         h.manageproc:= @managedynarraystring8;
+        end;
+        else begin
+         notimplementederror('20160312B');
+        end;
        end;
-       itemsize:= totsize;
-       infodynarray.i.itemtypedata:= itemtyoffs1;
-       infodynarray.i.itemindirectlevel:= indilev;
+      end
+      else begin
+       h.manageproc:= @managedynarray;
       end;
+      itemsize:= totsize;
+      infodynarray.i.itemtypedata:= itemtyoffs1;
+      infodynarray.i.itemindirectlevel:= indilev;
      end;
     end
     else begin

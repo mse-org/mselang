@@ -659,7 +659,8 @@ function checkcompatibledatatype(const sourcestackoffset: int32;
                                    const options: compatibilitycheckoptionsty;
                                             out conversioncost: int32): boolean;
 var
- dest,source: ptypedataty;
+ source,dest: ptypedataty;
+ sourceitem,destitem: ptypedataty;
  i1: int32;
 begin
  with info,contextstack[s.stackindex+sourcestackoffset] do begin
@@ -669,20 +670,24 @@ begin
   end;
  {$endif}
   conversioncost:= 0;
-  dest:= ele.eledataabs(desttypedata);
+  source:= ele.basetype(d.dat.datatyp.typedata);
+  dest:= ele.basetype(desttypedata);
+//  dest:= ele.eledataabs(desttypedata);
   i1:= destadress.indirectlevel{+po1^.h.indirectlevel};
   if af_paramindirect in destadress.flags then begin
    dec(i1);
   end;
-  source:= ele.eledataabs(d.dat.datatyp.typedata);
+//  source:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= i1 = d.dat.datatyp.indirectlevel;
   if result then begin
+  {
    if source^.h.base <> 0 then begin
     source:= ele.eledataabs(source^.h.base);
    end;
    if dest^.h.base <> 0 then begin
     dest:= ele.eledataabs(dest^.h.base);
    end;
+  }
    result:= (source = dest);
    if not result then begin
     if (cco_novarconversion in options) and 
@@ -690,6 +695,13 @@ begin
      exit;
     end;
     inc(conversioncost);            //1
+    if (i1 = 0) and (source^.h.kind = dk_dynarray) and 
+                          (dest^.h.kind = dk_openarray) then begin
+     sourceitem:= ele.basetype(source^.infodynarray.i.itemtypedata);
+     destitem:= ele.basetype(dest^.infodynarray.i.itemtypedata);
+     result:= sourceitem = destitem;
+     exit;
+    end;
     result:= (source^.h.kind = dest^.h.kind) and 
              (source^.h.kind in [dk_cardinal,dk_integer,dk_float,
                                  dk_string8,dk_character]);

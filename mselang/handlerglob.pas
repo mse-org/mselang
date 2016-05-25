@@ -247,14 +247,14 @@ type
      das_16: (infochar16: char16infoty);
      das_32: (infochar32: char32infoty);
    );
-   dk_string8,dk_dynarray:(
+   dk_string8,dk_dynarray,dk_openarray:(
 //    manageproc: managedtypeprocty;
     itemsize: integer; //bytes
     case datakindty of
      dk_string8:(
       dummy2: byte; //for systypeinfos list
      );
-     dk_dynarray:(
+     dk_dynarray,dk_openarray:(
       infodynarray: infodynarrayty;
      );
    );
