@@ -831,6 +831,7 @@ var
                  [stackoffset-2,typename(context1^.d),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                     vardata1^.address.indirectlevel)],stackind-s.stackindex);
+    exit;
    end;
    if af_paramindirect in vardata1^.address.flags then begin
     case context1^.d.kind of
