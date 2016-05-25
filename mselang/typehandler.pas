@@ -997,7 +997,7 @@ begin
  {$endif}
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
    exclude(d.handlerflags,hf_needsunique);
-   if kind1 in [dk_dynarray,dk_string8] then begin
+   if kind1 in [dk_dynarray,dk_openarray,dk_string8] then begin
     if kind1 = dk_string8 then begin
      include(d.handlerflags,hf_needsunique);
      d.dat.fact.opoffset:= getcontextopoffset(-1);
