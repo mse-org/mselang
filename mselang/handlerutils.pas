@@ -236,6 +236,7 @@ function getbasetypedata(const abitsize: databitsizety): ptypedataty;
 function getbasetypeele(const abitsize: databitsizety): elementoffsetty;
 function issametype(const a,b: ptypedataty): boolean; 
                                         //follow typex = typey chain
+function issametype(const a,b: elementoffsetty): boolean; 
 
 function getsystypeele(const atype: systypety): elementoffsetty;
 procedure setsysfacttype(var acontextdata: contextdataty; 
@@ -878,6 +879,17 @@ begin
    (b^.h.base <> 0) and 
        ((b^.h.base = a^.h.base) or (ele.eledatarel(a) = b^.h.base))
   );
+end;
+
+function issametype(const a,b: elementoffsetty): boolean; 
+begin
+{$ifdef mse_checkinternalerror}
+ if (ele.eleinfoabs(a)^.header.kind <> ek_type) or
+          (ele.eleinfoabs(b)^.header.kind <> ek_type) then begin
+  internalerror(ie_handler,'20160515B');
+ end;
+{$endif}
+ result:= (a = b) or issametype(ele.eledataabs(a),ele.eledataabs(b));
 end;
 
 procedure pushinsertconst(const stackoffset: int32;

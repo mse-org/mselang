@@ -512,6 +512,13 @@ begin
           end;
          end;
         end;
+        dk_openarray: begin
+         if (source1^.h.kind = dk_dynarray) and 
+              issametype(source1^.infodynarray.i.itemtypedata,
+                            dest^.infodynarray.i.itemtypedata) then begin
+          result:= true;
+         end;
+        end;
        end;
       end;
      {$ifdef mse_checkinternalerror}
@@ -696,10 +703,10 @@ begin
     end;
     inc(conversioncost);            //1
     if (i1 = 0) and (source^.h.kind = dk_dynarray) and 
-                          (dest^.h.kind = dk_openarray) then begin
-     sourceitem:= ele.basetype(source^.infodynarray.i.itemtypedata);
-     destitem:= ele.basetype(dest^.infodynarray.i.itemtypedata);
-     result:= sourceitem = destitem;
+                        (dest^.h.kind = dk_openarray) and
+                         issametype(source^.infodynarray.i.itemtypedata,
+                          dest^.infodynarray.i.itemtypedata) then begin
+     result:= true;
      exit;
     end;
     result:= (source^.h.kind = dest^.h.kind) and 
