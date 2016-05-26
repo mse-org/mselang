@@ -1,0 +1,45 @@
+program defaultpar2;
+
+var
+ i2: int32;
+
+function testpro(a: int32): int32;
+begin
+ i2:= 2;
+ result:= a;
+end;
+
+function testpro(a: int32; b,c: int32 = 42): int32;
+begin
+ i2:= 1;
+ result:= a+b-c;
+end;
+
+function testpro(a: flo64; b,c: int32 = 42): flo64;
+begin
+ i2:= 2;
+ result:= a+b-c;
+end;
+
+var
+ i1: int32;
+ f1: flo64;
+
+begin
+ i1:= testpro(1,2,3);
+ if (i2 = 1) and (i1 = 1+(2-3)) then begin
+  i1:= testpro(1,2);
+  if (i2 = 1) and (i1 = 1+2-42) then begin
+   i1:= testpro(1);
+   if (i2 = 2) and (i1 = 1) then begin
+    f1:= testpro(1.0,2);
+    if (i2 = 2) and (f1 = 1+2-42) then begin
+     f1:= testpro(1.0,2,3);
+     if (i2 = 2) and (f1 = 1+2-3) then begin
+      exitcode:= 123;
+     end;
+    end;
+   end;
+  end;
+ end;
+end.

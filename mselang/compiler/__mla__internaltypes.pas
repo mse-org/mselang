@@ -22,6 +22,8 @@ type
  targetptrintty = int32;
  card32 = longword;
  card64 = qword;
+ targetpointerty = card32;
+ ptargetpointerty = ^targetpointerty;
 {$endif}
  cint = int32;
  
@@ -63,6 +65,16 @@ type
  end;
  pdynarrayheaderty = ^dynarrayheaderty;
  ppdynarrayheaderty = ^pdynarrayheaderty;
+ 
+ openarrayty = record
+  high: int32;
+ {$ifdef mse_compiler}
+  data: targetpointerty;
+ {$else}
+  data: pointer;
+ {$endif}
+ end;
+ popenarrayty = ^openarrayty;
 
 const
  string8headersize = sizeof(string8headerty);

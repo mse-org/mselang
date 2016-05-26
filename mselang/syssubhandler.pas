@@ -772,8 +772,11 @@ var
    dk_string8: begin
     op1:= oc_highstring;
    end;
-   dk_dynarray,dk_openarray: begin
+   dk_dynarray: begin
     op1:= oc_highdynar;
+   end;
+   dk_openarray: begin
+    op1:= oc_highopenar;
    end;
    else begin
     typeerror();
@@ -808,8 +811,15 @@ begin
         end;
         dk_string8,dk_dynarray,dk_openarray: begin
          if ahigh then begin
-          if getvalue(s.stacktop-s.stackindex,das_none) then begin
-           checkfact();
+          if po1^.h.kind = dk_openarray then begin
+           if getvalue(s.stacktop-s.stackindex,das_none) then begin
+            checkfact();
+           end;
+          end
+          else begin
+           if getvalue(s.stacktop-s.stackindex,das_none) then begin
+            checkfact();
+           end;
           end;
          end
          else begin
@@ -930,6 +940,11 @@ begin
         case typ1^.h.kind of
          dk_string8: begin
           with additem(oc_lengthstring)^ do begin
+           par.ssas1:= info.s.ssa.index-1;
+          end;
+         end;
+         dk_openarray: begin
+          with additem(oc_lengthopenar)^ do begin
            par.ssas1:= info.s.ssa.index-1;
           end;
          end;

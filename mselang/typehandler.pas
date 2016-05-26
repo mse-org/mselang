@@ -61,7 +61,7 @@ implementation
 uses
  handlerglob,elements,errorhandler,handlerutils,parser,opcode,stackops,
  grammar,opglob,managedtypes,unithandler,identutils,valuehandler,subhandler,
- segmentutils;
+ segmentutils,__mla__internaltypes;
 
 procedure handletype();
 begin
@@ -878,7 +878,7 @@ begin
       goto endlab;
      end;
      if stf_paramsdef in s.currentstatementflags then begin
-      inittypedatasize(arty^,dk_openarray,0,das_pointer,[]);
+      inittypedatabyte(arty^,dk_openarray,0,sizeof(openarrayty),[]);
       isopenarray:= true;
      end
      else begin
@@ -984,6 +984,7 @@ end;
 procedure handleindexitemstart();
 var
  kind1: datakindty;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXITEMSTART');
@@ -991,20 +992,32 @@ begin
  with info,contextstack[s.stackindex-1] do begin
   if d.kind <> ck_prop then begin
  {$ifdef msecheckinternalerror}
-   if d.kind <> ck_fact then begin
+   if (d.kind <> ck_fact) or (d.dat.datatyp.indirectlevel <> 1) then begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
    exclude(d.handlerflags,hf_needsunique);
-   if kind1 in [dk_dynarray,dk_openarray,dk_string8] then begin
-    if kind1 = dk_string8 then begin
-     include(d.handlerflags,hf_needsunique);
-     d.dat.fact.opoffset:= getcontextopoffset(-1);
+   case kind1 of
+    dk_openarray: begin
+     i1:= s.ssa.nextindex-1;
+     with insertitem(oc_offsetpoimm32,-1,0)^ do begin
+      setimmint32(sizeof(openarrayty.high),par);
+      par.ssas1:= i1;
+     end;
+     dec(d.dat.indirection);
+     dec(d.dat.datatyp.indirectlevel);
+     getvalue(-1,das_none);
     end;
-    dec(d.dat.indirection);
-    dec(d.dat.datatyp.indirectlevel);
-    getvalue(-1,das_none);
+    dk_dynarray,dk_string8: begin
+     if kind1 = dk_string8 then begin
+      include(d.handlerflags,hf_needsunique);
+      d.dat.fact.opoffset:= getcontextopoffset(-1);
+     end;
+     dec(d.dat.indirection);
+     dec(d.dat.datatyp.indirectlevel);
+     getvalue(-1,das_none);
+    end;
    end;
   end;
  end;

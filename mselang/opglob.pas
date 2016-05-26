@@ -203,6 +203,7 @@ type
   oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
 
   oc_chartostring8,
+  oc_arraytoopenar,
   
   oc_not1,
   oc_not32,
@@ -388,8 +389,10 @@ type
 
   oc_highstring,
   oc_highdynar,
+  oc_highopenar,
   oc_lengthstring,
   oc_lengthdynar,
+  oc_lengthopenar,
   
   oc_popseg8,
   oc_popseg16,
@@ -1054,6 +1057,7 @@ type
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
    
    oc_chartostring8,
+   oc_arraytoopenar,
    
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulcard32,oc_mulint32,oc_mulflo64,

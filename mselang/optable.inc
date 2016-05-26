@@ -326,6 +326,8 @@
   
 //oc_chartostring8
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
+//oc_arraytoopenar
+  (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: []), 
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 
@@ -658,10 +660,14 @@
   (ssa: highstringssa; proc: @highstringop; flags: []), 
 //oc_highdynar,
   (ssa: highdynarssa; proc: @highdynarop; flags: []), 
+//oc_highopenar,
+  (ssa: highopenarssa; proc: @highopenarop; flags: []), 
 //oc_lengthstring,
   (ssa: lengthstringssa; proc: @lengthstringop; flags: []), 
 //oc_lengthdynar,
   (ssa: lengthdynarssa; proc: @lengthdynarop; flags: []), 
+//oc_lengthopenar,
+  (ssa: lengthopenarssa; proc: @lengthopenarop; flags: []), 
 
 //oc_popseg8
   (ssa: popseg8ssa; proc: @popseg8op; flags: [of_relocseg]), 

@@ -294,15 +294,16 @@ var                     //todo: optimize, use tables, complete
   end;
  end; //convertsize
 
- procedure convert(const aop: opcodety);
+ function convert(const aop: opcodety): popinfoty;
  var
   i1: int32;
  begin
-  result:= true;
+//  tryconvert.result:= true;
   with info do begin
    i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
   end;
-  with insertitem(aop,stackoffset,-1)^ do begin
+  result:= insertitem(aop,stackoffset,-1);
+  with result^ do begin
    par.ssas1:= i1;
   end;
  end; //convert
@@ -455,6 +456,31 @@ begin
         end;
        end;
       end;
+      ck_ref: begin
+       case dest^.h.kind of
+        dk_openarray: begin
+         case source1^.h.kind of
+          dk_dynarray: begin
+           if issametype(source1^.infodynarray.i.itemtypedata,
+                              dest^.infodynarray.i.itemtypedata) then begin
+            notimplementederror('20160525E');
+           end;
+          end;
+          dk_array: begin
+           if issametype(source1^.infoarray.i.itemtypedata,
+                              dest^.infodynarray.i.itemtypedata) then begin
+            if getaddress(stackoffset,true) then begin
+             with convert(oc_arraytoopenar)^.par.stackop do begin
+              t.size:= source1^.infoarray.i.totitemcount-1;
+             end;
+             result:= true;
+            end;
+           end;
+          end;
+         end;
+        end;
+       end;
+      end;
       ck_fact,ck_subres: begin
        case dest^.h.kind of //todo: use table
         dk_float: begin
@@ -509,14 +535,8 @@ begin
          case source1^.h.kind of
           dk_character: begin
            convert(oc_chartostring8);
+           result:= true;
           end;
-         end;
-        end;
-        dk_openarray: begin
-         if (source1^.h.kind = dk_dynarray) and 
-              issametype(source1^.infodynarray.i.itemtypedata,
-                            dest^.infodynarray.i.itemtypedata) then begin
-          result:= true;
          end;
         end;
        end;
@@ -702,10 +722,13 @@ begin
      exit;
     end;
     inc(conversioncost);            //1
-    if (i1 = 0) and (source^.h.kind = dk_dynarray) and 
-                        (dest^.h.kind = dk_openarray) and
+    if (i1 = 0) and (dest^.h.kind = dk_openarray) and
+               ((source^.h.kind = dk_dynarray) and 
                          issametype(source^.infodynarray.i.itemtypedata,
-                          dest^.infodynarray.i.itemtypedata) then begin
+                          dest^.infodynarray.i.itemtypedata) or
+                         (source^.h.kind = dk_array) and 
+                         issametype(source^.infoarray.i.itemtypedata,
+                          dest^.infodynarray.i.itemtypedata)) then begin
      result:= true;
      exit;
     end;
@@ -884,7 +907,9 @@ var
       pushinsertconst(stackoffset,-1,si1);
      end;
      ck_ref: begin
-      getvalue(stackoffset,si1);
+      if desttype^.h.kind <> dk_openarray then begin //address needed?
+       getvalue(stackoffset,si1);                    //no
+      end;
       if i2 > 0 then begin
        doconvert();
       end;

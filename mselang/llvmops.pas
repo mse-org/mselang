@@ -1478,6 +1478,11 @@ begin
  end;
 end;
 
+procedure arraytoopenarop();
+begin
+ notimplemented();
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -2293,6 +2298,11 @@ begin
  end;
 end;
 
+procedure highopenarop();
+begin
+ notimplemented();
+end;
+
 procedure lengthstringop();
 begin
  with pc^.par do begin
@@ -2305,6 +2315,11 @@ begin
  with pc^.par do begin
   callcompilersub(cs_lengthdynarray,true,[bcstream.ssaval(ssas1)]);
  end;
+end;
+
+procedure lengthopenarop();
+begin
+ notimplemented();
 end;
 
 procedure popseg8op();
@@ -3714,6 +3729,7 @@ const
   int64tocard64ssa = 0;
   
   chartostring8ssa = 1;
+  arraytoopenarssa = 1;
 
   not1ssa = 1;
   not32ssa = 1;
@@ -3899,8 +3915,10 @@ const
 
   highstringssa = 1;
   highdynarssa = 1;
+  highopenarssa = 1;
   lengthstringssa = 1;
   lengthdynarssa = 1;
+  lengthopenarssa = 1;
   
   popseg8ssa = 0;
   popseg16ssa = 0;

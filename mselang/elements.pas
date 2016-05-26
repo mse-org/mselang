@@ -469,7 +469,7 @@ begin
   internalerror(ie_elements,'20160525A');
  end;
 {$endif}
- if result^.h.base <> 0 then begin
+ if result^.h.base > 0 then begin
   result:= ele.eledataabs(result^.h.base);
  end;
 end;

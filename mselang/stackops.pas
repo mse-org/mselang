@@ -2054,6 +2054,17 @@ begin
  ppointer(stackpush(sizeof(pointer)))^:= po1+1; //-> data
 end;
 
+procedure arraytoopenarop();
+var
+ po1: targetpointerty;
+begin
+ po1:= ptargetpointerty(stackpop(sizeof(targetpointerty)))^;
+ with popenarrayty(stackpush(sizeof(openarrayty)))^ do begin
+  high:=  cpu.pc^.par.stackop.t.size;
+  data:= po1;
+ end;
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -3732,6 +3743,14 @@ begin
  pint32(stackpush(sizeof(i1)))^:= i1;
 end;
 
+procedure highopenarop();
+var
+ i1: int32;
+begin
+ i1:= popenarrayty(stackpop(sizeof(openarrayty)))^.high;
+ pint32(stackpush(sizeof(i1)))^:= i1;
+end;
+
 procedure lengthstringop();
 var
  i1: int32;
@@ -3746,6 +3765,14 @@ var
 begin
  i1:= length(pbytearty(stackpop(sizeof(pointer)))^);
  pint32(stackpush(sizeof(i1)))^:= i1;
+end;
+
+procedure lengthopenarop();
+var
+ i1: int32;
+begin
+ i1:= popenarrayty(stackpop(sizeof(openarrayty)))^.high;
+ pint32(stackpush(sizeof(i1)))^:= i1+1;
 end;
 
 procedure setlengthstr8op(); //address, length
@@ -4227,6 +4254,7 @@ const
   int64tocard64ssa = 0;
   
   chartostring8ssa = 0;
+  arraytoopenarssa = 0;
 
   not1ssa = 0;
   not32ssa = 0;
@@ -4412,8 +4440,10 @@ const
   
   highstringssa = 0;
   highdynarssa = 0;
+  highopenarssa = 0;
   lengthstringssa = 0;
   lengthdynarssa = 0;
+  lengthopenarssa = 0;
   
   popseg8ssa = 0;
   popseg16ssa = 0;

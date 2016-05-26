@@ -201,7 +201,8 @@ const
 type
  typeallocinfoty = record
   kind: databitsizety;
-  size: integer;        //bits or bytes, count for array managed ops
+  size: integer;        //bits or bytes, count for array managed ops,
+                        //high for openarray conversion
   listindex: integer;
   flags: addressflagsty;
  end; 
@@ -226,7 +227,7 @@ type
 
 const
  ordinaldatakinds = [dk_boolean,dk_cardinal,dk_integer,dk_enum];
- pointerdatakinds = [dk_pointer,dk_dynarray,dk_openarray,
+ pointerdatakinds = [dk_pointer,dk_dynarray,{dk_openarray,}
                      dk_interface,dk_class,dk_string8];
  ancestordatakinds = [dk_class];
  ancestorchaindatakinds = [dk_interface];
