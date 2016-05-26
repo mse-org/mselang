@@ -2060,7 +2060,7 @@ var
 begin
  po1:= ptargetpointerty(stackpop(sizeof(targetpointerty)))^;
  with popenarrayty(stackpush(sizeof(openarrayty)))^ do begin
-  high:=  cpu.pc^.par.stackop.t.size;
+  high:=  cpu.pc^.par.imm.vint32;
   data:= po1;
  end;
 end;

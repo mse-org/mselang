@@ -31,7 +31,7 @@ procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 
 function __mla__chartostring8(achar: card8): pointer;
-
+function __mla__arraytopenar(ahigh: int32; adata: pointer): openarrayty;
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 function __mla__highdynarray(ref: prefsizeinfoty): int32;
@@ -321,6 +321,12 @@ begin
  result:= po1+1; //data
  pcard8(result)^:= achar;
  (pcard8(result)+1)^:= 0; //terminator
+end;
+
+function __mla__arraytopenar(ahigh: int32; adata: pointer): openarrayty;
+begin
+ result.high:= ahigh;
+ result.data:= adata;
 end;
 
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;

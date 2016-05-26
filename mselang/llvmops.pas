@@ -1480,7 +1480,10 @@ end;
 
 procedure arraytoopenarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_arraytoopenar,true,[bcstream.constval(imm.llvm.listid),
+                                                    bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure not1op();

@@ -470,8 +470,8 @@ begin
            if issametype(source1^.infoarray.i.itemtypedata,
                               dest^.infodynarray.i.itemtypedata) then begin
             if getaddress(stackoffset,true) then begin
-             with convert(oc_arraytoopenar)^.par.stackop do begin
-              t.size:= source1^.infoarray.i.totitemcount-1;
+             with convert(oc_arraytoopenar)^ do begin
+              setimmint32(source1^.infoarray.i.totitemcount-1,par);
              end;
              result:= true;
             end;

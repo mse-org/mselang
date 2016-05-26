@@ -997,7 +997,8 @@ type
    oc_pushimmdatakind,
    oc_pushaddr,
    oc_increg0,oc_mulimmint32,oc_addimmint32,oc_offsetpoimm32,
-   oc_pop: (
+   oc_pop,
+   oc_arraytoopenar: (
     imm: immty;
    );
    oc_incdecsegimmint32,oc_incdecsegimmpo32,
@@ -1057,7 +1058,6 @@ type
    oc_int64tocard8,oc_int64tocard16,oc_int64tocard32,oc_int64tocard64,
    
    oc_chartostring8,
-   oc_arraytoopenar,
    
    oc_negcard32,oc_negint32,oc_negflo64,
    oc_mulcard32,oc_mulint32,oc_mulflo64,
