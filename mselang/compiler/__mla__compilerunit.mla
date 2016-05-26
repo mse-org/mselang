@@ -33,8 +33,10 @@ procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 function __mla__chartostring8(achar: card8): pointer;
 function __mla__arraytopenar(ahigh: int32; adata: pointer): openarrayty;
 function __mla__lengthdynarray(ref: prefsizeinfoty): int32;
+function __mla__lengthopenarray(ref: popenarrayty): int32;
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 function __mla__highdynarray(ref: prefsizeinfoty): int32;
+function __mla__highopenarray(ref: popenarrayty): int32;
 function __mla__highstring(ref: prefsizeinfoty): int32;
 
 function __mla__initclass(const classinfo: classdefinfoty): pointer;
@@ -339,6 +341,11 @@ begin
  end;
 end;
 
+function __mla__lengthopenarray(ref: popenarrayty): int32;
+begin
+ result:= ref^.high+1;
+end;
+
 function __mla__lengthstring(ref: prefsizeinfoty): int32;
 begin
  if ref <> nil then begin
@@ -358,6 +365,12 @@ begin
   result:= -1;
  end;
 end;
+
+function __mla__highopenarray(ref: popenarrayty): int32;
+begin
+ result:= ref^.high;
+end;
+
 
 function __mla__highstring(ref: prefsizeinfoty): int32;
 begin

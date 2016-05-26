@@ -3745,10 +3745,10 @@ end;
 
 procedure highopenarop();
 var
- i1: int32;
+ po1: popenarrayty;
 begin
- i1:= popenarrayty(stackpop(sizeof(openarrayty)))^.high;
- pint32(stackpush(sizeof(i1)))^:= i1;
+ po1:= popenarrayty(stackpop(sizeof(pointer))^);
+ pint32(stackpush(sizeof(int32)))^:= po1^.high;
 end;
 
 procedure lengthstringop();
@@ -3769,10 +3769,10 @@ end;
 
 procedure lengthopenarop();
 var
- i1: int32;
+ po1: popenarrayty;
 begin
- i1:= popenarrayty(stackpop(sizeof(openarrayty)))^.high;
- pint32(stackpush(sizeof(i1)))^:= i1+1;
+ po1:= popenarrayty(stackpop(sizeof(pointer))^);
+ pint32(stackpush(sizeof(int32)))^:= po1^.high+1;
 end;
 
 procedure setlengthstr8op(); //address, length

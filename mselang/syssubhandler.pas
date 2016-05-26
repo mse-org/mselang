@@ -812,7 +812,7 @@ begin
         dk_string8,dk_dynarray,dk_openarray: begin
          if ahigh then begin
           if po1^.h.kind = dk_openarray then begin
-           if getvalue(s.stacktop-s.stackindex,das_none) then begin
+           if getaddress(s.stacktop-s.stackindex,true) then begin
             checkfact();
            end;
           end
@@ -900,11 +900,13 @@ begin
  with info do begin
   if checkparamco(1,paramco) then begin
    with contextstack[s.stacktop] do begin
+   {
     if d.kind = ck_ref then begin
      if not getvalue(s.stacktop-s.stackindex,das_none,true) then begin
       exit;
      end;
     end;
+   }
     dest1:= @contextstack[s.stackindex];
     dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
     dest1^.d.dat.indirection:= 0;
@@ -936,31 +938,35 @@ begin
        end;
       end
       else begin
-       if getvalue(s.stacktop-s.stackindex,das_none) then begin
-        case typ1^.h.kind of
-         dk_string8: begin
-          with additem(oc_lengthstring)^ do begin
-           par.ssas1:= info.s.ssa.index-1;
-          end;
-         end;
-         dk_openarray: begin
-          with additem(oc_lengthopenar)^ do begin
-           par.ssas1:= info.s.ssa.index-1;
-          end;
-         end;
-         dk_dynarray: begin
-          with additem(oc_lengthdynar)^ do begin
-           par.ssas1:= info.s.ssa.index-1;
-          end;
-         end;
-         else begin
-          typeerror();
-          exit;
+       if typ1^.h.kind = dk_openarray then begin
+        if getaddress(s.stacktop-s.stackindex,true) then begin
+         with additem(oc_lengthopenar)^ do begin
+          par.ssas1:= info.s.ssa.index-1;
          end;
         end;
-        dest1^.d.kind:= ck_subres;
-        dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
+       end
+       else begin
+        if getvalue(s.stacktop-s.stackindex,das_none) then begin
+         case typ1^.h.kind of
+          dk_string8: begin
+           with additem(oc_lengthstring)^ do begin
+            par.ssas1:= info.s.ssa.index-1;
+           end;
+          end;
+          dk_dynarray: begin
+           with additem(oc_lengthdynar)^ do begin
+            par.ssas1:= info.s.ssa.index-1;
+           end;
+          end;
+          else begin
+           typeerror();
+           exit;
+          end;
+         end;
+        end;
        end;
+       dest1^.d.kind:= ck_subres;
+       dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
       end;
      end;
      ck_typearg: begin

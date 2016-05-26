@@ -2303,7 +2303,9 @@ end;
 
 procedure highopenarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_highopenarray,true,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure lengthstringop();
@@ -2322,7 +2324,9 @@ end;
 
 procedure lengthopenarop();
 begin
- notimplemented();
+ with pc^.par do begin
+  callcompilersub(cs_lengthopenarray,true,[bcstream.ssaval(ssas1)]);
+ end;
 end;
 
 procedure popseg8op();
