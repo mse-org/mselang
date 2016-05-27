@@ -2817,6 +2817,13 @@ begin
                                    m2,po2^.h.bitsize,0,0,0,m3);
      }                                  
      end;
+     dk_openarray: begin
+      m2:= addtype(po2^.infodynarray.i.itemtypedata,
+                                   po2^.infodynarray.i.itemindirectlevel);
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,
+                                          sizeof(openarrayty.high)*8,0,m2);
+     end;
      dk_string8: begin
                                         //todo: use refstringtype
       m2:= addtype(sysdatatypes[st_char8].typedata,0);
