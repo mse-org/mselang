@@ -204,6 +204,7 @@ type
 
   oc_chartostring8,
   oc_arraytoopenar,
+  oc_dynarraytoopenar,
   
   oc_not1,
   oc_not32,

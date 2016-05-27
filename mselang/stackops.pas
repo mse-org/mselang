@@ -2065,6 +2065,17 @@ begin
  end;
 end;
 
+procedure dynarraytoopenarop();
+var
+ po1: targetpointerty;
+begin
+ po1:= ptargetpointerty(stackpop(sizeof(targetpointerty)))^;
+ with popenarrayty(stackpush(sizeof(openarrayty)))^ do begin
+  high:=  system.high(bytearty(po1));
+  data:= po1;
+ end;
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -4255,6 +4266,7 @@ const
   
   chartostring8ssa = 0;
   arraytoopenarssa = 0;
+  dynarraytoopenarssa = 0;
 
   not1ssa = 0;
   not32ssa = 0;

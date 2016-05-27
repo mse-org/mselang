@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B732E698
+    ao=An unhandled exception occured at $B7348BC0
     ae=
     aec=123
     ie=0
@@ -4245,7 +4245,7 @@ c=3
     (
     kind=1
     a=0,665,4,openarray
-    c=2
+    c=4
      (
      kind=2
      a=0,648,1,openarray1
@@ -4270,9 +4270,53 @@ c=3
      )
      (
      kind=2
-     a=0,648,1,openarray llvm
+     a=0,648,1,openarray1 llvm
      teststate=1
      path=openarray1.mla
+     comment=
+     cc=${mlc_llvm}
+     cd=
+     rc=${lli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,openarray2
+     teststate=1
+     path=openarray2.mla
+     comment=
+     cc=${mlc}
+     cd=
+     rc=${mli}
+     rd=
+     in=
+     eo=
+     ao=0
+     ee=
+     ae=0
+     eec=123
+     cr=0
+     ao=
+     ae=
+     aec=123
+     ie=0
+     )
+     (
+     kind=2
+     a=0,648,1,openarray2 llvm
+     teststate=1
+     path=openarray2.mla
      comment=
      cc=${mlc_llvm}
      cd=
@@ -7118,7 +7162,9 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=65
+rowstate=67
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

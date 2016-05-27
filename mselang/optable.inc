@@ -328,6 +328,8 @@
   (ssa: chartostring8ssa; proc: @chartostring8op; flags: []), 
 //oc_arraytoopenar
   (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: []), 
+//oc_dynarraytoopenar
+  (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: []), 
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 

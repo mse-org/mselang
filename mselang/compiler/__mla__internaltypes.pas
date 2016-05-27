@@ -66,7 +66,7 @@ type
  pdynarrayheaderty = ^dynarrayheaderty;
  ppdynarrayheaderty = ^pdynarrayheaderty;
  
- openarrayty = record
+ openarrayty = record //layout fix
   high: int32;
  {$ifdef mse_compiler}
   data: targetpointerty;

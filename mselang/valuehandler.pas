@@ -463,7 +463,11 @@ begin
           dk_dynarray: begin
            if issametype(source1^.infodynarray.i.itemtypedata,
                               dest^.infodynarray.i.itemtypedata) then begin
-            notimplementederror('20160525E');
+            if getvalue(stackoffset,das_pointer,false) then begin
+             with convert(oc_dynarraytoopenar)^ do begin
+             end;
+             result:= true;
+            end;
            end;
           end;
           dk_array: begin

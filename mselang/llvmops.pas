@@ -1486,6 +1486,13 @@ begin
  end;
 end;
 
+procedure dynarraytoopenarop();
+begin
+ with pc^.par do begin
+  callcompilersub(cs_dynarraytoopenar,true,[bcstream.ssaval(ssas1)]);
+ end;
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -3737,6 +3744,7 @@ const
   
   chartostring8ssa = 1;
   arraytoopenarssa = 1;
+  dynarraytoopenarssa = 1;
 
   not1ssa = 1;
   not32ssa = 1;
