@@ -1000,7 +1000,6 @@ begin
  {$endif}
    po1:= @contextstack[s.stackindex].d;
    po1^.kind:= ck_getindex;
-//   po1^.getindex.arraytype:= d.dat.datatyp.typedata;
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
    exclude(d.handlerflags,hf_needsunique);
    case kind1 of
@@ -1015,10 +1014,6 @@ begin
                      //openarray.data
       par.ssas1:= i1;
      end;
-//     d.dat.datatyp:= sysdatatypes[st_pointer];
-//     dec(d.dat.indirection);
-//     dec(d.dat.datatyp.indirectlevel);
-//     getvalue(-1,das_none);
      dec(d.dat.datatyp.indirectlevel);
     end;
     dk_dynarray,dk_string8: begin
@@ -1056,19 +1051,8 @@ begin
    end;
   {$endif}
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
-//   arraytype:= ele.eledataabs(contextstack[s.stackindex].d.getindex.arraytype);
    isdynarray:= true;
    case itemtype^.h.kind of
-{
-    dk_openarray: begin
-     if d.dat.datatyp.indirectlevel <> 1 then begin
-      errormessage(err_illegalqualifier,[],1);
-      goto errorlab;
-     end;
-     itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
-     range.min:= 0;
-    end;
-}
     dk_dynarray,dk_openarray: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
       errormessage(err_illegalqualifier,[],1);
@@ -1096,14 +1080,6 @@ begin
      isdynarray:= false;
     end;
    end;
-  {
-   if not ((itemtype^.h.kind = dk_array) and 
-                             (d.dat.datatyp.indirectlevel = 1) or
-                  (isdynarray and (d.dat.datatyp.indirectlevel = 0))) then begin
-    errormessage(err_illegalqualifier,[],1);
-    goto errorlab;
-   end;
-  }
    if isdynarray then begin
     if not tryconvert(1,st_int32) then begin
      errormessage(err_illegalqualifier,[],1);
