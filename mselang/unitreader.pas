@@ -104,7 +104,7 @@ begin
   end;
  end;
 end;
-
+                                      //!!navigerror
 function readunitfile(const aunit: punitinfoty): boolean; //true if ok
 var
  names1,anons1: identarty;
@@ -264,7 +264,7 @@ var
  unit1: punitinfoty;
 // needsreloc: boolean;
  globvaroffset: elementoffsetty;
- opoffset: targetoffsty;
+ opoffset1: targetoffsty;
  op1,ope: popinfoty;
  isub1: internalsubty;
  bcheader1: bcunitheaderty;
@@ -521,7 +521,7 @@ begin
      addrelocitem(reloc.opstart,info.opcount,reloc.opsize,
                                                     opreloc1,opreloccount);
                                       //own op segment
-     opoffset:= info.opcount-reloc.opstart;
+     opoffset1:= info.opcount-reloc.opstart;
      aunit^.internalsubs:= internalsubs;
     end;
     setlength(globreloc1,globvarreloccount);
@@ -540,10 +540,10 @@ errorlab:
     goto endlab;
 oklab:
     with aunit^ do begin
-     mainad:= intf^.header.mainad + opoffset;
+     mainad:= intf^.header.mainad + opoffset1;
      for isub1:= low(internalsubs) to high(internalsubs) do begin
       if internalsubs[isub1] <> 0 then begin
-       inc(internalsubs[isub1],opoffset);
+       inc(internalsubs[isub1],opoffset1);
       end;
      end;
     end;

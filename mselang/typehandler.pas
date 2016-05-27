@@ -985,6 +985,8 @@ procedure handleindexitemstart();
 var
  kind1: datakindty;
  i1: int32;
+ t1: typeinfoty;
+ po1: pcontextdataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXITEMSTART');
@@ -996,23 +998,33 @@ begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}
+   po1:= @contextstack[s.stackindex].d;
+   po1^.kind:= ck_getindex;
+//   po1^.getindex.arraytype:= d.dat.datatyp.typedata;
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
    exclude(d.handlerflags,hf_needsunique);
    case kind1 of
     dk_openarray: begin
      i1:= s.ssa.nextindex-1;
-     with insertitem(oc_offsetpoimm32,-1,0)^ do begin
-      setimmint32(sizeof(openarrayty.high),par);
+     with insertitem(oc_offsetpoimm32,-1,-1)^ do begin //at end of context
+      setimmint32(sizeof(openarrayty.high),par); //pointer to openarrayty.data
       par.ssas1:= i1;
      end;
-     dec(d.dat.indirection);
+     i1:= s.ssa.nextindex-1;
+     with insertitem(oc_indirectpo,-1,-1)^ do begin //at end of context
+                     //openarray.data
+      par.ssas1:= i1;
+     end;
+//     d.dat.datatyp:= sysdatatypes[st_pointer];
+//     dec(d.dat.indirection);
+//     dec(d.dat.datatyp.indirectlevel);
+//     getvalue(-1,das_none);
      dec(d.dat.datatyp.indirectlevel);
-     getvalue(-1,das_none);
     end;
     dk_dynarray,dk_string8: begin
      if kind1 = dk_string8 then begin
       include(d.handlerflags,hf_needsunique);
-      d.dat.fact.opoffset:= getcontextopoffset(-1);
+      d.dat.fact.opoffset:= getcontextopoffset(-1); //for needsunique call
      end;
      dec(d.dat.indirection);
      dec(d.dat.datatyp.indirectlevel);
@@ -1038,9 +1050,25 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   if d.kind <> ck_prop then begin //no array property
+  {$ifdef mse_checkinternalerror}
+   if contextstack[s.stackindex].d.kind <> ck_getindex then begin
+    internalerror(ie_handler,'20160527');
+   end;
+  {$endif}
    itemtype:= ele.eledataabs(d.dat.datatyp.typedata);
+//   arraytype:= ele.eledataabs(contextstack[s.stackindex].d.getindex.arraytype);
    isdynarray:= true;
    case itemtype^.h.kind of
+{
+    dk_openarray: begin
+     if d.dat.datatyp.indirectlevel <> 1 then begin
+      errormessage(err_illegalqualifier,[],1);
+      goto errorlab;
+     end;
+     itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
+     range.min:= 0;
+    end;
+}
     dk_dynarray,dk_openarray: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
       errormessage(err_illegalqualifier,[],1);

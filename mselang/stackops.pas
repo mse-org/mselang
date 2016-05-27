@@ -962,8 +962,8 @@ procedure addpoint32op();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= po1-alignsize(sizeof(vintegerty));
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vpointerty));
  inc(pvpointerty(po2)^,vintegerty(po1^));
 end;
 
@@ -971,8 +971,8 @@ procedure subpoint32op();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= po1-alignsize(sizeof(vintegerty));
+ po1:= stackpop(sizeof(vintegerty));
+ po2:= po1-alignsize(sizeof(vpointerty));
  dec(pvpointerty(po2)^,vintegerty(po1^));
 end;
 
@@ -980,8 +980,8 @@ procedure subpoop();
 var
  po1,po2: pointer;
 begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= po1-alignsize(sizeof(vintegerty));
+ po1:= stackpop(sizeof(vpointerty));
+ po2:= po1-alignsize(sizeof(vpointerty));
  vintegerty(po2^):= vpointerty(po2^)-vpointerty(po1^);
 end;
 

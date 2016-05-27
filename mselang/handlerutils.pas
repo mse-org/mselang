@@ -125,6 +125,7 @@ function convertconsts(): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
 function getcontextopoffset(const stackoffset: int32): int32;
+            //returns opcount in context
 
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
@@ -2212,6 +2213,7 @@ begin
 end;
 
 function getcontextopoffset(const stackoffset: int32): int32;
+            //returns opcount in context
 var
  i1: int32;
 begin
@@ -2250,9 +2252,9 @@ var
   si1: databitsizety;
   ssabefore: integer;
  begin
-  with info,contextstack[s.stackindex+stackoffset],d do begin
-   if dat.datatyp.typedata > 0 then begin
-    opdata1:= getopdatatype(dat.datatyp.typedata,dat.datatyp.indirectlevel);
+  with info,contextstack[s.stackindex+stackoffset] do begin
+   if d.dat.datatyp.typedata > 0 then begin
+    opdata1:= getopdatatype(d.dat.datatyp.typedata,d.dat.datatyp.indirectlevel);
     ssabefore:= d.dat.fact.ssaindex;
     with insertitem(indirect[opdata1.kind],stackoffset,-1)^ do begin
      par.ssas1:= ssabefore;
@@ -3168,7 +3170,7 @@ begin
    else begin
     write(' ');
    end;
-   with contextstack[int1],d do begin
+   with contextstack[int1] do begin
     write(fitstring(inttostrmse(parent),3,sp_right),' ');
     if bf_continue in transitionflags then begin
      write('>');
@@ -3210,21 +3212,21 @@ begin
      write(fitstring(inttostrmse(opmark.address),3,sp_right));
      write('<NIL> ');
     end;
-    write(getenumname(typeinfo(kind),ord(kind)));
+    write(getenumname(typeinfo(d.kind),ord(d.kind)));
     write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
-                                              int32(handlerflags),true),' ');
-    case kind of
+                                              int32(d.handlerflags),true),' ');
+    case d.kind of
      ck_block: begin
-      write('idbefore:'+inttostrmse(block.blockidbefore));
+      write('idbefore:'+inttostrmse(d.block.blockidbefore));
      end;
      ck_label: begin
-      write('lab:'+inttostrmse(dat.lab));
+      write('lab:'+inttostrmse(d.dat.lab));
      end;
      ck_ident: begin
-      write('$',hextostr(ident.ident,8),':',ident.len);
-      write(' ',getidentname(ident.ident));
+      write('$',hextostr(d.ident.ident,8),':',d.ident.len);
+      write(' ',getidentname(d.ident.ident));
       write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
-                                           integer(ident.flags),true));
+                                           integer(d.ident.flags),true));
      end;
      ck_fact,ck_subres: begin
       write('ssa:',d.dat.fact.ssaindex,' ');
@@ -3246,39 +3248,39 @@ begin
      ck_const: begin
       writetype(d);
       write('V:');
-      case dat.constval.kind of
+      case d.dat.constval.kind of
        dk_boolean: begin
-        write(dat.constval.vboolean,' ');
+        write(d.dat.constval.vboolean,' ');
        end;
        dk_integer: begin
-        write(dat.constval.vinteger,' ');
+        write(d.dat.constval.vinteger,' ');
        end;
        dk_cardinal: begin
-        write(dat.constval.vcardinal,' ');
+        write(d.dat.constval.vcardinal,' ');
        end;
        dk_float: begin
-        write(dat.constval.vfloat,' ');
+        write(d.dat.constval.vfloat,' ');
        end;
        dk_address: begin
-        writeaddress(dat.constval.vaddress);
+        writeaddress(d.dat.constval.vaddress);
        end;
        dk_enum: begin
-        write(dat.constval.venum.value,' ');
+        write(d.dat.constval.venum.value,' ');
        end;
        dk_set: begin
-        write(hextostr(card32(dat.constval.vset.value)),' '); 
+        write(hextostr(card32(d.dat.constval.vset.value)),' '); 
                   //todo: arbitrary size, set format
        end;
       end;
      end;
      ck_subdef: begin
       write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
-                                           integer(subdef.flags),true),
-            ' ma:',subdef.match,
-                            ' ps:',subdef.paramsize,' vs:',subdef.varsize);
+                                           integer(d.subdef.flags),true),
+            ' ma:',d.subdef.match,
+                            ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
      end;
      ck_paramdef: begin
-      with paramdef do begin
+      with d.paramdef do begin
        write('kind:',getenumname(typeinfo(kind),ord(kind)),
                       ' def:',defaultconst);
       end;
@@ -3302,7 +3304,11 @@ begin
       end;
      end;
      ck_index: begin
-      write('opshiftmark:'+inttostr(opshiftmark));
+      write('opshiftmark:'+inttostrmse(d.opshiftmark));
+     end;
+     ck_getindex: begin
+//      write('itemtype:'+inttostrmse(d.getindex.itemtype)+' ');
+//      writetypedata(ele.eledataabs(d.getindex.itemtype));
      end;
      ck_typedata: begin
       writetypedata(d.typedata);
@@ -3312,10 +3318,10 @@ begin
       writetypedata(ele.eledataabs(d.typeref));
      end;
      ck_typetype,ck_fieldtype: begin
-      writetyp(typ);
+      writetyp(d.typ);
      end;
      ck_control: begin
-      with control do begin
+      with d.control do begin
        write('kind:',getenumname(typeinfo(kind),ord(kind)),' OP1:',
                                                        opmark1.address);
       end;

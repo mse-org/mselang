@@ -104,7 +104,8 @@ type
                   ck_block,ck_end,
                   ck_ident,ck_number,ck_str,ck_subdef,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
-                  ck_subres,ck_subcall,ck_controltoken,ck_getfact,ck_label,
+                  ck_subres,ck_subcall,ck_controltoken,
+                  ck_getfact,ck_getindex,ck_label,
                   ck_typedata,ck_typeref,
                   ck_typetype,ck_fieldtype,ck_typearg,ck_var,ck_field,
                   ck_statement,ck_control,ck_shortcutexp,
@@ -191,6 +192,10 @@ type
 } 
  getfactinfoty = record
 //  flags: factflagsty;
+ end;
+
+ getindexinfoty = record
+//  arraytype: elementoffsetty;
  end;
  
  factinfoty = record
@@ -408,6 +413,9 @@ type
    );
    ck_getfact:(
     getfact: getfactinfoty;
+   );
+   ck_getindex:(
+    getindex: getindexinfoty;
    );
    ck_const,ck_fact,ck_subres,ck_prop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;
