@@ -650,9 +650,11 @@ type
    fparams1po: metavaluety;
    fparams1posubtyp: metavaluety;
    fnoparamssubtyp: metavaluety;
+   fdynarrayindex: metavaluety;
    function getparams1po: metavaluety;
    function getpointertyp: metavaluety;
    function getparams1posubtyp: metavaluety;
+   function getdynarrayindex: metavaluety;
   protected
    function adddata(const akind: metadatakindty;
        const adatasize: int32; out avalue: metavaluety): pointer; reintroduce;
@@ -749,6 +751,7 @@ type
 //   property globalvariables: metavaluesty read getglobalvariables;
 //   property voidconst: metavaluety read fvoidconst;
 //   property nullintconst: metavaluety read fnullintconst;
+
    property emptystringconst: metavaluety read femptystringconst;
    property pointertyp: metavaluety read getpointertyp;
    property noparams: metavaluety read fnoparams; //[dummymeta]
@@ -756,6 +759,7 @@ type
                                              //[dummymeta,pointertype]
    property noparamssubtyp: metavaluety read fnoparamssubtyp;
    property params1posubtyp: metavaluety read getparams1posubtyp;
+   property dynarrayindex: metavaluety read getdynarrayindex; //[0..-1]
 
 //   property wdstringconst: metavaluety read fwdstringconst; //'./'
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
@@ -2126,6 +2130,20 @@ begin
  result:= fparams1posubtyp;
 end;
 
+function tmetadatalist.getdynarrayindex: metavaluety;
+var
+ ra1: ordrangety;
+ m1: metavaluety;
+begin
+ if fdynarrayindex.id = 0 then begin
+  ra1.min:= 0;
+  ra1.max:= 44;
+  m1:= adddisubrange(ra1);
+  fdynarrayindex:= addnode([m1]);
+ end;
+ result:= fdynarrayindex;
+end;
+
 procedure tmetadatalist.beginunit;
 begin
 // fsubprogramcount:= 0;
@@ -2808,8 +2826,10 @@ begin
      dk_dynarray: begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
                                    po2^.infodynarray.i.itemindirectlevel);
+      m3:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
+                                   m2,po2^.h.bitsize,0,0,0,dynarrayindex);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m3);
                        //todo
      {                 
       m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);

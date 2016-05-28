@@ -626,6 +626,14 @@ type
     METADATA_NAMED_NODE,//    = 10,  // NAMED_NODE:    [n x mdnodes]
     METADATA_ATTACHMENT,//    = 11,  // [m x [value, [n x [id, mdnode]]]
     METADATA_GENERIC_DEBUG,// = 12,  // [distinct, tag, vers, header, n x md num]
+{
+  Record.push_back(N->isDistinct());
+  Record.push_back(N->getTag());
+  Record.push_back(0); // Per-tag version field; unused for now.
+
+  for (auto &I : N->operands())
+    Record.push_back(VE.getMetadataOrNullID(I));
+}
     METADATA_SUBRANGE,//      = 13,  // [distinct, count, lo]
 {
   Record.push_back(N->isDistinct());
