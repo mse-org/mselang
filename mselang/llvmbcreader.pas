@@ -198,7 +198,7 @@ type
    function readvbr(const bitsize: int32): valuety;
    procedure align32();
    procedure readabbrev(aid: int32; var values: valuearty);
-   function readitem(): valuearty;
+   function readitem(): valuearty; //!! arrowdown
           //nil if internal read, first array item = abbrev, second = code
    procedure readblockheader(out blockid: int32; 
                                out newabbrevlen: int32; out blocklen: int32);

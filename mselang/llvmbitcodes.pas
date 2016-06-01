@@ -616,6 +616,13 @@ type
     METADATA_0,
     METADATA_STRING,//        = 1,   // MDSTRING:      [values]
     METADATA_VALUE,//         = 2,   // VALUE:         [type num, value num]
+ {
+  // Mimic an MDNode with a value as one operand.
+  Value *V = MD->getValue();
+  Record.push_back(VE.getTypeID(V->getType()));
+  Record.push_back(VE.getValueID(V));
+  Stream.EmitRecord(bitc::METADATA_VALUE, Record, 0);
+ }
     METADATA_NODE,//          = 3,   // NODE:          [n x md num]
     METADATA_NAME,//          = 4,   // STRING:        [values]
     METADATA_DISTINCT_NODE,// = 5,   // DISTINCT_NODE: [n x md num]

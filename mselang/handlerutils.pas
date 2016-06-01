@@ -614,7 +614,7 @@ end;
 
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
-var
+var                                                     //!!codenavig
  po1: pelementinfoty;
 begin
  result:= false;
@@ -623,6 +623,7 @@ begin
   aelementdata:= @po1^.data;
   aelementdata^.vf.next:= chain;
   aelementdata^.vf.flags:= [];
+  aelementdata^.vf.defaultconst:= 0;
   chain:= ele.eleinforel(po1);
   result:= true;
  end;

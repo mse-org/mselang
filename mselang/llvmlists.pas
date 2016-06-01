@@ -422,6 +422,14 @@ type
 const
  dummymeta: metavaluety = (id: -1);
 type
+ digenericdebugty = record
+  tag: int32;
+  len: int32;
+  data: record  //array of metavaluety
+  end;
+ end;
+ pdigenericdebugty = ^digenericdebugty;
+
  nodemetaty = record
   len: int32;
   data: record  //array of metavaluety
@@ -453,7 +461,7 @@ type
   name: identnamety;
  end;
  pidentmetaty = ^identmetaty;
-
+ 
  difilety = record
   filename: metavaluety;
   dirname: metavaluety;
@@ -604,7 +612,8 @@ type
  end;
  
  
- metadatakindty = (mdk_none,{mdk_void,}mdk_node,mdk_namednode,
+ metadatakindty = (mdk_none,{mdk_void,}mdk_digenericdebug,
+                   mdk_node,mdk_namednode,
                    mdk_string,mdk_ident,mdk_constvalue,mdk_globvalue,
                    mdk_difile,mdk_dibasictype,mdk_disubrange,mdk_dienumerator,
                    mdk_diderivedtype,mdk_dicompositetype,mdk_direfstringtype,
@@ -672,6 +681,11 @@ type
 
    function addconst(const constid: int32): metavaluety;
    function addglobvalue(const globid: int32): metavaluety;
+
+   function adddigenericdebug(const atag: int32; const avalues: pmetavaluety;
+                                     const acount: int32): metavaluety;
+   function adddigenericdebug(const atag: int32; 
+                             const avalues: array of metavaluety): metavaluety;
    
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
@@ -2137,7 +2151,7 @@ var
 begin
  if fdynarrayindex.id = 0 then begin
   ra1.min:= 0;
-  ra1.max:= 44;
+  ra1.max:= 0; //todo: dynarray debug info
   m1:= adddisubrange(ra1);
   fdynarrayindex:= addnode([m1]);
  end;
@@ -2229,6 +2243,26 @@ begin
   value.listid:= globid;
   value.typeid:= fgloblist.gettype(globid);;
  end;
+end;
+
+function tmetadatalist.adddigenericdebug(const atag: int32;
+               const avalues: pmetavaluety; const acount: int32): metavaluety;
+var
+ i1: int32;
+begin
+ i1:= acount*sizeof(avalues^);
+ with pdigenericdebugty(adddata(mdk_digenericdebug,
+                          sizeof(digenericdebugty)+i1,result))^ do begin
+  tag:= atag;
+  len:= acount;
+  move(avalues^,data,i1);
+ end;
+end;
+
+function tmetadatalist.adddigenericdebug(const atag: int32;
+               const avalues: array of metavaluety): metavaluety;
+begin
+ result:= adddigenericdebug(atag,@avalues,length(avalues));
 end;
 
 function tmetadatalist.addnode(const avalues: pmetavaluety;
@@ -2724,7 +2758,7 @@ var
   else begin
    result:= addnode(@metabuffer,pb-pmetavaluety(@metabuffer));
   end;
- end; //addbufferreverse
+ end; //addbuffer
 
  function addbufferreverse(): metavaluety;
  begin
@@ -2826,11 +2860,17 @@ begin
      dk_dynarray: begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
                                    po2^.infodynarray.i.itemindirectlevel);
+      m1:= adddiderivedtype(didk_pointertype,file1,context1,
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
+                       //todo
+//      m1:= adddigenericdebug(DW_TAG_pointer_type,[m2]);
+{
       m3:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,
                                    m2,po2^.h.bitsize,0,0,0,dynarrayindex);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
                       lstr1,0,pointerbitsize,pointerbitsize,0,0,m3);
                        //todo
+}
      {                 
       m3:= addnode([addtype(po2^.infoarray.indextypedata,0,true)]);
       m1:= adddicompositetype(dick_arraytype,lstr1,file1,0,context1,

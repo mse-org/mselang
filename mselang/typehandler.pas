@@ -823,8 +823,9 @@ begin
 //      if indilev > 0 then begin
 //       flags1:= flags1 - [tf_managed,tf_needsmanage];
 //      end;
-      arty^.h.flags:= flags1;
-      arty^.h.manageproc:= manageproc1;
+//      arty^.h.flags:= flags1;
+      inittypedata(arty^,dk_array,0,flags1,0,0);
+//      arty^.h.manageproc:= manageproc1;
       with arty^.infoarray do begin
        i.itemtypedata:= itemtyoffs1;
        i.itemindirectlevel:= indilev;
@@ -849,12 +850,12 @@ begin
        goto endlab;
       end;
       with arty^ do begin
-       h.indirectlevel:= 0;
+//       h.indirectlevel:= 0;
        h.bitsize:= totsize*8;
        h.bytesize:= totsize;
        infoarray.i.totitemcount:= itemcount1;
        h.datasize:= das_none;
-       h.kind:= dk_array;
+//       h.kind:= dk_array;
        h.manageproc:= manageproc1;
       end;
       itemtyoffs1:= ele.eledatarel(arty);

@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -242,6 +242,8 @@ type
    procedure emitmetaglobalvar(const avalue: diglobvariablety);
    procedure emitmetalocalvar(const avalue: dilocvariablety);
    procedure emitmetaexpression(const avalue: diexpressionty);
+   procedure emitgenericdebug(const tag: int32; const len: int32;
+                                                const values: pmetavaluety);
    procedure emitmetanode(const len: int32; const values: pmetavaluety);
    procedure emitmetanode(const values: array of metavaluety);
    procedure emitnamedmetanode(const namelen: int32; const name: pcard8;
@@ -745,6 +747,11 @@ begin
     mdk_ident: begin
      with nametolstring(pidentmetaty(@pm1^.data)^.name) do begin
       emitrec(ord(METADATA_STRING),len,pcard8(po));
+     end;
+    end;
+    mdk_digenericdebug: begin
+     with pdigenericdebugty(@pm1^.data)^ do begin
+      emitgenericdebug(tag,len,@data);
      end;
     end;
     mdk_node: begin
@@ -2141,6 +2148,28 @@ begin                        //todo: use FUNC_CODE_INST_LANDINGPAD,
  emitrec(ord(FUNC_CODE_INST_LANDINGPAD_OLD),
                                    [aresulttype,fsubopindex-apersonality,1,0]);
  inc(fsubopindex);
+end;
+
+procedure tllvmbcwriter.emitgenericdebug(const tag: int32; const len: int32;
+               const values: pmetavaluety);
+var
+ po1,pe: pmetavaluety;
+begin
+ emitcode(ord(UNABBREV_RECORD));
+ emitvbr6(ord(METADATA_GENERIC_DEBUG));
+ emitvbr6(len+4);
+ emitvbr6(0); //distinct
+ emitvbr6(tag);
+ emitvbr6(0); //version
+ emitvbr6(0); //string?
+ po1:= values;
+ pe:= po1+len;
+ while po1 < pe do begin
+  with po1^ do begin
+   emitvbr6(id+1);
+  end;
+  inc(po1);
+ end;
 end;
 
 procedure tllvmbcwriter.emitmetanode(const len: int32; 
