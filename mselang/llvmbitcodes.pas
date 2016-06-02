@@ -774,7 +774,21 @@ type
 
 const
 //from include/llvm/Support/Dwarf.def
+ DW_OP_addr = $03;  //HANDLE_DW_OP(0x03, addr)
  DW_OP_deref = $06; //HANDLE_DW_OP(0x06, deref)
+{
+ DW_OP_const1u = $08; //HANDLE_DW_OP(0x08, const1u)
+ DW_OP_const1s = $09; //HANDLE_DW_OP(0x09, const1s)
+ DW_OP_const2u = $0a; //HANDLE_DW_OP(0x0a, const2u)
+ DW_OP_const2s = $0b; //HANDLE_DW_OP(0x0b, const2s)
+ DW_OP_const4u = $0c; //HANDLE_DW_OP(0x0c, const4u)
+ DW_OP_const4s = $0d; //HANDLE_DW_OP(0x0d, const4s)
+ DW_OP_const8u = $0e; //HANDLE_DW_OP(0x0e, const8u)
+ DW_OP_const8s = $0f; //HANDLE_DW_OP(0x0f, const8s)
+ DW_OP_constu = $10;  //HANDLE_DW_OP(0x10, constu)
+ DW_OP_consts = $11;  //HANDLE_DW_OP(0x11, consts)
+}
+ DW_OP_plus = $22;    //HANDLE_DW_OP(0x22, plus)
  
 //from include/llvm/Support/Dwarf.h
 

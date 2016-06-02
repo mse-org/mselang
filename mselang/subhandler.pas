@@ -887,6 +887,9 @@ var                       //todo: move after doparam
           si1:= typ1^.h.bytesize;
          end;
          address.flags:= [af_param];
+         if typ1^.h.kind = dk_openarray then begin
+          include(address.flags,af_openarray);
+         end;
          if typ1^.h.datasize = das_none then begin
           include(address.flags,af_aggregate);
          end;

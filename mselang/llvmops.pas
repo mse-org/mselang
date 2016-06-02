@@ -3219,7 +3219,7 @@ var
  idar: idarty;
  ids: idsarty;
  isfunction: boolean;
- dummyexp,derefexp: int32;
+ dummyexp,derefexp,openarrayexp: int32;
 begin
 ///////////// bcstream.nodebugloc:= true; 
             //debugloc necessary because of param debuginfo
@@ -3346,6 +3346,7 @@ begin
     i2:= bcstream.globval(dbgdeclare);
     dummyexp:= dummyaddrexp.id;
     derefexp:= derefaddrexp.id;
+    openarrayexp:= openarrayaddrexp.id;
    end;
    po1:= ps;
    while po1 < pe do begin
@@ -3356,7 +3357,12 @@ begin
      ids[2]:= derefexp;
     end
     else begin
-     ids[2]:= dummyexp;
+     if af_openarray in po1^.flags then begin
+      ids[2]:= openarrayexp;
+     end
+     else begin
+      ids[2]:= dummyexp;
+     end;
     end;
     bcstream.emitcallop(false,i2,idar); //dbgdeclare
     inc(i1);

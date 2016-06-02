@@ -654,6 +654,7 @@ type
    fhasmoduleflags: boolean;
    fdummyaddrexp: metavaluety;
    fderefaddrexp: metavaluety;
+   fopenarrayaddrexp: metavaluety;
    fnoparams: metavaluety;
    fpointertyp: metavaluety;
    fparams1po: metavaluety;
@@ -684,8 +685,10 @@ type
 
    function adddigenericdebug(const atag: int32; const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
+                                     //not finished
    function adddigenericdebug(const atag: int32; 
                              const avalues: array of metavaluety): metavaluety;
+                                     //not finished
    
    function addnode(const avalues: pmetavaluety;
                                      const acount: int32): metavaluety;
@@ -779,6 +782,7 @@ type
    property dbgdeclare: int32 read fdbgdeclare; //globvalue id
    property dummyaddrexp: metavaluety read fdummyaddrexp;
    property derefaddrexp: metavaluety read fderefaddrexp;
+   property openarrayaddrexp: metavaluety read fopenarrayaddrexp;
    property hasmoduleflags: boolean read fhasmoduleflags write fhasmoduleflags;
  end;
 
@@ -2103,6 +2107,10 @@ begin
                                             getidentname('llvm.dbg.declare'));
    fdummyaddrexp:= adddiexpression([]);
    fderefaddrexp:= adddiexpression([DW_OP_deref]);
+   fopenarrayaddrexp:= adddiexpression([DW_OP_plus,sizeof(openarrayty.high)]);
+//   fopenarrayaddrexp:= adddiexpression([DW_OP_addr,DW_OP_plus,
+//                                        sizeof(openarrayty.high),DW_OP_deref]);
+               //llvm 3.7 can deref, plus and bit_piece only
    fnoparams:= addnode([dummymeta]);
    with pdisubroutinetypety(
     adddata(mdk_disubroutinetype,sizeof(disubroutinetypety),
@@ -2881,8 +2889,7 @@ begin
       m2:= addtype(po2^.infodynarray.i.itemtypedata,
                                    po2^.infodynarray.i.itemindirectlevel);
       m1:= adddiderivedtype(didk_pointertype,file1,context1,
-                      lstr1,0,pointerbitsize,pointerbitsize,
-                                          sizeof(openarrayty.high)*8,0,m2);
+                      lstr1,0,pointerbitsize,pointerbitsize,0,0,m2);
      end;
      dk_string8: begin
                                         //todo: use refstringtype
