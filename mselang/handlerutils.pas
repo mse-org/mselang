@@ -3093,9 +3093,16 @@ procedure outinfo(const text: string; const indent: boolean = true);
    end;
   end;
  end;//writeaddress
- 
+
+ procedure writedat(const adat: datacontextty);
+ begin
+  write('F:',settostring(ptypeinfo(typeinfo(datacontextflagsty)),
+                                                integer(adat.flags),true),' ');
+ end;
+  
  procedure writeref(const ainfo: contextdataty);
  begin
+  writedat(ainfo.dat);
   with ainfo.dat.ref do begin
    writeaddress(c.address);
    write('O:',offset,' ');
@@ -3196,6 +3203,7 @@ begin
                                            integer(d.ident.flags),true));
      end;
      ck_fact,ck_subres: begin
+      writedat(d.dat);
       write('ssa:',d.dat.fact.ssaindex,' ');
       writetype(d);
      end;
@@ -3210,9 +3218,11 @@ begin
       write(' E:',d.dat.prop.propele);
      end;
      ck_reffact: begin
+      writedat(d.dat);
       writetype(d);
      end;
      ck_const: begin
+      writedat(d.dat);
       writetype(d);
       write('V:');
       case d.dat.constval.kind of
