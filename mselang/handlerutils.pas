@@ -205,6 +205,8 @@ function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
 function getcontextssa(const stackoffset: integer): int32;
+procedure initdatacontext(var acontext: contextdataty;
+                                             const akind: contextkindty);
 procedure initfactcontext(const stackoffset: int32);
 procedure initblockcontext(const stackoffset: int32);
 procedure newblockcontext(const stackoffset: int32);
@@ -2100,12 +2102,31 @@ begin
  end;
 end;
 
-procedure initfactcontext(const stackoffset: int32);
+procedure initdatacontext(var acontext: contextdataty;
+                                             const akind: contextkindty);
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
-  d.kind:= ck_fact;
-  d.dat.fact.ssaindex:= getcontextssa(stackoffset);
-  d.dat.indirection:= 0;
+{$ifdef mse_checkinternalerror}
+ if not (akind in datacontexts) then begin
+  internalerror(ie_handler,'20160602A');
+ end;
+{$endif}
+ acontext.kind:= akind;
+ with acontext.dat do begin
+  flags:= [];
+  indirection:= 0;
+ end;
+end;
+
+procedure initfactcontext(const stackoffset: int32);
+var
+ po1: pcontextitemty;
+begin
+ with info do begin
+  po1:= @contextstack[s.stackindex+stackoffset];
+  initdatacontext(po1^.d,ck_fact);
+  with po1^ do begin
+   d.dat.fact.ssaindex:= getcontextssa(stackoffset);
+  end;
  end;
 end;
 
@@ -3018,8 +3039,7 @@ procedure setenumconst(const aenumitem: infoenumitemty;
                                    var acontextitem: contextitemty);
 begin
  with acontextitem do begin
-  d.kind:= ck_const;
-  d.dat.indirection:= 0;
+  initdatacontext(acontextitem.d,ck_const);
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= aenumitem.enum;
   d.dat.datatyp.indirectlevel:= 0;

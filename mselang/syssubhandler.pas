@@ -84,38 +84,41 @@ end;
 procedure handlesizeof(const paramco: integer);
 var
  int1: integer;
+ po1: pcontextitemty;
 begin
  if checkparamco(1,paramco) then begin
-  with info,contextstack[s.stackindex] do begin
-   d.kind:= ck_const;
-   d.dat.indirection:= 0;
-   d.dat.datatyp:= sysdatatypes[st_int32];
-   d.dat.constval.kind:= dk_integer;
-   with contextstack[s.stacktop] do begin
-    case d.kind of
-     ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
-      if d.dat.datatyp.indirectlevel > 0 then begin
-       int1:= pointersize;
-      end
+  with info do begin
+   po1:= @contextstack[s.stackindex];
+   with po1^ do begin
+    initdatacontext(po1^.d,ck_const);
+    d.dat.datatyp:= sysdatatypes[st_int32];
+    d.dat.constval.kind:= dk_integer;
+    with contextstack[s.stacktop] do begin
+     case d.kind of
+      ck_const,ck_fact,ck_subres,ck_ref,ck_reffact: begin
+       if d.dat.datatyp.indirectlevel > 0 then begin
+        int1:= pointersize;
+       end
+       else begin
+        int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize;
+       end;
+      end;
+      ck_typetype,ck_fieldtype,ck_typearg: begin
+       if d.typ.indirectlevel > 0 then begin
+        int1:= pointersize;
+       end
+       else begin
+        int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.h.bytesize;
+       end;
+      end;
       else begin
-       int1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.bytesize;
+       int1:= 0;
+       errormessage(err_cannotgetsize,[]);
       end;
      end;
-     ck_typetype,ck_fieldtype,ck_typearg: begin
-      if d.typ.indirectlevel > 0 then begin
-       int1:= pointersize;
-      end
-      else begin
-       int1:= ptypedataty(ele.eledataabs(d.typ.typedata))^.h.bytesize;
-      end;
-     end;
-     else begin
-      int1:= 0;
-      errormessage(err_cannotgetsize,[]);
-     end;
-    end;
-   end;      
-   d.dat.constval.vinteger:= int1;
+    end;      
+    d.dat.constval.vinteger:= int1;
+   end;
   end;
  end;
 end;
@@ -794,8 +797,7 @@ begin
  with info do begin
   if checkparamco(1,paramco) then begin
    dest1:= @contextstack[s.stackindex];
-   dest1^.d.kind:= ck_const;
-   dest1^.d.dat.indirection:= 0;
+   initdatacontext(dest1^.d,ck_const);
    dest1^.d.dat.datatyp:= sysdatatypes[st_int32]; //default
    with contextstack[s.stacktop] do begin
     case d.kind of
@@ -918,7 +920,7 @@ begin
       end;
       typ1:= ele.eledataabs(d.dat.datatyp.typedata);
       if d.kind = ck_const then begin
-       dest1^.d.kind:= ck_const;
+       initdatacontext(dest1^.d,ck_const);
        dest1^.d.dat.constval.kind:= dk_integer;
        case d.dat.constval.kind of
         dk_array: begin
@@ -975,7 +977,7 @@ begin
        typeerror();
        exit;
       end;
-      dest1^.d.kind:= ck_const;
+      initdatacontext(dest1^.d,ck_const);
       dest1^.d.dat.constval.kind:= dk_integer;
       case typ1^.h.kind of
        dk_array: begin

@@ -102,7 +102,7 @@ type
  contextkindty = (ck_none,ck_error,
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_end,
-                  ck_ident,ck_number,ck_str,ck_subdef,
+                  ck_ident,ck_number,ck_str,ck_subdef,ck_list,
                   ck_const,ck_range,ck_ref,ck_fact,ck_reffact,ck_prop,
                   ck_subres,ck_subcall,ck_controltoken,
                   ck_getfact,ck_getindex,ck_label,
@@ -368,7 +368,15 @@ type
   blockcountad: integer;
  end;
  
+ listinfoty = record
+  count: int32;
+ end;
+ 
+ datacontextflagty = (dcf_listitem);
+ datacontextflagsty = set of datacontextflagty;
+ 
  datacontextty = record
+  flags: datacontextflagsty;
   indirection: integer; //pending
   datatyp: typeinfoty;
   case contextkindty of
@@ -416,6 +424,9 @@ type
    );
    ck_getindex:(
     getindex: getindexinfoty;
+   );
+   ck_list:(
+    list: listinfoty;
    );
    ck_const,ck_fact,ck_subres,ck_prop,ck_ref,ck_reffact:( //datacontexts
     dat: datacontextty;

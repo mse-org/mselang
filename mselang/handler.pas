@@ -121,7 +121,7 @@ procedure handlenotfact();
 procedure handlemulfact();
 procedure handledivfact();
 procedure handledivisionfact();
-procedure handlesetfact();
+procedure handlelistfact();
 
 procedure handlefact2entry();
 //procedure handlefact2();
@@ -350,8 +350,7 @@ end;
 procedure setnumberconst(const aitem: pcontextitemty; const avalue: card64);
 begin
  with aitem^ do begin
-  d.kind:= ck_const;
-  d.dat.indirection:= 0;
+  initdatacontext(d,ck_const);
   if (int64(avalue) <= high(int8)) and 
                             (int64(avalue) >= low(int8)) then begin
    d.dat.datatyp:= sysdatatypes[st_int8];
@@ -656,6 +655,7 @@ var
  po1: pchar;
 // fraclen: integer;
  rea1: real;
+ po2: pcontextitemty;
 begin
  with info do begin
   with contextstack[s.stacktop] do begin
@@ -663,9 +663,9 @@ begin
   end;
   s.stacktop:= s.stacktop - 1;
   s.stackindex:= s.stacktop-1;
-  with contextstack[s.stacktop] do begin
-   d.kind:= ck_const;
-   d.dat.indirection:= 0;
+  po2:= @contextstack[s.stacktop];
+  initdatacontext(po2^.d,ck_const);
+  with po2^ do begin
    d.dat.datatyp:= sysdatatypes[st_flo64];
    d.dat.constval.kind:= dk_float;
    lint2:= 0;
@@ -1374,28 +1374,13 @@ begin
    with ptop^ do begin
     case d.kind of
      ck_str: begin
-      d.kind:= ck_const;
-      d.dat.indirection:= 0;
+      initdatacontext(ptop^.d,ck_const);
       d.dat.datatyp:= sysdatatypes[st_string8];
       d.dat.constval.kind:= dk_string8;
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
       setnumberconst(ptop,d.number.value);
-     {
-      c1:= d.number.value;
-      d.kind:= ck_const;
-      d.dat.indirection:= 0;
-      if (int64(c1) > maxint) or (int64(c1) < minint) then begin
-       d.dat.datatyp:= sysdatatypes[st_int64];
-      end
-      else begin
-       d.dat.datatyp:= sysdatatypes[st_int32];
-      end;
-      d.dat.constval.kind:= dk_integer;
-      d.dat.constval.vinteger:= int64(c1); 
-          //todo: handle cardinals and 64 bit
-     }
      end;
     end;
    end;
@@ -1667,24 +1652,42 @@ begin
  end;
 end;
 
-procedure handlesetfact(); //not finished
+(*
+procedure handlelistfact(); //not finished
+var
+ po1,pe: 
+begin
+{$ifdef mse_debugparser}
+ outhandle('LISTFACT');
+{$endif}
+ with info do begin
+  with contextstack[s.stackindex] do begin
+   d.kind:= ck_list;
+   d.count:= s.stacktop - s.stackindex;
+  end;
+ end;
+end;
+*)
+
+procedure handlelistfact(); //not finished
 var
  allconst: boolean;
  i1,i2: int32;
  po1,po2: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
+ po3: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
- outhandle('SETFACT');
+ outhandle('LISTFACT');
 {$endif}
  with info do begin
+  po3:= @contextstack[s.stackindex];
   ele.checkcapacity(ek_type);
   if s.stacktop = s.stackindex then begin //empty set
-   with contextstack[s.stackindex] do begin
-    d.kind:= ck_const;
+   initdatacontext(po3^.d,ck_const);
+   with po3^ do begin
     d.dat.datatyp:= emptyset;
-    d.dat.indirection:= 0;
     d.dat.constval.kind:= dk_set;
 //    d.dat.constval.vset.settype:= 0; 
    end;
@@ -1733,17 +1736,17 @@ begin
    with po1^ do begin
     infoset.itemtype:= ele.eledatarel(po2);
    end;
-   with contextstack[s.stackindex] do begin
-    d.dat.indirection:= 0;
+   with po3^ do begin
     d.dat.datatyp.flags:= [];
     d.dat.datatyp.typedata:= ele.eledatarel(po1);
     d.dat.datatyp.indirectlevel:= 0;
     if allconst then begin
-     d.kind:= ck_const;
+     initdatacontext(po3^.d,ck_const);
      d.dat.constval.kind:= dk_set;
      d.dat.constval.vset.value:= ca1;
     end
     else begin
+     initdatacontext(po3^.d,ck_fact);
      with insertitem(oc_pushimm32,1,0)^ do begin //first op
       setimmint32(ca1,par);
       i2:= par.ssad;
@@ -1757,7 +1760,6 @@ begin
        end;
       end;
      end;
-     d.kind:= ck_fact;
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
    end;
@@ -1766,6 +1768,7 @@ begin
   dec(s.stackindex);
  end;
 end;
+
 (*
 procedure handlesimpexp();
 begin

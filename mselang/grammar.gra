@@ -980,7 +980,7 @@ fact0,fact1,,
  '@',addressopfact-*
 // '@',!handleaddressfact-
  '(',bracketstart-*
- '[',setfact-*
+ '[',listfact-*
  @decnum,num*
  '%',binnum-*
  '&',octnum-*
@@ -1012,16 +1012,16 @@ negfact,,,handlenegfact
  '',fact*
 notfact,,,handlenotfact
  '',fact*
-setfact,setfact1,,        //or open array
+listfact,listfact1,,       
  ${whitespace}
- ']',setfact3-     //empty set
-setfact1,setfact2,,
+ ']',listfact3-     //empty list
+listfact1,listfact2,,
  '',exp^*
-setfact2,,,
+listfact2,,,
  ${whitespace}
- ',',setfact1-
- ']',setfact3-
-setfact3,,,handlesetfact
+ ',',listfact1-
+ ']',listfact3-
+listfact3,,,handlelistfact
 
 //addressfact,,handleaddressfactentry,handleaddressfact
 // '',fact*

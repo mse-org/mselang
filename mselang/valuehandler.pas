@@ -1579,6 +1579,7 @@ var
  paramco1: integer;
  origparent: elementoffsetty;
  ssabefore: int32;
+ contextindexpo: pcontextitemty;
 label
  endlab;
 begin
@@ -1676,7 +1677,8 @@ begin
    po1:= ele.eleinfoabs(prefdataty(po2)^.ref);
    po2:= @po1^.data;
   end;
-  with contextstack[s.stackindex] do begin
+  contextindexpo:= @contextstack[s.stackindex];
+  with contextindexpo^ do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
     ek_property: begin                      //todo: indirection
@@ -1812,8 +1814,7 @@ begin
     end;
     ek_const: begin
      if checknoparam then begin
-      d.kind:= ck_const;
-      d.dat.indirection:= 0;
+      initdatacontext(contextindexpo^.d,ck_const);
       d.dat.datatyp:= pconstdataty(po2)^.val.typ;
       d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
