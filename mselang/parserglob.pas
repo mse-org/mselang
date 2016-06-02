@@ -99,7 +99,7 @@ const
  dummyaddress = 0;
 
 type 
- contextkindty = (ck_none,ck_error,
+ contextkindty = (ck_none,ck_error,ck_space,
                   ck_interface,ck_implementation,ck_prog,
                   ck_block,ck_end,
                   ck_ident,ck_number,ck_str,ck_subdef,ck_list,

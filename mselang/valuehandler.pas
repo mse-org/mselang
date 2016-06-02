@@ -26,11 +26,18 @@ type
  compatibilitycheckoptionty = (cco_novarconversion);
  compatibilitycheckoptionsty = set of compatibilitycheckoptionty;
  
+function tryconvert(const acontext: pcontextitemty;
+          const dest: ptypedataty; destindirectlevel: integer;
+          const aoptions: convertoptionsty): boolean;
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
+function tryconvert(const acontext: pcontextitemty;
+                                               const dest: systypety;
+                           const aoptions: convertoptionsty = []): boolean;
 function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
+
 function checkcompatibledatatype(const sourcestackoffset: int32;
                          const desttypedata: elementoffsetty;
                          const destadress: addressvaluety;
@@ -260,11 +267,12 @@ const
   )
  );
 
-function tryconvert(const stackoffset: integer;{var context: contextitemty;}
+function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
-                       const aoptions: convertoptionsty): boolean;
+          const aoptions: convertoptionsty): boolean;
 var                     //todo: optimize, use tables, complete
  source1,po1: ptypedataty;
+ stackoffset: int32;
 
  procedure convertsize(const atable: convertsizetablety);
  var
@@ -284,7 +292,7 @@ var                     //todo: optimize, use tables, complete
     end
     else begin
      with info do begin
-      i1:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
+      i1:= acontext^.d.dat.fact.ssaindex;
      end;
      with insertitem(op1,stackoffset,-1)^ do begin
       par.ssas1:= i1;
@@ -313,7 +321,8 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
+ stackoffset:= getstackoffset(acontext);
+ with info,acontext^ do begin
   pointerconv:= false;
   source1:= ele.eledataabs(d.dat.datatyp.typedata);
   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
@@ -646,12 +655,31 @@ begin
  end;
 end;
 
-function tryconvert(const stackoffset: integer; const dest: systypety;
+function tryconvert(const stackoffset: integer;{var context: contextitemty;}
+          const dest: ptypedataty; destindirectlevel: integer;
+                       const aoptions: convertoptionsty): boolean;
+begin
+ with info do begin
+  result:= tryconvert(@contextstack[s.stackindex+stackoffset],dest,
+                                              destindirectlevel,aoptions); 
+ end;
+end;
+
+function tryconvert(const acontext: pcontextitemty;
+                                               const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
 begin
  with sysdatatypes[dest] do begin
-  result:= tryconvert(stackoffset,
+  result:= tryconvert(acontext,
                               ele.eledataabs(typedata),indirectlevel,aoptions);
+ end;
+end;
+
+function tryconvert(const stackoffset: integer; const dest: systypety;
+                           const aoptions: convertoptionsty = []): boolean;
+begin
+ with info do begin
+  result:= tryconvert(@contextstack[s.stackindex+stackoffset],dest,aoptions);
  end;
 end;
 
@@ -1643,7 +1671,7 @@ begin
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
-   paramco:= s.stacktop-s.stackindex-2-idents.high;
+   paramco:= s.stacktop-s.stackindex-2-idents.high-getspacecount(2);
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context
    end;

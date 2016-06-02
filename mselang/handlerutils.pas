@@ -127,9 +127,13 @@ function compaddress(const a,b: addressvaluety): integer;
 function getcontextopoffset(const stackoffset: int32): int32;
             //returns opcount in context
 
+function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
+                               const retainconst: boolean = false): boolean;
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 function getaddress(const stackoffset: integer;
+                                  const endaddress: boolean): boolean;
+function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
@@ -204,7 +208,15 @@ function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
+function getstackoffset(const acontext: pcontextitemty): int32;
 function getcontextssa(const stackoffset: integer): int32;
+function getnospace(const stackoffset: int32; out apo: pcontextitemty): boolean;
+                                   //true if found
+function getnextnospace(const current: pcontextitemty;
+                                      out apo: pcontextitemty): boolean;
+                                   //true if found
+function getspacecount(const stackoffset: int32): int32;
+               //counts ck_space from stackoffset to stacktop
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 procedure initfactcontext(const stackoffset: int32);
@@ -2040,6 +2052,18 @@ begin
  pushd(true,stackoffset,aopoffset,address,varele,offset,opdatatype);
 end;
 
+function getstackoffset(const acontext: pcontextitemty): int32;
+begin
+ result:= acontext - pcontextitemty(pointer(info.contextstack)) - 
+                                                 info.s.stackindex;
+{$ifdef mse_checkinternalerror}
+ if (result + info.s.stackindex < 0) or 
+                (result + info.s.stackindex > info.s.stacktop) then begin
+  internalerror(ie_handler,'20160602C');
+ end;
+{$endif}
+end;
+
 function getcontextssa(const stackoffset: integer): int32;
 var
  i1: int32;
@@ -2065,6 +2089,65 @@ begin
      end;
     end;
    end;
+  end;
+ end;
+end;
+
+function getnospace(const stackoffset: int32; out apo: pcontextitemty): boolean;
+                                   //true if found
+var
+ po1,pe: pcontextitemty;
+begin
+ result:= false;
+ with info do begin
+  po1:= @contextstack[s.stackindex+stackoffset];
+  pe:= @contextstack[s.stacktop];
+  while po1 <= pe do begin
+   if po1^.d.kind <> ck_space then begin
+    apo:= po1;
+    result:= true;
+    break;
+   end;
+   inc(po1);
+  end;
+ end;
+end;
+
+function getnextnospace(const current: pcontextitemty;
+                                      out apo: pcontextitemty): boolean;
+                                   //true if found
+var
+ po1,pe: pcontextitemty;
+begin
+ result:= false;
+ with info do begin
+  po1:= current+1;
+  pe:= @contextstack[s.stacktop];
+  while po1 <= pe do begin
+   if po1^.d.kind <> ck_space then begin
+    apo:= po1;
+    result:= true;
+    break;
+   end;
+   inc(po1);
+  end;
+ end;
+end;
+
+function getspacecount(const stackoffset: int32): int32;
+               //counts ck_space from stackoffset to stacktop
+var
+ po1,pe: pcontextitemty;
+begin
+ result:= 0;
+ with info do begin
+  po1:= @contextstack[s.stackindex+stackoffset];
+  pe:= @contextstack[s.stacktop];
+  while po1 <= pe do begin
+   if po1^.d.kind = ck_space then begin
+    inc(result);
+   end;
+   inc(po1);
   end;
  end;
 end;
@@ -2229,11 +2312,11 @@ const
  //das_f16,       das_f32,       das_f64        das_sub,      das_meta
    oc_indirectf16,oc_indirectf32,oc_indirectf64,oc_indirectpo,oc_none);
 
-function getvalue(const stackoffset: integer; const adatasize: databitsizety;
-                                  const retainconst: boolean = false): boolean;
-
+function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
+                               const retainconst: boolean = false): boolean;
 var
  opdata1: typeallocinfoty;
+ stackoffset: int32;
 
  procedure doindirect();
  var
@@ -2241,7 +2324,7 @@ var
   si1: databitsizety;
   ssabefore: integer;
  begin
-  with info,contextstack[s.stackindex+stackoffset] do begin
+  with acontext^ do begin
    if d.dat.datatyp.typedata > 0 then begin
     opdata1:= getopdatatype(d.dat.datatyp.typedata,d.dat.datatyp.indirectlevel);
     ssabefore:= d.dat.fact.ssaindex;
@@ -2257,7 +2340,7 @@ var
 
  procedure doref();
  begin
-  with info,contextstack[s.stackindex+stackoffset] do begin
+  with acontext^ do begin
    if d.dat.indirection < 0 then begin //dereference
     inc(d.dat.indirection); //correct addr handling
     if not pushindirection(stackoffset,false) then begin
@@ -2285,7 +2368,8 @@ label
 
 begin                    //todo: optimize
  result:= false;
- with info,contextstack[s.stackindex+stackoffset] do begin
+ stackoffset:= getstackoffset(acontext);
+ with info,acontext^ do begin
   po1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
   case d.kind of
    ck_ref: begin
@@ -2410,13 +2494,24 @@ errlab:
  end;
 end;
 
-function getaddress(const stackoffset: integer;
+function getvalue(const stackoffset: integer; const adatasize: databitsizety;
+                                  const retainconst: boolean = false): boolean;
+begin
+ with info do begin
+  result:= getvalue(@contextstack[s.stackindex+stackoffset],
+                                                adatasize,retainconst);
+ end;
+end;
+
+function getaddress(const acontext: pcontextitemty;
                                 const endaddress: boolean): boolean;
 var
  si1: databitsizety;
+ stackoffset: int32;
 begin
  result:= false;
- with info,contextstack[s.stackindex+stackoffset] do begin
+ stackoffset:= getstackoffset(acontext);
+ with acontext^ do begin
  {$ifdef mse_checkinternalerror}                             
   if not (d.kind in datacontexts) then begin
    internalerror(ie_handler,'20140405A');
@@ -2476,17 +2571,33 @@ begin
  result:= true;
 end;
 
-function getassignaddress(const stackoffset: integer;
+function getaddress(const stackoffset: integer;
+                                const endaddress: boolean): boolean;
+begin
+ with info do begin
+  result:= getaddress(@contextstack[s.stackindex+stackoffset],endaddress);
+ end;
+end;
+
+function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 begin
  result:= false;
- with info,contextstack[s.stackindex+stackoffset] do begin
+ with acontext^ do begin
   if (d.kind in datacontexts) then begin
-   result:= getaddress(stackoffset,endaddress);
+   result:= getaddress(acontext,endaddress);
   end
   else begin
-   errormessage(err_argnotassign,[],stackoffset);
+   errormessage(err_argnotassign,[],getstackoffset(acontext));
   end;
+ end;
+end;
+
+function getassignaddress(const stackoffset: integer;
+                                  const endaddress: boolean): boolean;
+begin
+ with info do begin
+  result:= getassignaddress(@contextstack[s.stackindex+stackoffset],endaddress);
  end;
 end;
 

@@ -1397,6 +1397,7 @@ begin
    end;
 *)
    indpo:= @contextstack[s.stackindex];
+   indpo^.d.kind:= ck_space;
    if hf_propindex in toppo^.d.handlerflags then begin //
     if stf_getaddress in s.currentstatementflags then begin
      errormessage(err_varidentexpected,[],1);
@@ -1404,7 +1405,7 @@ begin
     else begin
      if stf_rightside in s.currentstatementflags then begin
       getvalue(1,das_none);
-      indpo^.d:= (indpo+1)^.d;
+//      indpo^.d:= (indpo+1)^.d;
      end
      else begin
       goto endlab1;
@@ -1413,8 +1414,8 @@ begin
     goto endlab;
    end
    else begin
-    with indpo^ do begin
-     d:= toppo^.d;
+    with toppo^ do begin
+//     d:= toppo^.d;
      if stf_getaddress in s.currentstatementflags
                 {fl1 * [ff_address,ff_addressfact] <> []} then begin
       case d.kind of
@@ -1457,8 +1458,9 @@ begin
       {$endif}
       end;
      end;
-     s.currentstatementflags:= b.flags;
     end;
+    s.currentstatementflags:= indpo^.b.flags;
+    goto endlab1; //no stacktop release
    end;
   end
   else begin
@@ -1695,17 +1697,17 @@ var
  po1,po2: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
- po3: pcontextitemty;
+ indpo: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('LISTFACT');
 {$endif}
  with info do begin
-  po3:= @contextstack[s.stackindex];
+  indpo:= @contextstack[s.stackindex];
   ele.checkcapacity(ek_type);
   if s.stacktop = s.stackindex then begin //empty set
-   initdatacontext(po3^.d,ck_const);
-   with po3^ do begin
+   initdatacontext(indpo^.d,ck_const);
+   with indpo^ do begin
     d.dat.datatyp:= emptyset;
     d.dat.constval.kind:= dk_set;
 //    d.dat.constval.vset.settype:= 0; 
@@ -1717,37 +1719,39 @@ begin
    allconst:= true;
    for i1:= s.stackindex+1 to s.stacktop do begin
     with contextstack[i1] do begin
-    {$ifdef mse_checkinternalerror}
-     if not (d.kind in datacontexts) then begin
-      internalerror(ie_handler,'20151007A');
-     end;
-    {$endif}
-     po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
-     if po2 = nil then begin
-      po2:= po1;
-     end;
-     if not (po1^.h.kind in ordinaldatakinds) or 
-                                  (po1^.h.indirectlevel <> 0) then begin
-      errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
-     end
-     else begin
-      if (po1 <> po2) then begin //todo: try to convert ordinals
-       incompatibletypeserror(po2,po1,i1-s.stackindex);
+     if d.kind <> ck_space then begin
+     {$ifdef mse_checkinternalerror}
+      if not (d.kind in datacontexts) then begin
+       internalerror(ie_handler,'20151007A');
       end;
-     end;
-     case d.kind of 
-      ck_const: begin
-       ca2:= 1 shl d.dat.constval.vcardinal;
-       if ca1 and ca2 <> 0 then begin
-        errormessage(err_duplicatesetelement,[],i1-s.stackindex);
-       end;
-       ca1:= ca1 or ca2;
+     {$endif}
+      po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+      if po2 = nil then begin
+       po2:= po1;
+      end;
+      if not (po1^.h.kind in ordinaldatakinds) or 
+                                   (po1^.h.indirectlevel <> 0) then begin
+       errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
       end
       else begin
-       allconst:= false;
-       getvalue(i1-s.stackindex,das_32);
+       if (po1 <> po2) then begin //todo: try to convert ordinals
+        incompatibletypeserror(po2,po1,i1-s.stackindex);
+       end;
       end;
-     end; 
+      case d.kind of 
+       ck_const: begin
+        ca2:= 1 shl d.dat.constval.vcardinal;
+        if ca1 and ca2 <> 0 then begin
+         errormessage(err_duplicatesetelement,[],i1-s.stackindex);
+        end;
+        ca1:= ca1 or ca2;
+       end
+       else begin
+        allconst:= false;
+        getvalue(i1-s.stackindex,das_32);
+       end;
+      end; 
+     end;
     end;
    end;
    po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
@@ -1755,17 +1759,17 @@ begin
    with po1^ do begin
     infoset.itemtype:= ele.eledatarel(po2);
    end;
-   with po3^ do begin
+   with indpo^ do begin
     d.dat.datatyp.flags:= [];
     d.dat.datatyp.typedata:= ele.eledatarel(po1);
     d.dat.datatyp.indirectlevel:= 0;
     if allconst then begin
-     initdatacontext(po3^.d,ck_const);
+     initdatacontext(indpo^.d,ck_const);
      d.dat.constval.kind:= dk_set;
      d.dat.constval.vset.value:= ca1;
     end
     else begin
-     initdatacontext(po3^.d,ck_fact);
+     initdatacontext(indpo^.d,ck_fact);
      with insertitem(oc_pushimm32,1,0)^ do begin //first op
       setimmint32(ca1,par);
       i2:= par.ssad;
@@ -2162,8 +2166,9 @@ begin
 {$endif}
  with info,contextstack[s.stacktop] do begin
   if not (hf_propindex in d.handlerflags) then begin
-   contextstack[s.stacktop-1].d:= d;
-   dec(s.stacktop);
+   contextstack[s.stackindex].d.kind:= ck_space;
+//   contextstack[s.stacktop-1].d:= d;
+//   dec(s.stacktop);
   end;
  end;
 end;
@@ -2175,9 +2180,10 @@ begin
 {$endif}
  with info,contextstack[s.stacktop] do begin
   if not (hf_propindex in d.handlerflags) then begin
-   resolveshortcuts(0,1);
-   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
-   s.stacktop:= s.stackindex;
+   resolveshortcuts(0,1); //todo: ck_space handling
+   contextstack[s.stackindex].d.kind:= ck_space;
+//   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
+//   s.stacktop:= s.stackindex;
   end;
   dec(s.stackindex);
  end;
@@ -2718,9 +2724,10 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   if not errorfla then begin
-   if (s.stacktop-s.stackindex = 2) then begin
-    dest:= @contextstack[s.stackindex+1];
-    source:= @contextstack[s.stackindex+2];
+   if getnospace(1,dest) and getnextnospace(dest,source) and 
+                            (source = @contextstack[s.stacktop]) then begin
+//    dest:= @contextstack[s.stackindex+1];
+//    source:= @contextstack[s.stackindex+2];
     isconst:= source^.d.kind = ck_const;
     with dest^ do begin
      if d.kind = ck_prop then begin
@@ -2747,8 +2754,8 @@ begin
      end;
     end;
     with dest^ do begin
-     if getassignaddress(1,false) then begin
-      destkind:= contextstack[s.stackindex+1].d.kind;
+     if getassignaddress(dest,false) then begin
+      destkind:= d.kind;
       typematch:= false;
       indi:= false;
       dec(d.dat.datatyp.indirectlevel);
@@ -2809,7 +2816,7 @@ begin
       if d.dat.datatyp.indirectlevel >= 1 then begin
        datasi1:= das_pointer;
       end;
-      if isconst and not tryconvert(2,destvar.typ,indilev1,[]) then begin
+      if isconst and not tryconvert(source,destvar.typ,indilev1,[]) then begin
        assignmenterror(contextstack[s.stacktop].d,destvar);
        goto endlab;
       end;
@@ -2854,7 +2861,7 @@ begin
         needsdecref:= false;
        end;
       end;
-      if not getvalue(2,datasi1) then begin
+      if not getvalue(source,datasi1) then begin
        goto endlab;
       end;
      end
