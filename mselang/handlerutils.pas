@@ -3202,6 +3202,9 @@ begin
       write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
                                            integer(d.ident.flags),true));
      end;
+     ck_list: begin
+      write('count:',d.list.count);
+     end;
      ck_fact,ck_subres: begin
       writedat(d.dat);
       write('ssa:',d.dat.fact.ssaindex,' ');

@@ -1360,7 +1360,7 @@ procedure handlefact1();
 var
  i1: integer;
  c1: card64;
- pind,ptop: pcontextitemty;
+ indpo,toppo: pcontextitemty;
 // fl1: factflagsty;
 label
  endlab,endlab1;
@@ -1370,29 +1370,41 @@ begin
 {$endif}
  with info do begin
   if s.stackindex < s.stacktop then begin
-   ptop:= @contextstack[s.stacktop];
-   with ptop^ do begin
+   toppo:= @contextstack[s.stacktop];
+   with toppo^ do begin
     case d.kind of
      ck_str: begin
-      initdatacontext(ptop^.d,ck_const);
+      initdatacontext(toppo^.d,ck_const);
       d.dat.datatyp:= sysdatatypes[st_string8];
       d.dat.constval.kind:= dk_string8;
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
-      setnumberconst(ptop,d.number.value);
+      setnumberconst(toppo,d.number.value);
      end;
     end;
    end;
-   pind:= @contextstack[s.stackindex];
-   if hf_propindex in ptop^.d.handlerflags then begin //
+(*
+  {$ifdef mse_checkinternalerror}
+   if not (toppo^.d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20160602B');
+   end;
+  {$endif}
+   if dcf_listitem in toppo^.d.dat.flags then begin
+    repeat
+     dec(pointer(toppo),sizeof(contextitemty));
+    until toppo^.d.kind = ck_list;
+   end;
+*)
+   indpo:= @contextstack[s.stackindex];
+   if hf_propindex in toppo^.d.handlerflags then begin //
     if stf_getaddress in s.currentstatementflags then begin
      errormessage(err_varidentexpected,[],1);
     end
     else begin
      if stf_rightside in s.currentstatementflags then begin
       getvalue(1,das_none);
-      pind^.d:= (pind+1)^.d;
+      indpo^.d:= (indpo+1)^.d;
      end
      else begin
       goto endlab1;
@@ -1401,8 +1413,8 @@ begin
     goto endlab;
    end
    else begin
-    with pind^ do begin
-     d:= ptop^.d;
+    with indpo^ do begin
+     d:= toppo^.d;
      if stf_getaddress in s.currentstatementflags
                 {fl1 * [ff_address,ff_addressfact] <> []} then begin
       case d.kind of
@@ -1655,7 +1667,7 @@ end;
 (*
 procedure handlelistfact(); //not finished
 var
- po1,pe: 
+ po1,pe: pdatacontextty;
 begin
 {$ifdef mse_debugparser}
  outhandle('LISTFACT');
@@ -1663,8 +1675,15 @@ begin
  with info do begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_list;
-   d.count:= s.stacktop - s.stackindex;
+   d.list.count:= s.stacktop - s.stackindex;
+   po1:= @contextstack[s.stackindex+1].d.dat;
+   pe:= pointer(po1) + d.list.count * sizeof(contextitemty);
+   while po1 < pe do begin
+    include(po1^.flags,dcf_listitem);
+    inc(pointer(po1),sizeof(contextitemty));
+   end;
   end;
+  dec(s.stackindex);
  end;
 end;
 *)

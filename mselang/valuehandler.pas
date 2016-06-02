@@ -1039,7 +1039,7 @@ var
 
 var
  realparamco: int32; //including defaults
- contextindexpo: pcontextitemty;
+ indpo: pcontextitemty;
 label
  paramloopend;
 begin
@@ -1047,8 +1047,8 @@ begin
  outhandle('dosub');
 {$endif}
  with info do begin
-  contextindexpo:= @contextstack[s.stackindex];
-  with contextindexpo^ do begin //classinstance, result
+  indpo:= @contextstack[s.stackindex];
+  with indpo^ do begin //classinstance, result
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
     needsvarcheck:= true;
@@ -1127,7 +1127,7 @@ begin
    end;
  
    if stf_getaddress in s.currentstatementflags then begin
-    initdatacontext(contextindexpo^.d,ck_ref);
+    initdatacontext(indpo^.d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
     d.dat.datatyp.indirectlevel:= 1;
     d.dat.datatyp.flags:= [tf_subad];
@@ -1572,7 +1572,7 @@ var
  paramco1: integer;
  origparent: elementoffsetty;
  ssabefore: int32;
- contextindexpo: pcontextitemty;
+ indpo: pcontextitemty;
 label
  endlab;
 begin
@@ -1670,8 +1670,8 @@ begin
    po1:= ele.eleinfoabs(prefdataty(po2)^.ref);
    po2:= @po1^.data;
   end;
-  contextindexpo:= @contextstack[s.stackindex];
-  with contextindexpo^ do begin
+  indpo:= @contextstack[s.stackindex];
+  with indpo^ do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
     ek_property: begin                      //todo: indirection
@@ -1680,7 +1680,7 @@ begin
        errormessage(err_noclass,[],0);
        goto endlab;
       end;
-      initdatacontext(contextindexpo^.d,ck_prop);
+      initdatacontext(indpo^.d,ck_prop);
       d.dat.prop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
        d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
@@ -1720,7 +1720,7 @@ begin
        {$endif}
         end;
 //        initfactcontext(0);
-        initdatacontext(contextindexpo^.d,ck_ref);
+        initdatacontext(indpo^.d,ck_ref);
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.datatyp.flags:= vf.flags;
@@ -1765,7 +1765,7 @@ begin
      end
      else begin //ek_var
       if isgetfact then begin
-       initdatacontext(contextindexpo^.d,ck_ref);
+       initdatacontext(indpo^.d,ck_ref);
        d.dat.ref.c.address:= trackaccess(pvardataty(po2));
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
@@ -1806,7 +1806,7 @@ begin
     end;
     ek_const: begin
      if checknoparam then begin
-      initdatacontext(contextindexpo^.d,ck_const);
+      initdatacontext(indpo^.d,ck_const);
       d.dat.datatyp:= pconstdataty(po2)^.val.typ;
       d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
