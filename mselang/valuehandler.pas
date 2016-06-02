@@ -1505,20 +1505,13 @@ var
        with contextstack[s.stackindex],ppropertydataty(po4)^ do begin
         case d.kind of
          ck_ref: begin
-//          if pof_readsub in flags then begin
-//           getvalue(0,das_none);
-//           dosub(ele.eledataabs(readele),false,isinherited,paramco,
-//                                                           idents.high=0);
-//          end
-//          else begin
-           d.kind:= ck_prop;
-           dec(d.dat.indirection);
-           dec(d.dat.datatyp.indirectlevel);
-           d.dat.datatyp.typedata:= typ;
-           d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
-                         ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
-           d.dat.prop.propele:= ele.eledatarel(po4);
-//          end;
+          d.kind:= ck_prop;
+          dec(d.dat.indirection);
+          dec(d.dat.datatyp.indirectlevel);
+          d.dat.datatyp.typedata:= typ;
+          d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                        ptypedataty(ele.eledataabs(typ))^.h.indirectlevel;
+          d.dat.prop.propele:= ele.eledatarel(po4);
          end;
         {$ifdef mse_checkinternalerror}
          else begin
@@ -1536,9 +1529,6 @@ var
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
          getvalue(0,das_none);
-//         pushinsertdata(0,false,pvardataty(po2)^.address,ele.eledatarel(po2),
-//                                                offs1,bitoptypes[das_pointer]);
-//         initfactcontext(0); //set ssa
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
@@ -1690,7 +1680,7 @@ begin
        errormessage(err_noclass,[],0);
        goto endlab;
       end;
-      d.kind:= ck_prop;
+      initdatacontext(contextindexpo^.d,ck_prop);
       d.dat.prop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
        d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
