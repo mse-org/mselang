@@ -1039,382 +1039,385 @@ var
 
 var
  realparamco: int32; //including defaults
+ contextindexpo: pcontextitemty;
 label
  paramloopend;
 begin
 {$ifdef mse_debugparser}
  outhandle('dosub');
 {$endif}
- with info,contextstack[s.stackindex] do begin //classinstance, result
-  paramschecked:= false;
-  if asub^.nextoverload >= 0 then begin //check overloads
-   needsvarcheck:= true;
-   subdata1:= asub;
-   matchcount1:= 0;
-   cost1:= bigint;
-   while true do begin
-   {$ifdef mse_checkinternalerror}
-    if datatoele(subdata1)^.header.kind <> ek_sub then begin
-     internalerror(ie_handler,'20160517A');
-    end;
-   {$endif}
-    subparams1:= @subdata1^.paramsrel;
-    subparamse:= subparams1 + subdata1^.paramcount;
-    totparamco:= paramco;
-    if [sf_function] * subdata1^.flags <> [] then begin
-     inc(totparamco); //result parameter
-     inc(subparams1);
-    end;
-    if sf_method in subdata1^.flags then begin
-     inc(totparamco); //self parameter
-     inc(subparams1);
-    end;
-    i3:= 0;
-    bo1:= false;
-//    if totparamco = subdata1^.paramcount then begin //todo: default parameter
-    if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
-               (totparamco <= subdata1^.paramcount) then begin 
-     i1:= s.stacktop-paramco+1;
-     while subparams1 < subparamse do begin
-      if i1 > s.stacktop then begin
-       i1:= -1;
-       break;
-      end;
-      vardata1:= ele.eledataabs(subparams1^);
-      bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
-      if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1-s.stackindex,
-                       vardata1^.vf.typ,vardata1^.address,[],i2) then begin
-                                                          //report byvalue,
-                                                          //byaddress dup
-       goto paramloopend;
-      end;
-      i2:= i2*32; //room for default params cost
-      if i3 < i2 then begin
-       i3:= i2;             //maximal cost
-      end;
+ with info do begin
+  contextindexpo:= @contextstack[s.stackindex];
+  with contextindexpo^ do begin //classinstance, result
+   paramschecked:= false;
+   if asub^.nextoverload >= 0 then begin //check overloads
+    needsvarcheck:= true;
+    subdata1:= asub;
+    matchcount1:= 0;
+    cost1:= bigint;
+    while true do begin
+    {$ifdef mse_checkinternalerror}
+     if datatoele(subdata1)^.header.kind <> ek_sub then begin
+      internalerror(ie_handler,'20160517A');
+     end;
+    {$endif}
+     subparams1:= @subdata1^.paramsrel;
+     subparamse:= subparams1 + subdata1^.paramcount;
+     totparamco:= paramco;
+     if [sf_function] * subdata1^.flags <> [] then begin
+      inc(totparamco); //result parameter
       inc(subparams1);
-      inc(i1);
      end;
-     if i1 < 0 then begin
-      inc(i3);      //needs default params
+     if sf_method in subdata1^.flags then begin
+      inc(totparamco); //self parameter
+      inc(subparams1);
      end;
-     if i3 < cost1 then begin
-      cost1:= i3;
-      asub:= subdata1;
-      matchcount1:= 1;
-      needsvarcheck:= bo1;
-     end
-     else begin
-      if i3 = cost1 then begin
-       inc(matchcount1);
-      end;
-     end;
-    end;
-paramloopend:
-    if subdata1^.nextoverload < 0 then begin
-     break;
-    end;
-    subdata1:= ele.eledataabs(subdata1^.nextoverload);
-   end;
-   if matchcount1 > 1 then begin
-    errormessage(err_cantdetermine,[]);
-    exit;
-   end;
-   paramschecked:= not needsvarcheck;
-  end;
-
-  if stf_getaddress in s.currentstatementflags then begin
-   d.kind:= ck_ref;
-   d.dat.datatyp.typedata:= asub^.typ;
-   d.dat.datatyp.indirectlevel:= 1;
-   d.dat.datatyp.flags:= [tf_subad];
-   d.dat.indirection:= 0;
-   d.dat.ref.c.address:= nilopad;
-   d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
-   d.dat.ref.offset:= 0;
-   d.dat.ref.c.varele:= 0;
-  end
-  else begin
-   if dsf_indirect in aflags then begin
-    callssa:= d.dat.fact.ssaindex;
-   end;
-   subparams1:= @asub^.paramsrel;
-   totparamco:= paramco;
-   if [sf_function] * asub^.flags <> [] then begin
-    inc(totparamco); //result parameter
-   end;
-   if sf_method in asub^.flags then begin
-    inc(totparamco); //self parameter
-   end;
-   if (totparamco < asub^.paramcount - asub^.defaultparamcount) or 
-               (totparamco > asub^.paramcount) then begin 
-                                        //todo: use correct source pos
-    identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
-//    exit;
-   end
-   else begin
-   {$ifdef mse_checkinternalerror}
-    if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and
-        not(dsf_isinherited in aflags) and (d.kind <> ck_fact) then begin
-     internalerror(ie_handler,'20160219A');
-    end;
-   {$endif}
-    instancessa:= d.dat.fact.ssaindex; //for sf_method
-    hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
-    if hasresult then begin
-     initfactcontext(0); //set ssaindex
-     if sf_constructor in asub^.flags then begin 
-                                 //todo: check instance call
-      bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
-                                          //get class type
-     {$ifdef mse_checkinternalerror}
-      if not bo1 {or (firstnotfound <= idents1.high)} then begin 
-       internalerror(ie_handler,'20150325A'); 
-      end;
-     {$endif}     
-      with insertitem(oc_initclass,0,-1)^,par.initclass do begin
-       classdef:= po3^.infoclass.defs.address;
-      end;
-      instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-     end
-     else begin
-      po3:= ele.eledataabs(asub^.resulttype.typeele);
-     end;
-     d.kind:= ck_subres;
-     d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
-     d.dat.datatyp.typedata:= ele.eledatarel(po3);        
-     d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-     inc(subparams1);
-    end;
-
-    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
-                                                             //max
-    parallocstart:= getsegmenttopoffs(seg_localloc);    
-
-    if sf_function in asub^.flags then begin
-     with pparallocinfoty(
-              allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-      ssaindex:= 0; //not used
-      size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
-     end;
-    end;
-
-    if sf_method in asub^.flags then begin
-     selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
-     with selfpo^ do begin
-      ssaindex:= instancessa;
-      size:= bitoptypes[das_pointer];
-     end;
-     inc(subparams1); //instance pointer
-    end;
-    if co_mlaruntime in compileoptions then begin
-     i1:= 0;
-     if hasresult then begin
-      if sf_constructor in asub^.flags then begin
-       i1:= parent-s.stackindex;           //??? verfy!
-      end;
-      i1:= pushinsertvar(i1,-1,asub^.resulttype.indirectlevel,po3){ + 
-                                                                 vpointersize}; 
-                                   //alloc space for return value
-//      if sf_constructor in asub^.flags then begin
-//       int1:= int1-vpointersize;  //class info pointer
-//      end
-//      else begin
-      if not (sf_constructor in asub^.flags) then begin
-       with insertitem(oc_pushstackaddr,0,-1)^.
-                                      par.memop.tempdataaddress do begin
-                                               //result var param
-        a.address:= -i1{+vpointersize};
-        offset:= 0;
+     i3:= 0;
+     bo1:= false;
+ //    if totparamco = subdata1^.paramcount then begin //todo: default parameter
+     if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
+                (totparamco <= subdata1^.paramcount) then begin 
+      i1:= s.stacktop-paramco+1;
+      while subparams1 < subparamse do begin
+       if i1 > s.stacktop then begin
+        i1:= -1;
+        break;
        end;
-       i1:= i1 + vpointersize;
+       vardata1:= ele.eledataabs(subparams1^);
+       bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
+       if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1-s.stackindex,
+                        vardata1^.vf.typ,vardata1^.address,[],i2) then begin
+                                                           //report byvalue,
+                                                           //byaddress dup
+        goto paramloopend;
+       end;
+       i2:= i2*32; //room for default params cost
+       if i3 < i2 then begin
+        i3:= i2;             //maximal cost
+       end;
+       inc(subparams1);
+       inc(i1);
+      end;
+      if i1 < 0 then begin
+       inc(i3);      //needs default params
+      end;
+      if i3 < cost1 then begin
+       cost1:= i3;
+       asub:= subdata1;
+       matchcount1:= 1;
+       needsvarcheck:= bo1;
+      end
+      else begin
+       if i3 = cost1 then begin
+        inc(matchcount1);
+       end;
       end;
      end;
-     if (sf_method in asub^.flags) then begin
-          //param order is [returnvalue pointer],instancepo,{params}
-      with insertitem(oc_pushduppo,0,-1)^ do begin 
-       par.voffset:= -i1-vpointersize; //including push address
-      end;
+ paramloopend:
+     if subdata1^.nextoverload < 0 then begin
+      break;
      end;
+     subdata1:= ele.eledataabs(subdata1^.nextoverload);
     end;
-    paramsize1:= 0;
-    realparamco:= asub^.paramcount-(totparamco-paramco);
-    parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
-                                 realparamco);
-                                 //including default params
-    if dsf_indexedsetter in aflags then begin
-     inc(parallocpo); //second, first index
-     inc(subparams1);
-     for i1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
-      doparam(i1,subparams1,parallocpo);
-      inc(subparams1);
-      inc(parallocpo);
-     end;
-     dodefaultparams();
-     lastparamsize1:= paramsize1;
-     dec(parallocpo,paramco); //first, value
-     dec(subparams1,paramco);
-     doparam(s.stacktop,subparams1,parallocpo);
-     lastparamsize1:= paramsize1-lastparamsize1;
-    end
-    else begin
-     for i1:= s.stacktop-paramco+1 to s.stacktop do begin
-      doparam(i1,subparams1,parallocpo);
-      inc(subparams1);
-      inc(parallocpo);
-     end;
-     dodefaultparams();
+    if matchcount1 > 1 then begin
+     errormessage(err_cantdetermine,[]);
+     exit;
     end;
-              //todo: exeenv flag for constructor and destructor
-    if not hasresult then begin
-     d.kind:= ck_subcall;
-     if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
-                //owned method
-     {$ifdef mse_checkinternalerror}
-      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
-       internalerror(ie_value,'20140505A');
-      end;
-     {$else}
-      ele.findcurrent(tk_self,[],allvisi,vardata1);
-     {$endif}
-      with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
-       par.memop.t:= bitoptypes[das_pointer];
-       par.memop.locdataaddress.a.framelevel:= -1;
-       par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
-       par.memop.locdataaddress.offset:= 0;
-       selfpo^.ssaindex:= par.ssad;
-      end;
-     end;
-     if (dsf_indexedsetter in aflags) and 
-                             (co_mlaruntime in compileoptions) then begin
-      with additem(oc_swapstack)^.par.swapstack do begin
-       offset:= -paramsize1;
-       size:= lastparamsize1;
-      end;
-     end;
-    end;
+    paramschecked:= not needsvarcheck;
    end;
-   if not (dsf_isinherited in aflags) and 
-        (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
-    if sf_interface in asub^.flags then begin
-     if sf_function in asub^.flags then begin
-      po1:= additem(oc_callintffunc);
-     end
-     else begin
-      po1:= additem(oc_callintf);
-     end;
-     po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
-                                                       sizeof(intfdefheaderty);
-    end
-    else begin
-     if sf_function in asub^.flags then begin
-      po1:= additem(oc_callvirtfunc);
-     end
-     else begin
-      po1:= additem(oc_callvirt);
-     end;
-     po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
-                                                            virtualtableoffset;
-    end;
-    if co_llvm in compileoptions then begin
-     po1^.par.callinfo.virt.virtoffset:=  
-             info.s.unitinfo^.llvmlists.constlist.
-                        adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
-     po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
-                                                           addsubvalue(asub);
-    end;
-    if sf_function in asub^.flags then begin
-     po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
-    end
-    else begin
-     po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
-    end;
-    po1^.par.callinfo.linkcount:= -1;
+ 
+   if stf_getaddress in s.currentstatementflags then begin
+    initdatacontext(contextindexpo^.d,ck_ref);
+    d.dat.datatyp.typedata:= asub^.typ;
+    d.dat.datatyp.indirectlevel:= 1;
+    d.dat.datatyp.flags:= [tf_subad];
+    d.dat.ref.c.address:= nilopad;
+    d.dat.ref.c.address.segaddress.element:= ele.eledatarel(asub); 
+    d.dat.ref.offset:= 0;
+    d.dat.ref.c.varele:= 0;
    end
    else begin
-    if (asub^.nestinglevel = 0) or 
-                     (asub^.nestinglevel = sublevel) then begin
-     if dsf_indirect in aflags then begin
+    if dsf_indirect in aflags then begin
+     callssa:= d.dat.fact.ssaindex;
+    end;
+    subparams1:= @asub^.paramsrel;
+    totparamco:= paramco;
+    if [sf_function] * asub^.flags <> [] then begin
+     inc(totparamco); //result parameter
+    end;
+    if sf_method in asub^.flags then begin
+     inc(totparamco); //self parameter
+    end;
+    if (totparamco < asub^.paramcount - asub^.defaultparamcount) or 
+                (totparamco > asub^.paramcount) then begin 
+                                         //todo: use correct source pos
+     identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
+ //    exit;
+    end
+    else begin
+    {$ifdef mse_checkinternalerror}
+     if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and
+         not(dsf_isinherited in aflags) and (d.kind <> ck_fact) then begin
+      internalerror(ie_handler,'20160219A');
+     end;
+    {$endif}
+     instancessa:= d.dat.fact.ssaindex; //for sf_method
+     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
+     if hasresult then begin
+      initfactcontext(0); //set ssaindex
+      if sf_constructor in asub^.flags then begin 
+                                  //todo: check instance call
+       bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
+                                           //get class type
+      {$ifdef mse_checkinternalerror}
+       if not bo1 {or (firstnotfound <= idents1.high)} then begin 
+        internalerror(ie_handler,'20150325A'); 
+       end;
+      {$endif}     
+       with insertitem(oc_initclass,0,-1)^,par.initclass do begin
+        classdef:= po3^.infoclass.defs.address;
+       end;
+       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
+      end
+      else begin
+       po3:= ele.eledataabs(asub^.resulttype.typeele);
+      end;
+      d.kind:= ck_subres;
+      d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
+      d.dat.datatyp.typedata:= ele.eledatarel(po3);        
+      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
+      inc(subparams1);
+     end;
+ 
+     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
+                                                              //max
+     parallocstart:= getsegmenttopoffs(seg_localloc);    
+ 
+     if sf_function in asub^.flags then begin
+      with pparallocinfoty(
+               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+       ssaindex:= 0; //not used
+       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
+      end;
+     end;
+ 
+     if sf_method in asub^.flags then begin
+      selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
+      with selfpo^ do begin
+       ssaindex:= instancessa;
+       size:= bitoptypes[das_pointer];
+      end;
+      inc(subparams1); //instance pointer
+     end;
+     if co_mlaruntime in compileoptions then begin
+      i1:= 0;
+      if hasresult then begin
+       if sf_constructor in asub^.flags then begin
+        i1:= parent-s.stackindex;           //??? verfy!
+       end;
+       i1:= pushinsertvar(i1,-1,asub^.resulttype.indirectlevel,po3){ + 
+                                                                  vpointersize}; 
+                                    //alloc space for return value
+ //      if sf_constructor in asub^.flags then begin
+ //       int1:= int1-vpointersize;  //class info pointer
+ //      end
+ //      else begin
+       if not (sf_constructor in asub^.flags) then begin
+        with insertitem(oc_pushstackaddr,0,-1)^.
+                                       par.memop.tempdataaddress do begin
+                                                //result var param
+         a.address:= -i1{+vpointersize};
+         offset:= 0;
+        end;
+        i1:= i1 + vpointersize;
+       end;
+      end;
+      if (sf_method in asub^.flags) then begin
+           //param order is [returnvalue pointer],instancepo,{params}
+       with insertitem(oc_pushduppo,0,-1)^ do begin 
+        par.voffset:= -i1-vpointersize; //including push address
+       end;
+      end;
+     end;
+     paramsize1:= 0;
+     realparamco:= asub^.paramcount-(totparamco-paramco);
+     parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
+                                  realparamco);
+                                  //including default params
+     if dsf_indexedsetter in aflags then begin
+      inc(parallocpo); //second, first index
+      inc(subparams1);
+      for i1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
+       doparam(i1,subparams1,parallocpo);
+       inc(subparams1);
+       inc(parallocpo);
+      end;
+      dodefaultparams();
+      lastparamsize1:= paramsize1;
+      dec(parallocpo,paramco); //first, value
+      dec(subparams1,paramco);
+      doparam(s.stacktop,subparams1,parallocpo);
+      lastparamsize1:= paramsize1-lastparamsize1;
+     end
+     else begin
+      for i1:= s.stacktop-paramco+1 to s.stacktop do begin
+       doparam(i1,subparams1,parallocpo);
+       inc(subparams1);
+       inc(parallocpo);
+      end;
+      dodefaultparams();
+     end;
+               //todo: exeenv flag for constructor and destructor
+     if not hasresult then begin
+      d.kind:= ck_subcall;
+      if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
+                 //owned method
+      {$ifdef mse_checkinternalerror}
+       if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
+        internalerror(ie_value,'20140505A');
+       end;
+      {$else}
+       ele.findcurrent(tk_self,[],allvisi,vardata1);
+      {$endif}
+       with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
+        par.memop.t:= bitoptypes[das_pointer];
+        par.memop.locdataaddress.a.framelevel:= -1;
+        par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
+        par.memop.locdataaddress.offset:= 0;
+        selfpo^.ssaindex:= par.ssad;
+       end;
+      end;
+      if (dsf_indexedsetter in aflags) and 
+                              (co_mlaruntime in compileoptions) then begin
+       with additem(oc_swapstack)^.par.swapstack do begin
+        offset:= -paramsize1;
+        size:= lastparamsize1;
+       end;
+      end;
+     end;
+    end;
+    if not (dsf_isinherited in aflags) and 
+         (asub^.flags * [sf_virtual,sf_override,sf_interface] <> []) then begin
+     if sf_interface in asub^.flags then begin
       if sf_function in asub^.flags then begin
-       po1:= additem(oc_callfuncindi);
+       po1:= additem(oc_callintffunc);
       end
       else begin
-       po1:= additem(oc_callindi);
+       po1:= additem(oc_callintf);
       end;
-      if co_llvm in compileoptions then begin
-       po1^.par.ssas1:= callssa;
-       po1^.par.callinfo.indi.typeid:= 
-                    info.s.unitinfo^.llvmlists.typelist.addsubvalue(asub);
-      end
-      else begin
-       po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
-      end;
+      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(intfitemty) +
+                                                        sizeof(intfdefheaderty);
      end
      else begin
       if sf_function in asub^.flags then begin
-       po1:= additem(oc_callfunc);
+       po1:= additem(oc_callvirtfunc);
       end
       else begin
-       po1:= additem(oc_call);
+       po1:= additem(oc_callvirt);
       end;
+      po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
+                                                             virtualtableoffset;
+     end;
+     if co_llvm in compileoptions then begin
+      po1^.par.callinfo.virt.virtoffset:=  
+              info.s.unitinfo^.llvmlists.constlist.
+                         adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
+      po1^.par.callinfo.virt.typeid:= info.s.unitinfo^.llvmlists.typelist.
+                                                            addsubvalue(asub);
+     end;
+     if sf_function in asub^.flags then begin
+      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize + vpointersize;
+     end
+     else begin
+      po1^.par.callinfo.virt.selfinstance:= -asub^.paramsize;
      end;
      po1^.par.callinfo.linkcount:= -1;
     end
     else begin
-     i1:= sublevel-asub^.nestinglevel;
-     if sf_function in asub^.flags then begin
-      po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,i1));
+     if (asub^.nestinglevel = 0) or 
+                      (asub^.nestinglevel = sublevel) then begin
+      if dsf_indirect in aflags then begin
+       if sf_function in asub^.flags then begin
+        po1:= additem(oc_callfuncindi);
+       end
+       else begin
+        po1:= additem(oc_callindi);
+       end;
+       if co_llvm in compileoptions then begin
+        po1^.par.ssas1:= callssa;
+        po1^.par.callinfo.indi.typeid:= 
+                     info.s.unitinfo^.llvmlists.typelist.addsubvalue(asub);
+       end
+       else begin
+        po1^.par.callinfo.indi.calladdr:= -asub^.paramsize-pointersize;
+       end;
+      end
+      else begin
+       if sf_function in asub^.flags then begin
+        po1:= additem(oc_callfunc);
+       end
+       else begin
+        po1:= additem(oc_call);
+       end;
+      end;
+      po1^.par.callinfo.linkcount:= -1;
      end
      else begin
-      po1:= additem(oc_callout,getssa(ocssa_nestedcallout,i1));
-     end;
-     po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
-     po7:= ele.parentelement;
-     include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
-     for i1:= i1-1 downto 0 do begin
-      po7:= ele.eleinfoabs(po7^.header.parent);
-      include(psubdataty(@po7^.data)^.flags,sf_hasnestedref);
-      if i1 <> 0 then begin
-       include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
-       include(psubdataty(@po7^.data)^.flags,sf_hascallout);
+      i1:= sublevel-asub^.nestinglevel;
+      if sf_function in asub^.flags then begin
+       po1:= additem(oc_callfuncout,getssa(ocssa_nestedcallout,i1));
+      end
+      else begin
+       po1:= additem(oc_callout,getssa(ocssa_nestedcallout,i1));
+      end;
+      po1^.par.callinfo.linkcount:= i1-2;      //for downto 0
+      po7:= ele.parentelement;
+      include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+      for i1:= i1-1 downto 0 do begin
+       po7:= ele.eleinfoabs(po7^.header.parent);
+       include(psubdataty(@po7^.data)^.flags,sf_hasnestedref);
+       if i1 <> 0 then begin
+        include(psubdataty(@po7^.data)^.flags,sf_hasnestedaccess);
+        include(psubdataty(@po7^.data)^.flags,sf_hascallout);
+       end;
       end;
      end;
+     if (asub^.address = 0) and 
+                   (not modularllvm or 
+                    (s.unitinfo = datatoele(asub)^.header.defunit)) then begin 
+                                             //unresolved header
+      linkmark(asub^.calllinks,getsegaddress(seg_op,@po1^.par.callinfo.ad));
+     end;
     end;
-    if (asub^.address = 0) and 
-                  (not modularllvm or 
-                   (s.unitinfo = datatoele(asub)^.header.defunit)) then begin 
-                                            //unresolved header
-     linkmark(asub^.calllinks,getsegaddress(seg_op,@po1^.par.callinfo.ad));
+    with po1^ do begin
+     par.callinfo.flags:= asub^.flags;
+     if dsf_isinherited in aflags then begin
+      exclude(par.callinfo.flags,sf_virtual);
+     end;
+     par.callinfo.params:= parallocstart;
+    {$ifdef mse_checkinternalerror}
+     if realparamco+totparamco-paramco <> asub^.paramcount then begin
+      internalerror(ie_handler,'20160522A');
+     end;
+    {$endif}
+     par.callinfo.paramcount:= asub^.paramcount;
+ //    par.callinfo.paramcount:= realparamco+totparamco-paramco; //+internal params
+     par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
+     par.callinfo.ad.globid:= trackaccess(asub);
     end;
-   end;
-   with po1^ do begin
-    par.callinfo.flags:= asub^.flags;
-    if dsf_isinherited in aflags then begin
-     exclude(par.callinfo.flags,sf_virtual);
+    if sf_function in asub^.flags then begin
+     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
-    par.callinfo.params:= parallocstart;
-   {$ifdef mse_checkinternalerror}
-    if realparamco+totparamco-paramco <> asub^.paramcount then begin
-     internalerror(ie_handler,'20160522A');
+    if sf_destructor in asub^.flags then begin
+         //todo: call freemem direcly if there is no finalization
+     with additem(oc_destroyclass)^ do begin //insertitem???
+      par.ssas1:= d.dat.fact.ssaindex;
+     end;
     end;
-   {$endif}
-    par.callinfo.paramcount:= asub^.paramcount;
-//    par.callinfo.paramcount:= realparamco+totparamco-paramco; //+internal params
-    par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
-    par.callinfo.ad.globid:= trackaccess(asub);
-   end;
-   if sf_function in asub^.flags then begin
-    d.dat.fact.ssaindex:= s.ssa.nextindex-1;
-   end;
-   if sf_destructor in asub^.flags then begin
-        //todo: call freemem direcly if there is no finalization
-    with additem(oc_destroyclass)^ do begin //insertitem???
-     par.ssas1:= d.dat.fact.ssaindex;
-    end;
-   end;
-   if dsf_indirect in aflags then begin
-    with additem(oc_pop)^ do begin          //insertitem???
-     setimmsize(pointersize,par); //remove call address
+    if dsf_indirect in aflags then begin
+     with additem(oc_pop)^ do begin          //insertitem???
+      setimmsize(pointersize,par); //remove call address
+     end;
     end;
    end;
   end;
@@ -1727,7 +1730,7 @@ begin
        {$endif}
         end;
 //        initfactcontext(0);
-        d.kind:= ck_ref;
+        initdatacontext(contextindexpo^.d,ck_ref);
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.datatyp.flags:= vf.flags;
@@ -1772,14 +1775,13 @@ begin
      end
      else begin //ek_var
       if isgetfact then begin
-       d.kind:= ck_ref;
+       initdatacontext(contextindexpo^.d,ck_ref);
        d.dat.ref.c.address:= trackaccess(pvardataty(po2));
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
        d.dat.datatyp.typedata:= pvardataty(po2)^.vf.typ;
        d.dat.datatyp.indirectlevel:= pvardataty(po2)^.address.indirectlevel;
        d.dat.datatyp.flags:= [];
-       d.dat.indirection:= 0;
        if d.dat.ref.c.address.flags *
                           [af_paramindirect,af_withindirect] <> [] then begin
         d.dat.ref.c.address.flags:= d.dat.ref.c.address.flags-

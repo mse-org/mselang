@@ -1624,40 +1624,7 @@ begin
   setimmdatakind(avalue,par);
  end;
 end;
-(*
-procedure pushconst(var avalue: contextdataty);
-//todo: optimize
-begin
- with avalue do begin
-  case dat.constval.kind of
-   dk_boolean: begin
-    push(dat.constval.vboolean);
-   end;
-   dk_integer: begin
-    push(dat.constval.vinteger);
-   end;
-   dk_float: begin
-    push(dat.constval.vfloat);
-   end;
-   dk_address,dk_pointer: begin
-    push(dat.constval.vaddress,0,false);
-   end;
-   else begin
-   {$ifdef mse_checkinternalerror}   
-    internalerror(ie_handler,'2014118A');
-   {$endif}
-   end;
-  end;
-  kind:= ck_ref;
-  dat.fact.ssaindex:= info.s.ssa.index;
-  dat.indirection:= 0;
-  with dat.fact.opdatatype do begin
-   kind:= dat.constval.kind;
-   size:= bitsizes[kind];
-  end;
- end;
-end;
-*)
+
 procedure int32toflo64({; const index: integer});
 begin
  additem(oc_int32toflo64);
@@ -2860,28 +2827,7 @@ begin
        pushinsertconst(s.stacktop-s.stackindex,-1,si1);
       end;
      end;
-     {
-     if (ashortcutop <> sco_none) then begin
-      op1:= shortcutops[ashortcutop];
-      if op1 = oc_none then begin
-       notimplementederror('20151016D');
-      end;
-      with insertcontrolitem(op1,-1,false)^ do begin
-      end;
-     end;
-     }
      addfactbinop(op1);
-    {
-     with additem(op1)^ do begin      
-      par.ssas1:= d.dat.fact.ssaindex;
-      par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
-      par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
-                                      d.dat.datatyp.indirectlevel);
-     end;
-     d.kind:= ck_fact;
-     d.dat.fact.ssaindex:= s.ssa.nextindex-1;
-     d.dat.indirection:= 0;   
-    }
     end;
 endlab:
     dec(s.stacktop,2);

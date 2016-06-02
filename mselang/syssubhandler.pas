@@ -797,7 +797,7 @@ begin
  with info do begin
   if checkparamco(1,paramco) then begin
    dest1:= @contextstack[s.stackindex];
-   initdatacontext(dest1^.d,ck_const);
+   initdatacontext(dest1^.d,ck_const); //default
    dest1^.d.dat.datatyp:= sysdatatypes[st_int32]; //default
    with contextstack[s.stacktop] do begin
     case d.kind of
@@ -902,16 +902,9 @@ begin
  with info do begin
   if checkparamco(1,paramco) then begin
    with contextstack[s.stacktop] do begin
-   {
-    if d.kind = ck_ref then begin
-     if not getvalue(s.stacktop-s.stackindex,das_none,true) then begin
-      exit;
-     end;
-    end;
-   }
     dest1:= @contextstack[s.stackindex];
     dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
-    dest1^.d.dat.indirection:= 0;
+    initdatacontext(dest1^.d,ck_const); //default
     case d.kind of
      ck_const,ck_ref,ck_fact,ck_subres: begin
       if d.dat.datatyp.indirectlevel <> 0 then begin
@@ -920,7 +913,6 @@ begin
       end;
       typ1:= ele.eledataabs(d.dat.datatyp.typedata);
       if d.kind = ck_const then begin
-       initdatacontext(dest1^.d,ck_const);
        dest1^.d.dat.constval.kind:= dk_integer;
        case d.dat.constval.kind of
         dk_array: begin
@@ -998,6 +990,8 @@ begin
 end;
 
 procedure floatsysfunc(const paramco: integer; const aop: opcodety);
+var
+ po1: pcontextitemty;
 begin
  with info do begin
   if checkparamco(1,paramco) and 
@@ -1005,10 +999,10 @@ begin
    with additem(aop)^ do begin
     par.ssas1:= info.s.ssa.index-1;
    end;
-   with contextstack[s.stackindex] do begin
-    d.kind:= ck_subres;
+   po1:= @contextstack[s.stackindex];
+   initdatacontext(po1^.d,ck_subres);
+   with po1^ do begin
     d.dat.fact.ssaindex:= info.s.ssa.index;
-    d.dat.indirection:= 0;
     d.dat.datatyp:= sysdatatypes[st_flo64];
    end;
   end;
