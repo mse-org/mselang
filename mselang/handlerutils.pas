@@ -121,7 +121,7 @@ function addvar(const aname: identty; const avislevel: visikindsty;
 procedure addfactbinop(const aopcode: opcodety);
 procedure resolveshortcuts(const stackoffset,destoffset: int32);
 procedure updateop(const opsinfo: opsinfoty);
-function convertconsts(): stackdatakindty;
+function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
 function getcontextopoffset(const stackoffset: int32): int32;
@@ -1701,30 +1701,30 @@ begin
  end;
 end;
 
-function convertconsts(): stackdatakindty;
+function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
                 //convert s.stacktop, s.stacktop-2
-var
- poa,pob: pdatacontextty;
+//var
+// poa,pob: pcontextitemty;
 begin
- with info,contextstack[s.stacktop-2] do begin
+ with info do begin
+//  poa:= @contextstack[s.stacktop-2];
+//  pob:= @contextstack[s.stacktop];
  {$ifdef checkinternalerror}
-  if contextstack[s.stacktop-2].d.kind <> ck_const) or 
-     contextstack[s.stacktop].d.kind <> ck_const then begin
+  if poa^.d.kind <> ck_const) or 
+     pob^.d.kind <> ck_const then begin
    internalerror(ie_handler,'200151130A');
   end;
  {$endif}
-  poa:= @contextstack[s.stacktop-2].d.dat;
-  pob:= @contextstack[s.stacktop].d.dat;
-  result:= stackdatakinds[poa^.constval.kind];
-  if poa^.constval.kind <> pob^.constval.kind then begin
-   case pob^.constval.kind of
+  result:= stackdatakinds[poa^.d.dat.constval.kind];
+  if poa^.d.dat.constval.kind <> pob^.d.dat.constval.kind then begin
+   case pob^.d.dat.constval.kind of
     dk_float: begin
      result:= sdk_flo64;
-     case poa^.constval.kind of
+     case poa^.d.dat.constval.kind of
       dk_integer: begin
-       poa^.constval.vfloat:= poa^.constval.vinteger;
-       poa^.constval.kind:= dk_float;
-       poa^.datatyp:= pob^.datatyp;
+       poa^.d.dat.constval.vfloat:= poa^.d.dat.constval.vinteger;
+       poa^.d.dat.constval.kind:= dk_float;
+       poa^.d.dat.datatyp:= pob^.d.dat.datatyp;
       end;
       else begin
        result:= sdk_none;
@@ -1732,11 +1732,11 @@ begin
      end;
     end;
     dk_integer: begin
-     case poa^.constval.kind of
+     case poa^.d.dat.constval.kind of
       dk_float: begin
-       pob^.constval.vfloat:= pob^.constval.vinteger;
-       pob^.constval.kind:= dk_float;
-       pob^.datatyp:= poa^.datatyp;
+       pob^.d.dat.constval.vfloat:= pob^.d.dat.constval.vinteger;
+       pob^.d.dat.constval.kind:= dk_float;
+       pob^.d.dat.datatyp:= poa^.d.dat.datatyp;
       end;
       else begin
        result:= sdk_none;
@@ -1749,24 +1749,24 @@ begin
    end;
   end
   else begin
-   case poa^.constval.kind of
+   case poa^.d.dat.constval.kind of
     dk_enum: begin
-     if poa^.datatyp.typedata = pob^.datatyp.typedata then begin
+     if poa^.d.dat.datatyp.typedata = pob^.d.dat.datatyp.typedata then begin
       result:= sdk_int32; //todo: different sizes
      end;
     end;
     dk_set: begin                          //todo: basetype?
-     if ptypedataty(ele.eledataabs(poa^.datatyp.typedata))^.infoset.itemtype = 
+     if ptypedataty(ele.eledataabs(
+            poa^.d.dat.datatyp.typedata))^.infoset.itemtype = 
             ptypedataty(ele.eledataabs(
-                      pob^.datatyp.typedata))^.infoset.itemtype then begin
+                      pob^.d.dat.datatyp.typedata))^.infoset.itemtype then begin
       result:= sdk_set32; //todo: different sizes
      end;
     end;
    end;
   end;
   if result = sdk_none then begin
-   incompatibletypeserror(contextstack[s.stacktop-2].d,
-                                           contextstack[s.stacktop].d);
+   incompatibletypeserror(poa^.d,pob^.d);
   end;
  end;
 end;

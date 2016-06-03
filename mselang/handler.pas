@@ -1013,38 +1013,36 @@ const
 
 procedure addsubterm(const issub: boolean);
              //special inc(), dec(), pointer arithmetic
- 
+var
+ poa,pob: pcontextitemty; 
  procedure opnotsupported();
  var
   ch1: char;
  begin
-  with info,contextstack[s.stacktop-2] do begin
-   if issub then begin
-    ch1:= '-';
-   end
-   else begin
-    ch1:= '+';
-   end;
-   operationnotsupportederror(d,contextstack[s.stacktop].d,ch1);
+  if issub then begin
+   ch1:= '-';
+  end
+  else begin
+   ch1:= '+';
   end;
+  operationnotsupportederror(poa^.d,pob^.d,ch1);
  end; //opnotsupported
                                          //todo: operand size 
 var 
  dk1: stackdatakindty;
  i1,i2: int32;
- poa,pob: pcontextitemty;
  india,indib: int32;
  op1: opcodety;
 label
  errlab,endlab;
 begin
  with info do begin
-  poa:= @contextstack[s.stacktop-2];
+  poa:= @contextstack[s.stackindex-1];
   pob:= @contextstack[s.stacktop];
   with poa^ do begin
    if (pob^.d.kind = ck_const) and 
                (d.kind = ck_const) then begin
-    dk1:= convertconsts();
+    dk1:= convertconsts(poa,pob);
     case dk1 of
      sdk_card32,sdk_int32: begin
       if issub then begin
@@ -1070,8 +1068,10 @@ begin
       opnotsupported();
      end;
     end;
-    dec(s.stacktop,2);
-    s.stackindex:= s.stacktop-1;
+    s.stacktop:= s.stackindex;
+    dec(s.stackindex);
+//    dec(s.stacktop,2);
+//    s.stackindex:= s.stacktop-1;
    end
    else begin
    {$ifdef mse_checkinternalerror}
@@ -1147,10 +1147,9 @@ begin
         end;
        end
        else begin
-        i1:= s.stacktop-s.stackindex;
-        if getvalue(s.stacktop-s.stackindex-2,das_pointer) and 
-                                           getvalue(i1,das_32) then begin
-         if tryconvert(i1,st_int32) then begin //todo: data size
+//        i1:= s.stacktop-s.stackindex;
+        if getvalue(poa,das_pointer) and getvalue(pob,das_32) then begin
+         if tryconvert(pob,st_int32) then begin //todo: data size
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
            with additem(oc_mulimmint32)^ do begin
@@ -1187,8 +1186,10 @@ begin
       end;
      end;
 errlab:
-     dec(s.stacktop,2);
-     s.stackindex:= s.stacktop-1;
+     s.stacktop:= s.stackindex;
+     dec(s.stackindex);
+//     dec(s.stacktop,2);
+//     s.stackindex:= s.stacktop-1;
     end
     else begin
      if issub then begin
@@ -2307,150 +2308,154 @@ procedure handlecomparison(const aop: cmpopty);
 var
  dk1:stackdatakindty;
  int1: integer;
+ poa,pob: pcontextitemty;
 begin
- with info,contextstack[s.stacktop-2] do begin
-  if (contextstack[s.stacktop].d.kind = ck_const) and 
-                                               (d.kind = ck_const) then begin
-   dk1:= convertconsts();
-   d.dat.constval.kind:= dk_boolean;
-   d.dat.datatyp:= sysdatatypes[st_bool1];
-   case aop of
-    cmpo_eq: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger = 
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
+ with info do begin
+  poa:= @contextstack[s.stackindex-1];
+  pob:= @contextstack[s.stacktop];
+  with poa^ do begin
+   if (pob^.d.kind = ck_const) and (d.kind = ck_const) then begin
+    dk1:= convertconsts(poa,pob);
+    d.dat.constval.kind:= dk_boolean;
+    d.dat.datatyp:= sysdatatypes[st_bool1];
+    case aop of
+     cmpo_eq: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger = 
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat = 
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean =
+                                                  pob^.d.dat.constval.vboolean;
+       end;
+       sdk_pointer: begin
+        d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
+                                             pob^.d.dat.constval.vaddress) = 0;
+       end;
+       sdk_set32: begin
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
+                                         tintegerset(pob^.d.dat.constval.vset);
+       end;
+       else begin
+        notsupported();
+       end;
       end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat = 
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
+     end;
+     cmpo_ne: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger <>
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat <>
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean <>
+                                                  pob^.d.dat.constval.vboolean;
+       end;
+       sdk_set32: begin
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
+                                         tintegerset(pob^.d.dat.constval.vset);
+       end;
+       else begin
+        notsupported();
+       end;
       end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean =
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
+     end;
+     cmpo_gt: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger >
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat >
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean >
+                                                  pob^.d.dat.constval.vboolean;
+       end;
+       else begin
+        notsupported();
+       end;
       end;
-      sdk_pointer: begin
-       d.dat.constval.vboolean:= compaddress(d.dat.constval.vaddress,
-                  contextstack[s.stacktop].d.dat.constval.vaddress) = 0;
+     end;
+     cmpo_lt: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger <
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat <
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean <
+                                                  pob^.d.dat.constval.vboolean;
+       end;
       end;
-      sdk_set32: begin
-       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
-                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
+     end;
+     cmpo_ge: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger >=
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat >=
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean >=
+                                                  pob^.d.dat.constval.vboolean;
+       end;
+       else begin
+        notsupported();
+       end;
       end;
-      else begin
-       notsupported();
+     end;
+     cmpo_le: begin
+      case dk1 of
+       sdk_card32,sdk_int32: begin
+        d.dat.constval.vboolean:= d.dat.constval.vinteger <=
+                                                  pob^.d.dat.constval.vinteger;
+       end;
+       sdk_flo64: begin
+        d.dat.constval.vboolean:= d.dat.constval.vfloat <=
+                                                    pob^.d.dat.constval.vfloat;
+       end;
+       sdk_bool1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean <=
+                                                  pob^.d.dat.constval.vboolean;
+       end;
+       sdk_set32: begin
+        d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
+                                         tintegerset(pob^.d.dat.constval.vset);
+       end;
+       else begin
+        notsupported();
+       end;
       end;
      end;
     end;
-    cmpo_ne: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger <>
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
-      end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat <>
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
-      end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean <>
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
-      end;
-      sdk_set32: begin
-       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
-                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
-      end;
-      else begin
-       notsupported();
-      end;
-     end;
+    dec(s.stacktop,2);
+    s.stackindex:= s.stacktop-1;
+   end
+   else begin
+    updateop(cmpops[aop]);
+    with info,pob^ do begin
+     d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
+     d.dat.fact.opdatatype:= bitoptypes[das_1];
     end;
-    cmpo_gt: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger >
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
-      end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat >
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
-      end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean >
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
-      end;
-      else begin
-       notsupported();
-      end;
-     end;
-    end;
-    cmpo_lt: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger <
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
-      end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat <
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
-      end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean <
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
-      end;
-     end;
-    end;
-    cmpo_ge: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger >=
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
-      end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat >=
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
-      end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean >=
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
-      end;
-      else begin
-       notsupported();
-      end;
-     end;
-    end;
-    cmpo_le: begin
-     case dk1 of
-      sdk_card32,sdk_int32: begin
-       d.dat.constval.vboolean:= d.dat.constval.vinteger <=
-                 contextstack[s.stacktop].d.dat.constval.vinteger;
-      end;
-      sdk_flo64: begin
-       d.dat.constval.vboolean:= d.dat.constval.vfloat <=
-                              contextstack[s.stacktop].d.dat.constval.vfloat;
-      end;
-      sdk_bool1: begin
-       d.dat.constval.vboolean:= d.dat.constval.vboolean <=
-                              contextstack[s.stacktop].d.dat.constval.vboolean;
-      end;
-      sdk_set32: begin
-       d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
-                   tintegerset(contextstack[s.stacktop].d.dat.constval.vset);
-      end;
-      else begin
-       notsupported();
-      end;
-     end;
-    end;
-   end;
-   dec(s.stacktop,2);
-   s.stackindex:= s.stacktop-1;
-  end
-  else begin
-   updateop(cmpops[aop]);
-   with info,contextstack[s.stacktop] do begin
-    d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
-    d.dat.fact.opdatatype:= bitoptypes[das_1];
    end;
   end;
  end;
