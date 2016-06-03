@@ -863,8 +863,8 @@ var
  paramsize1: int32;
  paramschecked: boolean;
  
- procedure doparam(const stackind: int32;  const subparams1: pelementoffsetty;
-                                             const parallocpo: pparallocinfoty);
+ procedure doparam(const context1: pcontextitemty;
+         const subparams1: pelementoffsetty; const parallocpo: pparallocinfoty);
  var
   vardata1: pvardataty;
   desttype: ptypedataty;
@@ -880,8 +880,8 @@ var
    end;
   end; //doconvert
   
- var
-  context1: pcontextitemty;
+ //var
+ // context1: pcontextitemty;
   
  begin
   with info do begin
@@ -891,8 +891,8 @@ var
    end;
    desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
    si1:= desttype^.h.datasize;
-   stackoffset:= stackind-s.stackindex;
-   context1:= @contextstack[stackind];
+   stackoffset:= getstackoffset(context1);
+//   context1:= @contextstack[stackind];
    i2:= 1;
    if not paramschecked and 
           not checkcompatibledatatype(stackoffset,vardata1^.vf.typ,
@@ -904,14 +904,14 @@ var
     errormessage(err1,
                  [stackoffset-2,typename(context1^.d),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                    vardata1^.address.indirectlevel)],stackind-s.stackindex);
+                    vardata1^.address.indirectlevel)],stackoffset);
     exit;
    end;
    if af_paramindirect in vardata1^.address.flags then begin
     case context1^.d.kind of
      ck_const: begin
       if not (af_const in vardata1^.address.flags) then begin
-       errormessage(err_variableexpected,[],stackind-s.stackindex);
+       errormessage(err_variableexpected,[],stackoffset);
       end
       else begin
        notimplementederror('20140405B'); //todo
@@ -1067,7 +1067,7 @@ var
 
 var
  realparamco: int32; //including defaults
- indpo: pcontextitemty;
+ indpo,itempo1,pe: pcontextitemty;
 label
  paramloopend;
 begin
@@ -1272,24 +1272,28 @@ begin
      parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
                                   realparamco);
                                   //including default params
+     itempo1:= indpo+2;
      if dsf_indexedsetter in aflags then begin
+      pe:= @contextstack[s.stacktop];
       inc(parallocpo); //second, first index
       inc(subparams1);
-      for i1:= s.stacktop-paramco+1 to s.stacktop-1 do begin
-       doparam(i1,subparams1,parallocpo);
-       inc(subparams1);
-       inc(parallocpo);
+      while getnextnospace(itempo1,itempo1) do begin
+       if itempo1 < pe then begin //not last
+        doparam(itempo1,subparams1,parallocpo);
+        inc(subparams1);
+        inc(parallocpo);
+       end;
       end;
       dodefaultparams();
       lastparamsize1:= paramsize1;
       dec(parallocpo,paramco); //first, value
       dec(subparams1,paramco);
-      doparam(s.stacktop,subparams1,parallocpo);
+      doparam(itempo1,subparams1,parallocpo); //last
       lastparamsize1:= paramsize1-lastparamsize1;
      end
      else begin
-      for i1:= s.stacktop-paramco+1 to s.stacktop do begin
-       doparam(i1,subparams1,parallocpo);
+      while getnextnospace(itempo1,itempo1) do begin
+       doparam(itempo1,subparams1,parallocpo);
        inc(subparams1);
        inc(parallocpo);
       end;
