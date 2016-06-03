@@ -2136,7 +2136,7 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex <> 2) or 
+  if (s.stacktop-s.stackindex - getspacecount(s.stackindex+2) <> 2) or 
             (contextstack[s.stackindex+1].d.kind <> ck_ident) then begin
    internalerror(ie_handler,'20140326C');
   end;
