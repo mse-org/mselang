@@ -209,14 +209,18 @@ function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
 function getstackoffset(const acontext: pcontextitemty): int32;
-function getcontextssa(const stackoffset: integer): int32;
-function getnospace(const stackoffset: int32; out apo: pcontextitemty): boolean;
+function getcontextssa(const stackoffset: int32): int32;
+
+function getpreviousnospace(const stackoffset: int32): int32;
+function getnextnospace(const stackoffset: int32; 
+                                out apo: pcontextitemty): boolean;
                                    //true if found
 function getnextnospace(const current: pcontextitemty;
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 function getspacecount(const stackoffset: int32): int32;
                //counts ck_space from stackoffset to stacktop
+
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 procedure initfactcontext(const stackoffset: int32);
@@ -2093,8 +2097,32 @@ begin
  end;
 end;
 
-function getnospace(const stackoffset: int32; out apo: pcontextitemty): boolean;
-                                   //true if found
+function getpreviousnospace(const stackoffset: int32): int32;
+var
+ i1: int32;
+begin
+ with info do begin
+  i1:= s.stackindex + stackoffset;
+  while true do begin
+  {$ifdef mse_checkinternalerror}
+   if (i1 < 0) or (i1 > s.stacktop) then begin
+    internalerror(ie_handler,'20160603A');
+   end;
+  {$endif}
+   with contextstack[i1] do begin
+    if d.kind <> ck_space then begin
+     result:= i1;
+     break;
+    end;
+   end;
+   dec(i1);
+  end;
+ end;
+end;
+
+function getnextnospace(const stackoffset: int32;
+                                     out apo: pcontextitemty): boolean;
+                                                              //true if found
 var
  po1,pe: pcontextitemty;
 begin

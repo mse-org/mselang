@@ -1068,8 +1068,8 @@ begin
       opnotsupported();
      end;
     end;
-    s.stacktop:= s.stackindex;
-    dec(s.stackindex);
+    s.stacktop:= s.stackindex-1;
+    s.stackindex:= getpreviousnospace(-2);
 //    dec(s.stacktop,2);
 //    s.stackindex:= s.stacktop-1;
    end
@@ -1186,8 +1186,8 @@ begin
       end;
      end;
 errlab:
-     s.stacktop:= s.stackindex;
-     dec(s.stackindex);
+    s.stacktop:= s.stackindex-1;
+    s.stackindex:= getpreviousnospace(-2);
 //     dec(s.stacktop,2);
 //     s.stackindex:= s.stacktop-1;
     end
@@ -2729,7 +2729,7 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   if not errorfla then begin
-   if getnospace(1,dest) and getnextnospace(dest,source) and 
+   if getnextnospace(1,dest) and getnextnospace(dest,source) and 
                             (source = @contextstack[s.stacktop]) then begin
 //    dest:= @contextstack[s.stackindex+1];
 //    source:= @contextstack[s.stackindex+2];
