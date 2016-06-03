@@ -2455,7 +2455,7 @@ begin
    end
    else begin
     updateop(cmpops[aop]);
-    with info,pob^ do begin
+    with info,poa^ do begin
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
      d.dat.fact.opdatatype:= bitoptypes[das_1];
     end;
