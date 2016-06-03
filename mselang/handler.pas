@@ -3093,7 +3093,7 @@ begin
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex <> 1 then begin
+  if s.stacktop-s.stackindex-getspacecount(s.stackindex+1) <> 1 then begin
    internalerror(ie_handler,'20140216A');
   end;
  {$endif}
