@@ -133,17 +133,19 @@ begin
 end;
 *)
 procedure handlethen2();
-      //1       2        
+      //-1      stacktop
 begin //boolexp,thenmark
 {$ifdef mse_debugparser}
  outhandle('THEN2');
 {$endif}
- addlabel();
- setcurrentlocbefore(2); //set gotoaddress
-// addlabel();
  with info do begin
-  dec(s.stackindex);
-  s.stacktop:= s.stackindex;
+  addlabel();
+  setcurrentlocbefore(s.stacktop-s.stackindex); //set gotoaddress
+ // addlabel();
+  with info do begin
+   dec(s.stackindex);
+   s.stacktop:= s.stackindex;
+  end;
  end;
 end;
 

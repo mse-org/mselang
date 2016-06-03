@@ -1671,7 +1671,11 @@ begin
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
-   paramco:= s.stacktop-s.stackindex-2-idents.high-getspacecount(2);
+   paramco:= 0;
+   if s.stackindex+2 <= s.stacktop then begin
+    paramco:= s.stacktop-s.stackindex-2-idents.high -
+                                     getspacecount(s.stackindex+2);
+   end;
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context
    end;

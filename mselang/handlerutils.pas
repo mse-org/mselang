@@ -211,15 +211,15 @@ function getdatabitsize(const avalue: int64): databitsizety;
 function getcontextssa(const stackoffset: int32): int32;
 
 function getstackoffset(const acontext: pcontextitemty): int32;
-function getpreviousnospace(const stackoffset: int32): int32;
-function getnextnospace(const stackoffset: int32; 
+function getpreviousnospace(const astackindex: int32): int32;
+function getnextnospace(const astackindex: int32; 
                                 out apo: pcontextitemty): boolean;
                                    //true if found
 function getnextnospace(const current: pcontextitemty;
                                       out apo: pcontextitemty): boolean;
                                    //true if found
-function getspacecount(const stackoffset: int32): int32;
-               //counts ck_space from stackoffset to stacktop
+function getspacecount(const astackindex: int32): int32;
+               //counts ck_space from astackindex to stacktop
 
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
@@ -2104,12 +2104,12 @@ begin
  end;
 end;
 
-function getpreviousnospace(const stackoffset: int32): int32;
+function getpreviousnospace(const astackindex: int32): int32;
 var
  i1: int32;
 begin
  with info do begin
-  i1:= s.stackindex + stackoffset;
+  i1:= astackindex;
   while true do begin
   {$ifdef mse_checkinternalerror}
    if (i1 < 0) or (i1 > s.stacktop) then begin
@@ -2127,7 +2127,7 @@ begin
  end;
 end;
 
-function getnextnospace(const stackoffset: int32;
+function getnextnospace(const astackindex: int32;
                                      out apo: pcontextitemty): boolean;
                                                               //true if found
 var
@@ -2135,7 +2135,12 @@ var
 begin
  result:= false;
  with info do begin
-  po1:= @contextstack[s.stackindex+stackoffset];
+ {$ifdef mse_checkinternalerror}
+  if (astackindex < 0) or (astackindex > s.stacktop) then begin
+   internalerror(ie_handler,'20160603B');
+  end;
+ {$endif}
+  po1:= @contextstack[astackindex];
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
    if po1^.d.kind <> ck_space then begin
@@ -2169,14 +2174,19 @@ begin
  end;
 end;
 
-function getspacecount(const stackoffset: int32): int32;
-               //counts ck_space from stackoffset to stacktop
+function getspacecount(const astackindex: int32): int32;
+               //counts ck_space from astackindex to stacktop
 var
  po1,pe: pcontextitemty;
 begin
  result:= 0;
  with info do begin
-  po1:= @contextstack[s.stackindex+stackoffset];
+ {$ifdef mse_checkinternalerror}
+  if (astackindex < 0) or (astackindex > s.stacktop) then begin
+   internalerror(ie_handler,'20160603C');
+  end;
+ {$endif}
+  po1:= @contextstack[astackindex];
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
    if po1^.d.kind = ck_space then begin
@@ -2980,7 +2990,7 @@ endlab:
     s.stacktop:= s.stackindex-1;
    end;
   end;
-  s.stackindex:= getpreviousnospace(s.stacktop-1-s.stackindex); 
+  s.stackindex:= getpreviousnospace(s.stacktop-1); 
  end;
 end;
 

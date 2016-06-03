@@ -1069,7 +1069,7 @@ begin
      end;
     end;
     s.stacktop:= s.stackindex-1;
-    s.stackindex:= getpreviousnospace(-2);
+    s.stackindex:= getpreviousnospace(s.stackindex-2);
 //    dec(s.stacktop,2);
 //    s.stackindex:= s.stacktop-1;
    end
@@ -1187,7 +1187,7 @@ begin
      end;
 errlab:
     s.stacktop:= s.stackindex-1;
-    s.stackindex:= getpreviousnospace(-2);
+    s.stackindex:= getpreviousnospace(s.stacktop-1);
 //     dec(s.stacktop,2);
 //     s.stackindex:= s.stacktop-1;
     end
@@ -1835,15 +1835,16 @@ begin
   else begin
    inc(s.source.po);
   end;
-  if s.stackindex < s.stacktop then begin
-   contextstack[s.stacktop-1]:= contextstack[s.stacktop];
+  if (s.stackindex < s.stacktop) and 
+              (contextstack[s.stacktop].d.kind <> ck_space) then begin
+   contextstack[s.stackindex].d.kind:= ck_space;
   end
   else begin
    errormessage(err_expressionexpected,[]);
 //   error(ce_expressionexpected);
 //   outcommand(info,[],'*ERROR* Expression expected');
   end;
-  dec(s.stacktop);
+//  dec(s.stacktop);
   dec(s.stackindex);
  end;
 end;
@@ -2298,17 +2299,19 @@ const
 
 procedure handlecomparison(const aop: cmpopty);
 
+var
+ poa,pob: pcontextitemty;
+
  procedure notsupported();
  begin
-  with info,contextstack[s.stacktop-2] do begin
-   operationnotsupportederror(d,contextstack[s.stacktop].d,cmpops[aop].opname);
+  with info,poa^ do begin
+   operationnotsupportederror(d,pob^.d,cmpops[aop].opname);
   end;
  end;
 
 var
  dk1:stackdatakindty;
  int1: integer;
- poa,pob: pcontextitemty;
 begin
  with info do begin
   poa:= @contextstack[s.stackindex-1];
@@ -2447,8 +2450,8 @@ begin
       end;
      end;
     end;
-    dec(s.stacktop,2);
-    s.stackindex:= s.stacktop-1;
+    s.stacktop:= s.stackindex - 1;
+    s.stackindex:= getpreviousnospace(s.stacktop-1);
    end
    else begin
     updateop(cmpops[aop]);
@@ -2729,7 +2732,7 @@ begin
 {$endif}
  with info do begin       //todo: use direct move if possible
   if not errorfla then begin
-   if getnextnospace(1,dest) and getnextnospace(dest,source) and 
+   if getnextnospace(s.stackindex+1,dest) and getnextnospace(dest,source) and 
                             (source = @contextstack[s.stacktop]) then begin
 //    dest:= @contextstack[s.stackindex+1];
 //    source:= @contextstack[s.stackindex+2];
