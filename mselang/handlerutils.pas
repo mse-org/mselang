@@ -208,9 +208,9 @@ function getordcount(const typedata: ptypedataty): int64;
 function getordconst(const avalue: dataty): int64;
 function getdatabitsize(const avalue: int64): databitsizety;
 
-function getstackoffset(const acontext: pcontextitemty): int32;
 function getcontextssa(const stackoffset: int32): int32;
 
+function getstackoffset(const acontext: pcontextitemty): int32;
 function getpreviousnospace(const stackoffset: int32): int32;
 function getnextnospace(const stackoffset: int32; 
                                 out apo: pcontextitemty): boolean;
@@ -1070,6 +1070,13 @@ begin
    pushinsertconst(stackoffset,d.dat.constval,aopoffset,adatasize);
   end;
  end;
+end;
+
+//todo: optimize
+procedure pushinsertconst(const acontext: pcontextitemty; const aopoffset: int32;
+                                               const adatasize: databitsizety);
+begin
+ pushinsertconst(getstackoffset(acontext),aopoffset,adatasize);
 end;
 
 (*
@@ -2803,24 +2810,27 @@ var
  bo1,bo2: boolean;
  si1: databitsizety;
  po2: pointer;
+ poa,pob: pcontextitemty;
 label
  endlab;
 begin
  with info do begin
   bo1:= false;
-  with contextstack[s.stacktop-2] do begin
+  poa:= @contextstack[s.stackindex-1];
+  pob:= @contextstack[s.stacktop]; 
+  with poa^ do begin
   {$ifdef mse_checkinternalerror}
    if not (d.kind in datacontexts) or 
-              not (contextstack[s.stacktop].d.kind in datacontexts) then begin
+              not (pob^.d.kind in datacontexts) then begin
     internalerror(ie_handler,'20160219B');
    end;
   {$endif}
    bo2:= true;
    if d.kind <> ck_const then begin
-    bo2:= getvalue(s.stacktop-s.stackindex-2,das_none);
+    bo2:= getvalue(poa,das_none);
    end;
-   if contextstack[s.stacktop].d.kind <> ck_const then begin
-    if not getvalue(s.stacktop-s.stackindex,das_none) then begin
+   if pob^.d.kind <> ck_const then begin
+    if not getvalue(pob,das_none) then begin
      bo2:= false;
     end;
    end;
@@ -2828,12 +2838,12 @@ begin
     goto endlab;
    end;
    if opsinfo.wantedtype <> st_none then begin
-    if not tryconvert(s.stacktop-s.stackindex,opsinfo.wantedtype) then begin
+    if not tryconvert(pob,opsinfo.wantedtype) then begin
      operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
      goto endlab;
     end;
-    if not tryconvert(s.stacktop-s.stackindex-2,opsinfo.wantedtype) then begin
-     operationnotsupportederror(d,contextstack[s.stacktop-2].d,opsinfo.opname);
+    if not tryconvert(poa,opsinfo.wantedtype) then begin
+     operationnotsupportederror(d,poa^.d,opsinfo.opname);
      goto endlab;
     end;
     bo1:= true;
@@ -2842,12 +2852,12 @@ begin
    else begin   
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
     int1:= d.dat.datatyp.indirectlevel;
-    if not tryconvert(s.stacktop-s.stackindex,po1,int1,[coo_notrunk]) then begin
-     with contextstack[s.stacktop] do begin
+    if not tryconvert(pob,po1,int1,[coo_notrunk]) then begin
+     with pob^ do begin
       po1:= ele.eledataabs(d.dat.datatyp.typedata);
       int1:= d.dat.datatyp.indirectlevel;
      end;
-     if tryconvert(s.stacktop-s.stackindex-2,po1,int1,[coo_notrunk]) then begin
+     if tryconvert(poa,po1,int1,[coo_notrunk]) then begin
       bo1:= true;
      end;
     end
@@ -2856,8 +2866,7 @@ begin
     end;
    end;
    if not bo1 then begin
-    incompatibletypeserror(contextstack[s.stacktop-2].d,
-                                               contextstack[s.stacktop].d);
+    incompatibletypeserror(poa^.d,pob^.d);
     goto endlab;
    end
    else begin
@@ -2879,15 +2888,14 @@ begin
     end;
     op1:= opsinfo.ops[sd1];
     if op1 = oc_none then begin
-     operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
-     dec(s.stacktop,2);
+     operationnotsupportederror(d,pob^.d,opsinfo.opname);
+     s.stacktop:= s.stackindex-1;
     end
     else begin
      bo2:= false;
-     if (d.kind = ck_const) and 
-                      (contextstack[s.stacktop].d.kind = ck_const) then begin
+     if (d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
       bo2:= true;
-      po2:= @contextstack[s.stacktop].d.dat.constval.vinteger;
+      po2:= @pob^.d.dat.constval.vinteger;
       case op1 of //add and sub handled in addsubterm()
        oc_mulcard32: begin       
         d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
@@ -2959,20 +2967,20 @@ begin
       si1:= po1^.h.datasize;
      end;
      if d.kind = ck_const then begin
-      pushinsertconst(s.stacktop-s.stackindex-2,-1,si1);
+      pushinsertconst(poa,-1,si1);
      end;
-     with contextstack[s.stacktop] do begin
+     with pob^ do begin
       if d.kind = ck_const then begin
-       pushinsertconst(s.stacktop-s.stackindex,-1,si1);
+       pushinsertconst(pob,-1,si1);
       end;
      end;
      addfactbinop(op1);
     end;
 endlab:
-    dec(s.stacktop,2);
+    s.stacktop:= s.stackindex-1;
    end;
   end;
-  s.stackindex:= s.stacktop-1; 
+  s.stackindex:= getpreviousnospace(s.stacktop-1-s.stackindex); 
  end;
 end;
 
