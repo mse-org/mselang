@@ -10785,6 +10785,7 @@ begin
  caseofco.handleexit:= @handlecase;
  casebranchco.branch:= @bcasebranch;
  casebranchco.next:= @casebranch1co;
+ casebranchco.handleentry:= @handlecasebranch1entry;
  casebranch1co.branch:= @bcasebranch1;
  casebranch1co.handleexit:= @handlecolonexpected;
  casebranch2co.branch:= @bcasebranch2;

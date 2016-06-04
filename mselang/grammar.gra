@@ -545,7 +545,7 @@ case,caseof,handlecasestart,
 caseof,,handlecaseexpression,handlecase*
  'of'.,casebranch-^*
  '',!handleofexpected*
-casebranch,casebranch1,,
+casebranch,casebranch1,handlecasebranch1entry,
  ${whitespace}
  'else'.,caseelse-*
  'end'.,caseend-

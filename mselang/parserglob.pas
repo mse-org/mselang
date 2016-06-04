@@ -111,7 +111,7 @@ type
                   ck_statement,ck_control,ck_shortcutexp,
                   ck_recorddef,ck_classdef,ck_classprop,
                   ck_interfacedef,ck_enumdef,
-                  ck_paramdef,ck_params,ck_index);
+                  ck_paramdef,ck_params,ck_index,ck_casebranch);
  stackdatakindty = (sdk_none,
                     sdk_pointer,
                     sdk_bool1,

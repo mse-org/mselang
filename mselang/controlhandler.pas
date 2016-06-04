@@ -47,6 +47,7 @@ procedure handleforend();
 procedure handlecasestart();
 procedure handlecaseexpression();
 procedure handleofexpected();
+procedure handlecasebranch1entry();
 procedure handlecasebranchentry();
 procedure handlecasebranch();
 procedure handlecase();
@@ -571,21 +572,31 @@ begin
 end;
 
 procedure handlecaseexpression();
+var
+ poa: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEEXPRESSION');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  if (s.stacktop-s.stackindex = 1) and getvalue(1,das_none,true) and 
-                 (d.dat.datatyp.indirectlevel = 0) and 
-         (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
-                                                 ordinaldatakinds) then begin
-   if d.kind = ck_const then begin //todo: optimize const case switch
-    getvalue(1,das_none);
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if s.stacktop - s.stackindex - 
+                      getspacecount(s.stackindex + 1) <> 1 then begin
+   internalerror(ie_handler,'20160604B');
+  end;
+ {$endif}
+  poa:= @contextstack[s.stacktop];
+  with poa^ do begin
+   if getvalue(poa,das_none,true) and (d.dat.datatyp.indirectlevel = 0) and 
+          (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
+                                                  ordinaldatakinds) then begin
+ //   if d.kind = ck_const then begin //todo: optimize const case switch
+ //    getvalue(1,das_none);
+ //   end;
+   end
+   else begin
+    errormessage(err_ordinalexpexpected,[]);
    end;
-  end
-  else begin
-   errormessage(err_ordinalexpexpected,[]);
   end;
  end;
 end;
@@ -598,30 +609,47 @@ begin
  tokenexpectederror(tk_of);
 end;
 
+procedure handlecasebranch1entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('CASEBRANCH1ENTRY');
+{$endif}
+ with info,contextstack[s.stackindex] do begin
+  d.kind:= ck_casebranch;
+ end;
+end;
+
 procedure handlecasebranchentry();
 var
  int1: integer;
- itemcount,last: integer;
+ {itemcount,}last: integer;
  po1: popinfoty;
+ pexp,plast,pitem: pcontextitemty;
  expssa: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
 {$endif}
  with info do begin
-  last:= s.stackindex-1;
-  itemcount:= s.stackindex - contextstack[last].parent - 1;
+  pexp:= @contextstack[s.stacktop]; //@contextstack[pitem^.parent];
+  pexp:= @contextstack[pexp^.parent];
+  pexp:= getnextnospace(pexp+1);
+  plast:= @contextstack[s.stackindex-1];
+  pitem:= @contextstack[plast^.parent];
+  pitem:= getnextnospace(pitem+1);
+//  last:= s.stackindex-1;
+//  itemcount:= s.stackindex - contextstack[last].parent - 1;
  {$ifdef mse_checkinternalerror}
-  if contextstack[contextstack[s.stackindex].parent+1].d.kind <> 
+  if pexp^.d.kind <> 
                                                         ck_fact then begin
    internalerror(ie_parser,'20150909A');
   end;
  {$endif}
-  expssa:= contextstack[
-                 contextstack[s.stackindex].parent+1].d.dat.fact.ssaindex;
+  expssa:= pexp^.d.dat.fact.ssaindex;
+  last:= getitemcount(pitem)-2;
   
-  for int1:= s.stackindex - itemcount to last do begin
-   with contextstack[int1] do begin
+  for int1:= 0 to last do begin
+   with pitem^ do begin
     if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
                           (d.dat.constval.kind in ordinaldatakinds) then begin
             //todo: signed/unsigned, use table
@@ -669,6 +697,7 @@ begin
      errormessage(err_ordinalconstexpected,[],-1);
     end;
    end;
+   pitem:= getnextnospace(pitem+1);
   end;
  end;
 end;
@@ -697,9 +726,9 @@ begin
  with info do begin
   if errors[erl_error] = 0 then begin
    endad:= opcount - 1;
-   int1:= s.stackindex + 5;
+   int1:= getnextnospace(s.stackindex+1) + 3;
    while int1 <= s.stacktop do begin
-    while contextstack[int1].d.kind = ck_const do begin
+    while contextstack[int1].d.kind <> ck_casebranch do begin
      inc(int1);
     end;
     with contextstack[int1-1] do begin

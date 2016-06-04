@@ -213,14 +213,18 @@ function getcontextssa(const stackoffset: int32): int32;
 function getstackoffset(const acontext: pcontextitemty): int32;
 function getpreviousnospace(const astackindex: int32): int32;
 function getpreviousnospace(const apo: pcontextitemty): pcontextitemty;
+function getnextnospace(const current: pcontextitemty): pcontextitemty;
+function getnextnospace(const astackindex: int32): int32;
 function getnextnospace(const astackindex: int32; 
                                 out apo: pcontextitemty): boolean;
                                    //true if found
-function getnextnospace(const current: pcontextitemty;
+function getnextnospace(const current: pcontextitemty; //increments current
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 function getspacecount(const astackindex: int32): int32;
                //counts ck_space from astackindex to stacktop
+function getitemcount(const acontext: pcontextitemty): int32;
+               //counts not ck_space from astackindex to stacktop
 
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
@@ -2193,6 +2197,42 @@ begin
  end;
 end;
 
+function getnextnospace(const current: pcontextitemty): pcontextitemty;
+var
+ po1,pe: pcontextitemty;
+begin
+ with info do begin
+  po1:= current;
+  while po1^.d.kind = ck_space do begin
+   inc(po1);
+  {$ifdef mse_checkinternalerror}
+   if (po1 > @contextstack[s.stacktop]) then begin
+    internalerror(ie_handler,'20160604A');
+   end;
+  {$endif}
+  end;
+ end;
+ result:= po1;
+end;
+
+function getnextnospace(const astackindex: int32): int32;
+var
+ po1,pe: pcontextitemty;
+begin
+ with info do begin
+  po1:= @contextstack[astackindex];
+  while po1^.d.kind = ck_space do begin
+   inc(po1);
+  {$ifdef mse_checkinternalerror}
+   if (po1 > @contextstack[s.stacktop]) then begin
+    internalerror(ie_handler,'20160604A');
+   end;
+  {$endif}
+  end;
+  result:= po1 - pcontextitemty(@contextstack[0]);
+ end;
+end;
+
 function getspacecount(const astackindex: int32): int32;
                //counts ck_space from astackindex to stacktop
 var
@@ -2209,6 +2249,30 @@ begin
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
    if po1^.d.kind = ck_space then begin
+    inc(result);
+   end;
+   inc(po1);
+  end;
+ end;
+end;
+
+function getitemcount(const acontext: pcontextitemty): int32;
+               //counts not ck_space from astackindex to stacktop
+var
+ po1,pe: pcontextitemty;
+begin
+ result:= 0;
+ with info do begin
+ {$ifdef mse_checkinternalerror}
+  if (acontext < @contextstack) or 
+                           (acontext > @contextstack[s.stacktop]) then begin
+   internalerror(ie_handler,'20160604C');
+  end;
+ {$endif}
+  po1:= acontext;
+  pe:= @contextstack[s.stacktop];
+  while po1 <= pe do begin
+   if po1^.d.kind <> ck_space then begin
     inc(result);
    end;
    inc(po1);
