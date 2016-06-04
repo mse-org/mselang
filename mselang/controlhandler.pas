@@ -286,7 +286,8 @@ begin
   with addcontrolitem(oc_goto)^ do begin
    par.opaddress.opaddress:= d.control.opmark1.address-1; //label
   end;
-  setcurrentlocbefore(2); //dest for oc_while
+  setcurrentlocbefore(s.stacktop-s.stackindex); //dest for oc_while
+//  setcurrentlocbefore(2); //dest for oc_while
   endloop();
   addlabel();
   linkresolveopad(d.control.linkscontinue,d.control.opmark1.address);
