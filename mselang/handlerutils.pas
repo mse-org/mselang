@@ -2943,6 +2943,9 @@ begin
     internalerror(ie_handler,'20160219B');
    end;
   {$endif}
+   if d.dat.datatyp.typedata <= 0 then begin
+    goto endlab; //errorstate
+   end;
    bo2:= true;
    if d.kind <> ck_const then begin
     bo2:= getvalue(poa,das_none);

@@ -1190,8 +1190,8 @@ begin
       end;
      end;
 errlab:
-    s.stacktop:= s.stackindex-1;
-    s.stackindex:= getpreviousnospace(s.stacktop-1);
+     s.stacktop:= s.stackindex-1;
+     s.stackindex:= getpreviousnospace(s.stacktop-1);
 //     dec(s.stacktop,2);
 //     s.stackindex:= s.stacktop-1;
     end
@@ -1754,18 +1754,18 @@ begin
       end;
       if not (po1^.h.kind in ordinaldatakinds) or 
                                    (po1^.h.indirectlevel <> 0) then begin
-       errormessage(err_ordinalexpexpected,[],i1-s.stackindex);
+       errormessage(err_ordinalexpexpected,[],getstackoffset(poitem));
       end
       else begin
        if (po1 <> po2) then begin //todo: try to convert ordinals
-        incompatibletypeserror(po2,po1,i1-s.stackindex);
+        incompatibletypeserror(po2,po1,getstackoffset(poitem));
        end;
       end;
       case d.kind of 
        ck_const: begin
         ca2:= 1 shl d.dat.constval.vcardinal;
         if ca1 and ca2 <> 0 then begin
-         errormessage(err_duplicatesetelement,[],i1-s.stackindex);
+         errormessage(err_duplicatesetelement,[],getstackoffset(poitem));
         end;
         ca1:= ca1 or ca2;
        end
