@@ -402,7 +402,8 @@ begin
 {$endif}
  with info do begin
   with info,contextstack[s.stackindex] do begin
-   if getvalue(2,d.control.forinfo.alloc.kind) then begin
+   if getvalue(@contextstack[s.stacktop],
+                                     d.control.forinfo.alloc.kind) then begin
     d.control.forinfo.start:= gettempaddress(d.control.forinfo.alloc.kind);
    end
    else begin
@@ -440,87 +441,75 @@ var
  po2: popinfoty;
  step: int32;
  i1,i2: int32;
+ {poa,pob,}poc: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('FORHEADER');
 {$endif}
  with info do begin
-  if (s.stacktop-s.stackindex = 3) then begin
-   flags1:= contextstack[s.stackindex].d.handlerflags;
-   if not (hf_error in flags1) then begin
-    with info,contextstack[s.stackindex],d.control.forinfo do begin
-     if getvalue(3,alloc.kind) then begin
-      stop:= gettempaddress(alloc.kind);
-      pushtemp(start,alloc);
-      pushtemp(stop,alloc);
-      if hf_down in flags1 then begin        //todo: different types
-       op1:= oc_cmpgeint32;
-       step:= -1;
-      end
-      else begin
-       op1:= oc_cmpleint32;
-       step:= 1;
-      end;
-      with additem(op1)^.par do begin
-       ssas1:= start.tempaddress.ssaindex;
-       ssas2:= stop.tempaddress.ssaindex;
-       i1:= ssad;
-      end;
-      checkopcapacity(10);
-      po2:= addcontrolitem(oc_if); //jump to loop end
-      po2^.par.ssas1:= i1;
+ {$ifdef mse_checkinternalerror}
+  if (s.stacktop - s.stackindex - getspacecount(s.stackindex+1) <> 3) then begin
+   internalerror(ie_handler,'20160604');
+  end;
+ {$endif}
+  poc:= @contextstack[s.stacktop];
+//  pob:= getpreviousnospace(poc-1);
+//  poa:= getpreviousnospace(pob-1);
+  flags1:= contextstack[s.stackindex].d.handlerflags;
+  if not (hf_error in flags1) then begin
+   with info,contextstack[s.stackindex],d.control.forinfo do begin
+    if getvalue(poc,alloc.kind) then begin
+     stop:= gettempaddress(alloc.kind);
+     pushtemp(start,alloc);
+     pushtemp(stop,alloc);
+     if hf_down in flags1 then begin        //todo: different types
+      op1:= oc_cmpgeint32;
+      step:= -1;
+     end
+     else begin
+      op1:= oc_cmpleint32;
+      step:= 1;
+     end;
+     with additem(op1)^.par do begin
+      ssas1:= start.tempaddress.ssaindex;
+      ssas2:= stop.tempaddress.ssaindex;
+      i1:= ssad;
+     end;
+     checkopcapacity(10);
+     po2:= addcontrolitem(oc_if); //jump to loop end
+     po2^.par.ssas1:= i1;
 
-      i1:= pushtemppo(varad);
-      i2:= pushtemp(start,alloc);
-      with additem(popindioptable[alloc.kind])^ do begin
-       par.memop.t:= alloc;
-       par.ssas1:= i2; //source
-       par.ssas2:= i1; //dest
-      end;
-      i1:= pushtemppo(varad);
-      with additem(oc_incdecindiimmint32)^ do begin
-       par.memimm.mem.t:= alloc;
+     i1:= pushtemppo(varad);
+     i2:= pushtemp(start,alloc);
+     with additem(popindioptable[alloc.kind])^ do begin
+      par.memop.t:= alloc;
+      par.ssas1:= i2; //source
+      par.ssas2:= i1; //dest
+     end;
+     i1:= pushtemppo(varad);
+     with additem(oc_incdecindiimmint32)^ do begin
+      par.memimm.mem.t:= alloc;
 //       par.memimm.mem.t.flags:= varad.flags;
 //       par.memimm.mem.tempaddress:= varad.tempaddress;
-       setmemimm(-step,par);
-       par.ssas1:= i1;
-      end;
-      startlabel(cok_for);
-      linkmark(d.control.linksbreak,
-                       getsegaddress(seg_op,@po2^.par.opaddress.opaddress));
-      i1:= pushtemppo(varad);
-      with additem(oc_incdecindiimmint32)^ do begin
-       par.memimm.mem.t:= alloc;
+      setmemimm(-step,par);
+      par.ssas1:= i1;
+     end;
+     startlabel(cok_for);
+     linkmark(d.control.linksbreak,
+                      getsegaddress(seg_op,@po2^.par.opaddress.opaddress));
+     i1:= pushtemppo(varad);
+     with additem(oc_incdecindiimmint32)^ do begin
+      par.memimm.mem.t:= alloc;
 //       par.memimm.mem.t.flags:= varad.flags;
 //       par.memimm.mem.tempaddress:= varad.tempaddress;
-       setmemimm(step,par);
-       par.ssas1:= i1;
-      end;
-      beginloop();
-     end
-     else begin
-      sethandlererror();
+      setmemimm(step,par);
+      par.ssas1:= i1;
      end;
+     beginloop();
+    end
+    else begin
+     sethandlererror();
     end;
-{
-    with contextstack[s.stackindex+1].d.dat do begin
-     po1:= ele.eledataabs(datatyp.typedata);
-     if (datatyp.indirectlevel <> 1) or 
-         not (po1^.h.kind in ordinaldatakinds) then begin
-      errormessage(err_ordinalexpexpected,[],1);
-      sethandlererror();
-     end
-     else begin
-      if not getvalue(2,po1^.h.datasize) or 
-                        not getvalue(3,po1^.h.datasize) then begin
-       sethandlererror();
-      end
-      else begin
-       pushinsertstackindi(1,false,-(pointersize+2*4)); //counter value
-      end;
-     end;
-    end;
-}
    end;
   end;
  end;
