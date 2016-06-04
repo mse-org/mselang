@@ -3120,16 +3120,13 @@ begin
 end;
 
 procedure handlestatementexit();
+label
+ endlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('HANDLESTATEMENTEXIT');
 {$endif}
  with info do begin
- {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex-getspacecount(s.stackindex+1) <> 1 then begin
-   internalerror(ie_handler,'20140216A');
-  end;
- {$endif}
   with contextstack[s.stacktop].d do begin
    case kind of
     ck_subres: begin
@@ -3141,10 +3138,17 @@ begin
     ck_subcall,ck_controltoken: begin
     end;
     else begin
-     errormessage(err_illegalexpression,[],1);
+     errormessage(err_illegalexpression,[],s.stacktop-s.stackindex);
+     goto endlab;
     end;
    end;
   end;
+ {$ifdef mse_checkinternalerror}
+  if s.stacktop-s.stackindex-getspacecount(s.stackindex+1) <> 1 then begin
+   internalerror(ie_handler,'20140216A');
+  end;
+ {$endif}
+endlab:
   dec(s.stackindex);
  end;
 end;
