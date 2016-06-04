@@ -2937,13 +2937,10 @@ begin
   poa:= @contextstack[s.stackindex-1];
   pob:= @contextstack[s.stacktop]; 
   with poa^ do begin
-  {$ifdef mse_checkinternalerror}
    if not (d.kind in datacontexts) or 
-              not (pob^.d.kind in datacontexts) then begin
-    internalerror(ie_handler,'20160219B');
-   end;
-  {$endif}
-   if d.dat.datatyp.typedata <= 0 then begin
+              not (pob^.d.kind in datacontexts) or
+                       (d.dat.datatyp.typedata <= 0) or 
+                             (pob^.d.dat.datatyp.typedata <= 0) then begin
     goto endlab; //errorstate
    end;
    bo2:= true;
