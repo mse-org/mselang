@@ -1658,7 +1658,7 @@ begin
     end;
    end
    else begin
-    if getvalue(1,das_none) then begin
+    if getvalue(poa,das_none) then begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      i1:= d.dat.fact.ssaindex;
      with insertitem(notops[po1^.h.kind],1,-1)^ do begin
