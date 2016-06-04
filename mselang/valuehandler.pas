@@ -1645,6 +1645,9 @@ begin
       end;
      end;
     end;
+    ck_error,ck_none: begin
+     goto endlab;
+    end;
     else begin
      internalerror1(ie_notimplemented,'20140406A');
     end;
