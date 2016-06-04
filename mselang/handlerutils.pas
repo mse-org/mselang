@@ -131,7 +131,7 @@ function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety
                                const retainconst: boolean = false): boolean;
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
-function getaddress(const stackoffset: integer;
+function getaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
@@ -212,6 +212,7 @@ function getcontextssa(const stackoffset: int32): int32;
 
 function getstackoffset(const acontext: pcontextitemty): int32;
 function getpreviousnospace(const astackindex: int32): int32;
+function getpreviousnospace(const apo: pcontextitemty): pcontextitemty;
 function getnextnospace(const astackindex: int32; 
                                 out apo: pcontextitemty): boolean;
                                    //true if found
@@ -2125,6 +2126,24 @@ begin
    dec(i1);
   end;
  end;
+end;
+
+function getpreviousnospace(const apo: pcontextitemty): pcontextitemty;
+var
+ po1: pcontextitemty;
+begin
+ po1:= apo;
+ while po1^.d.kind = ck_space do begin
+ {$ifdef mse_checkinternalerror}
+  with info do begin
+   if (po1 < @contextstack) then begin
+    internalerror(ie_handler,'20160603D');
+   end;
+  end;
+ {$endif}
+  dec(po1);
+ end;
+ result:= po1;
 end;
 
 function getnextnospace(const astackindex: int32;

@@ -965,19 +965,25 @@ begin
 end;
 
 procedure handleindexstart();
+var
+ po1,po2: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXSTART');
 {$endif}
- with info,contextstack[s.stackindex-1] do begin
-  if d.kind = ck_prop then begin
-   with contextstack[s.stackindex] do begin
-    d.kind:= ck_index;
+ with info do begin
+  po2:= @contextstack[s.stackindex];
+  po1:= getpreviousnospace(po2-1);
+  with info,po1^ do begin
+   if d.kind = ck_prop then begin
+    with po2^ do begin
+     d.kind:= ck_index;
+    end;
+   end
+   else begin
+    getaddress(po1,true);
+    handleindexitemstart();
    end;
-  end
-  else begin
-   getaddress(-1,true);
-   handleindexitemstart();
   end;
  end;
 end;

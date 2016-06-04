@@ -3015,45 +3015,49 @@ procedure handlewith2entry();
 var
  po1: ptypedataty;
  ele1: elementoffsetty;
+ ptop: pcontextitemty;
 label
  errlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('WITH2ENTRY');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  case d.kind of
-   ck_ref,ck_fact: begin
-    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    if (d.dat.datatyp.indirectlevel = 1) and 
-                         (po1^.h.kind in [dk_record,dk_class]) then begin
-     if d.kind = ck_ref then begin
-      dec(d.dat.datatyp.indirectlevel);
-      dec(d.dat.indirection);
-      if not getaddress(s.stacktop-s.stackindex,true) then begin
-       goto errlab;
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  with ptop^ do begin
+   case d.kind of
+    ck_ref,ck_fact: begin
+     po1:= ele.eledataabs(d.dat.datatyp.typedata);
+     if (d.dat.datatyp.indirectlevel = 1) and 
+                          (po1^.h.kind in [dk_record,dk_class]) then begin
+      if d.kind = ck_ref then begin
+       dec(d.dat.datatyp.indirectlevel);
+       dec(d.dat.indirection);
+       if not getaddress(ptop,true) then begin
+        goto errlab;
+       end;
       end;
+      with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
+       address:= getpointertempaddress();
+       include(address.flags,af_withindirect);
+       vf.typ:= d.dat.datatyp.typedata;
+       vf.flags:= [];
+       vf.next:= 0;
+      end;
+     end
+     else begin
+      errormessage(err_expmustbeclassorrec,[]);
      end;
-     with pvardataty(ele.addscope(ek_var,basetype(po1)))^ do begin
-      address:= getpointertempaddress();
-      include(address.flags,af_withindirect);
-      vf.typ:= d.dat.datatyp.typedata;
-      vf.flags:= [];
-      vf.next:= 0;
-     end;
-    end
+    end;
+    ck_none: begin //error in fact
+    end;
     else begin
-     errormessage(err_expmustbeclassorrec,[]);
+     internalerror1(ie_notimplemented,'20140407A');
     end;
    end;
-   ck_none: begin //error in fact
-   end;
-   else begin
-    internalerror1(ie_notimplemented,'20140407A');
-   end;
+ errlab:
+   s.stacktop:= s.stackindex;
   end;
-errlab:
-  s.stacktop:= s.stackindex;
  end;
 end;
 

@@ -256,26 +256,29 @@ procedure handlesetlength(const paramco: integer);
 var
  len: integer;
  typ1: ptypedataty;
+ po1,po2: pcontextitemty;
 begin
  with info do begin
   if checkparamco(2,paramco) then begin
    if getvalue(s.stacktop-s.stackindex,das_32) then begin
-    with contextstack[s.stacktop] do begin
+    po2:= @contextstack[s.stacktop];
+    po1:= getpreviousnospace(po2-1);
+    with po2^ do begin
      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                                      (typ1^.h.kind <> dk_integer) then begin
       incompatibletypeserror(2,'dk_integer',d);
      end
      else begin
-      if getaddress(s.stacktop-s.stackindex-1,true) then begin
+      if getaddress(po1,true) then begin
       {$ifdef mse_checkinternalerror}
-       if not (contextstack[s.stacktop].d.kind in factcontexts) or 
-                     not (contextstack[s.stacktop-1].d.kind in 
+       if not (po2^.d.kind in factcontexts) or 
+                     not (po1^.d.kind in 
                                                [ck_fact,ck_subres]) then begin
         internalerror(ie_handler,'20160228A');
        end;
       {$endif}
-       with contextstack[s.stacktop-1] do begin
+       with po1^ do begin
         with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
          with additem(setlengthops[h.kind])^ do begin
           if op.op = oc_none then begin
@@ -284,7 +287,7 @@ begin
           else begin
            if co_llvm in compileoptions then begin
             par.ssas1:= d.dat.fact.ssaindex; //result
-            par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+            par.ssas2:= po2^.d.dat.fact.ssaindex;
             par.setlength.itemsize:= 
                    info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;
            end
@@ -304,11 +307,14 @@ begin
 end;
 
 procedure handleunique(const paramco: integer);
+var
+ ptop: pcontextitemty;
 begin
  with info do begin
+  ptop:= @contextstack[s.stacktop];
   if checkparamco(1,paramco) and 
-                       getaddress(s.stacktop-s.stackindex,true) then begin
-   with contextstack[s.stacktop] do begin
+                       getaddress(ptop,true) then begin
+   with ptop^ do begin
     with ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^ do begin
      with additem(uniqueops[h.kind])^ do begin
       if op.op = oc_none then begin

@@ -43,7 +43,7 @@ function checkcompatibledatatype(const sourcestackoffset: int32;
                          const destadress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
                                             out conversioncost: int32): boolean;
-function getbasevalue(const stackoffset: int32;
+function getbasevalue(const acontext: pcontextitemty;
                              const dest: databitsizety): boolean;
 procedure handlevalueidentifier();
 procedure handlevaluepathstart();
@@ -482,7 +482,7 @@ begin
           dk_array: begin
            if issametype(source1^.infoarray.i.itemtypedata,
                               dest^.infodynarray.i.itemtypedata) then begin
-            if getaddress(stackoffset,true) then begin
+            if getaddress(acontext,true) then begin
              with convert(oc_arraytoopenar)^ do begin
               setimmint32(source1^.infoarray.i.totitemcount-1,par);
              end;
@@ -683,30 +683,27 @@ begin
  end;
 end;
 
-function getbasevalue(const stackoffset: int32;
+function getbasevalue(const acontext: pcontextitemty;
                          const dest: databitsizety): boolean;
 var
  po1: ptypedataty;
 begin
  po1:= getbasetypedata(dest);
- if info.contextstack[info.s.stackindex+stackoffset].d.kind = 
-                                                        ck_const then begin
-  result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,[]);
+ if acontext^.d.kind = ck_const then begin
+  result:= tryconvert(acontext,po1,po1^.h.indirectlevel,[]);
   if not result then begin
-   illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
-                       po1,po1^.h.indirectlevel);
+   illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
   end
   else begin
-   result:= getvalue(stackoffset,dest);
+   result:= getvalue(acontext,dest);
   end;
  end
  else begin
-  result:= getvalue(stackoffset,dest);
+  result:= getvalue(acontext,dest);
   if result then begin
-   result:= tryconvert(stackoffset,po1,po1^.h.indirectlevel,[]);
+   result:= tryconvert(acontext,po1,po1^.h.indirectlevel,[]);
    if not result then begin
-    illegalconversionerror(info.contextstack[info.s.stackindex+stackoffset].d,
-                       po1,po1^.h.indirectlevel);
+    illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
    end;
   end; 
  end;
@@ -1604,7 +1601,7 @@ var
  paramco1: integer;
  origparent: elementoffsetty;
  ssabefore: int32;
- indpo: pcontextitemty;
+ indpo,pob: pcontextitemty;
 label
  endlab;
 begin
@@ -1614,7 +1611,8 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-  with contextstack[s.stackindex-1] do begin
+  pob:= @contextstack[s.stackindex-1];
+  with pob^ do begin
    case d.kind of
     ck_getfact: begin
      isgetfact:= true;
@@ -1738,7 +1736,7 @@ begin
      if po1^.header.kind in [ek_field] then begin
       if not isgetfact and 
                (contextstack[s.stackindex-1].d.dat.indirection < 0) then begin
-       if not getaddress(-1,true) then begin
+       if not getaddress(pob,true) then begin
         goto endlab;
        end;
       end;
@@ -1819,7 +1817,7 @@ begin
       else begin
        with contextstack[s.stackindex-1] do begin
         if d.dat.indirection <> 0 then begin
-         getaddress(-1,false);
+         getaddress(pob,false);
          dec(d.dat.indirection); //pending dereference
         end;
         contextstack[s.stackindex].d:= d; 

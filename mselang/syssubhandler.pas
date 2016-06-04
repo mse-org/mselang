@@ -360,7 +360,7 @@ begin
      case d.kind of
       ck_ref: begin
        if d.dat.indirection <> 0 then begin
-        getaddress(s.stacktop-paramco+1-s.stackindex,true);
+        getaddress(po1,true);
        end
        else begin
         inc(d.dat.indirection);         //address
@@ -369,7 +369,7 @@ begin
        handleimm(po1);
       end;
       ck_fact: begin
-       getaddress(s.stacktop-paramco+1-s.stackindex,true);
+       getaddress(po1,true);
        handleimm(po1);
       end;
       ck_const: begin
@@ -568,10 +568,10 @@ begin
  if checkparamco(2,paramco) then begin
   with info do begin
    po2:= @contextstack[s.stacktop];
-   po1:= po2-1;
+   po1:= getpreviousnospace(po2-1);
    with po1^ do begin
-    if getaddress(s.stacktop-s.stackindex-1,true) and
-                    getbasevalue(s.stacktop-s.stackindex,das_32) then begin
+    if getaddress(po1,true) and
+                    getbasevalue(po2,das_32) then begin
      if d.dat.datatyp.indirectlevel <= 0 then begin
       errormessage(err_pointertypeexpected,[]);
       exit;
@@ -606,7 +606,7 @@ procedure handlefreemem(const paramco: integer);
 begin
  with info do begin
   if checkparamco(1,paramco) and 
-          getbasevalue(s.stacktop-s.stackindex,das_pointer) then begin
+          getbasevalue(@contextstack[s.stacktop],das_pointer) then begin
 //   with contextstack[s.stacktop] do begin
     with additem(oc_freemem)^ do begin
      par.ssas1:= info.s.ssa.index-1;
@@ -623,20 +623,18 @@ end;
  
 procedure handlesetmem(const paramco: integer);
 var
- po1: pcontextitemty;
- i1: int32;
+ po1,po2,po3: pcontextitemty;
 begin
  with info do begin
-  i1:= s.stacktop-s.stackindex;
-  if checkparamco(3,paramco) and getbasevalue(i1-2,das_pointer) and 
-           getbasevalue(i1-1,das_32) and getbasevalue(i1,das_32) then begin
+  po3:= @contextstack[s.stacktop];
+  po2:= getpreviousnospace(po3-1);
+  po1:= getpreviousnospace(po2-1);
+  if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
+           getbasevalue(po2,das_32) and getbasevalue(po1,das_32) then begin
    with additem(oc_setmem)^ do begin
-    po1:= @contextstack[s.stackindex+3];
     par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
-    inc(po1);
-    par.ssas2:= po1^.d.dat.fact.ssaindex; //count
-    inc(po1);
-    par.ssas3:= po1^.d.dat.fact.ssaindex; //fill value
+    par.ssas2:= po2^.d.dat.fact.ssaindex; //count
+    par.ssas3:= po3^.d.dat.fact.ssaindex; //fill value
    end;
   end;
  end;
@@ -644,20 +642,19 @@ end;
 
 procedure handlememcpy(const paramco: integer);
 var
- po1: pcontextitemty;
+ po1,po2,po3: pcontextitemty;
  i1: int32;
 begin
  with info do begin
-  i1:= s.stacktop-s.stackindex;            
-  if checkparamco(3,paramco) and getbasevalue(i1-2,das_pointer) and 
-           getbasevalue(i1-1,das_pointer) and getbasevalue(i1,das_32) then begin
+  po3:= @contextstack[s.stacktop];
+  po2:= getpreviousnospace(po3-1);
+  po1:= getpreviousnospace(po2-1);
+  if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
+           getbasevalue(po2,das_pointer) and getbasevalue(po3,das_32) then begin
    with additem(oc_memcpy)^ do begin
-    po1:= @contextstack[s.stackindex+3];
     par.ssas1:= po1^.d.dat.fact.ssaindex; //dest
-    inc(po1);
-    par.ssas2:= po1^.d.dat.fact.ssaindex; //source
-    inc(po1);
-    par.ssas3:= po1^.d.dat.fact.ssaindex; //count
+    par.ssas2:= po2^.d.dat.fact.ssaindex; //source
+    par.ssas3:= po3^.d.dat.fact.ssaindex; //count
    end;
   end;
  end;
@@ -792,14 +789,18 @@ var
   dest1^.d.kind:= ck_subres;
   dest1^.d.dat.fact.ssaindex:= info.s.ssa.index;
  end; //checkfact
- 
+
+var
+ ptop: pcontextitemty;
+  
 begin
  with info do begin
   if checkparamco(1,paramco) then begin
    dest1:= @contextstack[s.stackindex];
    initdatacontext(dest1^.d,ck_const); //default
    dest1^.d.dat.datatyp:= sysdatatypes[st_int32]; //default
-   with contextstack[s.stacktop] do begin
+   ptop:= @contextstack[s.stacktop];
+   with ptop^ do begin
     case d.kind of
      ck_ref: begin
       if d.dat.datatyp.indirectlevel <> 0 then begin
@@ -814,12 +815,12 @@ begin
         dk_string8,dk_dynarray,dk_openarray: begin
          if ahigh then begin
           if po1^.h.kind = dk_openarray then begin
-           if getaddress(s.stacktop-s.stackindex,true) then begin
+           if getaddress(ptop,true) then begin
             checkfact();
            end;
           end
           else begin
-           if getvalue(s.stacktop-s.stackindex,das_none) then begin
+           if getvalue(ptop,das_none) then begin
             checkfact();
            end;
           end;
@@ -896,12 +897,13 @@ var
  end; //arraylength
  
 var
- dest1: pcontextitemty;
+ dest1,ptop: pcontextitemty;
  
 begin
  with info do begin
   if checkparamco(1,paramco) then begin
-   with contextstack[s.stacktop] do begin
+   ptop:= @contextstack[s.stacktop];
+   with ptop^ do begin
     dest1:= @contextstack[s.stackindex];
     dest1^.d.dat.datatyp:= sysdatatypes[st_int32];
     initdatacontext(dest1^.d,ck_const); //default
@@ -933,14 +935,14 @@ begin
       end
       else begin
        if typ1^.h.kind = dk_openarray then begin
-        if getaddress(s.stacktop-s.stackindex,true) then begin
+        if getaddress(ptop,true) then begin
          with additem(oc_lengthopenar)^ do begin
           par.ssas1:= info.s.ssa.index-1;
          end;
         end;
        end
        else begin
-        if getvalue(s.stacktop-s.stackindex,das_none) then begin
+        if getvalue(ptop,das_none) then begin
          case typ1^.h.kind of
           dk_string8: begin
            with additem(oc_lengthstring)^ do begin
@@ -995,7 +997,7 @@ var
 begin
  with info do begin
   if checkparamco(1,paramco) and 
-          getbasevalue(s.stacktop-s.stackindex,das_f64) then begin
+          getbasevalue(@contextstack[s.stacktop],das_f64) then begin
    with additem(aop)^ do begin
     par.ssas1:= info.s.ssa.index-1;
    end;
