@@ -409,17 +409,20 @@ var
  int1,int3: integer;
  po1: popinfoty; 
  po2: ptypedataty;
+ poitem,poe: pcontextitemty;
 label
  errlab;
 begin                      
  with info do begin
   int3:= 0;
-  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-   notimplementederror('');
-//   getvalue(int1-s.stackindex,das_none);
+  poe:= @contextstack[s.stacktop];
+  poitem:= @contextstack[s.stackindex+2];
+  while getnextnospace(poitem+1,poitem) do begin
+   getvalue(poitem,das_none);
   end;
-  for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-   with contextstack[int1] do begin //todo: use table
+  poitem:= @contextstack[s.stackindex+2];
+  while getnextnospace(poitem+1,poitem) do begin
+   with poitem^ do begin //todo: use table
     if d.dat.datatyp.indirectlevel > 0 then begin
      po1:= additem(oc_writepointer);
      po1^.par.voffset:= alignsize(pointersize);
@@ -502,7 +505,7 @@ begin
       end;
       else begin
 errlab:
-       errormessage(err_cantreadwritevar,[],int1-s.stackindex);
+       errormessage(err_cantreadwritevar,[],getstackoffset(poitem));
        po1:= additem(oc_none);
        po1^.par.voffset:= 0;         //dummy
  //      po1^.par.voffsaddress:= getrtti(po2);

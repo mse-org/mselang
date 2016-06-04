@@ -9,7 +9,7 @@
 }
 unit __mla__compilerunit;
 interface
-//{$internaldebug on}
+{$internaldebug on}
 //{$define mse_debugclass}
 
 uses
