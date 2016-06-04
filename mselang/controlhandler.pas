@@ -343,15 +343,16 @@ begin
 end;
 
 procedure handleforvar();
-var
- po1: ptypedataty;
- 
+
  procedure err(const aerror: errorty);
  begin
   errormessage(aerror,[],1);
   sethandlererror();
  end; //err
- 
+
+var
+ po1: ptypedataty;
+ ptop: pcontextitemty; 
 begin
 {$ifdef mse_debugparser}
  outhandle('FORVAR');
@@ -359,9 +360,10 @@ begin
  with info,contextstack[s.stackindex] do begin
   d.kind:= ck_control;
   d.control.kind:= cok_for;
-  if getassignaddress(1,true) then begin
+  ptop:= @contextstack[s.stacktop];
+  if getassignaddress(ptop,true) then begin
    d.control.forinfo.varad:= getpointertempaddress();
-   with contextstack[s.stackindex+1].d.dat do begin
+   with ptop^.d.dat do begin
     po1:= ele.eledataabs(datatyp.typedata);
     if (datatyp.indirectlevel <> 1) or 
         not (po1^.h.kind in ordinaldatakinds) then begin

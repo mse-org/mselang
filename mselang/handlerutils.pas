@@ -135,8 +135,8 @@ function getaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
-function getassignaddress(const stackoffset: integer;
-                                  const endaddress: boolean): boolean;
+//function getassignaddress(const stackoffset: integer;
+//                                  const endaddress: boolean): boolean;
 procedure getclassvalue(const stackoffset: int32);
 
 function pushtemp(const address: addressvaluety;
@@ -2656,7 +2656,7 @@ begin
   end;
  end;
 end;
-
+{
 function getassignaddress(const stackoffset: integer;
                                   const endaddress: boolean): boolean;
 begin
@@ -2664,7 +2664,7 @@ begin
   result:= getassignaddress(@contextstack[s.stackindex+stackoffset],endaddress);
  end;
 end;
-
+}
 procedure getclassvalue(const stackoffset: int32);
 begin
  with info,contextstack[s.stackindex+stackoffset] do begin
