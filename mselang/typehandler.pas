@@ -1045,6 +1045,8 @@ var
  isdynarray: boolean;
  range: ordrangety;
  li1: int64;
+ ptop: pcontextitemty;
+ topoffset: int32;
 label
  errorlab;
 begin
@@ -1052,6 +1054,9 @@ begin
  outhandle('INDEXITEM');
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
+//  getnextnospace(s.stackindex+1,poa);
+  ptop:= @contextstack[s.stacktop];
+  topoffset:= s.stacktop-s.stackindex;
   if d.kind <> ck_prop then begin //no array property
   {$ifdef mse_checkinternalerror}
    if contextstack[s.stackindex].d.kind <> ck_getindex then begin
@@ -1063,7 +1068,7 @@ begin
    case itemtype^.h.kind of
     dk_dynarray,dk_openarray: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
-      errormessage(err_illegalqualifier,[],1);
+      errormessage(err_illegalqualifier,[],topoffset);
       goto errorlab;
      end;
      itemtype:= ele.eledataabs(itemtype^.infodynarray.i.itemtypedata);
@@ -1071,7 +1076,7 @@ begin
     end;
     dk_string8: begin
      if d.dat.datatyp.indirectlevel <> 0 then begin
-      errormessage(err_illegalqualifier,[],1);
+      errormessage(err_illegalqualifier,[],topoffset);
       goto errorlab;
      end;
      range.min:= 1;
@@ -1079,7 +1084,7 @@ begin
     end;
     dk_array: begin
      if d.dat.datatyp.indirectlevel <> 1 then begin
-      errormessage(err_illegalqualifier,[],1);
+      errormessage(err_illegalqualifier,[],topoffset);
       goto errorlab;
      end;
      isdynarray:= false;
@@ -1089,7 +1094,7 @@ begin
     end;
    end;
    if isdynarray then begin
-    if not tryconvert(1,st_int32) then begin
+    if not tryconvert(ptop,st_int32) then begin
      errormessage(err_illegalqualifier,[],1);
      goto errorlab;
     end;
@@ -1098,35 +1103,35 @@ begin
     indextype:= ele.eledataabs(itemtype^.infoarray.indextypedata);
     getordrange(ele.eledataabs(itemtype^.infoarray.indextypedata),range);
     itemtype:= ele.eledataabs(itemtype^.infoarray.i.itemtypedata); 
-    if not tryconvert(1,indextype,0,[]) then begin
-     errormessage(err_illegalqualifier,[],1);
+    if not tryconvert(ptop,indextype,0,[]) then begin
+     errormessage(err_illegalqualifier,[],topoffset);
      goto errorlab;
     end;
    end;
-   with contextstack[s.stacktop] do begin
+   with ptop^ do begin
     if d.kind = ck_const then begin
      li1:= getordconst(d.dat.constval);
      if (li1 < range.min) or 
                        not isdynarray and (li1 > range.max) then begin
-      rangeerror(range,1);
+      rangeerror(range,topoffset);
       goto errorlab;
      end;
      
     end;
-    getvalue(1,das_32);
-    if not tryconvert(1,st_int32) then begin
-     errormessage(err_illegalqualifier,[],1);
+    getvalue(ptop,das_32);
+    if not tryconvert(ptop,st_int32) then begin
+     errormessage(err_illegalqualifier,[],topoffset);
      goto errorlab;
     end;
     if range.min <> 0 then begin
      lastssa:= d.dat.fact.ssaindex;
-     with insertitem(oc_addimmint32,1,-1)^ do begin
+     with insertitem(oc_addimmint32,topoffset,-1)^ do begin
       par.ssas1:= lastssa;
       setimmint32(-range.min,par);
      end;
     end;
     lastssa:= d.dat.fact.ssaindex;
-    with insertitem(oc_mulimmint32,1,-1)^ do begin
+    with insertitem(oc_mulimmint32,topoffset,-1)^ do begin
      par.ssas1:= lastssa;
      setimmint32(itemtype^.h.bytesize,par);
     end;
@@ -1141,7 +1146,8 @@ begin
    d.dat.datatyp.indirectlevel:= itemtype^.h.indirectlevel+1; //pointer
            //opdatatype is already pointer
 errorlab:
-   dec(s.stacktop);
+   s.stacktop:= s.stackindex;
+//   dec(s.stacktop);
   end;
  end;
 end;
