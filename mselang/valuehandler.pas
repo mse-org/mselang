@@ -1838,6 +1838,9 @@ begin
                   //todo: no double copy by handlefact
        end;
       end;
+      if pvardataty(po2)^.vf.typ <= 0 then begin
+       goto endlab; //todo: stop error earlier
+      end;
       donotfound(pvardataty(po2)^.vf.typ); //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and
                            (d.kind in datacontexts) then begin

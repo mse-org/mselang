@@ -1324,6 +1324,9 @@ begin
      ck_fact,ck_subres: begin
       //nothing to do
      end;
+     ck_none,ck_error: begin
+      exit;
+     end;
      else begin
       internalerror1(ie_notimplemented,'20140402A'); //todo
      end;
