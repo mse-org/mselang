@@ -1078,6 +1078,10 @@ begin
 //    s.stackindex:= s.stacktop-1;
    end
    else begin
+    if (d.kind in [ck_none,ck_error]) or
+              (pob^.d.kind in [ck_none,ck_error]) then begin
+     goto errlab;
+    end;
    {$ifdef mse_checkinternalerror}
     if not (d.kind in alldatacontexts) or 
               not (pob^.d.kind in alldatacontexts)then begin
