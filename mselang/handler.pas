@@ -1078,8 +1078,8 @@ begin
 //    s.stackindex:= s.stacktop-1;
    end
    else begin
-    if (d.kind in [ck_none,ck_error]) or
-              (pob^.d.kind in [ck_none,ck_error]) then begin
+    if (d.kind in [ck_none,ck_error,ck_space]) or
+              (pob^.d.kind in [ck_none,ck_error,ck_space]) then begin
      goto errlab;
     end;
    {$ifdef mse_checkinternalerror}
@@ -1462,6 +1462,9 @@ begin
        end;
        ck_controltoken: begin
         errormessage(err_invalidcontroltoken,[],1);
+       end;
+       ck_none,ck_error,ck_space,ck_subcall: begin //todo: stop error earlier
+        goto endlab;
        end;
       {$ifdef mse_checkinternalerror}
        else begin
