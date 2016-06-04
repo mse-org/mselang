@@ -1130,8 +1130,8 @@ begin
           pob^.d.dat.constval.vinteger:= -pob^.d.dat.constval.vinteger;
          end;
          pob^.d.dat.constval.vinteger:= pob^.d.dat.constval.vinteger*i2;
-         i2:= s.stacktop-s.stackindex-2;
-         getvalue(i2,das_none);
+//         i2:= s.stacktop-s.stackindex-2;
+         getvalue(poa,das_none);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
           if co_llvm in compileoptions then begin
@@ -1575,47 +1575,52 @@ procedure handlenegfact();
 var
  po1: ptypedataty;
  i1: int32;
+ poa: pcontextitemty;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
- with info,contextstack[s.stacktop] do begin
- {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex <> 1 then begin
-   internalerror(ie_handler,'20140404A');
-  end;
- {$endif}
-  if d.kind = ck_const then begin
-   with d.dat.constval do begin
-    case kind of
-     dk_integer: begin
-      vinteger:= -vinteger;
+ with info do begin
+  poa:= @contextstack[s.stacktop];
+  with poa^ do begin
+  {$ifdef mse_checkinternalerror}
+   if s.stacktop-s.stackindex - getspacecount(s.stackindex+1) <> 1 then begin
+    internalerror(ie_handler,'20140404A');
+   end;
+  {$endif}
+   if d.kind = ck_const then begin
+    with d.dat.constval do begin
+     case kind of
+      dk_integer: begin
+       vinteger:= -vinteger;
+      end;
+      dk_float: begin
+       vfloat:= -vfloat;
+      end;
+      else begin
+       errormessage(err_negnotpossible,[],1);
+      end;
      end;
-     dk_float: begin
-      vfloat:= -vfloat;
-     end;
-     else begin
-      errormessage(err_negnotpossible,[],1);
+    end;
+   end
+   else begin
+    if getvalue(poa,das_none) then begin
+     po1:= ele.eledataabs(d.dat.datatyp.typedata);
+     i1:= d.dat.fact.ssaindex;
+     with insertitem(negops[po1^.h.kind],1,-1)^ do begin
+      if op.op = oc_none then begin
+       errormessage(err_negnotpossible,[],1);
+      end;
+      par.ssas1:= i1;
      end;
     end;
    end;
-  end
-  else begin
-   if getvalue(1,das_none) then begin
-    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    i1:= d.dat.fact.ssaindex;
-    with insertitem(negops[po1^.h.kind],1,-1)^ do begin
-     if op.op = oc_none then begin
-      errormessage(err_negnotpossible,[],1);
-     end;
-     par.ssas1:= i1;
-    end;
-   end;
+   contextstack[s.stackindex].d.kind:= ck_space;
+//   contextstack[s.stackindex].d:= d;
+//   s.stacktop:= s.stackindex;
+   dec(s.stackindex);
   end;
-  contextstack[s.stackindex].d:= d;
-  s.stacktop:= s.stackindex;
-  dec(s.stackindex);
  end;
 end;
 
@@ -1623,47 +1628,52 @@ procedure handlenotfact;
 var
  po1: ptypedataty;
  i1: int32;
+ poa: pcontextitemty;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
- outhandle('NEGFACT');
+ outhandle('NOTFACT');
 {$endif}
- with info,contextstack[s.stacktop] do begin
- {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex <> 1 then begin
-   internalerror(ie_handler,'20140404A');
-  end;
- {$endif}
-  if d.kind = ck_const then begin
-   with d.dat.constval do begin
-    case kind of
-     dk_integer: begin
-      vinteger:= not vinteger;
+ with info do begin
+  poa:= @contextstack[s.stacktop];
+  with poa^ do begin
+  {$ifdef mse_checkinternalerror}
+   if s.stacktop-s.stackindex - getspacecount(s.stackindex+1) <> 1 then begin
+    internalerror(ie_handler,'20140404A');
+   end;
+  {$endif}
+   if d.kind = ck_const then begin
+    with d.dat.constval do begin
+     case kind of
+      dk_integer: begin
+       vinteger:= not vinteger;
+      end;
+      dk_boolean: begin
+       vboolean:= not vboolean;
+      end;
+      else begin
+       errormessage(err_notnotpossible,[],1);
+      end;
      end;
-     dk_boolean: begin
-      vboolean:= not vboolean;
-     end;
-     else begin
-      errormessage(err_notnotpossible,[],1);
+    end;
+   end
+   else begin
+    if getvalue(1,das_none) then begin
+     po1:= ele.eledataabs(d.dat.datatyp.typedata);
+     i1:= d.dat.fact.ssaindex;
+     with insertitem(notops[po1^.h.kind],1,-1)^ do begin
+      if op.op = oc_none then begin
+       errormessage(err_notnotpossible,[],1);
+      end;
+      par.ssas1:= i1;
      end;
     end;
    end;
-  end
-  else begin
-   if getvalue(1,das_none) then begin
-    po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    i1:= d.dat.fact.ssaindex;
-    with insertitem(notops[po1^.h.kind],1,-1)^ do begin
-     if op.op = oc_none then begin
-      errormessage(err_notnotpossible,[],1);
-     end;
-     par.ssas1:= i1;
-    end;
-   end;
+   contextstack[s.stackindex].d.kind:= ck_space;
+//   contextstack[s.stackindex].d:= d;
+//   s.stacktop:= s.stackindex;
+   dec(s.stackindex);
   end;
-  contextstack[s.stackindex].d:= d;
-  s.stacktop:= s.stackindex;
-  dec(s.stackindex);
  end;
 end;
 

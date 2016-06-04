@@ -319,7 +319,7 @@ var
  end;
 
 var
- po1: pcontextitemty;
+ poa,pob: pcontextitemty;
  {po1,}po2: ptypedataty;
  int1: integer;
 // po3: popinfoty;
@@ -334,7 +334,9 @@ begin
    int1:= 1;
    par2isconst:= true;
    if paramco > 1 then begin
-    with contextstack[s.stacktop] do begin
+    pob:= @contextstack[s.stacktop];
+    poa:= getpreviousnospace(pob-1);
+    with pob^ do begin
      po2:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 
                   not (po2^.h.kind in ordinaldatakinds) then begin
@@ -347,30 +349,32 @@ begin
       else begin
        par2isconst:= false;
        if d.kind <> ck_none then begin //parameter error otherwise
-        getvalue(s.stacktop-s.stackindex,das_none);
+        getvalue(pob,das_none);
         int1:= -1; //no imm
        end;
       end;
      end;
     end;
+   end
+   else begin
+    poa:= @contextstack[s.stacktop];
    end;
    if int1 <> 0 then begin //ignore otherwise
-    po1:= @contextstack[s.stacktop-paramco+1];
-    with po1^ do begin //dest
+    with poa^ do begin //dest
      case d.kind of
       ck_ref: begin
        if d.dat.indirection <> 0 then begin
-        getaddress(po1,true);
+        getaddress(poa,true);
        end
        else begin
         inc(d.dat.indirection);         //address
         inc(d.dat.datatyp.indirectlevel);
        end;
-       handleimm(po1);
+       handleimm(poa);
       end;
       ck_fact: begin
-       getaddress(po1,true);
-       handleimm(po1);
+       getaddress(poa,true);
+       handleimm(poa);
       end;
       ck_const: begin
        errormessage(err_variableexpected,[],s.stacktop-s.stackindex-paramco+1);
