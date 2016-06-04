@@ -38,7 +38,7 @@ function tryconvert(const acontext: pcontextitemty;
 function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
 
-function checkcompatibledatatype(const sourcestackoffset: int32;
+function checkcompatibledatatype(const sourcecontext: pcontextitemty;
                          const desttypedata: elementoffsetty;
                          const destadress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
@@ -472,7 +472,7 @@ begin
           dk_dynarray: begin
            if issametype(source1^.infodynarray.i.itemtypedata,
                               dest^.infodynarray.i.itemtypedata) then begin
-            if getvalue(stackoffset,das_pointer,false) then begin
+            if getvalue(acontext,das_pointer,false) then begin
              with convert(oc_dynarraytoopenar)^ do begin
              end;
              result:= true;
@@ -575,7 +575,7 @@ begin
    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
             (d.dat.datatyp.indirectlevel > 0) and 
                                          (coo_type in aoptions) then begin
-    if getvalue(stackoffset,das_pointer) then begin //pointer to int
+    if getvalue(acontext,das_pointer) then begin //pointer to int
      i1:= d.dat.fact.ssaindex;        //todo: operand size
      with insertitem(oc_potoint32,stackoffset,-1)^ do begin
       par.ssas1:= i1;
@@ -594,7 +594,7 @@ begin
      po1:= source1;
      repeat
       if getclassinterfaceoffset(po1,dest,i3) then begin
-       if getvalue(stackoffset,das_pointer) then begin
+       if getvalue(acontext,das_pointer) then begin
         i2:= d.dat.fact.ssaindex;
         with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
          setimmint32(i3,par);
@@ -622,7 +622,7 @@ begin
      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
               (source1^.h.bitsize = pointerbitsize) or 
                        (source1^.h.kind in [dk_integer,dk_cardinal])then begin
-      if getvalue(stackoffset,pointerintsize) then begin //any to pointer
+      if getvalue(acontext,pointerintsize) then begin //any to pointer
        i1:= d.dat.fact.ssaindex; //todo: no int source
        with insertitem(oc_inttopo,stackoffset,-1)^ do begin
         par.ssas1:= i1;
@@ -709,7 +709,7 @@ begin
  end;
 end;
 
-function checkcompatibledatatype(const sourcestackoffset: int32;
+function checkcompatibledatatype(const sourcecontext: pcontextitemty;
                          const desttypedata: elementoffsetty;
                          const destadress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
@@ -719,7 +719,7 @@ var
  sourceitem,destitem: ptypedataty;
  i1: int32;
 begin
- with info,contextstack[s.stackindex+sourcestackoffset] do begin
+ with info,sourcecontext^ do begin
  {$ifdef mse_checkinternalerror}
   if not (d.kind in datacontexts) then begin
    internalerror(ie_parser,'141211A');
@@ -871,7 +871,7 @@ var
   
   procedure doconvert();
   begin
-   if not tryconvert(stackoffset,ele.eledataabs(vardata1^.vf.typ),
+   if not tryconvert(context1,ele.eledataabs(vardata1^.vf.typ),
                               vardata1^.address.indirectlevel,[]) then begin
     internalerror1(ie_handler,'20160519A');
    end;
@@ -892,16 +892,16 @@ var
 //   context1:= @contextstack[stackind];
    i2:= 1;
    if not paramschecked and 
-          not checkcompatibledatatype(stackoffset,vardata1^.vf.typ,
+          not checkcompatibledatatype(context1,vardata1^.vf.typ,
                         vardata1^.address,[cco_novarconversion],i2) then begin
     err1:= err_incompatibletypeforarg;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
     end;
-    errormessage(err1,
+    errormessage(err1,        //todo: fixme
                  [stackoffset-2,typename(context1^.d),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
-                    vardata1^.address.indirectlevel)],stackoffset);
+                   vardata1^.address.indirectlevel)],stackoffset);
     exit;
    end;
    if af_paramindirect in vardata1^.address.flags then begin
@@ -937,7 +937,7 @@ var
      end;
      ck_ref: begin
       if desttype^.h.kind <> dk_openarray then begin //address needed?
-       getvalue(stackoffset,si1);                    //no
+       getvalue(context1,si1);                    //no
       end;
       if i2 > 0 then begin
        doconvert();
@@ -1073,6 +1073,7 @@ begin
 {$endif}
  with info do begin
   indpo:= @contextstack[s.stackindex];
+  pe:= @contextstack[s.stacktop];
   with indpo^ do begin //classinstance, result
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
@@ -1102,15 +1103,23 @@ begin
  //    if totparamco = subdata1^.paramcount then begin //todo: default parameter
      if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
                 (totparamco <= subdata1^.paramcount) then begin 
-      i1:= s.stacktop-paramco+1;
-      while subparams1 < subparamse do begin
+//      i1:= s.stacktop-paramco+1;
+      itempo1:= indpo+1;
+      while subparams1 < subparamse do begin //find best parameter match
+       if not getnextnospace(itempo1+1,itempo1) then begin
+        itempo1:= nil; //needs default param
+        break;
+       end;
+{ 
        if i1 > s.stacktop then begin
         i1:= -1;
         break;
        end;
+}
        vardata1:= ele.eledataabs(subparams1^);
        bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
-       if (vardata1^.vf.typ = 0) or not checkcompatibledatatype(i1-s.stackindex,
+       if (vardata1^.vf.typ = 0) or 
+             not checkcompatibledatatype(itempo1,
                         vardata1^.vf.typ,vardata1^.address,[],i2) then begin
                                                            //report byvalue,
                                                            //byaddress dup
@@ -1121,9 +1130,9 @@ begin
         i3:= i2;             //maximal cost
        end;
        inc(subparams1);
-       inc(i1);
+//       inc(i1);
       end;
-      if i1 < 0 then begin
+      if itempo1 = nil then begin
        inc(i3);      //needs default params
       end;
       if i3 < cost1 then begin
@@ -1271,7 +1280,6 @@ begin
                                   //including default params
      itempo1:= indpo+2;
      if dsf_indexedsetter in aflags then begin
-      pe:= @contextstack[s.stacktop];
       inc(parallocpo); //second, first index
       inc(subparams1);
       while getnextnospace(itempo1,itempo1) do begin
@@ -1494,11 +1502,13 @@ var
  var
   int1: integer;
   po4: pointer;
+  pind: pcontextitemty;
  begin //donotfond
   if firstnotfound <= idents.high then begin
    ele1:= basetype(typeele);
    offs1:= 0;
    with info do begin
+    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
      case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
       ek_none: begin
@@ -1557,7 +1567,7 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         getvalue(0,das_none);
+         getvalue(pind,das_none);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
@@ -1601,7 +1611,7 @@ var
  paramco1: integer;
  origparent: elementoffsetty;
  ssabefore: int32;
- indpo,pob: pcontextitemty;
+ poind,pob,potop: pcontextitemty;
 label
  endlab;
 begin
@@ -1611,7 +1621,9 @@ begin
  with info do begin
   ele.pushelementparent();
   isgetfact:= false;
-  pob:= @contextstack[s.stackindex-1];
+  poind:= @contextstack[s.stackindex];
+  pob:= poind-1;
+  potop:= @contextstack[s.stacktop];
   with pob^ do begin
    case d.kind of
     ck_getfact: begin
@@ -1704,8 +1716,7 @@ begin
    po1:= ele.eleinfoabs(prefdataty(po2)^.ref);
    po2:= @po1^.data;
   end;
-  indpo:= @contextstack[s.stackindex];
-  with indpo^ do begin
+  with poind^ do begin
    d.dat.indirection:= 0;
    case po1^.header.kind of
     ek_property: begin                      //todo: indirection
@@ -1714,7 +1725,7 @@ begin
        errormessage(err_noclass,[],0);
        goto endlab;
       end;
-      initdatacontext(indpo^.d,ck_prop);
+      initdatacontext(poind^.d,ck_prop);
       d.dat.prop.propele:= ele.eleinforel(po1);
       with ptypedataty(ele.eledataabs(ppropertydataty(po2)^.typ))^ do begin
        d.dat.datatyp.typedata:= ppropertydataty(po2)^.typ;
@@ -1754,7 +1765,7 @@ begin
        {$endif}
         end;
 //        initfactcontext(0);
-        initdatacontext(indpo^.d,ck_ref);
+        initdatacontext(poind^.d,ck_ref);
         d.dat.datatyp.typedata:= vf.typ;
         d.dat.datatyp.indirectlevel:= indirectlevel;
         d.dat.datatyp.flags:= vf.flags;
@@ -1799,7 +1810,7 @@ begin
      end
      else begin //ek_var
       if isgetfact then begin
-       initdatacontext(indpo^.d,ck_ref);
+       initdatacontext(poind^.d,ck_ref);
        d.dat.ref.c.address:= trackaccess(pvardataty(po2));
        d.dat.ref.offset:= 0;
        d.dat.ref.c.varele:= ele.eledatarel(po2); //used to store ssaindex
@@ -1820,14 +1831,14 @@ begin
          getaddress(pob,false);
          dec(d.dat.indirection); //pending dereference
         end;
-        contextstack[s.stackindex].d:= d; 
+        poind^.d:= d; 
                   //todo: no double copy by handlefact
        end;
       end;
       donotfound(pvardataty(po2)^.vf.typ); //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and
                            (d.kind in datacontexts) then begin
-       if getvalue(0,das_none) then begin
+       if getvalue(poind,das_none) then begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
         if (d.dat.datatyp.indirectlevel = 1) and 
                               (po3^.h.kind = dk_sub) then begin
@@ -1840,7 +1851,7 @@ begin
     end;
     ek_const: begin
      if checknoparam then begin
-      initdatacontext(indpo^.d,ck_const);
+      initdatacontext(poind^.d,ck_const);
       d.dat.datatyp:= pconstdataty(po2)^.val.typ;
       d.dat.constval:= pconstdataty(po2)^.val.d;
      end;
@@ -1886,7 +1897,7 @@ begin
         errormessage(err_tokenexpected,[')'],4,-1);
        end
        else begin
-        if getvalue(s.stacktop-s.stackindex,das_none,true) then begin
+        if getvalue(potop,das_none,true) then begin
          if not tryconvert(s.stacktop-s.stackindex,po2,
                      ptypedataty(po2)^.h.indirectlevel,[coo_type]) then begin
           illegalconversionerror(contextstack[s.stacktop].d,po2,

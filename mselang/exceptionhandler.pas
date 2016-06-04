@@ -158,28 +158,33 @@ procedure handleraise();
 var
  bo1: boolean;
  po1: ptypedataty;
+ ptop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('RAISE');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  bo1:= (s.stacktop-s.stackindex = 1) and (d.kind in datacontexts) and
-                     getvalue(1,das_none) and (d.dat.datatyp.indirectlevel = 1);
-  if bo1 then begin
-   po1:= ele.eledataabs(d.dat.datatyp.typedata);
-   bo1:= po1^.h.kind = dk_class;
-  end;
-  if bo1 then begin
-//   with addcontrolitem(oc_raise)^ do begin
-   with additem(oc_raise)^ do begin
-    par.ssas1:= d.dat.fact.ssaindex;
+ with info do begin
+  ptop:= @contextstack[s.stacktop];
+  with ptop^ do begin
+   bo1:= (getitemcount(s.stackindex+1) = 1) and (d.kind in datacontexts) and
+                      getvalue(ptop,das_none) and 
+                                           (d.dat.datatyp.indirectlevel = 1);
+   if bo1 then begin
+    po1:= ele.eledataabs(d.dat.datatyp.typedata);
+    bo1:= po1^.h.kind = dk_class;
    end;
-  end
-  else begin
-   errormessage(err_classinstanceexpected,[]);
+   if bo1 then begin
+ //   with addcontrolitem(oc_raise)^ do begin
+    with additem(oc_raise)^ do begin
+     par.ssas1:= d.dat.fact.ssaindex;
+    end;
+   end
+   else begin
+    errormessage(err_classinstanceexpected,[]);
+   end;
+   dec(s.stackindex);
   end;
-  dec(s.stackindex);
- end; 
+ end;
 end;
 
 end.

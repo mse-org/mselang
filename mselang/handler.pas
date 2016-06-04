@@ -890,44 +890,48 @@ procedure boolexpentry(const aop: shortcutopty);
 var
  op1: opcodety;
  po1: popinfoty;
+ poa: pcontextitemty;
 begin
- with info,contextstack[s.stackindex-1] do begin
+ with info do begin
+  poa:= @contextstack[s.stackindex-1];
+  with poa^ do begin
   {$ifdef mse_debugparser}
    if (s.stackindex < 1) or not (d.kind in datacontexts) then begin
     internalerror(ie_parser,'20151016A');
    end;
   {$endif}
-  if (d.dat.datatyp.indirectlevel = 0) and 
-            (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
-                                                        dk_boolean) then begin
-   with contextstack[s.stackindex-2] do begin
-   {$ifdef mse_debugparser}
-    if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
-     internalerror(ie_parser,'20151016A');
-    end;
-   {$endif}
-    if d.kind = ck_none then begin
-     d.kind:= ck_shortcutexp;
-     d.shortcutexp.shortcuts:= 0;
-     d.shortcutexp.op:= aop;
-    end
-    else begin
-     if d.shortcutexp.op <> aop then begin
-      resolveshortcuts(-2,-1);
-      d.shortcutexp.op:= aop;
+   if (d.dat.datatyp.indirectlevel = 0) and 
+             (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
+                                                         dk_boolean) then begin
+    with contextstack[s.stackindex-2] do begin
+    {$ifdef mse_debugparser}
+     if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
+      internalerror(ie_parser,'20151016A');
      end;
-    end;
-    if not (cos_booleval in s.compilerswitches) then begin
-     if getvalue(-1,das_1) then begin
-      op1:= shortcutops[aop];
-      if op1 = oc_none then begin
-       notimplementederror('20151016B');
+    {$endif}
+     if d.kind = ck_none then begin
+      d.kind:= ck_shortcutexp;
+      d.shortcutexp.shortcuts:= 0;
+      d.shortcutexp.op:= aop;
+     end
+     else begin
+      if d.shortcutexp.op <> aop then begin
+       resolveshortcuts(-2,-1);
+       d.shortcutexp.op:= aop;
       end;
-      po1:= addcontrolitem(op1);
-      with po1^ do begin
-       par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
-       linkmarkphi(d.shortcutexp.shortcuts,
-               getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
+     end;
+     if not (cos_booleval in s.compilerswitches) then begin
+      if getvalue(poa,das_1) then begin
+       op1:= shortcutops[aop];
+       if op1 = oc_none then begin
+        notimplementederror('20151016B');
+       end;
+       po1:= addcontrolitem(op1);
+       with po1^ do begin
+        par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
+        linkmarkphi(d.shortcutexp.shortcuts,
+                getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
+       end;
       end;
      end;
     end;
@@ -1263,6 +1267,7 @@ procedure handledereference();
 var
  po1: ptypedataty;
  int1: integer;
+ poa,potop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEREFERENCE');
@@ -1270,52 +1275,54 @@ begin
 // if hf_propindex in info.contextstack[info.s.stacktop].handlerflags then begin
 //  getpropvalue(info.s.stacktop-info.s.stackindex,das_none);
 // end;
- with info,contextstack[s.stacktop] do begin
-  if (d.kind = ck_prop) then begin
-   getvalue(s.stacktop-s.stackindex,das_none);
-  end
-  else begin
-   if hf_propindex in d.handlerflags then begin
-   {$ifdef mse_checkinternalerror}
-    if contextstack[s.stackindex+1].d.kind <> ck_prop then begin
-     internalerror(ie_handler,'20160214A');
-    end;
-   {$endif}
-    if getvalue(1,das_none) then begin
-     s.stacktop:= s.stackindex+1;
-    end
-    else begin
-     exit;
-    end;
-   end;
-  end;
- end;
- with info,contextstack[s.stacktop] do begin
-  if d.dat.datatyp.indirectlevel <= 0 then begin
-   errormessage(err_illegalqualifier,[]);
-  end
-  else begin
-   dec(d.dat.datatyp.indirectlevel);
-   dec(d.dat.indirection);
-   case d.kind of
-    ck_ref: begin        //todo: make universal
-     if not (stf_getaddress in s.currentstatementflags) then begin
-      include(d.dat.ref.c.address.flags,af_startoffset);
+ with info do begin
+  potop:= @contextstack[s.stacktop];
+  with potop^ do begin
+   if (d.kind = ck_prop) then begin
+    getvalue(potop,das_none);
+   end
+   else begin
+    if hf_propindex in d.handlerflags then begin
+     getnextnospace(s.stackindex,poa);
+    {$ifdef mse_checkinternalerror}
+     if poa^.d.kind <> ck_prop then begin
+      internalerror(ie_handler,'20160214A');
      end;
-    end;
-    ck_const: begin
-     if d.dat.constval.kind <> dk_address then begin
-      errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
+    {$endif}
+     if getvalue(poa,das_none) then begin
+      s.stacktop:= s.stackindex+1;
      end
      else begin
-      internalerror1(ie_notimplemented,'20140402B'); //todo
+      exit;
      end;
     end;
-    ck_fact,ck_subres: begin
-     //nothing to do
-    end;
-    else begin
-     internalerror1(ie_notimplemented,'20140402A'); //todo
+   end;
+   if d.dat.datatyp.indirectlevel <= 0 then begin
+    errormessage(err_illegalqualifier,[]);
+   end
+   else begin
+    dec(d.dat.datatyp.indirectlevel);
+    dec(d.dat.indirection);
+    case d.kind of
+     ck_ref: begin        //todo: make universal
+      if not (stf_getaddress in s.currentstatementflags) then begin
+       include(d.dat.ref.c.address.flags,af_startoffset);
+      end;
+     end;
+     ck_const: begin
+      if d.dat.constval.kind <> dk_address then begin
+       errormessage(err_cannotderefnonpointer,[],s.stacktop-s.stackindex);
+      end
+      else begin
+       internalerror1(ie_notimplemented,'20140402B'); //todo
+      end;
+     end;
+     ck_fact,ck_subres: begin
+      //nothing to do
+     end;
+     else begin
+      internalerror1(ie_notimplemented,'20140402A'); //todo
+     end;
     end;
    end;
   end;
@@ -1405,7 +1412,7 @@ begin
     end
     else begin
      if stf_rightside in s.currentstatementflags then begin
-      getvalue(1,das_none);
+      getvalue(toppo,das_none);
 //      indpo^.d:= (indpo+1)^.d;
      end
      else begin
@@ -1708,7 +1715,7 @@ var
  po1,po2: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
- indpo: pcontextitemty;
+ indpo,potop,poitem: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('LISTFACT');
@@ -1725,11 +1732,16 @@ begin
    end;
   end
   else begin
+   potop:= @contextstack[s.stacktop];
    po2:= nil;
    ca1:= 0;          //todo: arbitrary size, ranges
    allconst:= true;
-   for i1:= s.stackindex+1 to s.stacktop do begin
-    with contextstack[i1] do begin
+   poitem:= indpo;
+   while true do begin
+    if not getnextnospace(poitem+1,poitem) then begin
+     break;
+    end;
+    with poitem^ do begin
      if d.kind <> ck_space then begin
      {$ifdef mse_checkinternalerror}
       if not (d.kind in datacontexts) then begin
@@ -1759,7 +1771,7 @@ begin
        end
        else begin
         allconst:= false;
-        getvalue(i1-s.stackindex,das_32);
+        getvalue(poitem,das_32);
        end;
       end; 
      end;
@@ -2528,42 +2540,41 @@ end;
 
 procedure handleinsimpexp();
 var
- baseoffset: int32;
- a,b: pcontextdataty; 
+// baseoffset: int32;
+ poa,pob: pcontextitemty; 
 begin
 {$ifdef mse_debugparser}
  outhandle('INSIMPEXP');
 {$endif}
  with info do begin
-  a:= @contextstack[s.stacktop-2].d;
-  b:= @contextstack[s.stacktop].d;
+  poa:= getpreviousnospace(@contextstack[s.stacktop-1]);
+  pob:= @contextstack[s.stacktop].d;
  {$ifdef mse_checkinternalerror}
  {$endif}
-  baseoffset:= s.stacktop-s.stackindex-2;
-  if getvalue(baseoffset,das_32,true) and 
-     getvalue(baseoffset+2,das_none,true) and 
-     tryconvert(baseoffset,st_card32,[coo_enum]) and 
-     (b^.dat.datatyp.indirectlevel = 0) and 
+//  baseoffset:= s.stacktop-s.stackindex-2;
+  if getvalue(poa,das_32,true) and getvalue(pob,das_none,true) and 
+     tryconvert(poa,st_card32,[coo_enum]) and 
+     (pob^.d.dat.datatyp.indirectlevel = 0) and 
      (ptypedataty(ele.eledataabs(
-                      b^.dat.datatyp.typedata))^.h.kind = dk_set) then begin
-   if (a^.kind = ck_const) and (b^.kind = ck_const) then begin
-    a^.dat.constval.kind:= dk_boolean;
-    a^.dat.datatyp:= sysdatatypes[st_bool1];
-    a^.dat.constval.vboolean:= a^.dat.constval.vinteger in
-                    tintegerset(b^.dat.constval.vset);
+                      pob^.d.dat.datatyp.typedata))^.h.kind = dk_set) then begin
+   if (poa^.d.kind = ck_const) and (pob^.d.kind = ck_const) then begin
+    poa^.d.dat.constval.kind:= dk_boolean;
+    poa^.d.dat.datatyp:= sysdatatypes[st_bool1];
+    poa^.d.dat.constval.vboolean:= poa^.d.dat.constval.vinteger in
+                    tintegerset(pob^.d.dat.constval.vset);
    end
    else begin
-    if getvalue(baseoffset,das_32) and 
-                    getvalue(baseoffset+2,das_none) then begin
+    if getvalue(poa,das_32) and getvalue(pob,das_none) then begin
      addfactbinop(oc_setin);
-     setsysfacttype(a^,st_bool1);
+     setsysfacttype(poa^.d,st_bool1);
     end;
    end;
   end
   else begin
-   operationnotsupportederror(a^,b^,cmpops[cmpo_in].opname);
+   operationnotsupportederror(poa^.d,pob^.d,cmpops[cmpo_in].opname);
   end;
-  dec(s.stacktop,2);
+//  dec(s.stacktop,2);
+  s.stacktop:= s.stackindex;
   s.stackindex:= s.stacktop-1; 
  end;
 end;
@@ -2756,7 +2767,7 @@ begin
        end
        else begin
         if pof_writesub in flags then begin
-         getclassvalue(1);
+         getclassvalue(dest);
          ele.pushelementparent(writeele);
          inc(s.stackindex); //class instance
          dosub(psubdataty(ele.eledataabs(writeele)),1,[]);
@@ -2962,7 +2973,8 @@ begin
       internalerror(ie_handler,'20160211B');
      end;
     {$endif}
-     getclassvalue(4);
+notimplementederror('');
+//     getclassvalue(4);
      with ppropertydataty(ele.eledataabs(
                contextstack[s.stackindex+4].d.dat.prop.propele))^ do begin
       if not (pof_writesub in flags) then begin

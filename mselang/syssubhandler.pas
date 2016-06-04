@@ -415,7 +415,8 @@ begin
  with info do begin
   int3:= 0;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
-   getvalue(int1-s.stackindex,das_none);
+   notimplementederror('');
+//   getvalue(int1-s.stackindex,das_none);
   end;
   for int1:= s.stacktop-paramco+1 to s.stacktop do begin
    with contextstack[int1] do begin //todo: use table

@@ -129,15 +129,15 @@ function getcontextopoffset(const stackoffset: int32): int32;
 
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
-function getvalue(const stackoffset: integer; const adatasize: databitsizety;
-                               const retainconst: boolean = false): boolean;
+//function getvalue(const stackoffset: integer; const adatasize: databitsizety;
+//                               const retainconst: boolean = false): boolean;
 function getaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 function getassignaddress(const acontext: pcontextitemty;
                                   const endaddress: boolean): boolean;
 //function getassignaddress(const stackoffset: integer;
 //                                  const endaddress: boolean): boolean;
-procedure getclassvalue(const stackoffset: int32);
+procedure getclassvalue(const acontext: pcontextitemty);
 
 function pushtemp(const address: addressvaluety;
                                       const alloc: typeallocinfoty): int32;
@@ -224,6 +224,8 @@ function getnextnospace(const current: pcontextitemty; //increments current
 function getspacecount(const astackindex: int32): int32;
                //counts ck_space from astackindex to stacktop
 function getitemcount(const acontext: pcontextitemty): int32;
+               //counts not ck_space from acontext to stacktop
+function getitemcount(const astackindex: int32): int32;
                //counts not ck_space from astackindex to stacktop
 
 procedure initdatacontext(var acontext: contextdataty;
@@ -2280,6 +2282,29 @@ begin
  end;
 end;
 
+function getitemcount(const astackindex: int32): int32;
+               //counts not ck_space from astackindex to stacktop
+var
+ po1,pe: pcontextitemty;
+begin
+ result:= 0;
+ with info do begin
+  po1:= @contextstack[astackindex];
+ {$ifdef mse_checkinternalerror}
+  if (po1 < @contextstack) or (po1 > @contextstack[s.stacktop]) then begin
+   internalerror(ie_handler,'20160604C');
+  end;
+ {$endif}
+  pe:= @contextstack[s.stacktop];
+  while po1 <= pe do begin
+   if po1^.d.kind <> ck_space then begin
+    inc(result);
+   end;
+   inc(po1);
+  end;
+ end;
+end;
+
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 begin
@@ -2547,7 +2572,7 @@ begin                    //todo: optimize
      end
      else begin
       if pof_readsub in flags then begin
-       getclassvalue(stackoffset);
+       getclassvalue(acontext);
        ele.pushelementparent(readele);
        inc(s.stackindex,stackoffset); //class instance
        pocont1:= @contextstack[s.stacktop];
@@ -2621,7 +2646,7 @@ errlab:
   end;
  end;
 end;
-
+{
 function getvalue(const stackoffset: integer; const adatasize: databitsizety;
                                   const retainconst: boolean = false): boolean;
 begin
@@ -2630,7 +2655,7 @@ begin
                                                 adatasize,retainconst);
  end;
 end;
-
+}
 function getaddress(const acontext: pcontextitemty;
                                 const endaddress: boolean): boolean;
 var
@@ -2685,7 +2710,7 @@ begin
    end;
    ck_fact,ck_subres: begin
     if d.dat.indirection <> 0 then begin
-     result:= getvalue(stackoffset,das_none);
+     result:= getvalue(acontext,das_none);
      exit;
     end;
    end;
@@ -2729,9 +2754,9 @@ begin
  end;
 end;
 }
-procedure getclassvalue(const stackoffset: int32);
+procedure getclassvalue(const acontext: pcontextitemty);
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
+ with info,acontext^ do begin
  {$ifdef mse_debugparser}
   if d.kind <> ck_prop then begin
    internalerror(ie_handler,'20160202A');
@@ -2747,7 +2772,7 @@ begin
   d.dat.datatyp.typedata:= ele.eleinfoabs(d.dat.prop.propele)^.header.parent;
   d.dat.datatyp.indirectlevel:= 1;
   inc(d.dat.indirection);
-  getvalue(stackoffset,das_none);
+  getvalue(acontext,das_none);
  end;
 end;
 

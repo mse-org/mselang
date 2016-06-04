@@ -994,7 +994,7 @@ var
  kind1: datakindty;
  i1: int32;
  t1: typeinfoty;
- po1: pcontextdataty;
+ poa,po1: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('INDEXITEMSTART');
@@ -1006,8 +1006,9 @@ begin
     internalerror(ie_handler,'20160227D');
    end;
  {$endif}
-   po1:= @contextstack[s.stackindex].d;
-   po1^.kind:= ck_getindex;
+   po1:= @contextstack[s.stackindex];
+   poa:= getpreviousnospace(po1-1);
+   po1^.d.kind:= ck_getindex;
    kind1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind;
    exclude(d.handlerflags,hf_needsunique);
    case kind1 of
@@ -1031,7 +1032,7 @@ begin
      end;
      dec(d.dat.indirection);
      dec(d.dat.datatyp.indirectlevel);
-     getvalue(-1,das_none);
+     getvalue(poa,das_none);
     end;
    end;
   end;

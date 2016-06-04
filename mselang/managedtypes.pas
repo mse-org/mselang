@@ -260,9 +260,9 @@ var
 begin
  with info do begin
   if checkparamco(2,paramco) then begin
-   if getvalue(s.stacktop-s.stackindex,das_32) then begin
-    po2:= @contextstack[s.stacktop];
-    po1:= getpreviousnospace(po2-1);
+   po2:= @contextstack[s.stacktop];
+   po1:= getpreviousnospace(po2-1);
+   if getvalue(po2,das_32) then begin
     with po2^ do begin
      typ1:= ele.eledataabs(d.dat.datatyp.typedata);
      if (d.dat.datatyp.indirectlevel <> 0) or 

@@ -66,7 +66,7 @@ uses
 function conditionalcontrolop(const aopcode: opcodety): popinfoty;
 begin
  with info do begin
-  getvalue(s.stacktop-s.stackindex,das_none);
+  getvalue(@contextstack[s.stacktop],das_none);
   with contextstack[s.stacktop] do begin
    if (d.dat.datatyp.indirectlevel <> 0) or (ptypedataty(ele.eledataabs(
                       d.dat.datatyp.typedata))^.h.kind <> dk_boolean) then begin
