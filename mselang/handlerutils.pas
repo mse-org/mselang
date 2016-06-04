@@ -2629,7 +2629,7 @@ begin                    //todo: optimize
     errormessage(err_subnovalue,[],stackoffset);
     exit;
    end;
-   ck_error: begin
+   ck_error,ck_none: begin
     exit;
    end;
   {$ifdef mse_checkinternalerror}                             
