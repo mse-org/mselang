@@ -2665,6 +2665,9 @@ begin
  result:= false;
  stackoffset:= getstackoffset(acontext);
  with acontext^ do begin
+  if d.kind in [ck_none,ck_error] then begin
+   exit;
+  end;
  {$ifdef mse_checkinternalerror}                             
   if not (d.kind in datacontexts) then begin
    internalerror(ie_handler,'20140405A');
