@@ -4056,12 +4056,12 @@ end;
 
 procedure reallocmemop();
 var
- po1: pointer;
+ po1: ppointer;
  i1: int32;
 begin
  i1:= pinteger(stackpop(sizeof(int32)))^;
  po1:= ppointer(stackpop(pointersize))^;
- reallocmem(po1,i1);
+ reallocmem(po1^,i1);
 end;
 
 procedure setmemop();
