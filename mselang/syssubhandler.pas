@@ -630,7 +630,7 @@ begin
   po2:= getpreviousnospace(po3-1);
   po1:= getpreviousnospace(po2-1);
   if checkparamco(3,paramco) and getbasevalue(po1,das_pointer) and 
-           getbasevalue(po2,das_32) and getbasevalue(po1,das_32) then begin
+           getbasevalue(po2,das_32) and getbasevalue(po3,das_32) then begin
    with additem(oc_setmem)^ do begin
     par.ssas1:= po1^.d.dat.fact.ssaindex; //pointer
     par.ssas2:= po2^.d.dat.fact.ssaindex; //count
