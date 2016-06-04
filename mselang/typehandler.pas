@@ -233,12 +233,13 @@ procedure handlecheckrangetype();
 var
  id1: identty;
  po1: ptypedataty;
+ poa,pob: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CHECKRANGETYPE');
 {$endif}
  with info do begin
-  if s.stacktop-s.stackindex = 3 then begin
+  if getnextnospace(s.stackindex+2,poa) and getnextnospace(poa+1,pob) then begin
    with contextstack[s.stackindex-2] do begin
     if (d.kind = ck_ident) and 
                 (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin
@@ -257,8 +258,8 @@ begin
     include(po1^.h.flags,tf_subrange);
     with po1^.infoint32 do begin     //todo: other datasizes
      //todo: check datasize
-     min:= contextstack[s.stackindex+2].d.dat.constval.vinteger;
-     max:= contextstack[s.stackindex+3].d.dat.constval.vinteger;
+     min:= poa^.d.dat.constval.vinteger;
+     max:= pob^.d.dat.constval.vinteger;
     end;
    end;
   end;
