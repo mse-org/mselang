@@ -2139,6 +2139,13 @@ var
  po1: pcontextitemty;
 begin
  po1:= apo;
+{$ifdef mse_checkinternalerror}
+ with info do begin
+  if (po1 < @contextstack) then begin
+   internalerror(ie_handler,'20160603D');
+  end;
+ end;
+{$endif}
  while po1^.d.kind = ck_space do begin
  {$ifdef mse_checkinternalerror}
   with info do begin

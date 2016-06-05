@@ -890,22 +890,23 @@ procedure boolexpentry(const aop: shortcutopty);
 var
  op1: opcodety;
  po1: popinfoty;
- poa: pcontextitemty;
+ poa,pob: pcontextitemty;
 begin
  with info do begin
-  poa:= @contextstack[s.stackindex-1];
-  with poa^ do begin
+  pob:= @contextstack[s.stackindex-1];
+  poa:= getpreviousnospace(pob-1);
+  with pob^ do begin
   {$ifdef mse_debugparser}
-   if (s.stackindex < 1) or not (d.kind in datacontexts) then begin
+   if not (d.kind in datacontexts) then begin
     internalerror(ie_parser,'20151016A');
    end;
   {$endif}
    if (d.dat.datatyp.indirectlevel = 0) and 
              (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind = 
                                                          dk_boolean) then begin
-    with contextstack[s.stackindex-2] do begin
+    with poa^ do begin
     {$ifdef mse_debugparser}
-     if (s.stackindex < 2) or not (d.kind in [ck_none,ck_shortcutexp]) then begin
+     if not (d.kind in [ck_none,ck_shortcutexp]) then begin
       internalerror(ie_parser,'20151016A');
      end;
     {$endif}
@@ -921,14 +922,14 @@ begin
       end;
      end;
      if not (cos_booleval in s.compilerswitches) then begin
-      if getvalue(poa,das_1) then begin
+      if getvalue(pob,das_1) then begin
        op1:= shortcutops[aop];
        if op1 = oc_none then begin
         notimplementederror('20151016B');
        end;
        po1:= addcontrolitem(op1);
        with po1^ do begin
-        par.ssas1:= contextstack[s.stackindex-1].d.dat.fact.ssaindex;
+        par.ssas1:= pob^.d.dat.fact.ssaindex;
         linkmarkphi(d.shortcutexp.shortcuts,
                 getsegmentoffset(seg_op,@par.opaddress),par.ssas1);
        end;
@@ -2214,7 +2215,8 @@ begin
 {$endif}
  with info,contextstack[s.stacktop] do begin
   if not (hf_propindex in d.handlerflags) then begin
-   resolveshortcuts(0,1); //todo: ck_space handling
+//   resolveshortcuts(0,1); //todo: ck_space handling
+   resolveshortcuts(0,s.stacktop-s.stackindex);
    contextstack[s.stackindex].d.kind:= ck_space;
 //   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
 //   s.stacktop:= s.stackindex;
