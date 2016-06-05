@@ -1626,9 +1626,9 @@ begin
     if getvalue(poa,das_none) then begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      i1:= d.dat.fact.ssaindex;
-     with insertitem(negops[po1^.h.kind],1,-1)^ do begin
+     with insertitem(negops[po1^.h.kind],s.stacktop-s.stackindex,-1)^ do begin
       if op.op = oc_none then begin
-       errormessage(err_negnotpossible,[],1);
+       errormessage(err_negnotpossible,[],s.stacktop-s.stackindex);
       end;
       par.ssas1:= i1;
      end;
