@@ -118,7 +118,7 @@ function findvar(const astackoffset: integer;
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
-procedure addfactbinop(const aopcode: opcodety);
+procedure addfactbinop(const poa,pob: pcontextitemty;const aopcode: opcodety);
 procedure resolveshortcuts(const stackoffset,destoffset: int32);
 procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
@@ -2869,12 +2869,17 @@ begin
  end;
 end;
 }
-procedure addfactbinop(const aopcode: opcodety);
+procedure addfactbinop(const poa,pob: pcontextitemty; const aopcode: opcodety);
+//var
+// poa,pob: pcontextitemty;
 begin
- with info,contextstack[s.stacktop-2] do begin
+ with info do begin
+//  pob:= @contextstack[s.stacktop];
+//  poa:= getpreviousnospace(pob)-1;
+  with poa^ do begin
    with additem(aopcode)^ do begin      
     par.ssas1:= d.dat.fact.ssaindex;
-    par.ssas2:= contextstack[s.stacktop].d.dat.fact.ssaindex;
+    par.ssas2:= pob^.d.dat.fact.ssaindex;
     par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
                                     d.dat.datatyp.indirectlevel);
    end;
@@ -2882,6 +2887,7 @@ begin
    d.dat.fact.ssaindex:= s.ssa.nextindex-1;
    d.dat.indirection:= 0;   
   end;
+ end;
 end;
 
 procedure resolveshortcuts(const stackoffset,destoffset: int32);
@@ -3095,7 +3101,7 @@ begin
        pushinsertconst(pob,-1,si1);
       end;
      end;
-     addfactbinop(op1);
+     addfactbinop(poa,pob,op1);
     end;
 endlab:
     s.stacktop:= s.stackindex-1;

@@ -2575,7 +2575,7 @@ begin
    end
    else begin
     if getvalue(poa,das_32) and getvalue(pob,das_none) then begin
-     addfactbinop(oc_setin);
+     addfactbinop(poa,pob,oc_setin);
      setsysfacttype(poa^.d,st_bool1);
     end;
    end;
