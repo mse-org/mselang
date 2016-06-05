@@ -592,7 +592,7 @@ begin
  {$endif}
   poa:= @contextstack[s.stacktop];
   with poa^ do begin
-   if getvalue(poa,das_none,true) and (d.dat.datatyp.indirectlevel = 0) and 
+   if getvalue(poa,das_none{,true}) and (d.dat.datatyp.indirectlevel = 0) and 
           (ptypedataty(ele.eledataabs(d.dat.datatyp.typedata))^.h.kind in 
                                                   ordinaldatakinds) then begin
  //   if d.kind = ck_const then begin //todo: optimize const case switch
@@ -629,32 +629,31 @@ var
  int1: integer;
  {itemcount,}last: integer;
  po1: popinfoty;
- pexp,plast,pitem: pcontextitemty;
+ poexp,polast,poitem: pcontextitemty;
  expssa: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('CASEBRANCHENTRY');
 {$endif}
  with info do begin
-  pexp:= @contextstack[s.stacktop]; //@contextstack[pitem^.parent];
-  pexp:= @contextstack[pexp^.parent];
-  pexp:= getnextnospace(pexp+1);
-  plast:= @contextstack[s.stackindex-1];
-  pitem:= @contextstack[plast^.parent];
-  pitem:= getnextnospace(pitem+1);
+  poexp:= @contextstack[s.stacktop]; //@contextstack[pitem^.parent];
+  poexp:= @contextstack[poexp^.parent];
+  poexp:= getnextnospace(poexp+1);
+  polast:= @contextstack[s.stackindex-1];
+  poitem:= @contextstack[polast^.parent];
+  poitem:= getnextnospace(poitem+1);
 //  last:= s.stackindex-1;
 //  itemcount:= s.stackindex - contextstack[last].parent - 1;
  {$ifdef mse_checkinternalerror}
-  if pexp^.d.kind <> 
-                                                        ck_fact then begin
+  if poexp^.d.kind <> ck_fact then begin
    internalerror(ie_parser,'20150909A');
   end;
  {$endif}
-  expssa:= pexp^.d.dat.fact.ssaindex;
-  last:= getitemcount(pitem)-2;
+  expssa:= poexp^.d.dat.fact.ssaindex;
+  last:= getitemcount(poitem)-2;
   
   for int1:= 0 to last do begin
-   with pitem^ do begin
+   with poitem^ do begin
     if (d.kind = ck_const) and (d.dat.datatyp.indirectlevel = 0) and
                           (d.dat.constval.kind in ordinaldatakinds) then begin
             //todo: signed/unsigned, use table
@@ -702,7 +701,7 @@ begin
      errormessage(err_ordinalconstexpected,[],-1);
     end;
    end;
-   pitem:= getnextnospace(pitem+1);
+   poitem:= getnextnospace(poitem+1);
   end;
  end;
 end;
