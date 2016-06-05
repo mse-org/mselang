@@ -161,6 +161,8 @@ end;
 
 procedure handleelse();
       //1       2        3
+var
+ i1: int32;
 begin //boolexp,thenmark,elsemark
 {$ifdef mse_debugparser}
  outhandle('ELSE');
@@ -168,12 +170,15 @@ begin //boolexp,thenmark,elsemark
  with info do begin
  // addlabel();
  {$ifdef mse_checkinternalerror}
-  if s.stacktop-s.stackindex < 3 then begin
+  if s.stacktop-s.stackindex - getspacecount(s.stackindex+1) < 3 then begin
    internalerror(ie_parser,'20150918B');
   end;
  {$endif}
-  setlocbefore(2,3);      //set gotoaddress for handlethen0
-  setcurrentlocbefore(3); //set gotoaddress for handleelse0
+//  setlocbefore(2,3);      //set gotoaddress for handlethen0
+//  setcurrentlocbefore(3); //set gotoaddress for handleelse0
+  i1:= s.stacktop-s.stackindex;
+  setlocbefore(i1-1,i1);      //set gotoaddress for handlethen0
+  setcurrentlocbefore(i1); //set gotoaddress for handleelse0
   addlabel();
   dec(s.stackindex);
   s.stacktop:= s.stackindex;

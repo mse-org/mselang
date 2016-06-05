@@ -3081,7 +3081,7 @@ begin
       errormessage(err_expmustbeclassorrec,[]);
      end;
     end;
-    ck_none: begin //error in fact
+    ck_none,ck_error,ck_space: begin //error in fact
     end;
     else begin
      internalerror1(ie_notimplemented,'20140407A');
@@ -3133,7 +3133,7 @@ begin
   with contextstack[s.stacktop].d do begin
    case kind of
     ck_subres: begin
-     with additem(oc_pop)^ do begin      
+     with additem(oc_pop)^ do begin
       setimmsize(getbytesize(dat.fact.opdatatype),par); //todo: alignment
 //      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
