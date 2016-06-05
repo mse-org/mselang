@@ -829,22 +829,25 @@ end;
 procedure handlelabel();
 var
  po1: plabeldefdataty;
+ potop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('LABEL');
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}
-  if (s.stacktop-s.stackindex <> 1) or (s.stackindex < 2) then begin
+  if (s.stacktop-s.stackindex-getspacecount(s.stackindex) <> 1) or
+                                                (s.stackindex < 2) then begin
    internalerror(ie_handler,'20150916D');
   end;
  {$endif}
-  with contextstack[s.stacktop] do begin
+  potop:= @contextstack[s.stacktop];
+  with potop^ do begin
    if d.kind <> ck_label then begin
     handlesemicolonexpected();
    end
    else begin
-    po1:= ele.eledataabs(contextstack[s.stacktop].d.dat.lab);
+    po1:= ele.eledataabs(d.dat.lab);
     if po1^.address <> 0 then begin
      errormessage(err_labelalreadydef,[],1);
     end

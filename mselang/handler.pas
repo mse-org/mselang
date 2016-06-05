@@ -2590,9 +2590,8 @@ begin
   else begin
    operationnotsupportederror(poa^.d,pob^.d,cmpops[cmpo_in].opname);
   end;
-//  dec(s.stacktop,2);
-  s.stacktop:= s.stackindex;
-  s.stackindex:= s.stacktop-1; 
+  s.stacktop:= s.stackindex - 1;
+  s.stackindex:= getpreviousnospace(s.stacktop-1); //necessary? indexbefore?
  end;
 end;
 
