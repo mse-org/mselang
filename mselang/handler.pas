@@ -1678,9 +1678,9 @@ begin
     if getvalue(poa,das_none) then begin
      po1:= ele.eledataabs(d.dat.datatyp.typedata);
      i1:= d.dat.fact.ssaindex;
-     with insertitem(notops[po1^.h.kind],1,-1)^ do begin
+     with insertitem(notops[po1^.h.kind],s.stacktop-s.stackindex,-1)^ do begin
       if op.op = oc_none then begin
-       errormessage(err_notnotpossible,[],1);
+       errormessage(err_notnotpossible,[],s.stacktop-s.stackindex);
       end;
       par.ssas1:= i1;
      end;
@@ -2557,8 +2557,8 @@ begin
  outhandle('INSIMPEXP');
 {$endif}
  with info do begin
-  poa:= getpreviousnospace(@contextstack[s.stacktop-1]);
-  pob:= @contextstack[s.stacktop].d;
+  poa:= @contextstack[s.stackindex-1];
+  pob:= @contextstack[s.stacktop];
  {$ifdef mse_checkinternalerror}
  {$endif}
 //  baseoffset:= s.stacktop-s.stackindex-2;
