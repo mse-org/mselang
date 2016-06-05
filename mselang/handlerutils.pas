@@ -119,7 +119,7 @@ function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
 procedure addfactbinop(const poa,pob: pcontextitemty;const aopcode: opcodety);
-procedure resolveshortcuts(const stackoffset,destoffset: int32);
+procedure resolveshortcuts(const posource,podest: pcontextitemty);
 procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
@@ -2897,25 +2897,23 @@ begin
  end;
 end;
 
-procedure resolveshortcuts(const stackoffset,destoffset: int32);
+procedure resolveshortcuts(const posource,podest: pcontextitemty);
 var
  philist: dataoffsty;
- po1: pcontextitemty;
 begin
- with info,contextstack[s.stackindex+stackoffset] do begin
+ with info,posource^ do begin
   if (d.kind = ck_shortcutexp) and (d.shortcutexp.shortcuts <> 0) then begin
   {$ifdef mse_checkinternalerror}
-   with contextstack[s.stackindex+destoffset] do begin
+   with podest^ do begin
     if not (d.kind in factcontexts) then begin
      internalerror(ie_handler,'20151017B');
     end;
    end;
   {$endif}
    addlabel();
-   po1:= @contextstack[s.stackindex+destoffset];
    linkresolvephi(d.shortcutexp.shortcuts,opcount-1,
-                                         po1^.d.dat.fact.ssaindex,philist);
-   with po1^ do begin
+                                         podest^.d.dat.fact.ssaindex,philist);
+   with podest^ do begin
     with additem(oc_phi)^ do begin
      par.phi.t:= d.dat.fact.opdatatype;
      par.phi.philist:=philist;

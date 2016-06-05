@@ -917,7 +917,7 @@ begin
      end
      else begin
       if d.shortcutexp.op <> aop then begin
-       resolveshortcuts(-2,-1);
+       resolveshortcuts(poa,pob);
        d.shortcutexp.op:= aop;
       end;
      end;
@@ -2209,17 +2209,22 @@ begin
 end;
 
 procedure handleexp1();
+var
+ toppo: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('EXP1');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  if not (hf_propindex in d.handlerflags) then begin
-//   resolveshortcuts(0,1); //todo: ck_space handling
-   resolveshortcuts(0,s.stacktop-s.stackindex);
-   contextstack[s.stackindex].d.kind:= ck_space;
-//   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
-//   s.stacktop:= s.stackindex;
+ with info do begin
+  toppo:= @contextstack[s.stacktop];
+  with toppo^ do begin
+   if not (hf_propindex in d.handlerflags) then begin
+ //   resolveshortcuts(0,1); //todo: ck_space handling
+    resolveshortcuts(@contextstack[s.stackindex],toppo);
+    contextstack[s.stackindex].d.kind:= ck_space;
+ //   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
+ //   s.stacktop:= s.stackindex;
+   end;
   end;
   dec(s.stackindex);
  end;
