@@ -1278,7 +1278,16 @@ begin
      parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
                                   realparamco);
                                   //including default params
-     itempo1:= indpo+2;
+     itempo1:= pe;
+     if itempo1^.d.kind <> ck_params then begin
+      itempo1:= @contextstack[itempo1^.parent];
+     end;
+    {$ifdef mse_checkinternalerror}
+     if itempo1^.d.kind <> ck_params then begin
+      internalerror(ie_handler,'20160606A');
+     end;
+    {$endif}
+     inc(itempo1); //first param or past end
      if dsf_indexedsetter in aflags then begin
       inc(parallocpo); //second, first index
       inc(subparams1);
