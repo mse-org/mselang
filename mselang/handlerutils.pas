@@ -210,6 +210,7 @@ function getdatabitsize(const avalue: int64): databitsizety;
 
 function getcontextssa(const stackoffset: int32): int32;
 
+function getstackindex(const acontext: pcontextitemty): int32;
 function getstackoffset(const acontext: pcontextitemty): int32;
 function getpreviousnospace(const astackindex: int32): int32;
 function getpreviousnospace(const apo: pcontextitemty): pcontextitemty;
@@ -2068,6 +2069,16 @@ procedure pushinsertdata(const stackoffset: integer; const aopoffset: int32;
                   const opdatatype: typeallocinfoty);
 begin
  pushd(true,stackoffset,aopoffset,address,varele,offset,opdatatype);
+end;
+
+function getstackindex(const acontext: pcontextitemty): int32;
+begin
+ result:= acontext - pcontextitemty(pointer(info.contextstack));
+{$ifdef mse_checkinternalerror}
+ if (result  < 0) or (result  > info.s.stacktop) then begin
+  internalerror(ie_handler,'20160606B');
+ end;
+{$endif}
 end;
 
 function getstackoffset(const acontext: pcontextitemty): int32;

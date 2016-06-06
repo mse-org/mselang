@@ -362,21 +362,24 @@ var
  paramtype: ptypeinfoty;
  i1: int32;
  ad1: addressvaluety;
+ poa,potop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('PARAMDEFAULT');
 {$endif}
  with info do begin
+  potop:= @contextstack[s.stacktop];
+  poa:= getpreviousnospace(potop-1); //ck_fieldtype
  {$ifdef mse_checkinternalerror}
   if contextstack[s.stackindex].d.kind <> ck_paramdef then begin
    internalerror(ie_parser,'20160520A');
   end;
-  if contextstack[s.stacktop-1].d.kind <> ck_fieldtype then begin
+  if poa^.d.kind <> ck_fieldtype then begin
    internalerror(ie_parser,'20160520B');
   end;
  {$endif}
-  paramtype:= @contextstack[s.stacktop-1].d.typ;
-  if contextstack[s.stacktop].d.kind <> ck_const then begin
+  paramtype:= @poa^.d.typ;
+  if potop^.d.kind <> ck_const then begin
    errormessage(err_constexpressionexpected,[]);
   end
   else begin
@@ -389,16 +392,14 @@ begin
      ad1.indirectlevel:= paramtype^.indirectlevel;
 //     if not checkcompatibledatatype(s.stacktop-s.stackindex,
 //                                  paramtype^.typedata,ad1,[],i1) then begin
-     if not tryconvert(s.stacktop-s.stackindex,
-                           ele.eledataabs(paramtype^.typedata),
+     if not tryconvert(potop,ele.eledataabs(paramtype^.typedata),
                                      paramtype^.indirectlevel,[]) then begin
                                               //constref?
-      incompatibletypeserror(contextstack[s.stacktop-1].d,
-                                    contextstack[s.stacktop].d);
+      incompatibletypeserror(poa^.d,potop^.d);
      end
      else begin
      {$ifdef mse_checkinternalerror}
-      if contextstack[s.stacktop].d.kind <> ck_const then begin
+      if potop^.d.kind <> ck_const then begin
        internalerror(ie_parser,'20160521A');
       end;
      {$endif}
@@ -407,7 +408,7 @@ begin
        internalerror1(ie_parser,'20160520C'); //there is a duplicate
       end;
       with pconstdataty(ele.eledataabs(d.paramdef.defaultconst))^ do begin
-       with contextstack[s.stacktop].d do begin
+       with potop^.d do begin
         val.typ:= dat.datatyp;
         val.d:= dat.constval;
        end;
@@ -416,7 +417,8 @@ begin
     end;
    end;
   end;
-  dec(s.stacktop); //remove const
+  s.stacktop:= getstackindex(poa); //remove const  
+//  dec(s.stacktop); //remove const
  end;
 end;
 
@@ -854,6 +856,11 @@ var                       //todo: move after doparam
     {$endif}
     end;
     with contextstack[curstackindex] do begin
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_paramdef then begin
+      internalerror(ie_handler,'20160606C');
+     end;
+    {$endif}
      paramkind1:= d.paramdef.kind;
      defaultconst1:= d.paramdef.defaultconst;
     end;
