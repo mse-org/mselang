@@ -888,28 +888,31 @@ end;
 procedure handledefaultprop();
 var
  po1: ptypedataty;
+ poa,potop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEFAULTPROP');
 {$endif}
- with info,contextstack[s.stacktop] do begin
+ with info do begin
+  potop:= @contextstack[s.stacktop];
+  poa:= getpreviousnospace(potop-1);
  {$ifdef mse_checkinternalerror}
-  if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+  if poa^.d.kind <> ck_typeref then begin
    internalerror(ie_handler,'20151202C');
   end;
  {$endif}
-  if d.kind <> ck_const then begin
-   errormessage(err_constexpressionexpected,[]);
-  end
-  else begin
-   po1:= ele.eledataabs(contextstack[s.stacktop-1].d.typeref);
-   if not tryconvert(s.stacktop-s.stackindex,po1,
-                               po1^.h.indirectlevel,[]) then begin
-    incompatibletypeserror(contextstack[s.stacktop-1].d.typeref,
-                                                        d.dat.datatyp.typedata);
+  with potop^ do begin
+   if d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[]);
    end
    else begin
-    include(contextstack[s.stackindex].d.classprop.flags,pof_default);
+    po1:= ele.eledataabs(poa^.d.typeref);
+    if not tryconvert(potop,po1,po1^.h.indirectlevel,[]) then begin
+     incompatibletypeserror(poa^.d.typeref,d.dat.datatyp.typedata);
+    end
+    else begin
+     include(contextstack[s.stackindex].d.classprop.flags,pof_default);
+    end;
    end;
   end;
  end; 
@@ -919,16 +922,16 @@ procedure handleclassproperty();
 var
  po1: ppropertydataty;
  typeeleid1: int32;
+ poa,potop: pcontextitemty;
 begin
 {$ifdef mse_debugparser}
  outhandle('CLASSPROPERTY');
 {$endif}
  with info,contextstack[s.stackindex] do begin
+  potop:= @contextstack[s.stacktop];
+  poa:= getpreviousnospace(potop-1);
   if d.classprop.errorref = errors[erl_error] then begin //no error
   {$ifdef mse_checkinternalerror}
-   if s.stacktop-s.stackindex < 2 then begin
-    internalerror(ie_handler,'20151207B');
-   end;
    if d.kind <> ck_classprop then begin
     internalerror(ie_handler,'20151202B');
    end;
@@ -945,26 +948,26 @@ begin
      flags:= d.classprop.flags;
      if pof_default in flags then begin
      {$ifdef mse_checkinternalerror}
-      if contextstack[s.stacktop].d.kind <> ck_const then begin
+      if potop^.d.kind <> ck_const then begin
        internalerror(ie_handler,'20151202D');
       end;
-      if contextstack[s.stacktop-1].d.kind <> ck_typeref then begin
+      if poa^.d.kind <> ck_typeref then begin
        internalerror(ie_handler,'20151207A');
       end;
      {$endif}
-      with contextstack[s.stacktop] do begin
+      with potop^ do begin
        defaultconst.typ:= d.dat.datatyp;
        defaultconst.d:= d.dat.constval;
       end;
-      typ:= contextstack[s.stacktop-1].d.typeref;
+      typ:= poa^.d.typeref;
      end
      else begin
      {$ifdef mse_checkinternalerror}
-      if contextstack[s.stacktop].d.kind <> ck_typeref then begin
+      if potop^.d.kind <> ck_typeref then begin
        internalerror(ie_handler,'20151207A');
       end;
      {$endif}
-      typ:= contextstack[s.stacktop].d.typeref;
+      typ:= potop^.d.typeref;
      end;
      if flags * canreadprop <> [] then begin
       readele:= d.classprop.readele;
