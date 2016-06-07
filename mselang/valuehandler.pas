@@ -1239,7 +1239,8 @@ begin
       end;
      end;
      itempo1:= pe;
-     if itempo1^.d.kind <> ck_params then begin
+//     if itempo1^.d.kind <> ck_params then begin
+     if paramco > 0 then begin
       itempo1:= @contextstack[itempo1^.parent]; //before first param
      end
      else begin

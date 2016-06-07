@@ -2803,7 +2803,7 @@ begin
        else begin
         if pof_writesub in flags then begin
          i2:= 1; //value
-         source:= dest+1;
+         getnextnospacex(dest+1,source);
          if source^.d.kind = ck_index then begin
           source^.d.kind:= ck_space;
           i1:= getstackindex(source);
@@ -2818,11 +2818,13 @@ begin
          i1:= s.stackindex;
 //         inc(s.stackindex); //class instance
          s.stackindex:= getstackindex(dest);
+{
          flags1:= [];
          if i2 > 1 then begin
           flags1:= [dsf_indexedsetter];
          end;
-         dosub(psubdataty(ele.eledataabs(writeele)),i2,flags1);
+}
+         dosub(psubdataty(ele.eledataabs(writeele)),i2,[dsf_indexedsetter]{flags1});
          s.stackindex:= i1;
          ele.popelementparent();
         end
