@@ -2785,9 +2785,11 @@ begin
         if pof_writesub in flags then begin
          getclassvalue(dest);
          ele.pushelementparent(writeele);
-         inc(s.stackindex); //class instance
+         i1:= s.stackindex;
+//         inc(s.stackindex); //class instance
+         s.stackindex:= getstackindex(dest);
          dosub(psubdataty(ele.eledataabs(writeele)),1,[]);
-         dec(s.stackindex);
+         s.stackindex:= i1;
          ele.popelementparent();
         end
         else begin

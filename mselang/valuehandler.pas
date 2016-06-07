@@ -877,8 +877,8 @@ var
    end;
   end; //doconvert
   
- //var
- // context1: pcontextitemty;
+ var
+  po1: pcontextitemty;
   
  begin
   with info do begin
@@ -898,8 +898,12 @@ var
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
     end;
-    errormessage(err1,        //todo: fixme
-                 [stackoffset-2,typename(context1^.d),
+    i2:= 1;
+    po1:= @contextstack[context1^.parent];
+    while getnextnospace(po1+1,po1) and (po1 <> context1) do begin
+     inc(i2);
+    end;
+    errormessage(err1,[i2,typename(context1^.d),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                    vardata1^.address.indirectlevel)],stackoffset);
     exit;
@@ -1234,6 +1238,17 @@ begin
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       end;
      end;
+
+     itempo1:= pe;
+     if itempo1^.d.kind <> ck_params then begin
+      itempo1:= @contextstack[itempo1^.parent];
+     end;
+    {$ifdef mse_checkinternalerror}
+     if not (itempo1^.d.kind in [ck_params,ck_statement]) then begin
+      internalerror(ie_handler,'20160606A');
+     end;
+    {$endif}
+     inc(itempo1); //first param or past end
  
      if sf_method in asub^.flags then begin
       selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
@@ -1241,7 +1256,8 @@ begin
        ssaindex:= instancessa;
        size:= bitoptypes[das_pointer];
       end;
-      inc(subparams1); //instance pointer
+      inc(subparams1); //first param
+      getnextnospace(itempo1+1,itempo1);
      end;
      if co_mlaruntime in compileoptions then begin
       i1:= 0;
@@ -1278,16 +1294,18 @@ begin
      parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
                                   realparamco);
                                   //including default params
+(*
      itempo1:= pe;
      if itempo1^.d.kind <> ck_params then begin
       itempo1:= @contextstack[itempo1^.parent];
      end;
     {$ifdef mse_checkinternalerror}
-     if itempo1^.d.kind <> ck_params then begin
+     if not (itempo1^.d.kind in [ck_params,ck_statement]) then begin
       internalerror(ie_handler,'20160606A');
      end;
     {$endif}
      inc(itempo1); //first param or past end
+*)
      if dsf_indexedsetter in aflags then begin
       inc(parallocpo); //second, first index
       inc(subparams1);
