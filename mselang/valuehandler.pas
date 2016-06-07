@@ -1238,17 +1238,13 @@ begin
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       end;
      end;
-
      itempo1:= pe;
      if itempo1^.d.kind <> ck_params then begin
-      itempo1:= @contextstack[itempo1^.parent];
+      itempo1:= @contextstack[itempo1^.parent]; //before first param
+     end
+     else begin
+      inc(itempo1); //past end, no params
      end;
-    {$ifdef mse_checkinternalerror}
-     if not (itempo1^.d.kind in [ck_params,ck_statement]) then begin
-      internalerror(ie_handler,'20160606A');
-     end;
-    {$endif}
-     inc(itempo1); //first param or past end
  
      if sf_method in asub^.flags then begin
       selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
@@ -1257,7 +1253,7 @@ begin
        size:= bitoptypes[das_pointer];
       end;
       inc(subparams1); //first param
-      getnextnospace(itempo1+1,itempo1);
+//      getnextnospace(itempo1,itempo1);
      end;
      if co_mlaruntime in compileoptions then begin
       i1:= 0;
@@ -1307,6 +1303,7 @@ begin
      inc(itempo1); //first param or past end
 *)
      if dsf_indexedsetter in aflags then begin
+      getnextnospace(itempo1,itempo1); //skip class instance
       inc(parallocpo); //second, first index
       inc(subparams1);
       while getnextnospace(itempo1,itempo1) do begin

@@ -1419,15 +1419,17 @@ begin
      errormessage(err_varidentexpected,[],1);
     end
     else begin
+{
      if stf_rightside in s.currentstatementflags then begin
       getvalue(toppo,das_none);
 //      indpo^.d:= (indpo+1)^.d;
-     end
-     else begin
-      goto endlab1;
+//     end
+//     else begin
+//      goto endlab1;
      end;
+}
     end;
-    goto endlab;
+    goto endlab1;
    end
    else begin
     with toppo^ do begin
@@ -2199,6 +2201,10 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EXP');
 {$endif}
+ with info do begin
+  contextstack[s.stackindex].d.kind:= ck_space;
+ end;
+{
  with info,contextstack[s.stacktop] do begin
   if not (hf_propindex in d.handlerflags) then begin
    contextstack[s.stackindex].d.kind:= ck_space;
@@ -2206,6 +2212,7 @@ begin
 //   dec(s.stacktop);
   end;
  end;
+}
 end;
 
 procedure handleexp1();
@@ -2221,11 +2228,11 @@ begin
    if not (hf_propindex in d.handlerflags) then begin
  //   resolveshortcuts(0,1); //todo: ck_space handling
     resolveshortcuts(@contextstack[s.stackindex],toppo);
-    contextstack[s.stackindex].d.kind:= ck_space;
  //   contextstack[s.stacktop-1].d:= contextstack[s.stacktop].d;
  //   s.stacktop:= s.stackindex;
    end;
   end;
+  contextstack[s.stackindex].d.kind:= ck_space;
   dec(s.stackindex);
  end;
 end;
@@ -2761,6 +2768,10 @@ var
   writemanagedtypeop(aop,destvar.typ,ad1);
  end; //decref
 
+var
+ potop: pcontextitemty;
+ i2: int32;
+ flags1: dosubflagsty;
 label
  endlab;
 begin
@@ -2768,14 +2779,22 @@ begin
  outhandle('ASSIGNMENT');
 {$endif}
  with info do begin       //todo: use direct move if possible
+  potop:= @contextstack[s.stacktop];
   if not errorfla then begin
-   if getnextnospace(s.stackindex+1,dest) and getnextnospace(dest,source) and 
-                            (source = @contextstack[s.stacktop]) then begin
+   if not getnextnospace(s.stackindex+1,dest) or 
+                               not getnextnospace(dest,source) then begin
+    internalerror1(ie_handler,'20160607A');
+   end;
+   
+//   if source <> potop then begin //property
+//    getvalue(source,das_none);
+//   end;
+//   if source = potop then begin //simple assignment
 //    dest:= @contextstack[s.stackindex+1];
 //    source:= @contextstack[s.stackindex+2];
-    isconst:= source^.d.kind = ck_const;
     with dest^ do begin
      if d.kind = ck_prop then begin
+      
       with ppropertydataty(ele.eledataabs(d.dat.prop.propele))^ do begin
        if pof_writefield in flags then begin
         d.dat.ref.offset:= d.dat.ref.offset + writeoffset;
@@ -2783,12 +2802,27 @@ begin
        end
        else begin
         if pof_writesub in flags then begin
+         i2:= 1; //value
+         source:= dest+1;
+         if source^.d.kind = ck_index then begin
+          source^.d.kind:= ck_space;
+          i1:= getstackindex(source);
+          while getnextnospace(source+1,source) and 
+                                 (source^.parent = i1) do begin
+           inc(i2);
+          end;
+         end;
          getclassvalue(dest);
          ele.pushelementparent(writeele);
+         getvalue(source,das_none);
          i1:= s.stackindex;
 //         inc(s.stackindex); //class instance
          s.stackindex:= getstackindex(dest);
-         dosub(psubdataty(ele.eledataabs(writeele)),1,[]);
+         flags1:= [];
+         if i2 > 1 then begin
+          flags1:= [dsf_indexedsetter];
+         end;
+         dosub(psubdataty(ele.eledataabs(writeele)),i2,flags1);
          s.stackindex:= i1;
          ele.popelementparent();
         end
@@ -2801,6 +2835,11 @@ begin
      end;
     end;
     with dest^ do begin
+     if not getnextnospace(dest+1,source) then begin
+      internalerror1(ie_handler,'20160607B');
+     end;
+     isconst:= source^.d.kind = ck_const;
+//     getvalue(source,das_none);
      if getassignaddress(dest,false) then begin
       destkind:= d.kind;
       typematch:= false;
@@ -2980,30 +3019,35 @@ begin
       po1^.par.ssas2:= dest^.d.dat.fact.ssaindex; //dest
      end;
     end;
+ (*
    end
-   else begin
-    if hf_propindex in contextstack[s.stacktop-1].d.handlerflags then begin
+   else begin //source <> potop
+    if hf_propindex in potop^.d.handlerflags then begin
     {$ifdef mse_checkinternalerror}
-     if contextstack[s.stackindex+4].d.kind <> ck_prop then begin
+     if source^.d.kind <> ck_prop then begin
       internalerror(ie_handler,'20160211A');
      end;
-     if contextstack[s.stackindex+5].d.kind <> ck_index then begin
+     if pcontextitemty(@contextstack[potop^.parent])^.d.kind <>
+                                                     ck_index then begin
       internalerror(ie_handler,'20160211B');
      end;
     {$endif}
-notimplementederror('');
-//     getclassvalue(4);
-     with ppropertydataty(ele.eledataabs(
-               contextstack[s.stackindex+4].d.dat.prop.propele))^ do begin
-      if not (pof_writesub in flags) then begin
+     getclassvalue(source);
+     with ppropertydataty(ele.eledataabs(source^.d.dat.prop.propele))^ do begin
+      if not (pof_readsub in flags) then begin
        errormessage(err_nomemberaccessproperty,[],5);
       end
       else begin
-       ele.pushelementparent(writeele);
-       inc(s.stackindex,4);
-       dosub(psubdataty(ele.eledataabs(writeele)),s.stacktop-s.stackindex-1,
-                               [dsf_indexedsetter]); //swap first/last param
-       dec(s.stackindex,4);
+       ele.pushelementparent(readele);
+       i1:= s.stackindex;
+       s.stackindex:= getstackindex(source);
+       i2:= 1;
+       while getnextnospace(source+1,source) do begin
+        inc(i2);
+       end;
+       dosub(psubdataty(ele.eledataabs(writeele)),i1,[dsf_indexedsetter]); 
+                                                      //swap first/last param
+       s.stackindex:= i2;
        ele.popelementparent();
       end;
      end;
@@ -3012,6 +3056,7 @@ notimplementederror('');
      errormessage(err_illegalexpression,[]);
     end;
    end;
+*)
   end; //errorfla
 endlab:
   dec(s.stackindex);

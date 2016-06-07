@@ -832,7 +832,7 @@ begin
         d.classprop.readele:= ele1;
         d.classprop.readoffset:= 0;
         include(d.classprop.flags,pof_readsub);
-        result:= checkindex({indexcount1,}po1);
+        result:= (paramcount = 2) or checkindex({indexcount1,}po1);
        end
        else begin
         illegalsymbol();

@@ -2532,7 +2532,7 @@ var
 var
  po1: ptypedataty;
  op1: popinfoty;
- int1: integer;
+ i1: integer;
  pocont1,pocont2: pcontextitemty;
 label
  errlab; 
@@ -2593,19 +2593,14 @@ begin                    //todo: optimize
        getclassvalue(acontext);
        ele.pushelementparent(readele);
        inc(s.stackindex,stackoffset); //class instance
-       pocont1:= @contextstack[s.stacktop];
-       pocont2:= pocont1;
-       if s.stacktop > s.stackindex then begin
-        while pocont2^.d.kind <> ck_index do begin
-         dec(pocont2);
-        {$ifdef mse_checkinternalerror}
-         if pocont2 < @contextstack[s.stackindex] then begin
-          internalerror(ie_handler,'20160207B');
-         end;
-        {$endif}
+       i1:= 0; //result, class instance
+       if s.stacktop > s.stackindex then begin //has index params
+        pocont1:= @contextstack[s.stackindex+1];
+        while getnextnospace(pocont1,pocont1) do begin
+         inc(i1);
         end;
        end;
-       dosub(psubdataty(ele.eledataabs(readele)),pocont1-pocont2,[]);
+       dosub(psubdataty(ele.eledataabs(readele)),i1,[]);
        dec(s.stackindex,stackoffset);
        ele.popelementparent();
        result:= true;
@@ -2626,7 +2621,7 @@ begin                    //todo: optimize
    end;
    ck_subres,ck_fact: begin
     if d.dat.indirection < 0 then begin
-     for int1:= d.dat.indirection+2 to 0 do begin
+     for i1:= d.dat.indirection+2 to 0 do begin
       insertitem(oc_indirectpo,stackoffset,-1);
      end;
      d.dat.indirection:= 0;
