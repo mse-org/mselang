@@ -239,7 +239,8 @@ begin
  outhandle('CHECKRANGETYPE');
 {$endif}
  with info do begin
-  if getnextnospace(s.stackindex+2,poa) and getnextnospace(poa+1,pob) then begin
+  if getnextnospace(s.stackindex+2,poa) and 
+                                getnextnospacex(poa+1,pob) then begin
    with contextstack[s.stackindex-2] do begin
     if (d.kind = ck_ident) and 
                 (contextstack[s.stackindex-1].d.kind = ck_typetype) then begin

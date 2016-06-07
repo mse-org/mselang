@@ -1751,7 +1751,7 @@ begin
    allconst:= true;
    poitem:= indpo;
    while true do begin
-    if not getnextnospace(poitem+1,poitem) then begin
+    if not getnextnospacex(poitem+1,poitem) then begin
      break;
     end;
     with poitem^ do begin
@@ -2782,7 +2782,7 @@ begin
   potop:= @contextstack[s.stacktop];
   if not errorfla then begin
    if not getnextnospace(s.stackindex+1,dest) or 
-                               not getnextnospace(dest,source) then begin
+                               not getnextnospacex(dest+1,source) then begin
     internalerror1(ie_handler,'20160607A');
    end;
    
@@ -2807,7 +2807,7 @@ begin
          if source^.d.kind = ck_index then begin
           source^.d.kind:= ck_space;
           i1:= getstackindex(source);
-          while getnextnospace(source+1,source) and 
+          while getnextnospacex(source+1,source) and 
                                  (source^.parent = i1) do begin
            inc(i2);
           end;
@@ -2835,7 +2835,7 @@ begin
      end;
     end;
     with dest^ do begin
-     if not getnextnospace(dest+1,source) then begin
+     if not getnextnospacex(dest+1,source) then begin
       internalerror1(ie_handler,'20160607B');
      end;
      isconst:= source^.d.kind = ck_const;

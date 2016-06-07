@@ -417,11 +417,11 @@ begin
   int3:= 0;
   poe:= @contextstack[s.stacktop];
   poitem:= @contextstack[s.stackindex+2];
-  while getnextnospace(poitem+1,poitem) do begin
+  while getnextnospacex(poitem+1,poitem) do begin
    getvalue(poitem,das_none);
   end;
   poitem:= @contextstack[s.stackindex+2];
-  while getnextnospace(poitem+1,poitem) do begin
+  while getnextnospacex(poitem+1,poitem) do begin
    with poitem^ do begin //todo: use table
     if d.dat.datatyp.indirectlevel > 0 then begin
      po1:= additem(oc_writepointer);

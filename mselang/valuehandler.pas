@@ -900,7 +900,7 @@ var
     end;
     i2:= 1;
     po1:= @contextstack[context1^.parent];
-    while getnextnospace(po1+1,po1) and (po1 <> context1) do begin
+    while getnextnospacex(po1+1,po1) and (po1 <> context1) do begin
      inc(i2);
     end;
     errormessage(err1,[i2,typename(context1^.d),
@@ -1110,7 +1110,7 @@ begin
 //      i1:= s.stacktop-paramco+1;
       itempo1:= indpo+1;
       while subparams1 < subparamse do begin //find best parameter match
-       if not getnextnospace(itempo1+1,itempo1) then begin
+       if not getnextnospacex(itempo1+1,itempo1) then begin
         itempo1:= nil; //needs default param
         break;
        end;
@@ -1303,10 +1303,10 @@ begin
      inc(itempo1); //first param or past end
 *)
      if dsf_indexedsetter in aflags then begin
-      getnextnospace(itempo1,itempo1); //skip class instance
+      getnextnospacex(itempo1+1,itempo1); //skip class instance
       inc(parallocpo); //second, first index
       inc(subparams1);
-      while getnextnospace(itempo1,itempo1) do begin
+      while getnextnospacex(itempo1+1,itempo1) do begin
        if itempo1 < pe then begin //not last
         doparam(itempo1,subparams1,parallocpo);
         inc(subparams1);
@@ -1321,7 +1321,7 @@ begin
       lastparamsize1:= paramsize1-lastparamsize1;
      end
      else begin
-      while getnextnospace(itempo1,itempo1) do begin
+      while getnextnospacex(itempo1+1,itempo1) do begin
        doparam(itempo1,subparams1,parallocpo);
        inc(subparams1);
        inc(parallocpo);

@@ -219,7 +219,7 @@ function getnextnospace(const astackindex: int32): int32;
 function getnextnospace(const astackindex: int32; 
                                 out apo: pcontextitemty): boolean;
                                    //true if found
-function getnextnospace(const current: pcontextitemty; //increments current
+function getnextnospacex(const current: pcontextitemty; //increments current
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 function getspacecount(const astackindex: int32): int32;
@@ -2196,7 +2196,7 @@ begin
  end;
 end;
 
-function getnextnospace(const current: pcontextitemty;
+function getnextnospacex(const current: pcontextitemty;
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 var
@@ -2204,7 +2204,7 @@ var
 begin
  result:= false;
  with info do begin
-  po1:= current+1;
+  po1:= current;
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
    if po1^.d.kind <> ck_space then begin
@@ -2595,8 +2595,8 @@ begin                    //todo: optimize
        inc(s.stackindex,stackoffset); //class instance
        i1:= 0; //result, class instance
        if s.stacktop > s.stackindex then begin //has index params
-        pocont1:= @contextstack[s.stackindex+1];
-        while getnextnospace(pocont1,pocont1) do begin
+        pocont1:= @contextstack[s.stackindex];
+        while getnextnospacex(pocont1+1,pocont1) do begin
          inc(i1);
         end;
        end;
