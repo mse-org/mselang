@@ -923,7 +923,9 @@ const
   oc_decloop32,
   oc_decloop64];
 
- callops = [
+ subops = [oc_call,oc_callfunc,oc_callout,oc_callfuncout,
+           oc_callvirt,oc_callintf,oc_callindi,oc_callfuncindi];
+ callops = subops + [
   oc_raise,
   oc_writeln,
   oc_writeboolean,
@@ -941,16 +943,16 @@ const
   oc_writepointer,
   oc_writeclass,
   oc_writeenum,
-  oc_call,
-  oc_callfunc,
-  oc_callout,
-  oc_callfuncout,
-  oc_callvirt,
-  oc_callintf,
+//  oc_call,
+//  oc_callfunc,
+//  oc_callout,
+//  oc_callfuncout,
+//  oc_callvirt,
+//  oc_callintf,
   oc_virttrampoline,
 
-  oc_callindi,
-  oc_callfuncindi,
+//  oc_callindi,
+//  oc_callfuncindi,
 
   oc_initclass,
   oc_destroyclass

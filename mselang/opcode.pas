@@ -851,6 +851,7 @@ var
  po1: popinfoty;
  poend: pointer;
  ssadelta: integer;
+ parpo,endpo: pparallocinfoty;
 begin
  with info do begin
   int1:= stackoffset+s.stackindex;
@@ -891,6 +892,16 @@ begin
     end;
     if po1^.par.ssas2 >= int2 then begin
      inc(po1^.par.ssas2,ssadelta);
+    end;
+    if po1^.op.op in subops then begin
+     parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
+     endpo:= parpo + po1^.par.callinfo.paramcount;
+     while parpo < endpo do begin
+      if parpo^.ssaindex >= int2 then begin
+       inc(parpo^.ssaindex,ssadelta);
+      end;
+      inc(parpo);
+     end;
     end;
     inc(po1);
    end;

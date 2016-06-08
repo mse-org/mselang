@@ -112,11 +112,11 @@ c=3
  )
  (
  kind=1
- a=0,665,5,testdir
+ a=0,665,4,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,664,4,base
   c=22
    (
    kind=1
@@ -2304,7 +2304,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,dynarray
+   a=0,665,4,dynarray
    c=12
     (
     kind=2
@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B734CBC0
+    ao=An unhandled exception occured at $B73DDBC0
     ae=
     aec=123
     ie=0
@@ -5609,12 +5609,12 @@ c=3
   )
   (
   kind=1
-  a=0,665,5,class
+  a=0,665,4,class
   c=21
    (
    kind=1
-   a=0,665,5,properties
-   c=26
+   a=0,665,4,properties
+   c=28
     (
     kind=2
     a=0,648,1,classprop1
@@ -5969,8 +5969,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparamind3
-    teststate=2
+    a=0,648,1,arrayparamind3
+    teststate=1
     path=arrayparamind3.mla
     comment=
     cc=${mlc}
@@ -5983,16 +5983,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
-    aec=35
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,arrayparamind3 llvm
-    teststate=2
+    a=0,648,1,arrayparamind3 llvm
+    teststate=1
     path=arrayparamind3.mla
     comment=
     cc=${mlc_llvm}
@@ -6005,16 +6005,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
-    aec=35
+    aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,arrayparamsetind1
-    teststate=2
+    a=0,648,1,arrayparamsetind1
+    teststate=1
     path=arrayparamsetind1.mla
     comment=
     cc=${mlc}
@@ -6027,7 +6027,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
     aec=123
@@ -6035,8 +6035,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparamsetind1 llvm
-    teststate=2
+    a=0,648,1,arrayparamsetind1 llvm
+    teststate=1
     path=arrayparamsetind1.mla
     comment=
     cc=${mlc_llvm}
@@ -6049,7 +6049,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
     aec=123
@@ -6057,8 +6057,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparamsetind2
-    teststate=2
+    a=0,648,1,arrayparamsetind2
+    teststate=1
     path=arrayparamsetind2.mla
     comment=
     cc=${mlc}
@@ -6071,7 +6071,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
     ao=
     ae=
     aec=123
@@ -6079,8 +6079,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparamsetind2 llvm
-    teststate=2
+    a=0,648,1,arrayparamsetind2 llvm
+    teststate=1
     path=arrayparamsetind2.mla
     comment=
     cc=${mlc_llvm}
@@ -6093,7 +6093,51 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arrayparamsetind2
+    teststate=1
+    path=arrayparamsetind2.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arrayparamsetind2 llvm
+    teststate=1
+    path=arrayparamsetind2.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
     ao=
     ae=
     aec=123
@@ -6145,8 +6189,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,propderef
-    teststate=2
+    a=0,648,1,propderef
+    teststate=1
     path=propderef.mla
     comment=
     cc=${mlc}
@@ -6159,16 +6203,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=3
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,propderef llvm
-    teststate=2
+    a=0,648,1,propderef llvm
+    teststate=1
     path=propderef.mla
     comment=
     cc=${mlc_llvm}
@@ -6181,13 +6225,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=3
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
-   teststate=2
+   teststate=1
    path=properties/
    comment=
    cc=
@@ -6643,7 +6687,7 @@ c=3
    aec=123
    ie=0
    )
-  teststate=2
+  teststate=1
   path=class/
   comment=
   cc=
@@ -7045,7 +7089,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=2
+ teststate=1
  path=${testdir}
  comment=
  cc=
@@ -7162,147 +7206,7 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=198
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=58
  0 0
  0 0
  0 0
