@@ -1068,7 +1068,7 @@ var
 
 var
  realparamco: int32; //including defaults
- indpo,itempo1,pe: pcontextitemty;
+ indpo,itempo1{,pe}: pcontextitemty;
 label
  paramloopend;
 begin
@@ -1077,7 +1077,7 @@ begin
 {$endif}
  with info do begin
   indpo:= @contextstack[s.stackindex];
-  pe:= @contextstack[s.stacktop];
+//  pe:= @contextstack[s.stacktop];
   with indpo^ do begin //classinstance, result
    paramschecked:= false;
    if asub^.nextoverload >= 0 then begin //check overloads
@@ -1108,7 +1108,7 @@ begin
      if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
                 (totparamco <= subdata1^.paramcount) then begin 
 //      i1:= s.stacktop-paramco+1;
-      itempo1:= indpo+1;
+      itempo1:= indpo+2;
       while subparams1 < subparamse do begin //find best parameter match
        if not getnextnospacex(itempo1+1,itempo1) then begin
         itempo1:= nil; //needs default param
@@ -1193,12 +1193,14 @@ begin
      exit;
     end
     else begin
+   (*
     {$ifdef mse_checkinternalerror}
      if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and
-         not(dsf_isinherited in aflags) and (d.kind <> ck_fact) then begin
+         not(dsf_isinherited in aflags) and not (d.kind in [ck_fact,ck_index]) then begin
       internalerror(ie_handler,'20160219A');
      end;
     {$endif}
+    *)
      instancessa:= d.dat.fact.ssaindex; //for sf_method
      hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
      if hasresult then begin
@@ -1238,6 +1240,7 @@ begin
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       end;
      end;
+    {
      itempo1:= pe;
 //     if itempo1^.d.kind <> ck_params then begin
      if paramco > 0 then begin
@@ -1246,7 +1249,7 @@ begin
      else begin
       inc(itempo1); //past end, no params
      end;
- 
+    }
      if sf_method in asub^.flags then begin
       selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
       with selfpo^ do begin
@@ -1303,29 +1306,34 @@ begin
     {$endif}
      inc(itempo1); //first param or past end
 *)
+     itempo1:= indpo; //before first param
+     i1:= paramco;
      if dsf_indexedsetter in aflags then begin
-      getnextnospacex(itempo1+1,itempo1); //skip class instance
+//      getnextnospacex(itempo1+1,itempo1); //skip class instance
       inc(parallocpo); //second, first index
       inc(subparams1);
-      while getnextnospacex(itempo1+1,itempo1) do begin
-       if itempo1 < pe then begin //not last
-        doparam(itempo1,subparams1,parallocpo);
-        inc(subparams1);
-        inc(parallocpo);
-       end;
+      while i1 > 1 do begin
+       getnextnospacex(itempo1+1,itempo1);
+       doparam(itempo1,subparams1,parallocpo);
+       inc(subparams1);
+       inc(parallocpo);
+       dec(i1);
       end;
       dodefaultparams();
       lastparamsize1:= paramsize1;
       dec(parallocpo,paramco); //first, value
       dec(subparams1,paramco);
+      getnextnospacex(itempo1+1,itempo1);
       doparam(itempo1,subparams1,parallocpo); //last
       lastparamsize1:= paramsize1-lastparamsize1;
      end
      else begin
-      while getnextnospacex(itempo1+1,itempo1) do begin
+      while i1 > 0 do begin
+       getnextnospacex(itempo1+1,itempo1);
        doparam(itempo1,subparams1,parallocpo);
        inc(subparams1);
        inc(parallocpo);
+       dec(i1);
       end;
       dodefaultparams();
      end;

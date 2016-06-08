@@ -228,6 +228,7 @@ function getitemcount(const acontext: pcontextitemty): int32;
                //counts not ck_space from acontext to stacktop
 function getitemcount(const astackindex: int32): int32;
                //counts not ck_space from astackindex to stacktop
+function getfactstart(const astackindex: int32): pcontextitemty;
 
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
@@ -2323,6 +2324,21 @@ begin
  end;
 end;
 
+function getfactstart(const astackindex: int32): pcontextitemty;
+begin
+ with info do begin
+  result:= @contextstack[astackindex];
+  if hf_propindex in result^.d.handlerflags then begin
+   result:= @contextstack[result^.parent-1];
+  {$ifdef mse_checkinternalerror}
+   if (result^.d.kind <> ck_prop) or ((result+1)^.d.kind <> ck_index) then begin
+    internalerror(ie_handler,'20160608A');
+   end;
+  {$endif}
+  end;
+ end;
+end;
+
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 begin
@@ -2532,7 +2548,7 @@ var
 var
  po1: ptypedataty;
  op1: popinfoty;
- i1: integer;
+ i1,i2: integer;
  pocont1,pocont2: pcontextitemty;
 label
  errlab; 
@@ -2592,16 +2608,16 @@ begin                    //todo: optimize
       if pof_readsub in flags then begin
        getclassvalue(acontext);
        ele.pushelementparent(readele);
+       i2:= s.stackindex;
        inc(s.stackindex,stackoffset); //class instance
        i1:= 0; //result, class instance
-       if s.stacktop > s.stackindex then begin //has index params
-        pocont1:= @contextstack[s.stackindex];
-        while getnextnospacex(pocont1+1,pocont1) do begin
-         inc(i1);
-        end;
+       pocont1:= acontext+1;
+       if pocont1^.d.kind = ck_index then begin
+        i1:= pocont1^.d.index.count;
+        pocont1^.d.kind:= ck_space;
        end;
        dosub(psubdataty(ele.eledataabs(readele)),i1,[]);
-       dec(s.stackindex,stackoffset);
+       s.stackindex:= i2;
        ele.popelementparent();
        result:= true;
       end
@@ -2954,8 +2970,8 @@ label
 begin
  with info do begin
   bo1:= false;
-  poa:= @contextstack[s.stackindex-1];
-  pob:= @contextstack[s.stacktop]; 
+  poa:= getfactstart(s.stackindex-1);
+  pob:= getfactstart(s.stacktop); 
   with poa^ do begin
    if not (d.kind in datacontexts) or 
               not (pob^.d.kind in datacontexts) or
@@ -3115,7 +3131,8 @@ begin
      addfactbinop(poa,pob,op1);
     end;
 endlab:
-    s.stacktop:= s.stackindex-1;
+    s.stacktop:= getstackindex(poa);
+//    s.stacktop:= s.stackindex-1;
    end;
   end;
   s.stackindex:= getpreviousnospace(s.stacktop-1); 
@@ -3569,7 +3586,8 @@ begin
       end;
      end;
      ck_index: begin
-      write('opshiftmark:'+inttostrmse(d.opshiftmark));
+      write({'opshiftmark:'+inttostrmse(d.index.opshiftmark)+}
+               'count:'+inttostrmse(d.index.count));
      end;
      ck_getindex: begin
 //      write('itemtype:'+inttostrmse(d.getindex.itemtype)+' ');

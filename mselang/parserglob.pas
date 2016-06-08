@@ -372,6 +372,11 @@ type
   count: int32;
  end;
  
+ indexinfoty = record
+//  opshiftmark: integer;
+  count: int32;
+ end;
+ 
  datacontextflagty = (dcf_listitem);
  datacontextflagsty = set of datacontextflagty;
  
@@ -432,7 +437,7 @@ type
     dat: datacontextty;
    );
    ck_index:(
-    opshiftmark: integer;
+    index: indexinfoty;
    );
    ck_subdef:(
     subdef: subinfoty;

@@ -980,6 +980,7 @@ begin
    if d.kind = ck_prop then begin
     with po2^ do begin
      d.kind:= ck_index;
+     d.index.count:= 0;
     end;
    end
    else begin
@@ -1057,6 +1058,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
 //  getnextnospace(s.stackindex+1,poa);
+  inc(contextstack[s.stackindex].d.index.count);
   ptop:= @contextstack[s.stacktop];
   topoffset:= s.stacktop-s.stackindex;
   if d.kind <> ck_prop then begin //no array property
@@ -1162,6 +1164,7 @@ begin
  with info,contextstack[s.stackindex] do begin
   if d.kind = ck_index then begin //for indexed property
    include(contextstack[s.stacktop].d.handlerflags,hf_propindex);
+//   d.kind:= ck_space;
   end
   else begin
    s.stacktop:= s.stackindex-1;

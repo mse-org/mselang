@@ -116,7 +116,7 @@ c=3
  c=6
   (
   kind=1
-  a=0,664,4,base
+  a=0,665,4,base
   c=22
    (
    kind=1
@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B735ABC0
+    ao=An unhandled exception occured at $B734CBC0
     ae=
     aec=123
     ie=0
@@ -5925,8 +5925,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,2,arrayparamget
-    teststate=2
+    a=0,648,1,arrayparamget
+    teststate=1
     path=arrayparamget.mla
     comment=
     cc=${mlc}
@@ -5939,16 +5939,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,2,arrayparamget llvm
-    teststate=2
+    a=0,648,1,arrayparamget llvm
+    teststate=1
     path=arrayparamget.mla
     comment=
     cc=${mlc_llvm}
@@ -5961,9 +5961,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=1
-    ao=0
-    ae=0
+    cr=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -5984,9 +5984,9 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
-    aec=123
+    ao=
+    ae=
+    aec=35
     ie=0
     )
     (
@@ -6006,9 +6006,9 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
-    aec=123
+    ao=
+    ae=
+    aec=35
     ie=0
     )
     (
@@ -6028,8 +6028,8 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6050,8 +6050,8 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6072,8 +6072,8 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6094,8 +6094,8 @@ c=3
     ae=0
     eec=123
     cr=1
-    ao=0
-    ae=0
+    ao=
+    ae=
     aec=123
     ie=0
     )
@@ -6145,8 +6145,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,propderef
-    teststate=1
+    a=0,648,2,propderef
+    teststate=2
     path=propderef.mla
     comment=
     cc=${mlc}
@@ -6159,16 +6159,16 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=3
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,propderef llvm
-    teststate=1
+    a=0,648,2,propderef llvm
+    teststate=2
     path=propderef.mla
     comment=
     cc=${mlc_llvm}
@@ -6181,9 +6181,9 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
-    ao=
-    ae=
+    cr=3
+    ao=0
+    ae=0
     aec=123
     ie=0
     )
@@ -6601,8 +6601,8 @@ c=3
    )
    (
    kind=2
-   a=0,648,2,classsubcalls
-   teststate=2
+   a=0,648,1,classsubcalls
+   teststate=1
    path=classsubcalls.mla
    comment=
    cc=${mlc}
@@ -6615,16 +6615,16 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=3
-   ao=0
-   ae=0
+   cr=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
    (
    kind=2
-   a=0,648,2,classsubcalls llvm
-   teststate=2
+   a=0,648,1,classsubcalls llvm
+   teststate=1
    path=classsubcalls.mla
    comment=
    cc=${mlc_llvm}
@@ -6637,9 +6637,9 @@ c=3
    ee=
    ae=0
    eec=123
-   cr=3
-   ao=0
-   ae=0
+   cr=0
+   ao=
+   ae=
    aec=123
    ie=0
    )
@@ -7162,7 +7162,149 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=56
+rowstate=198
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0

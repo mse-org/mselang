@@ -1042,8 +1042,8 @@ label
  errlab,endlab;
 begin
  with info do begin
-  poa:= @contextstack[s.stackindex-1];
-  pob:= @contextstack[s.stacktop];
+  poa:= getfactstart(s.stackindex-1);
+  pob:= getfactstart(s.stacktop);
   with poa^ do begin
    if (pob^.d.kind = ck_const) and 
                (d.kind = ck_const) then begin
