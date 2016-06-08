@@ -1288,20 +1288,23 @@ begin
    end
    else begin
     if hf_propindex in d.handlerflags then begin
-     getnextnospace(s.stackindex,poa);
+     getnextnospace(s.stackindex+1,poa);
     {$ifdef mse_checkinternalerror}
      if poa^.d.kind <> ck_prop then begin
       internalerror(ie_handler,'20160214A');
      end;
     {$endif}
      if getvalue(poa,das_none) then begin
-      s.stacktop:= s.stackindex+1;
+      s.stacktop:= getstackindex(poa);
+      potop:= poa;
      end
      else begin
       exit;
      end;
     end;
    end;
+  end;
+  with potop^ do begin
    if d.dat.datatyp.indirectlevel <= 0 then begin
     errormessage(err_illegalqualifier,[]);
    end
@@ -2824,7 +2827,8 @@ begin
           flags1:= [dsf_indexedsetter];
          end;
 }
-         dosub(psubdataty(ele.eledataabs(writeele)),i2,[dsf_indexedsetter]{flags1});
+         dosub(psubdataty(ele.eledataabs(writeele)),s.stackindex+1,
+                                             i2,[dsf_indexedsetter]{flags1});
          s.stackindex:= i1;
          ele.popelementparent();
         end

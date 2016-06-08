@@ -56,7 +56,7 @@ type
  dosubflagty = (dsf_indirect,dsf_isinherited,dsf_ownedmethod,dsf_indexedsetter);
  dosubflagsty = set of dosubflagty;
 
-procedure dosub(asub: psubdataty; const paramco: int32; 
+procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
                                               const aflags: dosubflagsty);
 
 //procedure dosub(const asub: psubdataty;
@@ -640,6 +640,7 @@ begin
                                           (source1^.h.kind = dk_pointer) or 
       (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
                                                         (destindirectlevel > 0);
+   pointerconv:= result;
   end;
   if not result and (coo_type in aoptions) then begin
    result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
@@ -853,7 +854,7 @@ end;
 //procedure dosub(const asub: psubdataty;
 //                   const aindirect: boolean; const isinherited: boolean;
 //                   const paramco: int32; const ownedmethod: boolean);
-procedure dosub(asub: psubdataty; const paramco: int32; 
+procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
                                               const aflags: dosubflagsty);
      
 var
@@ -1306,7 +1307,7 @@ begin
     {$endif}
      inc(itempo1); //first param or past end
 *)
-     itempo1:= indpo; //before first param
+     itempo1:= @contextstack[paramstart-1]; //before first param
      i1:= paramco;
      if dsf_indexedsetter in aflags then begin
 //      getnextnospacex(itempo1+1,itempo1); //skip class instance
@@ -1504,7 +1505,7 @@ end;
  
 procedure handlevalueidentifier();
 var
- paramco: integer;
+ paramco,paramstart: integer;
 
  function checknoparam: boolean;
  begin
@@ -1613,7 +1614,7 @@ var
          internalerror1(ie_notimplemented,'20140417A');
         end;
        end;
-       dosub(psubdataty(po4),paramco,subflags);
+       dosub(psubdataty(po4),paramstart,paramco,subflags);
        exit;
       end;
       else begin
@@ -1645,6 +1646,8 @@ var
  origparent: elementoffsetty;
  ssabefore: int32;
  poind,pob,potop: pcontextitemty;
+ pocontext1: pcontextitemty;
+ 
 label
  endlab;
 begin
@@ -1721,10 +1724,14 @@ begin
    end;
   end;
   if findkindelements(1,[],allvisi,po1,firstnotfound,idents) then begin
+   paramstart:= s.stackindex+2+idents.high;
    paramco:= 0;
-   if s.stackindex+2 <= s.stacktop then begin
-    paramco:= s.stacktop-s.stackindex-2-idents.high -
-                                     getspacecount(s.stackindex+2);
+   pocontext1:= @contextstack[paramstart];
+   if (pocontext1 < potop) and (pocontext1^.d.kind = ck_params) then begin
+    inc(paramstart);
+    while getnextnospacex(pocontext1+1,pocontext1) do begin
+     inc(paramco);
+    end;
    end;
    if paramco < 0 then begin
     paramco:= 0; //no paramsend context
@@ -1881,7 +1888,7 @@ begin
         po3:= ele.eledataabs(d.dat.datatyp.typedata);
         if (d.dat.datatyp.indirectlevel = 1) and 
                               (po3^.h.kind = dk_sub) then begin
-         dosub(ele.eledataabs(po3^.infosub.sub),paramco,
+         dosub(ele.eledataabs(po3^.infosub.sub),paramstart,paramco,
                                                 subflags+[dsf_indirect]);
         end;
        end;     
@@ -1896,7 +1903,7 @@ begin
      end;
     end;
     ek_sub: begin
-     dosub(psubdataty(po2),paramco,subflags);
+     dosub(psubdataty(po2),paramstart,paramco,subflags);
     end;
     ek_sysfunc: begin //todo: handle ff_address
      with contextstack[s.stackindex] do begin

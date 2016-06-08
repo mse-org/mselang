@@ -2616,7 +2616,7 @@ begin                    //todo: optimize
         i1:= pocont1^.d.index.count;
         pocont1^.d.kind:= ck_space;
        end;
-       dosub(psubdataty(ele.eledataabs(readele)),i1,[]);
+       dosub(psubdataty(ele.eledataabs(readele)),s.stackindex+1,i1,[]);
        s.stackindex:= i2;
        ele.popelementparent();
        result:= true;
