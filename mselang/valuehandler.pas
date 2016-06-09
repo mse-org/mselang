@@ -1154,24 +1154,17 @@ begin
      exit;
     end
     else begin
-   (*
-    {$ifdef mse_checkinternalerror}
-     if (sf_method in asub^.flags) and not(sf_constructor in asub^.flags) and
-         not(dsf_isinherited in aflags) and not (d.kind in [ck_fact,ck_index]) then begin
-      internalerror(ie_handler,'20160219A');
-     end;
-    {$endif}
-    *)
      instancessa:= d.dat.fact.ssaindex; //for sf_method
      hasresult:= (sf_function in asub^.flags) or 
-                       not isfactcontext and (sf_constructor in asub^.flags);
+           not isfactcontext and 
+             (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
      if hasresult then begin
       initfactcontext(0); //set ssaindex
       if sf_constructor in asub^.flags then begin  //needs oc_initclass
        bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
                                            //get class type
       {$ifdef mse_checkinternalerror}
-       if not bo1 {or (firstnotfound <= idents1.high)} then begin 
+       if not bo1 then begin 
         internalerror(ie_handler,'20150325A'); 
        end;
       {$endif}     
@@ -1400,7 +1393,7 @@ begin
     end;
     with po1^ do begin
      par.callinfo.flags:= asub^.flags;
-     if isfactcontext then begin
+     if not hasresult then begin
       exclude(par.callinfo.flags,sf_constructor); //no class pointer on stack
      end;      
      if dsf_isinherited in aflags then begin
@@ -1413,7 +1406,6 @@ begin
      end;
     {$endif}
      par.callinfo.paramcount:= asub^.paramcount;
- //    par.callinfo.paramcount:= realparamco+totparamco-paramco; //+internal params
      par.callinfo.ad.ad:= asub^.address-1; //possibly invalid
      par.callinfo.ad.globid:= trackaccess(asub);
     end;
