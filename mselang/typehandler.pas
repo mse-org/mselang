@@ -1094,7 +1094,8 @@ begin
      isdynarray:= false;
     end;
     else begin
-     isdynarray:= false;
+     errormessage(err_illegalqualifier,[],1);
+     goto errorlab;
     end;
    end;
    if isdynarray then begin
