@@ -1,0 +1,43 @@
+program destructor1;
+
+type
+ ttest = class
+  private
+   ffield: int32;
+  public
+   constructor create();
+   destructor destroy(); virtual;
+ end;
+
+ ttest1 = class(ttest)
+  public
+   destructor destroy(); override;
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+ ffield:= 100;
+end;
+
+destructor ttest.destroy();
+begin
+ ffield:= 13;
+end;
+
+{ ttest1 }
+
+destructor ttest1.destroy();
+begin
+ inherited destroy();
+ exitcode:= ffield + 110;
+end;
+
+var
+ t1: ttest1;
+{$internaldebug on}
+begin
+ t1:= ttest1.create();
+ t1.destroy();
+end.

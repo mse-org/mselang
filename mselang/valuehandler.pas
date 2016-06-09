@@ -1269,7 +1269,7 @@ begin
       end;
       dodefaultparams();
      end;
-               //todo: exeenv flag for constructor and destructor
+
      if not hasresult then begin
       d.kind:= ck_subcall;
       if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
@@ -1412,8 +1412,8 @@ begin
     if sf_function in asub^.flags then begin
      d.dat.fact.ssaindex:= s.ssa.nextindex-1;
     end;
-    if sf_destructor in asub^.flags then begin
-         //todo: call freemem direcly if there is no finalization
+    if (sf_destructor in asub^.flags) and 
+                          not (dsf_isinherited in aflags) then begin
      with additem(oc_destroyclass)^ do begin //insertitem???
       par.ssas1:= d.dat.fact.ssaindex;
      end;
