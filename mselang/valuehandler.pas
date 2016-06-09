@@ -1266,19 +1266,19 @@ begin
       i1:= 0;  //current stackindex
       i2:= -1; //insert result space at end of statement
       if hasresult then begin
-       if sf_constructor in asub^.flags then begin
-        i1:= parent-s.stackindex;           //??? verfy!
-       end
-       else begin
+//       if sf_constructor in asub^.flags then begin
+//        i1:= parent-s.stackindex;           //??? verfy!
+//       end
+//       else begin
         if sf_method in asub^.flags then begin
          i2:= 0; //insert result space before instance
          stacksize:= vpointersize;
         end;
-       end;
+//       end;
        stacksize:= stacksize + 
                  pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,po3); 
                                             //alloc space for return value
-       if not (sf_constructor in asub^.flags) then begin
+//       if not (sf_constructor in asub^.flags) then begin
         with insertitem(oc_pushstackaddr,0,-1)^.
                                        par.memop.tempdataaddress do begin
                                                 //result var param
@@ -1286,10 +1286,10 @@ begin
          offset:= 0;
         end;
         stacksize:= stacksize + vpointersize;
-       end;
+//       end;
       end;
       if (sf_method in asub^.flags) then begin
-           //param order is [returnvalue pointer],instancepo,{params}
+           //param order is [returnvaluepointer],instancepo,{params}
        with insertitem(oc_pushduppo,0,-1)^ do begin
         if hasresult then begin
          par.voffset:= -2*vpointersize;
