@@ -1,0 +1,43 @@
+program arrayparam1;
+
+type
+ ttest = class
+
+  private
+   ffield: int32;
+   function getfield(i2: int32;i3:int32): int32;
+   procedure setfield(avalue: int32;i2: int32;i3:int32);
+  public
+   constructor create();
+   destructor destroy();
+   property field[i2: int32;i3:int32]: int32 read getfield write setfield;
+ end;
+
+{ ttest }
+
+constructor ttest.create();
+begin
+ field[100,11]:= 12;
+end;
+
+destructor ttest.destroy();
+begin
+end;
+
+function ttest.getfield(i2: int32;i3: int32): int32;
+begin
+ result:= ffield * i2 + i3;
+end;
+
+procedure ttest.setfield(avalue: int32; i2: int32; i3:int32);
+begin
+ self.ffield:= avalue + i2 + i3;
+end;
+
+var
+ t1: ttest;
+begin
+ t1:= ttest.create();
+ exitcode:= 33 + t1.field[10,3] - 33 -9*123 - 3;
+ t1.destroy();
+end.

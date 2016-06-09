@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73DDBC0
+    ao=An unhandled exception occured at $B73BEBFC
     ae=
     aec=123
     ie=0
@@ -5614,7 +5614,7 @@ c=3
    (
    kind=1
    a=0,665,4,properties
-   c=28
+   c=30
     (
     kind=2
     a=0,648,1,classprop1
@@ -5906,6 +5906,50 @@ c=3
     a=0,648,1,procwrite llvm
     teststate=1
     path=procwrite.mla
+    comment=
+    cc=${mlc_llvm}
+    cd=
+    rc=${lli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arrayparam1
+    teststate=1
+    path=arrayparam1.mla
+    comment=
+    cc=${mlc}
+    cd=
+    rc=${mli}
+    rd=
+    in=
+    eo=
+    ao=0
+    ee=
+    ae=0
+    eec=123
+    cr=0
+    ao=
+    ae=
+    aec=123
+    ie=0
+    )
+    (
+    kind=2
+    a=0,648,1,arrayparam1 llvm
+    teststate=1
+    path=arrayparam1.mla
     comment=
     cc=${mlc_llvm}
     cd=
@@ -7206,7 +7250,9 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=58
+rowstate=60
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
