@@ -1554,6 +1554,7 @@ var
  po1: psubdataty;
  po2: popinfoty;
  m1,m2: metavaluety;
+ i1: int32;
 begin
 {$ifdef mse_debugparser}
  outhandle('SUB6');
@@ -1578,16 +1579,20 @@ begin
     par.stacksize:= d.subdef.varsize;
    end;
   end;
+  i1:= d.subdef.paramsize;
+  if sf_method in po1^.flags then begin
+   i1:= i1 + vpointersize; //instancepointer
+  end;
   if sf_function in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
-    par.stacksize:= d.subdef.paramsize;
+    par.stacksize:= i1;
 //    par.returnfuncinfo.flags:= po1^.flags;
 //    par.returnfuncinfo.allocs:= po1^.allocs;
    end;
   end
   else begin
    with additem(oc_return)^ do begin
-    par.stacksize:= d.subdef.paramsize;
+    par.stacksize:= i1;
    end;
   end;
   locdatapo:= d.subdef.parambase;
