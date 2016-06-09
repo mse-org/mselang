@@ -18,7 +18,7 @@ unit classhandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$goto on}{$endif}
 interface
 uses
- globtypes,handlerglob,__mla__internaltypes;
+ globtypes,handlerglob,__mla__internaltypes,stackops;
 
 type
  classintfnamedataty = record
@@ -35,6 +35,7 @@ type
     
 const 
  virtualtableoffset = sizeof(classdefheaderty);
+ constructorstacksize = vpointersize;
 
 procedure copyvirtualtable(const source,dest: segaddressty;
                                                  const itemcount: integer);

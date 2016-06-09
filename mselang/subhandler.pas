@@ -1585,9 +1585,9 @@ begin
                       //otherwise retain instancepointer for oc_destroyclass
     i1:= i1 + vpointersize; //instancepointer
    end;
-   if sf_constructor in po1^.flags then begin
-    i1:= i1 + vpointersize; //class pointer
-   end;
+//   if sf_constructor in po1^.flags then begin
+//    i1:= i1 + vpointersize; //class pointer
+//   end;
   end;
   if sf_function in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin

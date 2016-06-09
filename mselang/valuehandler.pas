@@ -851,12 +851,8 @@ begin
  end;
 end;
 
-//procedure dosub(const asub: psubdataty;
-//                   const aindirect: boolean; const isinherited: boolean;
-//                   const paramco: int32; const ownedmethod: boolean);
 procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
                                               const aflags: dosubflagsty);
-     
 var
  paramsize1: int32;
  paramschecked: boolean;
@@ -961,38 +957,7 @@ var
    end;
   end;
  end; //doparam
-(* 
- procedure dodefaultparam(const stackoffset: int32; 
-                          const subparams1: pelementoffsetty;
-                                             const parallocpo: pparallocinfoty);
- var
-  desttype: ptypedataty;
-  vardata1: pvardataty;
- begin
-  with info do begin
-   vardata1:= ele.eledataabs(subparams1^);
-   desttype:= ptypedataty(ele.eledataabs(vardata1^.vf.typ));
-  {$ifdef mse_checkinternalerror}
-   if vardata1^.vf.defaultconst <= 0 then begin
-    internalerror(ie_handler,'20160521D');
-   end;
-  {$endif}
-   pushinsertconst(stackoffset,
-        pconstdataty(ele.eledataabs(vardata1^.vf.defaultconst))^.val.d,
-                                                               -1,das_none);
-   with parallocpo^ do begin
-   {$ifdef mse_checkinternalerror}
-    if contextstack[stackoffset+s.stackindex].d.kind <> ck_fact then begin
-     internalerror(ie_handler,'20160521E');
-    end;
-   {$endif}
-    ssaindex:= contextstack[stackoffset+s.stackindex].d.dat.fact.ssaindex;
-    size:= getopdatatype(vardata1^.vf.typ,vardata1^.address.indirectlevel);
-    inc(paramsize1,alignsize(getbytesize(size)));
-   end;
-  end;
- end; //dodefaultparam
-*)
+
 var
  po1: popinfoty;
  po3: ptypedataty;
@@ -1071,6 +1036,7 @@ var
  realparamco: int32; //including defaults
  indpo,itempo1{,pe}: pcontextitemty;
  stacksize: int32;
+ isfactcontext: boolean;
 label
  paramloopend;
 begin
@@ -1106,22 +1072,14 @@ begin
      end;
      i3:= 0;
      bo1:= false;
- //    if totparamco = subdata1^.paramcount then begin //todo: default parameter
      if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
                 (totparamco <= subdata1^.paramcount) then begin 
-//      i1:= s.stacktop-paramco+1;
       itempo1:= indpo+2;
       while subparams1 < subparamse do begin //find best parameter match
        if not getnextnospacex(itempo1+1,itempo1) then begin
         itempo1:= nil; //needs default param
         break;
        end;
-{ 
-       if i1 > s.stacktop then begin
-        i1:= -1;
-        break;
-       end;
-}
        vardata1:= ele.eledataabs(subparams1^);
        bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
        if (vardata1^.vf.typ = 0) or 
@@ -1165,7 +1123,7 @@ begin
     end;
     paramschecked:= not needsvarcheck;
    end;
- 
+
    if stf_getaddress in s.currentstatementflags then begin
     initdatacontext(indpo^.d,ck_ref);
     d.dat.datatyp.typedata:= asub^.typ;
@@ -1177,6 +1135,7 @@ begin
     d.dat.ref.c.varele:= 0;
    end
    else begin
+    isfactcontext:= d.kind in factcontexts;  
     if dsf_indirect in aflags then begin
      callssa:= d.dat.fact.ssaindex;
     end;
@@ -1204,11 +1163,11 @@ begin
     {$endif}
     *)
      instancessa:= d.dat.fact.ssaindex; //for sf_method
-     hasresult:= [sf_constructor,sf_function] * asub^.flags <> [];
+     hasresult:= (sf_function in asub^.flags) or 
+                       not isfactcontext and (sf_constructor in asub^.flags);
      if hasresult then begin
       initfactcontext(0); //set ssaindex
-      if sf_constructor in asub^.flags then begin 
-                                  //todo: check instance call
+      if sf_constructor in asub^.flags then begin  //needs oc_initclass
        bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
                                            //get class type
       {$ifdef mse_checkinternalerror}
@@ -1441,6 +1400,9 @@ begin
     end;
     with po1^ do begin
      par.callinfo.flags:= asub^.flags;
+     if isfactcontext then begin
+      exclude(par.callinfo.flags,sf_constructor); //no class pointer on stack
+     end;      
      if dsf_isinherited in aflags then begin
       exclude(par.callinfo.flags,sf_virtual);
      end;

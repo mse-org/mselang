@@ -51,7 +51,7 @@ type
 }
  frameinfoty = record
   pc: vpointerty;
-  frame: vpointerty;
+  frame: vpointerty; //lsb -> constructor flag
   link: vpointerty;     //todo: remove link field
  end;
  pframeinfoty = ^frameinfoty;
@@ -3047,11 +3047,14 @@ end;
 //                  |cpu.frame    |cpu.stack
 // params frameinfo locvars      
 //
-procedure docall();
+procedure docall(const isconstructor: boolean);
 begin
  with frameinfoty(stackpush(sizeof(frameinfoty))^) do begin
   pc:= cpu.pc;
   frame:= cpu.frame;
+  if isconstructor then begin
+   frame:= pointer(ptruint(frame) or 1);
+  end;
   link:= cpu.stacklink;
  end;
  cpu.frame:= cpu.stack;
@@ -3063,7 +3066,7 @@ begin
  if not halting and (finihandler <> 0) then begin
   halting:= true;
   dec(cpu.pc); //return to haltop()
-  docall();
+  docall(false);
   cpu.pc:= startpo+finihandler-1;
  end
  else begin
@@ -3074,8 +3077,10 @@ end;
 
 procedure callop();
 begin
- docall();
- cpu.pc:= startpo+cpu.pc^.par.callinfo.ad.ad;
+ with cpu.pc^.par do begin
+  docall(sf_constructor in callinfo.flags);
+  cpu.pc:= startpo+callinfo.ad.ad;
+ end;
 end;
 
 procedure callfuncop();
@@ -3085,8 +3090,8 @@ end;
 
 procedure callindiop();
 begin
- docall();
  with cpu.pc^.par do begin
+  docall(sf_constructor in callinfo.flags);
   cpu.pc:= ppointer(cpu.frame+callinfo.indi.calladdr)^;
   dec(cpu.pc);
  end;
@@ -3212,6 +3217,10 @@ begin
  i1:= cpu.pc^.par.stacksize;
  po1:= (cpu.frame-sizeof(frameinfoty));
  with po1^ do begin
+  if odd(ptruint(frame)) then begin
+   dec(frame); //remove lsb
+   i1:= i1 + constructorstacksize;
+  end;
   cpu.pc:= pc;
   cpu.frame:= frame;
   cpu.stacklink:= link;
