@@ -1223,12 +1223,12 @@ begin
       end
       else begin
        po3:= ele.eledataabs(asub^.resulttype.typeele);
+       inc(subparams1);
       end;
       d.kind:= ck_subres;
       d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
       d.dat.datatyp.typedata:= ele.eledatarel(po3);        
       d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
-      inc(subparams1);
      end;
  
      checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
@@ -1242,16 +1242,6 @@ begin
        size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
       end;
      end;
-    {
-     itempo1:= pe;
-//     if itempo1^.d.kind <> ck_params then begin
-     if paramco > 0 then begin
-      itempo1:= @contextstack[itempo1^.parent]; //before first param
-     end
-     else begin
-      inc(itempo1); //past end, no params
-     end;
-    }
      if sf_method in asub^.flags then begin
       selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
       with selfpo^ do begin
@@ -1259,34 +1249,26 @@ begin
        size:= bitoptypes[das_pointer];
       end;
       inc(subparams1); //first param
-//      getnextnospace(itempo1,itempo1);
      end;
      if co_mlaruntime in compileoptions then begin
       stacksize:= 0;
       i1:= 0;  //current stackindex
       i2:= -1; //insert result space at end of statement
       if hasresult then begin
-//       if sf_constructor in asub^.flags then begin
-//        i1:= parent-s.stackindex;           //??? verfy!
-//       end
-//       else begin
-        if sf_method in asub^.flags then begin
-         i2:= 0; //insert result space before instance
-         stacksize:= vpointersize;
-        end;
-//       end;
+       if sf_method in asub^.flags then begin
+        i2:= 0; //insert result space before instance
+        stacksize:= vpointersize;
+       end;
        stacksize:= stacksize + 
                  pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,po3); 
                                             //alloc space for return value
-//       if not (sf_constructor in asub^.flags) then begin
-        with insertitem(oc_pushstackaddr,0,-1)^.
-                                       par.memop.tempdataaddress do begin
-                                                //result var param
-         a.address:= -stacksize;
-         offset:= 0;
-        end;
-        stacksize:= stacksize + vpointersize;
-//       end;
+       with insertitem(oc_pushstackaddr,0,-1)^.
+                                      par.memop.tempdataaddress do begin
+                                               //result var param
+        a.address:= -stacksize;
+        offset:= 0;
+       end;
+       stacksize:= stacksize + vpointersize;
       end;
       if (sf_method in asub^.flags) then begin
            //param order is [returnvaluepointer],instancepo,{params}

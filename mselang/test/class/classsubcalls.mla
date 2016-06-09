@@ -1,0 +1,182 @@
+program classsubcalls;
+
+type
+
+ itest = interface
+  procedure test1(a,b: int32);
+  function test2(a,b: int32): int32;
+  procedure test0();
+  function test00(): int32;
+ end;
+
+ tobject = class
+ end;
+ tc = class(tobject,itest)
+  f1: int32;
+ private
+  constructor create();
+  destructor destroy();
+  procedure test0(); virtual;
+  function test00(): int32; virtual;
+  procedure test1(a,b: int32); virtual;
+  function test2(a,b: int32): int32; virtual;
+
+ end;
+
+ ttestcla = class(tc{,itest})
+  private
+   f2: int32;
+  public
+   constructor create();
+   destructor destroy();
+   procedure test1(a,b: int32); override;
+   function test2(a,b: int32): int32; override;
+   procedure test3(a,b: int32);
+   function test4(a,b: int32): int32;
+ end;
+
+constructor tc.create();
+begin
+ f1:= 20;
+end;
+
+destructor tc.destroy();
+begin
+end;
+
+procedure tc.test0();
+begin
+ exitcode:= 11+f1;
+end;
+
+function tc.test00(): int32;
+begin
+ result:= 100+f1;
+end;
+
+procedure tc.test1(a,b: int32);
+begin
+ exitcode:= 22+a+b+f1;
+end;
+
+
+function tc.test2(a,b: int32): int32;
+begin
+ result:= 33+f1+a+b;
+end;
+
+
+function test2(a,b: int32): int32;
+begin
+ result:= 33+a+b;
+end;
+
+constructor ttestcla.create();
+begin
+// inherited create();
+ f1:= 20;
+ f2:= 10;
+end;
+
+destructor ttestcla.destroy();
+begin
+end;
+
+procedure ttestcla.test1(a,b: int32);
+begin
+ exitcode:= a + b + f1+f2;
+end;
+
+function ttestcla.test2(a,b: int32): int32;
+begin
+ result:= a + b + f1+f2;
+end;
+
+procedure ttestcla.test3(a,b: int32);
+begin
+ exitcode:= a + b + f1+f2;
+end;
+
+function ttestcla.test4(a,b: int32): int32;
+begin
+ result:= a + b + f1+f2;
+end;
+
+
+function test1(a,b: int32): int32;
+begin
+ result:= a + b;
+end;
+
+procedure test(a,b: int32);
+begin
+ exitcode:= a + b;
+end;
+
+
+var
+ t0: tc;
+ t1: ttestcla;
+ intf1: itest;
+
+begin
+ test(95,23);
+ if exitcode = 118 then begin
+  if test2(83,369) = 33+83+369 then begin
+   t0:= tc.create();
+   t0.test0();
+   if exitcode = 31 then begin
+    if t0.test00() = 120 then begin
+     t0.test1(14,18);
+     if exitcode = 22+14+18+20 then begin
+      if t0.test2(62,92) = 33+62+92+20 then begin
+       intf1:= itest(t0);
+       intf1.test0();
+       if intf1.test00() = 120 then begin
+       end;
+       if exitcode = 31 then begin
+        if intf1.test00() = 120 then begin
+         intf1.test1(278,1628);
+         if exitcode = 22+278+1628+20 then begin
+          if intf1.test2(14626,8) = 33+14626+8+20 then begin
+           exitcode:= 123;
+          end;
+         end;
+        end;
+       end;
+      end;
+     end;
+    end;
+   end;
+   t0.destroy;
+  end;
+
+  if exitcode = 123 then begin
+   exitcode:= 0;
+   t1:= ttestcla.create();
+   t1.test0();
+   if exitcode = 31 then begin
+    if t1.test00() = 120 then begin
+     t1.test1(14,18);
+     if exitcode = 14+18+30 then begin
+      if t1.test2(62,92) = 62+92+30 then begin
+       intf1:= itest(t1);
+       intf1.test0();
+       if exitcode = 31 then begin
+        if intf1.test00() = 120 then begin
+         intf1.test1(278,1628);
+         if exitcode = 278+1628+30 then begin
+          if intf1.test2(14626,8) = 14626+8+30 then begin
+           exitcode:= 123;
+          end;
+         end;
+        end;
+       end;
+      end;
+     end;
+    end;
+   end;
+   t1.destroy;
+  end;
+ end;
+end.
