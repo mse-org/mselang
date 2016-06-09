@@ -1083,12 +1083,11 @@ begin
               (pob^.d.kind in [ck_none,ck_error,ck_space]) then begin
      goto errlab;
     end;
-   {$ifdef mse_checkinternalerror}
     if not (d.kind in alldatacontexts) or 
               not (pob^.d.kind in alldatacontexts)then begin
-     internalerror(ie_handler,'20150320B');
+     errormessage(err_illegalexpression,[]);
+     goto errlab;
     end;
-   {$endif}
     india:= d.dat.datatyp.indirectlevel;
     if (d.kind = ck_ref) and 
               (af_paramindirect in d.dat.ref.c.address.flags) then begin

@@ -2973,6 +2973,11 @@ begin
   poa:= getfactstart(s.stackindex-1);
   pob:= getfactstart(s.stacktop); 
   with poa^ do begin
+   if not (d.kind in alldatacontexts) or 
+             not (pob^.d.kind in alldatacontexts)then begin
+    errormessage(err_illegalexpression,[]);
+    goto endlab;
+   end;
    if not (d.kind in datacontexts) or 
               not (pob^.d.kind in datacontexts) or
                        (d.dat.datatyp.typedata <= 0) or 
