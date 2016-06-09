@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B73BEBFC
+    ao=An unhandled exception occured at $B735BBFC
     ae=
     aec=123
     ie=0
@@ -5610,10 +5610,10 @@ c=3
   (
   kind=1
   a=0,665,4,class
-  c=21
+  c=25
    (
    kind=1
-   a=0,665,4,properties
+   a=0,664,4,properties
    c=30
     (
     kind=2
@@ -6318,6 +6318,94 @@ c=3
    a=0,648,1,classminimal llvm
    teststate=1
    path=classminimal.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,constructor1
+   teststate=1
+   path=constructor1.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,constructor1 llvm
+   teststate=1
+   path=constructor1.mla
+   comment=
+   cc=${mlc_llvm}
+   cd=
+   rc=${lli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,constructor2
+   teststate=1
+   path=constructor2.mla
+   comment=
+   cc=${mlc}
+   cd=
+   rc=${mli}
+   rd=
+   in=
+   eo=
+   ao=0
+   ee=
+   ae=0
+   eec=123
+   cr=0
+   ao=
+   ae=
+   aec=123
+   ie=0
+   )
+   (
+   kind=2
+   a=0,648,1,constructor2 llvm
+   teststate=1
+   path=constructor2.mla
    comment=
    cc=${mlc_llvm}
    cd=
@@ -7250,33 +7338,7 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=60
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=34
  0 0
  0 0
  0 0

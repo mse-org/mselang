@@ -1,0 +1,38 @@
+program constructor2;
+
+type
+ ttest = class
+  private
+   ffield: int32;
+  public
+   constructor create(p: int32);
+   constructor create1(const p: int32);
+   destructor destroy(p: int32);
+ end;
+
+{ ttest }
+
+constructor ttest.create(p: int32);
+begin
+ ffield:= p;
+end;
+
+constructor ttest.create1(p: int32);
+begin
+ ffield:= ffield + 20;
+end;
+
+destructor ttest.destroy(p: int32);
+begin
+ exitcode:= 123+ffield-2*p;
+end;
+
+var
+ t1: ttest;
+{$internaldebug on}
+begin
+ t1:= ttest.create(10);
+ t1.create1(20);
+ t1.destroy(5);
+ exitcode:= exitcode-20;
+end.
