@@ -885,12 +885,12 @@ type
   flags: subflagsty;
   allocs: suballocinfoty;
  end;
-
+{
  returnfuncinfoty = record
   flags: subflagsty;
   allocs: suballocinfoty;
  end;
-
+}
  debuglocty = record
   line: int32;  //llvm constlistid
   col: int32;   //llvm constlistid
@@ -1132,10 +1132,10 @@ type
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(
     stacksize: datasizety;
-    case opcodety of
-     oc_returnfunc:(
-      returnfuncinfo: returnfuncinfoty;
-     );
+//    case opcodety of
+//     oc_returnfunc:(
+//      returnfuncinfo: returnfuncinfoty;
+//     );
    );
    oc_initclass:(
     initclass: initclassinfoty;

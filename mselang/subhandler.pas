@@ -1581,8 +1581,8 @@ begin
   if sf_function in po1^.flags then begin
    with additem(oc_returnfunc)^ do begin
     par.stacksize:= d.subdef.paramsize;
-    par.returnfuncinfo.flags:= po1^.flags;
-    par.returnfuncinfo.allocs:= po1^.allocs;
+//    par.returnfuncinfo.flags:= po1^.flags;
+//    par.returnfuncinfo.allocs:= po1^.allocs;
    end;
   end
   else begin

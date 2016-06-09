@@ -1070,6 +1070,7 @@ var
 var
  realparamco: int32; //including defaults
  indpo,itempo1{,pe}: pcontextitemty;
+ stacksize: int32;
 label
  paramloopend;
 begin
@@ -1261,32 +1262,41 @@ begin
 //      getnextnospace(itempo1,itempo1);
      end;
      if co_mlaruntime in compileoptions then begin
-      i1:= 0;
+      stacksize:= 0;
+      i1:= 0;  //current stackindex
+      i2:= -1; //insert result space at end of statement
       if hasresult then begin
        if sf_constructor in asub^.flags then begin
         i1:= parent-s.stackindex;           //??? verfy!
+       end
+       else begin
+        if sf_method in asub^.flags then begin
+         i2:= 0; //insert result space before instance
+         stacksize:= vpointersize;
+        end;
        end;
-       i1:= pushinsertvar(i1,-1,asub^.resulttype.indirectlevel,po3){ + 
-                                                                  vpointersize}; 
-                                    //alloc space for return value
- //      if sf_constructor in asub^.flags then begin
- //       int1:= int1-vpointersize;  //class info pointer
- //      end
- //      else begin
+       stacksize:= stacksize + 
+                 pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,po3); 
+                                            //alloc space for return value
        if not (sf_constructor in asub^.flags) then begin
         with insertitem(oc_pushstackaddr,0,-1)^.
                                        par.memop.tempdataaddress do begin
                                                 //result var param
-         a.address:= -i1{+vpointersize};
+         a.address:= -stacksize;
          offset:= 0;
         end;
-        i1:= i1 + vpointersize;
+        stacksize:= stacksize + vpointersize;
        end;
       end;
       if (sf_method in asub^.flags) then begin
            //param order is [returnvalue pointer],instancepo,{params}
-       with insertitem(oc_pushduppo,0,-1)^ do begin 
-        par.voffset:= -i1-vpointersize; //including push address
+       with insertitem(oc_pushduppo,0,-1)^ do begin
+        if hasresult then begin
+         par.voffset:= -2*vpointersize;
+        end
+        else begin
+         par.voffset:= -vpointersize;
+        end;
        end;
       end;
      end;
@@ -1295,22 +1305,9 @@ begin
      parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
                                   realparamco);
                                   //including default params
-(*
-     itempo1:= pe;
-     if itempo1^.d.kind <> ck_params then begin
-      itempo1:= @contextstack[itempo1^.parent];
-     end;
-    {$ifdef mse_checkinternalerror}
-     if not (itempo1^.d.kind in [ck_params,ck_statement]) then begin
-      internalerror(ie_handler,'20160606A');
-     end;
-    {$endif}
-     inc(itempo1); //first param or past end
-*)
      itempo1:= @contextstack[paramstart-1]; //before first param
      i1:= paramco;
      if dsf_indexedsetter in aflags then begin
-//      getnextnospacex(itempo1+1,itempo1); //skip class instance
       inc(parallocpo); //second, first index
       inc(subparams1);
       while i1 > 1 do begin
