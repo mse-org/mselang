@@ -1157,7 +1157,7 @@ begin
      instancessa:= d.dat.fact.ssaindex; //for sf_method
      hasresult:= (sf_function in asub^.flags) or 
            not isfactcontext and 
-             (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
+           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
      if hasresult then begin
       initfactcontext(0); //set ssaindex
       if sf_constructor in asub^.flags then begin  //needs oc_initclass
