@@ -29,15 +29,18 @@ type
 function tryconvert(const acontext: pcontextitemty;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
+{
 function tryconvert(const stackoffset: integer;
           const dest: ptypedataty; destindirectlevel: integer;
           const aoptions: convertoptionsty): boolean;
+}
 function tryconvert(const acontext: pcontextitemty;
                                                const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
+{
 function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
-
+}
 function checkcompatibledatatype(const sourcecontext: pcontextitemty;
                          const desttypedata: elementoffsetty;
                          const destadress: addressvaluety;
@@ -63,6 +66,7 @@ procedure dosub(asub: psubdataty; const paramstart,paramco: int32;
 //                   const aindirect: boolean; const isinherited: boolean;
 //                     const paramco: int32; const ownedmethod: boolean);
 function getselfvar(out aele: elementoffsetty): boolean;
+function listtoset(const acontext: pcontextitemty): boolean;
 
 implementation
 uses
@@ -70,6 +74,138 @@ uses
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
  controlhandler,identutils,msestrings,
  __mla__internaltypes,exceptionhandler,listutils;
+
+function listtoset(const acontext: pcontextitemty): boolean;
+var
+// allconst: boolean;
+ i1,i2: int32;
+ po1,po2: ptypedataty;
+ ca1,ca2: card32;
+ op1: popinfoty;
+ {indpo,}poe,{polast,}poitem: pcontextitemty;
+begin
+{$ifdef mse_checkinternalerrror}
+ if acontext^.d.kind <> ck_list then begin
+  internalerror(ie_handler,'20160610A');
+ end;
+{$endif}
+// with info do begin
+
+//  indpo:= @contextstack[s.stackindex];
+ result:= false;
+ poe:= acontext + acontext^.d.list.contextcount;
+// polast:= poe - 1;
+ ele.checkcapacity(ek_type);
+ if acontext^.d.list.itemcount = 0 then begin //empty set
+  initdatacontext(acontext^.d,ck_const);
+  with acontext^ do begin
+   d.dat.datatyp:= emptyset;
+   d.dat.constval.kind:= dk_set;
+//    d.dat.constval.vset.settype:= 0; 
+  end;
+ end
+ else begin
+//  potop:= @contextstack[s.stacktop];
+  po2:= nil;
+  ca1:= 0;          //todo: arbitrary size, ranges
+  poitem:= acontext+1;
+  while poitem < poe do begin
+   with poitem^ do begin
+    if d.kind <> ck_space then begin
+    {$ifdef mse_checkinternalerror}
+     if not (d.kind in datacontexts) then begin
+      internalerror(ie_handler,'20151007A');
+     end;
+    {$endif}
+     po1:= ele.eledataabs(basetype(d.dat.datatyp.typedata));
+     if po2 = nil then begin
+      po2:= po1;
+     end;
+     if not (po1^.h.kind in ordinaldatakinds) or 
+                                  (po1^.h.indirectlevel <> 0) then begin
+      errormessage(err_ordinalexpexpected,[],getstackoffset(poitem));
+      exit;
+     end
+     else begin
+      if (po1 <> po2) then begin //todo: try to convert ordinals
+       incompatibletypeserror(po2,po1,getstackoffset(poitem));
+       exit;
+      end;
+     end;
+     case d.kind of 
+      ck_const: begin
+       ca2:= 1 shl d.dat.constval.vcardinal;
+       if ca1 and ca2 <> 0 then begin
+        errormessage(err_duplicatesetelement,[],getstackoffset(poitem));
+        exit;
+       end;
+       ca1:= ca1 or ca2;
+      end
+      else begin
+//       allconst:= false;
+       if not getvalue(poitem,das_32) then begin
+        exit;
+       end;
+      end;
+     end; 
+    end;
+   end;
+   inc(poitem);
+  end;
+  po1:= ele.addelementdata(getident(),ek_type,[]); //anonymous set type
+  inittypedatasize(po1^,dk_set,0,das_32);
+  with po1^ do begin
+   infoset.itemtype:= ele.eledatarel(po2);
+  end;
+//  with acontext^ do begin
+  if lf_allconst in acontext^.d.list.flags then begin
+   initdatacontext(acontext^.d,ck_const);
+   with acontext^ do begin
+    d.dat.constval.kind:= dk_set;
+    d.dat.constval.vset.value:= ca1;
+   end;
+  end
+  else begin
+   initdatacontext(acontext^.d,ck_fact); //wrong opmark?
+   with insertitem(oc_pushimm32,getstackoffset(acontext)+1,0)^ do begin 
+                                                               //first op
+    setimmint32(ca1,par);
+    i2:= par.ssad;
+   end;
+   poitem:= acontext+1;
+   while poitem < poe do begin
+    if not (poitem^.d.kind in [ck_space,ck_const]) then begin
+     op1:= insertitem(oc_setbit,getstackoffset(poitem),-1);
+     with op1^ do begin //last op
+      par.ssas1:= i2;
+      par.ssas2:= (op1-1)^.par.ssad;
+      i2:= par.ssad;
+     end;
+    end;
+    inc(poitem);
+   end;
+   acontext^.d.dat.fact.ssaindex:= i2;
+//   d.dat.fact.ssaindex:= s.ssa.nextindex-1;
+  end;
+  with acontext^ do begin
+   d.dat.datatyp.flags:= [];
+   d.dat.datatyp.typedata:= ele.eledatarel(po1);
+   d.dat.datatyp.indirectlevel:= 0;
+  end;
+//  end;
+ end;
+ poitem:= acontext+1;
+ while poitem < poe do begin
+  poitem^.d.kind:= ck_space;
+  inc(poitem);
+ end;
+ result:= true;
+// acontext:= polast;
+//  s.stacktop:= s.stackindex;
+//  dec(s.stackindex);
+// end;
+end;
+
 type
  convertsizetablety = array[intbitsizety,databitsizety] of opcodety;
  convertnumtablety = array[boolean,databitsizety] of opcodety;
@@ -321,75 +457,201 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
 begin
+// acontext:= getpreviousnospace(acontext); //possibly set to list start
  stackoffset:= getstackoffset(acontext);
- with info,acontext^ do begin
-  pointerconv:= false;
-  source1:= ele.eledataabs(d.dat.datatyp.typedata);
-  result:= destindirectlevel = d.dat.datatyp.indirectlevel;
-  if result then begin
-   result:= (dest^.h.kind = source1^.h.kind) and 
-                          (dest^.h.datasize = source1^.h.datasize);
+ with info do begin
+  if acontext^.d.kind = ck_list then begin
+   case dest^.h.kind of
+    dk_set: begin
+     listtoset(acontext);
+    end;
+    else begin
+     result:= false;
+     exit;
+    end;
+   end;
+  end;
+  with acontext^ do begin
+   pointerconv:= false;
+   source1:= ele.eledataabs(d.dat.datatyp.typedata);
+   result:= destindirectlevel = d.dat.datatyp.indirectlevel;
    if result then begin
-    case dest^.h.kind of
-     dk_enum: begin
-      result:= issametype(dest,source1);
+    result:= (dest^.h.kind = source1^.h.kind) and 
+                           (dest^.h.datasize = source1^.h.datasize);
+    if result then begin
+     case dest^.h.kind of
+      dk_enum: begin
+       result:= issametype(dest,source1);
+      end;
+      dk_set: begin
+       result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+      end;
      end;
-     dk_set: begin
-      result:= dest^.infoset.itemtype = source1^.infoset.itemtype;
+     if not result then begin
+      exit; //no conversion possible
      end;
     end;
     if not result then begin
-     exit; //no conversion possible
-    end;
-   end;
-   if not result then begin
-    if destindirectlevel = 0 then begin
-     case d.kind of
-      ck_const: begin
-       with d.dat.constval do begin
+     if destindirectlevel = 0 then begin
+      case d.kind of
+       ck_const: begin
+        with d.dat.constval do begin
+         case dest^.h.kind of //todo: use table
+          dk_float: begin
+           case source1^.h.kind of
+            dk_float: begin
+             result:= true;
+            end;
+            dk_integer: begin
+             case intbits[source1^.h.datasize] of
+              ibs_8: begin
+               vfloat:= int8(vinteger);
+              end;
+              ibs_16: begin
+               vfloat:= int16(vinteger);
+              end;
+              ibs_32: begin
+               vfloat:= int32(vinteger);
+              end;
+              ibs_64: begin
+               vfloat:= int64(vinteger);
+              end;
+              else begin
+               internalerror1(ie_handler,'20160519B');
+              end;
+             end;
+             result:= true;
+            end;
+            dk_cardinal: begin
+             case intbits[source1^.h.datasize] of
+              ibs_8: begin
+               vfloat:= card8(vcardinal);
+              end;
+              ibs_16: begin
+               vfloat:= card16(vcardinal);
+              end;
+              ibs_32: begin
+               vfloat:= card32(vcardinal);
+              end;
+              ibs_64: begin
+               vfloat:= card64(vcardinal);
+              end;
+              else begin
+               internalerror1(ie_handler,'20160519C');
+              end;
+             end;
+             result:= true;
+            end;
+           end;
+          end;
+          dk_cardinal: begin
+           case source1^.h.kind of
+            dk_cardinal: begin
+             result:= true;
+            end;
+            dk_integer: begin
+             result:= true;
+            end;
+            dk_enum: begin
+             if coo_enum in aoptions then begin
+              result:= true;
+             end;
+             vcardinal:= venum.value;
+            end;
+            dk_set: begin //todo: arbitrary size
+             if coo_set in aoptions then begin
+              result:= true;
+             end;
+             vcardinal:= vset.value;
+            end;
+           end;
+          end;
+          dk_integer: begin
+           case source1^.h.kind of
+            dk_integer: begin
+             result:= true;
+            end;
+            dk_cardinal: begin
+             result:= true;
+            end;
+            dk_enum: begin
+             if coo_enum in aoptions then begin
+              result:= true;
+             end;
+             vinteger:= venum.value;
+            end;
+            dk_set: begin //todo: arbitrary size
+             if coo_set in aoptions then begin
+              result:= true;
+             end;
+             vinteger:= vset.value;
+            end;
+           end;
+          end;
+          dk_set: begin
+           case source1^.h.kind of
+            dk_set: begin
+             if vset.value = 0 then begin //empty set
+              result:= true; 
+             end;
+            end;
+           end;
+          end;
+          dk_character: begin
+           case source1^.h.kind of
+            dk_string8: begin 
+             lstr1:= getstringconst(vstring);
+             if lstr1.len = 1 then begin
+              vcharacter:= ord(lstr1.po^); //todo: encoding
+              result:= true;
+             end;
+            end;
+           end;
+          end;
+         end;
+         if result then begin
+          d.dat.datatyp.typedata:= ele.eledatarel(dest);
+         end;
+        end;
+       end;
+       ck_ref: begin
+        case dest^.h.kind of
+         dk_openarray: begin
+          case source1^.h.kind of
+           dk_dynarray: begin
+            if issametype(source1^.infodynarray.i.itemtypedata,
+                               dest^.infodynarray.i.itemtypedata) then begin
+             if getvalue(acontext,das_pointer,false) then begin
+              with convert(oc_dynarraytoopenar)^ do begin
+              end;
+              result:= true;
+             end;
+            end;
+           end;
+           dk_array: begin
+            if issametype(source1^.infoarray.i.itemtypedata,
+                               dest^.infodynarray.i.itemtypedata) then begin
+             if getaddress(acontext,true) then begin
+              with convert(oc_arraytoopenar)^ do begin
+               setimmint32(source1^.infoarray.i.totitemcount-1,par);
+              end;
+              result:= true;
+             end;
+            end;
+           end;
+          end;
+         end;
+        end;
+       end;
+       ck_fact,ck_subres: begin
         case dest^.h.kind of //todo: use table
          dk_float: begin
           case source1^.h.kind of
-           dk_float: begin
-            result:= true;
-           end;
-           dk_integer: begin
-            case intbits[source1^.h.datasize] of
-             ibs_8: begin
-              vfloat:= int8(vinteger);
-             end;
-             ibs_16: begin
-              vfloat:= int16(vinteger);
-             end;
-             ibs_32: begin
-              vfloat:= int32(vinteger);
-             end;
-             ibs_64: begin
-              vfloat:= int64(vinteger);
-             end;
-             else begin
-              internalerror1(ie_handler,'20160519B');
-             end;
-            end;
-            result:= true;
-           end;
-           dk_cardinal: begin
-            case intbits[source1^.h.datasize] of
-             ibs_8: begin
-              vfloat:= card8(vcardinal);
-             end;
-             ibs_16: begin
-              vfloat:= card16(vcardinal);
-             end;
-             ibs_32: begin
-              vfloat:= card32(vcardinal);
-             end;
-             ibs_64: begin
-              vfloat:= card64(vcardinal);
-             end;
-             else begin
-              internalerror1(ie_handler,'20160519C');
-             end;
+           dk_integer,dk_cardinal: begin //todo: data size
+            i1:= d.dat.fact.ssaindex;
+            with insertitem(convtoflo64[source1^.h.kind = dk_integer,
+                              source1^.h.datasize],stackoffset,-1)^ do begin
+             par.ssas1:= i1;
             end;
             result:= true;
            end;
@@ -397,265 +659,153 @@ begin
          end;
          dk_cardinal: begin
           case source1^.h.kind of
-           dk_cardinal: begin
-            result:= true;
-           end;
            dk_integer: begin
-            result:= true;
+            convertsize(inttocard);
+           end;
+           dk_cardinal: begin
+            convertsize(cardtocard);
            end;
            dk_enum: begin
             if coo_enum in aoptions then begin
-             result:= true;
+             convertsize(inttocard);
             end;
-            vcardinal:= venum.value;
-           end;
-           dk_set: begin //todo: arbitrary size
-            if coo_set in aoptions then begin
-             result:= true;
-            end;
-            vcardinal:= vset.value;
            end;
           end;
          end;
          dk_integer: begin
           case source1^.h.kind of
-           dk_integer: begin
-            result:= true;
-           end;
            dk_cardinal: begin
-            result:= true;
+            convertsize(cardtoint);
+           end;
+           dk_integer: begin
+            convertsize(inttoint);
            end;
            dk_enum: begin
             if coo_enum in aoptions then begin
-             result:= true;
+             convertsize(inttoint);
             end;
-            vinteger:= venum.value;
-           end;
-           dk_set: begin //todo: arbitrary size
-            if coo_set in aoptions then begin
-             result:= true;
-            end;
-            vinteger:= vset.value;
            end;
           end;
          end;
          dk_set: begin
-          case source1^.h.kind of
-           dk_set: begin
-            if vset.value = 0 then begin //empty set
-             result:= true; 
-            end;
-           end;
-          end;
-         end;
-         dk_character: begin
-          case source1^.h.kind of
-           dk_string8: begin 
-            lstr1:= getstringconst(vstring);
-            if lstr1.len = 1 then begin
-             vcharacter:= ord(lstr1.po^); //todo: encoding
-             result:= true;
-            end;
-           end;
-          end;
-         end;
-        end;
-        if result then begin
-         d.dat.datatyp.typedata:= ele.eledatarel(dest);
-        end;
-       end;
-      end;
-      ck_ref: begin
-       case dest^.h.kind of
-        dk_openarray: begin
-         case source1^.h.kind of
-          dk_dynarray: begin
-           if issametype(source1^.infodynarray.i.itemtypedata,
-                              dest^.infodynarray.i.itemtypedata) then begin
-            if getvalue(acontext,das_pointer,false) then begin
-             with convert(oc_dynarraytoopenar)^ do begin
-             end;
-             result:= true;
-            end;
-           end;
-          end;
-          dk_array: begin
-           if issametype(source1^.infoarray.i.itemtypedata,
-                              dest^.infodynarray.i.itemtypedata) then begin
-            if getaddress(acontext,true) then begin
-             with convert(oc_arraytoopenar)^ do begin
-              setimmint32(source1^.infoarray.i.totitemcount-1,par);
-             end;
-             result:= true;
-            end;
-           end;
-          end;
-         end;
-        end;
-       end;
-      end;
-      ck_fact,ck_subres: begin
-       case dest^.h.kind of //todo: use table
-        dk_float: begin
-         case source1^.h.kind of
-          dk_integer,dk_cardinal: begin //todo: data size
-           i1:= d.dat.fact.ssaindex;
-           with insertitem(convtoflo64[source1^.h.kind = dk_integer,
-                             source1^.h.datasize],stackoffset,-1)^ do begin
-            par.ssas1:= i1;
-           end;
+          if (source1^.h.kind = dk_set) and 
+               (d.dat.datatyp.typedata = emptyset.typedata) then begin
            result:= true;
           end;
          end;
-        end;
-        dk_cardinal: begin
-         case source1^.h.kind of
-          dk_integer: begin
-           convertsize(inttocard);
-          end;
-          dk_cardinal: begin
-           convertsize(cardtocard);
-          end;
-          dk_enum: begin
-           if coo_enum in aoptions then begin
-            convertsize(inttocard);
+         dk_string8: begin
+          case source1^.h.kind of
+           dk_character: begin
+            convert(oc_chartostring8);
+            result:= true;
            end;
-          end;
-         end;
-        end;
-        dk_integer: begin
-         case source1^.h.kind of
-          dk_cardinal: begin
-           convertsize(cardtoint);
-          end;
-          dk_integer: begin
-           convertsize(inttoint);
-          end;
-          dk_enum: begin
-           if coo_enum in aoptions then begin
-            convertsize(inttoint);
-           end;
-          end;
-         end;
-        end;
-        dk_set: begin
-         if (source1^.h.kind = dk_set) and 
-              (d.dat.datatyp.typedata = emptyset.typedata) then begin
-          result:= true;
-         end;
-        end;
-        dk_string8: begin
-         case source1^.h.kind of
-          dk_character: begin
-           convert(oc_chartostring8);
-           result:= true;
           end;
          end;
         end;
        end;
+      {$ifdef mse_checkinternalerror}
+       else begin
+        internalerror(ie_handler,'20131121B');
+       end;
+      {$endif}
       end;
-     {$ifdef mse_checkinternalerror}
-      else begin
-       internalerror(ie_handler,'20131121B');
+     end
+     else begin
+      if (destindirectlevel > 0) and 
+           ((dest^.h.kind = dk_pointer) or 
+                           (source1^.h.kind = dk_pointer)) then begin
+       result:= true; //untyped pointer
+       pointerconv:= true;
       end;
-     {$endif}
      end;
-    end
-    else begin
-     if (destindirectlevel > 0) and 
-          ((dest^.h.kind = dk_pointer) or 
-                          (source1^.h.kind = dk_pointer)) then begin
-      result:= true; //untyped pointer
-      pointerconv:= true;
-     end;
-    end;
-   end;
-  end
-  else begin
-   if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
-            (d.dat.datatyp.indirectlevel > 0) and 
-                                         (coo_type in aoptions) then begin
-    if getvalue(acontext,das_pointer) then begin //pointer to int
-     i1:= d.dat.fact.ssaindex;        //todo: operand size
-     with insertitem(oc_potoint32,stackoffset,-1)^ do begin
-      par.ssas1:= i1;
-     end;
-     d.dat.datatyp.typedata:= ele.eledatarel(dest);
-     d.dat.datatyp.indirectlevel:= 0;
-     result:= true;
     end;
    end
    else begin
-    if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
-          (d.dat.datatyp.indirectlevel = 1) and 
-             (source1^.h.kind = dk_class) and 
-                     (dest^.h.kind = dk_interface) then begin
-     i1:= ele.elementparent;
-     po1:= source1;
-     repeat
-      if getclassinterfaceoffset(po1,dest,i3) then begin
-       if getvalue(acontext,das_pointer) then begin
-        i2:= d.dat.fact.ssaindex;
-        with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
-         setimmint32(i3,par);
-         par.ssas1:= i2;
-        end;
-        result:= true;
-        destindirectlevel:= 1;
-       end;
-       break;
+    if (dest^.h.kind = dk_integer) and (destindirectlevel = 0) and 
+             (d.dat.datatyp.indirectlevel > 0) and 
+                                          (coo_type in aoptions) then begin
+     if getvalue(acontext,das_pointer) then begin //pointer to int
+      i1:= d.dat.fact.ssaindex;        //todo: operand size
+      with insertitem(oc_potoint32,stackoffset,-1)^ do begin
+       par.ssas1:= i1;
       end;
-      if po1^.infoclass.interfaceparent <> 0 then begin
-       ele.elementparent:= po1^.infoclass.interfaceparent;
-       po1:= ele.eledataabs(po1^.infoclass.interfaceparent);
-      end
-      else begin
-       po1:= nil;
-      end;
-     until po1 = nil;
-     ele.elementparent:= i1;
-     if po1 = nil then begin
-      exit;      //interface not found
+      d.dat.datatyp.typedata:= ele.eledatarel(dest);
+      d.dat.datatyp.indirectlevel:= 0;
+      result:= true;
      end;
     end
     else begin
-     if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
-              (source1^.h.bitsize = pointerbitsize) or 
-                       (source1^.h.kind in [dk_integer,dk_cardinal])then begin
-      if getvalue(acontext,pointerintsize) then begin //any to pointer
-       i1:= d.dat.fact.ssaindex; //todo: no int source
-       with insertitem(oc_inttopo,stackoffset,-1)^ do begin
-        par.ssas1:= i1;
+     if (d.kind in [ck_fact,ck_ref]) and (destindirectlevel = 0) and
+           (d.dat.datatyp.indirectlevel = 1) and 
+              (source1^.h.kind = dk_class) and 
+                      (dest^.h.kind = dk_interface) then begin
+      i1:= ele.elementparent;
+      po1:= source1;
+      repeat
+       if getclassinterfaceoffset(po1,dest,i3) then begin
+        if getvalue(acontext,das_pointer) then begin
+         i2:= d.dat.fact.ssaindex;
+         with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
+          setimmint32(i3,par);
+          par.ssas1:= i2;
+         end;
+         result:= true;
+         destindirectlevel:= 1;
+        end;
+        break;
        end;
-       d.dat.datatyp.typedata:= ele.eledatarel(dest);
-       d.dat.datatyp.indirectlevel:= destindirectlevel;
-       result:= true;
+       if po1^.infoclass.interfaceparent <> 0 then begin
+        ele.elementparent:= po1^.infoclass.interfaceparent;
+        po1:= ele.eledataabs(po1^.infoclass.interfaceparent);
+       end
+       else begin
+        po1:= nil;
+       end;
+      until po1 = nil;
+      ele.elementparent:= i1;
+      if po1 = nil then begin
+       exit;      //interface not found
+      end;
+     end
+     else begin
+      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
+               (source1^.h.bitsize = pointerbitsize) or 
+                        (source1^.h.kind in [dk_integer,dk_cardinal])then begin
+       if getvalue(acontext,pointerintsize) then begin //any to pointer
+        i1:= d.dat.fact.ssaindex; //todo: no int source
+        with insertitem(oc_inttopo,stackoffset,-1)^ do begin
+         par.ssas1:= i1;
+        end;
+        d.dat.datatyp.typedata:= ele.eledatarel(dest);
+        d.dat.datatyp.indirectlevel:= destindirectlevel;
+        result:= true;
+       end;
       end;
      end;
     end;
    end;
-  end;
-  if not result then begin
-   result:= (dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
-                                          (source1^.h.kind = dk_pointer) or 
-      (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
-                                                        (destindirectlevel > 0);
-   pointerconv:= result;
-  end;
-  if not result and (coo_type in aoptions) then begin
-   result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
-                             (dest^.h.bytesize = source1^.h.bytesize);
-  end;
-  if result then begin
-   if (d.kind = ck_const) and not pointerconv then begin
-    d.dat.constval.kind:= dest^.h.kind;
-   end;    
-   d.dat.datatyp.indirectlevel:= destindirectlevel;
-   d.dat.datatyp.typedata:= ele.eledatarel(dest);
+   if not result then begin
+    result:= (dest^.h.kind = dk_pointer) and (destindirectlevel = 1) and 
+                                           (source1^.h.kind = dk_pointer) or 
+       (source1^.h.kind = dk_pointer) and (d.dat.datatyp.indirectlevel = 1) and 
+                                                         (destindirectlevel > 0);
+    pointerconv:= result;
+   end;
+   if not result and (coo_type in aoptions) then begin
+    result:= (destindirectlevel = 0) and (source1^.h.indirectlevel = 0) and
+                              (dest^.h.bytesize = source1^.h.bytesize);
+   end;
+   if result then begin
+    if (d.kind = ck_const) and not pointerconv then begin
+     d.dat.constval.kind:= dest^.h.kind;
+    end;    
+    d.dat.datatyp.indirectlevel:= destindirectlevel;
+    d.dat.datatyp.typedata:= ele.eledatarel(dest);
+   end;
   end;
  end;
 end;
-
+(*
 function tryconvert(const stackoffset: integer;{var context: contextitemty;}
           const dest: ptypedataty; destindirectlevel: integer;
                        const aoptions: convertoptionsty): boolean;
@@ -665,7 +815,7 @@ begin
                                               destindirectlevel,aoptions); 
  end;
 end;
-
+*)
 function tryconvert(const acontext: pcontextitemty;
                                                const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
@@ -675,7 +825,7 @@ begin
                               ele.eledataabs(typedata),indirectlevel,aoptions);
  end;
 end;
-
+{
 function tryconvert(const stackoffset: integer; const dest: systypety;
                            const aoptions: convertoptionsty = []): boolean;
 begin
@@ -683,28 +833,30 @@ begin
   result:= tryconvert(@contextstack[s.stackindex+stackoffset],dest,aoptions);
  end;
 end;
-
+}
 function getbasevalue(const acontext: pcontextitemty;
                          const dest: databitsizety): boolean;
 var
  po1: ptypedataty;
+ pocontext1: pcontextitemty;
 begin
  po1:= getbasetypedata(dest);
+ pocontext1:= acontext;
  if acontext^.d.kind = ck_const then begin
-  result:= tryconvert(acontext,po1,po1^.h.indirectlevel,[]);
+  result:= tryconvert(pocontext1,po1,po1^.h.indirectlevel,[]);
   if not result then begin
-   illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
+   illegalconversionerror(pocontext1^.d,po1,po1^.h.indirectlevel);
   end
   else begin
-   result:= getvalue(acontext,dest);
+   result:= getvalue(pocontext1,dest);
   end;
  end
  else begin
-  result:= getvalue(acontext,dest);
+  result:= getvalue(pocontext1,dest);
   if result then begin
-   result:= tryconvert(acontext,po1,po1^.h.indirectlevel,[]);
+   result:= tryconvert(pocontext1,po1,po1^.h.indirectlevel,[]);
    if not result then begin
-    illegalconversionerror(acontext^.d,po1,po1^.h.indirectlevel);
+    illegalconversionerror(pocontext1^.d,po1,po1^.h.indirectlevel);
    end;
   end; 
  end;
@@ -857,7 +1009,7 @@ var
  paramsize1: int32;
  paramschecked: boolean;
  
- procedure doparam(const context1: pcontextitemty;
+ procedure doparam(var context1: pcontextitemty;
          const subparams1: pelementoffsetty; const parallocpo: pparallocinfoty);
  var
   vardata1: pvardataty;
@@ -1877,13 +2029,14 @@ begin
        end
        else begin
         if getvalue(potop,das_none,true) then begin
-         if not tryconvert(s.stacktop-s.stackindex,po2,
+         if not tryconvert(potop,po2,
                      ptypedataty(po2)^.h.indirectlevel,[coo_type]) then begin
-          illegalconversionerror(contextstack[s.stacktop].d,po2,
+          illegalconversionerror(potop^.d,po2,
                                       ptypedataty(po2)^.h.indirectlevel);
          end
          else begin
-          contextstack[s.stackindex].d:= contextstack[s.stacktop].d;
+          poind^.d:= potop^.d; //big copy!
+//          contextstack[s.stackindex].d.kind:= ck_space;
          end;
         end;
        end;
@@ -1904,6 +2057,13 @@ begin
   end;
 endlab:
   ele.popelementparent();
+{
+  pocontext1:= poind;
+  while pocontext1 < potop do begin
+   pocontext1^.d.kind:= ck_space;
+   inc(pocontext1);
+  end;
+}
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
  end;

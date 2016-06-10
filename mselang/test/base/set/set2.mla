@@ -1,0 +1,15 @@
+program set2;
+
+type
+ enty = (en_0,en_1,en_2,en_3);
+ sety = set of enty;
+var
+ s1: sety;
+ e2,e3: enty;
+
+begin
+ e2:= en_2;
+ e3:= en_3;
+ s1:= [en_1,e2,en_0,e3];
+ exitcode:= 123+int32(s1)-15;
+end.

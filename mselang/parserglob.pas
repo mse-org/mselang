@@ -368,8 +368,13 @@ type
   blockcountad: integer;
  end;
  
+ listflagty = (lf_allconst);
+ listflagsty = set of listflagty;
+ 
  listinfoty = record
-  count: int32;
+  itemcount: int32;
+  contextcount: int32;
+  flags: listflagsty;
  end;
  
  indexinfoty = record
@@ -377,11 +382,11 @@ type
   count: int32;
  end;
  
- datacontextflagty = (dcf_listitem);
- datacontextflagsty = set of datacontextflagty;
+// datacontextflagty = (dcf_listitem);
+// datacontextflagsty = set of datacontextflagty;
  
  datacontextty = record
-  flags: datacontextflagsty;
+//  flags: datacontextflagsty;
   indirection: integer; //pending
   datatyp: typeinfoty;
   case contextkindty of
@@ -403,7 +408,7 @@ type
  end;
  pdatacontextty = ^datacontextty;
 
- handlerflagty = (hf_error,hf_down,hf_default,
+ handlerflagty = (hf_listitem,hf_error,hf_down,hf_default,
                   hf_set,hf_clear,hf_long,hf_longset,hf_longclear,
                   hf_propindex,hf_needsunique);
  handlerflagsty = set of handlerflagty;

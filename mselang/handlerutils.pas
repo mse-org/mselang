@@ -2136,7 +2136,7 @@ begin
    end;
   {$endif}
    with contextstack[i1] do begin
-    if d.kind <> ck_space then begin
+    if (d.kind <> ck_space) and not (hf_listitem in d.handlerflags) then begin
      result:= i1;
      break;
     end;
@@ -2158,7 +2158,8 @@ begin
   end;
  end;
 {$endif}
- while po1^.d.kind = ck_space do begin
+ while (po1^.d.kind = ck_space) or 
+                              (hf_listitem in po1^.d.handlerflags) do begin
  {$ifdef mse_checkinternalerror}
   with info do begin
    if (po1 < @contextstack) then begin
@@ -2187,7 +2188,8 @@ begin
   po1:= @contextstack[astackindex];
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
-   if po1^.d.kind <> ck_space then begin
+   if (po1^.d.kind <> ck_space) and 
+                          not (hf_listitem in po1^.d.handlerflags) then begin
     apo:= po1;
     result:= true;
     break;
@@ -2208,7 +2210,8 @@ begin
   po1:= current;
   pe:= @contextstack[s.stacktop];
   while po1 <= pe do begin
-   if po1^.d.kind <> ck_space then begin
+   if (po1^.d.kind <> ck_space) and 
+                          not (hf_listitem in po1^.d.handlerflags) then begin
     apo:= po1;
     result:= true;
     break;
@@ -2224,7 +2227,8 @@ var
 begin
  with info do begin
   po1:= current;
-  while po1^.d.kind = ck_space do begin
+  while (po1^.d.kind = ck_space) or 
+                           (hf_listitem in po1^.d.handlerflags) do begin
    inc(po1);
   {$ifdef mse_checkinternalerror}
    if (po1 > @contextstack[s.stacktop]) then begin
@@ -2242,7 +2246,8 @@ var
 begin
  with info do begin
   po1:= @contextstack[astackindex];
-  while po1^.d.kind = ck_space do begin
+  while (po1^.d.kind = ck_space) or 
+                        (hf_listitem in po1^.d.handlerflags) do begin
    inc(po1);
   {$ifdef mse_checkinternalerror}
    if (po1 > @contextstack[s.stacktop]) then begin
@@ -2349,7 +2354,7 @@ begin
 {$endif}
  acontext.kind:= akind;
  with acontext.dat do begin
-  flags:= [];
+//  flags:= [];
   indirection:= 0;
  end;
 end;
@@ -3403,8 +3408,8 @@ procedure outinfo(const text: string; const indent: boolean = true);
 
  procedure writedat(const adat: datacontextty);
  begin
-  write('F:',settostring(ptypeinfo(typeinfo(datacontextflagsty)),
-                                                integer(adat.flags),true),' ');
+//  write('F:',settostring(ptypeinfo(typeinfo(datacontextflagsty)),
+//                                                integer(adat.flags),true),' ');
  end;
   
  procedure writeref(const ainfo: contextdataty);
@@ -3494,133 +3499,140 @@ begin
      write('<NIL> ');
     end;
     write(getenumname(typeinfo(d.kind),ord(d.kind)));
-    write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
-                                              int32(d.handlerflags),true),' ');
-    case d.kind of
-     ck_block: begin
-      write('idbefore:'+inttostrmse(d.block.blockidbefore));
-     end;
-     ck_label: begin
-      write('lab:'+inttostrmse(d.dat.lab));
-     end;
-     ck_ident: begin
-      write('$',hextostr(d.ident.ident,8),':',d.ident.len);
-      write(' ',getidentname(d.ident.ident));
-      write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
-                                           integer(d.ident.flags),true));
-     end;
-     ck_list: begin
-      write('count:',d.list.count);
-     end;
-     ck_fact,ck_subres: begin
-      writedat(d.dat);
-      write('ssa:',d.dat.fact.ssaindex,' ');
-      writetype(d);
-     end;
-     ck_ref: begin
-      writeref(d);
-      writetype(d);
-     end;
-     ck_prop: begin
-      writeref(d);
-      writetype(d);
-      writeln();
-      write(' E:',d.dat.prop.propele);
-     end;
-     ck_reffact: begin
-      writedat(d.dat);
-      writetype(d);
-     end;
-     ck_const: begin
-      writedat(d.dat);
-      writetype(d);
-      write('V:');
-      case d.dat.constval.kind of
-       dk_boolean: begin
-        write(d.dat.constval.vboolean,' ');
-       end;
-       dk_integer: begin
-        write(d.dat.constval.vinteger,' ');
-       end;
-       dk_cardinal: begin
-        write(d.dat.constval.vcardinal,' ');
-       end;
-       dk_float: begin
-        write(d.dat.constval.vfloat,' ');
-       end;
-       dk_address: begin
-        writeaddress(d.dat.constval.vaddress);
-       end;
-       dk_enum: begin
-        write(d.dat.constval.venum.value,' ');
-       end;
-       dk_set: begin
-        write(hextostr(card32(d.dat.constval.vset.value)),' '); 
-                  //todo: arbitrary size, set format
+    if d.kind <> ck_space then begin
+     write(settostring(ptypeinfo(typeinfo(handlerflagsty)),
+                                               int32(d.handlerflags),true),' ');
+     case d.kind of
+      ck_block: begin
+       write('idbefore:'+inttostrmse(d.block.blockidbefore));
+      end;
+      ck_label: begin
+       write('lab:'+inttostrmse(d.dat.lab));
+      end;
+      ck_ident: begin
+       write('$',hextostr(d.ident.ident,8),':',d.ident.len);
+       write(' ',getidentname(d.ident.ident));
+       write(' flags:',settostring(ptypeinfo(typeinfo(identflagsty)),
+                                            integer(d.ident.flags),true));
+      end;
+      ck_list: begin
+       write('itemcount:',d.list.itemcount,' contextcount:',d.list.contextcount,
+        ' flags:',settostring(ptypeinfo(typeinfo(listflagsty)),
+                                            integer(d.list.flags),true));
+      end;
+      ck_fact,ck_subres: begin
+       writedat(d.dat);
+       write('ssa:',d.dat.fact.ssaindex,' ');
+       writetype(d);
+      end;
+      ck_ref: begin
+       writeref(d);
+       writetype(d);
+      end;
+      ck_prop: begin
+       writeref(d);
+       writetype(d);
+       writeln();
+       write(' E:',d.dat.prop.propele);
+      end;
+      ck_reffact: begin
+       writedat(d.dat);
+       writetype(d);
+      end;
+      ck_const: begin
+       writedat(d.dat);
+       writetype(d);
+       write('V:');
+       case d.dat.constval.kind of
+        dk_boolean: begin
+         write(d.dat.constval.vboolean,' ');
+        end;
+        dk_integer: begin
+         write(d.dat.constval.vinteger,' ');
+        end;
+        dk_cardinal: begin
+         write(d.dat.constval.vcardinal,' ');
+        end;
+        dk_float: begin
+         write(d.dat.constval.vfloat,' ');
+        end;
+        dk_address: begin
+         writeaddress(d.dat.constval.vaddress);
+        end;
+        dk_enum: begin
+         write(d.dat.constval.venum.value,' ');
+        end;
+        dk_set: begin
+         write(hextostr(card32(d.dat.constval.vset.value)),' '); 
+                   //todo: arbitrary size, set format
+        end;
        end;
       end;
-     end;
-     ck_subdef: begin
-      write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
-                                           integer(d.subdef.flags),true),
-            ' ma:',d.subdef.match,
-                            ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
-     end;
-     ck_paramdef: begin
-      with d.paramdef do begin
-       write('kind:',getenumname(typeinfo(kind),ord(kind)),
-                      ' def:',defaultconst);
+      ck_subdef: begin
+       write('fl:',settostring(ptypeinfo(typeinfo(subflagsty)),
+                                            integer(d.subdef.flags),true),
+             ' ma:',d.subdef.match,
+                             ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
+      end;
+      ck_paramdef: begin
+       with d.paramdef do begin
+        write('kind:',getenumname(typeinfo(kind),ord(kind)),
+                       ' def:',defaultconst);
+       end;
+      end;
+      ck_recorddef: begin
+       write('foffs:',d.rec.fieldoffset);
+      end;
+      ck_classdef: begin
+       write('foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
+      end;
+      ck_classprop: begin
+       write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
+                                            integer(d.classprop.flags),true));
+       if d.classprop.flags * canreadprop <> [] then begin
+        write(' read:',inttostrmse(d.classprop.readele),
+                    ':',inttostrmse(d.classprop.readoffset));
+       end;
+       if d.classprop.flags * canwriteprop <> [] then begin
+        write(' write:',inttostrmse(d.classprop.writeele),
+                    ':',inttostrmse(d.classprop.writeoffset));
+       end;
+      end;
+      ck_index: begin
+       write({'opshiftmark:'+inttostrmse(d.index.opshiftmark)+}
+                'count:'+inttostrmse(d.index.count));
+      end;
+      ck_getindex: begin
+ //      write('itemtype:'+inttostrmse(d.getindex.itemtype)+' ');
+ //      writetypedata(ele.eledataabs(d.getindex.itemtype));
+      end;
+      ck_typedata: begin
+       writetypedata(d.typedata);
+      end;
+      ck_typeref: begin
+       write(' T:'+inttostrmse(d.typeref)+' ');
+       writetypedata(ele.eledataabs(d.typeref));
+      end;
+      ck_typetype,ck_fieldtype: begin
+       writetyp(d.typ);
+      end;
+      ck_control: begin
+       with d.control do begin
+        write('kind:',getenumname(typeinfo(kind),ord(kind)),' OP1:',
+                                                        opmark1.address);
+       end;
+      end;
+      ck_shortcutexp: begin
+       write('op:',d.shortcutexp.op,' shortcuts:',
+                          inttostr(d.shortcutexp.shortcuts));
       end;
      end;
-     ck_recorddef: begin
-      write('foffs:',d.rec.fieldoffset);
-     end;
-     ck_classdef: begin
-      write('foffs:',d.cla.fieldoffset,' virt:',d.cla.virtualindex);
-     end;
-     ck_classprop: begin
-      write(' flags:',settostring(ptypeinfo(typeinfo(propflagsty)),
-                                           integer(d.classprop.flags),true));
-      if d.classprop.flags * canreadprop <> [] then begin
-       write(' read:',inttostrmse(d.classprop.readele),
-                   ':',inttostrmse(d.classprop.readoffset));
-      end;
-      if d.classprop.flags * canwriteprop <> [] then begin
-       write(' write:',inttostrmse(d.classprop.writeele),
-                   ':',inttostrmse(d.classprop.writeoffset));
-      end;
-     end;
-     ck_index: begin
-      write({'opshiftmark:'+inttostrmse(d.index.opshiftmark)+}
-               'count:'+inttostrmse(d.index.count));
-     end;
-     ck_getindex: begin
-//      write('itemtype:'+inttostrmse(d.getindex.itemtype)+' ');
-//      writetypedata(ele.eledataabs(d.getindex.itemtype));
-     end;
-     ck_typedata: begin
-      writetypedata(d.typedata);
-     end;
-     ck_typeref: begin
-      write(' T:'+inttostrmse(d.typeref)+' ');
-      writetypedata(ele.eledataabs(d.typeref));
-     end;
-     ck_typetype,ck_fieldtype: begin
-      writetyp(d.typ);
-     end;
-     ck_control: begin
-      with d.control do begin
-       write('kind:',getenumname(typeinfo(kind),ord(kind)),' OP1:',
-                                                       opmark1.address);
-      end;
-     end;
-     ck_shortcutexp: begin
-      write('op:',d.shortcutexp.op,' shortcuts:',
-                         inttostr(d.shortcutexp.shortcuts));
-     end;
+     writeln(' '+inttostr(start.line+1)+':''',
+              psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
+    end
+    else begin
+     writeln(); //ck_space
     end;
-    writeln(' '+inttostr(start.line+1)+':''',
-             psubstr(debugstart,start.po),''',''',singleline(start.po),'''');
    end;
   end;
  end;
