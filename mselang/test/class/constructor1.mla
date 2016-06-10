@@ -5,7 +5,6 @@ type
   private
   public
    constructor create(const p: int32);
-//   constructor create1();
    destructor destroy(p: int32);
  end;
 
@@ -15,11 +14,7 @@ constructor ttest.create(const p: int32;);
 begin
  exitcode:= p+123;
 end;
-{
-constructor ttest.create1();
-begin
-end;
-}
+
 destructor ttest.destroy(p: int32);
 begin
  exitcode:= exitcode-p;
@@ -27,7 +22,7 @@ end;
 
 var
  t1: ttest;
-{$internaldebug on}
+
 begin
  t1:= ttest.create(10);
  t1.destroy(10);

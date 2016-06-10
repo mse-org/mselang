@@ -219,7 +219,7 @@ function getnextnospace(const astackindex: int32): int32;
 function getnextnospace(const astackindex: int32; 
                                 out apo: pcontextitemty): boolean;
                                    //true if found
-function getnextnospacex(const current: pcontextitemty; //increments current
+function getnextnospace(const current: pcontextitemty;
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 function getspacecount(const astackindex: int32): int32;
@@ -2197,7 +2197,7 @@ begin
  end;
 end;
 
-function getnextnospacex(const current: pcontextitemty;
+function getnextnospace(const current: pcontextitemty;
                                       out apo: pcontextitemty): boolean;
                                    //true if found
 var

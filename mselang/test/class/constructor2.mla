@@ -29,7 +29,7 @@ end;
 
 var
  t1: ttest;
-{$internaldebug on}
+
 begin
  t1:= ttest.create(10);
  t1.create1(20);

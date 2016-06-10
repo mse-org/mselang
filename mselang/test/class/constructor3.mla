@@ -36,7 +36,7 @@ end;
 
 var
  t1: ttest1;
-{$internaldebug on}
+
 begin
  t1:= ttest1.create();
  t1.destroy();

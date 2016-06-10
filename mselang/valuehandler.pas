@@ -897,7 +897,7 @@ var
     end;
     i2:= 1;
     po1:= @contextstack[context1^.parent];
-    while getnextnospacex(po1+1,po1) and (po1 <> context1) do begin
+    while getnextnospace(po1+1,po1) and (po1 <> context1) do begin
      inc(i2);
     end;
     errormessage(err1,[i2,typename(context1^.d),
@@ -1076,7 +1076,7 @@ begin
                 (totparamco <= subdata1^.paramcount) then begin 
       itempo1:= indpo+2;
       while subparams1 < subparamse do begin //find best parameter match
-       if not getnextnospacex(itempo1+1,itempo1) then begin
+       if not getnextnospace(itempo1+1,itempo1) then begin
         itempo1:= nil; //needs default param
         break;
        end;
@@ -1245,7 +1245,7 @@ begin
       inc(parallocpo); //second, first index
       inc(subparams1);
       while i1 > 1 do begin
-       getnextnospacex(itempo1+1,itempo1);
+       getnextnospace(itempo1+1,itempo1);
        doparam(itempo1,subparams1,parallocpo);
        inc(subparams1);
        inc(parallocpo);
@@ -1255,13 +1255,13 @@ begin
       lastparamsize1:= paramsize1;
       dec(parallocpo,paramco); //first, value
       dec(subparams1,paramco);
-      getnextnospacex(itempo1+1,itempo1);
+      getnextnospace(itempo1+1,itempo1);
       doparam(itempo1,subparams1,parallocpo); //last
       lastparamsize1:= paramsize1-lastparamsize1;
      end
      else begin
       while i1 > 0 do begin
-       getnextnospacex(itempo1+1,itempo1);
+       getnextnospace(itempo1+1,itempo1);
        doparam(itempo1,subparams1,parallocpo);
        inc(subparams1);
        inc(parallocpo);
@@ -1662,7 +1662,7 @@ begin
    pocontext1:= @contextstack[paramstart];
    if (pocontext1 < potop) and (pocontext1^.d.kind = ck_params) then begin
     inc(paramstart);
-    while getnextnospacex(pocontext1+1,pocontext1) do begin
+    while getnextnospace(pocontext1+1,pocontext1) do begin
      inc(paramco);
     end;
    end;
