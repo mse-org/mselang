@@ -885,7 +885,6 @@ const
    oc_none, oc_gotofalse,oc_gototrue
  );
  
- 
 procedure boolexpentry(const aop: shortcutopty);
 var
  op1: opcodety;
@@ -893,8 +892,12 @@ var
  poa,pob: pcontextitemty;
 begin
  with info do begin
-  pob:= @contextstack[s.stackindex-1];
-  poa:= getpreviousnospace(pob-1);
+  if not getfactstart(s.stackindex-1,pob) or
+                not getfactstart(getstackindex(pob)-1,poa) then begin
+   exit;
+  end;
+//  pob:= @contextstack[s.stackindex-1];
+//  poa:= getpreviousnospace(pob-1);
   with pob^ do begin
   {$ifdef mse_debugparser}
    if not (d.kind in datacontexts) then begin
@@ -1042,8 +1045,10 @@ label
  errlab,endlab;
 begin
  with info do begin
-  poa:= getfactstart(s.stackindex-1);
-  pob:= getfactstart(s.stacktop);
+  if not getfactstart(s.stackindex-1,poa) or
+                not getfactstart(s.stacktop,pob) then begin
+   goto errlab;
+  end;
   with poa^ do begin
    if (pob^.d.kind = ck_const) and 
                (d.kind = ck_const) then begin
@@ -1598,13 +1603,17 @@ var
  po1: ptypedataty;
  i1: int32;
  poa: pcontextitemty;
+label
+ errlab;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
  outhandle('NEGFACT');
 {$endif}
  with info do begin
-  poa:= @contextstack[s.stacktop];
+  if not getfactstart(s.stacktop,poa) then begin
+   goto errlab;
+  end;
   with poa^ do begin
   {$ifdef mse_checkinternalerror}
    if s.stacktop-s.stackindex - getspacecount(s.stackindex+1) <> 1 then begin
@@ -1638,9 +1647,8 @@ begin
      end;
     end;
    end;
+errlab:
    contextstack[s.stackindex].d.kind:= ck_space;
-//   contextstack[s.stackindex].d:= d;
-//   s.stacktop:= s.stackindex;
    dec(s.stackindex);
   end;
  end;
@@ -1651,13 +1659,17 @@ var
  po1: ptypedataty;
  i1: int32;
  poa: pcontextitemty;
+label
+ errlab;
 begin
 // handlefact;
 {$ifdef mse_debugparser}
  outhandle('NOTFACT');
 {$endif}
  with info do begin
-  poa:= @contextstack[s.stacktop];
+  if not getfactstart(s.stacktop,poa) then begin
+   goto errlab;
+  end;
   with poa^ do begin
   {$ifdef mse_checkinternalerror}
    if s.stacktop-s.stackindex - getspacecount(s.stackindex+1) <> 1 then begin
@@ -1691,9 +1703,8 @@ begin
      end;
     end;
    end;
+errlab:
    contextstack[s.stackindex].d.kind:= ck_space;
-//   contextstack[s.stackindex].d:= d;
-//   s.stacktop:= s.stackindex;
    dec(s.stackindex);
   end;
  end;
@@ -2262,10 +2273,14 @@ var
 var
  dk1:stackdatakindty;
  int1: integer;
+label
+ errlab;
 begin
  with info do begin
-  poa:= @contextstack[s.stackindex-1];
-  pob:= @contextstack[s.stacktop];
+  if not getfactstart(s.stackindex-1,poa) or 
+                              not getfactstart(s.stacktop,pob) then begin
+   goto errlab;
+  end;
   with poa^ do begin
    if (pob^.d.kind = ck_const) and (d.kind = ck_const) then begin
     dk1:= convertconsts(poa,pob);
@@ -2400,7 +2415,8 @@ begin
       end;
      end;
     end;
-    s.stacktop:= s.stackindex - 1;
+errlab:
+    s.stacktop:= getpreviousnospace(s.stackindex - 1);
     s.stackindex:= getpreviousnospace(s.stacktop-1);
    end
    else begin
@@ -2469,14 +2485,18 @@ end;
 procedure handleinsimpexp();
 var
 // baseoffset: int32;
- poa,pob: pcontextitemty; 
+ poa,pob: pcontextitemty;
+label
+ errlab;
 begin
 {$ifdef mse_debugparser}
  outhandle('INSIMPEXP');
 {$endif}
  with info do begin
-  poa:= @contextstack[s.stackindex-1];
-  pob:= @contextstack[s.stacktop];
+  if not getfactstart(s.stackindex-1,poa) or 
+                              not getfactstart(s.stacktop,pob) then begin
+   goto errlab;
+  end;
  {$ifdef mse_checkinternalerror}
  {$endif}
 //  baseoffset:= s.stacktop-s.stackindex-2;
@@ -2501,8 +2521,9 @@ begin
   else begin
    operationnotsupportederror(poa^.d,pob^.d,cmpops[cmpo_in].opname);
   end;
-  s.stacktop:= s.stackindex - 1;
-  s.stackindex:= getpreviousnospace(s.stacktop-1); //necessary? indexbefore?
+errlab:
+  s.stacktop:= getpreviousnospace(s.stackindex-1);
+  s.stackindex:= getpreviousnospace(s.stacktop-1);
  end;
 end;
 
@@ -2689,9 +2710,9 @@ begin
                                not getnextnospace(dest+1,source) then begin
     internalerror1(ie_handler,'20160607A');
    end;
-   if (source^.d.kind = ck_list) and not listtoset(source) then begin
-    goto endlab;
-   end;
+//   if (source^.d.kind = ck_list) and not listtoset(source) then begin
+//    goto endlab;
+//   end;
    with dest^ do begin
     if d.kind = ck_prop then begin
      

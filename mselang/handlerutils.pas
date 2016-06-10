@@ -228,7 +228,9 @@ function getitemcount(const acontext: pcontextitemty): int32;
                //counts not ck_space from acontext to stacktop
 function getitemcount(const astackindex: int32): int32;
                //counts not ck_space from astackindex to stacktop
-function getfactstart(const astackindex: int32): pcontextitemty;
+function getfactstart(const astackindex: int32;
+                        out acontext: pcontextitemty): boolean; 
+                                     //converts ck_list, false on error
 
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
@@ -2329,17 +2331,24 @@ begin
  end;
 end;
 
-function getfactstart(const astackindex: int32): pcontextitemty;
+function getfactstart(const astackindex: int32;
+                               out acontext: pcontextitemty): boolean;
 begin
+ result:= true;
  with info do begin
-  result:= @contextstack[astackindex];
-  if hf_propindex in result^.d.handlerflags then begin
-   result:= @contextstack[result^.parent-1];
+  acontext:= @contextstack[astackindex];
+  if hf_propindex in acontext^.d.handlerflags then begin
+   acontext:= @contextstack[acontext^.parent-1];
   {$ifdef mse_checkinternalerror}
-   if (result^.d.kind <> ck_prop) or ((result+1)^.d.kind <> ck_index) then begin
+   if (acontext^.d.kind <> ck_prop) or 
+                            ((acontext+1)^.d.kind <> ck_index) then begin
     internalerror(ie_handler,'20160608A');
    end;
   {$endif}
+  end;
+  acontext:= getpreviousnospace(acontext);
+  if acontext^.d.kind = ck_list then begin
+   result:= listtoset(acontext);
   end;
  end;
 end;
@@ -2562,6 +2571,11 @@ begin                    //todo: optimize
  result:= false;
  stackoffset:= getstackoffset(acontext);
  with info,acontext^ do begin
+  if d.kind = ck_list then begin
+   if not listtoset(acontext) then begin
+    goto errlab;
+   end;
+  end;
   po1:= ptypedataty(ele.eledataabs(d.dat.datatyp.typedata));
   case d.kind of
    ck_ref: begin
@@ -2975,8 +2989,10 @@ label
 begin
  with info do begin
   bo1:= false;
-  poa:= getfactstart(s.stackindex-1);
-  pob:= getfactstart(s.stacktop); 
+  if not getfactstart(s.stackindex-1,poa) or
+                not getfactstart(s.stacktop,pob) then begin
+   goto endlab;
+  end;
   with poa^ do begin
    if not (d.kind in alldatacontexts) or 
              not (pob^.d.kind in alldatacontexts)then begin
