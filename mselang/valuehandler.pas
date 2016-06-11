@@ -870,33 +870,58 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
 var
  source,dest: ptypedataty;
  sourceitem,destitem: ptypedataty;
- i1: int32;
+ indilev1: int32;
+ pocont1,poe: pcontextitemty;
 begin
  with info,sourcecontext^ do begin
  {$ifdef mse_checkinternalerror}
-  if not (d.kind in datacontexts) then begin
+  if not (d.kind in (datacontexts + [ck_list])) then begin
    internalerror(ie_parser,'141211A');
   end;
  {$endif}
   conversioncost:= 0;
-  source:= ele.basetype(d.dat.datatyp.typedata);
   dest:= ele.basetype(desttypedata);
-//  dest:= ele.eledataabs(desttypedata);
-  i1:= destadress.indirectlevel{+po1^.h.indirectlevel};
+  indilev1:= destadress.indirectlevel;
   if af_paramindirect in destadress.flags then begin
-   dec(i1);
+   dec(indilev1);
   end;
-//  source:= ele.eledataabs(d.dat.datatyp.typedata);
-  result:= i1 = d.dat.datatyp.indirectlevel;
+  
+  if d.kind = ck_list then begin
+   result:= false;
+   if indilev1 <> 0 then begin
+    exit;
+   end;
+   if dest^.h.kind = dk_set then begin
+    if sourcecontext^.d.list.itemcount = 0 then begin
+     result:= true; //empty set
+     exit;
+    end;
+    pocont1:= sourcecontext+1;
+    poe:= sourcecontext + sourcecontext^.d.list.contextcount;
+    destitem:= ele.eledataabs(dest^.infoset.itemtype);
+    while pocont1 < poe do begin
+     if pocont1^.d.kind <> ck_space then begin
+     {$ifdef mse_checkinternalerror}
+      if not (pocont1^.d.kind in datacontexts) then begin
+       internalerror(ie_handler,'20160611A');
+      end;
+     {$endif}
+      if (pocont1^.d.dat.datatyp.indirectlevel <> 0) or
+          (dest^.infoset.itemtype <> 
+                              pocont1^.d.dat.datatyp.typedata) then begin
+       exit;
+      end;
+     end;
+     inc(pocont1);
+    end;
+    result:= true;
+    exit;
+   end;
+  end;
+  
+  source:= ele.basetype(d.dat.datatyp.typedata);
+  result:= indilev1 = d.dat.datatyp.indirectlevel;
   if result then begin
-  {
-   if source^.h.base <> 0 then begin
-    source:= ele.eledataabs(source^.h.base);
-   end;
-   if dest^.h.base <> 0 then begin
-    dest:= ele.eledataabs(dest^.h.base);
-   end;
-  }
    result:= (source = dest);
    if not result then begin
     if (cco_novarconversion in options) and 
@@ -904,7 +929,7 @@ begin
      exit;
     end;
     inc(conversioncost);            //1
-    if (i1 = 0) and (dest^.h.kind = dk_openarray) and
+    if (indilev1 = 0) and (dest^.h.kind = dk_openarray) and
                ((source^.h.kind = dk_dynarray) and 
                          issametype(source^.infodynarray.i.itemtypedata,
                           dest^.infodynarray.i.itemtypedata) or
@@ -938,10 +963,10 @@ begin
    end;
   end;
   if not result then begin  //untyped pointer conversion
-   result:= (dest^.h.kind = dk_pointer) and (i1 = 1) and 
+   result:= (dest^.h.kind = dk_pointer) and (indilev1 = 1) and 
                                      (d.dat.datatyp.indirectlevel > 0) or 
             (d.dat.datatyp.indirectlevel = 1 ) and 
-                              (source^.h.kind = dk_pointer) and (i1 > 0);
+                              (source^.h.kind = dk_pointer) and (indilev1 > 0);
    if result then begin
     conversioncost:= 1;
    end;
@@ -1052,14 +1077,21 @@ var
     while getnextnospace(po1+1,po1) and (po1 <> context1) do begin
      inc(i2);
     end;
-    errormessage(err1,[i2,typename(context1^.d),
+    if context1^.d.kind = ck_list then begin
+     errormessage(err1,[i2,'list',
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                    vardata1^.address.indirectlevel)],stackoffset);
+    end
+    else begin
+     errormessage(err1,[i2,typename(context1^.d),
+                  typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
+                   vardata1^.address.indirectlevel)],stackoffset);
+    end;
     exit;
    end;
    if af_paramindirect in vardata1^.address.flags then begin
     case context1^.d.kind of
-     ck_const: begin
+     ck_const,ck_list: begin
       if not (af_const in vardata1^.address.flags) then begin
        errormessage(err_variableexpected,[],stackoffset);
       end
@@ -1080,6 +1112,10 @@ var
      else begin
       si1:= h.datasize;
      end;
+    end;
+    
+    if context1^.d.kind = ck_list then begin
+     listtoset(context1);
     end;
     case context1^.d.kind of
      ck_const: begin

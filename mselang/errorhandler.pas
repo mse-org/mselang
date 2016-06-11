@@ -333,6 +333,11 @@ function typename(const ainfo: contextdataty;
 var
  po1: ptypedataty;
 begin
+{$ifdef mse_checkinternalerror}
+ if not (ainfo.kind in datacontexts) then begin
+  internalerror(ie_handler,'20160611B');
+ end;
+{$endif}
  po1:= ele.eledataabs(ainfo.dat.datatyp.typedata);
  result:= charstring('^',po1^.h.indirectlevel+ainfo.dat.datatyp.indirectlevel+
                                                            aindirection)+
