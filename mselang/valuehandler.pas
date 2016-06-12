@@ -43,7 +43,7 @@ function tryconvert(const stackoffset: integer; const dest: systypety;
 }
 function checkcompatibledatatype(const sourcecontext: pcontextitemty;
                          const desttypedata: elementoffsetty;
-                         const destadress: addressvaluety;
+                         const destaddress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
                                             out conversioncost: int32): boolean;
 function getbasevalue(const acontext: pcontextitemty;
@@ -61,10 +61,6 @@ type
 
 procedure dosub(asub: psubdataty; const paramstart,paramco: int32; 
                                               const aflags: dosubflagsty);
-
-//procedure dosub(const asub: psubdataty;
-//                   const aindirect: boolean; const isinherited: boolean;
-//                     const paramco: int32; const ownedmethod: boolean);
 function getselfvar(out aele: elementoffsetty): boolean;
 function listtoset(const acontext: pcontextitemty): boolean;
 
@@ -77,35 +73,28 @@ uses
 
 function listtoset(const acontext: pcontextitemty): boolean;
 var
-// allconst: boolean;
  i1,i2: int32;
  po1,po2: ptypedataty;
  ca1,ca2: card32;
  op1: popinfoty;
- {indpo,}poe,{polast,}poitem: pcontextitemty;
+ poe,poitem: pcontextitemty;
 begin
 {$ifdef mse_checkinternalerrror}
  if acontext^.d.kind <> ck_list then begin
   internalerror(ie_handler,'20160610A');
  end;
 {$endif}
-// with info do begin
-
-//  indpo:= @contextstack[s.stackindex];
  result:= false;
  poe:= acontext + acontext^.d.list.contextcount;
-// polast:= poe - 1;
  ele.checkcapacity(ek_type);
  if acontext^.d.list.itemcount = 0 then begin //empty set
   initdatacontext(acontext^.d,ck_const);
   with acontext^ do begin
    d.dat.datatyp:= emptyset;
    d.dat.constval.kind:= dk_set;
-//    d.dat.constval.vset.settype:= 0; 
   end;
  end
  else begin
-//  potop:= @contextstack[s.stacktop];
   po2:= nil;
   ca1:= 0;          //todo: arbitrary size, ranges
   poitem:= acontext+1;
@@ -142,7 +131,6 @@ begin
        ca1:= ca1 or ca2;
       end
       else begin
-//       allconst:= false;
        if not getvalue(poitem,das_32) then begin
         exit;
        end;
@@ -157,7 +145,6 @@ begin
   with po1^ do begin
    infoset.itemtype:= ele.eledatarel(po2);
   end;
-//  with acontext^ do begin
   if lf_allconst in acontext^.d.list.flags then begin
    initdatacontext(acontext^.d,ck_const);
    with acontext^ do begin
@@ -185,14 +172,12 @@ begin
     inc(poitem);
    end;
    acontext^.d.dat.fact.ssaindex:= i2;
-//   d.dat.fact.ssaindex:= s.ssa.nextindex-1;
   end;
   with acontext^ do begin
    d.dat.datatyp.flags:= [];
    d.dat.datatyp.typedata:= ele.eledatarel(po1);
    d.dat.datatyp.indirectlevel:= 0;
   end;
-//  end;
  end;
  poitem:= acontext+1;
  while poitem < poe do begin
@@ -200,10 +185,58 @@ begin
   inc(poitem);
  end;
  result:= true;
-// acontext:= polast;
-//  s.stacktop:= s.stackindex;
-//  dec(s.stackindex);
-// end;
+end;
+
+function listtoopenarray(const acontext: pcontextitemty;
+                                         const aitemtype: ptypedataty): boolean;
+var
+ poe,poitem1: pcontextitemty;
+ po1,itemtype1: ptypedataty;
+ indilev1: int32;
+begin
+{$ifdef mse_checkinternalerrror}
+ if acontext^.d.kind <> ck_list then begin
+  internalerror(ie_handler,'20160612B');
+ end;
+{$endif}
+ result:= false;
+ ele.checkcapacity(ek_type);
+ indilev1:= aitemtype^.h.indirectlevel;
+ itemtype1:= ele.eledataabs(aitemtype^.infodynarray.i.itemtypedata);
+ poe:= acontext + acontext^.d.list.contextcount;
+ ele.checkcapacity(ek_type);
+ poitem1:= acontext+1;
+ while poitem1 < poe do begin
+  with poitem1^ do begin
+   if d.kind <> ck_space then begin
+   {$ifdef mse_checkinternalerror}
+    if not (d.kind in datacontexts) then begin
+     internalerror(ie_handler,'20151007A');
+    end;
+   {$endif}
+    if not tryconvert(poitem1,itemtype1,indilev1,[]) then begin
+     internalerror(ie_handler,'20160612C');
+    end;
+   end;
+  end;
+  inc(poitem1);
+ end;
+ po1:= ele.addelementdata(getident(),ek_type,[]);
+ inittypedatasize(po1^,dk_openarray,0,das_none);
+ with po1^ do begin
+  infodynarray.i.itemtypedata:= ele.eledatarel(aitemtype);
+ end;
+ with acontext^ do begin
+  d.dat.datatyp.flags:= [];
+  d.dat.datatyp.typedata:= ele.eledatarel(po1);
+  d.dat.datatyp.indirectlevel:= 0;
+ end;
+ poitem1:= acontext+1;
+ while poitem1 < poe do begin
+  poitem1^.d.kind:= ck_space;
+  inc(poitem1);
+ end;
+ result:= true;
 end;
 
 type
@@ -457,7 +490,6 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
 begin
-// acontext:= getpreviousnospace(acontext); //possibly set to list start
  stackoffset:= getstackoffset(acontext);
  with info do begin
   if acontext^.d.kind = ck_list then begin
@@ -465,6 +497,9 @@ begin
     dk_set: begin
      listtoset(acontext);
     end;
+//    dk_openarray: begin
+//     listtoopenarray(acontext,dest);
+//    end;
     else begin
      result:= false;
      exit;
@@ -864,14 +899,16 @@ end;
 
 function checkcompatibledatatype(const sourcecontext: pcontextitemty;
                          const desttypedata: elementoffsetty;
-                         const destadress: addressvaluety;
+                         const destaddress: addressvaluety;
                                    const options: compatibilitycheckoptionsty;
                                             out conversioncost: int32): boolean;
 var
  source,dest: ptypedataty;
- sourceitem,destitem: ptypedataty;
+ sourceitem{,destitem}: ptypedataty;
  indilev1: int32;
  pocont1,poe: pcontextitemty;
+ i1: int32;
+ addr1: addressvaluety;
 begin
  with info,sourcecontext^ do begin
  {$ifdef mse_checkinternalerror}
@@ -881,8 +918,8 @@ begin
  {$endif}
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
-  indilev1:= destadress.indirectlevel;
-  if af_paramindirect in destadress.flags then begin
+  indilev1:= destaddress.indirectlevel;
+  if af_paramindirect in destaddress.flags then begin
    dec(indilev1);
   end;
   
@@ -891,31 +928,53 @@ begin
    if indilev1 <> 0 then begin
     exit;
    end;
-   if dest^.h.kind = dk_set then begin
-    if sourcecontext^.d.list.itemcount = 0 then begin
-     result:= true; //empty set
+   pocont1:= sourcecontext+1;
+   poe:= sourcecontext + sourcecontext^.d.list.contextcount;
+   addr1.flags:= [];
+   i1:= conversioncost;
+   case dest^.h.kind of
+    dk_set: begin
+     if sourcecontext^.d.list.itemcount = 0 then begin
+      result:= true; //empty set
+      exit;
+     end;
+     addr1.indirectlevel:= 0;
+     while pocont1 < poe do begin
+      if pocont1^.d.kind <> ck_space then begin
+       if not checkcompatibledatatype(
+                    pocont1,dest^.infoset.itemtype,addr1,[],i1) then begin
+        exit;
+       end;
+       if i1 > conversioncost then begin
+        conversioncost:= i1;
+       end;
+      end;
+      inc(pocont1);
+     end;
+     result:= true;
      exit;
     end;
-    pocont1:= sourcecontext+1;
-    poe:= sourcecontext + sourcecontext^.d.list.contextcount;
-    destitem:= ele.eledataabs(dest^.infoset.itemtype);
-    while pocont1 < poe do begin
-     if pocont1^.d.kind <> ck_space then begin
-     {$ifdef mse_checkinternalerror}
-      if not (pocont1^.d.kind in datacontexts) then begin
-       internalerror(ie_handler,'20160611A');
+    dk_openarray: begin
+     addr1.indirectlevel:= ptypedataty(ele.eledataabs(
+                        dest^.infodynarray.i.itemtypedata))^.h.indirectlevel;
+     while pocont1 < poe do begin
+      if pocont1^.d.kind <> ck_space then begin
+       if not checkcompatibledatatype(
+               pocont1,dest^.infodynarray.i.itemtypedata,addr1,[],i1) then begin
+        exit;
+       end;
+       if i1 > conversioncost then begin
+        conversioncost:= i1;
+       end;
       end;
-     {$endif}
-      if (pocont1^.d.dat.datatyp.indirectlevel <> 0) or
-          (dest^.infoset.itemtype <> 
-                              pocont1^.d.dat.datatyp.typedata) then begin
-       exit;
-      end;
+      inc(pocont1);
      end;
-     inc(pocont1);
+     result:= true;
+     exit;
     end;
-    result:= true;
-    exit;
+    else begin
+     exit;
+    end;
    end;
   end;
   
@@ -925,7 +984,7 @@ begin
    result:= (source = dest);
    if not result then begin
     if (cco_novarconversion in options) and 
-             (destadress.flags * [af_paramvar,af_paramout] <> []) then begin
+             (destaddress.flags * [af_paramvar,af_paramout] <> []) then begin
      exit;
     end;
     inc(conversioncost);            //1
@@ -1115,7 +1174,17 @@ var
     end;
     
     if context1^.d.kind = ck_list then begin
-     listtoset(context1);
+     case desttype^.h.kind of
+      dk_set: begin
+       listtoset(context1);
+      end;
+      dk_openarray: begin
+       listtoopenarray(context1,desttype);
+      end;
+      else begin
+       internalerror1(ie_handler,'20160612A');
+      end;
+     end;
     end;
     case context1^.d.kind of
      ck_const: begin
