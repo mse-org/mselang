@@ -47,6 +47,8 @@ procedure releasetempaddress(const abytesize: int32);
 
 function getglobconstaddress(const asize: integer; var aflags: addressflagsty;
                                        const shift: integer = 0): segaddressty;
+function getglobconstaddress(const asize: integer;
+                                             out adata: pointer): segaddressty;
 function getclassinfoaddress(const asize: int32;
                                  const ainterfacecount: int32): segaddressty;
 //function getinterfacecount(const classindex: int32): int32;
@@ -572,6 +574,12 @@ begin
  result:= allocsegment(seg_globconst,asize);
  result.address:= result.address + shift;
  aflags:= aflags - addresskindflags + [af_segment];
+end;
+
+function getglobconstaddress(const asize: integer;
+                                             out adata: pointer): segaddressty;
+begin
+ result:= allocsegment(seg_globconst,asize,adata);
 end;
 
 function getclassinfoaddress(const asize: int32;

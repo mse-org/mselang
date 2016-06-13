@@ -192,7 +192,8 @@ function listtoopenarray(const acontext: pcontextitemty;
 var
  poe,poitem1: pcontextitemty;
  po1,itemtype1: ptypedataty;
- indilev1: int32;
+ indilev1,itemcount1: int32;
+ podata1: pointer;
 begin
 {$ifdef mse_checkinternalerrror}
  if acontext^.d.kind <> ck_list then begin
@@ -203,6 +204,7 @@ begin
  ele.checkcapacity(ek_type);
  indilev1:= aitemtype^.h.indirectlevel;
  itemtype1:= ele.eledataabs(aitemtype^.infodynarray.i.itemtypedata);
+ itemcount1:= acontext^.d.list.itemcount;
  poe:= acontext + acontext^.d.list.contextcount;
  ele.checkcapacity(ek_type);
  poitem1:= acontext+1;
@@ -221,20 +223,39 @@ begin
   end;
   inc(poitem1);
  end;
- po1:= ele.addelementdata(getident(),ek_type,[]);
+ po1:= ele.addelementdata(getident(),ek_type,[]); //anonymus type
  inittypedatasize(po1^,dk_openarray,0,das_none);
  with po1^ do begin
   infodynarray.i.itemtypedata:= ele.eledatarel(aitemtype);
  end;
  with acontext^ do begin
+  if lf_allconst in d.list.flags then begin
+   initdatacontext(d,ck_const);
+   podata1:= initopenarrayconst(d.dat.constval,itemcount1,
+                                                itemtype1^.h.bytesize);
+   poitem1:= acontext+1;
+   case itemtype1^.h.datasize of //todo: endianess
+    das_32: begin
+     while poitem1 < poe do begin
+      if poitem1^.d.kind <> ck_space then begin
+       pv32ty(podata1)^:= pv32ty(@poitem1^.d.dat.constval.vdummy)^;
+       inc(pv32ty(podata1));
+       poitem1^.d.kind:= ck_space;
+      end;
+      inc(poitem1);
+     end;
+    end
+    else begin
+     notimplementederror('20160613A'); //todo
+    end;
+   end;
+  end
+  else begin
+   notimplementederror('');
+  end;
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= ele.eledatarel(po1);
   d.dat.datatyp.indirectlevel:= 0;
- end;
- poitem1:= acontext+1;
- while poitem1 < poe do begin
-  poitem1^.d.kind:= ck_space;
-  inc(poitem1);
  end;
  result:= true;
 end;
@@ -969,6 +990,7 @@ begin
       end;
       inc(pocont1);
      end;
+     inc(conversioncost); //at least 1
      result:= true;
      exit;
     end;
@@ -1100,6 +1122,7 @@ var
   desttype: ptypedataty;
   si1: databitsizety;
   stackoffset,i2: int32;
+  conversioncost1: int32;
   err1: errorty;
   
   procedure doconvert();
@@ -1123,10 +1146,10 @@ var
    si1:= desttype^.h.datasize;
    stackoffset:= getstackoffset(context1);
 //   context1:= @contextstack[stackind];
-   i2:= 1;
+   conversioncost1:= 1;
    if not paramschecked and 
           not checkcompatibledatatype(context1,vardata1^.vf.typ,
-                        vardata1^.address,[cco_novarconversion],i2) then begin
+            vardata1^.address,[cco_novarconversion],conversioncost1) then begin
     err1:= err_incompatibletypeforarg;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
@@ -1176,10 +1199,16 @@ var
     if context1^.d.kind = ck_list then begin
      case desttype^.h.kind of
       dk_set: begin
-       listtoset(context1);
+       if not listtoset(context1) then begin
+        exit;
+       end;
+       conversioncost1:= 0;
       end;
       dk_openarray: begin
-       listtoopenarray(context1,desttype);
+       if not listtoopenarray(context1,desttype) then begin
+        exit;
+       end;
+       conversioncost1:= 0;
       end;
       else begin
        internalerror1(ie_handler,'20160612A');
@@ -1188,16 +1217,16 @@ var
     end;
     case context1^.d.kind of
      ck_const: begin
-      if i2 > 0 then begin
+      if conversioncost1 > 0 then begin
        doconvert();
       end;
       pushinsertconst(stackoffset,-1,si1);
      end;
      ck_ref: begin
       if desttype^.h.kind <> dk_openarray then begin //address needed?
-       getvalue(context1,si1);                    //no
+       getvalue(context1,si1);                       //no
       end;
-      if i2 > 0 then begin
+      if conversioncost1 > 0 then begin
        doconvert();
       end;
      end;

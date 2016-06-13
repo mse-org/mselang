@@ -223,7 +223,8 @@ type
                dk_kind,
                dk_address,dk_record,dk_string8,dk_dynarray,dk_openarray,
                dk_array,dk_class,dk_interface,dk_sub,
-               dk_enum,dk_enumitem,dk_set,dk_character);
+               dk_enum,dk_enumitem,dk_set,dk_character,
+               dk_data);
  pdatakindty = ^datakindty;
 
 const
@@ -273,8 +274,18 @@ type
  // settype: elementoffsetty; //0 for empty set
  end; 
 
+ openarrayvaluety = record
+  address: segaddressty;
+  size: int32; //byte size
+  high: int32; //item count - 1
+ end;
+  
  dataty = record
   case kind: datakindty of
+   dk_none:(
+    vdummy: record
+    end;
+   );
    dk_boolean:(
     vboolean: bool8;
    );
@@ -301,6 +312,9 @@ type
    );
    dk_set:(
     vset: setvaluety;
+   );
+   dk_openarray:(
+    vopenarray: openarrayvaluety;
    );
  end;
 

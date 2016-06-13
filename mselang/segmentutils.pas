@@ -65,6 +65,8 @@ function getfilekind(const akind: mlafilekindty): int32;
 
 function allocsegment(const asegment: segmentty;
                                     asize: integer): segaddressty;
+function allocsegment(const asegment: segmentty;
+                             asize: integer; out adata: pointer): segaddressty;
 function allocsegmentoffset(const asegment: segmentty;
                                     asize: integer): dataoffsty;
 function allocsegmentpo(const asegment: segmentty;
@@ -412,6 +414,24 @@ begin
   inc(toppo,asize);
   if toppo > endpo then begin
    grow(asegment);
+  end;
+ end;
+end;
+
+function allocsegment(const asegment: segmentty;
+                             asize: integer; out adata: pointer): segaddressty;
+begin
+ with segments[asegment] do begin
+  result.segment:= asegment;
+  adata:= toppo;
+  result.address:= toppo-pointer(data);
+  sizealign(asize);
+  inc(toppo,asize);
+  if toppo > endpo then begin
+   grow(asegment);
+   if adata = nil then begin
+    adata:= data;
+   end;
   end;
  end;
 end;

@@ -1257,21 +1257,7 @@ begin
 {$endif}
  updateop(xorsetops);
 end;
-(*
-procedure handleterm();
-begin
-{$ifdef mse_debugparser}
- outhandle('TERM');
-{$endif}
- with info do begin
-  if s.stacktop-s.stackindex = 1 then begin
-   contextstack[s.stackindex].d:= contextstack[s.stackindex+1].d;
-  end;
-  s.stacktop:= s.stackindex;
-  dec(s.stackindex);
- end;
-end;
-*)
+
 procedure handledereference();
 var
  po1: ptypedataty;
@@ -1364,8 +1350,8 @@ const
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_character
-   oc_none,oc_none,    oc_none,oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
+   oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
 
  notops: array[datakindty] of opcodety = (
@@ -1375,8 +1361,8 @@ const
    oc_none, oc_none,   oc_none,  oc_none,   oc_none,    oc_none,
  //dk_array,dk_class,dk_interface,dk_sub
    oc_none, oc_none, oc_none,     oc_none,
- //dk_enum,dk_enumitem,dk_set, dk_character
-   oc_none,oc_none,    oc_none,oc_none
+ //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
+   oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
 
 procedure handlefact1();
@@ -1407,18 +1393,6 @@ begin
      end;
     end;
    end;
-(*
-  {$ifdef mse_checkinternalerror}
-   if not (toppo^.d.kind in datacontexts) then begin
-    internalerror(ie_handler,'20160602B');
-   end;
-  {$endif}
-   if dcf_listitem in toppo^.d.dat.flags then begin
-    repeat
-     dec(pointer(toppo),sizeof(contextitemty));
-    until toppo^.d.kind = ck_list;
-   end;
-*)
    indpo:= @contextstack[s.stackindex];
    indpo^.d.kind:= ck_space;
    if hf_propindex in toppo^.d.handlerflags then begin //
@@ -1426,21 +1400,11 @@ begin
      errormessage(err_varidentexpected,[],1);
     end
     else begin
-{
-     if stf_rightside in s.currentstatementflags then begin
-      getvalue(toppo,das_none);
-//      indpo^.d:= (indpo+1)^.d;
-//     end
-//     else begin
-//      goto endlab1;
-     end;
-}
     end;
     goto endlab1;
    end
    else begin
     with toppo^ do begin
-//     d:= toppo^.d;
      if stf_getaddress in s.currentstatementflags
                 {fl1 * [ff_address,ff_addressfact] <> []} then begin
       case d.kind of

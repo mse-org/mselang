@@ -61,8 +61,8 @@ const
     sdk_none,sdk_none,
   //dk_sub
     sdk_pointer,
-  //dk_enum,dk_enumitem, dk_set,   dk_character
-    sdk_none,   sdk_none, sdk_none,sdk_card32);
+  //dk_enum,dk_enumitem, dk_set,   dk_character,dk_data
+    sdk_none,   sdk_none, sdk_none,sdk_card32,  sdk_none);
                 
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
@@ -239,6 +239,9 @@ procedure initblockcontext(const stackoffset: int32);
 procedure newblockcontext(const stackoffset: int32);
 procedure finiblockcontext(const stackoffset: int32);
 
+function initopenarrayconst(var adata: dataty; const itemcount: int32;
+                                     const itemsize: int32): pointer;
+                                         //returns pointer to data block
 //procedure trackalloc(const asize: integer; var address: addressvaluety);
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
                                  var address: segaddressty);
@@ -1051,6 +1054,19 @@ begin
      end;
     end;
    end;
+   dk_openarray: begin
+    si1:= das_none;
+    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
+     setimmint32(constval.vopenarray.high,par);
+    end;
+    with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
+               pushsegaddrssaar[constval.vopenarray.address.segment])^ do begin
+     par.memop.segdataaddress.a:= constval.vopenarray.address;
+                                        //todo:typelistindex
+     par.memop.segdataaddress.offset:= 0;
+     par.memop.t:= bitoptypes[das_pointer];
+    end;
+   end;
   {$ifdef mse_checkinternalerror}                             
    else begin
     internalerror(ie_handler,'20131121A');
@@ -1058,7 +1074,7 @@ begin
   {$endif}
   end;
   with contextstack[stackoffset+s.stackindex] do begin
-   if not (constval.kind in [dk_enum,dk_set,dk_string8]) then begin
+   if not (constval.kind in [dk_enum,dk_set,dk_string8,dk_openarray]) then begin
     d.dat.datatyp.typedata:= getbasetypeele(si1);
    end;
    initfactcontext(stackoffset);
@@ -2485,6 +2501,20 @@ begin
  end;
 end;
 
+function initopenarrayconst(var adata: dataty; const itemcount: int32;
+                                     const itemsize: int32): pointer;
+                                         //returns pointer to data block
+var
+ flags1: addressflagsty;
+begin
+ with adata do begin
+  kind:= dk_openarray;
+  vopenarray.size:= itemcount*itemsize;
+  vopenarray.high:= itemcount-1;
+  vopenarray.address:= getglobconstaddress(vopenarray.size,result);
+ end;
+end;
+
 function getcontextopoffset(const stackoffset: int32): int32;
             //returns opcount in context
 var
@@ -3581,6 +3611,10 @@ begin
         dk_set: begin
          write(hextostr(card32(d.dat.constval.vset.value)),' '); 
                    //todo: arbitrary size, set format
+        end;
+        dk_openarray: begin
+         write('size:',inttostrmse(d.dat.constval.vopenarray.size),
+               ' high:',inttostrmse(d.dat.constval.vopenarray.size));
         end;
        end;
       end;

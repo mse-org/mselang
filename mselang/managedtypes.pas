@@ -66,8 +66,8 @@ const
     oc_none,   oc_none,  oc_setlengthstr8,oc_setlengthdynarray,oc_none,
   //dk_array,dk_class,dk_interface,dk_sub,
     oc_none, oc_none, oc_none,     oc_none,
-  //dk_enum,dk_enumitem,dk_set, dk_character
-    oc_none,oc_none,    oc_none,oc_none
+  //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
+    oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
 
  uniqueops: array[datakindty] of opcodety = (
@@ -77,8 +77,8 @@ const
     oc_none,   oc_none,  oc_uniquestr8,oc_uniquedynarray,oc_none,
   //dk_array,dk_class,dk_interface,dk_sub,
     oc_none, oc_none, oc_none,     oc_none,
-  //dk_enum,dk_enumitem,dk_set, dk_character
-    oc_none,oc_none,    oc_none,oc_none
+  //dk_enum,dk_enumitem,dk_set, dk_character,dk_data
+    oc_none,oc_none,    oc_none,oc_none,     oc_none
  );
 
 procedure managestring8(const op: managedopty;{ const atype: ptypedataty;}
