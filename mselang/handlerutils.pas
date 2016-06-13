@@ -1055,14 +1055,15 @@ begin
     end;
    end;
    dk_openarray: begin
+    segad1:= allocdataconst(constval.vopenarray);
     si1:= das_none;
     with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
      setimmint32(constval.vopenarray.high,par);
     end;
     with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                pushsegaddrssaar[constval.vopenarray.address.segment])^ do begin
-     par.memop.segdataaddress.a:= constval.vopenarray.address;
-                                        //todo:typelistindex
+     par.memop.segdataaddress.a:= segad1;
+//     par.memop.segdataaddress.a:= constval.vopenarray.address;
      par.memop.segdataaddress.offset:= 0;
      par.memop.t:= bitoptypes[das_pointer];
     end;
@@ -1106,160 +1107,6 @@ begin
  pushinsertconst(getstackoffset(acontext),aopoffset,adatasize);
 end;
 
-(*
-procedure pushinsertconst(const stackoffset: integer; const aopoffset: int32;
-                                               const adatasize: databitsizety);
-var
- po1: pcontextitemty;
- isimm: boolean;
- segad1: segaddressty;
- si1: databitsizety;
-begin
- with info do begin
-  po1:= @contextstack[s.stackindex+stackoffset];
-  isimm:= true;
-  case po1^.d.dat.constval.kind of
-   dk_boolean: begin
-    si1:= das_1;
-    with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
-     setimmboolean(po1^.d.dat.constval.vboolean,par);
-    end;
-   end;
-   dk_integer,dk_cardinal,dk_enum: begin //todo: datasize warning
-    if adatasize in [das_none,das_pointer] then begin //todo das_1..das_16
-     si1:= das_32;
-     if po1^.d.dat.constval.kind = dk_cardinal then begin
-      if po1^.d.dat.constval.vcardinal > $ffffffff then begin
-       si1:= das_64;
-      end;
-     end
-     else begin
-      if (po1^.d.dat.constval.vinteger > $7ffffff) or 
-               (po1^.d.dat.constval.vinteger < -$80000000) then begin
-       si1:= das_64;
-      end;
-     end;
-    end
-    else begin
-     si1:= adatasize;
-    end;
-    case si1 of
-     das_1: begin
-      with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
-       setimmint1(po1^.d.dat.constval.vinteger,par);
-      end;
-     end;
-     das_8: begin
-      with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-       setimmint8(po1^.d.dat.constval.vinteger,par);
-      end;
-     end;
-     das_16: begin
-      with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
-       setimmint16(po1^.d.dat.constval.vinteger,par);
-      end;
-     end;
-     das_32: begin
-      with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-       setimmint32(po1^.d.dat.constval.vinteger,par);
-      end;
-     end;
-     das_64: begin
-      with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
-       setimmint64(po1^.d.dat.constval.vinteger,par);
-      end;
-     end;
-     else begin
-      internalerror1(ie_handler,'20150501A');
-     end;
-    end;
-   end;
-   dk_set: begin
-    si1:= das_32;           //todo: arbitrary size
-    with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-     setimmint32(po1^.d.dat.constval.vset.value,par);
-    end;
-   end;
-   dk_float: begin
-    si1:= das_f64;
-    with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
-     setimmfloat64(po1^.d.dat.constval.vfloat,par);
-    end;
-   end;
-   dk_string8: begin
-    si1:= das_pointer;
-    isimm:= false;
-    segad1:= allocstringconst(po1^.d.dat.constval.vstring);
-    if segad1.segment = seg_nil then begin
-     insertitem(oc_pushnil,stackoffset,aopoffset);
-    end
-    else begin
-     with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
-                               pushsegaddrssaar[segad1.segment])^ do begin
-      par.memop.segdataaddress.a:= segad1;
-      par.memop.segdataaddress.offset:= 0;
-      par.memop.t:= bitoptypes[das_pointer];
-     end;
-    end;
-   end;
-   dk_character: begin
-    si1:= das_8; //todo: size
-    with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-     setimmint8(po1^.d.dat.constval.vcharacter,par);
-    end;
-   end;
-   dk_pointer: begin
-    si1:= das_pointer;
-    with po1^.d.dat.constval do begin
-     if af_nil in vaddress.flags then begin
-      insertitem(oc_pushnil,stackoffset,aopoffset);
-     end
-     else begin
-      if af_segment in vaddress.flags then begin
-       with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
-                  pushsegaddrssaar[vaddress.segaddress.segment])^ do begin
-        par.memop.segdataaddress.a:= vaddress.segaddress;//todo:typelistindex
-        par.memop.segdataaddress.offset:= 0;
-        par.memop.t:= bitoptypes[das_pointer];
-       end;
-      end
-      else begin
-       with insertitem(oc_pushlocaddr{ess},stackoffset,aopoffset)^ do begin
-        par.memop.locdataaddress.a:= vaddress.locaddress;
-        par.memop.locdataaddress.offset:= 0;
-        par.memop.t:= bitoptypes[das_pointer];
-       end;
-      end;
-     end;
-    end;
-   end;
-  {$ifdef mse_checkinternalerror}                             
-   else begin
-    internalerror(ie_handler,'20131121A');
-   end;
-  {$endif}
-  end;
- {
-  if isimm then begin
-   par.ssad:= ssaindex;
-  end;
- }
-  if not (po1^.d.dat.constval.kind in [dk_enum,dk_set,dk_string8]) then begin
-   po1^.d.dat.datatyp.typedata:= getbasetypeele(si1);
-  end;
-  initfactcontext(stackoffset);
-  po1^.d.dat.fact.opdatatype:= getopdatatype(po1^.d.dat.datatyp.typedata,
-                                            po1^.d.dat.datatyp.indirectlevel);
- {
-  with po1^.d.dat.fact.opdatatype do begin
-   kind:= si1;
-   size:= bitsizes[si1];
-  end;
- }
-//  po1^.d.dat.fact.opdatatype:= opdatatype[si1]; //todo: odk_float
- end;
-end;
-*)
 procedure checkneedsunique(const stackoffset: int32);
 var
  i1: int32;

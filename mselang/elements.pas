@@ -329,6 +329,7 @@ function newstringconst(): stringvaluety; //save info.stringbuffer
 function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
 function allocstringconst(const astring: stringvaluety): segaddressty;
+function allocdataconst(const adata: openarrayvaluety): segaddressty;
 
 var
  ele: telementhashdatalist;
@@ -397,6 +398,12 @@ type
 
 var
  stringbuf: tstringbuffer;
+
+function allocdataconst(const adata: openarrayvaluety): segaddressty;
+begin
+ result:= adata.address;
+// notimplementederror('');
+end;
 
 function newstringconst({const info: pparseinfoty}): stringvaluety;
 begin
@@ -2308,7 +2315,7 @@ begin
  fbufcapacity:= minbuffersize;
  reallocmem(fbuffer,fbufcapacity);
 end;
- 
+                                                 //!!codenavig
 function tstringbuffer.allocconst(const astring: stringvaluety): segaddressty;
 var
  po1: pstring8headerty;
