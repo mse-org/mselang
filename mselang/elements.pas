@@ -334,15 +334,11 @@ function allocdataconst(const adata: openarrayvaluety): segaddressty;
 var
  ele: telementhashdatalist;
  globllvmlists: tllvmlists;
-// typelist: ttypehashdatalist;
-// constlist: tconsthashdatalist;
-// globlist: tgloballocdatalist;
-// mainmetadatalist: tmetadatalist;
 
 implementation
 uses
  msearrayutils,sysutils,typinfo,grammar,mseformatstr,
- mselinklist,{stackops,}msesysutils,opcode,{syssubhandler,}
+ mselinklist,msesysutils,opcode,
  internaltypes,__mla__internaltypes,errorhandler,identutils;
 
 function eletodata(const aele: pelementinfoty): pointer; inline;
@@ -402,17 +398,16 @@ var
 function allocdataconst(const adata: openarrayvaluety): segaddressty;
 begin
  result:= adata.address;
-// notimplementederror('');
 end;
 
-function newstringconst({const info: pparseinfoty}): stringvaluety;
+function newstringconst(): stringvaluety;
 begin
  result:= stringbuf.add(info.stringbuffer);
 end;
 
 function allocstringconst(const astring: stringvaluety): segaddressty;
 begin
- result:= stringbuf.allocconst({info,}astring);
+ result:= stringbuf.allocconst(astring);
 end;
 
 function getstringconst(const astring: stringvaluety): lstringty;
@@ -425,15 +420,6 @@ begin
  result:= stringbuf.getlength(astring);
 end;
 
-{
- varlendataty = record
-  len: integer;
-  data: record //array of byte
-  end;
- end;
- pvarlendataty = ^varlendataty;
-}
- 
 function telementhashdatalist.elebase: pointer; inline;
 begin
  result:= pointer(felementdata);
