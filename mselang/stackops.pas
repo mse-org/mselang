@@ -2489,6 +2489,14 @@ begin
                   stackpush(i1)^,i1);
 end;
 
+procedure pushsegopenarop();
+begin
+ with cpu.pc^.par.memop do begin
+  pint32(stackpush(sizeof(int32)))^:= segdataaddress.openarhigh;
+  ppointer(stackpush(sizeof(pointer)))^:= getsegaddress(segdataaddress);
+ end;
+end;
+
 procedure poploc8op();
 begin             
  pv8ty(getlocaddress(cpu.pc^.par.memop))^:= pv8ty(stackpop(1))^;
@@ -4540,6 +4548,7 @@ const
   pushsegf32ssa = 0;
   pushsegf64ssa = 0;
   pushsegssa = 0;
+  pushsegopenarssa = 0;
 
   pushloc8ssa = 0;
   pushloc16ssa = 0;

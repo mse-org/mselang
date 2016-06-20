@@ -658,7 +658,7 @@ begin
    id1:= -1;
    pc2:= consts.first;
    for i1:= 0 to consts.count-1 do begin
-    if pc2^.typeid < 0 then begin
+    if pc2^.typeid < 0 then begin //consttypety
      case consttypety(-pc2^.typeid) of
       ct_null: begin       
        checkconsttypeid(int32(pc2^.header.buffer));
@@ -698,7 +698,7 @@ begin
       end;
      end;
     end
-    else begin
+    else begin //typeid
      checkconsttypeid(pc2^.typeid);
      case databitsizety(pc2^.typeid) of
       das_1..das_32: begin

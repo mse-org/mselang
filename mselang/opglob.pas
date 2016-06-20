@@ -468,7 +468,8 @@ type
   oc_pushsegf32,
   oc_pushsegf64,
   oc_pushseg,
-
+  oc_pushsegopenar,
+  
   oc_pushloc8,
   oc_pushloc16,
   oc_pushloc32,
@@ -641,6 +642,35 @@ type
  destroyclassinfoty = record
   selfinstance: dataoffsty; //stackoffset
  end;
+
+ segdataaddressty = record
+  a: segaddressty;
+  offset: dataoffsty;
+  case opcodety of
+   oc_pushsegopenar:(
+    openarhigh: int32;
+   );
+//  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
+ end;
+   
+ locdataaddressty = record
+  a: locaddressty;
+  offset: dataoffsty;
+ end;
+
+ tempdataaddressty = record
+  a: tempaddressty;
+  offset: dataoffsty;
+ end;
+{
+ openarvaluety = record
+  high: int32;
+  case opcodety of
+   oc_pushsegopenar:(
+    segdataaddress: segdataaddressty;
+   );
+ end;
+}
  immty = record
 //   ssaindex: integer;
   datasize: integer;            //todo: remove, not necessary for bitcode
@@ -660,7 +690,7 @@ type
   12: (vpointer: dataaddressty);
   13: (voffset: dataoffsty);
   14: (vdatakind: datakindty);
- end;  
+ end;
  
  swapstackty = record
   offset,size: int32;
@@ -696,21 +726,6 @@ type
   address: dataoffsty;
  end;
 } 
- segdataaddressty = record
-  a: segaddressty;
-  offset: dataoffsty;
-//  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
- end;
-   
- locdataaddressty = record
-  a: locaddressty;
-  offset: dataoffsty;
- end;
-
- tempdataaddressty = record
-  a: tempaddressty;
-  offset: dataoffsty;
- end;
 { 
  vpushty = record
   ssaindex: integer;
@@ -1086,6 +1101,7 @@ type
    oc_storesegnildynar,oc_storelocnildynar,oc_storereg0nildynar,
    oc_storestacknildynar,oc_storestackrefnildynar,
    oc_popseg,oc_pushseg,
+   oc_pushsegopenar,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
    oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,

@@ -1057,16 +1057,24 @@ begin
    dk_openarray: begin
     segad1:= allocdataconst(constval.vopenarray);
     si1:= das_none;
+    with insertitem(oc_pushsegopenar,stackoffset,aopoffset)^ do begin
+     par.memop.segdataaddress.openarhigh:= constval.vopenarray.high;
+     par.memop.segdataaddress.a:= segad1;
+     par.memop.segdataaddress.offset:= 0;
+     par.memop.t:= bitoptypes[das_pointer];
+    end; 
+
+   {
     with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
      setimmint32(constval.vopenarray.high,par);
     end;
     with insertitem(oc_pushsegaddr,stackoffset,aopoffset,
                pushsegaddrssaar[constval.vopenarray.address.segment])^ do begin
      par.memop.segdataaddress.a:= segad1;
-//     par.memop.segdataaddress.a:= constval.vopenarray.address;
      par.memop.segdataaddress.offset:= 0;
      par.memop.t:= bitoptypes[das_pointer];
     end;
+   }
    end;
   {$ifdef mse_checkinternalerror}                             
    else begin
