@@ -463,7 +463,7 @@ testvar1:= ele.eledatarel(sub1);
      if i1 > 0 then begin
       i2:= s.ssa.nextindex-1;
       with additem(oc_offsetpoimm32)^ do begin
-       setimmint32(i1,par);
+       setimmint32(i1,par.imm);
        par.ssas1:= i2;
       end;
      end;
@@ -1017,7 +1017,7 @@ begin
     dk_openarray: begin
      i1:= s.ssa.nextindex-1;
      with insertitem(oc_offsetpoimm32,-1,-1)^ do begin //at end of context
-      setimmint32(sizeof(openarrayty.high),par); //pointer to openarrayty.data
+      setimmint32(sizeof(openarrayty.high),par.imm); //pointer to openarrayty.data
       par.ssas1:= i1;
      end;
      i1:= s.ssa.nextindex-1;
@@ -1132,13 +1132,13 @@ begin
      lastssa:= d.dat.fact.ssaindex;
      with insertitem(oc_addimmint32,topoffset,-1)^ do begin
       par.ssas1:= lastssa;
-      setimmint32(-range.min,par);
+      setimmint32(-range.min,par.imm);
      end;
     end;
     lastssa:= d.dat.fact.ssaindex;
     with insertitem(oc_mulimmint32,topoffset,-1)^ do begin
      par.ssas1:= lastssa;
-     setimmint32(itemtype^.h.bytesize,par);
+     setimmint32(itemtype^.h.bytesize,par.imm);
     end;
    end;
                                                         //next dimension

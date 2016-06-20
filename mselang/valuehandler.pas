@@ -156,7 +156,7 @@ begin
    initdatacontext(acontext^.d,ck_fact); //wrong opmark?
    with insertitem(oc_pushimm32,getstackoffset(acontext)+1,0)^ do begin 
                                                                //first op
-    setimmint32(ca1,par);
+    setimmint32(ca1,par.imm);
     i2:= par.ssad;
    end;
    poitem:= acontext+1;
@@ -689,7 +689,7 @@ begin
                                dest^.infodynarray.i.itemtypedata) then begin
              if getaddress(acontext,true) then begin
               with convert(oc_arraytoopenar)^ do begin
-               setimmint32(source1^.infoarray.i.totitemcount-1,par);
+               setimmint32(source1^.infoarray.i.totitemcount-1,par.imm);
               end;
               result:= true;
              end;
@@ -802,7 +802,7 @@ begin
         if getvalue(acontext,das_pointer) then begin
          i2:= d.dat.fact.ssaindex;
          with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
-          setimmint32(i3,par);
+          setimmint32(i3,par.imm);
           par.ssas1:= i2;
          end;
          result:= true;
@@ -1706,7 +1706,7 @@ begin
     end;
     if dsf_indirect in aflags then begin
      with additem(oc_pop)^ do begin          //insertitem???
-      setimmsize(pointersize,par); //remove call address
+      setimmsize(pointersize,par.imm); //remove call address
      end;
     end;
    end;
@@ -2050,7 +2050,7 @@ begin
             ssabefore:= d.dat.fact.ssaindex;
             with insertitem(oc_offsetpoimm32,-1,-1)^ do begin
              par.ssas1:= ssabefore;
-             setimmint32(offset,par);
+             setimmint32(offset,par.imm);
             end;
            end;
            d.dat.datatyp.typedata:= vf.typ;

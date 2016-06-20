@@ -780,7 +780,7 @@ begin
    end;
    addlabel();
    with additem(oc_pop)^ do begin
-    setimmsize(sizeof(int32),par);
+    setimmsize(sizeof(int32),par.imm);
    end;
   end;
   dec(s.stackindex);

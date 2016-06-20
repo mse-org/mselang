@@ -53,21 +53,21 @@ function getclassinfoaddress(const asize: int32;
                                  const ainterfacecount: int32): segaddressty;
 //function getinterfacecount(const classindex: int32): int32;
 
-procedure setimmboolean(const value: boolean; var par: opparamty);
-procedure setimmcard8(const value: card8; var par: opparamty);
-procedure setimmcard16(const value: card16; var par: opparamty);
-procedure setimmcard32(const value: card32; var par: opparamty);
-procedure setimmcard64(const value: card64; var par: opparamty);
-procedure setimmint1(const value: int8; var par: opparamty);
-procedure setimmint8(const value: int8; var par: opparamty);
-procedure setimmint16(const value: int16; var par: opparamty);
-procedure setimmint32(const value: int32; var par: opparamty);
-procedure setimmint64(const value: int64; var par: opparamty);
-procedure setimmfloat64(const value: float64; var par: opparamty);
-procedure setimmsize(const value: datasizety; var par: opparamty);
-procedure setimmpointer(const value: dataaddressty; var par: opparamty);
-procedure setimmoffset(const value: dataoffsty; var par: opparamty);
-procedure setimmdatakind(const value: datakindty; var par: opparamty);
+procedure setimmboolean(const value: boolean; var aimm: immty);
+procedure setimmcard8(const value: card8; var aimm: immty);
+procedure setimmcard16(const value: card16; var aimm: immty);
+procedure setimmcard32(const value: card32; var aimm: immty);
+procedure setimmcard64(const value: card64; var aimm: immty);
+procedure setimmint1(const value: int8; var aimm: immty);
+procedure setimmint8(const value: int8; var aimm: immty);
+procedure setimmint16(const value: int16; var aimm: immty);
+procedure setimmint32(const value: int32; var aimm: immty);
+procedure setimmint64(const value: int64; var aimm: immty);
+procedure setimmfloat64(const value: float64; var aimm: immty);
+procedure setimmsize(const value: datasizety; var aimm: immty);
+procedure setimmpointer(const value: dataaddressty; var aimm: immty);
+procedure setimmoffset(const value: dataoffsty; var aimm: immty);
+procedure setimmdatakind(const value: datakindty; var aimm: immty);
 
 procedure setmemimm(const value: int32; var par: opparamty);
 
@@ -588,108 +588,94 @@ begin
  result:= allocsegment(seg_classdef,asize);
  pint32(allocsegmentpo(seg_classintfcount,sizeof(int32)))^:= ainterfacecount;
 end;
-{
-function getinterfacecount(const classindex: int32): int32;
+
+procedure setimmboolean(const value: boolean; var aimm: immty);
 begin
- result:= pint32(getsegmentpo(seg_classintfcount,classindex*sizeof(int32)))^;
-end;
-}
-procedure setimmboolean(const value: boolean; var par: opparamty);
-begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(value);
  end
  else begin
-  par.imm.vboolean:= value;
+  aimm.vboolean:= value;
  end;
 end;
 
-procedure setimmcard8(const value: card8; var par: opparamty);
+procedure setimmcard8(const value: card8; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
  else begin
-  par.imm.vcard8:= value;
+  aimm.vcard8:= value;
  end;
 end;
 
-procedure setimmcard16(const value: card16; var par: opparamty);
+procedure setimmcard16(const value: card16; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
  else begin
-  par.imm.vcard16:= value;
+  aimm.vcard16:= value;
  end;
 end;
 
-procedure setimmcard32(const value: card32; var par: opparamty);
+procedure setimmcard32(const value: card32; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
  else begin
-  par.imm.vcard32:= value;
+  aimm.vcard32:= value;
  end;
 end;
 
-procedure setimmcard64(const value: card64; var par: opparamty);
+procedure setimmcard64(const value: card64; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
  else begin
-  par.imm.vcard64:= value;
+  aimm.vcard64:= value;
  end;
 end;
 
-procedure setimmint1(const value: int8; var par: opparamty);
+procedure setimmint1(const value: int8; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(odd(value));
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(odd(value));
  end
  else begin
-  par.imm.vint8:= value;
+  aimm.vint8:= value;
  end;
 end;
 
-procedure setimmint8(const value: int8; var par: opparamty);
+procedure setimmint8(const value: int8; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
  else begin
-  par.imm.vint8:= value;
+  aimm.vint8:= value;
  end;
 end;
 
-procedure setimmint16(const value: int16; var par: opparamty);
+procedure setimmint16(const value: int16; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
  else begin
-  par.imm.vint16:= value;
+  aimm.vint16:= value;
  end;
 end;
 
-procedure setimmint32(const value: int32; var par: opparamty);
+procedure setimmint32(const value: int32; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
  else begin
-  par.imm.vint32:= value;
+  aimm.vint32:= value;
  end;
 end;
 
@@ -703,71 +689,64 @@ begin
  end;
 end;
 
-procedure setimmint64(const value: int64; var par: opparamty);
+procedure setimmint64(const value: int64; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
  else begin
-  par.imm.vint64:= value;
+  aimm.vint64:= value;
  end;
 end;
 
-procedure setimmfloat64(const value: float64; var par: opparamty);
+procedure setimmfloat64(const value: float64; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
+  aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
  end
  else begin
-  par.imm.vflo64:= value;
+  aimm.vflo64:= value;
  end;
 end;
 
-procedure setimmsize(const value: datasizety; var par: opparamty);
+procedure setimmsize(const value: datasizety; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
-  par.imm.vsize:= info.s.unitinfo^.llvmlists.constlist.
+  aimm.vsize:= info.s.unitinfo^.llvmlists.constlist.
                                         adddataoffs(value).listid;
-//  notimplementederror('20150109B');
  end
  else begin
-  par.imm.vsize:= value;
+  aimm.vsize:= value;
  end;
 end;
 
-procedure setimmpointer(const value: dataaddressty; var par: opparamty);
+procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
   notimplementederror('20150109C');
  end
  else begin
-  par.imm.vpointer:= value;
+  aimm.vpointer:= value;
  end;
 end;
 
-procedure setimmoffset(const value: dataoffsty; var par: opparamty);
+procedure setimmoffset(const value: dataoffsty; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
   notimplementederror('20150109D');
  end
  else begin
-  par.imm.voffset:= value;
+  aimm.voffset:= value;
  end;
 end;
 
-procedure setimmdatakind(const value: datakindty; var par: opparamty);
+procedure setimmdatakind(const value: datakindty; var aimm: immty);
 begin
- par.imm.datasize:= sizeof(value);
  if co_llvm in info.compileoptions then begin
   notimplementederror('20150109E');
  end
  else begin
-  par.imm.vdatakind:= value;
+  aimm.vdatakind:= value;
  end;
 end;
 

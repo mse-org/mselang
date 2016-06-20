@@ -3069,7 +3069,7 @@ begin
    case kind of
     ck_subres: begin
      with additem(oc_pop)^ do begin
-      setimmsize(getbytesize(dat.fact.opdatatype),par); //todo: alignment
+      setimmsize(getbytesize(dat.fact.opdatatype),par.imm); //todo: alignment
 //      setimmsize((dat.fact.databitsize+7) div 8,par); //todo: alignment
      end;    
     end;

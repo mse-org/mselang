@@ -2491,9 +2491,9 @@ end;
 
 procedure pushsegopenarop();
 begin
- with cpu.pc^.par.memop do begin
-  pint32(stackpush(sizeof(int32)))^:= segdataaddress.openarhigh;
-  ppointer(stackpush(sizeof(pointer)))^:= getsegaddress(segdataaddress);
+ with cpu.pc^.par.memimm do begin
+  pint32(stackpush(sizeof(int32)))^:= vint32;
+  ppointer(stackpush(sizeof(pointer)))^:= getsegaddress(mem.segdataaddress);
  end;
 end;
 

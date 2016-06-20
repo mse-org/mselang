@@ -646,10 +646,12 @@ type
  segdataaddressty = record
   a: segaddressty;
   offset: dataoffsty;
+ {
   case opcodety of
    oc_pushsegopenar:(
     openarhigh: int32;
    );
+  }
 //  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
  end;
    
@@ -673,7 +675,7 @@ type
 }
  immty = record
 //   ssaindex: integer;
-  datasize: integer;            //todo: remove, not necessary for bitcode
+//  datasize: integer;            //todo: remove, not necessary for bitcode
   case integer of               //todo: use target size
    0: (llvm: llvmvaluety);
    1: (vboolean: boolean);
@@ -830,7 +832,8 @@ type
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
    oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32:(
+   oc_incdecindiimmint32,oc_incdecindiimmpo32,
+   oc_pushsegopenar:(
     vint32: int32;
    );
  end;
@@ -1023,7 +1026,8 @@ type
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
    oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32:(
+   oc_incdecindiimmint32,oc_incdecindiimmpo32,
+   oc_pushsegopenar:(
     memimm: memimmopty;
    );
   
@@ -1101,7 +1105,6 @@ type
    oc_storesegnildynar,oc_storelocnildynar,oc_storereg0nildynar,
    oc_storestacknildynar,oc_storestackrefnildynar,
    oc_popseg,oc_pushseg,
-   oc_pushsegopenar,
    oc_poploc8,oc_poploc16,oc_poploc32,oc_poploc,
    oc_poppar8,oc_poppar16,oc_poppar32,oc_poppar,
    oc_poplocindi8,oc_poplocindi16,oc_poplocindi32,oc_poplocindi,

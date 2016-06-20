@@ -729,7 +729,7 @@ begin
   else begin
    result:= atype^.h.bytesize; //todo: alignment
   end;
-  setimmsize(result,par);
+  setimmsize(result,par.imm);
  end;
 end;
 
@@ -943,7 +943,7 @@ begin
    dk_boolean: begin
     si1:= das_1;
     with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
-     setimmboolean(constval.vboolean,par);
+     setimmboolean(constval.vboolean,par.imm);
     end;
    end;
    dk_integer,dk_cardinal,dk_enum: begin //todo: datasize warning
@@ -967,27 +967,27 @@ begin
     case si1 of
      das_1: begin
       with insertitem(oc_pushimm1,stackoffset,aopoffset)^ do begin
-       setimmint1(constval.vinteger,par);
+       setimmint1(constval.vinteger,par.imm);
       end;
      end;
      das_8: begin
       with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-       setimmint8(constval.vinteger,par);
+       setimmint8(constval.vinteger,par.imm);
       end;
      end;
      das_16: begin
       with insertitem(oc_pushimm16,stackoffset,aopoffset)^ do begin
-       setimmint16(constval.vinteger,par);
+       setimmint16(constval.vinteger,par.imm);
       end;
      end;
      das_32: begin
       with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-       setimmint32(constval.vinteger,par);
+       setimmint32(constval.vinteger,par.imm);
       end;
      end;
      das_64: begin
       with insertitem(oc_pushimm64,stackoffset,aopoffset)^ do begin
-       setimmint64(constval.vinteger,par);
+       setimmint64(constval.vinteger,par.imm);
       end;
      end;
      else begin
@@ -998,13 +998,13 @@ begin
    dk_set: begin
     si1:= das_32;           //todo: arbitrary size
     with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
-     setimmint32(constval.vset.value,par);
+     setimmint32(constval.vset.value,par.imm);
     end;
    end;
    dk_float: begin
     si1:= das_f64;
     with insertitem(oc_pushimmf64,stackoffset,aopoffset)^ do begin
-     setimmfloat64(constval.vfloat,par);
+     setimmfloat64(constval.vfloat,par.imm);
     end;
    end;
    dk_string8: begin
@@ -1026,7 +1026,7 @@ begin
    dk_character: begin
     si1:= das_8; //todo: size
     with insertitem(oc_pushimm8,stackoffset,aopoffset)^ do begin
-     setimmint8(constval.vcharacter,par);
+     setimmint8(constval.vcharacter,par.imm);
     end;
    end;
    dk_pointer: begin
@@ -1058,7 +1058,7 @@ begin
     segad1:= allocdataconst(constval.vopenarray);
     si1:= das_none;
     with insertitem(oc_pushsegopenar,stackoffset,aopoffset)^ do begin
-     par.memop.segdataaddress.openarhigh:= constval.vopenarray.high;
+     setmemimm(constval.vopenarray.high,par);
      par.memop.segdataaddress.a:= segad1;
      par.memop.segdataaddress.offset:= 0;
      par.memop.t:= bitoptypes[das_pointer];
@@ -1154,7 +1154,7 @@ begin
   with info do begin
    ssabefore:= contextstack[s.stackindex+stackoffset].d.dat.fact.ssaindex;
    with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
-    setimmint32(aoffset,par);
+    setimmint32(aoffset,par.imm);
     par.ssas1:= ssabefore;
    end;
   end;
@@ -1256,21 +1256,21 @@ end;
 procedure push(const avalue: boolean);
 begin
  with addpushimm(oc_pushimm8)^ do begin
-  setimmboolean(avalue,par);
+  setimmboolean(avalue,par.imm);
  end;
 end;
 
 procedure push(const avalue: integer);
 begin
  with addpushimm(oc_pushimm32)^ do begin
-  setimmint32(avalue,par);
+  setimmint32(avalue,par.imm);
  end;
 end;
 
 procedure push(const avalue: real);
 begin
  with addpushimm(oc_pushimm64)^ do begin
-  setimmfloat64(avalue,par);
+  setimmfloat64(avalue,par.imm);
  end;
 end;
 
@@ -1427,7 +1427,7 @@ var
 begin
  if af_nil in avalue.flags then begin
   with getop(oc_pushaddr)^ do begin
-   setimmpointer(0,par);
+   setimmpointer(0,par.imm);
   end;
  end
  else begin
@@ -1509,7 +1509,7 @@ procedure push(const avalue: datakindty); overload;
       //no alignsize
 begin
  with addpushimm(oc_pushimmdatakind)^ do begin
-  setimmdatakind(avalue,par);
+  setimmdatakind(avalue,par.imm);
  end;
 end;
 
@@ -1526,7 +1526,7 @@ procedure pushinsert(const stackoffset: integer; const aopoffset: int32;
       //no alignsize
 begin
  with insertpushimm(oc_pushimmdatakind,stackoffset,aopoffset)^ do begin
-  setimmdatakind(avalue,par);
+  setimmdatakind(avalue,par.imm);
  end;
 end;
 
@@ -2310,7 +2310,7 @@ begin
       ssabefore:= getcontextssa(stackoffset);
       with insertitem(oc_offsetpoimm32,stackoffset,-1)^ do begin
        par.ssas1:= ssabefore;
-       setimmint32(d.dat.ref.offset,par);
+       setimmint32(d.dat.ref.offset,par.imm);
       end;
       inc(d.dat.indirection);
      end;

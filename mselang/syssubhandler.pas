@@ -278,7 +278,7 @@ var
        i2:= d.dat.fact.ssaindex;
        with insertitem(oc_mulimmint32,s.stacktop-s.stackindex,-1)^ do begin
         par.ssas1:= i2;
-        setimmint32(i1,par);
+        setimmint32(i1,par.imm);
        end;
       end;
       i2:= d.dat.fact.ssaindex;
