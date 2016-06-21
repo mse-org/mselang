@@ -1,0 +1,19 @@
+program openarray2;
+
+procedure test(p: array of int32);
+begin
+ if (p[1] = 2) and (high(p) = 2) and (length(p) = 3) then begin
+  exitcode:= 123;
+ end;
+end;
+
+var
+ ar1: array of int32;
+
+begin
+ setlength(ar1,3);
+ ar1[0]:= 1;
+ ar1[1]:= 2;
+ ar1[2]:= 3;
+ test(ar1);
+end.

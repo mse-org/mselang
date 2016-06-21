@@ -1,0 +1,11 @@
+program openarray3;
+
+procedure test(p: array of int32);
+begin
+ exitcode:= high(p)+p[2];
+end;
+
+begin
+ test([1,2,3]);
+ exitcode:= exitcode + 123 - 2 - 3;
+end.

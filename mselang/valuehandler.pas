@@ -217,7 +217,7 @@ begin
     end;
    {$endif}
     if not tryconvert(poitem1,itemtype1,indilev1,[]) then begin
-     internalerror(ie_handler,'20160612C');
+     internalerror1(ie_handler,'20160612C');
     end;
    end;
   end;
