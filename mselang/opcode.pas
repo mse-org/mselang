@@ -78,6 +78,10 @@ function additem(const aopcode: opcodety;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
                           const aopoffset: int32; //-1 -> at end
                           const ssaextension: integer = 0): popinfoty;
+function insertitem1(const aopcode: opcodety; const stackoffset: integer;
+                          var aopoffset: int32; //-1 -> at end
+                          const ssaextension: integer = 0): popinfoty;
+                              //increments aopoffset if not at end
 {
 function insertcallitem(const aopcode: opcodety; const stackoffset: integer;
                           const before: boolean;
@@ -872,7 +876,8 @@ begin
    poend:= po1+opcount-ad1;
    inc(opcount);
    int2:= (result-1)^.par.ssad; //original start ssa
-   while po1 < poend do begin
+   while po1 < poend do begin           
+                        //todo: boolean expression shortcut addresses?
     inc(po1^.par.ssad,ssadelta);
     if po1^.par.ssas1 >= int2 then begin
      inc(po1^.par.ssas1,ssadelta);
@@ -880,7 +885,7 @@ begin
     if po1^.par.ssas2 >= int2 then begin
      inc(po1^.par.ssas2,ssadelta);
     end;
-    if po1^.op.op in subops then begin
+    if po1^.op.op in subops then begin //adjust param ssa's
      parpo:= getsegmentpo(seg_localloc,po1^.par.callinfo.params);
      endpo:= parpo + po1^.par.callinfo.paramcount;
      while parpo < endpo do begin
@@ -911,6 +916,17 @@ begin
     inc(info.s.ssa.bbindex);
    end;
   end;   
+ end;
+end;
+
+function insertitem1(const aopcode: opcodety; const stackoffset: integer;
+                          var aopoffset: int32; //-1 -> at end
+                          const ssaextension: integer = 0): popinfoty;
+                              //increments aopoffset if not at end
+begin
+ result:= insertitem(aopcode,stackoffset,aopoffset,ssaextension);
+ if aopoffset >= 0 then begin
+  inc(aopoffset);
  end;
 end;
 

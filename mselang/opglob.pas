@@ -468,7 +468,7 @@ type
   oc_pushsegf32,
   oc_pushsegf64,
   oc_pushseg,
-  oc_pushsegopenar,
+//  oc_pushsegopenar,
   
   oc_pushloc8,
   oc_pushloc16,
@@ -651,7 +651,7 @@ type
    oc_pushsegopenar:(
     openarhigh: int32;
    );
-  }
+ }
 //  datasize: integer;         //>0 = bits, 0 = pointer, <0 = bytes
  end;
    
@@ -832,8 +832,8 @@ type
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
    oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32,
-   oc_pushsegopenar:(
+   oc_incdecindiimmint32,oc_incdecindiimmpo32{,
+   oc_pushsegopenar}:(
     vint32: int32;
    );
  end;
@@ -1026,8 +1026,8 @@ type
    oc_incdeclocimmint32,oc_incdeclocimmpo32,
    oc_incdecparimmint32,oc_incdecparimmpo32,
    oc_incdecparindiimmint32,oc_incdecparindiimmpo32,
-   oc_incdecindiimmint32,oc_incdecindiimmpo32,
-   oc_pushsegopenar:(
+   oc_incdecindiimmint32,oc_incdecindiimmpo32{,
+   oc_pushsegopenar}:(
     memimm: memimmopty;
    );
   

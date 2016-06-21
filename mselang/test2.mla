@@ -280,13 +280,13 @@ begin
  (pcard8(result)+1)^:= 0; //terminator
 end;
 
-function __mla__arraytopenar(ahigh: int32; adata: pointer): openarrayty;
+function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
 begin
  result.high:= ahigh;
  result.data:= adata;
 end;
 
-function __mla__dynarraytopenar(ref: prefsizeinfoty): openarrayty;
+function __mla__dynarraytoopenar(ref: prefsizeinfoty): openarrayty;
 begin
  if ref = nil then begin
   result.high:= -1;

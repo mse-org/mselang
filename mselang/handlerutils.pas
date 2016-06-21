@@ -935,6 +935,7 @@ var
  isimm: boolean;
  segad1: segaddressty;
  si1: databitsizety;
+ i1,i2: int32;
 begin
  with info do begin
 //  po1:= @contextstack[s.stackindex+stackoffset];
@@ -1057,13 +1058,26 @@ begin
    dk_openarray: begin
     segad1:= allocdataconst(constval.vopenarray);
     si1:= das_none;
+    i1:= aopoffset;
+    with insertitem1(oc_pushsegaddr,stackoffset,i1,
+                              pushsegaddrssaar[segad1.segment])^ do begin
+     par.memop.segdataaddress.a:= segad1;
+     par.memop.segdataaddress.offset:= 0;
+     par.memop.t:= bitoptypes[das_pointer];
+     i2:= par.ssad;
+    end;
+    with insertitem(oc_arraytoopenar,stackoffset,i1)^ do begin
+     par.ssas1:= i2;
+     setimmint32(constval.vopenarray.high,par.imm);
+    end;
+{
     with insertitem(oc_pushsegopenar,stackoffset,aopoffset)^ do begin
      setmemimm(constval.vopenarray.high,par);
      par.memop.segdataaddress.a:= segad1;
      par.memop.segdataaddress.offset:= 0;
      par.memop.t:= bitoptypes[das_pointer];
     end; 
-
+}
    {
     with insertitem(oc_pushimm32,stackoffset,aopoffset)^ do begin
      setimmint32(constval.vopenarray.high,par);

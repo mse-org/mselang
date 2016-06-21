@@ -2676,12 +2676,12 @@ procedure pushsegop();
 begin
  loadseg();
 end;
-
+{
 procedure pushsegopenarop();
 begin
  notimplemented();
 end;
-
+}
 procedure pushloc8op();
 begin
  loadloc(false);
@@ -4020,7 +4020,7 @@ const
   pushsegf32ssa = 1;
   pushsegf64ssa = 1;
   pushsegssa = 1;
-  pushsegopenarssa = 0; //todo
+//  pushsegopenarssa = 0; //todo
 
   pushloc8ssa = 1;
   pushloc16ssa = 1;

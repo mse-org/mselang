@@ -809,9 +809,10 @@
   (ssa: pushsegf64ssa; proc: @pushsegf64op; flags: [of_relocseg]),
 //oc_pushseg
   (ssa: pushsegssa; proc: @pushsegop; flags: [of_relocseg]),
+{
 //oc_pushsegopenar
   (ssa: pushsegopenarssa; proc: @pushsegopenarop; flags: [of_relocseg]),
-
+}
 //oc_pushloc8
   (ssa: pushloc8ssa; proc: @pushloc8op; flags: []), 
 //oc_pushloc16
