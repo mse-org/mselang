@@ -1,0 +1,14 @@
+program openarray4;
+
+procedure test(p: array of int32);
+begin
+ exitcode:= high(p)+p[2];
+end;
+
+var
+ i1: int32;
+begin
+ i1:= 2;
+ test([1,i1,3]);
+ exitcode:= exitcode + 123 - 2 - 3;
+end.

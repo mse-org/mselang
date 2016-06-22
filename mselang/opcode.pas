@@ -69,6 +69,8 @@ procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
 procedure setimmdatakind(const value: datakindty; var aimm: immty);
 
+procedure setimmint32(const value: int32; out aimm: int32);
+
 procedure setmemimm(const value: int32; var par: opparamty);
 
 procedure checkopcapacity(const areserve: int32);
@@ -76,6 +78,9 @@ procedure checkopcapacity(const areserve: int32);
 function additem(const aopcode: opcodety;
                                const ssaextension: integer = 0): popinfoty;
 function insertitem(const aopcode: opcodety; const stackoffset: integer;
+                          const aopoffset: int32; //-1 -> at end
+                          const ssaextension: integer = 0): popinfoty;
+function insertitem(const aopcode: opcodety; const acontext: pcontextitemty;
                           const aopoffset: int32; //-1 -> at end
                           const ssaextension: integer = 0): popinfoty;
 function insertitem1(const aopcode: opcodety; const stackoffset: integer;
@@ -683,6 +688,16 @@ begin
  end;
 end;
 
+procedure setimmint32(const value: int32; out aimm: int32);
+begin
+ if co_llvm in info.compileoptions then begin
+  aimm:= info.s.unitinfo^.llvmlists.constlist.addi32(value).listid;
+ end
+ else begin
+  aimm:= value;
+ end;
+end;
+
 procedure setmemimm(const value: int32; var par: opparamty);
 begin
  if co_llvm in info.compileoptions then begin
@@ -842,7 +857,9 @@ var
  po1: popinfoty;
  poend: pointer;
  ssadelta: integer;
- parpo,endpo: pparallocinfoty;
+ parpo: pparallocinfoty;
+ listpo: plistitemallocinfoty;
+ endpo: pointer;
 begin
  with info do begin
   int1:= stackoffset+s.stackindex;
@@ -894,6 +911,18 @@ begin
       end;
       inc(parpo);
      end;
+    end
+    else begin
+     if po1^.op.op in listops then begin
+      listpo:= getsegmentpo(seg_localloc,po1^.par.listinfo.allocs);
+      endpo:= listpo + po1^.par.listinfo.alloccount;
+      while listpo < endpo do begin
+       if listpo^.ssaindex >= int2 then begin
+        inc(listpo^.ssaindex,ssadelta);
+       end;
+       inc(listpo);
+      end;
+     end;
     end;
     inc(po1);
    end;
@@ -917,6 +946,14 @@ begin
    end;
   end;   
  end;
+end;
+
+function insertitem(const aopcode: opcodety; const acontext: pcontextitemty;
+                          const aopoffset: int32; //-1 -> at end
+                          const ssaextension: integer = 0): popinfoty;
+begin
+ result:= insertitem(aopcode,(acontext-pcontextitemty(info.contextstack)) -
+                                    info.s.stackindex,aopoffset,ssaextension);
 end;
 
 function insertitem1(const aopcode: opcodety; const stackoffset: integer;

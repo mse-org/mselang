@@ -190,10 +190,14 @@ end;
 function listtoopenarray(const acontext: pcontextitemty;
                                          const aitemtype: ptypedataty): boolean;
 var
- poe,poitem1: pcontextitemty;
+ poe: pointer;
+ poitem1: pcontextitemty;
  po1,itemtype1: ptypedataty;
  indilev1,itemcount1: int32;
  podata1: pointer;
+ isallconst: boolean;
+ poalloc: plistitemallocinfoty;
+ alloc1: dataoffsty;
 begin
 {$ifdef mse_checkinternalerrror}
  if acontext^.d.kind <> ck_list then begin
@@ -205,6 +209,17 @@ begin
  indilev1:= aitemtype^.h.indirectlevel;
  itemtype1:= ele.eledataabs(aitemtype^.infodynarray.i.itemtypedata);
  itemcount1:= acontext^.d.list.itemcount;
+ isallconst:= lf_allconst in acontext^.d.list.flags;
+ if not isallconst then begin
+  if co_llvm in info.compileoptions then begin
+   alloc1:= allocsegmentoffset(seg_localloc,
+                         itemcount1*sizeof(listitemallocinfoty),poalloc);
+  end
+  else begin
+   notimplementederror('');
+  end;
+ end;
+
  poe:= acontext + acontext^.d.list.contextcount;
  ele.checkcapacity(ek_type);
  poitem1:= acontext+1;
@@ -219,6 +234,18 @@ begin
     if not tryconvert(poitem1,itemtype1,indilev1,[]) then begin
      internalerror1(ie_handler,'20160612C');
     end;
+    if not isallconst then begin
+     getvalue(poitem1,das_none,false);
+    {$ifdef mse_checkinternalerror}
+     if d.kind <> ck_fact then begin
+      internalerror(ie_handler,'20160615A');
+     end;
+    {$endif}
+     if co_llvm in info.compileoptions then begin
+      poalloc^.ssaindex:= d.dat.fact.ssaindex;
+      inc(poalloc);
+     end;
+    end;
    end;
   end;
   inc(poitem1);
@@ -229,7 +256,7 @@ begin
   infodynarray.i.itemtypedata:= ele.eledatarel(aitemtype);
  end;
  with acontext^ do begin
-  if lf_allconst in d.list.flags then begin
+  if isallconst then begin
    initdatacontext(d,ck_const);
    podata1:= initopenarrayconst(d.dat.constval,itemcount1,
                                                 itemtype1^.h.bytesize);
@@ -251,7 +278,22 @@ begin
    end;
   end
   else begin
-   notimplementederror('');
+   initfactcontext(acontext);
+   with insertitem(oc_listtoopenar,poitem1,0,
+               itemcount1*getssa(ocssa_listtoopenaritem))^.par do begin 
+                                       //at start of next context
+    listinfo.allocs:= alloc1;
+    listinfo.alloccount:= itemcount1;
+    setimmint32(itemtype1^.h.bytesize,listinfo.itemsize);
+    setimmint32(itemcount1-1,listtoopenar.allochigh);
+    if co_llvm in info.compileoptions then begin
+     listtoopenar.arraytype:= info.s.unitinfo^.llvmlists.typelist.addbytevalue(
+                                            itemcount1*itemtype1^.h.bytesize);
+     listtoopenar.itemtype:= getopdatatype(itemtype1,
+                                              itemtype1^.h.indirectlevel);
+    end;
+    d.dat.fact.ssaindex:= ssad;
+   end;
   end;
   d.dat.datatyp.flags:= [];
   d.dat.datatyp.typedata:= ele.eledatarel(po1);

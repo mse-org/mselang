@@ -235,6 +235,7 @@ function getfactstart(const astackindex: int32;
 procedure initdatacontext(var acontext: contextdataty;
                                              const akind: contextkindty);
 procedure initfactcontext(const stackoffset: int32);
+procedure initfactcontext(const acontext: pcontextitemty);
 procedure initblockcontext(const stackoffset: int32);
 procedure newblockcontext(const stackoffset: int32);
 procedure finiblockcontext(const stackoffset: int32);
@@ -2264,6 +2265,12 @@ begin
    d.dat.fact.ssaindex:= getcontextssa(stackoffset);
   end;
  end;
+end;
+
+procedure initfactcontext(const acontext: pcontextitemty);
+begin
+ initfactcontext(((acontext-pcontextitemty(info.contextstack)) - 
+                                   info.s.stackindex) - info.s.stackindex);
 end;
 
 procedure initblockcontext(const stackoffset: int32);

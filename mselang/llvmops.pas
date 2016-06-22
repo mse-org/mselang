@@ -1493,6 +1493,31 @@ begin
  end;
 end;
 
+procedure listtoopenarop();
+var
+ po1,poe: plistitemallocinfoty;
+ i1: int32;
+begin
+ with pc^.par do begin
+  bcstream.emitalloca(bcstream.ptypeval(listtoopenar.arraytype)); //1 ssa
+  bcstream.emitbitcast(bcstream.relval(0),bcstream.typeval(das_pointer));
+                                                                  //1 ssa
+  i1:= bcstream.relval(0);
+  po1:= getsegmentpo(seg_localloc,listinfo.allocs);
+  poe:= po1 + listinfo.alloccount;
+  while po1 < poe do begin
+   bcstream.emitbitcast(bcstream.relval(0),
+                   bcstream.ptypeval(listtoopenar.itemtype));     //1 ssa
+   bcstream.emitstoreop(bcstream.ssaval(po1^.ssaindex),bcstream.relval(0));
+   bcstream.emitgetelementptr(bcstream.relval(0),
+                         bcstream.constval(listinfo.itemsize));   //2 ssa
+   inc(po1);
+  end;
+  callcompilersub(cs_arraytoopenar,true,
+                [bcstream.constval(listtoopenar.allochigh),i1]);  //1 ssa
+ end;
+end;
+
 procedure not1op();
 begin
  with pc^.par do begin
@@ -3756,6 +3781,7 @@ const
   chartostring8ssa = 1;
   arraytoopenarssa = 1;
   dynarraytoopenarssa = 1;
+  listtoopenarssa = 3;
 
   not1ssa = 1;
   not32ssa = 1;
@@ -4146,6 +4172,7 @@ const
   pushsegaddrglobvarssa = 1;
   pushsegaddrglobconstssa = 3;
   pushsegaddrclassdefssa = 3;
+  listtoopenaritemssa = 3;
   
 {$include optable.inc}
 

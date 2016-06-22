@@ -2076,6 +2076,11 @@ begin
  end;
 end;
 
+procedure listtoopenarop();
+begin
+ notimplemented();
+end;
+
 procedure not1op();
 var
  po1: pointer;
@@ -4284,6 +4289,7 @@ const
   chartostring8ssa = 0;
   arraytoopenarssa = 0;
   dynarraytoopenarssa = 0;
+  listtoopenarssa = 0;
 
   not1ssa = 0;
   not32ssa = 0;
@@ -4674,6 +4680,7 @@ const
   pushsegaddrglobvarssa = 0;
   pushsegaddrglobconstssa = 0;
   pushsegaddrclassdefssa = 0;
+  listtoopenaritemssa = 0;
     
 {$include optable.inc}
 

@@ -205,6 +205,7 @@ type
   oc_chartostring8,
   oc_arraytoopenar,
   oc_dynarraytoopenar,
+  oc_listtoopenar,
   
   oc_not1,
   oc_not32,
@@ -577,7 +578,8 @@ type
   ocssa_pushsegaddrnil,
   ocssa_pushsegaddrglobvar,
   ocssa_pushsegaddrglobconst,
-  ocssa_pushsegaddrclassdef
+  ocssa_pushsegaddrclassdef,
+  ocssa_listtoopenaritem //per item
  );
  
  v8ty = array[0..0] of byte;
@@ -855,6 +857,22 @@ type
 //  varalloccount: integer;
  end;
 
+ listitemallocinfoty = record
+  ssaindex: int32;
+ end;
+ plistitemallocinfoty = ^listitemallocinfoty;
+ 
+ listinfoty = record
+  allocs: dataoffsty;
+  alloccount: int32;
+  itemsize: int32; //in byte, constid for llvm
+ end;
+ listtoopenarty = record
+  arraytype: int32; //llvm type id
+  itemtype: typeallocinfoty;
+  allochigh: int32; //llvm constid
+ end;
+ 
 const
  nullallocs: suballocinfoty = (
   allocs: 0;
@@ -943,6 +961,7 @@ const
 
  subops = [oc_call,oc_callfunc,oc_callout,oc_callfuncout,
            oc_callvirt,oc_callintf,oc_callindi,oc_callfuncindi];
+                                    //have subinfo record
  callops = subops + [
   oc_raise,
   oc_writeln,
@@ -975,7 +994,8 @@ const
   oc_initclass,
   oc_destroyclass
  ];
-
+ listops = [oc_listtoopenar];                     //have listinfo record
+ 
 type
      //todo: unify, variable size, maybe use objects instead of records
  opparamty = record
@@ -1146,7 +1166,7 @@ type
     subend: subendty;
    );
    oc_call,oc_callfunc,oc_callout,oc_callvirt,oc_callintf,
-   oc_callindi,oc_callfuncindi:(
+   oc_callindi,oc_callfuncindi:(                               //subops
     callinfo: callinfoty;
    );
    oc_locvarpush,oc_locvarpop,oc_return,oc_returnfunc:(
@@ -1155,6 +1175,13 @@ type
 //     oc_returnfunc:(
 //      returnfuncinfo: returnfuncinfoty;
 //     );
+   );
+   oc_listtoopenar:(                                           //listops
+    listinfo: listinfoty;
+    case opcodety of
+     oc_listtoopenar:(
+      listtoopenar: listtoopenarty;
+     );
    );
    oc_initclass:(
     initclass: initclassinfoty;

@@ -1,0 +1,18 @@
+program setparam;
+
+type
+ enuty = (en_0,en_1,en_2);
+ setty = set of enuty;
+
+function test(p: setty): int32;
+begin
+ result:= int32(p);
+end;
+
+var
+ e: enuty;
+ s: setty;
+begin
+ e:= en_0;
+ exitcode:= 123 + test([e,en_2]) - 5;
+end.

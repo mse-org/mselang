@@ -330,6 +330,8 @@
   (ssa: arraytoopenarssa; proc: @arraytoopenarop; flags: []), 
 //oc_dynarraytoopenar
   (ssa: dynarraytoopenarssa; proc: @dynarraytoopenarop; flags: []), 
+//oc_listtoopenar
+  (ssa: listtoopenarssa; proc: @listtoopenarop; flags: []), 
 
 //oc_not1
   (ssa: not1ssa; proc: @not1op; flags: []), 
@@ -1001,5 +1003,7 @@
 //oc_pushsegaddrglobconst
   (ssa: pushsegaddrglobconstssa; proc: nil; flags: []), 
 //oc_pushsegaddrclassdef
-  (ssa: pushsegaddrclassdefssa; proc: nil; flags: []) 
+  (ssa: pushsegaddrclassdefssa; proc: nil; flags: []),
+//ocssa_listtoopenaritem
+  (ssa: listtoopenaritemssa; proc: nil; flags: []) 
  );
