@@ -1030,7 +1030,7 @@ begin
     dk_dynarray,dk_string8: begin
      if kind1 = dk_string8 then begin
       include(d.handlerflags,hf_needsunique);
-      d.dat.fact.opoffset:= getcontextopoffset(-1); //for needsunique call
+      d.dat.fact.opoffset:= getcontextopcount(-1); //for needsunique call
      end;
      dec(d.dat.indirection);
      dec(d.dat.datatyp.indirectlevel);

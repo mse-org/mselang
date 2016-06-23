@@ -1288,7 +1288,7 @@ var
 
 var
  po1: popinfoty;
- po3: ptypedataty;
+ resulttype1: ptypedataty;
  subparams1,subparamse: pelementoffsetty;
  po7: pelementinfoty;
  totparamco: integer; //including internal params
@@ -1365,6 +1365,7 @@ var
  indpo,itempo1{,pe}: pcontextitemty;
  stacksize: int32;
  isfactcontext: boolean;
+ opoffset1: int32;
 label
  paramloopend;
 begin
@@ -1489,7 +1490,8 @@ begin
      if hasresult then begin
       initfactcontext(0); //set ssaindex
       if sf_constructor in asub^.flags then begin  //needs oc_initclass
-       bo1:= findkindelementsdata(1,[],allvisi,po3,firstnotfound1,idents1,1);
+       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
+                                                    firstnotfound1,idents1,1);
                                            //get class type
       {$ifdef mse_checkinternalerror}
        if not bo1 then begin 
@@ -1497,18 +1499,18 @@ begin
        end;
       {$endif}     
        with insertitem(oc_initclass,0,-1)^,par.initclass do begin
-        classdef:= po3^.infoclass.defs.address;
+        classdef:= resulttype1^.infoclass.defs.address;
        end;
        instancessa:= d.dat.fact.ssaindex; //for sf_constructor
       end
       else begin
-       po3:= ele.eledataabs(asub^.resulttype.typeele);
+       resulttype1:= ele.eledataabs(asub^.resulttype.typeele);
        inc(subparams1);
       end;
       d.kind:= ck_subres;
       d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
-      d.dat.datatyp.typedata:= ele.eledatarel(po3);        
-      d.dat.fact.opdatatype:= getopdatatype(po3,d.dat.datatyp.indirectlevel);
+      d.dat.datatyp.typedata:= ele.eledatarel(resulttype1);        
+      d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
      end;
  
      checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
@@ -1530,6 +1532,8 @@ begin
       end;
       inc(subparams1); //first param
      end;
+     opoffset1:= getcontextopcount(0);
+(*
      if co_mlaruntime in compileoptions then begin
       stacksize:= 0;
       i1:= 0;  //current stackindex
@@ -1540,7 +1544,8 @@ begin
         stacksize:= vpointersize;
        end;
        stacksize:= stacksize + 
-                 pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,po3); 
+                 pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,
+                                                               resulttype1); 
                                             //alloc space for return value
        with insertitem(oc_pushstackaddr,0,-1)^.
                                       par.memop.tempdataaddress do begin
@@ -1562,6 +1567,7 @@ begin
        end;
       end;
      end;
+*)
      paramsize1:= 0;
      realparamco:= asub^.paramcount-(totparamco-paramco);
      parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
@@ -1596,6 +1602,44 @@ begin
        dec(i1);
       end;
       dodefaultparams();
+     end;
+     
+     if co_mlaruntime in compileoptions then begin
+      stacksize:= 0;
+//      i1:= 0;  //current stackindex
+      i2:= opoffset1; //insert result space at end of statement
+      if hasresult then begin
+       if sf_method in asub^.flags then begin
+        i2:= 0; //insert result space before instance
+        stacksize:= vpointersize;
+       end;
+       stacksize:= stacksize + 
+                 pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
+                                                               resulttype1); 
+                                            //alloc space for return value
+       inc(i2);
+       inc(opoffset1);
+       with insertitem(oc_pushstackaddr,0,opoffset1)^.
+                                      par.memop.tempdataaddress do begin
+                                               //result var param
+        a.address:= -stacksize;
+        offset:= 0;
+       end;
+       inc(opoffset1);
+       stacksize:= stacksize + vpointersize;
+      end;
+      if (sf_method in asub^.flags) then begin
+           //param order is [returnvaluepointer],instancepo,{params}
+       with insertitem(oc_pushduppo,0,opoffset1)^ do begin
+        if hasresult then begin
+         par.voffset:= -2*vpointersize;
+        end
+        else begin
+         par.voffset:= -vpointersize;
+        end;
+       end;
+       inc(opoffset1);
+      end;
      end;
 
      if not hasresult then begin

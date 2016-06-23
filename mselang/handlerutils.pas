@@ -124,7 +124,7 @@ procedure updateop(const opsinfo: opsinfoty);
 function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
-function getcontextopoffset(const stackoffset: int32): int32;
+function getcontextopcount(const stackoffset: int32): int32;
             //returns opcount in context
 
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
@@ -1989,6 +1989,11 @@ var
 begin
  with info do begin
   i1:= s.stackindex+stackoffset;
+ {$ifdef mse_checkinternalerror}
+  if (i1 < 0) or (i1 > info.s.stacktop) then begin
+   internalerror(ie_handler,'201606023A');
+  end;
+ {$endif}
   with info.contextstack[i1] do begin
    if i1 >= s.stacktop then begin
     result:= s.ssa.nextindex-1;
@@ -2391,7 +2396,7 @@ begin
  end;
 end;
 
-function getcontextopoffset(const stackoffset: int32): int32;
+function getcontextopcount(const stackoffset: int32): int32;
             //returns opcount in context
 var
  i1: int32;
