@@ -579,7 +579,7 @@ begin
    if abytesize > 0 then begin
     locdatapo:= locdatapo - abytesize;
     with additem(oc_pop)^ do begin
-     par.imm.vsize:= abytesize;
+     par.imm.vsize:= alignsize(abytesize);
     end;
    end;
   end;

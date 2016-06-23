@@ -1373,8 +1373,8 @@ var
 
 var
  realparamco: int32; //including defaults
- poparams,indpo,itempo1{,pe}: pcontextitemty;
- stacksize,resultsize: int32;
+ {poparams,}indpo,poitem1{,pe}: pcontextitemty;
+ stacksize,resultsize,tempsize: int32;
  isfactcontext: boolean;
  opoffset1: int32;
 label
@@ -1414,16 +1414,16 @@ begin
      bo1:= false;
      if (totparamco >= subdata1^.paramcount - subdata1^.defaultparamcount) and
                 (totparamco <= subdata1^.paramcount) then begin 
-      itempo1:= indpo+2;
+      poitem1:= indpo+2;
       while subparams1 < subparamse do begin //find best parameter match
-       if not getnextnospace(itempo1+1,itempo1) then begin
-        itempo1:= nil; //needs default param
+       if not getnextnospace(poitem1+1,poitem1) then begin
+        poitem1:= nil; //needs default param
         break;
        end;
        vardata1:= ele.eledataabs(subparams1^);
        bo1:= bo1 or (vardata1^.address.flags * [af_paramvar,af_paramout] <> []);
        if (vardata1^.vf.typ = 0) or 
-             not checkcompatibledatatype(itempo1,
+             not checkcompatibledatatype(poitem1,
                         vardata1^.vf.typ,vardata1^.address,[],i2) then begin
                                                            //report byvalue,
                                                            //byaddress dup
@@ -1436,7 +1436,7 @@ begin
        inc(subparams1);
 //       inc(i1);
       end;
-      if itempo1 = nil then begin
+      if poitem1 = nil then begin
        inc(i3);      //needs default params
       end;
       if i3 < cost1 then begin
@@ -1492,207 +1492,207 @@ begin
                                          //todo: use correct source pos
      identerror(datatoele(asub)^.header.name,err_wrongnumberofparameters);
      exit;
-    end
-    else begin
-     instancessa:= d.dat.fact.ssaindex; //for sf_method
-     hasresult:= (sf_function in asub^.flags) or 
-           not isfactcontext and 
-           (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
-     if hasresult then begin
-      initfactcontext(0); //set ssaindex
-      if sf_constructor in asub^.flags then begin  //needs oc_initclass
-       bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
-                                                    firstnotfound1,idents1,1);
-                                           //get class type
-      {$ifdef mse_checkinternalerror}
-       if not bo1 then begin 
-        internalerror(ie_handler,'20150325A'); 
-       end;
-      {$endif}     
-       with insertitem(oc_initclass,0,-1)^,par.initclass do begin
-        classdef:= resulttype1^.infoclass.defs.address;
-       end;
-       instancessa:= d.dat.fact.ssaindex; //for sf_constructor
-      end
-      else begin
-       resulttype1:= ele.eledataabs(asub^.resulttype.typeele);
-       inc(subparams1);
+    end;
+    instancessa:= d.dat.fact.ssaindex; //for sf_method
+    hasresult:= (sf_function in asub^.flags) or 
+          not isfactcontext and 
+          (sf_constructor in asub^.flags) and not (dsf_isinherited in aflags);
+    if hasresult then begin
+     initfactcontext(0); //set ssaindex
+     if sf_constructor in asub^.flags then begin  //needs oc_initclass
+      bo1:= findkindelementsdata(1,[],allvisi,resulttype1,
+                                                   firstnotfound1,idents1,1);
+                                          //get class type
+     {$ifdef mse_checkinternalerror}
+      if not bo1 then begin 
+       internalerror(ie_handler,'20150325A'); 
       end;
-      d.kind:= ck_subres;
-      d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
-      d.dat.datatyp.typedata:= ele.eledatarel(resulttype1);        
-      d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
-     end;
- 
-     checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
-                                                              //max
-     parallocstart:= getsegmenttopoffs(seg_localloc);    
- 
-     if sf_function in asub^.flags then begin
-      with pparallocinfoty(
-               allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
-       ssaindex:= 0; //not used
-       size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
+     {$endif}     
+      with insertitem(oc_initclass,0,-1)^,par.initclass do begin
+       classdef:= resulttype1^.infoclass.defs.address;
       end;
-     end;
-     if sf_method in asub^.flags then begin
-      selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
-      with selfpo^ do begin
-       ssaindex:= instancessa;
-       size:= bitoptypes[das_pointer];
-      end;
-      inc(subparams1); //first param
-     end;
-     opoffset1:= getcontextopcount(0);
-(*
-     if co_mlaruntime in compileoptions then begin
-      stacksize:= 0;
-      i1:= 0;  //current stackindex
-      i2:= -1; //insert result space at end of statement
-      if hasresult then begin
-       if sf_method in asub^.flags then begin
-        i2:= 0; //insert result space before instance
-        stacksize:= vpointersize;
-       end;
-       stacksize:= stacksize + 
-                 pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,
-                                                               resulttype1); 
-                                            //alloc space for return value
-       with insertitem(oc_pushstackaddr,0,-1)^.
-                                      par.memop.tempdataaddress do begin
-                                               //result var param
-        a.address:= -stacksize;
-        offset:= 0;
-       end;
-       stacksize:= stacksize + vpointersize;
-      end;
-      if (sf_method in asub^.flags) then begin
-           //param order is [returnvaluepointer],instancepo,{params}
-       with insertitem(oc_pushduppo,0,-1)^ do begin
-        if hasresult then begin
-         par.voffset:= -2*vpointersize;
-        end
-        else begin
-         par.voffset:= -vpointersize;
-        end;
-       end;
-      end;
-     end;
-*)
-     paramsize1:= 0;
-     realparamco:= asub^.paramcount-(totparamco-paramco);
-     parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
-                                  realparamco);
-                                  //including default params
-     itempo1:= @contextstack[paramstart-1]; //before first param
-     i1:= paramco;
-     if dsf_indexedsetter in aflags then begin
-      inc(parallocpo); //second, first index
-      inc(subparams1);
-      while i1 > 1 do begin
-       getnextnospace(itempo1+1,itempo1);
-       doparam(itempo1,subparams1,parallocpo);
-       inc(subparams1);
-       inc(parallocpo);
-       dec(i1);
-      end;
-      dodefaultparams();
-      lastparamsize1:= paramsize1;
-      dec(parallocpo,paramco); //first, value
-      dec(subparams1,paramco);
-      getnextnospace(itempo1+1,itempo1);
-      doparam(itempo1,subparams1,parallocpo); //last
-      lastparamsize1:= paramsize1-lastparamsize1;
+      instancessa:= d.dat.fact.ssaindex; //for sf_constructor
      end
      else begin
-      while i1 > 0 do begin
-       getnextnospace(itempo1+1,itempo1);
-       doparam(itempo1,subparams1,parallocpo);
-       inc(subparams1);
-       inc(parallocpo);
-       dec(i1);
-      end;
-      dodefaultparams();
+      resulttype1:= ele.eledataabs(asub^.resulttype.typeele);
+      inc(subparams1);
      end;
-     
-     if co_mlaruntime in compileoptions then begin
-      poparams:= @contextstack[paramstart];
-      if poparams^.d.kind <> ck_params then begin //no params
-       dec(poparams);
-      end;
-     {$ifdef mse_checkinternalerror}
-      if poparams^.d.kind <> ck_params then begin
-       internalerror(ie_handler,'20160623C');
-      end;
-     {$endif}
-      stacksize:= 0;
-      resultsize:= 0;
-      i2:= opoffset1; //insert result space at end of statement
-      if hasresult then begin
-       if sf_method in asub^.flags then begin
-        i2:= 0; //insert result space before instance
-        stacksize:= vpointersize;
-       end;
-       resultsize:= pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
-                                                               resulttype1);
-       inc(opoffset1);
-       stacksize:= stacksize + resultsize; //alloc space for return value
-      end;
-      if poparams^.d.params.tempsize > 0 then begin
-       with insertitem(oc_push,0,opoffset1)^ do begin
-        par.imm.vsize:= poparams^.d.params.tempsize;
-       end;
-       inc(opoffset1);
-      end;
-      if hasresult then begin
-       with insertitem(oc_pushstackaddr,0,opoffset1)^.
-                                      par.memop.tempdataaddress do begin
-                                               //result var param
-        a.address:= -stacksize-poparams^.d.params.tempsize;
-        offset:= 0;
-       end;
-       inc(opoffset1);
-       stacksize:= stacksize + vpointersize;
-      end;
-      if (sf_method in asub^.flags) then begin
-           //param order is [returnvaluepointer],instancepo,{params}
-       with insertitem(oc_pushduppo,0,opoffset1)^ do begin
-        if hasresult then begin
-         par.voffset:= -2*vpointersize;
-        end
-        else begin
-         par.voffset:= -vpointersize;
-        end;
-       end;
-       inc(opoffset1);
-      end;
-     end;
+     d.kind:= ck_subres;
+     d.dat.datatyp.indirectlevel:= asub^.resulttype.indirectlevel;
+     d.dat.datatyp.typedata:= ele.eledatarel(resulttype1);        
+     d.dat.fact.opdatatype:= getopdatatype(resulttype1,d.dat.datatyp.indirectlevel);
+    end;
 
-     if not hasresult then begin
-      d.kind:= ck_subcall;
-      if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
-                 //owned method
-      {$ifdef mse_checkinternalerror}
-       if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
-        internalerror(ie_value,'20140505A');
-       end;
-      {$else}
-       ele.findcurrent(tk_self,[],allvisi,vardata1);
-      {$endif}
-       with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
-        par.memop.t:= bitoptypes[das_pointer];
-        par.memop.locdataaddress.a.framelevel:= -1;
-        par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
-        par.memop.locdataaddress.offset:= 0;
-        selfpo^.ssaindex:= par.ssad;
+    checksegmentcapacity(seg_localloc,sizeof(parallocinfoty)*asub^.paramcount);
+                                                             //max
+    parallocstart:= getsegmenttopoffs(seg_localloc);    
+
+    if sf_function in asub^.flags then begin
+     with pparallocinfoty(
+              allocsegmentpo(seg_localloc,sizeof(parallocinfoty)))^ do begin
+      ssaindex:= 0; //not used
+      size:= d.dat.fact.opdatatype;//getopdatatype(po3,po3^.indirectlevel);
+     end;
+    end;
+    if sf_method in asub^.flags then begin
+     selfpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty));
+     with selfpo^ do begin
+      ssaindex:= instancessa;
+      size:= bitoptypes[das_pointer];
+     end;
+     inc(subparams1); //first param
+    end;
+    opoffset1:= getcontextopcount(0);
+(*
+    if co_mlaruntime in compileoptions then begin
+     stacksize:= 0;
+     i1:= 0;  //current stackindex
+     i2:= -1; //insert result space at end of statement
+     if hasresult then begin
+      if sf_method in asub^.flags then begin
+       i2:= 0; //insert result space before instance
+       stacksize:= vpointersize;
+      end;
+      stacksize:= stacksize + 
+                pushinsertvar(i1,i2,asub^.resulttype.indirectlevel,
+                                                              resulttype1); 
+                                           //alloc space for return value
+      with insertitem(oc_pushstackaddr,0,-1)^.
+                                     par.memop.tempdataaddress do begin
+                                              //result var param
+       a.address:= -stacksize;
+       offset:= 0;
+      end;
+      stacksize:= stacksize + vpointersize;
+     end;
+     if (sf_method in asub^.flags) then begin
+          //param order is [returnvaluepointer],instancepo,{params}
+      with insertitem(oc_pushduppo,0,-1)^ do begin
+       if hasresult then begin
+        par.voffset:= -2*vpointersize;
+       end
+       else begin
+        par.voffset:= -vpointersize;
        end;
       end;
-      if (dsf_indexedsetter in aflags) and 
-                              (co_mlaruntime in compileoptions) then begin
-       with additem(oc_swapstack)^.par.swapstack do begin
-        offset:= -paramsize1;
-        size:= lastparamsize1;
+     end;
+    end;
+*)
+    if co_mlaruntime in compileoptions then begin
+     stacksize:= 0;
+     resultsize:= 0;
+     i2:= opoffset1; //insert result space at end of statement
+     if hasresult then begin
+      if sf_method in asub^.flags then begin
+       i2:= 0; //insert result space before instance
+       stacksize:= vpointersize;
+      end;
+      resultsize:= pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
+                                                              resulttype1);
+      inc(opoffset1);
+      stacksize:= stacksize + resultsize; //alloc space for return value
+      locdatapo:= locdatapo + resultsize;
+     end;
+    end;
+    paramsize1:= 0;
+    realparamco:= asub^.paramcount-(totparamco-paramco);
+    parallocpo:= allocsegmentpo(seg_localloc,sizeof(parallocinfoty)*
+                                 realparamco);
+                                 //including default params
+    poitem1:= @contextstack[paramstart-1]; //before first param
+    i1:= paramco;
+    if dsf_indexedsetter in aflags then begin
+     inc(parallocpo); //second, first index
+     inc(subparams1);
+     while i1 > 1 do begin
+      getnextnospace(poitem1+1,poitem1);
+      doparam(poitem1,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+      dec(i1);
+     end;
+     dodefaultparams();
+     lastparamsize1:= paramsize1;
+     dec(parallocpo,paramco); //first, value
+     dec(subparams1,paramco);
+     getnextnospace(poitem1+1,poitem1);
+     doparam(poitem1,subparams1,parallocpo); //last
+     lastparamsize1:= paramsize1-lastparamsize1;
+    end
+    else begin
+     while i1 > 0 do begin
+      getnextnospace(poitem1+1,poitem1);
+      doparam(poitem1,subparams1,parallocpo);
+      inc(subparams1);
+      inc(parallocpo);
+      dec(i1);
+     end;
+     dodefaultparams();
+    end;
+    
+    if co_mlaruntime in compileoptions then begin
+     poitem1:= @contextstack[paramstart];
+     if poitem1^.d.kind <> ck_params then begin //no params
+      dec(poitem1);
+     end;
+     tempsize:= 0;
+     if poitem1^.d.kind = ck_params then begin
+      tempsize:= poitem1^.d.params.tempsize;
+     end;
+     if tempsize > 0 then begin
+      with insertitem(oc_push,0,opoffset1)^ do begin
+       par.imm.vsize:= tempsize;
+      end;
+      inc(opoffset1);
+     end;
+     if hasresult then begin
+      with insertitem(oc_pushstackaddr,0,opoffset1)^.
+                                     par.memop.tempdataaddress do begin
+                                              //result var param
+       a.address:= -stacksize-tempsize;
+       offset:= 0;
+      end;
+      inc(opoffset1);
+      stacksize:= stacksize + vpointersize;
+     end;
+     if (sf_method in asub^.flags) then begin
+          //param order is [returnvaluepointer],instancepo,{params}
+      with insertitem(oc_pushduppo,0,opoffset1)^ do begin
+       if hasresult then begin
+        par.voffset:= -2*vpointersize;
+       end
+       else begin
+        par.voffset:= -vpointersize;
        end;
+      end;
+      inc(opoffset1);
+     end;
+    end;
+
+    if not hasresult then begin
+     d.kind:= ck_subcall;
+     if (sf_method in asub^.flags) and (dsf_ownedmethod in aflags) then begin
+                //owned method
+     {$ifdef mse_checkinternalerror}
+      if ele.findcurrent(tks_self,[],allvisi,vardata1) <> ek_var then begin
+       internalerror(ie_value,'20140505A');
+      end;
+     {$else}
+      ele.findcurrent(tk_self,[],allvisi,vardata1);
+     {$endif}
+      with insertitem(oc_pushlocpo,parent-s.stackindex,-1)^ do begin
+       par.memop.t:= bitoptypes[das_pointer];
+       par.memop.locdataaddress.a.framelevel:= -1;
+       par.memop.locdataaddress.a.address:= vardata1^.address.poaddress;
+       par.memop.locdataaddress.offset:= 0;
+       selfpo^.ssaindex:= par.ssad;
+      end;
+     end;
+     if (dsf_indexedsetter in aflags) and 
+                             (co_mlaruntime in compileoptions) then begin
+      with additem(oc_swapstack)^.par.swapstack do begin
+       offset:= -paramsize1;
+       size:= lastparamsize1;
       end;
      end;
     end;
@@ -1821,7 +1821,10 @@ begin
       setimmsize(pointersize,par.imm); //remove call address
      end;
     end;
-    releasetempaddress(poparams^.d.params.tempsize-resultsize);
+    if co_mlaruntime in compileoptions then begin
+     releasetempaddress(tempsize-resultsize);
+     locdatapo:= locdatapo - resultsize;
+    end;
    end;
   end;
  end;
