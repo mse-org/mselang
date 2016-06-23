@@ -3505,6 +3505,9 @@ begin
              ' ma:',d.subdef.match,
                              ' ps:',d.subdef.paramsize,' vs:',d.subdef.varsize);
       end;
+      ck_params: begin
+       write('tempsize:',inttostrmse(d.params.tempsize));
+      end;
       ck_paramdef: begin
        with d.paramdef do begin
         write('kind:',getenumname(typeinfo(kind),ord(kind)),

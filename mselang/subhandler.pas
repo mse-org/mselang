@@ -296,6 +296,7 @@ begin
  with info do begin
   with contextstack[s.stackindex] do begin
    d.kind:= ck_params;
+   d.params.tempsize:= 0;
    b.flags:= s.currentstatementflags;
    include(s.currentstatementflags,stf_params);
   end;

@@ -191,7 +191,7 @@ function listtoopenarray(const acontext: pcontextitemty;
                                          const aitemtype: ptypedataty): boolean;
 var
  poe: pointer;
- poitem1: pcontextitemty;
+ poitem1,poparams: pcontextitemty;
  po1,itemtype1: ptypedataty;
  indilev1,itemcount1: int32;
  podata1: pointer;
@@ -199,7 +199,7 @@ var
  poalloc: plistitemallocinfoty;
  alloc1: dataoffsty;
 begin
-{$ifdef mse_checkinternalerrror}
+{$ifdef mse_checkinternalerror}
  if acontext^.d.kind <> ck_list then begin
   internalerror(ie_handler,'20160612B');
  end;
@@ -214,9 +214,6 @@ begin
   if co_llvm in info.compileoptions then begin
    alloc1:= allocsegmentoffset(seg_localloc,
                          itemcount1*sizeof(listitemallocinfoty),poalloc);
-  end
-  else begin
-   notimplementederror('');
   end;
  end;
 
@@ -280,19 +277,34 @@ begin
   else begin
    initfactcontext(acontext);
    with insertitem(oc_listtoopenar,poitem1,0,
-               itemcount1*getssa(ocssa_listtoopenaritem))^.par do begin 
+               itemcount1*getssa(ocssa_listtoopenaritem))^ do begin
                                        //at start of next context
-    listinfo.allocs:= alloc1;
-    listinfo.alloccount:= itemcount1;
-    setimmint32(itemtype1^.h.bytesize,listinfo.itemsize);
-    setimmint32(itemcount1-1,listtoopenar.allochigh);
-    if co_llvm in info.compileoptions then begin
-     listtoopenar.arraytype:= info.s.unitinfo^.llvmlists.typelist.addbytevalue(
-                                            itemcount1*itemtype1^.h.bytesize);
-     listtoopenar.itemtype:= getopdatatype(itemtype1,
-                                              itemtype1^.h.indirectlevel);
+    with info do begin
+     if co_mlaruntime in compileoptions then begin
+      poparams:= @contextstack[acontext^.parent];
+     {$ifdef mse_checkinternalerror}
+      if poparams^.d.kind <> ck_params then begin
+       internalerror(ie_handler,'20160623B');
+      end;
+     {$endif}
+     end;
     end;
-    d.dat.fact.ssaindex:= ssad;
+    par.listinfo.alloccount:= itemcount1;
+    setimmint32(itemtype1^.h.bytesize,par.listinfo.itemsize);
+    if co_llvm in info.compileoptions then begin
+     par.listinfo.allocs:= alloc1;
+     setimmint32(itemcount1-1,par.listtoopenar.allochigh);
+     par.listtoopenar.arraytype:= info.s.unitinfo^.
+             llvmlists.typelist.addbytevalue(itemcount1*itemtype1^.h.bytesize);
+     par.listtoopenar.itemtype:= getopdatatype(itemtype1,
+                                              itemtype1^.h.indirectlevel);
+    end
+    else begin // co_mlaruntime
+     par.listinfo.tempad:= poparams^.d.params.tempsize;
+     inc(poparams^.d.params.tempsize,
+                                 alignsize(itemcount1*itemtype1^.h.bytesize));
+    end;
+    d.dat.fact.ssaindex:= par.ssad;
    end;
   end;
   d.dat.datatyp.flags:= [];

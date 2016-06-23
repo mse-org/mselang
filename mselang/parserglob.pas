@@ -130,7 +130,6 @@ const
  factcontexts = [ck_fact,ck_reffact,ck_subres];
 
 type 
- backendty = (bke_direct,bke_llvm);
  compileoptionty = (co_mlaruntime, //mla interpreter
                     co_llvm,co_hasfunction,
                     co_writeunits,     //write unitfiles
@@ -281,6 +280,7 @@ type
  end;
  
  paramsinfoty = record
+  tempsize: int32;
 //  flagsbefore: statementflagsty;
  end;
 {

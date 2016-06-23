@@ -21,6 +21,8 @@ uses
  globtypes,msestrings;
  
 type
+ backendty = (bke_direct,bke_llvm);
+
  addressbasety = (ab_segment,ab_local{ab_frame},ab_reg0,ab_stack,ab_stackref);
 {
  addressrefty = record
@@ -863,9 +865,15 @@ type
  plistitemallocinfoty = ^listitemallocinfoty;
  
  listinfoty = record
-  allocs: dataoffsty;
   alloccount: int32;
   itemsize: int32; //in byte, constid for llvm
+  case backendty of
+   bke_llvm: (
+    allocs: dataoffsty;
+   );
+   bke_direct: (
+    tempad: int32; //frame relative
+   );
  end;
  listtoopenarty = record
   arraytype: int32; //llvm type id
@@ -1005,10 +1013,10 @@ type
   case opcodety of 
    oc_label,oc_goto,oc_gotofalse,oc_gototrue,oc_if,oc_while,oc_until,
    oc_decloop32,oc_decloop64, //controlops
-   oc_pushcpucontext,oc_popcpucontext:(
+   oc_pushcpucontext,oc_popcpucontext: (
     opaddress: labty; //first!
    );
-   oc_phi:(
+   oc_phi: (
     phi: phity;
    );
    oc_setmem,oc_memcpy: (
@@ -1055,7 +1063,7 @@ type
    oc_cmpjmpgtimm4: (
     cmpjmpimm: cmpjmpimmty;
    );
-   oc_movesegreg0:(
+   oc_movesegreg0: (
     vsegment: segmentty;
    );
    oc_storelocnil,oc_storereg0nil,oc_storestacknil,oc_storestackrefnil,
@@ -1071,10 +1079,10 @@ type
    oc_writechar8,oc_writestring8,
    oc_writepointer,oc_writeclass,oc_writeenum,
    {oc_pushstackaddrindi,}oc_pushduppo,
-   oc_indirectpooffs,oc_indirectoffspo:(
+   oc_indirectpooffs,oc_indirectoffspo: (
     voffset: dataoffsty;
     case opcodety of
-     oc_writeenum{,oc_pushstackaddrindi}:(
+     oc_writeenum{,oc_pushstackaddrindi}: (
       voffsaddress: dataaddressty;
      );
    );
@@ -1113,7 +1121,7 @@ type
    oc_cmpltbool,oc_cmpltint32,oc_cmpltflo64,
    oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64,
-   oc_setcontains,oc_setin:(
+   oc_setcontains,oc_setin: (
     stackop: stackopty;
    );
    {oc_pushstack8,oc_pushstack16,oc_pushstack32,oc_pushstack64,oc_pushstackpo,}
