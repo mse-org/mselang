@@ -300,9 +300,8 @@ begin
                                               itemtype1^.h.indirectlevel);
     end
     else begin // co_mlaruntime
-     par.listinfo.tempad:= poparams^.d.params.tempsize;
-     inc(poparams^.d.params.tempsize,
-                                 alignsize(itemcount1*itemtype1^.h.bytesize));
+     par.listinfo.tempad:= gettempaddress(itemcount1*itemtype1^.h.bytesize,
+                         poparams^.d.params.tempsize).tempaddress;
     end;
     d.dat.fact.ssaindex:= par.ssad;
    end;
@@ -1374,8 +1373,8 @@ var
 
 var
  realparamco: int32; //including defaults
- indpo,itempo1{,pe}: pcontextitemty;
- stacksize: int32;
+ poparams,indpo,itempo1{,pe}: pcontextitemty;
+ stacksize,resultsize: int32;
  isfactcontext: boolean;
  opoffset1: int32;
 label
@@ -1617,24 +1616,39 @@ begin
      end;
      
      if co_mlaruntime in compileoptions then begin
+      poparams:= @contextstack[paramstart];
+      if poparams^.d.kind <> ck_params then begin //no params
+       dec(poparams);
+      end;
+     {$ifdef mse_checkinternalerror}
+      if poparams^.d.kind <> ck_params then begin
+       internalerror(ie_handler,'20160623C');
+      end;
+     {$endif}
       stacksize:= 0;
-//      i1:= 0;  //current stackindex
+      resultsize:= 0;
       i2:= opoffset1; //insert result space at end of statement
       if hasresult then begin
        if sf_method in asub^.flags then begin
         i2:= 0; //insert result space before instance
         stacksize:= vpointersize;
        end;
-       stacksize:= stacksize + 
-                 pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
-                                                               resulttype1); 
-                                            //alloc space for return value
-       inc(i2);
+       resultsize:= pushinsertvar(0,i2,asub^.resulttype.indirectlevel,
+                                                               resulttype1);
        inc(opoffset1);
+       stacksize:= stacksize + resultsize; //alloc space for return value
+      end;
+      if poparams^.d.params.tempsize > 0 then begin
+       with insertitem(oc_push,0,opoffset1)^ do begin
+        par.imm.vsize:= poparams^.d.params.tempsize;
+       end;
+       inc(opoffset1);
+      end;
+      if hasresult then begin
        with insertitem(oc_pushstackaddr,0,opoffset1)^.
                                       par.memop.tempdataaddress do begin
                                                //result var param
-        a.address:= -stacksize;
+        a.address:= -stacksize-poparams^.d.params.tempsize;
         offset:= 0;
        end;
        inc(opoffset1);
@@ -1807,6 +1821,7 @@ begin
       setimmsize(pointersize,par.imm); //remove call address
      end;
     end;
+    releasetempaddress(poparams^.d.params.tempsize-resultsize);
    end;
   end;
  end;

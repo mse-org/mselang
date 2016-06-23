@@ -194,6 +194,15 @@ begin
  end;
 end;
 
+function gettempaddress(const aaddress: tempaddressty): pointer; 
+                                          {$ifdef mse_inline}inline;{$endif}
+var
+ i1: integer;
+ po1: pointer;
+begin
+ result:= cpu.frame + aaddress.address; //offset?
+end;
+
 function getlocaddressindi(const aaddress: memopty): pointer; 
                                           {$ifdef mse_inline}inline;{$endif}
 var
@@ -2077,8 +2086,59 @@ begin
 end;
 
 procedure listtoopenarop();
+var
+ pd,pe,ps,po1: pointer;
+ i1,i2: int32;
 begin
- notimplemented();
+ with cpu.pc^.par do begin
+  i1:= listinfo.itemsize;
+  i2:= alignsize(i1);
+  po1:= gettempaddress(listinfo.tempad);
+  pd:= po1;
+  pe:= pd + listinfo.alloccount * i1;
+  ps:= cpu.stack - listinfo.alloccount * i2;
+  case listinfo.itemsize of
+   1: begin
+    while pd < pe do begin
+     pcard8(pd)^:= pcard8(ps)^;
+     inc(pd,i1);
+     inc(ps,i2);
+    end;
+   end;
+   2: begin
+    while pd < pe do begin
+     pcard16(pd)^:= pcard16(ps)^;
+     inc(pd,i1);
+     inc(ps,i2);
+    end;
+   end;
+   4: begin
+    while pd < pe do begin
+     pcard32(pd)^:= pcard32(ps)^;
+     inc(pd,i1);
+     inc(ps,i2);
+    end;
+   end;
+   8: begin
+    while pd < pe do begin
+     pcard64(pd)^:= pcard64(ps)^;
+     inc(pd,i1);
+     inc(ps,i2);
+    end;
+   end;
+   else begin
+    while pd < pe do begin
+     move(ps^,pd^,i1);
+     inc(pd,i1);
+     inc(ps,i2);
+    end;
+   end;
+  end;
+  with popenarrayty(stackpush(sizeof(openarrayty)))^ do begin
+   high:=  listinfo.alloccount-1;
+   data:= ptrint(po1);
+  end;
+ end;
 end;
 
 procedure not1op();

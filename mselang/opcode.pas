@@ -41,6 +41,8 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
 function getpointertempaddress(): addressvaluety;
 procedure releasepointertempaddress();
 function gettempaddress(const asize: databitsizety): addressvaluety;
+function gettempaddress(const abytesize: int32;
+                                       var atotsize: int32): addressvaluety;
 procedure releasetempaddress(const asize: databitsizety);
 procedure releasetempaddress(const asize: array of databitsizety);
 procedure releasetempaddress(const abytesize: int32);
@@ -549,13 +551,36 @@ begin
  end;
 end;
 
+function gettempaddress(const abytesize: int32;
+                                       var atotsize: int32): addressvaluety;
+var
+ i1: int32;
+begin
+ with info do begin
+  result.flags:= [af_temp];
+  result.indirectlevel:= 0;
+  if not (co_llvm in compileoptions) then begin
+   result.tempaddress.address:= locdatapo - info.frameoffset;
+   i1:= alignsize(abytesize);
+   locdatapo:= locdatapo + i1;
+   atotsize:= atotsize + i1;
+  end
+  else begin
+   result.tempaddress.ssaindex:= info.s.ssa.nextindex-1;
+                 //last result
+  end;
+ end;
+end;
+
 procedure releasetempaddress(const abytesize: int32);
 begin
  with info do begin
   if not (co_llvm in compileoptions) then begin
-   locdatapo:= locdatapo - abytesize;
-   with additem(oc_pop)^ do begin
-    par.imm.vsize:= abytesize;
+   if abytesize > 0 then begin
+    locdatapo:= locdatapo - abytesize;
+    with additem(oc_pop)^ do begin
+     par.imm.vsize:= abytesize;
+    end;
    end;
   end;
  end;

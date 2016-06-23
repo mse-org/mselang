@@ -728,7 +728,7 @@ begin
    result:= pointersize;
   end
   else begin
-   result:= atype^.h.bytesize; //todo: alignment
+   result:= alignsize(atype^.h.bytesize);
   end;
   setimmsize(result,par.imm);
  end;

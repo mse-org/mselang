@@ -872,7 +872,7 @@ type
     allocs: dataoffsty;
    );
    bke_direct: (
-    tempad: int32; //frame relative
+    tempad: tempaddressty; //frame relative
    );
  end;
  listtoopenarty = record
