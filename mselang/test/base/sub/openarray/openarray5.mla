@@ -1,0 +1,11 @@
+program openarray5;
+
+function test(p: array of int32): int32;
+begin
+ result:= high(p)+p[2];
+end;
+var
+ i1: int32;
+begin
+ exitcode:= test([1,i1,3]) + 123 - 2 - 3;
+end.

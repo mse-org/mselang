@@ -2087,7 +2087,7 @@ end;
 
 procedure listtoopenarop();
 var
- pd,pe,ps,po1: pointer;
+ pd,pe,ps,po1,po2: pointer;
  i1,i2: int32;
 begin
  with cpu.pc^.par do begin
@@ -2096,7 +2096,8 @@ begin
   po1:= gettempaddress(listinfo.tempad);
   pd:= po1;
   pe:= pd + listinfo.alloccount * i1;
-  ps:= cpu.stack - listinfo.alloccount * i2;
+  po2:= cpu.stack - listinfo.alloccount * i2;
+  ps:= po2;
   case listinfo.itemsize of
    1: begin
     while pd < pe do begin
@@ -2134,6 +2135,7 @@ begin
     end;
    end;
   end;
+  cpu.stack:= po2; //remove list
   with popenarrayty(stackpush(sizeof(openarrayty)))^ do begin
    high:=  listinfo.alloccount-1;
    data:= ptrint(po1);

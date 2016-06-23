@@ -2274,8 +2274,8 @@ end;
 
 procedure initfactcontext(const acontext: pcontextitemty);
 begin
- initfactcontext(((acontext-pcontextitemty(info.contextstack)) - 
-                                   info.s.stackindex) - info.s.stackindex);
+ initfactcontext((acontext-pcontextitemty(info.contextstack)) - 
+                                                       info.s.stackindex);
 end;
 
 procedure initblockcontext(const stackoffset: int32);

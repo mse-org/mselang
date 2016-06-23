@@ -1822,7 +1822,7 @@ begin
      end;
     end;
     if co_mlaruntime in compileoptions then begin
-     releasetempaddress(tempsize-resultsize);
+     releasetempaddress(tempsize);
      locdatapo:= locdatapo - resultsize;
     end;
    end;
