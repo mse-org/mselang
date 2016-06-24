@@ -1165,7 +1165,7 @@ begin
      dec(var1^.address.locaddress.address,frameoffset);
      curparam^:= ptruint(var1)-eledatabase;
      if tf_needsmanage in var1^.vf.flags then begin
-      writemanagedvarop(mo_incref,var1);
+//      writemanagedvarop(mo_incref,var1);
 //      writemanagedtypeop(mo_incref,ptypedataty(ele.eledataabs(var1^.vf.typ)),
 //                                                        var1^.address);
       var1^.vf.next:= sub1^.paramfinichain;
@@ -1547,6 +1547,9 @@ begin
   if stf_needsmanage in s.currentstatementflags then begin
    writemanagedvarop(mo_ini,po1^.varchain);
   end;           //todo: implicit try-finally
+  if po1^.paramfinichain <> 0 then begin
+   writemanagedvarop(mo_incref,po1^.paramfinichain);
+  end;          
  end;
 end;
 
