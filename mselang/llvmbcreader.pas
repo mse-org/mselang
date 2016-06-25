@@ -244,7 +244,7 @@ const
   'PARAMATTR_GROUP_BLOCK',
   'CONSTANTS_BLOCK',
   'FUNCTION_BLOCK',
-  'UNUSED_BLOCK',
+  'IDENTIFICATION_BLOCK',
   'VALUE_SYMTAB_BLOCK',
   'METADATA_BLOCK',
   'METADATA_ATTACHMENT',
@@ -1151,6 +1151,10 @@ begin
    end
    else begin
     case modulecodes(rec1[1]) of
+     MODULE_CODE_TRIPLE,MODULE_CODE_DATALAYOUT: begin
+      outrecord(modulecodenames[modulecodes(rec1[1])],
+                                         [valueartostring(rec1,2)]);
+     end;
      MODULE_CODE_GLOBALVAR: begin
      //    2            3         4
      //[pointer type, isconst, initid,
@@ -2383,6 +2387,13 @@ var
   endblock();
  end; //unknownblock
 
+ procedure skipblock();
+ begin
+  output(ok_beginend,blockidnames[blockids(blockid)]);
+  skip(blocklen);
+  endblock();
+ end; //unknownblock
+
 begin
  readblockheader(blockid,newabbrevlen,blocklen);
  beginblock(blockid,newabbrevlen);
@@ -2428,6 +2439,9 @@ begin
    end;
    USELIST_BLOCK_ID: begin
     readuselistblock();
+   end;
+   IDENTIFICATION_BLOCK_ID: begin
+    skipblock();
    end;
    else begin
     unknownblock();

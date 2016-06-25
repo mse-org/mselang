@@ -15,7 +15,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-{ MSElang Copyright (c) 2014-2015 by Martin Schreiber
+{ MSElang Copyright (c) 2014-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ type
     CONSTANTS_BLOCK_ID,          //11
     FUNCTION_BLOCK_ID,           //12
 
-    UNUSED_ID1,                  //13
+    IDENTIFICATION_BLOCK_ID,     //13
 
     VALUE_SYMTAB_BLOCK_ID,       //14
     METADATA_BLOCK_ID,           //15

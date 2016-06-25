@@ -461,7 +461,9 @@ begin
  with info.s.unitinfo^ do begin
   unitheader1.guid:= filematch.guid;
   with llvmlists do begin
-   bcstream.start(constlist,globlist,metadatalist,unitheader1);
+   bcstream.start(constlist,globlist,metadatalist,unitheader1,
+                     'e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128',
+                     'i386-unknown-linux-gnu'); //todo: real values
   end;
  end;
 end;

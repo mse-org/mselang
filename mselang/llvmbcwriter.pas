@@ -63,6 +63,8 @@ type
    ftrampolineop: popinfoty;
    fstartpos: int32;
   protected
+   fdatalayout: string;
+   ftriple: string;
 //   fmetadata: tmetadatalist;
    fmetadatatype: int32;
    fconstseg: int32;
@@ -116,7 +118,9 @@ type
    procedure start(const consts: tconsthashdatalist;
                     const globals: tgloballocdatalist;
                     const metadata: tmetadatalist;
-                    const unitheader: bcunitinfoty);
+                    const unitheader: bcunitinfoty;
+                    const adatalayout: string;
+                    const atriple: string);
    procedure stop();
    procedure flushbuffer(); override;
    function bitpos(): int32;
@@ -412,7 +416,9 @@ end;
 procedure tllvmbcwriter.start(const consts: tconsthashdatalist;
                               const globals: tgloballocdatalist;
                               const metadata: tmetadatalist;
-                              const unitheader: bcunitinfoty);
+                              const unitheader: bcunitinfoty;
+                              const adatalayout: string;
+                              const atriple: string);
 var
  id1: int32;
  
@@ -440,6 +446,8 @@ var
  separator1: char;
  wrap: bcunitheaderty;
 begin
+ fdatalayout:= adatalayout;
+ ftriple:= atriple;
  fstartpos:= position;
  wrap.wrap.magic:= bcheadermagic;
  wrap.wrap.version:= bcheaderversion;
@@ -476,6 +484,9 @@ begin
  emitdata(mabmods);
 
  emitrec(ord(MODULE_CODE_VERSION),[1]);
+ emitrec(ord(MODULE_CODE_DATALAYOUT),length(fdatalayout),
+                                       pcard8(pointer(fdatalayout)));
+ emitrec(ord(MODULE_CODE_TRIPLE),length(ftriple),pcard8(pointer(ftriple)));
  
  fconststart:= globals.count;
  fsubstart:= globals.count+consts.count;
@@ -1588,7 +1599,7 @@ begin
  emitrec(ord(FUNC_CODE_INST_CAST),[fsubopindex-avalue,typeval(das_pointer),
                                                    ord(CAST_BITCAST)]);
  checkdebugloc();
- inc(fsubopindex);
+ inc(fsubopindex);                //no inbounds
  emitrec(ord(FUNC_CODE_INST_GEP),[0,typeval(das_8),
                                                 1,fsubopindex-aoffset]);
  checkdebugloc();
