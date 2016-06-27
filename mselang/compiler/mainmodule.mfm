@@ -37,6 +37,17 @@ object mainmo: tmainmo
       )
       (
         ak_par
+        '-nocompilerunit'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_par
         'd'
         (        )
         []

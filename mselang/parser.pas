@@ -1023,14 +1023,12 @@ begin
      po1:= info.systemunit;
      setlength(unit1^.interfaceuses,1);
      unit1^.interfaceuses[0]:= po1;
-    {$ifndef mse_nocompilerunit}
-     result:= parsecompilerunit(compilerunitname,unit2);
-     if result then begin
-    {$endif}
-      result:= parseunit(input,unit1,false);
-    {$ifndef mse_nocompilerunit}
+     if not (co_nocompilerunit in aoptions) then begin
+      result:= parsecompilerunit(compilerunitname,unit2);
      end;
-    {$endif}
+     if result then begin
+      result:= parseunit(input,unit1,false);
+     end;
     end;
     endparser();
 //    mainmetadatalist:= unit1^.metadatalist;

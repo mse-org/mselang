@@ -28,8 +28,7 @@ uses
  msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode;
 
 const
- llvmbindir = 
-     '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+ llvmbindir = '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
 type
  it = interface(ievent)
  end;
@@ -56,6 +55,7 @@ type
    proginfoed: tbooleanedit;
    nameed: tbooleanedit;
    opted: tstringedit;
+   nocompilerunited: tbooleanedit;
    procedure parseexe(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
@@ -104,7 +104,7 @@ begin
  outstream:= ttextstream.create;
  initio(outstream,errstream);
  if llvm.value then begin
-  compoptions:= llvmcompileoptions;
+	  compoptions:= llvmcompileoptions;
   if lineinfoed.value then begin
    include(compoptions,co_lineinfo);
   end;
@@ -123,6 +123,9 @@ begin
  end;
  if rrtued.value then begin
   include(compoptions,co_readunits);
+ end;
+ if nocompilerunited.value then begin
+  include(compoptions,co_nocompilerunit);
  end;
  dirbefore:= setcurrentdirmse(filedir(filena.value));
  try

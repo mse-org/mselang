@@ -131,6 +131,7 @@ const
 
 type 
  compileoptionty = (co_mlaruntime, //mla interpreter
+                    co_nocompilerunit,
                     co_llvm,co_hasfunction,
                     co_writeunits,     //write unitfiles
                     co_readunits,      //read unitfiles
