@@ -49,7 +49,8 @@ procedure findunitfile(var aname: filenamety);
 var
  mstr1: msestring;
 begin
- if not findfile(aname,info.o.unitdirs,aname) then begin
+ if not findfile(aname) and //current dir
+           not findfile(aname,info.o.unitdirs,aname) then begin
   aname:= '';
  end;
 end;
