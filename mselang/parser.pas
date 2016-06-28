@@ -34,6 +34,7 @@ const
  contextstackreserve = 16; //guaranteed available above stacktop in handlers
 
 
+procedure resetinfo();
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
   
 function parse(const input: string; const afilename: filenamety;
@@ -1050,7 +1051,7 @@ begin
 //    mainmetadatalist:= unit1^.metadatalist;
 //    unit1^.metadatalist:= nil;
    finally
-    system.finalize(info);
+//    system.finalize(info);
     deinit(not result or not (co_llvm in aoptions));
    end;
   except

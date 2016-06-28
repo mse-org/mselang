@@ -25,7 +25,7 @@ object mainfo: tmainfo
     state = [as_localcaption, as_localonexecute]
     caption = 'parse'
     options = [bo_executeonclick, bo_executeonkey, bo_executeonshortcut, bo_executedefaultonenterkey, bo_asyncexecute]
-    onexecute = parseexe
+    onexecute = parseev
   end
   object grid: tstringgrid
     frame.localprops = []
@@ -320,6 +320,7 @@ object mainfo: tmainfo
     bounds_x = 248
     bounds_y = 32
     bounds_cx = 197
+    anchors = [an_top, an_right]
     statfile = statf
     reffontheight = 14
   end
@@ -360,8 +361,20 @@ object mainfo: tmainfo
     anchors = [an_top, an_right]
     statfile = statf
   end
+  object tbutton3: tbutton
+    taborder = 18
+    bounds_x = 568
+    bounds_y = 0
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_top, an_right]
+    state = [as_localcaption, as_localonexecute]
+    caption = 'dirs'
+    onexecute = patheditev
+  end
   object statf: tstatfile
     filename = 'status.sta'
+    onstatupdate = statupdateev
     onstatbeforewrite = befwriteexe
     onstatafterread = aftreadexe
     left = 56

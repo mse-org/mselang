@@ -1,0 +1,78 @@
+object patheditfo: tpatheditfo
+  bounds_x = 177
+  bounds_y = 275
+  bounds_cx = 495
+  bounds_cy = 391
+  container.frame.localprops = []
+  container.frame.localprops1 = []
+  container.bounds = (
+    0
+    0
+    495
+    391
+  )
+  options = [fo_freeonclose, fo_cancelonesc, fo_autoreadstat, fo_autowritestat, fo_savepos, fo_savezorder, fo_savestate]
+  onloaded = loadedev
+  onclosequery = closequerydef
+  moduleclassname = 'tmseform'
+  object twidgetgrid1: twidgetgrid
+    frame.caption = '-Fu'
+    frame.localprops = []
+    frame.localprops1 = []
+    frame.outerframe = (
+      0
+      17
+      0
+      0
+    )
+    taborder = 1
+    bounds_x = 0
+    bounds_y = 7
+    bounds_cx = 490
+    bounds_cy = 347
+    anchors = [an_left, an_top, an_right, an_bottom]
+    optionsgrid = [og_rowinserting, og_rowdeleting, og_focuscellonenter, og_autofirstrow, og_autoappend, og_colchangeontabkey, og_wrapcol, og_autopopup, og_mousescrollcol]
+    datacols.count = 1
+    datacols.items = <    
+      item[fuvalues]
+        width = 485
+        options = [co_fill, co_savevalue, co_savestate, co_mousescrollrow]
+        widgetname = 'fuvalues'
+        dataclass = tgridmsestringdatalist
+      end>
+    datarowheight = 16
+    reffontheight = 14
+    object fuvalues: tstringedit
+      optionswidget1 = [ow1_fontglyphheight]
+      optionsskin = [osk_framebuttononly]
+      taborder = 1
+      visible = False
+      bounds_x = 0
+      bounds_y = 0
+      bounds_cx = 485
+      bounds_cy = 16
+      reffontheight = 14
+    end
+  end
+  object tbutton1: tbutton
+    taborder = 2
+    bounds_x = 336
+    bounds_y = 360
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_right, an_bottom]
+    state = [as_default, as_localdefault, as_localcaption]
+    caption = 'OK'
+    modalresult = mr_ok
+  end
+  object tbutton2: tbutton
+    bounds_x = 416
+    bounds_y = 360
+    bounds_cx = 50
+    bounds_cy = 20
+    anchors = [an_right, an_bottom]
+    state = [as_localcaption]
+    caption = 'Cancel'
+    modalresult = mr_cancel
+  end
+end

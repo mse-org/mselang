@@ -56,7 +56,8 @@ type
    nameed: tbooleanedit;
    opted: tstringedit;
    nocompilerunited: tbooleanedit;
-   procedure parseexe(const sender: TObject);
+   tbutton3: tbutton;
+   procedure parseev(const sender: TObject);
    procedure editnotiexe(const sender: TObject;
                    var info: editnotificationinfoty);
    procedure saveexe(const sender: TObject);
@@ -70,6 +71,8 @@ type
                    var accept: Boolean);
    procedure proginfoset(const sender: TObject; var avalue: Boolean;
                    var accept: Boolean);
+   procedure statupdateev(const sender: TObject; const filer: tstatfiler);
+   procedure patheditev(const sender: TObject);
   protected
 //   function test: integer; override;
  end;
@@ -81,10 +84,10 @@ var
 implementation
 uses
  errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,
- msefileutils,
+ msefileutils,patheditform,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
-procedure tmainfo.parseexe(const sender: TObject);
+procedure tmainfo.parseev(const sender: TObject);
 var
  errstream,outstream: ttextstream;
  mlistream: tmsefilestream;
@@ -275,10 +278,10 @@ procedure tmainfo.nameset(const sender: TObject; var avalue: Boolean;
                var accept: Boolean);
 begin
  if avalue then begin
-  include(info.debugoptions,do_name);
+  include(info.o.debugoptions,do_name);
  end
  else begin
-  exclude(info.debugoptions,do_name);
+  exclude(info.o.debugoptions,do_name);
  end;
 end;
 
@@ -293,6 +296,16 @@ begin
   exclude(info.debugoptions,do_proginfo);
  end;
  }
+end;
+
+procedure tmainfo.statupdateev(const sender: TObject; const filer: tstatfiler);
+begin
+ filer.updatevalue('unitdirs',info.o.unitdirs);
+end;
+
+procedure tmainfo.patheditev(const sender: TObject);
+begin
+ tpatheditfo.create(nil);
 end;
 
 end.

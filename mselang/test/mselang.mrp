@@ -83,8 +83,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
@@ -105,22 +105,22 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=0
- ae=0
+ ao=
+ ae=
  aec=0
  ie=0
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,665,5,testdir
  c=6
   (
   kind=1
-  a=0,665,4,base
+  a=0,665,5,base
   c=22
    (
    kind=1
-   a=0,664,4,address
+   a=0,665,5,address
    c=2
     (
     kind=2
@@ -139,15 +139,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,address llvm
-    teststate=1
+    a=0,648,2,address llvm
+    teststate=2
     path=address.mla
     comment=
     cc=${mlc_llvm}
@@ -160,13 +160,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=address/
    comment=
    cc=
@@ -184,16 +184,16 @@ c=3
    )
    (
    kind=1
-   a=0,665,4,arith
+   a=0,665,5,arith
    c=34
     (
     kind=1
-    a=0,664,4,bool
+    a=0,664,5,bool
     c=8
      (
      kind=2
      a=0,648,1,and1
-     teststate=1
+     teststate=2
      path=and1.mla
      comment=
      cc=${mlc}
@@ -207,15 +207,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,and1 llvm
-     teststate=1
+     teststate=2
      path=and1.mla
      comment=
      cc=${mlc_llvm}
@@ -228,7 +228,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -237,7 +237,7 @@ c=3
      (
      kind=2
      a=0,648,1,or1
-     teststate=1
+     teststate=2
      path=or1.mla
      comment=
      cc=${mlc}
@@ -251,15 +251,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,or1 llvm
-     teststate=1
+     teststate=2
      path=or1.mla
      comment=
      cc=${mlc_llvm}
@@ -272,7 +272,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -281,7 +281,7 @@ c=3
      (
      kind=2
      a=0,648,1,not1
-     teststate=1
+     teststate=2
      path=not1.mla
      comment=
      cc=${mlc}
@@ -295,15 +295,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,not1 llvm
-     teststate=1
+     teststate=2
      path=not1.mla
      comment=
      cc=${mlc_llvm}
@@ -316,7 +316,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -325,7 +325,7 @@ c=3
      (
      kind=2
      a=0,648,1,booleval1
-     teststate=1
+     teststate=2
      path=booleval1.mla
      comment=
      cc=${mlc}
@@ -339,15 +339,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,booleaval1 llvm
-     teststate=1
+     teststate=2
      path=booleval1.mla
      comment=
      cc=${mlc_llvm}
@@ -360,13 +360,13 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=2
     path=bool/
     comment=
     cc=
@@ -384,12 +384,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,cmp
+    a=0,664,5,cmp
     c=4
      (
      kind=2
      a=0,648,1,cmppointer
-     teststate=1
+     teststate=2
      path=cmppointer.mla
      comment=
      cc=${mlc}
@@ -403,15 +403,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,cmppointer llvm
-     teststate=1
+     teststate=2
      path=cmppointer.mla
      comment=
      cc=${mlc_llvm}
@@ -424,7 +424,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -433,7 +433,7 @@ c=3
      (
      kind=2
      a=0,648,1,cmpenum
-     teststate=1
+     teststate=2
      path=cmpenum.mla
      comment=
      cc=${mlc}
@@ -447,15 +447,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,cmpenum llvm
-     teststate=1
+     teststate=2
      path=cmpenum.mla
      comment=
      cc=${mlc_llvm}
@@ -468,13 +468,13 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=2
     path=cmp/
     comment=
     cc=
@@ -492,12 +492,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,float
+    a=0,664,5,float
     c=4
      (
      kind=2
      a=0,648,1,floatassign
-     teststate=1
+     teststate=2
      path=floatassign.mla
      comment=
      cc=${mlc}
@@ -511,15 +511,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,floatassign llvm
-     teststate=1
+     teststate=2
      path=floatassign.mla
      comment=
      cc=${mlc_llvm}
@@ -532,7 +532,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -541,7 +541,7 @@ c=3
      (
      kind=2
      a=0,648,1,sin
-     teststate=1
+     teststate=2
      path=sin.mla
      comment=
      cc=${mlc}
@@ -555,15 +555,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,sin llvm
-     teststate=1
+     teststate=2
      path=sin.mla
      comment=
      cc=${mlc_llvm}
@@ -576,13 +576,13 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=2
     path=float/
     comment=
     cc=
@@ -600,12 +600,12 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,664,5,pointer
     c=6
      (
      kind=2
      a=0,648,1,pointeradd
-     teststate=1
+     teststate=2
      path=pointeradd.mla
      comment=
      cc=${mlc}
@@ -619,15 +619,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,pointeradd llvm
-     teststate=1
+     teststate=2
      path=pointeradd.mla
      comment=
      cc=${mlc_llvm}
@@ -640,7 +640,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -649,7 +649,7 @@ c=3
      (
      kind=2
      a=0,648,1,pointerrecadd
-     teststate=1
+     teststate=2
      path=pointerrecadd.mla
      comment=
      cc=${mlc}
@@ -663,15 +663,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,pointerecadd llvm
-     teststate=1
+     teststate=2
      path=pointerrecadd.mla
      comment=
      cc=${mlc_llvm}
@@ -684,7 +684,7 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
@@ -693,7 +693,7 @@ c=3
      (
      kind=2
      a=0,648,1,pointerdiff
-     teststate=1
+     teststate=2
      path=pointerdiff.mla
      comment=
      cc=${mlc}
@@ -707,15 +707,15 @@ c=3
      ae=0
      eec=123
      cr=0
-     ao=0
-     ae=0
+     ao=
+     ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
      aec=123
      ie=0
      )
      (
      kind=2
      a=0,648,1,pointerdiff llvm
-     teststate=1
+     teststate=2
      path=pointerdiff.mla
      comment=
      cc=${mlc_llvm}
@@ -728,13 +728,13 @@ c=3
      ee=
      ae=0
      eec=123
-     cr=0
+     cr=1
      ao=0
      ae=0
      aec=123
      ie=0
      )
-    teststate=1
+    teststate=2
     path=pointer/
     comment=
     cc=
@@ -752,8 +752,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,update
-    teststate=1
+    a=0,648,2,update
+    teststate=2
     path=updatesize.mla
     comment=
     cc=${mlc}
@@ -767,15 +767,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,updatesize llvm
-    teststate=1
+    a=0,648,2,updatesize llvm
+    teststate=2
     path=updatesize.mla
     comment=
     cc=${mlc_llvm}
@@ -788,7 +788,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -796,8 +796,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divop
-    teststate=1
+    a=0,648,2,divop
+    teststate=2
     path=divop.mla
     comment=
     cc=${mlc}
@@ -811,15 +811,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,divop llvm
-    teststate=1
+    a=0,648,2,divop llvm
+    teststate=2
     path=divop.mla
     comment=
     cc=${mlc_llvm}
@@ -832,7 +832,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -840,8 +840,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,divisionop
-    teststate=1
+    a=0,648,2,divisionop
+    teststate=2
     path=divisionop.mla
     comment=
     cc=${mlc}
@@ -855,15 +855,15 @@ c=3
     ae=0
     eec=0
     cr=0
-    ao=0
-    ae=0
+    ao= 1.2300000000000000E+002
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=0
     ie=0
     )
     (
     kind=2
-    a=0,648,1,divisionop llvm
-    teststate=1
+    a=0,648,2,divisionop llvm
+    teststate=2
     path=divisionop.mla
     comment=
     cc=${mlc_llvm}
@@ -876,7 +876,7 @@ c=3
     ee=
     ae=0
     eec=0
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=0
@@ -884,8 +884,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,addsubint
-    teststate=1
+    a=0,648,2,addsubint
+    teststate=2
     path=addsubint.mla
     comment=
     cc=${mlc}
@@ -899,15 +899,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,addsubint llvm
-    teststate=1
+    a=0,648,2,addsubint llvm
+    teststate=2
     path=addsubint.mla
     comment=
     cc=${mlc_llvm}
@@ -920,7 +920,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -928,8 +928,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,bitexp1
-    teststate=1
+    a=0,648,2,bitexp1
+    teststate=2
     path=bitexp1.mla
     comment=
     cc=${mlc}
@@ -943,15 +943,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,bitexp1 llvm
-    teststate=1
+    a=0,648,2,bitexp1 llvm
+    teststate=2
     path=bitexp1.mla
     comment=
     cc=${mlc_llvm}
@@ -964,7 +964,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -972,8 +972,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdec
-    teststate=1
+    a=0,648,2,incdec
+    teststate=2
     path=incdec.mla
     comment=
     cc=${mlc}
@@ -987,15 +987,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdec llvm
-    teststate=1
+    a=0,648,2,incdec llvm
+    teststate=2
     path=incdec.mla
     comment=
     cc=${mlc_llvm}
@@ -1008,7 +1008,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1016,8 +1016,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incval1
-    teststate=1
+    a=0,648,2,incval1
+    teststate=2
     path=incval1.mla
     comment=
     cc=${mlc}
@@ -1031,15 +1031,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incval1 llvm
-    teststate=1
+    a=0,648,2,incval1 llvm
+    teststate=2
     path=incval1.mla
     comment=
     cc=${mlc_llvm}
@@ -1052,7 +1052,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1060,8 +1060,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incvalpo1
-    teststate=1
+    a=0,648,2,incvalpo1
+    teststate=2
     path=incvalpo1.mla
     comment=
     cc=${mlc}
@@ -1075,15 +1075,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incvalpo1 llvm
-    teststate=1
+    a=0,648,2,incvalpo1 llvm
+    teststate=2
     path=incvalpo1.mla
     comment=
     cc=${mlc_llvm}
@@ -1096,7 +1096,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1104,8 +1104,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecind
-    teststate=1
+    a=0,648,2,incdecind
+    teststate=2
     path=incdecind.mla
     comment=
     cc=${mlc}
@@ -1119,15 +1119,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecind llvm
-    teststate=1
+    a=0,648,2,incdecind llvm
+    teststate=2
     path=incdecind.mla
     comment=
     cc=${mlc_llvm}
@@ -1140,7 +1140,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1148,8 +1148,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shl1
-    teststate=1
+    a=0,648,2,shl1
+    teststate=2
     path=shl1.mla
     comment=
     cc=${mlc}
@@ -1163,15 +1163,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shl1 llvm
-    teststate=1
+    a=0,648,2,shl1 llvm
+    teststate=2
     path=shl1.mla
     comment=
     cc=${mlc_llvm}
@@ -1184,7 +1184,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1192,8 +1192,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,shr1
-    teststate=1
+    a=0,648,2,shr1
+    teststate=2
     path=shr1.mla
     comment=
     cc=${mlc}
@@ -1207,15 +1207,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,shr1 llvm
-    teststate=1
+    a=0,648,2,shr1 llvm
+    teststate=2
     path=shr1.mla
     comment=
     cc=${mlc_llvm}
@@ -1228,7 +1228,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1236,8 +1236,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,incdecindpo
-    teststate=1
+    a=0,648,2,incdecindpo
+    teststate=2
     path=incdecindpo.mla
     comment=
     cc=${mlc}
@@ -1251,15 +1251,15 @@ c=3
     ae=0
     eec=1
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=1
     ie=0
     )
     (
     kind=2
-    a=0,648,1,incdecindpo llvm
-    teststate=1
+    a=0,648,2,incdecindpo llvm
+    teststate=2
     path=incdecindpo.mla
     comment=
     cc=${mlc_llvm}
@@ -1272,7 +1272,7 @@ c=3
     ee=
     ae=0
     eec=1
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=1
@@ -1280,8 +1280,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,not1
-    teststate=1
+    a=0,648,2,not1
+    teststate=2
     path=not1.mla
     comment=
     cc=${mlc}
@@ -1295,15 +1295,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,not1 llvm
-    teststate=1
+    a=0,648,2,not1 llvm
+    teststate=2
     path=not1.mla
     comment=
     cc=${mlc_llvm}
@@ -1316,7 +1316,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1324,8 +1324,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,neg1
-    teststate=1
+    a=0,648,2,neg1
+    teststate=2
     path=neg1.mla
     comment=
     cc=${mlc}
@@ -1339,15 +1339,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,neg1 llvm
-    teststate=1
+    a=0,648,2,neg1 llvm
+    teststate=2
     path=neg1.mla
     comment=
     cc=${mlc_llvm}
@@ -1360,7 +1360,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1368,8 +1368,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,andorxor1
-    teststate=1
+    a=0,648,2,andorxor1
+    teststate=2
     path=andorxor1.mla
     comment=
     cc=${mlc}
@@ -1383,15 +1383,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,andorxor1 llvm
-    teststate=1
+    a=0,648,2,andorxor1 llvm
+    teststate=2
     path=andorxor1.mla
     comment=
     cc=${mlc_llvm}
@@ -1404,13 +1404,13 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=arith/
    comment=
    cc=
@@ -1428,12 +1428,12 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,control
+   a=0,665,5,control
    c=30
     (
     kind=2
-    a=0,648,1,breakrepeat
-    teststate=1
+    a=0,648,2,breakrepeat
+    teststate=2
     path=breakrepeat.mla
     comment=
     cc=${mlc}
@@ -1447,15 +1447,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,breakrepat llvm
-    teststate=1
+    a=0,648,2,breakrepat llvm
+    teststate=2
     path=breakrepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1468,7 +1468,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1476,8 +1476,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,breakwhile
-    teststate=1
+    a=0,648,2,breakwhile
+    teststate=2
     path=breakwhile.mla
     comment=
     cc=${mlc}
@@ -1491,15 +1491,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,breakwhile llvm
-    teststate=1
+    a=0,648,2,breakwhile llvm
+    teststate=2
     path=breakwhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1512,7 +1512,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1520,8 +1520,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuerepeat
-    teststate=1
+    a=0,648,2,continuerepeat
+    teststate=2
     path=continuerepeat.mla
     comment=
     cc=${mlc}
@@ -1535,15 +1535,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuerepat llvm
-    teststate=1
+    a=0,648,2,continuerepat llvm
+    teststate=2
     path=continuerepeat.mla
     comment=
     cc=${mlc_llvm}
@@ -1556,7 +1556,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1564,8 +1564,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,continuewhile
-    teststate=1
+    a=0,648,2,continuewhile
+    teststate=2
     path=continuewhile.mla
     comment=
     cc=${mlc}
@@ -1579,15 +1579,15 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=0
-    ae=0
+    ao=
+    ae=Invalid parameter: -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
     aec=123
     ie=0
     )
     (
     kind=2
-    a=0,648,1,continuewhile llvm
-    teststate=1
+    a=0,648,2,continuewhile llvm
+    teststate=2
     path=continuewhile.mla
     comment=
     cc=${mlc_llvm}
@@ -1600,7 +1600,7 @@ c=3
     ee=
     ae=0
     eec=123
-    cr=0
+    cr=1
     ao=0
     ae=0
     aec=123
@@ -1608,8 +1608,8 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,iftest
-    teststate=1
+    a=0,648,0,iftest
+    teststate=0
     path=iftest.mla
     comment=
     cc=${mlc}
@@ -1623,9 +1623,9 @@ c=3
     ae=0
     eec=99
     cr=0
-    ao=0
-    ae=0
-    aec=99
+    ao=
+    ae=
+    aec=-1
     ie=0
     )
     (
@@ -2090,7 +2090,7 @@ c=3
     aec=123
     ie=0
     )
-   teststate=1
+   teststate=2
    path=control/
    comment=
    cc=
@@ -5898,7 +5898,7 @@ c=3
    aec=0
    ie=0
    )
-  teststate=1
+  teststate=2
   path=base/
   comment=
   cc=
@@ -7614,7 +7614,7 @@ c=3
   cdef=
   pdef=
   )
- teststate=1
+ teststate=2
  path=${testdir}
  comment=
  cc=
@@ -7637,7 +7637,7 @@ checked=0
 [mainmo.stoponcomperr]
 checked=0
 [mainmo.trttistat1]
-macronames=21
+macronames=22
  fpcflags
  fpcdir
  fpc1
@@ -7650,6 +7650,7 @@ macronames=21
  mselangdir
  llvmbindir
  llvmbindir
+ mseflags
  mlc
  mlctest
  mli
@@ -7659,7 +7660,7 @@ macronames=21
  lli
  lli
  lli
-macrovalues=21
+macrovalues=22
  -dsvnfixes_3_0 -dmse_nocompilerunitxx -dmse_checkinternalerror
  /home/mse/packs/standard/svn/fp/fixes_3_0/
  ${fpcdir}compiler/ppc386 ${fpcflags} ${mseunits} ${mselangunits}
@@ -7672,16 +7673,17 @@ macrovalues=21
  /home/mse/packs/standard/git/mselang/mselang/
  /home/mse/packs/standard/git/llvm/build_release/Release/bin/
  /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/
- ${mselangdir}compiler/mlc ${FILE}
+ -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
+ ${mselangdir}compiler/mlc ${mseflags} ${FILE}
  ${mlc}
- ${mselangdir}interpreter/mli ${FILE_NOEXT(${FILE})}.mli
+ ${mselangdir}interpreter/mli ${mseflags} ${FILE_NOEXT(${FILE})}.mli
  ${mselangdir}test/
  ${mselangdir}compiler/mlc --llvm ${FILE}
  ${llvmbindir}llvm-as ${FILE_NOEXT(${FILE})}.ll
  ${llvmbindir}lli ${FILE_NOEXT(${FILE})}.bc
  ${mselangdir}run ${llvmbindir} ${FILE_NOEXT(${FILE})}
  ${mselangdir}run "" ${FILE_NOEXT(${FILE})}
-macroon=21
+macroon=22
  63
  63
  63
@@ -7694,6 +7696,7 @@ macroon=21
  63
  63
  0
+ 63
  63
  63
  63
@@ -7731,7 +7734,39 @@ sortdescend2=0
 width3=163
 sortdescend3=0
 sortdescend4=0
-rowstate=132
+rowstate=164
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
+ 0 0
  0 0
  0 0
  0 0
