@@ -236,7 +236,7 @@ begin
    //blockcount set in handleprogblock() 
    par.main.exitcodeaddress:= getexitcodeaddress();
   end;
-  if co_llvm in compileoptions then begin
+  if co_llvm in o.compileoptions then begin
    n1:= getidentname2(getident('main'));
    i1:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(nil,n1);
 //   m1.value.typeid:= info.s.unitinfo^.llvmlists.globlist.
@@ -1147,7 +1147,7 @@ begin
          getvalue(poa,das_none);
          i1:= d.dat.fact.ssaindex;
          with additem(oc_offsetpoimm32)^ do begin
-          if co_llvm in compileoptions then begin
+          if co_llvm in o.compileoptions then begin
            par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.
                                         addi32(pob^.d.dat.constval.vinteger);
           end
@@ -1166,7 +1166,7 @@ begin
           i1:= pob^.d.dat.fact.ssaindex;
           if i2 <> 1 then begin
            with additem(oc_mulimmint32)^ do begin
-            if co_llvm in compileoptions then begin
+            if co_llvm in o.compileoptions then begin
              par.imm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(i2);
             end
             else begin

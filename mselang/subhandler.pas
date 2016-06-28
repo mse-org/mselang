@@ -496,7 +496,7 @@ begin
 {$endif}
  with info,contextstack[s.stackindex-1] do begin
   d.kind:= ck_paramdef;
-  if co_hasfunction in compileoptions then begin
+  if co_hasfunction in o.compileoptions then begin
    d.paramdef.kind:= pk_value;
   end
   else begin
@@ -724,7 +724,7 @@ begin
   result:= opcount;
   with additem(oc_subbegin)^.par do begin
    subbegin.subname:= result;
-   if co_llvm in compileoptions then begin
+   if co_llvm in o.compileoptions then begin
     with s.unitinfo^ do begin
      if pointerparam then begin
       subbegin.globid:= llvmlists.globlist.addinternalsubvalue([],params1po);
@@ -751,7 +751,7 @@ begin
       address:= 0;
       flags:= [];
       size:= bitoptypes[das_pointer];
-      if do_proginfo in info.debugoptions then begin
+      if do_proginfo in info.o.debugoptions then begin
        var1.address.flags:= [af_param];
        var1.address.indirectlevel:= 1;
        var1.vf.typ:= sysdatatypes[st_pointer].typedata;
@@ -1189,7 +1189,7 @@ begin
       sub:= ele.eledatarel(sub1);
      end;
 }
-     if co_llvm in compileoptions then begin
+     if co_llvm in o.compileoptions then begin
       sub1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(sub1,
        getidentname2(pelementinfoty(pointer(sub1)-eledatashift)^.header.name));
      end;
@@ -1394,7 +1394,7 @@ begin
   po1^.address:= opcount;
   if d.subdef.match <> 0 then begin
    po2:= ele.eledataabs(d.subdef.match);    
-   if co_llvm in compileoptions then begin
+   if co_llvm in o.compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po2); 
           //body order must be in header order-> nested subs first -> 
                                        //do not add to list in sub header
@@ -1412,7 +1412,7 @@ begin
      end;
      par.subbegin.trampoline.virtoffset:= po2^.tableindex*sizeof(opaddressty)+
                                                             virtualtableoffset;
-     if co_llvm in compileoptions then begin
+     if co_llvm in o.compileoptions then begin
       par.subbegin.trampoline.virtoffset:= 
            info.s.unitinfo^.llvmlists.constlist.adddataoffs(
                                 par.subbegin.trampoline.virtoffset).listid;
@@ -1450,7 +1450,7 @@ begin
     end;
    {$endif}
     with ptypedataty(ele.eledataabs(currentcontainer))^ do begin
-     if co_llvm in compileoptions then begin
+     if co_llvm in o.compileoptions then begin
       ad1:= po1^.globid;
      end
      else begin
@@ -1465,7 +1465,7 @@ begin
    linkresolveopad(po2^.adlinks,po1^.address);
   end
   else begin //no header
-   if co_llvm in compileoptions then begin
+   if co_llvm in o.compileoptions then begin
     po1^.globid:= info.s.unitinfo^.llvmlists.globlist.addsubvalue(po1);
           //body order must be in header order-> nested subs first -> 
                                        //do not add to list in sub header
@@ -1492,7 +1492,7 @@ begin
    po5^.next:= ele2;
   end;
 
-  if co_llvm in compileoptions then begin
+  if co_llvm in o.compileoptions then begin
    if do_name in s.debugoptions then begin
     s.unitinfo^.llvmlists.globlist.namelist.addname(
                                         getidentname2(po1),po1^.globid);
@@ -1508,7 +1508,7 @@ begin
      address:= po4^.address.locaddress.address;
      flags:= po4^.address.flags;
      size:= getopdatatype(po4^.vf.typ,po4^.address.indirectlevel);
-     if do_proginfo in info.debugoptions then begin
+     if do_proginfo in info.o.debugoptions then begin
       debuginfo:= s.unitinfo^.llvmlists.metadatalist.adddivariable(
                     getidentnamel(datatoele(po4)^.header.name),lnr1,int1,po4^);
      end;
@@ -1566,7 +1566,7 @@ begin
  with info,contextstack[s.stackindex-2] do begin
    //todo: check local forward
   po1:= ele.eledataabs(d.subdef.ref); //todo: implicit try-finally
-  if co_llvm in compileoptions then begin
+  if co_llvm in o.compileoptions then begin
 //   if sf_hasnestedaccess in po1^.flags then begin
 //   if po1^.flags * [sf_hasnestedref,hasnestedaccess] <> [] then begin
     info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);

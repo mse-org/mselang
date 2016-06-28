@@ -684,7 +684,7 @@ begin
       end;
      end;
      opmark.address:= opcount-1;
-     if co_llvm in info.compileoptions then begin
+     if co_llvm in info.o.compileoptions then begin
 //      po1^.par.ssas1:= 
              //todo: cardinal
       with po1^.par do begin

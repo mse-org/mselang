@@ -39,30 +39,45 @@ function getrtunitfilename(const aname: filenamety): filenamety;
 function getbcunitfilename(const aname: filenamety): filenamety;
 function getbcunitfile(const aunit: punitinfoty): filenamety;
 
-function getsysfile(const aname: filenamety): filenamety;
+//function getsysfile(const aname: filenamety): filenamety;
 
 implementation
 uses
  msefileutils;
 
-procedure getsourcefile(var aname: filenamety); //todo: use directory options
+procedure findunitfile(var aname: filenamety);
+var
+ mstr1: msestring;
 begin
- if findfile(aname) then begin
-  aname:= filepath(aname);
- end
- else begin
-  aname:= getsysfile(aname);
+ if not findfile(aname,info.o.unitdirs,aname) then begin
+  aname:= '';
  end;
 end;
 
-procedure getrtfile(var aname: filenamety); //todo: use directory options
+procedure getsourcefile(var aname: filenamety);
 begin
+ findunitfile(aname);
+{
  if findfile(aname) then begin
   aname:= filepath(aname);
  end
  else begin
   aname:= getsysfile(aname);
  end;
+}
+end;
+
+procedure getrtfile(var aname: filenamety); 
+begin
+ findunitfile(aname);
+{
+ if findfile(aname) then begin
+  aname:= filepath(aname);
+ end
+ else begin
+  aname:= getsysfile(aname);
+ end;
+}
 end;
 
 function getsourceunitfile(const aname: filenamety): filenamety;
@@ -124,7 +139,7 @@ begin
 end;
 
 //todo: make it portable
-
+{
 function getsysfile(const aname: filenamety): filenamety;
 begin
  result:= 'compiler/'+aname;
@@ -138,5 +153,5 @@ begin
   result:= filepath(result);
  end;
 end;
-
+}
 end.

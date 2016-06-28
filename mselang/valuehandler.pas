@@ -211,7 +211,7 @@ begin
  itemcount1:= acontext^.d.list.itemcount;
  isallconst:= lf_allconst in acontext^.d.list.flags;
  if not isallconst then begin
-  if co_llvm in info.compileoptions then begin
+  if co_llvm in info.o.compileoptions then begin
    alloc1:= allocsegmentoffset(seg_localloc,
                          itemcount1*sizeof(listitemallocinfoty),poalloc);
   end;
@@ -238,7 +238,7 @@ begin
       internalerror(ie_handler,'20160615A');
      end;
     {$endif}
-     if co_llvm in info.compileoptions then begin
+     if co_llvm in info.o.compileoptions then begin
       poalloc^.ssaindex:= d.dat.fact.ssaindex;
       inc(poalloc);
      end;
@@ -280,7 +280,7 @@ begin
                itemcount1*getssa(ocssa_listtoopenaritem))^ do begin
                                        //at start of next context
     with info do begin
-     if co_mlaruntime in compileoptions then begin
+     if co_mlaruntime in o.compileoptions then begin
       poparams:= @contextstack[acontext^.parent];
      {$ifdef mse_checkinternalerror}
       if poparams^.d.kind <> ck_params then begin
@@ -291,7 +291,7 @@ begin
     end;
     par.listinfo.alloccount:= itemcount1;
     setimmint32(itemtype1^.h.bytesize,par.listinfo.itemsize);
-    if co_llvm in info.compileoptions then begin
+    if co_llvm in info.o.compileoptions then begin
      par.listinfo.allocs:= alloc1;
      setimmint32(itemcount1-1,par.listtoopenar.allochigh);
      par.listtoopenar.arraytype:= info.s.unitinfo^.
@@ -1578,7 +1578,7 @@ begin
      end;
     end;
 *)
-    if co_mlaruntime in compileoptions then begin
+    if co_mlaruntime in o.compileoptions then begin
      stacksize:= 0;
      resultsize:= 0;
      i2:= opoffset1; //insert result space at end of statement
@@ -1630,7 +1630,7 @@ begin
      dodefaultparams();
     end;
     
-    if co_mlaruntime in compileoptions then begin
+    if co_mlaruntime in o.compileoptions then begin
      poitem1:= @contextstack[paramstart];
      if poitem1^.d.kind <> ck_params then begin //no params
       dec(poitem1);
@@ -1689,7 +1689,7 @@ begin
       end;
      end;
      if (dsf_indexedsetter in aflags) and 
-                             (co_mlaruntime in compileoptions) then begin
+                             (co_mlaruntime in o.compileoptions) then begin
       with additem(oc_swapstack)^.par.swapstack do begin
        offset:= -paramsize1;
        size:= lastparamsize1;
@@ -1718,7 +1718,7 @@ begin
       po1^.par.callinfo.virt.virtoffset:= asub^.tableindex*sizeof(opaddressty)+
                                                              virtualtableoffset;
      end;
-     if co_llvm in compileoptions then begin
+     if co_llvm in o.compileoptions then begin
       po1^.par.callinfo.virt.virtoffset:=  
               info.s.unitinfo^.llvmlists.constlist.
                          adddataoffs(po1^.par.callinfo.virt.virtoffset).listid;
@@ -1743,7 +1743,7 @@ begin
        else begin
         po1:= additem(oc_callindi);
        end;
-       if co_llvm in compileoptions then begin
+       if co_llvm in o.compileoptions then begin
         po1^.par.ssas1:= callssa;
         po1^.par.callinfo.indi.typeid:= 
                      info.s.unitinfo^.llvmlists.typelist.addsubvalue(asub);
@@ -1821,7 +1821,7 @@ begin
       setimmsize(pointersize,par.imm); //remove call address
      end;
     end;
-    if co_mlaruntime in compileoptions then begin
+    if co_mlaruntime in o.compileoptions then begin
      releasetempaddress(tempsize);
      locdatapo:= locdatapo - resultsize;
     end;

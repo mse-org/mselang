@@ -640,6 +640,13 @@ type
 
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
 
+ parseoptionsty = record
+  compileoptions: compileoptionsty;
+  debugoptions: debugoptionsty;
+  compilerswitches: compilerswitchesty;
+  unitdirs: filenamearty;
+ end;
+ 
  savedparseinfoty = record
   filename: filenamety;
   input: string;
@@ -670,12 +677,11 @@ type
   
  parseinfoty = record
   s: savedparseinfoty;
-  compileoptions: compileoptionsty;
-  debugoptions: debugoptionsty;
+  o: parseoptionsty;
   currentscopemeta: metavaluety;
   scopemetastack: metavaluearty;
   scopemetaindex: int32;
-  compilerswitches: compilerswitchesty;
+//  compilerswitches: compilerswitchesty;
   modularllvm: boolean;
 
   unitinfochain: elementoffsetty;
@@ -729,7 +735,7 @@ var
  
 implementation
 initialization
- info.compileoptions:= defaultcompileoptions;
- info.debugoptions:= defaultdebugoptions;
- info.compilerswitches:= defaultcompilerswitches;
+ info.o.compileoptions:= defaultcompileoptions;
+ info.o.debugoptions:= defaultdebugoptions;
+ info.o.compilerswitches:= defaultcompilerswitches;
 end.

@@ -388,7 +388,7 @@ begin
   end;
   if arop = aro_static then begin
    i1:= typ1^.infoarray.i.totitemcount;
-   if (co_llvm in info.compileoptions) then begin
+   if (co_llvm in info.o.compileoptions) then begin
     par.memop.t.size:= 
               info.s.unitinfo^.llvmlists.constlist.adddataoffs(i1).listid;
    end
@@ -476,7 +476,7 @@ end;
 procedure inclocvaraddress(const asize: integer);
 begin
  with info do begin
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    locdatapo:= locdatapo + alignsize(asize);
   end;
  end;
@@ -486,7 +486,7 @@ function getlocvaraddress(const adatasize: databitsizety; const asize: integer;
            var aflags: addressflagsty; const shift: integer = 0): locaddressty;
 begin
  with info do begin
-  if co_llvm in compileoptions then begin
+  if co_llvm in o.compileoptions then begin
    result.address:= info.locallocid;
    inc(info.locallocid);
   end
@@ -511,7 +511,7 @@ begin
   result.flags:= [af_temp];
   result.indirectlevel:= 1;
 //  result.locaddress.framelevel:= info.sublevel;
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - info.frameoffset;
    locdatapo:= locdatapo + pointersize;
   end
@@ -525,7 +525,7 @@ end;
 procedure releasepointertempaddress();
 begin
  with info do begin
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    locdatapo:= locdatapo - pointersize;
    with additem(oc_pop)^ do begin
     par.imm.vsize:= pointersize;
@@ -540,7 +540,7 @@ begin
   result.flags:= [af_temp];
   result.indirectlevel:= 0;
 //  result.locaddress.framelevel:= info.sublevel;
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - info.frameoffset;
    locdatapo:= locdatapo + alignsize(bytesizes[asize]);
   end
@@ -559,7 +559,7 @@ begin
  with info do begin
   result.flags:= [af_temp];
   result.indirectlevel:= 0;
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    result.tempaddress.address:= locdatapo - info.frameoffset;
    i1:= alignsize(abytesize);
    locdatapo:= locdatapo + i1;
@@ -575,7 +575,7 @@ end;
 procedure releasetempaddress(const abytesize: int32);
 begin
  with info do begin
-  if not (co_llvm in compileoptions) then begin
+  if not (co_llvm in o.compileoptions) then begin
    if abytesize > 0 then begin
     locdatapo:= locdatapo - abytesize;
     with additem(oc_pop)^ do begin
@@ -625,7 +625,7 @@ end;
 
 procedure setimmboolean(const value: boolean; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(value);
  end
  else begin
@@ -635,7 +635,7 @@ end;
 
 procedure setimmcard8(const value: card8; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
  else begin
@@ -645,7 +645,7 @@ end;
 
 procedure setimmcard16(const value: card16; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
  else begin
@@ -655,7 +655,7 @@ end;
 
 procedure setimmcard32(const value: card32; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
  else begin
@@ -665,7 +665,7 @@ end;
 
 procedure setimmcard64(const value: card64; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
  else begin
@@ -675,7 +675,7 @@ end;
 
 procedure setimmint1(const value: int8; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi1(odd(value));
  end
  else begin
@@ -685,7 +685,7 @@ end;
 
 procedure setimmint8(const value: int8; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi8(value);
  end
  else begin
@@ -695,7 +695,7 @@ end;
 
 procedure setimmint16(const value: int16; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi16(value);
  end
  else begin
@@ -705,7 +705,7 @@ end;
 
 procedure setimmint32(const value: int32; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
  else begin
@@ -715,7 +715,7 @@ end;
 
 procedure setimmint32(const value: int32; out aimm: int32);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm:= info.s.unitinfo^.llvmlists.constlist.addi32(value).listid;
  end
  else begin
@@ -725,7 +725,7 @@ end;
 
 procedure setmemimm(const value: int32; var par: opparamty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   par.memimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(value);
  end
  else begin
@@ -735,7 +735,7 @@ end;
 
 procedure setimmint64(const value: int64; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addi64(value);
  end
  else begin
@@ -745,7 +745,7 @@ end;
 
 procedure setimmfloat64(const value: float64; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.llvm:= info.s.unitinfo^.llvmlists.constlist.addf64(value);
  end
  else begin
@@ -755,7 +755,7 @@ end;
 
 procedure setimmsize(const value: datasizety; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   aimm.vsize:= info.s.unitinfo^.llvmlists.constlist.
                                         adddataoffs(value).listid;
  end
@@ -766,7 +766,7 @@ end;
 
 procedure setimmpointer(const value: dataaddressty; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109C');
  end
  else begin
@@ -776,7 +776,7 @@ end;
 
 procedure setimmoffset(const value: dataoffsty; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109D');
  end
  else begin
@@ -786,7 +786,7 @@ end;
 
 procedure setimmdatakind(const value: datakindty; var aimm: immty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   notimplementederror('20150109E');
  end
  else begin

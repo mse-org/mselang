@@ -85,7 +85,7 @@ begin
 // opcode.deinit();
  unithandler.deinit(freeunitlist);
  handlerutils.deinit();
- if co_mlaruntime in info.compileoptions then begin
+ if co_mlaruntime in info.o.compileoptions then begin
   elements.clear();
  end;
  segmentutils.deinit();
@@ -383,7 +383,7 @@ end;
 procedure postlineinfo();
 begin
  if (do_lineinfo in info.s.debugoptions) and 
-             (co_llvm in info.compileoptions) then begin        //todo: columns
+             (co_llvm in info.o.compileoptions) then begin   //todo: columns
   include(info.s.currentstatementflags,stf_newlineposted);
   with additem(oc_lineinfo)^.par.lineinfo do begin
    loc.line:= info.s.source.line;
@@ -399,7 +399,7 @@ begin
  if do_lineinfo in info.s.debugoptions then begin        //todo: columns
   if not (stf_newlineposted in info.s.currentstatementflags) then begin
    include(info.s.currentstatementflags,stf_newlineposted);
-   if (co_llvm in info.compileoptions) then begin
+   if (co_llvm in info.o.compileoptions) then begin
     with additem(oc_lineinfo)^.par.lineinfo do begin
      loc.line:= linebreaks+info.s.source.line;
      loc.col:= 0;
@@ -484,7 +484,7 @@ begin
   inc(unitlevel);
   statebefore:= s;
   s.unitinfo:= aunit;
-  if compileoptions * [co_readunits,co_build] = [co_readunits] then begin
+  if o.compileoptions * [co_readunits,co_build] = [co_readunits] then begin
    if not (us_invalidunitfile in aunit^.state) and 
                                       readunitfile(aunit) then begin
     result:= true;
@@ -502,8 +502,8 @@ begin
     exit;
    end;
   end;
-  if (aunit^.llvmlists = nil) and (co_llvm in info.compileoptions) then begin
-   if co_writeunits in info.compileoptions then begin
+  if (aunit^.llvmlists = nil) and (co_llvm in info.o.compileoptions) then begin
+   if co_writeunits in info.o.compileoptions then begin
     aunit^.llvmlists:= tllvmlists.create();
    end
    else begin 
@@ -609,7 +609,7 @@ begin
   with s.unitinfo^ do begin
    s.currentfilemeta:= filepathmeta;
    s.currentcompileunitmeta:= compileunitmeta;
-   if do_proginfo in info.debugoptions then begin
+   if do_proginfo in info.o.debugoptions then begin
     pushcurrentscope(filepathmeta);
 //    setcurrentscope(filepathmeta);
    end
@@ -953,17 +953,33 @@ parseend:
 {$endif}
 end;
 
+procedure resetinfo();
+var
+ optbefore: parseoptionsty;
+begin
+ optbefore:= info.o;
+ system.finalize(info);
+ fillchar(info,sizeof(info),0);
+ info.o:= optbefore; 
+ exitcode:= 0;
+end;
+
 procedure initio(const aoutput: ttextstream; const aerror: ttextstream);
+{
 var
  debugoptionsbefore: debugoptionsty;
  compilerswitchesbefore: compilerswitchesty;
+}
 begin
+{
  debugoptionsbefore:= info.debugoptions;
  compilerswitchesbefore:= info.compilerswitches;
+ finalize(info);
  fillchar(info,sizeof(info),0);
  info.debugoptions:= debugoptionsbefore;
  info.compilerswitches:= compilerswitchesbefore;
  exitcode:= 0;
+}
  with info do begin
   outputstream:= aoutput;
   errorstream:= aerror;
@@ -983,18 +999,18 @@ begin
  with info do begin
   try
    try
-    compileoptions:= aoptions;
-    debugoptions:= [];
+    o.compileoptions:= aoptions;
+    o.debugoptions:= [];
     if co_llvm in aoptions then begin
      if co_lineinfo in aoptions then begin
-      include(info.debugoptions,do_lineinfo);
+      include(info.o.debugoptions,do_lineinfo);
      end;
      if co_proginfo in aoptions then begin
-      include(info.debugoptions,do_proginfo);
+      include(info.o.debugoptions,do_proginfo);
      end;    
     end;
-    s.debugoptions:= debugoptions;
-    s.compilerswitches:= compilerswitches;
+    s.debugoptions:= o.debugoptions;
+    s.compilerswitches:= o.compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
     init();
     unit1:= newunit('program');
@@ -1012,7 +1028,7 @@ begin
     s.stackindex:= s.stacktop;
     opcount:= startupoffset;
     allocsegmentpo(seg_op,opcount*sizeof(opinfoty));
-    if co_llvm in compileoptions then begin
+    if co_llvm in o.compileoptions then begin
      beginparser(llvmops.getoptable());
     end
     else begin

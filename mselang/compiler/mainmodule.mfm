@@ -68,6 +68,17 @@ object mainmo: tmainmo
         ''
         ''
       )
+      (
+        ak_pararg
+        'Fu'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
     )
   end
 end

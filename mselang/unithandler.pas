@@ -638,7 +638,8 @@ begin
    end
    else begin
     if (d.handlerflags * [hf_set,hf_longset] <> []) or 
-           (hf_default in d.handlerflags) and (s1 in compilerswitches) then begin
+           (hf_default in d.handlerflags) and 
+                             (s1 in o.compilerswitches) then begin
      include(s.compilerswitches,s1);
     end
     else begin 
@@ -1177,7 +1178,7 @@ begin
    end;
    li1:= links[li1].next;
   end;
-  if co_llvm in info.compileoptions then begin
+  if co_llvm in info.o.compileoptions then begin
    po1:= allocsegmentpo(seg_localloc,sizeof(philistty)+i1*sizeof(phiitemty));
    philist:= getsegmentoffset(seg_localloc,po1);
    with po1^ do begin
@@ -1649,7 +1650,7 @@ begin
     end;
    end;
   end;
-  if co_writeunits in compileoptions then begin
+  if co_writeunits in o.compileoptions then begin
    result:= writeunitfile(aunit);
    freeandnil(aunit^.llvmlists);
   end;

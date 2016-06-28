@@ -766,7 +766,7 @@ begin
     par.memop.t:= getopdatatype(datatyp);
     if tf_subad in datatyp.flags then begin
      po1:= ele.eledataabs(ref.c.address.segaddress.element);
-     if co_llvm in compileoptions then begin
+     if co_llvm in o.compileoptions then begin
       par.memop.segdataaddress.a.address:= po1^.globid;
      end
      else begin
@@ -808,7 +808,7 @@ begin
  end
  else begin
   if (atypedata^.h.datasize = das_none) and 
-                             (co_llvm in info.compileoptions) then begin
+                             (co_llvm in info.o.compileoptions) then begin
    result.listindex:= info.s.unitinfo^.llvmlists.typelist.
                                     addbytevalue(atypedata^.h.bytesize);
   end
@@ -1691,7 +1691,7 @@ var
  bo1: boolean;
  addressbefore: dataoffsty;
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   int1:= info.sublevel-aaddress.framelevel;
   if int1 > 0 then begin   //var in outer sub
    addressbefore:= aaddress.address;
@@ -3206,7 +3206,7 @@ end;
 procedure trackalloc(const adatasize: databitsizety; const asize: integer; 
                                  var address: segaddressty);
 begin
- if co_llvm in info.compileoptions then begin
+ if co_llvm in info.o.compileoptions then begin
   if address.segment = seg_globvar then begin
    if adatasize = das_none then begin
     address.address:= info.s.unitinfo^.llvmlists.globlist.

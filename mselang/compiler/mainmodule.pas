@@ -10,7 +10,7 @@ const
  llvmbcextension = 'bc'; 
 type
  paramty = (pa_source,pa_llvm,pa_nocompilerunit,
-            pa_debug,pa_debugline); //item number in sysenv
+            pa_debug,pa_debugline,pa_unitdirs); //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -30,7 +30,8 @@ implementation
 
 uses
  globtypes,mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
- msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler;
+ msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler,
+ msearrayutils;
  
 const
  startupmessage =
@@ -44,7 +45,7 @@ end;
 
 procedure tmainmo.eventloopexe(const sender: TObject);
 var
- inputstream: ttextstream;
+// inputstream: ttextstream;
  filename1: filenamety;
  str1: string;
  mstr1: msestring;
@@ -124,13 +125,14 @@ end;
 procedure tmainmo.sysenvexe(sender: tsysenvmanager);
 begin
  if sender.defined[ord(pa_debug)] then begin
-  info.debugoptions:= info.debugoptions + 
+  info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo,do_proginfo];
  end;
  if sender.defined[ord(pa_debugline)] then begin
-  info.debugoptions:= info.debugoptions + 
+  info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo];
  end;
+ info.o.unitdirs:= reversearray(sender.values[ord(pa_unitdirs)]);
 end;
 
 end.

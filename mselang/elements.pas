@@ -2327,7 +2327,7 @@ begin
   else begin
    result.segment:= seg_globconst;
    result.address:= constoffset+sizeof(string8headerty);
-   if co_llvm in info.compileoptions then begin
+   if co_llvm in info.o.compileoptions then begin
     result.address:= info.s.unitinfo^.llvmlists.constlist.
                                   adddataoffs(result.address).listid;
    end;

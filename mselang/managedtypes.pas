@@ -285,7 +285,7 @@ begin
            errormessage(err_typemismatch,[]);
           end
           else begin
-           if co_llvm in compileoptions then begin
+           if co_llvm in o.compileoptions then begin
             par.ssas1:= d.dat.fact.ssaindex; //result
             par.ssas2:= po2^.d.dat.fact.ssaindex;
             par.setlength.itemsize:= 
@@ -321,7 +321,7 @@ begin
        errormessage(err_typemismatch,[]);
       end
       else begin
-       if co_llvm in compileoptions then begin
+       if co_llvm in o.compileoptions then begin
         par.ssas1:= d.dat.fact.ssaindex; //result
         par.setlength.itemsize:= 
                info.s.unitinfo^.llvmlists.constlist.addi32(itemsize).listid;

@@ -2092,7 +2092,7 @@ begin
   fnullintconst.id:= ord(nc_i8);
 //  fnullintconst.flags:= [];
  }
-  if info.debugoptions <> [] then begin
+  if info.o.debugoptions <> [] then begin
    femptystringconst:= addstring('');
    with pnodemetaty(adddata(mdk_node,sizeof(nodemetaty),femptynode))^ do begin
     len:= 0;

@@ -426,7 +426,7 @@ begin
   with locad1 do begin
    t:= bitoptypes[das_pointer];
    with locdataaddress do begin
-    if co_llvm in compileoptions then begin
+    if co_llvm in o.compileoptions then begin
      a.address:= 0; //first param
     end
     else begin

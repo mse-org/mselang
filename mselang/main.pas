@@ -102,6 +102,7 @@ begin
 {$endif}
  errstream:= ttextstream.create;
  outstream:= ttextstream.create;
+ resetinfo();
  initio(outstream,errstream);
  if llvm.value then begin
 	  compoptions:= llvmcompileoptions;

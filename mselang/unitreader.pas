@@ -299,7 +299,7 @@ begin
      goto endlab; //invalid, no parserglob.idstart
     end;
     aunit^.filematch.guid:= intf^.header.filematch.guid;
-    if co_llvm in info.compileoptions then begin
+    if co_llvm in info.o.compileoptions then begin
      fna1:= getbcunitfile(aunit);
      if fna1 = '' then begin
       goto endlab; //llvm bc file not found
@@ -547,7 +547,7 @@ oklab:
       end;
      end;
     end;
-    if co_llvm in info.compileoptions then begin
+    if co_llvm in info.o.compileoptions then begin
      result:= true;
     end
     else begin

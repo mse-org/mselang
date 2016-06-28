@@ -310,7 +310,7 @@ var
    if adec then begin
     po3^.par.memimm.vint32:= -po3^.par.memimm.vint32;
    end;
-   if co_llvm in compileoptions then begin
+   if co_llvm in o.compileoptions then begin
     with po3^.par.memimm do begin
      llvm:= info.s.unitinfo^.llvmlists.constlist.addi32(vint32);
     end;
