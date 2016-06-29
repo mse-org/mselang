@@ -31,6 +31,6 @@ type
 
 var
  exitcode: int32;
- 
+implementation
 begin
-end; 
+end.
