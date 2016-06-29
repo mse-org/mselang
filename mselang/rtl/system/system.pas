@@ -8,5 +8,29 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 unit system;
+interface
+
+type
+ boolean = bool1;
+ 
+ byte = card8;
+ word = card16;
+ longword = card32;
+ qword = card64;
+
+ shortint = int8;
+ smallint = int16;
+ longint = int32;
+// int64 is internaltype
+
+ integer = longint;
+ cardinal = longword;
+
+ char = char8;
+ string = string8;
+
+var
+ exitcode: int32;
+ 
 begin
 end; 

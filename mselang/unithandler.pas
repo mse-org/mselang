@@ -22,7 +22,8 @@ uses
  handlerglob,msetypes;
 
 const
- systemunitname = '__mla__system';
+// systemunitname = '__mla__system';
+ systemunitname = 'system';
  compilerunitname = '__mla__compilerunit';
 
 type
@@ -876,25 +877,12 @@ begin
  po1:= punithashdataty(internaladdhash(aname));
  getmem(result,sizeof(unitinfoty));
  fillchar(result^,sizeof(result^),0);
-// clearlist(result^.externallinklist,sizeof(externallinkinfoty),256);
  result^.key:= aname;
  if info.systemunit <> nil then begin
   setlength(result^.interfaceuses,1);
   result^.interfaceuses[0]:= info.systemunit;
  end;
  po1^.data:= result;
-
-{
- if co_llvm in info.compileoptions then begin
-  if co_writeunits in info.compileoptions then begin
-   result^.llvmlists:= tllvmlists.create();
-  end
-  else begin 
-   result^.llvmlists:= globllvmlists;
-  end;
- end;
-}
-// result^.metadatalist:= tmetadatalist.create();
  with punitlinkinfoty(addlistitem(unitlinklist,unitchain))^ do begin
   ref:= result;
  end;
