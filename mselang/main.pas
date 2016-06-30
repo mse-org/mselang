@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013-2014 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,8 +73,13 @@ type
                    var accept: Boolean);
    procedure statupdateev(const sender: TObject; const filer: tstatfiler);
    procedure patheditev(const sender: TObject);
+  private
+   fcompparams: msestringarty;
+   procedure setcompparams(const avalue: msestringarty);
   protected
-//   function test: integer; override;
+   procedure initparams();
+  public
+   property compparams: msestringarty read fcompparams write setcompparams;
  end;
 var
  mainfo: tmainfo;
@@ -83,8 +88,8 @@ var
   
 implementation
 uses
- errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,
- msefileutils,patheditform,
+ errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,msearrayutils,
+ msefileutils,patheditform,mainmodule,mainmoduledebug,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
@@ -254,6 +259,7 @@ end;
 procedure tmainfo.aftreadexe(const sender: TObject);
 begin
  loadexe(nil);
+ initparams();
 end;
 
 procedure tmainfo.befwriteexe(const sender: TObject);
@@ -300,12 +306,24 @@ end;
 
 procedure tmainfo.statupdateev(const sender: TObject; const filer: tstatfiler);
 begin
- filer.updatevalue('unitdirs',info.o.unitdirs);
+ filer.updatevalue('unitdirs',fcompparams);
 end;
 
 procedure tmainfo.patheditev(const sender: TObject);
 begin
  tpatheditfo.create(nil);
+end;
+
+procedure tmainfo.setcompparams(const avalue: msestringarty);
+begin
+ fcompparams:= avalue;
+ initparams();
+end;
+
+procedure tmainfo.initparams();
+begin
+ maindebugmo.sysenv.init(fcompparams);
+ info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
 end;
 
 end.

@@ -20,18 +20,18 @@ var
  patheditfo: tpatheditfo;
 implementation
 uses
- patheditform_mfm,parserglob;
+ patheditform_mfm,parserglob,main;
  
 procedure tpatheditfo.loadedev(const sender: TObject);
 begin
- fuvalues.gridvalues:= info.o.unitdirs;
+ fuvalues.gridvalues:= mainfo.compparams;
 end;
 
 procedure tpatheditfo.closequerydef(const sender: tcustommseform;
                var amodalresult: modalresultty);
 begin
  if amodalresult = mr_ok then begin
-  info.o.unitdirs:= fuvalues.gridvalues;
+  mainfo.compparams:= fuvalues.gridvalues;
  end;
 end;
 

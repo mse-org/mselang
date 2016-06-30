@@ -16,7 +16,7 @@ object patheditfo: tpatheditfo
   onclosequery = closequerydef
   moduleclassname = 'tmseform'
   object twidgetgrid1: twidgetgrid
-    frame.caption = '-Fu'
+    frame.caption = 'Compiler params'
     frame.localprops = []
     frame.localprops1 = []
     frame.outerframe = (

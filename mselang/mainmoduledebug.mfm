@@ -1,0 +1,7 @@
+inherited maindebugmo: tmaindebugmo
+  oneventloopstart = nil
+  moduleclassname = 'tmainmo'
+  inherited sysenv: tsysenvmanager
+    options = [seo_tooutput, seo_toerror, seo_noautoinit]
+  end
+end

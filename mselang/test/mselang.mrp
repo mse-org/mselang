@@ -83,8 +83,8 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=
- ae=
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
@@ -105,14 +105,14 @@ c=3
  ae=0
  eec=0
  cr=0
- ao=
- ae=
+ ao=0
+ ae=0
  aec=0
  ie=0
  )
  (
  kind=1
- a=0,665,4,testdir
+ a=0,664,4,testdir
  c=6
   (
   kind=1
@@ -146,7 +146,7 @@ c=3
     )
     (
     kind=2
-    a=0,648,1,address llvm
+    a=0,648,2,address llvm
     teststate=1
     path=address.mla
     comment=
@@ -184,7 +184,7 @@ c=3
    )
    (
    kind=1
-   a=0,664,4,arith
+   a=0,665,4,arith
    c=34
     (
     kind=1
@@ -192,7 +192,7 @@ c=3
     c=8
      (
      kind=2
-     a=0,648,2,and1
+     a=0,648,1,and1
      teststate=1
      path=and1.mla
      comment=
@@ -236,7 +236,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,or1
+     a=0,648,1,or1
      teststate=1
      path=or1.mla
      comment=
@@ -280,7 +280,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,not1
+     a=0,648,1,not1
      teststate=1
      path=not1.mla
      comment=
@@ -324,7 +324,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,booleval1
+     a=0,648,1,booleval1
      teststate=1
      path=booleval1.mla
      comment=
@@ -388,7 +388,7 @@ c=3
     c=4
      (
      kind=2
-     a=0,648,2,cmppointer
+     a=0,648,1,cmppointer
      teststate=1
      path=cmppointer.mla
      comment=
@@ -432,7 +432,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,cmpenum
+     a=0,648,1,cmpenum
      teststate=1
      path=cmpenum.mla
      comment=
@@ -496,7 +496,7 @@ c=3
     c=4
      (
      kind=2
-     a=0,648,2,floatassign
+     a=0,648,1,floatassign
      teststate=1
      path=floatassign.mla
      comment=
@@ -540,7 +540,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,sin
+     a=0,648,1,sin
      teststate=1
      path=sin.mla
      comment=
@@ -600,11 +600,11 @@ c=3
     )
     (
     kind=1
-    a=0,664,4,pointer
+    a=0,665,4,pointer
     c=6
      (
      kind=2
-     a=0,648,2,pointeradd
+     a=0,648,1,pointeradd
      teststate=1
      path=pointeradd.mla
      comment=
@@ -648,7 +648,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerrecadd
+     a=0,648,1,pointerrecadd
      teststate=1
      path=pointerrecadd.mla
      comment=
@@ -692,7 +692,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerdiff
+     a=0,648,1,pointerdiff
      teststate=1
      path=pointerdiff.mla
      comment=
@@ -714,7 +714,7 @@ c=3
      )
      (
      kind=2
-     a=0,648,2,pointerdiff llvm
+     a=0,648,0,pointerdiff llvm
      teststate=1
      path=pointerdiff.mla
      comment=
@@ -2735,7 +2735,7 @@ c=3
     ae=0
     eec=123
     cr=0
-    ao=An unhandled exception occured at $B7315E00
+    ao=An unhandled exception occured at $B7301E00
     ae=
     aec=123
     ie=0
@@ -5290,7 +5290,7 @@ c=3
     eec=1
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
+    +Copyright (c) 2013-2016 by Martin Schreiber
     ae=typeequ2.mla(10,8) Error: Incompatible types: got "e" expected "dk_enum"
     aec=1
     ie=0
@@ -7493,7 +7493,7 @@ c=3
     eec=1
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
+    +Copyright (c) 2013-2016 by Martin Schreiber
     ae=missingend.mla(6,4) Fatal: Syntax error, ";" expected
     aec=1
     ie=0
@@ -7516,7 +7516,7 @@ c=3
     eec=0
     cr=0
     ao=MSElang Compiler version 0.0
-    +Copyright (c) 2013-2015 by Martin Schreiber
+    +Copyright (c) 2013-2016 by Martin Schreiber
     ae=
     aec=0
     ie=0
@@ -7677,7 +7677,7 @@ macrovalues=23
  /home/mse/packs/standard/git/mselang/mselang/
  /home/mse/packs/standard/git/llvm/build_release/bin/
  /home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/
- -Fu/home/mse/packs/standard/git/mselang/mselang/compiler
+ -Fu/home/mse/packs/standard/git/mselang/mselang/compiler -Fu/home/mse/packs/standard/git/mselang/mselang/rtl/*
  
  ${mselangdir}compiler/mlc ${msecflags} ${FILE}
  ${mlc}
@@ -7730,146 +7730,17 @@ wsize=0
 active=1
 visible=1
 [mainfo.grid]
-propcolwidthref=628
+propcolwidthref=643
 width0=50
 sortdescend0=0
-width1=194
+width1=199
 sortdescend1=0
-width2=222
+width2=227
 sortdescend2=0
-width3=163
+width3=167
 sortdescend3=0
 sortdescend4=0
-rowstate=132
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
- 0 0
+rowstate=3
  0 0
  0 0
  0 0

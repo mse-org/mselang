@@ -12,7 +12,7 @@ interface
 
 type
  boolean = bool1;
- 
+
  byte = card8;
  word = card16;
  longword = card32;
@@ -32,5 +32,4 @@ type
 var
  exitcode: int32;
 implementation
-begin
 end.

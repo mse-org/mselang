@@ -369,7 +369,7 @@ object mainfo: tmainfo
     bounds_cy = 20
     anchors = [an_top, an_right]
     state = [as_localcaption, as_localonexecute]
-    caption = 'dirs'
+    caption = 'param'
     onexecute = patheditev
   end
   object statf: tstatfile

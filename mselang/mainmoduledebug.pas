@@ -1,4 +1,4 @@
-{ MSElang Copyright (c) 2013 by Martin Schreiber
+{ MSElang Copyright (c) 2013-2016 by Martin Schreiber
    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,17 +14,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-program mselang;
+unit mainmoduledebug;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
-{$ifdef FPC}
- {$ifdef mswindows}{$apptype gui}{$endif}
-{$endif}
+interface
 uses
- {$ifdef FPC}{$ifdef unix}cthreads,{$endif}{$endif}
- msegui,mseforms,main,mainmoduledebug;
+ msetypes,mseglob,mseguiglob,mseguiintf,mseapplication,msestat,msemenus,msegui,
+ msegraphics,msegraphutils,mseevent,mseclasses,msewidgets,mseforms,
+ mainmodule;
 
-begin
- application.createdatamodule(tmaindebugmo,maindebugmo);
- application.createform(tmainfo,mainfo);
- application.run;
+type
+ tmaindebugmo = class(tmainmo)
+ end;
+var
+ maindebugmo: tmaindebugmo;
+implementation
+uses
+ mainmoduledebug_mfm;
 end.
