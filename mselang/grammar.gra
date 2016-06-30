@@ -8,6 +8,11 @@
  '{',curlycomment0-^*
  '(*',bracecomment0-^*
  '//',linecomment0-^*"
+{comments}
+"@whitespace,-
+ '{',curlycomment0-^*
+ '(*',bracecomment0-^*
+ '//',linecomment0-^*"
 
 {blockswitch}
 " 'implementation'.,*
@@ -175,12 +180,15 @@ directive,directive1,,*
  'ifdef'.,ifdef-*
  'else'.,elseif-*
  'endif'.,endif-*
+ 'h',ignoreddirective*
  '',compilerswitch*
  '}',-*
  '',-
 directive1,,,*
  '}',-*
  '',-
+ignoreddirective,directiveend,,handleignoreddirective
+ '',getident^*
 
 include,include1,,
  @whitespace,-
@@ -208,11 +216,14 @@ skipif,directiveend,,
  '}',skipif0-
  '',-
 skipif0,,,
+ ${comments}
  '{$',skipif1->
  '',-
 skipif1,,,
  'else'.,skipifelse-
  'endif'.,directiveend-
+ '}',skipif0-
+ '',-
 skipifelse,directiveend,handleskipifelseentry,
 
 elseif,skipelse,,handleelseif

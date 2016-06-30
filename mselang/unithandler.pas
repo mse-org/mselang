@@ -151,7 +151,7 @@ uses
  msehash,filehandler,errorhandler,parser,msefileutils,msestream,grammar,
  handlerutils,msearrayutils,opcode,subhandler,exceptionhandler,llvmlists,
  {stackops,}segmentutils,classhandler,compilerunit,managedtypes,llvmbitcodes,
- unitwriter,identutils,mseformatstr,sysutils,typehandler;
+ unitwriter,identutils,mseformatstr,sysutils,typehandler,directivehandler;
  
 type
  unithashdataty = record
@@ -195,6 +195,7 @@ procedure beginunit(const aname: identty; const nopush: boolean);
 var
  po1: punitdataty;
  lstr1: lstringty;
+ i1: int32;
 begin
  if nopush then begin
  {$ifdef mse_checkinternalerror}
@@ -228,14 +229,9 @@ begin
    getidentname(aname,lstr1);
    namestring:= lstringtostring(lstr1);
    name:= stringtolstring(namestring);
-   {
-   getidentname(aname,lstr1);
-   move(lstr1.po^,namebufferdata,lstr1.len);
-   namebufferdata[lstr1.len]:= '_';
-   namebufferstart:= lstr1.len + 1;
-   namebuffer.po:= @namebufferdata;
-   namebuffer.len:= lstr1.len+1+2*sizeof(int32);
-   }
+   for i1:= 0 to high(o.defines) do begin
+    adddefine(o.defines[i1].id);
+   end;
   end;
  end;
 end;

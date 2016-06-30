@@ -993,7 +993,7 @@ function parse(const input: string; const afilename: filenamety;
 var                           
  po1: punitinfoty;
  unit1,unit2: punitinfoty;
- int1: integer;
+ i1: integer;
 begin
  result:= false;
 // init();
@@ -1014,6 +1014,11 @@ begin
     s.compilerswitches:= o.compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
     init();
+    for i1:= 0 to high(o.defines) do begin
+     with o.defines[i1] do begin
+      id:= getident(name);
+     end;
+    end;
     unit1:= newunit('program');
     unit1^.filepath:= afilename; //todo: file reading
     if not initunitfileinfo(unit1) then begin

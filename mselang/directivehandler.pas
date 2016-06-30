@@ -17,7 +17,9 @@
 unit directivehandler;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
-
+uses
+ globtypes;
+ 
 procedure handledumpelements();
 procedure handledumpopcode();
 procedure handleabort();
@@ -31,6 +33,10 @@ procedure handleifdef();
 procedure handleelseif();
 procedure handleendif();
 procedure handleskipifelseentry();
+
+procedure handleignoreddirective();
+
+procedure adddefine(const id: identty);
 
 implementation
 uses
@@ -90,17 +96,29 @@ begin
  additem(oc_nop);
 end;
 
-procedure handledefine();
+procedure adddefine(const id: identty);
 var
  po1: pconditiondataty;
+begin
+ ele.adduniquechilddata(info.s.unitinfo^.interfaceelement,
+                  [tks_defines,id],ek_condition,allvisi,po1);
+ po1^.deleted:= false;
+end;
+
+procedure handledefine();
+//var
+// po1: pconditiondataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEFINE');
 {$endif}
  with info,contextstack[s.stacktop] do begin
+  adddefine(d.ident.ident);
+ {
   ele.adduniquechilddata(s.unitinfo^.interfaceelement,
                   [tks_defines,d.ident.ident],ek_condition,allvisi,po1);
   po1^.deleted:= false;
+ }
  end;
 end;
 
@@ -154,6 +172,14 @@ begin
 {$ifdef mse_debugparser}
  outhandle('SKIPIFELSENTRY');
 {$endif}
+end;
+
+procedure handleignoreddirective();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IGNOREDDIRECTIVE');
+{$endif}
+ identerror(1,err_ignoreddirective);
 end;
 
 end.

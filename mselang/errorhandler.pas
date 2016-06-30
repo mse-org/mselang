@@ -67,7 +67,8 @@ type
             err_nomemberaccessproperty,err_unknownrecordfield,
             err_illegalpropsymbol,err_div0,
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
-            err_subnovalue);
+            err_subnovalue,
+            err_ignoreddirective);
             
  errorinfoty = record
   level: errorlevelty;
@@ -108,7 +109,7 @@ const
  errorerrorlevel = erl_error;
  
  errorleveltext: array[errorlevelty] of string = (
-  '','Fatal','Error','Warning','Note'
+  '','Fatal','Error','Warning','Note','Hint'
  );
  errortext: array[errorty] of errorinfoty = (
   (level: erl_none; message: ''),
@@ -249,7 +250,9 @@ const
   (level: erl_error; message: 'Default values can only be specified for value,'+
                                               ' const and constref parameters'),
   (level: erl_error; message: 
-                     'Subroutine returns no value')
+                     'Subroutine returns no value'),
+  (level: erl_note; message: 
+                     'Ignored directive "%s"')
  );
 
 procedure message1(const atext: string; const values: array of const); 

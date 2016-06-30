@@ -10,7 +10,8 @@ const
  llvmbcextension = 'bc'; 
 type
  paramty = (pa_source,pa_llvm,pa_nocompilerunit,
-            pa_debug,pa_debugline,pa_unitdirs); //item number in sysenv
+            pa_debug,pa_debugline,pa_unitdirs,pa_define); 
+            //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
@@ -21,6 +22,8 @@ type
   private
    foutputstream: ttextstream;
    ferrorstream: ttextstream;
+  public
+   procedure initparams();
  end;
 
 var
@@ -31,7 +34,7 @@ implementation
 uses
  globtypes,mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
  msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler,
- msearrayutils;
+ msearrayutils,identutils;
  
 const
  startupmessage =
@@ -122,17 +125,30 @@ begin
  ferrorstream.free();
 end;
 
-procedure tmainmo.sysenvexe(sender: tsysenvmanager);
+procedure tmainmo.initparams();
+var
+ ar1: msestringarty;
+ i1: int32;
 begin
- if sender.defined[ord(pa_debug)] then begin
+ if sysenv.defined[ord(pa_debug)] then begin
   info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo,do_proginfo];
  end;
- if sender.defined[ord(pa_debugline)] then begin
+ if sysenv.defined[ord(pa_debugline)] then begin
   info.o.debugoptions:= info.o.debugoptions + 
                  [do_lineinfo];
  end;
- info.o.unitdirs:= reversearray(sender.values[ord(pa_unitdirs)]);
+ info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
+ ar1:= sysenv.values[ord(pa_define)];
+ setlength(info.o.defines,length(ar1));
+ for i1:= 0 to high(ar1) do begin
+  info.o.defines[i1].name:= ansistring(ar1[i1]);
+ end;
+end;
+
+procedure tmainmo.sysenvexe(sender: tsysenvmanager);
+begin
+ initparams();
 end;
 
 end.

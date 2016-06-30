@@ -534,7 +534,7 @@ type
 
 
 // opinfoarty = array of opinfoty;
- errorlevelty = (erl_none,erl_fatal,erl_error,erl_warning,erl_note);
+ errorlevelty = (erl_none,erl_fatal,erl_error,erl_warning,erl_note,erl_hint);
 {
  implinfoty = record
   sourceoffset: integer;
@@ -640,11 +640,18 @@ type
 
  allocprocty = procedure(const asize: integer; var address: segaddressty);  
 
+ defineinfoty = record
+  name: string;
+  id: identty;
+ end;
+ defineinfoarty = array of defineinfoty;
+ 
  parseoptionsty = record
   compileoptions: compileoptionsty;
   debugoptions: debugoptionsty;
   compilerswitches: compilerswitchesty;
   unitdirs: filenamearty;
+  defines: defineinfoarty;
  end;
  
  savedparseinfoty = record

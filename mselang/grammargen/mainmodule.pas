@@ -274,7 +274,7 @@ var
   end;
   exitcode:= 1;
 //  application.terminated:= true;
-  writestderr('***ERROR*** line '+inttostr(aline)+' '+text,true);
+  writestderr('***ERROR*** line '+inttostr(aline)+lineend+str1+lineend+text,true);
  end;
 
  procedure readline(var astr: string);

@@ -112,6 +112,7 @@ begin
  outstream:= ttextstream.create;
  resetinfo();
  initio(outstream,errstream);
+ initparams();
  if llvm.value then begin
 	  compoptions:= llvmcompileoptions;
   if lineinfoed.value then begin
@@ -259,7 +260,7 @@ end;
 procedure tmainfo.aftreadexe(const sender: TObject);
 begin
  loadexe(nil);
- initparams();
+// initparams();
 end;
 
 procedure tmainfo.befwriteexe(const sender: TObject);
@@ -317,13 +318,14 @@ end;
 procedure tmainfo.setcompparams(const avalue: msestringarty);
 begin
  fcompparams:= avalue;
- initparams();
+// initparams();
 end;
 
 procedure tmainfo.initparams();
 begin
  maindebugmo.sysenv.init(fcompparams);
- info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
+ maindebugmo.initparams();
+// info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
 end;
 
 end.

@@ -48,7 +48,7 @@ object mainmo: tmainmo
       )
       (
         ak_par
-        'd'
+        'g'
         (        )
         []
         ''
@@ -71,6 +71,17 @@ object mainmo: tmainmo
       (
         ak_pararg
         'Fu'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        'd'
         (        )
         []
         ''
