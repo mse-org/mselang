@@ -323,8 +323,7 @@ end;
 
 procedure tmainfo.initparams();
 begin
- maindebugmo.sysenv.init(fcompparams);
- maindebugmo.initparams();
+ maindebugmo.initparams(fcompparams);
 // info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
 end;
 

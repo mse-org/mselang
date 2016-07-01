@@ -10,7 +10,7 @@ const
  llvmbcextension = 'bc'; 
 type
  paramty = (pa_source,pa_llvm,pa_nocompilerunit,
-            pa_debug,pa_debugline,pa_unitdirs,pa_define); 
+            pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine); 
             //item number in sysenv
  
  tmainmo = class(tmsedatamodule)
@@ -18,12 +18,16 @@ type
    procedure eventloopexe(const sender: TObject);
    procedure terminatedexe(const sender: TObject);
    procedure createexe(const sender: TObject);
-   procedure sysenvexe(sender: tsysenvmanager);
+//   procedure sysenvexe(sender: tsysenvmanager);
+   procedure valuereadev(sender: tsysenvmanager; const index: Integer;
+                   var defined: Boolean; var argument: msestringarty;
+                   var error: sysenverrornrty);
   private
    foutputstream: ttextstream;
    ferrorstream: ttextstream;
-  public
    procedure initparams();
+  public
+   procedure initparams(const aparams: msestringarty);
  end;
 
 var
@@ -57,6 +61,7 @@ var
  llvmstream: tllvmbcwriter;
  compoptions: compileoptionsty;
 begin
+ initparams();
  foutputstream:= ttextstream.create(stdoutputhandle);
  ferrorstream:= ttextstream.create(stderrorhandle);
  initio(foutputstream,ferrorstream);
@@ -139,16 +144,47 @@ begin
                  [do_lineinfo];
  end;
  info.o.unitdirs:= reversearray(sysenv.values[ord(pa_unitdirs)]);
+{
  ar1:= sysenv.values[ord(pa_define)];
  setlength(info.o.defines,length(ar1));
  for i1:= 0 to high(ar1) do begin
   info.o.defines[i1].name:= ansistring(ar1[i1]);
  end;
+}
 end;
 
+procedure tmainmo.initparams(const aparams: msestringarty);
+begin
+ info.o.defines:= nil;
+ sysenv.init(aparams);
+ initparams();
+end;
+{
 procedure tmainmo.sysenvexe(sender: tsysenvmanager);
 begin
  initparams();
+end;
+}
+procedure tmainmo.valuereadev(sender: tsysenvmanager; const index: Integer;
+               var defined: Boolean; var argument: msestringarty;
+               var error: sysenverrornrty);
+var
+ i1: int32;
+begin
+ if error = ern_io then begin
+  case paramty(index) of
+   pa_define,pa_undefine: begin
+    i1:= high(info.o.defines)+1;
+    setlength(info.o.defines,i1+1);
+    with info.o.defines[i1] do begin
+     if argument <> nil then begin
+      name:= stringtoutf8ansi(argument[0]);
+      deleted:= paramty(index) = pa_undefine;
+     end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 end.

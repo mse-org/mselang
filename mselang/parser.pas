@@ -1020,7 +1020,7 @@ begin
      with o.defines[i1] do begin
       ele.adduniquechilddata(rootelement,
                   [tks_defines,getident(name)],ek_condition,allvisi,pcond);
-      pcond^.deleted:= false;
+      pcond^.deleted:= deleted;
      end;
     end;
     unit1:= newunit('program');

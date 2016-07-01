@@ -9,7 +9,7 @@ object mainmo: tmainmo
   moduleclassname = 'tmsedatamodule'
   object sysenv: tsysenvmanager
     options = [seo_appterminateonexception, seo_terminateonerror, seo_tooutput, seo_toerror]
-    onafterinit = sysenvexe
+    onvalueread = valuereadev
     left = 24
     top = 16
     defs = (
@@ -82,6 +82,17 @@ object mainmo: tmainmo
       (
         ak_pararg
         'd'
+        (        )
+        []
+        ''
+        ''
+        ''
+        ''
+        ''
+      )
+      (
+        ak_pararg
+        'u'
         (        )
         []
         ''

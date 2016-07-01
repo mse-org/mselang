@@ -642,6 +642,7 @@ type
 
  defineinfoty = record
   name: string;
+  deleted: boolean;
 //  id: identty;
  end;
  defineinfoarty = array of defineinfoty;
