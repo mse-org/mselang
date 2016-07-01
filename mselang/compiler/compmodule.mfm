@@ -1,4 +1,4 @@
-object mainmo: tmainmo
+object compmo: tcompmo
   bounds_cx = 331
   bounds_cy = 255
   oncreate = createexe

@@ -21,10 +21,10 @@ program mselang;
 {$endif}
 uses
  {$ifdef FPC}{$ifdef unix}cthreads,{$endif}{$endif}
- msegui,mseforms,main,mainmoduledebug;
+ msegui,mseforms,main,compmoduledebug;
 
 begin
- application.createdatamodule(tmaindebugmo,maindebugmo);
+ application.createdatamodule(tcompdebugmo,compdebugmo);
  application.createform(tmainfo,mainfo);
  application.run;
 end.

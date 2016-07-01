@@ -14,20 +14,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-unit mainmoduledebug;
+unit compmoduledebug;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
  msetypes,mseglob,mseguiglob,mseguiintf,mseapplication,msestat,msemenus,msegui,
  msegraphics,msegraphutils,mseevent,mseclasses,msewidgets,mseforms,
- mainmodule;
+ compmodule;
 
 type
- tmaindebugmo = class(tmainmo)
+ tcompdebugmo = class(tcompmo)
  end;
 var
- maindebugmo: tmaindebugmo;
+ compdebugmo: tcompdebugmo;
 implementation
 uses
- mainmoduledebug_mfm;
+ compmoduledebug_mfm;
 end.

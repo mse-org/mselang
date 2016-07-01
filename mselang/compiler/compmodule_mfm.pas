@@ -1,16 +1,16 @@
-unit mainmodule_mfm;
+unit compmodule_mfm;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 
 interface
 
 implementation
 uses
- mseclasses,mainmodule;
+ mseclasses,compmodule;
 
 const
  objdata: record size: integer; data: array[0..568] of byte end =
       (size: 569; data: (
-  84,80,70,48,7,116,109,97,105,110,109,111,6,109,97,105,110,109,111,9,
+  84,80,70,48,7,116,99,111,109,112,109,111,6,99,111,109,112,109,111,9,
   98,111,117,110,100,115,95,99,120,3,75,1,9,98,111,117,110,100,115,95,
   99,121,3,255,0,8,111,110,99,114,101,97,116,101,7,9,99,114,101,97,
   116,101,101,120,101,16,111,110,101,118,101,110,116,108,111,111,112,115,116,97,
@@ -42,5 +42,5 @@ const
  );
 
 initialization
- registerobjectdata(@objdata,tmainmo,'');
+ registerobjectdata(@objdata,tcompmo,'');
 end.

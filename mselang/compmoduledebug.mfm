@@ -1,6 +1,6 @@
-inherited maindebugmo: tmaindebugmo
+inherited compdebugmo: tcompdebugmo
   oneventloopstart = nil
-  moduleclassname = 'tmainmo'
+  moduleclassname = 'tcompmo'
   inherited sysenv: tsysenvmanager
     options = [seo_tooutput, seo_toerror, seo_noautoinit]
   end

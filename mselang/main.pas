@@ -89,7 +89,7 @@ var
 implementation
 uses
  errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,msearrayutils,
- msefileutils,patheditform,mainmodule,mainmoduledebug,
+ msefileutils,patheditform,mainmodule,compmoduledebug,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);
@@ -323,7 +323,7 @@ end;
 
 procedure tmainfo.initparams();
 begin
- maindebugmo.initparams(fcompparams);
+ compdebugmo.initparams(fcompparams);
 // info.o.unitdirs:= reversearray(maindebugmo.sysenv.values[ord(pa_unitdirs)]);
 end;
 

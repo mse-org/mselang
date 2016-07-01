@@ -1,4 +1,4 @@
-unit mainmodule;
+unit compmodule;
 {$ifdef FPC}{$mode objfpc}{$h+}{$endif}
 interface
 uses
@@ -13,7 +13,7 @@ type
             pa_debug,pa_debugline,pa_unitdirs,pa_define,pa_undefine); 
             //item number in sysenv
  
- tmainmo = class(tmsedatamodule)
+ tcompmo = class(tmsedatamodule)
    sysenv: tsysenvmanager;
    procedure eventloopexe(const sender: TObject);
    procedure terminatedexe(const sender: TObject);
@@ -25,18 +25,18 @@ type
   private
    foutputstream: ttextstream;
    ferrorstream: ttextstream;
-   procedure initparams();
   public
+   procedure initparams();
    procedure initparams(const aparams: msestringarty);
  end;
 
 var
- mainmo: tmainmo;
+ compmo: tcompmo;
 
 implementation
 
 uses
- globtypes,mainmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
+ globtypes,compmodule_mfm,parser,msesysutils,errorhandler,msesys,msesystypes,
  msefileutils,segmentutils,llvmops,sysutils,llvmbcwriter,unithandler,
  msearrayutils,identutils;
  
@@ -45,12 +45,12 @@ const
 'MSElang Compiler version 0.0'+lineend+
 'Copyright (c) 2013-2016 by Martin Schreiber';
 
-procedure tmainmo.createexe(const sender: TObject);
+procedure tcompmo.createexe(const sender: TObject);
 begin
  sysenv.printmessage(startupmessage);
 end;
 
-procedure tmainmo.eventloopexe(const sender: TObject);
+procedure tcompmo.eventloopexe(const sender: TObject);
 var
 // inputstream: ttextstream;
  filename1: filenamety;
@@ -124,13 +124,13 @@ begin
  application.terminated:= true;
 end;
 
-procedure tmainmo.terminatedexe(const sender: TObject);
+procedure tcompmo.terminatedexe(const sender: TObject);
 begin
  foutputstream.free();
  ferrorstream.free();
 end;
 
-procedure tmainmo.initparams();
+procedure tcompmo.initparams();
 var
  ar1: msestringarty;
  i1: int32;
@@ -153,19 +153,19 @@ begin
 }
 end;
 
-procedure tmainmo.initparams(const aparams: msestringarty);
+procedure tcompmo.initparams(const aparams: msestringarty);
 begin
  info.o.defines:= nil;
  sysenv.init(aparams);
  initparams();
 end;
 {
-procedure tmainmo.sysenvexe(sender: tsysenvmanager);
+procedure tcompmo.sysenvexe(sender: tsysenvmanager);
 begin
  initparams();
 end;
 }
-procedure tmainmo.valuereadev(sender: tsysenvmanager; const index: Integer;
+procedure tcompmo.valuereadev(sender: tsysenvmanager; const index: Integer;
                var defined: Boolean; var argument: msestringarty;
                var error: sysenverrornrty);
 var
