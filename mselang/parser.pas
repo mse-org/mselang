@@ -994,6 +994,7 @@ var
  po1: punitinfoty;
  unit1,unit2: punitinfoty;
  i1: integer;
+ pcond: pconditiondataty;
 begin
  result:= false;
 // init();
@@ -1014,9 +1015,12 @@ begin
     s.compilerswitches:= o.compilerswitches;
     modularllvm:= aoptions * [co_llvm,co_writeunits] = [co_llvm,co_writeunits];
     init();
+//    globelement:= ele.addelementduplicate1(idstart,ek_global,[]); //globals
     for i1:= 0 to high(o.defines) do begin
      with o.defines[i1] do begin
-      id:= getident(name);
+      ele.adduniquechilddata(rootelement,
+                  [tks_defines,getident(name)],ek_condition,allvisi,pcond);
+      pcond^.deleted:= false;
      end;
     end;
     unit1:= newunit('program');

@@ -229,9 +229,11 @@ begin
    getidentname(aname,lstr1);
    namestring:= lstringtostring(lstr1);
    name:= stringtolstring(namestring);
+  {
    for i1:= 0 to high(o.defines) do begin
     adddefine(o.defines[i1].id);
    end;
+  }
   end;
  end;
 end;

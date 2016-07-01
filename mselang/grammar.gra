@@ -178,6 +178,7 @@ directive,directive1,,*
  'define'.,define-*
  'undef'.,undef-*
  'ifdef'.,ifdef-*
+ 'ifndef'.,ifndef-*
  'else'.,elseif-*
  'endif'.,endif-*
  'h',ignoreddirective*
@@ -210,6 +211,8 @@ undef,directiveend,,handleundef
  '',getident^*
 
 ifdef,directiveend,,handleifdef
+ '',getident^*
+ifndef,directiveend,,handleifndef
  '',getident^*
 
 skipif,directiveend,,

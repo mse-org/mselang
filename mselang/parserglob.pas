@@ -642,7 +642,7 @@ type
 
  defineinfoty = record
   name: string;
-  id: identty;
+//  id: identty;
  end;
  defineinfoarty = array of defineinfoty;
  
@@ -685,6 +685,7 @@ type
  parseinfoty = record
   s: savedparseinfoty;
   o: parseoptionsty;
+  rootelement: elementoffsetty;
   currentscopemeta: metavaluety;
   scopemetastack: metavaluearty;
   scopemetaindex: int32;

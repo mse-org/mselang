@@ -30,13 +30,14 @@ procedure handledefine();
 procedure handleundef();
 
 procedure handleifdef();
+procedure handleifndef();
 procedure handleelseif();
 procedure handleendif();
 procedure handleskipifelseentry();
 
 procedure handleignoreddirective();
 
-procedure adddefine(const id: identty);
+//procedure adddefine(const id: identty);
 
 implementation
 uses
@@ -95,7 +96,7 @@ begin
 {$endif}
  additem(oc_nop);
 end;
-
+{
 procedure adddefine(const id: identty);
 var
  po1: pconditiondataty;
@@ -104,21 +105,19 @@ begin
                   [tks_defines,id],ek_condition,allvisi,po1);
  po1^.deleted:= false;
 end;
-
+}
 procedure handledefine();
-//var
-// po1: pconditiondataty;
+var
+ po1: pconditiondataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEFINE');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  adddefine(d.ident.ident);
- {
+//  adddefine(d.ident.ident);
   ele.adduniquechilddata(s.unitinfo^.interfaceelement,
                   [tks_defines,d.ident.ident],ek_condition,allvisi,po1);
   po1^.deleted:= false;
- }
  end;
 end;
 
@@ -130,28 +129,50 @@ begin
  outhandle('UNDEF');
 {$endif}
  with info,contextstack[s.stacktop] do begin
-  if ele.findchilddata(s.unitinfo^.interfaceelement,
-                 [tks_defines,d.ident.ident],[],allvisi,po1) then begin
-   po1^.deleted:= true;
+//  if ele.findchilddata(s.unitinfo^.interfaceelement,
+//                 [tks_defines,d.ident.ident],[],allvisi,po1) then begin
+  ele.adduniquechilddata(s.unitinfo^.interfaceelement,
+                  [tks_defines,d.ident.ident],ek_condition,allvisi,po1);
+                                  //hide possible global define
+  po1^.deleted:= true;
+//  end;
+ end;
+end;
+
+procedure checkdef(const ifndef: boolean);
+var
+ po1: pconditiondataty;
+begin
+ po1:= nil;
+ with info,contextstack[s.stacktop] do begin
+  if not ele.findchilddata(s.unitinfo^.interfaceelement,
+               [tks_defines,d.ident.ident],[],allvisi,po1) and
+     not ele.findchilddata(rootelement,
+               [tks_defines,d.ident.ident],[],allvisi,po1) then begin
+   po1:= nil;
+  end;
+  if ((po1 = nil) or po1^.deleted) xor ifndef then begin
+   switchcontext(@skipifco);
   end;
  end;
 end;
 
 procedure handleifdef();
-var
- po1: pconditiondataty;
 begin
 {$ifdef mse_debugparser}
  outhandle('IFDEF');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-  if not ele.findchilddata(s.unitinfo^.interfaceelement,
-               [tks_defines,d.ident.ident],[],allvisi,po1) or 
-                                                  po1^.deleted then begin
-   switchcontext(@skipifco);
-  end;
- end;
+ checkdef(false);
 end;
+
+procedure handleifndef();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IFNDEF');
+{$endif}
+ checkdef(true);
+end;
+
 //todo: check missing ifdef or double elseif
 procedure handleelseif();
 begin

@@ -426,6 +426,9 @@ type
  end;
  psysfuncdataty = ^sysfuncdataty;
 
+ globaldataty = record
+ end;
+ pglobaldataty = ^globaldataty;
  unitdataty = record
   varchain: elementoffsetty;
   next: elementoffsetty;

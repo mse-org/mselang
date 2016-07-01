@@ -49,7 +49,7 @@ type
                   ek_ancestorchain,
                   ek_sysfunc,ek_sub,ek_internalsub,
                   ek_nestedvar,
-                  ek_unit,ek_implementation,
+                  ek_global,ek_unit,ek_implementation,
                   ek_classimpnode,ek_classintfnamenode,ek_classintftypenode,
                   ek_uses,ek_condition);
  elementkindsty = set of elementkindty;
@@ -109,6 +109,8 @@ const
   sizeof(nestedvardataty)+elesize,
 //ek_classes,                   ek_class,
  {sizeof(classesdataty)+elesize,}{sizeof(classdataty)+elesize,}
+//ek_global,
+  sizeof(globaldataty)+elesize,
 //ek_unit,                   ek_implementation  
   sizeof(unitdataty)+elesize,sizeof(implementationdataty)+elesize,
 //ek_classimpnode,                   ek_classintfnamenode,
@@ -549,7 +551,7 @@ begin
   getident(tokens[tk1]);
  end;
  clear1();
- ele.pushelement(idstart,ek_none,[]); //root
+ info.rootelement:= ele.eleinforel(ele.pushelement(idstart,ek_none,[])); //root
 end;
 
 function alignsize(const asize: int32): int32; inline;
@@ -1580,6 +1582,17 @@ begin
    ek_ref: begin
     with prefdataty(@po1^.data)^ do begin
      mstr1:= mstr1 + ' R:'+inttostrmse(ref);
+    end;
+   end;
+   ek_condition: begin
+    with pconditiondataty(@po1^.data)^ do begin
+     mstr1:= mstr1 + ' D:';
+     if deleted then begin
+      mstr1:= mstr1 + 'true';
+     end
+     else begin
+      mstr1:= mstr1 + 'false';
+     end;
     end;
    end;
   end;
