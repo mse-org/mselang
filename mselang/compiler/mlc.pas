@@ -3,9 +3,9 @@ program mlc;
 {$ifdef mswindows}{$apptype console}{$endif}
 uses
  {$ifdef FPC}{$ifdef unix}cthreads,cwstring,{$endif}{$endif}
- sysutils,msenogui,mainmodule;
+ sysutils,msenogui,compmodule;
 
 begin
- application.createdatamodule(tmainmo,mainmo);
+ application.createdatamodule(tcompmo,compmo);
  application.run();
 end.
