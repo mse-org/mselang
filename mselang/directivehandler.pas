@@ -31,6 +31,7 @@ procedure handleundef();
 
 procedure handleifdef();
 procedure handleifndef();
+procedure ifcondentry();
 procedure handleifcond();
 procedure handleelseif();
 procedure handleendif();
@@ -174,12 +175,23 @@ begin
  checkdef(true);
 end;
 
+procedure ifcondentry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IFCONDENTRY');
+{$endif}
+ with info do begin
+  include(s.currentstatementflags,stf_condition);
+ end;
+end;
+
 procedure handleifcond();
 begin
 {$ifdef mse_debugparser}
  outhandle('IFCOND');
 {$endif}
  with info do begin
+  exclude(s.currentstatementflags,stf_condition);
   with info.contextstack[s.stacktop] do begin
    if d.kind <> ck_const then begin
     errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);

@@ -218,7 +218,7 @@ ifdef,directiveend,,handleifdef
  '',getident^*
 ifndef,directiveend,,handleifndef
  '',getident^*
-ifcond,directiveend,,handleifcond*
+ifcond,directiveend,ifcondentry,handleifcond*
  '',callexp*
 skipif,directiveend,,
  '}',skipif0-

@@ -89,7 +89,7 @@ var
 implementation
 uses
  errorhandler,main_mfm,stackops,parser,llvmops,msedatalist,msearrayutils,
- msefileutils,patheditform,mainmodule,compmoduledebug,
+ msefileutils,patheditform,compmoduledebug,
  msesystypes,llvmbcwriter,unithandler,mseformatstr,segmentutils,globtypes;
  
 procedure tmainfo.parseev(const sender: TObject);

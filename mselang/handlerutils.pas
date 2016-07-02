@@ -2988,6 +2988,15 @@ begin
       bo2:= true;
       po2:= @pob^.d.dat.constval.vinteger;
       case op1 of //add and sub handled in addsubterm()
+       oc_and1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean and pboolean(po2)^;
+       end;
+       oc_or1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean or pboolean(po2)^;
+       end;
+       oc_xor1: begin
+        d.dat.constval.vboolean:= d.dat.constval.vboolean xor pboolean(po2)^;
+       end;
        oc_mulcard32: begin       
         d.dat.constval.vcardinal:= card32(d.dat.constval.vinteger) *
                                                        card32(pcard64(po2)^);

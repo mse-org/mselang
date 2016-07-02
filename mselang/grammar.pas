@@ -10640,6 +10640,7 @@ begin
  ifndefco.handleexit:= @handleifndef;
  ifcondco.branch:= @bifcond;
  ifcondco.next:= @directiveendco;
+ ifcondco.handleentry:= @ifcondentry;
  ifcondco.handleexit:= @handleifcond;
  skipifco.branch:= @bskipif;
  skipifco.next:= @directiveendco;

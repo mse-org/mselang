@@ -924,7 +924,8 @@ begin
        d.shortcutexp.op:= aop;
       end;
      end;
-     if not (cos_booleval in s.compilerswitches) then begin
+     if not (stf_condition in s.currentstatementflags) and 
+                        not (cos_booleval in s.compilerswitches) then begin
       if getvalue(pob,das_1) then begin
        op1:= shortcutops[aop];
        if op1 = oc_none then begin
