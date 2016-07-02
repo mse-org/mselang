@@ -31,6 +31,7 @@ procedure handleundef();
 
 procedure handleifdef();
 procedure handleifndef();
+procedure handleifcond();
 procedure handleelseif();
 procedure handleendif();
 procedure handleskipifelseentry();
@@ -171,6 +172,32 @@ begin
  outhandle('IFNDEF');
 {$endif}
  checkdef(true);
+end;
+
+procedure handleifcond();
+begin
+{$ifdef mse_debugparser}
+ outhandle('IFCOND');
+{$endif}
+ with info do begin
+  with info.contextstack[s.stacktop] do begin
+   if d.kind <> ck_const then begin
+    errormessage(err_constexpressionexpected,[],s.stacktop-s.stackindex);
+   end
+   else begin
+    if (d.dat.datatyp.indirectlevel <> 0) or 
+                      (d.dat.constval.kind <> dk_boolean) then begin
+     errormessage(err_booleanexpressionexpected,[],s.stacktop-s.stackindex);
+    end
+    else begin
+     if not d.dat.constval.vboolean then begin
+      switchcontext(@skipifco);
+     end;
+    end;
+   end;
+  end;
+//  dec(s.stackindex);
+ end;
 end;
 
 //todo: check missing ifdef or double elseif
