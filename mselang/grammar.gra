@@ -209,8 +209,13 @@ nop,directiveend,handlenop,
 abort,directiveend,handleabort,
 stoponerror,directiveend,handlestoponerror,
 
-define,directiveend,,handledefine
+define,define1,,
  '',getident^*
+define1,directiveend,,handledefine
+ '=',define2-
+define2,directiveend,,handledefinevalue
+ '',callexppop^*
+ 
 undef,directiveend,,handleundef
  '',getident^*
 
@@ -923,6 +928,11 @@ exp,,,handleexp^
 callexp,exp1,,
  '',fact*
 exp1,,,handleexp1
+${simpexpswitch} 
+
+callexppop,exp1pop,,
+ '',fact*
+exp1pop,,,handleexp1^
 ${simpexpswitch} 
 
 mulfact,,,handlemulfact

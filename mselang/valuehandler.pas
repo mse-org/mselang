@@ -68,7 +68,7 @@ implementation
 uses
  errorhandler,elements,handlerutils,opcode,stackops,segmentutils,opglob,
  subhandler,grammar,unithandler,syssubhandler,classhandler,interfacehandler,
- controlhandler,identutils,msestrings,
+ controlhandler,identutils,msestrings,handler,
  __mla__internaltypes,exceptionhandler,listutils;
 
 function listtoset(const acontext: pcontextitemty): boolean;
@@ -2299,6 +2299,13 @@ begin
     ek_labeldef: begin
      d.kind:= ck_label;
      d.dat.lab:= ele.eleinforel(po1);
+    end;
+    ek_condition: begin
+     with pconditiondataty(po2)^ do begin
+      if value.kind = dk_none then begin
+      end;
+      setconstcontext(poind,value)
+     end;
     end;
     else begin
      internalerror1(ie_parser,'20150917C');

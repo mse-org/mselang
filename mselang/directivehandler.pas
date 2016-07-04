@@ -27,6 +27,7 @@ procedure handlestoponerror();
 procedure handlenop();
 
 procedure handledefine();
+procedure handledefinevalue();
 procedure handleundef();
 
 procedure handleifdef();
@@ -111,15 +112,48 @@ end;
 procedure handledefine();
 var
  po1: pconditiondataty;
+ ident1: identty;
 begin
 {$ifdef mse_debugparser}
  outhandle('DEFINE');
 {$endif}
- with info,contextstack[s.stacktop] do begin
-//  adddefine(d.ident.ident);
+ with info,contextstack[s.stackindex+1] do begin
+ {$ifdef mse_internaldebug}
+  if d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20160703A');
+  end;
+ {$endif}
   ele.adduniquechilddata(s.unitinfo^.interfaceelement,
                   [tks_defines,d.ident.ident],ek_condition,allvisi,po1);
   po1^.deleted:= false;
+  po1^.value.kind:= dk_none;
+ end;
+end;
+
+procedure handledefinevalue();
+var
+ po1: pconditiondataty;
+ ident1: identty;
+begin
+{$ifdef mse_debugparser}
+ outhandle('DEFINEVALUE');
+{$endif}
+ with info,contextstack[s.stacktop] do begin
+ {$ifdef mse_internaldebug}
+  if contextstack[s.stackindex+1].d.kind <> ck_ident then begin
+   internalerror(ie_handler,'20160703A');
+  end;
+ {$endif}
+  if d.kind <> ck_space then begin
+   if not (d.kind in datacontexts) then begin
+    internalerror(ie_handler,'20160703B');
+   end;
+   ele.adduniquechilddata(s.unitinfo^.interfaceelement,
+                  [tks_defines,contextstack[s.stackindex+1].d.ident.ident],
+                                                     ek_condition,allvisi,po1);
+   po1^.deleted:= false;
+   po1^.value:= d.dat.constval;
+  end;
  end;
 end;
 

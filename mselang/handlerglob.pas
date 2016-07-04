@@ -445,6 +445,7 @@ type
  
  conditiondataty = record
   deleted: boolean;
+  value: dataty;
  end;
  pconditiondataty = ^conditiondataty;
  

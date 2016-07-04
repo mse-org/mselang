@@ -480,7 +480,11 @@ begin
    exit;
   end;
   with info do begin
-   if ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
+   if (stf_condition in s.currentstatementflags) and 
+        (ele.findchild(s.unitinfo^.interfaceelement,
+               [tks_defines,idents.d[0]],[],allvisi,eleres) or
+        ele.findchild(rootelement,idents.d[0],[],allvisi,eleres)) or 
+            ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
     result:= true;
     firstnotfound:= 0;
    end

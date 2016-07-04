@@ -159,6 +159,8 @@ procedure copyapostrophe();
 procedure copytoken();
 procedure handlechar();
 
+procedure setconstcontext(const aitem: pcontextitemty; const avalue: dataty);
+
 implementation
 uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
@@ -350,7 +352,7 @@ end;
 procedure setnumberconst(const aitem: pcontextitemty; const avalue: card64);
 begin
  with aitem^ do begin
-  initdatacontext(d,ck_const);
+//  initdatacontext(d,ck_const);
   if (int64(avalue) <= high(int8)) and 
                             (int64(avalue) >= low(int8)) then begin
    d.dat.datatyp:= sysdatatypes[st_int8];
@@ -372,6 +374,55 @@ begin
   end;
   d.dat.constval.kind:= dk_integer;
   d.dat.constval.vinteger:= int64(avalue);   
+ end;
+end;
+
+procedure setconstcontext(const aitem: pcontextitemty; const avalue: dataty);
+begin
+ with aitem^ do begin
+  initdatacontext(d,ck_const);
+  d.dat.constval:= avalue;
+  case avalue.kind of
+   dk_boolean: begin
+    d.dat.datatyp:= sysdatatypes[st_bool1];
+   end;
+   dk_integer: begin
+    setnumberconst(aitem,avalue.vinteger);
+   end;
+   dk_cardinal: begin
+    if (avalue.vcardinal) <= high(card8) then begin
+     d.dat.datatyp:= sysdatatypes[st_card8];
+    end
+    else begin
+     if (avalue.vcardinal) <= high(card16) then begin
+      d.dat.datatyp:= sysdatatypes[st_card16];
+     end
+     else begin
+      if (avalue.vcardinal) <= high(card32) then begin
+       d.dat.datatyp:= sysdatatypes[st_card32];
+      end
+      else begin
+       d.dat.datatyp:= sysdatatypes[st_card64];
+      end;
+     end;
+    end;
+   end;
+   dk_float: begin
+    d.dat.datatyp:= sysdatatypes[st_flo64];
+   end;
+   dk_address: begin
+    d.dat.datatyp:= sysdatatypes[st_pointer];
+   end;
+   dk_string8: begin
+    d.dat.datatyp:= sysdatatypes[st_string8];
+   end;
+   dk_character: begin
+    d.dat.datatyp:= sysdatatypes[st_char8];
+   end;
+   else begin
+    internalerror1(ie_handler,'20160704A');
+   end;
+  end;
  end;
 end;
 
@@ -408,6 +459,7 @@ begin
     end;
    end;
    s.stackindex:= s.stacktop-1;
+   initdatacontext(poitem^.d,ck_const);
    setnumberconst(poitem,c1);
   end;
  end;
@@ -1390,6 +1442,7 @@ begin
       d.dat.constval.vstring:= newstringconst();
      end;
      ck_number: begin
+      initdatacontext(toppo^.d,ck_const);
       setnumberconst(toppo,d.number.value);
      end;
     end;
