@@ -118,7 +118,8 @@ type
                     sdk_card32,
                     sdk_int32,
                     sdk_flo64,
-                    sdk_set32);
+                    sdk_set32,
+                    sdk_string8);
  stackdatakindsty = set of stackdatakindty;
 
 const

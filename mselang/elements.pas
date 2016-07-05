@@ -328,6 +328,7 @@ function datatoele(const adata: pointer): pelementinfoty; inline;
 
 //todo: code unit sizes
 function newstringconst(): stringvaluety; //save info.stringbuffer
+function newstringconst(const avalue: lstringty): stringvaluety;
 function getstringconst(const astring: stringvaluety): lstringty;
 function stringconstlen(const astring: stringvaluety): int32;
 function allocstringconst(const astring: stringvaluety): segaddressty;
@@ -383,6 +384,7 @@ type
    destructor destroy; override;
    procedure clear; override;
    function add(const avalue: string): stringvaluety;
+   function add(const avalue: lstringty): stringvaluety;
    function allocconst(const astring: stringvaluety): segaddressty;
    function getlength(const astring: stringvaluety): int32;
    function getstring(const astring: stringvaluety): lstringty;
@@ -405,6 +407,11 @@ end;
 function newstringconst(): stringvaluety;
 begin
  result:= stringbuf.add(info.stringbuffer);
+end;
+
+function newstringconst(const avalue: lstringty): stringvaluety;
+begin
+ result:= stringbuf.add(avalue);
 end;
 
 function allocstringconst(const astring: stringvaluety): segaddressty;
@@ -1387,35 +1394,44 @@ function telementhashdatalist.dumpelements: msestringarty;
   end;
  end; //dumptyp
 
+ function dumpconstvalue(const avalue: dataty): msestring;
+ begin
+  with avalue do begin
+   result:= msestring(getenumname(typeinfo(kind),ord(kind)))+' ';
+   case kind of
+    dk_boolean: begin
+     result:= result + msestring(booltostr(vboolean));
+    end;
+    dk_integer: begin
+     result:= result + inttostrmse(vinteger);
+    end;
+    dk_cardinal: begin
+     result:= result + inttostrmse(vcardinal);
+    end;
+    dk_float: begin
+     result:= result + realtostrmse(vfloat);
+    end;
+    dk_address: begin
+     result:= result + inttostrmse(vaddress.poaddress);
+    end;
+    dk_enum: begin
+     result:= result + inttostrmse(venum.value);
+    end;
+    dk_set: begin
+     result:= result + hextostrmse(card32(vset.value)); 
+               //todo: arbitrary size, set format
+    end;
+    dk_string8: begin
+     result:= result + lstringtostring(getstringconst(vstring));
+    end;
+   end;
+  end;
+ end;
+
  function dumpconst(const avalue: datainfoty): msestring;
  begin
   with avalue do begin
-   result:= 'T:'+inttostrmse(typ.typedata)+' '+
-                  msestring(getenumname(typeinfo(d.kind),ord(d.kind)))+' ';
-   case d.kind of
-       dk_boolean: begin
-        result:= result + msestring(booltostr(d.vboolean));
-       end;
-       dk_integer: begin
-        result:= result + inttostrmse(d.vinteger);
-       end;
-       dk_cardinal: begin
-        result:= result + inttostrmse(d.vcardinal);
-       end;
-       dk_float: begin
-        result:= result + realtostrmse(d.vfloat);
-       end;
-       dk_address: begin
-        result:= result + inttostrmse(d.vaddress.poaddress);
-       end;
-       dk_enum: begin
-        result:= result + inttostrmse(d.venum.value);
-       end;
-       dk_set: begin
-        result:= result + hextostrmse(card32(d.vset.value)); 
-                  //todo: arbitrary size, set format
-       end;
-      end;
+   result:= 'T:'+inttostrmse(typ.typedata)+' '+dumpconstvalue(d);
   end; 
  end; //dumpconst
   
@@ -1592,6 +1608,9 @@ begin
      end
      else begin
       mstr1:= mstr1 + 'false';
+     end;
+     if value.kind <> dk_none then begin
+      mstr1:= mstr1+lineend+' value:'+dumpconstvalue(value);
      end;
     end;
    end;
@@ -2269,35 +2288,40 @@ begin
                                       stringbufdataty(aitemdata).len);
 end;
 
-function tstringbuffer.add(const avalue: string): stringvaluety;
+function tstringbuffer.add(const avalue: lstringty): stringvaluety;
 var
  hash: longword;
  po1: pstringbufhashdataty;
  offs1: ptruint;
- len1: integer;
+// len1: integer;
 begin
  hash:= stringhash(avalue);
- po1:= pointer(internalfind(stringtolstring(avalue),hash));
+ po1:= pointer(internalfind(avalue,hash));
  if po1 = nil then begin
-  len1:= length(avalue);
+//  len1:= length(avalue);
   po1:= pointer(internaladdhash(hash));
   po1^.data.offset:= fbufsize;
   po1^.data.constoffset:= 0;
-  po1^.data.len:= len1;
-  fbufsize:= fbufsize + len1;
+  po1^.data.len:= avalue.len;
+  fbufsize:= fbufsize + avalue.len;
   if fbufsize > fbufcapacity then begin
    fbufcapacity:= fbufsize*2;
    reallocmem(fbuffer,fbufcapacity);
   end;
-  move(pointer(avalue)^,(fbuffer+po1^.data.offset)^,len1);
+  move(avalue.po^,(fbuffer+po1^.data.offset)^,avalue.len);
  end;
  result.offset:= @po1^.data-fdata;
- if avalue = '' then begin
+ if avalue.len = 0 then begin
   result.flags:= [strf_empty];
  end
  else begin
   result.flags:= [];
  end;
+end;
+
+function tstringbuffer.add(const avalue: string): stringvaluety;
+begin
+ result:= add(stringtolstring(avalue));
 end;
 
 procedure tstringbuffer.clear;

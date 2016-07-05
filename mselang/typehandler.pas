@@ -410,7 +410,7 @@ begin
                             contextstack[s.stackindex-2].d.typ.flags);
  end;
 end;
-var testvar1: elementoffsetty; testvar2: pinternalsubdataty;
+
 procedure createrecordmanagehandlersubs(const atyp: elementoffsetty);
 var
  ele1,typele1: elementoffsetty;
@@ -443,7 +443,6 @@ begin
   typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
-testvar1:= ele.eledatarel(sub1);
    sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
    if sub1^.calllinks <> 0 then begin
     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
@@ -501,7 +500,6 @@ testvar1:= ele.eledatarel(sub1);
   typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to mo_decref do begin //mo_decrefindi?
    sub1:= ele.eledataabs(typ1^.recordmanagehandlers[op1]);
-testvar1:= ele.eledatarel(sub1);
    sub1^.address:= startsimplesub(datatoele(sub1)^.header.name,true);
    if sub1^.calllinks <> 0 then begin
     linkresolvecall(sub1^.calllinks,sub1^.address,-1); 
@@ -536,7 +534,7 @@ testvar1:= ele.eledatarel(sub1);
  end;
 *)
 end;
-var testvar3: popinfoty;
+
 procedure createrecordmanagehandler(const atyp: elementoffsetty);
 var
  op1: managedopty;
@@ -559,12 +557,10 @@ begin
   typ1:= ele.eledataabs(atyp);
   for op1:= low(op1) to high(op1) do begin
    sub1:= ele.addelementdata(managedopids[op1],ek_internalsub,allvisi);
-testvar1:= ele.eledatarel(sub1);
    sub1^.address:= 0;
    sub1^.calllinks:= 0;
    typ1^.recordmanagehandlers[op1]:= ele.eledatarel(sub1);
   end;
-testvar1:= ptypedataty(ele.eledataabs(atyp))^.recordmanagehandlers[low(op1)];
   ele.elementparent:= ele1;
   if (sublevel = 0) and
             (stf_implementation in s.currentstatementflags) then begin
@@ -575,9 +571,6 @@ testvar1:= ptypedataty(ele.eledataabs(atyp))^.recordmanagehandlers[low(op1)];
    s.unitinfo^.pendingmanagechain:= atyp;
                            //add to pending list
   end;
-testvar2:= ele.eledataabs(
-      ptypedataty(ele.eledataabs(atyp))^.recordmanagehandlers[low(op1)]);
-testvar3:= getoppo(testvar2^.address);
  end;
 end;
 

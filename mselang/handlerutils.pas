@@ -56,7 +56,7 @@ const
    //dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,dk_kind,
     sdk_none,sdk_pointer,sdk_bool1,sdk_card32, sdk_int32, sdk_flo64,sdk_none,
   //dk_address,dk_record,dk_string,dk_dynarray,dk_openarray,dk_array,
-    sdk_pointer,  sdk_none, sdk_none, sdk_none,sdk_none,    sdk_none,
+    sdk_pointer,  sdk_none, sdk_string8, sdk_none,sdk_none,    sdk_none,
   //dk_class,dk_interface
     sdk_none,sdk_none,
   //dk_sub
@@ -67,13 +67,13 @@ const
  resultdatakinds: array[stackdatakindty] of datakindty =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64,
            (dk_none,dk_pointer,dk_boolean,dk_cardinal,dk_integer,dk_float,
-          //sdk_set32
-            dk_set);
+          //sdk_set32,sdk_string8
+            dk_set,  dk_string8);
  resultdatatypes: array[stackdatakindty] of systypety =
           //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,sdk_int32,sdk_flo64
            (st_none, st_pointer, st_bool1, st_card32, st_int32, st_flo64,
-          //sdk_set32
-            st_card32);
+          //sdk_set32,sdk_string8
+            st_card32,st_string8);
 
  popindioptable: array[databitsizety] of opcodety = (
  //das_none,      das_1,          das_2_7,        das_8,
@@ -483,7 +483,8 @@ begin
    if (stf_condition in s.currentstatementflags) and 
         (ele.findchild(s.unitinfo^.interfaceelement,
                [tks_defines,idents.d[0]],[],allvisi,eleres) or
-        ele.findchild(rootelement,idents.d[0],[],allvisi,eleres)) or 
+        ele.findchild(rootelement,[tks_defines,idents.d[0]],
+                                                [],allvisi,eleres)) or 
             ele.findparentscope(idents.d[0],akinds,visibility,eleres) then begin
     result:= true;
     firstnotfound:= 0;

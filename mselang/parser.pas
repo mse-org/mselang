@@ -992,9 +992,11 @@ function parse(const input: string; const afilename: filenamety;
                               //true if ok
 var                           
  po1: punitinfoty;
+ po2: pchar;
  unit1,unit2: punitinfoty;
  i1: integer;
  pcond: pconditiondataty;
+ lstr1: lstringty;
 begin
  result:= false;
 // init();
@@ -1018,8 +1020,27 @@ begin
 //    globelement:= ele.addelementduplicate1(idstart,ek_global,[]); //globals
     for i1:= 0 to high(o.defines) do begin
      with o.defines[i1] do begin
-      ele.adduniquechilddata(rootelement,
+      po2:= msestrings.strscan(pointer(name),'=');
+      if po2 <> nil then begin
+       ele.adduniquechilddata(rootelement,
+                     [tks_defines,getident(pchar(pointer(name)),po2)],
+                                               ek_condition,allvisi,pcond);
+       pcond^.value.kind:= dk_none;
+       lstr1.po:= po2+1;
+       lstr1.len:= length(name)-(lstr1.po-pchar(pointer(name)));
+       if trystrtoint64(lstr1,pcond^.value.vinteger) then begin
+        pcond^.value.kind:= dk_integer;
+       end
+       else begin
+        pcond^.value.vstring:= newstringconst(lstr1);
+        pcond^.value.kind:= dk_string8;
+       end;
+      end
+      else begin
+       ele.adduniquechilddata(rootelement,
                   [tks_defines,getident(name)],ek_condition,allvisi,pcond);
+       pcond^.value.kind:= dk_none;
+      end;
       pcond^.deleted:= deleted;
      end;
     end;
