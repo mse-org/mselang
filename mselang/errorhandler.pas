@@ -68,7 +68,7 @@ type
             err_illegalpropsymbol,err_div0,
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
             err_subnovalue,
-            err_ignoreddirective);
+            err_ignoreddirective,err_definehasnovalue);
             
  errorinfoty = record
   level: errorlevelty;
@@ -252,7 +252,9 @@ const
   (level: erl_error; message: 
                      'Subroutine returns no value'),
   (level: erl_note; message: 
-                     'Ignored directive "%s"')
+                     'Ignored directive "%s"'),
+  (level: erl_error; message: 
+                     'Define has no value')
  );
 
 procedure message1(const atext: string; const values: array of const); 

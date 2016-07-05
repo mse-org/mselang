@@ -2303,6 +2303,8 @@ begin
     ek_condition: begin
      with pconditiondataty(po2)^ do begin
       if value.kind = dk_none then begin
+       errormessage(err_definehasnovalue,[]);
+       goto endlab;
       end;
       setconstcontext(poind,value)
      end;
