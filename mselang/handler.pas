@@ -166,7 +166,7 @@ uses
  stackops,msestrings,elements,grammar,sysutils,handlerutils,mseformatstr,
  unithandler,errorhandler,{$ifdef mse_debugparser}parser,{$endif}opcode,
  subhandler,managedtypes,syssubhandler,valuehandler,segmentutils,listutils,
- llvmlists,llvmbitcodes,identutils;
+ llvmlists,llvmbitcodes,identutils,__mla__internaltypes;
 
 procedure beginparser(const aoptable: poptablety);
 
@@ -2277,7 +2277,7 @@ const
    wantedtype: st_none; opname: 'in')}
  );
 
-function compstring8(const a,b: stringvaluety): int32;
+function compstring8(const a,b: stringvaluety): stringsizety;
 var
  sa,sb: lstringty;
  poa,poe,pob: pint8;

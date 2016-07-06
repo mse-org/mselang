@@ -1458,9 +1458,85 @@ begin
  end;
 end;
 
-procedure cmpstring8op();
+function compstring8(a,b: pointer): stringsizety;
+var
+ poa,poe,pob: pcard8;
+ s1,s2: stringsizety;
+ i1: int16;
+ 
 begin
- notimplemented();
+ result:= 0;
+ if a <> b then begin
+  if a = nil then begin
+   if b <> nil then begin
+    result:= -1;
+   end;
+  end
+  else begin
+   if b = nil then begin
+    result:= 1;
+   end
+   else begin
+    poa:= a;
+    pob:= b;
+    s1:= (pstring8headerty(a)-1)^.len;
+    s2:= (pstring8headerty(b)-1)^.len;
+    if s1 < s2 then begin
+     poe:= poa + s1;
+    end
+    else begin
+     poe:= poa + s2;
+    end;
+    while true do begin
+     i1:= poa^-pob^;
+     if i1 <> 0 then begin
+      result:= i1;
+      exit;
+     end;
+     inc(poa);
+     if poa >= poe then begin
+      break;
+     end;
+     inc(pob);
+    end;
+    if i1 = 0 then begin
+     result:= s1 - s2;
+    end;
+   end;
+  end;
+ end;
+end;
+
+procedure cmpstring8op();
+var
+ po1,po2: ppointer;
+ i1: stringsizety;
+begin
+ po1:= stackpop(sizeof(pointer));
+ po2:= stackpop(sizeof(pointer));
+ i1:= compstring8(po2^,po1^);
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 = 0;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 <> 0;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 > 0;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 < 0;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 >= 0;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= i1 <= 0;
+   end;
+  end;
+ end;
 end;
 
 procedure setcontainsop();
