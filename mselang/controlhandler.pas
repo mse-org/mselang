@@ -444,7 +444,8 @@ var
  flags1: handlerflagsty;
  initcheckad: int32;
  po1: ptypedataty;
- op1,op2: opcodety;
+ cok1: compopkindty;
+ op2: opcodety;
  po2: popinfoty;
  step: int32;
  i1,i2: int32;
@@ -470,17 +471,18 @@ begin
      pushtemp(start,alloc);
      pushtemp(stop,alloc);
      if hf_down in flags1 then begin        //todo: different types
-      op1:= oc_cmpgeint32;
+      cok1:= cok_ge;
       step:= -1;
      end
      else begin
-      op1:= oc_cmpleint32;
+      cok1:= cok_le;
       step:= 1;
      end;
-     with additem(op1)^.par do begin
+     with additem(oc_cmpint32)^.par do begin
       ssas1:= start.tempaddress.ssaindex;
       ssas2:= stop.tempaddress.ssaindex;
       i1:= ssad;
+      stackop.compkind:= cok1;
      end;
      checkopcapacity(10);
      po2:= addcontrolitem(oc_if); //jump to loop end
@@ -524,7 +526,7 @@ end;
 
 procedure handleforend();
 var
- op1: opcodety;
+ cok1: compopkindty;
  flags1: handlerflagsty;
  po1: popinfoty;
  i1,i2: int32;
@@ -537,20 +539,21 @@ begin
    flags1:= d.handlerflags;
    if not (hf_error in d.handlerflags) then begin
     if hf_down in flags1 then begin        //todo: different types
-     op1:= oc_cmpleint32;
+     cok1:= cok_le;
     end
     else begin
-     op1:= oc_cmpgeint32;
+     cok1:= cok_ge;
     end;
     addlabel();
     with d.control do begin
      linkresolveopad(linkscontinue,opcount-1);
      i1:= pushtempindi(forinfo.varad,forinfo.alloc);
      i2:= pushtemp(forinfo.stop,forinfo.alloc);
-     with additem(op1)^.par do begin
+     with additem(oc_cmpint32)^.par do begin
       ssas1:= i1;
       ssas2:= i2;
       i1:= ssad;
+      stackop.compkind:= cok1;
      end;    
      with addcontrolitem(oc_if)^ do begin //jump to loop start
       par.opaddress.opaddress:= d.control.opmark1.address;

@@ -118,9 +118,10 @@ function findvar(const astackoffset: integer;
 function addvar(const aname: identty; const avislevel: visikindsty;
           var chain: elementoffsetty; out aelementdata: pvardataty): boolean;
 
-procedure addfactbinop(const poa,pob: pcontextitemty;const aopcode: opcodety);
+function addfactbinop(const poa,pob: pcontextitemty;
+                                    const aopcode: opcodety): popinfoty;
 procedure resolveshortcuts(const posource,podest: pcontextitemty);
-procedure updateop(const opsinfo: opsinfoty);
+function updateop(const opsinfo: opsinfoty): popinfoty;
 function convertconsts(const poa,pob: pcontextitemty): stackdatakindty;
 function compaddress(const a,b: addressvaluety): integer;
 
@@ -2833,7 +2834,8 @@ begin
  end;
 end;
 }
-procedure addfactbinop(const poa,pob: pcontextitemty; const aopcode: opcodety);
+function addfactbinop(const poa,pob: pcontextitemty;
+                             const aopcode: opcodety): popinfoty;
 //var
 // poa,pob: pcontextitemty;
 begin
@@ -2841,7 +2843,8 @@ begin
 //  pob:= @contextstack[s.stacktop];
 //  poa:= getpreviousnospace(pob)-1;
   with poa^ do begin
-   with additem(aopcode)^ do begin      
+   result:= additem(aopcode);
+   with result^ do begin      
     par.ssas1:= d.dat.fact.ssaindex;
     par.ssas2:= pob^.d.dat.fact.ssaindex;
     par.stackop.t:= getopdatatype(d.dat.datatyp.typedata,
@@ -2882,7 +2885,8 @@ begin
  end;
 end;
 
-procedure updateop(const opsinfo: opsinfoty);
+function updateop(const opsinfo: opsinfoty): popinfoty;
+
  procedure div0error();
  begin
   with info do begin
@@ -2933,6 +2937,7 @@ begin
    if not bo2 then begin
     goto endlab;
    end;
+   int1:= d.dat.datatyp.indirectlevel;
    if opsinfo.wantedtype <> st_none then begin
     if not tryconvert(pob,opsinfo.wantedtype) then begin
      operationnotsupportederror(d,contextstack[s.stacktop].d,opsinfo.opname);
@@ -2947,7 +2952,6 @@ begin
    end
    else begin   
     po1:= ele.eledataabs(d.dat.datatyp.typedata);
-    int1:= d.dat.datatyp.indirectlevel;
     if not tryconvert(pob,po1,int1,[coo_notrunk]) then begin
      with pob^ do begin
       po1:= ele.eledataabs(d.dat.datatyp.typedata);
@@ -3079,7 +3083,7 @@ begin
        pushinsertconst(pob,-1,si1);
       end;
      end;
-     addfactbinop(poa,pob,op1);
+     result:= addfactbinop(poa,pob,op1);
     end;
 endlab:
     s.stacktop:= getstackindex(poa);

@@ -2235,48 +2235,49 @@ begin
  end;
 end;
 
-type
- cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le,cmpo_in);
+//type
+// cmpopty = (cmpo_eq,cmpo_ne,cmpo_gt,cmpo_lt,cmpo_ge,cmpo_le{,cmpo_in});
+
 const
- cmpops: array[cmpopty] of opsinfoty = (
+ cmpops: array[compopkindty] of opsinfoty = (
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
-  (ops: (oc_none, oc_cmpeqpo, oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqint32,                        
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint32,oc_cmpint32,                        
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpeqflo64,oc_cmpeqint32,oc_cmpequstring8);
+         oc_cmpflo64,oc_cmpint32,oc_cmpstring8);
    wantedtype: st_none; opname: '='),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,   sdk_int32,
-  (ops: (oc_none, oc_cmpnepo, oc_cmpnebool,oc_cmpneint32,oc_cmpneint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpint32,oc_cmpint32,
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpneflo64,oc_cmpneint32,oc_cmpnestring8);
+         oc_cmpflo64,oc_cmpint32,oc_cmpstring8);
    wantedtype: st_none; opname: '<>'),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
-  (ops: (oc_none, oc_cmpgtpo, oc_cmpgtbool,oc_cmpgtcard32,oc_cmpgtint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard32,oc_cmpint32,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpgtflo64,oc_none,  oc_cmpgtstring8);
+         oc_cmpflo64,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '>'),
        //sdk_none,sdk_pointer,sdk_bool1,   sdk_card32,    sdk_int32,
-  (ops: (oc_none, oc_cmpltpo, oc_cmpltbool,oc_cmpltcard32,oc_cmpltint32,
+  (ops: (oc_none, oc_cmppo, oc_cmpbool,oc_cmpcard32,oc_cmpint32,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpltflo64,oc_none,  oc_cmpltstring8);
+         oc_cmpflo64,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '<'),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
-  (ops: (oc_none,oc_cmpgepo,oc_cmpgebool,oc_cmpgecard32,oc_cmpgeint32,
+  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,
        //sdk_flo64,    sdk_set32,sdk_string8
-         oc_cmpgeflo64,oc_none,  oc_cmpgestring8);
+         oc_cmpflo64,oc_none,  oc_cmpstring8);
    wantedtype: st_none; opname: '>='),
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
-  (ops: (oc_none,oc_cmplepo,oc_cmplebool,oc_cmplecard32,oc_cmpleint32,
+  (ops: (oc_none,oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,
        //sdk_flo64,    sdk_set32,    sdk_string8
-         oc_cmpleflo64,oc_setcontains,oc_cmplestring8);
-   wantedtype: st_none; opname: '<='),
+         oc_cmpflo64,oc_setcontains,oc_cmpstring8);
+   wantedtype: st_none; opname: '<='){,
        //sdk_none,sdk_pointer,sdk_bool1,sdk_card32,  sdk_int32,
   (ops: (oc_none, oc_none,    oc_none,  oc_none,     oc_none,
        //sdk_flo64,    sdk_set32,sdk_string8
          oc_none,      oc_none,  oc_none); //special handling
-   wantedtype: st_none; opname: 'in')
+   wantedtype: st_none; opname: 'in')}
  );
 
-procedure handlecomparison(const aop: cmpopty);
+procedure handlecomparison(const aop: compopkindty);
 
 var
  poa,pob: pcontextitemty;
@@ -2305,7 +2306,7 @@ begin
     d.dat.constval.kind:= dk_boolean;
     d.dat.datatyp:= sysdatatypes[st_bool1];
     case aop of
-     cmpo_eq: begin
+     cok_eq: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger = 
@@ -2332,7 +2333,7 @@ begin
        end;
       end;
      end;
-     cmpo_ne: begin
+     cok_ne: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <>
@@ -2355,7 +2356,7 @@ begin
        end;
       end;
      end;
-     cmpo_gt: begin
+     cok_gt: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger >
@@ -2374,7 +2375,7 @@ begin
        end;
       end;
      end;
-     cmpo_lt: begin
+     cok_lt: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <
@@ -2390,7 +2391,7 @@ begin
        end;
       end;
      end;
-     cmpo_ge: begin
+     cok_ge: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger >=
@@ -2409,7 +2410,7 @@ begin
        end;
       end;
      end;
-     cmpo_le: begin
+     cok_le: begin
       case dk1 of
        sdk_card32,sdk_int32: begin
         d.dat.constval.vboolean:= d.dat.constval.vinteger <=
@@ -2438,7 +2439,9 @@ errlab:
     s.stackindex:= getpreviousnospace(s.stacktop-1);
    end
    else begin
-    updateop(cmpops[aop]);
+    with updateop(cmpops[aop])^.par do begin
+     stackop.compkind:= aop;
+    end;
     with info,poa^ do begin
      d.dat.datatyp:= sysdatatypes[resultdatatypes[sdk_bool1]];
      d.dat.fact.opdatatype:= bitoptypes[das_1];
@@ -2455,7 +2458,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('EQSIMPEXP');
 {$endif}
- handlecomparison(cmpo_eq);
+ handlecomparison(cok_eq);
 end;
 
 procedure handlenesimpexp();
@@ -2465,7 +2468,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('NESIMPEXP');
 {$endif}
- handlecomparison(cmpo_ne);
+ handlecomparison(cok_ne);
 end;
 
 procedure handlegtsimpexp();
@@ -2473,7 +2476,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GTSIMPEXP');
 {$endif}
- handlecomparison(cmpo_gt);
+ handlecomparison(cok_gt);
 end;
 
 procedure handleltsimpexp();
@@ -2481,7 +2484,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('LTSIMPEXP');
 {$endif}
- handlecomparison(cmpo_lt);
+ handlecomparison(cok_lt);
 end;
 
 procedure handlegesimpexp();
@@ -2489,7 +2492,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('GESIMPEXP');
 {$endif}
- handlecomparison(cmpo_ge);
+ handlecomparison(cok_ge);
 end;
 
 procedure handlelesimpexp();
@@ -2497,7 +2500,7 @@ begin
 {$ifdef mse_debugparser}
  outhandle('LESIMPEXP');
 {$endif}
- handlecomparison(cmpo_le);
+ handlecomparison(cok_le);
 end;
 
 procedure handleinsimpexp();
@@ -2537,7 +2540,7 @@ begin
    end;
   end
   else begin
-   operationnotsupportederror(poa^.d,pob^.d,cmpops[cmpo_in].opname);
+   operationnotsupportederror(poa^.d,pob^.d,'in');
   end;
 errlab:
   s.stacktop:= getpreviousnospace(s.stackindex-1);

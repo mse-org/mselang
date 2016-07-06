@@ -283,6 +283,13 @@ type
   oc_decindiint32,
   oc_decindipo32,
 
+  oc_cmppo,
+  oc_cmpbool,
+  oc_cmpcard32,
+  oc_cmpint32,
+  oc_cmpflo64,
+  oc_cmpstring8,
+{
   oc_cmpeqpo,
   oc_cmpeqbool,
   oc_cmpeqint32,
@@ -316,6 +323,7 @@ type
   oc_cmplecard32,
   oc_cmpleint32,
   oc_cmpleflo64,
+}
   oc_setcontains,
   oc_setin,
 
@@ -768,9 +776,14 @@ type
  progendty = record
   exitcodeaddress: segaddressty;
  end;
- 
+ compopkindty = (cok_eq,cok_ne,cok_gt,cok_lt,cok_ge,cok_le);
+
  stackopty = record
   t: typeallocinfoty;
+  case opcodety of
+   oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,oc_cmpflo64:(
+    compkind: compopkindty;
+   );
  end;
 {
  stackimmopty = record
@@ -1115,12 +1128,15 @@ type
    oc_addint32,oc_addflo64,
    oc_subint32,oc_subflo64,oc_diffset,oc_xorset,
    oc_addpoint32,oc_subpoint32,
+   oc_cmppo,oc_cmpbool,oc_cmpcard32,oc_cmpint32,oc_cmpflo64,
+   {
    oc_cmpeqbool,oc_cmpeqint32,oc_cmpeqflo64,
    oc_cmpnebool,oc_cmpneint32,oc_cmpneflo64,
    oc_cmpgtbool,oc_cmpgtint32,oc_cmpgtflo64,
    oc_cmpltbool,oc_cmpltint32,oc_cmpltflo64,
    oc_cmpgebool,oc_cmpgeint32,oc_cmpgeflo64,
    oc_cmplebool,oc_cmpleint32,oc_cmpleflo64,
+   }
    oc_setcontains,oc_setin: (
     stackop: stackopty;
    );

@@ -1308,257 +1308,159 @@ begin
  end; 
 end;
 
-
-procedure cmpeqpoop();
+procedure cmppoop();
 var
  po1,po2: pvpointerty;
 begin
  po1:= stackpop(sizeof(vpointerty));
  po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+   end;
+  end;
+ end;
 end;
 
-procedure cmpeqboolop();
+procedure cmpboolop();
 var
  po1,po2: pvbooleanty;
 begin
  po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ = po1^;
+ po2:= stackpop(sizeof(vbooleanty));
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+   end;
+  end;
+ end;
 end;
 
-procedure cmpeqint32op();
-var
- po1,po2: pvintegerty;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
-end;
-
-procedure cmpeqflo64op();
-var
- po1,po2: pvfloatty;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
-end;
-
-procedure cmpnepoop();
-var
- po1,po2: pvpointerty;
-begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
-end;
-
-procedure cmpneboolop();
-var
- po1,po2: pvbooleanty;
-begin
- po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ <> po1^;
-end;
-
-procedure cmpneint32op();
-var
- po1,po2: pvintegerty;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
-end;
-
-procedure cmpneflo64op();
-var
- po1,po2: pvfloatty;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
-end;
-
-procedure cmpgtpoop();
-var
- po1,po2: pvpointerty;
-begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
-end;
-
-procedure cmpgtboolop();
-var
- po1,po2: pvbooleanty;
-begin
- po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ > po1^;
-end;
-
-procedure cmpgtcard32op();
+procedure cmpcard32op();
 var
  po1,po2: pvcardinalty;
 begin
  po1:= stackpop(sizeof(vcardinalty));
  po2:= stackpop(sizeof(vcardinalty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+   end;
+  end;
+ end;
 end;
 
-procedure cmpgtint32op();
+procedure cmpint32op();
 var
  po1,po2: pvintegerty;
 begin
  po1:= stackpop(sizeof(vintegerty));
  po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+   end;
+  end;
+ end;
 end;
 
-procedure cmpgtflo64op();
+procedure cmpflo64op();
 var
  po1,po2: pvfloatty;
 begin
  po1:= stackpop(sizeof(vfloatty));
  po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+ with cpu.pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ = po1^;
+   end;
+   cok_ne: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <> po1^;
+   end;
+   cok_gt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ > po1^;
+   end;
+   cok_lt: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
+   end;
+   cok_ge: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
+   end;
+   cok_le: begin
+    vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+   end;
+  end;
+ end;
 end;
 
-procedure cmpltpoop();
-var
- po1,po2: pvpointerty;
+procedure cmpstring8op();
 begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
-end;
-
-procedure cmpltboolop();
-var
- po1,po2: pvbooleanty;
-begin
- po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ < po1^;
-end;
-
-procedure cmpltcard32op();
-var
- po1,po2: pvcardinalty;
-begin
- po1:= stackpop(sizeof(vcardinalty));
- po2:= stackpop(sizeof(vcardinalty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
-end;
-
-procedure cmpltint32op();
-var
- po1,po2: pvintegerty;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
-end;
-
-procedure cmpltflo64op();
-var
- po1,po2: pvfloatty;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ < po1^;
-end;
-
-procedure cmpgepoop();
-var
- po1,po2: pvpointerty;
-begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
-end;
-
-procedure cmpgeboolop();
-var
- po1,po2: pvbooleanty;
-begin
- po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ >= po1^;
-end;
-
-procedure cmpgecard32op();
-var
- po1,po2: pvcardinalty;
-begin
- po1:= stackpop(sizeof(vcardinalty));
- po2:= stackpop(sizeof(vcardinalty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
-end;
-
-procedure cmpgeint32op();
-var
- po1,po2: pvintegerty;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
-end;
-
-procedure cmpgeflo64op();
-var
- po1,po2: pvfloatty;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ >= po1^;
-end;
-
-procedure cmplepoop();
-var
- po1,po2: pvpointerty;
-begin
- po1:= stackpop(sizeof(vpointerty));
- po2:= stackpop(sizeof(vpointerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
-end;
-
-procedure cmpleboolop();
-var
- po1,po2: pvbooleanty;
-begin
- po1:= stackpop(sizeof(vbooleanty));
- po2:= po1-alignsize(sizeof(vbooleanty));
- po2^:= po2^ <= po1^;
-end;
-
-procedure cmplecard32op();
-var
- po1,po2: pvcardinalty;
-begin
- po1:= stackpop(sizeof(vcardinalty));
- po2:= stackpop(sizeof(vcardinalty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
-end;
-
-procedure cmpleint32op();
-var
- po1,po2: pvintegerty;
-begin
- po1:= stackpop(sizeof(vintegerty));
- po2:= stackpop(sizeof(vintegerty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
-end;
-
-procedure cmpleflo64op();
-var
- po1,po2: pvfloatty;
-begin
- po1:= stackpop(sizeof(vfloatty));
- po2:= stackpop(sizeof(vfloatty));
- vbooleanty(stackpush(sizeof(vbooleanty))^):= po2^ <= po1^;
+ notimplemented();
 end;
 
 procedure setcontainsop();
@@ -4427,39 +4329,13 @@ const
   decindiint32ssa = 0;
   decindipo32ssa = 0;
 
-  cmpeqpossa = 0;
-  cmpeqboolssa = 0;
-  cmpeqint32ssa = 0;
-  cmpeqflo64ssa = 0;
+  cmppossa = 0;
+  cmpboolssa = 0;
+  cmpcard32ssa = 0;
+  cmpint32ssa = 0;
+  cmpflo64ssa = 0;
+  cmpstring8ssa = 0;
 
-  cmpnepossa = 0;
-  cmpneboolssa = 0;
-  cmpneint32ssa = 0;
-  cmpneflo64ssa = 0;
-
-  cmpgtpossa = 0;
-  cmpgtboolssa = 0;
-  cmpgtcard32ssa = 0;
-  cmpgtint32ssa = 0;
-  cmpgtflo64ssa = 0;
-
-  cmpltpossa = 0;
-  cmpltboolssa = 0;
-  cmpltcard32ssa = 0;
-  cmpltint32ssa = 0;
-  cmpltflo64ssa = 0;
-
-  cmpgepossa = 0;
-  cmpgeboolssa = 0;
-  cmpgecard32ssa = 0;
-  cmpgeint32ssa = 0;
-  cmpgeflo64ssa = 0;
-
-  cmplepossa = 0;
-  cmpleboolssa = 0;
-  cmplecard32ssa = 0;
-  cmpleint32ssa = 0;
-  cmpleflo64ssa = 0;
   setcontainsssa = 0;
   setinssa = 0;
 

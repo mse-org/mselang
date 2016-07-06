@@ -461,6 +461,20 @@
 //oc_decindipo32
   (ssa: decindipo32ssa; proc: @decindipo32op; flags: []), 
 
+//oc_cmppo
+  (ssa: cmppossa; proc: @cmppoop; flags: []), 
+//oc_cmpbool
+  (ssa: cmpboolssa; proc: @cmpboolop; flags: []), 
+//oc_cmpcard32
+  (ssa: cmpcard32ssa; proc: @cmpcard32op; flags: []), 
+//oc_cmpint32
+  (ssa: cmpint32ssa; proc: @cmpint32op; flags: []), 
+//oc_cmpflo64
+  (ssa: cmpflo64ssa; proc: @cmpflo64op; flags: []), 
+//oc_cmpstring8
+  (ssa: cmpstring8ssa; proc: @cmpstring8op; flags: []), 
+
+{
 //oc_cmpeqpo
   (ssa: cmpeqpossa; proc: @cmpeqpoop; flags: []), 
 //oc_cmpeqbool
@@ -522,6 +536,7 @@
   (ssa: cmpleint32ssa; proc: @cmpleint32op; flags: []), 
 //oc_cmpleflo64
   (ssa: cmpleflo64ssa; proc: @cmpleflo64op; flags: []), 
+}
 //oc_setcontains,
   (ssa: setcontainsssa; proc: @setcontainsop; flags: []), 
 //oc_setin,

@@ -1813,146 +1813,53 @@ begin
  end;
 end;
 
-procedure cmpeqpoop();
+const
+ scomps: array[compopkindty] of predicate = (
+//     cok_eq, cmp_ne, cok_gt, cok_lt, cok_ge, cok_le
+      icmp_eq,icmp_ne,icmp_sgt,icmp_slt,icmp_sge,icmp_sle);
+ ucomps: array[compopkindty] of predicate = (
+//     cok_eq, cmp_ne, cok_gt, cok_lt, cok_ge, cok_le
+      icmp_eq,icmp_ne,icmp_ugt,icmp_ult,icmp_uge,icmp_ule);
+ fcomps: array[compopkindty] of predicate = (
+//     cok_eq,   cmp_ne,  cok_gt,  cok_lt,  cok_ge,  cok_le
+      fcmp_oeq,fcmp_one,fcmp_ogt,fcmp_olt,fcmp_oge,fcmp_ole);
+
+procedure cmppoop();
 begin
- comparessa(icmp_eq);
-// comparepo(icmp_eq);
+ with pc^.par do begin
+  comparessa(ucomps[stackop.compkind]);
+ end;
 end;
 
-procedure cmpeqboolop();
+procedure cmpboolop();
 begin
- notimplemented();
+ with pc^.par do begin
+  comparessa(ucomps[stackop.compkind]);
+ end;
 end;
 
-procedure cmpeqint32op();
+procedure cmpcard32op();
 begin
- comparessa(icmp_eq);
+ with pc^.par do begin
+  comparessa(ucomps[stackop.compkind]);
+ end;
 end;
 
-procedure cmpeqflo64op();
+procedure cmpint32op();
 begin
- comparessa(fcmp_oeq);
+ with pc^.par do begin
+  comparessa(scomps[stackop.compkind]);
+ end;
 end;
 
-procedure cmpnepoop();
+procedure cmpflo64op();
 begin
- comparessa(icmp_ne);
-// comparepo(icmp_ne);
+ with pc^.par do begin
+  comparessa(fcomps[stackop.compkind]);
+ end;
 end;
 
-procedure cmpneboolop();
-begin
- notimplemented();
-end;
-
-procedure cmpneint32op();
-begin
- comparessa(icmp_ne);
-end;
-
-procedure cmpneflo64op();
-begin
- comparessa(fcmp_one);
-end;
-
-procedure cmpgtpoop();
-begin
- comparessa(icmp_ugt);
-// comparepo(icmp_ugt);
-end;
-
-procedure cmpgtboolop();
-begin
- notimplemented();
-end;
-
-procedure cmpgtcard32op();
-begin
- comparessa(icmp_ugt);
-end;
-
-procedure cmpgtint32op();
-begin
- comparessa(icmp_sgt);
-end;
-
-procedure cmpgtflo64op();
-begin
- notimplemented();
-end;
-
-procedure cmpltpoop();
-begin
- comparessa(icmp_ult);
-// comparepo(icmp_ult);
-end;
-
-procedure cmpltboolop();
-begin
- notimplemented();
-end;
-
-procedure cmpltcard32op();
-begin
- comparessa(icmp_ult);
-end;
-
-procedure cmpltint32op();
-begin
- comparessa(icmp_slt);
-end;
-
-procedure cmpltflo64op();
-begin
- notimplemented();
-end;
-
-procedure cmpgepoop();
-begin
- comparessa(icmp_uge);
-end;
-
-procedure cmpgeboolop();
-begin
- notimplemented();
-end;
-
-procedure cmpgecard32op();
-begin
- comparessa(icmp_uge);
-end;
-
-procedure cmpgeint32op();
-begin
- comparessa(icmp_sge);
-end;
-
-procedure cmpgeflo64op();
-begin
- notimplemented();
-end;
-
-procedure cmplepoop();
-begin
- notimplemented();
-end;
-
-procedure cmpleboolop();
-begin
- notimplemented();
-end;
-
-procedure cmplecard32op();
-begin
- comparessa(icmp_sle);
-end;
-
-procedure cmpleint32op();
-begin
- comparessa(icmp_sle);
-end;
-
-procedure cmpleflo64op();
+procedure cmpstring8op();
 begin
  notimplemented();
 end;
@@ -3859,39 +3766,13 @@ const
   decindiint32ssa = 3;
   decindipo32ssa = 3;
 
-  cmpeqpossa = 1;
-  cmpeqboolssa = 1;
-  cmpeqint32ssa = 1;
-  cmpeqflo64ssa = 1;
+  cmppossa = 1;
+  cmpboolssa = 1;
+  cmpcard32ssa = 1;
+  cmpint32ssa = 1;
+  cmpflo64ssa = 1;
+  cmpstring8ssa = 1;
 
-  cmpnepossa = 1;
-  cmpneboolssa = 1;
-  cmpneint32ssa = 1;
-  cmpneflo64ssa = 1;
-
-  cmpgtpossa = 1;
-  cmpgtboolssa = 1;
-  cmpgtcard32ssa = 1;
-  cmpgtint32ssa = 1;
-  cmpgtflo64ssa = 1;
-
-  cmpltpossa = 1;
-  cmpltboolssa = 1;
-  cmpltcard32ssa = 1;
-  cmpltint32ssa = 1;
-  cmpltflo64ssa = 1;
-
-  cmpgepossa = 1;
-  cmpgeboolssa = 1;
-  cmpgecard32ssa = 1;
-  cmpgeint32ssa = 1;
-  cmpgeflo64ssa = 1;
-
-  cmplepossa = 1;
-  cmpleboolssa = 1;
-  cmplecard32ssa = 1;
-  cmpleint32ssa = 1;
-  cmpleflo64ssa = 1;
   setcontainsssa = 3;
   setinssa = 3;
 
