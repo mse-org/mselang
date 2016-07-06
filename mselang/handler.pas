@@ -2277,6 +2277,39 @@ const
    wantedtype: st_none; opname: 'in')}
  );
 
+function compstring8(const a,b: stringvaluety): int32;
+var
+ sa,sb: lstringty;
+ poa,poe,pob: pint8;
+ i1: int8;
+begin
+ result:= 0;
+ sa:= getstringconst(a);
+ sb:= getstringconst(b);
+ if sa.po <> sb.po then begin
+  poa:= pointer(sa.po);
+  pob:= pointer(sb.po);
+  if sa.len < sb.len then begin
+   poe:= poa + sa.len;
+  end
+  else begin
+   poe:= poa + sb.len;
+  end;
+  while poa < poe do begin
+   i1:= poa^ - pob^;
+   if i1 <> 0 then begin
+    result:= i1;
+    break;
+   end;
+   inc(poa);
+   inc(pob);
+  end;
+  if result = 0 then begin
+   result:= sa.len - sb.len;
+  end;
+ end;
+end;
+
 procedure handlecomparison(const aop: compopkindty);
 
 var
@@ -2303,8 +2336,6 @@ begin
   with poa^ do begin
    if (pob^.d.kind = ck_const) and (d.kind = ck_const) then begin
     dk1:= convertconsts(poa,pob);
-    d.dat.constval.kind:= dk_boolean;
-    d.dat.datatyp:= sysdatatypes[st_bool1];
     case aop of
      cok_eq: begin
       case dk1 of
@@ -2327,6 +2358,10 @@ begin
        sdk_set32: begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) =
                                          tintegerset(pob^.d.dat.constval.vset);
+       end;
+       sdk_string8: begin
+        d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
+                                          pob^.d.dat.constval.vstring) = 0;
        end;
        else begin
         notsupported();
@@ -2351,6 +2386,10 @@ begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <>
                                          tintegerset(pob^.d.dat.constval.vset);
        end;
+       sdk_string8: begin
+        d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
+                                          pob^.d.dat.constval.vstring) <> 0;
+       end;
        else begin
         notsupported();
        end;
@@ -2369,6 +2408,10 @@ begin
        sdk_bool1: begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean >
                                                   pob^.d.dat.constval.vboolean;
+       end;
+       sdk_string8: begin
+        d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
+                                          pob^.d.dat.constval.vstring) > 0;
        end;
        else begin
         notsupported();
@@ -2405,6 +2448,10 @@ begin
         d.dat.constval.vboolean:= d.dat.constval.vboolean >=
                                                   pob^.d.dat.constval.vboolean;
        end;
+       sdk_string8: begin
+        d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
+                                          pob^.d.dat.constval.vstring) >= 0;
+       end;
        else begin
         notsupported();
        end;
@@ -2428,12 +2475,18 @@ begin
         d.dat.constval.vboolean:= tintegerset(d.dat.constval.vset) <=
                                          tintegerset(pob^.d.dat.constval.vset);
        end;
+       sdk_string8: begin
+        d.dat.constval.vboolean:= compstring8(d.dat.constval.vstring,
+                                          pob^.d.dat.constval.vstring) <= 0;
+       end;
        else begin
         notsupported();
        end;
       end;
      end;
     end;
+    d.dat.constval.kind:= dk_boolean;
+    d.dat.datatyp:= sysdatatypes[st_bool1];
 errlab:
     s.stacktop:= getpreviousnospace(s.stackindex - 1);
     s.stackindex:= getpreviousnospace(s.stacktop-1);
