@@ -1861,7 +1861,24 @@ end;
 
 procedure cmpstring8op();
 begin
- notimplemented();
+ with pc^.par do begin
+  case stackop.compkind of
+   cok_eq: begin
+    callcompilersub(cs_compstring8eq,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
+   end;
+   cok_ne: begin
+   end;
+   cok_gt: begin
+   end;
+   cok_lt: begin
+   end;
+   cok_ge: begin
+   end;
+   cok_le: begin
+   end;
+  end;
+ end;
 end;
 
 procedure setcontainsop();

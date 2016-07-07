@@ -489,6 +489,8 @@ assignment,,handleassignmententry,handleassignment
  '',exp^*
 label,,,handlelabel*>
 
+dummy,,,
+
 statement,,,*
  ${whitespace}
  ';',endcontext-
@@ -1027,14 +1029,14 @@ fact0,fact1,,
  @identstart,valueidentifier*
  '',illegalexpression
 
-fact1,,,handlefact1
+fact1,,fact1entry,handlefact1
  ${whitespace}
  '^',!handledereference-
  '[',getindex-^*>
  '..',*
  '.',fact2-
 
-fact2,fact1,handlefact2entry,
+fact2,fact1,fact2entry,
  '',valueidentifierwhite*
 
 negfact,,,handlenegfact

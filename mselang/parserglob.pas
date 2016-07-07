@@ -161,7 +161,8 @@ type
  end;
 
 
- statementflagty = (stf_rightside,stf_params,stf_paramsdef,stf_condition,
+ statementflagty = (stf_rightside,stf_params,stf_paramsdef,stf_cutvalueident,
+                    stf_condition,
                     stf_leftreference,stf_proccall,
                     stf_loop,{stf_propindex,}
                     stf_classdef,stf_classimp,stf_interfacedef,

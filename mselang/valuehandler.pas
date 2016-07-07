@@ -1862,7 +1862,10 @@ var
  isgetfact: boolean;
  subflags: dosubflagsty;
   
- procedure donotfound(const typeele: elementoffsetty);
+// procedure donotfound(const typeele: elementoffsetty);
+ procedure donotfound(const adatacontext: pcontextitemty;
+                                               const atype: elementoffsetty);
+
 
  var
   offs1: dataoffsty;
@@ -1871,13 +1874,13 @@ var
  var
   int1: integer;
   po4: pointer;
-  pind: pcontextitemty;
+//  pind: pcontextitemty;
  begin //donotfond
   if firstnotfound <= idents.high then begin
-   ele1:= basetype(typeele);
+   ele1:= basetype(atype);
    offs1:= 0;
    with info do begin
-    pind:= @contextstack[s.stackindex];
+//    pind:= @contextstack[s.stackindex];
     for int1:= firstnotfound to idents.high do begin //fields
      case ele.findchild(ele1,idents.d[int1],[],allvisi,ele1,po4) of
       ek_none: begin
@@ -1885,7 +1888,7 @@ var
        exit;
       end;
       ek_field: begin
-       with contextstack[s.stackindex],pfielddataty(po4)^ do begin
+       with adatacontext^,pfielddataty(po4)^ do begin
         ele1:= vf.typ;
         case d.kind of
          ck_ref: begin
@@ -1910,7 +1913,7 @@ var
        end;
       end;
       ek_property: begin
-       with contextstack[s.stackindex],ppropertydataty(po4)^ do begin
+       with adatacontext^,ppropertydataty(po4)^ do begin
         case d.kind of
          ck_ref: begin
           d.kind:= ck_prop;
@@ -1936,7 +1939,7 @@ var
        end;
        case po1^.header.kind of
         ek_var: begin //todo: check class procedures
-         getvalue(pind,das_none);
+         getvalue(adatacontext,das_none);
         end;
         ek_type: begin
          if not (sf_constructor in psubdataty(po4)^.flags) then begin
@@ -2124,7 +2127,7 @@ begin
     ek_var,ek_field: begin
      if po1^.header.kind in [ek_field] then begin
       if not isgetfact and 
-               (contextstack[s.stackindex-1].d.dat.indirection < 0) then begin
+               (pob^.d.dat.indirection < 0) then begin
        if not getaddress(pob,true) then begin
         goto endlab;
        end;
@@ -2151,9 +2154,10 @@ begin
         d.dat.ref.c.address:= pvardataty(ele.eledataabs(ele2))^.address;
         d.dat.ref.offset:= offset;
         d.dat.ref.c.varele:= 0;
+        pocontext1:= poind;
        end
        else begin
-        with contextstack[s.stackindex-1] do begin
+        with pob^ do begin
          case d.kind of
           ck_ref: begin
            d.dat.datatyp.typedata:= vf.typ;
@@ -2179,11 +2183,12 @@ begin
           end;
          {$endif}
          end;
+         pocontext1:= pob;
         end;
-        d:= contextstack[s.stackindex-1].d;
+//        d:= contextstack[s.stackindex-1].d;
                   //todo: no double copy by handlefact
        end;
-       donotfound(d.dat.datatyp.typedata);
+       donotfound(pocontext1,pocontext1^.d.dat.datatyp.typedata);
       end;
      end
      else begin //ek_var
@@ -2202,6 +2207,7 @@ begin
         dec(d.dat.indirection);
         dec(d.dat.datatyp.indirectlevel);
        end;
+       pocontext1:= poind;
       end
       else begin
        with contextstack[s.stackindex-1] do begin
@@ -2209,14 +2215,16 @@ begin
          getaddress(pob,false);
          dec(d.dat.indirection); //pending dereference
         end;
-        poind^.d:= d; 
+        pocontext1:= poind - 1;
+//        poind^.d:= d; 
                   //todo: no double copy by handlefact
        end;
       end;
       if pvardataty(po2)^.vf.typ <= 0 then begin
        goto endlab; //todo: stop error earlier
       end;
-      donotfound(pvardataty(po2)^.vf.typ); //todo: call of sub function results
+      donotfound(pocontext1,pvardataty(po2)^.vf.typ); 
+                                  //todo: call of sub function results
       if (stf_params in s.currentstatementflags) and
                            (d.kind in datacontexts) then begin
        if getvalue(poind,das_none) then begin
@@ -2293,7 +2301,7 @@ begin
       end;
      end
      else begin
-      donotfound(ele.eleinforel(po1));
+      donotfound(poind,ele.eleinforel(po1));
      end;
     end;
     ek_labeldef: begin
@@ -2323,8 +2331,21 @@ endlab:
    inc(pocontext1);
   end;
 }
+{
+  if poind^.d.kind = ck_none then begin
+   s.stacktop:= s.stackindex-1;
+  end
+  else begin
+   s.stacktop:= s.stackindex;
+  end;
+}
   s.stacktop:= s.stackindex;
   dec(s.stackindex);
+  if stf_cutvalueident in s.currentstatementflags then begin
+                     //todo: use something more elegant
+   s.stacktop:= s.stackindex;
+   pob^.context:= @dummyco;
+  end;
  end;
 end;
 

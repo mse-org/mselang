@@ -898,6 +898,11 @@ var
                continue: true; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'label');
+ dummyco: contextty = (branch: nil; 
+               handleentry: nil; handleexit: nil; 
+               continue: false; restoresource: false; cutafter: false; 
+               pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
+               caption: 'dummy');
  statementco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
                continue: false; restoresource: false; cutafter: true; 
@@ -11035,6 +11040,7 @@ begin
  assignmentco.handleexit:= @handleassignment;
  labelco.branch:= nil;
  labelco.handleexit:= @handlelabel;
+ dummyco.branch:= nil;
  statementco.branch:= @bstatement;
  statementblockco.branch:= @bstatementblock;
  statementblockco.next:= @statementblock1co;
@@ -11389,10 +11395,11 @@ begin
  fact0co.branch:= @bfact0;
  fact0co.next:= @fact1co;
  fact1co.branch:= @bfact1;
+ fact1co.handleentry:= @fact1entry;
  fact1co.handleexit:= @handlefact1;
  fact2co.branch:= @bfact2;
  fact2co.next:= @fact1co;
- fact2co.handleentry:= @handlefact2entry;
+ fact2co.handleentry:= @fact2entry;
  negfactco.branch:= @bnegfact;
  negfactco.handleexit:= @handlenegfact;
  notfactco.branch:= @bnotfact;

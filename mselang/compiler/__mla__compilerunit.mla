@@ -29,6 +29,7 @@ procedure __mla__setlengthstring8(const ref: pprefsizeinfoty;
 procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
                                                     const itemsize: int32);
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
+function __mla__compstring8eq(a,b: pointer): bool1;
 
 function __mla__chartostring8(achar: card8): pointer;
 function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
@@ -310,6 +311,50 @@ begin
    end;
    d^.ref.count:= 1;
    ref^:= @d^.data;
+  end;
+ end;
+end;
+{$internaldebug on}
+function compstring8(a,b:pointer): stringsizety; //a and b <> nil
+var
+ poa,poe,pob: pcard8;
+ la,lb: stringsizety;
+ i1: int16;
+begin
+ la:= (pstring8headerty(a)-1)^.len;
+ lb:= (pstring8headerty(b)-1)^.len;
+ poa:= a;
+ pob:= b;
+ if la < lb then begin
+  poe:= poa + la;
+ end
+ else begin
+  poe:= poa + lb;
+ end;
+ while true do begin
+  i1:= poa^ - pob^;
+  if i1 <> 0 then begin
+   result:= i1;
+   exit;
+  end;
+  inc(poa);
+  if poa >= poe then begin
+   break;
+  end;
+  inc(pob);
+ end;
+ result:= la - lb; //cut text equal, compare length
+end;
+
+function __mla__compstring8eq(a,b: pointer): bool1;
+begin
+ result:= a = b;
+ if not result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) = 0;
+  end
+  else begin
+   result:= false;
   end;
  end;
 end;

@@ -123,7 +123,8 @@ procedure handledivfact();
 procedure handledivisionfact();
 procedure handlelistfact();
 
-procedure handlefact2entry();
+procedure fact1entry();
+procedure fact2entry();
 //procedure handlefact2();
 {
 procedure handleterm();
@@ -1519,12 +1520,25 @@ endlab1: //for property setter with index
  end;
 end;
 
-procedure handlefact2entry();
+procedure fact1entry();
+begin
+{$ifdef mse_debugparser}
+ outhandle('FACT1ENTRY');
+{$endif}
+ with info do begin
+  exclude(s.currentstatementflags,stf_cutvalueident);
+ end;
+end;
+
+procedure fact2entry();
 begin
 {$ifdef mse_debugparser}
  outhandle('FACT2ENTRY');
 {$endif}
  with info do begin
+  include(s.currentstatementflags,stf_cutvalueident);
+//  contextstack[s.stacktop].context:= @dummyco; //remove checkvalueparams
+(*
  {$ifdef mse_checkinternalerror}
   if s.stacktop-s.stackindex <> 1 then begin
    internalerror(ie_handler,'20140406B');
@@ -1532,6 +1546,7 @@ begin
  {$endif}
   contextstack[s.stackindex].d:= contextstack[s.stackindex+1].d;
   dec(s.stacktop);
+*)
  end;
 end;
 
