@@ -1820,7 +1820,10 @@ begin
   end;
   if (s.stackindex < s.stacktop) and 
               (contextstack[s.stacktop].d.kind <> ck_space) then begin
-   contextstack[s.stackindex].d.kind:= ck_space;
+   with contextstack[s.stackindex] do begin
+    d.kind:= ck_space;
+    context:= @dummyco;
+   end;
   end
   else begin
    errormessage(err_expressionexpected,[]);
