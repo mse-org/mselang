@@ -376,6 +376,7 @@ type
                            //by linkresolvecall()
   adlinks: linkindexty;    //calls which need to be resolved
                            //by linkresolveopad()
+  exitlinks: linkindexty;  //for exit statement, resolved by linkresolveopad
   mark: forwardindexty;
   flags: subflagsty;
   tableindex: integer; //-1 = none
@@ -410,15 +411,15 @@ type
  end;
  pinternalsubdataty = ^internalsubdataty;
 
- sysfuncty = (sf_write,sf_writeln,
-              sf_setlength,sf_unique,
-              sf_sizeof,
-              sf_inc,sf_dec,
-              sf_getmem,sf_getzeromem,sf_freemem,sf_reallocmem,sf_setmem,
-              sf_memcpy,
-              sf_halt,
-              sf_low,sf_high,sf_length,
-              sf_sin);
+ sysfuncty = (syf_exit,syf_write,syf_writeln,
+              syf_setlength,syf_unique,
+              syf_sizeof,
+              syf_inc,syf_dec,
+              syf_getmem,syf_getzeromem,syf_freemem,syf_reallocmem,syf_setmem,
+              syf_memcpy,
+              syf_halt,
+              syf_low,syf_high,syf_length,
+              syf_sin);
 
  sysfuncdataty = record
   func: sysfuncty;

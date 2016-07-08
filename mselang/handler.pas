@@ -2185,6 +2185,12 @@ begin
   end;
   contextstack[s.stackindex].d.kind:= ck_space;
   dec(s.stackindex);
+ {$ifdef mse_checkinternalerror}
+  if not (contextstack[s.stackindex].d.kind in [ck_none,ck_space]) then begin
+   internalerror(ie_handler,'20160708A');
+  end;
+ {$endif}
+  contextstack[s.stackindex].d.kind:= ck_space;
  end;
 end;
 

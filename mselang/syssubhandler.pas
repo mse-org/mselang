@@ -22,6 +22,7 @@ uses
 type
  syssubty = procedure (const paramco: integer);
  
+procedure handleexit(const paramco: integer);
 procedure handlewriteln(const paramco: integer);
 procedure handlewrite(const paramco: integer);
 procedure handlesizeof(const paramco: integer);
@@ -41,19 +42,21 @@ procedure handlesin(const paramco: integer);
 
 const
  sysfuncs: array[sysfuncty] of syssubty = (
-  //sf_write,   sf_writeln,
+  //syf_exit,
+  @handleexit,
+  //syf_write,   syf_writeln,
   @handlewrite,@handlewriteln,
-  //sf_setlength,  sf_unique
+  //syf_setlength,  syf_unique
   @handlesetlength,@handleunique,
-  //sf_sizeof,
+  //syf_sizeof,
   @handlesizeof,
-  //sf_inc,  sf_dec     sf_getmem,    sf_getzeromem,    sf_freemem
+  //syf_inc, syf_de     syf_getmem,   syf_getzeromem,   syf_freemem
   @handleinc,@handledec,@handlegetmem,@handlegetzeromem,@handlefreemem,
-  //sf_reallocmem
+  //syf_reallocmem
   @handlereallocmem,
-  //sf_setmem,  sf_memcpy,
+  //syf_setmem,  syf_memcpy,
   @handlesetmem,@handlememcpy,
-  //sf_halt,  //sf_low,  //sf_high,  //sf_length,  //sf_sin
+  //syf_halt, //syf_low, //syf_high, //syf_length, //syf_sin
   @handlehalt,@handlelow,@handlehigh,@handlelength,@handlesin);
 
 function checkparamco(const wanted, actual: integer): boolean;
@@ -402,6 +405,18 @@ end;
 procedure handledec(const paramco: integer);
 begin
  handleincdec(paramco,true);
+end;
+
+procedure handleexit(const paramco: integer);
+begin
+ with info do begin         //todo: try/finally
+  if checkparamco(0,paramco) then begin
+   with addcontrolitem(oc_goto)^ do begin
+    linkmark(psubdataty(ele.parentdata)^.exitlinks,
+                                getsegaddress(seg_op,@par.opaddress));
+   end;
+  end;
+ end;
 end;
 
 procedure handlewrite(const paramco: integer);
@@ -1031,24 +1046,25 @@ type
  end;
 const
  sysfuncinfos: array[sysfuncty] of sysfuncinfoty = (
-   (name: 'write'; data: (func: sf_write)),
-   (name: 'writeln'; data: (func: sf_writeln)),
-   (name: 'setlength'; data: (func: sf_setlength)),
-   (name: 'unique'; data: (func: sf_unique)),
-   (name: 'sizeof'; data: (func: sf_sizeof)),
-   (name: 'inc'; data: (func: sf_inc)),
-   (name: 'dec'; data: (func: sf_dec)),
-   (name: 'getmem'; data: (func: sf_getmem)),
-   (name: 'getzeromem'; data: (func: sf_getzeromem)),
-   (name: 'freemem'; data: (func: sf_freemem)),
-   (name: 'reallocmem'; data: (func: sf_reallocmem)),
-   (name: 'setmem'; data: (func: sf_setmem)),
-   (name: 'memcpy'; data: (func: sf_memcpy)),
-   (name: 'halt'; data: (func: sf_halt)),
-   (name: 'low'; data: (func: sf_low)),
-   (name: 'high'; data: (func: sf_high)),
-   (name: 'length'; data: (func: sf_length)),
-   (name: 'sin'; data: (func: sf_sin))
+   (name: 'exit'; data: (func: syf_exit)),
+   (name: 'write'; data: (func: syf_write)),
+   (name: 'writeln'; data: (func: syf_writeln)),
+   (name: 'setlength'; data: (func: syf_setlength)),
+   (name: 'unique'; data: (func: syf_unique)),
+   (name: 'sizeof'; data: (func: syf_sizeof)),
+   (name: 'inc'; data: (func: syf_inc)),
+   (name: 'dec'; data: (func: syf_dec)),
+   (name: 'getmem'; data: (func: syf_getmem)),
+   (name: 'getzeromem'; data: (func: syf_getzeromem)),
+   (name: 'freemem'; data: (func: syf_freemem)),
+   (name: 'reallocmem'; data: (func: syf_reallocmem)),
+   (name: 'setmem'; data: (func: syf_setmem)),
+   (name: 'memcpy'; data: (func: syf_memcpy)),
+   (name: 'halt'; data: (func: syf_halt)),
+   (name: 'low'; data: (func: syf_low)),
+   (name: 'high'; data: (func: syf_high)),
+   (name: 'length'; data: (func: syf_length)),
+   (name: 'sin'; data: (func: syf_sin))
   );
 
 procedure init();

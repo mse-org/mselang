@@ -873,7 +873,7 @@ var
  po1: plabeldefdataty;
 begin
 {$ifdef mse_debugparser}
- outhandle('LABEL');
+ outhandle('GOTO');
 {$endif}
  with info do begin
  {$ifdef mse_checkinternalerror}

@@ -721,6 +721,8 @@ begin
           goto parseend;
          end;
          if bf_push in pb^.flags then begin
+          s.pc:= contextstack[s.stackindex].context;
+                                   //stackindex could be changed
           break;                                //terminate current context
          end
         end
@@ -764,6 +766,7 @@ handlelab:
          //call context termination handler
      i1:= s.stackindex;
      s.pc^.handleexit();
+     s.pc:= contextstack[s.stackindex].context; //stackindex could be changed
      if s.stackindex < i1 then begin
       popped:= true;
      end;

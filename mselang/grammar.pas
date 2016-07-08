@@ -685,7 +685,7 @@ var
                caption: 'destructor');
  subco: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: false; 
+               continue: false; restoresource: false; cutafter: true; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'sub');
  callsubheaderco: contextty = (branch: nil; 

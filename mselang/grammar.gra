@@ -359,7 +359,7 @@ destructor,sub,handledestructorentry,
 
 //sub,suba,,
 // '',subheader0*
-sub,,,
+sub,,,*
  '',callsubheader*
  
 callsubheader,suba,callsubheaderentry, 

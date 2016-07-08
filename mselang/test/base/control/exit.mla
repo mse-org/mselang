@@ -1,0 +1,15 @@
+program exittest;
+
+procedure test();
+begin
+ if false then begin
+  exit;
+ end;
+ exitcode:= 123;
+ exit;
+ exitcode:= 11;
+end;
+
+begin
+ test();
+end.

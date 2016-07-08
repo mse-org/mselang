@@ -314,7 +314,7 @@ begin
   end;
  end;
 end;
-{$internaldebug on}
+
 function compstring8(a,b:pointer): stringsizety; //a and b <> nil
 var
  poa,poe,pob: pcard8;
@@ -335,6 +335,8 @@ begin
   i1:= poa^ - pob^;
   if i1 <> 0 then begin
    result:= i1;
+{$dumpelements}
+{$internaldebug on}
    exit;
   end;
   inc(poa);

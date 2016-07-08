@@ -949,6 +949,8 @@ var
  lstr1: lstringty;  
  i1: int32;
  element1: pelementinfoty;
+ poind: pcontextitemty;
+
 begin
 {$ifdef mse_debugparser}
  outhandle('SUBHEADER');
@@ -977,7 +979,8 @@ begin
 //elementoffsetty is 32 bit
 
  with info do begin
-  with contextstack[s.stackindex-1] do begin
+  poind:= @contextstack[s.stackindex];
+  with (poind-1)^ do begin
    d.subdef.match:= 0;              //todo: nested forward subs
    subflags:= d.subdef.flags;
    d.subdef.parambase:= locdatapo;
@@ -1069,6 +1072,7 @@ begin
   sub1^.paramcount:= paramco;
   sub1^.calllinks:= 0;
   sub1^.adlinks:= 0;
+  sub1^.exitlinks:= 0;
   sub1^.trampolinelinks:= 0;   //for virtual interface items
   sub1^.trampolineaddress:= 0;
   sub1^.trampolineid:= -1;
@@ -1147,7 +1151,7 @@ begin
   if impl1 then begin //implementation
    inc(sublevel);   
    inclocvaraddress(stacklinksize);
-   with contextstack[s.stackindex-1] do begin
+   with (poind-1)^ do begin
     ele.markelement(b.elemark); 
     sub1^.nestedvarele:= ele.addelementduplicate1(tks_nestedvarref,
                                                             ek_none,allvisi);
@@ -1218,14 +1222,14 @@ begin
    match:= nil;
   end;                                    
   if sf_override in subflags then begin
-   if not ele.forallancestor(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
+   if not ele.forallancestor((poind+1)^.d.ident.ident,[ek_sub],
                              allvisi,@checkequalheader,paramdata) then begin
     err1:= true;
     errormessage(err_noancestormethod,[]);
    end
    else begin
     sub1^.tableindex:= paramdata.match^.tableindex;
-    with contextstack[s.stackindex-3] do begin
+    with (poind-3)^ do begin
     {$ifdef mse_checkinternalerror}
      if d.kind <> ck_classdef then begin
       internalerror(ie_handler,'20151128A');
@@ -1236,7 +1240,7 @@ begin
    end;
   end
   else begin
-   if ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
+   if ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
                              allvisi,@checkequalheader,paramdata) then begin
     err1:= true;
     errormessage(err_sameparamlist,[]);
@@ -1249,7 +1253,7 @@ begin
      paramdata.match:= nil;
      if isclass then begin
       ele.pushelementparent(currentcontainer);
-      bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
+      bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
                                   allvisi,@checkequalparam,paramdata);
       ele.popelementparent();       
       if not bo1 then begin
@@ -1257,12 +1261,12 @@ begin
       end;
      end
      else begin
-      bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
-                                  allvisi,@checkequalparam,paramdata);
+      bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
+                                            allvisi,@checkequalparam,paramdata);
       if not bo1 then begin
        ele.decelementparent; //interface
-       bo1:= ele.forallcurrent(contextstack[s.stackindex+1].d.ident.ident,[ek_sub],
-                                 allvisi,@checkequalparam,paramdata);
+       bo1:= ele.forallcurrent((poind+1)^.d.ident.ident,[ek_sub],
+                                            allvisi,@checkequalparam,paramdata);
       end;
      end;
      if bo1 then begin
@@ -1288,7 +1292,7 @@ begin
        end;
       end;
      end;
-     with contextstack[s.stackindex-1] do begin
+     with (poind-1)^ do begin
       if paramdata.match <> nil then begin
        d.subdef.match:= ele.eledatarel(paramdata.match);
  //     end
@@ -1303,7 +1307,7 @@ begin
     end;
     }
     if s.debugoptions * [do_proginfo,do_name] <> [] then begin
-     with contextstack[s.stackindex-1] do begin
+     with (poind-1)^ do begin
      {$ifdef mse_checkinternalerror}
       if (s.stackindex < 1) or (d.kind <> ck_subdef) then begin
        internalerror(ie_parser,'20151023A');
@@ -1572,6 +1576,8 @@ begin
     info.s.unitinfo^.llvmlists.globlist.updatesubtype(po1);
 //   end;
   end;
+  addlabel();
+  linkresolveopad(po1^.exitlinks,opcount-1);
   if stf_needsmanage in s.currentstatementflags then begin
    writemanagedvarop(mo_fini,po1^.varchain);
   end;
