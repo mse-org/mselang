@@ -539,7 +539,7 @@ while,whiledo,handlewhilestart,
 whiledo,,,handledoexpected
  ${whitespace}
  'do'.,whiledo0-
-whiledo0,,handlewhileexpression,handlewhileend*
+whiledo0,,handlewhileexpression,handlewhileend
  '',statementstack^*
 
 repeat,,handlerepeatstart,handleuntilexpected
@@ -848,7 +848,7 @@ writepropa,classproperty4,,
  'default'.,exp-^*,defaultprop^
 defaultprop,classproperty4,,handledefaultprop*^
  '',exp^*
-classproperty4,,,handleclassproperty*
+classproperty4,,,handleclassproperty
  ${whitespace}
  ';',-*
  '',!handlesemicolonexpected

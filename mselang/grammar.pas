@@ -965,7 +965,7 @@ var
                caption: 'whiledo');
  whiledo0co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'whiledo0');
  repeatco: contextty = (branch: nil; 
@@ -1490,7 +1490,7 @@ var
                caption: 'defaultprop');
  classproperty4co: contextty = (branch: nil; 
                handleentry: nil; handleexit: nil; 
-               continue: false; restoresource: false; cutafter: true; 
+               continue: false; restoresource: false; cutafter: false; 
                pop: false; popexe: false; cutbefore: false; nexteat: false; next: nil;
                caption: 'classproperty4');
  interfacedefco: contextty = (branch: nil; 
