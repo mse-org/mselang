@@ -1,11 +1,11 @@
 unit unit1;
 interface
-procedure test1();
+procedure test();
 implementation
 
-procedure test1();
+procedure test();
 begin
- exitcode:= 222;
+ exitcode:= 123;
 end;
 
 //{$internaldebug on}

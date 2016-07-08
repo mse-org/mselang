@@ -561,7 +561,7 @@ begin
         hasmoduleflags:= true;
         m1:= i32const(ord(mfb_warning));
         m2:= addnode([m1,addstring(stringtolstring('Dwarf Version')),
-                                      i8const(DWARF_VERSION)]);
+                                      i8const(mse_DWARF_VERSION)]);
                                       
         m3:= addnode([m1,addstring(stringtolstring('Debug Info Version')),
                              i8const(DEBUG_METADATA_VERSION)]);

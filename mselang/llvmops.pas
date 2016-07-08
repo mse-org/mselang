@@ -20,7 +20,9 @@ unit llvmops;
 interface
 uses
  opglob,parserglob,msestream,llvmbcwriter,llvmbitcodes;
-
+const
+ mse_DWARF_VERSION = 2;
+ 
 //todo: handle shiftcount overflow
  
 function getoptable: poptablety;
@@ -1868,14 +1870,24 @@ begin
                                              bcstream.ssaval(ssas2)]);
    end;
    cok_ne: begin
+    callcompilersub(cs_compstring8ne,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
    end;
    cok_gt: begin
+    callcompilersub(cs_compstring8gt,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
    end;
    cok_lt: begin
+    callcompilersub(cs_compstring8lt,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
    end;
    cok_ge: begin
+    callcompilersub(cs_compstring8ge,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
    end;
    cok_le: begin
+    callcompilersub(cs_compstring8le,true,[bcstream.ssaval(ssas1),
+                                             bcstream.ssaval(ssas2)]);
    end;
   end;
  end;

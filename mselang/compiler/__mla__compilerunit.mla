@@ -30,6 +30,11 @@ procedure __mla__uniquedynarray(const ref: pprefsizeinfoty;
                                                     const itemsize: int32);
 procedure __mla__uniquestring8(const ref: pprefsizeinfoty);
 function __mla__compstring8eq(a,b: pointer): bool1;
+function __mla__compstring8ne(a,b: pointer): bool1;
+function __mla__compstring8gt(a,b: pointer): bool1;
+function __mla__compstring8lt(a,b: pointer): bool1;
+function __mla__compstring8ge(a,b: pointer): bool1;
+function __mla__compstring8le(a,b: pointer): bool1;
 
 function __mla__chartostring8(achar: card8): pointer;
 function __mla__arraytoopenar(ahigh: int32; adata: pointer): openarrayty;
@@ -357,6 +362,39 @@ begin
    result:= false;
   end;
  end;
+end;
+
+function __mla__compstring8ne(a,b: pointer): bool1;
+begin
+ result:= not (a = b);
+ if result then begin
+  if (a <> nil) and (b <> nil) then begin
+   result:= compstring8(a,b) <> 0;
+  end
+  else begin
+   result:= true;
+  end;
+ end;
+end;
+
+function __mla__compstring8gt(a,b: pointer): bool1;
+begin
+ result:= compstring8(a,b) > 0;
+end;
+
+function __mla__compstring8lt(a,b: pointer): bool1;
+begin
+ result:= compstring8(a,b) < 0;
+end;
+
+function __mla__compstring8ge(a,b: pointer): bool1;
+begin
+ result:= compstring8(a,b) >= 0;
+end;
+
+function __mla__compstring8le(a,b: pointer): bool1;
+begin
+ result:= compstring8(a,b) <= 0;
 end;
 
 function __mla__chartostring8(achar: card8): pointer;

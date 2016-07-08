@@ -28,7 +28,10 @@ uses
  msescrollbar,msesyntaxpainter,msesercomm,msestream,msebarcode;
 
 const
- llvmbindir = '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+// llvmbindir = 
+// '/home/mse/packs/standard/git/llvm/build_debug/Debug+Asserts/bin/';
+ llvmbindir = 
+      '/home/mse/packs/standard/git/llvm/build_debug_3_7/Debug+Asserts/bin/';
 type
  it = interface(ievent)
  end;
