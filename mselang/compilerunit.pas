@@ -57,7 +57,7 @@ const
   '__mla__uniquedynarray',
   '__mla__uniquestring8',
   '__mla__chartostring8',
-  '__mla__cmpstring8eq',
+  '__mla__compstring8eq',
   '__mla__arraytoopenar',
   '__mla__dynarraytoopenar',
   '__mla__lengthdynarray',

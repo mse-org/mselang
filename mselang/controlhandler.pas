@@ -299,6 +299,7 @@ begin
   linkresolveopad(d.control.linkscontinue,d.control.opmark1.address);
   linkresolveopad(d.control.linksbreak,opcount-1);
   dec(s.stackindex);
+  s.stacktop:= s.stackindex;
  end;
 end;
 

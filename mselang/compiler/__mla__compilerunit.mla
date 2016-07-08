@@ -335,8 +335,6 @@ begin
   i1:= poa^ - pob^;
   if i1 <> 0 then begin
    result:= i1;
-{$dumpelements}
-{$internaldebug on}
    exit;
   end;
   inc(poa);
