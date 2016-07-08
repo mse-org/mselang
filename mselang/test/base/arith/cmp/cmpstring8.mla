@@ -1,0 +1,11 @@
+program cmpstring8;
+var
+ s1: string8;
+ s2: string8;
+begin
+ s1:= 'abc';
+ s2:= 'abc1';
+ if (s1 < s2) and (s1 = 'abc') and (s2 <> s1) and ('z' > s1) then begin
+  exitcode:= 123;
+ end;
+end.
