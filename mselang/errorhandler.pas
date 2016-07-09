@@ -68,7 +68,8 @@ type
             err_illegalpropsymbol,err_div0,
             err_cantdetermine,err_callbyvarexact,err_defaultvaluescanonly,
             err_subnovalue,
-            err_ignoreddirective,err_definehasnovalue);
+            err_ignoreddirective,err_definehasnovalue,
+            err_typecastdifferentsize);
             
  errorinfoty = record
   level: errorlevelty;
@@ -249,12 +250,11 @@ const
     'Call by var for arg no. %d has to match exactly: Got "%s", expected "%s"'),
   (level: erl_error; message: 'Default values can only be specified for value,'+
                                               ' const and constref parameters'),
+  (level: erl_error; message: 'Subroutine returns no value'),
+  (level: erl_note; message: 'Ignored directive "%s"'),
+  (level: erl_error; message: 'Define has no value'),
   (level: erl_error; message: 
-                     'Subroutine returns no value'),
-  (level: erl_note; message: 
-                     'Ignored directive "%s"'),
-  (level: erl_error; message: 
-                     'Define has no value')
+                    'Typecast has different size (%d -> %d) in assignment')
  );
 
 procedure message1(const atext: string; const values: array of const); 

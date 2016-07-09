@@ -1985,6 +1985,8 @@ var
  ssabefore: int32;
  poind,pob,potop: pcontextitemty;
  pocontext1: pcontextitemty;
+ i1,i2: int32;
+ bo1: boolean;
  
 label
  endlab;
@@ -2281,18 +2283,47 @@ begin
         end;
        end;
       end
-      else begin          //type conversion
+      else begin          //type conversion //todo: identpath
        if paramco > 1 then begin
         errormessage(err_tokenexpected,[')'],4,-1);
        end
        else begin
-        if getvalue(potop,das_none,true) then begin
-         if not tryconvert(potop,po2,
-                     ptypedataty(po2)^.h.indirectlevel,[coo_type]) then begin
-          illegalconversionerror(potop^.d,po2,
-                                      ptypedataty(po2)^.h.indirectlevel);
-         end
-         else begin
+        with ptypedataty(po2)^ do begin 
+         bo1:= true;
+         if (potop^.d.kind = ck_ref) then begin
+          po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
+          i1:= h.bytesize;
+          i2:= po3^.h.bytesize;
+          if h.indirectlevel > 0 then begin
+           i1:= pointersize;
+          end;
+          if potop^.d.dat.datatyp.indirectlevel > 0 then begin
+           i2:= pointersize;
+          end;
+          if i1 = i2 then begin
+           if getaddress(potop,true) then begin
+            potop^.d.dat.datatyp.indirectlevel:= 
+                      po3^.h.indirectlevel - h.indirectlevel - 1;
+            dec(potop^.d.dat.indirection);
+            potop^.d.dat.datatyp.typedata:= ele.eledatarel(po2);
+            potop^.d.dat.datatyp.flags:= h.flags;
+            bo1:= false;
+           end;
+          end
+          else begin
+           errormessage(err_typecastdifferentsize,[i2,i1]);
+          end;
+         end;
+         if bo1 then begin
+ //        if getvalue(potop,das_none,true) then begin
+          bo1:= not tryconvert(potop,po2,
+                      ptypedataty(po2)^.h.indirectlevel,[coo_type]);
+          if bo1 then begin
+           illegalconversionerror(potop^.d,po2,
+                                       ptypedataty(po2)^.h.indirectlevel);
+          end;
+         end;
+         if not bo1 then begin
           poind^.d:= potop^.d; //big copy!
 //          contextstack[s.stackindex].d.kind:= ck_space;
          end;
