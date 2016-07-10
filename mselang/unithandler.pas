@@ -39,6 +39,13 @@ type
   end;
  end;
  pphilistty = ^philistty;
+
+ castitemty = record
+  typedata: elementoffsetty;
+ end;
+ pcastitemty = ^castitemty;
+ castcallbackty = procedure (var item: castitemty; var cancel: boolean);
+
  
  unitlinkinfoty = record  //used for ini, fini
   header: linkheaderty;
@@ -113,6 +120,11 @@ procedure linkresolveint(const alinks: linkindexty; const avalue: int32);
 procedure linkresolvephi(const alinks: linkindexty; 
                       const aaddress: opaddressty; const lastssa: int32;
                                  out philist: dataoffsty); //in seg_localloc
+procedure linkaddcast(var alinks: linkindexty; 
+                                          const atype: elementoffsetty);
+procedure linkdocasts(var alinks: linkindexty;
+                                    const callback: castcallbackty);
+
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
 procedure forwardresolve(const aforward: forwardindexty);
@@ -997,6 +1009,7 @@ type
   case integer of
    1:(dest: segaddressty);
    2:(phi: phiitemty);
+   3:(cast: castitemty);
  end;
  plinkinfoty = ^linkinfoty;
  linkarty = array of linkinfoty;
@@ -1188,6 +1201,20 @@ begin
  end;
 end;
 
+procedure linkaddcast(var alinks: linkindexty; 
+                                          const atype: elementoffsetty);
+var
+ po1: plinkinfoty;
+begin
+ po1:= link(alinks);
+ po1^.cast.typedata:= atype;
+end;
+
+procedure linkdocasts(var alinks: linkindexty;
+                                    const callback: castcallbackty);
+begin
+end;
+
 {
 function addtypedef(const aname: identty; const avislevel: visikindsty;
                                         out aelementdata: pointer): boolean;
@@ -1198,6 +1225,12 @@ begin
  end;
 end;
 }
+type
+ pendingconversionitemty = record
+  typedata: elementoffsetty;
+ end;
+ ppendingconversionitemty = ^pendingconversionitemty;
+ 
 type
  forwardtypeitemty = record
   header: linkheaderty;

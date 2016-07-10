@@ -2262,6 +2262,7 @@ begin
  with acontext.dat do begin
 //  flags:= [];
   indirection:= 0;
+  ref.castchain:= 0;
  end;
 end;
 
@@ -3363,6 +3364,7 @@ procedure outinfo(const text: string; const indent: boolean = true);
   with ainfo.dat.ref do begin
    writeaddress(c.address);
    write('O:',offset,' ');
+   write('C:',castchain,' ');
   end;
  end;//writeref
  

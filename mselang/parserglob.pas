@@ -182,6 +182,7 @@ type
    
  refvaluety = record
   c: refconstvaluety;
+  castchain: linkindexty;
   case contextkindty of
    ck_ref,ck_prop:(
     offset: dataoffsty;

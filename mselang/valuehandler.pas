@@ -877,9 +877,10 @@ begin
       end;
      end
      else begin
-      if (destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
+      if (coo_type in aoptions) and 
+              ((destindirectlevel > 0) and (source1^.h.indirectlevel = 0) and 
                (source1^.h.bitsize = pointerbitsize) or 
-                        (source1^.h.kind in [dk_integer,dk_cardinal])then begin
+                      (source1^.h.kind in [dk_integer,dk_cardinal])) then begin
        if getvalue(acontext,pointerintsize) then begin //any to pointer
         i1:= d.dat.fact.ssaindex; //todo: no int source
         with insertitem(oc_inttopo,stackoffset,-1)^ do begin
@@ -2291,6 +2292,9 @@ begin
         with ptypedataty(po2)^ do begin 
          bo1:= true;
          if (potop^.d.kind = ck_ref) then begin
+          linkaddcast(potop^.d.dat.ref.castchain,ele.eledatarel(po2));
+          bo1:= false;
+{
           po3:= ele.eledataabs(potop^.d.dat.datatyp.typedata);
           i1:= h.bytesize;
           i2:= po3^.h.bytesize;
@@ -2315,6 +2319,9 @@ begin
           end;
          end;
          if bo1 then begin
+         }
+         end
+         else begin
  //        if getvalue(potop,das_none,true) then begin
           bo1:= not tryconvert(potop,po2,
                       ptypedataty(po2)^.h.indirectlevel,[coo_type]);
