@@ -44,7 +44,8 @@ type
   typedata: elementoffsetty;
  end;
  pcastitemty = ^castitemty;
- castcallbackty = procedure (var item: castitemty; var cancel: boolean);
+ castcallbackty = procedure (const acontext: pcontextitemty;
+                                  const item: castitemty; var cancel: boolean);
 
  
  unitlinkinfoty = record  //used for ini, fini
@@ -122,7 +123,7 @@ procedure linkresolvephi(const alinks: linkindexty;
                                  out philist: dataoffsty); //in seg_localloc
 procedure linkaddcast(var alinks: linkindexty; 
                                           const atype: elementoffsetty);
-procedure linkdocasts(var alinks: linkindexty;
+procedure linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty);
 
 
@@ -1040,6 +1041,25 @@ begin
  alinks:= li1;
 end;
 
+procedure linksreverse(var alinks: linkindexty);
+var
+ li1,li2,li3: linkindexty;
+begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  li2:= 0;
+  repeat
+   with links[li1] do begin
+    li3:= next;
+    next:= li2;
+   end;
+   li2:= li1;
+   li1:= li3;
+  until li1 = 0;
+  alinks:= li2;
+ end;
+end;
+
 procedure linkmark(var alinks: linkindexty; const aaddress: segaddressty;
                                                     const offset: integer = 0);
 var
@@ -1210,9 +1230,32 @@ begin
  po1^.cast.typedata:= atype;
 end;
 
-procedure linkdocasts(var alinks: linkindexty;
+procedure linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty);
+var
+ li1,li2: linkindexty;
+ cancel1: boolean;
 begin
+ if alinks <> 0 then begin
+  li1:= alinks;
+  alinks:= 0;
+  linksreverse(li1);
+  li2:= li1; //backup
+  cancel1:= false;
+  while true do begin
+   with links[li1] do begin
+    if not cancel1 then begin
+     callback(acontext,cast,cancel1);
+    end;
+    if next = 0 then begin
+     break;
+    end;
+    li1:= next;
+   end;
+  end;
+  links[li1].next:= deletedlinks;
+  deletedlinks:= li2;
+ end;
 end;
 
 {

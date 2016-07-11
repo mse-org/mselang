@@ -2622,6 +2622,53 @@ begin
  end;
 end;
 }
+procedure castreftype(const acontext: pcontextitemty;
+                                  const item: castitemty; var cancel: boolean);
+var
+ sourcetyp,desttyp: ptypedataty;
+ i1,i2: int32;
+begin
+ sourcetyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
+ desttyp:= ele.eledataabs(item.typedata);
+ with desttyp^ do begin
+  i1:= h.bytesize;
+  i2:= sourcetyp^.h.bytesize;
+  if h.indirectlevel > 0 then begin
+   i1:= pointersize;
+  end;
+  if acontext^.d.dat.datatyp.indirectlevel > 0 then begin
+   i2:= pointersize;
+  end;
+  if i1 = i2 then begin
+   if getaddress(acontext,true) then begin
+    acontext^.d.dat.datatyp.indirectlevel:= 
+              sourcetyp^.h.indirectlevel - h.indirectlevel - 1;
+    dec(acontext^.d.dat.indirection);
+    acontext^.d.dat.datatyp.typedata:= item.typedata;
+    acontext^.d.dat.datatyp.flags:= h.flags;
+   end;
+  end
+  else begin
+   errormessage(err_typecastdifferentsize,[i2,i1]);
+   cancel:= true;
+  end;
+ end;
+end;
+
+procedure checkreftypeconversion(const acontext: pcontextitemty);
+begin
+ with acontext^ do begin
+ {$ifdef mse_checkinternalerror}
+  if d.kind <> ck_ref then begin
+   internalerror(ie_handler,'20160711A');
+  end;
+ {$endif}
+  if d.dat.ref.castchain <> 0 then begin
+   linkdocasts(d.dat.ref.castchain,acontext,@castreftype);
+  end;
+ end;
+end;
+
 function getaddress(const acontext: pcontextitemty;
                                 const endaddress: boolean): boolean;
 var
@@ -2639,6 +2686,7 @@ begin
    internalerror(ie_handler,'20140405A');
   end;
  {$endif}
+  checkreftypeconversion(acontext);
   inc(d.dat.indirection);
   inc(d.dat.datatyp.indirectlevel);
   if d.dat.datatyp.indirectlevel <= 0 then begin
