@@ -2628,6 +2628,11 @@ var
  sourcetyp,desttyp: ptypedataty;
  i1,i2: int32;
 begin
+{$ifdef mse_checkinternalerror}
+ if not (acontext^.d.kind in datacontexts) then begin
+  internalerror(ie_handler,'20160711A');
+ end;
+{$endif}
  sourcetyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
  desttyp:= ele.eledataabs(item.typedata);
  with desttyp^ do begin
@@ -2640,10 +2645,18 @@ begin
    i2:= pointersize;
   end;
   if i1 = i2 then begin
-   if getaddress(acontext,true) then begin
+   if acontext^.d.kind = ck_ref then begin
+    if getaddress(acontext,true) then begin
+     acontext^.d.dat.datatyp.indirectlevel:= 
+               sourcetyp^.h.indirectlevel - h.indirectlevel - 1;
+     dec(acontext^.d.dat.indirection);
+     acontext^.d.dat.datatyp.typedata:= item.typedata;
+     acontext^.d.dat.datatyp.flags:= h.flags;
+    end;
+   end
+   else begin //getaddress already called
     acontext^.d.dat.datatyp.indirectlevel:= 
-              sourcetyp^.h.indirectlevel - h.indirectlevel - 1;
-    dec(acontext^.d.dat.indirection);
+               sourcetyp^.h.indirectlevel - h.indirectlevel;
     acontext^.d.dat.datatyp.typedata:= item.typedata;
     acontext^.d.dat.datatyp.flags:= h.flags;
    end;
@@ -2686,7 +2699,9 @@ begin
    internalerror(ie_handler,'20140405A');
   end;
  {$endif}
-  checkreftypeconversion(acontext);
+  if d.kind = ck_ref then begin
+   checkreftypeconversion(acontext);
+  end;
   inc(d.dat.indirection);
   inc(d.dat.datatyp.indirectlevel);
   if d.dat.datatyp.indirectlevel <= 0 then begin
