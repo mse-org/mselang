@@ -981,7 +981,7 @@ function checkcompatibledatatype(const sourcecontext: pcontextitemty;
 var
  source,dest: ptypedataty;
  sourceitem{,destitem}: ptypedataty;
- indilev1: int32;
+ sourceindilev,destindilev: int32;
  pocont1,poe: pcontextitemty;
  i1: int32;
  addr1: addressvaluety;
@@ -994,14 +994,14 @@ begin
  {$endif}
   conversioncost:= 0;
   dest:= ele.basetype(desttypedata);
-  indilev1:= destaddress.indirectlevel;
+  destindilev:= destaddress.indirectlevel;
   if af_paramindirect in destaddress.flags then begin
-   dec(indilev1);
+   dec(destindilev);
   end;
   
   if d.kind = ck_list then begin
    result:= false;
-   if indilev1 <> 0 then begin
+   if destindilev <> 0 then begin
     exit;
    end;
    pocont1:= sourcecontext+1;
@@ -1057,12 +1057,13 @@ begin
   
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    source:= ele.basetype(linkgetcasttype(d.dat.ref.castchain));
-   result:= indilev1 = source^.h.indirectlevel;
+   sourceindilev:= source^.h.indirectlevel;
   end
   else begin
    source:= ele.basetype(d.dat.datatyp.typedata);
-   result:= indilev1 = d.dat.datatyp.indirectlevel;
+   sourceindilev:= d.dat.datatyp.indirectlevel;
   end;
+  result:= destindilev = sourceindilev;
   if result then begin
    result:= (source = dest);
    if not result then begin
@@ -1071,7 +1072,7 @@ begin
      exit;
     end;
     inc(conversioncost);            //1
-    if (indilev1 = 0) and (dest^.h.kind = dk_openarray) and
+    if (destindilev = 0) and (dest^.h.kind = dk_openarray) and
                ((source^.h.kind = dk_dynarray) and 
                          issametype(source^.infodynarray.i.itemtypedata,
                           dest^.infodynarray.i.itemtypedata) or
@@ -1105,10 +1106,10 @@ begin
    end;
   end;
   if not result then begin  //untyped pointer conversion
-   result:= (dest^.h.kind = dk_pointer) and (indilev1 = 1) and 
-                                     (d.dat.datatyp.indirectlevel > 0) or 
-            (d.dat.datatyp.indirectlevel = 1 ) and 
-                              (source^.h.kind = dk_pointer) and (indilev1 > 0);
+   result:= (dest^.h.kind = dk_pointer) and (destindilev = 1) and 
+                                     (sourceindilev > 0) or 
+        (sourceindilev = 1 ) and (source^.h.kind = dk_pointer) and 
+                                                         (destindilev > 0);
    if result then begin
     conversioncost:= 1;
    end;
