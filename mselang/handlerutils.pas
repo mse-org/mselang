@@ -128,6 +128,8 @@ function compaddress(const a,b: addressvaluety): integer;
 function getcontextopcount(const stackoffset: int32): int32;
             //returns opcount in context
 
+procedure checkreftypeconversion(const acontext: pcontextitemty);
+procedure checkdatatypeconversion(const acontext: pcontextitemty);
 function getvalue(const acontext: pcontextitemty; const adatasize: databitsizety;
                                const retainconst: boolean = false): boolean;
 //function getvalue(const stackoffset: integer; const adatasize: databitsizety;
@@ -2487,6 +2489,7 @@ label
 
 begin                    //todo: optimize
  result:= false;
+ checkdatatypeconversion(acontext);
  stackoffset:= getstackoffset(acontext);
  with info,acontext^ do begin
   if d.kind = ck_list then begin
@@ -2671,13 +2674,32 @@ end;
 procedure checkreftypeconversion(const acontext: pcontextitemty);
 begin
  with acontext^ do begin
- {$ifdef mse_checkinternalerror}
-  if d.kind <> ck_ref then begin
-   internalerror(ie_handler,'20160711A');
-  end;
- {$endif}
-  if d.dat.ref.castchain <> 0 then begin
+  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    linkdocasts(d.dat.ref.castchain,acontext,@castreftype);
+  end;
+ end;
+end;
+
+procedure castdatatype(const acontext: pcontextitemty;
+                                  const item: castitemty; var cancel: boolean);
+var
+ po1: ptypedataty;
+begin
+ po1:= ele.eledataabs(item.typedata);
+ cancel:= not tryconvert(acontext,po1,po1^.h.indirectlevel,[coo_type]);
+end;
+
+procedure checkdatatypeconversion(const acontext: pcontextitemty);
+var
+ link1: linkindexty;
+begin
+ with acontext^ do begin
+  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+   link1:= d.dat.ref.castchain;
+   d.dat.ref.castchain:= 0;
+   if getvalue(acontext,das_none) then begin
+    linkdocasts(link1,acontext,@castdatatype);
+   end;
   end;
  end;
 end;

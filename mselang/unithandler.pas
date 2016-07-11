@@ -125,6 +125,7 @@ procedure linkaddcast(var alinks: linkindexty;
                                           const atype: elementoffsetty);
 procedure linkdocasts(var alinks: linkindexty; const acontext: pcontextitemty;
                                     const callback: castcallbackty);
+function linkgetcasttype(const alinks: linkindexty): elementoffsetty;
 
 
 procedure forwardmark(out aforward: forwardindexty; const asource: sourceinfoty);
@@ -1258,6 +1259,15 @@ begin
  end;
 end;
 
+function linkgetcasttype(const alinks: linkindexty): elementoffsetty;
+begin
+{$ifdef mse_checkinternalerror}
+ if (alinks <= 0) or (alinks > high(links)) then begin
+  internalerror(ie_handler,'20160711B');
+ end;
+{$endif}
+ result:= links[alinks].cast.typedata;
+end;
 {
 function addtypedef(const aname: identty; const avislevel: visikindsty;
                                         out aelementdata: pointer): boolean;

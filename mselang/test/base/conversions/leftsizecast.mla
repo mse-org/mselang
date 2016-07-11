@@ -1,0 +1,20 @@
+program leftsizecast;
+
+procedure test(const p: pointer);
+begin
+end;
+
+procedure test(var p: int32);
+begin
+ exitcode:= p;
+end;
+
+var
+ po1: pointer;
+ i1: int32;
+begin
+ int32(po1):= 100;
+ test(int32(po1));
+ int32(card32(po1)):= 23;
+ exitcode:= exitcode + int32(po1);
+end.

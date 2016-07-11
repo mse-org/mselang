@@ -564,8 +564,9 @@ var
  i1,i2,i3: integer;
  lstr1: lstringty;
 begin
- stackoffset:= getstackoffset(acontext);
  with info do begin
+  checkreftypeconversion(acontext);
+  stackoffset:= getstackoffset(acontext);
   if acontext^.d.kind = ck_list then begin
    case dest^.h.kind of
     dk_set: begin
@@ -1054,8 +1055,14 @@ begin
    end;
   end;
   
-  source:= ele.basetype(d.dat.datatyp.typedata);
-  result:= indilev1 = d.dat.datatyp.indirectlevel;
+  if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+   source:= ele.basetype(linkgetcasttype(d.dat.ref.castchain));
+   result:= indilev1 = source^.h.indirectlevel;
+  end
+  else begin
+   source:= ele.basetype(d.dat.datatyp.typedata);
+   result:= indilev1 = d.dat.datatyp.indirectlevel;
+  end;
   if result then begin
    result:= (source = dest);
    if not result then begin
@@ -1175,7 +1182,7 @@ var
   vardata1: pvardataty;
   desttype: ptypedataty;
   si1: databitsizety;
-  stackoffset,i2: int32;
+  stackoffset,i1,i2: int32;
   conversioncost1: int32;
   err1: errorty;
   
@@ -1189,7 +1196,8 @@ var
   
  var
   po1: pcontextitemty;
-  
+  ele1: elementoffsetty;
+  sourcetype: ptypedataty;
  begin
   with info do begin
    vardata1:= ele.eledataabs(subparams1^);
@@ -1205,6 +1213,16 @@ var
           not checkcompatibledatatype(context1,vardata1^.vf.typ,
             vardata1^.address,[cco_novarconversion],conversioncost1) then begin
     err1:= err_incompatibletypeforarg;
+    with context1^ do begin
+     if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
+      sourcetype:= ele.eledataabs(linkgetcasttype(d.dat.ref.castchain));
+      i1:= 0;
+     end
+     else begin
+      sourcetype:= ele.eledataabs(d.dat.datatyp.typedata);
+      i1:= context1^.d.dat.datatyp.indirectlevel-sourcetype^.h.indirectlevel;
+     end;
+    end;
     if vardata1^.address.flags * [af_paramvar,af_paramout] <> [] then begin
      err1:= err_callbyvarexact;
     end;
@@ -1219,7 +1237,8 @@ var
                    vardata1^.address.indirectlevel)],stackoffset);
     end
     else begin
-     errormessage(err1,[i2,typename(context1^.d),
+     errormessage(err1,[i2,
+               typename(sourcetype^,i1),
                   typename(ptypedataty(ele.eledataabs(vardata1^.vf.typ))^,
                    vardata1^.address.indirectlevel)],stackoffset);
     end;
