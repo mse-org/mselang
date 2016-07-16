@@ -2753,8 +2753,6 @@ begin
  end;
 end;
 
-//todo: indirection needs rewrite, simplify and make universal
-
 procedure handleassignment();
 var
  destvar: vardestinfoty;

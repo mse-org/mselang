@@ -1,0 +1,24 @@
+program leftsidecast1;
+type
+ pint32 = ^int32;
+ pcard32 = ^card32;
+ ppointer = ^pointer;
+ pcard8 = ^card8;
+var
+ i1: int32;
+ po1: pointer;
+ po2: pint32;
+ po3: ppointer;
+begin
+ po1:= @i1;
+ pint32(pcard32(po1))^:= 20;
+ exitcode:= i1;
+ card32(i1):= 90;
+ exitcode:= exitcode + i1;
+ po1:= @po2;
+ ppointer(po1)^:= pointer(3);
+ exitcode:= exitcode + int32(po2);
+ po1:= @i1;
+ i1:= 10;
+ exitcode:= exitcode + pcard8(po1)^;
+end.

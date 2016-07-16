@@ -2629,7 +2629,7 @@ procedure castreftype(const acontext: pcontextitemty;
                                   const item: castitemty; var cancel: boolean);
 var
  sourcetyp,desttyp: ptypedataty;
- i1,i2: int32;
+ i1,i2,i3: int32;
 begin
 {$ifdef mse_checkinternalerror}
  if not (acontext^.d.kind in datacontexts) then begin
@@ -2638,7 +2638,13 @@ begin
 {$endif}
  sourcetyp:= ele.eledataabs(acontext^.d.dat.datatyp.typedata);
  desttyp:= ele.eledataabs(item.typedata);
- with desttyp^ do begin
+ with desttyp^,acontext^ do begin
+  i3:= 0;
+  if d.kind = ck_ref then begin
+   i3:= d.dat.indirection;
+   d.dat.indirection:= 0;
+   dec(d.dat.datatyp.indirectlevel,i3);
+  end;
   i1:= h.bytesize;
   i2:= sourcetyp^.h.bytesize;
   if h.indirectlevel > 0 then begin
@@ -2648,21 +2654,31 @@ begin
    i2:= pointersize;
   end;
   if i1 = i2 then begin
-   if acontext^.d.kind = ck_ref then begin
-    if getaddress(acontext,true) then begin
-     acontext^.d.dat.datatyp.indirectlevel:= 
-               sourcetyp^.h.indirectlevel - h.indirectlevel - 1;
-     dec(acontext^.d.dat.indirection);
-     acontext^.d.dat.datatyp.typedata:= item.typedata;
-     acontext^.d.dat.datatyp.flags:= h.flags;
+   if d.kind = ck_ref then begin
+    if d.dat.datatyp.indirectlevel > 0 then begin
+     if getvalue(acontext,das_none) then begin
+      d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                        h.indirectlevel - sourcetyp^.h.indirectlevel;
+     end;
+    end
+    else begin
+     if getaddress(acontext,true) then begin
+      d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                         h.indirectlevel - sourcetyp^.h.indirectlevel - 1;
+      dec(d.dat.indirection);
+     end;
     end;
+    d.dat.datatyp.typedata:= item.typedata;
+    d.dat.datatyp.flags:= h.flags;
    end
    else begin //getaddress already called
-    acontext^.d.dat.datatyp.indirectlevel:= 
-               sourcetyp^.h.indirectlevel - h.indirectlevel;
-    acontext^.d.dat.datatyp.typedata:= item.typedata;
-    acontext^.d.dat.datatyp.flags:= h.flags;
+    d.dat.datatyp.indirectlevel:= d.dat.datatyp.indirectlevel +
+                              sourcetyp^.h.indirectlevel - h.indirectlevel;
+    d.dat.datatyp.typedata:= item.typedata;
+    d.dat.datatyp.flags:= h.flags;
    end;
+   inc(d.dat.indirection,i3);
+   inc(d.dat.datatyp.indirectlevel,i3);
   end
   else begin
    errormessage(err_typecastdifferentsize,[i2,i1]);
@@ -2692,14 +2708,20 @@ end;
 procedure checkdatatypeconversion(const acontext: pcontextitemty);
 var
  link1: linkindexty;
+ i1: int32;
 begin
  with acontext^ do begin
   if (d.kind = ck_ref) and (d.dat.ref.castchain <> 0) then begin
    link1:= d.dat.ref.castchain;
    d.dat.ref.castchain:= 0;
+   i1:= d.dat.indirection;
+   d.dat.indirection:= 0;
+   dec(d.dat.datatyp.indirectlevel,i1);
    if getvalue(acontext,das_none) then begin
     linkdocasts(link1,acontext,@castdatatype);
    end;
+   inc(d.dat.datatyp.indirectlevel,i1);
+   inc(d.dat.indirection,i1);
   end;
  end;
 end;
@@ -2709,6 +2731,7 @@ function getaddress(const acontext: pcontextitemty;
 var
  si1: databitsizety;
  stackoffset: int32;
+ i1: int32;
 begin
  result:= false;
  stackoffset:= getstackoffset(acontext);
